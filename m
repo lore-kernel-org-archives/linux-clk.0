@@ -2,709 +2,681 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF15C77B6E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 18:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680D7C77B73
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 18:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbjDMSpm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 14:45:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36540 "EHLO
+        id S230136AbjDMSzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 14:55:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230241AbjDMSpj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 14:45:39 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FE228A42
-        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 11:45:11 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id o1so20438968lfc.2
-        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 11:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681411505; x=1684003505;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+R8RC3kGQqgnaooJNYVw/1Mh9uv8861rn5bH89aAReM=;
-        b=QoXXtSPYps2JS9upZSF+fHpJWOjrm0z/CIB0ffxv5OJrGK7x9PzKGnLGEXPQ+LUhJd
-         ttBeB8KUXjIFQjgsRLff1KU53U7GCfFXanGcRedv9PNydTA1MoReH5iNTE4ctyNpIkqI
-         R+3ABjMtzl7FOPAq4qGBNrumtRIVMPpL7k/RyBc8Mih5dq8Olel08/idQN2ZmCuttgB2
-         UEFtIp4RVnk5vlkRDe+CmT4zhJvknEYAwP1Fk8aX/mLqwMIrjRrW8p1iJUI/BEYRloIW
-         5tFrfxqfJ17ywPdhXxfzWZhYh7tfsOJApf8xkzzJVpFFlKCsz9eVq/7FrFhjbhq5U0IE
-         wlzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681411505; x=1684003505;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+R8RC3kGQqgnaooJNYVw/1Mh9uv8861rn5bH89aAReM=;
-        b=Rj1Izb+uR9Ac4jx5TCwigt11lt5vvtli4O7n5q12ldRHoHZcm5eQTAGT7Oip/vpzR1
-         EctkfBKE64yJNX57FYiOABi0FYrpe0guCKvYi1+iE2h8Y7oMcWdfzr+CHRRkpb11XNVS
-         Gg8BOz8ebOxZosq0VUhKB3FjiFr0Vess75brxWjxtsw6fMq5Kd+VWlCjG1rsOhDgdBCE
-         Klbh6MopQqrtRH0R/8rk3Jid7P+uQWQCyzUe+NaZBdz+6qn+riisBnc2rgtCJ+7l292m
-         J81QkJiCljz/fM/d6xd7dmpiQcHBMGz1oEt4jUJYaHLjU8dJ4UJanvMXlaR5wInN/lEG
-         p/Jw==
-X-Gm-Message-State: AAQBX9dihPNtkriJMIo5XQB+ls1SdeLHUgmetdnt8qW2zaQhObCx1RPi
-        u4p36WGPga/R7bz7ORogOZPDew==
-X-Google-Smtp-Source: AKy350Y1L0LqrMBPCsEt/RGUKui8p+uvQFJI0ACPjAA4VMWfpD9Xej6+UepT3K/mTvfpwE3Ilp4KKw==
-X-Received: by 2002:ac2:4e63:0:b0:4ed:b09a:6447 with SMTP id y3-20020ac24e63000000b004edb09a6447mr293467lfs.60.1681411505264;
-        Thu, 13 Apr 2023 11:45:05 -0700 (PDT)
-Received: from [192.168.1.101] (abyl123.neoplus.adsl.tpnet.pl. [83.9.31.123])
-        by smtp.gmail.com with ESMTPSA id r12-20020ac24d0c000000b004e95f53adc7sm419621lfi.27.2023.04.13.11.45.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Apr 2023 11:45:04 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Thu, 13 Apr 2023 20:44:59 +0200
-Subject: [PATCH 2/2] clk: qcom: Introduce SM8350 VIDEOCC
-MIME-Version: 1.0
+        with ESMTP id S229869AbjDMSzf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 14:55:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2BDC4200;
+        Thu, 13 Apr 2023 11:55:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 726FA640F9;
+        Thu, 13 Apr 2023 18:55:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81522C433D2;
+        Thu, 13 Apr 2023 18:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681412132;
+        bh=5KFNFdBIW2BvW60iizymJtZDW3ElqffE4eMRAKWlN0w=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=n7j4X7z7/w6hG3RTaCyYq1pNHJfwCoJ8w1/eLyoZ2Qf8Yt8OXChaykHHDdCmsz3zt
+         pioBPIS3kp2Q+GD1Z5JNFUTvFlW4gkrXxxtgdFv1MZaY5vLxrAmB0pn0VQX8UEOl5p
+         Hf3qAbHY1W2jd+vbnhIFFbCGtC7V4V0HlAIv1FW1IDNwm8QjBQI7ow3ZkpQSMAAdGq
+         TOcmXoNOpHn88qHuaTfVKozHsVmRDIG8jrYctOe1QC7GISmMcNyyUt+OJQdqBvms68
+         w8O0I1HXgHInU6ZiSrGqu4Yb5tIQE22F25RfsQu8TGq8kvnYK9BbjPnZTTE7jpfaQ8
+         e/fFJBZt43xFA==
+Message-ID: <2d848bc03aacb41a708ba2794eb043ff.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230413-topic-lahaina_vidcc-v1-2-134f9b22a5b3@linaro.org>
-References: <20230413-topic-lahaina_vidcc-v1-0-134f9b22a5b3@linaro.org>
-In-Reply-To: <20230413-topic-lahaina_vidcc-v1-0-134f9b22a5b3@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1681411500; l=17427;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=t2SuIf03zE+g67EYbEKVVwvVi13Twg5rvb4tqvAK/Ls=;
- b=5G7GHnxKmMs1UbEsnjOcjkLdiIBFtVxeUol5m07NyHWPQw0pnvy5SWxIeXU+LdqmhVveaeJH9kyM
- kUK6vIQ8CVDLRHdeawTxH+DxbcMxIEf1OzAHrpPXoReKFcqbpChA
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230321050034.1431379-3-sergio.paracuellos@gmail.com>
+References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com> <20230321050034.1431379-3-sergio.paracuellos@gmail.com>
+Subject: Re: [PATCH v2 2/9] clk: ralink: add clock and reset driver for MTMIPS SoCs
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
+        john@phrozen.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de, mturquette@baylibre.com,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        arinc.unal@arinc9.com
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+        linux-clk@vger.kernel.org
+Date:   Thu, 13 Apr 2023 11:55:30 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the Video Clock Controller found on the SM8350 SoC.
+Quoting Sergio Paracuellos (2023-03-20 22:00:27)
+> diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtm=
+ips.c
+> new file mode 100644
+> index 000000000000..6b4b5ae9384d
+> --- /dev/null
+> +++ b/drivers/clk/ralink/clk-mtmips.c
+> @@ -0,0 +1,985 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * MTMIPS SoCs Clock Driver
+> + * Author: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/clk.h>
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/Kconfig          |   9 +
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sm8350.c | 575 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 585 insertions(+)
+Drop unused include.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index d71c9d6036bb..dbb1dfcddb31 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -916,6 +916,15 @@ config SM_VIDEOCC_8250
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode and decode.
- 
-+config SM_VIDEOCC_8350
-+	tristate "SM8350 Video Clock Controller"
-+	select SM_GCC_8350
-+	select QCOM_GDSC
-+	help
-+	  Support for the video clock controller on SM8350 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode and decode.
-+
- config SPMI_PMIC_CLKDIV
- 	tristate "SPMI PMIC clkdiv Support"
- 	depends on SPMI || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index b54085e579a0..53290040523b 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -126,6 +126,7 @@ obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
- obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
- obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
- obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-+obj-$(CONFIG_SM_VIDEOCC_8350) += videocc-sm8350.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
- obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
- obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc-sm8350.c
-new file mode 100644
-index 000000000000..186a5bd9e184
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sm8350.c
-@@ -0,0 +1,575 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2023, Linaro Limited
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,sm8350-videocc.h>
-+#include <dt-bindings/reset/qcom,sm8350-videocc.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "clk-regmap-divider.h"
-+#include "common.h"
-+#include "reset.h"
-+#include "gdsc.h"
-+
-+enum {
-+	DT_BI_TCXO,
-+	DT_BI_TCXO_AO,
-+	DT_SLEEP_CLK,
-+};
-+
-+enum {
-+	P_BI_TCXO,
-+	P_BI_TCXO_AO,
-+	P_SLEEP_CLK,
-+	P_VIDEO_PLL0_OUT_MAIN,
-+	P_VIDEO_PLL1_OUT_MAIN,
-+};
-+
-+static struct pll_vco lucid_5lpe_vco[] = {
-+	{ 249600000, 1750000000, 0 },
-+};
-+
-+static const struct alpha_pll_config video_pll0_config = {
-+	.l = 0x25,
-+	.alpha = 0x8000,
-+	.config_ctl_val = 0x20485699,
-+	.config_ctl_hi_val = 0x00002261,
-+	.config_ctl_hi1_val = 0x2a9a699c,
-+	.test_ctl_val = 0x00000000,
-+	.test_ctl_hi_val = 0x00000000,
-+	.test_ctl_hi1_val = 0x01800000,
-+	.user_ctl_val = 0x00000000,
-+	.user_ctl_hi_val = 0x00000805,
-+	.user_ctl_hi1_val = 0x00000000,
-+};
-+
-+static struct clk_alpha_pll video_pll0 = {
-+	.offset = 0x42c,
-+	.vco_table = lucid_5lpe_vco,
-+	.num_vco = ARRAY_SIZE(lucid_5lpe_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_pll0",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_lucid_5lpe_ops,
-+		},
-+	},
-+};
-+
-+static const struct alpha_pll_config video_pll1_config = {
-+	.l = 0x2b,
-+	.alpha = 0xc000,
-+	.config_ctl_val = 0x20485699,
-+	.config_ctl_hi_val = 0x00002261,
-+	.config_ctl_hi1_val = 0x2a9a699c,
-+	.test_ctl_val = 0x00000000,
-+	.test_ctl_hi_val = 0x00000000,
-+	.test_ctl_hi1_val = 0x01800000,
-+	.user_ctl_val = 0x00000000,
-+	.user_ctl_hi_val = 0x00000805,
-+	.user_ctl_hi1_val = 0x00000000,
-+};
-+
-+static struct clk_alpha_pll video_pll1 = {
-+	.offset = 0x7d0,
-+	.vco_table = lucid_5lpe_vco,
-+	.num_vco = ARRAY_SIZE(lucid_5lpe_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_pll1",
-+			.parent_data = &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_lucid_5lpe_ops,
-+		},
-+	},
-+};
-+
-+static const struct parent_map video_cc_parent_map_0[] = {
-+	{ P_BI_TCXO_AO, 0 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_0[] = {
-+	{ .index = DT_BI_TCXO_AO },
-+};
-+
-+static const struct parent_map video_cc_parent_map_1[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL0_OUT_MAIN, 1 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_1[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .hw = &video_pll0.clkr.hw },
-+};
-+
-+static const struct parent_map video_cc_parent_map_2[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL1_OUT_MAIN, 1 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_2[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .hw = &video_pll1.clkr.hw },
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_ahb_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_ahb_clk_src = {
-+	.cmd_rcgr = 0xbd4,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_0,
-+	.freq_tbl = ftbl_video_cc_ahb_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_ahb_clk_src",
-+		.parent_data = video_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
-+	F(720000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1014000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1098000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1332000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_mvs0_clk_src = {
-+	.cmd_rcgr = 0xb94,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_1,
-+	.freq_tbl = ftbl_video_cc_mvs0_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_mvs0_clk_src",
-+		.parent_data = video_cc_parent_data_1,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_1),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_mvs1_clk_src[] = {
-+	F(840000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1098000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1332000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_mvs1_clk_src = {
-+	.cmd_rcgr = 0xbb4,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_2,
-+	.freq_tbl = ftbl_video_cc_mvs1_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_mvs1_clk_src",
-+		.parent_data = video_cc_parent_data_2,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_2),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_sleep_clk_src[] = {
-+	F(32000, P_SLEEP_CLK, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_sleep_clk_src = {
-+	.cmd_rcgr = 0xef0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.freq_tbl = ftbl_video_cc_sleep_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_sleep_clk_src",
-+		.parent_data = &(const struct clk_parent_data){
-+			.index = DT_SLEEP_CLK,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_rcg2 video_cc_xo_clk_src = {
-+	.cmd_rcgr = 0xecc,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_0,
-+	.freq_tbl = ftbl_video_cc_ahb_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_xo_clk_src",
-+		.parent_data = video_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs0_div_clk_src = {
-+	.reg = 0xd54,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "video_cc_mvs0_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]){
-+			&video_cc_mvs0_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs0c_div2_div_clk_src = {
-+	.reg = 0xc54,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "video_cc_mvs0c_div2_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]){
-+			&video_cc_mvs0_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs1_div_clk_src = {
-+	.reg = 0xdd4,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "video_cc_mvs1_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]){
-+			&video_cc_mvs1_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs1c_div2_div_clk_src = {
-+	.reg = 0xcf4,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "video_cc_mvs1c_div2_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]){
-+			&video_cc_mvs1_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs0_clk = {
-+	.halt_reg = 0xd34,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.hwcg_reg = 0xd34,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0xd34,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_mvs0_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&video_cc_mvs0_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs0c_clk = {
-+	.halt_reg = 0xc34,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xc34,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_mvs0c_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&video_cc_mvs0c_div2_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs1_clk = {
-+	.halt_reg = 0xdb4,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.hwcg_reg = 0xdb4,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0xdb4,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_mvs1_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&video_cc_mvs1_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs1_div2_clk = {
-+	.halt_reg = 0xdf4,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.hwcg_reg = 0xdf4,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0xdf4,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_mvs1_div2_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&video_cc_mvs1c_div2_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs1c_clk = {
-+	.halt_reg = 0xcd4,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xcd4,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_mvs1c_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&video_cc_mvs1c_div2_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_sleep_clk = {
-+	.halt_reg = 0xf10,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xf10,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_sleep_clk",
-+			.parent_hws = (const struct clk_hw*[]){
-+				&video_cc_sleep_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc mvs0c_gdsc = {
-+	.gdscr = 0xbf8,
-+	.pd = {
-+		.name = "mvs0c_gdsc",
-+	},
-+	.flags = RETAIN_FF_ENABLE,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc mvs1c_gdsc = {
-+	.gdscr = 0xc98,
-+	.pd = {
-+		.name = "mvs1c_gdsc",
-+	},
-+	.flags = RETAIN_FF_ENABLE,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc mvs0_gdsc = {
-+	.gdscr = 0xd18,
-+	.pd = {
-+		.name = "mvs0_gdsc",
-+	},
-+	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc mvs1_gdsc = {
-+	.gdscr = 0xd98,
-+	.pd = {
-+		.name = "mvs1_gdsc",
-+	},
-+	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct clk_regmap *video_cc_sm8350_clocks[] = {
-+	[VIDEO_CC_AHB_CLK_SRC] = &video_cc_ahb_clk_src.clkr,
-+	[VIDEO_CC_MVS0_CLK] = &video_cc_mvs0_clk.clkr,
-+	[VIDEO_CC_MVS0_CLK_SRC] = &video_cc_mvs0_clk_src.clkr,
-+	[VIDEO_CC_MVS0_DIV_CLK_SRC] = &video_cc_mvs0_div_clk_src.clkr,
-+	[VIDEO_CC_MVS0C_CLK] = &video_cc_mvs0c_clk.clkr,
-+	[VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC] = &video_cc_mvs0c_div2_div_clk_src.clkr,
-+	[VIDEO_CC_MVS1_CLK] = &video_cc_mvs1_clk.clkr,
-+	[VIDEO_CC_MVS1_CLK_SRC] = &video_cc_mvs1_clk_src.clkr,
-+	[VIDEO_CC_MVS1_DIV2_CLK] = &video_cc_mvs1_div2_clk.clkr,
-+	[VIDEO_CC_MVS1_DIV_CLK_SRC] = &video_cc_mvs1_div_clk_src.clkr,
-+	[VIDEO_CC_MVS1C_CLK] = &video_cc_mvs1c_clk.clkr,
-+	[VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC] = &video_cc_mvs1c_div2_div_clk_src.clkr,
-+	[VIDEO_CC_SLEEP_CLK] = &video_cc_sleep_clk.clkr,
-+	[VIDEO_CC_SLEEP_CLK_SRC] = &video_cc_sleep_clk_src.clkr,
-+	[VIDEO_CC_XO_CLK_SRC] = &video_cc_xo_clk_src.clkr,
-+	[VIDEO_PLL0] = &video_pll0.clkr,
-+	[VIDEO_PLL1] = &video_pll1.clkr,
-+};
-+
-+static const struct qcom_reset_map video_cc_sm8350_resets[] = {
-+	[CVP_VIDEO_CC_INTERFACE_BCR] = { 0xe54 },
-+	[CVP_VIDEO_CC_MVS0_BCR] = { 0xd14 },
-+	[VIDEO_CC_MVS0C_CLK_ARES] = { 0xc34, 2 },
-+	[CVP_VIDEO_CC_MVS0C_BCR] = { 0xbf4 },
-+	[CVP_VIDEO_CC_MVS1_BCR] = { 0xd94 },
-+	[VIDEO_CC_MVS1C_CLK_ARES] = { 0xcd4, 2 },
-+	[CVP_VIDEO_CC_MVS1C_BCR] = { 0xc94 },
-+};
-+
-+static struct gdsc *video_cc_sm8350_gdscs[] = {
-+	[MVS0C_GDSC] = &mvs0c_gdsc,
-+	[MVS1C_GDSC] = &mvs1c_gdsc,
-+	[MVS0_GDSC] = &mvs0_gdsc,
-+	[MVS1_GDSC] = &mvs1_gdsc,
-+};
-+
-+static const struct regmap_config video_cc_sm8350_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x10000,
-+	.fast_io = true,
-+};
-+
-+static struct qcom_cc_desc video_cc_sm8350_desc = {
-+	.config = &video_cc_sm8350_regmap_config,
-+	.clks = video_cc_sm8350_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sm8350_clocks),
-+	.resets = video_cc_sm8350_resets,
-+	.num_resets = ARRAY_SIZE(video_cc_sm8350_resets),
-+	.gdscs = video_cc_sm8350_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sm8350_gdscs),
-+};
-+
-+static void video_cc_sm8350_pm_runtime_disable(void *data)
-+{
-+	pm_runtime_disable(data);
-+}
-+
-+static int video_cc_sm8350_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	int ret;
-+
-+	pm_runtime_enable(&pdev->dev);
-+
-+	ret = devm_add_action_or_reset(&pdev->dev, video_cc_sm8350_pm_runtime_disable, &pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sm8350_desc);
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put(&pdev->dev);
-+		return PTR_ERR(regmap);
-+	};
-+
-+	clk_lucid_pll_configure(&video_pll0, regmap, &video_pll0_config);
-+	clk_lucid_pll_configure(&video_pll1, regmap, &video_pll1_config);
-+
-+	/*
-+	 * Keep clocks always enabled:
-+	 *      video_cc_ahb_clk
-+	 *      video_cc_xo_clk
-+	 */
-+	regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
-+
-+	ret = qcom_cc_really_probe(pdev, &video_cc_sm8350_desc, regmap);
-+	pm_runtime_put(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops video_cc_sm8350_pm_ops = {
-+	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-+};
-+
-+static const struct of_device_id video_cc_sm8350_match_table[] = {
-+	{ .compatible = "qcom,sm8350-videocc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sm8350_match_table);
-+
-+static struct platform_driver video_cc_sm8350_driver = {
-+	.probe = video_cc_sm8350_probe,
-+	.driver = {
-+		.name = "sm8350-videocc",
-+		.of_match_table = video_cc_sm8350_match_table,
-+		.pm = &video_cc_sm8350_pm_ops,
-+	},
-+};
-+
-+static int __init video_cc_sm8350_init(void)
-+{
-+	return platform_driver_register(&video_cc_sm8350_driver);
-+}
-+subsys_initcall(video_cc_sm8350_init);
-+
-+static void __exit video_cc_sm8350_exit(void)
-+{
-+	platform_driver_unregister(&video_cc_sm8350_driver);
-+}
-+module_exit(video_cc_sm8350_exit);
-+
-+MODULE_DESCRIPTION("QTI SM8350 VIDEOCC Driver");
-+MODULE_LICENSE("GPL");
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+> +
+[..]
+> +
+> +/*
+> + * There are drivers for these SoCs that are older than clock driver
+> + * and are not prepared for the clock. We don't want the kernel to
+> + * disable anything so we add CLK_IS_CRITICAL flag here.
+> + */
+> +#define CLK_PERIPH(_name, _parent) {                           \
+> +       .init =3D &(struct clk_init_data) {                       \
 
--- 
-2.40.0
+const?
 
+> +               .name =3D _name,                                  \
+> +               .ops =3D &(const struct clk_ops) {                \
+
+Make this into a named variable? Otherwise I suspect the compiler will
+want to duplicate it.
+
+> +                       .recalc_rate =3D mtmips_pherip_clk_rate   \
+> +               },                                              \
+> +               .parent_data =3D &(const struct clk_parent_data) {\
+> +                       .name =3D _parent,                        \
+> +                       .fw_name =3D _parent                      \
+> +               },                                              \
+> +               .num_parents =3D 1,                               \
+> +               .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL  \
+
+Why is everything critical? Put the comment here instead of above the
+macro
+
+> +       },                                                      \
+> +}
+> +
+[...]
+> +
+> +static int mtmips_register_pherip_clocks(struct device_node *np,
+> +                                        struct clk_hw_onecell_data *clk_=
+data,
+> +                                        struct mtmips_clk_priv *priv)
+> +{
+> +       struct clk_hw **hws =3D clk_data->hws;
+> +       struct mtmips_clk *sclk;
+> +       int ret, i;
+> +
+> +       for (i =3D 0; i < priv->data->num_clk_periph; i++) {
+> +               int idx =3D (priv->data->num_clk_base - 1) + i;
+> +
+> +               sclk =3D &priv->data->clk_periph[i];
+> +               ret =3D of_clk_hw_register(np, &sclk->hw);
+> +               if (ret) {
+> +                       pr_err("Couldn't register peripheral clock %d\n",=
+ idx);
+> +                       goto err_clk_unreg;
+> +               }
+> +
+> +               hws[idx] =3D &sclk->hw;
+> +       }
+> +
+> +       return 0;
+> +
+> +err_clk_unreg:
+> +       while (--i >=3D 0) {
+> +               sclk =3D &priv->data->clk_periph[i];
+> +               clk_hw_unregister(&sclk->hw);
+> +       }
+> +       return ret;
+> +}
+> +
+> +static inline struct mtmips_clk *to_mtmips_clk(struct clk_hw *hw)
+> +{
+> +       return container_of(hw, struct mtmips_clk, hw);
+> +}
+> +
+> +static unsigned long rt5350_xtal_recalc_rate(struct clk_hw *hw,
+> +                                            unsigned long parent_rate)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 val;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &val);
+> +       if (!(val & RT5350_CLKCFG0_XTAL_SEL))
+> +               return 20000000;
+> +
+> +       return 40000000;
+> +}
+> +
+> +static unsigned long rt5350_cpu_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long xtal_clk)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> +       t =3D (t >> RT5350_SYSCFG0_CPUCLK_SHIFT) & RT5350_SYSCFG0_CPUCLK_=
+MASK;
+> +
+> +       switch (t) {
+> +       case RT5350_SYSCFG0_CPUCLK_360:
+> +               return 360000000;
+> +       case RT5350_SYSCFG0_CPUCLK_320:
+> +               return 320000000;
+> +       case RT5350_SYSCFG0_CPUCLK_300:
+> +               return 300000000;
+> +       default:
+> +               BUG();
+> +       }
+> +}
+> +
+> +static unsigned long rt5350_bus_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       if (parent_rate =3D=3D 320000000)
+> +               return parent_rate / 4;
+> +
+> +       return parent_rate / 3;
+> +}
+> +
+> +static unsigned long rt3352_cpu_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long xtal_clk)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> +       t =3D (t >> RT3352_SYSCFG0_CPUCLK_SHIFT) & RT3352_SYSCFG0_CPUCLK_=
+MASK;
+> +
+> +       switch (t) {
+> +       case RT3352_SYSCFG0_CPUCLK_LOW:
+> +               return 384000000;
+> +       case RT3352_SYSCFG0_CPUCLK_HIGH:
+> +               return 400000000;
+> +       default:
+> +               BUG();
+> +       }
+> +}
+> +
+> +static unsigned long rt3352_periph_recalc_rate(struct clk_hw *hw,
+> +                                              unsigned long parent_rate)
+> +{
+> +       return 40000000;
+> +}
+> +
+> +static unsigned long rt3352_bus_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       return parent_rate / 3;
+> +}
+> +
+> +static unsigned long rt305x_xtal_recalc_rate(struct clk_hw *hw,
+> +                                            unsigned long parent_rate)
+> +{
+> +       return 40000000;
+> +}
+
+Register fixed factor and fixed rate clks in software instead of
+duplicating the code here.
+
+> +
+> +static unsigned long rt305x_cpu_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long xtal_clk)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> +       t =3D (t >> RT305X_SYSCFG_CPUCLK_SHIFT) & RT305X_SYSCFG_CPUCLK_MA=
+SK;
+> +
+> +       switch (t) {
+> +       case RT305X_SYSCFG_CPUCLK_LOW:
+> +               return 320000000;
+> +       case RT305X_SYSCFG_CPUCLK_HIGH:
+> +               return 384000000;
+> +       default:
+> +               BUG();
+> +       }
+> +}
+> +
+> +static unsigned long rt3883_cpu_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long xtal_clk)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> +       t =3D (t >> RT3883_SYSCFG0_CPUCLK_SHIFT) & RT3883_SYSCFG0_CPUCLK_=
+MASK;
+> +
+> +       switch (t) {
+> +       case RT3883_SYSCFG0_CPUCLK_250:
+> +               return 250000000;
+> +       case RT3883_SYSCFG0_CPUCLK_384:
+> +               return 384000000;
+> +       case RT3883_SYSCFG0_CPUCLK_480:
+> +               return 480000000;
+> +       case RT3883_SYSCFG0_CPUCLK_500:
+> +               return 500000000;
+> +       default:
+> +               BUG();
+> +       }
+> +}
+> +
+> +static unsigned long rt3883_bus_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 ddr2;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> +       ddr2 =3D t & RT3883_SYSCFG0_DRAM_TYPE_DDR2;
+> +
+> +       switch (parent_rate) {
+> +       case 250000000:
+> +               return (ddr2) ? 125000000 : 83000000;
+> +       case 384000000:
+> +               return (ddr2) ? 128000000 : 96000000;
+> +       case 480000000:
+> +               return (ddr2) ? 160000000 : 120000000;
+> +       case 500000000:
+> +               return (ddr2) ? 166000000 : 125000000;
+> +       default:
+> +               BUG();
+
+Why? Depending on clk registration order 'parent_rate' could be 0, and
+then this will crash the system.
+
+> +       }
+> +}
+> +
+> +static unsigned long rt2880_cpu_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long xtal_clk)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> +       t =3D (t >> RT2880_CONFIG_CPUCLK_SHIFT) & RT2880_CONFIG_CPUCLK_MA=
+SK;
+> +
+> +       switch (t) {
+> +       case RT2880_CONFIG_CPUCLK_250:
+> +               return 250000000;
+> +       case RT2880_CONFIG_CPUCLK_266:
+> +               return 266000000;
+> +       case RT2880_CONFIG_CPUCLK_280:
+> +               return 280000000;
+> +       case RT2880_CONFIG_CPUCLK_300:
+> +               return 300000000;
+> +       default:
+> +               BUG();
+> +       }
+> +}
+> +
+> +static unsigned long rt2880_bus_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       return parent_rate / 2;
+> +}
+
+A fixed factor clk?
+
+> +
+> +static u32 mt7620_calc_rate(u32 ref_rate, u32 mul, u32 div)
+> +{
+> +       u64 t;
+> +
+> +       t =3D ref_rate;
+> +       t *=3D mul;
+> +       do_div(t, div);
+
+Do we really need to do 64-bit math? At the least use div_u64().
+
+> +
+> +       return t;
+> +}
+> +
+> +static unsigned long mt7620_pll_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       static const u32 clk_divider[] =3D { 2, 3, 4, 8 };
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       unsigned long cpu_pll;
+> +       u32 t;
+> +       u32 mul;
+> +       u32 div;
+> +
+> +       regmap_read(sysc, SYSC_REG_CPLL_CONFIG0, &t);
+> +       if (t & CPLL_CFG0_BYPASS_REF_CLK) {
+> +               cpu_pll =3D parent_rate;
+> +       } else if ((t & CPLL_CFG0_SW_CFG) =3D=3D 0) {
+> +               cpu_pll =3D 600000000;
+> +       } else {
+> +               mul =3D (t >> CPLL_CFG0_PLL_MULT_RATIO_SHIFT) &
+> +                       CPLL_CFG0_PLL_MULT_RATIO_MASK;
+> +               mul +=3D 24;
+> +               if (t & CPLL_CFG0_LC_CURFCK)
+> +                       mul *=3D 2;
+> +
+> +               div =3D (t >> CPLL_CFG0_PLL_DIV_RATIO_SHIFT) &
+> +                       CPLL_CFG0_PLL_DIV_RATIO_MASK;
+> +
+> +               WARN_ON(div >=3D ARRAY_SIZE(clk_divider));
+
+WARN_ON_ONCE() so that this doesn't spam the system.
+
+> +
+> +               cpu_pll =3D mt7620_calc_rate(parent_rate, mul, clk_divide=
+r[div]);
+> +       }
+> +
+> +       regmap_read(sysc, SYSC_REG_CPLL_CONFIG1, &t);
+> +       if (t & CPLL_CFG1_CPU_AUX1)
+> +               return parent_rate;
+> +
+> +       if (t & CPLL_CFG1_CPU_AUX0)
+> +               return 480000000;
+> +
+> +       return cpu_pll;
+> +}
+> +
+> +static unsigned long mt7620_cpu_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +       u32 mul;
+> +       u32 div;
+> +
+> +       regmap_read(sysc, SYSC_REG_CPU_SYS_CLKCFG, &t);
+> +       mul =3D t & CPU_SYS_CLKCFG_CPU_FFRAC_MASK;
+> +       div =3D (t >> CPU_SYS_CLKCFG_CPU_FDIV_SHIFT) &
+> +               CPU_SYS_CLKCFG_CPU_FDIV_MASK;
+> +
+> +       return mt7620_calc_rate(parent_rate, mul, div);
+> +}
+> +
+> +static unsigned long mt7620_bus_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long parent_rate)
+> +{
+> +       static const u32 ocp_dividers[16] =3D {
+> +               [CPU_SYS_CLKCFG_OCP_RATIO_2] =3D 2,
+> +               [CPU_SYS_CLKCFG_OCP_RATIO_3] =3D 3,
+> +               [CPU_SYS_CLKCFG_OCP_RATIO_4] =3D 4,
+> +               [CPU_SYS_CLKCFG_OCP_RATIO_5] =3D 5,
+> +               [CPU_SYS_CLKCFG_OCP_RATIO_10] =3D 10,
+> +       };
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +       u32 ocp_ratio;
+> +       u32 div;
+> +
+> +       if (IS_ENABLED(CONFIG_USB)) {
+> +               /*
+> +               * When the CPU goes into sleep mode, the BUS
+> +               * clock will be too low for USB to function properly.
+> +               * Adjust the busses fractional divider to fix this
+> +               */
+> +               regmap_read(sysc, SYSC_REG_CPU_SYS_CLKCFG, &t);
+> +               t &=3D ~(CLKCFG_FDIV_MASK | CLKCFG_FFRAC_MASK);
+> +               t |=3D CLKCFG_FDIV_USB_VAL | CLKCFG_FFRAC_USB_VAL;
+> +               regmap_write(sysc, SYSC_REG_CPU_SYS_CLKCFG, t);
+
+Why can't we do this unconditionally? And recalc_rate() shouldn't be
+writing registers. It should be calculating the frequency of the clk
+based on 'parent_rate' and whatever the hardware is configured for.
+
+> +       }
+> +
+> +       regmap_read(sysc, SYSC_REG_CPU_SYS_CLKCFG, &t);
+> +       ocp_ratio =3D (t >> CPU_SYS_CLKCFG_OCP_RATIO_SHIFT) &
+> +               CPU_SYS_CLKCFG_OCP_RATIO_MASK;
+> +
+> +       if (WARN_ON(ocp_ratio >=3D ARRAY_SIZE(ocp_dividers)))
+> +               return parent_rate;
+> +
+> +       div =3D ocp_dividers[ocp_ratio];
+> +       if (WARN(!div, "invalid divider for OCP ratio %u", ocp_ratio))
+
+Missing newline.
+
+> +               return parent_rate;
+> +
+> +       return parent_rate / div;
+> +}
+> +
+> +static unsigned long mt7620_periph_recalc_rate(struct clk_hw *hw,
+> +                                              unsigned long parent_rate)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_CLKCFG0, &t);
+> +       if (t & CLKCFG0_PERI_CLK_SEL)
+> +               return parent_rate;
+> +
+> +       return 40000000;
+> +}
+> +
+> +static unsigned long mt76x8_xtal_recalc_rate(struct clk_hw *hw,
+> +                                            unsigned long parent_rate)
+> +{
+> +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> +       struct regmap *sysc =3D clk->priv->sysc;
+> +       u32 t;
+> +
+> +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> +       if (t & MT7620_XTAL_FREQ_SEL)
+> +               return 40000000;
+> +
+> +       return 20000000;
+> +}
+> +
+> +static unsigned long mt76x8_cpu_recalc_rate(struct clk_hw *hw,
+> +                                           unsigned long xtal_clk)
+> +{
+> +       if (xtal_clk =3D=3D 40000000)
+> +               return 580000000;
+> +
+> +       return 575000000;
+> +}
+> +
+> +static unsigned long mt76x8_pcmi2s_recalc_rate(struct clk_hw *hw,
+> +                                              unsigned long xtal_clk)
+> +{
+> +       return 480000000;
+> +}
+
+Use fixed rate clk.
+
+> +
+> +#define CLK_BASE(_name, _parent, _recalc) {                            \
+> +       .init =3D &(struct clk_init_data) {                              =
+ \
+
+const
+
+> +               .name =3D _name,                                         =
+ \
+> +               .ops =3D &(const struct clk_ops) {                       =
+ \
+> +                       .recalc_rate =3D _recalc,                        =
+ \
+> +               },                                                      \
+> +               .parent_data =3D &(const struct clk_parent_data) {       =
+ \
+> +                       .name =3D _parent,                               =
+ \
+> +                       .fw_name =3D _parent                             =
+ \
+> +               },                                                      \
+> +               .num_parents =3D _parent ? 1 : 0                         =
+ \
+> +       },                                                              \
+> +}
+> +
+[...]
+> +
+> +static void __init mtmips_clk_init(struct device_node *node)
+> +{
+> +       const struct of_device_id *match;
+> +       const struct mtmips_clk_data *data;
+> +       struct mtmips_clk_priv *priv;
+> +       struct clk_hw_onecell_data *clk_data;
+> +       int ret, i, count;
+> +
+> +       if (!of_find_property(node, "#clock-cells", NULL)) {
+> +               pr_err("No '#clock-cells' property found\n");
+
+We don't need to validate the bindings in the driver.
+
+> +               return;
+> +       }
+> +
+> +       priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return;
+> +
+> +       priv->sysc =3D syscon_node_to_regmap(node);
+> +       if (IS_ERR(priv->sysc)) {
+> +               pr_err("Could not get sysc syscon regmap\n");
+> +               goto free_clk_priv;
+> +       }
+> +
+> +       match =3D of_match_node(mtmips_of_match, node);
+> +       if (WARN_ON(!match))
+> +               return;
+> +
+> +       data =3D match->data;
+> +       priv->data =3D data;
+> +       count =3D priv->data->num_clk_base + priv->data->num_clk_periph;
+> +       clk_data =3D kzalloc(struct_size(clk_data, hws, count), GFP_KERNE=
+L);
+> +       if (!clk_data)
+> +               goto free_clk_priv;
+> +
+> +       ret =3D mtmips_register_clocks(node, clk_data, priv);
+> +       if (ret) {
+> +               pr_err("Couldn't register top clocks\n");
+> +               goto free_clk_data;
+> +       }
+> +
+> +       ret =3D mtmips_register_pherip_clocks(node, clk_data, priv);
+> +       if (ret) {
+> +               pr_err("Couldn't register peripheral clocks\n");
+> +               goto unreg_clk_top;
+> +       }
+> +
+> +       clk_data->num =3D count;
+> +
+> +       ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_d=
+ata);
+> +       if (ret) {
+> +               pr_err("Couldn't add clk hw provider\n");
+> +               goto unreg_clk_periph;
+> +       }
+> +
+> +       return;
+> +
+> +unreg_clk_periph:
+> +       for (i =3D 0; i < priv->data->num_clk_periph; i++) {
+> +               struct mtmips_clk *sclk =3D &priv->data->clk_periph[i];
+> +
+> +               clk_hw_unregister(&sclk->hw);
+> +       }
+> +
+> +unreg_clk_top:
+> +       for (i =3D 0; i < priv->data->num_clk_base; i++) {
+> +               struct mtmips_clk *sclk =3D &priv->data->clk_base[i];
+> +
+> +               clk_hw_unregister(&sclk->hw);
+> +       }
+> +
+> +free_clk_data:
+> +       kfree(clk_data);
+> +
+> +free_clk_priv:
+> +       kfree(priv);
+> +}
+> +CLK_OF_DECLARE_DRIVER(rt2880_clk, "ralink,rt2880-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(rt3050_clk, "ralink,rt3050-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(rt3052_clk, "ralink,rt3052-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(rt3352_clk, "ralink,rt3352-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(rt3883_clk, "ralink,rt3883-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(rt5350_clk, "ralink,rt5350-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(mt7620_clk, "ralink,mt7620-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(mt7620a_clk, "ralink,mt7620a-sysc", mtmips_clk_ini=
+t);
+> +CLK_OF_DECLARE_DRIVER(mt7628_clk, "ralink,mt7628-sysc", mtmips_clk_init);
+> +CLK_OF_DECLARE_DRIVER(mt7688_clk, "ralink,mt7688-sysc", mtmips_clk_init);
+
+Is there any reason why these can't be platform drivers?
+
+> +
+[..]
+> +
+> +static int mtmips_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *np =3D pdev->dev.of_node;
+> +       struct device *dev =3D &pdev->dev;
+> +       struct mtmips_clk_priv *priv;
+> +       int ret;
+> +
+> +       priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       priv->sysc =3D syscon_node_to_regmap(np);
+> +       if (IS_ERR(priv->sysc)) {
+> +               ret =3D PTR_ERR(priv->sysc);
+> +               dev_err(dev, "Could not get sysc syscon regmap\n");
+
+Use dev_err_probe()?
+
+> +               return ret;
+> +       }
+> +
+> +       ret =3D mtmips_reset_init(dev, priv->sysc);
+> +       if (ret) {
+> +               dev_err(dev, "Could not init reset controller\n");
+
+Use dev_err_probe()?
+
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
