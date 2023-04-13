@@ -2,131 +2,74 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45251C77B6E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 13:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A46AC77B6E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 14:27:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231513AbjDMNxM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 09:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55810 "EHLO
+        id S230130AbjDMO1n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 10:27:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231524AbjDMNxK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 09:53:10 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C85C9ED9;
-        Thu, 13 Apr 2023 06:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1681393985; x=1712929985;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RI5dxyny4pd6aZFj4Z1YM4GJ/8KIefexr1VJF7/pVbY=;
-  b=RkREgTExxJvehHtbjdlCpVYyXJqGDk9uQLbfhoOzhSFnTZFjZlN2/8jE
-   uVB4BFdVtquNSa3jspILzbz/w/YE1gh8Wy91p5SigOusEbgOs64vXvBBK
-   U8KhNrchxkVyyo0Iu5H00rbqV+Ygu2/0zIzj0ar731hXsAKK9Z9aA0cDr
-   4Gsv7PE+cALAvqBnX+KvaXuYJZeGI+bvihQN+/+RUoFgNZHh/mEDZVfCA
-   osqJoT/X5UiS5kJfnpY5IclUtuQrGA2YQZ7dwChzJ6UbgA+gEXL6l+CaA
-   rPdlSVkJnYVkzOHmJFcbeFwL+lROtaPndVOq4MrgRv8gr9VRLpoSwejwh
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.99,193,1677567600"; 
-   d="asc'?scan'208";a="208958686"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 13 Apr 2023 06:53:03 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Thu, 13 Apr 2023 06:53:02 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Thu, 13 Apr 2023 06:53:00 -0700
-Date:   Thu, 13 Apr 2023 14:52:44 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 07/10] clk: starfive: Add StarFive JH7110 Video-Output
- clock driver
-Message-ID: <20230413-hardcover-ground-efbd862c5ec3@wendy>
-References: <20230411135558.44282-1-xingyu.wu@starfivetech.com>
- <20230411135558.44282-8-xingyu.wu@starfivetech.com>
- <683cbe934d1df9436e003466d2a419ef.sboyd@kernel.org>
- <463ee23c-f617-bed0-27a8-56c6fb40d092@starfivetech.com>
- <cd4a11ae65e186799145410969d40421.sboyd@kernel.org>
+        with ESMTP id S229900AbjDMO1m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 10:27:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA2A9EE0;
+        Thu, 13 Apr 2023 07:27:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 75A7463E3D;
+        Thu, 13 Apr 2023 14:27:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BC1FC433EF;
+        Thu, 13 Apr 2023 14:27:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1681396060;
+        bh=8wdYdEx9r91O6/Y+zqWVtN9/7NQdwnbsI5I2V3wou5U=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=HKdAH1oIQSX/rf+efd38Zy0LXSQkzUKQPmPlQj6fMbzqck3J9v8l0zC+qw3PAHUcs
+         LYuB8vSLubJl796afn3LOp4KL1FeJsKevMT1GKLXmkexoxhUutuMJP2eFvr+gy+AgV
+         HDTwmYWntvvTLRpkSjEoDyF8L47e+fBhVORotL2RomyfhWMi4Ry895rgExaHSO8Ock
+         Vnr5GZrIxwT5aJ+TNAIPoCP7DdVuJZT34inejpYrUCWwS7aG8A1rIE7Zact3b78H0Q
+         IAaGp9UYckUE2Ur5K+WAk58ARVchlBefTqpvaLIN9f9EGrd54QV5aBG6H9BH9Bn6JH
+         NQk+MiTpHIkSg==
+Message-ID: <e3c2eb00-bbfd-8621-5356-d5daff6e9b55@kernel.org>
+Date:   Thu, 13 Apr 2023 16:27:37 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v0ip4bKAlPiDmbMW"
-Content-Disposition: inline
-In-Reply-To: <cd4a11ae65e186799145410969d40421.sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v2] dt-bindings: clock: versal: Add versal-net compatible
+ string
+Content-Language: en-US
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        devicetree@vger.kernel.org
+Cc:     git@amd.com, linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com
+References: <20230413101134.10627-1-shubhrajyoti.datta@amd.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <20230413101134.10627-1-shubhrajyoti.datta@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---v0ip4bKAlPiDmbMW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 13/04/2023 12:11, Shubhrajyoti Datta wrote:
+> From: Jay Buddhabhatti <jay.buddhabhatti@xilinx.com>
+> 
+> Add dt-binding documentation for Versal NET platforms.
+> 
+> Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@xilinx.com>
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> ---
 
-On Wed, Apr 12, 2023 at 09:04:08PM -0700, Stephen Boyd wrote:
-> Quoting Xingyu Wu (2023-04-11 23:15:26)
-> > On 2023/4/12 2:33, Stephen Boyd wrote:
-> > > Quoting Xingyu Wu (2023-04-11 06:55:55)
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC.
 
-> > >> +       if (ret < 0)
-> > >> +               return dev_err_probe(priv->dev, ret, "failed to turn=
- on power\n");
-> > >> +
-> > >> +       ret =3D jh7110_vout_top_crg_init(priv, top);
-> > >> +       if (ret)
-> > >> +               goto err_clk;
-> > >> +
-> > >> +       top->base =3D priv->base;
-> > >> +       dev_set_drvdata(priv->dev, (void *)(&top->base));
-> > >=20
-> > > See comment later about setting this to 'top' instead. Casting away
-> > > iomem markings is not good hygiene.
-> >=20
-> > JH7110 resets as the auxiliary device of clocks use the same iomem as t=
-he clocks
-> > and the iomem will be got by dev_get_drvdata() in the 7110 reset driver=
-s when registering reset.
-> > So I follow the basic 7110 reset driver and also set the iomem not top_=
-crg struct.
->=20
-> Oh I totally missed that this is how it's been done for the other
-> starfive driver. It's still not good hygiene to stash the iomem pointer
-> that way because the iomem marking is lost and has to be recovered. Can
-> you make a wrapper struct, either for the adev or to pass in struct
-> device::platform_data?
+First version was sent correctly, so why you decided here to do it
+differently?
 
-FWIW, this did come up on an earlier version of the other starfive
-driver:
-https://lore.kernel.org/linux-clk/e0d8f9ba-5bf4-d7dd-5110-20d4196556f9@star=
-fivetech.com/
+Anyway, you did not implement comments we asked you. There is no way
+this binding and your DTS works. There is no way you tested it.
 
-I probably should've pushed Hal to use a struct, but evidently I didn't
-reply to his final message there, so apologies for that!
+Best regards,
+Krzysztof
 
-
---v0ip4bKAlPiDmbMW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZDgJLAAKCRB4tDGHoIJi
-0grQAQD5cpctgc5Bq3S7CyFGTLA6byxDhiBh5Iyvw4xFI+lLdAD/SOinBHpjM3Vf
-npC+7trX9b+0Hc7eNQTp7L341SH1nAw=
-=b8hm
------END PGP SIGNATURE-----
-
---v0ip4bKAlPiDmbMW--
