@@ -2,62 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D645C77B71
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 18:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D84CC77B6E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 19:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbjDMS5C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 14:57:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46008 "EHLO
+        id S229479AbjDMTC0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 15:02:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229674AbjDMS5B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 14:57:01 -0400
+        with ESMTP id S229603AbjDMTCZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 15:02:25 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BAA3211F;
-        Thu, 13 Apr 2023 11:56:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB684220;
+        Thu, 13 Apr 2023 12:02:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EF7EE640D3;
-        Thu, 13 Apr 2023 18:56:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20531C433EF;
-        Thu, 13 Apr 2023 18:56:53 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0438F61357;
+        Thu, 13 Apr 2023 19:02:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BA3C433D2;
+        Thu, 13 Apr 2023 19:02:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681412213;
-        bh=UR21SnuIZMBQQnJcXzM5XSzqIBVio9J7W8EzLGxD1mo=;
+        s=k20201202; t=1681412542;
+        bh=nHNYpceJ4roSvXDKtTtCh6ig8YSudW6E4UTowUu9Cxk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=feRStNIa1VlFUDqzgb0UzPlch+AicEbc6yH6aSNHsBdTJYEgMv8e3LzQXtNkVojtf
-         9guSyqr1LF2KIad3uwnPqGrySfRoNHK7KGPL63VVj8TIZ1zWan+XjY/mKj3ypsocxO
-         OFn4aqZYFe7WQnlgjS5aD7tUrzuK19qJZ04rix7xHrqI7wQOmR+NYG8ia5lTxN/Hvw
-         PP91IKxa3ecdTRWqZhiSg9Xi1lpw9PYmH2TJ9hC4UvhPFTKuJB7mxnxbVx7qgiaEt4
-         kGt2qqh9EFTZY04rvpZ1tZdrY/YQS3NhO6egM8rzCaevq2MvBfwtOCuWYFxz+bNx9I
-         EMgPAnAaeO2oA==
-Message-ID: <d20a8910675be9acab3b2f4ac123fbf3.sboyd@kernel.org>
+        b=DR4LdQcqi4TgH/ULOR/JBgyy8FsDOVAQgXc90jAs+ld69dezOwe8LjTeZVFTqCdrJ
+         nW+C4dngAdE+NS5dDSa6XUAwfnMlixqb8VnnshqclMAdWLRsYXl2BEgsYLzpf+h/XD
+         sbc/c28zFFOrOHDgF9cneVegiIszVsypK3fzhgkIPzwBfVWiVzDowWBiIrG6e+75TW
+         rbAilwV2+3oPmVEJncvzA3L2mC5FqoLCHRLzfHkHsfD1ky5Ecxd3mu/o0U2dFmMA5C
+         LB5WV2pYgahcwahqS9lQK3wUZG7LmbUmz7xym8R3Min0qCV4Mbmp3Jf8dCVGjjfGni
+         h6bxBSNVRvOzQ==
+Message-ID: <cbb856f4f7e25b1267c902757e159322.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMhs-H-0Upz--k0tkm7BFCTd0b0Gso-c_uPyzeAjOigZowbK1Q@mail.gmail.com>
-References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com> <CAMhs-H-0Upz--k0tkm7BFCTd0b0Gso-c_uPyzeAjOigZowbK1Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] mips: ralink: add complete clock and reset driver for mtmips SoCs
+In-Reply-To: <20230413-topic-lahaina_vidcc-v1-1-134f9b22a5b3@linaro.org>
+References: <20230413-topic-lahaina_vidcc-v1-0-134f9b22a5b3@linaro.org> <20230413-topic-lahaina_vidcc-v1-1-134f9b22a5b3@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom,videocc: Add SM8350
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
-        john@phrozen.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, mturquette@baylibre.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        arinc.unal@arinc9.com
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        linux-clk@vger.kernel.org
-Date:   Thu, 13 Apr 2023 11:56:51 -0700
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Thu, 13 Apr 2023 12:02:20 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sergio Paracuellos (2023-04-13 01:44:56)
+Quoting Konrad Dybcio (2023-04-13 11:44:58)
+> SM8350, like most recent higher-end chips has a separate clock
+> controller block just for the Venus IP. Document it.
 >=20
-> Gentle ping on this series :-)
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.yaml    | 29 ++++++++++++++++=
++-
+>  include/dt-bindings/clock/qcom,sm8350-videocc.h    | 35 ++++++++++++++++=
+++++++
+>  include/dt-bindings/reset/qcom,sm8350-videocc.h    | 18 +++++++++++
 
-Please trim replies. I had marked the whole series as superseded because
-of the first patch discussions. I reviewed the clk driver now. In
-general, use the fixed rate and fixed factor basic clk types. Don't
-change hardware in recalc_rate().
+Is there any reason to have two files?
