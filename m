@@ -2,183 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E54AC77B61
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 19:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A5AC77B6E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 19:07:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229546AbjDMTEt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 15:04:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49496 "EHLO
+        id S229630AbjDMTHF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 15:07:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229867AbjDMTEt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 15:04:49 -0400
+        with ESMTP id S229546AbjDMTHE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 15:07:04 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1967D76B9;
-        Thu, 13 Apr 2023 12:04:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACDB07AB3;
+        Thu, 13 Apr 2023 12:07:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 97C9D64121;
-        Thu, 13 Apr 2023 19:04:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A480BC433D2;
-        Thu, 13 Apr 2023 19:04:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AED060C92;
+        Thu, 13 Apr 2023 19:07:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB8CC433D2;
+        Thu, 13 Apr 2023 19:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681412686;
-        bh=4FEqjPSBWEd+pQmOy7lkm5ZVGdiBe0T6lbnRPjNK85g=;
+        s=k20201202; t=1681412821;
+        bh=oojxmeg84uBgy5mEglQuFVEA6UgalGkZRPBKKPKhBFo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UAziBoFmAvl5QgFgIIgzUAEmm6wP/gfbXnWPRyN/iA8nfXj+JVRWegwz3HWImMTo3
-         zvK4Tbbh/Up5MxbxsC7MZTNlvv3134kK7//YFFBi2M5mnry7e0xKnTcAzJJ5k5wcOJ
-         iFGbhPAaNl6rlcYRqZm9dJumC3zhRe90N5eFRvd3+opD//BPEXuF3uBjTonBTlkdyt
-         rpy4kcUdW7ITUeQuTfiQ0R9weuoiLKZYKsb7Y8+aLzJvAZJzdG1Z9K/iuSAJHKoCyP
-         X9kOH5ZEa6yaw1SLkhc+L6DC84xITPetDsb3qpTyNXCW7IjSGpUIgp8bGHUuZtaNP2
-         gTV/hqq4qlzPQ==
-Message-ID: <2f955dc3105570df0acc2695739183ed.sboyd@kernel.org>
+        b=A9ga6TkO9EMOZPFaQ75gllB5vx3pE6c4bPHHnSNDa2fzU+civgoKu5AQoFGHHPlxU
+         OBSDwiy82lW4uZq9YTsWeB4jlmVvKxIUVE16FFibdydX2tNTXq51bd52lpA8zhKpYL
+         qFOMFzYi4ObKq+4uxPXpBOvQlCp7d+xlFyOTU15EpgX9Y3b2wqQYA+Q+T76T36XFco
+         t7zjYQXHMcs0D8T9EbJZmKPJr6032MyAinfTe8Kqp3KC1a1J4KbAEgDIEufSRDZvlP
+         2SMQ0PElL1kTdD0Bn8qz6Sxmg8BAgPzEh4a+vs9/N3H5gX+kKn7IVNR7b65n3XdZjR
+         a2gbnGqdCpJPA==
+Message-ID: <25b06794ffb595229019640e10f256fd.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230413-topic-lahaina_vidcc-v1-2-134f9b22a5b3@linaro.org>
-References: <20230413-topic-lahaina_vidcc-v1-0-134f9b22a5b3@linaro.org> <20230413-topic-lahaina_vidcc-v1-2-134f9b22a5b3@linaro.org>
-Subject: Re: [PATCH 2/2] clk: qcom: Introduce SM8350 VIDEOCC
+In-Reply-To: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+References: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+Subject: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in 'imx8mm_clocks_probe'
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Zhou Shide <u201911681@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Hao Luo <m202171776@hust.edu.cn>
+To:     Abel Vesa <abelvesa@kernel.org>, Bai Ping <ping.bai@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Thu, 13 Apr 2023 12:04:44 -0700
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Zhou Shide <u201911681@hust.edu.cn>
+Date:   Thu, 13 Apr 2023 12:06:59 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-04-13 11:44:59)
-> diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc=
--sm8350.c
-> new file mode 100644
-> index 000000000000..186a5bd9e184
-> --- /dev/null
-> +++ b/drivers/clk/qcom/videocc-sm8350.c
-> @@ -0,0 +1,575 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2023, Linaro Limited
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_clock.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,sm8350-videocc.h>
-> +#include <dt-bindings/reset/qcom,sm8350-videocc.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "common.h"
-> +#include "reset.h"
-> +#include "gdsc.h"
-> +
-> +enum {
-> +       DT_BI_TCXO,
-> +       DT_BI_TCXO_AO,
-> +       DT_SLEEP_CLK,
-> +};
-> +
-> +enum {
-> +       P_BI_TCXO,
-> +       P_BI_TCXO_AO,
-> +       P_SLEEP_CLK,
-> +       P_VIDEO_PLL0_OUT_MAIN,
-> +       P_VIDEO_PLL1_OUT_MAIN,
-> +};
-> +
-> +static struct pll_vco lucid_5lpe_vco[] =3D {
+Quoting Zhou Shide (2023-04-12 20:24:39)
+> The function imx8mm_clocks_probe() has two main issues:
+> - The of_iomap() function may cause a memory leak.
+> - Memory allocated for 'clk_hw_data' may not be freed properly
+> in some paths.
+>=20
+> To fix these issues, this commit replaces the use of of_iomap()
+> with devm_of_iomap() and replaces kzalloc() with devm_kzalloc().
+> This ensures that all memory is properly managed and automatically
+> freed when the device is removed.
+>=20
+> In addition, when devm_of_iomap() allocates memory with an error,
+> it will first jump to label "unregister_hws" and
+> then return PTR_ ERR(base).
+>=20
+> Fixes: 9c71f9ea35d7 ("clk: imx: imx8mm: Switch to clk_hw based API")
+> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Zhou Shide <u201911681@hust.edu.cn>
+> ---
+> The issue is discovered by static analysis, and the patch is not tested y=
+et.
 
-const
-
-> +       { 249600000, 1750000000, 0 },
-> +};
-> +
-> +static const struct alpha_pll_config video_pll0_config =3D {
-> +       .l =3D 0x25,
-> +       .alpha =3D 0x8000,
-> +       .config_ctl_val =3D 0x20485699,
-> +       .config_ctl_hi_val =3D 0x00002261,
-> +       .config_ctl_hi1_val =3D 0x2a9a699c,
-> +       .test_ctl_val =3D 0x00000000,
-> +       .test_ctl_hi_val =3D 0x00000000,
-> +       .test_ctl_hi1_val =3D 0x01800000,
-> +       .user_ctl_val =3D 0x00000000,
-> +       .user_ctl_hi_val =3D 0x00000805,
-> +       .user_ctl_hi1_val =3D 0x00000000,
-> +};
-> +
-> +static struct clk_alpha_pll video_pll0 =3D {
-> +       .offset =3D 0x42c,
-> +       .vco_table =3D lucid_5lpe_vco,
-> +       .num_vco =3D ARRAY_SIZE(lucid_5lpe_vco),
-> +       .regs =3D clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
-> +       .clkr =3D {
-> +               .hw.init =3D &(struct clk_init_data){
-
-const
-
-> +                       .name =3D "video_pll0",
-> +                       .parent_data =3D &(const struct clk_parent_data){
-> +                               .index =3D DT_BI_TCXO,
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .ops =3D &clk_alpha_pll_lucid_5lpe_ops,
-> +               },
-[...]
-> +
-> +static const struct regmap_config video_cc_sm8350_regmap_config =3D {
-> +       .reg_bits =3D 32,
-> +       .reg_stride =3D 4,
-> +       .val_bits =3D 32,
-> +       .max_register =3D 0x10000,
-> +       .fast_io =3D true,
-> +};
-> +
-> +static struct qcom_cc_desc video_cc_sm8350_desc =3D {
-> +       .config =3D &video_cc_sm8350_regmap_config,
-> +       .clks =3D video_cc_sm8350_clocks,
-> +       .num_clks =3D ARRAY_SIZE(video_cc_sm8350_clocks),
-> +       .resets =3D video_cc_sm8350_resets,
-> +       .num_resets =3D ARRAY_SIZE(video_cc_sm8350_resets),
-> +       .gdscs =3D video_cc_sm8350_gdscs,
-> +       .num_gdscs =3D ARRAY_SIZE(video_cc_sm8350_gdscs),
-> +};
-> +
-> +static void video_cc_sm8350_pm_runtime_disable(void *data)
-> +{
-> +       pm_runtime_disable(data);
-> +}
-> +
-> +static int video_cc_sm8350_probe(struct platform_device *pdev)
-> +{
-> +       struct regmap *regmap;
-> +       int ret;
-> +
-> +       pm_runtime_enable(&pdev->dev);
-> +
-> +       ret =3D devm_add_action_or_reset(&pdev->dev, video_cc_sm8350_pm_r=
-untime_disable, &pdev->dev);
-
-devm_pm_runtime_enable()?
-
-> +       if (ret)
-> +               return ret;
-> +
+And you're not coordinating with each other?
