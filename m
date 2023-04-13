@@ -2,69 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0441C77B6C
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 00:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5332BC77B61
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 03:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbjDMAUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 20:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35632 "EHLO
+        id S229526AbjDMD2r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 23:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbjDMAUH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 20:20:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E5B61B3;
-        Wed, 12 Apr 2023 17:20:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5446F61345;
-        Thu, 13 Apr 2023 00:20:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5444C433EF;
-        Thu, 13 Apr 2023 00:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681345205;
-        bh=uV5KjUfxfJ1S9nfIY4Ct9Vky0jgljwYMWvfKdD8J1Lg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=s+muFfIq0atvFfLKnWR2iSn8W80vUcR60RhoQgWbihjKQJlcpDvaY+fHq+9N0out7
-         4XfGvEgLrzBdWhzh/sqCscuGF1fHoIlMgfOTDZ3SulpHY9WFt5SCFR3SlBbpZ8Wvmk
-         o1Wk34B85AV5m98ad0Wz11iPeLXn8CJWj/t0yy4JBdZhdXrV2qC1wyPLJaiF+qbIk7
-         FqF9Z1HiAtDwyC/G0V702afUZxIe+fKlU3rfNEtKTCQvrlFb/C7KVRfHrv+KC+Wczi
-         Rt2qnNyK5zw6t9FjvYDPV+ysYdjn0tLsbLZ/OwrdL8p1Vr9rLRWFA+Ai4iCtcCYf7H
-         1yGjKMZ6C72LA==
-Message-ID: <26b909b5c15fd6c91458a8767d977397.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229831AbjDMD21 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 23:28:27 -0400
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F402E139;
+        Wed, 12 Apr 2023 20:28:25 -0700 (PDT)
+Received: from localhost.localdomain ([172.16.0.254])
+        (user=u201911681@hust.edu.cn mech=LOGIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 33D3PeWP002793-33D3PeWQ002793
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 13 Apr 2023 11:25:48 +0800
+From:   Zhou Shide <u201911681@hust.edu.cn>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Bai Ping <ping.bai@nxp.com>
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Zhou Shide <u201911681@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in 'imx8mm_clocks_probe'
+Date:   Thu, 13 Apr 2023 03:24:39 +0000
+Message-Id: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230412132243.3849779-1-abel.vesa@linaro.org>
-References: <20230412132243.3849779-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.4
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Abel Vesa <abel.vesa@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Date:   Wed, 12 Apr 2023 17:20:03 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-FEAS-AUTH-USER: u201911681@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2023-04-12 06:22:43)
-> The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4c=
-c6:
->=20
->   Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.4
->=20
-> for you to fetch changes up to 8a05f5cccdbe851265bf513643ada48c26b1267f:
->=20
->   clk: imx: imx8ulp: update clk flag for system critical clock (2023-04-0=
-9 17:12:49 +0300)
->=20
-> ----------------------------------------------------------------
+The function imx8mm_clocks_probe() has two main issues:
+- The of_iomap() function may cause a memory leak.
+- Memory allocated for 'clk_hw_data' may not be freed properly
+in some paths.
 
-Thanks. Pulled into clk-next
+To fix these issues, this commit replaces the use of of_iomap()
+with devm_of_iomap() and replaces kzalloc() with devm_kzalloc().
+This ensures that all memory is properly managed and automatically
+freed when the device is removed.
+
+In addition, when devm_of_iomap() allocates memory with an error,
+it will first jump to label "unregister_hws" and
+then return PTR_ ERR(base).
+
+Fixes: 9c71f9ea35d7 ("clk: imx: imx8mm: Switch to clk_hw based API")
+Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+Signed-off-by: Zhou Shide <u201911681@hust.edu.cn>
+---
+The issue is discovered by static analysis, and the patch is not tested yet.
+
+ drivers/clk/imx/clk-imx8mm.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index b618892170f2..e6e0bb4805a6 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -303,7 +303,7 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
+ 	void __iomem *base;
+ 	int ret;
+ 
+-	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
++	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+ 					  IMX8MM_CLK_END), GFP_KERNEL);
+ 	if (WARN_ON(!clk_hw_data))
+ 		return -ENOMEM;
+@@ -320,10 +320,12 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MM_CLK_EXT4] = imx_get_clk_hw_by_name(np, "clk_ext4");
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mm-anatop");
+-	base = of_iomap(np, 0);
++	base = devm_of_iomap(dev, np, 0, NULL);
+ 	of_node_put(np);
+-	if (WARN_ON(!base))
+-		return -ENOMEM;
++	if (WARN_ON(IS_ERR(base))) {
++		ret = PTR_ERR(base);
++		goto unregister_hws;
++	}
+ 
+ 	hws[IMX8MM_AUDIO_PLL1_REF_SEL] = imx_clk_hw_mux("audio_pll1_ref_sel", base + 0x0, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+ 	hws[IMX8MM_AUDIO_PLL2_REF_SEL] = imx_clk_hw_mux("audio_pll2_ref_sel", base + 0x14, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+@@ -399,8 +401,10 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
+ 
+ 	np = dev->of_node;
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+-	if (WARN_ON(IS_ERR(base)))
+-		return PTR_ERR(base);
++	if (WARN_ON(IS_ERR(base))) {
++		ret = PTR_ERR(base);
++		goto unregister_hws;
++	}
+ 
+ 	/* Core Slice */
+ 	hws[IMX8MM_CLK_A53_DIV] = imx8m_clk_hw_composite_core("arm_a53_div", imx8mm_a53_sels, base + 0x8000);
+-- 
+2.34.1
+
