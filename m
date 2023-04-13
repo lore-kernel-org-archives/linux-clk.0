@@ -2,143 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87773C7619A
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Apr 2023 21:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4C9C7619A
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 00:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbjDLVZb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Apr 2023 17:25:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56374 "EHLO
+        id S229707AbjDMAEl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Apr 2023 20:04:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229683AbjDLVZa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 17:25:30 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E76BFC;
-        Wed, 12 Apr 2023 14:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
-        t=1681334692; i=j.neuschaefer@gmx.net;
-        bh=1lJ48Ks8BJLDV0858j+7zFjPkSScyLQQDytPILWRroU=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=MqM6pNlGjibfGdC5QKhvhl0yAmQ6mAkFTyqgS2272odvCrSvQmS4ltpfUkiY90dI5
-         d3KUzTohx/Co/RD0hnN6ghpmwAeJtDx2GC4NRUGTn5jjlk1gTbvaijwzTt5xuB/yBQ
-         UtpJrZswJHgcWG/B0kU8KoLDZXahrC8QML3dTaUaoWGBSzq8Mgp89+O0A3tmcJP3rX
-         Kd9sbSxVE9+YEhrPSaMKhM1YeGbn7b2J0EG52rDY2Rt1pkFvkvYX+NULQyO9konDpU
-         nSyRULg01htzm+6FiJnP4+z9zjOVNB2XyPGqFZuIKu1HcKq/nUpjoDXFJsOYdlDybS
-         xP0NGKdsOecqA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([185.66.193.41]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N6siz-1qQmcN1JRn-018LPv; Wed, 12
- Apr 2023 23:24:52 +0200
-Date:   Wed, 12 Apr 2023 23:24:49 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: [PATCH v5 3/6] dt-bindings: clock: Add Nuvoton WPCM450
- clock/reset controller
-Message-ID: <ZDchofAGChRo3rUi@probook>
-References: <20221104161850.2889894-1-j.neuschaefer@gmx.net>
- <20221104161850.2889894-4-j.neuschaefer@gmx.net>
- <20221209202120.0AFACC433D2@smtp.kernel.org>
- <ZDcC9JBidzfu94NW@probook>
- <ed34eacdb1d35be8b9b2c44944f828e7.sboyd@kernel.org>
+        with ESMTP id S229630AbjDMAEk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Apr 2023 20:04:40 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C287D3C39
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 17:04:38 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d9443c01a7336-1a652700c36so167975ad.0
+        for <linux-clk@vger.kernel.org>; Wed, 12 Apr 2023 17:04:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20221208; t=1681344278; x=1683936278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6TD8d5lr5MkiN2++oGGCJCsMVGJRbHc45GRZJ35kiN8=;
+        b=tkWR9F20ucPpo1lTciwCS1VaBcp6T1BGCSSSD9KrFtZ1Zwmb9oI1TiAedLL9atVPlD
+         7YjRO1VK2rB3tIouLTrc+g0MYG2nTZpI1vJWYLWbFGe1niObTtSPjfLv5OX+qPRUred0
+         xlUfHGCufknPpcmFybego7lDy/nGNJyBoO2PzGNsMYG1OZsFJ9jIDmd4IlSFBxWgNe35
+         /dGGPPpFksV4mW6ULY2dNeVksXks96kOFkWiyuNVZwZjP0/zbaHcRZ6nkTTYH/CA0wjz
+         BUv3YYo30efcJAv1sd7l6kjVaranKcmS2jxuRoQ3/0DfGcBdytqQ7J+5hXaC3Jlh3ktC
+         V3dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681344278; x=1683936278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6TD8d5lr5MkiN2++oGGCJCsMVGJRbHc45GRZJ35kiN8=;
+        b=BwvdbDGN4XqTRFsEq24GD/Z/flTe2eOTgrpY2t2a6tJTmaApQ0AAhbSY4qPP1K4rMv
+         8qQ8MgV0n7iT1dfxu0v1lTCTXwLAdCin/9LdrMw+QcXmaebvERxp/WdoryNiByVnMhG7
+         H0e05B53LEOqT9h7gRlWvJ6djpP0NkjSUo91YL+OYCrd3DBo71F/hIgI+dpPEAD2PJhw
+         lmoSIfXdJMd0ebKU+b1kFXMKl2LdgmXod1io3s0n0uSdeeYNxSgm+FOweFdql0C6GrqQ
+         a4SWtKIEu1KKzYKvn3TTwOnwkrEe+zp9jqOkvOA220qxa05MJYe7u9n9DgUQqNjp4LlT
+         qA8Q==
+X-Gm-Message-State: AAQBX9ekzJo6tX/Ou6D36Ooo408oPSrTSBFVyD7ioPnwrEk6D7iSKLvX
+        Ll/ZRQDkD+rasNStlP7rP7uvn2QEnNeZM1/uWmRwnQ==
+X-Google-Smtp-Source: AKy350aFp8aD8fS3GRkg+Ma4y3lVM9sfzyPJ+FDQtWAnxs5derdP3Ayk1ShdJ+4ob5RT0Xr4WW4vBVunwX7+cJuqMpE=
+X-Received: by 2002:a17:902:a515:b0:19f:3c83:e9fe with SMTP id
+ s21-20020a170902a51500b0019f3c83e9femr829013plq.14.1681344278084; Wed, 12 Apr
+ 2023 17:04:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ijRhWXEzdUKaiJe1"
-Content-Disposition: inline
-In-Reply-To: <ed34eacdb1d35be8b9b2c44944f828e7.sboyd@kernel.org>
-X-Provags-ID: V03:K1:11HHXOJlEmu5SAf22Qo6cW7aqsbyy3MHsKrLND7Ec+YYY+jpmto
- 9zVADJVVK4YnjFYNDkNIn9xJ5m64xdfkRF0cFN3m7pLlp8NoQAxYUUbftgABatNOuPzNnRh
- nFGcF345rtT+y5LlMU/PPajrz1crlQv82C79eWKcdRPue/rfQFkbJ1iniuNOFPXkQ+aMWCU
- VX+gD2p6lVWxttOseUhzA==
-UI-OutboundReport: notjunk:1;M01:P0:NqMDQeZ0dwY=;T2pOs7OeULQAguNA9usaI6xaFqM
- 4vCrI2hHUwH7+38dwDt8IM/G1OYZic062fuk27MXLOzR3jaDUCBqYRjHqPEBp25vxH4zNuRiQ
- QCM+GdqPnNPkPOjR4OP3lg/Av5ynhpA4AUAVIewcY/pGeET2smtIX7e70UFsUEdiz97n2wSFe
- jWL0mLsDB60LbgIr3pBymlfBBIGY7ymC9WuaDzMrhPFbjYi8bqQPVSmMXrkGZvk0+NeNGJ+je
- qwAMHy3HPnImwruXp/7EbZUnnEzMgd7RxBvnSyFI33B6iIulf/WApJcdeCUYdJy6k3WlTz8kz
- 0Y17UzFIUAbCTExbUs4J58JAoVQzdMdgPQIFTaag49ePD+NVT9LHK6GowJpEu5yQO66DA3wyk
- vsJuXnYzv3ceyryUkqWPv20WeJcrj1o7KXa2r3ZlQuVnc9/SMsocT1RwzUq4aonySjZSobW5u
- 2fXVQYaTNp5pAZQJfuAuEbgsXe4Ddnk7pb8jmYUGJkN8VLBmgCjmcJL5oucjGowKAqHFeSLzP
- SXIW5PtFLaWaoww2YLmeW8/vRGNIztthhnBJTW2LPsvlmJ6Eid59L336rd/lKktz+xojsvLBR
- vclo1nlQgrloQst5MD+HnPsQ3JeyPfQtQZUE8Octg4cU3cyOGcuA2yG/o2qxXd397PT+ZisZ3
- 6lVNH5X2n6Helyibrew/sEdnSGenLf4EI+LJFOHiO/2i/9zPvdBud1L4p2zAhrzcKzrW3bXnO
- Ge1yLYPJPC70hyoJ3zpCV31Qjipq/w2BsKchdrQp3sogwtxk44NszHSZq8mnyaAtromqYqNCT
- XB1QylVqZv1h6QD1c7MQm3nFfZdEronREeG3TFwbZPI+nzoFWT0m/zJyt6FsTno5/SAqen45X
- m0GJ9sI7i18QLof6ZhcDLOBvZ2s/+oSPZBFBv9c1TmUZpozw61L53Cx15jVEWTYGNL7fWX+ss
- ONi7jw==
+References: <20230327222159.3509818-1-sboyd@kernel.org> <20230327222159.3509818-6-sboyd@kernel.org>
+In-Reply-To: <20230327222159.3509818-6-sboyd@kernel.org>
+From:   Daniel Latypov <dlatypov@google.com>
+Date:   Wed, 12 Apr 2023 17:04:26 -0700
+Message-ID: <CAGS_qxryWVOT9cBtKk28=NupbLP6_AiCj0P3np2GpMVKkyQOLg@mail.gmail.com>
+Subject: Re: [PATCH v3 05/11] of: Add a KUnit test for overlays and test
+ managed APIs
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Brendan Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, Maxime Ripard <maxime@cerno.tech>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Mar 27, 2023 at 3:22=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Test the KUnit test managed overlay APIs. Confirm that platform devices
+> are created and destroyed properly. This provides us confidence that the
+> test managed work correctly and can be relied upon to provide tests with
+> fake platform devices and device nodes via overlays compiled into the
+> kernel image.
+>
 
---ijRhWXEzdUKaiJe1
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The discussion around kunit_cleanup() caught my eye below, so one
+small comment about that.
 
-On Wed, Apr 12, 2023 at 01:34:20PM -0700, Stephen Boyd wrote:
-> Quoting Jonathan Neusch=C3=A4fer (2023-04-12 12:13:56)
-> > Hi,
-> >=20
-> > On Fri, Dec 09, 2022 at 12:21:17PM -0800, Stephen Boyd wrote:
-> > > Quoting Jonathan Neusch=C3=A4fer (2022-11-04 09:18:47)
-> > > > The Nuvoton WPCM450 SoC has a combined clock and reset controller.
-> > > > Add a devicetree binding for it, as well as definitions for the bit
-> > > > numbers used by it.
-> > > >=20
-> > > > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> > > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > > > ---
-> > >=20
-> > > Applied to clk-next
-> >=20
-> > I don't see this patch in clk/linux.git's clk-next branch. Did it get
-> > lost somehow?
-> >=20
->=20
-> Must have gotten lost. I don't see it in my branch history locally.
-> Resend?
+<snip>
 
-Will do.
+> +/* Test that of_overlay_apply_kunit() cleans up after the test is finish=
+ed */
+> +static void of_overlay_apply_kunit_cleanup(struct kunit *test)
+> +{
+> +       struct device *dev;
+> +       struct device_node *np;
+> +
+> +       KUNIT_ASSERT_EQ(test, 0,
+> +                       of_overlay_apply_kunit(test, kunit_overlay_test))=
+;
+> +
+> +       np =3D of_find_node_by_name(NULL, kunit_node_name);
+> +       of_node_put(np); /* Not derefing 'np' after this */
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> +
+> +       dev =3D bus_find_device(&platform_bus_type, NULL, np, bus_match_n=
+p);
+> +       put_device(dev); /* Not derefing 'device' after this */
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+> +
+> +       /* Remove overlay */
+> +       kunit_cleanup(test);
 
-Thanks,
-Jonathan
+Note: this cleans up *all* resources associated with `test`.
+Right now, it's probably fine, but this probably isn't the safest approach.
 
---ijRhWXEzdUKaiJe1
-Content-Type: application/pgp-signature; name="signature.asc"
+Notably, two of the new/upcoming API changes rely on resource,
+kunit/static_stub.h and kunit_add_action() [1].
+Calling kunit_cleanup() undoes all the stubs and immediately triggers
+all the actions.
 
------BEGIN PGP SIGNATURE-----
+Perhaps you can create your own local `struct kunit` like in [2]
+E.g.
 
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmQ3IYAACgkQCDBEmo7z
-X9v0qA//ZCyWw17Vh1uj88edHIAvM13FiSkcbtje9SXoTMnffVwvHTaP5fh82Zs0
-RJ7zJy080xBuP5dpeNcFKwNy+lv8XULtk3Y1ACzQjsZZRWUf37VEcaKZuuE9cjNJ
-QjArNXSqv0PVk0DJAcSCGOrJe11A51whZy8Tv/vF+67nu6QjFaGKFAtuG9RMtYLm
-5trTn96XKvFAOwckwzQe4FMLMLxXsHnsOk0G2fMj+jVoEDrMW9iC603lAIMqOCFJ
-ODk+NlA5IpDBFC/Z+yayafGX9YVuoMlOimWvSxKWh313uD84EfgDfuoEhM3MwSzZ
-c02XfSNQaWdMwFA93sj5Zw0Ar5wxDDuDxUkCTRH4PQo6RNSItsly8NfwnRKypysd
-140br+efe14Gv67Z37Z2XhfYLd64B7fjRJhz9ukqi8cOrS/eQlapCK5JASnFzJdZ
-f5HCXDNHF41HBL4r+hWgXsTCrB82N3jjGBptqr+qs9i7ZNKxxMKqy0NjTbAa2SzS
-4WMEib4xX3fuELGor6g2NoKrftduQ2uHKmdT9kPo+PdtHh/gp4l7yIvSmKZPqqJy
-oYnYWN+Yo/LkIV1mgXpLSzZTLuW0iyKv0iUM9N8jXRm4wQWfO0VjCpj69pk/26zq
-QEsxsPNA3UYQzMcO8vIOMbYJ8X5LGVK393TvACKt0TBodX4k2dA=
-=EKxn
------END PGP SIGNATURE-----
+struct kunit subtest; // not sure what to call this...
 
---ijRhWXEzdUKaiJe1--
+kunit_init_test(&subtest, "fake test", NULL);
+/* use subtest */
+kunit_cleanup(&subtest);
+
+There's also already-submitted code doing similar things in
+lib/kunit/kunit-test.c you can look at, but it's in init/exit funcs.
+See kunit_resource_test_init() and kunit_resource_test_exit().
+
+[1] https://lore.kernel.org/linux-kselftest/20230331080411.981038-2-davidgo=
+w@google.com/
+[2] https://lore.kernel.org/linux-kselftest/20230403201930.2019419-1-rmoar@=
+google.com/
+
+Daniel
