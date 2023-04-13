@@ -2,102 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4EABC77B6E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 22:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81662C77B6E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 22:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229924AbjDMWBJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 18:01:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35262 "EHLO
+        id S229820AbjDMWFb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 18:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229749AbjDMWBG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 18:01:06 -0400
+        with ESMTP id S229625AbjDMWFb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 18:05:31 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF82E77;
-        Thu, 13 Apr 2023 15:01:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D8DA4C32;
+        Thu, 13 Apr 2023 15:05:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 559B3640B2;
-        Thu, 13 Apr 2023 22:01:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D3EC433D2;
-        Thu, 13 Apr 2023 22:01:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C7C1C641B1;
+        Thu, 13 Apr 2023 22:05:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06BC1C433D2;
+        Thu, 13 Apr 2023 22:05:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681423264;
-        bh=hX8CWjMDrFtDXuH/nkcOaymmUtk+GZRIjp0k5IesTvo=;
+        s=k20201202; t=1681423529;
+        bh=X/8T9no8AB2J34rmBP2/hr8j3YKXCkaRcMGnKyfF67A=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=i/V6s08xML4Y0J15dq94uVDVuL8gdRjWepR6MmGV1lVko7Bmk2514xeJ0xJlWN+Z/
-         43r7S06ZT3bTLx3P+Nozh/4CuWb93bkYmz1gNG6QYcp1rgCoSaDG5Tc0DBcH4j5rxq
-         RBMKzHWkC8nqHWwBnx2+OEvjSCSYcNv+CxTaUl5qjoo8MKokHYttKRkUusRjVTJiR1
-         8XDW4X9a++mNqUKRR0o3RiKh1u1YS9Ic13fFvizDngp0mGR/MenugPciZRniVnopIR
-         lE9E4dAWanytDQeuuBVyuEOg83uLui76/JouO8sZ8dodvkEavlPtY1WQAQMNKy53jp
-         ypHR6jUI8KhbA==
-Message-ID: <558d22a8848f2f026f272fdc0528424d.sboyd@kernel.org>
+        b=DrfQjiCgjHYtn0mYTcyhFbQMx+ZuYRnWl/7PLsb6EabQrRRyK3Fl6xI14TLLpS/Db
+         PtqX/8XKeR+afQSl+3GXX0AV1kEb7CbC6oGcQWLr18QS/mZ5N3d+Yfa9894SuLbGUz
+         VdCLT6q9bhX8aMwevU1SOrUrRSr6bmD/DzLkECNs/i+L22b7cztrWPKSgam67WR03e
+         oaldKywwzia/opFZNfu/CddEunoQMzZLZO6FntIUNHfgjGVaUJxs5KD4ACWhaTgRXA
+         GJ1p1laQiWg64eT/D0AVrHKhK4lX6CKhEKxQtZDIplsxdP6pWXEmeeZfZRI+lv/5UW
+         QOyhz413QnTxQ==
+Message-ID: <7b2b2eefb4b7b6ef8ac2a3176286a97b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230413-creamer-overstate-f7ce5a72e437@spud>
-References: <20230413205528.4044216-1-sboyd@kernel.org> <20230413-creamer-overstate-f7ce5a72e437@spud>
-Subject: Re: [PATCH] clk: starfive: Avoid casting iomem pointers
+In-Reply-To: <20230413210127.s5dkek6adp5ndern@halaney-x13s>
+References: <20230413191541.1073027-1-ahalaney@redhat.com> <20230413191541.1073027-4-ahalaney@redhat.com> <a295939f0058373d1caf956749820c0d.sboyd@kernel.org> <20230413210127.s5dkek6adp5ndern@halaney-x13s>
+Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: sa8540p-ride: Add ethernet nodes
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        patches@lists.linux.dev, Tommaso Merciai <tomm.merciai@gmail.com>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>
-To:     Conor Dooley <conor@kernel.org>
-Date:   Thu, 13 Apr 2023 15:01:02 -0700
+Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        richardcochran@gmail.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        netdev@vger.kernel.org, bmasney@redhat.com, echanude@redhat.com,
+        ncai@quicinc.com, jsuraj@qti.qualcomm.com, hisunil@quicinc.com
+To:     Andrew Halaney <ahalaney@redhat.com>
+Date:   Thu, 13 Apr 2023 15:05:26 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2023-04-13 14:26:56)
-> > @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_a=
-dev)
-> >       struct auxiliary_device *adev =3D _adev;
-> > =20
-> >       auxiliary_device_delete(adev);
-> > +     auxiliary_device_uninit(adev);
+Quoting Andrew Halaney (2023-04-13 14:01:27)
+> On Thu, Apr 13, 2023 at 01:47:19PM -0700, Stephen Boyd wrote:
+> > Quoting Andrew Halaney (2023-04-13 12:15:41)
+> > >  arch/arm64/boot/dts/qcom/sa8540p-ride.dts | 179 ++++++++++++++++++++=
+++
+> > >  1 file changed, 179 insertions(+)
+> > >=20
+> > > diff --git a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts b/arch/arm64/b=
+oot/dts/qcom/sa8540p-ride.dts
+> > > index 40db5aa0803c..650cd54f418e 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
+> > > @@ -28,6 +28,65 @@ aliases {
+> > >         chosen {
+> > >                 stdout-path =3D "serial0:115200n8";
+> > >         };
+> > > +
+> > > +       mtl_rx_setup: rx-queues-config {
+> >=20
+> > Is there a reason why this isn't a child of an ethernet node?
+> >=20
+> >=20
 >=20
-> Huh, I think you didn't explicitly mention this one, but it's actually
-> part of the UAF fix AFAICT?
+> I debated if it was more appropriate to:
 >=20
-> When I did the aux device stuff for the clk-mpfs driver, I copied from
-> peci as there were almost no examples of aux dev stuff in-tree.
-> It looks like subsequently to me starting development, this fix landed:
-> 1c11289b34ab ("peci: cpu: Fix use-after-free in adev_release()")
+>     1. make a duplicate in each ethernet node (ethernet0/1)
+>     2. Put it in one and reference from both
+>     3. have it floating around independent like this, similar to what is
+>        done in sa8155p-adp.dts[0]
 >=20
-> It similarly moves the uninit() to the release callback...
->=20
-> I think I need the below (whitespace damaged):
+> I chose 3 as it seemed cleanest, but if there's a good argument for a
+> different approach I'm all ears!
 
-Yeah that looks better. Care to send a proper patch for it?
-
-> diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk=
--mpfs.c
-> index 4f0a19db7ed7..cc5d7dee59f0 100644
-> --- a/drivers/clk/microchip/clk-mpfs.c
-> +++ b/drivers/clk/microchip/clk-mpfs.c
-> @@ -374,14 +374,13 @@ static void mpfs_reset_unregister_adev(void *_adev)
->         struct auxiliary_device *adev =3D _adev;
-> =20
->         auxiliary_device_delete(adev);
-> +       auxiliary_device_uninit(adev);
->  }
-> =20
->  static void mpfs_reset_adev_release(struct device *dev)
->  {
->         struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> =20
-> -       auxiliary_device_uninit(adev);
-> -
->         kfree(adev);
->  }
->=20
-> Anyways, for this patch:
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->=20
-
-Thanks.
+I wonder if it allows the binding checker to catch bad properties by
+having it under the ethernet node? That's the only thing I can think of
+that may be improved, but I'll let binding reviewers comment here.
