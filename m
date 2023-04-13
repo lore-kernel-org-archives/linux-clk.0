@@ -2,82 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A5AC77B6E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 19:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F0AC77B61
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 19:10:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbjDMTHF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 15:07:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50912 "EHLO
+        id S229628AbjDMTK1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 15:10:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbjDMTHE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 15:07:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACDB07AB3;
-        Thu, 13 Apr 2023 12:07:02 -0700 (PDT)
+        with ESMTP id S229881AbjDMTK1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 15:10:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CFBD7DB0
+        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 12:10:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AED060C92;
-        Thu, 13 Apr 2023 19:07:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB8CC433D2;
-        Thu, 13 Apr 2023 19:07:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DD69A64014
+        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 19:10:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5A5C433EF;
+        Thu, 13 Apr 2023 19:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681412821;
-        bh=oojxmeg84uBgy5mEglQuFVEA6UgalGkZRPBKKPKhBFo=;
+        s=k20201202; t=1681413025;
+        bh=cYoIlHxt7fDZO4LpkZWVVp+TXUyyLwAHKqClcPZDx4A=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=A9ga6TkO9EMOZPFaQ75gllB5vx3pE6c4bPHHnSNDa2fzU+civgoKu5AQoFGHHPlxU
-         OBSDwiy82lW4uZq9YTsWeB4jlmVvKxIUVE16FFibdydX2tNTXq51bd52lpA8zhKpYL
-         qFOMFzYi4ObKq+4uxPXpBOvQlCp7d+xlFyOTU15EpgX9Y3b2wqQYA+Q+T76T36XFco
-         t7zjYQXHMcs0D8T9EbJZmKPJr6032MyAinfTe8Kqp3KC1a1J4KbAEgDIEufSRDZvlP
-         2SMQ0PElL1kTdD0Bn8qz6Sxmg8BAgPzEh4a+vs9/N3H5gX+kKn7IVNR7b65n3XdZjR
-         a2gbnGqdCpJPA==
-Message-ID: <25b06794ffb595229019640e10f256fd.sboyd@kernel.org>
+        b=RYfIfsyL3u5Hkyd80axpc9xgN6MPdp0zKBaK9mX6DGtxQaKOhbS0p6Q8rVqjUClzk
+         PSAb0s1zxiymhuXu+/fph0B5taOdZLifxuOA+ixgXeTc76HodVdAkZDglPDARGN9pe
+         haZHk2lgEB3bIFGApjFFYdu8s5sJwrugdw8F+JafuaFT51LWf+gXQKpZF1YEwlfUaA
+         ZHanyuE/Wsmn5V2uOrb6FXBlx+8CRxlWbXmTaSXaXFfMkgXVxJU540aActm7ncZJgc
+         EoND7zc/2IloJFhk0xWM4XA6eokUEdN7FSWxy+Rd71PPFaVyx8KySPdaPSIOEA9UFt
+         DFBtGIBXai2Hw==
+Message-ID: <7b16c4d703dc00efd6e1b4062b5fd6d7.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230413032439.1706448-1-u201911681@hust.edu.cn>
-References: <20230413032439.1706448-1-u201911681@hust.edu.cn>
-Subject: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in 'imx8mm_clocks_probe'
+In-Reply-To: <af85927b-0da3-3495-2ed4-64bda91cd239@gmail.com>
+References: <af85927b-0da3-3495-2ed4-64bda91cd239@gmail.com>
+Subject: Re: [PATCH] clk: mux: let clk_mux_val_to_index return U8_MAX in the error case
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     hust-os-kernel-patches@googlegroups.com,
-        Zhou Shide <u201911681@hust.edu.cn>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Hao Luo <m202171776@hust.edu.cn>
-To:     Abel Vesa <abelvesa@kernel.org>, Bai Ping <ping.bai@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Zhou Shide <u201911681@hust.edu.cn>
-Date:   Thu, 13 Apr 2023 12:06:59 -0700
+Cc:     linux-clk@vger.kernel.org
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 13 Apr 2023 12:10:23 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zhou Shide (2023-04-12 20:24:39)
-> The function imx8mm_clocks_probe() has two main issues:
-> - The of_iomap() function may cause a memory leak.
-> - Memory allocated for 'clk_hw_data' may not be freed properly
-> in some paths.
->=20
-> To fix these issues, this commit replaces the use of of_iomap()
-> with devm_of_iomap() and replaces kzalloc() with devm_kzalloc().
-> This ensures that all memory is properly managed and automatically
-> freed when the device is removed.
->=20
-> In addition, when devm_of_iomap() allocates memory with an error,
-> it will first jump to label "unregister_hws" and
-> then return PTR_ ERR(base).
->=20
-> Fixes: 9c71f9ea35d7 ("clk: imx: imx8mm: Switch to clk_hw based API")
-> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
-> Signed-off-by: Zhou Shide <u201911681@hust.edu.cn>
-> ---
-> The issue is discovered by static analysis, and the patch is not tested y=
-et.
+Quoting Heiner Kallweit (2023-04-11 23:19:04)
+> Currently this function may return a negative errno, but almost no
+> user checks for the error case. Only imx_clk_gpr_mux_get_parent()
+> does, but mentions in a comment that they'd prefer a dummy value.
+> Other users cast the negative errno to u8 instead, what may result
+> in unwanted results.
+> Let's deal with this by returning u8 and U8_MAX in the error case.
+> Then clk_core_get_parent_by_index() can detect that the index is
+> out of range.
 
-And you're not coordinating with each other?
+Is this causing problems for you?
