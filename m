@@ -2,114 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ABCC77B6E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 18:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8152C77B61
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 18:40:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229656AbjDMSiv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 14:38:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57186 "EHLO
+        id S229841AbjDMSkd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 14:40:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbjDMSiu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 14:38:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE02940E7;
-        Thu, 13 Apr 2023 11:38:49 -0700 (PDT)
+        with ESMTP id S229836AbjDMSk3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 14:40:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CD487DB0;
+        Thu, 13 Apr 2023 11:40:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 46B26640CF;
-        Thu, 13 Apr 2023 18:38:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBE7C433EF;
-        Thu, 13 Apr 2023 18:38:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 23B30640B7;
+        Thu, 13 Apr 2023 18:40:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 536EDC433EF;
+        Thu, 13 Apr 2023 18:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681411128;
-        bh=dzjuCgvj32gFNE1zyb8VjhG7HjDoQx2QthY/c2I2Lpg=;
+        s=k20201202; t=1681411224;
+        bh=mwYnTH2xTUlzJflPd1vC123IfsPEl3nEWJIFOU/ryso=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=iwJvM8gYpu2NK3VPMKGHwKdDmGZiFn5eJ3XrHZUH00mPtJ5Cum9Rb/YsWI2GCjjxh
-         +037VF3OBpkjeEqhoutZ7cvsZSPH1tAVQsOwLf2FkUcI/MoD2BU/BJMdrnn1Egx245
-         aWZ1RLbknn9BvgxDVUI5cC7yn+oz8f59i6+/9588tFGnaZpiD7lg8o+KDhPmZs4cB2
-         uNj/Mww9nsbepDK6X1rV81xlz+yiBTr4Uso9tGeaAxNTbypavIAArg5Z4VpQqeEUj6
-         td2BEgRsAuRxsqzGoNJY9gBCntBELonP42VwdDhR0gVC5wOxkPRwreWM/gkpU/IP24
-         tw52FMK+b25Mw==
-Message-ID: <d70886f6ee13e70845a72354fe9a2b7d.sboyd@kernel.org>
+        b=C1b7JS3gODDSYYlBDTIpxlgxG1R4XL1R85N0pALFWGPerftCQh/QgRTkSYmNuEYE9
+         L/Edkv3kS7VyqrGIxRIIdjjQO2xm/Qoe5ITC3m4M51owUTozFTFYrb45KhE0FrHJ9E
+         yjniCCFn4wdkU5OC0UqrILGm8af4piU0eXT+ootGLCww0CkSFCgOTSkv41JoWKduH1
+         wNXgpYg6SbGBH3SUhdHfLx6632/mSuRMo2Q/jkQfKPur8yk4bqg7cVIAPHLTp5pE43
+         rCPZVphcdd8JaZowPPREGMbP25Ke1cssVQFxLKe/7IZLp0MzhMSd+NPktv81meIG13
+         zpAqAywMfmBGA==
+Message-ID: <f09425fde83f4b21ee301ef8810c4c29.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4ed4d0e6-8da5-7eef-8713-44854b8d4a9b@starfivetech.com>
-References: <20230411135558.44282-1-xingyu.wu@starfivetech.com> <20230411135558.44282-8-xingyu.wu@starfivetech.com> <683cbe934d1df9436e003466d2a419ef.sboyd@kernel.org> <463ee23c-f617-bed0-27a8-56c6fb40d092@starfivetech.com> <cd4a11ae65e186799145410969d40421.sboyd@kernel.org> <4ed4d0e6-8da5-7eef-8713-44854b8d4a9b@starfivetech.com>
-Subject: Re: [PATCH v4 07/10] clk: starfive: Add StarFive JH7110 Video-Output clock driver
+In-Reply-To: <20230413090128.60119-1-gehao@kylinos.cn>
+References: <20230413090128.60119-1-gehao@kylinos.cn>
+Subject: Re: [PATCH] mediatek/clk-mt8173-apmixedsys: convert to devm_platform_ioremap_resource
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Date:   Thu, 13 Apr 2023 11:38:45 -0700
+Cc:     gehao@kylinos.cn, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+To:     Hao Ge <gehao@kylinos.cn>, matthias.bgg@gmail.com,
+        mturquette@baylibre.com
+Date:   Thu, 13 Apr 2023 11:40:22 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Xingyu Wu (2023-04-13 06:31:12)
-> On 2023/4/13 12:04, Stephen Boyd wrote:
-> > diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/c=
-lk/starfive/clk-starfive-jh7110-sys.c
-> > index 5ec210644e1d..851b93d0f371 100644
-> > --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> > +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> > @@ -11,6 +11,9 @@
-> >  #include <linux/init.h>
-> >  #include <linux/io.h>
-> >  #include <linux/platform_device.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#include <soc/starfive/reset-starfive-jh71x0.h>
-> > =20
-> >  #include <dt-bindings/clock/starfive,jh7110-crg.h>
-> > =20
-> > @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_a=
-dev)
-> >       struct auxiliary_device *adev =3D _adev;
-> > =20
-> >       auxiliary_device_delete(adev);
-> > +     auxiliary_device_uninit(adev);
-> >  }
-> > =20
-> >  static void jh7110_reset_adev_release(struct device *dev)
-> >  {
-> >       struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> > +     struct jh71x0_reset_adev *rdev =3D to_jh71x0_reset_adev(adev);
-> > =20
-> > -     auxiliary_device_uninit(adev);
-> > +     kfree(rdev);
-> >  }
-> > =20
-> >  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
-> >                                    const char *adev_name,
-> >                                    u32 adev_id)
-> >  {
-> > +     struct jh71x0_reset_adev *rdev;
-> >       struct auxiliary_device *adev;
-> >       int ret;
-> > =20
-> > -     adev =3D devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
-> > -     if (!adev)
-> > +     rdev =3D kzalloc(sizeof(*rdev), GFP_KERNEL);
->=20
-> Can there use 'devm_kzalloc'? Are you not using this because the struct i=
-s public and clock driver
-> and reset driver both use it. But I think the both clock driver and reset=
- driver are the same
-> device and can use 'devm_kzalloc'.
+Quoting Hao Ge (2023-04-13 02:01:28)
+> diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/m=
+ediatek/clk-mt8173-apmixedsys.c
+> index a56c5845d07a..fe386bf8225d 100644
+> --- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+> +++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+> @@ -90,7 +90,7 @@ static int clk_mt8173_apmixed_probe(struct platform_dev=
+ice *pdev)
+>         struct clk_hw *hw;
+>         int r;
+> =20
+> -       base =3D of_iomap(node, 0);
+> +       base =3D devm_platform_ioremap_resource(pdev, 0);
+>         if (!base)
 
-No. The release function for the auxiliary_device is supposed to free
-the memory. It shouldn't be tied to the lifetime of anything like the
-lifetime of the clk driver being bound.
+This needs to be updated.
+
+>                 return PTR_ERR(base);
+
+And PTR_ERR(NULL) is 0, which is wrong.
