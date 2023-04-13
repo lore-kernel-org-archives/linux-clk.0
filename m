@@ -2,127 +2,283 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A3BC77B6F
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 10:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBF0C77B7C
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 13:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229598AbjDMKM5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 06:12:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58526 "EHLO
+        id S231510AbjDMNfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 09:35:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbjDMKMd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 06:12:33 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FCB49EFB;
-        Thu, 13 Apr 2023 03:12:09 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BBc1Y3MF2vAxLdYBWz7UkgU+KffQHDamYZkk1kBawdDQV8nLHD6aRuKwfedkUj25apDJjoekAHpDI0IKBZPPUAX+aYzZzHrRafeQtIJVK0Om6XwQPmlkzTt1rpAZsosvOoIerBUvPLtCBm8amUwoDGwRWT3jtEhI0GbcytckZCDT8pSzR91zVZgAQ8sHP3NxMRRRkkdohoTqjVe68/YJdoC+dWpJsZFKWy6dTfDOwT9sM1A+PfgZYFECBmnwEWlUgfTI1e6IyGPlQiassMRVU7yBMPkhKN6/YvfgfiuI17mmILGq2Fx4ARqTVIQX5+CUW6qM9yZvQv1k0knSgGN95Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CIVRViL9kBbu7DJND7STArU4U5l9L/l8Mwtwr/tVrKg=;
- b=dAmwx9YDZLsjgKA0YegSP8A/DKKVWf88g/hQsDK+IoWT75MlTHlmXNwRmNoPBTjddRSFqADhcsbJmmjlyoUG86x99XpXVSbJAPwBbeHaivQrbAazR6YaghtELPE1Kmqxi0isGAiJ/41iFzPpIdRxQrNDMUPebQ92bbyjQoY8ycqScksVIDuv4Dv9o/b+gE0h+pUDhs8+H42xl2IQ299WY9no/+L2uxrxu1WycJQUU27ghVged1SzkUjp0Ss9ISvta9XtEVgeqxNn8+WvEQYDzhzZLpZLDofInnnkIny8oPM7rl4F2ITX1wN6fLvLX4IHw6133wrkTO44yI2KAqK8/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CIVRViL9kBbu7DJND7STArU4U5l9L/l8Mwtwr/tVrKg=;
- b=BdQaIef8ALTl+MvPyHZfX1rfsP2pim0JEbAI0S9cotCQ9S8QFpKU19dO6LS7AoMbgBbGjG76k2nNgmLNyUQcbRY4Q9kLAnOXb6c+LCGuhGW7tWoKuDVXeIarRREnacICosrGyoG+JQCtPZ0izf8Ir0aeZR1MeByFjJ1IQlrzYzY=
-Received: from MW3PR06CA0004.namprd06.prod.outlook.com (2603:10b6:303:2a::9)
- by BL1PR12MB5160.namprd12.prod.outlook.com (2603:10b6:208:311::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6298.30; Thu, 13 Apr
- 2023 10:11:53 +0000
-Received: from CO1NAM11FT081.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:2a:cafe::84) by MW3PR06CA0004.outlook.office365.com
- (2603:10b6:303:2a::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6277.38 via Frontend
- Transport; Thu, 13 Apr 2023 10:11:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT081.mail.protection.outlook.com (10.13.174.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6298.31 via Frontend Transport; Thu, 13 Apr 2023 10:11:53 +0000
-Received: from SATLEXMB07.amd.com (10.181.41.45) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 13 Apr
- 2023 05:11:47 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB07.amd.com
- (10.181.41.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 13 Apr
- 2023 03:11:37 -0700
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Thu, 13 Apr 2023 05:11:35 -0500
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To:     <devicetree@vger.kernel.org>
-CC:     <git@amd.com>, <linux-clk@vger.kernel.org>, <robh+dt@kernel.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>
-Subject: [PATCH v2] dt-bindings: clock: versal: Add versal-net compatible string
-Date:   Thu, 13 Apr 2023 15:41:34 +0530
-Message-ID: <20230413101134.10627-1-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S231614AbjDMNes (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 09:34:48 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42592AF39;
+        Thu, 13 Apr 2023 06:32:49 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 7C5D124E1CE;
+        Thu, 13 Apr 2023 21:32:11 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Apr
+ 2023 21:32:11 +0800
+Received: from [192.168.125.131] (183.27.97.249) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Apr
+ 2023 21:32:10 +0800
+Message-ID: <4ed4d0e6-8da5-7eef-8713-44854b8d4a9b@starfivetech.com>
+Date:   Thu, 13 Apr 2023 21:31:12 +0800
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT081:EE_|BL1PR12MB5160:EE_
-X-MS-Office365-Filtering-Correlation-Id: ca7d9363-27f7-4ff9-4a96-08db3c078145
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: mHg8T0HmsLpRomqVibclL/dKqC0hKwv6PF+g+qYv+g+gO5yTAmnb2FKYhz7B4vsbF7n/uL64qf/G0c6xtQER+Mna0+fi573t2ZecV6EQJ0ZSIWJYoFIdhGXQ7IXsNvk6UHo+ithOCObNy0CyeL1ZtKIqncDASYQaXioApDLo9Jv2KQl1HZAtndpnRcnHQZYopCriSGMmrA5SF+8Z7MzRn1o7FE5+1zsDJ4hkBeBCFb28BcSf1iJ7R7HlgRUf5rnY2YdwpYulbNwxQ9kvWVKOxWV+4GsrNaxMuEx5A+nqCMrxsLuBkeNwHMgMVQApSo+rgnJxRRh/n9Y8bWxnK7BSL9iuvrS4LJ/ULgiFfmfIMII07f2XhfD/5cI++SsUOVfTIsFp5LnGiboVjv5RLr+3M4Eo5IQ07CkoIHrDtxXznfbJ2qbkhkv9sR2Y0CYsU8ww7xIICLymfd2GIaYfwBzXukGzdYIquD8RXzWXFLL/iYSXYTrIsMkBQ2/cNZqgTQ7QfD4yOgVo48ZVh1L2U4VEKMPYijJ/f6J1kUSqUoo6u2OAfiVVvBJ+bfqL1eOeZKKEUe3qtkIRLFh0mhVmiW2fMfLpw+nDdcf2aCzou91knBeYeeBTzEv5OqXqL1RcUHz2Vc/2B+81H0DXEipuFAiY1ournvFAByqXc5Ex+wIXsNgyaRgItSxl3oMU74az81CO1Qp4/PgWmJ0+h+rQKbcg316DqfSi8+mOwhiwB/L1Bp0=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(346002)(376002)(39860400002)(451199021)(40470700004)(36840700001)(46966006)(40460700003)(6916009)(70206006)(70586007)(4326008)(36756003)(4744005)(2906002)(44832011)(86362001)(81166007)(82740400003)(356005)(41300700001)(5660300002)(82310400005)(8676002)(8936002)(316002)(478600001)(40480700001)(54906003)(1076003)(26005)(336012)(426003)(36860700001)(2616005)(186003)(47076005)(83380400001)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2023 10:11:53.2734
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca7d9363-27f7-4ff9-4a96-08db3c078145
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT081.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5160
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v4 07/10] clk: starfive: Add StarFive JH7110 Video-Output
+ clock driver
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230411135558.44282-1-xingyu.wu@starfivetech.com>
+ <20230411135558.44282-8-xingyu.wu@starfivetech.com>
+ <683cbe934d1df9436e003466d2a419ef.sboyd@kernel.org>
+ <463ee23c-f617-bed0-27a8-56c6fb40d092@starfivetech.com>
+ <cd4a11ae65e186799145410969d40421.sboyd@kernel.org>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <cd4a11ae65e186799145410969d40421.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.249]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jay Buddhabhatti <jay.buddhabhatti@xilinx.com>
+On 2023/4/13 12:04, Stephen Boyd wrote:
+> Quoting Xingyu Wu (2023-04-11 23:15:26)
+>> On 2023/4/12 2:33, Stephen Boyd wrote:
+>> > Quoting Xingyu Wu (2023-04-11 06:55:55)
+>> >> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-vout.c b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+>> >> new file mode 100644
+>> >> index 000000000000..4c6f5ae198cf
+>> >> --- /dev/null
+>> >> +++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
+>> >> @@ -0,0 +1,239 @@
+>> >> +// SPDX-License-Identifier: GPL-2.0
+>> >> +/*
+>> >> + * StarFive JH7110 Video-Output Clock Driver
+>> >> + *
+>> >> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+>> >> + */
+>> >> +
+>> >> +#include <linux/clk.h>
+>> >> +#include <linux/clk-provider.h>
+>> >> +#include <linux/io.h>
+>> >> +#include <linux/platform_device.h>
+>> >> +#include <linux/pm_runtime.h>
+>> >> +#include <linux/reset.h>
+>> > 
+>> > Include module.h, device.h, and kernel.h for things like ERR_PTR().
+>> 
+>> The local headfile 'clk-starfive-jh71x0.h' from the basic JH71x0 clock driver
+>> already includes the device.h. 
+>> And I found the module.h is included in device/driver.h file and then it is included
+>> in the device.h file.
+>> The kernel.h is included in the clk.h file.
+>> So do I still need to list them?
+> 
+> Yes.
 
-Add dt-binding documentation for Versal NET platforms.
+OK, will fix.
 
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@xilinx.com>
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
----
+> 
+>> 
+>> > Probably need to include a reset header as well for reset APIs.
+>> 
+>> The reset APIs like devm_reset_control_get_shared() and reset_control_deassert()
+>> come from the reset.h file and I have included it.
+> 
+> Cool, I missed it.
+> 
+>> 
+>> > 
+>> >> +
+>> >> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
+>> >> +
+>> >> +#include "clk-starfive-jh7110.h"
+>> >> +
+>> >> +/* external clocks */
+>> >> +#define JH7110_VOUTCLK_VOUT_SRC                        (JH7110_VOUTCLK_END + 0)
+>> >> +#define JH7110_VOUTCLK_VOUT_TOP_AHB            (JH7110_VOUTCLK_END + 1)
+>> >> +#define JH7110_VOUTCLK_VOUT_TOP_AXI            (JH7110_VOUTCLK_END + 2)
+>> >> +#define JH7110_VOUTCLK_VOUT_TOP_HDMITX0_MCLK   (JH7110_VOUTCLK_END + 3)
+>> >> +#define JH7110_VOUTCLK_I2STX0_BCLK             (JH7110_VOUTCLK_END + 4)
+>> >> +#define JH7110_VOUTCLK_HDMITX0_PIXELCLK                (JH7110_VOUTCLK_END + 5)
+>> >> +#define JH7110_VOUTCLK_EXT_END                 (JH7110_VOUTCLK_END + 6)
+>> >> +
+>> >> +/* VOUT domian clocks */
+>> >> +struct vout_top_crg {
+>> >> +       struct clk_bulk_data *top_clks;
+>> >> +       int top_clks_num;
+>> > 
+>> > size_t?
+>> 
+>> Will modify to 'unsigned int'.
+> 
+> Why not size_t?
 
-Changes in v2:
-Move to enum
-Drop driver patch
+OK,I will use size_t. 
 
- Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+>> 
+>> > 
+>> >> +       if (ret < 0)
+>> >> +               return dev_err_probe(priv->dev, ret, "failed to turn on power\n");
+>> >> +
+>> >> +       ret = jh7110_vout_top_crg_init(priv, top);
+>> >> +       if (ret)
+>> >> +               goto err_clk;
+>> >> +
+>> >> +       top->base = priv->base;
+>> >> +       dev_set_drvdata(priv->dev, (void *)(&top->base));
+>> > 
+>> > See comment later about setting this to 'top' instead. Casting away
+>> > iomem markings is not good hygiene.
+>> 
+>> JH7110 resets as the auxiliary device of clocks use the same iomem as the clocks
+>> and the iomem will be got by dev_get_drvdata() in the 7110 reset drivers when registering reset.
+>> So I follow the basic 7110 reset driver and also set the iomem not top_crg struct.
+> 
+> Oh I totally missed that this is how it's been done for the other
+> starfive driver. It's still not good hygiene to stash the iomem pointer
+> that way because the iomem marking is lost and has to be recovered. Can
+> you make a wrapper struct, either for the adev or to pass in struct
+> device::platform_data?
+> 
+> ---8<---
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> index 5ec210644e1d..851b93d0f371 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> @@ -11,6 +11,9 @@
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <soc/starfive/reset-starfive-jh71x0.h>
+>  
+>  #include <dt-bindings/clock/starfive,jh7110-crg.h>
+>  
+> @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_adev)
+>  	struct auxiliary_device *adev = _adev;
+>  
+>  	auxiliary_device_delete(adev);
+> +	auxiliary_device_uninit(adev);
+>  }
+>  
+>  static void jh7110_reset_adev_release(struct device *dev)
+>  {
+>  	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +	struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
+>  
+> -	auxiliary_device_uninit(adev);
+> +	kfree(rdev);
+>  }
+>  
+>  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+>  				     const char *adev_name,
+>  				     u32 adev_id)
+>  {
+> +	struct jh71x0_reset_adev *rdev;
+>  	struct auxiliary_device *adev;
+>  	int ret;
+>  
+> -	adev = devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
+> -	if (!adev)
+> +	rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-index 4bbf96484b56..0029d94c4e1e 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-@@ -20,7 +20,9 @@ select: false
- 
- properties:
-   compatible:
--    const: xlnx,versal-clk
-+    enum:
-+      - xlnx,versal-clk
-+      - xlnx,versal-net-clk
- 
-   "#clock-cells":
-     const: 1
--- 
-2.17.1
+Can there use 'devm_kzalloc'? Are you not using this because the struct is public and clock driver
+and reset driver both use it. But I think the both clock driver and reset driver are the same
+device and can use 'devm_kzalloc'.
+
+> +	if (!rdev)
+>  		return -ENOMEM;
+>  
+> +	rdev->base = priv->base;
+> +
+> +	adev = &rdev->adev;
+>  	adev->name = adev_name;
+>  	adev->dev.parent = priv->dev;
+>  	adev->dev.release = jh7110_reset_adev_release;
+> diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
+> index c1b3a490d951..2d26ae95c8cc 100644
+> --- a/drivers/reset/starfive/reset-starfive-jh7110.c
+> +++ b/drivers/reset/starfive/reset-starfive-jh7110.c
+> @@ -7,6 +7,8 @@
+>  
+>  #include <linux/auxiliary_bus.h>
+>  
+> +#include <soc/starfive/reset-starfive-jh71x0.h>
+> +
+>  #include "reset-starfive-jh71x0.h"
+>  
+>  #include <dt-bindings/reset/starfive,jh7110-crg.h>
+> @@ -33,14 +35,15 @@ static int jh7110_reset_probe(struct auxiliary_device *adev,
+>  			      const struct auxiliary_device_id *id)
+>  {
+>  	struct jh7110_reset_info *info = (struct jh7110_reset_info *)(id->driver_data);
+> -	void __iomem **base = (void __iomem **)dev_get_drvdata(adev->dev.parent);
+> +	struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
+> +	void __iomem *base = rdev->base;
+>  
+>  	if (!info || !base)
+>  		return -ENODEV;
+>  
+>  	return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_node,
+> -					      *base + info->assert_offset,
+> -					      *base + info->status_offset,
+> +					      base + info->assert_offset,
+> +					      base + info->status_offset,
+>  					      NULL,
+>  					      info->nr_resets,
+>  					      NULL);
+> diff --git a/include/soc/starfive/reset-starfive-jh71x0.h b/include/soc/starfive/reset-starfive-jh71x0.h
+> new file mode 100644
+> index 000000000000..47b486ececc5
+> --- /dev/null
+> +++ b/include/soc/starfive/reset-starfive-jh71x0.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __SOC_STARFIVE_RESET_JH71X0_H
+> +#define __SOC_STARFIVE_RESET_JH71X0_H
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/compiler_types.h>
+> +#include <linux/container_of.h>
+> +
+> +struct jh71x0_reset_adev {
+> +	void __iomem *base;
+> +	struct auxiliary_device adev;
+> +};
+> +
+> +#define to_jh71x0_reset_adev(_adev) \
+> +	container_of((_adev), struct jh71x0_reset_adev, adev)
+> +
+> +#endif
+
+That's great. It don't need to set iomem to driver_data and I can set the struct data like 'top_crg'
+to driver_data in VOUTCRG and ISPCRG driver. I try to modify it in next patchset.
+Thanks for your suggestion.
+
+Best regards,
+Xingyu Wu
 
