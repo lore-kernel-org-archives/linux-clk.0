@@ -2,92 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4156CC77B77
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 15:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C729BC77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 16:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230516AbjDNPSG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Apr 2023 11:18:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38364 "EHLO
+        id S230360AbjDNQFI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 12:05:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229967AbjDNPSB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 11:18:01 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D9E3A5EC
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 08:17:51 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id gc14so1308681ejc.5
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 08:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681485469; x=1684077469;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9drcNPSM0KBR/CLrBwPG24/hlufSHekIX2GuAa0mc7s=;
-        b=DpYdX+CHD+F/+NFh7Oh0tAd/G7RToDYcGkhwE0Qp9T+/OXvLJkiThET18+0f2JhQR/
-         ytNVi+NL44SPs4QSFY3PVpySwPE8J67VT6ToVQyvHjhsbqre9DKC1GI64VmbIKZINwuQ
-         TBrs8yC9yasnwi7+34VIkrpYmsalcISpUyMIMxWPxhHm9W2fCutH/uqUiiwSFAM/Epgs
-         Z1vis+O0CuGzfD3ka/4FKW33Y7U1MqWS1c2LEqQ9ARD7gQ4stOYs+jI7cehgK/wmEphg
-         wt2mU3/FpPLYcZUff4OIPg4J8gaRgJ/VlB5oiirY18bTdXQllJmRfVm9GrR47BMFGojl
-         Czqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681485469; x=1684077469;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9drcNPSM0KBR/CLrBwPG24/hlufSHekIX2GuAa0mc7s=;
-        b=VegJ33q05IBXj3SF86l/6Y+XdmT5hS2Qtpk3U92kd9FlgcYLKcACLIhJJFVN47AO6U
-         L6H6ovV39NEsBdRvII7OS0J+pwafsYoiBTfL0Y7B87abXYTQBEK/kXg1x8gtPN/CLW2o
-         TGRzbBL1gR3v12XHuIK70yC3KptKW5m12omN0D7iUGcvHH5m3rSDXLifxIcMgYNmHB/E
-         /jUN7nAf3XuAg7ZHRuHYx+2ErR82KfBQMpmcj5I3DOSYfV37RBTyyUyFm/rUyor8n6tK
-         l0mZmQEIgoOiOReiwvqO3QUxj2WzgyH6xwQx0PcCyOXqYESJ3Iz4hvJMHhQmtdmRmd7T
-         FspA==
-X-Gm-Message-State: AAQBX9d8E9Jq/uQT9kTOyEoG2mz+JqnL2blAId0vTryzSdclOaPRqnJI
-        2AQcffhnirG8aGxs8S1jX86cnw==
-X-Google-Smtp-Source: AKy350Y1ovRQx1f10GgZ8oEgerwPzy42tM/K38eDatHEyM6Q0mtLluw+V3szHNhRcNBxfX4Yn4ti6g==
-X-Received: by 2002:a17:907:72d4:b0:94a:7da2:d339 with SMTP id du20-20020a17090772d400b0094a7da2d339mr7465159ejc.26.1681485469533;
-        Fri, 14 Apr 2023 08:17:49 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:39b7:81a0:bd41:17b1? ([2a02:810d:15c0:828:39b7:81a0:bd41:17b1])
-        by smtp.gmail.com with ESMTPSA id p25-20020a17090635d900b0094e75d3ba1bsm2575677ejb.131.2023.04.14.08.17.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Apr 2023 08:17:49 -0700 (PDT)
-Message-ID: <20faef75-9182-6e67-8ac5-c8234318ab64@linaro.org>
-Date:   Fri, 14 Apr 2023 17:17:48 +0200
+        with ESMTP id S230108AbjDNQFH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 12:05:07 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191455BB0;
+        Fri, 14 Apr 2023 09:05:03 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33EFR9vE011456;
+        Fri, 14 Apr 2023 16:04:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=zmT8OGNRNLDcRI4wX+B2UEr0mwcLGz92og4FZshltnQ=;
+ b=antOn+e0QYxY11M/qmPeE5IR7JBm1chVBS7oGTbBzEjjMiGBgw8GyYgRpnPujQeNkBPH
+ CCwgJIJyJEB+vBSVebP1dzIcCAr18Nvkg0lGNNHlVRbjC0eAnF1mdIhM12Koc56w1tfs
+ XxaniBbWTUhs+Xf4zjMVlJVYdD9Oiu2J2An7NbqSpM6GqW+2+6CJFSXXmXLnkeGIIuLn
+ E3CuDfCgKXh2XYUzXckILUyEzIU0ZikYi89UVicHw2MpPDFKYtglLpch9+F0/PoWxI3M
+ ibKNnDMuVmaCpYPYq2fDxXJoHAQc4d2AliYoWN8w4PrCu8815zS4d1J++wQZDVXFDkge LA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pxdteknet-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Apr 2023 16:04:59 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33EG4wGV002787
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Apr 2023 16:04:58 GMT
+Received: from [10.216.10.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 14 Apr
+ 2023 09:04:52 -0700
+Message-ID: <2c5bbe48-3007-a1d5-73b9-9d2132bff9d4@quicinc.com>
+Date:   Fri, 14 Apr 2023 21:34:48 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: qcom,videocc: Add SM8350
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH V1 1/4] dt-bindings: clock: qcom,ipq9574-gcc: Drop the
+ Bias PLL ubi clock source
 Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230413-topic-lahaina_vidcc-v2-0-f721d507e555@linaro.org>
- <20230413-topic-lahaina_vidcc-v2-1-f721d507e555@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230413-topic-lahaina_vidcc-v2-1-f721d507e555@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <20230414134812.16812-1-quic_devipriy@quicinc.com>
+ <20230414134812.16812-2-quic_devipriy@quicinc.com>
+ <dc48d390-9c8b-d3b7-9c5e-6cbddb0e1306@linaro.org>
+ <aca7b808-51ce-1921-2ee2-0e82cf19d960@quicinc.com>
+ <7b4fe58c-9cf8-57ab-8cbc-c5ccf0b2a46d@linaro.org>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <7b4fe58c-9cf8-57ab-8cbc-c5ccf0b2a46d@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: H18vUg1Fz5dVU1W_YWN3MuQSKPZI4V0I
+X-Proofpoint-GUID: H18vUg1Fz5dVU1W_YWN3MuQSKPZI4V0I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-14_08,2023-04-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=597 clxscore=1015 spamscore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 mlxscore=0 impostorscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304140142
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/04/2023 13:26, Konrad Dybcio wrote:
-> SM8350, like most recent higher-end chips has a separate clock
-> controller block just for the Venus IP. Document it.
+
+
+On 4/14/2023 8:39 PM, Krzysztof Kozlowski wrote:
+> On 14/04/2023 16:22, Devi Priya wrote:
+>>
+>>
+>> On 4/14/2023 7:47 PM, Krzysztof Kozlowski wrote:
+>>> On 14/04/2023 15:48, Devi Priya wrote:
+>>>> Remove bias_pll_ubi_nc_clk from the binding as it has been removed from
+>>>> the Device Tree. Also added Bjorn Andersson to the maintainers list.
+>>>
+>>> Was it really removed? Where?
+>>>
+>> It has been removed from the Device tree and binding in V11
+>> https://lore.kernel.org/linux-arm-msm/20230404101622.5394-1-quic_devipriy@quicinc.com/
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  .../devicetree/bindings/clock/qcom,videocc.yaml    | 29 +++++++++++++
+> I still see it in current next. Are you sure you refer to something
+> already merged?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This change was made in V11 and Currently V9 is merged in linux-next.
+So, the delta changes between V9 & V12 is posted in this series.
+The device tree change where the clock is removed is added part of this 
+incremental patch series and the binding is updated to reflect the same.
+Apologies, if the confusion is because of "has been removed from device 
+tree" in the commit message.
 
-Best regards,
-Krzysztof
-
+Thanks,
+Devi Priya
+> 
+> Best regards,
+> Krzysztof
+> 
