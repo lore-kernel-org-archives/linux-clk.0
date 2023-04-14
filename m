@@ -2,109 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5B6C77B78
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 03:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A85C77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 05:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbjDNDdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 23:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
+        id S229873AbjDNFTP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 01:19:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbjDNDdf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 23:33:35 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31504ED8;
-        Thu, 13 Apr 2023 20:33:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 73344643A8;
-        Fri, 14 Apr 2023 03:33:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9449BC433D2;
-        Fri, 14 Apr 2023 03:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681443211;
-        bh=zQ1T5RTb+RrMY2JnDGYIFwYF15LUKVpBvczjEj5kFYg=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=MUhPXB/w7hkEalJgISFC9D1IcD/w818lEiYisFqIesDygBD5AsJ+OmHyQMvWGVynb
-         LqdGHaLEEvBiX7jwbH8N5Lx9lehI72Czr6SW4pm7T/J4vCq6r9oHVnPsGbwSzYr6cM
-         36Dga9p+tArC+01KxM+gd0gJ6dwEqbGuocyz2hbWtgijMtaE8uYstpZDi76le4+Mwz
-         ecnxbTIeXkNTzch7NAjPQ3pH2MkDWPtWtHmJOrr0AamYF3C1yEcPX+IUFKi2y5x1ly
-         KrMM5gxtuN7kQ8jijpvu4gMWEUPitNnNv+GMKcOW1muuu9FL4q3+Ye/+3koqy4O+yt
-         0pObnh8bHOsPg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     swboyd@chromium.org, konrad.dybcio@somainline.org,
-        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
-        linux-arm-msm@vger.kernel.org, broonie@kernel.org,
-        quic_visr@quicinc.com, agross@kernel.org, sboyd@kernel.org,
-        Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        robh+dt@kernel.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 0/3] Add resets for ADSP based audio clock controller driver
-Date:   Thu, 13 Apr 2023 20:37:06 -0700
-Message-Id: <168144342195.2459486.11052723951925664521.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230407092255.119690-1-quic_mohs@quicinc.com>
-References: <20230407092255.119690-1-quic_mohs@quicinc.com>
+        with ESMTP id S229636AbjDNFTP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 01:19:15 -0400
+Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A4A61FD2;
+        Thu, 13 Apr 2023 22:19:10 -0700 (PDT)
+Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-18779252f7fso8467430fac.12;
+        Thu, 13 Apr 2023 22:19:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681449549; x=1684041549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V99wgKb499+9VrSvxbUr6s15Psglq894fCu8CZq/rEU=;
+        b=WqKAAp1l5pn4CHAIORc/ME3DhmRJPzTL5tDeqPvveDFoafEWulN/voiYR+d+Xo1xfg
+         qLdcg/NgoMMgZU45ER4cMCVQlUboDz83vyLgTP4dKoQ8d5BzJyVE2aVxsnlrOLuBmQBz
+         LOc6tFbv3x+d7pRQ1P8ml4jY5LriVr9zjwWP9IrR+xjeVoqDTq1GrJE9+C0ptquOgtc4
+         PoymooWoSG2zOLu7WySxweEMUgO701ODcbWjXapsQhmGLv10bS0Fe+ec5bMDv9XJu2y6
+         ufuGIjLE+QJJzGs3+wzs+mumdVeBcSzerjm/ZJSmKJ0BAL1qSWdNG83OLNkTm7Q8eJ/W
+         8EsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681449549; x=1684041549;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V99wgKb499+9VrSvxbUr6s15Psglq894fCu8CZq/rEU=;
+        b=DxJebhu1nCRiXpgNwMCoZdNxYOqIDHM6WoEzVYaqsHx75MiHj+dGFbcXOkgNEoCwzJ
+         YWQHC+sbzb8KMclYbXl6yx37KQoSihOfHQeE3q0hrSTwNpsd8FzEdFt9dgyTbV0osx8W
+         9t+mj8igmp7TbQnCnrqvQKZQ32ZxwRCH+WSvMjMVu/6KrLvH3s0XPa1v5afRtIXW9YCU
+         EsL7EK/PZA509766UJvMmRJFkcifsUrdS/9gZ5VqN+Sx20L6D+jWCN1ThlugvcNYOiEs
+         FAhvsOaeqRQ6Qj6x6hQyexzX7QdukwyCkDuY1YQH3dpXjYhgNpaVcc0gAcTkXHkA18o8
+         wm5g==
+X-Gm-Message-State: AAQBX9ewtxT2i1RPelAMrWYOQuVLKt5Zq73GtnGz4KBrkyzbnkAZa1h5
+        4aVPgtUHpwSrs6oK2dV/qXjMje1jPHOPFHmTkRjCx7L/ByU=
+X-Google-Smtp-Source: AKy350YhFKBqyd5LScqou206ROnoHlD0S94N0EvVsdQvoyPVyih2qSotfVh+hMqqvnyqnB46Z4LPjnWW+M09FqSEOJc=
+X-Received: by 2002:a05:6870:e9aa:b0:187:7f01:7e74 with SMTP id
+ r42-20020a056870e9aa00b001877f017e74mr2428531oao.0.1681449549348; Thu, 13 Apr
+ 2023 22:19:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H-0Upz--k0tkm7BFCTd0b0Gso-c_uPyzeAjOigZowbK1Q@mail.gmail.com> <d20a8910675be9acab3b2f4ac123fbf3.sboyd@kernel.org>
+In-Reply-To: <d20a8910675be9acab3b2f4ac123fbf3.sboyd@kernel.org>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Fri, 14 Apr 2023 07:18:57 +0200
+Message-ID: <CAMhs-H-BfZb3mD8E=LeJ4vT22uibQ1DnaZsfTrtRxSiv=8L5RA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] mips: ralink: add complete clock and reset driver
+ for mtmips SoCs
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org, arinc.unal@arinc9.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 7 Apr 2023 14:52:52 +0530, Mohammad Rafi Shaik wrote:
-> Add resets and remove qdsp6ss clock controller for audioreach based platforms.
-> 
-> Changes since v10:
->     -- drop #define macro for max_register.
->     -- Add max_register value for top_cc register.
-> Changes since v9:
->     -- Drop "clk: qcom: lpassaudiocc-sc7280: Modify qcom_cc_probe" patch.
->     -- Update Fixes tag in Add the required gdsc's in lpass_cc_sc7280_desc patch.
->     -- Add the max_register value in Skip qdsp6ss clock registration patch.
-> Changes since v8:
->     -- Add the required gdsc's in lpass_cc_sc7280_desc structure.
->     -- Modify qcom_cc_probe to qcom_cc_probe_by_index.
->     -- Update the commit message for v8,4/5 patch, which is not required for new logic.
->     -- Drop "Add binding headers for lpasscc" patch.
->     -- Drop "Skip lpass_aon_cc_pll config" patch.
-> Changes since v7:
->     -- Modiy AHB clock probing method in "Merge lpasscc into lpass_aon patch".
->     -- Fix Typo errors in "Merge lpasscc into lpass_aon patch".
->     -- Update commit message in "Merge lpasscc into lpass_aon patch"
-> Changes since v6:
->     -- Update commit message in "Merge lpasscc into lpass_aon patch" patch.
->     -- Drop "Skip lpasscorecc registration" patch.
->     -- Add comment in the code in "Skip lpass_aon_cc_pll config" patch.
-> Changes since v5:
->     -- Fix compilation issue.
-> Changes since v4:
->     -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
->     -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
-> Changes since v3:
->     -- Remove duplicate clock resets patch.
->     -- Add binding headers for q6 clocks.
->     -- Create new patch for merging lpasscc q6 clocks into lpass_aon.
->     -- Create new patches for handling conflicts of ADSP and bypass solution.
-> Changes since v2:
->     -- Revert removing qdsp6ss clock control.
->     -- Add Conditional check for qdsp6ss clock registration.
-> Changes since v1:
->     -- Update commit message.
->     -- Remove qdsp6ss clock control.
-> 
-> [...]
+On Thu, Apr 13, 2023 at 8:56=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Quoting Sergio Paracuellos (2023-04-13 01:44:56)
+> >
+> > Gentle ping on this series :-)
+>
+> Please trim replies. I had marked the whole series as superseded because
+> of the first patch discussions. I reviewed the clk driver now. In
+> general, use the fixed rate and fixed factor basic clk types. Don't
+> change hardware in recalc_rate().
 
-Applied, thanks!
+Thanks, Stephen. I was expecting an answer in my request of
+Reviewed-by of the bindings after the discussion about the first patch
+between Arinc and Rob before resending anything [0].
 
-[1/3] dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode property
-      commit: 5c3a7dcce10028c5839864ed475ae7930b03c1e8
-[2/3] clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
-      commit: 4fc1c2d9a2b7a394f3b873aae5e03bffd8b5cd31
-[3/3] clk: qcom: lpassaudiocc-sc7280: Add required gdsc power domain clks in lpass_cc_sc7280_desc
-      commit: aad09fc7c4a522892eb64a79627b17a3869936cb
+I will reply to your review comments shortly.
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Thanks,
+    Sergio Paracuellos
+
+[0]: https://lore.kernel.org/linux-mips/d20a8910675be9acab3b2f4ac123fbf3.sb=
+oyd@kernel.org/T/#m6ae224c084b5b482ccfe0cfd0d936fb9ce1354b0
