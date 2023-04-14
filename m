@@ -2,120 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F80FC77B6E
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 13:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B732AC77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 14:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230040AbjDNNta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Apr 2023 09:49:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38566 "EHLO
+        id S229656AbjDNORX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 10:17:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230061AbjDNNtY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 09:49:24 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27003AF36;
-        Fri, 14 Apr 2023 06:49:00 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33ECxlTs022529;
-        Fri, 14 Apr 2023 13:48:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=bGJSg4QHg3Mdt9XB0epGlO/VU8HOYvpFzIafzWr02Yg=;
- b=CS8Nvv5XGxMzXPAASZgnr3744qYtnFsaS2Qwx1IgkXzLXBZWqPf1u23EOSmdDATgsAml
- il6je1DrLECujSdaUsa2Lbd66LLor2+cle/xhZ7GhyDOUpsV78+86kqhtU+nWhdQHldq
- YHggOXebtS0buL4JQqxZTuTgDt2a/bGG8Us34EswMeYo22ZJnPQ4ACzpBbn/AIF5J0vA
- GrYOE1kkfWL4V3R8qS+A8GhxJ5XKehrANXbp/+ZB9G24FZCrawYIPFw8lByVAOiir1RA
- kx+zE2X4EHD+vWbjxP4alGQ0f6eJBTGzSbbC2SnmYOpGl9qfYxI5qJaRqLt09nNJrp5p 1Q== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3py0xurxx1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Apr 2023 13:48:56 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33EDmtv4006683
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Apr 2023 13:48:55 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Fri, 14 Apr 2023 06:48:49 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-Subject: [PATCH V1 4/4] arm64: dts: qcom: ipq9574: rename al02-c7 dts to rdp433
-Date:   Fri, 14 Apr 2023 19:18:12 +0530
-Message-ID: <20230414134812.16812-5-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230414134812.16812-1-quic_devipriy@quicinc.com>
-References: <20230414134812.16812-1-quic_devipriy@quicinc.com>
+        with ESMTP id S229689AbjDNORW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 10:17:22 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A6E18F
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 07:17:21 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-50489d1af35so5017102a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 07:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681481839; x=1684073839;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LnW3vWHK2Vo4lGjSS4vQRc6YHi20i9L4078uQvE+7tQ=;
+        b=tjSWZvWj5n241DBLfgpKUFOVf9O9Jp2GMB0ZxnAXWyoGFVEckUIuGV2ytVqg9G0bST
+         mfX7gLSy6J8hSTMaiwxWRUJ2RtXmTKXYaEav7uQyfwdfSWYBFz785EtNux55X2UmS24p
+         DRhlZMaQdAB6uQJ1JIHdS0fYmD4KbbRgDUTXFMkpGIhZkpxHcrDb8HkzMhEexnmaCQn/
+         85qwRtxfGAHt0AbfO1nTNLTy5sKXbEmaQt6UUVbdqozhpGMWVm7OTWxxzWoFrLO2RjLJ
+         n+CU1q8DddUv2C+E+ZweHgfrJX1HuR9wrP5RVjo5O7chDwruGI/sxh5UudPpnS9vT/MJ
+         vNYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681481839; x=1684073839;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LnW3vWHK2Vo4lGjSS4vQRc6YHi20i9L4078uQvE+7tQ=;
+        b=fg5Bpc2rZPekeijK9kYComqoAry6GpKN8wlfhh9jnlMiJN4hdepD/Zg2WkA4Z2Y2AX
+         BAqYQOR6i6BFf6EiMTJK/riu6eU3gWrJBrIVr6sHpig3jv4fN3pvZSwHWQtCRP8ITynX
+         b9O02JPE/PIFiU/ZolFUTmFsW0216n/+SMwwSnKPiJlOoGrROBpZ6uO7pgqrgLpvKkek
+         u5wApkEBgoRZ2gnZFHheUHVcB90rQw4nGewcKljKuPn8XT4UukBLdm/uolmvvEp24F9j
+         XIF4YoECdUy+Ma6wfsm0JHHjHe/7T3I6dk/nf4W2LHjVGQpIzYH8JgVmOmc7O1Ny8xu3
+         nOjQ==
+X-Gm-Message-State: AAQBX9fnj7b1RWfgJ/AG1YYa55Vg97hjK8SxIYyGHadds0e4S9x7nzg0
+        rTqWigM93qJArIjCUQcx5W7Q2Q==
+X-Google-Smtp-Source: AKy350Yqdqe7M38Ry2qdwRjfaOfcGCLGN9zxH9nojZ1uqpEQfYyOBUhYFCXpiwyonr/N/0L/O4uh/A==
+X-Received: by 2002:aa7:db89:0:b0:506:8330:cff1 with SMTP id u9-20020aa7db89000000b005068330cff1mr2256283edt.35.1681481839555;
+        Fri, 14 Apr 2023 07:17:19 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:39b7:81a0:bd41:17b1? ([2a02:810d:15c0:828:39b7:81a0:bd41:17b1])
+        by smtp.gmail.com with ESMTPSA id v2-20020a1709064e8200b0094efcc4a076sm314603eju.164.2023.04.14.07.17.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Apr 2023 07:17:19 -0700 (PDT)
+Message-ID: <dc48d390-9c8b-d3b7-9c5e-6cbddb0e1306@linaro.org>
+Date:   Fri, 14 Apr 2023 16:17:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3a0NKACu2y04aVhP6DXGtYAJYeXMCzce
-X-Proofpoint-ORIG-GUID: 3a0NKACu2y04aVhP6DXGtYAJYeXMCzce
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-14_06,2023-04-14_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=929 priorityscore=1501 bulkscore=0 malwarescore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 spamscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2304140123
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH V1 1/4] dt-bindings: clock: qcom,ipq9574-gcc: Drop the
+ Bias PLL ubi clock source
+Content-Language: en-US
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+References: <20230414134812.16812-1-quic_devipriy@quicinc.com>
+ <20230414134812.16812-2-quic_devipriy@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230414134812.16812-2-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rename the dts after Reference Design Platform(RDP) to adopt
-standard naming convention.
+On 14/04/2023 15:48, Devi Priya wrote:
+> Remove bias_pll_ubi_nc_clk from the binding as it has been removed from
+> the Device Tree. Also added Bjorn Andersson to the maintainers list.
 
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- Changes since V9:
-	- Renamed the Board Device Tree Source to use the RDP numbers
+Was it really removed? Where?
 
- arch/arm64/boot/dts/qcom/Makefile                               | 2 +-
- .../boot/dts/qcom/{ipq9574-al02-c7.dts => ipq9574-rdp433.dts}   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
- rename arch/arm64/boot/dts/qcom/{ipq9574-al02-c7.dts => ipq9574-rdp433.dts} (97%)
+> 
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index e0e2def48470..f926e7e1aa7d 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -9,7 +9,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c2.dtb
--dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-al02-c7.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp433.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-asus-z00l.dtb
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-similarity index 97%
-rename from arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
-rename to arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 2c8430197ec0..2ce8e09e7565 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-- * IPQ9574 AL02-C7 board device tree source
-+ * IPQ9574 RDP433 board device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-  * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
--- 
-2.17.1
+
+Best regards,
+Krzysztof
 
