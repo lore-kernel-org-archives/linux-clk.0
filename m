@@ -2,128 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D83CC77B71
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 18:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0ADC77B72
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 18:13:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229786AbjDNSJM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Apr 2023 14:09:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
+        id S229479AbjDNSNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 14:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjDNSJL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 14:09:11 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B18D9EFA;
-        Fri, 14 Apr 2023 11:09:09 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33EEpId7025674;
-        Fri, 14 Apr 2023 17:31:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=fP0y3ivoleJMzMVSQbyNpJyi0x/okXy9OO/bGDnBZuo=;
- b=pYNXcPekDQ16mTq+D/7EAGIE8BRt1hg7PnruFL1Pbu7KTKrhWFgi0LDJByqJOe2MypuP
- Y3TImWgL9QKuioOjAGyDSRISML8y6fH0GgLl5oQQr/ki2hd52vG7UxiM0V7A56bFkVGM
- ujUVA1ofe1VPxOt8jQ/9ZMo2fSl5iezCNSprhy/5hUEUDxgm/SY6d/X0SP3J/CpfuCH8
- NWHY0j7/odt6qCxx/wM5BSiZycqeubNH0RqYpUEoOYezOViglCEtwLlVC1HdOdSK0kTM
- JUg9nGyz+0zM8KXp3mnsKvphpg9fB2fXbn6eovlgIIGoqmVylQGhVibuQWsZ/mFFBZ7j MA== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pxked32d8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Apr 2023 17:31:20 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33EHVJ2p028545
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 14 Apr 2023 17:31:19 GMT
-Received: from [10.216.10.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 14 Apr
- 2023 10:31:13 -0700
-Message-ID: <7abff83f-09ea-5b1b-cbb8-786cc97627d0@quicinc.com>
-Date:   Fri, 14 Apr 2023 23:01:03 +0530
+        with ESMTP id S229468AbjDNSNP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 14:13:15 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F0589005;
+        Fri, 14 Apr 2023 11:13:14 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id hg12so4632703pjb.2;
+        Fri, 14 Apr 2023 11:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681495993; x=1684087993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i64S1Gb6i6BXvs6qSii52zJ3ScYuWSR5RAeuO5Zmt1E=;
+        b=svfYttqfWSSUok6CpHujVXjjJvDgSsKJQ3NOi5dXibBi3pfs8SRbGvDnQwdLRSuGSw
+         Z3uG2oGsPlA6qQH+j+vfsQm+ggEK/rfgGByiDyqMKhspdtsPls2XqkM8//O4CrryA4cS
+         tMn+wVf/tF8+hii0o/qvUgNb3Gotp7vJx3T6JtWABlS98Zt8KLfQiI7J032xpCoXe9rv
+         KOyoJ7cG7T6FivwbX12+UAMuq/GcaFEI4u47QyE+MY7wP3moelorBBempP2iCw3Dx+/e
+         jd9Dl2r0vDJTdwo0fWhdXBjCVp/mbAUO7su8CscejVqfm776z8aF4BqkaciuaYLTdDtB
+         gl9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681495993; x=1684087993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i64S1Gb6i6BXvs6qSii52zJ3ScYuWSR5RAeuO5Zmt1E=;
+        b=hMDwOg8FoYCNnBQfYZ2I7xGAFpmsoZ6ZLFB8+s71c2uanj6VAedXc8D++DGOIx9f0n
+         c1YktRouJ0v4JWwocsCOzkH1VBevREmldrKBvSDmowJH+dm/Kbyq37xNMsuy/W0ALtmO
+         RT/piYqa9VlUI4I13TWg79zMM0K9+oHRFDPGo9XiNH8woiqYziJ1Re8P/5JygYQiU/pv
+         Zp7+5fMjYlGdJCcjKGRLaoW+31xPdw5jKQ9BbHE79RpR4+P1zc8daWfGIuB5gNCXnQnO
+         /DPAQYMWw0CFJg+p9KCECthqNpfN/DiQ63ZT7yrgMq8dHqznvxEfrTPCY+dJap/lzGDK
+         XDXg==
+X-Gm-Message-State: AAQBX9csje5WUeJcYVBJWeZZ4cgCKPJ2JV/7LvNaF8Y73tg7nKLCX358
+        t0ksopDODUp0gdDxWPKTveP5PlTbv9jeX/VpXZ0=
+X-Google-Smtp-Source: AKy350YU1CIR3iw6zpttN9gepz/ix/4ajKULqxnkjM9T/mEG6FVjNP/Uq5emblEduY1pRimowtbF3A==
+X-Received: by 2002:a17:903:2290:b0:1a2:afdd:8476 with SMTP id b16-20020a170903229000b001a2afdd8476mr4116249plh.2.1681495993419;
+        Fri, 14 Apr 2023 11:13:13 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.245.200])
+        by smtp.gmail.com with ESMTPSA id x11-20020a170902820b00b0019a593e45f1sm3309371pln.261.2023.04.14.11.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Apr 2023 11:13:13 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] clk: Add basic register clock controller
+Date:   Sat, 15 Apr 2023 02:12:58 +0800
+Message-Id: <20230414181302.986271-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH V1 1/4] dt-bindings: clock: qcom,ipq9574-gcc: Drop the
- Bias PLL ubi clock source
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <20230414134812.16812-1-quic_devipriy@quicinc.com>
- <20230414134812.16812-2-quic_devipriy@quicinc.com>
- <dc48d390-9c8b-d3b7-9c5e-6cbddb0e1306@linaro.org>
- <aca7b808-51ce-1921-2ee2-0e82cf19d960@quicinc.com>
- <7b4fe58c-9cf8-57ab-8cbc-c5ccf0b2a46d@linaro.org>
- <2c5bbe48-3007-a1d5-73b9-9d2132bff9d4@quicinc.com>
- <76237034-7871-c77f-1e32-c0a585d8df86@linaro.org>
-Content-Language: en-US
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <76237034-7871-c77f-1e32-c0a585d8df86@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QQV_QQ5WEzXOyGI-CmQyQ1dyJA7XHiKR
-X-Proofpoint-ORIG-GUID: QQV_QQ5WEzXOyGI-CmQyQ1dyJA7XHiKR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-14_10,2023-04-14_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 suspectscore=0
- adultscore=0 priorityscore=1501 clxscore=1015 mlxlogscore=669
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304140154
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+These clocks were provided in `include/linux/clk-provider.h`, but lacks DT
+bindings. Add a clock controller to avoid operation conflict on same
+register.
+
+*** BLURB HERE ***
+
+David Yang (2):
+  dt-bindings: clock: Add reg-clock-controller
+  clk: Add basic register clock controller
+
+ .../bindings/clock/reg-clock-controller.yaml  | 245 +++++++
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-reg.c                         | 638 ++++++++++++++++++
+ 3 files changed, 884 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/reg-clock-controller.yaml
+ create mode 100644 drivers/clk/clk-reg.c
 
 
-On 4/14/2023 10:41 PM, Krzysztof Kozlowski wrote:
-> On 14/04/2023 18:04, Devi Priya wrote:
->>
->>
->> On 4/14/2023 8:39 PM, Krzysztof Kozlowski wrote:
->>> On 14/04/2023 16:22, Devi Priya wrote:
->>>>
->>>>
->>>> On 4/14/2023 7:47 PM, Krzysztof Kozlowski wrote:
->>>>> On 14/04/2023 15:48, Devi Priya wrote:
->>>>>> Remove bias_pll_ubi_nc_clk from the binding as it has been removed from
->>>>>> the Device Tree. Also added Bjorn Andersson to the maintainers list.
->>>>>
->>>>> Was it really removed? Where?
->>>>>
->>>> It has been removed from the Device tree and binding in V11
->>>> https://lore.kernel.org/linux-arm-msm/20230404101622.5394-1-quic_devipriy@quicinc.com/
->>>
->>> I still see it in current next. Are you sure you refer to something
->>> already merged?
->>
->> This change was made in V11 and Currently V9 is merged in linux-next.
->> So, the delta changes between V9 & V12 is posted in this series.
->> The device tree change where the clock is removed is added part of this
->> incremental patch series and the binding is updated to reflect the same.
->> Apologies, if the confusion is because of "has been removed from device
->> tree" in the commit message.
-> 
-> Your commit indicated that removal from DTS happened. If it did not
-> happen, you need to come with proper reason (and fix the tense not to
-> confuse).
-Got it, will update the commit message.
+base-commit: 7a934f4bd7d6f9da84c8812da3ba42ee10f5778e
+-- 
+2.39.2
 
-Thanks,
-Devi Priya
-> 
-> Best regards,
-> Krzysztof
-> 
