@@ -2,144 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87669C77B6E
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 11:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 264B0C77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 11:26:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230257AbjDNLOd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Apr 2023 07:14:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50262 "EHLO
+        id S229930AbjDNL0Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 07:26:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230147AbjDNLOc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 07:14:32 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 315D276A7
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:14:31 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id e11so22851755lfc.10
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:14:31 -0700 (PDT)
+        with ESMTP id S229907AbjDNL0P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 07:26:15 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5555A86AD
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:26:12 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id x4so3036091lfr.8
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681470869; x=1684062869;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CCP7uzKaaXleul1h5NRBOZWggdFvVQLh2PRTfUPevlE=;
-        b=Gw3JIq4TwS0OyaLLlVhQvleKAT9sqOlR4KMCDgysvcwqABawxcrMqBBPsDvQs1EsV3
-         uRUJagqlukaa450ApAzeU/FHNh9j8unNCdRy1A8cos+8+xQkZQsvgs0zDcFnIUoYh0MK
-         L/WOUBDH8yWGQ07lwd5H7TTKB/FLjbbOpXIQ9Ueu4L41t7Tzj5UDMXVFLXE0NryeCGF3
-         P83Dqx0N5ukMFL0VnA2E9lebMqaHYxJCtRCkdKZF0ooEy6otekV+Vtnw+kO7dEnCW4Bl
-         CFyhzNsWvVogWqXdOQZZiHrPcDblxVLanih+UL3Lrn4RQe72uijpZPBQjI+vQN47TLau
-         /ERg==
+        d=linaro.org; s=google; t=1681471570; x=1684063570;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXayIhb48rpICvZhgV0WpLpWTGJfP5YGp0OUVXORCrU=;
+        b=B+aAH7iwOvmQOPM5kAGyXrKGDpG3EgfK7vClDXgy1uEk2I98f/mWfScR07a1scB4fz
+         NTjQ56u04nweoPFEM89XzKAkO3xZmFOcRFY0RbCaRTh2qSFhpId5RyZ/kmqSgNwJ0nNd
+         QWp2sVBBuQYQaPb/BK3eWNhyNGrL0t86GFMYbQRQV5qFTOA9PhrRyMq9lBj7ZQAzJ7el
+         NsGzuADabwE14EL52awSsYbyvUhMPCTuzucA4MH0vY/JKVdMdciB6hXkgRbEgyXPrXYs
+         WBJrjGmnRIF4TNgqSRpo1086F9agmwjywSRuBZzdMIaDDKy1nuzBVPsQk2jve81DJhk8
+         rONw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681470869; x=1684062869;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCP7uzKaaXleul1h5NRBOZWggdFvVQLh2PRTfUPevlE=;
-        b=f6hedZ68r7b3Hqo/szlnRIWDUxWpSZXNNLYJy+/heo6sQuYatZcs0y7UyxYpgmibKO
-         IW3uZ8sCcfK8B5QS5JoEWxvBr5OcjYkXbeyOSd3xXGITBsKTAm9ePB6lixzcd46euBiE
-         IkSL7i5T6Y48MyMeu/iEPGjnSghKkaGKVWScr08e9oegNKY3owpba+VW48594lyhgxxD
-         yGEqj+smbgrFifla7YHTXU8Y2KLTycVsRhvc0jPmcoHO/icI6tDpPkqMezQe7qvzExcK
-         N52lCLlYEkZIcgHxFFuMeFCdRBhtadvKZg8FpEulMRXqLyMvoeIS533cuJhsPz4nN3E9
-         a6Uw==
-X-Gm-Message-State: AAQBX9fcvbc1RP5wxzYMm02rrM7oeYF/npIkJGMFqM2K3VIty8LjRyqX
-        toqzvJ8GcDddO9Yqy5K0v5qURw==
-X-Google-Smtp-Source: AKy350ajyGff4BJxFlWFmId+REsisaKxDZG769Bylihlkj2zyBBIT3FFRpKGAq2lR2JQOi9b9OddGA==
-X-Received: by 2002:ac2:442c:0:b0:4e0:ff8e:bbfe with SMTP id w12-20020ac2442c000000b004e0ff8ebbfemr1673450lfl.12.1681470869249;
-        Fri, 14 Apr 2023 04:14:29 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1681471570; x=1684063570;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZXayIhb48rpICvZhgV0WpLpWTGJfP5YGp0OUVXORCrU=;
+        b=Vyc47egd5L5eDTTDgsYTe2Ovwb/CD7ZD2ahiXI7vUoe/Kr7XYq9mCszD1T/d3K5gk3
+         DS1vSv7hL2/gYm0od1x3muj8lSETM8rnRQpsksmFZMwUN9YTbaVun3Fy2OZ+WpV4zk13
+         AQIe2orTeKAealdzZiiFL+xi7q6fWuHt5Ul3ar1iY2DYHREWSDYIFzvC53Jznkr6a4Dm
+         umtqvd5LWsJVzrxvU/32ib0dSIC2nbQoyykf5STBPj32UmsR1Czjb9QH7izP7dQkapNy
+         W1mqjjJlvEZmqyNwT4g3Bd34jMHr6LX9y+AV9pXFa+Hc6BG8n5+E2tmBoqk6/KFQfcML
+         mGJg==
+X-Gm-Message-State: AAQBX9dvit8LD9qVYp12/ZJeb0HclWlWt8L+1i4jZzjLryIr7Q5eZxgH
+        AD3AnylT1odWcmPaXsBBFnBomA==
+X-Google-Smtp-Source: AKy350YCD/gqeoFDnTa2Hdfa7XhbQnXeWkA78wnWZoK8ZEzi0mDfNEObzPujJARrty7gF92OloRWSQ==
+X-Received: by 2002:ac2:5a4f:0:b0:4cb:4362:381d with SMTP id r15-20020ac25a4f000000b004cb4362381dmr2491545lfn.62.1681471570603;
+        Fri, 14 Apr 2023 04:26:10 -0700 (PDT)
 Received: from [192.168.1.101] (abyl123.neoplus.adsl.tpnet.pl. [83.9.31.123])
-        by smtp.gmail.com with ESMTPSA id b14-20020ac2562e000000b004b57bbaef87sm741584lff.224.2023.04.14.04.14.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Apr 2023 04:14:28 -0700 (PDT)
-Message-ID: <232e1687-7ad3-3cf9-1f0f-811e7d87b740@linaro.org>
-Date:   Fri, 14 Apr 2023 13:14:27 +0200
+        by smtp.gmail.com with ESMTPSA id f2-20020a19ae02000000b004ecb06acbb3sm738430lfc.281.2023.04.14.04.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Apr 2023 04:26:10 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v2 0/2] SM8350 VIDEOCC
+Date:   Fri, 14 Apr 2023 13:26:07 +0200
+Message-Id: <20230413-topic-lahaina_vidcc-v2-0-f721d507e555@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 2/2] clk: qcom: Introduce SM8350 VIDEOCC
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE84OWQC/32NWwrCMBBFt1LybaR5FNEv9yFFJmnaDISkTGpQS
+ vZu7AL8PPdyODvLjtBldut2Rq5gxhQbyFPHrIe4OI5TYyZ7qXotFN/SipYH8IARngUna7mxExi
+ jL8OgJWumgey4IYjWNze+QmjjSm7G95F6jI095i3R5ygX8Vv/R4rgPRdKz1cjJQxG3UM7KZ0TL
+ WystX4B1EoKpswAAAA=
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Taniya Das <tdas@codeaurora.org>
 Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230413-topic-lahaina_vidcc-v1-0-134f9b22a5b3@linaro.org>
- <20230413-topic-lahaina_vidcc-v1-2-134f9b22a5b3@linaro.org>
- <2f955dc3105570df0acc2695739183ed.sboyd@kernel.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <2f955dc3105570df0acc2695739183ed.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1681471569; l=1143;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=b1Z8B5GLQvfM6ewcQNkW9peR5LT/DSelr7WkGl08+Z0=;
+ b=76jbKqduayOAhCvGyK9OsQaZZi45ZFQ2hNbCxhFM+69mO3MOsGdnvnUZxZvpv9alD59wiz2tVLlt
+ 24W5MmekCF9GjBtxOpDEnBAyUBiHu0SjMYtWKN4qVMeF+JaFgpX2
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+v1 -> v2:
+- "){" -> ") {"
+- subsys_initcall -> module_platform_driver
+- constify lucid_5lpe_vco & .hw.init
+- devm_add_action_or_reset -> devm_pm_runtime_enable
 
+v1: https://lore.kernel.org/r/20230413-topic-lahaina_vidcc-v1-0-134f9b22a5b3@linaro.org
 
-On 13.04.2023 21:04, Stephen Boyd wrote:
-> Quoting Konrad Dybcio (2023-04-13 11:44:59)
->> diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc-sm8350.c
->> new file mode 100644
->> index 000000000000..186a5bd9e184
->> --- /dev/null
->> +++ b/drivers/clk/qcom/videocc-sm8350.c
->> @@ -0,0 +1,575 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2023, Linaro Limited
->> + */
->> +
+This serires brings support for SM8350 videocc and updates the
+related dt-bindings.
 
-[...]
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (2):
+      dt-bindings: clock: qcom,videocc: Add SM8350
+      clk: qcom: Introduce SM8350 VIDEOCC
 
->> +enum {
->> +       P_BI_TCXO,
->> +       P_BI_TCXO_AO,
->> +       P_SLEEP_CLK,
->> +       P_VIDEO_PLL0_OUT_MAIN,
->> +       P_VIDEO_PLL1_OUT_MAIN,
->> +};
->> +
->> +static struct pll_vco lucid_5lpe_vco[] = {
-> 
-> const
-> 
->> +       { 249600000, 1750000000, 0 },
->> +};
->> +
-[...]
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |  29 +-
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/videocc-sm8350.c                  | 557 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8350-videocc.h    |  35 ++
+ include/dt-bindings/reset/qcom,sm8350-videocc.h    |  18 +
+ 6 files changed, 648 insertions(+), 1 deletion(-)
+---
+base-commit: e3342532ecd39bbd9c2ab5b9001cec1589bc37e9
+change-id: 20230413-topic-lahaina_vidcc-bcdabb475542
 
->> +static struct clk_alpha_pll video_pll0 = {
->> +       .offset = 0x42c,
->> +       .vco_table = lucid_5lpe_vco,
->> +       .num_vco = ARRAY_SIZE(lucid_5lpe_vco),
->> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID],
->> +       .clkr = {
->> +               .hw.init = &(struct clk_init_data){
-> 
-> const
-Ack to both
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
-[...]
->> +
->> +static int video_cc_sm8350_probe(struct platform_device *pdev)
->> +{
->> +       struct regmap *regmap;
->> +       int ret;
->> +
->> +       pm_runtime_enable(&pdev->dev);
->> +
->> +       ret = devm_add_action_or_reset(&pdev->dev, video_cc_sm8350_pm_runtime_disable, &pdev->dev);
-> 
-> devm_pm_runtime_enable()?
-Right.
-
-Konrad
-> 
->> +       if (ret)
->> +               return ret;
->> +
