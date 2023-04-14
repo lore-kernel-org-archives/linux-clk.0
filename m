@@ -2,122 +2,222 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA76C77B6E
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 01:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0078C77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 01:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229567AbjDNBio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 21:38:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59326 "EHLO
+        id S229617AbjDNB7s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 21:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjDNBin (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 21:38:43 -0400
+        with ESMTP id S229601AbjDNB7s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 21:59:48 -0400
 Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9F52697;
-        Thu, 13 Apr 2023 18:38:39 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB6F3C30;
+        Thu, 13 Apr 2023 18:59:46 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 1D2778086;
-        Fri, 14 Apr 2023 09:38:27 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Apr
- 2023 09:38:26 +0800
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id F27E48022;
+        Fri, 14 Apr 2023 09:59:44 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Apr
+ 2023 09:59:45 +0800
 Received: from [192.168.125.131] (183.27.97.249) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Apr
- 2023 09:38:25 +0800
-Message-ID: <f020e55c-d4e4-dbb9-d658-7bef2b8bd94b@starfivetech.com>
-Date:   Fri, 14 Apr 2023 09:37:29 +0800
+ 2023 09:59:44 +0800
+Message-ID: <b41d8cf4-70aa-3b64-5254-46d92a188f63@starfivetech.com>
+Date:   Fri, 14 Apr 2023 09:58:47 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
-Subject: Re: [PATCH v4 07/10] clk: starfive: Add StarFive JH7110 Video-Output
- clock driver
+Subject: Re: [PATCH] clk: starfive: Avoid casting iomem pointers
 Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>,
-        "Emil Renner Berthing" <kernel@esmil.dk>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <patches@lists.linux.dev>,
+        Tommaso Merciai <tomm.merciai@gmail.com>,
+        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
         Hal Feng <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230411135558.44282-1-xingyu.wu@starfivetech.com>
- <20230411135558.44282-8-xingyu.wu@starfivetech.com>
- <683cbe934d1df9436e003466d2a419ef.sboyd@kernel.org>
- <463ee23c-f617-bed0-27a8-56c6fb40d092@starfivetech.com>
- <cd4a11ae65e186799145410969d40421.sboyd@kernel.org>
- <4ed4d0e6-8da5-7eef-8713-44854b8d4a9b@starfivetech.com>
- <d70886f6ee13e70845a72354fe9a2b7d.sboyd@kernel.org>
+        Conor Dooley <conor.dooley@microchip.com>
+References: <20230413205528.4044216-1-sboyd@kernel.org>
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <d70886f6ee13e70845a72354fe9a2b7d.sboyd@kernel.org>
+In-Reply-To: <20230413205528.4044216-1-sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [183.27.97.249]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
  (172.16.6.61)
 X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/4/14 2:38, Stephen Boyd wrote:
-> Quoting Xingyu Wu (2023-04-13 06:31:12)
->> On 2023/4/13 12:04, Stephen Boyd wrote:
->> > diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> > index 5ec210644e1d..851b93d0f371 100644
->> > --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> > +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> > @@ -11,6 +11,9 @@
->> >  #include <linux/init.h>
->> >  #include <linux/io.h>
->> >  #include <linux/platform_device.h>
->> > +#include <linux/slab.h>
->> > +
->> > +#include <soc/starfive/reset-starfive-jh71x0.h>
->> >  
->> >  #include <dt-bindings/clock/starfive,jh7110-crg.h>
->> >  
->> > @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_adev)
->> >       struct auxiliary_device *adev = _adev;
->> >  
->> >       auxiliary_device_delete(adev);
->> > +     auxiliary_device_uninit(adev);
->> >  }
->> >  
->> >  static void jh7110_reset_adev_release(struct device *dev)
->> >  {
->> >       struct auxiliary_device *adev = to_auxiliary_dev(dev);
->> > +     struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
->> >  
->> > -     auxiliary_device_uninit(adev);
->> > +     kfree(rdev);
->> >  }
->> >  
->> >  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
->> >                                    const char *adev_name,
->> >                                    u32 adev_id)
->> >  {
->> > +     struct jh71x0_reset_adev *rdev;
->> >       struct auxiliary_device *adev;
->> >       int ret;
->> >  
->> > -     adev = devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
->> > -     if (!adev)
->> > +     rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
->> 
->> Can there use 'devm_kzalloc'? Are you not using this because the struct is public and clock driver
->> and reset driver both use it. But I think the both clock driver and reset driver are the same
->> device and can use 'devm_kzalloc'.
+On 2023/4/14 4:55, Stephen Boyd wrote:
+> Let's use a wrapper struct for the auxiliary_device made in
+> jh7110_reset_controller_register() so that we can stop casting iomem
+> pointers. The casts trip up tools like sparse, and make for some awkward
+> casts that are largely unnecessary. While we're here, change the
+> allocation from devm and actually free the auxiliary_device memory in
+> the release function. This avoids any use after free problems where the
+> parent device driver is unbound from the device but the
+> auxiliuary_device is still in use accessing devm freed memory.
 > 
-> No. The release function for the auxiliary_device is supposed to free
-> the memory. It shouldn't be tied to the lifetime of anything like the
-> lifetime of the clk driver being bound.
+> Cc: Tommaso Merciai <tomm.merciai@gmail.com>
+> Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> Cc: Hal Feng <hal.feng@starfivetech.com>
+> Cc: Conor Dooley <conor.dooley@microchip.com>
+> Cc: Xingyu Wu <xingyu.wu@starfivetech.com>
+> Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock driver")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+> 
+> I can take this via clk tree.
+> 
+>  drivers/clk/starfive/clk-starfive-jh7110-sys.c | 15 ++++++++++++---
+>  drivers/reset/starfive/reset-starfive-jh7110.c |  9 ++++++---
+>  include/soc/starfive/reset-starfive-jh71x0.h   | 17 +++++++++++++++++
+>  3 files changed, 35 insertions(+), 6 deletions(-)
+>  create mode 100644 include/soc/starfive/reset-starfive-jh71x0.h
+> 
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> index 5ec210644e1d..851b93d0f371 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> @@ -11,6 +11,9 @@
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <soc/starfive/reset-starfive-jh71x0.h>
+>  
+>  #include <dt-bindings/clock/starfive,jh7110-crg.h>
+>  
+> @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_adev)
+>  	struct auxiliary_device *adev = _adev;
+>  
+>  	auxiliary_device_delete(adev);
+> +	auxiliary_device_uninit(adev);
+>  }
+>  
+>  static void jh7110_reset_adev_release(struct device *dev)
+>  {
+>  	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +	struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
+>  
+> -	auxiliary_device_uninit(adev);
+> +	kfree(rdev);
+>  }
+>  
+>  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+>  				     const char *adev_name,
+>  				     u32 adev_id)
+>  {
+> +	struct jh71x0_reset_adev *rdev;
+>  	struct auxiliary_device *adev;
+>  	int ret;
+>  
+> -	adev = devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
+> -	if (!adev)
+> +	rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
+> +	if (!rdev)
+>  		return -ENOMEM;
+>  
+> +	rdev->base = priv->base;
+> +
+> +	adev = &rdev->adev;
+>  	adev->name = adev_name;
+>  	adev->dev.parent = priv->dev;
+>  	adev->dev.release = jh7110_reset_adev_release;
+> diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
+> index c1b3a490d951..2d26ae95c8cc 100644
+> --- a/drivers/reset/starfive/reset-starfive-jh7110.c
+> +++ b/drivers/reset/starfive/reset-starfive-jh7110.c
+> @@ -7,6 +7,8 @@
+>  
+>  #include <linux/auxiliary_bus.h>
+>  
+> +#include <soc/starfive/reset-starfive-jh71x0.h>
+> +
+>  #include "reset-starfive-jh71x0.h"
+>  
+>  #include <dt-bindings/reset/starfive,jh7110-crg.h>
+> @@ -33,14 +35,15 @@ static int jh7110_reset_probe(struct auxiliary_device *adev,
+>  			      const struct auxiliary_device_id *id)
+>  {
+>  	struct jh7110_reset_info *info = (struct jh7110_reset_info *)(id->driver_data);
+> -	void __iomem **base = (void __iomem **)dev_get_drvdata(adev->dev.parent);
 
-Get it. Thanks.
+Thank you for doing that. BTW, if drop the dev_get_drvdata(), the dev_set_drvdata() should also be dropped.
+
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+index a2799fe8a234..62954eb7b50a 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-aon.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+@@ -83,8 +83,6 @@ static int jh7110_aoncrg_probe(struct platform_device *pdev)
+        if (IS_ERR(priv->base))
+                return PTR_ERR(priv->base);
+
+-       dev_set_drvdata(priv->dev, (void *)(&priv->base));
+-
+        for (idx = 0; idx < JH7110_AONCLK_END; idx++) {
+                u32 max = jh7110_aonclk_data[idx].max;
+                struct clk_parent_data parents[4] = {};
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+index 5ec210644e1d..0cda33fd47f8 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+@@ -393,8 +393,6 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+        if (IS_ERR(priv->base))
+                return PTR_ERR(priv->base);
+
+-       dev_set_drvdata(priv->dev, (void *)(&priv->base));
+-
+        /*
+         * These PLL clocks are not actually fixed factor clocks and can be
+         * controlled by the syscon registers of JH7110. They will be dropped
+
+
+> +	struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
+> +	void __iomem *base = rdev->base;
+>  
+>  	if (!info || !base)
+>  		return -ENODEV;
+>  
+>  	return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_node,
+> -					      *base + info->assert_offset,
+> -					      *base + info->status_offset,
+> +					      base + info->assert_offset,
+> +					      base + info->status_offset,
+>  					      NULL,
+>  					      info->nr_resets,
+>  					      NULL);
+> diff --git a/include/soc/starfive/reset-starfive-jh71x0.h b/include/soc/starfive/reset-starfive-jh71x0.h
+> new file mode 100644
+> index 000000000000..47b486ececc5
+> --- /dev/null
+> +++ b/include/soc/starfive/reset-starfive-jh71x0.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __SOC_STARFIVE_RESET_JH71X0_H
+> +#define __SOC_STARFIVE_RESET_JH71X0_H
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/compiler_types.h>
+> +#include <linux/container_of.h>
+> +
+> +struct jh71x0_reset_adev {
+> +	void __iomem *base;
+> +	struct auxiliary_device adev;
+> +};
+> +
+> +#define to_jh71x0_reset_adev(_adev) \
+> +	container_of((_adev), struct jh71x0_reset_adev, adev)
+> +
+> +#endif
+> 
+> base-commit: 601e5d464d535d655917c2cfb29c394d367fb676
 
 Best regards,
 Xingyu Wu
