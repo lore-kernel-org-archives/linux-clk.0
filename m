@@ -2,246 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895C1C77B71
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 17:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D83CC77B71
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 18:09:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbjDNRsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Apr 2023 13:48:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38242 "EHLO
+        id S229786AbjDNSJM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 14:09:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjDNRsU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 13:48:20 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E504AD3C
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 10:48:08 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id d7so35500013lfj.3
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 10:48:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681494486; x=1684086486;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q8j1jr5BkH9v0KQPH+g+TSZh3RFTw5oSiPfNJDMkbUI=;
-        b=eFVLbYGIciacDsJBsokCs+zDUEpRfZe/mbufuCA7rjpl8voW1F8fW+mDemas8NMbQB
-         U+2rhs7A/DGfQBE+5bCXo9w4Vw3mKbqiSDg/qRSx/mZug/YPNnD/f0y3nrqYQJeKlT0R
-         xnm8Ipc4zKrkWklZQeU6uIORyrZvw/hnq33b9gNN6dBUcq3bu/Z/fgt7hWFVhug2PYvH
-         pSoAE+gz7Gky2f5sev3FQb32VcUO/8BmEcuzEAGMDCZCLe9nsvaNyW1jHuJo8T1ABF3K
-         P5HMB5LD/D83HIzJY+7wSBCeDtS9pC54TsViwQSnjELHdeMy0zHq6oc8dfdTrp/DL2xr
-         dR1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681494486; x=1684086486;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q8j1jr5BkH9v0KQPH+g+TSZh3RFTw5oSiPfNJDMkbUI=;
-        b=ebwU5a3qrGQ5FLU6enR+GNVNdICbhi7rpyxM2U7+/W27HBe3bBW8EfJSXa6fiUHrrO
-         j8zheJpAXdqWquXBpE78UdztSmUJg0fYJkJfsLK8M6kxz2MG6h8CpyiuFdzOnifTO5EU
-         xJ0NDG8v7y9kHdLPhImezNil/X8ujLh53txFc55H71OeLob6OytE+kFG/0Jc6fd8bYQY
-         jRE+PNSRIIN0JLiCvSU5+t/5WWqiFlMuSeieA9dCQ6JfpZg0xIz1J5Q/7iIdSbMqyG8N
-         6189uCZb/h3iMyBuRYJP3IieaVn8ZQsNTXkjyzA6sba7uYWLytHMEVul79u28v+sUb6h
-         I28g==
-X-Gm-Message-State: AAQBX9eOniHlkzW+7EtQcjQkDz3JiBMvWjNS9teq1ZXPRV5/gPz5kDF9
-        3HnGE8ogCTQkfxzFdmOGhBGSHw==
-X-Google-Smtp-Source: AKy350Y8qOhfBv0DEfMa0AOWbSWbMI2Avxvvgkp83SOAZx+cTkGCMDntuL3v/WIQVj/hLPyMQFsvAw==
-X-Received: by 2002:a19:ae17:0:b0:4ec:5607:9055 with SMTP id f23-20020a19ae17000000b004ec56079055mr1962569lfc.31.1681494486467;
-        Fri, 14 Apr 2023 10:48:06 -0700 (PDT)
-Received: from [192.168.1.101] (abyk99.neoplus.adsl.tpnet.pl. [83.9.30.99])
-        by smtp.gmail.com with ESMTPSA id r13-20020ac252ad000000b004d5a6dcb94fsm901536lfm.33.2023.04.14.10.48.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Apr 2023 10:48:06 -0700 (PDT)
-Message-ID: <34797b11-b654-a9a4-ac26-5287ca582a82@linaro.org>
-Date:   Fri, 14 Apr 2023 19:48:03 +0200
+        with ESMTP id S229479AbjDNSJL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 14:09:11 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B18D9EFA;
+        Fri, 14 Apr 2023 11:09:09 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33EEpId7025674;
+        Fri, 14 Apr 2023 17:31:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=fP0y3ivoleJMzMVSQbyNpJyi0x/okXy9OO/bGDnBZuo=;
+ b=pYNXcPekDQ16mTq+D/7EAGIE8BRt1hg7PnruFL1Pbu7KTKrhWFgi0LDJByqJOe2MypuP
+ Y3TImWgL9QKuioOjAGyDSRISML8y6fH0GgLl5oQQr/ki2hd52vG7UxiM0V7A56bFkVGM
+ ujUVA1ofe1VPxOt8jQ/9ZMo2fSl5iezCNSprhy/5hUEUDxgm/SY6d/X0SP3J/CpfuCH8
+ NWHY0j7/odt6qCxx/wM5BSiZycqeubNH0RqYpUEoOYezOViglCEtwLlVC1HdOdSK0kTM
+ JUg9nGyz+0zM8KXp3mnsKvphpg9fB2fXbn6eovlgIIGoqmVylQGhVibuQWsZ/mFFBZ7j MA== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pxked32d8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Apr 2023 17:31:20 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33EHVJ2p028545
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 14 Apr 2023 17:31:19 GMT
+Received: from [10.216.10.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 14 Apr
+ 2023 10:31:13 -0700
+Message-ID: <7abff83f-09ea-5b1b-cbb8-786cc97627d0@quicinc.com>
+Date:   Fri, 14 Apr 2023 23:01:03 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH v2 2/2] clk: qcom: Introduce SM8350 VIDEOCC
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH V1 1/4] dt-bindings: clock: qcom,ipq9574-gcc: Drop the
+ Bias PLL ubi clock source
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <20230414134812.16812-1-quic_devipriy@quicinc.com>
+ <20230414134812.16812-2-quic_devipriy@quicinc.com>
+ <dc48d390-9c8b-d3b7-9c5e-6cbddb0e1306@linaro.org>
+ <aca7b808-51ce-1921-2ee2-0e82cf19d960@quicinc.com>
+ <7b4fe58c-9cf8-57ab-8cbc-c5ccf0b2a46d@linaro.org>
+ <2c5bbe48-3007-a1d5-73b9-9d2132bff9d4@quicinc.com>
+ <76237034-7871-c77f-1e32-c0a585d8df86@linaro.org>
 Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230413-topic-lahaina_vidcc-v2-0-f721d507e555@linaro.org>
- <20230413-topic-lahaina_vidcc-v2-2-f721d507e555@linaro.org>
- <CAA8EJpoxvjWrvJENkFSimfU=CG7C3jZ=ToZep1tnJbtPzCcS9Q@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CAA8EJpoxvjWrvJENkFSimfU=CG7C3jZ=ToZep1tnJbtPzCcS9Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <76237034-7871-c77f-1e32-c0a585d8df86@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QQV_QQ5WEzXOyGI-CmQyQ1dyJA7XHiKR
+X-Proofpoint-ORIG-GUID: QQV_QQ5WEzXOyGI-CmQyQ1dyJA7XHiKR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-14_10,2023-04-14_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 spamscore=0 malwarescore=0 suspectscore=0
+ adultscore=0 priorityscore=1501 clxscore=1015 mlxlogscore=669
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304140154
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 14.04.2023 18:31, Dmitry Baryshkov wrote:
-> On Fri, 14 Apr 2023 at 14:26, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+On 4/14/2023 10:41 PM, Krzysztof Kozlowski wrote:
+> On 14/04/2023 18:04, Devi Priya wrote:
 >>
->> Add support for the Video Clock Controller found on the SM8350 SoC.
 >>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
-
-[...]
-
->> +static struct clk_rcg2 video_cc_ahb_clk_src = {
->> +       .cmd_rcgr = 0xbd4,
->> +       .mnd_width = 0,
->> +       .hid_width = 5,
->> +       .parent_map = video_cc_parent_map_0,
->> +       .freq_tbl = ftbl_video_cc_ahb_clk_src,
->> +       .clkr.hw.init = &(const struct clk_init_data) {
->> +               .name = "video_cc_ahb_clk_src",
->> +               .parent_data = video_cc_parent_data_0,
->> +               .num_parents = ARRAY_SIZE(video_cc_parent_data_0),
->> +               .flags = CLK_SET_RATE_PARENT,
->> +               .ops = &clk_rcg2_shared_ops,
->> +       },
->> +};
-> 
-> Do we need this clock at all? We don't have the child
-> video_cc_ahb_clk, so potentially CCF can try disabling or modifying
-> this clock.
-Hm.. I see a few things:
-
-1. downstream kona has it, upstream does not
-2. it's shared so we never actually hard-shut it off..
-2a. ..but it'd be good to ensure it's on when it's ready..
-2b. ..but we never do anyway..
-2c. ..but should we even? doesn't Venus govern it internally?
-
-
-> 
->> +
->> +static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
->> +       F(720000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
->> +       F(1014000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
->> +       F(1098000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
->> +       F(1332000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
->> +       { }
->> +};
->> +
-
-[...]
-
->> +static struct clk_branch video_cc_mvs1_clk = {
->> +       .halt_reg = 0xdb4,
->> +       .halt_check = BRANCH_HALT_VOTED,
-> 
-> As a note, sm8250 has BRANCH_HALT here.
-No, it does on the div2 clk, and so do we:
-[...]
-
->> +};
->> +
->> +static struct clk_branch video_cc_mvs1_div2_clk = {
->> +       .halt_reg = 0xdf4,
->> +       .halt_check = BRANCH_HALT_VOTED,
->> +       .hwcg_reg = 0xdf4,
-
-[...]
-
->> +
->> +static const struct qcom_reset_map video_cc_sm8350_resets[] = {
->> +       [CVP_VIDEO_CC_INTERFACE_BCR] = { 0xe54 },
->> +       [CVP_VIDEO_CC_MVS0_BCR] = { 0xd14 },
-> 
-> Would it be better to use common VIDEO_CC prefix here (IOW:
-> VIDEO_CC_CVP_MVS0_BCR, VIDEO_CC_CVP_INTERFACE_BCR), etc.
-My best guess would be that the ones prefixed with CVP_
-are actual INTF/INSTANCEn(CORE) reset lines whereas
-the ones containing _CLK_ reset their clock sub-branches.
-
-> 
->> +       [VIDEO_CC_MVS0C_CLK_ARES] = { 0xc34, 2 },
->> +       [CVP_VIDEO_CC_MVS0C_BCR] = { 0xbf4 },
->> +       [CVP_VIDEO_CC_MVS1_BCR] = { 0xd94 },
->> +       [VIDEO_CC_MVS1C_CLK_ARES] = { 0xcd4, 2 },
->> +       [CVP_VIDEO_CC_MVS1C_BCR] = { 0xc94 },
->> +};
-
-[...]
-
->> +       ret = pm_runtime_resume_and_get(&pdev->dev);
->> +       if (ret)
->> +               return ret;
->> +
->> +       regmap = qcom_cc_map(pdev, &video_cc_sm8350_desc);
->> +       if (IS_ERR(regmap)) {
->> +               pm_runtime_put(&pdev->dev);
->> +               return PTR_ERR(regmap);
->> +       };
-> 
-> Extra semicolon
-Ooeh!
-
-> 
->> +
->> +       clk_lucid_pll_configure(&video_pll0, regmap, &video_pll0_config);
->> +       clk_lucid_pll_configure(&video_pll1, regmap, &video_pll1_config);
->> +
->> +       /*
->> +        * Keep clocks always enabled:
->> +        *      video_cc_ahb_clk
->> +        *      video_cc_xo_clk
->> +        */
->> +       regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
->> +       regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
->> +
->> +       ret = qcom_cc_really_probe(pdev, &video_cc_sm8350_desc, regmap);
->> +       pm_runtime_put(&pdev->dev);
->> +
->> +       return ret;
->> +}
->> +
->> +static const struct dev_pm_ops video_cc_sm8350_pm_ops = {
->> +       SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-> 
-> The driver doesn't use pm_clk at all. Are these PM_OPS correct?
-I'm unsure. I see the pm state changing in debugfs when the clocks are
-(not) consumed. But let's continue our discussion about using pm_clks
-for AHB.
-
-> 
->> +};
->> +
->> +static const struct of_device_id video_cc_sm8350_match_table[] = {
->> +       { .compatible = "qcom,sm8350-videocc" },
->> +       { }
->> +};
->> +MODULE_DEVICE_TABLE(of, video_cc_sm8350_match_table);
->> +
->> +static struct platform_driver video_cc_sm8350_driver = {
->> +       .probe = video_cc_sm8350_probe,
->> +       .driver = {
->> +               .name = "sm8350-videocc",
->> +               .of_match_table = video_cc_sm8350_match_table,
->> +               .pm = &video_cc_sm8350_pm_ops,
->> +       },
->> +};
->> +module_platform_driver(video_cc_sm8350_driver);
->> +
->> +MODULE_DESCRIPTION("QTI SM8350 VIDEOCC Driver");
->> +MODULE_LICENSE("GPL");
+>> On 4/14/2023 8:39 PM, Krzysztof Kozlowski wrote:
+>>> On 14/04/2023 16:22, Devi Priya wrote:
+>>>>
+>>>>
+>>>> On 4/14/2023 7:47 PM, Krzysztof Kozlowski wrote:
+>>>>> On 14/04/2023 15:48, Devi Priya wrote:
+>>>>>> Remove bias_pll_ubi_nc_clk from the binding as it has been removed from
+>>>>>> the Device Tree. Also added Bjorn Andersson to the maintainers list.
+>>>>>
+>>>>> Was it really removed? Where?
+>>>>>
+>>>> It has been removed from the Device tree and binding in V11
+>>>> https://lore.kernel.org/linux-arm-msm/20230404101622.5394-1-quic_devipriy@quicinc.com/
+>>>
+>>> I still see it in current next. Are you sure you refer to something
+>>> already merged?
 >>
->> --
->> 2.40.0
->>
+>> This change was made in V11 and Currently V9 is merged in linux-next.
+>> So, the delta changes between V9 & V12 is posted in this series.
+>> The device tree change where the clock is removed is added part of this
+>> incremental patch series and the binding is updated to reflect the same.
+>> Apologies, if the confusion is because of "has been removed from device
+>> tree" in the commit message.
 > 
-> Generic note: the register layout follows closely sm8250. However the
-> existing differences probably do not warrant merging them.
-No, I don't think merging any designs that are farther away
-than 8150 and 8155 or 8992 and 8994 etc. is a good idea..
+> Your commit indicated that removal from DTS happened. If it did not
+> happen, you need to come with proper reason (and fix the tense not to
+> confuse).
+Got it, will update the commit message.
 
-I don't want to ever look at something like dispcc-sm8[123]50.c
-again!
-
-Konrad
+Thanks,
+Devi Priya
+> 
+> Best regards,
+> Krzysztof
 > 
