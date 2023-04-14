@@ -2,52 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA17EC77B77
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 03:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5B6C77B78
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 03:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229689AbjDNDdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 23:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46414 "EHLO
+        id S229866AbjDNDdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 23:33:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbjDNDdd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 23:33:33 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A94449F
-        for <linux-clk@vger.kernel.org>; Thu, 13 Apr 2023 20:33:31 -0700 (PDT)
+        with ESMTP id S229810AbjDNDdf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 23:33:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31504ED8;
+        Thu, 13 Apr 2023 20:33:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 12FA26439D
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 03:33:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94185C433A4;
-        Fri, 14 Apr 2023 03:33:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 73344643A8;
+        Fri, 14 Apr 2023 03:33:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9449BC433D2;
+        Fri, 14 Apr 2023 03:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681443210;
-        bh=/KauP1C1n330Ut1f8l+ctrkpGjV7zdVgzmBEQkISa94=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h0EW3VDlATqkq4dkNIXwOzGMfcW0SOeRIkAPyd2KXtJvFmqopQlemo/sM9kum6tEV
-         c8vCdc7bsVqh83rEfQWnr5th27psCD+czQIDHOyF8hJSL+HwYE+x0geAmgBtEkaGbs
-         UCivMhGcJAq8E4HB/F1a+ftVjuv++iJJZGUfdvcrXIwfuOk00AjCLvi06U+BCWYiEA
-         oVoCI4nUCsWqe8Z7n5p3vo7HPhUOmas6ztUI7nDWFQReo00a5bOI6ncLV7uYwhoXOk
-         dCPvaxq4Z1oDw06MytG7/4z/hJaRjO+R9YTcpq7Un2pd7rzveZmZOKTxRkupdkJOkv
-         NsJiKeiup2m0Q==
+        s=k20201202; t=1681443211;
+        bh=zQ1T5RTb+RrMY2JnDGYIFwYF15LUKVpBvczjEj5kFYg=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=MUhPXB/w7hkEalJgISFC9D1IcD/w818lEiYisFqIesDygBD5AsJ+OmHyQMvWGVynb
+         LqdGHaLEEvBiX7jwbH8N5Lx9lehI72Czr6SW4pm7T/J4vCq6r9oHVnPsGbwSzYr6cM
+         36Dga9p+tArC+01KxM+gd0gJ6dwEqbGuocyz2hbWtgijMtaE8uYstpZDi76le4+Mwz
+         ecnxbTIeXkNTzch7NAjPQ3pH2MkDWPtWtHmJOrr0AamYF3C1yEcPX+IUFKi2y5x1ly
+         KrMM5gxtuN7kQ8jijpvu4gMWEUPitNnNv+GMKcOW1muuu9FL4q3+Ye/+3koqy4O+yt
+         0pObnh8bHOsPg==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Lars-Peter Clausen <lars@metafoo.de>
-Cc:     Max Filippov <jcmvbkbc@gmail.com>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        linux-clk@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: (subset) [PATCH 01/11] clk: axi-clkgen: Use managed `of_clk_add_hw_provider()`
-Date:   Thu, 13 Apr 2023 20:37:05 -0700
-Message-Id: <168144342194.2459486.898850057286455356.b4-ty@kernel.org>
+To:     swboyd@chromium.org, konrad.dybcio@somainline.org,
+        quic_plai@quicinc.com, quic_rohkumar@quicinc.com,
+        linux-arm-msm@vger.kernel.org, broonie@kernel.org,
+        quic_visr@quicinc.com, agross@kernel.org, sboyd@kernel.org,
+        Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        robh+dt@kernel.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 0/3] Add resets for ADSP based audio clock controller driver
+Date:   Thu, 13 Apr 2023 20:37:06 -0700
+Message-Id: <168144342195.2459486.11052723951925664521.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230410014502.27929-1-lars@metafoo.de>
-References: <20230410014502.27929-1-lars@metafoo.de>
+In-Reply-To: <20230407092255.119690-1-quic_mohs@quicinc.com>
+References: <20230407092255.119690-1-quic_mohs@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -55,18 +53,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 9 Apr 2023 18:44:52 -0700, Lars-Peter Clausen wrote:
-> Use the managed `devm_of_clk_add_hw_provider()` instead of
-> `of_clk_add_hw_provider()`. This makes sure the provider gets automatically
-> removed on unbind and allows to completely eliminate the drivers `remove()`
-> callback.
+On Fri, 7 Apr 2023 14:52:52 +0530, Mohammad Rafi Shaik wrote:
+> Add resets and remove qdsp6ss clock controller for audioreach based platforms.
 > 
+> Changes since v10:
+>     -- drop #define macro for max_register.
+>     -- Add max_register value for top_cc register.
+> Changes since v9:
+>     -- Drop "clk: qcom: lpassaudiocc-sc7280: Modify qcom_cc_probe" patch.
+>     -- Update Fixes tag in Add the required gdsc's in lpass_cc_sc7280_desc patch.
+>     -- Add the max_register value in Skip qdsp6ss clock registration patch.
+> Changes since v8:
+>     -- Add the required gdsc's in lpass_cc_sc7280_desc structure.
+>     -- Modify qcom_cc_probe to qcom_cc_probe_by_index.
+>     -- Update the commit message for v8,4/5 patch, which is not required for new logic.
+>     -- Drop "Add binding headers for lpasscc" patch.
+>     -- Drop "Skip lpass_aon_cc_pll config" patch.
+> Changes since v7:
+>     -- Modiy AHB clock probing method in "Merge lpasscc into lpass_aon patch".
+>     -- Fix Typo errors in "Merge lpasscc into lpass_aon patch".
+>     -- Update commit message in "Merge lpasscc into lpass_aon patch"
+> Changes since v6:
+>     -- Update commit message in "Merge lpasscc into lpass_aon patch" patch.
+>     -- Drop "Skip lpasscorecc registration" patch.
+>     -- Add comment in the code in "Skip lpass_aon_cc_pll config" patch.
+> Changes since v5:
+>     -- Fix compilation issue.
+> Changes since v4:
+>     -- Update Fixes tag in Merge lpasscc into lpass_aon patch.
+>     -- Revert removal of clk_regmap structure in Merge lpasscc into lpass_aon patch.
+> Changes since v3:
+>     -- Remove duplicate clock resets patch.
+>     -- Add binding headers for q6 clocks.
+>     -- Create new patch for merging lpasscc q6 clocks into lpass_aon.
+>     -- Create new patches for handling conflicts of ADSP and bypass solution.
+> Changes since v2:
+>     -- Revert removing qdsp6ss clock control.
+>     -- Add Conditional check for qdsp6ss clock registration.
+> Changes since v1:
+>     -- Update commit message.
+>     -- Remove qdsp6ss clock control.
 > 
+> [...]
 
 Applied, thanks!
 
-[07/11] clk: qcom: rpm: Use managed `of_clk_add_hw_provider()`
-        commit: f1f67db9d64ffb85af04dbbf59e3f213fbf86add
+[1/3] dt-bindings: clock: qcom,sc7280-lpasscc: Add qcom,adsp-pil-mode property
+      commit: 5c3a7dcce10028c5839864ed475ae7930b03c1e8
+[2/3] clk: qcom: lpasscc-sc7280: Skip qdsp6ss clock registration
+      commit: 4fc1c2d9a2b7a394f3b873aae5e03bffd8b5cd31
+[3/3] clk: qcom: lpassaudiocc-sc7280: Add required gdsc power domain clks in lpass_cc_sc7280_desc
+      commit: aad09fc7c4a522892eb64a79627b17a3869936cb
 
 Best regards,
 -- 
