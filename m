@@ -2,68 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A66C77B6E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Apr 2023 23:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBADC77B61
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 00:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230110AbjDMXpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 19:45:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37208 "EHLO
+        id S229618AbjDNAzh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 20:55:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39432 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbjDMXpP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 19:45:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 084DB35B1;
-        Thu, 13 Apr 2023 16:45:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 908C66428A;
-        Thu, 13 Apr 2023 23:45:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B2FD6C433EF;
-        Thu, 13 Apr 2023 23:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681429513;
-        bh=SjndJN9h7+r/dIQeKYTVRWL3UjFPyhDljk21Mjk1fJU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=H06UHAt2aiJxr3CrSYJkI4P0N9TdQXMeWBeKS9BRpzbE0IPcj2gzb/dU1HDI7vDMZ
-         Fot8aMVKLYxKDPx10F3hWl5V+XGSHiTGI34iBMjRLiyNN2YqdeXCRmq/rYZr0ebL//
-         3Jte9z0UD4Ve7SWzu6l9HVsdASdoLzubkpvzHwdvWyJsWGOYJ4d+0wnIa9Tc2d06x6
-         ySdze3mFYn5SihSafF1H0INP+jP8TYbt7qbXnSZAEaY3iWo2y4nEImcz6n8jUaMTFN
-         iZzBDwxNQBkCY7Hd+gRkEzrkRm8rhYxrJg+yqrQ5ONTdRv2pof3hkLFFrpyxhMUZzk
-         RXbHmZqYcYElQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9E937E5244F;
-        Thu, 13 Apr 2023 23:45:13 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.3-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230413224047.4086269-1-sboyd@kernel.org>
-References: <20230413224047.4086269-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230413224047.4086269-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 632e04739c8f45c2d9ca4d4c5bd18d80c2ac9296
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e44f45fee8d5520c6a72e308054fc627e8e38619
-Message-Id: <168142951364.2357.1414765178289555260.pr-tracker-bot@kernel.org>
-Date:   Thu, 13 Apr 2023 23:45:13 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        with ESMTP id S229516AbjDNAzg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 20:55:36 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3329826B8;
+        Thu, 13 Apr 2023 17:55:35 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id lh8so3890749plb.1;
+        Thu, 13 Apr 2023 17:55:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681433734; x=1684025734;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NpHU9YxApA1ZTwJM58qtSmQ3DAXg++Ijjf/3LEHCZOE=;
+        b=SYv+xqmhUKPO/BqQmTHclmV8WG2ugMN6WHnZ5NGCWvDGaeFH3U+WeKkIo7x7qmomjv
+         Ej5ZKlARiwjXkH6o8k+/5DGj+yToPFeewRgzDjcXdCWpjBJlWIp+twZlDDJt7R0ZSS6F
+         Hun4pA0jUZtE7NUNg/gqSAdFUigLWrxKlPT39cG1bqLzIKlUWQ+c/PZvk1/ilPAKJtqF
+         4VIx+4Hjum2TgZCjDCgZtr2LjmWH+h6/queEirWL6SFvEIjjeFDT3gNtQRyvivyZxtjo
+         bDh/92nZRtIyFLxrVaFH5/3t1aio8kAfNStIEPu//s4up4//zb2HOkQDMiJYlxSFZtgx
+         BFGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681433734; x=1684025734;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpHU9YxApA1ZTwJM58qtSmQ3DAXg++Ijjf/3LEHCZOE=;
+        b=Ae+09IwAjjRGCt0dCTlK0QvFvclB09SVq9v249GHcLt6X3z30zm7qvmoCNAOapQIOu
+         hG5dWjg43W0/Ym5cy6fkM3+wl33/QwhydgAKzdyHHfLDcYUOGRlrolycpkULJ4FyJTC2
+         uzoHWGdhFuw+AowWBfAka2nFx2Zb4Fptvk05SDC2KNThNlnhj0JLZqDq/Hu9hjXI4Uft
+         z204nG3eaDB58hKSyzdmyS21a9MpWT+cLPrykOy7UCbF4MZvU93sh7Z9BjGNiZCumTBR
+         N6TmJe3eGQwqXv9roeLA9lWx2+bs2M3cjTSrHSG8wkZUs2oJtdz8kUbW0U/UBRHVPyPZ
+         8D6g==
+X-Gm-Message-State: AAQBX9dcOg3/nLr7Cd+ZwyZfzYlNknG+Fvc9oTAmk7Pjs8fZn+xblQRR
+        RDQ4cGchrulPrLFad+w3vKZkdgPmOJQ=
+X-Google-Smtp-Source: AKy350b7ieJJ6BjqKMsXT60jZuiYxBbQoHhNssVmZ6GX2/YBWtkZ4XWybUefT/7qMUJw/a3FDaW0mA==
+X-Received: by 2002:a17:90a:fa4f:b0:247:4c7:4d53 with SMTP id dt15-20020a17090afa4f00b0024704c74d53mr3543640pjb.36.1681433734244;
+        Thu, 13 Apr 2023 17:55:34 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id t4-20020a1709028c8400b001a653a32173sm418179plo.29.2023.04.13.17.55.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Apr 2023 17:55:33 -0700 (PDT)
+Message-ID: <41807e8d-b081-6c91-3fc8-f273770ea493@gmail.com>
+Date:   Fri, 14 Apr 2023 08:55:29 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH v7 04/12] dt-bindings: reset: nuvoton: Document ma35d1
+ reset control
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230412053824.106-1-ychuang570808@gmail.com>
+ <20230412053824.106-5-ychuang570808@gmail.com>
+ <874a1e5c-f82e-68d7-3617-042deb928071@linaro.org>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <874a1e5c-f82e-68d7-3617-042deb928071@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Thu, 13 Apr 2023 15:40:47 -0700:
+Dear Krzysztof,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e44f45fee8d5520c6a72e308054fc627e8e38619
+On 2023/4/14 上午 12:58, Krzysztof Kozlowski wrote:
+> On 12/04/2023 07:38, Jacky Huang wrote:
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> Add the dt-bindings header for Nuvoton ma35d1, that gets shared
+>> between the reset controller and reset references in the dts.
+>> Add documentation to describe nuvoton ma35d1 reset driver.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+>
+> This is an automated instruction, just in case, because many review tags
+> are being ignored. If you do not know the process, here is a short
+> explanation:
+>
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions, under or above your Signed-off-by tag. Tools like b4 can help
+> here. However, there's no need to repost patches *only* to add the tags.
+> The upstream maintainer will do that for acks received on the version
+> they apply.
+>
+> https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
+>
+> Best regards,
+> Krzysztof
+>
 
-Thank you!
+Thank you for your explanation. I was not aware of the rules for adding 
+tags, and it was my mistake.
+I thought that it was necessary for the reviewer to proactively add the 
+"reviewed-by" tag to the patch
+before I could attach the tag. I am glad to collect the past records and 
+add the tags and will update
+in the next version.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
+Best regards,
+Jacky Huang
+
