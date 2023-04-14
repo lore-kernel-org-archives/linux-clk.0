@@ -2,222 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0078C77B6E
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 01:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC3CC77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 02:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbjDNB7s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 21:59:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36352 "EHLO
+        id S229484AbjDNCCq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 22:02:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbjDNB7s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 21:59:48 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB6F3C30;
-        Thu, 13 Apr 2023 18:59:46 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id F27E48022;
-        Fri, 14 Apr 2023 09:59:44 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Apr
- 2023 09:59:45 +0800
-Received: from [192.168.125.131] (183.27.97.249) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Apr
- 2023 09:59:44 +0800
-Message-ID: <b41d8cf4-70aa-3b64-5254-46d92a188f63@starfivetech.com>
-Date:   Fri, 14 Apr 2023 09:58:47 +0800
+        with ESMTP id S229450AbjDNCCp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 22:02:45 -0400
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 45A933C15;
+        Thu, 13 Apr 2023 19:02:44 -0700 (PDT)
+Received: from u201911681$hust.edu.cn ( [10.12.190.96] ) by
+ ajax-webmail-app1 (Coremail) ; Fri, 14 Apr 2023 10:02:19 +0800 (GMT+08:00)
+X-Originating-IP: [10.12.190.96]
+Date:   Fri, 14 Apr 2023 10:02:19 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   =?UTF-8?B?5ZGo5biI5b63?= <u201911681@hust.edu.cn>
+To:     "stephen boyd" <sboyd@kernel.org>
+Cc:     "abel vesa" <abelvesa@kernel.org>, "bai ping" <ping.bai@nxp.com>,
+        "fabio estevam" <festevam@gmail.com>,
+        "michael turquette" <mturquette@baylibre.com>,
+        "nxp linux team" <linux-imx@nxp.com>,
+        "peng fan" <peng.fan@nxp.com>,
+        "pengutronix kernel team" <kernel@pengutronix.de>,
+        "sascha hauer" <s.hauer@pengutronix.de>,
+        "shawn guo" <shawnguo@kernel.org>,
+        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "hao luo" <m202171776@hust.edu.cn>
+Subject: Re: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in
+ 'imx8mm_clocks_probe'
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20220802(cbd923c5)
+ Copyright (c) 2002-2023 www.mailtech.cn hust
+In-Reply-To: <25b06794ffb595229019640e10f256fd.sboyd@kernel.org>
+References: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+ <25b06794ffb595229019640e10f256fd.sboyd@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] clk: starfive: Avoid casting iomem pointers
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <patches@lists.linux.dev>,
-        Tommaso Merciai <tomm.merciai@gmail.com>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Conor Dooley <conor.dooley@microchip.com>
-References: <20230413205528.4044216-1-sboyd@kernel.org>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <20230413205528.4044216-1-sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.97.249]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+Message-ID: <5e18370b.3c8a8.1877d7fc98a.Coremail.u201911681@hust.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: FgEQrAAHVwgrtDhk3X2oAg--.38998W
+X-CM-SenderInfo: zxsqimqrrwmio6kx23oohg3hdfq/1tbiAQkBAV7Em5BU+wABs3
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/4/14 4:55, Stephen Boyd wrote:
-> Let's use a wrapper struct for the auxiliary_device made in
-> jh7110_reset_controller_register() so that we can stop casting iomem
-> pointers. The casts trip up tools like sparse, and make for some awkward
-> casts that are largely unnecessary. While we're here, change the
-> allocation from devm and actually free the auxiliary_device memory in
-> the release function. This avoids any use after free problems where the
-> parent device driver is unbound from the device but the
-> auxiliuary_device is still in use accessing devm freed memory.
-> 
-> Cc: Tommaso Merciai <tomm.merciai@gmail.com>
-> Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> Cc: Hal Feng <hal.feng@starfivetech.com>
-> Cc: Conor Dooley <conor.dooley@microchip.com>
-> Cc: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock driver")
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
-> I can take this via clk tree.
-> 
->  drivers/clk/starfive/clk-starfive-jh7110-sys.c | 15 ++++++++++++---
->  drivers/reset/starfive/reset-starfive-jh7110.c |  9 ++++++---
->  include/soc/starfive/reset-starfive-jh71x0.h   | 17 +++++++++++++++++
->  3 files changed, 35 insertions(+), 6 deletions(-)
->  create mode 100644 include/soc/starfive/reset-starfive-jh71x0.h
-> 
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> index 5ec210644e1d..851b93d0f371 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> @@ -11,6 +11,9 @@
->  #include <linux/init.h>
->  #include <linux/io.h>
->  #include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/starfive/reset-starfive-jh71x0.h>
->  
->  #include <dt-bindings/clock/starfive,jh7110-crg.h>
->  
-> @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_adev)
->  	struct auxiliary_device *adev = _adev;
->  
->  	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
->  }
->  
->  static void jh7110_reset_adev_release(struct device *dev)
->  {
->  	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +	struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
->  
-> -	auxiliary_device_uninit(adev);
-> +	kfree(rdev);
->  }
->  
->  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
->  				     const char *adev_name,
->  				     u32 adev_id)
->  {
-> +	struct jh71x0_reset_adev *rdev;
->  	struct auxiliary_device *adev;
->  	int ret;
->  
-> -	adev = devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
-> -	if (!adev)
-> +	rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
-> +	if (!rdev)
->  		return -ENOMEM;
->  
-> +	rdev->base = priv->base;
-> +
-> +	adev = &rdev->adev;
->  	adev->name = adev_name;
->  	adev->dev.parent = priv->dev;
->  	adev->dev.release = jh7110_reset_adev_release;
-> diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
-> index c1b3a490d951..2d26ae95c8cc 100644
-> --- a/drivers/reset/starfive/reset-starfive-jh7110.c
-> +++ b/drivers/reset/starfive/reset-starfive-jh7110.c
-> @@ -7,6 +7,8 @@
->  
->  #include <linux/auxiliary_bus.h>
->  
-> +#include <soc/starfive/reset-starfive-jh71x0.h>
-> +
->  #include "reset-starfive-jh71x0.h"
->  
->  #include <dt-bindings/reset/starfive,jh7110-crg.h>
-> @@ -33,14 +35,15 @@ static int jh7110_reset_probe(struct auxiliary_device *adev,
->  			      const struct auxiliary_device_id *id)
->  {
->  	struct jh7110_reset_info *info = (struct jh7110_reset_info *)(id->driver_data);
-> -	void __iomem **base = (void __iomem **)dev_get_drvdata(adev->dev.parent);
-
-Thank you for doing that. BTW, if drop the dev_get_drvdata(), the dev_set_drvdata() should also be dropped.
-
-diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-index a2799fe8a234..62954eb7b50a 100644
---- a/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-@@ -83,8 +83,6 @@ static int jh7110_aoncrg_probe(struct platform_device *pdev)
-        if (IS_ERR(priv->base))
-                return PTR_ERR(priv->base);
-
--       dev_set_drvdata(priv->dev, (void *)(&priv->base));
--
-        for (idx = 0; idx < JH7110_AONCLK_END; idx++) {
-                u32 max = jh7110_aonclk_data[idx].max;
-                struct clk_parent_data parents[4] = {};
-diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-index 5ec210644e1d..0cda33fd47f8 100644
---- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-@@ -393,8 +393,6 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
-        if (IS_ERR(priv->base))
-                return PTR_ERR(priv->base);
-
--       dev_set_drvdata(priv->dev, (void *)(&priv->base));
--
-        /*
-         * These PLL clocks are not actually fixed factor clocks and can be
-         * controlled by the syscon registers of JH7110. They will be dropped
-
-
-> +	struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
-> +	void __iomem *base = rdev->base;
->  
->  	if (!info || !base)
->  		return -ENODEV;
->  
->  	return reset_starfive_jh71x0_register(&adev->dev, adev->dev.parent->of_node,
-> -					      *base + info->assert_offset,
-> -					      *base + info->status_offset,
-> +					      base + info->assert_offset,
-> +					      base + info->status_offset,
->  					      NULL,
->  					      info->nr_resets,
->  					      NULL);
-> diff --git a/include/soc/starfive/reset-starfive-jh71x0.h b/include/soc/starfive/reset-starfive-jh71x0.h
-> new file mode 100644
-> index 000000000000..47b486ececc5
-> --- /dev/null
-> +++ b/include/soc/starfive/reset-starfive-jh71x0.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __SOC_STARFIVE_RESET_JH71X0_H
-> +#define __SOC_STARFIVE_RESET_JH71X0_H
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/compiler_types.h>
-> +#include <linux/container_of.h>
-> +
-> +struct jh71x0_reset_adev {
-> +	void __iomem *base;
-> +	struct auxiliary_device adev;
-> +};
-> +
-> +#define to_jh71x0_reset_adev(_adev) \
-> +	container_of((_adev), struct jh71x0_reset_adev, adev)
-> +
-> +#endif
-> 
-> base-commit: 601e5d464d535d655917c2cfb29c394d367fb676
-
-Best regards,
-Xingyu Wu
+CgoKPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCj4g5Y+R5Lu25Lq6OiAiU3RlcGhlbiBCb3lkIiA8
+c2JveWRAa2VybmVsLm9yZz4KPiDlj5HpgIHml7bpl7Q6IDIwMjMtMDQtMTQgMDM6MDY6NTkgKOaY
+n+acn+S6lCkKPiDmlLbku7bkuro6ICJBYmVsIFZlc2EiIDxhYmVsdmVzYUBrZXJuZWwub3JnPiwg
+IkJhaSBQaW5nIiA8cGluZy5iYWlAbnhwLmNvbT4sICJGYWJpbyBFc3RldmFtIiA8ZmVzdGV2YW1A
+Z21haWwuY29tPiwgIk1pY2hhZWwgVHVycXVldHRlIiA8bXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb20+
+LCAiTlhQIExpbnV4IFRlYW0iIDxsaW51eC1pbXhAbnhwLmNvbT4sICJQZW5nIEZhbiIgPHBlbmcu
+ZmFuQG54cC5jb20+LCAiUGVuZ3V0cm9uaXggS2VybmVsIFRlYW0iIDxrZXJuZWxAcGVuZ3V0cm9u
+aXguZGU+LCAiU2FzY2hhIEhhdWVyIiA8cy5oYXVlckBwZW5ndXRyb25peC5kZT4sICJTaGF3biBH
+dW8iIDxzaGF3bmd1b0BrZXJuZWwub3JnPiwgIlpob3UgU2hpZGUiIDx1MjAxOTExNjgxQGh1c3Qu
+ZWR1LmNuPgo+IOaKhOmAgTogaHVzdC1vcy1rZXJuZWwtcGF0Y2hlc0Bnb29nbGVncm91cHMuY29t
+LCAiWmhvdSBTaGlkZSIgPHUyMDE5MTE2ODFAaHVzdC5lZHUuY24+LCBsaW51eC1jbGtAdmdlci5r
+ZXJuZWwub3JnLCBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcsIGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmcsICJIYW8gTHVvIiA8bTIwMjE3MTc3NkBodXN0LmVkdS5jbj4K
+PiDkuLvpopg6IFJlOiBbUEFUQ0hdIGNsazogaW14OiBjbGstaW14OG1tOiBmaXggbWVtb3J5IGxl
+YWsgaXNzdWUgaW4gJ2lteDhtbV9jbG9ja3NfcHJvYmUnCj4gCj4gUXVvdGluZyBaaG91IFNoaWRl
+ICgyMDIzLTA0LTEyIDIwOjI0OjM5KQo+ID4gVGhlIGZ1bmN0aW9uIGlteDhtbV9jbG9ja3NfcHJv
+YmUoKSBoYXMgdHdvIG1haW4gaXNzdWVzOgo+ID4gLSBUaGUgb2ZfaW9tYXAoKSBmdW5jdGlvbiBt
+YXkgY2F1c2UgYSBtZW1vcnkgbGVhay4KPiA+IC0gTWVtb3J5IGFsbG9jYXRlZCBmb3IgJ2Nsa19o
+d19kYXRhJyBtYXkgbm90IGJlIGZyZWVkIHByb3Blcmx5Cj4gPiBpbiBzb21lIHBhdGhzLgo+ID4g
+Cj4gPiBUbyBmaXggdGhlc2UgaXNzdWVzLCB0aGlzIGNvbW1pdCByZXBsYWNlcyB0aGUgdXNlIG9m
+IG9mX2lvbWFwKCkKPiA+IHdpdGggZGV2bV9vZl9pb21hcCgpIGFuZCByZXBsYWNlcyBremFsbG9j
+KCkgd2l0aCBkZXZtX2t6YWxsb2MoKS4KPiA+IFRoaXMgZW5zdXJlcyB0aGF0IGFsbCBtZW1vcnkg
+aXMgcHJvcGVybHkgbWFuYWdlZCBhbmQgYXV0b21hdGljYWxseQo+ID4gZnJlZWQgd2hlbiB0aGUg
+ZGV2aWNlIGlzIHJlbW92ZWQuCj4gPiAKPiA+IEluIGFkZGl0aW9uLCB3aGVuIGRldm1fb2ZfaW9t
+YXAoKSBhbGxvY2F0ZXMgbWVtb3J5IHdpdGggYW4gZXJyb3IsCj4gPiBpdCB3aWxsIGZpcnN0IGp1
+bXAgdG8gbGFiZWwgInVucmVnaXN0ZXJfaHdzIiBhbmQKPiA+IHRoZW4gcmV0dXJuIFBUUl8gRVJS
+KGJhc2UpLgo+ID4gCj4gPiBGaXhlczogOWM3MWY5ZWEzNWQ3ICgiY2xrOiBpbXg6IGlteDhtbTog
+U3dpdGNoIHRvIGNsa19odyBiYXNlZCBBUEkiKQo+ID4gRml4ZXM6IGJhNTYyNWMzZTI3MiAoImNs
+azogaW14OiBBZGQgY2xvY2sgZHJpdmVyIHN1cHBvcnQgZm9yIGlteDhtbSIpCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBaaG91IFNoaWRlIDx1MjAxOTExNjgxQGh1c3QuZWR1LmNuPgo+ID4gLS0tCj4gPiBU
+aGUgaXNzdWUgaXMgZGlzY292ZXJlZCBieSBzdGF0aWMgYW5hbHlzaXMsIGFuZCB0aGUgcGF0Y2gg
+aXMgbm90IHRlc3RlZCB5ZXQuCj4gCj4gQW5kIHlvdSdyZSBub3QgY29vcmRpbmF0aW5nIHdpdGgg
+ZWFjaCBvdGhlcj8KV2hhdCBkbyB5b3UgbWVhbiBieSAiY29vcmRpbmF0aW5nIHdpdGggZWFjaCBv
+dGhlciI/CgpyZWdhcmRzLApaaG91IFNoaWRl
