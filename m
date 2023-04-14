@@ -2,63 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF794C77B6F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 11:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3631DC77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 11:07:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230266AbjDNLHC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230378AbjDNLHC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 14 Apr 2023 07:07:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230299AbjDNLG4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 07:06:56 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE4C85FEC
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:06:45 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id u12so5168231lfu.5
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:06:45 -0700 (PDT)
+        with ESMTP id S230385AbjDNLG7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 07:06:59 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF4F57698
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:06:46 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id d7so33968970lfj.3
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 04:06:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681470404; x=1684062404;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+pbVMYUFkp/wWpVPBgYNzrX3UCSwtdckmQwLwtFjCGg=;
-        b=Ecs0U6Fl0zwn2WiDyoyDh684jJKFZ+b9Z9kwZ/Y5S1MyDes1UYONXRjwIZDahTP0Mr
-         EY/JvXuPfibFAiKulbDs/AeLzBmh7Ql+T1Tr+bWkVkIvEiLVkNYWPOII7nMWmbKK79DM
-         XDmhkmHTaaa7rh9Z2HzVITeWeu7hJ8SXC48KT67Qk09uw2LgAK/cR4LeeRN4zlCaGl5Z
-         I+Rg4kTsxmZgISi4dddmFIeJYVipg4tOLON7FfjDhtmZu1B79d1Z79icFLXPrn/tHnTY
-         YpSxmg1JY6aPYca28GJZJKODf7n91rEBePiehC93k3zy4q7xEhUJgJENaLtxsQFIXaiW
-         ABBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681470404; x=1684062404;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1681470405; x=1684062405;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+pbVMYUFkp/wWpVPBgYNzrX3UCSwtdckmQwLwtFjCGg=;
-        b=QCn+tpoOA5BOuSEgSoutC1eseJJhQmeE/qlAmUHDwM3+N5zXNYg786LKGZ+AONVvTT
-         jR/azulW7CDGfLBjMmqkK4Z/Ingx6IopF6tTGCxdwfYB+gOtJ4TaIBIAYR2H2lQcg+A/
-         q6W5ZM8CnGepProzdT2lRP3+fVhVi+UVIS29IjqQqV6S0VV8BI6a5vWE9CmCWUs8KI70
-         +CC4TvcD0tYZO8unNqBfffy2YXSfq9ys6dIzXg6jwuDWYVIIJNFNgHAR80yjrvvZAsr5
-         VpUCGtmnbb9K0CbNqG8uxS4JmvKlKrlnIMGezAJMc9I6EbdNzfHSrTpSPpLey+NjegvP
-         AEvQ==
-X-Gm-Message-State: AAQBX9eL7zlM91gl62tH4TohB1npMA0ImYy6OHrkMqnSBGwsBCPUOB+F
-        7KkXeVnwymAeSPjP37hvm/R9V0X0ij5P/xA/W84=
-X-Google-Smtp-Source: AKy350YmEO0YJUXjQplRF1p2roVwVla0URGrh5PSaNMg7df5LsTT6qI1HTe2XSbdb+O5u95JFZzKeQ==
-X-Received: by 2002:ac2:46ce:0:b0:4d7:807:4eaa with SMTP id p14-20020ac246ce000000b004d708074eaamr1780082lfo.43.1681470403880;
-        Fri, 14 Apr 2023 04:06:43 -0700 (PDT)
+        bh=JMYMl2ifsB/W/YSsZX4ho7CAb5MXEt6JddjCfUBoXWc=;
+        b=I5dMM8CmLImhWIReAg4whN6HRPHrrIZUgjO8DTM2z6QGvFLOZpUvi90CvfubIAjCLw
+         MA1GJCryG1ELTxPW728bHrXAiCIs3lPYpEjmozxlFnrwJWQXc35rLUu12eUG5WVZMthR
+         gcjtvDdWcJ7C1w6MQzNioTbgTnIZ8q4LRC9S6fLb8I7ga7I0qyuVuwmHFHvgJsPuyC4M
+         G+L7DZ2K36NDL4ojD6mRaQt0P7rE2Iw8gYfI7/G9vXHVN6PV9Gx7izgULsxswuwV3aAr
+         PCYdrjGY/kjbaGsODQaTlFhxP8Z441aPeLGZIJSW4xvwjl+/H3M8uodjDC/w9+qon8Cb
+         JJwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681470405; x=1684062405;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JMYMl2ifsB/W/YSsZX4ho7CAb5MXEt6JddjCfUBoXWc=;
+        b=B6TpD2kG8D5HkO+6fahGrBeVK4fbqRrSS3TgwHM0RPpb1tFB32reBMPlF3FECMvmdt
+         nPw0rDXo3unN+m0k9dwpaEIOxBzxqp1dOLbKaJg0J7W+jleJ8mBFXd5LZEA3f+uju9GJ
+         VG6aD89u9zzSkA1at+50v+y6x18ywA8of4XmSLv6pYRbWwogIysucZpDxCKorzOfDaY7
+         boc25+PpuR+QKu+2AioN9Y4p1Soecq2cSd5kGZCPmUot+WESe8Htd+xQt7qh08sNu1FJ
+         +nRSwg0Tf39tBRurB3LkZPt4SJhzgA3fbUG5fEmDM/DKjoO1VXMaG7UH73WdG92v/RSH
+         2+dw==
+X-Gm-Message-State: AAQBX9fDFroUZBnBJ8GKhH+rly67fBxTDx1hc5KaURmh12WTr7fH1vt0
+        UDSL5tgRyMJxmiGpBktZi1n0C9O/7su79B67RQY=
+X-Google-Smtp-Source: AKy350aX9Ui41IrGKcRJRxVt3BVFPljIGXNdhMEomIKPucGsbJtU9Mdph41NKbhuDFgPIC+0sUo6KQ==
+X-Received: by 2002:ac2:5186:0:b0:4ec:89d3:a8a4 with SMTP id u6-20020ac25186000000b004ec89d3a8a4mr1938022lfi.31.1681470404997;
+        Fri, 14 Apr 2023 04:06:44 -0700 (PDT)
 Received: from [192.168.1.101] (abyl123.neoplus.adsl.tpnet.pl. [83.9.31.123])
-        by smtp.gmail.com with ESMTPSA id j18-20020ac24552000000b004eae672e96bsm751398lfm.255.2023.04.14.04.06.42
+        by smtp.gmail.com with ESMTPSA id j18-20020ac24552000000b004eae672e96bsm751398lfm.255.2023.04.14.04.06.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Apr 2023 04:06:43 -0700 (PDT)
+        Fri, 14 Apr 2023 04:06:44 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [PATCH v2 0/2] QCM2290 dispcc fixups
-Date:   Fri, 14 Apr 2023 13:06:34 +0200
-Message-Id: <20230412-topic-qcm_dispcc-v2-0-bce7dd512fe4@linaro.org>
+Date:   Fri, 14 Apr 2023 13:06:35 +0200
+Subject: [PATCH v2 1/2] clk: qcom: dispcc-qcm2290: Fix BI_TCXO_AO handling
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALozOWQC/32NWw6CMBAAr0L22zWl4gO+vIchZlsW2ARbbJFoC
- He3cgA/Z5LJLBA5CEeosgUCzxLFuwR6l4HtyXWM0iQGrfRBFbnGyY9i8Wkf90biaC22xcmahol
- NqSBlhiKjCeRsn0L3GoYkx8CtvLfPrU7cS5x8+GzbOf/ZP4c5R4Wm1eWlpPORuLgO4ij4vQ8d1
- Ou6fgFfVVdQxgAAAA==
+Message-Id: <20230412-topic-qcm_dispcc-v2-1-bce7dd512fe4@linaro.org>
+References: <20230412-topic-qcm_dispcc-v2-0-bce7dd512fe4@linaro.org>
+In-Reply-To: <20230412-topic-qcm_dispcc-v2-0-bce7dd512fe4@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -69,41 +68,60 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-kernel@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1681470402; l=851;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1681470402; l=1442;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=UDEB64Xz5IE9VTGP1A7X45x+eMP2+g5GQeAWrjLQ9yE=;
- b=oq7Xp8Mp5CyZKf2wzpqCcAfJXAw6g+8os24YM0RZ/hVDvtOL+oPBmphIm840NRT3vwjSL73+c1sX
- 7bhWrgb4AIStU+kW3Rh0A1O0u+ZVLbLref/InbfTMe9J/6m0bSsx
+ bh=73vWeRsxULxsTVXt8fy3JbmdlkHXYRh2zqlvDKixePU=;
+ b=klqeNgs4fXDoPiNelL6kgiOMXIkheqGeXB3qXqFzW9T7u7aojyCS3BnOA/+58IShkSe6Ug/wsKAR
+ dVQM6J9nAyADbHTyClq3Fh1cEFfZvFKKo6i7FqOBuMkJHB1QRAwL
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-v1 -> v2:
-- Drop the merged "remove inexistent dsi1phy clk"
-- Reword the commit messages to hopefully make them clearer
+BI_TCXO_AO (.fw_name = "bi_tcxo_ao") was previously made to reuse the
+same parent enum entry as BI_TCXO (.fw_name = "bi_tcxo") in parent_map_2.
 
-Rebased on qcom/for-next (see base-commit) for ease of merging
+Resolve it by introducing its own entry in the parent enum and
+correctly assigning it in disp_cc_parent_map_2[].
 
-v1: https://lore.kernel.org/r/20230412-topic-qcm_dispcc-v1-0-bf2989a75ae4@linaro.org
-
-I noticed some very msm-downstream-y bugs in the QCM2290 dispcc..
-Let's fix them up..
-
+Fixes: cc517ea3333f ("clk: qcom: Add display clock controller driver for QCM2290")
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
-Konrad Dybcio (2):
-      clk: qcom: dispcc-qcm2290: Fix BI_TCXO_AO handling
-      clk: qcom: dispcc-qcm2290: Fix GPLL0_OUT_DIV handling
+ drivers/clk/qcom/dispcc-qcm2290.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- drivers/clk/qcom/dispcc-qcm2290.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
----
-base-commit: 8358703a007eacc48b007284f29c0df2b694b513
-change-id: 20230412-topic-qcm_dispcc-f46cbdeaeb90
+diff --git a/drivers/clk/qcom/dispcc-qcm2290.c b/drivers/clk/qcom/dispcc-qcm2290.c
+index e9cfe41c0442..ee62aca4e5bb 100644
+--- a/drivers/clk/qcom/dispcc-qcm2290.c
++++ b/drivers/clk/qcom/dispcc-qcm2290.c
+@@ -24,6 +24,7 @@
+ 
+ enum {
+ 	P_BI_TCXO,
++	P_BI_TCXO_AO,
+ 	P_DISP_CC_PLL0_OUT_MAIN,
+ 	P_DSI0_PHY_PLL_OUT_BYTECLK,
+ 	P_DSI0_PHY_PLL_OUT_DSICLK,
+@@ -82,7 +83,7 @@ static const struct clk_parent_data disp_cc_parent_data_1[] = {
+ };
+ 
+ static const struct parent_map disp_cc_parent_map_2[] = {
+-	{ P_BI_TCXO, 0 },
++	{ P_BI_TCXO_AO, 0 },
+ 	{ P_GPLL0_OUT_MAIN, 4 },
+ };
+ 
+@@ -151,7 +152,7 @@ static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
+ };
+ 
+ static const struct freq_tbl ftbl_disp_cc_mdss_ahb_clk_src[] = {
+-	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(19200000, P_BI_TCXO_AO, 1, 0, 0),
+ 	F(37500000, P_GPLL0_OUT_MAIN, 8, 0, 0),
+ 	F(75000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
+ 	{ }
 
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+2.40.0
 
