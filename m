@@ -2,98 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FF8C77B71
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 16:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192B5C77B71
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 17:11:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbjDNQpd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Apr 2023 12:45:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50026 "EHLO
+        id S230309AbjDNRLT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 13:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbjDNQpc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 12:45:32 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08A39ED5
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 09:45:27 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id o11so543220ybk.11
-        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 09:45:27 -0700 (PDT)
+        with ESMTP id S230287AbjDNRLS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 13:11:18 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F4BEE63
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 10:11:16 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-50506111a6eso2581865a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Apr 2023 10:11:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681490727; x=1684082727;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dGC6d8pHkx4LIPUvsw9NY8Blv0Cd/e0UOketkjdE2UI=;
-        b=BZcE8fedbi18rtgZPHpt1A5gtRhqA1KWFJW0hZztZLJnmp7/8+45rKQ8SqCQRnkSMX
-         OrhW5n8u/jdnVn6kHOg+p4p17zWCP4T1eWwqc/VLUhKHmpPHlbpui+FEKLvL3hr0NJDA
-         wJktVnSc0iQgEYc0uf5XaRHWJHYflUEfAAtnJDVHEjc4tbIPkewCWJOyNlFKJCMjN1xd
-         UskxIRr2rqYcXu0wE89gsLVcVbkAyPWlCnK+Cae2exfEwEJRrBmXm8hY5VEw8hjcDGp3
-         ltnc8RMjfFapmakZhiYxo/6vYPZoDxmTCTxGouXEvJxxGK5P2ggqZeH3usKly73d5kUf
-         WjzA==
+        d=linaro.org; s=google; t=1681492275; x=1684084275;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WWFKzv+6OmPpo0mp+ZpJhFgaz9KaqvwS0otuVBFZkt4=;
+        b=zD/gD0jBGi43o9/Ge5kQCvMRScKUzFjkx5DaAbv/qtx0EJwZcJv2CoslRQDqd02H+y
+         md1jyufYPCllkhwCyDmoo0CVeh58e28zdDxN3wSnCy4MWOoyIhraFoYPXDTqREkpyI7N
+         m/Ha9wvdSPGfS4O24o9Xt0FXKp4Pa4k81XftT642qAajltTUdZRatCK5garx8jXT3WfM
+         1yS2jLg5m8kgM3QRF5uydUGagY5uIvqyob9d+bk1Ynq5DdSWZ3B8e7Y3SRMWysP+C6Ek
+         WdhGn+Umaoye7LWFQdNtIniRqS3MKgp8m/bJOIcI7J6L4+H4Lhp5B6bhonQfdbRP/5tQ
+         8M4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681490727; x=1684082727;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dGC6d8pHkx4LIPUvsw9NY8Blv0Cd/e0UOketkjdE2UI=;
-        b=OLf/b9KrmxrTg5gxGSzrYqJMHogdDr5Ofm+zvEEyZqNwKz2M6tv0uZemLjACFxPW8U
-         NKZD1RwlLRsVXs8ucu5UxeqkgLGbXSA1h1P3+XDnPylwxPuST2GdqBZrqB+AzaVE3tW/
-         PPsaIcoeRH4UsL7Hbg/INDJslYzzCRAoSirFjrvvVESt6Xfl1qBVcTy6c5a/yXrNA+s5
-         rb4tSZSrQ290bAVy/QV01Ai/3wgpLOlOJUywEdnukRa6cL4eOSZ9ZW2X5FCJmw25dfIW
-         /X3ZtEg571dtcPaDeX/RzYdlyNo8Sn3u7EUksDoSaS1dssM/xEd39LSzaG4Qy0KCtccv
-         Mrzw==
-X-Gm-Message-State: AAQBX9d+4W8isyOfMxKF2S0kLWm3TBscDmSWzqXJTZ06XxDq51EfZfic
-        R/mMEzMmaM+Ovuxlbz4E4P0I5zJXRwQgJ3hgUUODPQ==
-X-Google-Smtp-Source: AKy350boKXfRN0EHF9rp1Ah6iMumgNGg0ee80ixDS188j6sNu0vGjqXXrOcozUq0QKMO2Qx0WTIft4lniHatCuhAROE=
-X-Received: by 2002:a5b:647:0:b0:b8f:5474:2f33 with SMTP id
- o7-20020a5b0647000000b00b8f54742f33mr4712273ybq.5.1681490727101; Fri, 14 Apr
- 2023 09:45:27 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1681492275; x=1684084275;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WWFKzv+6OmPpo0mp+ZpJhFgaz9KaqvwS0otuVBFZkt4=;
+        b=SWRuhZN7FCg8RrnNdxv3/JBwq+d6y5JRV9IgD9hn4BkBeIZQg43LshGZMYAkHXmfXQ
+         JQTgT5own5NTREdm8LErdhY/EeAw2pvGeCPJt2OhNH1yeA9F+Wo2cATsNp0djUifMT68
+         IUjenI+UjGX67WEvPNEaOnyXbTTlrP+aoJXi3rwAkiTgTtoA+F3bclHnnzesZavRbXTR
+         ovWlYRrpCOZq+LqqY73+B79RMcYmxYY5oJsE+6njfdNEQhQR6qWEhY7mgR/CAfzdOrqK
+         GvAf9+3lfhgM1RWUnf4a8LVFTANBNsre2nB92z6sZnIcFxBfWvsuoYtArMMLZUFw6dlf
+         LDZQ==
+X-Gm-Message-State: AAQBX9cIIR0xISS2/6sG/LzxSDL14yQY2AtncaH6tkAMWP4R4q4IFBZb
+        uJcxhuWX3G1mHyQFaJYy8RA2QA==
+X-Google-Smtp-Source: AKy350ZM7koFyxIDpucMqufOPkm2B6d69BgIu8wCBP3JNPLMuVz9Btf/itc+rnQmz5h3CQEwKNXoLA==
+X-Received: by 2002:aa7:c394:0:b0:501:c3de:dc5c with SMTP id k20-20020aa7c394000000b00501c3dedc5cmr6166290edq.18.1681492275024;
+        Fri, 14 Apr 2023 10:11:15 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:39b7:81a0:bd41:17b1? ([2a02:810d:15c0:828:39b7:81a0:bd41:17b1])
+        by smtp.gmail.com with ESMTPSA id v15-20020aa7dbcf000000b00501d51c23fbsm2344642edt.6.2023.04.14.10.11.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Apr 2023 10:11:14 -0700 (PDT)
+Message-ID: <76237034-7871-c77f-1e32-c0a585d8df86@linaro.org>
+Date:   Fri, 14 Apr 2023 19:11:13 +0200
 MIME-Version: 1.0
-References: <20230413-topic-lahaina_vidcc-v2-0-f721d507e555@linaro.org>
- <20230413-topic-lahaina_vidcc-v2-1-f721d507e555@linaro.org> <20faef75-9182-6e67-8ac5-c8234318ab64@linaro.org>
-In-Reply-To: <20faef75-9182-6e67-8ac5-c8234318ab64@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 14 Apr 2023 19:45:15 +0300
-Message-ID: <CAA8EJprnD0jSH7JvhoEnqhNxC55TeqCvvR64R7U8Ni7M93N2eQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: qcom,videocc: Add SM8350
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH V1 1/4] dt-bindings: clock: qcom,ipq9574-gcc: Drop the
+ Bias PLL ubi clock source
+Content-Language: en-US
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+References: <20230414134812.16812-1-quic_devipriy@quicinc.com>
+ <20230414134812.16812-2-quic_devipriy@quicinc.com>
+ <dc48d390-9c8b-d3b7-9c5e-6cbddb0e1306@linaro.org>
+ <aca7b808-51ce-1921-2ee2-0e82cf19d960@quicinc.com>
+ <7b4fe58c-9cf8-57ab-8cbc-c5ccf0b2a46d@linaro.org>
+ <2c5bbe48-3007-a1d5-73b9-9d2132bff9d4@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <2c5bbe48-3007-a1d5-73b9-9d2132bff9d4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 14 Apr 2023 at 18:18, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 14/04/2023 13:26, Konrad Dybcio wrote:
-> > SM8350, like most recent higher-end chips has a separate clock
-> > controller block just for the Venus IP. Document it.
-> >
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > ---
-> >  .../devicetree/bindings/clock/qcom,videocc.yaml    | 29 +++++++++++++
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 14/04/2023 18:04, Devi Priya wrote:
+> 
+> 
+> On 4/14/2023 8:39 PM, Krzysztof Kozlowski wrote:
+>> On 14/04/2023 16:22, Devi Priya wrote:
+>>>
+>>>
+>>> On 4/14/2023 7:47 PM, Krzysztof Kozlowski wrote:
+>>>> On 14/04/2023 15:48, Devi Priya wrote:
+>>>>> Remove bias_pll_ubi_nc_clk from the binding as it has been removed from
+>>>>> the Device Tree. Also added Bjorn Andersson to the maintainers list.
+>>>>
+>>>> Was it really removed? Where?
+>>>>
+>>> It has been removed from the Device tree and binding in V11
+>>> https://lore.kernel.org/linux-arm-msm/20230404101622.5394-1-quic_devipriy@quicinc.com/
+>>
+>> I still see it in current next. Are you sure you refer to something
+>> already merged?
+> 
+> This change was made in V11 and Currently V9 is merged in linux-next.
+> So, the delta changes between V9 & V12 is posted in this series.
+> The device tree change where the clock is removed is added part of this 
+> incremental patch series and the binding is updated to reflect the same.
+> Apologies, if the confusion is because of "has been removed from device 
+> tree" in the commit message.
 
-Krzysztof, Konrad, would it make sense to split it into separate
-bindings? After all, previous videocc bindings used clock-names, while
-this one doesn't.
+Your commit indicated that removal from DTS happened. If it did not
+happen, you need to come with proper reason (and fix the tense not to
+confuse).
 
->
-> Best regards,
-> Krzysztof
->
+Best regards,
+Krzysztof
 
-
--- 
-With best wishes
-Dmitry
