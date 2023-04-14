@@ -2,119 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE5AC77B61
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 01:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA76C77B6E
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 01:38:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229907AbjDNB35 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Apr 2023 21:29:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        id S229567AbjDNBio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Apr 2023 21:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229826AbjDNB3y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 21:29:54 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA7198E;
-        Thu, 13 Apr 2023 18:29:53 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id p8so16988852plk.9;
-        Thu, 13 Apr 2023 18:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681435793; x=1684027793;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EHQxKuy5wo9zw7Q8sdOeV5ovgJI6/G8DeUagGTy+mSI=;
-        b=X2d23oP2uaVFlH2Xg/bXwzONBT8jYtB5SYIcztjPKAvpAVc3E81jYvY+19pedJSO3K
-         LdHCfQ6ED1R5LW95yIRbFxy92ClvuCxkBzKD3+efQzhtSCOqVfQrW34Ia8aecWib2ivz
-         qR53HCswrP0Z7MyLy/OZ7cf0dVQq8XDm/BWK+q8VxcNbJyueuWpz2fe0ZnXmsIbVV35Y
-         3ye42OBHuhYAbFLLaWfLTvGPniSZXLLzJLks+nBZOaPu7BEY8nTMyLsNGWt4LBafAia1
-         MtFgsPxQufWYvPwcT/KuUfyzi6xg2R1gqsZjYmYNn2YHxD0cnwZ91GgOPZSr18AIJ1f2
-         Ontw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681435793; x=1684027793;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EHQxKuy5wo9zw7Q8sdOeV5ovgJI6/G8DeUagGTy+mSI=;
-        b=XfqPsvROxj5TMHrWRJ+VRCBex447B+CxvaLehl5ZKR3eGf8+xpgXNXv+POfCJBEJ28
-         QQYTOeNt9SCmnivJBxCULT7dXVwtBdSrwQwzWnmJCH+MBrYyRyKKk6ty2Cf49l1qIsnS
-         f5s7TLZFDMXh3QbFWeIk/bqINcS+TtLWRZCLdOZXzcIzXZGimtHXEIqUjSrAbxdqS5vq
-         qGQ5W8Q2XpvbiYTSJVJQEtRbT9yUdCM3ksZU7VW7dW4fsgRkTHLxSKmuJvR2sFP+qImQ
-         tUE8yGKnhX2+1CfJf08fiwuZYVENxGNHfHsb30pceFzw+jafVVqJh5IoaDBtzV5k9jCa
-         1eJg==
-X-Gm-Message-State: AAQBX9eq4eMO3v/Xoe8d0d4KJxKPdh+BD4kwnMWf3DnyRyhf0Ru1ILxu
-        wogyiL4NgzFk4dB5M5JbijM=
-X-Google-Smtp-Source: AKy350ZeNjNiFnX4q7xMSeXDszszH5NN7E7rJKkho2NlRXntdOxyUmqU0QTOqWByEVtw5uGyi3eNmQ==
-X-Received: by 2002:a17:903:2091:b0:1a6:87e3:db50 with SMTP id d17-20020a170903209100b001a687e3db50mr929310plc.1.1681435793171;
-        Thu, 13 Apr 2023 18:29:53 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id y19-20020a1709027c9300b0019ea9e5815bsm2070952pll.45.2023.04.13.18.29.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Apr 2023 18:29:52 -0700 (PDT)
-Message-ID: <88310d3c-c0fd-33c8-920b-e589dbb60aae@gmail.com>
-Date:   Fri, 14 Apr 2023 09:29:49 +0800
+        with ESMTP id S229516AbjDNBin (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Apr 2023 21:38:43 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9F52697;
+        Thu, 13 Apr 2023 18:38:39 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 1D2778086;
+        Fri, 14 Apr 2023 09:38:27 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Apr
+ 2023 09:38:26 +0800
+Received: from [192.168.125.131] (183.27.97.249) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Apr
+ 2023 09:38:25 +0800
+Message-ID: <f020e55c-d4e4-dbb9-d658-7bef2b8bd94b@starfivetech.com>
+Date:   Fri, 14 Apr 2023 09:37:29 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
-Subject: Re: [PATCH v7 04/12] dt-bindings: reset: nuvoton: Document ma35d1
- reset control
+Subject: Re: [PATCH v4 07/10] clk: starfive: Add StarFive JH7110 Video-Output
+ clock driver
 Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230412053824.106-1-ychuang570808@gmail.com>
- <20230412053824.106-5-ychuang570808@gmail.com>
- <7c11349662327534fc61477c5526a923.sboyd@kernel.org>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <7c11349662327534fc61477c5526a923.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To:     Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230411135558.44282-1-xingyu.wu@starfivetech.com>
+ <20230411135558.44282-8-xingyu.wu@starfivetech.com>
+ <683cbe934d1df9436e003466d2a419ef.sboyd@kernel.org>
+ <463ee23c-f617-bed0-27a8-56c6fb40d092@starfivetech.com>
+ <cd4a11ae65e186799145410969d40421.sboyd@kernel.org>
+ <4ed4d0e6-8da5-7eef-8713-44854b8d4a9b@starfivetech.com>
+ <d70886f6ee13e70845a72354fe9a2b7d.sboyd@kernel.org>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <d70886f6ee13e70845a72354fe9a2b7d.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.249]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2023/4/14 2:38, Stephen Boyd wrote:
+> Quoting Xingyu Wu (2023-04-13 06:31:12)
+>> On 2023/4/13 12:04, Stephen Boyd wrote:
+>> > diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+>> > index 5ec210644e1d..851b93d0f371 100644
+>> > --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+>> > +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+>> > @@ -11,6 +11,9 @@
+>> >  #include <linux/init.h>
+>> >  #include <linux/io.h>
+>> >  #include <linux/platform_device.h>
+>> > +#include <linux/slab.h>
+>> > +
+>> > +#include <soc/starfive/reset-starfive-jh71x0.h>
+>> >  
+>> >  #include <dt-bindings/clock/starfive,jh7110-crg.h>
+>> >  
+>> > @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_adev)
+>> >       struct auxiliary_device *adev = _adev;
+>> >  
+>> >       auxiliary_device_delete(adev);
+>> > +     auxiliary_device_uninit(adev);
+>> >  }
+>> >  
+>> >  static void jh7110_reset_adev_release(struct device *dev)
+>> >  {
+>> >       struct auxiliary_device *adev = to_auxiliary_dev(dev);
+>> > +     struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
+>> >  
+>> > -     auxiliary_device_uninit(adev);
+>> > +     kfree(rdev);
+>> >  }
+>> >  
+>> >  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+>> >                                    const char *adev_name,
+>> >                                    u32 adev_id)
+>> >  {
+>> > +     struct jh71x0_reset_adev *rdev;
+>> >       struct auxiliary_device *adev;
+>> >       int ret;
+>> >  
+>> > -     adev = devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
+>> > -     if (!adev)
+>> > +     rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
+>> 
+>> Can there use 'devm_kzalloc'? Are you not using this because the struct is public and clock driver
+>> and reset driver both use it. But I think the both clock driver and reset driver are the same
+>> device and can use 'devm_kzalloc'.
+> 
+> No. The release function for the auxiliary_device is supposed to free
+> the memory. It shouldn't be tied to the lifetime of anything like the
+> lifetime of the clk driver being bound.
 
-Dear Stephen,
-
-
-On 2023/4/14 上午 04:21, Stephen Boyd wrote:
-> Quoting Jacky Huang (2023-04-11 22:38:16)
->> diff --git a/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->> new file mode 100644
->> index 000000000000..3ce7dcecd87a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/reset/nuvoton,ma35d1-reset.yaml
->> @@ -0,0 +1,46 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/reset/nuvoton,ma35d1-reset.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Nuvoton MA35D1 Reset Controller
->> +
->> +maintainers:
->> +  - Chi-Fang Li <cfli0@nuvoton.com>
->> +  - Jacky Huang <ychuang3@nuvoton.com>
->> +
->> +description:
->> +  The system reset controller can be used to reset various peripheral
->> +  controllers in MA35D1 SoC.
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: nuvoton,ma35d1-reset
->> +      - const: syscon
-> Does it need to be a syscon anymore?
-
-Yes, it should be removed. I will fix it in the next version.
-
+Get it. Thanks.
 
 Best regards,
-YC
-
-
+Xingyu Wu
