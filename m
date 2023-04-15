@@ -2,191 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA10C77B72
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Apr 2023 23:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 819F9C77B71
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Apr 2023 01:57:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbjDNXbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Apr 2023 19:31:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50780 "EHLO
+        id S229543AbjDOB5S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Apr 2023 21:57:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjDNXby (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 19:31:54 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C05BC9;
-        Fri, 14 Apr 2023 16:31:51 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 4341724DB83;
-        Sat, 15 Apr 2023 07:31:47 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 15 Apr
- 2023 07:31:47 +0800
-Received: from [192.168.0.6] (113.102.16.222) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Sat, 15 Apr
- 2023 07:31:46 +0800
-Message-ID: <2aa668e3-d065-7376-5d41-ef855afa8518@starfivetech.com>
-Date:   Sat, 15 Apr 2023 07:31:45 +0800
+        with ESMTP id S229457AbjDOB5S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Apr 2023 21:57:18 -0400
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E3B64692;
+        Fri, 14 Apr 2023 18:57:15 -0700 (PDT)
+Received: from [IPV6:2408:824e:f23:41b0:7819:c897:bdb2:2a7c] ([172.16.0.254])
+        (user=dzm91@hust.edu.cn mech=PLAIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 33F1tl6O019421-33F1tl6P019421
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sat, 15 Apr 2023 09:55:48 +0800
+Message-ID: <470c192a-8170-6ea9-eb14-aa678555a789@hust.edu.cn>
+Date:   Sat, 15 Apr 2023 09:55:47 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] clk: starfive: Avoid casting iomem pointers
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <patches@lists.linux.dev>,
-        Tommaso Merciai <tomm.merciai@gmail.com>,
-        "Emil Renner Berthing" <emil.renner.berthing@canonical.com>,
-        Conor Dooley <conor.dooley@microchip.com>
-References: <20230413205528.4044216-1-sboyd@kernel.org>
- <b41d8cf4-70aa-3b64-5254-46d92a188f63@starfivetech.com>
-Content-Language: en-US
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <b41d8cf4-70aa-3b64-5254-46d92a188f63@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.9.1
+Subject: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in
+ 'imx8mm_clocks_probe'
+To:     Dan Carpenter <error27@gmail.com>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Bai Ping <ping.bai@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Zhou Shide <u201911681@hust.edu.cn>,
+        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Hao Luo <m202171776@hust.edu.cn>
+References: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+ <25b06794ffb595229019640e10f256fd.sboyd@kernel.org>
+ <c37446f6-bfd6-456d-80aa-542fb2139929@kili.mountain>
+From:   Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <c37446f6-bfd6-456d-80aa-542fb2139929@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.102.16.222]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+X-FEAS-AUTH-USER: dzm91@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 14 Apr 2023 09:58:47 +0800, Xingyu Wu wrote:
-> On 2023/4/14 4:55, Stephen Boyd wrote:
->> Let's use a wrapper struct for the auxiliary_device made in
->> jh7110_reset_controller_register() so that we can stop casting iomem
->> pointers. The casts trip up tools like sparse, and make for some awkward
->> casts that are largely unnecessary. While we're here, change the
->> allocation from devm and actually free the auxiliary_device memory in
->> the release function. This avoids any use after free problems where the
->> parent device driver is unbound from the device but the
->> auxiliuary_device is still in use accessing devm freed memory.
->> 
->> Cc: Tommaso Merciai <tomm.merciai@gmail.com>
->> Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>
->> Cc: Hal Feng <hal.feng@starfivetech.com>
->> Cc: Conor Dooley <conor.dooley@microchip.com>
->> Cc: Xingyu Wu <xingyu.wu@starfivetech.com>
->> Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock driver")
->> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
->> ---
->> 
->> I can take this via clk tree.
->> 
->>  drivers/clk/starfive/clk-starfive-jh7110-sys.c | 15 ++++++++++++---
->>  drivers/reset/starfive/reset-starfive-jh7110.c |  9 ++++++---
->>  include/soc/starfive/reset-starfive-jh71x0.h   | 17 +++++++++++++++++
->>  3 files changed, 35 insertions(+), 6 deletions(-)
->>  create mode 100644 include/soc/starfive/reset-starfive-jh71x0.h
->> 
->> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> index 5ec210644e1d..851b93d0f371 100644
->> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
->> @@ -11,6 +11,9 @@
->>  #include <linux/init.h>
->>  #include <linux/io.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/slab.h>
->> +
->> +#include <soc/starfive/reset-starfive-jh71x0.h>
->>  
->>  #include <dt-bindings/clock/starfive,jh7110-crg.h>
->>  
->> @@ -335,26 +338,32 @@ static void jh7110_reset_unregister_adev(void *_adev)
->>  	struct auxiliary_device *adev = _adev;
->>  
->>  	auxiliary_device_delete(adev);
->> +	auxiliary_device_uninit(adev);
->>  }
->>  
->>  static void jh7110_reset_adev_release(struct device *dev)
->>  {
->>  	struct auxiliary_device *adev = to_auxiliary_dev(dev);
->> +	struct jh71x0_reset_adev *rdev = to_jh71x0_reset_adev(adev);
->>  
->> -	auxiliary_device_uninit(adev);
->> +	kfree(rdev);
->>  }
->>  
->>  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
->>  				     const char *adev_name,
->>  				     u32 adev_id)
->>  {
->> +	struct jh71x0_reset_adev *rdev;
->>  	struct auxiliary_device *adev;
->>  	int ret;
->>  
->> -	adev = devm_kzalloc(priv->dev, sizeof(*adev), GFP_KERNEL);
->> -	if (!adev)
->> +	rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
->> +	if (!rdev)
->>  		return -ENOMEM;
->>  
->> +	rdev->base = priv->base;
->> +
->> +	adev = &rdev->adev;
->>  	adev->name = adev_name;
->>  	adev->dev.parent = priv->dev;
->>  	adev->dev.release = jh7110_reset_adev_release;
->> diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
->> index c1b3a490d951..2d26ae95c8cc 100644
->> --- a/drivers/reset/starfive/reset-starfive-jh7110.c
->> +++ b/drivers/reset/starfive/reset-starfive-jh7110.c
->> @@ -7,6 +7,8 @@
->>  
->>  #include <linux/auxiliary_bus.h>
->>  
->> +#include <soc/starfive/reset-starfive-jh71x0.h>
->> +
->>  #include "reset-starfive-jh71x0.h"
->>  
->>  #include <dt-bindings/reset/starfive,jh7110-crg.h>
->> @@ -33,14 +35,15 @@ static int jh7110_reset_probe(struct auxiliary_device *adev,
->>  			      const struct auxiliary_device_id *id)
->>  {
->>  	struct jh7110_reset_info *info = (struct jh7110_reset_info *)(id->driver_data);
->> -	void __iomem **base = (void __iomem **)dev_get_drvdata(adev->dev.parent);
-> 
-> Thank you for doing that. BTW, if drop the dev_get_drvdata(), the dev_set_drvdata() should also be dropped.
-> 
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-> index a2799fe8a234..62954eb7b50a 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
-> @@ -83,8 +83,6 @@ static int jh7110_aoncrg_probe(struct platform_device *pdev)
->         if (IS_ERR(priv->base))
->                 return PTR_ERR(priv->base);
-> 
-> -       dev_set_drvdata(priv->dev, (void *)(&priv->base));
-> -
->         for (idx = 0; idx < JH7110_AONCLK_END; idx++) {
->                 u32 max = jh7110_aonclk_data[idx].max;
->                 struct clk_parent_data parents[4] = {};
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> index 5ec210644e1d..0cda33fd47f8 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> @@ -393,8 +393,6 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->         if (IS_ERR(priv->base))
->                 return PTR_ERR(priv->base);
-> 
-> -       dev_set_drvdata(priv->dev, (void *)(&priv->base));
-> -
->         /*
->          * These PLL clocks are not actually fixed factor clocks and can be
->          * controlled by the syscon registers of JH7110. They will be dropped
+
+On 2023/4/15 00:38, Dan Carpenter wrote:
+> On Thu, Apr 13, 2023 at 12:06:59PM -0700, Stephen Boyd wrote:
+>> Quoting Zhou Shide (2023-04-12 20:24:39)
+>>> The function imx8mm_clocks_probe() has two main issues:
+>>> - The of_iomap() function may cause a memory leak.
+>>> - Memory allocated for 'clk_hw_data' may not be freed properly
+>>> in some paths.
+>>>
+>>> To fix these issues, this commit replaces the use of of_iomap()
+>>> with devm_of_iomap() and replaces kzalloc() with devm_kzalloc().
+>>> This ensures that all memory is properly managed and automatically
+>>> freed when the device is removed.
+>>>
+>>> In addition, when devm_of_iomap() allocates memory with an error,
+>>> it will first jump to label "unregister_hws" and
+>>> then return PTR_ ERR(base).
+>>>
+>>> Fixes: 9c71f9ea35d7 ("clk: imx: imx8mm: Switch to clk_hw based API")
+>>> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+>>> Signed-off-by: Zhou Shide <u201911681@hust.edu.cn>
+>>> ---
+>>> The issue is discovered by static analysis, and the patch is not tested yet.
+>> And you're not coordinating with each other?
+>>
+> This is a university program.  The patches are reviewed by his professor
+> and teaching assistants etc.  I've been reviewing some of these patches
+> as well because of they're using Smatch.
+
+Thanks for your explanation, Dan. We are from Huazhong University of 
+Science and Technology.
+
+Some undergraduate and graduatestudents who are interested in Linux 
+Kernel are guided by me [1] and Dan to contribute into our kernel community.
+
+We found Smatch is really great in finding kernel issues and these 
+issues are suitable for undergraduate students. Therefore, I contacted 
+Dan to do a favor for patch interview. And our internal review are 
+publicly hosted in a google group [2].
+
+Please let me know if you have any questions.
+
+[1] https://mudongliang.github.io/about/
+
+[2] https://groups.google.com/g/hust-os-kernel-patches
+
 >
-
-Hi, Stephen,
-
-Thanks for your fix to my previous patches, and I have tested this patch
-on VisionFive 2 board. As Xingyu said above, I think dev_set_drvdata()
-should also be dropped in clk-starfive-jh7110-sys.c and
-clk-starfive-jh7110-aon.c.
-
-Best regards,
-Hal
+> regards,
+> dan carpenter
+>
