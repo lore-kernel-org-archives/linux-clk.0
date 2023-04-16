@@ -2,102 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90982C77B73
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 15:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F4DC77B61
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 16:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229774AbjDPPAP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Apr 2023 11:00:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58092 "EHLO
+        id S229588AbjDPQXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Apr 2023 12:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbjDPPAP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 11:00:15 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41D8CA6
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 08:00:13 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6a42afd77abso455789a34.1
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 08:00:13 -0700 (PDT)
+        with ESMTP id S229491AbjDPQXX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 12:23:23 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B678719B2
+        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 09:23:18 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id iw7-20020a05600c54c700b003f16fce55b5so1062623wmb.0
+        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 09:23:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681657212; x=1684249212;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+fpiS9sF0S365faNHxi4OaPza89UOtPx9+KzqrqO3OU=;
-        b=XPoxAZ/9BzkucIoLG8eDBxRicKYmh4vtlkGRGfqZyKjvQsKfhgFr2QAdliWj5cjiZm
-         2gpOUbgj0m0z4bUwRyvjkJBIbvk3H/EtvuuZgzEp7N1Vf9vqvD9dAxQTPviRWbecKlwZ
-         IRkTdyxjp+yHV+qO0Eocn1Ab9FmIQ+LKzoN6vI2DC2ok+sejn2pdIayjbAoSYvanms6a
-         AFr/5yB151cBJGWQQw6ehSTAlV/9HQYAsYophiyghipazcQQxAh2uquLFS+A5qISQFWF
-         rYZa9FUF4yg3NekBe8dylqkFMYrGOn79a+NyKCaPD19DOQQJZtLs5pJRY/bME8Z9WsDt
-         ggRQ==
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1681662197; x=1684254197;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3yXNr4yc6b0SDUY8hqCTB6iyF2qO+PN8qAd4295V67c=;
+        b=zPuigPa7iCwg1CEtHJefuGYFujUNp3obPccQklOnX2Pgb49sfYfg4kNZIAxW9dm8Tm
+         Yiv6DMBTJcTD/zHG7hrGEgJZsI3KRkxHhXB7wh3fw0pZ2+dmHDTouX2VovHZk1lt+GLR
+         0yJpgOu1iuShN8GPx6Xyc9mUDiWF+ggG+UehSh2GSNU59Pa+JC2HnF8a8vqvfycbqc3L
+         QrSqSy3YKfWNmlHGsp1duAU621yLavWG2NtR8J1AxevW8H4pcVemZL6el6KnYPxu9yF/
+         JOztp4dMn9XdoDWZz0bPE2rrrH+PIMI5P7srT1VBmaqEhhciiqJhKy2rrk6A0+ppsUjm
+         c5Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681657212; x=1684249212;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+fpiS9sF0S365faNHxi4OaPza89UOtPx9+KzqrqO3OU=;
-        b=ABrY4YJ6yBRHCDMvnWHW5JlwtcJ4Xf6/uQp4pT5N/2sec6XX2Z3zIXBAeMUq9xI9YV
-         dtnT+iIJP1YD+CbA3BlHG9nKlWgr+WTc0Tc8+5HxmrqU+uOVguXI6uk6HKyW+fEbx/mI
-         8DpVVxWP2YrJ/2TsW1EPxvB5gqw7xxUujpvnddvsl6AiJH5Z/rfz6TlZPm9nKdNRkKX0
-         kwWJ2tYh8XhnxCIKfKIlZoU7vo399vVJnHppaJ0/iWXuu8gIIjUHdhvCmWxjj2GBbdPc
-         bJQn/95TIr2QCyxvud9a7xY3GbOkOIhohDzLEWlBLJGMtkzw5jI2aczZxAtCLijfaTFo
-         Eebw==
-X-Gm-Message-State: AAQBX9eZQ/rdUfGvxyHSCeARiFWR6jHqcLZeLWqdevfNIUjC3Ni9seSx
-        826dsPqYXw/zp2JMMRWNLg6bcetrGt8=
-X-Google-Smtp-Source: AKy350bxV36Ibls7OSAOhDK9JycCBXP4HKUdgQKJWCv8XweXDtuJ8X+xx2VzP3zQypLM4WxSlsbigQ==
-X-Received: by 2002:a05:6870:332b:b0:183:fed0:940 with SMTP id x43-20020a056870332b00b00183fed00940mr5120901oae.1.1681657212486;
-        Sun, 16 Apr 2023 08:00:12 -0700 (PDT)
-Received: from fabio-Precision-3551.. ([2804:14c:485:4b69:70b9:3a68:ec59:4ade])
-        by smtp.gmail.com with ESMTPSA id y6-20020a9d6346000000b006a17bbe32f8sm3569252otk.51.2023.04.16.08.00.10
+        d=1e100.net; s=20221208; t=1681662197; x=1684254197;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3yXNr4yc6b0SDUY8hqCTB6iyF2qO+PN8qAd4295V67c=;
+        b=ZjvIhuYARt41U8YBsOEkW7NvJlnjLCUjyzDBuoToRbwRzKz+kXJwnl63cM/suKGiIP
+         NI2l9OZ4kGmAFCvGL6avkVU1P6rZEV5GSHAbJu860IfZHC8N9j1wAxr0M18MBO8EVuLx
+         wzvBjaKHy+zwJGSyzD8Nic4XqHhSz0pEb1csZzF/p4gqSiLOw3HLYPM6rJKy3atl21BY
+         bt4YwF6/CmOF7rlpUCfwOorQYnimJ5HNzU1NUiMLDf9w26a62lXBofabHST/rW3vM7RL
+         42e5o3jC+OQiqtVC0xWjNO7S8J/zNPZgCRZgwM9Gq10VnSSLMRr1nHXtd9oqJP2vipyv
+         j6QQ==
+X-Gm-Message-State: AAQBX9cdniv3Rv8HXNfo2Vl6ud1uZCoeU5L7ZXs8oNVUh9Hm991VIvgm
+        aY0bb+tz4NimF2TG2toozmx7jQ==
+X-Google-Smtp-Source: AKy350b83ubou9a7dd6ujUEcrDBq+OqbrLGe/hr8g88G8CsO1BmtZzvITgZILxyPinR9lnlT6C2siQ==
+X-Received: by 2002:a7b:ce0f:0:b0:3f1:6f39:419c with SMTP id m15-20020a7bce0f000000b003f16f39419cmr3370486wmc.36.1681662197134;
+        Sun, 16 Apr 2023 09:23:17 -0700 (PDT)
+Received: from localhost ([86.61.181.4])
+        by smtp.gmail.com with ESMTPSA id f16-20020a05600c155000b003f0a1c18128sm10573226wmg.29.2023.04.16.09.23.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 08:00:11 -0700 (PDT)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     abelvesa@kernel.org
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@denx.de>
-Subject: [PATCH] clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
-Date:   Sun, 16 Apr 2023 12:00:04 -0300
-Message-Id: <20230416150004.16834-1-festevam@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Sun, 16 Apr 2023 09:23:16 -0700 (PDT)
+Date:   Sun, 16 Apr 2023 18:23:15 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZDwg88x3HS2kd6lY@nanopsycho>
+References: <20230312022807.278528-1-vadfed@meta.com>
+ <20230312022807.278528-3-vadfed@meta.com>
+ <ZA9Nbll8+xHt4ygd@nanopsycho>
+ <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
+ <ZBA8ofFfKigqZ6M7@nanopsycho>
+ <DM6PR11MB4657120805D656A745EF724E9BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZBGOWQW+1JFzNsTY@nanopsycho>
+ <20230403111812.163b7d1d@kernel.org>
+ <ZDJulCXj9H8LH+kl@nanopsycho>
+ <20230410153149.602c6bad@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230410153149.602c6bad@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Fabio Estevam <festevam@denx.de>
+Tue, Apr 11, 2023 at 12:31:49AM CEST, kuba@kernel.org wrote:
+>On Sun, 9 Apr 2023 09:51:48 +0200 Jiri Pirko wrote:
+>> Wait, not sure you get the format of the "name". It does not contain any
+>> bus address, so the auxdev issue you pointed out is not applicable.
+>> It is driver/clock_id/index.
+>> All 3 are stable and user can rely on them. Do you see any issue in
+>> that?
+>
+>What is index? I thought you don't want an index and yet there is one,
+>just scoped by random attributes :(
 
-On the i.MX6SX, it is common to use the LDB and LCDIF with the same
-parent clock, such as the IMX6SX_CLK_PLL5_VIDEO_DIV, for example.
-
-Due to the CLK_SET_RATE_PARENT flag, the LDB clock would try to set the
-clock parent rate, which can mess with the required clock rate calculated
-from the eLCDIF driver.
-
-To prevent this problem, remove the CLK_SET_RATE_PARENT flag from the
-LDB clocks, so that a correct clock relationship can be achieved.
-
-Signed-off-by: Fabio Estevam <festevam@denx.de>
----
- drivers/clk/imx/clk-imx6sx.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 7cf86707bc39..3f1502933e59 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -302,10 +302,10 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	hws[IMX6SX_CLK_CKO2_SEL]           = imx_clk_hw_mux("cko2_sel",         base + 0x60,  16,     5,      cko2_sels,         ARRAY_SIZE(cko2_sels));
- 	hws[IMX6SX_CLK_CKO]                = imx_clk_hw_mux("cko",              base + 0x60,  8,      1,      cko_sels,          ARRAY_SIZE(cko_sels));
- 
--	hws[IMX6SX_CLK_LDB_DI1_DIV_SEL]    = imx_clk_hw_mux_flags("ldb_di1_div_sel", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels), CLK_SET_RATE_PARENT);
--	hws[IMX6SX_CLK_LDB_DI0_DIV_SEL]    = imx_clk_hw_mux_flags("ldb_di0_div_sel", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels), CLK_SET_RATE_PARENT);
--	hws[IMX6SX_CLK_LDB_DI1_SEL]        = imx_clk_hw_mux_flags("ldb_di1_sel",     base + 0x2c, 12, 3, ldb_di1_sels,      ARRAY_SIZE(ldb_di1_sels),    CLK_SET_RATE_PARENT);
--	hws[IMX6SX_CLK_LDB_DI0_SEL]        = imx_clk_hw_mux_flags("ldb_di0_sel",     base + 0x2c, 9,  3, ldb_di0_sels,      ARRAY_SIZE(ldb_di0_sels),    CLK_SET_RATE_PARENT);
-+	hws[IMX6SX_CLK_LDB_DI1_DIV_SEL]    = imx_clk_hw_mux("ldb_di1_div_sel", base + 0x20, 11, 1, ldb_di1_div_sels, ARRAY_SIZE(ldb_di1_div_sels));
-+	hws[IMX6SX_CLK_LDB_DI0_DIV_SEL]    = imx_clk_hw_mux("ldb_di0_div_sel", base + 0x20, 10, 1, ldb_di0_div_sels, ARRAY_SIZE(ldb_di0_div_sels));
-+	hws[IMX6SX_CLK_LDB_DI1_SEL]        = imx_clk_hw_mux("ldb_di1_sel",     base + 0x2c, 12, 3, ldb_di1_sels,      ARRAY_SIZE(ldb_di1_sels));
-+	hws[IMX6SX_CLK_LDB_DI0_SEL]        = imx_clk_hw_mux("ldb_di0_sel",     base + 0x2c, 9,  3, ldb_di0_sels,      ARRAY_SIZE(ldb_di0_sels));
- 	hws[IMX6SX_CLK_LCDIF1_PRE_SEL]     = imx_clk_hw_mux_flags("lcdif1_pre_sel",  base + 0x38, 15, 3, lcdif1_pre_sels,   ARRAY_SIZE(lcdif1_pre_sels), CLK_SET_RATE_PARENT);
- 	hws[IMX6SX_CLK_LCDIF1_SEL]         = imx_clk_hw_mux_flags("lcdif1_sel",      base + 0x38, 9,  3, lcdif1_sels,       ARRAY_SIZE(lcdif1_sels),     CLK_SET_RATE_PARENT);
- 
--- 
-2.34.1
+Index internal within a single instance. Like Intel guys, they have 1
+clock wired up with multiple DPLLs. The driver gives every DPLL index.
+This is internal, totally up to the driver decision. Similar concept to
+devlink port index.
 
