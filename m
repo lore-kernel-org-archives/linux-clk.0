@@ -2,67 +2,64 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2F8C77B61
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 19:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD0FC77B61
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 19:47:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229634AbjDPTLH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Apr 2023 15:11:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54336 "EHLO
+        id S229866AbjDPTrb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Apr 2023 15:47:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbjDPTLG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 15:11:06 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23121270E;
-        Sun, 16 Apr 2023 12:11:05 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id e18so5033989iow.3;
-        Sun, 16 Apr 2023 12:11:05 -0700 (PDT)
+        with ESMTP id S229810AbjDPTra (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 15:47:30 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EC7A10F1;
+        Sun, 16 Apr 2023 12:47:21 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id v9so28746560pjk.0;
+        Sun, 16 Apr 2023 12:47:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681672264; x=1684264264;
+        d=gmail.com; s=20221208; t=1681674440; x=1684266440;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SmvuhiuxAuYruekpO+qXlWQPF8+XI+RH2XWoXviPemo=;
-        b=ZIHTPjOUCR94YgZBoBC07HVxE4rP94v/zZDYXN6aBcPoXdvTzVLR4trcoiAOlJx1f9
-         0eNzOd6RkX/tss0cX9dmnRtjbCVeOlYs2OP2lAMKx//keXEHCjxJNRWvmPE+uZNL/D2Q
-         qRZRjxyteAHApDYuCn0xLEoySzKZxtff35fvegFCFtaCAbTqGLHukJZMRpmWjS9NW8eq
-         8ENSnZFqiq4Kjs2aEUt2+1aqzufeeXoa+dAmjACHjGhBVPXXhB1etPwCkhzeELEzdimt
-         w53BtkTQPfwYWxYezaZOCwi9ckEO38949lxwV4lYSw5r2njgcXJW0/FXW6f1I7yyH7Ya
-         /vgw==
+        bh=Meto6gsXNk91gHx8C0HmnEYuyxHZvVGTyKoqO9PiMNc=;
+        b=eJYqFrJGLk24WuxpY5JuFFW1v/FDUKlryz7xwHJakzKAdUk+S8VU0iiF5MekiOHc5o
+         ur0UALCSXSovdVFI191ofEm/D3GC32OPO80FM+Wl2ols3dif7zxY3rHS4NPa4ErHJ1+e
+         Im5jtiI1cWSha24rQLgrnFOHskXJ7t+6nZsR9DLrzGAEgZlcJqB4d+LaUObadc57YyKk
+         Lk2zAkOK3KOtE/R+8xcoExUwApUmw8NiA+VOC0Ssmdklx0XPTFVNTfPCSE46CxX0BtJg
+         j+lKuwjuySDz3Gq562LEvS4LvcuJiAcH+ymN0qB2auqXrbluYoNCoI83WhOYyhE/Rgoz
+         0L1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681672264; x=1684264264;
+        d=1e100.net; s=20221208; t=1681674440; x=1684266440;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SmvuhiuxAuYruekpO+qXlWQPF8+XI+RH2XWoXviPemo=;
-        b=RkSch88GnQke/Es+WGOMksZmRotc3P3tGebVSclIkexh06hPo5bXVtd1VY/4tfrJJl
-         qYu6oJhV3Lra4rm7mOT/Ru4c77HNk6xS3H34obrZ/ZNdC3iWcQgpraB20Oacc9I+TBaC
-         mJ6SpL9jNLrCA641a5RafAwtbkkdioZK2ALvaUssNmRAZJSmylg4LLCxCF9VCOpIdDXz
-         AQIOXzLoA256umXVvXWje3R5V4TNfrF0zhz8kNzVrcZF89fkqKrQBfSMhDONbD2javif
-         ODogZxb3yStN6E6kEFE7n1P1Z/y35hoqAzvPOJ7gkxJVMBw9IXClCQ+Q4fX6FnY0hUX0
-         N8IA==
-X-Gm-Message-State: AAQBX9dM0tWgLnUOsadM8e4qtq+m0mCE5xKG4GK+VvRwgLBc3DnfvKSG
-        ywWlbzBIo/d5crzxeCjyYFmXx62yu20=
-X-Google-Smtp-Source: AKy350aHI9BFLDvQFzvCMlI58HEGk+XF8iA0SsxyxfvB8/fRqh4zXzOhXz0kXd44cappd02de0zbZg==
-X-Received: by 2002:a6b:e506:0:b0:760:ea10:757 with SMTP id y6-20020a6be506000000b00760ea100757mr2589189ioc.20.1681672264056;
-        Sun, 16 Apr 2023 12:11:04 -0700 (PDT)
-Received: from localhost.localdomain ([2601:447:d001:897f:af57:910a:275a:1164])
-        by smtp.gmail.com with ESMTPSA id t9-20020a02b189000000b0040f8abd7c05sm1685044jah.151.2023.04.16.12.11.03
+        bh=Meto6gsXNk91gHx8C0HmnEYuyxHZvVGTyKoqO9PiMNc=;
+        b=G0kbFytODT+cCwT9UC6ruXTSK0CMPYUfsaLgR307lHjhHnw+FC4Nt8pw5xuCaXphEf
+         bG3iX0ux78emTYYpW/au0grqE0PDNeKC6U+cKdtGyGhzPfOrJskGsYqNdE3IlVubkJWV
+         HalWfWwKaaufOHpsXpywf4oNIxeHuKuXxQh67RHwC360FVYcvJOgRVQ2f+x0TMZ98w9+
+         nfOiysf5y/AVcAPSoDhJlOE638kNUsrxSXOf7IKa+oWidOkxAgk8lXS3YJp5RVsY96Or
+         0jRm/MBGzXk1gMYq0hhbWSxQwFCI0p08uKtnK2POmF7dAGY3ixeStMQm//PkUu3xhj+8
+         qEgA==
+X-Gm-Message-State: AAQBX9eNat8otMiSjWxlXfeJNbL/g68cqUdF+iW5CsPdil0lFC3fdYoj
+        Izm1zrQrTwkaP9UsIljZMwAVlZr5NAtkvol1CRU=
+X-Google-Smtp-Source: AKy350aKLugLJKCU9PBp1YlqTK5QgQQ9+hASlfM5JGJM0fpp7dQty4ffKT0yxtosQ52mF34G7YXYGA==
+X-Received: by 2002:a17:903:454:b0:1a0:50bd:31c0 with SMTP id iw20-20020a170903045400b001a050bd31c0mr8920831plb.24.1681674440450;
+        Sun, 16 Apr 2023 12:47:20 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.245.201])
+        by smtp.gmail.com with ESMTPSA id jd9-20020a170903260900b001a69b28f5c5sm4490375plb.222.2023.04.16.12.47.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 12:11:03 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
+        Sun, 16 Apr 2023 12:47:20 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
 To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+Cc:     David Yang <mmyangfl@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: composite-8m:  Fix clock divisions greater than 8
-Date:   Sun, 16 Apr 2023 14:10:51 -0500
-Message-Id: <20230416191051.106513-1-aford173@gmail.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] clk: Add basic register clock controller
+Date:   Mon, 17 Apr 2023 03:46:18 +0800
+Message-Id: <20230416194624.1258860-1-mmyangfl@gmail.com>
 X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -70,61 +67,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When adding imx8m_clk_divider_determine_rate to let the imx8mm
-and imx8mn get finer granulatiry of video clocks, it accidentally
-broke the imx8mp ability to divide clocks by more than 8 on clocks
-when the CLK_SET_RATE_PARENT flag is not set.
+These clocks were provided in `include/linux/clk-provider.h`, but lacks DT
+bindings. Add DT bindings for them.
 
-On the imx8mp, the CLK_SET_RATE_PARENT flag cannot be set on either
-media_disp1_pix or media_disp2_pix, because they both share the
-video_pll as a common clock, and if two displays are used, the
-parent clock needs to be something that both child clocks can
-divide.
+v2: split clock controller and its clocks
+v3:
+  * rewrite commit message
+  * rewrite descriptions in dt-bindings to describe the devices
+  * fix format error of dt-bindings
 
-imx8m_clk_divider_determine_rate ends up calling clk_divider_bestdiv
-which uses the value of 'width' to setup the maximum divisor.  The
-clk-composite-8m driver sets the with to 3 which means the maximum
-divisor is 8, but these clocks can divide by up to 64.
+Links:
+v1: https://lore.kernel.org/r/20230414181302.986271-1-mmyangfl@gmail.com
+v2: https://lore.kernel.org/r/20230416173302.1185683-1-mmyangfl@gmail.com
 
-Currently, if the video_pll is set to 1039500000, the slowest clock
-rate achievable is 129937500 which breaks a whole bunch of lower
-resolution and refresh options for both media_disp1_pix and
-media_disp2_pix.
+David Yang (4):
+  dt-bindings: clock: Add simple-clock-controller
+  clk: Add simple clock controller
+  dt-bindings: clock: Add gate-clock
+  clk: gate: Add DT binding
 
-By changing the 'width' variable to PCG_DIV_WIDTH, the maximum
-divisor becomes 64 which allows the clocks to divide down more,
-so the lower resolutions and refresh rates are achievable again.
+ .../devicetree/bindings/clock/gate-clock.yaml |  59 ++++
+ .../clock/simple-clock-controller.yaml        |  39 +++
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-gate.c                        |  81 +++++
+ drivers/clk/clk-of.c                          | 292 ++++++++++++++++++
+ drivers/clk/clk-of.h                          |  26 ++
+ 6 files changed, 498 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/gate-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/simple-clock-controller.yaml
+ create mode 100644 drivers/clk/clk-of.c
+ create mode 100644 drivers/clk/clk-of.h
 
-Fixes: 156e96ff2172 ("clk: imx: composite-8m: Add support to determine_rate")
-Signed-off-by: Adam Ford <aford173@gmail.com>
 
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index 6883a8199b6c..805e6aada83d 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -47,6 +47,7 @@ static unsigned long imx8m_clk_composite_divider_recalc_rate(struct clk_hw *hw,
- 				   divider->flags, PCG_DIV_WIDTH);
- }
- 
-+
- static int imx8m_clk_composite_compute_dividers(unsigned long rate,
- 						unsigned long parent_rate,
- 						int *prediv, int *postdiv)
-@@ -215,12 +216,12 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
- 		mux_ops = &imx8m_clk_composite_mux_ops;
- 	} else if (composite_flags & IMX_COMPOSITE_BUS) {
- 		div->shift = PCG_PREDIV_SHIFT;
--		div->width = PCG_PREDIV_WIDTH;
-+		div->width = PCG_DIV_WIDTH;
- 		divider_ops = &imx8m_clk_composite_divider_ops;
- 		mux_ops = &imx8m_clk_composite_mux_ops;
- 	} else {
- 		div->shift = PCG_PREDIV_SHIFT;
--		div->width = PCG_PREDIV_WIDTH;
-+		div->width = PCG_DIV_WIDTH;
- 		divider_ops = &imx8m_clk_composite_divider_ops;
- 		mux_ops = &clk_mux_ops;
- 		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED))
+base-commit: 7a934f4bd7d6f9da84c8812da3ba42ee10f5778e
 -- 
 2.39.2
 
