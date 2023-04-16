@@ -2,90 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFB1C77B73
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 18:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2F8C77B61
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 19:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229510AbjDPSbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Apr 2023 14:31:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42278 "EHLO
+        id S229634AbjDPTLH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Apr 2023 15:11:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbjDPSbK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 14:31:10 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2322122
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 11:31:09 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a5so2072399ejb.6
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 11:31:08 -0700 (PDT)
+        with ESMTP id S229615AbjDPTLG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 15:11:06 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23121270E;
+        Sun, 16 Apr 2023 12:11:05 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id e18so5033989iow.3;
+        Sun, 16 Apr 2023 12:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681669867; x=1684261867;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LlSBR/ShimGduJqFPI5aceEu54uJPlimp53JoHD6PME=;
-        b=yFv2QCH3hdQbx8P4vVE9YZ6FaDSEmZtc0t1GxIAa1LajI3B1pOfGVqFOiJKTbaMMT3
-         mEEzH5DJ+XWhjKg30hTxyGqyVmZ61OxMMNxwzfYvCglBLb4qLiCEvvcgENB8A67A2GDN
-         zEJBPifwHT00k4boYDIlWdJubiETWr/nzLWn9tyIAvnBIka5+nei0TUt+Aq4fQMhtuOy
-         YVm82apquBqlN3MKcfzagkW+BYtOYlN32x5sRUKZqzSCrnsnzZ6lWvm/GMPScUKSxxzZ
-         nQmS/sbEFZGNY/TxoFfEgYxnSiYxx8JTlwkqtGSucta2THKSeajuJymxMUstaYsp6zKJ
-         Kuhw==
+        d=gmail.com; s=20221208; t=1681672264; x=1684264264;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmvuhiuxAuYruekpO+qXlWQPF8+XI+RH2XWoXviPemo=;
+        b=ZIHTPjOUCR94YgZBoBC07HVxE4rP94v/zZDYXN6aBcPoXdvTzVLR4trcoiAOlJx1f9
+         0eNzOd6RkX/tss0cX9dmnRtjbCVeOlYs2OP2lAMKx//keXEHCjxJNRWvmPE+uZNL/D2Q
+         qRZRjxyteAHApDYuCn0xLEoySzKZxtff35fvegFCFtaCAbTqGLHukJZMRpmWjS9NW8eq
+         8ENSnZFqiq4Kjs2aEUt2+1aqzufeeXoa+dAmjACHjGhBVPXXhB1etPwCkhzeELEzdimt
+         w53BtkTQPfwYWxYezaZOCwi9ckEO38949lxwV4lYSw5r2njgcXJW0/FXW6f1I7yyH7Ya
+         /vgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681669867; x=1684261867;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LlSBR/ShimGduJqFPI5aceEu54uJPlimp53JoHD6PME=;
-        b=iBL03W1KgLLcIPyKmcRxpWpv+Q6ZY8U8V1dx9J5voUK+HXN59U9w1kVcuFiFgia6WY
-         aArxuP4PS5DVxGlF3Z5gJ73rPequMqokBgHmO2jJcqTwz+TsnGJU7U01FgPsGxyqzOA6
-         xsg/sIuzocZI7QFq1OD3AXnuyUoihHa15RY9043WYqNuqJBORNPAwgFOw0jzaKLguMTf
-         WW26BLO9tn/+YkFkgiRcIPw5nPS4Tfm0jxFDwxS3fZ8sSDKzccb9vPBaJslOAwe7BnOh
-         43Bm4aIiHP4ZqYga46pcGhHg5cCNyP/iqk1LLjbXSaXj5z9DGN31XiX/ud3bh45SEINK
-         eDpg==
-X-Gm-Message-State: AAQBX9fhpV+XKGitY4aYsIZRgp6GS/HG30L5P3VwSAy016SFhT8Ll+Hq
-        mXWneR4y4Yu7Cl7PQYUqfqy65Q==
-X-Google-Smtp-Source: AKy350YW7KeEJrlhpMsn0KWhTkUJxdnRtKPEFgnpdqTcJQnTkS+JAd/5gtmkuKjD2e622LFsZTZUzQ==
-X-Received: by 2002:a17:907:c018:b0:94f:6025:be53 with SMTP id ss24-20020a170907c01800b0094f6025be53mr1731474ejc.50.1681669867471;
-        Sun, 16 Apr 2023 11:31:07 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:f9e3:1d38:66a7:ae92? ([2a02:810d:15c0:828:f9e3:1d38:66a7:ae92])
-        by smtp.gmail.com with ESMTPSA id gv35-20020a1709072be300b0094f07545d43sm2896853ejc.188.2023.04.16.11.31.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Apr 2023 11:31:06 -0700 (PDT)
-Message-ID: <dcaf82c5-8fc6-68fd-c087-8d55def90ea0@linaro.org>
-Date:   Sun, 16 Apr 2023 20:31:05 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2 3/4] dt-bindings: clock: Add gate-clock
-Content-Language: en-US
-To:     Yangfl <mmyangfl@gmail.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        d=1e100.net; s=20221208; t=1681672264; x=1684264264;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SmvuhiuxAuYruekpO+qXlWQPF8+XI+RH2XWoXviPemo=;
+        b=RkSch88GnQke/Es+WGOMksZmRotc3P3tGebVSclIkexh06hPo5bXVtd1VY/4tfrJJl
+         qYu6oJhV3Lra4rm7mOT/Ru4c77HNk6xS3H34obrZ/ZNdC3iWcQgpraB20Oacc9I+TBaC
+         mJ6SpL9jNLrCA641a5RafAwtbkkdioZK2ALvaUssNmRAZJSmylg4LLCxCF9VCOpIdDXz
+         AQIOXzLoA256umXVvXWje3R5V4TNfrF0zhz8kNzVrcZF89fkqKrQBfSMhDONbD2javif
+         ODogZxb3yStN6E6kEFE7n1P1Z/y35hoqAzvPOJ7gkxJVMBw9IXClCQ+Q4fX6FnY0hUX0
+         N8IA==
+X-Gm-Message-State: AAQBX9dM0tWgLnUOsadM8e4qtq+m0mCE5xKG4GK+VvRwgLBc3DnfvKSG
+        ywWlbzBIo/d5crzxeCjyYFmXx62yu20=
+X-Google-Smtp-Source: AKy350aHI9BFLDvQFzvCMlI58HEGk+XF8iA0SsxyxfvB8/fRqh4zXzOhXz0kXd44cappd02de0zbZg==
+X-Received: by 2002:a6b:e506:0:b0:760:ea10:757 with SMTP id y6-20020a6be506000000b00760ea100757mr2589189ioc.20.1681672264056;
+        Sun, 16 Apr 2023 12:11:04 -0700 (PDT)
+Received: from localhost.localdomain ([2601:447:d001:897f:af57:910a:275a:1164])
+        by smtp.gmail.com with ESMTPSA id t9-20020a02b189000000b0040f8abd7c05sm1685044jah.151.2023.04.16.12.11.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Apr 2023 12:11:03 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-References: <20230416173302.1185683-1-mmyangfl@gmail.com>
- <20230416173302.1185683-4-mmyangfl@gmail.com>
- <8b3ea617-8d4e-cf0b-1cb2-d02405c39487@linaro.org>
- <CAAXyoMPcmbUGDpM6YAyJqGaXvgg2rQOCSdGGnaVQoGd5OE4OwA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAAXyoMPcmbUGDpM6YAyJqGaXvgg2rQOCSdGGnaVQoGd5OE4OwA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: composite-8m:  Fix clock divisions greater than 8
+Date:   Sun, 16 Apr 2023 14:10:51 -0500
+Message-Id: <20230416191051.106513-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/04/2023 20:28, Yangfl wrote:
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> 于2023年4月17日周一 01:41写道：
->>
->> Did you test the changes?
-> 
-> I don't know what "test" is here. make dt_binding_check passed and it
-> can work with the driver.
+When adding imx8m_clk_divider_determine_rate to let the imx8mm
+and imx8mn get finer granulatiry of video clocks, it accidentally
+broke the imx8mp ability to divide clocks by more than 8 on clocks
+when the CLK_SET_RATE_PARENT flag is not set.
 
-I don't think so. If you tested it, for sure you would see warnings like
-"node has a unit name, but no reg or ranges property".
+On the imx8mp, the CLK_SET_RATE_PARENT flag cannot be set on either
+media_disp1_pix or media_disp2_pix, because they both share the
+video_pll as a common clock, and if two displays are used, the
+parent clock needs to be something that both child clocks can
+divide.
 
-Best regards,
-Krzysztof
+imx8m_clk_divider_determine_rate ends up calling clk_divider_bestdiv
+which uses the value of 'width' to setup the maximum divisor.  The
+clk-composite-8m driver sets the with to 3 which means the maximum
+divisor is 8, but these clocks can divide by up to 64.
+
+Currently, if the video_pll is set to 1039500000, the slowest clock
+rate achievable is 129937500 which breaks a whole bunch of lower
+resolution and refresh options for both media_disp1_pix and
+media_disp2_pix.
+
+By changing the 'width' variable to PCG_DIV_WIDTH, the maximum
+divisor becomes 64 which allows the clocks to divide down more,
+so the lower resolutions and refresh rates are achievable again.
+
+Fixes: 156e96ff2172 ("clk: imx: composite-8m: Add support to determine_rate")
+Signed-off-by: Adam Ford <aford173@gmail.com>
+
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index 6883a8199b6c..805e6aada83d 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -47,6 +47,7 @@ static unsigned long imx8m_clk_composite_divider_recalc_rate(struct clk_hw *hw,
+ 				   divider->flags, PCG_DIV_WIDTH);
+ }
+ 
++
+ static int imx8m_clk_composite_compute_dividers(unsigned long rate,
+ 						unsigned long parent_rate,
+ 						int *prediv, int *postdiv)
+@@ -215,12 +216,12 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+ 		mux_ops = &imx8m_clk_composite_mux_ops;
+ 	} else if (composite_flags & IMX_COMPOSITE_BUS) {
+ 		div->shift = PCG_PREDIV_SHIFT;
+-		div->width = PCG_PREDIV_WIDTH;
++		div->width = PCG_DIV_WIDTH;
+ 		divider_ops = &imx8m_clk_composite_divider_ops;
+ 		mux_ops = &imx8m_clk_composite_mux_ops;
+ 	} else {
+ 		div->shift = PCG_PREDIV_SHIFT;
+-		div->width = PCG_PREDIV_WIDTH;
++		div->width = PCG_DIV_WIDTH;
+ 		divider_ops = &imx8m_clk_composite_divider_ops;
+ 		mux_ops = &clk_mux_ops;
+ 		if (!(composite_flags & IMX_COMPOSITE_FW_MANAGED))
+-- 
+2.39.2
 
