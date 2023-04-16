@@ -2,100 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F4DC77B61
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 16:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BFAC77B77
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 17:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229588AbjDPQXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Apr 2023 12:23:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57674 "EHLO
+        id S229593AbjDPRdZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Apr 2023 13:33:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbjDPQXX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 12:23:23 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B678719B2
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 09:23:18 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id iw7-20020a05600c54c700b003f16fce55b5so1062623wmb.0
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 09:23:18 -0700 (PDT)
+        with ESMTP id S229446AbjDPRdY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 13:33:24 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B1A792;
+        Sun, 16 Apr 2023 10:33:23 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-63b8b19901fso206360b3a.3;
+        Sun, 16 Apr 2023 10:33:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1681662197; x=1684254197;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3yXNr4yc6b0SDUY8hqCTB6iyF2qO+PN8qAd4295V67c=;
-        b=zPuigPa7iCwg1CEtHJefuGYFujUNp3obPccQklOnX2Pgb49sfYfg4kNZIAxW9dm8Tm
-         Yiv6DMBTJcTD/zHG7hrGEgJZsI3KRkxHhXB7wh3fw0pZ2+dmHDTouX2VovHZk1lt+GLR
-         0yJpgOu1iuShN8GPx6Xyc9mUDiWF+ggG+UehSh2GSNU59Pa+JC2HnF8a8vqvfycbqc3L
-         QrSqSy3YKfWNmlHGsp1duAU621yLavWG2NtR8J1AxevW8H4pcVemZL6el6KnYPxu9yF/
-         JOztp4dMn9XdoDWZz0bPE2rrrH+PIMI5P7srT1VBmaqEhhciiqJhKy2rrk6A0+ppsUjm
-         c5Cg==
+        d=gmail.com; s=20221208; t=1681666402; x=1684258402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5OXsid8SYL4GdSMfFGQSs/wdoDzyJyZpFKL7M/EWZU=;
+        b=r26bZ91MxZ8MIhL3bXOVZym4OV4qGD+oXb+sZ6/Bbj88MEymCf06SEFfbJ1rJvc2q1
+         deH0nKmnSkPXiGMsDh1RxIQjjNioNDR3L70xYvCpb2Inm0MnMR7n/+DGpkEtjgFcYajq
+         X8MtthEibrfeXhnNPGsq6dO6V9SEASZIjbnyhFcD3zNaW8wdagJYamUA/l75EXgpkl6J
+         GCMS75hM8XEm87oly5ydBtTc1eByYn2eL2Rpg97qU6+uhXownM7uxSbs29Q7IOyJCSmn
+         GYFFRp+rmojhelvZprQysyptI+Od47EBs7GEdLJBUD3nrUzgqB/ySo7thbgcye8g33D2
+         T1ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681662197; x=1684254197;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3yXNr4yc6b0SDUY8hqCTB6iyF2qO+PN8qAd4295V67c=;
-        b=ZjvIhuYARt41U8YBsOEkW7NvJlnjLCUjyzDBuoToRbwRzKz+kXJwnl63cM/suKGiIP
-         NI2l9OZ4kGmAFCvGL6avkVU1P6rZEV5GSHAbJu860IfZHC8N9j1wAxr0M18MBO8EVuLx
-         wzvBjaKHy+zwJGSyzD8Nic4XqHhSz0pEb1csZzF/p4gqSiLOw3HLYPM6rJKy3atl21BY
-         bt4YwF6/CmOF7rlpUCfwOorQYnimJ5HNzU1NUiMLDf9w26a62lXBofabHST/rW3vM7RL
-         42e5o3jC+OQiqtVC0xWjNO7S8J/zNPZgCRZgwM9Gq10VnSSLMRr1nHXtd9oqJP2vipyv
-         j6QQ==
-X-Gm-Message-State: AAQBX9cdniv3Rv8HXNfo2Vl6ud1uZCoeU5L7ZXs8oNVUh9Hm991VIvgm
-        aY0bb+tz4NimF2TG2toozmx7jQ==
-X-Google-Smtp-Source: AKy350b83ubou9a7dd6ujUEcrDBq+OqbrLGe/hr8g88G8CsO1BmtZzvITgZILxyPinR9lnlT6C2siQ==
-X-Received: by 2002:a7b:ce0f:0:b0:3f1:6f39:419c with SMTP id m15-20020a7bce0f000000b003f16f39419cmr3370486wmc.36.1681662197134;
-        Sun, 16 Apr 2023 09:23:17 -0700 (PDT)
-Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id f16-20020a05600c155000b003f0a1c18128sm10573226wmg.29.2023.04.16.09.23.16
+        d=1e100.net; s=20221208; t=1681666402; x=1684258402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G5OXsid8SYL4GdSMfFGQSs/wdoDzyJyZpFKL7M/EWZU=;
+        b=a1tkmuWnIlv9JU1jN/JbjrxKtwOmqQVwoFWFXMNQY2WKkjiLDfJc2347/H/ULmJy4w
+         DBlSPeMu9Y3loW1TPeB+Q4WPnQpo/qkCQeDv4A1jUsI8sI6WdTV+g3QQ0LlRf6LTmeKv
+         NgYUGx2fNh9zd74WK9hPZS5dymP3CEVkRFXXmXaLZ3Ibe6PzChFg1L2NdTW83T895d5f
+         8/hso3i4UVrnuZAGC8fjSxMSo2oSJrrhhFEXDow3tQ6RtAKBxBN5I3ttvQqiPzeH/Qzn
+         PP3xZ4SfeksSc/5CSPpuZ04nqG90R4nQL2DWAzGIdyvguy/OUV9nSkBY9Swr3s2E2aDR
+         yzmw==
+X-Gm-Message-State: AAQBX9c//BNcAGUG09yc+NrC814eI4anOOoi3WGGnZVjwN2FS5cMpLM6
+        g5dMy2ct2/QAvdlFIPjNWssT21sAkPjbk7FrCyg=
+X-Google-Smtp-Source: AKy350YOHxcAsnUbt/l01GPFPoS+uNRrCZ4sZGsqnnlfixZL9Q6Mh+rLYgt5VRK0pg//bgX/I5e3zQ==
+X-Received: by 2002:a05:6a00:240b:b0:637:c959:8ea1 with SMTP id z11-20020a056a00240b00b00637c9598ea1mr16584791pfh.22.1681666401849;
+        Sun, 16 Apr 2023 10:33:21 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.245.200])
+        by smtp.gmail.com with ESMTPSA id j22-20020a62b616000000b0062d90f36d16sm6110973pff.88.2023.04.16.10.33.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Apr 2023 09:23:16 -0700 (PDT)
-Date:   Sun, 16 Apr 2023 18:23:15 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Vadim Fedorenko <vadfed@meta.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <ZDwg88x3HS2kd6lY@nanopsycho>
-References: <20230312022807.278528-1-vadfed@meta.com>
- <20230312022807.278528-3-vadfed@meta.com>
- <ZA9Nbll8+xHt4ygd@nanopsycho>
- <2b749045-021e-d6c8-b265-972cfa892802@linux.dev>
- <ZBA8ofFfKigqZ6M7@nanopsycho>
- <DM6PR11MB4657120805D656A745EF724E9BBE9@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZBGOWQW+1JFzNsTY@nanopsycho>
- <20230403111812.163b7d1d@kernel.org>
- <ZDJulCXj9H8LH+kl@nanopsycho>
- <20230410153149.602c6bad@kernel.org>
+        Sun, 16 Apr 2023 10:33:21 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] clk: Add basic register clock controller
+Date:   Mon, 17 Apr 2023 01:32:56 +0800
+Message-Id: <20230416173302.1185683-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230410153149.602c6bad@kernel.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, Apr 11, 2023 at 12:31:49AM CEST, kuba@kernel.org wrote:
->On Sun, 9 Apr 2023 09:51:48 +0200 Jiri Pirko wrote:
->> Wait, not sure you get the format of the "name". It does not contain any
->> bus address, so the auxdev issue you pointed out is not applicable.
->> It is driver/clock_id/index.
->> All 3 are stable and user can rely on them. Do you see any issue in
->> that?
->
->What is index? I thought you don't want an index and yet there is one,
->just scoped by random attributes :(
+These clocks were provided in `include/linux/clk-provider.h`, but lacks DT
+bindings. Add a clock controller to avoid operation conflict on same
+register.
 
-Index internal within a single instance. Like Intel guys, they have 1
-clock wired up with multiple DPLLs. The driver gives every DPLL index.
-This is internal, totally up to the driver decision. Similar concept to
-devlink port index.
+v2: split clock controller and its clocks
+
+Links:
+v1: https://lore.kernel.org/r/20230414181302.986271-1-mmyangfl@gmail.com
+
+David Yang (4):
+  dt-bindings: clock: Add simple-clock-controller
+  clk: Add simple clock controller
+  dt-bindings: clock: Add gate-clock
+  clk: gate: Add DT binding
+
+ .../devicetree/bindings/clock/gate-clock.yaml |  58 ++++
+ .../clock/simple-clock-controller.yaml        |  50 +++
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-gate.c                        |  81 +++++
+ drivers/clk/clk-of.c                          | 292 ++++++++++++++++++
+ drivers/clk/clk-of.h                          |  26 ++
+ 6 files changed, 508 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/gate-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/simple-clock-controller.yaml
+ create mode 100644 drivers/clk/clk-of.c
+ create mode 100644 drivers/clk/clk-of.h
+
+
+base-commit: 7a934f4bd7d6f9da84c8812da3ba42ee10f5778e
+-- 
+2.39.2
 
