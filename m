@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50599C77B76
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 18:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1387EC77B77
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Apr 2023 18:11:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbjDPSKR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Apr 2023 14:10:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35100 "EHLO
+        id S229557AbjDPSLu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Apr 2023 14:11:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjDPSKQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 14:10:16 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFF7B10FC
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 11:10:14 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-94a34a0b9e2so454781366b.1
-        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 11:10:14 -0700 (PDT)
+        with ESMTP id S229771AbjDPSLt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Apr 2023 14:11:49 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B641BC9
+        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 11:11:47 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a5so1999049ejb.6
+        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 11:11:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681668613; x=1684260613;
+        d=linaro.org; s=google; t=1681668706; x=1684260706;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Oo9vwDAIQGWd+ZBgWogqeSzYCOSuwuz4YdLXaQda4hk=;
-        b=oo/jGAthzIYHD9CeJNKGhp4vfFFhrsxkzAj1QZp2gwQ1B01ATFLNxFCGe1892EehrH
-         XDK8LUfmRXSlyBXRach6rloo2FNbY9m3dYgxIXwHG/5nNm9UCSNAcK6PMrKvs2ezUL+1
-         uznSFP4iNYkZ9Gd5qHACFzVgJN1s/bVZYnKv08jcGcDAD+OGXH3c6Ko4t4+07F/oh+CP
-         Q/RumCJjaCzq3rdq5BlYHibK65gjUtrz7C5RH9K2HVEdquvEZR55kB96EsJ7ZHrOUDQm
-         vDi/2cBrSmhL/6qh+zP1u7SibPet6IMy71FDUK2yj92S4LpwBQUJ9lh+X1R/FX11Nl4k
-         Mwtw==
+        bh=B6n5E4CO4kCJf3nGE58OKGGQOMHXRP5JjX8b0teIIoI=;
+        b=ZzVcFejIqZ1u900JscVEO4eycpl/XhuypeXEfmIP1+mFuDcrOetJZg9pgtiTzhk7bV
+         yv+jXuVWrZrgi63qs845JZT4+uDvwzRhGZg2n8vWHSdukWIGgXUdjiaR6Ge0TZTpLakV
+         sd9idN4jVXnhSaWMnTx16O7GNfJwl2RJxPmgaOwy2gM80ImGxbWJ/eBotoETGIePkDwX
+         DJuJA5rWLDcRjNYG3lJteHo2gmKiS1ZWg2Ezw/JZWqRmDGp+QFDFE0ULQWWs42ga2lHp
+         SyfjD4jeLBXHheEGulco2Ne/KNSZYlVccr3fXkNH7H4NRBwIMAyPeussFZvDI/E9VsQD
+         E4DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681668613; x=1684260613;
+        d=1e100.net; s=20221208; t=1681668706; x=1684260706;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oo9vwDAIQGWd+ZBgWogqeSzYCOSuwuz4YdLXaQda4hk=;
-        b=NOc6XfeLkf41US+cXM4Bj6ULDFHtxmKmpB/V11H/izsNu1mwNR/+GU4kjwS4VbFHIP
-         0ShcsoPNAa6C5B5P5XYdq52P2Xsfgh/0wzQRZc7FQgJKEwvlXqbSnVTbNxm8EBQAWNSK
-         ECn9lcELPWQwTCTLMcjiCfLQefYFUxalndtaw1yPd7B1xGhrafIDceR5KjBrE3q2an23
-         JFkHOFmX9G9wQIevZPZKrb06XeFfd9FOBMcs0OljCg3WqJbBpTgodepweoZoiMZUvgAa
-         RRjG7mlT6eaFIekvGWnSoPBKVfVo8xs6ImkXi/CA024ofsf09jY4YCunO2wdqw5bCn+s
-         Si6Q==
-X-Gm-Message-State: AAQBX9drlz6O+18/BjEXzUlV7CEJF5n5kWD0uaesITvt3joAs6LoFBur
-        OQIm+FdPyNlCsFa0wAdF09DQfw==
-X-Google-Smtp-Source: AKy350awJUSJApohEW9Y2HjTY0hDK7meag+QYuc/qIbodh49giYK5YHhG9LMgMx3rmjwQW6KlxBkWw==
-X-Received: by 2002:a05:6402:1154:b0:506:83f7:157b with SMTP id g20-20020a056402115400b0050683f7157bmr8288181edw.10.1681668613362;
-        Sun, 16 Apr 2023 11:10:13 -0700 (PDT)
+        bh=B6n5E4CO4kCJf3nGE58OKGGQOMHXRP5JjX8b0teIIoI=;
+        b=hL03MYZ3liciYITx+/l+dxg0RywvvYFIo0I4JLpmKj2EkDZPxu4fmq0FuJZOwZ2eAA
+         RQ+qi3RcGJp2ExdWtWjo1/H1WItiJL2002lp9i8DI7syLuLNK95OoExfRm37AbRjTtFS
+         9SHlv7dowXsGiNWmjJYeGenyWlG6f9iSDhWVdV6Z6H7BKXMe+gfia5bHUFl2RU5aO5Cw
+         l1eV3PRJYkUpCA7LTDNF8IhPE9RnYqsEE8q9+gjH4KTeAx/+LwEW+v0+8VwPSDgzs6Em
+         VtgNOLXVBiTtx4eXzU/xU1Yxej+ZJRgzkWkvgEkNZIVKS/ttxVHLXsSI7sSKpfUihQAS
+         yZdQ==
+X-Gm-Message-State: AAQBX9frfcadW3k5d4K6NeKoL+DSnynIoYty++rHd4nnXBfztPDpnTYb
+        h6iRewPt/AhqSZETjMjm0Vv4Bg==
+X-Google-Smtp-Source: AKy350YdJ7HOUBtJuBV+9N3nl3r0pYo2W9W9x4AL+g+AIjJcSDFtAAeTr6+vxOUNtnVBQv5afOfW7w==
+X-Received: by 2002:a17:906:c294:b0:94f:5242:a03a with SMTP id r20-20020a170906c29400b0094f5242a03amr2582922ejz.63.1681668706168;
+        Sun, 16 Apr 2023 11:11:46 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:f9e3:1d38:66a7:ae92? ([2a02:810d:15c0:828:f9e3:1d38:66a7:ae92])
-        by smtp.gmail.com with ESMTPSA id a7-20020a50ff07000000b00504a356b149sm4706745edu.25.2023.04.16.11.10.12
+        by smtp.gmail.com with ESMTPSA id j15-20020a1709066dcf00b0094e0fab7705sm5375294ejt.107.2023.04.16.11.11.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Apr 2023 11:10:13 -0700 (PDT)
-Message-ID: <185485e5-fa17-dcd2-2354-cdf29d556a53@linaro.org>
-Date:   Sun, 16 Apr 2023 20:10:11 +0200
+        Sun, 16 Apr 2023 11:11:45 -0700 (PDT)
+Message-ID: <930d9bfe-7b23-766a-a968-4d3822dede74@linaro.org>
+Date:   Sun, 16 Apr 2023 20:11:44 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH v2 10/12] ARM: dts: Re-introduce Exynos4212 DTSI
+Subject: Re: [PATCH v2 11/12] dt-bindings: arm: samsung: Add Samsung Galaxy
+ Tab3 family boards
 Content-Language: en-US
 To:     Artur Weber <aweber.kernel@gmail.com>
 Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
@@ -78,9 +79,9 @@ Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
         linux-phy@lists.infradead.org,
         ~postmarketos/upstreaming@lists.sr.ht
 References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-11-aweber.kernel@gmail.com>
+ <20230416133422.1949-12-aweber.kernel@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230416133422.1949-11-aweber.kernel@gmail.com>
+In-Reply-To: <20230416133422.1949-12-aweber.kernel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -88,11 +89,42 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 16/04/2023 15:34, Artur Weber wrote:
-> The DTSI file was originally dropped in commit bca9085e0ae9 ("ARM:
-> dts: exynos: remove Exynos4212 support (dead code)"), as there were
-> no boards using it.
+> Add the compatible strings for the Samsung Galaxy Tab 3 8.0 series
+> of tablets.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+>  .../bindings/arm/samsung/samsung-boards.yaml           | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> index deb2cf971871..4ee026e7f7ad 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> @@ -104,6 +104,16 @@ properties:
+>            - const: samsung,exynos4412
+>            - const: samsung,exynos4
+>  
+> +      - description: Samsung Tab3 family boards
 
-Revert the commit instead, with necessary changes to the files if needed.
+s/Samsung Tab3/Samsung Galaxy Tab3/
+
+> +        items:
+> +          - enum:
+> +              - samsung,t310                    # Samsung Galaxy Tab 3 8.0 WiFi (SM-T310)
+> +              - samsung,t311                    # Samsung Galaxy Tab 3 8.0 3G (SM-T311)
+> +              - samsung,t315                    # Samsung Galaxy Tab 3 8.0 LTE (SM-T315)
+> +          - const: samsung,tab3
+> +          - const: samsung,exynos4212
+> +          - const: samsung,exynos4
+
+The entries are ordered by SoC compatible, so this should go before
+Exynos4412.
+
+> +
+>        - description: Exynos5250 based boards
+>          items:
+>            - enum:
 
 Best regards,
 Krzysztof
