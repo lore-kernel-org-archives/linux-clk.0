@@ -2,91 +2,425 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39923C77B76
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 17:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD4EC77B7A
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 17:48:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230347AbjDQRol (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 13:44:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
+        id S231152AbjDQRsi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 13:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbjDQRoj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 13:44:39 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A5FAF02;
-        Mon, 17 Apr 2023 10:44:26 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id gw13so14228862wmb.3;
-        Mon, 17 Apr 2023 10:44:26 -0700 (PDT)
+        with ESMTP id S231151AbjDQRsg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 13:48:36 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C602CB46E;
+        Mon, 17 Apr 2023 10:48:34 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id d9443c01a7336-1a66888cb89so10369745ad.3;
+        Mon, 17 Apr 2023 10:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681753465; x=1684345465;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJW18Rs7JyEs07/Vsxl5Q/32nWcrgJz6KvKEee91fk0=;
-        b=BV10jJi+xwQ6OOPKITXXNWMZq06YdlI4y7lJhXPx918vi9tx96j23IdJF8FJ30yeWF
-         kHE/oPeOweEOXFPIZM7gTOY8i+YUhXHpfZinoPBJD/zY7gizeO9k+UUMbxR1ioNc7/E7
-         y46KJ3eDsRmJ3yTYOcVQJENEmRk3j8f4VThzaELqqpiNf8nLBaIfa+6E74K4K4FY1gWR
-         BVfgJ2/EukUqOLwhpzd+MKpORW5ON8kJSG3b7ohVBwe4luZVpqWyPhV4hqRUzwTLhH1C
-         KTsjXYoF3JYO740OiQd3VRvVxkcMe+BIe5T49dPCHBcAcrFUZ7dwVEDFnRUyWCqr4kUD
-         n3xg==
+        d=gmail.com; s=20221208; t=1681753714; x=1684345714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mElitKZ7sVJOTw6f2WC/zkSXCNzETK2pY5VMRBVufmw=;
+        b=gGXX1Z3tsyEQ9yXV6FxAqKXrU/swtTH8fC2XXCDtPINtMLZI2Qi15weLR0kQC7WJ4c
+         0loRi1w73hJqt9ryrPCAGARvvap5ZEED70RY+GLV5zrLxpKLBFc4UyWIwxAVEd8waCOY
+         enHkm3sQq6zWbLi4P+E6BJAk92u50FETpMdynIgvEyx+OvIggocKQSdR9iJFRe6f7dHp
+         S8o9Pt9Pja5RR9HlOSzd3FzfcdJxprsgm09Lasp5okFZzJ6j8QO1nzWqxD05Q7c40D7K
+         2kw7b3bSHfowMrmkSVISE5Rn2bcrtF8dWZw7+Go3mNQwGpRFt3/zNwSO+OdNZmAL97IV
+         1Wyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681753465; x=1684345465;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jJW18Rs7JyEs07/Vsxl5Q/32nWcrgJz6KvKEee91fk0=;
-        b=k0eX/PaV+ksyOj7jzDvGa6fyQ11WbmFA/DS1x+BSxphgPR05QA6Vt61ZymkweoSXLI
-         w6Lpq+nP0ySJKg/9hlot8rpL53RRAzVMMa/WrUDoQf9HyacdZ7DdEcTordQrIBcLjrmI
-         0BtFe/6ksye3Nz8qrbPq0lT3pRiSUfHbfcUq+CrSLikvKF151aiOxkAaCDL052xByCAc
-         FzxHAn1NKJmQMvdAGGl4RxCT0+us+OzDx02x/zXf8NIzP1Osqdng2g0L/sUuKNxMJRKo
-         WV+sBLUs4nwIEwDDJVxmNYZ/+KsfOY7JSEfdymQ39J78lsGA6PKaOknuiPH4tQJT/ykM
-         PdMg==
-X-Gm-Message-State: AAQBX9fDyGnevtIyu/9gljr1zua3YgEvZulO/wFfP3rpkBcfuptLpWOo
-        pZ73NHvohYNECxz2ztPaYqA=
-X-Google-Smtp-Source: AKy350apxZRx4/sxLOBqB59xySZBVPcCeQ+i8o2uxY9qtWQKPTKExJWAsp2IFvQ1442jz7n6Uz1dxQ==
-X-Received: by 2002:a05:600c:229a:b0:3f0:a098:f503 with SMTP id 26-20020a05600c229a00b003f0a098f503mr11484013wmf.14.1681753464918;
-        Mon, 17 Apr 2023 10:44:24 -0700 (PDT)
-Received: from localhost.localdomain (host-87-7-13-196.retail.telecomitalia.it. [87.7.13.196])
-        by smtp.googlemail.com with ESMTPSA id f24-20020a7bcd18000000b003f09a9151c1sm12516155wmj.30.2023.04.17.10.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Apr 2023 10:44:24 -0700 (PDT)
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 1/2] clk: qcom: gcc-ipq6018: drop redundant F define
-Date:   Mon, 17 Apr 2023 19:44:07 +0200
-Message-Id: <20230417174408.23722-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20221208; t=1681753714; x=1684345714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mElitKZ7sVJOTw6f2WC/zkSXCNzETK2pY5VMRBVufmw=;
+        b=GFdkTxaXCu68YvO3o6pZ9MvljjuaAg0OWu92mGUD/ph/qKwR08i33cSE2Up2qyQROD
+         BYzn0l4B9tbl0F26lqBtv6oT4AfMJsKvCXega2Ooh1YzYYuQeOwqvgGQWutaN3cSTvVk
+         p1xS3Modi30Md9ZDJM0twHdJDobquAqCZUaBsV4TvLn2gJF2I0njKyxgl0dhFIWGcGhL
+         uXGykh7iU42Zgv01n7ofMFr+DXr2GChk/COrkszbEMoiIJ5jPgyN3sbFWoh0tpRos8lr
+         H82XiYe1FVJ/+GWW3CyYzfDsrtNrmubSP93bRlybNniNP+ck6o7/Y6rMm4z6zKC3Skev
+         pyZw==
+X-Gm-Message-State: AAQBX9fmPP0/nbHTsnxLV8OsjiPSsEKzLp/EuA3NqL5ZdhKJmJhrpKib
+        Jh2rYDgg6BQNEeLC7/0wyh/YY6sdiXZn4Crh+esjcgKg2Gv+fLlpgcA=
+X-Google-Smtp-Source: AKy350ZY2/SVWgCZZpNshcEjU75Gg3p0EuJFZSfpF3GMp51iDvev5JaVd2A9k5GnGj8yn466wUQCGf1vWQiSDPp1hgQ=
+X-Received: by 2002:a05:6a00:228b:b0:63b:641d:76d8 with SMTP id
+ f11-20020a056a00228b00b0063b641d76d8mr6279150pfe.2.1681753714033; Mon, 17 Apr
+ 2023 10:48:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230414181302.986271-1-mmyangfl@gmail.com> <20230414181302.986271-2-mmyangfl@gmail.com>
+ <c1f32d73-a311-6d70-0be6-12bdb50a052f@linaro.org>
+In-Reply-To: <c1f32d73-a311-6d70-0be6-12bdb50a052f@linaro.org>
+From:   Yangfl <mmyangfl@gmail.com>
+Date:   Tue, 18 Apr 2023 01:47:57 +0800
+Message-ID: <CAAXyoMPz1ONgDvFET0dFKBktODoSY2m3ubHfmVBsJ46sRBF31w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add reg-clock-controller
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The same exact F frequency table entry is defined in clk-rcg.h
-Drop the redundant define to cleanup code.
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2023=E5=B9=B4=
+4=E6=9C=8815=E6=97=A5=E5=91=A8=E5=85=AD 05:08=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 14/04/2023 20:12, David Yang wrote:
+> > Add DT bindings documentation for reg-clock-controller, collection of
+> > basic clocks common to many platforms.
+> >
+> > Signed-off-by: David Yang <mmyangfl@gmail.com>
+> > ---
+> >  .../bindings/clock/reg-clock-controller.yaml  | 245 ++++++++++++++++++
+> >  1 file changed, 245 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/reg-clock-c=
+ontroller.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/reg-clock-controll=
+er.yaml b/Documentation/devicetree/bindings/clock/reg-clock-controller.yaml
+> > new file mode 100644
+> > index 000000000000..a6a7e0b05821
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/reg-clock-controller.yaml
+> > @@ -0,0 +1,245 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/reg-clock-controller.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Simple straight-forward register-based clocks
+> > +
+> > +maintainers:
+> > +  - David Yang <mmyangfl@gmail.com>
+> > +
+> > +description: |
+> > +  Basic clocks common to many platforms.
+> > +
+> > +  If your clocks don't fit into these catagories, simply create your c=
+lock
+>
+> typo: categories
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/clk/qcom/gcc-ipq6018.c | 2 --
- 1 file changed, 2 deletions(-)
+Fixed in v2.
 
-diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-index 3f9c2f61a5d9..350ead66914c 100644
---- a/drivers/clk/qcom/gcc-ipq6018.c
-+++ b/drivers/clk/qcom/gcc-ipq6018.c
-@@ -26,8 +26,6 @@
- #include "clk-regmap-mux.h"
- #include "reset.h"
- 
--#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
--
- enum {
- 	P_XO,
- 	P_BIAS_PLL,
--- 
-2.39.2
+>
+> > +  controller. This driver normally work well with other controllers as=
+ long as
+> > +  they operate on different registers.
+> > +
+> > +  See linux/clk-provider.h for details about properties for each type =
+of clock.
+>
+> Describe here what is this device, what such simple clock controller
+> represents.
 
+Description has been rewritten in v3, to describe the device.
+
+>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - reg-clock-controller
+> > +
+> > +  ranges: true
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - ranges
+> > +  - '#address-cells'
+> > +  - '#size-cells'
+>
+> required goes after patternProperties.
+
+Fixed in v2.
+
+>
+> > +
+> > +patternProperties:
+> > +  ".*gate-clock@.*":
+>
+> "gate-clock@" should be equivalent. However this should be just "clock".
+
+Fixed in v3.
+
+>
+> > +    type: object
+> > +
+> > +    description: |
+>
+> Do not need '|' unless you need to preserve formatting.
+
+Fixed in v2.
+
+>
+> > +      Clock which can gate its output.
+> > +
+> > +    properties:
+> > +      compatible:
+> > +        const: gate-clock
+> > +
+> > +      reg:
+> > +        maxItems: 1
+> > +
+> > +      '#clock-cells':
+> > +        const: 0
+> > +
+> > +      clocks:
+> > +        maxItems: 1
+> > +        description:
+> > +          Parent clock.
+> > +
+> > +      clock-output-name:
+>
+> names
+>
+> Don't create your own properties.
+
+Fixed in v2, "clock-output-names".
+
+>
+> > +        maxItems: 1
+> > +
+> > +      bit-index:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Bit index which controls the output.
+>
+> I suggest to use same property as nvme, so bits.
+
+Replaced with "bits" in v2.
+
+>
+> > +
+> > +    required:
+> > +      - compatible
+> > +      - reg
+> > +      - '#clock-cells'
+> > +      - bit-index
+> > +
+> > +    additionalProperties: false
+> > +
+> > +  ".*divider-clock@.*":
+> > +    type: object
+> > +
+> > +    description: |
+> > +      Clock with an adjustable divider affecting its output frequency.
+> > +
+> > +    properties:
+> > +      compatible:
+> > +        const: divider-clock
+> > +
+> > +      reg:
+> > +        maxItems: 1
+> > +
+> > +      '#clock-cells':
+> > +        const: 0
+> > +
+> > +      clocks:
+> > +        description:
+> > +          Parent clocks.
+> > +
+> > +      clock-output-name:
+> > +        maxItems: 1
+> > +
+> > +      shift:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Shift to the divider bit field.
+> > +
+> > +      width:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Width of the divider bit field.
+> > +
+> > +      dividers:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +        description:
+> > +          Array of value/divider pairs.
+>
+> Then it looks like matrix.
+
+This part of bindings has been (temporarily) removed from this series
+since v2, to make it simpler.
+
+>
+> > +
+> > +    required:
+> > +      - compatible
+> > +      - reg
+> > +      - '#clock-cells'
+> > +      - shift
+> > +      - width
+> > +
+> > +    additionalProperties: false
+> > +
+> > +  ".*mux-clock@.*":
+> > +    type: object
+> > +
+> > +    description: |
+> > +      Clock with multiple selectable parents.
+> > +
+> > +    properties:
+> > +      compatible:
+> > +        const: mux-clock
+> > +
+> > +      reg:
+> > +        maxItems: 1
+> > +
+> > +      '#clock-cells':
+> > +        const: 0
+> > +
+> > +      clocks:
+> > +        minItems: 1
+> > +        description:
+> > +          Parent clock.
+> > +
+> > +      clock-output-name:
+> > +        maxItems: 1
+> > +
+> > +      shift:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Shift to multiplexer bit field.
+> > +
+> > +      mask:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Mask of mutliplexer bit field.
+> > +
+> > +      table:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +        description:
+> > +          Array of register values corresponding to the parent index.
+> > +
+> > +    required:
+> > +      - compatible
+> > +      - reg
+> > +      - '#clock-cells'
+> > +      - shift
+> > +      - mask
+> > +
+> > +    additionalProperties: false
+> > +
+> > +  ".*fractional-divider-clock@.*":
+> > +    type: object
+> > +
+> > +    description: |
+> > +      Clock with adjustable fractional divider affecting its output fr=
+equency.
+> > +
+> > +    properties:
+> > +      compatible:
+> > +        const: fractional_divider-clock
+> > +
+> > +      reg:
+> > +        maxItems: 1
+> > +
+> > +      '#clock-cells':
+> > +        const: 0
+> > +
+> > +      clocks:
+> > +        maxItems: 1
+> > +        description:
+> > +          Parent clock.
+> > +
+> > +      clock-output-name:
+> > +        maxItems: 1
+> > +
+> > +      numerator-shift:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Shift to the numerator bit field.
+> > +
+> > +      numerator-width:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Width of the numerator bit field.
+> > +
+> > +      denominator-shift:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Shift to the denominator bit field.
+> > +
+> > +      denominator-width:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        description:
+> > +          Width of the denominator bit field.
+> > +
+> > +    required:
+> > +      - compatible
+> > +      - reg
+> > +      - '#clock-cells'
+> > +      - numerator-shift
+> > +      - numerator-width
+> > +      - denominator-shift
+> > +      - denominator-width
+> > +
+> > +    additionalProperties: false
+> > +
+> > +additionalProperties: true
+>
+> No, come on. This must be false.
+
+Fixed with "false" in v2.
+
+>
+> > +
+> > +examples:
+> > +  - |
+> > +    clks: reg-clk-ctrl@ffff0000 {
+>
+> Names should be generic, so clock-controller
+>
+> Drop the label.
+
+Dropped in v2.
+
+>
+> > +      compatible =3D "reg-clock-controller";
+> > +      #address-cells =3D <1>;
+> > +      #size-cells =3D <1>;
+> > +      ranges =3D <0 0xffff0000 0x1000>;
+> > +
+> > +      my_clk: gate-clock@cc-3 {
+>
+> Drop label.
+>
+> That's a new unit address to me. Did I miss a change in DT spec?
+
+Dropped label in v2.
+
+>
+> > +        compatible =3D "gate-clock";
+> > +        #clock-cells =3D <0>;
+> > +        reg =3D <0xcc 4>;
+>
+> reg is after compatible.
+>
+> > +        bit-index =3D <3>;
+> > +        clock-output-name =3D "my-clk";
+>
+> Plus, test your patches. This fails testing...
+
+Fix name error in v3.
+
+>
+> > +      };
+> > +    };
+>
+> Best regards,
+> Krzysztof
+>
