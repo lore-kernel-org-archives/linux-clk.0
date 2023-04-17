@@ -2,120 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FFEFC77B7A
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 05:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781C6C77B70
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 06:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230105AbjDQFe7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 01:34:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55536 "EHLO
+        id S230175AbjDQG1y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 02:27:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230049AbjDQFez (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 01:34:55 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9321E3AAA;
-        Sun, 16 Apr 2023 22:34:46 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33H5RMbp010253;
-        Mon, 17 Apr 2023 05:34:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=bGJSg4QHg3Mdt9XB0epGlO/VU8HOYvpFzIafzWr02Yg=;
- b=kDPwANq98Y+Ql6vcoHefcWGw21ylDYEuOQs9MqqiPaCoKf9KXoPwbDMB/zOhr0uCzAEp
- sHTFqXBI0rFhPyMrKNBPP3x8Jwn5QmViMe08a6ouXPKR7J33/7wHHVvzVrnK/CoCsQtO
- OpTaChxqurg2g6eGXSmsCZKLBT6JLvxElbABbm6LsWUr/FGd0Aj5qqVaQbHtWBCpTigJ
- 2H2nvxrs1WLmnkemmkdGXlCH+KFUJm7EpSyXE01yNM2a5nqH95AIsGTPEzAEz1CSQBON
- Vj1wTrb78CZllXrcEbQcUo/hl/CMQDpAlix46UCu/3M9BzInFxHIyGoeUiEsGLrblU5H qA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pymnf2n76-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 05:34:43 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33H5Ygdo000941
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 05:34:42 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Sun, 16 Apr 2023 22:34:37 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-Subject: [PATCH V2 4/4] arm64: dts: qcom: ipq9574: rename al02-c7 dts to rdp433
-Date:   Mon, 17 Apr 2023 11:03:55 +0530
-Message-ID: <20230417053355.25691-5-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230417053355.25691-1-quic_devipriy@quicinc.com>
-References: <20230417053355.25691-1-quic_devipriy@quicinc.com>
+        with ESMTP id S229488AbjDQG1w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 02:27:52 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7345C358E
+        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 23:27:50 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a5so4716805ejb.6
+        for <linux-clk@vger.kernel.org>; Sun, 16 Apr 2023 23:27:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681712869; x=1684304869;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kZhVlgtCkjykFI3362iDf9ok4Q5/L8endAPoD1oRjnA=;
+        b=M/BBDRVpq3Qz72h/QrsYFZirctpqQXzcx+UgExn33c7UpLcFYy35fbnujNlg9pkU/5
+         6pEDbn8Y181Ip/HsSf7GzIv4IQhozyoy09kqc/5W7ZO5cnenowtlNX0nbyPdQu/ntJjd
+         Jov/jpScYqmJeaxx15U1pxxrYRDPaGg6j2C21eJZVadFB4CWGOHcojR0sH6wOroqxYwa
+         QTi9zN1gRhGzUBuX8lBi8ZucfXIiKrM0FZQkIczMyJi2Q5VS9lHYuQf++1q5fALpw2ig
+         mzRtmUzIsZFFqzSafVlAN03QRrb0YUFUQqygCMETq7sO25321HM9g4RolIpoOyrRczyC
+         rqQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681712869; x=1684304869;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kZhVlgtCkjykFI3362iDf9ok4Q5/L8endAPoD1oRjnA=;
+        b=DDAEOZ7HuTVusUMs68XLI/zXeKV57YDOq+47vEcpjdZrhM7z/mFQIEjGtBOncWFntH
+         Wtc7vEjwscFxNRH1AkZ1hmkIcKchwxpDuJ6mnQq2V4LA8bWQlmGm+BGXpptQvfByqVDl
+         y5eFJxUsmvhJ2BawhgaI1RGe/bD32bP7tblbQuA+DTNroDV9zUinsQ4IEfISqf8PCgg1
+         EkbPfNA1vwcuVwAklx2UC1Vi+FnhdQkEHIj6QIclvuu/e6nrblPIgdtEwXbnMeH7S5Du
+         Gz1+8BLRHqZt+LGq60ieqrg1WPEO02LHuF19OwWQzuuSNq2rKGTEAAcikxPrB7tDe3NK
+         Mzlw==
+X-Gm-Message-State: AAQBX9eve2559vf1I0ExHsW7Znli45JWrHPXcm9Vonx83am9P18CPxGw
+        XGWIb7LEIo7CjtPOssFmXT7LOQ==
+X-Google-Smtp-Source: AKy350aPF7fJyzUSSHBpxDjT4g8JZpxv5eabpBr8r+cEIjDDIZKYZt6rMjGs/0wqSq7MNs1NhofUsw==
+X-Received: by 2002:a17:906:53d1:b0:932:20a5:5b with SMTP id p17-20020a17090653d100b0093220a5005bmr5762356ejo.23.1681712868963;
+        Sun, 16 Apr 2023 23:27:48 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:b0ac:4d3b:966c:b33d? ([2a02:810d:15c0:828:b0ac:4d3b:966c:b33d])
+        by smtp.gmail.com with ESMTPSA id o26-20020a1709061d5a00b0094e44899367sm6057778ejh.101.2023.04.16.23.27.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Apr 2023 23:27:48 -0700 (PDT)
+Message-ID: <81ed4e15-19ea-34d9-3e05-d1195b2cdd57@linaro.org>
+Date:   Mon, 17 Apr 2023 08:27:47 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4COp8hi26rxbNCnDgEdkR0zphcExIBmD
-X-Proofpoint-ORIG-GUID: 4COp8hi26rxbNCnDgEdkR0zphcExIBmD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-17_02,2023-04-14_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=929 adultscore=0
- mlxscore=0 malwarescore=0 bulkscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 spamscore=0 lowpriorityscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304170050
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v3 0/4] clk: Add basic register clock controller
+Content-Language: en-US
+To:     David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230416194624.1258860-1-mmyangfl@gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230416194624.1258860-1-mmyangfl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rename the dts after Reference Design Platform(RDP) to adopt
-standard naming convention.
+On 16/04/2023 21:46, David Yang wrote:
+> These clocks were provided in `include/linux/clk-provider.h`, but lacks DT
+> bindings. Add DT bindings for them.
+> 
+> v2: split clock controller and its clocks
 
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- Changes since V9:
-	- Renamed the Board Device Tree Source to use the RDP numbers
+I gave you several comments on v1 and this vague changelog entry
+suggests you ignored all of it.
 
- arch/arm64/boot/dts/qcom/Makefile                               | 2 +-
- .../boot/dts/qcom/{ipq9574-al02-c7.dts => ipq9574-rdp433.dts}   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
- rename arch/arm64/boot/dts/qcom/{ipq9574-al02-c7.dts => ipq9574-rdp433.dts} (97%)
+Implement feedback and respond to each one that you ack it or disagree
+with it.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index e0e2def48470..f926e7e1aa7d 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -9,7 +9,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq6018-cp01-c1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk01.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= ipq8074-hk10-c2.dtb
--dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-al02-c7.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp433.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-asus-z00l.dtb
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-similarity index 97%
-rename from arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
-rename to arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 2c8430197ec0..2ce8e09e7565 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
- /*
-- * IPQ9574 AL02-C7 board device tree source
-+ * IPQ9574 RDP433 board device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-  * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
--- 
-2.17.1
+
+Best regards,
+Krzysztof
 
