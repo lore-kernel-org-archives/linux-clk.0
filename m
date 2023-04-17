@@ -2,96 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAB1C77B72
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 10:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92774C77B72
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 11:31:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229515AbjDQKmT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 06:42:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42562 "EHLO
+        id S230047AbjDQLbU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 07:31:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230430AbjDQKmH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 06:42:07 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32FB2900B;
-        Mon, 17 Apr 2023 03:41:10 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 276C824E289;
-        Mon, 17 Apr 2023 18:06:31 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 17 Apr
- 2023 18:06:31 +0800
-Received: from [192.168.125.87] (183.27.97.249) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 17 Apr
- 2023 18:06:30 +0800
-Message-ID: <83c5a35a-c646-cbc7-83f9-c02fcb24e069@starfivetech.com>
-Date:   Mon, 17 Apr 2023 18:06:29 +0800
+        with ESMTP id S229771AbjDQLbT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 07:31:19 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD3AB6E9D;
+        Mon, 17 Apr 2023 04:30:29 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33H9kKOi003301;
+        Mon, 17 Apr 2023 10:56:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=/giEdf/yYYj46lRvjmwhChjMapjO7EhdRyXvxQMFtoc=;
+ b=DItPq8SDt82cIriOwajXhAqVR56JC8Oue64DV6s3z4URZs2JnhegWAqeH9+6N6YutaE5
+ eCD/2xGkpoAUftfBPuC1hy29C4JSWPGweX0Wsablfuq6IF25CndE6ah4vOxFPdDlCpCx
+ fA5OIz4L66CuKJQIdUqgWuHgRssDjt4Zl20yJLucz6S8kgrDlbLUWOgOD1L0ahqef3mW
+ D3AytuCAuXZiUlmTUxwMFu9b02LcMYZYIPhtnifPWqBOt+JVEEYjfVlrdFDjyCFYDJrj
+ I7XGgDIX8i+JPKIDb00YjXpbtEjeD0XGAaKfFEJihv5p6sdtx2B3jcrJM6Lz8yY1qy3x SQ== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pymneu8v9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 10:56:26 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33HAuPLD028189
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Apr 2023 10:56:25 GMT
+Received: from kathirav-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Mon, 17 Apr 2023 03:56:21 -0700
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+To:     <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Kathiravan T <quic_kathirav@quicinc.com>
+Subject: [PATCH V2] clk: qcom: ipq5332: fix the order of SLEEP_CLK and XO clock
+Date:   Mon, 17 Apr 2023 16:26:07 +0530
+Message-ID: <20230417105607.4091-1-quic_kathirav@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 1/2] clk: starfive: Fix RESET_STARFIVE_JH7110 can't be
- selected in a specified case
-Content-Language: en-US
-To:     Conor Dooley <conor.dooley@microchip.com>
-CC:     <linux-clk@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
-        <linux-mm@kvack.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Gazzillo <paul@pgazz.com>,
-        "Necip Fazil Yildiran" <fazilyildiran@gmail.com>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230417074115.30786-1-hal.feng@starfivetech.com>
- <20230417074115.30786-2-hal.feng@starfivetech.com>
- <20230417-buckwheat-wilt-92a4e85a5ca0@wendy>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <20230417-buckwheat-wilt-92a4e85a5ca0@wendy>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.97.249]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: wfJlCBIXYyvXyv4SliMWsJz1oji-dxLs
+X-Proofpoint-GUID: wfJlCBIXYyvXyv4SliMWsJz1oji-dxLs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-17_06,2023-04-17_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=858 phishscore=0
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 spamscore=0 impostorscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304170098
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Apr 2023 10:54:09 +0100, Conor Dooley wrote:
-> On Mon, Apr 17, 2023 at 03:41:14PM +0800, Hal Feng wrote:
->> When (ARCH_STARFIVE [=n] && COMPILE_TEST [=y] && RESET_CONTROLLER [=n]),
->> RESET_STARFIVE_JH7110 can't be selected by CLK_STARFIVE_JH7110_SYS
->> and CLK_STARFIVE_JH7110_AON.
->> 
->> Considering RESET_STARFIVE_JH7110 is not a necessary option for compilation
->> test, we should select it only if ARCH_STARFIVE=y. Also, delete redundant
->> selected options of CLK_STARFIVE_JH7110_AON because these options are
->> already selected by the dependency.
->> 
->> Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock driver")
->> Fixes: b2ab3c94f41f ("clk: starfive: Add StarFive JH7110 always-on clock driver")
->> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->> ---
->>  drivers/clk/starfive/Kconfig | 5 +----
->>  1 file changed, 1 insertion(+), 4 deletions(-)
->> 
->> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
->> index 71c1148ee5f6..3fad4adee841 100644
->> --- a/drivers/clk/starfive/Kconfig
->> +++ b/drivers/clk/starfive/Kconfig
->> @@ -26,7 +26,7 @@ config CLK_STARFIVE_JH7110_SYS
->>  	depends on ARCH_STARFIVE || COMPILE_TEST
->>  	select AUXILIARY_BUS
->>  	select CLK_STARFIVE_JH71X0
->> -	select RESET_STARFIVE_JH7110
->> +	select RESET_STARFIVE_JH7110 if ARCH_STARFIVE
-> 
-> Hmm, I don't really follow the logic above.
-> Why not just make the if be `if RESET_CONTROLLER` rather than
-> ARCH_STARFIVE?
-> I'm probably missing some obvious reason why not.
+The order of DT_SLEEP_CLK and DT_XO are swapped and it is incorrect.
+Due to which the clocks for which the parent should be XO is having parent
+as SLEEP_CLK and vice versa. So fix the same by re-ordering the entries.
 
-Note that RESET_CONTROLLER is selected by ARCH_STARFIVE. Thanks.
+Fixes: 3d89d52970fd ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC")
+Reported-by: Devi Priya <quic_devipriy@quicinc.com>
+Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+---
+Changes in V2:
+	- Added the Reported-by and Fixes tag
 
-Best regards,
-Hal
+ drivers/clk/qcom/gcc-ipq5332.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+index 8cacbfb10c72..14096887d436 100644
+--- a/drivers/clk/qcom/gcc-ipq5332.c
++++ b/drivers/clk/qcom/gcc-ipq5332.c
+@@ -20,8 +20,8 @@
+ #include "reset.h"
+ 
+ enum {
+-	DT_SLEEP_CLK,
+ 	DT_XO,
++	DT_SLEEP_CLK,
+ 	DT_PCIE_2LANE_PHY_PIPE_CLK,
+ 	DT_PCIE_2LANE_PHY_PIPE_CLK_X1,
+ 	DT_USB_PCIE_WRAPPER_PIPE_CLK,
+-- 
+2.17.1
+
