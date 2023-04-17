@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5DCDC77B7A
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 05:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 139F5C77B79
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 05:34:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229849AbjDQFeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 01:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54876 "EHLO
+        id S230033AbjDQFes (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 01:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229458AbjDQFe3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 01:34:29 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B8C2713;
-        Sun, 16 Apr 2023 22:34:28 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33H30Uj5003694;
-        Mon, 17 Apr 2023 05:34:25 GMT
+        with ESMTP id S230032AbjDQFep (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 01:34:45 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 282D9358E;
+        Sun, 16 Apr 2023 22:34:42 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33H4ivXw031614;
+        Mon, 17 Apr 2023 05:34:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=5budlMC/TWBSN7orOMvIaRmn81J2KDv4KkmIkjnDggA=;
- b=G/vftIyn0rxLki5tnYasKsglRGaI8CeFne4UoO7IpGe+aRvxDWsX+1b25eU8iJPYTjkN
- rspe2IgIGwAuheH7yFQ0fufY0E/wa3F2Y0jqA2cSIqYaoVnbCvMtzUMlO9G2gUABhcLY
- 2PF0ZSwSKwM+t31Fenh0TsI0VtV7DDiAy2RjMkWTS2Etet6fhux7Ls5ocdak9e3iBord
- r65Sw8XE1utuYiLkdwWZgj7LD89eA9MM+ItgtWlUSYe90HFOM825muPdVXyCtUr5456p
- RLLsaYHrHGArUOY2KQQNHcRRIFW4HYdtPG//nH/fhImzRGMCEVC9IMC7FdLfBJlcBzqo WQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pyn7etk2n-1
+ bh=i6Was/67Lxb0xisdXTD6NDAvgjnWAeWd25RLPdV+T5A=;
+ b=AGUhvYSpmiZ6zolhtH9nf/j4BMBQWmobGXgfZJq/y3slD4bdk9uyy3kGtHRKCGsPx7qf
+ R25Yfi0jc9Ba7qvUSwpFO0NMiIAbQr5o/c8epojQsWzqkD8k7ZRt5RZJV5pgkvjMc8j3
+ Z2pSAHCSXIhCR/Yp5INPeCttyoyXNt81JsAHE6UqE8ItJJG09GQK0tXzuk0Rq2UTH9ai
+ 85wWsG4MJZ/IIAY0p6DW5vicEu0ES1A/oRpc0Se4J4/+vz1r3jKhAHGkIHLvKtSm5Pm1
+ kIXai4YVn7IVzDng3Kzt48r7YC1Fsu4wGjLb3yzqCF/s+ZRkIEAYcteEAj8z7qPs7XDz rw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3pyn2x2k4w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 05:34:25 +0000
+        Mon, 17 Apr 2023 05:34:38 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33H5YOcN020207
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33H5YbN1001486
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Apr 2023 05:34:24 GMT
+        Mon, 17 Apr 2023 05:34:37 GMT
 Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Sun, 16 Apr 2023 22:34:19 -0700
+ 15.2.986.42; Sun, 16 Apr 2023 22:34:31 -0700
 From:   Devi Priya <quic_devipriy@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
@@ -48,9 +48,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
 CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
         <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
         <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-Subject: [PATCH V2 1/4] dt-bindings: clock: qcom,ipq9574-gcc: Drop bias_pll_ubi_nc_clk input
-Date:   Mon, 17 Apr 2023 11:03:52 +0530
-Message-ID: <20230417053355.25691-2-quic_devipriy@quicinc.com>
+Subject: [PATCH V2 3/4] arm64: dts: qcom: ipq9574: Drop bias_pll_ubi_nc_clk & update intc node
+Date:   Mon, 17 Apr 2023 11:03:54 +0530
+Message-ID: <20230417053355.25691-4-quic_devipriy@quicinc.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230417053355.25691-1-quic_devipriy@quicinc.com>
 References: <20230417053355.25691-1-quic_devipriy@quicinc.com>
@@ -61,59 +61,72 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uX_oACe1TGb1kdYzNU4vFEqXuYEhBuO5
-X-Proofpoint-GUID: uX_oACe1TGb1kdYzNU4vFEqXuYEhBuO5
+X-Proofpoint-GUID: 2ZVQy5cWBdo_hmz77tTVlv-kEjc2OwW5
+X-Proofpoint-ORIG-GUID: 2ZVQy5cWBdo_hmz77tTVlv-kEjc2OwW5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-04-17_02,2023-04-14_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 impostorscore=0 bulkscore=0 clxscore=1015 mlxscore=0
- phishscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 lowpriorityscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=880
+ adultscore=0 bulkscore=0 spamscore=0 impostorscore=0 mlxscore=0
+ suspectscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2303200000 definitions=main-2304170050
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Drop unused bias_pll_ubi_nc_clk input to the clock controller.
+Drop the unused backup source bias_pll_ubi_nc_clk.
+Also, update the size of GICC and GICV region to 8kB and add target CPU
+encoding.
 
 Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 ---
- Changes since V9:
-	- Dropped the unused bias_pll_ubi_nc_clk input
-	- Added Bjorn Andersson to the maintainers list
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi | 13 +++----------
+ 1 file changed, 3 insertions(+), 10 deletions(-)
 
- Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
-index afc68eb9d7cc..8581de266750 100644
---- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml
-@@ -7,6 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Qualcomm Global Clock & Reset Controller on IPQ9574
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+index 3bb7435f5e7f..f1f959b43180 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+@@ -16,12 +16,6 @@
+ 	#size-cells = <2>;
  
- maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-   - Anusha Rao <quic_anusha@quicinc.com>
+ 	clocks {
+-		bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
+-			compatible = "fixed-clock";
+-			clock-frequency = <353000000>;
+-			#clock-cells = <0>;
+-		};
+-
+ 		sleep_clk: sleep-clk {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+@@ -131,7 +125,6 @@
+ 			reg = <0x01800000 0x80000>;
+ 			clocks = <&xo_board_clk>,
+ 				 <&sleep_clk>,
+-				 <&bias_pll_ubi_nc_clk>,
+ 				 <0>,
+ 				 <0>,
+ 				 <0>,
+@@ -172,14 +165,14 @@
+ 		intc: interrupt-controller@b000000 {
+ 			compatible = "qcom,msm-qgic2";
+ 			reg = <0x0b000000 0x1000>,  /* GICD */
+-			      <0x0b002000 0x1000>,  /* GICC */
++			      <0x0b002000 0x2000>,  /* GICC */
+ 			      <0x0b001000 0x1000>,  /* GICH */
+-			      <0x0b004000 0x1000>;  /* GICV */
++			      <0x0b004000 0x2000>;  /* GICV */
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <3>;
+-			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+ 			ranges = <0 0x0b00c000 0x3000>;
  
- description: |
-@@ -25,7 +26,6 @@ properties:
-     items:
-       - description: Board XO source
-       - description: Sleep clock source
--      - description: Bias PLL ubi clock source
-       - description: PCIE30 PHY0 pipe clock source
-       - description: PCIE30 PHY1 pipe clock source
-       - description: PCIE30 PHY2 pipe clock source
-@@ -48,7 +48,6 @@ examples:
-       reg = <0x01800000 0x80000>;
-       clocks = <&xo_board_clk>,
-                <&sleep_clk>,
--               <&bias_pll_ubi_nc_clk>,
-                <&pcie30_phy0_pipe_clk>,
-                <&pcie30_phy1_pipe_clk>,
-                <&pcie30_phy2_pipe_clk>,
+ 			v2m0: v2m@0 {
 -- 
 2.17.1
 
