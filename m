@@ -2,100 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C5FC77B7A
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 17:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED395C77B76
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 18:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbjDQRyW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 13:54:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48020 "EHLO
+        id S229929AbjDQSJh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 14:09:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbjDQRyU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 13:54:20 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 436467A91
-        for <linux-clk@vger.kernel.org>; Mon, 17 Apr 2023 10:54:18 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id o8so6336492ljp.6
-        for <linux-clk@vger.kernel.org>; Mon, 17 Apr 2023 10:54:18 -0700 (PDT)
+        with ESMTP id S229694AbjDQSJg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 14:09:36 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8723610D;
+        Mon, 17 Apr 2023 11:09:35 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id w11so26648437plp.13;
+        Mon, 17 Apr 2023 11:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681754056; x=1684346056;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F4+8olREfasjZv5QZc5V/pBOVr5naRMQNwCkcS8I+dA=;
-        b=xWU5V7sLim6ioC/6Y+oJGgycGYAycQ5y8UhuBIc4sh3cg9EMDk8QRYHlF/jnbdPdsd
-         32bDTpiDjIw0Egbeqk4eXTxNtEv3FtPbSHAkLGmSLadSJ2Elm0V1OOdfXXiGvQZIws5k
-         KLSdVDp1B8h/UzI/xc+fQmAQvn0u3P4jRkJ9g0EP9cyK2JDwz7iHt9LNC845kDcVAv0r
-         6xzLFeLqCNUoK8xhkDp+KCXFvvvuWnBiJ8097BQmVKCH8lDShMJRy+Ir0A4IzlafTh2d
-         YrLSdE1XCyXcGIcGF5OZwh7kbYjlI7O9JYii9SIU3q8HAnKS7UiyecSVVTdalT4aX2sn
-         k50w==
+        d=gmail.com; s=20221208; t=1681754975; x=1684346975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WNOsIQtquipVLHz8/RMsd7IDhOh5uaDhFa5Mb/HyQyI=;
+        b=K8lNZwCWAi69HuM8H5CpvXsO6JRXmF5bjsuJP4MBlqphQkWtHN5yPJgRPvhr11jBXv
+         LCQ0XiBOvyWy5lLY6PjcNjovVPe+8B2Xe6pkEDe9wlD21biLd8qxrncpDxkEIV44w5qR
+         Ll4g6NjbGABIuFK/2Aw4ZznxTV0HFr+kVqNBw9EFhOoDtcHJM7NTh30TWF/sisZla8kF
+         MQTOLmHoxRj+FjiTizTWKLFVOZQj3LDIfwVmudGbeC1nQ+WoQobnPHtXS9WpjP9eXdJr
+         TGBAsd6GCk/fy/X1ifvZpV4YZThGoaWGGJpyGQvb1oj2JnhKcLHjtGVuNJwdQBRLkbl4
+         ZCdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681754056; x=1684346056;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F4+8olREfasjZv5QZc5V/pBOVr5naRMQNwCkcS8I+dA=;
-        b=k1pzq/QBL2W3USb7IIMvFAJQi8/PK4D0GLO+hhXsXlafyosPrrg4bOxV9+XcWOuPfQ
-         64DTPsKSx5cE1GcLauCFaoi1WIAJ4XwCj5ziGRDv8Ikx+ANA+BZ5BgtyNGlyQbD8Zo9p
-         StXnQeh0PXfCSEt+nUie9mi+HsDks2EQXksQ5AzK7Ujdv+s2XRQ62snEFX6Gx7RSc+GX
-         GE62kRqPxtq0CKoHKHbW784ll58jaUB+IXDSQYmbwso70snN35fsbARyevrttcrv52Xw
-         NrhZeltuS8asJoPdpT5snpuPl9mioroLtUQTfFyoCHz8AozsrHABSACb6nfzueFYPI/C
-         vUew==
-X-Gm-Message-State: AAQBX9cPkIWjFIR7K+3aWQcUR6+MrifZ7OZ7Zwxq6pFkQpxjYmxFnsFK
-        zW6sf/71FNH/EJYAT7uPF3k0jw==
-X-Google-Smtp-Source: AKy350ZdGGOn1B6q+n7vcHcpU61x1OwUpebtzROn9z+Ltft2doHXj3wDzpWVq4DXIjV60SfmaBUrRg==
-X-Received: by 2002:a2e:7c06:0:b0:2a7:a5f7:e9bc with SMTP id x6-20020a2e7c06000000b002a7a5f7e9bcmr3887227ljc.15.1681754056399;
-        Mon, 17 Apr 2023 10:54:16 -0700 (PDT)
-Received: from [192.168.1.101] (abyk99.neoplus.adsl.tpnet.pl. [83.9.30.99])
-        by smtp.gmail.com with ESMTPSA id w19-20020a2e9bd3000000b002a8d915f30asm8799ljj.77.2023.04.17.10.54.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Apr 2023 10:54:16 -0700 (PDT)
-Message-ID: <8b73a320-8c52-16bb-12c5-85e78dd48c04@linaro.org>
-Date:   Mon, 17 Apr 2023 19:54:14 +0200
+        d=1e100.net; s=20221208; t=1681754975; x=1684346975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WNOsIQtquipVLHz8/RMsd7IDhOh5uaDhFa5Mb/HyQyI=;
+        b=iewYxCK2EGK7aCjUa8MAUILzojjEGvoQDYZzkXto+kSuvt8+xMeHh2PWh+KyclJWUM
+         VOULx4R7y6VMnByBgAvsoVVsvNQ8zDSR6xp3ynHbClTzWiA7jCpGuonAs8YkcChV7h8f
+         A9Q0ZnfdQobIg3aVjO5xR+HR0+ilceq0WHyPmFLZmhX5iIJyFcEFThmlJGiaXa2GiL6K
+         Ibk/s2/E3BmewuiJsRcBQ79T6oVCJAAc1O7oMiT/cfSDMtqWZybgWlR1vaueCGjPXsPX
+         qm+GPI0ZdmgrQo3cBj4/CFfBShHf8QyZZwV5yhUAsm0uuTOvlxwisblVFGbwE8SxEcYn
+         EEeg==
+X-Gm-Message-State: AAQBX9cPN2GCRclL0p4WgcHTM7HT7MtfW7RGSh/hdqCVV8g7Eb4Wstvd
+        32bLcqZwSy6R5aIqntOmElLdPMxlTvtuJ+X8bUw=
+X-Google-Smtp-Source: AKy350ZcGwtvc9bc5OmV986re8jTS7t6yf3evE/VHZhrKbmPQSK20zQKGda3a6I2bSv/pHSjitN9vGPX2QJ/+41y0BM=
+X-Received: by 2002:a17:902:ea05:b0:19a:64f6:e147 with SMTP id
+ s5-20020a170902ea0500b0019a64f6e147mr4400040plg.2.1681754974933; Mon, 17 Apr
+ 2023 11:09:34 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 2/2] clk: qcom: gcc-sdm660: drop redundant F define
-Content-Language: en-US
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+References: <20230416173302.1185683-1-mmyangfl@gmail.com> <20230416173302.1185683-2-mmyangfl@gmail.com>
+ <c6571a6d-bf55-14b3-102d-814af6763be7@linaro.org>
+In-Reply-To: <c6571a6d-bf55-14b3-102d-814af6763be7@linaro.org>
+From:   Yangfl <mmyangfl@gmail.com>
+Date:   Tue, 18 Apr 2023 02:08:58 +0800
+Message-ID: <CAAXyoMNKDFBnJbT0XX2LWtwDPiePjqhJ4n--cb+SDDBSmPZ_WQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: Add simple-clock-controller
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230417174408.23722-1-ansuelsmth@gmail.com>
- <20230417174408.23722-2-ansuelsmth@gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230417174408.23722-2-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> =E4=BA=8E2023=E5=B9=B4=
+4=E6=9C=8817=E6=97=A5=E5=91=A8=E4=B8=80 01:38=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 16/04/2023 19:32, David Yang wrote:
+> > Add DT bindings documentation for simple-clock-controller, mutex
+> > controller for clocks.
+> >
+> > Signed-off-by: David Yang <mmyangfl@gmail.com>
+> > ---
+> >  .../clock/simple-clock-controller.yaml        | 50 +++++++++++++++++++
+>
+> Where is the changelog?
+>
 
+Cover now send with v3.
 
-On 17.04.2023 19:44, Christian Marangi wrote:
-> The same exact F frequency table entry is defined in clk-rcg.h
-> Drop the redundant define to cleanup code.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> >  1 file changed, 50 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/simple-cloc=
+k-controller.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/simple-clock-contr=
+oller.yaml b/Documentation/devicetree/bindings/clock/simple-clock-controlle=
+r.yaml
+> > new file mode 100644
+> > index 000000000000..17835aeddb1d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/simple-clock-controller.y=
+aml
+> > @@ -0,0 +1,50 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/simple-clock-controller.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Simple clock controller
+> > +
+> > +maintainers:
+> > +  - David Yang <mmyangfl@gmail.com>
+> > +
+> > +description: |
+> > +  Driver (lock provider) for real clocks.
+>
+> Drop driver references. Typo: clock, not lock.
+>
+> What is a real clock? What is an unreal clock?
+>
 
-Konrad
->  drivers/clk/qcom/gcc-sdm660.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
-> index db918c92a522..6afce8e42ede 100644
-> --- a/drivers/clk/qcom/gcc-sdm660.c
-> +++ b/drivers/clk/qcom/gcc-sdm660.c
-> @@ -25,8 +25,6 @@
->  #include "reset.h"
->  #include "gdsc.h"
->  
-> -#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-> -
->  enum {
->  	P_XO,
->  	P_SLEEP_CLK,
+Rewrite description in v3. The controller is kinda unreal since it
+does not require any operation to "enable" the controller, but such
+description is avoided in v3.
+
+> > +
+> > +  Usually one register controls more than one clocks. This controller =
+avoids
+> > +  write conflicts by imposing a write lock, so that two operations on =
+the same
+> > +  register will not happen at the same time.
+>
+> Interesting. How the clock controller imposes write locks? Aren't you
+> now mixing drivers and hardware?
+
+Avoided driver details in device description in v3.
+
+>
+>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - oneOf:
+> > +          - const: simple-clock-controller
+> > +          - const: simple-clock-reset-controller
+>
+> Why two?
+
+It may also handle reset requests. But removed in v3 for further considerat=
+ion.
+
+>
+> > +      - const: syscon
+> > +      - const: simple-mfd
+>
+> Why do you need syscon and simple-mfd?
+
+Kinda typo. Removed in v3.
+
+>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  '#reset-cells':
+> > +    const: 2
+> > +
+> > +patternProperties:
+> > +  "clock@.*":
+>
+> Use consistent quotes.
+
+Fixed in v3.
+
+>
+> Anyway, I don't understand what is happening here and why such changes.
+> Nothing is explained...
+>
+>
+> Best regards,
+> Krzysztof
+>
