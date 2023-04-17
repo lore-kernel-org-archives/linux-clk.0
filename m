@@ -2,161 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CD9C77B76
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 19:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E63DC77B72
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 20:37:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229930AbjDQTLp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 15:11:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36904 "EHLO
+        id S229870AbjDQUhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 16:37:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230414AbjDQTL2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 15:11:28 -0400
-X-Greylist: delayed 370 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 17 Apr 2023 12:11:27 PDT
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169CC86AB
-        for <linux-clk@vger.kernel.org>; Mon, 17 Apr 2023 12:11:26 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1681758314; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=INqIBw4Ne4PgLy5vmY0LJBcYVa0jPhdpwP0ZTp9SvMxTNVsY/5fzEw4Skd5x0C/1lM
-    avWfzxvnZt+uRnH45Cu4Ovs3SoNTTuoAlpFhLhchgsMpT6JS2/2XYDPHpnQhey7Obvt/
-    VZ4RfzxGZA6mWk99KLwFndVy+VrPm3dFDIIc/6uhhLx039+zBheT93/znAjr8r5HhJVD
-    Mm2v+WKgsXbfwy8Fo02bI1Q//XVeoA/Cc+B0V9EXkHBOKeDTVQcuT666uryILzn3LM1w
-    UXs5Q7dTdcg7t9TkmUUB+p5XG5ZdSQgTCVeuC9foygDJ7FueeWTKeHRAofnIceU3YQ1t
-    8iUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1681758314;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=zMu8aCbltdkyaF8tMU4hcbAdwR6OQSkVDX5++sopalU=;
-    b=Z7THDmGdOJQi/D7qEGmW6cpwYVxZqgCIJK1hVZ9v02urqRsWJ5hatiZ9WjyP9awBjq
-    kKCgIiVsgKmV0UxqIenaBoAWuqiWBf0xeCHCb3H1XWUzZYY7VnGsztgMgedGlkkvYnT2
-    e6kHB9d/Qm6h8jq3kgZtyqbShoc6SE1wV6/x53BcEH+fuFvBMOLw+x65CiddyzKoToNB
-    QYZX/yvMbhTvnGSkAuEFrr2Ef7UqH7hwXgjzzM5qwlKsZDQWwcOmPQXbqzcs8dx+5Ovf
-    Zjq60svGQ9wa5BJxF498XiGPh7mrcEqRHWpnr0GFbbxJUxsiA0YvKixNr/o9KXDLml4e
-    3rnw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1681758314;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=zMu8aCbltdkyaF8tMU4hcbAdwR6OQSkVDX5++sopalU=;
-    b=tj9FF4MBFTjzEVOyc693G+9bSO3gFpH7oVu3u4z60niTHeJB8ND2Bc7uWZOsUOFAnP
-    b/hPAXWDxFgIVDROTq77rmn5T42vAgbNozYfSx2zm+Vk7DdCk5ib/Co5Kv/HGiPe4QFv
-    phpbyOp1dl0YZcT6VKPzbgHp7DeLYEJ5RnIyYBl7asrhwTRVEVDPALOrnHcjOcOzLRUj
-    J4L13kuhYcN/4+deaiDpt99qL7MGRKuWwht/pygsiYykFirzPvg5S1yTcMWLhHxrzI3b
-    EhmvyS+F7EdkuXqXg3HrxtYKK7DLukKbQi/p9JOEhkIPgF8LX75ReM3qx1dSCNTuqgy8
-    +e/g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1681758314;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=zMu8aCbltdkyaF8tMU4hcbAdwR6OQSkVDX5++sopalU=;
-    b=Rb+/EdXy6QJAJY1dx4i43fy15Q4UmnxHB5WJh1ND7b6jw4thZLbpKP7mpJXXVNJUEa
-    Qo36RKaAvge/AJtMfdAQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA8peN1A=="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.4.0 DYNA|AUTH)
-    with ESMTPSA id j6420az3HJ5EeE4
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Mon, 17 Apr 2023 21:05:14 +0200 (CEST)
-Date:   Mon, 17 Apr 2023 21:05:06 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S230150AbjDQUhE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 16:37:04 -0400
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8C3F4236;
+        Mon, 17 Apr 2023 13:36:53 -0700 (PDT)
+Received: by mail-ot1-f43.google.com with SMTP id w15-20020a056830410f00b006a386a0568dso20202414ott.4;
+        Mon, 17 Apr 2023 13:36:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681763813; x=1684355813;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e+QAWI6HAoCLsTSrdd3iRiJoq4aMeJmCh6mY2TAkIBc=;
+        b=Dc12sEBCehwPTv2eVHr4DX7CX4vZkhkCg97430i+0oX2YBu45B67flbrTm8oarTh8r
+         omncR29qlDa5pNPTD+3GGCnSf8GWXmYHvniFuFJ4HYi3ya4CmqbrFr5/U/bnDmE/0iFw
+         UwoH8aClvKTSmY1NdGuZZNQ5NRLVT1V+VdGQUs03jcAyaz3WLJ9RKmIJFhmXwzM72pkC
+         /acMG9EDcetJDStRKYcOervo0jCLV1pkS5TQmYSJHS1zO9oPNw0UBXIlTPLkh2zhjjGp
+         kD0agEbEQqEg0sgyMqtCf9e/PGqGWleVqtKiYfXy0wo+Jf0hMiEWzMbnVdDrGJrrCKVC
+         cvhg==
+X-Gm-Message-State: AAQBX9co+hAEBS/Ubav6WYMYkg6j9MpJo4Di/U+3bQj42bsU58avZ8x5
+        sw41AZeP23RifIC3+AAK/w==
+X-Google-Smtp-Source: AKy350ZzPROXT2PlKvU2SU951qQVWLCRSEIxLBJC/mGvKH/rXm//HY70PVAU5Zz6bI6JxxuBMbXmxw==
+X-Received: by 2002:a9d:6217:0:b0:6a2:49e6:9afc with SMTP id g23-20020a9d6217000000b006a249e69afcmr7537309otj.12.1681763813076;
+        Mon, 17 Apr 2023 13:36:53 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id f24-20020a9d7b58000000b006a5e0165d3esm1789231oto.19.2023.04.17.13.36.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Apr 2023 13:36:52 -0700 (PDT)
+Received: (nullmailer pid 3327898 invoked by uid 1000);
+        Mon, 17 Apr 2023 20:36:51 -0000
+Date:   Mon, 17 Apr 2023 15:36:51 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     William Qiu <william.qiu@starfivetech.com>,
+        linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RFT v2 01/14] dt-bindings: clock: qcom,rpmcc: Add a way
- to enable unused clock cleanup
-Message-ID: <ZD2YYrOdQMD3pi7u@gerhold.net>
-References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
- <20230303-topic-rpmcc_sleep-v2-1-ae80a325fe94@linaro.org>
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v3 5/7] dt-bindings: soc: starfive: Add StarFive syscon
+ module
+Message-ID: <20230417203651.GA3319886-robh@kernel.org>
+References: <20230414024157.53203-1-xingyu.wu@starfivetech.com>
+ <20230414024157.53203-6-xingyu.wu@starfivetech.com>
+ <168147484896.3576391.17289619505417988717.robh@kernel.org>
+ <8c396a98-a76e-cd68-4d26-15ae3a15a623@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230303-topic-rpmcc_sleep-v2-1-ae80a325fe94@linaro.org>
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <8c396a98-a76e-cd68-4d26-15ae3a15a623@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 08, 2023 at 10:35:17PM +0100, Konrad Dybcio wrote:
-> Disabling RPMCC clocks can be a bit touchy. If we can't guarantee all
-> (or at least most) of the oneline peripherals ask the interconnect
-> framework to keep their buses online and guarantee enough bandwidth,
-> we're relying on bootloader defaults to keep the said buses alive through
-> RPM requests and rate setting on RPM clocks.
+On Mon, Apr 17, 2023 at 03:43:48PM +0800, Xingyu Wu wrote:
+> On 2023/4/14 20:37, Rob Herring wrote:
+> > 
+> > On Fri, 14 Apr 2023 10:41:55 +0800, Xingyu Wu wrote:
+> >> From: William Qiu <william.qiu@starfivetech.com>
+> >> 
+> >> Add documentation to describe StarFive System Controller Registers.
+> >> 
+> >> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> >> ---
+> >>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 58 +++++++++++++++++++
+> >>  MAINTAINERS                                   |  6 ++
+> >>  2 files changed, 64 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+> >> 
+> > 
+> > My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> > on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > ./Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/clock/starfive,jh7110-pll.yaml
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230414024157.53203-6-xingyu.wu@starfivetech.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit after running the above command yourself. Note
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > your schema. However, it must be unset to test all examples with your schema.
+> > 
 > 
-> Without that in place, the RPM clocks are never enabled in the CCF, which
-> qualifies them to be cleaned up, since - as far as Linux is concerned -
-> nobody's using them and they're just wasting power. Doing so will end
-> tragically, as within miliseconds we'll get *some* access attempt on an
-> unlocked bus which will cause a platform crash.
-> 
-> On the other hand, if we want to save power and put well-supported
-> platforms to sleep, we should be shutting off at least some of these
-> clocks (this time with a clear distinction of which ones are *actually*
-> not in use, coming from the interconnect driver).
-> 
-> To differentiate between these two cases while not breaking older DTs,
-> introduce an opt-in property to correctly mark RPM clocks as enabled
-> after handoff (the initial max freq vote) and hence qualify them for the
-> common unused clock cleanup.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-> index 2a95bf8664f9..386153f61971 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.yaml
-> @@ -58,6 +58,12 @@ properties:
->      minItems: 1
->      maxItems: 2
->  
-> +  qcom,clk-disable-unused:
-> +    type: boolean
-> +    description:
-> +      Indicates whether unused RPM clocks can be shut down with the common
-> +      unused clock cleanup. Requires a functional interconnect driver.
-> +
+> I have updated yamllint and dtschema, and tested it and didn't see this error.
+> I asked william and also didn't see this. This error says the file:
+> http://devicetree.org/schemas/clock/starfive,jh7110-pll.yaml was not found.
+> This file is added in patch 1 but patch 1 should be applied after these patchset
+> about JH7110 basic clock drivers. I don't know if that's the reason.
 
-I'm surprised that Stephen Boyd did not bring up his usual "rant" here
-of moving the interconnect clock voting out of rpmcc into the
-interconnect drivers (see [1], [2]). :-)
+Yes, patch 1 could not be applied[1].
 
-I was a bit "cautious" about it back then but at this point I think it
-kind of makes sense. Make sure to read Stephen's detailed explanation in
-https://lore.kernel.org/linux-arm-msm/159796605593.334488.8355244657387381953@swboyd.mtv.corp.google.com/
+Rob
 
-We keep looking for workarounds to prevent the CCF from "messing" with
-interconnect-related clocks. But the CCF cannot mess with "clocks" it
-does not manage. The RPM interconnect drivers already talk directly to
-the RPM in drivers/interconnect/qcom/smd-rpm.c. I think it should be
-quite easy to move the QCOM_SMD_RPM_BUS_CLK relates defines over there
-and just bypass the CCF entirely.
-
-For backwards compatibility (for platforms without interconnect drivers)
-one could either assume that the bootloader bandwidth votes will be
-sufficient and just leave those clocks completely alone. Or the
-"icc_smd_rpm" platform device could initially make max votes similar to
-the rpmcc device. By coincidence the "icc_smd_rpm" platform device is
-always created, no matter how the device tree looks or if the platform
-actually has an interconnect driver.
-
-Stephan
-
-[1]: https://lore.kernel.org/linux-arm-msm/159796605593.334488.8355244657387381953@swboyd.mtv.corp.google.com/
-[2]: https://lore.kernel.org/linux-arm-msm/20211209091005.D3344C004DD@smtp.kernel.org/
+[1] https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230414024157.53203-2-xingyu.wu@starfivetech.com/
