@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C6AC77B76
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 07:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90331C77B70
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Apr 2023 07:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230468AbjDQHmX convert rfc822-to-8bit (ORCPT
+        id S231138AbjDQHm0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 03:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59600 "EHLO
+        Mon, 17 Apr 2023 03:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbjDQHmU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 03:42:20 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FFED1AD;
-        Mon, 17 Apr 2023 00:41:45 -0700 (PDT)
+        with ESMTP id S230045AbjDQHmV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 03:42:21 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E639240EF;
+        Mon, 17 Apr 2023 00:41:44 -0700 (PDT)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id DE41324E2A9;
-        Mon, 17 Apr 2023 15:41:16 +0800 (CST)
+        by ex01.ufhost.com (Postfix) with ESMTP id 38B5424E083;
+        Mon, 17 Apr 2023 15:41:18 +0800 (CST)
 Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 17 Apr
- 2023 15:41:16 +0800
+ 2023 15:41:18 +0800
 Received: from ubuntu.localdomain (183.27.97.249) by EXMBX172.cuchost.com
  (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 17 Apr
- 2023 15:41:16 +0800
+ 2023 15:41:17 +0800
 From:   Hal Feng <hal.feng@starfivetech.com>
 To:     <linux-clk@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
         <linux-mm@kvack.org>
@@ -38,10 +38,12 @@ CC:     Stephen Boyd <sboyd@kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 0/2] A fix for StarFive JH7110 clock drivers
-Date:   Mon, 17 Apr 2023 15:41:13 +0800
-Message-ID: <20230417074115.30786-1-hal.feng@starfivetech.com>
+Subject: [PATCH v1 2/2] clk: starfive: Delete the redundant dev_set_drvdata() in JH7110 clock drivers
+Date:   Mon, 17 Apr 2023 15:41:15 +0800
+Message-ID: <20230417074115.30786-3-hal.feng@starfivetech.com>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20230417074115.30786-1-hal.feng@starfivetech.com>
+References: <20230417074115.30786-1-hal.feng@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [183.27.97.249]
@@ -53,30 +55,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Stephen,
+The dev_set_drvdata() is no longer needed after we used a wrapper
+struct to get the data in auxiliary driver.
 
-This series fix some issues of StarFive JH7110 sys and aon clock drivers.
-
-The first patch fix two issues [1] [2] reported by kernel test robot.
-
-The second patch is an addition to patch [3]. It removes the redundant
-dev_set_drvdata().
-
-[1] https://lore.kernel.org/oe-kbuild-all/202304140256.aIlJMfbA-lkp@intel.com/
-[2] https://lore.kernel.org/oe-kbuild-all/202304140706.aOBNhUj2-lkp@intel.com/
-[3] https://lore.kernel.org/all/20230413205528.4044216-1-sboyd@kernel.org/
-
-Hal Feng (2):
-  clk: starfive: Fix RESET_STARFIVE_JH7110 can't be selected in a
-    specified case
-  clk: starfive: Delete the redundant dev_set_drvdata() in JH7110 clock
-    drivers
-
- drivers/clk/starfive/Kconfig                   | 5 +----
+Cc: Xingyu Wu <xingyu.wu@starfivetech.com>
+Fixes: d1aae0663023 ("clk: starfive: Avoid casting iomem pointers")
+Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+---
  drivers/clk/starfive/clk-starfive-jh7110-aon.c | 2 --
  drivers/clk/starfive/clk-starfive-jh7110-sys.c | 2 --
- 3 files changed, 1 insertion(+), 8 deletions(-)
+ 2 files changed, 4 deletions(-)
 
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-aon.c b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+index a2799fe8a234..62954eb7b50a 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-aon.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-aon.c
+@@ -83,8 +83,6 @@ static int jh7110_aoncrg_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
+-	dev_set_drvdata(priv->dev, (void *)(&priv->base));
+-
+ 	for (idx = 0; idx < JH7110_AONCLK_END; idx++) {
+ 		u32 max = jh7110_aonclk_data[idx].max;
+ 		struct clk_parent_data parents[4] = {};
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+index 851b93d0f371..e6031345ef05 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+@@ -402,8 +402,6 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
+-	dev_set_drvdata(priv->dev, (void *)(&priv->base));
+-
+ 	/*
+ 	 * These PLL clocks are not actually fixed factor clocks and can be
+ 	 * controlled by the syscon registers of JH7110. They will be dropped
 -- 
 2.38.1
 
