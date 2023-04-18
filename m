@@ -2,340 +2,226 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22719C77B71
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 06:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0376FC77B71
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 09:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230481AbjDRG4g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 02:56:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51066 "EHLO
+        id S230168AbjDRJDf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 05:03:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231136AbjDRG4a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 02:56:30 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27FB16A52;
-        Mon, 17 Apr 2023 23:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681800965; x=1713336965;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=cxF13p8SCEtnlzosb7qH6VytQ/OvmdwB769JK2OzYAg=;
-  b=BbmQ+zivQBU9BF5aghO9MXtCJSitIf8vVz3A6cZQr2NAV6f/vz1lMo5J
-   WVQgdK3nbMe6bq03wbsMbL/x0S/MBdBBc+hBKT9UDaVX1u+6HviJVjdaB
-   P6mCOgbQq5vMO+l//MT/FdG1m2+Ie1Ue/9j+CuAuBM0f9CaiBh8vEPxye
-   PRCdh41s56ORDvh9wdsVIhucVECutkgUWbIQTVWkMpdgDEUetE4gSiHbm
-   0QNc8SwIJGKK+kgzOCB079EXHJO8F3S4FNgdFNuHWO7Bt8dZ0RPy/lXJX
-   RpDaj6c6VGqUJZU/0rgamXjxzXp+4npXJq4eH43Kimfx3zHbppN49nu2w
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10683"; a="325432671"
-X-IronPort-AV: E=Sophos;i="5.99,206,1677571200"; 
-   d="scan'208";a="325432671"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Apr 2023 23:55:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10683"; a="815096197"
-X-IronPort-AV: E=Sophos;i="5.99,206,1677571200"; 
-   d="scan'208";a="815096197"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 17 Apr 2023 23:55:24 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pofFL-000d4p-2b;
-        Tue, 18 Apr 2023 06:55:23 +0000
-Date:   Tue, 18 Apr 2023 14:55:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- 4aa1da8d99724f6c0b762b58a71cee7c5e2e109b
-Message-ID: <643e3ecf.IXV1BGGBUFf0iS6O%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        with ESMTP id S231233AbjDRJDY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 05:03:24 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DCD15BA7;
+        Tue, 18 Apr 2023 02:03:16 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id gw13so15150265wmb.3;
+        Tue, 18 Apr 2023 02:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681808594; x=1684400594;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qq2Q2tk9q20ZsHUF956GXs78KCpVDJ6rH1bHkjjZwGc=;
+        b=qQHF4YLiKxjqYN/aHsHrx357il4DxWI5STZ8jf/00e70uLcmXJaipA1RwKs86KYwLb
+         tGzl+wKZ2Y3wkkG0HWmoAVqbTp+PnMFyRwre78hN5NNIrY7Yyh2nhOMMKaMGMkgwxVKw
+         v+z6GAuvq49m1TjRNUJKiOqHj8+OSohukzQ0ZQSigqZU2bDPuBLqququu1V7NvE6tGL2
+         cguQbaduydLiTaTL9wzv1og/pUlXWk3gvaRoO0hGuCkKOeJIwAVkXsYiN2n1+L1ivJ+f
+         /fo7Ay1jpkXfkLgnwgJl2F+PEpHrCZgQM5whG2sV1OH6FgOnI9xjYhNsvYLfrlb0ZbDF
+         nVbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681808594; x=1684400594;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qq2Q2tk9q20ZsHUF956GXs78KCpVDJ6rH1bHkjjZwGc=;
+        b=XucKtiTv6+3qHI2mP3pk/2jGYo1qgKcAvUCZkYgF1UluVELfFph5dYQBKJlPi8AZA/
+         8bWLzTKUoioB2fQ7VjA1HLd1ncNhi1u70PJc+7weBUAagl9Wj7E5zBvZZMdBFb0Lom6X
+         tN0LW+WpWA/Eyy9NkKv/F1rrgq0ECgdVd60Cz1wnuaB/QYdngxtd8n/2GDyZQO9C0qTr
+         ZKEPJlbK+Q7hYMzmfP02NTl2bxh7jkCviK6zw726dgGS6LX3RH4OChAxH9OI0LFAxP/U
+         q6cVih0cOpV//cT3dp8E0AFr27oBCkbb055l5dxyiukwhX0PD52BAH0mSmZd2nMJVCGX
+         uPxg==
+X-Gm-Message-State: AAQBX9extnzGBulT+UUInnhCK1M70MHEv/q66IRE573jH7cuUKvlQ7Ty
+        gqmCOsR3bh671UjyE7MolUICsMHgAa8=
+X-Google-Smtp-Source: AKy350ZoKrwnkjorG3phJ0G+UZ0OyNs5kprNSu8aCeLz6s09X6LUT7/XDqa+2DmDeWsHdO7DK7t7Yg==
+X-Received: by 2002:a05:600c:22d9:b0:3f1:72ee:97b7 with SMTP id 25-20020a05600c22d900b003f172ee97b7mr5807116wmg.15.1681808594245;
+        Tue, 18 Apr 2023 02:03:14 -0700 (PDT)
+Received: from localhost.localdomain (61.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.61])
+        by smtp.gmail.com with ESMTPSA id u7-20020a7bcb07000000b003ee70225ed2sm14341109wmj.15.2023.04.18.02.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 02:03:13 -0700 (PDT)
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
+        john@phrozen.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        arinc.unal@arinc9.com
+Subject: [PATCH v3 0/9] mips: ralink: add complete clock and reset driver for mtmips SoCs
+Date:   Tue, 18 Apr 2023 11:03:03 +0200
+Message-Id: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: 4aa1da8d99724f6c0b762b58a71cee7c5e2e109b  Add linux-next specific files for 20230417
+Hi all!
 
-Error/Warning reports:
+This patchset is a big effort to properly implement a clock and reset
+driver for old ralink SoCs. This allow to properly define clocks in 
+device tree and avoid to use fixed-clocks directly from 'arch/mips/ralink'
+architecture directory code.
 
-https://lore.kernel.org/oe-kbuild-all/202304102354.Q4VOXGTE-lkp@intel.com
+Device tree 'sysc' node will be both clock and reset provider using 
+'clock-cells' and 'reset-cells' properties.
 
-Error/Warning: (recently discovered and may have been fixed)
+The ralink SoCs we are taking about are RT2880, RT3050, RT3052, RT3350,
+RT3352, RT3883, RT5350, MT7620, MT7628 and MT7688. Mostly the code in
+this new driver has been extracted from 'arch/mips/ralink' and cleanly
+put using kernel clock and reset driver APIs. The clock plans for this
+SoCs only talks about relation between CPU frequency and BUS frequency.
+This relation is different depending on the particular SoC. CPU clock is
+derived from XTAL frequencies.
 
-drivers/clk/clk-sp7021.c:316:8: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (_m)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:351:13: warning: variable 'bw_needed' set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/amd/amdgpu/../display/dc/link/link_validation.c:352:25: warning: variable 'link' set but not used [-Wunused-but-set-variable]
-drivers/gpu/drm/i915/gt/uc/guc_capture_fwif.h:62: warning: wrong kernel-doc identifier on line:
-drivers/gpu/drm/i915/i915_pmu.h:41: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-drivers/gpu/drm/i915/i915_request.h:176: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-drivers/gpu/drm/i915/i915_vma.h:145: warning: expecting prototype for i915_vma_offset(). Prototype was for i915_vma_size() instead
-drivers/phy/mediatek/phy-mtk-hdmi-mt8195.c:298:6: warning: variable 'ret' is uninitialized when used here [-Wuninitialized]
-nios2-linux-ld: phy-mtk-hdmi-mt8195.c:(.text+0x564): undefined reference to `__gesf2'
-nios2-linux-ld: phy-mtk-hdmi-mt8195.c:(.text+0x584): undefined reference to `__ltsf2'
-phy-mtk-hdmi-mt8195.c:(.text+0x550): undefined reference to `__floatunsisf'
+ Depending on the SoC we have the following frequencies:
+ * RT2880 SoC:
+     - XTAL: 40 MHz.
+     - CPU: 250, 266, 280 or 300 MHz.
+     - BUS: CPU / 2 MHz.
+  * RT3050, RT3052, RT3350:
+     - XTAL: 40 MHz.
+     - CPU: 320 or 384 MHz.
+     - BUS: CPU / 3 MHz.
+  * RT3352:
+     - XTAL: 40 MHz.
+     - CPU: 384 or 400 MHz.
+     - BUS: CPU / 3 MHz.
+     - PERIPH: 40 MHz.
+  * RT3383:
+     - XTAL: 40 MHz.
+     - CPU: 250, 384, 480 or 500 MHz.
+     - BUS: Depends on RAM Type and CPU:
+       + RAM DDR2: 125. ELSE 83 MHz.
+       + RAM DDR2: 128. ELSE 96 MHz.
+       + RAM DDR2: 160. ELSE 120 MHz.
+       + RAM DDR2: 166. ELSE 125 MHz.
+  * RT5350:
+      - XTAL: 40 MHz.
+      - CPU: 300, 320 or 360 MHz.
+      - BUS: CPU / 3, CPU / 4, CPU / 3 MHz.
+      - PERIPH: 40 MHz.
+  * MT7628 and MT7688:
+     - XTAL: 20 MHz or 40 MHz.
+     - CPU: 575 or 580 MHz.
+     - BUS: CPU / 3.
+     - PCMI2S: 480 MHz.
+     - PERIPH: 40 MHz.
+  * MT7620:
+     - XTAL: 20 MHz or 40 MHz.
+     - PLL: XTAL, 480, 600 MHz.
+     - CPU: depends on PLL and some mult and dividers.
+     - BUS: depends on PLL and some mult and dividers.
+     - PERIPH: 40 or XTAL MHz.
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+MT7620 is a bit more complex deriving CPU clock from a PLL and an bunch of
+register reads and predividers. To derive CPU and BUS frequencies in the
+MT7620 SoC 'mt7620_calc_rate()' helper is used.
+In the case XTAL can have different frequencies and we need a different
+clock frequency for peripherals 'periph' clock in introduced.
+The rest of the peripherals present in the SoC just follow their parent
+frequencies.
 
-drivers/acpi/property.c:985 acpi_data_prop_read_single() error: potentially dereferencing uninitialized 'obj'.
-fs/xfs/scrub/refcount.c: xfs_mount.h is included more than once.
-fs/xfs/scrub/refcount.c: xfs_trans_resv.h is included more than once.
+I am using 'mtmips' inside for ralink clock driver. This is aligned with
+pinctrl series recently merged through pinctrl git tree [0].
 
-Error/Warning ids grouped by kconfigs:
+I am maintaining ralink as prefix for compatible strings after discussions
+between Rob and Arinc in v2 of this series [1].
 
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- arm64-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- i386-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- i386-randconfig-m021-20230417
-|   `-- drivers-acpi-property.c-acpi_data_prop_read_single()-error:potentially-dereferencing-uninitialized-obj-.
-|-- ia64-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- ia64-randconfig-r002-20230416
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- loongarch-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- loongarch-defconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- loongarch-randconfig-r015-20230411
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- microblaze-randconfig-r001-20230416
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- mips-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- mips-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- mips-randconfig-c032-20230416
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- mips-randconfig-r015-20230417
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- nios2-randconfig-r014-20230413
-|   |-- nios2-linux-ld:phy-mtk-hdmi-mt8195.c:(.text):undefined-reference-to-__gesf2
-|   |-- nios2-linux-ld:phy-mtk-hdmi-mt8195.c:(.text):undefined-reference-to-__ltsf2
-|   `-- phy-mtk-hdmi-mt8195.c:(.text):undefined-reference-to-__floatunsisf
-|-- powerpc-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- riscv-allmodconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- s390-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- sparc-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- sparc64-randconfig-r004-20230417
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-|-- x86_64-allnoconfig
-|   |-- fs-xfs-scrub-refcount.c:xfs_mount.h-is-included-more-than-once.
-|   `-- fs-xfs-scrub-refcount.c:xfs_trans_resv.h-is-included-more-than-once.
-|-- x86_64-allyesconfig
-|   |-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-bw_needed-set-but-not-used
-|   `-- drivers-gpu-drm-amd-amdgpu-..-display-dc-link-link_validation.c:warning:variable-link-set-but-not-used
-`-- x86_64-randconfig-m001-20230417
-    `-- drivers-acpi-property.c-acpi_data_prop_read_single()-error:potentially-dereferencing-uninitialized-obj-.
-clang_recent_errors
-|-- arm-randconfig-r022-20230416
-|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
-|-- arm-randconfig-r024-20230416
-|   |-- drivers-clk-clk-sp7021.c:warning:result-of-comparison-of-constant-with-expression-of-type-typeof-(_Generic((_m)-char:(unsigned-char)-unsigned-char:(unsigned-char)-signed-char:(unsigned-char)-unsigned-
-|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
-|-- arm64-buildonly-randconfig-r005-20230416
-|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
-|-- powerpc-randconfig-r032-20230416
-|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
-|-- powerpc-randconfig-r033-20230416
-|   `-- drivers-phy-mediatek-phy-mtk-hdmi-mt8195.c:warning:variable-ret-is-uninitialized-when-used-here
-`-- x86_64-randconfig-a011-20230417
-    |-- drivers-gpu-drm-i915-gt-uc-guc_capture_fwif.h:warning:wrong-kernel-doc-identifier-on-line:
-    |-- drivers-gpu-drm-i915-i915_pmu.h:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-    |-- drivers-gpu-drm-i915-i915_request.h:warning:This-comment-starts-with-but-isn-t-a-kernel-doc-comment.-Refer-Documentation-doc-guide-kernel-doc.rst
-    `-- drivers-gpu-drm-i915-i915_vma.h:warning:expecting-prototype-for-i915_vma_offset().-Prototype-was-for-i915_vma_size()-instead
+Changes have been compile tested for:
+- RT2880
+- RT3883
+- MT7620
 
-elapsed time: 724m
+Changes have been properly tested in RT5350 SoC based board (ALL5003 board)
+resulting in a working platform.
 
-configs tested: 143
-configs skipped: 17
+Dts files for these SoCs in-tree except MT7621 are incomplete. We are
+planning to align with openWRT files at some point and add extra needed
+changes. Hence I am not touching them at all in these series. If this is
+a problem, please let me know and I will update them.
 
-tested configs:
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-alpha                randconfig-r001-20230417   gcc  
-alpha                randconfig-r016-20230415   gcc  
-alpha                randconfig-r036-20230417   gcc  
-arc                              allyesconfig   gcc  
-arc          buildonly-randconfig-r001-20230417   gcc  
-arc                                 defconfig   gcc  
-arc                  randconfig-r034-20230417   gcc  
-arc                  randconfig-r036-20230416   gcc  
-arc                  randconfig-r043-20230416   gcc  
-arc                  randconfig-r043-20230417   gcc  
-arm                              allmodconfig   gcc  
-arm                              allyesconfig   gcc  
-arm                                 defconfig   gcc  
-arm                  randconfig-r012-20230413   gcc  
-arm                  randconfig-r022-20230416   clang
-arm                  randconfig-r024-20230416   clang
-arm                  randconfig-r046-20230416   clang
-arm                  randconfig-r046-20230417   gcc  
-arm                           sama5_defconfig   gcc  
-arm                        shmobile_defconfig   gcc  
-arm64                            allyesconfig   gcc  
-arm64        buildonly-randconfig-r005-20230416   clang
-arm64        buildonly-randconfig-r005-20230417   gcc  
-arm64                               defconfig   gcc  
-arm64                randconfig-r031-20230417   gcc  
-csky         buildonly-randconfig-r006-20230416   gcc  
-csky                                defconfig   gcc  
-csky                 randconfig-r025-20230416   gcc  
-hexagon              randconfig-r012-20230411   clang
-hexagon              randconfig-r014-20230415   clang
-hexagon              randconfig-r032-20230417   clang
-hexagon              randconfig-r041-20230416   clang
-hexagon              randconfig-r041-20230417   clang
-hexagon              randconfig-r045-20230416   clang
-hexagon              randconfig-r045-20230417   clang
-i386                             allyesconfig   gcc  
-i386                              debian-10.3   gcc  
-i386                                defconfig   gcc  
-i386                 randconfig-a001-20230417   gcc  
-i386                 randconfig-a002-20230417   gcc  
-i386                 randconfig-a003-20230417   gcc  
-i386                 randconfig-a004-20230417   gcc  
-i386                 randconfig-a005-20230417   gcc  
-i386                 randconfig-a006-20230417   gcc  
-i386                 randconfig-a011-20230417   clang
-i386                 randconfig-a012-20230417   clang
-i386                 randconfig-a013-20230417   clang
-i386                 randconfig-a014-20230417   clang
-i386                 randconfig-a015-20230417   clang
-i386                 randconfig-a016-20230417   clang
-ia64                             allmodconfig   gcc  
-ia64                                defconfig   gcc  
-ia64                 randconfig-r002-20230416   gcc  
-ia64                 randconfig-r016-20230411   gcc  
-ia64                 randconfig-r024-20230417   gcc  
-ia64                 randconfig-r033-20230417   gcc  
-ia64                 randconfig-r035-20230416   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch            randconfig-r012-20230417   gcc  
-loongarch            randconfig-r015-20230411   gcc  
-loongarch            randconfig-r022-20230417   gcc  
-m68k                             allmodconfig   gcc  
-m68k         buildonly-randconfig-r003-20230416   gcc  
-m68k         buildonly-randconfig-r006-20230417   gcc  
-m68k                                defconfig   gcc  
-m68k                 randconfig-r011-20230413   gcc  
-microblaze           randconfig-r001-20230416   gcc  
-microblaze           randconfig-r011-20230417   gcc  
-mips                             allmodconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                  maltasmvp_eva_defconfig   gcc  
-mips                 randconfig-r015-20230417   gcc  
-mips                 randconfig-r026-20230417   gcc  
-nios2        buildonly-randconfig-r003-20230417   gcc  
-nios2                               defconfig   gcc  
-nios2                randconfig-r012-20230415   gcc  
-nios2                randconfig-r014-20230413   gcc  
-nios2                randconfig-r014-20230417   gcc  
-nios2                randconfig-r015-20230413   gcc  
-nios2                randconfig-r015-20230415   gcc  
-nios2                randconfig-r023-20230416   gcc  
-openrisc             randconfig-r006-20230416   gcc  
-openrisc             randconfig-r013-20230415   gcc  
-openrisc             randconfig-r021-20230416   gcc  
-parisc                              defconfig   gcc  
-parisc               randconfig-r013-20230411   gcc  
-parisc               randconfig-r026-20230416   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                        cell_defconfig   gcc  
-powerpc              randconfig-r031-20230416   clang
-powerpc              randconfig-r032-20230416   clang
-powerpc              randconfig-r033-20230416   clang
-powerpc              randconfig-r034-20230416   clang
-riscv                            allmodconfig   gcc  
-riscv                             allnoconfig   gcc  
-riscv                               defconfig   gcc  
-riscv                randconfig-r003-20230417   gcc  
-riscv                randconfig-r035-20230417   gcc  
-riscv                randconfig-r042-20230416   gcc  
-riscv                randconfig-r042-20230417   clang
-riscv                          rv32_defconfig   gcc  
-s390                             allmodconfig   gcc  
-s390                             allyesconfig   gcc  
-s390         buildonly-randconfig-r001-20230416   gcc  
-s390         buildonly-randconfig-r002-20230416   gcc  
-s390                                defconfig   gcc  
-s390                 randconfig-r013-20230413   clang
-s390                 randconfig-r044-20230416   gcc  
-s390                 randconfig-r044-20230417   clang
-sh                               allmodconfig   gcc  
-sh           buildonly-randconfig-r002-20230417   gcc  
-sh           buildonly-randconfig-r004-20230416   gcc  
-sh                        dreamcast_defconfig   gcc  
-sparc                            alldefconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64              randconfig-r004-20230417   gcc  
-um                             i386_defconfig   gcc  
-um                           x86_64_defconfig   gcc  
-x86_64                            allnoconfig   gcc  
-x86_64                           allyesconfig   gcc  
-x86_64                              defconfig   gcc  
-x86_64                                  kexec   gcc  
-x86_64               randconfig-a001-20230417   gcc  
-x86_64               randconfig-a002-20230417   gcc  
-x86_64               randconfig-a003-20230417   gcc  
-x86_64               randconfig-a004-20230417   gcc  
-x86_64               randconfig-a005-20230417   gcc  
-x86_64               randconfig-a006-20230417   gcc  
-x86_64               randconfig-a011-20230417   clang
-x86_64               randconfig-a012-20230417   clang
-x86_64               randconfig-a013-20230417   clang
-x86_64               randconfig-a014-20230417   clang
-x86_64               randconfig-a015-20230417   clang
-x86_64               randconfig-a016-20230417   clang
-x86_64               randconfig-r016-20230417   clang
-x86_64                               rhel-8.3   gcc  
-xtensa               randconfig-r021-20230417   gcc  
+Talking about merging this series I'd like all of the patches going through
+the MIPS tree if possible.
+
+Thanks in advance for your time.
+
+Best regards,
+    Sergio Paracuellos
+
+Changes in v3:
+- Address Stephen comments in v2:
+    + Drop unsused include '<linux/clk.h>'.
+    + Add fixed and factor clocks when it makes sense.
+    + Make 'mtmips_periph_clk_ops' named variable.
+    + WARN_ON -> WARN_ON_ONCE.
+    + Avoid CONFIG_USB dependent code. Introduce new 'mtmips_clk_regs_init'.
+    + Don't validate the bindings in the driver.
+    + Make const 'struct clk_init_data' used inside macros.
+    + do_div -> div_u64.
+    + Make use of dev_err_probe.
+
+Changes in v2:
+- Address bindings documentation changes pointed out by Krzysztof:
+    + Rename the file into 'mediatek,mtmips-sysc.yaml'.
+    + Redo commit subject and log message.
+    + Order compatibles alphabetically.
+    + Redo bindings description taking into account this is a system
+      controller node which provides both clocks and resets to the world.
+    + Drop label from example.
+    + Use 'syscon' as node name in example.
+    + Drop no sense 'ralink,rt2880-reset' compatible string 
+- Squash patches 6 and 7 together as pointed out by Stephen Boyd.
+
+Previoous series:
+v2: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=LeJ4vT22uibQ1DnaZsfTrtRxSiv=8L5RA@mail.gmail.com/T/#t
+v1: https://lore.kernel.org/linux-clk/20230320161823.1424278-1-sergio.paracuellos@gmail.com/T/#t
+
+[0]: https://lore.kernel.org/linux-gpio/e9e6ad87-2db5-9767-ff39-64a302b06185@arinc9.com/T/#t
+[1]: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=LeJ4vT22uibQ1DnaZsfTrtRxSiv=8L5RA@mail.gmail.com/T/#mfe725b6e3382c6fb09736472a846cbbc84f264dc
+
+Sergio Paracuellos (9):
+  dt-bindings: clock: add mtmips SoCs system controller
+  clk: ralink: add clock and reset driver for MTMIPS SoCs
+  mips: ralink: rt288x: remove clock related code
+  mips: ralink: rt305x: remove clock related code
+  mips: ralink: rt3883: remove clock related code
+  mips: ralink: mt7620: remove clock related code
+  mips: ralink: remove reset related code
+  mips: ralink: get cpu rate from new driver code
+  MAINTAINERS: add Mediatek MTMIPS Clock maintainer
+
+ .../bindings/clock/mediatek,mtmips-sysc.yaml  |   65 +
+ MAINTAINERS                                   |    6 +
+ arch/mips/include/asm/mach-ralink/mt7620.h    |   35 -
+ arch/mips/include/asm/mach-ralink/rt288x.h    |   10 -
+ arch/mips/include/asm/mach-ralink/rt305x.h    |   21 -
+ arch/mips/include/asm/mach-ralink/rt3883.h    |    8 -
+ arch/mips/ralink/clk.c                        |   26 +-
+ arch/mips/ralink/common.h                     |    5 -
+ arch/mips/ralink/mt7620.c                     |  226 ----
+ arch/mips/ralink/of.c                         |    4 -
+ arch/mips/ralink/reset.c                      |   61 -
+ arch/mips/ralink/rt288x.c                     |   31 -
+ arch/mips/ralink/rt305x.c                     |   78 --
+ arch/mips/ralink/rt3883.c                     |   44 -
+ drivers/clk/ralink/Kconfig                    |    7 +
+ drivers/clk/ralink/Makefile                   |    1 +
+ drivers/clk/ralink/clk-mtmips.c               | 1134 +++++++++++++++++
+ 17 files changed, 1232 insertions(+), 530 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+ create mode 100644 drivers/clk/ralink/clk-mtmips.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.25.1
+
