@@ -2,47 +2,47 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AD0C77B78
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 17:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B7AC6FD18
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 17:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232170AbjDRRI0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 13:08:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50334 "EHLO
+        id S230143AbjDRRJa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 13:09:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232383AbjDRRII (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 13:08:08 -0400
+        with ESMTP id S232416AbjDRRJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 13:09:05 -0400
 Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D724486;
-        Tue, 18 Apr 2023 10:08:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534812125;
+        Tue, 18 Apr 2023 10:09:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681837686; x=1713373686;
+  t=1681837742; x=1713373742;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=clbh2zDGy6dFpAHAbuLZHr1blTUTX9CnRVLHP8QGdRQ=;
-  b=M7tzR3zhQLiMTXUUjf/dIeb52lhRVlff1WQgrnRIHk0QDqhKt1y9dHid
-   HXCrbYc11tpu0KSMUSxZ6CXKmDAj46CydTmISfZNthYHRo2l/3Uz2Z2JD
-   Iz98wy/F+TNC0phit3Bp2NifOkQq0Rcw38E/9Ny4r/tOqT7502dk8u6bX
-   hfXi2bPCywb3yOchuux6vcGU+/zbN9D8yGMj3mj6nu0RI7POm/ETaIsJ9
-   NOlaR2uKiGMZiGITT4p1D2d32vy2PeweeLaz/PY93gbeK1xh8qu0Vuwzs
-   dGz0Q3y6gtZaAG6zdtKj5AgkbGyVqRCPxd0hkcrSgysCmps4+umkoy3Gh
+  bh=Ch7D4lN7GXIVvnsPTDE1mNursv/c5YFQENktx7pddAo=;
+  b=LTJ7LJTTUY/AHLlXNggC9jIM8jrk3qOwJEfjmzG1QQluc61j36t1NAzK
+   +hlsj9dEireVqmeIL5u4SMDUbAIVwOJ0Y6NG9X9NKK/xK7duGbW9A8z9r
+   J7hkDr2A9Mm10rLzLzSZYWg/8itjQU9S7AjyPvDhUB0WLdhCLEgD3JW52
+   y4AN5GBQ0myU9XLuKNnt5mbYJVt39LPjsgC9UOaGe08GKsIIwIGg67mAG
+   zA04R6tnvPqNDMLgab7Hbum/ZP+oaYdGoPkp1gHr9b5I8L/tF3ypp2+87
+   ukHm4COVnwgNOuYSE8Bx3L69fBFt9B7vY87FFe4vciehn7auay1OPGxhE
    A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="431517791"
+X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="431517980"
 X-IronPort-AV: E=Sophos;i="5.99,207,1677571200"; 
-   d="scan'208";a="431517791"
+   d="scan'208";a="431517980"
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2023 10:08:05 -0700
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2023 10:09:02 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="865496831"
+X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="865497312"
 X-IronPort-AV: E=Sophos;i="5.99,207,1677571200"; 
-   d="scan'208";a="865496831"
+   d="scan'208";a="865497312"
 Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 18 Apr 2023 10:08:02 -0700
+  by orsmga005.jf.intel.com with ESMTP; 18 Apr 2023 10:08:57 -0700
 Received: from kbuild by b613635ddfff with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pooo8-000dmJ-0x;
-        Tue, 18 Apr 2023 17:07:56 +0000
-Date:   Wed, 19 Apr 2023 01:07:51 +0800
+        id 1poop6-000dma-1N;
+        Tue, 18 Apr 2023 17:08:56 +0000
+Date:   Wed, 19 Apr 2023 01:07:58 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
         devicetree@vger.kernel.org
@@ -52,7 +52,7 @@ Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, git@amd.com,
         michal.simek@xilinx.com
 Subject: Re: [PATCH v1 2/2] clocking-wizard: Add support for versal clocking
  wizard
-Message-ID: <202304190059.Br8jz0UK-lkp@intel.com>
+Message-ID: <202304190151.IdOfiD0y-lkp@intel.com>
 References: <20230418102855.6791-3-shubhrajyoti.datta@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -77,8 +77,8 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Shubhrajyoti-Datta/dt-bin
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 patch link:    https://lore.kernel.org/r/20230418102855.6791-3-shubhrajyoti.datta%40amd.com
 patch subject: [PATCH v1 2/2] clocking-wizard: Add support for versal clocking wizard
-config: i386-randconfig-a012-20230417 (https://download.01.org/0day-ci/archive/20230419/202304190059.Br8jz0UK-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
+config: hexagon-randconfig-r041-20230418 (https://download.01.org/0day-ci/archive/20230419/202304190151.IdOfiD0y-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project 437b7602e4a998220871de78afcb020b9c14a661)
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
@@ -88,15 +88,48 @@ reproduce (this is a W=1 build):
         git checkout 143916412aa6a419e20fa37059004329e300ca95
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/clk/xilinx/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/clk/xilinx/
 
 If you fix the issue, kindly add following tag where applicable
 | Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304190059.Br8jz0UK-lkp@intel.com/
+| Link: https://lore.kernel.org/oe-kbuild-all/202304190151.IdOfiD0y-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
+   In file included from drivers/clk/xilinx/clk-xlnx-clock-wizard.c:16:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:334:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __raw_readb(PCI_IOBASE + addr);
+                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+   #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+                                                     ^
+   In file included from drivers/clk/xilinx/clk-xlnx-clock-wizard.c:16:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:334:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+   #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+                                                     ^
+   In file included from drivers/clk/xilinx/clk-xlnx-clock-wizard.c:16:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:334:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writeb(value, PCI_IOBASE + addr);
+                               ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
 >> drivers/clk/xilinx/clk-xlnx-clock-wizard.c:264:11: warning: variable 'value' is uninitialized when used here [-Wuninitialized]
                    regh = (value / 4);
                            ^~~~~
@@ -110,7 +143,7 @@ All warnings (new ones prefixed by >>):
    drivers/clk/xilinx/clk-xlnx-clock-wizard.c:102:27: note: expanded from macro 'VER_WZRD_VCO_MAX'
    #define VER_WZRD_VCO_MAX                4320000000
                                            ^~~~~~~~~~
-   2 warnings generated.
+   8 warnings generated.
 
 
 vim +/value +264 drivers/clk/xilinx/clk-xlnx-clock-wizard.c
