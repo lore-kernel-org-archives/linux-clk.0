@@ -2,117 +2,257 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5B9C77B75
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 02:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B66C77B71
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 03:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbjDRCOM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 22:14:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54834 "EHLO
+        id S229769AbjDRDMh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 23:12:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbjDRCOM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 22:14:12 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1C14202;
-        Mon, 17 Apr 2023 19:14:09 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 830D024E2AB;
-        Tue, 18 Apr 2023 10:14:08 +0800 (CST)
-Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Apr
- 2023 10:14:08 +0800
-Received: from [192.168.125.87] (113.72.144.253) by EXMBX172.cuchost.com
- (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Apr
- 2023 10:14:07 +0800
-Message-ID: <be049959-423e-6cd6-1f11-9bfa72665803@starfivetech.com>
-Date:   Tue, 18 Apr 2023 10:14:06 +0800
+        with ESMTP id S229518AbjDRDMf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 23:12:35 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D55A19A6;
+        Mon, 17 Apr 2023 20:12:31 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-187af4a5453so74374fac.1;
+        Mon, 17 Apr 2023 20:12:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681787550; x=1684379550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RyMICzqEPh881keWpGBUJhcP7rNs3w+hjFrTTX9+thg=;
+        b=lnExo9C8YOma27x0A9RIBxOCXq0tuc/oLdHkU/XdY8/4Do5WIt+345CVo4cirOTGT3
+         wHHRgfk3tiXC+VESiIYTWTXs+Lf1N3OecU0eqBUox6V1OLddsyBgY/PhdhMmGX3ProI2
+         49Rx9YZwXoLAVxyTPnRRbL5sCVPzUn4KAKUCzzNiWwdMPR5cmdJVHVaRw5BoNcDYJ1a1
+         O54nRMunRFGA1q7BzckT1aKaJgya/tloQrvMH4qgg8iFiUD9OqV0L0NBUke7uyDnujNO
+         zL7rduevUYUun+Un1/mCFO0PpOcm8RURm51/hbupbQ/eW+GjssLf+kih3NBDscs+UEdR
+         PoWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681787550; x=1684379550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RyMICzqEPh881keWpGBUJhcP7rNs3w+hjFrTTX9+thg=;
+        b=SFHcntPmx3sJbn74BGf9N90KjrGBtVGw1kA4Yl7WZ6O3Wiv6xJZ5KVuTK8s+nX7n6v
+         FfqKVAYhXGE1dPndG0ihw9D+vBdeUrrstl6pg8Nkd+dkTeahdduBfgs8y7sSh69dGmdW
+         qwoI/H0gY7trwlSGnQ2c0EH8AHo9NaiTvlPPOFMfevyrwoiIWD7LOJffFm/ZDrs/TR2w
+         uYyxXbiHj1xsBIXZOfKBayYvFD6s36UqYTLtyCuAWKwFmYrBNFLLLiQU8w9EloEsV30+
+         9vxZaAA60BH3TbpF5OVCCVQazw1bJb0NEHRjQF+nmN0++/yV2+iICHgR6O/jthpUFcrI
+         MBkg==
+X-Gm-Message-State: AAQBX9dru2SZGbS9uA1+W9+HcHXbtMM+vM1nBQAtudILZU52GGflMjb3
+        su8RSPwirTDvm1gq8fsB+/mtfXecJqrEoPEh9Kg=
+X-Google-Smtp-Source: AKy350YC5E48AhcCIuEaJ6C1+64009rudG8FF13cHI878xSMDBgbZYRub6IbwsCf0FMgQBT1VWmikkxTIe8gAlt358Q=
+X-Received: by 2002:a05:6870:c106:b0:17e:8a64:3dab with SMTP id
+ f6-20020a056870c10600b0017e8a643dabmr371587oad.0.1681787550577; Mon, 17 Apr
+ 2023 20:12:30 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.2
-Subject: Re: [PATCH v1 1/2] clk: starfive: Fix RESET_STARFIVE_JH7110 can't be
- selected in a specified case
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>
-CC:     <linux-clk@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
-        <linux-mm@kvack.org>, Michael Turquette <mturquette@baylibre.com>,
-        "Paul Gazzillo" <paul@pgazz.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>
-References: <20230417074115.30786-1-hal.feng@starfivetech.com>
- <20230417074115.30786-2-hal.feng@starfivetech.com>
- <20230417-buckwheat-wilt-92a4e85a5ca0@wendy>
- <83c5a35a-c646-cbc7-83f9-c02fcb24e069@starfivetech.com>
- <20230417-bolster-vitality-89d279146497@wendy>
- <0fe42faa3b34f82cc2fb73ae61460bf2.sboyd@kernel.org>
-From:   Hal Feng <hal.feng@starfivetech.com>
-In-Reply-To: <0fe42faa3b34f82cc2fb73ae61460bf2.sboyd@kernel.org>
+References: <20230321050034.1431379-1-sergio.paracuellos@gmail.com>
+ <20230321050034.1431379-3-sergio.paracuellos@gmail.com> <2d848bc03aacb41a708ba2794eb043ff.sboyd@kernel.org>
+ <CAMhs-H9+ZthzCvqssypG8a2xKF4KFnvgz4ZfTKn6wE=ZxV29hQ@mail.gmail.com> <0c8891233195166d4a1b3cd858e91445.sboyd@kernel.org>
+In-Reply-To: <0c8891233195166d4a1b3cd858e91445.sboyd@kernel.org>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Tue, 18 Apr 2023 05:12:19 +0200
+Message-ID: <CAMhs-H93559ExKxF4NDk=SJnb-tN2YX7W-=wZnGDvUkb=qpu6w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] clk: ralink: add clock and reset driver for MTMIPS SoCs
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, matthias.bgg@gmail.com,
+        devicetree@vger.kernel.org, arinc.unal@arinc9.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.144.253]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
- (172.16.6.92)
-X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Apr 2023 17:22:01 -0700, Stephen Boyd wrote:
-> Quoting Conor Dooley (2023-04-17 03:18:35)
->> On Mon, Apr 17, 2023 at 06:06:29PM +0800, Hal Feng wrote:
->> > On Mon, 17 Apr 2023 10:54:09 +0100, Conor Dooley wrote:
->> > > On Mon, Apr 17, 2023 at 03:41:14PM +0800, Hal Feng wrote:
->> > >> When (ARCH_STARFIVE [=n] && COMPILE_TEST [=y] && RESET_CONTROLLER [=n]),
->> > >> RESET_STARFIVE_JH7110 can't be selected by CLK_STARFIVE_JH7110_SYS
->> > >> and CLK_STARFIVE_JH7110_AON.
->> > >> 
->> > >> Considering RESET_STARFIVE_JH7110 is not a necessary option for compilation
->> > >> test, we should select it only if ARCH_STARFIVE=y. Also, delete redundant
->> > >> selected options of CLK_STARFIVE_JH7110_AON because these options are
->> > >> already selected by the dependency.
->> > >> 
->> > >> Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock driver")
->> > >> Fixes: b2ab3c94f41f ("clk: starfive: Add StarFive JH7110 always-on clock driver")
->> > >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->> > >> ---
->> > >>  drivers/clk/starfive/Kconfig | 5 +----
->> > >>  1 file changed, 1 insertion(+), 4 deletions(-)
->> > >> 
->> > >> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
->> > >> index 71c1148ee5f6..3fad4adee841 100644
->> > >> --- a/drivers/clk/starfive/Kconfig
->> > >> +++ b/drivers/clk/starfive/Kconfig
->> > >> @@ -26,7 +26,7 @@ config CLK_STARFIVE_JH7110_SYS
->> > >>    depends on ARCH_STARFIVE || COMPILE_TEST
->> > >>    select AUXILIARY_BUS
->> > >>    select CLK_STARFIVE_JH71X0
->> > >> -  select RESET_STARFIVE_JH7110
->> > >> +  select RESET_STARFIVE_JH7110 if ARCH_STARFIVE
->> > > 
->> > > Hmm, I don't really follow the logic above.
->> > > Why not just make the if be `if RESET_CONTROLLER` rather than
->> > > ARCH_STARFIVE?
->> > > I'm probably missing some obvious reason why not.
->> > 
->> > Note that RESET_CONTROLLER is selected by ARCH_STARFIVE. Thanks.
->> 
->> Aye, just the explicit dependency seems like it'd be less fragile and
->> more obvious in the future.
-> 
-> Agreed. Be explicit so we don't have to hunt down select dependencies.
+On Tue, Apr 18, 2023 at 2:50=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Quoting Sergio Paracuellos (2023-04-13 22:49:47)
+> > On Thu, Apr 13, 2023 at 8:55=E2=80=AFPM Stephen Boyd <sboyd@kernel.org>=
+ wrote:
+> > >
+> > > Quoting Sergio Paracuellos (2023-03-20 22:00:27)
+> > > > diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/c=
+lk-mtmips.c
+> > > > new file mode 100644
+> > > > index 000000000000..6b4b5ae9384d
+> > > > --- /dev/null
+> > > > +++ b/drivers/clk/ralink/clk-mtmips.c
+> > > > @@ -0,0 +1,985 @@
+> [...]
+> > >
+> > > > +               .name =3D _name,                                  \
+> > > > +               .ops =3D &(const struct clk_ops) {                \
+> > >
+> > > Make this into a named variable? Otherwise I suspect the compiler wil=
+l
+> > > want to duplicate it.
+> >
+> > I am not sure if I understand this. What do you mean exactly?
+>
+>         static const struct clk_ops mtmips_periph_clk_ops =3D {
+>                 .recalc_rate =3D mtmips_pherip_clk_rate,
+>         };
+>
 
-With further consideration, on the other hand, if we set `if ARCH_STARFIVE`
-here, it can point out that we need the reset driver to boot up JH7110
-besides the clock drivers, and the reset driver is not a necessary option
-for compilation test. So the reset driver is independent to the clock
-drivers when you doing a compilation test.
+Ah, I see. Thanks. It is clear now.
 
-If we set `if RESET_CONTROLLER` here, the reset driver will be compiled
-automatically when (ARCH_STARFIVE [=n] && COMPILE_TEST [=y] && 
-RESET_CONTROLLER [=y] && CLK_STARFIVE_JH7110_SYS [=y]).
+> > > > +static unsigned long rt3352_bus_recalc_rate(struct clk_hw *hw,
+> > > > +                                           unsigned long parent_ra=
+te)
+> > > > +{
+> > > > +       return parent_rate / 3;
+> > > > +}
+> > > > +
+> > > > +static unsigned long rt305x_xtal_recalc_rate(struct clk_hw *hw,
+> > > > +                                            unsigned long parent_r=
+ate)
+> > > > +{
+> > > > +       return 40000000;
+> > > > +}
+> > >
+> > > Register fixed factor and fixed rate clks in software instead of
+> > > duplicating the code here.
+> >
+> > All the macros used in current code rely on the fact of having recalc
+> > functions so we can maintain the code shorter just using them. Is
+> > there a real benefit of using a fixed factor and fixed clks here?
+> > If possible I can avoid the duplicate here just using the same
+> > recalc_rate function returning the fixed stuff for both 305x and 3352
+> > SoCs as I am also doing for other functions.
+>
+> The real benefit is less code, smaller kernel size, less maintenance
+> over time.
 
-Best regards,
-Hal
+Understood. Will change to use fixed and factor clocks then.
+
+>
+> > >
+> > > > +       }
+> > > > +}
+> > > > +
+> > > > +static unsigned long rt2880_cpu_recalc_rate(struct clk_hw *hw,
+> > > > +                                           unsigned long xtal_clk)
+> > > > +{
+> > > > +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> > > > +       struct regmap *sysc =3D clk->priv->sysc;
+> > > > +       u32 t;
+> > > > +
+> > > > +       regmap_read(sysc, SYSC_REG_SYSTEM_CONFIG, &t);
+> > > > +       t =3D (t >> RT2880_CONFIG_CPUCLK_SHIFT) & RT2880_CONFIG_CPU=
+CLK_MASK;
+> > > > +
+> > > > +       switch (t) {
+> > > > +       case RT2880_CONFIG_CPUCLK_250:
+> > > > +               return 250000000;
+> > > > +       case RT2880_CONFIG_CPUCLK_266:
+> > > > +               return 266000000;
+> > > > +       case RT2880_CONFIG_CPUCLK_280:
+> > > > +               return 280000000;
+> > > > +       case RT2880_CONFIG_CPUCLK_300:
+> > > > +               return 300000000;
+> > > > +       default:
+> > > > +               BUG();
+> > > > +       }
+> > > > +}
+> > > > +
+> > > > +static unsigned long rt2880_bus_recalc_rate(struct clk_hw *hw,
+> > > > +                                           unsigned long parent_ra=
+te)
+> > > > +{
+> > > > +       return parent_rate / 2;
+> > > > +}
+> > >
+> > > A fixed factor clk?
+> >
+> > As I have said, macros rely on having recalc_rate functions. Also,
+> > having in this way makes pretty clear the relation between the bus
+> > clock and its related parent as it is in the datasheet.
+>
+> The macros are your own design, right? In which case, maybe you can use
+> CLK_HW_INIT() and friends macros instead to show the relationship
+> between clks in C code?
+
+I'll take a look at those macros also and will take them into account, than=
+ks.
+
+>
+> >
+> > >
+> > > > +
+> > > > +static u32 mt7620_calc_rate(u32 ref_rate, u32 mul, u32 div)
+> > > > +{
+> > > > +       u64 t;
+> > > > +
+> > > > +       t =3D ref_rate;
+> > > > +       t *=3D mul;
+> > > > +       do_div(t, div);
+> > >
+> > > Do we really need to do 64-bit math? At the least use div_u64().
+> >
+> > This is directly extracted from arch/mips/ralink clock code, so I have
+> > maintained it as it is since I don't have an mt7620 SoC based board to
+> > test. However using div_u64 here with t being u64 makes sense.
+>
+> Does anyone have the board to test? Can we simply delete it instead?
+
+I have mt7628 and rt5350 based boards where I am testing these
+changes. However I don't have mt7620 which is the one needed for this
+particular code.
+These SoCs are commonly used in the openWRT community so we cannot
+delete this code. I will use div_u64 for the next version which makes
+sense. If someone complains about something wrong with the change at
+some time we can just change it again in the future.
+
+>
+> > > > +
+> > > > +static unsigned long mt7620_bus_recalc_rate(struct clk_hw *hw,
+> > > > +                                           unsigned long parent_ra=
+te)
+> > > > +{
+> > > > +       static const u32 ocp_dividers[16] =3D {
+> > > > +               [CPU_SYS_CLKCFG_OCP_RATIO_2] =3D 2,
+> > > > +               [CPU_SYS_CLKCFG_OCP_RATIO_3] =3D 3,
+> > > > +               [CPU_SYS_CLKCFG_OCP_RATIO_4] =3D 4,
+> > > > +               [CPU_SYS_CLKCFG_OCP_RATIO_5] =3D 5,
+> > > > +               [CPU_SYS_CLKCFG_OCP_RATIO_10] =3D 10,
+> > > > +       };
+> > > > +       struct mtmips_clk *clk =3D to_mtmips_clk(hw);
+> > > > +       struct regmap *sysc =3D clk->priv->sysc;
+> > > > +       u32 t;
+> > > > +       u32 ocp_ratio;
+> > > > +       u32 div;
+> > > > +
+> > > > +       if (IS_ENABLED(CONFIG_USB)) {
+> > > > +               /*
+> > > > +               * When the CPU goes into sleep mode, the BUS
+> > > > +               * clock will be too low for USB to function properl=
+y.
+> > > > +               * Adjust the busses fractional divider to fix this
+> > > > +               */
+> > > > +               regmap_read(sysc, SYSC_REG_CPU_SYS_CLKCFG, &t);
+> > > > +               t &=3D ~(CLKCFG_FDIV_MASK | CLKCFG_FFRAC_MASK);
+> > > > +               t |=3D CLKCFG_FDIV_USB_VAL | CLKCFG_FFRAC_USB_VAL;
+> > > > +               regmap_write(sysc, SYSC_REG_CPU_SYS_CLKCFG, t);
+> > >
+> > > Why can't we do this unconditionally? And recalc_rate() shouldn't be
+> > > writing registers. It should be calculating the frequency of the clk
+> > > based on 'parent_rate' and whatever the hardware is configured for.
+> >
+> > This code is with IS_ENABLED(CONFIG_USB) guard in the original code so
+> > I have maintained it as it is. Where should it be moved into instead
+> > of doing the register writes in this recalc function?
+>
+> Can you do it unconditionally in driver probe? Or when the clk is turned
+> off or on can you park it at a safe frequency?
+
+Sure, thanks.
+
+I'll address all your comments and send v3, shortly.
+
+Thanks,
+    Sergio Paracuellos
