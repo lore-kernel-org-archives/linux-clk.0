@@ -2,66 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFDEC77B75
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 01:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5B9C77B75
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 02:14:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbjDRBN0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Apr 2023 21:13:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39496 "EHLO
+        id S230228AbjDRCOM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Apr 2023 22:14:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbjDRBNZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 21:13:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2D03A8C;
-        Mon, 17 Apr 2023 18:13:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 379E76176F;
-        Tue, 18 Apr 2023 01:13:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 861A2C433D2;
-        Tue, 18 Apr 2023 01:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681780403;
-        bh=RGVB4b1Ma/kemnqMd6QFYrPQXvJkDZYWawFz3hC5t4U=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YhM43pLMLnpYrnHFd76107gj08QmgTS0Ai+eBSvLbgEpRRrFHrEmOtKeE49msoN/Q
-         obhPiDUu4YHgVI+ySsqvuBipzkyP2mfvNYqIlmlyq5wBULGLcy0P+O9uy2B1/o5l+t
-         0xVEKpea/pgs51J1U7SQpRFSPAIWf/Ug1+dEizqUxVY8mMB1NBNzVhhyg/FydcSR+X
-         E/G+iTeNTM6GUFAMBngWr+ucey82v02X/yXiQ//axBfyuCkKl4mypJ5Dy+lZM/fP4W
-         X+c3Qzz5ECjGbGNdzIMfsInrDoEGZHcnvKYkDvgN4yUIJi38lG3k01amdZbMmtO3uZ
-         ZOyU2T+OZTqmg==
-Message-ID: <cb922046c9e9ae2359b7f22fa7436e2c.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229901AbjDRCOM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Apr 2023 22:14:12 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC1C14202;
+        Mon, 17 Apr 2023 19:14:09 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 830D024E2AB;
+        Tue, 18 Apr 2023 10:14:08 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Apr
+ 2023 10:14:08 +0800
+Received: from [192.168.125.87] (113.72.144.253) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Apr
+ 2023 10:14:07 +0800
+Message-ID: <be049959-423e-6cd6-1f11-9bfa72665803@starfivetech.com>
+Date:   Tue, 18 Apr 2023 10:14:06 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230417074115.30786-3-hal.feng@starfivetech.com>
-References: <20230417074115.30786-1-hal.feng@starfivetech.com> <20230417074115.30786-3-hal.feng@starfivetech.com>
-Subject: Re: [PATCH v1 2/2] clk: starfive: Delete the redundant dev_set_drvdata() in JH7110 clock drivers
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Paul Gazzillo <paul@pgazz.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH v1 1/2] clk: starfive: Fix RESET_STARFIVE_JH7110 can't be
+ selected in a specified case
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Conor Dooley <conor.dooley@microchip.com>
+CC:     <linux-clk@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
+        <linux-mm@kvack.org>, Michael Turquette <mturquette@baylibre.com>,
+        "Paul Gazzillo" <paul@pgazz.com>,
         Necip Fazil Yildiran <fazilyildiran@gmail.com>,
         Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
-        linux-kernel@vger.kernel.org
-To:     Hal Feng <hal.feng@starfivetech.com>, linux-clk@vger.kernel.org,
-        linux-mm@kvack.org, oe-kbuild-all@lists.linux.dev
-Date:   Mon, 17 Apr 2023 18:13:21 -0700
-User-Agent: alot/0.10
+        <linux-kernel@vger.kernel.org>
+References: <20230417074115.30786-1-hal.feng@starfivetech.com>
+ <20230417074115.30786-2-hal.feng@starfivetech.com>
+ <20230417-buckwheat-wilt-92a4e85a5ca0@wendy>
+ <83c5a35a-c646-cbc7-83f9-c02fcb24e069@starfivetech.com>
+ <20230417-bolster-vitality-89d279146497@wendy>
+ <0fe42faa3b34f82cc2fb73ae61460bf2.sboyd@kernel.org>
+From:   Hal Feng <hal.feng@starfivetech.com>
+In-Reply-To: <0fe42faa3b34f82cc2fb73ae61460bf2.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.144.253]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Hal Feng (2023-04-17 00:41:15)
-> The dev_set_drvdata() is no longer needed after we used a wrapper
-> struct to get the data in auxiliary driver.
->=20
-> Cc: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Fixes: d1aae0663023 ("clk: starfive: Avoid casting iomem pointers")
-> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
-> ---
+On Mon, 17 Apr 2023 17:22:01 -0700, Stephen Boyd wrote:
+> Quoting Conor Dooley (2023-04-17 03:18:35)
+>> On Mon, Apr 17, 2023 at 06:06:29PM +0800, Hal Feng wrote:
+>> > On Mon, 17 Apr 2023 10:54:09 +0100, Conor Dooley wrote:
+>> > > On Mon, Apr 17, 2023 at 03:41:14PM +0800, Hal Feng wrote:
+>> > >> When (ARCH_STARFIVE [=n] && COMPILE_TEST [=y] && RESET_CONTROLLER [=n]),
+>> > >> RESET_STARFIVE_JH7110 can't be selected by CLK_STARFIVE_JH7110_SYS
+>> > >> and CLK_STARFIVE_JH7110_AON.
+>> > >> 
+>> > >> Considering RESET_STARFIVE_JH7110 is not a necessary option for compilation
+>> > >> test, we should select it only if ARCH_STARFIVE=y. Also, delete redundant
+>> > >> selected options of CLK_STARFIVE_JH7110_AON because these options are
+>> > >> already selected by the dependency.
+>> > >> 
+>> > >> Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock driver")
+>> > >> Fixes: b2ab3c94f41f ("clk: starfive: Add StarFive JH7110 always-on clock driver")
+>> > >> Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+>> > >> ---
+>> > >>  drivers/clk/starfive/Kconfig | 5 +----
+>> > >>  1 file changed, 1 insertion(+), 4 deletions(-)
+>> > >> 
+>> > >> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+>> > >> index 71c1148ee5f6..3fad4adee841 100644
+>> > >> --- a/drivers/clk/starfive/Kconfig
+>> > >> +++ b/drivers/clk/starfive/Kconfig
+>> > >> @@ -26,7 +26,7 @@ config CLK_STARFIVE_JH7110_SYS
+>> > >>    depends on ARCH_STARFIVE || COMPILE_TEST
+>> > >>    select AUXILIARY_BUS
+>> > >>    select CLK_STARFIVE_JH71X0
+>> > >> -  select RESET_STARFIVE_JH7110
+>> > >> +  select RESET_STARFIVE_JH7110 if ARCH_STARFIVE
+>> > > 
+>> > > Hmm, I don't really follow the logic above.
+>> > > Why not just make the if be `if RESET_CONTROLLER` rather than
+>> > > ARCH_STARFIVE?
+>> > > I'm probably missing some obvious reason why not.
+>> > 
+>> > Note that RESET_CONTROLLER is selected by ARCH_STARFIVE. Thanks.
+>> 
+>> Aye, just the explicit dependency seems like it'd be less fragile and
+>> more obvious in the future.
+> 
+> Agreed. Be explicit so we don't have to hunt down select dependencies.
 
-Applied to clk-next
+With further consideration, on the other hand, if we set `if ARCH_STARFIVE`
+here, it can point out that we need the reset driver to boot up JH7110
+besides the clock drivers, and the reset driver is not a necessary option
+for compilation test. So the reset driver is independent to the clock
+drivers when you doing a compilation test.
+
+If we set `if RESET_CONTROLLER` here, the reset driver will be compiled
+automatically when (ARCH_STARFIVE [=n] && COMPILE_TEST [=y] && 
+RESET_CONTROLLER [=y] && CLK_STARFIVE_JH7110_SYS [=y]).
+
+Best regards,
+Hal
