@@ -2,94 +2,93 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B495C6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 21:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31F4C6FD18
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 22:29:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232759AbjDRVDS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 17:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56912 "EHLO
+        id S231799AbjDRW3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 18:29:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230408AbjDRVDN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 17:03:13 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2ABD975A
-        for <linux-clk@vger.kernel.org>; Tue, 18 Apr 2023 14:03:11 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id u3so24595278ejj.12
-        for <linux-clk@vger.kernel.org>; Tue, 18 Apr 2023 14:03:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681851790; x=1684443790;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7pfsKq2jegZCI9tTQYaPt4WSkjuv1Pe13pcaASvWJHc=;
-        b=NCzxU1IpCrLpLhecquYk8z4rUpQ9i81ywY6szWoufutWRIGpTuT6h9p5oQExZEpqR0
-         VEp88N9IFTPIt36210W247Q6AagnwKT+Jjb22T5ecIZI2OaCnbeVUs+RvHmDyIP8ouLu
-         Xvwo1dHzsgx/daizdIKXz6hiJQ5McWcF1Eqc69P1rzL/D1fF3y9EggTG723MeBq5SBUO
-         dOsaKhzUuoRdXGBe8eeXGAm4sF9QPutLYlVEq/MUP+TmmGWPYOGbnCN7IRGjBYSm9fBL
-         eTOdQMtjOebG2WoUqaLSclLr7mmp4Qv4YZkeaLcvgnPxkG3NU7W6yXG833rb1GMJZEd9
-         OOLw==
+        with ESMTP id S229940AbjDRW3Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 18:29:16 -0400
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D48E5C;
+        Tue, 18 Apr 2023 15:29:13 -0700 (PDT)
+Received: by mail-oo1-f54.google.com with SMTP id b8-20020a056820134800b00546f139ded4so885252oow.11;
+        Tue, 18 Apr 2023 15:29:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681851790; x=1684443790;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1681856953; x=1684448953;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7pfsKq2jegZCI9tTQYaPt4WSkjuv1Pe13pcaASvWJHc=;
-        b=dx5RFwILlQxzGU/al6KGm+65X0Efey2uzIL+f2+dfklmsFFXyKJjymfQKzeIXo83Z7
-         jwo3RPf2p9po57s0a1DSOecAt/sJUT2OkgdpClPu2gZJhBKM+rNGt+RPCCrIW1d6IEDL
-         6YtII5di8Wxp2KMCgEIDJ/JiklhiX4Jx+LhKF5FP26prtkbEY+hxWhqDLEG63EY8Jjz5
-         +doYOMOeQTqfB46yWKdujRaAChuprvxC/Il3+RfphqSJaNGjm4SIq+05t9J+kAYClwFc
-         OnmkallG2cBzIbrQ5n9HzwuZO/EpRiBtApfoxBzJ4GXEGOXEbE2TsVyC+CjAn+HnNtdF
-         MU9w==
-X-Gm-Message-State: AAQBX9eGvjgc2J8M1jrfsihpjwpWKfcD+FjJbraaqN+W+IxJfnClOLsG
-        exUV2PkNbU2rhEof/o1BpfvWpKjeZ6U=
-X-Google-Smtp-Source: AKy350ZNLFfx5rPjSX1sEPxCvfOPPrh3g0qRUT9mi5mkoWid9o2stQMw6GkHjy6E/OVVmFjF0ckvwg==
-X-Received: by 2002:a17:907:20c1:b0:94e:80b2:51e3 with SMTP id qq1-20020a17090720c100b0094e80b251e3mr133167ejb.27.1681851789877;
-        Tue, 18 Apr 2023 14:03:09 -0700 (PDT)
-Received: from ?IPV6:2a01:c22:6e8d:7900:5904:9190:13c1:f560? (dynamic-2a01-0c22-6e8d-7900-5904-9190-13c1-f560.c22.pool.telefonica.de. [2a01:c22:6e8d:7900:5904:9190:13c1:f560])
-        by smtp.googlemail.com with ESMTPSA id a7-20020aa7d747000000b00504a7deefd6sm7508638eds.7.2023.04.18.14.03.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Apr 2023 14:03:09 -0700 (PDT)
-Message-ID: <963d9e46-936e-bb38-aa92-38b8c36a3aaa@gmail.com>
-Date:   Tue, 18 Apr 2023 23:03:08 +0200
+        bh=db9PMHM/Qn98GSD4/ys+i9eCeTPLiGiM+3j8knhblLE=;
+        b=DdH8u6TvdO59BNIvUCFbWbncMUqsXqhRFZ23+8IeqpHePPhS5IPU6w+XJj5xrOCEAW
+         +Yx5Er/DGLV6D98efek9SGdb8dnsQS/81dKGxrjUrla8MtIUzWRBGNivYw4mdUhbKIet
+         BeQQQAdpB5yYn6twMzVjfNnbnMtXhyh29Am2Pwt53tVWbOk8UHqAcEpH2Z89Bj4sD0Zc
+         9MXferTKqzYYMWiWPJZYg/piEUuJwnOhx1nusOGRhj9bScb7UOeZf6gko4pVx5qn9f+S
+         gM7H1LqZLlDUg/6mvqx+amRTWiIRANxy8yxWCVxHhX2BCy+d3g4xHN7mjoQJeJskRtam
+         MZvA==
+X-Gm-Message-State: AAQBX9fLbsQ95Kn+UC0RxpHH7dU7WyRicl2Mho9RCYZ3cz6fMZjW99rF
+        WyOqVBWLnXi0OLH07hQyJA==
+X-Google-Smtp-Source: AKy350bAeSIuzj8yPGX5PIb4p4EJBNSdItbfFSe5fZAkxlfdQzq90VsiHCw3NU3aEUKFTKJ/jOnUzA==
+X-Received: by 2002:a4a:33c3:0:b0:541:b514:77eb with SMTP id q186-20020a4a33c3000000b00541b51477ebmr3108899ooq.2.1681856952661;
+        Tue, 18 Apr 2023 15:29:12 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id z137-20020a4a498f000000b00545b549c2f1sm3687486ooa.22.2023.04.18.15.29.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 15:29:12 -0700 (PDT)
+Received: (nullmailer pid 2442808 invoked by uid 1000);
+        Tue, 18 Apr 2023 22:29:11 -0000
+Date:   Tue, 18 Apr 2023 17:29:11 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Yangfl <mmyangfl@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] clk: Add basic register clock controller
+Message-ID: <20230418222911.GA2439926-robh@kernel.org>
+References: <20230416194624.1258860-1-mmyangfl@gmail.com>
+ <81ed4e15-19ea-34d9-3e05-d1195b2cdd57@linaro.org>
+ <CAAXyoMPShMwVjckmYRxStv=t=_GiNmqdLVUUjuxvVLdvp+-4Rw@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] clk: change clk_hw_create_clk() to avoid being unable to
- remove module
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-References: <4eb4755b-7a06-6cd9-7c9d-6d088d05ab19@gmail.com>
- <f336e108d8651f1e317fae39dc058966.sboyd@kernel.org>
- <3935914a-bf12-1040-10d2-c7a94465b37f@gmail.com>
- <efc9ee0c7c790566d242a2561ac55a55.sboyd@kernel.org>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-In-Reply-To: <efc9ee0c7c790566d242a2561ac55a55.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAXyoMPShMwVjckmYRxStv=t=_GiNmqdLVUUjuxvVLdvp+-4Rw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18.04.2023 02:43, Stephen Boyd wrote:
-> Quoting Heiner Kallweit (2023-04-13 23:01:13)
->> On 14.04.2023 00:29, Stephen Boyd wrote:
->>> Quoting Heiner Kallweit (2023-04-13 14:39:28)
->>>> With clk_hw_create_clk() we have the problem that module unloading
->>>> is impossible if consumer and provider module owner are the same and
->>>> refcount is incremented. See also following comment in __clk_register().
->>>
->>> Do you never call clk_put() on the clk that you get from
->>> clk_hw_create_clk()?
->>
->> In my case clk_put() is called from a devm release hook. Same issue
->> we'd have if clk_put would be called from the drivers remove callback.
->> clk_put would be unreachable because the incremented module refcount
->> prevents module removal.
->>
+On Tue, Apr 18, 2023 at 02:16:28AM +0800, Yangfl wrote:
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> 于2023年4月17日周一 14:27写道：
+> >
+> > On 16/04/2023 21:46, David Yang wrote:
+> > > These clocks were provided in `include/linux/clk-provider.h`, but lacks DT
+> > > bindings. Add DT bindings for them.
+> > >
+> > > v2: split clock controller and its clocks
+> >
+> > I gave you several comments on v1 and this vague changelog entry
+> > suggests you ignored all of it.
+> >
+> > Implement feedback and respond to each one that you ack it or disagree
+> > with it.
+> >
+> >
+> > Best regards,
+> > Krzysztof
+> >
 > 
-> Ok. You could unbind the device in sysfs though, right?
+> All issues have been addressed in v3 patch. I omitted details in
+> changelog to reduce redundancy. If that is not the proper way to make
+> response in dt maillist, please let me know.
+> 
+> Responses for each comments in v1 and v2 have been sent against original email.
 
-I *think* this should be possible, right.
+Go look at v1 replies. This series is a hard no.
+
+Rob
