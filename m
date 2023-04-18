@@ -2,119 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA3AC6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 11:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0D6C77B7D
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 12:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231247AbjDRLiA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 07:38:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47726 "EHLO
+        id S231781AbjDRMiK convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 08:38:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjDRLh7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 07:37:59 -0400
-Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E104B7ABA;
-        Tue, 18 Apr 2023 04:37:42 -0700 (PDT)
-Received: from kaima.. ([10.12.190.56])
-        (user=kaima@hust.edu.cn mech=LOGIN bits=0)
-        by mx1.hust.edu.cn  with ESMTP id 33IBZ9Ba004965-33IBZ9Bb004965
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 18 Apr 2023 19:35:23 +0800
-From:   Kai Ma <kaima@hust.edu.cn>
-To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        with ESMTP id S231215AbjDRMiJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 08:38:09 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A52513877;
+        Tue, 18 Apr 2023 05:38:01 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 1164D24E311;
+        Tue, 18 Apr 2023 20:37:59 +0800 (CST)
+Received: from EXMBX172.cuchost.com (172.16.6.92) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Apr
+ 2023 20:37:59 +0800
+Received: from ubuntu.localdomain (113.72.144.253) by EXMBX172.cuchost.com
+ (172.16.6.92) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Apr
+ 2023 20:37:58 +0800
+From:   Hal Feng <hal.feng@starfivetech.com>
+To:     <linux-clk@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
+        <linux-mm@kvack.org>
+CC:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jesse Taube <mr.bossman075@gmail.com>
-Cc:     hust-os-kernel-patches@googlegroups.com,
-        Kai Ma <kaima@hust.edu.cn>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: clk-imxrt1050: fix memory leak in imxrt1050_clocks_probe
-Date:   Tue, 18 Apr 2023 11:34:51 +0000
-Message-Id: <20230418113451.151312-1-kaima@hust.edu.cn>
-X-Mailer: git-send-email 2.34.1
+        Conor Dooley <conor.dooley@microchip.com>,
+        "Paul Gazzillo" <paul@pgazz.com>,
+        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/1] A fix for StarFive JH7110 clock drivers
+Date:   Tue, 18 Apr 2023 20:37:55 +0800
+Message-ID: <20230418123756.62495-1-hal.feng@starfivetech.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-FEAS-AUTH-USER: kaima@hust.edu.cn
+Content-Type: text/plain
+X-Originating-IP: [113.72.144.253]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX172.cuchost.com
+ (172.16.6.92)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use devm_of_iomap() instead of of_iomap() to automatically
-handle the unused ioremap region. If any error occurs, regions allocated by
-kzalloc() will leak, but using devm_kzalloc() instead will automatically
-free the memory using devm_kfree().
+This series fix some issues of StarFive JH7110 sys and aon clock drivers.
 
-Also, fix error handling of hws by adding unregister_hws label, which
-unregisters remaining hws when iomap failed.
+The first patch fix two issues [1] [2] reported by kernel test robot.
 
-Fixes: 7154b046d8f3 ("clk: imx: Add initial support for i.MXRT1050 clock driver")
-Signed-off-by: Kai Ma <kaima@hust.edu.cn>
+The second patch is accepted in v1 so drop it in v2.
+
+[1] https://lore.kernel.org/oe-kbuild-all/202304140256.aIlJMfbA-lkp@intel.com/
+[2] https://lore.kernel.org/oe-kbuild-all/202304140706.aOBNhUj2-lkp@intel.com/
+
+Changes since v1:
+- Drop patch 2 since it is accepted.
+- Change `select RESET_STARFIVE_JH7110 if ARCH_STARFIVE` to
+  `select RESET_STARFIVE_JH7110 if RESET_CONTROLLER`.
+- Change the commit message accordingly.
+
 ---
-The issue is found by static analysis and remains untested.
----
- drivers/clk/imx/clk-imxrt1050.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+History:
+v1: https://lore.kernel.org/all/20230417074115.30786-1-hal.feng@starfivetech.com/
 
-diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
-index fd5c51fc92c0..08d155feb035 100644
---- a/drivers/clk/imx/clk-imxrt1050.c
-+++ b/drivers/clk/imx/clk-imxrt1050.c
-@@ -42,7 +42,7 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
- 	struct device_node *anp;
- 	int ret;
- 
--	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-+	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
- 					  IMXRT1050_CLK_END), GFP_KERNEL);
- 	if (WARN_ON(!clk_hw_data))
- 		return -ENOMEM;
-@@ -53,10 +53,12 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
- 	hws[IMXRT1050_CLK_OSC] = imx_get_clk_hw_by_name(np, "osc");
- 
- 	anp = of_find_compatible_node(NULL, NULL, "fsl,imxrt-anatop");
--	pll_base = of_iomap(anp, 0);
-+	pll_base = devm_of_iomap(dev, anp, 0, NULL);
- 	of_node_put(anp);
--	if (WARN_ON(!pll_base))
--		return -ENOMEM;
-+	if (WARN_ON(IS_ERR(pll_base))) {
-+		ret = PTR_ERR(pll_base);
-+		goto unregister_hws;
-+	}
- 
- 	/* Anatop clocks */
- 	hws[IMXRT1050_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0UL);
-@@ -104,8 +106,10 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
- 
- 	/* CCM clocks */
- 	ccm_base = devm_platform_ioremap_resource(pdev, 0);
--	if (WARN_ON(IS_ERR(ccm_base)))
--		return PTR_ERR(ccm_base);
-+	if (WARN_ON(IS_ERR(ccm_base))) {
-+		ret = PTR_ERR(ccm_base);
-+		goto unregister_hws;
-+	}
- 
- 	hws[IMXRT1050_CLK_ARM_PODF] = imx_clk_hw_divider("arm_podf", "pll1_arm", ccm_base + 0x10, 0, 3);
- 	hws[IMXRT1050_CLK_PRE_PERIPH_SEL] = imx_clk_hw_mux("pre_periph_sel", ccm_base + 0x18, 18, 2,
-@@ -149,8 +153,12 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
- 	if (ret < 0) {
- 		dev_err(dev, "Failed to register clks for i.MXRT1050.\n");
--		imx_unregister_hw_clocks(hws, IMXRT1050_CLK_END);
-+		goto unregister_hws;
- 	}
-+	return 0;
-+
-+unregister_hws:
-+	imx_unregister_hw_clocks(hws, IMXRT1050_CLK_END);
- 	return ret;
- }
- static const struct of_device_id imxrt1050_clk_of_match[] = {
+Hal Feng (1):
+  clk: starfive: Fix RESET_STARFIVE_JH7110 can't be selected in a
+    specified case
+
+ drivers/clk/starfive/Kconfig | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
 -- 
-2.34.1
+2.38.1
 
