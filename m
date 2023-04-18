@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2F0C7EE20
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A8AC7EE23
 	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 09:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231241AbjDRJDj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 05:03:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39448 "EHLO
+        id S231305AbjDRJDn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 05:03:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230130AbjDRJDf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 05:03:35 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB69F422F;
-        Tue, 18 Apr 2023 02:03:21 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-2efbaad7a2eso1385338f8f.0;
-        Tue, 18 Apr 2023 02:03:21 -0700 (PDT)
+        with ESMTP id S231215AbjDRJDi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 05:03:38 -0400
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F07E54EF7;
+        Tue, 18 Apr 2023 02:03:26 -0700 (PDT)
+Received: by mail-wm1-x332.google.com with SMTP id v10so8523949wmn.5;
+        Tue, 18 Apr 2023 02:03:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681808600; x=1684400600;
+        d=gmail.com; s=20221208; t=1681808605; x=1684400605;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lAgPAF+zjeuI/E9IUlDFcsX7pn0c4FT4mD/fF6VQFeU=;
-        b=ctW+7OSIoVWA0EC/gvvaMs+TEOaigpuGUEOj2pwexh0GZYE5yl4fXflbRNHvSLrRHT
-         S1woxOyoh7vi3siWP/siaVrQHPaf7JCePme0cx5tcy7QbJMEjl0EXPFiOlfp+zUPmDgW
-         VRJbqagxKJ+VOjHmOAXjTXPjH5tjD7uRho4zCb5FlcECA4UodmMNKRwvb6T2JRNtbSI7
-         kPcvLnx2sP496ua9A/8vln1CChlyHbbUqhpW1EzkdKqvP+YLl2cvvA7k+tLe+9jSFO+4
-         a4FSPZtzySwdyThCyd+AeyEF5iOsJ0ZRUa4KYPEMwr8rfMDqRYUqYIKc5azHCHK14hHB
-         LujA==
+        bh=oM8GpGbGiC8m3xETpqZOKVCeTGKwMkImG6hLD6+J4YY=;
+        b=ctxsXyNnKMhP95P4Hk+NQVH7kFsUxogvu2M9hpBDmk2zks8C/0mUeEu7nvWTh4FjxH
+         QNdXdKZYlV/toXwg3YBYysppewAJhmYXPksk5qNDVyUzN1pUDaaPtww0qIka5SbAw18z
+         l3C5YWND3LquNZG6OIEoOgqhFDtB66aFqHc+CDb3lHhmiU25Vw4wgYeAz+2km3Mx/d1L
+         Q9eqdQQ5lKBhQe5sgtUr0nwdsmsygbom3qNSz9Jada1rk06b8FLW0+9Tua+wVDAhkVP+
+         ku78bLqiYA0DaR4MYSb3hjR++0I70LMxpekh96Mfdjz59oUbL8BXLKahBFKq74SHDU87
+         bF6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681808600; x=1684400600;
+        d=1e100.net; s=20221208; t=1681808605; x=1684400605;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lAgPAF+zjeuI/E9IUlDFcsX7pn0c4FT4mD/fF6VQFeU=;
-        b=Jb/BwfWTmPYd/E3J3exdrQfIccGt+9bmppJ8+DAJXf+0dPL7F91QHwnVZVRobc3U6P
-         2EuWN48ysWsZydpBhr46T3l5Ok8/YfCrTCAOTMh61Z93vs+12CBhoLhRpL27AMw+tbdG
-         OGnpXDeoZdhCUuvdEMxtNxw8akmo5EyisWDMDTgZjhg+YpigJ2zGoUwe+RBQITFf0kTm
-         oxzPwHcq6o8lkpL2wpPCqCWRGMjlZJq4eb5ZPNxQQCjw/To29JXCWYaOiy18DAPfcAJ5
-         AEXifjrpZg7JWHaDyXTCtEjgY7LasjB9Njwm7r0sSUCNzXyZFNkCiK75WmFRIku9DKQ6
-         QWZw==
-X-Gm-Message-State: AAQBX9dX+5crypHEiytEzTNobX39fNQi0F74Spb8VWAqK4PZ4pjZkVId
-        MNKrjW24NmmocL1fN+DI1nmV/NiFbmc=
-X-Google-Smtp-Source: AKy350YvX1SI2ZxXlLiCeq06iqrfDJqazo5MeMlUJKrlof+6IQnSh5x/kFjusT+DLatHtJ62uFfsfA==
-X-Received: by 2002:a5d:544f:0:b0:2fb:c431:fdd1 with SMTP id w15-20020a5d544f000000b002fbc431fdd1mr1530379wrv.37.1681808599979;
-        Tue, 18 Apr 2023 02:03:19 -0700 (PDT)
+        bh=oM8GpGbGiC8m3xETpqZOKVCeTGKwMkImG6hLD6+J4YY=;
+        b=j+kNSgnZ+Wz8hUwMqLc19ZTpfz+HbIX6AWYB9BtBSjGsjBgJpSerN0P8M0RZ+3wUry
+         ziJHSHIEScWWYK5LdkREGKxmWINNv2YZu3a1BJhhL93OWbvoLgtnND0a+OdXp+QevA6F
+         aYFfy9oDcF1exckXTdIH6JhXWS+z0TwUAC+K8kmSrlgX8JT9VyLfOTcAI5rY8Oqcvy5x
+         WI+VdMsu01/6RGRQXHy4+W4ItudtYL3dUrt9pskAa9rxHQk00QHqjrltxCfidDtYOoor
+         +x4qTCMRo7EF+eypN82L0kMXuFGJT67uPJZpZwTsazvLAWGz8FBueFzRijXw0Y7KWBk7
+         Q0ig==
+X-Gm-Message-State: AAQBX9cOOKSwakoEM9ZIf7m7zbUJVNwUhIo1EDQ5BMKBPDfg89fWbJbP
+        5/MFqdYrdRsTajNkBcwTviBzVNoXuIw=
+X-Google-Smtp-Source: AKy350ba2UVFuOG+JFOM810cCwXF9qurZCiipIbtykJbm4w1Eypd53rHW1F0rfXI/P4TwSF8P1/8Ng==
+X-Received: by 2002:a05:600c:ac8:b0:3f1:6fe2:c4b2 with SMTP id c8-20020a05600c0ac800b003f16fe2c4b2mr5968273wmr.23.1681808605051;
+        Tue, 18 Apr 2023 02:03:25 -0700 (PDT)
 Received: from localhost.localdomain (61.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.61])
-        by smtp.gmail.com with ESMTPSA id u7-20020a7bcb07000000b003ee70225ed2sm14341109wmj.15.2023.04.18.02.03.18
+        by smtp.gmail.com with ESMTPSA id u7-20020a7bcb07000000b003ee70225ed2sm14341109wmj.15.2023.04.18.02.03.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 02:03:19 -0700 (PDT)
+        Tue, 18 Apr 2023 02:03:24 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
@@ -57,9 +57,9 @@ Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         matthias.bgg@gmail.com, devicetree@vger.kernel.org,
         arinc.unal@arinc9.com
-Subject: [PATCH v3 4/9] mips: ralink: rt305x: remove clock related code
-Date:   Tue, 18 Apr 2023 11:03:07 +0200
-Message-Id: <20230418090312.2818879-5-sergio.paracuellos@gmail.com>
+Subject: [PATCH v3 8/9] mips: ralink: get cpu rate from new driver code
+Date:   Tue, 18 Apr 2023 11:03:11 +0200
+Message-Id: <20230418090312.2818879-9-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
 References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
@@ -69,149 +69,71 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A properly clock driver for ralink SoCs has been added. Hence there is no
-need to have clock related code in 'arch/mips/ralink' folder anymore.
+At very early stage on boot, there is a need to set 'mips_hpt_frequency'.
+This timer frequency is a half of the CPU frequency. To get clocks properly
+set we need to call to 'of_clk_init()' and properly get cpu clock frequency
+afterwards. Depending on the SoC, CPU clock index in the clock provider is
+different being two for MT7620 SoC and one for the rest. Hence, adapt code
+to be aligned with new clock driver.
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- arch/mips/include/asm/mach-ralink/rt305x.h | 21 ------
- arch/mips/ralink/rt305x.c                  | 78 ----------------------
- 2 files changed, 99 deletions(-)
+ arch/mips/ralink/clk.c | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/arch/mips/include/asm/mach-ralink/rt305x.h b/arch/mips/include/asm/mach-ralink/rt305x.h
-index ef58f7bff957..4fc5c279cd75 100644
---- a/arch/mips/include/asm/mach-ralink/rt305x.h
-+++ b/arch/mips/include/asm/mach-ralink/rt305x.h
-@@ -67,26 +67,9 @@ static inline int soc_is_rt5350(void)
- #define CHIP_ID_ID_SHIFT		8
- #define CHIP_ID_REV_MASK		0xff
+diff --git a/arch/mips/ralink/clk.c b/arch/mips/ralink/clk.c
+index 5b02bb7e0829..3d29e956f785 100644
+--- a/arch/mips/ralink/clk.c
++++ b/arch/mips/ralink/clk.c
+@@ -11,29 +11,41 @@
+ #include <linux/clkdev.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
++#include <asm/mach-ralink/ralink_regs.h>
  
--#define RT305X_SYSCFG_CPUCLK_SHIFT		18
--#define RT305X_SYSCFG_CPUCLK_MASK		0x1
--#define RT305X_SYSCFG_CPUCLK_LOW		0x0
--#define RT305X_SYSCFG_CPUCLK_HIGH		0x1
--
- #define RT305X_SYSCFG_SRAM_CS0_MODE_SHIFT	2
--#define RT305X_SYSCFG_CPUCLK_MASK		0x1
- #define RT305X_SYSCFG_SRAM_CS0_MODE_WDT		0x1
+ #include <asm/time.h>
  
--#define RT3352_SYSCFG0_CPUCLK_SHIFT	8
--#define RT3352_SYSCFG0_CPUCLK_MASK	0x1
--#define RT3352_SYSCFG0_CPUCLK_LOW	0x0
--#define RT3352_SYSCFG0_CPUCLK_HIGH	0x1
--
--#define RT5350_SYSCFG0_CPUCLK_SHIFT	8
--#define RT5350_SYSCFG0_CPUCLK_MASK	0x3
--#define RT5350_SYSCFG0_CPUCLK_360	0x0
--#define RT5350_SYSCFG0_CPUCLK_320	0x2
--#define RT5350_SYSCFG0_CPUCLK_300	0x3
--
- #define RT5350_SYSCFG0_DRAM_SIZE_SHIFT  12
- #define RT5350_SYSCFG0_DRAM_SIZE_MASK   7
- #define RT5350_SYSCFG0_DRAM_SIZE_2M     0
-@@ -117,13 +100,9 @@ static inline int soc_is_rt5350(void)
+ #include "common.h"
  
- #define RT3352_SYSC_REG_SYSCFG0		0x010
- #define RT3352_SYSC_REG_SYSCFG1         0x014
--#define RT3352_SYSC_REG_CLKCFG1         0x030
- #define RT3352_SYSC_REG_RSTCTRL         0x034
- #define RT3352_SYSC_REG_USB_PS          0x05c
+-void ralink_clk_add(const char *dev, unsigned long rate)
++static int clk_cpu_index(void)
+ {
+-	struct clk *clk = clk_register_fixed_rate(NULL, dev, NULL, 0, rate);
++	if (ralink_soc == RALINK_UNKNOWN)
++		return -1;
  
--#define RT3352_CLKCFG0_XTAL_SEL		BIT(20)
--#define RT3352_CLKCFG1_UPHY0_CLK_EN	BIT(18)
--#define RT3352_CLKCFG1_UPHY1_CLK_EN	BIT(20)
- #define RT3352_RSTCTRL_UHST		BIT(22)
- #define RT3352_RSTCTRL_UDEV		BIT(25)
- #define RT3352_SYSCFG1_USB0_HOST_MODE	BIT(10)
-diff --git a/arch/mips/ralink/rt305x.c b/arch/mips/ralink/rt305x.c
-index d8dcc5cc66cc..9cffe69dd11d 100644
---- a/arch/mips/ralink/rt305x.c
-+++ b/arch/mips/ralink/rt305x.c
-@@ -56,84 +56,6 @@ static unsigned long rt5350_get_mem_size(void)
- 	return ret;
+-	if (!clk)
+-		panic("failed to add clock");
++	if (ralink_soc == MT762X_SOC_MT7620A ||
++	    ralink_soc == MT762X_SOC_MT7620N)
++		return 2;
+ 
+-	clkdev_create(clk, NULL, "%s", dev);
++	return 1;
  }
  
--void __init ralink_clk_init(void)
--{
--	unsigned long cpu_rate, sys_rate, wdt_rate, uart_rate;
--	unsigned long wmac_rate = 40000000;
--
--	u32 t = rt_sysc_r32(SYSC_REG_SYSTEM_CONFIG);
--
--	if (soc_is_rt305x() || soc_is_rt3350()) {
--		t = (t >> RT305X_SYSCFG_CPUCLK_SHIFT) &
--		     RT305X_SYSCFG_CPUCLK_MASK;
--		switch (t) {
--		case RT305X_SYSCFG_CPUCLK_LOW:
--			cpu_rate = 320000000;
--			break;
--		case RT305X_SYSCFG_CPUCLK_HIGH:
--			cpu_rate = 384000000;
--			break;
--		}
--		sys_rate = uart_rate = wdt_rate = cpu_rate / 3;
--	} else if (soc_is_rt3352()) {
--		t = (t >> RT3352_SYSCFG0_CPUCLK_SHIFT) &
--		     RT3352_SYSCFG0_CPUCLK_MASK;
--		switch (t) {
--		case RT3352_SYSCFG0_CPUCLK_LOW:
--			cpu_rate = 384000000;
--			break;
--		case RT3352_SYSCFG0_CPUCLK_HIGH:
--			cpu_rate = 400000000;
--			break;
--		}
--		sys_rate = wdt_rate = cpu_rate / 3;
--		uart_rate = 40000000;
--	} else if (soc_is_rt5350()) {
--		t = (t >> RT5350_SYSCFG0_CPUCLK_SHIFT) &
--		     RT5350_SYSCFG0_CPUCLK_MASK;
--		switch (t) {
--		case RT5350_SYSCFG0_CPUCLK_360:
--			cpu_rate = 360000000;
--			sys_rate = cpu_rate / 3;
--			break;
--		case RT5350_SYSCFG0_CPUCLK_320:
--			cpu_rate = 320000000;
--			sys_rate = cpu_rate / 4;
--			break;
--		case RT5350_SYSCFG0_CPUCLK_300:
--			cpu_rate = 300000000;
--			sys_rate = cpu_rate / 3;
--			break;
--		default:
--			BUG();
--		}
--		uart_rate = 40000000;
--		wdt_rate = sys_rate;
--	} else {
--		BUG();
--	}
--
--	if (soc_is_rt3352() || soc_is_rt5350()) {
--		u32 val = rt_sysc_r32(RT3352_SYSC_REG_SYSCFG0);
--
--		if (!(val & RT3352_CLKCFG0_XTAL_SEL))
--			wmac_rate = 20000000;
--	}
--
--	ralink_clk_add("cpu", cpu_rate);
--	ralink_clk_add("sys", sys_rate);
--	ralink_clk_add("10000900.i2c", uart_rate);
--	ralink_clk_add("10000a00.i2s", uart_rate);
--	ralink_clk_add("10000b00.spi", sys_rate);
--	ralink_clk_add("10000b40.spi", sys_rate);
--	ralink_clk_add("10000100.timer", wdt_rate);
--	ralink_clk_add("10000120.watchdog", wdt_rate);
--	ralink_clk_add("10000500.uart", uart_rate);
--	ralink_clk_add("10000c00.uartlite", uart_rate);
--	ralink_clk_add("10100000.ethernet", sys_rate);
--	ralink_clk_add("10180000.wmac", wmac_rate);
--}
--
- void __init ralink_of_remap(void)
+ void __init plat_time_init(void)
  {
- 	rt_sysc_membase = plat_of_remap_node("ralink,rt3050-sysc");
++	struct of_phandle_args clkspec;
+ 	struct clk *clk;
++	int cpu_clk_idx;
+ 
+ 	ralink_of_remap();
+ 
+-	ralink_clk_init();
+-	clk = clk_get_sys("cpu", NULL);
++	cpu_clk_idx = clk_cpu_index();
++	if (cpu_clk_idx == -1)
++		panic("unable to get CPU clock index");
++
++	of_clk_init(NULL);
++	clkspec.np = of_find_node_by_name(NULL, "sysc");
++	clkspec.args_count = 1;
++	clkspec.args[0] = cpu_clk_idx;
++	clk = of_clk_get_from_provider(&clkspec);
+ 	if (IS_ERR(clk))
+ 		panic("unable to get CPU clock, err=%ld", PTR_ERR(clk));
+ 	pr_info("CPU Clock: %ldMHz\n", clk_get_rate(clk) / 1000000);
 -- 
 2.25.1
 
