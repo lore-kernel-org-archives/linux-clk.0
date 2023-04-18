@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03F3C7EE22
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 09:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDAAC77B75
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 09:03:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231144AbjDRJDi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 05:03:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39424 "EHLO
+        id S231268AbjDRJDk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 05:03:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231259AbjDRJDc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 05:03:32 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7794BDD;
-        Tue, 18 Apr 2023 02:03:20 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id o9-20020a05600c510900b003f17012276fso3707301wms.4;
-        Tue, 18 Apr 2023 02:03:20 -0700 (PDT)
+        with ESMTP id S231187AbjDRJDg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 05:03:36 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40AE86A59;
+        Tue, 18 Apr 2023 02:03:23 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id m39-20020a05600c3b2700b003f170e75bd3so516842wms.1;
+        Tue, 18 Apr 2023 02:03:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681808598; x=1684400598;
+        d=gmail.com; s=20221208; t=1681808601; x=1684400601;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n/vu+BfaX9/nXtP9I6CrmyWiA7s/9ryNRPNRydMSfbw=;
-        b=L+lDPE9xLwjgOiBHlzytsnInUPKmUpzDTsScTp4m1h2YQHo5+ioSBEq8BcaI0t5b4e
-         tLaMB2CkNPh2LXT0On55jRaJGzoltFJIxfxhi4W9cTq3cg2GMoHIT1u/2WE/hgYPnx1j
-         GgrbqOAvZsfWak2L+olIuO55ZIk3Q6SF+c7H6/JH6vmAqAEsRBrllI+rEXr+dPITYa2y
-         jpL1QKVGe+JqloB2gJB9t0cFg6hVlwwdfnY0BlJURx66nZZJNpeRwuMiWKqMWrUBcSfH
-         bJ7EVGbhrl/7e+VRfRiHQonLpih2bO0Fbx04swYRXAk8VUPbOT81Q7VeoqAhGEnExX3i
-         tK1A==
+        bh=+0hlvvdbeDEIm7xJGhHSHeJnLpm+LhG9OICPA4xVqkE=;
+        b=GMaQBTI19l2YP18gqjYQ7lE4q2ipqhpdQxH1Iqm6FgTpriXG1LR7B1cCL3ueZXAryQ
+         MwV3ry0MRFnF5MqgRNqIYvYN7HbSejI29kjGYS24Zi9G3/5xlHjNm2k5srp9hvbAW7yV
+         ujZrjVVm/aiecEceKab7foHpd9W93C39dAkgR2u3FU7Mi9bfp3N4lyNZtFwNETupWsi6
+         RJawAFfI6PBamAb0y82i4dXE+Mj8Sl+FYE1ewXspARKArORk1W9yPu4ZuHt9ExhP30lv
+         ux0MXp948pIQPjaflkSmnvSK94hQ5jWZ9wxFHtlG11UrRBJpLch0PazM9jP/lIXLXvj0
+         BTOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681808598; x=1684400598;
+        d=1e100.net; s=20221208; t=1681808601; x=1684400601;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n/vu+BfaX9/nXtP9I6CrmyWiA7s/9ryNRPNRydMSfbw=;
-        b=VMm/dQ2vd1ugFhsno4ZqtErYGko4YC63K7iu6mZ54OBRGPxDWMdR3La5pgWLwjq/I5
-         vq8/d1pLBiWdW+pwgoOzEJXPdMJLmpVARyqgw6H0EnsLMDsmOfwzKZoVtPeI1/QAKdyb
-         crGpT6sLYmKCdEHIkW1M8jx20BCnPWHIaLflAaGRKHIhZToyXU3NoL4dFRlp14KrhjtZ
-         o5paGDqreDbjxXcf7rrFwnRvC9Q0rrmrz1RsMQtatYyHi0yWWuhr5au8wpVgBdKYpKbr
-         pwQbdZlHcY4wZqwWyOuFFNh/pp8W2/QTmjkhS7Ej8Z8NjPtsON4jTl69yByCKXX+lhi9
-         0vBQ==
-X-Gm-Message-State: AAQBX9d0Vk26TuORoA47fQUnF+NR9aQjbTebmA7Tr47ye6i+gB7FGl9j
-        1As3mKk6UcfTYy7yQvDclR9i05rbpOk=
-X-Google-Smtp-Source: AKy350ZCUz8WXWirNZlLvA4wB0Zp6OwjmJAloCx8NgMqYe4xt7mQQVfBYMoJnNGMEOHH0Fp6elX4tQ==
-X-Received: by 2002:a7b:ce0f:0:b0:3f1:6f39:419c with SMTP id m15-20020a7bce0f000000b003f16f39419cmr7763555wmc.36.1681808598514;
-        Tue, 18 Apr 2023 02:03:18 -0700 (PDT)
+        bh=+0hlvvdbeDEIm7xJGhHSHeJnLpm+LhG9OICPA4xVqkE=;
+        b=X40Leh75oO/+cJAVm74+ZWLFZTKCqoyXBn1RvOQf1N1SZu+0bpd/OvpYOlm48fNrh9
+         YUoptzbRgwwVWlJ/k8q8Rc9m6/7oKIGyVIuwGS/YX0dwMgtK89CP78gpa1NPZVHjRTfn
+         aw9x8/iXrIZYTRdPuHLMKEl8YEN7ghVVc7PBxJsunlFDIs6zDezmuhnqL8T1Zhu30cDp
+         +y5j4VYZNaLm8w729PiSt0wnKQThEIVz/l/fpuz4keJy52mKdXvfdCKWwVK/cDRAC/B7
+         CXkwNehrkgTE+64ptWlQW92Ptk4IwqiewYK1G2VftptFDQFm1BCCvylrpyuvbg7CJEW9
+         n1Ww==
+X-Gm-Message-State: AAQBX9dhd2p+s6WlTXM6UlPGuXgBJ+BGXxtev3u2mHk9icOwdZQ+fYfa
+        FIl81N9R+6r45z1AwzMPotykxljZCBM=
+X-Google-Smtp-Source: AKy350Ytt6JSK4owTVg8GwCDHer01v2IV+cv9IDEL8Y9pzP7MWbP2DJsBkub763c76EMNuV6/jEodA==
+X-Received: by 2002:a05:600c:210f:b0:3f1:745d:821 with SMTP id u15-20020a05600c210f00b003f1745d0821mr3560579wml.23.1681808601206;
+        Tue, 18 Apr 2023 02:03:21 -0700 (PDT)
 Received: from localhost.localdomain (61.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.61])
-        by smtp.gmail.com with ESMTPSA id u7-20020a7bcb07000000b003ee70225ed2sm14341109wmj.15.2023.04.18.02.03.17
+        by smtp.gmail.com with ESMTPSA id u7-20020a7bcb07000000b003ee70225ed2sm14341109wmj.15.2023.04.18.02.03.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 02:03:17 -0700 (PDT)
+        Tue, 18 Apr 2023 02:03:20 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
@@ -57,9 +57,9 @@ Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         matthias.bgg@gmail.com, devicetree@vger.kernel.org,
         arinc.unal@arinc9.com
-Subject: [PATCH v3 3/9] mips: ralink: rt288x: remove clock related code
-Date:   Tue, 18 Apr 2023 11:03:06 +0200
-Message-Id: <20230418090312.2818879-4-sergio.paracuellos@gmail.com>
+Subject: [PATCH v3 5/9] mips: ralink: rt3883: remove clock related code
+Date:   Tue, 18 Apr 2023 11:03:08 +0200
+Message-Id: <20230418090312.2818879-6-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
 References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
@@ -74,80 +74,84 @@ need to have clock related code in 'arch/mips/ralink' folder anymore.
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- arch/mips/include/asm/mach-ralink/rt288x.h | 10 -------
- arch/mips/ralink/rt288x.c                  | 31 ----------------------
- 2 files changed, 41 deletions(-)
+ arch/mips/include/asm/mach-ralink/rt3883.h |  8 ----
+ arch/mips/ralink/rt3883.c                  | 44 ----------------------
+ 2 files changed, 52 deletions(-)
 
-diff --git a/arch/mips/include/asm/mach-ralink/rt288x.h b/arch/mips/include/asm/mach-ralink/rt288x.h
-index 66a999cd1d80..66d190358e3a 100644
---- a/arch/mips/include/asm/mach-ralink/rt288x.h
-+++ b/arch/mips/include/asm/mach-ralink/rt288x.h
-@@ -18,7 +18,6 @@
- #define SYSC_REG_CHIP_NAME1		0x04
- #define SYSC_REG_CHIP_ID		0x0c
- #define SYSC_REG_SYSTEM_CONFIG		0x10
--#define SYSC_REG_CLKCFG			0x30
+diff --git a/arch/mips/include/asm/mach-ralink/rt3883.h b/arch/mips/include/asm/mach-ralink/rt3883.h
+index ad25d5e8d2dc..4a835b178925 100644
+--- a/arch/mips/include/asm/mach-ralink/rt3883.h
++++ b/arch/mips/include/asm/mach-ralink/rt3883.h
+@@ -92,14 +92,6 @@
+ #define RT3883_REVID_VER_ID_SHIFT	8
+ #define RT3883_REVID_ECO_ID_MASK	0x0f
  
- #define RT2880_CHIP_NAME0		0x38325452
- #define RT2880_CHIP_NAME1		0x20203038
-@@ -27,15 +26,6 @@
- #define CHIP_ID_ID_SHIFT		8
- #define CHIP_ID_REV_MASK		0xff
- 
--#define SYSTEM_CONFIG_CPUCLK_SHIFT	20
--#define SYSTEM_CONFIG_CPUCLK_MASK	0x3
--#define SYSTEM_CONFIG_CPUCLK_250	0x0
--#define SYSTEM_CONFIG_CPUCLK_266	0x1
--#define SYSTEM_CONFIG_CPUCLK_280	0x2
--#define SYSTEM_CONFIG_CPUCLK_300	0x3
+-#define RT3883_SYSCFG0_DRAM_TYPE_DDR2	BIT(17)
+-#define RT3883_SYSCFG0_CPUCLK_SHIFT	8
+-#define RT3883_SYSCFG0_CPUCLK_MASK	0x3
+-#define RT3883_SYSCFG0_CPUCLK_250	0x0
+-#define RT3883_SYSCFG0_CPUCLK_384	0x1
+-#define RT3883_SYSCFG0_CPUCLK_480	0x2
+-#define RT3883_SYSCFG0_CPUCLK_500	0x3
 -
--#define CLKCFG_SRAM_CS_N_WDT		BIT(9)
--
- #define RT2880_SDRAM_BASE		0x08000000
- #define RT2880_MEM_SIZE_MIN		2
- #define RT2880_MEM_SIZE_MAX		128
-diff --git a/arch/mips/ralink/rt288x.c b/arch/mips/ralink/rt288x.c
-index 456ba0b2599e..0c6a87452dd1 100644
---- a/arch/mips/ralink/rt288x.c
-+++ b/arch/mips/ralink/rt288x.c
-@@ -21,37 +21,6 @@
+ #define RT3883_SYSCFG1_USB0_HOST_MODE	BIT(10)
+ #define RT3883_SYSCFG1_PCIE_RC_MODE	BIT(8)
+ #define RT3883_SYSCFG1_PCI_HOST_MODE	BIT(7)
+diff --git a/arch/mips/ralink/rt3883.c b/arch/mips/ralink/rt3883.c
+index cca887af378f..14c56993611a 100644
+--- a/arch/mips/ralink/rt3883.c
++++ b/arch/mips/ralink/rt3883.c
+@@ -21,50 +21,6 @@
  
  static struct ralink_soc_info *soc_info_ptr;
  
 -void __init ralink_clk_init(void)
 -{
--	unsigned long cpu_rate, wmac_rate = 40000000;
--	u32 t = rt_sysc_r32(SYSC_REG_SYSTEM_CONFIG);
--	t = ((t >> SYSTEM_CONFIG_CPUCLK_SHIFT) & SYSTEM_CONFIG_CPUCLK_MASK);
+-	unsigned long cpu_rate, sys_rate;
+-	u32 syscfg0;
+-	u32 clksel;
+-	u32 ddr2;
 -
--	switch (t) {
--	case SYSTEM_CONFIG_CPUCLK_250:
+-	syscfg0 = rt_sysc_r32(RT3883_SYSC_REG_SYSCFG0);
+-	clksel = ((syscfg0 >> RT3883_SYSCFG0_CPUCLK_SHIFT) &
+-		RT3883_SYSCFG0_CPUCLK_MASK);
+-	ddr2 = syscfg0 & RT3883_SYSCFG0_DRAM_TYPE_DDR2;
+-
+-	switch (clksel) {
+-	case RT3883_SYSCFG0_CPUCLK_250:
 -		cpu_rate = 250000000;
+-		sys_rate = (ddr2) ? 125000000 : 83000000;
 -		break;
--	case SYSTEM_CONFIG_CPUCLK_266:
--		cpu_rate = 266666667;
+-	case RT3883_SYSCFG0_CPUCLK_384:
+-		cpu_rate = 384000000;
+-		sys_rate = (ddr2) ? 128000000 : 96000000;
 -		break;
--	case SYSTEM_CONFIG_CPUCLK_280:
--		cpu_rate = 280000000;
+-	case RT3883_SYSCFG0_CPUCLK_480:
+-		cpu_rate = 480000000;
+-		sys_rate = (ddr2) ? 160000000 : 120000000;
 -		break;
--	case SYSTEM_CONFIG_CPUCLK_300:
--		cpu_rate = 300000000;
+-	case RT3883_SYSCFG0_CPUCLK_500:
+-		cpu_rate = 500000000;
+-		sys_rate = (ddr2) ? 166000000 : 125000000;
 -		break;
 -	}
 -
 -	ralink_clk_add("cpu", cpu_rate);
--	ralink_clk_add("300100.timer", cpu_rate / 2);
--	ralink_clk_add("300120.watchdog", cpu_rate / 2);
--	ralink_clk_add("300500.uart", cpu_rate / 2);
--	ralink_clk_add("300900.i2c", cpu_rate / 2);
--	ralink_clk_add("300c00.uartlite", cpu_rate / 2);
--	ralink_clk_add("400000.ethernet", cpu_rate / 2);
--	ralink_clk_add("480000.wmac", wmac_rate);
+-	ralink_clk_add("10000100.timer", sys_rate);
+-	ralink_clk_add("10000120.watchdog", sys_rate);
+-	ralink_clk_add("10000500.uart", 40000000);
+-	ralink_clk_add("10000900.i2c", 40000000);
+-	ralink_clk_add("10000a00.i2s", 40000000);
+-	ralink_clk_add("10000b00.spi", sys_rate);
+-	ralink_clk_add("10000b40.spi", sys_rate);
+-	ralink_clk_add("10000c00.uartlite", 40000000);
+-	ralink_clk_add("10100000.ethernet", sys_rate);
+-	ralink_clk_add("10180000.wmac", 40000000);
 -}
 -
  void __init ralink_of_remap(void)
  {
- 	rt_sysc_membase = plat_of_remap_node("ralink,rt2880-sysc");
+ 	rt_sysc_membase = plat_of_remap_node("ralink,rt3883-sysc");
 -- 
 2.25.1
 
