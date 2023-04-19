@@ -2,112 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5D1C77B75
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 21:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1492C6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 21:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230358AbjDSVhP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Apr 2023 17:37:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57752 "EHLO
+        id S229978AbjDSVxb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Apr 2023 17:53:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbjDSVhO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 17:37:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A37BC;
-        Wed, 19 Apr 2023 14:37:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95DDE642BA;
-        Wed, 19 Apr 2023 21:37:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBA52C433EF;
-        Wed, 19 Apr 2023 21:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1681940233;
-        bh=oXbP44FFeom1UFaKGtZXbWp0wlf68kOkYhyhd6aJL3Q=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RjLTR1zy537E9p1rG6cwCaRYJr/ui6DawDDXijTR5TlVVGT7yw2VNznJz+Ag358MK
-         Ozqx9RqDI+/30epaCdTIvOzAg88ml3LbzNzNaGwa21YjBr9cd6wPPv4D3mUtQ7bnZk
-         +gTIMZT0OkaDVNsgdQjmduI420pi/0FZpnE2JCRqgAaYRYuDAr7wUt2stxSvCTY3FK
-         McvQZOaCpXQGJ3tmVOYciW/HI7PMI3NBHF53iuLILNEtRto+slcLf/+n3FMoudjwrV
-         /nBXdRyfoyPZdcmd7iIfVjfNSJO/HAo1J0GZbhUEJiY8IvPGcs8055zYFsNjTSK84h
-         HGpt+ap81dNuA==
-Message-ID: <0dc457cbd13ea76a3aa3c70b2a31a537.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229572AbjDSVxb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 17:53:31 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F9F3C1E;
+        Wed, 19 Apr 2023 14:53:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1681941173; i=j.neuschaefer@gmx.net;
+        bh=E3MwaTC39cHV5jEqiGIoFdw7WcRGnfVKbe7RZwo68iw=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=LMkeOne8W12inAaZ/YilffTeUnstAOesHyxyoojqAF5QqEUyGHFxXGenviIBKVZDv
+         JnFaTLZIwIz3H+zJWTjMJ/H7Fpp+Gcf37ot94tS7gYcv30+KcJjbDGk6+QUbyjlRsc
+         sEXODlI9TmrUm1cnPr8pVmari2bYex5Hp2SPEZ6F+rTqtyxKZKvg1n7n2SSHHdCqQT
+         dr/LDcwBco9ZBLrQXmOqurNrgJzOy62MvR4W/y+N4LS8VaWG/i259Gqywatxeuextl
+         ZuMxy4V9fyIuQhAxmG9bH4+B+NE6EvnU6fY6FZOvo7gZJ3nfZXxM4mLMo2i8DZjc1o
+         I6NB30sJayYag==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([95.223.44.193]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8QWG-1ptfZl1Qe0-004QMs; Wed, 19
+ Apr 2023 23:52:53 +0200
+Date:   Wed, 19 Apr 2023 23:52:57 +0200
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     j.neuschaefer@gmx.net, avifishman70@gmail.com,
+        benjaminfair@google.com, daniel.lezcano@linaro.org,
+        devicetree@vger.kernel.org, krzk+dt@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux@roeck-us.net,
+        mturquette@baylibre.com, openbmc@lists.ozlabs.org,
+        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
+        tali.perry1@gmail.com, tglx@linutronix.de, tmaimon77@gmail.com,
+        venture@google.com, wim@linux-watchdog.org, yuenn@google.com
+Subject: Re: [PATCH v6 2/2] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
+ controller driver
+Message-ID: <ZEBiuRH3DjVUO/Kp@probook>
+References: <20230415111355.696738-1-j.neuschaefer@gmx.net>
+ <20230415111355.696738-3-j.neuschaefer@gmx.net>
+ <c04038f2-b7aa-7c37-df93-6950831579f6@wanadoo.fr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230419133013.2563-2-quic_tdas@quicinc.com>
-References: <20230419133013.2563-1-quic_tdas@quicinc.com> <20230419133013.2563-2-quic_tdas@quicinc.com>
-Subject: Re: [PATCH 1/4] clk: qcom: branch: Extend the invert logic for branch2 clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     quic_skakitap@quicinc.com, Imran Shaik <quic_imrashai@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <quic_tdas@quicinc.com>, quic_rohiagar@quicinc.com,
-        netdev@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Date:   Wed, 19 Apr 2023 14:37:10 -0700
-User-Agent: alot/0.10
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nBgbEHe+7HdynUHs"
+Content-Disposition: inline
+In-Reply-To: <c04038f2-b7aa-7c37-df93-6950831579f6@wanadoo.fr>
+X-Provags-ID: V03:K1:TTKfScm3X+1lV46i2xneBJJ+mRnIdHaebMSneyl8EkLY7S7V6ir
+ tmEvh62wdv/WVjbqdH7A84xGNb3RKFAch9n0YeCEcF0Igi49ekDymYcVSXXM2R9hgXdaLO7
+ dp/ICD4eIfn/dwbQzeE8iunQWMeFvF0BYiArqRE9d8zM1ppM0/o03p5BANY3lRmUNvTqR9u
+ b8Xg1w19VhdJqSmL5lteA==
+UI-OutboundReport: notjunk:1;M01:P0:wJFEDQxfRL4=;ah7J+2kmEogfH5rqEMt6ppjheoH
+ KrP7wiEcbiG50T6ZYLvyues+omkXepggjO1En8RKwfFQvj9Q+/y30OpG4QV4dyzjUN32pBp8k
+ ZTOgqXUIPXH09ZtfnfM5ucGA2R7aA9xIY/8m0Qx0Yx4uhsV16pEv2Ha7tGLWu+a/yy6tayKSP
+ xPZUwjW4slngP1ZdWok+JvE2R5s/MzPU9UbEGeuW32Lvdi4Qsmy2H+O/D+Mll3FavTSh+cu0A
+ HRhfEflMdgGaYjR3Wrk9oXiLuozTAkbmMf3jCKoqkZbfksy0A2NgAmXsk8syQv9WZri75JWBM
+ XOZe5Wg+QW0I6VMzgyXpbPtoSAvWQEFICalKEQfNxdnhRuXGb5EfRaolqY4L4+OjPFFKcEzFH
+ Kwpj5X72qUDcZG1Wc4Ll5dlHra46FzDl/zktU65dDa0zbQWPNcGMkFeldM2tQ0KORW+S17Vxv
+ bJI0IoSK+2qbFL8239d0Q9Ri/Cjp8AnawJWxWswlaEDN/ItKwjHD1P8WoNStTpfMfT7OBdGsJ
+ Y4YhWqJPLhP/d1YvVS8CbI19IEIVGctfHMOh++sB4XXw9mAdMi983yL9429cG7UYEBYHLk7Mo
+ HcNDjXXcynLxVelOIm0Wt2I4V9gB+p1H2V59i/4ozElhg74t2lo4Q6NXbx15TBHKhuyY4rZoM
+ /PpP7mqUYeLL169L133ueg8iz2uzY3DtntdvNPRlHBO1J24vRPukY6oxol70s1Vk3cqi6vldI
+ Z2OWlxj7ZzhJI4goYOm21BAmiSmrNtz07c0UP8kJgq5AUTo/YZexa5Yc8mrZqSyJi77YimMQe
+ xf0z2cjZPWQdKZxeMR0MwDmDHCf//oF/Hr+QkfMG9d6w9yVC0UU05ikuA8AZS36uNOTOHH08q
+ hKRT8qoU1bMND9hd87X4fZRw/56xTQwjo7noyODDFxPbqIBT8EW0TwbyA2MPek3sGnt7MVPDk
+ oJSfanfvsoDljHysdHMo1TiqsIc=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2023-04-19 06:30:10)
-> From: Imran Shaik <quic_imrashai@quicinc.com>
->=20
-> Add support to handle the invert logic for branch2 clocks.
-> Invert branch halt would indicate the clock ON when CLK_OFF
-> bit is '1' and OFF when CLK_OFF bit is '0'.
->=20
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/clk-branch.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-> index f869fc6aaed6..4b24d45be771 100644
-> --- a/drivers/clk/qcom/clk-branch.c
-> +++ b/drivers/clk/qcom/clk-branch.c
-> @@ -48,6 +48,7 @@ static bool clk_branch2_check_halt(const struct clk_bra=
-nch *br, bool enabling)
->  {
->         u32 val;
->         u32 mask;
-> +       bool invert =3D (br->halt_check =3D=3D BRANCH_HALT_ENABLE);
-> =20
->         mask =3D BRANCH_NOC_FSM_STATUS_MASK << BRANCH_NOC_FSM_STATUS_SHIF=
-T;
->         mask |=3D BRANCH_CLK_OFF;
-> @@ -56,9 +57,16 @@ static bool clk_branch2_check_halt(const struct clk_br=
-anch *br, bool enabling)
-> =20
->         if (enabling) {
->                 val &=3D mask;
-> +
-> +               if (invert)
-> +                       return (val & BRANCH_CLK_OFF) =3D=3D BRANCH_CLK_O=
-FF;
-> +
->                 return (val & BRANCH_CLK_OFF) =3D=3D 0 ||
->                         val =3D=3D BRANCH_NOC_FSM_STATUS_ON;
 
-Do these clks have a NOC_FSM_STATUS bit? I think it would be better to
-make a local variable for the val we're looking for, and then test for
-that. We may need a mask as well, but the idea is to not duplicate the
-test and return from multiple places.
+--nBgbEHe+7HdynUHs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->         } else {
-> +               if (invert)
-> +                       return (val & BRANCH_CLK_OFF) =3D=3D 0;
-> +
->                 return val & BRANCH_CLK_OFF;
->         }
+Hello Christophe,
 
-While at it, I'd get rid of this else and de-indent the code because if
-we're 'enabling' we'll return from the function regardless.
+On Sat, Apr 15, 2023 at 02:16:09PM +0200, Christophe JAILLET wrote:
+> Le 15/04/2023 =C3=A0 13:13, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=A0:
+> > This driver implements the following features w.r.t. the clock and reset
+> > controller in the WPCM450 SoC:
+> >=20
+> > - It calculates the rates for all clocks managed by the clock controller
+> > - It leaves the clock tree mostly unchanged, except that it enables/
+> >    disables clock gates based on usage.
+> > - It exposes the reset lines managed by the controller using the
+> >    Generic Reset Controller subsystem
+> >=20
+> > NOTE: If the driver and the corresponding devicetree node are present,
+> >        the driver will disable "unused" clocks. This is problem until
+> >        the clock relations are properly declared in the devicetree (in a
+> >        later patch). Until then, the clk_ignore_unused kernel parameter
+> >        can be used as a workaround.
+> >=20
+> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer-hi6Y0CQ0nG0@publ=
+ic.gmane.org>
+> > ---
+[...]
+> > +	// Enables/gates
+> > +	for (i =3D 0; i < ARRAY_SIZE(clken_data); i++) {
+> > +		const struct wpcm450_clken_data *data =3D &clken_data[i];
+> > +
+> > +		hw =3D clk_hw_register_gate_parent_data(NULL, data->name, &data->par=
+ent, data->flags,
+> > +						      clk_base + REG_CLKEN, data->bitnum,
+> > +						      data->flags, &wpcm450_clk_lock);
+>=20
+> If an error occures in the 'for' loop or after it, should this be
+> clk_hw_unregister_gate()'ed somewhere?
+
+Ideally yes =E2=80=94
+
+in this case, if the clock driver fails, the system is arguably in such
+a bad state that there isn't much point in bothering.
+
+
+>=20
+> CJ
+>=20
+> > +		if (IS_ERR(hw)) {
+> > +			pr_err("Failed to register gate: %pe\n", hw);
+> > +			goto err_free;
+> > +		}
+> > +		clk_data->hws[data->bitnum] =3D hw;
+> > +	}
+
+
+
+Best regards,
+Jonathan
+
+--nBgbEHe+7HdynUHs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmRAYpUACgkQCDBEmo7z
+X9v2qw/9EiZBIWVLXrb/H+SBZLajTH8gs/+wWatpfYY9MHKe6PQ4wEqD3wHZvC1j
+XNyEizeN9zKD617uEUNnj4LS65mXB9jpk+IBn2V3S9m8aK0ZnohGPIBQbp7fJxRD
+scBOpgCKxii9YUjJFDwfJc+aGteD1FZCV5ufF6W7tAlpqdpRJiV4Sxyui6tplBjb
+tmz3EbyRRYJ5IW+qM84oS9xocMvIyFUcSqIAyHZNzS2QyUzl48dHpwjfGn2jJ2q8
+enIxwqOsbNUNyYJHynYGVqQGTusRYJxd6Qg7c2fZyOtsRdvvS/cvTvaNeFap27zr
+4ciW+NTiD40FzGgrq8glOz18+fBi4HIpR9XYDIYSPNAIiQEmj3Uzn78EQ7xNrSk5
+6pjoPtE6AkYtGe/M7CAAjHkV6xiuKIXTXxZQMCI/vw22rg76CJkNzq1UapIqmYUQ
+klfYRnd/UFavPt57hVLC94KgBZO2tmikTOksaSnZw6tN0CCXwaz9MnAPR/aaA8YC
+8eO/7oNgydKM/K1fUrFBWbR0Td8MLlHmH35xsa9kdVayHin9v7oK8oqtCDFQvDHL
+1cd6KQcPHppWTQ7A8nWIjlmm+lm0Y5n1dfRL7/k/Lj6RrpkTOp6BQ+xqIM4LCpQb
+SQNXKoHLuiincVsxMWIWi+qDKYENxeosPds/iY3v6vSY82fkv50=
+=r2E3
+-----END PGP SIGNATURE-----
+
+--nBgbEHe+7HdynUHs--
