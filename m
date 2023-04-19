@@ -2,170 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A57C77B73
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 14:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE33AC77B75
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 14:23:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231128AbjDSOAq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Apr 2023 10:00:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33638 "EHLO
+        id S232707AbjDSOXu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Apr 2023 10:23:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbjDSOAp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 10:00:45 -0400
-X-Greylist: delayed 154347 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 19 Apr 2023 07:00:43 PDT
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57A3F83;
-        Wed, 19 Apr 2023 07:00:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1681912840; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=pvBk3KjtOqhsVP0fpd8sLK3TZ1iPPEOEMap3voQ1pMPZtV9W8bNXxRx2GNdcl4+TLI
-    JS5lpze7kXo5dfPZkUjgI3MDZdanV3cSyIi0FfBu3tZTtmF2MzTO5pS7qOCl9ykEvw2Y
-    vhNkZZuclPm+iIzBYGFMa0tE4pfAu8icBlL3XiyM62xUCtutuyqyEJmdGp7dgsNfp9Hx
-    3ejg2IqJ1ar/1/dGjvVRRpMsAUWfJghhkpwC4oo0zr5H/0Pg/Ryz3qcbdB+q6rhhMB5O
-    CwUdz9HPUi4zUnHcdaeEKL2C554ozIBPQ7gZw+Fc5q1QxUpH4TRIavB8lQDBGbDhsi6C
-    eyxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1681912840;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=khgLveWxOtEKwyxE2H65XlSSu/fm5Gz0M5cVj1ZTRVQ=;
-    b=j0jO8HFRZgQH8Pqmiqk3dcwZmfdwcBT7smkvNJL2IphNrx2qzyF67lNqlPA4GJWBfY
-    X7OqFtHu6698SdycUnVDBt3rCghQXmNWxt6xQH/c2ooTytuwIC/Egt+taERiDWCtBhkc
-    BD/TcMkN4EjTDr3zeBFi2Fqv3yoeIMEWI1d1jzk90SLnGNonpjwGb1ORU/wV6NpLMevg
-    A7GyqTGIvoudmgESPNI9xAVurZIbJpwp6mdEfjQYzuXsw5YWxdgrXYoRNrcCgNBemH1n
-    SHcu+8v0Q3My3FJ6+gSNiV5rB3wzhGzjupQU1bBvuErZ6VTt3rJhhLAONd479a6inNs0
-    1V1g==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1681912840;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=khgLveWxOtEKwyxE2H65XlSSu/fm5Gz0M5cVj1ZTRVQ=;
-    b=eWzHib70vHw+5Bol3kA1vcx3kxZxzTyRGMiJ4zMq5YkjJAl3SKphIGJY15TgkOxJdl
-    Pbc4OPFC9gTSmTkI1HphhyRWpL8D8zfOriRmnWtXk+7C8OP3b1Vjnd3X50G3UoBCnOt6
-    nmhRugRT4Vw/60zhcl4rna+RL3XeRcr30/3QzCVfnErPTzwu8xjSdQrXuWbCIuUAGKhp
-    FoT4qFtlA8sgz0dKK/E2mIzrs/K3jsqA/Owm7FJmp2T60wqCYwJKO8fh3W5tRYj7vCbS
-    tE4QAM4cKSgeNQkORn+KvrejqBBOz71jtNM8JoXwA+QumOHOT7mhU0spJlBc4KdeeLcF
-    TOTg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1681912840;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=khgLveWxOtEKwyxE2H65XlSSu/fm5Gz0M5cVj1ZTRVQ=;
-    b=K+LMlUTc2w6j06vhnHh7av6fPcrcYXmZdGiN9nKrW8XxKUT5izZYEYK5wq9H+NbJgA
-    NljCDk0AYBjY0BOnidBA==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA8p+F1A=="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.4.0 DYNA|AUTH)
-    with ESMTPSA id j6420az3JE0el5p
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 19 Apr 2023 16:00:40 +0200 (CEST)
-Date:   Wed, 19 Apr 2023 16:00:34 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S233005AbjDSOX2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 10:23:28 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07DF6C16E
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 07:23:06 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id v3so4173002wml.0
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 07:23:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681914185; x=1684506185;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/XcbEMF2wS+NEiOe1W+U7oicROXrfzxaAv5byhv5AaM=;
+        b=PcOAtQKUXeuQXgP4RP0Npp16jyTJYWyIpDecFJs2Rc50CfnD4cKH19lAt/x1AYm/SM
+         a/p3UimpCwrzD+dmnP+tK+9sadz+jSAB9jM+OSFW2TJgXIgRa7ROTNpB4Pal2ArWD00l
+         eefvEWQzWNQTqawLq7ujoDx9egy+HiBtI8vlppMGYWc4w+ryB2IEM13fDyzfeaDzdbpI
+         PauWnpRu5RZ1ivOIt7tnxNkmRHJhTd3uXu3LUeinzP1UW77W8J/WoW0MwZfTr6g8pfuu
+         uw8A6adglv6YPx2jO30lnuvuRr5oJeP54dltCO5wSVzRVFF/iWpr1++Fup6UNOrDGB3w
+         8zig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681914185; x=1684506185;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/XcbEMF2wS+NEiOe1W+U7oicROXrfzxaAv5byhv5AaM=;
+        b=P2S20nukF+JS/dOWRjfIoA+6MJpMHfVP8I5uzHGhjD/wAIPFPIUJHTkLNW3cciDpHD
+         WieDEOOMUaA/PHhDP9YTxGbc8nfNjaZm5OmH4RT7MsmhBzufvRLVMrcwQho8le0KYPIL
+         m+xlMPLOT+CCgk48nDfY5tpLb9TvQnRzEGLXOEJGlnvDVxUNnJK0a0HLKSKADS/dDf1u
+         3ppc9q6gpzKH6i9q+DW/cvD0kLpR2h9J8qFIJxzxzrJhE6CpUZRmyfyHTqB9hRgRSxvI
+         YQ50QWIHUhCdIrlJBZ6LBKZRCIYu7aiqHoQRc2DyQTO2F7rc0geG03s5HqI+DDypakcw
+         J7AA==
+X-Gm-Message-State: AAQBX9eGGNPNdIFftdF68X4N5xC3w3fKv9OlonbhNlD3ekQjAV6AJ4wX
+        VYZIIOUvSoq3/mIw07bSLsaKnA==
+X-Google-Smtp-Source: AKy350b1WMulog8jUcFSnfvv3joSXcZ4nJGc5I/rUk7fB5Yu5Dj/J1lBRuTlRNJ+wGAKXKJuYJ4fig==
+X-Received: by 2002:a1c:7c03:0:b0:3f1:7a50:dd66 with SMTP id x3-20020a1c7c03000000b003f17a50dd66mr4782095wmc.27.1681914185353;
+        Wed, 19 Apr 2023 07:23:05 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id d10-20020a1c730a000000b003ee63fe5203sm2303590wmb.36.2023.04.19.07.23.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Apr 2023 07:23:04 -0700 (PDT)
+Date:   Wed, 19 Apr 2023 17:23:01 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RFT v2 01/14] dt-bindings: clock: qcom,rpmcc: Add a way
- to enable unused clock cleanup
-Message-ID: <ZD_0AmYU-N5vzv8f@gerhold.net>
-References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
- <20230303-topic-rpmcc_sleep-v2-1-ae80a325fe94@linaro.org>
- <ZD2YYrOdQMD3pi7u@gerhold.net>
- <d63d4896afe8a1a901470f88862ce608.sboyd@kernel.org>
- <3873483f-7f7d-a146-cca9-b50f054289d4@linaro.org>
- <6407af2a-18c6-9baf-cc9b-dcf7001812b7@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] clk: imx: scu: use _safe list iterator to avoid a use after
+ free
+Message-ID: <0793fbd1-d2b5-4ec2-9403-3c39343a3e2d@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6407af2a-18c6-9baf-cc9b-dcf7001812b7@linaro.org>
-Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email haha only kidding
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 19, 2023 at 01:31:01PM +0200, Konrad Dybcio wrote:
-> What should we do about the non-bus RPM clocks though? I don't fancy
-> IPA_CLK running 24/7.. And Stephan Gerhold was able to achieve VDD_MIN
-> on msm8909 with these clocks shut down (albeit with a very basic dt setup)!
-> 
-> Taking into account the old interconnect-enabled DTs, some of the
-> clocks would need to be on so that the QoS writes can succeed
-> (e.g. the MAS_IPA endpoint needs IPA_CLK), it gets complicated again..
-> 
+This loop is freeing "clk" so it needs to use list_for_each_entry_safe().
+Otherwise it dereferences a freed variable to get the next item on the
+loop.
 
-I guess MSM8996 is the only platform affected by this? sdm630.dtsi seems
-to list the clock already in the a2noc and all others don't seem to have
-an interconnect driver yet.
+Fixes: 77d8f3068c63 ("clk: imx: scu: add two cells binding support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/clk/imx/clk-scu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This will be subjective and someone will surely disagree but...
+diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+index 1e6870f3671f..db307890e4c1 100644
+--- a/drivers/clk/imx/clk-scu.c
++++ b/drivers/clk/imx/clk-scu.c
+@@ -707,11 +707,11 @@ struct clk_hw *imx_clk_scu_alloc_dev(const char *name,
+ 
+ void imx_clk_scu_unregister(void)
+ {
+-	struct imx_scu_clk_node *clk;
++	struct imx_scu_clk_node *clk, *n;
+ 	int i;
+ 
+ 	for (i = 0; i < IMX_SC_R_LAST; i++) {
+-		list_for_each_entry(clk, &imx_scu_clks[i], node) {
++		list_for_each_entry_safe(clk, n, &imx_scu_clks[i], node) {
+ 			clk_hw_unregister(clk->hw);
+ 			kfree(clk);
+ 		}
+-- 
+2.39.2
 
-IMO forcing all RPM clocks on during boot and keeping them enabled is
-not part of the DT ABI. If you don't describe the hardware correctly and
-are missing necessary clocks in the description (like the IPA_CLK on the
-interconnect node) then your DT is wrong and should be fixed.
-
-I would see this a bit like typical optimizing C compilers nowadays. If
-you write correct code it can optimize, e.g. drop unnecessary function
-calls. But if you write incorrect code with undefined behavior it's not
-the fault of the compiler if you run into trouble. The code must be
-fixed.
-
-The DT bindings don't specify that unused resources (clocks, ...) stay
-"magically" active. They specify that that the resources you reference
-are available. As such, I would say the OS is free to optimize here and
-turn off unused resources.
-
-The more important point IMO is not breaking all platforms without
-interconnect drivers. This goes beyond just adding a missing clock to
-the DT, you need to write the driver first. But having the max vote in
-icc_smd_rpm (somehow) should hopefully take care of that.
-
-> I suppose something like this would work-ish:
-> 
-> 0. remove clock handles as they're now contained within icc and
->    use them as a "legacy marker"
-> 1. add:
-> 	if (qp->bus_clocks)
-> 		// skip qos writes
-
-Maybe you can just check if all necessary clocks for QOS are there or
-not? I don't think it's a problem to skip it on broken DTs. I think it
-would be even fine to refuse loading the interconnect driver completely
-and just have the standard max vote (as long as that results in a
-booting system).
-
-> 
-> This will:
-> - let us add is_enabled so that all RPM clocks bar XO_A will be cleaned up
-> - save massively on code complexity
-> 
-
-+1
-
-> at the cost of retroactively removing features (QoS settings) for people
-> with old DTs and new kernels (don't tell Torvalds!)
-> 
-
-I doubt anyone will notice :p
-
-> This DTB ABI stuff really gets in the way sometimes :/ We're only now
-> fixing up U-Boot to be able to use upstream Linux DTs and other than
-> that I think only OpenBSD uses it with 8280.. Wish we could get rid of
-> all old junk once and then establish immutability but oh well..
-
-Nice, thanks a lot for working on addressing the Qualcomm DT mess in
-U-Boot. I've been meaning to work this myself for a long time but never
-found the time to start... :')
-
-Thanks,
-Stephan
