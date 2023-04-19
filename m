@@ -2,1441 +2,184 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A40EC77B7F
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 20:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E94C6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 21:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbjDSUcb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Apr 2023 16:32:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47940 "EHLO
+        id S229822AbjDSVIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Apr 2023 17:08:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229812AbjDSUc3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 16:32:29 -0400
-X-Greylist: delayed 491 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 19 Apr 2023 13:32:19 PDT
-Received: from out-51.mta1.migadu.com (out-51.mta1.migadu.com [IPv6:2001:41d0:203:375::33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17BC56592
-        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 13:32:18 -0700 (PDT)
-Date:   Wed, 19 Apr 2023 22:23:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grimler.se; s=key1;
-        t=1681935836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=b7kyguLnM5OK92YAthVfhazbErVzCu4Cg5CV/Ko7wv0=;
-        b=FmAKrk7FUt2KE/8e58jVmo128XNV9e8RSy5Bkjq8C0vU1FPSXRlbwVq4JCqIz6eTyvmi5M
-        c75E8zz40kYJq+cekNPIqV6CotvrcJmbjut3qFHffshSJigq1X+JazuE0iS6VcqSTRro6n
-        0Vhsw9Z1WXsDM7uSPc1tPkV9e96RGbc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Henrik Grimler <henrik@grimler.se>
-To:     Artur Weber <aweber.kernel@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 12/12] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0
- boards
-Message-ID: <ZEBN2AciChG03FpM@L14.lan>
-References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-13-aweber.kernel@gmail.com>
+        with ESMTP id S231263AbjDSVII (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 17:08:08 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5406959F0
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 14:08:05 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4ec8da7aaf8so136139e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 14:08:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681938483; x=1684530483;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y4Qr1DXe1yvvm/vxNEQkt+SEuJu0KzbnH1GeDOIlXyQ=;
+        b=hC5WFtDnayfS8GWsFSCr2rWJ952sK2ZuuSjzPTBUweoBJYnzyc2+eTgmkgOhIxUf6S
+         BDUeCh7ucPblx5vCU3jh+xHT7Ufl8nN568uL5OmBnUcENBwm8bURgtNWq1VHsGfHoQUI
+         ao+7dER7M8FSI9y9EZ9ygtz4MVXj+UtJo1J/wkLA5md3YI1VllMsFuxHqDOoAv3Q/9eq
+         pKf1KX9NK63kJsc6Lw4xl+brmE4IpG3DC+/l8nMljCwNPA2FnaRThvXhgBlOpuVAso6f
+         HVSuaVmL/BsETOwLRgDgVwyJFI+rsgciODVoEphuGnhlT6K2XNQYlcHlybGlaxaYDPjF
+         6pAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681938483; x=1684530483;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y4Qr1DXe1yvvm/vxNEQkt+SEuJu0KzbnH1GeDOIlXyQ=;
+        b=H0TKyPxN4s2nCoqil0FkbIzhIX5cYrov8FQhfLLCN49s9G2GDDi9FkfKDmUuuJtS9t
+         kW1vTTdrlvqunA7zH3ujQEtg2IM66HtvK/0GnNG/9Om4ZxyZJf/aU1NGRC0c36Sonj9k
+         8tGpioVSSgv1uB13DNKi/QGrLykh4uKe7ot0NZ2BHdt9pijSzp4XrHhMdRaWoUWRNXzo
+         bfnq7BnhXr70GTnVhJclQ/40Gt3xOFDYjTrhNGedoIDGLUYO4xqQj6DhZTG+4smGeY2I
+         asfsqkVfeQoKJ+s5n+/RPsLAWSLEAqiGDdwq0RnTWN7TnNvWn5xDPO3QvBJeizO3E6qr
+         AHmg==
+X-Gm-Message-State: AAQBX9dYXVrQQ8OkvxGf05Pum8R/n0+/FluwhXNruc5qmBmaRVxF7UTD
+        1IQnPYgPpi/d5Dtqar14oRZgYQ==
+X-Google-Smtp-Source: AKy350bRPbKgT0N5fxItGxuOvv+MyhtWesynq8EjEf51YmaoGEZIZO4bHS/rGvjxJZSOp9eSI5UMZA==
+X-Received: by 2002:ac2:4833:0:b0:4cc:96f8:f9c6 with SMTP id 19-20020ac24833000000b004cc96f8f9c6mr4457459lft.5.1681938483555;
+        Wed, 19 Apr 2023 14:08:03 -0700 (PDT)
+Received: from [192.168.1.101] (abyj144.neoplus.adsl.tpnet.pl. [83.9.29.144])
+        by smtp.gmail.com with ESMTPSA id r4-20020ac24d04000000b004db0a7ce483sm11410lfi.162.2023.04.19.14.08.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Apr 2023 14:08:03 -0700 (PDT)
+Message-ID: <6e55d3fa-744e-1f85-7642-6138f4e6e5a5@linaro.org>
+Date:   Wed, 19 Apr 2023 23:08:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230416133422.1949-13-aweber.kernel@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH RFT v2 01/14] dt-bindings: clock: qcom,rpmcc: Add a way to
+ enable unused clock cleanup
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org
+References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
+ <20230303-topic-rpmcc_sleep-v2-1-ae80a325fe94@linaro.org>
+ <ZD2YYrOdQMD3pi7u@gerhold.net>
+ <d63d4896afe8a1a901470f88862ce608.sboyd@kernel.org>
+ <3873483f-7f7d-a146-cca9-b50f054289d4@linaro.org>
+ <6407af2a-18c6-9baf-cc9b-dcf7001812b7@linaro.org>
+ <ZD_0AmYU-N5vzv8f@gerhold.net>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <ZD_0AmYU-N5vzv8f@gerhold.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Artur,
 
-Nice to see some more Exynos arm boards!
 
-As Krzysztof already said this does not apply on top of
-https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=next/dt,
-but it seems to apply on top of v6.3-rc6.  If you use the --base arg
-of git format-patch it makes it easier to figure out where it applies.
-
-Running ./script/checkpatch.pl on the patches also points out two
-typos in exynos4x12.dtsi and exynos4212.dtsi, would probably be nice
-to fix those while you are at it.
-
-See some more comments/questions below.
-
-On Sun, Apr 16, 2023 at 03:34:22PM +0200, Artur Weber wrote:
-> Introduce support for the Galaxy Tab 3 8.0 series of boards:
+On 19.04.2023 16:00, Stephan Gerhold wrote:
+> On Wed, Apr 19, 2023 at 01:31:01PM +0200, Konrad Dybcio wrote:
+>> What should we do about the non-bus RPM clocks though? I don't fancy
+>> IPA_CLK running 24/7.. And Stephan Gerhold was able to achieve VDD_MIN
+>> on msm8909 with these clocks shut down (albeit with a very basic dt setup)!
+>>
+>> Taking into account the old interconnect-enabled DTs, some of the
+>> clocks would need to be on so that the QoS writes can succeed
+>> (e.g. the MAS_IPA endpoint needs IPA_CLK), it gets complicated again..
+>>
 > 
->  - Samsung Galaxy Tab 3 8.0 WiFi (SM-T310/lt01wifi)
->  - Samsung Galaxy Tab 3 8.0 3G (SM-T311/lt013g)
->  - Samsung Galaxy Tab 3 8.0 LTE (SM-T315/lt01lte)
+> I guess MSM8996 is the only platform affected by this? sdm630.dtsi seems
+> to list the clock already in the a2noc and all others don't seem to have
+> an interconnect driver yet.
 > 
-> What works:
+> This will be subjective and someone will surely disagree but...
 > 
->  - Display and backlight
->  - Touchscreen (without touchkeys)
->  - GPIO buttons, hall sensor
->  - WiFi and Bluetooth
->  - USB, fuel gauge, charging (partial)
->  - Accelerometer and magnetometer
->  - WiFi model only: light sensor
+> IMO forcing all RPM clocks on during boot and keeping them enabled is
+> not part of the DT ABI. If you don't describe the hardware correctly and
+> are missing necessary clocks in the description (like the IPA_CLK on the
+> interconnect node) then your DT is wrong and should be fixed.
 > 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
-> Display panel bindings are added by a separate patchset:
-> "[PATCH 0/3] Add Samsung S6D7AA0 panel controller driver"[1]
+> I would see this a bit like typical optimizing C compilers nowadays. If
+> you write correct code it can optimize, e.g. drop unnecessary function
+> calls. But if you write incorrect code with undefined behavior it's not
+> the fault of the compiler if you run into trouble. The code must be
+> fixed.
 > 
-> [1] https://lore.kernel.org/all/20230416131632.31673-1-aweber.kernel@gmail.com/
-> ---
->  arch/arm/boot/dts/Makefile                  |    3 +
->  arch/arm/boot/dts/exynos4212-tab3-3g8.dts   |   30 +
->  arch/arm/boot/dts/exynos4212-tab3-lte8.dts  |   43 +
->  arch/arm/boot/dts/exynos4212-tab3-wifi8.dts |   25 +
->  arch/arm/boot/dts/exynos4212-tab3.dtsi      | 1175 +++++++++++++++++++
->  5 files changed, 1276 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-3g8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-lte8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
->  create mode 100644 arch/arm/boot/dts/exynos4212-tab3.dtsi
+> The DT bindings don't specify that unused resources (clocks, ...) stay
+> "magically" active. They specify that that the resources you reference
+> are available. As such, I would say the OS is free to optimize here and
+> turn off unused resources.
 > 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index efe4152e5846..e5f63b636637 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -217,6 +217,9 @@ dtb-$(CONFIG_ARCH_EXYNOS4) += \
->  	exynos4210-smdkv310.dtb \
->  	exynos4210-trats.dtb \
->  	exynos4210-universal_c210.dtb \
-> +	exynos4212-tab3-3g8.dtb \
-> +	exynos4212-tab3-lte8.dtb \
-> +	exynos4212-tab3-wifi8.dtb \
->  	exynos4412-i9300.dtb \
->  	exynos4412-i9305.dtb \
->  	exynos4412-itop-elite.dtb \
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3-3g8.dts b/arch/arm/boot/dts/exynos4212-tab3-3g8.dts
-> new file mode 100644
-> index 000000000000..c503a2d351dd
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3-3g8.dts
-> @@ -0,0 +1,30 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 8.0 WiFi board device tree
-> + * source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212-tab3.dtsi"
-> +
-> +/ {
-> +	model = "Samsung Galaxy Tab 3 8.0 3G (SM-T311) based on Exynos4212";
-> +	compatible = "samsung,t311", "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +	chassis-type = "tablet";
-> +};
-> +
-> +/* Pin control sleep state overrides */
-> +
-> +&sleep0 {
-> +		PIN_SLP(gpb-5, INPUT, UP);
-> +};
-> +
-> +&sleep1 {
-> +		PIN_SLP(gpl0-0, OUT0, NONE);
-> +		PIN_SLP(gpl1-0, OUT0, NONE);
-> +		PIN_SLP(gpl2-4, OUT0, NONE);
-> +		PIN_SLP(gpm3-3, OUT1, NONE);
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3-lte8.dts b/arch/arm/boot/dts/exynos4212-tab3-lte8.dts
-> new file mode 100644
-> index 000000000000..158c6a2e24bf
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3-lte8.dts
-> @@ -0,0 +1,43 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 8.0 WiFi board device tree
-> + * source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212-tab3.dtsi"
-> +
-> +/ {
-> +	model = "Samsung Galaxy Tab 3 8.0 LTE (SM-T315) based on Exynos4212";
-> +	compatible = "samsung,t315", "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +	chassis-type = "tablet";
-> +};
-> +
-> +&sleep0 {
-> +		PIN_SLP(gpa0-4, INPUT, UP);
-> +		PIN_SLP(gpa0-5, INPUT, UP);
-> +
-> +		PIN_SLP(gpb-5, INPUT, UP);
-> +
-> +		PIN_SLP(gpc0-0, PREV, NONE);
-> +		PIN_SLP(gpc1-3, INPUT, NONE);
-> +
-> +		PIN_SLP(gpf1-6, INPUT, NONE);
-> +		PIN_SLP(gpf2-2, PREV, NONE);
-> +};
-> +
-> +&sleep1 {
-> +		PIN_SLP(gpl0-0, PREV, NONE);
-> +
-> +		PIN_SLP(gpl1-0, PREV, NONE);
-> +
-> +		PIN_SLP(gpl2-1, INPUT, DOWN);
-> +		PIN_SLP(gpl2-2, INPUT, DOWN);
-> +		PIN_SLP(gpl2-4, OUT0, NONE);
-> +		PIN_SLP(gpl2-5, PREV, NONE);
-> +
-> +		PIN_SLP(gpm3-3, OUT1, NONE);
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3-wifi8.dts b/arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
-> new file mode 100644
-> index 000000000000..0527a75710d8
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3-wifi8.dts
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 8.0 WiFi board device tree
-> + * source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212-tab3.dtsi"
-> +
-> +/ {
-> +	model = "Samsung Galaxy Tab 3 8.0 WiFi (SM-T310) based on Exynos4212";
-> +	compatible = "samsung,t310", "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +	chassis-type = "tablet";
-> +};
-> +
-> +&i2c_lightsensor {
-> +	/* Capella Micro CM3323 color light sensor */
-> +	colorsensor@10 {
-> +		compatible = "capella,cm3323";
-> +		reg = <0x10>;
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/exynos4212-tab3.dtsi b/arch/arm/boot/dts/exynos4212-tab3.dtsi
-> new file mode 100644
-> index 000000000000..b8ad5497506c
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4212-tab3.dtsi
-> @@ -0,0 +1,1175 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's Exynos4212 based Galaxy Tab 3 board common source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + */
-> +
-> +/dts-v1/;
-> +#include "exynos4212.dtsi"
-> +#include "exynos4412-ppmu-common.dtsi"
-> +#include "exynos-mfc-reserved-memory.dtsi"
-> +#include <dt-bindings/clock/samsung,s2mps11.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/gpio-keys.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include "exynos-pinctrl.h"
-> +
-> +/ {
-> +	compatible = "samsung,tab3", "samsung,exynos4212", "samsung,exynos4";
-> +
-> +	memory@40000000 {
-> +		device_type = "memory";
-> +
-> +		/* Technically 2GB, but last 1GB is flaky, so we ignore it for now */
-> +		reg = <0x40000000 0x3FC00000>;
+> The more important point IMO is not breaking all platforms without
+> interconnect drivers. This goes beyond just adding a missing clock to
+> the DT, you need to write the driver first. But having the max vote in
+> icc_smd_rpm (somehow) should hopefully take care of that.
+Hm, interesting argument.
 
-Comment says 1GB but you are skipping 1GB+4MB.  Is the entire region
-flaky or perhaps just the 4MB region in the middle?
+Krzysztof, Bjorn, what's your stance on this?
 
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = &serial_2;
-> +
-> +		/* Default S-BOOT bootloader loads initramfs here */
-> +		linux,initrd-start = <0x42000000>;
-> +		linux,initrd-end = <0x42800000>;
-> +	};
-> +
-> +	firmware@204f000 {
-> +		compatible = "samsung,secure-firmware";
-> +		reg = <0x0204F000 0x1000>;
-> +	};
-> +
-> +	fixed-rate-clocks {
-> +		xxti {
-> +			compatible = "samsung,clock-xxti";
-> +			clock-frequency = <0>;
-> +		};
-> +
-> +		xusbxti {
-> +			compatible = "samsung,clock-xusbxti";
-> +			clock-frequency = <24000000>;
-> +		};
-> +	};
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&gpio_keys>;
-> +
-> +		key-power {
-> +			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_POWER>;
-> +			label = "power";
-> +			debounce-interval = <10>;
-> +			wakeup-source;
-> +		};
-> +
-> +		key-up {
-> +			gpios = <&gpx2 2 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			label = "volume down";
-> +			debounce-interval = <10>;
-> +		};
-> +
-> +		key-down {
-> +			gpios = <&gpx3 3 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_VOLUMEDOWN>;
-> +			label = "volume up";
-> +			debounce-interval = <10>;
-> +		};
-> +
-> +		key-home {
-> +			gpios = <&gpx1 2 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_HOME>;
-> +			label = "home";
-> +			debounce-interval = <10>;
-> +		};
-> +
-> +		switch-hall-sensor {
-> +			gpios = <&gpx2 4 GPIO_ACTIVE_LOW>;
-> +			linux,input-type = <EV_SW>;
-> +			linux,code = <SW_LID>;
-> +			linux,can-disable;
-> +			label = "hall effect sensor";
-> +			debounce-interval = <10>;
-> +			wakeup-source;
-> +		};
-> +	};
-> +
-> +	vbatt_reg: voltage-regulator-1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VBATT";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	backlight_reset_supply: voltage-regulator-2 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "BACKLIGHT_ENVDDIO";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&backlight_reset>;
-> +		gpio = <&gpm0 1 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +	};
-> +
-> +	lcd_enable_supply: voltage-regulator-3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "LCD_VDD_2.2V";
-> +		regulator-min-microvolt = <2200000>;
-> +		regulator-max-microvolt = <2200000>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&lcd_en>;
-> +		gpio = <&gpc0 1 GPIO_ACTIVE_HIGH>; /* LCD_EN */
-> +		enable-active-high;
-> +	};
-> +
-> +	i2c_max77693: i2c-gpio-1 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpm2 0 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpm2 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-> +
-> +		pmic@66 {
-> +			compatible = "maxim,max77693";
-> +			interrupt-parent = <&gpx1>;
-> +			interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&max77693_irq>;
-> +			reg = <0x66>;
-> +
-> +			regulators {
-> +				esafeout1_reg: ESAFEOUT1 {
-> +					regulator-name = "ESAFEOUT1";
-> +					regulator-boot-on;
-> +				};
-> +
-> +				esafeout2_reg: ESAFEOUT2 {
-> +					regulator-name = "ESAFEOUT2";
-> +				};
-> +
-> +				charger_reg: CHARGER {
-> +					regulator-name = "CHARGER";
-> +					regulator-min-microamp = <60000>;
-> +					regulator-max-microamp = <2580000>;
-> +					regulator-boot-on;
-> +				};
-> +			};
-> +
-> +			charger {
-> +				compatible = "maxim,max77693-charger";
-> +
-> +				maxim,constant-microvolt = <4350000>;
-> +				maxim,min-system-microvolt = <3600000>;
-> +				maxim,thermal-regulation-celsius = <100>;
-> +				maxim,battery-overcurrent-microamp = <3500000>;
-> +				maxim,charge-input-threshold-microvolt = <4300000>;
-> +			};
-> +		};
-> +	};
-> +
-> +	i2c_max77693_fuel: i2c-gpio-2 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpy0 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpy0 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-> +
-> +		fuel-gauge@36 {
-> +			compatible = "maxim,max17050";
-> +			interrupt-parent = <&gpx2>;
-> +			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&max77693_fuel_irq>;
-> +			reg = <0x36>;
-> +
-> +			maxim,over-heat-temp = <500>;
-> +			maxim,over-volt = <4500>;
-> +		};
-> +	};
-> +
-> +	i2c_yas532_magnetometer: i2c-gpio-3 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpy2 4 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpy2 5 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-> +
-> +		/* Magnetometer: Yamaha YAS532 */
-> +		magnetometer@2e {
-> +			compatible = "yamaha,yas532";
-> +			reg = <0x2e>;
-> +			iovdd-supply = <&ldo3_reg>; /* VCC_1.8V_AP */
-> +			mount-matrix = "-1", "0", "0",
-> +					  "0", "1", "0",
-> +					  "0", "0", "-1";
-> +		};
-> +	};
-> +
-> +	i2c_lightsensor: i2c-gpio-4 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpl0 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpl0 1 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		i2c-gpio,delay-us = <2>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-> +
-> +		/* WiFi model uses CM3323, 3G/LTE use CM36653 */
-> +	};
-> +
-> +	i2c_bl: i2c-gpio-24 {
-> +		compatible = "i2c-gpio";
-> +		sda-gpios = <&gpm4 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		scl-gpios = <&gpm4 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		status = "okay";
-> +
-> +		backlight: backlight@2c {
-> +			compatible = "ti,lp8556";
-> +			reg = <0x2c>;
-> +			status = "okay";
-> +
-> +			bl-name = "lcd-bl";
-> +			dev-ctrl = /bits/ 8 <0x80>;
-> +			init-brt = /bits/ 8 <0x78>; /* 120 */
-> +
-> +			power-supply = <&vbatt_reg>;
-> +			enable-supply = <&backlight_reset_supply>;
-> +
-> +			pwms = <&pwm 1 78770 0>;
-> +			pwm-names = "lp8556";
-> +			pwm-period = <78770>;
-> +
-> +			rom_a3h {
-> +				rom-addr = /bits/ 8 <0xa3>;
-> +				rom-val = /bits/ 8 <0x5e>;
-> +			};
-> +
-> +			rom_a5h {
-> +				rom-addr = /bits/ 8 <0xa5>;
-> +				rom-val = /bits/ 8 <0x34>;
-> +			};
-> +
-> +			rom_a7h {
-> +				rom-addr = /bits/ 8 <0xa7>;
-> +				rom-val = /bits/ 8 <0xfa>;
-> +			};
-> +		};
-> +	};
-> +
-> +	wlan_pwrseq: sdhci3-pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		reset-gpios = <&gpm3 5 GPIO_ACTIVE_LOW>;
-> +	};
-> +};
-> +
-> +&bus_dmc {
-> +	devfreq-events = <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
-> +	vdd-supply = <&buck1_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_acp {
-> +	devfreq = <&bus_dmc>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_c2c {
-> +	devfreq = <&bus_dmc>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_leftbus {
-> +	devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
-> +	vdd-supply = <&buck3_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_rightbus {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_display {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_fsys {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_peri {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&bus_mfc {
-> +	devfreq = <&bus_leftbus>;
-> +	status = "okay";
-> +};
-> +
-> +&cpu0 {
-> +	cpu0-supply = <&buck2_reg>;
-> +};
-> +
-> +&dsi_0 {
-> +	vddcore-supply = <&ldo8_reg>;
-> +	vddio-supply = <&ldo10_reg>;
-> +	samsung,burst-clock-frequency = <500000000>;
-> +	samsung,esc-clock-frequency = <20000000>;
-> +	samsung,pll-clock-frequency = <24000000>;
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "samsung,s6d7aa0-lsl080al02";
-> +		reg = <0>;
-> +		enable-supply = <&lcd_enable_supply>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&lcd_nrst>;
-> +		reset-gpios = <&gpf0 4 GPIO_ACTIVE_LOW>;
-> +		backlight = <&backlight>;
-> +	};
-> +};
-> +
-> +&exynos_usbphy {
-> +	vbus-supply = <&esafeout1_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&fimd {
-> +	status = "okay";
-> +};
-> +
-> +&gpu {
-> +	mali-supply = <&buck4_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&hsotg {
-> +	vusb_d-supply = <&ldo15_reg>;
-> +	vusb_a-supply = <&ldo12_reg>;
-> +	dr_mode = "peripheral";
-> +	status = "okay";
-> +};
-> +
-> +/* Accelerometer: K2DH/K3DH */
-> +&i2c_1 {
-> +	pinctrl-0 = <&i2c1_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	lis3dh: accelerometer@19 {
-> +		/* K2DH seems to be the same as lis2dh12 in terms of registers */
-> +		compatible = "st,lis2dh12-accel";
-> +		reg = <0x19>;
-> +
-> +		interrupt-parent = <&gpx0>;
-> +		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		vdd-supply = <&ldo17_reg>; /* VCC_2.8V_AP */
-> +		vddio-supply = <&ldo3_reg>; /* VCC_1.8V_AP */
-> +
-> +		mount-matrix = "-1", "0", "0",
-> +				  "0", "1", "0",
-> +				  "0", "0", "-1";
-> +	};
-> +};
-> +
-> +/* Touchscreen: MMS252 */
-> +&i2c_3 {
-> +	samsung,i2c-sda-delay = <100>;
-> +	samsung,i2c-slave-addr = <0x10>;
-> +	samsung,i2c-max-bus-freq = <400000>;
-> +	pinctrl-0 = <&i2c3_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	touchscreen@48 {
-> +		/* Using mms114 compatible for now */
-> +		compatible = "melfas,mms114";
-> +		reg = <0x48>;
-> +		interrupt-parent = <&gpb>;
-> +		interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
-> +		touchscreen-size-x = <800>;
-> +		touchscreen-size-y = <1280>;
-> +		avdd-supply = <&ldo21_reg>;
-> +		vdd-supply = <&ldo25_reg>;
-> +	};
-> +};
-> +
-> +/* PMIC: s5m8767 */
-> +&i2c_7 {
-> +	samsung,i2c-sda-delay = <100>;
-> +	samsung,i2c-slave-addr = <0x10>;
-> +	samsung,i2c-max-bus-freq = <100000>;
-> +	pinctrl-0 = <&i2c7_bus>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	s5m8767: pmic@66 {
-> +		compatible = "samsung,s5m8767-pmic";
-> +		reg = <0x66>;
-> +		interrupt-parent = <&gpx0>;
-> +		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&s5m8767_irq &s5m8767_dvs &s5m8767_ds>;
-> +		wakeup-source;
-> +
-> +		s5m8767,pmic-buck2-ramp-enable;
-> +		s5m8767,pmic-buck3-ramp-enable;
-> +		s5m8767,pmic-buck4-ramp-enable;
-> +
-> +		s5m8767,pmic-buck-ramp-delay = <25>;
-> +		s5m8767,pmic-buck-default-dvs-idx = <1>;
-> +
-> +		s5m8767,pmic-buck-dvs-gpios = <&gpm3 0 GPIO_ACTIVE_HIGH>,
-> +						 <&gpm3 1 GPIO_ACTIVE_HIGH>,
-> +						 <&gpm3 2 GPIO_ACTIVE_HIGH>;
-> +
-> +		s5m8767,pmic-buck-ds-gpios = <&gpf3 1 GPIO_ACTIVE_HIGH>,
-> +						 <&gpf3 2 GPIO_ACTIVE_HIGH>,
-> +						 <&gpf3 3 GPIO_ACTIVE_HIGH>;
-> +
-> +		s5m8767,pmic-buck2-dvs-voltage = <1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>;
-> +
-> +		s5m8767,pmic-buck3-dvs-voltage = <1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>;
-> +
-> +		s5m8767,pmic-buck4-dvs-voltage = <1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>,
-> +						<1100000>, <1100000>;
-> +
-> +		regulators {
-> +			ldo1_reg: LDO1 {
-> +				regulator-name = "VALIVE_1.0V_AP";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo2_reg: LDO2 {
-> +				regulator-name = "VM1M2_1.2V_AP";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo3_reg: LDO3 {
-> +				regulator-name = "VCC_1.8V_AP";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				regulator-always-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo5_reg: LDO5 {
-> +				regulator-name = "VCC_3.3V_MHL";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo8_reg: LDO8 {
-> +				regulator-name = "VMIPI_1.0V";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			ldo9_reg: LDO9 {
-> +				regulator-name = "VSIL_1.2V";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo10_reg: LDO10 {
-> +				regulator-name = "VMIPI_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			ldo12_reg: LDO12 {
-> +				regulator-name = "VUOTG_3.0V";
-> +				regulator-min-microvolt = <3000000>;
-> +				regulator-max-microvolt = <3000000>;
-> +				op_mode = <1>;
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			ldo13_reg: LDO13 {
-> +				regulator-name = "VCC_1.8V_MHL";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo15_reg: LDO15 {
-> +				regulator-name = "VHSIC_1.0V";
-> +				regulator-min-microvolt = <1000000>;
-> +				regulator-max-microvolt = <1000000>;
-> +				op_mode = <1>;
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +				};
-> +			};
-> +
-> +			ldo17_reg: LDO17 {
-> +				regulator-name = "VCC_2.8V_AP";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <1>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo19_reg: LDO19 {
-> +				regulator-name = "VLED_IC_1.9V";
-> +				regulator-min-microvolt = <1900000>;
-> +				regulator-max-microvolt = <1900000>;
-> +				op_mode = <1>;
-> +				regulator-always-on;
-> +			};
-> +
-> +			ldo20_reg: LDO20 {
-> +				regulator-name = "VTOUCH_3.3V";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo21_reg: LDO21 {
-> +				regulator-name = "TSP_VDD_3.3V";
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo22_reg: LDO22 {
-> +				regulator-name = "5M_AF_2.8V";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo23_reg: LDO23 {
-> +				regulator-name = "VTF_2.8V";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			ldo24_reg: LDO24 {
-> +				regulator-name = "LEDA_2.8V";
-> +				regulator-min-microvolt = <2800000>;
-> +				regulator-max-microvolt = <2800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo25_reg: LDO25 {
-> +				regulator-name = "TSP_VDD_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo26_reg: LDO26 {
-> +				regulator-name = "CAM_IO_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			ldo27_reg: LDO27 {
-> +				regulator-name = "VTCAM_1.8V";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			buck1_reg: BUCK1 {
-> +				regulator-name = "VDD_MIF";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1100000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck2_reg: BUCK2 {
-> +				regulator-name = "VDD_ARM";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1500000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck3_reg: BUCK3 {
-> +				regulator-name = "VDD_INT";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1300000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck4_reg: BUCK4 {
-> +				regulator-name = "VDD_G3D";
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <1150000>;
-> +				regulator-boot-on;
-> +				op_mode = <3>;
-> +			};
-> +
-> +			buck5_reg: BUCK5 {
-> +				regulator-name = "VMEM_1.2V_AP";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt	= <1200000>;
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				op_mode = <1>;
-> +			};
-> +
-> +			buck6_reg: BUCK6 {
-> +				regulator-name = "CAM_ISP_CORE_1.2V";
-> +				regulator-min-microvolt = <1200000>;
-> +				regulator-max-microvolt = <1200000>;
-> +				op_mode = <1>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +		};
-> +
-> +		s5m8767_osc: clocks {
-> +			compatible = "samsung,s5m8767-clk";
-> +			#clock-cells = <1>;
-> +			clock-output-names = "en32khz_ap",
-> +						 "en32khz_cp",
-> +						 "en32khz_bt";
-> +		};
-> +	};
-> +};
-> +
-> +&mshc_0 {
-> +	broken-cd;
-> +	non-removable;
-> +	card-detect-delay = <200>;
-> +	vmmc-supply = <&ldo22_reg>;
-> +	clock-frequency = <400000000>;
-> +	samsung,dw-mshc-ciu-div = <0>;
-> +	samsung,dw-mshc-sdr-timing = <2 3>;
-> +	samsung,dw-mshc-ddr-timing = <1 2>;
-> +	pinctrl-0 = <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +	bus-width = <8>;
-> +	cap-mmc-highspeed;
+We *need* to add unused cleanup to rpmcc for feature completion and
+there's no good way of discerning whether it's safe to do so..
 
-Please add mmc-ddr-1_8v; here as well.  It was added to the other
-Exynos devices in commit 37f9514e618f ("ARM: dts: exynos: replace
-mshc0 alias with mmc-ddr-1_8v property") which can be found in
-Krzysztof's tree.
+Doing so will make clk_ignore_unused necessary to boot with legacy DTs.
 
-Best regards,
-Henrik Grimler
+Stephan argues the DTs were incomplete from the start and the breakage
+is only a result of us previously abusing what's essentially undefined
+behavior.. I think I second this, but it is *a* breakage so I want to
+know your opinion.
 
-> +};
-> +
-> +&pinctrl_0 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sleep0>;
-> +
-> +	s5m8767_ds: s5m8767-ds {
-> +		samsung,pins = "gpf3-1", "gpf3-2", "gpf3-3";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +	};
-> +
-> +	lcd_en: lcd-en {
-> +		samsung,pins = "gpc0-1";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	lcd_nrst: lcd-nrst {
-> +		samsung,pins = "gpf0-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	sleep0: sleep-state {
-> +		PIN_SLP(gpa0-0, INPUT, NONE);
-> +		PIN_SLP(gpa0-1, OUT0, NONE);
-> +		PIN_SLP(gpa0-2, INPUT, NONE);
-> +		PIN_SLP(gpa0-3, INPUT, UP);
-> +		PIN_SLP(gpa0-4, INPUT, DOWN); /* UP on LTE model */
-> +		PIN_SLP(gpa0-5, INPUT, DOWN); /* UP on LTE model */
-> +		PIN_SLP(gpa0-6, INPUT, DOWN);
-> +		PIN_SLP(gpa0-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpa1-0, INPUT, DOWN);
-> +		PIN_SLP(gpa1-1, INPUT, DOWN);
-> +		PIN_SLP(gpa1-2, INPUT, DOWN);
-> +		PIN_SLP(gpa1-3, INPUT, DOWN);
-> +		PIN_SLP(gpa1-4, INPUT, DOWN);
-> +		PIN_SLP(gpa1-5, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpb-0, INPUT, NONE);
-> +		PIN_SLP(gpb-1, INPUT, NONE);
-> +		PIN_SLP(gpb-2, INPUT, NONE);
-> +		PIN_SLP(gpb-3, INPUT, NONE);
-> +		PIN_SLP(gpb-4, INPUT, DOWN);
-> +		PIN_SLP(gpb-5, INPUT, DOWN); /* UP on all models with modem */
-> +		PIN_SLP(gpb-6, INPUT, DOWN);
-> +		PIN_SLP(gpb-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpc0-0, INPUT, DOWN); /* PREV, NONE on LTE model */
-> +		PIN_SLP(gpc0-1, INPUT, DOWN);
-> +		PIN_SLP(gpc0-2, INPUT, DOWN);
-> +		PIN_SLP(gpc0-3, INPUT, DOWN);
-> +		PIN_SLP(gpc0-4, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpc1-0, INPUT, DOWN);
-> +		PIN_SLP(gpc1-1, INPUT, DOWN);
-> +		PIN_SLP(gpc1-2, INPUT, DOWN);
-> +		PIN_SLP(gpc1-3, INPUT, DOWN); /* NONE on LTE model */
-> +		PIN_SLP(gpc1-4, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpd0-0, INPUT, DOWN);
-> +		PIN_SLP(gpd0-1, OUT0, NONE);
-> +		PIN_SLP(gpd0-2, INPUT, NONE);
-> +		PIN_SLP(gpd0-3, INPUT, NONE);
-> +
-> +		PIN_SLP(gpd1-0, INPUT, DOWN);
-> +		PIN_SLP(gpd1-1, INPUT, DOWN);
-> +		PIN_SLP(gpd1-2, INPUT, NONE);
-> +		PIN_SLP(gpd1-3, INPUT, NONE);
-> +
-> +		PIN_SLP(gpf0-0, INPUT, DOWN);
-> +		PIN_SLP(gpf0-1, INPUT, DOWN);
-> +		PIN_SLP(gpf0-2, INPUT, DOWN);
-> +		PIN_SLP(gpf0-3, INPUT, DOWN);
-> +		PIN_SLP(gpf0-4, OUT0, NONE);
-> +		PIN_SLP(gpf0-5, OUT0, NONE);
-> +		PIN_SLP(gpf0-6, INPUT, DOWN);
-> +		PIN_SLP(gpf0-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpf1-0, INPUT, DOWN);
-> +		PIN_SLP(gpf1-1, INPUT, DOWN);
-> +		PIN_SLP(gpf1-2, INPUT, DOWN);
-> +		PIN_SLP(gpf1-3, INPUT, DOWN);
-> +		PIN_SLP(gpf1-4, INPUT, DOWN);
-> +		PIN_SLP(gpf1-5, INPUT, DOWN);
-> +		PIN_SLP(gpf1-6, INPUT, DOWN); /* NONE on LTE model */
-> +		PIN_SLP(gpf1-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpf2-0, INPUT, DOWN);
-> +		PIN_SLP(gpf2-1, INPUT, DOWN);
-> +		PIN_SLP(gpf2-2, INPUT, DOWN); /* PREV, NONE on LTE model */
-> +		PIN_SLP(gpf2-3, INPUT, DOWN);
-> +		PIN_SLP(gpf2-4, INPUT, DOWN);
-> +		PIN_SLP(gpf2-5, INPUT, DOWN);
-> +		PIN_SLP(gpf2-6, INPUT, DOWN);
-> +		PIN_SLP(gpf2-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpf3-0, INPUT, DOWN);
-> +		PIN_SLP(gpf3-1, INPUT, DOWN);
-> +		PIN_SLP(gpf3-2, INPUT, DOWN);
-> +		PIN_SLP(gpf3-3, INPUT, DOWN);
-> +		PIN_SLP(gpf3-4, PREV, NONE);
-> +		PIN_SLP(gpf3-5, OUT0, DOWN);
-> +
-> +		PIN_SLP(gpj0-0, INPUT, DOWN);
-> +		PIN_SLP(gpj0-1, INPUT, DOWN);
-> +		PIN_SLP(gpj0-2, INPUT, DOWN);
-> +		PIN_SLP(gpj0-3, OUT0, NONE);
-> +		PIN_SLP(gpj0-4, INPUT, DOWN);
-> +		PIN_SLP(gpj0-5, INPUT, DOWN);
-> +		PIN_SLP(gpj0-6, OUT0, NONE);
-> +		PIN_SLP(gpj0-7, OUT0, NONE);
-> +
-> +		PIN_SLP(gpj1-0, OUT0, NONE);
-> +		PIN_SLP(gpj1-1, INPUT, DOWN);
-> +		PIN_SLP(gpj1-2, PREV, NONE);
-> +		PIN_SLP(gpj1-3, INPUT, DOWN);
-> +		PIN_SLP(gpj1-4, INPUT, DOWN);
-> +	};
-> +};
-> +
-> +&pinctrl_1 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sleep1>;
-> +
-> +	max77693_irq: max77693-irq {
-> +		samsung,pins = "gpx1-5";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +	};
-> +
-> +	max77693_fuel_irq: max77693-fuel-irq {
-> +		samsung,pins = "gpx2-3";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +	};
-> +
-> +	s5m8767_dvs: s5m8767-dvs {
-> +		samsung,pins = "gpm3-0", "gpm3-1", "gpm3-2";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +	};
-> +
-> +	s5m8767_irq: s5m8767-irq {
-> +		samsung,pins = "gpx0-7";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +	};
-> +
-> +	sdhci2_cd: sdhci2-cd-irq {
-> +		samsung,pins = "gpx3-4";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +		samsung,pin-drv = <EXYNOS4_PIN_DRV_LV1>;
-> +	};
-> +
-> +	bt_shutdown: bt-shutdown-pins {
-> +		samsung,pins = "gpl0-6";
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	bt_host_wakeup: bt-host-wakeup-pins {
-> +		samsung,pins = "gpx2-6";
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	bt_device_wakeup: bt-device-wakeup-pins {
-> +		samsung,pins = "gpx3-1";
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	backlight_reset: backlight-reset {
-> +		samsung,pins = "gpm0-1";
-> +		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	gpio_keys: gpio-keys-pins {
-> +		samsung,pins = "gpx1-2", "gpx2-2", "gpx2-4", "gpx2-7", "gpx3-3";
-> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-> +	};
-> +
-> +	sleep1: sleep-state {
-> +		PIN_SLP(gpk0-0, PREV, NONE);
-> +		PIN_SLP(gpk0-1, PREV, NONE);
-> +		PIN_SLP(gpk0-2, PREV, NONE);
-> +		PIN_SLP(gpk0-3, PREV, NONE);
-> +		PIN_SLP(gpk0-4, PREV, NONE);
-> +		PIN_SLP(gpk0-5, PREV, NONE);
-> +		PIN_SLP(gpk0-6, PREV, NONE);
-> +
-> +		PIN_SLP(gpk1-0, INPUT, DOWN);
-> +		PIN_SLP(gpk1-1, INPUT, DOWN);
-> +		PIN_SLP(gpk1-2, INPUT, DOWN);
-> +		PIN_SLP(gpk1-3, PREV, NONE);
-> +		PIN_SLP(gpk1-4, PREV, NONE);
-> +		PIN_SLP(gpk1-5, PREV, NONE);
-> +		PIN_SLP(gpk1-6, PREV, NONE);
-> +
-> +		PIN_SLP(gpk2-0, INPUT, DOWN);
-> +		PIN_SLP(gpk2-1, INPUT, DOWN);
-> +		PIN_SLP(gpk2-2, INPUT, DOWN);
-> +		PIN_SLP(gpk2-3, INPUT, DOWN);
-> +		PIN_SLP(gpk2-4, INPUT, DOWN);
-> +		PIN_SLP(gpk2-5, INPUT, DOWN);
-> +		PIN_SLP(gpk2-6, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpk3-0, OUT0, NONE);
-> +		PIN_SLP(gpk3-1, INPUT, NONE);
-> +		PIN_SLP(gpk3-2, INPUT, DOWN);
-> +		PIN_SLP(gpk3-3, INPUT, NONE);
-> +		PIN_SLP(gpk3-4, INPUT, NONE);
-> +		PIN_SLP(gpk3-5, INPUT, NONE);
-> +		PIN_SLP(gpk3-6, INPUT, NONE);
-> +
-> +		PIN_SLP(gpl0-0, INPUT, DOWN); /* OUT0 on 3G, PREV on LTE; NONE on both */
-> +		PIN_SLP(gpl0-1, INPUT, NONE);
-> +		PIN_SLP(gpl0-2, INPUT, NONE);
-> +		PIN_SLP(gpl0-3, INPUT, DOWN);
-> +		PIN_SLP(gpl0-4, INPUT, DOWN);
-> +		PIN_SLP(gpl0-6, PREV, NONE);
-> +
-> +		PIN_SLP(gpl1-0, INPUT, DOWN); /* OUT0 on 3G, PREV on LTE; NONE on both */
-> +		PIN_SLP(gpl1-1, OUT0, NONE);
-> +		PIN_SLP(gpl2-0, INPUT, DOWN);
-> +		PIN_SLP(gpl2-1, PREV, NONE); /* INPUT, DOWN on LTE */
-> +		PIN_SLP(gpl2-2, PREV, NONE); /* INPUT, DOWN on LTE */
-> +		PIN_SLP(gpl2-3, INPUT, DOWN);
-> +		PIN_SLP(gpl2-4, INPUT, DOWN); /* OUT0, NONE on models with modem */
-> +		PIN_SLP(gpl2-5, INPUT, DOWN); /* PREV, NONE on LTE */
-> +		PIN_SLP(gpl2-6, INPUT, DOWN);
-> +		PIN_SLP(gpl2-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpm0-0, PREV, NONE);
-> +		PIN_SLP(gpm0-1, OUT0, NONE);
-> +		PIN_SLP(gpm0-2, INPUT, DOWN);
-> +		PIN_SLP(gpm0-3, INPUT, DOWN);
-> +		PIN_SLP(gpm0-4, INPUT, DOWN);
-> +		PIN_SLP(gpm0-5, INPUT, DOWN);
-> +		PIN_SLP(gpm0-6, INPUT, DOWN);
-> +		PIN_SLP(gpm0-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpm1-0, INPUT, DOWN);
-> +		PIN_SLP(gpm1-1, INPUT, DOWN);
-> +		PIN_SLP(gpm1-2, INPUT, NONE);
-> +		PIN_SLP(gpm1-3, INPUT, NONE);
-> +		PIN_SLP(gpm1-4, INPUT, NONE);
-> +		PIN_SLP(gpm1-5, INPUT, NONE);
-> +		PIN_SLP(gpm1-6, OUT0, NONE);
-> +
-> +		PIN_SLP(gpm2-0, INPUT, NONE);
-> +		PIN_SLP(gpm2-1, INPUT, NONE);
-> +		PIN_SLP(gpm2-2, OUT0, NONE);
-> +		PIN_SLP(gpm2-3, INPUT, DOWN);
-> +		PIN_SLP(gpm2-4, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpm3-0, PREV, NONE);
-> +		PIN_SLP(gpm3-1, PREV, NONE);
-> +		PIN_SLP(gpm3-2, PREV, NONE);
-> +		PIN_SLP(gpm3-3, INPUT, DOWN); /* OUT1, NONE for 3G */
-> +		PIN_SLP(gpm3-4, INPUT, DOWN);
-> +		PIN_SLP(gpm3-5, PREV, NONE);
-> +		PIN_SLP(gpm3-6, INPUT, DOWN);
-> +		PIN_SLP(gpm3-7, OUT0, NONE);
-> +
-> +		PIN_SLP(gpm4-0, INPUT, DOWN);
-> +		PIN_SLP(gpm4-1, INPUT, DOWN);
-> +		PIN_SLP(gpm4-2, INPUT, DOWN);
-> +		PIN_SLP(gpm4-3, INPUT, DOWN);
-> +		PIN_SLP(gpm4-4, PREV, NONE);
-> +		PIN_SLP(gpm4-5, INPUT, NONE);
-> +		PIN_SLP(gpm4-6, INPUT, DOWN);
-> +		PIN_SLP(gpm4-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpy0-0, INPUT, DOWN);
-> +		PIN_SLP(gpy0-1, INPUT, DOWN);
-> +		PIN_SLP(gpy0-2, INPUT, NONE);
-> +		PIN_SLP(gpy0-3, INPUT, NONE);
-> +		PIN_SLP(gpy0-4, INPUT, DOWN);
-> +		PIN_SLP(gpy0-5, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpy1-0, INPUT, DOWN);
-> +		PIN_SLP(gpy1-1, INPUT, DOWN);
-> +		PIN_SLP(gpy1-2, INPUT, DOWN);
-> +		PIN_SLP(gpy1-3, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpy2-0, PREV, NONE);
-> +		PIN_SLP(gpy2-1, INPUT, DOWN);
-> +		PIN_SLP(gpy2-2, INPUT, NONE);
-> +		PIN_SLP(gpy2-3, INPUT, NONE);
-> +		PIN_SLP(gpy2-4, INPUT, NONE);
-> +		PIN_SLP(gpy2-5, INPUT, NONE);
-> +
-> +		PIN_SLP(gpy3-0, INPUT, DOWN);
-> +		PIN_SLP(gpy3-1, INPUT, DOWN);
-> +		PIN_SLP(gpy3-2, INPUT, DOWN);
-> +		PIN_SLP(gpy3-3, INPUT, DOWN);
-> +		PIN_SLP(gpy3-4, INPUT, DOWN);
-> +		PIN_SLP(gpy3-5, INPUT, DOWN);
-> +		PIN_SLP(gpy3-6, INPUT, DOWN);
-> +		PIN_SLP(gpy3-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpy4-0, INPUT, DOWN);
-> +		PIN_SLP(gpy4-1, INPUT, DOWN);
-> +		PIN_SLP(gpy4-2, INPUT, DOWN);
-> +		PIN_SLP(gpy4-3, INPUT, DOWN);
-> +		PIN_SLP(gpy4-4, INPUT, DOWN);
-> +		PIN_SLP(gpy4-5, INPUT, DOWN);
-> +		PIN_SLP(gpy4-6, INPUT, DOWN);
-> +		PIN_SLP(gpy4-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpy5-0, INPUT, DOWN);
-> +		PIN_SLP(gpy5-1, INPUT, DOWN);
-> +		PIN_SLP(gpy5-2, INPUT, DOWN);
-> +		PIN_SLP(gpy5-3, INPUT, DOWN);
-> +		PIN_SLP(gpy5-4, INPUT, DOWN);
-> +		PIN_SLP(gpy5-5, INPUT, DOWN);
-> +		PIN_SLP(gpy5-6, INPUT, DOWN);
-> +		PIN_SLP(gpy5-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpy6-0, INPUT, DOWN);
-> +		PIN_SLP(gpy6-1, INPUT, DOWN);
-> +		PIN_SLP(gpy6-2, INPUT, DOWN);
-> +		PIN_SLP(gpy6-3, INPUT, DOWN);
-> +		PIN_SLP(gpy6-4, INPUT, DOWN);
-> +		PIN_SLP(gpy6-5, INPUT, DOWN);
-> +		PIN_SLP(gpy6-6, INPUT, DOWN);
-> +		PIN_SLP(gpy6-7, INPUT, DOWN);
-> +	};
-> +};
-> +
-> +&pinctrl_2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sleep2>;
-> +
-> +	sleep2: sleep-state {
-> +		PIN_SLP(gpz-0, INPUT, DOWN);
-> +		PIN_SLP(gpz-1, INPUT, DOWN);
-> +		PIN_SLP(gpz-2, INPUT, DOWN);
-> +		PIN_SLP(gpz-3, INPUT, DOWN);
-> +		PIN_SLP(gpz-4, INPUT, DOWN);
-> +		PIN_SLP(gpz-5, INPUT, DOWN);
-> +		PIN_SLP(gpz-6, INPUT, DOWN);
-> +	};
-> +};
-> +
-> +&pinctrl_3 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sleep3>;
-> +
-> +	sleep3: sleep-state {
-> +		PIN_SLP(gpv0-0, INPUT, DOWN);
-> +		PIN_SLP(gpv0-1, INPUT, DOWN);
-> +		PIN_SLP(gpv0-2, INPUT, DOWN);
-> +		PIN_SLP(gpv0-3, INPUT, DOWN);
-> +		PIN_SLP(gpv0-4, INPUT, DOWN);
-> +		PIN_SLP(gpv0-5, INPUT, DOWN);
-> +		PIN_SLP(gpv0-6, INPUT, DOWN);
-> +		PIN_SLP(gpv0-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpv1-0, INPUT, DOWN);
-> +		PIN_SLP(gpv1-1, INPUT, DOWN);
-> +		PIN_SLP(gpv1-2, INPUT, DOWN);
-> +		PIN_SLP(gpv1-3, INPUT, DOWN);
-> +		PIN_SLP(gpv1-4, INPUT, DOWN);
-> +		PIN_SLP(gpv1-5, INPUT, DOWN);
-> +		PIN_SLP(gpv1-6, INPUT, DOWN);
-> +		PIN_SLP(gpv1-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpv2-0, INPUT, DOWN);
-> +		PIN_SLP(gpv2-1, INPUT, DOWN);
-> +		PIN_SLP(gpv2-2, INPUT, DOWN);
-> +		PIN_SLP(gpv2-3, INPUT, DOWN);
-> +		PIN_SLP(gpv2-4, INPUT, DOWN);
-> +		PIN_SLP(gpv2-5, INPUT, DOWN);
-> +		PIN_SLP(gpv2-6, INPUT, DOWN);
-> +		PIN_SLP(gpv2-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpv3-0, INPUT, DOWN);
-> +		PIN_SLP(gpv3-1, INPUT, DOWN);
-> +		PIN_SLP(gpv3-2, INPUT, DOWN);
-> +		PIN_SLP(gpv3-3, INPUT, DOWN);
-> +		PIN_SLP(gpv3-4, INPUT, DOWN);
-> +		PIN_SLP(gpv3-5, INPUT, DOWN);
-> +		PIN_SLP(gpv3-6, INPUT, DOWN);
-> +		PIN_SLP(gpv3-7, INPUT, DOWN);
-> +
-> +		PIN_SLP(gpv4-0, INPUT, DOWN);
-> +		PIN_SLP(gpv4-1, INPUT, DOWN);
-> +	};
-> +};
-> +
-> +&pmu_system_controller {
-> +	assigned-clocks = <&pmu_system_controller 0>;
-> +	assigned-clock-parents = <&clock CLK_XUSBXTI>;
-> +};
-> +
-> +&pwm {
-> +	pinctrl-0 = <&pwm1_out>;
-> +	pinctrl-names = "default";
-> +	samsung,pwm-outputs = <1>;
-> +	status = "okay";
-> +};
-> +
-> +&rtc {
-> +	status = "okay";
-> +	clocks = <&clock CLK_RTC>, <&s5m8767_osc S2MPS11_CLK_AP>;
-> +	clock-names = "rtc", "rtc_src";
-> +};
-> +
-> +&sdhci_2 {
-> +	bus-width = <4>;
-> +	cd-gpios = <&gpx3 4 GPIO_ACTIVE_LOW>;
-> +	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4 &sdhci2_cd>;
-> +	pinctrl-names = "default";
-> +	vmmc-supply = <&ldo23_reg>;
-> +	status = "okay";
-> +};
-> +
-> +&sdhci_3 {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	non-removable;
-> +	bus-width = <4>;
-> +
-> +	mmc-pwrseq = <&wlan_pwrseq>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
-> +	status = "okay";
-> +
-> +	/* BCM4334 Wi-Fi */
-> +	brcmf: wifi@1 {
-> +		compatible = "brcm,bcm4334-fmac", "brcm,bcm4329-fmac";
-> +		reg = <1>;
-> +
-> +		interrupt-parent = <&gpx2>;
-> +		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "host-wake";
-> +	};
-> +};
-> +
-> +&serial_0 {
-> +	pinctrl-0 = <&uart0_data &uart0_fctl>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +
-> +	/* BCM4334B0 Bluetooth */
-> +	bluetooth {
-> +		compatible = "brcm,bcm4330-bt";
-> +		pinctrl-0 = <&bt_shutdown &bt_device_wakeup &bt_host_wakeup>;
-> +		pinctrl-names = "default";
-> +		max-speed = <3000000>;
-> +		shutdown-gpios = <&gpl0 6 GPIO_ACTIVE_HIGH>;
-> +		device-wakeup-gpios = <&gpx3 1 GPIO_ACTIVE_HIGH>;
-> +		host-wakeup-gpios = <&gpx2 6 GPIO_ACTIVE_HIGH>;
-> +		clocks = <&s5m8767_osc S2MPS11_CLK_BT>;
-> +	};
-> +};
-> +
-> +&serial_1 {
-> +	status = "okay";
-> +};
-> +
-> +&serial_2 {
-> +	status = "okay";
-> +};
-> +
-> +&serial_3 {
-> +	status = "okay";
-> +};
-> +
-> +&tmu {
-> +	vtmu-supply = <&ldo10_reg>;
-> +	status = "okay";
-> +};
-> -- 
-> 2.40.0
+FWIW the same happens when we have simple-framebuffer enabled and then
+introduce dispcc on a given platform without adding the clocks under
+the simplefb node and we've not been frowning upon that too much, so I'd
+be willing to give it a pass if you're okay with it..
+
+Not caring about this would make things far, far easier really..
+
+Konrad
 > 
+>> I suppose something like this would work-ish:
+>>
+>> 0. remove clock handles as they're now contained within icc and
+>>    use them as a "legacy marker"
+>> 1. add:
+>> 	if (qp->bus_clocks)
+>> 		// skip qos writes
+> 
+> Maybe you can just check if all necessary clocks for QOS are there or
+> not? I don't think it's a problem to skip it on broken DTs. I think it
+> would be even fine to refuse loading the interconnect driver completely
+> and just have the standard max vote (as long as that results in a
+> booting system).
+> 
+>>
+>> This will:
+>> - let us add is_enabled so that all RPM clocks bar XO_A will be cleaned up
+>> - save massively on code complexity
+>>
+> 
+> +1
+> 
+>> at the cost of retroactively removing features (QoS settings) for people
+>> with old DTs and new kernels (don't tell Torvalds!)
+>>
+> 
+> I doubt anyone will notice :p
+> 
+>> This DTB ABI stuff really gets in the way sometimes :/ We're only now
+>> fixing up U-Boot to be able to use upstream Linux DTs and other than
+>> that I think only OpenBSD uses it with 8280.. Wish we could get rid of
+>> all old junk once and then establish immutability but oh well..
+> 
+> Nice, thanks a lot for working on addressing the Qualcomm DT mess in
+> U-Boot. I've been meaning to work this myself for a long time but never
+> found the time to start... :')
+> 
+> Thanks,
+> Stephan
