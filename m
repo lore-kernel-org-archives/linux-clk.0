@@ -2,93 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D31F4C6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Apr 2023 22:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F77C77B75
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 00:32:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231799AbjDRW3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 18:29:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55762 "EHLO
+        id S231740AbjDSAc3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 20:32:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjDRW3Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 18:29:16 -0400
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D48E5C;
-        Tue, 18 Apr 2023 15:29:13 -0700 (PDT)
-Received: by mail-oo1-f54.google.com with SMTP id b8-20020a056820134800b00546f139ded4so885252oow.11;
-        Tue, 18 Apr 2023 15:29:13 -0700 (PDT)
+        with ESMTP id S231646AbjDSAc2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 20:32:28 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB918269F;
+        Tue, 18 Apr 2023 17:32:27 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-2470271d9f9so1828494a91.2;
+        Tue, 18 Apr 2023 17:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681864347; x=1684456347;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D6JBEBOkVfTEmObqcNEsEyY9FQjlw46Y62iwKC4AS1o=;
+        b=EgBzzDeioDQmeDODO0ESCM2+hOKkVe5WFl8GLOkmwolTUPIsDapqz7/DdTZUrAj5SV
+         wU0dcMZpz6N72RuBATOn42n+oR/ixlhALpIux7ldqjX0oz3/DRdO0q0Me9z0kEmNZNqI
+         F0npW6jBiVL1c6rrMUyDGcLms98KTreROauoQwpxnV6ndCZaoIDDX5L7wg/OLEvBv+ia
+         dW0BovnTpeqUA55sM7jJAs9smEwWip5n7oiU3hJxMcx2rUjxnq+GwYCrWt5wl/Zn3dWs
+         gxklfAgGPqHJ+p8+N7AdESLbi0Ab69nRDYk+zDNSwigBj+9cU1r3nKUJCs8jH4i0zQsQ
+         gw+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681856953; x=1684448953;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1681864347; x=1684456347;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=db9PMHM/Qn98GSD4/ys+i9eCeTPLiGiM+3j8knhblLE=;
-        b=DdH8u6TvdO59BNIvUCFbWbncMUqsXqhRFZ23+8IeqpHePPhS5IPU6w+XJj5xrOCEAW
-         +Yx5Er/DGLV6D98efek9SGdb8dnsQS/81dKGxrjUrla8MtIUzWRBGNivYw4mdUhbKIet
-         BeQQQAdpB5yYn6twMzVjfNnbnMtXhyh29Am2Pwt53tVWbOk8UHqAcEpH2Z89Bj4sD0Zc
-         9MXferTKqzYYMWiWPJZYg/piEUuJwnOhx1nusOGRhj9bScb7UOeZf6gko4pVx5qn9f+S
-         gM7H1LqZLlDUg/6mvqx+amRTWiIRANxy8yxWCVxHhX2BCy+d3g4xHN7mjoQJeJskRtam
-         MZvA==
-X-Gm-Message-State: AAQBX9fLbsQ95Kn+UC0RxpHH7dU7WyRicl2Mho9RCYZ3cz6fMZjW99rF
-        WyOqVBWLnXi0OLH07hQyJA==
-X-Google-Smtp-Source: AKy350bAeSIuzj8yPGX5PIb4p4EJBNSdItbfFSe5fZAkxlfdQzq90VsiHCw3NU3aEUKFTKJ/jOnUzA==
-X-Received: by 2002:a4a:33c3:0:b0:541:b514:77eb with SMTP id q186-20020a4a33c3000000b00541b51477ebmr3108899ooq.2.1681856952661;
-        Tue, 18 Apr 2023 15:29:12 -0700 (PDT)
-Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id z137-20020a4a498f000000b00545b549c2f1sm3687486ooa.22.2023.04.18.15.29.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Apr 2023 15:29:12 -0700 (PDT)
-Received: (nullmailer pid 2442808 invoked by uid 1000);
-        Tue, 18 Apr 2023 22:29:11 -0000
-Date:   Tue, 18 Apr 2023 17:29:11 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Yangfl <mmyangfl@gmail.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] clk: Add basic register clock controller
-Message-ID: <20230418222911.GA2439926-robh@kernel.org>
-References: <20230416194624.1258860-1-mmyangfl@gmail.com>
- <81ed4e15-19ea-34d9-3e05-d1195b2cdd57@linaro.org>
- <CAAXyoMPShMwVjckmYRxStv=t=_GiNmqdLVUUjuxvVLdvp+-4Rw@mail.gmail.com>
+        bh=D6JBEBOkVfTEmObqcNEsEyY9FQjlw46Y62iwKC4AS1o=;
+        b=TQ+LNnHAlpHuGdsD8ZJbnnSzOktUFgUHwl0p2M2uXbEQaD8pRh5rHrMg5fhnverrAv
+         +ubprPwkF4LEYPpdBDshdNRiKvXWw8Gxi0GziPolIEQ7nGg+RYrD8fC4txg0cmfMFTp0
+         hn48EVz18Tvkl7MrvKvqYOTXlNGn3mgvd7Z5IhvGmGXS92dpnPOi2OU9fn9ZoQHwSg6P
+         tFgPKYje6rj6TDC7a4PV3QDc36KaZjgaKPbNVgnbxMe1Ur4doq9FiKGVpoh930FIojYl
+         tsw8VxV/rDHuWrPsAwDWGWMFH2DBxCbw3q6W2sExZPgrFIACm7nALV1VRC8vnQDm2cHN
+         lmkQ==
+X-Gm-Message-State: AAQBX9d5Atg5VKbS8/cS+3uGatoUId6/YAV6sQTL5MzKa8sOwQsYt8uA
+        uKmRCWDu3kyoRThft52EJrJhos/90ak=
+X-Google-Smtp-Source: AKy350Y8fUNfZALyHgpvZFVz6Fw2qMrCnDUy2F+p81FdRqt2ju7s2F5U/SWHfBoTbuz2ak8QPcCUpg==
+X-Received: by 2002:a17:90b:3b52:b0:249:748b:a232 with SMTP id ot18-20020a17090b3b5200b00249748ba232mr1005004pjb.25.1681864347066;
+        Tue, 18 Apr 2023 17:32:27 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id c9-20020a170902c1c900b001a065d3ea3bsm10169255plc.295.2023.04.18.17.32.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Apr 2023 17:32:26 -0700 (PDT)
+Message-ID: <b1fb3fc4-9051-2545-a273-c05b1f9b143e@gmail.com>
+Date:   Wed, 19 Apr 2023 08:32:22 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v7 09/12] clk: nuvoton: Add clock driver for ma35d1 clock
+ controller
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de,
+        robh+dt@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230412053824.106-1-ychuang570808@gmail.com>
+ <20230412053824.106-10-ychuang570808@gmail.com>
+ <4f57a7ccc946d18be5eb9a47fa69e5f8.sboyd@kernel.org>
+ <71f646cb-7114-0c78-493c-99bdb5217801@gmail.com>
+ <f817937cfd494c3f619adda97ebd6346.sboyd@kernel.org>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <f817937cfd494c3f619adda97ebd6346.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAXyoMPShMwVjckmYRxStv=t=_GiNmqdLVUUjuxvVLdvp+-4Rw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 18, 2023 at 02:16:28AM +0800, Yangfl wrote:
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> 于2023年4月17日周一 14:27写道：
-> >
-> > On 16/04/2023 21:46, David Yang wrote:
-> > > These clocks were provided in `include/linux/clk-provider.h`, but lacks DT
-> > > bindings. Add DT bindings for them.
-> > >
-> > > v2: split clock controller and its clocks
-> >
-> > I gave you several comments on v1 and this vague changelog entry
-> > suggests you ignored all of it.
-> >
-> > Implement feedback and respond to each one that you ack it or disagree
-> > with it.
-> >
-> >
-> > Best regards,
-> > Krzysztof
-> >
-> 
-> All issues have been addressed in v3 patch. I omitted details in
-> changelog to reduce redundancy. If that is not the proper way to make
-> response in dt maillist, please let me know.
-> 
-> Responses for each comments in v1 and v2 have been sent against original email.
 
-Go look at v1 replies. This series is a hard no.
+Dear Stephen,
 
-Rob
+
+On 2023/4/19 上午 04:23, Stephen Boyd wrote:
+> Quoting Jacky Huang (2023-04-14 20:58:57)
+>>>> diff --git a/drivers/clk/nuvoton/clk-ma35d1.h b/drivers/clk/nuvoton/clk-ma35d1.h
+>>>> new file mode 100644
+>>>> index 000000000000..28c60f081788
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/nuvoton/clk-ma35d1.h
+>>>> @@ -0,0 +1,123 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>>>> +/*
+>>>> + * Copyright (C) 2023 Nuvoton Technology Corp.
+>>>> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
+>>>> + */
+>>>> +
+>>>> +#ifndef __DRV_CLK_NUVOTON_MA35D1_H
+>>>> +#define __DRV_CLK_NUVOTON_MA35D1_H
+>>> Is this header included in one C file? If so, remove the header file and
+>>> put the contents in the C file.
+>> Both clk-ma35d1.c and clk-ma35d1-pll.c include this header file.
+>>
+> Do they both use all the defines from it? Move as much as possible out
+> of this header file and put them in the only C file that uses it.
+
+Okay, I will try to eliminate the header file.
+
+
+Best regards,
+Jacky Huang
+
