@@ -2,119 +2,175 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CB0C6FD18
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 03:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2C7C77B73
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 04:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbjDSDoj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 23:44:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60250 "EHLO
+        id S229618AbjDSEmn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Apr 2023 00:42:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230033AbjDSDoh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 23:44:37 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BCA4205;
-        Tue, 18 Apr 2023 20:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1681875873; x=1713411873;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4EP/2Cmk9H4XCoBfJIrk4quFOnVhOKLLl6A0ydsMZ54=;
-  b=CcVUpJorIz0KqAW9SqUImVys9IxGwlmABWar054LhypHTHiDzXxdUREb
-   V3JrIPaxGmPf40Sl6o9Alh12JzPSgZbmSI6JClvMW3dpMBGSOSflrcxqb
-   0jZa4usR7Q5tLpDHrjWT4CFjSxPIi5cN1I7oYUUD5Raq5n7lHsRO6jPwb
-   rto0REAZ0IKoormM47HRCICjyZX1PsgC9jFk4LCZk5G0szxjzFonfy6wR
-   DX8AkB6IqDPvKU5CWLgq/MQpWyefcsXTsacVwSSHZzoJIxkptQIwYOSQL
-   yXN3Kw3rqDuFNFL9frsiHjO499b8+ewYoZZfZXgRin5YdRti0LAITjkru
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="408251571"
-X-IronPort-AV: E=Sophos;i="5.99,208,1677571200"; 
-   d="scan'208";a="408251571"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2023 20:44:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10684"; a="691346028"
-X-IronPort-AV: E=Sophos;i="5.99,208,1677571200"; 
-   d="scan'208";a="691346028"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 18 Apr 2023 20:44:28 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1poyk7-000eRb-1Z;
-        Wed, 19 Apr 2023 03:44:27 +0000
-Date:   Wed, 19 Apr 2023 11:43:42 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, arnd@arndb.de, schung@nuvoton.com,
-        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-Subject: Re: [PATCH v7 11/12] tty: serial: Add Nuvoton ma35d1 serial driver
- support
-Message-ID: <202304191134.r0D17Yjq-lkp@intel.com>
-References: <20230412053824.106-12-ychuang570808@gmail.com>
+        with ESMTP id S230153AbjDSEmm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 00:42:42 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DB21213F;
+        Tue, 18 Apr 2023 21:42:40 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f0a0c4e1ebso30392475e9.3;
+        Tue, 18 Apr 2023 21:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681879359; x=1684471359;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rg17OEPD/HpqiUqkk1EGt0TAJm79SfIK4kHWRGVMOgc=;
+        b=TCzkHTkNaj6cihXWHZPN9Zyn1dIU0QfksLmfX9zus2ApeMVfbtuuDxbRTOIx1W8nIg
+         QP5oRBv2e2ViGY9Eq3HxSp2Cl15DyoWgg8xD1ziQZdqyuudwg0/GP6L5gDjLPnIDPMg7
+         5VJQ2Shc9DZ4eswINFlA3Y29mgLbsub4DjRA8mbPyO+tzzgIsXcWzwqH4bsorLHsnOyY
+         T6wA1jOh3+89wFkyXdqvOW3npTbdfz40qdx7BWdzerebCLRvLTh+Ppo5NZKFxaXcYqRz
+         3rcqKQcVxc3Z6a4VXepiRuBOFG4Gd+49drgDllrvpwL5uRUWzcBOuY9gm8gcN7Yoq6X1
+         ddyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681879359; x=1684471359;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rg17OEPD/HpqiUqkk1EGt0TAJm79SfIK4kHWRGVMOgc=;
+        b=I52/psA0+up51kZCEWWZFT/KyOj8HfQLIkGoMA8O36vSgiYvhNiTk3VVDcxbzU/Vls
+         2bCRrI0XofxogGONv3HrfbRlfvGKanPj/RpEVqII8/rDttprgVpQWlPnLCpgymr3phIy
+         GZi+42LIlMVt+AB/CeoeifAQ8AHF6g7V/yafPR57OSXELpFyw8vcdI0nRNTSjZQp6a2h
+         nlvGADhEwJMzOqjCpKVcJgFpD5OekwGMacPMd2uOWnD0gM87zsqS/G5W424TOhmNOWbM
+         8ofhLXex0FFOdltwi/HvmJ0TxY+jI0jWnSShuKLDwNmtvggQdZ37lFx8zI6xT1BJS6Vh
+         n8Og==
+X-Gm-Message-State: AAQBX9c0XN4kFGYFmZjyTjgudUSf+0+qSxVScRSOBpTzFZxiZzXlRdT+
+        xIpq/f+DzoN6vXk8GAhjT9Q=
+X-Google-Smtp-Source: AKy350bg/6oyNd2L8+kUXrGBSheCysTkDRCpeYG4ayrOqiiavxa+Rc+6UfiWMrhQfZOba/jWCF4hxg==
+X-Received: by 2002:a5d:55c1:0:b0:2dc:cad4:87b9 with SMTP id i1-20020a5d55c1000000b002dccad487b9mr3280558wrw.68.1681879357209;
+        Tue, 18 Apr 2023 21:42:37 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id z14-20020adff1ce000000b002f28de9f73bsm14591510wro.55.2023.04.18.21.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Apr 2023 21:42:36 -0700 (PDT)
+Date:   Wed, 19 Apr 2023 07:42:33 +0300
+From:   Dan Carpenter <error27@gmail.com>
+To:     oe-kbuild@lists.linux.dev,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        devicetree@vger.kernel.org
+Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev, git@amd.com,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, krzysztof.kozlowski+dt@linaro.org,
+        michal.simek@xilinx.com
+Subject: Re: [PATCH v1 2/2] clocking-wizard: Add support for versal clocking
+ wizard
+Message-ID: <588e6275-88a2-4c3a-beee-e73eb2c99eac@kili.mountain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230412053824.106-12-ychuang570808@gmail.com>
+In-Reply-To: <20230418102855.6791-3-shubhrajyoti.datta@amd.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jacky,
+Hi Shubhrajyoti,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on clk/clk-next linus/master pza/reset/next v6.3-rc7]
-[cannot apply to pza/imx-drm/next next-20230418]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230412-134123
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20230412053824.106-12-ychuang570808%40gmail.com
-patch subject: [PATCH v7 11/12] tty: serial: Add Nuvoton ma35d1 serial driver support
-config: csky-randconfig-c041-20230419 (https://download.01.org/0day-ci/archive/20230419/202304191134.r0D17Yjq-lkp@intel.com/config)
+url:    https://github.com/intel-lab-lkp/linux/commits/Shubhrajyoti-Datta/dt-bindings-clocking-wizard-add-versal-compatible/20230418-183046
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20230418102855.6791-3-shubhrajyoti.datta%40amd.com
+patch subject: [PATCH v1 2/2] clocking-wizard: Add support for versal clocking wizard
+config: csky-randconfig-m041-20230418 (https://download.01.org/0day-ci/archive/20230419/202304190429.UOH2nE9u-lkp@intel.com/config)
 compiler: csky-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/7918adf6941fa4fe48d57dffbcc09eee92b88e26
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230412-134123
-        git checkout 7918adf6941fa4fe48d57dffbcc09eee92b88e26
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=csky olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=csky SHELL=/bin/bash drivers/tty/serial/
 
 If you fix the issue, kindly add following tag where applicable
 | Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304191134.r0D17Yjq-lkp@intel.com/
+| Reported-by: Dan Carpenter <error27@gmail.com>
+| Link: https://lore.kernel.org/r/202304190429.UOH2nE9u-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+smatch warnings:
+drivers/clk/xilinx/clk-xlnx-clock-wizard.c:264 clk_wzrd_dynamic_reconfig() error: uninitialized symbol 'value'.
 
->> drivers/tty/serial/ma35d1_serial.c:151:64: warning: excess elements in struct initializer
-     151 | static struct uart_ma35d1_port ma35d1serial_ports[UART_NR] = { 0 };
-         |                                                                ^
-   drivers/tty/serial/ma35d1_serial.c:151:64: note: (near initialization for 'ma35d1serial_ports[0].port.lock.<anonymous>.rlock.raw_lock')
-   drivers/tty/serial/ma35d1_serial.c:150:28: warning: 'ma35d1serial_uart_nodes' defined but not used [-Wunused-variable]
-     150 | static struct device_node *ma35d1serial_uart_nodes[UART_NR];
-         |                            ^~~~~~~~~~~~~~~~~~~~~~~
+vim +/value +264 drivers/clk/xilinx/clk-xlnx-clock-wizard.c
 
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  226  static int clk_wzrd_dynamic_reconfig(struct clk_hw *hw, unsigned long rate,
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  227  				     unsigned long parent_rate)
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  228  {
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  229  	struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  230  	void __iomem *div_addr = divider->base + divider->offset;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  231  	u32 value, regh, edged, p5en, p5fedge, regval, regval1;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  232  	unsigned long flags = 0;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  233  	int err;
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  234  
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  235  	if (divider->lock)
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  236  		spin_lock_irqsave(divider->lock, flags);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  237  	else
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  238  		__acquire(divider->lock);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  239  
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  240  	if (!divider->is_versal) {
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  241  		value = DIV_ROUND_CLOSEST(parent_rate, rate);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  242  
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  243  		/* Cap the value to max */
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  244  		min_t(u32, value, WZRD_DR_MAX_INT_DIV_VALUE);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  245  
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  246  		/* Set divisor and clear phase offset */
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  247  		writel(value, div_addr);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  248  		writel(0x00, div_addr + WZRD_DR_DIV_TO_PHASE_OFFSET);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  249  
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  250  		/* Check status register */
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  251  		err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET,
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  252  					 value, value & WZRD_DR_LOCK_BIT_MASK,
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  253  					 WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  254  		if (err)
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  255  			goto err_reconfig;
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  256  
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  257  		/* Initiate reconfiguration */
+dd5e7431ac54e0 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2022-04-11  258  		writel(WZRD_DR_BEGIN_DYNA_RECONF_5_2,
+dd5e7431ac54e0 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2022-04-11  259  		       divider->base + WZRD_DR_INIT_REG_OFFSET);
+dd5e7431ac54e0 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2022-04-11  260  		writel(WZRD_DR_BEGIN_DYNA_RECONF1_5_2,
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  261  		       divider->base + WZRD_DR_INIT_REG_OFFSET);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  262  
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  263  	} else {
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18 @264  		regh = (value / 4);
+                                                                                                                                ^^^^^
+Uninitialized.
 
-vim +151 drivers/tty/serial/ma35d1_serial.c
-
-   149	
-   150	static struct device_node *ma35d1serial_uart_nodes[UART_NR];
- > 151	static struct uart_ma35d1_port ma35d1serial_ports[UART_NR] = { 0 };
-   152	
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  265  		regval1 = readl(div_addr);
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  266  		regval1 |= WZRD_CLKFBOUT_PREDIV2;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  267  		regval1 = regval1 & ~(WZRD_CLKFBOUT_EDGE | WZRD_P5EN | WZRD_P5FEDGE);
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  268  		if (value % 4 > 1) {
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  269  			edged = 1;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  270  			regval1 |= (edged << WZRD_EDGE_SHIFT);
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  271  		}
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  272  		p5fedge = value % 2;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  273  		p5en = value % 2;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  274  		regval1 = regval1 | p5en << WZRD_P5EN_SHIFT | p5fedge << WZRD_P5FEDGE_SHIFT;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  275  		writel(regval1, div_addr);
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  276  
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  277  		regval = regh | regh << WZRD_CLKFBOUT_H_SHIFT;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  278  		writel(regval, div_addr + 4);
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  279  		/* Check status register */
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  280  		err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET,
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  281  					 value, value & WZRD_DR_LOCK_BIT_MASK,
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  282  					 WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  283  		if (err)
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  284  			goto err_reconfig;
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  285  
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  286  		/* Initiate reconfiguration */
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  287  		writel(WZRD_DR_BEGIN_DYNA_RECONF,
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  288  		       divider->base + WZRD_DR_INIT_VERSAL_OFFSET);
+143916412aa6a4 drivers/clk/xilinx/clk-xlnx-clock-wizard.c              Shubhrajyoti Datta 2023-04-18  289  	}
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  290  	/* Check status register */
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  291  	err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET,
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  292  				 value, value & WZRD_DR_LOCK_BIT_MASK,
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  293  				 WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  294  err_reconfig:
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  295  	if (divider->lock)
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  296  		spin_unlock_irqrestore(divider->lock, flags);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  297  	else
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  298  		__release(divider->lock);
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  299  	return err;
+5a853722eb3218 drivers/staging/clocking-wizard/clk-xlnx-clock-wizard.c Shubhrajyoti Datta 2021-02-24  300  }
 
 -- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests
+
