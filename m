@@ -2,112 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F77C77B75
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 00:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D2AC6FD18
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 00:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231740AbjDSAc3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Apr 2023 20:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43382 "EHLO
+        id S230521AbjDSA5S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Apr 2023 20:57:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231646AbjDSAc2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 20:32:28 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB918269F;
-        Tue, 18 Apr 2023 17:32:27 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id 98e67ed59e1d1-2470271d9f9so1828494a91.2;
-        Tue, 18 Apr 2023 17:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1681864347; x=1684456347;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D6JBEBOkVfTEmObqcNEsEyY9FQjlw46Y62iwKC4AS1o=;
-        b=EgBzzDeioDQmeDODO0ESCM2+hOKkVe5WFl8GLOkmwolTUPIsDapqz7/DdTZUrAj5SV
-         wU0dcMZpz6N72RuBATOn42n+oR/ixlhALpIux7ldqjX0oz3/DRdO0q0Me9z0kEmNZNqI
-         F0npW6jBiVL1c6rrMUyDGcLms98KTreROauoQwpxnV6ndCZaoIDDX5L7wg/OLEvBv+ia
-         dW0BovnTpeqUA55sM7jJAs9smEwWip5n7oiU3hJxMcx2rUjxnq+GwYCrWt5wl/Zn3dWs
-         gxklfAgGPqHJ+p8+N7AdESLbi0Ab69nRDYk+zDNSwigBj+9cU1r3nKUJCs8jH4i0zQsQ
-         gw+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681864347; x=1684456347;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D6JBEBOkVfTEmObqcNEsEyY9FQjlw46Y62iwKC4AS1o=;
-        b=TQ+LNnHAlpHuGdsD8ZJbnnSzOktUFgUHwl0p2M2uXbEQaD8pRh5rHrMg5fhnverrAv
-         +ubprPwkF4LEYPpdBDshdNRiKvXWw8Gxi0GziPolIEQ7nGg+RYrD8fC4txg0cmfMFTp0
-         hn48EVz18Tvkl7MrvKvqYOTXlNGn3mgvd7Z5IhvGmGXS92dpnPOi2OU9fn9ZoQHwSg6P
-         tFgPKYje6rj6TDC7a4PV3QDc36KaZjgaKPbNVgnbxMe1Ur4doq9FiKGVpoh930FIojYl
-         tsw8VxV/rDHuWrPsAwDWGWMFH2DBxCbw3q6W2sExZPgrFIACm7nALV1VRC8vnQDm2cHN
-         lmkQ==
-X-Gm-Message-State: AAQBX9d5Atg5VKbS8/cS+3uGatoUId6/YAV6sQTL5MzKa8sOwQsYt8uA
-        uKmRCWDu3kyoRThft52EJrJhos/90ak=
-X-Google-Smtp-Source: AKy350Y8fUNfZALyHgpvZFVz6Fw2qMrCnDUy2F+p81FdRqt2ju7s2F5U/SWHfBoTbuz2ak8QPcCUpg==
-X-Received: by 2002:a17:90b:3b52:b0:249:748b:a232 with SMTP id ot18-20020a17090b3b5200b00249748ba232mr1005004pjb.25.1681864347066;
-        Tue, 18 Apr 2023 17:32:27 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id c9-20020a170902c1c900b001a065d3ea3bsm10169255plc.295.2023.04.18.17.32.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Apr 2023 17:32:26 -0700 (PDT)
-Message-ID: <b1fb3fc4-9051-2545-a273-c05b1f9b143e@gmail.com>
-Date:   Wed, 19 Apr 2023 08:32:22 +0800
+        with ESMTP id S229597AbjDSA5R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Apr 2023 20:57:17 -0400
+Received: from hust.edu.cn (unknown [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D928A250;
+        Tue, 18 Apr 2023 17:57:06 -0700 (PDT)
+Received: from [IPV6:2001:250:4000:5113:2570:678:bb4e:e0e8] ([172.16.0.254])
+        (user=dzm91@hust.edu.cn mech=PLAIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 33J0t72O020463-33J0t72P020463
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Wed, 19 Apr 2023 08:55:09 +0800
+Message-ID: <918bf8b1-6da6-943b-3cbe-e15a24c9de6f@hust.edu.cn>
+Date:   Wed, 19 Apr 2023 08:55:07 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v7 09/12] clk: nuvoton: Add clock driver for ma35d1 clock
- controller
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, gregkh@linuxfoundation.org,
-        jirislaby@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230412053824.106-1-ychuang570808@gmail.com>
- <20230412053824.106-10-ychuang570808@gmail.com>
- <4f57a7ccc946d18be5eb9a47fa69e5f8.sboyd@kernel.org>
- <71f646cb-7114-0c78-493c-99bdb5217801@gmail.com>
- <f817937cfd494c3f619adda97ebd6346.sboyd@kernel.org>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <f817937cfd494c3f619adda97ebd6346.sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.10.0
+Subject: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in
+ 'imx8mm_clocks_probe'
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?B?5ZGo5biI5b63?= <u201911681@hust.edu.cn>
+Cc:     abel vesa <abelvesa@kernel.org>, bai ping <ping.bai@nxp.com>,
+        fabio estevam <festevam@gmail.com>,
+        michael turquette <mturquette@baylibre.com>,
+        nxp linux team <linux-imx@nxp.com>,
+        peng fan <peng.fan@nxp.com>,
+        pengutronix kernel team <kernel@pengutronix.de>,
+        sascha hauer <s.hauer@pengutronix.de>,
+        shawn guo <shawnguo@kernel.org>,
+        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        hao luo <m202171776@hust.edu.cn>
+References: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+ <25b06794ffb595229019640e10f256fd.sboyd@kernel.org>
+ <5e18370b.3c8a8.1877d7fc98a.Coremail.u201911681@hust.edu.cn>
+ <86398a778336846688c33a737e2a9ae2.sboyd@kernel.org>
+From:   Dongliang Mu <dzm91@hust.edu.cn>
+In-Reply-To: <86398a778336846688c33a737e2a9ae2.sboyd@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-FEAS-AUTH-USER: dzm91@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-Dear Stephen,
-
-
-On 2023/4/19 上午 04:23, Stephen Boyd wrote:
-> Quoting Jacky Huang (2023-04-14 20:58:57)
->>>> diff --git a/drivers/clk/nuvoton/clk-ma35d1.h b/drivers/clk/nuvoton/clk-ma35d1.h
->>>> new file mode 100644
->>>> index 000000000000..28c60f081788
->>>> --- /dev/null
->>>> +++ b/drivers/clk/nuvoton/clk-ma35d1.h
->>>> @@ -0,0 +1,123 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>>> +/*
->>>> + * Copyright (C) 2023 Nuvoton Technology Corp.
->>>> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
->>>> + */
->>>> +
->>>> +#ifndef __DRV_CLK_NUVOTON_MA35D1_H
->>>> +#define __DRV_CLK_NUVOTON_MA35D1_H
->>> Is this header included in one C file? If so, remove the header file and
->>> put the contents in the C file.
->> Both clk-ma35d1.c and clk-ma35d1-pll.c include this header file.
+On 2023/4/19 03:57, Stephen Boyd wrote:
+> Quoting 周师德 (2023-04-13 19:02:19)
 >>
-> Do they both use all the defines from it? Move as much as possible out
-> of this header file and put them in the only C file that uses it.
+>>
+>>> -----原始邮件-----
+>>> 发件人: "Stephen Boyd" <sboyd@kernel.org>
+>>> 发送时间: 2023-04-14 03:06:59 (星期五)
+>>> 收件人: "Abel Vesa" <abelvesa@kernel.org>, "Bai Ping" <ping.bai@nxp.com>, "Fabio Estevam" <festevam@gmail.com>, "Michael Turquette" <mturquette@baylibre.com>, "NXP Linux Team" <linux-imx@nxp.com>, "Peng Fan" <peng.fan@nxp.com>, "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, "Zhou Shide" <u201911681@hust.edu.cn>
+>>> 抄送: hust-os-kernel-patches@googlegroups.com, "Zhou Shide" <u201911681@hust.edu.cn>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, "Hao Luo" <m202171776@hust.edu.cn>
+>>> 主题: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in 'imx8mm_clocks_probe'
+>>>
+>>> Quoting Zhou Shide (2023-04-12 20:24:39)
+>>>> The function imx8mm_clocks_probe() has two main issues:
+>>>> - The of_iomap() function may cause a memory leak.
+>>>> - Memory allocated for 'clk_hw_data' may not be freed properly
+>>>> in some paths.
+>>>>
+>>>> To fix these issues, this commit replaces the use of of_iomap()
+>>>> with devm_of_iomap() and replaces kzalloc() with devm_kzalloc().
+>>>> This ensures that all memory is properly managed and automatically
+>>>> freed when the device is removed.
+>>>>
+>>>> In addition, when devm_of_iomap() allocates memory with an error,
+>>>> it will first jump to label "unregister_hws" and
+>>>> then return PTR_ ERR(base).
+>>>>
+>>>> Fixes: 9c71f9ea35d7 ("clk: imx: imx8mm: Switch to clk_hw based API")
+>>>> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+>>>> Signed-off-by: Zhou Shide <u201911681@hust.edu.cn>
+>>>> ---
+>>>> The issue is discovered by static analysis, and the patch is not tested yet.
+>>> And you're not coordinating with each other?
+>> What do you mean by "coordinating with each other"?
+>>
+> I see two patches to the same driver from the same university on the
+> list. Preferably you coordinate and decide who will fix what smatch
+> warnings.
 
-Okay, I will try to eliminate the header file.
+Hi Stephen,
 
+As their advisor, I coordinate and assign smatch warnings to each 
+student. I double check our assignment table:
 
-Best regards,
-Jacky Huang
+drivers/clk/imx/clk-imx8mn.c:612 imx8mn_clocks_probe() warn: 'base' from 
+of_iomap() not released on lines: 612.
+drivers/clk/imx/clk-imxrt1050.c:154 imxrt1050_clocks_probe() warn: 
+'pll_base' from of_iomap() not released on lines: 108,154.
+drivers/clk/imx/clk-imx8mm.c:619 imx8mm_clocks_probe() warn: 'base' from 
+of_iomap() not released on lines: 403,619.
+drivers/clk/imx/clk-imx8mq.c:611 imx8mq_clocks_probe() warn: 'base' from 
+of_iomap() not released on lines: 399,611.
 
+There are four similar warnings from your subsystem. If I understand 
+correctly, two students are patching issues from different probe 
+functions in the different files since we assign all issues in one file 
+to one student. Maybe you mix clk-imx8mn (Hao Luo) and clk-imx8mm(Shide 
+Zhou). They only differ in one char.
+
+If I miss anything, please let me know. Next time, I will ask one 
+student to fix the issues in one subsystem. This can simply the effort 
+spent by other student.
+
+Dongliang Mu
+
+>
