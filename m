@@ -2,91 +2,231 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E4EC6FD18
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 18:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 269D0C77B78
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 18:11:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbjDSSCA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Apr 2023 14:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55596 "EHLO
+        id S232179AbjDSSLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Apr 2023 14:11:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232310AbjDSSBz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 14:01:55 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CDEE5BA1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 11:01:45 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id ud9so383341ejc.7
-        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 11:01:45 -0700 (PDT)
+        with ESMTP id S230218AbjDSSLH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 14:11:07 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F41536E8B
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 11:11:05 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-5058181d58dso190623a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 11:11:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681927304; x=1684519304;
+        d=linaro.org; s=google; t=1681927864; x=1684519864;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8TU4VKXggAA60k8u7aIEAlos+Ys8Wu2AXNC6HByLTIo=;
-        b=opsK8z1/b2kbjBrlmvQN7gIcrlPzmowCfoAZ7wiBNgndbvCFYgrtPuo1zv1/JVmW7k
-         Wtx8rpngvyT7fxDNSP7f+XLBNw5zS7wyT6gcasQESOoSiKBEvqs0o0n+HI2RVqPhE9z8
-         IxMqqMaCwx1D4E+WLnvsvvr7OGZMfEPtDW3HzzKBd3JIZnzNU55sRgWDPONxP7GVGVRM
-         ivgkBlX7+uTiNh3vtogdgAz+DXCgaf5YqaC5WAEl4MhvsM/VZ/+UxEZ9YoALfdBdnLnL
-         1C4A1hYOWpXoKhp9MSxS3TbJQbKdojnfXb6+vrCoF4hXYKh6RjG7wU/zvbGfCnkiIG7T
-         AM6w==
+        bh=2j1Pkr50g1mSceZHX8SMamWZIYT0Wo0+87cbSXw7e3o=;
+        b=m+cMiZEoVpqxyT/om0k6XXK3bOf3Pnff/VflBJct4TbCkartXBbel29eKfpE9IWZvi
+         S4ZUKSV6EXpHQ8zuORLbeV/u+ni6sq9BlxReFP0ECkw/+0dq7VRxqb3rIB1j5B0/oT25
+         HObV51x2RuIfHa0WVmal7WRUebQo4Kp9KIDgtprIK/DwbA+Nz5es2pWXc5ulhoQbOrYX
+         IHRxkGCj8TlYwdDI44bh8wW7iHPl6mHkK8LvOCKPqHKvVWzpjUD0b+WsjUzilILMFH42
+         9UVXyk8Sn04HGtwNOPR0vij04blgLVO4iVo5jbP8BRClZ/LI99gJA/czjWEHSdLvt7DM
+         xY/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681927304; x=1684519304;
+        d=1e100.net; s=20221208; t=1681927864; x=1684519864;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8TU4VKXggAA60k8u7aIEAlos+Ys8Wu2AXNC6HByLTIo=;
-        b=JwfipmeYkr60054XoOMZEHCAnrX9F6xTX4FYCpPsT09jGifje/brHZoZNupdc0F3Bp
-         VWnCGCW4EaSLA31rWgm6sCDTPp3bnOtRw1J4ZZqbiGY/AU4lJRApTtRoMyYtoopSHnnM
-         kc5jRetBrfQYExBaQaOKqOwBWqbA66IUHeimkCTfTbxzW5fA74l6kDLF3e78r/0T08il
-         FKipECzw1Wc5HuxGBTg0vPVJifWMGJptOcR4HDGwNNwjLZ9XgVH56cVCVVvJSkJaYzY9
-         6vgLZ+eQzAQvtF3vQ/EStCI8wL7S5UwfPbkq3EyXuTisJXybXHh54EasR5jj73sltCtM
-         QpKw==
-X-Gm-Message-State: AAQBX9cuS6LZGbG+KN1MxDPtJJ/pe2pXmdqoTFemP3G/PoaPL7j0MzMM
-        GGV6WX98gCy8U1hxLisjERZCJw==
-X-Google-Smtp-Source: AKy350aOM58fqkMWBGIsE//WU3V8n8GZKCewOK0nDx/WScmGxIL/da+nDUnS+aqw+9bnnVJH1n/4eg==
-X-Received: by 2002:a17:906:c098:b0:94e:5679:d950 with SMTP id f24-20020a170906c09800b0094e5679d950mr13391421ejz.72.1681927303028;
-        Wed, 19 Apr 2023 11:01:43 -0700 (PDT)
+        bh=2j1Pkr50g1mSceZHX8SMamWZIYT0Wo0+87cbSXw7e3o=;
+        b=aCqnPv1lqVLDOEHEpO/U4R30b7kHXwkvvj0ndP5PzLh5ee+FT4n1j1lMImyj2wOHhi
+         9QNga8Ahkcb8hVyFUXEELqOL7UFjRDz8gJ8AMvzTnxPGhw2iVne4DjCIY7NmNl4TKZU6
+         An4AynpMpwJeyBFTqg9bHmW610KQ0omhdh4NcL9+41lhEn2KrVRzLe2ueXALCuPELXI4
+         ERfzmqfKTQ2rXvUSdOBiYThOspAlkFV/NUPR6/7UdoDh1KzX3uxjBDTzvglkS60ggwF0
+         Zxa/jOid26fqQKzAf2uE8Ju77ay8kq3C93RApIMazsI6ZolltVodpLVaA1GoDmdqjAtS
+         i6ZQ==
+X-Gm-Message-State: AAQBX9cPlHvDcm+yDZ1H8ZOVO3A7kAm/DLEFvcTJN/GjtjqUe+SeFYNk
+        5rblQMeqFGXDYGZFFaw6VA0cbw==
+X-Google-Smtp-Source: AKy350a8Vdr07kQJG1rigtqy3d4/Y6OrVskqooISmVBchT4XXGJtlyrkQQiZkJt8od8HpD6LxrUw3w==
+X-Received: by 2002:aa7:d6c2:0:b0:505:47a:7ae8 with SMTP id x2-20020aa7d6c2000000b00505047a7ae8mr6638521edr.4.1681927864360;
+        Wed, 19 Apr 2023 11:11:04 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:b7d8:d88b:1fac:c802? ([2a02:810d:15c0:828:b7d8:d88b:1fac:c802])
-        by smtp.gmail.com with ESMTPSA id v8-20020a1709060b4800b0094f3cb173c7sm5855032ejg.63.2023.04.19.11.01.41
+        by smtp.gmail.com with ESMTPSA id bo25-20020a0564020b3900b005067d129267sm7397824edb.39.2023.04.19.11.11.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Apr 2023 11:01:42 -0700 (PDT)
-Message-ID: <1da38e9a-b5b2-0c06-8d30-d9c7df1b72cb@linaro.org>
-Date:   Wed, 19 Apr 2023 20:01:41 +0200
+        Wed, 19 Apr 2023 11:11:03 -0700 (PDT)
+Message-ID: <3b7394e1-1be7-ec38-61bd-708a624070ac@linaro.org>
+Date:   Wed, 19 Apr 2023 20:11:02 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH V2 1/4] dt-bindings: clock: qcom,ipq9574-gcc: Drop
- bias_pll_ubi_nc_clk input
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add GCC bindings support for
+ SDX75
 Content-Language: en-US
-To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-arm-msm@vger.kernel.org,
+To:     Taniya Das <quic_tdas@quicinc.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     quic_skakitap@quicinc.com, Imran Shaik <quic_imrashai@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
-        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
-References: <20230417053355.25691-1-quic_devipriy@quicinc.com>
- <20230417053355.25691-2-quic_devipriy@quicinc.com>
+        quic_rohiagar@quicinc.com, netdev@vger.kernel.org
+References: <20230419133013.2563-1-quic_tdas@quicinc.com>
+ <20230419133013.2563-3-quic_tdas@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230417053355.25691-2-quic_devipriy@quicinc.com>
+In-Reply-To: <20230419133013.2563-3-quic_tdas@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/04/2023 07:33, Devi Priya wrote:
-> Drop unused bias_pll_ubi_nc_clk input to the clock controller.
+On 19/04/2023 15:30, Taniya Das wrote:
+> From: Imran Shaik <quic_imrashai@quicinc.com>
 > 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+
+Thank you for your patch. There is something to discuss/improve.
+
+> Add support for GCC bindings and update documentation for
+> clock rpmh driver for SDX75.
+
+Subject: drop second/last, redundant "bindings support for". The
+"dt-bindings" prefix is already stating that these are bindings.
+But missing vendor name (Qualcomm). Both in subject and commit msg.
+
+
+
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
->  Changes since V9:
-> 	- Dropped the unused bias_pll_ubi_nc_clk input
-> 	- Added Bjorn Andersson to the maintainers list
+>  .../bindings/clock/qcom,gcc-sdx75.yaml        |  69 +++++++
+>  .../bindings/clock/qcom,rpmhcc.yaml           |   1 +
+>  include/dt-bindings/clock/qcom,gcc-sdx75.h    | 193 ++++++++++++++++++
+>  3 files changed, 263 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sdx75.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdx75.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdx75.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx75.yaml
+> new file mode 100644
+> index 000000000000..6489d857d5c4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdx75.yaml
+
+All new devices come as SoC-IP, so qcom,sdx75-gcc
+
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc-sdx75.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller on SDX75
+> +
+> +maintainers:
+> +  - Imran Shaik <quic_imrashai@quicinc.com>
+> +  - Taniya Das <quic_tdas@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm global clock control module provides the clocks, resets and power
+> +  domains on SDX75
+> +
+> +  See also:: include/dt-bindings/clock/qcom,gcc-sdx75.h
+
+Also hee
+
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,gcc-sdx75
+
+Also here
+
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: PCIE20 phy aux clock source
+> +      - description: PCIE_1 Pipe clock source
+> +      - description: PCIE_2 Pipe clock source
+> +      - description: PCIE Pipe clock source
+> +      - description: Sleep clock source
+> +      - description: USB3 phy wrapper pipe clock source
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: pcie20_phy_aux_clk
+> +      - const: pcie_1_pipe_clk
+> +      - const: pcie_2_pipe_clk
+> +      - const: pcie_pipe_clk
+> +      - const: sleep_clk
+> +      - const: usb3_phy_wrapper_gcc_usb30_pipe_clk
+
+Drop clock names entirely.
+
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    clock-controller@80000 {
+> +      compatible = "qcom,gcc-sdx75";
+> +      reg = <0x80000 0x1f7400>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>, <&pcie20_phy_aux_clk>, <&pcie_1_pipe_clk>,
+> +               <&pcie_2_pipe_clk>, <&pcie_pipe_clk>, <&sleep_clk>,
+> +               <&usb3_phy_wrapper_gcc_usb30_pipe_clk>;
+> +      clock-names = "bi_tcxo", "pcie20_phy_aux_clk", "pcie_1_pipe_clk",
+> +                    "pcie_2_pipe_clk", "pcie_pipe_clk", "sleep_clk",
+> +                    "usb3_phy_wrapper_gcc_usb30_pipe_clk";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> index d5a250b7c2af..267cf8c26823 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+> @@ -27,6 +27,7 @@ properties:
+>        - qcom,sdm845-rpmh-clk
+>        - qcom,sdx55-rpmh-clk
+>        - qcom,sdx65-rpmh-clk
+> +      - qcom,sdx75-rpmh-clk
+
+Separate patch.
 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>        - qcom,sm6350-rpmh-clk
+>        - qcom,sm8150-rpmh-clk
+>        - qcom,sm8250-rpmh-clk
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sdx75.h b/include/dt-bindings/clock/qcom,gcc-sdx75.h
+> new file mode 100644
+> index 000000000000..a470e8c4fd41
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,gcc-sdx75.h
+
+qcom,sdx75-gcc
+
+> @@ -0,0 +1,193 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SDX75_H
+> +#define _DT_BINDINGS_CLK_QCOM_GCC_SDX75_H
+> +
+> +/* GCC clocks */
+
 
 Best regards,
 Krzysztof
