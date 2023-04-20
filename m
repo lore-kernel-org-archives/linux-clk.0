@@ -2,126 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8D3C77B72
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 11:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB31C77B73
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 11:55:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbjDTLEe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Apr 2023 07:04:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54612 "EHLO
+        id S232140AbjDTLzm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Apr 2023 07:55:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235280AbjDTLEE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 07:04:04 -0400
-X-Greylist: delayed 1475 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 20 Apr 2023 04:02:49 PDT
-Received: from metanate.com (unknown [IPv6:2001:8b0:1628:5005::111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77ED335B1;
-        Thu, 20 Apr 2023 04:02:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=metanate.com; s=stronger; h=Content-Transfer-Encoding:Message-Id:Date:
-        Subject:Cc:To:From:Content-Type:Reply-To:Content-ID:Content-Description:
-        In-Reply-To:References; bh=f3UZPluLStuZn++V5HsxPtEJ327KiqrtZm7CqUYIcGI=; b=Ir
-        A52JQyq7SrUqPhPMQxOvB9eU9UdZLdYIi8574ktHEupTlj4wl8yT/LWcqQwozOFOo8l5O7dWG/acm
-        CBylwQO2QT0Q1KPUIMSd4a8zELnL0a5qwm4HQGDH8/yqa1BAoFIddsSXKmLrB+D7jutFP/w38creU
-        M1ucEAWwt/kirzuUCu1rtQNI+L2KIcmPObvro3EVdMwgPyHhDopGCgwrZQ0qdWqVvcEpXRsO7+oid
-        e5U0fg8QZ5b+pJzuHvTH2rViIDm34hsgMi6A3baYPJqsgpiDDixuOpdnixm2lRgu7ZOb315uM2WZD
-        AF6EWCPKBu09iyaGA08OwJu8POoUteSg==;
-Received: from [81.174.171.191] (helo=donbot.metanate.com)
-        by email.metanate.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <john@metanate.com>)
-        id 1ppRg1-0006ol-CI;
-        Thu, 20 Apr 2023 11:38:10 +0100
-From:   John Keeping <john@metanate.com>
-To:     linux-clk@vger.kernel.org
-Cc:     John Keeping <john@metanate.com>,
+        with ESMTP id S229520AbjDTLzm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 07:55:42 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F4E125;
+        Thu, 20 Apr 2023 04:55:40 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33KApa5i012564;
+        Thu, 20 Apr 2023 11:55:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=OpqjDS71NuvgVPcPQLeQrnkxWH3dmPrKI46AvafwSK0=;
+ b=aKtqgIijTEpFO/3ArVHZG74+d+B/sIookBOI4jMYjsygwwZYBJ7Lx8Z0FYYw9SsHlEpt
+ oZno6ZOq3x5rB3U2c0Mjlxo03OAvigTDcVUO4OXK345kQTVFJpPj6q+NHi7vl/GEMf8I
+ zCulE3ijnDpvHSDDurjt+Cp9A/n5e1oDN1ZZrYtkwJrfZdbxVChhE02sdtYpZQmHgOy2
+ ByC+89V3OM8VOMm7E5JbpUHVeDKMcv8ipJ2YYrNE9mmfCRtTwJ7b44JMSRLAPq1EFX+2
+ ttrd4nauYDyCfB896te6Xog4mM5o5iH+yLpUCNBYHDL++ZdvsMYPVHwMsa9AKAE7rm8S Tg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q2p4v9wdu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Apr 2023 11:55:37 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33KBtZYD017399
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Apr 2023 11:55:35 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Thu, 20 Apr 2023 04:55:32 -0700
+From:   Taniya Das <quic_tdas@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: Allow phase adjustment from debugfs
-Date:   Thu, 20 Apr 2023 11:38:04 +0100
-Message-Id: <20230420103805.125246-1-john@metanate.com>
-X-Mailer: git-send-email 2.40.0
+        Andy Gross <agross@kernel.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_skakitap@quicinc.com>,
+        <quic_cponnapa@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH] clk: qcom: camcc-sc7180: Add parent dependency to all camera GDSCs
+Date:   Thu, 20 Apr 2023 17:25:20 +0530
+Message-ID: <20230420115520.16472-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated: YES
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eYoN-tAZHMFiDmuzlDfaydVaQ2Tsq7hl
+X-Proofpoint-ORIG-GUID: eYoN-tAZHMFiDmuzlDfaydVaQ2Tsq7hl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-20_07,2023-04-20_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ bulkscore=0 impostorscore=0 phishscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 spamscore=0 mlxlogscore=666 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304200096
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For testing it may be useful to manually adjust a clock's phase.  Add
-support for writing to the existing clk_phase debugfs file, with the
-written value clamped to [0, 360) to match the behaviour of the
-clk_set_phase() function.
+Mark titan_top_gdsc as parent to all other camera GDSCs.
 
-This is a dangerous feature, so use the existing define
-CLOCK_ALLOW_WRITE_DEBUGFS to allow it only if the source is modified.
-
-Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 ---
- drivers/clk/clk.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/camcc-sc7180.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 27c30a533759..2d3b6869f3f6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3297,6 +3297,21 @@ static int clk_rate_set(void *data, u64 val)
- 
- #define clk_rate_mode	0644
- 
-+static int clk_phase_set(void *data, u64 val)
-+{
-+	struct clk_core *core = data;
-+	int degrees = do_div(val, 360);
-+	int ret;
+diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
+index e2b4804695f3..8a4ba7a19ed1 100644
+--- a/drivers/clk/qcom/camcc-sc7180.c
++++ b/drivers/clk/qcom/camcc-sc7180.c
+@@ -1480,12 +1480,21 @@ static struct clk_branch cam_cc_sys_tmr_clk = {
+ 	},
+ };
+
++static struct gdsc titan_top_gdsc = {
++	.gdscr = 0xb134,
++	.pd = {
++		.name = "titan_top_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++};
 +
-+	clk_prepare_lock();
-+	ret = clk_core_set_phase_nolock(core, degrees);
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+
-+#define clk_phase_mode	0644
-+
- static int clk_prepare_enable_set(void *data, u64 val)
- {
- 	struct clk_core *core = data;
-@@ -3324,6 +3339,9 @@ DEFINE_DEBUGFS_ATTRIBUTE(clk_prepare_enable_fops, clk_prepare_enable_get,
- #else
- #define clk_rate_set	NULL
- #define clk_rate_mode	0444
-+
-+#define clk_phase_set	NULL
-+#define clk_phase_mode	0644
- #endif
- 
- static int clk_rate_get(void *data, u64 *val)
-@@ -3339,6 +3357,16 @@ static int clk_rate_get(void *data, u64 *val)
- 
- DEFINE_DEBUGFS_ATTRIBUTE(clk_rate_fops, clk_rate_get, clk_rate_set, "%llu\n");
- 
-+static int clk_phase_get(void *data, u64 *val)
-+{
-+	struct clk_core *core = data;
-+
-+	*val = core->phase;
-+	return 0;
-+}
-+
-+DEFINE_DEBUGFS_ATTRIBUTE(clk_phase_fops, clk_phase_get, clk_phase_set, "%llu\n");
-+
- static const struct {
- 	unsigned long flag;
- 	const char *name;
-@@ -3529,7 +3557,8 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 	debugfs_create_file("clk_min_rate", 0444, root, core, &clk_min_rate_fops);
- 	debugfs_create_file("clk_max_rate", 0444, root, core, &clk_max_rate_fops);
- 	debugfs_create_ulong("clk_accuracy", 0444, root, &core->accuracy);
--	debugfs_create_u32("clk_phase", 0444, root, &core->phase);
-+	debugfs_create_file("clk_phase", clk_phase_mode, root, core,
-+			    &clk_phase_fops);
- 	debugfs_create_file("clk_flags", 0444, root, core, &clk_flags_fops);
- 	debugfs_create_u32("clk_prepare_count", 0444, root, &core->prepare_count);
- 	debugfs_create_u32("clk_enable_count", 0444, root, &core->enable_count);
--- 
-2.40.0
+ static struct gdsc bps_gdsc = {
+ 	.gdscr = 0x6004,
+ 	.pd = {
+ 		.name = "bps_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &titan_top_gdsc.pd,
+ 	.flags = HW_CTRL,
+ };
+
+@@ -1495,6 +1504,7 @@ static struct gdsc ife_0_gdsc = {
+ 		.name = "ife_0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &titan_top_gdsc.pd,
+ };
+
+ static struct gdsc ife_1_gdsc = {
+@@ -1503,6 +1513,7 @@ static struct gdsc ife_1_gdsc = {
+ 		.name = "ife_1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &titan_top_gdsc.pd,
+ };
+
+ static struct gdsc ipe_0_gdsc = {
+@@ -1512,15 +1523,9 @@ static struct gdsc ipe_0_gdsc = {
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = HW_CTRL,
++	.parent = &titan_top_gdsc.pd,
+ };
+
+-static struct gdsc titan_top_gdsc = {
+-	.gdscr = 0xb134,
+-	.pd = {
+-		.name = "titan_top_gdsc",
+-	},
+-	.pwrsts = PWRSTS_OFF_ON,
+-};
+
+ static struct clk_hw *cam_cc_sc7180_hws[] = {
+ 	[CAM_CC_PLL2_OUT_EARLY] = &cam_cc_pll2_out_early.hw,
+--
+2.17.1
 
