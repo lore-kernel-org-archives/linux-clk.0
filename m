@@ -2,88 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED623C77B72
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 16:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77911C77B72
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 17:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232983AbjDTQP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Apr 2023 12:15:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
+        id S230064AbjDTRc6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Apr 2023 13:32:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbjDTQP6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 12:15:58 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD703596;
-        Thu, 20 Apr 2023 09:15:57 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 4038C2AE;
-        Thu, 20 Apr 2023 16:15:57 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4038C2AE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1682007357; bh=dIoh7Uzva2QsUh5vyGcccNj94Y882Db73hATcucqawE=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=VANjqdpHV1W5XdXIB/wV+x8VC4ql3kGUs/Per8arX/UNuGOuxeKFb/7Av0anFrvms
-         k2opc6Z1dgRJBQh0L+vo4aO3IZ6rk1D1BicOJephalElMdkwyzKggqcxWNqG4OVJLo
-         KloTTSAaHOH4IGy3uYVMjyqnHdaIJTj7zO3MOaqMsisjTVETjJkOO66AcYdmNbZn3D
-         xcJNJf0KQeN4YWpLFn2TkGN+FDvBF6CFmG6Ph9Y320FpFKBVDL1z2sFaliP6/C7v4y
-         FTZSDSMqKbWjWmDM4+nEUU8ASgxHKz0/vH/CfYklDAAipUkksA5j/Ri8cMe226p3TD
-         Mktp/fj4YA+LA==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Brian Masney <bmasney@redhat.com>, sboyd@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: clk: add documentation to log which clocks have
- been disabled
-In-Reply-To: <20230411192153.289688-1-bmasney@redhat.com>
-References: <20230411192153.289688-1-bmasney@redhat.com>
-Date:   Thu, 20 Apr 2023 10:15:56 -0600
-Message-ID: <87y1mmsf5v.fsf@meer.lwn.net>
+        with ESMTP id S231405AbjDTRc5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 13:32:57 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B02E46BB
+        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 10:32:55 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id c3so3657055ljf.7
+        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 10:32:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1682011973; x=1684603973;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PMu93c2gYoXnO7B9slEwJygFJeopiwqYcQo4P3f1t+8=;
+        b=iOcSFGPT5NJMqkObNfENlnMWQuLzr8RN5hOMtxdkuzAlNCuVD2FzhRLMQfJHnD/rcL
+         9vYI7APHo51IEmPTUGT9PWxkRFkt14t1iIm4ZTKCuRRTtByxzY8NUgGNU8iaE7qspKJO
+         cJ9t75rLBwYhMeSNGlDJJgIsLCql7UQCEhGmSLxT2StD12AIJtomZy+GI+GHpMQm7/M7
+         cWW8ZJO0A7o2r/4Jmeu1x96MVBHq1QzLRQK870r4N1jZdFLg0iA/8BNf/VK/YRxb7TMi
+         lfhT1kzv0N2abbRC4Y43TryISMWJEtgnXDHZ9xU5+qOnM8t5lMojeoAKC+UCKnqofrFq
+         +Swg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682011973; x=1684603973;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PMu93c2gYoXnO7B9slEwJygFJeopiwqYcQo4P3f1t+8=;
+        b=JIh7rUNIianA+3CpD9YzdlwraEDxgjA3pTR7LlZPBOQZ1vgN224sRvgiXCheYaBONa
+         6joqjqWdZN5po/mgxr+KV21egGMstbXsKOTrxlhkkdW2bOgmXCPoX8GWMHAx97+m4QfR
+         FnyiJk/ij51z3dWe1gkABpKj7u+I5XC1F8Ne2jCNdzXNQZl4WOtYfJ4eLRmWo3qSADPR
+         2h/KR9MyGEZXK0qrkwj+X0YVGaZqiiP1fiRxp8IF91vT701SsiKVS8qUO8/8E+3imBxF
+         pNlRQ6k4vFPGhePYTmBSEKrxz0DaFxv9Fqp3rGPkzZLj2731Pj+NU7ZiLUx2n2rxKxJO
+         b9sw==
+X-Gm-Message-State: AAQBX9d1uqop/KK6hczaBpD09w8CM+OucX8lJmXHJKOWMF6gp0a7uDOR
+        KlKxyC8m+wSSX9JtPvP2OLRcwg==
+X-Google-Smtp-Source: AKy350YCIvzoC3bQqiv88BMnSKxCl7YsUyoUIg1If3KsIYiPncBILvB5mXz90XG0MQbAiVWdugjCnw==
+X-Received: by 2002:a05:651c:312:b0:2a9:7985:b2f5 with SMTP id a18-20020a05651c031200b002a97985b2f5mr1705522ljp.24.1682011973237;
+        Thu, 20 Apr 2023 10:32:53 -0700 (PDT)
+Received: from [192.168.1.101] (abyj144.neoplus.adsl.tpnet.pl. [83.9.29.144])
+        by smtp.gmail.com with ESMTPSA id e22-20020a2e8ed6000000b002a8c1462ecbsm309597ljl.137.2023.04.20.10.32.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Apr 2023 10:32:52 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v4 0/2] SM8350 VIDEOCC
+Date:   Thu, 20 Apr 2023 19:32:49 +0200
+Message-Id: <20230413-topic-lahaina_vidcc-v4-0-86c714a66a81@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEF3QWQC/43NTQrCMBAF4KtI1kbya6kr7yEiSZq2AyUpSQ1K6
+ d2ddieCdPlmeN+bSfYJfCaXw0ySL5AhBgzqeCCuN6HzFBrMRDAhmeKSTnEERwfTGwjmUaBxjlr
+ XGGtVpbUSBJvWZE9tMsH12A3PYcDjmHwLr23qdsfcQ55iem/Lha/X/yOFU0a5VG1thTDayuuAz
+ xRPMXVkBYvYgQhE2krwRrPKa61/ELkDkYgwr5iqzrqt1TeyLMsHXkaHplYBAAA=
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1682011971; l=1530;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=93PGuTesqpL9Pwcb1WJp1xK9V1diRq1o/c76V6de+NU=;
+ b=ythZ0cYRp+yVZKrwisW/OSq+a6uSM+i7d5ETgnwQsvLfui6DeWGYKABlE3Yf43lH9+ay5jIDl7eU
+ Vs9qZAFZAUXPBo6iysebo1QLgFiDr+5ymi1OHNoKskgLFDYIKNoV
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Brian Masney <bmasney@redhat.com> writes:
+v3 -> v4:
+- pick up rb
+- include qcom,gcc.yaml in the binding
 
-> The existing clk documentation has a section that talks about the
-> clk_ignore_unused kernel parameter. Add additional documentation that
-> describes how to log which clocks the kernel disables on bootup. This
-> will log messages like the following to the console on bootup:
->
->     [    1.268115] clk: Disabling unused clocks
->     [    1.272167] clk_disable: gcc_usb_clkref_en
->     [    1.276389] clk_disable: gcc_usb30_sec_sleep_clk
->     [    1.281131] clk_disable: gcc_usb30_prim_sleep_clk
->     ...
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  Documentation/driver-api/clk.rst | 5 +++++
->  1 file changed, 5 insertions(+)
+v3: https://lore.kernel.org/r/20230413-topic-lahaina_vidcc-v3-0-0e404765f945@linaro.org
 
-I've applied this, but...
+v2 -> v3:
+- Use a consistent VIDEO_CC_ prefix for resets
+- Separate out the binding (and don't pick up the rb as a consequence)
+- drop all pm_clks code
 
-> diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
-> index 3cad45d14187..2199c0042e75 100644
-> --- a/Documentation/driver-api/clk.rst
-> +++ b/Documentation/driver-api/clk.rst
-> @@ -258,6 +258,11 @@ clocks properly but rely on them being on from the bootloader, bypassing
->  the disabling means that the driver will remain functional while the issues
->  are sorted out.
->  
-> +You can see which clocks have been disabled by booting your kernel with these
-> +parameters:
+v2: https://lore.kernel.org/r/20230413-topic-lahaina_vidcc-v2-0-f721d507e555@linaro.org
 
-...I took the liberty of making that "parameters::" so that the options
-would be formatted as a literal block.
+v1 -> v2:
+- "){" -> ") {"
+- subsys_initcall -> module_platform_driver
+- constify lucid_5lpe_vco & .hw.init
+- devm_add_action_or_reset -> devm_pm_runtime_enable
 
-> + tp_printk trace_event=clk:clk_disable
-> +
->  To bypass this disabling, include "clk_ignore_unused" in the bootargs to the
->  kernel.
+v1: https://lore.kernel.org/r/20230413-topic-lahaina_vidcc-v1-0-134f9b22a5b3@linaro.org
 
-Thanks,
+This serires brings support for SM8350 videocc and updates the
+related dt-bindings.
 
-jon
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (2):
+      dt-bindings: clock: Add SM8350 VIDEOCC
+      clk: qcom: Introduce SM8350 VIDEOCC
+
+ .../bindings/clock/qcom,sm8350-videocc.yaml        |  68 +++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/videocc-sm8350.c                  | 552 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8350-videocc.h    |  35 ++
+ include/dt-bindings/reset/qcom,sm8350-videocc.h    |  18 +
+ 6 files changed, 683 insertions(+)
+---
+base-commit: 67d5d9f013d6c3829383c08162939cabff14fccc
+change-id: 20230413-topic-lahaina_vidcc-bcdabb475542
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
