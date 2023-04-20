@@ -2,158 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1492C6FD18
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Apr 2023 21:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89744C77B73
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 01:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbjDSVxb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Apr 2023 17:53:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34956 "EHLO
+        id S232328AbjDTBu1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Apr 2023 21:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbjDSVxb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 17:53:31 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63F9F3C1E;
-        Wed, 19 Apr 2023 14:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
-        t=1681941173; i=j.neuschaefer@gmx.net;
-        bh=E3MwaTC39cHV5jEqiGIoFdw7WcRGnfVKbe7RZwo68iw=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=LMkeOne8W12inAaZ/YilffTeUnstAOesHyxyoojqAF5QqEUyGHFxXGenviIBKVZDv
-         JnFaTLZIwIz3H+zJWTjMJ/H7Fpp+Gcf37ot94tS7gYcv30+KcJjbDGk6+QUbyjlRsc
-         sEXODlI9TmrUm1cnPr8pVmari2bYex5Hp2SPEZ6F+rTqtyxKZKvg1n7n2SSHHdCqQT
-         dr/LDcwBco9ZBLrQXmOqurNrgJzOy62MvR4W/y+N4LS8VaWG/i259Gqywatxeuextl
-         ZuMxy4V9fyIuQhAxmG9bH4+B+NE6EvnU6fY6FZOvo7gZJ3nfZXxM4mLMo2i8DZjc1o
-         I6NB30sJayYag==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([95.223.44.193]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M8QWG-1ptfZl1Qe0-004QMs; Wed, 19
- Apr 2023 23:52:53 +0200
-Date:   Wed, 19 Apr 2023 23:52:57 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     j.neuschaefer@gmx.net, avifishman70@gmail.com,
-        benjaminfair@google.com, daniel.lezcano@linaro.org,
-        devicetree@vger.kernel.org, krzk+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux@roeck-us.net,
-        mturquette@baylibre.com, openbmc@lists.ozlabs.org,
-        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
-        tali.perry1@gmail.com, tglx@linutronix.de, tmaimon77@gmail.com,
-        venture@google.com, wim@linux-watchdog.org, yuenn@google.com
-Subject: Re: [PATCH v6 2/2] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
- controller driver
-Message-ID: <ZEBiuRH3DjVUO/Kp@probook>
-References: <20230415111355.696738-1-j.neuschaefer@gmx.net>
- <20230415111355.696738-3-j.neuschaefer@gmx.net>
- <c04038f2-b7aa-7c37-df93-6950831579f6@wanadoo.fr>
+        with ESMTP id S231334AbjDTBuZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Apr 2023 21:50:25 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5461D10C
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 18:50:20 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2a8bca69e8bso1994401fa.3
+        for <linux-clk@vger.kernel.org>; Wed, 19 Apr 2023 18:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1681955418; x=1684547418;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nizPB57M3kviIBPTCEgCjkwcM2uwJN4yH7DbrqfjL/U=;
+        b=ijQFQOl0D+QxNYBLRsK03sCXvJSoXgkQ1tUoaxJ05thU2CniCDwmoENBu7lAqIOemt
+         9YrZQ1wxTOAqcrtydHSRhMzT9DozrQz9PnEF0lis0N7rI62uSCRqghv+Zwrle9os8HAN
+         gulc/qnPAky5h3942ws0EVPI4lF88ABikgUsbx1du9dmIIm1QH463wt9nvl7EOcSUu2y
+         pLezI17uxqXEUa5kRlmt+zUyf9BeG2e+E9GifCyK1IU+sl0+vRaD9tuOksNSwpl3oFFQ
+         Fp2DLHNRg1fp07/nPoC+prTmzfrdrNI75sUpODnTM2fjIYommNuGaebDkP9f/zInnXja
+         VdPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681955418; x=1684547418;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nizPB57M3kviIBPTCEgCjkwcM2uwJN4yH7DbrqfjL/U=;
+        b=f6T+k/x/uXmYucpUagSNd2GL7kj4H5veJYToRbV+dRNMYsZxt0Qv2NUVpeoOby0BMW
+         YRfgMmM9/7XcXXXJ4WANoqQC8+mX8R4vRpGVhuq0fkHzwfiCWfVsvXQi7eCXYK80pEBN
+         s2/53UxS8imPABKIu7qJrEUXGeHXkRHZLMdjOtoVJJU6s++VwCMx0gVZX9rzmX193jNC
+         eI68PdGg2K3cU5poHv5wUSI5ZKElKoRMcwELeIHE/3j3Sk8xiVrRvLYOqia0Msh2Z/rs
+         8XAVqxdeIfG69phMWxFLA4M0HbqHETPALmtmbaxPY1dBPHdlnHiO9w80XX3Zgau6oUTj
+         +WnQ==
+X-Gm-Message-State: AAQBX9fkm8QjzEIgJcVlM7AlTXFYKCEXcJhja3NdUWcYIu+o+5e3xB56
+        yGjL7xdVXAbS5IPdvSoqC2bUgQ==
+X-Google-Smtp-Source: AKy350ZBHPNjSoDhsEErAWQW3i0ayKz28VoblspqqpkAPk69WKIMkGhhqmI1kaVf9dno1FI7mXTyGA==
+X-Received: by 2002:ac2:4c1a:0:b0:4eb:1606:48db with SMTP id t26-20020ac24c1a000000b004eb160648dbmr4418362lfq.22.1681955418544;
+        Wed, 19 Apr 2023 18:50:18 -0700 (PDT)
+Received: from [192.168.1.101] (abyj144.neoplus.adsl.tpnet.pl. [83.9.29.144])
+        by smtp.gmail.com with ESMTPSA id v20-20020ac25614000000b004edd4566110sm58915lfd.286.2023.04.19.18.50.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Apr 2023 18:50:18 -0700 (PDT)
+Message-ID: <66c41caf-bf21-61af-c6e4-52b34b69c1ce@linaro.org>
+Date:   Thu, 20 Apr 2023 03:50:16 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nBgbEHe+7HdynUHs"
-Content-Disposition: inline
-In-Reply-To: <c04038f2-b7aa-7c37-df93-6950831579f6@wanadoo.fr>
-X-Provags-ID: V03:K1:TTKfScm3X+1lV46i2xneBJJ+mRnIdHaebMSneyl8EkLY7S7V6ir
- tmEvh62wdv/WVjbqdH7A84xGNb3RKFAch9n0YeCEcF0Igi49ekDymYcVSXXM2R9hgXdaLO7
- dp/ICD4eIfn/dwbQzeE8iunQWMeFvF0BYiArqRE9d8zM1ppM0/o03p5BANY3lRmUNvTqR9u
- b8Xg1w19VhdJqSmL5lteA==
-UI-OutboundReport: notjunk:1;M01:P0:wJFEDQxfRL4=;ah7J+2kmEogfH5rqEMt6ppjheoH
- KrP7wiEcbiG50T6ZYLvyues+omkXepggjO1En8RKwfFQvj9Q+/y30OpG4QV4dyzjUN32pBp8k
- ZTOgqXUIPXH09ZtfnfM5ucGA2R7aA9xIY/8m0Qx0Yx4uhsV16pEv2Ha7tGLWu+a/yy6tayKSP
- xPZUwjW4slngP1ZdWok+JvE2R5s/MzPU9UbEGeuW32Lvdi4Qsmy2H+O/D+Mll3FavTSh+cu0A
- HRhfEflMdgGaYjR3Wrk9oXiLuozTAkbmMf3jCKoqkZbfksy0A2NgAmXsk8syQv9WZri75JWBM
- XOZe5Wg+QW0I6VMzgyXpbPtoSAvWQEFICalKEQfNxdnhRuXGb5EfRaolqY4L4+OjPFFKcEzFH
- Kwpj5X72qUDcZG1Wc4Ll5dlHra46FzDl/zktU65dDa0zbQWPNcGMkFeldM2tQ0KORW+S17Vxv
- bJI0IoSK+2qbFL8239d0Q9Ri/Cjp8AnawJWxWswlaEDN/ItKwjHD1P8WoNStTpfMfT7OBdGsJ
- Y4YhWqJPLhP/d1YvVS8CbI19IEIVGctfHMOh++sB4XXw9mAdMi983yL9429cG7UYEBYHLk7Mo
- HcNDjXXcynLxVelOIm0Wt2I4V9gB+p1H2V59i/4ozElhg74t2lo4Q6NXbx15TBHKhuyY4rZoM
- /PpP7mqUYeLL169L133ueg8iz2uzY3DtntdvNPRlHBO1J24vRPukY6oxol70s1Vk3cqi6vldI
- Z2OWlxj7ZzhJI4goYOm21BAmiSmrNtz07c0UP8kJgq5AUTo/YZexa5Yc8mrZqSyJi77YimMQe
- xf0z2cjZPWQdKZxeMR0MwDmDHCf//oF/Hr+QkfMG9d6w9yVC0UU05ikuA8AZS36uNOTOHH08q
- hKRT8qoU1bMND9hd87X4fZRw/56xTQwjo7noyODDFxPbqIBT8EW0TwbyA2MPek3sGnt7MVPDk
- oJSfanfvsoDljHysdHMo1TiqsIc=
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
+Subject: Re: [PATCH RFT v2 00/14] SMD RPMCC sleep preparations
+Content-Language: en-US
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---nBgbEHe+7HdynUHs
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello Christophe,
+On 8.03.2023 22:35, Konrad Dybcio wrote:
+> v1 -> v2:
+> - Use CLK_IS_CRITICAL instead of leaving a clk enable vote, expand macros
+>   to do so
+> - Fix the keepalive clocks for 8998 & 660 (CNoC -> PNoC, it was
+>   confusingly named cnoc_periph downstream)
+> - Introduce .determinte_rate to ensure we don't set keepalive clocks'
+>   rates below 19.2 MHz
+> - Add a (!conditional!) way to test the ultimate goal of all these changes
+>   by essentially enabling unused clk cleanup through a dt property (for
+>   legacy reasons)
+> 
+> v2 was tested on:
+> 
+> - MSM8996 Sony Kagura (can disable unused)
+> - MSM8998 Sony Maple (can disable unused with OOT icc)
+> - SM6375 Sony PDX225 (can disable unused with OOT icc)
+> 
+> v1: https://lore.kernel.org/r/20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org
+> 
+> This series brings support for a couple of things necessary for the full
+> system idle on SMD RPM SoCs, namely unused clk shutdown and keepalive
+> votes (permanent active votes that are required on certain clocks for the
+> platform to function).
+> 
+> Tested on MSM8996 and SM6375, does not seem to introduce any additional
+> regressions.
+> 
+> Keepalive clocks for other platforms were gathered by digging in old
+> downstream kernels, please give them a test.
+I have an implementation of rpmcc-within-icc ready(ish) locally. Turns out
+some SoCs need a keepalive (19.2MHz, active-only) vote on clocks that
+are NOT governed by interconnect.. So before we can disable clocks,
+both will need to be implemented.. ugh... I was hoping we could avoid
+having it in rpmcc..
 
-On Sat, Apr 15, 2023 at 02:16:09PM +0200, Christophe JAILLET wrote:
-> Le 15/04/2023 =C3=A0 13:13, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=A0:
-> > This driver implements the following features w.r.t. the clock and reset
-> > controller in the WPCM450 SoC:
-> >=20
-> > - It calculates the rates for all clocks managed by the clock controller
-> > - It leaves the clock tree mostly unchanged, except that it enables/
-> >    disables clock gates based on usage.
-> > - It exposes the reset lines managed by the controller using the
-> >    Generic Reset Controller subsystem
-> >=20
-> > NOTE: If the driver and the corresponding devicetree node are present,
-> >        the driver will disable "unused" clocks. This is problem until
-> >        the clock relations are properly declared in the devicetree (in a
-> >        later patch). Until then, the clk_ignore_unused kernel parameter
-> >        can be used as a workaround.
-> >=20
-> > Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer-hi6Y0CQ0nG0@publ=
-ic.gmane.org>
-> > ---
-[...]
-> > +	// Enables/gates
-> > +	for (i =3D 0; i < ARRAY_SIZE(clken_data); i++) {
-> > +		const struct wpcm450_clken_data *data =3D &clken_data[i];
-> > +
-> > +		hw =3D clk_hw_register_gate_parent_data(NULL, data->name, &data->par=
-ent, data->flags,
-> > +						      clk_base + REG_CLKEN, data->bitnum,
-> > +						      data->flags, &wpcm450_clk_lock);
->=20
-> If an error occures in the 'for' loop or after it, should this be
-> clk_hw_unregister_gate()'ed somewhere?
-
-Ideally yes =E2=80=94
-
-in this case, if the clock driver fails, the system is arguably in such
-a bad state that there isn't much point in bothering.
-
-
->=20
-> CJ
->=20
-> > +		if (IS_ERR(hw)) {
-> > +			pr_err("Failed to register gate: %pe\n", hw);
-> > +			goto err_free;
-> > +		}
-> > +		clk_data->hws[data->bitnum] =3D hw;
-> > +	}
-
-
-
-Best regards,
-Jonathan
-
---nBgbEHe+7HdynUHs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmRAYpUACgkQCDBEmo7z
-X9v2qw/9EiZBIWVLXrb/H+SBZLajTH8gs/+wWatpfYY9MHKe6PQ4wEqD3wHZvC1j
-XNyEizeN9zKD617uEUNnj4LS65mXB9jpk+IBn2V3S9m8aK0ZnohGPIBQbp7fJxRD
-scBOpgCKxii9YUjJFDwfJc+aGteD1FZCV5ufF6W7tAlpqdpRJiV4Sxyui6tplBjb
-tmz3EbyRRYJ5IW+qM84oS9xocMvIyFUcSqIAyHZNzS2QyUzl48dHpwjfGn2jJ2q8
-enIxwqOsbNUNyYJHynYGVqQGTusRYJxd6Qg7c2fZyOtsRdvvS/cvTvaNeFap27zr
-4ciW+NTiD40FzGgrq8glOz18+fBi4HIpR9XYDIYSPNAIiQEmj3Uzn78EQ7xNrSk5
-6pjoPtE6AkYtGe/M7CAAjHkV6xiuKIXTXxZQMCI/vw22rg76CJkNzq1UapIqmYUQ
-klfYRnd/UFavPt57hVLC94KgBZO2tmikTOksaSnZw6tN0CCXwaz9MnAPR/aaA8YC
-8eO/7oNgydKM/K1fUrFBWbR0Td8MLlHmH35xsa9kdVayHin9v7oK8oqtCDFQvDHL
-1cd6KQcPHppWTQ7A8nWIjlmm+lm0Y5n1dfRL7/k/Lj6RrpkTOp6BQ+xqIM4LCpQb
-SQNXKoHLuiincVsxMWIWi+qDKYENxeosPds/iY3v6vSY82fkv50=
-=r2E3
------END PGP SIGNATURE-----
-
---nBgbEHe+7HdynUHs--
+Konrad
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+> Konrad Dybcio (11):
+>       dt-bindings: clock: qcom,rpmcc: Add a way to enable unused clock cleanup
+>       clk: qcom: smd-rpm_ Make __DEFINE_CLK_SMD_RPM_BRANCH_PREFIX accept flags
+>       clk: qcom: smd-rpm: Make DEFINE_CLK_SMD_RPM_BRANCH_A accept flags
+>       clk: qcom: smd-rpm: Make BI_TCXO_AO critical
+>       clk: qcom: smd-rpm: Make __DEFINE_CLK_SMD_RPM_PREFIX accept flags
+>       clk: qcom: smd-rpm: Separate out a macro for defining an AO clock
+>       clk: qcom: smd-rpm: Add support for keepalive votes
+>       clk: qcom: smd-rpm: Introduce DEFINE_CLK_SMD_RPM_BUS_KEEPALIVE
+>       clk: qcom: smd-rpm: Hook up PCNoC_0 keep_alive
+>       clk: qcom: smd-rpm: Hook up CNoC_1 and SNoC_2 keep_alive
+>       arm64: dts: qcom: msm8996: Enable rpmcc unused clk disablement
+> 
+> Shawn Guo (3):
+>       clk: qcom: smd-rpm: Add .is_enabled hook
+>       clk: qcom: smd-rpm: Add .is_prepared hook
+>       clk: qcom: smd-rpm: Mark clock enabled in clk_smd_rpm_handoff()
+> 
+>  .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   6 +
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi              |   1 +
+>  drivers/clk/qcom/clk-smd-rpm.c                     | 133 +++++++++++++++------
+>  3 files changed, 106 insertions(+), 34 deletions(-)
+> ---
+> base-commit: fc31900c948610e7b5c2f15fb7795832c8325327
+> change-id: 20230303-topic-rpmcc_sleep-d67aad9f3012
+> 
+> Best regards,
