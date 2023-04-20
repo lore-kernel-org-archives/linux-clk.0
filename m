@@ -2,60 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13FBC7EE25
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 09:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754BAC77B72
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 10:04:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231921AbjDTJhT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Apr 2023 05:37:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51708 "EHLO
+        id S231268AbjDTKEu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Apr 2023 06:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234041AbjDTJgp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 05:36:45 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ED585266
-        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 02:36:28 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2a8bb726210so3795991fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 02:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1681983386; x=1684575386;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hfsZM67OXbAlzVD+uHneuvtJvIsoB/dlohyx55svOjw=;
-        b=mMrxmnCh6cK34iMsXHT6we3TE3HE2XWlq8fH3NKmU0GnJbuuDmkuKeN18CGlJCP2+G
-         GkWDOm6egtzIZD4q1hutug9vMuk9ScjgB/G6l5Idnsk3aAAhgYEh3KEs8avXsCB1WwPm
-         1Dy0IYNMwOZMlEDqWU2+Byj7r6VeeVqC/O9afOWGvSDQdHQfnRSIg3WkpYIDgHX4B40e
-         qsyr/l/Zur5+MXYi7ubHKJq4hQ+gh/IoBjMf+qVXzvqJkYkp3lFXGdmXcI8vz165n3di
-         +dZ/jID2kuWv15n82fKrgHWEEuD2yr23jpgpOyq+6V7CuG/5EK6Wp+TvyS9wCxGhITQr
-         Xx7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681983386; x=1684575386;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hfsZM67OXbAlzVD+uHneuvtJvIsoB/dlohyx55svOjw=;
-        b=Zqcg9gAXSyNBKkSHrOUsh9LjMIdOLrIhsEPLhi50cp5Z7Aupr0YBVUw7DHcLEUeAxF
-         8F/k/LVGt4ca0mBKr64dS3Kta9+Lnhfqs1EJNvzhLfVGJJCHrYtrbIg3r5bSiYCgXHEN
-         NUT0yCb91LpyRlLBaACr5T7RJlLSroDICowxkHUM3HxeizHYG1Gb3URBGyXZ24C8H42T
-         XfLuZNDL5pyG2orOPYx0dl6dcsaWh722qqUH1vQkcc3hRtPCDZMnyItgVL348r5isKVk
-         TCcUKQoabrKBjBw+ODrXacbovDgN99R8oiq6theyB+7/AkuhPsy/kgieMPUgyJy/bjIS
-         B+Tg==
-X-Gm-Message-State: AAQBX9cWakPYUgHmqewlmFqNprELDddAroJU0cQPjqvN6i4zL0dHM/B+
-        72K0iz7qiSCCZKzImg4uzbE0fw==
-X-Google-Smtp-Source: AKy350ai9s+joKTQe7jfoz4hBNP9alfMfO6WPChONY+2B39f63l8Q02pLjKEKfzsAR5R+3/qer65/w==
-X-Received: by 2002:a05:6512:481:b0:4ed:c8ba:df9e with SMTP id v1-20020a056512048100b004edc8badf9emr305180lfq.63.1681983386212;
-        Thu, 20 Apr 2023 02:36:26 -0700 (PDT)
-Received: from [192.168.1.101] (abyj144.neoplus.adsl.tpnet.pl. [83.9.29.144])
-        by smtp.gmail.com with ESMTPSA id i20-20020ac25234000000b004eb07f5cde6sm155791lfl.297.2023.04.20.02.36.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Apr 2023 02:36:25 -0700 (PDT)
-Message-ID: <6175f709-8c88-6ec3-4c31-cac9f2440b52@linaro.org>
-Date:   Thu, 20 Apr 2023 11:36:24 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH RFT v2 00/14] SMD RPMCC sleep preparations
-To:     Stephan Gerhold <stephan@gerhold.net>
+        with ESMTP id S234125AbjDTKEh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 06:04:37 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A7D426AC;
+        Thu, 20 Apr 2023 03:04:34 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1681985070; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=UDim+PQA33tmbIO6x+xSrtpKHpsfwjxjEAELUsUhwNxS/T8XFZ6eO87JWRcMBECsU5
+    vCnf++wWTk9Gw28q7akFVYyKgU5M3qAOI68Q2XoWoKp4U1eyg2Y0soC8jgR1D4x+MnTV
+    C6J73l7VukQ2zi6h/DHQE3ZSGM2KHs8E9WY4CkkbVGHyazICt6TueM0ovjTWu+gx/pzD
+    ClgWYKbyxPnWdEzPf4pE1xSadVsKccJUj91JUHbeovHAyAVsh9I+I5Qp5RjBGUtBr/3w
+    /vWC/qPkt9uoHjU+3JidhaaHjAOObu7UcMKUlu8E2DTpghyfQLt4U79MeoZkcZA0irE/
+    vnUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1681985070;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=wDrVxTv70izMK25X6UuVTZzq526NLO2TgXSsl+hFSSM=;
+    b=Gxh+MnBNTyua7OV3fzNAyLwO0m3FSUK5tF68bSRwxWk7oKyQeDxd8Po2O0ySGvES34
+    ml0Fz3NDNhNO3j7XL5v8puEq00/9iQZgC4qSwGINQgMv6WQIlOYXI8brDXE1QH+IT5s5
+    xQ8uB5t+FeO8iAs6KuJ+CAtnHFf7OQfvrk9tQIuSaFn1MF10fpm3/v5g7PCDBYi53MQc
+    LrlWbwZJ4Ppc+R/t1uUa2InpkQff/Tm0EtKpfFGYisGMkq7KND0SrXhx+C3uyLDOp7a8
+    IJnB8AHTKkZ2yuBnjPcc2n3Scp6BoX6a8QRfo/WOvUqWGKc7OZmQOGxEQ9hmFR8Eb5Lj
+    wqYQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1681985070;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=wDrVxTv70izMK25X6UuVTZzq526NLO2TgXSsl+hFSSM=;
+    b=YSDzDfrr7wmCqJJee377/LUhYMc7adtH/ISYMHknGT9N64u/kCB4G2CVa9q/Fwzkq8
+    6hNgutF5ZS7M64G55XVIw6SP8oL/d3YM6UM1jwsLf/lFhfMO80XgIKaFrnQ4zID15ib8
+    a0E0ZKUp5mqgOkcOVvsJeO0FAkAK0d48m2umjkZ9iWRYLaZNLiE1Y05fH4vXjgS5E/ks
+    74NmK18JX47WkI19v1dFbPvXseDWM/TdReJfwLA/GHnj5o04EeXuecZbjSoKemA9884s
+    pgOUIJQBDLmn4yR5pKIiaQWccdsI+mLjijQAZuXFi59ppcY/RDsv8/xjaN75isTa2zus
+    H6nQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1681985070;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=wDrVxTv70izMK25X6UuVTZzq526NLO2TgXSsl+hFSSM=;
+    b=hd/YWgN17SBUy8Gk9S7Z0ak84x+6vM+rF3xu4/Op9RNUZjI7FMJ2bwkXoEejtAkoVu
+    6yaOUcG6HqCGmriSnHBg==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA8Z2F1A=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.4.0 DYNA|AUTH)
+    with ESMTPSA id j6420az3KA4To4v
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Thu, 20 Apr 2023 12:04:29 +0200 (CEST)
+Date:   Thu, 20 Apr 2023 12:04:23 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -67,36 +76,41 @@ Cc:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         devicetree@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>,
         Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH RFT v2 00/14] SMD RPMCC sleep preparations
+Message-ID: <ZEEOJ7VhccqCNTbj@gerhold.net>
 References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
  <66c41caf-bf21-61af-c6e4-52b34b69c1ce@linaro.org>
  <ZEDwLB3RwT6mHIu4@gerhold.net>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZEDwLB3RwT6mHIu4@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
+ <6175f709-8c88-6ec3-4c31-cac9f2440b52@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6175f709-8c88-6ec3-4c31-cac9f2440b52@linaro.org>
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Apr 20, 2023 at 11:36:24AM +0200, Konrad Dybcio wrote:
+> On 20.04.2023 09:56, Stephan Gerhold wrote:
+> > On Thu, Apr 20, 2023 at 03:50:16AM +0200, Konrad Dybcio wrote:
+> >> On 8.03.2023 22:35, Konrad Dybcio wrote:
+> >>> Keepalive clocks for other platforms were gathered by digging in old
+> >>> downstream kernels, please give them a test.
+> >> I have an implementation of rpmcc-within-icc ready(ish) locally. Turns out
+> >> some SoCs need a keepalive (19.2MHz, active-only) vote on clocks that
+> >> are NOT governed by interconnect.. So before we can disable clocks,
+> >> both will need to be implemented.. ugh... I was hoping we could avoid
+> >> having it in rpmcc..
+> > Can you give an example? Which clocks are affected on which SoC?
+> msm8998/sdm660 and PNoC
 
+I don't see a PNoC for 8998/660, do you mean the "cnoc_periph_clk"
+downstream? Like the other NoCs it seems to be a RPM_BUS_CLK_TYPE, which
+means it does fit best into interconnect in my opinion. From a quick
+grep I don't see any usage of it in msm-4.4 downstream other than the
+active-only keepalive vote. So maybe you could just send that vote once
+in icc_rpm_smd and then ignore that clock (don't expose it at all)?
 
-On 20.04.2023 09:56, Stephan Gerhold wrote:
-> On Thu, Apr 20, 2023 at 03:50:16AM +0200, Konrad Dybcio wrote:
->> On 8.03.2023 22:35, Konrad Dybcio wrote:
->>> Keepalive clocks for other platforms were gathered by digging in old
->>> downstream kernels, please give them a test.
->> I have an implementation of rpmcc-within-icc ready(ish) locally. Turns out
->> some SoCs need a keepalive (19.2MHz, active-only) vote on clocks that
->> are NOT governed by interconnect.. So before we can disable clocks,
->> both will need to be implemented.. ugh... I was hoping we could avoid
->> having it in rpmcc..
->>
-> 
-> Can you give an example? Which clocks are affected on which SoC?
-msm8998/sdm660 and PNoC
-
-Konrad
-> 
-> Thanks,
-> Stephan
+Thanks,
+Stephan
