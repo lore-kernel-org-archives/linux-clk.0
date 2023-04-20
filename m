@@ -2,156 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A11C77B73
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 15:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5AEC77B73
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 15:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231997AbjDTPqH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Apr 2023 11:46:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44142 "EHLO
+        id S233734AbjDTP6Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Apr 2023 11:58:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232217AbjDTPqG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 11:46:06 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60F3E6A
-        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:46:04 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-94eee951c70so76621266b.3
-        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:46:04 -0700 (PDT)
+        with ESMTP id S231742AbjDTP6Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 11:58:16 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCDA844AE
+        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:57:57 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4edbd6cc46bso661550e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:57:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682005563; x=1684597563;
+        d=linaro.org; s=google; t=1682006275; x=1684598275;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0cIHBvHWcGEnYBnx07Jx9M8LLOFZkmUFP1XaIMjnq7Q=;
-        b=e0hKPqIszYbYGJTlvCw3gsjO6ZNlIy5fi0qrX+vYzS25QEKh4qLoIGJ1P76GqbcyBy
-         1lF6GGuGAImVE6hpraQzoyydZGHRZlTmEG/wQZJTUuc2GPf/GFD56u+YxcyTM8EXhad2
-         ylKfpwqfeYcWPiQB0WAGYfChHYQNT3kCk083C0x5//SsjpXJOndN3T82JISqqFcPiaxQ
-         uGTT2LPm2MiosKnvZ7QIVoRgEox3hXsasn2T3YpQooRYnICpmdXwG3d/xVAgXljHO4Iw
-         fD2Nb1zZK3jVpc8uBcEp+rrK1HYeNfyD2et9WGuKW3X+W8noKGK97O8yjmeHjl4NygxN
-         KGFA==
+        bh=vNUf+/1kABmy7fyuOrfNxFVz/b750ayYzUND39pLMfE=;
+        b=gOzPqTG52EcJJcC8fSMrLBACgoU65xT1Z+2PjNPM5cnkRbYSCM9JE5KV4kM6VHLMD+
+         m/cGI6Q7aQc4PWxGUHI9ii+DnQOezZgZ6e5RFr+OOsCjgmPIU/Rpnrt+MoyUW1J32WAO
+         7DjiXhHxpe5rlclutblk1w9ENYHmCaD9M5cJ2AnL18YIxDMs265nUu44Qkzdsv+f6dkZ
+         8xqreK1i0x72eG7mKXPs2hZASBf9YxBwKtht08gqQxYSeSAxs1U+5qqQjFEea/9X/t2n
+         aX8Bajyb+mbUKSd5Fc44amn3GVSbJiZCNf8kaEdrUy+0I67ioo5gNgOvCFrMBsb7mCOo
+         9QyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682005563; x=1684597563;
+        d=1e100.net; s=20221208; t=1682006275; x=1684598275;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0cIHBvHWcGEnYBnx07Jx9M8LLOFZkmUFP1XaIMjnq7Q=;
-        b=QEyehNFkaBtq/9IOmtE9xzwKdbNfDtsEvl9dRI6uWc/QbeJ9FwKtRtiJ2pkY71Q/6K
-         +N2D8LZJBM6aTTCxSKchXOgiEAPaIK1X53U52bx9vY+idIouCanadr87Nd02lGgfzHiS
-         T4fn9LQ/NkUZ7enNdGmKk3+F+NraXQjlKSzMzUTbtmxz6r+eKcuLCRHWo4iryyaneVfY
-         HiVrMGSwKiLhtAjphUmAEp0y45OFBi2forSR6PcX+YGgZZERfF/56Roi7kj+r51PuW7u
-         EqO5A7iEMP59mb19NYo1zDU9QFX4+Q9BPtk0R7s5rUPMo/4aVWpo9M5rwg+AZtKgnrCR
-         O/WA==
-X-Gm-Message-State: AAQBX9dICA++w7vi3O7AOjNvmKK8NyW4C/vffPfHLowkxn03tSsmd6V+
-        LyQ614U5h/Z10KNKO9ssXHcwtQ==
-X-Google-Smtp-Source: AKy350ZR+5rRIUICH4MYgDTvUmfRzv2UsKC6PnHsLTZnVEbLk6qFlRl61Wr0kPjQFJ+5VzKwCqpkdQ==
-X-Received: by 2002:a05:6402:332:b0:504:7f72:3db3 with SMTP id q18-20020a056402033200b005047f723db3mr2383006edw.9.1682005563214;
-        Thu, 20 Apr 2023 08:46:03 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:bcb8:77e6:8f45:4771? ([2a02:810d:15c0:828:bcb8:77e6:8f45:4771])
-        by smtp.gmail.com with ESMTPSA id v5-20020a056402184500b0050687f06aacsm861574edy.12.2023.04.20.08.46.02
+        bh=vNUf+/1kABmy7fyuOrfNxFVz/b750ayYzUND39pLMfE=;
+        b=WxQSKNdMCGA7LB5xdHo8Yengpj4Hm9q76IP52pNGnG0qnnXpgEFbV8FUB6nqXld2jB
+         IgWEY5a0GtHTUW36urw7qVWQV+RWNQJVGqqLsIT8KdmzDOlZsmN+jLgjyqBHebXWsdPZ
+         AE1igxfucjX9eiVPNNaos3Y47YxJqkRnuDVSZe1o+843NcllkkVYUyA5XTt2W9aIMnxz
+         cEnJQZ38mGXW5PQVNgsMl6r+MIC21WpNEdFSgL9fxgVw1rld7DTYN12XYUuAafp9sgS4
+         fDI0xNafhTXZ9VdJWlqAu+MZlRjbBaeY/SHoYrvUAF+9Rp3gHKW/vRb4H4S4yOzQmqVY
+         nXlA==
+X-Gm-Message-State: AAQBX9ffCNlXlGRJJ+mSEub0tuKtr7T8tqMuXp8ZYKQokrNPER1+ZC3T
+        G01V6AMlVIrEZAX23+mBkNAaOw==
+X-Google-Smtp-Source: AKy350arn52bKLxZfJWKLLKPNIrb1lNv+4X1nIWe0dPWFxR0J7UgHvmPzDdNeiVmfrlAhRPBheO41g==
+X-Received: by 2002:ac2:490b:0:b0:4eb:50ba:cb06 with SMTP id n11-20020ac2490b000000b004eb50bacb06mr669625lfi.49.1682006275410;
+        Thu, 20 Apr 2023 08:57:55 -0700 (PDT)
+Received: from [192.168.1.101] (abyj144.neoplus.adsl.tpnet.pl. [83.9.29.144])
+        by smtp.gmail.com with ESMTPSA id d2-20020ac25ec2000000b004edc4928f2asm255230lfq.71.2023.04.20.08.57.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Apr 2023 08:46:02 -0700 (PDT)
-Message-ID: <4127a3d7-f65e-7d9c-86ea-e2e9754201aa@linaro.org>
-Date:   Thu, 20 Apr 2023 17:46:01 +0200
+        Thu, 20 Apr 2023 08:57:54 -0700 (PDT)
+Message-ID: <e3bd41d8-f0c5-6756-13bf-bf29c786ab5c@linaro.org>
+Date:   Thu, 20 Apr 2023 17:57:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Add SM8350 VIDEOCC
+ Thunderbird/102.9.1
+Subject: Re: [PATCH RFT v2 00/14] SMD RPMCC sleep preparations
 Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230413-topic-lahaina_vidcc-v3-0-0e404765f945@linaro.org>
- <20230413-topic-lahaina_vidcc-v3-1-0e404765f945@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230413-topic-lahaina_vidcc-v3-1-0e404765f945@linaro.org>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        devicetree@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/04/2023 14:53, Konrad Dybcio wrote:
-> SM8350, like most recent higher-end chips has a separate clock
-> controller block just for the Venus IP. Document it.
+
+
+On 8.03.2023 22:35, Konrad Dybcio wrote:
+> v1 -> v2:
+> - Use CLK_IS_CRITICAL instead of leaving a clk enable vote, expand macros
+>   to do so
+> - Fix the keepalive clocks for 8998 & 660 (CNoC -> PNoC, it was
+>   confusingly named cnoc_periph downstream)
+> - Introduce .determinte_rate to ensure we don't set keepalive clocks'
+>   rates below 19.2 MHz
+> - Add a (!conditional!) way to test the ultimate goal of all these changes
+>   by essentially enabling unused clk cleanup through a dt property (for
+>   legacy reasons)
 > 
-> The binding was separated as the driver, unlike the earlier ones, doesn't
-> expect clock-names to keep it easier to maintain.
+> v2 was tested on:
+> 
+> - MSM8996 Sony Kagura (can disable unused)
+> - MSM8998 Sony Maple (can disable unused with OOT icc)
+> - SM6375 Sony PDX225 (can disable unused with OOT icc)
+> 
+> v1: https://lore.kernel.org/r/20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org
+> 
+> This series brings support for a couple of things necessary for the full
+> system idle on SMD RPM SoCs, namely unused clk shutdown and keepalive
+> votes (permanent active votes that are required on certain clocks for the
+> platform to function).
+> 
+> Tested on MSM8996 and SM6375, does not seem to introduce any additional
+> regressions.
+> 
+> Keepalive clocks for other platforms were gathered by digging in old
+> downstream kernels, please give them a test.
 > 
 > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
->  .../bindings/clock/qcom,sm8350-videocc.yaml        | 81 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,sm8350-videocc.h    | 35 ++++++++++
->  include/dt-bindings/reset/qcom,sm8350-videocc.h    | 18 +++++
->  3 files changed, 134 insertions(+)
+> Konrad Dybcio (11):
+>       dt-bindings: clock: qcom,rpmcc: Add a way to enable unused clock cleanup
+
+>       clk: qcom: smd-rpm_ Make __DEFINE_CLK_SMD_RPM_BRANCH_PREFIX accept flags
+>       clk: qcom: smd-rpm: Make DEFINE_CLK_SMD_RPM_BRANCH_A accept flags
+>       clk: qcom: smd-rpm: Make BI_TCXO_AO critical
+Stephen, parallel to all of the discussions, would you be willing to
+take patches 4-6 as they are? XO_A being critical is something that
+won't hurt without the rest.
+
+Konrad
+
+>       clk: qcom: smd-rpm: Make __DEFINE_CLK_SMD_RPM_PREFIX accept flags
+>       clk: qcom: smd-rpm: Separate out a macro for defining an AO clock
+>       clk: qcom: smd-rpm: Add support for keepalive votes
+>       clk: qcom: smd-rpm: Introduce DEFINE_CLK_SMD_RPM_BUS_KEEPALIVE
+>       clk: qcom: smd-rpm: Hook up PCNoC_0 keep_alive
+>       clk: qcom: smd-rpm: Hook up CNoC_1 and SNoC_2 keep_alive
+>       arm64: dts: qcom: msm8996: Enable rpmcc unused clk disablement
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml
-> new file mode 100644
-> index 000000000000..28a1002b1563
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8350-videocc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SM8350 Video Clock & Reset Controller
-> +
-> +maintainers:
-> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
-> +
-> +description: |
-> +  Qualcomm video clock control module provides the clocks, resets and power
-> +  domains on Qualcomm SoCs.
-> +
-> +  See also::
-> +    include/dt-bindings/clock/qcom,videocc-sm8350.h
-> +    include/dt-bindings/reset/qcom,videocc-sm8350.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8350-videocc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board active XO source
-> +      - description: Board sleep clock
-> +
-> +  power-domains:
-> +    description:
-> +      A phandle and PM domain specifier for the MMCX power domain.
-> +    maxItems: 1
-> +
-> +  required-opps:
-> +    description:
-> +      A phandle to an OPP node describing required MMCX performance point.
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-
-Everything is the same as gcc.yaml, so add a allOf:$ref to it, drop
-unnecessary properties and use unevaluatedProperties: false.
-
-Best regards,
-Krzysztof
-
+> Shawn Guo (3):
+>       clk: qcom: smd-rpm: Add .is_enabled hook
+>       clk: qcom: smd-rpm: Add .is_prepared hook
+>       clk: qcom: smd-rpm: Mark clock enabled in clk_smd_rpm_handoff()
+> 
+>  .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   6 +
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi              |   1 +
+>  drivers/clk/qcom/clk-smd-rpm.c                     | 133 +++++++++++++++------
+>  3 files changed, 106 insertions(+), 34 deletions(-)
+> ---
+> base-commit: fc31900c948610e7b5c2f15fb7795832c8325327
+> change-id: 20230303-topic-rpmcc_sleep-d67aad9f3012
+> 
+> Best regards,
