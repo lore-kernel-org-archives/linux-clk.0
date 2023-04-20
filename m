@@ -2,146 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5AEC77B73
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 15:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED623C77B72
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 16:15:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233734AbjDTP6Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Apr 2023 11:58:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52978 "EHLO
+        id S232983AbjDTQP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Apr 2023 12:15:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231742AbjDTP6Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 11:58:16 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCDA844AE
-        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:57:57 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4edbd6cc46bso661550e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682006275; x=1684598275;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vNUf+/1kABmy7fyuOrfNxFVz/b750ayYzUND39pLMfE=;
-        b=gOzPqTG52EcJJcC8fSMrLBACgoU65xT1Z+2PjNPM5cnkRbYSCM9JE5KV4kM6VHLMD+
-         m/cGI6Q7aQc4PWxGUHI9ii+DnQOezZgZ6e5RFr+OOsCjgmPIU/Rpnrt+MoyUW1J32WAO
-         7DjiXhHxpe5rlclutblk1w9ENYHmCaD9M5cJ2AnL18YIxDMs265nUu44Qkzdsv+f6dkZ
-         8xqreK1i0x72eG7mKXPs2hZASBf9YxBwKtht08gqQxYSeSAxs1U+5qqQjFEea/9X/t2n
-         aX8Bajyb+mbUKSd5Fc44amn3GVSbJiZCNf8kaEdrUy+0I67ioo5gNgOvCFrMBsb7mCOo
-         9QyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682006275; x=1684598275;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vNUf+/1kABmy7fyuOrfNxFVz/b750ayYzUND39pLMfE=;
-        b=WxQSKNdMCGA7LB5xdHo8Yengpj4Hm9q76IP52pNGnG0qnnXpgEFbV8FUB6nqXld2jB
-         IgWEY5a0GtHTUW36urw7qVWQV+RWNQJVGqqLsIT8KdmzDOlZsmN+jLgjyqBHebXWsdPZ
-         AE1igxfucjX9eiVPNNaos3Y47YxJqkRnuDVSZe1o+843NcllkkVYUyA5XTt2W9aIMnxz
-         cEnJQZ38mGXW5PQVNgsMl6r+MIC21WpNEdFSgL9fxgVw1rld7DTYN12XYUuAafp9sgS4
-         fDI0xNafhTXZ9VdJWlqAu+MZlRjbBaeY/SHoYrvUAF+9Rp3gHKW/vRb4H4S4yOzQmqVY
-         nXlA==
-X-Gm-Message-State: AAQBX9ffCNlXlGRJJ+mSEub0tuKtr7T8tqMuXp8ZYKQokrNPER1+ZC3T
-        G01V6AMlVIrEZAX23+mBkNAaOw==
-X-Google-Smtp-Source: AKy350arn52bKLxZfJWKLLKPNIrb1lNv+4X1nIWe0dPWFxR0J7UgHvmPzDdNeiVmfrlAhRPBheO41g==
-X-Received: by 2002:ac2:490b:0:b0:4eb:50ba:cb06 with SMTP id n11-20020ac2490b000000b004eb50bacb06mr669625lfi.49.1682006275410;
-        Thu, 20 Apr 2023 08:57:55 -0700 (PDT)
-Received: from [192.168.1.101] (abyj144.neoplus.adsl.tpnet.pl. [83.9.29.144])
-        by smtp.gmail.com with ESMTPSA id d2-20020ac25ec2000000b004edc4928f2asm255230lfq.71.2023.04.20.08.57.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Apr 2023 08:57:54 -0700 (PDT)
-Message-ID: <e3bd41d8-f0c5-6756-13bf-bf29c786ab5c@linaro.org>
-Date:   Thu, 20 Apr 2023 17:57:53 +0200
+        with ESMTP id S231341AbjDTQP6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 12:15:58 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CD703596;
+        Thu, 20 Apr 2023 09:15:57 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 4038C2AE;
+        Thu, 20 Apr 2023 16:15:57 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4038C2AE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1682007357; bh=dIoh7Uzva2QsUh5vyGcccNj94Y882Db73hATcucqawE=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=VANjqdpHV1W5XdXIB/wV+x8VC4ql3kGUs/Per8arX/UNuGOuxeKFb/7Av0anFrvms
+         k2opc6Z1dgRJBQh0L+vo4aO3IZ6rk1D1BicOJephalElMdkwyzKggqcxWNqG4OVJLo
+         KloTTSAaHOH4IGy3uYVMjyqnHdaIJTj7zO3MOaqMsisjTVETjJkOO66AcYdmNbZn3D
+         xcJNJf0KQeN4YWpLFn2TkGN+FDvBF6CFmG6Ph9Y320FpFKBVDL1z2sFaliP6/C7v4y
+         FTZSDSMqKbWjWmDM4+nEUU8ASgxHKz0/vH/CfYklDAAipUkksA5j/Ri8cMe226p3TD
+         Mktp/fj4YA+LA==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Brian Masney <bmasney@redhat.com>, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] docs: clk: add documentation to log which clocks have
+ been disabled
+In-Reply-To: <20230411192153.289688-1-bmasney@redhat.com>
+References: <20230411192153.289688-1-bmasney@redhat.com>
+Date:   Thu, 20 Apr 2023 10:15:56 -0600
+Message-ID: <87y1mmsf5v.fsf@meer.lwn.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH RFT v2 00/14] SMD RPMCC sleep preparations
-Content-Language: en-US
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        devicetree@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-References: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230303-topic-rpmcc_sleep-v2-0-ae80a325fe94@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Brian Masney <bmasney@redhat.com> writes:
 
-
-On 8.03.2023 22:35, Konrad Dybcio wrote:
-> v1 -> v2:
-> - Use CLK_IS_CRITICAL instead of leaving a clk enable vote, expand macros
->   to do so
-> - Fix the keepalive clocks for 8998 & 660 (CNoC -> PNoC, it was
->   confusingly named cnoc_periph downstream)
-> - Introduce .determinte_rate to ensure we don't set keepalive clocks'
->   rates below 19.2 MHz
-> - Add a (!conditional!) way to test the ultimate goal of all these changes
->   by essentially enabling unused clk cleanup through a dt property (for
->   legacy reasons)
-> 
-> v2 was tested on:
-> 
-> - MSM8996 Sony Kagura (can disable unused)
-> - MSM8998 Sony Maple (can disable unused with OOT icc)
-> - SM6375 Sony PDX225 (can disable unused with OOT icc)
-> 
-> v1: https://lore.kernel.org/r/20230303-topic-rpmcc_sleep-v1-0-d9cfaf9b27a7@linaro.org
-> 
-> This series brings support for a couple of things necessary for the full
-> system idle on SMD RPM SoCs, namely unused clk shutdown and keepalive
-> votes (permanent active votes that are required on certain clocks for the
-> platform to function).
-> 
-> Tested on MSM8996 and SM6375, does not seem to introduce any additional
-> regressions.
-> 
-> Keepalive clocks for other platforms were gathered by digging in old
-> downstream kernels, please give them a test.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> The existing clk documentation has a section that talks about the
+> clk_ignore_unused kernel parameter. Add additional documentation that
+> describes how to log which clocks the kernel disables on bootup. This
+> will log messages like the following to the console on bootup:
+>
+>     [    1.268115] clk: Disabling unused clocks
+>     [    1.272167] clk_disable: gcc_usb_clkref_en
+>     [    1.276389] clk_disable: gcc_usb30_sec_sleep_clk
+>     [    1.281131] clk_disable: gcc_usb30_prim_sleep_clk
+>     ...
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 > ---
-> Konrad Dybcio (11):
->       dt-bindings: clock: qcom,rpmcc: Add a way to enable unused clock cleanup
+>  Documentation/driver-api/clk.rst | 5 +++++
+>  1 file changed, 5 insertions(+)
 
->       clk: qcom: smd-rpm_ Make __DEFINE_CLK_SMD_RPM_BRANCH_PREFIX accept flags
->       clk: qcom: smd-rpm: Make DEFINE_CLK_SMD_RPM_BRANCH_A accept flags
->       clk: qcom: smd-rpm: Make BI_TCXO_AO critical
-Stephen, parallel to all of the discussions, would you be willing to
-take patches 4-6 as they are? XO_A being critical is something that
-won't hurt without the rest.
+I've applied this, but...
 
-Konrad
+> diff --git a/Documentation/driver-api/clk.rst b/Documentation/driver-api/clk.rst
+> index 3cad45d14187..2199c0042e75 100644
+> --- a/Documentation/driver-api/clk.rst
+> +++ b/Documentation/driver-api/clk.rst
+> @@ -258,6 +258,11 @@ clocks properly but rely on them being on from the bootloader, bypassing
+>  the disabling means that the driver will remain functional while the issues
+>  are sorted out.
+>  
+> +You can see which clocks have been disabled by booting your kernel with these
+> +parameters:
 
->       clk: qcom: smd-rpm: Make __DEFINE_CLK_SMD_RPM_PREFIX accept flags
->       clk: qcom: smd-rpm: Separate out a macro for defining an AO clock
->       clk: qcom: smd-rpm: Add support for keepalive votes
->       clk: qcom: smd-rpm: Introduce DEFINE_CLK_SMD_RPM_BUS_KEEPALIVE
->       clk: qcom: smd-rpm: Hook up PCNoC_0 keep_alive
->       clk: qcom: smd-rpm: Hook up CNoC_1 and SNoC_2 keep_alive
->       arm64: dts: qcom: msm8996: Enable rpmcc unused clk disablement
-> 
-> Shawn Guo (3):
->       clk: qcom: smd-rpm: Add .is_enabled hook
->       clk: qcom: smd-rpm: Add .is_prepared hook
->       clk: qcom: smd-rpm: Mark clock enabled in clk_smd_rpm_handoff()
-> 
->  .../devicetree/bindings/clock/qcom,rpmcc.yaml      |   6 +
->  arch/arm64/boot/dts/qcom/msm8996.dtsi              |   1 +
->  drivers/clk/qcom/clk-smd-rpm.c                     | 133 +++++++++++++++------
->  3 files changed, 106 insertions(+), 34 deletions(-)
-> ---
-> base-commit: fc31900c948610e7b5c2f15fb7795832c8325327
-> change-id: 20230303-topic-rpmcc_sleep-d67aad9f3012
-> 
-> Best regards,
+...I took the liberty of making that "parameters::" so that the options
+would be formatted as a literal block.
+
+> + tp_printk trace_event=clk:clk_disable
+> +
+>  To bypass this disabling, include "clk_ignore_unused" in the bootargs to the
+>  kernel.
+
+Thanks,
+
+jon
