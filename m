@@ -2,140 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB31C77B73
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 11:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A11C77B73
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Apr 2023 15:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232140AbjDTLzm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Apr 2023 07:55:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52834 "EHLO
+        id S231997AbjDTPqH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Apr 2023 11:46:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbjDTLzm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 07:55:42 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9F4E125;
-        Thu, 20 Apr 2023 04:55:40 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33KApa5i012564;
-        Thu, 20 Apr 2023 11:55:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=OpqjDS71NuvgVPcPQLeQrnkxWH3dmPrKI46AvafwSK0=;
- b=aKtqgIijTEpFO/3ArVHZG74+d+B/sIookBOI4jMYjsygwwZYBJ7Lx8Z0FYYw9SsHlEpt
- oZno6ZOq3x5rB3U2c0Mjlxo03OAvigTDcVUO4OXK345kQTVFJpPj6q+NHi7vl/GEMf8I
- zCulE3ijnDpvHSDDurjt+Cp9A/n5e1oDN1ZZrYtkwJrfZdbxVChhE02sdtYpZQmHgOy2
- ByC+89V3OM8VOMm7E5JbpUHVeDKMcv8ipJ2YYrNE9mmfCRtTwJ7b44JMSRLAPq1EFX+2
- ttrd4nauYDyCfB896te6Xog4mM5o5iH+yLpUCNBYHDL++ZdvsMYPVHwMsa9AKAE7rm8S Tg== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q2p4v9wdu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Apr 2023 11:55:37 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33KBtZYD017399
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Apr 2023 11:55:35 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Thu, 20 Apr 2023 04:55:32 -0700
-From:   Taniya Das <quic_tdas@quicinc.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_skakitap@quicinc.com>,
-        <quic_cponnapa@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH] clk: qcom: camcc-sc7180: Add parent dependency to all camera GDSCs
-Date:   Thu, 20 Apr 2023 17:25:20 +0530
-Message-ID: <20230420115520.16472-1-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S232217AbjDTPqG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Apr 2023 11:46:06 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60F3E6A
+        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:46:04 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-94eee951c70so76621266b.3
+        for <linux-clk@vger.kernel.org>; Thu, 20 Apr 2023 08:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1682005563; x=1684597563;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0cIHBvHWcGEnYBnx07Jx9M8LLOFZkmUFP1XaIMjnq7Q=;
+        b=e0hKPqIszYbYGJTlvCw3gsjO6ZNlIy5fi0qrX+vYzS25QEKh4qLoIGJ1P76GqbcyBy
+         1lF6GGuGAImVE6hpraQzoyydZGHRZlTmEG/wQZJTUuc2GPf/GFD56u+YxcyTM8EXhad2
+         ylKfpwqfeYcWPiQB0WAGYfChHYQNT3kCk083C0x5//SsjpXJOndN3T82JISqqFcPiaxQ
+         uGTT2LPm2MiosKnvZ7QIVoRgEox3hXsasn2T3YpQooRYnICpmdXwG3d/xVAgXljHO4Iw
+         fD2Nb1zZK3jVpc8uBcEp+rrK1HYeNfyD2et9WGuKW3X+W8noKGK97O8yjmeHjl4NygxN
+         KGFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682005563; x=1684597563;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0cIHBvHWcGEnYBnx07Jx9M8LLOFZkmUFP1XaIMjnq7Q=;
+        b=QEyehNFkaBtq/9IOmtE9xzwKdbNfDtsEvl9dRI6uWc/QbeJ9FwKtRtiJ2pkY71Q/6K
+         +N2D8LZJBM6aTTCxSKchXOgiEAPaIK1X53U52bx9vY+idIouCanadr87Nd02lGgfzHiS
+         T4fn9LQ/NkUZ7enNdGmKk3+F+NraXQjlKSzMzUTbtmxz6r+eKcuLCRHWo4iryyaneVfY
+         HiVrMGSwKiLhtAjphUmAEp0y45OFBi2forSR6PcX+YGgZZERfF/56Roi7kj+r51PuW7u
+         EqO5A7iEMP59mb19NYo1zDU9QFX4+Q9BPtk0R7s5rUPMo/4aVWpo9M5rwg+AZtKgnrCR
+         O/WA==
+X-Gm-Message-State: AAQBX9dICA++w7vi3O7AOjNvmKK8NyW4C/vffPfHLowkxn03tSsmd6V+
+        LyQ614U5h/Z10KNKO9ssXHcwtQ==
+X-Google-Smtp-Source: AKy350ZR+5rRIUICH4MYgDTvUmfRzv2UsKC6PnHsLTZnVEbLk6qFlRl61Wr0kPjQFJ+5VzKwCqpkdQ==
+X-Received: by 2002:a05:6402:332:b0:504:7f72:3db3 with SMTP id q18-20020a056402033200b005047f723db3mr2383006edw.9.1682005563214;
+        Thu, 20 Apr 2023 08:46:03 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:bcb8:77e6:8f45:4771? ([2a02:810d:15c0:828:bcb8:77e6:8f45:4771])
+        by smtp.gmail.com with ESMTPSA id v5-20020a056402184500b0050687f06aacsm861574edy.12.2023.04.20.08.46.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Apr 2023 08:46:02 -0700 (PDT)
+Message-ID: <4127a3d7-f65e-7d9c-86ea-e2e9754201aa@linaro.org>
+Date:   Thu, 20 Apr 2023 17:46:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: eYoN-tAZHMFiDmuzlDfaydVaQ2Tsq7hl
-X-Proofpoint-ORIG-GUID: eYoN-tAZHMFiDmuzlDfaydVaQ2Tsq7hl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-20_07,2023-04-20_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- bulkscore=0 impostorscore=0 phishscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 spamscore=0 mlxlogscore=666 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304200096
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Add SM8350 VIDEOCC
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230413-topic-lahaina_vidcc-v3-0-0e404765f945@linaro.org>
+ <20230413-topic-lahaina_vidcc-v3-1-0e404765f945@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230413-topic-lahaina_vidcc-v3-1-0e404765f945@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mark titan_top_gdsc as parent to all other camera GDSCs.
+On 19/04/2023 14:53, Konrad Dybcio wrote:
+> SM8350, like most recent higher-end chips has a separate clock
+> controller block just for the Venus IP. Document it.
+> 
+> The binding was separated as the driver, unlike the earlier ones, doesn't
+> expect clock-names to keep it easier to maintain.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sm8350-videocc.yaml        | 81 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,sm8350-videocc.h    | 35 ++++++++++
+>  include/dt-bindings/reset/qcom,sm8350-videocc.h    | 18 +++++
+>  3 files changed, 134 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml
+> new file mode 100644
+> index 000000000000..28a1002b1563
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8350-videocc.yaml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sm8350-videocc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SM8350 Video Clock & Reset Controller
+> +
+> +maintainers:
+> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
+> +
+> +description: |
+> +  Qualcomm video clock control module provides the clocks, resets and power
+> +  domains on Qualcomm SoCs.
+> +
+> +  See also::
+> +    include/dt-bindings/clock/qcom,videocc-sm8350.h
+> +    include/dt-bindings/reset/qcom,videocc-sm8350.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm8350-videocc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +      - description: Board active XO source
+> +      - description: Board sleep clock
+> +
+> +  power-domains:
+> +    description:
+> +      A phandle and PM domain specifier for the MMCX power domain.
+> +    maxItems: 1
+> +
+> +  required-opps:
+> +    description:
+> +      A phandle to an OPP node describing required MMCX performance point.
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- drivers/clk/qcom/camcc-sc7180.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+Everything is the same as gcc.yaml, so add a allOf:$ref to it, drop
+unnecessary properties and use unevaluatedProperties: false.
 
-diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
-index e2b4804695f3..8a4ba7a19ed1 100644
---- a/drivers/clk/qcom/camcc-sc7180.c
-+++ b/drivers/clk/qcom/camcc-sc7180.c
-@@ -1480,12 +1480,21 @@ static struct clk_branch cam_cc_sys_tmr_clk = {
- 	},
- };
-
-+static struct gdsc titan_top_gdsc = {
-+	.gdscr = 0xb134,
-+	.pd = {
-+		.name = "titan_top_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
- static struct gdsc bps_gdsc = {
- 	.gdscr = 0x6004,
- 	.pd = {
- 		.name = "bps_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &titan_top_gdsc.pd,
- 	.flags = HW_CTRL,
- };
-
-@@ -1495,6 +1504,7 @@ static struct gdsc ife_0_gdsc = {
- 		.name = "ife_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &titan_top_gdsc.pd,
- };
-
- static struct gdsc ife_1_gdsc = {
-@@ -1503,6 +1513,7 @@ static struct gdsc ife_1_gdsc = {
- 		.name = "ife_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &titan_top_gdsc.pd,
- };
-
- static struct gdsc ipe_0_gdsc = {
-@@ -1512,15 +1523,9 @@ static struct gdsc ipe_0_gdsc = {
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.flags = HW_CTRL,
-+	.parent = &titan_top_gdsc.pd,
- };
-
--static struct gdsc titan_top_gdsc = {
--	.gdscr = 0xb134,
--	.pd = {
--		.name = "titan_top_gdsc",
--	},
--	.pwrsts = PWRSTS_OFF_ON,
--};
-
- static struct clk_hw *cam_cc_sc7180_hws[] = {
- 	[CAM_CC_PLL2_OUT_EARLY] = &cam_cc_pll2_out_early.hw,
---
-2.17.1
+Best regards,
+Krzysztof
 
