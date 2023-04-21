@@ -2,108 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0045DC77B75
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 10:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4938C77B75
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 11:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230335AbjDUKlL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 06:41:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36118 "EHLO
+        id S231208AbjDULFz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Apr 2023 07:05:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbjDUKlK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 06:41:10 -0400
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5DBCA5ED
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 03:41:06 -0700 (PDT)
-Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-2fddb442d47so1440699f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 03:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682073665; x=1684665665;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+YqQNAmmogknbIn9Y0b0u4L5Ow5Ad5Dnkjv56VIfJok=;
-        b=uQiklW2CvMkmNZHGr1EPHrLYXjD3GZMu0OEm7OaBY8cu3Quf2/yPz5X2Y5kM+vULXO
-         kWf8C1DbbzUMM+HqN6SZB+z8V2p0NsLuH5I85Fe/RoznmFQe7ducs1RiMV5R/JQk+i08
-         +Y1HXMg8DCQcsCMLTtO1G3zSWrHjWa5OY1S2XzIYcoEKRa99sV5zk+JH71LUjmE4DdFS
-         i6IhbY+ieFp3X2aqVch4Py8YH9b9vLkKSl2n9n+mr7zmXbVF1CURPGunnNJXYzW12g8z
-         hCLhbbseSAR8pCUtq9eovKWfAh4UR7+5WOe/rbGi6kMQwacFfbJbeDYgEb06JvzDHQ91
-         hmyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682073665; x=1684665665;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+YqQNAmmogknbIn9Y0b0u4L5Ow5Ad5Dnkjv56VIfJok=;
-        b=FcG0GPEcE3yCCso2dxbHLd2hBznj9h8+8Nh61TAHtXP9wsLdmTkcAnrV53YJbrJXs7
-         M4SbL0rW56OTnxdARp8UGMSIquitMp7mGhcaBctzHJv4n6wU8GyDGws569IxFqnGz6Lf
-         n2olZMC+2csHYcnuk52Y5Ip4oGiHpomkOmLF9tdwrQK/OW9F7981Ql7HmpvVblD8M971
-         gf3UdV7GDGDIZEHXZ0U/Abf/kIqt1p5C6roYNjlVvIx8tnXTRu0c8M0nAcTXd53rsYZM
-         9Wo4kHqFkeJYvjoFiyj/UNpsi+8HP8qeXNu7QfeF6lc8BrfWvNQ9J/IpiF2o48rNPzat
-         enqg==
-X-Gm-Message-State: AAQBX9eU0AXXBBgXtYMzQCrsM6DKTlurVP1nGXipvLMdXbUo0ksirLBZ
-        dhWwC+iH1hnJC0A1POO8zHCTPw==
-X-Google-Smtp-Source: AKy350Yqao75dQ23thMATmN1NhRFEeG5fvjt9ZYxkUJEmAhn02fefzSbUCbVTTv1MvkDJW/rRjgzWg==
-X-Received: by 2002:a5d:6b46:0:b0:2db:11f3:f7ee with SMTP id x6-20020a5d6b46000000b002db11f3f7eemr3550778wrw.63.1682073665405;
-        Fri, 21 Apr 2023 03:41:05 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id z14-20020a5d4d0e000000b002efb4f2d240sm4097576wrt.87.2023.04.21.03.41.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 03:41:04 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 13:41:01 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Maxime Ripard <maxime@cerno.tech>
+        with ESMTP id S229657AbjDULFx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 07:05:53 -0400
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D76FA5ED;
+        Fri, 21 Apr 2023 04:05:50 -0700 (PDT)
+Received: from [192.168.1.141] ([37.4.248.58]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MAfMc-1q0lrW2CjY-00B1GQ; Fri, 21 Apr 2023 13:05:30 +0200
+Message-ID: <bb8bf083-1d00-616d-f25d-44b4b362399b@i2se.com>
+Date:   Fri, 21 Apr 2023 13:05:29 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2] clk: bcm: rpi: Fix off by one in
+ raspberrypi_discover_clocks()
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Maxime Ripard <maxime@cerno.tech>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Florian Fainelli <f.fainelli@gmail.com>,
         Broadcom internal kernel review list 
         <bcm-kernel-feedback-list@broadcom.com>,
         "Ivan T. Ivanov" <iivanov@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
         Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
         linux-rpi-kernel@lists.infradead.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] clk: bcm: rpi: Fix off by one in
- raspberrypi_discover_clocks()
-Message-ID: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
+Content-Language: en-US
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:CQ0YM4GSV0XDqdNu4e3uiMJ+r1RDUIfRVgwvNT8+9Q8rs32aGhI
+ basyO+nttfkSvq+yKSWd5BpSDnM4BsFiN9WNbT5SCYkKQUV8hnVQF8jQb8JbNwCOTdeFuB8
+ r3tVCq7hbbbTnpq/9euhX61uwEJ1Tqh54RFQecJXC+JkzEhueNrWVwkeOIDqX2gvuKRE5Ew
+ JtgZBIruRoSDGEZXLMRKw==
+UI-OutboundReport: notjunk:1;M01:P0:qIwRPYCkjoM=;1/CRKEk9pp6U36vKDdsSD1qi6Yj
+ xkSST/6PhyI1MRT85tSbTU4eCYwJvBYc8EOoXQE9dry/V1FNXq0EwX3m48UveDaAWXklGaZ5O
+ feMmcV7NwuIyOR/6wE8vCj8a3e7gBma39QLxOI/Mqo6ilixtzluhQpOh46WcUSblD6rsQlY4j
+ a86opJL9lf3860cLmrGe1gVxp0h1LqEZgyAafTAenrOiPwwETjkuJMM5PFyvON02EelE4Bw0T
+ SqeoiQA7LALaqzj3wqQu3tQoJd58pSvwnQadUiEQlczMW7dcEm/w5ENCDzE21jmWP8uUl7Al3
+ u/eSPxjTrjuZT/F0FakIlX1kI9+ZV+KWVj4TdEyJPlI9f2Nr6C56XsVPEhOkhsimAplBKL4eB
+ 16G5fk4laRHdDDpUfgOgHipZaz66X8Y57qfBemqzWgWqrQcDh/ZKCt0q8hMZFz3q4LCfw/9uq
+ p2FaGi5AIH0fq+CN8o1/9Uyeg7fNhfJiubQj3YwKa1z/hK8ah8Q1dYvcEClC+Gx8nukf21rnT
+ Wm0Gei+6Dot6sl/ZTTpatQUOnS+CrzNyafa/uC9c/K4ZOu1JCgAeHIgI2sLuVHPRl1195L8GD
+ 87mFwmS6stX8nSAhtB3r1zopi/TfvjmR42pPsXUobH2ku8zoVpJqwon/8d+YXURMcGzsiXlSI
+ BCYhQQxOMddk0+rxAfSws0IDAplM46dJiegaIzrpng==
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Smatch detected an off by one in this code:
-    drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
-    error: buffer overflow 'data->hws' 16 <= 16
 
-The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
-comparison needs to changed to >=.
+Am 21.04.23 um 12:41 schrieb Dan Carpenter:
+> Smatch detected an off by one in this code:
+>      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
+>      error: buffer overflow 'data->hws' 16 <= 16
+> 
+> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
+> comparison needs to changed to >=.
+> 
+> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-v2: Update the error message as well
-
- drivers/clk/bcm/clk-raspberrypi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index eb399a4d141b..829406dc44a2 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -356,9 +356,9 @@ static int raspberrypi_discover_clocks(struct raspberrypi_clk *rpi,
- 	while (clks->id) {
- 		struct raspberrypi_clk_variant *variant;
- 
--		if (clks->id > RPI_FIRMWARE_NUM_CLK_ID) {
-+		if (clks->id >= RPI_FIRMWARE_NUM_CLK_ID) {
- 			dev_err(rpi->dev, "Unknown clock id: %u (max: %u)\n",
--					   clks->id, RPI_FIRMWARE_NUM_CLK_ID);
-+					   clks->id, RPI_FIRMWARE_NUM_CLK_ID - 1);
- 			return -EINVAL;
- 		}
- 
--- 
-2.39.2
-
+Reviewed-by: Stefan Wahren <stefan.wahren@i2se.com>
