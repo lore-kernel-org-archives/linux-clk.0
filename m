@@ -2,147 +2,151 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FA2C77B75
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 13:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9907DC77B7D
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 14:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231285AbjDUNnM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 09:43:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58910 "EHLO
+        id S232667AbjDUOU1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Apr 2023 10:20:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232555AbjDUNmx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 09:42:53 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E555212CB9
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 06:42:18 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id 3f1490d57ef6-b991e510fbcso1044936276.1
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 06:42:18 -0700 (PDT)
+        with ESMTP id S232587AbjDUOUM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 10:20:12 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 921BA13F85
+        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 07:20:01 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4ec9c7c6986so1766133e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 07:20:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682084537; x=1684676537;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JDE51zksfO+2BQYs2uxEkBWwzXHikJbqw2bzLyRXwaw=;
-        b=wpGNGkwCP6qhmDCTaIgu67XqT1Ne8yFuulkw6+VKZDDLlhH/MTjSIyQhwRY9T3goum
-         /oR12owOzVb3UpnwFxZxcN6a8zQ57W5RXkREo7mqJo2O/xt0DWcorbVH2pUIYtA76px9
-         MJ44uNf6YWHiQryP15EFD2/29KE3jBLjb1a6n9yYiXiXKvRuWnbCyr74FbU0LQZd92zJ
-         9izLLhcDEVT0XSH8RnybC46qTo2qKlBCPVJ+w68b6UVqdMsJx5r7MOoNrDgojopmlk9g
-         yAAFncbSjRK5C6++USLE/ehJIAyQSwOBAC+79NgJRZgTXLvVhreT61b8LFqvicp1uKbQ
-         PDAQ==
+        d=linaro.org; s=google; t=1682086800; x=1684678800;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yK3yIe9a1wbBKj0KZBkdEoQSsxDKw5meLrRh6nS/NAs=;
+        b=HNYSW9WtRin1UpYDmy5oqGTtPdRzatgSNcyZxKuAWL2njrWAmsO23bnSw/FaV5FsTk
+         3NaGs3ayknlAPebHS811STIn/tK01k7aVJddOrK/tE7mFCHeRhw3DWgQizrqy6YbHKFn
+         awnt9C3M3RAYwuQs6+fVDrW8uG1bcPKDEpRuCsqSt0Ei+RdxYa8T2YvxEH+bZxeWe8J7
+         SsZ7Dck9wf5ax5MSLqxBXeuSKSSPTxhp4UchJ/B4CLrX8WJiLWSG8mrj2aa4rU1t5TNS
+         ubMafmsHzR1v7NzXeHnXhbFNyBhH9vrTPdaGMnzaVXPPZ1NJFjuMnPKYB0UMca/j1cis
+         TnNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682084537; x=1684676537;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JDE51zksfO+2BQYs2uxEkBWwzXHikJbqw2bzLyRXwaw=;
-        b=j7VkTfyNOYZtwnkg9gxEFVcA88wqsIW29vaWMk8HTzqYKV0osRU2ihclKwb7shxj8h
-         g4CBrwLJXkZwOuefshdkIsg9vk+cnMMjZB/X4jIiTeIsUh/w5LGsl0eZlChiVYLUhUBl
-         OTJecWA9JAv+kTfFi+c+F0b08I6XWvBbkEtlmxRZE8vS02P165IYjkggXhX+zBi2qpCI
-         s2cz6yf5kJHHXzCGpLxOf6LA7AFGTYMjaRon4iRa30u0iaR8Z9LwasEqHizYibW8OtS3
-         Ns1+39mNODJoBEd3ZfOwDigUkBanyqU2JcyZPKp1aKKY+5R2tX+kdNRBNydxm3AwFp2O
-         qpKA==
-X-Gm-Message-State: AAQBX9fveJIgJ+1+Ik/oGUg/4YG6A2zBIlNJknN5Es07zPEAzLeDF9Dw
-        mkQHaK+W29qMY3DEjrTw+Xz7yvl0AA5ZFiUUhK/3YA==
-X-Google-Smtp-Source: AKy350a5SILKYcpime34mpGOMEVeRMBKWl75iNX3Pwr4E7FN7GNe+ZdrX2VuLz9ewSKOn6gkqrDRwwfejYqjRpydKAY=
-X-Received: by 2002:a25:bc8:0:b0:b92:510a:7320 with SMTP id
- 191-20020a250bc8000000b00b92510a7320mr2321396ybl.42.1682084537629; Fri, 21
- Apr 2023 06:42:17 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682086800; x=1684678800;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yK3yIe9a1wbBKj0KZBkdEoQSsxDKw5meLrRh6nS/NAs=;
+        b=dP1FYXIhx+7SWKbKQ7w6WyKtWtR2aRnGGs/BTcz0FXUlgbTnAc3Y/cX3ttM8/o/Xvc
+         lOP9F32u9fJdNl6vSQvtNhH0OpKKzO27v2owOa9DqYK2bcOoq1diWOgpSntumxXof14Q
+         2LDWUUgsbiBHzCWAhxeClyXqPM3OZC6N42Xofj9kSeOm1hSZDpLY/98lMHQX3iIB4yqX
+         7yhatH8KUzKyKcgL9QKNiPcXVo5E3E5FdwXOHy4t/y6fm3l1mZM6A/sv0OebOhIAXij1
+         2kOzn8QPVfCBFnmO1cP0j+WR1rvHp3W8ePSDqigx+aB+3Trm2TQpI3Tdz8Aof4bCPaih
+         d6+g==
+X-Gm-Message-State: AAQBX9dXykdZ+PcKkPJGBRMfmED9vjXq9T+f7vZMRHT6gqavgUfROxBh
+        fW4pyR0xvGdpzT+X6v5on6I2EQ==
+X-Google-Smtp-Source: AKy350Z3MlSM4frPMB2jDj6hRgEKBnQ0rSplMEGlIjVYqo2u0QTPdtI8l9nJrdrQA3sqCVG865KqkQ==
+X-Received: by 2002:ac2:47eb:0:b0:4eb:43f5:73a1 with SMTP id b11-20020ac247eb000000b004eb43f573a1mr1423815lfp.44.1682086799707;
+        Fri, 21 Apr 2023 07:19:59 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
+        by smtp.gmail.com with ESMTPSA id m15-20020a056512014f00b004e7fa99f2b5sm574358lfo.186.2023.04.21.07.19.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Apr 2023 07:19:59 -0700 (PDT)
+Message-ID: <6750910d-22a0-7bed-f163-db57424133c6@linaro.org>
+Date:   Fri, 21 Apr 2023 17:19:58 +0300
 MIME-Version: 1.0
-References: <20230420115520.16472-1-quic_tdas@quicinc.com>
-In-Reply-To: <20230420115520.16472-1-quic_tdas@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: [PATCH v8 2/8] dt-bindings: phy: qcom,qmp-usb: Add IPQ9574 USB3
+ PHY
+Content-Language: en-GB
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1680693149.git.quic_varada@quicinc.com>
+ <1efa9a64499767d939efadd0aef897ac4a6e54eb.1680693149.git.quic_varada@quicinc.com>
+ <b9763bee-c0c8-86be-14de-2ed077b1f1d5@linaro.org>
+ <20230421101345.GB5813@varda-linux.qualcomm.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 21 Apr 2023 16:42:06 +0300
-Message-ID: <CAA8EJprthTKxCDsMHTXZrLCyhGgTfF3LvqhkrF2-b6XFygKJ2A@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: camcc-sc7180: Add parent dependency to all
- camera GDSCs
-To:     Taniya Das <quic_tdas@quicinc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_skakitap@quicinc.com, quic_cponnapa@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20230421101345.GB5813@varda-linux.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 20 Apr 2023 at 14:55, Taniya Das <quic_tdas@quicinc.com> wrote:
->
-> Mark titan_top_gdsc as parent to all other camera GDSCs.
+On 21/04/2023 13:13, Varadarajan Narayanan wrote:
+> On Thu, Apr 06, 2023 at 09:42:31AM +0200, Krzysztof Kozlowski wrote:
+>> On 05/04/2023 13:41, Varadarajan Narayanan wrote:
+>>> Add dt-bindings for USB3 PHY found on Qualcomm IPQ9574
+>>>
+>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>> ---
+>>>   Changes in v8:
+>>> 	- Update clock names for ipq9574
+>>>
+>>>   Changes in v6:
+>>> 	- Made power-domains optional
+>>>
+>>> Note: In the earlier patch sets, had used the (legacy)
+>>> specification available in qcom,msm8996-qmp-usb3-phy.yaml. Moved
+>>> to newer specification in qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+>>> ---
+>>>   .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml        | 43 +++++++++++++++++++---
+>>>   1 file changed, 37 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+>>> index 16fce10..e902a0d 100644
+>>> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+>>> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+>>> @@ -16,6 +16,7 @@ description:
+>>>   properties:
+>>>     compatible:
+>>>       enum:
+>>> +      - qcom,ipq9574-qmp-usb3-phy
+>>>         - qcom,sc8280xp-qmp-usb3-uni-phy
+>>>
+>>>     reg:
+>>> @@ -25,11 +26,7 @@ properties:
+>>>       maxItems: 4
+>>>
+>>>     clock-names:
+>>> -    items:
+>>> -      - const: aux
+>>> -      - const: ref
+>>> -      - const: com_aux
+>>> -      - const: pipe
+>>> +    maxItems: 4
+>>>
+>>>     power-domains:
+>>>       maxItems: 1
+>>> @@ -60,7 +57,6 @@ required:
+>>>     - reg
+>>>     - clocks
+>>>     - clock-names
+>>> -  - power-domains
+>>
+>> Power domains are required. Commit msg does not explain why this should
+>> be now optional.
+> 
+> Since IPQ9574 doesn't have power switches couldn't provide power-domains details.
+> So, had to make it optional to pass 'make dtbs_check'.
 
-Please expand the commit message. Your text describes what the patch
-does, but it can be observed from the patch itself. Please describe
-why it is done.
+This should be a part of the commit message, so that the next developer 
+understands your intentions without going to mail archives.
 
->
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/camcc-sc7180.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
-> index e2b4804695f3..8a4ba7a19ed1 100644
-> --- a/drivers/clk/qcom/camcc-sc7180.c
-> +++ b/drivers/clk/qcom/camcc-sc7180.c
-> @@ -1480,12 +1480,21 @@ static struct clk_branch cam_cc_sys_tmr_clk = {
->         },
->  };
->
-> +static struct gdsc titan_top_gdsc = {
-> +       .gdscr = 0xb134,
-> +       .pd = {
-> +               .name = "titan_top_gdsc",
-> +       },
-> +       .pwrsts = PWRSTS_OFF_ON,
-> +};
-> +
->  static struct gdsc bps_gdsc = {
->         .gdscr = 0x6004,
->         .pd = {
->                 .name = "bps_gdsc",
->         },
->         .pwrsts = PWRSTS_OFF_ON,
-> +       .parent = &titan_top_gdsc.pd,
->         .flags = HW_CTRL,
->  };
->
-> @@ -1495,6 +1504,7 @@ static struct gdsc ife_0_gdsc = {
->                 .name = "ife_0_gdsc",
->         },
->         .pwrsts = PWRSTS_OFF_ON,
-> +       .parent = &titan_top_gdsc.pd,
->  };
->
->  static struct gdsc ife_1_gdsc = {
-> @@ -1503,6 +1513,7 @@ static struct gdsc ife_1_gdsc = {
->                 .name = "ife_1_gdsc",
->         },
->         .pwrsts = PWRSTS_OFF_ON,
-> +       .parent = &titan_top_gdsc.pd,
->  };
->
->  static struct gdsc ipe_0_gdsc = {
-> @@ -1512,15 +1523,9 @@ static struct gdsc ipe_0_gdsc = {
->         },
->         .pwrsts = PWRSTS_OFF_ON,
->         .flags = HW_CTRL,
-> +       .parent = &titan_top_gdsc.pd,
->  };
->
-> -static struct gdsc titan_top_gdsc = {
-> -       .gdscr = 0xb134,
-> -       .pd = {
-> -               .name = "titan_top_gdsc",
-> -       },
-> -       .pwrsts = PWRSTS_OFF_ON,
-> -};
->
->  static struct clk_hw *cam_cc_sc7180_hws[] = {
->         [CAM_CC_PLL2_OUT_EARLY] = &cam_cc_pll2_out_early.hw,
-> --
-> 2.17.1
->
-
+> 
+> Thanks
+> Varada
+> 
+>> Best regards,
+>> Krzysztof
+>>
 
 -- 
 With best wishes
 Dmitry
+
