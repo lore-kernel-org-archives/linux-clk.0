@@ -2,112 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4BEC7618E
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 11:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861F2C7618E
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 12:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjDULz2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 07:55:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45226 "EHLO
+        id S232215AbjDUMuI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Apr 2023 08:50:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbjDULz1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 07:55:27 -0400
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547E95251
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 04:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1682078125; x=1713614125;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=S4ws0FzPH8SjDdWPwT3no8KmZrz65JddDqUiUhrKLr8=;
-  b=qQqQkLQ4QVRaOcjik2DVHnA0koWgEKBWIZNl54wdGcleFfJ9jYv4Upm8
-   4nA5c0VnNSQDvLuFpMkT1IlWDtmgzG4rO3rxypJ28H2EZTfH02k/Am8yi
-   ay9UzGQAfvowmyss1hmYztmVC406agnv47IgBvtha39nl042TcW2d8m2x
-   MhlEzOeBtjJAiySmL3ODJK1flM7DLmkbOuw/Vy8Ble8iLcgtADHCiL+Jl
-   bKcPPQqQmZEpGUPjVrzG+dWZJFeynvf3uTbDeoeIG1Gvs1mx64T25Q3CW
-   R3z5X1q0svkEjq2e7QC0SLwSDA4DvTX9tDqRKtAh8nm0NNyh+DB2sW1OX
-   A==;
-X-IronPort-AV: E=Sophos;i="5.99,214,1677538800"; 
-   d="scan'208";a="30482432"
-Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
-  by mx1-pgp.tq-group.com with ESMTP; 21 Apr 2023 13:55:23 +0200
-Received: from mx1.tq-group.com ([192.168.6.7])
-  by tq-pgp-pr1.tq-net.de (PGP Universal service);
-  Fri, 21 Apr 2023 13:55:23 +0200
-X-PGP-Universal: processed;
-        by tq-pgp-pr1.tq-net.de on Fri, 21 Apr 2023 13:55:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1682078123; x=1713614123;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=S4ws0FzPH8SjDdWPwT3no8KmZrz65JddDqUiUhrKLr8=;
-  b=K8RqZZzo1uwi9WKzxDgaP1j+eZvk/RXbSfWyK5Irw3WHOQQPE1PvHBOp
-   umBUXpYN2jUCwiyYtQ5W5mDq1LqABaeyeLMokPBnUO9BnvSlecVv/E6KX
-   fAKfsTOGEso013q3A6o+5uTLv7NVBIhmpu1MLf1wWokoVzfe5PDc5wtRs
-   +8TZWhyWGFxFSu55iOD0zJ/r0CpETNz1xWwqirvYHL9ffxIyegZJAbjGU
-   zf0wyWyNNvKA7A1Ts90jYOtwkUJBfRQXA99XcGlw4Ed2EalDVuAmFvdE4
-   c1Tjma80eqDOp4AedxoDLltnFEzb4QtP04p51L7uguh6yiDIeG6PK38CG
-   w==;
-X-IronPort-AV: E=Sophos;i="5.99,214,1677538800"; 
-   d="scan'208";a="30482431"
-Received: from vtuxmail01.tq-net.de ([10.115.0.20])
-  by mx1.tq-group.com with ESMTP; 21 Apr 2023 13:55:23 +0200
-Received: from steina-w.tq-net.de (unknown [10.123.53.21])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 3916A280056;
-        Fri, 21 Apr 2023 13:55:22 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@ew.tq-group.com>
-To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/1] clk: imx6ul: retain early UART clocks during kernel init
-Date:   Fri, 21 Apr 2023 13:55:17 +0200
-Message-Id: <20230421115517.1940990-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S231203AbjDUMuH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 08:50:07 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D56725FE6;
+        Fri, 21 Apr 2023 05:50:06 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33LCa4vt006338;
+        Fri, 21 Apr 2023 12:50:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=j+anIc/zyqM8GYYlJwcDN4VcfAgHFFiFBkybSsnzCBA=;
+ b=TDMZYm2spLuV56SeohQXCWq4A83uoYO7V0omSDiw4RCxhCzNQjPAxZEHMF1S/E55r2jK
+ 2/IcmXifqbepdTVsh41w+A1CqbFNeNytA4E/MeUJp5/UjnFWV43EAJDGEizwDLntTqZf
+ ZszuzvW/nYVGqdJplaPwUezrnwpLEModjuG86gBAcwYjs8+SGR+iAk+JTc5OakAKbDrX
+ TUOR5laXIb3sZXgu0Vd6A7trEsiuamSW0aYln1D1l7n+QiVIE19Ib8XtT12pvncVSyuI
+ 1zbSPzocBAy8iFODFAvd6vWIbR4+k5VEz3+j4QGphh+6ajpfpmGhDr4TEfckj6cRWJw0 dw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q3tmer0yk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Apr 2023 12:50:00 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33LCnx2R004241
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Apr 2023 12:49:59 GMT
+Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 21 Apr 2023 05:49:52 -0700
+From:   Devi Priya <quic_devipriy@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <mani@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_ipkumar@quicinc.com>
+Subject: [PATCH V3 0/6] Add PCIe support for IPQ9574
+Date:   Fri, 21 Apr 2023 18:19:32 +0530
+Message-ID: <20230421124938.21974-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7GVp4J9scmF8d4gF01OcTlwtyLnjRiWT
+X-Proofpoint-ORIG-GUID: 7GVp4J9scmF8d4gF01OcTlwtyLnjRiWT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-21_06,2023-04-21_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ adultscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=683 phishscore=0 suspectscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304210112
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make sure to keep UART clocks enabled during kernel init if
-earlyprintk or earlycon are active.
+This series adds support for enabling the PCIe host devices (PCIe0, PCIe1,
+PCIe2, PCIe3) found on IPQ9574 platform.
+The PCIe0 & PCIe1 are 1-lane Gen3 host and PCIe2 & PCIe3 
+are 2-lane Gen3 host.
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v2:
-* Rebased to next-20230420
+DTS patch is based on the below series
+https://lore.kernel.org/linux-arm-msm/20230329053726.14860-1-quic_kathirav@quicinc.com/
 
-Apparently i.MX6UL was missed in commit 0822f933735c ("clk: imx6: retain
-early UART clocks during kernel init"). But as commit 379c9a24cc23 ("clk:
-imx: Fix reparenting of UARTs not associated with stdout") changes the
-calling signature it's not warranting a Fixes for the old commit.
+Changes in V3:
+	- Dropped the phy driver and binding patches as they have been 
+	  posted as a separate series.
+	- Dropped the pinctrl binding fix patch as it is unrelated to the series
+	  dt-bindings: pinctrl: qcom: Add few missing functions.
+	- Rebased on linux-next/master.
+	- Detailed change logs are added to the respective patches.
+	
+Changes in V2:
+https://lore.kernel.org/linux-arm-msm/20230404164828.8031-1-quic_devipriy@quicinc.com/
+	- Reordered the patches and splitted the board DT changes
+	  into a separate patch as suggested
+	- Detailed change logs are added to the respective patches
 
- drivers/clk/imx/clk-imx6ul.c | 2 ++
- 1 file changed, 2 insertions(+)
+[V1]
+https://lore.kernel.org/linux-arm-msm/20230214164135.17039-1-quic_devipriy@quicinc.com/
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index e3696a88b5a3..f9394e94f69d 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -544,6 +544,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
- 
- 	clk_set_parent(hws[IMX6UL_CLK_ENET1_REF_SEL]->clk, hws[IMX6UL_CLK_ENET_REF]->clk);
- 	clk_set_parent(hws[IMX6UL_CLK_ENET2_REF_SEL]->clk, hws[IMX6UL_CLK_ENET2_REF]->clk);
-+
-+	imx_register_uart_clocks();
- }
- 
- CLK_OF_DECLARE(imx6ul, "fsl,imx6ul-ccm", imx6ul_clocks_init);
+Devi Priya (6):
+  dt-bindings: clock: Add PCIe pipe clock definitions
+  clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
+  dt-bindings: PCI: qcom: Add IPQ9574
+  arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
+  arm64: dts: qcom: ipq9574: Enable PCIe PHYs and controllers
+  PCI: qcom: Add support for IPQ9574
+
+ .../devicetree/bindings/pci/qcom,pcie.yaml    |  40 ++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   |  62 +++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 375 +++++++++++++++++-
+ drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++
+ drivers/pci/controller/dwc/pcie-qcom.c        |  61 ++-
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
+ 6 files changed, 595 insertions(+), 23 deletions(-)
+
+
+base-commit: 44bf136283e567b2b62653be7630e7511da41da2
 -- 
-2.34.1
+2.17.1
 
