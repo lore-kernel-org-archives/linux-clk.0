@@ -2,94 +2,67 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51088C77B7E
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 07:54:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA48BC77B75
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 09:17:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231521AbjDUHyj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 03:54:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60820 "EHLO
+        id S229572AbjDUJRE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Apr 2023 05:17:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231487AbjDUHye (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 03:54:34 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D497902D
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 00:54:06 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-5050491cb04so1956853a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 00:54:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682063645; x=1684655645;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qQTDHxY3+OfXFRoJ5a/+GsFtonll6cxrCx06KzcINrc=;
-        b=pEf+67+V340JAx9qEdRrdGbzU7eOm/ClgZszYQbbqw3kdqILRaCywqUKCPCCpQFNnT
-         IYI+YJY4CPGWlhTnhpdxgZuiWaGbDLe5Ayjio2CPb+LF36msiZ+WyZwuKENbWh5k+Lao
-         Ww7IIentp+02Ar/BdhunVg/3qlhqZIpHVOqDg4KiAie8O5HrDJytTK/2DghOYjWZ+sSn
-         DTqPQ+QV80L0ysTKU18+XbCWdgWw/ND286PbkXt7/o1+r9/1Rw6SfOtzKFourWQYwgTM
-         lxHpfJr4MC6DhDpU/W7BR8THFa8dy1kNRtn3adteO2Fsp4ON8l2xqXG2s73SHqxrdf+r
-         pCOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682063645; x=1684655645;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qQTDHxY3+OfXFRoJ5a/+GsFtonll6cxrCx06KzcINrc=;
-        b=EmhCBWKv09LclGlVhV9ddIh7Rr9DuAOKyEx9Fj1zBywnwcoHCPhlmLt6HNAUaXce2y
-         hODOEAejPUa8aXrHzFQ4WjQjUlVVLdWCIPfKGhmNmZCfzV8lwj/TycVzcLveipkKx3pQ
-         mWc3ySoQ5/z4Pxg7yq34WzNFzV4srQrGPsPC0GKiRvnQMz6NnaYfy4z+2tH8WLFrFzYp
-         QOmJcLbjuNU0Iv7kB97hjgs9AXbQCcXBZxCksiWE9NCBsDMG4Zn25ZAPNMR83Wk+pjmV
-         IcJiqtNtDTSL0Iz1F3K2ffejMDYIUlltlSOKIFz8gQS37M9IHncRbC8atAtKWtAATnJ3
-         RLmg==
-X-Gm-Message-State: AAQBX9fow0B+nzMVFreHEEuCdD3fZu/wSS2ZmDDaEgRK3LdOuTfyTXEA
-        U73Vb21uQYkUP70UlVHszfafSQ==
-X-Google-Smtp-Source: AKy350ZkS1Pk2e+lQ/jDIPIibYgYq7xT0UhKLTyOfaFYL9XNjlfG+ZwpVMxiceJjxWF8G4SVvAb9Kw==
-X-Received: by 2002:a17:906:dda:b0:94f:694e:b953 with SMTP id p26-20020a1709060dda00b0094f694eb953mr1214235eji.59.1682063644671;
-        Fri, 21 Apr 2023 00:54:04 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:668b:1e57:3caa:4d06? ([2a02:810d:15c0:828:668b:1e57:3caa:4d06])
-        by smtp.gmail.com with ESMTPSA id f22-20020a170906c09600b0094f7cc13a69sm1703637ejz.181.2023.04.21.00.54.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Apr 2023 00:54:04 -0700 (PDT)
-Message-ID: <64dc4a6d-ae39-479b-f4df-34018a43eae0@linaro.org>
-Date:   Fri, 21 Apr 2023 09:54:03 +0200
+        with ESMTP id S229498AbjDUJRD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 05:17:03 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 998F01BFA
+        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 02:17:01 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1ppmss-0001mT-Tg; Fri, 21 Apr 2023 11:16:50 +0200
+Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1ppmss-000210-0I; Fri, 21 Apr 2023 11:16:50 +0200
+Date:   Fri, 21 Apr 2023 11:16:49 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Anson.Huang@nxp.com, abelvesa@kernel.org, festevam@gmail.com,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, shawnguo@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 1/2] clk: imx8mp: fix sai4 clock
+Message-ID: <20230421091649.7sihfhq62p5qstom@pengutronix.de>
+References: <20221219171058.164381-1-m.felsch@pengutronix.de>
+ <7687837da16c41ffca3cda747483f2d1.sboyd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Add SM8350 VIDEOCC
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230413-topic-lahaina_vidcc-v4-0-86c714a66a81@linaro.org>
- <20230413-topic-lahaina_vidcc-v4-1-86c714a66a81@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230413-topic-lahaina_vidcc-v4-1-86c714a66a81@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7687837da16c41ffca3cda747483f2d1.sboyd@kernel.org>
+User-Agent: NeoMutt/20180716
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/04/2023 19:32, Konrad Dybcio wrote:
-> SM8350, like most recent higher-end chips has a separate clock
-> controller block just for the Venus IP. Document it.
+Hi,
+
+On 23-01-12, Stephen Boyd wrote:
+> Quoting Marco Felsch (2022-12-19 09:10:57)
+> > The reference manual don't mention a SAI4 hardware block. This would be
+> > clock slice 78 which is skipped (TRM, page 237). Remove any reference to
+> > this clock to align the driver with the reality.
+> > 
+> > Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
 > 
-> The binding was separated as the driver, unlike the earlier ones, doesn't
-> expect clock-names to keep it easier to maintain.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I noticed that this isn't part of v6.3. @Abel can you add your rb or
+comments please?
 
-Best regards,
-Krzysztof
-
+Regards,
+  Marco
