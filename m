@@ -2,82 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2490CC7618E
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 17:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CF5C77B78
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 18:00:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233247AbjDURxB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 13:53:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54494 "EHLO
+        id S232026AbjDUSAg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Apr 2023 14:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbjDURxA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 13:53:00 -0400
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9102110D3;
-        Fri, 21 Apr 2023 10:52:57 -0700 (PDT)
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-187e041b08aso1573956fac.2;
-        Fri, 21 Apr 2023 10:52:57 -0700 (PDT)
+        with ESMTP id S232177AbjDUSAe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 14:00:34 -0400
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82B291BF8;
+        Fri, 21 Apr 2023 11:00:27 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-1879fc89e67so1475933fac.0;
+        Fri, 21 Apr 2023 11:00:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682099577; x=1684691577;
+        d=1e100.net; s=20221208; t=1682100027; x=1684692027;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3ZuA6YnetcoH1fBBOjh6OWXo5QXfMiryrevWyy06PqU=;
-        b=N7Ji2qM/2WM9xNEHFX/Yf+aOZ4WX3tj0U11Mlbl+2S4wM+0g0kVwQdkNpTMLhPff13
-         nxNgGeLMk1K5AUqOr9iEbZjTuIzo+i4nIvRbkcS782i0EBhO2fBtdM6p2zPxDHibt88N
-         t4bNwe5O5ZlD7aHGMfgRIdodfxOpaXrq4JRfihz1/aXvtsSzZYrNevQr+oCNEHvXw6RI
-         LD9+OZAMt+I9mpZh/sjkBDujB113+N2qtWuUqxfXXNjfsBvF+bMHiB5dFxPBFrEeL2Xa
-         oZc/dAdOL2Q5/xE2/nijjrub9LEr9xl/q84pemTNAfMK/bIYpo69a5MWv9x5XkZofqLe
-         BGDw==
-X-Gm-Message-State: AAQBX9e1oM1SDGGO+Cjq95pHxLLXaorC76cRmCvM6YUY1FFVdL17tMCm
-        LHMirr/OgMpFKaYuAFclyw==
-X-Google-Smtp-Source: AKy350YYj9G7YUb98/l/1ld/1teWRZxeVjFZ5m7JQI0C2fIwomZSfIubcU7JemWvoqRNils5giWsJQ==
-X-Received: by 2002:a05:6870:1d2:b0:187:a330:81a2 with SMTP id n18-20020a05687001d200b00187a33081a2mr4400380oad.54.1682099576780;
-        Fri, 21 Apr 2023 10:52:56 -0700 (PDT)
+        bh=pD45LRJYwcwGuhNgZXOZfLUe3Rp7o6tEE2EZGvtQuzY=;
+        b=kS4lqwjBftAU4U0BzTvWHS9UFiQqzXvZl26ZiLlD469REj3HRoYX7gyWk7sFlbmdnZ
+         dPU7H96S5HAHJp9fEpMcffY5jEh0MD+3wBfWNTqqAOKYfFaA9E2pwYFJMndg+/Lf0kE2
+         9YYpR4n52Jjq5gpuAP9/N/9imT+zdNtJWXjQyHKgNyB3ffM18Rvqu0XUsgIGwJx3ZaBP
+         JShOd0JZBDZuInYURsfTuq+V+G/+LbPYW9kB9EhckV0PtQR94kwYO8paP+aYlRXHz74J
+         azFwL1a6u+68kvlcmw9hD2+N6PPJt7csTLv9Kxt2SWl/ZqQGQML/prPNsOPJBg545ptR
+         BG9A==
+X-Gm-Message-State: AAQBX9eAO4FRmftCdzso1tAUBTjHHvU2/AymEic+0Zln2FEHGpsZMPpY
+        xvHTJCv9512tTLLgNIBQtw==
+X-Google-Smtp-Source: AKy350b2fQzu9H8xXTbqN6A1n9NlXJPvwjLvHLyVvV33r549va/iRuLiPVlgV1jQrex1VTdY1CSdRg==
+X-Received: by 2002:a05:6870:8186:b0:17a:b378:8e1d with SMTP id k6-20020a056870818600b0017ab3788e1dmr4628318oae.0.1682100026777;
+        Fri, 21 Apr 2023 11:00:26 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id j20-20020a056870d45400b0018b03bf5f97sm1971545oag.41.2023.04.21.10.52.56
+        by smtp.gmail.com with ESMTPSA id n124-20020a4a4082000000b00541854ce607sm1956261ooa.28.2023.04.21.11.00.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 10:52:56 -0700 (PDT)
-Received: (nullmailer pid 1540771 invoked by uid 1000);
-        Fri, 21 Apr 2023 17:52:55 -0000
-Date:   Fri, 21 Apr 2023 12:52:55 -0500
+        Fri, 21 Apr 2023 11:00:26 -0700 (PDT)
+Received: (nullmailer pid 1549286 invoked by uid 1000);
+        Fri, 21 Apr 2023 18:00:25 -0000
+Date:   Fri, 21 Apr 2023 13:00:25 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_skakitap@quicinc.com, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, quic_jkona@quicinc.com,
-        Andy Gross <agross@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        dmitry.baryshkov@linaro.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Subject: Re: [PATCH V2 1/3] dt-bindings: clock: qcom: Add SM8450 video clock
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     sboyd@kernel.org, arinc.unal@arinc9.com, robh+dt@kernel.org,
+        tsbogend@alpha.franken.de, john@phrozen.org,
+        linux-clk@vger.kernel.org, matthias.bgg@gmail.com,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, p.zabel@pengutronix.de
+Subject: Re: [PATCH v3 1/9] dt-bindings: clock: add mtmips SoCs system
  controller
-Message-ID: <168209957511.1540718.15695207046392293504.robh@kernel.org>
-References: <20230417082127.11681-1-quic_tdas@quicinc.com>
- <20230417082127.11681-2-quic_tdas@quicinc.com>
+Message-ID: <168210002512.1549232.11622395955569841871.robh@kernel.org>
+References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
+ <20230418090312.2818879-2-sergio.paracuellos@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230417082127.11681-2-quic_tdas@quicinc.com>
+In-Reply-To: <20230418090312.2818879-2-sergio.paracuellos@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon, 17 Apr 2023 13:51:25 +0530, Taniya Das wrote:
-> Add device tree bindings for the video clock controller on Qualcomm
-> SM8450 platform.
+On Tue, 18 Apr 2023 11:03:04 +0200, Sergio Paracuellos wrote:
+> Adds device tree binding documentation for system controller node present
+> in Mediatek MIPS and Ralink SOCs. This node is a clock and reset provider
+> for the rest of the world. This covers RT2880, RT3050, RT3052, RT3350,
+> RT3883, RT5350, MT7620, MT7628 and MT7688 SoCs.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 > ---
-> Changes since V1:
->  - Change the properties order to keep reg after the compatible
->    property.
-> 
->  .../bindings/clock/qcom,sm8450-videocc.yaml   | 84 +++++++++++++++++++
->  .../dt-bindings/clock/qcom,videocc-sm8450.h   | 38 +++++++++
->  2 files changed, 122 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,videocc-sm8450.h
+>  .../bindings/clock/mediatek,mtmips-sysc.yaml  | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
