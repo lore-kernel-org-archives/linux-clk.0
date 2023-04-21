@@ -2,171 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2C2C7618E
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 11:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4BEC7618E
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 11:55:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjDULLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 07:11:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48802 "EHLO
+        id S229575AbjDULz2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Apr 2023 07:55:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229575AbjDULLd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 07:11:33 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C32DA267
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 04:11:32 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id d2e1a72fcca58-63b60366047so1780385b3a.1
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 04:11:32 -0700 (PDT)
+        with ESMTP id S230253AbjDULz1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 07:55:27 -0400
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547E95251
+        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 04:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1682075491; x=1684667491;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LJ4eKElwcXuAb6zZfl+qVzBQVUqclnD1hUAJWdjMu78=;
-        b=l9Cq+zu1tu3PWplXH9Uj+nBZKyq3Rnk2OdYC4CsMxNwxy1eLaZNZQXRZalzD/SaNF8
-         O7qI0bCblAILe+N6lNiuhXsyfK46Q6dt3FcSeKctUFp+66jAkg7b5tvMvDUUJPYAEeUX
-         EWp/H37UdqKNTDzMK0c7LEh0zDkZlLmhDVjjA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682075491; x=1684667491;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LJ4eKElwcXuAb6zZfl+qVzBQVUqclnD1hUAJWdjMu78=;
-        b=IvBi/E0i0cf6ISc+DXDw5juFUz6yniXnOyceHt/e5QJR/H4p4vwEG17mRN2IkySeDx
-         w1eSzWVg+kSrthMrxhhE2KecFfWeqnkdv9Iqt5Db8p5NleIF/qN6iMBwBVtC77sOj6kL
-         xyCXqkBE8kcIMq50abNov05rNUdk7JYbXsIxcAlveZtD9B4vKam64H3imzGeu2X2RzAK
-         tWZo1hTRfaVFkFxJ18rho8+a5F2tYIZT7tnvF2Mhnph+64j21Pv3lgK1ZfBIlI4oEhUz
-         yk3Xccvmsiq9q5w8VB0wsLuOAPTBcaCt7gtHGw0QHpxMM1PiS9b8MZ8RjTDznfrt2/VM
-         x93A==
-X-Gm-Message-State: AAQBX9cn6FrcOgndCWqZTEl+4170gzGfMlBJdDP8iOCve9eqSuk91iub
-        WG54M5evqXANpkUw663GG8RFWA==
-X-Google-Smtp-Source: AKy350YjnNhyz/5DJTFMIFsnSfoBoVKhugxroxKYawrehd6/D9CSJXkJCdAySnCEcB05FVhuF+9sqg==
-X-Received: by 2002:a05:6a00:15ce:b0:63d:3411:f9e3 with SMTP id o14-20020a056a0015ce00b0063d3411f9e3mr6904730pfu.19.1682075491514;
-        Fri, 21 Apr 2023 04:11:31 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:47fa:fa8d:a971:f6ac])
-        by smtp.gmail.com with ESMTPSA id x4-20020a628604000000b00639fc7124c2sm2840983pfd.148.2023.04.21.04.11.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 04:11:31 -0700 (PDT)
-From:   Chen-Yu Tsai <wenst@chromium.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= 
-        <nfraprado@collabora.com>, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: mediatek: Enable all MT8192 clocks by default
-Date:   Fri, 21 Apr 2023 19:11:25 +0800
-Message-ID: <20230421111125.2397368-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.40.0.634.g4ca3ef3211-goog
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1682078125; x=1713614125;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=S4ws0FzPH8SjDdWPwT3no8KmZrz65JddDqUiUhrKLr8=;
+  b=qQqQkLQ4QVRaOcjik2DVHnA0koWgEKBWIZNl54wdGcleFfJ9jYv4Upm8
+   4nA5c0VnNSQDvLuFpMkT1IlWDtmgzG4rO3rxypJ28H2EZTfH02k/Am8yi
+   ay9UzGQAfvowmyss1hmYztmVC406agnv47IgBvtha39nl042TcW2d8m2x
+   MhlEzOeBtjJAiySmL3ODJK1flM7DLmkbOuw/Vy8Ble8iLcgtADHCiL+Jl
+   bKcPPQqQmZEpGUPjVrzG+dWZJFeynvf3uTbDeoeIG1Gvs1mx64T25Q3CW
+   R3z5X1q0svkEjq2e7QC0SLwSDA4DvTX9tDqRKtAh8nm0NNyh+DB2sW1OX
+   A==;
+X-IronPort-AV: E=Sophos;i="5.99,214,1677538800"; 
+   d="scan'208";a="30482432"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 21 Apr 2023 13:55:23 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Fri, 21 Apr 2023 13:55:23 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Fri, 21 Apr 2023 13:55:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1682078123; x=1713614123;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=S4ws0FzPH8SjDdWPwT3no8KmZrz65JddDqUiUhrKLr8=;
+  b=K8RqZZzo1uwi9WKzxDgaP1j+eZvk/RXbSfWyK5Irw3WHOQQPE1PvHBOp
+   umBUXpYN2jUCwiyYtQ5W5mDq1LqABaeyeLMokPBnUO9BnvSlecVv/E6KX
+   fAKfsTOGEso013q3A6o+5uTLv7NVBIhmpu1MLf1wWokoVzfe5PDc5wtRs
+   +8TZWhyWGFxFSu55iOD0zJ/r0CpETNz1xWwqirvYHL9ffxIyegZJAbjGU
+   zf0wyWyNNvKA7A1Ts90jYOtwkUJBfRQXA99XcGlw4Ed2EalDVuAmFvdE4
+   c1Tjma80eqDOp4AedxoDLltnFEzb4QtP04p51L7uguh6yiDIeG6PK38CG
+   w==;
+X-IronPort-AV: E=Sophos;i="5.99,214,1677538800"; 
+   d="scan'208";a="30482431"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 21 Apr 2023 13:55:23 +0200
+Received: from steina-w.tq-net.de (unknown [10.123.53.21])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPSA id 3916A280056;
+        Fri, 21 Apr 2023 13:55:22 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@ew.tq-group.com>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     Alexander Stein <alexander.stein@ew.tq-group.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/1] clk: imx6ul: retain early UART clocks during kernel init
+Date:   Fri, 21 Apr 2023 13:55:17 +0200
+Message-Id: <20230421115517.1940990-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently the base MT8192 clock drivers are enabled by default, but all
-the other clock drivers need to be enabled by hand. This is extremely
-confusing and inconvenient for end users. For the MT8192 platform to be
-useful, most if not all the clock drivers driving the hardware blocks
-need to be enabled.
+Make sure to keep UART clocks enabled during kernel init if
+earlyprintk or earlycon are active.
 
-Enable them by default whenever MT8192 base clock driver is enabled.
-
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- drivers/clk/mediatek/Kconfig | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Changes in v2:
+* Rebased to next-20230420
 
-diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
-index 99e67c07e638..48b42d11111c 100644
---- a/drivers/clk/mediatek/Kconfig
-+++ b/drivers/clk/mediatek/Kconfig
-@@ -781,72 +781,84 @@ config COMMON_CLK_MT8192
- config COMMON_CLK_MT8192_AUDSYS
- 	tristate "Clock driver for MediaTek MT8192 audsys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 audsys clocks.
+Apparently i.MX6UL was missed in commit 0822f933735c ("clk: imx6: retain
+early UART clocks during kernel init"). But as commit 379c9a24cc23 ("clk:
+imx: Fix reparenting of UARTs not associated with stdout") changes the
+calling signature it's not warranting a Fixes for the old commit.
+
+ drivers/clk/imx/clk-imx6ul.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index e3696a88b5a3..f9394e94f69d 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -544,6 +544,8 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
  
- config COMMON_CLK_MT8192_CAMSYS
- 	tristate "Clock driver for MediaTek MT8192 camsys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 camsys and camsys_raw clocks.
+ 	clk_set_parent(hws[IMX6UL_CLK_ENET1_REF_SEL]->clk, hws[IMX6UL_CLK_ENET_REF]->clk);
+ 	clk_set_parent(hws[IMX6UL_CLK_ENET2_REF_SEL]->clk, hws[IMX6UL_CLK_ENET2_REF]->clk);
++
++	imx_register_uart_clocks();
+ }
  
- config COMMON_CLK_MT8192_IMGSYS
- 	tristate "Clock driver for MediaTek MT8192 imgsys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 imgsys and imgsys2 clocks.
- 
- config COMMON_CLK_MT8192_IMP_IIC_WRAP
- 	tristate "Clock driver for MediaTek MT8192 imp_iic_wrap"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 imp_iic_wrap clocks.
- 
- config COMMON_CLK_MT8192_IPESYS
- 	tristate "Clock driver for MediaTek MT8192 ipesys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 ipesys clocks.
- 
- config COMMON_CLK_MT8192_MDPSYS
- 	tristate "Clock driver for MediaTek MT8192 mdpsys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mdpsys clocks.
- 
- config COMMON_CLK_MT8192_MFGCFG
- 	tristate "Clock driver for MediaTek MT8192 mfgcfg"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mfgcfg clocks.
- 
- config COMMON_CLK_MT8192_MMSYS
- 	tristate "Clock driver for MediaTek MT8192 mmsys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 mmsys clocks.
- 
- config COMMON_CLK_MT8192_MSDC
- 	tristate "Clock driver for MediaTek MT8192 msdc"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 msdc and msdc_top clocks.
- 
- config COMMON_CLK_MT8192_SCP_ADSP
- 	tristate "Clock driver for MediaTek MT8192 scp_adsp"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 scp_adsp clocks.
- 
- config COMMON_CLK_MT8192_VDECSYS
- 	tristate "Clock driver for MediaTek MT8192 vdecsys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 vdecsys and vdecsys_soc clocks.
- 
- config COMMON_CLK_MT8192_VENCSYS
- 	tristate "Clock driver for MediaTek MT8192 vencsys"
- 	depends on COMMON_CLK_MT8192
-+	default COMMON_CLK_MT8192
- 	help
- 	  This driver supports MediaTek MT8192 vencsys clocks.
- 
+ CLK_OF_DECLARE(imx6ul, "fsl,imx6ul-ccm", imx6ul_clocks_init);
 -- 
-2.40.0.634.g4ca3ef3211-goog
+2.34.1
 
