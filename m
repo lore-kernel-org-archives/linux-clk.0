@@ -2,91 +2,244 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF5FC77B78
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Apr 2023 21:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 928CCC77B76
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Apr 2023 00:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbjDUVIu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 17:08:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52158 "EHLO
+        id S233603AbjDVAGJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Apr 2023 20:06:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233174AbjDUVIt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 17:08:49 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB4C0B8
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 14:08:46 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4ec9c7c6986so2192368e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 14:08:46 -0700 (PDT)
+        with ESMTP id S233655AbjDVAGI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 20:06:08 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C796212F
+        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 17:06:01 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-54f9e41dfa7so12591687b3.3
+        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 17:06:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682111325; x=1684703325;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9W1D3wCw6XKucfchy0oa7eoctRHM+fcPALZxgsEbNBs=;
-        b=ixIJ9Hv+jHR8BhY4DAOaBAYeOne2MN8aCbLx7zyPBmkB0j+AwCl5fX1SBIDbQhoesO
-         oErScNiR/ChWnIPnHRsYPYAKqG5DUj850++d9s/1uI3clSI2bmZMv/mLlDlbA24facqM
-         OiZ3BA/fEer/hdoIBAy9g6tM0ZPvlVW1UMvOSjSo3XK36mcB+zON9FtyEo+0taeHu96j
-         A/iqY9N5A/vIoqxL4JEXKEkUml+uJiWtFpRsUZPncmCkCDc4Hz3AR90uuIcyYY/pxv6A
-         lFZ0oaPawAeo2/oPWRVo+XUhy6kjA5epdzfh2QuPm6L005wXQCWc66QWeF8FsHUWVU8R
-         6zxw==
+        d=linaro.org; s=google; t=1682121960; x=1684713960;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xO+YD26iSNYSmlzjnipo6n//XZnqdiZU5MbXowJFAto=;
+        b=Q9tFlYxp7N+1mxlzl25XZL2tPkhbxE7E+i6RzKw57sF0ZYGke+YtzMSsFk7NRtqVYA
+         tp7vnWOehv4rB6IgTMj2cApLYQ29VNz9DBcEvMVjjBMSqyMHBjDPRPDBgqiI4eNWTbeY
+         Ye8wqhl9VLEgKZexujdLyjyIWkALPRde0TRbtqQwUadnVe55IwF05aic1tn3XZviX9pN
+         1JjmzWe2zjnA9Nxv6CgZT2P9nJWhFNEBDOsm61Gezxxgi+VHvvoBQtl2W26GO+RXraY7
+         lMBP2AaDEFLMMOha30h+IKJkTcqT6nEPw56BC0aniVA8sYXFthEaeNhleJjYHpB66YLX
+         08OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682111325; x=1684703325;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9W1D3wCw6XKucfchy0oa7eoctRHM+fcPALZxgsEbNBs=;
-        b=lxT6bi9DXz/AFU4xDZ8MJ+GgUyKNwFFf7Kk3Tviol7Hf9zgUowgvTzrkQtntH3bUnl
-         0XOBquxlO+KNAvPd24ddErNdD3CMEnQtrXTJ28D2I9TOCEfoldEPGubXmF41ZZaljz3h
-         KX/QtpMYLxrufGd5CgYrLbnE6I9aqrL4MAXTIaI+zKlhl8ZrqWJpKH+20a9xX8d4pnK6
-         vscUpH51Z/J11LL7McIRN5pSBXyjaf9Wd4+nGLpTZjECnbK0oPiM/dAw4HQFKD5SI+fZ
-         Sk/U4ifpS5f3qqUdvjZtsbjGmYekHs0G0EYe0ee/NjRi9V3Eznw1vk+A6wDVz1g175Jd
-         L0JQ==
-X-Gm-Message-State: AAQBX9dP3K2Nhz+3PfelKjLZwuugNyDNMI7VxaqMn/JyjxUwJqoKStuH
-        NKyX1ASkYr+khZ4wWLtgnKdfTg==
-X-Google-Smtp-Source: AKy350YLTGBr4RyKMwcNF7D0+hyZdpX3tIb57/K2TAvk9TNPrByM+p/YOtKMAaJG9fIoYe+Yxdik/Q==
-X-Received: by 2002:ac2:4211:0:b0:4ed:bb8c:5036 with SMTP id y17-20020ac24211000000b004edbb8c5036mr1639270lfh.14.1682111325170;
-        Fri, 21 Apr 2023 14:08:45 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a085:4d00::8a5? (dzccz6yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a085:4d00::8a5])
-        by smtp.gmail.com with ESMTPSA id h23-20020ac250d7000000b004eeda08e9d9sm670853lfm.150.2023.04.21.14.08.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Apr 2023 14:08:44 -0700 (PDT)
-Message-ID: <6837a467-7d6d-2d6e-3b4a-191a5d32e650@linaro.org>
-Date:   Sat, 22 Apr 2023 00:08:44 +0300
+        d=1e100.net; s=20221208; t=1682121960; x=1684713960;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xO+YD26iSNYSmlzjnipo6n//XZnqdiZU5MbXowJFAto=;
+        b=TGtg2h6mNGlu8HSTrqF05LwI8GJEZHNKgU8MrAH9R4kNTWpmVwM3J/qhffk3vXckfE
+         rS73eFvMlpHVfAmAQ6muPqbIGrIZOClsnDyM7JxSwjFLIPzTZC/sjSsP1mlzwtIkSPro
+         TeC/YGAOigIL8x35cwGfd6j6vnW4xyGugRboofE9PXWPZDB+ftfrWhptHFAg5MxvPuAI
+         hnwLcwSKU5NWHfPs0CPQGItxtbIK6PPHVsqQkwq1QPbcu5stk/gncZp8eTIUEBqfTVtG
+         hHG+5TFQE20cdrcs5ANvOJtQlTgjEWHZxtpdroX+o8RXcBN5fJ1h9frNDlzxTPBwei4S
+         J/ug==
+X-Gm-Message-State: AAQBX9f9tBsBiOQAlPr7wWC7Rf8rFwZ9JHVp6YBvtz2rccVOfPdukYY3
+        03rOhYsmsHT1L2KCkJ+2PTQ29/tq1LQbT5xMfXqJLw==
+X-Google-Smtp-Source: AKy350Z08K5FgJgpv45/NNHDApgfPP7MHftNwuO+NiJhlwya5xRnHc1+3JSKhFhy3kz4H8xwhcCBrTYHNhl80xudzEM=
+X-Received: by 2002:a0d:d541:0:b0:54f:cbaf:36d with SMTP id
+ x62-20020a0dd541000000b0054fcbaf036dmr2944127ywd.35.1682121960536; Fri, 21
+ Apr 2023 17:06:00 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-Subject: Re: [PATCH v8 5/8] phy: qcom-qusb2: add QUSB2 support for IPQ9574
-Content-Language: en-GB
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
-        kishon@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
-References: <cover.1680693149.git.quic_varada@quicinc.com>
- <096d01ea7b833cc990a3c7cd071528aa50fd1020.1680693149.git.quic_varada@quicinc.com>
+References: <20230421124938.21974-1-quic_devipriy@quicinc.com> <20230421124938.21974-7-quic_devipriy@quicinc.com>
+In-Reply-To: <20230421124938.21974-7-quic_devipriy@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <096d01ea7b833cc990a3c7cd071528aa50fd1020.1680693149.git.quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Date:   Sat, 22 Apr 2023 03:05:44 +0300
+Message-ID: <CAA8EJpoqq=3o1K=yDaim=e11nEN5n+phJUSd1d5BT_VJkdv6xg@mail.gmail.com>
+Subject: Re: [PATCH V3 6/6] PCI: qcom: Add support for IPQ9574
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mani@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_ipkumar@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/04/2023 14:41, Varadarajan Narayanan wrote:
-> Add the phy init sequence for the Super Speed ports found
-> on IPQ9574.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+On Fri, 21 Apr 2023 at 15:51, Devi Priya <quic_devipriy@quicinc.com> wrote:
+>
+> The IPQ9574 platform has 4 Gen3 PCIe controllers: two single-lane
+> and two dual-lane based on SNPS core 5.70a
+> The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
+> Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
+> which reuses all the members of 'ops_2_9_0' except for the post_init
+> as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
+> and 1_27_0.
+> Also, modified get_resources of 'ops 2_9_0' to get the clocks
+> from the device tree and modelled the post init sequence as
+> a common function to avoid code redundancy.
+>
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 > ---
->    Changes in v2:
-> 	- Place the entry such that the list continues to be sorted
+>  Changes in V3:
+>         - Rebased on top of linux-next/master
+>
+>  drivers/pci/controller/dwc/pcie-qcom.c | 61 ++++++++++++++++++--------
+>  1 file changed, 43 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 4ab30892f6ef..3682ecdead1f 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -107,6 +107,7 @@
+>
+>  /* PARF_SLV_ADDR_SPACE_SIZE register value */
+>  #define SLV_ADDR_SPACE_SZ                      0x10000000
+> +#define SLV_ADDR_SPACE_SZ_1_27_0               0x08000000
+>
+>  /* PARF_MHI_CLOCK_RESET_CTRL register fields */
+>  #define AHB_CLK_EN                             BIT(0)
+> @@ -202,10 +203,10 @@ struct qcom_pcie_resources_2_7_0 {
+>         struct reset_control *rst;
+>  };
+>
+> -#define QCOM_PCIE_2_9_0_MAX_CLOCKS             5
+>  struct qcom_pcie_resources_2_9_0 {
+> -       struct clk_bulk_data clks[QCOM_PCIE_2_9_0_MAX_CLOCKS];
+> +       struct clk_bulk_data *clks;
+>         struct reset_control *rst;
+> +       int num_clks;
+>  };
+>
+>  union qcom_pcie_resources {
+> @@ -1050,17 +1051,10 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>         struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>         struct dw_pcie *pci = pcie->pci;
+>         struct device *dev = pci->dev;
+> -       int ret;
+>
+> -       res->clks[0].id = "iface";
+> -       res->clks[1].id = "axi_m";
+> -       res->clks[2].id = "axi_s";
+> -       res->clks[3].id = "axi_bridge";
+> -       res->clks[4].id = "rchng";
+> -
+> -       ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -       if (ret < 0)
+> -               return ret;
+> +       res->num_clks = devm_clk_bulk_get_all(dev, &res->clks);
+> +       if (res->clks < 0)
+> +               return res->num_clks;
+>
+>         res->rst = devm_reset_control_array_get_exclusive(dev);
+>         if (IS_ERR(res->rst))
+> @@ -1073,7 +1067,7 @@ static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
+>  {
+>         struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>
+> -       clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +       clk_bulk_disable_unprepare(res->num_clks, res->clks);
+>  }
+>
+>  static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+> @@ -1102,19 +1096,16 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>
+>         usleep_range(2000, 2500);
+>
+> -       return clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +       return clk_bulk_prepare_enable(res->num_clks, res->clks);
+>  }
+>
+> -static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> +static int qcom_pcie_post_init(struct qcom_pcie *pcie)
+>  {
+>         struct dw_pcie *pci = pcie->pci;
+>         u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>         u32 val;
+>         int i;
+>
+> -       writel(SLV_ADDR_SPACE_SZ,
+> -               pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> -
+>         val = readl(pcie->parf + PARF_PHY_CTRL);
+>         val &= ~PHY_TEST_PWR_DOWN;
+>         writel(val, pcie->parf + PARF_PHY_CTRL);
+> @@ -1151,6 +1142,26 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>         return 0;
+>  }
+>
+> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
+> +{
+> +       writel(SLV_ADDR_SPACE_SZ_1_27_0,
+> +              pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> +
+> +       qcom_pcie_post_init(pcie);
+> +
+> +       return 0;
+> +}
+> +
+> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> +{
+> +       writel(SLV_ADDR_SPACE_SZ,
+> +              pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> +
+> +       qcom_pcie_post_init(pcie);
+> +
+> +       return 0;
+> +}
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I'm not sure about moving the SLV_ADDR_SPACE_SIZE initialization from
+init() to post_init(). Probably a better solution might be to have two
+init() callbacks and to call the common function from both of them.
+
+> +
+>  static int qcom_pcie_link_up(struct dw_pcie *pci)
+>  {
+>         u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+> @@ -1291,6 +1302,15 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>         .ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  };
+>
+> +/* Qcom IP rev.: 1.27.0  Synopsys IP rev.: 5.80a */
+> +static const struct qcom_pcie_ops ops_1_27_0 = {
+> +       .get_resources = qcom_pcie_get_resources_2_9_0,
+> +       .init = qcom_pcie_init_2_9_0,
+> +       .post_init = qcom_pcie_post_init_1_27_0,
+> +       .deinit = qcom_pcie_deinit_2_9_0,
+> +       .ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +};
+> +
+>  static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>         .ops = &ops_1_0_0,
+>  };
+> @@ -1323,6 +1343,10 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
+>         .ops = &ops_2_9_0,
+>  };
+>
+> +static const struct qcom_pcie_cfg cfg_1_27_0 = {
+> +       .ops = &ops_1_27_0,
+> +};
+> +
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>         .link_up = qcom_pcie_link_up,
+>         .start_link = qcom_pcie_start_link,
+> @@ -1607,6 +1631,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>         { .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
+>         { .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
+>         { .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
+> +       { .compatible = "qcom,pcie-ipq9574", .data = &cfg_1_27_0 },
+>         { .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
+>         { .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
+>         { .compatible = "qcom,pcie-sa8540p", .data = &cfg_1_9_0 },
+> --
+> 2.17.1
+>
+
 
 -- 
 With best wishes
 Dmitry
-
