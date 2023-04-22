@@ -2,90 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03771C77B7C
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Apr 2023 00:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C71AC7618E
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Apr 2023 08:46:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234069AbjDVAV1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Apr 2023 20:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58304 "EHLO
+        id S229530AbjDVIqy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Apr 2023 04:46:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234067AbjDVAVZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Apr 2023 20:21:25 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D21952D5D
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 17:21:15 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id 3f1490d57ef6-b980e16b27bso1411461276.2
-        for <linux-clk@vger.kernel.org>; Fri, 21 Apr 2023 17:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682122875; x=1684714875;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vYPWYGDJMhP7eV/jzWq1VIOUpeyeWw3B0wUE4YZZCmE=;
-        b=p/bNplEChqCipEg965Y382pIyekStKKfzL2rZ+r7/98iZAysbEMBPiInYSpDkNsNrm
-         hy5DEwvn4duWAUum10kTnlcAZ5P46IFyrAmd9ueWg4yx6XMxKgm7xCadl4M7tgzwLNxc
-         BlVKJCZyoA368mMdWudGvnG5OpgrAv5vdCuP6Es4uWT1L2mOhjBilk2EluxX21EsgLR+
-         5gLyt3c1/FuX45FtZIUzxj67Mu3ZGqWEOjyFqA9jUxrWHIAPPSw718PlU5P6fpzMUfYQ
-         9/KHfk7pIzAOTQfcJrWaK20ufNMW8DSeZ9+jYP6WuMcXX+YjE4ECOYQcFw1EywSzs8ny
-         N29Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682122875; x=1684714875;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vYPWYGDJMhP7eV/jzWq1VIOUpeyeWw3B0wUE4YZZCmE=;
-        b=apUqhk/6jWHYzJDgvBlBZZPmtUXDkcgo33spvFLwcrWwEl68sByXAD7IImG6tOTuCd
-         3ipJRls5gLn1iCkPkeb/dr6XbXxdfKhZw78PofvOfuWPbfjNv185PYCSrisIypjM5y5l
-         P7Nom6ED4iSHap6x0G0gIzsC6BmGNZkNfUfe8gTRwcl699K/DqzDutkQA8fiOTaOuIdf
-         bm0A3N7XBZMGGwwSN061+DD4tndIYP3kxWaJGc0WV+Wnx2p7XBiNsifLBzn7TlelJRa8
-         owOLUXOYMQgXJF7lazh1raaupnTKq/Ys1gz5QA05S3qhW4fWvne8n82oKOWrhqDFwtS4
-         kWMg==
-X-Gm-Message-State: AAQBX9cJY7RqYUNg6RuQIhHaChG/ynpVF4iL6A2QKEUewbse0BDbDuYu
-        P+9AaSu9NYxiO++eWSajdRntMKSIt8cxUQUHbuDjTA==
-X-Google-Smtp-Source: AKy350Y+lKJO2oSM2BWjg2A3ysf0G4U98qb2g2BmthOtZuVMrE/ho258xSHNWC2L91ksdI74UKOPiSBzxWADWpaq55U=
-X-Received: by 2002:a25:e784:0:b0:b96:3fd4:52eb with SMTP id
- e126-20020a25e784000000b00b963fd452ebmr3497830ybh.39.1682122875007; Fri, 21
- Apr 2023 17:21:15 -0700 (PDT)
+        with ESMTP id S229468AbjDVIqx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Apr 2023 04:46:53 -0400
+Received: from hust.edu.cn (unknown [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97AC719AD;
+        Sat, 22 Apr 2023 01:46:52 -0700 (PDT)
+Received: from bosi.. ([10.12.190.56])
+        (user=u201911157@hust.edu.cn mech=LOGIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 33M8i4Mk027977-33M8i4Ml027977
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 22 Apr 2023 16:44:14 +0800
+From:   Bosi Zhang <u201911157@hust.edu.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Ikjoon Jang <ikjn@chromium.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Chun-Jie Chen <chun-jie.chen@mediatek.com>
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Bosi Zhang <u201911157@hust.edu.cn>,
+        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: fix of_iomap memory leak
+Date:   Sat, 22 Apr 2023 08:43:31 +0000
+Message-Id: <20230422084331.47198-1-u201911157@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230421124938.21974-1-quic_devipriy@quicinc.com> <20230421124938.21974-3-quic_devipriy@quicinc.com>
-In-Reply-To: <20230421124938.21974-3-quic_devipriy@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Sat, 22 Apr 2023 03:21:03 +0300
-Message-ID: <CAA8EJpr-Xppn0RCOBH-12DJeY1nc5CCgB480FZsrdi4wAY7CxQ@mail.gmail.com>
-Subject: Re: [PATCH V3 2/6] clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mani@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_ipkumar@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-FEAS-AUTH-USER: u201911157@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 21 Apr 2023 at 15:50, Devi Priya <quic_devipriy@quicinc.com> wrote:
->
-> Add the PCIe pipe clocks needed for enabling PCIe in IPQ9574.
->
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->  Changes in V3:
->         - Picked up the Acked-by tags
->
->  drivers/clk/qcom/gcc-ipq9574.c | 76 ++++++++++++++++++++++++++++++++++
->  1 file changed, 76 insertions(+)
+Smatch reports:
+drivers/clk/mediatek/clk-mtk.c:583 mtk_clk_simple_probe() warn:
+    'base' from of_iomap() not released on lines: 496.
 
+This problem was also found in linux-next. In mtk_clk_simple_probe(),
+base is not released when handling errors
+if clk_data is not existed, which may cause a leak.
+So free_base should be added here to release base.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Fixes: c58cd0e40ffa ("clk: mediatek: Add mtk_clk_simple_probe() to simplify clock providers")
+Signed-off-by: Bosi Zhang <u201911157@hust.edu.cn>
+Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+The issue is found by static analysis and remains untested.
+---
+ drivers/clk/mediatek/clk-mtk.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index fd2214c3242f..3c50f48e93a7 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -500,8 +500,10 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 	num_clks += mcd->num_mux_clks + mcd->num_divider_clks;
+ 
+ 	clk_data = mtk_alloc_clk_data(num_clks);
+-	if (!clk_data)
+-		return -ENOMEM;
++	if (!clk_data) {
++		r = -ENOMEM;
++		goto free_base;
++	}
+ 
+ 	if (mcd->fixed_clks) {
+ 		r = mtk_clk_register_fixed_clks(mcd->fixed_clks,
+@@ -599,6 +601,7 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+ 					      mcd->num_fixed_clks, clk_data);
+ free_data:
+ 	mtk_free_clk_data(clk_data);
++free_base:
+ 	if (mcd->shared_io && base)
+ 		iounmap(base);
+ 	return r;
 -- 
-With best wishes
-Dmitry
+2.34.1
+
