@@ -2,126 +2,147 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D64AC7618E
-	for <linux-clk@archiver.kernel.org>; Sat, 22 Apr 2023 13:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30FEC7618E
+	for <linux-clk@archiver.kernel.org>; Sat, 22 Apr 2023 15:57:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbjDVNuJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Apr 2023 09:50:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43626 "EHLO
+        id S229687AbjDVP5O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 22 Apr 2023 11:57:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbjDVNuH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Apr 2023 09:50:07 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869AA1BEB;
-        Sat, 22 Apr 2023 06:50:05 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id 4fb4d7f45d1cf-506bfe81303so4536514a12.1;
-        Sat, 22 Apr 2023 06:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682171404; x=1684763404;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WFcPcfg308BxIs2D12U44N+18aoFFJxwabh2xPhsPSk=;
-        b=ZRWs3JpD4Cp5/pHGbDd0vrTAVGX7MoGwPJIJGgfDW35EVVzY7pVHO1cr+CMew4W30p
-         LssfreTk3/208zOZke8KMcbc5fRWXdHA1gLcffdeonmQ1cUm09zZdb7Qax14xXqktigh
-         QxVFZlPxVn+VDM9CKTWGq2LYuxR3RzYjFrprgWqmNAwY/xi4H8xNsc+kt0VKUI+/YJis
-         qEI1pzNybL5k5euRWSNV8a+Zk0eVTMAXFwkhC0Ved4lMSY7As7fGXewYKgf18p+dGQsc
-         OWQWry1WTSwtalqKuUvjPaulrvkzhckKJWomjmsPu5aIEGm3MfwYgVjIgZ9AR3G3sIm1
-         gFYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682171404; x=1684763404;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WFcPcfg308BxIs2D12U44N+18aoFFJxwabh2xPhsPSk=;
-        b=YHtdifYPr278Wus8Jc+cYsuOrZjDGWe//gWavURvo2GnS9R1L/aRvE2JUcqZ6wkKOA
-         y0ZOCA1VCyZtXOtrgLstzJ15jABFFTg64pLhV0iBhZUuyhhO1gFxQDWf9Sqa9jUEG6qS
-         /wp6Fb9pizTEKTxL0OafhG1UGpoZx+lWHDtnouP5tTWfTaxf9mBZKaQCrddgj98Klf3t
-         XPJ2acbJpkuOZC/Whavn9eYNfA9JLEyoDWO/8tm1ztg/U8mSI5b8kEGABCjCBscVFSEV
-         TTL1tkbvZt3WrZ8AGcG0/CPsJPA9wUtPPy4STpUnJIcaGI7vWYZRukwUmgFms7nnmFDP
-         BI7A==
-X-Gm-Message-State: AAQBX9dXR9NKae4d9v4NVWtsAEXk99ZivEGy5yoJOGvcFv77i/9/Qnnd
-        /y6MFtbnC4GofUpaPSVF/3k=
-X-Google-Smtp-Source: AKy350agXYSrpjkbP6WbEUuG++nS8/psneQ03hXKL+jNOlMEImcYh4gHMeo5CK525yNYdOAzt8ZgwA==
-X-Received: by 2002:aa7:da41:0:b0:506:8660:77a3 with SMTP id w1-20020aa7da41000000b00506866077a3mr8228114eds.37.1682171403662;
-        Sat, 22 Apr 2023 06:50:03 -0700 (PDT)
-Received: from [192.168.50.244] (83.11.224.11.ipv4.supernova.orange.pl. [83.11.224.11])
-        by smtp.gmail.com with ESMTPSA id v2-20020aa7d802000000b004ad601533a3sm2846990edq.55.2023.04.22.06.50.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Apr 2023 06:50:03 -0700 (PDT)
-Message-ID: <5818b5be-f9cc-8009-e2a4-1049d84a944d@gmail.com>
-Date:   Sat, 22 Apr 2023 15:50:01 +0200
+        with ESMTP id S229669AbjDVP5M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Apr 2023 11:57:12 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C40119;
+        Sat, 22 Apr 2023 08:57:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net; s=s31663417;
+        t=1682178995; i=j.neuschaefer@gmx.net;
+        bh=UFyq5axvJcNsz0Fjz36jtW09WWOe6XfQ8XnSNYq26OM=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=jhCwElgzyVzcf6zhLYMPdR8LNrsTH1p2aOeja5J1VeX8w1QqVr4hwlneJ84mKHWAx
+         HdRY4P2N//q/bqGCME7wdPh/tlIWk24Tz71xyGbqA7AqbO/1Z6hGEhv50xDz/kDFwC
+         1VFhxLOPAWMfDmtwtD4/YzEM9T18ZItzx+AN2HnOBvKScGMFd5FCvc8QPJisK0G1tK
+         t/MHrY49vE5+xiCjY2oAhWGMV7yUovqiJ+rc3ht0LbqG6L6wXPV98ttR5Y7hiNs7MS
+         15fmYYRNxbPpr/Kn+qYIdWaGIo5UxZuVCwI57WOdy66pgSa08q5xhPFScm9yNEFE5m
+         V5uwwtU/RXgUg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from probook ([95.223.44.193]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mulm5-1q8sRl3ifz-00rsCB; Sat, 22
+ Apr 2023 17:56:35 +0200
+Date:   Sat, 22 Apr 2023 17:56:32 +0200
+From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     j.neuschaefer@gmx.net, avifishman70@gmail.com,
+        benjaminfair@google.com, daniel.lezcano@linaro.org,
+        devicetree@vger.kernel.org, krzk+dt@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux@roeck-us.net,
+        mturquette@baylibre.com, openbmc@lists.ozlabs.org,
+        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
+        tali.perry1@gmail.com, tglx@linutronix.de, tmaimon77@gmail.com,
+        venture@google.com, wim@linux-watchdog.org, yuenn@google.com
+Subject: Re: [PATCH v6 2/2] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
+ controller driver
+Message-ID: <ZEQDsLYaRywV9IbF@probook>
+References: <20230415111355.696738-1-j.neuschaefer@gmx.net>
+ <20230415111355.696738-3-j.neuschaefer@gmx.net>
+ <c04038f2-b7aa-7c37-df93-6950831579f6@wanadoo.fr>
+ <ZEBiuRH3DjVUO/Kp@probook>
+ <1f1b088c-85d2-13ed-bbb1-043409dbe894@wanadoo.fr>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-From:   Artur Weber <aweber.kernel@gmail.com>
-Subject: Re: [PATCH v2 12/12] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0
- boards
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-13-aweber.kernel@gmail.com>
- <9aba4c1d-93f3-7613-6fb5-0591a281ec0a@linaro.org>
-Content-Language: en-US
-In-Reply-To: <9aba4c1d-93f3-7613-6fb5-0591a281ec0a@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wBtEmj/GHkQArSVj"
+Content-Disposition: inline
+In-Reply-To: <1f1b088c-85d2-13ed-bbb1-043409dbe894@wanadoo.fr>
+X-Provags-ID: V03:K1:ylmmr/4kgHp15Xb1RvW1UVIaEunANbl10H6e0zPe9HHJJwa69i9
+ OK8KpchVwUVb1Yp17kuenenlhkiRgUgMHqVt3vxHcPJ/KeWzRjr45JXCSTGMzrR9Y30jgNC
+ UrcL3OberlEPUu90dCuqiknKtifX12y3FdlcXoCHV8lRkyfMSodJI1KRZsfWyLdb2/e/zKE
+ zwA4auX2wBUod8gCT1NCg==
+UI-OutboundReport: notjunk:1;M01:P0:97RAzFhE8GI=;jQrFiJ4qzZ+dN4UftPaapw/hkj4
+ 0jc9UjTbASAf/W4Vb0PHOu0bnnztUdn59FBN8ntko7pFeo6b7yKh5tewLZcZ8dYIhjAJAiefD
+ ZhjyjSGx5CJ0Ugczh2ph7jcP4bVTO9oWr5Z+Uvc3orUp9kJZNiRVT9k9mjaN6IV2Ptqb4h7gE
+ 7aO6h+K/rPLIShMZDKV8x/v0uLm8HqrovZcB+3E1CwSqeO28RAPzaxeQ3HGNA2hO7McHrSRuF
+ 2l1Fisdfw/TpPmWHfrcV555Sty1AMkRdWeG9RxfPRlUr1/mi9XXtxaNR123bfTf3CvWpNlzwT
+ iLBwTUJ3eaJTyWu49KJE0YTsSctARqeV04eidR27Z7UXs4Uud20QbZ4XgNY+SU7Zlki5hk809
+ Yaol7YPIq7lmbD89k+jrAAW5RzFEo7zU/+UlHAPpg1jLelQB/WKUZ8uFOUmVQbe4VB7U83Wlj
+ nlhQXvLgNvcH3yAuDQL5fze6DugzFKN7KRZsZ4XjNHGjrGjdpdBHsr3psxK7A6YKtgUjEADkh
+ M8vG5D7GlC5qGRe1mUVVZRqi6im0J2b/N5nEtHk1WsWMePmKRDPl3pGsEfrrwOZnXlk4gRgYV
+ dZ5f5Wca2qCDB8Eph41P0hkfU9/ON23sE9SkOk8wj2NL5RbxmTqOOLZ0iiqANS0nFyRRuHYH9
+ hjqyGolutav+wUMToJeG8IrPbOSRbdaZpwK7JvFBdQPTC2jtjl3MYSkzdNoz3xETIOcSIF2it
+ n3xeADDiUV6dSgfirmYLp+LDCJUz+q9LA3PF7+beZtQYP0v9OFRCbXOfDaOAwxbQPrmWRsxpW
+ ZgbEnPgGkfkOMQoT+wborxIigG24uMfl9F8jdqKYRoHgs4bAj4G0Bc9DRIsrWOYESdNN2Xpag
+ armu3PIYJYWtei8NSWYZRb8fdmOfI81PkqC2Za+ttLUfuo4wBdq56NG47E+5uwTAhZypSrZZz
+ B51RHYqL/WfamVhyFQZ2SYCpXH4=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-thank you for the review.
+--wBtEmj/GHkQArSVj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 16/04/2023 20:26, Krzysztof Kozlowski wrote:
-> On 16/04/2023 15:34, Artur Weber wrote:
-> [...]
->> +
->> +		backlight: backlight@2c {
->> +			compatible = "ti,lp8556";
-> 
-> You need to convert bindings to DT schema first. I don't accept any new
-> usages of TXT bindings anymore, sorry.
-> 
+On Thu, Apr 20, 2023 at 07:32:07AM +0200, Christophe JAILLET wrote:
+> Le 19/04/2023 =C3=A0 23:52, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=A0:
+> > On Sat, Apr 15, 2023 at 02:16:09PM +0200, Christophe JAILLET wrote:
+> > > Le 15/04/2023 =C3=A0 13:13, Jonathan Neusch=C3=A4fer a =C3=A9crit=C2=
+=A0:
+[...]
+> > > > +	// Enables/gates
+> > > > +	for (i =3D 0; i < ARRAY_SIZE(clken_data); i++) {
+> > > > +		const struct wpcm450_clken_data *data =3D &clken_data[i];
+> > > > +
+> > > > +		hw =3D clk_hw_register_gate_parent_data(NULL, data->name, &data-=
+>parent, data->flags,
+> > > > +						      clk_base + REG_CLKEN, data->bitnum,
+> > > > +						      data->flags, &wpcm450_clk_lock);
+> > >=20
+> > > If an error occures in the 'for' loop or after it, should this be
+> > > clk_hw_unregister_gate()'ed somewhere?
+> >=20
+> > Ideally yes =E2=80=94
+> >=20
+> > in this case, if the clock driver fails, the system is arguably in such
+> > a bad state that there isn't much point in bothering.
+> >=20
+>=20
+> Ok, but below we care about freeing clk_data->hws in the error handling
+> path.
+>=20
+> Why do we handle just half of the resources?
+> Shouldn't it be all (to be clean, if it makes sense) or nothing (to reduce
+> the LoC and have a smaller driver)?
 
-I'll be taking a look at the conversion (will likely submit it as a
-separate patchset, since I've been looking into some minor driver-side
-changes there as well...), although I have one question - who should I
-list as the bindings maintainer ("maintainers" field in YAML format)? Is
-this someone specific for that subsystem, or the author of the driver,
-or someone else? (It's worth noting that there isn't a maintainer listed
-for the lp855x driver in the MAINTAINERS file.)
-Documentation/devicetree/bindings/writing-schema.rst doesn't really
-mention anything about this.
+I thought about it for a bit, and I think I'm ok with reducing the
+deallocation in this driver to nothing. I'll spin a new version.
 
->> +&bus_acp {
-> 
-> Order label/phandle overrides by name, so acp before dmc.
-> 
+Conversely, if I were to implement proper error handling here, I'd
+convert it into a platform driver and use devm_* functions, because
+dealing with all the little clock objects is just too painful and
+fragile for my taste.
 
-Out of curiosity - should I order the children of the / node or the
-pinctrl nodes by name as well?
 
-Best regards
-Artur Weber
+Thanks,
+Jonathan
 
+--wBtEmj/GHkQArSVj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAmREA4gACgkQCDBEmo7z
+X9vELw//XtgZ45bo+nh7sRo2vLpDjlAMfwsWrnL/cHpN2rA/vinTR2rOZ8LwJAhG
+iuL5Smhp3DQv8H6ZUxvhyy2xZ3qXAxej5h8PVaUZlxLNwmG9Ro4Gyoy+n8VJagCz
+/FClvZ9sK6yGJXKayQwFZPdAGSZAN9CFpDiU10hteChB9U7UcoA5+UjUnY+15m6G
+NwK1x6u4UHUu6uQRBFapTX9RMBMMmc7zfJcq4nXvVfMaw+g9V6wPeiCJHetTnXC3
+A9q28JWdro6ZTu/DxfdEobpemv+gOM515g1HNZjORwy24vbfW6CuVxmAW64S3cwU
+Vu+OSfC7k4xY71pOGB2VrXpTqeSipobJmx3tU59wyjypysp3Mp/tUldd56eJGpko
+SMOrlH+LK866KMwUs7/qXNHdtDnsX4UtbdsiwwNCePgUeMqMcGLTd9wueVlUn/vj
+13SRz6wsdtKrvFA1daTP/7m1eFZ6dnLEU6AJAcZGVk60Bvq7NHYD7tnyMIJnM1xt
+3L82jBDW/58n290YMgVTKGt+zS+ZrFcn11ReMksvdWRKCUJRczmVLqhtLPA2IHjU
+D8vpmqO52/qEVskIwIJ+I/nlmY+3JnFBakdP8EQkSKGkfCJSrEBfehrYLeNDmgFg
+I/NeOR+jh1tSTebpHJGeeuWUKGO8AZeOs5IgrElfVRvkxiLRJeU=
+=+Ar6
+-----END PGP SIGNATURE-----
+
+--wBtEmj/GHkQArSVj--
