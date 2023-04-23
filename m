@@ -2,139 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B30C7EE20
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Apr 2023 08:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0778AC77B73
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Apr 2023 12:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbjDWIZt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Apr 2023 04:25:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42928 "EHLO
+        id S229485AbjDWMih (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Apr 2023 08:38:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbjDWIZs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Apr 2023 04:25:48 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB9F199E
-        for <linux-clk@vger.kernel.org>; Sun, 23 Apr 2023 01:25:46 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-504dfc87927so5564476a12.0
-        for <linux-clk@vger.kernel.org>; Sun, 23 Apr 2023 01:25:46 -0700 (PDT)
+        with ESMTP id S229441AbjDWMig (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Apr 2023 08:38:36 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A36210E2;
+        Sun, 23 Apr 2023 05:38:35 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id ca18e2360f4ac-760f8ffb27fso78792539f.2;
+        Sun, 23 Apr 2023 05:38:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682238345; x=1684830345;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qETio9rQ+I+ApbmjseQZz+b4a2GrMopfzyspvxvfmDI=;
-        b=CNlnud9ixhpA7rN5EkdFypqZA/9EHtbHo0dnoloz/zm9AmQu9Q7dFAPSj4qpSWmA20
-         LojHlppqQf6E2hQUooLbrCEqRzfDtZLvo/byw7QN4ujUSkjLnpmj3Ejl9UP4EoVVkVJJ
-         5js84TxfRY5fzJBR9v7M6CZkkJz11L7tpmtrEsbML+0/W5NrrY2NHnQV0Y86EoVyi4tG
-         dFteiFaIqHvaV4yAmni+nFeReHPTtKmlzPNBhQyj4eEC6dYOPxKpOgh7Fesd9EpWlnIp
-         bB7P6hgsKucCZU2KN3vOd2+7LnBC+WlY/jANPYX1BQ0wf8f8O0Bm1xBwgY0eYj70aW5E
-         hD9g==
+        d=gmail.com; s=20221208; t=1682253514; x=1684845514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=omxlpIKXp/6w9A8kSumpgR4tKNK9oDvDPvxcZqTnkYA=;
+        b=K/0OStf1AOLqMh4auNrV50Msgv/QyxlPG2TLzBqbRXPCUfpPOw5xbqGJWIfGF81YcS
+         Z3Oi+kk/pquajapZJP6Oabu/eUkPRHfi1+boSiHZ7r+XkDa3KvQzywIEhStm30Ketd89
+         gUszwtJfNyCE4fIlLwG0cCWgF8idwPzB1XqMMBBZWzp4ddWfmPLyerGv22WtpPxsx2fH
+         oXBWt1jjGcaAzqysyH58AaUVuJnMK1h1z2w1iE2GQCP0TfCg297VTdLYUS1EeJ+A7p1/
+         aBzHCFDClNfjoV+H50JKVhBeq4/0Ttdhg/kkTnq8wsi3DuqK+FOclZ3MZsZtw4LfFFCf
+         kYzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682238345; x=1684830345;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qETio9rQ+I+ApbmjseQZz+b4a2GrMopfzyspvxvfmDI=;
-        b=kaSK804KBjnHBX8H5GU5HHbL//k6qtmq5W6GwXHyNnxseiun+0dxV7fYk39iZMFKe/
-         97kexjBBIZ2ouyBh+tQqngzyT/qrcOIpdnYW8TPy1FKilE+u+IVdX8pDL9LqSYBL4ZJr
-         U+b4lX1oYCQOxyiyAeZUzmd6FNt2sgGlhM1rQtiHfJ0NVZFn3yCoc/w6A1wncf/1tKx1
-         waBjyJMHSzycCyQKyOBMYfr3cnEVL1qz+hBhhECMsAsTsYfKOc69dOo8k4zZfMdc/YA4
-         sKlZuCVCUBmxgYELpLAcGK7LI8u+My2y9Efgx/YdXogwc7gVsZud/G5buxuIhb6ojQ6L
-         /skA==
-X-Gm-Message-State: AAQBX9e7RUnfyQ3ym9bPFw0FkFBrSn9TDXJV17aNU+k8LXKRkgM8guzF
-        vVvWDjQjd2ayvk9TLK6njv+7vw==
-X-Google-Smtp-Source: AKy350a52plHENuAAwWUdq2bp/DaP8sNnY6cqie/09b6KCgt6I5FlFz697CL/6UK2AIp1gEeHdBZUg==
-X-Received: by 2002:a05:6402:74c:b0:506:976e:5242 with SMTP id p12-20020a056402074c00b00506976e5242mr8618775edy.25.1682238344819;
-        Sun, 23 Apr 2023 01:25:44 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:5d52:d466:d57f:118c? ([2a02:810d:15c0:828:5d52:d466:d57f:118c])
-        by smtp.gmail.com with ESMTPSA id p21-20020a056402075500b0050684020babsm3464665edy.27.2023.04.23.01.25.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Apr 2023 01:25:44 -0700 (PDT)
-Message-ID: <80c6cfbd-5661-ba39-2193-c6ae8eba3648@linaro.org>
-Date:   Sun, 23 Apr 2023 10:25:42 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2 12/12] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0
- boards
-Content-Language: en-US
-To:     Artur Weber <aweber.kernel@gmail.com>
-Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        d=1e100.net; s=20221208; t=1682253514; x=1684845514;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=omxlpIKXp/6w9A8kSumpgR4tKNK9oDvDPvxcZqTnkYA=;
+        b=RqXmoza6CyTjiAH6owkvl/C2F02lbIi3q8wG6dUFn2Cj9yNsq9cgcN0+2MgqCnyhg9
+         NnSOazWbze1x2QCY/XfBfoSHZflKoiarkJIY/HbHvGT35cx4RQT+YgVMdh+H1K3gcCDJ
+         rnPCt62b9WyEvrkJhYEura9K/ZgKcD0KYJxwSpzWVXqyKF//z8JQ/02WbaPihdkjBOT5
+         f0pSFhKTmonia53ifPMUimOCjAUxYVMz8+Fetmgwot7ug7c4oHaKry+YGb6VdX1uGuFV
+         zILzOPjk1P+gmtwYbXhioXoAldWFHpBz6UnpdExR3A5q6VlkXA2tqGIzXTZ0nRk3PKqw
+         h0ZQ==
+X-Gm-Message-State: AAQBX9dCJVtmQctWH7i+ru01FhvkAgYJF5kDapioXUzodt0pQVNl89s1
+        MkM8LHd/rL9V+hlTPfjPolCnpANi5PWrTQ==
+X-Google-Smtp-Source: AKy350YblNmFz+w1ZkW2Qy/dIQ1OMGstG9Gdcjsw4961EqNKt4mOnibsgcI87XwgHiv17i/dcAvbGg==
+X-Received: by 2002:a6b:6507:0:b0:760:f887:7553 with SMTP id z7-20020a6b6507000000b00760f8877553mr4196958iob.2.1682253513943;
+        Sun, 23 Apr 2023 05:38:33 -0700 (PDT)
+Received: from aford-B741.lan ([2601:447:d001:897f:b473:5d7c:4c2:75d7])
+        by smtp.gmail.com with ESMTPSA id i25-20020a056638381900b0040f8b6933f0sm2532203jav.74.2023.04.23.05.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Apr 2023 05:38:33 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>, soc@kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-phy@lists.infradead.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20230416133422.1949-1-aweber.kernel@gmail.com>
- <20230416133422.1949-13-aweber.kernel@gmail.com>
- <9aba4c1d-93f3-7613-6fb5-0591a281ec0a@linaro.org>
- <5818b5be-f9cc-8009-e2a4-1049d84a944d@gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <5818b5be-f9cc-8009-e2a4-1049d84a944d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Revert "clk: imx: composite-8m: Add support to determine_rate"
+Date:   Sun, 23 Apr 2023 07:38:27 -0500
+Message-Id: <20230423123828.1346511-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/04/2023 15:50, Artur Weber wrote:
-> Hi,
-> 
-> thank you for the review.
-> 
-> On 16/04/2023 20:26, Krzysztof Kozlowski wrote:
->> On 16/04/2023 15:34, Artur Weber wrote:
->> [...]
->>> +
->>> +		backlight: backlight@2c {
->>> +			compatible = "ti,lp8556";
->>
->> You need to convert bindings to DT schema first. I don't accept any new
->> usages of TXT bindings anymore, sorry.
->>
-> 
-> I'll be taking a look at the conversion (will likely submit it as a
-> separate patchset, since I've been looking into some minor driver-side
-> changes there as well...), although I have one question - who should I
-> list as the bindings maintainer ("maintainers" field in YAML format)? Is
+This reverts commit 156e96ff2172518b6f83e97d8f11f677bc668e22.
 
-Anyone who has interest in the device/driver, like driver maintainer,
-device developers, you erc.
+This patch was found to cause some division issues on the i.MX8MP
+which causes the video clocks to not properly divide when division
+was greate than 8.  This causes video failures on disp1_pix and
+disp2_pix clocks.
 
-> this someone specific for that subsystem, or the author of the driver,
-> or someone else? (It's worth noting that there isn't a maintainer listed
-> for the lp855x driver in the MAINTAINERS file.)
-> Documentation/devicetree/bindings/writing-schema.rst doesn't really
-> mention anything about this.
-> 
->>> +&bus_acp {
->>
->> Order label/phandle overrides by name, so acp before dmc.
->>
-> 
-> Out of curiosity - should I order the children of the / node 
+Until a better solution is found, we'll have to revert this.
 
-Yes.
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-> or the
-> pinctrl nodes by name as well?
-
-These are usually by pin name.
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index 6883a8199b6c..cbf0d7955a00 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -119,17 +119,10 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 	return ret;
+ }
+ 
+-static int imx8m_clk_divider_determine_rate(struct clk_hw *hw,
+-				      struct clk_rate_request *req)
+-{
+-	return clk_divider_ops.determine_rate(hw, req);
+-}
+-
+ static const struct clk_ops imx8m_clk_composite_divider_ops = {
+ 	.recalc_rate = imx8m_clk_composite_divider_recalc_rate,
+ 	.round_rate = imx8m_clk_composite_divider_round_rate,
+ 	.set_rate = imx8m_clk_composite_divider_set_rate,
+-	.determine_rate = imx8m_clk_divider_determine_rate,
+ };
+ 
+ static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
+-- 
+2.39.2
 
