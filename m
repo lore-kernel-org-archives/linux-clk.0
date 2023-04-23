@@ -2,57 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3036C6FD18
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Apr 2023 21:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B9DC77B76
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Apr 2023 21:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbjDWVMm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Apr 2023 17:12:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50128 "EHLO
+        id S230020AbjDWVax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Apr 2023 17:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjDWVMm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Apr 2023 17:12:42 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E2791B3;
-        Sun, 23 Apr 2023 14:12:40 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-94f7a0818aeso522605266b.2;
-        Sun, 23 Apr 2023 14:12:40 -0700 (PDT)
+        with ESMTP id S229510AbjDWVaw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Apr 2023 17:30:52 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799C1132;
+        Sun, 23 Apr 2023 14:30:51 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-94f32588c13so511160466b.2;
+        Sun, 23 Apr 2023 14:30:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1682284359; x=1684876359;
+        d=googlemail.com; s=20221208; t=1682285450; x=1684877450;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rRKnMw4QG50vnSFwd6Sq3W6Jkn3ZJ2yur8UiF0FgUbM=;
-        b=bQs61RS+BXawVW4hK2pXsIzqZif6LIir0t7z6rldZ2pSXl/J7TnR5PH81Xnrjs9rbS
-         /l/LyNd7WQrQJrp0egB9ucSZ2q9xJj7TuYqO2XLs1UWnVN6Z1Pl/QRUvcYvYs6tCwKUI
-         BtUL+eizagvmjUSMhrnTQXL+mVcYJRSJXaBW5XOlmqrs5Jbsnufir/3QgA5Ym9LjQaMp
-         upZwDwTP5dXgWGq5CBi41Rit8LZx5+v1I+eanfKvTGhCdMOcmdRvmYnR4UYz0AMhD+ia
-         y43NYxdUmugr+9kM0/w0W9YcrO3IgUYc4gaOjUXbNtgaQJM/nprXEPrC6xjvdBMrmyqC
-         0GTQ==
+        bh=18byURsd69WE5YM1Kosl1na2iTLaVqec0Q8hqzElXCQ=;
+        b=UpMUVMIcZYwgzlBgNfqGwLaGTQ8LBZpckrkTP8co4uaVRiioXyYKodDl4UM1opzsCR
+         FwjKYa6zIDlqL8JlsMdEtfFfuuoil92uNwnlO7WErAKHAiWAuScXiPNCvXkhH8WC0C1Q
+         LH102yESfPCFKqSlANYmth5TTctAP1PKpO9WJy+XEvumJlhs8cXlib5QpowvbWRO6Fm7
+         oNsE6IEyqwK12t8ssFWtQnIM7xJ8iXyKNKch4H02mKofeI/sH1lXFvUb9D9/l2qlg9+Z
+         Gtm3lNCy0k6ArmuDxI2ngSJVv12OSM617rUDxAdvwGjcjhGZWLvREkrw+Aobp5sdLsX8
+         zWnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682284359; x=1684876359;
+        d=1e100.net; s=20221208; t=1682285450; x=1684877450;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rRKnMw4QG50vnSFwd6Sq3W6Jkn3ZJ2yur8UiF0FgUbM=;
-        b=Ybr8NdBybXwP7FgMhRj+BR6ZMI8WBxeF/tMThoHhVQmcCE2cEb3CAS2O+TP+pdJom4
-         coYt4336Hq3vDoUbpXJyOIeB/NAc2dVYdrs22JUknCDkSPIlOQzkv3xW+TFhXIqrPNo2
-         YrVJmB90f71nz2JtEshnjFXxIxY0JVxqeJE4gmG/KhvSNuhgAQcVDuTlXI9RUV4MZrUe
-         T3Zo2Qdp3ewTs4uBcpzg+jp0+1cq83GvMjXM/rLeTzuzEc5dRW/ZGYzAyx5tDsDpI3Vw
-         YanBj+/HFeEM9PJp1vOUdMNbhIwLehqPjMzAotEBDmKa/yRBCKkbrmmOL3u003p7JEm3
-         eWHg==
-X-Gm-Message-State: AAQBX9c/jC2a/RFG6mXY9GTOIrEjlG1SIZea057nWoIPkmgP4QvM2qXd
-        VVTebCf/h9SYMCvCydknvLr9vr3l34oLk5h3yz8=
-X-Google-Smtp-Source: AKy350a5xYCoNTfH85jnfhrovh3KaFGyGvbTHqG+qrISXQKZrEMxqacX9V1s3QID4AJY4Rh6Ep1iATOzSQZQjOo9zEU=
-X-Received: by 2002:a17:906:abd9:b0:94a:5d5c:fe6f with SMTP id
- kq25-20020a170906abd900b0094a5d5cfe6fmr8162781ejb.47.1682284358711; Sun, 23
- Apr 2023 14:12:38 -0700 (PDT)
+        bh=18byURsd69WE5YM1Kosl1na2iTLaVqec0Q8hqzElXCQ=;
+        b=gRJhwZ3gNueXpaz5m+MumHTuirGKLxHXXqSTG0IPaUbeqXmR0vDi7uHu1rcIN935ld
+         G8WLCZPgyFhditngzFlAxWPQmtxz+lm6F7Uffsfguan+BbwEHv8YuJo+DxUvfp4TbS5R
+         2DJY4PGSJL+nXkoaeEWu6YPdG0W87zU17CeXqgpAN1NBbkhs1kB/+FLwVe1r6mXN4QHy
+         Oa75Ab0/w+1XyRRdBuSKiTLGbC6ssIQIpUUGhrT+HUTvSzqlFwCsUGVK6WOk9tSqjHjE
+         dJRCsYnV+6a6+9T1rrKGuNiEo2YUNjX2fsp7WxUWkAn1L7wQHAx1zHzYIy2sY8KmYwOc
+         qL3w==
+X-Gm-Message-State: AAQBX9ePvWhVJIIIuFofcBeW7bOP5jrMiqJkPDPF0JenV9Av92xrlyA4
+        5V5OINbRcvhOFVYeJhbc3+S8tOV1Ybf3H87vyaA=
+X-Google-Smtp-Source: AKy350biznEeVdPR+IKziz5Mo9fGNq2BckRGQcSOldDmB9sxfrWldGkWu2J4s9qdYYEN8VS1dRs5YAeA8QzTRjhqeh4=
+X-Received: by 2002:a17:906:7d6:b0:957:2d2a:e8a2 with SMTP id
+ m22-20020a17090607d600b009572d2ae8a2mr7535957ejc.27.1682285449823; Sun, 23
+ Apr 2023 14:30:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230405195927.13487-1-ddrokosov@sberdevices.ru> <20230405195927.13487-5-ddrokosov@sberdevices.ru>
-In-Reply-To: <20230405195927.13487-5-ddrokosov@sberdevices.ru>
+References: <20230405195927.13487-1-ddrokosov@sberdevices.ru> <20230405195927.13487-7-ddrokosov@sberdevices.ru>
+In-Reply-To: <20230405195927.13487-7-ddrokosov@sberdevices.ru>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 23 Apr 2023 23:12:27 +0200
-Message-ID: <CAFBinCA3uZXzr3RgnWnKV5Qr-CPaZQX5joDg319i_cgzhLJy2g@mail.gmail.com>
-Subject: Re: [PATCH v13 4/6] clk: meson: a1: add Amlogic A1 PLL clock
+Date:   Sun, 23 Apr 2023 23:30:38 +0200
+Message-ID: <CAFBinCBGWOB2XLb6su=R3W684rKdK3pOgPFsCGx+Oyo_pgdeBg@mail.gmail.com>
+Subject: Re: [PATCH v13 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
  controller driver
 To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
 Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
@@ -68,58 +68,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Dmitry,
-
-currently Jerome is busy so I am trying to continue where he left off.
-I have followed the previous iterations a bit but may have missed some
-details. So apologies if I'm repeating some questions that Jerome
-previously asked.
-
 On Wed, Apr 5, 2023 at 9:59=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevice=
 s.ru> wrote:
 [...]
-> +config COMMON_CLK_A1_PLL
-> +       tristate "Meson A1 SoC PLL controller support"
-Should this be "Amlogic A1 SoC PLL controller support"?
-My understanding is that the "meson" name was dropped for this
-generation of SoCs.
-
-[...]
-> +static const struct of_device_id a1_pll_clkc_match_table[] =3D {
-> +       { .compatible =3D "amlogic,a1-pll-clkc", },
+> +static const struct of_device_id a1_periphs_clkc_match_table[] =3D {
+> +       { .compatible =3D "amlogic,a1-clkc", },
 > +       {},
-nit-pick: please drop the comma after {}
-This empty entry is a sentinel, no other entries are supposed to come
-after this - so a trailing comma is not necessary.
+nit-pick: please remove the comma after the sentinel
 
-[...]
-> +/* PLL register offset */
-> +#define ANACTRL_FIXPLL_CTRL0   0x0
-> +#define ANACTRL_FIXPLL_CTRL1   0x4
-> +#define ANACTRL_FIXPLL_STS     0x14
-> +#define ANACTRL_HIFIPLL_CTRL0  0xc0
-> +#define ANACTRL_HIFIPLL_CTRL1  0xc4
-> +#define ANACTRL_HIFIPLL_CTRL2  0xc8
-> +#define ANACTRL_HIFIPLL_CTRL3  0xcc
-> +#define ANACTRL_HIFIPLL_CTRL4  0xd0
-> +#define ANACTRL_HIFIPLL_STS    0xd4
-Here I have a question that will potentially affect patch 3/6
-("dt-bindings: clock: meson: add A1 PLL clock controller bindings").
-In the cover-letter you mentioned that quite a few clocks have been omitted=
-.
-Any dt-bindings that we create need to be stable going forward. That
-means: the dt-bindings will always need to describe what the hardware
-is capable of, not what the driver implements.
-So my question is: do we have all needed inputs described in the
-dt-bindings (even though we're omitting quite a few registers here
-that will only be added/used in the future)?
-Older SoCs require (temporarily) using the XTAL clock for CPU clock
-tree changes. To make a long story short: I'm wondering if - at least
-- the XTAL clock input is missing.
+> +MODULE_DEVICE_TABLE(of, a1_periphs_clkc_match_table);
+> +
+> +static struct platform_driver a1_periphs_clkc_driver =3D {
+> +       .probe =3D meson_a1_periphs_probe,
+> +       .driver =3D {
+> +               .name =3D "a1-clkc",
+> +               .of_match_table =3D of_match_ptr(a1_periphs_clkc_match_ta=
+ble),
+I wonder if we should drop of_match_ptr() here as no other meson clock
+driver uses it.
+Also there's commits like 00cb754ac622 ("clk: imx8mq: drop
+of_match_ptr from of_device_id table") which explicitly remove it from
+other drivers.
 
-PS: I don't have an A1 datasheet nor a vendor kernel source (and even
-less a board for testing). So I can't verify any of this myself and
-I'm asking questions instead.
+Apart form these two this patch looks great to me.
 
 
 Best regards,
