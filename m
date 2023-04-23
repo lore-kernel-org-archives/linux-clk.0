@@ -2,119 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16657C77B60
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Apr 2023 12:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1817C77B60
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Apr 2023 12:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbjDWMsf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Apr 2023 08:48:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33962 "EHLO
+        id S229506AbjDWMxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Apr 2023 08:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjDWMse (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Apr 2023 08:48:34 -0400
-Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1AA510C8;
-        Sun, 23 Apr 2023 05:48:32 -0700 (PDT)
-Received: from pride-PowerEdge-R740.. ([172.16.0.254])
-        (user=U201812168@hust.edu.cn mech=LOGIN bits=0)
-        by mx1.hust.edu.cn  with ESMTP id 33NCl40M013852-33NCl40N013852
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 23 Apr 2023 20:47:08 +0800
-From:   Ziwei Yan <u201812168@hust.edu.cn>
-To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Bai Ping <ping.bai@nxp.com>, Anson Huang <anson.huang@nxp.com>
-Cc:     hust-os-kernel-patches@googlegroups.com,
-        Ziwei Yan <u201812168@hust.edu.cn>,
-        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: imx: clk-imx8mq: fix memory leak and missing unwind goto in imx8mq_clocks_probe
-Date:   Sun, 23 Apr 2023 08:47:02 -0400
-Message-Id: <20230423124702.168027-1-u201812168@hust.edu.cn>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S230336AbjDWMxD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Apr 2023 08:53:03 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5962B10D0;
+        Sun, 23 Apr 2023 05:53:02 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id 4fb4d7f45d1cf-5058181d58dso5970371a12.1;
+        Sun, 23 Apr 2023 05:53:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682254381; x=1684846381;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iytNL3ionK0y40hikstW/BCZlPf3T/1Wm7ZwrV0sJlw=;
+        b=mxFY2HrILM2cerTaYDSv71GR+WQ2TxeE3y9At9pEM0MB96S0zeycHmvj5b2o2Nyfah
+         8Hl6doywdvO32gzAWuXTOUT7U2gYPyaTtw08w4VvSPX7Ciu6zck0aaLKatWWicqz0szb
+         IRmEldsEp1zTkz495xH/zXysU/vFiKUiGzyvNn7aSQE7K0RkI0v9udqJrqic2TQ2bNwn
+         cZcriicgvgEM8HKLukppbCVWxS5Wztoc8HBi9T6Hpy8HogBf7Dg3UEEfv1/j8RSxD1GD
+         S2VJGecIOyRBelHB9ALxDbN5CJd5KkrmJEWVjCMVNimtYnhkWEcLruPlcm57ib1JZTC1
+         Cjng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682254381; x=1684846381;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iytNL3ionK0y40hikstW/BCZlPf3T/1Wm7ZwrV0sJlw=;
+        b=HwVlsVKpHYSVNm7yqFgG+1kXXHQzQCQsYHt3X13aKd+lvpjVAIE1FGo00XVvLVKKcF
+         Cf4GtwMpNteY3p0El13f6u1JdK3nm5P5uBJc9wuxFfkj359cB+5FqHNvzkQvDijIbxrk
+         PCHEYFNnxq9uYG3vK5bm+HIBOb/yMfmY8gavF7hizcN4jOez/suFDslH+yMBiWhhBCGz
+         pojp5xJMhurlbcTA2iAtLnaqtbUgLGdnaRQ076U6rFcWgzk3B64OXTKLLExKWi1ASWka
+         jHgwNQ6YVmaXDmWkUdlOWlAhNm56cMjZXxkUQwtJRMRX+fE/OKLOPkgh5iX85aRAYHfb
+         zqUg==
+X-Gm-Message-State: AAQBX9frco1oStuokQmgCdyJreA1J/fWUoFKK6W4Yg9jvzSQKgX+Lp9k
+        uZFBKGkgkoKynOkuN8sDwSo=
+X-Google-Smtp-Source: AKy350bSWYI/SvP558yd57KKjIp5PRfYPqiEM6lRUyYP8OmlVk45UlwzWUqDELXx4SoaZLUxhRnKcA==
+X-Received: by 2002:a05:6402:641:b0:504:921b:825 with SMTP id u1-20020a056402064100b00504921b0825mr9276422edx.36.1682254380636;
+        Sun, 23 Apr 2023 05:53:00 -0700 (PDT)
+Received: from [192.168.50.244] (83.11.224.11.ipv4.supernova.orange.pl. [83.11.224.11])
+        by smtp.gmail.com with ESMTPSA id i21-20020a05640200d500b00501d73cfc86sm3847476edu.9.2023.04.23.05.52.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Apr 2023 05:53:00 -0700 (PDT)
+Message-ID: <c717e975-092a-5090-89de-ec08237388a3@gmail.com>
+Date:   Sun, 23 Apr 2023 14:52:58 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-FEAS-AUTH-USER: U201812168@hust.edu.cn
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 12/12] ARM: dts: exynos: Add Samsung Galaxy Tab 3 8.0
+ boards
+Content-Language: en-US
+To:     Henrik Grimler <henrik@grimler.se>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20230416133422.1949-1-aweber.kernel@gmail.com>
+ <20230416133422.1949-13-aweber.kernel@gmail.com> <ZEBN2AciChG03FpM@L14.lan>
+From:   Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <ZEBN2AciChG03FpM@L14.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Smatch reports:
-drivers/clk/imx/clk-imx8mq.c:611 imx8mq_clocks_probe() warn: 'base'
-from of_iomap() not released on lines: 399,611.
+Hi,
 
-This is because probe() returns without releasing base.
-I fix this by replacing of_iomap() with devm_of_iomap()
-to automatically handle the unused ioremap region.
+On 19/04/2023 22:23, Henrik Grimler wrote:
+>> +	memory@40000000 {
+>> +		device_type = "memory";
+>> +
+>> +		/* Technically 2GB, but last 1GB is flaky, so we ignore it for now */
+>> +		reg = <0x40000000 0x3FC00000>;
+> 
+> Comment says 1GB but you are skipping 1GB+4MB.  Is the entire region
+> flaky or perhaps just the 4MB region in the middle?
 
-Similarly, I use devm_kzalloc() instead of kzalloc()
-to automatically free the memory
-using devm_kfree() when error occurs.
+I copied the memory bank configuration from downstream: according to
+boot logs and ATAG data from the stock bootloader, there are two memory
+regions: one starting at 0x40000000 (size: 1020M) and one starting at
+0x80000000 (size: 1024M). Here, only the first bank is added, since the
+second one doesn't work.
 
-Besides, in this function, some other issues are found.
-On line 311 and 398,
-probe() returns directly without unregistering hws.
-So I add `goto unregister_hws;` here.
+I tried changing the size of this first bank to the full 1024M, and it
+seems to be booting fine; still, I'd rather leave this at the same size
+as claimed by downstream and ATAG.
 
-Fixes: b9ef22e1592f ("clk: imx: imx8mq: Switch to clk_hw based API")
-Fixes: b80522040cd3 ("clk: imx: Add clock driver for i.MX8MQ CCM")
-Fixes: 1aa6af5f1813 ("clk: imx8mq: Use devm_platform_ioremap_resource() instead of of_iomap()")
-Signed-off-by: Ziwei Yan <u201812168@hust.edu.cn>
-Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
----
-The issue is found by static analysis and remains untested.
----
- drivers/clk/imx/clk-imx8mq.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+The second memory bank (anything past 0x80000000) doesn't work, as
+downstream has some weird special behavior regarding it: that region
+contains "page holes", and there's a check that discards every second
+page frame in that region[1][2]. That also means my comment is incorrect
+- indeed, 2GB of memory are passed to the kernel, but the second 1GB is
+effectively halved, leaving us with 1.5GB. (That's an oversight on my
+part - I wasn't aware of this when writing the DTS initially, and only
+checked this more in-depth now.)
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 4bd65879fcd3..4aa58a7e7880 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -288,7 +288,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	void __iomem *base;
- 	int err;
- 
--	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-+	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
- 					  IMX8MQ_CLK_END), GFP_KERNEL);
- 	if (WARN_ON(!clk_hw_data))
- 		return -ENOMEM;
-@@ -306,10 +306,12 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MQ_CLK_EXT4] = imx_get_clk_hw_by_name(np, "clk_ext4");
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-anatop");
--	base = of_iomap(np, 0);
-+	base = devm_of_iomap(dev, np, 0, NULL);
- 	of_node_put(np);
--	if (WARN_ON(!base))
--		return -ENOMEM;
-+	if (WARN_ON(IS_ERR(base))) {
-+		err = PTR_ERR(base);
-+		goto unregister_hws;
-+	}
- 
- 	hws[IMX8MQ_ARM_PLL_REF_SEL] = imx_clk_hw_mux("arm_pll_ref_sel", base + 0x28, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
- 	hws[IMX8MQ_GPU_PLL_REF_SEL] = imx_clk_hw_mux("gpu_pll_ref_sel", base + 0x18, 16, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-@@ -395,8 +397,10 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 
- 	np = dev->of_node;
- 	base = devm_platform_ioremap_resource(pdev, 0);
--	if (WARN_ON(IS_ERR(base)))
--		return PTR_ERR(base);
-+	if (WARN_ON(IS_ERR(base))) {
-+		err = PTR_ERR(base);
-+		goto unregister_hws;
-+	}
- 
- 	/* CORE */
- 	hws[IMX8MQ_CLK_A53_DIV] = imx8m_clk_hw_composite_core("arm_a53_div", imx8mq_a53_sels, base + 0x8000);
--- 
-2.34.1
+I'm not sure if there's a way to re-create this behavior in mainline;
+the closest thing I can think of is making a separate entry in reg for
+each of the working pages, but that would leave us with hundreds of
+lines, which is not ideal... so it's much easier to just leave it unused
+for now.
 
+Best regards
+Artur Weber
+
+[1]
+https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/786b1473b93aabf40c18a2dca035503cce5ecac7/arch/arm/mm/init.c#L413-L414
+[2]
+https://github.com/gr8nole/android_kernel_samsung_smdk4x12/blob/786b1473b93aabf40c18a2dca035503cce5ecac7/arch/arm/mach-exynos/include/mach/memory.h#L30-L38
