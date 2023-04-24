@@ -2,207 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDDAC77B61
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 17:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90739C77B61
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 17:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbjDXRPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 13:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45882 "EHLO
+        id S231794AbjDXRSJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 13:18:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229906AbjDXRPz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 13:15:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD956185;
-        Mon, 24 Apr 2023 10:15:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 648B06272B;
-        Mon, 24 Apr 2023 17:15:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F97AC433D2;
-        Mon, 24 Apr 2023 17:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682356552;
-        bh=hRs/acnkIDX2tBWCp9DVeye/pTM8KlJRW6iseqcPYZk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B3fVlOJYd1jRadwKwhGG99DNMpt6un9zqJ97AumxiIU1FL8bXSaWg8PcHKbmTOhlq
-         4oeSi4DaDS26tGqyB49nssli6RseTe7/ZiSLZvoUewN1L55VJO9ltcKFePBtr95nVe
-         RoskAuuKZuUQjV3AFml3QcFW3+uMfhxz+mewWAenAGs01KZweEqLkJpdEOgGqC7Yr4
-         g3vjq1IloujWIK6hIwiAu2g0srzHO7yOOZl6g4kj75DR8J0XE7lkQFd1zNxlpFQ9qS
-         STzlghmkCqzoK317Mh2vo+fvGZejCPFmJfVBUUefLis4CwOM4MBDgJiC79wn5K2/tI
-         ppnigF1Xz1SEQ==
-Date:   Mon, 24 Apr 2023 18:15:47 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        with ESMTP id S232105AbjDXRSG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 13:18:06 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81AD86187;
+        Mon, 24 Apr 2023 10:18:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1682356681; x=1713892681;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S/X2H/mlqZImO3F3tj7Tw3KTKqYXWQ1Zao3DMIW39tA=;
+  b=gDZA4LT5+bt2gX08HWTeprsjH7FUQM1HjqMHkMncJrRFrT8lVW4IOMru
+   Tnx0Xe5AZHufNbFlr7ChJomoFKHGAQQ9LU+Gr24Sl6/FFNYk7W2FBbCXe
+   m9sBLo4K9FJvgiI1SDxJyUB7KjgGeVdl1qeHEdr05PM6oVOWudjw6z8Fe
+   d3OZLjvcnIRJPDv6mBoYnjsXZ0S6NVskjSbqmdGvnQ1lkpl/i94LsQ37C
+   z2nvmD3PGuEPAPXkv+F1FZZjQU4CosjkSDbw4ozruv7ergQ/sUWAO+P7U
+   InNUU2DsfDII1JtRb05+3rtQMK/XYazMBnS2/tkmzNdr6KdJ0g9rQYeET
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="374458913"
+X-IronPort-AV: E=Sophos;i="5.99,223,1677571200"; 
+   d="scan'208";a="374458913"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2023 10:18:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="670574815"
+X-IronPort-AV: E=Sophos;i="5.99,223,1677571200"; 
+   d="scan'208";a="670574815"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 24 Apr 2023 10:17:57 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pqzp7-000iZu-0S;
+        Mon, 24 Apr 2023 17:17:57 +0000
+Date:   Tue, 25 Apr 2023 01:17:25 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nikita Shubin <nikita.shubin@maquefel.me>
+Cc:     oe-kbuild-all@lists.linux.dev, Arnd Bergmann <arnd@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] dt-bindings: soc: starfive: Add StarFive syscon
- module
-Message-ID: <20230424-footsie-compost-d6624c8ef4e8@spud>
-References: <20230414024157.53203-1-xingyu.wu@starfivetech.com>
- <20230414024157.53203-6-xingyu.wu@starfivetech.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 12/43] clk: ep93xx: add DT support for Cirrus EP93xx
+Message-ID: <202304250013.c9Px2Npt-lkp@intel.com>
+References: <20230424123522.18302-13-nikita.shubin@maquefel.me>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6h8NHcwldPvt4iyb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230414024157.53203-6-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230424123522.18302-13-nikita.shubin@maquefel.me>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Nikita,
 
---6h8NHcwldPvt4iyb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+kernel test robot noticed the following build errors:
 
-On Fri, Apr 14, 2023 at 10:41:55AM +0800, Xingyu Wu wrote:
-> From: William Qiu <william.qiu@starfivetech.com>
->=20
-> Add documentation to describe StarFive System Controller Registers.
->=20
-> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-> ---
->  .../soc/starfive/starfive,jh7110-syscon.yaml  | 58 +++++++++++++++++++
->  MAINTAINERS                                   |  6 ++
->  2 files changed, 64 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfi=
-ve,jh7110-syscon.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh71=
-10-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh=
-7110-syscon.yaml
-> new file mode 100644
-> index 000000000000..de086e74a229
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-sysc=
-on.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.y=
-aml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 SoC system controller
-> +
-> +maintainers:
-> +  - William Qiu <william.qiu@starfivetech.com>
-> +
-> +description: |
-> +  The StarFive JH7110 SoC system controller provides register informatio=
-n such
-> +  as offset, mask and shift to configure related modules such as MMC and=
- PCIe.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - starfive,jh7110-aon-syscon
-> +              - starfive,jh7110-sys-syscon
-> +          - const: syscon
-> +          - const: simple-mfd
-> +      - items:
-> +          - const: starfive,jh7110-stg-syscon
-> +          - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-controller:
-> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
-> +    type: object
-> +
-> +  power-controller:
-> +    $ref: /schemas/power/starfive,jh7110-pmu.yaml#
-> +    type: object
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on robh/for-next linusw-pinctrl/devel linusw-pinctrl/for-next linus/master v6.3]
+[cannot apply to next-20230421]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-My plan was to grab this patch after the merge window, but there's been
-some back and forth [1] about what exactly should be a power-controller
-here. Given the merge window is open & I know Emil wants to look at the
-various clock bits for the JH7110, I don't think there's a pressing need
-for you to do anything here, but figured I'd at least mention how things
-are going on this thread too.
+url:    https://github.com/intel-lab-lkp/linux/commits/Nikita-Shubin/gpio-ep93xx-split-device-in-multiple/20230424-183649
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20230424123522.18302-13-nikita.shubin%40maquefel.me
+patch subject: [PATCH 12/43] clk: ep93xx: add DT support for Cirrus EP93xx
+config: sparc-allyesconfig (https://download.01.org/0day-ci/archive/20230425/202304250013.c9Px2Npt-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/8621eda93e4a641c57f889ac36d2386482e92157
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Nikita-Shubin/gpio-ep93xx-split-device-in-multiple/20230424-183649
+        git checkout 8621eda93e4a641c57f889ac36d2386482e92157
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc SHELL=/bin/bash drivers/
 
-Thanks,
-Conor.
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304250013.c9Px2Npt-lkp@intel.com/
 
-1 - https://lore.kernel.org/linux-riscv/20230419035646.43702-1-changhuang.l=
-iang@starfivetech.com/T/#m708770e9596098214df769bcc2bdaf9c1a46ca98
+All errors (new ones prefixed by >>):
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    syscon@10240000 {
-> +        compatible =3D "starfive,jh7110-stg-syscon", "syscon";
-> +        reg =3D <0x10240000 0x1000>;
-> +    };
-> +
-> +    syscon@13030000 {
-> +        compatible =3D "starfive,jh7110-sys-syscon", "syscon", "simple-m=
-fd";
-> +        reg =3D <0x13030000 0x1000>;
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 03051ae2e9e5..0fafeea8ebdb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19917,6 +19917,11 @@ S:	Supported
->  F:	Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
->  F:	drivers/clk/starfive/clk-starfive-jh7110-pll.*
-> =20
-> +STARFIVE JH7110 SYSCON
-> +M:	William Qiu <william.qiu@starfivetech.com>
-> +S:	Supported
-> +F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon=
-=2Eyaml
-> +
->  STARFIVE JH71X0 CLOCK DRIVERS
->  M:	Emil Renner Berthing <kernel@esmil.dk>
->  M:	Hal Feng <hal.feng@starfivetech.com>
-> @@ -19954,6 +19959,7 @@ STARFIVE SOC DRIVERS
->  M:	Conor Dooley <conor@kernel.org>
->  S:	Maintained
->  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
-> +F:	Documentation/devicetree/bindings/soc/starfive/
->  F:	drivers/soc/starfive/
-> =20
->  STARFIVE TRNG DRIVER
-> --=20
-> 2.25.1
->=20
+   drivers/clk/clk-ep93xx.c: In function 'ep93xx_clk_enable':
+>> drivers/clk/clk-ep93xx.c:153:9: error: implicit declaration of function 'ep93xx_syscon_swlocked_write' [-Werror=implicit-function-declaration]
+     153 |         ep93xx_syscon_swlocked_write(val, psc->reg);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
---6h8NHcwldPvt4iyb
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+vim +/ep93xx_syscon_swlocked_write +153 drivers/clk/clk-ep93xx.c
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZEa5QwAKCRB4tDGHoIJi
-0l+0AP0e3JscjX9uM8ImqV7QVtI4v8fidKqzUoF260oblriMtwEA54APb/okMY+/
-v17rOEyY6cI2/FIYxQZLySSpbK99Og8=
-=PGj2
------END PGP SIGNATURE-----
+   140	
+   141	static int ep93xx_clk_enable(struct clk_hw *hw)
+   142	{
+   143		struct clk_psc *psc = to_clk_psc(hw);
+   144		unsigned long flags = 0;
+   145		u32 val;
+   146	
+   147		if (psc->lock)
+   148			spin_lock_irqsave(psc->lock, flags);
+   149	
+   150		ep93xx_regmap_read(psc->reg, &val);
+   151		val |= BIT(psc->bit_idx);
+   152	
+ > 153		ep93xx_syscon_swlocked_write(val, psc->reg);
+   154	
+   155		if (psc->lock)
+   156			spin_unlock_irqrestore(psc->lock, flags);
+   157	
+   158		return 0;
+   159	}
+   160	
 
---6h8NHcwldPvt4iyb--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
