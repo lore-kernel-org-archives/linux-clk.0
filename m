@@ -2,108 +2,226 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20858C7EE25
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 13:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51427C77B61
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 13:54:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232345AbjDXN2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 09:28:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56048 "EHLO
+        id S231445AbjDXNya convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 09:54:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232287AbjDXN2o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 09:28:44 -0400
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D6661B8;
-        Mon, 24 Apr 2023 06:28:30 -0700 (PDT)
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-18665c1776dso3429632fac.2;
-        Mon, 24 Apr 2023 06:28:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682342899; x=1684934899;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/1fifvOlhjvGQRsm6j4YqMXPrKDsFNdYCXL46lCn8YU=;
-        b=ToILqyCuyxvKv8o2UEc2/BSqKu+empVWthhSOanIFg8odBdqJNaYmUpADGWK7Um9BI
-         9H0Otn8yamLbpKyVh4+af25FLtx0lNF9kMg6uaHgtNTXu89MTtAH6rENwtJIvmD8biba
-         noVDXDgmce2eap8OTyczxIT08BhSJkVOH4hiWoyfeRddDRG2nJmV0WAYydPLVLx52fNc
-         sIP3ZagcsWOGBczUcMDGOeI5r8bdPVGdUM+I7HxkPl5FJ9yaGjBXEeQ3JUIZQs6GLHCt
-         2tJqa5a69JO90MXdJ0GhEpff76hBUFu0dtcSXUmQ2hHafWrjtFA2nXVd2U2tyB3sg/YR
-         KSRg==
-X-Gm-Message-State: AAQBX9e4/Sw/aKKNjrVosG4qyQrybOUBQxAuDqDNS3lGJBrwGP0mqior
-        3xn2PqXxNCO5xL3nzv7Bl2O/dUN+Tg==
-X-Google-Smtp-Source: AKy350Z/KIM/MbuvqVhEgg+x+VUTScdkDFKPCUzehJ/arFPHhmjsjLY4NRJsXPO/Tp0B3D1Pm5Dr7Q==
-X-Received: by 2002:a05:6871:707:b0:188:5:bc87 with SMTP id f7-20020a056871070700b001880005bc87mr9645448oap.6.1682342898797;
-        Mon, 24 Apr 2023 06:28:18 -0700 (PDT)
-Received: from robh_at_kernel.org ([2605:ef80:80e7:4387:ec9f:155:c2d2:6e82])
-        by smtp.gmail.com with ESMTPSA id n17-20020a9d6f11000000b006a5d7d7f6c3sm4607867otq.7.2023.04.24.06.28.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 06:28:18 -0700 (PDT)
-Received: (nullmailer pid 2494968 invoked by uid 1000);
-        Mon, 24 Apr 2023 13:28:08 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Nikita Shubin <nikita.shubin@maquefel.me>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Linus Walleij <linusw@kernel.org>,
+        with ESMTP id S230205AbjDXNy3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 09:54:29 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21CCC19B;
+        Mon, 24 Apr 2023 06:54:23 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 1BF5D24E1F2;
+        Mon, 24 Apr 2023 21:54:20 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 24 Apr
+ 2023 21:54:20 +0800
+Received: from localhost.localdomain (113.72.145.137) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 24 Apr
+ 2023 21:54:18 +0800
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Arnd Bergmann <arnd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>
-In-Reply-To: <20230424123522.18302-12-nikita.shubin@maquefel.me>
-References: <20230424123522.18302-1-nikita.shubin@maquefel.me>
- <20230424123522.18302-12-nikita.shubin@maquefel.me>
-Message-Id: <168234108008.2461298.8379802160390368703.robh@kernel.org>
-Subject: Re: [PATCH 11/43] dt-bindings: clock: add DT bindings for Cirrus
- EP93xx
-Date:   Mon, 24 Apr 2023 08:28:08 -0500
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v5 05/10] dt-bindings: clock: Add StarFive JH7110 Video-Output clock and reset generator
+Date:   Mon, 24 Apr 2023 21:54:04 +0800
+Message-ID: <20230424135409.6648-6-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230424135409.6648-1-xingyu.wu@starfivetech.com>
+References: <20230424135409.6648-1-xingyu.wu@starfivetech.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [113.72.145.137]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add bindings for the Video-Output clock and reset generator (VOUTCRG)
+on the JH7110 RISC-V SoC by StarFive Ltd.
 
-On Mon, 24 Apr 2023 15:34:27 +0300, Nikita Shubin wrote:
-> This adds device tree bindings for the Cirrus Logic EP93xx
-> clock block used in these SoCs.
-> 
-> Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-> ---
->  .../devicetree/bindings/arm/ep93xx.yaml       | 102 ++++++++++++++++++
->  .../dt-bindings/clock/cirrus,ep93xx-clock.h   |  53 +++++++++
->  2 files changed, 155 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/arm/ep93xx.yaml
->  create mode 100644 include/dt-bindings/clock/cirrus,ep93xx-clock.h
-> 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+---
+ .../clock/starfive,jh7110-voutcrg.yaml        | 90 +++++++++++++++++++
+ .../dt-bindings/clock/starfive,jh7110-crg.h   | 22 +++++
+ .../dt-bindings/reset/starfive,jh7110-crg.h   | 16 ++++
+ 3 files changed, 128 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/ep93xx.example.dtb: /: compatible: 'oneOf' conditional failed, one must be fixed:
-	['technologic,ts7250', 'cirrus,ep9301'] is too short
-	'liebherr,bk3' was expected
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/ep93xx.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230424123522.18302-12-nikita.shubin@maquefel.me
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
+new file mode 100644
+index 000000000000..af77bd8c86b1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/starfive,jh7110-voutcrg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: StarFive JH7110 Video-Output Clock and Reset Generator
++
++maintainers:
++  - Xingyu Wu <xingyu.wu@starfivetech.com>
++
++properties:
++  compatible:
++    const: starfive,jh7110-voutcrg
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Vout Top core
++      - description: Vout Top Ahb
++      - description: Vout Top Axi
++      - description: Vout Top HDMI MCLK
++      - description: I2STX0 BCLK
++      - description: external HDMI pixel
++
++  clock-names:
++    items:
++      - const: vout_src
++      - const: vout_top_ahb
++      - const: vout_top_axi
++      - const: vout_top_hdmitx0_mclk
++      - const: i2stx0_bclk
++      - const: hdmitx0_pixelclk
++
++  resets:
++    maxItems: 1
++    description: Vout Top core
++
++  '#clock-cells':
++    const: 1
++    description:
++      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
++
++  '#reset-cells':
++    const: 1
++    description:
++      See <dt-bindings/reset/starfive,jh7110-crg.h> for valid indices.
++
++  power-domains:
++    maxItems: 1
++    description:
++      Vout domain power
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - resets
++  - '#clock-cells'
++  - '#reset-cells'
++  - power-domains
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/starfive,jh7110-crg.h>
++    #include <dt-bindings/power/starfive,jh7110-pmu.h>
++    #include <dt-bindings/reset/starfive,jh7110-crg.h>
++
++    voutcrg: clock-controller@295C0000 {
++        compatible = "starfive,jh7110-voutcrg";
++        reg = <0x295C0000 0x10000>;
++        clocks = <&syscrg JH7110_SYSCLK_VOUT_SRC>,
++                 <&syscrg JH7110_SYSCLK_VOUT_TOP_AHB>,
++                 <&syscrg JH7110_SYSCLK_VOUT_TOP_AXI>,
++                 <&syscrg JH7110_SYSCLK_VOUT_TOP_HDMITX0_MCLK>,
++                 <&syscrg JH7110_SYSCLK_I2STX0_BCLK>,
++                 <&hdmitx0_pixelclk>;
++        clock-names = "vout_src", "vout_top_ahb",
++                      "vout_top_axi", "vout_top_hdmitx0_mclk",
++                      "i2stx0_bclk", "hdmitx0_pixelclk";
++        resets = <&syscrg JH7110_SYSRST_VOUT_TOP_SRC>;
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++        power-domains = <&pwrc JH7110_PD_VOUT>;
++    };
+diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
+index 39acf30db491..016227c64a27 100644
+--- a/include/dt-bindings/clock/starfive,jh7110-crg.h
++++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
+@@ -270,4 +270,26 @@
+ 
+ #define JH7110_ISPCLK_END			14
+ 
++/* VOUTCRG clocks */
++#define JH7110_VOUTCLK_APB			0
++#define JH7110_VOUTCLK_DC8200_PIX		1
++#define JH7110_VOUTCLK_DSI_SYS			2
++#define JH7110_VOUTCLK_TX_ESC			3
++#define JH7110_VOUTCLK_DC8200_AXI		4
++#define JH7110_VOUTCLK_DC8200_CORE		5
++#define JH7110_VOUTCLK_DC8200_AHB		6
++#define JH7110_VOUTCLK_DC8200_PIX0		7
++#define JH7110_VOUTCLK_DC8200_PIX1		8
++#define JH7110_VOUTCLK_DOM_VOUT_TOP_LCD		9
++#define JH7110_VOUTCLK_DSITX_APB		10
++#define JH7110_VOUTCLK_DSITX_SYS		11
++#define JH7110_VOUTCLK_DSITX_DPI		12
++#define JH7110_VOUTCLK_DSITX_TXESC		13
++#define JH7110_VOUTCLK_MIPITX_DPHY_TXESC	14
++#define JH7110_VOUTCLK_HDMI_TX_MCLK		15
++#define JH7110_VOUTCLK_HDMI_TX_BCLK		16
++#define JH7110_VOUTCLK_HDMI_TX_SYS		17
++
++#define JH7110_VOUTCLK_END			18
++
+ #endif /* __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__ */
+diff --git a/include/dt-bindings/reset/starfive,jh7110-crg.h b/include/dt-bindings/reset/starfive,jh7110-crg.h
+index 2c5d9dcefffa..eaf4a0d84f6a 100644
+--- a/include/dt-bindings/reset/starfive,jh7110-crg.h
++++ b/include/dt-bindings/reset/starfive,jh7110-crg.h
+@@ -195,4 +195,20 @@
+ 
+ #define JH7110_ISPRST_END			12
+ 
++/* VOUTCRG resets */
++#define JH7110_VOUTRST_DC8200_AXI		0
++#define JH7110_VOUTRST_DC8200_AHB		1
++#define JH7110_VOUTRST_DC8200_CORE		2
++#define JH7110_VOUTRST_DSITX_DPI		3
++#define JH7110_VOUTRST_DSITX_APB		4
++#define JH7110_VOUTRST_DSITX_RXESC		5
++#define JH7110_VOUTRST_DSITX_SYS		6
++#define JH7110_VOUTRST_DSITX_TXBYTEHS		7
++#define JH7110_VOUTRST_DSITX_TXESC		8
++#define JH7110_VOUTRST_HDMI_TX_HDMI		9
++#define JH7110_VOUTRST_MIPITX_DPHY_SYS		10
++#define JH7110_VOUTRST_MIPITX_DPHY_TXBYTEHS	11
++
++#define JH7110_VOUTRST_END			12
++
+ #endif /* __DT_BINDINGS_RESET_STARFIVE_JH7110_CRG_H__ */
+-- 
+2.25.1
 
