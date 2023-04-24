@@ -2,132 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90739C77B61
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 17:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6678DC7618E
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 18:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231794AbjDXRSJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 13:18:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47884 "EHLO
+        id S232369AbjDXScn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 14:32:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232105AbjDXRSG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 13:18:06 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81AD86187;
-        Mon, 24 Apr 2023 10:18:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1682356681; x=1713892681;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S/X2H/mlqZImO3F3tj7Tw3KTKqYXWQ1Zao3DMIW39tA=;
-  b=gDZA4LT5+bt2gX08HWTeprsjH7FUQM1HjqMHkMncJrRFrT8lVW4IOMru
-   Tnx0Xe5AZHufNbFlr7ChJomoFKHGAQQ9LU+Gr24Sl6/FFNYk7W2FBbCXe
-   m9sBLo4K9FJvgiI1SDxJyUB7KjgGeVdl1qeHEdr05PM6oVOWudjw6z8Fe
-   d3OZLjvcnIRJPDv6mBoYnjsXZ0S6NVskjSbqmdGvnQ1lkpl/i94LsQ37C
-   z2nvmD3PGuEPAPXkv+F1FZZjQU4CosjkSDbw4ozruv7ergQ/sUWAO+P7U
-   InNUU2DsfDII1JtRb05+3rtQMK/XYazMBnS2/tkmzNdr6KdJ0g9rQYeET
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="374458913"
-X-IronPort-AV: E=Sophos;i="5.99,223,1677571200"; 
-   d="scan'208";a="374458913"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2023 10:18:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="670574815"
-X-IronPort-AV: E=Sophos;i="5.99,223,1677571200"; 
-   d="scan'208";a="670574815"
-Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 24 Apr 2023 10:17:57 -0700
-Received: from kbuild by b613635ddfff with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pqzp7-000iZu-0S;
-        Mon, 24 Apr 2023 17:17:57 +0000
-Date:   Tue, 25 Apr 2023 01:17:25 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Nikita Shubin <nikita.shubin@maquefel.me>
-Cc:     oe-kbuild-all@lists.linux.dev, Arnd Bergmann <arnd@kernel.org>,
-        Linus Walleij <linusw@kernel.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 12/43] clk: ep93xx: add DT support for Cirrus EP93xx
-Message-ID: <202304250013.c9Px2Npt-lkp@intel.com>
-References: <20230424123522.18302-13-nikita.shubin@maquefel.me>
+        with ESMTP id S229929AbjDXSci (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 14:32:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C00244A4;
+        Mon, 24 Apr 2023 11:32:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E0C8E61DAE;
+        Mon, 24 Apr 2023 18:32:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DC2C433EF;
+        Mon, 24 Apr 2023 18:32:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682361155;
+        bh=Qwb6xQXtIp9IK5K1XYNjKtQG2ZIwhMNhHPe94Eain8I=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=AL1mQRPIK32zEIp1g3UTreatnys6JEiIOElV8WxQ0HCWYrYOh9FUa/pV+J28wkIb0
+         kuYZuUJpavJkOZaHtCtWDI71bQfr8PqKub4qFn3x5yzC4y8fbdLxu7HbJwBzC+XQwm
+         VrE7IOJkHHjP11gDLRWFy86EVLqVWwQrt/B4cpTsksi6B3BO3cBvv6mbtnfmE01ZgB
+         TzxQElbzcDm36YDmuacquU8+DAzm2Bx6Sa8BvlgfPXGSzs47J+MRnxBY/ACBhDqqPE
+         NaKy9ZqKj3mZAujGR2xqbrAlZIyDJXBbelkgz2XIH4N+SG2lVTYr08TXhvRv/t7uAi
+         Q8Hr8qGO9TEdw==
+Message-ID: <679921ee-98d4-d6ef-5934-e009fd4b31fc@kernel.org>
+Date:   Mon, 24 Apr 2023 13:32:28 -0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230424123522.18302-13-nikita.shubin@maquefel.me>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v3 29/65] clk: socfpga: gate: Add a determine_rate hook
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+ <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
+Content-Language: en-US
+From:   Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Nikita,
+Hi Maxime,
 
-kernel test robot noticed the following build errors:
+On 4/4/23 05:11, Maxime Ripard wrote:
+> The SoCFGPA gate clock implements a mux with a set_parent hook, but
+> doesn't provide a determine_rate implementation.
+> 
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+> 
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+> 
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+> 
+> The latter case would be equivalent to setting the flag
+> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> implementation is provided, clk_round_rate() (through
+> clk_core_round_rate_nolock()) will call itself on the parent if
+> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> CLK_SET_RATE_NO_REPARENT is set.
+> 
+> And if it was an oversight, then we are at least explicit about our
+> behavior now and it can be further refined down the line.
+> 
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>   drivers/clk/socfpga/clk-gate.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+> index 32ccda960f28..cbba8462a09e 100644
+> --- a/drivers/clk/socfpga/clk-gate.c
+> +++ b/drivers/clk/socfpga/clk-gate.c
+> @@ -110,6 +110,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
+>   
+>   static struct clk_ops gateclk_ops = {
+>   	.recalc_rate = socfpga_clk_recalc_rate,
+> +	.determine_rate = __clk_mux_determine_rate,
+>   	.get_parent = socfpga_clk_get_parent,
+>   	.set_parent = socfpga_clk_set_parent,
+>   };
+> @@ -166,7 +167,7 @@ void __init socfpga_gate_init(struct device_node *node)
+>   
+>   	init.name = clk_name;
+>   	init.ops = ops;
+> -	init.flags = 0;
+> +	init.flags = CLK_SET_RATE_NO_REPARENT;
+>   
+>   	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
+>   	if (init.num_parents < 2) {
+> 
 
-[auto build test ERROR on soc/for-next]
-[also build test ERROR on robh/for-next linusw-pinctrl/devel linusw-pinctrl/for-next linus/master v6.3]
-[cannot apply to next-20230421]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This patch broke SoCFPGA boot serial port. The characters are mangled.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nikita-Shubin/gpio-ep93xx-split-device-in-multiple/20230424-183649
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
-patch link:    https://lore.kernel.org/r/20230424123522.18302-13-nikita.shubin%40maquefel.me
-patch subject: [PATCH 12/43] clk: ep93xx: add DT support for Cirrus EP93xx
-config: sparc-allyesconfig (https://download.01.org/0day-ci/archive/20230425/202304250013.c9Px2Npt-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 12.1.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/8621eda93e4a641c57f889ac36d2386482e92157
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Nikita-Shubin/gpio-ep93xx-split-device-in-multiple/20230424-183649
-        git checkout 8621eda93e4a641c57f889ac36d2386482e92157
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc SHELL=/bin/bash drivers/
-
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202304250013.c9Px2Npt-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/clk-ep93xx.c: In function 'ep93xx_clk_enable':
->> drivers/clk/clk-ep93xx.c:153:9: error: implicit declaration of function 'ep93xx_syscon_swlocked_write' [-Werror=implicit-function-declaration]
-     153 |         ep93xx_syscon_swlocked_write(val, psc->reg);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/ep93xx_syscon_swlocked_write +153 drivers/clk/clk-ep93xx.c
-
-   140	
-   141	static int ep93xx_clk_enable(struct clk_hw *hw)
-   142	{
-   143		struct clk_psc *psc = to_clk_psc(hw);
-   144		unsigned long flags = 0;
-   145		u32 val;
-   146	
-   147		if (psc->lock)
-   148			spin_lock_irqsave(psc->lock, flags);
-   149	
-   150		ep93xx_regmap_read(psc->reg, &val);
-   151		val |= BIT(psc->bit_idx);
-   152	
- > 153		ep93xx_syscon_swlocked_write(val, psc->reg);
-   154	
-   155		if (psc->lock)
-   156			spin_unlock_irqrestore(psc->lock, flags);
-   157	
-   158		return 0;
-   159	}
-   160	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+Dinh
