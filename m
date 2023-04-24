@@ -2,261 +2,207 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B38BDC7618E
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 14:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDDAC77B61
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 17:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231156AbjDXOn5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 10:43:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60856 "EHLO
+        id S230343AbjDXRPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 13:15:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229522AbjDXOne (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 10:43:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB3F95BBF
-        for <linux-clk@vger.kernel.org>; Mon, 24 Apr 2023 07:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682347366;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xKVDH1fRnFTxaQHNAq/+pZJ5S9HufV5S7nytyAVR7K8=;
-        b=D4jYXsK9bkLEyYRZa9c20rCMKHAQDrO9AWCDtvaB8saBHo0nXoirQrVcnjjhtrmnnqrWlH
-        tO3xS7fDdZMPVB/Rvk6r+2QgdpmsXjKfElOUKz9W443K1XTJqxN04qNend61CGOTqMKjau
-        QI08lQah9psF33VTvxUyNXkyLO6KNTU=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-507-JV47rlPTMa2MeisBkABJJA-1; Mon, 24 Apr 2023 10:42:44 -0400
-X-MC-Unique: JV47rlPTMa2MeisBkABJJA-1
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-6a601684a90so3440999a34.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Apr 2023 07:42:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682347363; x=1684939363;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xKVDH1fRnFTxaQHNAq/+pZJ5S9HufV5S7nytyAVR7K8=;
-        b=W7QlHpDt8UhgJgvzq/MXQEv9uhkvkji/zVIn2ttV715KK3V3c1iYUNkTtf6lc8niLl
-         G7njXpDWxvI63zy+q9lvaZmhjF7hBr4wTCMWkJDx369iN76T/JyGN6yoFAKPM5q9Bl9O
-         qdCo2vhm+20FxyZ5gu/DzNGZsvwTHL8J//eSwTiRszL3vYdDAi9WmzNWGz9XKfsT15sS
-         +8UL+PeOccBTRhWNi7Zb/pP3PWZST4c4VKRbD/DjUSMkPX/I8NwF8q+T/9oYlVE0sWyX
-         5rO4JYRP2bF1+06v81gmWMkR4HEc1PyQieBZ2HrUi8iLOfwi6V6uRGyEL4dFiyFrzWDi
-         hKyA==
-X-Gm-Message-State: AAQBX9difBUszt6m2U8imgXTPbLFlw4qKpeTqROclcRHEMBBvKwRMn+R
-        q01MMh2x3EgfwEuQ5dzZKIqYzl3SgtBPWr3Tz02+U78gvExKzW//FJWuq2SaU7gIRQJZHoprXxq
-        eEq0BAGL1d5R7jO5Mo/hooSUWU5PQ
-X-Received: by 2002:a05:6870:4591:b0:183:c9a0:ef36 with SMTP id y17-20020a056870459100b00183c9a0ef36mr9673800oao.40.1682347363289;
-        Mon, 24 Apr 2023 07:42:43 -0700 (PDT)
-X-Google-Smtp-Source: AKy350YrhVgqfa1Uos07nqjj6F0iGhFGp2/4fsfP02k0X2y7sWPvqACZpOZtmnxiYHj7UMetzujVnA==
-X-Received: by 2002:a05:6870:4591:b0:183:c9a0:ef36 with SMTP id y17-20020a056870459100b00183c9a0ef36mr9673780oao.40.1682347363027;
-        Mon, 24 Apr 2023 07:42:43 -0700 (PDT)
-Received: from halaney-x13s ([2600:1700:1ff0:d0e0::22])
-        by smtp.gmail.com with ESMTPSA id h22-20020a9d61d6000000b006a6168665f6sm4770319otk.43.2023.04.24.07.42.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Apr 2023 07:42:42 -0700 (PDT)
-Date:   Mon, 24 Apr 2023 09:42:40 -0500
-From:   Andrew Halaney <ahalaney@redhat.com>
-To:     krzysztof.kozlowski+dt@linaro.org
-Cc:     linux-kernel@vger.kernel.org, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, richardcochran@gmail.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
-        bmasney@redhat.com, echanude@redhat.com, ncai@quicinc.com,
-        jsuraj@qti.qualcomm.com, hisunil@quicinc.com, sboyd@kernel.org
-Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: sa8540p-ride: Add ethernet nodes
-Message-ID: <20230424144240.h7mykl65fae6ygss@halaney-x13s>
-References: <20230413191541.1073027-1-ahalaney@redhat.com>
- <20230413191541.1073027-4-ahalaney@redhat.com>
- <a295939f0058373d1caf956749820c0d.sboyd@kernel.org>
- <20230413210127.s5dkek6adp5ndern@halaney-x13s>
- <7b2b2eefb4b7b6ef8ac2a3176286a97b.sboyd@kernel.org>
- <20230414145844.wyg6pt623pzqwh5l@halaney-x13s>
+        with ESMTP id S229906AbjDXRPz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 13:15:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD956185;
+        Mon, 24 Apr 2023 10:15:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 648B06272B;
+        Mon, 24 Apr 2023 17:15:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F97AC433D2;
+        Mon, 24 Apr 2023 17:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682356552;
+        bh=hRs/acnkIDX2tBWCp9DVeye/pTM8KlJRW6iseqcPYZk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=B3fVlOJYd1jRadwKwhGG99DNMpt6un9zqJ97AumxiIU1FL8bXSaWg8PcHKbmTOhlq
+         4oeSi4DaDS26tGqyB49nssli6RseTe7/ZiSLZvoUewN1L55VJO9ltcKFePBtr95nVe
+         RoskAuuKZuUQjV3AFml3QcFW3+uMfhxz+mewWAenAGs01KZweEqLkJpdEOgGqC7Yr4
+         g3vjq1IloujWIK6hIwiAu2g0srzHO7yOOZl6g4kj75DR8J0XE7lkQFd1zNxlpFQ9qS
+         STzlghmkCqzoK317Mh2vo+fvGZejCPFmJfVBUUefLis4CwOM4MBDgJiC79wn5K2/tI
+         ppnigF1Xz1SEQ==
+Date:   Mon, 24 Apr 2023 18:15:47 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] dt-bindings: soc: starfive: Add StarFive syscon
+ module
+Message-ID: <20230424-footsie-compost-d6624c8ef4e8@spud>
+References: <20230414024157.53203-1-xingyu.wu@starfivetech.com>
+ <20230414024157.53203-6-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6h8NHcwldPvt4iyb"
 Content-Disposition: inline
-In-Reply-To: <20230414145844.wyg6pt623pzqwh5l@halaney-x13s>
+In-Reply-To: <20230414024157.53203-6-xingyu.wu@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hey Krzysztof,
 
-Some advice below would be appreciated. I discussed offline with Bjorn
-between the two approaches below but it sounded like ultimately we'd
-defer to your preference here!
+--6h8NHcwldPvt4iyb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 14, 2023 at 09:58:44AM -0500, Andrew Halaney wrote:
-> On Thu, Apr 13, 2023 at 03:05:26PM -0700, Stephen Boyd wrote:
-> > Quoting Andrew Halaney (2023-04-13 14:01:27)
-> > > On Thu, Apr 13, 2023 at 01:47:19PM -0700, Stephen Boyd wrote:
-> > > > Quoting Andrew Halaney (2023-04-13 12:15:41)
-> > > > >  arch/arm64/boot/dts/qcom/sa8540p-ride.dts | 179 ++++++++++++++++++++++
-> > > > >  1 file changed, 179 insertions(+)
-> > > > > 
-> > > > > diff --git a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> > > > > index 40db5aa0803c..650cd54f418e 100644
-> > > > > --- a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> > > > > +++ b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> > > > > @@ -28,6 +28,65 @@ aliases {
-> > > > >         chosen {
-> > > > >                 stdout-path = "serial0:115200n8";
-> > > > >         };
-> > > > > +
-> > > > > +       mtl_rx_setup: rx-queues-config {
-> > > > 
-> > > > Is there a reason why this isn't a child of an ethernet node?
-> > > > 
-> > > > 
-> > > 
-> > > I debated if it was more appropriate to:
-> > > 
-> > >     1. make a duplicate in each ethernet node (ethernet0/1)
-> > >     2. Put it in one and reference from both
-> > >     3. have it floating around independent like this, similar to what is
-> > >        done in sa8155p-adp.dts[0]
-> > > 
-> > > I chose 3 as it seemed cleanest, but if there's a good argument for a
-> > > different approach I'm all ears!
-> > 
-> > I wonder if it allows the binding checker to catch bad properties by
-> > having it under the ethernet node? That's the only thing I can think of
-> > that may be improved, but I'll let binding reviewers comment here.
-> > 
-> 
-> Thanks, I was curious so I played around to answer the question via
-> testing, and you're right... rx-queues-config/tx-queues-config aren't
-> evaluated unless they sit under the node with the compatible (i.e. it
-> doesn't just follow the phandle and evaluate). That makes sense to me I
-> suppose.
-> 
-> So, I guess, would maintainers prefer to see option (1) or (2) above? I
-> want that thing evaluated.
-> 
-> Option 1., above, has duplicated configuration, but is probably a more accurate
-> representation of the hardware description.
-> 
-> Option 2., above, doesn't duplicate rx-queues-config/tx-queues-config,
-> but is a weirder representation of hardware description, and only
-> complains once (which is fine since it's shared) when the binding checker
-> runs (i.e. only the etherent parent containing rx-queues-config yells).
-> 
+On Fri, Apr 14, 2023 at 10:41:55AM +0800, Xingyu Wu wrote:
+> From: William Qiu <william.qiu@starfivetech.com>
+>=20
+> Add documentation to describe StarFive System Controller Registers.
+>=20
+> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> ---
+>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 58 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++
+>  2 files changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfi=
+ve,jh7110-syscon.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh71=
+10-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh=
+7110-syscon.yaml
+> new file mode 100644
+> index 000000000000..de086e74a229
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-sysc=
+on.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.y=
+aml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: StarFive JH7110 SoC system controller
+> +
+> +maintainers:
+> +  - William Qiu <william.qiu@starfivetech.com>
+> +
+> +description: |
+> +  The StarFive JH7110 SoC system controller provides register informatio=
+n such
+> +  as offset, mask and shift to configure related modules such as MMC and=
+ PCIe.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - starfive,jh7110-aon-syscon
+> +              - starfive,jh7110-sys-syscon
+> +          - const: syscon
+> +          - const: simple-mfd
+> +      - items:
+> +          - const: starfive,jh7110-stg-syscon
+> +          - const: syscon
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clock-controller:
+> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+> +    type: object
+> +
+> +  power-controller:
+> +    $ref: /schemas/power/starfive,jh7110-pmu.yaml#
+> +    type: object
 
-For what it is worth, I prefer option 1 above :)
+My plan was to grab this patch after the merge window, but there's been
+some back and forth [1] about what exactly should be a power-controller
+here. Given the merge window is open & I know Emil wants to look at the
+various clock bits for the JH7110, I don't think there's a pressing need
+for you to do anything here, but figured I'd at least mention how things
+are going on this thread too.
 
-> In the below example you can see what I mean by the "only complains
-> once" comment as well as illustration that the patchset as is doesn't
-> allow rx-queues-config/tx-queues-config to be validated by dt-binding
-> checks:
-> 
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % # Purposely introduce a dt-binding error on top of the current patchset                                                                                          :(
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % git diff                                                                                                                                                         :(
-> diff --git a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> index 650cd54f418e..ecb0000db4e2 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> @@ -54,7 +54,7 @@ queue2 {
->  
->                 queue3 {
->                         snps,avb-algorithm;
-> -                       snps,map-to-dma-channel = <0x3>;
-> +                       snps,map-to-dma-channel = "not-correct";
->                         snps,priority = <0xc>;
->                 };
->         };
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % make CHECK_DTBS=y DT_SCHEMA_FILES=/net/qcom,ethqos.yaml qcom/sa8540p-ride.dtb
->   DTC_CHK arch/arm64/boot/dts/qcom/sa8540p-ride.dtb
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % # That should have failed
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % # Move the whole node under ethernet0, have ethernet1 reference via phandle only still
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % git diff | cat
-> diff --git a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> index 650cd54f418e..451246936731 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/sa8540p-ride.dts
-> @@ -29,35 +29,6 @@ chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> -	mtl_rx_setup: rx-queues-config {
-> -		snps,rx-queues-to-use = <1>;
-> -		snps,rx-sched-sp;
-> -
-> -		queue0 {
-> -			snps,dcb-algorithm;
-> -			snps,map-to-dma-channel = <0x0>;
-> -			snps,route-up;
-> -			snps,priority = <0x1>;
-> -		};
-> -
-> -		queue1 {
-> -			snps,dcb-algorithm;
-> -			snps,map-to-dma-channel = <0x1>;
-> -			snps,route-ptp;
-> -		};
-> -
-> -		queue2 {
-> -			snps,avb-algorithm;
-> -			snps,map-to-dma-channel = <0x2>;
-> -			snps,route-avcp;
-> -		};
-> -
-> -		queue3 {
-> -			snps,avb-algorithm;
-> -			snps,map-to-dma-channel = <0x3>;
-> -			snps,priority = <0xc>;
-> -		};
-> -	};
->  
->  	mtl_tx_setup: tx-queues-config {
->  		snps,tx-queues-to-use = <1>;
-> @@ -223,6 +194,36 @@ &ethernet0 {
->  
->  	status = "okay";
->  
-> +	mtl_rx_setup: rx-queues-config {
-> +		snps,rx-queues-to-use = <1>;
-> +		snps,rx-sched-sp;
-> +
-> +		queue0 {
-> +			snps,dcb-algorithm;
-> +			snps,map-to-dma-channel = <0x0>;
-> +			snps,route-up;
-> +			snps,priority = <0x1>;
-> +		};
-> +
-> +		queue1 {
-> +			snps,dcb-algorithm;
-> +			snps,map-to-dma-channel = <0x1>;
-> +			snps,route-ptp;
-> +		};
-> +
-> +		queue2 {
-> +			snps,avb-algorithm;
-> +			snps,map-to-dma-channel = <0x2>;
-> +			snps,route-avcp;
-> +		};
-> +
-> +		queue3 {
-> +			snps,avb-algorithm;
-> +			snps,map-to-dma-channel = "not-correct";
-> +			snps,priority = <0xc>;
-> +		};
-> +	};
-> +
->  	mdio {
->  		compatible = "snps,dwmac-mdio";
->  		#address-cells = <1>;
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % make CHECK_DTBS=y DT_SCHEMA_FILES=/net/qcom,ethqos.yaml qcom/sa8540p-ride.dtb
->   DTC_CHK arch/arm64/boot/dts/qcom/sa8540p-ride.dtb
-> /home/ahalaney/git/redhat/stmmac/arch/arm64/boot/dts/qcom/sa8540p-ride.dtb: ethernet@20000: rx-queues-config:queue3:snps,map-to-dma-channel:0: [1852797997, 1668248178, 1701016576] is too long
-> 	From schema: /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> /home/ahalaney/git/redhat/stmmac/arch/arm64/boot/dts/qcom/sa8540p-ride.dtb: ethernet@20000: Unevaluated properties are not allowed ('max-speed', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,tso', 'tx-fifo-depth' were unexpected)
-> 	From schema: /home/ahalaney/git/redhat/stmmac/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] % # That warned as expected, since snps,dwmac.yaml failed on rx-queues-config it warns, \
-> 									and since part of the schema failed its not inherited (hence the Unevaluated properties warning following) \
-> 									also note how only ethernet0 (@20000) is evaluating rx-queues-config since that's where the rx-queues-config node lives
-> (dtschema) ahalaney@halaney-x13s ~/git/redhat/stmmac (git)-[stmmac] %
-> 
-> Thanks for the review!
->  - Andrew
+Thanks,
+Conor.
 
+1 - https://lore.kernel.org/linux-riscv/20230419035646.43702-1-changhuang.l=
+iang@starfivetech.com/T/#m708770e9596098214df769bcc2bdaf9c1a46ca98
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    syscon@10240000 {
+> +        compatible =3D "starfive,jh7110-stg-syscon", "syscon";
+> +        reg =3D <0x10240000 0x1000>;
+> +    };
+> +
+> +    syscon@13030000 {
+> +        compatible =3D "starfive,jh7110-sys-syscon", "syscon", "simple-m=
+fd";
+> +        reg =3D <0x13030000 0x1000>;
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 03051ae2e9e5..0fafeea8ebdb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19917,6 +19917,11 @@ S:	Supported
+>  F:	Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+>  F:	drivers/clk/starfive/clk-starfive-jh7110-pll.*
+> =20
+> +STARFIVE JH7110 SYSCON
+> +M:	William Qiu <william.qiu@starfivetech.com>
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon=
+=2Eyaml
+> +
+>  STARFIVE JH71X0 CLOCK DRIVERS
+>  M:	Emil Renner Berthing <kernel@esmil.dk>
+>  M:	Hal Feng <hal.feng@starfivetech.com>
+> @@ -19954,6 +19959,7 @@ STARFIVE SOC DRIVERS
+>  M:	Conor Dooley <conor@kernel.org>
+>  S:	Maintained
+>  T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
+> +F:	Documentation/devicetree/bindings/soc/starfive/
+>  F:	drivers/soc/starfive/
+> =20
+>  STARFIVE TRNG DRIVER
+> --=20
+> 2.25.1
+>=20
+
+--6h8NHcwldPvt4iyb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZEa5QwAKCRB4tDGHoIJi
+0l+0AP0e3JscjX9uM8ImqV7QVtI4v8fidKqzUoF260oblriMtwEA54APb/okMY+/
+v17rOEyY6cI2/FIYxQZLySSpbK99Og8=
+=PGj2
+-----END PGP SIGNATURE-----
+
+--6h8NHcwldPvt4iyb--
