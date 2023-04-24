@@ -2,320 +2,168 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74308C77B76
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 11:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DF6C77B76
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 11:31:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231660AbjDXLRX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 07:17:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54832 "EHLO
+        id S231332AbjDXLbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 07:31:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231644AbjDXLRW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 07:17:22 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 568DD30ED
-        for <linux-clk@vger.kernel.org>; Mon, 24 Apr 2023 04:17:18 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-b9963a72fbfso2481000276.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Apr 2023 04:17:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682335037; x=1684927037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iaX8xsPGl4rslxp6ho/AchvXG89eWPF4+LjwLKPk3Q0=;
-        b=PjF+k3XpknjTI7vcWJKwUWfFS+VCgLz/H1srKu1Hhq6NRjbIziu7HYWCwPHns/hCK9
-         rlMKZ5aGNpcuZDdYQEdE7x5ed3atiOFOYwwDna13UuuFoeEaJPUqw6efAxvVKU+eFiVG
-         uLBG9q5M5YX08kkJCzhtwY2TSguOjvxMkv6xX+9oKQq1O6LNx4QFM5r+GE71HtplyYKT
-         A1GiRKyTukMkRU7Pu1zDtX91ER3BcBOAicPq2ab46lQ/D6UO0mzfHeFl+DfLfmtf4Kvt
-         XPHIePWEvnxMoSFkSYRBVGrvzbOB6LuNyW2CZ4fUZeHujaDFP9CNRaJj9NOb6WZhg4RO
-         PiCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682335037; x=1684927037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iaX8xsPGl4rslxp6ho/AchvXG89eWPF4+LjwLKPk3Q0=;
-        b=H9EzpQRQZodV/HQoOrdOiBXEzuHWKxkzMpWHUjWOEOZ1GaRf7TSAD3wbVq2zsUrh7M
-         jydpSbVRR+qeBcFtTprP6F9wQPV/7a/nAgUJbv7f800kz6VsrBU2Z76RBSWvtv1vlFw0
-         m1O4dK6xRwk8qpLkLcR4Fu9Om5yyET5LzxlFJhj4Vgdz9jXuvNteWjiAlFn33Feo+Mai
-         N7PzAG02AqpFLunf9TEkGqB+/r4OwMG//pOdcF0UhhB0hsrMfouSMOdR5wD6LxP5LoLW
-         A6vr1/JpUmUqvLfKWK52e1DxxeeROKr3j/Ky4kR62i9Yg2vGVlIdjQ7R+bZ3ZypXpmaD
-         TQ7A==
-X-Gm-Message-State: AAQBX9cDT7LwyN4WvARwGlRM3NnlLV85OldeMhO9yCRgFOdqbB65QeIO
-        xuYU5p05Rtl6OoTkjc2+7PdlOzVX4OgRF0dwTM7P7g==
-X-Google-Smtp-Source: AKy350bW1CBxsge2Wn46uHD3D4/voh1BiG85nt/HNpSdQU1MdQwI+nEPHhfHyq0OqmXbZqbZ6fnfVz6e3TAMzWRsC9I=
-X-Received: by 2002:a25:aaa4:0:b0:b8e:cb88:1b69 with SMTP id
- t33-20020a25aaa4000000b00b8ecb881b69mr9636527ybi.34.1682335037478; Mon, 24
- Apr 2023 04:17:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1680693149.git.quic_varada@quicinc.com> <55db8487a7cbf3354749dd2d3a35c05bfd9fa4fc.1680693149.git.quic_varada@quicinc.com>
- <e142ff5d-543f-80bb-94f9-3f1fb90f1b83@linaro.org> <20230424090402.GB21232@varda-linux.qualcomm.com>
-In-Reply-To: <20230424090402.GB21232@varda-linux.qualcomm.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 24 Apr 2023 14:17:06 +0300
-Message-ID: <CAA8EJprqH5esxQkH3v-1i539OO3jQG9fN-YOqjZTwEqqgUfUyg@mail.gmail.com>
-Subject: Re: [PATCH v8 7/8] arm64: dts: qcom: ipq9574: Add USB related nodes
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S229547AbjDXLbx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 07:31:53 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CD502D70;
+        Mon, 24 Apr 2023 04:31:50 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id C099C5C018B;
+        Mon, 24 Apr 2023 07:31:49 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Mon, 24 Apr 2023 07:31:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1682335909; x=1682422309; bh=Y9
+        FYoJaNOjxIXKXj5iVt3HG1MU0gziVJXHg42DuXBOg=; b=O1tJf0aYUL1Asq2G9I
+        v/WenhP5rGZyZB1SAL0Lr08oQeAEEUQrAp0socR3vEd9UgGnvByhJ755hJxV1qKU
+        E9ZSACMVc6ctw5IOj3YSxNtJjppCrcMnuo3EHDjmd3kHM8VJtKdkgvKL4DFoHOqz
+        +W+8IuX2hg35wSKwedvXKJ3PURDaQkrWjJM/7PMwj2nQ3bK1GDbl6lv178HZ/NA8
+        KDsO9MYDBoMlPNBh8aEl4RrLKv4OLsavscqSSR/heANCq8T/WVE0cVUSnj8QfSJQ
+        4u/teN+GVPZosLly+e7aCJHZfWx6MH3m9aFx+6kQZQbTUHFFn+RPDQoPPYxBW1gQ
+        IJSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1682335909; x=1682422309; bh=Y9FYoJaNOjxIX
+        KXj5iVt3HG1MU0gziVJXHg42DuXBOg=; b=iBdH6uvO/L8/zyujyEmeuLQ7lvT2x
+        GYZygrbZo05oxTN/Md/oDE0e8WW8qA02cbgVhsfFcZOI0ds8e+FbCtiiaOJvFiRx
+        +0cW8fxBsOTCzFHhmKeMdRGumvrSujG5VcT8IFLwY3h8/nMbzymQnlGomWQOWzQx
+        /oBTRzPHT38WBG1dSwXH+qEHrQrBjZbDngRgGtk3lDrZjamKW1iCCAmPUjNH4bVF
+        47At9lDjEDsPYhnN2768xyf3oBtpO2z2m/rKqeUCbiN4YmtGLmGGX3q1bMmxrG9I
+        36sN74EogbvFLVEbiiG9I3iKHbm4hY5BQztKKlqVi2e7UnWmYlN05agjA==
+X-ME-Sender: <xms:o2hGZE7zjv519ykLdrbAQGTLb_LGqm8C9gu0iv5LW_l5ijia9biY7A>
+    <xme:o2hGZF7IUwkhhPb4KXqxJ6jrGKB4g1CI7PypRKEHNaKZ-yKjsy2DgJ29sYcy-8ANi
+    L7P0836qypU8DsWz5I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfedutddggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:o2hGZDccuXBCL3RAIdybA7rao9itrSh_uY8pqy72IR4RYUm3PNP66w>
+    <xmx:o2hGZJLZwUfDzeDL8noN8lkkCw-LNtlf4Vp39AIRXYTSMF4PksJThw>
+    <xmx:o2hGZIKT3iHKm9UvV7uZTvPOYuO2PbPXKewmqiqnd7-usVCISuMq0A>
+    <xmx:pWhGZAVObyMQbbUUBpdedORBxIIpPoWc5gLC07zOHsQjH_IqgL-nMw>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 2684DB60086; Mon, 24 Apr 2023 07:31:47 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-372-g43825cb665-fm-20230411.003-g43825cb6
+Mime-Version: 1.0
+Message-Id: <8101c53e-e682-4dc3-95cc-a332b1822b8b@app.fastmail.com>
+In-Reply-To: <20230424123522.18302-1-nikita.shubin@maquefel.me>
+References: <20230424123522.18302-1-nikita.shubin@maquefel.me>
+Date:   Mon, 24 Apr 2023 13:31:25 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Nikita Shubin" <nikita.shubin@maquefel.me>
+Cc:     "Arnd Bergmann" <arnd@kernel.org>,
+        "Linus Walleij" <linusw@kernel.org>,
+        "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+        "Russell King" <rmk+kernel@armlinux.org.uk>,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        "Alessandro Zummo" <a.zummo@towertech.it>,
+        "Alexander Gordeev" <agordeev@linux.ibm.com>,
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        "Bartosz Golaszewski" <brgl@bgdev.pl>,
+        "Brian Norris" <briannorris@chromium.org>,
+        "Chuanhong Guo" <gch981213@gmail.com>,
+        "Conor.Dooley" <conor.dooley@microchip.com>,
+        "Damien Le Moal" <dlemoal@kernel.org>,
+        "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        "Eric Dumazet" <edumazet@google.com>,
+        "Florian Fainelli" <f.fainelli@gmail.com>,
+        "Guenter Roeck" <linux@roeck-us.net>,
+        "Hartley Sweeten" <hsweeten@visionengravers.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        "Hitomi Hasegawa" <hasegawa-hitomi@fujitsu.com>,
+        "Jakub Kicinski" <kuba@kernel.org>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Jean Delvare" <jdelvare@suse.de>, "Joel Stanley" <joel@jms.id.au>,
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        "Damien Le Moal" <damien.lemoal@opensource.wdc.com>,
+        "Liam Girdwood" <lgirdwood@gmail.com>,
+        "Liang Yang" <liang.yang@amlogic.com>,
+        "Linus Walleij" <linus.walleij@linaro.org>,
+        "Lukasz Majewski" <lukma@denx.de>, "Lv Ruyi" <lv.ruyi@zte.com.cn>,
+        "Mark Brown" <broonie@kernel.org>,
+        "Masahiro Yamada" <masahiroy@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>,
+        "Nathan Chancellor" <nathan@kernel.org>,
+        "Nick Desaulniers" <ndesaulniers@google.com>,
+        "Nicolas Saenz Julienne" <nsaenz@kernel.org>,
+        "Olof Johansson" <olof@lixom.net>,
+        "Paolo Abeni" <pabeni@redhat.com>,
+        "Qin Jian" <qinjian@cqplus1.com>,
+        "Richard Weinberger" <richard@nod.at>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Robert Jarzmik" <robert.jarzmik@free.fr>,
+        "Russell King" <linux@armlinux.org.uk>,
+        "Sebastian Reichel" <sre@kernel.org>,
+        "Sergey Shtylyov" <s.shtylyov@omp.ru>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Sumanth Korikkar" <sumanthk@linux.ibm.com>,
+        "Sven Peter" <sven@svenpeter.dev>, "Takashi Iwai" <tiwai@suse.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ulf Hansson" <ulf.hansson@linaro.org>,
+        "Vasily Gorbik" <gor@linux.ibm.com>,
+        "Vignesh Raghavendra" <vigneshr@ti.com>,
+        "Vinod Koul" <vkoul@kernel.org>,
+        "Walker Chen" <walker.chen@starfivetech.com>,
+        "Wim Van Sebroeck" <wim@linux-watchdog.org>,
+        "Yinbo Zhu" <zhuyinbo@loongson.cn>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        soc@kernel.org
+Subject: Re: [PATCH 00/43] ep93xx device tree conversion
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 24 Apr 2023 at 12:04, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
+On Mon, Apr 24, 2023, at 14:34, Nikita Shubin wrote:
+> This series aims to convert ep93xx from platform to full device tree support.
 >
-> On Sat, Apr 22, 2023 at 12:07:01AM +0300, Dmitry Baryshkov wrote:
-> > On 05/04/2023 14:41, Varadarajan Narayanan wrote:
-> > >Add USB phy and controller related nodes
-> > >
-> > >Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > >---
-> > >  Changes in v8:
-> > >     - Change clocks order to match the bindings
-> > >  Changes in v7:
-> > >     - Change com_aux -> cfg_ahb
-> > >  Changes in v6:
-> > >     - Introduce fixed regulators for the phy
-> > >     - Resolved all 'make dtbs_check' messages
-> > >
-> > >  Changes in v5:
-> > >     - Fix additional comments
-> > >     - Edit nodes to match with qcom,sc8280xp-qmp-usb3-uni-phy.yaml
-> > >     - 'make dtbs_check' giving the following messages since
-> > >       ipq9574 doesn't have power domains. Hope this is ok
-> > >
-> > >             /local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: phy@7d000: 'power-domains' is a required property
-> > >             From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
-> > >             /local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: usb@8a00000: 'power-domains' is a required property
-> > >             From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> > >
-> > >  Changes in v4:
-> > >     - Use newer bindings without subnodes
-> > >     - Fix coding style issues
-> > >
-> > >  Changes in v3:
-> > >     - Insert the nodes at proper location
-> > >
-> > >  Changes in v2:
-> > >     - Fixed issues flagged by Krzysztof
-> > >     - Fix issues reported by make dtbs_check
-> > >     - Remove NOC related clocks (to be added with proper
-> > >       interconnect support)
-> > >---
-> > >  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 120 ++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 120 insertions(+)
-> > >
-> > >diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > >index 43a3dbe..1242382 100644
-> > >--- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > >+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> > >@@ -150,6 +150,33 @@
-> > >             method = "smc";
-> > >     };
-> > >+    reg_usb_3p3: s3300 {
-> >
-> > The node names do not look generic enough. Please take a look at other
-> > platforms.
+> Tested on ts7250 64 RAM/128 MiB Nand flash, edb9302.
 >
-> Please see below.
+> Thank you Linus and Arnd for your support, review and comments, sorry 
+> if i missed something -
+> these series are quite big for me.
 >
-> > >+            compatible = "regulator-fixed";
-> > >+            regulator-min-microvolt = <3300000>;
-> > >+            regulator-max-microvolt = <3300000>;
-> > >+            regulator-boot-on;
-> > >+            regulator-always-on;
-> > >+            regulator-name = "usb-phy-vdd-dummy";
-> >
-> > This also doesn't look correct. This regulator should not just fill the gap.
-> > Does it represent a generic voltage network on the board?
-> >
-> > Please do not add 'dummy' voltage regulators if there is no real voltage
-> > wire.
->
-> These are real voltage wires. I used dummy since they are
-> always-on and cannot be increased/decreased (i.e. fixed).
-> Would something along the following lines be appropriate?
+> Big thanks to Alexander Sverdlin for his testing, support, review, 
+> fixes and patches.
 
-Still not fully correct. Please use regulator name that corresponds to
-the power grid on the board schematics. I don't think that you have a
-separate power grids for USB PHY.
+Thanks a lot for your continued work. I can't merge any of this at
+the moment since the upstream merge window just opened, but I'm
+happy to take this all through the soc tree for 6.5, provided we
+get the sufficient Acks from the subsystem maintainers. Merging
+it through each individual tree would take a lot longer, so I
+hope we can avoid that.
 
->
->         vreg_ae10_3p3: s3300 {
-
-Naming suggests that these voltages are generated by some PMIC. Is
-this correct? If so, please describe the PMIC instead.
-
->                 compatible = "regulator-fixed";
->                 regulator-min-microvolt = <3300000>;
->                 regulator-max-microvolt = <3300000>;
->                 regulator-boot-on;
->                 regulator-always-on;
->                 regulator-name = "usb-phy-vdd";
->         };
->
->         vreg_ad8_1p8: s1800 {
->                 compatible = "regulator-fixed";
->                 regulator-min-microvolt = <1800000>;
->                 regulator-max-microvolt = <1800000>;
->                 regulator-boot-on;
->                 regulator-always-on;
->                 regulator-name = "usb-phy-pll";
->         };
->
->         vreg_ad9_0p925: s0925 {
->                 compatible = "regulator-fixed";
->                 regulator-min-microvolt = <925000>;
->                 regulator-max-microvolt = <925000>;
->                 regulator-boot-on;
->                 regulator-always-on;
->                 regulator-name = "usb-phy";
->         };
->
-> Thanks
-> Varada
->
-> > >+    };
-> > >+
-> > >+    reg_usb_1p8: s1800 {
-> > >+            compatible = "regulator-fixed";
-> > >+            regulator-min-microvolt = <1800000>;
-> > >+            regulator-max-microvolt = <1800000>;
-> > >+            regulator-boot-on;
-> > >+            regulator-always-on;
-> > >+            regulator-name = "usb-phy-pll-dummy";
-> > >+    };
-> > >+
-> > >+    reg_usb_0p925: s0925 {
-> > >+            compatible = "regulator-fixed";
-> > >+            regulator-min-microvolt = <925000>;
-> > >+            regulator-max-microvolt = <925000>;
-> > >+            regulator-boot-on;
-> > >+            regulator-always-on;
-> > >+            regulator-name = "usb-phy-dummy";
-> > >+    };
-> > >+
-> > >     reserved-memory {
-> > >             #address-cells = <2>;
-> > >             #size-cells = <2>;
-> > >@@ -179,6 +206,52 @@
-> > >             #size-cells = <1>;
-> > >             ranges = <0 0 0 0xffffffff>;
-> > >+            usb_0_qusbphy: phy@7b000 {
-> > >+                    compatible = "qcom,ipq9574-qusb2-phy";
-> > >+                    reg = <0x0007b000 0x180>;
-> > >+                    #phy-cells = <0>;
-> > >+
-> > >+                    clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> > >+                             <&xo_board_clk>;
-> > >+                    clock-names = "cfg_ahb",
-> > >+                                  "ref";
-> > >+
-> > >+                    vdd-supply = <&reg_usb_0p925>;
-> > >+                    vdda-pll-supply = <&reg_usb_1p8>;
-> > >+                    vdda-phy-dpdm-supply = <&reg_usb_3p3>;
-> > >+
-> > >+                    resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
-> > >+                    status = "disabled";
-> > >+            };
-> > >+
-> > >+            usb_0_qmpphy: phy@7d000 {
-> > >+                    compatible = "qcom,ipq9574-qmp-usb3-phy";
-> > >+                    reg = <0x0007d000 0xa00>;
-> > >+                    #phy-cells = <0>;
-> > >+
-> > >+                    clocks = <&gcc GCC_USB0_AUX_CLK>,
-> > >+                             <&xo_board_clk>,
-> > >+                             <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> > >+                             <&gcc GCC_USB0_PIPE_CLK>;
-> > >+                    clock-names = "aux",
-> > >+                                  "ref",
-> > >+                                  "cfg_ahb",
-> > >+                                  "pipe";
-> > >+
-> > >+                    resets = <&gcc GCC_USB0_PHY_BCR>,
-> > >+                             <&gcc GCC_USB3PHY_0_PHY_BCR>;
-> > >+                    reset-names = "phy",
-> > >+                                  "phy_phy";
-> > >+
-> > >+                    vdda-pll-supply = <&reg_usb_1p8>;
-> > >+                    vdda-phy-supply = <&reg_usb_0p925>;
-> > >+
-> > >+                    status = "disabled";
-> > >+
-> > >+                    #clock-cells = <0>;
-> > >+                    clock-output-names = "usb0_pipe_clk";
-> > >+            };
-> > >+
-> > >             pcie0_phy: phy@84000 {
-> > >                     compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
-> > >                     reg = <0x00084000 0x1000>;
-> > >@@ -548,6 +621,53 @@
-> > >                     status = "disabled";
-> > >             };
-> > >+            usb3: usb@8a00000 {
-> > >+                    compatible = "qcom,ipq9574-dwc3", "qcom,dwc3";
-> > >+                    reg = <0x08af8800 0x400>;
-> > >+                    #address-cells = <1>;
-> > >+                    #size-cells = <1>;
-> > >+                    ranges;
-> > >+
-> > >+                    clocks = <&gcc GCC_SNOC_USB_CLK>,
-> > >+                             <&gcc GCC_USB0_MASTER_CLK>,
-> > >+                             <&gcc GCC_ANOC_USB_AXI_CLK>,
-> > >+                             <&gcc GCC_USB0_SLEEP_CLK>,
-> > >+                             <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-> > >+
-> > >+                    clock-names = "cfg_noc",
-> > >+                                  "core",
-> > >+                                  "iface",
-> > >+                                  "sleep",
-> > >+                                  "mock_utmi";
-> > >+
-> > >+                    assigned-clocks = <&gcc GCC_USB0_MASTER_CLK>,
-> > >+                                      <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-> > >+                    assigned-clock-rates = <200000000>,
-> > >+                                           <24000000>;
-> > >+
-> > >+                    interrupts-extended = <&intc GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
-> > >+                    interrupt-names = "pwr_event";
-> > >+
-> > >+                    resets = <&gcc GCC_USB_BCR>;
-> > >+                    status = "disabled";
-> > >+
-> > >+                    dwc_0: usb@8a00000 {
-> > >+                            compatible = "snps,dwc3";
-> > >+                            reg = <0x8a00000 0xcd00>;
-> > >+                            clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-> > >+                            clock-names = "ref";
-> > >+                            interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
-> > >+                            phys = <&usb_0_qusbphy>, <&usb_0_qmpphy>;
-> > >+                            phy-names = "usb2-phy", "usb3-phy";
-> > >+                            tx-fifo-resize;
-> > >+                            snps,is-utmi-l1-suspend;
-> > >+                            snps,hird-threshold = /bits/ 8 <0x0>;
-> > >+                            snps,dis_u2_susphy_quirk;
-> > >+                            snps,dis_u3_susphy_quirk;
-> > >+                            dr_mode = "host";
-> > >+                    };
-> > >+            };
-> > >+
-> > >             intc: interrupt-controller@b000000 {
-> > >                     compatible = "qcom,msm-qgic2";
-> > >                     reg = <0x0b000000 0x1000>,  /* GICD */
-> >
-> > --
-> > With best wishes
-> > Dmitry
-> >
-
-
-
--- 
-With best wishes
-Dmitry
+      Arnd
