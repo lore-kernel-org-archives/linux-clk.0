@@ -2,137 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7497FC77B61
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 20:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6F2C7618E
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 22:37:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232256AbjDXUDI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 16:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33736 "EHLO
+        id S232815AbjDXWhX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 18:37:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231716AbjDXUDH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 16:03:07 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE4261FE6
-        for <linux-clk@vger.kernel.org>; Mon, 24 Apr 2023 13:03:06 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1pr2Ol-0008E0-El; Mon, 24 Apr 2023 22:02:55 +0200
-Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <pza@pengutronix.de>)
-        id 1pr2Oj-0004R7-Ph; Mon, 24 Apr 2023 22:02:53 +0200
-Date:   Mon, 24 Apr 2023 22:02:53 +0200
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Jacky Huang <ychuang570808@gmail.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-Subject: Re: [PATCH v6 10/12] reset: Add Nuvoton ma35d1 reset driver support
-Message-ID: <20230424200253.GC30248@pengutronix.de>
-References: <20230328021912.177301-1-ychuang570808@gmail.com>
- <20230328021912.177301-11-ychuang570808@gmail.com>
+        with ESMTP id S233134AbjDXWhE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 18:37:04 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CA5126;
+        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-63b7b54642cso3776359b3a.0;
+        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682375822; x=1684967822;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
+        b=FPQSG90ZXSUc5P/yeV7Ty842LoGViNqLiRh835nar/kqyUOmMd3Sdfd473qwlVozKO
+         G9fJYG46Ml8SwmmrRAXtovGGPNVv3BtZHM1l5+rkPfUvfi204l1aNR1eP03GEM4Eyca+
+         l6e8tFFdiaah8ENGQ1jLztg8EbSXXtpV/DPEOGLK81XLZQO5tFxYBT6hyZQoQkyAyPkE
+         sUnS3iP5uhRkjrsypQF5m3VmwyOQd7U4TKamduNKTYDV22X54R2uPf3OUaxzOyjUrzAM
+         6Z4op/Cf5aC6TscrRxhdNgpoNxWrZkvN1PHv8kdAV1wgQ7/Xi5KB+BV3WGCWX+Y8BqaR
+         2sew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682375822; x=1684967822;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
+        b=K5OnKvuwkmkMQ9frrzwU5Kl22tsjMTvruof3TNyrQO9EU9mnDapWXe1BNsLtCj+26+
+         YHhmouBM/niPw/oLadvQRcvJOPot4tw9VkRxi0vz0TZg+liEleXht86uWsgeLIKEpXTE
+         LQdHr3hYyl9vgZScrt4LZVzTrd8QM48HSO/C8tuzosxl8Yj16CAnEZbJjI/Uf/FIrHa1
+         +9xw/TgMwJZwmuwUiediap633Ir0bJeYadMI5u492o8MjMjTmo11RlDBTTZargbSs/C0
+         o6uggZ+2tsjptISLtWADPVQuQwh6Lg4NPTBUo18Ewwc0iaKukJfx+D8yvMcZraJ5N52Y
+         ja3A==
+X-Gm-Message-State: AAQBX9c1hRPetwNLlJ4HgFldVlpxmq/AzVMdl0KgU5cBLK5ye7ruUoMX
+        0YwQuY+eUx2OkgZmC6sV43I=
+X-Google-Smtp-Source: AKy350bQkD9qEKt0AXaIEoQV+2YVispEViRqtBeF0JlyRIcvdnq3SzLC7lBttdklkKb+7Mpd7n7YGQ==
+X-Received: by 2002:aa7:888a:0:b0:637:f1ae:d3e with SMTP id z10-20020aa7888a000000b00637f1ae0d3emr21117099pfe.25.1682375822356;
+        Mon, 24 Apr 2023 15:37:02 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id i64-20020a62c143000000b0063d328a690fsm7821812pfg.25.2023.04.24.15.36.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Apr 2023 15:37:01 -0700 (PDT)
+Message-ID: <185ac214-a94e-682e-0ec2-2beb25ec16fb@gmail.com>
+Date:   Mon, 24 Apr 2023 15:36:56 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230328021912.177301-11-ychuang570808@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: pza@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2] clk: bcm: rpi: Fix off by one in
+ raspberrypi_discover_clocks()
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Maxime Ripard <maxime@cerno.tech>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "Ivan T. Ivanov" <iivanov@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        kernel-janitors@vger.kernel.org
+References: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jacky,
-
-On Tue, Mar 28, 2023 at 02:19:10AM +0000, Jacky Huang wrote:
-> From: Jacky Huang <ychuang3@nuvoton.com>
+On 4/21/23 03:41, Dan Carpenter wrote:
+> Smatch detected an off by one in this code:
+>      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
+>      error: buffer overflow 'data->hws' 16 <= 16
 > 
-> This driver supports individual IP reset for ma35d1. The reset
-> control registers is a subset of system control registers.
+> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
+> comparison needs to changed to >=.
 > 
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
->  drivers/reset/Kconfig        |   6 ++
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-ma35d1.c | 152 +++++++++++++++++++++++++++++++++++
->  3 files changed, 159 insertions(+)
->  create mode 100644 drivers/reset/reset-ma35d1.c
-> 
-[...]
-> diff --git a/drivers/reset/reset-ma35d1.c b/drivers/reset/reset-ma35d1.c
-> new file mode 100644
-> index 000000000000..221299e7b873
-> --- /dev/null
-> +++ b/drivers/reset/reset-ma35d1.c
-> @@ -0,0 +1,152 @@
-[...]
-> +static int ma35d1_reset_update(struct reset_controller_dev *rcdev,
-> +			       unsigned long id, bool assert)
-> +{
-> +	unsigned int reg;
-> +	int ret;
-> +	int offset = (id / RST_PRE_REG) * 4;
-> +	struct ma35d1_reset_data *data =
-> +			container_of(rcdev, struct ma35d1_reset_data, rcdev);
-> +
-> +	ret = regmap_read(data->regmap, REG_SYS_IPRST0 + offset, &reg);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (assert)
-> +		reg |= 1 << (id % RST_PRE_REG);
-> +	else
-> +		reg &= ~(1 << (id % RST_PRE_REG));
-> +
-> +	return regmap_write(data->regmap, REG_SYS_IPRST0 + offset, reg);
+> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-This should use regmap_update_bits().
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
 
-[...]
-> +static int ma35d1_reset_status(struct reset_controller_dev *rcdev,
-> +			      unsigned long id)
-> +{
-> +	int reg, ret;
-> +	int offset = id / RST_PRE_REG;
-
-Should this be
-
-	int offset = (id / RST_PRE_REG) * 4;
-
-?
-
-> +static int ma35d1_reset_probe(struct platform_device *pdev)
-> +{
-> +	int err;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *parent;
-> +	struct ma35d1_reset_data *reset_data;
-> +	struct ma35d1_reboot_data *reboot_data;
-> +
-> +	if (!pdev->dev.of_node) {
-> +		dev_err(&pdev->dev, "Device tree node not found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	reset_data = devm_kzalloc(dev, sizeof(*reset_data), GFP_KERNEL);
-> +	if (!reset_data)
-> +		return -ENOMEM;
-> +
-> +	reboot_data = devm_kzalloc(dev, sizeof(*reboot_data), GFP_KERNEL);
-> +	if (!reboot_data)
-> +		return -ENOMEM;
-
-These structures could be combined into one.
-
-regards
-Philipp
