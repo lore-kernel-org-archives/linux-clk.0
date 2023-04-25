@@ -2,81 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F9DC77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 18:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5567EC77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 19:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235126AbjDYSzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 14:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53358 "EHLO
+        id S235102AbjDYTBh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 15:01:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235080AbjDYSzT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 14:55:19 -0400
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6A016F33;
-        Tue, 25 Apr 2023 11:55:02 -0700 (PDT)
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-546615d6f47so3886312eaf.0;
-        Tue, 25 Apr 2023 11:55:02 -0700 (PDT)
+        with ESMTP id S235106AbjDYTBf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 15:01:35 -0400
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2D849D8;
+        Tue, 25 Apr 2023 12:01:33 -0700 (PDT)
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-187949fdb1cso4699951fac.0;
+        Tue, 25 Apr 2023 12:01:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682448865; x=1685040865;
+        d=1e100.net; s=20221208; t=1682449293; x=1685041293;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6y7CuaWGG4f2cR6D1dHG8n9H6ZV3XhXaEAnqjecAYoY=;
-        b=VabjucDEMNi32e/OQTZrI+Z2ewa7s630759yis6U5PlwJJJZ/t3ouPIJnBsdkzQh07
-         uhKLGkMuLP5i40dhMwc8Dk6KyYzHv/YcFNrxI1TrwwxGZR92sx4t3Hg2OJVgHpskMceq
-         9dF3Ii7oMwY/xLQed5Op+JUUkXH3BgkKePFgIlm1iQIoGqXJ1Sh6KIIyONYICnCFWrIe
-         SC0q+JJjEQ21sL4XM64V+f6XWWE8LjBaXl0pErDtYb7XMA4RfBuy1AoP9mTtakoBSCpp
-         IQeRu/f6RG2s1llHDePfrJbEo4pIhVmr5Bzeib2ty9C5opZYkH5hQOVezFD5LHGjvGHc
-         Z+yA==
-X-Gm-Message-State: AAQBX9cBdyUiAXSoiqHtgnoZF7p79iA5RU3GDXTsa+HE/YIxeUIZFVM7
-        jlYd+xR4GAfIiSeYuXqReQ==
-X-Google-Smtp-Source: AKy350ZgWB2rPL7vzrqJCgeshN8YMDvzpzXhtbPchKiP/hbFnojfOGoW8uB4QIS0QWg5LDfTnrxnmg==
-X-Received: by 2002:aca:2315:0:b0:38c:11b3:a397 with SMTP id e21-20020aca2315000000b0038c11b3a397mr9259981oie.14.1682448865005;
-        Tue, 25 Apr 2023 11:54:25 -0700 (PDT)
+        bh=L1u0cCbUXzH7qiPF1I+5foUb5gsXy+f80Q5byZwNLdM=;
+        b=ZeyQJtEOd5gHCjWkCg0AtaCESlnUwe5CFGZu/YBXKOlsXp7MuKAdrXbkUpISKAfHFM
+         7JhDfubAopXNOQ2+CyZfJEdBTnk0ELXSSdm8FoTqOMpjgDnfWrvGEPexU2Ugam47gVlN
+         e05GOiH3zR14h6yFYoAgDYRVrI6NI1tP9iO8nffjy5ppbvRqI5MNEE3eoE6X2C8OYk9b
+         PbRwnkiJDbFfVY4pvg2Y7+8FK+m8w3ZKRs/eD2u9H62qz6BUh2796a1YO/MaYMwqggbA
+         Sxv4bgdmOeX9vMa+Q2oEVox1COei5C86YXM8GIAA9X0OJ49lZ9RK36XOtzCEZo+cImkg
+         4Akg==
+X-Gm-Message-State: AC+VfDzRnn55qjj/GCoP0GXL5UYLKAorLCJ6QQC8eKz9QpdHDltNdmSw
+        2IPXej3b9fuLN0pgatTvsVYhXfz7+Q==
+X-Google-Smtp-Source: ACHHUZ4Jn7kJ8s+qBM41oRwhYY5dL6y6or+OXTP5pm4bL15yF9Z0NMGQPtNx3cb9M6GBpM91Lv7yXg==
+X-Received: by 2002:a05:6870:e0cc:b0:18e:e33b:ec00 with SMTP id a12-20020a056870e0cc00b0018ee33bec00mr940168oab.52.1682449293096;
+        Tue, 25 Apr 2023 12:01:33 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id y10-20020a544d8a000000b0037b6f5d6309sm3774393oix.2.2023.04.25.11.54.23
+        by smtp.gmail.com with ESMTPSA id s21-20020a4a2d55000000b0054157801d51sm6233680oof.38.2023.04.25.12.01.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Apr 2023 11:54:24 -0700 (PDT)
-Received: (nullmailer pid 2079162 invoked by uid 1000);
-        Tue, 25 Apr 2023 18:54:22 -0000
-Date:   Tue, 25 Apr 2023 13:54:22 -0500
+        Tue, 25 Apr 2023 12:01:32 -0700 (PDT)
+Received: (nullmailer pid 2089441 invoked by uid 1000);
+        Tue, 25 Apr 2023 19:01:31 -0000
+Date:   Tue, 25 Apr 2023 14:01:31 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Mantas Pucka <mantas@8devices.com>
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Abhishek Sahu <absahu@codeaurora.org>,
-        linux-mmc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Anusha Canchi Ramachandra Rao <anusharao@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: mmc: sdhci-msm: add IPQ6018 compatible
-Message-ID: <168244885070.2078831.17064973248574990697.robh@kernel.org>
-References: <1682338412-15420-1-git-send-email-mantas@8devices.com>
- <1682338412-15420-2-git-send-email-mantas@8devices.com>
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     quic_kathirav@quicinc.com, andersson@kernel.org, agross@kernel.org,
+        mturquette@baylibre.com, quic_srichara@quicinc.com,
+        sboyd@kernel.org, quic_sjaganat@quicinc.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        konrad.dybcio@linaro.org, quic_arajkuma@quicinc.com,
+        robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com,
+        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V3 2/6] dt-bindings: clock: qcom,ipq9574-gcc: Add
+ maintainer
+Message-ID: <168244929071.2089337.16182607246447553484.robh@kernel.org>
+References: <20230425084010.15581-1-quic_devipriy@quicinc.com>
+ <20230425084010.15581-3-quic_devipriy@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1682338412-15420-2-git-send-email-mantas@8devices.com>
+In-Reply-To: <20230425084010.15581-3-quic_devipriy@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon, 24 Apr 2023 15:13:31 +0300, Mantas Pucka wrote:
-> IPQ6018 has a sdhci-msm compatible MMC controller. Add the appropriate
-> compatible to the documentation.
+On Tue, 25 Apr 2023 14:10:06 +0530, Devi Priya wrote:
+> Add Bjorn andersson to the maintainer's list.
 > 
-> Signed-off-by: Mantas Pucka <mantas@8devices.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  Changes in V3:
+> 	- "Drop bias_pll_ubi_nc_clk input": Reverted the changes as
+> 	  <0> entry is added in place of bias_pll_ubi_nc_clk in the DT.
+> 
+>  Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml | 1 +
 >  1 file changed, 1 insertion(+)
 > 
 
