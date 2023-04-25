@@ -2,61 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AE0C77B61
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 07:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE27C6FD18
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 07:47:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233390AbjDYHrF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 03:47:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54050 "EHLO
+        id S233403AbjDYHrG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 03:47:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233155AbjDYHqz (ORCPT
+        with ESMTP id S233330AbjDYHqz (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 03:46:55 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B041C4C0C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29E94C1B;
         Tue, 25 Apr 2023 00:46:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50029622E0;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6EFA662C2E;
         Tue, 25 Apr 2023 07:46:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A18CBC433D2;
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CA484C433EF;
         Tue, 25 Apr 2023 07:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1682408807;
-        bh=P4ik3YtZtaRc6Wh+178aYQgH3s7csdz7KIDFbHZ86mc=;
-        h=From:Subject:Date:To:Cc:Reply-To:From;
-        b=lyUOriJjX34uw84XiGJDxmkYukd9ZY5lI0GKKOOGUTDkQOSGCl5whmkfHwWpKCeIR
-         2g+2K0HW05qtxVahabgI1BAOhpWzO4SvnI5wzoVVtAlXz0ovwcHaSyKS24QMhecMjL
-         48T0w206gGSJJgMokfHDWSoEaHF6+p3SCkjmDwDWc+DnqWL4gHQbaqVnSwrtbsYHP5
-         rewTMtx2Gg3I1Tl+3ANKJhvNhZhALlROZDudivxaNS62BHYJVpK6Cjw7PXEs40kzoL
-         6KjTu0p9H+ujIqROIgM8UXPPh9tKkMAlYwxi5XbHulRUFK+Swz5pXx9qndmIcPuURc
-         BDnjZP2yHYHFQ==
+        bh=6Pnug/27whDytkmeiic0CYbvDPeiXSI2PUOdTUfzKUc=;
+        h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+        b=rw97KsIWbn3SzxXCuHcnoGrLTib62W+Qs0kkcmNIZhd5JZmsaYBISB3W01kKqQ6th
+         xoVKvhk+/fhHGQNmMWrL5HxKEagDGZGPwuyhBF4mKFv6p+LvFblQS4uQrUec6gqbRZ
+         kROIyXFCVkgUHxZmjjGuYXZoncaXFEl4FBn8OqilrA37ZtIh5VW+sc+NWKcXx0U1di
+         joyCE1U6RegKyF98/0mb/bI6a5zU9baVwWcft9ZPKEYlDrhxFoQR1hybgDmk03+j9U
+         D0OEOoun+sUGBMxRgl4LNGotleUoCVxKypUyEI7ewYedhePDx4q7XPjK1PXvhlOKhW
+         NY5maXrLYljDQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.lore.kernel.org (Postfix) with ESMTP id 86526C77B71;
+        by smtp.lore.kernel.org (Postfix) with ESMTP id AD4B8C77B76;
         Tue, 25 Apr 2023 07:46:47 +0000 (UTC)
 From:   Yang Xiwen via B4 Relay 
         <devnull+forbidden405.outlook.com@kernel.org>
-Subject: [PATCH v2 0/2] clk: fix corner case of
- clk_mux_determine_rate_flags()
-Date:   Tue, 25 Apr 2023 15:46:38 +0800
-Message-Id: <20230421-clk-v2-0-74c6cc2214d1@outlook.com>
+Date:   Tue, 25 Apr 2023 15:46:40 +0800
+Subject: [PATCH v2 2/2] clk: tests: Add missing test case for mux
+ determine_rate
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAF6FR2QC/1WNzQ6DIBCEX8XsuTSyWA899T0aD7AulfhDA0jaG
- N+96K3Hb+bLzAaRg+MI92qDwNlF55cCeKmABr28WLi+MGCNqm5QCppG0TbUmpZRUm+gmEZHFib
- ohYbDnXVMHI7iHdi6zzn/7AoPLiYfvudblkf6P5ylkMKYW60sWiSrHn5Nk/fjlfwM3b7vPyEk9
- IqxAAAA
+Message-Id: <20230421-clk-v2-2-74c6cc2214d1@outlook.com>
+References: <20230421-clk-v2-0-74c6cc2214d1@outlook.com>
+In-Reply-To: <20230421-clk-v2-0-74c6cc2214d1@outlook.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yang Xiwen <forbidden405@outlook.com>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1682408804; l=665;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1682408804; l=1148;
  i=forbidden405@outlook.com; s=20230415; h=from:subject:message-id;
- bh=P4ik3YtZtaRc6Wh+178aYQgH3s7csdz7KIDFbHZ86mc=;
- b=kPLo/ER7VoJpG3MfRFJptHn3wXFBaCAJuBu6nHGpJwTDK2tJ/Y2FQ+ccTtTcM2GCZfGnVYhNM
- LTV8aVVH1yvB1fLPFfFRuVJRN/tzmuF9UNdu3c3aaBpauMzJ9GMkX9U
+ bh=9OLnZFueJynRZ3/SvtdA921aQdEuKJhzY8cmJ1y5r2Y=;
+ b=pdXVz8zXO1kXbFfAdJ/F15BBHF/1kAn2fhFbi8+/zSxB0PPgyE7tRm3SSeQEjMvI/zH4HDqAQ
+ /LWxPZfpgvADWcbrp4mevnApifX4nH2eR+d3HP1k0vnov5Tg2gcRW9J
 X-Developer-Key: i=forbidden405@outlook.com; a=ed25519;
  pk=hfdpPU3AXR+t7fdv58tXCD4UzRNq+fop2TMJezFlAhM=
 X-Endpoint-Received: by B4 Relay for forbidden405@outlook.com/20230415 with auth_id=44
@@ -66,25 +64,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Yang Xiwen <forbidden405@outlook.com>
+
+Add a missing test case for determine_rate implemented by mux. It tests
+the behavior of determine_rate when requesting a rate that none of the
+parents could give.
+
 Signed-off-by: Yang Xiwen <forbidden405@outlook.com>
 ---
-Changes in v2:
-- Add a unit test to clk_test.c
-- Link to v1: https://lore.kernel.org/r/20230421-clk-v1-1-bb503f2f2cf3@outlook.com
-
----
-Yang Xiwen (2):
-      clk: use ULONG_MAX as the initial value for the iteration in clk_mux_determine_rate_flags()
-      clk: tests: Add missing test case for mux determine_rate
-
- drivers/clk/clk.c      | 5 ++++-
  drivers/clk/clk_test.c | 9 +++++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
----
-base-commit: 76f598ba7d8e2bfb4855b5298caedd5af0c374a8
-change-id: 20230421-clk-64c6b6e21cdb
+ 1 file changed, 9 insertions(+)
 
-Best regards,
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index f9a5c2964c65d..9b1c90de90454 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -2215,6 +2215,15 @@ static void clk_leaf_mux_set_rate_parent_determine_rate(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_2);
+ 	KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
+ 
++	// Test a non-existant rate which none of the parents could give
++	clk_hw_init_rate_request(hw, &req, DUMMY_CLOCK_INIT_RATE);
++
++	ret = __clk_determine_rate(hw, &req);
++	KUNIT_ASSERT_EQ(test, ret, 0);
++
++	KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_1);
++	KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_1);
++	KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
+ 	clk_put(clk);
+ }
+ 
+
 -- 
-Yang Xiwen <forbidden405@outlook.com>
+2.39.2
 
