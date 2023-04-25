@@ -2,114 +2,205 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E55C77B61
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 02:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A2CC77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 07:41:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232987AbjDYCHe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 22:07:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
+        id S233330AbjDYHlO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 03:41:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232950AbjDYCHe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 22:07:34 -0400
-Received: from hust.edu.cn (unknown [202.114.0.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B7CE55AF;
-        Mon, 24 Apr 2023 19:07:32 -0700 (PDT)
-Received: from u201911681$hust.edu.cn ( [172.16.0.254] ) by
- ajax-webmail-app2 (Coremail) ; Tue, 25 Apr 2023 10:06:26 +0800 (GMT+08:00)
-X-Originating-IP: [172.16.0.254]
-Date:   Tue, 25 Apr 2023 10:06:26 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From:   =?UTF-8?B?5ZGo5biI5b63?= <u201911681@hust.edu.cn>
-To:     "abel vesa" <abelvesa@kernel.org>, "peng fan" <peng.fan@nxp.com>,
-        "michael turquette" <mturquette@baylibre.com>,
-        "stephen boyd" <sboyd@kernel.org>,
-        "shawn guo" <shawnguo@kernel.org>,
-        "sascha hauer" <s.hauer@pengutronix.de>,
-        "pengutronix kernel team" <kernel@pengutronix.de>,
-        "fabio estevam" <festevam@gmail.com>,
-        "nxp linux team" <linux-imx@nxp.com>, "bai ping" <ping.bai@nxp.com>
-Cc:     hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in
- 'imx8mm_clocks_probe'
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20220802(cbd923c5)
- Copyright (c) 2002-2023 www.mailtech.cn hust
-In-Reply-To: <20230413032439.1706448-1-u201911681@hust.edu.cn>
-References: <20230413032439.1706448-1-u201911681@hust.edu.cn>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+        with ESMTP id S233322AbjDYHlK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 03:41:10 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ECF8B8;
+        Tue, 25 Apr 2023 00:40:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1682408458; x=1713944458;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=XiDBaOoJ3jGweq2Q6xUecOIExo6JNQOkp8Ggtb4AxSY=;
+  b=kV9VRZZclJgvz6WctfT4J49CZ/DrEqmKTgsA7QNXuiY8C4ns6vWK9jYe
+   Vggy66X+/RfCewRQOzjcwT8gSOxP+oRBwig8f4Rr5CF/p2oLCxOTbN8CE
+   VVuNId2hQ+1dWC8sfhIeXNjC/vq1e8QKZlyHhUx6pZyvGrAP3HSx+c2/U
+   kd+qIJmbwRSoNb/+zrIazDNh8X41Y+TSFIs3cYrhjGIw2K22tAUPv4fRS
+   Y5Dd1GibEbJUB89s2XNYKnT6ykF67T9wyIKKQidUfdKZkduPjFUJ6RFDz
+   ltylj1JtqUUhPgS9KlhCRRzGZohuvcpOjmM+NnrFjrDXLh+hHG8Wh1Ps7
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="344168856"
+X-IronPort-AV: E=Sophos;i="5.99,224,1677571200"; 
+   d="scan'208";a="344168856"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2023 00:40:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10690"; a="782741513"
+X-IronPort-AV: E=Sophos;i="5.99,224,1677571200"; 
+   d="scan'208";a="782741513"
+Received: from rolfneux-mobl.ger.corp.intel.com ([10.252.34.113])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2023 00:40:50 -0700
+Date:   Tue, 25 Apr 2023 10:40:43 +0300 (EEST)
+From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To:     Jacky Huang <ychuang570808@gmail.com>
+cc:     Philipp Zabel <p.zabel@pengutronix.de>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-serial <linux-serial@vger.kernel.org>, arnd@arndb.de,
+        schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH v7 10/12] reset: Add Nuvoton ma35d1 reset driver
+ support
+In-Reply-To: <4e1cd1c7-e681-fb25-1dcf-16d68e5e525b@gmail.com>
+Message-ID: <7f5fb515-a0a4-48fb-fdd5-247aff414d7d@linux.intel.com>
+References: <20230412053824.106-1-ychuang570808@gmail.com> <20230412053824.106-11-ychuang570808@gmail.com> <20230424192137.GB30248@pengutronix.de> <4e1cd1c7-e681-fb25-1dcf-16d68e5e525b@gmail.com>
 MIME-Version: 1.0
-Message-ID: <2038e5bd.42407.187b62983e3.Coremail.u201911681@hust.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: GQEQrAAXaJWiNUdk9uLZAw--.56301W
-X-CM-SenderInfo: zxsqimqrrwmio6kx23oohg3hdfq/1tbiAQsMAV7Em5P7UAACs8
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-        daVFxhVjvjDU=
+Content-Type: multipart/mixed; boundary="8323329-1391869021-1682408453=:1992"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CgoKPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCj4g5Y+R5Lu25Lq6OiAiWmhvdSBTaGlkZSIgPHUy
-MDE5MTE2ODFAaHVzdC5lZHUuY24+Cj4g5Y+R6YCB5pe26Ze0OiAyMDIzLTA0LTEzIDExOjI0OjM5
-ICjmmJ/mnJ/lm5spCj4g5pS25Lu25Lq6OiAiQWJlbCBWZXNhIiA8YWJlbHZlc2FAa2VybmVsLm9y
-Zz4sICJQZW5nIEZhbiIgPHBlbmcuZmFuQG54cC5jb20+LCAiTWljaGFlbCBUdXJxdWV0dGUiIDxt
-dHVycXVldHRlQGJheWxpYnJlLmNvbT4sICJTdGVwaGVuIEJveWQiIDxzYm95ZEBrZXJuZWwub3Jn
-PiwgIlNoYXduIEd1byIgPHNoYXduZ3VvQGtlcm5lbC5vcmc+LCAiU2FzY2hhIEhhdWVyIiA8cy5o
-YXVlckBwZW5ndXRyb25peC5kZT4sICJQZW5ndXRyb25peCBLZXJuZWwgVGVhbSIgPGtlcm5lbEBw
-ZW5ndXRyb25peC5kZT4sICJGYWJpbyBFc3RldmFtIiA8ZmVzdGV2YW1AZ21haWwuY29tPiwgIk5Y
-UCBMaW51eCBUZWFtIiA8bGludXgtaW14QG54cC5jb20+LCAiQmFpIFBpbmciIDxwaW5nLmJhaUBu
-eHAuY29tPgo+IOaKhOmAgTogaHVzdC1vcy1rZXJuZWwtcGF0Y2hlc0Bnb29nbGVncm91cHMuY29t
-LCAiWmhvdSBTaGlkZSIgPHUyMDE5MTE2ODFAaHVzdC5lZHUuY24+LCBsaW51eC1jbGtAdmdlci5r
-ZXJuZWwub3JnLCBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcsIGxpbnV4LWtl
-cm5lbEB2Z2VyLmtlcm5lbC5vcmcKPiDkuLvpopg6IFtQQVRDSF0gY2xrOiBpbXg6IGNsay1pbXg4
-bW06IGZpeCBtZW1vcnkgbGVhayBpc3N1ZSBpbiAnaW14OG1tX2Nsb2Nrc19wcm9iZScKPiAKPiBU
-aGUgZnVuY3Rpb24gaW14OG1tX2Nsb2Nrc19wcm9iZSgpIGhhcyB0d28gbWFpbiBpc3N1ZXM6Cj4g
-LSBUaGUgb2ZfaW9tYXAoKSBmdW5jdGlvbiBtYXkgY2F1c2UgYSBtZW1vcnkgbGVhay4KPiAtIE1l
-bW9yeSBhbGxvY2F0ZWQgZm9yICdjbGtfaHdfZGF0YScgbWF5IG5vdCBiZSBmcmVlZCBwcm9wZXJs
-eQo+IGluIHNvbWUgcGF0aHMuCj4gCj4gVG8gZml4IHRoZXNlIGlzc3VlcywgdGhpcyBjb21taXQg
-cmVwbGFjZXMgdGhlIHVzZSBvZiBvZl9pb21hcCgpCj4gd2l0aCBkZXZtX29mX2lvbWFwKCkgYW5k
-IHJlcGxhY2VzIGt6YWxsb2MoKSB3aXRoIGRldm1fa3phbGxvYygpLgo+IFRoaXMgZW5zdXJlcyB0
-aGF0IGFsbCBtZW1vcnkgaXMgcHJvcGVybHkgbWFuYWdlZCBhbmQgYXV0b21hdGljYWxseQo+IGZy
-ZWVkIHdoZW4gdGhlIGRldmljZSBpcyByZW1vdmVkLgo+IAo+IEluIGFkZGl0aW9uLCB3aGVuIGRl
-dm1fb2ZfaW9tYXAoKSBhbGxvY2F0ZXMgbWVtb3J5IHdpdGggYW4gZXJyb3IsCj4gaXQgd2lsbCBm
-aXJzdCBqdW1wIHRvIGxhYmVsICJ1bnJlZ2lzdGVyX2h3cyIgYW5kCj4gdGhlbiByZXR1cm4gUFRS
-XyBFUlIoYmFzZSkuCj4gCj4gRml4ZXM6IDljNzFmOWVhMzVkNyAoImNsazogaW14OiBpbXg4bW06
-IFN3aXRjaCB0byBjbGtfaHcgYmFzZWQgQVBJIikKPiBGaXhlczogYmE1NjI1YzNlMjcyICgiY2xr
-OiBpbXg6IEFkZCBjbG9jayBkcml2ZXIgc3VwcG9ydCBmb3IgaW14OG1tIikKPiBTaWduZWQtb2Zm
-LWJ5OiBaaG91IFNoaWRlIDx1MjAxOTExNjgxQGh1c3QuZWR1LmNuPgo+IC0tLQo+IFRoZSBpc3N1
-ZSBpcyBkaXNjb3ZlcmVkIGJ5IHN0YXRpYyBhbmFseXNpcywgYW5kIHRoZSBwYXRjaCBpcyBub3Qg
-dGVzdGVkIHlldC4KPiAKPiAgZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4bW0uYyB8IDE2ICsrKysr
-KysrKystLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDYgZGVsZXRp
-b25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2lteC9jbGstaW14OG1tLmMgYi9k
-cml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtbS5jCj4gaW5kZXggYjYxODg5MjE3MGYyLi5lNmUwYmI0
-ODA1YTYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4bW0uYwo+ICsrKyBi
-L2RyaXZlcnMvY2xrL2lteC9jbGstaW14OG1tLmMKPiBAQCAtMzAzLDcgKzMwMyw3IEBAIHN0YXRp
-YyBpbnQgaW14OG1tX2Nsb2Nrc19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+
-ICAJdm9pZCBfX2lvbWVtICpiYXNlOwo+ICAJaW50IHJldDsKPiAgCj4gLQljbGtfaHdfZGF0YSA9
-IGt6YWxsb2Moc3RydWN0X3NpemUoY2xrX2h3X2RhdGEsIGh3cywKPiArCWNsa19od19kYXRhID0g
-ZGV2bV9remFsbG9jKGRldiwgc3RydWN0X3NpemUoY2xrX2h3X2RhdGEsIGh3cywKPiAgCQkJCQkg
-IElNWDhNTV9DTEtfRU5EKSwgR0ZQX0tFUk5FTCk7Cj4gIAlpZiAoV0FSTl9PTighY2xrX2h3X2Rh
-dGEpKQo+ICAJCXJldHVybiAtRU5PTUVNOwo+IEBAIC0zMjAsMTAgKzMyMCwxMiBAQCBzdGF0aWMg
-aW50IGlteDhtbV9jbG9ja3NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAg
-CWh3c1tJTVg4TU1fQ0xLX0VYVDRdID0gaW14X2dldF9jbGtfaHdfYnlfbmFtZShucCwgImNsa19l
-eHQ0Iik7Cj4gIAo+ICAJbnAgPSBvZl9maW5kX2NvbXBhdGlibGVfbm9kZShOVUxMLCBOVUxMLCAi
-ZnNsLGlteDhtbS1hbmF0b3AiKTsKPiAtCWJhc2UgPSBvZl9pb21hcChucCwgMCk7Cj4gKwliYXNl
-ID0gZGV2bV9vZl9pb21hcChkZXYsIG5wLCAwLCBOVUxMKTsKPiAgCW9mX25vZGVfcHV0KG5wKTsK
-PiAtCWlmIChXQVJOX09OKCFiYXNlKSkKPiAtCQlyZXR1cm4gLUVOT01FTTsKPiArCWlmIChXQVJO
-X09OKElTX0VSUihiYXNlKSkpIHsKPiArCQlyZXQgPSBQVFJfRVJSKGJhc2UpOwo+ICsJCWdvdG8g
-dW5yZWdpc3Rlcl9od3M7Cj4gKwl9Cj4gIAo+ICAJaHdzW0lNWDhNTV9BVURJT19QTEwxX1JFRl9T
-RUxdID0gaW14X2Nsa19od19tdXgoImF1ZGlvX3BsbDFfcmVmX3NlbCIsIGJhc2UgKyAweDAsIDAs
-IDIsIHBsbF9yZWZfc2VscywgQVJSQVlfU0laRShwbGxfcmVmX3NlbHMpKTsKPiAgCWh3c1tJTVg4
-TU1fQVVESU9fUExMMl9SRUZfU0VMXSA9IGlteF9jbGtfaHdfbXV4KCJhdWRpb19wbGwyX3JlZl9z
-ZWwiLCBiYXNlICsgMHgxNCwgMCwgMiwgcGxsX3JlZl9zZWxzLCBBUlJBWV9TSVpFKHBsbF9yZWZf
-c2VscykpOwo+IEBAIC0zOTksOCArNDAxLDEwIEBAIHN0YXRpYyBpbnQgaW14OG1tX2Nsb2Nrc19w
-cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAKPiAgCW5wID0gZGV2LT5vZl9u
-b2RlOwo+ICAJYmFzZSA9IGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNvdXJjZShwZGV2LCAwKTsK
-PiAtCWlmIChXQVJOX09OKElTX0VSUihiYXNlKSkpCj4gLQkJcmV0dXJuIFBUUl9FUlIoYmFzZSk7
-Cj4gKwlpZiAoV0FSTl9PTihJU19FUlIoYmFzZSkpKSB7Cj4gKwkJcmV0ID0gUFRSX0VSUihiYXNl
-KTsKPiArCQlnb3RvIHVucmVnaXN0ZXJfaHdzOwo+ICsJfQo+ICAKPiAgCS8qIENvcmUgU2xpY2Ug
-Ki8KPiAgCWh3c1tJTVg4TU1fQ0xLX0E1M19ESVZdID0gaW14OG1fY2xrX2h3X2NvbXBvc2l0ZV9j
-b3JlKCJhcm1fYTUzX2RpdiIsIGlteDhtbV9hNTNfc2VscywgYmFzZSArIDB4ODAwMCk7Cj4gLS0g
-Cj4gMi4zNC4xCnBpbmfvvJ8=
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1391869021-1682408453=:1992
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Tue, 25 Apr 2023, Jacky Huang wrote:
+
+> 
+> 
+> On 2023/4/25 上午 03:21, Philipp Zabel wrote:
+> > Hi Jacky,
+> > 
+> > On Wed, Apr 12, 2023 at 05:38:22AM +0000, Jacky Huang wrote:
+> > > From: Jacky Huang <ychuang3@nuvoton.com>
+> > > 
+> > > This driver supports individual IP reset for ma35d1. The reset
+> > > control registers is a subset of system control registers.
+> > > 
+> > > Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> > > ---
+> > > 
+> > > +static const struct {
+> > > +	unsigned long id;
+> > Why store the id? ids should be contiguous and should start at 0,
+> > so the id could just be an index into the array.
+> 
+> Thank you, I didn't notice that the IDs were already consecutive.
+> The id field is indeed unnecessary, and I will remove it.
+
+I recommend you still keep the IDs in the array initializer though, like 
+this:
+
+...
+} ma35d1_reset_map[] = {
+	[MA35D1_RESET_CHIP] = {0x20, 0},
+	[MA35D1_RESET_CA35CR0] = {0x20, 1},
+	...
+
+> > > +	u32 reg_ofs;
+> > > +	u32 bit;
+> > > +} ma35d1_reset_map[] = {
+> > > +	{ MA35D1_RESET_CHIP,    0x20, 0  },
+> > > +	{ MA35D1_RESET_CA35CR0,	0x20, 1  },
+> > > +	{ MA35D1_RESET_CA35CR1, 0x20, 2  },
+> > > +	{ MA35D1_RESET_CM4,     0x20, 3  },
+> > > +	{ MA35D1_RESET_PDMA0,   0x20, 4  },
+> > > +	{ MA35D1_RESET_PDMA1,   0x20, 5  },
+> > > +	{ MA35D1_RESET_PDMA2,   0x20, 6  },
+> > > +	{ MA35D1_RESET_PDMA3,   0x20, 7  },
+> > > +	{ MA35D1_RESET_DISP,    0x20, 9  },
+> > > +	{ MA35D1_RESET_VCAP0,   0x20, 10 },
+> > > +	{ MA35D1_RESET_VCAP1,   0x20, 11 },
+> > > +	{ MA35D1_RESET_GFX,     0x20, 12 },
+> > > +	{ MA35D1_RESET_VDEC,    0x20, 13 },
+> > > +	{ MA35D1_RESET_WHC0,    0x20, 14 },
+> > > +	{ MA35D1_RESET_WHC1,    0x20, 15 },
+> > > +	{ MA35D1_RESET_GMAC0,   0x20, 16 },
+> > > +	{ MA35D1_RESET_GMAC1,   0x20, 17 },
+> > > +	{ MA35D1_RESET_HWSEM,   0x20, 18 },
+> > > +	{ MA35D1_RESET_EBI,     0x20, 19 },
+> > > +	{ MA35D1_RESET_HSUSBH0, 0x20, 20 },
+> > > +	{ MA35D1_RESET_HSUSBH1, 0x20, 21 },
+> > > +	{ MA35D1_RESET_HSUSBD,  0x20, 22 },
+> > > +	{ MA35D1_RESET_USBHL,   0x20, 23 },
+> > > +	{ MA35D1_RESET_SDH0,    0x20, 24 },
+> > > +	{ MA35D1_RESET_SDH1,    0x20, 25 },
+> > > +	{ MA35D1_RESET_NAND,    0x20, 26 },
+> > > +	{ MA35D1_RESET_GPIO,    0x20, 27 },
+> > > +	{ MA35D1_RESET_MCTLP,   0x20, 28 },
+> > > +	{ MA35D1_RESET_MCTLC,   0x20, 29 },
+> > > +	{ MA35D1_RESET_DDRPUB,  0x20, 30 },
+> > > +	{ MA35D1_RESET_TMR0,    0x24, 2  },
+> > > +	{ MA35D1_RESET_TMR1,    0x24, 3  },
+> > > +	{ MA35D1_RESET_TMR2,    0x24, 4  },
+> > > +	{ MA35D1_RESET_TMR3,    0x24, 5  },
+> > > +	{ MA35D1_RESET_I2C0,    0x24, 8  },
+> > > +	{ MA35D1_RESET_I2C1,    0x24, 9  },
+> > > +	{ MA35D1_RESET_I2C2,    0x24, 10 },
+> > > +	{ MA35D1_RESET_I2C3,    0x24, 11 },
+> > > +	{ MA35D1_RESET_QSPI0,   0x24, 12 },
+> > > +	{ MA35D1_RESET_SPI0,    0x24, 13 },
+> > > +	{ MA35D1_RESET_SPI1,    0x24, 14 },
+> > > +	{ MA35D1_RESET_SPI2,    0x24, 15 },
+> > > +	{ MA35D1_RESET_UART0,   0x24, 16 },
+> > > +	{ MA35D1_RESET_UART1,   0x24, 17 },
+> > > +	{ MA35D1_RESET_UART2,   0x24, 18 },
+> > > +	{ MA35D1_RESET_UAER3,   0x24, 19 },
+> > > +	{ MA35D1_RESET_UART4,   0x24, 20 },
+> > > +	{ MA35D1_RESET_UART5,   0x24, 21 },
+> > > +	{ MA35D1_RESET_UART6,   0x24, 22 },
+> > > +	{ MA35D1_RESET_UART7,   0x24, 23 },
+> > > +	{ MA35D1_RESET_CANFD0,  0x24, 24 },
+> > > +	{ MA35D1_RESET_CANFD1,  0x24, 25 },
+> > > +	{ MA35D1_RESET_EADC0,   0x24, 28 },
+> > > +	{ MA35D1_RESET_I2S0,    0x24, 29 },
+> > > +	{ MA35D1_RESET_SC0,     0x28, 0  },
+> > > +	{ MA35D1_RESET_SC1,     0x28, 1  },
+> > > +	{ MA35D1_RESET_QSPI1,   0x28, 4  },
+> > > +	{ MA35D1_RESET_SPI3,    0x28, 6  },
+> > > +	{ MA35D1_RESET_EPWM0,   0x28, 16 },
+> > > +	{ MA35D1_RESET_EPWM1,   0x28, 17 },
+> > > +	{ MA35D1_RESET_QEI0,    0x28, 22 },
+> > > +	{ MA35D1_RESET_QEI1,    0x28, 23 },
+> > > +	{ MA35D1_RESET_ECAP0,   0x28, 26 },
+> > > +	{ MA35D1_RESET_ECAP1,   0x28, 27 },
+> > > +	{ MA35D1_RESET_CANFD2,  0x28, 28 },
+> > > +	{ MA35D1_RESET_ADC0,    0x28, 31 },
+> > > +	{ MA35D1_RESET_TMR4,    0x2C, 0  },
+> > > +	{ MA35D1_RESET_TMR5,    0x2C, 1  },
+> > > +	{ MA35D1_RESET_TMR6,    0x2C, 2  },
+> > > +	{ MA35D1_RESET_TMR7,    0x2C, 3  },
+> > > +	{ MA35D1_RESET_TMR8,    0x2C, 4  },
+> > > +	{ MA35D1_RESET_TMR9,    0x2C, 5  },
+> > > +	{ MA35D1_RESET_TMR10,   0x2C, 6  },
+> > > +	{ MA35D1_RESET_TMR11,   0x2C, 7  },
+> > > +	{ MA35D1_RESET_UART8,   0x2C, 8  },
+> > > +	{ MA35D1_RESET_UART9,   0x2C, 9  },
+> > > +	{ MA35D1_RESET_UART10,  0x2C, 10 },
+> > > +	{ MA35D1_RESET_UART11,  0x2C, 11 },
+> > > +	{ MA35D1_RESET_UART12,  0x2C, 12 },
+> > > +	{ MA35D1_RESET_UART13,  0x2C, 13 },
+> > > +	{ MA35D1_RESET_UART14,  0x2C, 14 },
+> > > +	{ MA35D1_RESET_UART15,  0x2C, 15 },
+> > > +	{ MA35D1_RESET_UART16,  0x2C, 16 },
+> > > +	{ MA35D1_RESET_I2S1,    0x2C, 17 },
+> > > +	{ MA35D1_RESET_I2C4,    0x2C, 18 },
+> > > +	{ MA35D1_RESET_I2C5,    0x2C, 19 },
+> > > +	{ MA35D1_RESET_EPWM2,   0x2C, 20 },
+> > > +	{ MA35D1_RESET_ECAP2,   0x2C, 21 },
+> > > +	{ MA35D1_RESET_QEI2,    0x2C, 22 },
+> > > +	{ MA35D1_RESET_CANFD3,  0x2C, 23 },
+> > > +	{ MA35D1_RESET_KPI,     0x2C, 24 },
+> > > +	{ MA35D1_RESET_GIC,     0x2C, 28 },
+> > > +	{ MA35D1_RESET_SSMCC,   0x2C, 30 },
+> > > +	{ MA35D1_RESET_SSPCC,   0x2C, 31 }
+> > > +};
+
+
+-- 
+ i.
+--8323329-1391869021-1682408453=:1992--
