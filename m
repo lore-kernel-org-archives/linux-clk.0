@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865A9C6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 12:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD61C77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 12:33:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233968AbjDYMFN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 08:05:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35588 "EHLO
+        id S234113AbjDYMdg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 08:33:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233907AbjDYMFM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 08:05:12 -0400
+        with ESMTP id S233329AbjDYMdf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 08:33:35 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8667C49F8;
-        Tue, 25 Apr 2023 05:05:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF226D314;
+        Tue, 25 Apr 2023 05:33:08 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 889195FD05;
-        Tue, 25 Apr 2023 15:05:06 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id 71A9B5FD05;
+        Tue, 25 Apr 2023 15:33:06 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1682424306;
-        bh=/7k2hmgzdS0RWThtX1QVPv33A+h1jqDTdyLWRVz4PtQ=;
+        s=mail; t=1682425986;
+        bh=M8TJz6TMqm7slfXEipNmibDQJ7voQTFLqHG+/oEd4jc=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=rUHWN1H28wH6iCXoGWFuo0Owuh5UxXgiiUvT9oyGwOMOEYDF9gByjamwqDuIWOuXt
-         PFRpBZGx1+BZ2xn4eMdt0SqXge2rJxNeT0x9tXzGu0XVPV0Hdp2hBsvPqDbNOc4xhL
-         HAQWve0wxkYfvK9MJl6HSqSWQHGuNFMNXHXZqHP3gaumSc62gXiduIh8LvEJsbPIux
-         m4y9fIin/257IMbKn4Hvu5dMU2kd4c71/ejzWTYrHGyBZ4JAtFsfuIR60QKya+AOW9
-         aqnwRYUBFFa92VWgdYHCYhAhxIlI8GFovBlj1F0QArwb+0dIYT9P+H9t15CZr06HK3
-         J1XB8AUGCaTGQ==
+        b=s9kUrL+T6Zn4L1hYQXkZPtfb5nCqgVi5eojV/l3rBAA12rYmOn7TiAAuw1FcVm04X
+         H0udYw/FFlfCPMMChyes0CubfCt/lquS07lpaAO9rjRauSmIgn0nSBQnsaadh30nYi
+         d22INMAJPcrjAgRZK48IszAfv2bSJgdCERitydKeKlKnN4NxbvDc/ibCi7VQR17GJ0
+         jFXNTwEGfeqc5br/Rc79cofD/kRRUJx5qV7u47XJtN6AQK2TqQFctg75/MC5UrgVpY
+         ghuzBSxS37f8+Kwhy20kTi/BYga3kabJPsBmkwBX1HEpjncwlaI2nLmSD9wfa2jX6h
+         cuW6PQoyVBt9g==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Tue, 25 Apr 2023 15:05:05 +0300 (MSK)
-Date:   Tue, 25 Apr 2023 15:05:05 +0300
+        Tue, 25 Apr 2023 15:33:05 +0300 (MSK)
+Date:   Tue, 25 Apr 2023 15:33:04 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
@@ -41,20 +41,20 @@ CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v13 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+Subject: Re: [PATCH v13 4/6] clk: meson: a1: add Amlogic A1 PLL clock
  controller driver
-Message-ID: <20230425120505.xrgrjrxcxennrzct@CAB-WSD-L081021>
+Message-ID: <20230425123304.xjmrkraybp2siwdw@CAB-WSD-L081021>
 References: <20230405195927.13487-1-ddrokosov@sberdevices.ru>
- <20230405195927.13487-7-ddrokosov@sberdevices.ru>
- <CAFBinCBGWOB2XLb6su=R3W684rKdK3pOgPFsCGx+Oyo_pgdeBg@mail.gmail.com>
+ <20230405195927.13487-5-ddrokosov@sberdevices.ru>
+ <CAFBinCA3uZXzr3RgnWnKV5Qr-CPaZQX5joDg319i_cgzhLJy2g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCBGWOB2XLb6su=R3W684rKdK3pOgPFsCGx+Oyo_pgdeBg@mail.gmail.com>
+In-Reply-To: <CAFBinCA3uZXzr3RgnWnKV5Qr-CPaZQX5joDg319i_cgzhLJy2g@mail.gmail.com>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
  S-MS-EXCH01.sberdevices.ru (172.16.1.4)
 X-KSMG-Rule-ID: 4
 X-KSMG-Message-Action: clean
@@ -67,36 +67,84 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Apr 23, 2023 at 11:30:38PM +0200, Martin Blumenstingl wrote:
+Hello Martin,
+
+On Sun, Apr 23, 2023 at 11:12:27PM +0200, Martin Blumenstingl wrote:
+> Hello Dmitry,
+> 
+> currently Jerome is busy so I am trying to continue where he left off.
+> I have followed the previous iterations a bit but may have missed some
+> details. So apologies if I'm repeating some questions that Jerome
+> previously asked.
+> 
+
+Thank you very much for your effort! Please feel free to ask any
+questions you may have, without any hesitation.
+
 > On Wed, Apr 5, 2023 at 9:59 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
 > [...]
-> > +static const struct of_device_id a1_periphs_clkc_match_table[] = {
-> > +       { .compatible = "amlogic,a1-clkc", },
+> > +config COMMON_CLK_A1_PLL
+> > +       tristate "Meson A1 SoC PLL controller support"
+> Should this be "Amlogic A1 SoC PLL controller support"?
+> My understanding is that the "meson" name was dropped for this
+> generation of SoCs.
+> 
+> [...]
+
+Yep, that's good point. Will change it in the next version.
+
+> > +static const struct of_device_id a1_pll_clkc_match_table[] = {
+> > +       { .compatible = "amlogic,a1-pll-clkc", },
 > > +       {},
-> nit-pick: please remove the comma after the sentinel
+> nit-pick: please drop the comma after {}
+> This empty entry is a sentinel, no other entries are supposed to come
+> after this - so a trailing comma is not necessary.
 > 
+> [...]
 
-Thank you for bringing up that point! There's no problem with removing
-it in the next version of the product. I'll prepare it.
+OK
 
-> > +MODULE_DEVICE_TABLE(of, a1_periphs_clkc_match_table);
-> > +
-> > +static struct platform_driver a1_periphs_clkc_driver = {
-> > +       .probe = meson_a1_periphs_probe,
-> > +       .driver = {
-> > +               .name = "a1-clkc",
-> > +               .of_match_table = of_match_ptr(a1_periphs_clkc_match_table),
-> I wonder if we should drop of_match_ptr() here as no other meson clock
-> driver uses it.
-> Also there's commits like 00cb754ac622 ("clk: imx8mq: drop
-> of_match_ptr from of_device_id table") which explicitly remove it from
-> other drivers.
+> > +/* PLL register offset */
+> > +#define ANACTRL_FIXPLL_CTRL0   0x0
+> > +#define ANACTRL_FIXPLL_CTRL1   0x4
+> > +#define ANACTRL_FIXPLL_STS     0x14
+> > +#define ANACTRL_HIFIPLL_CTRL0  0xc0
+> > +#define ANACTRL_HIFIPLL_CTRL1  0xc4
+> > +#define ANACTRL_HIFIPLL_CTRL2  0xc8
+> > +#define ANACTRL_HIFIPLL_CTRL3  0xcc
+> > +#define ANACTRL_HIFIPLL_CTRL4  0xd0
+> > +#define ANACTRL_HIFIPLL_STS    0xd4
+> Here I have a question that will potentially affect patch 3/6
+> ("dt-bindings: clock: meson: add A1 PLL clock controller bindings").
+> In the cover-letter you mentioned that quite a few clocks have been omitted.
+> Any dt-bindings that we create need to be stable going forward. That
+> means: the dt-bindings will always need to describe what the hardware
+> is capable of, not what the driver implements.
+> So my question is: do we have all needed inputs described in the
+> dt-bindings (even though we're omitting quite a few registers here
+> that will only be added/used in the future)?
+> Older SoCs require (temporarily) using the XTAL clock for CPU clock
+> tree changes. To make a long story short: I'm wondering if - at least
+> - the XTAL clock input is missing.
 
-Exactly, all Meson clock drivers depend on the ARM64 config, which in
-turn selects CONFIG_OF by default. So of_match_ptr can be dropped.
+The Amlogic A1 clock engine comprises four clock controllers for
+peripherals, PLL, CPU, and audio. While the first two have been
+introduced in the current patch series, the last two will be sent in the
+next iteration.
+Presently, the PLL controller driver includes all the required bindings,
+and the peripherals controller driver has all bindings except for the
+CPU-related clock.
+However, I do not believe this to be a significant issue. The clock DT
+bindings are organized to simplify the process of introducing new bindings,
+whether public or private. For instance, we may add new bindings to
+include/dt-bindings at the end of the list and increase the overall number,
+without disrupting the DT bindings ABI (the old numbers will remain
+unchanged).
 
 > 
-> Apart form these two this patch looks great to me.
+> PS: I don't have an A1 datasheet nor a vendor kernel source (and even
+> less a board for testing). So I can't verify any of this myself and
+> I'm asking questions instead.
 > 
 
 -- 
