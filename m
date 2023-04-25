@@ -2,64 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FDF2C77B61
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 01:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC37C77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 01:30:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233106AbjDYBYu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 21:24:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35758 "EHLO
+        id S233212AbjDYBau (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 21:30:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232815AbjDYBYt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 21:24:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADBE5277;
-        Mon, 24 Apr 2023 18:24:49 -0700 (PDT)
+        with ESMTP id S232384AbjDYBat (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 21:30:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD98F5277;
+        Mon, 24 Apr 2023 18:30:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 955C6621BD;
-        Tue, 25 Apr 2023 01:24:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9DF7C433D2;
-        Tue, 25 Apr 2023 01:24:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 76A5962566;
+        Tue, 25 Apr 2023 01:30:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB23EC433D2;
+        Tue, 25 Apr 2023 01:30:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682385888;
-        bh=T7EvH2flz7r0yejnh3Y8Zgihn3vRMWwnaw/B65iiSck=;
+        s=k20201202; t=1682386247;
+        bh=w58zvq6SYmbfbSoeAu0aO4ZUeU56HHK96WcPNF+3gro=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=iHvBd5rshkoX58teEXxJFAijZbUh1+lHUlolLCKUP0WfaSf3nnbh3G0r1SVQZv3zK
-         h/1dif6N+6qUowV/VKAT8KC92LO4vMrYL+OKwA0qjl/r+dJSM+PQl4pJ6S/BwYc7YK
-         +5MkpD1ALO5mj/axYYg8+c6rf2yaKkmNdgHPh7HfsRSWGa12btHKS9EEkDI41sggRw
-         xx1SkF/9AJs1FNDVijQ95siiQ3pukPpbkujJDS7hXV0pKOEyz5l+NrqlVi2/6BdxZt
-         V6vvXqgxetVl1sAPgWQssemT375Rjch+stRV1OkP82kavTmRSUn0Ixg0A52o2fSBCS
-         xXp9tFsrzKMMA==
-Message-ID: <c428d3a4466b1a608e3e8b2434e8d5d9.sboyd@kernel.org>
+        b=FZ4jWRo0I48oIjYMIDpVNxS+isPkUxGPpRE0BoHwvI8RC8+x/q6rWxZr9Lb+5RSX1
+         bCLPAGs4XpXCMLCMiZ7cKyR9dV63sC8489tnja12BOK5WiEBnTOdwt6OK5VlfEbxm1
+         1uc8Fa1aU00tzs7mOWAsIW0s87n7lmj29lrqDQa4CEEawyVCH4m4/QZ+Uqi5yfEQyn
+         N+tBBPzzPcKfw6LSh+tRPLEeAbFK2YByfQ2kjyTmBWth4T+lC6pMfHvx8B0xdL9IDq
+         9gk03uGbeYgWUB/L2aPibxBsW0/RhoP+PmQ/IwFwYijGyOf5TNzHQ7qI1wh+Emmb/I
+         2wRrMXRSFAPPQ==
+Message-ID: <d7c96f7f38e88f0c9d8aa182dc71743a.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230421-clk-v1-1-bb503f2f2cf3@outlook.com>
-References: <20230421-clk-v1-1-bb503f2f2cf3@outlook.com>
-Subject: Re: [PATCH] clk: use ULONG_MAX as the initial value for the iteration in clk_mux_determine_rate_flags()
+In-Reply-To: <1682338412-15420-1-git-send-email-mantas@8devices.com>
+References: <1682338412-15420-1-git-send-email-mantas@8devices.com>
+Subject: Re: [PATCH 1/3] clk: qcom: gcc-ipq6018: Use floor ops for sdcc clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Xiwen <forbidden405@outlook.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Yang Xiwen via B4 Relay 
-        <devnull+forbidden405.outlook.com@kernel.org>,
-        forbidden405@outlook.com
-Date:   Mon, 24 Apr 2023 18:24:44 -0700
+Cc:     Abhishek Sahu <absahu@codeaurora.org>,
+        Anusha Canchi Ramachandra Rao <anusharao@codeaurora.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, Mantas Pucka <mantas@8devices.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mantas Pucka <mantas@8devices.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 24 Apr 2023 18:30:45 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yang Xiwen via B4 Relay (2023-04-21 08:56:38)
-> From: Yang Xiwen <forbidden405@outlook.com>
+Quoting Mantas Pucka (2023-04-24 05:13:30)
+> SDCC clocks must be rounded down to avoid overclocking the controller.
 >=20
-> Currently, clk_mux_determine_rate_flags() use 0 as the initial value for
-> selecting the best matching parent. However, this will choose a
-> non-existant rate(0) if the requested rate is closer to 0 than the
-> minimum rate the parents have.
+> Fixes: d9db07f088af ("clk: qcom: Add ipq6018 Global Clock Controller supp=
+ort")
 >=20
-> Fix that by initializing the initial value to ULONG_MAX and treat it as a
-> magic number.
 
-Can you add a unit test to clk_test.c as well?
+There should be no extra newline here.
+
+> Signed-off-by: Mantas Pucka <mantas@8devices.com>
