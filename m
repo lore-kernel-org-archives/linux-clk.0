@@ -2,92 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7993C77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 18:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F9DC77B73
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 18:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234586AbjDYSiY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 14:38:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40400 "EHLO
+        id S235126AbjDYSzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 14:55:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233991AbjDYSiX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 14:38:23 -0400
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11F6146CC;
-        Tue, 25 Apr 2023 11:38:22 -0700 (PDT)
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-541f21ef0d5so3318331eaf.0;
-        Tue, 25 Apr 2023 11:38:22 -0700 (PDT)
+        with ESMTP id S235080AbjDYSzT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 14:55:19 -0400
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6A016F33;
+        Tue, 25 Apr 2023 11:55:02 -0700 (PDT)
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-546615d6f47so3886312eaf.0;
+        Tue, 25 Apr 2023 11:55:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682447902; x=1685039902;
+        d=1e100.net; s=20221208; t=1682448865; x=1685040865;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+TSCz7QCmWjwuRcVpOo2qZlT76Hnne+7Du/Iuknn3Qg=;
-        b=Ih7Pe7IcKkq9RldpZtWsKEmRXXjv9asO4nF5bhNGx/Z2ZRZQ71pNtR0RscYASISQxo
-         6ddCUa/j9BGrE2Inpz5Ir5p5v8Nv74WCRRZjWmmx+iiTj/PeD27MOoSMmfEZ8UFX3y82
-         BIPKILjJ9F01YlyithPzAHEIMKGVovaPMU4x/BHfrZutejTDPJ9KJ6jAvz1/qKSfB59X
-         sEl4sjUVrB4tcmDv7j9GUJlVNJzoFd6XmDCIpmbIozBqrJNo0rWuQpMzGBcXzw3owHvr
-         6brIvp3jMgq8fWeYv7FePeTUN1zWfzZo2Nrs/AQT4UCwBrsO/nIOqxJY6SFPYcHEzTjW
-         jCkw==
-X-Gm-Message-State: AAQBX9fa4aTfi929FhCQRwcPxvYKjTfWwinCDZNXZ7LCOAlMpJB8w+KM
-        zsfaLPAfMQqPIhhsANnHsw==
-X-Google-Smtp-Source: AKy350baxMv1XV1+Ib7RtbH+radYPwF8Djs2uNuSzsYTcwt0TF3nKAN8Iz8fVFAXUp+IQJyPzxBzYA==
-X-Received: by 2002:a05:6808:1597:b0:388:fff3:61e6 with SMTP id t23-20020a056808159700b00388fff361e6mr10967697oiw.38.1682447901864;
-        Tue, 25 Apr 2023 11:38:21 -0700 (PDT)
+        bh=6y7CuaWGG4f2cR6D1dHG8n9H6ZV3XhXaEAnqjecAYoY=;
+        b=VabjucDEMNi32e/OQTZrI+Z2ewa7s630759yis6U5PlwJJJZ/t3ouPIJnBsdkzQh07
+         uhKLGkMuLP5i40dhMwc8Dk6KyYzHv/YcFNrxI1TrwwxGZR92sx4t3Hg2OJVgHpskMceq
+         9dF3Ii7oMwY/xLQed5Op+JUUkXH3BgkKePFgIlm1iQIoGqXJ1Sh6KIIyONYICnCFWrIe
+         SC0q+JJjEQ21sL4XM64V+f6XWWE8LjBaXl0pErDtYb7XMA4RfBuy1AoP9mTtakoBSCpp
+         IQeRu/f6RG2s1llHDePfrJbEo4pIhVmr5Bzeib2ty9C5opZYkH5hQOVezFD5LHGjvGHc
+         Z+yA==
+X-Gm-Message-State: AAQBX9cBdyUiAXSoiqHtgnoZF7p79iA5RU3GDXTsa+HE/YIxeUIZFVM7
+        jlYd+xR4GAfIiSeYuXqReQ==
+X-Google-Smtp-Source: AKy350ZgWB2rPL7vzrqJCgeshN8YMDvzpzXhtbPchKiP/hbFnojfOGoW8uB4QIS0QWg5LDfTnrxnmg==
+X-Received: by 2002:aca:2315:0:b0:38c:11b3:a397 with SMTP id e21-20020aca2315000000b0038c11b3a397mr9259981oie.14.1682448865005;
+        Tue, 25 Apr 2023 11:54:25 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id m129-20020acabc87000000b0037d8c938d62sm5834891oif.50.2023.04.25.11.38.20
+        by smtp.gmail.com with ESMTPSA id y10-20020a544d8a000000b0037b6f5d6309sm3774393oix.2.2023.04.25.11.54.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Apr 2023 11:38:21 -0700 (PDT)
-Received: (nullmailer pid 2061092 invoked by uid 1000);
-        Tue, 25 Apr 2023 18:38:20 -0000
-Date:   Tue, 25 Apr 2023 13:38:20 -0500
+        Tue, 25 Apr 2023 11:54:24 -0700 (PDT)
+Received: (nullmailer pid 2079162 invoked by uid 1000);
+        Tue, 25 Apr 2023 18:54:22 -0000
+Date:   Tue, 25 Apr 2023 13:54:22 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     quic_wcheng@quicinc.com, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, agross@kernel.org,
-        gregkh@linuxfoundation.org, krzysztof.kozlowski+dt@linaro.org,
-        sboyd@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, mturquette@baylibre.com,
-        kishon@kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH v9 3/8] dt-bindings: usb: dwc3: Add IPQ9574 compatible
-Message-ID: <168244790024.2061037.14160381736561499893.robh@kernel.org>
-References: <cover.1682092324.git.quic_varada@quicinc.com>
- <f9ba5b4f3dfd299ec7cefd038bc1d9ed5a817b8d.1682092324.git.quic_varada@quicinc.com>
+To:     Mantas Pucka <mantas@8devices.com>
+Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Sricharan R <sricharan@codeaurora.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Abhishek Sahu <absahu@codeaurora.org>,
+        linux-mmc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        Anusha Canchi Ramachandra Rao <anusharao@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: mmc: sdhci-msm: add IPQ6018 compatible
+Message-ID: <168244885070.2078831.17064973248574990697.robh@kernel.org>
+References: <1682338412-15420-1-git-send-email-mantas@8devices.com>
+ <1682338412-15420-2-git-send-email-mantas@8devices.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f9ba5b4f3dfd299ec7cefd038bc1d9ed5a817b8d.1682092324.git.quic_varada@quicinc.com>
+In-Reply-To: <1682338412-15420-2-git-send-email-mantas@8devices.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Fri, 21 Apr 2023 21:24:45 +0530, Varadarajan Narayanan wrote:
-> * Document the IPQ9574 dwc3 compatible.
+On Mon, 24 Apr 2023 15:13:31 +0300, Mantas Pucka wrote:
+> IPQ6018 has a sdhci-msm compatible MMC controller. Add the appropriate
+> compatible to the documentation.
 > 
-> * Make power-domains as optional since IPQ9574 doesn't have GDSCs
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> 
+> Signed-off-by: Mantas Pucka <mantas@8devices.com>
 > ---
->  Changes in v9:
-> 	- Place ipq9574 alongwith similar SoCs instead of new entry
-> 	- Make power-domains as optional since IPQ9574 doesn't have GDSCs
->  Changes in v6:
-> 	- Made power-domains as optional
-> 	- Resolved all 'make dtbs_check' messages
-> 
->  Changes in v5:
-> 	- Restore removed constraints
-> 
->  Changes in v4:
-> 	- Update other relevant sections
-> 	- Remove constraints not applicable to IPQ9574
-> ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 
