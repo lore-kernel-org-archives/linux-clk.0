@@ -2,80 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5567EC77B61
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 19:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4C4C6FD18
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 19:02:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235102AbjDYTBh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 15:01:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60296 "EHLO
+        id S235139AbjDYTC1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 15:02:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235106AbjDYTBf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 15:01:35 -0400
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB2D849D8;
-        Tue, 25 Apr 2023 12:01:33 -0700 (PDT)
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-187949fdb1cso4699951fac.0;
-        Tue, 25 Apr 2023 12:01:33 -0700 (PDT)
+        with ESMTP id S235143AbjDYTC0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 15:02:26 -0400
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03902E43;
+        Tue, 25 Apr 2023 12:02:19 -0700 (PDT)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-547299bf5d8so3581163eaf.3;
+        Tue, 25 Apr 2023 12:02:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682449293; x=1685041293;
+        d=1e100.net; s=20221208; t=1682449338; x=1685041338;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L1u0cCbUXzH7qiPF1I+5foUb5gsXy+f80Q5byZwNLdM=;
-        b=ZeyQJtEOd5gHCjWkCg0AtaCESlnUwe5CFGZu/YBXKOlsXp7MuKAdrXbkUpISKAfHFM
-         7JhDfubAopXNOQ2+CyZfJEdBTnk0ELXSSdm8FoTqOMpjgDnfWrvGEPexU2Ugam47gVlN
-         e05GOiH3zR14h6yFYoAgDYRVrI6NI1tP9iO8nffjy5ppbvRqI5MNEE3eoE6X2C8OYk9b
-         PbRwnkiJDbFfVY4pvg2Y7+8FK+m8w3ZKRs/eD2u9H62qz6BUh2796a1YO/MaYMwqggbA
-         Sxv4bgdmOeX9vMa+Q2oEVox1COei5C86YXM8GIAA9X0OJ49lZ9RK36XOtzCEZo+cImkg
-         4Akg==
-X-Gm-Message-State: AC+VfDzRnn55qjj/GCoP0GXL5UYLKAorLCJ6QQC8eKz9QpdHDltNdmSw
-        2IPXej3b9fuLN0pgatTvsVYhXfz7+Q==
-X-Google-Smtp-Source: ACHHUZ4Jn7kJ8s+qBM41oRwhYY5dL6y6or+OXTP5pm4bL15yF9Z0NMGQPtNx3cb9M6GBpM91Lv7yXg==
-X-Received: by 2002:a05:6870:e0cc:b0:18e:e33b:ec00 with SMTP id a12-20020a056870e0cc00b0018ee33bec00mr940168oab.52.1682449293096;
-        Tue, 25 Apr 2023 12:01:33 -0700 (PDT)
+        bh=kq/YohFvUXaLobjRGfG20kM6z4VVLoR6JmhP/GiUz7o=;
+        b=Dh8Frb6u2qUH/tS/M1ZhCtlFILfdGngISqCBZFOdoN8dfcAt7OuCd4Ifm2sWRQ4gfq
+         s88S47BMawQt2zBFbaOhvGYAEm0fsomXQMiplI1A5G6Ygu4sQLQB3jl3MLXcr7ljft/6
+         nw0oooB8/1t9HujlrU3UFPVveGxvbaj4m3b/ft00n61vkixV7kvyOkpIXBFYAu0esTna
+         F9P7pn5euhQYYPZgRC7dctKae1QLyFLDowTpcLDRpH4mCrkvZ6s4Z3o+xwdCNijrYzwv
+         /GDo0asGTeSTneHIt7/JYi5JJ5kP28KOgbcPPUTX5v+/fU1P4Q7g75UD5WAdZ5NW4MII
+         Ojqw==
+X-Gm-Message-State: AAQBX9dFVGkSalI6JAGZBJz8uvE2AU9iVOZ/qr+ILmkS/zdRkAQ421iz
+        ENgr+F/mIsyENx9PMQ9kxw==
+X-Google-Smtp-Source: AKy350ZxCF6ig24oz6aLoJegxsBErmc0e9oNlI+GuvtJzx6Pl7Yu08cAbpjPbTWmKvawYn7RgITdew==
+X-Received: by 2002:a4a:a3c3:0:b0:547:7574:b89a with SMTP id t3-20020a4aa3c3000000b005477574b89amr5706123ool.1.1682449338115;
+        Tue, 25 Apr 2023 12:02:18 -0700 (PDT)
 Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
-        by smtp.gmail.com with ESMTPSA id s21-20020a4a2d55000000b0054157801d51sm6233680oof.38.2023.04.25.12.01.31
+        by smtp.gmail.com with ESMTPSA id v6-20020a056870e28600b0017e0c13b29asm5849893oad.36.2023.04.25.12.02.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Apr 2023 12:01:32 -0700 (PDT)
-Received: (nullmailer pid 2089441 invoked by uid 1000);
-        Tue, 25 Apr 2023 19:01:31 -0000
-Date:   Tue, 25 Apr 2023 14:01:31 -0500
+        Tue, 25 Apr 2023 12:02:17 -0700 (PDT)
+Received: (nullmailer pid 2091228 invoked by uid 1000);
+        Tue, 25 Apr 2023 19:02:16 -0000
+Date:   Tue, 25 Apr 2023 14:02:16 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     quic_kathirav@quicinc.com, andersson@kernel.org, agross@kernel.org,
-        mturquette@baylibre.com, quic_srichara@quicinc.com,
-        sboyd@kernel.org, quic_sjaganat@quicinc.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        konrad.dybcio@linaro.org, quic_arajkuma@quicinc.com,
-        robh+dt@kernel.org, linux-clk@vger.kernel.org,
-        quic_anusha@quicinc.com, quic_poovendh@quicinc.com,
-        krzysztof.kozlowski+dt@linaro.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V3 2/6] dt-bindings: clock: qcom,ipq9574-gcc: Add
- maintainer
-Message-ID: <168244929071.2089337.16182607246447553484.robh@kernel.org>
-References: <20230425084010.15581-1-quic_devipriy@quicinc.com>
- <20230425084010.15581-3-quic_devipriy@quicinc.com>
+To:     Jacky Huang <ychuang570808@gmail.com>
+Cc:     tmaimon77@gmail.com, mturquette@baylibre.com,
+        gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
+        will@kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, catalin.marinas@arm.com,
+        krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org,
+        jirislaby@kernel.org, sboyd@kernel.org,
+        Jacky Huang <ychuang3@nuvoton.com>,
+        linux-kernel@vger.kernel.org, lee@kernel.org, arnd@arndb.de,
+        mjchen@nuvoton.com, linux-clk@vger.kernel.org,
+        p.zabel@pengutronix.de, schung@nuvoton.com
+Subject: Re: [PATCH v8 05/11] dt-bindings: arm: Add initial bindings for
+ Nuvoton platform
+Message-ID: <168244933613.2091189.18016207568464601422.robh@kernel.org>
+References: <20230425102418.185783-1-ychuang570808@gmail.com>
+ <20230425102418.185783-6-ychuang570808@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230425084010.15581-3-quic_devipriy@quicinc.com>
+In-Reply-To: <20230425102418.185783-6-ychuang570808@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Tue, 25 Apr 2023 14:10:06 +0530, Devi Priya wrote:
-> Add Bjorn andersson to the maintainer's list.
+On Tue, 25 Apr 2023 10:24:12 +0000, Jacky Huang wrote:
+> From: Jacky Huang <ychuang3@nuvoton.com>
 > 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> Move 'nuvoton,npcm-gcr.yaml' from 'arm/npcm' to 'soc/nuvoton'.
+> Rename the '/arm/npcm' directory to 'arm/nuvoton'. Additionally, add
+> bindings for ARMv8-based Nuvoton SoCs and platform boards, and include
+> the initial bindings for ma35d1 series development boards.
+> 
+> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
 > ---
->  Changes in V3:
-> 	- "Drop bias_pll_ubi_nc_clk input": Reverted the changes as
-> 	  <0> entry is added in place of bias_pll_ubi_nc_clk in the DT.
-> 
->  Documentation/devicetree/bindings/clock/qcom,ipq9574-gcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
+>  .../npcm.yaml => nuvoton/nuvoton,npcm.yaml}   |  2 +-
+>  .../nuvoton/nuvoton,npcm-gcr.yaml}            |  2 +-
+>  3 files changed, 32 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
+>  rename Documentation/devicetree/bindings/arm/{npcm/npcm.yaml => nuvoton/nuvoton,npcm.yaml} (93%)
+>  rename Documentation/devicetree/bindings/{arm/npcm/nuvoton,gcr.yaml => soc/nuvoton/nuvoton,npcm-gcr.yaml} (93%)
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
