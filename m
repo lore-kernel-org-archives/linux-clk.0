@@ -2,90 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B411C77B61
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 09:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0334C77B76
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 09:20:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233559AbjDYJNL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 05:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55322 "EHLO
+        id S233300AbjDYJU6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 05:20:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233599AbjDYJNJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 05:13:09 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9113910FE
-        for <linux-clk@vger.kernel.org>; Tue, 25 Apr 2023 02:13:08 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2a8ad872ea5so53682451fa.2
-        for <linux-clk@vger.kernel.org>; Tue, 25 Apr 2023 02:13:08 -0700 (PDT)
+        with ESMTP id S232615AbjDYJU4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 05:20:56 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 295794C01
+        for <linux-clk@vger.kernel.org>; Tue, 25 Apr 2023 02:20:51 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-508418b6d59so10103561a12.3
+        for <linux-clk@vger.kernel.org>; Tue, 25 Apr 2023 02:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=8devices.com; s=8devices; t=1682413987; x=1685005987;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l34Q+7TdUCHFwbLdB27KGTRN9LF/0aSi+VbSXHJLpqE=;
-        b=cjnTowehqiW/x4BS0rjz22+E9nzNksVfF4S48Snabpr+X9sljqjNwKeOWzGJJjJqxe
-         W9759yVOcEIQ647iflQ8e6bhCVdLhhRwTyIdisYM4NNrkEtmad1x4ZWFpXcW6OKwsWGz
-         BcQQ7d2Uo0mWywERSslNdZnadiAgUmsQjjCvJnItuFmunD1gMuzn746g9clXH+ePgPfu
-         8TzQuSjxHNuyO597w7tNd+lUnAfv0vzOqnSSeXpU9/5PUmyZ0KcY499gMJs8GoWD1Xen
-         6yqjuEwQNgaMkTTn2uPCA+P+EVkNF+qFVcx6gQVJ2Spj7hsGV8Xe8tssSL1UlpNe+Iwm
-         Gg1Q==
+        d=linaro.org; s=google; t=1682414449; x=1685006449;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WsdCNQzIoPz+lH63xj1YaKKNKo3iDm5pfw23qiYoBOQ=;
+        b=wOvkX2oC5ZHyFMdylx8IkrryNZeg23DU/Ch9AChLKbcB/sx0DFV8Yb/H7vUSsHm/ay
+         6vKeAhZHqi4KvKzBL9RsojhjUK4oU8lb+V+mupjRsr3d4Ozv9ezhvySx+DHEhqR+hjMA
+         gaiJOqLYT51c8eBo6o+cG8x82KOH/6WDLxVffZqZup0JrvMaRV4XDFiPQxHmTy81GMpM
+         QIfjcv/pPcyMi1TiLUVU+h31xU2FfOzqmTSR6PnZ45uP7vvaFC3j0EA3bBbvXBOdzaR3
+         fHRbyuMSy1Dp046zUXSSm/0Gjosdxp/aEC/NPYM4X7lNjpFDITb7o57bkR9W209v9XtR
+         w4rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682413987; x=1685005987;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l34Q+7TdUCHFwbLdB27KGTRN9LF/0aSi+VbSXHJLpqE=;
-        b=X/8ftihGPhbtK8O0dJpCiFG2Pm1uyGnL0gPyq7q7MLMU70uom6FdeTu0mq39YgvF75
-         fa+cc0T1+HiEivo8dS1Y86Zrcd/RGuWRt9afNeW8Fu+U59gAi8NjpiWxklTMPnA6xh5F
-         WLqJX7PNO9s1exjmwDi+/blot/vg+loJL33fwHkpR3c/VCaLlGblJG3WOlPVrQpVM5uB
-         jf/6TcJJht2dHgf3pcOC9O6eWhLbaTgo+QNbKctR/YAzm+n4o2ZHHw0w7RvmE+uJNBOA
-         jto5586i0QQ3G8KwAQW7yHnX+ISUzzlJQWncYJa3v7IWRwgw6yB6UAYU/H/OltTqQtkE
-         q1rA==
-X-Gm-Message-State: AAQBX9f0RtS5O5ilP+2E78ZWafFFpxEyn9Da9T/Y/F6osoWfIpDBJjyu
-        NCCqZVeNcwyAhgTes2nENovi4A==
-X-Google-Smtp-Source: AKy350ZYa7GYt+xP5M/MDlFGHK3ZRW7Y1PZkiYgrLxdKzUYBUzVs5ysrvz2PZX1oIKpmn2Q+Z+qs+w==
-X-Received: by 2002:a2e:9b95:0:b0:290:6e01:8d0b with SMTP id z21-20020a2e9b95000000b002906e018d0bmr2773202lji.26.1682413986874;
-        Tue, 25 Apr 2023 02:13:06 -0700 (PDT)
-Received: from mantas-MS-7994.8devices.com ([84.15.37.222])
-        by smtp.gmail.com with ESMTPSA id r22-20020a2eb616000000b0029ab1f2b196sm2027792ljn.24.2023.04.25.02.13.06
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Apr 2023 02:13:06 -0700 (PDT)
-From:   Mantas Pucka <mantas@8devices.com>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        d=1e100.net; s=20221208; t=1682414449; x=1685006449;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WsdCNQzIoPz+lH63xj1YaKKNKo3iDm5pfw23qiYoBOQ=;
+        b=BgTQVcFj6ldq/sQRxZOSn1kZlwN8BZk/rvBQvO3VMPX0vrc9pZ5x4AZ3xRSGHl9+TL
+         lgpHevln/LFf25RR6RRbS/5kKDu2c4O66/oMIUcsJ2l92V2E0GZ+hLP5Mgkm/sm1HTXf
+         anCgIet7MrIvTrzAV60+mUDycyMFCGLnPlIphtXxC59ri9ljC0aLPiQooU8fEW1Do3SR
+         w2WMcCdVwejIUYA0r5aZSxyjwALHaqFHB3IRikVyRMMe0EDcQxsViJ6SJK9/D6nP24Gr
+         ZVskrZ1WFiy1bmDokaxvfXbRjkaq2JYJRpD85ghzN7LVKItlw/naaABzFBrjslsly8ET
+         IAQQ==
+X-Gm-Message-State: AAQBX9eqxfzOlgbpJoQtjFbtjjh8iItAPCwx2Wxj6g7R3r/C7JFN7R1c
+        IGFR+nRPVmWT3P/3cLOi2gbENQ==
+X-Google-Smtp-Source: AKy350YuXymrw7So4UOjZjef+iEPyi/CshywTQ5AjTJZJr/4WaSMcccmVMSSXrgcRBO0CsBCTlwDVg==
+X-Received: by 2002:a17:907:b9d9:b0:94f:1a23:2f1c with SMTP id xa25-20020a170907b9d900b0094f1a232f1cmr14815686ejc.50.1682414449568;
+        Tue, 25 Apr 2023 02:20:49 -0700 (PDT)
+Received: from [192.168.9.102] ([195.167.132.10])
+        by smtp.gmail.com with ESMTPSA id h11-20020a170906828b00b0094f23480619sm6620286ejx.172.2023.04.25.02.20.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Apr 2023 02:20:48 -0700 (PDT)
+Message-ID: <0210316b-9e21-347c-ed15-ce8200aeeb94@linaro.org>
+Date:   Tue, 25 Apr 2023 11:20:46 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 00/43] ep93xx device tree conversion
+Content-Language: en-US
+To:     Jakub Kicinski <kuba@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Nikita Shubin <nikita.shubin@maquefel.me>,
+        Arnd Bergmann <arnd@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Brian Norris <briannorris@chromium.org>,
+        Chuanhong Guo <gch981213@gmail.com>,
+        "Conor.Dooley" <conor.dooley@microchip.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jean Delvare <jdelvare@suse.de>, Joel Stanley <joel@jms.id.au>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lukasz Majewski <lukma@denx.de>, Lv Ruyi <lv.ruyi@zte.com.cn>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mantas Pucka <mantas@8devices.com>
-Subject: [PATCH v2] clk: qcom: gcc-ipq6018: Use floor ops for sdcc clocks
-Date:   Tue, 25 Apr 2023 12:11:49 +0300
-Message-Id: <1682413909-24927-1-git-send-email-mantas@8devices.com>
-X-Mailer: git-send-email 2.7.4
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nicolas Saenz Julienne <nsaenz@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Qin Jian <qinjian@cqplus1.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Russell King <linux@armlinux.org.uk>,
+        Sebastian Reichel <sre@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sumanth Korikkar <sumanthk@linux.ibm.com>,
+        Sven Peter <sven@svenpeter.dev>, Takashi Iwai <tiwai@suse.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Walker Chen <walker.chen@starfivetech.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Yinbo Zhu <zhuyinbo@loongson.cn>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
+        soc@kernel.org
+References: <20230424123522.18302-1-nikita.shubin@maquefel.me>
+ <8101c53e-e682-4dc3-95cc-a332b1822b8b@app.fastmail.com>
+ <20230424152933.48b2ede1@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230424152933.48b2ede1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SDCC clocks must be rounded down to avoid overclocking the controller.
+On 25/04/2023 00:29, Jakub Kicinski wrote:
+> On Mon, 24 Apr 2023 13:31:25 +0200 Arnd Bergmann wrote:
+>> Thanks a lot for your continued work. I can't merge any of this at
+>> the moment since the upstream merge window just opened, but I'm
+>> happy to take this all through the soc tree for 6.5, provided we
+>> get the sufficient Acks from the subsystem maintainers. Merging
+>> it through each individual tree would take a lot longer, so I
+>> hope we can avoid that.
+> 
+> Is there a dependency between the patches?
 
-Fixes: d9db07f088af ("clk: qcom: Add ipq6018 Global Clock Controller support")
-Signed-off-by: Mantas Pucka <mantas@8devices.com>
----
-v2: remove unnecessary newline in commit message
+I didn't get entire patchset and cover letter does not mention
+dependencies, but usually there shouldn't be such. Maybe for the next
+versions this should be split per subsystem?
 
- drivers/clk/qcom/gcc-ipq6018.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-index 3f9c2f61a5d9..5c5d1b04ea7a 100644
---- a/drivers/clk/qcom/gcc-ipq6018.c
-+++ b/drivers/clk/qcom/gcc-ipq6018.c
-@@ -1654,7 +1654,7 @@ static struct clk_rcg2 sdcc1_apps_clk_src = {
- 		.name = "sdcc1_apps_clk_src",
- 		.parent_data = gcc_xo_gpll0_gpll2_gpll0_out_main_div2,
- 		.num_parents = 4,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
--- 
-2.7.4
+Best regards,
+Krzysztof
 
