@@ -2,104 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DE7C6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 13:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30861C77B76
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 14:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234234AbjDYNoS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 09:44:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41168 "EHLO
+        id S234205AbjDYOCx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 10:02:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234186AbjDYNoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 09:44:15 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0796AE58
-        for <linux-clk@vger.kernel.org>; Tue, 25 Apr 2023 06:44:14 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-94ef0a8546fso914392366b.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Apr 2023 06:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682430252; x=1685022252;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JEdRBIVNpKBeEtTf2V0pnx1RgdetECiJy/vNAh6/A7o=;
-        b=zIolGGcNUZTwywYcnLd5gqq5D3pbP7tkeR2DRJ3pKeTVfgPYKRGBtODmkfILSPA4pI
-         YZhuwhg7e8wjeseolpX77bUzWSm+VgjCgeM1vVHRaYLDlnLivVDPK9bVu89epyIxJRA6
-         M0XlVroEMB7vD2p9SV4kGuk6wGYpcCq9nSTWlO4ovZjmXerrAc4Y1sCS2R9dXDTFuVaW
-         ZZs9XDZ8Sjq2g+jfCKz/mpt1N2mzeMHwebC89X/B+38ymcRi7efAAXFX0AlxZWJtT/8D
-         pJjc8DHS66RLSJT63bZ96ciaUn8VXJO0AocDTnSJW2Zq9jK1nciUKI8zUngy8X4pkjlm
-         caNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682430252; x=1685022252;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JEdRBIVNpKBeEtTf2V0pnx1RgdetECiJy/vNAh6/A7o=;
-        b=Ya5jGx/8xVRvmr/oXRN8hEsNlpUUc/z0dnKKR7A3bLVKgK8T2ibwziRkKZ4GT3HDk5
-         EKDnIC5aOOH2eBy/606kLKLxTOTHXyv9cga/hZhqySBCY92ZyBX0/D0wE+rf0e4v6QYL
-         QgVTeIK3Ipw4thgQW48x4+jbTqnKlCADD4fjHOyyHOv1ZbeLdYpcI3TH+hZxcwvrItSv
-         GUEQCbSMtsxo+HXIdgXDg27b58gBs8/iDske2QOQOFmQxxqqJsdzKi3sBBmA7JS0rRKK
-         OC6FcARIBSOcE5YxlHTq3HKk+0xeIHfWhkqSBETromG2LIzw4h/VDQFP06lqVBefS4h8
-         AVYQ==
-X-Gm-Message-State: AAQBX9fC8V3jl7YjL4E7e3zqMzxFuIYKFlJZr+cN5mTdGkAa3GqZtSqf
-        M58HM03YFWe6FZ0z7f5qGvz5sg==
-X-Google-Smtp-Source: AKy350bhue30eF54tT/ujbt9TygS7DEofqGRu9TE88RP8Udstp37H6+lOTCb8DidCPSz8ktwGI9xeQ==
-X-Received: by 2002:a17:906:a3da:b0:94f:2b80:f3b4 with SMTP id ca26-20020a170906a3da00b0094f2b80f3b4mr14085813ejb.69.1682430252333;
-        Tue, 25 Apr 2023 06:44:12 -0700 (PDT)
-Received: from [172.23.2.104] ([195.167.132.10])
-        by smtp.gmail.com with ESMTPSA id jo2-20020a170906f6c200b009538cc79241sm6835561ejb.56.2023.04.25.06.44.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Apr 2023 06:44:11 -0700 (PDT)
-Message-ID: <094e0cec-5a9b-abfc-74b0-9d3af10f9275@linaro.org>
-Date:   Tue, 25 Apr 2023 14:44:10 +0100
+        with ESMTP id S234304AbjDYOCw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 10:02:52 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B25B61A4;
+        Tue, 25 Apr 2023 07:02:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1682431368; x=1713967368;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=l6q1dc5C1/q1Geq8yt82kUpPLs/7UC9mtgVUN2I56UE=;
+  b=h5LpmLC4zIWnHrVCNUQ/ECOWOAd+4R/QT75d9q2qc5VctZZaxAc3Gj6y
+   Xjp+cxDNpW3Si7YkTZ1H5p0OJMi8VRLamHllThRqBLou1Eu0ngqQGhZn5
+   G63f4GyiGr/ZtnV91Fhl36qYN9F972kpIbqBp0XzB+ISpJRWxT9BFPTUk
+   4YMpZdXj0U9Aq0CDkvfOG6QNs3rzgBbdF9agu/Iy4w1xrGtMkk3ISVX7Z
+   834mf+lwqAG3NIl+IOs0HsECaBIseIEaFZ+FD33lmXRoboRFN/WsYoYUz
+   RiFC/bD+PCU4+SSosNOZ4/3WXaV5soFRZsw7FA6xV2I6ezOhxGc1Fac51
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10691"; a="412062305"
+X-IronPort-AV: E=Sophos;i="5.99,225,1677571200"; 
+   d="scan'208";a="412062305"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2023 07:02:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10691"; a="837448058"
+X-IronPort-AV: E=Sophos;i="5.99,225,1677571200"; 
+   d="scan'208";a="837448058"
+Received: from lkp-server01.sh.intel.com (HELO b613635ddfff) ([10.239.97.150])
+  by fmsmga001.fm.intel.com with ESMTP; 25 Apr 2023 07:02:43 -0700
+Received: from kbuild by b613635ddfff with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1prJFh-000jRg-39;
+        Tue, 25 Apr 2023 14:02:41 +0000
+Date:   Tue, 25 Apr 2023 22:01:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        tmaimon77@gmail.com, catalin.marinas@arm.com, will@kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: Re: [PATCH v8 10/11] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
+Message-ID: <202304252118.P0ZCvlQO-lkp@intel.com>
+References: <20230425102418.185783-11-ychuang570808@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2] clk: qcom: gcc-ipq6018: Use floor ops for sdcc clocks
-To:     Mantas Pucka <mantas@8devices.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1682413909-24927-1-git-send-email-mantas@8devices.com>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <1682413909-24927-1-git-send-email-mantas@8devices.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230425102418.185783-11-ychuang570808@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Jacky,
 
-On 4/25/23 10:11, Mantas Pucka wrote:
-> SDCC clocks must be rounded down to avoid overclocking the controller.
->
-> Fixes: d9db07f088af ("clk: qcom: Add ipq6018 Global Clock Controller support")
-> Signed-off-by: Mantas Pucka <mantas@8devices.com>
-> ---
+kernel test robot noticed the following build warnings:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on clk/clk-next linus/master v6.3 next-20230424]
+[cannot apply to pza/reset/next pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230425-182746
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20230425102418.185783-11-ychuang570808%40gmail.com
+patch subject: [PATCH v8 10/11] tty: serial: Add Nuvoton ma35d1 serial driver support
+config: sparc-allyesconfig (https://download.01.org/0day-ci/archive/20230425/202304252118.P0ZCvlQO-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/9f299bce6e0e871aa112e06e2451e88198a75d97
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Jacky-Huang/arm64-Kconfig-platforms-Add-config-for-Nuvoton-MA35-platform/20230425-182746
+        git checkout 9f299bce6e0e871aa112e06e2451e88198a75d97
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc SHELL=/bin/bash drivers/tty/serial/
+
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
+| Link: https://lore.kernel.org/oe-kbuild-all/202304252118.P0ZCvlQO-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/tty/serial/ma35d1_serial.c: In function 'ma35d1serial_probe':
+   drivers/tty/serial/ma35d1_serial.c:675:28: error: implicit declaration of function 'devm_ioremap'; did you mean 'of_ioremap'? [-Werror=implicit-function-declaration]
+     675 |         up->port.membase = devm_ioremap(&pdev->dev, up->port.iobase, UART_REG_SIZE);
+         |                            ^~~~~~~~~~~~
+         |                            of_ioremap
+>> drivers/tty/serial/ma35d1_serial.c:675:26: warning: assignment to 'unsigned char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     675 |         up->port.membase = devm_ioremap(&pdev->dev, up->port.iobase, UART_REG_SIZE);
+         |                          ^
+   cc1: some warnings being treated as errors
 
 
-Konrad
+vim +675 drivers/tty/serial/ma35d1_serial.c
 
-> v2: remove unnecessary newline in commit message
->
->   drivers/clk/qcom/gcc-ipq6018.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-> index 3f9c2f61a5d9..5c5d1b04ea7a 100644
-> --- a/drivers/clk/qcom/gcc-ipq6018.c
-> +++ b/drivers/clk/qcom/gcc-ipq6018.c
-> @@ -1654,7 +1654,7 @@ static struct clk_rcg2 sdcc1_apps_clk_src = {
->   		.name = "sdcc1_apps_clk_src",
->   		.parent_data = gcc_xo_gpll0_gpll2_gpll0_out_main_div2,
->   		.num_parents = 4,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->   	},
->   };
->   
+   647	
+   648	/*
+   649	 * Register a set of serial devices attached to a platform device.
+   650	 * The list is terminated with a zero flags entry, which means we expect
+   651	 * all entries to have at least UPF_BOOT_AUTOCONF set.
+   652	 */
+   653	static int ma35d1serial_probe(struct platform_device *pdev)
+   654	{
+   655		struct resource *res_mem;
+   656		struct uart_ma35d1_port *up;
+   657		int ret = 0;
+   658		struct clk *clk;
+   659		int err;
+   660	
+   661		if (pdev->dev.of_node) {
+   662			ret = of_alias_get_id(pdev->dev.of_node, "serial");
+   663			if (ret < 0) {
+   664				dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
+   665				return ret;
+   666			}
+   667		}
+   668		up = &ma35d1serial_ports[ret];
+   669		up->port.line = ret;
+   670		res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+   671		if (!res_mem)
+   672			return -ENODEV;
+   673	
+   674		up->port.iobase = res_mem->start;
+ > 675		up->port.membase = devm_ioremap(&pdev->dev, up->port.iobase, UART_REG_SIZE);
+   676		up->port.ops = &ma35d1serial_ops;
+   677	
+   678		spin_lock_init(&up->port.lock);
+   679	
+   680		clk = of_clk_get(pdev->dev.of_node, 0);
+   681		if (IS_ERR(clk)) {
+   682			err = PTR_ERR(clk);
+   683			dev_err(&pdev->dev, "failed to get core clk: %d\n", err);
+   684			return -ENOENT;
+   685		}
+   686	
+   687		err = clk_prepare_enable(clk);
+   688		if (err)
+   689			return -ENOENT;
+   690	
+   691		if (up->port.line != 0)
+   692			up->port.uartclk = clk_get_rate(clk);
+   693	
+   694		ret = platform_get_irq(pdev, 0);
+   695		if (ret < 0)
+   696			return ret;
+   697		up->port.irq = ret;
+   698		up->port.dev = &pdev->dev;
+   699		up->port.flags = UPF_BOOT_AUTOCONF;
+   700	
+   701		platform_set_drvdata(pdev, up);
+   702	
+   703		return uart_add_one_port(&ma35d1serial_reg, &up->port);
+   704	}
+   705	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
