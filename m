@@ -2,219 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD3AC6FD18
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 08:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4971EC77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 08:44:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233453AbjDYIHK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 04:07:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37884 "EHLO
+        id S233842AbjDYIom (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 04:44:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233498AbjDYIHJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 04:07:09 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18AD3AAA;
-        Tue, 25 Apr 2023 01:07:05 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-63d4595d60fso33690510b3a.0;
-        Tue, 25 Apr 2023 01:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682410025; x=1685002025;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BjJjmGJHgsmevEHXxxC0Fcc1Z6Vq9hoaSZq1v6myiuU=;
-        b=cr+CuWk3gIqJ1J/X9xHfW5vgZ5OzRYDALmI/7XoHXPgnRQND57oYi3yXHVFv4r8uBG
-         nuJ8a0/pH5uFf3YNAN0mdV90PYEkip7usprgAaBzbR8Xoaov53Cqv+xXQCNrcVKnBVNs
-         XnZiDeZCsxi+GTmoHXSILCQKxEkLs516QnTfl6au9buUEqPzpwi1UPrzJ5P4pbJU3iEM
-         Vep1rwivZRRlJZTYWIGYM6Wt4KwHAyQg0FEfTs0EZ/yNGnqwrEmKVzXb07X2RO7axhVj
-         kzI0b0RzcIVIOxVe8D8FTfW8r6XQHW8CmwOa7FxrfM8F+dkDGXnJ1OF/oRoLAWeknqzB
-         /4jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682410025; x=1685002025;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BjJjmGJHgsmevEHXxxC0Fcc1Z6Vq9hoaSZq1v6myiuU=;
-        b=hHfH3AKa51CusxAbFhf+oNRwbyCNWSE2ptu37KcaobsKyvwSGl2orLAg01/Rkjm/GA
-         ErfAMQzrsZ53fhkrDK8YDwlurrX33MyrY14L+P/WdOqsiCU+o/55LBCeDXhEFT+IBcSi
-         5vJ9aB7xp36VZF5pczY4DDVSUf57iLTWrvcyAfPFXYR+WAO3CM3+J4LSn5W6T4+rKuM/
-         wN6uK+4+wMQbTnVbYmmNh+S59ortlfjs0c9xFX6eNZhQOPFYJjx1gX6KneNB4o9biTC9
-         3niD0/gG+XArMGxrJVRq76P/5ht9nbTJuMJDJuc1VAJh6opAnoKyhcJuy9hoQwFqIlYc
-         qoPQ==
-X-Gm-Message-State: AAQBX9d+VTgm3xsoJZ7pMmER0WftO3ndTAW8m8GdjZ42pnvrMv9c0s+3
-        91cXe5/GTsd+J4L12umDGyHTPIP017Z2bA==
-X-Google-Smtp-Source: AKy350bB8f4hiQ0km6TxbMIrwG2jg80ssgR28qrvp/alNZXYNx/TwhGPilKHOyfiu5GjPkjUFgXRqA==
-X-Received: by 2002:a17:902:f98e:b0:1a6:b971:fae9 with SMTP id ky14-20020a170902f98e00b001a6b971fae9mr15147214plb.8.1682410025148;
-        Tue, 25 Apr 2023 01:07:05 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d9-20020a170902b70900b001a96d295f15sm3436740pls.284.2023.04.25.01.07.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Apr 2023 01:07:04 -0700 (PDT)
-Message-ID: <49fe5ee3-3b82-f14f-60b6-ec14fe1f5663@gmail.com>
-Date:   Tue, 25 Apr 2023 16:07:00 +0800
+        with ESMTP id S233855AbjDYIoW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 04:44:22 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DD641547F;
+        Tue, 25 Apr 2023 01:42:08 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33P8dnwS017610;
+        Tue, 25 Apr 2023 08:40:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=CJFda1HHrboza25Ghy1e5r7VY3fKqD57pup/Hc23itc=;
+ b=ZwI8yMQw57gIIcSK5P/dqFe7ulG3bKVZlgw7gHgaYxpUUT9OFlphj/47rcktOBNq9aEA
+ LpvBwNEv6Rw4hG82td8UR+tGbr7csFM1vBxRkL18T1+7YKjt9j35xgmmkjUdbGoMEmK4
+ qg5ry93OBHtUZkL2IL57RS6aWik/OeePBrGqdlctA3oeSp/w8IkFTMUKOEg3JlOhPzoB
+ BeIx4Zz01cwHsfHBMZ4Lf6ILbPD5mVMHwHaWHzRcNdPZ39POhpbM6TY+YFs7RKLdfF7K
+ rQzUqyG8IId6rqsaURB/tTTw3JZPYSu9hP7JsnTFr4iKyW96gobYw9/Vxo8V+fYx3OCJ SQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q6bgp807u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Apr 2023 08:40:49 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 33P8eVk1001924
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Apr 2023 08:40:31 GMT
+Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Tue, 25 Apr 2023 01:40:25 -0700
+From:   Devi Priya <quic_devipriy@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+Subject: [PATCH V3 0/6] Incremental patches on minimal boot support
+Date:   Tue, 25 Apr 2023 14:10:04 +0530
+Message-ID: <20230425084010.15581-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v7 10/12] reset: Add Nuvoton ma35d1 reset driver support
-Content-Language: en-US
-To:     =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-serial <linux-serial@vger.kernel.org>, arnd@arndb.de,
-        schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230412053824.106-1-ychuang570808@gmail.com>
- <20230412053824.106-11-ychuang570808@gmail.com>
- <20230424192137.GB30248@pengutronix.de>
- <4e1cd1c7-e681-fb25-1dcf-16d68e5e525b@gmail.com>
- <7f5fb515-a0a4-48fb-fdd5-247aff414d7d@linux.intel.com>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <7f5fb515-a0a4-48fb-fdd5-247aff414d7d@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LN7GkLXPxYtizxXBwUBFIBVG3NHnHDh9
+X-Proofpoint-ORIG-GUID: LN7GkLXPxYtizxXBwUBFIBVG3NHnHDh9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-25_03,2023-04-21_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ mlxscore=0 mlxlogscore=999 suspectscore=0 adultscore=0 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2304250076
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Patchset V9 of the series: Add minimal boot support for IPQ9574 has been
+merged and is available in linux-next/master.
+V12 being the latest revision posted in the series, the delta between
+revisions V9 and V12 is posted as a separate series as suggested by 
+Bjorn to avoid possible confusions.
 
-Dear Ilpo,
+This series adds the delta changes between revisions V9 and V12.
 
+V9 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230316072940.29137-1-quic_devipriy@quicinc.com/
 
+V12 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230410135948.11970-1-quic_devipriy@quicinc.com/
 
-On 2023/4/25 下午 03:40, Ilpo Järvinen wrote:
-> On Tue, 25 Apr 2023, Jacky Huang wrote:
->
->>
->> On 2023/4/25 上午 03:21, Philipp Zabel wrote:
->>> Hi Jacky,
->>>
->>> On Wed, Apr 12, 2023 at 05:38:22AM +0000, Jacky Huang wrote:
->>>> From: Jacky Huang <ychuang3@nuvoton.com>
->>>>
->>>> This driver supports individual IP reset for ma35d1. The reset
->>>> control registers is a subset of system control registers.
->>>>
->>>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->>>> ---
->>>>
->>>> +static const struct {
->>>> +	unsigned long id;
->>> Why store the id? ids should be contiguous and should start at 0,
->>> so the id could just be an index into the array.
->> Thank you, I didn't notice that the IDs were already consecutive.
->> The id field is indeed unnecessary, and I will remove it.
-> I recommend you still keep the IDs in the array initializer though, like
-> this:
->
-> ...
-> } ma35d1_reset_map[] = {
-> 	[MA35D1_RESET_CHIP] = {0x20, 0},
-> 	[MA35D1_RESET_CA35CR0] = {0x20, 1},
-> 	...
+Changes in V3:
+	- Detailed change logs are added to the respective patches.
 
-Okay, I will modify the code like this.
+Changes in V2:
+https://lore.kernel.org/linux-arm-msm/20230417053355.25691-1-quic_devipriy@quicinc.com/
+	- Updated the subject & commit message of [PATCH V2 1/4]
+	- No changes were made to any other patches
 
->>>> +	u32 reg_ofs;
->>>> +	u32 bit;
->>>> +} ma35d1_reset_map[] = {
->>>> +	{ MA35D1_RESET_CHIP,    0x20, 0  },
->>>> +	{ MA35D1_RESET_CA35CR0,	0x20, 1  },
->>>> +	{ MA35D1_RESET_CA35CR1, 0x20, 2  },
->>>> +	{ MA35D1_RESET_CM4,     0x20, 3  },
->>>> +	{ MA35D1_RESET_PDMA0,   0x20, 4  },
->>>> +	{ MA35D1_RESET_PDMA1,   0x20, 5  },
->>>> +	{ MA35D1_RESET_PDMA2,   0x20, 6  },
->>>> +	{ MA35D1_RESET_PDMA3,   0x20, 7  },
->>>> +	{ MA35D1_RESET_DISP,    0x20, 9  },
->>>> +	{ MA35D1_RESET_VCAP0,   0x20, 10 },
->>>> +	{ MA35D1_RESET_VCAP1,   0x20, 11 },
->>>> +	{ MA35D1_RESET_GFX,     0x20, 12 },
->>>> +	{ MA35D1_RESET_VDEC,    0x20, 13 },
->>>> +	{ MA35D1_RESET_WHC0,    0x20, 14 },
->>>> +	{ MA35D1_RESET_WHC1,    0x20, 15 },
->>>> +	{ MA35D1_RESET_GMAC0,   0x20, 16 },
->>>> +	{ MA35D1_RESET_GMAC1,   0x20, 17 },
->>>> +	{ MA35D1_RESET_HWSEM,   0x20, 18 },
->>>> +	{ MA35D1_RESET_EBI,     0x20, 19 },
->>>> +	{ MA35D1_RESET_HSUSBH0, 0x20, 20 },
->>>> +	{ MA35D1_RESET_HSUSBH1, 0x20, 21 },
->>>> +	{ MA35D1_RESET_HSUSBD,  0x20, 22 },
->>>> +	{ MA35D1_RESET_USBHL,   0x20, 23 },
->>>> +	{ MA35D1_RESET_SDH0,    0x20, 24 },
->>>> +	{ MA35D1_RESET_SDH1,    0x20, 25 },
->>>> +	{ MA35D1_RESET_NAND,    0x20, 26 },
->>>> +	{ MA35D1_RESET_GPIO,    0x20, 27 },
->>>> +	{ MA35D1_RESET_MCTLP,   0x20, 28 },
->>>> +	{ MA35D1_RESET_MCTLC,   0x20, 29 },
->>>> +	{ MA35D1_RESET_DDRPUB,  0x20, 30 },
->>>> +	{ MA35D1_RESET_TMR0,    0x24, 2  },
->>>> +	{ MA35D1_RESET_TMR1,    0x24, 3  },
->>>> +	{ MA35D1_RESET_TMR2,    0x24, 4  },
->>>> +	{ MA35D1_RESET_TMR3,    0x24, 5  },
->>>> +	{ MA35D1_RESET_I2C0,    0x24, 8  },
->>>> +	{ MA35D1_RESET_I2C1,    0x24, 9  },
->>>> +	{ MA35D1_RESET_I2C2,    0x24, 10 },
->>>> +	{ MA35D1_RESET_I2C3,    0x24, 11 },
->>>> +	{ MA35D1_RESET_QSPI0,   0x24, 12 },
->>>> +	{ MA35D1_RESET_SPI0,    0x24, 13 },
->>>> +	{ MA35D1_RESET_SPI1,    0x24, 14 },
->>>> +	{ MA35D1_RESET_SPI2,    0x24, 15 },
->>>> +	{ MA35D1_RESET_UART0,   0x24, 16 },
->>>> +	{ MA35D1_RESET_UART1,   0x24, 17 },
->>>> +	{ MA35D1_RESET_UART2,   0x24, 18 },
->>>> +	{ MA35D1_RESET_UAER3,   0x24, 19 },
->>>> +	{ MA35D1_RESET_UART4,   0x24, 20 },
->>>> +	{ MA35D1_RESET_UART5,   0x24, 21 },
->>>> +	{ MA35D1_RESET_UART6,   0x24, 22 },
->>>> +	{ MA35D1_RESET_UART7,   0x24, 23 },
->>>> +	{ MA35D1_RESET_CANFD0,  0x24, 24 },
->>>> +	{ MA35D1_RESET_CANFD1,  0x24, 25 },
->>>> +	{ MA35D1_RESET_EADC0,   0x24, 28 },
->>>> +	{ MA35D1_RESET_I2S0,    0x24, 29 },
->>>> +	{ MA35D1_RESET_SC0,     0x28, 0  },
->>>> +	{ MA35D1_RESET_SC1,     0x28, 1  },
->>>> +	{ MA35D1_RESET_QSPI1,   0x28, 4  },
->>>> +	{ MA35D1_RESET_SPI3,    0x28, 6  },
->>>> +	{ MA35D1_RESET_EPWM0,   0x28, 16 },
->>>> +	{ MA35D1_RESET_EPWM1,   0x28, 17 },
->>>> +	{ MA35D1_RESET_QEI0,    0x28, 22 },
->>>> +	{ MA35D1_RESET_QEI1,    0x28, 23 },
->>>> +	{ MA35D1_RESET_ECAP0,   0x28, 26 },
->>>> +	{ MA35D1_RESET_ECAP1,   0x28, 27 },
->>>> +	{ MA35D1_RESET_CANFD2,  0x28, 28 },
->>>> +	{ MA35D1_RESET_ADC0,    0x28, 31 },
->>>> +	{ MA35D1_RESET_TMR4,    0x2C, 0  },
->>>> +	{ MA35D1_RESET_TMR5,    0x2C, 1  },
->>>> +	{ MA35D1_RESET_TMR6,    0x2C, 2  },
->>>> +	{ MA35D1_RESET_TMR7,    0x2C, 3  },
->>>> +	{ MA35D1_RESET_TMR8,    0x2C, 4  },
->>>> +	{ MA35D1_RESET_TMR9,    0x2C, 5  },
->>>> +	{ MA35D1_RESET_TMR10,   0x2C, 6  },
->>>> +	{ MA35D1_RESET_TMR11,   0x2C, 7  },
->>>> +	{ MA35D1_RESET_UART8,   0x2C, 8  },
->>>> +	{ MA35D1_RESET_UART9,   0x2C, 9  },
->>>> +	{ MA35D1_RESET_UART10,  0x2C, 10 },
->>>> +	{ MA35D1_RESET_UART11,  0x2C, 11 },
->>>> +	{ MA35D1_RESET_UART12,  0x2C, 12 },
->>>> +	{ MA35D1_RESET_UART13,  0x2C, 13 },
->>>> +	{ MA35D1_RESET_UART14,  0x2C, 14 },
->>>> +	{ MA35D1_RESET_UART15,  0x2C, 15 },
->>>> +	{ MA35D1_RESET_UART16,  0x2C, 16 },
->>>> +	{ MA35D1_RESET_I2S1,    0x2C, 17 },
->>>> +	{ MA35D1_RESET_I2C4,    0x2C, 18 },
->>>> +	{ MA35D1_RESET_I2C5,    0x2C, 19 },
->>>> +	{ MA35D1_RESET_EPWM2,   0x2C, 20 },
->>>> +	{ MA35D1_RESET_ECAP2,   0x2C, 21 },
->>>> +	{ MA35D1_RESET_QEI2,    0x2C, 22 },
->>>> +	{ MA35D1_RESET_CANFD3,  0x2C, 23 },
->>>> +	{ MA35D1_RESET_KPI,     0x2C, 24 },
->>>> +	{ MA35D1_RESET_GIC,     0x2C, 28 },
->>>> +	{ MA35D1_RESET_SSMCC,   0x2C, 30 },
->>>> +	{ MA35D1_RESET_SSPCC,   0x2C, 31 }
->>>> +};
-Best Regards,
-Jacky Huang
+Changes in V1:
+	- The Delta between V9 & V12 is added to the change log of
+	  the respective patches for quick reference
+
+Devi Priya (6):
+  arm64: dts: qcom: ipq9574: Update the size of GICC & GICV regions
+  dt-bindings: clock: qcom,ipq9574-gcc: Add maintainer
+  clk: qcom: gcc-ipq9574: Clean up included headers
+  clk: qcom: gcc-ipq9574: constify struct clk_init_data
+  arm64: dts: qcom: ipq9574: Drop bias_pll_ubi_nc_clk input
+  arm64: dts: qcom: ipq9574: rename al02-c7 dts to rdp433
+
+ .../bindings/clock/qcom,ipq9574-gcc.yaml      |   1 +
+ arch/arm64/boot/dts/qcom/Makefile             |   2 +-
+ ...ipq9574-al02-c7.dts => ipq9574-rdp433.dts} |   2 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  14 +-
+ drivers/clk/qcom/gcc-ipq9574.c                | 434 +++++++++---------
+ 5 files changed, 224 insertions(+), 229 deletions(-)
+ rename arch/arm64/boot/dts/qcom/{ipq9574-al02-c7.dts => ipq9574-rdp433.dts} (97%)
+
+-- 
+2.17.1
 
