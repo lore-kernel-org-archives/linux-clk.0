@@ -2,338 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7430EC7618E
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 01:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E55C77B61
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 02:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233220AbjDYBbI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 21:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39414 "EHLO
+        id S232987AbjDYCHe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 22:07:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232940AbjDYBbH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 21:31:07 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E33B450;
-        Mon, 24 Apr 2023 18:31:03 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-63b4e5fdb1eso6331259b3a.1;
-        Mon, 24 Apr 2023 18:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682386263; x=1684978263;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kxQUMM2pg/jACuzQsGpHiuw49TkmyobTldtx40vYc5c=;
-        b=BH7l/6rasADFtHq2oO9oly3omMuaTkHbkb+VlJCiWeNsv+jvpb7m/8iRIXZ6iqu5Dh
-         2rLDCKa3SsmD9TOdC2sCwYJz+tCIgxwwuXlr1zC5jhsfMmf7DsU11p1Qg3l84WnHzE76
-         6A0UnUTG/FLwS/k5eMspXWJHsQrJHC1abPadiGoifIMV/HauJqpQh0oUe8iI9gf3FwY5
-         6ZTbxII2JMPGgkxr/RKQxa+YJ+EkftBYb5ILp7qlGBCNoQBKJjU+nlfmSEoy+B+cFvIp
-         i1CvoOkUPnhvyddVrChpKGslmY1MFRsXAb4IxEvj841LlTRJ7MYC/4HXs81jshqeJ/4L
-         6nSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682386263; x=1684978263;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kxQUMM2pg/jACuzQsGpHiuw49TkmyobTldtx40vYc5c=;
-        b=e/+SGUulxHVLM9CqpvIoRXDvijcZsQqjee/VIa+PIwWSCmHbQjf6PE+0SqdOwZe5/H
-         txEoRybTW4HKZOjLds6YiJd9jh1Tbwu6NogXy3jIccfHWMKDuUfXL7JnS5jfJZ0mxDGe
-         dRnAosHEZMp8LahvF4NC/+lL1a7YKBcHAsUiu33QqSlZCN9Pbky1pdd+tEHWuV9RHWBk
-         hCgTzMMADz/1i6Nqkj6p6k8AASKBdVRVA4d3n1zhZXVkjrXgn4fJq61sV4BcXUaTf6+B
-         8mfjwdPYO/A7DGPI4gUGvhVWiiizBu1I30t+N1aVME6l43o5WKgIlPAnfsBvxF442DMu
-         RHLQ==
-X-Gm-Message-State: AAQBX9cfRvd7ysp81tKMhHhb8F435z/L0XZyNxOvICcAOAqK57MPT+wW
-        2d6ieMNkIeEbG1Gigs8dk2W1QcxeCWrkjQ==
-X-Google-Smtp-Source: AKy350Y7Fw1vVmalIl3qTMaWugjnlEwca4WFBuDeeOtzmxACi4LxtE8yJExMCjIzuqKyYq3XM+9EcA==
-X-Received: by 2002:a05:6a00:a07:b0:626:2984:8a76 with SMTP id p7-20020a056a000a0700b0062629848a76mr20279325pfh.34.1682386262777;
-        Mon, 24 Apr 2023 18:31:02 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id t6-20020aa79386000000b0063b6bc2be16sm8260306pfe.141.2023.04.24.18.31.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 18:31:02 -0700 (PDT)
-Message-ID: <4e1cd1c7-e681-fb25-1dcf-16d68e5e525b@gmail.com>
-Date:   Tue, 25 Apr 2023 09:30:58 +0800
+        with ESMTP id S232950AbjDYCHe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 22:07:34 -0400
+Received: from hust.edu.cn (unknown [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B7CE55AF;
+        Mon, 24 Apr 2023 19:07:32 -0700 (PDT)
+Received: from u201911681$hust.edu.cn ( [172.16.0.254] ) by
+ ajax-webmail-app2 (Coremail) ; Tue, 25 Apr 2023 10:06:26 +0800 (GMT+08:00)
+X-Originating-IP: [172.16.0.254]
+Date:   Tue, 25 Apr 2023 10:06:26 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   =?UTF-8?B?5ZGo5biI5b63?= <u201911681@hust.edu.cn>
+To:     "abel vesa" <abelvesa@kernel.org>, "peng fan" <peng.fan@nxp.com>,
+        "michael turquette" <mturquette@baylibre.com>,
+        "stephen boyd" <sboyd@kernel.org>,
+        "shawn guo" <shawnguo@kernel.org>,
+        "sascha hauer" <s.hauer@pengutronix.de>,
+        "pengutronix kernel team" <kernel@pengutronix.de>,
+        "fabio estevam" <festevam@gmail.com>,
+        "nxp linux team" <linux-imx@nxp.com>, "bai ping" <ping.bai@nxp.com>
+Cc:     hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: clk-imx8mm: fix memory leak issue in
+ 'imx8mm_clocks_probe'
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20220802(cbd923c5)
+ Copyright (c) 2002-2023 www.mailtech.cn hust
+In-Reply-To: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+References: <20230413032439.1706448-1-u201911681@hust.edu.cn>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v7 10/12] reset: Add Nuvoton ma35d1 reset driver support
-Content-Language: en-US
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230412053824.106-1-ychuang570808@gmail.com>
- <20230412053824.106-11-ychuang570808@gmail.com>
- <20230424192137.GB30248@pengutronix.de>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <20230424192137.GB30248@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <2038e5bd.42407.187b62983e3.Coremail.u201911681@hust.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: GQEQrAAXaJWiNUdk9uLZAw--.56301W
+X-CM-SenderInfo: zxsqimqrrwmio6kx23oohg3hdfq/1tbiAQsMAV7Em5P7UAACs8
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+        CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+        daVFxhVjvjDU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 2023/4/25 上午 03:21, Philipp Zabel wrote:
-> Hi Jacky,
->
-> On Wed, Apr 12, 2023 at 05:38:22AM +0000, Jacky Huang wrote:
->> From: Jacky Huang <ychuang3@nuvoton.com>
->>
->> This driver supports individual IP reset for ma35d1. The reset
->> control registers is a subset of system control registers.
->>
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->> ---
->>   drivers/reset/Kconfig        |   6 +
->>   drivers/reset/Makefile       |   1 +
->>   drivers/reset/reset-ma35d1.c | 255 +++++++++++++++++++++++++++++++++++
->>   3 files changed, 262 insertions(+)
->>   create mode 100644 drivers/reset/reset-ma35d1.c
->>
->> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->> index 2a52c990d4fe..58477c6ca9b8 100644
->> --- a/drivers/reset/Kconfig
->> +++ b/drivers/reset/Kconfig
->> @@ -143,6 +143,12 @@ config RESET_NPCM
->>   	  This enables the reset controller driver for Nuvoton NPCM
->>   	  BMC SoCs.
->>   
->> +config RESET_NUVOTON_MA35D1
->> +	bool "Nuvton MA35D1 Reset Driver"
->> +	default ARCH_NUVOTON || COMPILE_TEST
->> +	help
->> +	  This enables the reset controller driver for Nuvoton MA35D1 SoC.
->> +
->>   config RESET_OXNAS
->>   	bool
->>   
->> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
->> index 3e7e5fd633a8..fd52dcf66a99 100644
->> --- a/drivers/reset/Makefile
->> +++ b/drivers/reset/Makefile
->> @@ -20,6 +20,7 @@ obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
->>   obj-$(CONFIG_RESET_MESON) += reset-meson.o
->>   obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->>   obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
->> +obj-$(CONFIG_RESET_NUVOTON_MA35D1) += reset-ma35d1.o
->>   obj-$(CONFIG_RESET_OXNAS) += reset-oxnas.o
->>   obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
->>   obj-$(CONFIG_RESET_POLARFIRE_SOC) += reset-mpfs.o
->> diff --git a/drivers/reset/reset-ma35d1.c b/drivers/reset/reset-ma35d1.c
->> new file mode 100644
->> index 000000000000..57ed710c10f4
->> --- /dev/null
->> +++ b/drivers/reset/reset-ma35d1.c
->> @@ -0,0 +1,255 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2023 Nuvoton Technology Corp.
->> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
->> + */
->> +
->> +#include <linux/device.h>
->> +#include <linux/io.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reboot.h>
->> +#include <linux/reset-controller.h>
->> +#include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
->> +
->> +struct ma35d1_reset_data {
->> +	struct reset_controller_dev rcdev;
->> +	void __iomem *base;
->> +};
->> +
->> +struct ma35d1_reboot_data {
->> +	struct notifier_block restart_handler;
->> +	void __iomem *base;
->> +};
-> These two structs can be combined into one, no need to duplicate the
-> iomem base.
-
-Sure, we will combine these two into one structure.
-
->> +
->> +static const struct {
->> +	unsigned long id;
-> Why store the id? ids should be contiguous and should start at 0,
-> so the id could just be an index into the array.
-
-Thank you, I didn't notice that the IDs were already consecutive.
-The id field is indeed unnecessary, and I will remove it.
-
->> +	u32 reg_ofs;
->> +	u32 bit;
->> +} ma35d1_reset_map[] = {
->> +	{ MA35D1_RESET_CHIP,    0x20, 0  },
->> +	{ MA35D1_RESET_CA35CR0,	0x20, 1  },
->> +	{ MA35D1_RESET_CA35CR1, 0x20, 2  },
->> +	{ MA35D1_RESET_CM4,     0x20, 3  },
->> +	{ MA35D1_RESET_PDMA0,   0x20, 4  },
->> +	{ MA35D1_RESET_PDMA1,   0x20, 5  },
->> +	{ MA35D1_RESET_PDMA2,   0x20, 6  },
->> +	{ MA35D1_RESET_PDMA3,   0x20, 7  },
->> +	{ MA35D1_RESET_DISP,    0x20, 9  },
->> +	{ MA35D1_RESET_VCAP0,   0x20, 10 },
->> +	{ MA35D1_RESET_VCAP1,   0x20, 11 },
->> +	{ MA35D1_RESET_GFX,     0x20, 12 },
->> +	{ MA35D1_RESET_VDEC,    0x20, 13 },
->> +	{ MA35D1_RESET_WHC0,    0x20, 14 },
->> +	{ MA35D1_RESET_WHC1,    0x20, 15 },
->> +	{ MA35D1_RESET_GMAC0,   0x20, 16 },
->> +	{ MA35D1_RESET_GMAC1,   0x20, 17 },
->> +	{ MA35D1_RESET_HWSEM,   0x20, 18 },
->> +	{ MA35D1_RESET_EBI,     0x20, 19 },
->> +	{ MA35D1_RESET_HSUSBH0, 0x20, 20 },
->> +	{ MA35D1_RESET_HSUSBH1, 0x20, 21 },
->> +	{ MA35D1_RESET_HSUSBD,  0x20, 22 },
->> +	{ MA35D1_RESET_USBHL,   0x20, 23 },
->> +	{ MA35D1_RESET_SDH0,    0x20, 24 },
->> +	{ MA35D1_RESET_SDH1,    0x20, 25 },
->> +	{ MA35D1_RESET_NAND,    0x20, 26 },
->> +	{ MA35D1_RESET_GPIO,    0x20, 27 },
->> +	{ MA35D1_RESET_MCTLP,   0x20, 28 },
->> +	{ MA35D1_RESET_MCTLC,   0x20, 29 },
->> +	{ MA35D1_RESET_DDRPUB,  0x20, 30 },
->> +	{ MA35D1_RESET_TMR0,    0x24, 2  },
->> +	{ MA35D1_RESET_TMR1,    0x24, 3  },
->> +	{ MA35D1_RESET_TMR2,    0x24, 4  },
->> +	{ MA35D1_RESET_TMR3,    0x24, 5  },
->> +	{ MA35D1_RESET_I2C0,    0x24, 8  },
->> +	{ MA35D1_RESET_I2C1,    0x24, 9  },
->> +	{ MA35D1_RESET_I2C2,    0x24, 10 },
->> +	{ MA35D1_RESET_I2C3,    0x24, 11 },
->> +	{ MA35D1_RESET_QSPI0,   0x24, 12 },
->> +	{ MA35D1_RESET_SPI0,    0x24, 13 },
->> +	{ MA35D1_RESET_SPI1,    0x24, 14 },
->> +	{ MA35D1_RESET_SPI2,    0x24, 15 },
->> +	{ MA35D1_RESET_UART0,   0x24, 16 },
->> +	{ MA35D1_RESET_UART1,   0x24, 17 },
->> +	{ MA35D1_RESET_UART2,   0x24, 18 },
->> +	{ MA35D1_RESET_UAER3,   0x24, 19 },
->> +	{ MA35D1_RESET_UART4,   0x24, 20 },
->> +	{ MA35D1_RESET_UART5,   0x24, 21 },
->> +	{ MA35D1_RESET_UART6,   0x24, 22 },
->> +	{ MA35D1_RESET_UART7,   0x24, 23 },
->> +	{ MA35D1_RESET_CANFD0,  0x24, 24 },
->> +	{ MA35D1_RESET_CANFD1,  0x24, 25 },
->> +	{ MA35D1_RESET_EADC0,   0x24, 28 },
->> +	{ MA35D1_RESET_I2S0,    0x24, 29 },
->> +	{ MA35D1_RESET_SC0,     0x28, 0  },
->> +	{ MA35D1_RESET_SC1,     0x28, 1  },
->> +	{ MA35D1_RESET_QSPI1,   0x28, 4  },
->> +	{ MA35D1_RESET_SPI3,    0x28, 6  },
->> +	{ MA35D1_RESET_EPWM0,   0x28, 16 },
->> +	{ MA35D1_RESET_EPWM1,   0x28, 17 },
->> +	{ MA35D1_RESET_QEI0,    0x28, 22 },
->> +	{ MA35D1_RESET_QEI1,    0x28, 23 },
->> +	{ MA35D1_RESET_ECAP0,   0x28, 26 },
->> +	{ MA35D1_RESET_ECAP1,   0x28, 27 },
->> +	{ MA35D1_RESET_CANFD2,  0x28, 28 },
->> +	{ MA35D1_RESET_ADC0,    0x28, 31 },
->> +	{ MA35D1_RESET_TMR4,    0x2C, 0  },
->> +	{ MA35D1_RESET_TMR5,    0x2C, 1  },
->> +	{ MA35D1_RESET_TMR6,    0x2C, 2  },
->> +	{ MA35D1_RESET_TMR7,    0x2C, 3  },
->> +	{ MA35D1_RESET_TMR8,    0x2C, 4  },
->> +	{ MA35D1_RESET_TMR9,    0x2C, 5  },
->> +	{ MA35D1_RESET_TMR10,   0x2C, 6  },
->> +	{ MA35D1_RESET_TMR11,   0x2C, 7  },
->> +	{ MA35D1_RESET_UART8,   0x2C, 8  },
->> +	{ MA35D1_RESET_UART9,   0x2C, 9  },
->> +	{ MA35D1_RESET_UART10,  0x2C, 10 },
->> +	{ MA35D1_RESET_UART11,  0x2C, 11 },
->> +	{ MA35D1_RESET_UART12,  0x2C, 12 },
->> +	{ MA35D1_RESET_UART13,  0x2C, 13 },
->> +	{ MA35D1_RESET_UART14,  0x2C, 14 },
->> +	{ MA35D1_RESET_UART15,  0x2C, 15 },
->> +	{ MA35D1_RESET_UART16,  0x2C, 16 },
->> +	{ MA35D1_RESET_I2S1,    0x2C, 17 },
->> +	{ MA35D1_RESET_I2C4,    0x2C, 18 },
->> +	{ MA35D1_RESET_I2C5,    0x2C, 19 },
->> +	{ MA35D1_RESET_EPWM2,   0x2C, 20 },
->> +	{ MA35D1_RESET_ECAP2,   0x2C, 21 },
->> +	{ MA35D1_RESET_QEI2,    0x2C, 22 },
->> +	{ MA35D1_RESET_CANFD3,  0x2C, 23 },
->> +	{ MA35D1_RESET_KPI,     0x2C, 24 },
->> +	{ MA35D1_RESET_GIC,     0x2C, 28 },
->> +	{ MA35D1_RESET_SSMCC,   0x2C, 30 },
->> +	{ MA35D1_RESET_SSPCC,   0x2C, 31 }
->> +};
->> +
->> +static u32 ma35d1_reset_map_lookup(unsigned long id)
->> +{
->> +	u32 i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(ma35d1_reset_map); i++) {
->> +		if (ma35d1_reset_map[i].id == id)
->> +			break;
->> +	}
->> +	return i;
->> +}
-> If you use the id as a look up into the mapping array, this lookup
-> function wouldn't be necessary.
-
-Yes, it's not necessary. I will modify it.
-
->> +static int ma35d1_restart_handler(struct notifier_block *this,
->> +				  unsigned long mode, void *cmd)
->> +{
->> +	u32 i;
->> +	struct ma35d1_reboot_data *data = container_of(this,
->> +						       struct ma35d1_reboot_data,
->> +						       restart_handler);
->> +
->> +	i = ma35d1_reset_map_lookup(MA35D1_RESET_CHIP);
->> +	writel_relaxed(BIT(ma35d1_reset_map[i].bit),
->> +		       data->base + ma35d1_reset_map[i].reg_ofs);
->> +	return 0;
->> +}
->> +
->> +static int ma35d1_reset_update(struct reset_controller_dev *rcdev,
->> +			       unsigned long id, bool assert)
->> +{
->> +	u32 i, reg;
->> +	struct ma35d1_reset_data *data = container_of(rcdev,
->> +						      struct ma35d1_reset_data,
->> +						      rcdev);
->> +
->> +	i = ma35d1_reset_map_lookup(id);
->> +	reg = readl_relaxed(data->base + ma35d1_reset_map[i].reg_ofs);
->> +	if (assert)
->> +		reg |= BIT(ma35d1_reset_map[i].bit);
->> +	else
->> +		reg &= ~(BIT(ma35d1_reset_map[i].bit));
->> +	writel_relaxed(reg, data->base + ma35d1_reset_map[i].reg_ofs);
-> This requires a spinlock to protect the register from simultaneous
-> read-modify-writes.
-
-OK, I will add spinlock protect for it.
-
-> [...]
->> +static int ma35d1_reset_probe(struct platform_device *pdev)
->> +{
->> +	int err;
->> +	struct device *dev = &pdev->dev;
->> +	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +	struct ma35d1_reset_data *reset_data;
->> +	struct ma35d1_reboot_data *reboot_data;
->> +
->> +	if (!pdev->dev.of_node) {
->> +		dev_err(&pdev->dev, "Device tree node not found\n");
-> The driver is only probed via OF, so this isn't reachable and can be
-> dropped.
-Okay, I will remove this check.
-> regards
-> Philipp
-
-Thank you for the comments.
-
-
-Best regards,
-Jacky Huang
-
+CgoKPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCj4g5Y+R5Lu25Lq6OiAiWmhvdSBTaGlkZSIgPHUy
+MDE5MTE2ODFAaHVzdC5lZHUuY24+Cj4g5Y+R6YCB5pe26Ze0OiAyMDIzLTA0LTEzIDExOjI0OjM5
+ICjmmJ/mnJ/lm5spCj4g5pS25Lu25Lq6OiAiQWJlbCBWZXNhIiA8YWJlbHZlc2FAa2VybmVsLm9y
+Zz4sICJQZW5nIEZhbiIgPHBlbmcuZmFuQG54cC5jb20+LCAiTWljaGFlbCBUdXJxdWV0dGUiIDxt
+dHVycXVldHRlQGJheWxpYnJlLmNvbT4sICJTdGVwaGVuIEJveWQiIDxzYm95ZEBrZXJuZWwub3Jn
+PiwgIlNoYXduIEd1byIgPHNoYXduZ3VvQGtlcm5lbC5vcmc+LCAiU2FzY2hhIEhhdWVyIiA8cy5o
+YXVlckBwZW5ndXRyb25peC5kZT4sICJQZW5ndXRyb25peCBLZXJuZWwgVGVhbSIgPGtlcm5lbEBw
+ZW5ndXRyb25peC5kZT4sICJGYWJpbyBFc3RldmFtIiA8ZmVzdGV2YW1AZ21haWwuY29tPiwgIk5Y
+UCBMaW51eCBUZWFtIiA8bGludXgtaW14QG54cC5jb20+LCAiQmFpIFBpbmciIDxwaW5nLmJhaUBu
+eHAuY29tPgo+IOaKhOmAgTogaHVzdC1vcy1rZXJuZWwtcGF0Y2hlc0Bnb29nbGVncm91cHMuY29t
+LCAiWmhvdSBTaGlkZSIgPHUyMDE5MTE2ODFAaHVzdC5lZHUuY24+LCBsaW51eC1jbGtAdmdlci5r
+ZXJuZWwub3JnLCBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcsIGxpbnV4LWtl
+cm5lbEB2Z2VyLmtlcm5lbC5vcmcKPiDkuLvpopg6IFtQQVRDSF0gY2xrOiBpbXg6IGNsay1pbXg4
+bW06IGZpeCBtZW1vcnkgbGVhayBpc3N1ZSBpbiAnaW14OG1tX2Nsb2Nrc19wcm9iZScKPiAKPiBU
+aGUgZnVuY3Rpb24gaW14OG1tX2Nsb2Nrc19wcm9iZSgpIGhhcyB0d28gbWFpbiBpc3N1ZXM6Cj4g
+LSBUaGUgb2ZfaW9tYXAoKSBmdW5jdGlvbiBtYXkgY2F1c2UgYSBtZW1vcnkgbGVhay4KPiAtIE1l
+bW9yeSBhbGxvY2F0ZWQgZm9yICdjbGtfaHdfZGF0YScgbWF5IG5vdCBiZSBmcmVlZCBwcm9wZXJs
+eQo+IGluIHNvbWUgcGF0aHMuCj4gCj4gVG8gZml4IHRoZXNlIGlzc3VlcywgdGhpcyBjb21taXQg
+cmVwbGFjZXMgdGhlIHVzZSBvZiBvZl9pb21hcCgpCj4gd2l0aCBkZXZtX29mX2lvbWFwKCkgYW5k
+IHJlcGxhY2VzIGt6YWxsb2MoKSB3aXRoIGRldm1fa3phbGxvYygpLgo+IFRoaXMgZW5zdXJlcyB0
+aGF0IGFsbCBtZW1vcnkgaXMgcHJvcGVybHkgbWFuYWdlZCBhbmQgYXV0b21hdGljYWxseQo+IGZy
+ZWVkIHdoZW4gdGhlIGRldmljZSBpcyByZW1vdmVkLgo+IAo+IEluIGFkZGl0aW9uLCB3aGVuIGRl
+dm1fb2ZfaW9tYXAoKSBhbGxvY2F0ZXMgbWVtb3J5IHdpdGggYW4gZXJyb3IsCj4gaXQgd2lsbCBm
+aXJzdCBqdW1wIHRvIGxhYmVsICJ1bnJlZ2lzdGVyX2h3cyIgYW5kCj4gdGhlbiByZXR1cm4gUFRS
+XyBFUlIoYmFzZSkuCj4gCj4gRml4ZXM6IDljNzFmOWVhMzVkNyAoImNsazogaW14OiBpbXg4bW06
+IFN3aXRjaCB0byBjbGtfaHcgYmFzZWQgQVBJIikKPiBGaXhlczogYmE1NjI1YzNlMjcyICgiY2xr
+OiBpbXg6IEFkZCBjbG9jayBkcml2ZXIgc3VwcG9ydCBmb3IgaW14OG1tIikKPiBTaWduZWQtb2Zm
+LWJ5OiBaaG91IFNoaWRlIDx1MjAxOTExNjgxQGh1c3QuZWR1LmNuPgo+IC0tLQo+IFRoZSBpc3N1
+ZSBpcyBkaXNjb3ZlcmVkIGJ5IHN0YXRpYyBhbmFseXNpcywgYW5kIHRoZSBwYXRjaCBpcyBub3Qg
+dGVzdGVkIHlldC4KPiAKPiAgZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4bW0uYyB8IDE2ICsrKysr
+KysrKystLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDEwIGluc2VydGlvbnMoKyksIDYgZGVsZXRp
+b25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2lteC9jbGstaW14OG1tLmMgYi9k
+cml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtbS5jCj4gaW5kZXggYjYxODg5MjE3MGYyLi5lNmUwYmI0
+ODA1YTYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4bW0uYwo+ICsrKyBi
+L2RyaXZlcnMvY2xrL2lteC9jbGstaW14OG1tLmMKPiBAQCAtMzAzLDcgKzMwMyw3IEBAIHN0YXRp
+YyBpbnQgaW14OG1tX2Nsb2Nrc19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+
+ICAJdm9pZCBfX2lvbWVtICpiYXNlOwo+ICAJaW50IHJldDsKPiAgCj4gLQljbGtfaHdfZGF0YSA9
+IGt6YWxsb2Moc3RydWN0X3NpemUoY2xrX2h3X2RhdGEsIGh3cywKPiArCWNsa19od19kYXRhID0g
+ZGV2bV9remFsbG9jKGRldiwgc3RydWN0X3NpemUoY2xrX2h3X2RhdGEsIGh3cywKPiAgCQkJCQkg
+IElNWDhNTV9DTEtfRU5EKSwgR0ZQX0tFUk5FTCk7Cj4gIAlpZiAoV0FSTl9PTighY2xrX2h3X2Rh
+dGEpKQo+ICAJCXJldHVybiAtRU5PTUVNOwo+IEBAIC0zMjAsMTAgKzMyMCwxMiBAQCBzdGF0aWMg
+aW50IGlteDhtbV9jbG9ja3NfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiAg
+CWh3c1tJTVg4TU1fQ0xLX0VYVDRdID0gaW14X2dldF9jbGtfaHdfYnlfbmFtZShucCwgImNsa19l
+eHQ0Iik7Cj4gIAo+ICAJbnAgPSBvZl9maW5kX2NvbXBhdGlibGVfbm9kZShOVUxMLCBOVUxMLCAi
+ZnNsLGlteDhtbS1hbmF0b3AiKTsKPiAtCWJhc2UgPSBvZl9pb21hcChucCwgMCk7Cj4gKwliYXNl
+ID0gZGV2bV9vZl9pb21hcChkZXYsIG5wLCAwLCBOVUxMKTsKPiAgCW9mX25vZGVfcHV0KG5wKTsK
+PiAtCWlmIChXQVJOX09OKCFiYXNlKSkKPiAtCQlyZXR1cm4gLUVOT01FTTsKPiArCWlmIChXQVJO
+X09OKElTX0VSUihiYXNlKSkpIHsKPiArCQlyZXQgPSBQVFJfRVJSKGJhc2UpOwo+ICsJCWdvdG8g
+dW5yZWdpc3Rlcl9od3M7Cj4gKwl9Cj4gIAo+ICAJaHdzW0lNWDhNTV9BVURJT19QTEwxX1JFRl9T
+RUxdID0gaW14X2Nsa19od19tdXgoImF1ZGlvX3BsbDFfcmVmX3NlbCIsIGJhc2UgKyAweDAsIDAs
+IDIsIHBsbF9yZWZfc2VscywgQVJSQVlfU0laRShwbGxfcmVmX3NlbHMpKTsKPiAgCWh3c1tJTVg4
+TU1fQVVESU9fUExMMl9SRUZfU0VMXSA9IGlteF9jbGtfaHdfbXV4KCJhdWRpb19wbGwyX3JlZl9z
+ZWwiLCBiYXNlICsgMHgxNCwgMCwgMiwgcGxsX3JlZl9zZWxzLCBBUlJBWV9TSVpFKHBsbF9yZWZf
+c2VscykpOwo+IEBAIC0zOTksOCArNDAxLDEwIEBAIHN0YXRpYyBpbnQgaW14OG1tX2Nsb2Nrc19w
+cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAKPiAgCW5wID0gZGV2LT5vZl9u
+b2RlOwo+ICAJYmFzZSA9IGRldm1fcGxhdGZvcm1faW9yZW1hcF9yZXNvdXJjZShwZGV2LCAwKTsK
+PiAtCWlmIChXQVJOX09OKElTX0VSUihiYXNlKSkpCj4gLQkJcmV0dXJuIFBUUl9FUlIoYmFzZSk7
+Cj4gKwlpZiAoV0FSTl9PTihJU19FUlIoYmFzZSkpKSB7Cj4gKwkJcmV0ID0gUFRSX0VSUihiYXNl
+KTsKPiArCQlnb3RvIHVucmVnaXN0ZXJfaHdzOwo+ICsJfQo+ICAKPiAgCS8qIENvcmUgU2xpY2Ug
+Ki8KPiAgCWh3c1tJTVg4TU1fQ0xLX0E1M19ESVZdID0gaW14OG1fY2xrX2h3X2NvbXBvc2l0ZV9j
+b3JlKCJhcm1fYTUzX2RpdiIsIGlteDhtbV9hNTNfc2VscywgYmFzZSArIDB4ODAwMCk7Cj4gLS0g
+Cj4gMi4zNC4xCnBpbmfvvJ8=
