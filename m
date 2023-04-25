@@ -2,143 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7A1C77B61
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 12:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 865A9C6FD18
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 12:05:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233999AbjDYMC0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 08:02:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34136 "EHLO
+        id S233968AbjDYMFN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Apr 2023 08:05:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233452AbjDYMCY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 08:02:24 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9E3D32C;
-        Tue, 25 Apr 2023 05:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1682424143; x=1713960143;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ktZDAmJABhXIc6D5OVFisqlZkbF33qJIsMcwJhPUgkw=;
-  b=Bn6pkPidVvH4WT3yCWj6jWi7dvOh3Rus4CqZ+ghE0BUHV5AbKFfTXYro
-   jwGA24KpLVUmZpVOvNqFimxpACzS3F5GHf4GUKmCgn2SBlBeOx0vnD3fR
-   LPsyZanz2oL611KT4FuNroWjwajzsakfMGLVQj4BC8tdymjYDhHIS/BOh
-   uQUDufSy8wGiwUk6sn5dFlmQ3AMWr2/diNNP1diGVVgz/vgE723fDBpTj
-   qQctcdEu7lC5SmFbll0Ytft2TGMZ7uAsXnNXxQapzdO70fDntmmjaKVfm
-   Z2asKAypo0mWJZNPTTCjQ6UzSE73ChAyJYIB2hA4KySWqWBOfQnr7EvwW
-   A==;
-X-IronPort-AV: E=Sophos;i="5.99,225,1677567600"; 
-   d="asc'?scan'208";a="210584387"
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Apr 2023 05:02:22 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 25 Apr 2023 05:02:22 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Tue, 25 Apr 2023 05:02:20 -0700
-Date:   Tue, 25 Apr 2023 13:02:02 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Hal Feng <hal.feng@starfivetech.com>
-CC:     <linux-clk@vger.kernel.org>, <oe-kbuild-all@lists.linux.dev>,
-        <linux-mm@kvack.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Gazzillo <paul@pgazz.com>,
-        Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] clk: starfive: Fix RESET_STARFIVE_JH7110 can't be
- selected in a specified case
-Message-ID: <20230425-filtrate-nearby-f62515de1ec1@wendy>
-References: <20230418123756.62495-1-hal.feng@starfivetech.com>
- <20230418123756.62495-2-hal.feng@starfivetech.com>
- <aab34ed5-5b83-7e90-0bf9-a24fdf4c55a5@starfivetech.com>
+        with ESMTP id S233907AbjDYMFM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 08:05:12 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8667C49F8;
+        Tue, 25 Apr 2023 05:05:09 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 889195FD05;
+        Tue, 25 Apr 2023 15:05:06 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1682424306;
+        bh=/7k2hmgzdS0RWThtX1QVPv33A+h1jqDTdyLWRVz4PtQ=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=rUHWN1H28wH6iCXoGWFuo0Owuh5UxXgiiUvT9oyGwOMOEYDF9gByjamwqDuIWOuXt
+         PFRpBZGx1+BZ2xn4eMdt0SqXge2rJxNeT0x9tXzGu0XVPV0Hdp2hBsvPqDbNOc4xhL
+         HAQWve0wxkYfvK9MJl6HSqSWQHGuNFMNXHXZqHP3gaumSc62gXiduIh8LvEJsbPIux
+         m4y9fIin/257IMbKn4Hvu5dMU2kd4c71/ejzWTYrHGyBZ4JAtFsfuIR60QKya+AOW9
+         aqnwRYUBFFa92VWgdYHCYhAhxIlI8GFovBlj1F0QArwb+0dIYT9P+H9t15CZr06HK3
+         J1XB8AUGCaTGQ==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Tue, 25 Apr 2023 15:05:05 +0300 (MSK)
+Date:   Tue, 25 Apr 2023 15:05:05 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v13 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+Message-ID: <20230425120505.xrgrjrxcxennrzct@CAB-WSD-L081021>
+References: <20230405195927.13487-1-ddrokosov@sberdevices.ru>
+ <20230405195927.13487-7-ddrokosov@sberdevices.ru>
+ <CAFBinCBGWOB2XLb6su=R3W684rKdK3pOgPFsCGx+Oyo_pgdeBg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GHeW0EClyRQDEg0y"
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <aab34ed5-5b83-7e90-0bf9-a24fdf4c55a5@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFBinCBGWOB2XLb6su=R3W684rKdK3pOgPFsCGx+Oyo_pgdeBg@mail.gmail.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/04/25 07:55:00 #21159618
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---GHeW0EClyRQDEg0y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Apr 23, 2023 at 11:30:38PM +0200, Martin Blumenstingl wrote:
+> On Wed, Apr 5, 2023 at 9:59 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> [...]
+> > +static const struct of_device_id a1_periphs_clkc_match_table[] = {
+> > +       { .compatible = "amlogic,a1-clkc", },
+> > +       {},
+> nit-pick: please remove the comma after the sentinel
+> 
 
-On Tue, Apr 25, 2023 at 07:53:04PM +0800, Hal Feng wrote:
-> On Tue, 18 Apr 2023 20:37:56 +0800, Hal Feng wrote:
-> > When (ARCH_STARFIVE [=3Dn] && COMPILE_TEST [=3Dy] && RESET_CONTROLLER [=
-=3Dn]),
-> > RESET_STARFIVE_JH7110 can't be selected by CLK_STARFIVE_JH7110_SYS
-> > and CLK_STARFIVE_JH7110_AON.
-> >=20
-> > Add a condition `if RESET_CONTROLLER` to fix it. Also, delete redundant
-> > selected options of CLK_STARFIVE_JH7110_AON because these options are
-> > already selected by the dependency.
-> >=20
-> > Fixes: edab7204afe5 ("clk: starfive: Add StarFive JH7110 system clock d=
-river")
-> > Fixes: b2ab3c94f41f ("clk: starfive: Add StarFive JH7110 always-on cloc=
-k driver")
-> > Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
->=20
-> Hi, Stephen,
->=20
-> Could this patch be merged into v6.4? Thanks.
+Thank you for bringing up that point! There's no problem with removing
+it in the next version of the product. I'll prepare it.
 
-Whoops, I thought I had replied to this a week ago. In case it helps,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > +MODULE_DEVICE_TABLE(of, a1_periphs_clkc_match_table);
+> > +
+> > +static struct platform_driver a1_periphs_clkc_driver = {
+> > +       .probe = meson_a1_periphs_probe,
+> > +       .driver = {
+> > +               .name = "a1-clkc",
+> > +               .of_match_table = of_match_ptr(a1_periphs_clkc_match_table),
+> I wonder if we should drop of_match_ptr() here as no other meson clock
+> driver uses it.
+> Also there's commits like 00cb754ac622 ("clk: imx8mq: drop
+> of_match_ptr from of_device_id table") which explicitly remove it from
+> other drivers.
 
-Thanks,
-Conor.
+Exactly, all Meson clock drivers depend on the ARM64 config, which in
+turn selects CONFIG_OF by default. So of_match_ptr can be dropped.
 
->=20
-> Best regards,
-> Hal
->=20
-> > ---
-> >  drivers/clk/starfive/Kconfig | 5 +----
-> >  1 file changed, 1 insertion(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-> > index 71c1148ee5f6..5d2333106f13 100644
-> > --- a/drivers/clk/starfive/Kconfig
-> > +++ b/drivers/clk/starfive/Kconfig
-> > @@ -26,7 +26,7 @@ config CLK_STARFIVE_JH7110_SYS
-> >  	depends on ARCH_STARFIVE || COMPILE_TEST
-> >  	select AUXILIARY_BUS
-> >  	select CLK_STARFIVE_JH71X0
-> > -	select RESET_STARFIVE_JH7110
-> > +	select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
-> >  	default ARCH_STARFIVE
-> >  	help
-> >  	  Say yes here to support the system clock controller on the
-> > @@ -35,9 +35,6 @@ config CLK_STARFIVE_JH7110_SYS
-> >  config CLK_STARFIVE_JH7110_AON
-> >  	tristate "StarFive JH7110 always-on clock support"
-> >  	depends on CLK_STARFIVE_JH7110_SYS
-> > -	select AUXILIARY_BUS
-> > -	select CLK_STARFIVE_JH71X0
-> > -	select RESET_STARFIVE_JH7110
-> >  	default m if ARCH_STARFIVE
-> >  	help
-> >  	  Say yes here to support the always-on clock controller on the
->=20
+> 
+> Apart form these two this patch looks great to me.
+> 
 
---GHeW0EClyRQDEg0y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZEfBOgAKCRB4tDGHoIJi
-0rbrAP0V0yJ1YNh+S+KxDVsTxngYTKlRNjGmYP5q5MQo37uTyAEA24mDl+HcIrF5
-XyZakrHAwWpNtM6Z4Ux111f6UVJsRwQ=
-=wdU7
------END PGP SIGNATURE-----
-
---GHeW0EClyRQDEg0y--
+-- 
+Thank you,
+Dmitry
