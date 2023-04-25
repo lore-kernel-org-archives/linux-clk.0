@@ -2,95 +2,89 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6F2C7618E
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Apr 2023 22:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5B7C7618E
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Apr 2023 01:14:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232815AbjDXWhX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Apr 2023 18:37:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52790 "EHLO
+        id S231189AbjDYBOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Apr 2023 21:14:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233134AbjDXWhE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 18:37:04 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CA5126;
-        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id d2e1a72fcca58-63b7b54642cso3776359b3a.0;
-        Mon, 24 Apr 2023 15:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682375822; x=1684967822;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
-        b=FPQSG90ZXSUc5P/yeV7Ty842LoGViNqLiRh835nar/kqyUOmMd3Sdfd473qwlVozKO
-         G9fJYG46Ml8SwmmrRAXtovGGPNVv3BtZHM1l5+rkPfUvfi204l1aNR1eP03GEM4Eyca+
-         l6e8tFFdiaah8ENGQ1jLztg8EbSXXtpV/DPEOGLK81XLZQO5tFxYBT6hyZQoQkyAyPkE
-         sUnS3iP5uhRkjrsypQF5m3VmwyOQd7U4TKamduNKTYDV22X54R2uPf3OUaxzOyjUrzAM
-         6Z4op/Cf5aC6TscrRxhdNgpoNxWrZkvN1PHv8kdAV1wgQ7/Xi5KB+BV3WGCWX+Y8BqaR
-         2sew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682375822; x=1684967822;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TfVuBjqbPrda2V4JgOmJGuE9f+TlylUgWhlc/W6i9V0=;
-        b=K5OnKvuwkmkMQ9frrzwU5Kl22tsjMTvruof3TNyrQO9EU9mnDapWXe1BNsLtCj+26+
-         YHhmouBM/niPw/oLadvQRcvJOPot4tw9VkRxi0vz0TZg+liEleXht86uWsgeLIKEpXTE
-         LQdHr3hYyl9vgZScrt4LZVzTrd8QM48HSO/C8tuzosxl8Yj16CAnEZbJjI/Uf/FIrHa1
-         +9xw/TgMwJZwmuwUiediap633Ir0bJeYadMI5u492o8MjMjTmo11RlDBTTZargbSs/C0
-         o6uggZ+2tsjptISLtWADPVQuQwh6Lg4NPTBUo18Ewwc0iaKukJfx+D8yvMcZraJ5N52Y
-         ja3A==
-X-Gm-Message-State: AAQBX9c1hRPetwNLlJ4HgFldVlpxmq/AzVMdl0KgU5cBLK5ye7ruUoMX
-        0YwQuY+eUx2OkgZmC6sV43I=
-X-Google-Smtp-Source: AKy350bQkD9qEKt0AXaIEoQV+2YVispEViRqtBeF0JlyRIcvdnq3SzLC7lBttdklkKb+7Mpd7n7YGQ==
-X-Received: by 2002:aa7:888a:0:b0:637:f1ae:d3e with SMTP id z10-20020aa7888a000000b00637f1ae0d3emr21117099pfe.25.1682375822356;
-        Mon, 24 Apr 2023 15:37:02 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id i64-20020a62c143000000b0063d328a690fsm7821812pfg.25.2023.04.24.15.36.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Apr 2023 15:37:01 -0700 (PDT)
-Message-ID: <185ac214-a94e-682e-0ec2-2beb25ec16fb@gmail.com>
-Date:   Mon, 24 Apr 2023 15:36:56 -0700
+        with ESMTP id S229872AbjDYBOb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Apr 2023 21:14:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086C35272;
+        Mon, 24 Apr 2023 18:14:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9147F60EE2;
+        Tue, 25 Apr 2023 01:14:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA10C4339B;
+        Tue, 25 Apr 2023 01:14:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682385269;
+        bh=GxmMXN8bjubx8moTEEB2GPp+bfP/IUpllK5wYlBvT34=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=sfog3bHGqRFSQ6oDsyqkt7gsW70igSL9FIaoj4owAGixxP3LgBusV/hOGO+twEYzI
+         42VcJkwovaQJkkserzhQx1cOJpq4/qnFZXqUa729/eYHjGFS+/meY+NXbhvoxgridR
+         OXKPFGj07E4p3yN8QOS9cHWFM33TVQL3A1hQYOz35YWuh1jiFn1nKSkdL/GyUCkr6l
+         HuViNHQO2Zfj9fnAVvGf5u6N+uPDo16iuLE/FCeuDF4wktkT0St9+cvlfxbSvz23DV
+         CC5AjlOjlskVoW8ShveHnj9g+S5E81DPnxBzR7KzhEMdW+BZjOzYCqJxm7Zcy86J0q
+         Q0oQITZUp06tg==
+Message-ID: <477c7845dcc5f3a2dfbeafd2088a5e5d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2] clk: bcm: rpi: Fix off by one in
- raspberrypi_discover_clocks()
-Content-Language: en-US
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "Ivan T. Ivanov" <iivanov@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Dom Cobley <popcornmix@gmail.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        kernel-janitors@vger.kernel.org
-References: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <5a850b08-d2f5-4794-aceb-a6b468965139@kili.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230424144536.277508-1-andersson@kernel.org>
+References: <20230424144536.277508-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm Clock updates for v6.4
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Kathiravan T <quic_kathirav@quicinc.com>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Otto =?utf-8?q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Luca Weiss <luca@z3ntu.xyz>,
+        Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>,
+        Andrew Halaney <ahalaney@redhat.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mohammad Rafi Shaik <quic_mohs@quicinc.com>,
+        Rayyan Ansari <rayyan@ansari.sh>,
+        Shazad Hussain <quic_shazhuss@quicinc.com>,
+        Tom Rix <trix@redhat.com>,
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date:   Mon, 24 Apr 2023 18:14:27 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 4/21/23 03:41, Dan Carpenter wrote:
-> Smatch detected an off by one in this code:
->      drivers/clk/bcm/clk-raspberrypi.c:374 raspberrypi_discover_clocks()
->      error: buffer overflow 'data->hws' 16 <= 16
-> 
-> The data->hws[] array has RPI_FIRMWARE_NUM_CLK_ID elements so the >
-> comparison needs to changed to >=.
-> 
-> Fixes: 12c90f3f27bb ("clk: bcm: rpi: Add variant structure")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Quoting Bjorn Andersson (2023-04-24 07:45:36)
+> The following changes since commit fe15c26ee26efa11741a7b632e9f23b01aca4c=
+c6:
+>=20
+>   Linux 6.3-rc1 (2023-03-05 14:52:03 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.4
+>=20
+> for you to fetch changes up to 32c2f2a46db1322caaf78d5ea747ed5c56d2e353:
+>=20
+>   clk: qcom: gcc-sc8280xp: Add EMAC GDSCs (2023-04-24 07:22:01 -0700)
+>=20
+> ----------------------------------------------------------------
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
-
+Thanks. Pulled into clk-next
