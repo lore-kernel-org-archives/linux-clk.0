@@ -2,353 +2,204 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CCAC7618E
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Apr 2023 10:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DC6C77B60
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Apr 2023 10:53:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240606AbjDZKuv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Apr 2023 06:50:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
+        id S240282AbjDZKxP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Apr 2023 06:53:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240608AbjDZKt4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2023 06:49:56 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56E715260;
-        Wed, 26 Apr 2023 03:49:49 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id A396D5FD7C;
-        Wed, 26 Apr 2023 13:49:47 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1682506187;
-        bh=IH3YamOzLQv1Nj0YgkBPSG4+d92jT6kWcYeExBHgq9g=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=nADzFakiFOt9+0UeJf3hyK3Bt7ErYNmtKAmIsI6Sgjucb6p/yzwzFVWQRT9u4qKPl
-         maSM5dv99oqUHnveu7gy9A3twHRFoj2QfawshslPa8Bau5QK0lSHReLap0wBlxdnAb
-         5PUyRX3To3FpdSA5erZrKkw9EpcI0VDA0TAjg3sr2vwHBHcQ25fmrNV+3fkGZEAwp2
-         GffMsyn9HGldNL6PbJuTDMXvtBTXxjzkPObPloRC2cccfgHxsVJcMB5mAOW4dnouJn
-         LH+ZhzL2p185R7us/KS9PVl7oxteYCN/q07iJg9DGhmc1CMrqotayP1vdk4V4Y4+X5
-         FCJkkiIETNfVQ==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Wed, 26 Apr 2023 13:49:47 +0300 (MSK)
-Date:   Wed, 26 Apr 2023 13:49:46 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Yu Tu <yu.tu@amlogic.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S240326AbjDZKxO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2023 06:53:14 -0400
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on20615.outbound.protection.outlook.com [IPv6:2a01:111:f400:7e1a::615])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3256A5B81;
+        Wed, 26 Apr 2023 03:52:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NVyBuSuqtYuJ1+SKLJ6w6KtW0OOKrJEPl0vtqhEUbQPo92/RBtI/XQaFhgotgmKeBZYVtWwoofBTnpZW0TKwCxIgUVS/CShy1KMcPfMOi+Fg0F7t3RnYPqx7EDAHana9GADiI+zrTAnsHKjbH2vGeCuHBfNe04LhHcqzCzB4Z0uMw1LR1aut+LAbEAfSUzE0NnkbJ2znlVBrgPDU3CrgTjU98YCYbUWbrkxtt6n9bkBVSkkIpo+9uIMXn/IRCAbx3EGWoTKFlQ6GSwpSLQyPtyFK9eZVNMEkcLdsedz2nnpyiKf+ceHZTYPZnxGcVYBHiKfuBYyyyp6w5S5oCcnI1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hZjGRh8inPp5EFI0g9PM/FLHT9+sxPrIk3ppjfCNHIw=;
+ b=Hr7W+Wprj2qQ4JK9zU7NXPZA0A6YuwrAFdVzXdRaRymgKk2Yq9c2lhy+NerO+1If32YcXYJ0tIW7R75Ji0u/pG8zV3ZhnxMi8mYhljvvz1VWR4Cz39piBc6FNHtV4NiC4B4jPi7h1T2Gb8wcSfcf0Lko6rX2GsXAKJeYACA6YgrUzyPczBEWpzo4jBRWC4I2x1O2slF/EM2uLp/eBlxcXYUeJYhHDO25d2/+jItaPfv2Ce4RGC5uSq3bagDDJ2vXr/fchAX1VC/7SijB6xJ35YT2esoWMSej+pxA8izqtOcLyHjacWleAEHeeRjOZgpzO68wFu/4LsnU5w1cYXYCEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hZjGRh8inPp5EFI0g9PM/FLHT9+sxPrIk3ppjfCNHIw=;
+ b=ElfS425DorZV/j/Cj0UJynIRwM+bqt2Xs/xijptPH9P2IcB+txjlYXmqP+5mdQ8a8zTnqvc7678Y1lTalHnUoUJlEm3aLE4ekKXfNdZ+z4cgw8rJCKvIRycrlL4GFcS2hPgehKQ0LjE4m1jiR30BdxPY0wV7RPqPL9sku9nKrrM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB6452.eurprd04.prod.outlook.com (2603:10a6:208:16d::21)
+ by DU2PR04MB8870.eurprd04.prod.outlook.com (2603:10a6:10:2e1::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.21; Wed, 26 Apr
+ 2023 10:51:45 +0000
+Received: from AM0PR04MB6452.eurprd04.prod.outlook.com
+ ([fe80::245a:9272:b30a:a21c]) by AM0PR04MB6452.eurprd04.prod.outlook.com
+ ([fe80::245a:9272:b30a:a21c%3]) with mapi id 15.20.6340.021; Wed, 26 Apr 2023
+ 10:51:45 +0000
+Date:   Wed, 26 Apr 2023 13:51:40 +0300
+From:   Vladimir Oltean <vladimir.oltean@nxp.com>
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <kelvin.zhang@amlogic.com>, <qi.duan@amlogic.com>
-Subject: Re: [PATCH V7 2/4] dt-bindings: clock: document Amlogic S4 SoC
- peripherals clock controller
-Message-ID: <20230426104946.xiwsdjxris2faf7x@CAB-WSD-L081021>
-References: <20230417065005.24967-1-yu.tu@amlogic.com>
- <20230417065005.24967-3-yu.tu@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?utf-8?B?RmVybuKUnMOtbmRleg==?= Rojas <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
+Message-ID: <20230426105140.t4yqv6irtjcwptm5@skbuf>
+References: <20230425195002.fls5cmwolyrslpad@skbuf>
+ <b7779674-c3ac-e0ab-3ca8-db1ec5953a97@seco.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230417065005.24967-3-yu.tu@amlogic.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/04/26 04:45:00 #21166225
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <b7779674-c3ac-e0ab-3ca8-db1ec5953a97@seco.com>
+X-ClientProxiedBy: FR3P281CA0186.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a4::13) To AM0PR04MB6452.eurprd04.prod.outlook.com
+ (2603:10a6:208:16d::21)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6452:EE_|DU2PR04MB8870:EE_
+X-MS-Office365-Filtering-Correlation-Id: b1af915b-226d-4c46-ca90-08db46443a1e
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Ni/GpH9Rawu6XWT+SkBBkpBSKRvRVzCf3CEEfXT1H/XXQY9jkV4I7US0KFkNt50Bqwx8o/EXV2TJRPUt9Isj9+YsrrVmsQeG59lWeDWk7c2Qa8PQ1nfEQOT6dEJMUgIIOp6eNsQVuXVOd03uCaqDSL8vsYNUDP2hpsDjSzB0kB8z4r5XY4Raovm2q9RiuynFusTddxZd8x6lz/W+p/wohwIlceHJH6jmMZsJ1ZuxTsm7i5SVTfkMVbMh2LLHcc74+DwH1ucOQB2YH6bT8mA597N8WgrUbbnPjFf5ujOrUXBogtIAGJ3v8QypOxmRCrJuDiM3fXl6aCILnYjqnkZG6Ry5qoE9w9oqgDzr1PiH0PHAXDuS9gcXPkldAFfJ9liq7UAStXNqazgIFqAIfkY4uOv6FF3t6mFVlfGQbPt7KjaD+V7zU3mTiSbrr1dWE3q0qPXQb4QkuOIGe9govAc7cjD1mK6Sh26udpiraaZQCUP0TpIIVKZ8zQQRflV3T3emM4EdCq1XXf6gQxy7GHRsjP+SwMVeFKn990/LVtdjdFY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6452.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(4636009)(136003)(366004)(396003)(346002)(39860400002)(376002)(451199021)(54906003)(83380400001)(478600001)(6486002)(26005)(9686003)(6506007)(6512007)(1076003)(966005)(6666004)(316002)(6916009)(41300700001)(4326008)(186003)(66476007)(66556008)(66946007)(5660300002)(7416002)(44832011)(2906002)(38100700002)(8676002)(8936002)(33716001)(86362001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?C3TcgZS1oxKSnB0C/yBIbtEJisb7XgZjMWBSBRBhSfXlNJSScQ/yRVuDtka4?=
+ =?us-ascii?Q?OvT2KQsBZlUa8+p/kBVa7YSm5++sHaC3nmSsP1VWpmzK+PhougQGS7DCOoRM?=
+ =?us-ascii?Q?XW+uYkf8VyoH8x+QGahDViIdd00mwF+vYw5TlAeR4NrLIY2u+k5qEOP5dehz?=
+ =?us-ascii?Q?yZRSwiZ56C2XTi6XeZbzigHF6gCweKVzdRMHJYm3BG+BYMy4BdQ0vxi5G2RQ?=
+ =?us-ascii?Q?l4hjS3yYGgHvx22juw+dDUniKwxNbilela1+MDtnG0M7tFa4fDUuUiKELFrp?=
+ =?us-ascii?Q?c2JXfSa9OjBrz0DbAOVrAoolN9rfnRgmvvQYUTy8IXn5pkXk82gB6YGLc8V5?=
+ =?us-ascii?Q?iUEQxMCbL1vjMNyJYS30OvHCETW8JCh67qOU2Ume19K922PVTDszjk7jKvhG?=
+ =?us-ascii?Q?4gOtASGxNazefOAIkd1t+RRnH3DviC17xHaC3pHI38hEfoNHGQfqLQriIJuc?=
+ =?us-ascii?Q?QHWur7+u8qccluYSJAeG6mc+4gSdV9HUVBI/X1J0IO/etUk4d1aXBfS+69iq?=
+ =?us-ascii?Q?igSB1E3xqqYoGbFJig1WC03w21UXiyDqa/BjIqKH3rVJoKdJpjokbixHvipQ?=
+ =?us-ascii?Q?KRU1phzhpMoIwymVK4UGNOOHUI74ixJ7N1Mb5UFasWr/diAD7EpmgLyUwyhI?=
+ =?us-ascii?Q?/uWQNL1kUhfS0J43W5GLCITgmqVEZ1XuKOuwQn/7PU7//S/4aLKWd+9BdqTU?=
+ =?us-ascii?Q?GJjsslemsrefsrtf/TBfO0loVWMKqCPo3nhCIjq1G6RaRoXYpq9kD/DTa6Z+?=
+ =?us-ascii?Q?XvI4VnWjiU2DDIIyWNHiQpzW1HYuYsAw8kgZzKVigap3IoMLeF0OQGpmZ0wS?=
+ =?us-ascii?Q?hsfDQCNTkJxbncleNr0FSHwd3JK8bHuP396eV4bAjgHvbMBDn40SOAembyBm?=
+ =?us-ascii?Q?ZJ5i7LB3phub0ek12JnSn4awoMb9wctMKLeaSiMWjeBdOdh7ak1lunSTv1sT?=
+ =?us-ascii?Q?kOP9wiOWTRXkF+ggz6m9nX3qg7HcVTvx4lRIEpPKSZCPSq0mXZqLyJB5/QAm?=
+ =?us-ascii?Q?mS6oeJXyn2VCzpjNUZGSJRz3GCLBHCq8dH+K8wzpph2406m5v4VDmuGw9HMt?=
+ =?us-ascii?Q?o9ZNTV82hJIRXeKasGVOthpP+9Ul32o+g82OFA7bB9NiRfurczXSYEUvGiIY?=
+ =?us-ascii?Q?C7We9iQqOp54OOg+8Dkhq/upT2R7SLfY/3/Y6VqxARtIQvsXo/VH1cja8u9P?=
+ =?us-ascii?Q?rFJpA7wxqwmeZ/gSW9VDhU885Rjo+i3chdxAk/eUgzZAAi0JSfPrsoPwPaMp?=
+ =?us-ascii?Q?TR7uR5AMJaQB9mYVEmx9X+EL7Q6IiiIWN1c8eKaGteRSNQM+gIqEQW4Psixo?=
+ =?us-ascii?Q?V/Ku/9RjLbaArJil7g+ikenGRwzko3DhRLVl2nqFsjtJ+Gw6OyocfuWPJad5?=
+ =?us-ascii?Q?FGmfMvp7fL5YeHLD4HIIAi4Vn4+kr21CzvoQ6Z9nRrV/737cdY2U9vmJLxKa?=
+ =?us-ascii?Q?XwUMQGPG/2A5Sro4RBbRT03Dho26cLVWQfSszZs8i5IdvQMwHy+cQj8QYbBf?=
+ =?us-ascii?Q?DuBlZb7r8l8SMOVLutACtTr4jLxZxfGMK7CBNdc4csMcuSccYILHvJvUUZRN?=
+ =?us-ascii?Q?L5TWX8brvNbuQD3pVK6UzKQUTuab59GMSPNkdxCltLiTFyj62VTYTxLfq64N?=
+ =?us-ascii?Q?Wg=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1af915b-226d-4c46-ca90-08db46443a1e
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6452.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Apr 2023 10:51:45.1960
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eIe2lzPc/ieA6HFcFWKuw/SpOrC+nDnToRuHL6TaRHl1kvojxh3Y0PQ5LNmWCM6M6hOMMKjSa+t+dIQCyx+SQg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8870
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Yu,
-
-Thank you for the patch series! Please find my comments below.
-
-On Mon, Apr 17, 2023 at 02:50:03PM +0800, Yu Tu wrote:
-> Add the S4 peripherals clock controller dt-bindings in the s4 SoC
-> family.
+On Tue, Apr 25, 2023 at 04:22:32PM -0400, Sean Anderson wrote:
+> The features which do not work (major protocol changes) are disabled :)
 > 
-> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
-> ---
->  .../clock/amlogic,s4-peripherals-clkc.yaml    |  97 +++++++++++++
->  .../clock/amlogic,s4-peripherals-clkc.h       | 131 ++++++++++++++++++
->  2 files changed, 228 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+> If it would cause this series to be immediately merged, I would remove
+> KX/KR and 2.5G which are the only untested link modes.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
-> new file mode 100644
-> index 000000000000..46b969a16a7c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
-> @@ -0,0 +1,97 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/amlogic,s4-peripherals-clkc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic Meson S serials Peripherals Clock Controller
-
-As per my understanding, Meson is no longer applicable.
-As Neil and Martin suggested in other reviews, the term 'Amlogic' should
-be used instead or 'Meson' should be removed altogether.
-
-> +
-> +maintainers:
-> +  - Neil Armstrong <neil.armstrong@linaro.org>
-> +  - Jerome Brunet <jbrunet@baylibre.com>
-> +  - Yu Tu <yu.tu@amlogic.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: amlogic,s4-peripherals-clkc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: input fixed pll div2
-> +      - description: input fixed pll div2p5
-> +      - description: input fixed pll div3
-> +      - description: input fixed pll div4
-> +      - description: input fixed pll div5
-> +      - description: input fixed pll div7
-> +      - description: input hifi pll
-> +      - description: input gp0 pll
-> +      - description: input mpll0
-> +      - description: input mpll1
-> +      - description: input mpll2
-> +      - description: input mpll3
-> +      - description: input hdmi pll
-> +      - description: input oscillator (usually at 24MHz)
-> +      - description: input external 32kHz reference (optional)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: fclk_div2
-> +      - const: fclk_div2p5
-> +      - const: fclk_div3
-> +      - const: fclk_div4
-> +      - const: fclk_div5
-> +      - const: fclk_div7
-> +      - const: hifi_pll
-> +      - const: gp0_pll
-> +      - const: mpll0
-> +      - const: mpll1
-> +      - const: mpll2
-> +      - const: mpll3
-> +      - const: hdmi_pll
-> +      - const: xtal
-> +      - const: ext_32k
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
-> +
-> +    clkc_periphs: clock-controller@fe000000 {
-> +      compatible = "amlogic,s4-peripherals-clkc";
-> +      reg = <0xfe000000 0x49c>;
-
-I was under the impression that reg as MMIO address should have four
-cells on ARM64 architecture. Are you sure it only needs two cells?
-
-> +      clocks = <&clkc_pll 3>,
-> +              <&clkc_pll 13>,
-> +              <&clkc_pll 5>,
-> +              <&clkc_pll 7>,
-> +              <&clkc_pll 9>,
-> +              <&clkc_pll 11>,
-> +              <&clkc_pll 17>,
-> +              <&clkc_pll 15>,
-> +              <&clkc_pll 25>,
-> +              <&clkc_pll 27>,
-> +              <&clkc_pll 29>,
-> +              <&clkc_pll 31>,
-> +              <&clkc_pll 20>,
-> +              <&xtal>,
-> +              <&ext_32k>;
-> +      clock-names = "fclk_div2", "fclk_div2p5", "fclk_div3", "fclk_div4",
-> +                    "fclk_div5", "fclk_div7", "hifi_pll", "gp0_pll",
-> +                    "mpll0", "mpll1", "mpll2", "mpll3", "hdmi_pll", "xtal",
-> +                    "ext_32k";
-> +      #clock-cells = <1>;
-> +    };
-> +...
-> diff --git a/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
-> new file mode 100644
-> index 000000000000..073396a76957
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
-> @@ -0,0 +1,131 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> +/*
-> + * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
-> + * Author: Yu Tu <yu.tu@amlogic.com>
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
-> +#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
-> +
-> +/*
-> + * CLKID index values
-> + */
-> +
-> +#define CLKID_RTC_CLK			4
-
-I believe that the CLK suffix is unnecessary since it is already clear
-that the object in question is a clock. Additionally, it is redundant
-to use the GATE suffix.
-
-> +#define CLKID_SYS_CLK_B_GATE		7
-> +#define CLKID_SYS_CLK_A_GATE		10
-> +#define CLKID_SYS_CLK			11
-> +#define CLKID_CECA_32K_CLKOUT		16
-> +#define CLKID_CECB_32K_CLKOUT		21
-> +#define CLKID_SC_CLK_GATE		24
-> +#define CLKID_12_24M_CLK_SEL		27
-> +#define CLKID_VID_PLL			30
-> +#define CLKID_VCLK			37
-> +#define CLKID_VCLK2			38
-> +#define CLKID_VCLK_DIV1			39
-> +#define CLKID_VCLK2_DIV1		44
-> +#define CLKID_VCLK_DIV2			49
-> +#define CLKID_VCLK_DIV4			50
-> +#define CLKID_VCLK_DIV6			51
-> +#define CLKID_VCLK_DIV12		52
-> +#define CLKID_VCLK2_DIV2		53
-> +#define CLKID_VCLK2_DIV4		54
-> +#define CLKID_VCLK2_DIV6		55
-> +#define CLKID_VCLK2_DIV12		56
-> +#define CLKID_CTS_ENCI			61
-> +#define CLKID_CTS_ENCP			62
-> +#define CLKID_CTS_VDAC			63
-> +#define CLKID_HDMI			67
-> +#define CLKID_TS_CLK_GATE		69
-> +#define CLKID_MALI_0			72
-> +#define CLKID_MALI_1			75
-> +#define CLKID_MALI			76
-> +#define CLKID_VDEC_P0			79
-> +#define CLKID_VDEC_P1			82
-> +#define CLKID_VDEC_SEL			83
-> +#define CLKID_HEVCF_P0			86
-> +#define CLKID_HEVCF_P1			89
-> +#define CLKID_HEVCF_SEL			90
-> +#define CLKID_VPU_0			93
-> +#define CLKID_VPU_1			96
-> +#define CLKID_VPU			97
-> +#define CLKID_VPU_CLKB_TMP		100
-> +#define CLKID_VPU_CLKB			102
-> +#define CLKID_VPU_CLKC_P0		105
-> +#define CLKID_VPU_CLKC_P1		108
-> +#define CLKID_VPU_CLKC_SEL		109
-> +#define CLKID_VAPB_0			112
-> +#define CLKID_VAPB_1			115
-> +#define CLKID_VAPB			116
-> +#define CLKID_GE2D			117
-> +#define CLKID_VDIN_MEAS_GATE		120
-> +#define CLKID_SD_EMMC_C_CLK		123
-> +#define CLKID_SD_EMMC_A_CLK		126
-> +#define CLKID_SD_EMMC_B_CLK		129
-> +#define CLKID_SPICC0_GATE		132
-> +#define CLKID_PWM_A_GATE		135
-> +#define CLKID_PWM_B_GATE		138
-> +#define CLKID_PWM_C_GATE		141
-> +#define CLKID_PWM_D_GATE		144
-> +#define CLKID_PWM_E_GATE		147
-> +#define CLKID_PWM_F_GATE		150
-> +#define CLKID_PWM_G_GATE		153
-> +#define CLKID_PWM_H_GATE		156
-> +#define CLKID_PWM_I_GATE		159
-> +#define CLKID_PWM_J_GATE		162
-> +#define CLKID_SARADC_GATE		165
-> +#define CLKID_GEN_GATE			168
-> +#define CLKID_DDR			169
-> +#define CLKID_DOS			170
-> +#define CLKID_ETHPHY			171
-> +#define CLKID_MALI_GATE			172
-> +#define CLKID_AOCPU			173
-> +#define CLKID_AUCPU			174
-> +#define CLKID_CEC			175
-> +#define CLKID_SD_EMMC_A			176
-> +#define CLKID_SD_EMMC_B			177
-> +#define CLKID_NAND			178
-> +#define CLKID_SMARTCARD			179
-> +#define CLKID_ACODEC			180
-> +#define CLKID_SPIFC			181
-> +#define CLKID_MSR_CLK			182
-> +#define CLKID_IR_CTRL			183
-> +#define CLKID_AUDIO			184
-> +#define CLKID_ETH			185
-> +#define CLKID_UART_A			186
-> +#define CLKID_UART_B			187
-> +#define CLKID_UART_C			188
-> +#define CLKID_UART_D			189
-> +#define CLKID_UART_E			190
-> +#define CLKID_AIFIFO			191
-> +#define CLKID_TS_DDR			192
-> +#define CLKID_TS_PLL			193
-> +#define CLKID_G2D			194
-> +#define CLKID_SPICC0			195
-> +#define CLKID_SPICC1			196
-> +#define CLKID_USB			197
-> +#define CLKID_I2C_M_A			198
-> +#define CLKID_I2C_M_B			199
-> +#define CLKID_I2C_M_C			200
-> +#define CLKID_I2C_M_D			201
-> +#define CLKID_I2C_M_E			202
-> +#define CLKID_HDMITX_APB		203
-> +#define CLKID_I2C_S_A			204
-> +#define CLKID_USB1_TO_DDR		205
-> +#define CLKID_HDCP22			206
-> +#define CLKID_MMC_APB			207
-> +#define CLKID_RSA			208
-> +#define CLKID_CPU_DEBUG			209
-> +#define CLKID_VPU_INTR			210
-> +#define CLKID_DEMOD			211
-> +#define CLKID_SAR_ADC			212
-> +#define CLKID_GIC			213
-> +#define CLKID_PWM_AB			214
-> +#define CLKID_PWM_CD			215
-> +#define CLKID_PWM_EF			216
-> +#define CLKID_PWM_GH			217
-> +#define CLKID_PWM_IJ			218
-> +#define CLKID_HDCP22_ESMCLK_GATE	221
-> +#define CLKID_HDCP22_SKPCLK_GATE	224
-> +
-> +#endif /* _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H */
-> -- 
-> 2.33.1
+> That said, PCS support is necessary for these modes, so it is not even
+> possible to select them.
 > 
+> > If you do not have the time to fix up the loose ends
+> > for this patch submission now
 > 
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> I have time to fix up any loose ends preventing this series from being
+> applied. However, I am not very sympathetic to larger requests, since
+> there has been extensive time to supply feedback already.
+> 
+> > , you won't have the time to debug
+> > regressions on boards you might not even have access to, which worked
+> > fine previously due to the static RCW/PBL configuration.
+> 
+> I have gotten no substantive feedback on this driver. I have been
+> working on this series since June last year, and no one has commented on
+> the core algotithms thus far. My capacity for making large changes has
+> decreased because the project funding the development has ended. I
+> appreciate that you are taking interest now, but frankly I think it is
+> rather past time...
+> 
+> > I have downloaded your patches, and although I have objections to some
+> > of them already, I will be in the process of evaluating, testing,
+> > changing them, for the coming weeks, perhaps even more. Please consider
+> > this a NACK for the current patch set due to the SERDES related material,
+> > although the unrelated patches (like "dt-bindings: Convert gpio-mmio to
+> > yaml") can and should have been submitted separately, so they can be
+> > analyzed by their respective maintainers based on their own merit and
+> > not as part of an overall problematic set.
+> 
+> This patchset has been ready to merge for several revisions now. I do
+> not consider it problematic. However, I do consider the (nonexistant)
+> review process for this subsystem extremely problematic.
 
--- 
-Thank you,
-Dmitry
+To be very clear, the "larger request" which you are unsympathetic to is
+to wait. I didn't ask you to change anything.
+
+I need to catch up with 14 rounds of patches from you and with the
+discussions that took place on each version, and understand how you
+responded to feedback like "don't remove PHY interrupts without finding
+out why they don't work" and "doesn't changing PLL frequencies on the
+fly affect other lanes that use those PLLs, like PCIe?". The cognitive
+dissonance between this and you saying that the review process for this
+subsystem is absent is mind boggling. You are sufficiently averse to
+feedback that's not the feedback you want to hear, that it's hard to
+find a common ground.
+
+It's naive to expect that the silicon vendor will respond positively to
+a change of such magnitude as this one, which was written using the
+"works for me" work ethics, but which the silicon vendor will have to
+work with, afterwards. The only reason I sent my previous email was to
+announce you in advance that I have managed to carve out a sufficient
+amount of time to explore the topic in detail, and to stop you from
+pushing this forward in this state. I thought you would understand the
+concept of engineers being unable to easily reserve large chunks of time
+for a given project, after all, you brought this argument with your own
+company...
+
+Even if the SERDES and PLL drivers "work for you" in the current form,
+I doubt the usefulness of a PLL driver if you have to disconnect the
+SoC's reset request signal on the board to not be stuck in a reboot loop.
+https://lore.kernel.org/linux-arm-kernel/d3163201-2012-6cf9-c798-916bab9c7f72@seco.com/
+Even so, I have not said anything definitive, I have just requested time
+to take your proposal at face value, and understand whether there is any
+other alternative.
+
+I would advise you to consider whether your follow-up emails on this
+topic encourage a collaborative atmosphere.
+
+I will come back when I have tested the driver in a reasonable amount of
+setups.
