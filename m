@@ -2,584 +2,774 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B059C77B7F
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Apr 2023 02:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E98C7618E
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Apr 2023 04:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238460AbjDZCEC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Apr 2023 22:04:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56470 "EHLO
+        id S238588AbjDZEzi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Apr 2023 00:55:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233421AbjDZCEA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Apr 2023 22:04:00 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97FC6194;
-        Tue, 25 Apr 2023 19:03:57 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-506b20efd4cso11017449a12.3;
-        Tue, 25 Apr 2023 19:03:57 -0700 (PDT)
+        with ESMTP id S232395AbjDZEzh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2023 00:55:37 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FAA8E70;
+        Tue, 25 Apr 2023 21:55:35 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1a67bcde3a7so70510745ad.3;
+        Tue, 25 Apr 2023 21:55:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google; t=1682474636; x=1685066636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pxSWBEYZlNZW+jua4S5nwDI2g/pXBGbnN7kJRXndEJM=;
-        b=mMcFRri2XhK92cm9ONSfhIHOskPYOezAiz7KtBazwVydRV9bNBdWJSqnlmu4EIwBGe
-         qoJ/3tP4lDpACNbh9x56XZmqQuVYQWiHaeJ+f4JvNR8crq03nfPz1bEpAg9NF0CBq+3Q
-         33RVC1aXLn8BAki29ZWTBnRRHkdGOYmJjbY4Q=
+        d=gmail.com; s=20221208; t=1682484935; x=1685076935;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WjNT6AOkgQnHM+NHsCYx6Ex8tc21sRsFftHlaRPMdtA=;
+        b=Fe9fMTswOgusuHqx7Iga6xCj+gnjwvNrB/lIZelCGaGvNLEXkLOsTMwOIGMpDVu3dB
+         Y331NZw/OwjHFN4eYCbtadmSBhG0yDiVr0af/OfHejUjEFAxkASfbd3yhFnCwOproqFn
+         K4Y6HuaCZ+Z3rKD+V5npvUwyG9HqUeHvtSrTZFk0oy31gQSGwKJ4bWs6QjmQKF9u5UF6
+         d21i7DdX9fFLeykSOaXw7x26u04IByfN0qFLuIvFSc+IYQIJHpgEuvhD/Z1W/E9fc7PE
+         +ok7g6xSEOWZD0G4oPfATjIIic6uJw0AKqavgHekIj+aEccPe28i6peL1scbfUSRxE8w
+         yhyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682474636; x=1685066636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pxSWBEYZlNZW+jua4S5nwDI2g/pXBGbnN7kJRXndEJM=;
-        b=b898yegofE9Eh0JJz49vi9B9i2y5WR+/9Ors1PZFQjEZ8WC3cCZlbvqGpKD5s8G5uv
-         YlZzZu/MUZU/ZXmbqY+JMcviCGk+Ner4UonE3vYY1iqxuavE6qjoLXm8KSMBC8SEgn6I
-         v2p/wioiPQbyFaEnh4fIxiFHAxtCMx/KO+hkmZw6JE1t3nIPZPaI/gIc0aAcOMHScwuP
-         SgvKqfxGNfKcqOwjfcWIxP7/eAnu8rUC2DjmFYQLUR2IRr/ihjYZydaEQ1NClkonz9h9
-         jVTVczDQGh+sOFpFhWIvwyojVnZFAtmMY6H69HBEMILggCsiw5nTWdUSo6RfmnfhwZbe
-         tt4g==
-X-Gm-Message-State: AAQBX9cr6UYGbvzBX+C1/KZdTWXTpw/KANfbgtw299eihfvs5nosVUwK
-        zc8ukzUa1ptXFXh1TSXuNMHMNGY3gCgFiwC5cK4=
-X-Google-Smtp-Source: AKy350ZOI+ko0D9fPxZonz73kkuyXFvzUA/i4XqsHbYulra6AKuPTqmpZO0S8kB/PASzaQE0536n8GGZHpEWRLDt594=
-X-Received: by 2002:a17:907:7208:b0:930:b130:b7b with SMTP id
- dr8-20020a170907720800b00930b1300b7bmr15637808ejc.6.1682474635512; Tue, 25
- Apr 2023 19:03:55 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682484935; x=1685076935;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjNT6AOkgQnHM+NHsCYx6Ex8tc21sRsFftHlaRPMdtA=;
+        b=YWWc2Yjq3xrffTq+SwS3peyPLLh3tA4/L1HneEfAc2YaUsPCbNdIwGwgkKmc5JBVNT
+         CF/szWYghKI8dHwxJfwPXR4GshmzG5EbdCj6QOrQ0zbMz8AWq3swjrsMslwvDkw6RmTZ
+         A9vN5KL88c1Y3MRC9isAOYOfxE+j5GQlktx6ZRL2DEgi+NcEe5sufBa35uq4tr1cb7um
+         ibVDYh+a9kpuWyNL2hIYDSX/AqXrc3zH702Sy2ZDj9Q79Xa+/ysgrNFNCgE30CRE7GFl
+         qW6GNqQutSE5oDw6VbwrkUmNteCanCYIXk5hJYNEupx+CWLxZ78aA2MW2SQ4USWkisN9
+         SN4A==
+X-Gm-Message-State: AC+VfDyDD3dKBoX6oqIQzNnP3gf8AvlPDttb07vVFzEjJiByK/v3Hgsm
+        44nk0vCRn1LdrIHmvLRBkqs=
+X-Google-Smtp-Source: ACHHUZ5lIN7JTKiOJwM15BG+7XvHSh8jGEntO8um57ceuJpWihU7hhHPZrNkT78P1MRttQZ9Kyu+CQ==
+X-Received: by 2002:a17:902:e884:b0:1a9:9b92:bd84 with SMTP id w4-20020a170902e88400b001a99b92bd84mr2030040plg.31.1682484934404;
+        Tue, 25 Apr 2023 21:55:34 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id g4-20020a1709026b4400b001a183ade911sm9033526plt.56.2023.04.25.21.55.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Apr 2023 21:55:33 -0700 (PDT)
+Message-ID: <5e532409-5c5d-966f-7994-12e3a01f5029@gmail.com>
+Date:   Wed, 26 Apr 2023 12:55:29 +0800
 MIME-Version: 1.0
-References: <20230422220240.322572-1-j.neuschaefer@gmx.net> <20230422220240.322572-3-j.neuschaefer@gmx.net>
-In-Reply-To: <20230422220240.322572-3-j.neuschaefer@gmx.net>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 26 Apr 2023 02:03:44 +0000
-Message-ID: <CACPK8Xd7ebqq0m+xLOxsOXuxqRw31BXUBjhwuSpMJaH27NQZ6Q@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
- controller driver
-To:     =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
-        devicetree@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-watchdog@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Patrick Venture <venture@google.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Avi Fishman <avifishman70@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Tomer Maimon <tmaimon77@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v8 08/11] clk: nuvoton: Add clock driver for ma35d1 clock
+ controller
+Content-Language: en-US
+To:     =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, tmaimon77@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        arnd@arndb.de, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230425102418.185783-1-ychuang570808@gmail.com>
+ <20230425102418.185783-9-ychuang570808@gmail.com>
+ <4eef3e9e-ad13-a64c-69bd-fb37b63437a5@linux.intel.com>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <4eef3e9e-ad13-a64c-69bd-fb37b63437a5@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 22 Apr 2023 at 22:05, Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.n=
-et> wrote:
->
-> This driver implements the following features w.r.t. the clock and reset
-> controller in the WPCM450 SoC:
->
-> - It calculates the rates for all clocks managed by the clock controller
-> - It leaves the clock tree mostly unchanged, except that it enables/
->   disables clock gates based on usage.
-> - It exposes the reset lines managed by the controller using the
->   Generic Reset Controller subsystem
->
-> NOTE: If the driver and the corresponding devicetree node are present,
->       the driver will disable "unused" clocks. This is problem until
->       the clock relations are properly declared in the devicetree (in a
->       later patch). Until then, the clk_ignore_unused kernel parameter
->       can be used as a workaround.
->
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+Dear Ilpo,
 
-> ---
+
+
+On 2023/4/25 下午 07:30, Ilpo Järvinen wrote:
+> On Tue, 25 Apr 2023, Jacky Huang wrote:
 >
-> v7:
-> - Simplify error handling by not deallocating resources
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> The clock controller generates clocks for the whole chip, including
+>> system clocks and all peripheral clocks. This driver support ma35d1
+>> clock gating, divider, and individual PLL configuration.
+>>
+>> There are 6 PLLs in ma35d1 SoC:
+>>    - CA-PLL for the two Cortex-A35 CPU clock
+>>    - SYS-PLL for system bus, which comes from the companion MCU
+>>      and cannot be programmed by clock controller.
+>>    - DDR-PLL for DDR
+>>    - EPLL for GMAC and GFX, Display, and VDEC IPs.
+>>    - VPLL for video output pixel clock
+>>    - APLL for SDHC, I2S audio, and other IPs.
+>> CA-PLL has only one operation mode.
+>> DDR-PLL, EPLL, VPLL, and APLL are advanced PLLs which have 3
+>> operation modes: integer mode, fraction mode, and spread specturm mode.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>> ---
+>>   drivers/clk/Makefile                     |   1 +
+>>   drivers/clk/nuvoton/Kconfig              |  19 +
+>>   drivers/clk/nuvoton/Makefile             |   4 +
+>>   drivers/clk/nuvoton/clk-ma35d1-divider.c | 140 ++++
+>>   drivers/clk/nuvoton/clk-ma35d1-pll.c     | 364 +++++++++
+>>   drivers/clk/nuvoton/clk-ma35d1.c         | 947 +++++++++++++++++++++++
+>>   6 files changed, 1475 insertions(+)
+>>   create mode 100644 drivers/clk/nuvoton/Kconfig
+>>   create mode 100644 drivers/clk/nuvoton/Makefile
+>>   create mode 100644 drivers/clk/nuvoton/clk-ma35d1-divider.c
+>>   create mode 100644 drivers/clk/nuvoton/clk-ma35d1-pll.c
+>>   create mode 100644 drivers/clk/nuvoton/clk-ma35d1.c
+>>
+>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>> index e3ca0d058a25..401f2d800e7f 100644
+>> --- a/drivers/clk/Makefile
+>> +++ b/drivers/clk/Makefile
+>> @@ -103,6 +103,7 @@ endif
+>>   obj-y					+= mstar/
+>>   obj-y					+= mvebu/
+>>   obj-$(CONFIG_ARCH_MXS)			+= mxs/
+>> +obj-y					+= nuvoton/
+>>   obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
+>>   obj-$(CONFIG_COMMON_CLK_PISTACHIO)	+= pistachio/
+>>   obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
+>> diff --git a/drivers/clk/nuvoton/Kconfig b/drivers/clk/nuvoton/Kconfig
+>> new file mode 100644
+>> index 000000000000..9bb811d20b1c
+>> --- /dev/null
+>> +++ b/drivers/clk/nuvoton/Kconfig
+>> @@ -0,0 +1,19 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# common clock support for Nuvoton SoC family.
+>> +
+>> +config COMMON_CLK_NUVOTON
+>> +	bool "Nuvoton clock controller common support"
+>> +	depends on ARCH_NUVOTON || COMPILE_TEST
+>> +	default y
+>> +	help
+>> +	  Say y here to enable common clock controller for Nuvoton platforms.
+>> +
+>> +if COMMON_CLK_NUVOTON
+>> +
+>> +config CLK_MA35D1
+>> +	bool "Nuvoton MA35D1 clock controller support"
+>> +	default y
+>> +	help
+>> +	  Build the clock controller driver for MA35D1 SoC.
+>> +
+>> +endif
+>> diff --git a/drivers/clk/nuvoton/Makefile b/drivers/clk/nuvoton/Makefile
+>> new file mode 100644
+>> index 000000000000..d2c092541b8d
+>> --- /dev/null
+>> +++ b/drivers/clk/nuvoton/Makefile
+>> @@ -0,0 +1,4 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +obj-$(CONFIG_ARCH_NUVOTON) += clk-ma35d1.o
+>> +obj-$(CONFIG_ARCH_NUVOTON) += clk-ma35d1-divider.o
+>> +obj-$(CONFIG_ARCH_NUVOTON) += clk-ma35d1-pll.o
+>> diff --git a/drivers/clk/nuvoton/clk-ma35d1-divider.c b/drivers/clk/nuvoton/clk-ma35d1-divider.c
+>> new file mode 100644
+>> index 000000000000..0d4d8186a85c
+>> --- /dev/null
+>> +++ b/drivers/clk/nuvoton/clk-ma35d1-divider.c
+>> @@ -0,0 +1,140 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2023 Nuvoton Technology Corp.
+>> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/device.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/spinlock.h>
+>> +
+>> +struct ma35d1_adc_clk_div {
+>> +	struct clk_hw hw;
+>> +	void __iomem *reg;
+>> +	u8 shift;
+>> +	u8 width;
+>> +	u32 mask;
+>> +	const struct clk_div_table *table;
+>> +	/* protects concurrent access to clock divider registers */
+>> +	spinlock_t *lock;
+>> +};
+>> +
+>> +struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *dev, const char *name,
+>> +				     struct clk_hw *parent_hw, spinlock_t *lock,
+>> +				     unsigned long flags, void __iomem *reg,
+>> +				     u8 shift, u8 width, u32 mask_bit);
+>> +
+>> +static inline struct ma35d1_adc_clk_div *to_ma35d1_adc_clk_div(struct clk_hw *_hw)
+>> +{
+>> +	return container_of(_hw, struct ma35d1_adc_clk_div, hw);
+>> +}
+>> +
+>> +static inline unsigned long ma35d1_clkdiv_recalc_rate(struct clk_hw *hw,
+>> +						      unsigned long parent_rate)
+>> +{
+>> +	unsigned int val;
+>> +	struct ma35d1_adc_clk_div *dclk = to_ma35d1_adc_clk_div(hw);
+>> +
+>> +	val = readl_relaxed(dclk->reg) >> dclk->shift;
+>> +	val &= clk_div_mask(dclk->width);
+>> +	val += 1;
+>> +	return divider_recalc_rate(hw, parent_rate, val, dclk->table,
+>> +				   CLK_DIVIDER_ROUND_CLOSEST, dclk->width);
+>> +}
+>> +
+>> +static inline long ma35d1_clkdiv_round_rate(struct clk_hw *hw,
+>> +					    unsigned long rate,
+>> +					    unsigned long *prate)
+>> +{
+>> +	struct ma35d1_adc_clk_div *dclk = to_ma35d1_adc_clk_div(hw);
+>> +
+>> +	return divider_round_rate(hw, rate, prate, dclk->table,
+>> +				  dclk->width, CLK_DIVIDER_ROUND_CLOSEST);
+>> +}
+>> +
+>> +static inline int ma35d1_clkdiv_set_rate(struct clk_hw *hw,
+>> +					 unsigned long rate,
+>> +					 unsigned long parent_rate)
+>> +{
+>> +	int value;
+>> +	unsigned long flags = 0;
+>> +	u32 data;
+>> +	struct ma35d1_adc_clk_div *dclk = to_ma35d1_adc_clk_div(hw);
+>> +
+>> +	value = divider_get_val(rate, parent_rate, dclk->table,
+>> +				dclk->width, CLK_DIVIDER_ROUND_CLOSEST);
+>> +
+>> +	spin_lock_irqsave(dclk->lock, flags);
+>> +
+>> +	data = readl_relaxed(dclk->reg);
+>> +	data &= ~(clk_div_mask(dclk->width) << dclk->shift);
+>> +	data |= (value - 1) << dclk->shift;
+>> +	data |= dclk->mask;
+>> +	writel_relaxed(data, dclk->reg);
+>> +
+>> +	spin_unlock_irqrestore(dclk->lock, flags);
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct clk_ops ma35d1_adc_clkdiv_ops = {
+>> +	.recalc_rate = ma35d1_clkdiv_recalc_rate,
+>> +	.round_rate = ma35d1_clkdiv_round_rate,
+>> +	.set_rate = ma35d1_clkdiv_set_rate,
+>> +};
+>> +
+>> +struct clk_hw *ma35d1_reg_adc_clkdiv(struct device *dev, const char *name,
+>> +				     struct clk_hw *parent_hw, spinlock_t *lock,
+>> +				     unsigned long flags, void __iomem *reg,
+>> +				     u8 shift, u8 width, u32 mask_bit)
+>> +{
+>> +	struct ma35d1_adc_clk_div *div;
+>> +	struct clk_init_data init;
+>> +	struct clk_div_table *table;
+>> +	struct clk_parent_data pdata = { .index = 0 };
+>> +	u32 max_div, min_div;
+>> +	struct clk_hw *hw;
+>> +	int ret;
+>> +	int i;
+>> +
+>> +	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
+>> +	if (!div)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	max_div = clk_div_mask(width) + 1;
+>> +	min_div = 1;
+>> +
+>> +	table = devm_kcalloc(dev, max_div + 1, sizeof(*table), GFP_KERNEL);
+>> +	if (!table)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	for (i = 0; i < max_div; i++) {
+>> +		table[i].val = min_div + i;
+>> +		table[i].div = 2 * table[i].val;
+>> +	}
+>> +	table[max_div].val = 0;
+>> +	table[max_div].div = 0;
+>> +
+>> +	memset(&init, 0, sizeof(init));
+>> +	init.name = name;
+>> +	init.ops = &ma35d1_adc_clkdiv_ops;
+>> +	init.flags |= flags;
+>> +	pdata.hw = parent_hw;
+>> +	init.parent_data = &pdata;
+>> +	init.num_parents = 1;
+>> +
+>> +	div->reg = reg;
+>> +	div->shift = shift;
+>> +	div->width = width;
+>> +	div->mask = mask_bit ? BIT(mask_bit) : 0;
+>> +	div->lock = lock;
+>> +	div->hw.init = &init;
+>> +	div->table = table;
+>> +
+>> +	hw = &div->hw;
+>> +	ret = devm_clk_hw_register(dev, hw);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +	return hw;
+>> +}
+>> +EXPORT_SYMBOL_GPL(ma35d1_reg_adc_clkdiv);
+>> diff --git a/drivers/clk/nuvoton/clk-ma35d1-pll.c b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>> new file mode 100644
+>> index 000000000000..8ffefe285603
+>> --- /dev/null
+>> +++ b/drivers/clk/nuvoton/clk-ma35d1-pll.c
+>> @@ -0,0 +1,364 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2023 Nuvoton Technology Corp.
+>> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
+>> + */
+>> +
+>> +#include <linux/bitfield.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/container_of.h>
+>> +#include <linux/device.h>
+>> +#include <linux/io.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/slab.h>
+>> +#include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
+>> +
+>> +/* PLL frequency limits */
+>> +#define PLL_FREF_MAX_FREQ	200000000UL
+>> +#define PLL_FREF_MIN_FREQ	1000000UL
+>> +#define PLL_FREF_M_MAX_FREQ	40000000UL
+>> +#define PLL_FREF_M_MIN_FREQ	10000000UL
+>> +#define PLL_FCLK_MAX_FREQ	2400000000UL
+>> +#define PLL_FCLK_MIN_FREQ	600000000UL
+>> +#define PLL_FCLKO_MAX_FREQ	2400000000UL
+>> +#define PLL_FCLKO_MIN_FREQ	85700000UL
+> If there are in Hz, there would be something in include/linux/units.h to
+> reduce the number of zeros here.
+
+Okay, I will fix it.
+>> +#define PLL_SS_RATE		0x77
+>> +#define PLL_SLOPE		0x58CFA
+>> +
+>> +#define REG_PLL_CTL0_OFFSET	0x0
+>> +#define REG_PLL_CTL1_OFFSET	0x4
+>> +#define REG_PLL_CTL2_OFFSET	0x8
+>> +
+>> +/* bit fields for REG_CLK_PLL0CTL0, which is SMIC PLL design */
+>> +#define SPLL0_CTL0_FBDIV	GENMASK(7, 0)
+>> +#define SPLL0_CTL0_INDIV	GENMASK(11, 8)
+>> +#define SPLL0_CTL0_OUTDIV	GENMASK(13, 12)
+>> +#define SPLL0_CTL0_PD		BIT(16)
+>> +#define SPLL0_CTL0_BP		BIT(17)
+>> +
+>> +/* bit fields for REG_CLK_PLLxCTL0 ~ REG_CLK_PLLxCTL2, where x = 2 ~ 5 */
+>> +#define PLL_CTL0_FBDIV		GENMASK(10, 0)
+>> +#define PLL_CTL0_INDIV		GENMASK(17, 12)
+>> +#define PLL_CTL0_MODE		GENMASK(19, 18)
+>> +#define PLL_CTL0_SSRATE		GENMASK(30, 20)
+>> +#define PLL_CTL1_PD		BIT(0)
+>> +#define PLL_CTL1_BP		BIT(1)
+>> +#define PLL_CTL1_OUTDIV		GENMASK(6, 4)
+>> +#define PLL_CTL1_FRAC		GENMASK(31, 24)
+>> +#define PLL_CTL2_SLOPE		GENMASK(23, 0)
+>> +
+>> +#define INDIV_MIN		1
+>> +#define INDIV_MAX		63
+>> +#define FBDIV_MIN		16
+>> +#define FBDIV_MAX		2047
+>> +#define FBDIV_FRAC_MIN		1600
+>> +#define FBDIV_FRAC_MAX		204700
+>> +#define OUTDIV_MIN		1
+>> +#define OUTDIV_MAX		7
+>> +
+>> +#define PLL_MODE_INT            0
+>> +#define PLL_MODE_FRAC           1
+>> +#define PLL_MODE_SS             2
+>> +
+>> +struct ma35d1_clk_pll {
+>> +	struct clk_hw hw;
+>> +	u32 id;
+>> +	u8 mode;
+>> +	void __iomem *ctl0_base;
+>> +	void __iomem *ctl1_base;
+>> +	void __iomem *ctl2_base;
+>> +};
+>> +
+>> +struct clk_hw *ma35d1_reg_clk_pll(struct device *dev, u32 id, u8 u8mode, const char *name,
+>> +				  struct clk_hw *parent_hw, void __iomem *base);
+>> +
+>> +static inline struct ma35d1_clk_pll *to_ma35d1_clk_pll(struct clk_hw *_hw)
+>> +{
+>> +	return container_of(_hw, struct ma35d1_clk_pll, hw);
+>> +}
+>> +
+>> +static unsigned long ma35d1_calc_smic_pll_freq(u32 pll0_ctl0,
+>> +					       unsigned long parent_rate)
+>> +{
+>> +	u32 m, n, p, outdiv;
+>> +	u64 pll_freq;
+>> +	const u32 clk_div_table[] = { 1, 2, 4, 8 };
+>> +
+>> +	if (pll0_ctl0 & SPLL0_CTL0_BP)
+>> +		return parent_rate;
+>> +
+>> +	n = FIELD_GET(SPLL0_CTL0_FBDIV, pll0_ctl0);
+>> +	m = FIELD_GET(SPLL0_CTL0_INDIV, pll0_ctl0);
+>> +	p = FIELD_GET(SPLL0_CTL0_OUTDIV, pll0_ctl0);
+>> +	outdiv = clk_div_table[p];
+>> +	pll_freq = (u64)parent_rate * n;
+>> +	do_div(pll_freq, m * outdiv);
+>> +	return pll_freq;
+>> +}
+>> +
+>> +static unsigned long ma35d1_calc_pll_freq(u8 mode, u32 *reg_ctl,
+>> +					  unsigned long parent_rate)
+>> +{
+>> +	u32 m, n, p;
+>> +	u64 pll_freq, x;
+>> +
+>> +	if (reg_ctl[1] & PLL_CTL1_BP)
+>> +		return parent_rate;
+>> +
+>> +	n = FIELD_GET(PLL_CTL0_FBDIV, reg_ctl[0]);
+>> +	m = FIELD_GET(PLL_CTL0_INDIV, reg_ctl[0]);
+>> +	p = FIELD_GET(PLL_CTL1_OUTDIV, reg_ctl[1]);
+>> +
+>> +	if (mode == PLL_MODE_INT) {
+>> +		pll_freq = (u64)parent_rate * n;
+>> +		do_div(pll_freq, m * p);
+>> +	} else {
+>> +		x = FIELD_GET(PLL_CTL1_FRAC, reg_ctl[1]);
+>> +		/* 2 decimal places floating to integer (ex. 1.23 to 123) */
+>> +		n = n * 100 + ((x * 100) / FIELD_MAX(PLL_CTL1_FRAC));
+>> +		pll_freq = ((u64)parent_rate * n) / 100 / m / p;
+> Don't rely on compiler, you need to use correct fuction to do any
+> 64-bit divide. Also, you probably want to do just one divide.
+
+I will fix it.
+
+>> +	}
+>> +	return pll_freq;
+>> +}
+>> +
+>> +static int ma35d1_pll_find_closest(struct ma35d1_clk_pll *pll, unsigned long rate,
+>> +				   unsigned long parent_rate, u32 *reg_ctl,
+>> +				   unsigned long *freq)
+>> +{
+>> +	int p, m, n;
+>> +	int fbdiv_min, fbdiv_max;
+>> +	unsigned long diff = 0xffffffff;
+> I'm just noting that this is not the maximum value of unsigned long with
+> 64-bit longs. It is probably correct as is (32-bit limiter) but please
+> double check it does what you intended.
+
+Here we just want to provide diff with an initial value for comparison, 
+which is
+already far beyond the reasonable range, so it should be sufficient.
+
+>> +
+>> +	*freq = 0;
+>> +	if (rate < PLL_FCLKO_MIN_FREQ || rate > PLL_FCLKO_MAX_FREQ)
+>> +		return -EINVAL;
+>> +
+>> +	if (pll->mode == PLL_MODE_INT) {
+>> +		fbdiv_min = FBDIV_MIN;
+>> +		fbdiv_max = FBDIV_MAX;
+>> +	} else {
+>> +		fbdiv_min = FBDIV_FRAC_MIN;
+>> +		fbdiv_max = FBDIV_FRAC_MAX;
+>> +	}
+>> +
+>> +	for (m = INDIV_MIN; m <= INDIV_MAX; m++) {
+>> +		for (n = fbdiv_min; n <= fbdiv_max; n++) {
+>> +			for (p = OUTDIV_MIN; p <= OUTDIV_MAX; p++) {
+>> +				unsigned long tmp, fout;
+>> +				u64 fclk;
+>> +
+>> +				tmp = parent_rate / m;
+> 64-bit divide shouldn't be left to compiler, use a 64-bit helper function.
+
+Okay, I will use helper functions instead.
+
+>> +				if (tmp < PLL_FREF_M_MIN_FREQ ||
+>> +				    tmp > PLL_FREF_M_MAX_FREQ)
+>> +					continue; /* constrain */
+>> +
+>> +				fclk = (u64)parent_rate * n / m;
+> Ditto.
 >
-> v6:
-> - Enable RESET_SIMPLE based on ARCH_WPCM450, not ARCH_NPCM, as suggested =
-by Tomer Maimon
+>> +				/* for 2 decimal places */
+>> +				if (pll->mode != PLL_MODE_INT)
+>> +					fclk /= 100;
+> Ditto.
 >
-> v5:
-> - https://lore.kernel.org/lkml/20221104161850.2889894-6-j.neuschaefer@gmx=
-.net/
-> - Switch to using clk_parent_data
+>> +
+>> +				if (fclk < PLL_FCLK_MIN_FREQ ||
+>> +				    fclk > PLL_FCLK_MAX_FREQ)
+>> +					continue; /* constrain */
+>> +
+>> +				fout = (unsigned long)(fclk / p);
+>> +				if (fout < PLL_FCLKO_MIN_FREQ ||
+>> +				    fout > PLL_FCLKO_MAX_FREQ)
+>> +					continue; /* constrain */
+>> +
+>> +				if (abs(rate - fout) < diff) {
+> diff = abs(rate - fout);
+> if (diff < min_diff) {
+
 >
-> v4:
-> - https://lore.kernel.org/lkml/20220610072141.347795-6-j.neuschaefer@gmx.=
-net/
-> - Fix reset controller initialization
+>> +					reg_ctl[0] = FIELD_PREP(PLL_CTL0_INDIV, m) |
+>> +						     FIELD_PREP(PLL_CTL0_FBDIV, n);
+>> +					reg_ctl[1] = FIELD_PREP(PLL_CTL1_OUTDIV, p);
+>> +					*freq = fout;
+>> +					diff = abs(rate - fout);
+>> +					if (diff == 0)
+> min_diff = diff;
+> if (min_diff == 0)
 >
-> v3:
-> - https://lore.kernel.org/lkml/20220508194333.2170161-7-j.neuschaefer@gmx=
-.net/
-> - Change reference clock name from "refclk" to "ref"
-> - Remove unused variable in return path of wpcm450_clk_register_pll
-> - Remove unused divisor tables
+> You need to add the min_diff variable. Perhaps move diff variable local to
+> this block.
+
+Sure, I will add a min_diff variable to make the code more readable.
+
+>> +						break;
+>> +				}
+>> +			}
+>> +		}
+>> +	}
+>> +	if (*freq == 0)
+>> +		return -EINVAL; /* cannot find even one valid setting */
+>> +	return 0;
+>> +}
+>> +
+>> +static int ma35d1_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +				   unsigned long parent_rate)
+>> +{
+>> +	struct ma35d1_clk_pll *pll = to_ma35d1_clk_pll(hw);
+>> +	u32 reg_ctl[3] = { 0 };
+>> +	unsigned long pll_freq;
+>> +	int ret;
+>> +
+>> +	if (parent_rate < PLL_FREF_MIN_FREQ ||
+>> +	    parent_rate > PLL_FREF_MAX_FREQ)
+>> +		return -EINVAL;
+>> +
+>> +	ret = ma35d1_pll_find_closest(pll, rate, parent_rate, reg_ctl, &pll_freq);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +
+>> +	switch (pll->mode) {
+>> +	case PLL_MODE_INT:
+>> +		reg_ctl[0] |= FIELD_PREP(PLL_CTL0_MODE, PLL_MODE_INT);
+>> +		break;
+>> +	case PLL_MODE_FRAC:
+>> +		reg_ctl[0] |= FIELD_PREP(PLL_CTL0_MODE, PLL_MODE_FRAC);
+>> +		break;
+>> +	case PLL_MODE_SS:
+>> +		reg_ctl[0] |= FIELD_PREP(PLL_CTL0_MODE, PLL_MODE_SS) |
+>> +			      FIELD_PREP(PLL_CTL0_SSRATE, PLL_SS_RATE);
+>> +		reg_ctl[2] = FIELD_PREP(PLL_CTL2_SLOPE, PLL_SLOPE);
+>> +		break;
+>> +	}
+>> +	reg_ctl[1] |= PLL_CTL1_PD;
+>> +
+>> +	writel_relaxed(reg_ctl[0], pll->ctl0_base);
+>> +	writel_relaxed(reg_ctl[1], pll->ctl1_base);
+>> +	writel_relaxed(reg_ctl[2], pll->ctl2_base);
+>> +	return 0;
+>> +}
+>> +
+>> +static unsigned long ma35d1_clk_pll_recalc_rate(struct clk_hw *hw,
+>> +						unsigned long parent_rate)
+>> +{
+>> +	struct ma35d1_clk_pll *pll = to_ma35d1_clk_pll(hw);
+>> +	u32 reg_ctl[3];
+>> +	unsigned long pll_freq;
+>> +
+>> +	if (parent_rate < PLL_FREF_MIN_FREQ || parent_rate > PLL_FREF_MAX_FREQ)
+>> +		return 0;
+>> +
+>> +	switch (pll->id) {
+>> +	case CAPLL:
+>> +		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+>> +		pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], parent_rate);
+>> +		return pll_freq;
+>> +	case DDRPLL:
+>> +	case APLL:
+>> +	case EPLL:
+>> +	case VPLL:
+>> +		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+>> +		reg_ctl[1] = readl_relaxed(pll->ctl1_base);
+>> +		pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, parent_rate);
+>> +		return pll_freq;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static long ma35d1_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>> +				      unsigned long *parent_rate)
+>> +{
+>> +	struct ma35d1_clk_pll *pll = to_ma35d1_clk_pll(hw);
+>> +	u32 reg_ctl[3] = { 0 };
+>> +	unsigned long pll_freq;
+>> +	long ret;
+>> +
+>> +	if (*parent_rate < PLL_FREF_MIN_FREQ || *parent_rate > PLL_FREF_MAX_FREQ)
+>> +		return -EINVAL;
+>> +
+>> +	ret = ma35d1_pll_find_closest(pll, rate, *parent_rate, reg_ctl, &pll_freq);
+>> +	if (ret != 0)
+>> +		return ret;
+>> +
+>> +	switch (pll->id) {
+>> +	case CAPLL:
+>> +		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+>> +		pll_freq = ma35d1_calc_smic_pll_freq(reg_ctl[0], *parent_rate);
+>> +		return pll_freq;
+>> +	case DDRPLL:
+>> +	case APLL:
+>> +	case EPLL:
+>> +	case VPLL:
+>> +		reg_ctl[0] = readl_relaxed(pll->ctl0_base);
+>> +		reg_ctl[1] = readl_relaxed(pll->ctl1_base);
+>> +		pll_freq = ma35d1_calc_pll_freq(pll->mode, reg_ctl, *parent_rate);
+>> +		return pll_freq;
+>> +	}
+>> +	return 0;
+>> +}
+>> +
+>> +static int ma35d1_clk_pll_is_prepared(struct clk_hw *hw)
+>> +{
+>> +	struct ma35d1_clk_pll *pll = to_ma35d1_clk_pll(hw);
+>> +	u32 val = readl_relaxed(pll->ctl1_base);
+>> +
+>> +	return val & PLL_CTL1_PD ? 0 : 1;
+> return !(val & PLL_CTL1_PD);
+
+I will fix it.
+
+>> +}
+>> +
+>> +static int ma35d1_clk_pll_prepare(struct clk_hw *hw)
+>> +{
+>> +	struct ma35d1_clk_pll *pll = to_ma35d1_clk_pll(hw);
+>> +	u32 val;
+>> +
+>> +	val = readl_relaxed(pll->ctl1_base);
+>> +	val &= ~PLL_CTL1_PD;
+>> +	writel_relaxed(val, pll->ctl1_base);
+>> +	return 0;
+>> +}
+>> +
+>> +static void ma35d1_clk_pll_unprepare(struct clk_hw *hw)
+>> +{
+>> +	struct ma35d1_clk_pll *pll = to_ma35d1_clk_pll(hw);
+>> +	u32 val;
+>> +
+>> +	val = readl_relaxed(pll->ctl1_base);
+>> +	val |= PLL_CTL1_PD;
+>> +	writel_relaxed(val, pll->ctl1_base);
+>> +}
+>> +
+>> +static const struct clk_ops ma35d1_clk_pll_ops = {
+>> +	.is_prepared = ma35d1_clk_pll_is_prepared,
+>> +	.prepare = ma35d1_clk_pll_prepare,
+>> +	.unprepare = ma35d1_clk_pll_unprepare,
+>> +	.set_rate = ma35d1_clk_pll_set_rate,
+>> +	.recalc_rate = ma35d1_clk_pll_recalc_rate,
+>> +	.round_rate = ma35d1_clk_pll_round_rate,
+>> +};
+>> +
+>> +static const struct clk_ops ma35d1_clk_fixed_pll_ops = {
+>> +	.recalc_rate = ma35d1_clk_pll_recalc_rate,
+>> +	.round_rate = ma35d1_clk_pll_round_rate,
+>> +};
+>> +
+>> +struct clk_hw *ma35d1_reg_clk_pll(struct device *dev, u32 id, u8 u8mode, const char *name,
+>> +				  struct clk_hw *parent_hw, void __iomem *base)
+>> +{
+>> +	struct ma35d1_clk_pll *pll;
+>> +	struct clk_parent_data pdata = { .index = 0 };
+>> +	struct clk_hw *hw;
+>> +	struct clk_init_data init;
+>> +	int ret;
+>> +
+>> +	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
+>> +	if (!pll)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	pll->id = id;
+>> +	pll->mode = u8mode;
+>> +	pll->ctl0_base = base + REG_PLL_CTL0_OFFSET;
+>> +	pll->ctl1_base = base + REG_PLL_CTL1_OFFSET;
+>> +	pll->ctl2_base = base + REG_PLL_CTL2_OFFSET;
+>> +
+>> +	memset(&init, 0, sizeof(init));
+> Add = {} to the declaration instead to get it initialized.
+
+Okay, I will fix it.
+
+>> +	init.name = name;
+>> +	init.flags = 0;
+>> +	pdata.hw = parent_hw;
+>> +	init.parent_data = &pdata;
+>> +	init.num_parents = 1;
+>> +
+>> +	if (id == CAPLL || id == DDRPLL)
+>> +		init.ops = &ma35d1_clk_fixed_pll_ops;
+>> +	else
+>> +		init.ops = &ma35d1_clk_pll_ops;
+>> +
+>> +	pll->hw.init = &init;
+>> +	hw = &pll->hw;
+>> +
+>> +	ret = devm_clk_hw_register(dev, hw);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +	return hw;
+>> +}
+>> +EXPORT_SYMBOL_GPL(ma35d1_reg_clk_pll);
+>> +static int ma35d1_clocks_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *clk_node = pdev->dev.of_node;
+>> +	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +	void __iomem *clk_base;
+>> +	static struct clk_hw **hws;
+>> +	static struct clk_hw_onecell_data *ma35d1_hw_data;
+>> +	u32 pllmode[PLL_MAX_NUM];
+>> +	int ret;
+>> +
+>> +	ma35d1_hw_data = devm_kzalloc(dev, struct_size(ma35d1_hw_data,
+>> +				      hws, CLK_MAX_IDX), GFP_KERNEL);
+> Not a good split of lines here, struct_size() shouldn't be split like
+> that wrt. alignment.
+
+I will make it in one line.
+
+>> +	if (WARN_ON(!ma35d1_hw_data))
+>> +		return -ENOMEM;
+>> +
+>> +	ma35d1_hw_data->num = CLK_MAX_IDX;
+>> +	hws = ma35d1_hw_data->hws;
+>> +
+>> +	clk_base = devm_ioremap_resource(dev, res);
+>> +	if (IS_ERR(clk_base))
+>> +		return PTR_ERR(clk_base);
+>> +
+>> +	ret = ma35d1_get_pll_setting(clk_node, pllmode);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "Invalid PLL setting!\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+> [...snip...]
 >
-> v2:
-> - https://lore.kernel.org/lkml/20220429172030.398011-7-j.neuschaefer@gmx.=
-net/
-> - no changes
-> ---
->  drivers/clk/Makefile      |   1 +
->  drivers/clk/clk-wpcm450.c | 374 ++++++++++++++++++++++++++++++++++++++
->  drivers/reset/Kconfig     |   2 +-
->  3 files changed, 376 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/clk-wpcm450.c
+> Somewhere in the middle, I realized this patch must have been the
+> unreadable mess one I reviewed earlier. ...It sure has come long way from
+> that, it's so much easier to read now. Great work so far.
 >
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index e3ca0d058a256..b58352d4d615d 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -75,6 +75,7 @@ obj-$(CONFIG_COMMON_CLK_RS9_PCIE)     +=3D clk-renesas-=
-pcie.o
->  obj-$(CONFIG_COMMON_CLK_VC5)           +=3D clk-versaclock5.o
->  obj-$(CONFIG_COMMON_CLK_VC7)           +=3D clk-versaclock7.o
->  obj-$(CONFIG_COMMON_CLK_WM831X)                +=3D clk-wm831x.o
-> +obj-$(CONFIG_ARCH_WPCM450)             +=3D clk-wpcm450.o
->  obj-$(CONFIG_COMMON_CLK_XGENE)         +=3D clk-xgene.o
->
->  # please keep this section sorted lexicographically by directory path na=
-me
-> diff --git a/drivers/clk/clk-wpcm450.c b/drivers/clk/clk-wpcm450.c
-> new file mode 100644
-> index 0000000000000..6f6d8a1ea3484
-> --- /dev/null
-> +++ b/drivers/clk/clk-wpcm450.c
-> @@ -0,0 +1,374 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Nuvoton WPCM450 clock and reset controller driver.
-> + *
-> + * Copyright (C) 2022 Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> + */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/reset/reset-simple.h>
-> +#include <linux/slab.h>
-> +
-> +#include <dt-bindings/clock/nuvoton,wpcm450-clk.h>
-> +
-> +struct wpcm450_clk_pll {
-> +       struct clk_hw hw;
-> +       void __iomem *pllcon;
-> +       u8 flags;
-> +};
-> +
-> +#define to_wpcm450_clk_pll(_hw) container_of(_hw, struct wpcm450_clk_pll=
-, hw)
-> +
-> +#define PLLCON_FBDV    GENMASK(24, 16)
-> +#define PLLCON_PRST    BIT(13)
-> +#define PLLCON_PWDEN   BIT(12)
-> +#define PLLCON_OTDV    GENMASK(10, 8)
-> +#define PLLCON_INDV    GENMASK(5, 0)
-> +
-> +static unsigned long wpcm450_clk_pll_recalc_rate(struct clk_hw *hw,
-> +                                                unsigned long parent_rat=
-e)
-> +{
-> +       struct wpcm450_clk_pll *pll =3D to_wpcm450_clk_pll(hw);
-> +       unsigned long fbdv, indv, otdv;
-> +       u64 rate;
-> +       u32 pllcon;
-> +
-> +       if (parent_rate =3D=3D 0) {
-> +               pr_err("%s: parent rate is zero", __func__);
-> +               return 0;
-> +       }
-> +
-> +       pllcon =3D readl_relaxed(pll->pllcon);
-> +
-> +       indv =3D FIELD_GET(PLLCON_INDV, pllcon) + 1;
-> +       fbdv =3D FIELD_GET(PLLCON_FBDV, pllcon) + 1;
-> +       otdv =3D FIELD_GET(PLLCON_OTDV, pllcon) + 1;
-> +
-> +       rate =3D (u64)parent_rate * fbdv;
-> +       do_div(rate, indv * otdv);
-> +
-> +       return rate;
-> +}
-> +
-> +static int wpcm450_clk_pll_is_enabled(struct clk_hw *hw)
-> +{
-> +       struct wpcm450_clk_pll *pll =3D to_wpcm450_clk_pll(hw);
-> +       u32 pllcon;
-> +
-> +       pllcon =3D readl_relaxed(pll->pllcon);
-> +
-> +       return !(pllcon & PLLCON_PRST);
-> +}
-> +
-> +static void wpcm450_clk_pll_disable(struct clk_hw *hw)
-> +{
-> +       struct wpcm450_clk_pll *pll =3D to_wpcm450_clk_pll(hw);
-> +       u32 pllcon;
-> +
-> +       pllcon =3D readl_relaxed(pll->pllcon);
-> +       pllcon |=3D PLLCON_PRST | PLLCON_PWDEN;
-> +       writel(pllcon, pll->pllcon);
-> +}
-> +
-> +static const struct clk_ops wpcm450_clk_pll_ops =3D {
-> +       .recalc_rate =3D wpcm450_clk_pll_recalc_rate,
-> +       .is_enabled =3D wpcm450_clk_pll_is_enabled,
-> +       .disable =3D wpcm450_clk_pll_disable
-> +};
-> +
-> +static struct clk_hw *
-> +wpcm450_clk_register_pll(void __iomem *pllcon, const char *name,
-> +                        const struct clk_parent_data *parent, unsigned l=
-ong flags)
-> +{
-> +       struct wpcm450_clk_pll *pll;
-> +       struct clk_init_data init =3D {};
-> +       int ret;
-> +
-> +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> +       if (!pll)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &wpcm450_clk_pll_ops;
-> +       init.parent_data =3D parent;
-> +       init.num_parents =3D 1;
-> +       init.flags =3D flags;
-> +
-> +       pll->pllcon =3D pllcon;
-> +       pll->hw.init =3D &init;
-> +
-> +       ret =3D clk_hw_register(NULL, &pll->hw);
-> +       if (ret) {
-> +               kfree(pll);
-> +               return ERR_PTR(ret);
-> +       }
-> +
-> +       return &pll->hw;
-> +}
-> +
-> +#define REG_CLKEN      0x00
-> +#define REG_CLKSEL     0x04
-> +#define REG_CLKDIV     0x08
-> +#define REG_PLLCON0    0x0c
-> +#define REG_PLLCON1    0x10
-> +#define REG_PMCON      0x14
-> +#define REG_IRQWAKECON 0x18
-> +#define REG_IRQWAKEFLAG        0x1c
-> +#define REG_IPSRST     0x20
-> +
-> +struct wpcm450_pll_data {
-> +       const char *name;
-> +       struct clk_parent_data parent;
-> +       unsigned int reg;
-> +       unsigned long flags;
-> +};
-> +
-> +static const struct wpcm450_pll_data pll_data[] =3D {
-> +       { "pll0", { .name =3D "ref" }, REG_PLLCON0, 0 },
-> +       { "pll1", { .name =3D "ref" }, REG_PLLCON1, 0 },
-> +};
-> +
-> +struct wpcm450_clksel_data {
-> +       const char *name;
-> +       const struct clk_parent_data *parents;
-> +       unsigned int num_parents;
-> +       const u32 *table;
-> +       int shift;
-> +       int width;
-> +       int index;
-> +       unsigned long flags;
-> +};
-> +
-> +static const u32 parent_table[] =3D { 0, 1, 2 };
-> +
-> +static const struct clk_parent_data default_parents[] =3D {
-> +       { .name =3D "pll0" },
-> +       { .name =3D "pll1" },
-> +       { .name =3D "ref" },
-> +};
-> +
-> +static const struct clk_parent_data huart_parents[] =3D {
-> +       { .name =3D "ref" },
-> +       { .name =3D "refdiv2" },
-> +};
-> +
-> +static const struct wpcm450_clksel_data clksel_data[] =3D {
-> +       { "cpusel", default_parents, ARRAY_SIZE(default_parents),
-> +               parent_table, 0, 2, -1, CLK_IS_CRITICAL },
-> +       { "clkout", default_parents, ARRAY_SIZE(default_parents),
-> +               parent_table, 2, 2, -1, 0 },
-> +       { "usbphy", default_parents, ARRAY_SIZE(default_parents),
-> +               parent_table, 6, 2, -1, 0 },
-> +       { "uartsel", default_parents, ARRAY_SIZE(default_parents),
-> +               parent_table, 8, 2, WPCM450_CLK_USBPHY, 0 },
-> +       { "huartsel", huart_parents, ARRAY_SIZE(huart_parents),
-> +               parent_table, 10, 1, -1, 0 },
-> +};
-> +
-> +static const struct clk_div_table div_fixed2[] =3D {
-> +       { .val =3D 0, .div =3D 2 },
-> +       { }
-> +};
-> +
-> +struct wpcm450_clkdiv_data {
-> +       const char *name;
-> +       struct clk_parent_data parent;
-> +       int div_flags;
-> +       const struct clk_div_table *table;
-> +       int shift;
-> +       int width;
-> +       unsigned long flags;
-> +};
-> +
-> +static struct wpcm450_clkdiv_data clkdiv_data_early[] =3D {
-> +       { "refdiv2", { .name =3D "ref" }, 0, div_fixed2, 0, 0 },
-> +};
-> +
-> +static const struct wpcm450_clkdiv_data clkdiv_data[] =3D {
-> +       { "cpu", { .name =3D "cpusel" }, 0, div_fixed2, 0, 0, CLK_IS_CRIT=
-ICAL },
-> +       { "adcdiv", { .name =3D "ref" }, CLK_DIVIDER_POWER_OF_TWO, NULL, =
-28, 2, 0 },
-> +       { "apb", { .name =3D "ahb" }, CLK_DIVIDER_POWER_OF_TWO, NULL, 26,=
- 2, 0 },
-> +       { "ahb", { .name =3D "cpu" }, CLK_DIVIDER_POWER_OF_TWO, NULL, 24,=
- 2, 0 },
-> +       { "uart", { .name =3D "uartsel" }, 0, NULL, 16, 4, 0 },
-> +       { "ahb3", { .name =3D "ahb" }, CLK_DIVIDER_POWER_OF_TWO, NULL, 8,=
- 2, 0 },
-> +};
-> +
-> +struct wpcm450_clken_data {
-> +       const char *name;
-> +       struct clk_parent_data parent;
-> +       int bitnum;
-> +       unsigned long flags;
-> +};
-> +
-> +static const struct wpcm450_clken_data clken_data[] =3D {
-> +       { "fiu", { .name =3D "ahb3" }, WPCM450_CLK_FIU, 0 },
-> +       { "xbus", { .name =3D "ahb3" }, WPCM450_CLK_XBUS, 0 },
-> +       { "kcs", { .name =3D "apb" }, WPCM450_CLK_KCS, 0 },
-> +       { "shm", { .name =3D "ahb3" }, WPCM450_CLK_SHM, 0 },
-> +       { "usb1", { .name =3D "ahb" }, WPCM450_CLK_USB1, 0 },
-> +       { "emc0", { .name =3D "ahb" }, WPCM450_CLK_EMC0, 0 },
-> +       { "emc1", { .name =3D "ahb" }, WPCM450_CLK_EMC1, 0 },
-> +       { "usb0", { .name =3D "ahb" }, WPCM450_CLK_USB0, 0 },
-> +       { "peci", { .name =3D "apb" }, WPCM450_CLK_PECI, 0 },
-> +       { "aes", { .name =3D "apb" }, WPCM450_CLK_AES, 0 },
-> +       { "uart0", { .name =3D "uart" }, WPCM450_CLK_UART0, 0 },
-> +       { "uart1", { .name =3D "uart" }, WPCM450_CLK_UART1, 0 },
-> +       { "smb2", { .name =3D "apb" }, WPCM450_CLK_SMB2, 0 },
-> +       { "smb3", { .name =3D "apb" }, WPCM450_CLK_SMB3, 0 },
-> +       { "smb4", { .name =3D "apb" }, WPCM450_CLK_SMB4, 0 },
-> +       { "smb5", { .name =3D "apb" }, WPCM450_CLK_SMB5, 0 },
-> +       { "huart", { .name =3D "huartsel" }, WPCM450_CLK_HUART, 0 },
-> +       { "pwm", { .name =3D "apb" }, WPCM450_CLK_PWM, 0 },
-> +       { "timer0", { .name =3D "refdiv2" }, WPCM450_CLK_TIMER0, 0 },
-> +       { "timer1", { .name =3D "refdiv2" }, WPCM450_CLK_TIMER1, 0 },
-> +       { "timer2", { .name =3D "refdiv2" }, WPCM450_CLK_TIMER2, 0 },
-> +       { "timer3", { .name =3D "refdiv2" }, WPCM450_CLK_TIMER3, 0 },
-> +       { "timer4", { .name =3D "refdiv2" }, WPCM450_CLK_TIMER4, 0 },
-> +       { "mft0", { .name =3D "apb" }, WPCM450_CLK_MFT0, 0 },
-> +       { "mft1", { .name =3D "apb" }, WPCM450_CLK_MFT1, 0 },
-> +       { "wdt", { .name =3D "refdiv2" }, WPCM450_CLK_WDT, 0 },
-> +       { "adc", { .name =3D "adcdiv" }, WPCM450_CLK_ADC, 0 },
-> +       { "sdio", { .name =3D "ahb" }, WPCM450_CLK_SDIO, 0 },
-> +       { "sspi", { .name =3D "apb" }, WPCM450_CLK_SSPI, 0 },
-> +       { "smb0", { .name =3D "apb" }, WPCM450_CLK_SMB0, 0 },
-> +       { "smb1", { .name =3D "apb" }, WPCM450_CLK_SMB1, 0 },
-> +};
-> +
-> +static DEFINE_SPINLOCK(wpcm450_clk_lock);
-> +
-> +/*
-> + * NOTE: Error handling is very rudimentary here. If the clock driver in=
-itial-
-> + * ization fails, the system is probably in bigger trouble than what is =
-caused
-> + * by a few leaked resources.
-> + */
-> +
-> +static void __init wpcm450_clk_init(struct device_node *clk_np)
-> +{
-> +       struct clk_hw_onecell_data *clk_data;
-> +       static struct clk_hw **hws;
-> +       static struct clk_hw *hw;
-> +       void __iomem *clk_base;
-> +       int i, ret;
-> +       struct reset_simple_data *reset;
-> +
-> +       clk_base =3D of_iomap(clk_np, 0);
-> +       if (!clk_base) {
-> +               pr_err("%pOFP: failed to map registers\n", clk_np);
-> +               of_node_put(clk_np);
-> +               return;
-> +       }
-> +       of_node_put(clk_np);
-> +
-> +       clk_data =3D kzalloc(struct_size(clk_data, hws, WPCM450_NUM_CLKS)=
-, GFP_KERNEL);
-> +       if (!clk_data)
-> +               return;
-> +
-> +       clk_data->num =3D WPCM450_NUM_CLKS;
-> +       hws =3D clk_data->hws;
-> +
-> +       for (i =3D 0; i < WPCM450_NUM_CLKS; i++)
-> +               hws[i] =3D ERR_PTR(-ENOENT);
-> +
-> +       // PLLs
-> +       for (i =3D 0; i < ARRAY_SIZE(pll_data); i++) {
-> +               const struct wpcm450_pll_data *data =3D &pll_data[i];
-> +
-> +               hw =3D wpcm450_clk_register_pll(clk_base + data->reg, dat=
-a->name,
-> +                                             &data->parent, data->flags)=
-;
-> +               if (IS_ERR(hw)) {
-> +                       pr_info("Failed to register PLL: %pe", hw);
-> +                       return;
-> +               }
-> +       }
-> +
-> +       // Early divisors (REF/2)
-> +       for (i =3D 0; i < ARRAY_SIZE(clkdiv_data_early); i++) {
-> +               const struct wpcm450_clkdiv_data *data =3D &clkdiv_data_e=
-arly[i];
-> +
-> +               hw =3D clk_hw_register_divider_table_parent_data(NULL, da=
-ta->name, &data->parent,
-> +                                                              data->flag=
-s, clk_base + REG_CLKDIV,
-> +                                                              data->shif=
-t, data->width,
-> +                                                              data->div_=
-flags, data->table,
-> +                                                              &wpcm450_c=
-lk_lock);
-> +               if (IS_ERR(hw)) {
-> +                       pr_err("Failed to register div table: %pe\n", hw)=
-;
-> +                       return;
-> +               }
-> +       }
-> +
-> +       // Selects/muxes
-> +       for (i =3D 0; i < ARRAY_SIZE(clksel_data); i++) {
-> +               const struct wpcm450_clksel_data *data =3D &clksel_data[i=
-];
-> +
-> +               hw =3D clk_hw_register_mux_parent_data(NULL, data->name, =
-data->parents,
-> +                                                    data->num_parents, d=
-ata->flags,
-> +                                                    clk_base + REG_CLKSE=
-L, data->shift,
-> +                                                    data->width, 0,
-> +                                                    &wpcm450_clk_lock);
-> +               if (IS_ERR(hw)) {
-> +                       pr_err("Failed to register mux: %pe\n", hw);
-> +                       return;
-> +               }
-> +               if (data->index >=3D 0)
-> +                       clk_data->hws[data->index] =3D hw;
-> +       }
-> +
-> +       // Divisors
-> +       for (i =3D 0; i < ARRAY_SIZE(clkdiv_data); i++) {
-> +               const struct wpcm450_clkdiv_data *data =3D &clkdiv_data[i=
-];
-> +
-> +               hw =3D clk_hw_register_divider_table_parent_data(NULL, da=
-ta->name, &data->parent,
-> +                                                              data->flag=
-s, clk_base + REG_CLKDIV,
-> +                                                              data->shif=
-t, data->width,
-> +                                                              data->div_=
-flags, data->table,
-> +                                                              &wpcm450_c=
-lk_lock);
-> +               if (IS_ERR(hw)) {
-> +                       pr_err("Failed to register divider: %pe\n", hw);
-> +                       return;
-> +               }
-> +       }
-> +
-> +       // Enables/gates
-> +       for (i =3D 0; i < ARRAY_SIZE(clken_data); i++) {
-> +               const struct wpcm450_clken_data *data =3D &clken_data[i];
-> +
-> +               hw =3D clk_hw_register_gate_parent_data(NULL, data->name,=
- &data->parent, data->flags,
-> +                                                     clk_base + REG_CLKE=
-N, data->bitnum,
-> +                                                     data->flags, &wpcm4=
-50_clk_lock);
-> +               if (IS_ERR(hw)) {
-> +                       pr_err("Failed to register gate: %pe\n", hw);
-> +                       return;
-> +               }
-> +               clk_data->hws[data->bitnum] =3D hw;
-> +       }
-> +
-> +       ret =3D of_clk_add_hw_provider(clk_np, of_clk_hw_onecell_get, clk=
-_data);
-> +       if (ret)
-> +               pr_err("Failed to add DT provider: %d\n", ret);
-> +
-> +       // Reset controller
-> +       reset =3D kzalloc(sizeof(*reset), GFP_KERNEL);
-> +       if (!reset)
-> +               return;
-> +       reset->rcdev.owner =3D THIS_MODULE;
-> +       reset->rcdev.nr_resets =3D WPCM450_NUM_RESETS;
-> +       reset->rcdev.ops =3D &reset_simple_ops;
-> +       reset->rcdev.of_node =3D clk_np;
-> +       reset->membase =3D clk_base + REG_IPSRST;
-> +       ret =3D reset_controller_register(&reset->rcdev);
-> +       if (ret)
-> +               pr_err("Failed to register reset controller: %d\n", ret);
-> +
-> +       of_node_put(clk_np);
-> +}
-> +
-> +CLK_OF_DECLARE(wpcm450_clk_init, "nuvoton,wpcm450-clk", wpcm450_clk_init=
-);
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 2a52c990d4fec..16e111d213560 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -208,7 +208,7 @@ config RESET_SCMI
->
->  config RESET_SIMPLE
->         bool "Simple Reset Controller Driver" if COMPILE_TEST || EXPERT
-> -       default ARCH_ASPEED || ARCH_BCMBCA || ARCH_BITMAIN || ARCH_REALTE=
-K || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC
-> +       default ARCH_ASPEED || ARCH_BCMBCA || ARCH_BITMAIN || ARCH_REALTE=
-K || ARCH_STM32 || (ARCH_INTEL_SOCFPGA && ARM64) || ARCH_SUNXI || ARC || AR=
-CH_WPCM450
->         depends on HAS_IOMEM
->         help
->           This enables a simple reset controller driver for reset lines t=
-hat
-> --
-> 2.39.2
->
+Thank you for your kind help.
+
+
+Best Regards,
+Jacky Huang
+
