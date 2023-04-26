@@ -2,45 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD43FC7618E
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Apr 2023 07:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A057C77B60
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Apr 2023 07:43:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239795AbjDZHkG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Apr 2023 03:40:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41942 "EHLO
+        id S239953AbjDZHnu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Apr 2023 03:43:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239816AbjDZHkD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2023 03:40:03 -0400
+        with ESMTP id S239960AbjDZHnq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2023 03:43:46 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C333A8B
-        for <linux-clk@vger.kernel.org>; Wed, 26 Apr 2023 00:40:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68F4F40F7
+        for <linux-clk@vger.kernel.org>; Wed, 26 Apr 2023 00:43:38 -0700 (PDT)
 Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
         by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <pza@pengutronix.de>)
-        id 1prZkd-0000oH-C7; Wed, 26 Apr 2023 09:39:43 +0200
+        id 1prZoO-0001la-DI; Wed, 26 Apr 2023 09:43:36 +0200
 Received: from pza by ptx.hi.pengutronix.de with local (Exim 4.92)
         (envelope-from <pza@pengutronix.de>)
-        id 1prZkb-0001VM-MH; Wed, 26 Apr 2023 09:39:41 +0200
-Date:   Wed, 26 Apr 2023 09:39:41 +0200
+        id 1prZoM-0001fM-I9; Wed, 26 Apr 2023 09:43:34 +0200
+Date:   Wed, 26 Apr 2023 09:43:34 +0200
 From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Jacky Huang <ychuang570808@gmail.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        tmaimon77@gmail.com, catalin.marinas@arm.com, will@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-serial@vger.kernel.org, arnd@arndb.de, schung@nuvoton.com,
-        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-Subject: Re: [PATCH v8 09/11] reset: Add Nuvoton ma35d1 reset driver support
-Message-ID: <20230426073941.GB4724@pengutronix.de>
-References: <20230425102418.185783-1-ychuang570808@gmail.com>
- <20230425102418.185783-10-ychuang570808@gmail.com>
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v7 2/2] clk: wpcm450: Add Nuvoton WPCM450 clock/reset
+ controller driver
+Message-ID: <20230426074334.GC4724@pengutronix.de>
+References: <20230422220240.322572-1-j.neuschaefer@gmx.net>
+ <20230422220240.322572-3-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20230425102418.185783-10-ychuang570808@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230422220240.322572-3-j.neuschaefer@gmx.net>
 X-Sent-From: Pengutronix Hildesheim
 X-URL:  http://www.pengutronix.de/
 X-Accept-Language: de,en
@@ -54,65 +66,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jacky,
+Hi Jonathan,
 
-On Tue, Apr 25, 2023 at 10:24:16AM +0000, Jacky Huang wrote:
-> From: Jacky Huang <ychuang3@nuvoton.com>
+On Sun, Apr 23, 2023 at 12:02:40AM +0200, Jonathan Neuschäfer wrote:
+> This driver implements the following features w.r.t. the clock and reset
+> controller in the WPCM450 SoC:
 > 
-> This driver supports individual IP reset for ma35d1. The reset
-> control registers is a subset of system control registers.
+> - It calculates the rates for all clocks managed by the clock controller
+> - It leaves the clock tree mostly unchanged, except that it enables/
+>   disables clock gates based on usage.
+> - It exposes the reset lines managed by the controller using the
+>   Generic Reset Controller subsystem
 > 
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
->  drivers/reset/Kconfig        |   6 +
->  drivers/reset/Makefile       |   1 +
->  drivers/reset/reset-ma35d1.c | 229 +++++++++++++++++++++++++++++++++++
+> NOTE: If the driver and the corresponding devicetree node are present,
+>       the driver will disable "unused" clocks. This is problem until
+>       the clock relations are properly declared in the devicetree (in a
+>       later patch). Until then, the clk_ignore_unused kernel parameter
+>       can be used as a workaround.
+> 
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 [...]
-> diff --git a/drivers/reset/reset-ma35d1.c b/drivers/reset/reset-ma35d1.c
+> diff --git a/drivers/clk/clk-wpcm450.c b/drivers/clk/clk-wpcm450.c
 > new file mode 100644
-> index 000000000000..648b380becf7
+> index 0000000000000..6f6d8a1ea3484
 > --- /dev/null
-> +++ b/drivers/reset/reset-ma35d1.c
-> @@ -0,0 +1,229 @@
+> +++ b/drivers/clk/clk-wpcm450.c
+> @@ -0,0 +1,374 @@
 [...]
-> +static int ma35d1_reset_update(struct reset_controller_dev *rcdev,
-> +			       unsigned long id, bool assert)
+> +static void __init wpcm450_clk_init(struct device_node *clk_np)
 > +{
-> +	u32 reg;
-> +	struct ma35d1_reset_data *data = container_of(rcdev,
-> +						      struct ma35d1_reset_data,
-> +						      rcdev);
-> +
-> +	reg = readl_relaxed(data->base + ma35d1_reset_map[id].reg_ofs);
-> +	if (assert)
-> +		reg |= BIT(ma35d1_reset_map[id].bit);
-> +	else
-> +		reg &= ~(BIT(ma35d1_reset_map[id].bit));
-> +	writel_relaxed(reg, data->base + ma35d1_reset_map[id].reg_ofs);
-
-This is missing a spinlock to protect the read-modify-write cycle from
-simultaneous updates.
-
+> +	struct clk_hw_onecell_data *clk_data;
+> +	static struct clk_hw **hws;
+> +	static struct clk_hw *hw;
+> +	void __iomem *clk_base;
+> +	int i, ret;
+> +	struct reset_simple_data *reset;
 [...]
-> +static int ma35d1_reset_probe(struct platform_device *pdev)
-> +{
-> +	int err;
-> +	struct device *dev = &pdev->dev;
-> +	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	struct ma35d1_reset_data *reset_data;
-> +
-> +	if (!pdev->dev.of_node) {
-> +		dev_err(&pdev->dev, "Device tree node not found\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	reset_data = devm_kzalloc(dev, sizeof(*reset_data), GFP_KERNEL);
-> +	if (!reset_data)
-> +		return -ENOMEM;
-> +
-> +	reset_data->base = devm_ioremap_resource(&pdev->dev, res);
+> +	// Reset controller
+> +	reset = kzalloc(sizeof(*reset), GFP_KERNEL);
+> +	if (!reset)
+> +		return;
+> +	reset->rcdev.owner = THIS_MODULE;
+> +	reset->rcdev.nr_resets = WPCM450_NUM_RESETS;
+> +	reset->rcdev.ops = &reset_simple_ops;
+> +	reset->rcdev.of_node = clk_np;
+> +	reset->membase = clk_base + REG_IPSRST;
+> +	ret = reset_controller_register(&reset->rcdev);
+> +	if (ret)
+> +		pr_err("Failed to register reset controller: %d\n", ret);
 
-You could use devm_platform_ioremap_resource() here.
+You could use %pe for consistency.
 
 regards
 Philipp
