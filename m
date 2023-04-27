@@ -2,174 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F3FC77B7E
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Apr 2023 19:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AEAC77B61
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Apr 2023 00:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244381AbjD0TJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Apr 2023 15:09:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41932 "EHLO
+        id S1343716AbjD1AUB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Apr 2023 20:20:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244687AbjD0TJ5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2023 15:09:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D01E79E;
-        Thu, 27 Apr 2023 12:09:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BE9D63F22;
-        Thu, 27 Apr 2023 19:09:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DAF8C433EF;
-        Thu, 27 Apr 2023 19:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1682622594;
-        bh=4MuGyWTQQD8YDc9ZDP5EuTvCXfhs1RGXEGefTe8GbFs=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=OEyoAdAg2oHj1kpUaFAUQnORGNgUcMTwXna94WirWc4/7OFURAmKcVKLlVxGAFkME
-         toxsg2t0o0U7Q+9nKKAWfOe1B/t1z3g1kRabot2L3KU7VvngL293h0JsGHTQ534ZJP
-         wb/t5pQP0ryuyOaWJAQ0Akswuclq647TVGmt1KHHbj8adW21pY6mXqBy4ogxoG3XiT
-         nl8v4DuX6FhDVh3IAmmeTltphT6HmwSaAdaxUAAee3iYvoH2HR36H28EF1sUk2sy35
-         kac9ZjDMYlfFNHS8ZZYJ4TPcDUlbU3BEvZYy9X6SsaJklf3YKOr0nvFwrR0eNy/XBZ
-         ccVK16xunjKbA==
-Message-ID: <57dd81d0-510e-0fab-670d-1109eb8dd974@kernel.org>
-Date:   Thu, 27 Apr 2023 14:09:48 -0500
+        with ESMTP id S229750AbjD1AUA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2023 20:20:00 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 897502D40;
+        Thu, 27 Apr 2023 17:19:59 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-2f46348728eso5664047f8f.3;
+        Thu, 27 Apr 2023 17:19:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682641198; x=1685233198;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ve7uIoGJf2kkE3oRGUKMXB38f7f45Vy05Bqy3ZgBaus=;
+        b=h9ulxNNYhVzeT/m2EroqDmWk5YQGS9/8o7FJwIgRwI1b+YuCYDkpLgQlfdJvQIxNts
+         0BLwDEc9YeLxcDihKrRNCsRDBQRSXJO8Q6hZMMkKt1c1bBTFOL/ryL+NxU4b3D4ie7iE
+         CShIknkSa3ckIlOWcf6nqMCaeZqHha5Zql7M4+67frCfADy/WDUEU9jKQqMBwJLiotfj
+         2w/SYcILiGlxFbw4IOLKiycdcUM/B4e6xx2UvdMgoL+SuEcHOYA6lnBCV+9Pe67/AOov
+         iEtDq3WQp3dvxO2ThVIIapjKdR2WhfRDza1ONuac2UR8+KK19QhaJtCQrJOvhlN2qMf3
+         UUCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682641198; x=1685233198;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ve7uIoGJf2kkE3oRGUKMXB38f7f45Vy05Bqy3ZgBaus=;
+        b=QCLmtBIK6rqCpnjBTneww3PnMK7eSRe3XjCf/ewrnNZ8loI5DTWoCY+bgrLi8DF/+F
+         ZCL+eHzRPXv745ABEbDQ8w9YKpiv+KlJl1BMiTXkQxxCPl4Tplb+ZrnN6gMrePCiyI3J
+         kBYxNa51iOvZnU+GbQ5PKSIKHLsrCAJ8pvVSD9CTP8o8aUUrs5X+LyHcGn8ArLkDAnJt
+         EurK62VKxEU6tshQ499AwS9pIJ7c97RoAqmMd4/fCCvG9jchEIFMx7HdHJG8kllRNDyM
+         0VJQDqIq/hUx5bvM1xRR49wu6DhQPZy6Tw2HrrLUq1sO2TxErqIAo+L4Y1joMLYcc2E6
+         GY+Q==
+X-Gm-Message-State: AC+VfDw8XFPMX1FwkE05hbLPKtI7TxNHlLdX31Cq+lSg2xvVxazk7dIA
+        Mlsa3RLFkTSzQZipZ6WGtxQ=
+X-Google-Smtp-Source: ACHHUZ4bHqUf5OfMA8KtY9+qO8EpkzRC5rdHK5lFi4dD6UPUVf1ncZ/1k7PJyyMYQGoKKBszJVqyig==
+X-Received: by 2002:a05:600c:b45:b0:3f1:987b:7a13 with SMTP id k5-20020a05600c0b4500b003f1987b7a13mr2464939wmr.4.1682641197399;
+        Thu, 27 Apr 2023 17:19:57 -0700 (PDT)
+Received: from localhost.localdomain (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
+        by smtp.googlemail.com with ESMTPSA id d3-20020a05600c3ac300b003f19b3d89e9sm16362095wms.33.2023.04.27.17.19.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Apr 2023 17:19:56 -0700 (PDT)
+From:   Christian Marangi <ansuelsmth@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v4 0/3] clk: qcom: clk-rcg2: introduce support for multiple conf for same freq
+Date:   Thu, 27 Apr 2023 17:07:14 +0200
+Message-Id: <20230427150717.20860-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3 29/65] clk: socfpga: gate: Add a determine_rate hook
-Content-Language: en-US
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
- <679921ee-98d4-d6ef-5934-e009fd4b31fc@kernel.org>
- <sjlp5ubnpvulgwhhymmfkmmobkgxacyqwagqozodkee3di2qik@3igj6k3zgbk6>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <sjlp5ubnpvulgwhhymmfkmmobkgxacyqwagqozodkee3di2qik@3igj6k3zgbk6>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime,
+This small series fix a current problem with ipq8074 where the 2 uniphy
+port doesn't work in some corner case with some clk configuration. The
+port to correctly work require a specific frequency, using the wrong one
+results in the port not transmitting data.
 
-On 4/25/23 09:48, Maxime Ripard wrote:
-> Hi Dinh,
-> 
-> On Mon, Apr 24, 2023 at 01:32:28PM -0500, Dinh Nguyen wrote:
->> On 4/4/23 05:11, Maxime Ripard wrote:
->>> The SoCFGPA gate clock implements a mux with a set_parent hook, but
->>> doesn't provide a determine_rate implementation.
->>>
->>> This is a bit odd, since set_parent() is there to, as its name implies,
->>> change the parent of a clock. However, the most likely candidate to
->>> trigger that parent change is a call to clk_set_rate(), with
->>> determine_rate() figuring out which parent is the best suited for a
->>> given rate.
->>>
->>> The other trigger would be a call to clk_set_parent(), but it's far less
->>> used, and it doesn't look like there's any obvious user for that clock.
->>>
->>> So, the set_parent hook is effectively unused, possibly because of an
->>> oversight. However, it could also be an explicit decision by the
->>> original author to avoid any reparenting but through an explicit call to
->>> clk_set_parent().
->>>
->>> The latter case would be equivalent to setting the flag
->>> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
->>> to __clk_mux_determine_rate(). Indeed, if no determine_rate
->>> implementation is provided, clk_round_rate() (through
->>> clk_core_round_rate_nolock()) will call itself on the parent if
->>> CLK_SET_RATE_PARENT is set, and will not change the clock rate
->>> otherwise. __clk_mux_determine_rate() has the exact same behavior when
->>> CLK_SET_RATE_NO_REPARENT is set.
->>>
->>> And if it was an oversight, then we are at least explicit about our
->>> behavior now and it can be further refined down the line.
->>>
->>> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
->>> ---
->>>    drivers/clk/socfpga/clk-gate.c | 3 ++-
->>>    1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
->>> index 32ccda960f28..cbba8462a09e 100644
->>> --- a/drivers/clk/socfpga/clk-gate.c
->>> +++ b/drivers/clk/socfpga/clk-gate.c
->>> @@ -110,6 +110,7 @@ static unsigned long socfpga_clk_recalc_rate(struct clk_hw *hwclk,
->>>    static struct clk_ops gateclk_ops = {
->>>    	.recalc_rate = socfpga_clk_recalc_rate,
->>> +	.determine_rate = __clk_mux_determine_rate,
->>>    	.get_parent = socfpga_clk_get_parent,
->>>    	.set_parent = socfpga_clk_set_parent,
->>>    };
->>> @@ -166,7 +167,7 @@ void __init socfpga_gate_init(struct device_node *node)
->>>    	init.name = clk_name;
->>>    	init.ops = ops;
->>> -	init.flags = 0;
->>> +	init.flags = CLK_SET_RATE_NO_REPARENT;
->>>    	init.num_parents = of_clk_parent_fill(node, parent_name, SOCFPGA_MAX_PARENTS);
->>>    	if (init.num_parents < 2) {
->>>
->>
->> This patch broke SoCFPGA boot serial port. The characters are mangled.
-> 
-> Do you have any other access to that board? If so, could you dump
-> clk_summary in debugfs with and without that patch?
-> 
+With the current code with a requested freq of 125MHz, the frequency is
+set to 105MHz. This is caused by the fact that there are 2 different
+configuration to set 125MHz and it's always selected the first one that
+results in 105MHz.
 
-That dump from the clk_summary are identical for both cases.
+In the original QSDK code, the frequency configuration selection is
+different and the CEIL FLOOR logic is not present. Instead it's used a
+BEST approach where the frequency table is checked and then it's checked
+if there are duplicate entry.
+
+This proposed implementation is more specific and introduce an entire new
+set of ops and a specific freq table to support this special configuration.
+
+A union is introduced in rcg2 struct to not duplicate the struct.
+A new set of ops clk_rcg2_fm_ops are introduced to support this new kind
+of frequency table.
+
+Changes v4:
+- Drop suggested but wrong re-search patch
+- Move everything to separate ops and struct to not affect current rcg2
+  users.
+Changes v3:
+- Add qcom_find_freq_exact
+- Drop re-search on rcg2_set_rate
+- Rework multiple conf patch to follow new implementation
+Changes v2:
+- Out of RFC
+- Fix compile warning from buildbot related to F redefinition
+
+Christian Marangi (3):
+  clk: qcom: clk-rcg: introduce support for multiple conf for same freq
+  clk: qcom: clk-rcg2: add support for rcg2 freq multi ops
+  clk: qcom: gcc-ipq8074: rework nss_port5/6 clock to multiple conf
+
+ drivers/clk/qcom/clk-rcg.h     |  24 +++++-
+ drivers/clk/qcom/clk-rcg2.c    | 152 +++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/common.c      |  18 ++++
+ drivers/clk/qcom/common.h      |   2 +
+ drivers/clk/qcom/gcc-ipq8074.c | 120 ++++++++++++++++----------
+ 5 files changed, 271 insertions(+), 45 deletions(-)
+
+-- 
+2.39.2
+
