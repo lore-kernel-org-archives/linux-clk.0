@@ -2,426 +2,230 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA615C77B7C
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Apr 2023 11:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E9DCC77B61
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Apr 2023 12:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243730AbjD0LgZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Apr 2023 07:36:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42934 "EHLO
+        id S243760AbjD0Mzl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Apr 2023 08:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243750AbjD0LgX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2023 07:36:23 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 263805584
-        for <linux-clk@vger.kernel.org>; Thu, 27 Apr 2023 04:36:19 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-50685f1b6e0so15322655a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Apr 2023 04:36:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682595377; x=1685187377;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5aXE+IsV3n1SGEzkkFMoVBN+KiUYReiWu7h8fU7w0wg=;
-        b=lNDg0HuHr7nCEstvUnhiwOhlbFwcBloliBAA5div5SmhhlSCLVEE9rXgMl3YznSQal
-         3ej3mi978aoiz1akwD6WoT8tMszA9gyT5exMnxB3fquBUV1YlUVgKvRftW5pL3KmV4CB
-         RSLhNRHuUwuEddeHvwty+fyyGFF1LTCyf4yeyRmEjdYURM2YfbBl0SXKo/nri/dhdBl0
-         dRa5bSw4biMANPzwtb0jkhUt7GH0z7r1Gz++yWMC1HKrQiSXyMNTUugNlAAFImOaeEyl
-         TWMP7QEwKzPV5vvi/buuK4vk7fENbEu9HdSYdeORJ6MCjlWMTwZDAKbsDPdouI6uRZzq
-         OP0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682595377; x=1685187377;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5aXE+IsV3n1SGEzkkFMoVBN+KiUYReiWu7h8fU7w0wg=;
-        b=a8YXlb0p8gd4pIDfBuCnRsf6lB/zIhAgAQl8T7wzMoSArRyGoT7LdVhTNqtq2DLsOy
-         6d4r53eIOsim5YTut2ozyOUff8rDRciayo5X4EixaPMS7IpHmCHH86bstPRNcS7+uP8M
-         6QGGitpYhEGtwpOEYmXa6CEnaFzV0cPf7ASVtf0duxoY/RoqlbC+8aqKQWh3XRkFdQZO
-         GprnFmfmbAfxxeeVc6vpc9+OWbazgT3ZHWGgq22misydVqlLpewEMXV0OL5+9T/YX2tb
-         rlITufD3BjgboI4YT94cjE3OfrVxWm0j7IE1bUELj6NnyPad5Z5Ge/KLgxQsf8Vjo6V+
-         mwYg==
-X-Gm-Message-State: AC+VfDzgKe8XZnMfr3xeM2/gf8rQemnUT21AQjxdnFoUP5piSGQDucjd
-        +ucncvrMwsfnoypt0vdBnHdweQ==
-X-Google-Smtp-Source: ACHHUZ5Mqwyk4OEXex1vQHLNR3vFW39c9R30akVMaKZ3X/madF777DpkofW9hQUMGsuMDUrEt1XNdw==
-X-Received: by 2002:a05:6402:190:b0:506:8e91:3b35 with SMTP id r16-20020a056402019000b005068e913b35mr1543253edv.13.1682595377498;
-        Thu, 27 Apr 2023 04:36:17 -0700 (PDT)
-Received: from [172.23.2.82] ([31.221.30.162])
-        by smtp.gmail.com with ESMTPSA id o25-20020aa7d3d9000000b00509bd19b869sm6700713edr.48.2023.04.27.04.36.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Apr 2023 04:36:16 -0700 (PDT)
-Message-ID: <4f73fde6-bc67-ac31-08d2-3e84b0646e73@linaro.org>
-Date:   Thu, 27 Apr 2023 13:36:13 +0200
+        with ESMTP id S243276AbjD0Mzk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2023 08:55:40 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24E911B0
+        for <linux-clk@vger.kernel.org>; Thu, 27 Apr 2023 05:55:38 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ps19r-0006ST-9F; Thu, 27 Apr 2023 14:55:35 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ps19q-00E9kb-5t; Thu, 27 Apr 2023 14:55:34 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ps19p-00Gdya-Fj; Thu, 27 Apr 2023 14:55:33 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, kernel@pengutronix.de
+Subject: [PATCH] clk: Switch i2c drivers back to use .probe()
+Date:   Thu, 27 Apr 2023 14:55:31 +0200
+Message-Id: <20230427125531.622202-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH V7 2/4] dt-bindings: clock: document Amlogic S4 SoC
- peripherals clock controller
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        Yu Tu <yu.tu@amlogic.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-References: <20230417065005.24967-1-yu.tu@amlogic.com>
- <20230417065005.24967-3-yu.tu@amlogic.com>
- <20230426104946.xiwsdjxris2faf7x@CAB-WSD-L081021>
- <98fdedba-2715-23e7-1d2b-2d9334f0c674@amlogic.com>
- <20230427085228.vktptr76wbcdcksq@CAB-WSD-L081021>
-Content-Language: en-US
-Organization: Linaro Developer Services
-In-Reply-To: <20230427085228.vktptr76wbcdcksq@CAB-WSD-L081021>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6130; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=TaZKSdJv8tTXh4PTBDg1+27GpanBuBmfDXm/D3/A6xU=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkSnDC5aK/SHOgz39sYMPZWOKjypMuXN9qJ5VGZ 5iPNyNTpIuJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZEpwwgAKCRCPgPtYfRL+ TqkEB/9ah8YdqYptvG6lFYsrepnsXh6VMHH5Lic9U8AseNf3KNsFaOt8uZwYnlEVS42QnSDHQX9 W3ruQMmBGf+Er9+lUutsSuS3P7zInCabtNZmgPvS2JPzapnJnVov6rI+F9IYd2zTRqtOqXf5I4d /xfSI/FFP4QOEzb5rdaR5pxKAs9qxhX/dn+J/D27rpzUDCQy5u2g29k+bdJYI70CGUf8jud07os XSdH/8phllD2RGb8a1Ghjnj7dzn8o/nfM3O5lPkUVdMYxBPYXTKchPQdS+8OSg6h2CzjoCaUqIa 7LxTQVN/2HmKn+dAg5NzHYarQ/gxNakJqggK74BuIp4AQzCY
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+After commit b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new()
+call-back type"), all drivers being converted to .probe_new() and then
+03c835f498b5 ("i2c: Switch .probe() to not take an id parameter") convert
+back to (the new) .probe() to be able to eventually drop .probe_new() from
+struct i2c_driver.
 
-On 27/04/2023 10:52, Dmitry Rokosov wrote:
-> On Thu, Apr 27, 2023 at 04:03:41PM +0800, Yu Tu wrote:
->>
->>
->> On 2023/4/26 18:49, Dmitry Rokosov wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> Hello Yu,
->>>
->>> Thank you for the patch series! Please find my comments below.
->>>
->>
->> Hi Dmitry，
->> 	Thank you for your review.
->>
->>> On Mon, Apr 17, 2023 at 02:50:03PM +0800, Yu Tu wrote:
->>>> Add the S4 peripherals clock controller dt-bindings in the s4 SoC
->>>> family.
->>>>
->>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>> ---
->>>>    .../clock/amlogic,s4-peripherals-clkc.yaml    |  97 +++++++++++++
->>>>    .../clock/amlogic,s4-peripherals-clkc.h       | 131 ++++++++++++++++++
->>>>    2 files changed, 228 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
->>>>    create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
->>>> new file mode 100644
->>>> index 000000000000..46b969a16a7c
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
->>>> @@ -0,0 +1,97 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/clock/amlogic,s4-peripherals-clkc.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Amlogic Meson S serials Peripherals Clock Controller
->>>
->>> As per my understanding, Meson is no longer applicable.
->>> As Neil and Martin suggested in other reviews, the term 'Amlogic' should
->>> be used instead or 'Meson' should be removed altogether.
->>>
->>
->> No. This was all agreed upon a long time ago. Corporate drivers and dtsi are
->> named after this.
->>
-> 
-> Okay, it seems like there may be a misunderstanding here.
-> Now might be a good time to ask Neil about the correct behavior.
-> 
-> Neil, could you please provide the specific naming rules for the new
-> Amlogic drivers? Where should we use the 'meson' keyword, and where
-> should we not use it?
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/clk/clk-cdce706.c      | 2 +-
+ drivers/clk/clk-cdce925.c      | 2 +-
+ drivers/clk/clk-cs2000-cp.c    | 2 +-
+ drivers/clk/clk-max9485.c      | 2 +-
+ drivers/clk/clk-renesas-pcie.c | 2 +-
+ drivers/clk/clk-si514.c        | 2 +-
+ drivers/clk/clk-si5341.c       | 2 +-
+ drivers/clk/clk-si5351.c       | 2 +-
+ drivers/clk/clk-si544.c        | 2 +-
+ drivers/clk/clk-si570.c        | 2 +-
+ drivers/clk/clk-versaclock5.c  | 2 +-
+ drivers/clk/clk-versaclock7.c  | 2 +-
+ 12 files changed, 12 insertions(+), 12 deletions(-)
 
-The current goal is to first get rid of meson in the compatiob, which is ok here,
-then remove meson in the driver name & function names, and then wherever it's a
-nice to have to remove meson in bindings & comments.
-
-So if you where sending a v8, it would be good to remove the Meson in the
-bindings description.
-
-Neil
-
-> 
->>>> +
->>>> +maintainers:
->>>> +  - Neil Armstrong <neil.armstrong@linaro.org>
->>>> +  - Jerome Brunet <jbrunet@baylibre.com>
->>>> +  - Yu Tu <yu.tu@amlogic.com>
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: amlogic,s4-peripherals-clkc
->>>> +
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    items:
->>>> +      - description: input fixed pll div2
->>>> +      - description: input fixed pll div2p5
->>>> +      - description: input fixed pll div3
->>>> +      - description: input fixed pll div4
->>>> +      - description: input fixed pll div5
->>>> +      - description: input fixed pll div7
->>>> +      - description: input hifi pll
->>>> +      - description: input gp0 pll
->>>> +      - description: input mpll0
->>>> +      - description: input mpll1
->>>> +      - description: input mpll2
->>>> +      - description: input mpll3
->>>> +      - description: input hdmi pll
->>>> +      - description: input oscillator (usually at 24MHz)
->>>> +      - description: input external 32kHz reference (optional)
->>>> +
->>>> +  clock-names:
->>>> +    items:
->>>> +      - const: fclk_div2
->>>> +      - const: fclk_div2p5
->>>> +      - const: fclk_div3
->>>> +      - const: fclk_div4
->>>> +      - const: fclk_div5
->>>> +      - const: fclk_div7
->>>> +      - const: hifi_pll
->>>> +      - const: gp0_pll
->>>> +      - const: mpll0
->>>> +      - const: mpll1
->>>> +      - const: mpll2
->>>> +      - const: mpll3
->>>> +      - const: hdmi_pll
->>>> +      - const: xtal
->>>> +      - const: ext_32k
->>>> +
->>>> +  "#clock-cells":
->>>> +    const: 1
->>>> +
->>>> +required:
->>>> +  - compatible
->>>> +  - reg
->>>> +  - clocks
->>>> +  - clock-names
->>>> +  - "#clock-cells"
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->>>> +
->>>> +    clkc_periphs: clock-controller@fe000000 {
->>>> +      compatible = "amlogic,s4-peripherals-clkc";
->>>> +      reg = <0xfe000000 0x49c>;
->>>
->>> I was under the impression that reg as MMIO address should have four
->>> cells on ARM64 architecture. Are you sure it only needs two cells?
->>
->> Yes. Maybe you can check out the clock file for other yaml.The two cells and
->> four cells all are ok.
->>
->> It's not a problem even in real DTS. How many cells are needed to look at
->> the parent address-cells and size-cells definitions.
->>
-> 
-> AFAIR, it depends on which OF API you will call for retreive address
-> and size values (u32 or u64).
-> 
->>>
->>>> +      clocks = <&clkc_pll 3>,
->>>> +              <&clkc_pll 13>,
->>>> +              <&clkc_pll 5>,
->>>> +              <&clkc_pll 7>,
->>>> +              <&clkc_pll 9>,
->>>> +              <&clkc_pll 11>,
->>>> +              <&clkc_pll 17>,
->>>> +              <&clkc_pll 15>,
->>>> +              <&clkc_pll 25>,
->>>> +              <&clkc_pll 27>,
->>>> +              <&clkc_pll 29>,
->>>> +              <&clkc_pll 31>,
->>>> +              <&clkc_pll 20>,
->>>> +              <&xtal>,
->>>> +              <&ext_32k>;
->>>> +      clock-names = "fclk_div2", "fclk_div2p5", "fclk_div3", "fclk_div4",
->>>> +                    "fclk_div5", "fclk_div7", "hifi_pll", "gp0_pll",
->>>> +                    "mpll0", "mpll1", "mpll2", "mpll3", "hdmi_pll", "xtal",
->>>> +                    "ext_32k";
->>>> +      #clock-cells = <1>;
->>>> +    };
->>>> +...
->>>> diff --git a/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
->>>> new file mode 100644
->>>> index 000000000000..073396a76957
->>>> --- /dev/null
->>>> +++ b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
->>>> @@ -0,0 +1,131 @@
->>>> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
->>>> +/*
->>>> + * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
->>>> + * Author: Yu Tu <yu.tu@amlogic.com>
->>>> + */
->>>> +
->>>> +#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
->>>> +#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
->>>> +
->>>> +/*
->>>> + * CLKID index values
->>>> + */
->>>> +
->>>> +#define CLKID_RTC_CLK                        4
->>>
->>> I believe that the CLK suffix is unnecessary since it is already clear
->>> that the object in question is a clock. Additionally, it is redundant
->>> to use the GATE suffix.
->>
->> No. These prefixes and suffixes are very friendly to the people who write
->> and read the code.
->>
-> 
-> Jerome has already pointed this out in another review for the
-> A1 clock driver, there are redundant suffixes:
-> 
-> https://lore.kernel.org/linux-amlogic/1j359y82fn.fsf@starbuckisacylon.baylibre.com/
-> 
->>>
->>>> +#define CLKID_SYS_CLK_B_GATE         7
->>>> +#define CLKID_SYS_CLK_A_GATE         10
->>>> +#define CLKID_SYS_CLK                        11
->>>> +#define CLKID_CECA_32K_CLKOUT                16
->>>> +#define CLKID_CECB_32K_CLKOUT                21
->>>> +#define CLKID_SC_CLK_GATE            24
->>>> +#define CLKID_12_24M_CLK_SEL         27
->>>> +#define CLKID_VID_PLL                        30
->>>> +#define CLKID_VCLK                   37
->>>> +#define CLKID_VCLK2                  38
->>>> +#define CLKID_VCLK_DIV1                      39
->>>> +#define CLKID_VCLK2_DIV1             44
->>>> +#define CLKID_VCLK_DIV2                      49
->>>> +#define CLKID_VCLK_DIV4                      50
->>>> +#define CLKID_VCLK_DIV6                      51
->>>> +#define CLKID_VCLK_DIV12             52
->>>> +#define CLKID_VCLK2_DIV2             53
->>>> +#define CLKID_VCLK2_DIV4             54
->>>> +#define CLKID_VCLK2_DIV6             55
->>>> +#define CLKID_VCLK2_DIV12            56
->>>> +#define CLKID_CTS_ENCI                       61
->>>> +#define CLKID_CTS_ENCP                       62
->>>> +#define CLKID_CTS_VDAC                       63
->>>> +#define CLKID_HDMI                   67
->>>> +#define CLKID_TS_CLK_GATE            69
->>>> +#define CLKID_MALI_0                 72
->>>> +#define CLKID_MALI_1                 75
->>>> +#define CLKID_MALI                   76
->>>> +#define CLKID_VDEC_P0                        79
->>>> +#define CLKID_VDEC_P1                        82
->>>> +#define CLKID_VDEC_SEL                       83
->>>> +#define CLKID_HEVCF_P0                       86
->>>> +#define CLKID_HEVCF_P1                       89
->>>> +#define CLKID_HEVCF_SEL                      90
->>>> +#define CLKID_VPU_0                  93
->>>> +#define CLKID_VPU_1                  96
->>>> +#define CLKID_VPU                    97
->>>> +#define CLKID_VPU_CLKB_TMP           100
->>>> +#define CLKID_VPU_CLKB                       102
->>>> +#define CLKID_VPU_CLKC_P0            105
->>>> +#define CLKID_VPU_CLKC_P1            108
->>>> +#define CLKID_VPU_CLKC_SEL           109
->>>> +#define CLKID_VAPB_0                 112
->>>> +#define CLKID_VAPB_1                 115
->>>> +#define CLKID_VAPB                   116
->>>> +#define CLKID_GE2D                   117
->>>> +#define CLKID_VDIN_MEAS_GATE         120
->>>> +#define CLKID_SD_EMMC_C_CLK          123
->>>> +#define CLKID_SD_EMMC_A_CLK          126
->>>> +#define CLKID_SD_EMMC_B_CLK          129
->>>> +#define CLKID_SPICC0_GATE            132
->>>> +#define CLKID_PWM_A_GATE             135
->>>> +#define CLKID_PWM_B_GATE             138
->>>> +#define CLKID_PWM_C_GATE             141
->>>> +#define CLKID_PWM_D_GATE             144
->>>> +#define CLKID_PWM_E_GATE             147
->>>> +#define CLKID_PWM_F_GATE             150
->>>> +#define CLKID_PWM_G_GATE             153
->>>> +#define CLKID_PWM_H_GATE             156
->>>> +#define CLKID_PWM_I_GATE             159
->>>> +#define CLKID_PWM_J_GATE             162
->>>> +#define CLKID_SARADC_GATE            165
->>>> +#define CLKID_GEN_GATE                       168
->>>> +#define CLKID_DDR                    169
->>>> +#define CLKID_DOS                    170
->>>> +#define CLKID_ETHPHY                 171
->>>> +#define CLKID_MALI_GATE                      172
->>>> +#define CLKID_AOCPU                  173
->>>> +#define CLKID_AUCPU                  174
->>>> +#define CLKID_CEC                    175
->>>> +#define CLKID_SD_EMMC_A                      176
->>>> +#define CLKID_SD_EMMC_B                      177
->>>> +#define CLKID_NAND                   178
->>>> +#define CLKID_SMARTCARD                      179
->>>> +#define CLKID_ACODEC                 180
->>>> +#define CLKID_SPIFC                  181
->>>> +#define CLKID_MSR_CLK                        182
->>>> +#define CLKID_IR_CTRL                        183
->>>> +#define CLKID_AUDIO                  184
->>>> +#define CLKID_ETH                    185
->>>> +#define CLKID_UART_A                 186
->>>> +#define CLKID_UART_B                 187
->>>> +#define CLKID_UART_C                 188
->>>> +#define CLKID_UART_D                 189
->>>> +#define CLKID_UART_E                 190
->>>> +#define CLKID_AIFIFO                 191
->>>> +#define CLKID_TS_DDR                 192
->>>> +#define CLKID_TS_PLL                 193
->>>> +#define CLKID_G2D                    194
->>>> +#define CLKID_SPICC0                 195
->>>> +#define CLKID_SPICC1                 196
->>>> +#define CLKID_USB                    197
->>>> +#define CLKID_I2C_M_A                        198
->>>> +#define CLKID_I2C_M_B                        199
->>>> +#define CLKID_I2C_M_C                        200
->>>> +#define CLKID_I2C_M_D                        201
->>>> +#define CLKID_I2C_M_E                        202
->>>> +#define CLKID_HDMITX_APB             203
->>>> +#define CLKID_I2C_S_A                        204
->>>> +#define CLKID_USB1_TO_DDR            205
->>>> +#define CLKID_HDCP22                 206
->>>> +#define CLKID_MMC_APB                        207
->>>> +#define CLKID_RSA                    208
->>>> +#define CLKID_CPU_DEBUG                      209
->>>> +#define CLKID_VPU_INTR                       210
->>>> +#define CLKID_DEMOD                  211
->>>> +#define CLKID_SAR_ADC                        212
->>>> +#define CLKID_GIC                    213
->>>> +#define CLKID_PWM_AB                 214
->>>> +#define CLKID_PWM_CD                 215
->>>> +#define CLKID_PWM_EF                 216
->>>> +#define CLKID_PWM_GH                 217
->>>> +#define CLKID_PWM_IJ                 218
->>>> +#define CLKID_HDCP22_ESMCLK_GATE     221
->>>> +#define CLKID_HDCP22_SKPCLK_GATE     224
->>>> +
->>>> +#endif /* _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H */
->>>> --
->>>> 2.33.1
->>>>
->>>>
->>>> _______________________________________________
->>>> linux-amlogic mailing list
->>>> linux-amlogic@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
->>>
->>> --
->>> Thank you,
->>> Dmitry
-> 
+diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
+index 1449d0537674..396469c29633 100644
+--- a/drivers/clk/clk-cdce706.c
++++ b/drivers/clk/clk-cdce706.c
+@@ -690,7 +690,7 @@ static struct i2c_driver cdce706_i2c_driver = {
+ 		.name	= "cdce706",
+ 		.of_match_table = of_match_ptr(cdce706_dt_match),
+ 	},
+-	.probe_new	= cdce706_probe,
++	.probe		= cdce706_probe,
+ 	.remove		= cdce706_remove,
+ 	.id_table	= cdce706_id,
+ };
+diff --git a/drivers/clk/clk-cdce925.c b/drivers/clk/clk-cdce925.c
+index 6350682f7e6d..e0d22c2fd213 100644
+--- a/drivers/clk/clk-cdce925.c
++++ b/drivers/clk/clk-cdce925.c
+@@ -824,7 +824,7 @@ static struct i2c_driver cdce925_driver = {
+ 		.name = "cdce925",
+ 		.of_match_table = of_match_ptr(clk_cdce925_of_match),
+ 	},
+-	.probe_new	= cdce925_probe,
++	.probe		= cdce925_probe,
+ 	.id_table	= cdce925_id,
+ };
+ module_i2c_driver(cdce925_driver);
+diff --git a/drivers/clk/clk-cs2000-cp.c b/drivers/clk/clk-cs2000-cp.c
+index 320d39922206..b82fee6a3d6f 100644
+--- a/drivers/clk/clk-cs2000-cp.c
++++ b/drivers/clk/clk-cs2000-cp.c
+@@ -622,7 +622,7 @@ static struct i2c_driver cs2000_driver = {
+ 		.pm	= &cs2000_pm_ops,
+ 		.of_match_table = cs2000_of_match,
+ 	},
+-	.probe_new	= cs2000_probe,
++	.probe		= cs2000_probe,
+ 	.remove		= cs2000_remove,
+ 	.id_table	= cs2000_id,
+ };
+diff --git a/drivers/clk/clk-max9485.c b/drivers/clk/clk-max9485.c
+index 5f85b0a32872..be9020b6c789 100644
+--- a/drivers/clk/clk-max9485.c
++++ b/drivers/clk/clk-max9485.c
+@@ -376,7 +376,7 @@ static struct i2c_driver max9485_driver = {
+ 		.pm		= &max9485_pm_ops,
+ 		.of_match_table	= max9485_dt_ids,
+ 	},
+-	.probe_new = max9485_i2c_probe,
++	.probe = max9485_i2c_probe,
+ 	.id_table = max9485_i2c_ids,
+ };
+ module_i2c_driver(max9485_driver);
+diff --git a/drivers/clk/clk-renesas-pcie.c b/drivers/clk/clk-renesas-pcie.c
+index ff3a52d48479..c6181fd76fe6 100644
+--- a/drivers/clk/clk-renesas-pcie.c
++++ b/drivers/clk/clk-renesas-pcie.c
+@@ -371,7 +371,7 @@ static struct i2c_driver rs9_driver = {
+ 		.pm	= &rs9_pm_ops,
+ 		.of_match_table = clk_rs9_of_match,
+ 	},
+-	.probe_new	= rs9_probe,
++	.probe		= rs9_probe,
+ 	.id_table	= rs9_id,
+ };
+ module_i2c_driver(rs9_driver);
+diff --git a/drivers/clk/clk-si514.c b/drivers/clk/clk-si514.c
+index c028fa103bed..18242382301a 100644
+--- a/drivers/clk/clk-si514.c
++++ b/drivers/clk/clk-si514.c
+@@ -392,7 +392,7 @@ static struct i2c_driver si514_driver = {
+ 		.name = "si514",
+ 		.of_match_table = clk_si514_of_match,
+ 	},
+-	.probe_new	= si514_probe,
++	.probe		= si514_probe,
+ 	.remove		= si514_remove,
+ 	.id_table	= si514_id,
+ };
+diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
+index 0e528d7ba656..dbd21e658a3e 100644
+--- a/drivers/clk/clk-si5341.c
++++ b/drivers/clk/clk-si5341.c
+@@ -1834,7 +1834,7 @@ static struct i2c_driver si5341_driver = {
+ 		.name = "si5341",
+ 		.of_match_table = clk_si5341_of_match,
+ 	},
+-	.probe_new	= si5341_probe,
++	.probe		= si5341_probe,
+ 	.remove		= si5341_remove,
+ 	.id_table	= si5341_id,
+ };
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 9e939c98a455..f17c1ae0a65f 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -1661,7 +1661,7 @@ static struct i2c_driver si5351_driver = {
+ 		.name = "si5351",
+ 		.of_match_table = of_match_ptr(si5351_dt_ids),
+ 	},
+-	.probe_new = si5351_i2c_probe,
++	.probe = si5351_i2c_probe,
+ 	.remove = si5351_i2c_remove,
+ 	.id_table = si5351_i2c_ids,
+ };
+diff --git a/drivers/clk/clk-si544.c b/drivers/clk/clk-si544.c
+index 089786907641..22925968aa35 100644
+--- a/drivers/clk/clk-si544.c
++++ b/drivers/clk/clk-si544.c
+@@ -520,7 +520,7 @@ static struct i2c_driver si544_driver = {
+ 		.name = "si544",
+ 		.of_match_table = clk_si544_of_match,
+ 	},
+-	.probe_new	= si544_probe,
++	.probe		= si544_probe,
+ 	.id_table	= si544_id,
+ };
+ module_i2c_driver(si544_driver);
+diff --git a/drivers/clk/clk-si570.c b/drivers/clk/clk-si570.c
+index 0a6d70c49726..4616945ca97f 100644
+--- a/drivers/clk/clk-si570.c
++++ b/drivers/clk/clk-si570.c
+@@ -517,7 +517,7 @@ static struct i2c_driver si570_driver = {
+ 		.name = "si570",
+ 		.of_match_table = clk_si570_of_match,
+ 	},
+-	.probe_new	= si570_probe,
++	.probe		= si570_probe,
+ 	.remove		= si570_remove,
+ 	.id_table	= si570_id,
+ };
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index fa71a57875ce..b1586f4f16fa 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -1304,7 +1304,7 @@ static struct i2c_driver vc5_driver = {
+ 		.pm	= &vc5_pm_ops,
+ 		.of_match_table = clk_vc5_of_match,
+ 	},
+-	.probe_new	= vc5_probe,
++	.probe		= vc5_probe,
+ 	.remove		= vc5_remove,
+ 	.id_table	= vc5_id,
+ };
+diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
+index 8e4f86e852aa..056513a46167 100644
+--- a/drivers/clk/clk-versaclock7.c
++++ b/drivers/clk/clk-versaclock7.c
+@@ -1298,7 +1298,7 @@ static struct i2c_driver vc7_i2c_driver = {
+ 		.name = "vc7",
+ 		.of_match_table = vc7_of_match,
+ 	},
+-	.probe_new = vc7_probe,
++	.probe = vc7_probe,
+ 	.remove = vc7_remove,
+ 	.id_table = vc7_i2c_id,
+ };
+-- 
+2.39.2
 
