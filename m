@@ -2,151 +2,171 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6BCC7EE29
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Apr 2023 21:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FD2C77B73
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Apr 2023 07:23:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239999AbjDZVGw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Apr 2023 17:06:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41462 "EHLO
+        id S242844AbjD0HXl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Apr 2023 03:23:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239974AbjDZVGv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Apr 2023 17:06:51 -0400
-Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF7A030EE
-        for <linux-clk@vger.kernel.org>; Wed, 26 Apr 2023 14:06:47 -0700 (PDT)
-Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-54fc6949475so87479127b3.3
-        for <linux-clk@vger.kernel.org>; Wed, 26 Apr 2023 14:06:47 -0700 (PDT)
+        with ESMTP id S239395AbjD0HXj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2023 03:23:39 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A304EF5;
+        Thu, 27 Apr 2023 00:22:59 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1a69f686345so63306315ad.2;
+        Thu, 27 Apr 2023 00:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682543207; x=1685135207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8C6tKrbT51GaZnl8zer1AnBo8yNRgpprgLkj0av5l+E=;
-        b=Kh7TmG3JlHQoPDgJrxEspZSpUN+36yUdamiO43UnPnWU5WHRHExsZuq1crpHQPMIXw
-         zzWzXMlOi38Xx4my+77mCqHvk7/X81J/7WthQKZt0CHx/5a1ohrap/HzGWEDQbQACJTb
-         YhsFcjssiyz48P8HUQnvmRDVNrO8n5ZicePPH1S7Zj9YadbExO7GDrfEmhV8+JMdHi44
-         dS/U1Lzmekv6Z1Px+wN/pWN5LwOrRpCZPrnqoQccfnfTFROZXP698w5QlH4NBcZahcI9
-         Av/WtFSCGNW/WXdsMcqPPizaCNJVu9G6mBZV0Jx9mGGkKSo+tGaTmr2RPFnSQVsLEyzh
-         SKbg==
+        d=gmail.com; s=20221208; t=1682580135; x=1685172135;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kXJHDR+uvigrdqjtItsF0amUfeR/xcg4WFinveNN2RY=;
+        b=jWDo3kzPfX9uZTI+RJ06zG503kFpbG0icTs3PBkudav0w7nbVWnlOxeJU2R+UhPp6o
+         1MGmtg9T4ZoK+1Tlm1TteFyd3QcicOpretq9RxJhFW0ssm4ZxbfFWLkTj7hNzAzETYuM
+         ML2L0nSOWD/Aolznnh+z2NndUoCz7kGW6BnXzkf3p6E3O36fnst6lYDyXQMNL5/+QMKF
+         +rS9PR2tUgLTVL7cRVIUh1M4QifkRcC+6AKuaCUID5vcQEAl8f31ObgZXZ6hKnKB9Q7D
+         TVoT7XeLnyjhE2q0u6Cxalk/o+FLNOObIU5ngguKmQ7jRSRk/TBqh0NKtZv9Lqb4lfms
+         EJ9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682543207; x=1685135207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8C6tKrbT51GaZnl8zer1AnBo8yNRgpprgLkj0av5l+E=;
-        b=UYmsYDKBpvLiON+e0OaH3BTAUs8Ow19MJhLLe8fBf+9buAZOcNuzhyxNPdmI2s5X1L
-         UI/I2GX9Oe9Bpst2JfRYbVoGH8xiO4Y3N51OeCUyUM/0vvwXFktytLOTZqmX7nUTzRCV
-         B0tNPj1pdZ+CKetPsWadCKzYE1kcZbMFx3WK7Gyf9JMSIop/2XhDHfNQ2J4Wj5cEH2kK
-         HDqkUkkka5X+zX+Z1wnLqQ7hKMq8DSgu+d+U2WKCsXtj06isiNtmhnUhmc90BL/NVESf
-         LbQj3uq5VqNIfzNBQDsRmlL3mLyt2HkizAvOHwzOHHKQ5ASVdC5htfwJQRbb1u6zPurL
-         G7uA==
-X-Gm-Message-State: AAQBX9c3GNhRoJQNu0AE/w4u2qGImmkoe9NT4tr9L/bpdClVfOyU5ldN
-        zFpsSCitVEJeIaSzJi59bVPCgP89Qwlz9UwvdV/NvQ==
-X-Google-Smtp-Source: AKy350bnHkFKck7ScHLySUohS3TGug3PuU6k1b4WHzFwKnH0/14BD/IU48R1JEuMfUGu5baNdUtxQXCsghQML3QSaV8=
-X-Received: by 2002:a81:5d02:0:b0:54f:8b56:bb3 with SMTP id
- r2-20020a815d02000000b0054f8b560bb3mr13933284ywb.5.1682543207061; Wed, 26 Apr
- 2023 14:06:47 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682580135; x=1685172135;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kXJHDR+uvigrdqjtItsF0amUfeR/xcg4WFinveNN2RY=;
+        b=V5TFRGDCfbwVktVYpgHVEPhwngPbKHYhhNPyLGOVsM0U5FYt7vtQnZmJrOp7w4vz7f
+         S8A2dqcLEFxgvaW+mqEDox3VK6G4FXpS1653cxKAxAF5p/xVFq+C84BzVzzcBR4fL2JD
+         /+vmpbvlpoGGUU8oCeH2gxK7t1Tsgi6p6F3D2eQX+2sZTFXXX1DQ+HM0A0dhg4B4S2ay
+         LZzuI4cXQWRTadcHjSdI8dc7202uEUSt53epMymC70sHX03LWwA7IEql1cOtaC6R4a4K
+         xPs/XyiwV5zDAnOlyRWBILZTjHXxFKB5ZjCi4v83L4pUguKR8LNnTagT9+oG1OX8j52r
+         svwg==
+X-Gm-Message-State: AC+VfDxdx1/J1u7zUpJHpZXN590xQRXa7H1OGoIbt+vgKGeuSgoWaOn4
+        lfJA2RNVi/L/chNLHjoprH4=
+X-Google-Smtp-Source: ACHHUZ7QFbzk6DipZKj1VayaE1oZ/33TmkMvLk6ABtMS3XNELvyeMZtBaXjFmGh0CryDFiwMa2QPLg==
+X-Received: by 2002:a17:903:2095:b0:1a5:309e:d205 with SMTP id d21-20020a170903209500b001a5309ed205mr594702plc.21.1682580135198;
+        Thu, 27 Apr 2023 00:22:15 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id b10-20020a170902bd4a00b001a95aef9728sm8009094plx.19.2023.04.27.00.22.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Apr 2023 00:22:14 -0700 (PDT)
+Message-ID: <d2d42bf5-fc7e-7a88-7e62-f35e16401012@gmail.com>
+Date:   Thu, 27 Apr 2023 15:22:09 +0800
 MIME-Version: 1.0
-References: <20230424123522.18302-1-nikita.shubin@maquefel.me>
- <CACRpkdarANFQ7-p=-Pi_iuk6L=PfSLDsD3_w4dEVqarwXkEGMQ@mail.gmail.com> <b5396ef5-3fed-4e98-8f37-a9cd4473bddc@sirena.org.uk>
-In-Reply-To: <b5396ef5-3fed-4e98-8f37-a9cd4473bddc@sirena.org.uk>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 26 Apr 2023 23:06:35 +0200
-Message-ID: <CACRpkdaZvKoFuDHP0Cd1MuayKtnBjCG5wmWPjwq3pccCrb-P9A@mail.gmail.com>
-Subject: Re: [PATCH 00/43] ep93xx device tree conversion
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Nikita Shubin <nikita.shubin@maquefel.me>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Linus Walleij <linusw@kernel.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Brian Norris <briannorris@chromium.org>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jean Delvare <jdelvare@suse.de>, Joel Stanley <joel@jms.id.au>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Le Moal <damien.lemoal@opensource.wdc.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Lukasz Majewski <lukma@denx.de>, Lv Ruyi <lv.ruyi@zte.com.cn>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Qin Jian <qinjian@cqplus1.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Russell King <linux@armlinux.org.uk>,
-        Sebastian Reichel <sre@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sumanth Korikkar <sumanthk@linux.ibm.com>,
-        Sven Peter <sven@svenpeter.dev>, Takashi Iwai <tiwai@suse.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Walker Chen <walker.chen@starfivetech.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Yinbo Zhu <zhuyinbo@loongson.cn>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        netdev@vger.kernel.org, soc@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v8 10/11] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, tmaimon77@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-serial@vger.kernel.org, arnd@arndb.de, schung@nuvoton.com,
+        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
+References: <20230425102418.185783-1-ychuang570808@gmail.com>
+ <20230425102418.185783-11-ychuang570808@gmail.com>
+ <46933536-2999-c3b0-f3d3-60e8830f50a6@wanadoo.fr>
+Content-Language: en-US
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <46933536-2999-c3b0-f3d3-60e8830f50a6@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 26, 2023 at 11:02=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
-> On Wed, Apr 26, 2023 at 10:56:53PM +0200, Linus Walleij wrote:
->
-> > This is a big patch set and the improvement to the ARM kernel it
-> > brings is great, so I am a bit worried about over-review stalling the
-> > merged. If there start to be nitpicky comments I would prefer that
-> > we merge it and let minor comments and "nice-to-haves" be
-> > addressed in-tree during the development cycle.
->
-> I'm really not enthusiastic about the SPI bindings being merged as-is.
 
-Agree, the bindings are more important than the code IMO,
-they tend to get written in stone.
 
-Yours,
-Linus Walleij
+On 2023/4/25 下午 06:38, Christophe JAILLET wrote:
+> Le 25/04/2023 à 12:24, Jacky Huang a écrit :
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> This adds UART and console driver for Nuvoton ma35d1 Soc.
+>> It supports full-duplex communication, FIFO control, and
+>> hardware flow control.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>> ---
+>>   drivers/tty/serial/Kconfig         |  18 +
+>>   drivers/tty/serial/Makefile        |   1 +
+>>   drivers/tty/serial/ma35d1_serial.c | 781 +++++++++++++++++++++++++++++
+>>   3 files changed, 800 insertions(+)
+>>   create mode 100644 drivers/tty/serial/ma35d1_serial.c
+>>
+>
+> [...]
+>
+>> +static int ma35d1serial_probe(struct platform_device *pdev)
+>> +{
+>> +    struct resource *res_mem;
+>> +    struct uart_ma35d1_port *up;
+>> +    int ret = 0;
+>> +    struct clk *clk;
+>> +    int err;
+>> +
+>> +    if (pdev->dev.of_node) {
+>> +        ret = of_alias_get_id(pdev->dev.of_node, "serial");
+>> +        if (ret < 0) {
+>> +            dev_err(&pdev->dev, "failed to get alias/pdev id, errno 
+>> %d\n", ret);
+>> +            return ret;
+>> +        }
+>> +    }
+>> +    up = &ma35d1serial_ports[ret];
+>> +    up->port.line = ret;
+>> +    res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +    if (!res_mem)
+>> +        return -ENODEV;
+>> +
+>> +    up->port.iobase = res_mem->start;
+>> +    up->port.membase = devm_ioremap(&pdev->dev, up->port.iobase, 
+>> UART_REG_SIZE);
+>> +    up->port.ops = &ma35d1serial_ops;
+>> +
+>> +    spin_lock_init(&up->port.lock);
+>> +
+>> +    clk = of_clk_get(pdev->dev.of_node, 0);
+>
+> Does this...
+>
+>> +    if (IS_ERR(clk)) {
+>> +        err = PTR_ERR(clk);
+>> +        dev_err(&pdev->dev, "failed to get core clk: %d\n", err);
+>> +        return -ENOENT;
+>> +    }
+>> +
+>> +    err = clk_prepare_enable(clk);
+>
+> ... and this be undone in the remove function?
+>
+> CJ
+>
+
+I will add clk_disable_unprepare() in the remove function.
+
+>> +    if (err)
+>> +        return -ENOENT;
+>> +
+>> +    if (up->port.line != 0)
+>> +        up->port.uartclk = clk_get_rate(clk);
+>> +
+>> +    ret = platform_get_irq(pdev, 0);
+>> +    if (ret < 0)
+>> +        return ret;
+>> +    up->port.irq = ret;
+>> +    up->port.dev = &pdev->dev;
+>> +    up->port.flags = UPF_BOOT_AUTOCONF;
+>> +
+>> +    platform_set_drvdata(pdev, up);
+>> +
+>> +    return uart_add_one_port(&ma35d1serial_reg, &up->port);
+>> +}
+>
+> [...]
+>
+
+Best Regards,
+Jacky Huang
