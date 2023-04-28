@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE84C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Apr 2023 00:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5190DC77B61
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Apr 2023 00:21:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344312AbjD1AVU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Apr 2023 20:21:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56096 "EHLO
+        id S1344484AbjD1AVe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Apr 2023 20:21:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344362AbjD1AVS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2023 20:21:18 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E933AAC;
-        Thu, 27 Apr 2023 17:20:48 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33RMmU8S005049;
-        Thu, 27 Apr 2023 17:20:27 -0700
+        with ESMTP id S1344467AbjD1AVV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Apr 2023 20:21:21 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42F983C32;
+        Thu, 27 Apr 2023 17:20:54 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33RIQE0Z006026;
+        Thu, 27 Apr 2023 17:20:41 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=P99O37rx1nM3CVlJZ+xDyBfDmug/YyX04UDQK0XlRj8=;
- b=iIXbjOXh/goWDh/tjleOzndeM9u5gzBTTcWbul4w3L+dyKo3WCINaQ4NQxOlbIHFPY4B
- D+HFaVZOyWCnc05eUEulx014xnkMfXejHwmcpLbDd88jbhHqHWrodQFcjANRcgoJoQe6
- 42Cxq6IrdIUwWHxnNANxRVcN7jHJ+AeLDTVhMD0bp5+JfMDRveq3KRivDK7Wcs+vAdC5
- bHOPMiqP9iwdoubk6VEAnkh9VpK2eYeIOWt2anLWiSsuPIoK+QoU+wmR28OzreF4DO6c
- Q7XJoq1U3kUVohqCWDNTmczIf63sX7i1TC6CcbaPgeScde4xNOXPDZ7ZcD//admH7O8j dg== 
+ bh=+ZNcGqkDhy4F1/tl8AzWuVHCcH6zyv2z92GL4wmYWTc=;
+ b=Nhvfan3B9z8+orBKTj6fRoQBMaYSIJp+OM5WckVtpCrZLwkPr4gbsXweWQCM6RycUFhP
+ mYUg18rdVZL5eqQ/W3esv//q6sdvrN+110s8p/58bfKDMDlIr9toIK/+B+ypjEBMQ0m9
+ tK9k0hFuVkeuGBlhp37LxBAvAVDzT3ccLQiv2mt/zdRbw2U0m7ZRiKn/mub//N8UaMhx
+ i2nx2iAck5dsQQgGFZ9VOOwtcXcTkJnVu7XaeD0rdZbte/onjR7uVDwW3zWjXh+3fun1
+ rrv2Kg0cB5ZZku4giHdhWNSxlJ+g32yU/s3PlNuKDMT+DtRmn+AeYWHVag9xJp86bHYU bg== 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3q825urexd-1
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3q7ebf0ts8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 27 Apr 2023 17:20:26 -0700
+        Thu, 27 Apr 2023 17:20:41 -0700
 Received: from devvm1736.cln0.facebook.com (2620:10d:c085:108::4) by
  mail.thefacebook.com (2620:10d:c085:21d::6) with Microsoft SMTP Server id
- 15.1.2507.23; Thu, 27 Apr 2023 17:20:23 -0700
+ 15.1.2507.23; Thu, 27 Apr 2023 17:20:38 -0700
 From:   Vadim Fedorenko <vadfed@meta.com>
 To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
@@ -40,13 +40,13 @@ To:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         Paolo Abeni <pabeni@redhat.com>
 CC:     Milena Olech <milena.olech@intel.com>,
         Michal Michalik <michal.michalik@intel.com>,
-        <linux-arm-kernel@lists.infradead.org>, <poros@redhat.com>,
-        <mschmidt@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
-Date:   Thu, 27 Apr 2023 17:20:02 -0700
-Message-ID: <20230428002009.2948020-2-vadfed@meta.com>
+        <linux-arm-kernel@lists.infradead.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        <poros@redhat.com>, <mschmidt@redhat.com>,
+        <netdev@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [RFC PATCH v7 6/8] ptp_ocp: implement DPLL ops
+Date:   Thu, 27 Apr 2023 17:20:07 -0700
+Message-ID: <20230428002009.2948020-7-vadfed@meta.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230428002009.2948020-1-vadfed@meta.com>
 References: <20230428002009.2948020-1-vadfed@meta.com>
@@ -54,8 +54,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [2620:10d:c085:108::4]
-X-Proofpoint-GUID: w2sZxsjX2J9MX6xp92YCvRxtJqilui-i
-X-Proofpoint-ORIG-GUID: w2sZxsjX2J9MX6xp92YCvRxtJqilui-i
+X-Proofpoint-ORIG-GUID: j4hHxqAGkNaVcalj43oWnka4Py10ndC5
+X-Proofpoint-GUID: j4hHxqAGkNaVcalj43oWnka4Py10ndC5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-04-27_09,2023-04-27_01,2023-02-09_01
@@ -63,892 +63,550 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
-Add a protocol spec for DPLL.
-Add code generated from the spec.
+Implement basic DPLL operations in ptp_ocp driver as the
+simplest example of using new subsystem.
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Michal Michalik <michal.michalik@intel.com>
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 ---
- Documentation/netlink/specs/dpll.yaml | 472 ++++++++++++++++++++++++++
- drivers/dpll/dpll_nl.c                | 126 +++++++
- drivers/dpll/dpll_nl.h                |  42 +++
- include/uapi/linux/dpll.h             | 202 +++++++++++
- 4 files changed, 842 insertions(+)
- create mode 100644 Documentation/netlink/specs/dpll.yaml
- create mode 100644 drivers/dpll/dpll_nl.c
- create mode 100644 drivers/dpll/dpll_nl.h
- create mode 100644 include/uapi/linux/dpll.h
+ drivers/ptp/Kconfig   |   1 +
+ drivers/ptp/ptp_ocp.c | 327 +++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 276 insertions(+), 52 deletions(-)
 
-diff --git a/Documentation/netlink/specs/dpll.yaml b/Documentation/netlink/specs/dpll.yaml
-new file mode 100644
-index 000000000000..67ca0f6cf2d5
---- /dev/null
-+++ b/Documentation/netlink/specs/dpll.yaml
-@@ -0,0 +1,472 @@
-+# SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
-+
-+name: dpll
-+
-+doc: DPLL subsystem.
-+
-+definitions:
-+  -
-+    type: enum
-+    name: mode
-+    doc: |
-+      working-modes a dpll can support, differentiate if and how dpll selects
-+      one of its sources to syntonize with it, valid values for DPLL_A_MODE
-+      attribute
-+    entries:
-+      -
-+        name: unspec
-+        doc: unspecified value
-+      -
-+        name: manual
-+        doc: source can be only selected by sending a request to dpll
-+      -
-+        name: automatic
-+        doc: highest prio, valid source, auto selected by dpll
-+      -
-+        name: holdover
-+        doc: dpll forced into holdover mode
-+      -
-+        name: freerun
-+        doc: dpll driven on system clk, no holdover available
-+      -
-+        name: nco
-+        doc: dpll driven by Numerically Controlled Oscillator
-+    render-max: true
-+  -
-+    type: enum
-+    name: lock-status
-+    doc: |
-+      provides information of dpll device lock status, valid values for
-+      DPLL_A_LOCK_STATUS attribute
-+    entries:
-+      -
-+        name: unspec
-+        doc: unspecified value
-+      -
-+        name: unlocked
-+        doc: |
-+          dpll was not yet locked to any valid source (or is in one of
-+          modes: DPLL_MODE_FREERUN, DPLL_MODE_NCO)
-+      -
-+        name: calibrating
-+        doc: dpll is trying to lock to a valid signal
-+      -
-+        name: locked
-+        doc: dpll is locked
-+      -
-+        name: holdover
-+        doc: |
-+          dpll is in holdover state - lost a valid lock or was forced by
-+          selecting DPLL_MODE_HOLDOVER mode
-+    render-max: true
-+  -
-+    type: const
-+    name: temp-divider
-+    value: 10
-+    doc: |
-+      temperature divider allowing userspace to calculate the
-+      temperature as float with single digit precision.
-+      Value of (DPLL_A_TEMP / DPLL_TEMP_DIVIDER) is integer part of
-+      tempearture value.
-+      Value of (DPLL_A_TEMP % DPLL_TEMP_DIVIDER) is fractional part of
-+      temperature value.
-+  -
-+    type: enum
-+    name: type
-+    doc: type of dpll, valid values for DPLL_A_TYPE attribute
-+    entries:
-+      -
-+        name: unspec
-+        doc: unspecified value
-+      -
-+        name: pps
-+        doc: dpll produces Pulse-Per-Second signal
-+      -
-+        name: eec
-+        doc: dpll drives the Ethernet Equipment Clock
-+    render-max: true
-+  -
-+    type: enum
-+    name: pin-type
-+    doc: |
-+      defines possible types of a pin, valid values for DPLL_A_PIN_TYPE
-+      attribute
-+    entries:
-+      -
-+        name: unspec
-+        doc: unspecified value
-+      -
-+        name: mux
-+        doc: aggregates another layer of selectable pins
-+      -
-+        name: ext
-+        doc: external source
-+      -
-+        name: synce-eth-port
-+        doc: ethernet port PHY's recovered clock
-+      -
-+        name: int-oscillator
-+        doc: device internal oscillator
-+      -
-+        name: gnss
-+        doc: GNSS recovered clock
-+    render-max: true
-+  -
-+    type: enum
-+    name: pin-direction
-+    doc: |
-+      defines possible direction of a pin, valid values for
-+      DPLL_A_PIN_DIRECTION attribute
-+    entries:
-+      -
-+        name: unspec
-+        doc: unspecified value
-+      -
-+        name: source
-+        doc: pin used as a source of a signal
-+      -
-+        name: output
-+        doc: pin used to output the signal
-+    render-max: true
-+  -
-+    type: const
-+    name: pin-frequency-1-hz
-+    value: 1
-+  -
-+    type: const
-+    name: pin-frequency-10-mhz
-+    value: 10000000
-+  -
-+    type: enum
-+    name: pin-state
-+    doc: |
-+      defines possible states of a pin, valid values for
-+      DPLL_A_PIN_STATE attribute
-+    entries:
-+      -
-+        name: unspec
-+        doc: unspecified value
-+      -
-+        name: connected
-+        doc: pin connected, active source of phase locked loop
-+      -
-+        name: disconnected
-+        doc: pin disconnected, not considered as a valid source
-+      -
-+        name: selectable
-+        doc: pin enabled for automatic source selection
-+    render-max: true
-+  -
-+    type: flags
-+    name: pin-caps
-+    doc: |
-+      defines possible capabilities of a pin, valid flags on
-+      DPLL_A_PIN_CAPS attribute
-+    entries:
-+      -
-+        name: direction-can-change
-+      -
-+        name: priority-can-change
-+      -
-+        name: state-can-change
-+  -
-+    type: enum
-+    name: event
-+    doc: events of dpll generic netlink family
-+    entries:
-+      -
-+        name: unspec
-+        doc: invalid event type
-+      -
-+        name: device-create
-+        doc: dpll device created
-+      -
-+        name: device-delete
-+        doc: dpll device deleted
-+      -
-+        name: device-change
-+        doc: |
-+          attribute of dpll device or pin changed, reason is to be found with
-+          an attribute type (DPLL_A_*) received with the event
-+
-+
-+attribute-sets:
-+  -
-+    name: dpll
-+    enum-name: dplla
-+    attributes:
-+      -
-+        name: device
-+        type: nest
-+        value: 1
-+        multi-attr: true
-+        nested-attributes: device
-+      -
-+        name: id
-+        type: u32
-+      -
-+        name: dev-name
-+        type: string
-+      -
-+        name: bus-name
-+        type: string
-+      -
-+        name: mode
-+        type: u8
-+        enum: mode
-+      -
-+        name: mode-supported
-+        type: u8
-+        enum: mode
-+        multi-attr: true
-+      -
-+        name: lock-status
-+        type: u8
-+        enum: lock-status
-+      -
-+        name: temp
-+        type: s32
-+      -
-+        name: clock-id
-+        type: u64
-+      -
-+        name: type
-+        type: u8
-+        enum: type
-+      -
-+        name: pin-idx
-+        type: u32
-+      -
-+        name: pin-label
-+        type: string
-+      -
-+        name: pin-type
-+        type: u8
-+        enum: pin-type
-+      -
-+        name: pin-direction
-+        type: u8
-+        enum: pin-direction
-+      -
-+        name: pin-frequency
-+        type: u64
-+      -
-+        name: pin-frequency-supported
-+        type: nest
-+        multi-attr: true
-+        nested-attributes: pin-frequency-range
-+      -
-+        name: pin-frequency-min
-+        type: u64
-+      -
-+        name: pin-frequency-max
-+        type: u64
-+      -
-+        name: pin-prio
-+        type: u32
-+      -
-+        name: pin-state
-+        type: u8
-+        enum: pin-state
-+      -
-+        name: pin-parent
-+        type: nest
-+        multi-attr: true
-+        nested-attributes: pin-parent
-+      -
-+        name: pin-parent-idx
-+        type: u32
-+      -
-+        name: pin-rclk-device
-+        type: string
-+      -
-+        name: pin-dpll-caps
-+        type: u32
-+  -
-+    name: device
-+    subset-of: dpll
-+    attributes:
-+      -
-+        name: id
-+        type: u32
-+        value: 2
-+      -
-+        name: dev-name
-+        type: string
-+      -
-+        name: bus-name
-+        type: string
-+      -
-+        name: mode
-+        type: u8
-+        enum: mode
-+      -
-+        name: mode-supported
-+        type: u8
-+        enum: mode
-+        multi-attr: true
-+      -
-+        name: lock-status
-+        type: u8
-+        enum: lock-status
-+      -
-+        name: temp
-+        type: s32
-+      -
-+        name: clock-id
-+        type: u64
-+      -
-+        name: type
-+        type: u8
-+        enum: type
-+      -
-+        name: pin-prio
-+        type: u32
-+        value: 19
-+      -
-+        name: pin-state
-+        type: u8
-+        enum: pin-state
-+  -
-+    name: pin-parent
-+    subset-of: dpll
-+    attributes:
-+      -
-+        name: pin-state
-+        type: u8
-+        value: 20
-+        enum: pin-state
-+      -
-+        name: pin-parent-idx
-+        type: u32
-+        value: 22
-+      -
-+        name: pin-rclk-device
-+        type: string
-+  -
-+    name: pin-frequency-range
-+    subset-of: dpll
-+    attributes:
-+      -
-+        name: pin-frequency-min
-+        type: u64
-+        value: 17
-+      -
-+        name: pin-frequency-max
-+        type: u64
-+
-+operations:
-+  list:
-+    -
-+      name: unspec
-+      doc: unused
-+
-+    -
-+      name: device-get
-+      doc: |
-+        Get list of DPLL devices (dump) or attributes of a single dpll device
-+      attribute-set: dpll
-+      flags: [ admin-perm ]
-+
-+      do:
-+        pre: dpll-pre-doit
-+        post: dpll-post-doit
-+        request:
-+          attributes:
-+            - id
-+            - bus-name
-+            - dev-name
-+        reply:
-+          attributes:
-+            - device
-+
-+      dump:
-+        pre: dpll-pre-dumpit
-+        post: dpll-post-dumpit
-+        reply:
-+          attributes:
-+            - device
-+
-+    -
-+      name: device-set
-+      doc: Set attributes for a DPLL device
-+      attribute-set: dpll
-+      flags: [ admin-perm ]
-+
-+      do:
-+        pre: dpll-pre-doit
-+        post: dpll-post-doit
-+        request:
-+          attributes:
-+            - id
-+            - bus-name
-+            - dev-name
-+            - mode
-+
-+    -
-+      name: pin-get
-+      doc: |
-+        Get list of pins and its attributes.
-+        - dump request without any attributes given - list all the pins in the system
-+        - dump request with target dpll - list all the pins registered with a given dpll device
-+        - do request with target dpll and target pin - single pin attributes
-+      attribute-set: dpll
-+      flags: [ admin-perm ]
-+
-+      do:
-+        pre: dpll-pin-pre-doit
-+        post: dpll-pin-post-doit
-+        request:
-+          attributes:
-+            - id
-+            - bus-name
-+            - dev-name
-+            - pin-idx
-+        reply: &pin-attrs
-+          attributes:
-+            - pin-idx
-+            - pin-label
-+            - pin-type
-+            - pin-direction
-+            - pin-frequency
-+            - pin-frequency-supported
-+            - pin-parent
-+            - pin-rclk-device
-+            - pin-dpll-caps
-+            - device
-+
-+      dump:
-+        pre: dpll-pin-pre-dumpit
-+        post: dpll-pin-post-dumpit
-+        request:
-+          attributes:
-+            - id
-+            - bus-name
-+            - dev-name
-+        reply: *pin-attrs
-+
-+    -
-+      name: pin-set
-+      doc: Set attributes of a target pin
-+      attribute-set: dpll
-+      flags: [ admin-perm ]
-+
-+      do:
-+        pre: dpll-pin-pre-doit
-+        post: dpll-pin-post-doit
-+        request:
-+          attributes:
-+            - id
-+            - bus-name
-+            - dev-name
-+            - pin-idx
-+            - pin-frequency
-+            - pin-direction
-+            - pin-prio
-+            - pin-state
-+            - pin-parent-idx
-+
-+mcast-groups:
-+  list:
-+    -
-+      name: monitor
-diff --git a/drivers/dpll/dpll_nl.c b/drivers/dpll/dpll_nl.c
-new file mode 100644
-index 000000000000..2f8643f401b0
---- /dev/null
-+++ b/drivers/dpll/dpll_nl.c
-@@ -0,0 +1,126 @@
-+// SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause)
-+/* Do not edit directly, auto-generated from: */
-+/*	Documentation/netlink/specs/dpll.yaml */
-+/* YNL-GEN kernel source */
-+
-+#include <net/netlink.h>
-+#include <net/genetlink.h>
-+
-+#include "dpll_nl.h"
-+
+diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+index b00201d81313..e3575c2e34dc 100644
+--- a/drivers/ptp/Kconfig
++++ b/drivers/ptp/Kconfig
+@@ -177,6 +177,7 @@ config PTP_1588_CLOCK_OCP
+ 	depends on COMMON_CLK
+ 	select NET_DEVLINK
+ 	select CRC16
++	select DPLL
+ 	help
+ 	  This driver adds support for an OpenCompute time card.
+ 
+diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+index 2b63f3487645..100e5da0aeb3 100644
+--- a/drivers/ptp/ptp_ocp.c
++++ b/drivers/ptp/ptp_ocp.c
+@@ -23,6 +23,7 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/nvmem-consumer.h>
+ #include <linux/crc16.h>
 +#include <linux/dpll.h>
-+
-+/* DPLL_CMD_DEVICE_GET - do */
-+static const struct nla_policy dpll_device_get_nl_policy[DPLL_A_BUS_NAME + 1] = {
-+	[DPLL_A_ID] = { .type = NLA_U32, },
-+	[DPLL_A_BUS_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_DEV_NAME] = { .type = NLA_NUL_STRING, },
+ 
+ #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
+ #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
+@@ -261,12 +262,21 @@ enum ptp_ocp_sma_mode {
+ 	SMA_MODE_OUT,
+ };
+ 
++static struct dpll_pin_frequency ptp_ocp_sma_freq[] = {
++	DPLL_PIN_FREQUENCY_1PPS,
++	DPLL_PIN_FREQUENCY_10MHZ,
++	DPLL_PIN_FREQUENCY_IRIG_B,
++	DPLL_PIN_FREQUENCY_DCF77,
 +};
 +
-+/* DPLL_CMD_DEVICE_SET - do */
-+static const struct nla_policy dpll_device_set_nl_policy[DPLL_A_MODE + 1] = {
-+	[DPLL_A_ID] = { .type = NLA_U32, },
-+	[DPLL_A_BUS_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_DEV_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_MODE] = NLA_POLICY_MAX(NLA_U8, 5),
+ struct ptp_ocp_sma_connector {
+ 	enum	ptp_ocp_sma_mode mode;
+ 	bool	fixed_fcn;
+ 	bool	fixed_dir;
+ 	bool	disabled;
+ 	u8	default_fcn;
++	struct dpll_pin		   *dpll_pin;
++	struct dpll_pin_properties dpll_prop;
+ };
+ 
+ struct ocp_attr_group {
+@@ -295,6 +305,7 @@ struct ptp_ocp_serial_port {
+ 
+ #define OCP_BOARD_ID_LEN		13
+ #define OCP_SERIAL_LEN			6
++#define OCP_SMA_NUM			4
+ 
+ struct ptp_ocp {
+ 	struct pci_dev		*pdev;
+@@ -351,8 +362,9 @@ struct ptp_ocp {
+ 	u32			ts_window_adjust;
+ 	u64			fw_cap;
+ 	struct ptp_ocp_signal	signal[4];
+-	struct ptp_ocp_sma_connector sma[4];
++	struct ptp_ocp_sma_connector sma[OCP_SMA_NUM];
+ 	const struct ocp_sma_op *sma_op;
++	struct dpll_device *dpll;
+ };
+ 
+ #define OCP_REQ_TIMESTAMP	BIT(0)
+@@ -836,6 +848,7 @@ static DEFINE_IDR(ptp_ocp_idr);
+ struct ocp_selector {
+ 	const char *name;
+ 	int value;
++	u64 frequency;
+ };
+ 
+ static const struct ocp_selector ptp_ocp_clock[] = {
+@@ -856,31 +869,31 @@ static const struct ocp_selector ptp_ocp_clock[] = {
+ #define SMA_SELECT_MASK		GENMASK(14, 0)
+ 
+ static const struct ocp_selector ptp_ocp_sma_in[] = {
+-	{ .name = "10Mhz",	.value = 0x0000 },
+-	{ .name = "PPS1",	.value = 0x0001 },
+-	{ .name = "PPS2",	.value = 0x0002 },
+-	{ .name = "TS1",	.value = 0x0004 },
+-	{ .name = "TS2",	.value = 0x0008 },
+-	{ .name = "IRIG",	.value = 0x0010 },
+-	{ .name = "DCF",	.value = 0x0020 },
+-	{ .name = "TS3",	.value = 0x0040 },
+-	{ .name = "TS4",	.value = 0x0080 },
+-	{ .name = "FREQ1",	.value = 0x0100 },
+-	{ .name = "FREQ2",	.value = 0x0200 },
+-	{ .name = "FREQ3",	.value = 0x0400 },
+-	{ .name = "FREQ4",	.value = 0x0800 },
+-	{ .name = "None",	.value = SMA_DISABLE },
++	{ .name = "10Mhz",  .value = 0x0000,      .frequency = 10000000 },
++	{ .name = "PPS1",   .value = 0x0001,      .frequency = 1 },
++	{ .name = "PPS2",   .value = 0x0002,      .frequency = 1 },
++	{ .name = "TS1",    .value = 0x0004,      .frequency = 0 },
++	{ .name = "TS2",    .value = 0x0008,      .frequency = 0 },
++	{ .name = "IRIG",   .value = 0x0010,      .frequency = 10000 },
++	{ .name = "DCF",    .value = 0x0020,      .frequency = 77500 },
++	{ .name = "TS3",    .value = 0x0040,      .frequency = 0 },
++	{ .name = "TS4",    .value = 0x0080,      .frequency = 0 },
++	{ .name = "FREQ1",  .value = 0x0100,      .frequency = 0 },
++	{ .name = "FREQ2",  .value = 0x0200,      .frequency = 0 },
++	{ .name = "FREQ3",  .value = 0x0400,      .frequency = 0 },
++	{ .name = "FREQ4",  .value = 0x0800,      .frequency = 0 },
++	{ .name = "None",   .value = SMA_DISABLE, .frequency = 0 },
+ 	{ }
+ };
+ 
+ static const struct ocp_selector ptp_ocp_sma_out[] = {
+-	{ .name = "10Mhz",	.value = 0x0000 },
+-	{ .name = "PHC",	.value = 0x0001 },
+-	{ .name = "MAC",	.value = 0x0002 },
+-	{ .name = "GNSS1",	.value = 0x0004 },
+-	{ .name = "GNSS2",	.value = 0x0008 },
+-	{ .name = "IRIG",	.value = 0x0010 },
+-	{ .name = "DCF",	.value = 0x0020 },
++	{ .name = "10Mhz",	.value = 0x0000,  .frequency = 10000000 },
++	{ .name = "PHC",	.value = 0x0001,  .frequency = 1 },
++	{ .name = "MAC",	.value = 0x0002,  .frequency = 1 },
++	{ .name = "GNSS1",	.value = 0x0004,  .frequency = 1 },
++	{ .name = "GNSS2",	.value = 0x0008,  .frequency = 1 },
++	{ .name = "IRIG",	.value = 0x0010,  .frequency = 10000 },
++	{ .name = "DCF",	.value = 0x0020,  .frequency = 77000 },
+ 	{ .name = "GEN1",	.value = 0x0040 },
+ 	{ .name = "GEN2",	.value = 0x0080 },
+ 	{ .name = "GEN3",	.value = 0x0100 },
+@@ -891,15 +904,15 @@ static const struct ocp_selector ptp_ocp_sma_out[] = {
+ };
+ 
+ static const struct ocp_selector ptp_ocp_art_sma_in[] = {
+-	{ .name = "PPS1",	.value = 0x0001 },
+-	{ .name = "10Mhz",	.value = 0x0008 },
++	{ .name = "PPS1",	.value = 0x0001,  .frequency = 1 },
++	{ .name = "10Mhz",	.value = 0x0008,  .frequency = 1000000 },
+ 	{ }
+ };
+ 
+ static const struct ocp_selector ptp_ocp_art_sma_out[] = {
+-	{ .name = "PHC",	.value = 0x0002 },
+-	{ .name = "GNSS",	.value = 0x0004 },
+-	{ .name = "10Mhz",	.value = 0x0010 },
++	{ .name = "PHC",	.value = 0x0002,  .frequency = 1 },
++	{ .name = "GNSS",	.value = 0x0004,  .frequency = 1 },
++	{ .name = "10Mhz",	.value = 0x0010,  .frequency = 10000000 },
+ 	{ }
+ };
+ 
+@@ -2283,22 +2296,34 @@ ptp_ocp_sma_fb_set_inputs(struct ptp_ocp *bp, int sma_nr, u32 val)
+ static void
+ ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
+ {
++	struct dpll_pin_properties prop = {
++		.label = NULL,
++		.type = DPLL_PIN_TYPE_EXT,
++		.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE,
++		.freq_supported_num = ARRAY_SIZE(ptp_ocp_sma_freq),
++		.freq_supported = ptp_ocp_sma_freq,
++
++	};
+ 	u32 reg;
+ 	int i;
+ 
+ 	/* defaults */
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		bp->sma[i].default_fcn = i & 1;
++		bp->sma[i].dpll_prop = prop;
++		bp->sma[i].dpll_prop.label = bp->ptp_info.pin_config[i].name;
++	}
+ 	bp->sma[0].mode = SMA_MODE_IN;
+ 	bp->sma[1].mode = SMA_MODE_IN;
+ 	bp->sma[2].mode = SMA_MODE_OUT;
+ 	bp->sma[3].mode = SMA_MODE_OUT;
+-	for (i = 0; i < 4; i++)
+-		bp->sma[i].default_fcn = i & 1;
+-
+ 	/* If no SMA1 map, the pin functions and directions are fixed. */
+ 	if (!bp->sma_map1) {
+-		for (i = 0; i < 4; i++) {
++		for (i = 0; i < OCP_SMA_NUM; i++) {
+ 			bp->sma[i].fixed_fcn = true;
+ 			bp->sma[i].fixed_dir = true;
++			bp->sma[1].dpll_prop.capabilities &=
++				~DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
+ 		}
+ 		return;
+ 	}
+@@ -2308,7 +2333,7 @@ ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
+ 	 */
+ 	reg = ioread32(&bp->sma_map2->gpio2);
+ 	if (reg == 0xffffffff) {
+-		for (i = 0; i < 4; i++)
++		for (i = 0; i < OCP_SMA_NUM; i++)
+ 			bp->sma[i].fixed_dir = true;
+ 	} else {
+ 		reg = ioread32(&bp->sma_map1->gpio1);
+@@ -2330,7 +2355,7 @@ static const struct ocp_sma_op ocp_fb_sma_op = {
+ };
+ 
+ static int
+-ptp_ocp_fb_set_pins(struct ptp_ocp *bp)
++ptp_ocp_set_pins(struct ptp_ocp *bp)
+ {
+ 	struct ptp_pin_desc *config;
+ 	int i;
+@@ -2397,16 +2422,16 @@ ptp_ocp_fb_board_init(struct ptp_ocp *bp, struct ocp_resource *r)
+ 
+ 	ptp_ocp_tod_init(bp);
+ 	ptp_ocp_nmea_out_init(bp);
+-	ptp_ocp_sma_init(bp);
+ 	ptp_ocp_signal_init(bp);
+ 
+ 	err = ptp_ocp_attr_group_add(bp, fb_timecard_groups);
+ 	if (err)
+ 		return err;
+ 
+-	err = ptp_ocp_fb_set_pins(bp);
++	err = ptp_ocp_set_pins(bp);
+ 	if (err)
+ 		return err;
++	ptp_ocp_sma_init(bp);
+ 
+ 	return ptp_ocp_init_clock(bp);
+ }
+@@ -2446,6 +2471,14 @@ ptp_ocp_register_resources(struct ptp_ocp *bp, kernel_ulong_t driver_data)
+ static void
+ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+ {
++	struct dpll_pin_properties prop = {
++		.label = NULL,
++		.type = DPLL_PIN_TYPE_EXT,
++		.capabilities = 0,
++		.freq_supported_num = ARRAY_SIZE(ptp_ocp_sma_freq),
++		.freq_supported = ptp_ocp_sma_freq,
++
++	};
+ 	u32 reg;
+ 	int i;
+ 
+@@ -2460,16 +2493,16 @@ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+ 	bp->sma[2].default_fcn = 0x10;	/* OUT: 10Mhz */
+ 	bp->sma[3].default_fcn = 0x02;	/* OUT: PHC */
+ 
+-	/* If no SMA map, the pin functions and directions are fixed. */
+-	if (!bp->art_sma) {
+-		for (i = 0; i < 4; i++) {
++
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		/* If no SMA map, the pin functions and directions are fixed. */
++		bp->sma[i].dpll_prop = prop;
++		bp->sma[i].dpll_prop.label = bp->ptp_info.pin_config[i].name;
++		if (!bp->art_sma) {
+ 			bp->sma[i].fixed_fcn = true;
+ 			bp->sma[i].fixed_dir = true;
++			continue;
+ 		}
+-		return;
+-	}
+-
+-	for (i = 0; i < 4; i++) {
+ 		reg = ioread32(&bp->art_sma->map[i].gpio);
+ 
+ 		switch (reg & 0xff) {
+@@ -2480,9 +2513,13 @@ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+ 		case 1:
+ 		case 8:
+ 			bp->sma[i].mode = SMA_MODE_IN;
++			bp->sma[i].dpll_prop.capabilities =
++				DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
+ 			break;
+ 		default:
+ 			bp->sma[i].mode = SMA_MODE_OUT;
++			bp->sma[i].dpll_prop.capabilities =
++				DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
+ 			break;
+ 		}
+ 	}
+@@ -2549,6 +2586,9 @@ ptp_ocp_art_board_init(struct ptp_ocp *bp, struct ocp_resource *r)
+ 	/* Enable MAC serial port during initialisation */
+ 	iowrite32(1, &bp->board_config->mro50_serial_activate);
+ 
++	err = ptp_ocp_set_pins(bp);
++	if (err)
++		return err;
+ 	ptp_ocp_sma_init(bp);
+ 
+ 	err = ptp_ocp_attr_group_add(bp, art_timecard_groups);
+@@ -2690,16 +2730,9 @@ sma4_show(struct device *dev, struct device_attribute *attr, char *buf)
+ }
+ 
+ static int
+-ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
++ptp_ocp_sma_store_val(struct ptp_ocp *bp, int val, enum ptp_ocp_sma_mode mode, int sma_nr)
+ {
+ 	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
+-	enum ptp_ocp_sma_mode mode;
+-	int val;
+-
+-	mode = sma->mode;
+-	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
+-	if (val < 0)
+-		return val;
+ 
+ 	if (sma->fixed_dir && (mode != sma->mode || val & SMA_DISABLE))
+ 		return -EOPNOTSUPP;
+@@ -2734,6 +2767,20 @@ ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
+ 	return val;
+ }
+ 
++static int
++ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
++{
++	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
++	enum ptp_ocp_sma_mode mode;
++	int val;
++
++	mode = sma->mode;
++	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
++	if (val < 0)
++		return val;
++	return ptp_ocp_sma_store_val(bp, val, mode, sma_nr);
++}
++
+ static ssize_t
+ sma1_store(struct device *dev, struct device_attribute *attr,
+ 	   const char *buf, size_t count)
+@@ -4172,12 +4219,148 @@ ptp_ocp_detach(struct ptp_ocp *bp)
+ 	device_unregister(&bp->dev);
+ }
+ 
++static int ptp_ocp_dpll_lock_status_get(const struct dpll_device *dpll,
++					void *priv,
++					enum dpll_lock_status *status,
++					struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = priv;
++	int sync;
++
++	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
++	*status = sync ? DPLL_LOCK_STATUS_LOCKED : DPLL_LOCK_STATUS_UNLOCKED;
++
++	return 0;
++}
++
++static int ptp_ocp_dpll_source_idx_get(const struct dpll_device *dpll,
++				       void *priv, u32 *idx,
++				       struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp *bp = priv;
++
++	if (bp->pps_select) {
++		*idx = ioread32(&bp->pps_select->gpio1);
++		return 0;
++	}
++	return -EINVAL;
++}
++
++static int ptp_ocp_dpll_mode_get(const struct dpll_device *dpll, void *priv,
++				 u32 *mode, struct netlink_ext_ack *extack)
++{
++	*mode = DPLL_MODE_AUTOMATIC;
++	return 0;
++}
++
++static bool ptp_ocp_dpll_mode_supported(const struct dpll_device *dpll,
++					void *priv, const enum dpll_mode mode,
++					struct netlink_ext_ack *extack)
++{
++	return mode == DPLL_MODE_AUTOMATIC;
++}
++
++static int ptp_ocp_dpll_direction_get(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *priv,
++				      enum dpll_pin_direction *direction,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++
++	*direction = sma->mode == SMA_MODE_IN ?
++				  DPLL_PIN_DIRECTION_SOURCE :
++				  DPLL_PIN_DIRECTION_OUTPUT;
++	return 0;
++}
++
++static int ptp_ocp_dpll_direction_set(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *dpll_priv,
++				      enum dpll_pin_direction direction,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++	struct ptp_ocp *bp = dpll_priv;
++	enum ptp_ocp_sma_mode mode;
++	int sma_nr = (sma - bp->sma);
++
++	if (sma->fixed_dir)
++		return -EOPNOTSUPP;
++	mode = direction == DPLL_PIN_DIRECTION_SOURCE ?
++			    SMA_MODE_IN : SMA_MODE_OUT;
++	return ptp_ocp_sma_store_val(bp, 0, mode, sma_nr);
++}
++
++static int ptp_ocp_dpll_frequency_set(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *dpll_priv, u64 frequency,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++	struct ptp_ocp *bp = dpll_priv;
++	const struct ocp_selector *tbl;
++	int sma_nr = (sma - bp->sma);
++	int val, i;
++
++	if (sma->fixed_fcn)
++		return -EOPNOTSUPP;
++
++	tbl = bp->sma_op->tbl[sma->mode];
++	for (i = 0; tbl[i].name; i++)
++		if (tbl[i].frequency == frequency)
++			return ptp_ocp_sma_store_val(bp, val, sma->mode, sma_nr);
++	return -EINVAL;
++}
++
++static int ptp_ocp_dpll_frequency_get(const struct dpll_pin *pin,
++				      void *pin_priv,
++				      const struct dpll_device *dpll,
++				      void *dpll_priv, u64 *frequency,
++				      struct netlink_ext_ack *extack)
++{
++	struct ptp_ocp_sma_connector *sma = pin_priv;
++	struct ptp_ocp *bp = dpll_priv;
++	const struct ocp_selector *tbl;
++	int sma_nr = (sma - bp->sma);
++	u32 val;
++	int i;
++
++	val = bp->sma_op->get(bp, sma_nr);
++	tbl = bp->sma_op->tbl[sma->mode];
++	for (i = 0; tbl[i].name; i++)
++		if (val == tbl[i].value) {
++			*frequency = tbl[i].frequency;
++			return 0;
++		}
++
++	return -EINVAL;
++}
++
++static const struct dpll_device_ops dpll_ops = {
++	.lock_status_get = ptp_ocp_dpll_lock_status_get,
++	.source_pin_idx_get = ptp_ocp_dpll_source_idx_get,
++	.mode_get = ptp_ocp_dpll_mode_get,
++	.mode_supported = ptp_ocp_dpll_mode_supported,
 +};
 +
-+/* DPLL_CMD_PIN_GET - do */
-+static const struct nla_policy dpll_pin_get_do_nl_policy[DPLL_A_PIN_IDX + 1] = {
-+	[DPLL_A_ID] = { .type = NLA_U32, },
-+	[DPLL_A_BUS_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_DEV_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_PIN_IDX] = { .type = NLA_U32, },
++static const struct dpll_pin_ops dpll_pins_ops = {
++	.frequency_get = ptp_ocp_dpll_frequency_get,
++	.frequency_set = ptp_ocp_dpll_frequency_set,
++	.direction_get = ptp_ocp_dpll_direction_get,
++	.direction_set = ptp_ocp_dpll_direction_set,
 +};
 +
-+/* DPLL_CMD_PIN_GET - dump */
-+static const struct nla_policy dpll_pin_get_dump_nl_policy[DPLL_A_BUS_NAME + 1] = {
-+	[DPLL_A_ID] = { .type = NLA_U32, },
-+	[DPLL_A_BUS_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_DEV_NAME] = { .type = NLA_NUL_STRING, },
-+};
+ static int
+ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ {
+ 	struct devlink *devlink;
+ 	struct ptp_ocp *bp;
+-	int err;
++	int err, i;
++	u64 clkid;
+ 
+ 	devlink = devlink_alloc(&ptp_ocp_devlink_ops, sizeof(*bp), &pdev->dev);
+ 	if (!devlink) {
+@@ -4227,8 +4410,39 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 
+ 	ptp_ocp_info(bp);
+ 	devlink_register(devlink);
+-	return 0;
+ 
++	clkid = pci_get_dsn(pdev);
++	bp->dpll = dpll_device_get(clkid, 0, THIS_MODULE);
++	if (IS_ERR(bp->dpll)) {
++		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
++		goto out;
++	}
 +
-+/* DPLL_CMD_PIN_SET - do */
-+static const struct nla_policy dpll_pin_set_nl_policy[DPLL_A_PIN_PARENT_IDX + 1] = {
-+	[DPLL_A_ID] = { .type = NLA_U32, },
-+	[DPLL_A_BUS_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_DEV_NAME] = { .type = NLA_NUL_STRING, },
-+	[DPLL_A_PIN_IDX] = { .type = NLA_U32, },
-+	[DPLL_A_PIN_FREQUENCY] = { .type = NLA_U64, },
-+	[DPLL_A_PIN_DIRECTION] = NLA_POLICY_MAX(NLA_U8, 2),
-+	[DPLL_A_PIN_PRIO] = { .type = NLA_U32, },
-+	[DPLL_A_PIN_STATE] = NLA_POLICY_MAX(NLA_U8, 3),
-+	[DPLL_A_PIN_PARENT_IDX] = { .type = NLA_U32, },
-+};
++	err = dpll_device_register(bp->dpll, DPLL_TYPE_PPS, &dpll_ops, bp, &pdev->dev);
++	if (err)
++		goto out;
 +
-+/* Ops table for dpll */
-+static const struct genl_split_ops dpll_nl_ops[] = {
-+	{
-+		.cmd		= DPLL_CMD_DEVICE_GET,
-+		.pre_doit	= dpll_pre_doit,
-+		.doit		= dpll_nl_device_get_doit,
-+		.post_doit	= dpll_post_doit,
-+		.policy		= dpll_device_get_nl_policy,
-+		.maxattr	= DPLL_A_BUS_NAME,
-+		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-+	},
-+	{
-+		.cmd	= DPLL_CMD_DEVICE_GET,
-+		.start	= dpll_pre_dumpit,
-+		.dumpit	= dpll_nl_device_get_dumpit,
-+		.done	= dpll_post_dumpit,
-+		.flags	= GENL_ADMIN_PERM | GENL_CMD_CAP_DUMP,
-+	},
-+	{
-+		.cmd		= DPLL_CMD_DEVICE_SET,
-+		.pre_doit	= dpll_pre_doit,
-+		.doit		= dpll_nl_device_set_doit,
-+		.post_doit	= dpll_post_doit,
-+		.policy		= dpll_device_set_nl_policy,
-+		.maxattr	= DPLL_A_MODE,
-+		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-+	},
-+	{
-+		.cmd		= DPLL_CMD_PIN_GET,
-+		.pre_doit	= dpll_pin_pre_doit,
-+		.doit		= dpll_nl_pin_get_doit,
-+		.post_doit	= dpll_pin_post_doit,
-+		.policy		= dpll_pin_get_do_nl_policy,
-+		.maxattr	= DPLL_A_PIN_IDX,
-+		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-+	},
-+	{
-+		.cmd		= DPLL_CMD_PIN_GET,
-+		.start		= dpll_pin_pre_dumpit,
-+		.dumpit		= dpll_nl_pin_get_dumpit,
-+		.done		= dpll_pin_post_dumpit,
-+		.policy		= dpll_pin_get_dump_nl_policy,
-+		.maxattr	= DPLL_A_BUS_NAME,
-+		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DUMP,
-+	},
-+	{
-+		.cmd		= DPLL_CMD_PIN_SET,
-+		.pre_doit	= dpll_pin_pre_doit,
-+		.doit		= dpll_nl_pin_set_doit,
-+		.post_doit	= dpll_pin_post_doit,
-+		.policy		= dpll_pin_set_nl_policy,
-+		.maxattr	= DPLL_A_PIN_PARENT_IDX,
-+		.flags		= GENL_ADMIN_PERM | GENL_CMD_CAP_DO,
-+	},
-+};
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &bp->sma[i].dpll_prop);
++		if (IS_ERR(bp->sma[i].dpll_pin))
++			goto out_dpll;
 +
-+static const struct genl_multicast_group dpll_nl_mcgrps[] = {
-+	[DPLL_NLGRP_MONITOR] = { "monitor", },
-+};
++		err = dpll_pin_register(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops,
++					&bp->sma[i], NULL);
++		if (err) {
++			dpll_pin_put(bp->sma[i].dpll_pin);
++			goto out_dpll;
++		}
++	}
 +
-+struct genl_family dpll_nl_family __ro_after_init = {
-+	.name		= DPLL_FAMILY_NAME,
-+	.version	= DPLL_FAMILY_VERSION,
-+	.netnsok	= true,
-+	.parallel_ops	= true,
-+	.module		= THIS_MODULE,
-+	.split_ops	= dpll_nl_ops,
-+	.n_split_ops	= ARRAY_SIZE(dpll_nl_ops),
-+	.mcgrps		= dpll_nl_mcgrps,
-+	.n_mcgrps	= ARRAY_SIZE(dpll_nl_mcgrps),
-+};
-diff --git a/drivers/dpll/dpll_nl.h b/drivers/dpll/dpll_nl.h
-new file mode 100644
-index 000000000000..57ab2da562ba
---- /dev/null
-+++ b/drivers/dpll/dpll_nl.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* Do not edit directly, auto-generated from: */
-+/*	Documentation/netlink/specs/dpll.yaml */
-+/* YNL-GEN kernel header */
-+
-+#ifndef _LINUX_DPLL_GEN_H
-+#define _LINUX_DPLL_GEN_H
-+
-+#include <net/netlink.h>
-+#include <net/genetlink.h>
-+
-+#include <linux/dpll.h>
-+
-+int dpll_pre_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+		  struct genl_info *info);
-+int dpll_pin_pre_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+		      struct genl_info *info);
-+void
-+dpll_post_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+	       struct genl_info *info);
-+void
-+dpll_pin_post_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-+		   struct genl_info *info);
-+int dpll_pre_dumpit(struct netlink_callback *cb);
-+int dpll_pin_pre_dumpit(struct netlink_callback *cb);
-+int dpll_post_dumpit(struct netlink_callback *cb);
-+int dpll_pin_post_dumpit(struct netlink_callback *cb);
-+
-+int dpll_nl_device_get_doit(struct sk_buff *skb, struct genl_info *info);
-+int dpll_nl_device_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb);
-+int dpll_nl_device_set_doit(struct sk_buff *skb, struct genl_info *info);
-+int dpll_nl_pin_get_doit(struct sk_buff *skb, struct genl_info *info);
-+int dpll_nl_pin_get_dumpit(struct sk_buff *skb, struct netlink_callback *cb);
-+int dpll_nl_pin_set_doit(struct sk_buff *skb, struct genl_info *info);
-+
-+enum {
-+	DPLL_NLGRP_MONITOR,
-+};
-+
-+extern struct genl_family dpll_nl_family;
-+
-+#endif /* _LINUX_DPLL_GEN_H */
-diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
-new file mode 100644
-index 000000000000..e188bc189754
---- /dev/null
-+++ b/include/uapi/linux/dpll.h
-@@ -0,0 +1,202 @@
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* Do not edit directly, auto-generated from: */
-+/*	Documentation/netlink/specs/dpll.yaml */
-+/* YNL-GEN uapi header */
-+
-+#ifndef _UAPI_LINUX_DPLL_H
-+#define _UAPI_LINUX_DPLL_H
-+
-+#define DPLL_FAMILY_NAME	"dpll"
-+#define DPLL_FAMILY_VERSION	1
-+
-+/**
-+ * enum dpll_mode - working-modes a dpll can support, differentiate if and how
-+ *   dpll selects one of its sources to syntonize with it, valid values for
-+ *   DPLL_A_MODE attribute
-+ * @DPLL_MODE_UNSPEC: unspecified value
-+ * @DPLL_MODE_MANUAL: source can be only selected by sending a request to dpll
-+ * @DPLL_MODE_AUTOMATIC: highest prio, valid source, auto selected by dpll
-+ * @DPLL_MODE_HOLDOVER: dpll forced into holdover mode
-+ * @DPLL_MODE_FREERUN: dpll driven on system clk, no holdover available
-+ * @DPLL_MODE_NCO: dpll driven by Numerically Controlled Oscillator
-+ */
-+enum dpll_mode {
-+	DPLL_MODE_UNSPEC,
-+	DPLL_MODE_MANUAL,
-+	DPLL_MODE_AUTOMATIC,
-+	DPLL_MODE_HOLDOVER,
-+	DPLL_MODE_FREERUN,
-+	DPLL_MODE_NCO,
-+
-+	__DPLL_MODE_MAX,
-+	DPLL_MODE_MAX = (__DPLL_MODE_MAX - 1)
-+};
-+
-+/**
-+ * enum dpll_lock_status - provides information of dpll device lock status,
-+ *   valid values for DPLL_A_LOCK_STATUS attribute
-+ * @DPLL_LOCK_STATUS_UNSPEC: unspecified value
-+ * @DPLL_LOCK_STATUS_UNLOCKED: dpll was not yet locked to any valid source (or
-+ *   is in one of modes: DPLL_MODE_FREERUN, DPLL_MODE_NCO)
-+ * @DPLL_LOCK_STATUS_CALIBRATING: dpll is trying to lock to a valid signal
-+ * @DPLL_LOCK_STATUS_LOCKED: dpll is locked
-+ * @DPLL_LOCK_STATUS_HOLDOVER: dpll is in holdover state - lost a valid lock or
-+ *   was forced by selecting DPLL_MODE_HOLDOVER mode
-+ */
-+enum dpll_lock_status {
-+	DPLL_LOCK_STATUS_UNSPEC,
-+	DPLL_LOCK_STATUS_UNLOCKED,
-+	DPLL_LOCK_STATUS_CALIBRATING,
-+	DPLL_LOCK_STATUS_LOCKED,
-+	DPLL_LOCK_STATUS_HOLDOVER,
-+
-+	__DPLL_LOCK_STATUS_MAX,
-+	DPLL_LOCK_STATUS_MAX = (__DPLL_LOCK_STATUS_MAX - 1)
-+};
-+
-+#define DPLL_TEMP_DIVIDER	10
-+
-+/**
-+ * enum dpll_type - type of dpll, valid values for DPLL_A_TYPE attribute
-+ * @DPLL_TYPE_UNSPEC: unspecified value
-+ * @DPLL_TYPE_PPS: dpll produces Pulse-Per-Second signal
-+ * @DPLL_TYPE_EEC: dpll drives the Ethernet Equipment Clock
-+ */
-+enum dpll_type {
-+	DPLL_TYPE_UNSPEC,
-+	DPLL_TYPE_PPS,
-+	DPLL_TYPE_EEC,
-+
-+	__DPLL_TYPE_MAX,
-+	DPLL_TYPE_MAX = (__DPLL_TYPE_MAX - 1)
-+};
-+
-+/**
-+ * enum dpll_pin_type - defines possible types of a pin, valid values for
-+ *   DPLL_A_PIN_TYPE attribute
-+ * @DPLL_PIN_TYPE_UNSPEC: unspecified value
-+ * @DPLL_PIN_TYPE_MUX: aggregates another layer of selectable pins
-+ * @DPLL_PIN_TYPE_EXT: external source
-+ * @DPLL_PIN_TYPE_SYNCE_ETH_PORT: ethernet port PHY's recovered clock
-+ * @DPLL_PIN_TYPE_INT_OSCILLATOR: device internal oscillator
-+ * @DPLL_PIN_TYPE_GNSS: GNSS recovered clock
-+ */
-+enum dpll_pin_type {
-+	DPLL_PIN_TYPE_UNSPEC,
-+	DPLL_PIN_TYPE_MUX,
-+	DPLL_PIN_TYPE_EXT,
-+	DPLL_PIN_TYPE_SYNCE_ETH_PORT,
-+	DPLL_PIN_TYPE_INT_OSCILLATOR,
-+	DPLL_PIN_TYPE_GNSS,
-+
-+	__DPLL_PIN_TYPE_MAX,
-+	DPLL_PIN_TYPE_MAX = (__DPLL_PIN_TYPE_MAX - 1)
-+};
-+
-+/**
-+ * enum dpll_pin_direction - defines possible direction of a pin, valid values
-+ *   for DPLL_A_PIN_DIRECTION attribute
-+ * @DPLL_PIN_DIRECTION_UNSPEC: unspecified value
-+ * @DPLL_PIN_DIRECTION_SOURCE: pin used as a source of a signal
-+ * @DPLL_PIN_DIRECTION_OUTPUT: pin used to output the signal
-+ */
-+enum dpll_pin_direction {
-+	DPLL_PIN_DIRECTION_UNSPEC,
-+	DPLL_PIN_DIRECTION_SOURCE,
-+	DPLL_PIN_DIRECTION_OUTPUT,
-+
-+	__DPLL_PIN_DIRECTION_MAX,
-+	DPLL_PIN_DIRECTION_MAX = (__DPLL_PIN_DIRECTION_MAX - 1)
-+};
-+
-+#define DPLL_PIN_FREQUENCY_1_HZ		1
-+#define DPLL_PIN_FREQUENCY_10_MHZ	10000000
-+
-+/**
-+ * enum dpll_pin_state - defines possible states of a pin, valid values for
-+ *   DPLL_A_PIN_STATE attribute
-+ * @DPLL_PIN_STATE_UNSPEC: unspecified value
-+ * @DPLL_PIN_STATE_CONNECTED: pin connected, active source of phase locked loop
-+ * @DPLL_PIN_STATE_DISCONNECTED: pin disconnected, not considered as a valid
-+ *   source
-+ * @DPLL_PIN_STATE_SELECTABLE: pin enabled for automatic source selection
-+ */
-+enum dpll_pin_state {
-+	DPLL_PIN_STATE_UNSPEC,
-+	DPLL_PIN_STATE_CONNECTED,
-+	DPLL_PIN_STATE_DISCONNECTED,
-+	DPLL_PIN_STATE_SELECTABLE,
-+
-+	__DPLL_PIN_STATE_MAX,
-+	DPLL_PIN_STATE_MAX = (__DPLL_PIN_STATE_MAX - 1)
-+};
-+
-+/**
-+ * enum dpll_pin_caps - defines possible capabilities of a pin, valid flags on
-+ *   DPLL_A_PIN_CAPS attribute
-+ */
-+enum dpll_pin_caps {
-+	DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE = 1,
-+	DPLL_PIN_CAPS_PRIORITY_CAN_CHANGE = 2,
-+	DPLL_PIN_CAPS_STATE_CAN_CHANGE = 4,
-+};
-+
-+/**
-+ * enum dpll_event - events of dpll generic netlink family
-+ * @DPLL_EVENT_UNSPEC: invalid event type
-+ * @DPLL_EVENT_DEVICE_CREATE: dpll device created
-+ * @DPLL_EVENT_DEVICE_DELETE: dpll device deleted
-+ * @DPLL_EVENT_DEVICE_CHANGE: attribute of dpll device or pin changed, reason
-+ *   is to be found with an attribute type (DPLL_A_*) received with the event
-+ */
-+enum dpll_event {
-+	DPLL_EVENT_UNSPEC,
-+	DPLL_EVENT_DEVICE_CREATE,
-+	DPLL_EVENT_DEVICE_DELETE,
-+	DPLL_EVENT_DEVICE_CHANGE,
-+};
-+
-+enum dplla {
-+	DPLL_A_DEVICE = 1,
-+	DPLL_A_ID,
-+	DPLL_A_DEV_NAME,
-+	DPLL_A_BUS_NAME,
-+	DPLL_A_MODE,
-+	DPLL_A_MODE_SUPPORTED,
-+	DPLL_A_LOCK_STATUS,
-+	DPLL_A_TEMP,
-+	DPLL_A_CLOCK_ID,
-+	DPLL_A_TYPE,
-+	DPLL_A_PIN_IDX,
-+	DPLL_A_PIN_LABEL,
-+	DPLL_A_PIN_TYPE,
-+	DPLL_A_PIN_DIRECTION,
-+	DPLL_A_PIN_FREQUENCY,
-+	DPLL_A_PIN_FREQUENCY_SUPPORTED,
-+	DPLL_A_PIN_FREQUENCY_MIN,
-+	DPLL_A_PIN_FREQUENCY_MAX,
-+	DPLL_A_PIN_PRIO,
-+	DPLL_A_PIN_STATE,
-+	DPLL_A_PIN_PARENT,
-+	DPLL_A_PIN_PARENT_IDX,
-+	DPLL_A_PIN_RCLK_DEVICE,
-+	DPLL_A_PIN_DPLL_CAPS,
-+
-+	__DPLL_A_MAX,
-+	DPLL_A_MAX = (__DPLL_A_MAX - 1)
-+};
-+
-+enum {
-+	DPLL_CMD_UNSPEC = 1,
-+	DPLL_CMD_DEVICE_GET,
-+	DPLL_CMD_DEVICE_SET,
-+	DPLL_CMD_PIN_GET,
-+	DPLL_CMD_PIN_SET,
-+
-+	__DPLL_CMD_MAX,
-+	DPLL_CMD_MAX = (__DPLL_CMD_MAX - 1)
-+};
-+
-+#define DPLL_MCGRP_MONITOR	"monitor"
-+
-+#endif /* _UAPI_LINUX_DPLL_H */
++	return 0;
++out_dpll:
++	while (i) {
++		--i;
++		dpll_pin_unregister(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, &bp->sma[i]);
++		dpll_pin_put(bp->sma[i].dpll_pin);
++	}
++	dpll_device_put(bp->dpll);
+ out:
+ 	ptp_ocp_detach(bp);
+ out_disable:
+@@ -4243,7 +4457,16 @@ ptp_ocp_remove(struct pci_dev *pdev)
+ {
+ 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
+ 	struct devlink *devlink = priv_to_devlink(bp);
++	int i;
+ 
++	for (i = 0; i < OCP_SMA_NUM; i++) {
++		if (bp->sma[i].dpll_pin) {
++			dpll_pin_unregister(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, bp);
++			dpll_pin_put(bp->sma[i].dpll_pin);
++		}
++	}
++	dpll_device_unregister(bp->dpll, &dpll_ops, bp);
++	dpll_device_put(bp->dpll);
+ 	devlink_unregister(devlink);
+ 	ptp_ocp_detach(bp);
+ 	pci_disable_device(pdev);
 -- 
 2.34.1
 
