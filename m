@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E24C77B7C
-	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 20:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5F8C7EE2F
+	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 20:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232627AbjEAUeJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 May 2023 16:34:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58678 "EHLO
+        id S229758AbjEAUeK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 May 2023 16:34:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbjEAUeI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 16:34:08 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 306902710
-        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 13:34:06 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2a8bca69e8bso28911551fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 13:34:06 -0700 (PDT)
+        with ESMTP id S232879AbjEAUeK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 16:34:10 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352CF1FFD
+        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 13:34:07 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4f122ff663eso897035e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 13:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682973244; x=1685565244;
+        d=linaro.org; s=google; t=1682973245; x=1685565245;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x6pwZPYafkVn3VJcImsGxRtQe9a8LArqEXLVR3gpAsE=;
-        b=HpOv5vH2ozdsE0yuJQImLODjhbc6FD9xdzjd2Bdnqu4LJSZPcHfzYfo5yHtWnHDRHs
-         GZEJJ3104sY8ctK1GkoMc2ONgr0ejtorvokFZnhAkUM8nO6RvZA5MGQSrBEJ4to+Ig4W
-         2U25mQb3qHZA90gJkGUwBla9OSb3sYHeK+fOsoV2sVd9WQKdiG0mGfEc8AcWsQyrO1Hi
-         tFaqET2pCgCmVEbtPV31v1pGgVTBepqIvcAyTPYvPsWzb0RXC/l82T2CZtFwBvSp+84c
-         NX+jEtMk9TSJ8YxuDP5Ly6KmuraOUpfCEvyD+BkVfzu4ZxbflEHD6JnMy3z1JsEISQ8D
-         8anA==
+        bh=Y+N7k63DMlIbPxfHV3R2nf9CFSmJb5A9MP2qzr3A/bI=;
+        b=VPw2BK2TLIxwNbzR3bOWT3d04g5Vr24vDW9qYAF5nyGqYAEn0C3mt73tXRLRqB0b2b
+         uAlKmofolUH2YAGX8ev7mHkpQnGG8kUs33ukXFinx/ET78rEynXrgRbldIFKxgjLgD0P
+         Om9sOXv3iAEMepkT47ZMxsNxPbNY+SqymcmutA+pj5fB3S9rmJuTliFqqVNSHW8oLqF0
+         ZhF8ZV9lwZ55w+5t1yZBm32ffO88h85v5u8s39k+xplf5xVXnrUWHanyyH0PJFBvPwlv
+         jaIpA+G166mErcJxXAXN227vAagZvVJVStByxfjwPrwzHcsOyp7ofzpehthH43YzZ1gR
+         os3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682973244; x=1685565244;
+        d=1e100.net; s=20221208; t=1682973245; x=1685565245;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x6pwZPYafkVn3VJcImsGxRtQe9a8LArqEXLVR3gpAsE=;
-        b=NgM1SMlcOC88USo5yYGU86aTDx8DeRKsf61uY+siO6ct7PleXt258Zss2kF8WiE8G0
-         TrG84ozqLjUSerHzxmf+5XtSMQG+jowLy87lV8lJ2ZGPJT/LIPSoCjgAiHc2G+rPGpcv
-         V0cAywwwiXNbdFbk6vcChwbYiDzGCEfMyS/ItRA6N/67BdgucDuEjPd+yIQx1f2sjzYA
-         IC1zC2mce4pbQgIcXiX/73hM2M6i7gV4voYINR5cLsc6Nni/JJI97AsWVdib9e6MAsyB
-         h/bjsfaWfSwPx0xr8GScRuLmZ+ucH5zgob4b7AcmX/9zBB1onu6AjcyWqP2v9rcfTUEP
-         YdmQ==
-X-Gm-Message-State: AC+VfDzEK64YuvZsRzj5fMTHgZIVyXr8qhiz3PD2UOBGJYQgBj4TzsGt
-        URv/eKovIOcwahAWLp8a3kUpbg==
-X-Google-Smtp-Source: ACHHUZ6UbBO/jGKTlLgz1bOH+yksekj7YIQ6Xo9XUHLiLxhFW+ReP1rTS93f0yiVIvgQCgK0w+W8RA==
-X-Received: by 2002:a2e:3e0e:0:b0:2a8:a916:6b1c with SMTP id l14-20020a2e3e0e000000b002a8a9166b1cmr3913312lja.4.1682973244527;
-        Mon, 01 May 2023 13:34:04 -0700 (PDT)
+        bh=Y+N7k63DMlIbPxfHV3R2nf9CFSmJb5A9MP2qzr3A/bI=;
+        b=LEsh9NCzQxmeaq6Ms+3vW4QTUMgfZ+8ZQWjL2J799WnVFUQyIs6ddHju1UYJOA89vx
+         HxSwoP7R4GVCuTSmyIP8vopz06WOyPkwFrdQ/iIaI/YM95H6C9dbEk4EPI+Xn5SSqtbZ
+         ke+hlDRXlUm2EWG/uwq+e39j5nDhHNAOqjy/O0KYvtkg/czRl6/TbcH1Xd6sC8WLmBNu
+         MABvwWNAU3MiJTxYucZZAJSTZ2MTCG/hMS0dScMBmpOTMoEZh92RbL7yE+Pmtp7OMri0
+         YLNCEqlyQzLKvP19F5kSRyDUlnVt8SFxi/4x61/Yvb5ydvU7oGAizXiDlk/EcgLXEZAJ
+         ep/w==
+X-Gm-Message-State: AC+VfDxuUXNr3qPeZXPmipceBhT+kLHkJTbH+4F2hsmaajtDgUE7Mp5T
+        3TvIPGDaCTS3QX+5dT1A6tkKtRBSt/nUVMxFOQI=
+X-Google-Smtp-Source: ACHHUZ6w5wvnB6XJJ/Mmzgnp2pMAeyjGCx9IvhpXEKq7VxSDpPtiEblqe0fDJt0OPen0Hw/O6IvsXg==
+X-Received: by 2002:a05:6512:7c:b0:4f0:219f:7833 with SMTP id i28-20020a056512007c00b004f0219f7833mr1867446lfo.55.1682973245295;
+        Mon, 01 May 2023 13:34:05 -0700 (PDT)
 Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
-        by smtp.gmail.com with ESMTPSA id f27-20020ac251bb000000b004eb018fac57sm4885909lfk.191.2023.05.01.13.34.03
+        by smtp.gmail.com with ESMTPSA id f27-20020ac251bb000000b004eb018fac57sm4885909lfk.191.2023.05.01.13.34.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 May 2023 13:34:03 -0700 (PDT)
+        Mon, 01 May 2023 13:34:04 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -60,9 +60,9 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 02/10] dt-bindings: clock: drop qcom,lcc-mdm9615 header file
-Date:   Mon,  1 May 2023 23:33:53 +0300
-Message-Id: <20230501203401.41393-3-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 03/10] dt-bindings: clock: provide separate bindings for qcom,gcc-mdm9615
+Date:   Mon,  1 May 2023 23:33:54 +0300
+Message-Id: <20230501203401.41393-4-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
 References: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
@@ -72,80 +72,96 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The header file for qcom,lcc-mdm9615 and qcom,lcc-msm8960 is the same
-(as well as the drivers). Drop the qcom,lcc-mdm9615.h in favour of
-qcom,lcc-msm8960.h
+The global clock controller on MDM9615 uses external CXO and PLL7
+clocks. Split the qcom,gcc-mdm9615 to the separate schema file.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/lcc-mdm9615.c               |  2 +-
- include/dt-bindings/clock/qcom,lcc-mdm9615.h | 44 --------------------
- 2 files changed, 1 insertion(+), 45 deletions(-)
- delete mode 100644 include/dt-bindings/clock/qcom,lcc-mdm9615.h
+ .../bindings/clock/qcom,gcc-mdm9615.yaml      | 53 +++++++++++++++++++
+ .../bindings/clock/qcom,gcc-other.yaml        |  3 --
+ 2 files changed, 53 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
 
-diff --git a/drivers/clk/qcom/lcc-mdm9615.c b/drivers/clk/qcom/lcc-mdm9615.c
-index 8d243e880d95..c17caffdc349 100644
---- a/drivers/clk/qcom/lcc-mdm9615.c
-+++ b/drivers/clk/qcom/lcc-mdm9615.c
-@@ -15,7 +15,7 @@
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
+new file mode 100644
+index 000000000000..ca26d69ccb07
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,gcc-mdm9615.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller on MDM9615
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description: |
++  Qualcomm global clock control module provides the clocks, resets and power
++  domains on MDM9615.
++
++  See also::
++    include/dt-bindings/clock/qcom,gcc-mdm9615.h
++    include/dt-bindings/reset/qcom,gcc-mdm9615.h
++
++allOf:
++  - $ref: qcom,gcc.yaml#
++
++properties:
++  compatible:
++    const: qcom,gcc-mdm9615
++
++  clocks:
++    maxItems: 2
++
++  clock-names:
++    items:
++      - const: cxo
++      - const: pll4
++
++required:
++  - compatible
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,lcc-msm8960.h>
++    clock-controller@900000 {
++      compatible = "qcom,gcc-mdm9615";
++      reg = <0x00900000 0x4000>;
++      #power-domain-cells = <1>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      clocks = <&cxo_board>, <&lcc PLL4>;
++      clock-names = "cxo", "pll4";
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+index ae01e7749534..b6e260755a21 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+@@ -19,8 +19,6 @@ description: |
+     include/dt-bindings/reset/qcom,gcc-ipq6018.h
+     include/dt-bindings/clock/qcom,gcc-msm8953.h
+     include/dt-bindings/clock/qcom,gcc-mdm9607.h
+-    include/dt-bindings/clock/qcom,gcc-mdm9615.h
+-    include/dt-bindings/reset/qcom,gcc-mdm9615.h
  
--#include <dt-bindings/clock/qcom,lcc-mdm9615.h>
-+#include <dt-bindings/clock/qcom,lcc-msm8960.h>
+ allOf:
+   - $ref: qcom,gcc.yaml#
+@@ -31,7 +29,6 @@ properties:
+       - qcom,gcc-ipq6018
+       - qcom,gcc-mdm9607
+       - qcom,gcc-msm8953
+-      - qcom,gcc-mdm9615
  
- #include "common.h"
- #include "clk-regmap.h"
-diff --git a/include/dt-bindings/clock/qcom,lcc-mdm9615.h b/include/dt-bindings/clock/qcom,lcc-mdm9615.h
-deleted file mode 100644
-index 299338ee1d88..000000000000
---- a/include/dt-bindings/clock/qcom,lcc-mdm9615.h
-+++ /dev/null
-@@ -1,44 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
-- * Copyright (c) BayLibre, SAS.
-- * Author : Neil Armstrong <narmstrong@baylibre.com>
-- */
--
--#ifndef _DT_BINDINGS_CLK_LCC_MDM9615_H
--#define _DT_BINDINGS_CLK_LCC_MDM9615_H
--
--#define PLL4				0
--#define MI2S_OSR_SRC			1
--#define MI2S_OSR_CLK			2
--#define MI2S_DIV_CLK			3
--#define MI2S_BIT_DIV_CLK		4
--#define MI2S_BIT_CLK			5
--#define PCM_SRC				6
--#define PCM_CLK_OUT			7
--#define PCM_CLK				8
--#define SLIMBUS_SRC			9
--#define AUDIO_SLIMBUS_CLK		10
--#define SPS_SLIMBUS_CLK			11
--#define CODEC_I2S_MIC_OSR_SRC		12
--#define CODEC_I2S_MIC_OSR_CLK		13
--#define CODEC_I2S_MIC_DIV_CLK		14
--#define CODEC_I2S_MIC_BIT_DIV_CLK	15
--#define CODEC_I2S_MIC_BIT_CLK		16
--#define SPARE_I2S_MIC_OSR_SRC		17
--#define SPARE_I2S_MIC_OSR_CLK		18
--#define SPARE_I2S_MIC_DIV_CLK		19
--#define SPARE_I2S_MIC_BIT_DIV_CLK	20
--#define SPARE_I2S_MIC_BIT_CLK		21
--#define CODEC_I2S_SPKR_OSR_SRC		22
--#define CODEC_I2S_SPKR_OSR_CLK		23
--#define CODEC_I2S_SPKR_DIV_CLK		24
--#define CODEC_I2S_SPKR_BIT_DIV_CLK	25
--#define CODEC_I2S_SPKR_BIT_CLK		26
--#define SPARE_I2S_SPKR_OSR_SRC		27
--#define SPARE_I2S_SPKR_OSR_CLK		28
--#define SPARE_I2S_SPKR_DIV_CLK		29
--#define SPARE_I2S_SPKR_BIT_DIV_CLK	30
--#define SPARE_I2S_SPKR_BIT_CLK		31
--
--#endif
+ required:
+   - compatible
 -- 
 2.39.2
 
