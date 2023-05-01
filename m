@@ -2,50 +2,51 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF786C77B7C
-	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 20:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216D4C7EE24
+	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 20:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232693AbjEAUeH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 May 2023 16:34:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
+        id S232772AbjEAUeI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 May 2023 16:34:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230114AbjEAUeG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 16:34:06 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5B9213E
-        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 13:34:04 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4ec9c7c6986so3569122e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 13:34:04 -0700 (PDT)
+        with ESMTP id S232184AbjEAUeH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 16:34:07 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 309FD2693
+        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 13:34:05 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4efec123b28so3963889e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 13:34:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682973242; x=1685565242;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gtgi4uzBaMRQQUHqbLY1bdwg6cIPE7Uii87M8LpnWmA=;
-        b=rEhWSX3dH48zVGSj5JE9V9+i8SDvsaaRsuuwKI2+Ynq7VsEahZpYe24pzSmbOHygir
-         Py+pPRf15zFoyAU4EKFvkBDfeHFzhx1uH5tOcsFbSQhgkP09XPNSxMML5b6pGq5m8xCs
-         sEv+s/hEGoBRhegCuGlnvLJ3qTqQrw4BJuFMtnWX2k0iuvW1O3pW4UYUJXAi47jmMg4A
-         LwkAgUq8Rg4CBpLdvdv+VPBabPkPZVyxZGg7ZMe/OuGYXNveRpiMQazwOC/qZ+jf3uM4
-         EFm22IlxfWpoNR5ggqL8EJuUDmXcjgjgClcO8hsmmdaed5xCHME29sy830myDDQawg2e
-         pq0w==
+        d=linaro.org; s=google; t=1682973243; x=1685565243;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u3EsAWj9dP8IUk71au9cQSRbwH/Oh0w5YOlr/cVzUIs=;
+        b=uudomC2tQ6u0Pq3iagtAIzU6uuatzORVCmoU84223IfPl3JHdpzg6ZClxMfWkkeStF
+         KPlxE2TVUxikWW5BkMIUy++Wz82g0Zuib8Gt7j4Y8I4xBMdGLu4/Vyp4KvOHYFVhqSSL
+         IreDEisHuZ8q5vUeM22NrtgJ66GoeImic6hQIg0r/ePof3/AhRyKaBaI51uxQT5baomg
+         mloaTQ1KxiOAuZDt9oqWAI+lwrFYg4g/oUeXgBws8L0IMtF+jSaKI/RMEVK0Pzl03Zu2
+         cTcii8qShPApgbNXh16smCxyStDx1W7zSx93oFc8yt2XZ2YhrAo1OxNn9R6/YBrtlw8v
+         XVRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682973242; x=1685565242;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gtgi4uzBaMRQQUHqbLY1bdwg6cIPE7Uii87M8LpnWmA=;
-        b=TjACdiHXcFViU/neKt25EWFTsijY6CsadukqJw1gfEg+KAqTifigykXvvwcz8P0nzf
-         YXJuvLw7Di8vFGQ7nYO/kTD1KSqqP71k5Qn70e4ULBlk8lyR/45V9oaogSTJcO+LQ7em
-         vS9ujxoVPuEPLgipvJJa/iyFxkTMPbCBenfKB2QWf3NNDhSQF7gB21GMvSKlzOHJCOJ0
-         gS0SAuaSH2DoG0+DMh+pbiWnB4x/XJQufJAWUMLQyqEGUvX/qUQ15/Qf5Lsjxp7k0p+u
-         wOIEApOrV+tpk1OBjnmKR6jX/0u/AOgy6LBWMFOkifyPNN/MT5r/8ObmpiHiQ2LAUsQL
-         sumw==
-X-Gm-Message-State: AC+VfDzT11RMgzd5G4PhqI8a32hlkpT63tp8NUviX/xJRHBTveX7soxf
-        4jkvDlHe9GtrQ2F3GWqPkTtxOvMv/Szr3X3icQc=
-X-Google-Smtp-Source: ACHHUZ5MrScGDH2NSzMAJf2M5gAdGxGy/Kz+NEvowWWh9C3OfRreq4LFeopP9Q6zQyoz5395nH3aAw==
-X-Received: by 2002:a05:6512:376b:b0:4ef:6ed9:7af2 with SMTP id z11-20020a056512376b00b004ef6ed97af2mr4010525lft.8.1682973242612;
-        Mon, 01 May 2023 13:34:02 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682973243; x=1685565243;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u3EsAWj9dP8IUk71au9cQSRbwH/Oh0w5YOlr/cVzUIs=;
+        b=lw1FgZZQDKWWLt1GWs1mueBpa9Zz+HIu7wZqi0SjOoOHuVHshZdHxRdvqSCg/yQ7Lu
+         4Vurlx4AC85zcbJTdNIbksB08fpF5B2biJqpk6DUBuUw2dTarcRrqkGDrgBEtkMUfm+f
+         jCuCSdkZmm84AdGeS4sK/0ibLBqUaj0Y6/CTQfYdFeVukP3fB2P0QF18hRmKstk31i7t
+         PwyagPKzeD2gDbBw9l36T+Gk+rc10XprH/WIPPYitoCXfn/hPYc53cpcbK5FOG4wUY2N
+         pDI/of6juO9NeadJTNaP3FkC98yVt4CRDGzT7XEFJyu9lHcvgvYguTZ73+uCtxbeNfTR
+         Te5Q==
+X-Gm-Message-State: AC+VfDwAiCTfH6Ayi+VovI1F6+pJ/uOVMMMsJp14y5S8VeIeJfQUPPTf
+        AXOffZRiXcvQgFSB/jV/DzcnLQ==
+X-Google-Smtp-Source: ACHHUZ6coxt6m300xK5kmMfvgeaZPlg/GIwzhpZKCDCYPxC/Wl24dMwHprCk/GYX++274/wYPSa1eQ==
+X-Received: by 2002:ac2:4c1b:0:b0:4ec:9fe9:fea9 with SMTP id t27-20020ac24c1b000000b004ec9fe9fea9mr3618712lfq.56.1682973243470;
+        Mon, 01 May 2023 13:34:03 -0700 (PDT)
 Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
-        by smtp.gmail.com with ESMTPSA id f27-20020ac251bb000000b004eb018fac57sm4885909lfk.191.2023.05.01.13.34.01
+        by smtp.gmail.com with ESMTPSA id f27-20020ac251bb000000b004eb018fac57sm4885909lfk.191.2023.05.01.13.34.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 01 May 2023 13:34:02 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -59,49 +60,72 @@ To:     Andy Gross <agross@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 00/10] clk: qcom: convert mdm9615 to parent_hws/_data
-Date:   Mon,  1 May 2023 23:33:51 +0300
-Message-Id: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 01/10] dt-bindings: clock: qcom,lcc.yaml: describe clocks for lcc,qcom-mdm9615
+Date:   Mon,  1 May 2023 23:33:52 +0300
+Message-Id: <20230501203401.41393-2-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
+References: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series concludes the conversion of Qualcomm clock controller
-drivers to using the parent_hws/parent_data and declaring all the used
-clocks in DT.
+Describe parent clocks used by the LCC on the MDM9615 platform. It is
+the list as the one for msm8960/apq8064, with only difference being
+pxo/cxo replacement.
 
-Dmitry Baryshkov (10):
-  dt-bindings: clock: qcom,lcc.yaml: describe clocks for
-    lcc,qcom-mdm9615
-  dt-bindings: clock: drop qcom,lcc-mdm9615 header file
-  dt-bindings: clock: provide separate bindings for qcom,gcc-mdm9615
-  clk: qcom: gcc-mdm9615: use ARRAY_SIZE instead of specifying
-    num_parents
-  clk: qcom: drop lcc-mdm9615 in favour of lcc-msm8960
-  clk: qcom: gcc-mdm9615: use proper parent for pll0_vote clock
-  clk: qcom: gcc-mdm9615: use parent_hws/_data instead of parent_names
-  clk: qcom: gcc-mdm9615: drop the cxo clock
-  ARM: dts: qcom-mdm9615: specify clocks for the lcc device
-  ARM: dts: qcom-mdm9615: specify gcc clocks
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ .../devicetree/bindings/clock/qcom,lcc.yaml   | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
- .../bindings/clock/qcom,gcc-mdm9615.yaml      |  53 ++
- .../bindings/clock/qcom,gcc-other.yaml        |   3 -
- .../devicetree/bindings/clock/qcom,lcc.yaml   |  34 ++
- arch/arm/boot/dts/qcom-mdm9615.dtsi           |  21 +-
- drivers/clk/qcom/Kconfig                      |  14 +-
- drivers/clk/qcom/Makefile                     |   1 -
- drivers/clk/qcom/gcc-mdm9615.c                | 256 ++++----
- drivers/clk/qcom/lcc-mdm9615.c                | 572 ------------------
- drivers/clk/qcom/lcc-msm8960.c                |  19 +-
- include/dt-bindings/clock/qcom,lcc-mdm9615.h  |  44 --
- 10 files changed, 263 insertions(+), 754 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
- delete mode 100644 drivers/clk/qcom/lcc-mdm9615.c
- delete mode 100644 include/dt-bindings/clock/qcom,lcc-mdm9615.h
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,lcc.yaml b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
+index 8c783823e93c..55985e562a34 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,lcc.yaml
+@@ -76,6 +76,40 @@ allOf:
+         - clocks
+         - clock-names
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,lcc-mdm9615
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board CXO source
++            - description: PLL 4 Vote clock
++            - description: MI2S codec clock
++            - description: Mic I2S codec clock
++            - description: Mic I2S spare clock
++            - description: Speaker I2S codec clock
++            - description: Speaker I2S spare clock
++            - description: PCM codec clock
++
++        clock-names:
++          items:
++            - const: cxo
++            - const: pll4_vote
++            - const: mi2s_codec_clk
++            - const: codec_i2s_mic_codec_clk
++            - const: spare_i2s_mic_codec_clk
++            - const: codec_i2s_spkr_codec_clk
++            - const: spare_i2s_spkr_codec_clk
++            - const: pcm_codec_clk
++
++      required:
++        - clocks
++        - clock-names
++
+ examples:
+   - |
+     clock-controller@28000000 {
 -- 
 2.39.2
 
