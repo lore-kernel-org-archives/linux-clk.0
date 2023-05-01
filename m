@@ -2,106 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA56C7EE45
-	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 20:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C5FC77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 21:35:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232993AbjEAUeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 May 2023 16:34:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58938 "EHLO
+        id S232523AbjEAVfK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 May 2023 17:35:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233006AbjEAUeO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 16:34:14 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9487C30EB
-        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 13:34:12 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2a8ba5f1d6bso27826661fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 13:34:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1682973251; x=1685565251;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dtq6J1T5SaETo4KYX1pWYkqM6uP87lVD5G2k3rD0guM=;
-        b=ZtpZX+g+sXtKqgT7v0f/T4X047b+bGVdWfUZR+qKsCV31ZSWIesjMBKZB0eyUnVwCp
-         Cpoy1RQMVPkUsoleA+esh/KsLGvBhm9Djf6MKF8G+7OUj48ZW4GG7569f2GNxli9Bjuv
-         m41YAFADRdmRHkvS07nijLRquQo+EWSPOPSV7vmMDbu/cH3rVuVdHR8PZjmd92PkNkE9
-         vd2UuEpigtop/VZAxc/O2kX3Kvefe5RJ5HpdP7NxhCf2ZsZG631Zmro4lDM4jaxEHBpT
-         JJrjZuZ4E1y4roQ4p8gwqT7GuFEl9DJwC80ViKDJGxetKF93P7Zu7xp57zTU3Cfz+xJd
-         Fjmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682973251; x=1685565251;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dtq6J1T5SaETo4KYX1pWYkqM6uP87lVD5G2k3rD0guM=;
-        b=R2sl4GeoljE069AXXO1xe4J3i93PUzcvumQxDPaV1z+8gaznrY6VDdHb45w2zRSBj3
-         erhiLo6RJho+hfNwc6SE56MluzPz+t0ktSXVq7rPAba+sQOu0v6AFj2pRuy/3Bt5dcnV
-         5Aml9w376IkdBUZJpS/wfDNfR5LmJXuhENhmEyQRyDDKQIRfybmuV50sNkKurwUPsBLI
-         1RKTuDpcfWwFDYegp9R3wEU28WPJT+7ua37868MeMi7Mp8FKEMvX3mraSsFUP0IVgZDd
-         QvpcUfQE7bOAb80vUd57XZ9gYx/L1S91L8nBYhkPsQwYX16SNINo9y6zeImhtM6nhxaa
-         9pnA==
-X-Gm-Message-State: AC+VfDyyCNILYgE0bhtLtY+e/3XL4JpZ843lW8aXXd3G7g09BnKWl31K
-        Jri/9kSJJbHaR2Mc7iyGCtqf2g==
-X-Google-Smtp-Source: ACHHUZ6E7e/wTUNfAQwgw2IAiZMuYdpixqKVql55gkgnkWOKV8+7DtHKYx0NXu38Qb9EBfU/iklPfQ==
-X-Received: by 2002:a2e:8543:0:b0:2a8:a65a:7313 with SMTP id u3-20020a2e8543000000b002a8a65a7313mr3817363ljj.31.1682973250850;
-        Mon, 01 May 2023 13:34:10 -0700 (PDT)
-Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
-        by smtp.gmail.com with ESMTPSA id f27-20020ac251bb000000b004eb018fac57sm4885909lfk.191.2023.05.01.13.34.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 May 2023 13:34:10 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH 10/10] ARM: dts: qcom-mdm9615: specify gcc clocks
-Date:   Mon,  1 May 2023 23:34:01 +0300
-Message-Id: <20230501203401.41393-11-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
-References: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S230003AbjEAVfJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 17:35:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A24CE5A
+        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 14:35:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C182C61944
+        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 21:35:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3932C433EF;
+        Mon,  1 May 2023 21:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682976907;
+        bh=XnqhpFr6fnfhNPWyqQmtX3kBqxpEOgAFxsVlBRWbBPI=;
+        h=From:Date:Subject:To:Cc:From;
+        b=ZnOCr8fDXckc608qZzHYTAP81OsjQwPHx+kpYeRnbO8GwTsX4Mmp7thkxDQT7ktCz
+         sXF4pS3skljGbgDEev83h1qbNEWAS7aALi2k1nfXkODnAoYd0qjj523FtoCOBq718w
+         ovnGQ/wVI9ORmB17jnlCrKCT02P6nHKdBPkBUL7X6naonavE4pAE75FXGB1qObvEeO
+         ZEAy4/RriaOmbCXzlzExr9M9LpuwtK5X3YmNZ4dEsq8mUSYDaJc0ggeeS+7Bk7Q6Un
+         CsAz+bosOgwr2MkhL53MVah59NCUvMrPNHeqsThrYPlHmE7IAnZS1C73R1M0ZmF6zC
+         eSJaY6LgYb7Aw==
+From:   Nathan Chancellor <nathan@kernel.org>
+Date:   Mon, 01 May 2023 14:34:47 -0700
+Subject: [PATCH] clk: sp7021: Adjust width of _m in HWM_FIELD_PREP()
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230501-sp7021-field_prep-warning-v1-1-5b36d71feefe@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAHYwUGQC/x2NUQrCQAwFr1LybWB3i1S8ioik7ds2oGtJRIXSu
+ 7v1c3jMvJUcpnA6NysZ3ur6LBXioaFhljKBdaxMKaQ2HENkX7qQImfFfbwthoU/YkXLxCm1OXY
+ CyAlU/V4c3JuUYd4LD/EXbB+qlfX7P71ct+0H5eGNcoQAAAA=
+To:     qinjian@cqplus1.com, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     ndesaulniers@google.com, trix@redhat.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        llvm@lists.linux.dev, patches@lists.linux.dev,
+        Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.13-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2913; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=XnqhpFr6fnfhNPWyqQmtX3kBqxpEOgAFxsVlBRWbBPI=;
+ b=owGbwMvMwCEmm602sfCA1DTG02pJDCkBBl0x325mvvvMZK8y1diE+9rvAO2KpJkn+Xfe+3mPh
+ e9v6587HaUsDGIcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAiczsZ/jtkKxpPiBOQYLl7
+ gEmbzfxfSkTYD+nfdzYtZ7t3OVrtwRyG/2XqGcHPXafO1rZdx6N4oCj9yj2tLNMH+9d0rDusPCd
+ LgRkA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fully specify the clocks used by the GCC on the mdm9615 platform.
+When building with clang + W=1, there is a warning around an internal
+comparison check within the FIELD_PREP() macro, due to a 32-bit variable
+comparison against ~0ull:
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+  drivers/clk/clk-sp7021.c:316:8: error: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((_m), ...' (aka 'unsigned int') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
+          r0 |= HWM_FIELD_PREP(MASK_SEL_FRA, clk->p[SEL_FRA]);
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/clk/clk-sp7021.c:45:15: note: expanded from macro 'HWM_FIELD_PREP'
+          (_m << 16) | FIELD_PREP(_m, value);     \
+                       ^~~~~~~~~~~~~~~~~~~~~
+  include/linux/bitfield.h:114:3: note: expanded from macro 'FIELD_PREP'
+                  __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  include/linux/bitfield.h:71:53: note: expanded from macro '__BF_FIELD_CHECK'
+                  BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  note: (skipping 1 expansions in backtrace; use -fmacro-backtrace-limit=0 to see all)
+  include/linux/compiler_types.h:397:22: note: expanded from macro 'compiletime_assert'
+          _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+          ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  include/linux/compiler_types.h:385:23: note: expanded from macro '_compiletime_assert'
+          __compiletime_assert(condition, msg, prefix, suffix)
+          ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  include/linux/compiler_types.h:377:9: note: expanded from macro '__compiletime_assert'
+                  if (!(condition))                                       \
+                        ^~~~~~~~~
+
+This is expected given the tyoes of the input. Increase the size of the
+temporary variable in HWM_FIELD_PREP() to eliminate the warning, which
+follows the logic of commit cfd6fb45cfaf ("crypto: ccree - avoid
+out-of-range warnings from clang") for the same reasons.
+
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- arch/arm/boot/dts/qcom-mdm9615.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/clk-sp7021.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-index 556abe90cf5b..e81e5e3196d9 100644
---- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
-+++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
-@@ -10,6 +10,7 @@
+diff --git a/drivers/clk/clk-sp7021.c b/drivers/clk/clk-sp7021.c
+index 8fec14120105..11d22043ddd7 100644
+--- a/drivers/clk/clk-sp7021.c
++++ b/drivers/clk/clk-sp7021.c
+@@ -41,7 +41,7 @@ enum {
+ /* HIWORD_MASK FIELD_PREP */
+ #define HWM_FIELD_PREP(mask, value)		\
+ ({						\
+-	u32 _m = mask;				\
++	u64 _m = mask;				\
+ 	(_m << 16) | FIELD_PREP(_m, value);	\
+ })
  
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-mdm9615.h>
-+#include <dt-bindings/clock/qcom,lcc-msm8960.h>
- #include <dt-bindings/reset/qcom,gcc-mdm9615.h>
- #include <dt-bindings/mfd/qcom-rpm.h>
- #include <dt-bindings/soc/qcom,gsbi.h>
-@@ -106,6 +107,10 @@ gcc: clock-controller@900000 {
- 			#power-domain-cells = <1>;
- 			#reset-cells = <1>;
- 			reg = <0x900000 0x4000>;
-+			clocks = <&cxo_board>,
-+				 <&lcc PLL4>;
-+			clock-names = "cxo",
-+				      "pll4";
- 		};
- 
- 		lcc: clock-controller@28000000 {
+
+---
+base-commit: d54c1fd4a51e8fbc7f9da86b0cd338a4f7cd2bb2
+change-id: 20230501-sp7021-field_prep-warning-223f17aeea8e
+
+Best regards,
 -- 
-2.39.2
+Nathan Chancellor <nathan@kernel.org>
 
