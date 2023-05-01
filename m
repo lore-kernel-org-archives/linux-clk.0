@@ -2,107 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2A6C77B73
-	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 15:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E505C77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 16:18:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232376AbjEAP2Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 May 2023 11:28:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53464 "EHLO
+        id S232281AbjEAQSD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 May 2023 12:18:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232193AbjEAP2X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 11:28:23 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 942ABAA;
-        Mon,  1 May 2023 08:28:22 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 341FSIYV003625;
-        Mon, 1 May 2023 15:28:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=WxVYXWAROQLyqngVyIjkA6PL1TyrGM+M/4XnTbSf9Js=;
- b=NikjnHdxgDowrfCxfzuCBzAH7GgfIfY3/8adlGc83PyI4gTVRvFgHP1zqg8uC9RkAk6L
- qEoKAsma4r1Uz8TKmqBbDr7DhcpSNBOafa4dBSuChGtW5KKWfdnULvwyG+sYrHz0MaxX
- Rgoz8+VG+S1pQ6ZMgbTno/dbX1HCYj39OfZ3/Sa9MnKNr+nRcTi8sg52S9zVvkneRgmq
- 3+gerSOuABk59pH/KH7GFsdj3fJSbeEtgRaQvRNtYau1t3Qns1t252B57kgpYYzmp6RC
- KDQO5gIGUyUS6uleS9KpSlECC9ZoIlniAQlZxlUyurL89yqsDhp0QpdoM3a5oOJBGQbw Ag== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q8ub33vsr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 May 2023 15:28:18 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 341FSGhm001480
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 1 May 2023 15:28:16 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Mon, 1 May 2023 08:28:13 -0700
-From:   Taniya Das <quic_tdas@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_skakitap@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH] clk: qcom: rcg: Update rcg configuration before enabling it
-Date:   Mon, 1 May 2023 20:57:32 +0530
-Message-ID: <20230501152732.9245-1-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S231229AbjEAQSC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 12:18:02 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78402E4;
+        Mon,  1 May 2023 09:18:00 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id 41be03b00d2f7-51f1b6e8179so1713994a12.3;
+        Mon, 01 May 2023 09:18:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1682957880; x=1685549880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qk+9QkkonRjQxXkPE3ppsEbfc37j1jKoaFU3DPo9GLo=;
+        b=UZznBRMPjdb0UxnL0J5rsYVgsEDywc3ZLIjknqudXR4IO24FkAQn6QHq9HOJDqXzUf
+         D0FhF8xqaKu2DPao4TkQqAV3Xn6F5zD+ohrsOLMc39LXmaZ8f1BcKEcdOq/9BYE7Umsu
+         J1C4u3A/kpkHUHKqYstjvpZcj3iqsiqQgmtXA7Q2kWpBp5oRv3VheBVryQkrm8nmYkwf
+         YEGbpAOsEeNzzzS0AT8EqDcRTIofl+1ZTlDGtwZe4HkayXE4tG4fZiDljEq3eQKvnyyP
+         qcWN4LcG1MIqyV1BfRZM7xML8q2GIG+/f5bYOhErfGFQDJezDG83Yhr68hRGZpuG3gin
+         Tf6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682957880; x=1685549880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qk+9QkkonRjQxXkPE3ppsEbfc37j1jKoaFU3DPo9GLo=;
+        b=E74G1I7k/v0cnWVof0re8c6quk3XdGObQex3T2CmucDilNLwiVFC1IDVRBt6yKb8GW
+         oCQNmLbB6l3jVkHPuStykIeggFGQxomiOq4atQfLIgPnQCowQgIyqNMqjb+PlgRz/igt
+         y6j2GeNr8K1q0R2KjGCev+KcvhlwxBMEbiHcsoqcBEHVqM0tEtsFW2tK0h1i59tXFxaQ
+         VT4EuaAJgYgmqzcNshdCtC84Pz4RHf0FeQUhhnyvZFz6mIMXYxcP8lVjqLA1qHnAzP8d
+         PoDsYZLSbcRCp2jUy2UfrP3yY+Bhi9gX+IyGGZyi3X1apka1AlgfMuKBuAjW5uIYxS/g
+         6a5w==
+X-Gm-Message-State: AC+VfDxY9OEU7uGZcEtRb91doYnj7HPyksyuEvvCIN3dG7Iz5AbMF5P2
+        ZIal+S0yZrbyiPOrUILwgwxM91lrHOpUbuhsq9g=
+X-Google-Smtp-Source: ACHHUZ4J0yGW5Pp7kdvK7YAjRQgLn/EdRmN2Ens4poOcMXDuiITwrbiSunLGNaJQTvrE+33RCSAqrcaHDzIWjtq7TIQ=
+X-Received: by 2002:a17:90a:bc45:b0:24c:c75:2531 with SMTP id
+ t5-20020a17090abc4500b0024c0c752531mr15257019pjv.37.1682957879849; Mon, 01
+ May 2023 09:17:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8qeVBL17wU7HePPciFAE2GRzCOu06Gat
-X-Proofpoint-ORIG-GUID: 8qeVBL17wU7HePPciFAE2GRzCOu06Gat
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-01_08,2023-04-27_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxscore=0 impostorscore=0 spamscore=0 mlxlogscore=803 lowpriorityscore=0
- phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2305010125
+References: <20230423123828.1346511-1-aford173@gmail.com> <DU0PR04MB9417FF20BEDB110DE49FB7F388679@DU0PR04MB9417.eurprd04.prod.outlook.com>
+In-Reply-To: <DU0PR04MB9417FF20BEDB110DE49FB7F388679@DU0PR04MB9417.eurprd04.prod.outlook.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 1 May 2023 11:17:48 -0500
+Message-ID: <CAHCN7x+A+=mYKLTX6JedQM=oBz=HmM=E_Sv5VxqWqyyjQeFDcQ@mail.gmail.com>
+Subject: Re: [PATCH] Revert "clk: imx: composite-8m: Add support to determine_rate"
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "aford@beaconembedded.com" <aford@beaconembedded.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If rcg is in disabled state when clk_rcg2_shared_set_rate is called, the
-new configuration is written to the configuration register but it won't be
-effective in h/w yet because update bit won't be set if rcg is in disabled
-state. Since the new configuration is not yet updated in h/w, dirty bit of
-configuration register will be set in such case. Clear the dirty bit and
-update the rcg to proper new configuration by setting the update bit before
-enabling the rcg.
+On Sun, Apr 23, 2023 at 8:43=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: [PATCH] Revert "clk: imx: composite-8m: Add support to
+> > determine_rate"
+> >
+> > This reverts commit 156e96ff2172518b6f83e97d8f11f677bc668e22.
+> >
+> > This patch was found to cause some division issues on the i.MX8MP which
+> > causes the video clocks to not properly divide when division was greate=
+ than
+> > 8.  This causes video failures on disp1_pix and disp2_pix clocks.
+> >
+> > Until a better solution is found, we'll have to revert this.
+> >
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- drivers/clk/qcom/clk-rcg2.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Abel / Stephen,
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 76551534f10d..b36377979f21 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -980,7 +980,13 @@ static int clk_rcg2_set_force_enable(struct clk_hw *hw)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	const char *name = clk_hw_get_name(hw);
--	int ret, count;
-+	int ret, count, val;
-+
-+	if (!__clk_is_enabled(hw->clk)) {
-+		regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG, &val);
-+		if (val & CMD_DIRTY_CFG)
-+			update_config(rcg);
-+	}
+Is there a way we can get this applied and put in for RC1?  When I
+originally did this, I only tested with Nano and some brief testing
+with Mini, but  it wasn't until I tested with Plus that I found
+issues.
 
- 	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
- 				 CMD_ROOT_EN, CMD_ROOT_EN);
---
-2.17.1
+thanks
 
+adam
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> Indeed we already see issue in NXP local CI with the previous patch.
+>
+> Acked-by: Peng Fan <peng.fan@nxp.com>
+>
+> >
+> > diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-
+> > composite-8m.c
+> > index 6883a8199b6c..cbf0d7955a00 100644
+> > --- a/drivers/clk/imx/clk-composite-8m.c
+> > +++ b/drivers/clk/imx/clk-composite-8m.c
+> > @@ -119,17 +119,10 @@ static int
+> > imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+> >       return ret;
+> >  }
+> >
+> > -static int imx8m_clk_divider_determine_rate(struct clk_hw *hw,
+> > -                                   struct clk_rate_request *req)
+> > -{
+> > -     return clk_divider_ops.determine_rate(hw, req);
+> > -}
+> > -
+> >  static const struct clk_ops imx8m_clk_composite_divider_ops =3D {
+> >       .recalc_rate =3D imx8m_clk_composite_divider_recalc_rate,
+> >       .round_rate =3D imx8m_clk_composite_divider_round_rate,
+> >       .set_rate =3D imx8m_clk_composite_divider_set_rate,
+> > -     .determine_rate =3D imx8m_clk_divider_determine_rate,
+> >  };
+> >
+> >  static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
+> > --
+> > 2.39.2
+>
