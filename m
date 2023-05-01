@@ -2,327 +2,150 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EF5C77B7F
-	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 17:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC872C77B7C
+	for <linux-clk@archiver.kernel.org>; Mon,  1 May 2023 18:39:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232511AbjEARnd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 May 2023 13:43:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37876 "EHLO
+        id S232267AbjEASjj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 May 2023 14:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232499AbjEARnc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 13:43:32 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 707D4E43
-        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 10:43:27 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-2f55ffdbaedso1560967f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 10:43:27 -0700 (PDT)
+        with ESMTP id S229871AbjEASji (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 1 May 2023 14:39:38 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920D319B0;
+        Mon,  1 May 2023 11:39:33 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-958bb7731a9so581784166b.0;
+        Mon, 01 May 2023 11:39:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1682963006; x=1685555006;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=KWAQxRppuZL76jxl312jAhqOoymrs7nJ8TG4C726RtE=;
-        b=CoydJabmyK6nsiu4/DyVcD32sGakdDP3vSNK7d7+Kj2YBWx8NuwQrs/vT4xv9RkZSy
-         fPt7ZVFP2loG2ZtXuw4JY2V4IVHt7r8xx0rPMAfQjoGnp3vBkzB/Bb/HUmeBCCJS6e7q
-         uL7bef3K1d2OKjFBLAAIr5JbAQLmfpzCBWzXUnxslBlEn0iLJqqtH6+FxGsbzxhD5ExI
-         Mc507jIwmHAHedxkatF7ptCgSJP3QX0szConssBMKmGJFYWtT8SZwkAHkXooO4jnPIai
-         ZmO7TPnLoppaXkt34OMamXzl67aPDR5MIG5qIZ42Dfox0SYfvCUWSPQOOZ4hbFyTcuKf
-         VXww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682963006; x=1685555006;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+        d=googlemail.com; s=20221208; t=1682966372; x=1685558372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KWAQxRppuZL76jxl312jAhqOoymrs7nJ8TG4C726RtE=;
-        b=X0A6+DsPRJHBUcAtgJwbCkuCnrqGAqCWlOR7ZDNx4OFNd9pKxbni2fZBXEKybKienl
-         bFmJT1ncT7eiD1X91b6EWnwUGd57Fbvt17JB0ivQMXn1mxz0JtJSlLQcqQ/XaQr94/0d
-         YVhUm80VEYK28wp/AbyYU/JvX6/Mh2tVbmqWFS1N0KFpEWkr66Vj0I3pgKvz+hRPc3t0
-         +T3HH0Hu+mubWbY+LZlhBVogTxTZPIM0anjO/psAKYrnYN7gIeDCDF1RRhFSqmmM+49h
-         5pPpxpB28jZE7a7dAxEVePUMU6+pJg41bqDLWEQXKPJzXjZ7aMSy43hS65O0JcaMbRfT
-         icfA==
-X-Gm-Message-State: AC+VfDy2nm/0ug1h6/X2rzdKOJvy7Fcyr2ytIibUBFxT5nuyT+mt337I
-        FdhN8PaA1W9DqjrV4H4oeYsCWA==
-X-Google-Smtp-Source: ACHHUZ41tSRIwqt4t/r56GXoMbyRL5di4OgNoAeDZuDa65UkAb7PtSfmleaf6RGcDoS3+Ui3FnRZdg==
-X-Received: by 2002:adf:cc89:0:b0:304:a40c:43c3 with SMTP id p9-20020adfcc89000000b00304a40c43c3mr9973070wrj.45.1682963005887;
-        Mon, 01 May 2023 10:43:25 -0700 (PDT)
-Received: from localhost ([2a04:cec0:11b2:f613:c075:6ab:a69e:307d])
-        by smtp.gmail.com with ESMTPSA id j14-20020adfea4e000000b002fc3d8c134bsm28854132wrn.74.2023.05.01.10.43.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 May 2023 10:43:25 -0700 (PDT)
-References: <20230417065005.24967-1-yu.tu@amlogic.com>
- <20230417065005.24967-5-yu.tu@amlogic.com>
- <20230426110538.y2d4qhv2qffc62vj@CAB-WSD-L081021>
- <6cc4c3f2-4df5-6456-fe65-71aa4a13c866@amlogic.com>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yu Tu <yu.tu@amlogic.com>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-Subject: Re: [PATCH V7 4/4] clk: meson: s4: add support for Amlogic S4 SoC
- peripheral clock controller
-Date:   Mon, 01 May 2023 19:37:58 +0200
-In-reply-to: <6cc4c3f2-4df5-6456-fe65-71aa4a13c866@amlogic.com>
-Message-ID: <1jpm7kuev7.fsf@starbuckisacylon.baylibre.com>
+        bh=Vy8LMgK7nlj8Hadd9P4DNIqtoF7V1DAnGwP0/fa2hB8=;
+        b=U5D7cxNQTURT8xwkIm3G1FjwzyMGG5dzHJMisO4ldoGpHCh2i4+CzU5YRAlZCAKUGD
+         Xn6lbly6fyylDsFJy7yJgxXVXxkji8ExeXlGf6txh4V/hW7XCBVIKBxy5q71Bivb2V2c
+         uIgmKUQHOAA0WMq1LxPtFAvSwnlWRx2YBULmIgt+592UWgpHwxO75jhDHOoB4H82COlr
+         yy1R9sUHSAI2/hJ6oWc4RqgrpbJv+uy9qVnZ5qo62qEQ5zgJMIrAASjE+RcYdFefYVw3
+         JNfCACRGxcC0WO5XEoqMtPKgw6j3KM5b4jUV2TgDyTT4trKxdU2Pwl0XeAcsxa+mW/xZ
+         q4Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1682966372; x=1685558372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vy8LMgK7nlj8Hadd9P4DNIqtoF7V1DAnGwP0/fa2hB8=;
+        b=GTht1OR/nC15lh+sV/bB5WPtgJG6yqyQnFByLd0WILfwMG7+Jvl9GzHCI/MErrzThv
+         p++csaxonEZ0kdA4P08KckwtaSYKhKFhP4pOQKLhVyyxzEjunZUsj1VFUBEElaCpk/5y
+         5T8oN1BD+2LT+obINAvt6fvz359iCiKeEzJ3Ae5ay+AwnJ/bzD6NqFTxtSKrgzVBOmuL
+         t8KEir4O7LJp+CGE8Vm1xqpoWvj1sYbOXHi+lwpQdDMeXPVJ9MMECMP4CNkgxbAvNX1q
+         YrSfuJ8uJAAkIvBAnRFCIGo5WGzgTqZryUDNKggyBLAYbA6af9gxJpU6rF7OwBR1Y6vQ
+         WJfw==
+X-Gm-Message-State: AC+VfDwJnqq0SCEh+eOViKA/kePQSpvDpABm3ndbq7vofJzJke0KbS+W
+        tpcWLG1pW5bkTxxeNh6dMvyOMp8JKSrwUGDqFs0=
+X-Google-Smtp-Source: ACHHUZ7XYkmDWh6C7QrAP5IrIgIh54a4MMgW7FDGV1Ipa9leHn0ud1zf0ChP3eFCS4Yg4qGriQmF6zeP4UR5ar4Bb4U=
+X-Received: by 2002:a17:907:160a:b0:94f:21cf:86c6 with SMTP id
+ hb10-20020a170907160a00b0094f21cf86c6mr14226257ejc.51.1682966371921; Mon, 01
+ May 2023 11:39:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20230405195927.13487-1-ddrokosov@sberdevices.ru>
+ <20230405195927.13487-5-ddrokosov@sberdevices.ru> <CAFBinCA3uZXzr3RgnWnKV5Qr-CPaZQX5joDg319i_cgzhLJy2g@mail.gmail.com>
+ <20230425123304.xjmrkraybp2siwdw@CAB-WSD-L081021>
+In-Reply-To: <20230425123304.xjmrkraybp2siwdw@CAB-WSD-L081021>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 1 May 2023 20:39:20 +0200
+Message-ID: <CAFBinCCqx1oHf+PcXBkeRYHnGQChbTTPRyD8SJU+ait+TG+AjQ@mail.gmail.com>
+Subject: Re: [PATCH v13 4/6] clk: meson: a1: add Amlogic A1 PLL clock
+ controller driver
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Dmitry,
 
-On Thu 27 Apr 2023 at 16:15, Yu Tu <yu.tu@amlogic.com> wrote:
+(I'm aware you already posted a v14 - but I'm still replying here to
+continue the discussion on one question I had to keep the context)
 
-> On 2023/4/26 19:05, Dmitry Rokosov wrote:
->> [Some people who received this message don't often get email from
->> ddrokosov@sberdevices.ru. Learn why this is important at
->> https://aka.ms/LearnAboutSenderIdentification ]
->> [ EXTERNAL EMAIL ]
->> On Mon, Apr 17, 2023 at 02:50:05PM +0800, Yu Tu wrote:
->>> Add the peripherals clock controller driver in the s4 SoC family.
->>>
->>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>> ---
->>>   drivers/clk/meson/Kconfig          |   12 +
->>>   drivers/clk/meson/Makefile         |    1 +
->>>   drivers/clk/meson/s4-peripherals.c | 3814 ++++++++++++++++++++++++++++
->>>   drivers/clk/meson/s4-peripherals.h |  217 ++
->>>   4 files changed, 4044 insertions(+)
->>>   create mode 100644 drivers/clk/meson/s4-peripherals.c
->>>   create mode 100644 drivers/clk/meson/s4-peripherals.h
->>>
->>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->>> index a663c90a3f3b..a6eb9fa15c74 100644
->>> --- a/drivers/clk/meson/Kconfig
->>> +++ b/drivers/clk/meson/Kconfig
->>> @@ -128,4 +128,16 @@ config COMMON_CLK_S4_PLL
->>>          aka s4. Amlogic S805X2 and S905Y4 devices include AQ222 and AQ229.
->>>          Say Y if you want the board to work, because plls are the parent of most
->>>          peripherals.
->>> +
->>> +config COMMON_CLK_S4
->>> +     tristate "S4 SoC Peripherals clock controllers support"
->>> +     depends on ARM64
->>> +     default y
->>> +     select COMMON_CLK_MESON_REGMAP
->>> +     select COMMON_CLK_MESON_DUALDIV
->>> +     select COMMON_CLK_MESON_VID_PLL_DIV
->>> +     help
->>> +       Support for the Peripherals clock controller on Amlogic S805X2 and S905Y4
->>> +       devices, aka s4. Amlogic S805X2 and S905Y4 devices include AQ222 and AQ229.
->>> +       Say Y if you want peripherals to work.
->>>   endmenu
->>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->>> index 376f49cc13f1..c9130afccb48 100644
->>> --- a/drivers/clk/meson/Makefile
->>> +++ b/drivers/clk/meson/Makefile
->>> @@ -20,3 +20,4 @@ obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
->>>   obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
->>>   obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
->>>   obj-$(CONFIG_COMMON_CLK_S4_PLL) += s4-pll.o
->>> +obj-$(CONFIG_COMMON_CLK_S4) += s4-peripherals.o
->> [...]
+On Tue, Apr 25, 2023 at 2:33=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
+es.ru> wrote:
+[...]
+> > > +/* PLL register offset */
+> > > +#define ANACTRL_FIXPLL_CTRL0   0x0
+> > > +#define ANACTRL_FIXPLL_CTRL1   0x4
+> > > +#define ANACTRL_FIXPLL_STS     0x14
+> > > +#define ANACTRL_HIFIPLL_CTRL0  0xc0
+> > > +#define ANACTRL_HIFIPLL_CTRL1  0xc4
+> > > +#define ANACTRL_HIFIPLL_CTRL2  0xc8
+> > > +#define ANACTRL_HIFIPLL_CTRL3  0xcc
+> > > +#define ANACTRL_HIFIPLL_CTRL4  0xd0
+> > > +#define ANACTRL_HIFIPLL_STS    0xd4
+> > Here I have a question that will potentially affect patch 3/6
+> > ("dt-bindings: clock: meson: add A1 PLL clock controller bindings").
+> > In the cover-letter you mentioned that quite a few clocks have been omi=
+tted.
+> > Any dt-bindings that we create need to be stable going forward. That
+> > means: the dt-bindings will always need to describe what the hardware
+> > is capable of, not what the driver implements.
+> > So my question is: do we have all needed inputs described in the
+> > dt-bindings (even though we're omitting quite a few registers here
+> > that will only be added/used in the future)?
+> > Older SoCs require (temporarily) using the XTAL clock for CPU clock
+> > tree changes. To make a long story short: I'm wondering if - at least
+> > - the XTAL clock input is missing.
 >
-> ?
->
->> 
->>> +static struct clk_regmap s4_ceca_32k_clkin = {
->>> +     .data = &(struct clk_regmap_gate_data){
->>> +             .offset = CLKCTRL_CECA_CTRL0,
->>> +             .bit_idx = 31,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "ceca_32k_clkin",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_data = (const struct clk_parent_data []) {
->>> +                     { .fw_name = "xtal", }
->>> +             },
->>> +             .num_parents = 1,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_ceca_32k_div = {
->>> +     .data = &(struct meson_clk_dualdiv_data){
->>> +             .n1 = {
->>> +                     .reg_off = CLKCTRL_CECA_CTRL0,
->>> +                     .shift   = 0,
->>> +                     .width   = 12,
->>> +             },
->>> +             .n2 = {
->>> +                     .reg_off = CLKCTRL_CECA_CTRL0,
->>> +                     .shift   = 12,
->>> +                     .width   = 12,
->>> +             },
->>> +             .m1 = {
->>> +                     .reg_off = CLKCTRL_CECA_CTRL1,
->>> +                     .shift   = 0,
->>> +                     .width   = 12,
->>> +             },
->>> +             .m2 = {
->>> +                     .reg_off = CLKCTRL_CECA_CTRL1,
->>> +                     .shift   = 12,
->>> +                     .width   = 12,
->>> +             },
->>> +             .dual = {
->>> +                     .reg_off = CLKCTRL_CECA_CTRL0,
->>> +                     .shift   = 28,
->>> +                     .width   = 1,
->>> +             },
->>> +             .table = s4_32k_div_table,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "ceca_32k_div",
->>> +             .ops = &meson_clk_dualdiv_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_ceca_32k_clkin.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_ceca_32k_sel_pre = {
->>> +     .data = &(struct clk_regmap_mux_data) {
->>> +             .offset = CLKCTRL_CECA_CTRL1,
->>> +             .mask = 0x1,
->>> +             .shift = 24,
->>> +             .flags = CLK_MUX_ROUND_CLOSEST,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "ceca_32k_sel_pre",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_ceca_32k_div.hw,
->>> +                     &s4_ceca_32k_clkin.hw
->>> +             },
->>> +             .num_parents = 2,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_ceca_32k_sel = {
->>> +     .data = &(struct clk_regmap_mux_data) {
->>> +             .offset = CLKCTRL_CECA_CTRL1,
->>> +             .mask = 0x1,
->>> +             .shift = 31,
->>> +             .flags = CLK_MUX_ROUND_CLOSEST,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "ceca_32k_sel",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_ceca_32k_sel_pre.hw,
->>> +                     &s4_rtc_clk.hw
->>> +             },
->>> +             .num_parents = 2,
->>> +             .flags = CLK_SET_RATE_PARENT,
->> In my opinion, all clocks that can inherit from a more accurate RTC clock
->> should be marked with the CLK_SET_RATE_NO_REPARENT flag.
->> This is necessary because in certain situations, it may be required to
->> freeze their parent. The setup of these clocks' parent should be located
->> on the device tree's side.
->
-> We don't need to freeze parent,in a real project.
+> The Amlogic A1 clock engine comprises four clock controllers for
+> peripherals, PLL, CPU, and audio. While the first two have been
+> introduced in the current patch series, the last two will be sent in the
+> next iteration.
+I (think that I) understand this part.
 
-"a real project" to whom ?
+> Presently, the PLL controller driver includes all the required bindings,
+> and the peripherals controller driver has all bindings except for the
+> CPU-related clock.
+Let's stick to the PLL controller bindings for the next part.
+My understanding is that the PLL clock controller registers
+(ANACTRL_*) are managing the following clocks:
+- fixed_pll
+- sys_pll
+- hifi_pll
+- whatever "AUDDDS" is
+- and some miscellaneous registers like ANACTRL_POR_CNTL and
+ANACTRL_MISCTOP_CTRL0
 
-Dmitry remark makes sense to me.
+I *think* you got the dt-bindings correct:
+Even though the driver part does not support the hifi_pll yet, this IP
+block seems to have a "hifipll_in" clock input.
+Since the dt-bindings describes the hardware it may describe (for
+example) clock inputs that are not used by the driver yet.
 
->
->> [...]
->> 
->>> +
->>> +/*
->>> + * gen clk is designed for debug/monitor some internal clock quality. Some of the
->>> + * corresponding clock sources are not described in the clock tree and internal clock
->>> + * for debug, so they are skipped.
->>> + */
->>> +static u32 s4_gen_clk_mux_table[] = { 0, 4, 5, 7, 19, 21, 22,
->>> +                                   23, 24, 25, 26, 27, 28 };
->>> +static const struct clk_parent_data s4_gen_clk_parent_data[] = {
->>> +     { .fw_name = "xtal", },
->>> +     { .hw = &s4_vid_pll.hw },
->>> +     { .fw_name = "gp0_pll", },
->>> +     { .fw_name = "hifi_pll", },
->>> +     { .fw_name = "fclk_div2", },
->>> +     { .fw_name = "fclk_div3", },
->>> +     { .fw_name = "fclk_div4", },
->>> +     { .fw_name = "fclk_div5", },
->>> +     { .fw_name = "fclk_div7", },
->>> +     { .fw_name = "mpll0", },
->>> +     { .fw_name = "mpll1", },
->>> +     { .fw_name = "mpll2", },
->>> +     { .fw_name = "mpll3", },
->>> +};
->>> +
->>> +static struct clk_regmap s4_gen_clk_sel = {
->>> +     .data = &(struct clk_regmap_mux_data){
->>> +             .offset = CLKCTRL_GEN_CLK_CTRL,
->>> +             .mask = 0x1f,
->>> +             .shift = 12,
->>> +             .table = s4_gen_clk_mux_table,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "gen_clk_sel",
->>> +             .ops = &clk_regmap_mux_ops,
->>> +             .parent_data = s4_gen_clk_parent_data,
->>> +             .num_parents = ARRAY_SIZE(s4_gen_clk_parent_data),
->> I think, the gen_clk selector should be marked with the
->> CLK_SET_RATE_NO_REPARENT flag. This is because the GEN clock can be
->> connected to an external pad and may be set up directly from the
->> device tree.
->
-> This is used by the debug table clock and is not connected externally.
->
+If you agree with my statement from above I'll be able to make my
+original question more specific:
+Since we know that we have all the required inputs for fixed_pll,
+sys_pll and hifi_pll - do you know what AUDDDS is and whether it
+requires any specific clock inputs (other than "fixpll_in" and
+"hifipll_in")?
 
-Again, Dmitry remark is very interresting.
-This debug clock is typacally one you don't really want to automatically reparent
+> However, I do not believe this to be a significant issue. The clock DT
+> bindings are organized to simplify the process of introducing new binding=
+s,
+> whether public or private. For instance, we may add new bindings to
+> include/dt-bindings at the end of the list and increase the overall numbe=
+r,
+> without disrupting the DT bindings ABI (the old numbers will remain
+> unchanged).
+Yep, this part is clear to me. I should have been more specific that I
+was asking about the inputs that are described in the .yaml file, not
+the clock IDs.
 
->> 
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_gen_clk_div = {
->>> +     .data = &(struct clk_regmap_div_data){
->>> +             .offset = CLKCTRL_GEN_CLK_CTRL,
->>> +             .shift = 0,
->>> +             .width = 11,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data){
->>> +             .name = "gen_clk_div",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_gen_clk_sel.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +static struct clk_regmap s4_gen_clk = {
->>> +     .data = &(struct clk_regmap_gate_data){
->>> +             .offset = CLKCTRL_GEN_CLK_CTRL,
->>> +             .bit_idx = 11,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "gen_clk",
->>> +             .ops = &clk_regmap_gate_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &s4_gen_clk_div.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
->>> +     },
->>> +};
->>> +
->> [...]
->> --
->> Thank you,
->> Dmitry
 
+Best regards,
+Martin
