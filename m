@@ -2,196 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4406EC77B7E
-	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 05:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 714FDC77B73
+	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 06:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233552AbjEBFjW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 May 2023 01:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
+        id S233480AbjEBGbQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 May 2023 02:31:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbjEBFjU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 01:39:20 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8269AE52;
-        Mon,  1 May 2023 22:39:19 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3425GU1H031986;
-        Tue, 2 May 2023 05:39:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=PrAFe7ea7BirIRPVaDBoFpQItMlnOPom8nGljtcwk9Y=;
- b=FqKeMCvI3uJXUuU0UL20EgdHCgG/UUKE+x3ZWZIIvg7ugm5ceZ59U5jPsJ8nmds5n8fC
- /zUaYt9fZeVuU6UWbA+L39Rdo4oQDEH+u6XkVkv0Oj3gdY5j83doBObdqotzQMyB5GEX
- KuUdF8rnTK+h9trR3sFIurrZD+n+hrzz8L0Q32ag4R/9XluL9kKv6pwEZKpt5erJ6XuV
- 5hJB09GMedTci0y4b7rfiURg7tKAurer5kAqm9tlWeRX5k8BiXC+FF9RMrUokAJuDhdE
- J8lV96P+PPknawqZ++B1ZQAfLpuZUfkKH3+2m+xVmntnYV593WETLPb8VHWJhtavnrb+ kw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3q8ufc5dpj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 May 2023 05:39:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3425cwn5010848
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 2 May 2023 05:38:58 GMT
-Received: from [10.242.243.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 1 May 2023
- 22:38:50 -0700
-Message-ID: <fa1f011a-9f18-5799-dbf3-ad5b1893f57b@quicinc.com>
-Date:   Tue, 2 May 2023 11:08:39 +0530
+        with ESMTP id S233373AbjEBGbP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 02:31:15 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179162D41
+        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 23:31:13 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-956eacbe651so676949566b.3
+        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 23:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683009071; x=1685601071;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Aq3WwE51aD4Fqe/+1vl6PvG/lCHBeN+HW7nLfaOHSd0=;
+        b=U9eP7tYQOcSpsVZHUsazY2ho7zcbyVUSrCMykSnixhtgdleHFsUGhpavnBqieXBh6w
+         4QHlDV1MUEMB0MQ9funL986uyMeNiGEdOTJKvJqBA4Pnird6IRtB9B5ifYjcZpFiuUlw
+         rYh0QI6so376tg5E2M/7jTKMSbW5mPVbSUuSzQvJs4rDvBr0HsjDK+XYDDcoZxfjE6oy
+         W3mptimR4I7GR3g9dglGSyU4RlZPa9BRwS6e6UfCOWuSMuOSjKIfBv/3tyq7skTpARlN
+         hKTT8lmRW3Fg8Jf4oFGsgvQA0coMqPDO3lk/UCjyTqdUL6hqrHwvPW8E89ixrNx27d+A
+         w8Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683009071; x=1685601071;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Aq3WwE51aD4Fqe/+1vl6PvG/lCHBeN+HW7nLfaOHSd0=;
+        b=B+kDNl7jwLTbzcbMHj46OtsLEq8wEBAqMUd5Qer8Rhnu1BtldJw1zXj9MRU0ik+NuI
+         hf2iZ0Kuc+pMr18FMRER2MsNNR3h/sG5mdowJVMtNRo/yCs5xYGuhweNZ7EuOGT/9lcx
+         xa+d1XXLe9yT4LB6dphG0w08R/3Cb3u7Y3VKryLwG7zKeXL+/Cy8jp416Ps838X5JqnG
+         PYg2j621BNoNo1AxT2v5Lm+3N+GEIfyN04qwt6CfuyADsvqZ2SXR02uwuEnE6GsQJcfw
+         t9oY2MVg4VYUqoY+534tK8SNYsxEktXZFagnVLLXiQYWLeNEvO1T/g3PFGd4j64vS/eH
+         6bUA==
+X-Gm-Message-State: AC+VfDweU+lcgol6+oiFrBdFHqAigkDXkVkNY9BNqg91W2AKOdVYcOoU
+        Iftq7sDOgK88tzeYHqwx2CShqw==
+X-Google-Smtp-Source: ACHHUZ4baDQK37C+Ez0SWCX/yXtXPHPzWV57b2UMhkju31JcZzt6SfSP7RPxpwRVvxkuJthLU3rrHA==
+X-Received: by 2002:a17:906:5d0b:b0:95e:d468:c35f with SMTP id g11-20020a1709065d0b00b0095ed468c35fmr13692567ejt.57.1683009071427;
+        Mon, 01 May 2023 23:31:11 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:bafd:1283:b136:5f6a? ([2a02:810d:15c0:828:bafd:1283:b136:5f6a])
+        by smtp.gmail.com with ESMTPSA id ku15-20020a170907788f00b009571293d6acsm14527373ejc.59.2023.05.01.23.31.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 01 May 2023 23:31:09 -0700 (PDT)
+Message-ID: <34d70271-ff07-aea8-bcb7-81d39a55167c@linaro.org>
+Date:   Tue, 2 May 2023 08:31:07 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH V3 3/6] dt-bindings: PCI: qcom: Add IPQ9574
-To:     Rob Herring <robh@kernel.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <bhelgaas@google.com>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <mani@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_ipkumar@quicinc.com>
-References: <20230421124938.21974-1-quic_devipriy@quicinc.com>
- <20230421124938.21974-4-quic_devipriy@quicinc.com>
- <20230425173330.GA1985131-robh@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v8 05/11] dt-bindings: arm: Add initial bindings for
+ Nuvoton platform
+To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org,
+        tmaimon77@gmail.com, catalin.marinas@arm.com, will@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-serial@vger.kernel.org, arnd@arndb.de, schung@nuvoton.com,
+        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
+References: <20230425102418.185783-1-ychuang570808@gmail.com>
+ <20230425102418.185783-6-ychuang570808@gmail.com>
+ <2b79021d-3793-5f2d-8659-5d0d8fc78017@linaro.org>
+ <ded0c68a-e0b3-b106-e24d-7d9087c6ca4c@gmail.com>
 Content-Language: en-US
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <20230425173330.GA1985131-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Rrfp5iF_YPZ1tvVUs0Qeb6soHz_aEy6n
-X-Proofpoint-GUID: Rrfp5iF_YPZ1tvVUs0Qeb6soHz_aEy6n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-02_02,2023-04-27_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- adultscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
- suspectscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305020049
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <ded0c68a-e0b3-b106-e24d-7d9087c6ca4c@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 4/25/2023 11:03 PM, Rob Herring wrote:
-> On Fri, Apr 21, 2023 at 06:19:35PM +0530, Devi Priya wrote:
->> Add bindings for PCIe hosts on IPQ9574 platform and allow
->> msi-parent property.
+On 02/05/2023 03:31, Jacky Huang wrote:
+> Dear Krzysztof,
 > 
-> Go see the long discussion about why msi-parent with msi-map is wrong.
-> If something changed, explain that here.
-Sure, okay
-
-Thanks,
-Devi Priya
 > 
+> On 2023/5/1 下午 05:50, Krzysztof Kozlowski wrote:
+>> On 25/04/2023 12:24, Jacky Huang wrote:
+>>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>>
+>>> Move 'nuvoton,npcm-gcr.yaml' from 'arm/npcm' to 'soc/nuvoton'.
+>>> Rename the '/arm/npcm' directory to 'arm/nuvoton'. Additionally, add
+>>> bindings for ARMv8-based Nuvoton SoCs and platform boards, and include
+>>> the initial bindings for ma35d1 series development boards.
+>>>
+>>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>>> ---
+>>>   .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
+>>>   .../npcm.yaml => nuvoton/nuvoton,npcm.yaml}   |  2 +-
+>>>   .../nuvoton/nuvoton,npcm-gcr.yaml}            |  2 +-
+>>>   3 files changed, 32 insertions(+), 2 deletions(-)
+>>>   create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
+>> I don't see any improvements here. Path in maintainers is still broken.
 >>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> ---
->>   Changes in V3:
->> 	- Rebased on linux-next/master
+>> Best regards,
+>> Krzysztof
 >>
->>   .../devicetree/bindings/pci/qcom,pcie.yaml    | 40 +++++++++++++++++++
->>   1 file changed, 40 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->> index 81971be4e554..a92cecc5fe6f 100644
->> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
->> @@ -26,6 +26,7 @@ properties:
->>             - qcom,pcie-ipq8064-v2
->>             - qcom,pcie-ipq8074
->>             - qcom,pcie-ipq8074-gen3
->> +          - qcom,pcie-ipq9574
->>             - qcom,pcie-msm8996
->>             - qcom,pcie-qcs404
->>             - qcom,pcie-sa8540p
->> @@ -113,6 +114,8 @@ properties:
->>     power-domains:
->>       maxItems: 1
->>   
->> +  msi-parent: true
->> +
->>     perst-gpios:
->>       description: GPIO controlled connection to PERST# signal
->>       maxItems: 1
->> @@ -138,6 +141,8 @@ anyOf:
->>     - required:
->>         - msi-map
->>         - msi-map-mask
->> +  - required:
->> +      - msi-parent
->>   
->>   allOf:
->>     - $ref: /schemas/pci/pci-bus.yaml#
->> @@ -171,6 +176,7 @@ allOf:
->>               enum:
->>                 - qcom,pcie-ipq6018
->>                 - qcom,pcie-ipq8074-gen3
->> +              - qcom,pcie-ipq9574
->>       then:
->>         properties:
->>           reg:
->> @@ -382,6 +388,39 @@ allOf:
->>               - const: ahb # AHB Reset
->>               - const: axi_m_sticky # AXI Master Sticky reset
->>   
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - qcom,pcie-ipq9574
->> +    then:
->> +      properties:
->> +        clocks:
->> +          minItems: 6
->> +          maxItems: 6
->> +        clock-names:
->> +          items:
->> +            - const: ahb  # AHB clock
->> +            - const: aux  # Auxiliary clock
->> +            - const: axi_m # AXI Master clock
->> +            - const: axi_s # AXI Slave clock
->> +            - const: axi_bridge # AXI bridge clock
->> +            - const: rchng
->> +        resets:
->> +          minItems: 8
->> +          maxItems: 8
->> +        reset-names:
->> +          items:
->> +            - const: pipe # PIPE reset
->> +            - const: sticky # Core Sticky reset
->> +            - const: axi_s_sticky # AXI Slave Sticky reset
->> +            - const: axi_s # AXI Slave reset
->> +            - const: axi_m_sticky # AXI Master Sticky reset
->> +            - const: axi_m # AXI Master reset
->> +            - const: aux # AUX Reset
->> +            - const: ahb # AHB Reset
->> +
->>     - if:
->>         properties:
->>           compatible:
->> @@ -767,6 +806,7 @@ allOf:
->>                   - qcom,pcie-ipq8064v2
->>                   - qcom,pcie-ipq8074
->>                   - qcom,pcie-ipq8074-gen3
->> +                - qcom,pcie-ipq9574
->>                   - qcom,pcie-qcs404
->>       then:
->>         required:
->> -- 
->> 2.17.1
->>
+> 
+> Does this line cover 
+> 'Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml'?
+> ==>  F:    Documentation/devicetree/bindings/*/*/*ma35*
+> 
+> I ran 'get_maintainer.pl' on this patch, and it was able to find 
+> maintainers and looked good.
+> I also ran 'make htmldocs' and did not see any warnings or errors 
+> related to the .yaml files
+> in this patch. However, I am still unsure where the problem lies. Can 
+> you suggest any
+> tools I can use to check for errors? I would greatly appreciate any 
+> guidance you can provide.
+
+Apply the patches 1 to 5 and then check if all paths from maintainers
+are correct. I believe the path
+Documentation/devicetree/bindings/arm/npcm/ is not.
+
+I think I told the same last time with explanation that this patch must
+correct path.
+
+Best regards,
+Krzysztof
+
