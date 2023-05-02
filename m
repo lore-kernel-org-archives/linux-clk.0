@@ -2,128 +2,267 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 714FDC77B73
-	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 06:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BC5C77B7E
+	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 06:36:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233480AbjEBGbQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 May 2023 02:31:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45724 "EHLO
+        id S229822AbjEBGge (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 May 2023 02:36:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233373AbjEBGbP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 02:31:15 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 179162D41
-        for <linux-clk@vger.kernel.org>; Mon,  1 May 2023 23:31:13 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-956eacbe651so676949566b.3
-        for <linux-clk@vger.kernel.org>; Mon, 01 May 2023 23:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683009071; x=1685601071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Aq3WwE51aD4Fqe/+1vl6PvG/lCHBeN+HW7nLfaOHSd0=;
-        b=U9eP7tYQOcSpsVZHUsazY2ho7zcbyVUSrCMykSnixhtgdleHFsUGhpavnBqieXBh6w
-         4QHlDV1MUEMB0MQ9funL986uyMeNiGEdOTJKvJqBA4Pnird6IRtB9B5ifYjcZpFiuUlw
-         rYh0QI6so376tg5E2M/7jTKMSbW5mPVbSUuSzQvJs4rDvBr0HsjDK+XYDDcoZxfjE6oy
-         W3mptimR4I7GR3g9dglGSyU4RlZPa9BRwS6e6UfCOWuSMuOSjKIfBv/3tyq7skTpARlN
-         hKTT8lmRW3Fg8Jf4oFGsgvQA0coMqPDO3lk/UCjyTqdUL6hqrHwvPW8E89ixrNx27d+A
-         w8Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683009071; x=1685601071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aq3WwE51aD4Fqe/+1vl6PvG/lCHBeN+HW7nLfaOHSd0=;
-        b=B+kDNl7jwLTbzcbMHj46OtsLEq8wEBAqMUd5Qer8Rhnu1BtldJw1zXj9MRU0ik+NuI
-         hf2iZ0Kuc+pMr18FMRER2MsNNR3h/sG5mdowJVMtNRo/yCs5xYGuhweNZ7EuOGT/9lcx
-         xa+d1XXLe9yT4LB6dphG0w08R/3Cb3u7Y3VKryLwG7zKeXL+/Cy8jp416Ps838X5JqnG
-         PYg2j621BNoNo1AxT2v5Lm+3N+GEIfyN04qwt6CfuyADsvqZ2SXR02uwuEnE6GsQJcfw
-         t9oY2MVg4VYUqoY+534tK8SNYsxEktXZFagnVLLXiQYWLeNEvO1T/g3PFGd4j64vS/eH
-         6bUA==
-X-Gm-Message-State: AC+VfDweU+lcgol6+oiFrBdFHqAigkDXkVkNY9BNqg91W2AKOdVYcOoU
-        Iftq7sDOgK88tzeYHqwx2CShqw==
-X-Google-Smtp-Source: ACHHUZ4baDQK37C+Ez0SWCX/yXtXPHPzWV57b2UMhkju31JcZzt6SfSP7RPxpwRVvxkuJthLU3rrHA==
-X-Received: by 2002:a17:906:5d0b:b0:95e:d468:c35f with SMTP id g11-20020a1709065d0b00b0095ed468c35fmr13692567ejt.57.1683009071427;
-        Mon, 01 May 2023 23:31:11 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:bafd:1283:b136:5f6a? ([2a02:810d:15c0:828:bafd:1283:b136:5f6a])
-        by smtp.gmail.com with ESMTPSA id ku15-20020a170907788f00b009571293d6acsm14527373ejc.59.2023.05.01.23.31.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 May 2023 23:31:09 -0700 (PDT)
-Message-ID: <34d70271-ff07-aea8-bcb7-81d39a55167c@linaro.org>
-Date:   Tue, 2 May 2023 08:31:07 +0200
+        with ESMTP id S229449AbjEBGgd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 02:36:33 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2283E26A8;
+        Mon,  1 May 2023 23:36:31 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3426X6FR025764;
+        Tue, 2 May 2023 06:36:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=vY+ew26s6ysSAjuAC9cfSQMdQzNN0pcDTBulQSGGq68=;
+ b=bRbf5ZF/BEeiQ3g8E42dXj/ut6hnSIwT7OG3aGR9EufbxhWqBMfgx487aP9fYRjPw5EN
+ UtYai9pYUpi+zuOLWDLSdgDEqZ/sPlZY0HPhSf9iY2fGGQWOOT4SytWdQfHfcJPgpp8u
+ iyfgAjsdodNoPm0hisUBV/HYtM1C/o3zOlPThcjZh1pVlJQWYp2TOMPTuCVju4ZuZU37
+ xPPKprw9eQvxQVO+gkYrUzKG6HdMtoQupsPX9b8NcC0A790hgwKD6C6+EEpYKpjrPq1Y
+ nEnBdhKE8D9zWanx7Ehvo6XVRg4M1PD8ybx3FvNUHtS9P18B9POAFw2/7l6fm92vY2qK kQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qawb0r0c0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 02 May 2023 06:36:25 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3426aOk3026722
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 2 May 2023 06:36:24 GMT
+Received: from [10.242.243.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 1 May 2023
+ 23:36:17 -0700
+Message-ID: <d6b5e395-6d4b-7b5d-f24f-f7dd2e901c00@quicinc.com>
+Date:   Tue, 2 May 2023 12:06:13 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v8 05/11] dt-bindings: arm: Add initial bindings for
- Nuvoton platform
-To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        tmaimon77@gmail.com, catalin.marinas@arm.com, will@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-serial@vger.kernel.org, arnd@arndb.de, schung@nuvoton.com,
-        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-References: <20230425102418.185783-1-ychuang570808@gmail.com>
- <20230425102418.185783-6-ychuang570808@gmail.com>
- <2b79021d-3793-5f2d-8659-5d0d8fc78017@linaro.org>
- <ded0c68a-e0b3-b106-e24d-7d9087c6ca4c@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH V3 6/6] PCI: qcom: Add support for IPQ9574
 Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ded0c68a-e0b3-b106-e24d-7d9087c6ca4c@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <mani@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_ipkumar@quicinc.com>
+References: <20230421124938.21974-1-quic_devipriy@quicinc.com>
+ <20230421124938.21974-7-quic_devipriy@quicinc.com>
+ <CAA8EJpoqq=3o1K=yDaim=e11nEN5n+phJUSd1d5BT_VJkdv6xg@mail.gmail.com>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <CAA8EJpoqq=3o1K=yDaim=e11nEN5n+phJUSd1d5BT_VJkdv6xg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zc5h8GZhf-mJpw7L1OlpBUsQ5SxY-tzo
+X-Proofpoint-GUID: zc5h8GZhf-mJpw7L1OlpBUsQ5SxY-tzo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-02_02,2023-04-27_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0 spamscore=0
+ impostorscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2305020057
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 02/05/2023 03:31, Jacky Huang wrote:
-> Dear Krzysztof,
-> 
-> 
-> On 2023/5/1 下午 05:50, Krzysztof Kozlowski wrote:
->> On 25/04/2023 12:24, Jacky Huang wrote:
->>> From: Jacky Huang <ychuang3@nuvoton.com>
->>>
->>> Move 'nuvoton,npcm-gcr.yaml' from 'arm/npcm' to 'soc/nuvoton'.
->>> Rename the '/arm/npcm' directory to 'arm/nuvoton'. Additionally, add
->>> bindings for ARMv8-based Nuvoton SoCs and platform boards, and include
->>> the initial bindings for ma35d1 series development boards.
->>>
->>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->>> ---
->>>   .../bindings/arm/nuvoton/nuvoton,ma35d1.yaml  | 30 +++++++++++++++++++
->>>   .../npcm.yaml => nuvoton/nuvoton,npcm.yaml}   |  2 +-
->>>   .../nuvoton/nuvoton,npcm-gcr.yaml}            |  2 +-
->>>   3 files changed, 32 insertions(+), 2 deletions(-)
->>>   create mode 100644 Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml
->> I don't see any improvements here. Path in maintainers is still broken.
+
+
+On 4/22/2023 5:35 AM, Dmitry Baryshkov wrote:
+> On Fri, 21 Apr 2023 at 15:51, Devi Priya <quic_devipriy@quicinc.com> wrote:
 >>
->> Best regards,
->> Krzysztof
+>> The IPQ9574 platform has 4 Gen3 PCIe controllers: two single-lane
+>> and two dual-lane based on SNPS core 5.70a
+>> The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
+>> Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
+>> which reuses all the members of 'ops_2_9_0' except for the post_init
+>> as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
+>> and 1_27_0.
+>> Also, modified get_resources of 'ops 2_9_0' to get the clocks
+>> from the device tree and modelled the post init sequence as
+>> a common function to avoid code redundancy.
+>>
+>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> ---
+>>   Changes in V3:
+>>          - Rebased on top of linux-next/master
+>>
+>>   drivers/pci/controller/dwc/pcie-qcom.c | 61 ++++++++++++++++++--------
+>>   1 file changed, 43 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 4ab30892f6ef..3682ecdead1f 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -107,6 +107,7 @@
+>>
+>>   /* PARF_SLV_ADDR_SPACE_SIZE register value */
+>>   #define SLV_ADDR_SPACE_SZ                      0x10000000
+>> +#define SLV_ADDR_SPACE_SZ_1_27_0               0x08000000
+>>
+>>   /* PARF_MHI_CLOCK_RESET_CTRL register fields */
+>>   #define AHB_CLK_EN                             BIT(0)
+>> @@ -202,10 +203,10 @@ struct qcom_pcie_resources_2_7_0 {
+>>          struct reset_control *rst;
+>>   };
+>>
+>> -#define QCOM_PCIE_2_9_0_MAX_CLOCKS             5
+>>   struct qcom_pcie_resources_2_9_0 {
+>> -       struct clk_bulk_data clks[QCOM_PCIE_2_9_0_MAX_CLOCKS];
+>> +       struct clk_bulk_data *clks;
+>>          struct reset_control *rst;
+>> +       int num_clks;
+>>   };
+>>
+>>   union qcom_pcie_resources {
+>> @@ -1050,17 +1051,10 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>>          struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>>          struct dw_pcie *pci = pcie->pci;
+>>          struct device *dev = pci->dev;
+>> -       int ret;
+>>
+>> -       res->clks[0].id = "iface";
+>> -       res->clks[1].id = "axi_m";
+>> -       res->clks[2].id = "axi_s";
+>> -       res->clks[3].id = "axi_bridge";
+>> -       res->clks[4].id = "rchng";
+>> -
+>> -       ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+>> -       if (ret < 0)
+>> -               return ret;
+>> +       res->num_clks = devm_clk_bulk_get_all(dev, &res->clks);
+>> +       if (res->clks < 0)
+>> +               return res->num_clks;
+>>
+>>          res->rst = devm_reset_control_array_get_exclusive(dev);
+>>          if (IS_ERR(res->rst))
+>> @@ -1073,7 +1067,7 @@ static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
+>>   {
+>>          struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>>
+>> -       clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+>> +       clk_bulk_disable_unprepare(res->num_clks, res->clks);
+>>   }
+>>
+>>   static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>> @@ -1102,19 +1096,16 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>>
+>>          usleep_range(2000, 2500);
+>>
+>> -       return clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+>> +       return clk_bulk_prepare_enable(res->num_clks, res->clks);
+>>   }
+>>
+>> -static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>> +static int qcom_pcie_post_init(struct qcom_pcie *pcie)
+>>   {
+>>          struct dw_pcie *pci = pcie->pci;
+>>          u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>>          u32 val;
+>>          int i;
+>>
+>> -       writel(SLV_ADDR_SPACE_SZ,
+>> -               pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+>> -
+>>          val = readl(pcie->parf + PARF_PHY_CTRL);
+>>          val &= ~PHY_TEST_PWR_DOWN;
+>>          writel(val, pcie->parf + PARF_PHY_CTRL);
+>> @@ -1151,6 +1142,26 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>>          return 0;
+>>   }
+>>
+>> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
+>> +{
+>> +       writel(SLV_ADDR_SPACE_SZ_1_27_0,
+>> +              pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+>> +
+>> +       qcom_pcie_post_init(pcie);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>> +{
+>> +       writel(SLV_ADDR_SPACE_SZ,
+>> +              pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+>> +
+>> +       qcom_pcie_post_init(pcie);
+>> +
+>> +       return 0;
+>> +}
+> 
+> I'm not sure about moving the SLV_ADDR_SPACE_SIZE initialization from
+> init() to post_init(). Probably a better solution might be to have two
+> init() callbacks and to call the common function from both of them.
+> 
+Hi Dmitry, Originally, the SLV_ADDR_SPACE_SIZE initialization was done
+part of post_init() callback only and we haven't moved it from init() to
+post_init().We have just added two post_init() callbacks to
+handle the SLV_ADDR_SPACE_SIZE initialization accordingly for 1_27_0 and
+2_9_0.
+
+Thanks,
+Devi Priya
+>> +
+>>   static int qcom_pcie_link_up(struct dw_pcie *pci)
+>>   {
+>>          u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>> @@ -1291,6 +1302,15 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>>          .ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>>   };
+>>
+>> +/* Qcom IP rev.: 1.27.0  Synopsys IP rev.: 5.80a */
+>> +static const struct qcom_pcie_ops ops_1_27_0 = {
+>> +       .get_resources = qcom_pcie_get_resources_2_9_0,
+>> +       .init = qcom_pcie_init_2_9_0,
+>> +       .post_init = qcom_pcie_post_init_1_27_0,
+>> +       .deinit = qcom_pcie_deinit_2_9_0,
+>> +       .ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>> +};
+>> +
+>>   static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>>          .ops = &ops_1_0_0,
+>>   };
+>> @@ -1323,6 +1343,10 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
+>>          .ops = &ops_2_9_0,
+>>   };
+>>
+>> +static const struct qcom_pcie_cfg cfg_1_27_0 = {
+>> +       .ops = &ops_1_27_0,
+>> +};
+>> +
+>>   static const struct dw_pcie_ops dw_pcie_ops = {
+>>          .link_up = qcom_pcie_link_up,
+>>          .start_link = qcom_pcie_start_link,
+>> @@ -1607,6 +1631,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>>          { .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
+>>          { .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
+>>          { .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
+>> +       { .compatible = "qcom,pcie-ipq9574", .data = &cfg_1_27_0 },
+>>          { .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
+>>          { .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
+>>          { .compatible = "qcom,pcie-sa8540p", .data = &cfg_1_9_0 },
+>> --
+>> 2.17.1
 >>
 > 
-> Does this line cover 
-> 'Documentation/devicetree/bindings/arm/nuvoton/nuvoton,ma35d1.yaml'?
-> ==>  F:    Documentation/devicetree/bindings/*/*/*ma35*
 > 
-> I ran 'get_maintainer.pl' on this patch, and it was able to find 
-> maintainers and looked good.
-> I also ran 'make htmldocs' and did not see any warnings or errors 
-> related to the .yaml files
-> in this patch. However, I am still unsure where the problem lies. Can 
-> you suggest any
-> tools I can use to check for errors? I would greatly appreciate any 
-> guidance you can provide.
-
-Apply the patches 1 to 5 and then check if all paths from maintainers
-are correct. I believe the path
-Documentation/devicetree/bindings/arm/npcm/ is not.
-
-I think I told the same last time with explanation that this patch must
-correct path.
-
-Best regards,
-Krzysztof
-
