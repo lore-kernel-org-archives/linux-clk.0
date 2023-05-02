@@ -2,217 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2D8C77B7E
-	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 08:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F80C7EE21
+	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 08:36:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233471AbjEBIfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 May 2023 04:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42142 "EHLO
+        id S233855AbjEBIgl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 May 2023 04:36:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232197AbjEBIfE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 04:35:04 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BE119AE
-        for <linux-clk@vger.kernel.org>; Tue,  2 May 2023 01:35:01 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-b9246a5f3feso5871608276.1
-        for <linux-clk@vger.kernel.org>; Tue, 02 May 2023 01:35:01 -0700 (PDT)
+        with ESMTP id S233843AbjEBIg3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 04:36:29 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 613001BEF
+        for <linux-clk@vger.kernel.org>; Tue,  2 May 2023 01:36:24 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-306342d7668so650385f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 02 May 2023 01:36:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683016501; x=1685608501;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EQzmsLXS8o53Z/tJTwR8dBrkRh8cGnQKwsG++ZUM2Rw=;
-        b=c38iWqoEsV2Ak6ZcqLGqtUG9fKxZwCiTxUe6opQW4xHF2//ciLjPAXSCwCkNIWhnUE
-         r7HVF0jPrO1eBnG3aH62ge5xzY7l3xtGxztlwaHJHom9tlIZ1dxTgi/qgVkOKYcfwPK+
-         f+VztAoZAyiAM3TGJ/sa2kZJVxZQnuqDvtxLs8XmahPiwWHFpTx7lYRFoEfCthesNAQs
-         99pXmMimCxFyvNswavo9rNBF3pMQhVBvP60GRPnjE8ECT1BjjW/a844NMgutFOuvBg+5
-         Rke6snxWBgVN6I1E7oqv4nv8WQdEjfkfFR5tIRXPvcMm9+BDfEFJTTI5VwyqxjDmCphp
-         MFAA==
+        d=linaro.org; s=google; t=1683016582; x=1685608582;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:reply-to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SitD8eS7SmwIqmQF/UDh1viisJCwTcmFhILidSZ/5UM=;
+        b=jC9GXy14GFLw2EtOc+bLiNCEQlBG2U8TLFM5J8u2Gvop1IqBdHVEuGN3rTi9izDKe7
+         AwjhVA97/IBg0HP85XVpLtTxAD0KsOpv+iayfCt+XMn133N3MM3wlFrww4e9X63BjLZ2
+         AfXRb1UiWMiygegKSXi1qvM/nQrMZVw50/8PKINn3mo5IAq7PJC/UnHsjrWaJqsYZfZ3
+         yHJNdjciKFADeKHCV5xWyMLlhl8VwJhbWytwbCg35gDAM0tbx3escGTTM8I6cgbRcdDU
+         gS23ijkDDwgVvQOsbVqUKmCeDJHMpwG2mGWXjPhMPzaW0ZVc+9iAETySkpRK8O1S6iDF
+         AHKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683016501; x=1685608501;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EQzmsLXS8o53Z/tJTwR8dBrkRh8cGnQKwsG++ZUM2Rw=;
-        b=gts0y0pDScxXa49tm79C05nDlZhFVYWnxoxU4Ch0r9Y5q31F46ke4rEm/gAEeEVGi0
-         K9d9d8S0rpHfu9Je1lh7fR/pvy5pxdL6KPr/yPfJwHA3Dq0Jm8MJRy/awihpkE0SmHgr
-         460b8mR7b3OkegWGWdHNrQiDQFq3/j+UBnn9O+puU2uvjHlBKio4+QwvwsXWR2l3t56d
-         6z7aizdDJ0qhy+qrgt1CaJWSiLjsTLQE5TOqn3zvGP1VGKDcRjsdwqDCwuqiNCu4YS+A
-         ypxUB0BlNZzSJ6NigqNbviFugG6/Cnn+n2EWbr4E2IMrwhdJ3+FYUPqgFlA1op+HiBAc
-         UGaw==
-X-Gm-Message-State: AC+VfDw+9Z1TjX+sq+q+3l4R03G6MiA22aW0KFv84lyYmWecI0CMFcoA
-        IEmIi5t7Rsi0PxjZsXGFtGROt76pEGdrPNsuuvh3NQ==
-X-Google-Smtp-Source: ACHHUZ7prVyExhhCDfZ9wbdVmvLpHPC8RmEbBTxceN5puB7edxWSnc7AxGder2kHWuuyjnb5ts+y/AKRZDjsq/tajN0=
-X-Received: by 2002:a25:d7d7:0:b0:b9a:66b7:673e with SMTP id
- o206-20020a25d7d7000000b00b9a66b7673emr17241022ybg.43.1683016501059; Tue, 02
- May 2023 01:35:01 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683016582; x=1685608582;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:reply-to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SitD8eS7SmwIqmQF/UDh1viisJCwTcmFhILidSZ/5UM=;
+        b=HCaVURcIoWoDwJAq68o/fjPs8RLJVkvvUvFSvbgFgTzGPZR3d0DtdERPXXKyDnTX5V
+         rvfpPkzfd51hFuQusWMBwnhnyaebkkmi4AT88tWqWlozsAFekjMjSCvpNss+mxw7nlHh
+         caou9cOVTM8CQSxk9XoJiDX/zGnA1BaxyzeKB9H7I85qHf2D6hffBVtoo1QgnHuD7e6E
+         pBFyIUJscZDj2f9UgBibzxto1tDLI/IB/u8lkzYuFbX8uzHxPuPq00DaMBlzSoMWGqyP
+         fJ5E8807IOnbAAEXVBZ0CnOFnZBLSozM+QON2WlLfm946Wt/ydrGIcHsiQodVqJtEqSF
+         a4jw==
+X-Gm-Message-State: AC+VfDx5fG3NR7PPU1dn11M7l5s/Wi8XsCl5UAfS0sIJj5XtcLGuHOyc
+        ccra0RfhQM9Y0J8oUKRUQP4kOw==
+X-Google-Smtp-Source: ACHHUZ4+OfnVp1VWDA4+QwNGqWGHC+k/y9gMsuGjEaECxeOvtPJQuB666EEs5Kx0ayTvZnPoMoJR5A==
+X-Received: by 2002:a5d:4e08:0:b0:2fe:2775:6067 with SMTP id p8-20020a5d4e08000000b002fe27756067mr11509118wrt.28.1683016582562;
+        Tue, 02 May 2023 01:36:22 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:e265:b513:556a:4149? ([2a01:e0a:982:cbb0:e265:b513:556a:4149])
+        by smtp.gmail.com with ESMTPSA id r17-20020adfdc91000000b002ff2c39d072sm30282065wrj.104.2023.05.02.01.36.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 May 2023 01:36:22 -0700 (PDT)
+Message-ID: <7d724ebb-23cb-426b-e3a5-1f3e57c56d61@linaro.org>
+Date:   Tue, 2 May 2023 10:36:20 +0200
 MIME-Version: 1.0
-References: <20230421124938.21974-1-quic_devipriy@quicinc.com>
- <20230421124938.21974-7-quic_devipriy@quicinc.com> <CAA8EJpoqq=3o1K=yDaim=e11nEN5n+phJUSd1d5BT_VJkdv6xg@mail.gmail.com>
- <d6b5e395-6d4b-7b5d-f24f-f7dd2e901c00@quicinc.com>
-In-Reply-To: <d6b5e395-6d4b-7b5d-f24f-f7dd2e901c00@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 2 May 2023 11:34:50 +0300
-Message-ID: <CAA8EJpoaZFArA=CGg_WP5SUXWsn++M82RB21gYuy84NPfNJd+w@mail.gmail.com>
-Subject: Re: [PATCH V3 6/6] PCI: qcom: Add support for IPQ9574
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mani@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_ipkumar@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 06/10] clk: qcom: gcc-mdm9615: use proper parent for
+ pll0_vote clock
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
+ <20230501203401.41393-7-dmitry.baryshkov@linaro.org>
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Organization: Linaro Developer Services
+In-Reply-To: <20230501203401.41393-7-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2 May 2023 at 09:36, Devi Priya <quic_devipriy@quicinc.com> wrote:
->
->
->
-> On 4/22/2023 5:35 AM, Dmitry Baryshkov wrote:
-> > On Fri, 21 Apr 2023 at 15:51, Devi Priya <quic_devipriy@quicinc.com> wrote:
-> >>
-> >> The IPQ9574 platform has 4 Gen3 PCIe controllers: two single-lane
-> >> and two dual-lane based on SNPS core 5.70a
-> >> The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
-> >> Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
-> >> which reuses all the members of 'ops_2_9_0' except for the post_init
-> >> as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
-> >> and 1_27_0.
-> >> Also, modified get_resources of 'ops 2_9_0' to get the clocks
-> >> from the device tree and modelled the post init sequence as
-> >> a common function to avoid code redundancy.
-> >>
-> >> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> >> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> >> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> >> ---
-> >>   Changes in V3:
-> >>          - Rebased on top of linux-next/master
-> >>
-> >>   drivers/pci/controller/dwc/pcie-qcom.c | 61 ++++++++++++++++++--------
-> >>   1 file changed, 43 insertions(+), 18 deletions(-)
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> >> index 4ab30892f6ef..3682ecdead1f 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> >> @@ -107,6 +107,7 @@
-> >>
-> >>   /* PARF_SLV_ADDR_SPACE_SIZE register value */
-> >>   #define SLV_ADDR_SPACE_SZ                      0x10000000
-> >> +#define SLV_ADDR_SPACE_SZ_1_27_0               0x08000000
-> >>
-> >>   /* PARF_MHI_CLOCK_RESET_CTRL register fields */
-> >>   #define AHB_CLK_EN                             BIT(0)
-> >> @@ -202,10 +203,10 @@ struct qcom_pcie_resources_2_7_0 {
-> >>          struct reset_control *rst;
-> >>   };
-> >>
-> >> -#define QCOM_PCIE_2_9_0_MAX_CLOCKS             5
-> >>   struct qcom_pcie_resources_2_9_0 {
-> >> -       struct clk_bulk_data clks[QCOM_PCIE_2_9_0_MAX_CLOCKS];
-> >> +       struct clk_bulk_data *clks;
-> >>          struct reset_control *rst;
-> >> +       int num_clks;
-> >>   };
-> >>
-> >>   union qcom_pcie_resources {
-> >> @@ -1050,17 +1051,10 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
-> >>          struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-> >>          struct dw_pcie *pci = pcie->pci;
-> >>          struct device *dev = pci->dev;
-> >> -       int ret;
-> >>
-> >> -       res->clks[0].id = "iface";
-> >> -       res->clks[1].id = "axi_m";
-> >> -       res->clks[2].id = "axi_s";
-> >> -       res->clks[3].id = "axi_bridge";
-> >> -       res->clks[4].id = "rchng";
-> >> -
-> >> -       ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
-> >> -       if (ret < 0)
-> >> -               return ret;
-> >> +       res->num_clks = devm_clk_bulk_get_all(dev, &res->clks);
-> >> +       if (res->clks < 0)
-> >> +               return res->num_clks;
-> >>
-> >>          res->rst = devm_reset_control_array_get_exclusive(dev);
-> >>          if (IS_ERR(res->rst))
-> >> @@ -1073,7 +1067,7 @@ static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
-> >>   {
-> >>          struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
-> >>
-> >> -       clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
-> >> +       clk_bulk_disable_unprepare(res->num_clks, res->clks);
-> >>   }
-> >>
-> >>   static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
-> >> @@ -1102,19 +1096,16 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
-> >>
-> >>          usleep_range(2000, 2500);
-> >>
-> >> -       return clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
-> >> +       return clk_bulk_prepare_enable(res->num_clks, res->clks);
-> >>   }
-> >>
-> >> -static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-> >> +static int qcom_pcie_post_init(struct qcom_pcie *pcie)
-> >>   {
-> >>          struct dw_pcie *pci = pcie->pci;
-> >>          u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-> >>          u32 val;
-> >>          int i;
-> >>
-> >> -       writel(SLV_ADDR_SPACE_SZ,
-> >> -               pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
-> >> -
-> >>          val = readl(pcie->parf + PARF_PHY_CTRL);
-> >>          val &= ~PHY_TEST_PWR_DOWN;
-> >>          writel(val, pcie->parf + PARF_PHY_CTRL);
-> >> @@ -1151,6 +1142,26 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-> >>          return 0;
-> >>   }
-> >>
-> >> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
-> >> +{
-> >> +       writel(SLV_ADDR_SPACE_SZ_1_27_0,
-> >> +              pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
-> >> +
-> >> +       qcom_pcie_post_init(pcie);
-> >> +
-> >> +       return 0;
-> >> +}
-> >> +
-> >> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-> >> +{
-> >> +       writel(SLV_ADDR_SPACE_SZ,
-> >> +              pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
-> >> +
-> >> +       qcom_pcie_post_init(pcie);
-> >> +
-> >> +       return 0;
-> >> +}
-> >
-> > I'm not sure about moving the SLV_ADDR_SPACE_SIZE initialization from
-> > init() to post_init(). Probably a better solution might be to have two
-> > init() callbacks and to call the common function from both of them.
-> >
-> Hi Dmitry, Originally, the SLV_ADDR_SPACE_SIZE initialization was done
-> part of post_init() callback only and we haven't moved it from init() to
-> post_init().We have just added two post_init() callbacks to
-> handle the SLV_ADDR_SPACE_SIZE initialization accordingly for 1_27_0 and
-> 2_9_0.
+On 01/05/2023 22:33, Dmitry Baryshkov wrote:
+> The pll0_vote clock definitely should have pll0 as a parent (instead of
+> pll8).
+> 
+> Fixes: 7792a8d6713c ("clk: mdm9615: Add support for MDM9615 Clock Controllers")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/clk/qcom/gcc-mdm9615.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+> index fb5c1244fb97..2f921891008d 100644
+> --- a/drivers/clk/qcom/gcc-mdm9615.c
+> +++ b/drivers/clk/qcom/gcc-mdm9615.c
+> @@ -58,7 +58,7 @@ static struct clk_regmap pll0_vote = {
+>   	.enable_mask = BIT(0),
+>   	.hw.init = &(struct clk_init_data){
+>   		.name = "pll0_vote",
+> -		.parent_names = (const char *[]){ "pll8" },
+> +		.parent_names = (const char *[]){ "pll0" },
+>   		.num_parents = 1,
+>   		.ops = &clk_pll_vote_ops,
+>   	},
 
-Ack, I see then.
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
