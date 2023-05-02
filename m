@@ -2,286 +2,228 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50102C7EE21
-	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 08:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFFAC77B73
+	for <linux-clk@archiver.kernel.org>; Tue,  2 May 2023 08:55:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233830AbjEBIjF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 May 2023 04:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45302 "EHLO
+        id S233714AbjEBIzQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 May 2023 04:55:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233846AbjEBIi5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 04:38:57 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E2771BFC
-        for <linux-clk@vger.kernel.org>; Tue,  2 May 2023 01:38:53 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-2fa0ce30ac2so3176692f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 02 May 2023 01:38:53 -0700 (PDT)
+        with ESMTP id S233665AbjEBIzP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 04:55:15 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC172D63
+        for <linux-clk@vger.kernel.org>; Tue,  2 May 2023 01:55:13 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2a8db10a5d4so34606281fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 02 May 2023 01:55:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683016731; x=1685608731;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=eCrV5VrRtYuc4KptMcXDh4B9nlJNDO/1WI5OAKUYJu4=;
-        b=zW8wjGLGfy7OFnhZmv9VUvO7DWuXbuK8gqH0oB1OKV18SXOiYsvtaaaM6Fk7LOzK80
-         61wgGL/+9vUdoMjotakL4ZNgI8qZNYPqId5MmdhIJGtscrxdGJG3OuQDB27W//M/LXVM
-         FJgTO5psz0c/ONQTe3IyuUfkdtup/zbw09erqeY+Ow9aJn4QAtNDLYGgCpr5WXidvpjy
-         o5VE7ljC8iOpIGVkqCmdxvCNsvE6kNKT3Dq5sAYrZsKP4nAQDHw3RQaz6KtY6pvIjZ/8
-         hJJlhmHLh1nvwYNue9tvP+dGNpX9rmlIDQDktNCDUvSkEOFm2Z3sEx10PXZTovCEbSkq
-         pk9Q==
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1683017711; x=1685609711;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6KAOCXN0Bjiv2/am6tzP5opdR60WhoCZzyQYuV095Po=;
+        b=wgyDO4WoIZx/It75e6I8TCsFFQdnH8LdCgCZhPgFDy5ihl6KK64cMmdxVvarmn8GjP
+         o8Ig+eEeRy+6wpklqNWrktMqMRnz7JLwxDbQNoekf0FWz/SkAXX5ok6wHyDgWQFnozKS
+         Ch7aVv7ludwU1YI3hR9t6dGxEf76qQiCLaCnZhwrc500ZWGeR1XCvRNnac8Ga8QzRdIG
+         f37V3UKz4gtuh6zIQMlvSaFP6u0JuEAIagHzs4IQg2GeQQbXidJJFZBQRFbXdvaOu1+e
+         nNI94EMR4YEkx9ksezU4+4L2d3OZIF3JZZAyP7hXbF5fbfa4nESNOvz8Km2CU1/FIkST
+         WUow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683016731; x=1685608731;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:reply-to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20221208; t=1683017711; x=1685609711;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eCrV5VrRtYuc4KptMcXDh4B9nlJNDO/1WI5OAKUYJu4=;
-        b=PCTrL97usJSlvmaMC7ornv7Pliv64I2RVlY5sWa943MXIk0SNTsB0Z53f8e4VuYTdI
-         7K38bHsj9naCGU5jAMbVGsrICgXoVY9+uz0vg1cYBgMp/Ip+tdA1OH17b/N4IAK2q68+
-         exBejScQd9mYgQcXXT1Ttt6nvMzRp29kC7DhnLaknB5Befw9MqlbANRPlX+1g9Mbi3VW
-         fFc41/c2JCc4N5eO2t/J7G5vCkadKxWVdHl2/ToDUYIDi1VYyEMYrz5VtidLxiFUA3vI
-         Vo7160KCH8VqI3JqP34q+9mzY7APUxodIy2hXG7JtCj7OOHBOLohThRKunVV3KFAmQLr
-         kmPg==
-X-Gm-Message-State: AC+VfDwNCaRskYr69E6nKlF3TauJbMvzXGpdNLB4l/t/XXdjyUh+vHcL
-        Sa9K/iIWyRNdYumkc3e9m3SR4A==
-X-Google-Smtp-Source: ACHHUZ6bi9tg9YFbNJZ8bUmIzEg8YX++0CwMkpnCs3DCEsByHZoFVzvYWseCIv6lqXpLHrctcQbugQ==
-X-Received: by 2002:adf:eb08:0:b0:304:6a26:1f6 with SMTP id s8-20020adfeb08000000b003046a2601f6mr11443615wrn.59.1683016731504;
-        Tue, 02 May 2023 01:38:51 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:e265:b513:556a:4149? ([2a01:e0a:982:cbb0:e265:b513:556a:4149])
-        by smtp.gmail.com with ESMTPSA id d2-20020adffbc2000000b003060c7b5ed6sm7864485wrs.26.2023.05.02.01.38.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 May 2023 01:38:51 -0700 (PDT)
-Message-ID: <68144145-123e-9676-839b-28e7db5bc2bd@linaro.org>
-Date:   Tue, 2 May 2023 10:38:49 +0200
+        bh=6KAOCXN0Bjiv2/am6tzP5opdR60WhoCZzyQYuV095Po=;
+        b=dtdBwKMl4LLHs48vXSJSKaUC0l1yYQ/cJIaIGFYRHySZcjmo2N4kf7QTYusM6naQ7n
+         7cFXcOchGM0tes49npqpMFlkaQ5PAXT8xgi61pvHECjgQlYEf6RYz1ge5P6b4DHiJ9Dl
+         Md77+RCcTmLlpSn75yB5zL5RLYeZMP3QEtmGghW+1BLekLu+P/8J2r9QLTLLhZmT3JBf
+         x2DEVwU4ERTmQirNe49xwJ9NQFiB0LWLADyLJl65GLTFtPqOKDg4wC0TsGdv/mMXmVf+
+         7atCtpF0RB46ylHRlV9jtjTqdZcZEt71sr/2nEJZ9kLjTFa9mYrEs0KkWfJge0jl/j3s
+         Nrng==
+X-Gm-Message-State: AC+VfDzklu8hqAC2kNE0JKY0nyHhKr0YGW452N8mBTFsOQMB5OhLnqqy
+        HeblXK+dGCwkQiLfb9XJ9UmejA==
+X-Google-Smtp-Source: ACHHUZ7v3evF05SJzw6RKcHifKinUdxWIjmkm/fvqm2KnR/AHLSlpfu8PR1U/chUv9IKte3vPZtrsQ==
+X-Received: by 2002:a19:ae0b:0:b0:4e9:5f90:748 with SMTP id f11-20020a19ae0b000000b004e95f900748mr4092307lfc.9.1683017711356;
+        Tue, 02 May 2023 01:55:11 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id 8-20020ac24828000000b004ecad67a925sm5205014lft.66.2023.05.02.01.55.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 May 2023 01:55:10 -0700 (PDT)
+Date:   Tue, 2 May 2023 10:55:09 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH v7 0/8] Create common DPLL configuration API
+Message-ID: <ZFDP7SA7qaSFQh/l@nanopsycho>
+References: <20230428002009.2948020-1-vadfed@meta.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 04/10] clk: qcom: gcc-mdm9615: use ARRAY_SIZE instead of
- specifying num_parents
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230501203401.41393-1-dmitry.baryshkov@linaro.org>
- <20230501203401.41393-5-dmitry.baryshkov@linaro.org>
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Organization: Linaro Developer Services
-In-Reply-To: <20230501203401.41393-5-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230428002009.2948020-1-vadfed@meta.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/05/2023 22:33, Dmitry Baryshkov wrote:
-> Use ARRAY_SIZE() instead of manually specifying num_parents. This makes
-> adding/removing entries to/from parent_data easy and errorproof.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/clk/qcom/gcc-mdm9615.c | 42 +++++++++++++++++-----------------
->   1 file changed, 21 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
-> index 8bed02a748ab..fb5c1244fb97 100644
-> --- a/drivers/clk/qcom/gcc-mdm9615.c
-> +++ b/drivers/clk/qcom/gcc-mdm9615.c
-> @@ -207,7 +207,7 @@ static struct clk_rcg gsbi1_uart_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi1_uart_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -258,7 +258,7 @@ static struct clk_rcg gsbi2_uart_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi2_uart_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -309,7 +309,7 @@ static struct clk_rcg gsbi3_uart_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi3_uart_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -360,7 +360,7 @@ static struct clk_rcg gsbi4_uart_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi4_uart_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -411,7 +411,7 @@ static struct clk_rcg gsbi5_uart_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi5_uart_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -474,7 +474,7 @@ static struct clk_rcg gsbi1_qup_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi1_qup_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -523,7 +523,7 @@ static struct clk_rcg gsbi2_qup_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi2_qup_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -572,7 +572,7 @@ static struct clk_rcg gsbi3_qup_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi3_qup_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -621,7 +621,7 @@ static struct clk_rcg gsbi4_qup_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi4_qup_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -670,7 +670,7 @@ static struct clk_rcg gsbi5_qup_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gsbi5_qup_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -725,7 +725,7 @@ static struct clk_rcg gp0_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gp0_src",
->   			.parent_names = gcc_cxo,
-> -			.num_parents = 1,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_PARENT_GATE,
->   		},
-> @@ -774,7 +774,7 @@ static struct clk_rcg gp1_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gp1_src",
->   			.parent_names = gcc_cxo,
-> -			.num_parents = 1,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_RATE_GATE,
->   		},
-> @@ -823,7 +823,7 @@ static struct clk_rcg gp2_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "gp2_src",
->   			.parent_names = gcc_cxo,
-> -			.num_parents = 1,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_RATE_GATE,
->   		},
-> @@ -875,7 +875,7 @@ static struct clk_rcg prng_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "prng_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   		},
->   	},
-> @@ -937,7 +937,7 @@ static struct clk_rcg sdc1_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "sdc1_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   		},
->   	}
-> @@ -985,7 +985,7 @@ static struct clk_rcg sdc2_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "sdc2_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   		},
->   	}
-> @@ -1038,7 +1038,7 @@ static struct clk_rcg usb_hs1_xcvr_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "usb_hs1_xcvr_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_RATE_GATE,
->   		},
-> @@ -1087,7 +1087,7 @@ static struct clk_rcg usb_hsic_xcvr_fs_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "usb_hsic_xcvr_fs_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_RATE_GATE,
->   		},
-> @@ -1142,7 +1142,7 @@ static struct clk_rcg usb_hs1_system_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "usb_hs1_system_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_RATE_GATE,
->   		},
-> @@ -1197,7 +1197,7 @@ static struct clk_rcg usb_hsic_system_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "usb_hsic_system_src",
->   			.parent_names = gcc_cxo_pll8,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_RATE_GATE,
->   		},
-> @@ -1252,7 +1252,7 @@ static struct clk_rcg usb_hsic_hsic_src = {
->   		.hw.init = &(struct clk_init_data){
->   			.name = "usb_hsic_hsic_src",
->   			.parent_names = gcc_cxo_pll14,
-> -			.num_parents = 2,
-> +			.num_parents = ARRAY_SIZE(gcc_cxo_pll14),
->   			.ops = &clk_rcg_ops,
->   			.flags = CLK_SET_RATE_GATE,
->   		},
+Fri, Apr 28, 2023 at 02:20:01AM CEST, vadfed@meta.com wrote:
+>From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>
+>Implement common API for clock/DPLL configuration and status reporting.
+>The API utilises netlink interface as transport for commands and event
+>notifications. This API aim to extend current pin configuration and
+>make it flexible and easy to cover special configurations.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Vadim, I guess you forgot, could you please add some example commands
+here? Please keep them in for the next V.
+
+Thanks!
+
+
+>
+>v6 -> v7:
+> * YAML spec:
+>   - remove nested 'pin' attribute
+>   - clean up definitions on top of the latest changes
+> * pin object:
+>   - pin xarray uses id provided by the driver
+>   - remove usage of PIN_IDX_INVALID in set function
+>   - source_pin_get() returns object instead of idx
+>   - fixes in frequency support API
+> * device and pin operations are const now
+> * small fixes in naming in Makefile and in the functions
+> * single mutex for the subsystem to avoid possible ABBA locks
+> * no special *_priv() helpers anymore, private data is passed as void*
+> * no netlink filters by name anymore, only index is supported
+> * update ptp_ocp and ice drivers to follow new API version
+> * add mlx5e driver as a new customer of the subsystem
+>v5 -> v6:
+> * rework pin part to better fit shared pins use cases
+> * add YAML spec to easy generate user-space apps
+> * simple implementation in ptp_ocp is back again
+>v4 -> v5:
+> * fix code issues found during last reviews:
+>   - replace cookie with clock id
+>   - follow one naming schema in dpll subsys
+>   - move function comments to dpll_core.c, fix exports
+>   - remove single-use helper functions
+>   - merge device register with alloc
+>   - lock and unlock mutex on dpll device release
+>   - move dpll_type to uapi header
+>   - rename DPLLA_DUMP_FILTER to DPLLA_FILTER
+>   - rename dpll_pin_state to dpll_pin_mode
+>   - rename DPLL_MODE_FORCED to DPLL_MODE_MANUAL
+>   - remove DPLL_CHANGE_PIN_TYPE enum value
+> * rewrite framework once again (Arkadiusz)
+>   - add clock class:
+>     Provide userspace with clock class value of DPLL with dpll device dump
+>     netlink request. Clock class is assigned by driver allocating a dpll
+>     device. Clock class values are defined as specified in:
+>     ITU-T G.8273.2/Y.1368.2 recommendation.
+>   - dpll device naming schema use new pattern:
+>     "dpll_%s_%d_%d", where:
+>       - %s - dev_name(parent) of parent device,
+>       - %d (1) - enum value of dpll type,
+>       - %d (2) - device index provided by parent device.
+>   - new muxed/shared pin registration:
+>     Let the kernel module to register a shared or muxed pin without finding
+>     it or its parent. Instead use a parent/shared pin description to find
+>     correct pin internally in dpll_core, simplifing a dpll API
+> * Implement complex DPLL design in ice driver (Arkadiusz)
+> * Remove ptp_ocp driver from the series for now
+>v3 -> v4:
+> * redesign framework to make pins dynamically allocated (Arkadiusz)
+> * implement shared pins (Arkadiusz)
+>v2 -> v3:
+> * implement source select mode (Arkadiusz)
+> * add documentation
+> * implementation improvements (Jakub)
+>v1 -> v2:
+> * implement returning supported input/output types
+> * ptp_ocp: follow suggestions from Jonathan
+> * add linux-clk mailing list
+>v0 -> v1:
+> * fix code style and errors
+> * add linux-arm mailing list
+>
+>Arkadiusz Kubalewski (3):
+>  dpll: spec: Add Netlink spec in YAML
+>  ice: add admin commands to access cgu configuration
+>  ice: implement dpll interface to control cgu
+>
+>Jiri Pirko (2):
+>  netdev: expose DPLL pin handle for netdevice
+>  mlx5: Implement SyncE support using DPLL infrastructure
+>
+>Vadim Fedorenko (3):
+>  dpll: Add DPLL framework base functions
+>  dpll: documentation on DPLL subsystem interface
+>  ptp_ocp: implement DPLL ops
+>
+> Documentation/dpll.rst                        |  408 ++++
+> Documentation/netlink/specs/dpll.yaml         |  472 ++++
+> Documentation/networking/index.rst            |    1 +
+> MAINTAINERS                                   |    8 +
+> drivers/Kconfig                               |    2 +
+> drivers/Makefile                              |    1 +
+> drivers/dpll/Kconfig                          |    7 +
+> drivers/dpll/Makefile                         |   10 +
+> drivers/dpll/dpll_core.c                      |  939 ++++++++
+> drivers/dpll/dpll_core.h                      |  113 +
+> drivers/dpll/dpll_netlink.c                   |  991 +++++++++
+> drivers/dpll/dpll_netlink.h                   |   27 +
+> drivers/dpll/dpll_nl.c                        |  126 ++
+> drivers/dpll/dpll_nl.h                        |   42 +
+> drivers/net/ethernet/intel/Kconfig            |    1 +
+> drivers/net/ethernet/intel/ice/Makefile       |    3 +-
+> drivers/net/ethernet/intel/ice/ice.h          |    5 +
+> .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  240 +-
+> drivers/net/ethernet/intel/ice/ice_common.c   |  467 ++++
+> drivers/net/ethernet/intel/ice/ice_common.h   |   43 +
+> drivers/net/ethernet/intel/ice/ice_dpll.c     | 1929 +++++++++++++++++
+> drivers/net/ethernet/intel/ice/ice_dpll.h     |  101 +
+> drivers/net/ethernet/intel/ice/ice_lib.c      |   17 +-
+> drivers/net/ethernet/intel/ice/ice_main.c     |    7 +
+> drivers/net/ethernet/intel/ice/ice_ptp_hw.c   |  414 ++++
+> drivers/net/ethernet/intel/ice/ice_ptp_hw.h   |  230 ++
+> drivers/net/ethernet/intel/ice/ice_type.h     |    1 +
+> .../net/ethernet/mellanox/mlx5/core/Kconfig   |    8 +
+> .../net/ethernet/mellanox/mlx5/core/Makefile  |    3 +
+> drivers/net/ethernet/mellanox/mlx5/core/dev.c |   17 +
+> .../net/ethernet/mellanox/mlx5/core/dpll.c    |  438 ++++
+> drivers/ptp/Kconfig                           |    1 +
+> drivers/ptp/ptp_ocp.c                         |  327 ++-
+> include/linux/dpll.h                          |  294 +++
+> include/linux/mlx5/driver.h                   |    2 +
+> include/linux/mlx5/mlx5_ifc.h                 |   59 +-
+> include/linux/netdevice.h                     |    7 +
+> include/uapi/linux/dpll.h                     |  204 ++
+> include/uapi/linux/if_link.h                  |    2 +
+> net/core/dev.c                                |   20 +
+> net/core/rtnetlink.c                          |   38 +
+> 41 files changed, 7966 insertions(+), 59 deletions(-)
+> create mode 100644 Documentation/dpll.rst
+> create mode 100644 Documentation/netlink/specs/dpll.yaml
+> create mode 100644 drivers/dpll/Kconfig
+> create mode 100644 drivers/dpll/Makefile
+> create mode 100644 drivers/dpll/dpll_core.c
+> create mode 100644 drivers/dpll/dpll_core.h
+> create mode 100644 drivers/dpll/dpll_netlink.c
+> create mode 100644 drivers/dpll/dpll_netlink.h
+> create mode 100644 drivers/dpll/dpll_nl.c
+> create mode 100644 drivers/dpll/dpll_nl.h
+> create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.c
+> create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.h
+> create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/dpll.c
+> create mode 100644 include/linux/dpll.h
+> create mode 100644 include/uapi/linux/dpll.h
+>
+>-- 
+>2.34.1
+>
