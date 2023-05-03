@@ -2,92 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5B6C77B78
-	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 19:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F76C7EE22
+	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 22:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbjECTh5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 May 2023 15:37:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
+        id S229706AbjECWuU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 May 2023 18:50:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbjECTh4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 15:37:56 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC75619E;
-        Wed,  3 May 2023 12:37:55 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (aztw-30-b2-v4wan-166917-cust845.vm26.cable.virginm.net [82.37.23.78])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C9A5C755;
-        Wed,  3 May 2023 21:37:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1683142671;
-        bh=yfAwbaUKZSnKoed08VhWC18/ixIfVmYbDcSFtKakHU0=;
+        with ESMTP id S229558AbjECWuT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 18:50:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA9044B7;
+        Wed,  3 May 2023 15:50:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3B0C86306F;
+        Wed,  3 May 2023 22:50:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E6AC433EF;
+        Wed,  3 May 2023 22:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683154216;
+        bh=0ghuZTHCllMGC/CsV74+H0DShYTM8XeQjp1D0k/OePU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=rNuKNqiUSObj9aRyK/babtm2zk7dtSzaiT5OYlhefE9Zu91EnR5LkSpvqxvZcpYMf
-         cgSf1A4NXldjj19uWO+8Z4soOEEIRl1T/7b5az6EJanCyaRO3ddIv5+chsMNLu4H2H
-         qMQZTYmW2Neza4nG8B4rw6LlTtsiFVSiR8WJtRYs=
+        b=lBw9RzFJq2CJjKFz1DztWwO2G6m5bTE+n+yicYbMLOn2P7ivsWbj2BOVkUbwrwHpW
+         0vh1DUvrkFDbfFZmjs/v8muPK9e0pVLXC833vSAOv0LVO98v4B+1BRFxYNOPN6FHoy
+         bivWZS5y18Dux+FgKkpKdKdAgYW+/ONJ/IrHfacvIe7RNZZr2CG/1FwbSMQhEFvVr1
+         vEJCaQB3u3oldvafx/mCB6WiqxYdHncu/0Lhv2ElTCUWbkGc/1rLzu1I1QH+x+tscF
+         ZoXPB2BdldmDmRgG2fh3qy+7Wh3+JYXQ1De1kIN3UtbtH+eDG47df7i2qDek6NJbpA
+         Bq4uEBLn64POA==
+Message-ID: <4a01dd6af40e4395466133c97b3999fe.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMuHMdW9OP-C2iN97ntNJ7hjgmtY+=NQ=Hi38kPrd8ZUoafFjw@mail.gmail.com>
-References: <20230502170618.55967-1-wsa+renesas@sang-engineering.com> <20230502170618.55967-2-wsa+renesas@sang-engineering.com> <CAMuHMdW9OP-C2iN97ntNJ7hjgmtY+=NQ=Hi38kPrd8ZUoafFjw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: r8a779a0: Add PWM clock
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Date:   Wed, 03 May 2023 20:37:51 +0100
-Message-ID: <168314267169.1880445.1440127465012985035@Monstersaurus>
+In-Reply-To: <TYZPR04MB632148D739338EC2ABB1C035966C9@TYZPR04MB6321.apcprd04.prod.outlook.com>
+References: <20230421-clk-v3-0-9ff79e7e7fed@outlook.com> <20230421-clk-v3-2-9ff79e7e7fed@outlook.com> <954b051546fe936db16353fc58a68438.sboyd@kernel.org> <TYZPR04MB632148D739338EC2ABB1C035966C9@TYZPR04MB6321.apcprd04.prod.outlook.com>
+Subject: Re: [PATCH v3 2/2] clk: tests: Add missing test cases for mux determine_rate
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Yang Xiwen <forbidden405@outlook.com>,
+        Yang Xiwen via B4 Relay 
+        <devnull+forbidden405.outlook.com@kernel.org>
+Date:   Wed, 03 May 2023 15:50:14 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2023-05-03 11:09:29)
-> Hi Wolfram,
->=20
-> On Tue, May 2, 2023 at 7:06=E2=80=AFPM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> Thanks for your patch!
->=20
-> > --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> > @@ -170,6 +170,7 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[=
-] __initconst =3D {
-> >         DEF_MOD("msi3",         621,    R8A779A0_CLK_MSO),
-> >         DEF_MOD("msi4",         622,    R8A779A0_CLK_MSO),
-> >         DEF_MOD("msi5",         623,    R8A779A0_CLK_MSO),
-> > +       DEF_MOD("pwm",          628,    R8A779A0_CLK_S1D8),
->=20
-> Do you mind if I rename this to "pwm0" while applying, to match the docs?
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-clk-for-v6.5.
+Quoting Yang Xiwen (2023-05-03 11:44:45)
+> On 5/3/2023 11:08 AM, Stephen Boyd wrote:
+> > Quoting Yang Xiwen via B4 Relay (2023-04-26 12:34:17)
+> >> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+> >> index f9a5c2964c65d..4f7f9a964637a 100644
+> >> --- a/drivers/clk/clk_test.c
+> >> +++ b/drivers/clk/clk_test.c
+> >> @@ -2194,7 +2194,47 @@ static void clk_leaf_mux_set_rate_parent_test_e=
+xit(struct kunit *test)
+> >>   * parent, the rate request structure returned by __clk_determine_rate
+> >>   * is sane and will be what we expect.
+> >>   */
+> >> -static void clk_leaf_mux_set_rate_parent_determine_rate(struct kunit =
+*test)
+> >=20
+> > Just leave this one alone and put the other test cases right after it.
+> > Don't rename it and also move it lower down. It makes the diff hard to
+> > read.
+> I don't quite understand. In this patch, I renamed it to case3. Here I
+> think you'd like it to remain as-is. But I think the comments below said
+> I should rename it to clk_leaf_mux_determine_rate_exactly_parent1()?
+> Actually what this test has done should be included in this series of
+> test cases as one of them.
 
-Either way is fine with me, and I've seen this work now so:
+You can rename it, but don't move it lower in the file.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+[...]
+> >> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case4),
+> >=20
+> > I'm not sure I understand what is being tested in this case. Are we
+> > testing that __clk_determine_rate() with a rate between parent0 and
+> > parent1 picks parent1?
+> I think I have to speak more about how these tests are arranged.
+
+The order that tests run in should not be relied upon. The tests should
+be hermetic.
+
+> Imagine
+> that there is a segment starting at 0, ending at ULONG_MAX. Now add two
+> points on it, assuming DUMMY_CLOCK_RATE_1(142MHz) and
+> DUMMY_CLOCK_RATE_2(242MHz). We split the segment into 3 segments, and we
+> have 4 endpoints in total. They are: 0, 0-142MHz, 142MHz, 142MHz-242MHz,
+> 242MHz-ULONG_MAX, ULONG_MAX. Ideally, we need to test all these 7 cases.
+> For those 4 points, the tests should be straightforward. But for the 3
+> segments, we can only extract a random point on it to test. Besides, I
+> think requesting for 142MHz or 242MHz has no big difference, so I
+> omitted one of them. The original
+> clk_leaf_mux_set_rate_parent_determine_rate() is considered to be one of
+> the cases here, for which I think should be absorbed and renamed.
+
+Got it. Adding various tests is OK. Hard-coding a rate, instead of doing
+math makes it easier to read. Dividing by 2 threw me off because I was
+trying to figure out why it was important.
+
+I'll note that you're basically testing the rounding implementation of
+the clk's determine_rate clk_op though, which may be different from what
+this test suite is testing. The test suite talks about making sure the
+struct clk_rate_request is correct. Maybe the suite should be renamed to
+"clk-leaf-mux-determine-rate-request" because it doesn't call set_rate
+at all.
+
+If you want to add tests that check the rounding behavior then maybe add
+a test for clk-mux.c called clk-mux_test.c and follow the
+clk-gate_test.c approach to fake the register. Then also add tests for
+the exported functions in there like clk_mux_val_to_index() and
+clk_mux_determine_rate_flags(), etc. The mux determine rate API is in
+clk.c, but that's mostly because it is so generic it can be used by any
+mux type of clk hardware.
+
+Please Cc Maxime on these patches too, because the lines you're
+modifying were authored by Maxime.
 
 >=20
-> >         DEF_MOD("rpc-if",       629,    R8A779A0_CLK_RPCD2),
-> >         DEF_MOD("scif0",        702,    R8A779A0_CLK_S1D8),
-> >         DEF_MOD("scif1",        703,    R8A779A0_CLK_S1D8),
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
-> --=20
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->=20
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+> And as said in the previous email, the situation here would become even
+> more complicated if CLK_MUX_ROUND_CLOSEST is true. I guess it should be
+> in another patchset.
+
+Yes, that's different, and probably should be implemented as a direct
+call to __clk_mux_determine_rate_closest() instead.
