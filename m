@@ -2,248 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A56BC77B7F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 03:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E965C77B78
+	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 07:08:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229458AbjECDI2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 May 2023 23:08:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53516 "EHLO
+        id S229499AbjECHIK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 May 2023 03:08:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbjECDII (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 May 2023 23:08:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4907B26A0;
-        Tue,  2 May 2023 20:08:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C9A3562A3A;
-        Wed,  3 May 2023 03:08:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2202AC433EF;
-        Wed,  3 May 2023 03:08:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683083286;
-        bh=Dg4NxEX0n42vP7zx2JpmRiiGjwgticb90bYo0bsDAAg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JyUqGkK3evuHh3wfRMC3XEhXFJCvIZHzs+i/JFujoK9UejXkFyj/IDDDVWedowfqo
-         ouqZpydsCx6sYxV086SnIbhtI0Il6TGMaywofbJPgnrImffD+78RObMYMP+ai1FaMk
-         yvKduRPaq4WEDTSf/uMDEXRHkXGndPf+o9Q2Ru9xljcIObN7fcoCFydMS+dHEQNB6y
-         94YagG3mTS68tkoZuHd0KxjpZJw7mLCI8hBETCTD7E2/X9YjlmABO2H9WfQZbvYV8P
-         10TOLfB91dNaKAuKmQImY16e3dfJPZyHfU2qpNc366A5MD32f2R8ENP9CEOcjYDmNS
-         47u3+pWNEaMMw==
-Message-ID: <954b051546fe936db16353fc58a68438.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229460AbjECHIJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 03:08:09 -0400
+Received: from hust.edu.cn (unknown [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388161FF6;
+        Wed,  3 May 2023 00:08:07 -0700 (PDT)
+Received: from liuyuxing.. ([10.12.190.56])
+        (user=lyx2022@hust.edu.cn mech=LOGIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 343769xR010417-343769xS010417
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 3 May 2023 15:06:15 +0800
+From:   Yuxing Liu <lyx2022@hust.edu.cn>
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Yuxing Liu <lyx2022@hust.edu.cn>,
+        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx: clk-imx8mp: improve error handling in imx8mp_clocks_probe()
+Date:   Wed,  3 May 2023 07:06:07 +0000
+Message-Id: <20230503070607.2462-1-lyx2022@hust.edu.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230421-clk-v3-2-9ff79e7e7fed@outlook.com>
-References: <20230421-clk-v3-0-9ff79e7e7fed@outlook.com> <20230421-clk-v3-2-9ff79e7e7fed@outlook.com>
-Subject: Re: [PATCH v3 2/2] clk: tests: Add missing test cases for mux determine_rate
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Xiwen <forbidden405@outlook.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Yang Xiwen via B4 Relay 
-        <devnull+forbidden405.outlook.com@kernel.org>,
-        forbidden405@outlook.com
-Date:   Tue, 02 May 2023 20:08:03 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
+X-FEAS-AUTH-USER: lyx2022@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Yang Xiwen via B4 Relay (2023-04-26 12:34:17)
-> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index f9a5c2964c65d..4f7f9a964637a 100644
-> --- a/drivers/clk/clk_test.c
-> +++ b/drivers/clk/clk_test.c
-> @@ -2194,7 +2194,47 @@ static void clk_leaf_mux_set_rate_parent_test_exit=
-(struct kunit *test)
->   * parent, the rate request structure returned by __clk_determine_rate
->   * is sane and will be what we expect.
->   */
-> -static void clk_leaf_mux_set_rate_parent_determine_rate(struct kunit *te=
-st)
+Replace of_iomap() and kzalloc() with devm_of_iomap() and devm_kzalloc()
+which can automatically release the related memory when the device
+or driver is removed or unloaded to avoid potential memory leak.
 
-Just leave this one alone and put the other test cases right after it.
-Don't rename it and also move it lower down. It makes the diff hard to
-read.
+In this case, iounmap(anatop_base) in line 427,433 are removed
+as manual release is not required.
 
-> +static void clk_leaf_mux_set_rate_parent_determine_rate_case1(struct kun=
-it *test)
+Besides, referring to clk-imx8mq.c, check the return code of
+of_clk_add_hw_provider, if it returns negtive, print error info
+and unregister hws, which makes the program more robust.
 
-Please add a comment above each test case like there is for
-clk_leaf_mux_set_rate_parent_determine_rate() that describes what is
-being tested.
+Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
+Signed-off-by: Yuxing Liu <lyx2022@hust.edu.cn>
+Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+---
+This issue is found by static analysis and remains untested.
+---
+ drivers/clk/imx/clk-imx8mp.c | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
-> +{
-> +       struct clk_leaf_mux_ctx *ctx =3D test->priv;
-> +       struct clk_hw *hw =3D &ctx->hw;
-> +       struct clk *clk =3D clk_hw_get_clk(hw, NULL);
-> +       struct clk_rate_request req;
-> +       unsigned long rate;
-> +       int ret;
-> +
-> +       rate =3D clk_get_rate(clk);
-> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-> +
-> +       clk_hw_init_rate_request(hw, &req, 0);
-> +
-> +       ret =3D __clk_determine_rate(hw, &req);
-> +       KUNIT_ASSERT_EQ(test, ret, -EINVAL);
-> +
-> +       clk_put(clk);
-> +}
-> +
-> +static void clk_leaf_mux_set_rate_parent_determine_rate_case2(struct kun=
-it *test)
-> +{
-> +       struct clk_leaf_mux_ctx *ctx =3D test->priv;
-> +       struct clk_hw *hw =3D &ctx->hw;
-> +       struct clk *clk =3D clk_hw_get_clk(hw, NULL);
-> +       struct clk_rate_request req;
-> +       unsigned long rate;
-> +       int ret;
-> +
-> +       rate =3D clk_get_rate(clk);
-> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-> +
-> +       clk_hw_init_rate_request(hw, &req, DUMMY_CLOCK_INIT_RATE);
-> +
-> +       ret =3D __clk_determine_rate(hw, &req);
-> +       KUNIT_ASSERT_EQ(test, ret, -EINVAL);
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 3253589851ff..de7d2d2176be 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -414,25 +414,22 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np;
+ 	void __iomem *anatop_base, *ccm_base;
++	int err;
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
+-	anatop_base = of_iomap(np, 0);
++	anatop_base = devm_of_iomap(dev, np, 0, NULL);
+ 	of_node_put(np);
+-	if (WARN_ON(!anatop_base))
+-		return -ENOMEM;
++	if (WARN_ON(IS_ERR(anatop_base)))
++		return PTR_ERR(anatop_base);
+ 
+ 	np = dev->of_node;
+ 	ccm_base = devm_platform_ioremap_resource(pdev, 0);
+-	if (WARN_ON(IS_ERR(ccm_base))) {
+-		iounmap(anatop_base);
++	if (WARN_ON(IS_ERR(ccm_base)))
+ 		return PTR_ERR(ccm_base);
+-	}
+ 
+-	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
+-	if (WARN_ON(!clk_hw_data)) {
+-		iounmap(anatop_base);
++	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
++	if (WARN_ON(!clk_hw_data))
+ 		return -ENOMEM;
+-	}
+ 
+ 	clk_hw_data->num = IMX8MP_CLK_END;
+ 	hws = clk_hw_data->hws;
+@@ -721,7 +718,12 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 
+ 	imx_check_clk_hws(hws, IMX8MP_CLK_END);
+ 
+-	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
++	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
++	if (err < 0) {
++		dev_err(dev, "failed to register hws for i.MX8MP\n");
++		imx_unregister_hw_clocks(hws, IMX8MP_CLK_END);
++		return err;
++	}
+ 
+ 	imx_register_uart_clocks();
+ 
+-- 
+2.34.1
 
-There should be some KUNIT_EXPECT statement in each test.
-
-> +
-> +       clk_put(clk);
-> +}
-> +
-> +static void clk_leaf_mux_set_rate_parent_determine_rate_case3(struct kun=
-it *test)
->  {
->         struct clk_leaf_mux_ctx *ctx =3D test->priv;
->         struct clk_hw *hw =3D &ctx->hw;
-> @@ -2218,8 +2258,95 @@ static void clk_leaf_mux_set_rate_parent_determine=
-_rate(struct kunit *test)
->         clk_put(clk);
->  }
-> =20
-> +static void clk_leaf_mux_set_rate_parent_determine_rate_case4(struct kun=
-it *test)
-> +{
-> +       struct clk_leaf_mux_ctx *ctx =3D test->priv;
-> +       struct clk_hw *hw =3D &ctx->hw;
-> +       struct clk *clk =3D clk_hw_get_clk(hw, NULL);
-> +       struct clk_rate_request req;
-> +       unsigned long rate;
-> +       int ret;
-> +
-> +       rate =3D clk_get_rate(clk);
-> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-> +
-> +       clk_hw_init_rate_request(hw, &req, (DUMMY_CLOCK_RATE_1 + DUMMY_CL=
-OCK_RATE_2) / 2);
-> +
-> +       ret =3D __clk_determine_rate(hw, &req);
-> +       KUNIT_ASSERT_EQ(test, ret, 0);
-> +
-> +       KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_1);
-> +       KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_1);
-> +       KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
-> +
-> +       clk_put(clk);
-> +}
-> +
-> +static void clk_leaf_mux_set_rate_parent_determine_rate_case5(struct kun=
-it *test)
-> +{
-> +       struct clk_leaf_mux_ctx *ctx =3D test->priv;
-> +       struct clk_hw *hw =3D &ctx->hw;
-> +       struct clk *clk =3D clk_hw_get_clk(hw, NULL);
-> +       struct clk_rate_request req;
-> +       unsigned long rate;
-> +       int ret;
-> +
-> +       rate =3D clk_get_rate(clk);
-> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-> +
-> +       clk_hw_init_rate_request(hw, &req, DUMMY_CLOCK_RATE_2 + 100000);
-> +
-> +       ret =3D __clk_determine_rate(hw, &req);
-> +       KUNIT_ASSERT_EQ(test, ret, 0);
-> +
-> +       KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_2);
-> +       KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_2);
-> +       KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
-> +
-> +       clk_put(clk);
-> +}
-> +
-> +static void clk_leaf_mux_set_rate_parent_determine_rate_case6(struct kun=
-it *test)
-> +{
-> +       struct clk_leaf_mux_ctx *ctx =3D test->priv;
-> +       struct clk_hw *hw =3D &ctx->hw;
-> +       struct clk *clk =3D clk_hw_get_clk(hw, NULL);
-> +       struct clk_rate_request req;
-> +       unsigned long rate;
-> +       int ret;
-> +
-> +       rate =3D clk_get_rate(clk);
-> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
-> +
-> +       clk_hw_init_rate_request(hw, &req, ULONG_MAX);
-> +
-> +       ret =3D __clk_determine_rate(hw, &req);
-> +       KUNIT_ASSERT_EQ(test, ret, 0);
-> +
-> +       KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_2);
-> +       KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_2);
-> +       KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
-> +
-> +       clk_put(clk);
-> +}
-> +
-> +/* We test 6 cases here:
-> + * 1. The requested rate is 0;
-> + * 2. The requested rate is not 0 but lower than any rate that parents c=
-ould offer;
-> + * 3. The requested rate is exactly one of the parents' clock rate;
-> + * 4. The requested rate is between the lowest clock rate and the highes=
-t clock rate that the parents could offer;
-> + * 5. The requested rate is larger than all rates that parents could off=
-er;
-> + * 6. The requested rate is ULONG_MAX.
-> + *
-> + * Hopefully they covered all cases.
-> + */
-
-Please remove this comment and name the cases better.
-
->  static struct kunit_case clk_leaf_mux_set_rate_parent_test_cases[] =3D {
-> -       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate),
-> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case1),
-
-Maybe call it clk_leaf_mux_determine_rate_request_zero?
-
-> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case2),
-
-clk_leaf_mux_determine_rate_lower_than_parents_fails
-
-> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case3),
-
-clk_leaf_mux_determine_rate_exactly_parent1
-
-> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case4),
-
-I'm not sure I understand what is being tested in this case. Are we
-testing that __clk_determine_rate() with a rate between parent0 and
-parent1 picks parent1?
-
-> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case5),
-
-clk_leaf_mux_determine_rate_larger_than_parents
-
-> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case6),
-
-clk_leaf_mux_determine_rate_ULONG_MAX_picks_parent1
