@@ -2,92 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81510C77B78
-	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 12:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD8FC77B75
+	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 12:59:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbjECMpH convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 May 2023 08:45:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50618 "EHLO
+        id S229890AbjECM7f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 May 2023 08:59:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjECMpG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 08:45:06 -0400
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0796F4688;
-        Wed,  3 May 2023 05:45:06 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-55a64f0053fso45831587b3.3;
-        Wed, 03 May 2023 05:45:05 -0700 (PDT)
+        with ESMTP id S229671AbjECM7e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 08:59:34 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90342DF;
+        Wed,  3 May 2023 05:59:33 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so6352645a12.1;
+        Wed, 03 May 2023 05:59:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683118772; x=1685710772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MwC+BnPU6BKqxfDtGr6AFGwZArDyvQQ/gezoS0Ber4M=;
+        b=Whvtoc/skophwF5/lRnqZvU1HO9Y43Jm5bQ33Y4F+62KIWB5UxTiVA7QWdvdULYFkz
+         MwIU3Oe/1xZRIouK++//fKBd/uW1VGOwKoWjzMtRhxvqlMsIkqp8AuYIqvx4ASTqoCRN
+         8U6FduvNK59YjQlWcLUaVSPpZWoumSiXY9GqUBrfl+pKq5Rkl3YhjnczZfu4kO4fqqLz
+         8cfwzm6C4WBZIRMbmE5xMIBaDSaxqiwnYLzreA5DhoWKx09nB26U970l8mg1c1oWDq5o
+         x6LtGx9876/D9WscvZK/IVj6BnbxKfNVkbIBhJCvjq9n1+3YoMzKwt/LN3OZcyiOFhKk
+         ho5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683117905; x=1685709905;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LzS5hST/7dqPMgs9sJNP8+fBwYbZ8e7b2WdD4jUEi3c=;
-        b=ef2nOFPb9dwfOENTBcejBQR8wM+d8IXsRzeF139GXOj3D6ICccL9z9+IiuAKnN2Hki
-         kQzcnOUmONc/S95qdFLMPDbIPCdeCtw/F7OOP+FcUbhoP8ZlF+WSOMOzZVSPjcfyA9HX
-         47udGmGKjnIfKjteDIdgBtpLTAW6HVmcTWAjBb+cX6h1tZHR8kTgwOtaMC4KmblpgmGI
-         p9DzRBtW4GqENFYUTuGCaJw/XhtaPVXlWiitkNoPATR9vfpOulfrQnmr5wfz+5f6uCMw
-         65Lx7HSaPGzXsVEmsB9BwMIuXT1TVM5XLpc9+qc1HYjycF/NdNJ2jsY6I+C7q/54dLZU
-         Pzrg==
-X-Gm-Message-State: AC+VfDxqVeRfYH83nPwg6LUGsj5J+qzvI3qT0oaFLfxSbCOvjPM1PBoH
-        NTEQP95HbLRyMaXOY6ImivYB5j+o/z1K2g==
-X-Google-Smtp-Source: ACHHUZ6TlvmCii8SvA+8xjIzQjWUQz7hdNdJXZjLZcr73jnLr4Upb6RroV+IXm2vjz+Ntk9NlGbxtQ==
-X-Received: by 2002:a0d:cacc:0:b0:55a:afce:f652 with SMTP id m195-20020a0dcacc000000b0055aafcef652mr3865184ywd.32.1683117904937;
-        Wed, 03 May 2023 05:45:04 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id g140-20020a0ddd92000000b00545a081849esm3133470ywe.46.2023.05.03.05.45.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 May 2023 05:45:03 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-b9e66ce80acso2934616276.3;
-        Wed, 03 May 2023 05:45:03 -0700 (PDT)
-X-Received: by 2002:a25:ca08:0:b0:b9d:9b0b:6aa0 with SMTP id
- a8-20020a25ca08000000b00b9d9b0b6aa0mr15992985ybg.44.1683117903422; Wed, 03
- May 2023 05:45:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230502170618.55967-1-wsa+renesas@sang-engineering.com>
- <20230502170618.55967-2-wsa+renesas@sang-engineering.com> <CAMuHMdW9OP-C2iN97ntNJ7hjgmtY+=NQ=Hi38kPrd8ZUoafFjw@mail.gmail.com>
- <ZFJWkOzqqLXWReSk@ninjato>
-In-Reply-To: <ZFJWkOzqqLXWReSk@ninjato>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 3 May 2023 14:44:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV4StnvMaUZtrjbk-dbrm+3ELCKmzhSxd7O29Vt1fnM_A@mail.gmail.com>
-Message-ID: <CAMuHMdV4StnvMaUZtrjbk-dbrm+3ELCKmzhSxd7O29Vt1fnM_A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: r8a779a0: Add PWM clock
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        d=1e100.net; s=20221208; t=1683118772; x=1685710772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MwC+BnPU6BKqxfDtGr6AFGwZArDyvQQ/gezoS0Ber4M=;
+        b=OsEBdFc1xeIFkPXjW6R6V+XuW7vx4+f7DFSiSmDT8xNyGj2ivS7MvHzN6U3fpzk/ll
+         tDdPf67jlDVSCiqEGIOJMq4JZQIWnwyu2ZMPi1vYw1S+s3ngAEVX2YEIg0Gey+CP5X+H
+         qlAzV+MRwy+ro0QzfZ+CmJGPKEoVFDtmfZT/J1U0o3kpbLh8iBxZNMu3Q+iqOxOcIfza
+         yHEf3XeqGI5n1brpIvowpesmMBXyX3G48E/CBNjH8j0cqSZokoNJYagtycQZAjfQjB9Q
+         uHO15whMLoM/5OzVxAKideDlzyXbp78AvEryKGB5Qaqopx+HqUvRxabx8q9t7Fa29Qjl
+         Xw9A==
+X-Gm-Message-State: AC+VfDw8Iaf6R+qz8u6xJUyn8auJ7alaltc69fK8MlBVqjUX7XenIXO8
+        FCdA+X91BQIfqheL7Qk+sWc=
+X-Google-Smtp-Source: ACHHUZ72Fpw9/LNn4QH8bRfBYxsRJdfj9uLxypIA46Jhz9l0FywBbW/ZnyfmqNjGGZ+WjHN1Vh41lg==
+X-Received: by 2002:a17:907:7f89:b0:94b:769f:3ba3 with SMTP id qk9-20020a1709077f8900b0094b769f3ba3mr1841245ejc.8.1683118771593;
+        Wed, 03 May 2023 05:59:31 -0700 (PDT)
+Received: from localhost.localdomain ([95.183.227.33])
+        by smtp.gmail.com with ESMTPSA id gn2-20020a1709070d0200b009545230e682sm17107696ejc.91.2023.05.03.05.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 May 2023 05:59:31 -0700 (PDT)
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        "Yassine Oudjana linux-arm-msm @ vger . kernel . org" 
+        <yassine.oudjana@gmail.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] MSM8996 Pro CBF scaling support
+Date:   Wed,  3 May 2023 15:59:13 +0300
+Message-Id: <20230503125916.144600-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.40.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram,
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-On Wed, May 3, 2023 at 2:41 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > > +       DEF_MOD("pwm",          628,    R8A779A0_CLK_S1D8),
-> >
-> > Do you mind if I rename this to "pwm0" while applying, to match the docs?
->
-> No, feel free. I think it is a bit misleading because the clock is used
-> up to pwm4. But if the docs have it that way...
+MSM8996 Pro has a /4 post divisor on its CBF PLL instead of /2, allowing
+it to reach 192000000Hz on the lowest CPU OPPs (compared to 307200000Hz
+on MSM8996). Add a compatible string to differentiate between the two and
+handle the different divisor in the driver. Finally, add peak bandwidths
+to CPU OPPs in msm8996pro.dtsi.
 
-The preliminary R-Car V3U docs _are_ misleading... But it's probably
-the best we'd ever get ;-)
+This series depends on the following patch series:
+  clk: qcom: msm8996: add support for the CBF clock
+  https://lore.kernel.org/linux-arm-msm/20230410200014.432418-1-dmitry.baryshkov@linaro.org/
 
-Gr{oetje,eeting}s,
+Yassine Oudjana (3):
+  dt-bindings: clock: qcom,msm8996-cbf: Add compatible for MSM8996 Pro
+  arm64: dts: qcom: msm8996pro: Add CBF scaling support
+  clk: qcom: cbf-msm8996: Add support for MSM8996 Pro
 
-                        Geert
+ .../bindings/clock/qcom,msm8996-cbf.yaml      |   4 +-
+ arch/arm64/boot/dts/qcom/msm8996pro.dtsi      |  51 ++++++++
+ drivers/clk/qcom/clk-cbf-8996.c               | 121 +++++++++++++++---
+ 3 files changed, 160 insertions(+), 16 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.40.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
