@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC29C77B78
-	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 11:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF9EC77B7F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 11:01:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbjECLAu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 May 2023 07:00:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58972 "EHLO
+        id S230126AbjECLBS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 May 2023 07:01:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230075AbjECLAp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 07:00:45 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A969C59E2;
-        Wed,  3 May 2023 04:00:25 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3439oW1R020552;
-        Wed, 3 May 2023 11:00:22 GMT
+        with ESMTP id S229632AbjECLBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 07:01:15 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E5AD59E1;
+        Wed,  3 May 2023 04:00:53 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343AT8X3010063;
+        Wed, 3 May 2023 11:00:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=8jiLRyU6DTRkvpNPRSNdAkJ9zIZ0h5pDGG4GXsWSb8E=;
- b=W0C0BbwyHc6dy8SZPn5ox7dDDpSRxS3s7o/t9mi1KF1ZFz5yzuX+hXz960LI7JS+tfAe
- XILo+y+fkhdoJKROCkp+xK5s2HV9LQqXKgnGzu6SsHwN3u1oIP8ATc7qecBMRp5tctaF
- yiFpc/QtFOfIrBPNyq7niK9lbB+Oo3uYg+5xUsarrqxhIn2O8OSjHUyspuc/SuBSM6l1
- TkRwX8eGJo8l5KuTh78rEC6NUT1xTHEfgSjZ60P6E9kQTmU7ywF80UvAXy9d0iRc9fdp
- 9S2/FYaAK1MlK0teu2lFO9fdB1OBRpDc6isRGNS2GL+UMtfuPEccHofGkxgoUkkW79Rb LA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qbeb2s593-1
+ bh=FjejIpHQK/tD4zuDDj+JO8gGS83Ayl/yTEm9FCkIIOQ=;
+ b=DbAVIKPE4l5jUa0t6BNraWrVznCtlqqObjIazeXtfDfXx6NuE1w+WHyaGiFxOWphRomC
+ Y10mgEXl5VJrnwJHREVaMDJvLVnZG06pmeHG08jjUzycqgYcfzSzctOp7deQIODnnEc/
+ 7xHMc/64BnCXnQ3y2lShw6nykpuHgFjhk/vEFgCv28ZbYcb+QHC+uwfJG4usM1TWc/xE
+ W0PWWK6wYOSJN9+6FbRtByzMscuTcylnhFkgQF2hWBZNqrFiONiWpkV67/LECo2vB+Bn
+ cyEqORc/UzlNgZ2tRrBZYXEo9uUHEmG+D+yTcmcDBDxktBR9L54RzXgfHtdqt0OuHQl4 GQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qbbsw1b9g-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 May 2023 11:00:21 +0000
+        Wed, 03 May 2023 11:00:13 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 343B0L3W023647
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 343B0CYU017809
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 3 May 2023 11:00:21 GMT
+        Wed, 3 May 2023 11:00:12 GMT
 Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 3 May 2023 04:00:16 -0700
+ 15.2.986.42; Wed, 3 May 2023 04:00:07 -0700
 From:   Taniya Das <quic_tdas@quicinc.com>
 To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -49,9 +49,9 @@ CC:     Bjorn Andersson <andersson@kernel.org>,
         <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <quic_skakitap@quicinc.com>, <quic_jkona@quicinc.com>
-Subject: [PATCH V3 3/3] arm64: dts: qcom: sm8450: Add video clock controller
-Date:   Wed, 3 May 2023 16:29:37 +0530
-Message-ID: <20230503105937.24911-4-quic_tdas@quicinc.com>
+Subject: [PATCH V3 1/3] dt-bindings: clock: qcom: Add SM8450 video clock controller
+Date:   Wed, 3 May 2023 16:29:35 +0530
+Message-ID: <20230503105937.24911-2-quic_tdas@quicinc.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230503105937.24911-1-quic_tdas@quicinc.com>
 References: <20230503105937.24911-1-quic_tdas@quicinc.com>
@@ -62,56 +62,169 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NJCku49CYpp3rWN4BDWAEVguUAlhp-Jm
-X-Proofpoint-GUID: NJCku49CYpp3rWN4BDWAEVguUAlhp-Jm
+X-Proofpoint-GUID: P8KAP24Zz2VTGU_S-50rZGhwwYi5fwkI
+X-Proofpoint-ORIG-GUID: P8KAP24Zz2VTGU_S-50rZGhwwYi5fwkI
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-03_06,2023-05-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 spamscore=0 bulkscore=0 mlxscore=0 phishscore=0
- malwarescore=0 adultscore=0 clxscore=1015 priorityscore=1501
- mlxlogscore=954 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2303200000 definitions=main-2305030092
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 impostorscore=0 bulkscore=0 mlxscore=0 phishscore=0
+ spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2305030092
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device node for video clock controller on Qualcomm SM8450 platform.
+Add device tree bindings for the video clock controller on Qualcomm
+SM8450 platform.
 
 Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changes since V2:
- - No changes.
+ - As per Stephen's comments drop clock-names to match how newer
+   qcom clk bindings are being done.
+ - Change the header file name as qcom,sm8450-videocc.h to match
+   latest upstream header files.
 
 Changes since V1:
- - No changes.
+ - Change the properties order to keep reg after the compatible
+   property.
 
- arch/arm64/boot/dts/qcom/sm8450.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../bindings/clock/qcom,sm8450-videocc.yaml   | 77 +++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm8450-videocc.h   | 38 +++++++++
+ 2 files changed, 115 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+ create mode 100644 include/dt-bindings/clock/qcom,sm8450-videocc.h
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-index 595533aeafc4..00ff8efa53c7 100644
---- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
-@@ -756,6 +756,18 @@ gcc: clock-controller@100000 {
- 				      "usb3_phy_wrapper_gcc_usb30_pipe_clk";
- 		};
- 
-+		videocc: clock-controller@aaf0000 {
-+			compatible = "qcom,sm8450-videocc";
-+			reg = <0 0x0aaf0000 0 0x10000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_VIDEO_AHB_CLK>;
-+			power-domains = <&rpmhpd SM8450_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+new file mode 100644
+index 000000000000..58e59065bb2a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 		gpi_dma2: dma-controller@800000 {
- 			compatible = "qcom,sm8450-gpi-dma", "qcom,sm6350-gpi-dma";
- 			#dma-cells = <3>;
++title: Qualcomm Video Clock & Reset Controller on SM8450
++
++maintainers:
++  - Taniya Das <quic_tdas@quicinc.com>
++
++description: |
++  Qualcomm video clock control module provides the clocks, resets and power
++  domains on SM8450.
++
++  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
++
++properties:
++  compatible:
++    const: qcom,sm8450-videocc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Video AHB clock from GCC
++      - description: Board XO source
++
++  power-domains:
++    maxItems: 1
++    description:
++      MMCX power domain.
++
++  required-opps:
++    maxItems: 1
++    description:
++      A phandle to an OPP node describing required MMCX performance point.
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - power-domains
++  - required-opps
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-sm8450.h>
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/power/qcom-rpmpd.h>
++    videocc: clock-controller@aaf0000 {
++      compatible = "qcom,sm8450-videocc";
++      reg = <0x0aaf0000 0x10000>;
++      clocks = <&gcc GCC_VIDEO_AHB_CLK>,
++               <&rpmhcc RPMH_CXO_CLK>;
++      power-domains = <&rpmhpd SM8450_MMCX>;
++      required-opps = <&rpmhpd_opp_low_svs>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,sm8450-videocc.h b/include/dt-bindings/clock/qcom,sm8450-videocc.h
+new file mode 100644
+index 000000000000..9d795adfe4eb
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,sm8450-videocc.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
++#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
++
++/* VIDEO_CC clocks */
++#define VIDEO_CC_MVS0_CLK					0
++#define VIDEO_CC_MVS0_CLK_SRC					1
++#define VIDEO_CC_MVS0_DIV_CLK_SRC				2
++#define VIDEO_CC_MVS0C_CLK					3
++#define VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC				4
++#define VIDEO_CC_MVS1_CLK					5
++#define VIDEO_CC_MVS1_CLK_SRC					6
++#define VIDEO_CC_MVS1_DIV_CLK_SRC				7
++#define VIDEO_CC_MVS1C_CLK					8
++#define VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC				9
++#define VIDEO_CC_PLL0						10
++#define VIDEO_CC_PLL1						11
++
++/* VIDEO_CC power domains */
++#define VIDEO_CC_MVS0C_GDSC					0
++#define VIDEO_CC_MVS0_GDSC					1
++#define VIDEO_CC_MVS1C_GDSC					2
++#define VIDEO_CC_MVS1_GDSC					3
++
++/* VIDEO_CC resets */
++#define CVP_VIDEO_CC_INTERFACE_BCR				0
++#define CVP_VIDEO_CC_MVS0_BCR					1
++#define CVP_VIDEO_CC_MVS0C_BCR					2
++#define CVP_VIDEO_CC_MVS1_BCR					3
++#define CVP_VIDEO_CC_MVS1C_BCR					4
++#define VIDEO_CC_MVS0C_CLK_ARES					5
++#define VIDEO_CC_MVS1C_CLK_ARES					6
++
++#endif
 -- 
 2.25.1
 
