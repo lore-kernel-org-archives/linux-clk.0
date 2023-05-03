@@ -2,229 +2,306 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF9EC77B7F
-	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 11:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B9DC77B7F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 11:54:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230126AbjECLBS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 May 2023 07:01:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59522 "EHLO
+        id S229536AbjECLx7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 May 2023 07:53:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjECLBP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 07:01:15 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E5AD59E1;
-        Wed,  3 May 2023 04:00:53 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 343AT8X3010063;
-        Wed, 3 May 2023 11:00:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=FjejIpHQK/tD4zuDDj+JO8gGS83Ayl/yTEm9FCkIIOQ=;
- b=DbAVIKPE4l5jUa0t6BNraWrVznCtlqqObjIazeXtfDfXx6NuE1w+WHyaGiFxOWphRomC
- Y10mgEXl5VJrnwJHREVaMDJvLVnZG06pmeHG08jjUzycqgYcfzSzctOp7deQIODnnEc/
- 7xHMc/64BnCXnQ3y2lShw6nykpuHgFjhk/vEFgCv28ZbYcb+QHC+uwfJG4usM1TWc/xE
- W0PWWK6wYOSJN9+6FbRtByzMscuTcylnhFkgQF2hWBZNqrFiONiWpkV67/LECo2vB+Bn
- cyEqORc/UzlNgZ2tRrBZYXEo9uUHEmG+D+yTcmcDBDxktBR9L54RzXgfHtdqt0OuHQl4 GQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qbbsw1b9g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 03 May 2023 11:00:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 343B0CYU017809
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 3 May 2023 11:00:12 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 3 May 2023 04:00:07 -0700
-From:   Taniya Das <quic_tdas@quicinc.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_skakitap@quicinc.com>, <quic_jkona@quicinc.com>
-Subject: [PATCH V3 1/3] dt-bindings: clock: qcom: Add SM8450 video clock controller
-Date:   Wed, 3 May 2023 16:29:35 +0530
-Message-ID: <20230503105937.24911-2-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230503105937.24911-1-quic_tdas@quicinc.com>
-References: <20230503105937.24911-1-quic_tdas@quicinc.com>
+        with ESMTP id S229482AbjECLx7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 07:53:59 -0400
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn20827.outbound.protection.outlook.com [IPv6:2a01:111:f400:feae::827])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65847E43;
+        Wed,  3 May 2023 04:53:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LPNDPNhIPxqKZbCmHFZwVH81mY2wxeWFRrhuvbP1iKVnBDkik4wyD1i5nk5T4t2HEAfpJkmMC+IGs7mFLjT0JPrGc5Oe+LWQO3IEuXd/BB/h7PSAFCBxAtBQO7fvP/R9Sb96iGrfqIJCCqPP1TSstIjpxhkE2Uu03MXZIYf8jm3GZTGaGhvkEGXgeEh1ko/KcFwpkoO6T9ZF4PImnjJ8mdd9bWLLfzrjA61sI5+F4opZa7WERHz/jQui9Cj9AG2RXX5yQaiGbSjnCGN9h0SKeOv1DNFtLb/NF3YlD7rJvO3rwO/Ru5F9ce3OAbw21acj3gLU93wx1JueZ34XbshvCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bOvpr+1MpxPxFyKIz+JTki5jX8+5i03AiBmPpzL2P28=;
+ b=fHc321u6DaNPkQVTzOy693YEyoTQFLJhljlWbCuz4UnHhxSwp63ztIjmyar9ycSMAS3Qm/Y3wOITJzaYX6e2XX4nDcpezae0QpkkptnT6PugQYUyI6mESCMiHl+jMKuYhxzIiSv8ZeqwCVPLePrnsMwudvO2QscNhndZTbAwGp9UN2PWm3RdJiqZfXIcXh6lXk+8ok4mgWrjKWp+WNaYSGisK0+XoEp66ODDEF3i5Ab+ZZ2JQ4hPaVo8uMeflTO3FERnCw22EQzOb/yHxhgxYXy3fBNRliAQmP19emYcS9QO6TlU5i4RTzaITtYAncaMDyeJVTtm4+qFB+ci6SipqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bOvpr+1MpxPxFyKIz+JTki5jX8+5i03AiBmPpzL2P28=;
+ b=EihBZSsRkhG5YCrgzWzTMJtnEI8n8Ds7G8LB5l4/JhGwijdbJ7Lp9+CbvcsAPAGt/m/+xyVy3KYJRN7Ilyp1mJ+Rv1irNdjtZ1u0DHV6RxWW+CbCW1UTxJn3PatGX2XDP1QkaEjOu+0o4eZbH4dygEdGSzaHyV8LOTRsz3go7/75X28Gjn77goag7uEvloG8v4gEX90maz2XyrIjW9KLta1jU6jdTmbzYAKJsApGTmrDfOQPL3AkjJVMC2qA0KPEUeR3oepxhIiZfzt7kTIhmXgGtKOGVEJCkwyaX7ORDctT2oWT6h9sdXEJcsi9E786CnrDCf78sIAoK52fFCkTMg==
+Received: from TYZPR04MB6321.apcprd04.prod.outlook.com (2603:1096:400:28a::14)
+ by SEYPR04MB6896.apcprd04.prod.outlook.com (2603:1096:101:dd::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6340.31; Wed, 3 May
+ 2023 11:53:51 +0000
+Received: from TYZPR04MB6321.apcprd04.prod.outlook.com
+ ([fe80::4705:d219:7cf0:46f4]) by TYZPR04MB6321.apcprd04.prod.outlook.com
+ ([fe80::4705:d219:7cf0:46f4%3]) with mapi id 15.20.6363.021; Wed, 3 May 2023
+ 11:53:51 +0000
+Message-ID: <TYZPR04MB6321AECE88794F8585182977966C9@TYZPR04MB6321.apcprd04.prod.outlook.com>
+Date:   Wed, 3 May 2023 19:53:44 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v3 2/2] clk: tests: Add missing test cases for mux
+ determine_rate
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Yang Xiwen via B4 Relay 
+        <devnull+forbidden405.outlook.com@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230421-clk-v3-0-9ff79e7e7fed@outlook.com>
+ <20230421-clk-v3-2-9ff79e7e7fed@outlook.com>
+ <954b051546fe936db16353fc58a68438.sboyd@kernel.org>
+Content-Language: en-US
+From:   Yang Xiwen <forbidden405@outlook.com>
+In-Reply-To: <954b051546fe936db16353fc58a68438.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TMN:  [NdkBGoqjQGa+OnwgkFSVdPqiDtiVpmCJaitOVcGSpK7+lZtaoDb0N53SeXnRPg/Mb7rN74gmDyQ=]
+X-ClientProxiedBy: TYCP286CA0199.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:385::17) To TYZPR04MB6321.apcprd04.prod.outlook.com
+ (2603:1096:400:28a::14)
+X-Microsoft-Original-Message-ID: <aeb793d4-59ef-2875-454d-f2b0a259f73f@outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: P8KAP24Zz2VTGU_S-50rZGhwwYi5fwkI
-X-Proofpoint-ORIG-GUID: P8KAP24Zz2VTGU_S-50rZGhwwYi5fwkI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-03_06,2023-05-03_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 impostorscore=0 bulkscore=0 mlxscore=0 phishscore=0
- spamscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305030092
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR04MB6321:EE_|SEYPR04MB6896:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48919622-f248-4a6c-d273-08db4bcd0f6b
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: s+hfVTL7lrdtKiUw7fqXkVF2G/P8nV1aVH7CctEHAg6vM9qSg9f2wRx5RvtpMzYttc/JtCnafQVRJpyTFCGdZycK3BkTtOxlJQNWz0l43IJGLpISYwkWJ7gKn0YM5wmJ3M3CBdTtrqoXa5Tvj8Jt9h4oXGRwzFGKbZ307INhMXJbQJ85GNkjq8DztXMj8wvFpMY8+ufAeP4hMpSC5QqU5+r0B8bBMbF6933BCYSlJiuTh9YLowp0FiVThrmr818A/Fz3B+MRXJ6u1TJko0VjUpzNbtyrq05cAb/wZjQU97xnFt1ERg4mFtICVeGvYvVkqx/dLdCCK5wcGyyihiGsKuXprVC6HpLNM/7HZHkfiB47ZMbd3a97LOh3bkrjxQ3pFlQQlgk7Rvyfq3dEO9IFardhbbnoPeZULP7DCZpQo+e5aEYir+ARUM9R0n0l0kIPkKXD3hgXr1b4IXeRLB17WtFVkw0iVHaxJmc/8FOgi1iiGT7+v72sXSSSwh3zTO97HAFP0ivKvaawNzLfiDBdabR8GvkJpWzZR0vV8AG7hx1EJjHYh/jMySNVGtBXzOMzWM0emPmpSMnD4bAAtGSDnLI/Ps3hPdrcaxlZu6QaGwIYjsXg9FAmOvcy9bTnHYis
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eXBOVWtQRzZaSWF0bnQvZUxlb3pqVmtqWVg3VGs4TkExcVU5TFV0RHNyVlV5?=
+ =?utf-8?B?VG5KbFFtUFNCNlpBN0UyeFV3SllHMXZFSGFMSUVQWERuSnpYdXllNDY5eS9M?=
+ =?utf-8?B?OG1jYTRUNVNNTUZ0Q0FhVXVaNjY2UktTNDR6YzVOUi8ydEQwTThVVlpRNjhH?=
+ =?utf-8?B?OXo3RVJsZWtheXhvdXk2MVFYSE9teEl4ZlA5Z04xTEtqQjdadWNOZXVUQkVE?=
+ =?utf-8?B?WkNKOTNiZkVvV1p6TzNZTHpjY0ZWYjZtZHErREdtNmhQSlNGV25UZVVoYUNq?=
+ =?utf-8?B?SFI4R0tpRW5FN2M2eWZqTFdLYjd4c1AvSDlCN2Y1bXFneGVCd3NvOTJvNXVz?=
+ =?utf-8?B?a3pRL0R0SEZGV282T1I4aXVyM0RERCtYZTVCc0xoZTczQVRBSC9nam80ZGZD?=
+ =?utf-8?B?LzZ3RjFDdWM5Q3ErOG9ad3UwalM2NzBoL01LdlFjVjVqZHpBUElQOThCZkNr?=
+ =?utf-8?B?SHYrbDFMOVNsV2F5QmFYbGRERm4zbTJKRDc0ZHl3M3BUeWptTlEyV1lLbW9l?=
+ =?utf-8?B?cE5kSld3Mk9US0RtUjdzZWY5d3hhU0kyTUtCcTVoR0tVME1PVm5qc3Q4TEg3?=
+ =?utf-8?B?MndPa1AzTVQ1TDZIb3RsQnFUK2tjMkpkU2xRdUN6NEV2OVJ4N3FvYXZkclpX?=
+ =?utf-8?B?NkZUM2hVL3Zhbi83VW84Vi9vMXRrdDJFS2dmVXBRRE5EbmpYclhyR2Y2MHJJ?=
+ =?utf-8?B?V2YyWFV1RHptNmROU0IwNzA5U3BWMU03dnVXTlVRTEhUaVh3TWIxWU9ZQndG?=
+ =?utf-8?B?ZGlVS3ptYmVZUmlsbFNiL3Jlb0s1LzlrbkZFU3NhcFZJS3A3NThabWxYSUls?=
+ =?utf-8?B?Q2JNSXgwQTM3dnVSQk11d2lIeUtJMTZXZW5SVTh6eWdzdWZnc1huTlRYR0lK?=
+ =?utf-8?B?aXlTOXZ1ZEo5OWh6MU10S3pFRlZPVDhuR0RTZktzdCtLaWwrNi9uQ1hXUldH?=
+ =?utf-8?B?R3RVSHYwVlhncHA5S3NtL2dxN3JWZ2prckFtY1duNUZnSnl1NmVYSTQ0cVFi?=
+ =?utf-8?B?ZXFqSHg3MnpVaTVSK0pLZjBSbjlyZ0cyNjdVL3BFK2RoNTBweW83cEZJaE92?=
+ =?utf-8?B?WlAvc3k1Z2kwaHpLMEZ0NVQ0elBjY3VNZ3FhNUt3VkZIN2wyQUdraVhveVEv?=
+ =?utf-8?B?OWNZVFlWdWoxZDBGaEpwVFlPeU5makNCQWE3QVg0R1JMWE5na290RzVtV2Qz?=
+ =?utf-8?B?RWtQMDAyQzZuTXIrWkd4dVpMS3NlbjlSSHVkQzI1VjVTa2Y5MUx6bWlCSkxa?=
+ =?utf-8?B?TmNnZW5zVmR2bmdmaTlyMWhpQ05Ca3FOazZaZnNqR093RXNLWHJSWmJtSG5H?=
+ =?utf-8?B?bDhpMWc0bUlsaTIxTHF6OHROeFNnWWFjVStBcXU2ZG0wSDcvQnU0U2xoS2tk?=
+ =?utf-8?B?VHkvZFFsdEpoRUIvbW85K1kzV1pOV292eDFZazFoWEVxVTI2M2tiTnlmSGxS?=
+ =?utf-8?B?Mjdtb2N1RU1xYnlENGpNdHR1YjNJZHJkaHREOS9UbFoxSHNJTzlSM3MrZElN?=
+ =?utf-8?B?VHFUVTM5T1A0RlFzQXN3T1lkd0JJQjVsUndyUGZ0SU9udzZwUjFKSTNiRFAv?=
+ =?utf-8?B?SFVkTERoZTV0UTRBYmVCczB2NElySHFXcnRKZUkvUVphRkRNTUJnSUhoZmtD?=
+ =?utf-8?B?cUhmMHhxenpVV0p0SmRoYTNGZTdDdFlUcU14TTRSYnRxeVdxMWcvNEFSS0ps?=
+ =?utf-8?B?ei9RYTJhbzdIWTN6Zk90L3NwVm9MeER3N04zRllzVlhrbDIyeStBQURvSDRy?=
+ =?utf-8?Q?LF/oOLBvAJrGhX5Ovs=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48919622-f248-4a6c-d273-08db4bcd0f6b
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR04MB6321.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2023 11:53:51.0828
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR04MB6896
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for the video clock controller on Qualcomm
-SM8450 platform.
-
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Changes since V2:
- - As per Stephen's comments drop clock-names to match how newer
-   qcom clk bindings are being done.
- - Change the header file name as qcom,sm8450-videocc.h to match
-   latest upstream header files.
-
-Changes since V1:
- - Change the properties order to keep reg after the compatible
-   property.
-
- .../bindings/clock/qcom,sm8450-videocc.yaml   | 77 +++++++++++++++++++
- .../dt-bindings/clock/qcom,sm8450-videocc.h   | 38 +++++++++
- 2 files changed, 115 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
- create mode 100644 include/dt-bindings/clock/qcom,sm8450-videocc.h
-
-diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-new file mode 100644
-index 000000000000..58e59065bb2a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Video Clock & Reset Controller on SM8450
-+
-+maintainers:
-+  - Taniya Das <quic_tdas@quicinc.com>
-+
-+description: |
-+  Qualcomm video clock control module provides the clocks, resets and power
-+  domains on SM8450.
-+
-+  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
-+
-+properties:
-+  compatible:
-+    const: qcom,sm8450-videocc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Video AHB clock from GCC
-+      - description: Board XO source
-+
-+  power-domains:
-+    maxItems: 1
-+    description:
-+      MMCX power domain.
-+
-+  required-opps:
-+    maxItems: 1
-+    description:
-+      A phandle to an OPP node describing required MMCX performance point.
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#power-domain-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - power-domains
-+  - required-opps
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,gcc-sm8450.h>
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    videocc: clock-controller@aaf0000 {
-+      compatible = "qcom,sm8450-videocc";
-+      reg = <0x0aaf0000 0x10000>;
-+      clocks = <&gcc GCC_VIDEO_AHB_CLK>,
-+               <&rpmhcc RPMH_CXO_CLK>;
-+      power-domains = <&rpmhpd SM8450_MMCX>;
-+      required-opps = <&rpmhpd_opp_low_svs>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+      #power-domain-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/qcom,sm8450-videocc.h b/include/dt-bindings/clock/qcom,sm8450-videocc.h
-new file mode 100644
-index 000000000000..9d795adfe4eb
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,sm8450-videocc.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
-+#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SM8450_H
-+
-+/* VIDEO_CC clocks */
-+#define VIDEO_CC_MVS0_CLK					0
-+#define VIDEO_CC_MVS0_CLK_SRC					1
-+#define VIDEO_CC_MVS0_DIV_CLK_SRC				2
-+#define VIDEO_CC_MVS0C_CLK					3
-+#define VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC				4
-+#define VIDEO_CC_MVS1_CLK					5
-+#define VIDEO_CC_MVS1_CLK_SRC					6
-+#define VIDEO_CC_MVS1_DIV_CLK_SRC				7
-+#define VIDEO_CC_MVS1C_CLK					8
-+#define VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC				9
-+#define VIDEO_CC_PLL0						10
-+#define VIDEO_CC_PLL1						11
-+
-+/* VIDEO_CC power domains */
-+#define VIDEO_CC_MVS0C_GDSC					0
-+#define VIDEO_CC_MVS0_GDSC					1
-+#define VIDEO_CC_MVS1C_GDSC					2
-+#define VIDEO_CC_MVS1_GDSC					3
-+
-+/* VIDEO_CC resets */
-+#define CVP_VIDEO_CC_INTERFACE_BCR				0
-+#define CVP_VIDEO_CC_MVS0_BCR					1
-+#define CVP_VIDEO_CC_MVS0C_BCR					2
-+#define CVP_VIDEO_CC_MVS1_BCR					3
-+#define CVP_VIDEO_CC_MVS1C_BCR					4
-+#define VIDEO_CC_MVS0C_CLK_ARES					5
-+#define VIDEO_CC_MVS1C_CLK_ARES					6
-+
-+#endif
+On 5/3/2023 11:08 AM, Stephen Boyd wrote:
+> Quoting Yang Xiwen via B4 Relay (2023-04-26 12:34:17)
+>> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+>> index f9a5c2964c65d..4f7f9a964637a 100644
+>> --- a/drivers/clk/clk_test.c
+>> +++ b/drivers/clk/clk_test.c
+>> @@ -2194,7 +2194,47 @@ static void clk_leaf_mux_set_rate_parent_test_exit(struct kunit *test)
+>>   * parent, the rate request structure returned by __clk_determine_rate
+>>   * is sane and will be what we expect.
+>>   */
+>> -static void clk_leaf_mux_set_rate_parent_determine_rate(struct kunit *test)
+> 
+> Just leave this one alone and put the other test cases right after it.
+> Don't rename it and also move it lower down. It makes the diff hard to
+> read.
+> 
+>> +static void clk_leaf_mux_set_rate_parent_determine_rate_case1(struct kunit *test)
+> 
+> Please add a comment above each test case like there is for
+> clk_leaf_mux_set_rate_parent_determine_rate() that describes what is
+> being tested.
+> 
+>> +{
+>> +       struct clk_leaf_mux_ctx *ctx = test->priv;
+>> +       struct clk_hw *hw = &ctx->hw;
+>> +       struct clk *clk = clk_hw_get_clk(hw, NULL);
+>> +       struct clk_rate_request req;
+>> +       unsigned long rate;
+>> +       int ret;
+>> +
+>> +       rate = clk_get_rate(clk);
+>> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+>> +
+>> +       clk_hw_init_rate_request(hw, &req, 0);
+>> +
+>> +       ret = __clk_determine_rate(hw, &req);
+>> +       KUNIT_ASSERT_EQ(test, ret, -EINVAL);
+>> +
+>> +       clk_put(clk);
+>> +}
+>> +
+>> +static void clk_leaf_mux_set_rate_parent_determine_rate_case2(struct kunit *test)
+>> +{
+>> +       struct clk_leaf_mux_ctx *ctx = test->priv;
+>> +       struct clk_hw *hw = &ctx->hw;
+>> +       struct clk *clk = clk_hw_get_clk(hw, NULL);
+>> +       struct clk_rate_request req;
+>> +       unsigned long rate;
+>> +       int ret;
+>> +
+>> +       rate = clk_get_rate(clk);
+>> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+>> +
+>> +       clk_hw_init_rate_request(hw, &req, DUMMY_CLOCK_INIT_RATE);
+>> +
+>> +       ret = __clk_determine_rate(hw, &req);
+>> +       KUNIT_ASSERT_EQ(test, ret, -EINVAL);
+> 
+> There should be some KUNIT_EXPECT statement in each test.>
+>> +
+>> +       clk_put(clk);
+>> +}
+>> +
+>> +static void clk_leaf_mux_set_rate_parent_determine_rate_case3(struct kunit *test)
+>>  {
+>>         struct clk_leaf_mux_ctx *ctx = test->priv;
+>>         struct clk_hw *hw = &ctx->hw;
+>> @@ -2218,8 +2258,95 @@ static void clk_leaf_mux_set_rate_parent_determine_rate(struct kunit *test)
+>>         clk_put(clk);
+>>  }
+>>  
+>> +static void clk_leaf_mux_set_rate_parent_determine_rate_case4(struct kunit *test)
+>> +{
+>> +       struct clk_leaf_mux_ctx *ctx = test->priv;
+>> +       struct clk_hw *hw = &ctx->hw;
+>> +       struct clk *clk = clk_hw_get_clk(hw, NULL);
+>> +       struct clk_rate_request req;
+>> +       unsigned long rate;
+>> +       int ret;
+>> +
+>> +       rate = clk_get_rate(clk);
+>> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+>> +
+>> +       clk_hw_init_rate_request(hw, &req, (DUMMY_CLOCK_RATE_1 + DUMMY_CLOCK_RATE_2) / 2);
+>> +
+>> +       ret = __clk_determine_rate(hw, &req);
+>> +       KUNIT_ASSERT_EQ(test, ret, 0);
+>> +
+>> +       KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_1);
+>> +       KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_1);
+>> +       KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
+>> +
+>> +       clk_put(clk);
+>> +}
+>> +
+>> +static void clk_leaf_mux_set_rate_parent_determine_rate_case5(struct kunit *test)
+>> +{
+>> +       struct clk_leaf_mux_ctx *ctx = test->priv;
+>> +       struct clk_hw *hw = &ctx->hw;
+>> +       struct clk *clk = clk_hw_get_clk(hw, NULL);
+>> +       struct clk_rate_request req;
+>> +       unsigned long rate;
+>> +       int ret;
+>> +
+>> +       rate = clk_get_rate(clk);
+>> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+>> +
+>> +       clk_hw_init_rate_request(hw, &req, DUMMY_CLOCK_RATE_2 + 100000);
+>> +
+>> +       ret = __clk_determine_rate(hw, &req);
+>> +       KUNIT_ASSERT_EQ(test, ret, 0);
+>> +
+>> +       KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_2);
+>> +       KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_2);
+>> +       KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
+>> +
+>> +       clk_put(clk);
+>> +}
+>> +
+>> +static void clk_leaf_mux_set_rate_parent_determine_rate_case6(struct kunit *test)
+>> +{
+>> +       struct clk_leaf_mux_ctx *ctx = test->priv;
+>> +       struct clk_hw *hw = &ctx->hw;
+>> +       struct clk *clk = clk_hw_get_clk(hw, NULL);
+>> +       struct clk_rate_request req;
+>> +       unsigned long rate;
+>> +       int ret;
+>> +
+>> +       rate = clk_get_rate(clk);
+>> +       KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+>> +
+>> +       clk_hw_init_rate_request(hw, &req, ULONG_MAX);
+>> +
+>> +       ret = __clk_determine_rate(hw, &req);
+>> +       KUNIT_ASSERT_EQ(test, ret, 0);
+>> +
+>> +       KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_2);
+>> +       KUNIT_EXPECT_EQ(test, req.best_parent_rate, DUMMY_CLOCK_RATE_2);
+>> +       KUNIT_EXPECT_PTR_EQ(test, req.best_parent_hw, &ctx->mux_ctx.hw);
+>> +
+>> +       clk_put(clk);
+>> +}
+>> +
+>> +/* We test 6 cases here:
+>> + * 1. The requested rate is 0;
+>> + * 2. The requested rate is not 0 but lower than any rate that parents could offer;
+>> + * 3. The requested rate is exactly one of the parents' clock rate;
+>> + * 4. The requested rate is between the lowest clock rate and the highest clock rate that the parents could offer;
+>> + * 5. The requested rate is larger than all rates that parents could offer;
+>> + * 6. The requested rate is ULONG_MAX.
+>> + *
+>> + * Hopefully they covered all cases.
+>> + */
+> 
+> Please remove this comment and name the cases better.
+Thanks, I will follow your suggestions and rename them in next version.
+> 
+>>  static struct kunit_case clk_leaf_mux_set_rate_parent_test_cases[] = {
+>> -       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate),
+>> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case1),
+> 
+> Maybe call it clk_leaf_mux_determine_rate_request_zero?
+> 
+>> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case2),
+> 
+> clk_leaf_mux_determine_rate_lower_than_parents_fails
+> 
+>> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case3),
+> 
+> clk_leaf_mux_determine_rate_exactly_parent1
+> 
+>> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case4),
+> 
+> I'm not sure I understand what is being tested in this case. Are we
+> testing that __clk_determine_rate() with a rate between parent0 and
+> parent1 picks parent1?Yes, that's it. For example, 2 parents offer 100MHz and 200MHz, we
+request 150MHz, and 100MHz should be determined(the highest possible
+rate lower than or equal to the requested rate). Actually the flag
+CLK_MUX_ROUND_CLOSEST is still missing in the test cases. I suppose it
+should be in another patchset.
+> 
+>> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case5),
+> 
+> clk_leaf_mux_determine_rate_larger_than_parents
+> 
+>> +       KUNIT_CASE(clk_leaf_mux_set_rate_parent_determine_rate_case6),
+> 
+> clk_leaf_mux_determine_rate_ULONG_MAX_picks_parent1
 -- 
-2.25.1
+Best regards,
+Yang Xiwen
 
