@@ -2,101 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83265C77B78
-	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 10:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4804C77B7F
+	for <linux-clk@archiver.kernel.org>; Wed,  3 May 2023 11:00:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbjECKJp convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 May 2023 06:09:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58884 "EHLO
+        id S229595AbjECLAB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 May 2023 07:00:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbjECKJp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 06:09:45 -0400
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1353E1A5;
-        Wed,  3 May 2023 03:09:43 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-55a79671a4dso39920847b3.2;
-        Wed, 03 May 2023 03:09:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683108582; x=1685700582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sawd4wpoRtHE8s6UvEovoP3gm1uY3ejIUgCGBfkkyLU=;
-        b=ZYtGy04apyTkfG5MjQFhd9tmehcu813IpBOeqxVap0RZ46CfL+cbFHDKSOlo7XL69Z
-         wXBhwpg80jWmCTlUwIPW5fjRKp15WD6ybZYVvj8IrkOAplFKvxJSfIJmta98AebAcGeC
-         II52QXGVsV2WYfZTJDlhfGT8JFMG5T2d8+Q6BO76CAX+A7ZkcXtTEo+Q6+LdcGeSG4qw
-         32DBWJ+lvQwOnMPl+UkIGgY2WgtsAeC+a9dxcOvfT7XWJ8aB+Csinmmj0Ylkl0PkEvJP
-         xVsXunslfSLyZTqfPCbaW4DjnpfcZDrPnqyx0xmOzElJ/NBrYITOpBw02vMiF+ToUZ8N
-         oZvw==
-X-Gm-Message-State: AC+VfDw4VwPb8gcZOpqdHwPO+jkndYQPotaykWCpKoMcmjQRtw/u4cxn
-        Ho6R5H2JiuX4Rk3Ay+upEXDdZiynyUO4FA==
-X-Google-Smtp-Source: ACHHUZ54oosSzxi/8tOiAnFCUh2kjyZhlP4God13vC+klLQhjpuO8Nx6cCe31zYrr6p0+7bBuiPtjw==
-X-Received: by 2002:a81:8886:0:b0:55a:592d:9ec0 with SMTP id y128-20020a818886000000b0055a592d9ec0mr10060051ywf.20.1683108582047;
-        Wed, 03 May 2023 03:09:42 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id y206-20020a81a1d7000000b0055a07585a91sm2494527ywg.11.2023.05.03.03.09.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 May 2023 03:09:41 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-55af4277904so14442667b3.1;
-        Wed, 03 May 2023 03:09:41 -0700 (PDT)
-X-Received: by 2002:a81:84d2:0:b0:55a:6551:7ea8 with SMTP id
- u201-20020a8184d2000000b0055a65517ea8mr9163012ywf.42.1683108581083; Wed, 03
- May 2023 03:09:41 -0700 (PDT)
+        with ESMTP id S229569AbjECLAA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 May 2023 07:00:00 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8153649DE;
+        Wed,  3 May 2023 03:59:59 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3439oQNL020511;
+        Wed, 3 May 2023 10:59:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=61I/qHVeaDrVGfByyTdO3IToeDPjIKC0Vq4EoJrP05g=;
+ b=aJfdyJNgbkxy6juGv76E1/HoyOSfscT8VtxNa48kp4ElG6qu9ELD/BTDALw3qPxycn3V
+ GoAHIZChwwxfIKiDhBz7Ht7pfR/9k4jJVxPidWYrATNhNCuLxkl/6XXih82riQu6MstP
+ F4wKHIwEnT2ovYGtrKjW48BmmIx/hJQpAY9sAgvISv0P3dPJ/X31MPGAr8c5jSiTNcif
+ G61Q1dpbxJpLQdVoJCWtzksSPMKS8b0wn3YmvU9h9+L0w0bEgXaRJr1gdSUqMZEn/Rsm
+ PY+4aHhLx4j79oxTe2Au0DNdtCig7SsoqOKfcSDlO+FCz+6zn00sFi9EDuN1JuMresmT BA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qbeb2s512-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 03 May 2023 10:59:48 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 343AxKsq022293
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 3 May 2023 10:59:20 GMT
+Received: from [10.242.242.243] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 3 May 2023
+ 03:59:09 -0700
+Message-ID: <9de5629f-0a69-7b5b-c312-ab6fe19d60f8@quicinc.com>
+Date:   Wed, 3 May 2023 16:29:06 +0530
 MIME-Version: 1.0
-References: <20230502170618.55967-1-wsa+renesas@sang-engineering.com> <20230502170618.55967-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20230502170618.55967-2-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 3 May 2023 12:09:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW9OP-C2iN97ntNJ7hjgmtY+=NQ=Hi38kPrd8ZUoafFjw@mail.gmail.com>
-Message-ID: <CAMuHMdW9OP-C2iN97ntNJ7hjgmtY+=NQ=Hi38kPrd8ZUoafFjw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: renesas: r8a779a0: Add PWM clock
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+To:     Rob Herring <robh@kernel.org>
+CC:     <quic_sjaganat@quicinc.com>, <quic_gurus@quicinc.com>,
+        <quic_gokulsri@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <andersson@kernel.org>, <jassisinghbrar@gmail.com>,
+        <konrad.dybcio@linaro.org>, <quic_eberman@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <robimarko@gmail.com>,
+        <mturquette@baylibre.com>, <mathieu.poirier@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <quic_arajkuma@quicinc.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <loic.poulain@linaro.org>, <quic_anusha@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <agross@kernel.org>,
+        <linux-remoteproc@vger.kernel.org>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
+ <167819522915.3831.12765243745569076133.robh@kernel.org>
+Content-Language: en-US
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <167819522915.3831.12765243745569076133.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -1i42SqUw0sue0zOijKvfEfpXK-YxAtg
+X-Proofpoint-GUID: -1i42SqUw0sue0zOijKvfEfpXK-YxAtg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-03_06,2023-05-03_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 bulkscore=0 mlxscore=0 phishscore=0
+ malwarescore=0 adultscore=0 clxscore=1011 priorityscore=1501
+ mlxlogscore=962 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2303200000 definitions=main-2305030092
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram,
 
-On Tue, May 2, 2023 at 7:06 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Thanks for your patch!
+On 3/7/2023 6:53 PM, Rob Herring wrote:
+> 
+> On Tue, 07 Mar 2023 10:11:27 +0530, Manikanta Mylavarapu wrote:
+>> Add new binding document for multipd model remoteproc.
+>> IPQ5018, IPQ9574 follows multipd model.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   .../bindings/remoteproc/qcom,multipd-pil.yaml | 282 ++++++++++++++++++
+>>   1 file changed, 282 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>
+> 
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.example.dts:22:18: fatal error: dt-bindings/clock/qcom,gcc-ipq5018.h: No such file or directory
+>     22 |         #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>        |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[1]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.example.dtb] Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:1512: dt_binding_check] Error 2
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
 
-> --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> @@ -170,6 +170,7 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
->         DEF_MOD("msi3",         621,    R8A779A0_CLK_MSO),
->         DEF_MOD("msi4",         622,    R8A779A0_CLK_MSO),
->         DEF_MOD("msi5",         623,    R8A779A0_CLK_MSO),
-> +       DEF_MOD("pwm",          628,    R8A779A0_CLK_S1D8),
+I mentioned dependency link 
+(https://lore.kernel.org/linux-arm-msm/20220621161126.15883-1-quic_srichara@quicinc.com/) 
+in cover page patch because it's required for entire series. I will add 
+dependency link's and raise new patchset.
 
-Do you mind if I rename this to "pwm0" while applying, to match the docs?
+Thanks & Regards,
+Manikanta.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.5.
-
->         DEF_MOD("rpc-if",       629,    R8A779A0_CLK_RPCD2),
->         DEF_MOD("scif0",        702,    R8A779A0_CLK_S1D8),
->         DEF_MOD("scif1",        703,    R8A779A0_CLK_S1D8),
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
