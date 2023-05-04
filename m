@@ -2,63 +2,54 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C88C77B78
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 18:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEBDC77B78
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 19:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbjEDSoZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 14:44:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41926 "EHLO
+        id S230403AbjEDTGx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 15:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbjEDSoY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 14:44:24 -0400
+        with ESMTP id S230284AbjEDTGj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 15:06:39 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2453C33
-        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 11:44:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D32F9EF6
+        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 12:05:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 50586616EF
-        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 18:44:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52BD8C433EF;
-        Thu,  4 May 2023 18:44:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E3071636BC
+        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 19:04:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF46C433B3;
+        Thu,  4 May 2023 19:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683225862;
-        bh=AXfZhTl4CAMvddsRCT4gxAh0YyM5asyL2fZDOM7392g=;
+        s=k20201202; t=1683227073;
+        bh=785b5ReprMuscQm8vEfSkKNR5HjGXuom4XmEBdU6CPk=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=WKzVy8mPC9n4w3mgqz2/js9aYICqzA/fx0l7jqU1fyyLMgzs58E4YbmFonjUjLpAX
-         RXe/3eLky0H5Cs0KIvtPPR4oo9oZFLtMP7VzzqlgILoNr0H2qmTSzvGt1ppUb8WXr6
-         nzHs/4eUk/xNEyKwRTA1WLVx8BAC0Rlayl7S7ihPDjVy8OVRFvmobPBGitk7/zVHMy
-         JZ3pT8ZfhY8xRAoptCgeuCh2IExIbvSmgtu1XW8UlUzsBGyI+lLw2IiWMzETsybIkC
-         7XTawLFp+29cXqL60yUsacTMnt3qHf3kvV7xZXF/96ookU4ADuzOBi+xXvGvta0vN5
-         /HvEpodh8j7sQ==
-Date:   Thu, 4 May 2023 11:44:21 -0700
+        b=EArzFi+nu8kwEB6Aat0S2lMc33gQsCi2968S1EBAQU8aH3BSDUypQ0gOosxUTDLEh
+         NRXWKVKzslTbHXvAytER3Ou91fLNJt3+dtG2rQRnYd7RNp2lSpOlRuEOHmERdU7Kgc
+         S2p0JQJUZD7KiyAdMtkZWGSdspRCtdWOfN1rTRJIqstz79aS6yf0THRLmKThoFDdKY
+         g4QANUdvNDpGzu1yDcA6iN6WKdCyM0ya0Ii6Z+6LZFtyvy+9f3vqnn7SLbBoxJGA72
+         F4zx513k0zJW82aWDDGkmqAHDs8hhvt1xAGX2nICnJ9qR5/XnZQNFg3/WnCB0HC0y2
+         et20rcxUXDY2w==
+Date:   Thu, 4 May 2023 12:04:31 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Vadim Fedorenko <vadfed@meta.com>,
+To:     Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <20230504114421.51415018@kernel.org>
-In-Reply-To: <ZFPwqu5W8NE6Luvk@nanopsycho>
-References: <ZDJulCXj9H8LH+kl@nanopsycho>
-        <20230410153149.602c6bad@kernel.org>
-        <ZDwg88x3HS2kd6lY@nanopsycho>
-        <20230417124942.4305abfa@kernel.org>
-        <ZFDPaXlJainSOqmV@nanopsycho>
-        <20230502083244.19543d26@kernel.org>
-        <ZFITyWvVcqgRtN+Q@nanopsycho>
-        <20230503191643.12a6e559@kernel.org>
-        <ZFOQWmkBUtgVR06R@nanopsycho>
-        <20230504090401.597a7a61@kernel.org>
-        <ZFPwqu5W8NE6Luvk@nanopsycho>
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        <poros@redhat.com>, <mschmidt@redhat.com>,
+        <netdev@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v7 3/8] dpll: documentation on DPLL subsystem
+ interface
+Message-ID: <20230504120431.036cb8ba@kernel.org>
+In-Reply-To: <20230428002009.2948020-4-vadfed@meta.com>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+        <20230428002009.2948020-4-vadfed@meta.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -66,59 +57,241 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 4 May 2023 19:51:38 +0200 Jiri Pirko wrote:
-> >> What is the next intelligible element to identify DPLL device here?  
-> >
-> >I don't know. We can always add more as needed.
-> >We presuppose that the devices are identifiable, so whatever info
-> >is used to identify them goes here.  
+On Thu, 27 Apr 2023 17:20:04 -0700 Vadim Fedorenko wrote:
+> From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 > 
-> Allright. So in case of ptp_ocp and mlx5, module_name and clock_id
-> are enough. In case of ice, DPLL_A_TYPE, attr is the one to make
-> distinction between the 2 dpll instances there
+> Add documentation explaining common netlink interface to configure DPLL
+> devices and monitoring events. Common way to implement DPLL device in
+> a driver is also covered.
 > 
-> So for now, we can have:
->  CMD_GET_ID
->    -> DPLL_A_MODULE_NAME  
->       DPLL_A_CLOCK_ID
->       DPLL_A_TYPE
->    <- DPLL_A_ID
-> 
-> 
-> if user passes a subset which would not provide a single match, we error
-> out with -EINVAL and proper exack message. Makes sense?
+> Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
-Yup, that sounds good to me.
+nit: let's put documentation as patch 1, it's more natural for 
+a reviewer to start from the docs.
 
-> >Same answer. Could be a name of the pin according to ASIC docs.
-> >Could be the ball name for a BGA package. Anything that's meaningful.  
-> 
-> Okay, for pin, the type and label would probably do:
->  CMD_GET_PIN_ID
->    -> DPLL_A_MODULE_NAME  
->       DPLL_A_CLOCK_ID
->       DPLL_A_PIN_TYPE
->       DPLL_A_PIN_LABEL
+> diff --git a/Documentation/dpll.rst b/Documentation/dpll.rst
+> new file mode 100644
+> index 000000000000..fba5bc027967
+> --- /dev/null
+> +++ b/Documentation/dpll.rst
+> @@ -0,0 +1,408 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +===============================
+> +The Linux kernel dpll subsystem
+> +===============================
+> +
+> +
 
-Label sounds dangerously open ended, too. Would that be the SMA
-connector label (i.e. front panel label)? Or also applicable to
-internal pins? It'd be easier to talk details if we had the user
-facing documentation that ships with these products.
+nit: two empty lines here...
 
->    <- DPLL_A_PIN_ID
-> 
-> Again, if user passes a subset which would not provide a single match,
-> we error out with -EINVAL and proper exack message.
-> 
-> If there is only one pin for example, user query of DPLL_A_MODULE_NAME
-> and DPLL_A_CLOCK_ID would do return a single match. No need to pass
-> anything else.
-> 
-> I think this could work with both ice and ptp_ocp, correct guys?
-> 
-> For mlx5, I will have 2 or more pins with same module name, clock id
-> and type. For these SyncE pins the label does not really make sense.
-> But I don't have to query, because the PIN_ID is going to be exposed for
-> netdev over RT netlink. Clicks.
-> 
-> Makes sense?
+> +The main purpose of dpll subsystem is to provide general interface
+> +to configure devices that use any kind of Digital PLL and could use
+> +different sources of signal to synchronize to as well as different
+> +types of outputs.
+> +The main interface is NETLINK_GENERIC based protocol with an event
+> +monitoring multicast group defined.
+> +
+> +
+> +Device object
+> +=============
+
+.. but none after the section start? One nl to separate things, please.
+
+> +Single dpll device object means single Digital PLL circuit and bunch of
+> +pins connected with it.
+
+s/bunch of pins connected with it/bunch of connected pins/
+
+> +It provides its supported working modes and current status to the user
+
+"reports the supported modes of operation" ?
+
+> +in response to the `do` request of netlink command
+> +``DPLL_CMD_DEVICE_GET`` and list of dplls registered in the subsystem
+> +with `dump` netlink request of same command.
+> +Requesting configuration of dpll device is done with `do` request of
+
+Changing the configuration ?
+
+> +netlink ``DPLL_CMD_DEVICE_SET`` command.
+> +
+> +
+> +Pin object
+> +==========
+> +A pin is amorphic object which represents either source or output, it
+
+Is the terminology mixing on purpose?
+Source or drain vs input or output ?
+
+> +could be internal component of the device, as well as externaly
+> +connected.
+> +The number of pins per dpll vary, but usually multiple pins shall be
+> +provided for a single dpll device.
+> +Pin's properties, capabilities and status is provided to the user in
+> +response to `do` request of netlink ``DPLL_CMD_PIN_GET`` command.
+> +It is also possible to list all the pins that were registered in the
+> +system with `dump` request of ``DPLL_CMD_PIN_GET`` command.
+> +Configuration of a pin can be changed by `do` request of netlink
+> +``DPLL_CMD_PIN_SET`` command.
+> +
+> +
+> +Pin selection
+> +=============
+> +In general selected pin (the one which signal is driving the dpll
+> +device) can be obtained from ``DPLL_A_PIN_STATE`` attribute, and only
+> +one pin shall be in ``DPLL_PIN_STATE_CONNECTED`` state for any dpll
+> +device.
+> +
+> +Pin selection can be done either manualy or automatically, depending on
+
+manually, spellcheck?
+
+> +hardware capabilities and active dpll device work mode
+> +(``DPLL_A_MODE`` attribute). The consequence is that, there are
+> +differences for each mode in terms of available pin states, as well
+> +as for the states the user can request for a dpll device.
+> +
+> +In manual mode (``DPLL_MODE_MANUAL``) the user can request or receive
+> +one of following pin states:
+> +- ``DPLL_PIN_STATE_CONNECTED`` - the pin is used to drive dpll device
+> +- ``DPLL_PIN_STATE_DISCONNECTED`` - the pin is not used to drive dpll
+> +  device
+> +
+> +In automatic mode (``DPLL_MODE_AUTOMATIC``) the user can request or
+> +receive one of following pin states:
+> +- ``DPLL_PIN_STATE_SELECTABLE`` - the pin shall be considered as valid
+> +  source for automatic selection algorithm
+> +- ``DPLL_PIN_STATE_DISCONNECTED`` - the pin shall be not considered as
+> +  a valid source for automatic selection algorithm
+> +In automatic mode (``DPLL_MODE_AUTOMATIC``) the user can only receive
+> +pin state ``DPLL_PIN_STATE_CONNECTED`` once automatic selection
+> +algorithm locks a dpll device with one of the sources.
+
+But there's a lot more modes in the mode enum :S
+
+> +Shared pins
+> +===========
+> +A single pin object can be registered to multiple dpll devices.
+
+s/registered/attached/ ?
+
+> +Then there are two groups of configuration knobs:
+> +1) Set on a pin - the configuration affects all dpll devices pin is
+> +   registered to. (i.e. ``PIN_FREQUENCY``, ``PIN_DIRECTION``),
+
+Why is direction set on a pin? We can't chain DPLLs?
+
+> +2) Set on a pin-dpll tuple - the configuration affects only selected
+> +   dpll device. (i.e. PIN_PRIO, PIN_STATE).
+> +
+> +
+> +MUX-type pins
+> +=============
+> +A pin can be MUX-type, it aggregates child pins and serves as a pin
+> +multiplexer. One or more pins are registered with MUX-type instead of
+> +being directly registered to a dpll device.
+> +Pins registered with a MUX-type provide user with additional nested
+> +attribute ``DPLL_A_PIN_PARENT`` for each parent they were registered
+> +with.
+> +If a pin was registered with multiple parent pins, they behave like a
+> +multiple output multiplexer. In this case output of a
+> +``DPLL_CMD_PIN_GET`` would contain multiple pin-parent nested
+> +attributes with current state related to each parent, like:
+> +
+> +``'pin': [{
+> +        'device': [{'bus-name': 'pci',
+> +                    'dev-name': '0000:21:00.0_0', 'id': 0}],
+> +        'pin-direction': {'doc': 'pin used as a source of a signal',
+> +                          'name': 'source'},
+> +        'pin-idx': 13,
+> +        'pin-parent': [{'pin-parent-idx': 2,
+> +                        'pin-state': {'doc': 'pin disconnected',
+> +                                      'name': 'disconnected'}},
+> +                       {'pin-parent-idx': 3,
+> +                        'pin-state': {'doc': 'pin disconnected',
+> +                                      'name': 'disconnected'}}],
+> +        }]``
+> +
+> +Only one child pin can provide it's signal to the parent MUX-type pin at
+> +a time, the selection is done with requesting change of child pin state
+> +to ``DPLL_PIN_STATE_CONNECTED`` and providing a target MUX-type pin
+> +index value in ``DPLL_A_PARENT_PIN_IDX``.
+> +
+> +Pin priority
+> +============
+> +Some devices might offer a capability of automatic pin selection mode
+> +(enum value ``DPLL_MODE_AUTOMATIC`` of ``DPLL_A_MODE`` attribute).
+> +Usually such automatic selection is offloaded to the hardware,
+
+offloaded is a dirty word, s/offloaded to/performed by/
+
+> +which means only pins directly connected to the dpll are capable of
+> +automatic source pin selection.
+
+s/are capable of/can be used in the/
+
+> +In automatic selection mode, the user cannot manually select a source
+> +pin for the device, instead the user shall provide all directly
+> +connected pins with a priority ``DPLL_A_PIN_PRIO``, the device would
+> +pick a highest priority valid signal and connect with it.
+
+s/connect with it/use it to control the DPLL device/ ?
+
+> +Child pin of MUX-type is not capable of automatic source pin selection,
+> +in order to configure a source of a MUX-type pin, the user needs to
+> +request desired pin state of the child pin on the parent - it is done
+> +with providing additional attribute for pin set state request - index
+> +of parent pin he wish to propagate its signal to
+> +(``DPLL_A_PARENT_PIN_IDX``).
+> +
+> +
+> +Configuration commands group
+> +============================
+> +
+
+oh and the new lines after headers appear ;)
+
+> +Configuration commands are used to get or dump information about
+
+s/or dump//
+the netlink ability to query or dump is not something specific to dpll,
+I wouldn't mention it so many times.
+
+> +registered dpll devices (and pins), as well as set configuration of
+> +device or pins. As dpll device could not be abstract and reflects real
+
+Missing an article before dpll device, maybe "each dpll device", or 'a
+dppl device' or 'dpll devices" (plural)
+
+s/could/must/
+
+> +hardware, there is no way to add new dpll device via netlink from user
+> +space and each device should be registered by it's driver.
+> +
+> +All netlink commands require ``GENL_ADMIN_PERM``. This is to prevent
+> +any spamming/D.o.S. from unauthorized userspace applications.
+
+no dots in DoS
+
+> +In general it is possible to configure multiple parameters at once.
+
+s/In general//
+Should we say that we don't guarantee the change will be atomic in that
+case?
+
+> +Device driver implementation
+> +============================
+> +
+> +Device is allocated by ``dpll_device_get`` call. Second call with the
+> +same arguments doesn't create new object but provides pointer to
+> +previously created device for given arguments, it also increase refcount
+> +of that object.
+> +Device is deallocated by ``dpll_device_put`` call, which first decreases
+> +the refcount, once refcount is cleared the object is destroyed.
+
+You can add () after the function name and render the kdoc at the end
+of this doc. The `` marking will then be unnecessary.
+
+
