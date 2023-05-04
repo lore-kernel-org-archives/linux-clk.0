@@ -2,161 +2,182 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 527F2C77B7C
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 16:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0074C7EE22
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 17:01:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229514AbjEDQEI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 12:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
+        id S229659AbjEDRBg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 13:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230326AbjEDQEH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 12:04:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D7E4EE1
-        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 09:04:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 667776354D
-        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 16:04:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBD1C433D2;
-        Thu,  4 May 2023 16:04:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683216244;
-        bh=Ov33ChoosA7Cg6h45OD0WZw1JmTuLbJ584Oy24/tJVw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DR204dEDNKBcZFSP8CNLlrVFA0V5T7uw3kTvqe8VeJNeBbra6huCqOW1gyOnh+d8V
-         xAgCzYQ5VjPQIXOIBNcAi+/bIj5n3LiigembK7raNPr5RL8qISsKu/WRMb2PF7UnS0
-         Ur0ugAfKCQDj3LNtTi7EZ2qTldvPT+Rh7Ss/2MudtXsMuw8Vx+MSbZIXe9aOM0IS8T
-         FVaTTjyje7Xgmzm7SqmJbjc/UtrIv4oIxYY9nC16c1TGKkYx4itmg86WAcAXUSzBhI
-         yCcDl/l8Z2P+TFEBsqIyYsw3ESufSDfm+FFe2vaheFRBMF1pT34Ll6xzGltabAfVNU
-         u8Q1tDHVdFhqg==
-Date:   Thu, 4 May 2023 09:04:01 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Vadim Fedorenko <vadfed@meta.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        with ESMTP id S229470AbjEDRBf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 13:01:35 -0400
+Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57BD030C0;
+        Thu,  4 May 2023 10:01:33 -0700 (PDT)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 8758A5803C8;
+        Thu,  4 May 2023 13:01:31 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Thu, 04 May 2023 13:01:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1683219691; x=1683226891; bh=92
+        1YgmgJDyX8fTpEjsf680K9b88j6xKzseERDrln0VI=; b=UYj68jiu63Xrv9446C
+        U+7U9vT/DXuEOuF3C0zduG+D5WwodyQMk5zwxbNyx6IQ/IHLcFFKytQ58Niabyii
+        HVter6AnK4ozGstpWcb5IyV/Epexltg5yOm/kFrPSmr4yj5YIzaeiVlfA1JjwN+q
+        eZIFziOXq/OXFg/9YSOYo2OZTG7PRgSnfuJ/SjE7Y4ew/Bj25quWLuh/t0BdQ1nN
+        gr29J1wULKDJhJMUQ5sC6VZCQ0LmvT5mvjrh1ge/K441JeWExDM+jU8TvC9BbaI7
+        FZBNgnpNSIK7wXulqF9ONHUxtHhw/a67TW9cQwyucpsYz4ig7GrlTNbCH5W9yCeh
+        W5gA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1683219691; x=1683226891; bh=921YgmgJDyX8f
+        TpEjsf680K9b88j6xKzseERDrln0VI=; b=WZAQbTl4KhdIBGFggnepbC24ozON+
+        Y9P7RamUUn7KUOWfYKgsofJKMU48g+a442uJvpwU3eSyLQOp4GW03QHV/nxVQUZy
+        kwx1JFK0G0n3OX0QxctPhaenfPjSDIRHfhQCLLL2k/1SNkO0+tdr2ePUDWuuQElv
+        hAIWgE5sxPtyjiqrYoW9Xzd1CGRPuuuJqVj0jqU1tNQgYccAk9hmIGX4ChAah8ut
+        YyPTN1JU564F6RHSmzHnxPcTGjFo5Vzs3IXod7C95xqFT6q0ULFQe2gA2K8RFkeH
+        AkTeomH/mAn/3XjfXDtpF5l4Y14mA6UOEaSmMPu86fbGpwwMJ8npfGAjQ==
+X-ME-Sender: <xms:6eRTZBd0Ca4UchpFkmcVRifBZTiLzDjaNYIL7ROKZYaoG-tDG7sJzw>
+    <xme:6eRTZPMzfdcnM01gMAo4h9ncJjXV2G6Nnz_K08C0TtkeGA9U0GpVI924kPDOXLzG1
+    o3H35qXB0mAKR_nHJo>
+X-ME-Received: <xmr:6eRTZKjIX9LfZkO66qX4gILAEZHe-iK55SIBd3aO1CEJWIS47IOXh50_YQkpM_GGYDtiztC_5PPESExggI7WAxdKyZmWwh8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeftddguddtjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeet
+    kefgleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:6eRTZK_L0pD3f9C6mQznCyuZW59l3sB-Df_ouW1uu_huJ9lMp9fZrQ>
+    <xmx:6eRTZNu3V9DGdTelUE-VIZ4R-xjzfJTdBioowM4FVQ2sC0il4NTMOQ>
+    <xmx:6eRTZJGmUm2SjMFMmFm9mJ4FpEruFnIuKFeUcXhEvcHdHm2GnQML-Q>
+    <xmx:6-RTZB2mU23ipge8XMotfaWkDt4t3YRIYZvJ9OpnSv1sp4-zCY_M7A>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 4 May 2023 13:01:27 -0400 (EDT)
+Date:   Thu, 4 May 2023 19:01:25 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
         linux-arm-kernel@lists.infradead.org,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <20230504090401.597a7a61@kernel.org>
-In-Reply-To: <ZFOQWmkBUtgVR06R@nanopsycho>
-References: <ZBGOWQW+1JFzNsTY@nanopsycho>
-        <20230403111812.163b7d1d@kernel.org>
-        <ZDJulCXj9H8LH+kl@nanopsycho>
-        <20230410153149.602c6bad@kernel.org>
-        <ZDwg88x3HS2kd6lY@nanopsycho>
-        <20230417124942.4305abfa@kernel.org>
-        <ZFDPaXlJainSOqmV@nanopsycho>
-        <20230502083244.19543d26@kernel.org>
-        <ZFITyWvVcqgRtN+Q@nanopsycho>
-        <20230503191643.12a6e559@kernel.org>
-        <ZFOQWmkBUtgVR06R@nanopsycho>
+        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
+        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
+Subject: Re: [PATCH v3 43/65] ASoC: tlv320aic32x4: Add a determine_rate hook
+Message-ID: <leuxcmkwyb6k77oh47jcpcyp3dujy5f7gjijvkaxjz6gy5im3f@c4kvrnq6auug>
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+ <20221018-clk-range-checks-fixes-v3-43-9a1358472d52@cerno.tech>
+ <01f32440-8dd2-4030-9006-a3123be55845@sirena.org.uk>
+ <erm4iq3mygnrr4h2gd5cag3sfuovv47ibdqsbmxcfabngvnwy4@z63ksvj55zuu>
+ <fcc11e4d-eba6-4eff-b3e5-9488a4da84c3@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="co3427ienkolccfs"
+Content-Disposition: inline
+In-Reply-To: <fcc11e4d-eba6-4eff-b3e5-9488a4da84c3@sirena.org.uk>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 4 May 2023 13:00:42 +0200 Jiri Pirko wrote:
-> Thu, May 04, 2023 at 04:16:43AM CEST, kuba@kernel.org wrote:
-> >On Wed, 3 May 2023 09:56:57 +0200 Jiri Pirko wrote:  
-> >> Okay.
-> >> 
-> >> When netdev will have pin ID in the RT netlink message (as it is done
-> >> in RFCv7), it is easy to get the pin/dpll for netdev. No problem there.
-> >> 
-> >> However, for non-SyncE usecase, how do you imagine scripts to work?
-> >> I mean, the script have to obtain dpll/pin ID by deterministic
-> >> module_name/clock_id/idx tuple.  
-> >
-> >No scoped idx.  
-> 
-> That means, no index defined by a driver if I undestand you correctly,
-> right?
 
-Yes, my suggestion did not include a scoped index with no
-globally defined semantics.
- 
-> >> There are 2 options to do that:
-> >> 1) dump all dplls/pins and do lookup in userspace
-> >> 2) get a dpll/pin according to given module_name/clock_id/idx tuple
-> >> 
-> >> The first approach is not very nice.
-> >> The currently pushed RFCv7 of the patchset does not support 2)
-> >> 
-> >> Now if we add support for 2), we basically use module_name/clock_id/idx
-> >> as a handle for "get cmd". My point is, why can't we use it for "set
-> >> cmd" as well and avoid the ID entirely?  
-> >
-> >Sure, we don't _have_ to have an ID, but it seems go against normal
-> >data normalization rules. And I don't see any harm in it.
-> >
-> >But you're asking for per-device "idx" and that's a no-go for me,
-> >given already cited experience.
-> >
-> >The user space can look up the ID based on identifying information it
-> >has. IMO it's better to support multiple different intelligible elements  
-> 
-> Do you mean fixed tuple or variable tuple?
-> 
-> CMD_GET_ID
->   -> DPLL_A_MODULE_NAME  
->      DPLL_A_CLOCK_ID
+--co3427ienkolccfs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> What is the next intelligible element to identify DPLL device here?
+Hi Mark,
 
-I don't know. We can always add more as needed.
-We presuppose that the devices are identifiable, so whatever info
-is used to identify them goes here.
+On Wed, Apr 05, 2023 at 04:34:31PM +0100, Mark Brown wrote:
+> On Wed, Apr 05, 2023 at 05:17:21PM +0200, Maxime Ripard wrote:
+> > On Tue, Apr 04, 2023 at 04:26:18PM +0100, Mark Brown wrote:
+>=20
+> > > To be honest it's surprising that we'd have to manually specify this,=
+ I
+> > > would expect to be able to reparent.  I suspect it'd be better to go =
+the
+> > > other way here and allow reparenting.
+>=20
+> > Yeah, I think I'd prefer to allow reparenting too, but as can be seen
+> > from the other reviewers in that thread, it seems like we have a very
+> > split community here, so that doesn't sound very realistic without some
+> > major pushback :)
+>=20
+> For these ASoC drivers I think we should just do the reparenting,
+> they're very much at the leaf of the tree so the considerations that
+> make it a problem sometimes are unlikely to apply.
 
->   <- DPLL_A_ID
-> 
-> CMD_GET_PIN_ID
->   -> DPLL_A_MODULE_NAME  
->      DPLL_A_CLOCK_ID
+I'd still prefer to remain conservative on this series and try not to
+change the behaviour in it. It's pretty massive already, I'd like to
+avoid tracking regressions left and right :)
 
-> What is the next intelligible element to identify a pin here?
+Would sending a subsequent series that would do this acceptable for you?
 
-Same answer. Could be a name of the pin according to ASIC docs.
-Could be the ball name for a BGA package. Anything that's meaningful.
+Maxime
 
-My point is that we don't want a field simply called "index". Because
-then for one vendor it will mean Ethernet port, for another SMA
-connector number and for the third pin of the package. Those are
-different attributes.
+--co3427ienkolccfs
+Content-Type: application/pgp-signature; name="signature.asc"
 
->   <- DPLL_A_PIN_ID
-> 
-> >than single integer index into which drivers will start encoding all
-> >sort of info, using locally invented schemes.  
-> 
-> There could be multiple DPLL and pin instances for a single
-> module/clock_id tuple we have to distinguish somehow. If the driver
-> can't pass "index" of DPLL or a pin, how we distinguish them?
-> 
-> Plus is is possible that 2 driver instances share the same dpll
-> instance, then to get the dpll pointer reference, they do:
-> INSTANCE A:
-> dpll_0 = dpll_device_get(clock_id, 0, THIS_MODULE);
-> dpll_1 = dpll_device_get(clock_id, 1, THIS_MODULE);
-> 
-> INSTANCE B:
-> dpll_0 = dpll_device_get(clock_id, 0, THIS_MODULE);
-> dpll_1 = dpll_device_get(clock_id, 1, THIS_MODULE);
-> 
-> My point is, event if we don't expose the index to the userspace,
-> we need to have it internally.
+-----BEGIN PGP SIGNATURE-----
 
-That's fine, I guess. I'd prefer driver matching to be the same as user
-space matching to force driver authors to have the same perspective as
-the user. But a "driver coookie" not visible to user space it probably
-fine.
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZFPk5QAKCRDj7w1vZxhR
+xYK/AQDT76loaORROKC2ghqyIIHmBg+xw8VB5nThUFKuIO4RhgD9ERaCF31CTPdE
+PdgL4dyZrWlQGqGmbyHbk465s505Jww=
+=OlOa
+-----END PGP SIGNATURE-----
+
+--co3427ienkolccfs--
