@@ -2,103 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4DFC7EE23
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 06:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BC7C7EE23
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 06:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbjEDGdA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 02:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50228 "EHLO
+        id S230039AbjEDGr6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 02:47:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbjEDGc7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 02:32:59 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF025212B
-        for <linux-clk@vger.kernel.org>; Wed,  3 May 2023 23:32:56 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-50bc37e1525so80875a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 03 May 2023 23:32:56 -0700 (PDT)
+        with ESMTP id S229871AbjEDGr5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 02:47:57 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580B22711
+        for <linux-clk@vger.kernel.org>; Wed,  3 May 2023 23:47:56 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-50bcb4a81ceso31982a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 May 2023 23:47:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683181975; x=1685773975;
+        d=linaro.org; s=google; t=1683182875; x=1685774875;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3RBEhpd3xEUlZ6Us/X/cjuw9/V+kcP7bYejuz1B4OPg=;
-        b=IhGqbZGuMUF4xJ8W9u/Pr1NiZ3uruaJUW/ekux+SG7T1u60WXizi9DkjVmlg+9J96c
-         fkwWuvCI4mb4POHNlsUxFJ07dd4xIPTeYzVpq1RmCFeTCsiGXNsSdJyc4dLZQWPLLkYC
-         n5BQXDGfVnCYnTtk+k57tCmH+y0/CxM2MWvQAm9VDTOhazq9RcZMhNfAo+9FIGhKdNHZ
-         mqzH8pPxTbOju4k7zJYeOSJO8mX0IQLfHLooxIflhBum1dmDmqxROVVncQEljT/CCJpS
-         ZfGIpjR1stIiaEEc06rHAzIT+Ix9bxibCMdIH8N+TJWIQDfI3cGdNcq+Zpml9ExW38w5
-         XaXA==
+        bh=YNoB1CN4mNjbzbyJ7ifXkPbkV+dgOC11t9BHcH2q8pY=;
+        b=sSweCCGjrdmyJj2jSGtItrUmsI6bPOIG5TckUrtu/iIlxrDEqWImvvtyrqMtWCwhMp
+         sBgI7GLHOoWO7BTiidKBun7BFlEq4I7/oFUK/F8Iw0ENDjA8BbxlpuOIGroFqD9sxLpc
+         v7CHBOpmXxOMRqOIXHAcEUJ7t5asysNxom/TvXW7gld/a8lF31FftLJG7NdDW6w6sXk3
+         L5iL0Mur6sMIG9xxyy1FXokDihqUIHSuPHTWMK5bzQf9Q5jDuCHd43CymXkXCKo4iLN2
+         OQnA9aEMJ1tX3II5itslGhIVNBPGf25YphMBla+rUYqcHXO0CMczwG1VHVk7xv4XsFUQ
+         A95g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683181975; x=1685773975;
+        d=1e100.net; s=20221208; t=1683182875; x=1685774875;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3RBEhpd3xEUlZ6Us/X/cjuw9/V+kcP7bYejuz1B4OPg=;
-        b=QXF0PGV4BQbDe0SoQA7T8g5CQSkajwArGlDj/ALKOYjHX40akrNGYiW3We6jGhRzOA
-         gYnpMQAzVRoCoJW5RY7ZVRu9DdSJuEDuHe3heqvTiTIwNJYvP/F5jgJEQYYrpVT9aA2r
-         FvfPu2y49N5heQyIEfcKozktKMPp/i7uw7HLUi9dukZZ2jRU3qErqIw//UxZz/GMysdC
-         SRrXiMQepn9SNr3U5BK4qfBwx2EbXfHc7vh+VmnyexddJYT/2impFKamscRFZe7hWGZY
-         Y6OBNbxl+/uJtknIB2XivqZhvHO7A/qXSTgK/arYCzbd0LpbEJAVPkiwOCzB3wOWzg5s
-         rC/g==
-X-Gm-Message-State: AC+VfDxcIbUafp/CLV8VfyIgRts8VG/KkXbPBM0P2ZBsEzDmd6e8Q6xG
-        XACqieeIk6UouoHzVhY86M24Eg==
-X-Google-Smtp-Source: ACHHUZ6cU1GIx7gdw1AGNelLdQi0YhZ6hCvTdTZP7dgeRkG1vnyMmM+bjaey386+6gjK3w0+zCTr6Q==
-X-Received: by 2002:a17:907:31c4:b0:94f:e00:c8c9 with SMTP id xf4-20020a17090731c400b0094f0e00c8c9mr4344851ejb.34.1683181975206;
-        Wed, 03 May 2023 23:32:55 -0700 (PDT)
+        bh=YNoB1CN4mNjbzbyJ7ifXkPbkV+dgOC11t9BHcH2q8pY=;
+        b=NcAfMurjqhbO33fCD2xksmHJ5hwRzfWwX86eG0euMmBG3LoNUJPOsT88v9x4zki//8
+         oCtiOdo7oFMqNERsajC9S5OYVU4wmJ4TzTk7zXQksOdjSHMldGKZlzx2UVbj3OFKeP3I
+         8RsIlqY3LuDAwwL7WE9L1T8oAZtNEAhxUaTp6zExPwGF6w/dsRg0J3tw7jtw1N0ZPoZr
+         Jx2AJP3Hja07j5h6RMHMuzQwldzP6Bi2GkUCdZCnlIXZzg0ZBXH8e822xKAMxaEqlQIx
+         QRFa/zwXX8umVrbrTdDGWgiTA5aLKo3K6C8mah471qd9kRetzVGpsY4gg1jppdE5pPu7
+         KapA==
+X-Gm-Message-State: AC+VfDy9gewSegX4meCTr9KRG7Ty3xDvtVXcJCIHVkHHMRdHOVfOf92S
+        mHLkIP3oNhXsGE9T0CJMadzkBA==
+X-Google-Smtp-Source: ACHHUZ7PfA9SaWdGNw6CarkGjGW5noqaere74jXmcRAxtY4uIC+Sp8pC+Pvnt00LCkqoxHvBk+JvbA==
+X-Received: by 2002:a17:907:c20:b0:965:5668:d0ed with SMTP id ga32-20020a1709070c2000b009655668d0edmr5359045ejc.22.1683182874882;
+        Wed, 03 May 2023 23:47:54 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:cbf1:e7ef:fb81:e912? ([2a02:810d:15c0:828:cbf1:e7ef:fb81:e912])
-        by smtp.gmail.com with ESMTPSA id vh7-20020a170907d38700b0094f31208918sm18056053ejc.108.2023.05.03.23.32.53
+        by smtp.gmail.com with ESMTPSA id jy7-20020a170907762700b00947740a4373sm18154982ejc.81.2023.05.03.23.47.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 May 2023 23:32:54 -0700 (PDT)
-Message-ID: <8ce93998-84c3-0640-a6e1-76ff17b3953c@linaro.org>
-Date:   Thu, 4 May 2023 08:32:53 +0200
+        Wed, 03 May 2023 23:47:54 -0700 (PDT)
+Message-ID: <bffd777f-c076-58ac-f26b-bee671a57992@linaro.org>
+Date:   Thu, 4 May 2023 08:47:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.1
-Subject: Re: [PATCH v9 01/10] arm64: Kconfig.platforms: Add config for Nuvoton
- MA35 platform
+Subject: Re: [PATCH RESEND 1/3] dt-bindings: clock: qcom,msm8996-cbf: Add
+ compatible for MSM8996 Pro
 Content-Language: en-US
-To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, jirislaby@kernel.org,
-        tmaimon77@gmail.com, catalin.marinas@arm.com, will@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-serial@vger.kernel.org, arnd@arndb.de, schung@nuvoton.com,
-        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-References: <20230504033726.93-1-ychuang570808@gmail.com>
- <20230504033726.93-2-ychuang570808@gmail.com>
+To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230503130051.144708-1-y.oudjana@protonmail.com>
+ <20230503130051.144708-2-y.oudjana@protonmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230504033726.93-2-ychuang570808@gmail.com>
+In-Reply-To: <20230503130051.144708-2-y.oudjana@protonmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/05/2023 05:37, Jacky Huang wrote:
-> From: Jacky Huang <ychuang3@nuvoton.com>
+On 03/05/2023 15:00, Yassine Oudjana wrote:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> Add ARCH_NUVOTON configuration option for Nuvoton MA35 family SoCs.
+> The CBF clock on MSM8996 Pro has a different divisor compared to MSM8996
+> and is therefore not fully compatible with it. Add a new compatible string
+> to differentiate between them.
 > 
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 > ---
->  arch/arm64/Kconfig.platforms | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 89a0b13b058d..c1f277c05569 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -236,6 +236,15 @@ config ARCH_NPCM
->  	  General support for NPCM8xx BMC (Arbel).
->  	  Nuvoton NPCM8xx BMC based on the Cortex A35.
->  
-> +config ARCH_NUVOTON
+>  Documentation/devicetree/bindings/clock/qcom,msm8996-cbf.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Either this should be ARCH_MA35 or you should integrate it with NPCM.
-ARCH_NUVOTON means all Nuvoton platforms.
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
