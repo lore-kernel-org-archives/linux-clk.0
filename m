@@ -2,860 +2,714 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7F3C77B78
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 09:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1C0C7EE21
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 09:28:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjEDJUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 05:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44620 "EHLO
+        id S229607AbjEDJ2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 05:28:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbjEDJUH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 05:20:07 -0400
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2119.outbound.protection.outlook.com [40.107.255.119])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1552E4686;
-        Thu,  4 May 2023 02:20:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bCuZ6vy0pn3gi3/+gRTpuNXy0otigKl/Ufu5sOIuXkD57s2CNVNDS85O1/Yrbk0m1Beh3BRlBg/RoX9uRcgghPAKumCRVP4z6TvsBdOXHzo9ssbFsha6KTvhFI9hX/vT0qHsCqBho8LjDEVaGOmlFKAe4EQWIm4QUE7sBOzxxEN4veNUP9L/UqK3+qQMwP5MPEmeCq489u97lm9D3UFhIOwRatvMl+Od0PnaerFuVWV6imFIM6VZLSf5cA1o8OuFd5u3fvR5dTj2s6Q3TfV+aebH4N7ODIEwLnt/fQDGp0AfgAykLIWq8YsLo2nH4f1joMwBzF5RGNlQJiHUqbwMhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zfYisgNODNJoHRXclsZV3ENBfvKVHAOYuKdoGbmPhNE=;
- b=nYMizQst9g+cfxRqUXp7OC0N0XS0InKxnvLOYGj5s3ar3BzRJbyiJyUbcIUGsneUFNNteOUd4M8tnKV4Zzt42uBZk5aO0wqiHuqnpvfl7Amm1hImx6xI6ay87jbRFnbjUVgIFKAUEXZ/e7MzMUgQR4EE7eCcDqBPbs9GDXrTX6IO3IYpelIs94Y4jVx28yo4wCXLFEkes2CyP32cHAt7SFz5c6QXKj2SqJcwnZwngNNp5EoRdFxfgbwuFI1Dq7G6UAY985zTkUPrkNyO0R0vkq6KgfjXamraxIyN4YSBs2AahV3OOwucsEjytG4IuEXJ8iE1SE6KLxCPfS6/HuJpHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zfYisgNODNJoHRXclsZV3ENBfvKVHAOYuKdoGbmPhNE=;
- b=ov8rEbBp8syEL+4/zDpau50THlew8vAIvw+EkjFMbEQ5Lpev78jv1/Ws3mMI2RPzsLZJ5FF2lDfE28f2HK5VlPK0MfACsL0KEoYbZT9w54IR4V2JonOczlAbALBoyImOhepEI2A19ucyRJJET0G7x5VFv1nBPKgbpfQB/IdTKgsG9XDn1mNlHlil3re+vH6o8GEwMSRc4A9++FG9+YC4efDOIVHBl71htxNTNLG0DXI+pJH7LprkP0gPQ4TwHg2CHzO3k7EdHKbSVEqjSRlToJb3408lCrLehEZsOE8Ut5X/d3oxwMPJxTzBeWhk27etxH2wsXt8Vq4l/D3A5EqBNQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from SG2PR03MB6730.apcprd03.prod.outlook.com (2603:1096:4:1d5::9) by
- SEZPR03MB6959.apcprd03.prod.outlook.com (2603:1096:101:9e::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6340.36; Thu, 4 May 2023 09:19:57 +0000
-Received: from SG2PR03MB6730.apcprd03.prod.outlook.com
- ([fe80::e116:7d2a:af78:fcf1]) by SG2PR03MB6730.apcprd03.prod.outlook.com
- ([fe80::e116:7d2a:af78:fcf1%5]) with mapi id 15.20.6363.022; Thu, 4 May 2023
- 09:19:57 +0000
-Message-ID: <e8a42623-b0e1-728d-58a0-35f6a89eb179@amlogic.com>
-Date:   Thu, 4 May 2023 17:19:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH V7 3/4] clk: meson: S4: add support for Amlogic S4 SoC PLL
- clock driver
-Content-Language: en-US
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-References: <20230417065005.24967-1-yu.tu@amlogic.com>
- <20230417065005.24967-4-yu.tu@amlogic.com>
- <20230426111358.xh3gbhlvxj46ggi5@CAB-WSD-L081021>
- <3be758e3-aa41-0003-fd1a-324b8dd4267a@amlogic.com>
- <20230427091141.q3fky7ywnu4lsddk@CAB-WSD-L081021>
-From:   Yu Tu <yu.tu@amlogic.com>
-In-Reply-To: <20230427091141.q3fky7ywnu4lsddk@CAB-WSD-L081021>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR04CA0178.apcprd04.prod.outlook.com
- (2603:1096:4:14::16) To SG2PR03MB6730.apcprd03.prod.outlook.com
- (2603:1096:4:1d5::9)
+        with ESMTP id S230362AbjEDJ17 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 05:27:59 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE8A8448F
+        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 02:27:54 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-956ff2399b1so39854766b.3
+        for <linux-clk@vger.kernel.org>; Thu, 04 May 2023 02:27:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1683192473; x=1685784473;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DlMPQyYkhlk13xRSyZTO32Sp+zpmDMVqz0Ddt7Xu0ic=;
+        b=VMfi/eKlTpOiQGdcer3Xw1SfySJ/BVKxjIIg/gJpArsjkJq9dBPo5KD83TWlf1CWb6
+         mcpunK28CJs8j8Gp5qKkPKSJ9xB1L/GW3zcsyzcvQeqvE3Wa3b1+AyE+5VxqJ+JviUW/
+         4zr5+qCP2kSpvCi0oes94gltmU4SIakrf7nSLuzc7PjqRsT2sDc6lgSbPijBWJ1GkKLr
+         S+oERSKaLKjWBB9Q61IE2seejoD+Bvis6uXaWakp2y3RfGtmGia3bTxSvXPXYHgmya3S
+         +HR8wMlO3MFq35xTfmVQsFGJ1b/NaRwg3KqjGnVc0Ppil6QSjxmmp01w3n3vdB3xxpLa
+         P6/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683192473; x=1685784473;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DlMPQyYkhlk13xRSyZTO32Sp+zpmDMVqz0Ddt7Xu0ic=;
+        b=ZZAbhnDQ/M768w/Cb6CxJIgnf6n6EIgxcLRFWqzTEK7LZi+q3Q21qATrgK4mcSDtdy
+         hMsOmk1YZcpa2dChunwp1seZkyDvNIvb8grGyqeRiSrGLo0I3DD371nMILMahqrN/YJ+
+         xrZDUQXZPExDJZ+VEw7IOU39ejMjwEjdO2dehTNf4szvuO3DCB5EB5WNSqOZcEWRVNNx
+         lQ6DazGHj8J9gmSgvTbUHSsvhebGrJybq/kdlF7xB7U4KpnBCPK+h3s41s7gU5vrOZg9
+         QfD2txjD+HfGfDd6pLiQ1pBub7uhkpeYzcmXOvi3aCBZuf7D5hpzlQZ6F8xLeK82RaQM
+         VvwA==
+X-Gm-Message-State: AC+VfDxlT5MSRe7GQs0O+Wpi425M14AExbNWV/pxkQcS9nzLuQ1YT2lF
+        GYqLsVPvWwM35kLhK1d46VPMBg==
+X-Google-Smtp-Source: ACHHUZ7VsjaA4NSROmR/Pe0H2JWimn3m3skAh5y/Le2jI+U44997g5Nd80134aQSYF1P5OqUsYh3VQ==
+X-Received: by 2002:a17:907:3209:b0:94e:8d26:f610 with SMTP id xg9-20020a170907320900b0094e8d26f610mr5013794ejb.28.1683192473030;
+        Thu, 04 May 2023 02:27:53 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id my34-20020a1709065a6200b0094f6f45b2c1sm18585796ejc.156.2023.05.04.02.27.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 May 2023 02:27:52 -0700 (PDT)
+Date:   Thu, 4 May 2023 11:27:51 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH v7 6/8] ptp_ocp: implement DPLL ops
+Message-ID: <ZFN6lwE2Up8xV+I6@nanopsycho>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+ <20230428002009.2948020-7-vadfed@meta.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PR03MB6730:EE_|SEZPR03MB6959:EE_
-X-MS-Office365-Filtering-Correlation-Id: de291d32-c2ae-4f0d-ec3c-08db4c80b9c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: WjdTXtNtukLGOXbC0IQMWx7IRNm7pk4d88SapbwczNTWlMsLtSjT7bPPLc8c7rTkJR+cojaQwv3u8O+MYuOhKCZGv6zQgVTjXFl62dwyReNKPQo8BTDS/VzuIQHb0iDrBXJqsiPQMMRU1vkcZRj8Q6BWNdRglHzAuSwdmWGNtnXSUZcCDIh+QBhjk9i6aijgwUlswpGXYWu56nBFPCW95iQpWvjZDuvF14N0tE9TMRjfWvhgiaLEuVOjvG7omNS05VopnipFe7bfk99RsXc5kd8C5NR7fWH8OE0xz8UJApiL/Ts2xjmdv0pH1rTbSGGLr73QdcbXtBbn/nGhxfK3QyV+aH0j328rDXx3TvDkWWIUut0mvK16uSChOBwuqjMhi88DvIGjSUuDgfgS5Zfnmwb3kkH3M+widevQ6mmjH2mUPPmk57W/NpFk8tO67s4O8wzh6N7cUiR/Ro8e9wT1DDuK+bIX+8IRsw0+GNs1Uaqv3ikATvdI+peLMDa2bh+ZJZsIcYMdgUEdKXBES6Qh7JNHs8X22+Dwynlv8zSEZooB9rDCNl9LvpxTELCyYWGNfkvpLKAkTEC6ihtbZy7EAshIwbJX3vhrnlpd69G7iYrbWZudD01Oea6jaRQ5D4Ozjbhfhj2fFlLbiHSjsCjfeQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR03MB6730.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(376002)(39850400004)(396003)(366004)(346002)(451199021)(7416002)(66946007)(6666004)(4326008)(478600001)(66476007)(66556008)(6916009)(5660300002)(966005)(44832011)(8936002)(8676002)(30864003)(6506007)(6512007)(26005)(2906002)(53546011)(31686004)(316002)(6486002)(41300700001)(107886003)(54906003)(2616005)(83380400001)(186003)(86362001)(31696002)(38100700002)(36756003)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eEVEK1ltZFpKeGVMZnhlQW5aYlRFdTZYWjVtdHVHc0JQVzAvNjBCU1FmamtM?=
- =?utf-8?B?dWlwc2tKcW5tY1kxcC9UaUwxeVEzUEd4UTRLTFNHeE9QNTdYeGlLV01CSUNE?=
- =?utf-8?B?TUdhK2lPdTJXSUxsSnYvQlZtcE5qbHFvR3ZNdDdsSm5peXZQbkpFTWxuUnpj?=
- =?utf-8?B?aDZJblBEd2NiL1o5WlRGdGw0WjJYNUF6V2NVeW9UMkF2STF0cDFmd1lBdlVa?=
- =?utf-8?B?OThXZjJEUmdQZ0ZNRCtNd3ZXYmJlSE5XTTlpeGhUNXRHclNrQ2lMQU13ZXZC?=
- =?utf-8?B?M3B1bFZVQWRiU1JWRG0xNmV1akFRZUJ6dU9IdEtQNmdLa3lDbHM5N3pkVTZo?=
- =?utf-8?B?MUszNEcrYlNER09TaUErTkQweEIrMERVOFRvdEJQQ1hZZHlKZHdwSWhjYXFG?=
- =?utf-8?B?V1hVWk5SeEs3TnM2aFhSTkVtWnJLMWsveUdFUWZ1ZlpwWjVqUTltRFJzbStD?=
- =?utf-8?B?bml6NkZvUE0rMFZ1eGZEQ0YzQncvT2g1WUYvZC9ORnB2Uk5GSDZYa21jUXFT?=
- =?utf-8?B?RFU2bXRBSkFENDhxWTVkdUFxMCtpRWZtdGExbDVFejQzanNxUStLdmNraHJ4?=
- =?utf-8?B?ZWl1U3ZZcjNDd3I2amZvOFVPT0FDOTZCMWhEdmdVaUpONFdUTmpjYW9NWDNC?=
- =?utf-8?B?V3ZPbXJSR3grTm1ZVVExNDZYYkQ3b0ZoRFBqMnQzSEJ4azZZRE55QVhBM3pa?=
- =?utf-8?B?LytLWVBlWnFRTTlIYWp3d0Uxck9NZWx0WW8vd2tTc1IzN3NIL1AxalZLU0gy?=
- =?utf-8?B?OGluQ2Y0OUxOVHFlQ09ubFN0NEpFNkJMU2w5SFk5alZMWGR0ZHlPZmxHR0JY?=
- =?utf-8?B?WW81SG9aVHMyMlFkSEZ5aUR2TkV0QU8wMDdlWlYyMFhlQkp4MVZEWWRlYVJD?=
- =?utf-8?B?M0ZqREVqMjRZT0tUL3dFcks2cXNZelJnWTZqa3dKc1lySFUzRGVRVTJTTWlh?=
- =?utf-8?B?SE12cDlkQlFTR0JacDFBMDJFNUVrOHlnUlExUjZzcGNPenBNKzd3bzFmNlhn?=
- =?utf-8?B?eXhFNU0zaWxpYmR6RHQzNWkxQVdTdXJ4VElrUklTVk5LWU52V1E2YlB3NFkr?=
- =?utf-8?B?UGd3S2s3dDkxZGVLNjkxeTlzTG9zWjI3Q01lU0JLb2YybWlJODhwOVpQbG5q?=
- =?utf-8?B?VjhRS0pGNTlQZXJzUEgvWlRaV2xXZEZCNXZ0QVgzbVlBTk1WWG4wb3lFZUhV?=
- =?utf-8?B?V1Q1Tnhlamh5T08vQjVCMFNoTEhiV2l3VUtWaEh4QTl2NjgySjFSTTQ4K1Nm?=
- =?utf-8?B?eDk4VWRvMHlHOXovR2xUek1xU0JjbXpRQVZ1MnZtMG01dTJ6cCtGVTQwTnFt?=
- =?utf-8?B?TUFwS0tybjlMVTZneHBPaFp3M2NaQVArRldSMVlPNWtqaDY3M3VFL1d6YU9k?=
- =?utf-8?B?ZHJ6VFAxc3Azb1huZDhMWFF3dHJvNFlSTkRPMS9XbFF2ME8xVytEelh0eEg5?=
- =?utf-8?B?SGo5dTR4NFVrWHVRMkUwT2lsWjRwU0JXbHRpSmhqSHd2cWM4TXFPcnZXWnZ2?=
- =?utf-8?B?MnoyZG5OUFVKVjA5NUhKL1hBMldlMkxRMDkxWm5xK3dacENiSmw5Z2xVQU9H?=
- =?utf-8?B?d29kOThqVmRLMDNtZ1VWZGI4ZXpaUlhKTWtYTXhKOHVveDIxTnJ0UHlnL0M4?=
- =?utf-8?B?OE4wenptMUZUS2JEd1kxN3ZncXhEdGkrNkpqTW9mUjZNTityaDJYamZOYU9B?=
- =?utf-8?B?VHVpN1JvTFAwSFd4bW41ZnBlQ2pNcmNXZ1diME5HWWtLZFNjVzhxTklkR0Vy?=
- =?utf-8?B?aVpnbTVMK2VCWmE1T29IOGFDLzJxc1IvZnJvZkNiU29NSVhXUUFLUkRUSU4y?=
- =?utf-8?B?WS9Sb1I1Ky92bzQwdk1PaktSQ1B2bmp6ODRlQUtPcHhmSVE1b1M2Q3JZbEcw?=
- =?utf-8?B?OUJISDk4ak5haW5nUU9naTRVcVJoQkZXOXdOY0lrbzJZNTVEYktUdHhUQlRP?=
- =?utf-8?B?TEV0QjA3ZmIzaWhVNFV4THBvczRYUVFydnovWTIvVVg0cHhkaGJMRkR6Nmkv?=
- =?utf-8?B?dk9MYWYxbXF1ZHVkU2o3QkVQaXMxUTZma28wbXBnbWk5dkZpNDBaNkNxdFZL?=
- =?utf-8?B?cDFQWmZMMVhSVlRXNEJnTDZ5emhJbWNUKzgrRUhMSmF5SzY4WVZGeFdkRXVJ?=
- =?utf-8?Q?oPFosfrlxSXyuSq+K0B8hUJ33?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de291d32-c2ae-4f0d-ec3c-08db4c80b9c5
-X-MS-Exchange-CrossTenant-AuthSource: SG2PR03MB6730.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2023 09:19:56.4163
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UoCYkgngZOqSIUgw183sDdTvABAZUJueS/0F7gAZj97alshVWZE9pMbIS/Rjo9b2wP0GZG1ESvOse8a5nP2Rug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB6959
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230428002009.2948020-7-vadfed@meta.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Fri, Apr 28, 2023 at 02:20:07AM CEST, vadfed@meta.com wrote:
+>From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>
+>Implement basic DPLL operations in ptp_ocp driver as the
+>simplest example of using new subsystem.
+>
+>Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>---
+> drivers/ptp/Kconfig   |   1 +
+> drivers/ptp/ptp_ocp.c | 327 +++++++++++++++++++++++++++++++++++-------
+> 2 files changed, 276 insertions(+), 52 deletions(-)
+>
+>diff --git a/drivers/ptp/Kconfig b/drivers/ptp/Kconfig
+>index b00201d81313..e3575c2e34dc 100644
+>--- a/drivers/ptp/Kconfig
+>+++ b/drivers/ptp/Kconfig
+>@@ -177,6 +177,7 @@ config PTP_1588_CLOCK_OCP
+> 	depends on COMMON_CLK
+> 	select NET_DEVLINK
+> 	select CRC16
+>+	select DPLL
+> 	help
+> 	  This driver adds support for an OpenCompute time card.
+> 
+>diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+>index 2b63f3487645..100e5da0aeb3 100644
+>--- a/drivers/ptp/ptp_ocp.c
+>+++ b/drivers/ptp/ptp_ocp.c
+>@@ -23,6 +23,7 @@
+> #include <linux/mtd/mtd.h>
+> #include <linux/nvmem-consumer.h>
+> #include <linux/crc16.h>
+>+#include <linux/dpll.h>
+> 
+> #define PCI_VENDOR_ID_FACEBOOK			0x1d9b
+> #define PCI_DEVICE_ID_FACEBOOK_TIMECARD		0x0400
+>@@ -261,12 +262,21 @@ enum ptp_ocp_sma_mode {
+> 	SMA_MODE_OUT,
+> };
+> 
+>+static struct dpll_pin_frequency ptp_ocp_sma_freq[] = {
+
+const
+
+>+	DPLL_PIN_FREQUENCY_1PPS,
+>+	DPLL_PIN_FREQUENCY_10MHZ,
+>+	DPLL_PIN_FREQUENCY_IRIG_B,
+>+	DPLL_PIN_FREQUENCY_DCF77,
+>+};
+>+
+> struct ptp_ocp_sma_connector {
+> 	enum	ptp_ocp_sma_mode mode;
+> 	bool	fixed_fcn;
+> 	bool	fixed_dir;
+> 	bool	disabled;
+> 	u8	default_fcn;
+>+	struct dpll_pin		   *dpll_pin;
+>+	struct dpll_pin_properties dpll_prop;
+> };
+> 
+> struct ocp_attr_group {
+>@@ -295,6 +305,7 @@ struct ptp_ocp_serial_port {
+> 
+> #define OCP_BOARD_ID_LEN		13
+> #define OCP_SERIAL_LEN			6
+>+#define OCP_SMA_NUM			4
+> 
+> struct ptp_ocp {
+> 	struct pci_dev		*pdev;
+>@@ -351,8 +362,9 @@ struct ptp_ocp {
+> 	u32			ts_window_adjust;
+> 	u64			fw_cap;
+> 	struct ptp_ocp_signal	signal[4];
+>-	struct ptp_ocp_sma_connector sma[4];
+>+	struct ptp_ocp_sma_connector sma[OCP_SMA_NUM];
+> 	const struct ocp_sma_op *sma_op;
+>+	struct dpll_device *dpll;
+> };
+> 
+> #define OCP_REQ_TIMESTAMP	BIT(0)
+>@@ -836,6 +848,7 @@ static DEFINE_IDR(ptp_ocp_idr);
+> struct ocp_selector {
+> 	const char *name;
+> 	int value;
+>+	u64 frequency;
+> };
+> 
+> static const struct ocp_selector ptp_ocp_clock[] = {
+>@@ -856,31 +869,31 @@ static const struct ocp_selector ptp_ocp_clock[] = {
+> #define SMA_SELECT_MASK		GENMASK(14, 0)
+> 
+> static const struct ocp_selector ptp_ocp_sma_in[] = {
+>-	{ .name = "10Mhz",	.value = 0x0000 },
+>-	{ .name = "PPS1",	.value = 0x0001 },
+>-	{ .name = "PPS2",	.value = 0x0002 },
+>-	{ .name = "TS1",	.value = 0x0004 },
+>-	{ .name = "TS2",	.value = 0x0008 },
+>-	{ .name = "IRIG",	.value = 0x0010 },
+>-	{ .name = "DCF",	.value = 0x0020 },
+>-	{ .name = "TS3",	.value = 0x0040 },
+>-	{ .name = "TS4",	.value = 0x0080 },
+>-	{ .name = "FREQ1",	.value = 0x0100 },
+>-	{ .name = "FREQ2",	.value = 0x0200 },
+>-	{ .name = "FREQ3",	.value = 0x0400 },
+>-	{ .name = "FREQ4",	.value = 0x0800 },
+>-	{ .name = "None",	.value = SMA_DISABLE },
+>+	{ .name = "10Mhz",  .value = 0x0000,      .frequency = 10000000 },
+>+	{ .name = "PPS1",   .value = 0x0001,      .frequency = 1 },
+>+	{ .name = "PPS2",   .value = 0x0002,      .frequency = 1 },
+>+	{ .name = "TS1",    .value = 0x0004,      .frequency = 0 },
+>+	{ .name = "TS2",    .value = 0x0008,      .frequency = 0 },
+>+	{ .name = "IRIG",   .value = 0x0010,      .frequency = 10000 },
+>+	{ .name = "DCF",    .value = 0x0020,      .frequency = 77500 },
+>+	{ .name = "TS3",    .value = 0x0040,      .frequency = 0 },
+>+	{ .name = "TS4",    .value = 0x0080,      .frequency = 0 },
+>+	{ .name = "FREQ1",  .value = 0x0100,      .frequency = 0 },
+>+	{ .name = "FREQ2",  .value = 0x0200,      .frequency = 0 },
+>+	{ .name = "FREQ3",  .value = 0x0400,      .frequency = 0 },
+>+	{ .name = "FREQ4",  .value = 0x0800,      .frequency = 0 },
+>+	{ .name = "None",   .value = SMA_DISABLE, .frequency = 0 },
+> 	{ }
+> };
+> 
+> static const struct ocp_selector ptp_ocp_sma_out[] = {
+>-	{ .name = "10Mhz",	.value = 0x0000 },
+>-	{ .name = "PHC",	.value = 0x0001 },
+>-	{ .name = "MAC",	.value = 0x0002 },
+>-	{ .name = "GNSS1",	.value = 0x0004 },
+>-	{ .name = "GNSS2",	.value = 0x0008 },
+>-	{ .name = "IRIG",	.value = 0x0010 },
+>-	{ .name = "DCF",	.value = 0x0020 },
+>+	{ .name = "10Mhz",	.value = 0x0000,  .frequency = 10000000 },
+>+	{ .name = "PHC",	.value = 0x0001,  .frequency = 1 },
+>+	{ .name = "MAC",	.value = 0x0002,  .frequency = 1 },
+>+	{ .name = "GNSS1",	.value = 0x0004,  .frequency = 1 },
+>+	{ .name = "GNSS2",	.value = 0x0008,  .frequency = 1 },
+>+	{ .name = "IRIG",	.value = 0x0010,  .frequency = 10000 },
+>+	{ .name = "DCF",	.value = 0x0020,  .frequency = 77000 },
+> 	{ .name = "GEN1",	.value = 0x0040 },
+> 	{ .name = "GEN2",	.value = 0x0080 },
+> 	{ .name = "GEN3",	.value = 0x0100 },
+>@@ -891,15 +904,15 @@ static const struct ocp_selector ptp_ocp_sma_out[] = {
+> };
+> 
+> static const struct ocp_selector ptp_ocp_art_sma_in[] = {
+>-	{ .name = "PPS1",	.value = 0x0001 },
+>-	{ .name = "10Mhz",	.value = 0x0008 },
+>+	{ .name = "PPS1",	.value = 0x0001,  .frequency = 1 },
+>+	{ .name = "10Mhz",	.value = 0x0008,  .frequency = 1000000 },
+> 	{ }
+> };
+> 
+> static const struct ocp_selector ptp_ocp_art_sma_out[] = {
+>-	{ .name = "PHC",	.value = 0x0002 },
+>-	{ .name = "GNSS",	.value = 0x0004 },
+>-	{ .name = "10Mhz",	.value = 0x0010 },
+>+	{ .name = "PHC",	.value = 0x0002,  .frequency = 1 },
+>+	{ .name = "GNSS",	.value = 0x0004,  .frequency = 1 },
+>+	{ .name = "10Mhz",	.value = 0x0010,  .frequency = 10000000 },
+> 	{ }
+> };
+> 
+>@@ -2283,22 +2296,34 @@ ptp_ocp_sma_fb_set_inputs(struct ptp_ocp *bp, int sma_nr, u32 val)
+> static void
+> ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
+> {
+>+	struct dpll_pin_properties prop = {
+
+Why don't you have this as static const outside the function?
 
 
-On 2023/4/27 17:11, Dmitry Rokosov wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On Thu, Apr 27, 2023 at 04:38:20PM +0800, Yu Tu wrote:
->>
->>
->> On 2023/4/26 19:13, Dmitry Rokosov wrote:
->>> [Some people who received this message don't often get email from ddrokosov@sberdevices.ru. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>>
->>> [ EXTERNAL EMAIL ]
->>>
->>> On Mon, Apr 17, 2023 at 02:50:04PM +0800, Yu Tu wrote:
->>>> Add the S4 PLL clock controller driver in the s4 SoC family.
->>>>
->>>> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
->>>> ---
->>>>    drivers/clk/meson/Kconfig  |  13 +
->>>>    drivers/clk/meson/Makefile |   1 +
->>>>    drivers/clk/meson/s4-pll.c | 902 +++++++++++++++++++++++++++++++++++++
->>>>    drivers/clk/meson/s4-pll.h |  87 ++++
->>>>    4 files changed, 1003 insertions(+)
->>>>    create mode 100644 drivers/clk/meson/s4-pll.c
->>>>    create mode 100644 drivers/clk/meson/s4-pll.h
->>>>
->>>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->>>> index fc002c155bc3..a663c90a3f3b 100644
->>>> --- a/drivers/clk/meson/Kconfig
->>>> +++ b/drivers/clk/meson/Kconfig
->>>> @@ -115,4 +115,17 @@ config COMMON_CLK_G12A
->>>>         help
->>>>           Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
->>>>           devices, aka g12a. Say Y if you want peripherals to work.
->>>> +
->>>> +config COMMON_CLK_S4_PLL
->>>> +     tristate "S4 SoC PLL clock controllers support"
->>>> +     depends on ARM64
->>>> +     default y
->>>> +     select COMMON_CLK_MESON_MPLL
->>>> +     select COMMON_CLK_MESON_PLL
->>>> +     select COMMON_CLK_MESON_REGMAP
->>>> +     help
->>>> +       Support for the pll clock controller on Amlogic S805X2 and S905Y4 devices,
->>>> +       aka s4. Amlogic S805X2 and S905Y4 devices include AQ222 and AQ229.
->>>> +       Say Y if you want the board to work, because plls are the parent of most
->>>> +       peripherals.
->>>>    endmenu
->>>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->>>> index 6eca2a406ee3..376f49cc13f1 100644
->>>> --- a/drivers/clk/meson/Makefile
->>>> +++ b/drivers/clk/meson/Makefile
->>>> @@ -19,3 +19,4 @@ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
->>>>    obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
->>>>    obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
->>>>    obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
->>>> +obj-$(CONFIG_COMMON_CLK_S4_PLL) += s4-pll.o
->>>> diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
->>>> new file mode 100644
->>>> index 000000000000..5a34d304adf7
->>>> --- /dev/null
->>>> +++ b/drivers/clk/meson/s4-pll.c
->>>> @@ -0,0 +1,902 @@
->>>> +// SPDX-License-Identifier: GPL-2.0+
->>>> +/*
->>>> + * Amlogic Meson-S4 PLL Clock Controller Driver
->>>> + *
->>>> + * Copyright (c) 2021 Amlogic, inc.
->>>> + * Author: Yu Tu <yu.tu@amlogic.com>
->>>> + */
->>>> +
->>>> +#include <linux/clk-provider.h>
->>>> +#include <linux/of_device.h>
->>>> +#include <linux/platform_device.h>
->>>> +
->>>> +#include "clk-mpll.h"
->>>> +#include "clk-pll.h"
->>>> +#include "clk-regmap.h"
->>>> +#include "s4-pll.h"
->>>> +
->>>> +static DEFINE_SPINLOCK(meson_clk_lock);
->>>> +
->>>> +static struct clk_regmap s4_fixed_pll_dco = {
->>>> +     .data = &(struct meson_clk_pll_data){
->>>> +             .en = {
->>>> +                     .reg_off = ANACTRL_FIXPLL_CTRL0,
->>>> +                     .shift   = 28,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .m = {
->>>> +                     .reg_off = ANACTRL_FIXPLL_CTRL0,
->>>> +                     .shift   = 0,
->>>> +                     .width   = 8,
->>>> +             },
->>>> +             .n = {
->>>> +                     .reg_off = ANACTRL_FIXPLL_CTRL0,
->>>> +                     .shift   = 10,
->>>> +                     .width   = 5,
->>>> +             },
->>>> +             .frac = {
->>>> +                     .reg_off = ANACTRL_FIXPLL_CTRL1,
->>>> +                     .shift   = 0,
->>>> +                     .width   = 17,
->>>> +             },
->>>> +             .l = {
->>>> +                     .reg_off = ANACTRL_FIXPLL_CTRL0,
->>>> +                     .shift   = 31,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .rst = {
->>>> +                     .reg_off = ANACTRL_FIXPLL_CTRL0,
->>>> +                     .shift   = 29,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fixed_pll_dco",
->>>> +             /*
->>>> +              * This clock is a fixed value (4GHz) that is initialized by ROMcode.
->>>> +              * This clock won't ever change at runtime.
->>>> +              * The chip design determines that this clock cannot be changed after
->>>> +              * initialization. To prevent system crash caused by changing
->>>> +              * fixed related register in kernel phase. This register is not
->>>> +              * writable in the kernel phase.
->>>> +              * So we use ro_ops.
->>>> +              */
->>>> +             .ops = &meson_clk_pll_ro_ops,
->>>> +             .parent_data = (const struct clk_parent_data []) {
->>>> +                     { .fw_name = "xtal", }
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_fixed_pll = {
->>>> +     .data = &(struct clk_regmap_div_data){
->>>> +             .offset = ANACTRL_FIXPLL_CTRL0,
->>>> +             .shift = 16,
->>>> +             .width = 2,
->>>> +             .flags = CLK_DIVIDER_POWER_OF_TWO,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fixed_pll",
->>>> +             /*
->>>> +              * This clock is a fixed value (2GHz) that is initialized by ROMcode.
->>>> +              * This clock won't ever change at runtime.
->>>> +              * The chip design determines that this clock cannot be changed after
->>>> +              * initialization. To prevent system crash caused by changing
->>>> +              * fixed related register in kernel phase. This register is not
->>>> +              * writable in the kernel phase.
->>>> +              * So we use ro_ops.
->>>> +              */
->>>> +             .ops = &clk_regmap_divider_ro_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fixed_pll_dco.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +             /*
->>>> +              * This clock won't ever change at runtime so
->>>> +              * CLK_SET_RATE_PARENT is not required
->>>> +              */
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_fixed_factor s4_fclk_div2_div = {
->>>> +     .mult = 1,
->>>> +     .div = 2,
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div2_div",
->>>> +             .ops = &clk_fixed_factor_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) { &s4_fixed_pll.hw },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_fclk_div2 = {
->>>> +     .data = &(struct clk_regmap_gate_data){
->>>> +             .offset = ANACTRL_FIXPLL_CTRL1,
->>>> +             .bit_idx = 24,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div2",
->>>> +             /*
->>>> +              * This clock is a fixed value (1GHz) that is initialized by ROMcode.
->>>> +              * This clock won't ever ungate at runtime.
->>>> +              * The chip design determines that this clock cannot be changed after
->>>> +              * initialization. To prevent system crash caused by changing
->>>> +              * fixed related register in kernel phase. This register is not
->>>> +              * writable in the kernel phase.
->>>> +              * So we use ro_ops.
->>>> +              */
->>>
->>> The above comment has been copied and pasted many times.
->>> Please collapse it and refer to it from specific locations.
->>
->> Just three times. The goal is to make it clear to the viewer.
->>
-> 
-> I think, reference to one time mentioned comment is clear for viewer too.
-> Also Jerome has pointed to this problem for the A1 driver as well:
-> 
-> https://lore.kernel.org/all/1jtty6o5so.fsf@starbuckisacylon.baylibre.com/
+>+		.label = NULL,
 
-I will refer to your way in A1.
+Pointless init.
 
-> 
->>>
->>>> +             .ops = &clk_regmap_gate_ro_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fclk_div2_div.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_fixed_factor s4_fclk_div3_div = {
->>>> +     .mult = 1,
->>>> +     .div = 3,
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div3_div",
->>>> +             .ops = &clk_fixed_factor_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) { &s4_fixed_pll.hw },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_fclk_div3 = {
->>>> +     .data = &(struct clk_regmap_gate_data){
->>>> +             .offset = ANACTRL_FIXPLL_CTRL1,
->>>> +             .bit_idx = 20,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div3",
->>>> +             .ops = &clk_regmap_gate_ro_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fclk_div3_div.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_fixed_factor s4_fclk_div4_div = {
->>>> +     .mult = 1,
->>>> +     .div = 4,
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div4_div",
->>>> +             .ops = &clk_fixed_factor_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) { &s4_fixed_pll.hw },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_fclk_div4 = {
->>>> +     .data = &(struct clk_regmap_gate_data){
->>>> +             .offset = ANACTRL_FIXPLL_CTRL1,
->>>> +             .bit_idx = 21,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div4",
->>>> +             .ops = &clk_regmap_gate_ro_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fclk_div4_div.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_fixed_factor s4_fclk_div5_div = {
->>>> +     .mult = 1,
->>>> +     .div = 5,
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div5_div",
->>>> +             .ops = &clk_fixed_factor_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) { &s4_fixed_pll.hw },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_fclk_div5 = {
->>>> +     .data = &(struct clk_regmap_gate_data){
->>>> +             .offset = ANACTRL_FIXPLL_CTRL1,
->>>> +             .bit_idx = 22,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div5",
->>>> +             .ops = &clk_regmap_gate_ro_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fclk_div5_div.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_fixed_factor s4_fclk_div7_div = {
->>>> +     .mult = 1,
->>>> +     .div = 7,
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div7_div",
->>>> +             .ops = &clk_fixed_factor_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) { &s4_fixed_pll.hw },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_fclk_div7 = {
->>>> +     .data = &(struct clk_regmap_gate_data){
->>>> +             .offset = ANACTRL_FIXPLL_CTRL1,
->>>> +             .bit_idx = 23,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div7",
->>>> +             .ops = &clk_regmap_gate_ro_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fclk_div7_div.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_fixed_factor s4_fclk_div2p5_div = {
->>>> +     .mult = 2,
->>>> +     .div = 5,
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div2p5_div",
->>>> +             .ops = &clk_fixed_factor_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fixed_pll.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_fclk_div2p5 = {
->>>> +     .data = &(struct clk_regmap_gate_data){
->>>> +             .offset = ANACTRL_FIXPLL_CTRL1,
->>>> +             .bit_idx = 25,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "fclk_div2p5",
->>>> +             .ops = &clk_regmap_gate_ro_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_fclk_div2p5_div.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static const struct pll_mult_range s4_gp0_pll_mult_range = {
->>>> +     .min = 125,
->>>> +     .max = 250,
->>>> +};
->>>> +
->>>> +/*
->>>> + * Internal gp0 pll emulation configuration parameters
->>>> + */
->>>> +static const struct reg_sequence s4_gp0_init_regs[] = {
->>>> +     { .reg = ANACTRL_GP0PLL_CTRL1,  .def = 0x00000000 },
->>>> +     { .reg = ANACTRL_GP0PLL_CTRL2,  .def = 0x00000000 },
->>>> +     { .reg = ANACTRL_GP0PLL_CTRL3,  .def = 0x48681c00 },
->>>> +     { .reg = ANACTRL_GP0PLL_CTRL4,  .def = 0x88770290 },
->>>> +     { .reg = ANACTRL_GP0PLL_CTRL5,  .def = 0x39272000 },
->>>> +     { .reg = ANACTRL_GP0PLL_CTRL6,  .def = 0x56540000 }
->>>
->>> Please ensure that the initialization sequence values do not overlap
->>> with the below pll_data bits that are managed during runtime.
->>>
->>
->> That's right. There is a timing requirement for PLL initialization.
->>
-> 
-> Okay, we have already discussed this in another patch series for A1 clock
-> drivers, and some overlaps were found.
-> I just want to help you find potential problems.
-> 
-> You can find the discussion here:
-> 
-> https://lore.kernel.org/linux-amlogic/1jr0u2azfi.fsf@starbuckisacylon.baylibre.com/ >
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_gp0_pll_dco = {
->>>> +     .data = &(struct meson_clk_pll_data){
->>>> +             .en = {
->>>> +                     .reg_off = ANACTRL_GP0PLL_CTRL0,
->>>> +                     .shift   = 28,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .m = {
->>>> +                     .reg_off = ANACTRL_GP0PLL_CTRL0,
->>>> +                     .shift   = 0,
->>>> +                     .width   = 8,
->>>> +             },
->>>> +             .n = {
->>>> +                     .reg_off = ANACTRL_GP0PLL_CTRL0,
->>>> +                     .shift   = 10,
->>>> +                     .width   = 5,
->>>> +             },
->>>> +             .frac = {
->>>> +                     .reg_off = ANACTRL_GP0PLL_CTRL1,
->>>> +                     .shift   = 0,
->>>> +                     .width   = 17,
->>>> +             },
->>>> +             .l = {
->>>> +                     .reg_off = ANACTRL_GP0PLL_CTRL0,
->>>> +                     .shift   = 31,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .rst = {
->>>> +                     .reg_off = ANACTRL_GP0PLL_CTRL0,
->>>> +                     .shift   = 29,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .range = &s4_gp0_pll_mult_range,
->>>> +             .init_regs = s4_gp0_init_regs,
->>>> +             .init_count = ARRAY_SIZE(s4_gp0_init_regs),
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "gp0_pll_dco",
->>>> +             .ops = &meson_clk_pll_ops,
->>>> +             .parent_data = (const struct clk_parent_data []) {
->>>> +                     { .fw_name = "xtal", }
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_gp0_pll = {
->>>> +     .data = &(struct clk_regmap_div_data){
->>>> +             .offset = ANACTRL_GP0PLL_CTRL0,
->>>> +             .shift = 16,
->>>> +             .width = 3,
->>>> +             .flags = (CLK_DIVIDER_POWER_OF_TWO |
->>>> +                       CLK_DIVIDER_ROUND_CLOSEST),
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "gp0_pll",
->>>> +             .ops = &clk_regmap_divider_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_gp0_pll_dco.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +             .flags = CLK_SET_RATE_PARENT,
->>>> +     },
->>>> +};
->>>> +
->>>> +/*
->>>> + * Internal hifi pll emulation configuration parameters
->>>> + */
->>>> +static const struct reg_sequence s4_hifi_init_regs[] = {
->>>> +     { .reg = ANACTRL_HIFIPLL_CTRL1, .def = 0x00010e56 },
->>>> +     { .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00000000 },
->>>> +     { .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x6a285c00 },
->>>> +     { .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x65771290 },
->>>> +     { .reg = ANACTRL_HIFIPLL_CTRL5, .def = 0x39272000 },
->>>> +     { .reg = ANACTRL_HIFIPLL_CTRL6, .def = 0x56540000 }
->>>> +};
->>>
->>> Please ensure that the initialization sequence values do not overlap
->>> with the below pll_data bits that are managed during runtime.
->>
->> [...]
->>
->>>
->>>> +
->>>> +static struct clk_regmap s4_hifi_pll_dco = {
->>>> +     .data = &(struct meson_clk_pll_data){
->>>> +             .en = {
->>>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>>> +                     .shift   = 28,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .m = {
->>>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>>> +                     .shift   = 0,
->>>> +                     .width   = 8,
->>>> +             },
->>>> +             .n = {
->>>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>>> +                     .shift   = 10,
->>>> +                     .width   = 5,
->>>> +             },
->>>> +             .frac = {
->>>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL1,
->>>> +                     .shift   = 0,
->>>> +                     .width   = 17,
->>>> +             },
->>>> +             .l = {
->>>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>>> +                     .shift   = 31,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .rst = {
->>>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>>> +                     .shift   = 29,
->>>> +                     .width   = 1,
->>>> +             },
->>>> +             .range = &s4_gp0_pll_mult_range,
->>>> +             .init_regs = s4_hifi_init_regs,
->>>> +             .init_count = ARRAY_SIZE(s4_hifi_init_regs),
->>>> +             .flags = CLK_MESON_PLL_ROUND_CLOSEST,
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "hifi_pll_dco",
->>>> +             .ops = &meson_clk_pll_ops,
->>>> +             .parent_data = (const struct clk_parent_data []) {
->>>> +                     { .fw_name = "xtal", }
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +     },
->>>> +};
->>>> +
->>>> +static struct clk_regmap s4_hifi_pll = {
->>>> +     .data = &(struct clk_regmap_div_data){
->>>> +             .offset = ANACTRL_HIFIPLL_CTRL0,
->>>> +             .shift = 16,
->>>> +             .width = 2,
->>>> +             .flags = (CLK_DIVIDER_POWER_OF_TWO |
->>>> +                       CLK_DIVIDER_ROUND_CLOSEST),
->>>> +     },
->>>> +     .hw.init = &(struct clk_init_data){
->>>> +             .name = "hifi_pll",
->>>> +             .ops = &clk_regmap_divider_ops,
->>>> +             .parent_hws = (const struct clk_hw *[]) {
->>>> +                     &s4_hifi_pll_dco.hw
->>>> +             },
->>>> +             .num_parents = 1,
->>>> +             .flags = CLK_SET_RATE_PARENT,
->>>> +     },
->>>> +};
->>>> +
->>>
->>> [...]
->>>
->>>> +static int meson_s4_pll_probe(struct platform_device *pdev)
->>>> +{
->>>> +     struct device *dev = &pdev->dev;
->>>> +     struct regmap *regmap;
->>>> +     void __iomem *base;
->>>> +     int ret, i;
->>>> +
->>>> +     base = devm_platform_ioremap_resource(pdev, 0);
->>>> +     if (IS_ERR(base))
->>>> +             return PTR_ERR(base);
->>>> +
->>>> +     regmap = devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
->>>> +     if (IS_ERR(regmap))
->>>> +             return PTR_ERR(regmap);
->>>> +
->>>> +     ret = regmap_multi_reg_write(regmap, s4_init_regs, ARRAY_SIZE(s4_init_regs));
->>>> +     if (ret) {
->>>> +             dev_err(dev, "Failed to init registers\n");
->>>
->>> dev_err_probe()
->>
->> Clock drivers are the foundation on which other drivers run. There is no
->> need to EPROBE_DEFER. Also use EPROBE_DEFER as long as it is better to use
->> when getting the resource.
->>
-> 
-> At least you are requesting the ioremap resource, right? :-)
-> And clock driver has tristate config, so can be built as module.
 
-I took a look at where you suggested using dev_err_probe. Neither 
-regmap_multi_reg_write nor devm_clk_hw_register will return 
--EPROBE_DEFER. So is it unreasonable for you to use this in A1.
+>+		.type = DPLL_PIN_TYPE_EXT,
+>+		.capabilities = DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE,
+>+		.freq_supported_num = ARRAY_SIZE(ptp_ocp_sma_freq),
+>+		.freq_supported = ptp_ocp_sma_freq,
+>+
+>+	};
+> 	u32 reg;
+> 	int i;
+> 
+> 	/* defaults */
+>+	for (i = 0; i < OCP_SMA_NUM; i++) {
+>+		bp->sma[i].default_fcn = i & 1;
+>+		bp->sma[i].dpll_prop = prop;
+>+		bp->sma[i].dpll_prop.label = bp->ptp_info.pin_config[i].name;
+>+	}
+> 	bp->sma[0].mode = SMA_MODE_IN;
+> 	bp->sma[1].mode = SMA_MODE_IN;
+> 	bp->sma[2].mode = SMA_MODE_OUT;
+> 	bp->sma[3].mode = SMA_MODE_OUT;
+>-	for (i = 0; i < 4; i++)
+>-		bp->sma[i].default_fcn = i & 1;
+>-
+> 	/* If no SMA1 map, the pin functions and directions are fixed. */
+> 	if (!bp->sma_map1) {
+>-		for (i = 0; i < 4; i++) {
+>+		for (i = 0; i < OCP_SMA_NUM; i++) {
+> 			bp->sma[i].fixed_fcn = true;
+> 			bp->sma[i].fixed_dir = true;
+>+			bp->sma[1].dpll_prop.capabilities &=
+>+				~DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
+> 		}
+> 		return;
+> 	}
+>@@ -2308,7 +2333,7 @@ ptp_ocp_sma_fb_init(struct ptp_ocp *bp)
+> 	 */
+> 	reg = ioread32(&bp->sma_map2->gpio2);
+> 	if (reg == 0xffffffff) {
+>-		for (i = 0; i < 4; i++)
+>+		for (i = 0; i < OCP_SMA_NUM; i++)
+> 			bp->sma[i].fixed_dir = true;
+> 	} else {
+> 		reg = ioread32(&bp->sma_map1->gpio1);
+>@@ -2330,7 +2355,7 @@ static const struct ocp_sma_op ocp_fb_sma_op = {
+> };
+> 
+> static int
+>-ptp_ocp_fb_set_pins(struct ptp_ocp *bp)
+>+ptp_ocp_set_pins(struct ptp_ocp *bp)
+> {
+> 	struct ptp_pin_desc *config;
+> 	int i;
+>@@ -2397,16 +2422,16 @@ ptp_ocp_fb_board_init(struct ptp_ocp *bp, struct ocp_resource *r)
+> 
+> 	ptp_ocp_tod_init(bp);
+> 	ptp_ocp_nmea_out_init(bp);
+>-	ptp_ocp_sma_init(bp);
+> 	ptp_ocp_signal_init(bp);
+> 
+> 	err = ptp_ocp_attr_group_add(bp, fb_timecard_groups);
+> 	if (err)
+> 		return err;
+> 
+>-	err = ptp_ocp_fb_set_pins(bp);
+>+	err = ptp_ocp_set_pins(bp);
+> 	if (err)
+> 		return err;
+>+	ptp_ocp_sma_init(bp);
+> 
+> 	return ptp_ocp_init_clock(bp);
+> }
+>@@ -2446,6 +2471,14 @@ ptp_ocp_register_resources(struct ptp_ocp *bp, kernel_ulong_t driver_data)
+> static void
+> ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+> {
+>+	struct dpll_pin_properties prop = {
+>+		.label = NULL,
+>+		.type = DPLL_PIN_TYPE_EXT,
+>+		.capabilities = 0,
 
+Same comment as to the similar prop struct above. Plus another pointless
+init here.
+
+
+>+		.freq_supported_num = ARRAY_SIZE(ptp_ocp_sma_freq),
+>+		.freq_supported = ptp_ocp_sma_freq,
+>+
+>+	};
+> 	u32 reg;
+> 	int i;
 > 
->>>
->>>> +             return ret;
->>>> +     }
->>>> +
->>>> +     /* Populate regmap for the regmap backed clocks */
->>>> +     for (i = 0; i < ARRAY_SIZE(s4_pll_clk_regmaps); i++)
->>>> +             s4_pll_clk_regmaps[i]->map = regmap;
->>>> +
->>>> +     for (i = 0; i < s4_pll_hw_onecell_data.num; i++) {
->>>> +             /* array might be sparse */
->>>> +             if (!s4_pll_hw_onecell_data.hws[i])
->>>> +                     continue;
->>>> +
->>>> +             ret = devm_clk_hw_register(dev, s4_pll_hw_onecell_data.hws[i]);
->>>> +             if (ret) {
->>>> +                     dev_err(dev, "Clock registration failed\n");
->>>
->>> dev_err_probe()
->>
->> [...]
->>
->>>
->>>> +                     return ret;
->>>> +             }
->>>> +     }
->>>> +
->>>> +     return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->>>> +                                        &s4_pll_hw_onecell_data);
->>>> +}
->>>> +
->>>> +static const struct of_device_id clkc_match_table[] = {
->>>> +     {
->>>> +             .compatible = "amlogic,s4-pll-clkc",
->>>> +     },
->>>> +     {}
->>>> +};
->>>> +
->>>> +static struct platform_driver s4_driver = {
->>>> +     .probe          = meson_s4_pll_probe,
->>>> +     .driver         = {
->>>> +             .name   = "s4-pll-clkc",
->>>> +             .of_match_table = clkc_match_table,
->>>> +     },
->>>> +};
->>>> +
->>>> +module_platform_driver(s4_driver);
->>>> +MODULE_LICENSE("GPL");
->>>> diff --git a/drivers/clk/meson/s4-pll.h b/drivers/clk/meson/s4-pll.h
->>>> new file mode 100644
->>>> index 000000000000..1fb5bececf5f
->>>> --- /dev/null
->>>> +++ b/drivers/clk/meson/s4-pll.h
->>>> @@ -0,0 +1,87 @@
->>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>>> +/*
->>>> + * Copyright (c) 2021 Amlogic, inc.
->>>> + * Author: Yu Tu <yu.tu@amlogic.com>
->>>> + */
->>>> +
->>>> +#ifndef __MESON_S4_PLL_H__
->>>> +#define __MESON_S4_PLL_H__
->>>> +
->>>> +/* ANA_CTRL - Registers */
->>>> +
->>>> +#define ANACTRL_FIXPLL_CTRL0                       0x040
->>>> +#define ANACTRL_FIXPLL_CTRL1                       0x044
->>>> +#define ANACTRL_FIXPLL_CTRL2                       0x048
->>>> +#define ANACTRL_FIXPLL_CTRL3                       0x04c
->>>> +#define ANACTRL_FIXPLL_CTRL4                       0x050
->>>> +#define ANACTRL_FIXPLL_CTRL5                       0x054
->>>> +#define ANACTRL_FIXPLL_CTRL6                       0x058
->>>> +#define ANACTRL_FIXPLL_STS                         0x05c
->>>> +#define ANACTRL_GP0PLL_CTRL0                       0x080
->>>> +#define ANACTRL_GP0PLL_CTRL1                       0x084
->>>> +#define ANACTRL_GP0PLL_CTRL2                       0x088
->>>> +#define ANACTRL_GP0PLL_CTRL3                       0x08c
->>>> +#define ANACTRL_GP0PLL_CTRL4                       0x090
->>>> +#define ANACTRL_GP0PLL_CTRL5                       0x094
->>>> +#define ANACTRL_GP0PLL_CTRL6                       0x098
->>>> +#define ANACTRL_GP0PLL_STS                         0x09c
->>>> +#define ANACTRL_HIFIPLL_CTRL0                      0x100
->>>> +#define ANACTRL_HIFIPLL_CTRL1                      0x104
->>>> +#define ANACTRL_HIFIPLL_CTRL2                      0x108
->>>> +#define ANACTRL_HIFIPLL_CTRL3                      0x10c
->>>> +#define ANACTRL_HIFIPLL_CTRL4                      0x110
->>>> +#define ANACTRL_HIFIPLL_CTRL5                      0x114
->>>> +#define ANACTRL_HIFIPLL_CTRL6                      0x118
->>>> +#define ANACTRL_HIFIPLL_STS                        0x11c
->>>> +#define ANACTRL_MPLL_CTRL0                         0x180
->>>> +#define ANACTRL_MPLL_CTRL1                         0x184
->>>> +#define ANACTRL_MPLL_CTRL2                         0x188
->>>> +#define ANACTRL_MPLL_CTRL3                         0x18c
->>>> +#define ANACTRL_MPLL_CTRL4                         0x190
->>>> +#define ANACTRL_MPLL_CTRL5                         0x194
->>>> +#define ANACTRL_MPLL_CTRL6                         0x198
->>>> +#define ANACTRL_MPLL_CTRL7                         0x19c
->>>> +#define ANACTRL_MPLL_CTRL8                         0x1a0
->>>> +#define ANACTRL_MPLL_STS                           0x1a4
->>>> +#define ANACTRL_HDMIPLL_CTRL0                      0x1c0
->>>> +#define ANACTRL_HDMIPLL_CTRL1                      0x1c4
->>>> +#define ANACTRL_HDMIPLL_CTRL2                      0x1c8
->>>> +#define ANACTRL_HDMIPLL_CTRL3                      0x1cc
->>>> +#define ANACTRL_HDMIPLL_CTRL4                      0x1d0
->>>> +#define ANACTRL_HDMIPLL_CTRL5                      0x1d4
->>>> +#define ANACTRL_HDMIPLL_CTRL6                      0x1d8
->>>> +#define ANACTRL_HDMIPLL_STS                        0x1dc
->>>> +#define ANACTRL_HDMIPLL_VLOCK                      0x1e4
->>>> +
->>>> +/*
->>>> + * CLKID index values
->>>> + *
->>>> + * These indices are entirely contrived and do not map onto the hardware.
->>>> + * It has now been decided to expose everything by default in the DT header:
->>>> + * include/dt-bindings/clock/axg-clkc.h. Only the clocks ids we don't want
->>>
->>> axg-clkc.h?
->>
->> I will correct.
->>
->>>
->>>> + * to expose, such as the internal muxes and dividers of composite clocks,
->>>> + * will remain defined here.
->>>> + */
->>>> +#define CLKID_FIXED_PLL_DCO          0
->>>> +#define CLKID_FCLK_DIV2_DIV          2
->>>> +#define CLKID_FCLK_DIV3_DIV          4
->>>> +#define CLKID_FCLK_DIV4_DIV          6
->>>> +#define CLKID_FCLK_DIV5_DIV          8
->>>> +#define CLKID_FCLK_DIV7_DIV          10
->>>> +#define CLKID_FCLK_DIV2P5_DIV                12
->>>> +#define CLKID_GP0_PLL_DCO            14
->>>> +#define CLKID_HIFI_PLL_DCO           16
->>>> +#define CLKID_HDMI_PLL_DCO           18
->>>> +#define CLKID_HDMI_PLL_OD            19
->>>> +#define CLKID_MPLL_50M_DIV           21
->>>> +#define CLKID_MPLL_PREDIV            23
->>>> +#define CLKID_MPLL0_DIV                      24
->>>> +#define CLKID_MPLL1_DIV                      26
->>>> +#define CLKID_MPLL2_DIV                      28
->>>> +#define CLKID_MPLL3_DIV                      30
->>>> +
->>>> +#define NR_PLL_CLKS                  32
->>>> +/* include the CLKIDs that have been made part of the DT binding */
->>>> +#include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
->>>> +
->>>> +#endif /* __MESON_S4_PLL_H__ */
->>>> --
->>>> 2.33.1
->>>>
->>>>
->>>> _______________________________________________
->>>> linux-amlogic mailing list
->>>> linux-amlogic@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
->>>
->>> --
->>> Thank you,
->>> Dmitry
+>@@ -2460,16 +2493,16 @@ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+> 	bp->sma[2].default_fcn = 0x10;	/* OUT: 10Mhz */
+> 	bp->sma[3].default_fcn = 0x02;	/* OUT: PHC */
 > 
-> --
-> Thank you,
-> Dmitry
+>-	/* If no SMA map, the pin functions and directions are fixed. */
+>-	if (!bp->art_sma) {
+>-		for (i = 0; i < 4; i++) {
+>+
+>+	for (i = 0; i < OCP_SMA_NUM; i++) {
+>+		/* If no SMA map, the pin functions and directions are fixed. */
+>+		bp->sma[i].dpll_prop = prop;
+>+		bp->sma[i].dpll_prop.label = bp->ptp_info.pin_config[i].name;
+>+		if (!bp->art_sma) {
+> 			bp->sma[i].fixed_fcn = true;
+> 			bp->sma[i].fixed_dir = true;
+>+			continue;
+> 		}
+>-		return;
+>-	}
+>-
+>-	for (i = 0; i < 4; i++) {
+> 		reg = ioread32(&bp->art_sma->map[i].gpio);
+> 
+> 		switch (reg & 0xff) {
+>@@ -2480,9 +2513,13 @@ ptp_ocp_art_sma_init(struct ptp_ocp *bp)
+> 		case 1:
+> 		case 8:
+> 			bp->sma[i].mode = SMA_MODE_IN;
+>+			bp->sma[i].dpll_prop.capabilities =
+>+				DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
+> 			break;
+> 		default:
+> 			bp->sma[i].mode = SMA_MODE_OUT;
+>+			bp->sma[i].dpll_prop.capabilities =
+>+				DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE;
+> 			break;
+> 		}
+> 	}
+>@@ -2549,6 +2586,9 @@ ptp_ocp_art_board_init(struct ptp_ocp *bp, struct ocp_resource *r)
+> 	/* Enable MAC serial port during initialisation */
+> 	iowrite32(1, &bp->board_config->mro50_serial_activate);
+> 
+>+	err = ptp_ocp_set_pins(bp);
+>+	if (err)
+>+		return err;
+> 	ptp_ocp_sma_init(bp);
+> 
+> 	err = ptp_ocp_attr_group_add(bp, art_timecard_groups);
+>@@ -2690,16 +2730,9 @@ sma4_show(struct device *dev, struct device_attribute *attr, char *buf)
+> }
+> 
+> static int
+>-ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
+>+ptp_ocp_sma_store_val(struct ptp_ocp *bp, int val, enum ptp_ocp_sma_mode mode, int sma_nr)
+> {
+> 	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
+>-	enum ptp_ocp_sma_mode mode;
+>-	int val;
+>-
+>-	mode = sma->mode;
+>-	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
+>-	if (val < 0)
+>-		return val;
+> 
+> 	if (sma->fixed_dir && (mode != sma->mode || val & SMA_DISABLE))
+> 		return -EOPNOTSUPP;
+>@@ -2734,6 +2767,20 @@ ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
+> 	return val;
+> }
+> 
+>+static int
+>+ptp_ocp_sma_store(struct ptp_ocp *bp, const char *buf, int sma_nr)
+>+{
+>+	struct ptp_ocp_sma_connector *sma = &bp->sma[sma_nr - 1];
+>+	enum ptp_ocp_sma_mode mode;
+>+	int val;
+>+
+>+	mode = sma->mode;
+>+	val = sma_parse_inputs(bp->sma_op->tbl, buf, &mode);
+>+	if (val < 0)
+>+		return val;
+>+	return ptp_ocp_sma_store_val(bp, val, mode, sma_nr);
+>+}
+>+
+> static ssize_t
+> sma1_store(struct device *dev, struct device_attribute *attr,
+> 	   const char *buf, size_t count)
+>@@ -4172,12 +4219,148 @@ ptp_ocp_detach(struct ptp_ocp *bp)
+> 	device_unregister(&bp->dev);
+> }
+> 
+>+static int ptp_ocp_dpll_lock_status_get(const struct dpll_device *dpll,
+>+					void *priv,
+>+					enum dpll_lock_status *status,
+>+					struct netlink_ext_ack *extack)
+>+{
+>+	struct ptp_ocp *bp = priv;
+>+	int sync;
+>+
+>+	sync = ioread32(&bp->reg->status) & OCP_STATUS_IN_SYNC;
+>+	*status = sync ? DPLL_LOCK_STATUS_LOCKED : DPLL_LOCK_STATUS_UNLOCKED;
+
+Does your device support event delivery in case of the status change?
+ice and mlx5 drivers do poll for changes in this area anyway. It's a
+part of this patchset. You should do the same if your device does
+not support events.
+
+Could you please implement notifications using
+dpll_device_notify() for status change and dpll_pin_notify() for pin
+state change?
+
+
+
+>+
+>+	return 0;
+>+}
+>+
+>+static int ptp_ocp_dpll_source_idx_get(const struct dpll_device *dpll,
+>+				       void *priv, u32 *idx,
+>+				       struct netlink_ext_ack *extack)
+>+{
+>+	struct ptp_ocp *bp = priv;
+>+
+>+	if (bp->pps_select) {
+>+		*idx = ioread32(&bp->pps_select->gpio1);
+>+		return 0;
+>+	}
+>+	return -EINVAL;
+>+}
+>+
+>+static int ptp_ocp_dpll_mode_get(const struct dpll_device *dpll, void *priv,
+>+				 u32 *mode, struct netlink_ext_ack *extack)
+>+{
+>+	*mode = DPLL_MODE_AUTOMATIC;
+>+	return 0;
+>+}
+>+
+>+static bool ptp_ocp_dpll_mode_supported(const struct dpll_device *dpll,
+>+					void *priv, const enum dpll_mode mode,
+>+					struct netlink_ext_ack *extack)
+>+{
+>+	return mode == DPLL_MODE_AUTOMATIC;
+>+}
+>+
+>+static int ptp_ocp_dpll_direction_get(const struct dpll_pin *pin,
+>+				      void *pin_priv,
+>+				      const struct dpll_device *dpll,
+>+				      void *priv,
+>+				      enum dpll_pin_direction *direction,
+>+				      struct netlink_ext_ack *extack)
+>+{
+>+	struct ptp_ocp_sma_connector *sma = pin_priv;
+>+
+>+	*direction = sma->mode == SMA_MODE_IN ?
+>+				  DPLL_PIN_DIRECTION_SOURCE :
+>+				  DPLL_PIN_DIRECTION_OUTPUT;
+>+	return 0;
+>+}
+>+
+>+static int ptp_ocp_dpll_direction_set(const struct dpll_pin *pin,
+>+				      void *pin_priv,
+>+				      const struct dpll_device *dpll,
+>+				      void *dpll_priv,
+>+				      enum dpll_pin_direction direction,
+>+				      struct netlink_ext_ack *extack)
+>+{
+>+	struct ptp_ocp_sma_connector *sma = pin_priv;
+>+	struct ptp_ocp *bp = dpll_priv;
+>+	enum ptp_ocp_sma_mode mode;
+>+	int sma_nr = (sma - bp->sma);
+>+
+>+	if (sma->fixed_dir)
+
+I believe that this is a pointless check as DPLL_PIN_CAPS_DIRECTION_CAN_CHANGE
+is not set and therefore the check in dpll_pin_direction_set() will be
+true and -EOPNOTSUPP will be returned from there.
+Remove this.
+
+
+>+		return -EOPNOTSUPP;
+>+	mode = direction == DPLL_PIN_DIRECTION_SOURCE ?
+>+			    SMA_MODE_IN : SMA_MODE_OUT;
+>+	return ptp_ocp_sma_store_val(bp, 0, mode, sma_nr);
+
+You need sma_nr just here. Why can't you change ptp_ocp_sma_store_val()
+to accept struct ptp_ocp_sma_connector * instead avoiding the need for
+tne sma_nr completely?
+
+
+>+}
+>+
+>+static int ptp_ocp_dpll_frequency_set(const struct dpll_pin *pin,
+>+				      void *pin_priv,
+>+				      const struct dpll_device *dpll,
+>+				      void *dpll_priv, u64 frequency,
+>+				      struct netlink_ext_ack *extack)
+>+{
+>+	struct ptp_ocp_sma_connector *sma = pin_priv;
+>+	struct ptp_ocp *bp = dpll_priv;
+>+	const struct ocp_selector *tbl;
+>+	int sma_nr = (sma - bp->sma);
+>+	int val, i;
+>+
+>+	if (sma->fixed_fcn)
+
+In that case, just fill up a single frequency in the properties,
+avoid this check-fail and let the dpll core handle it.
+
+
+>+		return -EOPNOTSUPP;
+>+
+>+	tbl = bp->sma_op->tbl[sma->mode];
+>+	for (i = 0; tbl[i].name; i++)
+>+		if (tbl[i].frequency == frequency)
+>+			return ptp_ocp_sma_store_val(bp, val, sma->mode, sma_nr);
+>+	return -EINVAL;
+>+}
+>+
+>+static int ptp_ocp_dpll_frequency_get(const struct dpll_pin *pin,
+>+				      void *pin_priv,
+>+				      const struct dpll_device *dpll,
+>+				      void *dpll_priv, u64 *frequency,
+>+				      struct netlink_ext_ack *extack)
+>+{
+>+	struct ptp_ocp_sma_connector *sma = pin_priv;
+>+	struct ptp_ocp *bp = dpll_priv;
+>+	const struct ocp_selector *tbl;
+>+	int sma_nr = (sma - bp->sma);
+
+1) void "()"s here.
+2) why don't you fill the sma_nr in struct ptp_ocp_sma_connector to make
+   this easier to follow? IDK, just a suggestion, take or leave.
+
+Same applies to the the rest of similar occurances above.
+
+
+>+	u32 val;
+>+	int i;
+>+
+>+	val = bp->sma_op->get(bp, sma_nr);
+>+	tbl = bp->sma_op->tbl[sma->mode];
+>+	for (i = 0; tbl[i].name; i++)
+>+		if (val == tbl[i].value) {
+>+			*frequency = tbl[i].frequency;
+>+			return 0;
+>+		}
+>+
+>+	return -EINVAL;
+>+}
+>+
+>+static const struct dpll_device_ops dpll_ops = {
+>+	.lock_status_get = ptp_ocp_dpll_lock_status_get,
+>+	.source_pin_idx_get = ptp_ocp_dpll_source_idx_get,
+
+This op is a leftover, in dpll core it is not called. This was removed
+and agreed that drivers should implement state_on_dpll_get() op for pins
+to see which one is connected.
+
+Please fix here and remove the leftover from DPLL patch #2 as well.
+
+
+>+	.mode_get = ptp_ocp_dpll_mode_get,
+>+	.mode_supported = ptp_ocp_dpll_mode_supported,
+>+};
+>+
+>+static const struct dpll_pin_ops dpll_pins_ops = {
+>+	.frequency_get = ptp_ocp_dpll_frequency_get,
+>+	.frequency_set = ptp_ocp_dpll_frequency_set,
+>+	.direction_get = ptp_ocp_dpll_direction_get,
+>+	.direction_set = ptp_ocp_dpll_direction_set,
+>+};
+>+
+> static int
+> ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> {
+> 	struct devlink *devlink;
+> 	struct ptp_ocp *bp;
+>-	int err;
+>+	int err, i;
+>+	u64 clkid;
+> 
+> 	devlink = devlink_alloc(&ptp_ocp_devlink_ops, sizeof(*bp), &pdev->dev);
+> 	if (!devlink) {
+>@@ -4227,8 +4410,39 @@ ptp_ocp_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> 
+> 	ptp_ocp_info(bp);
+> 	devlink_register(devlink);
+>-	return 0;
+> 
+>+	clkid = pci_get_dsn(pdev);
+>+	bp->dpll = dpll_device_get(clkid, 0, THIS_MODULE);
+
+I suggested this the last time, but again: Could you please:
+1) rename dpll_device_get to __dpll_device_get
+2) introduce dpll_device_get as a macro filling up THIS_MODULE
+
+Then drivers will just call always:
+bp->dpll = dpll_device_get(clkid, 0);
+and the macro will fillup the module automatically.
+
+Please do the same for dpll_pin_get()
+
+
+>+	if (IS_ERR(bp->dpll)) {
+>+		dev_err(&pdev->dev, "dpll_device_alloc failed\n");
+
+You need to fix your error path to call devlink_unregister() in this
+case.
+
+
+>+		goto out;
+>+	}
+>+
+>+	err = dpll_device_register(bp->dpll, DPLL_TYPE_PPS, &dpll_ops, bp, &pdev->dev);
+>+	if (err)
+
+You need to fix your error path to call dpll_device_put() in this
+case.
+
+
+>+		goto out;
+>+
+>+	for (i = 0; i < OCP_SMA_NUM; i++) {
+>+		bp->sma[i].dpll_pin = dpll_pin_get(clkid, i, THIS_MODULE, &bp->sma[i].dpll_prop);
+>+		if (IS_ERR(bp->sma[i].dpll_pin))
+>+			goto out_dpll;
+>+
+>+		err = dpll_pin_register(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops,
+>+					&bp->sma[i], NULL);
+>+		if (err) {
+>+			dpll_pin_put(bp->sma[i].dpll_pin);
+>+			goto out_dpll;
+>+		}
+>+	}
+>+
+>+	return 0;
+>+out_dpll:
+>+	while (i) {
+>+		--i;
+
+	while (i--) {
+	?
+
+>+		dpll_pin_unregister(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, &bp->sma[i]);
+>+		dpll_pin_put(bp->sma[i].dpll_pin);
+>+	}
+>+	dpll_device_put(bp->dpll);
+> out:
+> 	ptp_ocp_detach(bp);
+> out_disable:
+>@@ -4243,7 +4457,16 @@ ptp_ocp_remove(struct pci_dev *pdev)
+> {
+> 	struct ptp_ocp *bp = pci_get_drvdata(pdev);
+> 	struct devlink *devlink = priv_to_devlink(bp);
+>+	int i;
+> 
+>+	for (i = 0; i < OCP_SMA_NUM; i++) {
+>+		if (bp->sma[i].dpll_pin) {
+
+Remove this pointless check. It is always true.
+
+
+>+			dpll_pin_unregister(bp->dpll, bp->sma[i].dpll_pin, &dpll_pins_ops, bp);
+>+			dpll_pin_put(bp->sma[i].dpll_pin);
+>+		}
+>+	}
+>+	dpll_device_unregister(bp->dpll, &dpll_ops, bp);
+>+	dpll_device_put(bp->dpll);
+> 	devlink_unregister(devlink);
+> 	ptp_ocp_detach(bp);
+> 	pci_disable_device(pdev);
+>-- 
+>2.34.1
+>
