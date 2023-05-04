@@ -2,226 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97DEC77B78
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 12:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E289C7EE21
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 13:39:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229880AbjEDMwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 08:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
+        id S230167AbjEDNjm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 09:39:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230426AbjEDMwG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 08:52:06 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B730E6E90
-        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 05:51:33 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-953343581a4so66805566b.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 May 2023 05:51:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683204653; x=1685796653;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O2obC0cCkbuuZfXfRaApQUsjUhYRjOVjT9ma5uBlilE=;
-        b=CGgnPsWj7gT8G7a/TeYTnrfIH3GbZXAzKzl23MMuVFADFRvnPFzYGHCDV6EW588TTc
-         NBC8WfsuRahYRm8RI4X2gf+uyXrI+j+qHTschHy4PaeotgnwkGI/DRmgTFVJsjW+XOCD
-         7r4Fv8Vxljud0g0AWCsEfBDo/9XKvuUrqtch6A2OnMLyqre0Qqog8IpVJ7AiHL4GayIV
-         VLviGVXEcTleBbbfN+5/LH7PGrTPv5PjyBmT1CNkJ27grPWohmOC7XV5VSxpJiNvqQQL
-         iiBCGOs9wx8mITE9kkBgNr4TzeoEiem+9d40DWtCdkcgyImU2kOwmRIQU7L7PH09WK8k
-         ShHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683204653; x=1685796653;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O2obC0cCkbuuZfXfRaApQUsjUhYRjOVjT9ma5uBlilE=;
-        b=DbxXpSTuxU2jN4qQ41RmP3Cd/7u1qZq1Vm8Jr5lQ2tniHCBn56pOln/C57NRP+DtLh
-         G6P5gC6tjcx9pPJPdYB25T+HqAZxkWw7VI+0yt9kFWbBM/PxYeX40Dr7g5aMYSvlZXEt
-         hGl66tz9DZYsBK7QcJWTAkt5p92yETSnJcG8RKNpIoHM5XQ5UIZMf62h3wQb/JaE+by4
-         g+nIVEl2p2ceVaw+dyFcndaTuz04mVyk/PY6Zi9bwcGOxM8f3pClO7lpiodOxvR0Qa0y
-         2L0tqySs9fcKLrx6AqaVZTLxYFq7epfpZTus8Qs5oFjKxl7KSkE0pcg0oaX5atvWGTl7
-         KVzg==
-X-Gm-Message-State: AC+VfDyoPutGLPhmbGhbvL0uiLGbH5XMGt5xSbkxXnwgfaYt/xjQk5QV
-        v9ZMqWmdW32aNQjcF3F+fIuCMA==
-X-Google-Smtp-Source: ACHHUZ4p5/ZI/MQhoR/P1zQKgfq+Cw+kXOWRIR8givCmU3e+NL2+9TtXsspQiz2YNPuMLAIm9b1HRw==
-X-Received: by 2002:a17:907:1c21:b0:94b:cd7c:59f4 with SMTP id nc33-20020a1709071c2100b0094bcd7c59f4mr6549002ejc.16.1683204653018;
-        Thu, 04 May 2023 05:50:53 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:cbf1:e7ef:fb81:e912? ([2a02:810d:15c0:828:cbf1:e7ef:fb81:e912])
-        by smtp.gmail.com with ESMTPSA id e5-20020a170906504500b0094f124a37c4sm18826340ejk.18.2023.05.04.05.50.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 May 2023 05:50:52 -0700 (PDT)
-Message-ID: <7f9f991a-fa56-2f65-293b-bd0ec5d07c40@linaro.org>
-Date:   Thu, 4 May 2023 14:50:46 +0200
+        with ESMTP id S229638AbjEDNjl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 09:39:41 -0400
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA08E768B;
+        Thu,  4 May 2023 06:39:40 -0700 (PDT)
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3445DKX4028271;
+        Thu, 4 May 2023 08:39:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=zEWDZRH16IxZH8jYRpv51rOx+oio62y+XziPw6IiJ1w=;
+ b=L9OXVtBpZ1h2EQYPU9fS+CdLeJbQogB3ovHqBxHZV93tB0yyeToDCRKM+3p1Z+XcLFZz
+ DhnfCDaIAxZdN2kEgqy91hT0ZkrDGwKDxWYOZyY84Bl71CaNzT/kQ6H7HeGti1LPjN2A
+ 1C53tmN+15LZY4Xx0LsXz3jdPfYj804ASLi4vP04knaO2fZRiDoRcGlVawsjF8dnEBef
+ /SeuYP9ruq4TACIUkQ8hZ4rHae8zIGOhnmbirZT1jFR/3kSOYyRRGhG6Ds8kk3q2z9qA
+ m1ycJOjn8GapD45ROvo5FEKeAAyqeD0ftMxijnIycmgOTyr7CJvQgOt/JbzSOHf7FjX0 fg== 
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+        by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 3q8ynqxxwk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 04 May 2023 08:39:25 -0500
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.26; Thu, 4 May
+ 2023 08:39:24 -0500
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Thu, 4 May 2023 08:39:24 -0500
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id E168D11AA;
+        Thu,  4 May 2023 13:39:23 +0000 (UTC)
+Date:   Thu, 4 May 2023 13:39:23 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-actions@lists.infradead.org>,
+        <patches@opensource.cirrus.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-phy@lists.infradead.org>,
+        <linux-rtc@vger.kernel.org>, <linux-sunxi@lists.linux.dev>,
+        <alsa-devel@alsa-project.org>, <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v3 14/65] clk: lochnagar: Add a determine_rate hook
+Message-ID: <20230504133923.GE68926@ediswmail.ad.cirrus.com>
+References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
+ <20221018-clk-range-checks-fixes-v3-14-9a1358472d52@cerno.tech>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH 5/5] dt-bindings: clocks: at91sam9x5-sckc: convert to yaml
-Content-Language: en-US
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20230504060729.689579-1-claudiu.beznea@microchip.com>
- <20230504060729.689579-6-claudiu.beznea@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230504060729.689579-6-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20221018-clk-range-checks-fixes-v3-14-9a1358472d52@cerno.tech>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-GUID: by0VDh8QAdOEbtK8UU7dmeZOMGxMIv4b
+X-Proofpoint-ORIG-GUID: by0VDh8QAdOEbtK8UU7dmeZOMGxMIv4b
+X-Proofpoint-Spam-Reason: safe
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 04/05/2023 08:07, Claudiu Beznea wrote:
-> Convert Atmel slow clock controller documentation to yaml.
+On Tue, Apr 04, 2023 at 12:11:04PM +0200, Maxime Ripard wrote:
+> The lochnagar clocks implement a mux with a set_parent hook, but
+> doesn't provide a determine_rate implementation.
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+> 
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+> 
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+> 
+> The latter case would be equivalent to setting the flag
+> CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+> to __clk_mux_determine_rate(). Indeed, if no determine_rate
+> implementation is provided, clk_round_rate() (through
+> clk_core_round_rate_nolock()) will call itself on the parent if
+> CLK_SET_RATE_PARENT is set, and will not change the clock rate
+> otherwise. __clk_mux_determine_rate() has the exact same behavior when
+> CLK_SET_RATE_NO_REPARENT is set.
+> 
+> And if it was an oversight, then we are at least explicit about our
+> behavior now and it can be further refined down the line.
+> 
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
->  .../devicetree/bindings/clock/at91-clock.txt  | 30 -------
->  .../bindings/clock/atmel,at91sam9x5-sckc.yaml | 84 +++++++++++++++++++
->  2 files changed, 84 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/at91-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-> deleted file mode 100644
-> index 57394785d3b0..000000000000
-> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -Device Tree Clock bindings for arch-at91
-> -
-> -This binding uses the common clock binding[1].
-> -
-> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> -
-> -Slow Clock controller:
-> -
-> -Required properties:
-> -- compatible : shall be one of the following:
-> -	"atmel,at91sam9x5-sckc",
-> -	"atmel,sama5d3-sckc",
-> -	"atmel,sama5d4-sckc" or
-> -	"microchip,sam9x60-sckc":
-> -		at91 SCKC (Slow Clock Controller)
-> -- #clock-cells : shall be 1 for "microchip,sam9x60-sckc" otherwise shall be 0.
-> -- clocks : shall be the input parent clock phandle for the clock.
-> -
-> -Optional properties:
-> -- atmel,osc-bypass : boolean property. Set this when a clock signal is directly
-> -  provided on XIN.
-> -
-> -For example:
-> -	sckc@fffffe50 {
-> -		compatible = "atmel,at91sam9x5-sckc";
-> -		reg = <0xfffffe50 0x4>;
-> -		clocks = <&slow_xtal>;
-> -		#clock-cells = <0>;
-> -	};
-> -
-> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
-> new file mode 100644
-> index 000000000000..62660c823ea1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
-> @@ -0,0 +1,84 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/clock/atmel,at91sam9x5-sckc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 
-Drop quotes.
+Tested-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-> +
-> +title: Atmel Slow Clock Controller (SCKC)
-> +
-> +maintainers:
-> +  - Claudiu Beznea <claudiu.beznea@microchip.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-
-Drop items here.
-
-> +          - enum:
-> +              - atmel,at91sam9x5-sckc
-> +              - atmel,sama5d4-sckc
-> +              - atmel,sama5d3-sckc
-
-Keep order by name, so 5d3 and then 5d4.
-
-> +              - microchip,sam9x60-sckc
-> +      - items:
-> +          - const: microchip,sama7g5-sckc
-> +          - const: microchip,sam9x60-sckc
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  "#clock-cells":
-> +    enum: [0, 1]
-> +
-> +  atmel,osc-bypass:
-> +    type: boolean
-> +    description: set when a clock signal is directly provided on XIN
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-
-put it after allOf, just like previous patch.
-
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - microchip,sam9x60-sckc
-> +              - microchip,sama7g5-sckc
-
-Drop this one. It's not needed.
-
-> +    then:
-> +      properties:
-> +        "#clock-cells":
-> +          const: 1
-> +      required:
-> +        - "#clock-cells"
-> +        - clocks
-
-Move these to top-level.
-
-> +    else:
-> +      properties:
-> +        "#clock-cells":
-> +          const: 0
-> +      if:
-> +        properties:
-> +          compatible:
-> +            contains:
-> +              enum:
-> +                - atmel,sama5d4-sckc
-> +                - atmel,sama5d3-sckc
-> +      then:
-> +        required:
-> +          - "#clock-cells"
-> +          - clocks
-
-and drop these required... but this is if-within-else. Very confusing.
-Which case you want to handle that way? So other compatibles do not need
-clock cells or clocks?
-
-
-Best regards,
-Krzysztof
-
+Thanks,
+Charles
