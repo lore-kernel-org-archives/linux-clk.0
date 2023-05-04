@@ -2,255 +2,161 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A68CC77B78
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 14:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 527F2C77B7C
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 16:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbjEDOsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 10:48:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44274 "EHLO
+        id S229514AbjEDQEI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 12:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbjEDOsU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 10:48:20 -0400
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388E0CD;
-        Thu,  4 May 2023 07:48:19 -0700 (PDT)
-Received: by mail-oi1-x22a.google.com with SMTP id 5614622812f47-38e5eeba43cso199749b6e.3;
-        Thu, 04 May 2023 07:48:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683211698; x=1685803698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/elf53ReInwQkE2MA0feH0LEMQ6B/gIWB/x/DzsbjR8=;
-        b=hInvwGa9X+53HLs//WPzgh4itSmpZzu4o+YjJu+vqENVTsUVRuyX/tQ1TOMDhzad28
-         1dVJEHFRTuHAQu346Wv0c2w3kglaMsLtdGi7f+jiBc/cr8pddyPxL63imxc1SAkLo0PX
-         MvCBVx5yKU4P451j4Vqn9NL5S7EvOv9h1dqFjA3PbC+Dft76gUBqqVW5ZerzC4ySXpiX
-         UK/+7saLslglP4T9ylLUexeQGl0F7aQkQgYOERMtHq2NAHvbqAqLZ/zeitfvo/fBXn73
-         RgPDrsFD6fFIUx2Uh6pz9U8eoi9tbPCkJfCdr3ivnS4VTxIYONJhEEjnrvPVYoEt6BZt
-         3iWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683211698; x=1685803698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/elf53ReInwQkE2MA0feH0LEMQ6B/gIWB/x/DzsbjR8=;
-        b=MO++zvWvUVBua3s3VqIKqlXM/sIxdFHxoBDwFP57aZbgAyNyyedxTiGgg2Mi9y0Ugm
-         8lNXIwehXe3SPP5nyPi5xWSNkW/aTnf4wNBRMbRl1yJDSbHcIBjpssOLEt8XDSnJqUhg
-         iRTBjutDdKcSQ5z/aXZctyp8yf805ot81ZPucf5lWFb2tjpddIUW2Jnr20Tk0jzTn3fj
-         OPL+F+pcxsDLbpHzRJd7pZ1JDVQHn+s9APiVrFuNoejA4d7WG52uIz29yF8zuihReVQR
-         rO6Oz3PLzDIXB+F26f+umKIY9kctAsopAKLXvXC49IfwI5SbBIx568UDyfCQE3vEDMoR
-         rYhQ==
-X-Gm-Message-State: AC+VfDyXIwRszEi+sTY+HZ7ktDkoyCjo9Ru6dYUsLfLKafs20sJCsUVH
-        gFP5y6EJvCQnY3EzNtXpphhYMRSfwtqP1X23ManTq4xhP/E=
-X-Google-Smtp-Source: ACHHUZ6MwHuU84KzmOFkHJdZLMa2SNpJTDMCzVNdGE6/3Ylx9yAG6UCDbFstjPwKMPydDnS8O3/Igd9Ud3WI5jH3yZA=
-X-Received: by 2002:a05:6808:190b:b0:38e:a4a6:41a with SMTP id
- bf11-20020a056808190b00b0038ea4a6041amr1947029oib.20.1683211697946; Thu, 04
- May 2023 07:48:17 -0700 (PDT)
+        with ESMTP id S230326AbjEDQEH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 12:04:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D7E4EE1
+        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 09:04:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 667776354D
+        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 16:04:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBD1C433D2;
+        Thu,  4 May 2023 16:04:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683216244;
+        bh=Ov33ChoosA7Cg6h45OD0WZw1JmTuLbJ584Oy24/tJVw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=DR204dEDNKBcZFSP8CNLlrVFA0V5T7uw3kTvqe8VeJNeBbra6huCqOW1gyOnh+d8V
+         xAgCzYQ5VjPQIXOIBNcAi+/bIj5n3LiigembK7raNPr5RL8qISsKu/WRMb2PF7UnS0
+         Ur0ugAfKCQDj3LNtTi7EZ2qTldvPT+Rh7Ss/2MudtXsMuw8Vx+MSbZIXe9aOM0IS8T
+         FVaTTjyje7Xgmzm7SqmJbjc/UtrIv4oIxYY9nC16c1TGKkYx4itmg86WAcAXUSzBhI
+         yCcDl/l8Z2P+TFEBsqIyYsw3ESufSDfm+FFe2vaheFRBMF1pT34Ll6xzGltabAfVNU
+         u8Q1tDHVdFhqg==
+Date:   Thu, 4 May 2023 09:04:01 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <20230504090401.597a7a61@kernel.org>
+In-Reply-To: <ZFOQWmkBUtgVR06R@nanopsycho>
+References: <ZBGOWQW+1JFzNsTY@nanopsycho>
+        <20230403111812.163b7d1d@kernel.org>
+        <ZDJulCXj9H8LH+kl@nanopsycho>
+        <20230410153149.602c6bad@kernel.org>
+        <ZDwg88x3HS2kd6lY@nanopsycho>
+        <20230417124942.4305abfa@kernel.org>
+        <ZFDPaXlJainSOqmV@nanopsycho>
+        <20230502083244.19543d26@kernel.org>
+        <ZFITyWvVcqgRtN+Q@nanopsycho>
+        <20230503191643.12a6e559@kernel.org>
+        <ZFOQWmkBUtgVR06R@nanopsycho>
 MIME-Version: 1.0
-References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
-In-Reply-To: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Thu, 4 May 2023 16:48:06 +0200
-Message-ID: <CAMhs-H_yn_76RAFNk4ux_-rn9FdKna9Vsu0raFQXfr3ykkRWPw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] mips: ralink: add complete clock and reset driver
- for mtmips SoCs
-To:     linux-clk@vger.kernel.org
-Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
-        john@phrozen.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        arinc.unal@arinc9.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 18, 2023 at 11:03=E2=80=AFAM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
->
-> Hi all!
->
-> This patchset is a big effort to properly implement a clock and reset
-> driver for old ralink SoCs. This allow to properly define clocks in
-> device tree and avoid to use fixed-clocks directly from 'arch/mips/ralink=
-'
-> architecture directory code.
->
-> Device tree 'sysc' node will be both clock and reset provider using
-> 'clock-cells' and 'reset-cells' properties.
->
-> The ralink SoCs we are taking about are RT2880, RT3050, RT3052, RT3350,
-> RT3352, RT3883, RT5350, MT7620, MT7628 and MT7688. Mostly the code in
-> this new driver has been extracted from 'arch/mips/ralink' and cleanly
-> put using kernel clock and reset driver APIs. The clock plans for this
-> SoCs only talks about relation between CPU frequency and BUS frequency.
-> This relation is different depending on the particular SoC. CPU clock is
-> derived from XTAL frequencies.
->
->  Depending on the SoC we have the following frequencies:
->  * RT2880 SoC:
->      - XTAL: 40 MHz.
->      - CPU: 250, 266, 280 or 300 MHz.
->      - BUS: CPU / 2 MHz.
->   * RT3050, RT3052, RT3350:
->      - XTAL: 40 MHz.
->      - CPU: 320 or 384 MHz.
->      - BUS: CPU / 3 MHz.
->   * RT3352:
->      - XTAL: 40 MHz.
->      - CPU: 384 or 400 MHz.
->      - BUS: CPU / 3 MHz.
->      - PERIPH: 40 MHz.
->   * RT3383:
->      - XTAL: 40 MHz.
->      - CPU: 250, 384, 480 or 500 MHz.
->      - BUS: Depends on RAM Type and CPU:
->        + RAM DDR2: 125. ELSE 83 MHz.
->        + RAM DDR2: 128. ELSE 96 MHz.
->        + RAM DDR2: 160. ELSE 120 MHz.
->        + RAM DDR2: 166. ELSE 125 MHz.
->   * RT5350:
->       - XTAL: 40 MHz.
->       - CPU: 300, 320 or 360 MHz.
->       - BUS: CPU / 3, CPU / 4, CPU / 3 MHz.
->       - PERIPH: 40 MHz.
->   * MT7628 and MT7688:
->      - XTAL: 20 MHz or 40 MHz.
->      - CPU: 575 or 580 MHz.
->      - BUS: CPU / 3.
->      - PCMI2S: 480 MHz.
->      - PERIPH: 40 MHz.
->   * MT7620:
->      - XTAL: 20 MHz or 40 MHz.
->      - PLL: XTAL, 480, 600 MHz.
->      - CPU: depends on PLL and some mult and dividers.
->      - BUS: depends on PLL and some mult and dividers.
->      - PERIPH: 40 or XTAL MHz.
->
-> MT7620 is a bit more complex deriving CPU clock from a PLL and an bunch o=
-f
-> register reads and predividers. To derive CPU and BUS frequencies in the
-> MT7620 SoC 'mt7620_calc_rate()' helper is used.
-> In the case XTAL can have different frequencies and we need a different
-> clock frequency for peripherals 'periph' clock in introduced.
-> The rest of the peripherals present in the SoC just follow their parent
-> frequencies.
->
-> I am using 'mtmips' inside for ralink clock driver. This is aligned with
-> pinctrl series recently merged through pinctrl git tree [0].
->
-> I am maintaining ralink as prefix for compatible strings after discussion=
-s
-> between Rob and Arinc in v2 of this series [1].
->
-> Changes have been compile tested for:
-> - RT2880
-> - RT3883
-> - MT7620
->
-> Changes have been properly tested in RT5350 SoC based board (ALL5003 boar=
-d)
-> resulting in a working platform.
->
-> Dts files for these SoCs in-tree except MT7621 are incomplete. We are
-> planning to align with openWRT files at some point and add extra needed
-> changes. Hence I am not touching them at all in these series. If this is
-> a problem, please let me know and I will update them.
->
-> Talking about merging this series I'd like all of the patches going throu=
-gh
-> the MIPS tree if possible.
->
-> Thanks in advance for your time.
->
-> Best regards,
->     Sergio Paracuellos
->
-> Changes in v3:
-> - Address Stephen comments in v2:
->     + Drop unsused include '<linux/clk.h>'.
->     + Add fixed and factor clocks when it makes sense.
->     + Make 'mtmips_periph_clk_ops' named variable.
->     + WARN_ON -> WARN_ON_ONCE.
->     + Avoid CONFIG_USB dependent code. Introduce new 'mtmips_clk_regs_ini=
-t'.
->     + Don't validate the bindings in the driver.
->     + Make const 'struct clk_init_data' used inside macros.
->     + do_div -> div_u64.
->     + Make use of dev_err_probe.
+On Thu, 4 May 2023 13:00:42 +0200 Jiri Pirko wrote:
+> Thu, May 04, 2023 at 04:16:43AM CEST, kuba@kernel.org wrote:
+> >On Wed, 3 May 2023 09:56:57 +0200 Jiri Pirko wrote:  
+> >> Okay.
+> >> 
+> >> When netdev will have pin ID in the RT netlink message (as it is done
+> >> in RFCv7), it is easy to get the pin/dpll for netdev. No problem there.
+> >> 
+> >> However, for non-SyncE usecase, how do you imagine scripts to work?
+> >> I mean, the script have to obtain dpll/pin ID by deterministic
+> >> module_name/clock_id/idx tuple.  
+> >
+> >No scoped idx.  
+> 
+> That means, no index defined by a driver if I undestand you correctly,
+> right?
 
-Hi Stephen,
+Yes, my suggestion did not include a scoped index with no
+globally defined semantics.
+ 
+> >> There are 2 options to do that:
+> >> 1) dump all dplls/pins and do lookup in userspace
+> >> 2) get a dpll/pin according to given module_name/clock_id/idx tuple
+> >> 
+> >> The first approach is not very nice.
+> >> The currently pushed RFCv7 of the patchset does not support 2)
+> >> 
+> >> Now if we add support for 2), we basically use module_name/clock_id/idx
+> >> as a handle for "get cmd". My point is, why can't we use it for "set
+> >> cmd" as well and avoid the ID entirely?  
+> >
+> >Sure, we don't _have_ to have an ID, but it seems go against normal
+> >data normalization rules. And I don't see any harm in it.
+> >
+> >But you're asking for per-device "idx" and that's a no-go for me,
+> >given already cited experience.
+> >
+> >The user space can look up the ID based on identifying information it
+> >has. IMO it's better to support multiple different intelligible elements  
+> 
+> Do you mean fixed tuple or variable tuple?
+> 
+> CMD_GET_ID
+>   -> DPLL_A_MODULE_NAME  
+>      DPLL_A_CLOCK_ID
 
-Does anything else need to be addressed to have all of these added?
+> What is the next intelligible element to identify DPLL device here?
 
-Philipp, can you please review the reset related code in PATCH 2/9 of
-these series?
+I don't know. We can always add more as needed.
+We presuppose that the devices are identifiable, so whatever info
+is used to identify them goes here.
 
-Thanks in advance for your time!
+>   <- DPLL_A_ID
+> 
+> CMD_GET_PIN_ID
+>   -> DPLL_A_MODULE_NAME  
+>      DPLL_A_CLOCK_ID
 
-Best regards,
-    Sergio Paracuellos
+> What is the next intelligible element to identify a pin here?
 
->
-> Changes in v2:
-> - Address bindings documentation changes pointed out by Krzysztof:
->     + Rename the file into 'mediatek,mtmips-sysc.yaml'.
->     + Redo commit subject and log message.
->     + Order compatibles alphabetically.
->     + Redo bindings description taking into account this is a system
->       controller node which provides both clocks and resets to the world.
->     + Drop label from example.
->     + Use 'syscon' as node name in example.
->     + Drop no sense 'ralink,rt2880-reset' compatible string
-> - Squash patches 6 and 7 together as pointed out by Stephen Boyd.
->
-> Previoous series:
-> v2: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=3DLeJ4vT22uibQ1Dn=
-aZsfTrtRxSiv=3D8L5RA@mail.gmail.com/T/#t
-> v1: https://lore.kernel.org/linux-clk/20230320161823.1424278-1-sergio.par=
-acuellos@gmail.com/T/#t
->
-> [0]: https://lore.kernel.org/linux-gpio/e9e6ad87-2db5-9767-ff39-64a302b06=
-185@arinc9.com/T/#t
-> [1]: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=3DLeJ4vT22uibQ1D=
-naZsfTrtRxSiv=3D8L5RA@mail.gmail.com/T/#mfe725b6e3382c6fb09736472a846cbbc84=
-f264dc
->
-> Sergio Paracuellos (9):
->   dt-bindings: clock: add mtmips SoCs system controller
->   clk: ralink: add clock and reset driver for MTMIPS SoCs
->   mips: ralink: rt288x: remove clock related code
->   mips: ralink: rt305x: remove clock related code
->   mips: ralink: rt3883: remove clock related code
->   mips: ralink: mt7620: remove clock related code
->   mips: ralink: remove reset related code
->   mips: ralink: get cpu rate from new driver code
->   MAINTAINERS: add Mediatek MTMIPS Clock maintainer
->
->  .../bindings/clock/mediatek,mtmips-sysc.yaml  |   65 +
->  MAINTAINERS                                   |    6 +
->  arch/mips/include/asm/mach-ralink/mt7620.h    |   35 -
->  arch/mips/include/asm/mach-ralink/rt288x.h    |   10 -
->  arch/mips/include/asm/mach-ralink/rt305x.h    |   21 -
->  arch/mips/include/asm/mach-ralink/rt3883.h    |    8 -
->  arch/mips/ralink/clk.c                        |   26 +-
->  arch/mips/ralink/common.h                     |    5 -
->  arch/mips/ralink/mt7620.c                     |  226 ----
->  arch/mips/ralink/of.c                         |    4 -
->  arch/mips/ralink/reset.c                      |   61 -
->  arch/mips/ralink/rt288x.c                     |   31 -
->  arch/mips/ralink/rt305x.c                     |   78 --
->  arch/mips/ralink/rt3883.c                     |   44 -
->  drivers/clk/ralink/Kconfig                    |    7 +
->  drivers/clk/ralink/Makefile                   |    1 +
->  drivers/clk/ralink/clk-mtmips.c               | 1134 +++++++++++++++++
->  17 files changed, 1232 insertions(+), 530 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mtmi=
-ps-sysc.yaml
->  create mode 100644 drivers/clk/ralink/clk-mtmips.c
->
-> --
-> 2.25.1
->
+Same answer. Could be a name of the pin according to ASIC docs.
+Could be the ball name for a BGA package. Anything that's meaningful.
+
+My point is that we don't want a field simply called "index". Because
+then for one vendor it will mean Ethernet port, for another SMA
+connector number and for the third pin of the package. Those are
+different attributes.
+
+>   <- DPLL_A_PIN_ID
+> 
+> >than single integer index into which drivers will start encoding all
+> >sort of info, using locally invented schemes.  
+> 
+> There could be multiple DPLL and pin instances for a single
+> module/clock_id tuple we have to distinguish somehow. If the driver
+> can't pass "index" of DPLL or a pin, how we distinguish them?
+> 
+> Plus is is possible that 2 driver instances share the same dpll
+> instance, then to get the dpll pointer reference, they do:
+> INSTANCE A:
+> dpll_0 = dpll_device_get(clock_id, 0, THIS_MODULE);
+> dpll_1 = dpll_device_get(clock_id, 1, THIS_MODULE);
+> 
+> INSTANCE B:
+> dpll_0 = dpll_device_get(clock_id, 0, THIS_MODULE);
+> dpll_1 = dpll_device_get(clock_id, 1, THIS_MODULE);
+> 
+> My point is, event if we don't expose the index to the userspace,
+> we need to have it internally.
+
+That's fine, I guess. I'd prefer driver matching to be the same as user
+space matching to force driver authors to have the same perspective as
+the user. But a "driver coookie" not visible to user space it probably
+fine.
