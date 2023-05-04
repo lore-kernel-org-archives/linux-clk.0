@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE566C77B7C
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 12:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97DEC77B78
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 12:52:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbjEDMr5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 08:47:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35224 "EHLO
+        id S229880AbjEDMwH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 08:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229958AbjEDMr4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 08:47:56 -0400
+        with ESMTP id S230426AbjEDMwG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 08:52:06 -0400
 Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B108B49D2
-        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 05:47:54 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9659c5b14d8so71042066b.3
-        for <linux-clk@vger.kernel.org>; Thu, 04 May 2023 05:47:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B730E6E90
+        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 05:51:33 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-953343581a4so66805566b.3
+        for <linux-clk@vger.kernel.org>; Thu, 04 May 2023 05:51:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683204473; x=1685796473;
+        d=linaro.org; s=google; t=1683204653; x=1685796653;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jbqmEvSI8fNnq/copnGLAXkGX86AYweHmXiMD8VPVeY=;
-        b=eKDW7e2kSJUwvj9cuUAef9rRN5YE1ZPGTM8A2q/DhOtAQ/RxCw+vjayCwzmsLREXQz
-         h/zrn0FI9uL5uk8ofeNGy2gLnybDyYlrRDA7wrUk2gDj9FPaDxMIxqEcBzKFRX2pzJ+3
-         4zdT67vYlEZ/Ai9Em508YZNSRz0fJncw1ilURfL/zUfgjmDXCfpGxqeeMO+0DXLl/YXv
-         CcioFf+cHII6yQSILoE0aMq0NDnPYH50PYzCsMAs2xY/RJWflrEW0HI2nhW1NdQ0G4Pu
-         Nfmk3jxBe+UtO29v4X8lXiaGqJJrWVv5esn1ji9fVL0rNiSSQd/sDKpWBHiEpLj0j6Io
-         UMfg==
+        bh=O2obC0cCkbuuZfXfRaApQUsjUhYRjOVjT9ma5uBlilE=;
+        b=CGgnPsWj7gT8G7a/TeYTnrfIH3GbZXAzKzl23MMuVFADFRvnPFzYGHCDV6EW588TTc
+         NBC8WfsuRahYRm8RI4X2gf+uyXrI+j+qHTschHy4PaeotgnwkGI/DRmgTFVJsjW+XOCD
+         7r4Fv8Vxljud0g0AWCsEfBDo/9XKvuUrqtch6A2OnMLyqre0Qqog8IpVJ7AiHL4GayIV
+         VLviGVXEcTleBbbfN+5/LH7PGrTPv5PjyBmT1CNkJ27grPWohmOC7XV5VSxpJiNvqQQL
+         iiBCGOs9wx8mITE9kkBgNr4TzeoEiem+9d40DWtCdkcgyImU2kOwmRIQU7L7PH09WK8k
+         ShHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683204473; x=1685796473;
+        d=1e100.net; s=20221208; t=1683204653; x=1685796653;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jbqmEvSI8fNnq/copnGLAXkGX86AYweHmXiMD8VPVeY=;
-        b=COIwM2WFUCMGZFl4oXlcjYjWytbjiBzOAyQD8xjIoN/UhotpuUfFJK7MfOaeOLEJi4
-         F5bhAJXno0cpGYmJGxp4FEL1ajS3zVoP5MoLfi5ahyfjIBe0b0CtvQes5UnxbQrBRVVr
-         4YqGjgvzUVFHTrTvVEBWVHG6XdqPiDD8x7aL4OmcwEbUSD4rk3o4YcjygPRN3D2JqmWc
-         qF7v+GK5FGSb/FwIU5n1EdRFlcX6w8Bk+GF2Uxg845/t9bGYd5vpBN+XdgoyBL6fihC+
-         hXdkkGy2AbbW9cOGsUQuFjEJ772PLC48sRR/v6DZvuYW5qRVsAt2iVPUQYtCqP+QksG9
-         AL5w==
-X-Gm-Message-State: AC+VfDz4c+kvbPgBlVLKnNQt/iUgpnch2jtSogLQd2rMU6HTx8w2mvkb
-        EmFlgT2rdy3WP9urOhU8YnReqEjzwAsNhzYcbacPuw==
-X-Google-Smtp-Source: ACHHUZ5a5T0CbH2FVRK40w4xfIAoT1WHLaqmHed+xyVHOrOBsjEmHjTvIBxh1FKgrAEezuTq2URoRQ==
-X-Received: by 2002:a17:907:e90:b0:965:c58f:f8b9 with SMTP id ho16-20020a1709070e9000b00965c58ff8b9mr272891ejc.19.1683204473160;
-        Thu, 04 May 2023 05:47:53 -0700 (PDT)
+        bh=O2obC0cCkbuuZfXfRaApQUsjUhYRjOVjT9ma5uBlilE=;
+        b=DbxXpSTuxU2jN4qQ41RmP3Cd/7u1qZq1Vm8Jr5lQ2tniHCBn56pOln/C57NRP+DtLh
+         G6P5gC6tjcx9pPJPdYB25T+HqAZxkWw7VI+0yt9kFWbBM/PxYeX40Dr7g5aMYSvlZXEt
+         hGl66tz9DZYsBK7QcJWTAkt5p92yETSnJcG8RKNpIoHM5XQ5UIZMf62h3wQb/JaE+by4
+         g+nIVEl2p2ceVaw+dyFcndaTuz04mVyk/PY6Zi9bwcGOxM8f3pClO7lpiodOxvR0Qa0y
+         2L0tqySs9fcKLrx6AqaVZTLxYFq7epfpZTus8Qs5oFjKxl7KSkE0pcg0oaX5atvWGTl7
+         KVzg==
+X-Gm-Message-State: AC+VfDyoPutGLPhmbGhbvL0uiLGbH5XMGt5xSbkxXnwgfaYt/xjQk5QV
+        v9ZMqWmdW32aNQjcF3F+fIuCMA==
+X-Google-Smtp-Source: ACHHUZ4p5/ZI/MQhoR/P1zQKgfq+Cw+kXOWRIR8givCmU3e+NL2+9TtXsspQiz2YNPuMLAIm9b1HRw==
+X-Received: by 2002:a17:907:1c21:b0:94b:cd7c:59f4 with SMTP id nc33-20020a1709071c2100b0094bcd7c59f4mr6549002ejc.16.1683204653018;
+        Thu, 04 May 2023 05:50:53 -0700 (PDT)
 Received: from ?IPV6:2a02:810d:15c0:828:cbf1:e7ef:fb81:e912? ([2a02:810d:15c0:828:cbf1:e7ef:fb81:e912])
-        by smtp.gmail.com with ESMTPSA id w14-20020a170907270e00b009659fed3612sm1083638ejk.24.2023.05.04.05.47.52
+        by smtp.gmail.com with ESMTPSA id e5-20020a170906504500b0094f124a37c4sm18826340ejk.18.2023.05.04.05.50.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 04 May 2023 05:47:52 -0700 (PDT)
-Message-ID: <a964eeef-1db0-0d8a-e2a5-9e4c5fd8b2f0@linaro.org>
-Date:   Thu, 4 May 2023 14:47:51 +0200
+        Thu, 04 May 2023 05:50:52 -0700 (PDT)
+Message-ID: <7f9f991a-fa56-2f65-293b-bd0ec5d07c40@linaro.org>
+Date:   Thu, 4 May 2023 14:50:46 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.1
-Subject: Re: [PATCH 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc: convert to
- yaml
+Subject: Re: [PATCH 5/5] dt-bindings: clocks: at91sam9x5-sckc: convert to yaml
 Content-Language: en-US
 To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -64,9 +63,9 @@ To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20230504060729.689579-1-claudiu.beznea@microchip.com>
- <20230504060729.689579-3-claudiu.beznea@microchip.com>
+ <20230504060729.689579-6-claudiu.beznea@microchip.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230504060729.689579-3-claudiu.beznea@microchip.com>
+In-Reply-To: <20230504060729.689579-6-claudiu.beznea@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -74,122 +73,111 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 04/05/2023 08:07, Claudiu Beznea wrote:
-> Convert Atmel PMC documentation to yaml.
+> Convert Atmel slow clock controller documentation to yaml.
 > 
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-
-Thank you for your patch. There is something to discuss/improve.
-
-
-> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> ---
+>  .../devicetree/bindings/clock/at91-clock.txt  | 30 -------
+>  .../bindings/clock/atmel,at91sam9x5-sckc.yaml | 84 +++++++++++++++++++
+>  2 files changed, 84 insertions(+), 30 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/at91-clock.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+> deleted file mode 100644
+> index 57394785d3b0..000000000000
+> --- a/Documentation/devicetree/bindings/clock/at91-clock.txt
+> +++ /dev/null
+> @@ -1,30 +0,0 @@
+> -Device Tree Clock bindings for arch-at91
+> -
+> -This binding uses the common clock binding[1].
+> -
+> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -
+> -Slow Clock controller:
+> -
+> -Required properties:
+> -- compatible : shall be one of the following:
+> -	"atmel,at91sam9x5-sckc",
+> -	"atmel,sama5d3-sckc",
+> -	"atmel,sama5d4-sckc" or
+> -	"microchip,sam9x60-sckc":
+> -		at91 SCKC (Slow Clock Controller)
+> -- #clock-cells : shall be 1 for "microchip,sam9x60-sckc" otherwise shall be 0.
+> -- clocks : shall be the input parent clock phandle for the clock.
+> -
+> -Optional properties:
+> -- atmel,osc-bypass : boolean property. Set this when a clock signal is directly
+> -  provided on XIN.
+> -
+> -For example:
+> -	sckc@fffffe50 {
+> -		compatible = "atmel,at91sam9x5-sckc";
+> -		reg = <0xfffffe50 0x4>;
+> -		clocks = <&slow_xtal>;
+> -		#clock-cells = <0>;
+> -	};
+> -
+> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
 > new file mode 100644
-> index 000000000000..c4023c3a85f2
+> index 000000000000..62660c823ea1
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
-> @@ -0,0 +1,161 @@
+> +++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> @@ -0,0 +1,84 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: "http://devicetree.org/schemas/clock/atmel,at91rm9200-pmc.yaml#"
+> +$id: "http://devicetree.org/schemas/clock/atmel,at91sam9x5-sckc.yaml#"
 > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 
-Drop quotes from both.
+Drop quotes.
 
 > +
-> +title: Atmel Power Management Controller (PMC)
+> +title: Atmel Slow Clock Controller (SCKC)
 > +
 > +maintainers:
 > +  - Claudiu Beznea <claudiu.beznea@microchip.com>
-> +
-> +description:
-> +  The power management controller optimizes power consumption by controlling all
-> +  system and user peripheral clocks. The PMC enables/disables the clock inputs
-> +  to many of the peripherals and to the processor.
 > +
 > +properties:
 > +  compatible:
 > +    oneOf:
 > +      - items:
-> +          - const: atmel,at91sam9260-pmc
 
-Why this is separate, not part of bottom enum?
+Drop items here.
 
-> +          - const: syscon
+> +          - enum:
+> +              - atmel,at91sam9x5-sckc
+> +              - atmel,sama5d4-sckc
+> +              - atmel,sama5d3-sckc
 
+Keep order by name, so 5d3 and then 5d4.
+
+> +              - microchip,sam9x60-sckc
 > +      - items:
-> +          - enum:
-> +              - atmel,at91sam9g20-pmc
-> +          - enum:
-> +              - atmel,at91sam9260-pmc
-
-This should be const. You cannot have here different compatibles.
-
-> +          - const: syscon
-> +      - items:
-> +          - enum:
-> +              - atmel,at91sam9g15-pmc
-> +              - atmel,at91sam9g25-pmc
-> +              - atmel,at91sam9g35-pmc
-> +              - atmel,at91sam9x25-pmc
-> +              - atmel,at91sam9x35-pmc
-> +          - enum:
-> +              - atmel,at91sam9x5-pmc
-> +          - const: syscon
-> +      - items:
-> +          - enum:
-> +              - atmel,at91sam9g45-pmc
-> +              - atmel,at91sam9n12-pmc
-> +              - atmel,at91sam9rl-pmc
-> +              - atmel,at91rm9200-pmc
-
-Order by name?
-
-> +              - atmel,sama5d4-pmc
-> +              - atmel,sama5d3-pmc
-> +              - atmel,sama5d2-pmc
-> +              - microchip,sam9x60-pmc
-> +              - microchip,sama7g5-pmc
-> +          - const: syscon
+> +          - const: microchip,sama7g5-sckc
+> +          - const: microchip,sam9x60-sckc
 > +
 > +  reg:
 > +    maxItems: 1
 > +
-> +  "#clock-cells":
-> +    const: 2
-
-Explain what the cells are for in description. Having '2' for clock
-controller is not obvious.
-
-> +
 > +  clocks:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    maxItems: 3
-> +
-> +  interrupts:
 > +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    enum: [0, 1]
 > +
 > +  atmel,osc-bypass:
 > +    type: boolean
 > +    description: set when a clock signal is directly provided on XIN
 > +
-> +
-
-Just one blank line.
-
 > +required:
 > +  - compatible
 > +  - reg
-> +  - interrupts
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
+> +
+> +additionalProperties: false
 
-Keep the same order here as they appear in properties:.
-
+put it after allOf, just like previous patch.
 
 > +
 > +allOf:
@@ -198,86 +186,41 @@ Keep the same order here as they appear in properties:.
 > +        compatible:
 > +          contains:
 > +            enum:
-> +              - microchip,sam9x60-pmc
-> +              - microchip,sama7g5-pmc
+> +              - microchip,sam9x60-sckc
+> +              - microchip,sama7g5-sckc
+
+Drop this one. It's not needed.
+
 > +    then:
 > +      properties:
-> +        clocks:
-> +          minItems: 3
-> +          maxItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: td_slck
-> +            - const: md_slck
-> +            - const: main_xtal
+> +        "#clock-cells":
+> +          const: 1
 > +      required:
-> +        - clock-names
+> +        - "#clock-cells"
 > +        - clocks
 
-Drop required: here. It's already in top-level. Same in places below.
+Move these to top-level.
 
-> +
-> +  - if:
+> +    else:
 > +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - atmel,at91rm9200-pmc
-> +              - atmel,at91sam9260-pmc
-> +              - atmel,at91sam9g20-pmc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: slow_xtal
-> +            - const: main_xtal
-> +      required:
-> +        - clock-names
-> +        - clocks
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - atmel,sama5d4-pmc
-> +              - atmel,sama5d3-pmc
-> +              - atmel,sama5d2-pmc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: slow_clk
-> +            - const: main_xtal
-> +      required:
-> +        - clock-names
-> +        - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    pmc: clock-controller@f0018000 {
-> +        compatible = "atmel,sama5d4-pmc", "syscon";
-> +        reg = <0xf0018000 0x120>;
-> +        interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+> +        "#clock-cells":
+> +          const: 0
+> +      if:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              enum:
+> +                - atmel,sama5d4-sckc
+> +                - atmel,sama5d3-sckc
+> +      then:
+> +        required:
+> +          - "#clock-cells"
+> +          - clocks
 
-interrupt looks a bit odd. Are you sure it is correct?
+and drop these required... but this is if-within-else. Very confusing.
+Which case you want to handle that way? So other compatibles do not need
+clock cells or clocks?
 
-> +        #clock-cells = <2>;
-> +        clocks = <&clk32k>, <&main_xtal>;
-> +        clock-names = "slow_clk", "main_xtal";
-> +    };
-> +
-> +...
 
 Best regards,
 Krzysztof
