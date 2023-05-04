@@ -2,250 +2,238 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA22CC77B78
-	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 17:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 831C2C77B78
+	for <linux-clk@archiver.kernel.org>; Thu,  4 May 2023 17:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229712AbjEDREQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 May 2023 13:04:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39118 "EHLO
+        id S229670AbjEDRvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 May 2023 13:51:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229602AbjEDREP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 13:04:15 -0400
-Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B90B62719;
-        Thu,  4 May 2023 10:04:13 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id F1E2E580E6A;
-        Thu,  4 May 2023 13:04:12 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Thu, 04 May 2023 13:04:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1683219852; x=1683227052; bh=Pk
-        SQbmz2mEiFvQuMjYfFpQvVcVsNXX6yAK0DMQvrT78=; b=cmJlwLa8yhdC4PdQoI
-        d0hb531eiI2SORxL3Fl3hrBicgmrIqTK2JruPb97I5kPMeDAKroA/qfvcVn4SHpi
-        0GJwBwwJhVyBr0Z3gCWPJStGYlLHJVRHb8h+jKHQvCaAntRpesESAK3sBnsryQLT
-        SY1pMZNm7NeXzxB0X4LGhh4tDtYGJwHvxymMS6zun/yeRMUOk17dwvfkedHb73tr
-        HDJwJT3hqrDjvLymB2DkFIWIl9NAK1sqV8mngyOKOOkARjYozakGWeevZLdVnLJM
-        2r9OCaZnJE/Iut75vl7CK6hrYFM8e09Zs5jDuDCIHU4E46AgWleB+oJARw3dPB4i
-        nWXg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1683219852; x=1683227052; bh=PkSQbmz2mEiFv
-        QuMjYfFpQvVcVsNXX6yAK0DMQvrT78=; b=AuagbG+sDeabBm6qygO9uf6q6oPyP
-        ln51yGwNChqfoFi25xJw+emXpwH8g/NTNhI3i5k1yWKZiYlTlAS5rplMF6gQkK/e
-        laonPFrlE/3b3UZB5kH5Oe8M2j6oYoZR4K3PB9E/ohKD6c/GRXCbuk26UWMvS6ps
-        IGPMb413/9tdMInk8seyummLGmLiYcAs0royMw83PEXI5IllNN1DDdz1ub/MnRtP
-        jNV3A8TnFjNuN73VANJme+us+/xozB2Fslb8vtM7RCSV5PVpN7WkauqzxtupFLrH
-        w6KIslwyhc14ZQfGI9ojV26lTWu/2uydNx3dHVpk0RYe0JWyoFktgKk2g==
-X-ME-Sender: <xms:iuVTZB3-j9J9v_I9u_nLe23G-6Km95qYmGddsS8j9B3EISxW2I58tQ>
-    <xme:iuVTZIFcT7ZRU7I8Q-j_hIxB2UA45VX7YZUSc23XiwcJfwvL32Fc00IBM8g7HDbhY
-    fDMxv-M9z8kq6nDOks>
-X-ME-Received: <xmr:iuVTZB6hMgnVSN6caEFK-biUtu_4lRmFrrREwhLfK0aqpVD8obrAFVEs3OgODGka612q-Vxrss0VmiOBn_hzt2nWqkubj9U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeftddguddtkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeet
-    kefgleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:iuVTZO352jeG413D2-8gCuvaVz9nzir5JVeGb9Qt5T66BjFUHxDI6A>
-    <xmx:iuVTZEEch61XFzQdgNXpnEgchfdDLzHESPV9TD2R7L76K_Tm_CGCzg>
-    <xmx:iuVTZP8JvDB9v2-05uIiSmwcEsdw1ZGXKd400N956wEG9rbS3yqRhA>
-    <xmx:jOVTZIO2DARyLcbYRuAk0sTaKYb8VuLfnAb3kuIJaa_ZaJPDtFbScA>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 4 May 2023 13:04:09 -0400 (EDT)
-Date:   Thu, 4 May 2023 19:04:07 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+        with ESMTP id S229449AbjEDRvp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 May 2023 13:51:45 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332B519B0
+        for <linux-clk@vger.kernel.org>; Thu,  4 May 2023 10:51:43 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2ac675d84b5so9684891fa.3
+        for <linux-clk@vger.kernel.org>; Thu, 04 May 2023 10:51:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1683222701; x=1685814701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O45EJsoDq0FqmHnerFViZl2wgrujScPaI15rEDqYMNE=;
+        b=uFlPsO8rOXvRxLzCv8wu8QfDcuqRrwfKuf1HallJvCJGOewFVvgFbHzxus9dZORTyM
+         dI/tqMDT+drHp2aGr0LMvK0AjH9nMQKVEpN70NfP0/9zVCT7EZDZnVLFAPqNYM0qGjWH
+         kNnbG1xtu7iWY5T/O6JkdvO3xxRG0EvdrI4sSXknRaLDsUmPTX0pgBIK1IfFBSW+kdsY
+         nyMUaSYyqM5Olpv8RHQtMW4qTBkYjFtsyAzXVnpFMpzVlR3i/awvRa6SJ67n6fazIIgr
+         CndOZAOkaKFUG6yu4hSltD/I70enaaPBKq1BGP2jPyLunGzVa4GXVn4s1a1s6ForQW1/
+         2NHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683222701; x=1685814701;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O45EJsoDq0FqmHnerFViZl2wgrujScPaI15rEDqYMNE=;
+        b=et6vQtS6r/XkRKTJFBCVrNli0n8lvoVEAj/sx6+S6WjzeU20exTKFruYrIXHuRnK9k
+         No7eZxWCCPey10/3NTgD1jMAROpe1gjEoPTdnwG6gi1mZVgbJS+ahTKiMHOxd5c9Ibjl
+         IKBjtg/6pAXIBGQiV/oZZ3EAjifLnc0JuudIyUVAnOEpvPsS0ZWyj8jj5yPRpeUhwHZw
+         D/XX8+Lhq/kN/DOXLSC8WQhVqjw9jFckVG9yDvrszZVXltzw7jTI72GvbIBtDji5W41G
+         PonBYAWzffCI/7gSBMgpoatMFwpDtPE+33zF1tE2208CilxgA1zWEBs+kjXiJEpdovkF
+         gWvA==
+X-Gm-Message-State: AC+VfDzPBxHqssjG3BQhy+JgfkxcZ9U6Y0SMwbs3yNt68kh2BzO9w4Kk
+        5FkrUimvxLM7Gb+CGI6rjzWZ/Q==
+X-Google-Smtp-Source: ACHHUZ7OfjupDiodfS/3ZFemfNnPjusNOrEf4cKdOHZtq3CRyMql0W2cUpmGdNjebY8nBN9KSOf/MA==
+X-Received: by 2002:a2e:2403:0:b0:2a7:7259:9587 with SMTP id k3-20020a2e2403000000b002a772599587mr1111040ljk.46.1683222701245;
+        Thu, 04 May 2023 10:51:41 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id i3-20020a2e9403000000b002a8b5310642sm6707037ljh.5.2023.05.04.10.51.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 May 2023 10:51:40 -0700 (PDT)
+Date:   Thu, 4 May 2023 19:51:38 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v3 29/65] clk: socfpga: gate: Add a determine_rate hook
-Message-ID: <tgtfisqxubin4cjj6q26fboirbcnjzcazt5y3m322lw5lskz6l@d3tgz4hdfnk2>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
- <679921ee-98d4-d6ef-5934-e009fd4b31fc@kernel.org>
- <sjlp5ubnpvulgwhhymmfkmmobkgxacyqwagqozodkee3di2qik@3igj6k3zgbk6>
- <57dd81d0-510e-0fab-670d-1109eb8dd974@kernel.org>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZFPwqu5W8NE6Luvk@nanopsycho>
+References: <ZDJulCXj9H8LH+kl@nanopsycho>
+ <20230410153149.602c6bad@kernel.org>
+ <ZDwg88x3HS2kd6lY@nanopsycho>
+ <20230417124942.4305abfa@kernel.org>
+ <ZFDPaXlJainSOqmV@nanopsycho>
+ <20230502083244.19543d26@kernel.org>
+ <ZFITyWvVcqgRtN+Q@nanopsycho>
+ <20230503191643.12a6e559@kernel.org>
+ <ZFOQWmkBUtgVR06R@nanopsycho>
+ <20230504090401.597a7a61@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wz33ctz6wi47hpno"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <57dd81d0-510e-0fab-670d-1109eb8dd974@kernel.org>
+In-Reply-To: <20230504090401.597a7a61@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Thu, May 04, 2023 at 06:04:01PM CEST, kuba@kernel.org wrote:
+>On Thu, 4 May 2023 13:00:42 +0200 Jiri Pirko wrote:
+>> Thu, May 04, 2023 at 04:16:43AM CEST, kuba@kernel.org wrote:
+>> >On Wed, 3 May 2023 09:56:57 +0200 Jiri Pirko wrote:  
+>> >> Okay.
+>> >> 
+>> >> When netdev will have pin ID in the RT netlink message (as it is done
+>> >> in RFCv7), it is easy to get the pin/dpll for netdev. No problem there.
+>> >> 
+>> >> However, for non-SyncE usecase, how do you imagine scripts to work?
+>> >> I mean, the script have to obtain dpll/pin ID by deterministic
+>> >> module_name/clock_id/idx tuple.  
+>> >
+>> >No scoped idx.  
+>> 
+>> That means, no index defined by a driver if I undestand you correctly,
+>> right?
+>
+>Yes, my suggestion did not include a scoped index with no
+>globally defined semantics.
 
---wz33ctz6wi47hpno
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Okay, makes sense. Devlink port index didn't end up well :/
 
-Hi Dinh,
 
-On Thu, Apr 27, 2023 at 02:09:48PM -0500, Dinh Nguyen wrote:
-> Hi Maxime,
->=20
-> On 4/25/23 09:48, Maxime Ripard wrote:
-> > Hi Dinh,
-> >=20
-> > On Mon, Apr 24, 2023 at 01:32:28PM -0500, Dinh Nguyen wrote:
-> > > On 4/4/23 05:11, Maxime Ripard wrote:
-> > > > The SoCFGPA gate clock implements a mux with a set_parent hook, but
-> > > > doesn't provide a determine_rate implementation.
-> > > >=20
-> > > > This is a bit odd, since set_parent() is there to, as its name impl=
-ies,
-> > > > change the parent of a clock. However, the most likely candidate to
-> > > > trigger that parent change is a call to clk_set_rate(), with
-> > > > determine_rate() figuring out which parent is the best suited for a
-> > > > given rate.
-> > > >=20
-> > > > The other trigger would be a call to clk_set_parent(), but it's far=
- less
-> > > > used, and it doesn't look like there's any obvious user for that cl=
-ock.
-> > > >=20
-> > > > So, the set_parent hook is effectively unused, possibly because of =
-an
-> > > > oversight. However, it could also be an explicit decision by the
-> > > > original author to avoid any reparenting but through an explicit ca=
-ll to
-> > > > clk_set_parent().
-> > > >=20
-> > > > The latter case would be equivalent to setting the flag
-> > > > CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate =
-hook
-> > > > to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> > > > implementation is provided, clk_round_rate() (through
-> > > > clk_core_round_rate_nolock()) will call itself on the parent if
-> > > > CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> > > > otherwise. __clk_mux_determine_rate() has the exact same behavior w=
-hen
-> > > > CLK_SET_RATE_NO_REPARENT is set.
-> > > >=20
-> > > > And if it was an oversight, then we are at least explicit about our
-> > > > behavior now and it can be further refined down the line.
-> > > >=20
-> > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > > ---
-> > > >    drivers/clk/socfpga/clk-gate.c | 3 ++-
-> > > >    1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >=20
-> > > > diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/c=
-lk-gate.c
-> > > > index 32ccda960f28..cbba8462a09e 100644
-> > > > --- a/drivers/clk/socfpga/clk-gate.c
-> > > > +++ b/drivers/clk/socfpga/clk-gate.c
-> > > > @@ -110,6 +110,7 @@ static unsigned long socfpga_clk_recalc_rate(st=
-ruct clk_hw *hwclk,
-> > > >    static struct clk_ops gateclk_ops =3D {
-> > > >    	.recalc_rate =3D socfpga_clk_recalc_rate,
-> > > > +	.determine_rate =3D __clk_mux_determine_rate,
-> > > >    	.get_parent =3D socfpga_clk_get_parent,
-> > > >    	.set_parent =3D socfpga_clk_set_parent,
-> > > >    };
-> > > > @@ -166,7 +167,7 @@ void __init socfpga_gate_init(struct device_nod=
-e *node)
-> > > >    	init.name =3D clk_name;
-> > > >    	init.ops =3D ops;
-> > > > -	init.flags =3D 0;
-> > > > +	init.flags =3D CLK_SET_RATE_NO_REPARENT;
-> > > >    	init.num_parents =3D of_clk_parent_fill(node, parent_name, SOCF=
-PGA_MAX_PARENTS);
-> > > >    	if (init.num_parents < 2) {
-> > > >=20
-> > >=20
-> > > This patch broke SoCFPGA boot serial port. The characters are mangled.
-> >=20
-> > Do you have any other access to that board? If so, could you dump
-> > clk_summary in debugfs with and without that patch?
-> >=20
->=20
-> That dump from the clk_summary are identical for both cases.
+> 
+>> >> There are 2 options to do that:
+>> >> 1) dump all dplls/pins and do lookup in userspace
+>> >> 2) get a dpll/pin according to given module_name/clock_id/idx tuple
+>> >> 
+>> >> The first approach is not very nice.
+>> >> The currently pushed RFCv7 of the patchset does not support 2)
+>> >> 
+>> >> Now if we add support for 2), we basically use module_name/clock_id/idx
+>> >> as a handle for "get cmd". My point is, why can't we use it for "set
+>> >> cmd" as well and avoid the ID entirely?  
+>> >
+>> >Sure, we don't _have_ to have an ID, but it seems go against normal
+>> >data normalization rules. And I don't see any harm in it.
+>> >
+>> >But you're asking for per-device "idx" and that's a no-go for me,
+>> >given already cited experience.
+>> >
+>> >The user space can look up the ID based on identifying information it
+>> >has. IMO it's better to support multiple different intelligible elements  
+>> 
+>> Do you mean fixed tuple or variable tuple?
+>> 
+>> CMD_GET_ID
+>>   -> DPLL_A_MODULE_NAME  
+>>      DPLL_A_CLOCK_ID
+>
+>> What is the next intelligible element to identify DPLL device here?
+>
+>I don't know. We can always add more as needed.
+>We presuppose that the devices are identifiable, so whatever info
+>is used to identify them goes here.
 
-Thanks for testing
+Allright. So in case of ptp_ocp and mlx5, module_name and clock_id
+are enough. In case of ice, DPLL_A_TYPE, attr is the one to make
+distinction between the 2 dpll instances there
 
-I'm a bit confused, there should be no difference in behaviour, and if
-there was any difference I would expect the clock tree to be somewhat
-different.
+So for now, we can have:
+ CMD_GET_ID
+   -> DPLL_A_MODULE_NAME
+      DPLL_A_CLOCK_ID
+      DPLL_A_TYPE
+   <- DPLL_A_ID
 
-Could you still paste the clk_summary (and dmesg) output? Which UART
-driver is being used?
 
-Also, is there a way for me to test it somehow?
+if user passes a subset which would not provide a single match, we error
+out with -EINVAL and proper exack message. Makes sense?
 
-Thanks,
-Maxime
 
---wz33ctz6wi47hpno
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZFPlhwAKCRDj7w1vZxhR
-xctpAQD9sYYRJZv9h/D0iPAAtlYeOZYDF7u18IvdR8rTQHoA/wEAz3/h3C/WCX/e
-9OHv6OkqMBGTFLQxWrqvIxshn0fuYg4=
-=DIwC
------END PGP SIGNATURE-----
 
---wz33ctz6wi47hpno--
+>
+>>   <- DPLL_A_ID
+>> 
+>> CMD_GET_PIN_ID
+>>   -> DPLL_A_MODULE_NAME  
+>>      DPLL_A_CLOCK_ID
+>
+>> What is the next intelligible element to identify a pin here?
+>
+>Same answer. Could be a name of the pin according to ASIC docs.
+>Could be the ball name for a BGA package. Anything that's meaningful.
+
+Okay, for pin, the type and label would probably do:
+ CMD_GET_PIN_ID
+   -> DPLL_A_MODULE_NAME
+      DPLL_A_CLOCK_ID
+      DPLL_A_PIN_TYPE
+      DPLL_A_PIN_LABEL
+   <- DPLL_A_PIN_ID
+
+Again, if user passes a subset which would not provide a single match,
+we error out with -EINVAL and proper exack message.
+
+If there is only one pin for example, user query of DPLL_A_MODULE_NAME
+and DPLL_A_CLOCK_ID would do return a single match. No need to pass
+anything else.
+
+I think this could work with both ice and ptp_ocp, correct guys?
+
+For mlx5, I will have 2 or more pins with same module name, clock id
+and type. For these SyncE pins the label does not really make sense.
+But I don't have to query, because the PIN_ID is going to be exposed for
+netdev over RT netlink. Clicks.
+
+Makes sense?
+
+
+>
+>My point is that we don't want a field simply called "index". Because
+>then for one vendor it will mean Ethernet port, for another SMA
+>connector number and for the third pin of the package. Those are
+>different attributes.
+
+Got you and agree.
+
+
+>
+>>   <- DPLL_A_PIN_ID
+>> 
+>> >than single integer index into which drivers will start encoding all
+>> >sort of info, using locally invented schemes.  
+>> 
+>> There could be multiple DPLL and pin instances for a single
+>> module/clock_id tuple we have to distinguish somehow. If the driver
+>> can't pass "index" of DPLL or a pin, how we distinguish them?
+>> 
+>> Plus is is possible that 2 driver instances share the same dpll
+>> instance, then to get the dpll pointer reference, they do:
+>> INSTANCE A:
+>> dpll_0 = dpll_device_get(clock_id, 0, THIS_MODULE);
+>> dpll_1 = dpll_device_get(clock_id, 1, THIS_MODULE);
+>> 
+>> INSTANCE B:
+>> dpll_0 = dpll_device_get(clock_id, 0, THIS_MODULE);
+>> dpll_1 = dpll_device_get(clock_id, 1, THIS_MODULE);
+>> 
+>> My point is, event if we don't expose the index to the userspace,
+>> we need to have it internally.
+>
+>That's fine, I guess. I'd prefer driver matching to be the same as user
+>space matching to force driver authors to have the same perspective as
+>the user. But a "driver coookie" not visible to user space it probably
+>fine.
+
+Allright, lets leave them for now. As internal kernel API, could be
+changed in the future if needed.
+
+Arkadiusz, Vadim, are you following this?
+
