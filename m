@@ -2,91 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476D5C77B7D
-	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 10:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE27EC77B7C
+	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 10:41:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230484AbjEEKcS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 May 2023 06:32:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40770 "EHLO
+        id S231588AbjEEKlW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 May 2023 06:41:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbjEEKcR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 06:32:17 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06FEC16094
-        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 03:32:16 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-94a34a14a54so308741066b.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 May 2023 03:32:15 -0700 (PDT)
+        with ESMTP id S231690AbjEEKlR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 06:41:17 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A051A1F6
+        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 03:41:14 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-2fa47de5b04so1506808f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 05 May 2023 03:41:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1683282734; x=1685874734;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1683283273; x=1685875273;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oqFM0dfkiOziqgm+y7EAdXu3SisD+1/na/JyXA0Db3s=;
-        b=NQZWiOt0UJlZjfg3GJnTv8hNzqx+Nl7N072M4bTaZxs0xwR0Yf7ZsNZ4lJOlNfNDT7
-         tAM3IidgUlachT+I6uvo+sFy/kMTy4CK4kukqyLPIxM+4fNh6qP+GdbKDMu/oZh/a6qx
-         UFwyD9deiM0sw3nx+TM0ukDI3KvNWNazhdaRacEp3YbYfQKLYoOkNL+2c02960OWlZa4
-         v1wl7PnHnmRMcL/+zpccmr8m9ef2nHaEwHGPx5fMOA2aVjLtWhJyIX+sgEHtfAkADg7z
-         jfXRcxJZYna4QCHkG+bmOZM1W4qv++/IHR1xYL6PO6xpRHk1cBF4ttlvVaugTUBYdLDg
-         zOkA==
+        bh=2Nq9FdkBIx7qSryTVXqkeom+1RISA8nreL8gl42Y7iA=;
+        b=aRXM1GWidgf8Okv7zsy+p23RkW4A7VS9PvC9GNkHVM3zrKKuhdA2WkYNRci3aNhwti
+         WS7qBTTCy31SYNrRXFqkRKGQU4QuBkK1BtB4cb+NwGYLXUFmKFtCdYhA1WHAzQODEYTT
+         cHvO55vJwuUBRrbCbmHny5TfPxwFP6tFvsZzwDQ7agH8+f1z6d/Tx5jVq2PdmCLR14Cz
+         el85dxokm3LC+zxDGH+INLa5KqWsBi7eLfkpWesxin9bQZBMlWxG4BTGwBaKIt6Sp/y6
+         RcRlTJynem2WpOKg7R8VDezVZAM/w8Y7smGK0K6mm2C8UThkycRNNcPJMgoQ23AIhWgA
+         v5UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683282734; x=1685874734;
+        d=1e100.net; s=20221208; t=1683283273; x=1685875273;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oqFM0dfkiOziqgm+y7EAdXu3SisD+1/na/JyXA0Db3s=;
-        b=gbsLWT1NjgUkgy/jktHdaVMoP1HfFzu9qAzIHiz41Cm32RTmcvl9psJVfr0HLpMZtM
-         aHGh54TLu9cUeFOk20du3UD80i8eHOg3Rv0vYtbLGRrRJtLOZ5UARhksvJbDHt9uK7yz
-         pdRCqgpfFfzhndXxD2IIsOlA8mXJSPBQ5sw9b/knHA3CTdR0T8CuKm1UJFRtm98SN2M2
-         ghI1kHVgSgVsO4JCeIyGLuAtm87mkxrMEOI5tgeErpaMo4vbtOCq9QfSONaI7V+rjC4/
-         3UZwccLDt0hiRFWRCEslzYuDUGpsYfYW2RotYPWwlszxms7Tk8/AOuzjlmdqg4JiJCj2
-         4j5A==
-X-Gm-Message-State: AC+VfDzNR9D5tr2gqBQMmrSeOuGdU0qw5vE9umRpZRMyH9yrAJAdD26N
-        MFwwkZHzqnOPEZpMqJygq9KQTg==
-X-Google-Smtp-Source: ACHHUZ4pZ9j/Mdczi1SYO7f5/FVFXb5vlqeJq2kBdYMCcTQvfFJrB/MTmDxvlObDskpJSZp8Qu6MUQ==
-X-Received: by 2002:a17:907:7204:b0:94f:2bd0:4780 with SMTP id dr4-20020a170907720400b0094f2bd04780mr725346ejc.58.1683282733904;
-        Fri, 05 May 2023 03:32:13 -0700 (PDT)
+        bh=2Nq9FdkBIx7qSryTVXqkeom+1RISA8nreL8gl42Y7iA=;
+        b=Oe0pYQS7CtYijm+1TvflTbZNZswHrt3qt+NrYafPP2aBz+bRVbD+IrgP47Dkx2Ka6V
+         xE1S+dmGGif1oDfxst0hwLFLuGiv0RX2QuNWbZZf9Yrt5apRURGHV3F10NGsZWCwqQcx
+         Jbb9VwUco/QsA3GEa+1qKWQPvnC6vpzBcRqnqNSkuLiOrb/OS/IVdSbGBPXL556I5U9c
+         cN66dbc8V8J/0AEkUlPSFMWc4ElSvamaSMYRzYX+/vJxXheJbNT6z6hhuL/kudp7ZnqJ
+         WhScBq449xCZk1c8H/grLzq/pxCupWVrJmy5DUUyCxVGXUnrdbzyYs9ur1QdlyDQ4GZF
+         4nHw==
+X-Gm-Message-State: AC+VfDw3pu5v8FYfRvgSbLztj0xWBhOrdXXJbq5wTNFxFZp/Bt1l6tbH
+        bM1e+VlGZCGCaz/Rvm6dWEeDqg==
+X-Google-Smtp-Source: ACHHUZ5N1BYv2fq0cH1ZrnOoRhp0jMNO3Sek0h8iGuMTIFGDHe5roWYot3NxaGP4Kg3ciiwxq4JcMw==
+X-Received: by 2002:a5d:4c8c:0:b0:2f5:3dfd:f4d2 with SMTP id z12-20020a5d4c8c000000b002f53dfdf4d2mr1102918wrs.64.1683283272788;
+        Fri, 05 May 2023 03:41:12 -0700 (PDT)
 Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id de5-20020a1709069bc500b0094ef96a6564sm772766ejc.75.2023.05.05.03.32.13
+        by smtp.gmail.com with ESMTPSA id f16-20020a5d6650000000b003062c0ef959sm1993670wrw.69.2023.05.05.03.41.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 May 2023 03:32:13 -0700 (PDT)
-Date:   Fri, 5 May 2023 12:32:12 +0200
+        Fri, 05 May 2023 03:41:12 -0700 (PDT)
+Date:   Fri, 5 May 2023 12:41:11 +0200
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Vadim Fedorenko <vadfed@meta.com>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org, Jiri Pirko <jiri@nvidia.com>,
-        poros@redhat.com, mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v7 7/8] netdev: expose DPLL pin handle for netdevice
-Message-ID: <ZFTbLHnL9SXxqtzt@nanopsycho>
-References: <20230428002009.2948020-1-vadfed@meta.com>
- <20230428002009.2948020-8-vadfed@meta.com>
- <20230504133140.06ab37d0@kernel.org>
+        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZFTdR93aDa6FvY4w@nanopsycho>
+References: <ZDwg88x3HS2kd6lY@nanopsycho>
+ <20230417124942.4305abfa@kernel.org>
+ <ZFDPaXlJainSOqmV@nanopsycho>
+ <20230502083244.19543d26@kernel.org>
+ <ZFITyWvVcqgRtN+Q@nanopsycho>
+ <20230503191643.12a6e559@kernel.org>
+ <ZFOQWmkBUtgVR06R@nanopsycho>
+ <20230504090401.597a7a61@kernel.org>
+ <ZFPwqu5W8NE6Luvk@nanopsycho>
+ <20230504114421.51415018@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230504133140.06ab37d0@kernel.org>
+In-Reply-To: <20230504114421.51415018@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, May 04, 2023 at 10:31:40PM CEST, kuba@kernel.org wrote:
->On Thu, 27 Apr 2023 17:20:08 -0700 Vadim Fedorenko wrote:
->> @@ -2411,6 +2412,10 @@ struct net_device {
->>  	struct rtnl_hw_stats64	*offload_xstats_l3;
->>  
->>  	struct devlink_port	*devlink_port;
->> +
->> +#if IS_ENABLED(CONFIG_DPLL)
->> +	struct dpll_pin		*dpll_pin;
->> +#endif
+Thu, May 04, 2023 at 08:44:21PM CEST, kuba@kernel.org wrote:
+>On Thu, 4 May 2023 19:51:38 +0200 Jiri Pirko wrote:
+>> >> What is the next intelligible element to identify DPLL device here?  
+>> >
+>> >I don't know. We can always add more as needed.
+>> >We presuppose that the devices are identifiable, so whatever info
+>> >is used to identify them goes here.  
+>> 
+>> Allright. So in case of ptp_ocp and mlx5, module_name and clock_id
+>> are enough. In case of ice, DPLL_A_TYPE, attr is the one to make
+>> distinction between the 2 dpll instances there
+>> 
+>> So for now, we can have:
+>>  CMD_GET_ID
+>>    -> DPLL_A_MODULE_NAME  
+>>       DPLL_A_CLOCK_ID
+>>       DPLL_A_TYPE
+>>    <- DPLL_A_ID
+>> 
+>> 
+>> if user passes a subset which would not provide a single match, we error
+>> out with -EINVAL and proper exack message. Makes sense?
 >
->kdoc is missing. I'm guessing that one pin covers all current user
->cases but we should clearly document on what this pin is, so that when
->we extend the code to support multiple pins (in/out, per lane, idk)
->we know which one this was.. ?
+>Yup, that sounds good to me.
+>
+>> >Same answer. Could be a name of the pin according to ASIC docs.
+>> >Could be the ball name for a BGA package. Anything that's meaningful.  
+>> 
+>> Okay, for pin, the type and label would probably do:
+>>  CMD_GET_PIN_ID
+>>    -> DPLL_A_MODULE_NAME  
+>>       DPLL_A_CLOCK_ID
+>>       DPLL_A_PIN_TYPE
+>>       DPLL_A_PIN_LABEL
+>
+>Label sounds dangerously open ended, too. Would that be the SMA
 
-Oh, yeah. Will do.
+Well, every string is. And past RFCs of this patchset demonstrated guys
+did serialize a lot of stuff in strings.
+
+
+>connector label (i.e. front panel label)? Or also applicable to
+>internal pins? It'd be easier to talk details if we had the user
+>facing documentation that ships with these products.
+
+I think is is use case specific. Some of the pins face the user over
+physical port, they it is a front panel label. Others are internal
+names. I have no clue how to define and mainly enforce rules here.
+
+But as an example, if you have 2 pins of the same type, only difference
+is they are connected to front panel connector "A" and "B", this is the
+label you have to pass to the ID query. Do you see any other way?
+
+
+>
+>>    <- DPLL_A_PIN_ID
+>> 
+>> Again, if user passes a subset which would not provide a single match,
+>> we error out with -EINVAL and proper exack message.
+>> 
+>> If there is only one pin for example, user query of DPLL_A_MODULE_NAME
+>> and DPLL_A_CLOCK_ID would do return a single match. No need to pass
+>> anything else.
+>> 
+>> I think this could work with both ice and ptp_ocp, correct guys?
+>> 
+>> For mlx5, I will have 2 or more pins with same module name, clock id
+>> and type. For these SyncE pins the label does not really make sense.
+>> But I don't have to query, because the PIN_ID is going to be exposed for
+>> netdev over RT netlink. Clicks.
+>> 
+>> Makes sense?
