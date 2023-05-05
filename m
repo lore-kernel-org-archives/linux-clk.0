@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E163EC7EE22
-	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 08:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE78C7EE30
+	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 08:23:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231171AbjEEIW6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 May 2023 04:22:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51660 "EHLO
+        id S230450AbjEEIX1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 May 2023 04:23:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231360AbjEEIWf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 04:22:35 -0400
+        with ESMTP id S230348AbjEEIWz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 04:22:55 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 480221892A;
-        Fri,  5 May 2023 01:22:28 -0700 (PDT)
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3458LmUV028048;
-        Fri, 5 May 2023 08:22:22 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F2818DC6;
+        Fri,  5 May 2023 01:22:39 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3457I9r7007851;
+        Fri, 5 May 2023 08:22:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=JZQ3+O8SUdOc+nTxQWYiFuvwz2MSIJTyx1Se9DSUYTc=;
- b=MVK02hFbHXvDF+/mwr9OnULsIfIuQCR4a5rgJKkpffECFp3tzJ1bblqDvu1u+zKo52tk
- edhicwfhXtg68jeeGvXBAHsxoY8FV4MQXh+hDlHZFnZTOwk7I0bnUXtPa0jywlncpbzw
- MO7D7T0H/kLWGay0/S1dfk3FMDab0Lbmk4MwCRsyfjadzf/hDPK6gNxw4UekWCjEOC7y
- lrBlRlz68/z6whuBLKa15PnXSaGI5sRQl/CNoMG9PDqW2ef8nAde5biTVgAtnvcmRnbT
- LAAZnLBt9YyWuO0IMT8xuMq26RkGcRs0t9bRr6dJWEY9tNBeTt2GDkpYWAzHwxoIG4vk Sw== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qcf24htyr-1
+ bh=iRsnsr0FuzceuDgW0k3bBzXdLl6ibER0NleiSWTqAp0=;
+ b=pnJjSOUX4erupwertY4t6iqYhEkHy76knpWD9eY5xI9D3xlYypOGNQuWwtHAjfZJut1c
+ 7ouoe0b4N6ovWFidb1plsjyEshIzpZfSuXfYBhmKTFXjHxE4t8BF94huuoZXR+/2TX/B
+ WK9pRb6At0VpAUHc2zB2WRRXneFmx9eAyXEYgMB8FoouPXHHjBus72/BHIfYNa4uTb6R
+ inOfIInFx4159UXHbHVXwsC9YZVJtQj6w8hYfPibOsgu3sY03rTxAbQ6Mt2d7LUP29ZK
+ WcMBicXpnwcqo5HfYp7EvsrFsYOSdfBBMJ1gJ4ITObx0Yv56EuIRqpzbow8udDDewrz2 IQ== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qce6mhyx8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 May 2023 08:22:22 +0000
+        Fri, 05 May 2023 08:22:33 +0000
 Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3458MMT1016114
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3458MXRQ022476
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 5 May 2023 08:22:22 GMT
+        Fri, 5 May 2023 08:22:33 GMT
 Received: from varda-linux.qualcomm.com (10.80.80.8) by
  nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Fri, 5 May 2023 01:22:16 -0700
+ 15.2.986.42; Fri, 5 May 2023 01:22:27 -0700
 From:   Varadarajan Narayanan <quic_varada@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
@@ -49,9 +49,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
         <linux-clk@vger.kernel.org>
 CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH v10 3/9] dt-bindings: usb: dwc3: Add IPQ9574 compatible
-Date:   Fri, 5 May 2023 13:05:04 +0530
-Message-ID: <5f7e77b715ed93e4ece624988822f7bd0e2db03c.1683183860.git.quic_varada@quicinc.com>
+Subject: [PATCH v10 5/9] phy: qcom-qusb2: add QUSB2 support for IPQ9574
+Date:   Fri, 5 May 2023 13:05:06 +0530
+Message-ID: <3388703660fa977e72b50fafa9e9361720428648.1683183860.git.quic_varada@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1683183860.git.quic_varada@quicinc.com>
 References: <cover.1683183860.git.quic_varada@quicinc.com>
@@ -62,73 +62,46 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JIfoL_n8B4rfnovvCQYXvzyf4Amae7jd
-X-Proofpoint-GUID: JIfoL_n8B4rfnovvCQYXvzyf4Amae7jd
+X-Proofpoint-GUID: chVUOeGy7xETl2c9wwv_jx7BQKp2WmaX
+X-Proofpoint-ORIG-GUID: chVUOeGy7xETl2c9wwv_jx7BQKp2WmaX
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-04_15,2023-05-04_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- spamscore=0 malwarescore=0 clxscore=1015 mlxlogscore=894
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ mlxlogscore=999 impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2303200000 definitions=main-2305050069
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Document the IPQ9574 dwc3 compatible.
+Add the phy init sequence for the Super Speed ports found
+on IPQ9574.
 
-* Make power-domains as optional since IPQ9574 doesn't have GDSCs
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 ---
- Changes in v9:
-	- Place ipq9574 alongwith similar SoCs instead of new entry
-	- Make power-domains as optional since IPQ9574 doesn't have GDSCs
-
- Changes in v6:
-	- Made power-domains as optional
-	- Resolved all 'make dtbs_check' messages
-
- Changes in v5:
-	- Restore removed constraints
-
- Changes in v4:
-	- Update other relevant sections
-	- Remove constraints not applicable to IPQ9574
+  Changes in v2:
+	- Place the entry such that the list continues to be sorted
 ---
- Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/phy/qualcomm/phy-qcom-qusb2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-index d842819..5c13229 100644
---- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-+++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-@@ -17,6 +17,7 @@ properties:
-           - qcom,ipq6018-dwc3
-           - qcom,ipq8064-dwc3
-           - qcom,ipq8074-dwc3
-+          - qcom,ipq9574-dwc3
-           - qcom,msm8953-dwc3
-           - qcom,msm8994-dwc3
-           - qcom,msm8996-dwc3
-@@ -133,7 +134,6 @@ required:
-   - "#address-cells"
-   - "#size-cells"
-   - ranges
--  - power-domains
-   - clocks
-   - clock-names
-   - interrupts
-@@ -177,6 +177,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,ipq9574-dwc3
-               - qcom,msm8953-dwc3
-               - qcom,msm8996-dwc3
-               - qcom,msm8998-dwc3
+diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+index 2ef638b..bec6e40 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
++++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+@@ -912,6 +912,9 @@ static const struct of_device_id qusb2_phy_of_match_table[] = {
+ 		.compatible	= "qcom,ipq8074-qusb2-phy",
+ 		.data		= &msm8996_phy_cfg,
+ 	}, {
++		.compatible	= "qcom,ipq9574-qusb2-phy",
++		.data		= &ipq6018_phy_cfg,
++	}, {
+ 		.compatible	= "qcom,msm8953-qusb2-phy",
+ 		.data		= &msm8996_phy_cfg,
+ 	}, {
 -- 
 2.7.4
 
