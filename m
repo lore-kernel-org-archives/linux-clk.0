@@ -2,116 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1350C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 11:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF14C7EE22
+	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 11:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231960AbjEEL2U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 May 2023 07:28:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38696 "EHLO
+        id S231796AbjEEL2V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 May 2023 07:28:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231796AbjEEL2J (ORCPT
+        with ESMTP id S231940AbjEEL2J (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 07:28:09 -0400
 Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C12D1A4A0
-        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 04:28:00 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id B90A83200A80;
-        Fri,  5 May 2023 07:27:38 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20A0E18DC2
+        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 04:28:03 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 0B5D83200A6D;
+        Fri,  5 May 2023 07:27:47 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 05 May 2023 07:27:39 -0400
+  by compute4.internal (MEProxy); Fri, 05 May 2023 07:27:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:content-type:content-type:date
         :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1683286058; x=1683372458; bh=D8rLr9OMXPZcCTtVhZhxl/mxOaqHxQqts0r
-        YZ7FfWpo=; b=Vid7TGwpVXkLt2mESgclZOESsWOXEbEk4dsNiJmZW4KqvMhT915
-        j7JHxRMr2/wbYS1eJFbAAZPWnpNkLlPZnYx2s5isoWALYI+7x7xyc2JqxTk2pnvS
-        5TfC/VUM0gCl6oVf5lsJS17L3ZEVFZlUDgBPQqGRje+zTmz9olteyjv+nwm74v31
-        SkFqqVvHTjV2G0tDEQOtLNoCdF2+bajcxaqp+VEYw7LlLR81bWUs4OP89s4OHjOq
-        9KmEA5Kxd04U9xLjZJyOyj66PBCw488WtIWOMa88N9Gof49TRqUnl5oxyRY3EFfu
-        Id9Olh173dRyiLmyr6dfGkKT/cjUfxZpO6Q==
+        1683286067; x=1683372467; bh=5ITAFuRIgliRb6OtSLym5ZbZ5a0N7dtjOQb
+        eU7+laLQ=; b=UGUb73ynxCPGrAgsxTvaBTjhOv4H1p04Q117iBoY0+dTs4OP17D
+        +8JJfvW7rj4MQbRaQ22/0YT6/mdsULIgi9LVKAb+WSJGl+TFAdcsL7jeX0AMOeQJ
+        /zVPSMRUS3d3r72UpCbgNpO1L5X6hdzwa3itAuXIMMLkHUTmDdYbhM/T/h8v2jVV
+        0rWKY7FSlVYt1G3r98Zlq4pJUdpG2S6SqYfnA46fgpM6PFPkQkg7w1eT+RrQddgk
+        TtopqoFprgwLKAVgbtVT/G6yBr1Yf9c5pXDmq9NSMSQRxtKM/1uwKX8eG/mXbYHB
+        f775JmOVw6GJ46S5uMAv/ek4b7Lu+rXYt6w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:content-type:date:date:feedback-id:feedback-id
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683286058; x=1683372458; bh=D8rLr9OMXPZcCTtVhZhxl/mxOaqHxQqts0r
-        YZ7FfWpo=; b=H92S22diAKEuDqPCEcfIUBHXMAaFQiVKXHKDmFUS2l4NhnKJlnN
-        /zRj/SfFql3BaR28K2/wlo427BXWUzP9fftSvqK/5OMozatsnIVqX9WVsW6PxflO
-        kcViETolKmIxVSsG6atNG4ZeUa3aeI2jOXs1vWOa7giHoFpjEexZZnADTM2JCzox
-        mHYVLX6uVxDkLrZh1+G/vZROk/sA/lQ0K9xjUHpBJwv2FZ2eehNVlTRHw06dG12x
-        ZX8tBKMhiNKWontRIcVAdCwEPGH1ha66FxVIu7P+0P90rXGwUVVp/Q3Q/gnuCY3e
-        O5rCf06qjVQP4tg3WYVtTqzqaCIMpmVZTvQ==
-X-ME-Sender: <xms:KuhUZI13TJ44_G2Lj1g_1IOhNEeJ8ZU7IAwxFMKyDDZlVvIKBWdZHA>
-    <xme:KuhUZDGx6d3zh9MCsLg4cuJk7cJJUQbu1e09MFYHUUk1KMr2Ln1ERhWEqoZ0CWcKh
-    2Q8OVn8LDilKyV--MQ>
-X-ME-Received: <xmr:KuhUZA7QPkAi08G9FhXBT8fc9b3MMI0c2HaBldkWBL4-2ImfZ3aLxVfUNS13GljlZfD5Y2WkPdqpX17TkQ8G5cQkml5GLO0>
+        1683286067; x=1683372467; bh=5ITAFuRIgliRb6OtSLym5ZbZ5a0N7dtjOQb
+        eU7+laLQ=; b=BKcYhBif2mH0IUOAWbPbwyJJUlLCFVKLg13KgQEE9I7fk2YWatJ
+        uIQd+ZFBzvtgKTb6knScsFYcGcTcrbif03aQcV1bwKkwfRWOkW+kLL2bF7yG2u+V
+        xCUz1Oj60sGa4LbOOZ1gyATCq12NzZnjWSYXGe5181YiU8t0XJ03IHf900IHGzPD
+        MbKTUnItva4tXjspFphe8kVbMwXDED17d/PL5ngjrhma96QekxApRqRHgTkEqOFT
+        koQjTjKCQ0Pz743T35PTytkzk7PA7BD6AJatvN6wrlo0PAdcDc2FoQUX2PalPPc5
+        If7eIdtxY6xXKA7nQo05RkhCi2SQYv4xuKw==
+X-ME-Sender: <xms:M-hUZNfnO5p6QPNP35irKtPcTDR3p_o3M66Dfx6VwZzo-JASudMUiA>
+    <xme:M-hUZLP89vEhHFWXtsw3lOhCfUaDkR3GGSZGH3l194PJIgKTbySKUP2gXS76Bf17w
+    YUyA_WFhfKwcKBgYRA>
+X-ME-Received: <xmr:M-hUZGjClhPqYIl3x2i5RTYxZheydFeXGKcgIr0taFwEodqE2ikIu_dh5p-2s9rerNBZC8udFUuUesQl4HlIJKi06_br7QQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddggedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforgig
     ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
     grthhtvghrnhepvedvleeijeegvdekffehkeehieelhfeggfffheetkeeuledvtdeuffeh
-    teeltdffnecuvehluhhsthgvrhfuihiivgepuddtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:KuhUZB2Wdv_jkcHkzqtWyy8WWfqhPoLjQuHomsI3SXvzy6iy_oxtyQ>
-    <xmx:KuhUZLG8WxU5TDAO3Vnl9eAKLRLxJ-YwTuHPHhQhU60ub0wBl7mPmQ>
-    <xmx:KuhUZK_5qHVGyu-OsiAb2WINUfJ2doDr8Cna_IkCEBDy-5n6lH9-tg>
-    <xmx:KuhUZMO8mWeMfVTs5rDGpBtvgWG5FxWyL2EERd_2X85-xiSCRHRyVA>
+    teeltdffnecuvehluhhsthgvrhfuihiivgepjeenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:M-hUZG-inXZ0rI346ksvDETD1YBiS9hf0U3hVxw0-wp47beCD5oGeA>
+    <xmx:M-hUZJunpV0X-qERxZWGq8mM7101uZxz_5oPqXDEqpznVtTcZZCCyA>
+    <xmx:M-hUZFE76CGtGyD-zk7ZViA_2_veK1rGzVNfvb9mifqRED9Y0H4Q2w>
+    <xmx:M-hUZHW4BZInRCWrKKFYjBcYxJN3T-2sDfDjqccQjsUEUYFS2d1mfQ>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 07:27:37 -0400 (EDT)
+ 5 May 2023 07:27:47 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Fri, 05 May 2023 13:25:40 +0200
-Subject: [PATCH v4 38/68] clk: ux500: sysctrl: Add a determine_rate hook
+Date:   Fri, 05 May 2023 13:25:43 +0200
+Subject: [PATCH v4 41/68] phy: cadence: sierra: Add a determine_rate hook
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20221018-clk-range-checks-fixes-v4-38-971d5077e7d2@cerno.tech>
+Message-Id: <20221018-clk-range-checks-fixes-v4-41-971d5077e7d2@cerno.tech>
 References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
 In-Reply-To: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2305; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=PZ0luiC05wRTIkvYXLkev/HtMLESoOlpFBb4AQ2bSHc=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhz5c8s2Sakqrz0DbW6FGiz8dfW+szPfUFJ3HVvP/9Svbg
- vKd/OkpZGMS4GGTFFFlihM2XxJ2a9bqTjW8ezBxWJpAhDFycAjARgRxGhkX6EyunzvsenF71fPOSP7
- 1ykp3Jq677cYrvPHDAe+q9V7MZGXadMV+3aorTBu1TZ+O0NopoJ14Oec/F43q/iuedzi+BMB4A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2216; i=maxime@cerno.tech;
+ h=from:subject:message-id; bh=1L+EyOSq1c6qf7fYoSWfWytVr/66VQf6PFcGzNIY8wQ=;
+ b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhz5d0G17pE7AIiAn53C6rrat/zK/k0rtVBuwnPracf3I3
+ Je1uRykLgxgXg6yYIkuMsPmSuFOzXney8c2DmcPKBDKEgYtTACYSKsDwV6hmQVGGdSKP/vq40002l9
+ f5Pf67gftLjGW2WWbFbw/tPYwMb3ZmOIYldJ3sZdeKWGK260It80Kzla95FSr9ZgRXrf3AAgA=
 X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
  fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The UX500 sysctrl "set_parent" clocks implement a mux with a set_parent
-hook, but doesn't provide a determine_rate implementation.
+The Cadence Sierra PLL clock implements a mux with a set_parent hook,
+but doesn't provide a determine_rate implementation.
 
 This is a bit odd, since set_parent() is there to, as its name implies,
-change the parent of a clock. However, the most likely candidates to
-trigger that parent change are either the assigned-clock-parents device
-tree property or a call to clk_set_rate(), with determine_rate()
-figuring out which parent is the best suited for a given rate.
+change the parent of a clock. However, the most likely candidate to
+trigger that parent change is a call to clk_set_rate(), with
+determine_rate() figuring out which parent is the best suited for a
+given rate.
 
 The other trigger would be a call to clk_set_parent(), but it's far less
 used, and it doesn't look like there's any obvious user for that clock.
-
-Similarly, it doesn't look like the device tree using that clock driver
-uses any of the assigned-clock properties on that clock.
 
 So, the set_parent hook is effectively unused, possibly because of an
 oversight. However, it could also be an explicit decision by the
 original author to avoid any reparenting but through an explicit call to
 clk_set_parent().
 
-The latter case would be equivalent to setting the determine_rate
-implementation to clk_hw_determine_rate_no_reparent(). Indeed, if no
-determine_rate implementation is provided, clk_round_rate() (through
+The latter case would be equivalent to setting the flag
+CLK_SET_RATE_NO_REPARENT, together with setting our determine_rate hook
+to __clk_mux_determine_rate(). Indeed, if no determine_rate
+implementation is provided, clk_round_rate() (through
 clk_core_round_rate_nolock()) will call itself on the parent if
 CLK_SET_RATE_PARENT is set, and will not change the clock rate
 otherwise.
@@ -119,26 +116,28 @@ otherwise.
 And if it was an oversight, then we are at least explicit about our
 behavior now and it can be further refined down the line.
 
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Since the CLK_SET_RATE_NO_REPARENT flag was already set though, it seems
+unlikely.
+
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: linux-phy@lists.infradead.org
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/ux500/clk-sysctrl.c | 1 +
+ drivers/phy/cadence/phy-cadence-sierra.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/ux500/clk-sysctrl.c b/drivers/clk/ux500/clk-sysctrl.c
-index 702f2f8b43fa..ba3258c88d28 100644
---- a/drivers/clk/ux500/clk-sysctrl.c
-+++ b/drivers/clk/ux500/clk-sysctrl.c
-@@ -110,6 +110,7 @@ static const struct clk_ops clk_sysctrl_gate_fixed_rate_ops = {
- };
+diff --git a/drivers/phy/cadence/phy-cadence-sierra.c b/drivers/phy/cadence/phy-cadence-sierra.c
+index 13fcd3a65fe9..7df9c79a772a 100644
+--- a/drivers/phy/cadence/phy-cadence-sierra.c
++++ b/drivers/phy/cadence/phy-cadence-sierra.c
+@@ -720,6 +720,7 @@ static int cdns_sierra_pll_mux_set_parent(struct clk_hw *hw, u8 index)
+ }
  
- static const struct clk_ops clk_sysctrl_set_parent_ops = {
-+	.determine_rate = clk_hw_determine_rate_no_reparent,
- 	.set_parent = clk_sysctrl_set_parent,
- 	.get_parent = clk_sysctrl_get_parent,
+ static const struct clk_ops cdns_sierra_pll_mux_ops = {
++	.determine_rate = __clk_mux_determine_rate,
+ 	.set_parent = cdns_sierra_pll_mux_set_parent,
+ 	.get_parent = cdns_sierra_pll_mux_get_parent,
  };
 
 -- 
