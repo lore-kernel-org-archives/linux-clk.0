@@ -2,123 +2,307 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB90C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 13:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21679C77B7F
+	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 13:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232033AbjEENN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 May 2023 09:13:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38578 "EHLO
+        id S232133AbjEENRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 May 2023 09:17:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232225AbjEENNZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 09:13:25 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 306AD1E986;
-        Fri,  5 May 2023 06:13:22 -0700 (PDT)
-X-UUID: 99904a7eeb4611ed9cb5633481061a41-20230505
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=5N66xXPaesJHbEN2e+y1DB+ADmXl9MaI6t+9Chgeapo=;
-        b=OQkRgqbdHkkc7frbm6kbSiTyV3VQNxExnAj0CPxedd2DO65Okv7fd15aal45e5EpsFFhHD4sjTtibU1tFliZdISi5vZlRECmIpxd0Y7VrwsDVzxHmK7/dD20vfx9O6eGWN7alsF+S3OfjiBeGY24S53+BZ7FrY0ZKGQ+AaqejhI=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.23,REQID:a81fdd2e-07c5-4826-a262-4f6947dfffa9,IP:0,U
-        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:-5
-X-CID-META: VersionHash:697ab71,CLOUDID:f275e46a-2f20-4998-991c-3b78627e4938,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-UUID: 99904a7eeb4611ed9cb5633481061a41-20230505
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-        (envelope-from <runyang.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 924361886; Fri, 05 May 2023 21:13:17 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.25; Fri, 5 May 2023 21:13:16 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 5 May 2023 21:13:15 +0800
-From:   Runyang Chen <runyang.chen@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Runyang Chen <runyang.chen@mediatek.com>
-Subject: [PATCH v2 2/2] clk: mediatek: reset: add infra_ao reset support for MT8188
-Date:   Fri, 5 May 2023 21:13:08 +0800
-Message-ID: <20230505131308.27190-3-runyang.chen@mediatek.com>
-X-Mailer: git-send-email 2.9.2
-In-Reply-To: <20230505131308.27190-1-runyang.chen@mediatek.com>
-References: <20230505131308.27190-1-runyang.chen@mediatek.com>
+        with ESMTP id S232381AbjEENRL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 09:17:11 -0400
+Received: from out-57.mta0.migadu.com (out-57.mta0.migadu.com [IPv6:2001:41d0:1004:224b::39])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B12DF1982
+        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 06:17:00 -0700 (PDT)
+Message-ID: <7be22f4a-3fd5-f579-6824-56b4feafdb03@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1683292617;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=MZxYl1jtunKQOO10NrRAuzbgY/i7QTUMoq4lJixqYAU=;
+        b=BlD3JdqVzHARaO2bvmouAcb9JCuLc40Ki6kpM8s8UP9NGo+smkXS/lzARZcNP47USgL67d
+        u26fO13vCwdkUEviaFIx9cwTLa9sf8GBsUuAd7CbFCwhkTmdD4lGxyzKRAUw19jRNhqJmL
+        9dwqd+cHer3r6GAxAWfK0wyaR2AeDqI=
+Date:   Fri, 5 May 2023 14:16:53 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
+Subject: Re: [RFC PATCH v7 3/8] dpll: documentation on DPLL subsystem
+ interface
+To:     Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20230428002009.2948020-1-vadfed@meta.com>
+ <20230428002009.2948020-4-vadfed@meta.com>
+ <20230504120431.036cb8ba@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20230504120431.036cb8ba@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The infra_ao reset is needed for MT8188.
-- Add mtk_clk_rst_desc for MT8188.
-- Add register reset controller function for MT8188 infra_ao.
-- Add infra_ao_idx_map for MT8188.
+On 04/05/2023 20:04, Jakub Kicinski wrote:
+> On Thu, 27 Apr 2023 17:20:04 -0700 Vadim Fedorenko wrote:
+>> From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>>
+>> Add documentation explaining common netlink interface to configure DPLL
+>> devices and monitoring events. Common way to implement DPLL device in
+>> a driver is also covered.
+>>
+>> Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+> 
+> nit: let's put documentation as patch 1, it's more natural for
+> a reviewer to start from the docs.
 
-Signed-off-by: Runyang Chen <runyang.chen@mediatek.com>
----
- drivers/clk/mediatek/clk-mt8188-infra_ao.c | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Ok, sure, will do it.
+And I agree to almost all the comments here, but for some I have, 
+questions below.
 
-diff --git a/drivers/clk/mediatek/clk-mt8188-infra_ao.c b/drivers/clk/mediatek/clk-mt8188-infra_ao.c
-index 91c35db40b4e..1d4b27ba06be 100644
---- a/drivers/clk/mediatek/clk-mt8188-infra_ao.c
-+++ b/drivers/clk/mediatek/clk-mt8188-infra_ao.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+#include <dt-bindings/reset/mt8188-resets.h>
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
- 
-@@ -176,9 +177,32 @@ static const struct mtk_gate infra_ao_clks[] = {
- 		       "infra_ao_aes_msdcfde_0p", "top_aes_msdcfde", 18),
- };
- 
-+static u16 infra_ao_rst_ofs[] = {
-+	INFRA_RST0_SET_OFFSET,
-+	INFRA_RST1_SET_OFFSET,
-+	INFRA_RST2_SET_OFFSET,
-+	INFRA_RST3_SET_OFFSET,
-+	INFRA_RST4_SET_OFFSET,
-+};
-+
-+static u16 infra_ao_idx_map[] = {
-+	[MT8188_INFRA_RST1_THERMAL_MCU_RST] = 1 * RST_NR_PER_BANK + 2,
-+	[MT8188_INFRA_RST1_THERMAL_CTRL_RST] = 1 * RST_NR_PER_BANK + 4,
-+	[MT8188_INFRA_RST3_PTP_CTRL_RST] = 3 * RST_NR_PER_BANK + 5,
-+};
-+
-+static struct mtk_clk_rst_desc infra_ao_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = infra_ao_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(infra_ao_rst_ofs),
-+	.rst_idx_map = infra_ao_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(infra_ao_idx_map),
-+};
-+
- static const struct mtk_clk_desc infra_ao_desc = {
- 	.clks = infra_ao_clks,
- 	.num_clks = ARRAY_SIZE(infra_ao_clks),
-+	.rst_desc = &infra_ao_rst_desc,
- };
- 
- static const struct of_device_id of_match_clk_mt8188_infra_ao[] = {
--- 
-2.18.0
+>> diff --git a/Documentation/dpll.rst b/Documentation/dpll.rst
+>> new file mode 100644
+>> index 000000000000..fba5bc027967
+>> --- /dev/null
+>> +++ b/Documentation/dpll.rst
+>> @@ -0,0 +1,408 @@
+>> +.. SPDX-License-Identifier: GPL-2.0
+>> +
+>> +===============================
+>> +The Linux kernel dpll subsystem
+>> +===============================
+>> +
+>> +
+> 
+> nit: two empty lines here...
+> 
+>> +The main purpose of dpll subsystem is to provide general interface
+>> +to configure devices that use any kind of Digital PLL and could use
+>> +different sources of signal to synchronize to as well as different
+>> +types of outputs.
+>> +The main interface is NETLINK_GENERIC based protocol with an event
+>> +monitoring multicast group defined.
+>> +
+>> +
+>> +Device object
+>> +=============
+> 
+> .. but none after the section start? One nl to separate things, please.
+> 
+>> +Single dpll device object means single Digital PLL circuit and bunch of
+>> +pins connected with it.
+> 
+> s/bunch of pins connected with it/bunch of connected pins/
+> 
+>> +It provides its supported working modes and current status to the user
+> 
+> "reports the supported modes of operation" ?
+> 
+>> +in response to the `do` request of netlink command
+>> +``DPLL_CMD_DEVICE_GET`` and list of dplls registered in the subsystem
+>> +with `dump` netlink request of same command.
+>> +Requesting configuration of dpll device is done with `do` request of
+> 
+> Changing the configuration ?
+> 
+>> +netlink ``DPLL_CMD_DEVICE_SET`` command.
+>> +
+>> +
+>> +Pin object
+>> +==========
+>> +A pin is amorphic object which represents either source or output, it
+> 
+> Is the terminology mixing on purpose?
+> Source or drain vs input or output ?
+> 
+>> +could be internal component of the device, as well as externaly
+>> +connected.
+>> +The number of pins per dpll vary, but usually multiple pins shall be
+>> +provided for a single dpll device.
+>> +Pin's properties, capabilities and status is provided to the user in
+>> +response to `do` request of netlink ``DPLL_CMD_PIN_GET`` command.
+>> +It is also possible to list all the pins that were registered in the
+>> +system with `dump` request of ``DPLL_CMD_PIN_GET`` command.
+>> +Configuration of a pin can be changed by `do` request of netlink
+>> +``DPLL_CMD_PIN_SET`` command.
+>> +
+>> +
+>> +Pin selection
+>> +=============
+>> +In general selected pin (the one which signal is driving the dpll
+>> +device) can be obtained from ``DPLL_A_PIN_STATE`` attribute, and only
+>> +one pin shall be in ``DPLL_PIN_STATE_CONNECTED`` state for any dpll
+>> +device.
+>> +
+>> +Pin selection can be done either manualy or automatically, depending on
+> 
+> manually, spellcheck?
+> 
+>> +hardware capabilities and active dpll device work mode
+>> +(``DPLL_A_MODE`` attribute). The consequence is that, there are
+>> +differences for each mode in terms of available pin states, as well
+>> +as for the states the user can request for a dpll device.
+>> +
+>> +In manual mode (``DPLL_MODE_MANUAL``) the user can request or receive
+>> +one of following pin states:
+>> +- ``DPLL_PIN_STATE_CONNECTED`` - the pin is used to drive dpll device
+>> +- ``DPLL_PIN_STATE_DISCONNECTED`` - the pin is not used to drive dpll
+>> +  device
+>> +
+>> +In automatic mode (``DPLL_MODE_AUTOMATIC``) the user can request or
+>> +receive one of following pin states:
+>> +- ``DPLL_PIN_STATE_SELECTABLE`` - the pin shall be considered as valid
+>> +  source for automatic selection algorithm
+>> +- ``DPLL_PIN_STATE_DISCONNECTED`` - the pin shall be not considered as
+>> +  a valid source for automatic selection algorithm
+>> +In automatic mode (``DPLL_MODE_AUTOMATIC``) the user can only receive
+>> +pin state ``DPLL_PIN_STATE_CONNECTED`` once automatic selection
+>> +algorithm locks a dpll device with one of the sources.
+> 
+> But there's a lot more modes in the mode enum :S
+> 
+>> +Shared pins
+>> +===========
+>> +A single pin object can be registered to multiple dpll devices.
+> 
+> s/registered/attached/ ?
+> 
+>> +Then there are two groups of configuration knobs:
+>> +1) Set on a pin - the configuration affects all dpll devices pin is
+>> +   registered to. (i.e. ``PIN_FREQUENCY``, ``PIN_DIRECTION``),
+> 
+> Why is direction set on a pin? We can't chain DPLLs?
+
+We can chain DPLLs using pins only. We don't have any interface to
+configure 2 pins to connect 2 different DPLLs to each other at the same 
+time. The configuration should take care of one pin being input and
+other one being output. That's why we have direction property attached
+to the pin, not the DPLL itself.
+
+>> +2) Set on a pin-dpll tuple - the configuration affects only selected
+>> +   dpll device. (i.e. PIN_PRIO, PIN_STATE).
+>> +
+>> +
+>> +MUX-type pins
+>> +=============
+>> +A pin can be MUX-type, it aggregates child pins and serves as a pin
+>> +multiplexer. One or more pins are registered with MUX-type instead of
+>> +being directly registered to a dpll device.
+>> +Pins registered with a MUX-type provide user with additional nested
+>> +attribute ``DPLL_A_PIN_PARENT`` for each parent they were registered
+>> +with.
+>> +If a pin was registered with multiple parent pins, they behave like a
+>> +multiple output multiplexer. In this case output of a
+>> +``DPLL_CMD_PIN_GET`` would contain multiple pin-parent nested
+>> +attributes with current state related to each parent, like:
+>> +
+>> +``'pin': [{
+>> +        'device': [{'bus-name': 'pci',
+>> +                    'dev-name': '0000:21:00.0_0', 'id': 0}],
+>> +        'pin-direction': {'doc': 'pin used as a source of a signal',
+>> +                          'name': 'source'},
+>> +        'pin-idx': 13,
+>> +        'pin-parent': [{'pin-parent-idx': 2,
+>> +                        'pin-state': {'doc': 'pin disconnected',
+>> +                                      'name': 'disconnected'}},
+>> +                       {'pin-parent-idx': 3,
+>> +                        'pin-state': {'doc': 'pin disconnected',
+>> +                                      'name': 'disconnected'}}],
+>> +        }]``
+>> +
+>> +Only one child pin can provide it's signal to the parent MUX-type pin at
+>> +a time, the selection is done with requesting change of child pin state
+>> +to ``DPLL_PIN_STATE_CONNECTED`` and providing a target MUX-type pin
+>> +index value in ``DPLL_A_PARENT_PIN_IDX``.
+>> +
+>> +Pin priority
+>> +============
+>> +Some devices might offer a capability of automatic pin selection mode
+>> +(enum value ``DPLL_MODE_AUTOMATIC`` of ``DPLL_A_MODE`` attribute).
+>> +Usually such automatic selection is offloaded to the hardware,
+> 
+> offloaded is a dirty word, s/offloaded to/performed by/
+> 
+>> +which means only pins directly connected to the dpll are capable of
+>> +automatic source pin selection.
+> 
+> s/are capable of/can be used in the/
+> 
+>> +In automatic selection mode, the user cannot manually select a source
+>> +pin for the device, instead the user shall provide all directly
+>> +connected pins with a priority ``DPLL_A_PIN_PRIO``, the device would
+>> +pick a highest priority valid signal and connect with it.
+> 
+> s/connect with it/use it to control the DPLL device/ ?
+> 
+>> +Child pin of MUX-type is not capable of automatic source pin selection,
+>> +in order to configure a source of a MUX-type pin, the user needs to
+>> +request desired pin state of the child pin on the parent - it is done
+>> +with providing additional attribute for pin set state request - index
+>> +of parent pin he wish to propagate its signal to
+>> +(``DPLL_A_PARENT_PIN_IDX``).
+>> +
+>> +
+>> +Configuration commands group
+>> +============================
+>> +
+> 
+> oh and the new lines after headers appear ;)
+> 
+>> +Configuration commands are used to get or dump information about
+> 
+> s/or dump//
+> the netlink ability to query or dump is not something specific to dpll,
+> I wouldn't mention it so many times.
+> 
+>> +registered dpll devices (and pins), as well as set configuration of
+>> +device or pins. As dpll device could not be abstract and reflects real
+> 
+> Missing an article before dpll device, maybe "each dpll device", or 'a
+> dppl device' or 'dpll devices" (plural)
+> 
+> s/could/must/
+> 
+>> +hardware, there is no way to add new dpll device via netlink from user
+>> +space and each device should be registered by it's driver.
+>> +
+>> +All netlink commands require ``GENL_ADMIN_PERM``. This is to prevent
+>> +any spamming/D.o.S. from unauthorized userspace applications.
+> 
+> no dots in DoS
+> 
+>> +In general it is possible to configure multiple parameters at once.
+> 
+> s/In general//
+> Should we say that we don't guarantee the change will be atomic in that
+> case?
+
+I agree, I'll add this explicitly in the next version.
+
+>> +Device driver implementation
+>> +============================
+>> +
+>> +Device is allocated by ``dpll_device_get`` call. Second call with the
+>> +same arguments doesn't create new object but provides pointer to
+>> +previously created device for given arguments, it also increase refcount
+>> +of that object.
+>> +Device is deallocated by ``dpll_device_put`` call, which first decreases
+>> +the refcount, once refcount is cleared the object is destroyed.
+> 
+> You can add () after the function name and render the kdoc at the end
+> of this doc. The `` marking will then be unnecessary.
+> 
+Mmm... any examples of such a way of creating documentation? I was
+following tls*.rst style, but without copying code-blocks.
 
