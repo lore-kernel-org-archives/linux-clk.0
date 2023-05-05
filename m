@@ -2,138 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9033C7EE31
-	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 11:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F03C77B7C
+	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 12:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231698AbjEELf4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 May 2023 07:35:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41582 "EHLO
+        id S232003AbjEEMBU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 May 2023 08:01:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231764AbjEELfx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 07:35:53 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4846A5D3
-        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 04:35:52 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id D81543200923;
-        Fri,  5 May 2023 07:26:00 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Fri, 05 May 2023 07:26:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1683285960; x=1683372360; bh=EJxBXZ6qnhjj8sJ7fKmL+1oGhH+GkZRJbnw
-        wVHzRo8s=; b=ue3ktep6FiSqS+zZTu9KV3uFxN+6COkAp+t5Yr7/HRc/a7a7HMs
-        9gYU8matJAIdCGQWdnZZeI8vyoJIFT6UteniS+WFWfc1wRLAmC+cZd6+36PlWojs
-        8s2iNxrRj3/vJummcAeetAxi3tGfk1Lq1N42144WXxjUblUi1g+V7x9nETbHKyMG
-        10udN/i9on/bIqLXQfzv6nCNJa5MQbS94/vkBJVJeUAoSFR/YTOnyEKKJDxiEauy
-        Kq8c+9TTNLXMCNIgdZcbauSOhUtRWdgHYZv5BqTXOUzj4P95BxbEkd42jQyWr3Fy
-        5Z6NGDpmHinn9VL3MtL8ZAa1I0au3oBJVmw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683285960; x=1683372360; bh=EJxBXZ6qnhjj8sJ7fKmL+1oGhH+GkZRJbnw
-        wVHzRo8s=; b=YZvLDwe1kjvTdetkAjvgF1vUJOvptQ1H23X1oC02PQjcMvsqXC2
-        XkJOhUXglD63v7G0o7WyFb47Ig/mUdK6TlR43K4iGqo6KteS8jxFNn01Xj7C5ypV
-        +x0IiRFObupxd7fr318oq93z/qW6AyBg0MD59+NWawo/aLt/ptEvFaYY7ydR3QSs
-        Z5u2c0NC5kOg9WqxlCqFQqRVZtSKD1Xt6F92TYqUvuyBK2bKqTilgbUND8KxS5tJ
-        itvilWUdRR8trghbSKQ/Jg3nuUQylf16wLv5VBTvhZd0MSrngl4lUyauRGcU9BYD
-        9Mksrtea6pFxIBgjx5lCy8oHvLo3+B4zbeQ==
-X-ME-Sender: <xms:yOdUZCM0sge5-jpo6iMav0q_9eUGUJhQJCeJz_9a7GTjAOiURVDQtg>
-    <xme:yOdUZA_B8RNZapzb5Wk2agzXTMoAl1bJgGwWl0BhVCYk8ef7yqn9P6efYV3zVBimW
-    UxyBTVSqcnUqP959Ds>
-X-ME-Received: <xmr:yOdUZJQFl6Qy34JwaQGnzVza_rF0NYUV-YjpKVd9realjmvFEI80xYBYxOywnsPCqK3GsHLTBMyChLmUcbqQ0O8UF4S3Hwk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeefvddggedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepvedvleeijeegvdekffehkeehieelhfeggfffheetkeeuledvtdeuffeh
-    teeltdffnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:yOdUZCvEo4T1Da-uXXpdI5EQGqYuxvdKem-AA58QyqNSajxPtjSAUw>
-    <xmx:yOdUZKfs4PmxLxIs6muCudLNk04Jyryv2VS0mYMMEBnpx6cAbHufyw>
-    <xmx:yOdUZG1pPfbNPBSzmFgVNRj4AEAB1s9QFL-4jal2p75MFuj82oulJQ>
-    <xmx:yOdUZLpH6JINdWfFJ631ZPPwehIkYbkjDSaZUhP5yeAy_z-sTEiiSg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 5 May 2023 07:25:59 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-Date:   Fri, 05 May 2023 13:25:07 +0200
-Subject: [PATCH v4 05/68] clk: lan966x: Remove unused round_rate hook
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20221018-clk-range-checks-fixes-v4-5-971d5077e7d2@cerno.tech>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
-In-Reply-To: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+        with ESMTP id S231706AbjEEMBS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 08:01:18 -0400
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A1D1A63F;
+        Fri,  5 May 2023 05:01:15 -0700 (PDT)
+X-UUID: 87387a68eb3c11edb20a276fd37b9834-20230505
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=luAbm/cIf5DEjsuZn9nfRPhegMwL+AJHD3PniRM34VE=;
+        b=KR/+bcp61QlUR5OeosRVygtHBWKYPt/882cl7tgij11yW++IsPXoksva6ErcI9HuSWztPOQufnMDQ0/PfaDWSNDTLctCRYQtKwnPPJr+KRz4oc3caazuWUi/S3QUf1+Pss0sAaA7BNDfnTNw+8rDYEoAiYDlZZP5/sJmmwXQcc0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.23,REQID:22f102bc-0398-402f-be35-4ebf1c4b3e6a,IP:0,U
+        RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+        release,TS:0
+X-CID-META: VersionHash:697ab71,CLOUDID:68aedd30-6935-4eab-a959-f84f8da15543,B
+        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-UUID: 87387a68eb3c11edb20a276fd37b9834-20230505
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+        (envelope-from <runyang.chen@mediatek.com>)
+        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+        with ESMTP id 1281634735; Fri, 05 May 2023 20:01:11 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 5 May 2023 20:01:11 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.25 via Frontend Transport; Fri, 5 May 2023 20:01:10 +0800
+From:   Runyang Chen <runyang.chen@mediatek.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1553; i=maxime@cerno.tech;
- h=from:subject:message-id; bh=VjoPzGPlkvAYTTAB0KZcMAeTT6q4N2DMAu8sHFnEyEI=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDCkhzxdpBNxWzYu7lrpCK/3goj/SIf6nz1wqOtWpMS8hJOeh
- 49t9HaUsDGJcDLJiiiwxwuZL4k7Net3JxjcPZg4rE8gQBi5OAZhI9D9GhiNCtTWcQTlzzJ5ZcQdfU3
- nHtXGHiN7sZ5sC5rrF7syUMWVkePbrbevy6RdYdtaayi1JykqLP63OdtHw7Y8jh0vDWDO38AEA
-X-Developer-Key: i=maxime@cerno.tech; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        Runyang Chen <runyang.chen@mediatek.com>
+Subject: [PATCH 0/2] Add infra_ao reset support for MT8188 Soc
+Date:   Fri, 5 May 2023 20:01:06 +0800
+Message-ID: <20230505120108.26603-1-runyang.chen@mediatek.com>
+X-Mailer: git-send-email 2.9.2
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The lan966x driver registers a gck clock with both a determine_rate and
-a round_rate implementation. Both are equivalent, and are only called by
-clk_core_determine_round_nolock() which favors determine_rate.
+Based on tag: next-20230504, linux-next/master
 
-Thus, lan966x_gck_round_rate() is never called, so we can just remove
-it.
+1. Add thermal reset bit for MT8188.
+2. Add infra_ao reset support for MT8188.
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk-lan966x.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+Runyang Chen (2):
+  dt-bindings: reset: mt8188: add thermal reset control bit
+  clk: mediatek: reset: add infra_ao reset support for  MT8188
 
-diff --git a/drivers/clk/clk-lan966x.c b/drivers/clk/clk-lan966x.c
-index 460e7216bfa1..870fd7df50c1 100644
---- a/drivers/clk/clk-lan966x.c
-+++ b/drivers/clk/clk-lan966x.c
-@@ -103,22 +103,6 @@ static int lan966x_gck_set_rate(struct clk_hw *hw,
- 	return 0;
- }
- 
--static long lan966x_gck_round_rate(struct clk_hw *hw, unsigned long rate,
--				   unsigned long *parent_rate)
--{
--	unsigned int div;
--
--	if (rate == 0 || *parent_rate == 0)
--		return -EINVAL;
--
--	if (rate >= *parent_rate)
--		return *parent_rate;
--
--	div = DIV_ROUND_CLOSEST(*parent_rate, rate);
--
--	return *parent_rate / div;
--}
--
- static unsigned long lan966x_gck_recalc_rate(struct clk_hw *hw,
- 					     unsigned long parent_rate)
- {
-@@ -177,7 +161,6 @@ static const struct clk_ops lan966x_gck_ops = {
- 	.enable         = lan966x_gck_enable,
- 	.disable        = lan966x_gck_disable,
- 	.set_rate       = lan966x_gck_set_rate,
--	.round_rate     = lan966x_gck_round_rate,
- 	.recalc_rate    = lan966x_gck_recalc_rate,
- 	.determine_rate = lan966x_gck_determine_rate,
- 	.set_parent     = lan966x_gck_set_parent,
+ drivers/clk/mediatek/clk-mt8188-infra_ao.c | 24 ++++++++++++++++++++++
+ include/dt-bindings/reset/mt8188-resets.h  |  5 +++++
+ 2 files changed, 29 insertions(+)
 
 -- 
-2.40.0
+2.18.0
 
