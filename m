@@ -2,45 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 411FFC77B7C
-	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 12:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B1FC77B75
+	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 12:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232040AbjEEMBl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 May 2023 08:01:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54038 "EHLO
+        id S232141AbjEEMcI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 May 2023 08:32:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232023AbjEEMB0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 08:01:26 -0400
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AB921AEDD;
-        Fri,  5 May 2023 05:01:23 -0700 (PDT)
-X-UUID: 8b846f32eb3c11ed9cb5633481061a41-20230505
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=WENEAGI81W/kSnUcxhlJRn72rPH1x58Xnf1xu4O5Qs4=;
-        b=HU7UaHYiHYiAURa7HkRomZyDaSa5i1wkhLuzO3VQZm538+A43c8W3SMubU8uW37+qXbEq6i6vkE1RgjOkiJv43z5+gndHiK3aDLICsnQpjm++sbJG2YoQSXT/DpgWcKsdIR8rg6qFuNpwfKA2CgUzD3G9lxtPmHjopwUxaora2U=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.23,REQID:8e385da2-741f-4c69-9e00-536aa3ff802e,IP:0,U
-        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-        :release,TS:-5
-X-CID-META: VersionHash:697ab71,CLOUDID:40afdd30-6935-4eab-a959-f84f8da15543,B
-        ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-        RL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-UUID: 8b846f32eb3c11ed9cb5633481061a41-20230505
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-        (envelope-from <runyang.chen@mediatek.com>)
-        (Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-        with ESMTP id 877711924; Fri, 05 May 2023 20:01:18 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.25; Fri, 5 May 2023 20:01:17 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.25 via Frontend Transport; Fri, 5 May 2023 20:01:16 +0800
-From:   Runyang Chen <runyang.chen@mediatek.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S232060AbjEEMcH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 08:32:07 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FAF111D90
+        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 05:32:06 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-50bc4b88998so2952739a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 05 May 2023 05:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683289924; x=1685881924;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9rulx3XpcK9ZcqvOFoebZzjIkj2vjyGTAItP7Et3Jpo=;
+        b=f9/YRf0G4/yHQA9ZrPCOWjJqvRiajxaWoiwNciSx6p83h9gDVJZmc0Mg9paKCxoEat
+         2GBzkeC62lEeOcBlDfYIlVdZp03mH5G/V/VOBO06tc7tYJRiD+lpVPZ743PcMmfnwe7L
+         l8T9JB0O98fG0DIAvChWSRky5kU1FRWfVGHADRltw9EXCx3aKMAEB+a72uOIzgwHBpED
+         uynhb9/EUUIo7Hamw33RUz3ewDkYzE2ViGkIaNAt44ab10ZwzlH/1zY4LTrDfFYw9w97
+         FIYsgQyTVl+R4eryXvPsJi/iHOTZQyQ3euLmOAUsJ6G3Jilk6kz4sL+kR8AY5JLURmh5
+         uhiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683289924; x=1685881924;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9rulx3XpcK9ZcqvOFoebZzjIkj2vjyGTAItP7Et3Jpo=;
+        b=KplvbIIPlbsqFRasrHCxD3ApB4STSmZQfV0LCzSugql3q4F48flPXH0MKQ9d+xIEq+
+         BOMB0NbH1/C5z+4RY4UWOqC68I6N2Q6Z+zQTv/Iu7GvPfz2IogAXGKdBnsFLMGMz7ZbG
+         7SIM25Exj9z3peRHWmjx/U9G7RQBH6l8aZ/4mn69e/20NHM/Jig2NlTmI3yWPfqim1CT
+         44izgKjRmhMQnwaiz7N3SMz7LVKLGG3tTAEVFhVMiWTnQuSLt5eGYsKe5FEbSGccbLa4
+         q1/CcaD7KAmrgEU3E8MQA0xsUZJzSxX8hbnDTrD1BrhjfYGa4SPxOQKSI0uESyhv8Mp/
+         dxjg==
+X-Gm-Message-State: AC+VfDzpdrzJuxi86APyYNGhYpaYkLq1Ypp/Pp0ncW0+U4k2tWZddVvl
+        vV6EHoJ3NVztgL06o13iGfMpWA==
+X-Google-Smtp-Source: ACHHUZ6+yw8cSVm0sZNFJUhlsJz5DdajKxKExEbzpGhkKfl9sghrff69dynFdSFmqx6pBWAoOyA7WQ==
+X-Received: by 2002:a05:6402:1255:b0:50c:646:cafd with SMTP id l21-20020a056402125500b0050c0646cafdmr1206373edw.7.1683289924710;
+        Fri, 05 May 2023 05:32:04 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:52e:24ce:bbc1:127d? ([2a02:810d:15c0:828:52e:24ce:bbc1:127d])
+        by smtp.gmail.com with ESMTPSA id w6-20020aa7d286000000b0050be0b14672sm2898604edq.3.2023.05.05.05.32.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 May 2023 05:32:04 -0700 (PDT)
+Message-ID: <b8a0a43f-a118-b3ac-01e9-703162e617f1@linaro.org>
+Date:   Fri, 5 May 2023 14:32:02 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH 1/2] dt-bindings: reset: mt8188: add thermal reset control
+ bit
+Content-Language: en-US
+To:     Runyang Chen <runyang.chen@mediatek.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         AngeloGioacchino Del Regno 
@@ -48,78 +66,29 @@ To:     Michael Turquette <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Runyang Chen <runyang.chen@mediatek.com>,
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
         Runyang Chen <runyang.chen@mediatek.corp-partner.google.com>
-Subject: [PATCH 2/2] clk: mediatek: reset: add infra_ao reset support for MT8188
-Date:   Fri, 5 May 2023 20:01:08 +0800
-Message-ID: <20230505120108.26603-3-runyang.chen@mediatek.com>
-X-Mailer: git-send-email 2.9.2
-In-Reply-To: <20230505120108.26603-1-runyang.chen@mediatek.com>
 References: <20230505120108.26603-1-runyang.chen@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+ <20230505120108.26603-2-runyang.chen@mediatek.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230505120108.26603-2-runyang.chen@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The infra_ao reset is needed for MT8188.
-- Add mtk_clk_rst_desc for MT8188.
-- Add register reset controller function for MT8188 infra_ao.
-- Add infra_ao_idx_map for MT8188.
+On 05/05/2023 14:01, Runyang Chen wrote:
+> To support reset of infra_ao, add the index of infra_ao reset of thermal
+> for MT8188.
+> 
+> Signed-off-by: Runyang Chen <runyang.chen@mediatek.corp-partner.google.com>
 
-Signed-off-by: Runyang Chen <runyang.chen@mediatek.corp-partner.google.com>
----
- drivers/clk/mediatek/clk-mt8188-infra_ao.c | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+Your SoB does not march author.
 
-diff --git a/drivers/clk/mediatek/clk-mt8188-infra_ao.c b/drivers/clk/mediatek/clk-mt8188-infra_ao.c
-index 91c35db40b4e..1d4b27ba06be 100644
---- a/drivers/clk/mediatek/clk-mt8188-infra_ao.c
-+++ b/drivers/clk/mediatek/clk-mt8188-infra_ao.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <dt-bindings/clock/mediatek,mt8188-clk.h>
-+#include <dt-bindings/reset/mt8188-resets.h>
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
- 
-@@ -176,9 +177,32 @@ static const struct mtk_gate infra_ao_clks[] = {
- 		       "infra_ao_aes_msdcfde_0p", "top_aes_msdcfde", 18),
- };
- 
-+static u16 infra_ao_rst_ofs[] = {
-+	INFRA_RST0_SET_OFFSET,
-+	INFRA_RST1_SET_OFFSET,
-+	INFRA_RST2_SET_OFFSET,
-+	INFRA_RST3_SET_OFFSET,
-+	INFRA_RST4_SET_OFFSET,
-+};
-+
-+static u16 infra_ao_idx_map[] = {
-+	[MT8188_INFRA_RST1_THERMAL_MCU_RST] = 1 * RST_NR_PER_BANK + 2,
-+	[MT8188_INFRA_RST1_THERMAL_CTRL_RST] = 1 * RST_NR_PER_BANK + 4,
-+	[MT8188_INFRA_RST3_PTP_CTRL_RST] = 3 * RST_NR_PER_BANK + 5,
-+};
-+
-+static struct mtk_clk_rst_desc infra_ao_rst_desc = {
-+	.version = MTK_RST_SET_CLR,
-+	.rst_bank_ofs = infra_ao_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(infra_ao_rst_ofs),
-+	.rst_idx_map = infra_ao_idx_map,
-+	.rst_idx_map_nr = ARRAY_SIZE(infra_ao_idx_map),
-+};
-+
- static const struct mtk_clk_desc infra_ao_desc = {
- 	.clks = infra_ao_clks,
- 	.num_clks = ARRAY_SIZE(infra_ao_clks),
-+	.rst_desc = &infra_ao_rst_desc,
- };
- 
- static const struct of_device_id of_match_clk_mt8188_infra_ao[] = {
--- 
-2.18.0
+
+Best regards,
+Krzysztof
 
