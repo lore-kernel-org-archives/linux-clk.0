@@ -2,55 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8AFC77B7C
-	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 15:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FAFC77B7F
+	for <linux-clk@archiver.kernel.org>; Fri,  5 May 2023 15:35:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232959AbjEEPaF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 May 2023 11:30:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60582 "EHLO
+        id S232896AbjEEPfg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 May 2023 11:35:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232949AbjEEP3s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 11:29:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1AF11887F
-        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 08:29:37 -0700 (PDT)
+        with ESMTP id S232990AbjEEPff (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 May 2023 11:35:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE2F198E
+        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 08:35:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5F67F63EDE
-        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 15:29:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35910C433D2;
-        Fri,  5 May 2023 15:29:36 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8020563EE9
+        for <linux-clk@vger.kernel.org>; Fri,  5 May 2023 15:35:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4C9C433D2;
+        Fri,  5 May 2023 15:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683300576;
-        bh=2TPWOPhFJzdwwpBDvHtt4BWhGjepWrVrYx1gskl609o=;
+        s=k20201202; t=1683300933;
+        bh=OPlunUdfvXK6uRgblU/QUedptc22mJhlsbSHxPNaQxs=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=uc7K/I/VdaX8SNqB1hYfppXeHReiEZmx2kkprPXG2aCStH0FkYn1q0vurH4PwTn+D
-         XsIWamEMOdWk9ImVuAZLoa5jVco57mz22p0u+f0+enaF2QHKOZ/+Cy/ye5LfeJTRQ4
-         65K4n7tfX2kU3YH0g2M6g7zXZTOVuc/pa8I3OiJzyZZmh4QwDpxwvYpdRgmTFVexaG
-         DL6V1cRT56eDGidyGVv70rWDoe8T4irCWAJRe8l5nxSubJP0I9pefMYK/hMGg2WmK0
-         ycWf/nmSB5mJ/WOxow0F5b8bN3+h8raqWdPoBKtTarnKcTWZRyLqrm25tzMCIIGwgj
-         ghy6a54FyoJyw==
-Date:   Fri, 5 May 2023 08:29:35 -0700
+        b=uBEgDxn0+0bsBQOFEUNODO6ici04abrkTGxM1Ti7VAM95VsgFk2A0hHDwHKCokrS8
+         Mrr294E3dvqDcIRNgYol1IsU5EujK8O1Bob44G/BGBu1hsfmNh4OBqj2ndi5SdVWqy
+         5iWznbzqTVUTHsSD+XIIkJg+XW8ORTejSLrh1Strkj5/sTefdvMAohby9eElUbrgUG
+         6LUZ7KNWtiZC0/ZLdYpG/hFQ69ZlV//oirR09L+2v9j879UzQBu50mA9hpFpZg0/YA
+         mgu0x7txicTMdWoyqHeqjH9oSLXHR/AkaAr/aKKT00tmV6uZuyiVbQF7nc2upziaPW
+         S07MJj9QPSIjw==
+Date:   Fri, 5 May 2023 08:35:31 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
-To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc:     Vadim Fedorenko <vadfed@meta.com>, Jiri Pirko <jiri@resnulli.us>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v7 3/8] dpll: documentation on DPLL subsystem
- interface
-Message-ID: <20230505082935.24deca78@kernel.org>
-In-Reply-To: <7be22f4a-3fd5-f579-6824-56b4feafdb03@linux.dev>
-References: <20230428002009.2948020-1-vadfed@meta.com>
-        <20230428002009.2948020-4-vadfed@meta.com>
-        <20230504120431.036cb8ba@kernel.org>
-        <7be22f4a-3fd5-f579-6824-56b4feafdb03@linux.dev>
+        Paolo Abeni <pabeni@redhat.com>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <20230505083531.57966958@kernel.org>
+In-Reply-To: <ZFTdR93aDa6FvY4w@nanopsycho>
+References: <ZDwg88x3HS2kd6lY@nanopsycho>
+        <20230417124942.4305abfa@kernel.org>
+        <ZFDPaXlJainSOqmV@nanopsycho>
+        <20230502083244.19543d26@kernel.org>
+        <ZFITyWvVcqgRtN+Q@nanopsycho>
+        <20230503191643.12a6e559@kernel.org>
+        <ZFOQWmkBUtgVR06R@nanopsycho>
+        <20230504090401.597a7a61@kernel.org>
+        <ZFPwqu5W8NE6Luvk@nanopsycho>
+        <20230504114421.51415018@kernel.org>
+        <ZFTdR93aDa6FvY4w@nanopsycho>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -58,36 +66,23 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 5 May 2023 14:16:53 +0100 Vadim Fedorenko wrote:
-> >> +Then there are two groups of configuration knobs:
-> >> +1) Set on a pin - the configuration affects all dpll devices pin is
-> >> +   registered to. (i.e. ``PIN_FREQUENCY``, ``PIN_DIRECTION``),  
-> > 
-> > Why is direction set on a pin? We can't chain DPLLs?  
+On Fri, 5 May 2023 12:41:11 +0200 Jiri Pirko wrote:
+> >connector label (i.e. front panel label)? Or also applicable to
+> >internal pins? It'd be easier to talk details if we had the user
+> >facing documentation that ships with these products.  
 > 
-> We can chain DPLLs using pins only. We don't have any interface to
-> configure 2 pins to connect 2 different DPLLs to each other at the same 
-> time. The configuration should take care of one pin being input and
-> other one being output. That's why we have direction property attached
-> to the pin, not the DPLL itself.
+> I think is is use case specific. Some of the pins face the user over
+> physical port, they it is a front panel label. Others are internal
+> names. I have no clue how to define and mainly enforce rules here.
 
-Makes sense.
+It should be pretty easy to judge if we see the user-facing
+documentation vendors have.
 
-> >> +Device driver implementation
-> >> +============================
-> >> +
-> >> +Device is allocated by ``dpll_device_get`` call. Second call with the
-> >> +same arguments doesn't create new object but provides pointer to
-> >> +previously created device for given arguments, it also increase refcount
-> >> +of that object.
-> >> +Device is deallocated by ``dpll_device_put`` call, which first decreases
-> >> +the refcount, once refcount is cleared the object is destroyed.  
-> > 
-> > You can add () after the function name and render the kdoc at the end
-> > of this doc. The `` marking will then be unnecessary.
-> >   
-> Mmm... any examples of such a way of creating documentation? I was
-> following tls*.rst style, but without copying code-blocks.
+> But as an example, if you have 2 pins of the same type, only difference
+> is they are connected to front panel connector "A" and "B", this is the
+> label you have to pass to the ID query. Do you see any other way?
 
-net_dim.rst, maybe?  driver.rst ? Feel free to ping me 1:1 if you're
-struggling, it should be fairly straightforward.
+Sound perfectly fine, if it's a front panel label, let's call 
+the attribute DPLL_A_PIN_FRONT_PANEL_LABEL. If the pin is not
+brought out to the front panel it will not have this attr.
+For other type of labels we should have different attributes.
