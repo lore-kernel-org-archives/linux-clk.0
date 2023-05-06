@@ -2,51 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB8CC77B73
-	for <linux-clk@archiver.kernel.org>; Sat,  6 May 2023 18:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C42C77B7F
+	for <linux-clk@archiver.kernel.org>; Sat,  6 May 2023 19:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbjEFSM3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 May 2023 14:12:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60728 "EHLO
+        id S229472AbjEFTxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 May 2023 15:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjEFSM1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 May 2023 14:12:27 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0B811B74;
-        Sat,  6 May 2023 11:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683396746; x=1714932746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YngAekiyMFQcAH087yL/A1vfWTMr5bD0St58aYn+lAc=;
-  b=MIfrrhm0go25i+vKnZvlkr2NS245FLl63Hq3o5CeLizef1m0X2hjmHEd
-   ua+rCWGW0ryDtlDUxQhjcgTDDAnQJi0kLDEQJVBjAe7CPkxiR6CNYSbXY
-   tOsnTRCPQQOccdhjPqc61JzF8JCtDxt2JF3ZoWRR+cHF0PUJoW7iCPuMK
-   9DWRMiWbQaCtC2TMy+cSNx7o8bqU2XvZsgNoOfSW8F/wicMAcb0j02Yy4
-   QZB1Zrckg0kndldjcz5lEYpavrsWj583TDSz7QdNnoQfAke+J7d98VXjt
-   vp6h+rcMx1RsW5obtMTCaifetc4uOlX8g8UZnTLfqMvTcxmlQe3iSvHt0
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="329030127"
-X-IronPort-AV: E=Sophos;i="5.99,255,1677571200"; 
-   d="scan'208";a="329030127"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2023 11:12:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="822147827"
-X-IronPort-AV: E=Sophos;i="5.99,255,1677571200"; 
-   d="scan'208";a="822147827"
-Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 06 May 2023 11:12:22 -0700
-Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pvMOL-0000RF-1n;
-        Sat, 06 May 2023 18:12:21 +0000
-Date:   Sun, 7 May 2023 02:12:12 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        with ESMTP id S229441AbjEFTxg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 May 2023 15:53:36 -0400
+Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A07611D97;
+        Sat,  6 May 2023 12:53:35 -0700 (PDT)
+Received: by mail-il1-x132.google.com with SMTP id e9e14a558f8ab-3319a6f989aso22970095ab.2;
+        Sat, 06 May 2023 12:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683402814; x=1685994814;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=et5odkEWMhvUd9/Y4cXnYrY0jnj+L9/Dy7S8TmthK9w=;
+        b=I275jrOTraNI70Wunv4m3wVa4U3ifeQIlGiZkWEVqF+lsmAwHKBlk/FXUzgLGgW30e
+         2kgTw4rL47xkX3mfOFcBdhQFqhbImUjTfDp9HwbrcbSL5D3GIzN34s9N0tGf4G2O3vaa
+         PekAG5BddG2ARY32guLUeLcFfY5TIY9qHknhyVsym/0T/qo+iB/KAATknBPRdy7H5L4T
+         hNu4MMaFBnrfqOqF/x2v0HMsqCJ2XsdC8FbX4tVnAaxJFSo3BXUELeGGqhsxS69Ws1HZ
+         FmpXY/AZFizrikcrXzesPSVYllGA6kgw4gs5a4b/sLpAJKHl8fNV7G3+eb5hdulpmk+a
+         gv2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683402814; x=1685994814;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=et5odkEWMhvUd9/Y4cXnYrY0jnj+L9/Dy7S8TmthK9w=;
+        b=RhSnXC27tfaeNZLLzOdWVyT1x5KnmaYiPGdeAA0W8Kpw2uQNnNFc2kc1zdpR997LI3
+         vwylZsjp8O1MG7bnPFsywPnA/IZ0c3yrToGTPnMNfQuXHk0USolFEZxLc12Ow0/KLB2k
+         VrkEW6allaVTQFRn2RC12cNzZ8sEUPZkRri/KmmbBVCJAXJxr70OdbaOvZ+mEkCXNO/y
+         kBQ8LWJA4JOIVK7y7FgspcF9Utpv5Irol8x1nNWYUmjq6wIcUDtjE6VgjLNY8ynv4c3q
+         3l0fksEbc//9NaGe7fAXcA0aRil5SlAzBdHcrZrJEQJSHL1z5v2VkbtvTAxMd+x+jFJr
+         Rmvg==
+X-Gm-Message-State: AC+VfDyWhD7KhLKMCHjMp5gfm+WJ+dx4xczvekwEjRRbgnJY3czgwnrc
+        vXAyI50R5x/qTh2bka8qGI/EzeOVAqzK/Q==
+X-Google-Smtp-Source: ACHHUZ47xOFM4B8bzp32xmSsiHPdRaTulBX8t/1b1+aPhqzqw9dS068F64JdJSY3pHBMIsleQwM2ww==
+X-Received: by 2002:a92:dd01:0:b0:331:9a82:33f9 with SMTP id n1-20020a92dd01000000b003319a8233f9mr4091856ilm.10.1683402814417;
+        Sat, 06 May 2023 12:53:34 -0700 (PDT)
+Received: from aford-B741.lan ([2601:447:d001:897f:5e49:1bed:79d0:5c25])
+        by smtp.gmail.com with ESMTPSA id s11-20020a92d90b000000b0032957b21c26sm1317220iln.77.2023.05.06.12.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 06 May 2023 12:53:33 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -55,97 +59,115 @@ Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-Message-ID: <202305070235.r9bEq3U8-lkp@intel.com>
-References: <20230506162403.375212-1-aford173@gmail.com>
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
+        / MXC ARM ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
+Date:   Sat,  6 May 2023 14:53:25 -0500
+Message-Id: <20230506195325.876871-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230506162403.375212-1-aford173@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
+Currently, certain clocks are derrived as a divider from their
+parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
+is set, the parent clock is not properly set which can lead
+to some relatively inaccurate clock values.
 
-kernel test robot noticed the following build warnings:
+Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
+cannot rely on calling a standard determine_rate function,
+because the 8m composite clocks have a pre-divider and
+post-divider. Because of this, a custom determine_rate
+function is necessary to determine the maximum clock
+division which is equivalent to pre-divider * the
+post-divider.
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v6.3 next-20230505]
-[cannot apply to abelvesa/clk/imx linus/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+With this added, the system can attempt to adjust the parent rate
+when the proper flags are set which can lead to a more precise clock
+value.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Adam-Ford/clk-imx-composite-8m-Add-imx8m_divider_determine_rate/20230507-002453
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20230506162403.375212-1-aford173%40gmail.com
-patch subject: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-config: powerpc-randconfig-r012-20230507 (https://download.01.org/0day-ci/archive/20230507/202305070235.r9bEq3U8-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project b0fb98227c90adf2536c9ad644a74d5e92961111)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # install powerpc cross compiling tool for clang build
-        # apt-get install binutils-powerpc-linux-gnu
-        # https://github.com/intel-lab-lkp/linux/commit/d92df3b38fc20beb735cb3b75f118b45d1ae304b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Adam-Ford/clk-imx-composite-8m-Add-imx8m_divider_determine_rate/20230507-002453
-        git checkout d92df3b38fc20beb735cb3b75f118b45d1ae304b
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash drivers/clk/imx/
+On the imx8mplus, no clock changes are present.
+On the Mini and Nano, this can help achieve more accurate
+lcdif clocks. When trying to get a pixel clock of 31.500MHz
+on an imx8m Nano, the clocks divided the 594MHz down, but
+left the parent rate untouched which caused a calulation error.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202305070235.r9bEq3U8-lkp@intel.com/
+Before:
+video_pll              594000000
+  video_pll_bypass     594000000
+    video_pll_out      594000000
+      disp_pixel       31263158
+        disp_pixel_clk 31263158
 
-All warnings (new ones prefixed by >>):
+Variance = -236842 Hz
 
->> drivers/clk/imx/clk-composite-8m.c:122:5: warning: no previous prototype for function 'imx8m_divider_determine_rate' [-Wmissing-prototypes]
-   int imx8m_divider_determine_rate(struct clk_hw *hw,
-       ^
-   drivers/clk/imx/clk-composite-8m.c:122:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   int imx8m_divider_determine_rate(struct clk_hw *hw,
-   ^
-   static 
-   1 warning generated.
+After this patch:
+video_pll               31500000
+  video_pll_bypass      31500000
+    video_pll_out       31500000
+      disp_pixel        31500000
+        disp_pixel_clk  31500000
 
+Variance = 0 Hz
 
-vim +/imx8m_divider_determine_rate +122 drivers/clk/imx/clk-composite-8m.c
+All other clocks rates and parent were the same.
+Similar results on imx8mm were found.
 
-   121	
- > 122	int imx8m_divider_determine_rate(struct clk_hw *hw,
-   123					      struct clk_rate_request *req)
-   124	{
-   125		struct clk_divider *divider = to_clk_divider(hw);
-   126		int prediv_value;
-   127		int div_value;
-   128	
-   129		/* if read only, just return current value */
-   130		if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-   131			u32 val;
-   132	
-   133			val = readl(divider->reg);
-   134			prediv_value = val >> divider->shift;
-   135			prediv_value &= clk_div_mask(divider->width);
-   136	
-   137			div_value = val >> PCG_DIV_SHIFT;
-   138			div_value &= clk_div_mask(PCG_DIV_WIDTH);
-   139	
-   140			return divider_ro_determine_rate(hw, req, divider->table,
-   141							 PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
-   142							 divider->flags, prediv_value * div_value);
-   143		}
-   144	
-   145		return divider_determine_rate(hw, req, divider->table,
-   146					      PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
-   147					      divider->flags);
-   148	}
-   149	
+Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support to determine_rate"")
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+V2:  Fix build warning found by build bot and fix prediv_value
+     and div_value because the values stored are the divisor - 1,
+     so we need to add 1 to the values to be correct.
 
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index cbf0d7955a00..7a6e3ce97133 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -119,10 +119,41 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+ 	return ret;
+ }
+ 
++static int imx8m_divider_determine_rate(struct clk_hw *hw,
++				      struct clk_rate_request *req)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	int prediv_value;
++	int div_value;
++
++	/* if read only, just return current value */
++	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
++		u32 val;
++
++		val = readl(divider->reg);
++		prediv_value = val >> divider->shift;
++		prediv_value &= clk_div_mask(divider->width);
++		prediv_value++;
++
++		div_value = val >> PCG_DIV_SHIFT;
++		div_value &= clk_div_mask(PCG_DIV_WIDTH);
++		div_value++;
++
++		return divider_ro_determine_rate(hw, req, divider->table,
++						 PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
++						 divider->flags, prediv_value * div_value);
++	}
++
++	return divider_determine_rate(hw, req, divider->table,
++				      PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
++				      divider->flags);
++}
++
+ static const struct clk_ops imx8m_clk_composite_divider_ops = {
+ 	.recalc_rate = imx8m_clk_composite_divider_recalc_rate,
+ 	.round_rate = imx8m_clk_composite_divider_round_rate,
+ 	.set_rate = imx8m_clk_composite_divider_set_rate,
++	.determine_rate = imx8m_divider_determine_rate,
+ };
+ 
+ static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+2.39.2
+
