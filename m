@@ -2,172 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C42C77B7F
-	for <linux-clk@archiver.kernel.org>; Sat,  6 May 2023 19:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5838BC77B73
+	for <linux-clk@archiver.kernel.org>; Sat,  6 May 2023 20:12:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229472AbjEFTxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 May 2023 15:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53052 "EHLO
+        id S229598AbjEFUMR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 May 2023 16:12:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjEFTxg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 May 2023 15:53:36 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A07611D97;
-        Sat,  6 May 2023 12:53:35 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id e9e14a558f8ab-3319a6f989aso22970095ab.2;
-        Sat, 06 May 2023 12:53:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683402814; x=1685994814;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=et5odkEWMhvUd9/Y4cXnYrY0jnj+L9/Dy7S8TmthK9w=;
-        b=I275jrOTraNI70Wunv4m3wVa4U3ifeQIlGiZkWEVqF+lsmAwHKBlk/FXUzgLGgW30e
-         2kgTw4rL47xkX3mfOFcBdhQFqhbImUjTfDp9HwbrcbSL5D3GIzN34s9N0tGf4G2O3vaa
-         PekAG5BddG2ARY32guLUeLcFfY5TIY9qHknhyVsym/0T/qo+iB/KAATknBPRdy7H5L4T
-         hNu4MMaFBnrfqOqF/x2v0HMsqCJ2XsdC8FbX4tVnAaxJFSo3BXUELeGGqhsxS69Ws1HZ
-         FmpXY/AZFizrikcrXzesPSVYllGA6kgw4gs5a4b/sLpAJKHl8fNV7G3+eb5hdulpmk+a
-         gv2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683402814; x=1685994814;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=et5odkEWMhvUd9/Y4cXnYrY0jnj+L9/Dy7S8TmthK9w=;
-        b=RhSnXC27tfaeNZLLzOdWVyT1x5KnmaYiPGdeAA0W8Kpw2uQNnNFc2kc1zdpR997LI3
-         vwylZsjp8O1MG7bnPFsywPnA/IZ0c3yrToGTPnMNfQuXHk0USolFEZxLc12Ow0/KLB2k
-         VrkEW6allaVTQFRn2RC12cNzZ8sEUPZkRri/KmmbBVCJAXJxr70OdbaOvZ+mEkCXNO/y
-         kBQ8LWJA4JOIVK7y7FgspcF9Utpv5Irol8x1nNWYUmjq6wIcUDtjE6VgjLNY8ynv4c3q
-         3l0fksEbc//9NaGe7fAXcA0aRil5SlAzBdHcrZrJEQJSHL1z5v2VkbtvTAxMd+x+jFJr
-         Rmvg==
-X-Gm-Message-State: AC+VfDyWhD7KhLKMCHjMp5gfm+WJ+dx4xczvekwEjRRbgnJY3czgwnrc
-        vXAyI50R5x/qTh2bka8qGI/EzeOVAqzK/Q==
-X-Google-Smtp-Source: ACHHUZ47xOFM4B8bzp32xmSsiHPdRaTulBX8t/1b1+aPhqzqw9dS068F64JdJSY3pHBMIsleQwM2ww==
-X-Received: by 2002:a92:dd01:0:b0:331:9a82:33f9 with SMTP id n1-20020a92dd01000000b003319a8233f9mr4091856ilm.10.1683402814417;
-        Sat, 06 May 2023 12:53:34 -0700 (PDT)
-Received: from aford-B741.lan ([2601:447:d001:897f:5e49:1bed:79d0:5c25])
-        by smtp.gmail.com with ESMTPSA id s11-20020a92d90b000000b0032957b21c26sm1317220iln.77.2023.05.06.12.53.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 May 2023 12:53:33 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX
-        / MXC ARM ARCHITECTURE), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-Date:   Sat,  6 May 2023 14:53:25 -0500
-Message-Id: <20230506195325.876871-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S229441AbjEFUMQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 May 2023 16:12:16 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA3A2E43;
+        Sat,  6 May 2023 13:12:14 -0700 (PDT)
+Received: from [192.168.178.23] (unknown [62.108.10.64])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id B7C81CECA7;
+        Sat,  6 May 2023 20:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1683403902; bh=UxjuILMhubHneGZUmQeFeUolQx/NHIfVA3+XfK69Uj4=;
+        h=From:Date:Subject:To:Cc;
+        b=g0GKdvapFiwGdq90l8srl0399ddU6ZdU6WMHEC7H3jgSy4O3Cs9Jk0h/WE2WqaDK+
+         L/yQsIScZJAdoEVcnbS5buH3TCHJSsH7jSpGfy8vJni6l0l79G4+5+AQu83ohC/c+g
+         NJNXMd9Wd3SREsp66GjDZJq1MVR05NT0k1fKA6xk=
+From:   Luca Weiss <luca@z3ntu.xyz>
+Date:   Sat, 06 May 2023 22:10:32 +0200
+Subject: [PATCH] clk: qcom: smd-rpm: conditionally enable scaling before
+ doing handover
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230506-rpmcc-scaling-handover-v1-1-374338a8dfd9@z3ntu.xyz>
+X-B4-Tracking: v=1; b=H4sIADe0VmQC/x2NQQqDMBAAvyJ77kpMaKj9SvEQN1sNNNHugrSIf
+ 2/scWCG2UFZEivcmx2Et6RpKRW6SwM0hzIxplgZrLHOXI1HWTMRKoVXKhNWJS4bCwbvjO059rF
+ zUOMxKOMoodB85m9aMmbNN2s9+ta131NahZ/p878/huP4AfixEwKNAAAA
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2241; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=UxjuILMhubHneGZUmQeFeUolQx/NHIfVA3+XfK69Uj4=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkVrRyLZWFssqnJHHtJ1HqB2nvu0fC09tj9rXe0
+ X6Uj3EodpOJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZFa0cgAKCRBy2EO4nU3X
+ VuxOD/9sFRP4HphYYzYvnlVI6K933cKINbjyWVqlYf7ACq8YJxKgA0kMmoRNYXoosl/9EoamYab
+ BsXq98V4RA8/CUSjVbcBcM5ix8uIEB9Plbhy/rRrwJVAbag4aTm/rjtLViAkdU2IykeAXE+7rwV
+ IBwvdg9YZp3hms1KZ3sFx5jE0YhkxakregjIaxJMKRvc0L9blD4X5Q1yAClO6mQ0FD3Iei1YI9T
+ 3yP42GBfoBEsx+1eiVEpNNCJOtqp4SLM1gIpiRsHjTRRgl3MVZD+vHNUWmZ1nBLaR9Trbv08Kzt
+ XRfimTkuR5H0dGt8xCPLbEiil3wDCCIpnsBXyEzh7/NenyRnmGxDmWk+vAHMOfD1VaTVvJMmEj7
+ +EufbtZe0+ylYhRyfZd7g0nErOe8NSNZGAqDSejBKtMSjrlM2/rXnxce3IhFxsjEbt0rq9VMeXG
+ x2KkGphEdTFNMVcM4GDZatGyxpaNgsIJz5SewM4Mct1A4EfyORMe4+0YjlxQevQ9n2nHGzVFijh
+ BqHuptbMp5txUaXhIaVSMM/serLP864F1PUULfkOZyTZ8b4upYM1FHFEKsCYjoxogPQIwc9HgdU
+ k+lWvGmznkcY3CZZEcXZ9hVl2V+ABvBnMYfCqzDpUJbTW584SZQbCHDtdOtxXRViVpq1+b8DzQv
+ x8iuHbRZXrT70hQ==
+X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently, certain clocks are derrived as a divider from their
-parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
-is set, the parent clock is not properly set which can lead
-to some relatively inaccurate clock values.
+On older platforms like msm8226, msm8974 and msm8916 the driver in the
+downstream kernel enables scaling first before doing the handover of the
+clocks.
 
-Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
-cannot rely on calling a standard determine_rate function,
-because the 8m composite clocks have a pre-divider and
-post-divider. Because of this, a custom determine_rate
-function is necessary to determine the maximum clock
-division which is equivalent to pre-divider * the
-post-divider.
+While this normally doesn't seem to cause noticeable problems, on
+apq8026-asus-sparrow this causes the device to immediately reboot,
+perhaps due to older rpm firmware that becomes unhappy.
 
-With this added, the system can attempt to adjust the parent rate
-when the proper flags are set which can lead to a more precise clock
-value.
+On newer platforms the order has swapped and enabling scaling is done
+after the handover, so let's introduce this behavior only conditionally
+for msm8226 and msm8974 for now.
 
-On the imx8mplus, no clock changes are present.
-On the Mini and Nano, this can help achieve more accurate
-lcdif clocks. When trying to get a pixel clock of 31.500MHz
-on an imx8m Nano, the clocks divided the 594MHz down, but
-left the parent rate untouched which caused a calulation error.
-
-Before:
-video_pll              594000000
-  video_pll_bypass     594000000
-    video_pll_out      594000000
-      disp_pixel       31263158
-        disp_pixel_clk 31263158
-
-Variance = -236842 Hz
-
-After this patch:
-video_pll               31500000
-  video_pll_bypass      31500000
-    video_pll_out       31500000
-      disp_pixel        31500000
-        disp_pixel_clk  31500000
-
-Variance = 0 Hz
-
-All other clocks rates and parent were the same.
-Similar results on imx8mm were found.
-
-Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support to determine_rate"")
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
-V2:  Fix build warning found by build bot and fix prediv_value
-     and div_value because the values stored are the divisor - 1,
-     so we need to add 1 to the values to be correct.
+ drivers/clk/qcom/clk-smd-rpm.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index cbf0d7955a00..7a6e3ce97133 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -119,10 +119,41 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
- 	return ret;
- }
- 
-+static int imx8m_divider_determine_rate(struct clk_hw *hw,
-+				      struct clk_rate_request *req)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	int prediv_value;
-+	int div_value;
-+
-+	/* if read only, just return current value */
-+	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-+		u32 val;
-+
-+		val = readl(divider->reg);
-+		prediv_value = val >> divider->shift;
-+		prediv_value &= clk_div_mask(divider->width);
-+		prediv_value++;
-+
-+		div_value = val >> PCG_DIV_SHIFT;
-+		div_value &= clk_div_mask(PCG_DIV_WIDTH);
-+		div_value++;
-+
-+		return divider_ro_determine_rate(hw, req, divider->table,
-+						 PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
-+						 divider->flags, prediv_value * div_value);
-+	}
-+
-+	return divider_determine_rate(hw, req, divider->table,
-+				      PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
-+				      divider->flags);
-+}
-+
- static const struct clk_ops imx8m_clk_composite_divider_ops = {
- 	.recalc_rate = imx8m_clk_composite_divider_recalc_rate,
- 	.round_rate = imx8m_clk_composite_divider_round_rate,
- 	.set_rate = imx8m_clk_composite_divider_set_rate,
-+	.determine_rate = imx8m_divider_determine_rate,
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 887b945a6fb7..6d5476afc4d1 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -178,6 +178,7 @@ struct clk_smd_rpm_req {
+ struct rpm_smd_clk_desc {
+ 	struct clk_smd_rpm **clks;
+ 	size_t num_clks;
++	bool scaling_before_handover;
  };
  
- static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
+ static DEFINE_MUTEX(rpm_smd_clk_lock);
+@@ -693,6 +694,7 @@ static struct clk_smd_rpm *msm8974_clks[] = {
+ static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
+ 	.clks = msm8974_clks,
+ 	.num_clks = ARRAY_SIZE(msm8974_clks),
++	.scaling_before_handover = true,
+ };
+ 
+ static struct clk_smd_rpm *msm8976_clks[] = {
+@@ -1318,6 +1320,12 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+ 	rpm_smd_clks = desc->clks;
+ 	num_clks = desc->num_clks;
+ 
++	if (desc->scaling_before_handover) {
++		ret = clk_smd_rpm_enable_scaling(rpm);
++		if (ret)
++			goto err;
++	}
++
+ 	for (i = 0; i < num_clks; i++) {
+ 		if (!rpm_smd_clks[i])
+ 			continue;
+@@ -1329,9 +1337,11 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+ 			goto err;
+ 	}
+ 
+-	ret = clk_smd_rpm_enable_scaling(rpm);
+-	if (ret)
+-		goto err;
++	if (!desc->scaling_before_handover) {
++		ret = clk_smd_rpm_enable_scaling(rpm);
++		if (ret)
++			goto err;
++	}
+ 
+ 	for (i = 0; i < num_clks; i++) {
+ 		if (!rpm_smd_clks[i])
+
+---
+base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
+change-id: 20230506-rpmcc-scaling-handover-a63029ed9d13
+
+Best regards,
 -- 
-2.39.2
+Luca Weiss <luca@z3ntu.xyz>
 
