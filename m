@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDA8C77B7F
-	for <linux-clk@archiver.kernel.org>; Sat,  6 May 2023 17:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB8CC77B73
+	for <linux-clk@archiver.kernel.org>; Sat,  6 May 2023 18:12:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbjEFRm1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 6 May 2023 13:42:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54412 "EHLO
+        id S229692AbjEFSM3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 May 2023 14:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjEFRm0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 May 2023 13:42:26 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF59617FD0;
-        Sat,  6 May 2023 10:42:25 -0700 (PDT)
+        with ESMTP id S229454AbjEFSM1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 May 2023 14:12:27 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0B811B74;
+        Sat,  6 May 2023 11:12:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683394945; x=1714930945;
+  t=1683396746; x=1714932746;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=oT8CwAw0/pgt47zXZltnYILo21BzxQh30+v5OGLUHNI=;
-  b=l/fFlR0cyAglwDYrvgPKFMUYL4BC9EMgjpf9y5eQxXmn9+9EDYRRPVy3
-   3mT15tV9c3+vZGqzZlwI64sTPc06AxNzQ7kvdj1X/0jjudAhzHxcD/lfJ
-   riFScC7Xu3xreAdleRLlwMpD6Ld4+ljY0aPhjt8tuODtEo1b3VO+TwpXU
-   B1m0dCQz5xnVjR3G9umXWP6X006o+KXy8FDbeaPZD3ftT2VyQV7AfDMKw
-   wSCvatUM3qoJV3Lq5QREAQhTWihdd3P1jLHgGFPai69Pv19rVVoA9sIwx
-   tqV4hpsiVMknF3z9mKQ+aXvJTwoEWLwv8B7iMlhUEWoB9KNL2Q+dL2yyF
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="329760996"
+  bh=YngAekiyMFQcAH087yL/A1vfWTMr5bD0St58aYn+lAc=;
+  b=MIfrrhm0go25i+vKnZvlkr2NS245FLl63Hq3o5CeLizef1m0X2hjmHEd
+   ua+rCWGW0ryDtlDUxQhjcgTDDAnQJi0kLDEQJVBjAe7CPkxiR6CNYSbXY
+   tOsnTRCPQQOccdhjPqc61JzF8JCtDxt2JF3ZoWRR+cHF0PUJoW7iCPuMK
+   9DWRMiWbQaCtC2TMy+cSNx7o8bqU2XvZsgNoOfSW8F/wicMAcb0j02Yy4
+   QZB1Zrckg0kndldjcz5lEYpavrsWj583TDSz7QdNnoQfAke+J7d98VXjt
+   vp6h+rcMx1RsW5obtMTCaifetc4uOlX8g8UZnTLfqMvTcxmlQe3iSvHt0
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="329030127"
 X-IronPort-AV: E=Sophos;i="5.99,255,1677571200"; 
-   d="scan'208";a="329760996"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2023 10:42:25 -0700
+   d="scan'208";a="329030127"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2023 11:12:26 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="872289514"
+X-IronPort-AV: E=McAfee;i="6600,9927,10702"; a="822147827"
 X-IronPort-AV: E=Sophos;i="5.99,255,1677571200"; 
-   d="scan'208";a="872289514"
+   d="scan'208";a="822147827"
 Received: from lkp-server01.sh.intel.com (HELO dea6d5a4f140) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 06 May 2023 10:42:21 -0700
+  by orsmga004.jf.intel.com with ESMTP; 06 May 2023 11:12:22 -0700
 Received: from kbuild by dea6d5a4f140 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pvLvJ-0000QR-0i;
-        Sat, 06 May 2023 17:42:21 +0000
-Date:   Sun, 7 May 2023 01:41:38 +0800
+        id 1pvMOL-0000RF-1n;
+        Sat, 06 May 2023 18:12:21 +0000
+Date:   Sun, 7 May 2023 02:12:12 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, aford@beaconembedded.com,
-        Adam Ford <aford173@gmail.com>,
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -57,7 +57,7 @@ Cc:     oe-kbuild-all@lists.linux.dev, aford@beaconembedded.com,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-Message-ID: <202305070143.iTqgbS75-lkp@intel.com>
+Message-ID: <202305070235.r9bEq3U8-lkp@intel.com>
 References: <20230506162403.375212-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -82,29 +82,36 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Adam-Ford/clk-imx-composi
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 patch link:    https://lore.kernel.org/r/20230506162403.375212-1-aford173%40gmail.com
 patch subject: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20230507/202305070143.iTqgbS75-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 12.1.0
+config: powerpc-randconfig-r012-20230507 (https://download.01.org/0day-ci/archive/20230507/202305070235.r9bEq3U8-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project b0fb98227c90adf2536c9ad644a74d5e92961111)
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
+        # install powerpc cross compiling tool for clang build
+        # apt-get install binutils-powerpc-linux-gnu
         # https://github.com/intel-lab-lkp/linux/commit/d92df3b38fc20beb735cb3b75f118b45d1ae304b
         git remote add linux-review https://github.com/intel-lab-lkp/linux
         git fetch --no-tags linux-review Adam-Ford/clk-imx-composite-8m-Add-imx8m_divider_determine_rate/20230507-002453
         git checkout d92df3b38fc20beb735cb3b75f118b45d1ae304b
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=m68k SHELL=/bin/bash drivers/clk/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash drivers/clk/imx/
 
 If you fix the issue, kindly add following tag where applicable
 | Reported-by: kernel test robot <lkp@intel.com>
-| Link: https://lore.kernel.org/oe-kbuild-all/202305070143.iTqgbS75-lkp@intel.com/
+| Link: https://lore.kernel.org/oe-kbuild-all/202305070235.r9bEq3U8-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
->> drivers/clk/imx/clk-composite-8m.c:122:5: warning: no previous prototype for 'imx8m_divider_determine_rate' [-Wmissing-prototypes]
-     122 | int imx8m_divider_determine_rate(struct clk_hw *hw,
-         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/imx/clk-composite-8m.c:122:5: warning: no previous prototype for function 'imx8m_divider_determine_rate' [-Wmissing-prototypes]
+   int imx8m_divider_determine_rate(struct clk_hw *hw,
+       ^
+   drivers/clk/imx/clk-composite-8m.c:122:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int imx8m_divider_determine_rate(struct clk_hw *hw,
+   ^
+   static 
+   1 warning generated.
 
 
 vim +/imx8m_divider_determine_rate +122 drivers/clk/imx/clk-composite-8m.c
