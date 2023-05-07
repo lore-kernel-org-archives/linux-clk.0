@@ -2,93 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6352BC77B7D
-	for <linux-clk@archiver.kernel.org>; Sun,  7 May 2023 17:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05559C7EE24
+	for <linux-clk@archiver.kernel.org>; Sun,  7 May 2023 18:12:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231287AbjEGRxk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 May 2023 13:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36368 "EHLO
+        id S231543AbjEGSMV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 May 2023 14:12:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbjEGRxj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 May 2023 13:53:39 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13F7E2737
-        for <linux-clk@vger.kernel.org>; Sun,  7 May 2023 10:53:38 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2ac88d9edf3so29733641fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 07 May 2023 10:53:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683482016; x=1686074016;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BfjD+nhpwNlgeLxaYqdhE5T1OFGvqPPFvhrWYJ9f1lc=;
-        b=Enin1Yq86SSr21WwjrXXnKTANl+Bbo917juyLyLF2mpeBJSDU5KPaxrHcjchVliFID
-         dCgMNsHYRBAwrSFUu+10EZ1BBlJTtO8E001V2ogMRcNVZIbiBKgJaAmJfNT/aHa8aTQh
-         9mPSG69Pq/gKo5ct7n08EMhU6b1xF5vVOSOuIPtJ7rpxvPpEZ9tyryOgSWa2x6ppn8EX
-         +Rc6M1BwWepZLqYe0v7/jvb137/1OnRHiaVb/TZGWGtHBkqKvWw6ssRgNu5k/oOJOXHL
-         w4bZ1xL9JvsQLCD81HzjchzQyg2Glch70GetQ8LiJtyf1p0/Nx1JGLNcK99p+LWRoepT
-         Hc5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683482016; x=1686074016;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BfjD+nhpwNlgeLxaYqdhE5T1OFGvqPPFvhrWYJ9f1lc=;
-        b=J/23HgcC1GiyEiMsJCqI0Zy+TVsAZqyYzRwAZ6EaOVYllpR2C27FApxur9O7q5aQQE
-         qh1Qt9SI4e11Yc736jYTdSMXUbb6dSRc3ogmDBRrrrZyqz045xOnclw+Y6LR/JFzMEXy
-         FYz4eiSCf+USGOFZBi/8ZK+SOV4J9Vr/42PYc144tO3aHNRp53cL/a6CMYOtn3TM12GX
-         uFcYac3GKEgzM8GHn6CeLvdVMEhbwKR318yaDJk6WeXVPmLsvuFIgu0BCp5EL/j1xSvh
-         y//lIU6PXK/UTjtKfSCsEcLlM9hkdbYY4Ro/z/ddnGDYLvE6LE9TIdEb3yacGteMgUdw
-         hEng==
-X-Gm-Message-State: AC+VfDzQzB4Qo54OVa0mzA7qg76qQOd+JfXEYoO822sR/Tqoj8TilyRn
-        EnSP1NWjWwk93S+SeJnLzzazyw==
-X-Google-Smtp-Source: ACHHUZ5WTuEFXd09rjrEA3r6HUKx0bUzbhV88Honm2eb1pIyFFx/J6O1o2CaH3LPo3RwIKgdFFzyGA==
-X-Received: by 2002:a05:651c:1032:b0:2ac:8283:b67d with SMTP id w18-20020a05651c103200b002ac8283b67dmr2317372ljm.25.1683482016320;
-        Sun, 07 May 2023 10:53:36 -0700 (PDT)
-Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
-        by smtp.gmail.com with ESMTPSA id e16-20020a2e9850000000b002ac8e6d54b7sm883616ljj.42.2023.05.07.10.53.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 May 2023 10:53:35 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S231863AbjEGSMT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 May 2023 14:12:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2BE4EDB;
+        Sun,  7 May 2023 11:12:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 824A5616C9;
+        Sun,  7 May 2023 18:12:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E482CC4339B;
+        Sun,  7 May 2023 18:12:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683483133;
+        bh=tI+b856dXIQEYxVncjfesUNAFqQkV68/vG1VyASOGFw=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=r8D6uscFrIi43XGlZjxYS4/cdDfjmJSh1gTK7qrfOKw1KjWsHAhYIJLsmFbltvLwJ
+         QesQd3nTuLl9O5SGejVLyfI/optMQTcrJOBiRz+xDDRg5iicVP4LPdobLbDJxfFaXc
+         8OE0rbBoTE+vzrETJvBNXitEtrHl5jzqzprce75MjRxHJjsPBMGGSTD38f6CgEsVs0
+         lnG3eKDy9amk22YPRMq/d0qPvfiFjUkh7sFjeF4RkJGLUyW8fyqh7wtSd3yrpGFl0s
+         YAsdSrTUkYO2Io78NoEVA2ryKvbbR0Pa+UYGY7Bu5w+Gput89Ckg9Fb24O9oe/B1gO
+         GZR3pAycuMTVw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D3036E5FFCC;
+        Sun,  7 May 2023 18:12:12 +0000 (UTC)
+Subject: Re: [GIT PULL] clk changes for the merge window
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230507002734.1674632-1-sboyd@kernel.org>
+References: <20230507002734.1674632-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230507002734.1674632-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: 31c6ed4e89187beef8fe2f979c8881ca94839427
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d6b8a8c49ad6afce23c2c65a3cda0a0ccd3eaf61
+Message-Id: <168348313285.16669.2190463091670324864.pr-tracker-bot@kernel.org>
+Date:   Sun, 07 May 2023 18:12:12 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH 1/2] clk: qcom: mmcc-msm8974: use clk_rcg2_shared_ops for mdp_clk_src clock
-Date:   Sun,  7 May 2023 20:53:34 +0300
-Message-Id: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The mdp_clk_src clock should not be turned off. Instead it should be
-'parked' to the XO, as most of other mdp_clk_src clocks. Fix that by
-using the clk_rcg2_shared_ops.
+The pull request you sent on Sat,  6 May 2023 17:27:34 -0700:
 
-Fixes: d8b212014e69 ("clk: qcom: Add support for MSM8974's multimedia clock controller (MMCC)")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/mmcc-msm8974.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 4273fce9a4a4..aa29c79fcd55 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -485,7 +485,7 @@ static struct clk_rcg2 mdp_clk_src = {
- 		.name = "mdp_clk_src",
- 		.parent_data = mmcc_xo_mmpll0_dsi_hdmi_gpll0,
- 		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_dsi_hdmi_gpll0),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d6b8a8c49ad6afce23c2c65a3cda0a0ccd3eaf61
+
+Thank you!
+
 -- 
-2.39.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
