@@ -2,107 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D226CC7EE2A
-	for <linux-clk@archiver.kernel.org>; Sun,  7 May 2023 13:42:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78941C7EE24
+	for <linux-clk@archiver.kernel.org>; Sun,  7 May 2023 17:53:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229628AbjEGNmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 7 May 2023 09:42:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32912 "EHLO
+        id S230399AbjEGRxl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 7 May 2023 13:53:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229852AbjEGNmG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 May 2023 09:42:06 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA3835B6;
-        Sun,  7 May 2023 06:42:03 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QDlvt2lpVz9slp;
-        Sun,  7 May 2023 15:42:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1683466922;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yg6rSvs/km57l/SFRzTV4ALBJYztbsp9TDDKC8eYx9s=;
-        b=M3WvugFzAg7ZNYuAcISCLHuEnvzOoF6GRAJ+Ot6v5ZGvj0EUbYm/6xMUd18h5RXYuYn1d6
-        Hcz5ZlGNyBRsqyMxIroZtfUiltEIsD61X3wcZwDr0R4MJ1HVKKe2nS7VsmElF8ouIpHQXh
-        UER4eneZ7hdNaQAmqkRpra1EP+h0FdBfZhKDYj+fmhQBnV/FlcUd8LKHyLtiaS/IhofClH
-        Bm0TqFOdUfDZJ9XI9Mk+qOO+lmFMX5RHdBSxHAbN9ACr0D5PttfrYQyQ9qXKaggRqW2S8+
-        zTEv1pYfeOmOjOQPMGj48oa+mxbv7iji9FeoDmbfsyD4ZIhTJKwVCa+DXayXVw==
-From:   Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1683466920;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yg6rSvs/km57l/SFRzTV4ALBJYztbsp9TDDKC8eYx9s=;
-        b=Kmf0q6SsLTku7iwlE0M8f5K734xNufWEBYavB3QSv5BiP5uBqd1jMUGh/C+3iBMacg9G73
-        g/+BNepACyHZbJjrhqbhWqgOAwC0JqNvQsxFubXP8JoldYwKT4lrdbe4pbBPiovD0Aw2lO
-        SHWOOZnvVKWLhWm/YnkiGUXjjbAd6OeRLgKlHlr80v5OiwPFlrjffazIlNbUQ33pBpRhFe
-        UHVhL6TJNqVdycp0ZQ/gzjzW0B9JRFQkW9SO8qE3jhs4tywtk8SxwiwzVfeT5CqPyyw43B
-        z6Rzj5HiwAgSXtqUK87hlrejCCEDOUPSlUhK/CWnsnEZozdwSYhnr+r/I3PlfA==
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        with ESMTP id S230450AbjEGRxk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 7 May 2023 13:53:40 -0400
+Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE4602D58
+        for <linux-clk@vger.kernel.org>; Sun,  7 May 2023 10:53:38 -0700 (PDT)
+Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2ac82b07eb3so35624531fa.1
+        for <linux-clk@vger.kernel.org>; Sun, 07 May 2023 10:53:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683482017; x=1686074017;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1iAIvvqwVR4IGoEYIIWCaks02oDOzgrLafdexSSTNYY=;
+        b=vKjzTQFwLGWPbLIZtbfw2A85vIr/haasx7TxzVUBfxslGAn3SOuqxv7z1zVkL+OQKk
+         FRFYvGqnuCu2vq24uJM+v3tDB0muDsIv5tcoukukoHbF0NRCFRDjzO3l/k5b+M5O+A+9
+         5aYCNTU9hR1HndbKZl4JYkmmcU7OV+FCN8qglQe205jrDq6vt7Bl65rpXFwM484+enjL
+         F1Jt/FcmeLikKs0YBeDsWujz/rBJUHESfJH8g7hmEQDP5OUyA4Y/0rhEQ3eFAdHCoFPH
+         jJpgT8NQkFfRvlUANXXJNM4Q7h17UhYuE5GAEk5yXgx7XCFRyB+aw95wxhhgMysjeajT
+         c5KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683482017; x=1686074017;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1iAIvvqwVR4IGoEYIIWCaks02oDOzgrLafdexSSTNYY=;
+        b=JnMkEXlqndC7CZ8REimL+SFdMMYAcFsD/1HbW63J/GjdKd0DPTwFeuYRjKMgrMMnkS
+         p18ZvHBP7Svj33iEMN62fGXTknfwuAUOrf4bNUpUGC5io3XFQSMiDl2TlEWLfshKFwp/
+         gIpWfULIR/hZty+XatcFAl9WmoDn2kVgRPcgbfBhjY1zFWiJXBbdN93dawSAJZdVPpPq
+         ob2vnewyuaiE6gvWjIg/v1tNfNfGmboocWgVcZ6RfMb0UACwYkAnwMmS8JE7RYY3fuTC
+         EZ6RAF85AGUD6ntEdE7LpNyeBp4Wt9CML0sx7f63Mwsb74nS6zsdKzNLULGeE7AUqKC8
+         Rljw==
+X-Gm-Message-State: AC+VfDyd/19xRRR2f3xMQ+cDl35PairbOCo0LE0DSgHKAdgjdM0h9s8L
+        sTK+XZa48Kx0ZJdsm0sUPSXGtQ==
+X-Google-Smtp-Source: ACHHUZ4yRhQTgDJZ0zLiiEHYOXxMNdJcTvIwBkJGyQ5KidwGtroNQwIyoDQe4YOBsjOLML87hAP8lA==
+X-Received: by 2002:a2e:b70b:0:b0:2ad:8a4b:6a9e with SMTP id j11-20020a2eb70b000000b002ad8a4b6a9emr682076ljo.26.1683482017023;
+        Sun, 07 May 2023 10:53:37 -0700 (PDT)
+Received: from lothlorien.lan (dzdqv0yyyyyyyyyyybm5y-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::ab2])
+        by smtp.gmail.com with ESMTPSA id e16-20020a2e9850000000b002ac8e6d54b7sm883616ljj.42.2023.05.07.10.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 May 2023 10:53:36 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tom Rix <trix@redhat.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/2] clk: vc7: Use device_get_match_data() instead of of_device_get_match_data()
-Date:   Sun,  7 May 2023 15:41:48 +0200
-Message-Id: <20230507134148.16530-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20230507134148.16530-1-marek.vasut+renesas@mailbox.org>
-References: <20230507134148.16530-1-marek.vasut+renesas@mailbox.org>
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH 2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
+Date:   Sun,  7 May 2023 20:53:35 +0300
+Message-Id: <20230507175335.2321503-2-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
+References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: jmzb878jmwsfcuyncc1k6wgu3n44bsx9
-X-MBO-RS-ID: ff5e630adb91bb7fe4f
-X-Rspamd-Queue-Id: 4QDlvt2lpVz9slp
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use device_get_match_data() which, unlike of_device_get_match_data(),
-is compatible with other firmware interfaces than just OF.
+Using PWRSTS_RET on msm8974's MDSS_GDSC causes display to stop working.
+The gdsc doesn't fully come out of retention mode. Change it's pwrsts
+flags to PWRSTS_OFF_ON.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Fixes: d399723950c4 ("clk: qcom: gdsc: Fix the handling of PWRSTS_RET support")
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
-Cc: Alex Helms <alexander.helms.jy@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Tom Rix <trix@redhat.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/clk/clk-versaclock7.c | 2 +-
+ drivers/clk/qcom/mmcc-msm8974.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
-index 0ae191f50b4b..d563afee79d4 100644
---- a/drivers/clk/clk-versaclock7.c
-+++ b/drivers/clk/clk-versaclock7.c
-@@ -1108,7 +1108,7 @@ static int vc7_probe(struct i2c_client *client)
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index aa29c79fcd55..277ef0065aae 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -2401,7 +2401,7 @@ static struct gdsc mdss_gdsc = {
+ 	.pd = {
+ 		.name = "mdss",
+ 	},
+-	.pwrsts = PWRSTS_RET_ON,
++	.pwrsts = PWRSTS_OFF_ON,
+ };
  
- 	i2c_set_clientdata(client, vc7);
- 	vc7->client = client;
--	vc7->chip_info = of_device_get_match_data(&client->dev);
-+	vc7->chip_info = device_get_match_data(&client->dev);
- 
- 	vc7->pin_xin = devm_clk_get(&client->dev, "xin");
- 	if (PTR_ERR(vc7->pin_xin) == -EPROBE_DEFER) {
+ static struct gdsc camss_jpeg_gdsc = {
 -- 
 2.39.2
 
