@@ -2,157 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5AFC7EE2C
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 05:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D53C77B75
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 06:30:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232603AbjEHFR3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 01:17:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46116 "EHLO
+        id S232533AbjEHGaJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 02:30:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232580AbjEHFR2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 01:17:28 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A1AAD0E;
-        Sun,  7 May 2023 22:17:25 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3485H9Zc024000;
-        Mon, 8 May 2023 05:17:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=TYmfJr7HHvsCMYz1MiZH4pwIzylWNmQxGfoSFBWza8I=;
- b=fF4abupXW4DeZCHGNHsgY95T+i5anWG2nDbBlO9LL/fM/FUk+L9L4keLAxnqJ0lZTzmR
- wPhcD2LFW/4xGxJm+c9Dr3ysODTh0q7O18Wd+MoDyXaCOV3/qmEq/dx4hfndPQHhAxpg
- /rT0tDqMiHGuZ2WQkbF5Iet3CraXPl2Fl5tiZrzlfE3nWLdf1NTKTwiF5MyrUDSXRNTe
- pEAfzr0PgqI3WNeTBe/FGc+aBMNERUcodioPR/wXOa3mVNx/pnuYVwVUrSm8VcEBd/bW
- VT2Lp5S+pHMO5F6WNNZaEPbLIqIlZQNtN9qL29EM6XbTNLgWEQhMWrj+/bS2L6EB5CBZ og== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qddwhjtcm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 May 2023 05:17:08 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3485H7fT007437
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 8 May 2023 05:17:07 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Sun, 7 May 2023 22:17:02 -0700
-Date:   Mon, 8 May 2023 10:46:58 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <gregkh@linuxfoundation.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_wcheng@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v10 8/9] arm64: dts: qcom: ipq9574: Add LDO regulator node
-Message-ID: <20230508051657.GA24472@varda-linux.qualcomm.com>
-References: <cover.1683183860.git.quic_varada@quicinc.com>
- <8894bf2c44eaf4959c7a1966b66229e6cf5cda96.1683183860.git.quic_varada@quicinc.com>
- <CAA8EJppvj2nzqwdsC+Xct4cJg2-_yPpiGDELjHJG4HyAH3zGMA@mail.gmail.com>
- <20230506110918.GC10918@varda-linux.qualcomm.com>
- <CAA8EJpqg2htfa2QZ7q6SP58N5YAABa8knBn4c5eYqYOU6HQNiA@mail.gmail.com>
+        with ESMTP id S232478AbjEHGaH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 02:30:07 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B397D9E
+        for <linux-clk@vger.kernel.org>; Sun,  7 May 2023 23:30:05 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9660af2499dso409085666b.0
+        for <linux-clk@vger.kernel.org>; Sun, 07 May 2023 23:30:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683527404; x=1686119404;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fi0i2cMZjjInkpQ+3hyZ8l8Sv2Kjn70uJtkUShV1UHc=;
+        b=Kgqy//Fcdlqj1BuDNQaLj6efRELUNo/FmN1Jr7mZ2q+5eGUU4diD+v/wbw2g8RaWPr
+         BssN5M5q97S8ZzcfImpknom9SjWDUx8deCZMLQeRhTx9I+3u2rub/DyzZwOUMZRHkMqn
+         oEVlzO8BZ2OqEnadoBhYig5d0AE3C92fdeHP/xiVMpfXIosZItzoaHad4NfOzhVBHBy7
+         dbXdT6hhfLZmW279mQNMemDoo6Nbg+nptT9xPkHJdeOn5VOXhAIxiKLpTtfqFmIgcD0i
+         weugiEm0mR6mIH3xouRvDDq2imoNPkLX5RhSRWS0f5cvfx6GuhzEhax2MQ7CMdPXCdkH
+         N06w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683527404; x=1686119404;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fi0i2cMZjjInkpQ+3hyZ8l8Sv2Kjn70uJtkUShV1UHc=;
+        b=VSvn0V3DhzVoKcZ952H4l8ZIogt4RrtcUmfCitKg+RmHxbNI9zewO2zCXTS4DtEAfI
+         rXTRtj0IB0cI2M3ai7O/iR527+10M1DSdyDKegjWMki0wBxXa3ZQYE1l5l5EwoqbJPOA
+         TyO7qVIfhjXO/dO1fiHoplv1w43B8otbyFQETvsG8q8GkvsbgZGzXIpjqC4TVo5HHKcd
+         Sb6XisKQLwmkiNbpE1tVkwJFxe4Nh9O1TP8c4CF6RrXCgFjEv4dAJ4mT4z5GIlDsmn+g
+         CRM419kD6aBcpEa2Jdbd3k2/BQRtn8pknW6z873+L7VFY/bXKuNdX/WQsLNbq8R/8y3C
+         4ZTw==
+X-Gm-Message-State: AC+VfDzV0W2PKA0b9MOzlMHM9hT+Prn+ZjPrRzneljrr8Z31d2bNddVA
+        w1JaZE0radn8ji+yWKXYL0mBywPrKI+LMuZfJi5lMA==
+X-Google-Smtp-Source: ACHHUZ5YuCPskRu1pFz1aQtZmzepVWd4mFXYAtXmOsiNTP4TxuOkZffchSM69ObwVHShGO/yj+Nzsg==
+X-Received: by 2002:a17:907:1b12:b0:961:b0:3dfc with SMTP id mp18-20020a1709071b1200b0096100b03dfcmr8459701ejc.8.1683527404278;
+        Sun, 07 May 2023 23:30:04 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:50e0:ebdf:b755:b300? ([2a02:810d:15c0:828:50e0:ebdf:b755:b300])
+        by smtp.gmail.com with ESMTPSA id hu7-20020a170907a08700b009661484e84esm3087357ejc.191.2023.05.07.23.30.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 May 2023 23:30:03 -0700 (PDT)
+Message-ID: <db53c250-4e6a-5dd3-6ebc-e7c4ddc70304@linaro.org>
+Date:   Mon, 8 May 2023 08:30:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpqg2htfa2QZ7q6SP58N5YAABa8knBn4c5eYqYOU6HQNiA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rai6O2lzCM5Y5S4XD8ywvDXPGmLwmYiT
-X-Proofpoint-ORIG-GUID: rai6O2lzCM5Y5S4XD8ywvDXPGmLwmYiT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-08_02,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- adultscore=0 impostorscore=0 mlxscore=0 phishscore=0 priorityscore=1501
- bulkscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0 mlxlogscore=844
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
- definitions=main-2305080036
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v10 03/10] dt-bindings: clock: nuvoton: add binding for
+ ma35d1 clock controller
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Jacky Huang <ychuang570808@gmail.com>
+Cc:     lee@kernel.org, mjchen@nuvoton.com, will@kernel.org,
+        mturquette@baylibre.com, Jacky Huang <ychuang3@nuvoton.com>,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, jirislaby@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, robh+dt@kernel.org,
+        gregkh@linuxfoundation.org, arnd@arndb.de,
+        krzysztof.kozlowski+dt@linaro.org, p.zabel@pengutronix.de,
+        schung@nuvoton.com, linux-serial@vger.kernel.org,
+        tmaimon77@gmail.com
+References: <20230508025936.36776-1-ychuang570808@gmail.com>
+ <20230508025936.36776-4-ychuang570808@gmail.com>
+ <168351638542.4154651.973240291606333991.robh@kernel.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <168351638542.4154651.973240291606333991.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, May 06, 2023 at 02:33:11PM +0300, Dmitry Baryshkov wrote:
-> On Sat, 6 May 2023 at 14:09, Varadarajan Narayanan
-> <quic_varada@quicinc.com> wrote:
-> >
-> > On Fri, May 05, 2023 at 12:29:54PM +0300, Dmitry Baryshkov wrote:
-> > > On Fri, 5 May 2023 at 11:23, Varadarajan Narayanan
-> > > <quic_varada@quicinc.com> wrote:
-> > > >
-> > > > Add LDO regulator node
-> > >
-> > > As this LDO is provided by the PMIC, it would be nice to know why it
-> > > is modelled as an always-on regulator instead of the proper PMIC
-> > > regulator. Up to now we were doing this only for the outstanding power
-> > > rails like CX/MX or EBI.
-> >
-> > These are always ON because USB phy doesn't support power
-> > collapse, and there is a chance that other IP blocks might be
-> > sharing the rail.
->
-> You are describing the software side here. From the hardware point of
-> view, it is an I2C regulator, which is probably also exported as an
-> SMD_RPM regulator. Unless you have a good reason not to do so, there
-> should be a node under rpm-requests, which describes mp5496 regulators
-> exported via RPM. then USB should refer to those regulators.
+On 08/05/2023 05:26, Rob Herring wrote:
+> 
+> On Mon, 08 May 2023 02:59:29 +0000, Jacky Huang wrote:
+>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>
+>> Add the dt-bindings header for Nuvoton ma35d1, that gets shared
+>> between the clock controller and clock references in the dts.
+>> Add documentation to describe nuvoton ma35d1 clock driver.
+>>
+>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  .../bindings/clock/nuvoton,ma35d1-clk.yaml    |  63 +++++
+>>  .../dt-bindings/clock/nuvoton,ma35d1-clk.h    | 253 ++++++++++++++++++
+>>  2 files changed, 316 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/nuvoton,ma35d1-clk.yaml
+>>  create mode 100644 include/dt-bindings/clock/nuvoton,ma35d1-clk.h
+>>
+> 
+> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.example.dtb: camera-sensor@3c: port:endpoint:data-lanes: [[1]] is too short
+> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip-isp1.example.dtb: camera@3c: port:endpoint:data-lanes: [[1]] is too short
+> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.example.dtb: pcie-ep@33800000: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
+> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
+> 
 
-Yes. It is a part of rpm-requests. That is why have mentioned V10
-is dependent on
-https://lore.kernel.org/lkml/20230407155727.20615-1-quic_devipriy@quicinc.com/T/.
-The 4th patch of the above series
-(https://lore.kernel.org/lkml/20230407155727.20615-1-quic_devipriy@quicinc.com/T/#mea3f0ea37c53cf5e39e10cd6cf3bed5243cec629)
-adds the rpm_requests node and this regulator definition is added
-to it. Hope that is ok.
+These are unrelated, you can ignore them.
 
-Thanks
-Varada
+Best regards,
+Krzysztof
 
-> > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > ---
-> > > >  Changes in v10:
-> > > >         - Add LDO regulator node
-> > > > ---
-> > > >  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 7 +++++++
-> > > >  1 file changed, 7 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> > > > index bdc1434..1f5d14f 100644
-> > > > --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> > > > @@ -60,6 +60,13 @@
-> > > >                         regulator-min-microvolt = <725000>;
-> > > >                         regulator-max-microvolt = <1075000>;
-> > > >                 };
-> > > > +
-> > > > +               mp5496_l2: l2 {
-> > > > +                       regulator-min-microvolt = <1800000>;
-> > > > +                       regulator-max-microvolt = <1800000>;
-> > > > +                       regulator-boot-on;
-> > > > +                       regulator-always-on;
-> > > > +               };
-> > > >         };
-> > > >  };
-> > > >
-> > > > --
-> > > > 2.7.4
-> > > >
-> > >
-> > >
-> > > --
-> > > With best wishes
-> > > Dmitry
->
->
->
-> --
-> With best wishes
-> Dmitry
