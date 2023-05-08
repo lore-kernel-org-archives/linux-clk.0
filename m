@@ -2,125 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7395C7EE2F
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 11:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91ECC7EE23
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 11:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235347AbjEHLCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 07:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39594 "EHLO
+        id S235597AbjEHLWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 07:22:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235455AbjEHLCi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 07:02:38 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E367F2E814;
-        Mon,  8 May 2023 04:01:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683543686; x=1715079686;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=LjfkfoKDufvFptmjnU8Tpr/miNBczjPxAPKLfzlZzdI=;
-  b=gmF/MTiwnEnSvrJ8lxfKxTtC/KvhQ4Fhyx3ktWO4cuebN8aT1n6BF07X
-   fyjDZBTZkwEdeJo1r/pXXDWx+G+RMW8xnZqycss6C39T3CNb7aSwMUfxb
-   RmzHO2IIMq0nkJGThASqlAuFMN/VZ+sy/deVquGLxgzehRleU1Eh/hgaY
-   UbBa31qz0FifMHONYdvJf7pN3x4Chw96VBoXNwFOCYgE+ZQZbX/ysMQUQ
-   HL1BWBKBtSHMeP8D4AYFNeywWXa8lrvd4b8qWZ63Xbw/He8CrgcYW2kdk
-   +/6CIBjQUlgsvQA/zT2ZssauS6Qbw7QfjFgQZlOZM1C4uAyVJbbzCvtoN
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10703"; a="329237302"
-X-IronPort-AV: E=Sophos;i="5.99,258,1677571200"; 
-   d="scan'208";a="329237302"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2023 04:01:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10703"; a="698489829"
-X-IronPort-AV: E=Sophos;i="5.99,258,1677571200"; 
-   d="scan'208";a="698489829"
-Received: from cciobanu-mobl1.ger.corp.intel.com ([10.249.37.159])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2023 04:00:58 -0700
-Date:   Mon, 8 May 2023 14:00:56 +0300 (EEST)
-From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To:     Jacky Huang <ychuang570808@gmail.com>
-cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, tmaimon77@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-serial <linux-serial@vger.kernel.org>, arnd@arndb.de,
-        schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-Subject: Re: [PATCH v10 09/10] reset: Add Nuvoton ma35d1 reset driver
- support
-In-Reply-To: <20230508025936.36776-10-ychuang570808@gmail.com>
-Message-ID: <1ec43550-9aee-3a36-6ca5-ed56e98628f@linux.intel.com>
-References: <20230508025936.36776-1-ychuang570808@gmail.com> <20230508025936.36776-10-ychuang570808@gmail.com>
+        with ESMTP id S235598AbjEHLWI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 07:22:08 -0400
+Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDA02E075
+        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 04:22:03 -0700 (PDT)
+Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-55a5a830238so38760197b3.3
+        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 04:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683544923; x=1686136923;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ko/U1fePk/WQPy7Vn3m2ZCRRwSMISl8BqLJIER3u0Oc=;
+        b=lmH0XMw8PpvMAbg4bTIjxo7HrMUANXnsUFHAGj4B/mc9GFBCjA8omr6ylekmWkYkhn
+         6Z6uO30eTzH+govAWZABsibcAaCFm4bxOHizPQYwPIX998PelJ/aRHI9BhWZvuA/0RTc
+         L27hLqc7EVPLe5WpS1yCjZXfSORDmbnHsH9qYJsXK6gRuQDaVw1B4EQwt/WVy54savt8
+         CTObqlSg0mBBX9N4XY2o7IoofdceWwM2Jkgf9UH8/a8V3K9LECpbwxeAASI1HSGsnlDH
+         VWbxvbXnl6V4UczO1yrBQo5vMiRDzC1WnKLkdPf4o9OJNIQKVwjwFFVIYE4VMAJJp+gw
+         43lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683544923; x=1686136923;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ko/U1fePk/WQPy7Vn3m2ZCRRwSMISl8BqLJIER3u0Oc=;
+        b=Ess1L2L1PeNjYFNKIKagag4Fjao50BJO/2Cg6tn4mlz2G6uzbkpEsessibEdLPSbW2
+         p3viXKv1hzPa3iJ577l3KUjFPFaEPuue947VkI2c3wszxS8iUNgvXo0rLtzmQkrIL5x2
+         seIqgzl0MD79WnuQactikCLjIyWwAGvm3xZhEdSJjmQJhT6E4c8HYLG9TUC98I2V3Kyj
+         EnvsYDwgMR/Jf+3/KfKT5YQK48wnDawxro+SBrYVRmCgwC2afXOXsoBYeSPTYdkucoL5
+         Q3JA629xRY9ipg/etoSc+yWxldOuqcsy9xVVV4KAnS/fwipqwJUbAiXbTc4Onohr0KEd
+         7sXQ==
+X-Gm-Message-State: AC+VfDxEBTV6icAL7QY0YNd8lnKzH88A9wzVJ0aBL9ZU0rWdhqeBIJZO
+        xFWBULeCwrJOEU7IFgw6LtErXG1NEIurYOxdcTBfNQ==
+X-Google-Smtp-Source: ACHHUZ5au/Vo+wSxMFwJFjI/9KWWlfBLe/b0UuwxkO/sVsdYW6os9E+PkdqReYK5feb3ykElLiD8ESJVRHb4HRFlL5A=
+X-Received: by 2002:a25:d008:0:b0:b92:3958:dad9 with SMTP id
+ h8-20020a25d008000000b00b923958dad9mr10268569ybg.40.1683544922857; Mon, 08
+ May 2023 04:22:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1035541048-1683543664=:1790"
+References: <cover.1683183860.git.quic_varada@quicinc.com> <8894bf2c44eaf4959c7a1966b66229e6cf5cda96.1683183860.git.quic_varada@quicinc.com>
+ <CAA8EJppvj2nzqwdsC+Xct4cJg2-_yPpiGDELjHJG4HyAH3zGMA@mail.gmail.com>
+ <20230506110918.GC10918@varda-linux.qualcomm.com> <CAA8EJpqg2htfa2QZ7q6SP58N5YAABa8knBn4c5eYqYOU6HQNiA@mail.gmail.com>
+ <20230508051657.GA24472@varda-linux.qualcomm.com>
+In-Reply-To: <20230508051657.GA24472@varda-linux.qualcomm.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Mon, 8 May 2023 14:21:52 +0300
+Message-ID: <CAA8EJppubMsUrG3Vo=2W8Y6=MCBKd7OCViM30jdGAdCc8x65Ww@mail.gmail.com>
+Subject: Re: [PATCH v10 8/9] arm64: dts: qcom: ipq9574: Add LDO regulator node
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, 8 May 2023 at 08:17, Varadarajan Narayanan
+<quic_varada@quicinc.com> wrote:
+>
+> On Sat, May 06, 2023 at 02:33:11PM +0300, Dmitry Baryshkov wrote:
+> > On Sat, 6 May 2023 at 14:09, Varadarajan Narayanan
+> > <quic_varada@quicinc.com> wrote:
+> > >
+> > > On Fri, May 05, 2023 at 12:29:54PM +0300, Dmitry Baryshkov wrote:
+> > > > On Fri, 5 May 2023 at 11:23, Varadarajan Narayanan
+> > > > <quic_varada@quicinc.com> wrote:
+> > > > >
+> > > > > Add LDO regulator node
+> > > >
+> > > > As this LDO is provided by the PMIC, it would be nice to know why it
+> > > > is modelled as an always-on regulator instead of the proper PMIC
+> > > > regulator. Up to now we were doing this only for the outstanding power
+> > > > rails like CX/MX or EBI.
+> > >
+> > > These are always ON because USB phy doesn't support power
+> > > collapse, and there is a chance that other IP blocks might be
+> > > sharing the rail.
+> >
+> > You are describing the software side here. From the hardware point of
+> > view, it is an I2C regulator, which is probably also exported as an
+> > SMD_RPM regulator. Unless you have a good reason not to do so, there
+> > should be a node under rpm-requests, which describes mp5496 regulators
+> > exported via RPM. then USB should refer to those regulators.
+>
+> Yes. It is a part of rpm-requests. That is why have mentioned V10
+> is dependent on
+> https://lore.kernel.org/lkml/20230407155727.20615-1-quic_devipriy@quicinc.com/T/.
+> The 4th patch of the above series
+> (https://lore.kernel.org/lkml/20230407155727.20615-1-quic_devipriy@quicinc.com/T/#mea3f0ea37c53cf5e39e10cd6cf3bed5243cec629)
+> adds the rpm_requests node and this regulator definition is added
+> to it. Hope that is ok.
 
---8323329-1035541048-1683543664=:1790
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+It is fine. Most probably I was mistaken by the patch itself. Please
+excuse me. If this this is an RPM regulator, it's is fine and correct.
 
-On Mon, 8 May 2023, Jacky Huang wrote:
+>
+> Thanks
+> Varada
+>
+> > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > > ---
+> > > > >  Changes in v10:
+> > > > >         - Add LDO regulator node
+> > > > > ---
+> > > > >  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 7 +++++++
+> > > > >  1 file changed, 7 insertions(+)
+> > > > >
+> > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> > > > > index bdc1434..1f5d14f 100644
+> > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> > > > > @@ -60,6 +60,13 @@
+> > > > >                         regulator-min-microvolt = <725000>;
+> > > > >                         regulator-max-microvolt = <1075000>;
+> > > > >                 };
+> > > > > +
+> > > > > +               mp5496_l2: l2 {
+> > > > > +                       regulator-min-microvolt = <1800000>;
+> > > > > +                       regulator-max-microvolt = <1800000>;
+> > > > > +                       regulator-boot-on;
+> > > > > +                       regulator-always-on;
+> > > > > +               };
+> > > > >         };
+> > > > >  };
+> > > > >
+> > > > > --
+> > > > > 2.7.4
+> > > > >
+> > > >
+> > > >
+> > > > --
+> > > > With best wishes
+> > > > Dmitry
+> >
+> >
+> >
+> > --
+> > With best wishes
+> > Dmitry
 
-> From: Jacky Huang <ychuang3@nuvoton.com>
-> 
-> This driver supports individual IP reset for ma35d1. The reset
-> control registers is a subset of system control registers.
-
-registers are 
-
-> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> ---
-
-> diff --git a/drivers/reset/reset-ma35d1.c b/drivers/reset/reset-ma35d1.c
-> new file mode 100644
-> index 000000000000..19ed323981df
-> --- /dev/null
-> +++ b/drivers/reset/reset-ma35d1.c
-> @@ -0,0 +1,234 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2023 Nuvoton Technology Corp.
-> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
-> + */
-> +
-> +#include <linux/bits.h>
-> +#include <linux/container_of.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reboot.h>
-> +#include <linux/reset-controller.h>
-> +#include <linux/spinlock.h>
-> +#include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
-> +
-> +struct ma35d1_reset_data {
-> +	struct reset_controller_dev rcdev;
-> +	struct notifier_block restart_handler;
-> +	void __iomem *base;
-> +	spinlock_t lock;
-
-Please add a comment about what this protects. After adding that, feel 
-free to add also:
-
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
 
 -- 
- i.
-
---8323329-1035541048-1683543664=:1790--
+With best wishes
+Dmitry
