@@ -2,70 +2,67 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DE0C77B7F
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 16:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7497AC77B75
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 16:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233830AbjEHQkF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 12:40:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37752 "EHLO
+        id S234062AbjEHQkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 12:40:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233725AbjEHQkC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 12:40:02 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06D372BE
-        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 09:39:30 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4ec8149907aso5492741e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 09:39:30 -0700 (PDT)
+        with ESMTP id S233694AbjEHQkm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 12:40:42 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E6972AE
+        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 09:40:24 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f14ec4efb0so3219977e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 09:40:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683563967; x=1686155967;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=linaro.org; s=google; t=1683564016; x=1686156016;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fGhSQBof6Qw7j8oJ6dl7kDWKIrDr2aP4xnq1pwJb2TQ=;
-        b=nyKMpcZ8VFP7xiJevf65/S2S4dhuujUyPZQZhOahSHdqBe1Is0sdKBAqPaRqtjYe8i
-         A1ZSPXz29/mBpnjUqXvDtx1qrDcA9YHPLtL+gTkepFiD2LRbcQVuxFb9eRoT+cfXxb9w
-         HnC4lAnTZnXUpryg8gmhJkPw9HGl2w8ebWVfj+LH1GFymKIezNaw7nNSWTxltwx4momP
-         vzKiDXicBpzqU++SXrPWhXU7arruK2z2ILWS/ABikWeQJZoM7TdCo9RnkJqD/6dve4jK
-         Cl+zZAB0Sf41kfLfYuXo+tfksTPTbpTHSD2IOBuHaJ0KtlmLkO1j4U6lzMKErescAyS8
-         Ogng==
+        bh=aUxn30nI2JC2NtHSud7ubjIIo2ZFwZw2vxazxJv+hlE=;
+        b=A2H6+EZETU19uZp9uxVwu4SLkeNRyo0WdTduVSE/23Ny5M9vHuZs88iS3TfkWjq/Kx
+         hLjp1IsETrANWQxedB2rfqB91hzKz4iy0TPDwJVUKyMlabSFfq6tegZC4hlH/1YZEvxx
+         fZ+k5zOCLujASQLnt1AoVOPj73CVRGdZ6MkS5FvlZg17+DITlJnJhd89drvazuYV8pTP
+         V3Mkqur6AYVFFJAw/O7SZD3oykGJUbzQ8u0+qIgPntINVazYreG9ZPCAHgsdUU1US0PC
+         lGKKMZKK0QdZEFNp3hU+iQL/gLdNpNCUo1edloWE2we+tC2YlabQgTFpnEESV15Y0+pF
+         eivQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683563967; x=1686155967;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+        d=1e100.net; s=20221208; t=1683564016; x=1686156016;
+        h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fGhSQBof6Qw7j8oJ6dl7kDWKIrDr2aP4xnq1pwJb2TQ=;
-        b=K2AZIyehVYXPPh0JrTpm5bh514w0lZrTw+4S1VZkrhtH/7CsAW/fBQWVyOL7hRR9sf
-         82j11LXO45qC66nnV8BULgxBEEm1z4J1RsETOqidegOJTG4l99npz2XIUhCRgEWGHE3a
-         X7AyH17JNZ9W01iKizTo08jJK1LqQ51ZhTZg91uu8gbs4QXEXaxMvlIW+R0DJKWcum9E
-         MhwCa6SyvH2kyE9jZ5y6XgclKLBoZVlXXoq/oHA58drLM/r7K6A5Rtj1wgk8YKkKbuip
-         6OqdG/EFl3vCDUmJhgHFFP8rkjeiYseTglkcS9/eyBqkOvVicwap5sKgXlv4dUFFkego
-         Ab6A==
-X-Gm-Message-State: AC+VfDz7KqZvwyErF1XqIN4cjR9J/zJXu6L176YBGaAuBER87zlmrSxl
-        awwqpdBT8or8YZie1YvY9khTeGU7SBJTEGqX2R8=
-X-Google-Smtp-Source: ACHHUZ780o8Hl76I8LAZEsSYyASCwjYLOlcmFu8v1tXYtLWfWTWJT9QzwBadu9FLf2MnY6MNJJCYYg==
-X-Received: by 2002:ac2:52b6:0:b0:4f2:5393:b71 with SMTP id r22-20020ac252b6000000b004f253930b71mr303906lfm.17.1683563967000;
-        Mon, 08 May 2023 09:39:27 -0700 (PDT)
+        bh=aUxn30nI2JC2NtHSud7ubjIIo2ZFwZw2vxazxJv+hlE=;
+        b=i/dgVLxaEKwl7b1Qxy2QUMxfjF/2OcL/KtwvtdddzIDrM8+SoalasjuZeAyJAnuOEE
+         hJUcJgg9NBtZ9PJzr7GbjE8EzyV2tYYgEin6lfE+yvunT5Vqxn9vSZ/hoDz+Bk+z9KAi
+         dgENbLCO88fRMWWvQ5f9ibzgFUFSRD4O8qlXQwIwwof5fYtn+6YAMEaKjyUZLSJ9rvsK
+         LLpIbMftdJTJ3sOhgAnmEK871WSL4PqA0zZfDOnty6pbvY2+gjut1NVYjtP0ysTr9veU
+         2nTmoYAgAizHjtgPzEHmStmwz1UTfT5S4fdXwRn/bv7m/0DlmKt6iqPA4UYQ+qWCQEF3
+         tmgw==
+X-Gm-Message-State: AC+VfDxZ3duMRPP2hwfoCyD+0ae6j2wb5Iz3M+XOCeLgHluCswdLoglC
+        eUgw1e3bCP4Mp/xqIGheTpAXpw==
+X-Google-Smtp-Source: ACHHUZ6u7+V88g+UMiDYJc3ekgTOxbHHa+oqE7nsNuFqFyqBCSf8uLTqkAINz7xlB87R6Q38suZyeg==
+X-Received: by 2002:ac2:52b0:0:b0:4ec:8b57:b018 with SMTP id r16-20020ac252b0000000b004ec8b57b018mr2670653lfm.33.1683564016101;
+        Mon, 08 May 2023 09:40:16 -0700 (PDT)
 Received: from [192.168.1.101] (abyl248.neoplus.adsl.tpnet.pl. [83.9.31.248])
-        by smtp.gmail.com with ESMTPSA id h22-20020a197016000000b004e887fd71acsm37704lfc.236.2023.05.08.09.39.25
+        by smtp.gmail.com with ESMTPSA id y11-20020ac255ab000000b004efeb7776d3sm37000lfg.278.2023.05.08.09.40.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 09:39:26 -0700 (PDT)
-Message-ID: <033952d2-af42-3980-95ab-1aea158f60f1@linaro.org>
-Date:   Mon, 8 May 2023 18:39:24 +0200
+        Mon, 08 May 2023 09:40:15 -0700 (PDT)
+Message-ID: <bd57675e-fe80-b5ea-cd21-46bc98e45c3e@linaro.org>
+Date:   Mon, 8 May 2023 18:40:14 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.1
-Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: remove oxili_ocmemgx_clk
+Subject: Re: [PATCH] clk: qcom: gcc: ipq5332: Use floor ops for SDCC clocks
 Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230508153319.2371645-1-dmitry.baryshkov@linaro.org>
+To:     Kathiravan T <quic_kathirav@quicinc.com>, andersson@kernel.org,
+        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230508163145.9678-1-quic_kathirav@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230508153319.2371645-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230508163145.9678-1-quic_kathirav@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -74,69 +71,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 8.05.2023 17:33, Dmitry Baryshkov wrote:
-> After the internal discussions, it looks like this clock is managed by
-> RPM itself. Linux kernel should not touch it on its own, as this causes
-> disagreement with RPM. Shutting down this clock causes the OCMEM<->GPU
-> interface to stop working, resulting in GPU hangchecks/timeouts.
+On 8.05.2023 18:31, Kathiravan T wrote:
+> SDCC clocks must be rounded down to avoid overclocking the controller.
 > 
-> Fixes: d8b212014e69 ("clk: qcom: Add support for MSM8974's multimedia clock controller (MMCC)")
-Feels good to fix 9 year old code!
-
-> Suggested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Fixes: 3d89d52970fd ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC")
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
 > ---
-+CC Luca please give it a spin on your smartwatch
-
-(fun to say isn't it)
-
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/clk/qcom/mmcc-msm8974.c | 19 -------------------
->  1 file changed, 19 deletions(-)
+>  drivers/clk/qcom/gcc-ipq5332.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-> index 277ef0065aae..82f6bad144a9 100644
-> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> @@ -2204,23 +2204,6 @@ static struct clk_branch ocmemcx_ocmemnoc_clk = {
+> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+> index bdb4a0a11d07..1ad23aa8aa5a 100644
+> --- a/drivers/clk/qcom/gcc-ipq5332.c
+> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+> @@ -963,7 +963,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
+>  		.name = "gcc_sdcc1_apps_clk_src",
+>  		.parent_data = gcc_parent_data_9,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_9),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_floor_ops,
 >  	},
 >  };
 >  
-> -static struct clk_branch oxili_ocmemgx_clk = {
-> -	.halt_reg = 0x402c,
-> -	.clkr = {
-> -		.enable_reg = 0x402c,
-> -		.enable_mask = BIT(0),
-> -		.hw.init = &(struct clk_init_data){
-> -			.name = "oxili_ocmemgx_clk",
-> -			.parent_data = (const struct clk_parent_data[]){
-> -				{ .fw_name = "gfx3d_clk_src", .name = "gfx3d_clk_src" },
-> -			},
-> -			.num_parents = 1,
-> -			.flags = CLK_SET_RATE_PARENT,
-> -			.ops = &clk_branch2_ops,
-> -		},
-> -	},
-> -};
-> -
->  static struct clk_branch ocmemnoc_clk = {
->  	.halt_reg = 0x50b4,
->  	.clkr = {
-> @@ -2512,7 +2495,6 @@ static struct clk_regmap *mmcc_msm8226_clocks[] = {
->  	[MMSS_MMSSNOC_AXI_CLK] = &mmss_mmssnoc_axi_clk.clkr,
->  	[MMSS_S0_AXI_CLK] = &mmss_s0_axi_clk.clkr,
->  	[OCMEMCX_AHB_CLK] = &ocmemcx_ahb_clk.clkr,
-> -	[OXILI_OCMEMGX_CLK] = &oxili_ocmemgx_clk.clkr,
->  	[OXILI_GFX3D_CLK] = &oxili_gfx3d_clk.clkr,
->  	[OXILICX_AHB_CLK] = &oxilicx_ahb_clk.clkr,
->  	[OXILICX_AXI_CLK] = &oxilicx_axi_clk.clkr,
-> @@ -2670,7 +2652,6 @@ static struct clk_regmap *mmcc_msm8974_clocks[] = {
->  	[MMSS_S0_AXI_CLK] = &mmss_s0_axi_clk.clkr,
->  	[OCMEMCX_AHB_CLK] = &ocmemcx_ahb_clk.clkr,
->  	[OCMEMCX_OCMEMNOC_CLK] = &ocmemcx_ocmemnoc_clk.clkr,
-> -	[OXILI_OCMEMGX_CLK] = &oxili_ocmemgx_clk.clkr,
->  	[OCMEMNOC_CLK] = &ocmemnoc_clk.clkr,
->  	[OXILI_GFX3D_CLK] = &oxili_gfx3d_clk.clkr,
->  	[OXILICX_AHB_CLK] = &oxilicx_ahb_clk.clkr,
