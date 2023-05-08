@@ -2,67 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FE8C77B7F
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 10:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CABAC7EE2D
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 11:02:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235403AbjEHK44 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 06:56:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33454 "EHLO
+        id S235440AbjEHLCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 07:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235332AbjEHK43 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 06:56:29 -0400
+        with ESMTP id S235451AbjEHLCh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 07:02:37 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BBD31576;
-        Mon,  8 May 2023 03:55:31 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3489RjBU016799;
-        Mon, 8 May 2023 10:55:23 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFE092E80E;
+        Mon,  8 May 2023 04:01:25 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3486Eqs2025662;
+        Mon, 8 May 2023 11:01:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=wwGIVflxgcYEbSSfRt33GWz2bAD2ZPta9N/khOZxKJM=;
- b=Jg+uItN/CV+ZivaQF6nmXUHmJ6YoTPJuqQVBOb7VkTTxPzRJDjo2Z94ho0gUFUqJMOMd
- sed0+IOkCIRBk2pW+ikOsC49wmx19h1cU1CqKFRUmLcI9eNTwPY1YKm5qjEN6vcKyKo8
- zBkKb6F5CA7DD2k1XCdeG/pr1hBOdw23nTcsNUFflBfzRIpUr5PthM6a0K7dR6udKtJd
- h2kDEZmRX0e/OOWz7FUwK64+3xIVRkKEPsAASz7TDeMfB4W1hWFguqtlQC4KnkxbkwGq
- OmLegU3j0ohSk3x0dFcBnH/PzPRQjrSYhAkjbrhmYDaJSxjmEtFPPfBW0AYOnGH9+QHc zQ== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qexf1g5hj-1
+ bh=30YV3GSfUJH7uuAX8OaPEaPxhsD0B30A4xbCT71CEQo=;
+ b=WGHVlF3BsyIuV/3SBrU26+mSJHJfuxCpxS0A4EPFCSIZPqVCmu2edkCUpANl261nQVDH
+ IJKmmANwNZ2pWLDEwsGtr4OKjv/o5iPw/wWd56LwUGXjAhHaf5X5IY9GUfxY6ASRZ3m4
+ S7VeeZMEx/2JaEV6u7tCLCLPL5fh10l2IXG1QMBk7b7gBL+rWaVfmeyX0jx029Uvhpo2
+ oaV9CEdyxq5IbyNTvk1eM7ogRngQ2qIkQtKWrUafeBrHBRF/W8T80mvbJMvq9rFoKIuS
+ +4wlbkvPEuvB6I/mHdNz7kKo1Oeaz+uzMy/4CCUpc/frjFVMKz7t+9SHL7Sxln39tOqz Lg== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qdf4b3ce1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 May 2023 10:55:22 +0000
+        Mon, 08 May 2023 11:01:20 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 348AtLUO010651
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 348B1J0P008879
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 8 May 2023 10:55:21 GMT
-Received: from [10.216.51.233] (10.80.80.8) by nalasex01a.na.qualcomm.com
+        Mon, 8 May 2023 11:01:19 GMT
+Received: from [10.216.33.39] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 8 May 2023
- 03:55:14 -0700
-Message-ID: <6c962760-d81c-af52-bce2-49090f66f4ee@quicinc.com>
-Date:   Mon, 8 May 2023 16:25:10 +0530
+ 04:01:14 -0700
+Message-ID: <62a80dec-91ff-8a07-9818-7207a08a35b3@quicinc.com>
+Date:   Mon, 8 May 2023 16:31:11 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH V3 5/6] arm64: dts: qcom: ipq9574: Enable PCIe PHYs and
- controllers
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH 1/4] clk: qcom: branch: Extend the invert logic for
+ branch2 clocks
 Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <mani@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_ipkumar@quicinc.com>
-References: <20230421124938.21974-1-quic_devipriy@quicinc.com>
- <20230421124938.21974-6-quic_devipriy@quicinc.com>
- <CAA8EJpqx1jv_xEnS-2rOOGCtEB=1vo477H7XLGGvH=o7NHJD7w@mail.gmail.com>
-From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <CAA8EJpqx1jv_xEnS-2rOOGCtEB=1vo477H7XLGGvH=o7NHJD7w@mail.gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "Rob Herring" <robh+dt@kernel.org>
+CC:     <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohiagar@quicinc.com>, <netdev@vger.kernel.org>
+References: <20230419133013.2563-1-quic_tdas@quicinc.com>
+ <20230419133013.2563-2-quic_tdas@quicinc.com>
+ <0dc457cbd13ea76a3aa3c70b2a31a537.sboyd@kernel.org>
+From:   Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <0dc457cbd13ea76a3aa3c70b2a31a537.sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
@@ -70,137 +69,83 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zS8fFU3lxbkVpPV_L_0MxgUOIKW40EgJ
-X-Proofpoint-GUID: zS8fFU3lxbkVpPV_L_0MxgUOIKW40EgJ
+X-Proofpoint-ORIG-GUID: kQ3XYs3uLOipgrKCKIHyYStYliBRUIOY
+X-Proofpoint-GUID: kQ3XYs3uLOipgrKCKIHyYStYliBRUIOY
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-08_08,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=971 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
- adultscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2305080074
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1015 priorityscore=1501 adultscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2303200000
+ definitions=main-2305080075
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Stephen,
 
+Thanks for your review.
 
-On 4/22/2023 5:43 AM, Dmitry Baryshkov wrote:
-> On Fri, 21 Apr 2023 at 15:51, Devi Priya <quic_devipriy@quicinc.com> wrote:
+On 4/20/2023 3:07 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2023-04-19 06:30:10)
+>> From: Imran Shaik <quic_imrashai@quicinc.com>
 >>
->> Enable the PCIe controller and PHY nodes corresponding to
->> RDP 433.
+>> Add support to handle the invert logic for branch2 clocks.
+>> Invert branch halt would indicate the clock ON when CLK_OFF
+>> bit is '1' and OFF when CLK_OFF bit is '0'.
 >>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 >> ---
->>   Changes in V3:
->>          - No change
+>>   drivers/clk/qcom/clk-branch.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
 >>
->>   arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 62 +++++++++++++++++++++
->>   1 file changed, 62 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
->> index 7be578017bf7..3ae38cf327ea 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
->> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
->> @@ -8,6 +8,7 @@
->>
->>   /dts-v1/;
->>
->> +#include <dt-bindings/gpio/gpio.h>
->>   #include "ipq9574.dtsi"
->>
->>   / {
->> @@ -43,6 +44,42 @@
->>          };
->>   };
->>
->> +&pcie1_phy {
->> +       status = "okay";
->> +};
+>> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+>> index f869fc6aaed6..4b24d45be771 100644
+>> --- a/drivers/clk/qcom/clk-branch.c
+>> +++ b/drivers/clk/qcom/clk-branch.c
+>> @@ -48,6 +48,7 @@ static bool clk_branch2_check_halt(const struct clk_branch *br, bool enabling)
+>>   {
+>>          u32 val;
+>>          u32 mask;
+>> +       bool invert = (br->halt_check == BRANCH_HALT_ENABLE);
+>>   
+>>          mask = BRANCH_NOC_FSM_STATUS_MASK << BRANCH_NOC_FSM_STATUS_SHIFT;
+>>          mask |= BRANCH_CLK_OFF;
+>> @@ -56,9 +57,16 @@ static bool clk_branch2_check_halt(const struct clk_branch *br, bool enabling)
+>>   
+>>          if (enabling) {
+>>                  val &= mask;
 >> +
->> +&pcie1 {
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&pcie_1_pin>;
+>> +               if (invert)
+>> +                       return (val & BRANCH_CLK_OFF) == BRANCH_CLK_OFF;
 >> +
->> +       perst-gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
+>>                  return (val & BRANCH_CLK_OFF) == 0 ||
+>>                          val == BRANCH_NOC_FSM_STATUS_ON;
 > 
-> Usually qcom PCIe hosts also define wake-gpios.
-In IPQ9574, we do not have hot plug support and host always starts the
-enumeration for the device. Hence no wake pin is required.
+> Do these clks have a NOC_FSM_STATUS bit? I think it would be better to
+> make a local variable for the val we're looking for, and then test for
+> that. We may need a mask as well, but the idea is to not duplicate the
+> test and return from multiple places.
 > 
->> +       status = "okay";
->> +};
->> +
->> +&pcie2_phy {
->> +       status = "okay";
->> +};
->> +
->> +&pcie2 {
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&pcie_2_pin>;
->> +
->> +       perst-gpios = <&tlmm 29 GPIO_ACTIVE_LOW>;
->> +       status = "okay";
->> +};
->> +
->> +&pcie3_phy {
->> +       status = "okay";
->> +};
->> +
->> +&pcie3 {
->> +       pinctrl-names = "default";
->> +       pinctrl-0 = <&pcie_3_pin>;
->> +
->> +       perst-gpios = <&tlmm 32 GPIO_ACTIVE_LOW>;
->> +       status = "okay";
->> +};
->> +
->>   &sdhc_1 {
->>          pinctrl-0 = <&sdc_default_state>;
->>          pinctrl-names = "default";
->> @@ -60,6 +97,31 @@
->>   };
->>
->>   &tlmm {
->> +
->> +       pcie_1_pin: pcie-1-state {
->> +               pins = "gpio26";
->> +               function = "gpio";
->> +               drive-strength = <8>;
->> +               bias-pull-down;
->> +               output-low;
-> 
-> No clkreq and no wake gpios?
-We do not use any PCIe low power states and link is always in L0.
 
-Thanks,
-Devi Priya
-> 
->> +       };
+Clocks which has invert status doesn't have NOC_FSM_STATUS bit.
+Will remove the multiple returns in next patch.
+
+>>          } else {
+>> +               if (invert)
+>> +                       return (val & BRANCH_CLK_OFF) == 0;
 >> +
->> +       pcie_2_pin: pcie-2-state {
->> +               pins = "gpio29";
->> +               function = "gpio";
->> +               drive-strength = <8>;
->> +               bias-pull-down;
->> +               output-low;
->> +       };
->> +
->> +       pcie_3_pin: pcie-3-state {
->> +               pins = "gpio32";
->> +               function = "gpio";
->> +               drive-strength = <8>;
->> +               bias-pull-up;
->> +               output-low;
->> +       };
->> +
->>          sdc_default_state: sdc-default-state {
->>                  clk-pins {
->>                          pins = "gpio5";
->> --
->> 2.17.1
->>
+>>                  return val & BRANCH_CLK_OFF;
+>>          }
 > 
-> 
+> While at it, I'd get rid of this else and de-indent the code because if
+> we're 'enabling' we'll return from the function regardless.
+
+
+Yes, Stephen, will take care in the next patch.
+
+-- 
+Thanks & Regards,
+Taniya Das.
