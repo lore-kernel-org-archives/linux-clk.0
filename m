@@ -2,97 +2,163 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7497AC77B75
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 16:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E3FC77B7F
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 19:25:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234062AbjEHQkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 12:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39430 "EHLO
+        id S232518AbjEHTZC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 15:25:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233694AbjEHQkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 12:40:42 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E6972AE
-        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 09:40:24 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f14ec4efb0so3219977e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 09:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683564016; x=1686156016;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aUxn30nI2JC2NtHSud7ubjIIo2ZFwZw2vxazxJv+hlE=;
-        b=A2H6+EZETU19uZp9uxVwu4SLkeNRyo0WdTduVSE/23Ny5M9vHuZs88iS3TfkWjq/Kx
-         hLjp1IsETrANWQxedB2rfqB91hzKz4iy0TPDwJVUKyMlabSFfq6tegZC4hlH/1YZEvxx
-         fZ+k5zOCLujASQLnt1AoVOPj73CVRGdZ6MkS5FvlZg17+DITlJnJhd89drvazuYV8pTP
-         V3Mkqur6AYVFFJAw/O7SZD3oykGJUbzQ8u0+qIgPntINVazYreG9ZPCAHgsdUU1US0PC
-         lGKKMZKK0QdZEFNp3hU+iQL/gLdNpNCUo1edloWE2we+tC2YlabQgTFpnEESV15Y0+pF
-         eivQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683564016; x=1686156016;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUxn30nI2JC2NtHSud7ubjIIo2ZFwZw2vxazxJv+hlE=;
-        b=i/dgVLxaEKwl7b1Qxy2QUMxfjF/2OcL/KtwvtdddzIDrM8+SoalasjuZeAyJAnuOEE
-         hJUcJgg9NBtZ9PJzr7GbjE8EzyV2tYYgEin6lfE+yvunT5Vqxn9vSZ/hoDz+Bk+z9KAi
-         dgENbLCO88fRMWWvQ5f9ibzgFUFSRD4O8qlXQwIwwof5fYtn+6YAMEaKjyUZLSJ9rvsK
-         LLpIbMftdJTJ3sOhgAnmEK871WSL4PqA0zZfDOnty6pbvY2+gjut1NVYjtP0ysTr9veU
-         2nTmoYAgAizHjtgPzEHmStmwz1UTfT5S4fdXwRn/bv7m/0DlmKt6iqPA4UYQ+qWCQEF3
-         tmgw==
-X-Gm-Message-State: AC+VfDxZ3duMRPP2hwfoCyD+0ae6j2wb5Iz3M+XOCeLgHluCswdLoglC
-        eUgw1e3bCP4Mp/xqIGheTpAXpw==
-X-Google-Smtp-Source: ACHHUZ6u7+V88g+UMiDYJc3ekgTOxbHHa+oqE7nsNuFqFyqBCSf8uLTqkAINz7xlB87R6Q38suZyeg==
-X-Received: by 2002:ac2:52b0:0:b0:4ec:8b57:b018 with SMTP id r16-20020ac252b0000000b004ec8b57b018mr2670653lfm.33.1683564016101;
-        Mon, 08 May 2023 09:40:16 -0700 (PDT)
-Received: from [192.168.1.101] (abyl248.neoplus.adsl.tpnet.pl. [83.9.31.248])
-        by smtp.gmail.com with ESMTPSA id y11-20020ac255ab000000b004efeb7776d3sm37000lfg.278.2023.05.08.09.40.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 09:40:15 -0700 (PDT)
-Message-ID: <bd57675e-fe80-b5ea-cd21-46bc98e45c3e@linaro.org>
-Date:   Mon, 8 May 2023 18:40:14 +0200
+        with ESMTP id S229464AbjEHTZC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 15:25:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A8CE7;
+        Mon,  8 May 2023 12:25:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2AAFB62A69;
+        Mon,  8 May 2023 19:25:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE64C433EF;
+        Mon,  8 May 2023 19:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683573899;
+        bh=d25zkj4QIGqo1q9tRg60u0/yBs9nIpXewK+TJMWlDW4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KLRAJbBdRK515SCcYa1oYJQKak5uw89c+v1lYRyQNEYe9Rku839yD9vkdD2MALzRx
+         2hHmvo3ulnCy9ifr4zGje4M0roh1X+ugpS2Wew0Mk21s/j3Q7PLDgZRSMwqeNTHowm
+         ZXAp5vS02JoKUM3VnHz7HpWTKXZGUv5x+lAJfDay8i2OVmHFCg2+JuqI1++489ye4S
+         b3aR3TcYLOoFpnL92z2zBV0jM/wgZxqhpGFdJsc/mjZLwVFQdB36t2AcFS9KkID6b2
+         FmlnqXnINf0TSEuhagyPh0OX78cdwy95tMDESZOiCGcLN2pXQIvFXUy+K5NjiAcW1a
+         /VAo+mf6lNt/A==
+Date:   Mon, 8 May 2023 20:24:53 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 5/7] dt-bindings: soc: starfive: Add StarFive syscon
+ module
+Message-ID: <20230508-margarita-fondling-c9b970ad73a9@spud>
+References: <20230414024157.53203-1-xingyu.wu@starfivetech.com>
+ <20230414024157.53203-6-xingyu.wu@starfivetech.com>
+ <20230424-footsie-compost-d6624c8ef4e8@spud>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH] clk: qcom: gcc: ipq5332: Use floor ops for SDCC clocks
-Content-Language: en-US
-To:     Kathiravan T <quic_kathirav@quicinc.com>, andersson@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230508163145.9678-1-quic_kathirav@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230508163145.9678-1-quic_kathirav@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mn9OXjbT0/L5FxUF"
+Content-Disposition: inline
+In-Reply-To: <20230424-footsie-compost-d6624c8ef4e8@spud>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--mn9OXjbT0/L5FxUF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 8.05.2023 18:31, Kathiravan T wrote:
-> SDCC clocks must be rounded down to avoid overclocking the controller.
-> 
-> Fixes: 3d89d52970fd ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC")
-> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On Mon, Apr 24, 2023 at 06:15:47PM +0100, Conor Dooley wrote:
+> On Fri, Apr 14, 2023 at 10:41:55AM +0800, Xingyu Wu wrote:
+> > From: William Qiu <william.qiu@starfivetech.com>
+> >=20
+> > Add documentation to describe StarFive System Controller Registers.
+> >=20
+> > Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> > ---
+> >  .../soc/starfive/starfive,jh7110-syscon.yaml  | 58 +++++++++++++++++++
+> >  MAINTAINERS                                   |  6 ++
+> >  2 files changed, 64 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/soc/starfive/star=
+five,jh7110-syscon.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh=
+7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,=
+jh7110-syscon.yaml
+> > new file mode 100644
+> > index 000000000000..de086e74a229
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-sy=
+scon.yaml
+> > @@ -0,0 +1,58 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon=
+=2Eyaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: StarFive JH7110 SoC system controller
+> > +
+> > +maintainers:
+> > +  - William Qiu <william.qiu@starfivetech.com>
+> > +
+> > +description: |
+> > +  The StarFive JH7110 SoC system controller provides register informat=
+ion such
+> > +  as offset, mask and shift to configure related modules such as MMC a=
+nd PCIe.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - starfive,jh7110-aon-syscon
+> > +              - starfive,jh7110-sys-syscon
+> > +          - const: syscon
+> > +          - const: simple-mfd
+> > +      - items:
+> > +          - const: starfive,jh7110-stg-syscon
+> > +          - const: syscon
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clock-controller:
+> > +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+> > +    type: object
+> > +
+> > +  power-controller:
+> > +    $ref: /schemas/power/starfive,jh7110-pmu.yaml#
+> > +    type: object
+>=20
+> My plan was to grab this patch after the merge window, but there's been
+> some back and forth [1] about what exactly should be a power-controller
+> here. Given the merge window is open & I know Emil wants to look at the
+> various clock bits for the JH7110, I don't think there's a pressing need
+> for you to do anything here, but figured I'd at least mention how things
+> are going on this thread too.
 
-Konrad
->  drivers/clk/qcom/gcc-ipq5332.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-> index bdb4a0a11d07..1ad23aa8aa5a 100644
-> --- a/drivers/clk/qcom/gcc-ipq5332.c
-> +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> @@ -963,7 +963,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
->  		.name = "gcc_sdcc1_apps_clk_src",
->  		.parent_data = gcc_parent_data_9,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_9),
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->  	},
->  };
->  
+To follow up on this, it transpired in that thread that this node, not a
+child node, should be the power controller.
+
+Up to you StarFive folk how you wish to resend, but I am fine with it
+being in this series, I shall just not pick up the soc driver patches
+until the resent binding is applied by Stephen.
+
+Thanks,
+Conor.
+
+--mn9OXjbT0/L5FxUF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZFlMhQAKCRB4tDGHoIJi
+0qDRAQC/Oe6fBxsiKfuTm43qtFROX9XPTmdIibQnwwOi+PzIEQD8DfYgZYAzC53a
+PgLCy7zOEWGuwYyL6gtESmlBXNsYlQY=
+=Nsa4
+-----END PGP SIGNATURE-----
+
+--mn9OXjbT0/L5FxUF--
