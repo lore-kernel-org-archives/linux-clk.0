@@ -2,154 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EC6C77B7F
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 07:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1682C77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 07:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232717AbjEHHXW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 03:23:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37528 "EHLO
+        id S233601AbjEHHwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 03:52:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233084AbjEHHXT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 03:23:19 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FD3F1A1E6
-        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 00:23:06 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f14ec8d72aso2654985e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 00:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683530584; x=1686122584;
-        h=content-transfer-encoding:in-reply-to:subject:from:content-language
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TcajkMFg+Ijs1is/I9T3sNOP6ZgzZEyX3QOUPBnk/dc=;
-        b=FC6fI1KiPdx+e67WHc+0iGmLtivABnz8MrKkTMaTy8j2fSHT+89HwVPiRw3bAJNrC/
-         0j65IwEydYg9NiJdl6qFH6PugeMwIlaXzKrjo1BLAZ+C/pI9LCROGvwJ0lydfoPSfle8
-         ovKlA53T47amHxIk7ClUN4x5vmxO2eTTX2q2G53oBDH6wkuj8mmoA44p8YuHjAe3HDNY
-         04zKaWmQpSuvlAiybds3j7cC+yVVy+27Jl9TE+mD9ZpYTo7f1r9j8ttYPKpN8mzI4dag
-         ZKPLv93zUHVRQc4nDHGDB6B5wE9w/AsjCpzWR2YJk7j8hSNcltTfSFafL040x2RrgHiz
-         dlXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683530584; x=1686122584;
-        h=content-transfer-encoding:in-reply-to:subject:from:content-language
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TcajkMFg+Ijs1is/I9T3sNOP6ZgzZEyX3QOUPBnk/dc=;
-        b=A+XinzeAnB9g1vjiR6/z+AjtPp0ehidTE2gr1Fs2jP1uWckiB0MWlZ492PJHKhWPq5
-         2lm0NmzMSmKAnmdIYaJoy6rRx7U864mqNTmlIUIsHvz6UH4RQ7mPPl2xqYvCPw6weZBV
-         rEVQnTWuk2+kDq7x3sv2E+lRVqvFTsOcOMsrEk4sMkwW2V0nM/yrqHc4P0dvx0cgttFP
-         mHnHdO3x/59m2+/ZYNZq6i4gO4GqW8cdbwiqfwLu00xIJhAK+TcFSMBriei552zFPRlY
-         7SchxUVkvHKrWPI+Wncpj0FE2fqMpF1XPI3RzhAFt70JiI+Cw6SYr4Jn+4dOyb2f39qg
-         t2HQ==
-X-Gm-Message-State: AC+VfDxDflNSSCkC7Q2qexbhO3pT8nK3KwEjcu+woDL9ztrZJ1kaG+Ay
-        We0YNB7ut+B6E8QuiHhm/n6NzA==
-X-Google-Smtp-Source: ACHHUZ6ejBx1vKnzKsGGvjQPIgfuX8+QSRfspSO3bKunB3U8xP/D7kfgYBUc8w9TLE7z9shOBp4lOg==
-X-Received: by 2002:a19:7016:0:b0:4f2:4d32:9b62 with SMTP id h22-20020a197016000000b004f24d329b62mr995245lfc.20.1683530584507;
-        Mon, 08 May 2023 00:23:04 -0700 (PDT)
-Received: from [192.168.1.101] (abyl248.neoplus.adsl.tpnet.pl. [83.9.31.248])
-        by smtp.gmail.com with ESMTPSA id b4-20020ac25624000000b004f127652954sm1187107lff.184.2023.05.08.00.23.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 00:23:04 -0700 (PDT)
-Message-ID: <cef7b823-451f-e98a-65d3-3e396124071a@linaro.org>
-Date:   Mon, 8 May 2023 09:23:02 +0200
+        with ESMTP id S233582AbjEHHwJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 03:52:09 -0400
+X-Greylist: delayed 604 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 08 May 2023 00:52:06 PDT
+Received: from mail.rawlinsfis.com (mail.rawlinsfis.com [89.40.118.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740151FEB
+        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 00:52:06 -0700 (PDT)
+Received: by mail.rawlinsfis.com (Postfix, from userid 1001)
+        id 582B7818ED; Mon,  8 May 2023 08:36:12 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rawlinsfis.com;
+        s=mail; t=1683531373;
+        bh=lDo1OjfzzJ3sOfR9tSDg5RMmT4aDyBP45hIVJCLtIrE=;
+        h=Date:From:To:Subject:From;
+        b=YCx2MXdk1MzdwM6eMkU6yJO63y8u6WfgAQOn5xmVkytfvRjPJkdlOiOlyro/bzP4Y
+         CvPxrjE5ZCJ7h8wYJlDU+Ks4mZ7OqHApwlNopkF9fi70AqT4pprMED/jYxCXd8dv58
+         uOKXsUvsWpfXWjyu2LQMMThllMtPBNdm+P0EmCkHq7KVyiyKnXpTxBIT5uuy6ehiCS
+         5YHIga707tcuSP1zqbB6aC5dj2a+VmeYzPqWBwkhXskOiiavCW9aC9fE47Qbzv2o7q
+         q/4ZOXaSDImgo5BfsupAps0I2IATBGh0A1/K1wYvgvZqQVnFPBiePGCm42qvwrgpVy
+         sCnpE2liHtC2g==
+Received: by mail.rawlinsfis.com for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 07:36:07 GMT
+Message-ID: <20230508074500-0.1.3d.5lri.0.rhaa4zkf59@rawlinsfis.com>
+Date:   Mon,  8 May 2023 07:36:07 GMT
+From:   "Damian Hordych" <damian.hordych@rawlinsfis.com>
+To:     <linux-clk@vger.kernel.org>
+Subject: =?UTF-8?Q?Pompy_ciep=C5=82a_-_nowe_warunki_?=
+X-Mailer: mail.rawlinsfis.com
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-To:     Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: Add OXILICX_GDSC for msm8226
-In-Reply-To: <20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Dzie=C5=84 dobry,
 
+w ramach nowej edycji programu Czyste Powietrze dla klient=C3=B3w indywid=
+ualnych mog=C4=85 otrzyma=C4=87 Pa=C5=84stwo do 135 tys. z=C5=82 wsparcia=
+ na zakup pompy ciep=C5=82a.
 
-On 6.05.2023 23:20, Luca Weiss wrote:
-> On msm8226 we also have OXILICX_GDSC but we need a slighly different
-> config, with a .cxcs defined for clock but with no parent.
-Hm, on newer (a5xx+) GPUs, CX needs to be turned on first and
-to achieve that, we sometimes define it to be the GX's (also
-implicitly known as "oxili-non-CX" in before-a6xx-times) parent..
+Pr=C3=B3cz wy=C5=BCszego dofinansowania program zak=C5=82ada m.in. podwy=C5=
+=BCszenie prog=C3=B3w dochodowych oraz mo=C5=BCliwo=C5=9B=C4=87 z=C5=82o=C5=
+=BCenia kolejnego wniosku o dofinansowanie dla tych, kt=C3=B3rzy ju=C5=BC=
+ wcze=C5=9Bniej skorzystali z Programu.
 
-Roughly speaking CX powers the "GPU hardware owned by the broader
-SoC that may not need the GPU core clock to be up" and GX powers
-the "GPU hardware owned strictly by the GPU that needs at least some
-GPU clocks to be enabled"
+Jako firma specjalizuj=C4=85ca si=C4=99 w dostawie, monta=C5=BCu i serwis=
+ie pomp ciep=C5=82a pomo=C5=BCemy Pa=C5=84stwu w uzyskaniu dofinansowania=
+ wraz z kompleksow=C4=85 realizacj=C4=85 ca=C5=82ego projektu.
 
-Maybe 8974 simply has a bug in the driver that would do the reverse?
-Could you (and perhaps Dmitry on his shiny new 13yo board) test that
-theory, preferably on both SoCs?
+S=C4=85 Pa=C5=84stwo zainteresowani?
 
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -2431,6 +2431,7 @@ static struct gdsc oxili_gdsc = {
-        .pd = {
-                .name = "oxili",
-        },
-+       .parent = &oxili_gdsc.pd,
-        .pwrsts = PWRSTS_OFF_ON,
- };
- 
-@@ -2439,7 +2440,6 @@ static struct gdsc oxilicx_gdsc = {
-        .pd = {
-                .name = "oxilicx",
-        },
--       .parent = &oxili_gdsc.pd,
-        .pwrsts = PWRSTS_OFF_ON,
- };
-
-Konrad
-> 
-> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> ---
->  drivers/clk/qcom/mmcc-msm8974.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-> index 4273fce9a4a4..39ee3953567c 100644
-> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> @@ -2443,6 +2443,16 @@ static struct gdsc oxilicx_gdsc = {
->  	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
-> +static struct gdsc oxilicx_gdsc_msm8226 = {
-> +	.gdscr = 0x4034,
-> +	.cxcs = (unsigned int []){ 0x4028 },
-> +	.cxc_count = 1,
-> +	.pd = {
-> +		.name = "oxilicx",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +};
-> +
->  static struct clk_regmap *mmcc_msm8226_clocks[] = {
->  	[MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
->  	[MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
-> @@ -2533,6 +2543,7 @@ static struct gdsc *mmcc_msm8226_gdscs[] = {
->  	[MDSS_GDSC] = &mdss_gdsc,
->  	[CAMSS_JPEG_GDSC] = &camss_jpeg_gdsc,
->  	[CAMSS_VFE_GDSC] = &camss_vfe_gdsc,
-> +	[OXILICX_GDSC] = &oxilicx_gdsc_msm8226,
->  };
->  
->  static const struct regmap_config mmcc_msm8226_regmap_config = {
-> 
-> ---
-> base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
-> change-id: 20230506-msm8226-oxilicx-7f3f0f8e491d
-> 
-> Best regards,
+Pozdrawiam
+Damian Hordych
