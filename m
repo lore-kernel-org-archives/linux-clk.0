@@ -2,137 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549F1C7EE2A
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 07:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EC6C77B7F
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 07:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232416AbjEHHBK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 03:01:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43702 "EHLO
+        id S232717AbjEHHXW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 03:23:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232717AbjEHHBI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 03:01:08 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D06126;
-        Mon,  8 May 2023 00:01:07 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id d2e1a72fcca58-64115eef620so32227362b3a.1;
-        Mon, 08 May 2023 00:01:07 -0700 (PDT)
+        with ESMTP id S233084AbjEHHXT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 03:23:19 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FD3F1A1E6
+        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 00:23:06 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f14ec8d72aso2654985e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 00:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683529266; x=1686121266;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jthW37Br3CWW6oDDp73mfLXu8mJlozgP0I5MOOkOdf0=;
-        b=Oj3IUqP4wi7mlIkA56gMt2DdHfomWG2wlyiwmRL1ehxXsXIMnOrc7VYHhzaRrQwFia
-         f+ZK5t6F2NxMAwoQ6rxxofyNcD8hDlC/YKAAZCMn6ZoKAaTeQ84QKAVyBnIdb3W7iuEi
-         GoNl229/h1EIRU5g7vrd7PmUSt2jipcH1nR55g8IzM5WuV/qfkhL5dXVLNhyLNJDP/3M
-         bohQrYNbwDWkLtahGjt2z5TxAl0wJxFaACdfAEIZnP0B6Oi73k43UYJ2lWKYvUIZNTb5
-         NENHMcSm4iLSfpqdpiZliiZlqQifQSMxrGECdtcYhSW2dMH7KTZqOyXALuRpv5jAObEC
-         Xgsg==
+        d=linaro.org; s=google; t=1683530584; x=1686122584;
+        h=content-transfer-encoding:in-reply-to:subject:from:content-language
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TcajkMFg+Ijs1is/I9T3sNOP6ZgzZEyX3QOUPBnk/dc=;
+        b=FC6fI1KiPdx+e67WHc+0iGmLtivABnz8MrKkTMaTy8j2fSHT+89HwVPiRw3bAJNrC/
+         0j65IwEydYg9NiJdl6qFH6PugeMwIlaXzKrjo1BLAZ+C/pI9LCROGvwJ0lydfoPSfle8
+         ovKlA53T47amHxIk7ClUN4x5vmxO2eTTX2q2G53oBDH6wkuj8mmoA44p8YuHjAe3HDNY
+         04zKaWmQpSuvlAiybds3j7cC+yVVy+27Jl9TE+mD9ZpYTo7f1r9j8ttYPKpN8mzI4dag
+         ZKPLv93zUHVRQc4nDHGDB6B5wE9w/AsjCpzWR2YJk7j8hSNcltTfSFafL040x2RrgHiz
+         dlXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683529266; x=1686121266;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1683530584; x=1686122584;
+        h=content-transfer-encoding:in-reply-to:subject:from:content-language
+         :references:cc:to:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jthW37Br3CWW6oDDp73mfLXu8mJlozgP0I5MOOkOdf0=;
-        b=HlQ5A6w48Qb8nZ4ljFuQKWiQP4plgGpBNYZpRUYNZ+GLQR1B7+U1poZfvd8v69/+G0
-         IWg1AL3gfe1CurhtLnanMNdvfEibyPsGkR3NIPVHcvYzoTBaWH6Vqf2gbNnaCn4eRP17
-         VSeeSX+eQMUmr0bji1cs7Gj+tEFu8fgF/yJEeGsOywB56xvNo0byDVm7KRPfxI3B3NTz
-         zLIqdmdeS+tsGaw/ppL6GEtum2qF4sva49ueRCdqexVvmCsTz/lywhkc1G2/kvk5FrLX
-         TLdjagxg+XxCegX29Yj3YpZ28OzzCY9f2e+zm1NQpKvlrj/jhqsV2dy5qwEB7h+tY+tE
-         tU8Q==
-X-Gm-Message-State: AC+VfDz3U9f2XuAzQ5U7JDq0tSjB8kgd/kyeI90s5MLH4AjYYQvDbctF
-        Uxtta9xzj0ivzLL9aQzepHPF6o+Pmv0hgQ==
-X-Google-Smtp-Source: ACHHUZ7EQNNsKFSqhaVH+uhIoQpOPTr7J+y/fYLRFXjp3WHBn0CxJfpX2Fhd2tICzPW/UxQyi7BEqw==
-X-Received: by 2002:a17:90b:1188:b0:250:32dc:3369 with SMTP id gk8-20020a17090b118800b0025032dc3369mr10934362pjb.15.1683529266341;
-        Mon, 08 May 2023 00:01:06 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id a21-20020a170902ee9500b001a934af187esm3891407pld.153.2023.05.08.00.01.02
+        bh=TcajkMFg+Ijs1is/I9T3sNOP6ZgzZEyX3QOUPBnk/dc=;
+        b=A+XinzeAnB9g1vjiR6/z+AjtPp0ehidTE2gr1Fs2jP1uWckiB0MWlZ492PJHKhWPq5
+         2lm0NmzMSmKAnmdIYaJoy6rRx7U864mqNTmlIUIsHvz6UH4RQ7mPPl2xqYvCPw6weZBV
+         rEVQnTWuk2+kDq7x3sv2E+lRVqvFTsOcOMsrEk4sMkwW2V0nM/yrqHc4P0dvx0cgttFP
+         mHnHdO3x/59m2+/ZYNZq6i4gO4GqW8cdbwiqfwLu00xIJhAK+TcFSMBriei552zFPRlY
+         7SchxUVkvHKrWPI+Wncpj0FE2fqMpF1XPI3RzhAFt70JiI+Cw6SYr4Jn+4dOyb2f39qg
+         t2HQ==
+X-Gm-Message-State: AC+VfDxDflNSSCkC7Q2qexbhO3pT8nK3KwEjcu+woDL9ztrZJ1kaG+Ay
+        We0YNB7ut+B6E8QuiHhm/n6NzA==
+X-Google-Smtp-Source: ACHHUZ6ejBx1vKnzKsGGvjQPIgfuX8+QSRfspSO3bKunB3U8xP/D7kfgYBUc8w9TLE7z9shOBp4lOg==
+X-Received: by 2002:a19:7016:0:b0:4f2:4d32:9b62 with SMTP id h22-20020a197016000000b004f24d329b62mr995245lfc.20.1683530584507;
+        Mon, 08 May 2023 00:23:04 -0700 (PDT)
+Received: from [192.168.1.101] (abyl248.neoplus.adsl.tpnet.pl. [83.9.31.248])
+        by smtp.gmail.com with ESMTPSA id b4-20020ac25624000000b004f127652954sm1187107lff.184.2023.05.08.00.23.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 00:01:05 -0700 (PDT)
-Message-ID: <a62d278c-f47c-fa97-185e-b81ff4b28a4c@gmail.com>
-Date:   Mon, 8 May 2023 15:01:01 +0800
+        Mon, 08 May 2023 00:23:04 -0700 (PDT)
+Message-ID: <cef7b823-451f-e98a-65d3-3e396124071a@linaro.org>
+Date:   Mon, 8 May 2023 09:23:02 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.1
-Subject: Re: [PATCH v10 06/10] dt-bindings: serial: Document ma35d1 uart
- controller
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     p.zabel@pengutronix.de, arnd@arndb.de, jirislaby@kernel.org,
-        schung@nuvoton.com, tmaimon77@gmail.com,
-        devicetree@vger.kernel.org, catalin.marinas@arm.com,
-        gregkh@linuxfoundation.org, sboyd@kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, will@kernel.org,
-        Jacky Huang <ychuang3@nuvoton.com>, lee@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        mjchen@nuvoton.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230508025936.36776-1-ychuang570808@gmail.com>
- <20230508025936.36776-7-ychuang570808@gmail.com>
- <168351638748.4154745.16515916544783600377.robh@kernel.org>
- <65914d45-95fb-9b44-daf2-5885ba62a180@linaro.org>
+To:     Luca Weiss <luca@z3ntu.xyz>, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz>
 Content-Language: en-US
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <65914d45-95fb-9b44-daf2-5885ba62a180@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: Add OXILICX_GDSC for msm8226
+In-Reply-To: <20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 2023/5/8 下午 02:31, Krzysztof Kozlowski wrote:
-> On 08/05/2023 05:26, Rob Herring wrote:
->> On Mon, 08 May 2023 02:59:32 +0000, Jacky Huang wrote:
->>> From: Jacky Huang <ychuang3@nuvoton.com>
->>>
->>> Add documentation that describes the nuvoton ma35d1 UART driver bindings.
->>>
->>> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> ---
->>>   .../serial/nuvoton,ma35d1-serial.yaml         | 48 +++++++++++++++++++
->>>   1 file changed, 48 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/serial/nuvoton,ma35d1-serial.yaml
->>>
->> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
->> on your patch (DT_CHECKER_FLAGS is new in v5.13):
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.example.dtb: camera-sensor@3c: port:endpoint:data-lanes: [[1]] is too short
->> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip-isp1.example.dtb: camera@3c: port:endpoint:data-lanes: [[1]] is too short
->> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.example.dtb: pcie-ep@33800000: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
->> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
->> Documentation/devicetree/bindings/serial/nuvoton,ma35d1-serial.example.dts:25:18: fatal error: dt-bindings/clock/nuvoton,ma35d1-clk.h: No such file or directory
->>     25 |         #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
->>        |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> compilation terminated.
->> make[1]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/serial/nuvoton,ma35d1-serial.example.dtb] Error 1
-> This however is related, although might be coming from earlier failure.
-> I assume you run the check and you do not see any errors?
->
+On 6.05.2023 23:20, Luca Weiss wrote:
+> On msm8226 we also have OXILICX_GDSC but we need a slighly different
+> config, with a .cxcs defined for clock but with no parent.
+Hm, on newer (a5xx+) GPUs, CX needs to be turned on first and
+to achieve that, we sometimes define it to be the GX's (also
+implicitly known as "oxili-non-CX" in before-a6xx-times) parent..
+
+Roughly speaking CX powers the "GPU hardware owned by the broader
+SoC that may not need the GPU core clock to be up" and GX powers
+the "GPU hardware owned strictly by the GPU that needs at least some
+GPU clocks to be enabled"
+
+Maybe 8974 simply has a bug in the driver that would do the reverse?
+Could you (and perhaps Dmitry on his shiny new 13yo board) test that
+theory, preferably on both SoCs?
+
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -2431,6 +2431,7 @@ static struct gdsc oxili_gdsc = {
+        .pd = {
+                .name = "oxili",
+        },
++       .parent = &oxili_gdsc.pd,
+        .pwrsts = PWRSTS_OFF_ON,
+ };
+ 
+@@ -2439,7 +2440,6 @@ static struct gdsc oxilicx_gdsc = {
+        .pd = {
+                .name = "oxilicx",
+        },
+-       .parent = &oxili_gdsc.pd,
+        .pwrsts = PWRSTS_OFF_ON,
+ };
+
+Konrad
+> 
+> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> ---
+>  drivers/clk/qcom/mmcc-msm8974.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+> index 4273fce9a4a4..39ee3953567c 100644
+> --- a/drivers/clk/qcom/mmcc-msm8974.c
+> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> @@ -2443,6 +2443,16 @@ static struct gdsc oxilicx_gdsc = {
+>  	.pwrsts = PWRSTS_OFF_ON,
+>  };
+>  
+> +static struct gdsc oxilicx_gdsc_msm8226 = {
+> +	.gdscr = 0x4034,
+> +	.cxcs = (unsigned int []){ 0x4028 },
+> +	.cxc_count = 1,
+> +	.pd = {
+> +		.name = "oxilicx",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +};
+> +
+>  static struct clk_regmap *mmcc_msm8226_clocks[] = {
+>  	[MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
+>  	[MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
+> @@ -2533,6 +2543,7 @@ static struct gdsc *mmcc_msm8226_gdscs[] = {
+>  	[MDSS_GDSC] = &mdss_gdsc,
+>  	[CAMSS_JPEG_GDSC] = &camss_jpeg_gdsc,
+>  	[CAMSS_VFE_GDSC] = &camss_vfe_gdsc,
+> +	[OXILICX_GDSC] = &oxilicx_gdsc_msm8226,
+>  };
+>  
+>  static const struct regmap_config mmcc_msm8226_regmap_config = {
+> 
+> ---
+> base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
+> change-id: 20230506-msm8226-oxilicx-7f3f0f8e491d
+> 
 > Best regards,
-> Krzysztof
->
-
-Dear Krzysztof,
-
-Thank you for your review.
-
-Of course I have run the check.
-I did not see any errors, because I have 
-"dt-bindings/clock/nuvoton,ma35d1-clk.h".
-This patch 6/10 depends on path 3/10 which include 
-"dt-bindings/clock/nuvoton,ma35d1-clk.h".
-Should I combine this patch 6/10 into patch 3/10?
-
-
-Best Regards,
-Jacky Huang
-
