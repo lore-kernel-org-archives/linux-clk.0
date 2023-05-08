@@ -2,120 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B262C7EE24
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 06:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1614AC77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 06:51:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232840AbjEHGbk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 02:31:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54278 "EHLO
+        id S229999AbjEHGvW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 02:51:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232890AbjEHGbj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 02:31:39 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F9911A124
-        for <linux-clk@vger.kernel.org>; Sun,  7 May 2023 23:31:09 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-50c8d87c775so4735510a12.3
-        for <linux-clk@vger.kernel.org>; Sun, 07 May 2023 23:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683527468; x=1686119468;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/OQ1Y1Dy1DcmXDOkFF4+nxsd0s1CfphsQW74olTDqGw=;
-        b=K/w0jKgME2AOUJJRKDKulpIP5BE7fu316yYG2yR5ZiMAlp063cVXzESZRRRAMDM1GG
-         GsP793uiIpYFthczfdKDGo8K4AzLs+UMJ0/NtCP5/4cfK+Q7tpBMXzjtYqid0BtySlbB
-         q5FhM31BQTeEHEcA/IWnJL/ftQf6AGcNisNQNbwrIqZf2pqJCnEjKi1vhnhfQGniItZg
-         s6s0WWp7NBfzwrocMErcUaHYuFfdJfBx82k3rOxlmNwE8MULZhmJ0jEoMG05Po/p4rrZ
-         7C5CLCKbI34fRRtp5ddxW6ye0pmDaCoJ7xrcDNKoxqJigU+6I9EjmxhV2U0w8q2jBCYV
-         o+kQ==
+        with ESMTP id S229852AbjEHGvU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 02:51:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 915E36A40
+        for <linux-clk@vger.kernel.org>; Sun,  7 May 2023 23:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683528631;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=32UpXCzVyg7syon/NdEm9BVsI1w4xTARICsqJk7H+no=;
+        b=JDpyR0OyVsGetDMYGEKR3OAJXY6v+WDpiOY3V3BO7UYAvTAaWQ+yS4jiNfezOXTqt3PF5U
+        S3iLLMPMamGylzmIYfJQjq6iUx4p9uHv7ltZWje5Bavshz4pCUBAh7i/XE4HkixPgQbTwa
+        AxodCkX34TG5Jxv7aNLFGBfO/rby4bY=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-377-FbStRIykPw27jraak9csag-1; Mon, 08 May 2023 02:50:14 -0400
+X-MC-Unique: FbStRIykPw27jraak9csag-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-5ef4d54d84cso8039086d6.0
+        for <linux-clk@vger.kernel.org>; Sun, 07 May 2023 23:50:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683527468; x=1686119468;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/OQ1Y1Dy1DcmXDOkFF4+nxsd0s1CfphsQW74olTDqGw=;
-        b=MrKLh6Yp6PRlyV4HsCWQ5wJ/D6rKX9n/LTAhsWWzCp+O5/RKQn8+HEiffYGJnjVFYX
-         kqhiZdrSdMW1X0im9nvKyuGxpLGQEHmI+3JKh3BPQ4XKSj8Bsd8wiyjL+unqpHYFCuCw
-         sSsk447YhxBwDdh41HPe/aVRxm5oHqDlTDD9O7XvQT1AWopz7j4cmAD+zaSwo76fVoTk
-         G6FWVkjYMmV9PItx/rk+oAQ76kj11E+hDAI4asNNcZMQNY7DA2xTCB3th07U2Ik8MxRc
-         0CiSYWbsYhDFTR7F0wrnz/z/ZgndUodhHdDc5OoR3acXWPvEQWj916MyTSFjM2vw4LKB
-         7KiA==
-X-Gm-Message-State: AC+VfDxTzc4NhFFFQo43kvbKtZkvmXkI2Oj6OB4npu9+4eQa2jMhqP69
-        VF1/bKPK/BQtF3t10bXvw6tMAA==
-X-Google-Smtp-Source: ACHHUZ5Ej9KOXTs2EAx/CHeY+tmJXILRqG31KllqiRtW3HMLq46+8Gb6Tsjesrbj2kRrYN64WAhpRQ==
-X-Received: by 2002:aa7:c991:0:b0:50d:88f3:2e30 with SMTP id c17-20020aa7c991000000b0050d88f32e30mr5953819edt.13.1683527467870;
-        Sun, 07 May 2023 23:31:07 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:50e0:ebdf:b755:b300? ([2a02:810d:15c0:828:50e0:ebdf:b755:b300])
-        by smtp.gmail.com with ESMTPSA id i5-20020aa7c705000000b0050673b13b58sm5690029edq.56.2023.05.07.23.31.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 07 May 2023 23:31:07 -0700 (PDT)
-Message-ID: <65914d45-95fb-9b44-daf2-5885ba62a180@linaro.org>
-Date:   Mon, 8 May 2023 08:31:05 +0200
+        d=1e100.net; s=20221208; t=1683528614; x=1686120614;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=32UpXCzVyg7syon/NdEm9BVsI1w4xTARICsqJk7H+no=;
+        b=duwdImH7Y9dgAKXecAU2N4BowpzdhcNssJHuXgUmVEekt97uChQSwkcNbND+4poDJZ
+         yqdBEdg61OKnAJmmns5cAj5oUD3G37TWBxw4Xjyuf9RuUI5qRc6JCO3UCvceH7wfWBjD
+         t4hTmge8PYWcOfGAaWoALfaTQCtjlwjUDLtmkO8RiAwkWJ7TacC/TJ77iWSC9y0yAFz/
+         A8zdWzMGtQU28TuLKmQqPyRKzXqJnZpVCeX9M9C0JERAObigOpBNjyYBQF1RrjSZJguq
+         TMjxN4a/vdSr3ImeQ4W8B/A7mP4CdzFNywQt6MRM2RKSZsqLVSgw8g1ZYjK/KS3qWO4Q
+         TRRA==
+X-Gm-Message-State: AC+VfDyexY8VfqZx2y9nyql1rMHTFhMd+yN945b5h6zXGhKSxXyBhZIl
+        sjv/Jl4sHUwxdoiTmE9ZyOcDu03f3MLJREJ9X2tlUbkoDz1RQKLi4mNWcSFc5edm62gIei3AMoe
+        vN85Lfzds/5oPNsWb5BhZ
+X-Received: by 2002:ad4:5ecf:0:b0:5df:55b5:b1a with SMTP id jm15-20020ad45ecf000000b005df55b50b1amr13016798qvb.4.1683528614395;
+        Sun, 07 May 2023 23:50:14 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5q5ghOczOmNoK3lScvQqhcZZ6tdqJVH5UXF5t5HvbVS/LDnf2+1HpA70aZES2YbbGS4w+1MA==
+X-Received: by 2002:ad4:5ecf:0:b0:5df:55b5:b1a with SMTP id jm15-20020ad45ecf000000b005df55b50b1amr13016781qvb.4.1683528614096;
+        Sun, 07 May 2023 23:50:14 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-244-175.dyn.eolo.it. [146.241.244.175])
+        by smtp.gmail.com with ESMTPSA id t17-20020a0ce2d1000000b005ef442226bbsm2552489qvl.8.2023.05.07.23.50.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 07 May 2023 23:50:13 -0700 (PDT)
+Message-ID: <d86ff1331a621bf3048123c24c22f49e9ecf0044.camel@redhat.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Date:   Mon, 08 May 2023 08:50:09 +0200
+In-Reply-To: <ZFdaDmPAKJHDoFvV@nanopsycho>
+References: <ZFDPaXlJainSOqmV@nanopsycho>
+         <20230502083244.19543d26@kernel.org> <ZFITyWvVcqgRtN+Q@nanopsycho>
+         <20230503191643.12a6e559@kernel.org> <ZFOQWmkBUtgVR06R@nanopsycho>
+         <20230504090401.597a7a61@kernel.org> <ZFPwqu5W8NE6Luvk@nanopsycho>
+         <20230504114421.51415018@kernel.org> <ZFTdR93aDa6FvY4w@nanopsycho>
+         <20230505083531.57966958@kernel.org> <ZFdaDmPAKJHDoFvV@nanopsycho>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v10 06/10] dt-bindings: serial: Document ma35d1 uart
- controller
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Jacky Huang <ychuang570808@gmail.com>
-Cc:     p.zabel@pengutronix.de, arnd@arndb.de, jirislaby@kernel.org,
-        schung@nuvoton.com, tmaimon77@gmail.com,
-        devicetree@vger.kernel.org, catalin.marinas@arm.com,
-        gregkh@linuxfoundation.org, sboyd@kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, will@kernel.org,
-        Jacky Huang <ychuang3@nuvoton.com>, lee@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
-        mjchen@nuvoton.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230508025936.36776-1-ychuang570808@gmail.com>
- <20230508025936.36776-7-ychuang570808@gmail.com>
- <168351638748.4154745.16515916544783600377.robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <168351638748.4154745.16515916544783600377.robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/05/2023 05:26, Rob Herring wrote:
-> 
-> On Mon, 08 May 2023 02:59:32 +0000, Jacky Huang wrote:
->> From: Jacky Huang <ychuang3@nuvoton.com>
->>
->> Add documentation that describes the nuvoton ma35d1 UART driver bindings.
->>
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>  .../serial/nuvoton,ma35d1-serial.yaml         | 48 +++++++++++++++++++
->>  1 file changed, 48 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/serial/nuvoton,ma35d1-serial.yaml
->>
-> 
-> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-> on your patch (DT_CHECKER_FLAGS is new in v5.13):
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.example.dtb: camera-sensor@3c: port:endpoint:data-lanes: [[1]] is too short
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip-isp1.example.dtb: camera@3c: port:endpoint:data-lanes: [[1]] is too short
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.example.dtb: pcie-ep@33800000: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
-> 	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> Documentation/devicetree/bindings/serial/nuvoton,ma35d1-serial.example.dts:25:18: fatal error: dt-bindings/clock/nuvoton,ma35d1-clk.h: No such file or directory
->    25 |         #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
->       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> make[1]: *** [scripts/Makefile.lib:419: Documentation/devicetree/bindings/serial/nuvoton,ma35d1-serial.example.dtb] Error 1
+On Sun, 2023-05-07 at 09:58 +0200, Jiri Pirko wrote:
+> Fri, May 05, 2023 at 05:35:31PM CEST, kuba@kernel.org wrote:
+> > On Fri, 5 May 2023 12:41:11 +0200 Jiri Pirko wrote:
+> > >=20
+> > Sound perfectly fine, if it's a front panel label, let's call=20
+> > the attribute DPLL_A_PIN_FRONT_PANEL_LABEL. If the pin is not
+> > brought out to the front panel it will not have this attr.
+> > For other type of labels we should have different attributes.
+>=20
+> Hmm, that would kind of embed the pin type into attr which feels wrong.
 
-This however is related, although might be coming from earlier failure.
-I assume you run the check and you do not see any errors?
+Looking at the above from a different angle, the
+DPLL_A_PIN_FRONT_PANEL_LABEL attribute will be available only for
+DPLL_PIN_TYPE_EXT type pins, which looks legit to me - possibly
+renaming DPLL_A_PIN_FRONT_PANEL_LABEL as DPLL_A_PIN_EXT_LABEL.
 
-Best regards,
-Krzysztof
+Cheer,
+
+Paolo
 
