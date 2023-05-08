@@ -2,116 +2,214 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEF7C77B73
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 11:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFD5C7EE2F
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 11:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236026AbjEHLhr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 07:37:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56064 "EHLO
+        id S236043AbjEHLkL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 07:40:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236008AbjEHLhS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 07:37:18 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FA4E31567
-        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 04:36:53 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2ac785015d6so47942361fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 04:36:53 -0700 (PDT)
+        with ESMTP id S236193AbjEHLjy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 07:39:54 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E52A1411A5
+        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 04:39:43 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2ad819ab8a9so17839321fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 04:39:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683545776; x=1686137776;
+        d=linaro.org; s=google; t=1683545982; x=1686137982;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QwYbaMN3dCdCT8K/nKUJpbtKfxl8i/KYmyHshaMqV2w=;
-        b=ZGpoUwM86kB2XE28iNttwtRQagoWcy7gceng/kGUVN/pZ1IfBCJWvktlPIyGCLU107
-         eDsi8zBKrs7HRJ6+X7DlMimjc8OzYDuRbPBkZEVfLn1HjSV7ajOYAkx1YYGtRnwmd0RH
-         n8wHUo6qIPfZT4udE+DFP2KlKnwCvqi0SwqaHhyOpJGcpJgZHiJ1RQl6WS1zOIEPEVec
-         nFOQlX9ApBOPw2RjIP5QAvqzfxO/8IyxSYxuthmwMEAENZGv7bgGgiOdBiNu67TnyO4d
-         pnQ2tDVeAcUzupQLzhLLkUyYWnb/9HeLqftEJ/QGuqBb3OUyz2pJRaHNY9pi0IgUcsgv
-         gzTw==
+        bh=MexXMEnvHcUnDYaMqmVY/MSHM/LherZWjP+20kmXVqY=;
+        b=WCaDKEpWxQvYqhKslJuI6E4qcU2uFvPbdI0djxGp1xxik6KdDtp3q/nCsmctEdIW4j
+         vY4QK6uYYiF5F1KhSwXAJklU7araihN5GvHeR+hKFACwW351mpY3IPEGlIXEvc1aqYml
+         Xf/dahyqCmciWP+mgnmI92CcOLnQ80BN/gAMzqMti9qX+qswfnOAaQ20DZ0tZ2xWjSbZ
+         iQM/QCHgaAz3oCANYf2DdpwZmGten6ADoW0ZeIRICeOvwv1042ybx8TIZAwjM8xQBcFx
+         PSkLN66PUh8Z6Xp3v/loqrmTIdSvwxnaMgCHMaoJtiDOkT1YLsj8s8Kg3C9tCt9sy31a
+         0ZxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683545776; x=1686137776;
+        d=1e100.net; s=20221208; t=1683545982; x=1686137982;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QwYbaMN3dCdCT8K/nKUJpbtKfxl8i/KYmyHshaMqV2w=;
-        b=KI/N3ikSQpVHm9HAvl2HaGeY80DS/G4+OTv/fPaA8hcQ3m61Ebe2jt3ombdOq78+2Y
-         E4I3O/S08Oh/qJg/RNA6xIRrDIE0oINNtDeuNUkzrPdnB/dLn/s+Y5dlqyNw/85YbQuW
-         755b+qUzj4Nn377Fy06Qb+FH4hn+ll2v+5AXD6ymJGyTwq+AGh13urdyJj0mKCdFT25H
-         KWaCWnPYHwT3MQr41eMNAL/ZOFuGu/cjW3srWtG87OMebPlwXSrlFB49ny41AhKSgYmw
-         0ad29le1EghfJKGXNBx6SBwU5lVNZHfaiDGuwy/shiajur7fJkorFDORMuGxduslRtHu
-         RzMA==
-X-Gm-Message-State: AC+VfDxYY7ZH5m1E+0EkgZfALRHuSTXG4NtBpC/2kqDUiSLn2EtJHYpG
-        S11zfipdTVYsHkb7xM+GO+gEGg==
-X-Google-Smtp-Source: ACHHUZ58fOkHPkkn/MpT7Bv4OCSJYfOgdpL4SsexdHmSaR7unLAkYkPId4VQB/G3VlXkMoswbeKieA==
-X-Received: by 2002:a2e:b6c6:0:b0:2ab:4399:708b with SMTP id m6-20020a2eb6c6000000b002ab4399708bmr2666246ljo.40.1683545776425;
-        Mon, 08 May 2023 04:36:16 -0700 (PDT)
+        bh=MexXMEnvHcUnDYaMqmVY/MSHM/LherZWjP+20kmXVqY=;
+        b=hj+wSixqH3oq+X/a3/Zmt5TWyiQOGht2ElGrdz8BKgA1tFXq0CeRbfP1wbxXhA0kkZ
+         34DwoaMGdgmd8EG+xexxWY28/sUmufZKmlBHrsz/9wrCaT4WWEQN0McjOVOZcpB5cSZF
+         YtVaNMYicl7degE9dHJ5veyWwPhSAGiTsocPJ0qEiXRK/rB3yNVY/JzPVIXb98y6clYf
+         ggCNcLhrcRjFVAlbZNR7Fm7khwdatLs+rszFj/pzMXW56onP8rX3RO7WUF9//uAajs+5
+         7hqUHia/OGtN5NWNCLwB0OVZS19qyVB80DdeZAfche76s9zRG1vrJjGEeOAo6RatK9bD
+         RfDQ==
+X-Gm-Message-State: AC+VfDwWXZqN1aa6kMg0E6ZjKtcwj2iwLqm1zgIuxCIsa0R9vhD/uX84
+        fHyNxfthcyyweK7BCi7pmYmH9g==
+X-Google-Smtp-Source: ACHHUZ66251TTq/ybOlW2YVgnvnqHsTExmFa9F/UDFJGUqL7omt0e4DgRvnmXKm0af1SqwTOmRcpOA==
+X-Received: by 2002:a2e:900d:0:b0:2a8:c7f8:58ef with SMTP id h13-20020a2e900d000000b002a8c7f858efmr2638998ljg.22.1683545981956;
+        Mon, 08 May 2023 04:39:41 -0700 (PDT)
 Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id j2-20020a2e8002000000b002a798d12cdbsm1142660ljg.116.2023.05.08.04.36.15
+        by smtp.gmail.com with ESMTPSA id o13-20020a2e9b4d000000b002ad92dff470sm377803ljj.134.2023.05.08.04.39.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 04:36:15 -0700 (PDT)
-Message-ID: <2921aee8-520d-080d-4ecb-7438fff4e0f2@linaro.org>
-Date:   Mon, 8 May 2023 14:36:15 +0300
+        Mon, 08 May 2023 04:39:41 -0700 (PDT)
+Message-ID: <fdf697c1-16a3-6b8c-90fa-51ef7137d546@linaro.org>
+Date:   Mon, 8 May 2023 14:39:40 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
-Subject: Re: [PATCH 2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
+Subject: Re: [PATCH V3 5/6] arm64: dts: qcom: ipq9574: Enable PCIe PHYs and
+ controllers
 Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
- <20230507175335.2321503-2-dmitry.baryshkov@linaro.org>
- <e1ee4334-ee99-2495-89b6-6a67f4130747@linaro.org>
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mani@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_ipkumar@quicinc.com
+References: <20230421124938.21974-1-quic_devipriy@quicinc.com>
+ <20230421124938.21974-6-quic_devipriy@quicinc.com>
+ <CAA8EJpqx1jv_xEnS-2rOOGCtEB=1vo477H7XLGGvH=o7NHJD7w@mail.gmail.com>
+ <6c962760-d81c-af52-bce2-49090f66f4ee@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <e1ee4334-ee99-2495-89b6-6a67f4130747@linaro.org>
+In-Reply-To: <6c962760-d81c-af52-bce2-49090f66f4ee@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/05/2023 11:27, Konrad Dybcio wrote:
+On 08/05/2023 13:55, Devi Priya wrote:
 > 
 > 
-> On 7.05.2023 19:53, Dmitry Baryshkov wrote:
->> Using PWRSTS_RET on msm8974's MDSS_GDSC causes display to stop working.
->> The gdsc doesn't fully come out of retention mode. Change it's pwrsts
->> flags to PWRSTS_OFF_ON.
+> On 4/22/2023 5:43 AM, Dmitry Baryshkov wrote:
+>> On Fri, 21 Apr 2023 at 15:51, Devi Priya <quic_devipriy@quicinc.com> 
+>> wrote:
+>>>
+>>> Enable the PCIe controller and PHY nodes corresponding to
+>>> RDP 433.
+>>>
+>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>>> ---
+>>>   Changes in V3:
+>>>          - No change
+>>>
+>>>   arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 62 +++++++++++++++++++++
+>>>   1 file changed, 62 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts 
+>>> b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+>>> index 7be578017bf7..3ae38cf327ea 100644
+>>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+>>> @@ -8,6 +8,7 @@
+>>>
+>>>   /dts-v1/;
+>>>
+>>> +#include <dt-bindings/gpio/gpio.h>
+>>>   #include "ipq9574.dtsi"
+>>>
+>>>   / {
+>>> @@ -43,6 +44,42 @@
+>>>          };
+>>>   };
+>>>
+>>> +&pcie1_phy {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&pcie1 {
+>>> +       pinctrl-names = "default";
+>>> +       pinctrl-0 = <&pcie_1_pin>;
+>>> +
+>>> +       perst-gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
 >>
->> Fixes: d399723950c4 ("clk: qcom: gdsc: Fix the handling of PWRSTS_RET support")
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
-> This is a stopgap solution, not exactly a fix, all signs on Heaven and
-> Earth say that 8974 should support retention on this GDSC!
-> 
-> *although*
-> 
-> pre-v2.2 chips don't
+>> Usually qcom PCIe hosts also define wake-gpios.
+> In IPQ9574, we do not have hot plug support and host always starts the
+> enumeration for the device. Hence no wake pin is required.
 
-Mine is apq8074 v2.2, if I'm not mistaken.
+None of the qcom PCIe hosts support hotplug, if I remember correctly. 
+This is not a reason not to describe the hardware.
 
-> 
-> Konrad
->>   drivers/clk/qcom/mmcc-msm8974.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
->> index aa29c79fcd55..277ef0065aae 100644
->> --- a/drivers/clk/qcom/mmcc-msm8974.c
->> +++ b/drivers/clk/qcom/mmcc-msm8974.c
->> @@ -2401,7 +2401,7 @@ static struct gdsc mdss_gdsc = {
->>   	.pd = {
->>   		.name = "mdss",
->>   	},
->> -	.pwrsts = PWRSTS_RET_ON,
->> +	.pwrsts = PWRSTS_OFF_ON,
->>   };
->>   
->>   static struct gdsc camss_jpeg_gdsc = {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&pcie2_phy {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&pcie2 {
+>>> +       pinctrl-names = "default";
+>>> +       pinctrl-0 = <&pcie_2_pin>;
+>>> +
+>>> +       perst-gpios = <&tlmm 29 GPIO_ACTIVE_LOW>;
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&pcie3_phy {
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>> +&pcie3 {
+>>> +       pinctrl-names = "default";
+>>> +       pinctrl-0 = <&pcie_3_pin>;
+>>> +
+>>> +       perst-gpios = <&tlmm 32 GPIO_ACTIVE_LOW>;
+>>> +       status = "okay";
+>>> +};
+>>> +
+>>>   &sdhc_1 {
+>>>          pinctrl-0 = <&sdc_default_state>;
+>>>          pinctrl-names = "default";
+>>> @@ -60,6 +97,31 @@
+>>>   };
+>>>
+>>>   &tlmm {
+>>> +
+>>> +       pcie_1_pin: pcie-1-state {
+>>> +               pins = "gpio26";
+>>> +               function = "gpio";
+>>> +               drive-strength = <8>;
+>>> +               bias-pull-down;
+>>> +               output-low;
+>>
+>> No clkreq and no wake gpios?
+> We do not use any PCIe low power states and link is always in L0.
+
+Again. We = software. Please describe the hardware here.
+
+> 
+> Thanks,
+> Devi Priya
+>>
+>>> +       };
+>>> +
+>>> +       pcie_2_pin: pcie-2-state {
+>>> +               pins = "gpio29";
+>>> +               function = "gpio";
+>>> +               drive-strength = <8>;
+>>> +               bias-pull-down;
+>>> +               output-low;
+>>> +       };
+>>> +
+>>> +       pcie_3_pin: pcie-3-state {
+>>> +               pins = "gpio32";
+>>> +               function = "gpio";
+>>> +               drive-strength = <8>;
+>>> +               bias-pull-up;
+>>> +               output-low;
+>>> +       };
+>>> +
+>>>          sdc_default_state: sdc-default-state {
+>>>                  clk-pins {
+>>>                          pins = "gpio5";
+>>> -- 
+>>> 2.17.1
+>>>
+>>
+>>
 
 -- 
 With best wishes
