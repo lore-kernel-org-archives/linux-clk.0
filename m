@@ -2,158 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91ECC7EE23
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 11:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C3FC7EE26
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 11:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235597AbjEHLWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 07:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37236 "EHLO
+        id S235856AbjEHL2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 07:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235598AbjEHLWI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 07:22:08 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDA02E075
-        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 04:22:03 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-55a5a830238so38760197b3.3
-        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 04:22:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683544923; x=1686136923;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ko/U1fePk/WQPy7Vn3m2ZCRRwSMISl8BqLJIER3u0Oc=;
-        b=lmH0XMw8PpvMAbg4bTIjxo7HrMUANXnsUFHAGj4B/mc9GFBCjA8omr6ylekmWkYkhn
-         6Z6uO30eTzH+govAWZABsibcAaCFm4bxOHizPQYwPIX998PelJ/aRHI9BhWZvuA/0RTc
-         L27hLqc7EVPLe5WpS1yCjZXfSORDmbnHsH9qYJsXK6gRuQDaVw1B4EQwt/WVy54savt8
-         CTObqlSg0mBBX9N4XY2o7IoofdceWwM2Jkgf9UH8/a8V3K9LECpbwxeAASI1HSGsnlDH
-         VWbxvbXnl6V4UczO1yrBQo5vMiRDzC1WnKLkdPf4o9OJNIQKVwjwFFVIYE4VMAJJp+gw
-         43lg==
+        with ESMTP id S235797AbjEHL1v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 07:27:51 -0400
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06E2D3D55C;
+        Mon,  8 May 2023 04:27:37 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-38dfa504391so2369979b6e.3;
+        Mon, 08 May 2023 04:27:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683544923; x=1686136923;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ko/U1fePk/WQPy7Vn3m2ZCRRwSMISl8BqLJIER3u0Oc=;
-        b=Ess1L2L1PeNjYFNKIKagag4Fjao50BJO/2Cg6tn4mlz2G6uzbkpEsessibEdLPSbW2
-         p3viXKv1hzPa3iJ577l3KUjFPFaEPuue947VkI2c3wszxS8iUNgvXo0rLtzmQkrIL5x2
-         seIqgzl0MD79WnuQactikCLjIyWwAGvm3xZhEdSJjmQJhT6E4c8HYLG9TUC98I2V3Kyj
-         EnvsYDwgMR/Jf+3/KfKT5YQK48wnDawxro+SBrYVRmCgwC2afXOXsoBYeSPTYdkucoL5
-         Q3JA629xRY9ipg/etoSc+yWxldOuqcsy9xVVV4KAnS/fwipqwJUbAiXbTc4Onohr0KEd
-         7sXQ==
-X-Gm-Message-State: AC+VfDxEBTV6icAL7QY0YNd8lnKzH88A9wzVJ0aBL9ZU0rWdhqeBIJZO
-        xFWBULeCwrJOEU7IFgw6LtErXG1NEIurYOxdcTBfNQ==
-X-Google-Smtp-Source: ACHHUZ5au/Vo+wSxMFwJFjI/9KWWlfBLe/b0UuwxkO/sVsdYW6os9E+PkdqReYK5feb3ykElLiD8ESJVRHb4HRFlL5A=
-X-Received: by 2002:a25:d008:0:b0:b92:3958:dad9 with SMTP id
- h8-20020a25d008000000b00b923958dad9mr10268569ybg.40.1683544922857; Mon, 08
- May 2023 04:22:02 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1683545256; x=1686137256;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hgY1TG/HeMuxKUbL+5g1oS6I4Kij1PvcnYZww9LHLxw=;
+        b=Ocx34fuZ1afSLUvPCl5vHgu5/AA+JCYUdOsG+eqrqkYZCfprYN+C2gpdt+pox+ZbbN
+         a88kEywP3+geoidRLLDsHHQPBAnxltwGfjOtGMGi0bkIGYeHp8TPR7xz4MI8rkjN2fel
+         +eBaZlrrHZZSSUFN35YIC4BBGzp8oTGk72dhTg24K8nYudbhk2xHrrWdlOqMKS1/JIac
+         dzcdGAu1wn/Pfal24GpfmZ4mA682X/EUtFeny9tpw9jX0sjMMvPGRfExdZ982QmJGX9T
+         i3JFd45ZkgI8SIiCnPKvobsxdTEBNFdfj/u0B7NB5pWh8KmdF/OXI2JJzXXKd4gcU+gu
+         Wz7Q==
+X-Gm-Message-State: AC+VfDz3DPNb86644s2z933IakSR/SK8B4W8iXCvR+DaU8KM9aHhb5pU
+        xMDx5SrBusdI5fnUBXLF41w16ORGtXjb
+X-Google-Smtp-Source: ACHHUZ6CnaupNBoI+FoKCFTYjq8Y0Zi59PAtLLATG0Oc1ZTR6Wn71A3JmNl66+ywJlOAJS/NHTClRQ==
+X-Received: by 2002:a05:6808:6243:b0:38e:7bb:5a0d with SMTP id dt3-20020a056808624300b0038e07bb5a0dmr4703743oib.27.1683545255953;
+        Mon, 08 May 2023 04:27:35 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id es10-20020a056808278a00b0038edc69490bsm5433912oib.10.2023.05.08.04.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 May 2023 04:27:35 -0700 (PDT)
+Received: (nullmailer pid 789288 invoked by uid 1000);
+        Mon, 08 May 2023 11:27:28 -0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-References: <cover.1683183860.git.quic_varada@quicinc.com> <8894bf2c44eaf4959c7a1966b66229e6cf5cda96.1683183860.git.quic_varada@quicinc.com>
- <CAA8EJppvj2nzqwdsC+Xct4cJg2-_yPpiGDELjHJG4HyAH3zGMA@mail.gmail.com>
- <20230506110918.GC10918@varda-linux.qualcomm.com> <CAA8EJpqg2htfa2QZ7q6SP58N5YAABa8knBn4c5eYqYOU6HQNiA@mail.gmail.com>
- <20230508051657.GA24472@varda-linux.qualcomm.com>
-In-Reply-To: <20230508051657.GA24472@varda-linux.qualcomm.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Mon, 8 May 2023 14:21:52 +0300
-Message-ID: <CAA8EJppubMsUrG3Vo=2W8Y6=MCBKd7OCViM30jdGAdCc8x65Ww@mail.gmail.com>
-Subject: Re: [PATCH v10 8/9] arm64: dts: qcom: ipq9574: Add LDO regulator node
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sboyd@kernel.org, quic_wcheng@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+From:   Rob Herring <robh@kernel.org>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-arm-kernel@lists.infradead.org, nicolas.ferre@microchip.com,
+        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org
+In-Reply-To: <20230508104801.445261-3-claudiu.beznea@microchip.com>
+References: <20230508104801.445261-1-claudiu.beznea@microchip.com>
+ <20230508104801.445261-3-claudiu.beznea@microchip.com>
+Message-Id: <168354524853.789265.9741363586759296275.robh@kernel.org>
+Subject: Re: [PATCH v2 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc:
+ convert to yaml
+Date:   Mon, 08 May 2023 06:27:28 -0500
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 8 May 2023 at 08:17, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> On Sat, May 06, 2023 at 02:33:11PM +0300, Dmitry Baryshkov wrote:
-> > On Sat, 6 May 2023 at 14:09, Varadarajan Narayanan
-> > <quic_varada@quicinc.com> wrote:
-> > >
-> > > On Fri, May 05, 2023 at 12:29:54PM +0300, Dmitry Baryshkov wrote:
-> > > > On Fri, 5 May 2023 at 11:23, Varadarajan Narayanan
-> > > > <quic_varada@quicinc.com> wrote:
-> > > > >
-> > > > > Add LDO regulator node
-> > > >
-> > > > As this LDO is provided by the PMIC, it would be nice to know why it
-> > > > is modelled as an always-on regulator instead of the proper PMIC
-> > > > regulator. Up to now we were doing this only for the outstanding power
-> > > > rails like CX/MX or EBI.
-> > >
-> > > These are always ON because USB phy doesn't support power
-> > > collapse, and there is a chance that other IP blocks might be
-> > > sharing the rail.
-> >
-> > You are describing the software side here. From the hardware point of
-> > view, it is an I2C regulator, which is probably also exported as an
-> > SMD_RPM regulator. Unless you have a good reason not to do so, there
-> > should be a node under rpm-requests, which describes mp5496 regulators
-> > exported via RPM. then USB should refer to those regulators.
->
-> Yes. It is a part of rpm-requests. That is why have mentioned V10
-> is dependent on
-> https://lore.kernel.org/lkml/20230407155727.20615-1-quic_devipriy@quicinc.com/T/.
-> The 4th patch of the above series
-> (https://lore.kernel.org/lkml/20230407155727.20615-1-quic_devipriy@quicinc.com/T/#mea3f0ea37c53cf5e39e10cd6cf3bed5243cec629)
-> adds the rpm_requests node and this regulator definition is added
-> to it. Hope that is ok.
 
-It is fine. Most probably I was mistaken by the patch itself. Please
-excuse me. If this this is an RPM regulator, it's is fine and correct.
+On Mon, 08 May 2023 13:47:58 +0300, Claudiu Beznea wrote:
+> Convert Atmel PMC documentation to yaml.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+>  .../devicetree/bindings/clock/at91-clock.txt  |  28 ----
+>  .../bindings/clock/atmel,at91rm9200-pmc.yaml  | 154 ++++++++++++++++++
+>  2 files changed, 154 insertions(+), 28 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> 
 
->
-> Thanks
-> Varada
->
-> > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > > ---
-> > > > >  Changes in v10:
-> > > > >         - Add LDO regulator node
-> > > > > ---
-> > > > >  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 7 +++++++
-> > > > >  1 file changed, 7 insertions(+)
-> > > > >
-> > > > > diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> > > > > index bdc1434..1f5d14f 100644
-> > > > > --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> > > > > +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-> > > > > @@ -60,6 +60,13 @@
-> > > > >                         regulator-min-microvolt = <725000>;
-> > > > >                         regulator-max-microvolt = <1075000>;
-> > > > >                 };
-> > > > > +
-> > > > > +               mp5496_l2: l2 {
-> > > > > +                       regulator-min-microvolt = <1800000>;
-> > > > > +                       regulator-max-microvolt = <1800000>;
-> > > > > +                       regulator-boot-on;
-> > > > > +                       regulator-always-on;
-> > > > > +               };
-> > > > >         };
-> > > > >  };
-> > > > >
-> > > > > --
-> > > > > 2.7.4
-> > > > >
-> > > >
-> > > >
-> > > > --
-> > > > With best wishes
-> > > > Dmitry
-> >
-> >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
+yamllint warnings/errors:
 
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.example.dtb: camera-sensor@3c: port:endpoint:data-lanes: [[1]] is too short
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/rockchip-isp1.example.dtb: camera@3c: port:endpoint:data-lanes: [[1]] is too short
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/media/i2c/ovti,ov2685.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.example.dtb: pcie-ep@33800000: Unevaluated properties are not allowed ('assigned-clock-parents', 'assigned-clock-rates', 'assigned-clocks' were unexpected)
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
 
--- 
-With best wishes
-Dmitry
+doc reference errors (make refcheckdocs):
+Documentation/usb/gadget_uvc.rst: Documentation/userspace-api/media/v4l/pixfmt-packed.yuv.rst
+MAINTAINERS: Documentation/devicetree/bindings/pwm/pwm-apple.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230508104801.445261-3-claudiu.beznea@microchip.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
