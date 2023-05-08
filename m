@@ -2,122 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3AEC7EE25
-	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 14:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4809EC77B75
+	for <linux-clk@archiver.kernel.org>; Mon,  8 May 2023 15:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234886AbjEHObN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 10:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38222 "EHLO
+        id S234079AbjEHPDJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 11:03:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235218AbjEHOa0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 10:30:26 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BFFF9010;
-        Mon,  8 May 2023 07:29:57 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 348ETpNA015244;
-        Mon, 8 May 2023 14:29:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=5OtZQNzTavdtMmiQ3BQTEPQPhnMBmFVHCrTtzHQe0Aw=;
- b=W/3rtYJh7L7iF3oFVojlRC1xzGSh4RwWlEI+dV9Y3G8fqsasyTNggb5+x2TDfK9XfObS
- Ka5ZEzKeLq2QYAN7G/asVvP6eFxlOv0dubZ0iArzc9NAHNqlQkCW4Ef91f7+O2UyTah7
- Dn7D2dTFMrngwHGvLo0oYV8IzD3SUGgn7zMr6pgN6OdYCi0E5CIByGgQVIwaXR1sbJMJ
- 69std41K2GlRGw+wAotOpAooJazvbnnbKt+gqwMya5Pz+SXeurxBfsV769KUj3+A43op
- rnNBUYQhfI9NFHcasakcg4b6E1N0WwDNYBEAOslPzg0e0FiLknnGeTgUP3o9KS2fazUy jA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf0vk09g6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 08 May 2023 14:29:51 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 348EToXa017015
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 8 May 2023 14:29:50 GMT
-Received: from [10.242.242.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 8 May 2023
- 07:29:42 -0700
-Message-ID: <3d876a44-0145-09b8-0722-80f57d6c96ac@quicinc.com>
-Date:   Mon, 8 May 2023 19:59:39 +0530
+        with ESMTP id S230263AbjEHPDI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 11:03:08 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D935E71
+        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 08:03:07 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f122ff663eso5205375e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 08:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683558185; x=1686150185;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5P7zQmkkbgrBtJhFAGKUKghf7IUiE+88LhUoxRqw578=;
+        b=thJYmk9qbm8Br5Wc+/EL1Z8udNXQBMb6EyHrGiGkV9fOqaE8MWu2bqPicL4IzVPM1H
+         mqos6dF5AJCaULu1dL8dD9Ffezxx7fd3fRzPB66OEyJsJM/1FV/8TaE+ZUOAmkYm5MDW
+         2UxV18D6Q6cJoLPchP/1z2O2Aetdp99ArRsv/70WBbf0vB12HVya8LlyhH0kkFY1tjoF
+         6pDW/anOYpcA8vZBigu3vW0MWpiOoEiJO+omFhZOYVIYXRwjQ2gFP/b8CEJR8TNf5ELg
+         f462AlmAveODb7FsIAxCFlctlmD5++YKPeyY3tKSAYNWRzFVILmu8OgBOxZlRK0FxgAZ
+         hWEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683558185; x=1686150185;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5P7zQmkkbgrBtJhFAGKUKghf7IUiE+88LhUoxRqw578=;
+        b=Zis7f9n6HAFHGtpQQ+e8OC6nBU4s9hpMpAYull2/ujVyTmbi0aorBiujKDp2i0BMvB
+         yog4Co4SlHFosubsAh7A0yDXT+fl3ZRyCP/AjkmDERUQUWYYWRbGY7D7pabeS4tBIyrX
+         Mo/2JEuS2h8TphqH5mOjLNjQG1zxU+SGGH22rEKWE3YM1i9NrdSrmSSXppdyFo4ZWBhO
+         3rePN8zByiluLwbhhxxPOHqSGxGCwV8xBQ/W0N49XgL1w4WgYElP0DDRjE11GvBl+DWO
+         h78+Mru55er/mwENsZpfxzAyCtGeQ1SufMEodsYVTDuqxlddX9lt2Sd3T0Di1cnXK0PK
+         Q9nA==
+X-Gm-Message-State: AC+VfDxSw23VHB0CPmv1qR1BByLqDO4PH4LIWNfFrkBbFk9Q3LjwoY6f
+        E7yZ/eX02aTZe+k9eAX7YEdAzQ==
+X-Google-Smtp-Source: ACHHUZ64dANyCw4EZKVb6T1sq0Z1GmmEFvSAoQmDXKDucB5v/YDzvFl6fKSC6cbHVt/X3wysM7Su3A==
+X-Received: by 2002:ac2:53a6:0:b0:4eb:20e:6aec with SMTP id j6-20020ac253a6000000b004eb020e6aecmr2434490lfh.40.1683558185331;
+        Mon, 08 May 2023 08:03:05 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id h22-20020a197016000000b004e887fd71acsm14877lfc.236.2023.05.08.08.03.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 May 2023 08:03:04 -0700 (PDT)
+Message-ID: <d6b77072-e559-93bd-2f60-94f0a8f9b400@linaro.org>
+Date:   Mon, 8 May 2023 18:03:04 +0300
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 05/11] dt-bindings: clock: qcom: gcc-ipq9574: Add Q6 gcc
- clock control
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-6-git-send-email-quic_mmanikan@quicinc.com>
- <95c57098-aa37-a203-2ed3-f36449abefea@linaro.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <95c57098-aa37-a203-2ed3-f36449abefea@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 1/2] clk: qcom: mmcc-msm8974: use clk_rcg2_shared_ops for
+ mdp_clk_src clock
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
+ <70b06c2a-de21-b14f-b3b2-82e40762f862@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <70b06c2a-de21-b14f-b3b2-82e40762f862@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KqQ7f46CIgekKZiO7U2LP9DA5aiSHFvY
-X-Proofpoint-ORIG-GUID: KqQ7f46CIgekKZiO7U2LP9DA5aiSHFvY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-08_10,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=990 bulkscore=0
- malwarescore=0 adultscore=0 spamscore=0 mlxscore=0 clxscore=1015
- impostorscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2303200000 definitions=main-2305080097
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 3/7/2023 8:49 PM, Krzysztof Kozlowski wrote:
-> On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
->> Add support for the QDSP6 gcc clock control used on IPQ9574
->> based devices. This would allow mpd remoteproc driver to control
->> the required gcc clocks to bring the subsystem out of reset.
+On 08/05/2023 10:55, Konrad Dybcio wrote:
+> 
+> 
+> On 7.05.2023 19:53, Dmitry Baryshkov wrote:
+>> The mdp_clk_src clock should not be turned off. Instead it should be
+>> 'parked' to the XO, as most of other mdp_clk_src clocks. Fix that by
+>> using the clk_rcg2_shared_ops.
 >>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> Fixes: d8b212014e69 ("clk: qcom: Add support for MSM8974's multimedia clock controller (MMCC)")
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >> ---
->>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 159 ++++++++++---------
->>   1 file changed, 83 insertions(+), 76 deletions(-)
+> I am inclined to think it's true, however I can't see any evidence
+> of this being done on the vendor kernel.. I am however not a licensed
+> archaeologist so I might have missed it.. Hence I'll do:
+
+I have been observing the 'clock stuck at off' without this change. The 
+warning goes away with this patch. Thus I suppose it is correct.
+
+> 
+> Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
+> Konrad
+>>   drivers/clk/qcom/mmcc-msm8974.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> index c89e96d568c6..8bd6350ecd56 100644
->> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> @@ -138,80 +138,87 @@
->>   #define WCSS_AHB_CLK_SRC				129
->>   #define GCC_Q6_AHB_CLK					130
->>   #define GCC_Q6_AHB_S_CLK				131
->> -#define GCC_WCSS_ECAHB_CLK				132
->> -#define GCC_WCSS_ACMT_CLK				133
-> 
-> That's an ABI break, if file was accepted. Or a very weird change
-> anyway, if it wasn't (why adding entry and immediately changing it?).
-> 
-> Best regards,
-> Krzysztof
-> 
+>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+>> index 4273fce9a4a4..aa29c79fcd55 100644
+>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+>> @@ -485,7 +485,7 @@ static struct clk_rcg2 mdp_clk_src = {
+>>   		.name = "mdp_clk_src",
+>>   		.parent_data = mmcc_xo_mmpll0_dsi_hdmi_gpll0,
+>>   		.num_parents = ARRAY_SIZE(mmcc_xo_mmpll0_dsi_hdmi_gpll0),
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
 
-I will add new macros at the end instead in middle.
+-- 
+With best wishes
+Dmitry
 
-Thanks & Regards,
-Manikanta.
