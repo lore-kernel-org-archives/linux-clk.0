@@ -2,113 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7443FC77B75
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 05:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABD9C7EE22
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 06:25:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbjEIFuz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 01:50:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
+        id S234627AbjEIGZA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 02:25:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234624AbjEIFuy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 01:50:54 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 508AE903C
-        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 22:50:52 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id 41be03b00d2f7-518d325b8a2so4970747a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 22:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683611452; x=1686203452;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AOxvOPHTRilyOmLohM9swFUYHYoS09dGPpcRJnsGSWU=;
-        b=t6ApgQ/F7HvkVQL89vfe2rdqcHFhb1NwKfBKD7o4ppUVe+Qg0zQ73Te321bDYDY8iX
-         5g0CFvv0r92cnQ/vHF+NlR/ThcUK+B/4bdvUaaDm+0Y+H0SJLTmCgIZmCR/iw1mFNmXE
-         R4edOBnq/iaZABkuU5oepOrICQvrCMtWZ/iABzHfGwtXNBOvP8fEA3sRtPgd5c3RRGWM
-         6vlAPmafDY0tM9eEote65wu6WQ17xJ11r1do93qSDS9+ZNXHjEU4vCfbZn6cLZrYYS/o
-         XB4swlYNVBmdZ/4vuo+bLq5GlX5vQYu/B3HnnR6syW2KQysLNQjzMwDBuO1pMPjsKC0Z
-         gE3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683611452; x=1686203452;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AOxvOPHTRilyOmLohM9swFUYHYoS09dGPpcRJnsGSWU=;
-        b=j+RVTqhZ2IbfWFqkrawpnaWOOA0Ei2grJFUVQw8AEx2P0OvoOw0EFwHkhV6i8T+EIg
-         /lhi425/BNvUHfS0TOf/szJMc2tcV1xIaib8p4EU7FgWO98LHeOZRH9TUooypo4Y2GY4
-         0kONLIrmXf4QqAoJMsIj+u0G7nl3EMLUTnAnrtE9q88NjniiftG7Z+xW8I2hddI/WYZ6
-         aUDBpLMzhmOe8JRDnMLjNWpu+ZUDMvlX55IzGZ+rjAra/EgNc55otknLIim8rhgH9f/q
-         DX8FA9x6JHncF7f60WGO4wHUjXC/+L00LCnnJFyaFMpbF4S10C9wxmJc8bDYo+NtoGeS
-         yBew==
-X-Gm-Message-State: AC+VfDw4rH4VVtkRuDNvxxK6pO4HRXuaS1XKUfj/eFiWTL7B4shGXG9o
-        HgQiXevR5yvPKzaT7c451BSP
-X-Google-Smtp-Source: ACHHUZ7sh9t6z0347Cym3km5R6SVH/r+Go7Ckx/CKViYyIgoDbGRY2pAY4lbQJgCW/QCr88TMVTu/Q==
-X-Received: by 2002:a17:902:d50d:b0:1ac:5382:6e24 with SMTP id b13-20020a170902d50d00b001ac53826e24mr11881045plg.10.1683611451718;
-        Mon, 08 May 2023 22:50:51 -0700 (PDT)
-Received: from thinkpad ([59.92.97.45])
-        by smtp.gmail.com with ESMTPSA id i12-20020a17090332cc00b001ac5896e96esm523686plr.207.2023.05.08.22.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 May 2023 22:50:50 -0700 (PDT)
-Date:   Tue, 9 May 2023 11:20:44 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
-Message-ID: <20230509055044.GA4823@thinkpad>
-References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
- <20230507175335.2321503-2-dmitry.baryshkov@linaro.org>
+        with ESMTP id S234882AbjEIGY5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 02:24:57 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23AE78A7B;
+        Mon,  8 May 2023 23:24:55 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 3293724DB84;
+        Tue,  9 May 2023 14:24:46 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 9 May
+ 2023 14:24:46 +0800
+Received: from [192.168.125.131] (183.27.98.219) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 9 May
+ 2023 14:24:44 +0800
+Message-ID: <014dd7b2-9623-805c-97a6-5b3c5f120b79@starfivetech.com>
+Date:   Tue, 9 May 2023 14:23:18 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230507175335.2321503-2-dmitry.baryshkov@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v3 5/7] dt-bindings: soc: starfive: Add StarFive syscon
+ module
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230414024157.53203-1-xingyu.wu@starfivetech.com>
+ <20230414024157.53203-6-xingyu.wu@starfivetech.com>
+ <20230424-footsie-compost-d6624c8ef4e8@spud>
+ <20230508-margarita-fondling-c9b970ad73a9@spud>
+Content-Language: en-US
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <20230508-margarita-fondling-c9b970ad73a9@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.98.219]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 07, 2023 at 08:53:35PM +0300, Dmitry Baryshkov wrote:
-> Using PWRSTS_RET on msm8974's MDSS_GDSC causes display to stop working.
-> The gdsc doesn't fully come out of retention mode. Change it's pwrsts
-> flags to PWRSTS_OFF_ON.
+On 2023/5/9 3:24, Conor Dooley wrote:
+> On Mon, Apr 24, 2023 at 06:15:47PM +0100, Conor Dooley wrote:
+>> On Fri, Apr 14, 2023 at 10:41:55AM +0800, Xingyu Wu wrote:
+>> > From: William Qiu <william.qiu@starfivetech.com>
+>> > 
+>> > Add documentation to describe StarFive System Controller Registers.
+>> > 
+>> > Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+>> > ---
+>> >  .../soc/starfive/starfive,jh7110-syscon.yaml  | 58 +++++++++++++++++++
+>> >  MAINTAINERS                                   |  6 ++
+>> >  2 files changed, 64 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> > 
+>> > diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> > new file mode 100644
+>> > index 000000000000..de086e74a229
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> > @@ -0,0 +1,58 @@
+>> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> > +%YAML 1.2
+>> > +---
+>> > +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.yaml#
+>> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> > +
+>> > +title: StarFive JH7110 SoC system controller
+>> > +
+>> > +maintainers:
+>> > +  - William Qiu <william.qiu@starfivetech.com>
+>> > +
+>> > +description: |
+>> > +  The StarFive JH7110 SoC system controller provides register information such
+>> > +  as offset, mask and shift to configure related modules such as MMC and PCIe.
+>> > +
+>> > +properties:
+>> > +  compatible:
+>> > +    oneOf:
+>> > +      - items:
+>> > +          - enum:
+>> > +              - starfive,jh7110-aon-syscon
+>> > +              - starfive,jh7110-sys-syscon
+>> > +          - const: syscon
+>> > +          - const: simple-mfd
+>> > +      - items:
+>> > +          - const: starfive,jh7110-stg-syscon
+>> > +          - const: syscon
+>> > +
+>> > +  reg:
+>> > +    maxItems: 1
+>> > +
+>> > +  clock-controller:
+>> > +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+>> > +    type: object
+>> > +
+>> > +  power-controller:
+>> > +    $ref: /schemas/power/starfive,jh7110-pmu.yaml#
+>> > +    type: object
+>> 
+>> My plan was to grab this patch after the merge window, but there's been
+>> some back and forth [1] about what exactly should be a power-controller
+>> here. Given the merge window is open & I know Emil wants to look at the
+>> various clock bits for the JH7110, I don't think there's a pressing need
+>> for you to do anything here, but figured I'd at least mention how things
+>> are going on this thread too.
+> 
+> To follow up on this, it transpired in that thread that this node, not a
+> child node, should be the power controller.
+> 
+> Up to you StarFive folk how you wish to resend, but I am fine with it
+> being in this series, I shall just not pick up the soc driver patches
+> until the resent binding is applied by Stephen.
 > 
 
-What does "stop working" implies? Does it work during boot and randomly stopped
-working or it stopped working after resume from suspend?
+Thanks. I had discussed with changhuang.liang about this. And I will drop
+the 'starfive,jh7110-aon-syscon' and 'power-controller' in next patchset.
+Changhuang will take these in his patchset.
 
-Even though reverting to non-retention mode works, I think the issue might be
-somewhere else. Like the vote might be missing to get the GDSC out of retention
-mode.
+Best regards,
+Xingyu Wu
 
-- Mani
-
-> Fixes: d399723950c4 ("clk: qcom: gdsc: Fix the handling of PWRSTS_RET support")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/mmcc-msm8974.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-> index aa29c79fcd55..277ef0065aae 100644
-> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> @@ -2401,7 +2401,7 @@ static struct gdsc mdss_gdsc = {
->  	.pd = {
->  		.name = "mdss",
->  	},
-> -	.pwrsts = PWRSTS_RET_ON,
-> +	.pwrsts = PWRSTS_OFF_ON,
->  };
->  
->  static struct gdsc camss_jpeg_gdsc = {
-> -- 
-> 2.39.2
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
