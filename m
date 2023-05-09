@@ -2,605 +2,262 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14300C7EE22
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 17:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A83BC7EE23
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 17:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229533AbjEIRP1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 13:15:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33272 "EHLO
+        id S232665AbjEIRQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 13:16:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232812AbjEIRP0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 13:15:26 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3359FA
-        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 10:15:19 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id 3f1490d57ef6-b9d881ad689so7943728276.2
-        for <linux-clk@vger.kernel.org>; Tue, 09 May 2023 10:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683652519; x=1686244519;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5K/VAWobe6QtxBJm14y/m85k0/aUzIPJ6lOqo+MArk=;
-        b=PHkY22nUfk6ytVvqirp/RANagas4xMclCKwMRG8BUr1dgA/WCO2jk84mRCxTTnEqIT
-         M0n37dDMZlDsNbMD5bGfgWxRk2G1upgUpXVvFPqc2kmyf1x2bT5E1vsTqWpEFLmrF8aZ
-         scgHU5xA0OuoOiF1UqBDDvZYd05/7yxKc1UUPn8foGN4UnAL0kP5jZKEmcseEIrYoOsR
-         WAmtSAmJgzpT5Jz4T9k3szfmDHTpUHf8z0bK9lfylRrn7r0ihWRPYddwE6MafErctofi
-         zuok2nfDNuUJSe97KdZ6862SdqYOapY5Un8ZEEpiyAb2hHWR7i6GxR04neU+af5eT8Lw
-         nR6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683652519; x=1686244519;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m5K/VAWobe6QtxBJm14y/m85k0/aUzIPJ6lOqo+MArk=;
-        b=dzgCYTpxLMELvEcv4poCpO5Bagb408QtOtDxFrdNiYpBVSczAxz8uz7l1yu9QwY/OB
-         eboYJCwdbeXOWoikQ9yjwSpyce9pq+HU8ojDcYjXSuiP6gFCKhjHO00BDn+8O2ZA/aB9
-         plhCKZVsWPFO1/gMy+SL5nu4DSs3bft7avD5AGmlOCyrU6o84EhPrE1yHm4QIDAQ9ITk
-         6ap4uzSKCvizN4xtbTkPN6FMO/s3FYNXCZdEge2B1bHJgdD6QEhkQ+uE/nmvZfSGTZGa
-         Yoqw9Deu14ONdYToY1nMYIEtFl3F7Sfid3vHCwSFHOipxMh815xFMr4NrlRniieZDysa
-         CTOw==
-X-Gm-Message-State: AC+VfDwawJI7Z1nHQmHG/D2DPJXbSja05dknAcahYOVxt1ZVH32K0Uwd
-        qx5ALPJ8grddt/088Yvo6WZPY0te68DRZuyKHULxhA==
-X-Google-Smtp-Source: ACHHUZ7AVxP2o6Dea5tX2/rrit6n8sU9feVdJ1gls8GblkvBvwBO2QPgHpwK8l1GrqC5Ok74a+e2rRUA8cWtPZkQAB8=
-X-Received: by 2002:a25:1854:0:b0:b75:9a44:5342 with SMTP id
- 81-20020a251854000000b00b759a445342mr16103411yby.4.1683652518988; Tue, 09 May
- 2023 10:15:18 -0700 (PDT)
+        with ESMTP id S229515AbjEIRQu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 13:16:50 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3481E71;
+        Tue,  9 May 2023 10:16:48 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349Gg89T012569;
+        Tue, 9 May 2023 17:03:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=qI45RyaeiSVGGtld+kEpMAI9UE2lNL2CaZZmt75kPww=;
+ b=VAnJdxSeXAFHP4N0fq0UrtckJJLNGGoDPTSl4FXeAIqLAs/blbNIaQDUENCbtqAnPDG1
+ 1M4wAd6UMvwn0LUaST+GT3HL0i1j5feb424eEgg7YH+Yyud43BZuzXpSDFk67tiRYp1W
+ nyeStaIP3EYMhZ1lvqG6oJYq6AwA7gxwiZSJ/7ydsHKc3fejrm2RK640dqk0te0iAYJq
+ FfCBQtDhVm0HpRX+08EJygPebUWvL4b3MuRrfiZ44NOhgmwsva/4UQju+gbpEeIT6TR3
+ gkEd2Y5ld3JKvUK434++4COb28/4AhgrAo6zByRwgrDaI22xAGzcVtzsbioTeHOof4Xk tQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qfrvm07k0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 May 2023 17:03:06 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349H35FJ030496
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 9 May 2023 17:03:05 GMT
+Received: from [10.216.5.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 9 May 2023
+ 10:02:57 -0700
+Message-ID: <5d719c21-7820-b67f-ba63-adee0431cae7@quicinc.com>
+Date:   Tue, 9 May 2023 22:32:53 +0530
 MIME-Version: 1.0
-References: <20230509161218.11979-1-quic_jkona@quicinc.com> <20230509161218.11979-4-quic_jkona@quicinc.com>
-In-Reply-To: <20230509161218.11979-4-quic_jkona@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Tue, 9 May 2023 20:15:08 +0300
-Message-ID: <CAA8EJppn9=gPFk1RRB9y50aU_G3J6QrsOVQ9GH5gT86D_hOAgQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: qcom: videocc-sm8550: Add video clock controller
- driver for SM8550
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 06/11] clk: qcom: IPQ9574: Add q6/wcss clocks
+Content-Language: en-US
+To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com>
+ <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fjcwsU8JXGhDunl7NH2vLhH2qz6N5A7K
+X-Proofpoint-GUID: fjcwsU8JXGhDunl7NH2vLhH2qz6N5A7K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-09_10,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 spamscore=0 mlxlogscore=903 clxscore=1015
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090141
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 9 May 2023 at 19:14, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->
-> Add support for the video clock controller for video clients to be able
-> to request for videocc clocks on SM8550 platform.
->
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig          |  10 +
->  drivers/clk/qcom/Makefile         |   1 +
->  drivers/clk/qcom/videocc-sm8550.c | 468 ++++++++++++++++++++++++++++++
->  3 files changed, 479 insertions(+)
->  create mode 100644 drivers/clk/qcom/videocc-sm8550.c
->
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 12be3e2371b3..6bb9b4aff047 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -925,6 +925,16 @@ config SM_VIDEOCC_8250
->           Say Y if you want to support video devices and functionality such as
->           video encode and decode.
->
-> +config SM_VIDEOCC_8550
-> +       tristate "SM8550 Video Clock Controller"
-> +       select SM_GCC_8550
-> +       select QCOM_GDSC
-> +       help
-> +         Support for the video clock controller on Qualcomm Technologies, Inc.
-> +         SM8550 devices.
-> +         Say Y if you want to support video devices and functionality such as
-> +         video encode/decode.
-> +
->  config SPMI_PMIC_CLKDIV
->         tristate "SPMI PMIC clkdiv Support"
->         depends on SPMI || COMPILE_TEST
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 9ff4c373ad95..f0b95fc217aa 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -127,6 +127,7 @@ obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
->  obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
->  obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
->  obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-> +obj-$(CONFIG_SM_VIDEOCC_8550) += videocc-sm8550.o
->  obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
->  obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
->  obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
-> new file mode 100644
-> index 000000000000..10e4b2725ddf
-> --- /dev/null
-> +++ b/drivers/clk/qcom/videocc-sm8550.c
-> @@ -0,0 +1,468 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,sm8550-videocc.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "common.h"
-> +#include "gdsc.h"
-> +#include "reset.h"
-> +
-> +enum {
-> +       DT_BI_TCXO,
 
-Any additional handling for gcc_video_ahb clk? It doesn't seem to be
-used as a parent. Probably you intended to use it as a pm_clk?
 
-> +};
-> +
-> +enum {
-> +       P_BI_TCXO,
-> +       P_VIDEO_CC_PLL0_OUT_MAIN,
-> +       P_VIDEO_CC_PLL1_OUT_MAIN,
-> +};
-> +
-> +static const struct pll_vco lucid_ole_vco[] = {
-> +       { 249600000, 2300000000, 0 },
-> +};
-> +
-> +static const struct alpha_pll_config video_cc_pll0_config = {
-> +       .l = 0x44000025,
-> +       .alpha = 0x8000,
-> +       .config_ctl_val = 0x20485699,
-> +       .config_ctl_hi_val = 0x00182261,
-> +       .config_ctl_hi1_val = 0x82aa299c,
-> +       .test_ctl_val = 0x00000000,
-> +       .test_ctl_hi_val = 0x00000003,
-> +       .test_ctl_hi1_val = 0x00009000,
-> +       .test_ctl_hi2_val = 0x00000034,
-> +       .user_ctl_val = 0x00000000,
-> +       .user_ctl_hi_val = 0x00000005,
-> +};
-> +
-> +static struct clk_alpha_pll video_cc_pll0 = {
-> +       .offset = 0x0,
-> +       .vco_table = lucid_ole_vco,
-> +       .num_vco = ARRAY_SIZE(lucid_ole_vco),
-> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
-> +       .clkr = {
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "video_cc_pll0",
-> +                       .parent_data = &(const struct clk_parent_data) {
-> +                               .index = DT_BI_TCXO,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .ops = &clk_alpha_pll_lucid_ole_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static const struct alpha_pll_config video_cc_pll1_config = {
-> +       .l = 0x44000036,
-> +       .alpha = 0xb000,
-> +       .config_ctl_val = 0x20485699,
-> +       .config_ctl_hi_val = 0x00182261,
-> +       .config_ctl_hi1_val = 0x82aa299c,
-> +       .test_ctl_val = 0x00000000,
-> +       .test_ctl_hi_val = 0x00000003,
-> +       .test_ctl_hi1_val = 0x00009000,
-> +       .test_ctl_hi2_val = 0x00000034,
-> +       .user_ctl_val = 0x00000000,
-> +       .user_ctl_hi_val = 0x00000005,
-> +};
-> +
-> +static struct clk_alpha_pll video_cc_pll1 = {
-> +       .offset = 0x1000,
-> +       .vco_table = lucid_ole_vco,
-> +       .num_vco = ARRAY_SIZE(lucid_ole_vco),
-> +       .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
-> +       .clkr = {
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "video_cc_pll1",
-> +                       .parent_data = &(const struct clk_parent_data) {
-> +                               .index = DT_BI_TCXO,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .ops = &clk_alpha_pll_lucid_ole_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static const struct parent_map video_cc_parent_map_0[] = {
-> +       { P_BI_TCXO, 0 },
-> +       { P_VIDEO_CC_PLL0_OUT_MAIN, 1 },
-> +};
-> +
-> +static const struct clk_parent_data video_cc_parent_data_0[] = {
-> +       { .index = DT_BI_TCXO },
-> +       { .hw = &video_cc_pll0.clkr.hw },
-> +};
-> +
-> +static const struct parent_map video_cc_parent_map_1[] = {
-> +       { P_BI_TCXO, 0 },
-> +       { P_VIDEO_CC_PLL1_OUT_MAIN, 1 },
-> +};
-> +
-> +static const struct clk_parent_data video_cc_parent_data_1[] = {
-> +       { .index = DT_BI_TCXO },
-> +       { .hw = &video_cc_pll1.clkr.hw },
-> +};
-> +
-> +static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
-> +       F(720000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-> +       F(1014000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-> +       F(1098000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-> +       F(1332000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-> +       F(1600000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 video_cc_mvs0_clk_src = {
-> +       .cmd_rcgr = 0x8000,
-> +       .mnd_width = 0,
-> +       .hid_width = 5,
-> +       .parent_map = video_cc_parent_map_0,
-> +       .freq_tbl = ftbl_video_cc_mvs0_clk_src,
-> +       .clkr.hw.init = &(const struct clk_init_data) {
-> +               .name = "video_cc_mvs0_clk_src",
-> +               .parent_data = video_cc_parent_data_0,
-> +               .num_parents = ARRAY_SIZE(video_cc_parent_data_0),
-> +               .flags = CLK_SET_RATE_PARENT,
-> +               .ops = &clk_rcg2_shared_ops,
-> +       },
-> +};
-> +
-> +static const struct freq_tbl ftbl_video_cc_mvs1_clk_src[] = {
-> +       F(1050000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-> +       F(1350000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-> +       F(1500000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-> +       F(1650000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 video_cc_mvs1_clk_src = {
-> +       .cmd_rcgr = 0x8018,
-> +       .mnd_width = 0,
-> +       .hid_width = 5,
-> +       .parent_map = video_cc_parent_map_1,
-> +       .freq_tbl = ftbl_video_cc_mvs1_clk_src,
-> +       .clkr.hw.init = &(const struct clk_init_data) {
-> +               .name = "video_cc_mvs1_clk_src",
-> +               .parent_data = video_cc_parent_data_1,
-> +               .num_parents = ARRAY_SIZE(video_cc_parent_data_1),
-> +               .flags = CLK_SET_RATE_PARENT,
-> +               .ops = &clk_rcg2_shared_ops,
-> +       },
-> +};
-> +
-> +static struct clk_regmap_div video_cc_mvs0_div_clk_src = {
-> +       .reg = 0x80c4,
-> +       .shift = 0,
-> +       .width = 4,
-> +       .clkr.hw.init = &(const struct clk_init_data) {
-> +               .name = "video_cc_mvs0_div_clk_src",
-> +               .parent_hws = (const struct clk_hw*[]) {
-> +                       &video_cc_mvs0_clk_src.clkr.hw,
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +               .ops = &clk_regmap_div_ro_ops,
-> +       },
-> +};
-> +
-> +static struct clk_regmap_div video_cc_mvs0c_div2_div_clk_src = {
-> +       .reg = 0x8070,
-> +       .shift = 0,
-> +       .width = 4,
-> +       .clkr.hw.init = &(const struct clk_init_data) {
-> +               .name = "video_cc_mvs0c_div2_div_clk_src",
-> +               .parent_hws = (const struct clk_hw*[]) {
-> +                       &video_cc_mvs0_clk_src.clkr.hw,
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +               .ops = &clk_regmap_div_ro_ops,
-> +       },
-> +};
-> +
-> +static struct clk_regmap_div video_cc_mvs1_div_clk_src = {
-> +       .reg = 0x80ec,
-> +       .shift = 0,
-> +       .width = 4,
-> +       .clkr.hw.init = &(const struct clk_init_data) {
-> +               .name = "video_cc_mvs1_div_clk_src",
-> +               .parent_hws = (const struct clk_hw*[]) {
-> +                       &video_cc_mvs1_clk_src.clkr.hw,
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +               .ops = &clk_regmap_div_ro_ops,
-> +       },
-> +};
-> +
-> +static struct clk_regmap_div video_cc_mvs1c_div2_div_clk_src = {
-> +       .reg = 0x809c,
-> +       .shift = 0,
-> +       .width = 4,
-> +       .clkr.hw.init = &(const struct clk_init_data) {
-> +               .name = "video_cc_mvs1c_div2_div_clk_src",
-> +               .parent_hws = (const struct clk_hw*[]) {
-> +                       &video_cc_mvs1_clk_src.clkr.hw,
-> +               },
-> +               .num_parents = 1,
-> +               .flags = CLK_SET_RATE_PARENT,
-> +               .ops = &clk_regmap_div_ro_ops,
-> +       },
-> +};
-> +
-> +static struct clk_branch video_cc_mvs0_clk = {
-> +       .halt_reg = 0x80b8,
-> +       .halt_check = BRANCH_HALT_SKIP,
-> +       .hwcg_reg = 0x80b8,
-> +       .hwcg_bit = 1,
-> +       .clkr = {
-> +               .enable_reg = 0x80b8,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "video_cc_mvs0_clk",
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &video_cc_mvs0_div_clk_src.clkr.hw,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch video_cc_mvs0c_clk = {
-> +       .halt_reg = 0x8064,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0x8064,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "video_cc_mvs0c_clk",
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &video_cc_mvs0c_div2_div_clk_src.clkr.hw,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch video_cc_mvs1_clk = {
-> +       .halt_reg = 0x80e0,
-> +       .halt_check = BRANCH_HALT_SKIP,
-> +       .hwcg_reg = 0x80e0,
-> +       .hwcg_bit = 1,
-> +       .clkr = {
-> +               .enable_reg = 0x80e0,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "video_cc_mvs1_clk",
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &video_cc_mvs1_div_clk_src.clkr.hw,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_branch video_cc_mvs1c_clk = {
-> +       .halt_reg = 0x8090,
-> +       .halt_check = BRANCH_HALT,
-> +       .clkr = {
-> +               .enable_reg = 0x8090,
-> +               .enable_mask = BIT(0),
-> +               .hw.init = &(const struct clk_init_data) {
-> +                       .name = "video_cc_mvs1c_clk",
-> +                       .parent_hws = (const struct clk_hw*[]) {
-> +                               &video_cc_mvs1c_div2_div_clk_src.clkr.hw,
-> +                       },
-> +                       .num_parents = 1,
-> +                       .flags = CLK_SET_RATE_PARENT,
-> +                       .ops = &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct gdsc video_cc_mvs0c_gdsc = {
-> +       .gdscr = 0x804c,
-> +       .en_rest_wait_val = 0x2,
-> +       .en_few_wait_val = 0x2,
-> +       .clk_dis_wait_val = 0x6,
-> +       .pd = {
-> +               .name = "video_cc_mvs0c_gdsc",
-> +       },
-> +       .pwrsts = PWRSTS_OFF_ON,
-> +       .flags = RETAIN_FF_ENABLE,
-> +};
-> +
-> +static struct gdsc video_cc_mvs0_gdsc = {
-> +       .gdscr = 0x80a4,
-> +       .en_rest_wait_val = 0x2,
-> +       .en_few_wait_val = 0x2,
-> +       .clk_dis_wait_val = 0x6,
-> +       .pd = {
-> +               .name = "video_cc_mvs0_gdsc",
-> +       },
-> +       .pwrsts = PWRSTS_OFF_ON,
-> +       .parent = &video_cc_mvs0c_gdsc.pd,
-> +       .flags = RETAIN_FF_ENABLE | HW_CTRL,
-> +};
-> +
-> +static struct gdsc video_cc_mvs1c_gdsc = {
-> +       .gdscr = 0x8078,
-> +       .en_rest_wait_val = 0x2,
-> +       .en_few_wait_val = 0x2,
-> +       .clk_dis_wait_val = 0x6,
-> +       .pd = {
-> +               .name = "video_cc_mvs1c_gdsc",
-> +       },
-> +       .pwrsts = PWRSTS_OFF_ON,
-> +       .flags = RETAIN_FF_ENABLE,
-> +};
-> +
-> +static struct gdsc video_cc_mvs1_gdsc = {
-> +       .gdscr = 0x80cc,
-> +       .en_rest_wait_val = 0x2,
-> +       .en_few_wait_val = 0x2,
-> +       .clk_dis_wait_val = 0x6,
-> +       .pd = {
-> +               .name = "video_cc_mvs1_gdsc",
-> +       },
-> +       .pwrsts = PWRSTS_OFF_ON,
-> +       .parent = &video_cc_mvs1c_gdsc.pd,
-> +       .flags = RETAIN_FF_ENABLE | HW_CTRL,
-> +};
-> +
-> +static struct clk_regmap *video_cc_sm8550_clocks[] = {
-> +       [VIDEO_CC_MVS0_CLK] = &video_cc_mvs0_clk.clkr,
-> +       [VIDEO_CC_MVS0_CLK_SRC] = &video_cc_mvs0_clk_src.clkr,
-> +       [VIDEO_CC_MVS0_DIV_CLK_SRC] = &video_cc_mvs0_div_clk_src.clkr,
-> +       [VIDEO_CC_MVS0C_CLK] = &video_cc_mvs0c_clk.clkr,
-> +       [VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC] = &video_cc_mvs0c_div2_div_clk_src.clkr,
-> +       [VIDEO_CC_MVS1_CLK] = &video_cc_mvs1_clk.clkr,
-> +       [VIDEO_CC_MVS1_CLK_SRC] = &video_cc_mvs1_clk_src.clkr,
-> +       [VIDEO_CC_MVS1_DIV_CLK_SRC] = &video_cc_mvs1_div_clk_src.clkr,
-> +       [VIDEO_CC_MVS1C_CLK] = &video_cc_mvs1c_clk.clkr,
-> +       [VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC] = &video_cc_mvs1c_div2_div_clk_src.clkr,
-> +       [VIDEO_CC_PLL0] = &video_cc_pll0.clkr,
-> +       [VIDEO_CC_PLL1] = &video_cc_pll1.clkr,
-> +};
-> +
-> +static struct gdsc *video_cc_sm8550_gdscs[] = {
-> +       [VIDEO_CC_MVS0C_GDSC] = &video_cc_mvs0c_gdsc,
-> +       [VIDEO_CC_MVS0_GDSC] = &video_cc_mvs0_gdsc,
-> +       [VIDEO_CC_MVS1C_GDSC] = &video_cc_mvs1c_gdsc,
-> +       [VIDEO_CC_MVS1_GDSC] = &video_cc_mvs1_gdsc,
-> +};
-> +
-> +static const struct qcom_reset_map video_cc_sm8550_resets[] = {
-> +       [CVP_VIDEO_CC_INTERFACE_BCR] = { 0x80f0 },
-> +       [CVP_VIDEO_CC_MVS0_BCR] = { 0x80a0 },
-> +       [CVP_VIDEO_CC_MVS0C_BCR] = { 0x8048 },
-> +       [CVP_VIDEO_CC_MVS1_BCR] = { 0x80c8 },
-> +       [CVP_VIDEO_CC_MVS1C_BCR] = { 0x8074 },
+On 3/7/2023 12:58 PM, Sricharan Ramabadhran wrote:
+> 
+> 
+> On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
+>> Some of the clocks required for q6/wcss bring up
+>> are missing. So this patch adds clocks.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/gcc-ipq9574.c | 119 +++++++++++++++++++++++++++++++++
+>>   1 file changed, 119 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-ipq9574.c 
+>> b/drivers/clk/qcom/gcc-ipq9574.c
+>> index 1bf33d582dc2..355f2e12d9c6 100644
+>> --- a/drivers/clk/qcom/gcc-ipq9574.c
+>> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+>> @@ -2697,6 +2697,22 @@ static struct clk_branch gcc_wcss_acmt_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_ahb_s_clk = {
+>> +    .halt_reg = 0x25060,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25060,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_ahb_s_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &wcss_ahb_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_sys_noc_wcss_ahb_clk = {
+>>       .halt_reg = 0x2e030,
+>>       .clkr = {
+>> @@ -2734,6 +2750,22 @@ static struct clk_rcg2 wcss_axi_m_clk_src = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_axi_m_clk = {
+>> +    .halt_reg = 0x25064,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25064,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_axi_m_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &wcss_axi_m_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_anoc_wcss_axi_m_clk = {
+>>       .halt_reg = 0x2e0a8,
+>>       .clkr = {
+>> @@ -2803,6 +2835,22 @@ static struct clk_branch 
+>> gcc_wcss_dbg_ifc_atb_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_dbg_ifc_atb_bdg_clk = {
+>> +    .halt_reg = 0x2504C,
+>> +    .clkr = {
+>> +        .enable_reg = 0x2504C,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_atb_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_at_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_nssnoc_atb_clk = {
+>>       .halt_reg = 0x17014,
+>>       .clkr = {
+>> @@ -3073,6 +3121,22 @@ static struct clk_branch 
+>> gcc_wcss_dbg_ifc_nts_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_dbg_ifc_nts_bdg_clk = {
+>> +    .halt_reg = 0x25050,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25050,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_nts_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_tsctr_div2_clk_src.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_qdss_tsctr_div2_clk = {
+>>       .halt_reg = 0x2d044,
+>>       .clkr = {
+>> @@ -3315,6 +3379,38 @@ static struct clk_branch 
+>> gcc_wcss_dbg_ifc_dapbus_clk = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_wcss_dbg_ifc_apb_bdg_clk = {
+>> +    .halt_reg = 0x25048,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25048,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_apb_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_dap_sync_clk_src.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>> +static struct clk_branch gcc_wcss_dbg_ifc_dapbus_bdg_clk = {
+>> +    .halt_reg = 0x25054,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25054,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_wcss_dbg_ifc_dapbus_bdg_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &qdss_dap_sync_clk_src.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+>>   static struct clk_branch gcc_qdss_dap_clk = {
+>>       .halt_reg = 0x2d058,
+>>       .clkr = {
+>> @@ -3513,6 +3609,22 @@ static struct clk_rcg2 q6_axim2_clk_src = {
+>>       },
+>>   };
+>> +static struct clk_branch gcc_q6_axim2_clk = {
+>> +    .halt_reg = 0x25010,
+>> +    .clkr = {
+>> +        .enable_reg = 0x25010,
+>> +        .enable_mask = BIT(0),
+>> +        .hw.init = &(struct clk_init_data){
+>> +            .name = "gcc_q6_axim2_clk",
+>> +            .parent_hws = (const struct clk_hw *[]){
+>> +                    &q6_axim2_clk_src.clkr.hw },
+>> +            .num_parents = 1,
+>> +            .flags = CLK_SET_RATE_PARENT,
+>> +            .ops = &clk_branch2_ops,
+>> +        },
+>> +    },
+>> +};
+>> +
+> 
+> These clocks does not seem to be used in the driver, where are they used ?
+> 
+> Regards,
+>   Sricharan
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling and drop this patch.
 
-Please rename them to start with the VIDEO_CC prefix.
-
-> +       [VIDEO_CC_MVS0C_CLK_ARES] = { 0x8064, 2 },
-> +       [VIDEO_CC_MVS1C_CLK_ARES] = { 0x8090, 2 },
-> +};
-> +
-> +static const struct regmap_config video_cc_sm8550_regmap_config = {
-> +       .reg_bits = 32,
-> +       .reg_stride = 4,
-> +       .val_bits = 32,
-> +       .max_register = 0x9f4c,
-> +       .fast_io = true,
-> +};
-> +
-> +static struct qcom_cc_desc video_cc_sm8550_desc = {
-> +       .config = &video_cc_sm8550_regmap_config,
-> +       .clks = video_cc_sm8550_clocks,
-> +       .num_clks = ARRAY_SIZE(video_cc_sm8550_clocks),
-> +       .resets = video_cc_sm8550_resets,
-> +       .num_resets = ARRAY_SIZE(video_cc_sm8550_resets),
-> +       .gdscs = video_cc_sm8550_gdscs,
-> +       .num_gdscs = ARRAY_SIZE(video_cc_sm8550_gdscs),
-> +};
-> +
-> +static const struct of_device_id video_cc_sm8550_match_table[] = {
-> +       { .compatible = "qcom,sm8550-videocc" },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, video_cc_sm8550_match_table);
-> +
-> +static int video_cc_sm8550_probe(struct platform_device *pdev)
-> +{
-> +       struct regmap *regmap;
-> +       int ret;
-> +
-> +       ret = devm_pm_runtime_enable(&pdev->dev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret = pm_runtime_resume_and_get(&pdev->dev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       regmap = qcom_cc_map(pdev, &video_cc_sm8550_desc);
-> +       if (IS_ERR(regmap)) {
-> +               pm_runtime_put(&pdev->dev);
-> +               return PTR_ERR(regmap);
-> +       }
-> +
-> +       clk_lucid_ole_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
-> +       clk_lucid_ole_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
-> +
-> +       /*
-> +        * Keep clocks always enabled:
-> +        *      video_cc_ahb_clk
-> +        *      video_cc_sleep_clk
-> +        *      video_cc_xo_clk
-> +        */
-> +       regmap_update_bits(regmap, 0x80f4, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0x8140, BIT(0), BIT(0));
-> +       regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
-> +
-> +       ret = qcom_cc_really_probe(pdev, &video_cc_sm8550_desc, regmap);
-> +
-> +       pm_runtime_put(&pdev->dev);
-> +
-> +       return ret;
-> +}
-> +
-> +static struct platform_driver video_cc_sm8550_driver = {
-> +       .probe = video_cc_sm8550_probe,
-> +       .driver = {
-> +               .name = "video_cc-sm8550",
-> +               .of_match_table = video_cc_sm8550_match_table,
-> +       },
-> +};
-> +
-> +static int __init video_cc_sm8550_init(void)
-> +{
-> +       return platform_driver_register(&video_cc_sm8550_driver);
-> +}
-> +subsys_initcall(video_cc_sm8550_init);
-
-module_platform_driver() instead? There is no need to register videocc
-at the subsys level.
-
-> +
-> +static void __exit video_cc_sm8550_exit(void)
-> +{
-> +       platform_driver_unregister(&video_cc_sm8550_driver);
-> +}
-> +module_exit(video_cc_sm8550_exit);
-> +
-> +MODULE_DESCRIPTION("QTI VIDEO_CC SM8550 Driver");
-> +MODULE_LICENSE("GPL");
-
--- 
-With best wishes
-Dmitry
+Thanks & Regards,
+Manikanta.
