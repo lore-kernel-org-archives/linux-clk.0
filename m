@@ -2,600 +2,435 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA46C7EE22
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 16:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA50C7EE23
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 16:18:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235940AbjEIQOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 12:14:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39948 "EHLO
+        id S233512AbjEIQSc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 12:18:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235902AbjEIQNy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 12:13:54 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B1D4201;
-        Tue,  9 May 2023 09:13:51 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349E2NOt009756;
-        Tue, 9 May 2023 16:13:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=Ctx3yBxCzLk3ZOYddoRl9px5qeBnzZOSFXr32wssr74=;
- b=Ve6k9irkbGX12w/vqIFJ4eMAWEP8FGEIPCOEzyied4/BNHbK9OM+mYV2Putp0RuBDPU4
- GjNfF8yVucolOfkjl9WM2fGFXOAOe9Seo2mLD40C9qohqvj7qtqqR0iG3vRCS6C89/fl
- xz0HdjfYsvCqGeH378x0pJdh/z0919muUis2bgr9irVB5w6ZudI5/1RpqsaKwB6K7aMB
- N+PDVEf6O55Xom2RymVm0vCX1SiCY9pa6e0US0dIfJsVaie1tnv9EhxDH0WCw+SuvJkG
- smqLlZWkCesbt8YUCFu6g7W6zCGfCRrTiiihOpwdrHn6vTI2KSnIOLdMfUE6mEb7Z1VY yA== 
+        with ESMTP id S229533AbjEIQSb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 12:18:31 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3090646A2;
+        Tue,  9 May 2023 09:18:29 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349BW8Vj032004;
+        Tue, 9 May 2023 16:18:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=C1yltITvHm6+V9sJou1VjBUdYHedvQ1G0Q45b7NVnN4=;
+ b=iW04eozuKAMYFsyEcx3PK+l4lX64sVZe+egaVePgpbC33cSMqzR3a+zPNYMAc02d7Xal
+ rt1I59PPcbg5sJsub/7Eotaq4jupBvFOn5CW7CSfBc+9d/+MakQndKllSAg2zlsLxE7a
+ A33udQweWnWorzpuomnpzYD/BVaaS8UYDCmDHpV0LIocCe4dv/Txo9ravtWhPhylvc2f
+ rw4Vh/T9fqkvPMBv1+iqLJ6L8R9jM37I18+a/xyHM+G7pb//9GB+HfFkBQIKZVSaXME9
+ ntuzG2wWnrmHNaS+lNQT2dAKBJvpxPfMR8dz415bIDG61irLgQXjIPgzC+yDFVHvhGqN uQ== 
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf77g2bcg-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf781jb76-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 May 2023 16:13:47 +0000
+        Tue, 09 May 2023 16:18:23 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349GDj1Z016620
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349GILj4021857
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 9 May 2023 16:13:46 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Tue, 9 May 2023 09:13:15 -0700
-From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Taniya Das" <quic_tdas@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/4] clk: qcom: videocc-sm8550: Add video clock controller driver for SM8550
-Date:   Tue, 9 May 2023 21:42:17 +0530
-Message-ID: <20230509161218.11979-4-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230509161218.11979-1-quic_jkona@quicinc.com>
-References: <20230509161218.11979-1-quic_jkona@quicinc.com>
+        Tue, 9 May 2023 16:18:22 GMT
+Received: from [10.216.5.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 9 May 2023
+ 09:17:59 -0700
+Message-ID: <1ddb9ff9-2284-1f8b-69cc-e8d041a29ca1@quicinc.com>
+Date:   Tue, 9 May 2023 21:47:54 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_gurus@quicinc.com>, <loic.poulain@linaro.org>,
+        <quic_eberman@quicinc.com>, <robimarko@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
+ <20230307142614.GA2742-robh@kernel.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <20230307142614.GA2742-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Qo2kZLyb1fMtofQug7SnnoP2WUeiEWzu
-X-Proofpoint-ORIG-GUID: Qo2kZLyb1fMtofQug7SnnoP2WUeiEWzu
+X-Proofpoint-GUID: WxJlulJhVGuV9feqI3M2tz29GapSrcu_
+X-Proofpoint-ORIG-GUID: WxJlulJhVGuV9feqI3M2tz29GapSrcu_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-09_09,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- mlxlogscore=999 malwarescore=0 clxscore=1015 mlxscore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305090133
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ suspectscore=0 clxscore=1015 mlxlogscore=999 malwarescore=0 mlxscore=0
+ impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090133
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the video clock controller for video clients to be able
-to request for videocc clocks on SM8550 platform.
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- drivers/clk/qcom/Kconfig          |  10 +
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sm8550.c | 468 ++++++++++++++++++++++++++++++
- 3 files changed, 479 insertions(+)
- create mode 100644 drivers/clk/qcom/videocc-sm8550.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 12be3e2371b3..6bb9b4aff047 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -925,6 +925,16 @@ config SM_VIDEOCC_8250
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode and decode.
- 
-+config SM_VIDEOCC_8550
-+	tristate "SM8550 Video Clock Controller"
-+	select SM_GCC_8550
-+	select QCOM_GDSC
-+	help
-+	  Support for the video clock controller on Qualcomm Technologies, Inc.
-+	  SM8550 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode/decode.
-+
- config SPMI_PMIC_CLKDIV
- 	tristate "SPMI PMIC clkdiv Support"
- 	depends on SPMI || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 9ff4c373ad95..f0b95fc217aa 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -127,6 +127,7 @@ obj-$(CONFIG_SM_GPUCC_8350) += gpucc-sm8350.o
- obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
- obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
- obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-+obj-$(CONFIG_SM_VIDEOCC_8550) += videocc-sm8550.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
- obj-$(CONFIG_KPSS_XCC) += kpss-xcc.o
- obj-$(CONFIG_QCOM_HFPLL) += hfpll.o
-diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
-new file mode 100644
-index 000000000000..10e4b2725ddf
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sm8550.c
-@@ -0,0 +1,468 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,sm8550-videocc.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "clk-regmap-divider.h"
-+#include "common.h"
-+#include "gdsc.h"
-+#include "reset.h"
-+
-+enum {
-+	DT_BI_TCXO,
-+};
-+
-+enum {
-+	P_BI_TCXO,
-+	P_VIDEO_CC_PLL0_OUT_MAIN,
-+	P_VIDEO_CC_PLL1_OUT_MAIN,
-+};
-+
-+static const struct pll_vco lucid_ole_vco[] = {
-+	{ 249600000, 2300000000, 0 },
-+};
-+
-+static const struct alpha_pll_config video_cc_pll0_config = {
-+	.l = 0x44000025,
-+	.alpha = 0x8000,
-+	.config_ctl_val = 0x20485699,
-+	.config_ctl_hi_val = 0x00182261,
-+	.config_ctl_hi1_val = 0x82aa299c,
-+	.test_ctl_val = 0x00000000,
-+	.test_ctl_hi_val = 0x00000003,
-+	.test_ctl_hi1_val = 0x00009000,
-+	.test_ctl_hi2_val = 0x00000034,
-+	.user_ctl_val = 0x00000000,
-+	.user_ctl_hi_val = 0x00000005,
-+};
-+
-+static struct clk_alpha_pll video_cc_pll0 = {
-+	.offset = 0x0,
-+	.vco_table = lucid_ole_vco,
-+	.num_vco = ARRAY_SIZE(lucid_ole_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
-+	.clkr = {
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_pll0",
-+			.parent_data = &(const struct clk_parent_data) {
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_lucid_ole_ops,
-+		},
-+	},
-+};
-+
-+static const struct alpha_pll_config video_cc_pll1_config = {
-+	.l = 0x44000036,
-+	.alpha = 0xb000,
-+	.config_ctl_val = 0x20485699,
-+	.config_ctl_hi_val = 0x00182261,
-+	.config_ctl_hi1_val = 0x82aa299c,
-+	.test_ctl_val = 0x00000000,
-+	.test_ctl_hi_val = 0x00000003,
-+	.test_ctl_hi1_val = 0x00009000,
-+	.test_ctl_hi2_val = 0x00000034,
-+	.user_ctl_val = 0x00000000,
-+	.user_ctl_hi_val = 0x00000005,
-+};
-+
-+static struct clk_alpha_pll video_cc_pll1 = {
-+	.offset = 0x1000,
-+	.vco_table = lucid_ole_vco,
-+	.num_vco = ARRAY_SIZE(lucid_ole_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE],
-+	.clkr = {
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_pll1",
-+			.parent_data = &(const struct clk_parent_data) {
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_lucid_ole_ops,
-+		},
-+	},
-+};
-+
-+static const struct parent_map video_cc_parent_map_0[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_CC_PLL0_OUT_MAIN, 1 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_0[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .hw = &video_cc_pll0.clkr.hw },
-+};
-+
-+static const struct parent_map video_cc_parent_map_1[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_CC_PLL1_OUT_MAIN, 1 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_1[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .hw = &video_cc_pll1.clkr.hw },
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
-+	F(720000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1014000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1098000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1332000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1600000000, P_VIDEO_CC_PLL0_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_mvs0_clk_src = {
-+	.cmd_rcgr = 0x8000,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_0,
-+	.freq_tbl = ftbl_video_cc_mvs0_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_mvs0_clk_src",
-+		.parent_data = video_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_mvs1_clk_src[] = {
-+	F(1050000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1350000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1500000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1650000000, P_VIDEO_CC_PLL1_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_mvs1_clk_src = {
-+	.cmd_rcgr = 0x8018,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_1,
-+	.freq_tbl = ftbl_video_cc_mvs1_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_mvs1_clk_src",
-+		.parent_data = video_cc_parent_data_1,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_1),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs0_div_clk_src = {
-+	.reg = 0x80c4,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_mvs0_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&video_cc_mvs0_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs0c_div2_div_clk_src = {
-+	.reg = 0x8070,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_mvs0c_div2_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&video_cc_mvs0_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs1_div_clk_src = {
-+	.reg = 0x80ec,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_mvs1_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&video_cc_mvs1_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_regmap_div video_cc_mvs1c_div2_div_clk_src = {
-+	.reg = 0x809c,
-+	.shift = 0,
-+	.width = 4,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_mvs1c_div2_div_clk_src",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&video_cc_mvs1_clk_src.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_regmap_div_ro_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs0_clk = {
-+	.halt_reg = 0x80b8,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.hwcg_reg = 0x80b8,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x80b8,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvs0_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_mvs0_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs0c_clk = {
-+	.halt_reg = 0x8064,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8064,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvs0c_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_mvs0c_div2_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs1_clk = {
-+	.halt_reg = 0x80e0,
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.hwcg_reg = 0x80e0,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x80e0,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvs1_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_mvs1_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs1c_clk = {
-+	.halt_reg = 0x8090,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8090,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvs1c_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_mvs1c_div2_div_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc video_cc_mvs0c_gdsc = {
-+	.gdscr = 0x804c,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x6,
-+	.pd = {
-+		.name = "video_cc_mvs0c_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = RETAIN_FF_ENABLE,
-+};
-+
-+static struct gdsc video_cc_mvs0_gdsc = {
-+	.gdscr = 0x80a4,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x6,
-+	.pd = {
-+		.name = "video_cc_mvs0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &video_cc_mvs0c_gdsc.pd,
-+	.flags = RETAIN_FF_ENABLE | HW_CTRL,
-+};
-+
-+static struct gdsc video_cc_mvs1c_gdsc = {
-+	.gdscr = 0x8078,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x6,
-+	.pd = {
-+		.name = "video_cc_mvs1c_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = RETAIN_FF_ENABLE,
-+};
-+
-+static struct gdsc video_cc_mvs1_gdsc = {
-+	.gdscr = 0x80cc,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x6,
-+	.pd = {
-+		.name = "video_cc_mvs1_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &video_cc_mvs1c_gdsc.pd,
-+	.flags = RETAIN_FF_ENABLE | HW_CTRL,
-+};
-+
-+static struct clk_regmap *video_cc_sm8550_clocks[] = {
-+	[VIDEO_CC_MVS0_CLK] = &video_cc_mvs0_clk.clkr,
-+	[VIDEO_CC_MVS0_CLK_SRC] = &video_cc_mvs0_clk_src.clkr,
-+	[VIDEO_CC_MVS0_DIV_CLK_SRC] = &video_cc_mvs0_div_clk_src.clkr,
-+	[VIDEO_CC_MVS0C_CLK] = &video_cc_mvs0c_clk.clkr,
-+	[VIDEO_CC_MVS0C_DIV2_DIV_CLK_SRC] = &video_cc_mvs0c_div2_div_clk_src.clkr,
-+	[VIDEO_CC_MVS1_CLK] = &video_cc_mvs1_clk.clkr,
-+	[VIDEO_CC_MVS1_CLK_SRC] = &video_cc_mvs1_clk_src.clkr,
-+	[VIDEO_CC_MVS1_DIV_CLK_SRC] = &video_cc_mvs1_div_clk_src.clkr,
-+	[VIDEO_CC_MVS1C_CLK] = &video_cc_mvs1c_clk.clkr,
-+	[VIDEO_CC_MVS1C_DIV2_DIV_CLK_SRC] = &video_cc_mvs1c_div2_div_clk_src.clkr,
-+	[VIDEO_CC_PLL0] = &video_cc_pll0.clkr,
-+	[VIDEO_CC_PLL1] = &video_cc_pll1.clkr,
-+};
-+
-+static struct gdsc *video_cc_sm8550_gdscs[] = {
-+	[VIDEO_CC_MVS0C_GDSC] = &video_cc_mvs0c_gdsc,
-+	[VIDEO_CC_MVS0_GDSC] = &video_cc_mvs0_gdsc,
-+	[VIDEO_CC_MVS1C_GDSC] = &video_cc_mvs1c_gdsc,
-+	[VIDEO_CC_MVS1_GDSC] = &video_cc_mvs1_gdsc,
-+};
-+
-+static const struct qcom_reset_map video_cc_sm8550_resets[] = {
-+	[CVP_VIDEO_CC_INTERFACE_BCR] = { 0x80f0 },
-+	[CVP_VIDEO_CC_MVS0_BCR] = { 0x80a0 },
-+	[CVP_VIDEO_CC_MVS0C_BCR] = { 0x8048 },
-+	[CVP_VIDEO_CC_MVS1_BCR] = { 0x80c8 },
-+	[CVP_VIDEO_CC_MVS1C_BCR] = { 0x8074 },
-+	[VIDEO_CC_MVS0C_CLK_ARES] = { 0x8064, 2 },
-+	[VIDEO_CC_MVS1C_CLK_ARES] = { 0x8090, 2 },
-+};
-+
-+static const struct regmap_config video_cc_sm8550_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0x9f4c,
-+	.fast_io = true,
-+};
-+
-+static struct qcom_cc_desc video_cc_sm8550_desc = {
-+	.config = &video_cc_sm8550_regmap_config,
-+	.clks = video_cc_sm8550_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sm8550_clocks),
-+	.resets = video_cc_sm8550_resets,
-+	.num_resets = ARRAY_SIZE(video_cc_sm8550_resets),
-+	.gdscs = video_cc_sm8550_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sm8550_gdscs),
-+};
-+
-+static const struct of_device_id video_cc_sm8550_match_table[] = {
-+	{ .compatible = "qcom,sm8550-videocc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sm8550_match_table);
-+
-+static int video_cc_sm8550_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	int ret;
-+
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sm8550_desc);
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put(&pdev->dev);
-+		return PTR_ERR(regmap);
-+	}
-+
-+	clk_lucid_ole_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
-+	clk_lucid_ole_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
-+
-+	/*
-+	 * Keep clocks always enabled:
-+	 *	video_cc_ahb_clk
-+	 *	video_cc_sleep_clk
-+	 *	video_cc_xo_clk
-+	 */
-+	regmap_update_bits(regmap, 0x80f4, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, 0x8140, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, 0x8124, BIT(0), BIT(0));
-+
-+	ret = qcom_cc_really_probe(pdev, &video_cc_sm8550_desc, regmap);
-+
-+	pm_runtime_put(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static struct platform_driver video_cc_sm8550_driver = {
-+	.probe = video_cc_sm8550_probe,
-+	.driver = {
-+		.name = "video_cc-sm8550",
-+		.of_match_table = video_cc_sm8550_match_table,
-+	},
-+};
-+
-+static int __init video_cc_sm8550_init(void)
-+{
-+	return platform_driver_register(&video_cc_sm8550_driver);
-+}
-+subsys_initcall(video_cc_sm8550_init);
-+
-+static void __exit video_cc_sm8550_exit(void)
-+{
-+	platform_driver_unregister(&video_cc_sm8550_driver);
-+}
-+module_exit(video_cc_sm8550_exit);
-+
-+MODULE_DESCRIPTION("QTI VIDEO_CC SM8550 Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.25.1
+On 3/7/2023 7:56 PM, Rob Herring wrote:
+> On Tue, Mar 07, 2023 at 10:11:27AM +0530, Manikanta Mylavarapu wrote:
+>> Add new binding document for multipd model remoteproc.
+>> IPQ5018, IPQ9574 follows multipd model.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   .../bindings/remoteproc/qcom,multipd-pil.yaml | 282 ++++++++++++++++++
+>>   1 file changed, 282 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>> new file mode 100644
+>> index 000000000000..b788607f5abd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,multipd-pil.yaml
+>> @@ -0,0 +1,282 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/remoteproc/qcom,multipd-pil.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Multipd Secure Peripheral Image Loader
+>> +
+>> +maintainers:
+>> +  - Bjorn Andersson <andersson@kernel.org>
+>> +  - Mathieu Poirier <mathieu.poirier@linaro.org>
+>> +
+>> +description:
+>> +  Multipd Peripheral Image Loader loads firmware and boots Q6 pd, WCSS pd
+>> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC.
+> 
+> What is PD? I don't see it defined anywhere.
+> 
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - qcom,ipq5018-q6-mpd
+>> +      - qcom,ipq9574-q6-mpd
+>> +
+>> +  '#address-cells': true
+> 
+> Need to define the size.
+> 
+>> +
+>> +  '#size-cells': true
+> 
+> ditto
+> 
+>> +
+>> +  'ranges': true
+> 
+> Don't need quotes
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupts-extended:
+> 
+> Just 'interrupts'. Both forms are always supported.
+> 
+>> +    items:
+>> +      - description: Watchdog interrupt
+>> +      - description: Fatal interrupt
+>> +      - description: Ready interrupt
+>> +      - description: Handover interrupt
+>> +      - description: Stop acknowledge interrupt
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: wdog
+>> +      - const: fatal
+>> +      - const: ready
+>> +      - const: handover
+>> +      - const: stop-ack
+>> +
+>> +  clocks:
+>> +    minItems: 25
+>> +    maxItems: 25
+> 
+> You need to list out what the clocks are.
+> 
+>> +
+>> +  clock-names:
+>> +    minItems: 25
+>> +    maxItems: 25
+>> +
+>> +  assigned-clocks:
+> 
+> You can drop this. Implicitly supported.
+>
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling.
 
+>> +    minItems: 13
+>> +    maxItems: 13
+>> +
+>> +  assigned-clock-rates:
+>> +    minItems: 13
+>> +    maxItems: 13
+>> +
+>> +  qcom,smem-states:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> 
+> I believe this already has a type. It should be defined in a common
+> schema if not already and then included in this schema.
+> 
+>> +    description: States used by the AP to signal the remoteprocessor
+>> +    items:
+>> +      - description: Shutdown Q6
+>> +      - description: Stop Q6
+>> +
+>> +  qcom,smem-state-names:
+>> +    description:
+>> +      Names of the states used by the AP to signal the remoteprocessor
+>> +    items:
+>> +      - const: shutdown
+>> +      - const: stop
+>> +
+>> +  memory-region:
+>> +    items:
+>> +      - description: Q6 pd reserved region
+>> +
+>> +  glink-edge:
+>> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+>> +    description:
+>> +      Qualcomm G-Link subnode which represents communication edge, channels
+>> +      and devices related to the Modem.
+>> +
+>> +patternProperties:
+>> +  "^remoteproc_pd1|remoteproc_pd2|remoteproc_pd3":
+>> +    type: object
+>> +    description:
+>> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
+>> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
+>> +      device node.
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        enum:
+>> +          - "qcom,ipq5018-wcss-ahb-mpd"
+> 
+> Don't need quotes.
+> 
+>> +          - "qcom,ipq9574-wcss-ahb-mpd"
+>> +          - "qcom,ipq5018-wcss-pcie-mpd"
+>> +
+>> +      interrupts-extended:
+> 
+> Just interrupts
+> 
+>> +        items:
+>> +          - description: Fatal interrupt
+>> +          - description: Ready interrupt
+>> +          - description: Spawn acknowledge interrupt
+>> +          - description: Stop acknowledge interrupt
+>> +
+>> +      interrupt-names:
+>> +        items:
+>> +          - const: fatal
+>> +          - const: ready
+>> +          - const: spawn-ack
+>> +          - const: stop-ack
+>> +
+>> +      qcom,smem-states:
+>> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +        description: States used by the AP to signal the remoteprocessor
+>> +        items:
+>> +          - description: Shutdown WCSS pd
+>> +          - description: Stop WCSS pd
+>> +          - description: Spawn WCSS pd
+>> +
+>> +      qcom,smem-state-names:
+>> +        description:
+>> +          Names of the states used by the AP to signal the remoteprocessor
+>> +        items:
+>> +          - const: shutdown
+>> +          - const: stop
+>> +          - const: spawn
+>> +
+>> +    required:
+>> +      - compatible
+>> +
+>> +    additionalProperties: false
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts-extended
+>> +  - interrupt-names
+>> +  - qcom,smem-states
+>> +  - qcom,smem-state-names
+>> +  - memory-region
+>> +
+>> +additionalProperties: false
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          enum:
+>> +            - qcom,ipq9574-q6-mpd
+>> +    then:
+>> +      properties:
+>> +        assigned-clocks:
+> 
+> Don't need to define assigned-clocks
+> 
+Clocks in multipd architecture will be handled by QDSP6 firmware.
+So i am going to remove clock handling.
+>> +          items:
+>> +            - description: Phandle, clock specifier of GCC_ANOC_WCSS_AXI_M_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_AHB_S_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_ECAHB_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_ACMT_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_AXI_M_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AXIM_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AXIM2_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AHB_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6_AHB_S_CLK
+>> +            - description: Phandle, clock specifier of GCC_Q6SS_BOOT_CLK
+>> +            - description: Phandle, clock specifier of GCC_MEM_NOC_Q6_AXI_CLK
+>> +            - description: Phandle, clock specifier of GCC_WCSS_Q6_TBU_CLK
+>> +            - description: Phandle, clock specifier of GCC_SYS_NOC_WCSS_AHB_CLK
+>> +        assigned-clock-rates:
+>> +          items:
+>> +            - description: Must be 266666667 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 266666667 HZ
+>> +            - description: Must be 533000000 HZ
+>> +            - description: Must be 342857143 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 133333333 HZ
+>> +            - description: Must be 342857143 HZ
+>> +            - description: Must be 533000000 HZ
+>> +            - description: Must be 533000000 HZ
+>> +            - description: Must be 133333333 HZ
+>> +
+>> +examples:
+>> +  - |
+>> +        #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +        #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>> +        #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+>> +
+>> +        q6v5_wcss: remoteproc@cd00000 {
+>> +                compatible = "qcom,ipq5018-q6-mpd";
+>> +                #address-cells = <1>;
+>> +                #size-cells = <1>;
+>> +                ranges;
+>> +                reg = <0x0cd00000 0x4040>;
+>> +                interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
+>> +                                <&wcss_smp2p_in 0 0>,
+>> +                                <&wcss_smp2p_in 1 0>,
+>> +                                <&wcss_smp2p_in 2 0>,
+>> +                                <&wcss_smp2p_in 3 0>;
+>> +                interrupt-names = "wdog",
+>> +                                  "fatal",
+>> +                                  "ready",
+>> +                                  "handover",
+>> +                                  "stop-ack";
+>> +
+>> +                qcom,smem-states = <&wcss_smp2p_out 0>,
+>> +                                   <&wcss_smp2p_out 1>;
+>> +                qcom,smem-state-names = "shutdown",
+>> +                                        "stop";
+>> +
+>> +                memory-region = <&q6_region>;
+>> +
+>> +                glink-edge {
+>> +                        interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
+>> +                        label = "rtr";
+>> +                        qcom,remote-pid = <1>;
+>> +                        mboxes = <&apcs_glb 8>;
+>> +                };
+>> +
+>> +                q6_wcss_pd1: remoteproc_pd1 {
+>> +                        compatible = "qcom,ipq5018-wcss-ahb-mpd";
+>> +                        interrupts-extended = <&wcss_smp2p_in 8 0>,
+>> +                                        <&wcss_smp2p_in 9 0>,
+>> +                                        <&wcss_smp2p_in 12 0>,
+>> +                                        <&wcss_smp2p_in 11 0>;
+>> +                        interrupt-names = "fatal",
+>> +                                          "ready",
+>> +                                          "spawn-ack",
+>> +                                          "stop-ack";
+>> +                        qcom,smem-states = <&wcss_smp2p_out 8>,
+>> +                                           <&wcss_smp2p_out 9>,
+>> +                                           <&wcss_smp2p_out 10>;
+>> +                        qcom,smem-state-names = "shutdown",
+>> +                                                "stop",
+>> +                                                "spawn";
+>> +                };
+>> +
+>> +                q6_wcss_pd2: remoteproc_pd2 {
+>> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
+>> +                        interrupts-extended = <&wcss_smp2p_in 16 0>,
+>> +                                        <&wcss_smp2p_in 17 0>,
+>> +                                        <&wcss_smp2p_in 20 0>,
+>> +                                        <&wcss_smp2p_in 19 0>;
+>> +                        interrupt-names = "fatal",
+>> +                                          "ready",
+>> +                                          "spawn-ack",
+>> +                                          "stop-ack";
+>> +
+>> +                        qcom,smem-states = <&wcss_smp2p_out 16>,
+>> +                                           <&wcss_smp2p_out 17>,
+>> +                                           <&wcss_smp2p_out 18>;
+>> +                        qcom,smem-state-names = "shutdown",
+>> +                                                "stop",
+>> +                                                "spawn";
+>> +                        status = "okay";
+> 
+> Don't need status in examples.
+> 
+>> +                };
+>> +
+>> +                q6_wcss_pd3: remoteproc_pd3 {
+>> +                        compatible = "qcom,ipq5018-wcss-pcie-mpd";
+>> +                        interrupts-extended = <&wcss_smp2p_in 24 0>,
+>> +                                        <&wcss_smp2p_in 25 0>,
+>> +                                        <&wcss_smp2p_in 28 0>,
+>> +                                        <&wcss_smp2p_in 27 0>;
+>> +                        interrupt-names = "fatal",
+>> +                                          "ready",
+>> +                                          "spawn-ack",
+>> +                                          "stop-ack";
+>> +
+>> +                        qcom,smem-states = <&wcss_smp2p_out 24>,
+>> +                                           <&wcss_smp2p_out 25>,
+>> +                                           <&wcss_smp2p_out 26>;
+>> +                        qcom,smem-state-names = "shutdown",
+>> +                                                "stop",
+>> +                                                "spawn";
+>> +                        status = "okay";
+>> +                };
+>> +        };
+>> -- 
+>> 2.34.1
+>>
+
+Thanks & Regards,
+Manikanta.
