@@ -2,188 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9046C77B75
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 05:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DBEC77B75
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 05:35:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234638AbjEIF3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 01:29:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48286 "EHLO
+        id S229667AbjEIFfv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 01:35:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233293AbjEIF27 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 01:28:59 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D24D2C7;
-        Mon,  8 May 2023 22:28:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1683610117; x=1715146117;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=N+P7ruCMFEnmOkQ7g7T72yIAucZDvB6nBLPKCGf1wns=;
-  b=fAykelNuG0NH0P73Vbwadje8RjFFa6RO6zDOS4V6VK8FrE+eKjD+cSf5
-   YB5jwwaBAbNHPADlGZMw9cOI5osk1L6LHDoHUYOfWRDJyNJYW7LdR/emO
-   KNAc4+ANW0h5v1Fbfqan+th295DT0tyFUCUg7uBKntwtcZzik/TBW3va+
-   A+1CQPvo1BBAzHQ68ars0DANNI02eYdBsS8ELPYMvHX5dT6S3T42Zk1gO
-   0FANcZgXkjU+WgI+BIZL2LmRr/tVrxzUWpNqeyH05wPxhAWHVYwtB1ql+
-   hyxMRDSQFybvefow0qFCxQjBlNQIq/EXoax+AciEtkr4H/v1hKRbaylV0
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.99,261,1677567600"; 
-   d="scan'208";a="212510231"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 May 2023 22:28:36 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 8 May 2023 22:28:36 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Mon, 8 May 2023 22:28:32 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 5/5] dt-bindings: clocks: at91sam9x5-sckc: convert to yaml
-Date:   Tue, 9 May 2023 08:27:57 +0300
-Message-ID: <20230509052757.539274-6-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230509052757.539274-1-claudiu.beznea@microchip.com>
-References: <20230509052757.539274-1-claudiu.beznea@microchip.com>
+        with ESMTP id S229460AbjEIFfu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 01:35:50 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A868049D6;
+        Mon,  8 May 2023 22:35:49 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3494Gidx015573;
+        Tue, 9 May 2023 05:35:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=Z/BGhvH9Jrj8XvGR8C6AUeOtQEdwRrcS3THsHd+8GP0=;
+ b=beyQ4WiHt109T72pcEuXqejZ2DEvkUFEGpzTN5LI43MMotVskI3ZVprc1fuI0w99mSyC
+ XOf7D0D3FhCYA9a3IeEhDWsd86WKYez28tsDkaouDZY9gkzmLlroKJD8uD2qjKBtvdW9
+ x4uCZQxm65yQJUhWGb+meFtGeJKqtqn4sqO7iYVm+yN6t+T8sYYZU9p7gphfWSWZe4S5
+ MTaUiaYrvfKLM5tc4Af3UzJEBPsYM3/6dPQIDEGYH+506yC8yCov/UH/Wb2MjaM7DeOR
+ akH4xxgzZIbDCHqIJ0pVNMhv7Dyax9yPI+IgNh5n6zUOMzcA2Ns485yQ3cwkZCr5fDLf tQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf781gvtf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 09 May 2023 05:35:15 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3495ZEXV009406
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 9 May 2023 05:35:14 GMT
+Received: from [10.50.33.246] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 8 May 2023
+ 22:35:10 -0700
+Message-ID: <20de1c19-399c-2925-173c-e722922cdefa@quicinc.com>
+Date:   Tue, 9 May 2023 11:05:07 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH 2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
+To:     Luca Weiss <luca@z3ntu.xyz>, Andy Gross <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>
+References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
+ <20230507175335.2321503-2-dmitry.baryshkov@linaro.org>
+ <6529911.lOV4Wx5bFT@z3ntu.xyz>
+Content-Language: en-US
+From:   Rajendra Nayak <quic_rjendra@quicinc.com>
+In-Reply-To: <6529911.lOV4Wx5bFT@z3ntu.xyz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WqLYlBCVekDHM4BPTxpN1zb0CL6B3uPi
+X-Proofpoint-ORIG-GUID: WqLYlBCVekDHM4BPTxpN1zb0CL6B3uPi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-09_02,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ suspectscore=0 clxscore=1011 mlxlogscore=727 malwarescore=0 mlxscore=0
+ impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305090041
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Atmel slow clock controller documentation to yaml.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/clock/at91-clock.txt  | 30 --------
- .../bindings/clock/atmel,at91sam9x5-sckc.yaml | 70 +++++++++++++++++++
- 2 files changed, 70 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/at91-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-deleted file mode 100644
-index 57394785d3b0..000000000000
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--Device Tree Clock bindings for arch-at91
--
--This binding uses the common clock binding[1].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Slow Clock controller:
--
--Required properties:
--- compatible : shall be one of the following:
--	"atmel,at91sam9x5-sckc",
--	"atmel,sama5d3-sckc",
--	"atmel,sama5d4-sckc" or
--	"microchip,sam9x60-sckc":
--		at91 SCKC (Slow Clock Controller)
--- #clock-cells : shall be 1 for "microchip,sam9x60-sckc" otherwise shall be 0.
--- clocks : shall be the input parent clock phandle for the clock.
--
--Optional properties:
--- atmel,osc-bypass : boolean property. Set this when a clock signal is directly
--  provided on XIN.
--
--For example:
--	sckc@fffffe50 {
--		compatible = "atmel,at91sam9x5-sckc";
--		reg = <0xfffffe50 0x4>;
--		clocks = <&slow_xtal>;
--		#clock-cells = <0>;
--	};
--
-diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
-new file mode 100644
-index 000000000000..7be29877e6d2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/atmel,at91sam9x5-sckc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel Slow Clock Controller (SCKC)
-+
-+maintainers:
-+  - Claudiu Beznea <claudiu.beznea@microchip.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - atmel,at91sam9x5-sckc
-+          - atmel,sama5d3-sckc
-+          - atmel,sama5d4-sckc
-+          - microchip,sam9x60-sckc
-+      - items:
-+          - const: microchip,sama7g5-sckc
-+          - const: microchip,sam9x60-sckc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    enum: [0, 1]
-+
-+  atmel,osc-bypass:
-+    type: boolean
-+    description: set when a clock signal is directly provided on XIN
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#clock-cells"
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - microchip,sam9x60-sckc
-+    then:
-+      properties:
-+        "#clock-cells":
-+          const: 1
-+    else:
-+      properties:
-+        "#clock-cells":
-+          const: 0
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clk32k: clock-controller@fffffe50 {
-+        compatible = "microchip,sam9x60-sckc";
-+        reg = <0xfffffe50 0x4>;
-+        clocks = <&slow_xtal>;
-+        #clock-cells = <1>;
-+    };
-+
-+...
--- 
-2.34.1
+On 5/9/2023 2:17 AM, Luca Weiss wrote:
+> On Sonntag, 7. Mai 2023 19:53:35 CEST Dmitry Baryshkov wrote:
+>> Using PWRSTS_RET on msm8974's MDSS_GDSC causes display to stop working.
+>> The gdsc doesn't fully come out of retention mode. Change it's pwrsts
+>> flags to PWRSTS_OFF_ON.
+> 
+> +CC Rajendra & Manivannan
+> 
+> Following the mails at [0] this was the suggested fix, which I haven't
+> made into a patch myself yet.
+> 
+> With this (and without the revert of the linked patch) panel init is fine
+> again on FP2. Thanks!
+> 
+> [0] https://lore.kernel.org/linux-arm-msm/5897497.lOV4Wx5bFT@g550jk/
+> 
+> Tested-by: Luca Weiss <luca@z3ntu.xyz>
 
+Reviewed-by: Rajendra Nayak <quic_rjendra@quicinc.com>
+
+> 
+>>
+>> Fixes: d399723950c4 ("clk: qcom: gdsc: Fix the handling of PWRSTS_RET
+>> support") Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   drivers/clk/qcom/mmcc-msm8974.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c
+>> b/drivers/clk/qcom/mmcc-msm8974.c index aa29c79fcd55..277ef0065aae 100644
+>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+>> @@ -2401,7 +2401,7 @@ static struct gdsc mdss_gdsc = {
+>>   	.pd = {
+>>   		.name = "mdss",
+>>   	},
+>> -	.pwrsts = PWRSTS_RET_ON,
+>> +	.pwrsts = PWRSTS_OFF_ON,
+>>   };
+>>
+>>   static struct gdsc camss_jpeg_gdsc = {
+> 
+> 
+> 
+> 
