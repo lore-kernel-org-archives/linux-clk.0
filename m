@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A721BC7EE22
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 18:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD660C7EE33
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 18:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234622AbjEISJq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 14:09:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36402 "EHLO
+        id S234954AbjEISJt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 14:09:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229527AbjEISJo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 14:09:44 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C3D10FE
-        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 11:09:43 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-50bd37ca954so61520356a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 May 2023 11:09:43 -0700 (PDT)
+        with ESMTP id S234929AbjEISJr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 14:09:47 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A23749F8
+        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 11:09:45 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-50b8d2eed3dso9644066a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 May 2023 11:09:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683655782; x=1686247782;
+        d=linaro.org; s=google; t=1683655784; x=1686247784;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P531oV9/x4YHyyJQpy3FZFac9rbq6io6m/JeWQjftLM=;
-        b=PzuJq0GFfFoj6RYV71gN0FpO0c7kgBNVclZp3ScvSdrwCgPvIvtiitjlQPUWYijCzT
-         lgBdMEDYmo16sorhdRCZZ2BzE9NTB6YkYxizyhW+4l4IToWnsjGCUcqoSwstw4QUuz1I
-         xDa/2rT4imCNx4inRSVeLRv0OHxZduyxfjcMCltpuEu7L5mbtkS7LzDdl27CCybJpBAw
-         u+GW6TUZ2NxRNiXYs6juxBtzEnhBI4097rg6luDHEgMDzsCkvOzqj/tEp0f4jk0WU8v3
-         +yV/GyHj6smfz9rDL9C0ni0qAjQK/+JArtvwNPvSbL7p95MOF7wXb8+yCAVTwEujSZTt
-         TkNg==
+        bh=zs9IksAZdPUWZueIWev0YHwP3SfwTJngjTY4HAluqu0=;
+        b=k3tXANjes4g05zH+EiJsegWVxlkJzp41oNY3t1dshZB/kkJLq7LyekAftEzAadwf3U
+         10Xc91NiUZEeq+UdneApZrEHyTkl18baPlYBxM/jJeEzJTpktNxhLwWB8UP1qMZEHRPP
+         HxZ9j5syMXIa5W2CbsnzlM1ZWiauPeJOXuaDRRlY/2ZAjQZtsUVKpNWe9Lt9owhhEF5c
+         dpwlWcc7SNI1TSBZMLrOf6Z0ZsQIdhhkXzypjItx/lsFs4Sn5+HRI7IQkvdtCLTBPZnq
+         aq18PWOcv/9gofTZDflgIF2QuHx4juSZoxnRcJYpN0IqRzVl9KB/HAParfVePmCfOVAt
+         DiSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683655782; x=1686247782;
+        d=1e100.net; s=20221208; t=1683655784; x=1686247784;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P531oV9/x4YHyyJQpy3FZFac9rbq6io6m/JeWQjftLM=;
-        b=fOZHQeVgG09DDD/D4SjL26YJ7sL6fHpaNJNgp/ifYdbDWagMOK3JVHgrWY5iNuaEso
-         mYvhp9NMumODinoxyhkG6RCzcXEeEfax7VHoN7ODBLbMHxavQiApe9B+Ms7BEvUWCe1V
-         lCo8LwnTTMnuuawjQxoMv0HFY5cVSJnpIjVqdpT4nPOGK/H0+p5Rc8yBZwPVUIJogOPA
-         hRUUD3zTnWvJxrZXxP89MTd94Oashu9qHJWi2HDatXz6JzwlInwVJ/uBPJo5ecRaOSIw
-         IDqeUCoRp7K/KMQMeyLJ6N99/oAORYDOrIDMILVK8YCrE2ssZ3cr+GXw8TmSNHxunMBX
-         JtaA==
-X-Gm-Message-State: AC+VfDwx5/G8Gtfs5R0gJDmJOHSPXaljuvOVu3YpCT+QIWhkCyfnpFYw
-        U9p+SIDRnJ1SffXL0I67IM+OXg==
-X-Google-Smtp-Source: ACHHUZ6Z2hWW4kJo4XA6wPEBn0RJsE0vvL841HD+tBBP3RwHP6qfpE0ZE/ZwoCyHJIplknssHD1coQ==
-X-Received: by 2002:a05:6402:5202:b0:506:bd27:a2f0 with SMTP id s2-20020a056402520200b00506bd27a2f0mr13339691edd.15.1683655781945;
-        Tue, 09 May 2023 11:09:41 -0700 (PDT)
+        bh=zs9IksAZdPUWZueIWev0YHwP3SfwTJngjTY4HAluqu0=;
+        b=KBBugUk2fWzI4j4rIjF7gm0FQ1u6KmhzPcfQQRYWtowCWCCoSuwmmyg5iKsY2bpHMl
+         cS9NK1LZLZY8HZXQ7Q/VPP8RGar9Chz3iCiK/PctfwNxLcHJjUucNM+i5mZY0G11/l9+
+         Xle7EreGKQxyGMtsuBonSdHJCYivuezVKWHgo3BvVTc03IChaqZAE28DCYWz1/loBG0d
+         FIhk+u1fMJEfHemtXNNYrNMDbZ6PXpkhKC2xAnTdvP69vV99KatmAuOt7GgFGB2q37r6
+         xEeArAFcW5lCogI3VgP+HkHSCA2hfYBEYZP6DzheN32arR5Y/AOOoNdDvJMby+/OKhrI
+         WdtA==
+X-Gm-Message-State: AC+VfDzesT47KZZnuwYFnMj0wbX2s322VS+BVbUThOLdzJHjWUn6fKu1
+        WoZXv0D199ZND+n9Gaw3k9IH9Q==
+X-Google-Smtp-Source: ACHHUZ5e5xBUZoC73JkHOAuYZol8+WzHPQzUCswmjDbXMuKS2byDzPvO1tY0/0dKFOjnVbNh6oDCWg==
+X-Received: by 2002:aa7:ccce:0:b0:50b:c085:1991 with SMTP id y14-20020aa7ccce000000b0050bc0851991mr11920150edt.19.1683655783875;
+        Tue, 09 May 2023 11:09:43 -0700 (PDT)
 Received: from krzk-bin.. ([2a02:810d:15c0:828:d0d5:7818:2f46:5e76])
-        by smtp.gmail.com with ESMTPSA id dy28-20020a05640231fc00b0050d8b5757d1sm1015286edb.54.2023.05.09.11.09.40
+        by smtp.gmail.com with ESMTPSA id dy28-20020a05640231fc00b0050d8b5757d1sm1015286edb.54.2023.05.09.11.09.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 11:09:41 -0700 (PDT)
+        Tue, 09 May 2023 11:09:43 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Artur Weber <aweber.kernel@gmail.com>
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -72,12 +72,12 @@ Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
         linux-phy@lists.infradead.org,
         ~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: (subset) [PATCH v3 02/13] dt-bindings: clock: add Exynos4212 clock compatible
-Date:   Tue,  9 May 2023 20:09:29 +0200
-Message-Id: <168365575564.242810.8233098910658144453.b4-ty@linaro.org>
+Subject: Re: (subset) [PATCH v3 03/13] ARM: exynos: Re-introduce Exynos4212 support
+Date:   Tue,  9 May 2023 20:09:30 +0200
+Message-Id: <168365575564.242810.13469552889679829335.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230501195525.6268-3-aweber.kernel@gmail.com>
-References: <20230501195525.6268-1-aweber.kernel@gmail.com> <20230501195525.6268-3-aweber.kernel@gmail.com>
+In-Reply-To: <20230501195525.6268-4-aweber.kernel@gmail.com>
+References: <20230501195525.6268-1-aweber.kernel@gmail.com> <20230501195525.6268-4-aweber.kernel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -86,17 +86,20 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Mon, 01 May 2023 21:55:14 +0200, Artur Weber wrote:
+On Mon, 01 May 2023 21:55:15 +0200, Artur Weber wrote:
 > Support for the Exynos4212 SoC was originally dropped as there were
 > no boards using it. We will be adding a device that uses it, so add
-> back the relevant compatible.
+> back the relevant code.
+> 
+> This reverts commit 9e43eca3c87476f75680f472ff3ebcd85f357b86.
 > 
 > 
+> [...]
 
 Applied, thanks!
 
-[02/13] dt-bindings: clock: add Exynos4212 clock compatible
-        https://git.kernel.org/krzk/linux/c/5b40732af063c3fa2085b247129f065276c4947c
+[03/13] ARM: exynos: Re-introduce Exynos4212 support
+        https://git.kernel.org/krzk/linux/c/4e486a650162a20e5c3c7987715f8297c84c85f4
 
 Best regards,
 -- 
