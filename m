@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD156C7EE30
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA9FC7EE24
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235537AbjEIVQz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 17:16:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34224 "EHLO
+        id S234919AbjEIVRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 17:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234267AbjEIVQw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:16:52 -0400
+        with ESMTP id S235574AbjEIVRe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:17:34 -0400
 Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0568F30EE;
-        Tue,  9 May 2023 14:16:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E0655A2;
+        Tue,  9 May 2023 14:17:20 -0700 (PDT)
 Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 17CC1CED2D;
-        Tue,  9 May 2023 21:16:49 +0000 (UTC)
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 6C415CED2A;
+        Tue,  9 May 2023 21:16:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1683667009; bh=9R6SRvAGjxwi8/vkLzlzpi22W4hAaJIg2Z7jYqDUgMM=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc;
-        b=cS2x4pL1Y8Euyv1qBu++8aFNleQrxUtYNqxI+RllW08ZCyKEeyXifp612yVsM2Oqu
-         oxWU+msVpQZkVIfUR2lCjgSqEMPysj4Sfikis2ZozEVv90whjW5Ge3DFabM5aRANQ4
-         4eJWvY5sGUr4b+pjADva8LwesFTxCCLJKhAX8BbA=
+        t=1683667008; bh=Dd2WH20nE9Cn1fgXE2cnZpLj6u3pya7fQbeUQoj+SfI=;
+        h=From:Subject:Date:To:Cc;
+        b=lOpNq6XYafpR/MdOnyEJb70lm7LnbUPGaI/PiAOiVwrkHkIlpIuZjIW+OPRj9LYRQ
+         KJDe+Q6r2hZ6mqiBiC67YK40hAbcrBw6PNkKudgmagKo1UhpMKiwZV19oZLfMBmoch
+         mAkCRfaBOKqI8fbKKimROdZGUSibRdBaIqJgietQ=
 From:   Luca Weiss <luca@z3ntu.xyz>
-Date:   Tue, 09 May 2023 23:16:36 +0200
-Subject: [PATCH 2/3] dt-bindings: clock: qcom,mmcc: define
- clocks/clock-names for MSM8226
+Subject: [PATCH 0/3] Provide parent clocks to msm8226 mmcc
+Date:   Tue, 09 May 2023 23:16:34 +0200
+Message-Id: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230509-msm8226-mmcc-parents-v1-2-83a2dfc986ab@z3ntu.xyz>
-References: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
-In-Reply-To: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
+X-B4-Tracking: v=1; b=H4sIADK4WmQC/z3Oyw6CMBCF4Vchs3ZIrYUUX4W4KGWEWbTUjtcQ3
+ t3iwuWfnC85KwhlJoFztUKmJwsvscTxUIGfXZwIeSwNWumTalSHQYLVusUQvMfkMsW7oDbGdqa
+ z1IwOCh2cEA7ZRT/v+OaX8IdtbeoPvjjhlB77OGW68vv3ob9s2xdJa9wokwAAAA==
 To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -48,88 +48,44 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1800; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=9R6SRvAGjxwi8/vkLzlzpi22W4hAaJIg2Z7jYqDUgMM=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkWrg+uif8+jTU5wl9DJ5FMzUmRYuPndkpfWHFt
- NiMI50zSkyJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZFq4PgAKCRBy2EO4nU3X
- VkU7D/4jngTUQhY5BeZ5sP31TJfQjU7Nk+96d/wKqr9W8ah+CKQfbZWlGiVIAtXSF3goT+KSqs+
- 3K3v9l4WO3Amo8YEDNaHp6wyz/9F20Uupx3tfgJaHqlHBO/R1fYWnjOA8B/9nIOd8e7xn87Upzf
- fjofGrLtAavDDpOAo7W97+txlyMZsbQiznj/Ddd29u2CcUnIEDleN83C2XwdX+/4/qt2awlOPv/
- OG5wBr/neJLuUUBFNrMb5LTfQICotR0IkCWRmyZBJyuionkr3AiNvPbv8WtOB42526diTdOjaaZ
- JvxbuC6YYpJR7067xUwA2hiVn5oiR8e+Uk3PSmJjycltp2AyXmsvyTlKQZRtjiYTK86j8jWWH0k
- 3UDWsv2HF7PsTuPIsYsO8/SvYdKgvoPuHuUK4kIHU7srw4u2slr0/+Fono5zyCbyPefJF+C3qy9
- QX7tpd8kiXaF7das0h9jvrJwKluEE44Yx4Si6neyW3gGViw2CgIxzw2QT5BnHtp3r426ztL8PlP
- cThmYhEr/uJ/MRQnuRsVtUDXQtLulUD2dkd6WbI9wgksAa00hgd8rrv+n3dQncE2clyIt65GhaR
- pQ3D+jZ3dlGb9/9/xep0h1uRHIbheakG3XItfnsOv7PgLkr5Je67B6rOJdGaCFWIYGNs1SPfklR
- yJtgcI6Hy0dGCbw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=772; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=Dd2WH20nE9Cn1fgXE2cnZpLj6u3pya7fQbeUQoj+SfI=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkWrg6XuAMsP/aBDMGI64O47DqT3NboGZkfPi9r
+ oQoEIZeBPKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZFq4OgAKCRBy2EO4nU3X
+ Vnm5D/0RqlJmfmZNPpXLXRauQUuEJHxSu3Kg6Uxc3AGbIdHG39ZhBLEWqO90wHdmDRNKDso29Xh
+ rA3PaDwg3H8siDm1VZmm8jnJQkaxSGtqCHpQ30HcOpFE4fJfv6nxPO/kZSh1sZNOTue8AxqW2NR
+ xDkKIbGbs6PjQH47GJYSH+b8h4x3NnsG1OOoICKSEVHRxSbbmAYjj5shtjlhZZ801p17b8f40+e
+ iQjTQkSDYBNJrbXzJBjw9XyroZkxpehx5b6qoSVewzwiF5aHq+KeRfX8Gb0YN9Hz5JdU8xNljcN
+ DKsTom5o9gxTq0POG30rmuk2928zJ5EfPA8wI3CESEAE9Y4BYfEbubvKG6NfYAl9vzXJpN5xNQU
+ 9zSFJrI2fugkC2/ExpVJ5PtGf4UXQtiYTYTjipjzX+cmA3tIsDs9OLECw5sdrbW4yPcV2r15oFt
+ Jlxffq+oxZ+dp8Nkqj+Fkxm2UF3dgIV+taO2f29Tpn4VLitEsnQrd500zqEo/Om2S+BcOHdg9zk
+ RcpB/+NBmQI9aSZLyTRbFyCkr3CP6w0G38IjOIkk5lN130tTxpsXehwH2q6eev9dOuu/wOzDkcn
+ uWt0LDNYO3R+GCvmtGUWJi+T4stncCTRPjhQn9/RtqnNMUnhZnG0DqEOrb+J9xBcJR+9wc/QiEA
+ jP936NZoYc/dU4w==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Define clock/clock-names properties of the MMCC device node to be used
-on MSM8226 platform.
+Replace most usages of &xo_board with the &rpmcc variant, and also
+provide the necessary parent clocks to the mmcc driver.
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
+Luca Weiss (3):
+      ARM: dts: qcom: msm8226: Use XO from rpmcc where possible
+      dt-bindings: clock: qcom,mmcc: define clocks/clock-names for MSM8226
+      ARM: dts: qcom: msm8226: Provide clocks to mmcc node
+
  .../devicetree/bindings/clock/qcom,mmcc.yaml       | 32 ++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/qcom-msm8226.dtsi                | 26 ++++++++++++++----
+ 2 files changed, 51 insertions(+), 7 deletions(-)
+---
+base-commit: f46950f720460ef8b8c5ca68e14a529dd1705832
+change-id: 20230509-msm8226-mmcc-parents-24489498e5da
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-index acf0c923c24f..422f5776a771 100644
---- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-@@ -31,11 +31,11 @@ properties:
-       - qcom,mmcc-sdm660
- 
-   clocks:
--    minItems: 8
-+    minItems: 7
-     maxItems: 13
- 
-   clock-names:
--    minItems: 8
-+    minItems: 7
-     maxItems: 13
- 
-   '#clock-cells':
-@@ -99,6 +99,34 @@ allOf:
-             - const: dsi2pllbyte
-             - const: hdmipll
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,mmcc-msm8226
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Board XO source
-+            - description: MMSS GPLL0 voted clock
-+            - description: GPLL0 voted clock
-+            - description: GPLL1 voted clock
-+            - description: GFX3D clock source
-+            - description: DSI phy instance 0 dsi clock
-+            - description: DSI phy instance 0 byte clock
-+
-+        clock-names:
-+          items:
-+            - const: xo
-+            - const: mmss_gpll0_vote
-+            - const: gpll0_vote
-+            - const: gpll1_vote
-+            - const: gfx3d_clk_src
-+            - const: dsi0pll
-+            - const: dsi0pllbyte
-+
-   - if:
-       properties:
-         compatible:
-
+Best regards,
 -- 
-2.40.1
+Luca Weiss <luca@z3ntu.xyz>
 
