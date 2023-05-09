@@ -2,90 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA9FC7EE24
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B438C77B7C
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:19:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234919AbjEIVRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 17:17:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35046 "EHLO
+        id S235691AbjEIVTt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 17:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235574AbjEIVRe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:17:34 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E0655A2;
-        Tue,  9 May 2023 14:17:20 -0700 (PDT)
-Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 6C415CED2A;
-        Tue,  9 May 2023 21:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1683667008; bh=Dd2WH20nE9Cn1fgXE2cnZpLj6u3pya7fQbeUQoj+SfI=;
-        h=From:Subject:Date:To:Cc;
-        b=lOpNq6XYafpR/MdOnyEJb70lm7LnbUPGaI/PiAOiVwrkHkIlpIuZjIW+OPRj9LYRQ
-         KJDe+Q6r2hZ6mqiBiC67YK40hAbcrBw6PNkKudgmagKo1UhpMKiwZV19oZLfMBmoch
-         mAkCRfaBOKqI8fbKKimROdZGUSibRdBaIqJgietQ=
-From:   Luca Weiss <luca@z3ntu.xyz>
-Subject: [PATCH 0/3] Provide parent clocks to msm8226 mmcc
-Date:   Tue, 09 May 2023 23:16:34 +0200
-Message-Id: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
+        with ESMTP id S235683AbjEIVTq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:19:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F5F5279;
+        Tue,  9 May 2023 14:19:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D23BB6366B;
+        Tue,  9 May 2023 21:19:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB339C433AC;
+        Tue,  9 May 2023 21:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683667183;
+        bh=vPKYro4QLlskCwG8Mem35oe25rxm3WPf7BbJoyHZhbg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qkjirZXOF2jPM4fSG84spB1EAy6y6XpHALJ2Oe+3df8H6nrT8LYUjJRHHme8Egmdr
+         uBNOgp+/Xj+5oW2PMQOEB3AyxEJA2NPo/r+aAsMb+ioYtRjKoDVpYY6Id5WtArt+Rn
+         lcPAddDXxan44kyeqlQ3gMBMjzm0YbKLHFRHGlf+zYCcgfxOUK3FcvWatkAAvmoBg5
+         OvoWbPO53BIQrFlqq1XDFZ4ZRVzte0RJ2bsqEY0ivm0UqiZZt6r+Ek59AaMvASeuNA
+         ur2EDbUGXyOBb1p+cF/TJOisKULPzLSFfDcSQleh0l/AoTV1VShwSkjl+ins+xcF0t
+         EoBdyvs3Z3CtA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, pdeschrijver@nvidia.com,
+        pgaikwad@nvidia.com, mturquette@baylibre.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.3 10/18] clk: tegra20: fix gcc-7 constant overflow warning
+Date:   Tue,  9 May 2023 17:19:18 -0400
+Message-Id: <20230509211928.21010-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230509211928.21010-1-sashal@kernel.org>
+References: <20230509211928.21010-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADK4WmQC/z3Oyw6CMBCF4Vchs3ZIrYUUX4W4KGWEWbTUjtcQ3
- t3iwuWfnC85KwhlJoFztUKmJwsvscTxUIGfXZwIeSwNWumTalSHQYLVusUQvMfkMsW7oDbGdqa
- z1IwOCh2cEA7ZRT/v+OaX8IdtbeoPvjjhlB77OGW68vv3ob9s2xdJa9wokwAAAA==
-To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Luca Weiss <luca@z3ntu.xyz>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=772; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=Dd2WH20nE9Cn1fgXE2cnZpLj6u3pya7fQbeUQoj+SfI=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkWrg6XuAMsP/aBDMGI64O47DqT3NboGZkfPi9r
- oQoEIZeBPKJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZFq4OgAKCRBy2EO4nU3X
- Vnm5D/0RqlJmfmZNPpXLXRauQUuEJHxSu3Kg6Uxc3AGbIdHG39ZhBLEWqO90wHdmDRNKDso29Xh
- rA3PaDwg3H8siDm1VZmm8jnJQkaxSGtqCHpQ30HcOpFE4fJfv6nxPO/kZSh1sZNOTue8AxqW2NR
- xDkKIbGbs6PjQH47GJYSH+b8h4x3NnsG1OOoICKSEVHRxSbbmAYjj5shtjlhZZ801p17b8f40+e
- iQjTQkSDYBNJrbXzJBjw9XyroZkxpehx5b6qoSVewzwiF5aHq+KeRfX8Gb0YN9Hz5JdU8xNljcN
- DKsTom5o9gxTq0POG30rmuk2928zJ5EfPA8wI3CESEAE9Y4BYfEbubvKG6NfYAl9vzXJpN5xNQU
- 9zSFJrI2fugkC2/ExpVJ5PtGf4UXQtiYTYTjipjzX+cmA3tIsDs9OLECw5sdrbW4yPcV2r15oFt
- Jlxffq+oxZ+dp8Nkqj+Fkxm2UF3dgIV+taO2f29Tpn4VLitEsnQrd500zqEo/Om2S+BcOHdg9zk
- RcpB/+NBmQI9aSZLyTRbFyCkr3CP6w0G38IjOIkk5lN130tTxpsXehwH2q6eev9dOuu/wOzDkcn
- uWt0LDNYO3R+GCvmtGUWJi+T4stncCTRPjhQn9/RtqnNMUnhZnG0DqEOrb+J9xBcJR+9wc/QiEA
- jP936NZoYc/dU4w==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Replace most usages of &xo_board with the &rpmcc variant, and also
-provide the necessary parent clocks to the mmcc driver.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+[ Upstream commit b4a2adbf3586efa12fe78b9dec047423e01f3010 ]
+
+Older gcc versions get confused by comparing a u32 value to a negative
+constant in a switch()/case block:
+
+drivers/clk/tegra/clk-tegra20.c: In function 'tegra20_clk_measure_input_freq':
+drivers/clk/tegra/clk-tegra20.c:581:2: error: case label does not reduce to an integer constant
+  case OSC_CTRL_OSC_FREQ_12MHZ:
+  ^~~~
+drivers/clk/tegra/clk-tegra20.c:593:2: error: case label does not reduce to an integer constant
+  case OSC_CTRL_OSC_FREQ_26MHZ:
+
+Make the constants unsigned instead.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20230227085914.2560984-1-arnd@kernel.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Luca Weiss (3):
-      ARM: dts: qcom: msm8226: Use XO from rpmcc where possible
-      dt-bindings: clock: qcom,mmcc: define clocks/clock-names for MSM8226
-      ARM: dts: qcom: msm8226: Provide clocks to mmcc node
+ drivers/clk/tegra/clk-tegra20.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
- .../devicetree/bindings/clock/qcom,mmcc.yaml       | 32 ++++++++++++++++++++--
- arch/arm/boot/dts/qcom-msm8226.dtsi                | 26 ++++++++++++++----
- 2 files changed, 51 insertions(+), 7 deletions(-)
----
-base-commit: f46950f720460ef8b8c5ca68e14a529dd1705832
-change-id: 20230509-msm8226-mmcc-parents-24489498e5da
-
-Best regards,
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index 422d782475532..dcacc5064d339 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -21,24 +21,24 @@
+ #define MISC_CLK_ENB 0x48
+ 
+ #define OSC_CTRL 0x50
+-#define OSC_CTRL_OSC_FREQ_MASK (3<<30)
+-#define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
+-#define OSC_CTRL_OSC_FREQ_19_2MHZ (1<<30)
+-#define OSC_CTRL_OSC_FREQ_12MHZ (2<<30)
+-#define OSC_CTRL_OSC_FREQ_26MHZ (3<<30)
+-#define OSC_CTRL_MASK (0x3f2 | OSC_CTRL_OSC_FREQ_MASK)
+-
+-#define OSC_CTRL_PLL_REF_DIV_MASK (3<<28)
+-#define OSC_CTRL_PLL_REF_DIV_1		(0<<28)
+-#define OSC_CTRL_PLL_REF_DIV_2		(1<<28)
+-#define OSC_CTRL_PLL_REF_DIV_4		(2<<28)
++#define OSC_CTRL_OSC_FREQ_MASK (3u<<30)
++#define OSC_CTRL_OSC_FREQ_13MHZ (0u<<30)
++#define OSC_CTRL_OSC_FREQ_19_2MHZ (1u<<30)
++#define OSC_CTRL_OSC_FREQ_12MHZ (2u<<30)
++#define OSC_CTRL_OSC_FREQ_26MHZ (3u<<30)
++#define OSC_CTRL_MASK (0x3f2u | OSC_CTRL_OSC_FREQ_MASK)
++
++#define OSC_CTRL_PLL_REF_DIV_MASK	(3u<<28)
++#define OSC_CTRL_PLL_REF_DIV_1		(0u<<28)
++#define OSC_CTRL_PLL_REF_DIV_2		(1u<<28)
++#define OSC_CTRL_PLL_REF_DIV_4		(2u<<28)
+ 
+ #define OSC_FREQ_DET 0x58
+-#define OSC_FREQ_DET_TRIG (1<<31)
++#define OSC_FREQ_DET_TRIG (1u<<31)
+ 
+ #define OSC_FREQ_DET_STATUS 0x5c
+-#define OSC_FREQ_DET_BUSY (1<<31)
+-#define OSC_FREQ_DET_CNT_MASK 0xFFFF
++#define OSC_FREQ_DET_BUSYu (1<<31)
++#define OSC_FREQ_DET_CNT_MASK 0xFFFFu
+ 
+ #define TEGRA20_CLK_PERIPH_BANKS	3
+ 
 -- 
-Luca Weiss <luca@z3ntu.xyz>
+2.39.2
 
