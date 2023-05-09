@@ -2,262 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A83BC7EE23
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 17:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90833C7EE22
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 17:22:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232665AbjEIRQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 13:16:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34156 "EHLO
+        id S234648AbjEIRWU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 13:22:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjEIRQu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 13:16:50 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3481E71;
-        Tue,  9 May 2023 10:16:48 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349Gg89T012569;
-        Tue, 9 May 2023 17:03:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=qI45RyaeiSVGGtld+kEpMAI9UE2lNL2CaZZmt75kPww=;
- b=VAnJdxSeXAFHP4N0fq0UrtckJJLNGGoDPTSl4FXeAIqLAs/blbNIaQDUENCbtqAnPDG1
- 1M4wAd6UMvwn0LUaST+GT3HL0i1j5feb424eEgg7YH+Yyud43BZuzXpSDFk67tiRYp1W
- nyeStaIP3EYMhZ1lvqG6oJYq6AwA7gxwiZSJ/7ydsHKc3fejrm2RK640dqk0te0iAYJq
- FfCBQtDhVm0HpRX+08EJygPebUWvL4b3MuRrfiZ44NOhgmwsva/4UQju+gbpEeIT6TR3
- gkEd2Y5ld3JKvUK434++4COb28/4AhgrAo6zByRwgrDaI22xAGzcVtzsbioTeHOof4Xk tQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qfrvm07k0-1
+        with ESMTP id S234262AbjEIRWT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 13:22:19 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92B841BCB;
+        Tue,  9 May 2023 10:22:15 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 349GguCC020103;
+        Tue, 9 May 2023 17:22:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=bbvAu1RMUs5Yto3tyQpfnpR0HvMNfvh8+ycuopiZ1Wk=;
+ b=hPAsr7AV6ySVkGDAYZeOmdoSrRqy0coffiTJSrEcbCTO5igzGlMSeqUFnJRCksEQOXVp
+ DY6m/8fNTUvh6sIGcuyfL0OkTVneuLdnNPG3mnScXuc3Rg6xqAC0FM5UuVSi8+UeaEqH
+ Eb2gvlMjbJZ+HB6mFHePz0oiyiJGjGwPjD/k5MFeaqbrDlsyCukuoAmoDGchLflLrpsg
+ TBwsjJ22QYq9BnObl1HFLdQMzLJXu11KahQOBwCEVaY4oOd+MInrlSuUaNLZk8fyqSCN
+ m4QZMUzln6UQzIUdND8qCklG0EPtyZ19jAVfHA8snhFuFurOHYQunbJ2JhrKEr8/V4s1 5Q== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qf77g2g58-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 09 May 2023 17:03:06 +0000
+        Tue, 09 May 2023 17:22:11 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349H35FJ030496
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 349HMBgO030723
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 9 May 2023 17:03:05 GMT
-Received: from [10.216.5.187] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 9 May 2023
- 10:02:57 -0700
-Message-ID: <5d719c21-7820-b67f-ba63-adee0431cae7@quicinc.com>
-Date:   Tue, 9 May 2023 22:32:53 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 06/11] clk: qcom: IPQ9574: Add q6/wcss clocks
-Content-Language: en-US
-To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        Tue, 9 May 2023 17:22:11 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Tue, 9 May 2023 10:22:06 -0700
+From:   Taniya Das <quic_tdas@quicinc.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-7-git-send-email-quic_mmanikan@quicinc.com>
- <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <3298e7f6-ec63-077e-7dc9-2243670bc026@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+        <quic_skakitap@quicinc.com>, <quic_jkona@quicinc.com>
+Subject: [PATCH V4 0/3] Add video clock controller driver for SM8450
+Date:   Tue, 9 May 2023 22:51:45 +0530
+Message-ID: <20230509172148.7627-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fjcwsU8JXGhDunl7NH2vLhH2qz6N5A7K
-X-Proofpoint-GUID: fjcwsU8JXGhDunl7NH2vLhH2qz6N5A7K
+X-Proofpoint-GUID: A9g44H6dr-eutw3XYrkTSMd18ffhz6g9
+X-Proofpoint-ORIG-GUID: A9g44H6dr-eutw3XYrkTSMd18ffhz6g9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-09_10,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 adultscore=0 spamscore=0 mlxlogscore=903 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305090141
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ mlxlogscore=712 malwarescore=0 clxscore=1015 mlxscore=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 spamscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305090144
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add bindings, driver and DT node for video clock controller on SM8450.
 
+Taniya Das (3):
+  dt-bindings: clock: qcom: Add SM8450 video clock controller
+  clk: qcom: videocc-sm8450: Add video clock controller driver for
+    SM8450
+  arm64: dts: qcom: sm8450: Add video clock controller
 
-On 3/7/2023 12:58 PM, Sricharan Ramabadhran wrote:
-> 
-> 
-> On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
->> Some of the clocks required for q6/wcss bring up
->> are missing. So this patch adds clocks.
->>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>   drivers/clk/qcom/gcc-ipq9574.c | 119 +++++++++++++++++++++++++++++++++
->>   1 file changed, 119 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-ipq9574.c 
->> b/drivers/clk/qcom/gcc-ipq9574.c
->> index 1bf33d582dc2..355f2e12d9c6 100644
->> --- a/drivers/clk/qcom/gcc-ipq9574.c
->> +++ b/drivers/clk/qcom/gcc-ipq9574.c
->> @@ -2697,6 +2697,22 @@ static struct clk_branch gcc_wcss_acmt_clk = {
->>       },
->>   };
->> +static struct clk_branch gcc_wcss_ahb_s_clk = {
->> +    .halt_reg = 0x25060,
->> +    .clkr = {
->> +        .enable_reg = 0x25060,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "gcc_wcss_ahb_s_clk",
->> +            .parent_hws = (const struct clk_hw *[]){
->> +                    &wcss_ahb_clk_src.clkr.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->>   static struct clk_branch gcc_sys_noc_wcss_ahb_clk = {
->>       .halt_reg = 0x2e030,
->>       .clkr = {
->> @@ -2734,6 +2750,22 @@ static struct clk_rcg2 wcss_axi_m_clk_src = {
->>       },
->>   };
->> +static struct clk_branch gcc_wcss_axi_m_clk = {
->> +    .halt_reg = 0x25064,
->> +    .clkr = {
->> +        .enable_reg = 0x25064,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "gcc_wcss_axi_m_clk",
->> +            .parent_hws = (const struct clk_hw *[]){
->> +                    &wcss_axi_m_clk_src.clkr.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->>   static struct clk_branch gcc_anoc_wcss_axi_m_clk = {
->>       .halt_reg = 0x2e0a8,
->>       .clkr = {
->> @@ -2803,6 +2835,22 @@ static struct clk_branch 
->> gcc_wcss_dbg_ifc_atb_clk = {
->>       },
->>   };
->> +static struct clk_branch gcc_wcss_dbg_ifc_atb_bdg_clk = {
->> +    .halt_reg = 0x2504C,
->> +    .clkr = {
->> +        .enable_reg = 0x2504C,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "gcc_wcss_dbg_ifc_atb_bdg_clk",
->> +            .parent_hws = (const struct clk_hw *[]){
->> +                    &qdss_at_clk_src.clkr.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->>   static struct clk_branch gcc_nssnoc_atb_clk = {
->>       .halt_reg = 0x17014,
->>       .clkr = {
->> @@ -3073,6 +3121,22 @@ static struct clk_branch 
->> gcc_wcss_dbg_ifc_nts_clk = {
->>       },
->>   };
->> +static struct clk_branch gcc_wcss_dbg_ifc_nts_bdg_clk = {
->> +    .halt_reg = 0x25050,
->> +    .clkr = {
->> +        .enable_reg = 0x25050,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "gcc_wcss_dbg_ifc_nts_bdg_clk",
->> +            .parent_hws = (const struct clk_hw *[]){
->> +                    &qdss_tsctr_div2_clk_src.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->>   static struct clk_branch gcc_qdss_tsctr_div2_clk = {
->>       .halt_reg = 0x2d044,
->>       .clkr = {
->> @@ -3315,6 +3379,38 @@ static struct clk_branch 
->> gcc_wcss_dbg_ifc_dapbus_clk = {
->>       },
->>   };
->> +static struct clk_branch gcc_wcss_dbg_ifc_apb_bdg_clk = {
->> +    .halt_reg = 0x25048,
->> +    .clkr = {
->> +        .enable_reg = 0x25048,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "gcc_wcss_dbg_ifc_apb_bdg_clk",
->> +            .parent_hws = (const struct clk_hw *[]){
->> +                    &qdss_dap_sync_clk_src.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->> +static struct clk_branch gcc_wcss_dbg_ifc_dapbus_bdg_clk = {
->> +    .halt_reg = 0x25054,
->> +    .clkr = {
->> +        .enable_reg = 0x25054,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "gcc_wcss_dbg_ifc_dapbus_bdg_clk",
->> +            .parent_hws = (const struct clk_hw *[]){
->> +                    &qdss_dap_sync_clk_src.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->>   static struct clk_branch gcc_qdss_dap_clk = {
->>       .halt_reg = 0x2d058,
->>       .clkr = {
->> @@ -3513,6 +3609,22 @@ static struct clk_rcg2 q6_axim2_clk_src = {
->>       },
->>   };
->> +static struct clk_branch gcc_q6_axim2_clk = {
->> +    .halt_reg = 0x25010,
->> +    .clkr = {
->> +        .enable_reg = 0x25010,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "gcc_q6_axim2_clk",
->> +            .parent_hws = (const struct clk_hw *[]){
->> +                    &q6_axim2_clk_src.clkr.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
-> 
-> These clocks does not seem to be used in the driver, where are they used ?
-> 
-> Regards,
->   Sricharan
-Clocks in multipd architecture will be handled by QDSP6 firmware.
-So i am going to remove clock handling and drop this patch.
+ .../bindings/clock/qcom,sm8450-videocc.yaml   |  77 +++
+ arch/arm64/boot/dts/qcom/sm8450.dtsi          |  12 +
+ drivers/clk/qcom/Kconfig                      |   9 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/videocc-sm8450.c             | 461 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,sm8450-videocc.h   |  38 ++
+ 6 files changed, 598 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+ create mode 100644 drivers/clk/qcom/videocc-sm8450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8450-videocc.h
 
-Thanks & Regards,
-Manikanta.
+-- 
+2.17.1
+
