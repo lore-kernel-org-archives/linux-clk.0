@@ -2,144 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10893C77B7C
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 17:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BE5C7EE2F
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 18:09:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbjEIRxH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 13:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54266 "EHLO
+        id S234262AbjEISJo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 14:09:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjEIRxG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 13:53:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AA6D40E5
-        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 10:53:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D8D761634
-        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 17:53:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7AC1C433EF;
-        Tue,  9 May 2023 17:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683654784;
-        bh=tWgR3+pNstlOjHvOjM5Qf0s3WnTQ6LeXkywW+xrMO40=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=C73/5giShPsIdNnFQJQ46sNcU3aKnpNu9JaoM9MdKuA4iOLC032Xgn1Jcc230Hx7L
-         /j+fwISpIxPOX87cpL7Wj5QlyQ/ac0Pebu93AbCODcqiOcY3QHw+BlgsycIyDDRVEN
-         HpSS1/6Dsf1ubSMen0reCFRWmw2462KRt6UhdcJFxYToC04cZ2xpS5TF+X0kOJbufe
-         FVgQWOydkxN5p51v04IiuteiqX5QpVYKl5xiVORkze4mrIoa0Ege/YXbvWz+N0TOqq
-         SDzDGLT9pV9t9x0Bxm3JNrmvVK4WfYC3R0WBCdGVqSOoS6DyTTphKnbRuRQZL+DFB9
-         cIl4eOhVXLZig==
-Date:   Tue, 9 May 2023 10:53:02 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     Paolo Abeni <pabeni@redhat.com>,
-        "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Vadim Fedorenko <vadfed@meta.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        with ESMTP id S229615AbjEISJn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 14:09:43 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977DA1732
+        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 11:09:41 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-50bd2d7ba74so61377702a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 May 2023 11:09:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683655780; x=1686247780;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sOxLtKQQVjzWmW6oMf5arrESUTg7L76NrXcLY8eEWIY=;
+        b=h/Xalg+73qTYecR2RtFtm3tuJpHj9tjuvX9Eoeoi1yrKT6S/qlpEjSxNWyP0Bg5R+Z
+         c6n1s3h36fbep6yxERo9p8+xZFVL/VRQidHslyr48QNTYB02rQyr3p26ugouGKwsuUpN
+         6bSC69Rj3wmQlhIz0ngfGctDQI311hlnJfuss4MqYdPzdax+834fd1V6hf/ICPiZANyR
+         YQHv17bGlOgnT3jZVr3of2u0izPDQNgKNs87xG/PTlPxme0t/+1mWurd6oCVUWVSHorh
+         yVeNNHcnMpcRpv/dz6zty3KMklR/nYFb086yJuNo3GrrPqStPUJPA2qto7NJHw8y40LM
+         1yGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683655780; x=1686247780;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sOxLtKQQVjzWmW6oMf5arrESUTg7L76NrXcLY8eEWIY=;
+        b=dfPGvlO4FBt41KSsq/E0oroCMcyPV/bZebnb6T5/wb8Jhvs4sp3OP90WTdvlWAGERY
+         ry3egsyv5Dc3BmlbaRH60llTFhVvsntLXHPwRQLhVIh49Ah9139HRKAp6Z3pbLvrPJB2
+         g4eHk1MjQIuInERsiFGOd7gdhyXJvTnN9j+PTWkcl1pueJR4ujez6ZGxCmXyNHOeIWsH
+         HYaQPifYeTiuHbuUyEgzEwIueed8iUxuTeVXb1yYbKzihqSK69wcz3sQKrF9ZOnmY3Bj
+         Eyu7bm9UbsL01IZcfCARfjb/VxgwGHI7Z3mPSWvsDzKRsICXBFHr1m4PlHWC+lrwXbvP
+         USmA==
+X-Gm-Message-State: AC+VfDy2KY1hft6OZ/J7JmTwBfeyOGmhgk2GNTxE0q3GJQyfBlNs/9X+
+        CEEjg/0ja6ho5VCn/JMQ9v6PAA==
+X-Google-Smtp-Source: ACHHUZ7ZP9TpSCN16a7TGu8HBolTKycKVwrMz/AgCz5Pz6hGWhLH011gKjd/yBRjPNbci8b64gxLLA==
+X-Received: by 2002:a05:6402:34c9:b0:50b:c350:f9ca with SMTP id w9-20020a05640234c900b0050bc350f9camr14480931edc.10.1683655780065;
+        Tue, 09 May 2023 11:09:40 -0700 (PDT)
+Received: from krzk-bin.. ([2a02:810d:15c0:828:d0d5:7818:2f46:5e76])
+        by smtp.gmail.com with ESMTPSA id dy28-20020a05640231fc00b0050d8b5757d1sm1015286edb.54.2023.05.09.11.09.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 May 2023 11:09:39 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Artur Weber <aweber.kernel@gmail.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>, soc@kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>
-Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
-Message-ID: <20230509105302.3703216c@kernel.org>
-In-Reply-To: <ZFplBpF3etwRY5nv@nanopsycho>
-References: <ZFPwqu5W8NE6Luvk@nanopsycho>
-        <20230504114421.51415018@kernel.org>
-        <ZFTdR93aDa6FvY4w@nanopsycho>
-        <20230505083531.57966958@kernel.org>
-        <ZFdaDmPAKJHDoFvV@nanopsycho>
-        <d86ff1331a621bf3048123c24c22f49e9ecf0044.camel@redhat.com>
-        <ZFjoWn9+H932DdZ1@nanopsycho>
-        <20230508124250.20fb1825@kernel.org>
-        <ZFn74xJOtiXatfHQ@nanopsycho>
-        <20230509075247.2df8f5aa@kernel.org>
-        <ZFplBpF3etwRY5nv@nanopsycho>
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-phy@lists.infradead.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: (subset) [PATCH v3 01/13] dt-bindings: soc: samsung: add Exynos4212 PMU compatible
+Date:   Tue,  9 May 2023 20:09:28 +0200
+Message-Id: <168365575563.242810.473604395196843985.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230501195525.6268-2-aweber.kernel@gmail.com>
+References: <20230501195525.6268-1-aweber.kernel@gmail.com> <20230501195525.6268-2-aweber.kernel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 9 May 2023 17:21:42 +0200 Jiri Pirko wrote:
-> Tue, May 09, 2023 at 04:52:47PM CEST, kuba@kernel.org wrote:
-> >On Tue, 9 May 2023 09:53:07 +0200 Jiri Pirko wrote:  
-> >> >Yup. Even renaming EXT to something that's less.. relative :(    
-> >> 
-> >> Suggestion?  
-> >
-> >Well, is an SMT socket on the board an EXT pin?
-> >Which is why I prefer PANEL.  
+
+On Mon, 01 May 2023 21:55:13 +0200, Artur Weber wrote:
+> Support for the Exynos4212 SoC was originally dropped as there were
+> no boards using it. We will be adding a device that uses it, so add
+> back the relevant compatible.
 > 
-> Makes sense.
-> To speak code, we'll have:
+> This reverts part of commit c40610198f35 ("soc: samsung: Remove
+> Exynos4212 related dead code").
 > 
-> /**
->  * enum dpll_pin_type - defines possible types of a pin, valid values for
->  *   DPLL_A_PIN_TYPE attribute
->  * @DPLL_PIN_TYPE_UNSPEC: unspecified value
->  * @DPLL_PIN_TYPE_MUX: aggregates another layer of selectable pins
->  * @DPLL_PIN_TYPE_PANEL: physically facing user, for example on a front panel
->  * @DPLL_PIN_TYPE_SYNCE_ETH_PORT: ethernet port PHY's recovered clock
->  * @DPLL_PIN_TYPE_INT_OSCILLATOR: device internal oscillator
->  * @DPLL_PIN_TYPE_GNSS: GNSS recovered clock
->  */
-> enum dpll_pin_type {
->         DPLL_PIN_TYPE_UNSPEC,
->         DPLL_PIN_TYPE_MUX,
->         DPLL_PIN_TYPE_PANEL,
->         DPLL_PIN_TYPE_SYNCE_ETH_PORT,
->         DPLL_PIN_TYPE_INT_OSCILLATOR,
->         DPLL_PIN_TYPE_GNSS,
-> 
->         __DPLL_PIN_TYPE_MAX,
->         DPLL_PIN_TYPE_MAX = (__DPLL_PIN_TYPE_MAX - 1)
-> };
+> [...]
 
-Maybe we can keep the EXT here, just not in the label itself.
-Don't think we care to add pin type for PANEL vs SMT vs jumper?
+Applied, thanks!
 
-> >> Sure, I get what you say and agree. I'm just trying to find out the
-> >> actual attributes :)  
-> >
-> >PANEL label must match the name on the panel. User can take the card
-> >into their hand, look at the front, and there should be a label/sticker/
-> >/engraving which matches exactly what the kernel reports.
-> >
-> >If the label is printed on the board it's a BOARD_LABEL, if it's the
-> >name of a trace in board docs it's a BOARD_TRACE, if it's a pin of 
-> >the ASIC it's a PACKAGE_PIN.
-> >
-> >If it's none of those, or user does not have access to the detailed
-> >board / pinout - don't use the label.  
-> 
-> To speak code, we'll have:
-> DPLL_A_PIN_PANEL_LABEL (string)
->    available always when attr[DPLL_A_PIN_TYPE] == DPLL_PIN_TYPE_PANEL
+[01/13] dt-bindings: soc: samsung: add Exynos4212 PMU compatible
+        https://git.kernel.org/krzk/linux/c/8a19d4a1508c62ff28ba427c3209cdb57379d325
 
-Not sure about always, if there's only one maybe there's no need 
-to provide the label?
-
-> DPLL_A_PIN_BOARD_LABEL (string)
->    may be available for any type, optional
-> DPLL_A_PIN_BOARD_TRACE (string)
->    may be available for any type, optional
-> DPLL_A_PIN_PACKAGE_PIN (string)
->    may be available for any type, optional
-> 
-> Makes sense?
-
-yup (obviously we need to document the semantics)
-
-> But this does not prevent driver developer to pack random crap in the
-> string anyway :/
-
-It doesn't but it hopefully makes it much more likely that (1) reviewer
-will notice that something is off if the driver printfs random crap;
-and (2) that the user reading the documentation will complain that 
-e.g.BOARD_LABEL is used but does not match the label on they see...
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
