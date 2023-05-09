@@ -2,34 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B748C7EE25
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD156C7EE30
 	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235095AbjEIVQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 17:16:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34226 "EHLO
+        id S235537AbjEIVQz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 17:16:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbjEIVQw (ORCPT
+        with ESMTP id S234267AbjEIVQw (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:16:52 -0400
 Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D80830F0;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0568F30EE;
         Tue,  9 May 2023 14:16:51 -0700 (PDT)
 Received: from [192.168.178.23] (unknown [62.108.10.64])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 56067CED2E;
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 17CC1CED2D;
         Tue,  9 May 2023 21:16:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1683667009; bh=zDs3Pv0PWo6YsPN0pHNUEmM5loKt3uLGkVd+dWX4sLg=;
+        t=1683667009; bh=9R6SRvAGjxwi8/vkLzlzpi22W4hAaJIg2Z7jYqDUgMM=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc;
-        b=Dnbpp//WRzqrk0GM9doxMC1cemhomznySmdVef6JUFF5klzIdHkNI+VgcvquY+Tku
-         6oGMiFRv/zZBr/uvgSr0drQrdBwjE++d2UznZjcMrxinhKFz3HhaFs+uafSu1vs1SW
-         YAhUBkkFN0Ur8l8DLuq0XWim+SdlnATQ89W6j0J0=
+        b=cS2x4pL1Y8Euyv1qBu++8aFNleQrxUtYNqxI+RllW08ZCyKEeyXifp612yVsM2Oqu
+         oxWU+msVpQZkVIfUR2lCjgSqEMPysj4Sfikis2ZozEVv90whjW5Ge3DFabM5aRANQ4
+         4eJWvY5sGUr4b+pjADva8LwesFTxCCLJKhAX8BbA=
 From:   Luca Weiss <luca@z3ntu.xyz>
-Date:   Tue, 09 May 2023 23:16:37 +0200
-Subject: [PATCH 3/3] ARM: dts: qcom: msm8226: Provide clocks to mmcc node
+Date:   Tue, 09 May 2023 23:16:36 +0200
+Subject: [PATCH 2/3] dt-bindings: clock: qcom,mmcc: define
+ clocks/clock-names for MSM8226
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230509-msm8226-mmcc-parents-v1-3-83a2dfc986ab@z3ntu.xyz>
+Message-Id: <20230509-msm8226-mmcc-parents-v1-2-83a2dfc986ab@z3ntu.xyz>
 References: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
 In-Reply-To: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
 To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
@@ -47,60 +48,87 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Luca Weiss <luca@z3ntu.xyz>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1024; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=zDs3Pv0PWo6YsPN0pHNUEmM5loKt3uLGkVd+dWX4sLg=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkWrg/M8WLo2bZlDnuK85MWA3+5ZEUewrWTu8E6
- f94Dverj6CJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZFq4PwAKCRBy2EO4nU3X
- Vig8D/4x71FXZmpVMAno2Q1/BEn9LGytWBlHXkUTP3XhfRyxhSvTFqtlhvOx4f2xuTQwLR+P8SD
- EtNBsHEBoVTn6nNzxX+m9GKh6RFbXHfhTmBiNVHmoUTkYRt6dxGVJBAs1L9PpEUQkEfoxgxOlro
- 7g1H9yWIRioFPs+AI/9Hnt/EcCmroqVKJ9r3Xs405WbecrDnqJnj+89LRLQ15tf8fdVl0TRMwGb
- 2VkOxekPWwBuST9bBVCZsXUcD53EwT9KsqAyyho/Zg57yuf7++86E+4NwVv6VUgQJnvpmZ692Zo
- GJ6zAStZpWslSKHh8M609dxEH4l2aKBU14t84evib71hsrxH+Matv8o4snPmYGjWXKF1JS2/jA+
- GNtnOoG0eL4SdZKnZI0F5z9J2zsxYlsy9YvHDhdBMetY1Eu20gDpWkgbgqhLhMbCqzclhEJXwPg
- 6wooSTT07jU5bnEduTwVEQOu2p7jn2d/PXw9Z4wrA4TLXeZgD2dn2Yk0Fss1K0jOnbaWxiO5J7W
- phqKKcS/RnmFh/woFJVRrc71Ycr625JBIVHypvoUdHVpNbSmJj+aq08p3oxNX6dYTZxsbk01FMb
- 07NWv4fCEte3a1uAdWVcBQbZ8TTUMvGogN6kphd0T1sipTXS7U7spm6N52ukoM/2ZlQ+xrClM1y
- W8FPGcsM50qjpUQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1800; i=luca@z3ntu.xyz;
+ h=from:subject:message-id; bh=9R6SRvAGjxwi8/vkLzlzpi22W4hAaJIg2Z7jYqDUgMM=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkWrg+uif8+jTU5wl9DJ5FMzUmRYuPndkpfWHFt
+ NiMI50zSkyJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZFq4PgAKCRBy2EO4nU3X
+ VkU7D/4jngTUQhY5BeZ5sP31TJfQjU7Nk+96d/wKqr9W8ah+CKQfbZWlGiVIAtXSF3goT+KSqs+
+ 3K3v9l4WO3Amo8YEDNaHp6wyz/9F20Uupx3tfgJaHqlHBO/R1fYWnjOA8B/9nIOd8e7xn87Upzf
+ fjofGrLtAavDDpOAo7W97+txlyMZsbQiznj/Ddd29u2CcUnIEDleN83C2XwdX+/4/qt2awlOPv/
+ OG5wBr/neJLuUUBFNrMb5LTfQICotR0IkCWRmyZBJyuionkr3AiNvPbv8WtOB42526diTdOjaaZ
+ JvxbuC6YYpJR7067xUwA2hiVn5oiR8e+Uk3PSmJjycltp2AyXmsvyTlKQZRtjiYTK86j8jWWH0k
+ 3UDWsv2HF7PsTuPIsYsO8/SvYdKgvoPuHuUK4kIHU7srw4u2slr0/+Fono5zyCbyPefJF+C3qy9
+ QX7tpd8kiXaF7das0h9jvrJwKluEE44Yx4Si6neyW3gGViw2CgIxzw2QT5BnHtp3r426ztL8PlP
+ cThmYhEr/uJ/MRQnuRsVtUDXQtLulUD2dkd6WbI9wgksAa00hgd8rrv+n3dQncE2clyIt65GhaR
+ pQ3D+jZ3dlGb9/9/xep0h1uRHIbheakG3XItfnsOv7PgLkr5Je67B6rOJdGaCFWIYGNs1SPfklR
+ yJtgcI6Hy0dGCbw==
 X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
  fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The mmcc needs several clocks that are being used as parents. Provide
-them in dt.
+Define clock/clock-names properties of the MMCC device node to be used
+on MSM8226 platform.
 
 Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
 ---
- arch/arm/boot/dts/qcom-msm8226.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ .../devicetree/bindings/clock/qcom,mmcc.yaml       | 32 ++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom-msm8226.dtsi
-index 4dd4e26c73a2..3187b6853445 100644
---- a/arch/arm/boot/dts/qcom-msm8226.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8226.dtsi
-@@ -392,6 +392,21 @@ mmcc: clock-controller@fd8c0000 {
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 			#power-domain-cells = <1>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GCC_MMSS_GPLL0_CLK_SRC>,
-+				 <&gcc GPLL0_VOTE>,
-+				 <&gcc GPLL1_VOTE>,
-+				 <&rpmcc RPM_SMD_GFX3D_CLK_SRC>,
-+				 <0>,
-+				 <0>;
-+			clock-names = "xo",
-+				      "mmss_gpll0_vote",
-+				      "gpll0_vote",
-+				      "gpll1_vote",
-+				      "gfx3d_clk_src",
-+				      "dsi0pll",
-+				      "dsi0pllbyte";
- 		};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index acf0c923c24f..422f5776a771 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -31,11 +31,11 @@ properties:
+       - qcom,mmcc-sdm660
  
- 		tlmm: pinctrl@fd510000 {
+   clocks:
+-    minItems: 8
++    minItems: 7
+     maxItems: 13
+ 
+   clock-names:
+-    minItems: 8
++    minItems: 7
+     maxItems: 13
+ 
+   '#clock-cells':
+@@ -99,6 +99,34 @@ allOf:
+             - const: dsi2pllbyte
+             - const: hdmipll
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,mmcc-msm8226
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Board XO source
++            - description: MMSS GPLL0 voted clock
++            - description: GPLL0 voted clock
++            - description: GPLL1 voted clock
++            - description: GFX3D clock source
++            - description: DSI phy instance 0 dsi clock
++            - description: DSI phy instance 0 byte clock
++
++        clock-names:
++          items:
++            - const: xo
++            - const: mmss_gpll0_vote
++            - const: gpll0_vote
++            - const: gpll1_vote
++            - const: gfx3d_clk_src
++            - const: dsi0pll
++            - const: dsi0pllbyte
++
+   - if:
+       properties:
+         compatible:
 
 -- 
 2.40.1
