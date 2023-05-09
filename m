@@ -2,45 +2,47 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F461C77B7C
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9643CC7EE2D
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:22:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235902AbjEIVVx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 17:21:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38952 "EHLO
+        id S236092AbjEIVWM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 17:22:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229734AbjEIVVS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:21:18 -0400
+        with ESMTP id S236025AbjEIVVe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:21:34 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A89857DB3;
-        Tue,  9 May 2023 14:20:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E95076593;
+        Tue,  9 May 2023 14:20:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5D6E763748;
-        Tue,  9 May 2023 21:20:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402B9C4339E;
-        Tue,  9 May 2023 21:20:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AECA363725;
+        Tue,  9 May 2023 21:20:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC459C4331F;
+        Tue,  9 May 2023 21:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683667207;
-        bh=vPKYro4QLlskCwG8Mem35oe25rxm3WPf7BbJoyHZhbg=;
+        s=k20201202; t=1683667219;
+        bh=dZcncFoOgw/eH7UVCrXpSIV9X+sT3A0DOP87tB3c8zE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YX/EqwBbJlW0ljOUklUJV96u9fnbLmQfHQ0CtC4uG6W926Sz8TZdMdsLOFoLUYXiE
-         leXcdSOy6ai4mI0SLh0CjF0BGIIuqrQW3k4DyVwzbGelRBPsPx4QXzQROgE6BUksrQ
-         a3pyPmglZOz6qMB9T/A1oaVK4stcup2ExTEqHQOTvx5xsMyGa2+8xFnEPpkG+mBht8
-         S8cYyuPaGashQCw8isXv9KHp+Zd50a55hNfBCWIWSA1j2mEz1djxWh6h86BjPGjQBm
-         CRB/LyI2m1VfHFHlngmajTkZg4xUK2NBK+dojyr0ZhjVBx9PXhxyNPitoq9PQbzMxn
-         Kd0s53J51a4+Q==
+        b=Gj52pfCVyh3Qe0Ch9cxQEeaykwrlv8JNQD3eW+fMt0tb3tXktiDWxKmdS+80+EQ5/
+         UOT2XDLjaj9q0ft6YBM9MjqyUwaUlExSK6VnO6LYyVyfDCGoQGCY2EIbmpEA/4VmmY
+         HfP9zxX5LngDjvbfmDG0p/9mtSbKd0TtfDi8/TUdQNAy57PY7H6NX4+1HOU3gY9YaN
+         WO0fPEYfSQMtIDHqND3I+NT3/xV/966ckJQtRi9OhHtXKZIrCxEgJwHgc7WuSfWv6a
+         SflPZodzgCAL57Etdyp4ZLg+hcEeI7nOnCFvcSOlEzql7iPhr5Sp9C24CvBpUXQxXa
+         cRT7v1RnW/Suw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, mturquette@baylibre.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.2 10/18] clk: tegra20: fix gcc-7 constant overflow warning
-Date:   Tue,  9 May 2023 17:19:48 -0400
-Message-Id: <20230509211958.21596-10-sashal@kernel.org>
+Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Vincent Legoll <vincent.legoll@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.2 17/18] clk: rockchip: rk3588: make gate linked clocks critical
+Date:   Tue,  9 May 2023 17:19:55 -0400
+Message-Id: <20230509211958.21596-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230509211958.21596-1-sashal@kernel.org>
 References: <20230509211958.21596-1-sashal@kernel.org>
@@ -52,73 +54,156 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-[ Upstream commit b4a2adbf3586efa12fe78b9dec047423e01f3010 ]
+[ Upstream commit 64042c28c3bb6729df8e2fda89bc7ebbe3790907 ]
 
-Older gcc versions get confused by comparing a u32 value to a negative
-constant in a switch()/case block:
+RK3588 has a couple of hardware blocks called Native Interface Unit
+(NIU) that gate the clocks to devices behind them. Effectively this
+means that some clocks require two parent clocks being enabled.
+Downstream implemented this by using a separate clock driver
+("clk-link") for them, which enables the second clock using PM
+framework.
 
-drivers/clk/tegra/clk-tegra20.c: In function 'tegra20_clk_measure_input_freq':
-drivers/clk/tegra/clk-tegra20.c:581:2: error: case label does not reduce to an integer constant
-  case OSC_CTRL_OSC_FREQ_12MHZ:
-  ^~~~
-drivers/clk/tegra/clk-tegra20.c:593:2: error: case label does not reduce to an integer constant
-  case OSC_CTRL_OSC_FREQ_26MHZ:
+In the upstream kernel we are currently missing support for the second
+parent. The information about it is in the GATE_LINK() macro as
+linkname, but that is not used. Thus the second parent clock is not
+properly enabled. So far this did not really matter, since these clocks
+are mostly required for the more advanced IP blocks, that are not yet
+supported upstream. As this is about to change we need a fix. There
+are three options available:
 
-Make the constants unsigned instead.
+1. Properly implement support for having two parent clocks in the
+   clock framework.
+2. Mark the affected clocks CLK_IGNORE_UNUSED, so that they are not
+   disabled. This wastes some power, but keeps the hack contained
+   within the clock driver. Going from this to the first solution
+   is easy once that has been implemented.
+3. Enabling the extra clock in the consumer driver. This leaks some
+   implementation details into DT.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20230227085914.2560984-1-arnd@kernel.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+This patch implements the second option as an intermediate solution
+until the first one is available. I used an alias for CLK_IS_CRITICAL,
+so that it's easy to see which clocks are not really critical once
+the clock framework supports a better way to implement this.
+
+Tested-by: Vincent Legoll <vincent.legoll@gmail.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Link: https://lore.kernel.org/r/20230403193250.108693-2-sebastian.reichel@collabora.com
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra20.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/clk/rockchip/clk-rk3588.c | 42 +++++++++++++++++++------------
+ 1 file changed, 26 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 422d782475532..dcacc5064d339 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -21,24 +21,24 @@
- #define MISC_CLK_ENB 0x48
+diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+index b7ce3fbd6fa6a..6994165e03957 100644
+--- a/drivers/clk/rockchip/clk-rk3588.c
++++ b/drivers/clk/rockchip/clk-rk3588.c
+@@ -13,15 +13,25 @@
+ #include "clk.h"
  
- #define OSC_CTRL 0x50
--#define OSC_CTRL_OSC_FREQ_MASK (3<<30)
--#define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
--#define OSC_CTRL_OSC_FREQ_19_2MHZ (1<<30)
--#define OSC_CTRL_OSC_FREQ_12MHZ (2<<30)
--#define OSC_CTRL_OSC_FREQ_26MHZ (3<<30)
--#define OSC_CTRL_MASK (0x3f2 | OSC_CTRL_OSC_FREQ_MASK)
--
--#define OSC_CTRL_PLL_REF_DIV_MASK (3<<28)
--#define OSC_CTRL_PLL_REF_DIV_1		(0<<28)
--#define OSC_CTRL_PLL_REF_DIV_2		(1<<28)
--#define OSC_CTRL_PLL_REF_DIV_4		(2<<28)
-+#define OSC_CTRL_OSC_FREQ_MASK (3u<<30)
-+#define OSC_CTRL_OSC_FREQ_13MHZ (0u<<30)
-+#define OSC_CTRL_OSC_FREQ_19_2MHZ (1u<<30)
-+#define OSC_CTRL_OSC_FREQ_12MHZ (2u<<30)
-+#define OSC_CTRL_OSC_FREQ_26MHZ (3u<<30)
-+#define OSC_CTRL_MASK (0x3f2u | OSC_CTRL_OSC_FREQ_MASK)
-+
-+#define OSC_CTRL_PLL_REF_DIV_MASK	(3u<<28)
-+#define OSC_CTRL_PLL_REF_DIV_1		(0u<<28)
-+#define OSC_CTRL_PLL_REF_DIV_2		(1u<<28)
-+#define OSC_CTRL_PLL_REF_DIV_4		(2u<<28)
+ /*
+- * GATE with additional linked clock. Downstream enables the linked clock
+- * (via runtime PM) whenever the gate is enabled. The downstream implementation
+- * does this via separate clock nodes for each of the linked gate clocks,
+- * which leaks parts of the clock tree into DT. It is unclear why this is
+- * actually needed and things work without it for simple use cases. Thus
+- * the linked clock is ignored for now.
++ * Recent Rockchip SoCs have a new hardware block called Native Interface
++ * Unit (NIU), which gates clocks to devices behind them. These effectively
++ * need two parent clocks.
++ *
++ * Downstream enables the linked clock via runtime PM whenever the gate is
++ * enabled. This implementation uses separate clock nodes for each of the
++ * linked gate clocks, which leaks parts of the clock tree into DT.
++ *
++ * The GATE_LINK macro instead takes the second parent via 'linkname', but
++ * ignores the information. Once the clock framework is ready to handle it, the
++ * information should be passed on here. But since these clocks are required to
++ * access multiple relevant IP blocks, such as PCIe or USB, we mark all linked
++ * clocks critical until a better solution is available. This will waste some
++ * power, but avoids leaking implementation details into DT or hanging the
++ * system.
+  */
+ #define GATE_LINK(_id, cname, pname, linkname, f, o, b, gf) \
+ 	GATE(_id, cname, pname, f, o, b, gf)
++#define RK3588_LINKED_CLK		CLK_IS_CRITICAL
  
- #define OSC_FREQ_DET 0x58
--#define OSC_FREQ_DET_TRIG (1<<31)
-+#define OSC_FREQ_DET_TRIG (1u<<31)
  
- #define OSC_FREQ_DET_STATUS 0x5c
--#define OSC_FREQ_DET_BUSY (1<<31)
--#define OSC_FREQ_DET_CNT_MASK 0xFFFF
-+#define OSC_FREQ_DET_BUSYu (1<<31)
-+#define OSC_FREQ_DET_CNT_MASK 0xFFFFu
+ #define RK3588_GRF_SOC_STATUS0		0x600
+@@ -1446,7 +1456,7 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	COMPOSITE_NODIV(HCLK_NVM_ROOT,  "hclk_nvm_root", mux_200m_100m_50m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(77), 0, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(31), 0, GFLAGS),
+-	COMPOSITE(ACLK_NVM_ROOT, "aclk_nvm_root", gpll_cpll_p, 0,
++	COMPOSITE(ACLK_NVM_ROOT, "aclk_nvm_root", gpll_cpll_p, RK3588_LINKED_CLK,
+ 			RK3588_CLKSEL_CON(77), 7, 1, MFLAGS, 2, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(31), 1, GFLAGS),
+ 	GATE(ACLK_EMMC, "aclk_emmc", "aclk_nvm_root", 0,
+@@ -1675,13 +1685,13 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 			RK3588_CLKGATE_CON(42), 9, GFLAGS),
  
- #define TEGRA20_CLK_PERIPH_BANKS	3
+ 	/* vdpu */
+-	COMPOSITE(ACLK_VDPU_ROOT, "aclk_vdpu_root", gpll_cpll_aupll_p, 0,
++	COMPOSITE(ACLK_VDPU_ROOT, "aclk_vdpu_root", gpll_cpll_aupll_p, RK3588_LINKED_CLK,
+ 			RK3588_CLKSEL_CON(98), 5, 2, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(44), 0, GFLAGS),
+ 	COMPOSITE_NODIV(ACLK_VDPU_LOW_ROOT, "aclk_vdpu_low_root", mux_400m_200m_100m_24m_p, 0,
+ 			RK3588_CLKSEL_CON(98), 7, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(44), 1, GFLAGS),
+-	COMPOSITE_NODIV(HCLK_VDPU_ROOT, "hclk_vdpu_root", mux_200m_100m_50m_24m_p, 0,
++	COMPOSITE_NODIV(HCLK_VDPU_ROOT, "hclk_vdpu_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
+ 			RK3588_CLKSEL_CON(98), 9, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(44), 2, GFLAGS),
+ 	COMPOSITE(ACLK_JPEG_DECODER_ROOT, "aclk_jpeg_decoder_root", gpll_cpll_aupll_spll_p, 0,
+@@ -1732,9 +1742,9 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	COMPOSITE(ACLK_RKVENC0_ROOT, "aclk_rkvenc0_root", gpll_cpll_npll_p, 0,
+ 			RK3588_CLKSEL_CON(102), 7, 2, MFLAGS, 2, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(47), 1, GFLAGS),
+-	GATE(HCLK_RKVENC0, "hclk_rkvenc0", "hclk_rkvenc0_root", 0,
++	GATE(HCLK_RKVENC0, "hclk_rkvenc0", "hclk_rkvenc0_root", RK3588_LINKED_CLK,
+ 			RK3588_CLKGATE_CON(47), 4, GFLAGS),
+-	GATE(ACLK_RKVENC0, "aclk_rkvenc0", "aclk_rkvenc0_root", 0,
++	GATE(ACLK_RKVENC0, "aclk_rkvenc0", "aclk_rkvenc0_root", RK3588_LINKED_CLK,
+ 			RK3588_CLKGATE_CON(47), 5, GFLAGS),
+ 	COMPOSITE(CLK_RKVENC0_CORE, "clk_rkvenc0_core", gpll_cpll_aupll_npll_p, 0,
+ 			RK3588_CLKSEL_CON(102), 14, 2, MFLAGS, 9, 5, DFLAGS,
+@@ -1744,10 +1754,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 			RK3588_CLKGATE_CON(48), 6, GFLAGS),
  
+ 	/* vi */
+-	COMPOSITE(ACLK_VI_ROOT, "aclk_vi_root", gpll_cpll_npll_aupll_spll_p, 0,
++	COMPOSITE(ACLK_VI_ROOT, "aclk_vi_root", gpll_cpll_npll_aupll_spll_p, RK3588_LINKED_CLK,
+ 			RK3588_CLKSEL_CON(106), 5, 3, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(49), 0, GFLAGS),
+-	COMPOSITE_NODIV(HCLK_VI_ROOT, "hclk_vi_root", mux_200m_100m_50m_24m_p, 0,
++	COMPOSITE_NODIV(HCLK_VI_ROOT, "hclk_vi_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
+ 			RK3588_CLKSEL_CON(106), 8, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(49), 1, GFLAGS),
+ 	COMPOSITE_NODIV(PCLK_VI_ROOT, "pclk_vi_root", mux_100m_50m_24m_p, 0,
+@@ -1919,10 +1929,10 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 	COMPOSITE(ACLK_VOP_ROOT, "aclk_vop_root", gpll_cpll_dmyaupll_npll_spll_p, 0,
+ 			RK3588_CLKSEL_CON(110), 5, 3, MFLAGS, 0, 5, DFLAGS,
+ 			RK3588_CLKGATE_CON(52), 0, GFLAGS),
+-	COMPOSITE_NODIV(ACLK_VOP_LOW_ROOT, "aclk_vop_low_root", mux_400m_200m_100m_24m_p, 0,
++	COMPOSITE_NODIV(ACLK_VOP_LOW_ROOT, "aclk_vop_low_root", mux_400m_200m_100m_24m_p, RK3588_LINKED_CLK,
+ 			RK3588_CLKSEL_CON(110), 8, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(52), 1, GFLAGS),
+-	COMPOSITE_NODIV(HCLK_VOP_ROOT, "hclk_vop_root", mux_200m_100m_50m_24m_p, 0,
++	COMPOSITE_NODIV(HCLK_VOP_ROOT, "hclk_vop_root", mux_200m_100m_50m_24m_p, RK3588_LINKED_CLK,
+ 			RK3588_CLKSEL_CON(110), 10, 2, MFLAGS,
+ 			RK3588_CLKGATE_CON(52), 2, GFLAGS),
+ 	COMPOSITE_NODIV(PCLK_VOP_ROOT, "pclk_vop_root", mux_100m_50m_24m_p, 0,
+@@ -2425,7 +2435,7 @@ static struct rockchip_clk_branch rk3588_clk_branches[] __initdata = {
+ 
+ 	GATE_LINK(ACLK_ISP1_PRE, "aclk_isp1_pre", "aclk_isp1_root", "aclk_vi_root", 0, RK3588_CLKGATE_CON(26), 6, GFLAGS),
+ 	GATE_LINK(HCLK_ISP1_PRE, "hclk_isp1_pre", "hclk_isp1_root", "hclk_vi_root", 0, RK3588_CLKGATE_CON(26), 8, GFLAGS),
+-	GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", "aclk_nvm_root", 0, RK3588_CLKGATE_CON(31), 2, GFLAGS),
++	GATE_LINK(HCLK_NVM, "hclk_nvm", "hclk_nvm_root", "aclk_nvm_root", RK3588_LINKED_CLK, RK3588_CLKGATE_CON(31), 2, GFLAGS),
+ 	GATE_LINK(ACLK_USB, "aclk_usb", "aclk_usb_root", "aclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(42), 2, GFLAGS),
+ 	GATE_LINK(HCLK_USB, "hclk_usb", "hclk_usb_root", "hclk_vo1usb_top_root", 0, RK3588_CLKGATE_CON(42), 3, GFLAGS),
+ 	GATE_LINK(ACLK_JPEG_DECODER_PRE, "aclk_jpeg_decoder_pre", "aclk_jpeg_decoder_root", "aclk_vdpu_root", 0, RK3588_CLKGATE_CON(44), 7, GFLAGS),
 -- 
 2.39.2
 
