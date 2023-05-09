@@ -2,135 +2,172 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC5CC77B7C
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 06:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF873C7EE22
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 06:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234870AbjEIGZQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 02:25:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37722 "EHLO
+        id S229672AbjEIGfz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 02:35:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234871AbjEIGZP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 02:25:15 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 433BDA5F3
-        for <linux-clk@vger.kernel.org>; Mon,  8 May 2023 23:25:13 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-50b8d2eed3dso8420533a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 08 May 2023 23:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683613511; x=1686205511;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TfYutvSnmG0xToTn7QuW3dip61h04rlgqKGBarW0D6c=;
-        b=FFt4aoW2plUl9LBzp86tsiKAP2L9t6isoWwmEom+HSgYeKssPi9XIK42kNricy7P+d
-         MenvmyDOSxmQfo42+yeLTxiENNbV6LdR5IBOq+d0oFgBQ8iiXrhxJoI+NtIjnN73LVoQ
-         FpjsGop5ymBBpkI+eedhjaFngehkvES2xMjyEr+aBnsUB596DBooBZCAlP8OL3jGuSsP
-         Jg1wn+ipDeALdiXOUFNo2YoekShzOd17yOfh/SsV3Ce96nNDkwDw3ZYcOTVNj4X2S6kb
-         cY/p0/U/JF2g1dKzbKQ9HkMC0+VHSd48LurAB2fDzEf6hZ/Gf5/SRU3cIX2aPfqEZXSs
-         CqhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683613511; x=1686205511;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TfYutvSnmG0xToTn7QuW3dip61h04rlgqKGBarW0D6c=;
-        b=Tl1sVF0xf6GbCKE9nK9Oo9IdEGWVQ/T2VPZFolwWLOOqSX9VOGwusNv4rMaDbqhu6C
-         dyY6yWVqTjmFgZgG00lbDOTony/Y+rKw6XCValniAEu4Mi1cwqXzfIi86ofVqopda3Aq
-         4NvfVG8L4jq7NzJ+HGxxwxzNdNIyewpnZqDRgrV+iySVe4XJ/lVAZFIJ4MuUcfV9m5wj
-         i7CGpDJ5iyrFZJQuQrkIda/c5CKSKcXl5RxzZNAmwPzvZE+wzL6PLC1eUpiW1P/UlcS9
-         GEhXlHY0MvhEJ9/tRb3Ja1nH4zkQXGQ3S++y3Ju5e9ChVUMUfKUbZTyI/FU7Mo1fUgNU
-         lo6g==
-X-Gm-Message-State: AC+VfDzZDdiwKEX/vJavKa6XM5NH/q5uee+ChwL1IR2ZRy9lHDGavN9s
-        dVlv8Ztkl7RJjqCz83tDJWJ8FA==
-X-Google-Smtp-Source: ACHHUZ4c7ZhS+2SHxTATjrVi07zz9QxVLQYPzgHka/2yGmY9HGKxWiS52td6vghMy16CRpuFKbm8AA==
-X-Received: by 2002:a50:fe8c:0:b0:506:ba8d:c317 with SMTP id d12-20020a50fe8c000000b00506ba8dc317mr9294753edt.40.1683613511519;
-        Mon, 08 May 2023 23:25:11 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:d0d5:7818:2f46:5e76? ([2a02:810d:15c0:828:d0d5:7818:2f46:5e76])
-        by smtp.gmail.com with ESMTPSA id j10-20020aa7ca4a000000b005066cadcc54sm360829edt.43.2023.05.08.23.25.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 23:25:11 -0700 (PDT)
-Message-ID: <e463eb68-3ea0-5230-76fd-4a2ee66bf397@linaro.org>
-Date:   Tue, 9 May 2023 08:25:09 +0200
+        with ESMTP id S234665AbjEIGfx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 02:35:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2896F9012;
+        Mon,  8 May 2023 23:35:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9549062FC2;
+        Tue,  9 May 2023 06:35:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7EDC433D2;
+        Tue,  9 May 2023 06:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683614151;
+        bh=zpOHSdqVCQBn2YAqILJfgbw4dfnb2g8xfAWRoqWAjbE=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=JT/X4jPsrFCl2gJQ7d8jDxK0p5UfTg/oyy1MHnUzjjAgEVn9WHYrBBIntVUVkH8Wu
+         59H2HnO1TDxDNSiAmlaL99d/yrr2tAhm8w3QIVUMHSPxsPuLYyiM9UFx/A0djr2FLc
+         jOKADTqF05GzBoJ/XBhO1hWCzhcT2K2+jgRpucDp56FCv/tyLCoq2NDqDxq3MBLKUb
+         WviSYUPRcfq/DRFas9g//bfcOkCSlUZqye0mkzbXkVO0omebzPToapGKZqw8DRNT6t
+         ganRqlzDoi0SzRy5s7iMeEjMlRSY5j6rv8p8sIqyDDH1wwyHDJgxdrVeR+YWiOMpKn
+         wQtUctAEqNQGQ==
+Date:   Tue, 09 May 2023 07:35:46 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+CC:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_5/7=5D_dt-bindings=3A_soc=3A?= =?US-ASCII?Q?_starfive=3A_Add_StarFive_syscon_module?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <014dd7b2-9623-805c-97a6-5b3c5f120b79@starfivetech.com>
+References: <20230414024157.53203-1-xingyu.wu@starfivetech.com> <20230414024157.53203-6-xingyu.wu@starfivetech.com> <20230424-footsie-compost-d6624c8ef4e8@spud> <20230508-margarita-fondling-c9b970ad73a9@spud> <014dd7b2-9623-805c-97a6-5b3c5f120b79@starfivetech.com>
+Message-ID: <7527C059-95A2-49EA-AFE0-B089D3651A6B@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v3 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc: convert
- to yaml
-Content-Language: en-US
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20230509052757.539274-1-claudiu.beznea@microchip.com>
- <20230509052757.539274-3-claudiu.beznea@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230509052757.539274-3-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/05/2023 07:27, Claudiu Beznea wrote:
-> Convert Atmel PMC documentation to yaml. Along with it clock names
-> were adapted according to the current available device trees as
-> different controller versions accept different clocks (some of them
-> have 3 clocks as input, some has 2 clocks as inputs and some with 2
-> input clocks uses different clock names).
-> 
-
-Thank you for your patch. There is something to discuss/improve.
-
-> +title: Atmel Power Management Controller (PMC)
-> +
-> +maintainers:
-> +  - Claudiu Beznea <claudiu.beznea@microchip.com>
-> +
-> +description:
-> +  The power management controller optimizes power consumption by controlling all
-> +  system and user peripheral clocks. The PMC enables/disables the clock inputs
-> +  to many of the peripherals and to the processor.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - atmel,at91sam9g15-pmc
-> +              - atmel,at91sam9g20-pmc
-> +              - atmel,at91sam9g25-pmc
-> +              - atmel,at91sam9g35-pmc
-> +              - atmel,at91sam9x25-pmc
-> +              - atmel,at91sam9x35-pmc
-> +          - enum:
-> +              - atmel,at91sam9260-pmc
-> +              - atmel,at91sam9x5-pmc
-
-I missed it last time - why you have two enums? We never talked about
-this. It's usually wrong... are you sure this is real hardware:
-atmel,at91sam9g20-pmc, atmel,at91sam9260-pmc
-?
 
 
-> +          - const: syscon
-> +      - items:
-> +          - enum:
-> +              - atmel,at91rm9200-pmc
-> +              - atmel,at91sam9260-pmc
-> +              - atmel,at91sam9g45-pmc
-> +              - atmel,at91sam9n12-pmc
-> +              - atmel,at91sam9rl-pmc
-> +              - atmel,sama5d2-pmc
-> +              - atmel,sama5d3-pmc
-> +              - atmel,sama5d4-pmc
-> +              - microchip,sam9x60-pmc
-> +              - microchip,sama7g5-pmc
-> +          - const: syscon
-> +
+On 9 May 2023 07:23:18 IST, Xingyu Wu <xingyu=2Ewu@starfivetech=2Ecom> wro=
+te:
+>On 2023/5/9 3:24, Conor Dooley wrote:
+>> On Mon, Apr 24, 2023 at 06:15:47PM +0100, Conor Dooley wrote:
+>>> On Fri, Apr 14, 2023 at 10:41:55AM +0800, Xingyu Wu wrote:
+>>> > From: William Qiu <william=2Eqiu@starfivetech=2Ecom>
+>>> >=20
+>>> > Add documentation to describe StarFive System Controller Registers=
+=2E
+>>> >=20
+>>> > Signed-off-by: William Qiu <william=2Eqiu@starfivetech=2Ecom>
+>>> > ---
+>>> >  =2E=2E=2E/soc/starfive/starfive,jh7110-syscon=2Eyaml  | 58 ++++++++=
++++++++++++
+>>> >  MAINTAINERS                                   |  6 ++
+>>> >  2 files changed, 64 insertions(+)
+>>> >  create mode 100644 Documentation/devicetree/bindings/soc/starfive/s=
+tarfive,jh7110-syscon=2Eyaml
+>>> >=20
+>>> > diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive=
+,jh7110-syscon=2Eyaml b/Documentation/devicetree/bindings/soc/starfive/star=
+five,jh7110-syscon=2Eyaml
+>>> > new file mode 100644
+>>> > index 000000000000=2E=2Ede086e74a229
+>>> > --- /dev/null
+>>> > +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110=
+-syscon=2Eyaml
+>>> > @@ -0,0 +1,58 @@
+>>> > +# SPDX-License-Identifier: (GPL-2=2E0 OR BSD-2-Clause)
+>>> > +%YAML 1=2E2
+>>> > +---
+>>> > +$id: http://devicetree=2Eorg/schemas/soc/starfive/starfive,jh7110-s=
+yscon=2Eyaml#
+>>> > +$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
+>>> > +
+>>> > +title: StarFive JH7110 SoC system controller
+>>> > +
+>>> > +maintainers:
+>>> > +  - William Qiu <william=2Eqiu@starfivetech=2Ecom>
+>>> > +
+>>> > +description: |
+>>> > +  The StarFive JH7110 SoC system controller provides register infor=
+mation such
+>>> > +  as offset, mask and shift to configure related modules such as MM=
+C and PCIe=2E
+>>> > +
+>>> > +properties:
+>>> > +  compatible:
+>>> > +    oneOf:
+>>> > +      - items:
+>>> > +          - enum:
+>>> > +              - starfive,jh7110-aon-syscon
+>>> > +              - starfive,jh7110-sys-syscon
+>>> > +          - const: syscon
+>>> > +          - const: simple-mfd
+>>> > +      - items:
+>>> > +          - const: starfive,jh7110-stg-syscon
+>>> > +          - const: syscon
+>>> > +
+>>> > +  reg:
+>>> > +    maxItems: 1
+>>> > +
+>>> > +  clock-controller:
+>>> > +    $ref: /schemas/clock/starfive,jh7110-pll=2Eyaml#
+>>> > +    type: object
+>>> > +
+>>> > +  power-controller:
+>>> > +    $ref: /schemas/power/starfive,jh7110-pmu=2Eyaml#
+>>> > +    type: object
+>>>=20
+>>> My plan was to grab this patch after the merge window, but there's bee=
+n
+>>> some back and forth [1] about what exactly should be a power-controlle=
+r
+>>> here=2E Given the merge window is open & I know Emil wants to look at =
+the
+>>> various clock bits for the JH7110, I don't think there's a pressing ne=
+ed
+>>> for you to do anything here, but figured I'd at least mention how thin=
+gs
+>>> are going on this thread too=2E
+>>=20
+>> To follow up on this, it transpired in that thread that this node, not =
+a
+>> child node, should be the power controller=2E
+>>=20
+>> Up to you StarFive folk how you wish to resend, but I am fine with it
+>> being in this series, I shall just not pick up the soc driver patches
+>> until the resent binding is applied by Stephen=2E
+>>=20
+>
+>Thanks=2E I had discussed with changhuang=2Eliang about this=2E And I wil=
+l drop
+>the 'starfive,jh7110-aon-syscon' and 'power-controller' in next patchset=
+=2E
+>Changhuang will take these in his patchset=2E
 
+Won't that result in broken bindings, since there's a ref to the pll bindi=
+ng?
+Keeping it in the same series (i=2Ee=2E this one) makes
+the most sense to me=2E
 
-Best regards,
-Krzysztof
+Cheers,
+Conor=2E
 
+>
+>Best regards,
+>Xingyu Wu
+>
