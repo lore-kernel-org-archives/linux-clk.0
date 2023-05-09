@@ -2,140 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A279C77B75
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 01:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64A3C77B75
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 02:12:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbjEIBJr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 May 2023 21:09:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54664 "EHLO
+        id S230113AbjEICMc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 May 2023 22:12:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbjEIBJo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 21:09:44 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2108E184;
-        Mon,  8 May 2023 18:09:44 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-643aad3bc41so4041580b3a.0;
-        Mon, 08 May 2023 18:09:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683594583; x=1686186583;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oJnx2f3sXSSrhC3+3mHpnxe1r3Cp8bqHnQ2WAmhKzRs=;
-        b=c9G8/lFCDbIQ2Lt8NlDQmzUR4Mmr/H8b9Jc7ZLAYTlteDovE8iEvC9w4jWBQbIZYjR
-         IXHgDo9j85ADaUa9+i3nEby0tmfN1JzuEYQcSIdQgCk50vnENodVlybeUwkjzA5/IZfJ
-         rDlMzv9j/1UuvSUCpYvMdbpRfmAH4IIPv6mJgki25TdmDkfJxQGUkVzPHm0w6GErIrXX
-         WPQHlSoqCzWvx2vSzQ6+isShM7AMLvSWnLnyDM4olfbcu0naoH2jdUc/uJI/2EKgjI+w
-         naBmo1Yg/539FmJk1JUSh/CxYxvPzrku8+NHw0hvdFgZ7CmWBkoCaVMIJD0LBRNJ8/6L
-         qwOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683594583; x=1686186583;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oJnx2f3sXSSrhC3+3mHpnxe1r3Cp8bqHnQ2WAmhKzRs=;
-        b=WaPZYYayNMCaRwYVj4aYsc5loZiQ0a12HrsvARgMloLMa9/oXrnSHCFLoGMdIlFU+2
-         oq6/GFCtECXj/txWMIMJ4Go+LpZluyii/O244JTefWi7htndc+adHD7G0UxEMH08BrV1
-         NHFMp+UiZTBCpJhK70Cd+ZoINUj+5YbggVIP8+QBgwZ2mddi+AzSf2s6VIkP5J++OWol
-         sPbOfQCvcBBGecmemn7RZe8Fl9LSGIS65z4zswgKgWIGlUJijqA+yTJ/3q67x/HhAeuA
-         OnZWeEtwn8VhLi/NYos6kvZmdydicqKSjTOeNfBosW1xv94k9mJMvBWVnlhpmq82ggQ+
-         GzpA==
-X-Gm-Message-State: AC+VfDwPgCU2KTm0cW/9S/1cV0f85JPrJSn694hJVTxYDkenmGz+kI8b
-        cP9JJeEQydiLDzDNoWS49IA=
-X-Google-Smtp-Source: ACHHUZ5dzwu0YRY8ZNRrpOmdQtDXncyRjy6d0AwRRlWcdeFmjbmAKdW6nVanTZBJugap1961XomYBg==
-X-Received: by 2002:a05:6a20:429b:b0:101:4c8c:d1fa with SMTP id o27-20020a056a20429b00b001014c8cd1famr476055pzj.5.1683594583425;
-        Mon, 08 May 2023 18:09:43 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id t23-20020a62ea17000000b0062cf75a9e6bsm539061pfh.131.2023.05.08.18.09.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 May 2023 18:09:42 -0700 (PDT)
-Message-ID: <a64a2da0-893e-52ce-c784-cac70d7cfeb2@gmail.com>
-Date:   Tue, 9 May 2023 09:09:38 +0800
+        with ESMTP id S229650AbjEICMb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 May 2023 22:12:31 -0400
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9962C93C5;
+        Mon,  8 May 2023 19:12:29 -0700 (PDT)
+X-UUID: 664dc89cd2b247b58cbe342628b969e4-20230509
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.22,REQID:e00b98a3-2ddc-4ba9-90f4-e29fc37af68b,IP:5,U
+        RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+        ON:release,TS:-15
+X-CID-INFO: VERSION:1.1.22,REQID:e00b98a3-2ddc-4ba9-90f4-e29fc37af68b,IP:5,URL
+        :0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+        :release,TS:-15
+X-CID-META: VersionHash:120426c,CLOUDID:6ace2c6b-2f20-4998-991c-3b78627e4938,B
+        ulkID:2305091012243TVTBB2R,BulkQuantity:0,Recheck:0,SF:38|24|17|19|44|102,
+        TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil,COL:0
+        ,OSI:0,OSA:0,AV:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-UUID: 664dc89cd2b247b58cbe342628b969e4-20230509
+X-User: gehao@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.169)] by mailgw
+        (envelope-from <gehao@kylinos.cn>)
+        (Generic MTA)
+        with ESMTP id 1014334548; Tue, 09 May 2023 10:12:21 +0800
+From:   Hao Ge <gehao@kylinos.cn>
+To:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org
+Cc:     gehao618@163.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH] mediatek/clk-mt8173-apmixedsys: use devm_of_iomap to avoid resource leak in clk_mt8173_apmixed_probe
+Date:   Tue,  9 May 2023 10:12:14 +0800
+Message-Id: <20230509021214.17105-1-gehao@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v10 09/10] reset: Add Nuvoton ma35d1 reset driver support
-Content-Language: en-US
-To:     =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, tmaimon77@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-serial <linux-serial@vger.kernel.org>, arnd@arndb.de,
-        schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230508025936.36776-1-ychuang570808@gmail.com>
- <20230508025936.36776-10-ychuang570808@gmail.com>
- <1ec43550-9aee-3a36-6ca5-ed56e98628f@linux.intel.com>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <1ec43550-9aee-3a36-6ca5-ed56e98628f@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Use devm_platform_ioremap_resource to take the place of of_iomap for
+avoid that we don't called iounmap when return some error or remove
+device.
+
+Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+index 8c2aa8b0f39e..8a2a88c63d15 100644
+--- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+@@ -146,8 +146,8 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
+ 	struct clk_hw *hw;
+ 	int r;
+ 
+-	base = of_iomap(node, 0);
+-	if (!base)
++	base = devm_of_iomap(&pdev->dev, node, 0, NULL);
++	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+ 	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
+-- 
+2.25.1
 
 
-On 2023/5/8 下午 07:00, Ilpo Järvinen wrote:
-> On Mon, 8 May 2023, Jacky Huang wrote:
->
->> From: Jacky Huang <ychuang3@nuvoton.com>
->>
->> This driver supports individual IP reset for ma35d1. The reset
->> control registers is a subset of system control registers.
-> registers are
->
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->> ---
->> diff --git a/drivers/reset/reset-ma35d1.c b/drivers/reset/reset-ma35d1.c
->> new file mode 100644
->> index 000000000000..19ed323981df
->> --- /dev/null
->> +++ b/drivers/reset/reset-ma35d1.c
->> @@ -0,0 +1,234 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2023 Nuvoton Technology Corp.
->> + * Author: Chi-Fang Li <cfli0@nuvoton.com>
->> + */
->> +
->> +#include <linux/bits.h>
->> +#include <linux/container_of.h>
->> +#include <linux/device.h>
->> +#include <linux/err.h>
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/of.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reboot.h>
->> +#include <linux/reset-controller.h>
->> +#include <linux/spinlock.h>
->> +#include <dt-bindings/reset/nuvoton,ma35d1-reset.h>
->> +
->> +struct ma35d1_reset_data {
->> +	struct reset_controller_dev rcdev;
->> +	struct notifier_block restart_handler;
->> +	void __iomem *base;
->> +	spinlock_t lock;
-> Please add a comment about what this protects. After adding that, feel
-> free to add also:
->
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
->
->
-Dear Ilpo ,
-
-Thanks for your review. I will fix them in the next version.
-
-
-Best Regards,
-Jacky Huang
-
-
-
+No virus found
+		Checked by Hillstone Network AntiVirus
