@@ -2,282 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE169C77B75
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 07:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078BAC7EE22
+	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 07:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233992AbjEIHQ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 03:16:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44536 "EHLO
+        id S233867AbjEIHxN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 03:53:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234665AbjEIHQZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 03:16:25 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C68B2688
-        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 00:16:23 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-30626f4d74aso3410268f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 May 2023 00:16:23 -0700 (PDT)
+        with ESMTP id S233731AbjEIHxN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 03:53:13 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D792133
+        for <linux-clk@vger.kernel.org>; Tue,  9 May 2023 00:53:10 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id a640c23a62f3a-9659f452148so968276766b.1
+        for <linux-clk@vger.kernel.org>; Tue, 09 May 2023 00:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683616582; x=1686208582;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1683618789; x=1686210789;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/zV8I60kyr/duLFC6koHipgTZUu3f0+TrYYdM3dUr30=;
-        b=YXqUvaJlzhOKBpI+x4uew1JBxo03mm5PTfJUOR+SXB+sjBIEKX4Bd8CsrXQKrWu7kg
-         McZgIPeGe6aEh0xILSsZhlpAGvvivhBRNEOB2j69RRKDfd+YybfO/VUf5Md6DzZeP0ff
-         hADplbDAiAyGQjrAF1sWpqbX5qrtKFm/RmWsoDdhQQdStgcr5k/ff6v5cmoy3b7ljagA
-         eyomEB8pJzOos9CImmahj/zivQSXueyBvAk/EzKMlyZ+9HPJG2izYHJYPJtBxpcc5TZw
-         /lJEykA0zUq3tJiIrrIuHwSYdB6vG5500TkHX/LgVmH6Lb+sBtznvyo9dPwH+MoKzVf9
-         Urkw==
+        bh=feUQTmDsglXzlQR46XLSaIS8pInOXk6yAAJ3q99bp6I=;
+        b=hjRhYZ2sqanoRvze/04alzqj9JiiwPhCoxB+BI/eJx6dHRi6cYVOLmaRH9YzRfEfv6
+         T3ZXVRAubpUacBIo/dQ1Oe6Ccb8QgQhq8ZZyqE4K3gqrMkiztqLy40BvjiJrSpLAq/Et
+         D5CExYDCCSTBwJUZJaiAnXUj+uvuTSbyouSFBVHyZIWGpiHNKyGCmgqG0WBQJvHcsLlr
+         D0s7voEYioCxU7RFpIUN39peWz4+qm+s7GB6IczkO65xQ2rOLlQ1/KxMhF8pDHefm+oH
+         SMNyWsNxQhQnjC5bN2bD59vzIffXLhoebYhPhQUl9Wxe19W38bupMDXk2WzIzp9m0ij3
+         sCmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683616582; x=1686208582;
+        d=1e100.net; s=20221208; t=1683618789; x=1686210789;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/zV8I60kyr/duLFC6koHipgTZUu3f0+TrYYdM3dUr30=;
-        b=YKgpXqxlL+ydcncwZxjs4czezzeclBsGvwmEeIZ7VowhI1rZYwSU0sojDn4y+qA5Kp
-         HqeDubGuektnKXCyCbNp/GdoiED/kTCwn+kTnHb17CB54EjgeHcTNo2D1DxePAa9xqzu
-         yLK+o0CqUCuiYbKc/1p7EhB1UEyB6a5t3CdO7vQRPpxQfThwqv4rcY9tDYO3K9ycrOSP
-         xKoRXmzsaUpx0GQPauiG0m+MkvqEVq/6YtNSyTdYUOZtJqDUZImAcia9Il6PQYkQlVmV
-         nXtmiJbbIaDm4vO+atgTVp+aJUZ/5w9pm+t33b6xXiVF1+hHugYOD+jlZBddb6xvm13Q
-         P2fw==
-X-Gm-Message-State: AC+VfDxWRDmGT/Uc1POO5DxT3HuDhirprWKHrKcQ8RuEPEfLkqeGKQYA
-        y5eliNCoz7rUBM+lR+TjjVnlBQ==
-X-Google-Smtp-Source: ACHHUZ7xZh5XUfIBj39z/ocPaZauzFBEVCazPYU32WDWQ3cmX7amUGDoS/V4zAOozPjq9F8MY92oeA==
-X-Received: by 2002:a5d:6586:0:b0:306:e59b:e272 with SMTP id q6-20020a5d6586000000b00306e59be272mr7505676wru.51.1683616581909;
-        Tue, 09 May 2023 00:16:21 -0700 (PDT)
-Received: from linaro.org ([86.121.163.20])
-        by smtp.gmail.com with ESMTPSA id v1-20020a5d6101000000b003062b57ffd1sm13488062wrt.50.2023.05.09.00.16.21
+        bh=feUQTmDsglXzlQR46XLSaIS8pInOXk6yAAJ3q99bp6I=;
+        b=T4lXnWmm+R7eg9W2AUzj4NFFKV45fXbDcNzZ8sWQTnQkFz5LOqeBq/SMBu5mRWgmlX
+         Is4CHFc9GsNt0Yw9AOKKRgX2Tn3eAuu3jLEspaymiomwXNc3AOkayOmDP4kY12XflXyN
+         yuY73D2qS6bgWnYV78jLmSuAtHQrHNCC17sa8V5C4aRCx6OSINXuriDPLN6zRyuisFcu
+         EqruRP7yIjX3vbhWq1JY+EdmTduZlG1Zmf20oCLMsLYxD+C9vSjtyrSmDagRcvvqSr4q
+         iqmpbqlp2XWErESv2tQb41KB4+/uBqQy9pv9Rt5X4B5I6e5IYUYVTeE9u/lk+Xjzqpa9
+         ZISA==
+X-Gm-Message-State: AC+VfDwnQHk/7nIHCrx0hRaeq2Q7d3JKAheCSlzQXe1Tuob6B4gUR+u5
+        y9DTXMXloOkGz/jnP+WxI1XxZQ==
+X-Google-Smtp-Source: ACHHUZ4Ys5JPUT5yfL7I2Ptl2Kgw41O9I1am/CVOQxdIoqUTW0+/rjArOEcpP2Y6DgIN8YjOjWtTBA==
+X-Received: by 2002:a17:907:1c9a:b0:966:2fdf:f66c with SMTP id nb26-20020a1709071c9a00b009662fdff66cmr9304626ejc.3.1683618788710;
+        Tue, 09 May 2023 00:53:08 -0700 (PDT)
+Received: from localhost ([86.61.181.4])
+        by smtp.gmail.com with ESMTPSA id d21-20020a170906c21500b00965fdb90801sm990212ejz.153.2023.05.09.00.53.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 May 2023 00:16:21 -0700 (PDT)
-Date:   Tue, 9 May 2023 10:16:20 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, kernel-team@android.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] clk: Add support for sync_state()
-Message-ID: <ZFnzRJu/SVh+zd6O@linaro.org>
-References: <20210407034456.516204-1-saravanak@google.com>
- <20210407034456.516204-3-saravanak@google.com>
+        Tue, 09 May 2023 00:53:08 -0700 (PDT)
+Date:   Tue, 9 May 2023 09:53:07 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Paolo Abeni <pabeni@redhat.com>,
+        "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>
+Subject: Re: [PATCH RFC v6 2/6] dpll: Add DPLL framework base functions
+Message-ID: <ZFn74xJOtiXatfHQ@nanopsycho>
+References: <ZFOQWmkBUtgVR06R@nanopsycho>
+ <20230504090401.597a7a61@kernel.org>
+ <ZFPwqu5W8NE6Luvk@nanopsycho>
+ <20230504114421.51415018@kernel.org>
+ <ZFTdR93aDa6FvY4w@nanopsycho>
+ <20230505083531.57966958@kernel.org>
+ <ZFdaDmPAKJHDoFvV@nanopsycho>
+ <d86ff1331a621bf3048123c24c22f49e9ecf0044.camel@redhat.com>
+ <ZFjoWn9+H932DdZ1@nanopsycho>
+ <20230508124250.20fb1825@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210407034456.516204-3-saravanak@google.com>
+In-Reply-To: <20230508124250.20fb1825@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21-04-06 20:44:55, Saravana Kannan wrote:
-> Clocks can be turned on (by the hardware, bootloader, etc) upon a
-> reset/boot of a hardware platform. These "boot clocks" could be clocking
-> devices that are active before the kernel starts running. For example,
-> clocks needed for the interconnects, UART console, display, CPUs, DDR,
-> etc.
-> 
-> When a boot clock is used by more than one consumer or multiple boot
-> clocks share a parent clock, the boot clock (or the common parent) can
-> be turned off when the first consumer probes. This can crash the device
-> or cause poor user experience.
-> 
-> Fix this by explicitly enabling the boot clocks during clock
-> registration and then removing the enable vote when the clock provider
-> device gets its sync_state() callback. Since sync_state() callback comes
-> only when all the consumers of a device (not a specific clock) have
-> probed, this ensures the boot clocks are kept on at least until all
-> their consumers have had a chance to vote on them (in their respective
-> probe functions).
-> 
-> Also, if a clock provider is loaded as a module and it has some boot
-> clocks, they get turned off only when a consumer explicitly turns them
-> off. So clocks that are boot clocks and are unused never get turned off
-> because the logic to turn off unused clocks has already run during
-> late_initcall_sync(). Adding sync_state() support also makes sure these
-> unused boot clocks are turned off once all the consumers have probed.
-> 
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  drivers/clk/clk.c            | 84 +++++++++++++++++++++++++++++++++++-
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 84 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d6301a3351f2..cd07f4d1254c 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -72,6 +72,8 @@ struct clk_core {
->  	unsigned long		flags;
->  	bool			orphan;
->  	bool			rpm_enabled;
-> +	bool			need_sync;
-> +	bool			boot_enabled;
->  	unsigned int		enable_count;
->  	unsigned int		prepare_count;
->  	unsigned int		protect_count;
-> @@ -1215,6 +1217,15 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
->  	hlist_for_each_entry(child, &core->children, child_node)
->  		clk_unprepare_unused_subtree(child);
->  
-> +	/*
-> +	 * Orphan clocks might still not have their state held if one of their
-> +	 * ancestors hasn't been registered yet. We don't want to turn off
-> +	 * these orphan clocks now as they will be turned off later when their
-> +	 * device gets a sync_state() call.
-> +	 */
-> +	if (dev_has_sync_state(core->dev))
-> +		return;
-> +
->  	if (core->prepare_count)
->  		return;
->  
-> @@ -1246,6 +1257,15 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
->  	hlist_for_each_entry(child, &core->children, child_node)
->  		clk_disable_unused_subtree(child);
->  
-> +	/*
-> +	 * Orphan clocks might still not have their state held if one of their
-> +	 * ancestors hasn't been registered yet. We don't want to turn off
-> +	 * these orphan clocks now as they will be turned off later when their
-> +	 * device gets a sync_state() call.
-> +	 */
-> +	if (dev_has_sync_state(core->dev))
-> +		return;
-> +
->  	if (core->flags & CLK_OPS_PARENT_ENABLE)
->  		clk_core_prepare_enable(core->parent);
->  
-> @@ -1319,6 +1339,38 @@ static int __init clk_disable_unused(void)
->  }
->  late_initcall_sync(clk_disable_unused);
->  
-> +static void clk_unprepare_disable_dev_subtree(struct clk_core *core,
-> +					      struct device *dev)
-> +{
-> +	struct clk_core *child;
-> +
-> +	lockdep_assert_held(&prepare_lock);
-> +
-> +	hlist_for_each_entry(child, &core->children, child_node)
-> +		clk_unprepare_disable_dev_subtree(child, dev);
-> +
-> +	if (core->dev != dev || !core->need_sync)
-> +		return;
-> +
-> +	clk_core_disable_unprepare(core);
-> +}
-> +
-> +void clk_sync_state(struct device *dev)
-> +{
-> +	struct clk_core *core;
-> +
-> +	clk_prepare_lock();
-> +
-> +	hlist_for_each_entry(core, &clk_root_list, child_node)
-> +		clk_unprepare_disable_dev_subtree(core, dev);
-> +
-> +	hlist_for_each_entry(core, &clk_orphan_list, child_node)
-> +		clk_unprepare_disable_dev_subtree(core, dev);
-> +
-> +	clk_prepare_unlock();
-> +}
-> +EXPORT_SYMBOL_GPL(clk_sync_state);
-> +
->  static int clk_core_determine_round_nolock(struct clk_core *core,
->  					   struct clk_rate_request *req)
->  {
-> @@ -1725,6 +1777,30 @@ int clk_hw_get_parent_index(struct clk_hw *hw)
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
->  
-> +static void clk_core_hold_state(struct clk_core *core)
-> +{
-> +	if (core->need_sync || !core->boot_enabled)
-> +		return;
-> +
-> +	if (core->orphan || !dev_has_sync_state(core->dev))
-> +		return;
-> +
-> +	core->need_sync = !clk_core_prepare_enable(core);
-> +}
-> +
-> +static void __clk_core_update_orphan_hold_state(struct clk_core *core)
-> +{
-> +	struct clk_core *child;
-> +
-> +	if (core->orphan)
-> +		return;
-> +
-> +	clk_core_hold_state(core);
-> +
-> +	hlist_for_each_entry(child, &core->children, child_node)
-> +		__clk_core_update_orphan_hold_state(child);
-> +}
-> +
->  /*
->   * Update the orphan status of @core and all its children.
->   */
-> @@ -3392,6 +3468,7 @@ static void clk_core_reparent_orphans_nolock(void)
->  			__clk_set_parent_after(orphan, parent, NULL);
->  			__clk_recalc_accuracies(orphan);
->  			__clk_recalc_rates(orphan, 0);
-> +			__clk_core_update_orphan_hold_state(orphan);
->  		}
->  	}
->  }
-> @@ -3550,6 +3627,8 @@ static int __clk_core_init(struct clk_core *core)
->  		rate = 0;
->  	core->rate = core->req_rate = rate;
->  
-> +	core->boot_enabled = clk_core_is_enabled(core);
-> +
->  	/*
->  	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
->  	 * don't get accidentally disabled when walking the orphan tree and
-> @@ -3572,6 +3651,7 @@ static int __clk_core_init(struct clk_core *core)
->  		}
->  	}
->  
-> +	clk_core_hold_state(core);
+Mon, May 08, 2023 at 09:42:50PM CEST, kuba@kernel.org wrote:
+>On Mon, 8 May 2023 14:17:30 +0200 Jiri Pirko wrote:
+>> >> Hmm, that would kind of embed the pin type into attr which feels wrong.  
+>
+>An attribute which changes meaning based on a value of another attribute
+>feels even more wrong.
 
-Sorry for bringing up this old thread. Per your suggestion, I'm trying
-to respin this patchset.
+It wouldn't change meaning, it would be still "a label". Either on a
+back of a PCI card or internal pin in a board scheme. Still the same
+meaning (for mux type for example).
 
-The problem with this approach is that it re-enables 'boot enabled'
-clocks on init. This messes up the clock slice for uart, for example.
-More so, think what happens with PLLs that need to lock again or clocks
-for which writing the enable bit again require some time to become
-stable again.
 
-As a whole, I believe this patchset looks good, but the re-enabling
-needs to be dropped.
 
->  	clk_core_reparent_orphans_nolock();
->  
->  
-> @@ -3837,8 +3917,10 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->  		core->rpm_enabled = true;
->  	core->dev = dev;
->  	core->of_node = np;
-> -	if (dev && dev->driver)
-> +	if (dev && dev->driver) {
->  		core->owner = dev->driver->owner;
-> +		dev_set_drv_sync_state(dev, clk_sync_state);
-> +	}
->  	core->hw = hw;
->  	core->flags = init->flags;
->  	core->num_parents = init->num_parents;
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 58f6fe866ae9..429c413dadce 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -1112,6 +1112,7 @@ void devm_clk_unregister(struct device *dev, struct clk *clk);
->  
->  void clk_hw_unregister(struct clk_hw *hw);
->  void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
-> +void clk_sync_state(struct device *dev);
->  
->  /* helper functions */
->  const char *__clk_get_name(const struct clk *clk);
-> -- 
-> 2.31.1.295.g9ea45b61b8-goog
-> 
-> 
+>
+>> >Looking at the above from a different angle, the
+>> >DPLL_A_PIN_FRONT_PANEL_LABEL attribute will be available only for
+>> >DPLL_PIN_TYPE_EXT type pins, which looks legit to me - possibly
+>> >renaming DPLL_A_PIN_FRONT_PANEL_LABEL as DPLL_A_PIN_EXT_LABEL.  
+>
+>Yup. Even renaming EXT to something that's less.. relative :(
+
+Suggestion?
+
+
+>
+>> Well sure, in case there is no "label" attr for the rest of the types.
+>> Which I believe it is, for the ice implementation in this patchset.
+>> Otherwise, there is no way to distinguish between the pins.
+>> To have multiple attrs for label for multiple pin types does not make
+>> any sense to me, that was my point.
+>
+>Come on, am I really this bad at explaining this?
+
+Or perhaps I'm just slow.
+
+
+>
+>If we make a generic "label" attribute driver authors will pack
+>everything they want to expose to the user into it, and then some.
+
+What's difference in generic label string attr and type specific label
+string attr. What is stopping driver developers to pack crap in either
+of these 2. Perhaps I'm missing something. Could you draw examples?
+
+
+>
+>So we need attributes which will feel *obviously* *wrong* to abuse.
+
+Sure, I get what you say and agree. I'm just trying to find out the
+actual attributes :)
