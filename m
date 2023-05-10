@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70592C77B7D
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 19:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCEFC77B7C
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 19:32:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231486AbjEJTbV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 15:31:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60686 "EHLO
+        id S230016AbjEJTcZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 15:32:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbjEJTbU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 15:31:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADAE465A0;
-        Wed, 10 May 2023 12:31:19 -0700 (PDT)
+        with ESMTP id S229586AbjEJTcY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 15:32:24 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCF66A58;
+        Wed, 10 May 2023 12:32:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4404763EFB;
-        Wed, 10 May 2023 19:31:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94776C433D2;
-        Wed, 10 May 2023 19:31:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BEF063F48;
+        Wed, 10 May 2023 19:32:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B9AAC433D2;
+        Wed, 10 May 2023 19:32:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683747078;
-        bh=sLc/tCNuyfPHA5XcyUpPv3W6N3rM7ijgibgCvR1Je4o=;
+        s=k20201202; t=1683747142;
+        bh=c/AlsGiGpoTHae8vhLhsc3UPCjpdKpr279Xb/LN1V5s=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=pXqhfXUXBN3zMa4L/744yahSwwUxF3peMk/RyCUNMLdnaKEfKjbhPru08XabVTC7v
-         Kpj5e6mOJiM1blE/6LDET0jWANrklI0jVPR8f+pQICdXsVInUaO5A8iALmkPAFIvvB
-         EbBd8LfNX4iQw4e2tS/xPSt+pH82JweobUu1doUHCvwe0Dj1Xpbj5MjLKL7uWiaeYm
-         eH8gKdt+wmhqdOv0WhM0ckOxM1tzq3Ri8g0oxd6f7ZyWatxJIyR1O68uKy/5v3ArNm
-         Y5vGqCWqF7hSMPbaI2TGHRW3mxi+Bq2SgJhsVpR+5422UpD6qWDKthFMORsLfPjRTZ
-         ozVtTs2w1iyOA==
-Message-ID: <6bfb24ba4b944563f601035824c97f06.sboyd@kernel.org>
+        b=JlskFPAhVrij7C90ZF1JsoTand7G3QJdQ6fF+FMpvBug94+uMGMPVmWGSN/y/DH2r
+         IaJPxjXl8if6QZppHq6n41lmqY14TQsa+XjKtLrjXGxmWqlt+y7HIZwABdMBwlKb5t
+         py/p17QCQuSSL9mVb3IrMxUa2PhqyewLq1zStWDDdHgF3xtyJNR9QUXrOb3TmKE6Xh
+         EoOXGKul7apNmn6W+RJWP8r3A3e8KepPQqrip5R9et6z7UL021jBtBU84YnlK5Nhtc
+         TfANR2c/wgU8zG2GglL2lAhpjwAIWeNjSsaelYiooGxGLE+XE7WDpbcAQoahaO+oZd
+         sUQGGMeaDhXEQ==
+Message-ID: <f450c63a57fc5a9536d3c48df26244cf.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -46,7 +46,7 @@ To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <quic_tdas@quicinc.com>
-Date:   Wed, 10 May 2023 12:31:16 -0700
+Date:   Wed, 10 May 2023 12:32:20 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -62,6 +62,7 @@ Quoting Taniya Das (2023-05-01 07:29:32)
 > Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller drive=
 r for SC7180")
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Is something broken right now? The commit text doesn't tell me if we
+need to backport this to stable kernels or merge it as soon as possible.
+What's the priority of this fix?
