@@ -2,70 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEA3C7EE24
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 16:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF49C77B7D
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 16:52:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236021AbjEJQvm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 12:51:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36040 "EHLO
+        id S235134AbjEJQwT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 12:52:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236034AbjEJQvg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 12:51:36 -0400
+        with ESMTP id S230023AbjEJQwS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 12:52:18 -0400
 Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21C1D30FE;
-        Wed, 10 May 2023 09:51:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66F186BA;
+        Wed, 10 May 2023 09:51:56 -0700 (PDT)
 Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34AErisr015048;
-        Wed, 10 May 2023 18:51:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
- mime-version : subject : from : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=selector1;
- bh=1TPowHl9YS+9EwhC0HyGBvVFoLMVcbPAYARBloMLBAY=;
- b=SC2ubzgCSgC/4M1ZeLFYO3G0owJFVcxjajOAxj0Id+jvdLIv7sgC0V2z42ZREMTwvcs4
- 1/13oP6o/eGqsj13KvjS+M9HaLEB8yL6q7qF4bCq14G9ASXBNFIvA4TDEdtXZZExH9XK
- /y8MW51ZA4llMauvEj/+ZvwhFwYCzQMreBj3ZQjzvnkOvtdFNFbftDFvrdA8/BnidB+b
- nNzgUgIKDDYo0u+7uoz1nxxI1lX5rx91Ofx6IEmGqouI22UW6+pNXok21iQ3HTFr4ml/
- jfcTjtabuPsa7onSDmu59B6tcJq7PLYGR5EiR1jnQ5A5e8lzOuxWY9KeESq9gDlGLCze lA== 
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34AEqUK7015023;
+        Wed, 10 May 2023 18:51:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=selector1;
+ bh=lcLDqN2ZYdjWNqrxhC5sckV20z6BNR4pxtCqiw/kpbM=;
+ b=dk7NmF2csO2LTk2mHy7Br/xGu8EiQaurF2rizF6rPIpxYTni524o2o+M+9HIWjRv6DeJ
+ EJh290xBpdLFpzNf+W9kDzUkCxkn2dlBqu6S9m99Vbo2F7oYB4/QORFtq7yZYsKQG3KV
+ 2iaqmWV4Ji0gKsu/mv5X+E1gBz/x6Q1auhuFs6oLdguo+SJT7Yz3k4zzKCC8MEY7aEbg
+ slH4iaFooMmkh7JDnh6EjbtJaAgydx9fb9H8t3G4O4Af7Zm8Jf5HQrahngMTC/vz0xK/
+ 44KZK54YPfB/h/aAcmYjwCwvxUcRGnOtW15leLGZtn0aT7f0Q5GMuBeKiXhO0sioubhp 6A== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qg90pjff2-1
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qg90pjfhf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 May 2023 18:51:14 +0200
+        Wed, 10 May 2023 18:51:45 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 23A4A10002A;
-        Wed, 10 May 2023 18:51:13 +0200 (CEST)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2FA4710002A;
+        Wed, 10 May 2023 18:51:45 +0200 (CEST)
 Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 174D522D183;
-        Wed, 10 May 2023 18:51:13 +0200 (CEST)
-Received: from [10.48.1.0] (10.48.1.0) by SHFDAG1NODE3.st.com (10.75.129.71)
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 22AD122D185;
+        Wed, 10 May 2023 18:51:45 +0200 (CEST)
+Received: from localhost (10.48.1.0) by SHFDAG1NODE3.st.com (10.75.129.71)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Wed, 10 May
- 2023 18:51:12 +0200
-Message-ID: <0e2453b9-cb7d-fdd9-2eb5-145972b23061@foss.st.com>
-Date:   Wed, 10 May 2023 18:51:11 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] dt-bindings: rcc: stm32: Fix STM32MP13 include file
-Content-Language: en-US
-From:   Patrick DELAUNAY <patrick.delaunay@foss.st.com>
-To:     Rob Herring <robh@kernel.org>, <gabriel.fernandez@foss.st.com>
-CC:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+ 2023 18:51:44 +0200
+From:   Patrick Delaunay <patrick.delaunay@foss.st.com>
+To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <gabriel.fernandez@st.com>, <devicetree@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     <gabriel.fernandez@st.com>, <gabriel.fernandez@foss.st.com>,
+        "Patrick Delaunay" <patrick.delaunay@foss.st.com>,
+        <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Loic PALLARDY <loic.pallardy@st.com>
-References: <20230407201526.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
- <20230412151404.GA2372294-robh@kernel.org>
- <7884b0d8-199c-4415-4113-ddce4b640508@foss.st.com>
-In-Reply-To: <7884b0d8-199c-4415-4113-ddce4b640508@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v2] dt-bindings: rcc: stm32: Sync with u-boot copy for STM32MP13 SoC
+Date:   Wed, 10 May 2023 18:51:40 +0200
+Message-ID: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [10.48.1.0]
 X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
  (10.75.129.71)
@@ -76,143 +72,61 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Minor cosmetic change, aligned with files in U-Boot:
+- change obsolete SPDX id : GPL-2.0+ and use the same license
+  GPL-2.0-only for the 2 files
+- use correct mail address gabriel.fernandez@foss.st.com
+- remove extra space
 
-On 5/10/23 16:22, Patrick DELAUNAY wrote:
-> Hi,
->
-> On 4/12/23 17:14, Rob Herring wrote:
->> On Fri, Apr 07, 2023 at 08:15:33PM +0200, Patrick Delaunay wrote:
->>> Minor cosmetic change, aligned with files in U-Boot:
->>> - change obsolete SPDX id : GPL-2.0+
->>> - use correct address gabriel.fernandez@foss.st.com
->>> - remove extra space
->> Make the subject reflect the purpose: 'Sync with u-boot copy'
->
->
-> Ok
->
->
->>
->>> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
->>> ---
->>>
->>>   include/dt-bindings/clock/stm32mp13-clks.h   | 6 +++---
->>>   include/dt-bindings/reset/stm32mp13-resets.h | 4 ++--
->>>   2 files changed, 5 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/include/dt-bindings/clock/stm32mp13-clks.h 
->>> b/include/dt-bindings/clock/stm32mp13-clks.h
->>> index 02befd25edce..da4cb7567430 100644
->>> --- a/include/dt-bindings/clock/stm32mp13-clks.h
->>> +++ b/include/dt-bindings/clock/stm32mp13-clks.h
->>> @@ -1,7 +1,7 @@
->>> -/* SPDX-License-Identifier: GPL-2.0+ or BSD-3-Clause */
->>> +/* SPDX-License-Identifier: GPL-2.0-or-later or BSD-3-Clause */
->>>   /*
->>>    * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
->>> - * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for 
->>> STMicroelectronics.
->>> + * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for 
->>> STMicroelectronics.
->>>    */
->>>     #ifndef _DT_BINDINGS_STM32MP13_CLKS_H_
->>> @@ -64,7 +64,7 @@
->>>   #define CK_MCO1        38
->>>   #define CK_MCO2        39
->>>   -/*  IP clocks */
->>> +/* IP clocks */
->>>   #define SYSCFG        40
->>>   #define VREF        41
->>>   #define DTS        42
->>> diff --git a/include/dt-bindings/reset/stm32mp13-resets.h 
->>> b/include/dt-bindings/reset/stm32mp13-resets.h
->>> index 934864e90da6..1b83a01de8f0 100644
->>> --- a/include/dt-bindings/reset/stm32mp13-resets.h
->>> +++ b/include/dt-bindings/reset/stm32mp13-resets.h
->>> @@ -1,7 +1,7 @@
->>> -/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
->>> +/* SPDX-License-Identifier: GPL-2.0-or-later or BSD-3-Clause */
->> Really, the Linux copy came first, so you should use its license. Your
->> company's lawyers are good with GPLv3 and then v4?
->
->
-> We have a long debate on the licenses, and particular for device tree,
->
-> and as conclusion we are using for STM32MP SoCs:
->
-> - For code (in Linux kernel driver) => GPL-2.0-only
->
-> - For device tree and binding .h files; the dual licenses => 
-> GPL-2.0-or-later OR BSD-3-Clause
->
->
-> It is because the modifications in device tree files and binding file 
-> s can be applied on
->
-> other SW with using any licenses:
->
->    - GPL2 (Linux /u-Boot)
->
->    - BSD (TF-A/OP-TEE)
->
->    - GPL3/GPL4 license (any other SW component)
->
->
-> Just indicate GPL-2.0-or-later in the device tree or binding files 
-> won't contaminate
->
-> all the projects with GPL3/GPL4 license if it only use this DT, or 
-> binding files.
->
->
-> NB: it is already the case for other files used by STM32MP SoC, for 
-> example :
->
-> ./include/dt-bindings/pinctrl/stm32-pinfunc.h:
->     /* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
->
->
-> and we have no reason to use a different license for the 2 files for 
-> STM32MP13 RCC binding:
->
->   include/dt-bindings/reset/stm32mp13-resets.h
->   include/dt-bindings/clock/stm32mp13-clks.h
->
-> This patch corrects a mistake in the initial commit for RCC binding 
-> up-streamed
->
-> by Gabriel in parallel in U-Boot and Linux repositories; this 
-> inconsistency in the license
->
-> was corrected only when the same patch was pushed in U-Boot.
->
->
-> PS: using the GPL2-only is not a issue for U-Boot but perhaps for 
-> other user of device tree in other components,
->       So if it is a blocking issue for Linux I can change it to 
-> "GPL-2.0-only" in Linux and U-Boot
->
->
-> Patrick 
+Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+---
 
+Changes in v2:
+- Change title "Fix STM32MP13 include file"
+- Use the same license for the 2 files GPL-2.0-only as recommended
+  to avoid check-patch issue on next
 
-Hi,
+ include/dt-bindings/clock/stm32mp13-clks.h   | 6 +++---
+ include/dt-bindings/reset/stm32mp13-resets.h | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-
-after test and to avoid the check-patch issue on next branch introduced 
-by commit a04bb4c24a48
-
-("checkpatch: introduce proper bindings license check"),
-
-I will use the same license for the 2 files "GPL-2.0-only" as recommended in
-
-https://lore.kernel.org/all/CAL_Jsq+-YJsBO+LuPJ=ZQ=eb-monrwzuCppvReH+af7hYZzNaQ@mail.gmail.com
-
-=> "Also, GPL-2.0-or-later is neither desired nor encouraged."
-
-And I will align the U-Boot files later....
-
-
-Patrick
-
+diff --git a/include/dt-bindings/clock/stm32mp13-clks.h b/include/dt-bindings/clock/stm32mp13-clks.h
+index 02befd25edce..0bd7b54c65ff 100644
+--- a/include/dt-bindings/clock/stm32mp13-clks.h
++++ b/include/dt-bindings/clock/stm32mp13-clks.h
+@@ -1,7 +1,7 @@
+-/* SPDX-License-Identifier: GPL-2.0+ or BSD-3-Clause */
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+ /*
+  * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
+- * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+  */
+ 
+ #ifndef _DT_BINDINGS_STM32MP13_CLKS_H_
+@@ -64,7 +64,7 @@
+ #define CK_MCO1		38
+ #define CK_MCO2		39
+ 
+-/*  IP clocks */
++/* IP clocks */
+ #define SYSCFG		40
+ #define VREF		41
+ #define DTS		42
+diff --git a/include/dt-bindings/reset/stm32mp13-resets.h b/include/dt-bindings/reset/stm32mp13-resets.h
+index 934864e90da6..ecb37c7ddde1 100644
+--- a/include/dt-bindings/reset/stm32mp13-resets.h
++++ b/include/dt-bindings/reset/stm32mp13-resets.h
+@@ -1,7 +1,7 @@
+-/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+ /*
+  * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
+- * Author: Gabriel Fernandez <gabriel.fernandez@st.com> for STMicroelectronics.
++ * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicroelectronics.
+  */
+ 
+ #ifndef _DT_BINDINGS_STM32MP13_RESET_H_
+-- 
+2.25.1
 
