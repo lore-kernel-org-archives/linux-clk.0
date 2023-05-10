@@ -2,67 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCEFC77B7C
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 19:32:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E83BC77B7C
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 20:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230016AbjEJTcZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 15:32:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33122 "EHLO
+        id S229745AbjEJUnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 16:43:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229586AbjEJTcY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 15:32:24 -0400
+        with ESMTP id S236538AbjEJUnO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 16:43:14 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCF66A58;
-        Wed, 10 May 2023 12:32:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1C8BD7;
+        Wed, 10 May 2023 13:43:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BEF063F48;
-        Wed, 10 May 2023 19:32:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B9AAC433D2;
-        Wed, 10 May 2023 19:32:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F3706401A;
+        Wed, 10 May 2023 20:43:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DFC2C433D2;
+        Wed, 10 May 2023 20:43:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683747142;
-        bh=c/AlsGiGpoTHae8vhLhsc3UPCjpdKpr279Xb/LN1V5s=;
+        s=k20201202; t=1683751392;
+        bh=x7JoMvq12GkBDAMpw0bQAgdVpKquBbUYn0pK97yJaOQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=JlskFPAhVrij7C90ZF1JsoTand7G3QJdQ6fF+FMpvBug94+uMGMPVmWGSN/y/DH2r
-         IaJPxjXl8if6QZppHq6n41lmqY14TQsa+XjKtLrjXGxmWqlt+y7HIZwABdMBwlKb5t
-         py/p17QCQuSSL9mVb3IrMxUa2PhqyewLq1zStWDDdHgF3xtyJNR9QUXrOb3TmKE6Xh
-         EoOXGKul7apNmn6W+RJWP8r3A3e8KepPQqrip5R9et6z7UL021jBtBU84YnlK5Nhtc
-         TfANR2c/wgU8zG2GglL2lAhpjwAIWeNjSsaelYiooGxGLE+XE7WDpbcAQoahaO+oZd
-         sUQGGMeaDhXEQ==
-Message-ID: <f450c63a57fc5a9536d3c48df26244cf.sboyd@kernel.org>
+        b=ZVp3Fh//rOZOI2KmFeakDBJXz14hmUm4L5JHlBzzzf056YNFNzroLjIX1zw2DU6YR
+         Cpb5ltYNlm9fwjaX3/Dw5a2lJwwIoznyyUI3K/PYSlAnX7jV2k6DUjMHeW9WIn7wIA
+         jVbkAjsVGILIyvAvpz3BZ9cOlghyBQoStxHGlXgictIFQ7jPZTD8iaQtyAxMgUpovA
+         ciIKUD+jCM5dvGAwkSG15u3S73r8Bq9GawfmQDrXJQjj8Kwk+RFY1ztkQlE5Ci0v/r
+         SHhdgVpH6ME0aoML9QFfHxTgLGpPYLya97LQsjFjRkwMDfZKhAcCPBCHmWUperndjk
+         XDk6wW8cDCEoQ==
+Message-ID: <f1d5d02d31e6237087c81705907ed861.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230501142932.13049-1-quic_tdas@quicinc.com>
-References: <20230501142932.13049-1-quic_tdas@quicinc.com>
-Subject: Re: [PATCH V2] clk: qcom: camcc-sc7180: Add parent dependency to all camera GDSCs
+In-Reply-To: <20230430190233.878921-2-u.kleine-koenig@pengutronix.de>
+References: <20230430190233.878921-1-u.kleine-koenig@pengutronix.de> <20230430190233.878921-2-u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH v2 1/3] clk: mediatek: Make mtk_clk_simple_remove() return void
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_skakitap@quicinc.com,
-        quic_cponnapa@quicinc.com, Taniya Das <quic_tdas@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@pengutronix.de
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Date:   Wed, 10 May 2023 12:32:20 -0700
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Date:   Wed, 10 May 2023 13:43:10 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2023-05-01 07:29:32)
-> Camera titan top GDSC is a parent supply to all other camera GDSCs. Titan
-> top GDSC is required to be enabled before enabling any other camera GDSCs
-> and it should be disabled only after all other camera GDSCs are disabled.
-> Ensure this behavior by marking titan top GDSC as parent of all other
-> camera GDSCs.
+Quoting Uwe Kleine-K=C3=B6nig (2023-04-30 12:02:31)
+> __mtk_clk_simple_remove() and so also mtk_clk_simple_remove() return
+> zero unconditionally. Make them return no value instead and convert the
+> drivers making use of it to platform_driver's .remove_new().
 >=20
-> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller drive=
-r for SC7180")
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> This makes the semantics in the callers of mtk_clk_simple_remove() clearer
+> and prepares for the quest to make platform driver's remove function retu=
+rn
+> void. There is no semantic change.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-Is something broken right now? The commit text doesn't tell me if we
-need to backport this to stable kernels or merge it as soon as possible.
-What's the priority of this fix?
+Applied to clk-next
