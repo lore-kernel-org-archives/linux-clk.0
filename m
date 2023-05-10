@@ -2,160 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFC3C77B7D
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 10:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38590C7EE23
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 14:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235982AbjEJK6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 06:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56056 "EHLO
+        id S237060AbjEJOEK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 10:04:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235609AbjEJK56 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 06:57:58 -0400
-Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C5344A7;
-        Wed, 10 May 2023 03:57:50 -0700 (PDT)
+        with ESMTP id S236853AbjEJOEJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 10:04:09 -0400
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80D5E7C;
+        Wed, 10 May 2023 07:04:07 -0700 (PDT)
 Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4912B5C0113;
-        Wed, 10 May 2023 06:57:47 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Wed, 10 May 2023 06:57:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        by mailout.nyi.internal (Postfix) with ESMTP id 657E15C020B;
+        Wed, 10 May 2023 10:04:05 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 10 May 2023 10:04:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-transfer-encoding:content-type:content-type:date
         :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1683716267; x=1683802667; bh=U322gBAbCdps6RWJ4IJe3DP7Q6UeQ5VwPYn
-        Ra4Qb9OY=; b=rMEQzxhepIevzd53zmr36ANsYcs/OOEySbJaannH74IKSpDs3Ju
-        gQMYhehpV1GQ4LPVKnzIPDnQf1lvB33N9pE8YF9J32ReLyXJvx+S1B2QdpPlqls7
-        g7Imz420Hwf4wT9v+BT6fEXENLl6JfjhZ3j2i04OgLETYfOKqBC+m5JwP4wMq7Dc
-        XOQVNCGKulmK3B7CMtfLUbmThrqcKJ/HGDjyllm09BbWX/8ZCtyjnvJPcytEuB6i
-        HBYXczt2TA64uMydKCs26VNGSy3RljKUssaBGAj8MDahQYkRJ9AIqZSoj1ZZgzMO
-        WFgs1ScRCk5ltE3iCiho20uMqpo0uyR9llg==
+        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
+        1683727445; x=1683813845; bh=kTL4f5KIw3wMvRAkNXXul615DukLk1ocVlo
+        TB3qbjIA=; b=kcixg1WysUEJMLh+AOCn9T4HjkZ2SkUt+hQCyoLz+HV68AnP0O1
+        0/Eexoec6WUy179FcCD1JvvfUPFpxPsZgt5HEgL8fxIYXsgALIgI3jYdcwOoZQeW
+        7xmpHhlTyQm/BWJI7vZZDzirIlpNAXvKAGTc44Phx6Mc4xvXuWR0lR7dGiZab9cK
+        mOfDIqAcVuBBGWcj9BBMKVPhoL9w/nhvC757j7OfggFxeI6NMOdRu7HHXTxkxOxN
+        uNnJpRWH2nAsOVEZTmJnJhUkV3DwAe4R35cuhu7BPmk7AdGFPCitZXBms3qqKuST
+        YpLPk1P5slS2J1cDc+X4iKWgZn7VpphNunw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-transfer-encoding
         :content-type:content-type:date:date:feedback-id:feedback-id
         :from:from:in-reply-to:in-reply-to:message-id:mime-version
         :references:reply-to:sender:subject:subject:to:to:x-me-proxy
         :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-        1683716267; x=1683802667; bh=U322gBAbCdps6RWJ4IJe3DP7Q6UeQ5VwPYn
-        Ra4Qb9OY=; b=FBOsVLG+2ibtxfa6a9Z4GIo550sXjdgJMAao+8N8dx0Xuoap1xM
-        MjKBy9SK65QSPtvtZe0ZWbDS6DaH4z9nil80gzUvaLsV46e4kzOs8mKCrcLUfbOx
-        /Hybut2I8CDYP7OID27ZALVJ45UVLxCHFeFct4xjRYMC1nknVZAr24VdmRewiWHY
-        hXPbbXfP7LxHG00ssM+Q8rmN8xvO8KTHriPehyClwF5ZrRZoY/n0a4/9cIa3mB+c
-        h6nipdq6Ii+nfWynKdUsbZN96onkevdcHpPvZmd4PtEVYj2+9r+Z2U4xCp3hb3/G
-        A4dA4wSa3hNX1x/7kHx2Mfw+pufqvbLei0A==
-X-ME-Sender: <xms:qnhbZL9YYegaO6qGWff4Xn0A2xb34U0vKuswd_tkxADCDXL79Ty10w>
-    <xme:qnhbZHt_OCEW04lS_K3jlhuNP6jN120R2OW4IT0UJGykIjjavBr1sl1wCPUjt2mpd
-    iKDdFR0vu0P4fkOby0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeegiedgudefucetufdoteggodetrfdotf
+        1683727445; x=1683813845; bh=kTL4f5KIw3wMvRAkNXXul615DukLk1ocVlo
+        TB3qbjIA=; b=WZxAJGdSOh/nwuEkfMVI1eXfcfd4auiFGvDhb1PK+BT0MxPK3kT
+        jeMy144LD7JqeaoW5xstsOheT00SjjjCWBpNNFTYVqnqfyCYpNpICHsRft0E6XWq
+        f8+yxpMYjgEIoPVQivjZk6Q7cHtlFr7TEpLq4pSoEmoJzXzIP6avHdO/wxHX92PN
+        yxTGlh/RDWqAZ1ey0y9c+R1Xt9Wa4sFTIluwB6Tz51+QNVMWXLApvtgl8GHpd7Q+
+        U4SC1G0MWdlj26xCKS53/BHcHOOK+3V4jTfLC0CM79S2M5AHY1WtgksyUkkOVEub
+        z736dfgWrS/tdnO3c1ivVFqm6TbIkeNxkSA==
+X-ME-Sender: <xms:U6RbZPmK8GJN8Pux2hQ-xF7o9cKrPnjhfd09vAcQ2Vx491DzdybkhQ>
+    <xme:U6RbZC3-yJAGuFKGg96CRnkhSGJq-YUiVZ6TiYuie76dJv7epUtxTGafXOnoDd41N
+    I0gNLiS7PJosyNov0U>
+X-ME-Received: <xmr:U6RbZFr_zIhNlMj5xr5E96P2PHqo1EqO4c17Zw0KJd8SzWhkzYeroOsCuKmlpdVmq1A76X5920wUmQDe7dv0Eg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeegiedghedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:qnhbZJAhWw5JgD6ceJIE_eQRqx_7BE6awqkGnDFr38jzJXLeAszlQQ>
-    <xmx:qnhbZHcWmBIERVA2crB5dc07ZxtSNsybRDEGtgW6AQQGm2Ruypr7xg>
-    <xmx:qnhbZAM_6LIIoyF4TdW5Smun8jkrOAE-m2X-ezgJUD0EG7j2YP0L0g>
-    <xmx:q3hbZLEa-PLZrqETUKsJK92oLjtZTu16qb_iW3QQsNFSpLf52HFDzg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 3BAD4B60086; Wed, 10 May 2023 06:57:46 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-415-gf2b17fe6c3-fm-20230503.001-gf2b17fe6
-Mime-Version: 1.0
-Message-Id: <6b35ee35-0567-473c-9f76-d8bdda0e90a3@app.fastmail.com>
-In-Reply-To: <6bee2314-043d-e1af-016b-779df88f1868@gmail.com>
-References: <20230508025936.36776-1-ychuang570808@gmail.com>
- <20230508025936.36776-11-ychuang570808@gmail.com>
- <2ba483e9-267f-2159-1ea8-75a2618fcdf9@linux.intel.com>
- <eeeaf258-8f2b-436a-aba0-b32dc90b359f@app.fastmail.com>
- <b9573562-d4d7-3535-fb4d-f2bc694f2a4@linux.intel.com>
- <72983689-0e98-4482-b549-ba2530274943@app.fastmail.com>
- <6bee2314-043d-e1af-016b-779df88f1868@gmail.com>
-Date:   Wed, 10 May 2023 12:57:26 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Jacky Huang" <ychuang570808@gmail.com>,
-        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc:     "Rob Herring" <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, "Lee Jones" <lee@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Jiri Slaby" <jirislaby@kernel.org>,
-        "Tomer Maimon" <tmaimon77@gmail.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-serial <linux-serial@vger.kernel.org>, schung@nuvoton.com,
-        mjchen@nuvoton.com, "Jacky Huang" <ychuang3@nuvoton.com>
-Subject: Re: [PATCH v10 10/10] tty: serial: Add Nuvoton ma35d1 serial driver support
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+    cujfgurhephffvvegjfhfukfffgggtgffosehtjeertdertdejnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepleeifffgvdetjeejueejieehuedvteeigeehtefhhfeifeegleekudek
+    teegueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:U6RbZHkBjyQ0w38HRPFotZUTsTwsa4eduNbPrR7fqkaw0UtmN3ogtg>
+    <xmx:U6RbZN0aBpKEAK6zTkHww0kgSjya8xufHUKDzwGWulDPcgVU2wKd7g>
+    <xmx:U6RbZGuaXpOYmF-IlrVZiYsoFUn30IYllQ5STZrqELbpZVAZBxoxwQ>
+    <xmx:VaRbZEtSEWdL6efS9woWYejq3zpYJgVmlpoo0WLYYpnbsGagyW8DPg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 May 2023 10:04:02 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Roman Beranek <me@crly.cz>
+Cc:     Frank Oltmanns <frank@oltmanns.dev>,
+        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20230505052110.67514-4-me@crly.cz>
+References: <20230505052110.67514-1-me@crly.cz>
+ <20230505052110.67514-4-me@crly.cz>
+Subject: Re: (subset) [PATCH v4 3/4] drm: sun4i: rename sun4i_dotclock to
+ sun4i_tcon_dclk
+Message-Id: <168372744041.19948.4436808010046905352.b4-ty@cerno.tech>
+Date:   Wed, 10 May 2023 16:04:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 10, 2023, at 03:26, Jacky Huang wrote:
-> On 2023/5/9 =E4=B8=8B=E5=8D=88 08:32, Arnd Bergmann wrote:
->> On Tue, May 9, 2023, at 14:25, Ilpo J=C3=A4rvinen wrote:
->>> On Tue, 9 May 2023, Arnd Bergmann wrote:
->>>> On Tue, May 9, 2023, at 12:17, Ilpo J=C3=A4rvinen wrote:
->>>>> On Mon, 8 May 2023, Jacky Huang wrote:
->>>>>> +
->>>>>> +#define UART_NR			17
->>>>>> +
->>>>>> +#define UART_REG_RBR		0x00
->>>>>> +#define UART_REG_THR		0x00
->>>>>> +#define UART_REG_IER		0x04
->>>>>> +#define UART_REG_FCR		0x08
->>>>>> +#define UART_REG_LCR		0x0C
->>>>>> +#define UART_REG_MCR		0x10
->>>>> These duplicate include/uapi/linux/serial_reg.h ones, use the std =
-ones
->>>>> directly.
-...
->>
->> There is clearly some family lineage, but there are differences
->> everywhere, and I don't think it was designed by extending a 8250
->> compatible hardware block with extra features, but rather built
->> from scratch (sigh) based only loosely on a register description
->> but then extending it with no intent of retaining compatibility.
->>
->
-> Yes, the design of this UART IP is indeed incompatible with the 8250, =
-but it
-> does imitate the 8250 in some register and register bit field naming, =
-and
-> even in usage definitions, which can easily lead to misunderstandings.
->
-> In order to distinguish it from the 8250 and make it clear that it has=20
-> nothing
-> to do with the 8250, I hope you can agree with me not to use the exist=
-ing
-> register and bit field definitions of the 8250 in this driver.
->
-> In fact, this UART design has been used for more than 15 years and is =
-used
-> in our M0/M23/M4, ARM7/ARM9 MCUs and MPUs. The MA35 series will also
-> continue to use this design. I will add the MA35_ prefix to all=20
-> registers and bit
-> fields, and make the modifications suggested by Ilpo that are unrelate=
-d to
-> this 8250 issue.
+On Fri, 05 May 2023 07:21:09 +0200, Roman Beranek wrote:
+> While the rate of TCON0's DCLK matches dotclock for parallel and LVDS
+> outputs, this doesn't hold for DSI. The 'D' in DCLK actually stands for
+> 'Data' according to Allwinner's manuals. The clock is mostly referred to
+> as dclk throughout this driver already anyway, so stick with that.
+> 
+> 
 
-Sounds good to me, thanks! It would be good if Jiri or GregKH can also
-weigh in to make sure they agree on this approach.
+Applied to drm/drm-misc (drm-misc-next).
 
-On the topic of tty namespace, please also add the change that I suggest=
-ed
-to pick an unused major/minor number range. I'm not entirely sure about
-whether using name=3D"ttyS" is actually preferred here or if you should
-pick something else here as well. I see that "ttyN" has no other users
-are the moment, though "ttyn" is what drivers/tty/serial/jsm/ has.
+Thanks!
+Maxime
 
-Maybe Jiri can also recommend what to pick here.
-
-       Arnd
