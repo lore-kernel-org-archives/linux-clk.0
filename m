@@ -2,84 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E4BC7EE22
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 04:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9481C7EE22
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 05:38:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbjEJEie (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 00:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
+        id S229500AbjEJFiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 01:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjEJEid (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 00:38:33 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BBA23C3A;
-        Tue,  9 May 2023 21:38:31 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QGMjG03vPz9sbC;
-        Wed, 10 May 2023 06:38:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1683693506;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0TGqUxEs7+KA0bUhtlK1lVZB5oosirddpuH1iKWN/KY=;
-        b=qZqEMiiK9m96NDdgm0AnO6/mf8bQdwNxo1oktDksIzGixa+60AHTXNKvWfMMF6WhH9gKJs
-        gHE9iAE1unK6VYv+saT9wUn30yAzcKzRIlG8cJVP7esjgJ9/aZGMgkUk6aND/gCVcJXyq6
-        cjd2yXOLsKrff8lUanv5SudV64JiUCdic170HU68nroUZJNAc1lbLCmjfopAQnyfWjrLrB
-        jzLbHb0lFIVJ/13nse6u0rIu6LiDSXGZI9818rUjqHE3n6OJDKN5rTTujXAHXtju3w1USK
-        rX1GF1M7daxUuV1LoOt8h/BWlKNx/oOgMboHfWXshP/Q2fgqZXt9pJBpk/Gxew==
-References: <20230505052110.67514-1-me@crly.cz>
- <87jzxjp5tp.fsf@oltmanns.dev> <CSHP4M31IC80.2WGQC75I3PX71@void.crly.cz>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Roman Beranek <me@crly.cz>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        with ESMTP id S229482AbjEJFiR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 01:38:17 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55442719;
+        Tue,  9 May 2023 22:38:16 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-50bc0117683so12182560a12.1;
+        Tue, 09 May 2023 22:38:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683697095; x=1686289095;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IRV+sBk5PSnkH2cvQJEurZPQMXkcZOja4gthBlnfdvw=;
+        b=A1h54Fif7vGJHhX9m1f3Kshr1flFcjj5AzZ/ocnSu3BiLmXjzWi8eQZxj/rncY8miQ
+         0v27z+lMPwGBmHopVHW2+2J14kjpyubV1MgJlX+pboaAr0MZToQgz/2v2g3expkwDpKe
+         WZ3tAFfb7li10tp/88owAqkA0zPC+8hxwtaA6ff26GFvXDgrFw78JG7QQUH2LYdwFv5u
+         vN1FyOhDc6JeOVeA1f6OWLEPfCBTQVmdWhzybqZa7gw0D+OsML6oniiMpxYs4T4nzHQ6
+         JOlHgzkLxan/XMa7ezvhi7uRB3nazYJl74itRiBJ+qcoWns94wmL1BbIUw6l/93Qu5jR
+         rODA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683697095; x=1686289095;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IRV+sBk5PSnkH2cvQJEurZPQMXkcZOja4gthBlnfdvw=;
+        b=TLkqNKUsFgJO9oCgg0szbMQ8U1WFEULHsEBtlFNcWB/1CEKp0Mgr+HTUsi2NKNB1Hj
+         HyXhJIj7HpYUQl5g4boMbf8VkbsQNWvVu+SxOOJYk3zcQiVeCzP32ORWaGb4T1K56kdB
+         9X1wktJ/fnxCxZ6knmP8MqAj3Syd+10oKq1POX845PNPmpxI+dGmASiz3sajzN6hw6vc
+         tNPCZzLuLiGquMzfTIpMLdfhmPV4F7+aVR0jTt+4eKGTclGeUJHUQ0n6d0SxMV8/sA66
+         irXP6qnrxcGilP1P3oSoPXm0FHDYfa0ftu4yNPnkcmMkkQiW3zPo9AD62BR3WQy0Pq+T
+         TfTQ==
+X-Gm-Message-State: AC+VfDzqlEAnAOe8rkp5XJ4kA8SixYPC+hkrvVDUBHcC4iwkH2rlcrhc
+        JRwk9E7Kuu2FLo/OcDB5J29UONcxKqJKdpGRxE4=
+X-Google-Smtp-Source: ACHHUZ4ogjZtGrQXMJMKwEGu0G0AbD0KpYVERcNwR4arcIxdi5S+ollKjEgImzB7I/MuJA0JZh7eBw+2jTW/8V51pB4=
+X-Received: by 2002:a17:907:9808:b0:94f:4801:6d08 with SMTP id
+ ji8-20020a170907980800b0094f48016d08mr15277609ejc.71.1683697095024; Tue, 09
+ May 2023 22:38:15 -0700 (PDT)
+MIME-Version: 1.0
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Date:   Wed, 10 May 2023 07:38:04 +0200
+Message-ID: <CAKXUXMy3_krgwHMS6TaDZhBePkaHTHigntwBD0WFxMJ=DtgWYA@mail.gmail.com>
+Subject: Situation of CONFIG_CLK_SUNXI_PRCM_SUN9I
+To:     Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] drm: sun4i: set proper TCON0 DCLK rate in DSI mode
-Date:   Wed, 10 May 2023 06:30:04 +0200
-In-reply-to: <CSHP4M31IC80.2WGQC75I3PX71@void.crly.cz>
-Message-ID: <874jokg5sf.fsf@oltmanns.dev>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4QGMjG03vPz9sbC
+        linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Roman,
+Dear Maxime,
 
-On 2023-05-09 at 13:04:50 +0200, "Roman Beranek" <me@crly.cz> wrote:
-> On Mon May 8, 2023 at 10:47 AM CEST, Frank Oltmanns wrote:
->> I played back a 60 fps video (10 seconds) and recorded the panel's
->> output with a 240 fps camera. I noticed only 2 dropped frames, that I
->> account to the imperfect data rate of 107.8MHz instead of 108 MHz due
->> to pll-video0's rate being 294MHz instead of the 297 MHz for reasons
->> I described in the thread on your v2 of this patch [4]).
->
-> Yes. That's what should happen, right? Or do you report this as a
-> defect?
+with commit 49c726d55c1b ("clk: sunxi: Add Kconfig options"), you
+introduce various build configurations for Legacy clock support for
+Allwinner SoCs. Among them, you introduce the config
+CLK_SUNXI_PRCM_SUN9I in drivers/clk/sunxi/Kconfig, but this config is
+not used anywhere in the kernel tree.
 
-Sorry, I didn't communicate more clearly. Without your patch, I'm losing
-a number of frames in the realm of three digits. With your patch I only
-lost 2 frames which is expetcted. Your patches are a big improvement.
+Can we just delete this config CLK_SUNXI_PRCM_SUN9I again, as it is
+not needed, or did you simply miss to adjust the Makefile for this
+option to be effective?
 
-This is the opposite of a defect report. :-)
+I will gladly send a patch, once you could give me a quick pointer.
 
-Thanks,
-  Frank
 
->
-> Roman
+Best regards,
+
+Lukas
+
+Note: This is a resent email (see original email:
+https://lore.kernel.org/all/CAKXUXMzqCktKz7vGN4_QAp4n1SeP0-YHL19evmVSfseZOemd5g@mail.gmail.com/);
+now hopefully with an email address for Maxime that reaches Maxime.
