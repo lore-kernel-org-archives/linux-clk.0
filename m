@@ -2,124 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5067CC77B7D
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 09:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2494DC77B7D
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 10:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236258AbjEJJOB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 05:14:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33700 "EHLO
+        id S236420AbjEJKMJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 06:12:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231486AbjEJJOA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 05:14:00 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3772D30CF;
-        Wed, 10 May 2023 02:13:59 -0700 (PDT)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 88CB45C02DD;
-        Wed, 10 May 2023 05:13:56 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 10 May 2023 05:13:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1683710036; x=1683796436; bh=ii
-        ADo2HcVVP7FI0vsjXgBbOVG3uyaHWjU7aM/iZfF6g=; b=fQ0pc45lup697IbFq5
-        7VfBPUM54DU4ba+Je2Aw+5Rl872ZxULr52/WGOoXdFFpAl8AZXFGoH38GIf7UnN1
-        BxUKsq+wYdfRRLiNjpkpcPnWiMXgP4+F52tztVHZalAlnnWLQq61doK+VRkDZ58a
-        q+k8ePiWGuKJz59iCuZm6VOz10qggDNyYwM5r86dsRfMgsHoB76MdyiedlCX3ePm
-        HET49vPIajwacbIxAd8puh6GNMimHkCoMavggq02i8PhM1pNtHMFYa18JpXwMP3K
-        PO/GlhCRyfWQ6a5gU8TjzqafJH2tp0/Yt2Awc83wL9auOBgpvy3ixvCVdFbdIAwQ
-        JJfw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1683710036; x=1683796436; bh=iiADo2HcVVP7F
-        I0vsjXgBbOVG3uyaHWjU7aM/iZfF6g=; b=P7rchaHWU3Ofd9cQJ+ipo5Su4l+CW
-        l2GrrIG3tC11y4REJsbZEDvHafr6jSH/OpUW6rcB3TpKbRORc4Wcvg7WkSVFRJIr
-        ctq4UH4neT2ulzTHFIomba4ThhMVVjjpZ1Ah5QhR72YfIixWffPWWmU0M6gVlBtS
-        qItRsQFQctqMuNdeIvkGnlzJkf8C36JtwlDzUFG694bBMWB+kJ7AX/hoJo5lRvxX
-        eSJpnrpLcP4s8hgqETMAvMEmzquITy+cJ1WCjC83dBgKv8IBWK65HsYuctgDujtc
-        R+2CTMi9gwSwEIGCWWAMkbOleBNRYq56KGVWl51esed5I6CGFenUaOQbQ==
-X-ME-Sender: <xms:VGBbZOeeGHuqwg4M43TOeGtpFogjbBb8sZzKUoR41L19cOSn8MRQYA>
-    <xme:VGBbZINOKZ8bRXL3mha9OfYn7k8zTobuXbjBu4i7HSOOpHnFlJ2uxIgp3QVdoIPLc
-    hfffBWP5VEsSw>
-X-ME-Received: <xmr:VGBbZPh3RNOUf2wT-uWzowDiMuxBECwWEEhdJpIG8rgOICewMaGyZkq0D_Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeghedguddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgeehue
-    ehgfdtledutdelkeefgeejteegieekheefudeiffdvudeffeelvedttddvnecuffhomhgr
-    ihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:VGBbZL9Qc2UYbJrMatkR8vQJq6yx3cgLD5XnycSnDh0_gbPEAPyBqA>
-    <xmx:VGBbZKu__Brm1JfvmxyKQkFtwoDaHS0meLCSDWeIzU_mNoH1qt0X2Q>
-    <xmx:VGBbZCHaWw7OWpAogx0n74wfVa0LFO6ar8_tdUBxb4UozwqWD7IX_w>
-    <xmx:VGBbZB-2XtfxDMh4O77ZCGL36Rv32ruLiqOfeX6nG1pSKdUCNgFugw>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 10 May 2023 05:13:55 -0400 (EDT)
-Date:   Wed, 10 May 2023 11:13:51 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "abelvesa@kernel.org" <abelvesa@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx: imx93: introduce clk_bypassed module parameter
-Message-ID: <2023051027-wages-feminine-cb5d@gregkh>
-References: <20230504085506.504474-1-peng.fan@oss.nxp.com>
- <2023050410-rejoin-vocation-8560@gregkh>
- <DU0PR04MB9417FE67ABF9A2B1EE4DEBA088779@DU0PR04MB9417.eurprd04.prod.outlook.com>
+        with ESMTP id S236286AbjEJKMI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 06:12:08 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548541BEA
+        for <linux-clk@vger.kernel.org>; Wed, 10 May 2023 03:12:06 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-965fc25f009so977119266b.3
+        for <linux-clk@vger.kernel.org>; Wed, 10 May 2023 03:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683713525; x=1686305525;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8W9wj6II5GTrEem7luB1BRmjIURt5RdoLBLDnnuSaBY=;
+        b=oUOYhwB4kUwcFIrS3FG81XCuZ/NcBiGJ+OUZEGUl7TCsABhBzAx8XiZDuiSpX00e33
+         YH68zgczYjIS7C4nG9aDhS5tokGMTABPQE9BzD41s168vBrBjW8WKHI9Cn8m2FxPkpVs
+         nUVE9wRIhFrpTaFF3mtKLj1Uc5Cpb3Y6+yqBHa6p693u4qYZq+dmwJJRrYZmMqs5uYhs
+         kNElXVoaD4n/xDZIkiPv5K5UUWLv3+ACqsvADtfrJJn12d9TYoVfxyKwkAFGmfqNGKm5
+         71ut/Ru25HT23ufPo0Lry7u9e4/X7nHxq8Nz7XzowsjXj+WqqXNicri1I6MFvLDZaagk
+         xjnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683713525; x=1686305525;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8W9wj6II5GTrEem7luB1BRmjIURt5RdoLBLDnnuSaBY=;
+        b=l4j+50xmC3zpcym6i53C7VWG6kqIDyg+r61jmFTqo9X+3aZgG7HxVQHP8275HE5n+B
+         3mjudyOmVnlqzudFbNR4IqhmsOmMcNImjVktLfF6M2tQZYkZiDVq0zQ7r+p/w+yW0lnC
+         60Xq1tOm5+o3hQ1afl2Ntn7TOOwlAB42G/mCom/KAZmtKxDwynyRFXijj9OXmGv9y6Ea
+         2mOk7ojF2DfAoJ57b8hsbkGFjM71QV+dfih13lHfwh3NbXSm0t5b86AVp/kRH1UNTyLH
+         hWII+tdSdYzCGL84cPylYN5UK1h1TxZ7ZYQR9Hsw+IUT3JhYSl2JxzdCjBAzXAmM3m2E
+         tNrQ==
+X-Gm-Message-State: AC+VfDxxS2mT49wnRnc77n76yM0ev2sTSkkAL35CK9R23dGlcOD/BQ32
+        av/9rDxbTEh6VV1aUtyWPC7tWg==
+X-Google-Smtp-Source: ACHHUZ7QAKmL0TacRIZKfIWUdEdjTRxMsMME+brBGTKG2TxMOHIiq7GsjlRzMgperJDfC2U8Whz63Q==
+X-Received: by 2002:a17:907:3d92:b0:969:fc68:fa9a with SMTP id he18-20020a1709073d9200b00969fc68fa9amr4689159ejc.40.1683713524736;
+        Wed, 10 May 2023 03:12:04 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:c175:a0f9:6928:8c9d? ([2a02:810d:15c0:828:c175:a0f9:6928:8c9d])
+        by smtp.gmail.com with ESMTPSA id mh25-20020a170906eb9900b00882f9130eafsm2435335ejb.26.2023.05.10.03.12.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 May 2023 03:12:04 -0700 (PDT)
+Message-ID: <8f21f892-de54-9bc7-d4b9-f36aaa6b4a7c@linaro.org>
+Date:   Wed, 10 May 2023 12:12:02 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DU0PR04MB9417FE67ABF9A2B1EE4DEBA088779@DU0PR04MB9417.eurprd04.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc: convert
+ to yaml
+Content-Language: en-US
+To:     Claudiu.Beznea@microchip.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, Nicolas.Ferre@microchip.com,
+        alexandre.belloni@bootlin.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20230509052757.539274-1-claudiu.beznea@microchip.com>
+ <20230509052757.539274-3-claudiu.beznea@microchip.com>
+ <e463eb68-3ea0-5230-76fd-4a2ee66bf397@linaro.org>
+ <773d0d90-29c7-b1bd-bd16-898b435eafb6@microchip.com>
+ <b3c7db03-6614-47d9-a9e0-a8e51c836d86@linaro.org>
+ <a4d934c6-ec28-50d0-b9bb-9b11fee7ebb6@microchip.com>
+ <1c2aa022-348a-8ac2-1a26-eedf57aadb77@linaro.org>
+ <71a1e8de-932d-09a1-efeb-af459fee9423@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <71a1e8de-932d-09a1-efeb-af459fee9423@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 10, 2023 at 07:49:20AM +0000, Peng Fan wrote:
+On 10/05/2023 10:31, Claudiu.Beznea@microchip.com wrote:
+> On 10.05.2023 10:58, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On 10/05/2023 09:14, Claudiu.Beznea@microchip.com wrote:
+>>> On 10.05.2023 10:06, Krzysztof Kozlowski wrote:
+>>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>>>
+>>>> On 10/05/2023 09:00, Claudiu.Beznea@microchip.com wrote:
+>>>>> On 09.05.2023 09:25, Krzysztof Kozlowski wrote:
+>>>>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>>>>>
+>>>>>> On 09/05/2023 07:27, Claudiu Beznea wrote:
+>>>>>>> Convert Atmel PMC documentation to yaml. Along with it clock names
+>>>>>>> were adapted according to the current available device trees as
+>>>>>>> different controller versions accept different clocks (some of them
+>>>>>>> have 3 clocks as input, some has 2 clocks as inputs and some with 2
+>>>>>>> input clocks uses different clock names).
+>>>>>>>
+>>>>>>
+>>>>>> Thank you for your patch. There is something to discuss/improve.
+>>>>>>
+>>>>>>> +title: Atmel Power Management Controller (PMC)
+>>>>>>> +
+>>>>>>> +maintainers:
+>>>>>>> +  - Claudiu Beznea <claudiu.beznea@microchip.com>
+>>>>>>> +
+>>>>>>> +description:
+>>>>>>> +  The power management controller optimizes power consumption by controlling all
+>>>>>>> +  system and user peripheral clocks. The PMC enables/disables the clock inputs
+>>>>>>> +  to many of the peripherals and to the processor.
+>>>>>>> +
+>>>>>>> +properties:
+>>>>>>> +  compatible:
+>>>>>>> +    oneOf:
+>>>>>>> +      - items:
+>>>>>>> +          - enum:
+>>>>>>> +              - atmel,at91sam9g15-pmc
+>>>>>>> +              - atmel,at91sam9g20-pmc
+>>>>>>> +              - atmel,at91sam9g25-pmc
+>>>>>>> +              - atmel,at91sam9g35-pmc
+>>>>>>> +              - atmel,at91sam9x25-pmc
+>>>>>>> +              - atmel,at91sam9x35-pmc
+>>>>>>> +          - enum:
+>>>>>>> +              - atmel,at91sam9260-pmc
+>>>>>>> +              - atmel,at91sam9x5-pmc
+>>>>>>
+>>>>>> I missed it last time - why you have two enums? We never talked about
+>>>>>> this. It's usually wrong... are you sure this is real hardware:
+>>>>>> atmel,at91sam9g20-pmc, atmel,at91sam9260-pmc
+>>>>>> ?
+>>>>>
+>>>>> I have 2 enums because there are some hardware covered by:
+>>>>> "vendor-name,hardware-v1-pmc", "syscon" and some covered by:
+>>>>> "vendor-name,hardware-v2-pmc", "vendor-name,hardware-v1-pmc", "syscon".
+>>>>
+>>>> The enum does not say this. At all.
+>>>>
+>>>> So again, answer, do not ignore:
+>>>> is this valid setup:
+>>>> atmel,at91sam9g20-pmc, atmel,at91sam9260-pmc
+>>>> ?
+>>>
+>>> Not w/o syscon. This is valid:
+>>
+>> Syscon is not important here, but indeed I missed it.
+>>
+>>>
+>>> compatible = "atmel,at91sam9g20-pmc", "atmel,at91sam9260-pmc", "syscon";
+>>>
+>>> available in arch/arm/boot/dts/at91sam9g20.dtsi +45
+>>
+>> Nice, so my random choice was actually correct. Ok, so another:
+>>
+>> atmel,at91sam9g15-pmc, atmel,at91sam9260-pmc, syscon
+>>
+>> Is it valid hardware?
 > 
-> > Subject: Re: [PATCH] clk: imx: imx93: introduce clk_bypassed module
-> > parameter
-> > 
-> > On Thu, May 04, 2023 at 04:55:06PM +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > With the clk names specified in clk_bypassed module parameter, give
-> > > user an option to bypass the clk from managing them by Linux kernel.
-> > 
-> > As I said on another email, no, please do not add new module parameters
-> > for drivers, this is not the 1990s
-> 
-> After a search of the list,
-> https://lore.kernel.org/all/?q=module_param
-> 
-> I still see many drivers are adding module_param.
+> This one, no. So, I guess, the wrong here is that there could be
+> combinations that are not for actual hardware and yet considered valid by
+> changes in this patch?
 
-And they should not be doing so as it is almost always not a good idea
-(note, some subsystems, like sound, do require it, as that's the api
-they use, so this is not a blanket statement.)
+I just don't understand why you have two enums. This is not a pattern
+which is allowed anywhere. It might appear but only as exception or mistake.
 
-> Is this is strict ban that new platform driver should not add
-> module_param?
 
-You need to really really really justify, and document in the changelog
-text, why all of the other methods of configuring a platform driver will
-not work in order to have it considered.
+Best regards,
+Krzysztof
 
-thanks,
-
-greg k-h
