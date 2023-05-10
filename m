@@ -2,118 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C36C77B7D
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 17:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 511C3C7EE22
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 18:43:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235006AbjEJRCt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 13:02:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45236 "EHLO
+        id S230331AbjEJSne (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 14:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232032AbjEJRCs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 13:02:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78748A244;
-        Wed, 10 May 2023 10:02:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EA29863F32;
-        Wed, 10 May 2023 17:02:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B0CEC433EF;
-        Wed, 10 May 2023 17:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683738129;
-        bh=lotOX4b7zrwUZyultRVZKebXpnW0zUfr/QizPj7LoDc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DA1HfDlqPzbwUs7qeCL2ZApnhrOk+VviUystpCSedzJh4elZ18Fh0eTfZtXkplioH
-         1AYC6h8AawtSTXHcJjUapzPAZhS7RUHJgq8PXBkWYypS2AxGJU8QmAljnTfyZNBGTH
-         wFOgSv/kze540CrHr3gz+UPlrArdjJpCGSAvhFTYAhrqJ/Fxly0H7/1/UHIFThpi9F
-         6fMH88N9Dwn7/P+1sAdNsv6/+Kgdvl0Qgnw06B4+cbWt6+vydnIpPZah/EnJykhuqV
-         NwiHBaC0iXqaX14GB7a6gPPxxtSugqvQ+VnzeG+w81nB6sh5bXOQQYf1sbvGVa7fOS
-         W4I3tbMsE6B1g==
-Date:   Wed, 10 May 2023 18:02:03 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Patrick Delaunay <patrick.delaunay@foss.st.com>
-Cc:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        with ESMTP id S229461AbjEJSne (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 14:43:34 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E59EA8F;
+        Wed, 10 May 2023 11:43:32 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9659e9bbff5so1380937866b.1;
+        Wed, 10 May 2023 11:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683744211; x=1686336211;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gq7FGBBCVUWg9J5mCHnrCLlt8OqBW6wcJOJEyZGAjTU=;
+        b=bmqkK9YGPu+Dx9JKP0oGXBndlrDSdWNiog1vFSUuZI0DvCy+7UmDadEPQTNfWgTOkS
+         1bzucwXk1rJ74lAUkDBcwOfw7QkyVFfAkQNvjGr/22/3IiGyKfi1WZ6FtHe+et3MTS0G
+         DiaEan1VTKwjOg1VQ2icxdFSJlBcQGvicNobmsXb56tbONBfx+0O0bc5lFjlseDZ/0av
+         Yk8Bn2n1oXTrZFabtWVmJmjf5dSnU0Axt1NUKGfMjVJbnZw+eFmRKHAp97IKd8vUiCkh
+         m4Jr80UbW7FLE/oWq3QHKlBQZvvjd8QgbF+cKqyd2E/+8ekX7bkuc9MmwQFaGP/mEu0f
+         gXQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683744211; x=1686336211;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gq7FGBBCVUWg9J5mCHnrCLlt8OqBW6wcJOJEyZGAjTU=;
+        b=gAOISCBAX+je840lNslBcHM5KKIq3EdjSCsUpiUkUIg3ASEieAJ9c6Zo5LwB7DAX0k
+         iWWk7X3AjcQPjchDB5QzzqS1LRFCnZGMG3d6HCjIzY3L+5gfRVEjcZvzrpghsnEIJKad
+         tWBanViqabrwte/tPi+l6C0f2DpYAv1xTFWaoaJiX7KDtoNqdhfIKByE17Fw5HrokOJj
+         hDr1a2zAT+g45vzOguTeRQ1Ax1vn4DWsyGwxQWG2GAd1qUbF6YM8RbHiyoDKKhNbbbma
+         YAbIIQ5sxPc9PI5fCd3uD+1PnnV8m+fU1s6OYC/eLRgF+z8sWS+a2ImnX5Zd+sTUOa8X
+         PjHw==
+X-Gm-Message-State: AC+VfDzQaFyY8nEx7mvz+g1YcNDEfXeDKreZw5EcbeGFeNahZ9KI7Uwu
+        V6Z0BYZOZEht5Fb6kqNAQKY=
+X-Google-Smtp-Source: ACHHUZ5qQHPAak3fJENQzWiF5faDzhV/CfrF6o5JZeuLw4jsNWWDaYlpbOzCCgyE3kmTmGrXn0ZNzQ==
+X-Received: by 2002:a17:907:7f14:b0:94f:9acc:65c9 with SMTP id qf20-20020a1709077f1400b0094f9acc65c9mr16822802ejc.66.1683744211262;
+        Wed, 10 May 2023 11:43:31 -0700 (PDT)
+Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
+        by smtp.gmail.com with ESMTPSA id jz24-20020a17090775f800b0096347ef816dsm3003796ejc.64.2023.05.10.11.43.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 May 2023 11:43:30 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        gabriel.fernandez@st.com, gabriel.fernandez@foss.st.com,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2] dt-bindings: rcc: stm32: Sync with u-boot copy for
- STM32MP13 SoC
-Message-ID: <20230510-cornball-compacter-39e57a5c1906@spud>
-References: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+        Roman Beranek <me@crly.cz>
+Cc:     Frank Oltmanns <frank@oltmanns.dev>,
+        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux
+Date:   Wed, 10 May 2023 20:43:29 +0200
+Message-ID: <5674988.DvuYhMxLoT@jernej-laptop>
+In-Reply-To: <20230505052110.67514-2-me@crly.cz>
+References: <20230505052110.67514-1-me@crly.cz> <20230505052110.67514-2-me@crly.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k4ry2CHnyg+ELMZR"
-Content-Disposition: inline
-In-Reply-To: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Dne petek, 05. maj 2023 ob 07:21:07 CEST je Roman Beranek napisal(a):
+> TCON0's source clock can be fed from either PLL_MIPI, or PLL_VIDEO0(2X),
+> however MIPI DSI output only seems to work when PLL_MIPI is selected and
+> thus the choice must be hardcoded in.
+> 
+> Currently, this driver can't propagate rate change from N-K-M clocks
+> (such as PLL_MIPI) upwards. This prevents PLL_VIDEO0 from participating
+> in setting of the TCON0 data clock rate, limiting the precision with
+> which a target pixel clock can be matched.
+> 
+> For outputs with fixed TCON0 divider, that is DSI and LVDS, the dotclock
+> can deviate up to 8% off target.
+> 
+> Signed-off-by: Roman Beranek <me@crly.cz>
 
---k4ry2CHnyg+ELMZR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-On Wed, May 10, 2023 at 06:51:40PM +0200, Patrick Delaunay wrote:
-> Minor cosmetic change, aligned with files in U-Boot:
-> - change obsolete SPDX id : GPL-2.0+ and use the same license
->   GPL-2.0-only for the 2 files
-> - use correct mail address gabriel.fernandez@foss.st.com
-> - remove extra space
+Best regards,
+Jernej
 
-Rob's comments on v1 were about $subject, which you've fixed, although
-the second prefix is a bit odd (I assume since you're changing clock and
-reset headers) and about the change in license to "or-later" for the
-resets header, which you've changed too, so...
->=20
-> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
-> ---
->=20
-> Changes in v2:
-> - Change title "Fix STM32MP13 include file"
-> - Use the same license for the 2 files GPL-2.0-only as recommended
->   to avoid check-patch issue on next
->=20
->  include/dt-bindings/clock/stm32mp13-clks.h   | 6 +++---
->  include/dt-bindings/reset/stm32mp13-resets.h | 4 ++--
->  2 files changed, 5 insertions(+), 5 deletions(-)
->=20
-> diff --git a/include/dt-bindings/clock/stm32mp13-clks.h b/include/dt-bind=
-ings/clock/stm32mp13-clks.h
-> index 02befd25edce..0bd7b54c65ff 100644
-> --- a/include/dt-bindings/clock/stm32mp13-clks.h
-> +++ b/include/dt-bindings/clock/stm32mp13-clks.h
-> @@ -1,7 +1,7 @@
-> -/* SPDX-License-Identifier: GPL-2.0+ or BSD-3-Clause */
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
 
-=2E..since Gabriel does appear to be the only author of this file:
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks,
-Conor.
-
---k4ry2CHnyg+ELMZR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZFvOCwAKCRB4tDGHoIJi
-0nzKAP9Q3RQ8cCCJ0u7zvdfKzBAtWVV74cClqrvrHvOX/dPoCgEA8ZSZ26rKzZ58
-mifcHLYL8KXB19Ms7tHVYatW5g/hgQw=
-=E1Wj
------END PGP SIGNATURE-----
-
---k4ry2CHnyg+ELMZR--
