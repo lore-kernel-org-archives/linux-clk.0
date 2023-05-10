@@ -2,155 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F079C77B75
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 01:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E4BC7EE22
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 04:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbjEJB1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 21:27:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53494 "EHLO
+        id S235265AbjEJEie (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 00:38:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230316AbjEJB1B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 21:27:01 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED1E26BD;
-        Tue,  9 May 2023 18:26:59 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-6435bbedb4fso7159750b3a.3;
-        Tue, 09 May 2023 18:26:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683682019; x=1686274019;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eEArS+kabsb+fSj/X6VQ7ACodsIFNt5JLcPXN1+j86M=;
-        b=AMofmhhQxuI+/Ta/xu+zM0kGDlwMOD4fuf2FL646bvCis5kncCEXK8AT4f5ZvuIwqk
-         oCroTcsYRu4Du+YQSHP/YrGptUN63h3JJlXOmukQUQjqZ18bttEnvW3se533CBAdszr5
-         TyQrYfkrgOb0Y7TbM60svXzh12GzV8LyS9IAw9VqU3ka5vrDQs9bMxWdJeMka4CzntIS
-         8C3ymzUXGRk7wa3sxNsMbSOhfiOiv0tuDEx2sIHTMRsTk9zb+N8cNXIyjvbiEv0lWp+e
-         rVdSpXKKNO1RCfGPs5deb/tGsUynv+DjfJMF2XPrRhzrLQ+WmB3QJ+3tFP9sxKuABk+f
-         Y+kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683682019; x=1686274019;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eEArS+kabsb+fSj/X6VQ7ACodsIFNt5JLcPXN1+j86M=;
-        b=ZDWxV1sQcuJKiGnf1P5b4EjMBw3jx7TnP2MldZKudWShSoCXfQh0Oh5EGpi/rWmM36
-         JIVeVJvmkoq2EJY828GvAigsG/aeK2svSe21tEK4VlIpgS6qjGmtxAelqas6EKmS+qiX
-         WFVODWfuz8q01VgUU4+7fC1AzYP0Ru3s+EkFeP4RD+iqXRKst9p+D/cOJ/QIvZ6RBeL1
-         BoUZm57eIpT8O01qMsnQ/ODLq7w5i9+0ujcRJ6LTBqm0VjdWfS056gQwS54xEAEJ1Zqu
-         GSSYJF89AJOCPNFtNbAhs841WvaJeAY/FuIUpSVlHCHEsZSkweKNKUs72IWGy1v25xtL
-         dp/w==
-X-Gm-Message-State: AC+VfDw2OsKG+p7KjE5eaKP8iuIzxgMVkpxGBLyRjr0R2Sgb14ugUVJi
-        ydK4r+ZVGeg+JccnyykUdcA=
-X-Google-Smtp-Source: ACHHUZ7Fe4IYlb9nVqD1imy2o9VmsAZXxyb26u3Hau9eW97be7LwC+3ZfqjpjiWPm4YHL9LsNN9IVA==
-X-Received: by 2002:a05:6a20:1608:b0:f2:c2a3:3a1 with SMTP id l8-20020a056a20160800b000f2c2a303a1mr20395456pzj.43.1683682018908;
-        Tue, 09 May 2023 18:26:58 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id a16-20020a62e210000000b006439df7ed5fsm2426977pfi.6.2023.05.09.18.26.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 May 2023 18:26:58 -0700 (PDT)
-Message-ID: <6bee2314-043d-e1af-016b-779df88f1868@gmail.com>
-Date:   Wed, 10 May 2023 09:26:53 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v10 10/10] tty: serial: Add Nuvoton ma35d1 serial driver
- support
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, Lee Jones <lee@kernel.org>,
+        with ESMTP id S229461AbjEJEid (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 00:38:33 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BBA23C3A;
+        Tue,  9 May 2023 21:38:31 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QGMjG03vPz9sbC;
+        Wed, 10 May 2023 06:38:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1683693506;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0TGqUxEs7+KA0bUhtlK1lVZB5oosirddpuH1iKWN/KY=;
+        b=qZqEMiiK9m96NDdgm0AnO6/mf8bQdwNxo1oktDksIzGixa+60AHTXNKvWfMMF6WhH9gKJs
+        gHE9iAE1unK6VYv+saT9wUn30yAzcKzRIlG8cJVP7esjgJ9/aZGMgkUk6aND/gCVcJXyq6
+        cjd2yXOLsKrff8lUanv5SudV64JiUCdic170HU68nroUZJNAc1lbLCmjfopAQnyfWjrLrB
+        jzLbHb0lFIVJ/13nse6u0rIu6LiDSXGZI9818rUjqHE3n6OJDKN5rTTujXAHXtju3w1USK
+        rX1GF1M7daxUuV1LoOt8h/BWlKNx/oOgMboHfWXshP/Q2fgqZXt9pJBpk/Gxew==
+References: <20230505052110.67514-1-me@crly.cz>
+ <87jzxjp5tp.fsf@oltmanns.dev> <CSHP4M31IC80.2WGQC75I3PX71@void.crly.cz>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Roman Beranek <me@crly.cz>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-serial <linux-serial@vger.kernel.org>, schung@nuvoton.com,
-        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
-References: <20230508025936.36776-1-ychuang570808@gmail.com>
- <20230508025936.36776-11-ychuang570808@gmail.com>
- <2ba483e9-267f-2159-1ea8-75a2618fcdf9@linux.intel.com>
- <eeeaf258-8f2b-436a-aba0-b32dc90b359f@app.fastmail.com>
- <b9573562-d4d7-3535-fb4d-f2bc694f2a4@linux.intel.com>
- <72983689-0e98-4482-b549-ba2530274943@app.fastmail.com>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <72983689-0e98-4482-b549-ba2530274943@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] drm: sun4i: set proper TCON0 DCLK rate in DSI mode
+Date:   Wed, 10 May 2023 06:30:04 +0200
+In-reply-to: <CSHP4M31IC80.2WGQC75I3PX71@void.crly.cz>
+Message-ID: <874jokg5sf.fsf@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4QGMjG03vPz9sbC
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Roman,
 
-Dear Arnd and Ilpo,
-
-
-Thank you for the comments.
-
-
-On 2023/5/9 下午 08:32, Arnd Bergmann wrote:
-> On Tue, May 9, 2023, at 14:25, Ilpo Järvinen wrote:
->> On Tue, 9 May 2023, Arnd Bergmann wrote:
->>> On Tue, May 9, 2023, at 12:17, Ilpo Järvinen wrote:
->>>> On Mon, 8 May 2023, Jacky Huang wrote:
->>>>> +
->>>>> +#define UART_NR			17
->>>>> +
->>>>> +#define UART_REG_RBR		0x00
->>>>> +#define UART_REG_THR		0x00
->>>>> +#define UART_REG_IER		0x04
->>>>> +#define UART_REG_FCR		0x08
->>>>> +#define UART_REG_LCR		0x0C
->>>>> +#define UART_REG_MCR		0x10
->>>> These duplicate include/uapi/linux/serial_reg.h ones, use the std ones
->>>> directly.
->>>>
->>>> Setup regshift too and use it in serial_in.
->>> I think this came up in previous reviews, but it turned out that
->>> only the first six registers are compatible, while the later
->>> ones are all different, and it's not 8250 compatible.
->> So use the normal name for compatible ones and HW specific names for the
->> others?
->>
->> It might not be compatible in everything but surely 8250 influence is
->> visible here and there.
-> I'd rename all of them and share nothing. I had the same thought as you
-> when I first looked at the driver, and thought of how we merged the omap
-> uart into 8250 for this reason, but after I found a datasheet for this
-> one, my impression was that it's a much more distant cousin of 8250
-> than the others,
+On 2023-05-09 at 13:04:50 +0200, "Roman Beranek" <me@crly.cz> wrote:
+> On Mon May 8, 2023 at 10:47 AM CEST, Frank Oltmanns wrote:
+>> I played back a 60 fps video (10 seconds) and recorded the panel's
+>> output with a 240 fps camera. I noticed only 2 dropped frames, that I
+>> account to the imperfect data rate of 107.8MHz instead of 108 MHz due
+>> to pll-video0's rate being 294MHz instead of the 297 MHz for reasons
+>> I described in the thread on your v2 of this patch [4]).
 >
-> There is clearly some family lineage, but there are differences
-> everywhere, and I don't think it was designed by extending a 8250
-> compatible hardware block with extra features, but rather built
-> from scratch (sigh) based only loosely on a register description
-> but then extending it with no intent of retaining compatibility.
+> Yes. That's what should happen, right? Or do you report this as a
+> defect?
+
+Sorry, I didn't communicate more clearly. Without your patch, I'm losing
+a number of frames in the realm of three digits. With your patch I only
+lost 2 frames which is expetcted. Your patches are a big improvement.
+
+This is the opposite of a defect report. :-)
+
+Thanks,
+  Frank
+
 >
->         Arnd
-
-Yes, the design of this UART IP is indeed incompatible with the 8250, but it
-does imitate the 8250 in some register and register bit field naming, and
-even in usage definitions, which can easily lead to misunderstandings.
-
-In order to distinguish it from the 8250 and make it clear that it has 
-nothing
-to do with the 8250, I hope you can agree with me not to use the existing
-register and bit field definitions of the 8250 in this driver.
-
-In fact, this UART design has been used for more than 15 years and is used
-in our M0/M23/M4, ARM7/ARM9 MCUs and MPUs. The MA35 series will also
-continue to use this design. I will add the MA35_ prefix to all 
-registers and bit
-fields, and make the modifications suggested by Ilpo that are unrelated to
-this 8250 issue.
-
-
-Best Regards,
-Jacky Huang
-
+> Roman
