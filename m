@@ -2,62 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0688C77B7C
-	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 21:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC73C77B7C
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 21:20:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236607AbjEJVSQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 May 2023 17:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37844 "EHLO
+        id S230023AbjEJVUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 May 2023 17:20:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236812AbjEJVSO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 17:18:14 -0400
+        with ESMTP id S236015AbjEJVUe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 May 2023 17:20:34 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58C697A9D;
-        Wed, 10 May 2023 14:18:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 773FC2D46;
+        Wed, 10 May 2023 14:20:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DD4786153D;
-        Wed, 10 May 2023 21:18:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B841C4339B;
-        Wed, 10 May 2023 21:18:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0FF5363441;
+        Wed, 10 May 2023 21:20:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F40AC433EF;
+        Wed, 10 May 2023 21:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683753492;
-        bh=6wnXuR0Uc2BahIDEvzqhRJQCaY9gzOEcQOGZoDtF2ww=;
+        s=k20201202; t=1683753632;
+        bh=6PCycjhSBuykel0Qz6uiSXaWOAyhbmYe/UM3kSHOyqw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OzMXZsLU2BSip09Tnai3Lsa4m/Vf/2TWC4pDIQm6uci92fKbsp7dPM+IRDO4emqKO
-         xjAm2DdtUv/nSl/q+cXWS26Syv5ZD5415u1rjvX88fVDVtWtmRPIc5Dt2Hi6lG7PC0
-         7m16qX2e9QMLNVsRJRjdtqy/xpqmifr+TU1B7AgLXgYXz1RmBhB8Klx8YoS/hwWJBv
-         Ln1knJdZ4hpPgujCm62SO/DsOkzpMn8ODkauHm95KlobPb3ifdyDiPg00lHIYgqMmP
-         J21xGvcW1vr24/0lcfKX8ZdBBw+iOB4jKTlz8MmaOPyQps8e4467/vq+ab/0k0BvLd
-         FQfo0AWIdllsA==
-Message-ID: <b35458250af972d95c708792633c9a58.sboyd@kernel.org>
+        b=PJgUUjcyrB10GRVmq0OFFRyugnYOVPkCQ1dowRynzI69QTyJYsb4nUojnTfmKR3JJ
+         zqe4E8bf1i0Qy7iu4y4FEmnp/2NSWOZSCCo7a5/WbGdSUIVTlPh7fYNhFau313+jFs
+         0fRwpikC53dpqkhXUCrUaOWJ46sqPhEdj1C+axUNovRKmxJYq/5omxqFEOuD7hR1oh
+         YVqMpbzLhLp13Pr9uXQ6cUuz6bYbb1OKFJoF6ldESfI8zByzZIuPFNzc8X1wU4tU/M
+         RVFWurDzSoTWRJwuk4a2q5UThFYDZXhxzRvoLBBBDw6Y9NN1G4cGpuQjZNK7sMzdTi
+         NwJ4c5eZwFTXA==
+Message-ID: <ca1e1df877652808ef76851d7f2ed781.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230509021214.17105-1-gehao@kylinos.cn>
-References: <20230509021214.17105-1-gehao@kylinos.cn>
-Subject: Re: [PATCH] mediatek/clk-mt8173-apmixedsys: use devm_of_iomap to avoid resource leak in clk_mt8173_apmixed_probe
+In-Reply-To: <20230505131308.27190-3-runyang.chen@mediatek.com>
+References: <20230505131308.27190-1-runyang.chen@mediatek.com> <20230505131308.27190-3-runyang.chen@mediatek.com>
+Subject: Re: [PATCH v2 2/2] clk: mediatek: reset: add infra_ao reset support for MT8188
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     gehao618@163.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, Hao Ge <gehao@kylinos.cn>
-To:     Hao Ge <gehao@kylinos.cn>, angelogioacchino.delregno@collabora.com,
-        matthias.bgg@gmail.com, mturquette@baylibre.com, wenst@chromium.org
-Date:   Wed, 10 May 2023 14:18:08 -0700
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        Runyang Chen <runyang.chen@mediatek.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Runyang Chen <runyang.chen@mediatek.com>
+Date:   Wed, 10 May 2023 14:20:28 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Hao Ge (2023-05-08 19:12:14)
-> Use devm_platform_ioremap_resource to take the place of of_iomap for
-> avoid that we don't called iounmap when return some error or remove
-> device.
->=20
-> Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and=
- allow module build")
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
-> ---
+Quoting Runyang Chen (2023-05-05 06:13:08)
+> @@ -176,9 +177,32 @@ static const struct mtk_gate infra_ao_clks[] =3D {
+>                        "infra_ao_aes_msdcfde_0p", "top_aes_msdcfde", 18),
+>  };
+> =20
+> +static u16 infra_ao_rst_ofs[] =3D {
 
-Is this v3?
+const?
+
+> +       INFRA_RST0_SET_OFFSET,
+> +       INFRA_RST1_SET_OFFSET,
+> +       INFRA_RST2_SET_OFFSET,
+> +       INFRA_RST3_SET_OFFSET,
+> +       INFRA_RST4_SET_OFFSET,
+> +};
+> +
+> +static u16 infra_ao_idx_map[] =3D {
+
+const?
+
+> +       [MT8188_INFRA_RST1_THERMAL_MCU_RST] =3D 1 * RST_NR_PER_BANK + 2,
+> +       [MT8188_INFRA_RST1_THERMAL_CTRL_RST] =3D 1 * RST_NR_PER_BANK + 4,
+> +       [MT8188_INFRA_RST3_PTP_CTRL_RST] =3D 3 * RST_NR_PER_BANK + 5,
+> +};
+> +
+> +static struct mtk_clk_rst_desc infra_ao_rst_desc =3D {
+> +       .version =3D MTK_RST_SET_CLR,
+> +       .rst_bank_ofs =3D infra_ao_rst_ofs,
+> +       .rst_bank_nr =3D ARRAY_SIZE(infra_ao_rst_ofs),
+> +       .rst_idx_map =3D infra_ao_idx_map,
+> +       .rst_idx_map_nr =3D ARRAY_SIZE(infra_ao_idx_map),
+> +};
+> +
+>  static const struct mtk_clk_desc infra_ao_desc =3D {
+>         .clks =3D infra_ao_clks,
+>         .num_clks =3D ARRAY_SIZE(infra_ao_clks),
+> +       .rst_desc =3D &infra_ao_rst_desc,
+>  };
