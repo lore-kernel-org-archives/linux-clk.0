@@ -2,121 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C2FC77B75
-	for <linux-clk@archiver.kernel.org>; Tue,  9 May 2023 21:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F079C77B75
+	for <linux-clk@archiver.kernel.org>; Wed, 10 May 2023 01:27:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236333AbjEIV0K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 May 2023 17:26:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48446 "EHLO
+        id S229555AbjEJB1C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 May 2023 21:27:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236235AbjEIVZx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 17:25:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FBEDDDBF;
-        Tue,  9 May 2023 14:22:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ED44463756;
-        Tue,  9 May 2023 21:21:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DCEC433D2;
-        Tue,  9 May 2023 21:21:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683667281;
-        bh=zQi2eM/DoY4SalsehEeFzNcXkQCabmHiuWhEdz1j8wk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BKBejHUuC+wbI43x7M8W7cNdCQ9FPBJrmMPTIaIJlylmAla89b+l4Bd6IXRjLZjUq
-         ZaTRlnpoAbaXO2CU5KaQOFf2O8M3jQjM+67ctSLFCMGYJgiuf5jnNTpMxEI5dNzutS
-         lmFOUzZyJnbmjErJUkom83pO23S1Bj6rqErxMKruJf4z60lrQVbkeg4bXMv0iI6eZ4
-         yBSfunrV7RycOZvIwtkRli6puHoZOCdys6i/I9lNBfQEeuukI39cdxukffUHmGKYJi
-         Mk0ShGPllYoB37sHoukq6VONdFpzIq0AMWjg4rLY1hZRHItA5VKoPT8kkgDQLa9Zb8
-         zIfsZNNasjUdQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, mturquette@baylibre.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 1/2] clk: tegra20: fix gcc-7 constant overflow warning
-Date:   Tue,  9 May 2023 17:21:14 -0400
-Message-Id: <20230509212115.22774-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.2
+        with ESMTP id S230316AbjEJB1B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 May 2023 21:27:01 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED1E26BD;
+        Tue,  9 May 2023 18:26:59 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id d2e1a72fcca58-6435bbedb4fso7159750b3a.3;
+        Tue, 09 May 2023 18:26:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1683682019; x=1686274019;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eEArS+kabsb+fSj/X6VQ7ACodsIFNt5JLcPXN1+j86M=;
+        b=AMofmhhQxuI+/Ta/xu+zM0kGDlwMOD4fuf2FL646bvCis5kncCEXK8AT4f5ZvuIwqk
+         oCroTcsYRu4Du+YQSHP/YrGptUN63h3JJlXOmukQUQjqZ18bttEnvW3se533CBAdszr5
+         TyQrYfkrgOb0Y7TbM60svXzh12GzV8LyS9IAw9VqU3ka5vrDQs9bMxWdJeMka4CzntIS
+         8C3ymzUXGRk7wa3sxNsMbSOhfiOiv0tuDEx2sIHTMRsTk9zb+N8cNXIyjvbiEv0lWp+e
+         rVdSpXKKNO1RCfGPs5deb/tGsUynv+DjfJMF2XPrRhzrLQ+WmB3QJ+3tFP9sxKuABk+f
+         Y+kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683682019; x=1686274019;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eEArS+kabsb+fSj/X6VQ7ACodsIFNt5JLcPXN1+j86M=;
+        b=ZDWxV1sQcuJKiGnf1P5b4EjMBw3jx7TnP2MldZKudWShSoCXfQh0Oh5EGpi/rWmM36
+         JIVeVJvmkoq2EJY828GvAigsG/aeK2svSe21tEK4VlIpgS6qjGmtxAelqas6EKmS+qiX
+         WFVODWfuz8q01VgUU4+7fC1AzYP0Ru3s+EkFeP4RD+iqXRKst9p+D/cOJ/QIvZ6RBeL1
+         BoUZm57eIpT8O01qMsnQ/ODLq7w5i9+0ujcRJ6LTBqm0VjdWfS056gQwS54xEAEJ1Zqu
+         GSSYJF89AJOCPNFtNbAhs841WvaJeAY/FuIUpSVlHCHEsZSkweKNKUs72IWGy1v25xtL
+         dp/w==
+X-Gm-Message-State: AC+VfDw2OsKG+p7KjE5eaKP8iuIzxgMVkpxGBLyRjr0R2Sgb14ugUVJi
+        ydK4r+ZVGeg+JccnyykUdcA=
+X-Google-Smtp-Source: ACHHUZ7Fe4IYlb9nVqD1imy2o9VmsAZXxyb26u3Hau9eW97be7LwC+3ZfqjpjiWPm4YHL9LsNN9IVA==
+X-Received: by 2002:a05:6a20:1608:b0:f2:c2a3:3a1 with SMTP id l8-20020a056a20160800b000f2c2a303a1mr20395456pzj.43.1683682018908;
+        Tue, 09 May 2023 18:26:58 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id a16-20020a62e210000000b006439df7ed5fsm2426977pfi.6.2023.05.09.18.26.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 May 2023 18:26:58 -0700 (PDT)
+Message-ID: <6bee2314-043d-e1af-016b-779df88f1868@gmail.com>
+Date:   Wed, 10 May 2023 09:26:53 +0800
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v10 10/10] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@arndb.de>,
+        =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, Lee Jones <lee@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-serial <linux-serial@vger.kernel.org>, schung@nuvoton.com,
+        mjchen@nuvoton.com, Jacky Huang <ychuang3@nuvoton.com>
+References: <20230508025936.36776-1-ychuang570808@gmail.com>
+ <20230508025936.36776-11-ychuang570808@gmail.com>
+ <2ba483e9-267f-2159-1ea8-75a2618fcdf9@linux.intel.com>
+ <eeeaf258-8f2b-436a-aba0-b32dc90b359f@app.fastmail.com>
+ <b9573562-d4d7-3535-fb4d-f2bc694f2a4@linux.intel.com>
+ <72983689-0e98-4482-b549-ba2530274943@app.fastmail.com>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <72983689-0e98-4482-b549-ba2530274943@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit b4a2adbf3586efa12fe78b9dec047423e01f3010 ]
+Dear Arnd and Ilpo,
 
-Older gcc versions get confused by comparing a u32 value to a negative
-constant in a switch()/case block:
 
-drivers/clk/tegra/clk-tegra20.c: In function 'tegra20_clk_measure_input_freq':
-drivers/clk/tegra/clk-tegra20.c:581:2: error: case label does not reduce to an integer constant
-  case OSC_CTRL_OSC_FREQ_12MHZ:
-  ^~~~
-drivers/clk/tegra/clk-tegra20.c:593:2: error: case label does not reduce to an integer constant
-  case OSC_CTRL_OSC_FREQ_26MHZ:
+Thank you for the comments.
 
-Make the constants unsigned instead.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20230227085914.2560984-1-arnd@kernel.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/tegra/clk-tegra20.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+On 2023/5/9 下午 08:32, Arnd Bergmann wrote:
+> On Tue, May 9, 2023, at 14:25, Ilpo Järvinen wrote:
+>> On Tue, 9 May 2023, Arnd Bergmann wrote:
+>>> On Tue, May 9, 2023, at 12:17, Ilpo Järvinen wrote:
+>>>> On Mon, 8 May 2023, Jacky Huang wrote:
+>>>>> +
+>>>>> +#define UART_NR			17
+>>>>> +
+>>>>> +#define UART_REG_RBR		0x00
+>>>>> +#define UART_REG_THR		0x00
+>>>>> +#define UART_REG_IER		0x04
+>>>>> +#define UART_REG_FCR		0x08
+>>>>> +#define UART_REG_LCR		0x0C
+>>>>> +#define UART_REG_MCR		0x10
+>>>> These duplicate include/uapi/linux/serial_reg.h ones, use the std ones
+>>>> directly.
+>>>>
+>>>> Setup regshift too and use it in serial_in.
+>>> I think this came up in previous reviews, but it turned out that
+>>> only the first six registers are compatible, while the later
+>>> ones are all different, and it's not 8250 compatible.
+>> So use the normal name for compatible ones and HW specific names for the
+>> others?
+>>
+>> It might not be compatible in everything but surely 8250 influence is
+>> visible here and there.
+> I'd rename all of them and share nothing. I had the same thought as you
+> when I first looked at the driver, and thought of how we merged the omap
+> uart into 8250 for this reason, but after I found a datasheet for this
+> one, my impression was that it's a much more distant cousin of 8250
+> than the others,
+>
+> There is clearly some family lineage, but there are differences
+> everywhere, and I don't think it was designed by extending a 8250
+> compatible hardware block with extra features, but rather built
+> from scratch (sigh) based only loosely on a register description
+> but then extending it with no intent of retaining compatibility.
+>
+>         Arnd
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 4c9038e738886..a660adaa4920f 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -27,24 +27,24 @@
- #include "clk-id.h"
- 
- #define OSC_CTRL 0x50
--#define OSC_CTRL_OSC_FREQ_MASK (3<<30)
--#define OSC_CTRL_OSC_FREQ_13MHZ (0<<30)
--#define OSC_CTRL_OSC_FREQ_19_2MHZ (1<<30)
--#define OSC_CTRL_OSC_FREQ_12MHZ (2<<30)
--#define OSC_CTRL_OSC_FREQ_26MHZ (3<<30)
--#define OSC_CTRL_MASK (0x3f2 | OSC_CTRL_OSC_FREQ_MASK)
--
--#define OSC_CTRL_PLL_REF_DIV_MASK (3<<28)
--#define OSC_CTRL_PLL_REF_DIV_1		(0<<28)
--#define OSC_CTRL_PLL_REF_DIV_2		(1<<28)
--#define OSC_CTRL_PLL_REF_DIV_4		(2<<28)
-+#define OSC_CTRL_OSC_FREQ_MASK (3u<<30)
-+#define OSC_CTRL_OSC_FREQ_13MHZ (0u<<30)
-+#define OSC_CTRL_OSC_FREQ_19_2MHZ (1u<<30)
-+#define OSC_CTRL_OSC_FREQ_12MHZ (2u<<30)
-+#define OSC_CTRL_OSC_FREQ_26MHZ (3u<<30)
-+#define OSC_CTRL_MASK (0x3f2u | OSC_CTRL_OSC_FREQ_MASK)
-+
-+#define OSC_CTRL_PLL_REF_DIV_MASK	(3u<<28)
-+#define OSC_CTRL_PLL_REF_DIV_1		(0u<<28)
-+#define OSC_CTRL_PLL_REF_DIV_2		(1u<<28)
-+#define OSC_CTRL_PLL_REF_DIV_4		(2u<<28)
- 
- #define OSC_FREQ_DET 0x58
--#define OSC_FREQ_DET_TRIG (1<<31)
-+#define OSC_FREQ_DET_TRIG (1u<<31)
- 
- #define OSC_FREQ_DET_STATUS 0x5c
--#define OSC_FREQ_DET_BUSY (1<<31)
--#define OSC_FREQ_DET_CNT_MASK 0xFFFF
-+#define OSC_FREQ_DET_BUSYu (1<<31)
-+#define OSC_FREQ_DET_CNT_MASK 0xFFFFu
- 
- #define TEGRA20_CLK_PERIPH_BANKS	3
- 
--- 
-2.39.2
+Yes, the design of this UART IP is indeed incompatible with the 8250, but it
+does imitate the 8250 in some register and register bit field naming, and
+even in usage definitions, which can easily lead to misunderstandings.
+
+In order to distinguish it from the 8250 and make it clear that it has 
+nothing
+to do with the 8250, I hope you can agree with me not to use the existing
+register and bit field definitions of the 8250 in this driver.
+
+In fact, this UART design has been used for more than 15 years and is used
+in our M0/M23/M4, ARM7/ARM9 MCUs and MPUs. The MA35 series will also
+continue to use this design. I will add the MA35_ prefix to all 
+registers and bit
+fields, and make the modifications suggested by Ilpo that are unrelated to
+this 8250 issue.
+
+
+Best Regards,
+Jacky Huang
 
