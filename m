@@ -2,89 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CECC77B7C
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 13:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1C0C7EE22
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 13:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238237AbjEKNjW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 09:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56778 "EHLO
+        id S238205AbjEKNop (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 09:44:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237736AbjEKNi7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 09:38:59 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E036B10E73
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 06:37:08 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f41d087b24so41735705e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 06:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1683812222; x=1686404222;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J5QAZdjVLVbI0V0MOBRrdkRCmTAX1lGamqSGOVwZZl0=;
-        b=zubWSEySVwG6S1WwoZLBWgivEDgrrzpKil0UxQQUDmONjZVJJ66SUzH6iqu/UZ92C4
-         +hlbxJ96105mAyduA6JTwgws44lxdd852RvVr315fRGKjNohoW5SLTP6/EM9bHVPlOiI
-         kIJ919cEGf4RC2+gtmTHhwpmGx287fjpu4Sc7zfrIgZiJvlww7cFIJLI9MSpa+coIu0o
-         xfg5fh/NpUI7GoP8cc7fcV2vVvvICrLjFnzs/djvhtdYJIjepx8zBZZCiJgioqiGTr5Y
-         z9QVyTRHxW4+K1XSv+jXLo4a5bxfOCbneTdQzgQ5KAe+W18VKNr/4HiJLVjcVLy0IGmT
-         yhjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683812222; x=1686404222;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J5QAZdjVLVbI0V0MOBRrdkRCmTAX1lGamqSGOVwZZl0=;
-        b=JCLDN11D/tbsS2f80RhIdoR527WJwaGSB5BVcS36h6QUXB9SeO9/3sXT36YDaE1Qqr
-         2U/qqw62SpKPfnMpX8NXcvDbZiPGlNhs8NrhBwDqf5nZ04fCNEVmRmhAHuiWHlEUmWWs
-         szMGWWxm3tGN9VNM8Xn46yW/sUIddtoZz0ARX8A8TWyxpp1VtvF6t4Mx4REbDbaioPlw
-         qr/HT96fLvF9OAfWHPjkyQHQCD4WJ7S0xvZXp+HlIOPQsGUgZx4C90ENslXnIG0f+kSO
-         Qfo+p6/OG3ugwwKlO6YyQbErqCOihIP2RKZPJxwbC9GjETtM8fHvTmdgG04J6bGIb3YX
-         gUkg==
-X-Gm-Message-State: AC+VfDyyezdFE7CxsNbyAzDbB6D6UuJJ17zkn2AKbf2tQpbYxI0+9zpJ
-        wPdRKu6kmqi9M0TVwsU9ZYRckevDFoDqFVMxMgI=
-X-Google-Smtp-Source: ACHHUZ6durEogDyWOruj0uja6YyUtEd+bw8P/5czqWQsSh8N78YTOQerfYFo4L6J5TKmEd7dsLzRXw==
-X-Received: by 2002:a05:600c:383:b0:3f1:93c2:4df6 with SMTP id w3-20020a05600c038300b003f193c24df6mr14526564wmd.12.1683812222586;
-        Thu, 11 May 2023 06:37:02 -0700 (PDT)
-Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id 12-20020a05600c020c00b003f4b6bcbd8bsm4469844wmi.31.2023.05.11.06.37.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 May 2023 06:37:02 -0700 (PDT)
-Message-ID: <6abfd685-e2cc-ef0e-188a-4fb6c243ab81@baylibre.com>
-Date:   Thu, 11 May 2023 15:37:01 +0200
+        with ESMTP id S238379AbjEKNo2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 09:44:28 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 719B1100EF;
+        Thu, 11 May 2023 06:44:20 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id E1E575FD13;
+        Thu, 11 May 2023 16:44:17 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1683812657;
+        bh=zpRN19wKJWL95Pe9rYSROAJmHnQ4rR4hEcVtgRpKk68=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=LsEa5uuVVpI5U5qf/kO9mz6Kw6h0QV+TV7C0pfu4gmnlhZtecj13b0HrjlJiXZt4H
+         XyL1v97e/SEtUCc1XXnFJcz1YQOrHokYsQS1x7qU3/ctsNcJEMRklgMSVdZSXXyjpJ
+         h3E5o30imO2R1t17JImKYhIDzByfDqYeBQ3TQaucGshvbxSSQwQ8gNnHoEzZYXDXgx
+         CpCFVGiUWsgZ9925kr0fMd2Z85SWnnedNpDnrBDRHay8mHx4nlRlRDzBMH5B1z/BGS
+         +tPjXRY7yjpGklbGqC7V1K+reqsgmBoOjHGRpWRD43DIGuUdqk/OQ9OopDjOgCdQx8
+         RKuOkISUjTWBg==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Thu, 11 May 2023 16:44:17 +0300 (MSK)
+Date:   Thu, 11 May 2023 16:44:16 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v14 5/6] dt-bindings: clock: meson: add A1 Peripherals
+ clock controller bindings
+Message-ID: <20230511134416.pw4led274g72z7e6@CAB-WSD-L081021>
+References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
+ <20230426095805.15338-6-ddrokosov@sberdevices.ru>
+ <CAFBinCCdoaNuQymcjp5j9MHn2jpPWMqXe-+EgBo=5Ot8Bwaofw@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] clk: mediatek: mt8365: Fix inverted topclk operations
-Content-Language: en-US
-To:     Markus Schneider-Pargmann <msp@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230511133226.913600-1-msp@baylibre.com>
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20230511133226.913600-1-msp@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFBinCCdoaNuQymcjp5j9MHn2jpPWMqXe-+EgBo=5Ot8Bwaofw@mail.gmail.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/11 10:21:00 #21259776
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/05/2023 15:32, Markus Schneider-Pargmann wrote:
-> The given operations are inverted for the wrong registers which makes
-> multiple of the mt8365 hardware units unusable. In my setup at least usb
-> did not work.
-> 
-> Fixed by swapping the operations with the inverted ones.
+Hello Martin,
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
-Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
+Sorry for the delayed response as I was on vacation without laptop.
+
+On Mon, May 01, 2023 at 08:51:30PM +0200, Martin Blumenstingl wrote:
+> Hi Dmitry,
+> 
+> On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
+> <ddrokosov@sberdevices.ru> wrote:
+> >
+> > Add the documentation for Amlogic A1 Peripherals clock driver,
+> > and A1 Peripherals clock controller bindings.
+> Maybe a native English speaker can comment on whether it's
+> "peripheral" or "peripherals".
+> 
+
+Ok
+
+> [...]
+> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/clock/amlogic,a1-clkc.yaml       |  73 +++++++++++
+> >  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   5 +-
+> >  include/dt-bindings/clock/amlogic,a1-clkc.h   | 114 ++++++++++++++++++
+> I have seen that Yu Tu named the S4 peripheral clock controller
+> binding and driver "s4-peripherals-clkc" [0].
+> Does it make sense to apply the same naming here as well?
+
+Yes, it makes sense. I will prepare a new version with the necessary
+renaming.
+
+> 
+> 
+> Best regards,
+> Martin
+> 
+> 
+> [0] https://lore.kernel.org/linux-amlogic/20230417065005.24967-3-yu.tu@amlogic.com/
 
 -- 
-Regards,
-Alexandre
-
+Thank you,
+Dmitry
