@@ -2,288 +2,221 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A33C7EE25
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 09:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC4EC7EE22
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 10:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237662AbjEKJqE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 05:46:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33066 "EHLO
+        id S237169AbjEKKXR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 06:23:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjEKJqD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 05:46:03 -0400
-Received: from new4-smtp.messagingengine.com (new4-smtp.messagingengine.com [66.111.4.230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FA615BAE;
-        Thu, 11 May 2023 02:46:01 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 1DB1658046F;
-        Thu, 11 May 2023 05:45:58 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Thu, 11 May 2023 05:45:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1683798358; x=1683805558; bh=+n
-        y1Afea5R0LOsb4Ol/qv4DwWMag5LYnjc/55L4/zj0=; b=a0a1Rny1fJ4G40ROVP
-        p6PM59GR8lWf+QDz80KYNEFeugiu06rC7qXIkbxBgIPj+fnHgADOQ64y/5uCwHCp
-        ND9TQdCBKeHcr01DP6q2O1PoMPgeXBLAh0RjsUVJlH+ligR1m5ygaiHk1JYfr5/b
-        6A5rA9smFHn3zR+T7W1pjsKYaXutCZ8DcO5zlGPSNYCmACecxhzMW6Io20Sek8ia
-        5Hzy2ES3fW2PM/dVnjCcvBUBaB9XXPBFRdGU8oaYDIXugWL2u/m5RD1IGjAZgeDL
-        Ys6++ImgdON8U42Ak5RKwWzJ4l0j2C1g9pCsxZFAjQ4DGx6IcJuqHXLDNYHSyCh+
-        e5nA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; t=1683798358; x=1683805558; bh=+ny1Afea5R0LO
-        sb4Ol/qv4DwWMag5LYnjc/55L4/zj0=; b=LFY23qSKl94UZOFuJkhpGEQyasRby
-        gbLbyefMBRT4PHfaH6XkZ/rsSJL1fhXl5Re1rHJJnufX1e8Ff5yaTAa+0ed6d4uW
-        95KjZizvZWx73mJmN9B6v1Mpzz+DiGGQTF0ThlwvQKQdmYJeHGroCpTvaBoNOBnR
-        UFhpVmU7gsIXKI6OasqGZ7w6ABmjxxXCBndQbVZzgQYZZKfDFcW1tFpwP7AhA/+s
-        a0Rl4SZ8A0+rEwO3Vh54J0hTXP8yZSv9SrOrHu5bF687MQB2r6sYOMdpdiA1kwBS
-        KduLItK8Us0sRRMcA8oSZjbsBqo0MsVpsgbUdIlRPRygOcN7p0/FqdJxA==
-X-ME-Sender: <xms:VLlcZGJVw0ZFHGVEz1kscSfJdJJXnN-TSM-V95Ff4Ctlc9pjeMDCMg>
-    <xme:VLlcZOKCL5q-tMt6tcn0vAscmNATB7rYoM-EtfoSqE8SGtH_zNIhZ3jFqsl_K60In
-    yFrILW2iTk3ZVOiDEg>
-X-ME-Received: <xmr:VLlcZGseivHmMWqVb1OuVX_cXeveSNbIlR_VP_5mkZsAJgAWttluVtJrrjzLJIymBC740bbDgW8KvsJ-w-7GBg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeegkedgvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeeuveduheeutdekvefgudevjeeufedvvdevhfejgfelgfdtkeevueegteek
-    gfelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:VLlcZLaBqggMF920o1RrZkXQR5WlFDgcp9oqhhV5oKPXDaeCOHXlbg>
-    <xmx:VLlcZNaCLoXRnpwnUS4klYEv95-jdtjx1TnWjWgpXPJZ0nY-i1d61g>
-    <xmx:VLlcZHCViDDrk4Pz_ZQ6l_qK2lbm3BNWgwwXCSplVHHAxYXZRmYXgA>
-    <xmx:VrlcZIjbcbR6-ocUtg6G1yyfYRrVst63f1irq8-6dnFMlLckdA-lWg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 11 May 2023 05:45:55 -0400 (EDT)
-Date:   Thu, 11 May 2023 11:45:53 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Lechner <david@lechnology.com>,
-        Sekhar Nori <nsekhar@ti.com>, Abel Vesa <abelvesa@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, patches@opensource.cirrus.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org
-Subject: Re: [PATCH v3 29/65] clk: socfpga: gate: Add a determine_rate hook
-Message-ID: <x4xc7kjkphbejmjj35ohlk6u33vshysr4jii4fmu7ogbzrk6zg@2dry3apxjhad>
-References: <20221018-clk-range-checks-fixes-v3-0-9a1358472d52@cerno.tech>
- <20221018-clk-range-checks-fixes-v3-29-9a1358472d52@cerno.tech>
- <679921ee-98d4-d6ef-5934-e009fd4b31fc@kernel.org>
- <sjlp5ubnpvulgwhhymmfkmmobkgxacyqwagqozodkee3di2qik@3igj6k3zgbk6>
- <57dd81d0-510e-0fab-670d-1109eb8dd974@kernel.org>
- <tgtfisqxubin4cjj6q26fboirbcnjzcazt5y3m322lw5lskz6l@d3tgz4hdfnk2>
- <1b766164-b5e8-61ac-bf73-6d2c49c72409@kernel.org>
+        with ESMTP id S236911AbjEKKXP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 06:23:15 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23943E5A;
+        Thu, 11 May 2023 03:23:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1683800594; x=1715336594;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=KUXLhP5n1q6m/RJjVJUtKBwAgDT9hdHpSKx2HCXFQZ8=;
+  b=LtwvpAZB9IZpeo40srIm06yU5SXtBBgI6kcWNrlje21HUXj5wkm7T2UB
+   JLa9fwlQA9Fx+ZG1WO7xN2qEKQU2z6EGhJcdeTcdA93Gb9bqUPYcD4OHd
+   kd+jynojsj0rheeR76uOKdTvvYPQocyUuvqIz40Rvic3S+d9r+xuhgfTD
+   88K0Cwzg0qnsEmO0uak7XgXHMPIHoz/tEBY67l6v/sOVsCQ8EZBex96bt
+   MXe8tSB8e4X1e/VhBQyHxLSMLJiNbwzVXSqqpPyjBWsURjrNGDWRTHRJA
+   q4KNXutmNPAMoqY34YFmjlUe/ly91tCWSI5F3VEnCLx4JHAm/qfhjRqkM
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10706"; a="330082554"
+X-IronPort-AV: E=Sophos;i="5.99,266,1677571200"; 
+   d="scan'208";a="330082554"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2023 03:23:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10706"; a="650109203"
+X-IronPort-AV: E=Sophos;i="5.99,266,1677571200"; 
+   d="scan'208";a="650109203"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orsmga003.jf.intel.com with ESMTP; 11 May 2023 03:23:12 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Thu, 11 May 2023 03:23:12 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Thu, 11 May 2023 03:23:11 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23 via Frontend Transport; Thu, 11 May 2023 03:23:11 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.102)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.23; Thu, 11 May 2023 03:23:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gFRuyiR+fOeLt8zU5ty68Lj7wyWB7YUpRVOLO9nHiEKpByYGulrM3P50yF2+bm9YHcBFSI5zlAX4NxeUWp/DTjFUNHIDeiZNV9u1zdvgcuXkNzUkw2jEeCkOC+eBbZsQb57aTJOHPW6lT3gXuuQwefjzq9S2XI0aCDbD4zTMZKHIBUlnd4FlE6+UYEbj0sfiWkkcJqPkG4sr/sVWC1XDaNU03E0MTauJEDQkUDye0SWEgTFaHBYuSE4bhoyUXlb0hTxz1mSz4RN4d8VwGk4kW7hCcozXN2y4en3RMAQ1X303pysffaWFTbe2tX6YSPuUk1NlWgLrnxk91raKWgaA+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mMpRAlVgVk6RU5G5xT5axW/r6EG/PMLSo3tOpxoZ8WI=;
+ b=gr1uwc/DvGKkWdN2XVfo4TGs8MnylgyzbbcCyOxi4GtH++eP15FJ+VCAqERgVeYFkC5edotuvskzv6ZGi81O/vkp85GY0Gct/JDqTeV6h6sUzkWBc1svYnOmUnH9/e7FfytFCY3a00uNOgPfFHKMkQSZwuxVp9SP2V2byA6Sc72GJeKWPMIMzhM1SznGf824hdZm+V0Y/qmnhjr8kt3KbG83HK1DorTQlxvd4pHJQWoOj3OIr78rwYJEOn72Ia7vw9sNzdoCfdgzmrDOtph67QVOkeq6HmL+7c50arZwPWCfBUZNNGIZptCzMLgJGR0Y5LUqmbU7ZgqYlH+BJFUObA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ SN7PR11MB6601.namprd11.prod.outlook.com (2603:10b6:806:273::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.33; Thu, 11 May
+ 2023 10:23:07 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::7887:a196:2b04:c96e]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::7887:a196:2b04:c96e%5]) with mapi id 15.20.6387.022; Thu, 11 May 2023
+ 10:23:06 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jakub Kicinski <kuba@kernel.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>
+CC:     Vadim Fedorenko <vadfed@meta.com>, Jiri Pirko <jiri@resnulli.us>,
+        "Jonathan Lemon" <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [RFC PATCH v7 3/8] dpll: documentation on DPLL subsystem
+ interface
+Thread-Topic: [RFC PATCH v7 3/8] dpll: documentation on DPLL subsystem
+ interface
+Thread-Index: AQHZeWdHKMdPMbaEvUGy14WAo+ctW69Kg7SAgAExNICAACUUgIAJEtPA
+Date:   Thu, 11 May 2023 10:23:06 +0000
+Message-ID: <DM6PR11MB4657E8F5D86C1FA5AA38758E9B749@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+        <20230428002009.2948020-4-vadfed@meta.com>
+        <20230504120431.036cb8ba@kernel.org>
+        <7be22f4a-3fd5-f579-6824-56b4feafdb03@linux.dev>
+ <20230505082935.24deca78@kernel.org>
+In-Reply-To: <20230505082935.24deca78@kernel.org>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|SN7PR11MB6601:EE_
+x-ms-office365-filtering-correlation-id: f9744fd0-6308-4fc6-e34b-08db5209b610
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: s5mdEMOeSykwXs9vkm8TO6ECiiKLN3awufr358Vld7ym5o82IiRKQ4JRg7ckZUsl+KkyhnuIGzm4HNhrIhIbc/PJRGG2nrare6H3dJ8gM3vfejf3Hpo+Lrnld1p8eZFAMo4gdMroqToFTBCBPo2DoxHjG/JMKXjXcb9eoSRahXTKuPypzHjdOZjTOuL2Oa9stYUyUUnyxRvDYtOo+poWZfOLBvKaBfifS+erhnRk0hlJkUEZnKnuyclyB7QJix+dUeGXnQk5Vj1LkrLBRxM0gbpiSznnCvEj4btlCCLslslK/BJavmd15/eQo1wt7pbZY4m4R9/jcBJrP0UE0WifhZqmsp7RSEw6cfVPRJlAiNSBaNIxD/ADTS5bzLz85Ml+a46rcilWegLF9fVZiCpI4jkQBQxATzJfBJ8cPZwokpHos5PW/HGFU86mmXBq/RYFqyebRBDLDYyqE3B71ofEFsxKZvMd/LLvrU2yZKDZzd+UN8pycwdJMJOJZeOzffaG/14G6H7XETJPPbsDtZLd0m/umMX2LnSXWbn0dqA+uWIVt3YPAaLuLaz4gCEE8+ipk2hR05HOFaNdFUCSkbKCRVfTn5zgS5dOyUTColmYnz6Nzmiv6ufqDDyw8g21WYNp
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(396003)(346002)(376002)(366004)(136003)(451199021)(66899021)(7416002)(38100700002)(64756008)(2906002)(66476007)(8676002)(38070700005)(66446008)(86362001)(316002)(5660300002)(66946007)(82960400001)(122000001)(55016003)(8936002)(66556008)(41300700001)(52536014)(4326008)(76116006)(71200400001)(54906003)(83380400001)(110136005)(9686003)(6506007)(33656002)(7696005)(186003)(478600001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?W0Y+z0vLcMa1oAY8bo3R/TboPA5PmOYxtOSUNIZtMav1QY20Dpr+u+3faJF4?=
+ =?us-ascii?Q?N8U2q21ZzWhok2IFfGRRRZzqzNqv5aG2PrmQv1GAdbP9jzxJJdBZmCF0NSt+?=
+ =?us-ascii?Q?qqlFDkIS6LLn8COREqqUoaVsjlQdDbGZBtuWYdd9tVlcFpamo1hY8riiQsAM?=
+ =?us-ascii?Q?4SWuqq+BU80Uv4py+MiiddvCWwPIUchATuSzoaGgSTxX9KYt1ySGiNYCE2kE?=
+ =?us-ascii?Q?qjyNBGT+s2+2dMdSe2YoMss6+9sgNASBxRIMsr8QmAa2BKSpMkItBSIcYy4M?=
+ =?us-ascii?Q?OP2lz7NPXuD82PK8qpq/+NcHzxNRbXZvf1tHDbr2ejq0JbMwHKqGlLjr/dq1?=
+ =?us-ascii?Q?M8joFdgyCUaIM9FKmhHqQ+qni5cBNi+GC6rHgk2Dc/eVWq6U4lU3Pi9SGnTX?=
+ =?us-ascii?Q?x1LcU8llCb5qe+47JmNOTsZ+BbyOoImsjwMNackV6aN5kttE6dIReRnXiV3U?=
+ =?us-ascii?Q?X86Ha45u7fkPeCawI6mR76VjmaUN2S+OYcESDE0UmlW1whUdAho3BN1DOsGv?=
+ =?us-ascii?Q?qJ8O+ppt30SvfYDPr8VeXHI6DYnt/vlvwcpqsbpZntSFp+GmjBkYchM/0qir?=
+ =?us-ascii?Q?XRHTn9/lSyp8elNt34Zk50QjE7t+xcq55mxTnZM/8I0H2t5TpoZpAGXbJJgl?=
+ =?us-ascii?Q?w47drG6ly6z4VDZHKltVHJ3Yl5s/rBftcHJbzmatK85IA3SHzHvXSFUSKhQ6?=
+ =?us-ascii?Q?bP38GDYenOno1GGZB2lWzXw3QHJIma/oqLL5OC+j6ncPHNcJaG/C736VpXa1?=
+ =?us-ascii?Q?A7DIWArSxN4xt9wTcKE3bsA50a5hNM8k7v0s8KE/sXKfBgUX81lGshIeyD27?=
+ =?us-ascii?Q?wD/4Dl5Fv+mYh6YoYPioPf2U0j2BjQ7JhLxo6M+D4XTTMGxmEL3vxk3Wo+jj?=
+ =?us-ascii?Q?hi4dKr3qaK72PNvHzdu+l29gsCVgV8z+4Zfk1gSfxcGyklef7EDPTUSm1uLz?=
+ =?us-ascii?Q?xlqxEwV4ZMLi7iT8XkBaVJidPdsfN8nUWcyeACJNZU9TGzjfWZi+bdd8UrMV?=
+ =?us-ascii?Q?/1lZMdFUbpu+b4n3tcDMmgn/XMJeB8EDdcbaCPitvgfmEPN5mlTI5iJdftSG?=
+ =?us-ascii?Q?azpOdNGmbVwiBI+uZI5IUPiO6mLiBffppDFefF/i7aiZZeOmUmKLWecfiZWt?=
+ =?us-ascii?Q?dmj5OZax4IXPxknxToKYN88fqzygwzuF1Xocle01ObpD2/2WhihBWXeJ0sbm?=
+ =?us-ascii?Q?53cseRiyNy+u6Y7NpIYwYMpZmfDE5N0MxXeLpbz7KY2eLJSlLHdHT3uwlgyb?=
+ =?us-ascii?Q?UKU4MV4L3BZlXuWXXqksKJkFUDY+7g6pmwXeoFe/D5TBXqdd29qkvuaFHRCH?=
+ =?us-ascii?Q?3lmcVFmwN836r2aTyui3pAtEE8fCqU3fIgzSaoD0cOyqdLLAIwsaDGZagTXb?=
+ =?us-ascii?Q?ShSi3jJbN4G8Nq8scJ5RF/08qtbceZZDOcjMGoP4bYXceg9Oywj3IMdczgrk?=
+ =?us-ascii?Q?yKFPXUYoKZTdl//q3166LjTm3K3zBOiDpaMGHUuQdWuWZHaLJHqRpm+c1WlX?=
+ =?us-ascii?Q?wTt1YDU24KAoFZKR3U0uGLtEtZ5W3Sr8o9/+kvoVfRStIPhYbALHJHN3D7Z7?=
+ =?us-ascii?Q?oy10ujDYuj+LFBCFygh1UJcYOO25gXJcM434yKkq?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jwj5rc6xyemnxcyt"
-Content-Disposition: inline
-In-Reply-To: <1b766164-b5e8-61ac-bf73-6d2c49c72409@kernel.org>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9744fd0-6308-4fc6-e34b-08db5209b610
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 May 2023 10:23:06.5400
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: t9xmig+Uf7aSKiexrXBE+qdeoKjUb96ehRoJLF31qWtiuS+zphLthw0d0dByBtqR2DK98YnQ9GRxR7ujlgLPjSFj1vzIaKlIL/vLNmX2LK8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6601
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+>From: Jakub Kicinski <kuba@kernel.org>
+>Sent: Friday, May 5, 2023 5:30 PM
+>
+>On Fri, 5 May 2023 14:16:53 +0100 Vadim Fedorenko wrote:
+>> >> +Then there are two groups of configuration knobs:
+>> >> +1) Set on a pin - the configuration affects all dpll devices pin is
+>> >> +   registered to. (i.e. ``PIN_FREQUENCY``, ``PIN_DIRECTION``),
+>> >
+>> > Why is direction set on a pin? We can't chain DPLLs?
+>>
+>> We can chain DPLLs using pins only. We don't have any interface to
+>> configure 2 pins to connect 2 different DPLLs to each other at the same
+>> time. The configuration should take care of one pin being input and
+>> other one being output. That's why we have direction property attached
+>> to the pin, not the DPLL itself.
+>
+>Makes sense.
 
---jwj5rc6xyemnxcyt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hmmm, actually we already can register the same pin with 2 dplls, and it co=
+uld
+identify itself as an input for one dpll and as an output for the other. It
+makes sense as change on one pin would again inform both dplls.
 
-Hi Dinh,
+The dpll_pin_direction_get/set callbacks are already called with dpll, so
+we are good, only one change would be needed is to move PIN_DIRECTION to th=
+e
+pin-dpll configuration tuples on `pin-get`.
 
-On Tue, May 09, 2023 at 12:37:39PM -0500, Dinh Nguyen wrote:
-> Hi Maxime,
->=20
-> On 5/4/23 12:04, Maxime Ripard wrote:
-> > Hi Dinh,
-> >=20
-> > On Thu, Apr 27, 2023 at 02:09:48PM -0500, Dinh Nguyen wrote:
-> > > Hi Maxime,
-> > >=20
-> > > On 4/25/23 09:48, Maxime Ripard wrote:
-> > > > Hi Dinh,
-> > > >=20
-> > > > On Mon, Apr 24, 2023 at 01:32:28PM -0500, Dinh Nguyen wrote:
-> > > > > On 4/4/23 05:11, Maxime Ripard wrote:
-> > > > > > The SoCFGPA gate clock implements a mux with a set_parent hook,=
- but
-> > > > > > doesn't provide a determine_rate implementation.
-> > > > > >=20
-> > > > > > This is a bit odd, since set_parent() is there to, as its name =
-implies,
-> > > > > > change the parent of a clock. However, the most likely candidat=
-e to
-> > > > > > trigger that parent change is a call to clk_set_rate(), with
-> > > > > > determine_rate() figuring out which parent is the best suited f=
-or a
-> > > > > > given rate.
-> > > > > >=20
-> > > > > > The other trigger would be a call to clk_set_parent(), but it's=
- far less
-> > > > > > used, and it doesn't look like there's any obvious user for tha=
-t clock.
-> > > > > >=20
-> > > > > > So, the set_parent hook is effectively unused, possibly because=
- of an
-> > > > > > oversight. However, it could also be an explicit decision by the
-> > > > > > original author to avoid any reparenting but through an explici=
-t call to
-> > > > > > clk_set_parent().
-> > > > > >=20
-> > > > > > The latter case would be equivalent to setting the flag
-> > > > > > CLK_SET_RATE_NO_REPARENT, together with setting our determine_r=
-ate hook
-> > > > > > to __clk_mux_determine_rate(). Indeed, if no determine_rate
-> > > > > > implementation is provided, clk_round_rate() (through
-> > > > > > clk_core_round_rate_nolock()) will call itself on the parent if
-> > > > > > CLK_SET_RATE_PARENT is set, and will not change the clock rate
-> > > > > > otherwise. __clk_mux_determine_rate() has the exact same behavi=
-or when
-> > > > > > CLK_SET_RATE_NO_REPARENT is set.
-> > > > > >=20
-> > > > > > And if it was an oversight, then we are at least explicit about=
- our
-> > > > > > behavior now and it can be further refined down the line.
-> > > > > >=20
-> > > > > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > > > > ---
-> > > > > >     drivers/clk/socfpga/clk-gate.c | 3 ++-
-> > > > > >     1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfp=
-ga/clk-gate.c
-> > > > > > index 32ccda960f28..cbba8462a09e 100644
-> > > > > > --- a/drivers/clk/socfpga/clk-gate.c
-> > > > > > +++ b/drivers/clk/socfpga/clk-gate.c
-> > > > > > @@ -110,6 +110,7 @@ static unsigned long socfpga_clk_recalc_rat=
-e(struct clk_hw *hwclk,
-> > > > > >     static struct clk_ops gateclk_ops =3D {
-> > > > > >     	.recalc_rate =3D socfpga_clk_recalc_rate,
-> > > > > > +	.determine_rate =3D __clk_mux_determine_rate,
-> > > > > >     	.get_parent =3D socfpga_clk_get_parent,
-> > > > > >     	.set_parent =3D socfpga_clk_set_parent,
-> > > > > >     };
-> > > > > > @@ -166,7 +167,7 @@ void __init socfpga_gate_init(struct device=
-_node *node)
-> > > > > >     	init.name =3D clk_name;
-> > > > > >     	init.ops =3D ops;
-> > > > > > -	init.flags =3D 0;
-> > > > > > +	init.flags =3D CLK_SET_RATE_NO_REPARENT;
-> > > > > >     	init.num_parents =3D of_clk_parent_fill(node, parent_name,=
- SOCFPGA_MAX_PARENTS);
-> > > > > >     	if (init.num_parents < 2) {
-> > > > > >=20
-> > > > >=20
-> > > > > This patch broke SoCFPGA boot serial port. The characters are man=
-gled.
-> > > >=20
-> > > > Do you have any other access to that board? If so, could you dump
-> > > > clk_summary in debugfs with and without that patch?
-> > > >=20
-> > >=20
-> > > That dump from the clk_summary are identical for both cases.
-> >=20
-> > Thanks for testing
-> >=20
-> > I'm a bit confused, there should be no difference in behaviour, and if
-> > there was any difference I would expect the clock tree to be somewhat
-> > different.
-> >=20
-> > Could you still paste the clk_summary (and dmesg) output? Which UART
-> > driver is being used?
-> >=20
-> > Also, is there a way for me to test it somehow?
-> >=20
->=20
-> Apologies, but there is a diff with/without this patch:
->=20
-> With patch:
-> <           l4_sp_clk                   3        3        0   100000000
-> 0     0  50000         ?
-> ---
-> Without patch:
-> >           l4_sp_clk                   4        4        0   100000000
-> 0     0  50000         ?
->=20
-> The enable/prepare count is 4 instead of 3 in the case of a working UART.
-> The debug uart is using the lp_sp_clk.
+Thus, actually it looks like a bug now:
+- pin-dpll tuple may report different direction for each dpll pin was
+registered with
+- userspace see this as pin specific property, but it would return differen=
+t
+values depending on which dpll was given as arg for pin-get command.
 
-This is pretty weird, the enable count shouldn't change, really, we're
-only changing something in the rate rounding path... Is it using the
-snps,dw-apb-uart driver?
+I will fix it, as it relates to the modifying spec in first place.
 
-Nothing shows up in dmesg?
-
-> The Cyclone5 devkits are pretty cheap if you want to get one.
-
-Are you talking about the DE10-Nano? It seems out of stock everywhere in
-Europe :/
-
-Thanks!
-Maxime
-
---jwj5rc6xyemnxcyt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZFy5UQAKCRDj7w1vZxhR
-xQIDAP4vmB3HyvWG6uvwLSOB1WMHUejwVKumXbB/B6a/fLmtBQEApiEQi3pLDYQt
-OaahdgfV4a9cmtvor4QvkqvX+jEBuwE=
-=ETpg
------END PGP SIGNATURE-----
-
---jwj5rc6xyemnxcyt--
+>
+>> >> +Device driver implementation
+>> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+>> >> +
+>> >> +Device is allocated by ``dpll_device_get`` call. Second call with th=
+e
+>> >> +same arguments doesn't create new object but provides pointer to
+>> >> +previously created device for given arguments, it also increase refc=
+ount
+>> >> +of that object.
+>> >> +Device is deallocated by ``dpll_device_put`` call, which first decre=
+ases
+>> >> +the refcount, once refcount is cleared the object is destroyed.
+>> >
+>> > You can add () after the function name and render the kdoc at the end
+>> > of this doc. The `` marking will then be unnecessary.
+>> >
+>> Mmm... any examples of such a way of creating documentation? I was
+>> following tls*.rst style, but without copying code-blocks.
+>
+>net_dim.rst, maybe?  driver.rst ? Feel free to ping me 1:1 if you're
+>struggling, it should be fairly straightforward.
