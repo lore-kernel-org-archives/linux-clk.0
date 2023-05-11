@@ -2,225 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B58C77B7F
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 07:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A6CC7EE22
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 07:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237589AbjEKHon (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 03:44:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49886 "EHLO
+        id S236758AbjEKHws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 03:52:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237626AbjEKHol (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 03:44:41 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A661BF6;
-        Thu, 11 May 2023 00:44:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1683791077; x=1715327077;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=1695o9HRJ81MJ35H2IEUI9B1cZKAqgPdFtIoZZQSZj8=;
-  b=YIGxqL3jowb1zN2ELWWMnx4xd+/81QDrsT7YXhgFhhFy+M7G8Fs2yIwu
-   xOPf9pVJpLTKo6ww0ZfExLxw4K4NxAT3CaSGUcATk7xkSrXmi3tx28J20
-   AUXerlEspfyVCJs6Xab0u/2bdBrvxQM3RUcsEPv+6iNJ2KqINDvcIDaR3
-   891eR+basKvDHgWH+TOrCj5jdCjSkrkZgmplDq86tlHHf8O2g2b0/0JBf
-   2WBJIUZt+v/tj6f3rogOCxNolnc2hWFiLjlmaMpowik8LQPFQ/eW8mHIH
-   vyG/rCKkvToU8gF8xA8+cTgmNErs2EjU3kTHXZ5O1rLjL8NVQm9EK3Bh0
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10706"; a="436756813"
-X-IronPort-AV: E=Sophos;i="5.99,266,1677571200"; 
-   d="scan'208";a="436756813"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2023 00:44:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10706"; a="730235738"
-X-IronPort-AV: E=Sophos;i="5.99,266,1677571200"; 
-   d="scan'208";a="730235738"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga008.jf.intel.com with ESMTP; 11 May 2023 00:44:33 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Thu, 11 May 2023 00:44:33 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23 via Frontend Transport; Thu, 11 May 2023 00:44:33 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.176)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.23; Thu, 11 May 2023 00:44:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LLKKmHDViCSE5QY0+0aeOtg/XgIgWvHFkRt4YCWT6IsLsFFbvMs/XksnTaXUj2L2cZIM8VtMcxUrS/Sf57Yrw87YyH0CpoyJEllY256lXjRdsf7It1VgL9wQqAXeWSZbPKDfliCU9qOGd71s3Xmlkv4GLG+MVXg6voU6wA12GePcV9PjPlHDyAfGnOaX/EptnZoS8MPIabk17JlIEWduEv0MPLIohNgDZcPVT+nqnmdx2+Z/lMuUbd/ZdcpJzQklhsD1P62GxHQsqq/B0jUVqeovbLYszWlcmRfET70ivY7JLopGDjFxPRwCWUolqjv7dX5b7OFMGRS6pJbTFu458Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1J48e/Nvn/5+Is+CfXrfZYj8pkAufo8k072DiDgKtkU=;
- b=bEWG+s5mXnTFyy9DSmLA1xYRI9sa5R7ixMoaCrXUxLMfqf5HJAYjSSud1gZbwiBf5nu/qJ8KOCsf4g3UUaO6nHuiikmKdpa6EkKOP/uXV3ZEWzZW1DBHz1SuG6HgL1VLGItJrz9Bkb/FNquEhImhJ1ccS7noPOwQR7F58fbdpEcm6uqXQLmnZyafCMgZbCOYzySh8umZa4pz5MMEYiMuXyHNi2jUETPNIpPzy0Reix9EqQvRuOKV5ZGBdk4EMdFUAFWyOp5q9QQn4/A7qN+nRdA+XBixjUwx2ZiOL3krqwz6EqQpdnOriAshZyKgB5vB61taaqwPp/WBvP8sfemaGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN2PR11MB4664.namprd11.prod.outlook.com (2603:10b6:208:26e::24)
- by SA2PR11MB4811.namprd11.prod.outlook.com (2603:10b6:806:11d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.20; Thu, 11 May
- 2023 07:44:30 +0000
-Received: from MN2PR11MB4664.namprd11.prod.outlook.com
- ([fe80::62d1:43b3:3184:9824]) by MN2PR11MB4664.namprd11.prod.outlook.com
- ([fe80::62d1:43b3:3184:9824%7]) with mapi id 15.20.6363.033; Thu, 11 May 2023
- 07:44:30 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>
-CC:     Vadim Fedorenko <vadfed@meta.com>,
+        with ESMTP id S237092AbjEKHwr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 03:52:47 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9762681
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 00:52:45 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f11d267d8bso9208025e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 00:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1683791563; x=1686383563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=b6DFRF7liSPTRBWUgV4zRPvf0XPmI7i6mOr3sUG/Pww=;
+        b=RcJOhHOIWUSQ93TYOfy2VN4gk4UjljRzsAC5LdPYalMUiOutpW4ENNVRrfIEb3usTd
+         y8WPbazXzHH7723saBdE+DdKrZJIZSpwfRmepmPHrVK+DZWKOAsBV1xuPy8qke0QY0zA
+         3BlzNmgIDfRKLdxSykvKXs6WOi1ijfBQg6FHLg452hr7C+hdOIByZ1C8AKRjrktFSjBd
+         AQ8j/4zKZAI3g03EFng0UFnmwWJ7zULsnLu9iyW6Bv1MYAxn5KXE7boJa2ZQnqGroLM7
+         iBGhRmIiVMfvWdmTPAEQLeDgEaQjUyO9RzJHTXh4KVx/14Rd82c51DZA3h+Kv4kCUnCp
+         GezA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683791563; x=1686383563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b6DFRF7liSPTRBWUgV4zRPvf0XPmI7i6mOr3sUG/Pww=;
+        b=E6YwMY9LsUCGAndzxQB+6Xy55y63jwL2hVImLSi5KPhc/lA9DyUqYmLPRORLpMBEHa
+         DA5YRk52wac5Slaoke71my20GBd8dtg19L3J5jmvzltpI3F0xYP+RQmJgyDXryAAefQf
+         9nVoBfX35o6HMT0WEpIdWLHPHdXu/FfOHzQoasH3mWfYMW8yG3fE5E7WVQkma8Xoa+9y
+         erdR2arUCHJsOi2VwtQ2i57Y9K6zNAY4E+vjjDDbCea+/a+ppBhTASIBfb/6txg34B+n
+         LyOVSJvMVovYyjg57dhQD6FzUNr+zDSTtrKFO1yxWL1ZexhDAeqnJhxS5epk8qN3k26v
+         4fWg==
+X-Gm-Message-State: AC+VfDwyelEBcC6IB4sC+DCeyyMDIJjftQNaoRuCotTAKA0w9z0QIYOI
+        vr86IhdLgVtmCoSy9xfUu4683Q==
+X-Google-Smtp-Source: ACHHUZ6n5iHMqIe9ArVMmr5wpO4iz3LXFjcDxnbz9cB9wVHSPQHJaKcI4AgGn9KMUxzvWa7az03qhg==
+X-Received: by 2002:ac2:4555:0:b0:4dd:cb1d:b3cc with SMTP id j21-20020ac24555000000b004ddcb1db3ccmr2413412lfm.11.1683791563299;
+        Thu, 11 May 2023 00:52:43 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id f1-20020ac25321000000b004eff3050e24sm1029272lfh.125.2023.05.11.00.52.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 May 2023 00:52:42 -0700 (PDT)
+Date:   Thu, 11 May 2023 09:52:41 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadfed@meta.com>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: RE: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
-Thread-Topic: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
-Thread-Index: AQHZeWdNus9yie+T1ke/i4FdVA4f5K9KDcsAgACdH4CAANtdgIAJPuag
-Date:   Thu, 11 May 2023 07:44:30 +0000
-Message-ID: <MN2PR11MB4664357BAEC609040CF480C69B749@MN2PR11MB4664.namprd11.prod.outlook.com>
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH v7 0/8] Create common DPLL configuration API
+Message-ID: <ZFyeydHS6iTECqiA@nanopsycho>
 References: <20230428002009.2948020-1-vadfed@meta.com>
- <20230428002009.2948020-2-vadfed@meta.com> <ZFOe1sMFtAOwSXuO@nanopsycho>
- <20230504142451.4828bbb5@kernel.org> <ZFTap8tIHWdbzGwp@nanopsycho>
-In-Reply-To: <ZFTap8tIHWdbzGwp@nanopsycho>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN2PR11MB4664:EE_|SA2PR11MB4811:EE_
-x-ms-office365-filtering-correlation-id: d15ce067-5984-45f4-a06d-08db51f38df2
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: zI+kS5Kcy4xwG9HXRdoCGP3DDQfe3PBI0KOFc9R0CD54OXUzhTPw5Y8EZ2fHwjGKPefa/C+bLZ7S6gYeSrMlcKaz6pIT/+G2nQAMTOPjAMKJeJ3TXwNscz2WdrM3xBdo/v6p7BNgAXHRIc8G7WUzTTemb1M8MdJRPgglVQKd8qzvSoRaVmtl95QSTCqVwkd3qnWxwZstT49bug3/+DpdGcj9jaBzMmOM51E5KycDRFY1XnlEY0M/c9oln5FS7w+ptbg4RH1JrEqOv04EXpFDI/7HzIecrNHkU/PUHea4/IrnaiCMhQYM9K3dl/USiUvKCiLV0NazaRpkvEYgC0xbOdccxz3xXOCVeLk/ov80pElUknfa6dl4lR5HHyCJ5YmhE5hzKruYol3JxZu+epX2/RpB9PYkCkvYKQnvZqIwcZYKkYNlVkIPtVakFCOK9kp8/SLl+G7Fzmz7D/FsK/KykvgEKz6ysEhjjBJGA+TpGZdBBxAAo0tbHHDkwosRMme88BDgWUZXUrgxBeCrvXEo1mFDno57UAe0/ABCIFnk9rGgTsnDebFZWXm950sW0DBvXW52gKFMD+GaPAHpRZWRp4uf5YAdx0frvCVXkf58nZhKhqWu4slPRXc7QDkeX9Nv
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR11MB4664.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(136003)(396003)(346002)(39860400002)(376002)(451199021)(4326008)(82960400001)(54906003)(110136005)(316002)(76116006)(83380400001)(52536014)(5660300002)(2906002)(41300700001)(71200400001)(66446008)(66476007)(7696005)(66556008)(86362001)(66946007)(122000001)(64756008)(33656002)(26005)(6506007)(9686003)(38100700002)(8676002)(8936002)(55016003)(186003)(38070700005)(7416002)(478600001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?VdWVYMKCTFYpmwQ8LKeH28zzfZIfT5Pxj3FZ/M2AchRfk8tTKQgp62kWxqoX?=
- =?us-ascii?Q?pY34SbhdFcGieNHgIvQcoJsz3VyNp3q//2oMKqSBKMANmhUb5UN2sowthmT5?=
- =?us-ascii?Q?mYz72JBAZzMO62ouarnGhYDVQ/yXWB+9RDYAMc068n1II81emj7bemtXMz8b?=
- =?us-ascii?Q?z4Msr4AWK4NsO13g4RvukdgWQj4nUiZmyIwVJFklkNAbn0QiQrQF8OP3xfiw?=
- =?us-ascii?Q?5njuTW6HW/A4u7hnpLtEAn/TrOoJTDEIB2uEVdD3kj5wZj8S+YHTAlRZCIOI?=
- =?us-ascii?Q?fBm9kIqsV0hBjHfJ2hN5yArG5zXyWj9WN32KUUQeyZdRM3u+fia+5HcuYIQh?=
- =?us-ascii?Q?0pdwUH+qGXf+EJ+MwV4z8sIz/CcogL/BBAHz0/a9tiTsOCuK8rSTSmnISTh6?=
- =?us-ascii?Q?tLLlV4r5Z4WvtLWUlwfwKR566M3foD2CsCM1F5ciLqyk0zDkm0fVYx4TvH5n?=
- =?us-ascii?Q?J54PoKaaYY998jupubJBDavW63xh2gSFnVB06qA0eAvJPRjWgEkyrBEWz1Y2?=
- =?us-ascii?Q?0nncjYz0cNv4kzYjXz5aByMn1zMqh3gKS8k+XDYigJ5w2JM6GuAXGt4x0mUH?=
- =?us-ascii?Q?FfcaA1uw0kepkVcFXp3qExHRXaiyYSjJHJF9SaPxRC7sdnDjV6B8q1rJQy3F?=
- =?us-ascii?Q?opnkU1iJdpCqMfoQonq4JmfHamJtvju2fsIMuwOpOHsoKlR3iSyROK2jnN/p?=
- =?us-ascii?Q?V/3LS2XJNyaR15VAkXCnHNnu8GcBKmOITI108QDXCmUiPC7QJMZL4dCgNkHz?=
- =?us-ascii?Q?loRCcpGz5DnG5KSNs//RqJGohfLJWrpOyolE2o3Ir8RbgvTBm5rYpd1jErym?=
- =?us-ascii?Q?a3F5yoQVHQWtcA2QBorLz0R7lGHJ436t9HVlvG9Cx/DLO4Go8OUjzFqy/FEW?=
- =?us-ascii?Q?EjfE5hsiBf+XNQ0wkaUD4qtKiGI1YD+m3qeFqwITDcWDiO/m5LycQe8DAZry?=
- =?us-ascii?Q?Zwm26WvQp5gf8J2RxU6zLUUoiR2ByRvm7pMjB7pCz0nITA2Ez5jiE6vSp+rI?=
- =?us-ascii?Q?i3g1T2V/l8GThP6wwX1kWPX9JYBUZPT68Q6ZfPsjx0gK7XjRTJqPOSWZWHZb?=
- =?us-ascii?Q?iW0MgCqpJnJFoZLR3GwrkYHOS9LRkpsipHrXziVn4lOYFlD1oP3CbX10nwDH?=
- =?us-ascii?Q?tjP6X4vMD5f9jZJpmNlsvSram/tU1fJOB91Zv9OfTbqSTflGe/faZP7As3BV?=
- =?us-ascii?Q?GPGjmO7UmgAckMLFteTPy+S9EjeYb9Eh1sN7apwyYT1GyDW739gkDSlGBbZO?=
- =?us-ascii?Q?plyYRMmNq8cru6VcUb+fxCw+a/arq9ogqCar9r643Lg7ucXMMEW0cAN3uEql?=
- =?us-ascii?Q?Tn9w4U6Y2EZMJgjRO/VbBMfBd2NhfqzMac+jmG8f+Pv79AOvnit2CxEKCt90?=
- =?us-ascii?Q?Cvy29yRyX629eYIhblA6TmN5jrGBqygoZYBem82GrWqQt21DG6sRP9IGzMZO?=
- =?us-ascii?Q?FK8S0OBKvRhhMSOCQCTpZR9s2DnBZEEGYUEl/dDOKGIIvCBUz4UCETCsJaPe?=
- =?us-ascii?Q?SPmHMWxjgfd9ZpC5+0au52GWg1JPrLHuG8Jc2pk9eMz6H3H0EmJSbReffS4H?=
- =?us-ascii?Q?z0vtWg4K9OpGeWdVSIucqhjwrwVx5pobY6KFfwbcXHJvBYxojxlaFLziqEle?=
- =?us-ascii?Q?dg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB4664.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d15ce067-5984-45f4-a06d-08db51f38df2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 May 2023 07:44:30.2842
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BL++1eRp1yXt/tCQy1plejHgYO8mZJMKuxMdYVN52Y4H5bXfGL3ZpNjEpuAtP6bcsDTMmhR3/sNJgybm2cFLRqDgSZsPuUC1FLyeuwdnE3I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4811
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230428002009.2948020-1-vadfed@meta.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Fri, Apr 28, 2023 at 02:20:01AM CEST, vadfed@meta.com wrote:
+>From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>
+>Implement common API for clock/DPLL configuration and status reporting.
+>The API utilises netlink interface as transport for commands and event
+>notifications. This API aim to extend current pin configuration and
+>make it flexible and easy to cover special configurations.
+>
+>v6 -> v7:
+> * YAML spec:
+>   - remove nested 'pin' attribute
+>   - clean up definitions on top of the latest changes
+> * pin object:
+>   - pin xarray uses id provided by the driver
+>   - remove usage of PIN_IDX_INVALID in set function
+>   - source_pin_get() returns object instead of idx
+>   - fixes in frequency support API
+> * device and pin operations are const now
+> * small fixes in naming in Makefile and in the functions
+> * single mutex for the subsystem to avoid possible ABBA locks
+> * no special *_priv() helpers anymore, private data is passed as void*
+> * no netlink filters by name anymore, only index is supported
+> * update ptp_ocp and ice drivers to follow new API version
+> * add mlx5e driver as a new customer of the subsystem
+>v5 -> v6:
+> * rework pin part to better fit shared pins use cases
+> * add YAML spec to easy generate user-space apps
+> * simple implementation in ptp_ocp is back again
+>v4 -> v5:
+> * fix code issues found during last reviews:
+>   - replace cookie with clock id
+>   - follow one naming schema in dpll subsys
+>   - move function comments to dpll_core.c, fix exports
+>   - remove single-use helper functions
+>   - merge device register with alloc
+>   - lock and unlock mutex on dpll device release
+>   - move dpll_type to uapi header
+>   - rename DPLLA_DUMP_FILTER to DPLLA_FILTER
+>   - rename dpll_pin_state to dpll_pin_mode
+>   - rename DPLL_MODE_FORCED to DPLL_MODE_MANUAL
+>   - remove DPLL_CHANGE_PIN_TYPE enum value
+> * rewrite framework once again (Arkadiusz)
+>   - add clock class:
+>     Provide userspace with clock class value of DPLL with dpll device dump
+>     netlink request. Clock class is assigned by driver allocating a dpll
+>     device. Clock class values are defined as specified in:
+>     ITU-T G.8273.2/Y.1368.2 recommendation.
+>   - dpll device naming schema use new pattern:
+>     "dpll_%s_%d_%d", where:
+>       - %s - dev_name(parent) of parent device,
+>       - %d (1) - enum value of dpll type,
+>       - %d (2) - device index provided by parent device.
+>   - new muxed/shared pin registration:
+>     Let the kernel module to register a shared or muxed pin without finding
+>     it or its parent. Instead use a parent/shared pin description to find
+>     correct pin internally in dpll_core, simplifing a dpll API
+> * Implement complex DPLL design in ice driver (Arkadiusz)
+> * Remove ptp_ocp driver from the series for now
+>v3 -> v4:
+> * redesign framework to make pins dynamically allocated (Arkadiusz)
+> * implement shared pins (Arkadiusz)
+>v2 -> v3:
+> * implement source select mode (Arkadiusz)
+> * add documentation
+> * implementation improvements (Jakub)
+>v1 -> v2:
+> * implement returning supported input/output types
+> * ptp_ocp: follow suggestions from Jonathan
+> * add linux-clk mailing list
+>v0 -> v1:
+> * fix code style and errors
+> * add linux-arm mailing list
 
->From: Jiri Pirko <jiri@resnulli.us>
->Sent: Friday, May 5, 2023 12:30 PM
->
->Thu, May 04, 2023 at 11:24:51PM CEST, kuba@kernel.org wrote:
->>On Thu, 4 May 2023 14:02:30 +0200 Jiri Pirko wrote:
->
->[...]
->
->>
->>> >+    name: device
->>> >+    subset-of: dpll
->>> >+    attributes:
->>> >+      -
->>> >+        name: id
->>> >+        type: u32
->>> >+        value: 2
->>> >+      -
->>> >+        name: dev-name
->>> >+        type: string
->>> >+      -
->>> >+        name: bus-name
->>> >+        type: string
->>> >+      -
->>> >+        name: mode
->>> >+        type: u8
->>> >+        enum: mode
->>> >+      -
->>> >+        name: mode-supported
->>> >+        type: u8
->>> >+        enum: mode
->>> >+        multi-attr: true
->>> >+      -
->>> >+        name: lock-status
->>> >+        type: u8
->>> >+        enum: lock-status
->>> >+      -
->>> >+        name: temp
->>> >+        type: s32
->>> >+      -
->>> >+        name: clock-id
->>> >+        type: u64
->>> >+      -
->>> >+        name: type
->>> >+        type: u8
->>> >+        enum: type
->>> >+      -
->>> >+        name: pin-prio
->>> >+        type: u32
->>> >+        value: 19
->>>
->>> Do you still need to pass values for a subset? That is odd. Well, I
->>> think is is odd to pass anything other than names in subset definition,
->>> the rest of the info is in the original attribute set definition,
->>> isn't it?
->>> Jakub?
->>
->>Probably stale code, related bug was fixed in YNL a few months back.
->>Explicit value should no longer be needed.
->
->What about the rest, like type, enum, multi-attr etc. Are they needed
->for subset? If yes, why?
->
->
+Vadim, did you try ynl monitor? I think there might be something wrong
+with the yaml spec:
+# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml --subscribe monitor --sleep 10
+Unexpected msg id done while checking for ntf nl_len = 92 (76) nl_flags = 0x0 nl_type = 19
 
-It seems the name and type is needed. Without type generation scripts fails=
-.
-For now fixed with having only name/type on subset attributes.
 
-Thanks!
-Arkadiusz
