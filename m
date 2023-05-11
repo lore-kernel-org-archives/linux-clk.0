@@ -2,60 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1C0C7EE22
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 13:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A409C77B7C
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 13:46:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238205AbjEKNop (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 09:44:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38540 "EHLO
+        id S237618AbjEKNqa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 09:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238379AbjEKNo2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 09:44:28 -0400
+        with ESMTP id S229847AbjEKNq3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 09:46:29 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 719B1100EF;
-        Thu, 11 May 2023 06:44:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EE1199E;
+        Thu, 11 May 2023 06:46:22 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id E1E575FD13;
-        Thu, 11 May 2023 16:44:17 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id 409955FD5F;
+        Thu, 11 May 2023 16:46:21 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1683812657;
-        bh=zpRN19wKJWL95Pe9rYSROAJmHnQ4rR4hEcVtgRpKk68=;
+        s=mail; t=1683812781;
+        bh=WC0yahayL00lp9RjVX6ifkwESNGz2I60jc5UqW7rtAw=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=LsEa5uuVVpI5U5qf/kO9mz6Kw6h0QV+TV7C0pfu4gmnlhZtecj13b0HrjlJiXZt4H
-         XyL1v97e/SEtUCc1XXnFJcz1YQOrHokYsQS1x7qU3/ctsNcJEMRklgMSVdZSXXyjpJ
-         h3E5o30imO2R1t17JImKYhIDzByfDqYeBQ3TQaucGshvbxSSQwQ8gNnHoEzZYXDXgx
-         CpCFVGiUWsgZ9925kr0fMd2Z85SWnnedNpDnrBDRHay8mHx4nlRlRDzBMH5B1z/BGS
-         +tPjXRY7yjpGklbGqC7V1K+reqsgmBoOjHGRpWRD43DIGuUdqk/OQ9OopDjOgCdQx8
-         RKuOkISUjTWBg==
+        b=aaLh5SlwmrxUGQy4Nt1nFHJEK4zhWwytNo8Ovia/U9RHOOvB8RT67woDb+Sc9RVC9
+         6495ZqGXUwvDbJnctimR8g6Qc10Pv0yz0eJqlJQu7A9wHhKy/0YYWvn2OFuF+VgS3M
+         X+Id6qi0RyRHpTh0gN4smLrJ2py0xWX8mKLkPDDoOmgDdkZeLtYn0tKSrQEjIE57u+
+         WbOwdiPaUL2MqLA4YGnOSCOdva7ywE6dTH00wQkFaqvVYc25yKiQef8UdS9ncKP0FD
+         9LcQM3bN534yyvG4g3ek5lYNgohsEKWzPfiSChn7rzRAvxtyYERfiUN72EwT+t63hE
+         Wk0wKAWC/fspg==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Thu, 11 May 2023 16:44:17 +0300 (MSK)
-Date:   Thu, 11 May 2023 16:44:16 +0300
+        Thu, 11 May 2023 16:46:21 +0300 (MSK)
+Date:   Thu, 11 May 2023 16:46:20 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+To:     Christian Hewitt <christianshewitt@gmail.com>
+CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>, <jian.hu@amlogic.com>,
         <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        AML <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         Rob Herring <robh@kernel.org>
 Subject: Re: [PATCH v14 5/6] dt-bindings: clock: meson: add A1 Peripherals
  clock controller bindings
-Message-ID: <20230511134416.pw4led274g72z7e6@CAB-WSD-L081021>
+Message-ID: <20230511134620.iukkxnbotcjyfcyx@CAB-WSD-L081021>
 References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
  <20230426095805.15338-6-ddrokosov@sberdevices.ru>
  <CAFBinCCdoaNuQymcjp5j9MHn2jpPWMqXe-+EgBo=5Ot8Bwaofw@mail.gmail.com>
+ <2F9DDB93-5EE7-4B5D-AFB5-052968081E0A@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCCdoaNuQymcjp5j9MHn2jpPWMqXe-+EgBo=5Ot8Bwaofw@mail.gmail.com>
+In-Reply-To: <2F9DDB93-5EE7-4B5D-AFB5-052968081E0A@gmail.com>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
  S-MS-EXCH01.sberdevices.ru (172.16.1.4)
 X-KSMG-Rule-ID: 4
 X-KSMG-Message-Action: clean
@@ -68,46 +74,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Martin,
+Hello Christian,
 
-Sorry for the delayed response as I was on vacation without laptop.
+On Tue, May 02, 2023 at 02:38:20AM +0100, Christian Hewitt wrote:
+> > On 1 May 2023, at 7:51 pm, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+> > 
+> > Hi Dmitry,
+> > 
+> > On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
+> > <ddrokosov@sberdevices.ru> wrote:
+> >> 
+> >> Add the documentation for Amlogic A1 Peripherals clock driver,
+> >> and A1 Peripherals clock controller bindings.
+> > Maybe a native English speaker can comment on whether it's
+> > "peripheral" or "peripherals".
+> 
+> I’m not a grammar specialist, but I would write:
+> 
+> “Add documentation and bindings for the Amlogic A1 SoC peripherals
+> clock driver”
+> 
+> Peripherals is the correct plural but reads better when you add
+> context on the type of peripherals.
 
-On Mon, May 01, 2023 at 08:51:30PM +0200, Martin Blumenstingl wrote:
-> Hi Dmitry,
-> 
-> On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
-> <ddrokosov@sberdevices.ru> wrote:
-> >
-> > Add the documentation for Amlogic A1 Peripherals clock driver,
-> > and A1 Peripherals clock controller bindings.
-> Maybe a native English speaker can comment on whether it's
-> "peripheral" or "peripherals".
-> 
+Thank you for your suggestion! I will make the change in the v15.
 
-Ok
-
-> [...]
-> > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../bindings/clock/amlogic,a1-clkc.yaml       |  73 +++++++++++
-> >  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   5 +-
-> >  include/dt-bindings/clock/amlogic,a1-clkc.h   | 114 ++++++++++++++++++
-> I have seen that Yu Tu named the S4 peripheral clock controller
-> binding and driver "s4-peripherals-clkc" [0].
-> Does it make sense to apply the same naming here as well?
-
-Yes, it makes sense. I will prepare a new version with the necessary
-renaming.
-
-> 
-> 
-> Best regards,
-> Martin
-> 
-> 
-> [0] https://lore.kernel.org/linux-amlogic/20230417065005.24967-3-yu.tu@amlogic.com/
+[...]
 
 -- 
 Thank you,
