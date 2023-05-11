@@ -2,224 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED03AC7EE22
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 08:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBEEC77B7F
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 09:22:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234093AbjEKI7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 04:59:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55898 "EHLO
+        id S237448AbjEKJWj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 05:22:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233461AbjEKI7Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 04:59:24 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C70E2107;
-        Thu, 11 May 2023 01:59:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1683795563; x=1715331563;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=v42NvPVBKaIwu61SkEdAj1zG9Hx2b4e6U93BhDKvPUs=;
-  b=LUW5f2er9wwUCEqbSHDqBxeLBIdHf1PA+kMCsXgtiNkWLcDRN7WvVztH
-   dXjJ2k/z/5nJ8dcez8gG91jqhqO76cVPfAaqObae8vXoVZV5xDUFaeApe
-   bnvdiz+d4uLuXH8RUQ2HDnJ2qDIXLRekyYfH/q5rllTTT8RTw1ZPfQaq2
-   +mIMJxzBf+yU/eJ1vQoST/G5HfLKdXtvrRo8YDkjMRucP6fcALjkzFjAN
-   GtR0yJLca4OyjtgBb6hmMukJUGnxChHyH0Nq/fVJ7sH0QXpbhTTHGKqGp
-   ZhhLUr0sjAk7WuGQPZLn8Pxs2HaGzqgz3zJVnTA4a2IEUxARKWeT530Ku
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.99,266,1677567600"; 
-   d="asc'?scan'208";a="213392843"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 11 May 2023 01:59:22 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Thu, 11 May 2023 01:59:21 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Thu, 11 May 2023 01:59:19 -0700
-Date:   Thu, 11 May 2023 09:58:59 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     <Claudiu.Beznea@microchip.com>
-CC:     <krzysztof.kozlowski@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc:
- convert to yaml
-Message-ID: <20230511-strike-viper-f4171c88a040@wendy>
-References: <20230509052757.539274-1-claudiu.beznea@microchip.com>
- <20230509052757.539274-3-claudiu.beznea@microchip.com>
- <e463eb68-3ea0-5230-76fd-4a2ee66bf397@linaro.org>
- <773d0d90-29c7-b1bd-bd16-898b435eafb6@microchip.com>
- <b3c7db03-6614-47d9-a9e0-a8e51c836d86@linaro.org>
- <a4d934c6-ec28-50d0-b9bb-9b11fee7ebb6@microchip.com>
- <1c2aa022-348a-8ac2-1a26-eedf57aadb77@linaro.org>
- <71a1e8de-932d-09a1-efeb-af459fee9423@microchip.com>
- <8f21f892-de54-9bc7-d4b9-f36aaa6b4a7c@linaro.org>
- <e8e2de0e-ca7b-44e3-7853-5693a7926a2b@microchip.com>
+        with ESMTP id S237455AbjEKJWd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 05:22:33 -0400
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 135C22126;
+        Thu, 11 May 2023 02:22:30 -0700 (PDT)
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34B78eoF003364;
+        Thu, 11 May 2023 11:21:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=SeWGtG+XiqIvze4ZZLjFVr2B3K2HgCHgt+uSIHu1cd0=;
+ b=xfoz1DcUtxYMHhLfxpMljJurG3O+QF3UahoG5vMp05o1N4XXk8UJ8Zw/7HgzqIAx8n7W
+ ZJF8ieQpHapWlHPB7cYOrchfzUfaVDruvGHUTBrtacC/kH3TSv55ZqCvy/DbY3Q5TZZU
+ WwQrXTqe+bpZ4aRrKA+CFcu4NZDR7XGGs7lXAVI2Ade4iZvcIeZ9wagT2FnwAHEG/Itj
+ 1YmHB4woAUqLRA+LuNyc9XTzfIC3ryeuuLtg/egvx5GbQKbj0yTO4Gbv8ziuzZofp5Wy
+ 3J6FV7hsR5D5qn/f2FjYnLCDwVNJu9SIhPNbMZ1Tb/rgl8SISw930978hjZvseurYj2U 2g== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3qg9hfevru-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 11 May 2023 11:21:59 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6FD13100038;
+        Thu, 11 May 2023 11:21:45 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 663D5216ECC;
+        Thu, 11 May 2023 11:21:45 +0200 (CEST)
+Received: from [10.48.0.11] (10.48.0.11) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21; Thu, 11 May
+ 2023 11:21:44 +0200
+Message-ID: <067b2abb-9a84-db6c-725b-87307839b81a@foss.st.com>
+Date:   Thu, 11 May 2023 11:21:31 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w4yJ+fuYCr9l/xTM"
-Content-Disposition: inline
-In-Reply-To: <e8e2de0e-ca7b-44e3-7853-5693a7926a2b@microchip.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2] dt-bindings: rcc: stm32: Sync with u-boot copy for
+ STM32MP13 SoC
+To:     Conor Dooley <conor@kernel.org>,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>
+CC:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        <gabriel.fernandez@st.com>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+ <20230510-cornball-compacter-39e57a5c1906@spud>
+Content-Language: en-US
+From:   Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>
+In-Reply-To: <20230510-cornball-compacter-39e57a5c1906@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.48.0.11]
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-11_06,2023-05-05_01,2023-02-09_01
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---w4yJ+fuYCr9l/xTM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 11, 2023 at 06:29:39AM +0000, Claudiu.Beznea@microchip.com wrot=
-e:
-> On 10.05.2023 13:12, Krzysztof Kozlowski wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
-the content is safe
-> >=20
-> > On 10/05/2023 10:31, Claudiu.Beznea@microchip.com wrote:
-> >> On 10.05.2023 10:58, Krzysztof Kozlowski wrote:
-> >>> EXTERNAL EMAIL: Do not click links or open attachments unless you kno=
-w the content is safe
-> >>>
-> >>> On 10/05/2023 09:14, Claudiu.Beznea@microchip.com wrote:
-> >>>> On 10.05.2023 10:06, Krzysztof Kozlowski wrote:
-> >>>>> EXTERNAL EMAIL: Do not click links or open attachments unless you k=
-now the content is safe
-> >>>>>
-> >>>>> On 10/05/2023 09:00, Claudiu.Beznea@microchip.com wrote:
-> >>>>>> On 09.05.2023 09:25, Krzysztof Kozlowski wrote:
-> >>>>>>> EXTERNAL EMAIL: Do not click links or open attachments unless you=
- know the content is safe
-> >>>>>>>
-> >>>>>>> On 09/05/2023 07:27, Claudiu Beznea wrote:
-> >>>>>>>> Convert Atmel PMC documentation to yaml. Along with it clock nam=
-es
-> >>>>>>>> were adapted according to the current available device trees as
-> >>>>>>>> different controller versions accept different clocks (some of t=
-hem
-> >>>>>>>> have 3 clocks as input, some has 2 clocks as inputs and some wit=
-h 2
-> >>>>>>>> input clocks uses different clock names).
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Thank you for your patch. There is something to discuss/improve.
-> >>>>>>>
-> >>>>>>>> +title: Atmel Power Management Controller (PMC)
-> >>>>>>>> +
-> >>>>>>>> +maintainers:
-> >>>>>>>> +  - Claudiu Beznea <claudiu.beznea@microchip.com>
-> >>>>>>>> +
-> >>>>>>>> +description:
-> >>>>>>>> +  The power management controller optimizes power consumption b=
-y controlling all
-> >>>>>>>> +  system and user peripheral clocks. The PMC enables/disables t=
-he clock inputs
-> >>>>>>>> +  to many of the peripherals and to the processor.
-> >>>>>>>> +
-> >>>>>>>> +properties:
-> >>>>>>>> +  compatible:
-> >>>>>>>> +    oneOf:
-> >>>>>>>> +      - items:
-> >>>>>>>> +          - enum:
-> >>>>>>>> +              - atmel,at91sam9g15-pmc
-> >>>>>>>> +              - atmel,at91sam9g20-pmc
-> >>>>>>>> +              - atmel,at91sam9g25-pmc
-> >>>>>>>> +              - atmel,at91sam9g35-pmc
-> >>>>>>>> +              - atmel,at91sam9x25-pmc
-> >>>>>>>> +              - atmel,at91sam9x35-pmc
-> >>>>>>>> +          - enum:
-> >>>>>>>> +              - atmel,at91sam9260-pmc
-> >>>>>>>> +              - atmel,at91sam9x5-pmc
-> >>>>>>>
-> >>>>>>> I missed it last time - why you have two enums? We never talked a=
-bout
-> >>>>>>> this. It's usually wrong... are you sure this is real hardware:
-> >>>>>>> atmel,at91sam9g20-pmc, atmel,at91sam9260-pmc
-> >>>>>>> ?
-> >>>>>>
-> >>>>>> I have 2 enums because there are some hardware covered by:
-> >>>>>> "vendor-name,hardware-v1-pmc", "syscon" and some covered by:
-> >>>>>> "vendor-name,hardware-v2-pmc", "vendor-name,hardware-v1-pmc", "sys=
-con".
-> >>>>>
-> >>>>> The enum does not say this. At all.
-> >>>>>
-> >>>>> So again, answer, do not ignore:
-> >>>>> is this valid setup:
-> >>>>> atmel,at91sam9g20-pmc, atmel,at91sam9260-pmc
-> >>>>> ?
-> >>>>
-> >>>> Not w/o syscon. This is valid:
-> >>>
-> >>> Syscon is not important here, but indeed I missed it.
-> >>>
-> >>>>
-> >>>> compatible =3D "atmel,at91sam9g20-pmc", "atmel,at91sam9260-pmc", "sy=
-scon";
-> >>>>
-> >>>> available in arch/arm/boot/dts/at91sam9g20.dtsi +45
-> >>>
-> >>> Nice, so my random choice was actually correct. Ok, so another:
-> >>>
-> >>> atmel,at91sam9g15-pmc, atmel,at91sam9260-pmc, syscon
-> >>>
-> >>> Is it valid hardware?
-> >>
-> >> This one, no. So, I guess, the wrong here is that there could be
-> >> combinations that are not for actual hardware and yet considered valid=
- by
-> >> changes in this patch?
-> >=20
-> > I just don't understand why you have two enums. This is not a pattern
-> > which is allowed anywhere. It might appear but only as exception or mis=
-take.
->=20
-> I'm not at all an YAML expert and this is how I've managed to make
-> dt_binding_check/dtbs_check happy.
+On 5/10/23 19:02, Conor Dooley wrote:
+> On Wed, May 10, 2023 at 06:51:40PM +0200, Patrick Delaunay wrote:
+>> Minor cosmetic change, aligned with files in U-Boot:
+>> - change obsolete SPDX id : GPL-2.0+ and use the same license
+>>    GPL-2.0-only for the 2 files
+>> - use correct mail address gabriel.fernandez@foss.st.com
+>> - remove extra space
+> Rob's comments on v1 were about $subject, which you've fixed, although
+> the second prefix is a bit odd (I assume since you're changing clock and
+> reset headers) and about the change in license to "or-later" for the
+> resets header, which you've changed too, so...
+>> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+>> ---
+>>
+>> Changes in v2:
+>> - Change title "Fix STM32MP13 include file"
+>> - Use the same license for the 2 files GPL-2.0-only as recommended
+>>    to avoid check-patch issue on next
+>>
+>>   include/dt-bindings/clock/stm32mp13-clks.h   | 6 +++---
+>>   include/dt-bindings/reset/stm32mp13-resets.h | 4 ++--
+>>   2 files changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/include/dt-bindings/clock/stm32mp13-clks.h b/include/dt-bindings/clock/stm32mp13-clks.h
+>> index 02befd25edce..0bd7b54c65ff 100644
+>> --- a/include/dt-bindings/clock/stm32mp13-clks.h
+>> +++ b/include/dt-bindings/clock/stm32mp13-clks.h
+>> @@ -1,7 +1,7 @@
+>> -/* SPDX-License-Identifier: GPL-2.0+ or BSD-3-Clause */
+>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause */
+> ...since Gabriel does appear to be the only author of this file:
+>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> Thanks,
+> Conor.
 
-Picking one item at random, do the devicetrees contain stuff like:
-"atmel,at91sam9g35-pmc", "atmel,at91sam9260-pmc", "syscon"
-//AND//
-"atmel,at91sam9g35-pmc", "atmel,at91sam9x5-pmc", "syscon"
-?
+Hi
 
-If not, why do you not break it down to something like:
-- items:
-    - enum:
-        - atmel,compatible
-        - atmel,with
-        - atmel,sam9260's pmc
-    - const: atmel,at91sam9260-pmc
-    - const: syscon
+Acked-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
 
-- items:
-    - enum:
-        - atmel,compatible
-        - atmel,with
-        - atmel,sam9x5's pmc
-    - const: atmel,at91sam9x5-pmc
-    - const: syscon
+Thanks
+Gabriel
 
-Cheers,
-Conor.
-
---w4yJ+fuYCr9l/xTM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZFyuUwAKCRB4tDGHoIJi
-0suRAQDysc87JyYDx/XRfnlXqky2ma5ajlXlcxrFkB2DILD75AEAm51N9jtu/TiC
-JNvrPPBAryZOpPnm/VSyGXlHS7sgJQg=
-=3SaE
------END PGP SIGNATURE-----
-
---w4yJ+fuYCr9l/xTM--
