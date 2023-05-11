@@ -2,113 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874D8C7EE22
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 13:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883F9C77B7C
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 14:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237760AbjEKNuc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 09:50:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44290 "EHLO
+        id S238521AbjEKO5F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 10:57:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236577AbjEKNub (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 09:50:31 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4DEED9;
-        Thu, 11 May 2023 06:50:29 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 3C47B5FD5F;
-        Thu, 11 May 2023 16:50:28 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1683813028;
-        bh=RMxJjEHJX0J6cuwdy2YgFZf1Gg52m0VezrZJvqOMaY8=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=M6GU5ISY3Mv0QEnjh2NKb5xTVGYQYoSeIcRu0VuGPTsEejBDDGUhrGA4rfspJa+T0
-         7oAa8lBpV8UvH3cVvDuf8xotDuykXPT2tDeBgRoz39z+VfTw3Rmkm529NaJ4PZGoG0
-         DUrolTUhKLGN2K5PxUXEkRObkrlvz8zj5U8L7Wu0KQ4p8wTZnH8ES4C3ueCqwFHeZO
-         H1akRIjfHBOaU/8hUfm6NYd12hz56Ate8iIcttopxSTuesYN0aJpW9hrL+TDx7QlTq
-         svJrAC89qTH3UYczt3km/iLdj9cPL3/3TQAGnVlzsXIxrIQEZ18MUDjxmpfXR92dyt
-         EMYvw7TteVwkg==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Thu, 11 May 2023 16:50:28 +0300 (MSK)
-Date:   Thu, 11 May 2023 16:50:22 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Christian Hewitt <christianshewitt@gmail.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        AML <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v14 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-Message-ID: <20230511135022.jzkv4un4bbm375aw@CAB-WSD-L081021>
-References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
- <20230426095805.15338-6-ddrokosov@sberdevices.ru>
- <CAFBinCCdoaNuQymcjp5j9MHn2jpPWMqXe-+EgBo=5Ot8Bwaofw@mail.gmail.com>
- <2F9DDB93-5EE7-4B5D-AFB5-052968081E0A@gmail.com>
- <e29a7911-065a-04e2-f04f-027a0646362c@linaro.org>
+        with ESMTP id S238652AbjEKO4v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 10:56:51 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 018AD106C2
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 07:56:34 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1798764EA4
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 14:55:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAAFAC433EF;
+        Thu, 11 May 2023 14:55:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683816934;
+        bh=TWVGAxdHC0hEH9C5Zgy4ygLuKrZWu81JJ74/YHgVR/k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UJo4LBA/AyV+tsgQfyOtA5TItg8VVAfeGU147YVCYktv7zP3scUD4pdlG3RrSpyOu
+         l4kzUWwucf6OgfJ4VCBZS2Kd0yQKlwLwUBesVPZpgktWhlytQXYe4n/TGBgue8kcr7
+         j00zitPSAyvxzEGxdGTAY5vbcVzUI1EthNmkstuMvxlqp+sBm7qTVliE8R3/ZnKl5T
+         BIgKgUnuUeQTReoioNroLla9Ofa1/YLxSYwP++n+61x75W5dyrdTQyyZlYRDp8p72Z
+         GgHO8+bBXLct6fQntES+MB/xrpqzM9TbXKItw0W1R6UnuOtnRxnMNfwNWMLmoGxTHl
+         yehTU+ByqseiQ==
+Date:   Thu, 11 May 2023 07:55:32 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        Vadim Fedorenko <vadfed@meta.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
+Message-ID: <20230511075532.6de7381c@kernel.org>
+In-Reply-To: <ZFygo47TtTdb8IQa@nanopsycho>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+        <20230428002009.2948020-2-vadfed@meta.com>
+        <ZFOe1sMFtAOwSXuO@nanopsycho>
+        <20230504142451.4828bbb5@kernel.org>
+        <ZFTap8tIHWdbzGwp@nanopsycho>
+        <MN2PR11MB4664357BAEC609040CF480C69B749@MN2PR11MB4664.namprd11.prod.outlook.com>
+        <ZFygo47TtTdb8IQa@nanopsycho>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e29a7911-065a-04e2-f04f-027a0646362c@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/11 10:21:00 #21259776
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Krzysztof,
-
-Thank you for the review!
-
-On Tue, May 02, 2023 at 09:39:12AM +0200, Krzysztof Kozlowski wrote:
-> On 02/05/2023 03:38, Christian Hewitt wrote:
-> >> On 1 May 2023, at 7:51 pm, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
-> >>
-> >> Hi Dmitry,
-> >>
-> >> On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
-> >> <ddrokosov@sberdevices.ru> wrote:
-> >>>
-> >>> Add the documentation for Amlogic A1 Peripherals clock driver,
-> >>> and A1 Peripherals clock controller bindings.
-> >> Maybe a native English speaker can comment on whether it's
-> >> "peripheral" or "peripherals".
-> > 
-> > I’m not a grammar specialist, but I would write:
-> > 
-> > “Add documentation and bindings for the Amlogic A1 SoC peripherals
-> > clock driver”
-> > 
-> > Peripherals is the correct plural but reads better when you add
-> > context on the type of peripherals.
+On Thu, 11 May 2023 10:00:35 +0200 Jiri Pirko wrote:
+>> It seems the name and type is needed. Without type generation scripts fails.
+>> For now fixed with having only name/type on subset attributes.  
 > 
-> Drop the "driver" references - from the binding itself and from commit
-> msg. The bindings are for hardware, not for the driver, so: "for the
-> Amlogic A1 SoC peripherals clock controller.".
+> Okay. Jakub, any idea why "type" is needed here?
 
-Okay, thank you for the suggestion! I will remove it in the next
-version.
-
--- 
-Thank you,
-Dmitry
+I don't remember.
