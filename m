@@ -2,39 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6E0C77B7C
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 15:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5688C77B7F
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 15:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238363AbjEKPU6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 11:20:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44598 "EHLO
+        id S238654AbjEKP06 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 11:26:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237687AbjEKPU5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 11:20:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E43AC115
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 08:20:55 -0700 (PDT)
+        with ESMTP id S238569AbjEKP05 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 11:26:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA531DC
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 08:26:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8815E6393A
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 15:20:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B049C4339B;
-        Thu, 11 May 2023 15:20:54 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 41D7164EFD
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 15:26:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25F4EC433D2;
+        Thu, 11 May 2023 15:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683818454;
-        bh=LlEqzQak7c2TgFwwm3ndbqMEHDmT7FAykIqojK/MUaI=;
+        s=k20201202; t=1683818815;
+        bh=+7QZL904BwNTluSbT6if/okhWOSRPnmftg11VAD2xDo=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=DeYnWczTbjryXUB8lBvhvHWi0u2Rm/cpjy+OQhjGO4NDivP+aEqko9+fC9a49IRTD
-         iHzd80Bck8SR4V5N7RBxfAvGushssgM3AY2IVsYFCrurag+7IIvfkoN7zJtTuUByIM
-         r/M5lCaAGascT2J7/uNiJohBvZUppQhsB2HGRKFZfGzl+nZg6PTEN+YdKJzuaovSGS
-         Qk16NnM3cDQBCsGq28ghEaArT0tDFYrfSLfSHKxdYe86YJ6wMM2+9xAFSaujIOFKoK
-         3R9s2LiF1Cs4cClofYGpRebTh/3KvbG9duNxgWvXOg14n9M0K0FwaSlin1GBYLhf1R
-         qGHwtPD+kMuyw==
-Date:   Thu, 11 May 2023 08:20:53 -0700
+        b=AwJPvKdeQ/qOhlz8YnKglbSmyFnTBjI7CB5q7FzWN+mvNRm4N3P30F2UfnADhhJRS
+         iwOUcLAR3LNlFH5U0IAz2G/pMcS5fk1Sgmmv53176KUpUpqN/7Wwt121Hfw/of3e8Q
+         W8CK04fSZUAQWJsljL/ADCV+IevNDFV/5XJXZygQgSFL3INYYodZyoEVNdi5hEsQwO
+         lbiEQXv6xevyJvoXuCbogi6eToMRUcM+1sF6UdgcG+UAUp9IZrrdKLWcAGTXAtCcDJ
+         2uUS+Go9tvDCzk3RFhldV/FjFNsr/9FC9EJ75CNQFExOt7NqnQ2U8be84ztcNRSsUI
+         y4BOWzybO+Cjg==
+Date:   Thu, 11 May 2023 08:26:54 -0700
 From:   Jakub Kicinski <kuba@kernel.org>
 To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadfed@meta.com>, Jiri Pirko <jiri@resnulli.us>,
+Cc:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>,
         Jonathan Lemon <jonathan.lemon@gmail.com>,
         Paolo Abeni <pabeni@redhat.com>,
         "Olech, Milena" <milena.olech@intel.com>,
@@ -46,13 +46,12 @@ Cc:     Vadim Fedorenko <vadfed@meta.com>, Jiri Pirko <jiri@resnulli.us>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Vadim Fedorenko <vadim.fedorenko@linux.dev>
 Subject: Re: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
-Message-ID: <20230511082053.7d2e57e3@kernel.org>
-In-Reply-To: <MN2PR11MB46645511A6C93F5C98A8A66F9B749@MN2PR11MB4664.namprd11.prod.outlook.com>
+Message-ID: <20230511082654.44883ebe@kernel.org>
+In-Reply-To: <MN2PR11MB466446F5594B3D90C7927E719B749@MN2PR11MB4664.namprd11.prod.outlook.com>
 References: <20230428002009.2948020-1-vadfed@meta.com>
         <20230428002009.2948020-2-vadfed@meta.com>
         <ZFOe1sMFtAOwSXuO@nanopsycho>
-        <20230504142451.4828bbb5@kernel.org>
-        <MN2PR11MB46645511A6C93F5C98A8A66F9B749@MN2PR11MB4664.namprd11.prod.outlook.com>
+        <MN2PR11MB466446F5594B3D90C7927E719B749@MN2PR11MB4664.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -60,80 +59,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 11 May 2023 07:40:26 +0000 Kubalewski, Arkadiusz wrote:
-> >> Remove "no holdover available". This is not a state, this is a mode
-> >> configuration. If holdover is or isn't available, is a runtime info.  
+On Thu, 11 May 2023 07:38:04 +0000 Kubalewski, Arkadiusz wrote:
+> >>+  -
+> >>+    type: enum
+> >>+    name: event
+> >>+    doc: events of dpll generic netlink family
+> >>+    entries:
+> >>+      -
+> >>+        name: unspec
+> >>+        doc: invalid event type
+> >>+      -
+> >>+        name: device-create
+> >>+        doc: dpll device created
+> >>+      -
+> >>+        name: device-delete
+> >>+        doc: dpll device deleted
+> >>+      -
+> >>+        name: device-change  
 > >
-> >Agreed, seems a little confusing now. Should we expose the system clk
-> >as a pin to be able to force lock to it? Or there's some extra magic
-> >at play here?  
-> 
-> In freerun you cannot lock to anything it, it just uses system clock from
-> one of designated chip wires (which is not a part of source pins pool) to feed
-> the dpll. Dpll would only stabilize that signal and pass it further.
-> Locking itself is some kind of magic, as it usually takes at least ~15 seconds
-> before it locks to a signal once it is selected.
-
-Okay, I guess that makes sense.
-
-I was wondering if there may be a DPLLs which allow other input clocks
-to bypass the PLL logic, and output purely a stabilized signal. In
-which case we should model this as a generic PLL bypass, FREERUN being
-just one special case where we're bypassing with the system clock.
-
-But that may well be a case of "software guy thinking", so if nobody
-thinks this can happen in practice we can keep FREERUN.
-
-> >Noob question, what is NCO in terms of implementation?
-> >We source the signal from an arbitrary pin and FW / driver does
-> >the control? Or we always use system refclk and then tune?
+> >Please have a separate create/delete/change values for pins.
 > >  
 > 
-> Documentation of chip we are using, stated NCO as similar to FREERUN, and it
-> runs on a SYSTEM CLOCK provided to the chip (plus some stabilization and
-> dividers before it reaches the output).
-> It doesn't count as an source pin, it uses signal form dedicated wire for
-> SYSTEM CLOCK.
-> In this case control over output frequency is done by synchronizer chip
-> firmware, but still it will not lock to any source pin signal.
-
-Reading wikipedia it sounds like NCO is just a way of generating 
-a waveform from synchronous logic.
-
-Does the DPLL not allow changing clock frequency when locked?
-I.e. feeding it one frequency and outputting another?
-Because I think that'd be done by an NCO, no?
-
-> >> Is it needed to mention the holdover mode. It's slightly confusing,
-> >> because user might understand that the lock-status is always "holdover"
-> >> in case of "holdover" mode. But it could be "unlocked", can't it?
-> >> Perhaps I don't understand the flows there correctly :/  
-> >
-> >Hm, if we want to make sure that holdover mode must result in holdover
-> >state then we need some extra atomicity requirements on the SET
-> >operation. To me it seems logical enough that after setting holdover
-> >mode we'll end up either in holdover or unlocked status, depending on
-> >lock status when request reached the HW.
-> >  
+> Makes sense, but details, pin creation doesn't occur from uAPI perspective,
+> as the pins itself are not visible to the user. They are visible after they
+> are registered with a device, thus we would have to do something like:
+> - pin-register
+> - pin-unregister
+> - pin-change
 > 
-> Improved the docs:
->         name: holdover
->         doc: |
->           dpll is in holdover state - lost a valid lock or was forced
->           by selecting DPLL_MODE_HOLDOVER mode (latter possible only
->           when dpll lock-state was already DPLL_LOCK_STATUS_LOCKED,
-> 	  if it was not, the dpll's lock-status will remain
->           DPLL_LOCK_STATUS_UNLOCKED even if user requests
->           DPLL_MODE_HOLDOVER)
-> Is that better?
+> Does it make sense?
 
-Yes, modulo breaking it up into sentences, as Jiri says.
+I missed this, notifications should be declared under operations.
 
-> What extra atomicity you have on your mind?
-> Do you suggest to validate and allow (in dpll_netlink.c) only for 'unlocked'
-> or 'holdover' states of dpll, once DPLL_MODE_HOLDOVER was successfully
-> requested by the user?
+Please look at netdev.yaml for an example.
 
-No, I was saying that making sure that we end up in holdover (rather
-than unlocked) when user requested holdover is hard, and we shouldn't 
-even try to implement that.
+I thought about implementing this model where events are separate
+explicitly but I think it's an unnecessary complication.
