@@ -2,76 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF51C77B7F
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 22:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BE9C7EE22
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 23:29:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239164AbjEKWhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 18:37:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41558 "EHLO
+        id S229654AbjEKX3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 19:29:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239214AbjEKWhw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 18:37:52 -0400
+        with ESMTP id S239506AbjEKX3a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 19:29:30 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9EDF5584;
-        Thu, 11 May 2023 15:37:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B920461BA
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 16:29:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5EAF765171;
-        Thu, 11 May 2023 22:37:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADDCC433D2;
-        Thu, 11 May 2023 22:37:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A38D265274
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 23:29:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8179FC433EF;
+        Thu, 11 May 2023 23:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683844667;
-        bh=+D78NZFIyG9cTjRHg49tXEf4K+BxuWLjB0MhRWS4xmE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LNceuXEs3YJ/BM9/ZeKGTCnwt2V1n/VFVwM1GOOT+pRx8Jf9wscrAqwTj/yh81exC
-         CVFH98y0ClXaApMBqZbmjlRBCp2+5t/v2WkkmpzCWUyz41EMcg4UwyrGN/uXf4H+Tf
-         3+1eKv65w6Fc4cSVaR+DMFgduf3ELmaNoULr49Svan9i2eUIsMVZgj3WygJnpEjNfp
-         PCia0Bv0Qpej5ElOPrj0wAcf2OM+Dtu7CMf+3ZPLv7kgVlNWE9qkCIZUZyHkljWprr
-         fsJN6fecyaRUyKevsnMySmDkh3zyfTUxDrJbCGt5ZwvIizy0bk3IFCk7DY/uBKkntu
-         E7rb0olHklYXQ==
-Message-ID: <ead66129a75a558badf81b07955b7cec.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        s=k20201202; t=1683847768;
+        bh=SLlcwEuE4JpFNFcPjNi/S0l6z/1UC6psRw1iRRUVsYs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=efUdlcXR/weB6qRSybLmpnKrQG4ctSZoORqH6nEZTv0i+nAPO4aErh3H652p78bhZ
+         tVE+QXHCkMDO7gRC+eRJ7rKBpsXJZQ/l/knP+UPmqN5P4YyFLbvYLE/N+2mpU8jehw
+         JDTysC+qkto2m3UoixYkCKVqqj2MKCiOiS0dSMR1lNHOnC6XTnUF1I9jWNYP4e6LhG
+         h9d8bKTpoQq3YuR4xqlTf/GqOXvMYILRNsWv+evIyyp7FR/57/Fu6XvxYSnFYFbXoV
+         M6uJbiFNqPHw4+XLoGIe9pJpTllMPFIVdCOcujeyDwvddeGva5nJ+dpAi7mfwoO6kW
+         fb+AFD5Kkdh9g==
+Date:   Thu, 11 May 2023 16:29:26 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadfed@meta.com>, Jiri Pirko <jiri@resnulli.us>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
+Message-ID: <20230511162926.009994bb@kernel.org>
+In-Reply-To: <DM6PR11MB4657EF0A57977C56264BC7A99B749@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+        <20230428002009.2948020-2-vadfed@meta.com>
+        <ZFOe1sMFtAOwSXuO@nanopsycho>
+        <20230504142451.4828bbb5@kernel.org>
+        <MN2PR11MB46645511A6C93F5C98A8A66F9B749@MN2PR11MB4664.namprd11.prod.outlook.com>
+        <20230511082053.7d2e57e3@kernel.org>
+        <DM6PR11MB4657EF0A57977C56264BC7A99B749@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230511092654.6d8fab41@haoge-QiTianM428-A376>
-References: <20230509021214.17105-1-gehao@kylinos.cn> <b35458250af972d95c708792633c9a58.sboyd@kernel.org> <20230511092654.6d8fab41@haoge-QiTianM428-A376>
-Subject: Re: [PATCH] mediatek/clk-mt8173-apmixedsys: use devm_of_iomap to avoid resource leak in clk_mt8173_apmixed_probe
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Hao Ge <gehao@kylinos.cn>, angelogioacchino.delregno@collabora.com,
-        matthias.bgg@gmail.com, mturquette@baylibre.com,
-        wenst@chromium.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-To:     Hao Ge <gehao618@163.com>
-Date:   Thu, 11 May 2023 15:37:45 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Hao Ge (2023-05-10 18:26:54)
-> On Wed, 10 May 2023 14:18:08 -0700
-> Stephen Boyd <sboyd@kernel.org> wrote:
->=20
-> > Quoting Hao Ge (2023-05-08 19:12:14)
-> > > Use devm_platform_ioremap_resource to take the place of of_iomap for
-> > > avoid that we don't called iounmap when return some error or remove
-> > > device.
-> > >=20
-> > > Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock
-> > > drivers and allow module build") Signed-off-by: Hao Ge
-> > > <gehao@kylinos.cn> --- =20
-> >=20
-> > Is this v3?
-> Hi Stephen
->=20
-> yes,Perhaps you are too busy,I have not received a response
-> in the future, so you are unsure about the status of V2.
-> So I adjusted the code and title make changes smaller and
-> sent V3 for it.It is precisely because of these that I did=20
-> not continue the original mail thread.
->=20
+On Thu, 11 May 2023 20:53:40 +0000 Kubalewski, Arkadiusz wrote:
+> >Because I think that'd be done by an NCO, no?  
+> 
+> From docs I can also see that chip has additional designated dpll for NCO mode,
+> and this statement:
+> "Numerically controlled oscillator (NCO) behavior allows system software to steer
+> DPLL frequency or synthesizer frequency with resolution better than 0.005 ppt."
+> 
+> I am certainly not an expert on this, but seems like the NCO mode for this chip
+> is better than FREERUN, since signal produced on output is somehow higher quality.
 
-I'm waiting for the usual mediatek clk driver folks to review the patch.
+Herm, this seems complicated. Do you have a use case for this? 
+Maybe we can skip it :D
+
+My reading of the quote is that there is an NCO which SW can control
+precisely. But that does not answer the questions:
+ - is the NCO driven by system clock or can it be used in locked mode?
+ - what is the "system software"? FW which based on temperature
+   information, and whatever else compensates drift of system clock?
+   or there are exposed registers to control the NCO?
+
