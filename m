@@ -2,38 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A409C77B7C
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 13:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874D8C7EE22
+	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 13:50:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237618AbjEKNqa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 09:46:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41468 "EHLO
+        id S237760AbjEKNuc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 09:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229847AbjEKNq3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 09:46:29 -0400
+        with ESMTP id S236577AbjEKNub (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 09:50:31 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8EE1199E;
-        Thu, 11 May 2023 06:46:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4DEED9;
+        Thu, 11 May 2023 06:50:29 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 409955FD5F;
-        Thu, 11 May 2023 16:46:21 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id 3C47B5FD5F;
+        Thu, 11 May 2023 16:50:28 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1683812781;
-        bh=WC0yahayL00lp9RjVX6ifkwESNGz2I60jc5UqW7rtAw=;
+        s=mail; t=1683813028;
+        bh=RMxJjEHJX0J6cuwdy2YgFZf1Gg52m0VezrZJvqOMaY8=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=aaLh5SlwmrxUGQy4Nt1nFHJEK4zhWwytNo8Ovia/U9RHOOvB8RT67woDb+Sc9RVC9
-         6495ZqGXUwvDbJnctimR8g6Qc10Pv0yz0eJqlJQu7A9wHhKy/0YYWvn2OFuF+VgS3M
-         X+Id6qi0RyRHpTh0gN4smLrJ2py0xWX8mKLkPDDoOmgDdkZeLtYn0tKSrQEjIE57u+
-         WbOwdiPaUL2MqLA4YGnOSCOdva7ywE6dTH00wQkFaqvVYc25yKiQef8UdS9ncKP0FD
-         9LcQM3bN534yyvG4g3ek5lYNgohsEKWzPfiSChn7rzRAvxtyYERfiUN72EwT+t63hE
-         Wk0wKAWC/fspg==
+        b=M6GU5ISY3Mv0QEnjh2NKb5xTVGYQYoSeIcRu0VuGPTsEejBDDGUhrGA4rfspJa+T0
+         7oAa8lBpV8UvH3cVvDuf8xotDuykXPT2tDeBgRoz39z+VfTw3Rmkm529NaJ4PZGoG0
+         DUrolTUhKLGN2K5PxUXEkRObkrlvz8zj5U8L7Wu0KQ4p8wTZnH8ES4C3ueCqwFHeZO
+         H1akRIjfHBOaU/8hUfm6NYd12hz56Ate8iIcttopxSTuesYN0aJpW9hrL+TDx7QlTq
+         svJrAC89qTH3UYczt3km/iLdj9cPL3/3TQAGnVlzsXIxrIQEZ18MUDjxmpfXR92dyt
+         EMYvw7TteVwkg==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Thu, 11 May 2023 16:46:21 +0300 (MSK)
-Date:   Thu, 11 May 2023 16:46:20 +0300
+        Thu, 11 May 2023 16:50:28 +0300 (MSK)
+Date:   Thu, 11 May 2023 16:50:22 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Christian Hewitt <christianshewitt@gmail.com>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     Christian Hewitt <christianshewitt@gmail.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Neil Armstrong <neil.armstrong@linaro.org>,
         Jerome Brunet <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -49,16 +50,17 @@ CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Rob Herring <robh@kernel.org>
 Subject: Re: [PATCH v14 5/6] dt-bindings: clock: meson: add A1 Peripherals
  clock controller bindings
-Message-ID: <20230511134620.iukkxnbotcjyfcyx@CAB-WSD-L081021>
+Message-ID: <20230511135022.jzkv4un4bbm375aw@CAB-WSD-L081021>
 References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
  <20230426095805.15338-6-ddrokosov@sberdevices.ru>
  <CAFBinCCdoaNuQymcjp5j9MHn2jpPWMqXe-+EgBo=5Ot8Bwaofw@mail.gmail.com>
  <2F9DDB93-5EE7-4B5D-AFB5-052968081E0A@gmail.com>
+ <e29a7911-065a-04e2-f04f-027a0646362c@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2F9DDB93-5EE7-4B5D-AFB5-052968081E0A@gmail.com>
+In-Reply-To: <e29a7911-065a-04e2-f04f-027a0646362c@linaro.org>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [172.16.1.6]
 X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
@@ -74,32 +76,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Christian,
+Hello Krzysztof,
 
-On Tue, May 02, 2023 at 02:38:20AM +0100, Christian Hewitt wrote:
-> > On 1 May 2023, at 7:51 pm, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+Thank you for the review!
+
+On Tue, May 02, 2023 at 09:39:12AM +0200, Krzysztof Kozlowski wrote:
+> On 02/05/2023 03:38, Christian Hewitt wrote:
+> >> On 1 May 2023, at 7:51 pm, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+> >>
+> >> Hi Dmitry,
+> >>
+> >> On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
+> >> <ddrokosov@sberdevices.ru> wrote:
+> >>>
+> >>> Add the documentation for Amlogic A1 Peripherals clock driver,
+> >>> and A1 Peripherals clock controller bindings.
+> >> Maybe a native English speaker can comment on whether it's
+> >> "peripheral" or "peripherals".
 > > 
-> > Hi Dmitry,
+> > I’m not a grammar specialist, but I would write:
 > > 
-> > On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
-> > <ddrokosov@sberdevices.ru> wrote:
-> >> 
-> >> Add the documentation for Amlogic A1 Peripherals clock driver,
-> >> and A1 Peripherals clock controller bindings.
-> > Maybe a native English speaker can comment on whether it's
-> > "peripheral" or "peripherals".
+> > “Add documentation and bindings for the Amlogic A1 SoC peripherals
+> > clock driver”
+> > 
+> > Peripherals is the correct plural but reads better when you add
+> > context on the type of peripherals.
 > 
-> I’m not a grammar specialist, but I would write:
-> 
-> “Add documentation and bindings for the Amlogic A1 SoC peripherals
-> clock driver”
-> 
-> Peripherals is the correct plural but reads better when you add
-> context on the type of peripherals.
+> Drop the "driver" references - from the binding itself and from commit
+> msg. The bindings are for hardware, not for the driver, so: "for the
+> Amlogic A1 SoC peripherals clock controller.".
 
-Thank you for your suggestion! I will make the change in the v15.
-
-[...]
+Okay, thank you for the suggestion! I will remove it in the next
+version.
 
 -- 
 Thank you,
