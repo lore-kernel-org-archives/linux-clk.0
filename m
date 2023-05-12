@@ -2,170 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFE4C7EE22
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 00:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0FCC77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 02:22:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229654AbjELAq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 20:46:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48602 "EHLO
+        id S239778AbjELCWY convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 22:22:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239565AbjELAqz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 20:46:55 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771AB5BA9
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:46:53 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1ac65ab7432so456065ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20221208; t=1683852413; x=1686444413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T10+eZtv1P+sem5SVFeRBdSEdRHCp+2rjVXG+IX1VZU=;
-        b=gIHAFdeEe1rnnfoFGIl/9aXpKSDBFR9XdszD8qHiGqo2Kshj+VfKQZUvxSBhs23kVg
-         wNyv9TldElL0ea4PE82pLgbczZDxEKtOZ1oaIfl4YT3q3Oq4drZpUuHBHWhbdeUTLWkx
-         O5DzckwPk2Ta4BXxUomEHQnbHOrQBGYXcy6M9GyAUBEbi6YFDSu6lD5mUp4sNxBAzU2c
-         Q4aiDwwHkV/SSEQZfpPJDZ8wdNXCjvyO+otiUiWU8a/gPuMT+524O7S0eCPfSQGblDj6
-         CW3aoqYZNERuloOxNEfq/787dzrcMaDPh3+Bei/HEVtFVYrU1qiGXGXQoxBPhqOAUB6d
-         O1Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683852413; x=1686444413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T10+eZtv1P+sem5SVFeRBdSEdRHCp+2rjVXG+IX1VZU=;
-        b=NVngMKFxqBJHrL2pLR7GROHC/lvgkgSfNTUws8yGtQNwSc5c0qRUD3L+/B8R7D23Dn
-         AwOxzmI6QmS7Z6jOaT9uYkQqppQ23jylB86TMBOsukTacW36c3MTGsm6A3wSfVHdaCmZ
-         PFYkc+pXy3liUQZpiRWdSkPzGrVsnjuS9o88j/huJswLCUZrsWfEuTbOYjO2Juu8cL+1
-         O8BWxojTBKu54/Rh6QUE8FtZ49MMMMIxUQpW62sgYjhE+Rx9hDTOhhNDJPYvwsax7UED
-         lK/+cW8v17fkhxeQH0Ds+I+FadT0sCvzXxSNh/mhEh7ZsAF4nJb8Az72PcVlH6AOrMwd
-         q/Zg==
-X-Gm-Message-State: AC+VfDxFksc1sMpbOvuMH8159duyVkYivPv9JAajNfWChtTALrEJuE5V
-        MGEeCP0vdzIwSfnsI0gh2th7QOjT7+EZzNFSc47Adg==
-X-Google-Smtp-Source: ACHHUZ6C90xQqot7Pn5snLVCYUAcVqM4UmA6opiCWqzhJzBIjgxyvC/9CH3mnuUtcd3S6uVRB9XzCnGt/fID8eiOS0Q=
-X-Received: by 2002:a17:902:dacd:b0:1ac:8835:b890 with SMTP id
- q13-20020a170902dacd00b001ac8835b890mr117014plx.14.1683852412825; Thu, 11 May
- 2023 17:46:52 -0700 (PDT)
+        with ESMTP id S239776AbjELCWW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 22:22:22 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 709DF4C26;
+        Thu, 11 May 2023 19:22:19 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 976E68157;
+        Fri, 12 May 2023 10:22:16 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 12 May
+ 2023 10:22:16 +0800
+Received: from localhost.localdomain (113.72.146.187) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 12 May
+ 2023 10:22:15 +0800
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v4 4/7] clk: starfive: jh7110-sys: Modify PLL clocks source
+Date:   Fri, 12 May 2023 10:20:33 +0800
+Message-ID: <20230512022036.97987-5-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
+References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
-References: <20221227204528.1899863-1-abel.vesa@linaro.org>
- <ebc257025ebd641e624ef506ea09c800.sboyd@kernel.org> <Y/OV3CF0ootyooDJ@linaro.org>
- <Y/OfjbxI1tHYJHNv@linaro.org> <CAGETcx_mD3pbAmT5FDZaVAsKb_2PAnrHL8B_6gSR=+a0O4kHfQ@mail.gmail.com>
- <Y/PALlrQpwPlum9M@linaro.org> <CAGETcx_TZN3=GKrEf5fy_tA=JnOfw7m-N=+hD=qhe_yRRpngPw@mail.gmail.com>
- <ZFzmaavGYy4isU7J@linaro.org>
-In-Reply-To: <ZFzmaavGYy4isU7J@linaro.org>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Thu, 11 May 2023 17:46:16 -0700
-Message-ID: <CAGETcx8_maXSCmQcU_UE499pwJRLY4E7yydWsxbU91==vgCoFw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: Add generic sync_state callback for disabling
- unused clocks
-To:     Abel Vesa <abel.vesa@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, mka@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [113.72.146.187]
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 11, 2023 at 5:58=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org> wr=
-ote:
->
-> On 23-02-21 11:58:24, Saravana Kannan wrote:
-> > On Mon, Feb 20, 2023 at 10:47 AM Abel Vesa <abel.vesa@linaro.org> wrote=
-:
-> > >
-> > > On 23-02-20 09:51:55, Saravana Kannan wrote:
-> > > > On Mon, Feb 20, 2023 at 8:28 AM Abel Vesa <abel.vesa@linaro.org> wr=
-ote:
-> > > > >
-> > > > > On 23-02-20 17:46:36, Abel Vesa wrote:
-> > > > > > On 23-02-17 21:38:22, Stephen Boyd wrote:
-> > > > > > > Quoting Abel Vesa (2022-12-27 12:45:27)
-> > > > > > > > There are unused clocks that need to remain untouched by cl=
-k_disable_unused,
-> > > > > > > > and most likely could be disabled later on sync_state. So p=
-rovide a generic
-> > > > > > > > sync_state callback for the clock providers that register s=
-uch clocks.
-> > > > > > > > Then, use the same mechanism as clk_disable_unused from tha=
-t generic
-> > > > > > > > callback, but pass the device to make sure only the clocks =
-belonging to
-> > > > > > > > the current clock provider get disabled, if unused. Also, d=
-uring the
-> > > > > > > > default clk_disable_unused, if the driver that registered t=
-he clock has
-> > > > > > > > the generic clk_sync_state_disable_unused callback set for =
-sync_state,
-> > > > > > > > skip disabling its clocks.
-> > > >
-> > > > Hi Abel,
-> > > >
-> > > > We have the day off today, so I'll respond more later. Also, please=
- cc
-> > > > me on all sync_state() related patches in the future.
-> > > >
-> > >
-> > > Sure thing.
-> > >
-> > > > I haven't taken a close look at your series yet, but at a glance it
-> > > > seems incomplete.
-> > > >
-> > > > Any reason you didn't just try to revive my series[1] or nudge me?
-> > > > [1]- https://lore.kernel.org/lkml/20210407034456.516204-3-saravanak=
-@google.com/
-> > >
-> > > This patchset is heavily reworked and much more simpler as it relies
-> > > strictly on the sync_state being registered by the clock provider.
-> >
-> > It's simpler because it's not complete. It for sure doesn't handle
-> > orphan-reparenting. It also doesn't make a lot of sense for only some
-> > clock providers registering for sync_state(). If CC-A is feeding a
-> > clock signal that's used as a root for clocks in CC-B, then what
-> > happens if only CC-B implements sync_state() but CC-A doesn't. The
-> > clocks from CC-B are still going to turn off when CC-A turns off its
-> > PLL before CC-B registers.
->
-> I gave your patchset a try and it breaks the uart for qcom platforms.
-> That is because your patchset enables the clock on __clk_core_init and
-> does not take into account the fact that 'boot enabled' clocks should be
-> left untouched.
+Modify PLL clocks source to be got from dts instead of
+the fixed factor clocks.
 
-Those are probably just hacks when we didn't have sync_state(). But
-sure, we can make sure existing drivers aren't broken if the flag is
-set.
+Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+---
+ drivers/clk/starfive/Kconfig                  |  1 +
+ .../clk/starfive/clk-starfive-jh7110-sys.c    | 31 ++++---------------
+ 2 files changed, 7 insertions(+), 25 deletions(-)
 
-> This also means the orphan-reparenting enabling should
-> be dropped as well.
+diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+index 5195f7be5213..978b78ec08b1 100644
+--- a/drivers/clk/starfive/Kconfig
++++ b/drivers/clk/starfive/Kconfig
+@@ -35,6 +35,7 @@ config CLK_STARFIVE_JH7110_SYS
+ 	select AUXILIARY_BUS
+ 	select CLK_STARFIVE_JH71X0
+ 	select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
++	select CLK_STARFIVE_JH7110_PLL
+ 	default ARCH_STARFIVE
+ 	help
+ 	  Say yes here to support the system clock controller on the
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+index e6031345ef05..7fd30c571059 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+@@ -402,29 +402,6 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
+-	/*
+-	 * These PLL clocks are not actually fixed factor clocks and can be
+-	 * controlled by the syscon registers of JH7110. They will be dropped
+-	 * and registered in the PLL clock driver instead.
+-	 */
+-	/* 24MHz -> 1000.0MHz */
+-	priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
+-							 "osc", 0, 125, 3);
+-	if (IS_ERR(priv->pll[0]))
+-		return PTR_ERR(priv->pll[0]);
+-
+-	/* 24MHz -> 1066.0MHz */
+-	priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
+-							 "osc", 0, 533, 12);
+-	if (IS_ERR(priv->pll[1]))
+-		return PTR_ERR(priv->pll[1]);
+-
+-	/* 24MHz -> 1188.0MHz */
+-	priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
+-							 "osc", 0, 99, 2);
+-	if (IS_ERR(priv->pll[2]))
+-		return PTR_ERR(priv->pll[2]);
+-
+ 	for (idx = 0; idx < JH7110_SYSCLK_END; idx++) {
+ 		u32 max = jh7110_sysclk_data[idx].max;
+ 		struct clk_parent_data parents[4] = {};
+@@ -462,8 +439,12 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+ 				parents[i].fw_name = "tdm_ext";
+ 			else if (pidx == JH7110_SYSCLK_MCLK_EXT)
+ 				parents[i].fw_name = "mclk_ext";
+-			else
+-				parents[i].hw = priv->pll[pidx - JH7110_SYSCLK_PLL0_OUT];
++			else if (pidx == JH7110_SYSCLK_PLL0_OUT)
++				parents[i].fw_name = "pll0_out";
++			else if (pidx == JH7110_SYSCLK_PLL1_OUT)
++				parents[i].fw_name = "pll1_out";
++			else if (pidx == JH7110_SYSCLK_PLL2_OUT)
++				parents[i].fw_name = "pll2_out";
+ 		}
+ 
+ 		clk->hw.init = &init;
+-- 
+2.25.1
 
-No, maybe for boot enabled clocks, but not for all clocks in general.
-You need this for sync_state() to work correctly for clocks left on at
-boot but "boot enabled" isn't set.
-
-> As for the second part, related to providers that might not have a
-> registered sync_state(), your patchset sets the clock core generic
-> one. This is also wrong because it doesn't take into account the fact
-> that there might be providers that need to do their own stuff on
-> sync_state() and should do that by registering their own implementation
-> of it.
-
-Right, in which case, they can set theirs or they get the default one.
-
-> Therefore, I'll respin your patchset and use only the skipping of
-> disabling the unused clocks, but I'll drop all the enable on init and orp=
-han
-> reparenting changes.
-
-I think it'll result in a broken patch.
-
-Sorry, I've been a bit busy with some other work and I haven't been
-able to get to the clk_sync_state(). I'll try to rebase it soon and
-send it out too.
-
--Saravana
