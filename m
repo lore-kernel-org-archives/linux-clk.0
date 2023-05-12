@@ -2,84 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BE9C7EE22
-	for <linux-clk@archiver.kernel.org>; Thu, 11 May 2023 23:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36840C77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 00:13:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229654AbjEKX3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 19:29:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38232 "EHLO
+        id S239594AbjELANj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 20:13:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239506AbjEKX3a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 19:29:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B920461BA
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 16:29:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A38D265274
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 23:29:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8179FC433EF;
-        Thu, 11 May 2023 23:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683847768;
-        bh=SLlcwEuE4JpFNFcPjNi/S0l6z/1UC6psRw1iRRUVsYs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=efUdlcXR/weB6qRSybLmpnKrQG4ctSZoORqH6nEZTv0i+nAPO4aErh3H652p78bhZ
-         tVE+QXHCkMDO7gRC+eRJ7rKBpsXJZQ/l/knP+UPmqN5P4YyFLbvYLE/N+2mpU8jehw
-         JDTysC+qkto2m3UoixYkCKVqqj2MKCiOiS0dSMR1lNHOnC6XTnUF1I9jWNYP4e6LhG
-         h9d8bKTpoQq3YuR4xqlTf/GqOXvMYILRNsWv+evIyyp7FR/57/Fu6XvxYSnFYFbXoV
-         M6uJbiFNqPHw4+XLoGIe9pJpTllMPFIVdCOcujeyDwvddeGva5nJ+dpAi7mfwoO6kW
-         fb+AFD5Kkdh9g==
-Date:   Thu, 11 May 2023 16:29:26 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadfed@meta.com>, Jiri Pirko <jiri@resnulli.us>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
-Message-ID: <20230511162926.009994bb@kernel.org>
-In-Reply-To: <DM6PR11MB4657EF0A57977C56264BC7A99B749@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230428002009.2948020-1-vadfed@meta.com>
-        <20230428002009.2948020-2-vadfed@meta.com>
-        <ZFOe1sMFtAOwSXuO@nanopsycho>
-        <20230504142451.4828bbb5@kernel.org>
-        <MN2PR11MB46645511A6C93F5C98A8A66F9B749@MN2PR11MB4664.namprd11.prod.outlook.com>
-        <20230511082053.7d2e57e3@kernel.org>
-        <DM6PR11MB4657EF0A57977C56264BC7A99B749@DM6PR11MB4657.namprd11.prod.outlook.com>
+        with ESMTP id S230257AbjELANi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 20:13:38 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2E54199
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:13:36 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f13bfe257aso10483558e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683850415; x=1686442415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8vXWsYBVQ6fbfhImzVmNrZ7KIf2Nh83Q0Y/f2HJbonU=;
+        b=ke+VD4d38T34P9YvH3jv5n2uLWRSYlGZkauyTrFcp3JDSLKylhR+SfN0Te14UTX8DW
+         QHmuljjMN0wMmk8GRB+9enMjpqKHug0rekF+pCZYpc7mC3XJNFzvZL0uIYyVrsAX5xYz
+         KuARiQlhvoI3JSWHAZYxhB8R5qLnZcJdbid6I+ZmZGF0ZaTjVxBnm3pSF6KHsrzwWkO3
+         POJfXt5qWUODtPgE7lb6995kkEyMdL7W6fHTFrjr6aaVgFH9XLlWBXnKqMG5qtubojrU
+         +7jNenQGEnTmwDyc3Y+XOmzo9im2LWG1afZcxADgKcgTLHmt3AlATjFsM3OrI1FciMBP
+         Yw3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683850415; x=1686442415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8vXWsYBVQ6fbfhImzVmNrZ7KIf2Nh83Q0Y/f2HJbonU=;
+        b=IWg1Kw0pzm2lh6SZMUSFpYViKLsRibvAVxfDzE9XbMdtTov3+ODdb/CXSF2gO8a2ti
+         fYiYbvtbla00Ofvrp5YTH/khl9nNTcHMhcaDJejoQdAgMHr5iGqZpOmnDhPhq1HWTel9
+         CwTQAWpZFBJHDzqcKXaZJ0k/WOb6YuKweCEsY1wt7SVtPwyOeyvt2L4ebB0RmKKjAylN
+         u9pYGdd15y1ZxxzR5Kwq2I9hYA5oASKRsm7Uivw/amlGIaKjfVSAQYe8Bl1SOEbYBq0s
+         UdFQR4SyTSilT0tcf6PnL5yXvx0VA7dlbnhPeH8EG9RtvYRpH+rncdTKQeHCtnQpFJ63
+         DeCQ==
+X-Gm-Message-State: AC+VfDywnSqVqViGOvLwTxU45SeuTEpCLklkk8KDUdjb8HhqsPx549zo
+        MIhg6xbW5rgxG3+4OhaBK4B3RA==
+X-Google-Smtp-Source: ACHHUZ5ipOmBCCs95o29BHFEojWXb4HSYqv5FmFsuBgFkAAsTTATvkiyGaYwFO0c+lQPZh/+g08ZOA==
+X-Received: by 2002:a05:6512:909:b0:4d8:6540:a731 with SMTP id e9-20020a056512090900b004d86540a731mr2764683lft.47.1683850414945;
+        Thu, 11 May 2023 17:13:34 -0700 (PDT)
+Received: from umbar.unikie.fi ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id p15-20020ac246cf000000b004f13c3cb9ffsm1258109lfo.200.2023.05.11.17.13.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 May 2023 17:13:34 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v6 0/4] clk: qcom: msm8996: add support for the CBF clock
+Date:   Fri, 12 May 2023 03:13:30 +0300
+Message-Id: <20230512001334.2983048-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 11 May 2023 20:53:40 +0000 Kubalewski, Arkadiusz wrote:
-> >Because I think that'd be done by an NCO, no?  
-> 
-> From docs I can also see that chip has additional designated dpll for NCO mode,
-> and this statement:
-> "Numerically controlled oscillator (NCO) behavior allows system software to steer
-> DPLL frequency or synthesizer frequency with resolution better than 0.005 ppt."
-> 
-> I am certainly not an expert on this, but seems like the NCO mode for this chip
-> is better than FREERUN, since signal produced on output is somehow higher quality.
+On MSM8996 two CPU clusters are interconnected using the Core Bus
+Fabric (CBF). In order for the CPU clusters to function properly, it
+should be clocked following the core's frequencies to provide adequate
+bandwidth.
 
-Herm, this seems complicated. Do you have a use case for this? 
-Maybe we can skip it :D
+Register CBF as a clock (required for CPU to boot) and add a tiny
+interconnect layer on top of it to let cpufreq/opp scale the CBF clock.
 
-My reading of the quote is that there is an NCO which SW can control
-precisely. But that does not answer the questions:
- - is the NCO driven by system clock or can it be used in locked mode?
- - what is the "system software"? FW which based on temperature
-   information, and whatever else compensates drift of system clock?
-   or there are exposed registers to control the NCO?
+Changes since v5:
+- Fixed !INTERCONNECT warning (Konrad)
+- Fixed the sync_state wrapper for !INTERCONNECT case
+
+Changes since v4:
+- Fixed typos in commit messages
+
+Changes since v3:
+- Dropped merged patches
+- Moved interconnect shim to drivers/interconnect/icc-clk.c
+
+Changes since v2:
+- Added interconnect-related bindings
+- Switched CPU and CBF clocks to RPM_SMD_XO_A_CLK_SRC
+
+Changes since v1:
+- Relicensed schema to GPL-2.0 + BSD-2-Clause (Krzysztof)
+- Changed clock driver to use parent_hws (Konrad)
+- Fixed indentation in CBF clock driver (Konrad)
+- Changed MODULE_LICENSE of CBF clock driver to GPL from GPL-v2
+- Switched CBF to use RPM_SMD_XO_CLK_SRC as one of the parents
+- Enabled RPM_SMD_XO_CLK_SRC on msm8996 platform and switch to it from
+  RPM_SMD_BB_CLK1 clock
+
+Dmitry Baryshkov (4):
+  dt-bindings: interconnect/msm8996-cbf: add defines to be used by CBF
+  interconnect: add clk-based icc provider support
+  clk: qcom: cbf-msm8996: scale CBF clock according to the CPUfreq
+  arm64: dts: qcom: msm8996: scale CBF clock according to the CPUfreq
+
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  51 ++++++
+ drivers/clk/qcom/Kconfig                      |   1 +
+ drivers/clk/qcom/clk-cbf-8996.c               |  60 ++++++-
+ drivers/interconnect/Kconfig                  |   6 +
+ drivers/interconnect/Makefile                 |   2 +
+ drivers/interconnect/icc-clk.c                | 168 ++++++++++++++++++
+ .../interconnect/qcom,msm8996-cbf.h           |  12 ++
+ include/linux/interconnect-clk.h              |  22 +++
+ 8 files changed, 321 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/interconnect/icc-clk.c
+ create mode 100644 include/dt-bindings/interconnect/qcom,msm8996-cbf.h
+ create mode 100644 include/linux/interconnect-clk.h
+
+-- 
+2.39.2
 
