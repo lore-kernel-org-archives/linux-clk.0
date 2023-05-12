@@ -2,96 +2,88 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F45C77B7C
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 06:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A8CC77B75
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 06:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238554AbjELGvD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 02:51:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43870 "EHLO
+        id S239960AbjELGvS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 02:51:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239968AbjELGvC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 02:51:02 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD627D064
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 23:50:50 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-94a342f7c4cso1712071366b.0
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 23:50:50 -0700 (PDT)
+        with ESMTP id S239986AbjELGvQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 02:51:16 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA6E27EF5
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 23:51:14 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-50bc4ba28cbso16906680a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 23:51:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683874249; x=1686466249;
+        d=linaro.org; s=google; t=1683874273; x=1686466273;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tjLTSzaj/aJam+P8bDF+fpLGAFitrvdhPxYkij3cdnM=;
-        b=KXwh1obIMnIY9EpDd/kl96eg4glZYjziU2VDrzj0M+j00eDbKSqTPpFCJqz/DmFc3K
-         H1lt58qZtQiNFDfZbaX4CIlkv8iXrcFVEOQUORaNHfCe10LzBIrN0qWDExvq7TLcGIT1
-         3A+n1zC1xhJ8STMD7DRlmrQwv6oJTWTwpLuCY5GmyG1KMqMoV6XiT9mnBxy5bBqowF8i
-         QNDjZPa4hVcO1f53LLBhY+iXQty6JCJPX+wYciAn8pRtq9ZcDcKH/oT7f4SHwvTtHlMr
-         zbgFi/0ILZj3NLMjLAGLlcjJ3CCk/MfX6rz8Hyob51MdWu1E9uVmb7Q3HsorM+4Ydqsx
-         fbaQ==
+        bh=jsKErXbRUCx9c7pJsXtZwQSUgnhV+n88fwqIY9/PnvQ=;
+        b=JUsi5uOkdPGkVRUOaAVDmZjBCegMSSSdUbhe5Qh45HTLe303viogN90K6Oxr+G/aS9
+         34i6uBjZGlJ1h3yGtoAvif/dV3T4FMVTMylomVkycTz/yTyGDxRnWjBA5b2D8Gm5JJxH
+         afhCF0pTwKXOvcOkOeJwLawMN/hLJ9KaUH9eMiXMSt1AtaFkKYiW3EKYCnmAGAI+fYOY
+         hCUHyw5WCHvg9BxQrAn0rkTJfAuiGkFczZIZH2CA2MhyCApuxJUIrr1J3C9RMJ83dwri
+         GKMuxkoz/lHDdpm3LRoObQlTVxo3Fcj1O5paXH+23BnHwcZtXJBvR62AqZkdKH5lO7q1
+         /IGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683874249; x=1686466249;
+        d=1e100.net; s=20221208; t=1683874273; x=1686466273;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tjLTSzaj/aJam+P8bDF+fpLGAFitrvdhPxYkij3cdnM=;
-        b=Ayp6YlOGgb+i5OWFFeIWNo+NOMLDR3QaYurj6/UbvAxQLYyjQt4Q9WKNYcXLhfqNNb
-         oX/cLkh+/RkrKoBqeeKZUIOtK2YMqkTG7N2qt7kft4YjgtzMH5dTgOK35v24rZlLdnsg
-         /a4TPJWQ1Ltr4nb3YY7wWVVmbKwva5xqXMu0duscx5cWrHB4uMOGYksKFw93s9RCy7AP
-         GvWZ+0x9fT/BGYMsnnvjw6yQgKDa2k8IuOPch68UPNHMhTPsmNypONkXaikr3SwG1BIt
-         lPlrLStvY3P6h9o31n291LQ6/P1bAQ2Ll0YRCE0tisCVoPs/4XpaN+/3/j2Ihj3IOMOU
-         0Rgg==
-X-Gm-Message-State: AC+VfDxNvcbRY9Kr2g47dgEfvxvuoqOQvbIXwFXu9JJvebiorMWvqjSk
-        oa2+3i2d3v5l3sK3e9YdQbIolA==
-X-Google-Smtp-Source: ACHHUZ76mXy1zTI9i2lKsIPaB4P4XRWrjQ/x0aamkZb6fQKroHOTuJZ7C8gUN6BprZD4LBeSRMFy3w==
-X-Received: by 2002:a17:906:da87:b0:966:3c82:4a97 with SMTP id xh7-20020a170906da8700b009663c824a97mr17082800ejb.35.1683874249187;
-        Thu, 11 May 2023 23:50:49 -0700 (PDT)
+        bh=jsKErXbRUCx9c7pJsXtZwQSUgnhV+n88fwqIY9/PnvQ=;
+        b=i3xkJq22z/QptzWt/XzEUI/wUPSXgF8VlPFjbSZY6r3XQsz+j5yJsYDWG2W+F+asuY
+         JREdBgrTvrmFLuNv2qAgE5MqMoBxloraSjNWnJPlQ31Zz+T3oMojDCRDuuOsHx1YXiWg
+         GuEYU1D8cNjybqESOMh0U2e99DZ0BbgvlwX32/AcsG+dMhFPhbayfC+OxU64kYEF61Dx
+         WQiiEwUvvgwowZj3k1WFKEDFoe1+C/S73lHTL2nJ+ruHDV3ZjR1hCjuP5kSGRHn8YB2D
+         yQetlpctgt3Ti4dfamSfwXRLEoTM5scBu6twTkr6Vh1HZ7qhpoZhOoqGmigR7Sluc1iK
+         Tbyg==
+X-Gm-Message-State: AC+VfDzhSO8xhQUIEfoSAJ/vRPUHSy8juYlOzD2RAOtx3VFCyv7K0ZuJ
+        Xs4ZmgaNEMq+MKKqdr+zDjFrEQ==
+X-Google-Smtp-Source: ACHHUZ5ne4AG2s1Tjpb09NNtv6IuN7wWFAFFSnCE8dNGrf8EMNOx7G8rmG4qvPMsmzEwzbAdQLy9kQ==
+X-Received: by 2002:a17:906:ef06:b0:969:ee0b:24a9 with SMTP id f6-20020a170906ef0600b00969ee0b24a9mr9931134ejs.15.1683874273227;
+        Thu, 11 May 2023 23:51:13 -0700 (PDT)
 Received: from krzk-bin ([2a02:810d:15c0:828:7ede:fc7b:2328:3883])
-        by smtp.gmail.com with ESMTPSA id ci18-20020a170907267200b00959c6cb82basm4974642ejc.105.2023.05.11.23.50.48
+        by smtp.gmail.com with ESMTPSA id hy27-20020a1709068a7b00b0094f1fe1696bsm4950500ejc.216.2023.05.11.23.51.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 May 2023 23:50:48 -0700 (PDT)
-Date:   Fri, 12 May 2023 08:50:46 +0200
+        Thu, 11 May 2023 23:51:12 -0700 (PDT)
+Date:   Fri, 12 May 2023 08:51:10 +0200
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     William Qiu <william.qiu@starfivetech.com>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH v4 5/7] dt-bindings: soc: starfive: Add StarFive syscon
- module
-Message-ID: <20230512065046.bhblj4uci7hnjoof@krzk-bin>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
- <20230512022036.97987-6-xingyu.wu@starfivetech.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH v2 03/10] dt-bindings: clock: provide separate bindings
+ for qcom,gcc-mdm9615
+Message-ID: <20230512065110.zjr5rmcz6fahvzmu@krzk-bin>
+References: <20230512003230.3043284-1-dmitry.baryshkov@linaro.org>
+ <20230512003230.3043284-4-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230512022036.97987-6-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230512003230.3043284-4-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 12 May 2023 10:20:34 +0800, Xingyu Wu wrote:
-> From: William Qiu <william.qiu@starfivetech.com>
+On Fri, 12 May 2023 03:32:23 +0300, Dmitry Baryshkov wrote:
+> The global clock controller on MDM9615 uses external CXO and PLL7
+> clocks. Split the qcom,gcc-mdm9615 to the separate schema file.
 > 
-> Add documentation to describe StarFive System Controller Registers.
-> 
-> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  .../soc/starfive/starfive,jh7110-syscon.yaml  | 67 +++++++++++++++++++
->  MAINTAINERS                                   |  7 ++
->  2 files changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>  .../bindings/clock/qcom,gcc-mdm9615.yaml      | 48 +++++++++++++++++++
+>  .../bindings/clock/qcom,gcc-other.yaml        |  3 --
+>  2 files changed, 48 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
 > 
 
 My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
@@ -100,9 +92,11 @@ on your patch (DT_CHECKER_FLAGS is new in v5.13):
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-./Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml: Unable to find schema file matching $id: http://devicetree.org/schemas/clock/starfive,jh7110-pll.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.example.dtb: clock-controller@900000: Unevaluated properties are not allowed ('clock-names' was unexpected)
+	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
 
-See https://patchwork.ozlabs.org/patch/1780353
+
+See https://patchwork.ozlabs.org/patch/1780326
 
 This check can fail if there are any dependencies. The base for a patch
 series is generally the most recent rc1.
