@@ -2,207 +2,160 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBE1C77B75
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 10:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48422C77B7F
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 11:38:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240395AbjELKbI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 06:31:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57530 "EHLO
+        id S240641AbjELLiZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 07:38:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239935AbjELKbG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 06:31:06 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6C5A35A2
-        for <linux-clk@vger.kernel.org>; Fri, 12 May 2023 03:31:02 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f315712406so316328125e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 12 May 2023 03:31:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683887461; x=1686479461;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yVyd3nrAFCEpG6TOtlbRSc+LQxBB0GhvmjWrl9ISpYU=;
-        b=v9GCAW88fTPUPCBKonqAIPqDLUbrqAkeqqo489ynO828vcyEIC8G28SCuzGuofwAXt
-         VRnUZmMsz8zVE+snWk7DUGWZaSDiuo2sNfzAI0RFuRiCs/yicv+KSnf4iER0Go/kvPqS
-         55sgNJ7JB2meHoZTBrfdSkBTUo97X4UDuQ8+A2+87R8ZJKAsjcLgtbxZHC61A3et50t9
-         199qzTzykhu7BvtJ+9rgER+DEyOj/Ig0bT3Ke/fNJcscrWmdtCRE/etdMyu7EBsG4NYp
-         vtxRC5hRT6/N8LOirBqS+eW6t7o+BuUA3v/YVg4b8O0h4sjbRu1idCb9cx85HA/qYjcQ
-         a8Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683887461; x=1686479461;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yVyd3nrAFCEpG6TOtlbRSc+LQxBB0GhvmjWrl9ISpYU=;
-        b=F9l9gjRTeltKJcvsC/tH1vykdFIOcXerBX+z5gqwBLNF7So7wDpMs169GAB9o5K0N5
-         rtAQbuDzrnOn6jEEbWcVLTmgbwfTn6wJHErx7M+ohYYv2cihvbqyoTasmDUwgZCNv2+g
-         8pfTRPRmypNgoNzp6ktfIsmZT7+5eLNIx7Op1AHj3s/hjUP4i/XeJXVNl9D0CTjoIQQ+
-         Y4ED5TF3EmThDrxzf0/bTHEOMD2/yxEZwv/kzmAv/Oz4gF7IYdoYb/Ai/UBAJFh+aOZ4
-         NqJhm0AEBTGcni41UrIIpY/Dfr9Nj7vIVTLxyJ8ldsbZfJu+ca48vffjvy5byAZg/WLo
-         r/7w==
-X-Gm-Message-State: AC+VfDwfriKTZc45XfZKxfAPbozfosnz0gvCU9+TlJ1R+6gXSYecLFZk
-        RGUWCcGhbil0Vd+1XxbEh9Cltw==
-X-Google-Smtp-Source: ACHHUZ7FeZJG9jqcVQqpGOX7/7Z98vyZ9jB9cw9ljYRTYKlHyvOfXeTOZPQTqbXNYleD5deGp1b8RQ==
-X-Received: by 2002:adf:ce8c:0:b0:306:2713:f7f with SMTP id r12-20020adfce8c000000b0030627130f7fmr19792716wrn.11.1683887461254;
-        Fri, 12 May 2023 03:31:01 -0700 (PDT)
-Received: from linaro.org ([86.121.163.20])
-        by smtp.gmail.com with ESMTPSA id n3-20020a5d4843000000b003047d5b8817sm22905770wrs.80.2023.05.12.03.30.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 May 2023 03:31:00 -0700 (PDT)
-Date:   Fri, 12 May 2023 13:30:59 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Saravana Kannan <saravanak@google.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, mka@chromium.org
-Subject: Re: [PATCH v3 1/2] clk: Add generic sync_state callback for
- disabling unused clocks
-Message-ID: <ZF4VY2ngPtg9Xytc@linaro.org>
-References: <20221227204528.1899863-1-abel.vesa@linaro.org>
- <ebc257025ebd641e624ef506ea09c800.sboyd@kernel.org>
- <Y/OV3CF0ootyooDJ@linaro.org>
- <Y/OfjbxI1tHYJHNv@linaro.org>
- <CAGETcx_mD3pbAmT5FDZaVAsKb_2PAnrHL8B_6gSR=+a0O4kHfQ@mail.gmail.com>
- <Y/PALlrQpwPlum9M@linaro.org>
- <CAGETcx_TZN3=GKrEf5fy_tA=JnOfw7m-N=+hD=qhe_yRRpngPw@mail.gmail.com>
- <ZFzmaavGYy4isU7J@linaro.org>
- <CAGETcx8_maXSCmQcU_UE499pwJRLY4E7yydWsxbU91==vgCoFw@mail.gmail.com>
+        with ESMTP id S240230AbjELLiY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 07:38:24 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E20213F;
+        Fri, 12 May 2023 04:38:22 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 054B95C041E;
+        Fri, 12 May 2023 07:38:19 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Fri, 12 May 2023 07:38:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1683891498; x=1683977898; bh=9q
+        AOuPR81wdPIMJq/ul1Z1ZgLOrwDPtn2FpzZci5EkY=; b=MT5xz0YxP3UruUyKZy
+        7TCEGigykY1e8mQK0VTM7nl0hxMJQpMHFzCEQB4/G//ujbBUpAI5gOuY92oASXKI
+        8/DkHoH9s1k4VmNkc+Dh3Pp2ypodlCV380TnG+4DuUTwoAdm3tEoyTwWIMNC9hjD
+        fonnzyJs56rdFtH3xrURdb46ZRn0eW7Ul/XIHI6y8obdGo/+sms/RR9fSGjHdIxO
+        CvT+5QTwtawEx+X8Qa5uiIS/djx9xPTMJ4tSdCakrzppUrbpYXuzOQAjim4xq+p4
+        EPQ6CiOBl2qIJCuLkhVHCadFEWBaDxCDUTps94MIoV0tXD/nB3YRHDgfKAMoHqua
+        cEEw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1683891498; x=1683977898; bh=9qAOuPR81wdPI
+        MJq/ul1Z1ZgLOrwDPtn2FpzZci5EkY=; b=ScXFSHvxKD4mTOvqnXuUeVuMco5J/
+        Fm5JXG6BzheiBC4zlr4BU5uWzz1O22v06Xn/zZCWxU8WzLJLCoksnrFjjthkfn1g
+        dbQ5rPE6zFV/4inncX+ewq86p6az0uR+5LOSJCig/bIyXKpuExKNt8zgTF/UHaYV
+        yDU+sZKr+xjVf37hD4/V7DgG4RuGXWd/TCrWF4dvYDnk+2rz3nPU9G5rkPab8wA9
+        WAhRaQ6Kd/Ke1c/4Fgyrwh/uDoZFi9HWlnxMSwTestHI5G5CLpriDvTMRAjuZxOU
+        +sav+fiifhtdA+BmlVQoD85rWhZH/JOjyST/qpsbF/Aj2moBDgedWFGbA==
+X-ME-Sender: <xms:KiVeZEGjFkK5WzttluNkyIDvVATUeeKeZ1qKcOyL4tVwjmIf-3sPmA>
+    <xme:KiVeZNUEMqCPX210aEPW2vIuP73O5YTPfDHtX2g8fLcrTl4DNKFLM0CGwY7u6qXEY
+    4h9rBv-dBBVfw>
+X-ME-Received: <xmr:KiVeZOLEX0dF7MUAovzGDPwhPO7Bhb4wcaexgxtcAncTJNULxAAuOkeH_9cOuwCPlyNuqxB6uSIPgZo2fQXsY7b6>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeehtddggedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgeehue
+    ehgfdtledutdelkeefgeejteegieekheefudeiffdvudeffeelvedttddvnecuffhomhgr
+    ihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
+X-ME-Proxy: <xmx:KiVeZGFM5S-CembPJInGX85HTXRRmj7vm5a5jSzhkQCRFdPB-qOXSw>
+    <xmx:KiVeZKVv8CpYTf1SLUayNkAiWEI80RI8IrP850Q6GF_Awpk6mPBWhA>
+    <xmx:KiVeZJNjsM9qCFytn2KOJE7ivIXiQi-0blqU7vkYCCwg-rmwAwdm2w>
+    <xmx:KiVeZAnAxFPB9NRaNjbyn8O9yj_zXaaVEy8EM-PgrcBvetGVwt2qzA>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 May 2023 07:38:17 -0400 (EDT)
+Date:   Fri, 12 May 2023 20:38:11 +0900
+From:   Greg KH <greg@kroah.com>
+To:     Peng Fan <peng.fan@oss.nxp.com>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        "abelvesa@kernel.org" <abelvesa@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx: imx93: introduce clk_bypassed module parameter
+Message-ID: <2023051224-freezing-dweeb-25b3@gregkh>
+References: <20230504085506.504474-1-peng.fan@oss.nxp.com>
+ <2023050410-rejoin-vocation-8560@gregkh>
+ <DU0PR04MB9417FE67ABF9A2B1EE4DEBA088779@DU0PR04MB9417.eurprd04.prod.outlook.com>
+ <2023051027-wages-feminine-cb5d@gregkh>
+ <28629bcd-d01a-92ab-b27c-0b8ae8bfdaf3@oss.nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGETcx8_maXSCmQcU_UE499pwJRLY4E7yydWsxbU91==vgCoFw@mail.gmail.com>
+In-Reply-To: <28629bcd-d01a-92ab-b27c-0b8ae8bfdaf3@oss.nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-05-11 17:46:16, Saravana Kannan wrote:
-> On Thu, May 11, 2023 at 5:58 AM Abel Vesa <abel.vesa@linaro.org> wrote:
-> >
-> > On 23-02-21 11:58:24, Saravana Kannan wrote:
-> > > On Mon, Feb 20, 2023 at 10:47 AM Abel Vesa <abel.vesa@linaro.org> wrote:
-> > > >
-> > > > On 23-02-20 09:51:55, Saravana Kannan wrote:
-> > > > > On Mon, Feb 20, 2023 at 8:28 AM Abel Vesa <abel.vesa@linaro.org> wrote:
-> > > > > >
-> > > > > > On 23-02-20 17:46:36, Abel Vesa wrote:
-> > > > > > > On 23-02-17 21:38:22, Stephen Boyd wrote:
-> > > > > > > > Quoting Abel Vesa (2022-12-27 12:45:27)
-> > > > > > > > > There are unused clocks that need to remain untouched by clk_disable_unused,
-> > > > > > > > > and most likely could be disabled later on sync_state. So provide a generic
-> > > > > > > > > sync_state callback for the clock providers that register such clocks.
-> > > > > > > > > Then, use the same mechanism as clk_disable_unused from that generic
-> > > > > > > > > callback, but pass the device to make sure only the clocks belonging to
-> > > > > > > > > the current clock provider get disabled, if unused. Also, during the
-> > > > > > > > > default clk_disable_unused, if the driver that registered the clock has
-> > > > > > > > > the generic clk_sync_state_disable_unused callback set for sync_state,
-> > > > > > > > > skip disabling its clocks.
-> > > > >
-> > > > > Hi Abel,
-> > > > >
-> > > > > We have the day off today, so I'll respond more later. Also, please cc
-> > > > > me on all sync_state() related patches in the future.
-> > > > >
-> > > >
-> > > > Sure thing.
-> > > >
-> > > > > I haven't taken a close look at your series yet, but at a glance it
-> > > > > seems incomplete.
-> > > > >
-> > > > > Any reason you didn't just try to revive my series[1] or nudge me?
-> > > > > [1]- https://lore.kernel.org/lkml/20210407034456.516204-3-saravanak@google.com/
-> > > >
-> > > > This patchset is heavily reworked and much more simpler as it relies
-> > > > strictly on the sync_state being registered by the clock provider.
-> > >
-> > > It's simpler because it's not complete. It for sure doesn't handle
-> > > orphan-reparenting. It also doesn't make a lot of sense for only some
-> > > clock providers registering for sync_state(). If CC-A is feeding a
-> > > clock signal that's used as a root for clocks in CC-B, then what
-> > > happens if only CC-B implements sync_state() but CC-A doesn't. The
-> > > clocks from CC-B are still going to turn off when CC-A turns off its
-> > > PLL before CC-B registers.
-> >
-> > I gave your patchset a try and it breaks the uart for qcom platforms.
-> > That is because your patchset enables the clock on __clk_core_init and
-> > does not take into account the fact that 'boot enabled' clocks should be
-> > left untouched.
+On Thu, May 11, 2023 at 04:54:23PM +0800, Peng Fan wrote:
 > 
-> Those are probably just hacks when we didn't have sync_state(). But
-> sure, we can make sure existing drivers aren't broken if the flag is
-> set.
-
-I probably didn't make myself clear enough here. ANY clock that is
-enabled (HW-wise) before the kernel boots should remain AS IS, that is, no writing
-the enable bit, no reparenting, and so on. This rule applies to the clock itself
-and for all of its parents. This is because, for some clocks, writing the
-enable bit might lead to glitches. UART is just one example. So, please, do not
-try enabling such clocks until the consumer driver does so.
-
 > 
-> > This also means the orphan-reparenting enabling should
-> > be dropped as well.
+> On 5/10/2023 5:13 PM, Greg KH wrote:
+> > Caution: This is an external email. Please take care when clicking links or opening attachments. When in doubt, report the message using the 'Report this email' button
+> > 
+> > 
+> > On Wed, May 10, 2023 at 07:49:20AM +0000, Peng Fan wrote:
+> > > 
+> > > > Subject: Re: [PATCH] clk: imx: imx93: introduce clk_bypassed module
+> > > > parameter
+> > > > 
+> > > > On Thu, May 04, 2023 at 04:55:06PM +0800, Peng Fan (OSS) wrote:
+> > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > > 
+> > > > > With the clk names specified in clk_bypassed module parameter, give
+> > > > > user an option to bypass the clk from managing them by Linux kernel.
+> > > > 
+> > > > As I said on another email, no, please do not add new module parameters
+> > > > for drivers, this is not the 1990s
+> > > 
+> > > After a search of the list,
+> > > https://lore.kernel.org/all/?q=module_param
+> > > 
+> > > I still see many drivers are adding module_param.
+> > 
+> > And they should not be doing so as it is almost always not a good idea
+> > (note, some subsystems, like sound, do require it, as that's the api
+> > they use, so this is not a blanket statement.)
+> > 
+> > > Is this is strict ban that new platform driver should not add
+> > > module_param?
+> > 
+> > You need to really really really justify, and document in the changelog
+> > text, why all of the other methods of configuring a platform driver will
+> > not work in order to have it considered.
 > 
-> No, maybe for boot enabled clocks, but not for all clocks in general.
-> You need this for sync_state() to work correctly for clocks left on at
-> boot but "boot enabled" isn't set.
+> I just wanna use the module parateter to give user a choice to choose
+> to bypass some clocks.
 
-I think you lost me here. What do you mean by 'this'? If you mean the
-enabling of orphan clocks, then the rule above still applies. It
-doesn't matter if the clock is an orphan one or not. It can be orphan
-from linux point of view, but the actual parent (even if it is not
-registered with the linux clock tree) might still be enabled. This means
-the clock itself will be also enabled. And by enabling them when
-registering, we can have glitches. Therefore, please, do not do this
-either.
+That is not what a module paramter is for, a "user" does not use them,
+that would be required to be set at boot time.
 
-The registering of a boot enabled clock should not change/override/touch
-the current state of it in any way!
+> There are 100+ clocks in the driver. Different user
+> may wanna different configuration. With device tree, it is
+> not flexible.Such as user A may wanna bypass clock X, Y; user B may
+> wanna bypass clock Z.
 
-Stephen, can you confirm this as well?
+Device tree is supposed to be flexible to handle this.  If not, please
+rework the way your driver handles the device tree information about the
+clocks.
 
-> 
-> > As for the second part, related to providers that might not have a
-> > registered sync_state(), your patchset sets the clock core generic
-> > one. This is also wrong because it doesn't take into account the fact
-> > that there might be providers that need to do their own stuff on
-> > sync_state() and should do that by registering their own implementation
-> > of it.
-> 
-> Right, in which case, they can set theirs or they get the default one.
+Again, module parameters is not the way to handle this issue, sorry.
+Think about what would happen if all drivers were to attempt to have a
+module parameter like this.  That would be unmaintainable.
 
-I'm still not sure that defaulting to the clk_sync_state callback is a
-good choice here. I have to think some more about what the impact is for
-providers that do not have any sync_state callback registered currently.
+> With module parameter, I could easily set it in bootargs.
 
-> 
-> > Therefore, I'll respin your patchset and use only the skipping of
-> > disabling the unused clocks, but I'll drop all the enable on init and orphan
-> > reparenting changes.
-> 
-> I think it'll result in a broken patch.
+Users do not set bootargs :)
 
-Yep, tried that and it doesn't work. What happened was that, because you
-were enabling the 'boot enabled' clocks when registering them (on __clk_core_init),
-the disabling from the sync state needs to be without dropping the enable/prepare
-counts. This is why I think my patchset here is the best alternative he have
-currently, as it does exactly what it is supposed to do, namingly, to leave
-untouched the boot enabled clocks until sync state and then disabling
-them with via clk_disable_unused_subtree which calls the disable and
-unprepare ops without decrementing the prepare and enable counts.
+> But anyway if this is not preferred, I need to find other way.
 
-> 
-> Sorry, I've been a bit busy with some other work and I haven't been
-> able to get to the clk_sync_state(). I'll try to rebase it soon and
-> send it out too.
+Use device tree please, that is what it is there for.
 
-Well, I already did that and I described above why that won't help.
+thanks,
 
-> 
-> -Saravana
+greg k-h
