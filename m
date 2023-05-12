@@ -2,55 +2,45 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573B0C7EE24
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 09:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87127C7EE24
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 09:58:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240158AbjELJfe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 05:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33048 "EHLO
+        id S240571AbjELJ62 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 05:58:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231767AbjELJfd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 05:35:33 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1428A4C1F;
-        Fri, 12 May 2023 02:35:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1683884131; x=1715420131;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fimsaLVN3IxgXwB6v4650M8bZOFhhLTgufNrSkX2BtI=;
-  b=ic5GkReHO9v9JdcZGljzbr24fpwf8PWhUnzV+8fCVl0ZmqO2ok/Yoldn
-   emVD9nenNzjdmAcAoSqauy/zddWztZaN/+/4I6+oXMF9ULlToxD/Vu5wQ
-   1SewJiKZigKMOxaId32XgYPcEGiPPMlfd5Xi+hhSQ6s9Ah65CPUC9ZrXn
-   7o1sWM9GQ+5Xxvbzf7uC78I94e30dzfnzQW10djbdJ6dDlV7OQSOgz5HG
-   uQTjxr/h48mQx3g93FhtjbRH9UuZB3xxyjiD9qxEw4foBTd+e4ZKvSe3d
-   RDjuSEm9jRxBNqlxefUt+N4+rTJJ76x5pdeT17+BMZmgBlacGzSoKQM4m
-   g==;
-X-IronPort-AV: E=Sophos;i="5.99,269,1677567600"; 
-   d="asc'?scan'208";a="213028836"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 May 2023 02:35:30 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 12 May 2023 02:35:30 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Fri, 12 May 2023 02:35:27 -0700
-Date:   Fri, 12 May 2023 10:35:07 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+        with ESMTP id S240114AbjELJ6T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 05:58:19 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E01911B6D;
+        Fri, 12 May 2023 02:58:01 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id CFD3E24E16F;
+        Fri, 12 May 2023 17:56:41 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 12 May
+ 2023 17:57:53 +0800
+Received: from [192.168.125.131] (113.72.146.187) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 12 May
+ 2023 17:57:52 +0800
+Message-ID: <be85aa2a-c72c-5272-ee40-f1265768e7b3@starfivetech.com>
+Date:   Fri, 12 May 2023 17:56:16 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v4 3/7] dt-bindings: clock: jh7110-syscrg: Add PLL clock
+ inputs
+Content-Language: en-US
+To:     Conor Dooley <conor.dooley@microchip.com>
 CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
         Rob Herring <robh+dt@kernel.org>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
@@ -58,101 +48,76 @@ CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         Hal Feng <hal.feng@starfivetech.com>,
         William Qiu <william.qiu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 3/7] dt-bindings: clock: jh7110-syscrg: Add PLL clock
- inputs
-Message-ID: <20230512-backlit-radiated-ded0b38b4a94@wendy>
 References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
  <20230512022036.97987-4-xingyu.wu@starfivetech.com>
  <20230512-uproar-external-49a9e793fbc4@wendy>
  <91e4fd3c-20cb-724b-c9a8-e038600aabb7@starfivetech.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="QcQ3Y5HHQp1oxn9V"
-Content-Disposition: inline
-In-Reply-To: <91e4fd3c-20cb-724b-c9a8-e038600aabb7@starfivetech.com>
+ <20230512-backlit-radiated-ded0b38b4a94@wendy>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <20230512-backlit-radiated-ded0b38b4a94@wendy>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.146.187]
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---QcQ3Y5HHQp1oxn9V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2023/5/12 17:35, Conor Dooley wrote:
+> On Fri, May 12, 2023 at 04:07:47PM +0800, Xingyu Wu wrote:
+>> On 2023/5/12 14:47, Conor Dooley wrote:
+>> > On Fri, May 12, 2023 at 10:20:32AM +0800, Xingyu Wu wrote:
+>> >> Add PLL clock inputs from PLL clock generator.
+>> >> 
+>> >> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> >> ---
+>> >>  .../clock/starfive,jh7110-syscrg.yaml         | 20 +++++++++++++++++--
+>> >>  1 file changed, 18 insertions(+), 2 deletions(-)
+>> > 
+>> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dtb: clock-controller@13020000: clocks: 'oneOf' conditional failed, one must be fixed:
+>> > 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
+>> > 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dtb: clock-controller@13020000: clock-names: 'oneOf' conditional failed, one must be fixed:
+>> > 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', 'i2stx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext'] is too short
+>> > 	'i2stx_bclk_ext' was expected
+>> > 	'i2stx_lrck_ext' was expected
+>> > 	'i2srx_bclk_ext' was expected
+>> > 	'i2srx_lrck_ext' was expected
+>> > 	'tdm_ext' was expected
+>> > 	'mclk_ext' was expected
+>> > 	'pll0_out' was expected
+>> > 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dtb: clock-controller@13020000: clocks: 'oneOf' conditional failed, one must be fixed:
+>> > 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
+>> > 	From schema: Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dtb: clock-controller@13020000: clock-names: 'oneOf' conditional failed, one must be fixed:
+>> > 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', 'i2stx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext'] is too short
+>> > 	'i2stx_bclk_ext' was expected
+>> > 	'i2stx_lrck_ext' was expected
+>> > 	'i2srx_bclk_ext' was expected
+>> > 	'i2srx_lrck_ext' was expected
+>> > 	'tdm_ext' was expected
+>> > 	'mclk_ext' was expected
+>> > 	'pll0_out' was expected
+>> > 	Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+>> > 
+>> > This binding change is incompatible with the existing devicetrees for
+>> > the visionfive 2.
+>> 
+>> This looks like less clocks about PLL in SYSCRG node. And I add this in patch 7.
+> 
+> The existing devicetree is a valid, albeit limited, description of the
+> hardware.
+> After your changes to the clock driver in this series, but *without* the
+> changes to the devicetrees, does the system still function?
+> From a quick check of 4/7, it looks like it will not?
 
-On Fri, May 12, 2023 at 04:07:47PM +0800, Xingyu Wu wrote:
-> On 2023/5/12 14:47, Conor Dooley wrote:
-> > On Fri, May 12, 2023 at 10:20:32AM +0800, Xingyu Wu wrote:
-> >> Add PLL clock inputs from PLL clock generator.
-> >>=20
-> >> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> >> ---
-> >>  .../clock/starfive,jh7110-syscrg.yaml         | 20 +++++++++++++++++--
-> >>  1 file changed, 18 insertions(+), 2 deletions(-)
-> >=20
-> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vision=
-five-2-v1.3b.dtb: clock-controller@13020000: clocks: 'oneOf' conditional fa=
-iled, one must be fixed:
-> > 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
-> > 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh7110-=
-syscrg.yaml
-> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vision=
-five-2-v1.3b.dtb: clock-controller@13020000: clock-names: 'oneOf' condition=
-al failed, one must be fixed:
-> > 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', 'i2s=
-tx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext'] is=
- too short
-> > 	'i2stx_bclk_ext' was expected
-> > 	'i2stx_lrck_ext' was expected
-> > 	'i2srx_bclk_ext' was expected
-> > 	'i2srx_lrck_ext' was expected
-> > 	'tdm_ext' was expected
-> > 	'mclk_ext' was expected
-> > 	'pll0_out' was expected
-> > 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh7110-=
-syscrg.yaml
-> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vision=
-five-2-v1.2a.dtb: clock-controller@13020000: clocks: 'oneOf' conditional fa=
-iled, one must be fixed:
-> > 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
-> > 	From schema: Documentation/devicetree/bindings/clock/starfive,jh7110-s=
-yscrg.yaml
-> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vision=
-five-2-v1.2a.dtb: clock-controller@13020000: clock-names: 'oneOf' condition=
-al failed, one must be fixed:
-> > 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', 'i2s=
-tx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext'] is=
- too short
-> > 	'i2stx_bclk_ext' was expected
-> > 	'i2stx_lrck_ext' was expected
-> > 	'i2srx_bclk_ext' was expected
-> > 	'i2srx_lrck_ext' was expected
-> > 	'tdm_ext' was expected
-> > 	'mclk_ext' was expected
-> > 	'pll0_out' was expected
-> > 	Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> >=20
-> > This binding change is incompatible with the existing devicetrees for
-> > the visionfive 2.
->=20
-> This looks like less clocks about PLL in SYSCRG node. And I add this in p=
-atch 7.
+I just tested it on the board and the system still worked without the changes
+about devicetree. But these clocks' rate were 0 because these could not get
+the PLL clocks from devicetree.
 
-The existing devicetree is a valid, albeit limited, description of the
-hardware.
-After your changes to the clock driver in this series, but *without* the
-changes to the devicetrees, does the system still function?
-=46rom a quick check of 4/7, it looks like it will not?
-
---QcQ3Y5HHQp1oxn9V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZF4ISwAKCRB4tDGHoIJi
-0iZ9AP4u9KYEMY6ijX89u7Z+3hMOXU9bpxiDpvO0ou//U3u5/QEA/iV3wF+GGG2p
-Xe3b7nBI0NXFjIeBsr4Ow5b4xMFfZQc=
-=4554
------END PGP SIGNATURE-----
-
---QcQ3Y5HHQp1oxn9V--
+Best regards,
+Xingyu Wu
