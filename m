@@ -2,677 +2,241 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1D3C7EE43
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 21:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75777C77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 21:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240422AbjELVSL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 17:18:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46682 "EHLO
+        id S239981AbjELVfa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 17:35:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240418AbjELVSK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 17:18:10 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C68A1FD6
-        for <linux-clk@vger.kernel.org>; Fri, 12 May 2023 14:17:42 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4f11d267d8bso11692340e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 12 May 2023 14:17:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683926255; x=1686518255;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6wokvLB4E/PYGVb196XdxZfYyHsIhHMceF+n+PMLHuw=;
-        b=jMTWZTkJt/nuLsFE07djpr/e0ogBtcSyQZGJkn9DuZJLntO/Z5eXiCq/3Gkt/Wxbp9
-         apXsNcOsao9tYHuotuSsk8am5f14u1V9g4bf9bA2sD2oOu3Fuy2JdEN+uT1IYhu9CGiB
-         DFHu0nJf73HL8vrr291bkqDx4edwBmDJKtFfsB+R+z7GpMqZ6f9tc1+m/rxckFo7adsv
-         WdoxbinlWBt/su7n8LACfkuZO7Mdu1GhDPE8Qlz/qplM4UCGGttAfddbTW2sPwiFs19L
-         u8BnKbFMNCBLzcxLshVDr8pD3wqQZaGqioCGAzNA4dvCDcjsouTcWO0TVJdZY8Pbkx0u
-         p90Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683926255; x=1686518255;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6wokvLB4E/PYGVb196XdxZfYyHsIhHMceF+n+PMLHuw=;
-        b=PE9yal/jIV4sJ4lPmJqYjY/DVyThzrQnrM6JWVWVXMJsmTJ1mb4xnU8w5faqLuJ5mg
-         4zGYYBWyXqH9AABgUJNbDC8yKimGnOt0y/DY5vjjvQ36O1hZ97zSyJ93CEBG0b4FgdjX
-         sFyStUV+osuHKAGq1FOdxGfcg2dRhFY+6f0o0yu2ry2u7Rq3s9r8V70gZtOA1KYLq+gG
-         q4Ll0SqeBev7QNn8cp64mbrpvcNaW4yymJvgNn2ToBBfGCOHe/lH3PLi1cWDnbKn9PaQ
-         gbrdVjPEju1haFd57rZgDftsHFJVEBiYE4kEO+03+2UH/EhFFl7rlickf/vGC4m6AtQA
-         ws/g==
-X-Gm-Message-State: AC+VfDyMqVsJvLkmibbhEnYD7TGYUVvdwAolXkUSWK8dmZio/8/PoUGd
-        krgIqNNQ6f+nP466/JPHMGXh9w==
-X-Google-Smtp-Source: ACHHUZ5PAjsGTpj0oDS+/FVXSitqLPEeDMjULN0n+fEjRdjSLBPvd6mxH8LKcQZO5zHx5pWPCqTH1g==
-X-Received: by 2002:a05:6512:78:b0:4eb:3bb5:81c5 with SMTP id i24-20020a056512007800b004eb3bb581c5mr3749966lfo.15.1683926254886;
-        Fri, 12 May 2023 14:17:34 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id w4-20020ac254a4000000b004edafe3f8dbsm1590363lfk.11.2023.05.12.14.17.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 May 2023 14:17:34 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S239867AbjELVfU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 17:35:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53EFE9ECA;
+        Fri, 12 May 2023 14:35:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E49C361C11;
+        Fri, 12 May 2023 21:35:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011DCC433D2;
+        Fri, 12 May 2023 21:35:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1683927308;
+        bh=ssPoigezhCRrDjg7mcA2KStxlVolfI3YMYndQSDR72E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rnWJ+EWH6NpSxhEi+rjIYtoO0FVqUzj+M2yz0JL6ra6laKLTgsewUkAJGF7WDI7db
+         kAMtFsNX2vDmy63695efG66uBHWQLnMGPinOgtPVd4knXqdExsA3zrvoIoHRB9lb3N
+         BZbZhqEV6/kl0ZSGozTekrAacngCLqYGsopfJKkPhpkK3k0l4lptSMdDGS1i0q7+9S
+         mBVdrlmEhvFX8CPNgd3rLUSR8GlL+RyA/vXFDMydaftSdcXg+KMQHW/qjGqbgz+tz9
+         uFBcTtAVC8QM0LM2G+BJxUJQlPEcJrlZmaEPJOxoR7zQtletlJG8vCQCsIyDpc7AeY
+         HFIAh5kfx00+w==
+Date:   Fri, 12 May 2023 22:35:01 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH v3 07/10] clk: qcom: gcc-mdm9615: use parent_hws/_data instead of parent_names
-Date:   Sat, 13 May 2023 00:17:24 +0300
-Message-Id: <20230512211727.3445575-8-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230512211727.3445575-1-dmitry.baryshkov@linaro.org>
-References: <20230512211727.3445575-1-dmitry.baryshkov@linaro.org>
+        Conor Dooley <conor+dt@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Nicolas Belin <nbelin@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-phy@lists.infradead.org
+Subject: Re: [PATCH v4 04/13] dt-bindings: display: add Amlogic MIPI DSI Host
+ Controller bindings
+Message-ID: <20230512-elevation-stream-8acf60905d6b@spud>
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-0-2592c29ea263@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-4-2592c29ea263@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="s/aEe9Onk7m7s45t"
+Content-Disposition: inline
+In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-4-2592c29ea263@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the clock driver to specify parent data rather than parent
-names, to actually bind using 'clock-names' specified in the DTS rather
-than global clock names. Use parent_hws where possible to refer parent
-clocks directly, skipping the lookup.
 
-Note, the system names for xo clocks were changed from "cxo" to
-"cxo_board" to follow the example of other platforms. This switches the
-clocks to use DT-provided "cxo_board" clock instead of manually
-registered "cxo" clock and allows us to drop the cxo clock.
+--s/aEe9Onk7m7s45t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/gcc-mdm9615.c | 206 ++++++++++++++++++++-------------
- 1 file changed, 124 insertions(+), 82 deletions(-)
+On Fri, May 12, 2023 at 03:11:35PM +0200, Neil Armstrong wrote:
+> The Amlogic G12A, G12B & SM1 SoCs embeds a Synopsys DW-MIPI-DSI transceiv=
+er (ver 1.21a),
+> with a custom glue managing the IP resets, clock and data input similar t=
+o the DW-HDMI Glue
+> on the same Amlogic SoCs.
+>=20
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
-index 2f921891008d..458c18b639db 100644
---- a/drivers/clk/qcom/gcc-mdm9615.c
-+++ b/drivers/clk/qcom/gcc-mdm9615.c
-@@ -37,6 +37,25 @@ static struct clk_fixed_factor cxo = {
- 	},
- };
- 
-+enum {
-+	DT_CXO,
-+	DT_PLL4,
-+};
-+
-+enum {
-+	P_CXO,
-+	P_PLL8,
-+	P_PLL14,
-+};
-+
-+static const struct parent_map gcc_cxo_map[] = {
-+	{ P_CXO, 0 },
-+};
-+
-+static const struct clk_parent_data gcc_cxo[] = {
-+	{ .index = DT_CXO, .name = "cxo_board" },
-+};
-+
- static struct clk_pll pll0 = {
- 	.l_reg = 0x30c4,
- 	.m_reg = 0x30c8,
-@@ -47,8 +66,8 @@ static struct clk_pll pll0 = {
- 	.status_bit = 16,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pll0",
--		.parent_names = (const char *[]){ "cxo" },
--		.num_parents = 1,
-+		.parent_data = gcc_cxo,
-+		.num_parents = ARRAY_SIZE(gcc_cxo),
- 		.ops = &clk_pll_ops,
- 	},
- };
-@@ -58,7 +77,9 @@ static struct clk_regmap pll0_vote = {
- 	.enable_mask = BIT(0),
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pll0_vote",
--		.parent_names = (const char *[]){ "pll0" },
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&pll0.clkr.hw,
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_pll_vote_ops,
- 	},
-@@ -69,7 +90,9 @@ static struct clk_regmap pll4_vote = {
- 	.enable_mask = BIT(4),
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pll4_vote",
--		.parent_names = (const char *[]){ "pll4" },
-+		.parent_data = &(const struct clk_parent_data) {
-+			.index = DT_PLL4, .name = "pll4",
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_pll_vote_ops,
- 	},
-@@ -85,8 +108,8 @@ static struct clk_pll pll8 = {
- 	.status_bit = 16,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pll8",
--		.parent_names = (const char *[]){ "cxo" },
--		.num_parents = 1,
-+		.parent_data = gcc_cxo,
-+		.num_parents = ARRAY_SIZE(gcc_cxo),
- 		.ops = &clk_pll_ops,
- 	},
- };
-@@ -96,7 +119,9 @@ static struct clk_regmap pll8_vote = {
- 	.enable_mask = BIT(8),
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pll8_vote",
--		.parent_names = (const char *[]){ "pll8" },
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&pll8.clkr.hw,
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_pll_vote_ops,
- 	},
-@@ -112,8 +137,8 @@ static struct clk_pll pll14 = {
- 	.status_bit = 16,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "pll14",
--		.parent_names = (const char *[]){ "cxo" },
--		.num_parents = 1,
-+		.parent_data = gcc_cxo,
-+		.num_parents = ARRAY_SIZE(gcc_cxo),
- 		.ops = &clk_pll_ops,
- 	},
- };
-@@ -123,26 +148,22 @@ static struct clk_regmap pll14_vote = {
- 	.enable_mask = BIT(11),
- 	.hw.init = &(struct clk_init_data){
- 		.name = "pll14_vote",
--		.parent_names = (const char *[]){ "pll14" },
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&pll14.clkr.hw,
-+		},
- 		.num_parents = 1,
- 		.ops = &clk_pll_vote_ops,
- 	},
- };
- 
--enum {
--	P_CXO,
--	P_PLL8,
--	P_PLL14,
--};
--
- static const struct parent_map gcc_cxo_pll8_map[] = {
- 	{ P_CXO, 0 },
- 	{ P_PLL8, 3 }
- };
- 
--static const char * const gcc_cxo_pll8[] = {
--	"cxo",
--	"pll8_vote",
-+static const struct clk_parent_data gcc_cxo_pll8[] = {
-+	{ .index = DT_CXO, .name = "cxo_board" },
-+	{ .hw = &pll8_vote.hw },
- };
- 
- static const struct parent_map gcc_cxo_pll14_map[] = {
-@@ -150,17 +171,9 @@ static const struct parent_map gcc_cxo_pll14_map[] = {
- 	{ P_PLL14, 4 }
- };
- 
--static const char * const gcc_cxo_pll14[] = {
--	"cxo",
--	"pll14_vote",
--};
--
--static const struct parent_map gcc_cxo_map[] = {
--	{ P_CXO, 0 },
--};
--
--static const char * const gcc_cxo[] = {
--	"cxo",
-+static const struct clk_parent_data gcc_cxo_pll14[] = {
-+	{ .index = DT_CXO, .name = "cxo_board" },
-+	{ .hw = &pll14_vote.hw },
- };
- 
- static struct freq_tbl clk_tbl_gsbi_uart[] = {
-@@ -206,7 +219,7 @@ static struct clk_rcg gsbi1_uart_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi1_uart_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -222,8 +235,8 @@ static struct clk_branch gsbi1_uart_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi1_uart_clk",
--			.parent_names = (const char *[]){
--				"gsbi1_uart_src",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi1_uart_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
-@@ -257,7 +270,7 @@ static struct clk_rcg gsbi2_uart_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi2_uart_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -273,8 +286,8 @@ static struct clk_branch gsbi2_uart_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi2_uart_clk",
--			.parent_names = (const char *[]){
--				"gsbi2_uart_src",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi2_uart_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
-@@ -308,7 +321,7 @@ static struct clk_rcg gsbi3_uart_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi3_uart_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -324,8 +337,8 @@ static struct clk_branch gsbi3_uart_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi3_uart_clk",
--			.parent_names = (const char *[]){
--				"gsbi3_uart_src",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi3_uart_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
-@@ -359,7 +372,7 @@ static struct clk_rcg gsbi4_uart_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi4_uart_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -375,8 +388,8 @@ static struct clk_branch gsbi4_uart_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi4_uart_clk",
--			.parent_names = (const char *[]){
--				"gsbi4_uart_src",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi4_uart_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
-@@ -410,7 +423,7 @@ static struct clk_rcg gsbi5_uart_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi5_uart_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -426,8 +439,8 @@ static struct clk_branch gsbi5_uart_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi5_uart_clk",
--			.parent_names = (const char *[]){
--				"gsbi5_uart_src",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi5_uart_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
-@@ -473,7 +486,7 @@ static struct clk_rcg gsbi1_qup_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi1_qup_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -489,7 +502,9 @@ static struct clk_branch gsbi1_qup_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi1_qup_clk",
--			.parent_names = (const char *[]){ "gsbi1_qup_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi1_qup_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -522,7 +537,7 @@ static struct clk_rcg gsbi2_qup_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi2_qup_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -538,7 +553,9 @@ static struct clk_branch gsbi2_qup_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi2_qup_clk",
--			.parent_names = (const char *[]){ "gsbi2_qup_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi2_qup_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -571,7 +588,7 @@ static struct clk_rcg gsbi3_qup_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi3_qup_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -587,7 +604,9 @@ static struct clk_branch gsbi3_qup_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi3_qup_clk",
--			.parent_names = (const char *[]){ "gsbi3_qup_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi3_qup_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -620,7 +639,7 @@ static struct clk_rcg gsbi4_qup_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi4_qup_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -636,7 +655,9 @@ static struct clk_branch gsbi4_qup_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi4_qup_clk",
--			.parent_names = (const char *[]){ "gsbi4_qup_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi4_qup_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -669,7 +690,7 @@ static struct clk_rcg gsbi5_qup_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi5_qup_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -685,7 +706,9 @@ static struct clk_branch gsbi5_qup_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gsbi5_qup_clk",
--			.parent_names = (const char *[]){ "gsbi5_qup_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gsbi5_qup_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -724,7 +747,7 @@ static struct clk_rcg gp0_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gp0_src",
--			.parent_names = gcc_cxo,
-+			.parent_data = gcc_cxo,
- 			.num_parents = ARRAY_SIZE(gcc_cxo),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_PARENT_GATE,
-@@ -740,7 +763,9 @@ static struct clk_branch gp0_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gp0_clk",
--			.parent_names = (const char *[]){ "gp0_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gp0_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -773,7 +798,7 @@ static struct clk_rcg gp1_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gp1_src",
--			.parent_names = gcc_cxo,
-+			.parent_data = gcc_cxo,
- 			.num_parents = ARRAY_SIZE(gcc_cxo),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -789,7 +814,9 @@ static struct clk_branch gp1_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gp1_clk",
--			.parent_names = (const char *[]){ "gp1_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gp1_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -822,7 +849,7 @@ static struct clk_rcg gp2_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gp2_src",
--			.parent_names = gcc_cxo,
-+			.parent_data = gcc_cxo,
- 			.num_parents = ARRAY_SIZE(gcc_cxo),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -838,7 +865,9 @@ static struct clk_branch gp2_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gp2_clk",
--			.parent_names = (const char *[]){ "gp2_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&gp2_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -874,7 +903,7 @@ static struct clk_rcg prng_src = {
- 	.clkr = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "prng_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 		},
-@@ -890,7 +919,9 @@ static struct clk_branch prng_clk = {
- 		.enable_mask = BIT(10),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "prng_clk",
--			.parent_names = (const char *[]){ "prng_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&prng_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 		},
-@@ -936,7 +967,7 @@ static struct clk_rcg sdc1_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "sdc1_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 		},
-@@ -951,7 +982,9 @@ static struct clk_branch sdc1_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "sdc1_clk",
--			.parent_names = (const char *[]){ "sdc1_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&sdc1_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -984,7 +1017,7 @@ static struct clk_rcg sdc2_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "sdc2_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 		},
-@@ -999,7 +1032,9 @@ static struct clk_branch sdc2_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "sdc2_clk",
--			.parent_names = (const char *[]){ "sdc2_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&sdc2_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -1037,7 +1072,7 @@ static struct clk_rcg usb_hs1_xcvr_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hs1_xcvr_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -1053,7 +1088,9 @@ static struct clk_branch usb_hs1_xcvr_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hs1_xcvr_clk",
--			.parent_names = (const char *[]){ "usb_hs1_xcvr_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&usb_hs1_xcvr_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -1086,7 +1123,7 @@ static struct clk_rcg usb_hsic_xcvr_fs_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hsic_xcvr_fs_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -1102,8 +1139,9 @@ static struct clk_branch usb_hsic_xcvr_fs_clk = {
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hsic_xcvr_fs_clk",
--			.parent_names =
--				(const char *[]){ "usb_hsic_xcvr_fs_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&usb_hsic_xcvr_fs_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.ops = &clk_branch_ops,
- 			.flags = CLK_SET_RATE_PARENT,
-@@ -1141,7 +1179,7 @@ static struct clk_rcg usb_hs1_system_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hs1_system_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -1156,8 +1194,9 @@ static struct clk_branch usb_hs1_system_clk = {
- 		.enable_reg = 0x36a4,
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
--			.parent_names =
--				(const char *[]){ "usb_hs1_system_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&usb_hs1_system_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.name = "usb_hs1_system_clk",
- 			.ops = &clk_branch_ops,
-@@ -1196,7 +1235,7 @@ static struct clk_rcg usb_hsic_system_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hsic_system_src",
--			.parent_names = gcc_cxo_pll8,
-+			.parent_data = gcc_cxo_pll8,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll8),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -1211,8 +1250,9 @@ static struct clk_branch usb_hsic_system_clk = {
- 		.enable_reg = 0x2b58,
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
--			.parent_names =
--				(const char *[]){ "usb_hsic_system_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&usb_hsic_system_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.name = "usb_hsic_system_clk",
- 			.ops = &clk_branch_ops,
-@@ -1251,7 +1291,7 @@ static struct clk_rcg usb_hsic_hsic_src = {
- 		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "usb_hsic_hsic_src",
--			.parent_names = gcc_cxo_pll14,
-+			.parent_data = gcc_cxo_pll14,
- 			.num_parents = ARRAY_SIZE(gcc_cxo_pll14),
- 			.ops = &clk_rcg_ops,
- 			.flags = CLK_SET_RATE_GATE,
-@@ -1265,7 +1305,9 @@ static struct clk_branch usb_hsic_hsic_clk = {
- 		.enable_reg = 0x2b50,
- 		.enable_mask = BIT(9),
- 		.hw.init = &(struct clk_init_data){
--			.parent_names = (const char *[]){ "usb_hsic_hsic_src" },
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&usb_hsic_hsic_src.clkr.hw,
-+			},
- 			.num_parents = 1,
- 			.name = "usb_hsic_hsic_clk",
- 			.ops = &clk_branch_ops,
-@@ -1281,8 +1323,8 @@ static struct clk_branch usb_hsic_hsio_cal_clk = {
- 		.enable_reg = 0x2b48,
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
--			.parent_names = (const char *[]){ "cxo" },
--			.num_parents = 1,
-+			.parent_data = gcc_cxo,
-+			.num_parents = ARRAY_SIZE(gcc_cxo),
- 			.name = "usb_hsic_hsio_cal_clk",
- 			.ops = &clk_branch_ops,
- 		},
--- 
-2.39.2
+This looks fine to me,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+but I would like Krzysztof to take a look too to be on the safe side!
 
+Cheers,
+Conor.
+
+> ---
+>  .../display/amlogic,meson-g12a-dw-mipi-dsi.yaml    | 117 +++++++++++++++=
+++++++
+>  1 file changed, 117 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-g12a=
+-dw-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/amlogic,meson=
+-g12a-dw-mipi-dsi.yaml
+> new file mode 100644
+> index 000000000000..8169c7e93ff5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/amlogic,meson-g12a-dw-mip=
+i-dsi.yaml
+> @@ -0,0 +1,117 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright 2020 BayLibre, SAS
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/amlogic,meson-g12a-dw-mipi-ds=
+i.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic specific extensions to the Synopsys Designware MIPI DSI H=
+ost Controller
+> +
+> +maintainers:
+> +  - Neil Armstrong <neil.armstrong@linaro.org>
+> +
+> +description: |
+> +  The Amlogic Meson Synopsys Designware Integration is composed of
+> +  - A Synopsys DesignWare MIPI DSI Host Controller IP
+> +  - A TOP control block controlling the Clocks & Resets of the IP
+> +
+> +allOf:
+> +  - $ref: dsi-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,meson-g12a-dw-mipi-dsi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 3
+> +
+> +  clock-names:
+> +    minItems: 3
+> +    items:
+> +      - const: pclk
+> +      - const: bit_clk
+> +      - const: px_clk
+> +      - const: meas_clk
+> +
+> +  resets:
+> +    minItems: 1
+> +
+> +  reset-names:
+> +    items:
+> +      - const: top
+> +
+> +  phys:
+> +    minItems: 1
+> +
+> +  phy-names:
+> +    items:
+> +      - const: dphy
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Input node to receive pixel data.
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: DSI output node to panel.
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - phys
+> +  - phy-names
+> +  - ports
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    dsi@7000 {
+> +          compatible =3D "amlogic,meson-g12a-dw-mipi-dsi";
+> +          reg =3D <0x6000 0x400>;
+> +          resets =3D <&reset_top>;
+> +          reset-names =3D "top";
+> +          clocks =3D <&clk_pclk>, <&bit_clk>, <&clk_px>;
+> +          clock-names =3D "pclk", "bit_clk", "px_clk";
+> +          phys =3D <&mipi_dphy>;
+> +          phy-names =3D "dphy";
+> +
+> +          ports {
+> +              #address-cells =3D <1>;
+> +              #size-cells =3D <0>;
+> +
+> +              /* VPU VENC Input */
+> +              mipi_dsi_venc_port: port@0 {
+> +                  reg =3D <0>;
+> +
+> +                  mipi_dsi_in: endpoint {
+> +                       remote-endpoint =3D <&dpi_out>;
+> +                  };
+> +              };
+> +
+> +              /* DSI Output */
+> +              mipi_dsi_panel_port: port@1 {
+> +                  reg =3D <1>;
+> +
+> +                  mipi_out_panel: endpoint {
+> +                      remote-endpoint =3D <&mipi_in_panel>;
+> +                  };
+> +              };
+> +          };
+> +    };
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--s/aEe9Onk7m7s45t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZF6xBQAKCRB4tDGHoIJi
+0lkLAP9aw2fomhWlSF6eQEZVTD8Xm33bApDDIK5TJfpd9yZupQD8DFLo/uqOZeTX
+Sifp4pc02lgSSSXPXhf84CIoaGUoHAU=
+=h7tW
+-----END PGP SIGNATURE-----
+
+--s/aEe9Onk7m7s45t--
