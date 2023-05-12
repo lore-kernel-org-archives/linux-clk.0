@@ -2,175 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D84C77B75
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 13:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E0DC77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 14:06:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241327AbjELNtz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 09:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58522 "EHLO
+        id S241337AbjELOGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 10:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241325AbjELNty (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 09:49:54 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 301EF12EA9;
-        Fri, 12 May 2023 06:49:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1683899393; x=1715435393;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DuNeysYSTXy/mIZofYnY1xvzASlALFjZdE92szRAONc=;
-  b=jalO+Qu1oHnS0FfJgzVsS84HrwTnpOqII992QLCJf1te4pfzAhqA71d3
-   e5/JPXViiWgCfUhnR1J8CEAy42yukDc1X8TG9bMnApgnas6oN3W7KPSs5
-   aqKulDjLCCr9BwzuQgnKEf3Q+yOZ77FTq/igFZJIqzuGcbxg5Y70gfAXc
-   R9TBX7K9THPlkWmm19EqasQavHFWsCmib+rQ/QgBlk4Df4PXoSNonSRZ4
-   r8vc+ZblUVm24cUoemNfMgv3K9olZfevenckc+Z1EJtbsCapoMLG8tn0a
-   3ggUMw88eYK9udVQOx7CmfL2EywPiQSKajicXRKFVDn8P307pNzHHIEY6
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.99,269,1677567600"; 
-   d="asc'?scan'208";a="210975138"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 May 2023 06:49:52 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 12 May 2023 06:49:50 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Fri, 12 May 2023 06:49:48 -0700
-Date:   Fri, 12 May 2023 14:49:27 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v4 3/7] dt-bindings: clock: jh7110-syscrg: Add PLL clock
- inputs
-Message-ID: <20230512-traffic-popsicle-5c3423b37fab@wendy>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
- <20230512022036.97987-4-xingyu.wu@starfivetech.com>
- <20230512-uproar-external-49a9e793fbc4@wendy>
- <91e4fd3c-20cb-724b-c9a8-e038600aabb7@starfivetech.com>
- <20230512-backlit-radiated-ded0b38b4a94@wendy>
- <be85aa2a-c72c-5272-ee40-f1265768e7b3@starfivetech.com>
+        with ESMTP id S241171AbjELOGi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 10:06:38 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5A1B8;
+        Fri, 12 May 2023 07:06:35 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 51F475FD7F;
+        Fri, 12 May 2023 17:06:32 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1683900392;
+        bh=Wty4lPdUl1Ry9LEa9KvWzRRPn/a18yqNQKacXZMS6oc=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=MQu3fETnqRD++Dvd5Edd/wJkzKTcTtmlgHgxPWSvbZqyZ050kPpnx4O7g+08Rc0ph
+         0KJ15CGO4YcM15Vvj9wTAuPujliJtd2tWOKhmdY99+ypLXLbhsgZ2Sq/lzlilebmmw
+         qdm9r+r2JbGrLrmnfnJsl1e7f0hdozXXHOm0SzpCVslCeTaWjk/+L+ukC8aiU6J022
+         J9IcGEFJjvnwsQHukaeim0kpRilczpixzAPoS0Kl/AEg3bJhuYhpdMcQA72MGmc96q
+         PnHXIn7O9lU++x6+dE5EPDZvVDs1T8rZDO2UXH/87lOpX+cKA+mY/RVzTpQKKQiA72
+         jw6M2QhHYphDQ==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Fri, 12 May 2023 17:06:31 +0300 (MSK)
+Date:   Fri, 12 May 2023 17:06:30 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+Message-ID: <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
+References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
+ <20230426095805.15338-7-ddrokosov@sberdevices.ru>
+ <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qj/PZxe9T53Afs5A"
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <be85aa2a-c72c-5272-ee40-f1265768e7b3@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/12 11:36:00 #21269061
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---qj/PZxe9T53Afs5A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Martin,
 
-On Fri, May 12, 2023 at 05:56:16PM +0800, Xingyu Wu wrote:
-> On 2023/5/12 17:35, Conor Dooley wrote:
-> > On Fri, May 12, 2023 at 04:07:47PM +0800, Xingyu Wu wrote:
-> >> On 2023/5/12 14:47, Conor Dooley wrote:
-> >> > On Fri, May 12, 2023 at 10:20:32AM +0800, Xingyu Wu wrote:
-> >> >> Add PLL clock inputs from PLL clock generator.
-> >> >>=20
-> >> >> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> >> >> ---
-> >> >>  .../clock/starfive,jh7110-syscrg.yaml         | 20 +++++++++++++++=
-++--
-> >> >>  1 file changed, 18 insertions(+), 2 deletions(-)
-> >> >=20
-> >> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vis=
-ionfive-2-v1.3b.dtb: clock-controller@13020000: clocks: 'oneOf' conditional=
- failed, one must be fixed:
-> >> > 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
-> >> > 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh71=
-10-syscrg.yaml
-> >> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vis=
-ionfive-2-v1.3b.dtb: clock-controller@13020000: clock-names: 'oneOf' condit=
-ional failed, one must be fixed:
-> >> > 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', '=
-i2stx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext']=
- is too short
-> >> > 	'i2stx_bclk_ext' was expected
-> >> > 	'i2stx_lrck_ext' was expected
-> >> > 	'i2srx_bclk_ext' was expected
-> >> > 	'i2srx_lrck_ext' was expected
-> >> > 	'tdm_ext' was expected
-> >> > 	'mclk_ext' was expected
-> >> > 	'pll0_out' was expected
-> >> > 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh71=
-10-syscrg.yaml
-> >> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vis=
-ionfive-2-v1.2a.dtb: clock-controller@13020000: clocks: 'oneOf' conditional=
- failed, one must be fixed:
-> >> > 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
-> >> > 	From schema: Documentation/devicetree/bindings/clock/starfive,jh711=
-0-syscrg.yaml
-> >> > /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-vis=
-ionfive-2-v1.2a.dtb: clock-controller@13020000: clock-names: 'oneOf' condit=
-ional failed, one must be fixed:
-> >> > 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', '=
-i2stx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext']=
- is too short
-> >> > 	'i2stx_bclk_ext' was expected
-> >> > 	'i2stx_lrck_ext' was expected
-> >> > 	'i2srx_bclk_ext' was expected
-> >> > 	'i2srx_lrck_ext' was expected
-> >> > 	'tdm_ext' was expected
-> >> > 	'mclk_ext' was expected
-> >> > 	'pll0_out' was expected
-> >> > 	Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> >> >=20
-> >> > This binding change is incompatible with the existing devicetrees for
-> >> > the visionfive 2.
-> >>=20
-> >> This looks like less clocks about PLL in SYSCRG node. And I add this i=
-n patch 7.
-> >=20
-> > The existing devicetree is a valid, albeit limited, description of the
-> > hardware.
-> > After your changes to the clock driver in this series, but *without* the
-> > changes to the devicetrees, does the system still function?
-> > From a quick check of 4/7, it looks like it will not?
->=20
-> I just tested it on the board and the system still worked without the cha=
-nges
-> about devicetree. But these clocks' rate were 0 because these could not g=
-et
-> the PLL clocks from devicetree.
+On Mon, May 01, 2023 at 09:06:24PM +0200, Martin Blumenstingl wrote:
+> Hi Dmitry,
+> 
+> overall this looks pretty good.
 
-Hmm, that sounds like an issue to me. If all of the clock rates are
-computed based off of parents that incorrectly report 0, are we not in
-for trouble?
-Should the fixed-factor clocks be retained as a fallback for the sake of
-compatibility?
-Emil, Stephen?
+Thank you! Please find my thoughts about RTC clock below.
 
---qj/PZxe9T53Afs5A
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> +Cc Heiner
+> 
+> On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
+> <ddrokosov@sberdevices.ru> wrote:
+> [...]
+> > +static struct clk_regmap pwm_a_sel = {
+> > +       .data = &(struct clk_regmap_mux_data){
+> > +               .offset = PWM_CLK_AB_CTRL,
+> > +               .mask = 0x1,
+> > +               .shift = 9,
+> > +       },
+> > +       .hw.init = &(struct clk_init_data){
+> > +               .name = "pwm_a_sel",
+> > +               .ops = &clk_regmap_mux_ops,
+> > +               .parent_data = pwm_abcd_parents,
+> > +               .num_parents = ARRAY_SIZE(pwm_abcd_parents),
+> > +               /* For more information, please refer to rtc clock */
+> > +               .flags = CLK_SET_RATE_NO_REPARENT,
+> Heiner is working on a series that adds common clock support to the
+> PWM driver [0].
+> I think his plans for a next step are adding support for SoCs where
+> the PWM clocks are part of the peripheral clock controller (instead of
+> being part of the PWM controller registers).
+> 
 
------BEGIN PGP SIGNATURE-----
+Yes, I'm keeping up with this review and staying informed. It's worth
+noting that the peripheral clock driver already includes PWM clocks,
+with an important remark about reparenting being switched off. It's
+described below.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZF5D5wAKCRB4tDGHoIJi
-0ls8AQDZMoyMjXuX37lw7BCSWsU9Gxef0TEiBYOlGG+R1S9i9gEAlqR+XYcFjG8B
-9nGwVdlLV70d09Xp6IjHrhusCQ2QSA4=
-=fsw/
------END PGP SIGNATURE-----
+> Have you considered removing CLK_SET_RATE_PARENT from the &rtc clock
+> so downstream clocks won't change the rtc clock rate by accident?
+> Then we could drop the CLK_SET_RATE_NO_REPARENT flag from the PWM
+> clocks to allow them to pick the best available parent (whether that's
+> the rtc clock, xtal or sys_pll).
+> That said, it would require managing the CLKID_RTC_32K_SEL clock (or
+> it's parents) using assigned-clocks instead of doing so with the PWM
+> (and other) clocks. Whether this would cause problems: I'm not sure,
+> so I'm hoping that you can share some insights.
+> 
+> 
 
---qj/PZxe9T53Afs5A--
+Allow me to share my thoughts on this matter. From my understanding,
+Amlogic provides an RTC clock that is both accurate and power-effective
+in achieving a 32KHz signal from an internal xtal of 24MHz. However,
+this requires a complex RTC divider with four parameters (m1, m2, n1,
+n2), as it cannot be accomplished with a single divider. Our team has
+measured the RTC clock using an oscilloscope on the GEN CLK pin and
+found that it provides a stable 32KHz signal with acceptable jitter. On
+the other hand, other approaches, such as the PWM way, yield less stable
+and less accurate 32KHz signals with greater jitter.
+
+Additionally, the CCF determines the best ancestor based on how close
+its rate is to the given one, based on arithmetic calculations. However,
+we have independent knowledge that a certain clock would be better, with
+less jitter and fewer intermediaries, which will likely improve energy
+efficiency. Sadly, the CCF cannot take this into account.
+
+Given the advantages of the RTC clock, we wish to be able to control the
+RTC as a parent for specific leaf clocks. This is achievable with the
+'assigned-clocks' feature of CCF OF, but it poses a significant
+architectural problem. The 'assigned-clocks' node does not lock/pin the
+parent, and a simple clk_set_rate() call can change the parent during
+rate propagation. In my opinion, an ideal solution to this problem would
+be an additional patch to the CCF core that provides this locking
+capability. As a board DTS developer, I know which clock I want to use
+as the parent and have a strong reason for doing so, and I do not wish
+to open up my parent muxing to other drivers. But until the behavior of
+'assigned-clocks' is not available, we will simply label all RTC
+children with the CLK_SET_RATE_NO_REPARENT flag.
+
+> Best regards,
+> Martin
+> 
+> 
+> [0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e323e@gmail.com/
+
+-- 
+Thank you,
+Dmitry
