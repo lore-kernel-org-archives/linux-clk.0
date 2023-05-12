@@ -2,61 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A26C77B7C
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 20:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C36C77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 21:06:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239014AbjELUuV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 16:50:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54310 "EHLO
+        id S237769AbjELVGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 17:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238989AbjELUuU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 16:50:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A568A5E;
-        Fri, 12 May 2023 13:50:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 40DEB61585;
-        Fri, 12 May 2023 20:50:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DEC1C433EF;
-        Fri, 12 May 2023 20:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683924614;
-        bh=/Mn4L+a1/bgxrze0zB5CbsA1BiqgmzfxAOiw6lAL/JU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QhMSm/GbIBE//aSYVXOIvzEU+a6W4bv+7cB9Q65hpH5Vy5D5DSz7cdwVw7LTbncVt
-         6trrJEGFYSkrnK9xkm4BU7VV/pz0VffkF8gtwWho6aQyBHyBPKPzOuhxhwErvKecGu
-         qhFvJ7TmiO3ntSrn4hueZkgjIRPoqezim3V1BqEOLS6KBwDTCRGqVTICWfgxHftMxQ
-         fOGNgFcUCNXOybrmRsxPOLUc04IgvzshZ+fdXV+90cM9pUMqvZht5Uhvhg4lt2L2iU
-         LAItQ/NI7koE+f7MN7XCfT6XP+3CTiPUIwzj/7ArhgxC2KnQElN6CrBpZUI/OqgWl2
-         LnEyB/i+OL0Og==
-Message-ID: <a54a4634fd5e161a1ac2697a388018db.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S238595AbjELVGi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 17:06:38 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01B83A84
+        for <linux-clk@vger.kernel.org>; Fri, 12 May 2023 14:06:36 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f139de8cefso54408050e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 12 May 2023 14:06:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683925595; x=1686517595;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EsiWgLFZscJzjm/g92UOpjZeba02UZH+himRJmD+dtQ=;
+        b=n7IF88ZdZYqRZGDuqB/Dv/16wx9vbg/x6e6+WHnd+UnbMzZqXokFm4Zq4gQP1BbKnN
+         tNLJwgsQfXJS6GMaLTz0LhuaVvVZCSlr8kSJXGdZ8vnh8u+/g2XgwzFX+lqHFgyHn+QZ
+         Rt2CtSAwpZtGyeFxSXT0dpr72NRG/FXJ4mpk7iYevcaub0dspdK5RE+yZY6xSC0Pp/SB
+         B3U5gGJCnXn8knfNef6eKHQ7y89OGuYPouv63+OGgG4EuBIx3+88ekszxw9oNwQ0CBIC
+         O3HWeP5vLiM7afGd+dPZzyXZoRa8t5+MJ4CtOqGoZ8ycbTOnYIF89rGIr2kn0SUoSSpy
+         72xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683925595; x=1686517595;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EsiWgLFZscJzjm/g92UOpjZeba02UZH+himRJmD+dtQ=;
+        b=WRSxFF7aZzFMHbMhFH5jqRGjyxM0EnSKSlfXImtMKjTUYhUQitBtn4wp23i2XI0GOy
+         U077Z4B7qXnFK9NfhNjxwp6yQyGdloDsh6R8kdO0Z4DqQecyKW/ZOOn4x6eo8GsgXgvY
+         FjzIfzE+fu1HBMY6beQhzPe4lvFtsV+tvdSYpOmNG+JWEnVABvWvNBqJbBothhTaeV5C
+         3+U+CsyUZOWJ21kYTK6M+5rzZQQPOqF7KaLtgY/G4YQKKe1iWH2HRh1QXGE4G15w8k0D
+         sf9KXjCC2Zri7qWjOKbZed4ahVOcqVN7wH858C5JZycgohPM3aGA7kwM05iPt1Ljuzt2
+         NTeQ==
+X-Gm-Message-State: AC+VfDwwtSbFU5UpmQOP0iBMhtaxrH37ReimNzsveaQoUK9AQQRMBzDA
+        M4yC32sh23wsutCraYi51lC86w==
+X-Google-Smtp-Source: ACHHUZ4CwKOHCsRb0bfIwwJbnr+PWrGViaDjdBuMWsTm/HnJwmySw0sQnF4fsrwMPM5AfAloglKfUg==
+X-Received: by 2002:a2e:a377:0:b0:2ac:826a:efae with SMTP id i23-20020a2ea377000000b002ac826aefaemr4628424ljn.5.1683925594723;
+        Fri, 12 May 2023 14:06:34 -0700 (PDT)
+Received: from [192.168.2.40] ([194.204.33.9])
+        by smtp.gmail.com with ESMTPSA id g9-20020a2eb0c9000000b002ac8164d77fsm2895728ljl.86.2023.05.12.14.06.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 May 2023 14:06:34 -0700 (PDT)
+Message-ID: <1351c7b9-ab70-f6ec-3d0e-2b56af42c5c8@linaro.org>
+Date:   Sat, 13 May 2023 00:06:32 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230506090856.3599035-1-peng.fan@oss.nxp.com>
-References: <20230506090856.3599035-1-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH] clk: imx: drop imx_unregister_clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-To:     Peng Fan (OSS) <peng.fan@oss.nxp.com>, abelvesa@kernel.org,
-        festevam@gmail.com, kernel@pengutronix.de, mturquette@baylibre.com,
-        s.hauer@pengutronix.de, shawnguo@kernel.org
-Date:   Fri, 12 May 2023 13:50:12 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 03/10] dt-bindings: clock: provide separate bindings
+ for qcom,gcc-mdm9615
+Content-Language: en-GB
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230512003230.3043284-1-dmitry.baryshkov@linaro.org>
+ <20230512003230.3043284-4-dmitry.baryshkov@linaro.org>
+ <d3daccb6-8b4e-7016-5545-097dba2188b2@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <d3daccb6-8b4e-7016-5545-097dba2188b2@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (OSS) (2023-05-06 02:08:56)
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> There is no user using imx_unregister_clocks, so drop it.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+On 12/05/2023 09:52, Krzysztof Kozlowski wrote:
+> On 12/05/2023 02:32, Dmitry Baryshkov wrote:
+>> The global clock controller on MDM9615 uses external CXO and PLL7
+>> clocks. Split the qcom,gcc-mdm9615 to the separate schema file.
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   .../bindings/clock/qcom,gcc-mdm9615.yaml      | 48 +++++++++++++++++++
+>>   .../bindings/clock/qcom,gcc-other.yaml        |  3 --
+>>   2 files changed, 48 insertions(+), 3 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
+>> new file mode 100644
+>> index 000000000000..bc9786f2c1d5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-mdm9615.yaml
+>> @@ -0,0 +1,48 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,gcc-mdm9615.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller on MDM9615
+>> +
+>> +maintainers:
+>> +  - Stephen Boyd <sboyd@kernel.org>
+>> +  - Taniya Das <quic_tdas@quicinc.com>
+>> +
+>> +description: |
+>> +  Qualcomm global clock control module provides the clocks, resets and power
+>> +  domains on MDM9615.
+>> +
+>> +  See also::
+>> +    include/dt-bindings/clock/qcom,gcc-mdm9615.h
+>> +    include/dt-bindings/reset/qcom,gcc-mdm9615.h
+>> +
+>> +allOf:
+>> +  - $ref: qcom,gcc.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,gcc-mdm9615
+>> +
+>> +  clocks:
+>> +    maxItems: 2
+> 
+> Does not look like you tested the bindings. Please run `make
+> dt_binding_check` (see
+> Documentation/devicetree/bindings/writing-schema.rst for instructions).
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Indeed. I did this when preparing v1 and then skipped it when sending 
+v2. Mea culpa.
+
+-- 
+With best wishes
+Dmitry
+
