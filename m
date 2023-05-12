@@ -2,41 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC701C7EE2D
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 12:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FCDC7EE2A
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 12:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240962AbjELMZN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 08:25:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54036 "EHLO
+        id S240979AbjELMZR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 08:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240916AbjELMZJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 08:25:09 -0400
+        with ESMTP id S240981AbjELMZO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 08:25:14 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298821434E;
-        Fri, 12 May 2023 05:24:55 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34CBVVlg001397;
-        Fri, 12 May 2023 12:24:25 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B0A120BF;
+        Fri, 12 May 2023 05:24:57 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34CCI9vO015098;
+        Fri, 12 May 2023 12:24:42 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=TOLDap9g4CiRSss99GzEPDthDzvKUOxBI4x2i5gHuY8=;
- b=DTDUkmR5FiFz7nzFNwawTF539aFOktMTrGczJ06C8ZmFVxmS5IPGejjCmahryeq5atQh
- /B3mD1WZ2udlHWuSXY8RgTGMrh/VO1djFeKhDTR3hoCvRV78sR56KzIZhU2bKYVpS9No
- tqHqRulcGllOJjOu0I1e5jzu323Dzg85gtn3YWypVaWbyBY2vvR2lmWVkdC1EgnqILns
- BKcqCboZXlrQD1oo6vaaZVVZ+5fEGONmc64ArYU44lSOS/TKGx4FM2jUIB92hR2yHh/h
- BgDNvEXDidqJAVI4CmxSEent/tJMCvVQizzCYT+GGL9df8yb4OPL6BdOA16kIfb+Uolg dQ== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qhdf412ra-1
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=rMJhlmv7XvF0qN+4OPfI0d9NZsyw21a8rrz2Gol6ccE=;
+ b=Cjl4E8NB+idiSImcdVi1/lWE/Ji1wxV28aT/sUOeR6KXbbYUCXnkyqqamPnRAvFxTFm/
+ oqPTh9+rY0MhSDhevL/WVFnJWhcnQPhfU+fOMEfICbYd9AnuQ42IHIP69D/Y5qrpGNxA
+ qu0Zp84KaSB/gPVPMX6xhJjqJ82jKiJWlEIxUKYAdeTvkl7YK7eb3gLJwR/VytqNwZfv
+ 571xE6HxyJIY+4ucL4H8mTIfiDGAOFbZWrkORR9yKXwxH+80j0TNbcwiC8Fi9uHqWqYw
+ cQlf/rYPty69cVqXBl1IE1hE4ArAIOqUqf2ZRXPLmrM8seDWxSvflq7zKKBwgldoZ0w4 zA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qhayt1a2p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 May 2023 12:24:25 +0000
+        Fri, 12 May 2023 12:24:42 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34CCOOMT019869
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34CCOf61013074
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 12 May 2023 12:24:24 GMT
+        Fri, 12 May 2023 12:24:41 GMT
 Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Fri, 12 May 2023 05:24:19 -0700
+ 15.2.986.42; Fri, 12 May 2023 05:24:35 -0700
 From:   Taniya Das <quic_tdas@quicinc.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -52,10 +53,12 @@ CC:     Bjorn Andersson <andersson@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <netdev@vger.kernel.org>, <jkona@quicinc.com>,
         <quic_rohiagar@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH V2 0/5] Add GCC and RPMHCC support for sdx75
-Date:   Fri, 12 May 2023 17:53:42 +0530
-Message-ID: <20230512122347.1219-1-quic_tdas@quicinc.com>
+Subject: [PATCH V2 3/5] dt-bindings: clock: qcom: Add RPMHCC for SDX75
+Date:   Fri, 12 May 2023 17:53:45 +0530
+Message-ID: <20230512122347.1219-4-quic_tdas@quicinc.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230512122347.1219-1-quic_tdas@quicinc.com>
+References: <20230512122347.1219-1-quic_tdas@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.80.80.8]
@@ -63,43 +66,45 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hf5MuzCXo0-DEPF6MD4wNr1LvVQbZvrs
-X-Proofpoint-ORIG-GUID: hf5MuzCXo0-DEPF6MD4wNr1LvVQbZvrs
+X-Proofpoint-ORIG-GUID: ORnyQCwG9IGMVXwGqeg_T0BLWNS465Bp
+X-Proofpoint-GUID: ORnyQCwG9IGMVXwGqeg_T0BLWNS465Bp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
  definitions=2023-05-12_08,2023-05-05_01,2023-02-09_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- clxscore=1011 bulkscore=0 spamscore=0 suspectscore=0 phishscore=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ phishscore=0 priorityscore=1501 suspectscore=0 spamscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2304280000 definitions=main-2305120104
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series of patches extends the invert logic for branch2 clocks and adds
-GCC, RPMH clocks devicetree bindings and driver support for SDX75 platform.
+From: Imran Shaik <quic_imrashai@quicinc.com>
 
-Imran Shaik (5):
-  clk: qcom: branch: Extend the invert logic for branch2 clocks
-  dt-bindings: clock: qcom: Add GCC clocks for SDX75
-  dt-bindings: clock: qcom: Add RPMHCC for SDX75
-  clk: qcom: rpmh: Add RPMH clocks support for SDX75
-  clk: qcom: Add GCC driver support for SDX75
+Add compatible string for qcom RPMHCC for SDX75 platform.
 
- .../bindings/clock/qcom,rpmhcc.yaml           |    1 +
- .../bindings/clock/qcom,sdx75-gcc.yaml        |   65 +
- drivers/clk/qcom/Kconfig                      |    8 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/clk-branch.c                 |    6 +-
- drivers/clk/qcom/clk-rpmh.c                   |   19 +
- drivers/clk/qcom/gcc-sdx75.c                  | 2970 +++++++++++++++++
- include/dt-bindings/clock/qcom,sdx75-gcc.h    |  193 ++
- 8 files changed, 3260 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdx75-gcc.yaml
- create mode 100644 drivers/clk/qcom/gcc-sdx75.c
- create mode 100644 include/dt-bindings/clock/qcom,sdx75-gcc.h
+Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+Changes since V1:
+ - Newly added.
 
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index d5a250b7c2af..267cf8c26823 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -27,6 +27,7 @@ properties:
+       - qcom,sdm845-rpmh-clk
+       - qcom,sdx55-rpmh-clk
+       - qcom,sdx65-rpmh-clk
++      - qcom,sdx75-rpmh-clk
+       - qcom,sm6350-rpmh-clk
+       - qcom,sm8150-rpmh-clk
+       - qcom,sm8250-rpmh-clk
 -- 
 2.17.1
 
