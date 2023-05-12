@@ -2,159 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E0DC77B7C
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 14:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F67C77B7F
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 16:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241337AbjELOGj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 10:06:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42976 "EHLO
+        id S241966AbjELQGo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 12:06:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241171AbjELOGi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 10:06:38 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5A1B8;
-        Fri, 12 May 2023 07:06:35 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 51F475FD7F;
-        Fri, 12 May 2023 17:06:32 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1683900392;
-        bh=Wty4lPdUl1Ry9LEa9KvWzRRPn/a18yqNQKacXZMS6oc=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=MQu3fETnqRD++Dvd5Edd/wJkzKTcTtmlgHgxPWSvbZqyZ050kPpnx4O7g+08Rc0ph
-         0KJ15CGO4YcM15Vvj9wTAuPujliJtd2tWOKhmdY99+ypLXLbhsgZ2Sq/lzlilebmmw
-         qdm9r+r2JbGrLrmnfnJsl1e7f0hdozXXHOm0SzpCVslCeTaWjk/+L+ukC8aiU6J022
-         J9IcGEFJjvnwsQHukaeim0kpRilczpixzAPoS0Kl/AEg3bJhuYhpdMcQA72MGmc96q
-         PnHXIn7O9lU++x6+dE5EPDZvVDs1T8rZDO2UXH/87lOpX+cKA+mY/RVzTpQKKQiA72
-         jw6M2QhHYphDQ==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri, 12 May 2023 17:06:31 +0300 (MSK)
-Date:   Fri, 12 May 2023 17:06:30 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
- controller driver
-Message-ID: <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
-References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
- <20230426095805.15338-7-ddrokosov@sberdevices.ru>
- <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
+        with ESMTP id S242003AbjELQGn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 12:06:43 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4AB35FD0;
+        Fri, 12 May 2023 09:06:40 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34CEd0h0009563;
+        Fri, 12 May 2023 16:06:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=45xGjmzIzfSYZ1glcXNm8UnBod6ohVLumXn6e35KAfg=;
+ b=cbcNFmKpHYWAZqRU9+Zdrzw7kKTK3VwUnuCr4STDwM6ZeV0TTgABk7aN6S863cboWFLt
+ 5pHoSwCWXOQWn9DwCxvhzq3YiyOWgPkCAZMISHwOZYgfohy6hIynMarZCH/haaPxShET
+ cIxfY1VSPEpXFasgyyDrA+gV84VtFVXki6L+pivqOXrcG1HTfyUGisewh7pk3ORHEeOZ
+ Of5cIGxV4J2/sqmKnWGRoLAAWLE3iHgC+KOFn7qpGOMXahSwDtH3yjmz1PYtZSF4inTA
+ ExIYNG7ER2Fg9Iz5OgC+SPEVtewjvp6lxMyRx+0ahjYdshqCD5BOFwG8RgF0XgwGk4kh jA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qhj9s0x12-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 12 May 2023 16:06:34 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34CG6X2p022611
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 12 May 2023 16:06:33 GMT
+Received: from [10.216.40.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 12 May
+ 2023 09:06:30 -0700
+Message-ID: <53182e14-d6bb-97d8-010d-b99789af8ba6@quicinc.com>
+Date:   Fri, 12 May 2023 21:33:56 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/12 11:36:00 #21269061
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH] clk: qcom: ipq5332: fix the src parameter in
+ ftbl_gcc_apss_axi_clk_src
+Content-Language: en-US
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230417044342.9406-1-quic_kathirav@quicinc.com>
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <20230417044342.9406-1-quic_kathirav@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: j--XRIBXm0y0yHdxmyoIt9HTBLyJE5xL
+X-Proofpoint-GUID: j--XRIBXm0y0yHdxmyoIt9HTBLyJE5xL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-12_10,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=927 mlxscore=0
+ adultscore=0 clxscore=1011 phishscore=0 lowpriorityscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305120133
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Martin,
 
-On Mon, May 01, 2023 at 09:06:24PM +0200, Martin Blumenstingl wrote:
-> Hi Dmitry,
-> 
-> overall this looks pretty good.
+On 4/17/2023 10:13 AM, Kathiravan T wrote:
+> 480MHz is derived from P_GPLL4_OUT_AUX not from P_GPLL4_OUT_MAIN. Update
+> the freq_tbl with the correct src.
 
-Thank you! Please find my thoughts about RTC clock below.
 
-> 
-> +Cc Heiner
-> 
-> On Wed, Apr 26, 2023 at 11:58 AM Dmitry Rokosov
-> <ddrokosov@sberdevices.ru> wrote:
-> [...]
-> > +static struct clk_regmap pwm_a_sel = {
-> > +       .data = &(struct clk_regmap_mux_data){
-> > +               .offset = PWM_CLK_AB_CTRL,
-> > +               .mask = 0x1,
-> > +               .shift = 9,
-> > +       },
-> > +       .hw.init = &(struct clk_init_data){
-> > +               .name = "pwm_a_sel",
-> > +               .ops = &clk_regmap_mux_ops,
-> > +               .parent_data = pwm_abcd_parents,
-> > +               .num_parents = ARRAY_SIZE(pwm_abcd_parents),
-> > +               /* For more information, please refer to rtc clock */
-> > +               .flags = CLK_SET_RATE_NO_REPARENT,
-> Heiner is working on a series that adds common clock support to the
-> PWM driver [0].
-> I think his plans for a next step are adding support for SoCs where
-> the PWM clocks are part of the peripheral clock controller (instead of
-> being part of the PWM controller registers).
-> 
+Gentle Reminder...
 
-Yes, I'm keeping up with this review and staying informed. It's worth
-noting that the peripheral clock driver already includes PWM clocks,
-with an important remark about reparenting being switched off. It's
-described below.
 
-> Have you considered removing CLK_SET_RATE_PARENT from the &rtc clock
-> so downstream clocks won't change the rtc clock rate by accident?
-> Then we could drop the CLK_SET_RATE_NO_REPARENT flag from the PWM
-> clocks to allow them to pick the best available parent (whether that's
-> the rtc clock, xtal or sys_pll).
-> That said, it would require managing the CLKID_RTC_32K_SEL clock (or
-> it's parents) using assigned-clocks instead of doing so with the PWM
-> (and other) clocks. Whether this would cause problems: I'm not sure,
-> so I'm hoping that you can share some insights.
-> 
-> 
-
-Allow me to share my thoughts on this matter. From my understanding,
-Amlogic provides an RTC clock that is both accurate and power-effective
-in achieving a 32KHz signal from an internal xtal of 24MHz. However,
-this requires a complex RTC divider with four parameters (m1, m2, n1,
-n2), as it cannot be accomplished with a single divider. Our team has
-measured the RTC clock using an oscilloscope on the GEN CLK pin and
-found that it provides a stable 32KHz signal with acceptable jitter. On
-the other hand, other approaches, such as the PWM way, yield less stable
-and less accurate 32KHz signals with greater jitter.
-
-Additionally, the CCF determines the best ancestor based on how close
-its rate is to the given one, based on arithmetic calculations. However,
-we have independent knowledge that a certain clock would be better, with
-less jitter and fewer intermediaries, which will likely improve energy
-efficiency. Sadly, the CCF cannot take this into account.
-
-Given the advantages of the RTC clock, we wish to be able to control the
-RTC as a parent for specific leaf clocks. This is achievable with the
-'assigned-clocks' feature of CCF OF, but it poses a significant
-architectural problem. The 'assigned-clocks' node does not lock/pin the
-parent, and a simple clk_set_rate() call can change the parent during
-rate propagation. In my opinion, an ideal solution to this problem would
-be an additional patch to the CCF core that provides this locking
-capability. As a board DTS developer, I know which clock I want to use
-as the parent and have a strong reason for doing so, and I do not wish
-to open up my parent muxing to other drivers. But until the behavior of
-'assigned-clocks' is not available, we will simply label all RTC
-children with the CLK_SET_RATE_NO_REPARENT flag.
-
-> Best regards,
-> Martin
-> 
-> 
-> [0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e323e@gmail.com/
-
--- 
-Thank you,
-Dmitry
+>
+> Fixes: 3d89d52970fd ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5332 SoC")
+> Reported-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+> ---
+>   drivers/clk/qcom/gcc-ipq5332.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+> index bdb4a0a11d07..8cacbfb10c72 100644
+> --- a/drivers/clk/qcom/gcc-ipq5332.c
+> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+> @@ -366,7 +366,7 @@ static struct clk_rcg2 gcc_adss_pwm_clk_src = {
+>   };
+>   
+>   static const struct freq_tbl ftbl_gcc_apss_axi_clk_src[] = {
+> -	F(480000000, P_GPLL4_OUT_MAIN, 2.5, 0, 0),
+> +	F(480000000, P_GPLL4_OUT_AUX, 2.5, 0, 0),
+>   	F(533333333, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
+>   	{ }
+>   };
