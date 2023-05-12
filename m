@@ -2,108 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8376FC77B7C
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 08:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22404C77B75
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 09:02:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240175AbjELIKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 12 May 2023 04:10:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41036 "EHLO
+        id S240332AbjELJCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 12 May 2023 05:02:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240411AbjELIJx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 04:09:53 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E53E72;
-        Fri, 12 May 2023 01:09:25 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id CD9B624DFDC;
-        Fri, 12 May 2023 16:09:24 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 12 May
- 2023 16:09:24 +0800
-Received: from [192.168.125.131] (113.72.146.187) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 12 May
- 2023 16:09:23 +0800
-Message-ID: <91e4fd3c-20cb-724b-c9a8-e038600aabb7@starfivetech.com>
-Date:   Fri, 12 May 2023 16:07:47 +0800
+        with ESMTP id S240316AbjELJCM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 12 May 2023 05:02:12 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B206310A1A;
+        Fri, 12 May 2023 02:02:10 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34C6gEFA009696;
+        Fri, 12 May 2023 09:02:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=7nKG4H/M+uTX77iTMQalYgs8w4+6ZX3j0hKFVi3bQoM=;
+ b=i4M2zFkyx2g3PVTEWkx7eOhVE3SU0Luq7hoDVmEqZs891Owgb6JzoxU09QZZEZaVc9fN
+ cZkiOv/dfdW4sBBswnz8Guq8lSw+C8Is+73QJFi6AY1upzQLua/R0IPrVpgQUGcCmQs+
+ /I9BMIenBsouMGgS5DSeYwsVYajtjNurZXOMDyNFA1nGsbCsDKJISDJwe8mr8pYNlycp
+ Fpo7XaXF7kYi5JYsm8C0rW+iv05zCG/+EsuLC/DYoYA+vnexFQIjtbDvJqFVKRcXj007
+ idTt1xW7OH+0Az52OFzJgnYP9Exhh3SZCNAwhwod5JobYf/XxGGfjHn6r6dchfUEEQZK 4g== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qh5g99h04-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 12 May 2023 09:02:02 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34C921ag023275
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 12 May 2023 09:02:01 GMT
+Received: from anusha-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 12 May 2023 02:01:55 -0700
+From:   Anusha Rao <quic_anusha@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
+Subject: [PATCH 0/2]] Enable crypto for ipq9574
+Date:   Fri, 12 May 2023 14:31:32 +0530
+Message-ID: <20230512090134.9811-1-quic_anusha@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v4 3/7] dt-bindings: clock: jh7110-syscrg: Add PLL clock
- inputs
-Content-Language: en-US
-To:     Conor Dooley <conor.dooley@microchip.com>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        "Emil Renner Berthing" <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
- <20230512022036.97987-4-xingyu.wu@starfivetech.com>
- <20230512-uproar-external-49a9e793fbc4@wendy>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <20230512-uproar-external-49a9e793fbc4@wendy>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.146.187]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RK4i753B7_Hlrreei9RIsyyKHoq-KwjF
+X-Proofpoint-ORIG-GUID: RK4i753B7_Hlrreei9RIsyyKHoq-KwjF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-12_05,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=564 mlxscore=0 clxscore=1011
+ priorityscore=1501 spamscore=0 impostorscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 bulkscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305120075
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/5/12 14:47, Conor Dooley wrote:
-> On Fri, May 12, 2023 at 10:20:32AM +0800, Xingyu Wu wrote:
->> Add PLL clock inputs from PLL clock generator.
->> 
->> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->> ---
->>  .../clock/starfive,jh7110-syscrg.yaml         | 20 +++++++++++++++++--
->>  1 file changed, 18 insertions(+), 2 deletions(-)
-> 
-> /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dtb: clock-controller@13020000: clocks: 'oneOf' conditional failed, one must be fixed:
-> 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
-> 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.3b.dtb: clock-controller@13020000: clock-names: 'oneOf' conditional failed, one must be fixed:
-> 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', 'i2stx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext'] is too short
-> 	'i2stx_bclk_ext' was expected
-> 	'i2stx_lrck_ext' was expected
-> 	'i2srx_bclk_ext' was expected
-> 	'i2srx_lrck_ext' was expected
-> 	'tdm_ext' was expected
-> 	'mclk_ext' was expected
-> 	'pll0_out' was expected
-> 	From schema: /Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dtb: clock-controller@13020000: clocks: 'oneOf' conditional failed, one must be fixed:
-> 	[[19], [20], [21], [22], [23], [24], [25], [26], [27]] is too short
-> 	From schema: Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> /tmp/tmp.KDlzwQM5ma/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2-v1.2a.dtb: clock-controller@13020000: clock-names: 'oneOf' conditional failed, one must be fixed:
-> 	['osc', 'gmac1_rmii_refin', 'gmac1_rgmii_rxin', 'i2stx_bclk_ext', 'i2stx_lrck_ext', 'i2srx_bclk_ext', 'i2srx_lrck_ext', 'tdm_ext', 'mclk_ext'] is too short
-> 	'i2stx_bclk_ext' was expected
-> 	'i2stx_lrck_ext' was expected
-> 	'i2srx_bclk_ext' was expected
-> 	'i2srx_lrck_ext' was expected
-> 	'tdm_ext' was expected
-> 	'mclk_ext' was expected
-> 	'pll0_out' was expected
-> 	Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-> 
-> This binding change is incompatible with the existing devicetrees for
-> the visionfive 2.
+Update GCC driver to include clocks required for crypto.
+Enable crypto nodes in ipq9574.
 
-This looks like less clocks about PLL in SYSCRG node. And I add this in patch 7.
+DTS patch depends on the below series
+https://lore.kernel.org/linux-arm-msm/20230329053726.14860-1-quic_kathirav@quicinc.com/
 
-Best regards,
-Xingyu Wu
+Anusha Rao (2):
+  clk: qcom: gcc-ipq9574: Enable crypto clocks
+  arm64: dts: qcom: ipq9574: Enable crypto nodes
+
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi        | 20 ++++++
+ drivers/clk/qcom/gcc-ipq9574.c               | 72 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h |  4 ++
+ include/dt-bindings/reset/qcom,ipq9574-gcc.h |  2 +-
+ 4 files changed, 97 insertions(+), 1 deletion(-)
+
+
+base-commit: aabe491169befbe5481144acf575a0260939764a
+-- 
+2.17.1
+
