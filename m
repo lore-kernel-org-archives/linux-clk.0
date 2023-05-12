@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ED2C7EE32
-	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 00:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D766AC77B7F
+	for <linux-clk@archiver.kernel.org>; Fri, 12 May 2023 00:13:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239630AbjELANn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 May 2023 20:13:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34624 "EHLO
+        id S239603AbjELANo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 May 2023 20:13:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239618AbjELANk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 20:13:40 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66F6D61B3
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:13:38 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f24d4900bbso6891309e87.3
-        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:13:38 -0700 (PDT)
+        with ESMTP id S239627AbjELANm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 May 2023 20:13:42 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF0B15BB2
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:13:39 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2ac82c08542so93851051fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 11 May 2023 17:13:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1683850416; x=1686442416;
+        d=linaro.org; s=google; t=1683850418; x=1686442418;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EdUICkWxwUjuhvguH8xyDqg9XBNhUuJ2REN1syLS9vw=;
-        b=S0JI8pIHiDDfAQyqo5n8SyLVtpVs8i1x4dltjWNMz6n8oiyi8O+rwbbvSX5covn/lG
-         ogXh4BxnF0Fh+jyPAJirtXYFyyxkRrK6z6lxJFbAJdopZ0zYhD5MOMTYmbbw5Qg9TWBp
-         i8MdeOnAgKSzB08XHO3zL4nxk9mKsKjIKJ0f8qFLC4fDeSNctsf31u5gj0VkcC/QfqRZ
-         1ayjq4MmeNVOzXgIJdh94DoEipH3tlDv+oeC3b5HxsOSmmYiJJ/LMOjzkK6Axtx8cfpf
-         C3VWAD8aMxMGFKZUk1coHl0Ij8hhYVeDDWdRnAqnSz3qqbnyBv0li/usAXDVWmoESHjG
-         hRRg==
+        bh=P347Hf7iyYzkM3saYrQWkx2EDd1BnKEXa+x5POJNVb8=;
+        b=mFeQnVf7VfjOVNxrPnHXmiU5Q9rm7tbMc2JR0YFb5eLl+ZvcA9+QkyT2mn6SQ+gTm4
+         JWVLnWgtRt8SPz2JbFMcI+gcNEgzf5SzT35vrL5b8yj1i5FvHJ7VQh9XciKFwAY2sbf2
+         xF78YBcXg+oSaAhr+xvkJTpn3T7Zws/olnvLrrC/7GQ7oMLjGwJPHKW/AU/x71AFGNFC
+         plk6b2w3hi6Ug3K+LB4E3M+2stxHrE26rJGNVw80l/X1ZWN3npuqtRfLsJuOvHuboicx
+         fgIye68lkA34K36u8Qj6LfXTPr1peDgTfHAdWIj7kjCQiT/SzoUcoyLT52Dudn/LyMSm
+         61tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683850416; x=1686442416;
+        d=1e100.net; s=20221208; t=1683850418; x=1686442418;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EdUICkWxwUjuhvguH8xyDqg9XBNhUuJ2REN1syLS9vw=;
-        b=MgUlBueSV5Vb5BvaJk1wI4yVWSdzyLYsh6velqndlxgbv4k/agGbtek8lHWZ1D5fm9
-         Ic24d3CD4xRH7ikSCuC6lwlHOBoqJ4NMqo/LQq/1tt5BZ0m4xeQht6udzFgtYIxdPRx9
-         3sKIe12ak/MwfYOn7cAH36f7sZH77Ns09M77KjcD3xhXMKXxdrOooxRRJPPt9ZVT/1QX
-         +vMsnUveIs37QrYQOZceUI1tu6vRqkVQEadPg94ELZ19/f2Hkf6kvbE7hzSOAQ2+bpI+
-         7BEfVAMb+zIFg6hjVgAbbzrypfvwLKcJvROqU1UAMp+7KbJsD90pE3qA9H73mgMhwRir
-         oSWg==
-X-Gm-Message-State: AC+VfDzYmuIiqNRmJ5xsCK2yoFE8XZxd2avvpADU2DkRqeSVfind659O
-        nbPzV8DIPygJSBh994sZ9RCioQ==
-X-Google-Smtp-Source: ACHHUZ4jKyaEkSkcBf4+gAXytzszVQic0VODR+8n7aItYYqrHpQhJWnlXNZaeJ3vn/2IJv1CtF3DNA==
-X-Received: by 2002:a19:7403:0:b0:4ef:ff42:b13 with SMTP id v3-20020a197403000000b004efff420b13mr2890798lfe.65.1683850416500;
-        Thu, 11 May 2023 17:13:36 -0700 (PDT)
+        bh=P347Hf7iyYzkM3saYrQWkx2EDd1BnKEXa+x5POJNVb8=;
+        b=MIiZHpvznBAtG9IrfQKMWowBQ+ZwgY/JpIQd8zzZH5MCddADyMbLCwpRoSlwFybpwB
+         zra7tLzGiWSvZ0c15usX23Yw8G1hF1aSBbu9eBRcfnyMaGaQNMmUrkUCIa2MUX3eJwLJ
+         /VSjdyttzLTjBKmlbR+m/7Zg18T/v1ghVhinCmzZF/Ga7Tl3TL26mkMl7+/WMLLemdfD
+         1QyBblXbTGfzuveUXadrdP9OmGUZNy1MsLsp+aEQoIIRd6XGFbYD7izqrcbMOWOb2WOa
+         yud2cKYYD0cxydqVQ2ElUe07iRkuG98VkO1tjRS7Arm3E4UKuIrVWumSPSqHirmcfYLt
+         AeiQ==
+X-Gm-Message-State: AC+VfDz0t4OP2aErH1x0fSTgVbiPT115TkQsw44hWQwy9s5wiZLoi9RX
+        12D8EsBtqQb0lR68ph04lSRQ/w==
+X-Google-Smtp-Source: ACHHUZ6b4Ctx+dB9wGezToRlxGuqD50sYwy8w+yH2eqNl75dXdRMuVN7QkRMg9J29sDSWnngvNt/vw==
+X-Received: by 2002:a2e:990a:0:b0:29d:d0b:7a78 with SMTP id v10-20020a2e990a000000b0029d0d0b7a78mr4132405lji.21.1683850418071;
+        Thu, 11 May 2023 17:13:38 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id p15-20020ac246cf000000b004f13c3cb9ffsm1258109lfo.200.2023.05.11.17.13.35
+        by smtp.gmail.com with ESMTPSA id p15-20020ac246cf000000b004f13c3cb9ffsm1258109lfo.200.2023.05.11.17.13.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 May 2023 17:13:35 -0700 (PDT)
+        Thu, 11 May 2023 17:13:37 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -63,9 +63,9 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         Yassine Oudjana <y.oudjana@protonmail.com>,
         linux-pm@vger.kernel.org
-Subject: [PATCH v6 2/4] interconnect: add clk-based icc provider support
-Date:   Fri, 12 May 2023 03:13:32 +0300
-Message-Id: <20230512001334.2983048-3-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v6 4/4] arm64: dts: qcom: msm8996: scale CBF clock according to the CPUfreq
+Date:   Fri, 12 May 2023 03:13:34 +0300
+Message-Id: <20230512001334.2983048-5-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230512001334.2983048-1-dmitry.baryshkov@linaro.org>
 References: <20230512001334.2983048-1-dmitry.baryshkov@linaro.org>
@@ -75,252 +75,342 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For some devices it is useful to export clocks as interconnect providers,
-if the clock corresponds to bus bandwidth.
+Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
+according to CPU frequencies.
 
-For example, on MSM8996 the cluster interconnect clock should be scaled
-according to the cluster frequencies. Exporting it as an interconnect
-allows one to properly describe this as the cluster bandwidth
-requirements.
-
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/interconnect/Kconfig     |   6 ++
- drivers/interconnect/Makefile    |   2 +
- drivers/interconnect/icc-clk.c   | 168 +++++++++++++++++++++++++++++++
- include/linux/interconnect-clk.h |  22 ++++
- 4 files changed, 198 insertions(+)
- create mode 100644 drivers/interconnect/icc-clk.c
- create mode 100644 include/linux/interconnect-clk.h
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 51 +++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
 
-diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
-index d637a89d4695..5faa8d2aecff 100644
---- a/drivers/interconnect/Kconfig
-+++ b/drivers/interconnect/Kconfig
-@@ -15,4 +15,10 @@ source "drivers/interconnect/imx/Kconfig"
- source "drivers/interconnect/qcom/Kconfig"
- source "drivers/interconnect/samsung/Kconfig"
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 2b35cb3f5292..5b006cebe47c 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/interconnect/qcom,msm8996.h>
++#include <dt-bindings/interconnect/qcom,msm8996-cbf.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/power/qcom-rpmpd.h>
+ #include <dt-bindings/soc/qcom,apr.h>
+@@ -49,6 +50,7 @@ CPU0: cpu@0 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 0>;
++			interconnects = <&cbf MASTER_CBF_M4M &cbf SLAVE_CBF_M4M>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+@@ -66,6 +68,7 @@ CPU1: cpu@1 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 0>;
++			interconnects = <&cbf MASTER_CBF_M4M &cbf SLAVE_CBF_M4M>;
+ 			operating-points-v2 = <&cluster0_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+@@ -79,6 +82,7 @@ CPU2: cpu@100 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 1>;
++			interconnects = <&cbf MASTER_CBF_M4M &cbf SLAVE_CBF_M4M>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+@@ -96,6 +100,7 @@ CPU3: cpu@101 {
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&kryocc 1>;
++			interconnects = <&cbf MASTER_CBF_M4M &cbf SLAVE_CBF_M4M>;
+ 			operating-points-v2 = <&cluster1_opp>;
+ 			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+@@ -147,91 +152,109 @@ opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-422400000 {
+ 			opp-hz = /bits/ 64 <422400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <384000>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <460800>;
+ 		};
+ 		opp-844800000 {
+ 			opp-hz = /bits/ 64 <844800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <537600>;
+ 		};
+ 		opp-960000000 {
+ 			opp-hz = /bits/ 64 <960000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <825600>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <825600>;
+ 		};
+ 		opp-1228800000 {
+ 			opp-hz = /bits/ 64 <1228800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <902400>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
+ 			opp-supported-hw = <0xd>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1056000>;
+ 		};
+ 		opp-1363200000 {
+ 			opp-hz = /bits/ 64 <1363200000>;
+ 			opp-supported-hw = <0x2>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1132800>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
+ 			opp-supported-hw = <0xd>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1132800>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
+ 			opp-supported-hw = <0x9>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1190400>;
+ 		};
+ 		opp-1497600000 {
+ 			opp-hz = /bits/ 64 <1497600000>;
+ 			opp-supported-hw = <0x04>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1593600000 {
+ 			opp-hz = /bits/ 64 <1593600000>;
+ 			opp-supported-hw = <0x9>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1382400>;
+ 		};
+ 	};
  
-+config INTERCONNECT_CLK
-+	tristate
-+	depends on COMMON_CLK
-+	help
-+	  Support for wrapping clocks into the interconnect nodes.
-+
- endif
-diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-index 97d393fd638d..5604ce351a9f 100644
---- a/drivers/interconnect/Makefile
-+++ b/drivers/interconnect/Makefile
-@@ -7,3 +7,5 @@ obj-$(CONFIG_INTERCONNECT)		+= icc-core.o
- obj-$(CONFIG_INTERCONNECT_IMX)		+= imx/
- obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
- obj-$(CONFIG_INTERCONNECT_SAMSUNG)	+= samsung/
-+
-+obj-$(CONFIG_INTERCONNECT_CLK)		+= icc-clk.o
-diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
-new file mode 100644
-index 000000000000..0db3b654548b
---- /dev/null
-+++ b/drivers/interconnect/icc-clk.c
-@@ -0,0 +1,168 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2023, Linaro Ltd.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/interconnect-clk.h>
-+#include <linux/interconnect-provider.h>
-+
-+struct icc_clk_node {
-+	struct clk *clk;
-+	bool enabled;
-+};
-+
-+struct icc_clk_provider {
-+	struct icc_provider provider;
-+	int num_clocks;
-+	struct icc_clk_node clocks[];
-+};
-+
-+#define to_icc_clk_provider(_provider) \
-+	container_of(_provider, struct icc_clk_provider, provider)
-+
-+static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
-+{
-+	struct icc_clk_node *qn = src->data;
-+	int ret;
-+
-+	if (!qn || !qn->clk)
-+		return 0;
-+
-+	if (!src->peak_bw) {
-+		if (qn->enabled)
-+			clk_disable_unprepare(qn->clk);
-+		qn->enabled = false;
-+
-+		return 0;
-+	}
-+
-+	if (!qn->enabled) {
-+		ret = clk_prepare_enable(qn->clk);
-+		if (ret)
-+			return ret;
-+		qn->enabled = true;
-+	}
-+
-+	return clk_set_rate(qn->clk, icc_units_to_bps(src->peak_bw));
-+}
-+
-+static int icc_clk_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
-+{
-+	struct icc_clk_node *qn = node->data;
-+
-+	if (!qn || !qn->clk)
-+		*peak = INT_MAX;
-+	else
-+		*peak = Bps_to_icc(clk_get_rate(qn->clk));
-+
-+	return 0;
-+}
-+
-+/**
-+ * icc_clk_register() - register a new clk-based interconnect provider
-+ * @dev: device supporting this provider
-+ * @first_id: an ID of the first provider's node
-+ * @num_clocks: number of instances of struct icc_clk_data
-+ * @data: data for the provider
-+ *
-+ * Registers and returns a clk-based interconnect provider. It is a simple
-+ * wrapper around COMMON_CLK framework, allowing other devices to vote on the
-+ * clock rate.
-+ *
-+ * Return: 0 on success, or an error code otherwise
-+ */
-+struct icc_provider *icc_clk_register(struct device *dev,
-+				      unsigned int first_id,
-+				      unsigned int num_clocks,
-+				      const struct icc_clk_data *data)
-+{
-+	struct icc_clk_provider *qp;
-+	struct icc_provider *provider;
-+	struct icc_onecell_data *onecell;
-+	struct icc_node *node;
-+	int ret, i, j;
-+
-+	onecell = devm_kzalloc(dev, struct_size(onecell, nodes, 2 * num_clocks), GFP_KERNEL);
-+	if (!onecell)
-+		return ERR_PTR(-ENOMEM);
-+
-+	qp = devm_kzalloc(dev, struct_size(qp, clocks, num_clocks), GFP_KERNEL);
-+	if (!qp)
-+		return ERR_PTR(-ENOMEM);
-+
-+	qp->num_clocks = num_clocks;
-+
-+	provider = &qp->provider;
-+	provider->dev = dev;
-+	provider->get_bw = icc_clk_get_bw;
-+	provider->set = icc_clk_set;
-+	provider->aggregate = icc_std_aggregate;
-+	provider->xlate = of_icc_xlate_onecell;
-+	INIT_LIST_HEAD(&provider->nodes);
-+	provider->data = onecell;
-+
-+	icc_provider_init(provider);
-+
-+	for (i = 0, j = 0; i < num_clocks; i++) {
-+		qp->clocks[i].clk = data[i].clk;
-+
-+		node = icc_node_create(first_id + j);
-+		if (IS_ERR(node)) {
-+			ret = PTR_ERR(node);
-+			goto err;
-+		}
-+
-+		node->name = devm_kasprintf(dev, GFP_KERNEL, "%s_master", data[i].name);
-+		node->data = &qp->clocks[i];
-+		icc_node_add(node, provider);
-+		/* link to the next node, slave */
-+		icc_link_create(node, first_id + j + 1);
-+		onecell->nodes[j++] = node;
-+
-+		node = icc_node_create(first_id + j);
-+		if (IS_ERR(node)) {
-+			ret = PTR_ERR(node);
-+			goto err;
-+		}
-+
-+		node->name = devm_kasprintf(dev, GFP_KERNEL, "%s_slave", data[i].name);
-+		/* no data for slave node */
-+		icc_node_add(node, provider);
-+		onecell->nodes[j++] = node;
-+	}
-+
-+	onecell->num_nodes = j;
-+
-+	ret = icc_provider_register(provider);
-+	if (ret)
-+		goto err;
-+
-+	return provider;
-+
-+err:
-+	icc_nodes_remove(provider);
-+
-+	return ERR_PTR(ret);
-+}
-+
-+/**
-+ * icc_clk_unregister() - unregister a previously registered clk interconnect provider
-+ * @provider: provider returned by icc_clk_register()
-+ */
-+void icc_clk_unregister(struct icc_provider *provider)
-+{
-+	struct icc_clk_provider *qp = container_of(provider, struct icc_clk_provider, provider);
-+	int i;
-+
-+	icc_provider_deregister(&qp->provider);
-+	icc_nodes_remove(&qp->provider);
-+
-+	for (i = 0; i < qp->num_clocks; i++) {
-+		struct icc_clk_node *qn = &qp->clocks[i];
-+
-+		if (qn->enabled)
-+			clk_disable_unprepare(qn->clk);
-+	}
-+}
-diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
-new file mode 100644
-index 000000000000..0cd80112bea5
---- /dev/null
-+++ b/include/linux/interconnect-clk.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2023, Linaro Ltd.
-+ */
-+
-+#ifndef __LINUX_INTERCONNECT_CLK_H
-+#define __LINUX_INTERCONNECT_CLK_H
-+
-+struct device;
-+
-+struct icc_clk_data {
-+	struct clk *clk;
-+	const char *name;
-+};
-+
-+struct icc_provider *icc_clk_register(struct device *dev,
-+				      unsigned int first_id,
-+				      unsigned int num_clocks,
-+				      const struct icc_clk_data *data);
-+void icc_clk_unregister(struct icc_provider *provider);
-+
-+#endif
+@@ -245,136 +268,163 @@ opp-307200000 {
+ 			opp-hz = /bits/ 64 <307200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-403200000 {
+ 			opp-hz = /bits/ 64 <403200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-480000000 {
+ 			opp-hz = /bits/ 64 <480000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-556800000 {
+ 			opp-hz = /bits/ 64 <556800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-652800000 {
+ 			opp-hz = /bits/ 64 <652800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-729600000 {
+ 			opp-hz = /bits/ 64 <729600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <307200>;
+ 		};
+ 		opp-806400000 {
+ 			opp-hz = /bits/ 64 <806400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <384000>;
+ 		};
+ 		opp-883200000 {
+ 			opp-hz = /bits/ 64 <883200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <460800>;
+ 		};
+ 		opp-940800000 {
+ 			opp-hz = /bits/ 64 <940800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <537600>;
+ 		};
+ 		opp-1036800000 {
+ 			opp-hz = /bits/ 64 <1036800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <595200>;
+ 		};
+ 		opp-1113600000 {
+ 			opp-hz = /bits/ 64 <1113600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1190400000 {
+ 			opp-hz = /bits/ 64 <1190400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <672000>;
+ 		};
+ 		opp-1248000000 {
+ 			opp-hz = /bits/ 64 <1248000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <748800>;
+ 		};
+ 		opp-1324800000 {
+ 			opp-hz = /bits/ 64 <1324800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <825600>;
+ 		};
+ 		opp-1401600000 {
+ 			opp-hz = /bits/ 64 <1401600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <902400>;
+ 		};
+ 		opp-1478400000 {
+ 			opp-hz = /bits/ 64 <1478400000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <979200>;
+ 		};
+ 		opp-1555200000 {
+ 			opp-hz = /bits/ 64 <1555200000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1056000>;
+ 		};
+ 		opp-1632000000 {
+ 			opp-hz = /bits/ 64 <1632000000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1190400>;
+ 		};
+ 		opp-1708800000 {
+ 			opp-hz = /bits/ 64 <1708800000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1228800>;
+ 		};
+ 		opp-1785600000 {
+ 			opp-hz = /bits/ 64 <1785600000>;
+ 			opp-supported-hw = <0xf>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1804800000 {
+ 			opp-hz = /bits/ 64 <1804800000>;
+ 			opp-supported-hw = <0xe>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1824000000 {
+ 			opp-hz = /bits/ 64 <1824000000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1382400>;
+ 		};
+ 		opp-1900800000 {
+ 			opp-hz = /bits/ 64 <1900800000>;
+ 			opp-supported-hw = <0x4>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1305600>;
+ 		};
+ 		opp-1920000000 {
+ 			opp-hz = /bits/ 64 <1920000000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1459200>;
+ 		};
+ 		opp-1996800000 {
+ 			opp-hz = /bits/ 64 <1996800000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1593600>;
+ 		};
+ 		opp-2073600000 {
+ 			opp-hz = /bits/ 64 <2073600000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1593600>;
+ 		};
+ 		opp-2150400000 {
+ 			opp-hz = /bits/ 64 <2150400000>;
+ 			opp-supported-hw = <0x1>;
+ 			clock-latency-ns = <200000>;
++			opp-peak-kBps = <1593600>;
+ 		};
+ 	};
+ 
+@@ -3549,6 +3599,7 @@ cbf: clock-controller@9a11000 {
+ 			reg = <0x09a11000 0x10000>;
+ 			clocks = <&rpmcc RPM_SMD_XO_A_CLK_SRC>, <&apcs_glb>;
+ 			#clock-cells = <0>;
++			#interconnect-cells = <1>;
+ 		};
+ 
+ 		intc: interrupt-controller@9bc0000 {
 -- 
 2.39.2
 
