@@ -2,117 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4687C7EE26
-	for <linux-clk@archiver.kernel.org>; Sun, 14 May 2023 19:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B65C77B7F
+	for <linux-clk@archiver.kernel.org>; Sun, 14 May 2023 20:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234864AbjENTU3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 May 2023 15:20:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45476 "EHLO
+        id S230166AbjENUyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 May 2023 16:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235550AbjENTU2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2023 15:20:28 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4753719A6
-        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 12:20:27 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QKC523Lnnz9sQp;
-        Sun, 14 May 2023 21:20:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1684092022;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gZM5ZzjtFg/rYXLHRzCfNvOVOMDqKgxi6keltv+A8jM=;
-        b=SYeiz9Jst9mGRjgXg9VlfyTkuoXkRHjMehO9/hoR3aSWlADuBs23xY9sgTEqBYc8oDZphX
-        1+AvbCbQk8zPDybvCtp3MKtUImc2nbrwGRhNarVoNwLhl0Xpyhf7Ri36ERDXtYnSSHm6Kd
-        RgyyjXpMbZXncXu3QZ8tLQUmNGzuCVIs4Nu4b4l56POriKLZmNt5hVV3oh6BXh0a73KlN/
-        sWS0XDvtsOmSUtjUfOYUE/Ye4k+7MQh8TB3HBcUAaZz8U4k9u7nitTZXgPSChqYK+XMvUi
-        lnPl/gSQzIZlBBdaxpzBF9qm4MNGSodldNv7WZe0i0g2+f4g3jPMT1bZziV+Ag==
-From:   Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1684092020;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=gZM5ZzjtFg/rYXLHRzCfNvOVOMDqKgxi6keltv+A8jM=;
-        b=HtTO8Mx16X1JWK2rHsQksSgy8hxBe2wjoPFgdPFBWdDSqTDsW/2NbOLcvgMCAKG/FTM/Pn
-        QoeLg7iL8Q2FX3YcZ7PIOtvsWAUIk+fqf3s5ZtoTWYQp4teLfOOeLTwUpYAFkzu9eZZMo8
-        y6X8luIMyBZb79ih64v4ltt17RO7rCgeZPHGmUelqkmbNyKdUhqFFKruKwRlh++EBGSSox
-        guMXkgw7sFH8HkAH6F60BkZP+lppQakT3ic/aaTDaupAYvd5u8HKBo/oQL3YtHFZgQFKXg
-        MPyKuKCSxlb36ohd3+i3LRXTRRjBY8AKuoT12LbIQrkCHlyIyFyWCfrbvlzgyQ==
-To:     linux-clk@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tom Rix <trix@redhat.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: vc7: Use device_get_match_data() instead of of_device_get_match_data()
-Date:   Sun, 14 May 2023 21:19:59 +0200
-Message-Id: <20230514191959.706269-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20230514191959.706269-1-marek.vasut+renesas@mailbox.org>
-References: <20230514191959.706269-1-marek.vasut+renesas@mailbox.org>
+        with ESMTP id S229539AbjENUyH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2023 16:54:07 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10C44E7A;
+        Sun, 14 May 2023 13:54:06 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-50bd37ca954so105732759a12.0;
+        Sun, 14 May 2023 13:54:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20221208; t=1684097644; x=1686689644;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YYXzQGD4CK+PR6VYYUVHfW34nIF3O8YOM3IMJi2QYTs=;
+        b=JSTgRl2SmfcWopA251KJrDng3cAoIp4gpXTE6HFK9VY+6/gwM2oVqDfKldQgX8ptxo
+         ApgzLBeMR+G9CV6GSQ1WbFQDz4JP11YlBscQtb9vLloHBDuTmjLnfPNHnQqqOhQL2wOR
+         D8XEOc1beJW1wZQV228VMaPTxOF8pfC1mTBIfiJkgO9u0SsWl/PMIZ+dJPxvEG26pPxr
+         kNi1tn/9CXQAwmp4Zk0wcOAi2qA3/Dte0Vu1JaJye6PjrDi9B6fsFjqAPWW/uDTF2HHG
+         Ga/dYwkzcGXFnrm4TTqdpY2EopR2rqmjhwB3DUE+tLcqNPzlwEMylXAYql2Rvv8CFSJ0
+         xoBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684097644; x=1686689644;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YYXzQGD4CK+PR6VYYUVHfW34nIF3O8YOM3IMJi2QYTs=;
+        b=dO3VdFlz3jotZyhalChm4OAc7Bhd70xGrrBkuWD1xg+4VY/h/mEKwsYPfy3LBjP3Eh
+         2RuagVArPmHS/hzdYGqoNu8/C0zfOZ0Z0abnWxwdTS2pNVVz0aqnYPhex+amkXvGbAnM
+         NExAZdR5UNmQREvEZ1ilwJHI65jfTdGndpB5MACf+Ppt+IKdPUqfRCSdmccrQ9Vekyan
+         CBnGCzU5xYpxC9V5iqdthURRQ4HmZhG8hOqTMKm9Caw16jDXJOk9Lx0Zk67gfPmrkzxR
+         1a0xa0V6STkp45rjdbaGnQYHelNUhqeWlh5rU8/ZHczrmRtg8oLO0SLRvJd3ax8ORay4
+         s8zw==
+X-Gm-Message-State: AC+VfDztC+xmh95z5X69RyRG2p+DyKLIbEnWseQW5jDgqiMhQZUcxBo1
+        9Z2js7CgRnBvNI4F/+UPMn6TrFenquBYFqTQXoc=
+X-Google-Smtp-Source: ACHHUZ6aAc7g+tuqtm7m+Fo4Q/ZkFtq4577x7D2m+gvXW5qmQnJ1rjCVz8GazQhyDuyNmWlvfQcoabyoo8++z0bEXLY=
+X-Received: by 2002:a17:907:6e06:b0:969:c354:7d9a with SMTP id
+ sd6-20020a1709076e0600b00969c3547d9amr17320894ejc.12.1684097644271; Sun, 14
+ May 2023 13:54:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: bc96a341453e96c3f4f
-X-MBO-RS-META: jfnwzbj7be4rmde9irnsngfbc7x91zaj
-X-Rspamd-Queue-Id: 4QKC523Lnnz9sQp
+References: <20230405195927.13487-1-ddrokosov@sberdevices.ru>
+ <20230405195927.13487-5-ddrokosov@sberdevices.ru> <CAFBinCA3uZXzr3RgnWnKV5Qr-CPaZQX5joDg319i_cgzhLJy2g@mail.gmail.com>
+ <20230425123304.xjmrkraybp2siwdw@CAB-WSD-L081021> <CAFBinCCqx1oHf+PcXBkeRYHnGQChbTTPRyD8SJU+ait+TG+AjQ@mail.gmail.com>
+ <20230511132606.vk52yorf43alwgew@CAB-WSD-L081021>
+In-Reply-To: <20230511132606.vk52yorf43alwgew@CAB-WSD-L081021>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 14 May 2023 22:53:53 +0200
+Message-ID: <CAFBinCCmNLQF_qV3k4kgDEAsemEsjL-GQtPex7Pmxrc2sHx30A@mail.gmail.com>
+Subject: Re: [PATCH v13 4/6] clk: meson: a1: add Amlogic A1 PLL clock
+ controller driver
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use device_get_match_data() which, unlike of_device_get_match_data(),
-is compatible with other firmware interfaces than just OF.
+Hi Dmitry.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Alex Helms <alexander.helms.jy@renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Tom Rix <trix@redhat.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Explicitly include linux/property.h
----
- drivers/clk/clk-versaclock7.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Thu, May 11, 2023 at 3:26=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
+es.ru> wrote:
+[...]
+> > If you agree with my statement from above I'll be able to make my
+> > original question more specific:
+> > Since we know that we have all the required inputs for fixed_pll,
+> > sys_pll and hifi_pll - do you know what AUDDDS is and whether it
+> > requires any specific clock inputs (other than "fixpll_in" and
+> > "hifipll_in")?
+> >
+>
+> To be honest, I have prepared A1 peripherals and A1 PLL drivers based on =
+very
+> poor Amlogic datasheets and custom 4.19-based vendor drivers.
+> The vendor driver has an AUDDDS clock in the PLL clock part, but it is no=
+t
+> used anywhere. Unfortunately, as usual, the datasheet doesn't provide any
+> information or explanation about what it is. However, the driver has a fe=
+w
+> lines of comments that indicate:
+>
+>     /*
+>      * aud dds clock is not pll clock, not divider clock,
+>      * No clock model can describe it.
+>      * So we regard it as a gate, and the gate ops
+>      * should realize lonely.
+>      */
+>
+> Additionally, the vendor driver states that AUDDDS has a 49Mhz clock,
+> but I do not see any relationship with other clocks (including the export=
+ed
+> GENCLK).
+> Jian did not include it in the first version of the PLL driver, and I hav=
+e
+> decided not to change it either.
+>
+> I also noticed a few lines of AUDDDS initialization sequences in the vend=
+or
+> driver, which may affect CPU clock objects (from my point of view).
+> However, they are currently under development, and I will try to figure i=
+t
+> out with Amlogic support.
+>
+> > > However, I do not believe this to be a significant issue. The clock D=
+T
+> > > bindings are organized to simplify the process of introducing new bin=
+dings,
+> > > whether public or private. For instance, we may add new bindings to
+> > > include/dt-bindings at the end of the list and increase the overall n=
+umber,
+> > > without disrupting the DT bindings ABI (the old numbers will remain
+> > > unchanged).
+> > Yep, this part is clear to me. I should have been more specific that I
+> > was asking about the inputs that are described in the .yaml file, not
+> > the clock IDs.
+>
+> Actually, AUDDDS has an xtal2dds parent clock, and if we need to have
+> the AUDDDS clock in the PLL driver, we should add one more link between
+> peripherals and PLL drivers.
+>
+> Let me know if you have any questions.
+I have no questions - all I can say is that:
+- I like your approach of clarifying details of the AUDDDS clock with Amlog=
+ic
+- and I fully agree with your conclusion that (depending on what
+Amlogic says) we need one more link from the PLL driver to the AUDDDS
+clock
 
-diff --git a/drivers/clk/clk-versaclock7.c b/drivers/clk/clk-versaclock7.c
-index 0ae191f50b4b..42abd5da6675 100644
---- a/drivers/clk/clk-versaclock7.c
-+++ b/drivers/clk/clk-versaclock7.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
-+#include <linux/property.h>
- #include <linux/regmap.h>
- #include <linux/swab.h>
- 
-@@ -1108,7 +1109,7 @@ static int vc7_probe(struct i2c_client *client)
- 
- 	i2c_set_clientdata(client, vc7);
- 	vc7->client = client;
--	vc7->chip_info = of_device_get_match_data(&client->dev);
-+	vc7->chip_info = device_get_match_data(&client->dev);
- 
- 	vc7->pin_xin = devm_clk_get(&client->dev, "xin");
- 	if (PTR_ERR(vc7->pin_xin) == -EPROBE_DEFER) {
--- 
-2.39.2
+Thank you for your persistence with this series, I'm sure it will pay
+off in the long run!
 
+
+Best regards,
+Martin
