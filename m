@@ -2,148 +2,146 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B65C77B7F
-	for <linux-clk@archiver.kernel.org>; Sun, 14 May 2023 20:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A8DC77B7D
+	for <linux-clk@archiver.kernel.org>; Sun, 14 May 2023 22:36:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230166AbjENUyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 May 2023 16:54:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38272 "EHLO
+        id S230116AbjENWgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 14 May 2023 18:36:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbjENUyH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2023 16:54:07 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10C44E7A;
-        Sun, 14 May 2023 13:54:06 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-50bd37ca954so105732759a12.0;
-        Sun, 14 May 2023 13:54:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1684097644; x=1686689644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YYXzQGD4CK+PR6VYYUVHfW34nIF3O8YOM3IMJi2QYTs=;
-        b=JSTgRl2SmfcWopA251KJrDng3cAoIp4gpXTE6HFK9VY+6/gwM2oVqDfKldQgX8ptxo
-         ApgzLBeMR+G9CV6GSQ1WbFQDz4JP11YlBscQtb9vLloHBDuTmjLnfPNHnQqqOhQL2wOR
-         D8XEOc1beJW1wZQV228VMaPTxOF8pfC1mTBIfiJkgO9u0SsWl/PMIZ+dJPxvEG26pPxr
-         kNi1tn/9CXQAwmp4Zk0wcOAi2qA3/Dte0Vu1JaJye6PjrDi9B6fsFjqAPWW/uDTF2HHG
-         Ga/dYwkzcGXFnrm4TTqdpY2EopR2rqmjhwB3DUE+tLcqNPzlwEMylXAYql2Rvv8CFSJ0
-         xoBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684097644; x=1686689644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YYXzQGD4CK+PR6VYYUVHfW34nIF3O8YOM3IMJi2QYTs=;
-        b=dO3VdFlz3jotZyhalChm4OAc7Bhd70xGrrBkuWD1xg+4VY/h/mEKwsYPfy3LBjP3Eh
-         2RuagVArPmHS/hzdYGqoNu8/C0zfOZ0Z0abnWxwdTS2pNVVz0aqnYPhex+amkXvGbAnM
-         NExAZdR5UNmQREvEZ1ilwJHI65jfTdGndpB5MACf+Ppt+IKdPUqfRCSdmccrQ9Vekyan
-         CBnGCzU5xYpxC9V5iqdthURRQ4HmZhG8hOqTMKm9Caw16jDXJOk9Lx0Zk67gfPmrkzxR
-         1a0xa0V6STkp45rjdbaGnQYHelNUhqeWlh5rU8/ZHczrmRtg8oLO0SLRvJd3ax8ORay4
-         s8zw==
-X-Gm-Message-State: AC+VfDztC+xmh95z5X69RyRG2p+DyKLIbEnWseQW5jDgqiMhQZUcxBo1
-        9Z2js7CgRnBvNI4F/+UPMn6TrFenquBYFqTQXoc=
-X-Google-Smtp-Source: ACHHUZ6aAc7g+tuqtm7m+Fo4Q/ZkFtq4577x7D2m+gvXW5qmQnJ1rjCVz8GazQhyDuyNmWlvfQcoabyoo8++z0bEXLY=
-X-Received: by 2002:a17:907:6e06:b0:969:c354:7d9a with SMTP id
- sd6-20020a1709076e0600b00969c3547d9amr17320894ejc.12.1684097644271; Sun, 14
- May 2023 13:54:04 -0700 (PDT)
+        with ESMTP id S229534AbjENWgA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2023 18:36:00 -0400
+X-Greylist: delayed 1799 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 14 May 2023 15:35:59 PDT
+Received: from hall.aurel32.net (hall.aurel32.net [IPv6:2001:bc8:30d7:100::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 077A010EF
+        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 15:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+        ; s=202004.hall; h=In-Reply-To:Content-Type:MIME-Version:References:
+        Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:From:Reply-To:
+        Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+        bh=Le/EDFx24rD9UDUsnqI9SxJ9Hh1UhhshlO7B1XJaioE=; b=O5HpHVhGQsxuePlD8N1aIBPW9l
+        XWTN4LRjYLi4I7HVM06cfSX7UvoPTvI8tyVVnwIk5yrYs4bia0UcvjQPMPg937Kat8fkcM/ZkZrE7
+        gymTZ6OXc7j/874dsbvVTwCTl2/gg8HdgbOcxNGgnWKk3Vr54le6KLJoZcbxYMN7TntPJV1Jsfo8l
+        bO1/EOXwNRu6rI507iXCIrUwEhFX9ZID973uB509beemwmfQSFP/uv8VpBChFjTiTFgsasb7t+uXU
+        IAJBRzj6FuBYzGXgt4X7ydhk+QtuFjXhUu1/qN01Bv/0HolOW0iidrBB8TmREmglipTebV9T1TqPa
+        caU+v1dQ==;
+Received: from [2a01:e34:ec5d:a741:8a4c:7c4e:dc4c:1787] (helo=ohm.rr44.fr)
+        by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <aurelien@aurel32.net>)
+        id 1pyJYG-00Ajbr-Sb; Sun, 14 May 2023 23:46:49 +0200
+Received: from aurel32 by ohm.rr44.fr with local (Exim 4.96)
+        (envelope-from <aurelien@aurel32.net>)
+        id 1pyJYG-00AqI7-21;
+        Sun, 14 May 2023 23:46:48 +0200
+Date:   Sun, 14 May 2023 23:46:48 +0200
+From:   Aurelien Jarno <aurelien@aurel32.net>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 06/10] clk: starfive: Add StarFive JH7110 Video-Output
+ clock driver
+Message-ID: <ZGFWyPbeEOxxqwQK@aurel32.net>
+Mail-Followup-To: Xingyu Wu <xingyu.wu@starfivetech.com>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20230424135409.6648-1-xingyu.wu@starfivetech.com>
+ <20230424135409.6648-7-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
-References: <20230405195927.13487-1-ddrokosov@sberdevices.ru>
- <20230405195927.13487-5-ddrokosov@sberdevices.ru> <CAFBinCA3uZXzr3RgnWnKV5Qr-CPaZQX5joDg319i_cgzhLJy2g@mail.gmail.com>
- <20230425123304.xjmrkraybp2siwdw@CAB-WSD-L081021> <CAFBinCCqx1oHf+PcXBkeRYHnGQChbTTPRyD8SJU+ait+TG+AjQ@mail.gmail.com>
- <20230511132606.vk52yorf43alwgew@CAB-WSD-L081021>
-In-Reply-To: <20230511132606.vk52yorf43alwgew@CAB-WSD-L081021>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 14 May 2023 22:53:53 +0200
-Message-ID: <CAFBinCCmNLQF_qV3k4kgDEAsemEsjL-GQtPex7Pmxrc2sHx30A@mail.gmail.com>
-Subject: Re: [PATCH v13 4/6] clk: meson: a1: add Amlogic A1 PLL clock
- controller driver
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230424135409.6648-7-xingyu.wu@starfivetech.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry.
+On 2023-04-24 21:54, Xingyu Wu wrote:
+> Add driver for the StarFive JH7110 Video-Output clock controller.
+> And these clock controllers should power on and enable the clocks from
+> SYSCRG first before registering.
+> 
+> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 
-On Thu, May 11, 2023 at 3:26=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
-es.ru> wrote:
-[...]
-> > If you agree with my statement from above I'll be able to make my
-> > original question more specific:
-> > Since we know that we have all the required inputs for fixed_pll,
-> > sys_pll and hifi_pll - do you know what AUDDDS is and whether it
-> > requires any specific clock inputs (other than "fixpll_in" and
-> > "hifipll_in")?
-> >
->
-> To be honest, I have prepared A1 peripherals and A1 PLL drivers based on =
-very
-> poor Amlogic datasheets and custom 4.19-based vendor drivers.
-> The vendor driver has an AUDDDS clock in the PLL clock part, but it is no=
-t
-> used anywhere. Unfortunately, as usual, the datasheet doesn't provide any
-> information or explanation about what it is. However, the driver has a fe=
-w
-> lines of comments that indicate:
->
->     /*
->      * aud dds clock is not pll clock, not divider clock,
->      * No clock model can describe it.
->      * So we regard it as a gate, and the gate ops
->      * should realize lonely.
->      */
->
-> Additionally, the vendor driver states that AUDDDS has a 49Mhz clock,
-> but I do not see any relationship with other clocks (including the export=
-ed
-> GENCLK).
-> Jian did not include it in the first version of the PLL driver, and I hav=
-e
-> decided not to change it either.
->
-> I also noticed a few lines of AUDDDS initialization sequences in the vend=
-or
-> driver, which may affect CPU clock objects (from my point of view).
-> However, they are currently under development, and I will try to figure i=
-t
-> out with Amlogic support.
->
-> > > However, I do not believe this to be a significant issue. The clock D=
-T
-> > > bindings are organized to simplify the process of introducing new bin=
-dings,
-> > > whether public or private. For instance, we may add new bindings to
-> > > include/dt-bindings at the end of the list and increase the overall n=
-umber,
-> > > without disrupting the DT bindings ABI (the old numbers will remain
-> > > unchanged).
-> > Yep, this part is clear to me. I should have been more specific that I
-> > was asking about the inputs that are described in the .yaml file, not
-> > the clock IDs.
->
-> Actually, AUDDDS has an xtal2dds parent clock, and if we need to have
-> the AUDDDS clock in the PLL driver, we should add one more link between
-> peripherals and PLL drivers.
->
-> Let me know if you have any questions.
-I have no questions - all I can say is that:
-- I like your approach of clarifying details of the AUDDDS clock with Amlog=
-ic
-- and I fully agree with your conclusion that (depending on what
-Amlogic says) we need one more link from the PLL driver to the AUDDDS
-clock
+There seems to be something wrong with this patch. Building the kernel
+with the whole series applied and with CONFIG_FORTIFY_SOURCE=y triggers
+the following kernel bug: 
 
-Thank you for your persistence with this series, I'm sure it will pay
-off in the long run!
+[   75.705103] detected buffer overflow in __fortify_strlen
+[   75.710497] ------------[ cut here ]------------
+[   75.715117] kernel BUG at lib/string_helpers.c:1027!
+[   75.720083] Kernel BUG [#1]
+[   75.722879] Modules linked in: clk_starfive_jh7110_vout(+) nvme_fabrics binfmt_misc starfive_wdt jh7110_trng watchdog sfctemp rng_core drm loop fuse drm_panel_orientation_quirks configfs ip_tables x_tables autofs4 ext4 crc32c_generic crc16 mbcache jbd2 dm_mod nvme nvme_core t10_pi crc64_rocksoft crc64 crc_t10dif crct10dif_generic crct10dif_common xhci_pci xhci_hcd mmc_block dwmac_starfive stmmac_platform stmmac usbcore pcs_xpcs of_mdio fixed_phy fwnode_mdio phylink libphy usb_common dw_mmc_starfive dw_mmc_pltfm clk_starfive_jh7110_isp dw_mmc clk_starfive_jh7110_aon ptp phy_starfive_dphy_rx mmc_core pps_core phy_jh7110_pcie i2c_designware_platform clk_starfive_jh7110_stg phy_jh7110_usb i2c_designware_core
+[   75.785411] CPU: 1 PID: 419 Comm: insmod Not tainted 6.3.1+ #1
+[   75.791241] Hardware name: StarFive VisionFive 2 v1.2A (DT)
+[   75.796809] epc : fortify_panic+0x1a/0x1c
+[   75.800828]  ra : fortify_panic+0x1a/0x1c
+[   75.804838] epc : ffffffff80874242 ra : ffffffff80874242 sp : ffffffc80454b6a0
+[   75.812054]  gp : ffffffff8157f008 tp : ffffffd8c1214f80 t0 : 6465746365746564
+[   75.819269]  t1 : 0000000000000064 t2 : 2064657463657465 s0 : ffffffc80454b6b0
+[   75.826483]  s1 : 0000000000000020 a0 : 000000000000002c a1 : ffffffd8fdd63688
+[   75.833697]  a2 : ffffffd8fdd6f8e8 a3 : 0000000000000000 a4 : 0000000000000000
+[   75.840912]  a5 : 0000000000000000 a6 : ffffffff81426a38 a7 : 0000000000000000
+[   75.848126]  s2 : ffffffff80ec4e00 s3 : ffffffd8d9e28008 s4 : 000000000000001f
+[   75.855340]  s5 : 0000000000000000 s6 : ffffffff81580798 s7 : 0000000000ffffff
+[   75.862555]  s8 : ffffffd8d9e29ab0 s9 : 0000000000000011 s10: ffffffff017312a0
+[   75.869770]  s11: ffffffff01731450 t3 : ffffffff81592df7 t4 : ffffffff81592df7
+[   75.876984]  t5 : ffffffff81592df8 t6 : ffffffc80454b4a8
+[   75.882290] status: 0000000200000120 badaddr: 0000000000000000 cause: 0000000000000003
+[   75.890199] [<ffffffff80874242>] fortify_panic+0x1a/0x1c
+[   75.895513] [<ffffffff805c7e20>] auxiliary_match_id+0x70/0xcc
+[   75.901262] [<ffffffff805c7f22>] auxiliary_match+0x1e/0x2a
+[   75.906749] [<ffffffff805bd6b0>] __device_attach_driver+0x2c/0xe4
+[   75.912841] [<ffffffff805bb04e>] bus_for_each_drv+0x70/0xc4
+[   75.918418] [<ffffffff805bdb0a>] __device_attach+0x94/0x198
+[   75.923989] [<ffffffff805bde68>] device_initial_probe+0x1a/0x22
+[   75.929908] [<ffffffff805bc146>] bus_probe_device+0x96/0x98
+[   75.935482] [<ffffffff805b971e>] device_add+0x56a/0x722
+[   75.940710] [<ffffffff805c7fc4>] __auxiliary_device_add+0x40/0x92
+[   75.946803] [<ffffffff80556ff4>] jh7110_reset_controller_register+0x92/0xca
+[   75.953765] [<ffffffff0173034c>] jh7110_voutcrg_probe+0x236/0x2fa [clk_starfive_jh7110_vout]
+[   75.962228] [<ffffffff805bfb40>] platform_probe+0x5e/0xa6
+[   75.967629] [<ffffffff805bd1e6>] really_probe+0xa0/0x342
+[   75.972940] [<ffffffff805bd508>] __driver_probe_device+0x80/0x138
+[   75.979031] [<ffffffff805bd5f8>] driver_probe_device+0x38/0xc4
+[   75.984863] [<ffffffff805bd83a>] __driver_attach+0xd2/0x1a8
+[   75.990436] [<ffffffff805baf92>] bus_for_each_dev+0x6c/0xb8
+[   75.996011] [<ffffffff805bcab6>] driver_attach+0x26/0x2e
+[   76.001325] [<ffffffff805bc384>] bus_add_driver+0x10c/0x1ee
+[   76.006900] [<ffffffff805be5e2>] driver_register+0x52/0xf4
+[   76.012386] [<ffffffff805bf78e>] __platform_driver_register+0x28/0x30
+[   76.018827] [<ffffffff01b72028>] jh7110_voutcrg_driver_init+0x28/0x1000 [clk_starfive_jh7110_vout]
+[   76.027802] [<ffffffff8000281a>] do_one_initcall+0x5c/0x1c8
+[   76.033377] [<ffffffff800a7612>] do_init_module+0x4c/0x1f6
+[   76.038867] [<ffffffff800a9396>] load_module+0x1a6c/0x1ebe
+[   76.044356] [<ffffffff800a99ea>] __do_sys_finit_module+0x9c/0xf8
+[   76.050365] [<ffffffff800a9a82>] sys_finit_module+0x1c/0x24
+[   76.055936] [<ffffffff80003df8>] ret_from_syscall+0x0/0x2
+[   76.061343] Code: 0800 85aa 3517 007a 0513 7ee5 a097 ffff 80e7 fc20 (9002) 7179 
+[   76.068735] ---[ end trace 0000000000000000 ]---
 
-
-Best regards,
-Martin
+-- 
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
