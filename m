@@ -2,101 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9075BC7EE24
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 07:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26039C77B75
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 07:29:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230201AbjEOH2Z convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 May 2023 03:28:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46708 "EHLO
+        id S235023AbjEOH3V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 03:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbjEOH2Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 03:28:24 -0400
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8476AD9;
-        Mon, 15 May 2023 00:28:23 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-559e2051d05so177208057b3.3;
-        Mon, 15 May 2023 00:28:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684135702; x=1686727702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9SoDPB/byKQ6HPKAt04qB+4IS3tH9nAH2dkJKJtq8Ig=;
-        b=GoFSq4gODp913KrBSxsCwgVBECIMBddhuRhDujQoDyrjWBThNk9PUuC90kXVanZng7
-         7n6gVpkMpVhK2x/s0LW2g+P9CZD25RaHenAP0zZT9x90o1ilu2Gq12JOQ9I/fQz69Gjo
-         3Bl5vwZCmnluKhyyjYMyuyE8rW3/wJkOIaqghyKo29CBSXWAFcP7hh+8srFMdSwZrqh0
-         GgIDCIRRGc5h5vAeY8F3+c2YwSFcch9MEbDuD3Z3fIRdQwtnAG+BY4YiA5gy33YzOv4e
-         VFCnqmMEDkf91Q7ppupsf2vvBZkfyFCPsmmh+M+Vbjldb8nfORiamsodzYxDTFKJSuC5
-         hzwA==
-X-Gm-Message-State: AC+VfDyTAoUYzNP013eGsMjz7dv6YuW1gg2FiVoaKFW8kcjgxJ6BBs8T
-        htZAbfTrZQaqFLLpH3MqEvYlayOf3j3r7A==
-X-Google-Smtp-Source: ACHHUZ4Hrm7hwJWNPaOMaZd8lwF5JDaU4aoGymJrMv6MEMAEEc1OMgc2BoBlLwgkTJ14R2YJGLF/Yg==
-X-Received: by 2002:a81:6cce:0:b0:55a:52e3:8dbf with SMTP id h197-20020a816cce000000b0055a52e38dbfmr35824528ywc.40.1684135702489;
-        Mon, 15 May 2023 00:28:22 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id c68-20020a0df347000000b0054f83731ad2sm7606689ywf.0.2023.05.15.00.28.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 May 2023 00:28:21 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-ba6e90e9199so5106255276.0;
-        Mon, 15 May 2023 00:28:21 -0700 (PDT)
-X-Received: by 2002:a25:cc48:0:b0:ba7:73c1:d38e with SMTP id
- l69-20020a25cc48000000b00ba773c1d38emr6057035ybf.3.1684135701405; Mon, 15 May
- 2023 00:28:21 -0700 (PDT)
+        with ESMTP id S240214AbjEOH3M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 03:29:12 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C31D9;
+        Mon, 15 May 2023 00:29:11 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34F7JgV7014710;
+        Mon, 15 May 2023 07:29:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=KHTzhT+XgalBzcWl78u0uoUyarGO7y9QKQvm1l7UtLk=;
+ b=IALfZY8+4c4zYRnEgqybQO+lKVCi3fUHM+arLnsQR6ZBb/zUhjXTV8SdJIVERFU+lgwG
+ wKuif4vzFvo/bHndFGef7WF+Mf8qo4grV9Cq+J2/mHCVEEkGEQXY3ONIvf6zuU02NrUR
+ mh7NT9z5cVw+JwOYwPmQ4BAycI6EbJ/sZvbXcNYLkktEW7AowdzrNufFfMlkcetmtxhz
+ U+2Mi8okw7RK3oCl2bkRrBRTydBliBKsWOEUZQzSgV+HWYeFxtBaO/5ykZ+X7W0mp2lk
+ r5xqGjGdhYRpGwgYestmhKlOgR44Qgh7hictL2PBfsxNwKAAmag09DjTqvcLsWAV1Yif mw== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qj2n2b0fr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 07:29:04 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34F7T2qR021837
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 07:29:02 GMT
+Received: from [10.216.63.235] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 15 May
+ 2023 00:28:26 -0700
+Message-ID: <783ec6ea-425c-882a-47bf-d0a38dcc3bb2@quicinc.com>
+Date:   Mon, 15 May 2023 12:58:23 +0530
 MIME-Version: 1.0
-References: <20230514191959.706269-1-marek.vasut+renesas@mailbox.org> <20230514191959.706269-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20230514191959.706269-2-marek.vasut+renesas@mailbox.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 15 May 2023 09:28:10 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUoMZqG+wz9jDcDNjYiLXDm_X4+SabxBfE_etgVYUt0fA@mail.gmail.com>
-Message-ID: <CAMuHMdUoMZqG+wz9jDcDNjYiLXDm_X4+SabxBfE_etgVYUt0fA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: vc7: Use device_get_match_data() instead of of_device_get_match_data()
-To:     Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc:     linux-clk@vger.kernel.org,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tom Rix <trix@redhat.com>,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: ipq9574: Enable crypto nodes
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <20230512090134.9811-1-quic_anusha@quicinc.com>
+ <20230512090134.9811-3-quic_anusha@quicinc.com>
+ <845fc080-154f-6799-65e3-a62fc8652b80@linaro.org>
+From:   Anusha Canchi <quic_anusha@quicinc.com>
+In-Reply-To: <845fc080-154f-6799-65e3-a62fc8652b80@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Gle8WE6nTQAQEThAtXwo8PsUA9glG5kS
+X-Proofpoint-GUID: Gle8WE6nTQAQEThAtXwo8PsUA9glG5kS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-15_04,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=892 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305150066
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, May 14, 2023 at 9:20 PM Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Use device_get_match_data() which, unlike of_device_get_match_data(),
-> is compatible with other firmware interfaces than just OF.
+
+
+On 5/12/2023 2:52 PM, Krzysztof Kozlowski wrote:
+> On 12/05/2023 11:01, Anusha Rao wrote:
+>> Enable crypto support for ipq9574.
+>>
+>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> index fea15f3cf910..3cda5aa8d03c 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> @@ -123,6 +123,26 @@
+>>   			clock-names = "core";
+>>   		};
+>>   
+>> +		cryptobam: dma-controller@704000 {
+>> +			compatible = "qcom,bam-v1.7.0";
+>> +			reg = <0x00704000 0x20000>;
+>> +			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
+>> +			#dma-cells = <1>;
+>> +			qcom,ee = <1>;
+>> +			qcom,controlled-remotely;
+>> +		};
+>> +
+>> +		crypto: crypto@73a000 {
+>> +			compatible = "qcom,crypto-v5.1";
+> This compatible is deprecated. Take a look at the bindings - I think you
+> miss bindings for your SoC, which you should then use here.
+Okay, will address in next spin.
+
+Thanks,
+Anusha
+> Best regards,
+> Krzysztof
 >
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: Alex Helms <alexander.helms.jy@renesas.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Cc: Magnus Damm <magnus.damm@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Tom Rix <trix@redhat.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: Explicitly include linux/property.h
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
