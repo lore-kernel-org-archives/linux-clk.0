@@ -2,266 +2,319 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7898C7EE22
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 09:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C34DC7EE22
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 09:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231730AbjEOJbN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 May 2023 05:31:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36888 "EHLO
+        id S230093AbjEOJkS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 05:40:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240305AbjEOJaq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 05:30:46 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F946E56
-        for <linux-clk@vger.kernel.org>; Mon, 15 May 2023 02:30:38 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-306281edf15so11797176f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 15 May 2023 02:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1684143036; x=1686735036;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=W6BSTCYK/WuLOkz9AG6TW1a3eQQDrhG76l1jFykbWQU=;
-        b=u66WDxVUfm+0HPKxUq0rT+tvZOm6xx/h1Cb4vw2QwXBlTM5jGsxEK+iBZuVyV4zlMb
-         a2KuKq3KcrZiDQc7crBEXsEiJO3H2/m0uxxK8TzTDJLa3I1Rre6LpT6YhXKELrwEsWwy
-         5xzbq3E4GnxwRos1bYU1/uNQkOfABtcgHvYZmUJz+Si0F1jskldMzs/QvM8vvFbIrYJr
-         aGjMLR69fbVjLSbqGVeWzRSXb4gnrNq5DaTujTw8HXYu0fHz1PQ8yIdULns8fGUNxaY2
-         4ncf1t70/AoR7F5o+9FTNs/gcGeJuqD6Z/RCVXtWxdf7EQEHl66tUyqJDgX/Xp86Cl4i
-         vPQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684143036; x=1686735036;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W6BSTCYK/WuLOkz9AG6TW1a3eQQDrhG76l1jFykbWQU=;
-        b=UZAAnQIdfmqNTgPBord1eEQGRAEWf48XWvEtFaWIf3ubHCMfWaPTdcpoznEDRMesFC
-         pZUMIcnmCTlEptM+hkl4aXtLuACD/XAzD7FVhlMlpwdFY9C1wzUFjxhAed9blRiOnVFx
-         2hVWqueLJYABenxCTRrSwpHrVxIeBPycf9gG8DN/VvbBCKrPOEeENfJ/cSeU9bxx0NPL
-         9tprjS1FsGlj7p2dSgfPy0sBdktZvPUFY7nt70pl/e0A6+iekPYcmJe8num1bGFNHbCK
-         Oie/1dYbsbm0l7BV7C+WGHmYzPydcrmVJ8edt7weSITUh4ZgwfDfhqg72u59v1EblXRR
-         wJgg==
-X-Gm-Message-State: AC+VfDxxAw1gvKh2TLGSj/ypbGAqQUZmLnCnwmA1iNvxheLx4W51K/7/
-        voFuaVXJ/Z4lAysliDrEvbCsqw==
-X-Google-Smtp-Source: ACHHUZ7HsO3IDkKNYHrf1UocuJiNC3jR9r3hPnrkeVc35ERImxr3DuADDzUzGPZ+70i4Ke4a3nRwCg==
-X-Received: by 2002:a5d:58f4:0:b0:306:8f5b:1b49 with SMTP id f20-20020a5d58f4000000b003068f5b1b49mr24839324wrd.47.1684143036436;
-        Mon, 15 May 2023 02:30:36 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id q12-20020a05600000cc00b0030795b2be15sm24162409wrx.103.2023.05.15.02.30.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 02:30:35 -0700 (PDT)
-Date:   Mon, 15 May 2023 11:30:34 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Vadim Fedorenko <vadfed@meta.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
-Message-ID: <ZGH7uvxD55Pan0gf@nanopsycho>
-References: <20230428002009.2948020-1-vadfed@meta.com>
- <20230428002009.2948020-2-vadfed@meta.com>
- <ZFOe1sMFtAOwSXuO@nanopsycho>
- <20230504142451.4828bbb5@kernel.org>
- <MN2PR11MB46645511A6C93F5C98A8A66F9B749@MN2PR11MB4664.namprd11.prod.outlook.com>
- <ZFygbd1H+VdvCTyH@nanopsycho>
- <DM6PR11MB4657924148B84F502A44903D9B749@DM6PR11MB4657.namprd11.prod.outlook.com>
+        with ESMTP id S239630AbjEOJjc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 05:39:32 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60ECA35A3;
+        Mon, 15 May 2023 02:36:52 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34F92U4p008637;
+        Mon, 15 May 2023 09:36:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=V3dx2dKXQgFKKyHbqxM3rV5CJESiyRqNCrhoy2ZY9Ps=;
+ b=hGY8zABq1n7S+BdPOS4lMVUjlan0MWmXpGedhrG6Sp2Y2Xo5Ahx5BT5JP2aFMLBRfYij
+ l9i3rThdFpnhq9R6fcUg5xEAGbcL7lLHyzO/KoUfUIBavZusOZU8EbAS9tBc+CJFY3v7
+ eGR3ju/qrVIb55SrjbIiIBqlnwgPP3Cn3LpzLi0t3bYcln55dBUT/kh7CLpYX8uis07B
+ 7e0AHd8NrBG3ZSzdCQFFwGYfhKjT+8Hy0L1K/3P029cyIBFRrB1TsgI3L5DkQmmntTuL
+ 5gULmoW+WQgvScJlubfYheOGze2ft1nU8o9x7clGk0CdHNZuH4PgQaX9cDwQgbUQGPbK fA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qj2n2b8yr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 09:36:15 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34F9aDQq023709
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 09:36:13 GMT
+Received: from [10.50.3.91] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 15 May
+ 2023 02:36:07 -0700
+Message-ID: <97315104-d9cc-27f8-8c52-b99080179269@quicinc.com>
+Date:   Mon, 15 May 2023 15:06:03 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657924148B84F502A44903D9B749@DM6PR11MB4657.namprd11.prod.outlook.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH V3 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and
+ controller nodes
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <mani@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_ipkumar@quicinc.com>
+References: <20230421124938.21974-1-quic_devipriy@quicinc.com>
+ <20230421124938.21974-5-quic_devipriy@quicinc.com>
+ <CAA8EJppyro1wM3KmDU3DVjKCqXH5+KaNoT_7ObVuuYNMoZKpoA@mail.gmail.com>
+ <a220e00d-0559-35d5-80e9-7e11e566851a@quicinc.com>
+ <e7b4afde-2cd7-0ab5-8a15-446173b42c40@linaro.org>
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <e7b4afde-2cd7-0ab5-8a15-446173b42c40@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JngKJnGSVbSINFjz3mHaNTSSlINAVvvf
+X-Proofpoint-GUID: JngKJnGSVbSINFjz3mHaNTSSlINAVvvf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-15_06,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ clxscore=1015 malwarescore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305150082
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, May 11, 2023 at 10:51:43PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Thursday, May 11, 2023 10:00 AM
+
+
+On 5/8/2023 5:10 PM, Dmitry Baryshkov wrote:
+> On 08/05/2023 13:53, Devi Priya wrote:
 >>
->>Thu, May 11, 2023 at 09:40:26AM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>>From: Jakub Kicinski <kuba@kernel.org>
->>>>Sent: Thursday, May 4, 2023 11:25 PM
->>>>
->>>>On Thu, 4 May 2023 14:02:30 +0200 Jiri Pirko wrote:
->>>>> >+definitions:
->>>>> >+  -
->>>>> >+    type: enum
->>>>> >+    name: mode
->>>>> >+    doc: |
->>>>> >+      working-modes a dpll can support, differentiate if and how dpll
->>>>>selects
->>>>> >+      one of its sources to syntonize with it, valid values for
->>>>>DPLL_A_MODE
->>>>> >+      attribute
->>>>> >+    entries:
->>>>> >+      -
->>>>> >+        name: unspec
->>>>>
->>>>> In general, why exactly do we need unspec values in enums and CMDs?
->>>>> What is the usecase. If there isn't please remove.
->>>>
->>>>+1
->>>>
->>>
->>>Sure, fixed.
->>>
->>>>> >+        doc: unspecified value
->>>>> >+      -
->>>>> >+        name: manual
->>>>
->>>>I think the documentation calls this "forced", still.
->>>>
->>>
->>>Yes, good catch, fixed docs.
->>>
->>>>> >+        doc: source can be only selected by sending a request to dpll
->>>>> >+      -
->>>>> >+        name: automatic
->>>>> >+        doc: highest prio, valid source, auto selected by dpll
->>>>> >+      -
->>>>> >+        name: holdover
->>>>> >+        doc: dpll forced into holdover mode
->>>>> >+      -
->>>>> >+        name: freerun
->>>>> >+        doc: dpll driven on system clk, no holdover available
->>>>>
->>>>> Remove "no holdover available". This is not a state, this is a mode
->>>>> configuration. If holdover is or isn't available, is a runtime info.
->>>>
->>>>Agreed, seems a little confusing now. Should we expose the system clk
->>>>as a pin to be able to force lock to it? Or there's some extra magic
->>>>at play here?
->>>
->>>In freerun you cannot lock to anything it, it just uses system clock from
->>>one of designated chip wires (which is not a part of source pins pool) to
->>>feed the dpll. Dpll would only stabilize that signal and pass it further.
->>>Locking itself is some kind of magic, as it usually takes at least ~15
->>>seconds before it locks to a signal once it is selected.
->>>
->>>>
->>>>> >+      -
->>>>> >+        name: nco
->>>>> >+        doc: dpll driven by Numerically Controlled Oscillator
->>>>
->>>>Noob question, what is NCO in terms of implementation?
->>>>We source the signal from an arbitrary pin and FW / driver does
->>>>the control? Or we always use system refclk and then tune?
->>>>
->>>
->>>Documentation of chip we are using, stated NCO as similar to FREERUN, and
->>it
 >>
->>So how exactly this is different to freerun? Does user care or he would
->>be fine with "freerun" in this case? My point is, isn't "NCO" some
->>device specific thing that should be abstracted out here?
->>
->
->Sure, it is device specific, some synchronizing circuits would have this
->capability, while others would not.
->Should be abstracted out? It is a good question.. shall user know that he is in
->freerun with possibility to control the frequency or not?
->Let's say we remove NCO, and have dpll with enabled FREERUN mode and pins
->supporting multiple output frequencies.
->How the one would know if those frequencies are supported only in
->MANUAL/AUTOMATIC modes or also in the FREERUN mode?
->In other words: As the user can I change a frequency of a dpll if active
->mode is FREERUN?
-
-Okay, I think I'm deep in the DPLL infra you are pushing, but my
-understanding that you can control frequency in NCO mode is not present
-:/ That only means it may be confusing and not described properly.
-How do you control this frequency exactly? I see no such knob.
-
-Can't the oscilator be modeled as a pin and then you are not in freerun
-but locked this "internal pin"? We know how to control frequency there.
-
-
->
->I would say it is better to have such mode, we could argue on naming though.
->
->>
->>>runs on a SYSTEM CLOCK provided to the chip (plus some stabilization and
->>>dividers before it reaches the output).
->>>It doesn't count as an source pin, it uses signal form dedicated wire for
->>>SYSTEM CLOCK.
->>>In this case control over output frequency is done by synchronizer chip
->>>firmware, but still it will not lock to any source pin signal.
->>>
->>>>> >+    render-max: true
->>>>> >+  -
->>>>> >+    type: enum
->>>>> >+    name: lock-status
->>>>> >+    doc: |
->>>>> >+      provides information of dpll device lock status, valid values for
->>>>> >+      DPLL_A_LOCK_STATUS attribute
->>>>> >+    entries:
->>>>> >+      -
->>>>> >+        name: unspec
->>>>> >+        doc: unspecified value
->>>>> >+      -
->>>>> >+        name: unlocked
->>>>> >+        doc: |
->>>>> >+          dpll was not yet locked to any valid source (or is in one of
->>>>> >+          modes: DPLL_MODE_FREERUN, DPLL_MODE_NCO)
->>>>> >+      -
->>>>> >+        name: calibrating
->>>>> >+        doc: dpll is trying to lock to a valid signal
->>>>> >+      -
->>>>> >+        name: locked
->>>>> >+        doc: dpll is locked
->>>>> >+      -
->>>>> >+        name: holdover
->>>>> >+        doc: |
->>>>> >+          dpll is in holdover state - lost a valid lock or was forced by
->>>>> >+          selecting DPLL_MODE_HOLDOVER mode
->>>>>
->>>>> Is it needed to mention the holdover mode. It's slightly confusing,
->>>>> because user might understand that the lock-status is always "holdover"
->>>>> in case of "holdover" mode. But it could be "unlocked", can't it?
->>>>> Perhaps I don't understand the flows there correctly :/
+>> On 4/22/2023 5:49 AM, Dmitry Baryshkov wrote:
+>>> On Fri, 21 Apr 2023 at 15:50, Devi Priya <quic_devipriy@quicinc.com> 
+>>> wrote:
 >>>>
->>>>Hm, if we want to make sure that holdover mode must result in holdover
->>>>state then we need some extra atomicity requirements on the SET
->>>>operation. To me it seems logical enough that after setting holdover
->>>>mode we'll end up either in holdover or unlocked status, depending on
->>>>lock status when request reached the HW.
+>>>> Add PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
+>>>> found on IPQ9574 platform. The PCIe0 & PCIe1 are 1-lane Gen3
+>>>> host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
 >>>>
+>>>> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+>>>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>>>> ---
+>>>>   Changes in V3:
+>>>>          - Fixed up the PCI I/O port ranges
+>>>>
+>>>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 375 
+>>>> +++++++++++++++++++++++++-
+>>>>   1 file changed, 370 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi 
+>>>> b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>> index e757b57957cf..953a839a1141 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>>> @@ -6,8 +6,8 @@
+>>>>    * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights 
+>>>> reserved.
+>>>>    */
+>>>>
+>>>> -#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>>   #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+>>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>>   #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
+>>>>
+>>>>   / {
+>>>> @@ -116,6 +116,58 @@
+>>>>                  #size-cells = <1>;
+>>>>                  ranges = <0 0 0 0xffffffff>;
+>>>>
+>>>> +               pcie0_phy: phy@84000 {
+>>>> +                       compatible = 
+>>>> "qcom,ipq9574-qmp-gen3x1-pcie-phy";
+>>>> +                       reg = <0x00084000 0x1000>;
+>>>> +
+>>>> +                       clocks = <&gcc GCC_PCIE0_AUX_CLK>,
+>>>> +                                <&gcc GCC_PCIE0_AHB_CLK>,
+>>>> +                                <&gcc GCC_ANOC_PCIE0_1LANE_M_CLK>,
+>>>> +                                <&gcc GCC_SNOC_PCIE0_1LANE_S_CLK>,
+>>>> +                                <&gcc GCC_PCIE0_PIPE_CLK>;
+>>>> +                       clock-names = "aux", "cfg_ahb", "anoc_lane", 
+>>>> "snoc_lane", "pipe";
+>>>> +
+>>>> +                       assigned-clocks = <&gcc GCC_PCIE0_AUX_CLK>;
+>>>> +                       assigned-clock-rates = <20000000>;
+>>>> +
+>>>> +                       resets = <&gcc GCC_PCIE0_PHY_BCR>,
+>>>> +                                <&gcc GCC_PCIE0PHY_PHY_BCR>;
+>>>> +                       reset-names = "phy", "common";
+>>>> +
+>>>> +                       #clock-cells = <0>;
+>>>> +                       clock-output-names = "gcc_pcie0_pipe_clk_src";
+>>>> +
+>>>> +                       #phy-cells = <0>;
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +               };
+>>>> +
+>>>> +               pcie2_phy: phy@8c000 {
+>>>> +                       compatible = 
+>>>> "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+>>>> +                       reg = <0x0008c000 0x2000>;
+>>>> +
+>>>> +                       clocks = <&gcc GCC_PCIE2_AUX_CLK>,
+>>>> +                                <&gcc GCC_PCIE2_AHB_CLK>,
+>>>> +                                <&gcc GCC_ANOC_PCIE2_2LANE_M_CLK>,
+>>>> +                                <&gcc GCC_SNOC_PCIE2_2LANE_S_CLK>,
+>>>> +                                <&gcc GCC_PCIE2_PIPE_CLK>;
+>>>> +                       clock-names = "aux", "cfg_ahb", "anoc_lane", 
+>>>> "snoc_lane", "pipe";
+>>>> +
+>>>> +                       assigned-clocks = <&gcc GCC_PCIE2_AUX_CLK>;
+>>>> +                       assigned-clock-rates = <20000000>;
+>>>> +
+>>>> +                       resets = <&gcc GCC_PCIE2_PHY_BCR>,
+>>>> +                                <&gcc GCC_PCIE2PHY_PHY_BCR>;
+>>>> +                       reset-names = "phy", "common";
+>>>> +
+>>>> +                       #clock-cells = <0>;
+>>>> +                       clock-output-names = "gcc_pcie2_pipe_clk_src";
+>>>> +
+>>>> +                       #phy-cells = <0>;
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +               };
+>>>> +
+>>>>                  rng: rng@e3000 {
+>>>>                          compatible = "qcom,prng-ee";
+>>>>                          reg = <0x000e3000 0x1000>;
+>>>> @@ -123,6 +175,58 @@
+>>>>                          clock-names = "core";
+>>>>                  };
+>>>>
+>>>> +               pcie3_phy: phy@f4000 {
+>>>> +                       compatible = 
+>>>> "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+>>>> +                       reg = <0x000f4000 0x2000>;
+>>>> +
+>>>> +                       clocks = <&gcc GCC_PCIE3_AUX_CLK>,
+>>>> +                                <&gcc GCC_PCIE3_AHB_CLK>,
+>>>> +                                <&gcc GCC_ANOC_PCIE3_2LANE_M_CLK>,
+>>>> +                                <&gcc GCC_SNOC_PCIE3_2LANE_S_CLK>,
+>>>> +                                <&gcc GCC_PCIE3_PIPE_CLK>;
+>>>> +                       clock-names = "aux", "cfg_ahb", "anoc_lane", 
+>>>> "snoc_lane", "pipe";
+>>>> +
+>>>> +                       assigned-clocks = <&gcc GCC_PCIE3_AUX_CLK>;
+>>>> +                       assigned-clock-rates = <20000000>;
+>>>> +
+>>>> +                       resets = <&gcc GCC_PCIE3_PHY_BCR>,
+>>>> +                                <&gcc GCC_PCIE3PHY_PHY_BCR>;
+>>>> +                       reset-names = "phy", "common";
+>>>> +
+>>>> +                       #clock-cells = <0>;
+>>>> +                       clock-output-names = "gcc_pcie3_pipe_clk_src";
+>>>> +
+>>>> +                       #phy-cells = <0>;
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +               };
+>>>> +
+>>>> +               pcie1_phy: phy@fc000 {
+>>>> +                       compatible = 
+>>>> "qcom,ipq9574-qmp-gen3x1-pcie-phy";
+>>>> +                       reg = <0x000fc000 0x1000>;
+>>>> +
+>>>> +                       clocks = <&gcc GCC_PCIE1_AUX_CLK>,
+>>>> +                                <&gcc GCC_PCIE1_AHB_CLK>,
+>>>> +                                <&gcc GCC_ANOC_PCIE1_1LANE_M_CLK>,
+>>>> +                                <&gcc GCC_SNOC_PCIE1_1LANE_S_CLK>,
+>>>> +                                <&gcc GCC_PCIE1_PIPE_CLK>;
+>>>> +                       clock-names = "aux", "cfg_ahb", "anoc_lane", 
+>>>> "snoc_lane", "pipe";
+>>>> +
+>>>> +                       assigned-clocks = <&gcc GCC_PCIE1_AUX_CLK>;
+>>>> +                       assigned-clock-rates = <20000000>;
+>>>> +
+>>>> +                       resets = <&gcc GCC_PCIE1_PHY_BCR>,
+>>>> +                                <&gcc GCC_PCIE1PHY_PHY_BCR>;
+>>>> +                       reset-names = "phy", "common";
+>>>> +
+>>>> +                       #clock-cells = <0>;
+>>>> +                       clock-output-names = "gcc_pcie1_pipe_clk_src";
+>>>> +
+>>>> +                       #phy-cells = <0>;
+>>>> +                       status = "disabled";
+>>>> +
+>>>> +               };
+>>>> +
+>>>>                  tlmm: pinctrl@1000000 {
+>>>>                          compatible = "qcom,ipq9574-tlmm";
+>>>>                          reg = <0x01000000 0x300000>;
+>>>> @@ -146,10 +250,10 @@
+>>>>                          reg = <0x01800000 0x80000>;
+>>>>                          clocks = <&xo_board_clk>,
+>>>>                                   <&sleep_clk>,
+>>>> -                                <0>,
+>>>> -                                <0>,
+>>>> -                                <0>,
+>>>> -                                <0>,
+>>>> +                                <&pcie0_phy>,
+>>>> +                                <&pcie1_phy>,
+>>>> +                                <&pcie2_phy>,
+>>>> +                                <&pcie3_phy>,
+>>>>                                   <0>;
+>>>>                          #clock-cells = <1>;
+>>>>                          #reset-cells = <1>;
+>>>> @@ -478,6 +582,267 @@
+>>>>                                  status = "disabled";
+>>>>                          };
+>>>>                  };
+>>>> +
+>>>> +               pcie1: pci@10000000 {
+>>>> +                       compatible = "qcom,pcie-ipq9574";
+>>>> +                       reg =  <0x10000000 0xf1d>,
+>>>> +                              <0x10000F20 0xa8>,
+>>>> +                              <0x10001000 0x1000>,
+>>>> +                              <0x000F8000 0x4000>,
+>>>> +                              <0x10100000 0x1000>;
+>>>> +                       reg-names = "dbi", "elbi", "atu", "parf", 
+>>>> "config";
+>>>> +                       device_type = "pci";
+>>>> +                       linux,pci-domain = <2>;
+>>>> +                       bus-range = <0x00 0xff>;
+>>>> +                       num-lanes = <1>;
+>>>> +                       #address-cells = <3>;
+>>>> +                       #size-cells = <2>;
+>>>> +
+>>>> +                       ranges = <0x01000000 0x0 0x00000000 
+>>>> 0x10200000 0x0 0x100000>,  /* I/O */
+>>>> +                                <0x02000000 0x0 0x10300000 
+>>>> 0x10300000 0x0 0x7d00000>; /* MEM */
+>>>> +
+>>>> +                       #interrupt-cells = <1>;
+>>>> +                       interrupt-map-mask = <0 0 0 0x7>;
+>>>> +                       interrupt-map = <0 0 0 1 &intc 0 35 
+>>>> IRQ_TYPE_LEVEL_HIGH>, /* int_a */
+>>>> +                                       <0 0 0 2 &intc 0 49 
+>>>> IRQ_TYPE_LEVEL_HIGH>, /* int_b */
+>>>> +                                       <0 0 0 3 &intc 0 84 
+>>>> IRQ_TYPE_LEVEL_HIGH>, /* int_c */
+>>>> +                                       <0 0 0 4 &intc 0 85 
+>>>> IRQ_TYPE_LEVEL_HIGH>; /* int_d */
+>>>> +
 >>>
->>>Improved the docs:
->>>        name: holdover
->>>        doc: |
->>>          dpll is in holdover state - lost a valid lock or was forced
->>>          by selecting DPLL_MODE_HOLDOVER mode (latter possible only
->>>          when dpll lock-state was already DPLL_LOCK_STATUS_LOCKED,
->>>	  if it was not, the dpll's lock-status will remain
->>
->>"if it was not" does not really cope with the sentence above that. Could
->>you iron-out the phrasing a bit please?
->
->
->Hmmm,
->        name: holdover
->        doc: |
->          dpll is in holdover state - lost a valid lock or was forced
->          by selecting DPLL_MODE_HOLDOVER mode (latter possible only
->          when dpll lock-state was already DPLL_LOCK_STATUS_LOCKED,
->          if dpll lock-state was not DPLL_LOCK_STATUS_LOCKED, the
->          dpll's lock-state shall remain DPLL_LOCK_STATUS_UNLOCKED
->          even if DPLL_MODE_HOLDOVER was requested)
->
->Hope this is better?
+>>> No iommu-map?
+>> We do not enable the IOMMU stage1 translation for PCIe and the registers
+>> have secure access only from TrustZone (It enables only stage2 for
+>> Access control)
+> 
+> So, no SMMU protection for PCIe transactions? This sounds like a step 
+> backwards.
+Yes, we are not using stage1 translations.
 
-Okay.
-
->
->
->Thank you!
->Arkadiusz
->
->[...]
+Thanks,
+Devi Priya
+> 
