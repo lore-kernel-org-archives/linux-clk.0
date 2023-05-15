@@ -2,76 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07311C77B7D
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 06:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA93C77B7D
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 06:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234659AbjEOGXE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 May 2023 02:23:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
+        id S239788AbjEOG1F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 02:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234111AbjEOGXD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 02:23:03 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E4E4FC
-        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 23:23:01 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-50b8d2eed3dso18571361a12.0
-        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 23:23:01 -0700 (PDT)
+        with ESMTP id S239748AbjEOG0y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 02:26:54 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F7C1FD8
+        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 23:26:51 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-50bc4b88998so21755824a12.3
+        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 23:26:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684131780; x=1686723780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s7mkOa7RGOem2p2FaaquTYyaUy5EE4ipdPRCvshSlyQ=;
-        b=tbnef+kOmfZW51v+VNLQOSV4rx0+Ic5xV6exhELIbvUKRc/eu3CdhPMnLF0QRpaLPR
-         b6BuYGsYuiW5TaqV6sdpYB0NlKFcQBvRceEPAIL4EbxTKvmTOGod5sZoZfGlKBIN9Yag
-         elk/zHRDMqYWldbnPJwKb6auScsj9622DBxQws2SXDJHDZ0E0DE8tRrZmnzGPT5po3Qh
-         BnhVgwkR7uMCOvPV5D2Oy/x4yUSBVqhLtCP/KF/qJ9y3v3QUkyScOkGHg4tzM2EZIx2+
-         XydmRp8rwX2xV0jKBUEyajSS2uQMQj3uHteOj9ZdDpGP1WA0kXc9KSrwZ4TBVn9Worfg
-         qyEQ==
+        d=linaro.org; s=google; t=1684132010; x=1686724010;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qKPNUzjoxIt2qle5yyUBx+bzfhRe4atuWwPXnoKqr+I=;
+        b=i0rOmp8mgMrmR30bV4O+LQ+jOpWIkqsnD3dfhCBrHxL6VrwBvi1R92pPpXXejeRZlR
+         4ut9hMkEDnvlR7YDto5UTrk4sgeKmrTuFKlBH0WyxUzhmIx3E+c5TiPtONH5zBydqGrA
+         qCMBZbIkIoOwq3QumgXHx9eV7DpX8hZ2lBHgh5wyHznKoglu9wZTF57C5Sol3LW0TBDi
+         syjRgknmwz54wGvXMBq3qJ8GvG0jj9Gt4VhJWSYfy4qRQpzyQ3ZON2+cfHAAhzbJ66Op
+         u2oviZ3B4KKL2EHWCNPphpefFZzbOSTBQN5ymDWTROIyGXPzijTCiEyDkXgGu50mxzrb
+         fygA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684131780; x=1686723780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s7mkOa7RGOem2p2FaaquTYyaUy5EE4ipdPRCvshSlyQ=;
-        b=S9EXTbuLDpXcDSyMXLdTb4FrsJjUv4TpthyVGJ8XG9Z3vtPd01Ot4wQWvxYf6pag7R
-         2qF+G8o3jj6lnpE2kh1oTKVc+twHPnwp2JeKI28yvR+rIIkgS9M+BKY+jbsMWkGk6HEd
-         rLOwjJpJIecqsTPL5tFzAqFyi/pB3VFziRLtDdSO4iCj16rBVdpUuTPoYRGnbuiR+St3
-         U/wKIQ+ENWecEQfXVGsyZ2HRovN12lqZxhlG5+VwnbWKUXbwaCusJfzXmJQQhnDrr2eU
-         /0YEZ0EHaLh5lggl2PDDGg+H5fyGHVYI49sp1aTzObpnTbiTy9TJN5vz/VR43WyQlBOI
-         eL7A==
-X-Gm-Message-State: AC+VfDycD1lx1OVdMLPpbGRO4STTmVLsR5WwKU8VG5PXiuYSR8h7+Plb
-        9M08TwEw2fQMuUb4OUJVsCtMeQ==
-X-Google-Smtp-Source: ACHHUZ493IcGLkpWFXY2aFpoX+MXDo+VhdhEdKZ5LMwrRSbVU98BaRHoVr2JBOCbMqRUPpa1vkUjYA==
-X-Received: by 2002:a17:906:fd83:b0:94a:845c:3529 with SMTP id xa3-20020a170906fd8300b0094a845c3529mr27604916ejb.9.1684131779897;
-        Sun, 14 May 2023 23:22:59 -0700 (PDT)
-Received: from krzk-bin ([2a02:810d:15c0:828:6470:25b8:7c2d:1992])
-        by smtp.gmail.com with ESMTPSA id ks16-20020a170906f85000b00947740a4373sm8872377ejb.81.2023.05.14.23.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 May 2023 23:22:59 -0700 (PDT)
-Date:   Mon, 15 May 2023 08:22:57 +0200
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Yangtao Li <frank.li@vivo.com>
-Cc:     linux-riscv@lists.infradead.org, Icenowy Zheng <uwu@icenowy.me>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        mturquette@baylibre.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        sboyd@kernel.org, Wei Fu <wefu@redhat.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jisheng Zhang <jszhang@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
+        d=1e100.net; s=20221208; t=1684132010; x=1686724010;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qKPNUzjoxIt2qle5yyUBx+bzfhRe4atuWwPXnoKqr+I=;
+        b=TK71EeVHS0tQVJOIUGe0rqogKFUYrGeYwcJNJr/a4J1ZWf+KZVCqrXKxhu37f24sjG
+         w5i46VR8M+EmxsSSXt67cG1H85WQ3v7a+8hj8gPP1irXtX4hqPtwY8us1jtIqm+WzDfu
+         b0B4t/MTYCPX8HJmzYKK0JESGHXvIBK2lkDMgw33sJCusiYdslHnKMG8LOzYi6HErr80
+         Jzfvq2f9cMqYNFVFcLwqlpmgQNVxGuJ+IAobi09iZ0y8gdjN7Kot+Q4YVYqFixglH3ft
+         qPIPXYT4Y8tgg0MMvvgOqemzPR722B8XE9GPkSGaZOiL/vmv4R6B3eD0ceeAY5MC7KVe
+         LfYg==
+X-Gm-Message-State: AC+VfDzFnwJRRbYrMQ4/8iW4vGr7WYk+kiROTWs2KxMkFpDAPFM40FOF
+        G/N2cwjBDP2OlZW1hncc/55fz7zru4MFIrE6zm7C0g==
+X-Google-Smtp-Source: ACHHUZ519n6PfF1iQeih2w1H7eBKQCRVwE2ObXahgbrsyPv9Fez0px0W+jcEExMsuLAEmazbgXYEPw==
+X-Received: by 2002:aa7:d982:0:b0:509:f221:cee2 with SMTP id u2-20020aa7d982000000b00509f221cee2mr26674380eds.32.1684132010534;
+        Sun, 14 May 2023 23:26:50 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:6470:25b8:7c2d:1992? ([2a02:810d:15c0:828:6470:25b8:7c2d:1992])
+        by smtp.gmail.com with ESMTPSA id n25-20020a056402061900b0050a276e7ba8sm7069699edv.36.2023.05.14.23.26.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 14 May 2023 23:26:50 -0700 (PDT)
+Message-ID: <a4ec338a-1b17-4b88-3df1-239acfa6745e@linaro.org>
+Date:   Mon, 15 May 2023 08:26:48 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
 Subject: Re: [PATCH 1/3] dt-bindings: clock: Add thead th1520 clock
-Message-ID: <20230515062257.zjwtbl4xjbzj7qdh@krzk-bin>
+Content-Language: en-US
+To:     Yangtao Li <frank.li@vivo.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jisheng Zhang <jszhang@kernel.org>, Wei Fu <wefu@redhat.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        Icenowy Zheng <uwu@icenowy.me>
 References: <20230515054402.27633-1-frank.li@vivo.com>
  <20230515054402.27633-2-frank.li@vivo.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 In-Reply-To: <20230515054402.27633-2-frank.li@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 15 May 2023 13:43:59 +0800, Yangtao Li wrote:
+On 15/05/2023 07:43, Yangtao Li wrote:
 > Add devicetree binding document and related header file
 > for the T-HEAD TH1520 clock.
 > 
@@ -84,57 +87,61 @@ On Mon, 15 May 2023 13:43:59 +0800, Yangtao Li wrote:
 >  1 file changed, 60 insertions(+)
 >  create mode 100644 Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
+> new file mode 100644
+> index 000000000000..c3e2d8c7efa6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+Dual license.
 
-yamllint warnings/errors:
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/thead,th1520-ccu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: T-HEAD Clock Control Unit
+> +
+> +maintainers:
+> +  - Jisheng Zhang <jszhang@kernel.org>
+> +  - Wei Fu <wefu@redhat.com>
+> +  - Yangtao Li <frank.li@vivo.com>
+> +
+> +
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml: properties:clock-names: 'const' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
-	hint: Scalar and array keywords cannot be mixed
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml: properties:clocks: 'const' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
-	hint: Scalar and array keywords cannot be mixed
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml: properties:clock-names:const: 2 is not of type 'string'
-	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml: properties:clocks: 'oneOf' conditional failed, one must be fixed:
-	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml: properties:clocks: 'anyOf' conditional failed, one must be fixed:
-		'maxItems' is a required property
-			hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-		'const' is not one of ['maxItems', 'description', 'deprecated']
-			hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-		'items' is not one of ['maxItems', 'description', 'deprecated']
-			hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-		Additional properties are not allowed ('const' was unexpected)
-			hint: Arrays must be described with a combination of minItems/maxItems/items
-		'items' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-		hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-		from schema $id: http://devicetree.org/meta-schemas/clocks.yaml#
-	'const' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
-	'items' is not one of ['type', 'description', 'dependencies', 'dependentRequired', 'dependentSchemas', 'properties', 'patternProperties', 'additionalProperties', 'unevaluatedProperties', 'deprecated', 'required', 'not', 'allOf', 'anyOf', 'oneOf', '$ref']
-	'type' is a required property
-		hint: DT nodes ("object" type in schemas) can only use a subset of json-schema keywords
-	from schema $id: http://devicetree.org/meta-schemas/clocks.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.example.dtb: clock-controller@ffef010000: reg: [[255, 4009820160], [0, 4096]] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.example.dtb: clock-controller@ffef010000: clocks:0:0: 2 was expected
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.example.dtb: clock-controller@ffef010000: clock-names:0: 'losc' is not of type 'array'
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.example.dtb: clock-controller@ffef010000: clock-names: ['losc', 'hosc'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
+Stray blank line.
 
-See https://patchwork.ozlabs.org/patch/1781099
+> +properties:
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  compatible:
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+Compatible is always first property.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+> +    enum:
+> +      - thead,th1520-ccu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    const: 2
+> +    items:
+> +      - description: High Frequency Oscillator (usually at 24MHz)
+> +      - description: Low Frequency Oscillator (usually at 32kHz)
 
-pip3 install dtschema --upgrade
+Does not look like you tested the bindings. Please run `make
+dt_binding_check` (see
+Documentation/devicetree/bindings/writing-schema.rst for instructions).
 
-Please check and re-submit.
+I'll stop review.
+
+Best regards,
+Krzysztof
+
