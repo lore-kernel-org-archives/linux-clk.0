@@ -2,216 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D80C77B7D
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 10:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47205C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 11:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231730AbjEOKgx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 May 2023 06:36:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33778 "EHLO
+        id S241337AbjEOLfw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 07:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229582AbjEOKgw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 06:36:52 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FF0B186;
-        Mon, 15 May 2023 03:36:51 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34F9wd8j029249;
-        Mon, 15 May 2023 10:36:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=2Q2H/6F0QA6haF/RsibQHIgK0WwHTGtWTzV2dagm4/M=;
- b=R/sg+DHG1eGPJyp26EG7GfQrr5PNJJ08ZK25KRGyXNOwx484GFce285rsFG5VEs8ZLiA
- Wqu7t+fM/bFPBwwpFPoXXy16bpJfTMohrHUw17+kdOW8yC9P5rmYUZ0Xl/djZ1fbnPzW
- 0wK7KKPU5cbPio0oM+Vw549I/OywpgqFT/mFfUpV9r6j3SAnt1FE+OMB2deHUTlIsgxB
- xtQmFxParDFu22qkgrgEWUvHob8YT6gQg+ch39iiXV9rSBTMFxkEqbuZbz/siKxyUsPf
- 78XbzDk3GN3I+DvjhAGG5fvfXyUauZSu1mKDD19ju7jnkaBKNWN9N0Mfn7/4WWG/0sRB Pw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qkjk183s1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 10:36:43 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34FAagJH012725
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 10:36:42 GMT
-Received: from [10.216.17.27] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 15 May
- 2023 03:36:34 -0700
-Message-ID: <dc816d43-d3ca-62be-3e8d-9e6d7470c530@quicinc.com>
-Date:   Mon, 15 May 2023 16:06:29 +0530
+        with ESMTP id S241082AbjEOLdv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 07:33:51 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331D5189;
+        Mon, 15 May 2023 04:33:50 -0700 (PDT)
+Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 6A37466031D7;
+        Mon, 15 May 2023 12:33:48 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1684150429;
+        bh=0Op7/1O++9f9jKqNzHu0BHLGnt+h03kOJbIaWi9PeKs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=HrS1R2p9PM3I1yxbCWG+C30ZX/cEa5ugTBKNO3T5Emy1qniUwHhESsZhVy/LMKmMg
+         bKTtwNBibki/OauZ1RHDUi95FkFk2vKFuA5ht4V86ArWKFDyIoJr9zrvy/ifPx3Oo9
+         EDK2Yc+Wn8uRtv4Z+jzZTj+d/ht6NbponChojL5q4EftCnakM4bSPDBJK1b5okD5N7
+         CxLZtEKJCCeBaCTwa4kCuT/1Rwf27NikcsLNTn2J+ebnNHzOxm7SGfZeJrmQJmAsHg
+         jpccAqjglu9DCIWz0CBaqAcr5FmgjViOcOeR7F9PfZ0NK7m+A3SYwCOPWNd010UR1S
+         JeHS7lr9bPWHg==
+Message-ID: <8a3249a5-787b-5c7d-cf7c-69b732eb100e@collabora.com>
+Date:   Mon, 15 May 2023 13:33:45 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.0
-Subject: Re: [PATCH v11 7/9] arm64: dts: qcom: ipq9574: Add USB related nodes
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <cover.1683630932.git.quic_varada@quicinc.com>
- <b4c9dcfbfc328e9404be0edeaa70dde076cb7144.1683630932.git.quic_varada@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH] mediatek/clk-mt8173-apmixedsys: use devm_of_iomap to
+ avoid resource leak in clk_mt8173_apmixed_probe
 Content-Language: en-US
-From:   Kathiravan T <quic_kathirav@quicinc.com>
-In-Reply-To: <b4c9dcfbfc328e9404be0edeaa70dde076cb7144.1683630932.git.quic_varada@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: q3oFru8Y1a-Qa7wyjETsnDLfNc65JTYE
-X-Proofpoint-ORIG-GUID: q3oFru8Y1a-Qa7wyjETsnDLfNc65JTYE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-15_08,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- spamscore=0 bulkscore=0 mlxlogscore=999 clxscore=1011 priorityscore=1501
- adultscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305150091
+To:     Chen-Yu Tsai <wenst@chromium.org>, Hao Ge <gehao@kylinos.cn>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, matthias.bgg@gmail.com,
+        gehao618@163.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20230509021214.17105-1-gehao@kylinos.cn>
+ <CAGXv+5Gvw0QsOa-7E==61WUiJ-q=9qAqN9E0L9hsmk+t12RJ9A@mail.gmail.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CAGXv+5Gvw0QsOa-7E==61WUiJ-q=9qAqN9E0L9hsmk+t12RJ9A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Il 12/05/23 02:39, Chen-Yu Tsai ha scritto:
+> On Tue, May 9, 2023 at 11:12 AM Hao Ge <gehao@kylinos.cn> wrote:
+>>
+>> Use devm_platform_ioremap_resource to take the place of of_iomap for
+>> avoid that we don't called iounmap when return some error or remove
+>> device.
+>>
+>> Fixes: 4c02c9af3cb9 ("clk: mediatek: mt8173: Break down clock drivers and allow module build")
+>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>> ---
+>>   drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+>> index 8c2aa8b0f39e..8a2a88c63d15 100644
+>> --- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+>> +++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+>> @@ -146,8 +146,8 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
+>>          struct clk_hw *hw;
+>>          int r;
+>>
+>> -       base = of_iomap(node, 0);
+>> -       if (!base)
+>> +       base = devm_of_iomap(&pdev->dev, node, 0, NULL);
+>> +       if (IS_ERR(base))
+> 
+>  From lib/devres.c:
+> 
+>   * Please Note: This is not a one-to-one replacement for of_iomap() because the
+>   * of_iomap() function does not track whether the region is already mapped.  If
+>   * two drivers try to map the same memory, the of_iomap() function will succeed
+>   * but the devm_of_iomap() function will return -EBUSY.
+> 
+> The register range for apmixedsys given in mt8173.dtsi overlaps with
+> the HDMI phy. I'm concerned that would cause issues.
 
-On 5/9/2023 5:24 PM, Varadarajan Narayanan wrote:
-> Add USB phy and controller related nodes
->
-> SS PHY need two supplies and HS PHY needs three supplies. 0.925V
-> and 3.3V are from fixed regulators and 1.8V is generated from
-> PMIC's LDO
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->   Changes in v11:
-> 	- Rename dwc_0 -> usb_0_dwc3
->   Changes in v10:
-> 	- Fix regulator definitions
->   Changes in v8:
-> 	- Change clocks order to match the bindings
->   Changes in v7:
-> 	- Change com_aux -> cfg_ahb
->   Changes in v6:
-> 	- Introduce fixed regulators for the phy
-> 	- Resolved all 'make dtbs_check' messages
->
->   Changes in v5:
-> 	- Fix additional comments
-> 	- Edit nodes to match with qcom,sc8280xp-qmp-usb3-uni-phy.yaml
-> 	- 'make dtbs_check' giving the following messages since
-> 	  ipq9574 doesn't have power domains. Hope this is ok
->
-> 		/local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: phy@7d000: 'power-domains' is a required property
->          	From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
-> 		/local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: usb@8a00000: 'power-domains' is a required property
->          	From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
->
->   Changes in v4:
-> 	- Use newer bindings without subnodes
-> 	- Fix coding style issues
->
->   Changes in v3:
-> 	- Insert the nodes at proper location
->
->   Changes in v2:
-> 	- Fixed issues flagged by Krzysztof
-> 	- Fix issues reported by make dtbs_check
-> 	- Remove NOC related clocks (to be added with proper
-> 	  interconnect support)
-> ---
->   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 104 ++++++++++++++++++++++++++++++++++
->   1 file changed, 104 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> index 93b4ba9..42b61f6 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -150,6 +150,24 @@
->   		method = "smc";
->   	};
->   
-> +	fixed_3p3: s3300 {
-> +		compatible = "regulator-fixed";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-name = "fixed_3p3";
-> +	};
-> +
-> +	fixed_0p925: s0925 {
-> +		compatible = "regulator-fixed";
-> +		regulator-min-microvolt = <925000>;
-> +		regulator-max-microvolt = <925000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		regulator-name = "fixed_0p925";
-> +	};
-> +
->   	reserved-memory {
->   		#address-cells = <2>;
->   		#size-cells = <2>;
-> @@ -191,6 +209,45 @@
->   			reg = <0x00060000 0x6000>;
->   		};
->   
-> +		usb_0_qusbphy: phy@7b000 {
-> +			compatible = "qcom,ipq9574-qusb2-phy";
-> +			reg = <0x0007b000 0x180>;
-> +			#phy-cells = <0>;
-> +
-> +			clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> +				 <&xo_board_clk>;
-> +			clock-names = "cfg_ahb",
-> +				      "ref";
-> +
-> +			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
-> +			status = "disabled";
-> +		};
-> +
-> +		usb_0_qmpphy: phy@7d000 {
-> +			compatible = "qcom,ipq9574-qmp-usb3-phy";
-> +			reg = <0x0007d000 0xa00>;
-> +			#phy-cells = <0>;
-> +
-> +			clocks = <&gcc GCC_USB0_AUX_CLK>,
-> +				 <&xo_board_clk>,
-> +				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
-> +				 <&gcc GCC_USB0_PIPE_CLK>;
-> +			clock-names = "aux",
-> +				      "ref",
-> +				      "cfg_ahb",
-> +				      "pipe";
-> +
-> +			resets = <&gcc GCC_USB0_PHY_BCR>,
-> +				 <&gcc GCC_USB3PHY_0_PHY_BCR>;
-> +			reset-names = "phy",
-> +				      "phy_phy";
-> +
-> +			status = "disabled";
-> +
-> +			#clock-cells = <0>;
-> +			clock-output-names = "usb0_pipe_clk";
-> +		};
-> +
->   		pcie0_phy: phy@84000 {
->   			compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
->   			reg = <0x00084000 0x1000>;
-> @@ -560,6 +617,53 @@
->   			status = "disabled";
->   		};
->   
-> +		usb3: usb@8a00000 {
+I agree, that will cause issues.
 
-node address should be updated to 8af8800 ?
-
-Thanks,
+Regards,
+Angelo
 
