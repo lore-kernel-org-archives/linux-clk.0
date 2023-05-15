@@ -2,127 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EDFC77B75
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 14:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA398C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 15:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238603AbjEOOSA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 May 2023 10:18:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47588 "EHLO
+        id S242168AbjEOPJ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 11:09:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237721AbjEOOR7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 10:17:59 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931A71FCE;
-        Mon, 15 May 2023 07:17:58 -0700 (PDT)
-Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CFE4966058D2;
-        Mon, 15 May 2023 15:17:55 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1684160276;
-        bh=isAu6jaVeMeTLU5u3pXCbHYMMByM16GBW5K9iE6wVqM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=E69ssZrHbA8dsU7JD1aA1yNwFgIFGa0oJvFQ/Vpc25IlMQ2Hxz/BxoHaMBvjlPwrO
-         3SXNMteCZzP+chskAdlAOobejNHmNhFiyLDXOcYKGCzs8GiceWkgQz/tjuv7QBev3p
-         0vClO/kOP5dMbdxm40B9TSQTx0PxxachJjvpMq4X6h5M+yKzO9eZeMM7Ul+ZdwhuqF
-         erD4C3GgGVXW5hH7FTRMmBThEAETUHnycQ7AP4aC3jBdEyhJUoHvrFlh5UMAIdC1n1
-         Yh9LagnpYpJ2qskxEa+I1dsO/S/Q91vHcMdZcDDCDzAH+0zI5l5B1H4bTe9+EYum87
-         IxG/FN1b2ZGhg==
-Message-ID: <adca53e5-5c26-e087-f142-5a6f9e9961db@collabora.com>
-Date:   Mon, 15 May 2023 16:17:52 +0200
+        with ESMTP id S242058AbjEOPJ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 11:09:28 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A62DF90;
+        Mon, 15 May 2023 08:09:23 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34FEgEgd029290;
+        Mon, 15 May 2023 15:08:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=l1110XsEoAINYDvtMhYa50pyYXPzrlXWQsAzFepIySY=;
+ b=IgBJLBEAOVoCQY/HVW2uqN73P1Lp8lQqXo71yMGBLx5bqPWvgwuVmDmE3v6rbwMUqWkr
+ 8ZsFFA2aqdpA5M0deEpDXUjCXjLwrFInMTririU4vxNXgp5kHDa8V8ey8Aa5l8fNx1yq
+ zNQ+mTSHXlMZK/DCpaC1qzfUKZn4RMq9cibsym2uMWGNZWjcdyeYYLFyBI8hfzgii3LM
+ pLWdn+K8dDZtFvX1rp83bHt2xKJ5DfnADrGTSmnrthhZ0PMUmsjmYOudNPmL7YOheLdp
+ whw6X0B9noVuydH/yT1qKPp4sQtn8lKmROG2cZ4haNQh+XnATsUrsThyM7ecAmkJVslS ag== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qkkq98rng-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 15:08:26 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34FF8Oxd018718
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 15:08:24 GMT
+Received: from anusha-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Mon, 15 May 2023 08:08:17 -0700
+From:   Anusha Rao <quic_anusha@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <thara.gopinath@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
+        <bhupesh.sharma@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
+Subject: [PATCH V2 2/4] clk: qcom: gcc-ipq9574: Enable crypto clocks
+Date:   Mon, 15 May 2023 20:37:20 +0530
+Message-ID: <20230515150722.12196-3-quic_anusha@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230515150722.12196-1-quic_anusha@quicinc.com>
+References: <20230515150722.12196-1-quic_anusha@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH] clk: mediatek: mt8365: Fix inverted topclk operations
-Content-Language: en-US
-To:     Markus Schneider-Pargmann <msp@baylibre.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Alexandre Mergnat <amergnat@baylibre.com>
-References: <20230511133226.913600-1-msp@baylibre.com>
- <8603c2b2-2a5b-48f6-9b08-9b3b518b716b@gmail.com>
- <aa383909-7a03-eb24-3a61-397f2a6adb54@collabora.com>
- <20230515140153.ppjl4zyshscvcbuu@blmsp>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230515140153.ppjl4zyshscvcbuu@blmsp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: AI3arLalsGal46tBMCvFdskD0jxiZKjW
+X-Proofpoint-ORIG-GUID: AI3arLalsGal46tBMCvFdskD0jxiZKjW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-15_11,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305150124
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 15/05/23 16:01, Markus Schneider-Pargmann ha scritto:
-> On Mon, May 15, 2023 at 01:49:54PM +0200, AngeloGioacchino Del Regno wrote:
->> Il 12/05/23 13:51, Matthias Brugger ha scritto:
->>>
->>>
->>> On 11/05/2023 15:32, Markus Schneider-Pargmann wrote:
->>>> The given operations are inverted for the wrong registers which makes
->>>> multiple of the mt8365 hardware units unusable. In my setup at least usb
->>>> did not work.
->>>>
->>>> Fixed by swapping the operations with the inverted ones.
->>
->> ...with the not inverted ones, you mean!
-> 
-> Actually now I am not sure how to express it correctly, maybe I should
-> have just left that sentence out of the commit message.
-> 
-> I meant replacing the no_setclr_inv with no_setclr for TOP0 and no_setclr with
-> no_setclr_inv for TOP1/2.
-> 
+Enable the clocks required for crypto operation.
 
-Yeah, the sentence may be a bit confusing, but you're actually inverting the
-inverted ones and the non-inverted ones.
+Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+---
+ Changes in V2:
+	- Moved the clock/reset binding changes to a new patch.
 
-It's fine, anyway, this commit can get picked as-is imo :-D
+ drivers/clk/qcom/gcc-ipq9574.c | 72 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-> Best,
-> Markus
-> 
->>
->> Anyway,
->>
->> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>
->>>>
->>>> Reported-by: Alexandre Mergnat <amergnat@baylibre.com>
->>>> Fixes: 905b7430d3cc ("clk: mediatek: mt8365: Convert simple_gate to
->>>> mtk_gate clocks")
->>>> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
->>>
->>> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
->>>
->>>> ---
->>>>    drivers/clk/mediatek/clk-mt8365.c | 6 +++---
->>>>    1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/mediatek/clk-mt8365.c b/drivers/clk/mediatek/clk-mt8365.c
->>>> index 6b4e193f648d..6d785ec5754d 100644
->>>> --- a/drivers/clk/mediatek/clk-mt8365.c
->>>> +++ b/drivers/clk/mediatek/clk-mt8365.c
->>>> @@ -583,15 +583,15 @@ static const struct mtk_gate_regs top2_cg_regs = {
->>>>    #define GATE_TOP0(_id, _name, _parent, _shift)            \
->>>>        GATE_MTK(_id, _name, _parent, &top0_cg_regs,        \
->>>> -         _shift, &mtk_clk_gate_ops_no_setclr_inv)
->>>> +         _shift, &mtk_clk_gate_ops_no_setclr)
->>>>    #define GATE_TOP1(_id, _name, _parent, _shift)            \
->>>>        GATE_MTK(_id, _name, _parent, &top1_cg_regs,        \
->>>> -         _shift, &mtk_clk_gate_ops_no_setclr)
->>>> +         _shift, &mtk_clk_gate_ops_no_setclr_inv)
->>>>    #define GATE_TOP2(_id, _name, _parent, _shift)            \
->>>>        GATE_MTK(_id, _name, _parent, &top2_cg_regs,        \
->>>> -         _shift, &mtk_clk_gate_ops_no_setclr)
->>>> +         _shift, &mtk_clk_gate_ops_no_setclr_inv)
->>>>    static const struct mtk_gate top_clk_gates[] = {
->>>>        GATE_TOP0(CLK_TOP_CONN_32K, "conn_32k", "clk32k", 10),
->>
->>
+diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+index 7b0505f5c255..b203e7aae145 100644
+--- a/drivers/clk/qcom/gcc-ipq9574.c
++++ b/drivers/clk/qcom/gcc-ipq9574.c
+@@ -728,6 +728,41 @@ static struct clk_rcg2 blsp1_uart6_apps_clk_src = {
+ 	},
+ };
+ 
++static const struct freq_tbl ftbl_crypto_clk_src[] = {
++	F(160000000, P_GPLL0, 5, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 crypto_clk_src = {
++	.cmd_rcgr = 0x16004,
++	.freq_tbl = ftbl_crypto_clk_src,
++	.hid_width = 5,
++	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "crypto_clk_src",
++		.parent_data = gcc_xo_gpll0_gpll0_out_main_div2,
++		.num_parents = ARRAY_SIZE(gcc_xo_gpll0_gpll0_out_main_div2),
++		.ops = &clk_rcg2_ops,
++	},
++};
++
++static struct clk_branch gcc_crypto_clk = {
++	.halt_reg = 0x1600c,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x0b004,
++		.enable_mask = BIT(14),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_crypto_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&crypto_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_apss_ahb_clk = {
+ 	.halt_reg = 0x24018,
+ 	.halt_check = BRANCH_HALT_VOTED,
+@@ -2071,6 +2106,38 @@ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_crypto_axi_clk = {
++	.halt_reg = 0x16010,
++	.clkr = {
++		.enable_reg = 0x16010,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_crypto_axi_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&pcnoc_bfdcd_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_crypto_ahb_clk = {
++	.halt_reg = 0x16014,
++	.clkr = {
++		.enable_reg = 0x16014,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "gcc_crypto_ahb_clk",
++			.parent_hws = (const struct clk_hw *[]) {
++				&pcnoc_bfdcd_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_nsscfg_clk = {
+ 	.halt_reg = 0x1702c,
+ 	.clkr = {
+@@ -4036,6 +4103,10 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
+ 	[GCC_SNOC_PCIE1_1LANE_S_CLK] = &gcc_snoc_pcie1_1lane_s_clk.clkr,
+ 	[GCC_SNOC_PCIE2_2LANE_S_CLK] = &gcc_snoc_pcie2_2lane_s_clk.clkr,
+ 	[GCC_SNOC_PCIE3_2LANE_S_CLK] = &gcc_snoc_pcie3_2lane_s_clk.clkr,
++	[CRYPTO_CLK_SRC] = &crypto_clk_src.clkr,
++	[GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
++	[GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
++	[GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq9574_resets[] = {
+@@ -4193,6 +4264,7 @@ static const struct qcom_reset_map gcc_ipq9574_resets[] = {
+ 	[GCC_WCSS_ECAHB_ARES] = { 0x25070, 0 },
+ 	[GCC_WCSS_Q6_BCR] = { 0x18000, 0 },
+ 	[GCC_WCSS_Q6_TBU_BCR] = { 0x12054, 0 },
++	[GCC_CRYPTO_BCR] = { 0x16000, 0 },
+ };
+ 
+ static const struct of_device_id gcc_ipq9574_match_table[] = {
+-- 
+2.17.1
 
