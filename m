@@ -2,105 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BE1C7EE24
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 06:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24864C77B75
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 07:13:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239371AbjEOGcd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 May 2023 02:32:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34386 "EHLO
+        id S240072AbjEOHNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 03:13:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239249AbjEOGcd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 02:32:33 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F9C019D
-        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 23:32:31 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-50bd37ca954so108299722a12.0
-        for <linux-clk@vger.kernel.org>; Sun, 14 May 2023 23:32:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684132349; x=1686724349;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S/hYvCcBf6b2cvUWeK/Zz7sqw40AaKUPJTT2dMrut/Q=;
-        b=anAg46r3ItG7TxcWPmGuHeXhHGLKN+nwU5I/BaIYPU4UiOscHUTadRL+pNRbf/gYVb
-         8MREHFIQAa9kjGLnQykkQe9c5bLgg85EQVXWPsJzjJuPq3DoMcwDL4Z/Yk6Y4MCBqbMt
-         FiM0re6eTy6RayocX6uDWemmtmLxfNWKTItPkbHpmfnqULHK/EelaOr1KnkkS8J8zG4S
-         gHSAu4G6iBMwAxFc1Zn+tfOkxaFSXUkn3fYvPljK4aMNzLROLTTAMniixl1XB3p6+fg3
-         XrnDDUWkx4JnxaGcmA/1h3oC0bfflrFgXikACk6tTT6ReFWajycMuQaWkMi7r1A35Wui
-         qrBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684132349; x=1686724349;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/hYvCcBf6b2cvUWeK/Zz7sqw40AaKUPJTT2dMrut/Q=;
-        b=LQlnvsX2FdDQ3kw8ohViDB4jDgIrxDe9xHS+RRo1/TqeNBPu5yRYQ190QxAGIPo6C+
-         bs8AhY7UwOC5NKEaAD9ahlBSVGEaWupoo6odx2F+6nPozYP29QfSdkmCznRFjn2x29AA
-         8DTRUsI90xNaGx5p06ijFI8XQuzP2eJuW6M4HYMyehCeXjpc443wG6x78GR92Ap6C/qi
-         pcEeo59SXSUC9ztxKBhGwE5Q/55Xqf+mkPTZtUt6grLGAWVCkfTvs4weDmqy4j/NQWdJ
-         5Ze1niNoDkL2QwABPMlznesnQxHHgR8Qx/BPrARJfNH4xLY2M9bPbHMRlE70/G2gPqdA
-         wMqw==
-X-Gm-Message-State: AC+VfDys/oss1oBftevmvNbFRMza6suQVgpzi265KaeWH/ptaxCCtJca
-        Rp8L3kg5t3V+AfF91RmoINHCHA==
-X-Google-Smtp-Source: ACHHUZ5G5Kk8YwVeXUzhpeXKMrTcjuQZ9G2Q+2fbGgBS0iUKQ7ma65pjl4f7B8m21PO/4Bg2keLvVg==
-X-Received: by 2002:a17:907:3d89:b0:94e:4285:390c with SMTP id he9-20020a1709073d8900b0094e4285390cmr31602369ejc.10.1684132349638;
-        Sun, 14 May 2023 23:32:29 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:6470:25b8:7c2d:1992? ([2a02:810d:15c0:828:6470:25b8:7c2d:1992])
-        by smtp.gmail.com with ESMTPSA id bu2-20020a170906a14200b0096654fdbe34sm9129015ejb.142.2023.05.14.23.32.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 May 2023 23:32:29 -0700 (PDT)
-Message-ID: <0ff4b9fb-c56d-b896-e2de-c2f189a5e6d0@linaro.org>
-Date:   Mon, 15 May 2023 08:32:27 +0200
+        with ESMTP id S231540AbjEOHNI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 03:13:08 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2529EE6D;
+        Mon, 15 May 2023 00:13:06 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34F6Jm4v011633;
+        Mon, 15 May 2023 07:13:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=TtMMfLL5nCFr68O0x6kk9AsNmzhF3MX3q5iwKJo0uLg=;
+ b=DkX/6/q0mCXyoe2Q8R8cIuGv1/XR7wmJh71lfFbfB8twrQ5TRU3FI+/vgF2tsVjVN8wZ
+ bLJ6lPQH7xf7rdj1aIhi6uXmdDTYGF47XOO0Y1LKmsFitJ8QQkmcjuzaD+XbyBq0e8Ki
+ WRcZti94U7Kn55knRuMmXBMiptnK9c5X7YLUUGk1QcsJPIkvyut/zneV0qBsnTaOqRsn
+ zKs3GcJc/lJXkv/X9fkkcPu+y+fPlQGiOMJtg1N4uwG4JMk6Q01rk/cVU4dC92AEejz1
+ 1EDKHh/EqJmPjukPl4wT9PhLL9mZ4Acb2WtTuOEd1ynMHPldNBPbfAq3DnlULlkc9Sv/ 6A== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qj2xdaxmb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 07:13:00 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34F7CbeU026358
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 May 2023 07:12:37 GMT
+Received: from [10.216.63.235] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 15 May
+ 2023 00:12:30 -0700
+Message-ID: <b90211ca-acdd-0845-8c44-47a84e747fa4@quicinc.com>
+Date:   Mon, 15 May 2023 12:42:26 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V8 2/4] dt-bindings: clock: document Amlogic S4 SoC
- peripherals clock controller
-Content-Language: en-US
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-References: <20230515031557.31143-1-yu.tu@amlogic.com>
- <20230515031557.31143-3-yu.tu@amlogic.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230515031557.31143-3-yu.tu@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-ipq9574: Enable crypto clocks
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <20230512090134.9811-1-quic_anusha@quicinc.com>
+ <20230512090134.9811-2-quic_anusha@quicinc.com>
+ <7496f2a8-db87-ffec-8ea8-2f9ff7511a75@linaro.org>
+From:   Anusha Canchi <quic_anusha@quicinc.com>
+In-Reply-To: <7496f2a8-db87-ffec-8ea8-2f9ff7511a75@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kEr-t2CWcp0eGOXgnKkYSN9Baw4jB_Fb
+X-Proofpoint-GUID: kEr-t2CWcp0eGOXgnKkYSN9Baw4jB_Fb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-15_04,2023-05-05_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ mlxlogscore=948 priorityscore=1501 mlxscore=0 clxscore=1011
+ lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305150064
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/05/2023 05:15, Yu Tu wrote:
-> Add the S4 peripherals clock controller dt-bindings in the s4 SoC
-> family.
-> 
-> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
 
-This is a friendly reminder during the review process.
+On 5/12/2023 2:50 PM, Krzysztof Kozlowski wrote:
+> On 12/05/2023 11:01, Anusha Rao wrote:
+>> Enable the clocks required for crypto operation.
+>>
+>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/gcc-ipq9574.c               | 72 ++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,ipq9574-gcc.h |  4 ++
+>>   include/dt-bindings/reset/qcom,ipq9574-gcc.h |  2 +-
+> Bindings are always separate patches.
 
-It looks like you received a tag and forgot to add it.
+Okay, will address in the next spin.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions. However, there's no need to repost patches *only* to add the
-tags. The upstream maintainer will do that for acks received on the
-version they apply.
+Thanks,
 
-https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
+Anusha
 
-If a tag was not added on purpose, please state why and what changed.
-
-
-Best regards,
-Krzysztof
-
+>
+> Best regards,
+> Krzysztof
+>
