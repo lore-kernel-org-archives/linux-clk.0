@@ -2,136 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AEC2C7EE22
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 03:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFAAC77B7D
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 05:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231948AbjEODZE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 14 May 2023 23:25:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35650 "EHLO
+        id S233811AbjEOFoZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 01:44:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235202AbjEODYx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 14 May 2023 23:24:53 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7B89170B;
-        Sun, 14 May 2023 20:24:50 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id DA10A80C1;
-        Mon, 15 May 2023 11:24:37 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 15 May
- 2023 11:24:38 +0800
-Received: from [192.168.125.131] (113.72.146.187) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 15 May
- 2023 11:24:36 +0800
-Message-ID: <b461a88f-76a1-29a2-d4d4-6ec9992a78ae@starfivetech.com>
-Date:   Mon, 15 May 2023 11:23:00 +0800
+        with ESMTP id S229629AbjEOFoY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 01:44:24 -0400
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2105.outbound.protection.outlook.com [40.107.215.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C1110E3;
+        Sun, 14 May 2023 22:44:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gF1nAn2S+gyVkcJji9ydbsQjP+70iBiZGFQcw7kRXuNglepdaQe6MJTYgxaW0rePWRSc9lOTksDf4xdS3meqW8sqfW72hKMmctqUAQEM9Aki5biWMWbzlHhqOfY8E1lAyW7xXzN97DiL/SYhMF0DgP9uZ/JEpt/nNug436r18R3mS+NCc/KEtwSBSn6oU3TVke1CJRoCH3h0wMgKd/sgy4IfnmszdR875LIxLwjUNTpMEWAD8ePdDdZ3uZouL/jA8GzpEAUcqboOFDiT4sofxhYcjV/vrpZSczudPANJr+uuoz47jT+bAtg7LRwiMElsLth7K2VFPl5ayuADSncfiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4o7tmJHmmFhvUG70KdMYT50HyZV2hyvHQ944xzvH7SA=;
+ b=ZTv/PfOr9Fj1ppFY5W19khBj7fDlXlYIa0AE6VvstXQ/TJR24fY5g1YvBM/00C/MoD7NgVyHBmnBsPiGhqfz80otsPV6g3opwFGH6u8OsHTkU0qWYGQU5vaMeBzBOZEIvImRjHbrnGxVvJU6gm8A4KG/1RjunrLrHspuQ71FS9bnIZvwWafzM37IIiQpW75jGYIVRE2EAfDdjX/fQGC39pjsWzX/llLMHOE/1PwYpQ8iF9r/HzgdwUrw+HeAYHufQeWrLB78Za1+osdli4oJmn5/ZrBT+me1a9+FyeocgBnmteenKp/qNRQdw8BjDW4G2QI7F5YrThoSWTssoQxuyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4o7tmJHmmFhvUG70KdMYT50HyZV2hyvHQ944xzvH7SA=;
+ b=iKBmS3RP4ZNl345o2PhLIH9e088vo+BHK8hSij8q9y8+Zr3uPbw9sLv4U9noTqpY2BpN7K06V94rctAosbQ1+dYHpNHeIWeyq045uz3IBsrwW+ozMswqfD+dKin0G3jpd7sangnlRHfrie0H7xz32GJjlw4cw57ACTljg5n6ZiaeIsRPsHo5Fqae6hUwOboUj9e7AXtYiDfoi8QPvggqqrbOXAyv77DN1rCCJO1cAhqSQfaaQqrVfQ1Fb+K3B7e1g/FixStTwlH5iZdHAYNEWVfC2cEmnTePvx4bOENlAby277CCKqEJQgI14TL+Ztb6+kOi4HygCsdzf4sw3zRVGg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by SEZPR06MB6571.apcprd06.prod.outlook.com (2603:1096:101:185::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Mon, 15 May
+ 2023 05:44:13 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::76d6:4828:7e80:2965]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::76d6:4828:7e80:2965%3]) with mapi id 15.20.6387.030; Mon, 15 May 2023
+ 05:44:12 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH 0/3] Add T-HEAD th1520 soc clock support
+Date:   Mon, 15 May 2023 13:43:58 +0800
+Message-Id: <20230515054402.27633-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0064.apcprd02.prod.outlook.com
+ (2603:1096:4:54::28) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v5 06/10] clk: starfive: Add StarFive JH7110 Video-Output
- clock driver
-Content-Language: en-US
-To:     Aurelien Jarno <aurelien@aurel32.net>
-References: <20230424135409.6648-1-xingyu.wu@starfivetech.com>
- <20230424135409.6648-7-xingyu.wu@starfivetech.com>
- <ZGFWyPbeEOxxqwQK@aurel32.net>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        "Emil Renner Berthing" <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Hal Feng <hal.feng@starfivetech.com>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <ZGFWyPbeEOxxqwQK@aurel32.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.146.187]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|SEZPR06MB6571:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4677b084-436f-446c-61cc-08db5507693c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MyCtES4w0Eu/7QnIiTHfpYXn47HDzoy+1NFmFaaoZuHtgbSsElk1YlKfFJRqmX1ZCQ0rycMPmPkwm3lh+I5DMmpscw15XJVi4IvQJ9Ln0tDUbj/9502RBb9RfiiX8+64xoJkCCQO/LmIvA4ZhijvDUzur/wN5CCspTp39diJ8Vl5EaWBwaut4t6isNucFDRqxhZszY87gmwah8UB6P8onAi0wL8ockRaMvEkRNnROpLOvTOY5yvw6yDxPR92kyGDtzKQblnRnlcUc5sSCkGabg+uQ+nCW++N7z6ugy3F0JdK2OpOoqrbAMBOwIQcudyKFXCWulJ0d68/TQxPRIO7SBobHWuk4XAxQIubOiE47PpWeBkm7CJiCg9ESsec6kc+7jCPBRzhQscRfkAh2Gq7ehfCnL4j/m0fBtpXrx/MKiZJMt52QwOTpmsSbCYMczXpKR6Yr7zZEK1C6eAKrcRlWG8g85mvUzhrs+Z2QhsbHDCuNDd+UDxooEUuZTAxxCd6nPh/8Gi27QTNnbs2VMC0CqX6bu8pIhJ/CWj/uWa4dQGbrfI/wB8P0/4s2t5i/h8DyWP4zidhtTab8Dt2cMlIeTi0q4VEGKs29IHxV/kwSUo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(376002)(366004)(136003)(396003)(39860400002)(451199021)(966005)(52116002)(66556008)(66946007)(66476007)(4326008)(478600001)(6486002)(86362001)(316002)(36756003)(83380400001)(6512007)(26005)(107886003)(1076003)(186003)(2616005)(6506007)(41300700001)(8936002)(8676002)(5660300002)(6666004)(2906002)(4744005)(38100700002)(38350700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TukjampMehJVO8Mj39BeT3+0El/SS4pkth5S2svqkg6fUIESVbEAu/iPmvsw?=
+ =?us-ascii?Q?0LYK3/lTtt0UzkepOnGkoRVP/gGjra3YLMBbVrv1R9eqvcn8YyQOI9MNr4h0?=
+ =?us-ascii?Q?6FUJnjxKEafFxBcArw28z8KdfTj878JdvxlIjb+RhvTqfaAT3ByLj5fKi6Zc?=
+ =?us-ascii?Q?cr/BliHm5HDEVZxCETMBis6ZmMNtIZ2YaLeNMXiRHgz3GS4MHnDwW/uYRVCC?=
+ =?us-ascii?Q?22xpL0cVIQa0AyEsDMp5pHoutYxeZ1Gc3ZbAUnY7CIM+4jrS0wLLOX+eaQeu?=
+ =?us-ascii?Q?GZ2CWVhPFlCpuOPI4xLn/tJW0lYw7YupwsbRuwmkNB5TgTjtE8kNN5UFnwh2?=
+ =?us-ascii?Q?Y6P7kPS83PmMQ/wuY/YZojjXBwqUQB6z0L+MDB9gtvzv3607YR/rNGWUb+Zn?=
+ =?us-ascii?Q?d59i3KL0W/2+p5MVQUV/fU12h5w7beYz3rSCE0kPfdmlri/vJVfuOWFhvGkC?=
+ =?us-ascii?Q?hj45mJFA93ot5cL3klzoONTqHszeMnK7x9kAb8VEkOxKNFDzhg5oS6j+zeU/?=
+ =?us-ascii?Q?LScQhlcxgx5BkRyBMgifntLddzbFNf76JFWfgtRJhk82IRrtOhhtx3OU64/W?=
+ =?us-ascii?Q?6p6/fp7m91Yi/R7egzlxRimRxoiY53sE9HURG7ntdpNzhlCizbaHTAquRVLn?=
+ =?us-ascii?Q?90g7BO05PdexqWDiRvqkKltdpFz3XSeHn7RPAcsNMBRghpkPzSSgbwOMUuoV?=
+ =?us-ascii?Q?zYYrWLTp5nFzmhlG4kDZWTXeVEVOoJzPxkDbrluxezib5NsQDGokXTty9D1+?=
+ =?us-ascii?Q?vLYDt4bECs2Hy4Ltrw4TxxmmjCV3yhHarsItelovRrYLQzJXFXG/YWDfQFMl?=
+ =?us-ascii?Q?qpdH9rhFu/OlGXiTSiYJNRug8IFcD9iaxf6DRJAq+raf1soYlm9FOygfgm5s?=
+ =?us-ascii?Q?Hg/93wtyGN5mIp0lP/f00sCZVTBkjD8oqkMOC1QwGMo7atw+oLVzTOgp5OKf?=
+ =?us-ascii?Q?ZkMWpyMa0Rn+eMM4pznu7BgM2dADCp0zZiDHSvvWjFDKYX328SzFinum17Ls?=
+ =?us-ascii?Q?vpS5RApffMalejk00rOVXrAnRsLr1m9h+UQWgk3xwwaAHBkt2lqqN2ebcZK9?=
+ =?us-ascii?Q?GJo54EsEfkYBSH4APh1oZln/l6uGmd1oyvV0DOOlwFlzb0XBhERoXIBgaP42?=
+ =?us-ascii?Q?AwfzQgpNmgdOtCuaE6XyOcGA5Z6BwzyM8uruO+Usq+HMvPCqQDIGxoTloi7i?=
+ =?us-ascii?Q?CU2d9cAR39i9VvC8V/aCPBeeIdtvl1IdFd5nTMcSgB/sP7PdmYE8jJTlcwjC?=
+ =?us-ascii?Q?wxCD0ZWobG6tPOwblgEzd+qxgEv43M4SehlxlVeMF5WvHrXrzQskDRRQxbGp?=
+ =?us-ascii?Q?OGbeg6wQxK4a0aMwg44BAxHm/XRqylIFya9yLq5hWTtBHCpGnjligfWs0pD7?=
+ =?us-ascii?Q?Xt2US1JEhPB1VZSofk4NwpQiut572YvTlDKDaYGDRw9K5J5IX8GeJs/LaY4R?=
+ =?us-ascii?Q?KXpd69ZiUjbRTjk/Ty+Fj9pbqSndPAy871VIcchgFfJ3dk0nX/ELH2dmYV8F?=
+ =?us-ascii?Q?sK4aPFBtX4DecZZIxP0MwgvyLbOwU9PHhy0X+UO0Q/zAjx9X5WsvkxTcLTU8?=
+ =?us-ascii?Q?bHMrX/FDif5xj8CO2eIGjkhLXwbUFtxr1CuK3xE6?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4677b084-436f-446c-61cc-08db5507693c
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2023 05:44:12.4556
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WKJsUVty5jU185lkGPaQFUE/jwJXijTe/iCargHUYd42WF1iwYzBo8x9kYeWbEoAE098lb0DMhcxAb0URIlxQw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6571
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/5/15 5:46, Aurelien Jarno wrote:
-> On 2023-04-24 21:54, Xingyu Wu wrote:
->> Add driver for the StarFive JH7110 Video-Output clock controller.
->> And these clock controllers should power on and enable the clocks from
->> SYSCRG first before registering.
->> 
->> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> 
-> There seems to be something wrong with this patch. Building the kernel
-> with the whole series applied and with CONFIG_FORTIFY_SOURCE=y triggers
-> the following kernel bug: 
-> 
-> [   75.705103] detected buffer overflow in __fortify_strlen
-> [   75.710497] ------------[ cut here ]------------
-> [   75.715117] kernel BUG at lib/string_helpers.c:1027!
-> [   75.720083] Kernel BUG [#1]
-> [   75.722879] Modules linked in: clk_starfive_jh7110_vout(+) nvme_fabrics binfmt_misc starfive_wdt jh7110_trng watchdog sfctemp rng_core drm loop fuse drm_panel_orientation_quirks configfs ip_tables x_tables autofs4 ext4 crc32c_generic crc16 mbcache jbd2 dm_mod nvme nvme_core t10_pi crc64_rocksoft crc64 crc_t10dif crct10dif_generic crct10dif_common xhci_pci xhci_hcd mmc_block dwmac_starfive stmmac_platform stmmac usbcore pcs_xpcs of_mdio fixed_phy fwnode_mdio phylink libphy usb_common dw_mmc_starfive dw_mmc_pltfm clk_starfive_jh7110_isp dw_mmc clk_starfive_jh7110_aon ptp phy_starfive_dphy_rx mmc_core pps_core phy_jh7110_pcie i2c_designware_platform clk_starfive_jh7110_stg phy_jh7110_usb i2c_designware_core
-> [   75.785411] CPU: 1 PID: 419 Comm: insmod Not tainted 6.3.1+ #1
-> [   75.791241] Hardware name: StarFive VisionFive 2 v1.2A (DT)
-> [   75.796809] epc : fortify_panic+0x1a/0x1c
-> [   75.800828]  ra : fortify_panic+0x1a/0x1c
-> [   75.804838] epc : ffffffff80874242 ra : ffffffff80874242 sp : ffffffc80454b6a0
-> [   75.812054]  gp : ffffffff8157f008 tp : ffffffd8c1214f80 t0 : 6465746365746564
-> [   75.819269]  t1 : 0000000000000064 t2 : 2064657463657465 s0 : ffffffc80454b6b0
-> [   75.826483]  s1 : 0000000000000020 a0 : 000000000000002c a1 : ffffffd8fdd63688
-> [   75.833697]  a2 : ffffffd8fdd6f8e8 a3 : 0000000000000000 a4 : 0000000000000000
-> [   75.840912]  a5 : 0000000000000000 a6 : ffffffff81426a38 a7 : 0000000000000000
-> [   75.848126]  s2 : ffffffff80ec4e00 s3 : ffffffd8d9e28008 s4 : 000000000000001f
-> [   75.855340]  s5 : 0000000000000000 s6 : ffffffff81580798 s7 : 0000000000ffffff
-> [   75.862555]  s8 : ffffffd8d9e29ab0 s9 : 0000000000000011 s10: ffffffff017312a0
-> [   75.869770]  s11: ffffffff01731450 t3 : ffffffff81592df7 t4 : ffffffff81592df7
-> [   75.876984]  t5 : ffffffff81592df8 t6 : ffffffc80454b4a8
-> [   75.882290] status: 0000000200000120 badaddr: 0000000000000000 cause: 0000000000000003
-> [   75.890199] [<ffffffff80874242>] fortify_panic+0x1a/0x1c
-> [   75.895513] [<ffffffff805c7e20>] auxiliary_match_id+0x70/0xcc
-> [   75.901262] [<ffffffff805c7f22>] auxiliary_match+0x1e/0x2a
-> [   75.906749] [<ffffffff805bd6b0>] __device_attach_driver+0x2c/0xe4
-> [   75.912841] [<ffffffff805bb04e>] bus_for_each_drv+0x70/0xc4
-> [   75.918418] [<ffffffff805bdb0a>] __device_attach+0x94/0x198
-> [   75.923989] [<ffffffff805bde68>] device_initial_probe+0x1a/0x22
-> [   75.929908] [<ffffffff805bc146>] bus_probe_device+0x96/0x98
-> [   75.935482] [<ffffffff805b971e>] device_add+0x56a/0x722
-> [   75.940710] [<ffffffff805c7fc4>] __auxiliary_device_add+0x40/0x92
-> [   75.946803] [<ffffffff80556ff4>] jh7110_reset_controller_register+0x92/0xca
-> [   75.953765] [<ffffffff0173034c>] jh7110_voutcrg_probe+0x236/0x2fa [clk_starfive_jh7110_vout]
-> [   75.962228] [<ffffffff805bfb40>] platform_probe+0x5e/0xa6
-> [   75.967629] [<ffffffff805bd1e6>] really_probe+0xa0/0x342
-> [   75.972940] [<ffffffff805bd508>] __driver_probe_device+0x80/0x138
-> [   75.979031] [<ffffffff805bd5f8>] driver_probe_device+0x38/0xc4
-> [   75.984863] [<ffffffff805bd83a>] __driver_attach+0xd2/0x1a8
-> [   75.990436] [<ffffffff805baf92>] bus_for_each_dev+0x6c/0xb8
-> [   75.996011] [<ffffffff805bcab6>] driver_attach+0x26/0x2e
-> [   76.001325] [<ffffffff805bc384>] bus_add_driver+0x10c/0x1ee
-> [   76.006900] [<ffffffff805be5e2>] driver_register+0x52/0xf4
-> [   76.012386] [<ffffffff805bf78e>] __platform_driver_register+0x28/0x30
-> [   76.018827] [<ffffffff01b72028>] jh7110_voutcrg_driver_init+0x28/0x1000 [clk_starfive_jh7110_vout]
-> [   76.027802] [<ffffffff8000281a>] do_one_initcall+0x5c/0x1c8
-> [   76.033377] [<ffffffff800a7612>] do_init_module+0x4c/0x1f6
-> [   76.038867] [<ffffffff800a9396>] load_module+0x1a6c/0x1ebe
-> [   76.044356] [<ffffffff800a99ea>] __do_sys_finit_module+0x9c/0xf8
-> [   76.050365] [<ffffffff800a9a82>] sys_finit_module+0x1c/0x24
-> [   76.055936] [<ffffffff80003df8>] ret_from_syscall+0x0/0x2
-> [   76.061343] Code: 0800 85aa 3517 007a 0513 7ee5 a097 ffff 80e7 fc20 (9002) 7179 
-> [   76.068735] ---[ end trace 0000000000000000 ]---
-> 
+It is planned to support th1520 soc from T-HEAD in Linux, which is the clock part.
 
-I got the recurrence of this with CONFIG_FORTIFY_SOURCE=y.
-And I found the problem that the reset name of auxiliary_device_id in VOUTCRG
-is exactly 32 characters. I rename the reset of auxiliary_device_id in VOUTCRG
-to a shorter name and fix the problem. And I will fix it in next patch.
+BTW, we are already in the shell console, and some modules are already available.
+This patchset depends on some of the patches in the link below:
+https://www.spinics.net/lists/kernel/msg4780793.html
 
-Best regards,
-Xingyu Wu
+Yangtao Li (3):
+  dt-bindings: clock: Add thead th1520 clock
+  clk: thead: add support for the T-HEAD TH1520 CCU
+  MAINTAINERS: update entry for T-HEAD RISC-V SoC
+
+ .../bindings/clock/thead,th1520-ccu.yaml      |  60 ++
+ MAINTAINERS                                   |   6 +-
+ drivers/clk/Kconfig                           |   6 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-th1520.c                      | 999 ++++++++++++++++++
+ include/dt-bindings/clock/th1520-clock.h      |  92 ++
+ 6 files changed, 1163 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/thead,th1520-ccu.yaml
+ create mode 100644 drivers/clk/clk-th1520.c
+ create mode 100644 include/dt-bindings/clock/th1520-clock.h
+
+-- 
+2.39.0
+
