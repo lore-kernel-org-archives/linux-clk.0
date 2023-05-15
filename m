@@ -2,104 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24864C77B75
-	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 07:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA30CC7EE22
+	for <linux-clk@archiver.kernel.org>; Mon, 15 May 2023 07:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240072AbjEOHNJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 May 2023 03:13:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37096 "EHLO
+        id S231400AbjEOH1u convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 May 2023 03:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231540AbjEOHNI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 03:13:08 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2529EE6D;
-        Mon, 15 May 2023 00:13:06 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34F6Jm4v011633;
-        Mon, 15 May 2023 07:13:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=TtMMfLL5nCFr68O0x6kk9AsNmzhF3MX3q5iwKJo0uLg=;
- b=DkX/6/q0mCXyoe2Q8R8cIuGv1/XR7wmJh71lfFbfB8twrQ5TRU3FI+/vgF2tsVjVN8wZ
- bLJ6lPQH7xf7rdj1aIhi6uXmdDTYGF47XOO0Y1LKmsFitJ8QQkmcjuzaD+XbyBq0e8Ki
- WRcZti94U7Kn55knRuMmXBMiptnK9c5X7YLUUGk1QcsJPIkvyut/zneV0qBsnTaOqRsn
- zKs3GcJc/lJXkv/X9fkkcPu+y+fPlQGiOMJtg1N4uwG4JMk6Q01rk/cVU4dC92AEejz1
- 1EDKHh/EqJmPjukPl4wT9PhLL9mZ4Acb2WtTuOEd1ynMHPldNBPbfAq3DnlULlkc9Sv/ 6A== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qj2xdaxmb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 07:13:00 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34F7CbeU026358
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 May 2023 07:12:37 GMT
-Received: from [10.216.63.235] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 15 May
- 2023 00:12:30 -0700
-Message-ID: <b90211ca-acdd-0845-8c44-47a84e747fa4@quicinc.com>
-Date:   Mon, 15 May 2023 12:42:26 +0530
+        with ESMTP id S233762AbjEOH1t (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 May 2023 03:27:49 -0400
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE2BA136;
+        Mon, 15 May 2023 00:27:48 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-559e53d1195so177422287b3.2;
+        Mon, 15 May 2023 00:27:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684135667; x=1686727667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1/6AVCgaClZFIG6Sl6YBe+IqE4k4AYRkLLIyRiwqfwA=;
+        b=XdEIGgRwlC1J6hL7C72Wwiom3mqB8SDR2Eb4l4wvamoW0r7p+1uW17Ek1bjA7USXmA
+         RAeqmhbV9TN/neikCj7o93SKwt5kAYOshXpPbdnRiNfyJUmrnuef+KLm5iNbpcF62d50
+         dKiLJ0t0ZX7zrqUR5H0ZtoAIzS/2BuPUHbqcp86ab1BOF8AIoNRGQE5CrsfyNERoXITq
+         Jfd19Es/7Bji2G7EJlNoOGhEQqK5nTpPZ2keFB53kkWGzDn1bhKnZlNzWq8je7KSYsXi
+         ntOKzey4XZFWab0eKchVHLXLrAtGXyuzmbTLfCxZcqeQtwb+cGvKw6/15v9X+qI80RlC
+         GSuQ==
+X-Gm-Message-State: AC+VfDyJs9IgfgnzL/7ZKaY1neOq+BJy8E7rvu5O0k36hdY1gr/ktqc9
+        6vIfNcoaq/wMw6B2TGUuVRXa6Ih9N/pJEQ==
+X-Google-Smtp-Source: ACHHUZ4sgc6g5if5q7TFT3/6TpXpmPnENWF+rNubDihVmrNe262gKtRF8aKX2qByRQzmG5NSS5YYNg==
+X-Received: by 2002:a81:8443:0:b0:54f:179:cef2 with SMTP id u64-20020a818443000000b0054f0179cef2mr33551880ywf.19.1684135667396;
+        Mon, 15 May 2023 00:27:47 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id p75-20020a0de64e000000b0055a9c2c8faasm7529855ywe.60.2023.05.15.00.27.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 15 May 2023 00:27:46 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-559e53d1195so177421967b3.2;
+        Mon, 15 May 2023 00:27:46 -0700 (PDT)
+X-Received: by 2002:a0d:c205:0:b0:561:508b:b8f8 with SMTP id
+ e5-20020a0dc205000000b00561508bb8f8mr3135287ywd.50.1684135666571; Mon, 15 May
+ 2023 00:27:46 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-ipq9574: Enable crypto clocks
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <20230512090134.9811-1-quic_anusha@quicinc.com>
- <20230512090134.9811-2-quic_anusha@quicinc.com>
- <7496f2a8-db87-ffec-8ea8-2f9ff7511a75@linaro.org>
-From:   Anusha Canchi <quic_anusha@quicinc.com>
-In-Reply-To: <7496f2a8-db87-ffec-8ea8-2f9ff7511a75@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: kEr-t2CWcp0eGOXgnKkYSN9Baw4jB_Fb
-X-Proofpoint-GUID: kEr-t2CWcp0eGOXgnKkYSN9Baw4jB_Fb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-15_04,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- mlxlogscore=948 priorityscore=1501 mlxscore=0 clxscore=1011
- lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305150064
+References: <20230514191959.706269-1-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20230514191959.706269-1-marek.vasut+renesas@mailbox.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 15 May 2023 09:27:35 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU5xSJMBh6F69WM+sgg0wFy3x3zE_B_8JxnQMwG20NPiA@mail.gmail.com>
+Message-ID: <CAMuHMdU5xSJMBh6F69WM+sgg0wFy3x3zE_B_8JxnQMwG20NPiA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: vc5: Use device_get_match_data() instead of of_device_get_match_data()
+To:     Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc:     linux-clk@vger.kernel.org,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tom Rix <trix@redhat.com>,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 5/12/2023 2:50 PM, Krzysztof Kozlowski wrote:
-> On 12/05/2023 11:01, Anusha Rao wrote:
->> Enable the clocks required for crypto operation.
->>
->> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->> ---
->>   drivers/clk/qcom/gcc-ipq9574.c               | 72 ++++++++++++++++++++
->>   include/dt-bindings/clock/qcom,ipq9574-gcc.h |  4 ++
->>   include/dt-bindings/reset/qcom,ipq9574-gcc.h |  2 +-
-> Bindings are always separate patches.
-
-Okay, will address in the next spin.
-
-Thanks,
-
-Anusha
-
+On Sun, May 14, 2023 at 9:20 PM Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Use device_get_match_data() which, unlike of_device_get_match_data(),
+> is compatible with other firmware interfaces than just OF.
 >
-> Best regards,
-> Krzysztof
->
+> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> ---
+> Cc: Alex Helms <alexander.helms.jy@renesas.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Tom Rix <trix@redhat.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> ---
+> V2: - Explicitly include linux/property.h
+>     - Add RB from Luca
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
