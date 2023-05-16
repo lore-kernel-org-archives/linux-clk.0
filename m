@@ -2,138 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90163C77B7F
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 08:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C847EC7EE24
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 08:45:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231543AbjEPIFk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 04:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60822 "EHLO
+        id S231649AbjEPIpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 04:45:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231553AbjEPIFg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 04:05:36 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CB64469F;
-        Tue, 16 May 2023 01:05:34 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34G6WjNS030536;
-        Tue, 16 May 2023 08:05:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=E4kETU/bgdAp48Vc9CYxxz7aGuqStSJykDGqUXfAonI=;
- b=aRygt18pL6e80ousW2e+32Ap9xA54kxrdsps4c7NBrdNfLVXcxi/Q+EMO1Ti7CInRhnI
- Dr9Lzz87NCvDmgQR74G2HfnX/YW/oDXjxpZSgT+cO66KcF/JSEjkAKDTplAm56/aWfAH
- QvwFSnRYEBJlTFxcFVqBUnxqCkSiZCPEabA4aQKcgL06YfX6x/q+KEOct2HcRWAUJXKz
- 1gPEYwZfD4r+RnXjnF2fwnOvCB7BV6HcrvsW5fSRPw+pEsoRK35JaBX5ejblTYJwxMLp
- wlIHLN2gAPeP7dqDCYdl3iQXbrR/ByaR1rc+N2TUjWnHmD8B0WLaUGzdr3w4t3wkfbaU nA== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qkt9w15ds-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 May 2023 08:05:15 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34G85Epx027068
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 May 2023 08:05:14 GMT
-Received: from [10.216.33.161] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 16 May
- 2023 01:05:06 -0700
-Message-ID: <99213d31-c0a1-e0ce-d58d-36f392ad9095@quicinc.com>
-Date:   Tue, 16 May 2023 13:35:03 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V2 1/4] dt-bindings: clock: Add crypto clock and reset
- definitions
-To:     Bhupesh Sharma <bhupesh.sharma@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <linux-arm-msm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <20230515150722.12196-1-quic_anusha@quicinc.com>
- <20230515150722.12196-2-quic_anusha@quicinc.com>
- <4f68a71f-b9ea-7240-8d82-5578b9a94fbc@linaro.org>
-From:   Anusha Canchi <quic_anusha@quicinc.com>
-In-Reply-To: <4f68a71f-b9ea-7240-8d82-5578b9a94fbc@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4k1sACSEcNOzNnaTTx6WQDLgcRvAss42
-X-Proofpoint-ORIG-GUID: 4k1sACSEcNOzNnaTTx6WQDLgcRvAss42
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-16_02,2023-05-05_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- adultscore=0 bulkscore=0 impostorscore=0 clxscore=1015 spamscore=0
- priorityscore=1501 mlxlogscore=999 suspectscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305160069
+        with ESMTP id S230385AbjEPIpM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 04:45:12 -0400
+Received: from new1-smtp.messagingengine.com (new1-smtp.messagingengine.com [66.111.4.221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87E4019BD;
+        Tue, 16 May 2023 01:45:11 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 522B65810AF;
+        Tue, 16 May 2023 04:45:08 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Tue, 16 May 2023 04:45:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1684226708; x=1684233908; bh=u/
+        Wz5MhNACKrizGF564GZclX7WtuKcDjHIIc2sgb46k=; b=LZwQORTPNRSuxtpmnd
+        ncA/M0GDtg3dh7wxSU7uqTrOJWQ0JudOtVmLMg6+XYJJN7JkkhOaqWr9JMUJ1LYN
+        qlsXhsVFZwKdFi7LcqNMpziHyx+mheLQlbmWNeBmG7grA0HCXVgHp5i5BFWTv7Zk
+        c6MbjEN04eqMeNz2WPg04ABVYJiNbL2d4kHKuk9xBc/be9SRSFSG3sdJ2P+YmXuM
+        sWJERm3eaXVLB70uKqLNxSMUjmQZH6ZZra9iVh2PASs3OS1MyTeDVJMwZ8sqRMtF
+        jVJTgCxreoiAubEYMI1cLq2h2/KsLcGqMlxUJTbEv7GhFoqyI5CridlFzwyCyASg
+        t9Aw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1684226708; x=1684233908; bh=u/Wz5MhNACKri
+        zGF564GZclX7WtuKcDjHIIc2sgb46k=; b=dIM0d/rWDZRxe7l2yHA8Ys/6jAjJ1
+        jzn5PVRh0UI3hEhDGSbYeitApDeupBmoKf8Z9yRSFCrmvoM7bvYQ3l15E7isPivU
+        Cl+5R+XQQCgSYMG/DRxE/H01o6IhPDbLn9fEsKAlOzn2y4vEsgLxNVmB5WNNJZ9h
+        93ORydUw+VR3p9D5ITaAuZuQ7rIwHhvawr06BPgUH40iOl0/7UbJYdV7H0cNSn6U
+        sAliTsQlKy3hNA7w4PU7Rf87KgM8UDglyqB3tAmaTM+4RSnE+H/GmMrPd/buYSlM
+        w4deceGtaJ8L0m5z3S2tBm5Z7Pt35x0TcDCS+QcRR/N8CCnn3GO4dySDQ==
+X-ME-Sender: <xms:k0JjZHYINi_B2oYrUdT0aJgPICFzDz-f3r20UBg6F9qO6G1GhhxfXw>
+    <xme:k0JjZGa6WQ40P-MeUsiDH97ab1HHMRq3UjfkwX3sF4ds5FYVgY4rFUEwYEt861uJ2
+    WyKDPTJfKgrJkbVQkg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeehledgtdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:k0JjZJ9ZFPvUQMdXbAcgS7dLsrFIbc8_NFycwgYtMqV52neATnsIkA>
+    <xmx:k0JjZNpupvUMEJJbur4eJj0b5lnHQ5_2TRz-gy8bZxP9efgBLd7hDw>
+    <xmx:k0JjZCrTsJg_ZlDnOiKui63PzKX-TM63SjAnwzZ8wbPJHvFGGygA7w>
+    <xmx:lEJjZKB3kWYt21PwpKFT5sM6_1Q5NhXKizj5u523ggsCHuQu0KNR9Q>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 8FDBDB60086; Tue, 16 May 2023 04:45:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-415-gf2b17fe6c3-fm-20230503.001-gf2b17fe6
+Mime-Version: 1.0
+Message-Id: <2fabe721-7434-43e7-bae5-088a42ba128d@app.fastmail.com>
+In-Reply-To: <9cba6384-123b-1cd1-ed02-08365a0ed529@linaro.org>
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-0-2592c29ea263@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-1-2592c29ea263@linaro.org>
+ <5cb38be4-a27f-dc1a-cbb9-c195505a9e7c@linaro.org>
+ <9fa0662e-8854-05f9-da7f-ec8e08d2badf@linaro.org>
+ <d5c030f9-2f4d-25cc-b922-d00f5033ac37@linaro.org>
+ <6228670c-3e06-3061-f304-a2c641962ffa@linaro.org>
+ <9cba6384-123b-1cd1-ed02-08365a0ed529@linaro.org>
+Date:   Tue, 16 May 2023 10:44:44 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Neil Armstrong" <neil.armstrong@linaro.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+        "Jerome Brunet" <jbrunet@baylibre.com>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Kevin Hilman" <khilman@baylibre.com>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        "Dave Airlie" <airlied@gmail.com>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        "Vinod Koul" <vkoul@kernel.org>,
+        "Kishon Vijay Abraham I" <kishon@kernel.org>,
+        "Sam Ravnborg" <sam@ravnborg.org>
+Cc:     "Nicolas Belin" <nbelin@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-phy@lists.infradead.org
+Subject: Re: [PATCH v4 01/13] dt-bindings: clk: g12a-clkc: export VCLK2_SEL and add
+ CTS_ENCL clock ids
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 5/16/2023 1:15 PM, Bhupesh Sharma wrote:
+On Mon, May 15, 2023, at 18:22, neil.armstrong@linaro.org wrote:
+> On 15/05/2023 18:15, Krzysztof Kozlowski wrote:
+>> On 15/05/2023 18:13, Krzysztof Kozlowski wrote:
+>> 
+>> Also one more argument maybe not relevant here but for other cases -
+>> this makes literally impossible to include the clock ID in DTS in the
+>> same kernel revision, because you must not merge driver branch to DTS
+>> branch. SoC folks were complaining about this many times.
 >
-> On 5/15/23 8:37 PM, Anusha Rao wrote:
->> Add crypto clock and reset ID definitions for ipq9574.
->>
->> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->> ---
->>   Changes in V2:
->>     - Separated out the clock/reset binding changes to a new patch.
->>
->>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
->>   include/dt-bindings/reset/qcom,ipq9574-gcc.h | 1 +
->>   2 files changed, 5 insertions(+)
->>
->> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h 
->> b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> index 5a2961bfe893..86790efa10f0 100644
->> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
->> @@ -210,4 +210,8 @@
->>   #define GCC_SNOC_PCIE1_1LANE_S_CLK            201
->>   #define GCC_SNOC_PCIE2_2LANE_S_CLK            202
->>   #define GCC_SNOC_PCIE3_2LANE_S_CLK            203
->> +#define CRYPTO_CLK_SRC                    204
->
-> For uniformity, please use GCC_ prefix int the above define as well.
-> Also make the similar changes at the places where this CLOCK_SRC macro 
-> is used.
-Sure, will update in the next spin.
+> Actually we handle this very simply by having such patches merged in a immutable
+> branch merged in the clock and DT pull-requests, it worked perfectly so far
+> and neither Stephen or Arnd complained about that.
 
-Thanks,
-Anusha
->
-> Thanks,
-> Bhupesh
->
->> +#define GCC_CRYPTO_CLK 205
->> +#define GCC_CRYPTO_AXI_CLK                206
->> +#define GCC_CRYPTO_AHB_CLK                207
->>   #endif
->> diff --git a/include/dt-bindings/reset/qcom,ipq9574-gcc.h 
->> b/include/dt-bindings/reset/qcom,ipq9574-gcc.h
->> index d01dc6a24cf1..c709d103673d 100644
->> --- a/include/dt-bindings/reset/qcom,ipq9574-gcc.h
->> +++ b/include/dt-bindings/reset/qcom,ipq9574-gcc.h
->> @@ -160,5 +160,6 @@
->>   #define GCC_WCSS_Q6_BCR                        151
->>   #define GCC_WCSS_Q6_TBU_BCR                    152
->>   #define GCC_TCSR_BCR                        153
->> +#define GCC_CRYPTO_BCR                        154
->>     #endif
+It's usually benign if you just add a new clk at the end of the binding
+header, as that doesn't touch the internal header file in the same
+commit. I'm certainly happier about drivers that just use numbers from
+a datasheet instead of having to come up with numbers to stick in a binding
+because the hardware is entirely irregular, but there is usually no point
+trying to complain about bad hardware to the driver authors -- I unsterstand
+you are just trying to make things work.
 
+I agree with Krzysztof that using the same identifiers in the local
+header and in the binding is just making your life harder for no
+reason, and if you are the only ones doing it this way, it would
+help to change it. Maybe just add a namespace prefix to all the internal
+macros so the next time you move one into the documented bindings you
+can do it with the same immutable branch hack but not include the
+driver changes in the dt branch.
+
+    Arnd
