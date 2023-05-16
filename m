@@ -2,298 +2,179 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D00C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 14:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B41C77B7F
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 15:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233572AbjEPOdm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 10:33:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45122 "EHLO
+        id S233525AbjEPPMQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 11:12:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233744AbjEPOdl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 10:33:41 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2732C30FA
-        for <linux-clk@vger.kernel.org>; Tue, 16 May 2023 07:33:37 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bd37ca954so7906604a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 16 May 2023 07:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1684247615; x=1686839615;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+LK2OpAFas8P3MmZmqwSI9CreYUGyjnN2bl4gbEEJPE=;
-        b=LOB613eVdoxppxmElUsDS9NLW72MvlmqIJ1rWlXnCjikMf7ujDA9v4ZeULFwZeLJj0
-         kQICBSgRGXDrzZkDr/LfoeDSp1S6n4rfK9slpy6NWsXQoWPnIFiNDVP5lZQ9XwOGbIdZ
-         FSsMlVh43XqnYSu4XJilR2ye8BSPBlnNLzJl84UG9cSMHx2qrR5yaD+hQjZ/sStdKzNE
-         ExOvtv4IfUWD0gGNJGdq690lH0DzEXGzJohxDZv/1aGJk/kK9YZCWYEUBrjEb7JNV89P
-         5ketniaPbYUKPLswVp96d51TBlL0oKIbAdxX+82vWyszg3RgjY4Yrhfd2RNb0fbcrS4D
-         8wvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684247615; x=1686839615;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LK2OpAFas8P3MmZmqwSI9CreYUGyjnN2bl4gbEEJPE=;
-        b=Nfy9KJK3nRA/NVIdWGjQJcm18gN40BdplZEfodLkS5whlyBUoMxVVBbyaxHUjm1OCw
-         Zrj2tzLHJWKzTugdfiMR3xGRQLzS7ZqzHJ2kWM0vJJPGr68aqskpM87e+wVfQ8xHly0F
-         ESF28flqsoP8Nd8156m1F5BCg0Uj0UxS+xR+5faTTMWjfDD8k19+Qn8aYoDUg0KaBXrL
-         mdtuWAgYWeY1nEckuBqEJNZdZjRIH8+9I0B+rOQl5+UQ0cqPQvlDjaGE/ds/hbulyBDv
-         3e/fAzn733u7WGNk7PGi5A+RhrzTT3YaP8rtvrWaHqgNp6JAsBgMTXsFugXgYPIC7x3t
-         fAAw==
-X-Gm-Message-State: AC+VfDxonsUZKTfhDntaCZIktilYE55VFDhFHhCH2WB9l0cx48wWCvS1
-        5vSIb192cJDEYw/7PLxkNeEm5w==
-X-Google-Smtp-Source: ACHHUZ5RjbCf8rDXcfvsTR7OhaJEnOnHYqYV1g3YaVX2C1PrNk9uJcx8rEsXXhpD/No4Aq0xGW5UqA==
-X-Received: by 2002:a17:907:3209:b0:94e:4b26:233c with SMTP id xg9-20020a170907320900b0094e4b26233cmr32498469ejb.16.1684247615440;
-        Tue, 16 May 2023 07:33:35 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id gz4-20020a170907a04400b009571293d6acsm10988779ejc.59.2023.05.16.07.33.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 07:33:34 -0700 (PDT)
-Date:   Tue, 16 May 2023 16:33:32 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Vadim Fedorenko <vadfed@meta.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v7 1/8] dpll: spec: Add Netlink spec in YAML
-Message-ID: <ZGOUPCxCzVNuOrDZ@nanopsycho>
-References: <20230428002009.2948020-1-vadfed@meta.com>
- <20230428002009.2948020-2-vadfed@meta.com>
- <ZFOe1sMFtAOwSXuO@nanopsycho>
- <20230504142451.4828bbb5@kernel.org>
- <MN2PR11MB46645511A6C93F5C98A8A66F9B749@MN2PR11MB4664.namprd11.prod.outlook.com>
- <ZFygbd1H+VdvCTyH@nanopsycho>
- <DM6PR11MB4657924148B84F502A44903D9B749@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZGH7uvxD55Pan0gf@nanopsycho>
- <DM6PR11MB4657670163F45823F66B28619B799@DM6PR11MB4657.namprd11.prod.outlook.com>
+        with ESMTP id S233481AbjEPPMP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 11:12:15 -0400
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05hn2238.outbound.protection.outlook.com [52.100.20.238])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F16363A86;
+        Tue, 16 May 2023 08:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4C57uS6igxBPemybcqYu1s1Oip14dQJY29vJh5Uzbp4=;
+ b=LV3COoRSf77l3SYjQQtJF/yCTUgDuvCrPSOGSTBAkj5KCSFgMjsz4U9bUz6v6MCUALg866yA+eI8HKrLQ/fMNemdD2uRHTx19kzX6vIauowxZyv0FxO+PM7rqqic8kZEwue7RmUdAG62pc0qlIGdNlOIl33QPSe1Sa0T4yybqBsxZm6sR5fC3FUE6EDieVkgJCx+RcYtBL+E8atAZpkcXJvyW6SmNbGBCH+Pg/Sqa0YsnXw6w7G2RG9BztqRGBRlCsevDcpMwFXcj/hKghT+CcEXSJhdVjcHN0TzYci7Gk51eAoh0u/NBUYpI/+f9a6KDn0gD2Po8dt3VsIIFEDXHg==
+Received: from DB7PR05CA0019.eurprd05.prod.outlook.com (2603:10a6:10:36::32)
+ by DB4PR03MB8657.eurprd03.prod.outlook.com (2603:10a6:10:387::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.30; Tue, 16 May
+ 2023 15:12:09 +0000
+Received: from DB8EUR05FT059.eop-eur05.prod.protection.outlook.com
+ (2603:10a6:10:36:cafe::f9) by DB7PR05CA0019.outlook.office365.com
+ (2603:10a6:10:36::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.33 via Frontend
+ Transport; Tue, 16 May 2023 15:12:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.160.56.81)
+ smtp.mailfrom=seco.com; dkim=pass (signature was verified)
+ header.d=seco.com;dmarc=pass action=none header.from=seco.com;
+Received-SPF: Pass (protection.outlook.com: domain of seco.com designates
+ 20.160.56.81 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.160.56.81; helo=inpost-eu.tmcas.trendmicro.com; pr=C
+Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.81) by
+ DB8EUR05FT059.mail.protection.outlook.com (10.233.239.69) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6411.15 via Frontend Transport; Tue, 16 May 2023 15:12:09 +0000
+Received: from outmta (unknown [192.168.82.133])
+        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 441A620081128;
+        Tue, 16 May 2023 15:12:09 +0000 (UTC)
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (unknown [104.47.11.108])
+        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id C920320080073;
+        Tue, 16 May 2023 15:12:34 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gB9C3OuA7IGQToNz5LEfwsTJrRJATtEEpzqaugi1kj2JJx0P6dc6K7eMj6Ps+YTryyPkwnS/eTaESUHJpv8Z3xrftCLx5onYEGRM1lkTcAXnX9cXoc15A7o0nYE5QqOuf39brFVbDsUHfiqTqMY0E2cmErgqWiQ7mLSIRJyBIMH9sI2YeX9TiaHcG+KCaKsudpDUMGUXGDvNfS6i1Lf3y312ilJdGf90qRRBG5ocQ2VljRciXExmqaFvYC/wINE6VJA/x95Strglnimqjh2Zdoqu8aHKL0vo5x9t1iKYWz8t5KPxywD32xLo+edccIQ1ge+YJU4i4nAy5XqOzmr0Vw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4C57uS6igxBPemybcqYu1s1Oip14dQJY29vJh5Uzbp4=;
+ b=Dc3rqGM5diM8YhVOCuo+74y9Yx/Pz1IyFMRVGc+DYOhakDPAthTDboJAecfRs6DWj8MoYBb7JA/tBbu5agVJxbM8oTiJs2+ABgDlCT7cGoiVu+UphJ+8tSnCmMgdl+dcXWPtYRiktUKviz0npJKKCD3MRDCX1MztZ7CujDcCpTG+sKhh8UCvuhjtQcWh0GGWdEjeIFmkvXkT9H5VXSufRIvMh2jw28ud8q36rCkNdvLhEmUooNDvn3LlpTGnBv1D2EmRnMbwE7aWdTTqE9y3whotsZohrnF2fPGShYDVO4Qv2DrVdIXXyNT343Q2icPfa5eMT7o+JCsK2d5d1tVRsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4C57uS6igxBPemybcqYu1s1Oip14dQJY29vJh5Uzbp4=;
+ b=LV3COoRSf77l3SYjQQtJF/yCTUgDuvCrPSOGSTBAkj5KCSFgMjsz4U9bUz6v6MCUALg866yA+eI8HKrLQ/fMNemdD2uRHTx19kzX6vIauowxZyv0FxO+PM7rqqic8kZEwue7RmUdAG62pc0qlIGdNlOIl33QPSe1Sa0T4yybqBsxZm6sR5fC3FUE6EDieVkgJCx+RcYtBL+E8atAZpkcXJvyW6SmNbGBCH+Pg/Sqa0YsnXw6w7G2RG9BztqRGBRlCsevDcpMwFXcj/hKghT+CcEXSJhdVjcHN0TzYci7Gk51eAoh0u/NBUYpI/+f9a6KDn0gD2Po8dt3VsIIFEDXHg==
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
+ by AM9PR03MB7396.eurprd03.prod.outlook.com (2603:10a6:20b:26c::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.32; Tue, 16 May
+ 2023 15:12:01 +0000
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::d632:8122:75f7:7b0e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::d632:8122:75f7:7b0e%3]) with mapi id 15.20.6387.030; Tue, 16 May 2023
+ 15:12:01 +0000
+Message-ID: <7ad1089f-106d-e355-5558-f06f8b428f34@seco.com>
+Date:   Tue, 16 May 2023 11:11:56 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v14 06/15] clk: Add Lynx 10G SerDes PLL driver
+Content-Language: en-US
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+References: <20230413160607.4128315-1-sean.anderson@seco.com>
+ <20230413160607.4128315-7-sean.anderson@seco.com> <ZFi9t84UoIfUyHhi@matsya>
+ <1012f955-180e-0013-cc13-1da10991b5f5@seco.com> <ZFpD4I2LK9YIQQat@matsya>
+ <d230c641-7270-c768-fd48-9012c01621b2@seco.com> <ZGODpt7MARD47us7@matsya>
+From:   Sean Anderson <sean.anderson@seco.com>
+In-Reply-To: <ZGODpt7MARD47us7@matsya>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL1P222CA0002.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c7::7) To DB9PR03MB8847.eurprd03.prod.outlook.com
+ (2603:10a6:10:3dd::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657670163F45823F66B28619B799@DM6PR11MB4657.namprd11.prod.outlook.com>
+X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|AM9PR03MB7396:EE_|DB8EUR05FT059:EE_|DB4PR03MB8657:EE_
+X-MS-Office365-Filtering-Correlation-Id: b5996450-0cca-4460-7379-08db561feb62
+X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: RHnaZEFmETnnbfcpluhQotDD3hf7ROT5S+8vcLhrJppGP+2yTMeaDcTO/pcwn+3G3OwYv6yzc4KyXXaZt+/hYt268Yuq2egGmmBbsmgLwmHfhmUO2fOwzE193TIBg05PEvCngN8Q3+Yu/RKUdHf4XA47/AORGcBcTH3pKT/hanE5FJUzaio65Z+ZU0giq56mqpspMCWU9HfJuc+H+VrTqsb0PwC875g4xvsQsrcpMahxuafck/pcpXV++nM+rVFE+/FA427F/ifKlbKLw9pFh01VrbSTcU8JiA5N4PDZuOFe5o1Tp7iBxBh5hvdV4KyJPgXp92+oPvY7eVbiwV44kc/n2475w+/4Y0wRisHPzkNr3WStaKo47OSkpallPgKCYU4F8lKFJxXoDSYJ1Szs+clkEMsGsSYalCTcdFw8pnydBLcuAoVQClVDcaPT3/bLMeAuDJ7jPKUFQVNBsnrhABvPFqq8fPEnvkLlaZ34TQljpp3HuuEltWxsXaFrMp5yQ4T3vthLofjDnUCZoFGjiISpvVXrgGuHsWh8MBNzsosKtYLrccTFjEXEXz4sJQXNH8VqTYJ7OS0TT2OYLEsxKyR8vs2q1qtgp7NiiD3mTVkCQaGbfNyHu0neEbPH3PaTG55O5okwPTPfdw/myPsKjtLHVjAx6CuRR+TiqxFoNqI=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(396003)(366004)(136003)(346002)(39850400004)(376002)(451199021)(2906002)(478600001)(41300700001)(316002)(54906003)(44832011)(7416002)(6666004)(6486002)(8676002)(66476007)(66556008)(4326008)(6916009)(66946007)(5660300002)(31686004)(8936002)(966005)(6512007)(6506007)(26005)(52116002)(53546011)(186003)(83380400001)(2616005)(36756003)(86362001)(31696002)(38350700002)(38100700002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7396
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB8EUR05FT059.eop-eur05.prod.protection.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: ec6c67cb-c25d-4f8b-33d3-08db561fe686
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4IxorGfVblbVSjJ6FHa+xc66Y+5tRvMbrEBh0oFQIDUH6M3FRjLQgA5TQoM45dSJdContnvppxM7lurlpCExzSxz2jkwykr9In5oxCa5PJfc3XzRBW6XkC5wxavYf69ZcyLLU2wDaiQe+mPyGZbYG4VfPRW0/j2H/mLDwMS6G5U/J+A+OnievSW261eHhNDxW52yF1P/qO1/5hZbL19khbChFwMS3dIWCPYZOYcvQ1wK4EMLcGmYdSq6Z5+QEzWX1xME8+HAgb/ZYLJ/jWuuVNGdVdIaDu/xFZwA7AqbgqlZa++a5PDfsKyToN4cHuVJQy7srsGK8WF8zXVll6jeYJFRRMljl+kcIW//FgX4qkG4dvW/RNWTDsZGPsRM70CVz9IwZ3cqcSYhV4LibmjfGTPj23C8skMgykG8nj7lZcLFAqUR3bD41d3alnPRNzEk+HEdBUEDPD1PaADk/IyYjYF9Ptzk4ett+2ndBmdq9dJToHWruZDKdT9GNouxATScZtjE/xdVVodmiGY+b6pNF8CZg95YTF2Nuj92FEDhzKk/J9nO8hTZraKK/qXhfbQH4rnIMCBquyjYPzU/EjHPKkiJm1xVlkYWcLO4pImt5GVCxGCNGHXhfpLt5urSEpE+TDTivV4MJRhhjxHqsW6ffq5/KSFENEd/D3AdPW5prqW1sFfm0zAD957PD5dcyn/k2QlnXRdAmU5rMaD//f1iY2b+Qmy5jO1mSFhwJrPI4Qp3JPJ0gZOvMGr/aaABfCKEOkSYxW8uZGqe4M0p/9gTSw/0rwcvLpuXt1ZuQcfGoG0=
+X-Forefront-Antispam-Report: CIP:20.160.56.81;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230028)(39850400004)(396003)(136003)(346002)(376002)(5400799015)(451199021)(36840700001)(46966006)(36756003)(54906003)(966005)(478600001)(6916009)(70206006)(4326008)(70586007)(316002)(86362001)(6486002)(83380400001)(82740400003)(82310400005)(40480700001)(2616005)(5660300002)(8676002)(7416002)(8936002)(6666004)(2906002)(44832011)(34070700002)(7636003)(31696002)(356005)(7596003)(41300700001)(36860700001)(6512007)(186003)(53546011)(6506007)(26005)(47076005)(336012)(31686004)(43740500002)(12100799033);DIR:OUT;SFP:1501;
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2023 15:12:09.5348
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5996450-0cca-4460-7379-08db561feb62
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.81];Helo=[inpost-eu.tmcas.trendmicro.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB8EUR05FT059.eop-eur05.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR03MB8657
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, May 16, 2023 at 02:05:38PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Monday, May 15, 2023 11:31 AM
->>
->>Thu, May 11, 2023 at 10:51:43PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>>From: Jiri Pirko <jiri@resnulli.us>
->>>>Sent: Thursday, May 11, 2023 10:00 AM
->>>>
->>>>Thu, May 11, 2023 at 09:40:26AM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>>>>From: Jakub Kicinski <kuba@kernel.org>
->>>>>>Sent: Thursday, May 4, 2023 11:25 PM
->>>>>>
->>>>>>On Thu, 4 May 2023 14:02:30 +0200 Jiri Pirko wrote:
->>>>>>> >+definitions:
->>>>>>> >+  -
->>>>>>> >+    type: enum
->>>>>>> >+    name: mode
->>>>>>> >+    doc: |
->>>>>>> >+      working-modes a dpll can support, differentiate if and how dpll
->>>>>>>selects
->>>>>>> >+      one of its sources to syntonize with it, valid values for
->>>>>>>DPLL_A_MODE
->>>>>>> >+      attribute
->>>>>>> >+    entries:
->>>>>>> >+      -
->>>>>>> >+        name: unspec
->>>>>>>
->>>>>>> In general, why exactly do we need unspec values in enums and CMDs?
->>>>>>> What is the usecase. If there isn't please remove.
->>>>>>
->>>>>>+1
->>>>>>
->>>>>
->>>>>Sure, fixed.
->>>>>
->>>>>>> >+        doc: unspecified value
->>>>>>> >+      -
->>>>>>> >+        name: manual
->>>>>>
->>>>>>I think the documentation calls this "forced", still.
->>>>>>
->>>>>
->>>>>Yes, good catch, fixed docs.
->>>>>
->>>>>>> >+        doc: source can be only selected by sending a request to dpll
->>>>>>> >+      -
->>>>>>> >+        name: automatic
->>>>>>> >+        doc: highest prio, valid source, auto selected by dpll
->>>>>>> >+      -
->>>>>>> >+        name: holdover
->>>>>>> >+        doc: dpll forced into holdover mode
->>>>>>> >+      -
->>>>>>> >+        name: freerun
->>>>>>> >+        doc: dpll driven on system clk, no holdover available
->>>>>>>
->>>>>>> Remove "no holdover available". This is not a state, this is a mode
->>>>>>> configuration. If holdover is or isn't available, is a runtime info.
->>>>>>
->>>>>>Agreed, seems a little confusing now. Should we expose the system clk
->>>>>>as a pin to be able to force lock to it? Or there's some extra magic
->>>>>>at play here?
->>>>>
->>>>>In freerun you cannot lock to anything it, it just uses system clock from
->>>>>one of designated chip wires (which is not a part of source pins pool) to
->>>>>feed the dpll. Dpll would only stabilize that signal and pass it further.
->>>>>Locking itself is some kind of magic, as it usually takes at least ~15
->>>>>seconds before it locks to a signal once it is selected.
->>>>>
->>>>>>
->>>>>>> >+      -
->>>>>>> >+        name: nco
->>>>>>> >+        doc: dpll driven by Numerically Controlled Oscillator
->>>>>>
->>>>>>Noob question, what is NCO in terms of implementation?
->>>>>>We source the signal from an arbitrary pin and FW / driver does
->>>>>>the control? Or we always use system refclk and then tune?
->>>>>>
->>>>>
->>>>>Documentation of chip we are using, stated NCO as similar to FREERUN, and
->>>>>it
->>>>
->>>>So how exactly this is different to freerun? Does user care or he would
->>>>be fine with "freerun" in this case? My point is, isn't "NCO" some
->>>>device specific thing that should be abstracted out here?
->>>>
->>>
->>>Sure, it is device specific, some synchronizing circuits would have this
->>>capability, while others would not.
->>>Should be abstracted out? It is a good question.. shall user know that he is
->>>in
->>>freerun with possibility to control the frequency or not?
->>>Let's say we remove NCO, and have dpll with enabled FREERUN mode and pins
->>>supporting multiple output frequencies.
->>>How the one would know if those frequencies are supported only in
->>>MANUAL/AUTOMATIC modes or also in the FREERUN mode?
->>>In other words: As the user can I change a frequency of a dpll if active
->>>mode is FREERUN?
->>
->>Okay, I think I'm deep in the DPLL infra you are pushing, but my
->>understanding that you can control frequency in NCO mode is not present
->>:/ That only means it may be confusing and not described properly.
->>How do you control this frequency exactly? I see no such knob.
->>
->
->The set frequency is there already, although we miss phase offset I guess.
+On 5/16/23 09:22, Vinod Koul wrote:
+> On 09-05-23, 11:26, Sean Anderson wrote:
+>> On 5/9/23 09:00, Vinod Koul wrote:
+>> > On 08-05-23, 11:31, Sean Anderson wrote:
+>> >> On 5/8/23 05:15, Vinod Koul wrote:
+>> > 
+>> >> >> +int lynx_clks_init(struct device *dev, struct regmap *regmap,
+>> >> >> +		   struct clk *plls[2], struct clk *ex_dlys[2], bool compat);
+>> >> > 
+>> >> > so you have an exported symbol for clk driver init in phy driver header?
+>> >> > can you please explain why..?
+>> >> 
+>> >> So that it can be called at the appropriate time during the phy's probe function.
+>> >> 
+>> >> This is really an integral part of the phy driver, but I was directed to split it
+>> >> off and put it in another subsystem's directory.
+>> > 
+>> > That is right clock should be belong to clk driver. IIUC the hardware is
+>> > phy along with clocks and you are doing the clk init. I think that may
+>> > not be correct model, you should really have a device tree node to
+>> > represent the clock and the phy node
+>> > 
+>> > 
+>> > What stops this from being modelled as it is in the hardware?
+>> 
+>> It *is* modeled as it is in hardware. With just the serdes compatible,
+>> we have all the information we need to create the clocks. So we do so.
+>> There's no need for a separate device just to create four clocks.
+>> 
+>> These clocks cannot be used by any other device (except possibly by
+>> putting a lane into test mode). So there is no benefit from making them
+>> a separate device, except an increase in complexity due to ordering and
+>> dynamic lookup. By doing things this way we know that either there was
+>> an error or the clocks all exist, and the lifetime of the clocks matches
+>> the serdes.
+> 
+> Okay that does makes sense.
+> 
+> In that case why should this not be in the phy driver itself. There are
+> already few examples og phy drivers having inbuild clk where is makes
+> sense. You register the clk_ops as part of phy driver
 
-Yeah, but on a pin, right?
+You told me to do it this way
 
+https://lore.kernel.org/linux-phy/YsW+4fm%2F613ByK09@matsya/
 
+--Sean
 
->
->But I have changed my mind on having this in the kernel..
->Initially I have added this mode as our HW supports it, while thinking that
->dpll subsystem shall have this, and we will implement it one day..
->But as we have not implemented it yet, let's leave work and discussion on
->this mode for the future, when someone will actually try to implement it.
-
-Yeah, let's drop it then. One less confusing thing to wrap a head around :)
-
-
->
->>Can't the oscilator be modeled as a pin and then you are not in freerun
->>but locked this "internal pin"? We know how to control frequency there.
->>
->
->Hmm, yeah probably could work this way.
->
->
->Thank you!
->Arkadiusz
->
->>
->>>
->>>I would say it is better to have such mode, we could argue on naming though.
->>>
->>>>
->>>>>runs on a SYSTEM CLOCK provided to the chip (plus some stabilization and
->>>>>dividers before it reaches the output).
->>>>>It doesn't count as an source pin, it uses signal form dedicated wire for
->>>>>SYSTEM CLOCK.
->>>>>In this case control over output frequency is done by synchronizer chip
->>>>>firmware, but still it will not lock to any source pin signal.
->>>>>
->>>>>>> >+    render-max: true
->>>>>>> >+  -
->>>>>>> >+    type: enum
->>>>>>> >+    name: lock-status
->>>>>>> >+    doc: |
->>>>>>> >+      provides information of dpll device lock status, valid values for
->>>>>>> >+      DPLL_A_LOCK_STATUS attribute
->>>>>>> >+    entries:
->>>>>>> >+      -
->>>>>>> >+        name: unspec
->>>>>>> >+        doc: unspecified value
->>>>>>> >+      -
->>>>>>> >+        name: unlocked
->>>>>>> >+        doc: |
->>>>>>> >+          dpll was not yet locked to any valid source (or is in one of
->>>>>>> >+          modes: DPLL_MODE_FREERUN, DPLL_MODE_NCO)
->>>>>>> >+      -
->>>>>>> >+        name: calibrating
->>>>>>> >+        doc: dpll is trying to lock to a valid signal
->>>>>>> >+      -
->>>>>>> >+        name: locked
->>>>>>> >+        doc: dpll is locked
->>>>>>> >+      -
->>>>>>> >+        name: holdover
->>>>>>> >+        doc: |
->>>>>>> >+          dpll is in holdover state - lost a valid lock or was forced by
->>>>>>> >+          selecting DPLL_MODE_HOLDOVER mode
->>>>>>>
->>>>>>> Is it needed to mention the holdover mode. It's slightly confusing,
->>>>>>> because user might understand that the lock-status is always "holdover"
->>>>>>> in case of "holdover" mode. But it could be "unlocked", can't it?
->>>>>>> Perhaps I don't understand the flows there correctly :/
->>>>>>
->>>>>>Hm, if we want to make sure that holdover mode must result in holdover
->>>>>>state then we need some extra atomicity requirements on the SET
->>>>>>operation. To me it seems logical enough that after setting holdover
->>>>>>mode we'll end up either in holdover or unlocked status, depending on
->>>>>>lock status when request reached the HW.
->>>>>>
->>>>>
->>>>>Improved the docs:
->>>>>        name: holdover
->>>>>        doc: |
->>>>>          dpll is in holdover state - lost a valid lock or was forced
->>>>>          by selecting DPLL_MODE_HOLDOVER mode (latter possible only
->>>>>          when dpll lock-state was already DPLL_LOCK_STATUS_LOCKED,
->>>>>	  if it was not, the dpll's lock-status will remain
->>>>
->>>>"if it was not" does not really cope with the sentence above that. Could
->>>>you iron-out the phrasing a bit please?
->>>
->>>
->>>Hmmm,
->>>        name: holdover
->>>        doc: |
->>>          dpll is in holdover state - lost a valid lock or was forced
->>>          by selecting DPLL_MODE_HOLDOVER mode (latter possible only
->>>          when dpll lock-state was already DPLL_LOCK_STATUS_LOCKED,
->>>          if dpll lock-state was not DPLL_LOCK_STATUS_LOCKED, the
->>>          dpll's lock-state shall remain DPLL_LOCK_STATUS_UNLOCKED
->>>          even if DPLL_MODE_HOLDOVER was requested)
->>>
->>>Hope this is better?
->>
->>Okay.
->>
->>>
->>>
->>>Thank you!
->>>Arkadiusz
->>>
->>>[...]
