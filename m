@@ -2,315 +2,302 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C947C77B7F
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 06:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC52C77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 06:49:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230122AbjEPG0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 02:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44394 "EHLO
+        id S230313AbjEPGtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 02:49:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbjEPG0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 02:26:33 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D19CCC
-        for <linux-clk@vger.kernel.org>; Mon, 15 May 2023 23:26:31 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bc2feb320so20907996a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 15 May 2023 23:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1684218389; x=1686810389;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ncnk5u25n1gKhMi5UjBgWgY2AR5TG5mfySIQXV43uLs=;
-        b=Kpf7UzvzzxHh5bvV+R50ESbrX1kVXjvfxkNVibVXDJtGAxWpS101Rz44PC3CFQKUee
-         MbPbEX4/cAq1acTDSZnM3k911WeRpfekjBt62onyIfjBgtuSZcHwvzbyHSfn91Y2Wyyg
-         rIWlPvtCtFF/z0fggAO2rPmfJKLHnVTcfNJ1+1PvZx+YRNndB1J26YQ/yHXWXdcb77LU
-         tUo8ACRChqXD9dCbKGlVKdrSVj7Wi8QgYGW5Y1ER1OB76eO+I+CLXfbm+zHo3+Esc9tE
-         L2X6Hoa3CCIIzFbRe3A9odykqRsD2CpOfkoIDkb9RjscYGgLLf2um9ZbJm38ka50TBD2
-         mnqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684218389; x=1686810389;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ncnk5u25n1gKhMi5UjBgWgY2AR5TG5mfySIQXV43uLs=;
-        b=NO7nCyiKG8Q/DXubRXOd8j8x+rDXlLb2UhYZ14UMFdYW4kSrBVMl3jIpJq9Tf2QmeM
-         i6g86a6ciwtk4MFk5JDRMkHdeP2DyPrp1mg8CdIcZfscr9TlnSXmWIvzdZKRgkw165WW
-         7gNjMbF82CF7ekdR1JdM7PSWkeXyr41DhXK74vvR9aOQtzvcfOX/P4Mhy2zSKaWB2xnM
-         mSX4brN3g04a8IfWG0bvfURFY5sLxQp0y+LHPxEOh9QW/Aig5oxISic7oAuSIxqf9T+0
-         iU/cQpMJ6+ZfFLRvgQSPfq+luFIvGaoONj1eCjarYU5BTBJn9GEBKg0X51pt2bGwbcs+
-         VCsg==
-X-Gm-Message-State: AC+VfDy5vW0nc5SeABUaOsGarCMbRyiXCehEbk1tSRCGnWvRLW2EEcat
-        +wVwgcyN36n5AzNq1X6hdzRlhQ==
-X-Google-Smtp-Source: ACHHUZ4T0YNJLV13EFOWH4PksgAdo38fAvy+qD8boms/O8jp2/miH61xuB9s88pWcSdObsm+kMYFZQ==
-X-Received: by 2002:a17:907:60d6:b0:957:1df0:9cbf with SMTP id hv22-20020a17090760d600b009571df09cbfmr37389568ejc.19.1684218389369;
-        Mon, 15 May 2023 23:26:29 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id a23-20020a1709065f9700b0096a3d346d6asm8170826eju.211.2023.05.15.23.26.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 May 2023 23:26:28 -0700 (PDT)
-Date:   Tue, 16 May 2023 08:26:27 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadfed@meta.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v7 5/8] ice: implement dpll interface to control cgu
-Message-ID: <ZGMiE1ByArIr8ARB@nanopsycho>
-References: <20230428002009.2948020-1-vadfed@meta.com>
- <20230428002009.2948020-6-vadfed@meta.com>
- <ZFJRIY1HM64gFo3a@nanopsycho>
- <DM6PR11MB4657EAF163220617A94154A39B789@DM6PR11MB4657.namprd11.prod.outlook.com>
+        with ESMTP id S230312AbjEPGs6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 02:48:58 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE7D4215;
+        Mon, 15 May 2023 23:48:50 -0700 (PDT)
+Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Tue, 16 May 2023
+ 14:48:40 +0800
+From:   Yu Tu <yu.tu@amlogic.com>
+To:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Neil Armstrong" <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     <kelvin.zhang@amlogic.com>, <qi.duan@amlogic.com>,
+        Yu Tu <yu.tu@amlogic.com>
+Subject: [PATCH V8 RESEND 2/4] dt-bindings: clock: document Amlogic S4 SoC peripherals clock controller
+Date:   Tue, 16 May 2023 14:47:34 +0800
+Message-ID: <20230516064736.10270-3-yu.tu@amlogic.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20230516064736.10270-1-yu.tu@amlogic.com>
+References: <20230516064736.10270-1-yu.tu@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657EAF163220617A94154A39B789@DM6PR11MB4657.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.18.11.248]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, May 16, 2023 at 12:07:57AM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Wednesday, May 3, 2023 2:19 PM
->>
->>Fri, Apr 28, 2023 at 02:20:06AM CEST, vadfed@meta.com wrote:
->>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Add the S4 peripherals clock controller dt-bindings in the s4 SoC
+family.
 
-[...]
+Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+---
+ .../clock/amlogic,s4-peripherals-clkc.yaml    |  97 +++++++++++++
+ .../clock/amlogic,s4-peripherals-clkc.h       | 131 ++++++++++++++++++
+ 2 files changed, 228 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
 
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+new file mode 100644
+index 000000000000..6f825c9613a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+@@ -0,0 +1,97 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,s4-peripherals-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic S serials Peripherals Clock Controller
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++  - Jerome Brunet <jbrunet@baylibre.com>
++  - Yu Tu <yu.tu@amlogic.com>
++
++properties:
++  compatible:
++    const: amlogic,s4-peripherals-clkc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: input fixed pll div2
++      - description: input fixed pll div2p5
++      - description: input fixed pll div3
++      - description: input fixed pll div4
++      - description: input fixed pll div5
++      - description: input fixed pll div7
++      - description: input hifi pll
++      - description: input gp0 pll
++      - description: input mpll0
++      - description: input mpll1
++      - description: input mpll2
++      - description: input mpll3
++      - description: input hdmi pll
++      - description: input oscillator (usually at 24MHz)
++      - description: input external 32kHz reference (optional)
++
++  clock-names:
++    items:
++      - const: fclk_div2
++      - const: fclk_div2p5
++      - const: fclk_div3
++      - const: fclk_div4
++      - const: fclk_div5
++      - const: fclk_div7
++      - const: hifi_pll
++      - const: gp0_pll
++      - const: mpll0
++      - const: mpll1
++      - const: mpll2
++      - const: mpll3
++      - const: hdmi_pll
++      - const: xtal
++      - const: ext_32k
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
++
++    clkc_periphs: clock-controller@fe000000 {
++      compatible = "amlogic,s4-peripherals-clkc";
++      reg = <0xfe000000 0x49c>;
++      clocks = <&clkc_pll 3>,
++              <&clkc_pll 13>,
++              <&clkc_pll 5>,
++              <&clkc_pll 7>,
++              <&clkc_pll 9>,
++              <&clkc_pll 11>,
++              <&clkc_pll 17>,
++              <&clkc_pll 15>,
++              <&clkc_pll 25>,
++              <&clkc_pll 27>,
++              <&clkc_pll 29>,
++              <&clkc_pll 31>,
++              <&clkc_pll 20>,
++              <&xtal>,
++              <&ext_32k>;
++      clock-names = "fclk_div2", "fclk_div2p5", "fclk_div3", "fclk_div4",
++                    "fclk_div5", "fclk_div7", "hifi_pll", "gp0_pll",
++                    "mpll0", "mpll1", "mpll2", "mpll3", "hdmi_pll", "xtal",
++                    "ext_32k";
++      #clock-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+new file mode 100644
+index 000000000000..131b35759eff
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+@@ -0,0 +1,131 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++/*
++ * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
++ * Author: Yu Tu <yu.tu@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
++#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
++
++/*
++ * CLKID index values
++ */
++
++#define CLKID_RTC			4
++#define CLKID_SYS_CLK_B			7
++#define CLKID_SYS_CLK_A			10
++#define CLKID_SYS			11
++#define CLKID_CECA_32K_CLKOUT		16
++#define CLKID_CECB_32K_CLKOUT		21
++#define CLKID_SC			24
++#define CLKID_12_24M_CLK_SEL		27
++#define CLKID_VID_PLL			30
++#define CLKID_VCLK			37
++#define CLKID_VCLK2			38
++#define CLKID_VCLK_DIV1			39
++#define CLKID_VCLK2_DIV1		44
++#define CLKID_VCLK_DIV2			49
++#define CLKID_VCLK_DIV4			50
++#define CLKID_VCLK_DIV6			51
++#define CLKID_VCLK_DIV12		52
++#define CLKID_VCLK2_DIV2		53
++#define CLKID_VCLK2_DIV4		54
++#define CLKID_VCLK2_DIV6		55
++#define CLKID_VCLK2_DIV12		56
++#define CLKID_CTS_ENCI			61
++#define CLKID_CTS_ENCP			62
++#define CLKID_CTS_VDAC			63
++#define CLKID_HDMI			67
++#define CLKID_TS			69
++#define CLKID_MALI_0			72
++#define CLKID_MALI_1			75
++#define CLKID_MALI_SEL			76
++#define CLKID_VDEC_P0			79
++#define CLKID_VDEC_P1			82
++#define CLKID_VDEC_SEL			83
++#define CLKID_HEVCF_P0			86
++#define CLKID_HEVCF_P1			89
++#define CLKID_HEVCF_SEL			90
++#define CLKID_VPU_0			93
++#define CLKID_VPU_1			96
++#define CLKID_VPU			97
++#define CLKID_VPU_CLKB_TMP		100
++#define CLKID_VPU_CLKB			102
++#define CLKID_VPU_CLKC_P0		105
++#define CLKID_VPU_CLKC_P1		108
++#define CLKID_VPU_CLKC_SEL		109
++#define CLKID_VAPB_0			112
++#define CLKID_VAPB_1			115
++#define CLKID_VAPB			116
++#define CLKID_GE2D			117
++#define CLKID_VDIN_MEAS			120
++#define CLKID_SD_EMMC_C			123
++#define CLKID_SD_EMMC_A			126
++#define CLKID_SD_EMMC_B			129
++#define CLKID_SPICC0_EN			132
++#define CLKID_PWM_A			135
++#define CLKID_PWM_B			138
++#define CLKID_PWM_C			141
++#define CLKID_PWM_D			144
++#define CLKID_PWM_E			147
++#define CLKID_PWM_F			150
++#define CLKID_PWM_G			153
++#define CLKID_PWM_H			156
++#define CLKID_PWM_I			159
++#define CLKID_PWM_J			162
++#define CLKID_SARADC			165
++#define CLKID_GEN			168
++#define CLKID_DDR			169
++#define CLKID_DOS			170
++#define CLKID_ETHPHY			171
++#define CLKID_MALI			172
++#define CLKID_AOCPU			173
++#define CLKID_AUCPU			174
++#define CLKID_CEC			175
++#define CLKID_SDEMMC_A			176
++#define CLKID_SDEMMC_B			177
++#define CLKID_NAND			178
++#define CLKID_SMARTCARD			179
++#define CLKID_ACODEC			180
++#define CLKID_SPIFC			181
++#define CLKID_MSR			182
++#define CLKID_IR_CTRL			183
++#define CLKID_AUDIO			184
++#define CLKID_ETH			185
++#define CLKID_UART_A			186
++#define CLKID_UART_B			187
++#define CLKID_UART_C			188
++#define CLKID_UART_D			189
++#define CLKID_UART_E			190
++#define CLKID_AIFIFO			191
++#define CLKID_TS_DDR			192
++#define CLKID_TS_PLL			193
++#define CLKID_G2D			194
++#define CLKID_SPICC0			195
++#define CLKID_SPICC1			196
++#define CLKID_USB			197
++#define CLKID_I2C_M_A			198
++#define CLKID_I2C_M_B			199
++#define CLKID_I2C_M_C			200
++#define CLKID_I2C_M_D			201
++#define CLKID_I2C_M_E			202
++#define CLKID_HDMITX_APB		203
++#define CLKID_I2C_S_A			204
++#define CLKID_USB1_TO_DDR		205
++#define CLKID_HDCP22			206
++#define CLKID_MMC_APB			207
++#define CLKID_RSA			208
++#define CLKID_CPU_DEBUG			209
++#define CLKID_VPU_INTR			210
++#define CLKID_DEMOD			211
++#define CLKID_SAR_ADC			212
++#define CLKID_GIC			213
++#define CLKID_PWM_AB			214
++#define CLKID_PWM_CD			215
++#define CLKID_PWM_EF			216
++#define CLKID_PWM_GH			217
++#define CLKID_PWM_IJ			218
++#define CLKID_HDCP22_ESMCLK		221
++#define CLKID_HDCP22_SKPCLK		224
++
++#endif /* _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H */
+-- 
+2.33.1
 
->>>+ * ice_dpll_frequency_set - wrapper for pin callback for set frequency
->>>+ * @pin: pointer to a pin
->>>+ * @pin_priv: private data pointer passed on pin registration
->>>+ * @dpll: pointer to dpll
->>>+ * @frequency: frequency to be set
->>>+ * @extack: error reporting
->>>+ * @pin_type: type of pin being configured
->>>+ *
->>>+ * Wraps internal set frequency command on a pin.
->>>+ *
->>>+ * Return:
->>>+ * * 0 - success
->>>+ * * negative - error pin not found or couldn't set in hw  */ static
->>>+int ice_dpll_frequency_set(const struct dpll_pin *pin, void *pin_priv,
->>>+		       const struct dpll_device *dpll,
->>>+		       const u32 frequency,
->>>+		       struct netlink_ext_ack *extack,
->>>+		       const enum ice_dpll_pin_type pin_type) {
->>>+	struct ice_pf *pf = pin_priv;
->>>+	struct ice_dpll_pin *p;
->>>+	int ret = -EINVAL;
->>>+
->>>+	if (!pf)
->>>+		return ret;
->>>+	if (ice_dpll_cb_lock(pf))
->>>+		return -EBUSY;
->>>+	p = ice_find_pin(pf, pin, pin_type);
->>
->>This does not make any sense to me. You should avoid the lookups and remove
->>ice_find_pin() function entirely. The purpose of having pin_priv is to
->>carry the struct ice_dpll_pin * directly. You should pass it down during
->>pin register.
->>
->>pf pointer is stored in dpll_priv.
->>
->
->In this case dpll_priv is not passed, so cannot use it.
-
-It should be passed. In general to every op where *dpll is passed, the
-dpll_priv pointer should be passed along. Please, fix this.
-
-
->But in general it makes sense I will hold pf inside of ice_dpll_pin
->and fix this.
-
-Nope, just use dpll_priv. That's why we have it.
-
-
-[...]
-
-
->>>+/**
->>>+ * ice_dpll_pin_state_set - set pin's state on dpll
->>>+ * @dpll: dpll being configured
->>>+ * @pin: pointer to a pin
->>>+ * @pin_priv: private data pointer passed on pin registration
->>>+ * @state: state of pin to be set
->>>+ * @extack: error reporting
->>>+ * @pin_type: type of a pin
->>>+ *
->>>+ * Set pin state on a pin.
->>>+ *
->>>+ * Return:
->>>+ * * 0 - OK or no change required
->>>+ * * negative - error
->>>+ */
->>>+static int
->>>+ice_dpll_pin_state_set(const struct dpll_device *dpll,
->>>+		       const struct dpll_pin *pin, void *pin_priv,
->>>+		       const enum dpll_pin_state state,
->>
->>Why you use const with enums?
->>
->
->Just show usage intention explicitly.
-
-Does not make any sense what so ever. Please avoid it.
-
-
->>>+static int ice_dpll_rclk_state_on_pin_get(const struct dpll_pin *pin,
->>>+					  void *pin_priv,
->>>+					  const struct dpll_pin *parent_pin,
->>>+					  enum dpll_pin_state *state,
->>>+					  struct netlink_ext_ack *extack) {
->>>+	struct ice_pf *pf = pin_priv;
->>>+	u32 parent_idx, hw_idx = ICE_DPLL_PIN_IDX_INVALID, i;
->>
->>Reverse christmas tree ordering please.
->
->Fixed.
->
->>
->>
->>>+	struct ice_dpll_pin *p;
->>>+	int ret = -EFAULT;
->>>+
->>>+	if (!pf)
->>
->>How exacly this can happen. My wild guess is it can't. Don't do such
->>pointless checks please, confuses the reader.
->>
->
->From driver perspective the pf pointer value is given by external entity,
->why shouldn't it be valdiated?
-
-What? You pass it during register, you get it back here. Nothing to
-check. Please drop it. Non-sense checks like this have no place in
-kernel, they only confuse reader as he/she assumes it is a valid case.
-
-
-[...]
-
-
->>
->>
->>>+			pins[i].pin = NULL;
->>>+			return -ENOMEM;
->>>+		}
->>>+		if (cgu) {
->>>+			ret = dpll_pin_register(pf->dplls.eec.dpll,
->>>+						pins[i].pin,
->>>+						ops, pf, NULL);
->>>+			if (ret)
->>>+				return ret;
->>>+			ret = dpll_pin_register(pf->dplls.pps.dpll,
->>>+						pins[i].pin,
->>>+						ops, pf, NULL);
->>>+			if (ret)
->>>+				return ret;
->>
->>You have to call dpll_pin_unregister(pf->dplls.eec.dpll, pins[i].pin, ..)
->>here.
->>
->
->No, in case of error, the caller releases everything ice_dpll_release_all(..).
-
-
-How does ice_dpll_release_all() where you failed? If you need to
-unregister one or both or none? I know that in ice you have odd ways to
-handle error paths in general, but this one clearly seems to be broken.
-
-
-
-
-
->
->>
->>>+		}
->>>+	}
->>>+	if (cgu) {
->>>+		ops = &ice_dpll_output_ops;
->>>+		pins = pf->dplls.outputs;
->>>+		for (i = 0; i < pf->dplls.num_outputs; i++) {
->>>+			pins[i].pin = dpll_pin_get(pf->dplls.clock_id,
->>>+						   i + pf->dplls.num_inputs,
->>>+						   THIS_MODULE, &pins[i].prop);
->>>+			if (IS_ERR_OR_NULL(pins[i].pin)) {
->>>+				pins[i].pin = NULL;
->>>+				return -ENOMEM;
->>
->>Don't make up error values when you get them from the function you call:
->>	return PTR_ERR(pins[i].pin);
->
->Fixed.
->
->>
->>>+			}
->>>+			ret = dpll_pin_register(pf->dplls.eec.dpll, pins[i].pin,
->>>+						ops, pf, NULL);
->>>+			if (ret)
->>>+				return ret;
->>>+			ret = dpll_pin_register(pf->dplls.pps.dpll, pins[i].pin,
->>>+						ops, pf, NULL);
->>>+			if (ret)
->>>+				return ret;
->>
->>You have to call dpll_pin_unregister(pf->dplls.eec.dpll, pins[i].pin, ..)
->>here.
->>
->
->As above, in case of error, the caller releases everything.
-
-As above, I don't think it works.
-
-
-[...]
-
-
->>>+	}
->>>+
->>>+	if (cgu) {
->>>+		ret = dpll_device_register(pf->dplls.eec.dpll, DPLL_TYPE_EEC,
->>>+					   &ice_dpll_ops, pf, dev);
->>>+		if (ret)
->>>+			goto put_pps;
->>>+		ret = dpll_device_register(pf->dplls.pps.dpll, DPLL_TYPE_PPS,
->>>+					   &ice_dpll_ops, pf, dev);
->>>+		if (ret)
->>
->>You are missing call to dpll_device_unregister(pf->dplls.eec.dpll,
->>DPLL_TYPE_EEC here. Fix the error path.
->>
->
->The caller shall do the clean up, but yeah will fix this as here clean up
->is not expected.
-
-:) Just make your error paths obvious and easy to follow to not to
-confuse anybody, you included.
-
-
->
->>
->>>+			goto put_pps;
->>>+	}
->>>+
->>>+	return 0;
->>>+
->>>+put_pps:
->>>+	dpll_device_put(pf->dplls.pps.dpll);
->>>+	pf->dplls.pps.dpll = NULL;
->>>+put_eec:
->>>+	dpll_device_put(pf->dplls.eec.dpll);
->>>+	pf->dplls.eec.dpll = NULL;
->>>+
->>>+	return ret;
->>>+}
-
-[...]
