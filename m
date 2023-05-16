@@ -2,101 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2E0C77B75
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 23:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E3CC77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 23:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229644AbjEPXRD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 19:17:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
+        id S230214AbjEPXTC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 19:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229518AbjEPXRC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 19:17:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC9D448C;
-        Tue, 16 May 2023 16:17:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S231373AbjEPXSu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 19:18:50 -0400
+Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59E9E448C;
+        Tue, 16 May 2023 16:18:34 -0700 (PDT)
+Received: from darkstar.musicnaut.iki.fi (85-76-146-199-nat.elisa-mobile.fi [85.76.146.199])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9780463848;
-        Tue, 16 May 2023 23:17:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFDC5C433EF;
-        Tue, 16 May 2023 23:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684279020;
-        bh=zCFk9ckmMwoH0fK8TjR+DgTP01W/heIVljzahFq+A38=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=NICfEbOp4ULW5GEyU9ohb43NabVga42QJFmD77gToi4aEEmSR4l23+0E6WVSr+LG9
-         t5+BAjOEL6PQZ0svP9qh+u4sTZapXD2zezdB6CH2J6m2hVn7D7iO3XqzZY/EWCDhwJ
-         DEbBC96l0uq2HKlTsqmZPc/xkBFpLCnzN5uv5diojginclAUxcz68Op66s+MLJD+mc
-         lly1L8n6Xgcayt36KyXXYITiWlon+A1YCip9Drmo8s70vIqb2MrTzlJbH91J06QHS1
-         ClKINgaDfe9Wp3LKGUtPjq6lkZ1EA+qETfcYX5XYF6zsbpu57WZXYJC3pjoiIssXkj
-         9S0PnO9uDsqWg==
-Message-ID: <174a6ed0-1a2a-40d1-9a14-8bbbdd6e582c@kernel.org>
-Date:   Wed, 17 May 2023 08:16:52 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH] dt-bindings: xilinx: Switch xilinx.com emails to amd.com
-To:     Michal Simek <michal.simek@amd.com>, piyush.mehta@amd.com,
-        nava.kishore.manne@amd.com, sai.krishna.potthuri@amd.com,
-        shubhrajyoti.datta@amd.com, vishal.sagar@amd.com,
-        kalyani.akula@amd.com, bharat.kumar.gogada@amd.com,
-        linux-kernel@vger.kernel.org, monstr@monstr.eu,
-        michal.simek@xilinx.com, git@xilinx.com
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        (Authenticated sender: aaro.koskinen)
+        by meesny.iki.fi (Postfix) with ESMTPSA id 4QLXGl0L5SzyTW;
+        Wed, 17 May 2023 02:18:22 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+        t=1684279111;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Vb+A9iOTP02ZCkPAmsVAR/eDZMRXA1HmPW5ybHLeMc8=;
+        b=Qa5s19H7fFpuhyAC8+miaNUHlba2D2tpjilO4QmL4HYjVqfUI0okebT3wi0qPuggZNTcW6
+        VnAEMLATAwxar7iQCdFuj8kZi01pjmYNoQtPmZdvi/y2bxyYSvFrj9dwBZHekYljCVsTb6
+        FoPv1AaGVsdRx/6Ivm4cLEmsNnJBgEI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+        s=meesny; t=1684279111;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Vb+A9iOTP02ZCkPAmsVAR/eDZMRXA1HmPW5ybHLeMc8=;
+        b=Nn7Fxr7Ro53/rvPYt9zz7x9TFrN5D8hfPm2b5Ft9Rhr31I9DSBEWOxSC2RFbxZJlzsb1Uc
+        L1HgrAwOMRMsU1t95rcdSC0ZwEcFEGutRdY89NPXyiq6DqqlEzusRMn8/x14HSQaGzzgqq
+        BMZ0rU5UCrfNI7tIqcWYNaP7Np8dGF0=
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1684279111; a=rsa-sha256; cv=none;
+        b=RwleUqzehTz3HbZ6b/VMpIjDVaA4Nsc3fu72IsL4voTcCasHIU6DOx1Zq3B8wMDP8f0eUm
+        FMf8D7ammM6DWaYXL7QPxvOBaYxhOV+0KR4TMm2j0WoL/gYYHMsjIqyJ4r2a+GDsqVGsg7
+        eHViMsarDjur2uv7AYiYWail8NqVmOU=
+Date:   Wed, 17 May 2023 02:18:21 +0300
+From:   Aaro Koskinen <aaro.koskinen@iki.fi>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     soc@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
         Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
         Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Manish Narani <manish.narani@xilinx.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Srinivas Neeli <srinivas.neeli@amd.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Rix <trix@redhat.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-References: <f5b2bd1e78407e4128fc8f0b5874ba723e710a88.1684245058.git.michal.simek@amd.com>
-Content-Language: en-US
-From:   Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <f5b2bd1e78407e4128fc8f0b5874ba723e710a88.1684245058.git.michal.simek@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH 07/13] ARM: omap1: add missing include
+Message-ID: <20230516231821.GC271152@darkstar.musicnaut.iki.fi>
+References: <20230516153109.514251-1-arnd@kernel.org>
+ <20230516153109.514251-8-arnd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230516153109.514251-8-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/16/23 22:51, Michal Simek wrote:
-> @xilinx.com is still working but better to switch to new amd.com after
-> AMD/Xilinx acquisition.
+On Tue, May 16, 2023 at 05:31:03PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-Acked-by: Damien Le Moal <dlemoal@kernel.org>
+> The omap_serial_wakeup_init() declaration is not visible where it is
+> defined, so make sure "common.h" is included here, avoiding:
+> 
+> arch/arm/mach-omap1/serial.c:221:12: error: no previous prototype for 'omap_serial_wakeup_init' [-Werror=missing-prototypes]
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+
+A.
+
+> ---
+>  arch/arm/mach-omap1/serial.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-omap1/serial.c b/arch/arm/mach-omap1/serial.c
+> index 96f59110d649..f25b94c86aec 100644
+> --- a/arch/arm/mach-omap1/serial.c
+> +++ b/arch/arm/mach-omap1/serial.c
+> @@ -19,6 +19,7 @@
+>  
+>  #include <asm/mach-types.h>
+>  
+> +#include "common.h"
+>  #include "serial.h"
+>  #include "mux.h"
+>  #include "pm.h"
+> -- 
+> 2.39.2
+> 
