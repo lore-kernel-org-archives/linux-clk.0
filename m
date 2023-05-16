@@ -2,189 +2,315 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A44ECC77B7F
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 05:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C947C77B7F
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 06:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229980AbjEPFTm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 01:19:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45876 "EHLO
+        id S230122AbjEPG0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 02:26:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbjEPFTj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 01:19:39 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B8E144B0;
-        Mon, 15 May 2023 22:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1684214363; x=1715750363;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=N+P7ruCMFEnmOkQ7g7T72yIAucZDvB6nBLPKCGf1wns=;
-  b=h2v9oZUFKUU+9bm8PCF1BXWmiICz36hWazwbksw3/6bRRM2jJGJ9lJQT
-   fnMT/Ahvj1c/9JgxU/f/bE+1WSrmfdph/vlU3kfnUv5sTy2oGwKQQ5nh8
-   +pnwG4Z2Rl7NBtSyrqhjVaJxoTOiO9LrtEKsvI3a5poRUXYoopu92J2ON
-   RzHguPhw+vY2fEGClUjU/u3MffLFAVybmcTlc8FDsgXrltonUodCBG3dV
-   YZinFNcqPalG788K3UWDdLHkyPKNsmWJerKSjCSUmKGYLutEXSUqSEfng
-   Ok/N2Bu3C2xgJe+FtLSiG37LgAgbVKbjKft10CIDAJDfCNYSzEBxIxTPB
-   A==;
-X-IronPort-AV: E=Sophos;i="5.99,277,1677567600"; 
-   d="scan'208";a="214031161"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 May 2023 22:19:15 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 15 May 2023 22:19:14 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Mon, 15 May 2023 22:19:10 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <conor.dooley@microchip.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v4 5/5] dt-bindings: clocks: at91sam9x5-sckc: convert to yaml
-Date:   Tue, 16 May 2023 08:18:36 +0300
-Message-ID: <20230516051836.2511149-6-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230516051836.2511149-1-claudiu.beznea@microchip.com>
-References: <20230516051836.2511149-1-claudiu.beznea@microchip.com>
+        with ESMTP id S230104AbjEPG0d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 02:26:33 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D19CCC
+        for <linux-clk@vger.kernel.org>; Mon, 15 May 2023 23:26:31 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-50bc2feb320so20907996a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 15 May 2023 23:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1684218389; x=1686810389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ncnk5u25n1gKhMi5UjBgWgY2AR5TG5mfySIQXV43uLs=;
+        b=Kpf7UzvzzxHh5bvV+R50ESbrX1kVXjvfxkNVibVXDJtGAxWpS101Rz44PC3CFQKUee
+         MbPbEX4/cAq1acTDSZnM3k911WeRpfekjBt62onyIfjBgtuSZcHwvzbyHSfn91Y2Wyyg
+         rIWlPvtCtFF/z0fggAO2rPmfJKLHnVTcfNJ1+1PvZx+YRNndB1J26YQ/yHXWXdcb77LU
+         tUo8ACRChqXD9dCbKGlVKdrSVj7Wi8QgYGW5Y1ER1OB76eO+I+CLXfbm+zHo3+Esc9tE
+         L2X6Hoa3CCIIzFbRe3A9odykqRsD2CpOfkoIDkb9RjscYGgLLf2um9ZbJm38ka50TBD2
+         mnqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684218389; x=1686810389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ncnk5u25n1gKhMi5UjBgWgY2AR5TG5mfySIQXV43uLs=;
+        b=NO7nCyiKG8Q/DXubRXOd8j8x+rDXlLb2UhYZ14UMFdYW4kSrBVMl3jIpJq9Tf2QmeM
+         i6g86a6ciwtk4MFk5JDRMkHdeP2DyPrp1mg8CdIcZfscr9TlnSXmWIvzdZKRgkw165WW
+         7gNjMbF82CF7ekdR1JdM7PSWkeXyr41DhXK74vvR9aOQtzvcfOX/P4Mhy2zSKaWB2xnM
+         mSX4brN3g04a8IfWG0bvfURFY5sLxQp0y+LHPxEOh9QW/Aig5oxISic7oAuSIxqf9T+0
+         iU/cQpMJ6+ZfFLRvgQSPfq+luFIvGaoONj1eCjarYU5BTBJn9GEBKg0X51pt2bGwbcs+
+         VCsg==
+X-Gm-Message-State: AC+VfDy5vW0nc5SeABUaOsGarCMbRyiXCehEbk1tSRCGnWvRLW2EEcat
+        +wVwgcyN36n5AzNq1X6hdzRlhQ==
+X-Google-Smtp-Source: ACHHUZ4T0YNJLV13EFOWH4PksgAdo38fAvy+qD8boms/O8jp2/miH61xuB9s88pWcSdObsm+kMYFZQ==
+X-Received: by 2002:a17:907:60d6:b0:957:1df0:9cbf with SMTP id hv22-20020a17090760d600b009571df09cbfmr37389568ejc.19.1684218389369;
+        Mon, 15 May 2023 23:26:29 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id a23-20020a1709065f9700b0096a3d346d6asm8170826eju.211.2023.05.15.23.26.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 May 2023 23:26:28 -0700 (PDT)
+Date:   Tue, 16 May 2023 08:26:27 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v7 5/8] ice: implement dpll interface to control cgu
+Message-ID: <ZGMiE1ByArIr8ARB@nanopsycho>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+ <20230428002009.2948020-6-vadfed@meta.com>
+ <ZFJRIY1HM64gFo3a@nanopsycho>
+ <DM6PR11MB4657EAF163220617A94154A39B789@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657EAF163220617A94154A39B789@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Atmel slow clock controller documentation to yaml.
+Tue, May 16, 2023 at 12:07:57AM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Wednesday, May 3, 2023 2:19 PM
+>>
+>>Fri, Apr 28, 2023 at 02:20:06AM CEST, vadfed@meta.com wrote:
+>>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/clock/at91-clock.txt  | 30 --------
- .../bindings/clock/atmel,at91sam9x5-sckc.yaml | 70 +++++++++++++++++++
- 2 files changed, 70 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/at91-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+[...]
 
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-deleted file mode 100644
-index 57394785d3b0..000000000000
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--Device Tree Clock bindings for arch-at91
--
--This binding uses the common clock binding[1].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Slow Clock controller:
--
--Required properties:
--- compatible : shall be one of the following:
--	"atmel,at91sam9x5-sckc",
--	"atmel,sama5d3-sckc",
--	"atmel,sama5d4-sckc" or
--	"microchip,sam9x60-sckc":
--		at91 SCKC (Slow Clock Controller)
--- #clock-cells : shall be 1 for "microchip,sam9x60-sckc" otherwise shall be 0.
--- clocks : shall be the input parent clock phandle for the clock.
--
--Optional properties:
--- atmel,osc-bypass : boolean property. Set this when a clock signal is directly
--  provided on XIN.
--
--For example:
--	sckc@fffffe50 {
--		compatible = "atmel,at91sam9x5-sckc";
--		reg = <0xfffffe50 0x4>;
--		clocks = <&slow_xtal>;
--		#clock-cells = <0>;
--	};
--
-diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
-new file mode 100644
-index 000000000000..7be29877e6d2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
-@@ -0,0 +1,70 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/atmel,at91sam9x5-sckc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel Slow Clock Controller (SCKC)
-+
-+maintainers:
-+  - Claudiu Beznea <claudiu.beznea@microchip.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - atmel,at91sam9x5-sckc
-+          - atmel,sama5d3-sckc
-+          - atmel,sama5d4-sckc
-+          - microchip,sam9x60-sckc
-+      - items:
-+          - const: microchip,sama7g5-sckc
-+          - const: microchip,sam9x60-sckc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    enum: [0, 1]
-+
-+  atmel,osc-bypass:
-+    type: boolean
-+    description: set when a clock signal is directly provided on XIN
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - "#clock-cells"
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - microchip,sam9x60-sckc
-+    then:
-+      properties:
-+        "#clock-cells":
-+          const: 1
-+    else:
-+      properties:
-+        "#clock-cells":
-+          const: 0
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clk32k: clock-controller@fffffe50 {
-+        compatible = "microchip,sam9x60-sckc";
-+        reg = <0xfffffe50 0x4>;
-+        clocks = <&slow_xtal>;
-+        #clock-cells = <1>;
-+    };
-+
-+...
--- 
-2.34.1
 
+>>>+ * ice_dpll_frequency_set - wrapper for pin callback for set frequency
+>>>+ * @pin: pointer to a pin
+>>>+ * @pin_priv: private data pointer passed on pin registration
+>>>+ * @dpll: pointer to dpll
+>>>+ * @frequency: frequency to be set
+>>>+ * @extack: error reporting
+>>>+ * @pin_type: type of pin being configured
+>>>+ *
+>>>+ * Wraps internal set frequency command on a pin.
+>>>+ *
+>>>+ * Return:
+>>>+ * * 0 - success
+>>>+ * * negative - error pin not found or couldn't set in hw  */ static
+>>>+int ice_dpll_frequency_set(const struct dpll_pin *pin, void *pin_priv,
+>>>+		       const struct dpll_device *dpll,
+>>>+		       const u32 frequency,
+>>>+		       struct netlink_ext_ack *extack,
+>>>+		       const enum ice_dpll_pin_type pin_type) {
+>>>+	struct ice_pf *pf = pin_priv;
+>>>+	struct ice_dpll_pin *p;
+>>>+	int ret = -EINVAL;
+>>>+
+>>>+	if (!pf)
+>>>+		return ret;
+>>>+	if (ice_dpll_cb_lock(pf))
+>>>+		return -EBUSY;
+>>>+	p = ice_find_pin(pf, pin, pin_type);
+>>
+>>This does not make any sense to me. You should avoid the lookups and remove
+>>ice_find_pin() function entirely. The purpose of having pin_priv is to
+>>carry the struct ice_dpll_pin * directly. You should pass it down during
+>>pin register.
+>>
+>>pf pointer is stored in dpll_priv.
+>>
+>
+>In this case dpll_priv is not passed, so cannot use it.
+
+It should be passed. In general to every op where *dpll is passed, the
+dpll_priv pointer should be passed along. Please, fix this.
+
+
+>But in general it makes sense I will hold pf inside of ice_dpll_pin
+>and fix this.
+
+Nope, just use dpll_priv. That's why we have it.
+
+
+[...]
+
+
+>>>+/**
+>>>+ * ice_dpll_pin_state_set - set pin's state on dpll
+>>>+ * @dpll: dpll being configured
+>>>+ * @pin: pointer to a pin
+>>>+ * @pin_priv: private data pointer passed on pin registration
+>>>+ * @state: state of pin to be set
+>>>+ * @extack: error reporting
+>>>+ * @pin_type: type of a pin
+>>>+ *
+>>>+ * Set pin state on a pin.
+>>>+ *
+>>>+ * Return:
+>>>+ * * 0 - OK or no change required
+>>>+ * * negative - error
+>>>+ */
+>>>+static int
+>>>+ice_dpll_pin_state_set(const struct dpll_device *dpll,
+>>>+		       const struct dpll_pin *pin, void *pin_priv,
+>>>+		       const enum dpll_pin_state state,
+>>
+>>Why you use const with enums?
+>>
+>
+>Just show usage intention explicitly.
+
+Does not make any sense what so ever. Please avoid it.
+
+
+>>>+static int ice_dpll_rclk_state_on_pin_get(const struct dpll_pin *pin,
+>>>+					  void *pin_priv,
+>>>+					  const struct dpll_pin *parent_pin,
+>>>+					  enum dpll_pin_state *state,
+>>>+					  struct netlink_ext_ack *extack) {
+>>>+	struct ice_pf *pf = pin_priv;
+>>>+	u32 parent_idx, hw_idx = ICE_DPLL_PIN_IDX_INVALID, i;
+>>
+>>Reverse christmas tree ordering please.
+>
+>Fixed.
+>
+>>
+>>
+>>>+	struct ice_dpll_pin *p;
+>>>+	int ret = -EFAULT;
+>>>+
+>>>+	if (!pf)
+>>
+>>How exacly this can happen. My wild guess is it can't. Don't do such
+>>pointless checks please, confuses the reader.
+>>
+>
+>From driver perspective the pf pointer value is given by external entity,
+>why shouldn't it be valdiated?
+
+What? You pass it during register, you get it back here. Nothing to
+check. Please drop it. Non-sense checks like this have no place in
+kernel, they only confuse reader as he/she assumes it is a valid case.
+
+
+[...]
+
+
+>>
+>>
+>>>+			pins[i].pin = NULL;
+>>>+			return -ENOMEM;
+>>>+		}
+>>>+		if (cgu) {
+>>>+			ret = dpll_pin_register(pf->dplls.eec.dpll,
+>>>+						pins[i].pin,
+>>>+						ops, pf, NULL);
+>>>+			if (ret)
+>>>+				return ret;
+>>>+			ret = dpll_pin_register(pf->dplls.pps.dpll,
+>>>+						pins[i].pin,
+>>>+						ops, pf, NULL);
+>>>+			if (ret)
+>>>+				return ret;
+>>
+>>You have to call dpll_pin_unregister(pf->dplls.eec.dpll, pins[i].pin, ..)
+>>here.
+>>
+>
+>No, in case of error, the caller releases everything ice_dpll_release_all(..).
+
+
+How does ice_dpll_release_all() where you failed? If you need to
+unregister one or both or none? I know that in ice you have odd ways to
+handle error paths in general, but this one clearly seems to be broken.
+
+
+
+
+
+>
+>>
+>>>+		}
+>>>+	}
+>>>+	if (cgu) {
+>>>+		ops = &ice_dpll_output_ops;
+>>>+		pins = pf->dplls.outputs;
+>>>+		for (i = 0; i < pf->dplls.num_outputs; i++) {
+>>>+			pins[i].pin = dpll_pin_get(pf->dplls.clock_id,
+>>>+						   i + pf->dplls.num_inputs,
+>>>+						   THIS_MODULE, &pins[i].prop);
+>>>+			if (IS_ERR_OR_NULL(pins[i].pin)) {
+>>>+				pins[i].pin = NULL;
+>>>+				return -ENOMEM;
+>>
+>>Don't make up error values when you get them from the function you call:
+>>	return PTR_ERR(pins[i].pin);
+>
+>Fixed.
+>
+>>
+>>>+			}
+>>>+			ret = dpll_pin_register(pf->dplls.eec.dpll, pins[i].pin,
+>>>+						ops, pf, NULL);
+>>>+			if (ret)
+>>>+				return ret;
+>>>+			ret = dpll_pin_register(pf->dplls.pps.dpll, pins[i].pin,
+>>>+						ops, pf, NULL);
+>>>+			if (ret)
+>>>+				return ret;
+>>
+>>You have to call dpll_pin_unregister(pf->dplls.eec.dpll, pins[i].pin, ..)
+>>here.
+>>
+>
+>As above, in case of error, the caller releases everything.
+
+As above, I don't think it works.
+
+
+[...]
+
+
+>>>+	}
+>>>+
+>>>+	if (cgu) {
+>>>+		ret = dpll_device_register(pf->dplls.eec.dpll, DPLL_TYPE_EEC,
+>>>+					   &ice_dpll_ops, pf, dev);
+>>>+		if (ret)
+>>>+			goto put_pps;
+>>>+		ret = dpll_device_register(pf->dplls.pps.dpll, DPLL_TYPE_PPS,
+>>>+					   &ice_dpll_ops, pf, dev);
+>>>+		if (ret)
+>>
+>>You are missing call to dpll_device_unregister(pf->dplls.eec.dpll,
+>>DPLL_TYPE_EEC here. Fix the error path.
+>>
+>
+>The caller shall do the clean up, but yeah will fix this as here clean up
+>is not expected.
+
+:) Just make your error paths obvious and easy to follow to not to
+confuse anybody, you included.
+
+
+>
+>>
+>>>+			goto put_pps;
+>>>+	}
+>>>+
+>>>+	return 0;
+>>>+
+>>>+put_pps:
+>>>+	dpll_device_put(pf->dplls.pps.dpll);
+>>>+	pf->dplls.pps.dpll = NULL;
+>>>+put_eec:
+>>>+	dpll_device_put(pf->dplls.eec.dpll);
+>>>+	pf->dplls.eec.dpll = NULL;
+>>>+
+>>>+	return ret;
+>>>+}
+
+[...]
