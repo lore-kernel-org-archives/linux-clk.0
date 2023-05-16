@@ -2,105 +2,181 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1D7C77B75
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 09:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482ABC77B7F
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 09:24:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbjEPJWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 05:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60696 "EHLO
+        id S232103AbjEPJYQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 05:24:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231982AbjEPJWY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 05:22:24 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F5B54EEA
-        for <linux-clk@vger.kernel.org>; Tue, 16 May 2023 02:21:38 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-50bc5197d33so25237394a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 16 May 2023 02:21:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684228895; x=1686820895;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cLFC2bNX6txLnjTPD5+kbo++oGCyGs9/o5oXQDZQo4c=;
-        b=iu0gLDPhCLaWcd6EPNDAMZ6RADmZTS7G17U99YpQtRVBlZ5XuiIUPr6/uZOmxwbE9h
-         xTJ41HMul09+N1P7ZoYma9BMw6ie+5PW+hznisj7u8wHbDV+4fC7oTzMO1n9uAXz/1Sz
-         QLRhsg24PRZUztVMhLfV99/GvIMJC5jcDPTZ4SYjpxMkvaU4Fx1Pw4tFyY2bpxySNvKG
-         w/f49Nb3M/glSIUNwreXGY3xjvPh39lKiuehClugMZQCOeCcwqONa60EYADMN04C9Y5t
-         ZGi8JBWP+pFZAz3uZELImxqWYSAU3jd1KEX3u+MvlBDFl1qsLTUAiCs2tcijr6lJhhcw
-         c7aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684228895; x=1686820895;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLFC2bNX6txLnjTPD5+kbo++oGCyGs9/o5oXQDZQo4c=;
-        b=Ar8DWyjY5lcCcn4VksuibaTimqmKKjnq8MxVntwmHODc//Gtc8NsWD1JlLQREqnuc/
-         4YnMaEpGj4HbkMJlw95iEjL+NyNpFQrPGJ1/d0gvGZjaF/19EIFJaar1ZjMz7zYPhBhq
-         Xhi8vKqtBaPCztmkckCL9oM58OhomUsBwV6vFcu9aCoN72o0TrKz1etdG5+oHV5qRlQ3
-         gireigwsza8KjtlQaszyG5ePNrlDGtNeqqrqy4lauA5Jq1EQR4upP28Ci1Q8CIXEvxRH
-         soBnfzAsEGgMOfaJ0goksl5bAkX0pEahWsDtY+0x3oR6PM7iJGzYpMXhioJso16PRcmH
-         ck0w==
-X-Gm-Message-State: AC+VfDyMFQfSb9OVNKZ2XZHqI5zGSP7Iny0c6R5qpwQjI4FECdqMomUV
-        nBwDrPVtuMX4M2zaC10xNLF3dw==
-X-Google-Smtp-Source: ACHHUZ7pSEzzkRBU/kT98UVCxfWhQeBfw5kAf0aPQHsa2kgcYfw+RMjIwWa+6b7fuAWllQ+0Y+XM7g==
-X-Received: by 2002:a05:6402:614:b0:506:c2d7:503c with SMTP id n20-20020a056402061400b00506c2d7503cmr28441142edv.41.1684228895224;
-        Tue, 16 May 2023 02:21:35 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:77d1:16a1:abe1:84fc? ([2a02:810d:15c0:828:77d1:16a1:abe1:84fc])
-        by smtp.gmail.com with ESMTPSA id q22-20020aa7da96000000b0050470aa444fsm8008834eds.51.2023.05.16.02.21.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 May 2023 02:21:34 -0700 (PDT)
-Message-ID: <f2c348d1-4ffe-d515-17d5-ddb25bd38f53@linaro.org>
-Date:   Tue, 16 May 2023 11:21:33 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V8 RESEND 2/4] dt-bindings: clock: document Amlogic S4 SoC
- peripherals clock controller
+        with ESMTP id S232108AbjEPJXx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 05:23:53 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F8330FE;
+        Tue, 16 May 2023 02:23:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1684229002; x=1715765002;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=RD7XxEVLQtturu/Xh4oIUqYTX5QhuLOzq4taDLbkSwg=;
+  b=DY+lsjpMte8+to1auDyvhWa41R2SG9CNnfeT6oNZUZsnx6GBwZrAku7E
+   mpoZnxtmz9S+k+pXcsPZclCuwu0tRbPHhltIZAKXrejqhZPHHamW0Nwn4
+   BEwbQRi2JwW5sPuYKAX9Lh9ZmsZwzepIcjjpKE7BHDZ1wZ1UaUBmWZ67m
+   i1/yeZbNmL6UZreYwATdaqZ7B41HAIhXJSPqkGMHGLSqkJ7AuV9hrMH6U
+   JQQOwV0AzVSpTNsR5eOU4Ld0glVy8B62RtfQuyt/9EE2jKId7FeDP2i3B
+   jr+yvlEeOkCbF7hqjR6P41p+sjEcLJfiYDU33m8sYPTnPtRpcHG1BLvZQ
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10711"; a="414836483"
+X-IronPort-AV: E=Sophos;i="5.99,278,1677571200"; 
+   d="scan'208";a="414836483"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2023 02:22:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10711"; a="701276089"
+X-IronPort-AV: E=Sophos;i="5.99,278,1677571200"; 
+   d="scan'208";a="701276089"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orsmga002.jf.intel.com with ESMTP; 16 May 2023 02:22:47 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Tue, 16 May 2023 02:22:45 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23 via Frontend Transport; Tue, 16 May 2023 02:22:45 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.108)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.23; Tue, 16 May 2023 02:22:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=U7eig22aLL2tSEOZGucGFu2Vi7JkIK2pcw8SFsiHv5ia3NnGljb04gDgqPASs5zm8tGUNhdCFHFPFJmNTnfA+ui0bsQtbIGrQN4Vvna/OM4AMFETDgE/3LRGGIsDQZfmDIg/YtQoUv/vlIbGygDahsf9ZAFa+Lrwpvq3DOmtq+DGcXwigvo+LGByK2MLBt0na7htEcVUj+jTyXPchv48X0Kqqt98W785zOaKS+0zkGD/q5PDm/+ikZrBWTmEUxQXRe+A40oqFsj7bnbMnBmXLm6qjvnu/odMZV/Xbau/l9bm9f6s9HoswS/C/lLXwqwx06CmSN2SnJ033Eb4vsfetA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MzuvR9CvCpJX0P25Rdpnw9lc+/ydOpY6AEG4j5Q9ln8=;
+ b=Cdj/vdv+4vsdTjNoTwAQX24EGauETNR89aOMyxgi4VUbRO0tf0eWrRAVELnhb0LSOf78Sg2yu7C2ldR/AyINkWJul+V/fMl5uJpGyGxXIaYcNqpMnoG9MW8XwKVkTtaDwNIe41OY2RobzPBL/vk834w5wxIOnXAz5y1Qhmkx8o7UX4ZYOTjU+NSY27IU/Wa6yEQYWlgtH5flFxiCfQKW48YYqKdjhlk10Xb7j5RE4abt9UiCAIOH6dBB99GLu0o8GuAaValNLm19yl5iv8Uu4vZ30rFp0ZZ6SQ/5U4vX3TzsYCMi1cMMj/c8ZMufniD3gJDVJflUvXkK+gY6QlrJfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ SJ2PR11MB7576.namprd11.prod.outlook.com (2603:10b6:a03:4c9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6387.28; Tue, 16 May
+ 2023 09:22:38 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::7887:a196:2b04:c96e]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::7887:a196:2b04:c96e%5]) with mapi id 15.20.6387.030; Tue, 16 May 2023
+ 09:22:38 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jiri Pirko <jiri@resnulli.us>, Vadim Fedorenko <vadfed@meta.com>
+CC:     Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [RFC PATCH v7 5/8] ice: implement dpll interface to control cgu
+Thread-Topic: [RFC PATCH v7 5/8] ice: implement dpll interface to control cgu
+Thread-Index: AQHZeWdQDnOnlwLdVUynBqrraL/3s69brg0AgAEOquA=
+Date:   Tue, 16 May 2023 09:22:37 +0000
+Message-ID: <DM6PR11MB46570013B31FCCF1FCE0854D9B799@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+ <20230428002009.2948020-6-vadfed@meta.com> <ZGJn/tKjzxNYcNKU@nanopsycho>
+In-Reply-To: <ZGJn/tKjzxNYcNKU@nanopsycho>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
-To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
-References: <20230516064736.10270-1-yu.tu@amlogic.com>
- <20230516064736.10270-3-yu.tu@amlogic.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230516064736.10270-3-yu.tu@amlogic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|SJ2PR11MB7576:EE_
+x-ms-office365-filtering-correlation-id: 5379cb34-bc37-4c7c-1a75-08db55ef1761
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: p/23O4VMcNOQD0F6ni8PRN8jSUJCYb9YmjjideiI+SsVs9IZ7huzcNax7e7oHGeGz8vB/wqjGH7e4ut0eTOlh7KsKEx+FaIWFMuIRWApfQUHPF1nLtkdvE2YTduYW84rV18rLpONB09yQbHDZT/e+23towLkqFz+rDeTj1mhNAwHeW1+mGm2CYuKV5HDNfq4D7XybB89j+cWYtXHg2y3DTAA1Zhc02riJax/knQnC/CKVIDvbWAiBWzLYjN9lpWauWqGpdydfy6Fh14Xcsq116P81UOxw9rq+k40OxZFGulKzkbwPZXpOW/xpDCMIDbHAcC2bplUpkye7BS2C2xoAL4156f/Ovfn35NxIdMaduGwdI7WrXeF8FRp+JuBxG/t4dHFtD57PwevX1Oqb9G1BPvnuGhHD1r4rxCojJ5WgqfzCo6TpJAPHT6XllJXEIvWY55YlM3g19XHpmHa2G7nNCQoXUvnrthzGbbTGfbW7lgKRLpRhkoJk0PnKVf5U6bXOJWiNdfkObOMkLr6+9Fh4xengDBfVNWf7Hsc6y3wGtNFvbCAxEahQMtYcws2uo0uVIhMuUpraIGtd0vSwFXaD341ZqDhTsr21xNt6O0fPG8kf+t4rcNncaKmD0BzdAVv
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(366004)(39860400002)(346002)(376002)(396003)(451199021)(41300700001)(71200400001)(54906003)(4326008)(7696005)(316002)(8676002)(55016003)(8936002)(7416002)(5660300002)(52536014)(110136005)(76116006)(64756008)(66946007)(66446008)(66476007)(66556008)(478600001)(9686003)(6506007)(26005)(2906002)(4744005)(186003)(83380400001)(82960400001)(33656002)(86362001)(38100700002)(122000001)(38070700005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?oCYqg1wRt5XA8JtJ0Cp1rzvcC0BtWjkfnYbVyJG+lWlG08AW3X9rW0/7sCFL?=
+ =?us-ascii?Q?BD1vokQqc55lgv1BwiE5SOpBpWGlCGIvQZfH3xrX/VzDbCkzXYQJWKF6IjYF?=
+ =?us-ascii?Q?ywVR/qPDA6q/+GlFTtANZe8bMXMUhOgOlM36DowIc2Yb8DrY1j3YWpMtLjzr?=
+ =?us-ascii?Q?1FkTBF4H9uAfmPenW4pyfCU70P95L3xVeHteyn6wQgIhHowWwZri+idSihzY?=
+ =?us-ascii?Q?4z+YnmONGVTuRGn2iVdJK3Z0spSEUs9VjvQuu8NQ74Z3F6rPFTEb9hwYSHjM?=
+ =?us-ascii?Q?/DYz1msR3P/RVndniUjBnTcqVPfHMatJ6JQBQ0q5osW9m7U81/CXJ/pwgRXS?=
+ =?us-ascii?Q?JJNv53p4I8dejX9RZuX2FOH9JmOJmcJUCu85nw9LFnb+JtRr4XkrQ++HAHtz?=
+ =?us-ascii?Q?nxwJBJP21e2IWPd/tkyKae3vUmZ0v1MVKYdoLkL8J5MgMSc16n1BC4QIV1EG?=
+ =?us-ascii?Q?A8rW5xw+NAOlMPgT11g+ss91y4DvoOnHO4/lrmSWs7laa36lSsBySVFeArBN?=
+ =?us-ascii?Q?6MUd6s7z+YLYfe2QyMLqAE9eCjE2dlYbsce75jxg/Fy7Zob53XMDqlc2L4es?=
+ =?us-ascii?Q?PD9HPyz/yQ29ayBJyatj71psNaPeu7mWG9Gucj8lKNLmj4++TL3WNajTvlzW?=
+ =?us-ascii?Q?g6V/lqFDPio7gUlarsLNQsq1cUqK7lmlA33cCSPBWIXF42iRIaHiBGA1akKo?=
+ =?us-ascii?Q?l970FH2d/ndZ83odnJR3j6SwDkhQO1jMzmUhyUSOdxaF9qe+2xPSpF/tCKbz?=
+ =?us-ascii?Q?59pSKSNCfF6FDra1Lkb8AHwLyCH+IY6n4GV4+NCYSdSWfG+MBUqwCtqr+Od1?=
+ =?us-ascii?Q?ioG7zugb1UR7FVUQRCtQL1aBPLI605FhISXPIUXUXdTAMO7S1hjpTfM/AbiQ?=
+ =?us-ascii?Q?vLKFriCq3GPgKty5GLRFYymNxfBTRUhn8gjCTIjQtgVCykHUl4mPjh1G4BNV?=
+ =?us-ascii?Q?bEzc3w63/c9mDZ/VHgjGve0k+tV8DFpz3cKuja9ng7vH0P2uqv1Zugs6mI62?=
+ =?us-ascii?Q?oYFMmVG3NgplL75oUWCl5RVd9o+Ayl+sWZDE5Vrho/zgnjitK/N9BGDK9fSG?=
+ =?us-ascii?Q?atjEkn7tYNz2XcHkwNzlLg9Eler3tVmq76PJdA8ihEqyiULKRWbfH86wpCQ8?=
+ =?us-ascii?Q?ns4lcOM5lwyJN2QJatwy80AzruH2bvctewvOiQ+L9JXtuGnJ3+Pi0fDg2CCz?=
+ =?us-ascii?Q?jHExp6bhxywg8ZoGSdhN0OQzT7iELeZjx1a0blcHEnyW7cjmLG4yh1dZgMKa?=
+ =?us-ascii?Q?V+uEFI6Dr723bQEwiKO10J7Dmj7aT23jb2WiuxC7Hj9kbeq7RSmNgRe5tA80?=
+ =?us-ascii?Q?uv17sKtZPnhpBbfHTJx/okvqdxVXJqDmgs1NrFJ26ZM6EoKcy8kc1e6dHA4S?=
+ =?us-ascii?Q?wMFKgXO6xF9SXYjK3WE4giy1nlhWEzYWmrhSOoPhvVXPUZHiBvKbcO+UNRUR?=
+ =?us-ascii?Q?8oikd3Cm7bAGSrSoIcwo3kyspPxuwVU49XM9lKPYRi4vXj3GXMidpnr/XebO?=
+ =?us-ascii?Q?M6l0L/4DuNt98dUhvGKCIrSXWEescUm4+9FK5aqQ573BaN7cWaiDf4viNyZJ?=
+ =?us-ascii?Q?XDLLcn59wnsuOnUM3U9sQjKawR1Ujz7aKgXPHfU3WJsDLyMnj29fxVVWZ40z?=
+ =?us-ascii?Q?Ww=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5379cb34-bc37-4c7c-1a75-08db55ef1761
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 May 2023 09:22:38.0221
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: TxVy6ZTggjwxbJAMkUWtA7H7jf4gbZ47q9dOEP4NOtk5zr7JBw4StzDH5FgOhxF1R+0+OdM28xd4pSFDscBsF2IOW7xhnWj2TeAonWnyO8A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7576
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/05/2023 08:47, Yu Tu wrote:
-> Add the S4 peripherals clock controller dt-bindings in the s4 SoC
-> family.
-> 
-> Signed-off-by: Yu Tu <yu.tu@amlogic.com>
-> ---
+>From: Jiri Pirko <jiri@resnulli.us>
+>Sent: Monday, May 15, 2023 7:13 PM
+>
+>Fri, Apr 28, 2023 at 02:20:06AM CEST, vadfed@meta.com wrote:
+>
+>[...]
+>
+>>+static const enum dpll_lock_status
+>>+ice_dpll_status[__DPLL_LOCK_STATUS_MAX] =3D {
+>>+	[ICE_CGU_STATE_INVALID] =3D DPLL_LOCK_STATUS_UNSPEC,
+>>+	[ICE_CGU_STATE_FREERUN] =3D DPLL_LOCK_STATUS_UNLOCKED,
+>>+	[ICE_CGU_STATE_LOCKED] =3D DPLL_LOCK_STATUS_CALIBRATING,
+>
+>This is a bit confusing to me. You are locked, yet you report
+>calibrating? Wouldn't it be better to have:
+>DPLL_LOCK_STATUS_LOCKED
+>DPLL_LOCK_STATUS_LOCKED_HO_ACQ
+>
+>?
+>
 
-This is a friendly reminder during the review process.
+Sure makes sense, will add this state.
 
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions. However, there's no need to repost patches *only* to add the
-tags. The upstream maintainer will do that for acks received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
-
-If a tag was not added on purpose, please state why and what changed.
-
-Best regards,
-Krzysztof
-
+>
+>>+	[ICE_CGU_STATE_LOCKED_HO_ACQ] =3D DPLL_LOCK_STATUS_LOCKED,
+>>+	[ICE_CGU_STATE_HOLDOVER] =3D DPLL_LOCK_STATUS_HOLDOVER,
+>>+};
+>
+>[...]
