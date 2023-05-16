@@ -2,74 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45830C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 13:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB91C77B7F
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 13:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233418AbjEPNEo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 09:04:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49938 "EHLO
+        id S233433AbjEPNWx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 09:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbjEPNEl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 09:04:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C2949D4;
-        Tue, 16 May 2023 06:04:20 -0700 (PDT)
+        with ESMTP id S233071AbjEPNWw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 09:22:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF833A9D;
+        Tue, 16 May 2023 06:22:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B8F4639E0;
-        Tue, 16 May 2023 13:04:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4797EC433EF;
-        Tue, 16 May 2023 13:04:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 57D7063A0E;
+        Tue, 16 May 2023 13:22:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC46C4339C;
+        Tue, 16 May 2023 13:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684242244;
-        bh=VdqrGbdfxEFS/5J2JfzncnbQSVDrzAf7yrXeYtQkJDs=;
+        s=k20201202; t=1684243370;
+        bh=+sPUthy7aIz73vxHLbcpB1b2jpbwC7HJrTOIMZMo2dE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eU0fLyUF+iHfuBBjE6jPPhHzUuRLHz9TD24pWt4Mr65p2J1Bq7XiwpnidUWVY4Puj
-         k3TfnR5y0qwVHujY/yCawxLKIBwqf5ovtUAE1BB/vSwk91jHa16v9S9FHa2NcgCI2l
-         ZfOyqs6WQChh8WjrGWLQ1+uresXVQZbbmBn9XwC4PucQnXatCBBXm+VS2PELznSbWH
-         0GtcfnmMdVxHOct08d5q/XniLBDkg75aRH09sBBe7V339A2O0b5BMoFuEH4gxVQXhe
-         UsEnpjlcZ9Auiiw64UTq9zIzWyhsB7lX7UttAhq+DNOYMtLYnJxIU0qm8ZG1rlM82Z
-         xMK/d3yBRYBAw==
-Date:   Tue, 16 May 2023 18:34:00 +0530
+        b=uPYOuK4MsGdqbnn/xMDKkUnZ4yYcIuyBc3wmFOmWi0M1zulETSYFuwtqUCrDRWI5S
+         wVgIQoGalPhgXBR/I5WssTLKmq6aTcrsCJUtSooWl34gqA1lzOk4MpXdwpQp4uI1ix
+         UxdzERwnISLKF24Av3xmoQrl0qjZ57o4EfWErx8mzgrIZ5TrmzYI5ABlT5e+uuy5rl
+         m5ShpiTBT8U6M4bVGmzempnsCwRwUYC+UX8Dwlya7GJyyjdUslWoAv5UVFoYyEhMEI
+         2k0EvrnUPDzM8TriF9OikZq4XzzY8CwIj/Z+UQn841ylHadecHfO4QMMpUByPVPigy
+         Qi/cGvspkIySw==
+Date:   Tue, 16 May 2023 18:52:46 +0530
 From:   Vinod Koul <vkoul@kernel.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Nicolas Belin <nbelin@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-phy@lists.infradead.org
-Subject: Re: [PATCH v4 10/13] phy: amlogic: phy-meson-g12a-mipi-dphy-analog:
- fix CNTL2_DIF_TX_CTL0 value
-Message-ID: <ZGN/QA5ZeVS459Og@matsya>
-References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-0-2592c29ea263@linaro.org>
- <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-10-2592c29ea263@linaro.org>
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v14 06/15] clk: Add Lynx 10G SerDes PLL driver
+Message-ID: <ZGODpt7MARD47us7@matsya>
+References: <20230413160607.4128315-1-sean.anderson@seco.com>
+ <20230413160607.4128315-7-sean.anderson@seco.com>
+ <ZFi9t84UoIfUyHhi@matsya>
+ <1012f955-180e-0013-cc13-1da10991b5f5@seco.com>
+ <ZFpD4I2LK9YIQQat@matsya>
+ <d230c641-7270-c768-fd48-9012c01621b2@seco.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v4-10-2592c29ea263@linaro.org>
+In-Reply-To: <d230c641-7270-c768-fd48-9012c01621b2@seco.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12-05-23, 15:11, Neil Armstrong wrote:
-> Use the same CNTL2_DIF_TX_CTL0 value used by the vendor, it was reported
-> fixing timings issues.
+On 09-05-23, 11:26, Sean Anderson wrote:
+> On 5/9/23 09:00, Vinod Koul wrote:
+> > On 08-05-23, 11:31, Sean Anderson wrote:
+> >> On 5/8/23 05:15, Vinod Koul wrote:
+> > 
+> >> >> +int lynx_clks_init(struct device *dev, struct regmap *regmap,
+> >> >> +		   struct clk *plls[2], struct clk *ex_dlys[2], bool compat);
+> >> > 
+> >> > so you have an exported symbol for clk driver init in phy driver header?
+> >> > can you please explain why..?
+> >> 
+> >> So that it can be called at the appropriate time during the phy's probe function.
+> >> 
+> >> This is really an integral part of the phy driver, but I was directed to split it
+> >> off and put it in another subsystem's directory.
+> > 
+> > That is right clock should be belong to clk driver. IIUC the hardware is
+> > phy along with clocks and you are doing the clk init. I think that may
+> > not be correct model, you should really have a device tree node to
+> > represent the clock and the phy node
+> > 
+> > 
+> > What stops this from being modelled as it is in the hardware?
+> 
+> It *is* modeled as it is in hardware. With just the serdes compatible,
+> we have all the information we need to create the clocks. So we do so.
+> There's no need for a separate device just to create four clocks.
+> 
+> These clocks cannot be used by any other device (except possibly by
+> putting a lane into test mode). So there is no benefit from making them
+> a separate device, except an increase in complexity due to ordering and
+> dynamic lookup. By doing things this way we know that either there was
+> an error or the clocks all exist, and the lifetime of the clocks matches
+> the serdes.
 
-Applied to phy/fixes, thanks
+Okay that does makes sense.
+
+In that case why should this not be in the phy driver itself. There are
+already few examples og phy drivers having inbuild clk where is makes
+sense. You register the clk_ops as part of phy driver
+
+Thanks
 
 -- 
 ~Vinod
