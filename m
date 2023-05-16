@@ -2,125 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A50C7EE2D
-	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 11:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5533C77B75
+	for <linux-clk@archiver.kernel.org>; Tue, 16 May 2023 12:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232135AbjEPLrZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 May 2023 07:47:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42396 "EHLO
+        id S231888AbjEPMBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 May 2023 08:01:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232154AbjEPLrJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 07:47:09 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E1616582
-        for <linux-clk@vger.kernel.org>; Tue, 16 May 2023 04:46:42 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-965ab8ed1fcso2592531466b.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 May 2023 04:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1684237601; x=1686829601;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=93Yzq0NQPKDWbsmyn4CBhtU/WekigFVvB0zAMgN57XI=;
-        b=SUIAwvI++5kAvyMBRhzQ8MviZaRm5/h1Y2uQSZusDH1AIVw9ICmGwylsvUeczZiPZR
-         bNaGsvQCvTmWmIyaCN/Rdv08q23K/aF8O1MIle6o8HrqjSsXrAv+rbXKsVDk+CMu2vlA
-         tkvSYGP8SY4X+4MZuWafcslj/1QsI4q9Q3qzgkwLH3u+eonbhz5tbQxv2ePF1Ldc28CK
-         rK4/j/VsoJrElP+ZbpVWibqAaM50B1PHxWEoVQ+ZtH1FjnAYK0YZDxM7Y1nF+rYb1bbB
-         Xr15ZesjVZock5QuYL7A3P5QQfnJwTajoUjJKBEd9Tt8SbIwVb+JnutoK7UjCX1TkBZa
-         Nk5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684237601; x=1686829601;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=93Yzq0NQPKDWbsmyn4CBhtU/WekigFVvB0zAMgN57XI=;
-        b=Ayzl/vDXOFiVe/SuZJZDQhVsP2QPGvdOyIdyKp5KwkfL1GFKgGVNwATrXQebD8j/W7
-         VVNy6AmmPHyqGz4M3UKzOWlNvxBfXvxl7E7MW8WyNPXn6bDAHZFCS2v8g1BWkrJYOXHr
-         bG5qAryl0/k+6wyf4xk21C7qMUqeDDpiTvcwSOrmQVQ0V7W43DtHnzUbdKpTpgpwaC+b
-         LyfmWppjrlL/4R5D2FMaPOihwylCfCCdiFvqoE1BkGlzjPQSjjlb4wpLoq6BaW7GDFQc
-         YgJN5WMoUTnixVePA/MfBq87VLnD5Sc2gjW1Fn6/NwL3yMWycAYhL2yKEjo2v4NCvrgX
-         25ng==
-X-Gm-Message-State: AC+VfDz/2jUL07hJQDM9FdNAimtiRAbEvG4tfJmh8mOc5wljeq5zdebc
-        nmHsw2lRg/zDcCr+EWM3DFGF3g==
-X-Google-Smtp-Source: ACHHUZ6Le8AKBQWreteycC6kDR3GS8geixujQ/iDzkE/vuc3eDWlUxCWIkF3haHQxfAKxtuwY4i1qA==
-X-Received: by 2002:a17:906:58d5:b0:969:9fd0:7cee with SMTP id e21-20020a17090658d500b009699fd07ceemr26824898ejs.10.1684237601227;
-        Tue, 16 May 2023 04:46:41 -0700 (PDT)
-Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id qh20-20020a170906ecb400b009655eb8be26sm10862429ejb.73.2023.05.16.04.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 May 2023 04:46:40 -0700 (PDT)
-Date:   Tue, 16 May 2023 13:46:39 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadfed@meta.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v7 5/8] ice: implement dpll interface to control cgu
-Message-ID: <ZGNtH1W3Y/pnx2Hk@nanopsycho>
-References: <20230428002009.2948020-1-vadfed@meta.com>
- <20230428002009.2948020-6-vadfed@meta.com>
- <ZGJn/tKjzxNYcNKU@nanopsycho>
- <DM6PR11MB46570013B31FCCF1FCE0854D9B799@DM6PR11MB4657.namprd11.prod.outlook.com>
+        with ESMTP id S229656AbjEPMBV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 May 2023 08:01:21 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD13E44AA;
+        Tue, 16 May 2023 05:01:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1684238480; x=1715774480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MkgobwPTSWoToec9i45GpRXlMt8+RnGcFPDnD9ytMaA=;
+  b=CC1CaOLVx4pfc5YQdEedRq3kX4pw1tvGB2CqChiLaUZLNsCBpSHfz3oD
+   rIrVrZEgTvJEEnaRGcuRV45yG+CEaXrjbw+QIyMgyWi2b0gth6G2IeWFf
+   dSRrCuvc6hWIGEvIVwqxCsD7ouJ8VetcM3fRb4weUeUcf3l+kGsVpVvyj
+   +MTNHJpQnitxtb82b4SUXgbNUjjqqSV1Op0t+HzuvmtTXfCnZz6lWaOuv
+   no/V7YfQYjpy5u6oxTxRws6thETWk+lE5ITYD6txKVtc8btTsTV7fsfXe
+   K/aM73DiRn0ta36sVaPNm8LrSAlLNFhLLivSxc2PayUeP+J4DDQZ4Q8tS
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.99,278,1677567600"; 
+   d="asc'?scan'208";a="213511896"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 16 May 2023 05:01:19 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Tue, 16 May 2023 05:01:19 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
+ Transport; Tue, 16 May 2023 05:01:17 -0700
+Date:   Tue, 16 May 2023 13:00:57 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc:
+ convert to yaml
+Message-ID: <20230516-modulator-reason-1d3a754c6dd7@wendy>
+References: <20230516051836.2511149-1-claudiu.beznea@microchip.com>
+ <20230516051836.2511149-3-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/p49LlXOSFYXPS6l"
 Content-Disposition: inline
-In-Reply-To: <DM6PR11MB46570013B31FCCF1FCE0854D9B799@DM6PR11MB4657.namprd11.prod.outlook.com>
+In-Reply-To: <20230516051836.2511149-3-claudiu.beznea@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, May 16, 2023 at 11:22:37AM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Monday, May 15, 2023 7:13 PM
->>
->>Fri, Apr 28, 2023 at 02:20:06AM CEST, vadfed@meta.com wrote:
->>
->>[...]
->>
->>>+static const enum dpll_lock_status
->>>+ice_dpll_status[__DPLL_LOCK_STATUS_MAX] = {
->>>+	[ICE_CGU_STATE_INVALID] = DPLL_LOCK_STATUS_UNSPEC,
->>>+	[ICE_CGU_STATE_FREERUN] = DPLL_LOCK_STATUS_UNLOCKED,
->>>+	[ICE_CGU_STATE_LOCKED] = DPLL_LOCK_STATUS_CALIBRATING,
->>
->>This is a bit confusing to me. You are locked, yet you report
->>calibrating? Wouldn't it be better to have:
->>DPLL_LOCK_STATUS_LOCKED
->>DPLL_LOCK_STATUS_LOCKED_HO_ACQ
->>
->>?
->>
->
->Sure makes sense, will add this state.
+--/p49LlXOSFYXPS6l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Do you need "calibrating" then? I mean, the docs says:
-  ``LOCK_STATUS_CALIBRATING``   dpll device calibrates to lock to the
-                                source pin signal
+Hey Claudiu,
 
-Yet you do: [ICE_CGU_STATE_LOCKED] = DPLL_LOCK_STATUS_CALIBRATING
-Seems like you should have:
-[ICE_CGU_STATE_LOCKED] = DPLL_LOCK_STATUS_LOCKED
-[ICE_CGU_STATE_LOCKED_HO_ACQ] = DPLL_LOCK_STATUS_LOCKED_HO_ACQ,
+On Tue, May 16, 2023 at 08:18:33AM +0300, Claudiu Beznea wrote:
+> Convert Atmel PMC documentation to yaml. Along with it clock names
+> were adapted according to the current available device trees as
+> different controller versions accept different clock (some of them
+> have 3 clocks as input, some has 2 clocks as inputs and some with 2
+> input clocks uses different clock names).
+> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> new file mode 100644
+> index 000000000000..e5f514bc4bf7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> @@ -0,0 +1,153 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/atmel,at91rm9200-pmc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Atmel Power Management Controller (PMC)
+> +
+> +maintainers:
+> +  - Claudiu Beznea <claudiu.beznea@microchip.com>
+> +
+> +description:
+> +  The power management controller optimizes power consumption by controlling all
+> +  system and user peripheral clocks. The PMC enables/disables the clock inputs
+> +  to many of the peripherals and to the processor.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: atmel,at91sam9g20-pmc
+> +          - const: atmel,at91sam9260-pmc
+> +          - const: syscon
+> +      - items:
+> +          - enum:
+> +              - atmel,at91sam9g15-pmc
+> +              - atmel,at91sam9g25-pmc
+> +              - atmel,at91sam9g35-pmc
+> +              - atmel,at91sam9x25-pmc
+> +              - atmel,at91sam9x35-pmc
+> +          - const: atmel,at91sam9x5-pmc
 
-and remove DPLL_LOCK_STATUS_CALIBRATING as it would be unused?
+Yet another combinations question for you...
+With this binding the following is not possible:
 
-Also, as a sidenote, could you use the whole names of enum value names
-in documentation? Simple reason, greppability.
+"atmel,at91sam9x5-pmc", "syscon"
 
-Thanks!
+Is that intended?
+I notice "atmel,at91sam9260-pmc" is able to appear as:
 
+"atmel,at91sam9260-pmc", "syscon"
 
->
->>
->>>+	[ICE_CGU_STATE_LOCKED_HO_ACQ] = DPLL_LOCK_STATUS_LOCKED,
->>>+	[ICE_CGU_STATE_HOLDOVER] = DPLL_LOCK_STATUS_HOLDOVER,
->>>+};
->>
->>[...]
+So the inconsistency stands out.
+
+> +          - const: syscon
+> +      - items:
+> +          - enum:
+> +              - atmel,at91rm9200-pmc
+> +              - atmel,at91sam9260-pmc
+> +              - atmel,at91sam9g45-pmc
+> +              - atmel,at91sam9n12-pmc
+> +              - atmel,at91sam9rl-pmc
+> +              - atmel,sama5d2-pmc
+> +              - atmel,sama5d3-pmc
+> +              - atmel,sama5d4-pmc
+> +              - microchip,sam9x60-pmc
+> +              - microchip,sama7g5-pmc
+> +          - const: syscon
+
+Otherwise, this looks grand to me.
+
+Cheers,
+Conor.
+
+--/p49LlXOSFYXPS6l
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGNweAAKCRB4tDGHoIJi
+0klMAP0feKg5Rk+Yx1hTTlWBFl+34Zjsn4gGKdFx2Qpcp5s4OwD+IIa9fAnSmOd/
+OrjaQNfj+Ol17iJGt9+PsDIjVzpxsQE=
+=6H0j
+-----END PGP SIGNATURE-----
+
+--/p49LlXOSFYXPS6l--
