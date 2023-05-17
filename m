@@ -2,156 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F9DC77B7F
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 17:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489CAC77B7A
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 18:22:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbjEQR7O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 13:59:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38468 "EHLO
+        id S229803AbjEQSWG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 14:22:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbjEQR7I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 13:59:08 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB38059DD
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 10:58:49 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-96aa0cab88dso171270766b.1
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 10:58:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684346328; x=1686938328;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3xY1JCEQxcvzs0PmRIIYxSLiWCMdSU7/ohWJm/hG6xo=;
-        b=KuyZ4BSpveQ66Kj7PM9d4+h4kwrBu5OJuEFatgNtyCQxJbCrA33RS+HKUUfws2z2yU
-         +WXpdgic2ft5KJk0W1KKD6XP7dwINh0nosE8QQ4i9Tp5LJtGZYy4uUI6fE+1nAvfcU+o
-         2j2rpSCIO6agggEbsMJhMRDL3Akee8twxUB218bO0ucZey7pAQYG2xH2e8tgl1rzpinU
-         xmtToOaPD8k+6GeWkb7YNCguTws3pUz+oau8dNv6yLNvUO5qY5omMuqezVb7jZ4HqSkr
-         PMTNzChR21QGqeQHQF/dduKl0qvYYYrgY8Wz2aM0RgDJIiunkfFEFEstSdAJ7wTDqcKK
-         pW/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684346328; x=1686938328;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3xY1JCEQxcvzs0PmRIIYxSLiWCMdSU7/ohWJm/hG6xo=;
-        b=a2u4uAjIQ9Bnryc8sHniS51qnHmbKgmi0mQtuKJGdslUDys0I9e9XrUPTcEEfCWynD
-         6TBD2qIYJ722dA+6R3K82K2lZ41E57FjWb+kK4htZWT4kLX1jZQljq3perep3CeLoTdH
-         ukwEOMsSOvA8mQyjJ8gF57stPNQChuuJBl3HrDzywxzprQG5yZxwF+Essn4sVtQiIQNj
-         kPlvwnGTWtyU0lL3DD9u4o/acWiin5ziDfQ0afZHfq6PQfTQKxysWzBkfSmbwDJ8GkKa
-         yDsrjSEBmRmPvnP7kFA32FtMbbgkXsuB3/Xn/ZCGm4CIoxKN6rDVHXk2BZ8w8dRnXkn6
-         bnnw==
-X-Gm-Message-State: AC+VfDwZIHKLt+oSAE1Mqg8FfKIzEe+Pbv6XrAd+dI2ZzCVXOmcNiz5d
-        GQrUsptJSmJs/WatrMXh2QSBCw==
-X-Google-Smtp-Source: ACHHUZ4+I04w2oCouHmiraoxQ9cnEQIU0CDJVo5wdeZ/CokqQoACA/pFV0LqPYEBUzSYqDjhdWBRjg==
-X-Received: by 2002:a17:906:9749:b0:96f:1b96:6147 with SMTP id o9-20020a170906974900b0096f1b966147mr1208654ejy.55.1684346327721;
-        Wed, 17 May 2023 10:58:47 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:c9ff:4c84:dd21:568d? ([2a02:810d:15c0:828:c9ff:4c84:dd21:568d])
-        by smtp.gmail.com with ESMTPSA id ay20-20020a056402203400b00502689a06b2sm9632296edb.91.2023.05.17.10.58.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 May 2023 10:58:47 -0700 (PDT)
-Message-ID: <3239db1b-3ade-8881-e05b-2e69a7d5f287@linaro.org>
-Date:   Wed, 17 May 2023 19:58:46 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/4] dt-bindings: clock: Add Qcom SM8450 GPUCC
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230517-topic-waipio-gpucc-v1-0-4f40e282af1d@linaro.org>
- <20230517-topic-waipio-gpucc-v1-1-4f40e282af1d@linaro.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230517-topic-waipio-gpucc-v1-1-4f40e282af1d@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S229932AbjEQSWE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 14:22:04 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF93F7EC5;
+        Wed, 17 May 2023 11:22:00 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 61F225C0046;
+        Wed, 17 May 2023 14:22:00 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Wed, 17 May 2023 14:22:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm3; t=1684347720; x=1684434120; bh=Dz
+        JffaXEI8AFQEMUkaUG2Da+r+V+XolUqabCMS6PQ/s=; b=fy24rRFPgz2m8U6BRa
+        s9V+MvrDPgmqKTYRKZqh3nBKFmbUj3/SXccdz2JhadmDZAXjviE7WJFQ4X9oZDoz
+        8RdMu7J5+eI0gCKvrYE6khsOzQhsBiYC6hrHoPHsfssop1Oh6YFYvkmQWBVkoAuj
+        /uT3f0B8mPwCu3Tv+fGBh8W2RdoDo9DTv9NjXELpS4vWitbCz+KCy6aTjCUINc17
+        yw1F6O7DCacB3u2gF9KE+LlcwMhDbzJeA6LSVQgrANHLzc84s4bKLE2xCL6VRwDd
+        XO9rf7NRCuI3veYFvhCrNKJxZskFhfGS5YrJxntqb85JZ9LDn0idYaiwPxkIyVmE
+        peBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1684347720; x=1684434120; bh=DzJffaXEI8AFQ
+        EMUkaUG2Da+r+V+XolUqabCMS6PQ/s=; b=k0C0quzwNqx94l8fUwWgRfWd+jMOg
+        hRDViSh1ZtrusuIBzxbdib5jRb4nBuPheDFOJRacx5BxGZfzO7/7JhUjU9pJ5sD/
+        wzrRcRwb7V337TZasazDdNGwQ50OrIoid20oB6RxfSFCsjQCATbhu5br93H6IjXP
+        bmRBsixoyr05HYLcL1SzhveidMG02rCLZMt4vjaYF5Tx2dDSwYqbnoKaNtH0ch1y
+        KkeaW02PrkAqcmSiLucBLF9JnP7y2pnBHTMWjiYuV05JkNYZDNxSgXrfFixbMSgy
+        2HzwJHnnHSUSUg0guLxMLI79hpyVJABnSKmU/YacPTTqbd/PWMGm62SqA==
+X-ME-Sender: <xms:SBtlZG7gj_FLVD4wCY9fZlDf79slCM7cq1F1ONKERrwU-EFG87pXPg>
+    <xme:SBtlZP5-Q68e0dK538Lz0HBIn889VWEHFAGVJ7GDw9QjvSn5WEp-CjOSRHb1FtoAr
+    Hb0_qPe_CW0ktZgePY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeiuddguddvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:SBtlZFeeXZF1F6hrUcDbAG2ygvAer8mT8csRuLvaTN4dgz_OjE2uFg>
+    <xmx:SBtlZDIBNrBGKhmjLn5vA6I6C_G2uiWkq1nfASyP4RPJqcllHPdLJw>
+    <xmx:SBtlZKIybT4vkWAMCc_mjrtE1sgpCvVg6t-t9DEVz1g9Tf_ci3mvGg>
+    <xmx:SBtlZC89jhJBNeG7h2fKcNb2oFMLmyBiks6MrzFdb88cRUVLC7R2kw>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id EEFD6B60086; Wed, 17 May 2023 14:21:59 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-431-g1d6a3ebb56-fm-20230511.001-g1d6a3ebb
+Mime-Version: 1.0
+Message-Id: <2a7c0d21-3dde-4c9c-94b9-3839282ecf18@app.fastmail.com>
+In-Reply-To: <20230517153932.172081-1-martin@kaiser.cx>
+References: <20220815190748.102664-1-martin@kaiser.cx>
+ <20230517153932.172081-1-martin@kaiser.cx>
+Date:   Wed, 17 May 2023 20:21:19 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Martin Kaiser" <martin@kaiser.cx>,
+        "Abel Vesa" <abelvesa@kernel.org>,
+        "Stephen Boyd" <sboyd@kernel.org>
+Cc:     "Shawn Guo" <shawnguo@kernel.org>,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        "Fabio Estevam" <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] ARM: imx25: print silicon revision at startup
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/05/2023 18:40, Konrad Dybcio wrote:
-> Add device tree bindings for the graphics clock controller on Qualcomm
-> Technology Inc's SM8450 SoCs.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  .../bindings/clock/qcom,sm8450-gpucc.yaml          | 73 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,sm8450-gpucc.h      | 48 ++++++++++++++
->  include/dt-bindings/reset/qcom,sm8450-gpucc.h      | 20 ++++++
->  3 files changed, 141 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> new file mode 100644
-> index 000000000000..ad913b2daf0c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-gpucc.yaml
-> @@ -0,0 +1,73 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8450-gpucc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics Clock & Reset Controller on SM8450
-> +
-> +maintainers:
-> +  - Konrad Dybcio <konrad.dybcio@linaro.org>
-> +
-> +description: |
-> +  Qualcomm graphics clock control module provides the clocks, resets and power
-> +  domains on Qualcomm SoCs.
-> +
-> +  See also::
-> +    include/dt-bindings/clock/qcom,sm8450-gpucc.h
-> +    include/dt-bindings/reset/qcom,sm8450-gpucc.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sm8450-gpucc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: GPLL0 main branch source
-> +      - description: GPLL0 div branch source
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
+On Wed, May 17, 2023, at 17:39, Martin Kaiser wrote:
+> Resurrect the unused function to print the imx25 silicon revision at
+> startup.
+>
+> This patchset has been mentioned in a discussion today. Let's bring it to the
+> attention of the clk maintainers again. 
 
-If there is going to be new version:
+Looks good to me, and fixes the warning about the function having
+no prototype, so
 
-Keep the same order as in properties:, so if reg is not second there,
-neither should be here.
-
-In any case:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-Best regards,
-Krzysztof
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
