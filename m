@@ -2,98 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EC2C77B75
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 12:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21D5C7EE22
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 13:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231384AbjEQMn0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 08:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
+        id S231508AbjEQNTN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 09:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231443AbjEQMnZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 08:43:25 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3806B26A3;
-        Wed, 17 May 2023 05:43:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1684327382; x=1715863382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0wb+aIX7/letJ9Gm0YD6AnxqCsFTli+EhhB+a+U+28w=;
-  b=SslVsAW6FXxd6f+ZaTufH/c+hLAJ9l11/xgsByN612z5cC8s5s6XMelE
-   0sy30NWoZAs9c+YJoGC33M9VbTinrNftGu8unetDRJLA2yLXyTDBbhS6O
-   D0O6iL36mNXP+YPW/VvinXJz+VKs5FGlPNIKI+q2zEE8O74jiBwYeqFnk
-   7bgSlHookIZdbvFS/nnx4OASyoHhttO0VQnEMGJeccBtb0R4v5ijX23Yx
-   OTunpIyBfX5kgbcw73X0NDVe21psEPu8Ve8d6fdEjgF0h8ZxqQsuCwdt9
-   dFSuJh+/0pnt+XTVbjoFl/a+SLPQh8LISZmin/b7B4763T+jmKjtyheeR
-   g==;
-X-IronPort-AV: E=Sophos;i="5.99,282,1677567600"; 
-   d="asc'?scan'208";a="152529056"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 May 2023 05:42:51 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Wed, 17 May 2023 05:42:51 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Wed, 17 May 2023 05:42:49 -0700
-Date:   Wed, 17 May 2023 13:42:28 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc:
- convert to yaml
-Message-ID: <20230517-degrading-stoppage-54f7769f1956@wendy>
-References: <20230517094119.2894220-1-claudiu.beznea@microchip.com>
- <20230517094119.2894220-3-claudiu.beznea@microchip.com>
+        with ESMTP id S231425AbjEQNTI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 09:19:08 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483A4213A;
+        Wed, 17 May 2023 06:19:07 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id EA71E1FD68;
+        Wed, 17 May 2023 13:19:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1684329545; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0yEaZ9wXA+cWPA25h9EIXyAIeYp+OM3Sb2sM7l1qBrs=;
+        b=ZuDLXj2q3LjuAXxfYXFwPYc1S7uyoELs8tGkJ7Jk1zO1qX9fWmrsZfajes9lw068PoF9A8
+        nJKMvRxm5U5TINr5p/kRbnck4/ydolVIGq2cFp0CFMmEQXFCeIUVIwUkDmNH2b3DtvKlSg
+        vIsrlolp/vXZpqcYLsGp1czILwqvVkM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1684329545;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0yEaZ9wXA+cWPA25h9EIXyAIeYp+OM3Sb2sM7l1qBrs=;
+        b=HBCJlgZNK6zh9eXCRf0J3+tjRLv9+YX1OfIXxgyCNUkoGgaQx+IyxviEZsX9mxGTmQCIZP
+        9Lep3ohD8ldxieDA==
+Received: from hawking.suse.de (unknown [10.168.4.11])
+        by relay2.suse.de (Postfix) with ESMTP id 516F72C141;
+        Wed, 17 May 2023 13:19:05 +0000 (UTC)
+Received: by hawking.suse.de (Postfix, from userid 17005)
+        id 39BA64A04DB; Wed, 17 May 2023 15:19:05 +0200 (CEST)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v5 08/10] reset: starfive: jh7110: Add StarFive
+ STG/ISP/VOUT resets support
+In-Reply-To: <20230424135409.6648-9-xingyu.wu@starfivetech.com> (Xingyu Wu's
+        message of "Mon, 24 Apr 2023 21:54:07 +0800")
+References: <20230424135409.6648-1-xingyu.wu@starfivetech.com>
+        <20230424135409.6648-9-xingyu.wu@starfivetech.com>
+X-Yow:  Yow!  I'm imagining a surfer van filled with soy sauce!
+Date:   Wed, 17 May 2023 15:19:05 +0200
+Message-ID: <mvmsfbvgkom.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ssdu9SzKEXVS/OPM"
-Content-Disposition: inline
-In-Reply-To: <20230517094119.2894220-3-claudiu.beznea@microchip.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---ssdu9SzKEXVS/OPM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Apr 24 2023, Xingyu Wu wrote:
 
-On Wed, May 17, 2023 at 12:41:16PM +0300, Claudiu Beznea wrote:
-> Convert Atmel PMC documentation to yaml. Along with it clock names
-> were adapted according to the current available device trees as
-> different controller versions accept different clock (some of them
-> have 3 clocks as input, some has 2 clocks as inputs and some with 2
-> input clocks uses different clock names).
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> @@ -58,6 +76,18 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
+>  		.name = "clk_starfive_jh7110_sys.rst-aon",
+>  		.driver_data = (kernel_ulong_t)&jh7110_aon_info,
+>  	},
+> +	{
+> +		.name = "clk_starfive_jh7110_sys.rst-stg",
+> +		.driver_data = (kernel_ulong_t)&jh7110_stg_info,
+> +	},
+> +	{
+> +		.name = "clk_starfive_jh7110_sys.rst-isp",
+> +		.driver_data = (kernel_ulong_t)&jh7110_isp_info,
+> +	},
+> +	{
+> +		.name = "clk_starfive_jh7110_sys.rst-vout",
 
-Looks good to me now Claudiu, thanks!
+"clk_starfive_jh7110_sys.rst-vout" is exactly AUXILIARY_NAME_SIZE long,
+thus lacks a null termination.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
---ssdu9SzKEXVS/OPM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGTLtAAKCRB4tDGHoIJi
-0liRAQDsZjU9B15a9rnhIN17ei53YY8w3HzELiqszr4hvKfR1wEAjsnlJtzq5Z1w
-U3kVEcygfCm3gQJxqEJTxAHcJtr6IgI=
-=bdpZ
------END PGP SIGNATURE-----
-
---ssdu9SzKEXVS/OPM--
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
