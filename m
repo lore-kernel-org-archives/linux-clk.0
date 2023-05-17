@@ -2,150 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 381C0C7EE22
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 12:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EC2C77B75
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 12:43:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230370AbjEQMMf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 08:12:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56870 "EHLO
+        id S231384AbjEQMn0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 08:43:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbjEQMMe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 08:12:34 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F9213C3B;
-        Wed, 17 May 2023 05:12:16 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id d2e1a72fcca58-64a9335a8e7so12707041b3a.0;
-        Wed, 17 May 2023 05:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684325536; x=1686917536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jR9QVy06+8kCR0o/MKpVdWGpHv1t5cW3AKmbdvo1Kjc=;
-        b=mMxLZJ5ClWCNLFgj9hpEZpfDu1kAtMtUeeBNuLdH81tH6WbPdHzHkUF+T/nOslsRY9
-         RBh27yg9XsCmkG1aM0eVWFTBrsRzDOMf0T4WOYWA5PbyNP47/T80qU3HpdMfxuQmY0Yz
-         0ndK627AmJ0xWoyY8SKIeEpm8VPtbvwjnufBI7oWWD7xqtOd1d53896dqyjFwWoAUugU
-         HQMY8ok7AMqYSsDFhArRhT2nYB0as1luSohqkYvs5CNqyYaVKsBbPspT20mFYt6If5e3
-         UHxcagAgqk9ClsAVp4OxsJ70b6ifBOONkstfI/LtT3979vHc8VLBsQispsv/S///i2DP
-         7ZHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684325536; x=1686917536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jR9QVy06+8kCR0o/MKpVdWGpHv1t5cW3AKmbdvo1Kjc=;
-        b=MnCBUFBWXyjqIBXOA7128NGSEnDm1iDcwP/USfnzBLuB0kL1Q86ZlI6l4p7FAKy3lc
-         3efdNagze1VB0iPDtQFxt9pYgeecc2oYquUUb8Yd5ovo5ewYBYqkh4IwytFXIiXUU3un
-         3phHuDPlaI9a5kT39F9ah0sv2muxBlYJcQg9H+0vYenGn9PrwanSPvYDLW5kBW02zFAa
-         9TjGAfw7BoN1mQJz5CNfx5NE/9GLPmObuRO2fftC92OpDaKzS+YmxFrAaXtGBTZ8yiut
-         EP7EeOUjW3RfNmVoE1aeykpybXYyrbuGecoMb2Uji7WUCgN0E1o0xm5ssQTonxfAZOfI
-         fgew==
-X-Gm-Message-State: AC+VfDxDdL1p8nzdaKDe4AsDkhjLOVqBP9oC/wpZGERPl/d4ygKljHvz
-        SCM2Vp2FpqlRAIR94v+4cg4=
-X-Google-Smtp-Source: ACHHUZ4ZyE/7M5xz4RF4owSSi09+sIdG3gisbl9+Vhh4syqW9Ou10ZCQBp3hmVhBuaWjYlpwSabJgA==
-X-Received: by 2002:a17:90b:120c:b0:253:25c3:7a95 with SMTP id gl12-20020a17090b120c00b0025325c37a95mr2402736pjb.14.1684325535612;
-        Wed, 17 May 2023 05:12:15 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id j19-20020a17090ae61300b002500df72713sm1445765pjy.7.2023.05.17.05.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 May 2023 05:12:15 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 17 May 2023 05:12:13 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Michal Simek <michal.simek@amd.com>
-Cc:     piyush.mehta@amd.com, nava.kishore.manne@amd.com,
-        sai.krishna.potthuri@amd.com, shubhrajyoti.datta@amd.com,
-        vishal.sagar@amd.com, kalyani.akula@amd.com,
-        bharat.kumar.gogada@amd.com, linux-kernel@vger.kernel.org,
-        monstr@monstr.eu, michal.simek@xilinx.com, git@xilinx.com,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Manish Narani <manish.narani@xilinx.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Srinivas Neeli <srinivas.neeli@amd.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Rix <trix@redhat.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: xilinx: Switch xilinx.com emails to amd.com
-Message-ID: <155bdc43-7606-4279-a6f4-fe6e29a61722@roeck-us.net>
-References: <f5b2bd1e78407e4128fc8f0b5874ba723e710a88.1684245058.git.michal.simek@amd.com>
+        with ESMTP id S231443AbjEQMnZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 08:43:25 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3806B26A3;
+        Wed, 17 May 2023 05:43:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1684327382; x=1715863382;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0wb+aIX7/letJ9Gm0YD6AnxqCsFTli+EhhB+a+U+28w=;
+  b=SslVsAW6FXxd6f+ZaTufH/c+hLAJ9l11/xgsByN612z5cC8s5s6XMelE
+   0sy30NWoZAs9c+YJoGC33M9VbTinrNftGu8unetDRJLA2yLXyTDBbhS6O
+   D0O6iL36mNXP+YPW/VvinXJz+VKs5FGlPNIKI+q2zEE8O74jiBwYeqFnk
+   7bgSlHookIZdbvFS/nnx4OASyoHhttO0VQnEMGJeccBtb0R4v5ijX23Yx
+   OTunpIyBfX5kgbcw73X0NDVe21psEPu8Ve8d6fdEjgF0h8ZxqQsuCwdt9
+   dFSuJh+/0pnt+XTVbjoFl/a+SLPQh8LISZmin/b7B4763T+jmKjtyheeR
+   g==;
+X-IronPort-AV: E=Sophos;i="5.99,282,1677567600"; 
+   d="asc'?scan'208";a="152529056"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 May 2023 05:42:51 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Wed, 17 May 2023 05:42:51 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
+ Transport; Wed, 17 May 2023 05:42:49 -0700
+Date:   Wed, 17 May 2023 13:42:28 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc:
+ convert to yaml
+Message-ID: <20230517-degrading-stoppage-54f7769f1956@wendy>
+References: <20230517094119.2894220-1-claudiu.beznea@microchip.com>
+ <20230517094119.2894220-3-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ssdu9SzKEXVS/OPM"
 Content-Disposition: inline
-In-Reply-To: <f5b2bd1e78407e4128fc8f0b5874ba723e710a88.1684245058.git.michal.simek@amd.com>
+In-Reply-To: <20230517094119.2894220-3-claudiu.beznea@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 16, 2023 at 03:51:08PM +0200, Michal Simek wrote:
-> @xilinx.com is still working but better to switch to new amd.com after
-> AMD/Xilinx acquisition.
-> 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> ---
-> 
->  Documentation/devicetree/bindings/arm/xilinx.yaml             | 2 +-
->  Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml     | 2 +-
->  .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml       | 2 +-
->  Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml  | 2 +-
->  Documentation/devicetree/bindings/crypto/xlnx,zynqmp-aes.yaml | 4 ++--
->  .../bindings/firmware/xilinx/xlnx,zynqmp-firmware.yaml        | 2 +-
->  .../devicetree/bindings/fpga/xilinx-zynq-fpga-mgr.yaml        | 2 +-
->  Documentation/devicetree/bindings/fpga/xlnx,versal-fpga.yaml  | 2 +-
->  .../devicetree/bindings/fpga/xlnx,zynqmp-pcap-fpga.yaml       | 2 +-
->  Documentation/devicetree/bindings/gpio/gpio-zynq.yaml         | 2 +-
->  Documentation/devicetree/bindings/gpio/xlnx,gpio-xilinx.yaml  | 2 +-
->  .../devicetree/bindings/gpio/xlnx,zynqmp-gpio-modepin.yaml    | 2 +-
->  Documentation/devicetree/bindings/i2c/cdns,i2c-r1p10.yaml     | 2 +-
->  .../devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.yaml  | 2 +-
->  .../devicetree/bindings/media/xilinx/xlnx,csi2rxss.yaml       | 2 +-
->  .../bindings/memory-controllers/snps,dw-umctl2-ddrc.yaml      | 2 +-
->  .../bindings/memory-controllers/xlnx,zynq-ddrc-a05.yaml       | 2 +-
->  Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml  | 2 +-
->  .../devicetree/bindings/pinctrl/xlnx,zynq-pinctrl.yaml        | 2 +-
->  .../devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml      | 2 +-
->  .../devicetree/bindings/power/reset/xlnx,zynqmp-power.yaml    | 2 +-
->  Documentation/devicetree/bindings/rtc/xlnx,zynqmp-rtc.yaml    | 2 +-
->  Documentation/devicetree/bindings/serial/cdns,uart.yaml       | 2 +-
->  Documentation/devicetree/bindings/spi/spi-cadence.yaml        | 2 +-
->  Documentation/devicetree/bindings/spi/spi-xilinx.yaml         | 2 +-
->  Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml    | 2 +-
->  Documentation/devicetree/bindings/spi/xlnx,zynq-qspi.yaml     | 2 +-
->  Documentation/devicetree/bindings/timer/cdns,ttc.yaml         | 2 +-
->  .../devicetree/bindings/watchdog/xlnx,xps-timebase-wdt.yaml   | 4 ++--
+--ssdu9SzKEXVS/OPM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+On Wed, May 17, 2023 at 12:41:16PM +0300, Claudiu Beznea wrote:
+> Convert Atmel PMC documentation to yaml. Along with it clock names
+> were adapted according to the current available device trees as
+> different controller versions accept different clock (some of them
+> have 3 clocks as input, some has 2 clocks as inputs and some with 2
+> input clocks uses different clock names).
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Guenter
+Looks good to me now Claudiu, thanks!
+
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+--ssdu9SzKEXVS/OPM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGTLtAAKCRB4tDGHoIJi
+0liRAQDsZjU9B15a9rnhIN17ei53YY8w3HzELiqszr4hvKfR1wEAjsnlJtzq5Z1w
+U3kVEcygfCm3gQJxqEJTxAHcJtr6IgI=
+=bdpZ
+-----END PGP SIGNATURE-----
+
+--ssdu9SzKEXVS/OPM--
