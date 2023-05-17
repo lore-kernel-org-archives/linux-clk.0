@@ -2,128 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06214C77B75
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 14:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB69C7EE23
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 15:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230254AbjEQOWD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 10:22:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47556 "EHLO
+        id S231801AbjEQPCQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 11:02:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbjEQOWC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 10:22:02 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50A6C40EB
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 07:22:01 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-50be17a1eceso1463231a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 07:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684333320; x=1686925320;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ONuJY2KtI2KHJtsYCPsFhw7heZvdRq+s7WoctleT5QQ=;
-        b=mxoDAeCr+NxZwAyQdXIKhSX/7OYByY9p0AlLZp6EEQ/WLcZBbQjkLeIx1CW0kMhhd2
-         i5OeoqfV9vTiuN0Y6w4Ie1eGulLIO3uu8Cl/66c9O7Yi8VOfRty/V50nVSZSBjFG8I2b
-         nCSOgHMax5X6f7Gx8tQgmhFEvIDVzOUtfh2CdMXJk3oNZFrNPVGNWrIYO2dDeuv2TG79
-         XZjW76uj/jCOBLyeLqSqi+XLg8TNGa0Sm1mBoRR/kLMJdJqqBJRt5hhCg+8Wt9zqzppV
-         ai/0ait6TEoBeVPYcldyeTntoxu4a6oC9HEVbu2AWHmZojpQkf1I1DxY8ZjyQ0jcV1p7
-         aqcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684333320; x=1686925320;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ONuJY2KtI2KHJtsYCPsFhw7heZvdRq+s7WoctleT5QQ=;
-        b=hGyMOI4c3iPPDvoCT8i/U3xtBihVlwsETssaziRC/GrNTUraC08y/8IbJ48Tur755b
-         00Jbm/DyVWfSdlZC5F5UtvMsJmjYLgFwzKK2IwS0jve+sbVN8GLgBBcfjr2XKvE+UrKm
-         XZvPDCXe5AWPHL4Q2qXYUrmZwGH1YkHkXTv3qt5QgK0k3T/Errcmj51LoNa4qJ/lq9N3
-         UEgktt94pb8g/CLslWC4K3KU+wUCgFQBMEl9kie9X55ZaxFKrWb+p8bLkKxlTzy2pYDJ
-         wWSJX8k+4o36N/ZsgAOeXcES6jtXgaA6Lh+862iliE0BwJjIYIM/Bv96jyQl6O2Ajf9T
-         /2uQ==
-X-Gm-Message-State: AC+VfDyOb06vhRMo16w0zzW6YZCJQw9JGCB43ElHjAk5xgITrKuk7Ijf
-        EEWRthYC7gl2zS0pqR86+CFpsA==
-X-Google-Smtp-Source: ACHHUZ5OJ/YLytKU3bCRqMPBudelHZ3QHoMBNuG0N9S8Ng5wRUmLHpOMp0yEFnGPVTQTRkijdezw5Q==
-X-Received: by 2002:a17:907:c1e:b0:94f:250b:2536 with SMTP id ga30-20020a1709070c1e00b0094f250b2536mr39106884ejc.28.1684333319732;
-        Wed, 17 May 2023 07:21:59 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:c9ff:4c84:dd21:568d? ([2a02:810d:15c0:828:c9ff:4c84:dd21:568d])
-        by smtp.gmail.com with ESMTPSA id ks16-20020a170906f85000b00947740a4373sm12136992ejb.81.2023.05.17.07.21.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 May 2023 07:21:59 -0700 (PDT)
-Message-ID: <83f484ff-f170-6f32-f4b4-9743eb6d0b4c@linaro.org>
-Date:   Wed, 17 May 2023 16:21:58 +0200
+        with ESMTP id S232433AbjEQPBs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 11:01:48 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C06AD84E;
+        Wed, 17 May 2023 08:00:33 -0700 (PDT)
+Received: from g550jk.localnet (84-115-214-73.cable.dynamic.surfer.at [84.115.214.73])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id B99AECE0B8;
+        Wed, 17 May 2023 14:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1684335570; bh=b+cK+yIredBclcZLDhIrSKK1DPiHez1yG+yF+QpEoIA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=dwp2HpAqySkhm6KLTWLtXtB124Zj7Xpxw0ZItIvaTZF0S1HEPdLbMbjIrKYOBRZbz
+         hZBTrKZwbig8CtBwGP23KUmU7+F9VM4+PDzgP9RE2eq9hOjdNkZi8nuqmOrJkf7Zhu
+         OT0QpD4A5WpyPqaF1yrRPqfu3GNRE5p0n2GyM6BM=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: smd-rpm: conditionally enable scaling before doing
+ handover
+Date:   Wed, 17 May 2023 16:59:29 +0200
+Message-ID: <2679120.mvXUDI8C0e@z3ntu.xyz>
+In-Reply-To: <20bd79c1-6c38-f1ed-1661-6fa4c308c5c5@linaro.org>
+References: <20230506-rpmcc-scaling-handover-v1-1-374338a8dfd9@z3ntu.xyz>
+ <20bd79c1-6c38-f1ed-1661-6fa4c308c5c5@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v5 2/5] dt-bindings: clocks: atmel,at91rm9200-pmc: convert
- to yaml
-Content-Language: en-US
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor.dooley@microchip.com,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20230517094119.2894220-1-claudiu.beznea@microchip.com>
- <20230517094119.2894220-3-claudiu.beznea@microchip.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230517094119.2894220-3-claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/05/2023 11:41, Claudiu Beznea wrote:
-> Convert Atmel PMC documentation to yaml. Along with it clock names
-> were adapted according to the current available device trees as
-> different controller versions accept different clock (some of them
-> have 3 clocks as input, some has 2 clocks as inputs and some with 2
-> input clocks uses different clock names).
+On Dienstag, 16. Mai 2023 03:27:46 CEST Konrad Dybcio wrote:
+> On 6.05.2023 22:10, Luca Weiss wrote:
+> > On older platforms like msm8226, msm8974 and msm8916 the driver in the
+> > downstream kernel enables scaling first before doing the handover of the
+> > clocks.
+> > 
+> > While this normally doesn't seem to cause noticeable problems, on
+> > apq8026-asus-sparrow this causes the device to immediately reboot,
+> > perhaps due to older rpm firmware that becomes unhappy.
+> > 
+> > On newer platforms the order has swapped and enabling scaling is done
+> > after the handover, so let's introduce this behavior only conditionally
+> > for msm8226 and msm8974 for now.
+> > 
+> > Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> > ---
+> 
+> Did you give this a spin on some 8974? I think hammerhead had
+> issues around rpmcc in the past..
 
-Thank you for your patch. There is something to discuss/improve.
+Yes, appears to be fine on msm8974 also.
+
+I tried to reproduce the hammerhead ocmem hang we had in the past but even 
+with v6.3 rpmcc it seems to be fine. But iirc it was happening more or less at 
+random in the past so wouldn't be surprised if my tests just didn't show 
+anything on accident.
+
+Regards
+Luca
+
+> 
+> Konrad
+> 
+> >  drivers/clk/qcom/clk-smd-rpm.c | 16 +++++++++++++---
+> >  1 file changed, 13 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/clk/qcom/clk-smd-rpm.c
+> > b/drivers/clk/qcom/clk-smd-rpm.c index 887b945a6fb7..6d5476afc4d1 100644
+> > --- a/drivers/clk/qcom/clk-smd-rpm.c
+> > +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> > @@ -178,6 +178,7 @@ struct clk_smd_rpm_req {
+> > 
+> >  struct rpm_smd_clk_desc {
+> >  
+> >  	struct clk_smd_rpm **clks;
+> >  	size_t num_clks;
+> > 
+> > +	bool scaling_before_handover;
+> > 
+> >  };
+> >  
+> >  static DEFINE_MUTEX(rpm_smd_clk_lock);
+> > 
+> > @@ -693,6 +694,7 @@ static struct clk_smd_rpm *msm8974_clks[] = {
+> > 
+> >  static const struct rpm_smd_clk_desc rpm_clk_msm8974 = {
+> >  
+> >  	.clks = msm8974_clks,
+> >  	.num_clks = ARRAY_SIZE(msm8974_clks),
+> > 
+> > +	.scaling_before_handover = true,
+> > 
+> >  };
+> >  
+> >  static struct clk_smd_rpm *msm8976_clks[] = {
+> > 
+> > @@ -1318,6 +1320,12 @@ static int rpm_smd_clk_probe(struct platform_device
+> > *pdev)> 
+> >  	rpm_smd_clks = desc->clks;
+> >  	num_clks = desc->num_clks;
+> > 
+> > +	if (desc->scaling_before_handover) {
+> > +		ret = clk_smd_rpm_enable_scaling(rpm);
+> > +		if (ret)
+> > +			goto err;
+> > +	}
+> > +
+> > 
+> >  	for (i = 0; i < num_clks; i++) {
+> >  	
+> >  		if (!rpm_smd_clks[i])
+> >  		
+> >  			continue;
+> > 
+> > @@ -1329,9 +1337,11 @@ static int rpm_smd_clk_probe(struct platform_device
+> > *pdev)> 
+> >  			goto err;
+> >  	
+> >  	}
+> > 
+> > -	ret = clk_smd_rpm_enable_scaling(rpm);
+> > -	if (ret)
+> > -		goto err;
+> > +	if (!desc->scaling_before_handover) {
+> > +		ret = clk_smd_rpm_enable_scaling(rpm);
+> > +		if (ret)
+> > +			goto err;
+> > +	}
+> > 
+> >  	for (i = 0; i < num_clks; i++) {
+> >  	
+> >  		if (!rpm_smd_clks[i])
+> > 
+> > ---
+> > base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
+> > change-id: 20230506-rpmcc-scaling-handover-a63029ed9d13
+> > 
+> > Best regards,
 
 
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - atmel,at91rm9200-pmc
-> +              - atmel,at91sam9260-pmc
-> +              - atmel,at91sam9g20-pmc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: slow_xtal
-> +            - const: main_xtal
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - atmel,sama5d2-pmc
-> +              - atmel,sama5d3-pmc
-> +              - atmel,sama5d4-pmc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: slow_clk
-> +            - const: main_xtal
 
-This and previous if, should be squashed. You have exactly the same then:.
-
-
-
-Best regards,
-Krzysztof
 
