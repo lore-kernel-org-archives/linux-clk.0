@@ -2,144 +2,303 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC555C77B7D
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 06:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E14C77B7A
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 07:02:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229617AbjEQGkd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 02:40:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55208 "EHLO
+        id S229675AbjEQHCk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 03:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229525AbjEQGkc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 02:40:32 -0400
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C87A0CE;
-        Tue, 16 May 2023 23:40:30 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id A5A755C01A5;
-        Wed, 17 May 2023 02:40:27 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Wed, 17 May 2023 02:40:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
-        1684305627; x=1684392027; bh=kl6TNT66P/y7iDeev/8upXtGKNlx3dVK/bG
-        gkTY44/g=; b=dDepjuPQJpgpVcowQGAp9w9CSr8sS4dhN4qAyaBed7q08tauAKA
-        2JVAJPtCONiJyrmQqEUDNDyvKkkGeMzzhHDVORpiBuFBcnRJmRiuV+vrF/Q962QP
-        tZwalgxXh/0ZtE5RzAQyER7HXq2ngLal+K8eZUWX3QL2QYR9DRqkxLBYYxmrxLTq
-        64M/MrtC2X9tkI1WAaym1SGbvlp91I3xuHdeiuKRR5hlOX2x2AtteDfccnsqxqwJ
-        5CsPP24TnqrV0sjE0Aer95/M7NgZ/up3BzTEkEeVQPH60OzUIgZszVz57EPxY3uP
-        rMFGvmypNQBvgzdz2XSHXKsu8XnFmL/y3xg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1684305627; x=1684392027; bh=kl6TNT66P/y7iDeev/8upXtGKNlx3dVK/bG
-        gkTY44/g=; b=PipUvu0ehXleAfyypA9PUQLNwaI2g6c2IRoo+aylUllBX3EY2ES
-        XQz2+3ZvfVPqLVVOuoLtuZG5s50Y8MCOYOdsFo/jNk28UhjAfVdQ61BwzRlup4nj
-        pxrQhR8Sko0agy4sNPUNV050rnNxwWEC6HwXpXcL0Gnp3RZYTS/m/1SBL4/Xp/ye
-        IgLTQRhiINQ1HktO5BigEHjzcMyiB0MNjp7QYTfUAEwoR4VQcb1OUIXO1Ui78Xrn
-        XD/fIpYfQ28Uh9F/uYXo9iHfxWSVXBZ61FNlcd0gsf8qZk/4tPvCQh8DWor2I4C6
-        fJ0T9s6BC45qjosZzAf68noItbmhkrszv6g==
-X-ME-Sender: <xms:2XZkZIW9r5pDXvUOE3TzlEet6QUxsBAiN2Kou2aOO2OakqNmEQQ_XQ>
-    <xme:2XZkZMlLqxXEY-dMX6yWOkKmREEluiUAylF5d_eUMCn8NC5bFvQOLBGIbSkOVWR8F
-    kioh-vEpfS3Z8iEgvg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfeeitddguddtgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    tehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrf
-    grthhtvghrnhepgfekueelgeeigefhudduledtkeefffejueelheelfedutedttdfgveeu
-    feefieegnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:2XZkZMYyskLJEfaL4VUUnUgyHfCJda5CAqllXBYgjB4C-OiZN-qMFQ>
-    <xmx:2XZkZHXu6EZpul6Ml51QzRUL2ZmaPmfxpLxEKxWU0Xlj5eHeX9-h9w>
-    <xmx:2XZkZClqiv3kxVLfuDFJ7IW2IYSGqKkJie_F9JqwPbvsXCD63B9JAg>
-    <xmx:23ZkZFG39h66nlIjqAJI56u55rXpuzswWUC9U7JWRRqZoyJnw6dodw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 21F70B60086; Wed, 17 May 2023 02:40:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-431-g1d6a3ebb56-fm-20230511.001-g1d6a3ebb
-Mime-Version: 1.0
-Message-Id: <4e026f08-d733-4b01-ab47-e921d041e74e@app.fastmail.com>
-In-Reply-To: <CAOMZO5B0stW2X6YqPTTKDpCOAzPDvm=4HT8jfBAgbTy11gnKgg@mail.gmail.com>
-References: <20230516153109.514251-1-arnd@kernel.org>
- <20230516153109.514251-6-arnd@kernel.org>
- <CAOMZO5B0stW2X6YqPTTKDpCOAzPDvm=4HT8jfBAgbTy11gnKgg@mail.gmail.com>
-Date:   Wed, 17 May 2023 08:39:53 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Fabio Estevam" <festevam@gmail.com>,
-        "Arnd Bergmann" <arnd@kernel.org>,
-        "Martin Kaiser" <martin@kaiser.cx>
-Cc:     soc@kernel.org, "Russell King" <linux@armlinux.org.uk>,
-        "Bartosz Golaszewski" <brgl@bgdev.pl>,
-        "Hartley Sweeten" <hsweeten@visionengravers.com>,
-        "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
-        "Andre Przywara" <andre.przywara@arm.com>,
-        "Shawn Guo" <shawnguo@kernel.org>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "Vladimir Zapolskiy" <vz@mleia.com>,
-        "Aaro Koskinen" <aaro.koskinen@iki.fi>,
-        "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
-        "Tony Lindgren" <tony@atomide.com>, "Andrew Lunn" <andrew@lunn.ch>,
-        "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
-        "Gregory Clement" <gregory.clement@bootlin.com>,
-        "Daniel Mack" <daniel@zonque.org>,
-        "Haojian Zhuang" <haojian.zhuang@gmail.com>,
-        "Robert Jarzmik" <robert.jarzmik@free.fr>,
-        "Viresh Kumar" <vireshk@kernel.org>,
-        "Shiraz Hashim" <shiraz.linux.kernel@gmail.com>,
-        "Sudeep Holla" <sudeep.holla@arm.com>,
-        "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Alan Stern" <stern@rowland.harvard.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 05/13] ARM: imx: remove unused mx25_revision()
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S229670AbjEQHCj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 03:02:39 -0400
+Received: from mail-sh.amlogic.com (mail-sh.amlogic.com [58.32.228.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B716E110;
+        Wed, 17 May 2023 00:02:36 -0700 (PDT)
+Received: from droid06.amlogic.com (10.18.11.248) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.13; Wed, 17 May 2023
+ 15:02:25 +0800
+From:   Yu Tu <yu.tu@amlogic.com>
+To:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Neil Armstrong" <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     <kelvin.zhang@amlogic.com>, <qi.duan@amlogic.com>,
+        Yu Tu <yu.tu@amlogic.com>, Rob Herring <robh@kernel.org>
+Subject: [PATCH V9 2/4] dt-bindings: clock: document Amlogic S4 SoC peripherals clock controller
+Date:   Wed, 17 May 2023 15:02:13 +0800
+Message-ID: <20230517070215.28463-3-yu.tu@amlogic.com>
+X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20230517070215.28463-1-yu.tu@amlogic.com>
+References: <20230517070215.28463-1-yu.tu@amlogic.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.18.11.248]
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 17, 2023, at 01:34, Fabio Estevam wrote:
-> On Tue, May 16, 2023 at 12:32=E2=80=AFPM Arnd Bergmann <arnd@kernel.or=
-g> wrote:
->>
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> This function has no prototype and no callers:
->>
->> arm/mach-imx/cpu-imx25.c:43:5: error: no previous prototype for 'mx25=
-_revision' [-Werror=3Dmissing-prototypes]
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Martin Kaiser sent a patch adding a user for this function:
->
-> https://lore.kernel.org/linux-arm-kernel/20220815190748.102664-2-marti=
-n@kaiser.cx/
->
-> It would be better to apply Martin's patch instead of removing mx25_re=
-vision().
+Add the S4 peripherals clock controller dt-bindings in the s4 SoC
+family.
 
-I think either way is ok to address the warning. If we wanted to do this
-properly, the mx{25,27,31,35,5}_revision functions could all be removed
-and the logic hooked up to imx_set_soc_revision() in the same way that
-they already use mxc_set_cpu_type() for drivers/soc/imx/soc-imx.c.
+Signed-off-by: Yu Tu <yu.tu@amlogic.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../clock/amlogic,s4-peripherals-clkc.yaml    |  97 +++++++++++++
+ .../clock/amlogic,s4-peripherals-clkc.h       | 131 ++++++++++++++++++
+ 2 files changed, 228 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
 
-I'll leave it up to you, if you want to merge Martin's patches or
-a replacement for the soc-imx driver through the imx tree for 6.5,
-I'll drop my patch from this series, otherwise I'll keep it for now
-and we can still do it better at later point.
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+new file mode 100644
+index 000000000000..6f825c9613a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,s4-peripherals-clkc.yaml
+@@ -0,0 +1,97 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,s4-peripherals-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic S serials Peripherals Clock Controller
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++  - Jerome Brunet <jbrunet@baylibre.com>
++  - Yu Tu <yu.tu@amlogic.com>
++
++properties:
++  compatible:
++    const: amlogic,s4-peripherals-clkc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: input fixed pll div2
++      - description: input fixed pll div2p5
++      - description: input fixed pll div3
++      - description: input fixed pll div4
++      - description: input fixed pll div5
++      - description: input fixed pll div7
++      - description: input hifi pll
++      - description: input gp0 pll
++      - description: input mpll0
++      - description: input mpll1
++      - description: input mpll2
++      - description: input mpll3
++      - description: input hdmi pll
++      - description: input oscillator (usually at 24MHz)
++      - description: input external 32kHz reference (optional)
++
++  clock-names:
++    items:
++      - const: fclk_div2
++      - const: fclk_div2p5
++      - const: fclk_div3
++      - const: fclk_div4
++      - const: fclk_div5
++      - const: fclk_div7
++      - const: hifi_pll
++      - const: gp0_pll
++      - const: mpll0
++      - const: mpll1
++      - const: mpll2
++      - const: mpll3
++      - const: hdmi_pll
++      - const: xtal
++      - const: ext_32k
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
++
++    clkc_periphs: clock-controller@fe000000 {
++      compatible = "amlogic,s4-peripherals-clkc";
++      reg = <0xfe000000 0x49c>;
++      clocks = <&clkc_pll 3>,
++              <&clkc_pll 13>,
++              <&clkc_pll 5>,
++              <&clkc_pll 7>,
++              <&clkc_pll 9>,
++              <&clkc_pll 11>,
++              <&clkc_pll 17>,
++              <&clkc_pll 15>,
++              <&clkc_pll 25>,
++              <&clkc_pll 27>,
++              <&clkc_pll 29>,
++              <&clkc_pll 31>,
++              <&clkc_pll 20>,
++              <&xtal>,
++              <&ext_32k>;
++      clock-names = "fclk_div2", "fclk_div2p5", "fclk_div3", "fclk_div4",
++                    "fclk_div5", "fclk_div7", "hifi_pll", "gp0_pll",
++                    "mpll0", "mpll1", "mpll2", "mpll3", "hdmi_pll", "xtal",
++                    "ext_32k";
++      #clock-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+new file mode 100644
+index 000000000000..131b35759eff
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,s4-peripherals-clkc.h
+@@ -0,0 +1,131 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++/*
++ * Copyright (c) 2021 Amlogic, Inc. All rights reserved.
++ * Author: Yu Tu <yu.tu@amlogic.com>
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
++#define _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H
++
++/*
++ * CLKID index values
++ */
++
++#define CLKID_RTC			4
++#define CLKID_SYS_CLK_B			7
++#define CLKID_SYS_CLK_A			10
++#define CLKID_SYS			11
++#define CLKID_CECA_32K_CLKOUT		16
++#define CLKID_CECB_32K_CLKOUT		21
++#define CLKID_SC			24
++#define CLKID_12_24M_CLK_SEL		27
++#define CLKID_VID_PLL			30
++#define CLKID_VCLK			37
++#define CLKID_VCLK2			38
++#define CLKID_VCLK_DIV1			39
++#define CLKID_VCLK2_DIV1		44
++#define CLKID_VCLK_DIV2			49
++#define CLKID_VCLK_DIV4			50
++#define CLKID_VCLK_DIV6			51
++#define CLKID_VCLK_DIV12		52
++#define CLKID_VCLK2_DIV2		53
++#define CLKID_VCLK2_DIV4		54
++#define CLKID_VCLK2_DIV6		55
++#define CLKID_VCLK2_DIV12		56
++#define CLKID_CTS_ENCI			61
++#define CLKID_CTS_ENCP			62
++#define CLKID_CTS_VDAC			63
++#define CLKID_HDMI			67
++#define CLKID_TS			69
++#define CLKID_MALI_0			72
++#define CLKID_MALI_1			75
++#define CLKID_MALI_SEL			76
++#define CLKID_VDEC_P0			79
++#define CLKID_VDEC_P1			82
++#define CLKID_VDEC_SEL			83
++#define CLKID_HEVCF_P0			86
++#define CLKID_HEVCF_P1			89
++#define CLKID_HEVCF_SEL			90
++#define CLKID_VPU_0			93
++#define CLKID_VPU_1			96
++#define CLKID_VPU			97
++#define CLKID_VPU_CLKB_TMP		100
++#define CLKID_VPU_CLKB			102
++#define CLKID_VPU_CLKC_P0		105
++#define CLKID_VPU_CLKC_P1		108
++#define CLKID_VPU_CLKC_SEL		109
++#define CLKID_VAPB_0			112
++#define CLKID_VAPB_1			115
++#define CLKID_VAPB			116
++#define CLKID_GE2D			117
++#define CLKID_VDIN_MEAS			120
++#define CLKID_SD_EMMC_C			123
++#define CLKID_SD_EMMC_A			126
++#define CLKID_SD_EMMC_B			129
++#define CLKID_SPICC0_EN			132
++#define CLKID_PWM_A			135
++#define CLKID_PWM_B			138
++#define CLKID_PWM_C			141
++#define CLKID_PWM_D			144
++#define CLKID_PWM_E			147
++#define CLKID_PWM_F			150
++#define CLKID_PWM_G			153
++#define CLKID_PWM_H			156
++#define CLKID_PWM_I			159
++#define CLKID_PWM_J			162
++#define CLKID_SARADC			165
++#define CLKID_GEN			168
++#define CLKID_DDR			169
++#define CLKID_DOS			170
++#define CLKID_ETHPHY			171
++#define CLKID_MALI			172
++#define CLKID_AOCPU			173
++#define CLKID_AUCPU			174
++#define CLKID_CEC			175
++#define CLKID_SDEMMC_A			176
++#define CLKID_SDEMMC_B			177
++#define CLKID_NAND			178
++#define CLKID_SMARTCARD			179
++#define CLKID_ACODEC			180
++#define CLKID_SPIFC			181
++#define CLKID_MSR			182
++#define CLKID_IR_CTRL			183
++#define CLKID_AUDIO			184
++#define CLKID_ETH			185
++#define CLKID_UART_A			186
++#define CLKID_UART_B			187
++#define CLKID_UART_C			188
++#define CLKID_UART_D			189
++#define CLKID_UART_E			190
++#define CLKID_AIFIFO			191
++#define CLKID_TS_DDR			192
++#define CLKID_TS_PLL			193
++#define CLKID_G2D			194
++#define CLKID_SPICC0			195
++#define CLKID_SPICC1			196
++#define CLKID_USB			197
++#define CLKID_I2C_M_A			198
++#define CLKID_I2C_M_B			199
++#define CLKID_I2C_M_C			200
++#define CLKID_I2C_M_D			201
++#define CLKID_I2C_M_E			202
++#define CLKID_HDMITX_APB		203
++#define CLKID_I2C_S_A			204
++#define CLKID_USB1_TO_DDR		205
++#define CLKID_HDCP22			206
++#define CLKID_MMC_APB			207
++#define CLKID_RSA			208
++#define CLKID_CPU_DEBUG			209
++#define CLKID_VPU_INTR			210
++#define CLKID_DEMOD			211
++#define CLKID_SAR_ADC			212
++#define CLKID_GIC			213
++#define CLKID_PWM_AB			214
++#define CLKID_PWM_CD			215
++#define CLKID_PWM_EF			216
++#define CLKID_PWM_GH			217
++#define CLKID_PWM_IJ			218
++#define CLKID_HDCP22_ESMCLK		221
++#define CLKID_HDCP22_SKPCLK		224
++
++#endif /* _DT_BINDINGS_CLOCK_AMLOGIC_S4_PERIPHERALS_CLKC_H */
+-- 
+2.33.1
 
-    Arnd
