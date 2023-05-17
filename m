@@ -2,107 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB05C7EE2C
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 07:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A610CC7EE2A
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 08:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230248AbjEQHxV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 03:53:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
+        id S230448AbjEQI3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 04:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229827AbjEQHxS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 03:53:18 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D563AA1
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 00:53:14 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-965ab8ed1fcso68484866b.2
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 00:53:14 -0700 (PDT)
+        with ESMTP id S230213AbjEQI2m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 04:28:42 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C4D55AC
+        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 01:28:39 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f450815d02so3104115e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 01:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684309993; x=1686901993;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YxZmzXZkXDBaGgGWBd0FKqOvFO0QoVnqw9tUxsTvOAs=;
-        b=ooHuR6MkMk7X91Ce8AshfMTwcLvBEooZNPRz3QYxhe86Lp+rfo7jPEybaYeF/l7T4N
-         5ErDRsYbYm5CjMPC/m0Y/2bg2dJNQbbqhZXowFei6t0G3t9K+2xV9n6pXUfRgkyxtLLq
-         jRpSstSiT8ri3BHemZBHSL1/h+eKYYB+CeWORnv7n/CgBZR30X1e9vrZ1J3oIV2cSMTt
-         b+xetZhXjhV31DMdQs/e+IIgITXchKJbNgD6UcT/xMKaiH8100mbf6dAa+tFeUg4heSt
-         Zi94RLTwwdUtzjTcTyNYiTE+ZnZVFkaTjl/mRN6tlEtdyPiFmRl6X9B2tLAWUEJI4OI4
-         jA1A==
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684312118; x=1686904118;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZihnAL1nAkDBbq2KyMEHfWY+WWt7eWRA6dF80uZXMso=;
+        b=G3QSKTUw0Oxncgfh6I40dQHk87EmvKdhFRf4n1G5iSXH+XaYVVT+Ra2U6O1C+SX7hG
+         5OntSosJwXDp6Uf5nvYmFzYWDpxllRQpRLdp6lWK+0Hn2uJsoyWdkKVDv8mtUTUxfvRl
+         BKiAvmrEMgb60bXnNbNffJf3jMSN+luwT5lb5nG/IM5zenRs+GNPulhKMb0bZWJ0mCBV
+         DK8sDECKzx60jE+At3/Md1nScT338EQOPGVGQhqi7TgIFgMLsOVgsVih4yTAEMVmp9BG
+         UV0GNj4nHNrCw3VbUiRp5FvhLOVjMOQAN0WLe3zovNqOjr9YY/kPmDDHArQ/ioJhE5RB
+         8UnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684309993; x=1686901993;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YxZmzXZkXDBaGgGWBd0FKqOvFO0QoVnqw9tUxsTvOAs=;
-        b=Ik5C7vg9tFnz9zjK70cpd2HqxkhgGU1p59xaTqQ1IMBfG6YHbt9BqfuBGqAxs0wWRy
-         CHuIu/7544z8bZGO5fEqwt/3+l9swjeJMl79ZMQVsu5EK+n4xPYeYvXtx0cgOxQltoCZ
-         8RbPyV3o5WYze9Tu0Dp9REtB5feF3DawQpgyqFzTVdTk7j7wcyzmuo5S1GDRxmslL6sM
-         Ftp5UlSs3Wb/njwceq39kk+02fCwJ1Nq1yKx90JjeIUioABSCbrH+u/AFQJyKO5NrEU3
-         2OupRWWw2JuBndneck0zaFgwvbnC4IHzCUIjqFGHQ6tGSYwzwYweAoIYa4glqNHYPJHr
-         b2AA==
-X-Gm-Message-State: AC+VfDzd6m7svt7WiiWg/hMlxF5rzOXXdEZnhRPO0+fIJcV3CMwZ+B/1
-        NuOxtkR0k/JyS7tWZ1Id6NSLRg==
-X-Google-Smtp-Source: ACHHUZ4d4FF1MqDNE/QWLvtFqwDL3H45IrtZ4O8CBJ3/OL1X7qUrMJSaS5NCwnE95sV4+LxlBVpd0Q==
-X-Received: by 2002:a17:906:7947:b0:94e:dd68:aba1 with SMTP id l7-20020a170906794700b0094edd68aba1mr36835117ejo.67.1684309993120;
-        Wed, 17 May 2023 00:53:13 -0700 (PDT)
-Received: from krzk-bin ([2a02:810d:15c0:828:c9ff:4c84:dd21:568d])
-        by smtp.gmail.com with ESMTPSA id h15-20020a1709067ccf00b0094f23480619sm12056895ejp.172.2023.05.17.00.53.12
+        d=1e100.net; s=20221208; t=1684312118; x=1686904118;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZihnAL1nAkDBbq2KyMEHfWY+WWt7eWRA6dF80uZXMso=;
+        b=C0m1CR9V9flfG8Mw0SThLVeFM6CQ7zCd+6V/8QZq69QVMETjl4VGrU+VXuvNcdjaKQ
+         7Ca8bsFn3qDbM8onj7FZS+KEzi4FcEO/tuzIvZNGEyV+dDSvmyoVw7yPRftihc2hPGUu
+         IzHZgY8sLnlLRrzVsicbxJ4UdCvnnWySPCY0q3aVdB3/dumLru1D96A9jVJBGpsSSrGs
+         x0bWf7StejFOA5bMg88awx0IeqaF6rohLVfZW6ejlWZk9uXva/Ry1zdu3EIRV105dlaO
+         ZIx2l7JGjRiywSRCAngKBnVI2DfciiknWjuWD24E2T7T8Xp/Y18qzA7HhEWCY3zrSZ94
+         Ad0g==
+X-Gm-Message-State: AC+VfDw3Gx8dQA7iQxc1quRxr3OSrbGkcENq2k5RsJLGWIV8ILIliSR4
+        PMe44Pge5mZJAf+YBMjYlhIyHw==
+X-Google-Smtp-Source: ACHHUZ7YKNglQi5AC4I94XCPl4u8XP7inha9SQYONn/dMfYjIeq63eOT4aRc1F8dTARCyWuhK96BGg==
+X-Received: by 2002:a1c:f310:0:b0:3f1:74bd:bc22 with SMTP id q16-20020a1cf310000000b003f174bdbc22mr26806422wmq.6.1684312117897;
+        Wed, 17 May 2023 01:28:37 -0700 (PDT)
+Received: from [127.0.1.1] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id c4-20020a056000104400b0030922ba6d0csm2323066wrx.45.2023.05.17.01.28.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 May 2023 00:53:12 -0700 (PDT)
-Date:   Wed, 17 May 2023 09:53:10 +0200
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Andrew Davis <afd@ti.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH 2/2] dt-bindings: clock: ehrpwm: Remove unneeded syscon
- compatible
-Message-ID: <20230517075310.iduc2eisw7a5bm45@krzk-bin>
-References: <20230516184626.154892-1-afd@ti.com>
- <20230516184626.154892-2-afd@ti.com>
+        Wed, 17 May 2023 01:28:37 -0700 (PDT)
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+Subject: [PATCH 0/2] Fix and clean MT8365 clock indexes
+Date:   Wed, 17 May 2023 10:28:18 +0200
+Message-Id: <20230517-fix-clk-index-v1-0-142077a1732b@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230516184626.154892-2-afd@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACKQZGQC/1WOyw6CMBBFf4XM2rEt0Pr4FeOiLYNM1NK0SEgI/
+ 25x5/Lc5JzcFTIlpgzXaoVEM2ceQwF1qMAPNjwIuSsMtawbqdUJe17Qv57IoaMFL0a2jbO90Y6
+ gOM5mQpds8MNufaKYzbHF5JWYxshevKdzY7T4q+xiTFS235Hbfdu+oefgUJgAAAA=
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>
+Cc:     Markus Schneider-Pargmann <msp@baylibre.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Mergnat <amergnat@baylibre.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=849; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=163q5ZS2H6Rg2KSX1F5s5Y2O3lJW+MTWBH+aLyNFN0c=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkZJA0Cqynex2hMWv5jFuYbgLuJEm6GmoGzTrvVMjE
+ 2KVGv6OJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZGSQNAAKCRArRkmdfjHURVWzD/
+ 9ZqOS0zeXDxgtNISQviQzvACckTrVcuvTIWsU62emZwgz/vWSglHU5NO5g+YjQrk6SlIjNlFm9PvTp
+ f9heTYMBlIBek9cd3jdwS7pL+8wemxp6Z5UtiUNh98B0c6VrONOe1Q8ZTsjKZ+YpE/N+ZUS6xMx8YX
+ rMOsAIDqMOwgnigjDi5H1yOQnvIN1CS8wHmkgdFaWR2sN/QwZ+4NEkp9nTjxrHEBo5nim9mWGofror
+ PpkezQoyJaTA5PhWxqy6tjgI7JQ7fgmHN26swYTRk6F3tMxGozmW64sJFHUXXVYgQsZFaouV9COfxx
+ I8JBvNlmetiBYyOFlUR/hm+9r52t5Cb0BZnk5oLnY4ElTXmUDQAGKDknG1uJkG1jcgij/4ZkufFvwa
+ wYsH2dtTYYd39CTQGz5ojHIScDO8fPDYSe7tMV/MQkmX8gAPdAjj1r/DZA1wocK/vxPk4GU1qEFnRG
+ 9oqiPwGpLATbNfHRWQPmvgo8qVNruvQQX0Xa/G7rI38cn6I4/e+Nj3eKfJ5blYFzn3vTnaIt8F8BTH
+ cktEgwR9JZzeu7zSoI8numeAvh+VH+nOaCvEjKOsLM/R5LiS5k1s8gRcNFWFxYiLQjMirEswCuk7MR
+ Tf7Nad3oHM+CDg04hcgsVjEYo/ymxc9h+urgq+KX1n0vPpWr/rBZaM/n5ANQ==
+X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
+ fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 16 May 2023 13:46:26 -0500, Andrew Davis wrote:
-> This node's register space is not accessed by any other node, which
-> is the traditional use for the "syscon" hint. It looks to have been
-> added here to make use of a Linux kernel helper syscon_node_to_regmap().
-> The Linux driver now uses a more appropriate helper that does not
-> require the hint, so let's remove it from the binding.
-> 
-> Signed-off-by: Andrew Davis <afd@ti.com>
-> ---
->  .../devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml     | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
+The first commit of this serie fix a regression which prevent the
+initialization of the latest indexed clocks. The regression is
+introduced with [1].
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+The second one cleans unused define since the probe mecanism change.[1]
 
-yamllint warnings/errors:
+[1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
+     mtk_clk_simple_{probe,remove}()")
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.example.dtb: scm-conf@100000: clock-controller@4140:compatible: ['ti,am654-ehrpwm-tbclk', 'syscon'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.example.dtb: clock-controller@4140: compatible: ['ti,am654-ehrpwm-tbclk', 'syscon'] is too long
-	From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+---
+Alexandre Mergnat (2):
+      clk: mediatek: mt8365: fix the clock indexes
+      clk: mediatek: mt8365: remove the max clock number defines
 
-See https://patchwork.ozlabs.org/patch/1782200
+ include/dt-bindings/clock/mediatek,mt8365-clk.h | 375 +++++++++++-------------
+ 1 file changed, 175 insertions(+), 200 deletions(-)
+---
+base-commit: ac9a78681b921877518763ba0e89202254349d1b
+change-id: 20230517-fix-clk-index-96043baf65be
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+Best regards,
+-- 
+Alexandre Mergnat <amergnat@baylibre.com>
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
