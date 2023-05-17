@@ -2,173 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01253C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 09:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6F3C77B75
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 09:42:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbjEQJel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 05:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41334 "EHLO
+        id S229937AbjEQJmU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 05:42:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbjEQJek (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 05:34:40 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2D9273C
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 02:34:37 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f42ba32e24so3565855e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 02:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684316076; x=1686908076;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OUDDylEUMPQFAPrSz8VZ1I2suyRsN1Zbbv13ypc2rzA=;
-        b=XJSg314JjT5M+98dJS+VCddMEi8iYMXpPyn9zkjIGFyADWNkyxp7ryBtkVfS4Cd847
-         Lf48mYtXHWxAdR37oqQ0G6DJ2ismYf50up5N7NAFWfNKEyfAdokSiVpsnQLhPGW83h47
-         21D6C4OqYuNMollfIfXcv38/Z/u1EvEFleuDbYG2qLucJtxks4ngMKvuJtN8TPhlMxE4
-         mhskNVHTzvyf9d7zTcKLksGRRkEsGZC86Qn8Xv+7pDe78i5HKplZFQ62HbZTOry7HJ8i
-         nYDa3O6hEeyDtrwmAJO0FQzrGBnlICC2D7pwBW8C0Tb65VoXjz/1/H/502o/UslnVCAv
-         p6qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684316076; x=1686908076;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUDDylEUMPQFAPrSz8VZ1I2suyRsN1Zbbv13ypc2rzA=;
-        b=FvwMOaIh27j+2kAs/Kf5S8Kg1QpL6QbrTb1kCKSAjnW+rfATPurrgA0gvODg0iElkO
-         JSaJlx7slwm0h2hYpQUYfwRhykdBqxfLeGuc1UHK8onMnoGJ+MOn+CAnfTMtnYC3VpSh
-         yUq9UZwmxUwgtOZlubXFLZ3YhsCSDDDmJfgCtls4cKTlIThfLAI1kA1QLem2kKc7Wnat
-         SoSoihQew6ISK5B4RihU6tP5uuA2S3qoWq3dxQTe9aNbGD/9QZ4g8Q/s3QS7SNZok3OO
-         BsOJpHq06CjSS/8UIYCtxcWKHdoS4PeYLq5GTHNZ7IOaoWXN1/HLYzypZR4H58B6uCb8
-         +pzg==
-X-Gm-Message-State: AC+VfDycsPU1XPaN9WxbBfvWvyQN1Jsf4HZwoC7/l2/pXpCJXc0f4Uns
-        cR0H3rJwtFj26n0Dl4pRbU/VNw==
-X-Google-Smtp-Source: ACHHUZ4jNgQpFPdP+tvVxA3NtSIP3jJELzRJPLwuGEnKMoW8YHWa+nsihhXkJ5xOCHJj8CLdfns4gg==
-X-Received: by 2002:a05:600c:c6:b0:3f4:28db:f5ff with SMTP id u6-20020a05600c00c600b003f428dbf5ffmr21701922wmm.35.1684316076025;
-        Wed, 17 May 2023 02:34:36 -0700 (PDT)
-Received: from [10.1.3.59] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id n7-20020a05600c294700b003f4266965fbsm1655325wmd.5.2023.05.17.02.34.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 May 2023 02:34:35 -0700 (PDT)
-Message-ID: <62c51f2c-a620-a879-5659-faf3c4b77268@baylibre.com>
-Date:   Wed, 17 May 2023 11:34:32 +0200
+        with ESMTP id S229920AbjEQJmT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 05:42:19 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F2E540E6;
+        Wed, 17 May 2023 02:42:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1684316537; x=1715852537;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=FeioifEDxdEGwYiM4iQLG5+TkZ9F3zFlGDG+wIqLuxE=;
+  b=0MR7kQaQd/1c76YvDpqyJMD8QU0JkKKKp1firltOxeQmpdmqk/yZALC3
+   Pr7ZeSRgScnTr5RJ70pTn1saSfq6AoQvXSMU+t9iIQdGmy23xRDpnxWtK
+   UgvtL78f67nMbR+Wy9fSnBbM/xNqwoizB2RqgjjSvWogQlcRJzsem2SNT
+   WQFmssDMO+bCsltiCXjUfxVm4uIXug64+zuY0sktMRZPF586SyiDRE7+Q
+   cP2NVsB6CeeZDxOxYXjkb+Tv0qjEcVi2Nqu2YqXqffUI3xTdil27mr6tp
+   kRPc/FlvA6l+0FzHRv+Kze1jIrwgZweubwr3jjTA7ky4XJS06adySLQrl
+   w==;
+X-IronPort-AV: E=Sophos;i="5.99,281,1677567600"; 
+   d="scan'208";a="211698232"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 May 2023 02:42:16 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Wed, 17 May 2023 02:42:15 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.21 via Frontend Transport; Wed, 17 May 2023 02:42:11 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor.dooley@microchip.com>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v5 0/5] dt-bindings: clocks: at91: convert to yaml
+Date:   Wed, 17 May 2023 12:41:14 +0300
+Message-ID: <20230517094119.2894220-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/2] clk: mediatek: mt8365: fix the clock indexes
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Markus Schneider-Pargmann <msp@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230517-fix-clk-index-v1-0-142077a1732b@baylibre.com>
- <20230517-fix-clk-index-v1-1-142077a1732b@baylibre.com>
- <9c7ff0f1-3d2c-b83a-a47d-544c76f29663@linaro.org>
-Content-Language: en-US
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <9c7ff0f1-3d2c-b83a-a47d-544c76f29663@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/05/2023 10:40, Krzysztof Kozlowski wrote:
-> On 17/05/2023 10:28, Alexandre Mergnat wrote:
->> Before the patch [1], the clock probe was done directly in the
->> clk-mt8365 driver. In this probe function, the array which stores the
->> data clocks is sized using the higher defined numbers (*_NR_CLOCK) in
->> the clock lists [2]. Currently, with the patch [1], the specific
->> clk-mt8365 probe function is replaced by the mtk generic one [3], which
->> size the clock data array by adding all the clock descriptor array size
->> provided by the clk-mt8365 driver.
->>
->> Actually, all clock indexes come from the header file [2], that mean, if
->> there are more clock (then more index) in the header file [2] than the
->> number of clock declared in the clock descriptor arrays (which is the
->> case currently), the clock data array will be undersized and then the
->> generic probe function will overflow when it will try to write in
->> "clk_data[CLK_INDEX]". Actually, instead of crashing at boot, the probe
->> function returns an error in the log which looks like:
->> "of_clk_hw_onecell_get: invalid index 135", then this clock isn't
->> enabled.
-> 
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching.
+Hi,
 
-I will.
+This series converts atmel clocks bindings (PMC and slow clock
+controller) to YAML. Along with it updated device trees to cope
+with the dt-binding requirements.
 
-> 
-> This is huge ABI break and I don't understand why it is needed. Entire
-> description above did not explain me that.
+Thank you,
+Claudiu Beznea
 
-Briefly, clocks with the higher index than the data clock array can't be 
-used. I've this issue:
-[    0.427054] of_clk_hw_onecell_get: invalid index 135
-[    0.429525] of_clk_hw_onecell_get: invalid index 69
-[    0.442998] of_clk_hw_onecell_get: invalid index 70
+Changes in v4:
+- in patch 2/5: added "atmel,at91sam9x5-pmc", "syscon" to the list of
+  available compatibles
 
-That means CLK_TOP_SSUSB_PHY_CK_EN, CLK_IFR_SSUSB_REF and 
-CLK_IFR_SSUSB_XHCI aren't working when I need them. So my USB doesn't work.
+Changes in v4:
+- changed the approach the compatibles are treated in patch 2/5 to avoid
+  having 2 enums on one items entry (thanks Conor for hint)
+  
+Changes in v3:
+- in patch 2/5:
+	- get rid of 1st "items" section and embedd it in the last compatible
+	  enum
+	- sort alphanumerically the compatibles in allOf
+- collected tags
 
-> 
->>
->> The simplest way to fix the regression is to remove from the header file
->> [2] the unused clocks.
-> 
-> ??? The simples is to revert the patch, so you won't break the ABI.
-> 
->>
->> [1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
->>       mtk_clk_simple_{probe,remove}()")
->> [2]: include/dt-bindings/clock/mediatek,mt8365-clk.h
->> [3]: drivers/clk/mediatek/clk-mtk.c
->>
->> Fixes: ffe91cb28f6a ("clk: mediatek: mt8365: Convert to mtk_clk_simple_{probe,remove}()")
->>
->> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
->> ---
->>   include/dt-bindings/clock/mediatek,mt8365-clk.h | 361 ++++++++++++------------
->>   1 file changed, 177 insertions(+), 184 deletions(-)
->>
->> diff --git a/include/dt-bindings/clock/mediatek,mt8365-clk.h b/include/dt-bindings/clock/mediatek,mt8365-clk.h
->> index f9aff1775810..fd59c8bdeb24 100644
->> --- a/include/dt-bindings/clock/mediatek,mt8365-clk.h
->> +++ b/include/dt-bindings/clock/mediatek,mt8365-clk.h
->> @@ -7,147 +7,142 @@
->>   #define _DT_BINDINGS_CLK_MT8365_H
->>   
->>   /* TOPCKGEN */
->> -#define CLK_TOP_CLK_NULL		0> -#define CLK_TOP_I2S0_BCK		1
-> 
-> ...
-> 
->> +#define CLK_TOP_I2S0_BCK		0
-> 
-> Why? This is really broken. You can remove the defines, but re-shuffling
-> everything?!?
+Changes in v2:
+- in patch 2/5:
+	- dropped quotes from $id and $schema
+	- get rid of 1st "items" sections corresponding to "atmel,at91sam9260-pmc",
+	  "syscon" compatible and move it to the proper enum
+	- ordered compatibles by name
+	- add description for #clock-cells
+	- remove blank lines
+	- keep order in required (same order that the properties were
+	  defined)
+	- dropped required from allOf
 
-I've under-estimated the impact of modifying the defines, I will try to 
-find another way to fix the regression in the drivers directly.
+- in patch 5/5:
+	- dropped quotes from $id and $schema
+	- drop first "items:" in compatible:oneOf section
+	- ordered compatibles by name
+	- moved additionalProperties after allOf
+	- dropped microchip,sama7g5-sckc from first allOf:if section
+	- moved "required" section from allOf to global "required" section
+	- dropped if:then from the last if:then:else in allOf
 
-Thanks for your review.
+Claudiu Beznea (5):
+  ARM: dts: at91: use clock-controller name for PMC nodes
+  dt-bindings: clocks: atmel,at91rm9200-pmc: convert to yaml
+  ARM: dts: at91: at91sam9n12: witch sckc to new clock bindings
+  ARM: dts: at91: use clock-controller name for sckc nodes
+  dt-bindings: clocks: at91sam9x5-sckc: convert to yaml
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+ .../devicetree/bindings/clock/at91-clock.txt  |  58 -------
+ .../bindings/clock/atmel,at91rm9200-pmc.yaml  | 154 ++++++++++++++++++
+ .../bindings/clock/atmel,at91sam9x5-sckc.yaml |  70 ++++++++
+ arch/arm/boot/dts/at91rm9200.dtsi             |   2 +-
+ arch/arm/boot/dts/at91sam9260.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9261.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9263.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9g20.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9g25.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9g35.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9g45.dtsi            |   4 +-
+ arch/arm/boot/dts/at91sam9n12.dtsi            |  25 +--
+ arch/arm/boot/dts/at91sam9rl.dtsi             |   4 +-
+ arch/arm/boot/dts/at91sam9x25.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9x35.dtsi            |   2 +-
+ arch/arm/boot/dts/at91sam9x5.dtsi             |   4 +-
+ arch/arm/boot/dts/sam9x60.dtsi                |   4 +-
+ arch/arm/boot/dts/sama5d2.dtsi                |   4 +-
+ arch/arm/boot/dts/sama5d3.dtsi                |   4 +-
+ arch/arm/boot/dts/sama5d3_emac.dtsi           |   2 +-
+ arch/arm/boot/dts/sama5d4.dtsi                |   4 +-
+ arch/arm/boot/dts/sama7g5.dtsi                |   2 +-
+ 22 files changed, 253 insertions(+), 104 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/at91-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
 
 -- 
-Regards,
-Alexandre
+2.34.1
 
