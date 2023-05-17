@@ -2,164 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD5CC77B75
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 17:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B1DC77B7A
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 17:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbjEQROQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 13:14:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56622 "EHLO
+        id S229458AbjEQRPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 13:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjEQROP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 13:14:15 -0400
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D5626B6;
-        Wed, 17 May 2023 10:14:13 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34HHE9N1129523;
-        Wed, 17 May 2023 12:14:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1684343649;
-        bh=rIqgp7czyztNTxjbeT0TWDy5/cpNONc7nlh+3hBbUYk=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=U1Ec+9mkcyHnF7+AkMh0oVvZFhqsJJSCXedT55UfFHAzlLQnEYDYZpQczcQI31vcd
-         tdjzJYw+1HGx2OpaN4d7a803GvhobfdCNAgTU8j9TXSh84gk1Dftg0unvDoq5omEJU
-         qWV7a7zAmHkWNiwJQKAxNBK616OKvL0qRMIuXhuc=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34HHE9J8125638
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 May 2023 12:14:09 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 17
- May 2023 12:14:08 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 17 May 2023 12:14:08 -0500
-Received: from [10.250.35.184] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34HHE8ta001597;
-        Wed, 17 May 2023 12:14:08 -0500
-Message-ID: <40a828bc-c1f2-d865-72e5-2171338c6839@ti.com>
-Date:   Wed, 17 May 2023 12:14:08 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 2/2] dt-bindings: clock: ehrpwm: Remove unneeded syscon
- compatible
-Content-Language: en-US
-To:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229448AbjEQRPo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 13:15:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62A5526B6;
+        Wed, 17 May 2023 10:15:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 001EC61B9A;
+        Wed, 17 May 2023 17:15:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D7B3C433EF;
+        Wed, 17 May 2023 17:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684343742;
+        bh=9rs6w/Oob54rFS5h303MzKdArQ7keaKIcj9JQ+9rSPU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pQ8X8cQ+jDSM0y/hAfk+XLx+EKhh5nlULkV9js9gV8dXSfnh6raoHSjBZtnT9/Vng
+         QMsLzlkVvkSgjUBlQ+zfAy3qqtOc7NEN/Z+B56Y9fsjostzA6HMCAQmMv9g7nJ1T0K
+         OEK4IMLRwe4AJMCflVbrqqII7Z3bjf6ExuF52LtrZhkwb7GForYmzK2sMI6PKsBexl
+         Fs6PWcRsIH/PtG67c8aIaJsb1rMPdoWCQTuscfQsHqDwKG7Y3nRSHjE6hPSPQv4vyY
+         6ss1rUjVVSppV5TgJCSSDM4ZDJqgLaczx6ikh5dCy3vrYFAAUfae3XrI7VDCoISzBB
+         47V94KBVx3OeA==
+Date:   Wed, 17 May 2023 18:15:37 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Jai Luthra <j-luthra@ti.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20230516184626.154892-1-afd@ti.com>
- <20230516184626.154892-2-afd@ti.com>
- <373ce50d-37ab-5c25-c50b-20e4f6ae6859@ti.com>
-From:   Andrew Davis <afd@ti.com>
-In-Reply-To: <373ce50d-37ab-5c25-c50b-20e4f6ae6859@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
+ Audio REFCLK
+Message-ID: <20230517-reprise-unroll-e2223cab3846@spud>
+References: <20230515-refclk-v1-0-5e89f01d6733@ti.com>
+ <20230515-refclk-v1-1-5e89f01d6733@ti.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fpjkaEH5QgyScueG"
+Content-Disposition: inline
+In-Reply-To: <20230515-refclk-v1-1-5e89f01d6733@ti.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/16/23 11:36 PM, Vignesh Raghavendra wrote:
-> 
-> 
-> On 17/05/23 00:16, Andrew Davis wrote:
->> This node's register space is not accessed by any other node, which
->> is the traditional use for the "syscon" hint.
-> 
-> Unfortunately that's not the case across SoCs. Eg AM65x See  TRM section
-> Table 5-582. CTRLMMR_EPWM0_CTRL Register Field Descriptions
-> 
 
-Not sure what version of the TRM you have, latest (Rev. E) has this
-register as Table 5-636.. but I found it and see your point here.
+--fpjkaEH5QgyScueG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> TB_CLKEN is clubbed with SYNCIN_SEL and ePWM tripzone configuration
-> signals which may require register to be shared with other drivers in future
-> 
+On Wed, May 17, 2023 at 01:04:05PM +0530, Jai Luthra wrote:
+> Add DT bindings for TI's audio reference clocks (REFCLK) present on AM62
+> SoC.
 
-This looks to only be a problem in AM65x, all later devices we have fixed
-the issue and now group the clock enable bits all together.
+This seems fine to me. Perhaps Krzysztof will differ...
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Do we actually expect this to be an issue and have a user of these
-other bits? If so then we modeled this region wrong in AM65x DT, these
-registers are not "tbclk gate registers" any more then they are to the
-other functions they provide. These registers should be a syscon node
-and then each function within should be a child node.
+>=20
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> ---
+>  .../bindings/clock/ti,am62-audio-refclk.yaml       | 44 ++++++++++++++++=
+++++++
+>  1 file changed, 44 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk=
+=2Eyaml b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
+> new file mode 100644
+> index 000000000000..7c4cf7abe007
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti,am62-audio-refclk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI Audio Reference Clock
+> +
+> +maintainers:
+> +  - Jai Luthra <j-luthra@ti.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: ti,am62-audio-refclk
+> +      - const: syscon
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  reg:
+> +    maxItems: 1
 
-syscon@4140 {
-	compatible = "ti,am654-epwm-crtl", "syscon";
-	reg = <0x4140 0x18>;
+Just a minor comment, usually reg appears after compatible and before
+anything else.
 
-	ehrpwm_tbclk: clock {
-		compatible = "ti,am654-ehrpwm-tbclk";
-		#clock-cells = <1>;
-	};
+Thanks,
+Conor.
 
-	pwm_mux: mux-controller {
-		compatible = "mmio-mux";
-		#mux-control-cells = <1>;
-	};
-};
+--fpjkaEH5QgyScueG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Something like that. That way we do not give preference to one device
-and have to have it give out shared registers.
+-----BEGIN PGP SIGNATURE-----
 
-Either that or split the binding compatible, one for AM65x with syscon
-and one for all later device compatibles that do not share the register:
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGULuQAKCRB4tDGHoIJi
+0pN+AQCK25LofJxlOqk3RCnFS5ehEs5mn79haSqJQVsO1t/PQwEAw6Df6VhcCPPC
+1cgNG50q2gr3/+KpIJiKwbVSCPucNwM=
+=sQzT
+-----END PGP SIGNATURE-----
 
-compatible:
-     oneOf:
-       - items:
-           - const: ti,am654-ehrpwm-tbclk
-           - const: syscon
-       - items:
-         - enum:
-           - ti,am64-epwm-tbclk
-           - ti,am62-epwm-tbclk
-
-Would rather the first option.
-
-Andrew
-
-> 
->> It looks to have been
->> added here to make use of a Linux kernel helper syscon_node_to_regmap().
->> The Linux driver now uses a more appropriate helper that does not
->> require the hint, so let's remove it from the binding.
->>
->> Signed-off-by: Andrew Davis <afd@ti.com>
->> ---
->>   .../devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml     | 5 ++---
->>   1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
->> index 66765116aff5..64b8bce5962c 100644
->> --- a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
->> +++ b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
->> @@ -16,7 +16,6 @@ properties:
->>             - ti,am654-ehrpwm-tbclk
->>             - ti,am64-epwm-tbclk
->>             - ti,am62-epwm-tbclk
->> -      - const: syscon
->>   
->>     "#clock-cells":
->>       const: 1
->> @@ -33,8 +32,8 @@ additionalProperties: false
->>   
->>   examples:
->>     - |
->> -    ehrpwm_tbclk: syscon@4140 {
->> -        compatible = "ti,am654-ehrpwm-tbclk", "syscon";
->> +    ehrpwm_tbclk: clock@4140 {
->> +        compatible = "ti,am654-ehrpwm-tbclk";
->>           reg = <0x4140 0x18>;
->>           #clock-cells = <1>;
->>       };
-> 
+--fpjkaEH5QgyScueG--
