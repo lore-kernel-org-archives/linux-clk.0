@@ -2,110 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D9CC7EE2C
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 07:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04459C77B7F
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 07:43:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230104AbjEQHfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 03:35:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59642 "EHLO
+        id S230130AbjEQHm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 03:42:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbjEQHem (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 03:34:42 -0400
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35F4E19B0;
-        Wed, 17 May 2023 00:34:31 -0700 (PDT)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34H7YHFd129172;
-        Wed, 17 May 2023 02:34:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1684308857;
-        bh=q/SFmzYhjBJLA55MxMPvGUOzW2FoR1LTN7CN6R4bpuM=;
-        h=From:Subject:Date:To:CC;
-        b=ZWJVJBcZwCD4D91xNGFuJ9gxMmRAasVH5izU/Q1oknJGKL00sozvTeNU5F8Eb+155
-         hDfnEnlVGifEpVi2gBTI36Lcy3YLVbAvwJNvRwJKoiFXFIllTGKwtw6J5nEmcjP7ru
-         TlyKGuj0GjnWUTvo1do9t6nNjEe2NjCbrw7YP4h0=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34H7YHSN013715
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 May 2023 02:34:17 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 17
- May 2023 02:34:16 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 17 May 2023 02:34:16 -0500
-Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34H7YG2L103469;
-        Wed, 17 May 2023 02:34:16 -0500
-From:   Jai Luthra <j-luthra@ti.com>
-Subject: [PATCH 0/2] clk: keystone: syscon-clk: Enable audio reference
- clock
-Date:   Wed, 17 May 2023 13:04:04 +0530
-Message-ID: <20230515-refclk-v1-0-5e89f01d6733@ti.com>
+        with ESMTP id S229520AbjEQHm6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 03:42:58 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8A481BF
+        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 00:42:56 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-510b6a24946so809315a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 00:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684309375; x=1686901375;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yo1I/1vDP3z13Q3ZEs/apavzcdIdkXn5Cb0/YZeUq7o=;
+        b=KPBs9Hn8M/SBgyu7aMwH5VXCe4uD5a/cIVb3YGTROnrt2A0gJO0+6AZ4Jo6DDNtUgj
+         eSza3U8S4yvl3xHxjllNps5yNPb+pc1oiJw63OeHecJnHcqUkJq7uozkIQv2G4oZqgc+
+         KbCxMse40q4TbxWJhrX9gYY1NGtmIBvBf+mdgiMBYmeSHWZVpISG0TcBmY6A2li4L4j8
+         Ojbqj6HrqXWeS+nALmACoPpSuIhO0iOqqsfBWDveCelIVb+cB5WonD9LholknQMXAK++
+         J1+eeE4l6v3swThylhxGtLRzPI+lOF8a1fVp8vATmyGSfKlG+hu6I0RWmoSa9hrC44mU
+         sW8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684309375; x=1686901375;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yo1I/1vDP3z13Q3ZEs/apavzcdIdkXn5Cb0/YZeUq7o=;
+        b=OrkGwV7KVi85RH43idjsGqtiC8iUoG+dxoObmlgv0EsmQ/m+CX8L+0TzTFtvy+1q6a
+         ugUMuQ0Fz1C4a5S5U566+V/9GVv2NI1glHseeKkqGVi6Rmze51wbMim6hCK8oDMkHGx6
+         RGqrYsvWpmJ6OLCEA5YhVyVF0mO342y0waet1lom/xchaWubAIBhFBdTyHu+8/HZxy1C
+         BbyqPh02MBGMHGGixappv95BwZEPMwN2wJcUChCW4t/hvEo5aKTAljm9EyVWjd8ALvYH
+         6wUdUyVfvCnfY3+AkDyo0+jHxSI7zZ7MDG3xlcp8ZKGzD/sXLFkd/5Zgi3m4NeNJQeWr
+         ORHQ==
+X-Gm-Message-State: AC+VfDwCsRNq+fTNBhO8FLwSmh7FwW+ncehbu8jWRCqQypqS2rYlYHfQ
+        dEubFtNdQ+sshWbddy+4GhoGPA==
+X-Google-Smtp-Source: ACHHUZ5Qs9iRKS/sNuzWVap6xMTWzTWQ1o6tT4BpdUrV2MV5ZU1nHgdx0wUzTZSHIwlRIqSR9RJ/LQ==
+X-Received: by 2002:a17:907:7da9:b0:966:538f:843b with SMTP id oz41-20020a1709077da900b00966538f843bmr32467875ejc.77.1684309375398;
+        Wed, 17 May 2023 00:42:55 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:c9ff:4c84:dd21:568d? ([2a02:810d:15c0:828:c9ff:4c84:dd21:568d])
+        by smtp.gmail.com with ESMTPSA id k18-20020a17090632d200b009661f07db93sm11841022ejk.223.2023.05.17.00.42.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 May 2023 00:42:54 -0700 (PDT)
+Message-ID: <10a0c64c-1b56-a1fe-0f4e-3185cce18d1c@linaro.org>
+Date:   Wed, 17 May 2023 09:42:53 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGyDZGQC/x3MSwqAIBSF4a3IHSfka9JWooGPW10KC40QpL1nD
- f/Dx6mQMRFmGFiFhDdlOmIL0THwq40LcgqtQfZS9UYYnnD2+8aNM1oHJbSXChp2NiN3yUa/fjx
- iub75bJzK/z9Oz/MC74WpkW8AAAA=
-To:     Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3 09/10] ARM: dts: qcom-mdm9615: specify clocks for the
+ lcc device
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-CC:     Vignesh Raghavendra <vigneshr@ti.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jai Luthra <j-luthra@ti.com>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1065; i=j-luthra@ti.com;
- h=from:subject:message-id; bh=/0cUZo86/f53s3JQ6WfEz9sn4ePUwoM0/fp5Dviv2R4=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBkZINyTqYcN2XUOj8v3yDQWPEGxR17RGVT+pqLT
- VidUy0YOgKJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZGSDcgAKCRBD3pH5JJpx
- RcgqD/9E9BOAmyaI06N441eNhGq4LdMc48I0vYbhWg2GkZJJhw/0GEemRqoF6FnZJQqp+5Y70Oj
- mSvZQ5iU/GVBDQ1dEgTeGcVKQUSEYKb3al+Bvq6Pp15dRLE+u9YtXjG8zV9Vbsn7ZPx9fCPSP2d
- T3RAeJ+YQzU0NQ1yP0iUBQ+4q5JCU41GUUucoADzPQZ22eIQ4lTNlCkIXW+yqa1lJYrvvklYyzc
- PaxUo1seX5YTNekT5tyMbn77UuRIXobNiKw6N5BDhU3as0Je/XYtYoXjuFt3upmvozIYPQPYGvg
- 3iiaLwUxdk0rKoS7hyjOusLZE0FZK4yWJ1wKWDJyX9ObhjVZbUSH8wSvzeHyb+6XxHPskNgzxP8
- m3v9CBcjW5Xx11qHG9KoTC7ouoKGoAd9HZ7aflB6mprRF6S+O4UxXm9bZkJLBE3/PomXbx6c/zI
- 8raW6EmwcBoVa2lAB8NbNXUskw28J8BkNb9OhW6yh534bMqyXfEMeviMni93QdBm1opgaoaEgS1
- kAG7wQe+zvPBScUdcp9umBDREE1DvVrf0t2xI8W/fbcoQXvpdJwljUt2L8RD0JAPcEXLz3pKKlX
- ScodvdzbA/UZhx5RjAMDmzTYps9/dNkUMQHqcfS1yEGU4bxSXozbpju3zveFwpkEOoVRTp1aT2t
- FZI24B89+qS4oBA==
-X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+References: <20230512211727.3445575-1-dmitry.baryshkov@linaro.org>
+ <20230512211727.3445575-10-dmitry.baryshkov@linaro.org>
+ <0954a80d-9151-4be3-dcee-e42ddc0b5300@linaro.org>
+ <52005148-c0fb-8bf8-80b8-7c1077cced17@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <52005148-c0fb-8bf8-80b8-7c1077cced17@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-TI's AM62 SoC can optionally provide two audio reference clocks
-(AUDIO_REFCLKx) to external peripherals. By default the reference clock
-is looped-back inside the SoC to a mux that goes to McASP AHCLK, but can
-optionally be enabled as an output to peripherals outside the SoC by
-setting a bit through the syscon (CTRL_MMR) registers.
+On 16/05/2023 19:44, Dmitry Baryshkov wrote:
+> On 13/05/2023 12:20, Krzysztof Kozlowski wrote:
+>> On 12/05/2023 23:17, Dmitry Baryshkov wrote:
+>>> Specify clocks used by the LCC device on the MDM9615 platform.
+>>>
+>>> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>   arch/arm/boot/dts/qcom-mdm9615.dtsi | 16 +++++++++++++++-
+>>>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
+>>> index b40c52ddf9b4..556abe90cf5b 100644
+>>> --- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
+>>> +++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
+>>> @@ -39,7 +39,7 @@ cpu-pmu {
+>>>   	};
+>>>   
+>>>   	clocks {
+>>> -		cxo_board {
+>>> +		cxo_board: cxo_board {
+>>
+>> Maybe it is possible now to change the node name to cxo-board-clk?
+> 
+> This would break compatibility with the possible drivers using 
+> "cxo_board" sys name. It seems this is the last platform using old 
+> bindings. Let's probably settle that for 6.6 I can go and rename all 
+> fixed clock nodes. Would that work for you?
+> 
 
-This patch series extends the existing syscon-clk driver to support
-the audio reference clock, and also adds new device tree bindings
-documentation.
-
-Signed-off-by: Jai Luthra <j-luthra@ti.com>
----
-Jai Luthra (2):
-      dt-bindings: clock: Add binding documentation for TI Audio REFCLK
-      clk: keystone: syscon-clk: Add support for audio refclk
-
- .../bindings/clock/ti,am62-audio-refclk.yaml       | 44 ++++++++++++++++++++++
- drivers/clk/keystone/syscon-clk.c                  | 43 ++++++++++++++++++---
- 2 files changed, 82 insertions(+), 5 deletions(-)
----
-base-commit: d3a08193ebf4220a69f1f13087f150429769f911
-change-id: 20230515-refclk-5b544d314c23
+Yes, sure.
 
 Best regards,
--- 
-Jai Luthra <j-luthra@ti.com>
+Krzysztof
 
