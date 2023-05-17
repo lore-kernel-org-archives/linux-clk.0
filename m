@@ -2,170 +2,229 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60630C77B7F
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 10:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA7FC77B7F
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 10:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbjEQKSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 06:18:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44140 "EHLO
+        id S230013AbjEQKfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 06:35:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbjEQKSo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 06:18:44 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6173A80
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 03:18:40 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f42c865535so6182275e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 03:18:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1684318719; x=1686910719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sh6TUytTx8wxEeH05oUpSXv6G2yuZqNrzgF6N7Kf/JE=;
-        b=zCe8LxzUKmyqw6vOO9CGBnHOQlVUnRVuNRoTfZ+57IrX+pAxQArgqo5yLGdGZT4i1T
-         8mPj2Jy4pjxdx1shCpWJZrBa+PxUOOufGz4FOs/5GO035D+guuPpq4q62NC0Q458d6b3
-         AedB8pwzHc10YUnrtba6YW5HBAp9QKEFanoFO5QavAJbL11bDlWMXTQbc0BT7ZpSs9vY
-         HE7sbsLMtEbdT674wlHtmpR8SpucMzOMS90hXpbA0OTGbDdhtsOXTPVL/PEp9Z+wIXXq
-         XaNFy3PfbNd9ttUYXVgnwM+l0J/mLDXIzMr+QTE+pc8S0ovoLUb4kEruf4z5EUFPiu0X
-         43Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684318719; x=1686910719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sh6TUytTx8wxEeH05oUpSXv6G2yuZqNrzgF6N7Kf/JE=;
-        b=fo2QT/ebjR7XziWgfUpGAJ0HqCykRvLLHwrbyTDCyPQ912jwQ1Uy9NaUN6F9hBIY+N
-         vBSN4xxWD8bChhaQioX7dv2IyC4vJ6Iv6juLT42N3wV2m+XB6l02RATsBBIxEcElyNin
-         u5y5ZdGxgPR65A4yPxB+zY5uSIUkojry8p5YV3O0eU7M1Lh/9f4NpY/ZXmpZ63uYxc9v
-         vUOjcPnZbD3yJnvDSvJTJ2Rtq5XuCWEqvDZGlAF2hIsfv5jScH6zOBv5v/Iby8pzAYHF
-         jdiWK9zXPG7+bVXzFW/XP/q+Y88OY1SxjV1HenAcA1/2RAzX7cmv7ptRaeEX8Z4UTukv
-         vdOA==
-X-Gm-Message-State: AC+VfDyyqL04OEk4hdvHBTlOqgz4ZctmqwKQDpfHzRg7EjRTvktMxSV0
-        EcrEhL2PIs+wxMJeqDgkhA5sZQ==
-X-Google-Smtp-Source: ACHHUZ4UlQsr2kc2g5MqE1OgdmK2YuPWRilWxI/M6/tgf2zjPIaxmYm87qqMrU+Uw79xVyRVicyNIA==
-X-Received: by 2002:a05:600c:ac6:b0:3f4:2770:f7e9 with SMTP id c6-20020a05600c0ac600b003f42770f7e9mr20925393wmr.17.1684318719016;
-        Wed, 17 May 2023 03:18:39 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id n10-20020a5d67ca000000b0030796e103a1sm2511144wrw.5.2023.05.17.03.18.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 May 2023 03:18:38 -0700 (PDT)
-Date:   Wed, 17 May 2023 12:18:37 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vadim Fedorenko <vadfed@meta.com>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Milena Olech <milena.olech@intel.com>,
-        Michal Michalik <michal.michalik@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>, poros@redhat.com,
-        mschmidt@redhat.com, netdev@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH v7 0/8] Create common DPLL configuration API
-Message-ID: <ZGSp/XRLExRqOKQs@nanopsycho>
-References: <20230428002009.2948020-1-vadfed@meta.com>
+        with ESMTP id S229529AbjEQKfE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 06:35:04 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51743C30;
+        Wed, 17 May 2023 03:35:01 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 1B6895FD3E;
+        Wed, 17 May 2023 13:34:58 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1684319698;
+        bh=HCQ4TPFcqVI9UeV/PD1K5fm+MO3VePXkoXjbIJEWfqc=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=iQpKioKLSuXASDt4w07TGpjm7yJFxXWvKYNukjc91LjZWNIA8m2ZBiI3b1/IIon1v
+         EDY5K50Gg9FqfoMhnFJvRdTp39i7cXjWZBP2UfTJsHUq64+SMl3HGu/ZIS/QJg97PD
+         uwrWZXlupCpSpuSZXPf8k7JHQIxrQ4e+Az143lxdz6B6UehUF1qsm9BpB8iY5dnJAK
+         4Y4L/pTKLaS3R0AwTHheJmaLYbW19om/DydHvB4gvLHpK10ENGrMzRERhAZVF7EYBH
+         7nLWZgKn80b78CoiTwYe302ntHB/76gFPRLO63P00+1aKOP2pGQ8vdnLMB0nN7V5Iz
+         ys0GKf9E1FBYg==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Wed, 17 May 2023 13:34:57 +0300 (MSK)
+Date:   Wed, 17 May 2023 13:34:56 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+Message-ID: <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
+References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
+ <20230426095805.15338-7-ddrokosov@sberdevices.ru>
+ <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
+ <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
+ <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20230428002009.2948020-1-vadfed@meta.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/17 06:42:00 #21327754
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Let me summarize the outcome of the discussion between me and Jakub
-regarding attributes, handles and ID lookups in the RFCv7 thread:
+Hello Martin,
 
---------------------------------------------------------------
-** Needed changes for RFCv8 **
+Thank you for reply and for sharing your thoughts, appreciate it!
+Please find my comments below.
 
-1) No scoped indexes.
-   The indexes passed from driver to dpll core during call of:
-        dpll_device_get() - device_idx
-        dpll_pin_get() - pin_idx
-   should be for INTERNAL kernel use only and NOT EXPOSED over uapi.
-   Therefore following attributes need to be removed:
-   DPLL_A_PIN_IDX
-   DPLL_A_PIN_PARENT_IDX
+On Tue, May 16, 2023 at 11:10:19PM +0200, Martin Blumenstingl wrote:
+> Hello Dmitry,
+> 
+> On Fri, May 12, 2023 at 4:06 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> [...]
+> > > > +static struct clk_regmap pwm_a_sel = {
+> > > > +       .data = &(struct clk_regmap_mux_data){
+> > > > +               .offset = PWM_CLK_AB_CTRL,
+> > > > +               .mask = 0x1,
+> > > > +               .shift = 9,
+> > > > +       },
+> > > > +       .hw.init = &(struct clk_init_data){
+> > > > +               .name = "pwm_a_sel",
+> > > > +               .ops = &clk_regmap_mux_ops,
+> > > > +               .parent_data = pwm_abcd_parents,
+> > > > +               .num_parents = ARRAY_SIZE(pwm_abcd_parents),
+> > > > +               /* For more information, please refer to rtc clock */
+> > > > +               .flags = CLK_SET_RATE_NO_REPARENT,
+> > > Heiner is working on a series that adds common clock support to the
+> > > PWM driver [0].
+> > > I think his plans for a next step are adding support for SoCs where
+> > > the PWM clocks are part of the peripheral clock controller (instead of
+> > > being part of the PWM controller registers).
+> > >
+> >
+> > Yes, I'm keeping up with this review and staying informed. It's worth
+> > noting that the peripheral clock driver already includes PWM clocks,
+> > with an important remark about reparenting being switched off. It's
+> > described below.
+> Indeed, this is why this question came to my mind
+> 
+> > > Have you considered removing CLK_SET_RATE_PARENT from the &rtc clock
+> > > so downstream clocks won't change the rtc clock rate by accident?
+> > > Then we could drop the CLK_SET_RATE_NO_REPARENT flag from the PWM
+> > > clocks to allow them to pick the best available parent (whether that's
+> > > the rtc clock, xtal or sys_pll).
+> > > That said, it would require managing the CLKID_RTC_32K_SEL clock (or
+> > > it's parents) using assigned-clocks instead of doing so with the PWM
+> > > (and other) clocks. Whether this would cause problems: I'm not sure,
+> > > so I'm hoping that you can share some insights.
+> > >
+> > >
+> >
+> > Allow me to share my thoughts on this matter. From my understanding,
+> > Amlogic provides an RTC clock that is both accurate and power-effective
+> > in achieving a 32KHz signal from an internal xtal of 24MHz. However,
+> > this requires a complex RTC divider with four parameters (m1, m2, n1,
+> > n2), as it cannot be accomplished with a single divider. Our team has
+> > measured the RTC clock using an oscilloscope on the GEN CLK pin and
+> > found that it provides a stable 32KHz signal with acceptable jitter. On
+> > the other hand, other approaches, such as the PWM way, yield less stable
+> > and less accurate 32KHz signals with greater jitter.
+> This part is clear to me (we may have even chatted on IRC how to use
+> the GEN CLK output previously)
+> 
+> > Additionally, the CCF determines the best ancestor based on how close
+> > its rate is to the given one, based on arithmetic calculations. However,
+> > we have independent knowledge that a certain clock would be better, with
+> > less jitter and fewer intermediaries, which will likely improve energy
+> > efficiency. Sadly, the CCF cannot take this into account.
+> I agree that the implementation in CCF is fairly simple. There's ways
+> to trick it though: IIRC if there are multiple equally suitable clocks
+> it picks the first one. For me all of this has worked so far which is
+> what makes me curious in this case (not saying that anything is wrong
+> with your approach).
+> 
+> Do you have a (real world) example where the RTC clock should be
+> preferred over another clock?
+> 
 
-2) For device, the handle will be DPLL_A_ID == dpll->id.
-   This will be the only handle for device for every
-   device related GET, SET command and every device related notification.
-   Note: this ID is not deterministing and may be different depending on
-   order of device probes etc.
+Yes, a real-life example is the need for a 32Khz clock for an external
+wifi chip. There is one option to provide this clock with high
+precision, which is RTC + GENCLK.
 
-3) For pin, the handle will be DPLL_A_PIN_ID == pin->id
-   This will be the only handle for pin for every
-   pin related GET, SET command and every pin related notification.
-   Note: this ID is not deterministing and may be different depending on
-   order of device probes etc.
+> I'm thinking about the following scenario.
+> PWM parents:
+> - XTAL: 24MHz
+> - sys: not sure - let's say 166.67MHz
+> - RTC: 32kHz
+> 
+> Then after that there's a divider and a gate.
+> 
+> Let's say the PWM controller needs a 1MHz clock: it can take that from
+> XTAL or sys. Since XTAL is evenly divisible to 1MHz CCF will pick that
+> and use the divider.
+> But let's say the PWM controller needs a 32kHz clock: CCF would
+> automatically pick the RTC clock.
+> So is your implementation there to cover let's say 1kHz where
+> mathematically 24MHz can be divided evenly to 1kHz (and thus should
+> not result in any jitter) but RTC gives better precision in the real
+> world (even though it's off by 24Hz)?
+> 
 
-4) Remove attribute:
-   DPLL_A_PIN_LABEL
-   and replace it with:
-   DPLL_A_PIN_PANEL_LABEL (string)
-   DPLL_A_PIN_XXX (string)
-   where XXX is a label type, like for example:
-     DPLL_A_PIN_BOARD_LABEL
-     DPLL_A_PIN_BOARD_TRACE
-     DPLL_A_PIN_PACKAGE_PIN
+I don't think so. The highest precision that RTC can provide is from a
+32KHz rate only. However, I believe that a 1kHz frequency can also be
+achieved by using xtal 24MHz with a divider, which can provide high
+precision as well.
 
-5) Make sure you expose following attributes for every device and
-   pin GET/DUMP command reply message:
-   DPLL_A_MODULE_NAME
-   DPLL_A_CLOCK_ID
+> > Given the advantages of the RTC clock, we wish to be able to control the
+> > RTC as a parent for specific leaf clocks. This is achievable with the
+> > 'assigned-clocks' feature of CCF OF, but it poses a significant
+> > architectural problem. The 'assigned-clocks' node does not lock/pin the
+> > parent, and a simple clk_set_rate() call can change the parent during
+> > rate propagation.
+> Are you aware of clk_set_rate_exclusive() and clk_rate_exclusive_{get,put}()?
+> It locks a clock and all of its parents to a certain rate. Other
+> consumers are unable to change the rate unless the lock is released
+> again.
+> 
 
-6) Remove attributes:
-   DPLL_A_DEV_NAME
-   DPLL_A_BUS_NAME
-   as they no longer have any value and do no make sense (even in RFCv7)
+Agreed, this API works well for protecting the rate changes. However, I
+do not think it covers the scenario where we want to change the rate but
+still retain the parent (if it has already been assigned from the dts).
 
+> > In my opinion, an ideal solution to this problem would
+> > be an additional patch to the CCF core that provides this locking
+> > capability.As a board DTS developer, I know which clock I want to use
+> > as the parent and have a strong reason for doing so, and I do not wish
+> > to open up my parent muxing to other drivers. But until the behavior of
+> > 'assigned-clocks' is not available, we will simply label all RTC
+> > children with the CLK_SET_RATE_NO_REPARENT flag.
+> 
+> PS: while writing this reply I found
+> drivers/clk/sunxi-ng/ccu-sun6i-rtc.c which implements
+> clk_ops.recalc_accuracy
+> I'm not sure I understand this correctly but it seems that CCF is not
+> using that information when making the decision which parent to use.
 
---------------------------------------------------------------
-** Lookup commands **
+Hmm, I couldn't find how accuracy is used in the logic. It seems that
+only the clk_summary contains information on accuracy.
 
-Basically these would allow user to query DEVICE_ID and PIN_ID
-according to provided atributes (see examples below).
+I actually do not like my approach very much. CCF is not very flexible,
+yet at the same time it does not allow for strict rules to be set for
+the clock. With my approach, each developer would have to set up
+assigned clocks directly from the device tree. However, if we back all
+clocks inherited from RTC to the reparenting process, we can lose
+assigned clocks for the RTC state.
 
-These would be from my perspective optional for this patchsets.
-I believe we can do it as follow-up if needed. For example for mlx5
-I don't have usecase for it, since I can consistently get PIN_ID
-using RT netlink for given netdev. But I can imagine that for non-SyncE
-dpll driver this would make sense to have.
+As I mentioned earlier, I believe the best solution is to change CCF to
+provide a new 'assigned-clocks-exclusive' mechanism while protecting the
+clock from parent changing. I can provide an RFC patch for this if you
+do not mind.
 
-1) Introduce CMD_GET_ID - query the kernel for a dpll device
-                          specified by given attrs
-   Example:
-   -> DPLL_A_MODULE_NAME
-      DPLL_A_CLOCK_ID
-      DPLL_A_TYPE
-   <- DPLL_A_ID
-   Example:
-   -> DPLL_A_MODULE_NAME
-      DPLL_A_CLOCK_ID
-   <- DPLL_A_ID
-   Example:
-   -> DPLL_A_MODULE_NAME
-   <- -EINVAL (Extack: "multiple devices matched")
+However, I think it is necessary to move forward with that patch series
+since many other meson-a1.dtsi changes depend on it. We can merge the
+current driver implementation as is, and after the CCF has an exclusive
+assigned-clocks mechanism, then I will rework this driver.
+Alternatively, I can revert all PARENT flags back and change the logic,
+if it becomes necessary in the future on upstream boards.
 
-   If user passes a subset of attrs which would not result in
-   a single match, kernel returns -EINVAL and proper extack message.
-
-2) Introduce CMD_GET_PIN_ID - query the kernel for a dpll pin
-                              specified by given attrs
-   Example:
-   -> DPLL_A_MODULE_NAME
-      DPLL_A_CLOCK_ID
-      DPLL_A_PIN_TYPE
-      DPLL_A_PIN_PANEL_LABEL
-   <- DPLL_A_PIN_ID
-   Example:
-   -> DPLL_A_MODULE_NAME
-      DPLL_A_CLOCK_ID
-   <- DPLL_A_PIN_ID    (There was only one pin for given module/clock_id)
-   Example:
-   -> DPLL_A_MODULE_NAME
-      DPLL_A_CLOCK_ID
-   <- -EINVAL (Extack: "multiple pins matched")
-
-   If user passes a subset of attrs which would not result in
-   a single match, kernel returns -EINVAL and proper extack message.
+-- 
+Thank you,
+Dmitry
