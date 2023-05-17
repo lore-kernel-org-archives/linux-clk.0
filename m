@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6DAC7EE30
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 13:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E4FC77B7F
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 13:33:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231918AbjEQNd2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 09:33:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42660 "EHLO
+        id S231917AbjEQNd1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 09:33:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231897AbjEQNd0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 09:33:26 -0400
+        with ESMTP id S231731AbjEQNdX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 09:33:23 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9DC713A;
-        Wed, 17 May 2023 06:33:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0B513A;
+        Wed, 17 May 2023 06:33:22 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id A80365FD44;
-        Wed, 17 May 2023 16:33:22 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id A72B65FD42;
+        Wed, 17 May 2023 16:33:20 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1684330402;
-        bh=tBTHQtZLBVMM1xJ2CHesO19/Ord/PD+KOb5QmIbiZGc=;
+        s=mail; t=1684330400;
+        bh=ywVAWUW9jbvz+vfZY+snT7ksvWRteTwJF8+dCOusnpE=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=sYF1zgjNQXXZFEAwyOsa9xhRfu/SbiwSUHGb03fLk9hkK3qST0v0QIFnpa5kw4ZNE
-         ITkIAQIYe7cbx8mvirEZmY/Ju92Y/SWMi/a660NimMuqd6euuN4pRl9sdQmzppg2/h
-         H55/IUFGFolgCUD7VqBlrtT4++jlWPieHIo1rufr07xq3dyMLpQzt6IwoJ5HswHei/
-         OwoKWt23LEGKILgJphPAuJ2vZv47qLiDw98Yu4bMvDy9tv7luyNo1eKrU458yEwTDD
-         juNNlvHmo+vezT3X3gWQ+sVyZVfnupnxtS7tOuY2p4KaNLgiJ0EobBFAF8uwNcODH6
-         GI5mF/7W9yGnQ==
+        b=b6v6AwBVkVNi64/YeYKUac+FF20aZtFI2HiB/cTaDT8NOLJ/ESyouM3CaqnxViWmq
+         MN/6+oH+Iji2LX5Bz/ZCmid3FILW1qjRUAyMy+M4SEiOXO6xQ5isSqEnpuNe47HjIb
+         /3m0Xk2MAwNhfVcCfbxd/QHp+2iVfsX2dNAaf2d17lzOs057uJ63/puybGBXo4P1CM
+         YRhIM81sweKkOEMEP6DegVJIfJ0iBk3uJHITBSesT0hfYKSaY6yiz/o9T2QtFL7qCz
+         VbRm7cpsy/Ke9a0kVV975BjQIX+1WStPBMn0Ca87cJg+N8NFQBdx3s2hF35BuTiIpp
+         LP6rHqUID3tuw==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Wed, 17 May 2023 16:33:22 +0300 (MSK)
+        Wed, 17 May 2023 16:33:20 +0300 (MSK)
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -40,10 +40,11 @@ CC:     <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals clock controller bindings
-Date:   Wed, 17 May 2023 16:33:08 +0300
-Message-ID: <20230517133309.9874-6-ddrokosov@sberdevices.ru>
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v15 3/6] dt-bindings: clock: meson: add A1 PLL clock controller bindings
+Date:   Wed, 17 May 2023 16:33:06 +0300
+Message-ID: <20230517133309.9874-4-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
 References: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
@@ -64,34 +65,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation and dt bindings for the Amlogic A1 Peripherals clock
+Add the documentation and dt bindings for Amlogic A1 PLL clock
 controller.
-A1 PLL clock controller has references to A1 Peripherals clock
-controller objects, so reflect them in the schema.
+Also include new A1 clock controller dt bindings to MAINTAINERS.
 
 Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- .../clock/amlogic,a1-peripherals-clkc.yaml    |  73 +++++++++++
- .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   5 +-
- .../clock/amlogic,a1-peripherals-clkc.h       | 115 ++++++++++++++++++
- 3 files changed, 191 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
- create mode 100644 include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
+ .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 58 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ .../dt-bindings/clock/amlogic,a1-pll-clkc.h   | 20 +++++++
+ 3 files changed, 79 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/amlogic,a1-pll-clkc.h
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
 new file mode 100644
-index 000000000000..6d84cee1bd75
+index 000000000000..5c6fa620a63c
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-@@ -0,0 +1,73 @@
++++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+@@ -0,0 +1,58 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/amlogic,a1-peripherals-clkc.yaml#
++$id: http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Amlogic A1 Peripherals Clock Control Unit
++title: Amlogic A1 PLL Clock Control Unit
 +
 +maintainers:
 +  - Neil Armstrong <neil.armstrong@linaro.org>
@@ -101,7 +103,7 @@ index 000000000000..6d84cee1bd75
 +
 +properties:
 +  compatible:
-+    const: amlogic,a1-peripherals-clkc
++    const: amlogic,a1-pll-clkc
 +
 +  '#clock-cells':
 +    const: 1
@@ -111,21 +113,13 @@ index 000000000000..6d84cee1bd75
 +
 +  clocks:
 +    items:
-+      - description: input fixed pll div2
-+      - description: input fixed pll div3
-+      - description: input fixed pll div5
-+      - description: input fixed pll div7
-+      - description: input hifi pll
-+      - description: input oscillator (usually at 24MHz)
++      - description: input fixpll_in
++      - description: input hifipll_in
 +
 +  clock-names:
 +    items:
-+      - const: fclk_div2
-+      - const: fclk_div3
-+      - const: fclk_div5
-+      - const: fclk_div7
-+      - const: hifi_pll
-+      - const: xtal
++      - const: fixpll_in
++      - const: hifipll_in
 +
 +required:
 +  - compatible
@@ -138,55 +132,37 @@ index 000000000000..6d84cee1bd75
 +
 +examples:
 +  - |
-+    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
 +    apb {
 +        #address-cells = <2>;
 +        #size-cells = <2>;
 +
-+        clock-controller@800 {
-+            compatible = "amlogic,a1-peripherals-clkc";
-+            reg = <0 0x800 0 0x104>;
++        clock-controller@7c80 {
++            compatible = "amlogic,a1-pll-clkc";
++            reg = <0 0x7c80 0 0x18c>;
 +            #clock-cells = <1>;
-+            clocks = <&clkc_pll CLKID_FCLK_DIV2>,
-+                     <&clkc_pll CLKID_FCLK_DIV3>,
-+                     <&clkc_pll CLKID_FCLK_DIV5>,
-+                     <&clkc_pll CLKID_FCLK_DIV7>,
-+                     <&clkc_pll CLKID_HIFI_PLL>,
-+                     <&xtal>;
-+            clock-names = "fclk_div2", "fclk_div3",
-+                          "fclk_div5", "fclk_div7",
-+                          "hifi_pll", "xtal";
++            clocks = <&clkc_periphs_fixpll_in>,
++                     <&clkc_periphs_hifipll_in>;
++            clock-names = "fixpll_in", "hifipll_in";
 +        };
 +    };
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-index 5c6fa620a63c..a59b188a8bf5 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-@@ -43,6 +43,7 @@ additionalProperties: false
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 39ff1a717625..8438bc9bd636 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1895,6 +1895,7 @@ L:	linux-amlogic@lists.infradead.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/clock/amlogic*
+ F:	drivers/clk/meson/
++F:	include/dt-bindings/clock/a1*
+ F:	include/dt-bindings/clock/gxbb*
+ F:	include/dt-bindings/clock/meson*
  
- examples:
-   - |
-+    #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
-     apb {
-         #address-cells = <2>;
-         #size-cells = <2>;
-@@ -51,8 +52,8 @@ examples:
-             compatible = "amlogic,a1-pll-clkc";
-             reg = <0 0x7c80 0 0x18c>;
-             #clock-cells = <1>;
--            clocks = <&clkc_periphs_fixpll_in>,
--                     <&clkc_periphs_hifipll_in>;
-+            clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
-+                     <&clkc_periphs CLKID_HIFIPLL_IN>;
-             clock-names = "fixpll_in", "hifipll_in";
-         };
-     };
-diff --git a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
+diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
 new file mode 100644
-index 000000000000..ff2730f398a6
+index 000000000000..01fb8164ac29
 --- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-@@ -0,0 +1,115 @@
++++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+@@ -0,0 +1,20 @@
 +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
 +/*
 + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
@@ -196,112 +172,17 @@ index 000000000000..ff2730f398a6
 + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 + */
 +
-+#ifndef __A1_PERIPHERALS_CLKC_H
-+#define __A1_PERIPHERALS_CLKC_H
++#ifndef __A1_PLL_CLKC_H
++#define __A1_PLL_CLKC_H
 +
-+#define CLKID_FIXPLL_IN		1
-+#define CLKID_USB_PHY_IN	2
-+#define CLKID_USB_CTRL_IN	3
-+#define CLKID_HIFIPLL_IN	4
-+#define CLKID_SYSPLL_IN		5
-+#define CLKID_DDS_IN		6
-+#define CLKID_SYS		7
-+#define CLKID_CLKTREE		8
-+#define CLKID_RESET_CTRL	9
-+#define CLKID_ANALOG_CTRL	10
-+#define CLKID_PWR_CTRL		11
-+#define CLKID_PAD_CTRL		12
-+#define CLKID_SYS_CTRL		13
-+#define CLKID_TEMP_SENSOR	14
-+#define CLKID_AM2AXI_DIV	15
-+#define CLKID_SPICC_B		16
-+#define CLKID_SPICC_A		17
-+#define CLKID_MSR		18
-+#define CLKID_AUDIO		19
-+#define CLKID_JTAG_CTRL		20
-+#define CLKID_SARADC_EN		21
-+#define CLKID_PWM_EF		22
-+#define CLKID_PWM_CD		23
-+#define CLKID_PWM_AB		24
-+#define CLKID_CEC		25
-+#define CLKID_I2C_S		26
-+#define CLKID_IR_CTRL		27
-+#define CLKID_I2C_M_D		28
-+#define CLKID_I2C_M_C		29
-+#define CLKID_I2C_M_B		30
-+#define CLKID_I2C_M_A		31
-+#define CLKID_ACODEC		32
-+#define CLKID_OTP		33
-+#define CLKID_SD_EMMC_A		34
-+#define CLKID_USB_PHY		35
-+#define CLKID_USB_CTRL		36
-+#define CLKID_SYS_DSPB		37
-+#define CLKID_SYS_DSPA		38
-+#define CLKID_DMA		39
-+#define CLKID_IRQ_CTRL		40
-+#define CLKID_NIC		41
-+#define CLKID_GIC		42
-+#define CLKID_UART_C		43
-+#define CLKID_UART_B		44
-+#define CLKID_UART_A		45
-+#define CLKID_SYS_PSRAM		46
-+#define CLKID_RSA		47
-+#define CLKID_CORESIGHT		48
-+#define CLKID_AM2AXI_VAD	49
-+#define CLKID_AUDIO_VAD		50
-+#define CLKID_AXI_DMC		51
-+#define CLKID_AXI_PSRAM		52
-+#define CLKID_RAMB		53
-+#define CLKID_RAMA		54
-+#define CLKID_AXI_SPIFC		55
-+#define CLKID_AXI_NIC		56
-+#define CLKID_AXI_DMA		57
-+#define CLKID_CPU_CTRL		58
-+#define CLKID_ROM		59
-+#define CLKID_PROC_I2C		60
-+#define CLKID_DSPA_EN		63
-+#define CLKID_DSPA_EN_NIC	64
-+#define CLKID_DSPB_EN		65
-+#define CLKID_DSPB_EN_NIC	66
-+#define CLKID_RTC		67
-+#define CLKID_CECA_32K		68
-+#define CLKID_CECB_32K		69
-+#define CLKID_24M		70
-+#define CLKID_12M		71
-+#define CLKID_FCLK_DIV2_DIVN	72
-+#define CLKID_GEN		73
-+#define CLKID_SARADC		75
-+#define CLKID_PWM_A		76
-+#define CLKID_PWM_B		77
-+#define CLKID_PWM_C		78
-+#define CLKID_PWM_D		79
-+#define CLKID_PWM_E		80
-+#define CLKID_PWM_F		81
-+#define CLKID_SPICC		82
-+#define CLKID_TS		83
-+#define CLKID_SPIFC		84
-+#define CLKID_USB_BUS		85
-+#define CLKID_SD_EMMC		86
-+#define CLKID_PSRAM		87
-+#define CLKID_DMC		88
-+#define CLKID_DSPA_A_SEL	95
-+#define CLKID_DSPA_B_SEL	98
-+#define CLKID_DSPB_A_SEL	101
-+#define CLKID_DSPB_B_SEL	104
-+#define CLKID_CECB_32K_SEL_PRE	113
-+#define CLKID_CECB_32K_SEL	114
-+#define CLKID_CECA_32K_SEL_PRE	117
-+#define CLKID_CECA_32K_SEL	118
-+#define CLKID_GEN_SEL		121
-+#define CLKID_PWM_A_SEL		124
-+#define CLKID_PWM_B_SEL		126
-+#define CLKID_PWM_C_SEL		128
-+#define CLKID_PWM_D_SEL		130
-+#define CLKID_PWM_E_SEL		132
-+#define CLKID_PWM_F_SEL		134
-+#define CLKID_SD_EMMC_SEL2	147
++#define CLKID_FIXED_PLL		1
++#define CLKID_FCLK_DIV2		6
++#define CLKID_FCLK_DIV3		7
++#define CLKID_FCLK_DIV5		8
++#define CLKID_FCLK_DIV7		9
++#define CLKID_HIFI_PLL		10
 +
-+#endif /* __A1_PERIPHERALS_CLKC_H */
++#endif /* __A1_PLL_CLKC_H */
 -- 
 2.36.0
 
