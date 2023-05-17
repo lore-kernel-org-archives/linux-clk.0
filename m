@@ -2,116 +2,164 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17939C7EE2E
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 16:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD5CC77B75
+	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 17:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229540AbjEQQxl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 12:53:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44566 "EHLO
+        id S229641AbjEQROQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 13:14:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbjEQQxQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 12:53:16 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5AF9D
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 09:53:00 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f41d087a84so1984375e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 09:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684342379; x=1686934379;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8dOJVIGMX/56gfv9vT65ZzraMpImyEbSMTyJtUPlCLo=;
-        b=2BVmhZvz4oCFmI5/DV5GvMVrMDeSuoxTJrL4iNd3Jxd8RMgHHaG2zBP3QGXd4XOrKH
-         hnCaxYsoji/6w9ykNXsu7Fi6zdPHszF1Q4gQwaYtYi+alCroMmK3dTCvf76H24m0hBNH
-         uPYMxYIcvwsv9oLoqcnRqkuJqG160ovtznAlXlPoISd+6G5FUe39gNEpXnHhlVhKSgAr
-         j7cJBOpVpVr6bIWkD/AWH7j1IIm/DQGL+hgxy/nADAKFAC150PQwk4fwE0f01qyGHD+P
-         Cp76uAflMqRUWC6k9pvk/7rn+QHXpv19LDYyCPOIgLeWLoQ8+IfQ09AyPHmlKEGKrCXG
-         SwVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684342379; x=1686934379;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8dOJVIGMX/56gfv9vT65ZzraMpImyEbSMTyJtUPlCLo=;
-        b=Bsz3x8NBgy7Raf/6Pn0ur2ANVnWgHHkyh+cRXCkBmwmQ52lMISMvut+TXs/0OkPp5A
-         XDWgzsNyPZtTsBGuruuqmIta9RSDq3wNs0U58e5hyh+s8v+vU153n3xa7+n99LSfdYbo
-         7kEMUjiKU7yvwAEVFkGZ/7ItVONMJPlcLy/HuUsw6qoQ0tW064VU9wTJqP7sc3sVb9vw
-         tk/fDaiUUF9ekPxj4kmEX2W3lMbk+u/43ocs1lYSp+9F3R2ALylYuZr9Wo0PFUifb7n6
-         xO5oyAQXuawKJSdHJtPPcoRHIR50oVzaBv1FJJVwSU7jw8Q1lJ09PBN58UpmC+gc6r1V
-         1sVA==
-X-Gm-Message-State: AC+VfDwRek5yc9hW9QMaYP41k8p/LSLwFZTQvnuLQoiX/yB5B+ogMkT9
-        MN2py+UXUVQ+mLWv8KlsMsV9JA==
-X-Google-Smtp-Source: ACHHUZ5oWXHIEKdFAwIxANhWR9lMlqKmEiYA0FORJIMDBWG4zKRbrOzb0ppHIUnnzPT2YmO1WjO6DQ==
-X-Received: by 2002:a7b:cd01:0:b0:3f4:fe7f:3d18 with SMTP id f1-20020a7bcd01000000b003f4fe7f3d18mr2318552wmj.2.1684342378813;
-        Wed, 17 May 2023 09:52:58 -0700 (PDT)
-Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id u15-20020adfed4f000000b00307c46f4f08sm3267555wro.79.2023.05.17.09.52.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 May 2023 09:52:58 -0700 (PDT)
-Message-ID: <94f8af4a-2555-052d-d04a-a0e54e0e2d13@baylibre.com>
-Date:   Wed, 17 May 2023 18:52:56 +0200
+        with ESMTP id S229558AbjEQROP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 13:14:15 -0400
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77D5626B6;
+        Wed, 17 May 2023 10:14:13 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34HHE9N1129523;
+        Wed, 17 May 2023 12:14:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1684343649;
+        bh=rIqgp7czyztNTxjbeT0TWDy5/cpNONc7nlh+3hBbUYk=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=U1Ec+9mkcyHnF7+AkMh0oVvZFhqsJJSCXedT55UfFHAzlLQnEYDYZpQczcQI31vcd
+         tdjzJYw+1HGx2OpaN4d7a803GvhobfdCNAgTU8j9TXSh84gk1Dftg0unvDoq5omEJU
+         qWV7a7zAmHkWNiwJQKAxNBK616OKvL0qRMIuXhuc=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34HHE9J8125638
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 17 May 2023 12:14:09 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 17
+ May 2023 12:14:08 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 17 May 2023 12:14:08 -0500
+Received: from [10.250.35.184] (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34HHE8ta001597;
+        Wed, 17 May 2023 12:14:08 -0500
+Message-ID: <40a828bc-c1f2-d865-72e5-2171338c6839@ti.com>
+Date:   Wed, 17 May 2023 12:14:08 -0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH v2 0/2] clk/mediatek: Adjustments for MSDC rate accuracy
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
-        chun-jie.chen@mediatek.com, mandyjh.liu@mediatek.com,
-        miles.chen@mediatek.com, zhaojh329@gmail.com,
-        daniel@makrotopia.org, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, Garmin.Chang@mediatek.com,
-        msp@baylibre.com, yangyingliang@huawei.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20230516135205.372951-1-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: ehrpwm: Remove unneeded syscon
+ compatible
 Content-Language: en-US
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20230516135205.372951-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20230516184626.154892-1-afd@ti.com>
+ <20230516184626.154892-2-afd@ti.com>
+ <373ce50d-37ab-5c25-c50b-20e4f6ae6859@ti.com>
+From:   Andrew Davis <afd@ti.com>
+In-Reply-To: <373ce50d-37ab-5c25-c50b-20e4f6ae6859@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/05/2023 15:52, AngeloGioacchino Del Regno wrote:
-> Changes in v2:
->    - Extended the changes in this series to MT8365 clocks
+On 5/16/23 11:36 PM, Vignesh Raghavendra wrote:
 > 
-> This series stops unconditionally forcing CLK_SET_RATE_PARENT on
-> MediaTek muxes, as that should be set in the clock driver for each
-> clock requiring it, and removes CLK_SET_PARENT from all MSDC core
-> clocks to allow mtk-sd to select the right clock parent when doing
-> mclk setting, improving the rate accuracy and avoiding both under
-> and overclocks of the eMMC/SD/SDIO card, both improving performance
-> and stability of the attached storage.
 > 
-> This series was successfully tested on MT8173, MT8192, MT8195.
+> On 17/05/23 00:16, Andrew Davis wrote:
+>> This node's register space is not accessed by any other node, which
+>> is the traditional use for the "syscon" hint.
 > 
-> AngeloGioacchino Del Regno (2):
->    clk: mediatek: mux: Stop forcing CLK_SET_RATE_PARENT flag
->    clk: mediatek: Remove CLK_SET_PARENT from all MSDC core clocks
-> 
->   drivers/clk/mediatek/clk-mt6765.c          | 20 +++++-----
->   drivers/clk/mediatek/clk-mt6779.c          | 24 +++++------
->   drivers/clk/mediatek/clk-mt7981-topckgen.c | 12 +++---
->   drivers/clk/mediatek/clk-mt7986-topckgen.c | 12 +++---
->   drivers/clk/mediatek/clk-mt8173-topckgen.c | 24 +++++------
->   drivers/clk/mediatek/clk-mt8183.c          | 22 ++++++-----
->   drivers/clk/mediatek/clk-mt8186-topckgen.c | 24 +++++------
->   drivers/clk/mediatek/clk-mt8188-topckgen.c | 40 +++++++++++--------
->   drivers/clk/mediatek/clk-mt8192.c          | 23 +++++------
->   drivers/clk/mediatek/clk-mt8195-topckgen.c | 46 +++++++++++++---------
->   drivers/clk/mediatek/clk-mt8365.c          | 38 +++++++++---------
->   drivers/clk/mediatek/clk-mux.c             |  2 +-
->   12 files changed, 155 insertions(+), 132 deletions(-)
+> Unfortunately that's not the case across SoCs. Eg AM65x See  TRM section
+> Table 5-582. CTRLMMR_EPWM0_CTRL Register Field Descriptions
 > 
 
-I will try to test it next week on MT8365 SoC.
+Not sure what version of the TRM you have, latest (Rev. E) has this
+register as Table 5-636.. but I found it and see your point here.
 
--- 
-Regards,
-Alexandre
+> TB_CLKEN is clubbed with SYNCIN_SEL and ePWM tripzone configuration
+> signals which may require register to be shared with other drivers in future
+> 
 
+This looks to only be a problem in AM65x, all later devices we have fixed
+the issue and now group the clock enable bits all together.
+
+Do we actually expect this to be an issue and have a user of these
+other bits? If so then we modeled this region wrong in AM65x DT, these
+registers are not "tbclk gate registers" any more then they are to the
+other functions they provide. These registers should be a syscon node
+and then each function within should be a child node.
+
+syscon@4140 {
+	compatible = "ti,am654-epwm-crtl", "syscon";
+	reg = <0x4140 0x18>;
+
+	ehrpwm_tbclk: clock {
+		compatible = "ti,am654-ehrpwm-tbclk";
+		#clock-cells = <1>;
+	};
+
+	pwm_mux: mux-controller {
+		compatible = "mmio-mux";
+		#mux-control-cells = <1>;
+	};
+};
+
+Something like that. That way we do not give preference to one device
+and have to have it give out shared registers.
+
+Either that or split the binding compatible, one for AM65x with syscon
+and one for all later device compatibles that do not share the register:
+
+compatible:
+     oneOf:
+       - items:
+           - const: ti,am654-ehrpwm-tbclk
+           - const: syscon
+       - items:
+         - enum:
+           - ti,am64-epwm-tbclk
+           - ti,am62-epwm-tbclk
+
+Would rather the first option.
+
+Andrew
+
+> 
+>> It looks to have been
+>> added here to make use of a Linux kernel helper syscon_node_to_regmap().
+>> The Linux driver now uses a more appropriate helper that does not
+>> require the hint, so let's remove it from the binding.
+>>
+>> Signed-off-by: Andrew Davis <afd@ti.com>
+>> ---
+>>   .../devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml     | 5 ++---
+>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+>> index 66765116aff5..64b8bce5962c 100644
+>> --- a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+>> @@ -16,7 +16,6 @@ properties:
+>>             - ti,am654-ehrpwm-tbclk
+>>             - ti,am64-epwm-tbclk
+>>             - ti,am62-epwm-tbclk
+>> -      - const: syscon
+>>   
+>>     "#clock-cells":
+>>       const: 1
+>> @@ -33,8 +32,8 @@ additionalProperties: false
+>>   
+>>   examples:
+>>     - |
+>> -    ehrpwm_tbclk: syscon@4140 {
+>> -        compatible = "ti,am654-ehrpwm-tbclk", "syscon";
+>> +    ehrpwm_tbclk: clock@4140 {
+>> +        compatible = "ti,am654-ehrpwm-tbclk";
+>>           reg = <0x4140 0x18>;
+>>           #clock-cells = <1>;
+>>       };
+> 
