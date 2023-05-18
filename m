@@ -2,140 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32E5C7EE23
-	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 11:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EC5C77B7D
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 12:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231415AbjERLkz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 May 2023 07:40:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36570 "EHLO
+        id S230366AbjERML0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 May 2023 08:11:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230255AbjERLkv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 07:40:51 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CB28213F
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 04:40:25 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30781184e78so767971f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 04:40:25 -0700 (PDT)
+        with ESMTP id S231536AbjERMLX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 08:11:23 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F3F9186
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 05:11:20 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-510d0e40c6eso2672400a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 05:11:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684409998; x=1687001998;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Frmz6BUTi78qNKAnyUDI2sB3xiLlUUZ/RRfE43Q8FQ=;
-        b=U9NIAkhVvca0066Yr4djQhpo9mqifAnkmKHo59xN7p73oSprjOddei8gVDX7VPy6uI
-         hH/3uHvoBwTLr0rhZ7EFG3R1bZZakNQxL4t7doVa3eavQ7d/c011pxox65vYCOBOIB1n
-         JzpBKWgiXeG1loBrTy4r7ODkSyxhzxlOUpllYVruO7WKTvNgZLz6GY/1YO7XvJkQ4Gy3
-         iugZRGsSSL6vdfZhORce41I4+XUjx0gToqBQxR52GmTDWiql/DdPtBcdKxv1bI5+MX1f
-         wt2eDGhGR678wkQsBz+ZBdGRhUDpygdTAu9bhhPnLewabSCxicdCuin9C9jE7EmhgKL/
-         fY3w==
+        d=linaro.org; s=google; t=1684411879; x=1687003879;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eH9Ti4nAq2PZgm6qot+MzQ9siimF1sxRnPpGSpCfOHw=;
+        b=RIBUXrHljuk/rLgpBNTWH/Wt8Vy6eMUK63vu12NMpC4cJ4FN3M5zi2onk/Iw4KYhTm
+         rP6J/j+yirrlO7lqfR9kv8QcE6GGAl+awJPjixU/XDrx15/r2MwInelsa9xHk4rmNgdm
+         FkEzMSUQ1ThUjutqAJMyHrka/ytAY3JXhVk154ofb26rEF6/U7+vVyEKUcDnGTYI8K1J
+         ojFx4daCGQQ0jcEKzcZ6chAV0qZgdIEzptZFV6Lx8YGo3mOF6k5AgQwOyxoXRmDUhjU5
+         EELFbj+tOxCM0gMyJP42SzyfUSUTaVu1OE8Y2Ol4jr2DKBoti/8WHo0oi95I0BihnWwS
+         HnFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684409998; x=1687001998;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Frmz6BUTi78qNKAnyUDI2sB3xiLlUUZ/RRfE43Q8FQ=;
-        b=FDM39hTGrx+hG1QRzeInPT4j+z22x897Ah6gA4bPki1pa6AZKE+gPRGk6D9p86I3C1
-         RfKjyTxz4rxT1ZF7PHB+BB09rEp176h2rMBGotgHSbyRneOcPJJgivtipFXu5uKpVVZL
-         MZkch+yqhBn0Lgy2bLd3AJpYWvP9rpopnpvCZBIcIidL2fSKTP2e+va6wbLPbyMDbckW
-         5Bp/zRUmp5h+U4PzsXsB2+h89vIVXukSCbpQnsbPHBJMQRGIQhJtCWFNELiJbUUjFtWu
-         rpLD2zGh23XJI3LLkkCTchNHejSWZD86Smh5/0++/G6q/Ro0jHHV/htKQGJVbyOF713O
-         DYRA==
-X-Gm-Message-State: AC+VfDxKwX+rf/zPVZ7RmA4SJoQXgXlBc2M1XGp/MR3J6vs4QmW5YjIA
-        DnVSAYtU2Vc0CXU7agdNEoGjKg==
-X-Google-Smtp-Source: ACHHUZ7/GKfftwYr59QGYkOR9Uj8PP4ipOIj0pnQA907QBhpiaV2sC/IDRdQHFOaxIPwBegiMM8TXA==
-X-Received: by 2002:a5d:51c5:0:b0:307:7959:6461 with SMTP id n5-20020a5d51c5000000b0030779596461mr1191839wrv.31.1684409998195;
-        Thu, 18 May 2023 04:39:58 -0700 (PDT)
-Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id f14-20020a5d568e000000b003047d5b8817sm1897135wrv.80.2023.05.18.04.39.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 04:39:57 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     johan+linaro@kernel.org, agross@kernel.org,
-        konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 5/5] arm64: dts: qcom: sc8280xp: add resets for soundwire controllers
-Date:   Thu, 18 May 2023 12:38:00 +0100
-Message-Id: <20230518113800.339158-6-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
-References: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
+        d=1e100.net; s=20221208; t=1684411879; x=1687003879;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eH9Ti4nAq2PZgm6qot+MzQ9siimF1sxRnPpGSpCfOHw=;
+        b=LiuworC+bSCxDweKdwSBZdIXNjw58nQbXQWQZA/u6pzQZ+T5UfsIn1xiRouLC1vO90
+         6xhUaEC7N2d2c448xVjjKj4F3sejcrUe5WglEf6Rzyb0KW5hoCcLilZFNar0Y/8NB9U/
+         DmRR4qXwdOZzeEq1HCYkCJtEbW3ZHKqEj+/00p01Uk18EWIBb7GJMY5f6Vod36Uov7DA
+         to6fox/hFh/4tHYkNdFtkv1vwSDFIRmeoF3gqIA/RwIlpHzExSYMTZZGtodZoy3W/IE/
+         C2qvuZLCnZyqXD+flPu/vIMpcPbobXB3k4IJiFPUBvkYwBYgAhewmTGHqYIiNOTGrrkF
+         q/Ow==
+X-Gm-Message-State: AC+VfDzKexPXniLsLPXN+2bno1FWmjGTCvIJBKkJ079YIdn9gigOcTvj
+        ywuCCcNnE9y4PckZx9x3pXuqLWCRtsr3DvMRjVc=
+X-Google-Smtp-Source: ACHHUZ4c7pZWy3fky9l24pA71DBgsX/CNygp+rtQGgH6TvGPQbJhspz40DPl1raunNLanz3NzAeP1w==
+X-Received: by 2002:a05:6402:b21:b0:510:d9c8:f180 with SMTP id bo1-20020a0564020b2100b00510d9c8f180mr3745398edb.21.1684411879096;
+        Thu, 18 May 2023 05:11:19 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:15c0:828:a2b:c408:5834:f48e? ([2a02:810d:15c0:828:a2b:c408:5834:f48e])
+        by smtp.gmail.com with ESMTPSA id j14-20020aa7ca4e000000b00510b5051f95sm508499edt.90.2023.05.18.05.11.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 18 May 2023 05:11:18 -0700 (PDT)
+Message-ID: <53288f73-8271-9572-14b9-27fa34e2c9fc@linaro.org>
+Date:   Thu, 18 May 2023 14:11:17 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v5 5/5] dt-bindings: clocks: at91sam9x5-sckc: convert to
+ yaml
+Content-Language: en-US
+To:     Claudiu.Beznea@microchip.com
+Cc:     robh+dt@kernel.org, alexandre.belloni@bootlin.com,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Nicolas.Ferre@microchip.com, krzysztof.kozlowski+dt@linaro.org,
+        Conor.Dooley@microchip.com, mturquette@baylibre.com,
+        devicetree@vger.kernel.org
+References: <20230517094119.2894220-1-claudiu.beznea@microchip.com>
+ <20230517094119.2894220-6-claudiu.beznea@microchip.com>
+ <20230517141508.evb6jg5bcpjzhqve@krzk-bin>
+ <79b77cb4-1e18-3c19-15dd-66951541abdf@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <79b77cb4-1e18-3c19-15dd-66951541abdf@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Soundwire controllers on sc8280xp needs an explicit reset, this
-patch adds support for this.
+On 18/05/2023 10:31, Claudiu.Beznea@microchip.com wrote:
+> On 17.05.2023 17:15, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On Wed, 17 May 2023 12:41:19 +0300, Claudiu Beznea wrote:
+>>> Convert Atmel slow clock controller documentation to yaml.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> ---
+>>>  .../devicetree/bindings/clock/at91-clock.txt  | 30 --------
+>>>  .../bindings/clock/atmel,at91sam9x5-sckc.yaml | 70 +++++++++++++++++++
+>>>  2 files changed, 70 insertions(+), 30 deletions(-)
+>>>  delete mode 100644 Documentation/devicetree/bindings/clock/at91-clock.txt
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+>>>
+>>
+>> Running 'make dtbs_check' with the schema in this patch gives the
+>> following warnings. Consider if they are expected or the schema is
+>> incorrect. These may not be new warnings.
+>>
+>> Note that it is not yet a requirement to have 0 warnings for dtbs_check.
+>> This will change in the future.
+>>
+>> Full log is available here: https://patchwork.ozlabs.org/patch/1782586
+>>
+>>
+>> sckc@fffffe50: '#clock-cells' is a required property
+>>         arch/arm/boot/dts/at91sam9n12ek.dtb
+>>
+>> sckc@fffffe50: 'clocks' is a required property
+>>         arch/arm/boot/dts/at91sam9n12ek.dtb
+>>
+>> sckc@fffffe50: 'slck', 'slow_osc', 'slow_rc_osc' do not match any of the regexes: 'pinctrl-[0-9]+'
+>>         arch/arm/boot/dts/at91sam9n12ek.dtb
+> 
+> Is it possible that this has been checked on a wrong base? I'm asking this
+> because:
+> - patch 3/5 in this series uses proper bindings for slow clock controller
+>   on at91sam9n12.dtsi (which includes #clock-cells and clocks bindings and
+>   removes slck, slow_osc, slow_rc_osc)
+> - patch 4/5 in this series does s/sckc@/clock-controller@/ in all AT91
+>   device trees.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Yes, it is quite likely. It's up to you to investigate it or ignore if
+you are sure report is a false positive.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-index d2a2224d138a..a2d0f8abe23d 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
-@@ -6,6 +6,7 @@
- 
- #include <dt-bindings/clock/qcom,dispcc-sc8280xp.h>
- #include <dt-bindings/clock/qcom,gcc-sc8280xp.h>
-+#include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sc8280xp.h>
-@@ -2548,6 +2549,8 @@ rxmacro: rxmacro@3200000 {
- 		swr1: soundwire-controller@3210000 {
- 			compatible = "qcom,soundwire-v1.6.0";
- 			reg = <0 0x03210000 0 0x2000>;
-+			resets = <&lpass_audiocc LPASS_AUDIO_SWR_RX_CGCR>;
-+			reset-names = "swr_audio_cgcr";
- 			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&rxmacro>;
- 			clock-names = "iface";
-@@ -2647,6 +2650,13 @@ swr0: soundwire-controller@3250000 {
- 			status = "disabled";
- 		};
- 
-+		lpass_audiocc: clock-controller@3300000 {
-+			compatible = "qcom,sc8280xp-lpassaudiocc";
-+			reg = <0 0x032a9000 0 0x1000>;
-+			#reset-cells = <1>;
-+			#clock-cells = <1>;
-+		};
-+
- 		swr2: soundwire-controller@3330000 {
- 			compatible = "qcom,soundwire-v1.6.0";
- 			reg = <0 0x03330000 0 0x2000>;
-@@ -2654,6 +2664,8 @@ swr2: soundwire-controller@3330000 {
- 				     <GIC_SPI 520 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "core", "wakeup";
- 
-+			resets = <&lpasscc LPASS_AUDIO_SWR_TX_CGCR>;
-+			reset-names = "swr_audio_cgcr";
- 			clocks = <&txmacro>;
- 			clock-names = "iface";
- 			label = "TX";
-@@ -2849,6 +2861,13 @@ data-pins {
- 			};
- 		};
- 
-+		lpasscc: clock-controller@33e0000 {
-+			compatible = "qcom,sc8280xp-lpasscc";
-+			reg = <0 0x033e0000 0 0x21000>;
-+			#reset-cells = <1>;
-+			#clock-cells = <1>;
-+		};
-+
- 		usb_0_qmpphy: phy@88eb000 {
- 			compatible = "qcom,sc8280xp-qmp-usb43dp-phy";
- 			reg = <0 0x088eb000 0 0x4000>;
--- 
-2.25.1
+> 
+> Moreover, I've re-checked all the individual dtsi files that describes a
+> slow clock controller and all descriptions has the "#clock-cells", "clocks"
+> property available and no slck, slow_osc, slow_rc_osc as childs of
+> sckc@fffffe50.
+> 
+> If not, could you please let me know your checker command?
+
+
+make dbts_check
+
+Best regards,
+Krzysztof
 
