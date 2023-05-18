@@ -2,81 +2,90 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C432C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed, 17 May 2023 21:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FF3C77B75
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 01:24:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbjEQVGL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 May 2023 17:06:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
+        id S229452AbjERBY5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 May 2023 21:24:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbjEQVGH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 17:06:07 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 206E17DA4
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 14:06:02 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1ae65e44536so295855ad.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 May 2023 14:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684357561; x=1686949561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HqFXYd9rNq05jqE+OMCTpUFM3DmoW2ueyhDNCFXpm8M=;
-        b=THdBU5Ib8gbAy2/3Y991wevBJmGC4A4UXz/Zt81XYqMks32DOHBX41c1Fp1jKHs/fR
-         t2eu5Yo6ZqNMRH6wojhD2x1ZbwNhNBB5RNORXM941lIjMk8yyn5oQgEAylbhkhK/JqBr
-         iqfwzzODNzaVUVF5XJRIHY/nlIbgsoSCU5h1s3wILD4+qOi8dnAU0D17wV1fLtoAN4fO
-         5Wp6Xkls2cjVbLEGM/9G+sz8Q+3syTvNO6eJQ5DrHLgt0T9sf0+TGeTB4MxEK86EaCme
-         LrM37X5njTJUhTTjZdkphTo95JmPfeHPjK1TBiuUfOaoTXOeI9InyJvJAkFdA4ulr5Hp
-         QweQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684357561; x=1686949561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HqFXYd9rNq05jqE+OMCTpUFM3DmoW2ueyhDNCFXpm8M=;
-        b=i0jxICJ9TNRjGpFZ540bhaFmfQ1dbAtmCQKa/rFAjIeKSbQ+7u+zsEpW0F6bFg1W4F
-         XQlgMZZ6xuZHPkeg+QL+JfWyP7dt2EiEV3+D5GaSKEqjFoI3CGx9uVPyPXAnbec/vYIf
-         KLymGqi7UWBisWEJ66vx/gGFcqwNhB+wXwYuVn1vJ1mxraD8ZFgwISzHHW4X2not8cgg
-         uvBa+RgljZJOqYN+pphEP0XsgbYrR6bFC0DtsdkRsHLOXuIcn0iDa5BairJh/nUPhyC/
-         N7yPr3AyxTS4/rcv/TJ36ZPT8AePQYvMW8hE4Tzzzybl3VQPEXPRK0a+C3NVBVsau1oO
-         HSzQ==
-X-Gm-Message-State: AC+VfDxmwLnHqVpJIEMIsFPGK0vRbM5Pogk91heAqU+UwlcyFs7Xmz0l
-        WasafMq6Q1LJtiS4Bvw3715K17ebIHRE2QaEtiff1OHp
-X-Google-Smtp-Source: ACHHUZ7nuFHJajJvBkmUdRtWfHJoFLNNBID89m3iz79dqyCn7vUx6QtLSTNzq5KIemwSCK3shDdEqt2k0KMAWHWWAFk=
-X-Received: by 2002:a17:902:d50e:b0:1ad:e3a8:3c4 with SMTP id
- b14-20020a170902d50e00b001ade3a803c4mr4974239plg.4.1684357561077; Wed, 17 May
- 2023 14:06:01 -0700 (PDT)
+        with ESMTP id S229586AbjERBY5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 May 2023 21:24:57 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C43DE92;
+        Wed, 17 May 2023 18:24:50 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id D8C0F806C;
+        Thu, 18 May 2023 09:24:42 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 18 May
+ 2023 09:24:42 +0800
+Received: from [192.168.125.131] (113.72.146.100) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 18 May
+ 2023 09:24:42 +0800
+Message-ID: <901dd93d-bd79-a62f-1ada-0328a5f04737@starfivetech.com>
+Date:   Thu, 18 May 2023 09:22:59 +0800
 MIME-Version: 1.0
-References: <20230416150004.16834-1-festevam@gmail.com>
-In-Reply-To: <20230416150004.16834-1-festevam@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 17 May 2023 18:05:49 -0300
-Message-ID: <CAOMZO5AJBcQxHKWtNjtFUbo8_Mb3ECBY0KePCsJmROKGEVqaNg@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
-To:     abelvesa@kernel.org
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@denx.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v5 08/10] reset: starfive: jh7110: Add StarFive
+ STG/ISP/VOUT resets support
+Content-Language: en-US
+To:     Andreas Schwab <schwab@suse.de>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230424135409.6648-1-xingyu.wu@starfivetech.com>
+ <20230424135409.6648-9-xingyu.wu@starfivetech.com> <mvmsfbvgkom.fsf@suse.de>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <mvmsfbvgkom.fsf@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.146.100]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Apr 16, 2023 at 12:00=E2=80=AFPM Fabio Estevam <festevam@gmail.com>=
- wrote:
->
-> From: Fabio Estevam <festevam@denx.de>
->
-> On the i.MX6SX, it is common to use the LDB and LCDIF with the same
-> parent clock, such as the IMX6SX_CLK_PLL5_VIDEO_DIV, for example.
->
-> Due to the CLK_SET_RATE_PARENT flag, the LDB clock would try to set the
-> clock parent rate, which can mess with the required clock rate calculated
-> from the eLCDIF driver.
->
-> To prevent this problem, remove the CLK_SET_RATE_PARENT flag from the
-> LDB clocks, so that a correct clock relationship can be achieved.
->
-> Signed-off-by: Fabio Estevam <festevam@denx.de>
+On 2023/5/17 21:19, Andreas Schwab wrote:
+> On Apr 24 2023, Xingyu Wu wrote:
+> 
+>> @@ -58,6 +76,18 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
+>>  		.name = "clk_starfive_jh7110_sys.rst-aon",
+>>  		.driver_data = (kernel_ulong_t)&jh7110_aon_info,
+>>  	},
+>> +	{
+>> +		.name = "clk_starfive_jh7110_sys.rst-stg",
+>> +		.driver_data = (kernel_ulong_t)&jh7110_stg_info,
+>> +	},
+>> +	{
+>> +		.name = "clk_starfive_jh7110_sys.rst-isp",
+>> +		.driver_data = (kernel_ulong_t)&jh7110_isp_info,
+>> +	},
+>> +	{
+>> +		.name = "clk_starfive_jh7110_sys.rst-vout",
+> 
+> "clk_starfive_jh7110_sys.rst-vout" is exactly AUXILIARY_NAME_SIZE long,
+> thus lacks a null termination.
+> 
 
-A gentle ping.
+Yeah, it should be modified to "clk_starfive_jh7110_sys.rst-vo" in this and
+use "rst-vo" instead of "rst-vout" in the probe of vout clock driver.
+Then it will work.
+
+Best regards,
+Xingyu Wu
