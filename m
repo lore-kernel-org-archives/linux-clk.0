@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970FFC7EE22
-	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 11:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE4FC7EE22
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 11:40:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231351AbjERLki (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 May 2023 07:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36346 "EHLO
+        id S231358AbjERLkn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 May 2023 07:40:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbjERLkh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 07:40:37 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16D5A1BD5
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 04:40:15 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3090408e09bso1263302f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 04:40:15 -0700 (PDT)
+        with ESMTP id S230144AbjERLkl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 07:40:41 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7694D1FDC
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 04:40:17 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-30949241c65so485368f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 04:40:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684409993; x=1687001993;
+        d=linaro.org; s=google; t=1684409994; x=1687001994;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2LcnYqoHcZvLzA6Z3GL7iXhdSd41fT2YfxCPjhoX5Gg=;
-        b=J19eqrqYxAX/RlpALBD7A4d7onhmQpGgddCk9FD0mP0a2jtRYbLlSFbRBMa4avh0go
-         AvrsPn+q5UYMxVnW6o0UoRxPhM0kEUICgtxpkaj8hpaMBSBluDyyer1pveBy/4orbVat
-         RvzlMKBxmO95vsCnEnvkF6Z8KWYbtMlTdqUR2Kzvoh9Zx5ghSBBr80ehtnSyftgh2WuJ
-         0NCza6BNQHgEnGG6yZVk5H+2R+8mZRbh4TI+hOo+juzLnnn+JoW9zyQh+Jnov3snIT9A
-         BX1fUTjYRgRtWyQoXTCfXHNsJoaTH/UWCRvj38ms2DfZ5b4APBvuAdxp8x5hWpaE70WP
-         vP9Q==
+        bh=HG4Vbyr7PlG0lpY1RSxwlZMOHt+XOR7/ovgh8gARZlM=;
+        b=kbczseXt+Cf+wUhPfg3lOvHXPHqqYE7Mh28Vz0DG3Tus2Fb0O+v8jSSfk+sOsXfJej
+         yFsMiR9F7FxX/XYGxM4urkPI0/lSKkx1ogJoX/ZhscTnCYQue3lPgolwI0KZ20oL5QUX
+         XWn4zTIG5bKgqf67r94YkjPGJmgiyOlu4LYYiGUjSoTCUICGLzyxRRi9tHT4E2Gu8MWC
+         gLEW6MZFNeeusp28Fca11GDy+1QJC2RvJ4JmpebUHRoXeILJscP8flYNw/+i4Ne/kFAZ
+         y7aMlICfq5PLz8ul8AnbZst/iPbLSy7wAID9g1T00xAXXWI4OssILrA0Fjl2YQg7GJXi
+         PUkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684409993; x=1687001993;
+        d=1e100.net; s=20221208; t=1684409994; x=1687001994;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2LcnYqoHcZvLzA6Z3GL7iXhdSd41fT2YfxCPjhoX5Gg=;
-        b=UO27fALHH4/XiViOQAuesKeSRdzNfAOvYkpNZYN8aWLIyMvLfndsWzCByyABTIXPrU
-         cHlQz8U4aL+OPvz0/aTMCaAsVo1txc+lbFzJACt83gj+o9UltXEAlusrqrIENCqnqCcC
-         O3LWPPAARsjeTCSQcqNFF2feAqkORH5I2DyIj6y+abNBmPYWck5jZACDYeHDBkr73lS1
-         XGGM2dPXxrk0uZtUdstNwIt/R9iTX7AENoZuvGsaKPgYvHmmfHkxDB40W3s8/IpllDDE
-         jnDSEGLaePXT7h/HqAClf8KrkbKRGI87UvsgKCSqx2xCNzhqvjpaNWhJGPQUclWPEQTC
-         WMnA==
-X-Gm-Message-State: AC+VfDwMUrCHHhOvrB4ir2ZVmvAw57pM7bPJlZeKsSNo9uul5it5zCmS
-        mEmaEGfxScTLXNCL/nO9Wfqhmw==
-X-Google-Smtp-Source: ACHHUZ5ioBYKk2HoOTJ7/GOsCLfIkRsICz8W5l4WVwP7qy21i4PiTpTnZnCzG8rRg4T4CoVmr2rsEg==
-X-Received: by 2002:adf:cd0e:0:b0:2f5:8e8b:572c with SMTP id w14-20020adfcd0e000000b002f58e8b572cmr1637884wrm.49.1684409992852;
-        Thu, 18 May 2023 04:39:52 -0700 (PDT)
+        bh=HG4Vbyr7PlG0lpY1RSxwlZMOHt+XOR7/ovgh8gARZlM=;
+        b=LVmGqnjS1HEEapp3hdWv4rmFlIFJHO4f6/mDXlvYVnhYeYyPs/MfHGSYVfDTctxHUu
+         1RDnM500rzTPVn9UkYxA1p/dJQifLGd5hQjzcksEgsC04L+05GMEsRXA3HUfrWPc0BWY
+         UgmQ/IZ3nM5iu/5BmdcKoRH6qxsEdAa7s1GErsQI5lFU1x/h8eR86aBQs8WYh5Ov6BOA
+         rm6/0NDEZ1lExRsiMAyv/gCb5IjkWyLExmhFDwcFMsVrUTqnFUkQp1GVeKWvS3h23RDP
+         ehAvEN4MWtcUSNLjqJwgyCnISDFjhxpLmiSy0Ff37TDHNppwhgkE9WDM9JGvDADSqPAO
+         g71g==
+X-Gm-Message-State: AC+VfDyxN2Wrc/5l8L6qLneNEc3MLJnuglwXO/t4+Xa60waz4zVKKJlt
+        rfcx0yBE+JlzHTJ6NeX3wC7zww==
+X-Google-Smtp-Source: ACHHUZ45vjuEaH9D5GBYXWDkM1nucUH5ctXYjl87CMZOxDISAypwtYW5WXGFDuw5yYrlwsiHTzA7Eg==
+X-Received: by 2002:adf:f484:0:b0:306:3ec9:99c5 with SMTP id l4-20020adff484000000b003063ec999c5mr1398646wro.9.1684409994340;
+        Thu, 18 May 2023 04:39:54 -0700 (PDT)
 Received: from localhost.localdomain ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id f14-20020a5d568e000000b003047d5b8817sm1897135wrv.80.2023.05.18.04.39.51
+        by smtp.gmail.com with ESMTPSA id f14-20020a5d568e000000b003047d5b8817sm1897135wrv.80.2023.05.18.04.39.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 04:39:52 -0700 (PDT)
+        Thu, 18 May 2023 04:39:53 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     andersson@kernel.org, robh+dt@kernel.org,
         krzysztof.kozlowski+dt@linaro.org
@@ -58,9 +58,9 @@ Cc:     johan+linaro@kernel.org, agross@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/5] dt-bindings: clock: Add YAML schemas for LPASSCC and reset on SC8280XP
-Date:   Thu, 18 May 2023 12:37:56 +0100
-Message-Id: <20230518113800.339158-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/5] dt-bindings: clock: Add YAML schemas for LPASS AUDIOCC and reset on SC8280XP
+Date:   Thu, 18 May 2023 12:37:57 +0100
+Message-Id: <20230518113800.339158-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
 References: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
@@ -70,100 +70,62 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The LPASS(Low Power Audio Subsystem) clock provider provides reset
+The LPASS(Low Power Audio Subsystem) Audio clock provider provides reset
 controller support when is driven by the Q6DSP.
 This patch adds support for those resets and adds IDs for clients
 to request the reset.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- .../bindings/clock/qcom,sc8280xp-lpasscc.yaml | 57 +++++++++++++++++++
- .../dt-bindings/clock/qcom,lpasscc-sc8280xp.h | 12 ++++
- 2 files changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
- create mode 100644 include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+ .../bindings/clock/qcom,sc8280xp-lpasscc.yaml         | 11 +++++++++++
+ include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h     |  5 +++++
+ 2 files changed, 16 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
-new file mode 100644
-index 000000000000..7c30614a0af9
---- /dev/null
+index 7c30614a0af9..394833819ba3 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
 +++ b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
-@@ -0,0 +1,57 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm LPASS Core & Audio Clock Controller on SC8280XP
-+
-+maintainers:
-+  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-+
-+description: |
-+  Qualcomm LPASS core and audio clock control module provides the clocks,
-+  reset and power domains on SC8280XP.
-+
-+  See also::
-+    include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
-+
-+properties:
-+  reg: true
-+
-+  compatible:
-+    enum:
-+      - qcom,sc8280xp-lpasscc
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  qcom,adsp-pil-mode:
-+    description:
-+      Indicates if the LPASS would be brought out of reset using
-+      peripheral loader.
-+    type: boolean
-+
-+required:
-+  - compatible
-+  - reg
-+  - qcom,adsp-pil-mode
-+  - '#reset-cells'
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
+@@ -22,6 +22,7 @@ properties:
+   compatible:
+     enum:
+       - qcom,sc8280xp-lpasscc
++      - qcom,sc8280xp-lpassaudiocc
+ 
+   '#reset-cells':
+     const: 1
+@@ -45,6 +46,16 @@ required:
+ additionalProperties: false
+ 
+ examples:
 +  - |
 +    #include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
-+    lpasscc: clock-controller@3900000 {
-+      compatible = "qcom,sc8280xp-lpasscc";
-+      reg = <0x033e0000 0x12000>;
++    lpass_audiocc: clock-controller@3300000 {
++      compatible = "qcom,sc8280xp-lpassaudiocc";
++      reg = <0x32a9000 0x1000>;
 +      #reset-cells = <1>;
 +      #clock-cells = <1>;
 +      qcom,adsp-pil-mode;
 +    };
-+...
++
+   - |
+     #include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
+     lpasscc: clock-controller@3900000 {
 diff --git a/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
-new file mode 100644
-index 000000000000..df800ea2741c
---- /dev/null
+index df800ea2741c..d190d57fc81a 100644
+--- a/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
 +++ b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2023, Linaro Ltd.
-+ */
+@@ -6,6 +6,11 @@
+ #ifndef _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
+ #define _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
+ 
++/* LPASS AUDIO CC CSR */
++#define LPASS_AUDIO_SWR_RX_CGCR				0
++#define LPASS_AUDIO_SWR_WSA_CGCR			1
++#define LPASS_AUDIO_SWR_WSA2_CGCR			2
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
-+#define _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
-+
-+/* LPASS TCSR */
-+#define LPASS_AUDIO_SWR_TX_CGCR				0
-+
-+#endif
+ /* LPASS TCSR */
+ #define LPASS_AUDIO_SWR_TX_CGCR				0
+ 
 -- 
 2.25.1
 
