@@ -2,86 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A83C77B7D
-	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 10:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1AAC77B7D
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 10:34:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbjERK21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 May 2023 06:28:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51836 "EHLO
+        id S230408AbjERKep (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 May 2023 06:34:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230424AbjERK2P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 06:28:15 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4887E1BD2
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 03:28:14 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-510d9218506so2034396a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 03:28:14 -0700 (PDT)
+        with ESMTP id S230415AbjERKen (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 06:34:43 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0795B1BFC
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 03:34:42 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-96a9c44ec4bso207436266b.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 03:34:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684405693; x=1686997693;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wiXiegdggLu/PT+d6XklO6wTTE+KccH+53chOvJaVbo=;
-        b=cmaitgxZhUX0xD5u3Bxfszq39fOCWChWuWHfPLKaWVW32xEtF7HFWhIMidXD/zk57w
-         FOTQIgiPXmuCTj4amk94bIATZvpub2xk4BZ7bQmVvoLTmb8/PhUb5T7nuct9Utvmv1ai
-         8M85ExPZP4OI0vToPlszrk6kMzovY456QMZzlRqG20wqppSvOc+LMIINY2H9vdMhyfKR
-         za8fu/gFdLAZLRTOObclDXIZRsMnU/hXbNAHR7UmqMiPMgB5GQAlQZFJW5ywk/HP2R7v
-         6o991yzRoIEoYSeAMVBp50dQ/kfnsTCFmrAaJcWo48nMplc0eMYgTWalLvBqG3Okyq1N
-         z+ow==
+        d=linaro.org; s=google; t=1684406080; x=1686998080;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2RC/1sciy0QBoH7anRgTXBV0jA9fPxn+8CaU4uzDVkg=;
+        b=k053xBGCAuTA7fiT+gWM+OUIhtRRJHqt9y+xrqsH+KibV4Izto85yaYxnKEw19EUmc
+         CiS07hAIYgKUm+mmPfagMcAN6ZrpIFc2NXLYZDSqUbuxWzkxn3bwUnN9/KsirxF19FXs
+         E6YaPCbF2jqs1WDIpoRJFlYkKwodbtpj4FgBkDz6pMimjhrrZkZCGvYRexHAlVp47S7c
+         RP3RJ1dyUTpw6maxUdVM0tXbBEnmrBCqWuLBpW3g4VfDmydtcW5ddOOkh6KuXRfWVftc
+         dzG3T/cfHScb/1waO/w5qe666b0bUn1jpjOw0+smonZDNpL9eRPY6FsTlgVusPtdfV3G
+         qVGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684405693; x=1686997693;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wiXiegdggLu/PT+d6XklO6wTTE+KccH+53chOvJaVbo=;
-        b=IGaEOoX+K1rIHhLfKA26g/daNMd/6fLwwoQv5XwZNrxO/zjsVIzJSa33Yh2lw4P8R9
-         UEv/AGPc2DcgO7QCqZIPXzfyblacZ+GdInZlLYWsqFhpqDDfdI7Vj+nKxkz3dSzd1eQj
-         iGW7w6UKNfBw1s3s9wbTkP8hkVp4FMfLWJo8ZdVoIfPrGD8jcMos8SppEtNcT+YGfdVn
-         WMMeobCzjm/OA6eDQSO/Aco9IL9Zvjl77qMBo26f1yh56ZTRR1aeBKaSf7Tz3DVXzQaB
-         EScyeeBByKg7Ec/g1DRfitIfMn+aiR1DDe3lEl8aKE22ANkYKQnF/yT1rbfg4SdX4aMk
-         Oeqg==
-X-Gm-Message-State: AC+VfDwu7mcRF7CGORKr+zJ5GItn768Dqcwn/I5SuQXBIpfWF2jdCn50
-        p4dh8GEsj47n5RE9A8b1H993jg==
-X-Google-Smtp-Source: ACHHUZ69SrGVd74iqUJ3ZXauhudQVSiJNuaDqGfwltLwqrlNuAChWRytyEzB98aVDLoX6HCfbwnzGw==
-X-Received: by 2002:a05:6402:1355:b0:50b:c013:f933 with SMTP id y21-20020a056402135500b0050bc013f933mr5368444edw.6.1684405692773;
-        Thu, 18 May 2023 03:28:12 -0700 (PDT)
-Received: from hackbox.lan ([86.121.163.20])
-        by smtp.gmail.com with ESMTPSA id bl24-20020a170906c25800b00969f13d886fsm780592ejb.71.2023.05.18.03.28.11
+        d=1e100.net; s=20221208; t=1684406080; x=1686998080;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2RC/1sciy0QBoH7anRgTXBV0jA9fPxn+8CaU4uzDVkg=;
+        b=ixL7H5zoNLGvWHml/Pj4We3FJKNsrgbxAOL/z0SsT2Li35oeghDCspM4bpmzpUxvgZ
+         Kkcm1A4KvIe0BCOVc3qj7vVvU8ns5MDfk0SP60U6bjiWcwBY5snLKXgjio4mOmFoDluh
+         pIyqSeKT1FA5Bj+vvgbGpXkz9hfkbHDSC1QxUQJhx0zkuz99+qLVYZL7oiQxBvFC5iUw
+         K8S2eMEnCfpePOgCyOtHywT5t+lgUuDL8nKbxawM73it6UF4KFmkcr7/2YVxj19iEb4e
+         kMagpByuNFvC6gVfj+8j0KogO2tS3siZOeAgL7ctJ61MXjwa4t6ZQQVTfQ2ahJkx4T5t
+         OJyw==
+X-Gm-Message-State: AC+VfDzP4wOMkpsdMgK7nMfJV2FjfjBEMEZC9qcaWsZNm+P4mrqf/Lu0
+        r61ZRsF8ZY7dfOIDY+2nzhJGgg==
+X-Google-Smtp-Source: ACHHUZ4XPTb5278IzXALjeOxwbpWuF0b2L1XTq/bU/Bhzm9pn7WtM6on4sTP5U3OkI4HD4X97c8PkQ==
+X-Received: by 2002:a17:907:9411:b0:969:2df9:a0dd with SMTP id dk17-20020a170907941100b009692df9a0ddmr4846983ejc.25.1684406080432;
+        Thu, 18 May 2023 03:34:40 -0700 (PDT)
+Received: from linaro.org ([86.121.163.20])
+        by smtp.gmail.com with ESMTPSA id og19-20020a1709071dd300b0096f00d79d6asm795300ejc.54.2023.05.18.03.34.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 May 2023 03:28:12 -0700 (PDT)
+        Thu, 18 May 2023 03:34:39 -0700 (PDT)
+Date:   Thu, 18 May 2023 13:34:38 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     abelvesa@kernel.org, Fabio Estevam <festevam@gmail.com>
-Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@denx.de>
-Subject: Re: [PATCH] clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
-Date:   Thu, 18 May 2023 13:28:02 +0300
-Message-Id: <168440555099.2524465.18044940718129209216.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230416150004.16834-1-festevam@gmail.com>
-References: <20230416150004.16834-1-festevam@gmail.com>
+To:     Kai Ma <kaima@hust.edu.cn>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Jesse Taube <mr.bossman075@gmail.com>,
+        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: clk-imxrt1050: fix memory leak in
+ imxrt1050_clocks_probe
+Message-ID: <ZGX/PjYBVGuECcPg@linaro.org>
+References: <20230418113451.151312-1-kaima@hust.edu.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230418113451.151312-1-kaima@hust.edu.cn>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Sun, 16 Apr 2023 12:00:04 -0300, Fabio Estevam wrote:
-> On the i.MX6SX, it is common to use the LDB and LCDIF with the same
-> parent clock, such as the IMX6SX_CLK_PLL5_VIDEO_DIV, for example.
+On 23-04-18 11:34:51, Kai Ma wrote:
+> Use devm_of_iomap() instead of of_iomap() to automatically
+> handle the unused ioremap region. If any error occurs, regions allocated by
+> kzalloc() will leak, but using devm_kzalloc() instead will automatically
+> free the memory using devm_kfree().
 > 
-> Due to the CLK_SET_RATE_PARENT flag, the LDB clock would try to set the
-> clock parent rate, which can mess with the required clock rate calculated
-> from the eLCDIF driver.
+> Also, fix error handling of hws by adding unregister_hws label, which
+> unregisters remaining hws when iomap failed.
 > 
-> [...]
+> Fixes: 7154b046d8f3 ("clk: imx: Add initial support for i.MXRT1050 clock driver")
+> Signed-off-by: Kai Ma <kaima@hust.edu.cn>
 
-Applied, thanks!
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-[1/1] clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
-      commit: 370da75066e32bef008ca17290f4aa644500100c
+Stephen, can you apply this through clk-fixes?
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+> ---
+> The issue is found by static analysis and remains untested.
+> ---
+>  drivers/clk/imx/clk-imxrt1050.c | 22 +++++++++++++++-------
+>  1 file changed, 15 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+> index fd5c51fc92c0..08d155feb035 100644
+> --- a/drivers/clk/imx/clk-imxrt1050.c
+> +++ b/drivers/clk/imx/clk-imxrt1050.c
+> @@ -42,7 +42,7 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+>  	struct device_node *anp;
+>  	int ret;
+>  
+> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
+> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+>  					  IMXRT1050_CLK_END), GFP_KERNEL);
+>  	if (WARN_ON(!clk_hw_data))
+>  		return -ENOMEM;
+> @@ -53,10 +53,12 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+>  	hws[IMXRT1050_CLK_OSC] = imx_get_clk_hw_by_name(np, "osc");
+>  
+>  	anp = of_find_compatible_node(NULL, NULL, "fsl,imxrt-anatop");
+> -	pll_base = of_iomap(anp, 0);
+> +	pll_base = devm_of_iomap(dev, anp, 0, NULL);
+>  	of_node_put(anp);
+> -	if (WARN_ON(!pll_base))
+> -		return -ENOMEM;
+> +	if (WARN_ON(IS_ERR(pll_base))) {
+> +		ret = PTR_ERR(pll_base);
+> +		goto unregister_hws;
+> +	}
+>  
+>  	/* Anatop clocks */
+>  	hws[IMXRT1050_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0UL);
+> @@ -104,8 +106,10 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+>  
+>  	/* CCM clocks */
+>  	ccm_base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (WARN_ON(IS_ERR(ccm_base)))
+> -		return PTR_ERR(ccm_base);
+> +	if (WARN_ON(IS_ERR(ccm_base))) {
+> +		ret = PTR_ERR(ccm_base);
+> +		goto unregister_hws;
+> +	}
+>  
+>  	hws[IMXRT1050_CLK_ARM_PODF] = imx_clk_hw_divider("arm_podf", "pll1_arm", ccm_base + 0x10, 0, 3);
+>  	hws[IMXRT1050_CLK_PRE_PERIPH_SEL] = imx_clk_hw_mux("pre_periph_sel", ccm_base + 0x18, 18, 2,
+> @@ -149,8 +153,12 @@ static int imxrt1050_clocks_probe(struct platform_device *pdev)
+>  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+>  	if (ret < 0) {
+>  		dev_err(dev, "Failed to register clks for i.MXRT1050.\n");
+> -		imx_unregister_hw_clocks(hws, IMXRT1050_CLK_END);
+> +		goto unregister_hws;
+>  	}
+> +	return 0;
+> +
+> +unregister_hws:
+> +	imx_unregister_hw_clocks(hws, IMXRT1050_CLK_END);
+>  	return ret;
+>  }
+>  static const struct of_device_id imxrt1050_clk_of_match[] = {
+> -- 
+> 2.34.1
+> 
