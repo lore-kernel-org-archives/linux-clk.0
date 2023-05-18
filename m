@@ -2,151 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49513C7EE32
-	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 10:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A83C77B7D
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 10:28:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbjERKMv convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 May 2023 06:12:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42988 "EHLO
+        id S230179AbjERK21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 May 2023 06:28:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230372AbjERKMq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 06:12:46 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6115919B0;
-        Thu, 18 May 2023 03:12:45 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 2BCF024E201;
-        Thu, 18 May 2023 18:12:44 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 18 May
- 2023 18:12:44 +0800
-Received: from localhost.localdomain (113.72.146.100) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 18 May
- 2023 18:12:43 +0800
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        "Emil Renner Berthing" <kernel@esmil.dk>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v6 11/11] riscv: dts: starfive: jh7110: Add STGCRG/ISPCRG/VOUTCRG nodes
-Date:   Thu, 18 May 2023 18:12:34 +0800
-Message-ID: <20230518101234.143748-12-xingyu.wu@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230518101234.143748-1-xingyu.wu@starfivetech.com>
-References: <20230518101234.143748-1-xingyu.wu@starfivetech.com>
+        with ESMTP id S230424AbjERK2P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 06:28:15 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4887E1BD2
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 03:28:14 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-510d9218506so2034396a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 03:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684405693; x=1686997693;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wiXiegdggLu/PT+d6XklO6wTTE+KccH+53chOvJaVbo=;
+        b=cmaitgxZhUX0xD5u3Bxfszq39fOCWChWuWHfPLKaWVW32xEtF7HFWhIMidXD/zk57w
+         FOTQIgiPXmuCTj4amk94bIATZvpub2xk4BZ7bQmVvoLTmb8/PhUb5T7nuct9Utvmv1ai
+         8M85ExPZP4OI0vToPlszrk6kMzovY456QMZzlRqG20wqppSvOc+LMIINY2H9vdMhyfKR
+         za8fu/gFdLAZLRTOObclDXIZRsMnU/hXbNAHR7UmqMiPMgB5GQAlQZFJW5ywk/HP2R7v
+         6o991yzRoIEoYSeAMVBp50dQ/kfnsTCFmrAaJcWo48nMplc0eMYgTWalLvBqG3Okyq1N
+         z+ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684405693; x=1686997693;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wiXiegdggLu/PT+d6XklO6wTTE+KccH+53chOvJaVbo=;
+        b=IGaEOoX+K1rIHhLfKA26g/daNMd/6fLwwoQv5XwZNrxO/zjsVIzJSa33Yh2lw4P8R9
+         UEv/AGPc2DcgO7QCqZIPXzfyblacZ+GdInZlLYWsqFhpqDDfdI7Vj+nKxkz3dSzd1eQj
+         iGW7w6UKNfBw1s3s9wbTkP8hkVp4FMfLWJo8ZdVoIfPrGD8jcMos8SppEtNcT+YGfdVn
+         WMMeobCzjm/OA6eDQSO/Aco9IL9Zvjl77qMBo26f1yh56ZTRR1aeBKaSf7Tz3DVXzQaB
+         EScyeeBByKg7Ec/g1DRfitIfMn+aiR1DDe3lEl8aKE22ANkYKQnF/yT1rbfg4SdX4aMk
+         Oeqg==
+X-Gm-Message-State: AC+VfDwu7mcRF7CGORKr+zJ5GItn768Dqcwn/I5SuQXBIpfWF2jdCn50
+        p4dh8GEsj47n5RE9A8b1H993jg==
+X-Google-Smtp-Source: ACHHUZ69SrGVd74iqUJ3ZXauhudQVSiJNuaDqGfwltLwqrlNuAChWRytyEzB98aVDLoX6HCfbwnzGw==
+X-Received: by 2002:a05:6402:1355:b0:50b:c013:f933 with SMTP id y21-20020a056402135500b0050bc013f933mr5368444edw.6.1684405692773;
+        Thu, 18 May 2023 03:28:12 -0700 (PDT)
+Received: from hackbox.lan ([86.121.163.20])
+        by smtp.gmail.com with ESMTPSA id bl24-20020a170906c25800b00969f13d886fsm780592ejb.71.2023.05.18.03.28.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 May 2023 03:28:12 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     abelvesa@kernel.org, Fabio Estevam <festevam@gmail.com>
+Cc:     sboyd@kernel.org, linux-clk@vger.kernel.org,
+        Fabio Estevam <festevam@denx.de>
+Subject: Re: [PATCH] clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
+Date:   Thu, 18 May 2023 13:28:02 +0300
+Message-Id: <168440555099.2524465.18044940718129209216.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230416150004.16834-1-festevam@gmail.com>
+References: <20230416150004.16834-1-festevam@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [113.72.146.100]
-X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add STGCRG/ISPCRG/VOUTCRG new node to support JH7110
-System-Top-Group, Image-Signal-Process and Video-Output
-clock and reset drivers for the JH7110 RISC-V SoC.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
----
- arch/riscv/boot/dts/starfive/jh7110.dtsi | 55 ++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+On Sun, 16 Apr 2023 12:00:04 -0300, Fabio Estevam wrote:
+> On the i.MX6SX, it is common to use the LDB and LCDIF with the same
+> parent clock, such as the IMX6SX_CLK_PLL5_VIDEO_DIV, for example.
+> 
+> Due to the CLK_SET_RATE_PARENT flag, the LDB clock would try to set the
+> clock parent rate, which can mess with the required clock rate calculated
+> from the eLCDIF driver.
+> 
+> [...]
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-index 336ee2b0ffb5..9acb5fb1716d 100644
---- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-@@ -6,6 +6,7 @@
- 
- /dts-v1/;
- #include <dt-bindings/clock/starfive,jh7110-crg.h>
-+#include <dt-bindings/power/starfive,jh7110-pmu.h>
- #include <dt-bindings/reset/starfive,jh7110-crg.h>
- 
- / {
-@@ -365,6 +366,25 @@ i2c2: i2c@10050000 {
- 			status = "disabled";
- 		};
- 
-+		stgcrg: clock-controller@10230000 {
-+			compatible = "starfive,jh7110-stgcrg";
-+			reg = <0x0 0x10230000 0x0 0x10000>;
-+			clocks = <&osc>,
-+				 <&syscrg JH7110_SYSCLK_HIFI4_CORE>,
-+				 <&syscrg JH7110_SYSCLK_STG_AXIAHB>,
-+				 <&syscrg JH7110_SYSCLK_USB_125M>,
-+				 <&syscrg JH7110_SYSCLK_CPU_BUS>,
-+				 <&syscrg JH7110_SYSCLK_HIFI4_AXI>,
-+				 <&syscrg JH7110_SYSCLK_NOCSTG_BUS>,
-+				 <&syscrg JH7110_SYSCLK_APB_BUS>;
-+			clock-names = "osc", "hifi4_core",
-+				      "stg_axiahb", "usb_125m",
-+				      "cpu_bus", "hifi4_axi",
-+				      "nocstg_bus", "apb_bus";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		uart3: serial@12000000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x12000000 0x0 0x10000>;
-@@ -515,5 +535,40 @@ pwrc: power-controller@17030000 {
- 			interrupts = <111>;
- 			#power-domain-cells = <1>;
- 		};
-+
-+		ispcrg: clock-controller@19810000 {
-+			compatible = "starfive,jh7110-ispcrg";
-+			reg = <0x0 0x19810000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_ISP_TOP_CORE>,
-+				 <&syscrg JH7110_SYSCLK_ISP_TOP_AXI>,
-+				 <&syscrg JH7110_SYSCLK_NOC_BUS_ISP_AXI>,
-+				 <&dvp_clk>;
-+			clock-names = "isp_top_core", "isp_top_axi",
-+				      "noc_bus_isp_axi", "dvp_clk";
-+			resets = <&syscrg JH7110_SYSRST_ISP_TOP>,
-+				 <&syscrg JH7110_SYSRST_ISP_TOP_AXI>,
-+				 <&syscrg JH7110_SYSRST_NOC_BUS_ISP_AXI>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			power-domains = <&pwrc JH7110_PD_ISP>;
-+		};
-+
-+		voutcrg: clock-controller@295c0000 {
-+			compatible = "starfive,jh7110-voutcrg";
-+			reg = <0x0 0x295c0000 0x0 0x10000>;
-+			clocks = <&syscrg JH7110_SYSCLK_VOUT_SRC>,
-+				 <&syscrg JH7110_SYSCLK_VOUT_TOP_AHB>,
-+				 <&syscrg JH7110_SYSCLK_VOUT_TOP_AXI>,
-+				 <&syscrg JH7110_SYSCLK_VOUT_TOP_HDMITX0_MCLK>,
-+				 <&syscrg JH7110_SYSCLK_I2STX0_BCLK>,
-+				 <&hdmitx0_pixelclk>;
-+			clock-names = "vout_src", "vout_top_ahb",
-+				      "vout_top_axi", "vout_top_hdmitx0_mclk",
-+				      "i2stx0_bclk", "hdmitx0_pixelclk";
-+			resets = <&syscrg JH7110_SYSRST_VOUT_TOP_SRC>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			power-domains = <&pwrc JH7110_PD_VOUT>;
-+		};
- 	};
- };
+Applied, thanks!
+
+[1/1] clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
+      commit: 370da75066e32bef008ca17290f4aa644500100c
+
+Best regards,
 -- 
-2.25.1
-
+Abel Vesa <abel.vesa@linaro.org>
