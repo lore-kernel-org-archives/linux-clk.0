@@ -2,123 +2,176 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F51AC77B7A
-	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 14:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E5DC7EE23
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 14:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231754AbjERONK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 May 2023 10:13:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46172 "EHLO
+        id S231250AbjEROhI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 May 2023 10:37:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231703AbjEROMu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 10:12:50 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B6E171C;
-        Thu, 18 May 2023 07:12:39 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34IDPjQ2030688;
-        Thu, 18 May 2023 14:12:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=8LnI7jv3bEqP+lz6ARSZE9caJfa3XA3FReK2ep5ZFgg=;
- b=U9bOxex/ED+qxDPShkH4RUiFOwhCet0rH7oWAbuKewcMvuKSkoH3HNJtNvC0n3j9JBRP
- e+xcSoYPOm/bf9EzwsLMmabd/P4yNJzsaDVdxWOtXYEkuB64W5PBbc+ApZ2HZ02lQWAZ
- Eeui8qEacpifd6wT5UkEsWGNRAGoFlhy1ft0DuPBlcVG6PwwYuTBOjvD0iIfrTpIclAW
- nFS0pMh6LkeEuDJrhXGjZolSN1bNlzQ2HDiPe3IbIilvBl76j3p4Wv6Gzxp0+Q3s6QPL
- vOiIT2f9LRKu2lqmtRXQjMfUNW19gKSUu/oDtvqbAgKSYUJwt9SsQAwhypST3smNvgAL 1A== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qn73uspkt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 May 2023 14:12:30 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34IECTlU026219
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 May 2023 14:12:29 GMT
-Received: from anusha-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Thu, 18 May 2023 07:12:23 -0700
-From:   Anusha Rao <quic_anusha@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <thara.gopinath@gmail.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-        <bhupesh.sharma@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
-Subject: [PATCH V3 4/4] arm64: dts: qcom: ipq9574: Enable crypto nodes
-Date:   Thu, 18 May 2023 19:41:05 +0530
-Message-ID: <20230518141105.24741-5-quic_anusha@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230518141105.24741-1-quic_anusha@quicinc.com>
-References: <20230518141105.24741-1-quic_anusha@quicinc.com>
+        with ESMTP id S229810AbjEROhG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 10:37:06 -0400
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604A4DE
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 07:37:05 -0700 (PDT)
+Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-30948709b3cso675386f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 07:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684420624; x=1687012624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NuGTxg0Bi/ffAC7iy/DtX+nu1bNY6UiYni6S2M+CTBo=;
+        b=uu6zp1lK/hmMYrNMGLBtZREqtb7Tu+8G65p8ZUDUwaLdTMlj+UlOePKjfCN/GuBkzr
+         F4vu8SLwLHOnZgwdkzLpQ7TEZNPGJyaZ8EVhBMICnr9WtiqZBWJKaAQ6iyVVT69/BinU
+         RFsOcXPuYQoKpgMFdIKp6UBt0oBB603zNxYojH7jg8LOpQUNg4LzKnmaJceWG0nq6vkl
+         01N4Nmy5kfh5IWX7dTfKa0+45woOKASQW7VEPBf3NT2pW25a1PEuzs6Rd8tqpNN5dfn5
+         6MjtRjasIyyQiBiY4Iz0BWSRxUJf1ZrKSlnGzjEIhvVKzbFIBfQprtTC7oEh0Mc5B2iz
+         Jbng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684420624; x=1687012624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NuGTxg0Bi/ffAC7iy/DtX+nu1bNY6UiYni6S2M+CTBo=;
+        b=NgBEtVJaditbWVCFAgnbShl0/9Hhcj6nIuM8UlNfS/ZT1KKRiXMM1FuMybhrxq2e42
+         0lCKjLfnmQ5fXPPhxp/NGf7uPeAEm5gD5auWTKzfKqBR8+WgF8b2i/5SAul+Qy61Brsg
+         ERaiw4HAsyAx6HX2nXNTdjKxPI7SK9wJITS4aR8gsESVCArRpLSf+FwkPVDH7DJIEZ5d
+         8oxylXu3TjhWJgRDqKvT0D0AybGmrvyAYOuRbgWnJMHBdURvIVIlhH9lkA3k8UxsdKwn
+         BBE9Q80kLWO+KwJBWxq2WZxEFqmUVeOpWchFZSXEo66RKCbcJljIxkRIhkrgr5UZVtHW
+         RlyA==
+X-Gm-Message-State: AC+VfDxDq0xvcNAEjhZbEq9JU98H+/rWUyFzFxr158ZM2vzaF9BQ1K6H
+        6mSCpwlbQMp9HiWvfg1fVEveGA==
+X-Google-Smtp-Source: ACHHUZ7NJGL16Mofflwp6cgsGutN16kV09se5SAVk1PwcuHN/HbYK5qIkbY4G9uUq8a2s04i0T001Q==
+X-Received: by 2002:adf:f0cc:0:b0:306:2e48:6ded with SMTP id x12-20020adff0cc000000b003062e486dedmr1774419wro.13.1684420623773;
+        Thu, 18 May 2023 07:37:03 -0700 (PDT)
+Received: from linaro.org ([86.121.163.20])
+        by smtp.gmail.com with ESMTPSA id k9-20020a5d5189000000b003063176ef09sm2424748wrv.6.2023.05.18.07.37.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 May 2023 07:37:03 -0700 (PDT)
+Date:   Thu, 18 May 2023 17:37:01 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Zhanhao Hu <zero12113@hust.edu.cn>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        hust-os-kernel-patches@googlegroups.com,
+        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx93: fix memory leak and missing unwind goto in
+ imx93_clocks_probe
+Message-ID: <ZGY4DQ7JKvC1fMyt@linaro.org>
+References: <20230426142552.217435-1-zero12113@hust.edu.cn>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ebYrIL_MKsAgVrXOjDu99Xs1ZD6jDom-
-X-Proofpoint-GUID: ebYrIL_MKsAgVrXOjDu99Xs1ZD6jDom-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-18_11,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=838 malwarescore=0
- impostorscore=0 bulkscore=0 mlxscore=0 clxscore=1015 adultscore=0
- spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305180113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230426142552.217435-1-zero12113@hust.edu.cn>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enable crypto support for ipq9574.
+On 23-04-26 14:25:52, Zhanhao Hu wrote:
+> In function probe(), it returns directly without unregistered hws
+> when error occurs.
+> 
+> I fix this by adding 'goto unregister_hws;' on line 295 and
+> line 310.
 
-Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
----
- Changes in V3:
-	- No change.
+Hi Zhanhao,
 
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+I like your patch, but there are some things to improve in the commit
+message.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index fea15f3cf910..6e52d35a6a15 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -123,6 +123,26 @@
- 			clock-names = "core";
- 		};
- 
-+		cryptobam: dma-controller@704000 {
-+			compatible = "qcom,bam-v1.7.0";
-+			reg = <0x00704000 0x20000>;
-+			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-+			#dma-cells = <1>;
-+			qcom,ee = <1>;
-+			qcom,controlled-remotely;
-+		};
-+
-+		crypto: crypto@73a000 {
-+			compatible = "qcom,ipq9574-qce", "qcom,ipq4019-qce", "qcom,qce";
-+			reg = <0x0073a000 0x6000>;
-+			clocks = <&gcc GCC_CRYPTO_AHB_CLK>,
-+				 <&gcc GCC_CRYPTO_AXI_CLK>,
-+				 <&gcc GCC_CRYPTO_CLK>;
-+			clock-names = "iface", "bus", "core";
-+			dmas = <&cryptobam 2>, <&cryptobam 3>;
-+			dma-names = "rx", "tx";
-+		};
-+
- 		tlmm: pinctrl@1000000 {
- 			compatible = "qcom,ipq9574-tlmm";
- 			reg = <0x01000000 0x300000>;
--- 
-2.17.1
+Have a read here before rephrasing it:
+https://docs.kernel.org/process/submitting-patches.html
 
+Quoting the above doc:
+"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy to
+do frotz", as if you are giving orders to the codebase to change its
+behaviour."
+
+> 
+> Besides, I use devm_kzalloc() instead of kzalloc() to automatically
+> free the memory using devm_kfree() when error occurs.
+
+So this should be rephrased like:
+
+Use devm_kzalloc instead of kzalloc, to automatically free the memory...
+
+> 
+> Similarly, I replace of_iomap() with devm_of_iomap() to automatically
+> handle the unused ioremap region. So I delete 'iounmap(anatop_base);'
+> in unregister_hws.
+
+Same here. Make it imperative rather than mentioning what you're doing
+in this patch.
+
+With the commit rephrased in a new version, I'll be more than happy to
+apply it.
+
+> 
+> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
+> Signed-off-by: Zhanhao Hu <zero12113@hust.edu.cn>
+> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+> This issue is found by static analysis and remains untested.
+> ---
+>  drivers/clk/imx/clk-imx93.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index 07b4a043e449..b6c7c2725906 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -264,7 +264,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  	void __iomem *base, *anatop_base;
+>  	int i, ret;
+>  
+> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
+> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+>  					  IMX93_CLK_END), GFP_KERNEL);
+>  	if (!clk_hw_data)
+>  		return -ENOMEM;
+> @@ -288,10 +288,12 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  								    "sys_pll_pfd2", 1, 2);
+>  
+>  	np = of_find_compatible_node(NULL, NULL, "fsl,imx93-anatop");
+> -	anatop_base = of_iomap(np, 0);
+> +	anatop_base = devm_of_iomap(dev, np, 0, NULL);
+>  	of_node_put(np);
+> -	if (WARN_ON(!anatop_base))
+> -		return -ENOMEM;
+> +	if (WARN_ON(IS_ERR(anatop_base))) {
+> +		ret = PTR_ERR(base);
+> +		goto unregister_hws;
+> +	}
+>  
+>  	clks[IMX93_CLK_ARM_PLL] = imx_clk_fracn_gppll_integer("arm_pll", "osc_24m",
+>  							      anatop_base + 0x1000,
+> @@ -304,8 +306,8 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  	np = dev->of_node;
+>  	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (WARN_ON(IS_ERR(base))) {
+> -		iounmap(anatop_base);
+> -		return PTR_ERR(base);
+> +		ret = PTR_ERR(base);
+> +		goto unregister_hws;
+>  	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(root_array); i++) {
+> @@ -345,7 +347,6 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  
+>  unregister_hws:
+>  	imx_unregister_hw_clocks(clks, IMX93_CLK_END);
+> -	iounmap(anatop_base);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.34.1
+> 
