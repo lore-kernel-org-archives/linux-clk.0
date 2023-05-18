@@ -2,167 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F596C7EE2A
-	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 20:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF247C77B73
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 21:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230331AbjERUFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 May 2023 16:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40416 "EHLO
+        id S229973AbjERVIG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 May 2023 17:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230451AbjERUFQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 16:05:16 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64BB31995;
-        Thu, 18 May 2023 13:04:54 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-96f5d651170so12177266b.1;
-        Thu, 18 May 2023 13:04:54 -0700 (PDT)
+        with ESMTP id S229969AbjERVIF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 17:08:05 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C790419B;
+        Thu, 18 May 2023 14:08:04 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-510eb3dbaaeso1694787a12.1;
+        Thu, 18 May 2023 14:08:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1684440293; x=1687032293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1684444083; x=1687036083;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Dz/8MS7Lj7KmoyyTrLm++CyIRlPD4x/waiNz5/meCus=;
-        b=NjGtnN1Mekg/KnyMcY5xayEbV0Y4bnlTPJhsEXA6VcI6P1h2dUq5mFbFxefAdSmz9c
-         caEhSKdDftvK2RWaQDpqdQTFAiPGq/QLm5zOlJRFTm1webNMRCKbCUAenPBxlONPShHy
-         iomEz7YWfFklxSutSM2/3llf6xWuUglUNsSMj1uMYfZg3N/N7BdDOsnbBBASeQOj57pD
-         iTLgABWiJ+S/cfvIrPvTwPCbEfPNC0/AMGHTu1B8P2E88NHkSTjVOzUbQrvGvTrllBTV
-         9u8VVLx+IgiK8uQZepaIs5+Cu0hr5Ctu5A0pVJhvpae8XiFBx488/OCWC8QHsyQLXpEr
-         qEGw==
+        bh=PQ1nJRxIw8TnLlb1uSAgTqg+C0cT9QEqF+EZc+fkSGE=;
+        b=qcFIYBlhQxLx5FpKG/1H+u3N7ybS144V6jLsrdWYaTAUef1G3Uq6pjVipT0EPjzIsf
+         fPa8M+8MqZNU68NgmxUnn81uBLw1UNoTwoH3v2vWcg7UC+FCOIGTjWLJPA4yh8qlEdyb
+         R+7ZPZHirHFLCQMwATJX8ntw+HT3nWxvNcrlcSMBPCg4ZU+q1EaQQI0txdXcibMPs1d9
+         NpTb0gJp8+JAhUWbyqtJmcus1ooyPCHUsrg0VQlE/S+izxUyzCjl7Es6/+qJx2NzRUDC
+         h18rwgSxqbISnBdUfohbj4b9Bkcgue6noAzU77rh7XqPZVJGZRrqX39lxW3rEEF9WTWh
+         lc7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684440293; x=1687032293;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1684444083; x=1687036083;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Dz/8MS7Lj7KmoyyTrLm++CyIRlPD4x/waiNz5/meCus=;
-        b=laSlJNQyOmnZptBJvUBlc4axLZCKjcmAHKxWAG08GgmK9gwPPAoeiyTA8bD94U6hKi
-         ZZHc7lmsbbqVVPkMn5KsNXo7VJCHfCJgh2xAGNTGOY+q5x/Y8my/KkOk0hUt7hslFn6e
-         lciGuwl5pVkuetmhFQ6wClbkHYjm88paR9VAbRKhRts28e1zGYTGRuqV5l3gAIjoNB8m
-         S4UTp05SemnfSyyXM1g9gzHSkZn3VpQMF3oN1OifTFuUZfhdNmQhiShxex5p49Y8jnOz
-         71mnr/iIlqUFs7nYP7aRzDRMjBi0MyZ7eTNUGbrh4c1JLiL+Tml5jyoBHmuYC7j+0E+Y
-         6JKA==
-X-Gm-Message-State: AC+VfDz7exBOPY6y+PmH0v3A+ihpOS3WSKKYq4KZ8Wsh7NA9uhSxi8x5
-        X3PpCVFTvUnSFgKs9BDypG2EVz2fc6fjT5DZaZk=
-X-Google-Smtp-Source: ACHHUZ4EBOtGVUrAip758uCZF+1h1aLN/sSTVQIUSACMMRvnCSHys6SxptJuy+0OrMe//0KPdz+gDV+lTDKBFqM4vWU=
-X-Received: by 2002:a17:907:3f17:b0:94f:1d54:95d2 with SMTP id
- hq23-20020a1709073f1700b0094f1d5495d2mr7161796ejc.15.1684440292615; Thu, 18
- May 2023 13:04:52 -0700 (PDT)
+        bh=PQ1nJRxIw8TnLlb1uSAgTqg+C0cT9QEqF+EZc+fkSGE=;
+        b=Qx8BTdniY//t4z27aFG06aBwpsYUxnYJalZU4cKek9TMgIssVFnWHoXwA2wAB9thHD
+         vhmxqyHznBb5gjCoC4J9aNZK2JtOFEG1QMdX5GZ/m68yOOnJkWwRuqY8oi7a1ShyHAw0
+         spTKrtv3dJekCSsvkPwk4sRgNdMh29hxkDNfX3yclRjQapPIr+dn5ojw7I3E3BRILFy3
+         4H2ZwJ45qY6mZE44CxA8HYwEjQjV9oSn0m7J/JAwAqKHx9pHETVuOdaLzMtFMpg9qrnO
+         x0lEJte5cBTKt72Pgy9jun4CbPZa2447hCMdFW7mwoj68qQfeeRAofFrTXk8hAOCq4jY
+         J3jw==
+X-Gm-Message-State: AC+VfDxju/J9iRIYuoaWI6cRDTF6X1Rwsv59ut+gKWr6AnDfrYA3GPsF
+        aQSpJnF/HoIIFM7P54QJwCU=
+X-Google-Smtp-Source: ACHHUZ52SILasiNNx8sRkg0S1vg75C4xH/2WANsiZSXCT1GQIAgCV8NbifpGXn/D63ZPnP28Jh2UMw==
+X-Received: by 2002:aa7:df0d:0:b0:50d:f9b3:444c with SMTP id c13-20020aa7df0d000000b0050df9b3444cmr6065388edy.17.1684444082935;
+        Thu, 18 May 2023 14:08:02 -0700 (PDT)
+Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
+        by smtp.gmail.com with ESMTPSA id bc3-20020a056402204300b0050bc41352d9sm949023edb.46.2023.05.18.14.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 May 2023 14:08:02 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     Maxime Ripard <mripard@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Roman Beranek <me@crly.cz>
+Cc:     Frank Oltmanns <frank@oltmanns.dev>,
+        Icenowy Zheng <icenowy@aosc.io>, Ondrej Jirman <megi@xff.cz>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux
+Date:   Thu, 18 May 2023 23:07:59 +0200
+Message-ID: <4828357.31r3eYUQgx@jernej-laptop>
+In-Reply-To: <20230505052110.67514-2-me@crly.cz>
+References: <20230505052110.67514-1-me@crly.cz> <20230505052110.67514-2-me@crly.cz>
 MIME-Version: 1.0
-References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
- <20230426095805.15338-7-ddrokosov@sberdevices.ru> <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
- <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021> <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
- <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
-In-Reply-To: <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 18 May 2023 22:04:41 +0200
-Message-ID: <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
-Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
- controller driver
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-        jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Heiner Kallweit <hkallweit1@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
+Dne petek, 05. maj 2023 ob 07:21:07 CEST je Roman Beranek napisal(a):
+> TCON0's source clock can be fed from either PLL_MIPI, or PLL_VIDEO0(2X),
+> however MIPI DSI output only seems to work when PLL_MIPI is selected and
+> thus the choice must be hardcoded in.
+> 
+> Currently, this driver can't propagate rate change from N-K-M clocks
+> (such as PLL_MIPI) upwards. This prevents PLL_VIDEO0 from participating
+> in setting of the TCON0 data clock rate, limiting the precision with
+> which a target pixel clock can be matched.
+> 
+> For outputs with fixed TCON0 divider, that is DSI and LVDS, the dotclock
+> can deviate up to 8% off target.
+> 
+> Signed-off-by: Roman Beranek <me@crly.cz>
 
-On Wed, May 17, 2023 at 12:34=E2=80=AFPM Dmitry Rokosov
-<ddrokosov@sberdevices.ru> wrote:
-[...]
-> > > Additionally, the CCF determines the best ancestor based on how close
-> > > its rate is to the given one, based on arithmetic calculations. Howev=
-er,
-> > > we have independent knowledge that a certain clock would be better, w=
-ith
-> > > less jitter and fewer intermediaries, which will likely improve energ=
-y
-> > > efficiency. Sadly, the CCF cannot take this into account.
-> > I agree that the implementation in CCF is fairly simple. There's ways
-> > to trick it though: IIRC if there are multiple equally suitable clocks
-> > it picks the first one. For me all of this has worked so far which is
-> > what makes me curious in this case (not saying that anything is wrong
-> > with your approach).
-> >
-> > Do you have a (real world) example where the RTC clock should be
-> > preferred over another clock?
-> >
->
-> Yes, a real-life example is the need for a 32Khz clock for an external
-> wifi chip. There is one option to provide this clock with high
-> precision, which is RTC + GENCLK.
->
-> > I'm thinking about the following scenario.
-> > PWM parents:
-> > - XTAL: 24MHz
-> > - sys: not sure - let's say 166.67MHz
-> > - RTC: 32kHz
-> >
-> > Then after that there's a divider and a gate.
-> >
-> > Let's say the PWM controller needs a 1MHz clock: it can take that from
-> > XTAL or sys. Since XTAL is evenly divisible to 1MHz CCF will pick that
-> > and use the divider.
-> > But let's say the PWM controller needs a 32kHz clock: CCF would
-> > automatically pick the RTC clock.
-> > So is your implementation there to cover let's say 1kHz where
-> > mathematically 24MHz can be divided evenly to 1kHz (and thus should
-> > not result in any jitter) but RTC gives better precision in the real
-> > world (even though it's off by 24Hz)?
-> >
->
-> I don't think so. The highest precision that RTC can provide is from a
-> 32KHz rate only. However, I believe that a 1kHz frequency can also be
-> achieved by using xtal 24MHz with a divider, which can provide high
-> precision as well.
-Thank you again for the great discussion on IRC today.
-Here's my short summary so I don't forget before you'll follow up on this.
-
-In general there's two known cases where the RTC clock needs to be used:
-a) When using the GENCLK output of the SoC to output the 32kHz RTC
-clock and connect that to an SDIO WiFi chip clock input (this seems
-useful in my understanding because the RTC clock provides high
-precision)
-b) When using the PWM controller to output a 32kHz clock signal. In
-this case my understanding is that using the RTC clock as input to the
-PWM controller results in the best possible signal
-
-The second case won't be supported with Heiner's patches [0] that use
-CCF (common clock framework) in the PWM controller driver.
-In this series the parent clock is calculated using:
-  freq =3D div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
-
-A 32kHz clock means a PWM period of 30518ns. So with the above
-calculation the PWM driver is asking for a clock rate of >=3D2GHz.
-We concluded that letting the common clock framework choose the best
-possible parent (meaning: removing CLK_SET_RATE_NO_REPARENT here) can
-be a way forward.
-But this means that the PWM controller driver must try to find the
-best possible parent somehow. The easiest way we came up with
-(pseudo-code):
-  freq =3D NSEC_PER_SEC / period;
-  fin_freq =3D clk_round_rate(channel->clk, freq);
-  if (fin_freq !=3D freq) {
-    freq =3D div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
-    fin_freq =3D clk_round_rate(channel->clk, freq);
-  }
-
-The idea is: for a requested 32kHz signal the PWM period is 30518ns.
-The updated logic would find that there's a matching clock input and
-use that directly. If not: use the original logic as suggested by
-Heiner.
-
+Applied, thanks!
 
 Best regards,
-Martin
+Jernej
 
 
-[0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e3=
-23e@gmail.com/
