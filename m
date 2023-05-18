@@ -2,127 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33201C7EE24
-	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 14:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D490C7EE23
+	for <linux-clk@archiver.kernel.org>; Thu, 18 May 2023 14:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231311AbjEROJH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 May 2023 10:09:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44546 "EHLO
+        id S231618AbjEROMS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 May 2023 10:12:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229952AbjEROJG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 10:09:06 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EB4CE51
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 07:09:05 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-965b5f3b9ffso249843066b.0
-        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 07:09:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684418944; x=1687010944;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ynI1F9GRlorpTQ3//tjzRjm9oO2VDWxwaEiCp14cw+8=;
-        b=l/uqrQwhsN91ktGXDLHSeOnK04VqjMfjApJem9V22gmlQ2PMPpJ6PIkXIknZORpOo9
-         13oiHJvgawnfSmhP1Ekes3Z0PPfLCy7iq9Iq3J7xclj9g9fC3oevOOr7p1GcLJiVBKJc
-         G0+K2R6js7q7WGM8H9bHuIMwtHp2MUfnLiny7Yhi8cLh+m5yxXb5L3HTgJXkaR29N/Sw
-         gWEvPp3eVirnwoR3WyUu9ewAt76N+QSUvYWIK+1F2B1Jp9H0B/+1vGRP4/jwHj2GvYae
-         Fr7Cl3+lRz91r81XjP8byuGztLkI1zQZucjp41lch/kdQwYOxjFdcXyPq06pSBjTUxux
-         B2lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684418944; x=1687010944;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ynI1F9GRlorpTQ3//tjzRjm9oO2VDWxwaEiCp14cw+8=;
-        b=T699KILs1jg8fBvxVN8+vLIz2AoDlc5Die/nb9W/s6i42O9CkLUqYu5XB/W4yjGWm+
-         bVFf7q4yEcJKWEwF9Y8r+Y1fzjyxxASjnWBVpP8X/uVrj0xW0N4wWbG1QlXZlMGCEWnk
-         sSkg4L0bG/+9+WQCTbCrXM98goo2IRNKi3+xZZj4SDUj7QYoq6uGKByvp697SCzcQmDX
-         OOnKD0ClQ70GM1+7eSS6L9oT1aFeiUYzJuTQyF2ON+RHkBqkn6YJh+/WIvq/qadHh4KL
-         s6OMn3Ql7K8tZFSkp64LuHj2vniOdW77gBo//lZQZLXF6heGngrB+/Tdh/C9boPqSEas
-         /1yg==
-X-Gm-Message-State: AC+VfDxOnxkvR0m1udiSxehRToiV6mkmeXwyg1QmhnXeI7YLeble/fRb
-        zBMgTFcIJ3WxQ5mcAjgpYjZ6gg==
-X-Google-Smtp-Source: ACHHUZ7AWtaKIYmvs/UYoBsfo7y1w1zvObfFUtKx8gAePaPSKP9wKSev0O+652RoyHlDI7I/+hlO1w==
-X-Received: by 2002:a17:907:7f18:b0:96b:1606:f015 with SMTP id qf24-20020a1709077f1800b0096b1606f015mr5350697ejc.18.1684418943709;
-        Thu, 18 May 2023 07:09:03 -0700 (PDT)
-Received: from ?IPV6:2a02:810d:15c0:828:7e24:6d1b:6bf:4249? ([2a02:810d:15c0:828:7e24:6d1b:6bf:4249])
-        by smtp.gmail.com with ESMTPSA id c7-20020a17090654c700b0096f4389714csm441423ejp.55.2023.05.18.07.09.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 May 2023 07:09:02 -0700 (PDT)
-Message-ID: <cd38d95f-95bd-056e-e3d0-d6c95e3fd80e@linaro.org>
-Date:   Thu, 18 May 2023 16:09:01 +0200
+        with ESMTP id S231589AbjEROMR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 May 2023 10:12:17 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E3861B5;
+        Thu, 18 May 2023 07:12:16 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34I8wZFR022296;
+        Thu, 18 May 2023 14:12:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=LkrMDDc9iBtZ45s6C+tsBpRL5jdn9d9RJXAXRCAhMq0=;
+ b=kFMyIXWqsYH0na5EBHXYeDWyaJT0PE+JAJ2rXS66MTBhClH36CE8ON+vmHrh/2dC7BqK
+ EXgqRfi8Xi1Z4HdirHstBq9hiWbld4Ej+29WdPHrEA5sLaTHK9xN+/YQNf4pM2+nwCBO
+ x+e98exOtSrD/rsnIJCU7FGYVzAaEiKMUchRGj5wrFIrg0DyQ/FDgWLPykiZ676pa1mv
+ /iK3DR3ewK+YTDRdMv7ildwvfa10FWlN5CJ846VQGzA8l7dU4BmDi94H8+UoT+1XM5s8
+ P3FDVJ9J5BJwGDgb4ihwlt+N4M/N0JfsVdnk/kF0iaR/dYhA267gD9lMTE1pTKMqhsQU QA== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qmxyp2wnt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 May 2023 14:12:04 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34IEC2uw010622
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 May 2023 14:12:02 GMT
+Received: from anusha-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Thu, 18 May 2023 07:11:56 -0700
+From:   Anusha Rao <quic_anusha@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <thara.gopinath@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
+        <bhupesh.sharma@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
+Subject: [PATCH V3 0/4] Enable crypto for ipq9574
+Date:   Thu, 18 May 2023 19:41:01 +0530
+Message-ID: <20230518141105.24741-1-quic_anusha@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
- Audio REFCLK
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>, Jai Luthra <j-luthra@ti.com>,
-        Andrew Davis <afd@ti.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20230515-refclk-v1-0-5e89f01d6733@ti.com>
- <20230515-refclk-v1-1-5e89f01d6733@ti.com>
- <20230517-reprise-unroll-e2223cab3846@spud>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230517-reprise-unroll-e2223cab3846@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kcZfL1pMlsxlAmOt-lKVjsZzpqWdx1pV
+X-Proofpoint-GUID: kcZfL1pMlsxlAmOt-lKVjsZzpqWdx1pV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-18_11,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=807
+ priorityscore=1501 impostorscore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305180113
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/05/2023 19:15, Conor Dooley wrote:
-> On Wed, May 17, 2023 at 01:04:05PM +0530, Jai Luthra wrote:
->> Add DT bindings for TI's audio reference clocks (REFCLK) present on AM62
->> SoC.
-> 
-> This seems fine to me. Perhaps Krzysztof will differ...
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> 
->>
->> Signed-off-by: Jai Luthra <j-luthra@ti.com>
->> ---
->>  .../bindings/clock/ti,am62-audio-refclk.yaml       | 44 ++++++++++++++++++++++
->>  1 file changed, 44 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
->> new file mode 100644
->> index 000000000000..7c4cf7abe007
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
->> @@ -0,0 +1,44 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/ti,am62-audio-refclk.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: TI Audio Reference Clock
->> +
->> +maintainers:
->> +  - Jai Luthra <j-luthra@ti.com>
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: ti,am62-audio-refclk
->> +      - const: syscon
+Update GCC driver to include clocks required for crypto.
+Enable crypto nodes in ipq9574.
 
-I just don't get why this is syscon? There are no references to it, no
-DTS change and nothing in the driver suggesting it has to be syscon
-(creating regmap for internal use does not count).
+DTS patch depends on the below series
+https://lore.kernel.org/linux-arm-msm/20230517072806.13170-1-quic_kathirav@quicinc.com/
 
-Andrew,
-Is this the pattern we discussed and wanted to remove?
+Changes in V3:
+	Detailed change logs are added to the respective patches.
 
-Best regards,
-Krzysztof
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230515150722.12196-1-quic_anusha@quicinc.com/
+
+V1 can be found at
+https://lore.kernel.org/linux-arm-msm/20230512090134.9811-1-quic_anusha@quicinc.com/
+
+Anusha Rao (4):
+  dt-bindings: clock: Add crypto clock and reset definitions
+  clk: qcom: gcc-ipq9574: Enable crypto clocks
+  dt-bindings: qcom-qce: add SoC compatible string for ipq9574
+  arm64: dts: qcom: ipq9574: Enable crypto nodes
+
+ .../devicetree/bindings/crypto/qcom-qce.yaml  |  1 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 20 ++++++
+ drivers/clk/qcom/gcc-ipq9574.c                | 72 +++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |  4 ++
+ include/dt-bindings/reset/qcom,ipq9574-gcc.h  |  1 +
+ 5 files changed, 98 insertions(+)
+
+
+base-commit: aabe491169befbe5481144acf575a0260939764a
+-- 
+2.17.1
 
