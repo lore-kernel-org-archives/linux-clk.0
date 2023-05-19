@@ -2,241 +2,161 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA470C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 09:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA90C77B7F
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 10:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231329AbjESJEF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 05:04:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49894 "EHLO
+        id S231324AbjESKpD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 06:45:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231311AbjESJD7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 05:03:59 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F12531BC8;
-        Fri, 19 May 2023 02:03:28 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34J81B91004765;
-        Fri, 19 May 2023 09:03:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type; s=qcppdkim1;
- bh=+qPFDuZS2pivZBcOc3YcwlSzJjRWO/L2uVnS7tFny2M=;
- b=iFiG8fAOaea0qBpFuO9TpDZk/df0BSD4m8aLm9zO3buB28t3X6d3nVwoUEpgydR83USC
- mNI33hIy4EtvqNnep/STPu/t0l071X3cccN3VWv0oOrPXJzviDYyrjgNEzcQ5PjS06ap
- BVff1CEXcQ7nYiPd7OLOn4EFFSl9SI/qsVZvXBZgCl3IH+d1tVBZh5gvmRKbteBXlQ4r
- +463bd7yJpBWhFM/z4ZQGhMDDOvQ2e1z3lazyWGtZHz5lKu80my3tbDgGRXrAs912M14
- s5BwZbIyA+k9bt7LFsr2QxM+JVp8vKPekmG1LGb6IogSi8cTyAss/c5XDbVXE1kLuBgz yw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qp57y0365-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 09:03:22 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34J93Lkl005425
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 09:03:21 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Fri, 19 May 2023 02:03:14 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <mani@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_ipkumar@quicinc.com>
-Subject: [PATCH V4 6/6] PCI: qcom: Add support for IPQ9574
-Date:   Fri, 19 May 2023 14:32:19 +0530
-Message-ID: <20230519090219.15925-7-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230519090219.15925-1-quic_devipriy@quicinc.com>
-References: <20230519090219.15925-1-quic_devipriy@quicinc.com>
+        with ESMTP id S231824AbjESKpA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 06:45:00 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5D8EC;
+        Fri, 19 May 2023 03:44:57 -0700 (PDT)
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34JAigHW043525;
+        Fri, 19 May 2023 05:44:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1684493082;
+        bh=pz9X5RVPYmUqGvU6zl4HiycPuT79cB7Xrh/xPmkS/Mk=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=jv7DC0GpQk2ezyDOeRSRiD/+eB4Da++TCy9fJ7+L7jNFAh9cpNto12J9Fr3DF4Akm
+         XpgQ1ISCnduwNT7uuYCWjByFni0+2lWTeRtmh5yObQubjUbjjx0QdhxnbauUYBqi/d
+         AMfMMD5UsqmKlj8s76yi1p7C4fTBRdB2i27OL+BY=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34JAiggE021339
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 19 May 2023 05:44:42 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 19
+ May 2023 05:44:42 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 19 May 2023 05:44:42 -0500
+Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34JAiffV030900;
+        Fri, 19 May 2023 05:44:41 -0500
+Date:   Fri, 19 May 2023 16:14:42 +0530
+From:   Jai Luthra <j-luthra@ti.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     Conor Dooley <conor@kernel.org>, Andrew Davis <afd@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
+ Audio REFCLK
+Message-ID: <e3gfl2hqb5ac3lyj3ji7ncvdjdhkkrefwr2xqrjixavdhxcyil@avdo5ovc4bqv>
+References: <20230515-refclk-v1-0-5e89f01d6733@ti.com>
+ <20230515-refclk-v1-1-5e89f01d6733@ti.com>
+ <20230517-reprise-unroll-e2223cab3846@spud>
+ <cd38d95f-95bd-056e-e3d0-d6c95e3fd80e@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: UKn8ECl2vvAbogOMpC-bZvwfUA1Wt0Bn
-X-Proofpoint-ORIG-GUID: UKn8ECl2vvAbogOMpC-bZvwfUA1Wt0Bn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-19_05,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0 clxscore=1015
- priorityscore=1501 bulkscore=0 impostorscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
- definitions=main-2305190076
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uyc5revnwgqxyrfw"
+Content-Disposition: inline
+In-Reply-To: <cd38d95f-95bd-056e-e3d0-d6c95e3fd80e@linaro.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The IPQ9574 platform has 4 Gen3 PCIe controllers: two single-lane
-and two dual-lane based on SNPS core 5.70a
-The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
-Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
-which reuses all the members of 'ops_2_9_0' except for the post_init
-as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
-and 1_27_0.
-Also, modified get_resources of 'ops 2_9_0' to get the clocks
-from the device tree and modelled the post init sequence as
-a common function to avoid code redundancy.
+--uyc5revnwgqxyrfw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
----
- Changes in V4:
-	- Fixed the if conditional check in qcom_pcie_get_resources_2_9_0
-	  'if (res->clks < 0)' modified to 'if (res->num_clks < 0)'
-	- Picked up the R-b tags
+Hi Krzysztof,
 
- drivers/pci/controller/dwc/pcie-qcom.c | 57 ++++++++++++++++++--------
- 1 file changed, 39 insertions(+), 18 deletions(-)
+Thanks for the review,
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 4ab30892f6ef..c7579dfa5b1c 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -107,6 +107,7 @@
- 
- /* PARF_SLV_ADDR_SPACE_SIZE register value */
- #define SLV_ADDR_SPACE_SZ			0x10000000
-+#define SLV_ADDR_SPACE_SZ_1_27_0		0x08000000
- 
- /* PARF_MHI_CLOCK_RESET_CTRL register fields */
- #define AHB_CLK_EN				BIT(0)
-@@ -202,10 +203,10 @@ struct qcom_pcie_resources_2_7_0 {
- 	struct reset_control *rst;
- };
- 
--#define QCOM_PCIE_2_9_0_MAX_CLOCKS		5
- struct qcom_pcie_resources_2_9_0 {
--	struct clk_bulk_data clks[QCOM_PCIE_2_9_0_MAX_CLOCKS];
-+	struct clk_bulk_data *clks;
- 	struct reset_control *rst;
-+	int num_clks;
- };
- 
- union qcom_pcie_resources {
-@@ -1050,17 +1051,10 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
- 	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
- 	struct dw_pcie *pci = pcie->pci;
- 	struct device *dev = pci->dev;
--	int ret;
--
--	res->clks[0].id = "iface";
--	res->clks[1].id = "axi_m";
--	res->clks[2].id = "axi_s";
--	res->clks[3].id = "axi_bridge";
--	res->clks[4].id = "rchng";
- 
--	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
--	if (ret < 0)
--		return ret;
-+	res->num_clks = devm_clk_bulk_get_all(dev, &res->clks);
-+	if (res->num_clks < 0)
-+		return res->num_clks;
- 
- 	res->rst = devm_reset_control_array_get_exclusive(dev);
- 	if (IS_ERR(res->rst))
-@@ -1073,7 +1067,7 @@ static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
- {
- 	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
- 
--	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
-+	clk_bulk_disable_unprepare(res->num_clks, res->clks);
- }
- 
- static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
-@@ -1102,19 +1096,16 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
- 
- 	usleep_range(2000, 2500);
- 
--	return clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
-+	return clk_bulk_prepare_enable(res->num_clks, res->clks);
- }
- 
--static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-+static int qcom_pcie_post_init(struct qcom_pcie *pcie)
- {
- 	struct dw_pcie *pci = pcie->pci;
- 	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
- 	u32 val;
- 	int i;
- 
--	writel(SLV_ADDR_SPACE_SZ,
--		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
--
- 	val = readl(pcie->parf + PARF_PHY_CTRL);
- 	val &= ~PHY_TEST_PWR_DOWN;
- 	writel(val, pcie->parf + PARF_PHY_CTRL);
-@@ -1151,6 +1142,22 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
- 	return 0;
- }
- 
-+static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
-+{
-+	writel(SLV_ADDR_SPACE_SZ_1_27_0,
-+	       pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
-+
-+	return qcom_pcie_post_init(pcie);
-+}
-+
-+static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
-+{
-+	writel(SLV_ADDR_SPACE_SZ,
-+	       pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
-+
-+	return qcom_pcie_post_init(pcie);
-+}
-+
- static int qcom_pcie_link_up(struct dw_pcie *pci)
- {
- 	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
-@@ -1291,6 +1298,15 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
- 	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
- };
- 
-+/* Qcom IP rev.: 1.27.0  Synopsys IP rev.: 5.80a */
-+static const struct qcom_pcie_ops ops_1_27_0 = {
-+	.get_resources = qcom_pcie_get_resources_2_9_0,
-+	.init = qcom_pcie_init_2_9_0,
-+	.post_init = qcom_pcie_post_init_1_27_0,
-+	.deinit = qcom_pcie_deinit_2_9_0,
-+	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
-+};
-+
- static const struct qcom_pcie_cfg cfg_1_0_0 = {
- 	.ops = &ops_1_0_0,
- };
-@@ -1323,6 +1339,10 @@ static const struct qcom_pcie_cfg cfg_2_9_0 = {
- 	.ops = &ops_2_9_0,
- };
- 
-+static const struct qcom_pcie_cfg cfg_1_27_0 = {
-+	.ops = &ops_1_27_0,
-+};
-+
- static const struct dw_pcie_ops dw_pcie_ops = {
- 	.link_up = qcom_pcie_link_up,
- 	.start_link = qcom_pcie_start_link,
-@@ -1607,6 +1627,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
- 	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
- 	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
-+	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_1_27_0 },
- 	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
- 	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
- 	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_1_9_0 },
--- 
-2.17.1
+On May 18, 2023 at 16:09:01 +0200, Krzysztof Kozlowski wrote:
+> On 17/05/2023 19:15, Conor Dooley wrote:
+> > On Wed, May 17, 2023 at 01:04:05PM +0530, Jai Luthra wrote:
+> >> Add DT bindings for TI's audio reference clocks (REFCLK) present on AM=
+62
+> >> SoC.
+> >=20
+> > This seems fine to me. Perhaps Krzysztof will differ...
+> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> >>
+> >> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> >> ---
+> >>  .../bindings/clock/ti,am62-audio-refclk.yaml       | 44 +++++++++++++=
++++++++++
+> >>  1 file changed, 44 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/clock/ti,am62-audio-ref=
+clk.yaml b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
+> >> new file mode 100644
+> >> index 000000000000..7c4cf7abe007
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
+> >> @@ -0,0 +1,44 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/clock/ti,am62-audio-refclk.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: TI Audio Reference Clock
+> >> +
+> >> +maintainers:
+> >> +  - Jai Luthra <j-luthra@ti.com>
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    items:
+> >> +      - const: ti,am62-audio-refclk
+> >> +      - const: syscon
+>=20
+> I just don't get why this is syscon? There are no references to it, no
+> DTS change and nothing in the driver suggesting it has to be syscon
+> (creating regmap for internal use does not count).
 
+Sorry you're right, I missed Andrew's series removing syscon:
+https://lore.kernel.org/linux-clk/20230516184626.154892-1-afd@ti.com/
+
+Will re-base my patches on top of it and send v2.
+
+>=20
+> Andrew,
+> Is this the pattern we discussed and wanted to remove?
+>=20
+> Best regards,
+> Krzysztof
+>=20
+
+Thanks,
+Jai
+
+--uyc5revnwgqxyrfw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmRnUxYACgkQQ96R+SSa
+cUWHeg//S9Bd9zlNj0Q8CIjTyzpLh1dChtqtqpJAPnt2JDm4O8/6CyaBF1up7G/2
+kHUhBukHhaoOvsX/e24axalKjMbLkPwgZnjSDNPoAyWUyAx4FNYP2QIbuuHCEcBl
+YUJ6D7RTnptcdbBek8zQ0TGC5nQFKBkjxQafi9aAlQ66zOuDGT9S0h4S1sVgp5u0
+2XcwyKppOgEN9m7nmSfjno5QwhwacH+7GKMwlD/NcBdmsOMVvZd/Fj8ay16akb7A
+cRJ0Vgsh+PYWzCFp5KvqIHilxHhDOPH8BiwHJ/YT8YCoTutIh1AZ3PCKvjnuGr+q
+UoA0cXwsCF31yKRUiGRigpXzNXHYDobovNiyA3A6CKyNXZC4TPOV82SBQ9TSZ/Bi
+4HnG5cM4X5BUu8uSZCNne79c7Vh2BQWrT93kBAw6+bkcPq/OjmVF23SVdsWdbWD9
+rmWxz7Bmyk5Cie13OvUpbz7Zn3VKxoSPpKU0NKGGkQYde28BJMMAf+9qIUK/8s54
+3set9qv3xXVl5EilLIwABF2qX36huiOdpxfEkHw9GrpqMTSn4lb2fvv44bILqptR
+xtF5xK5/BIT2yE6IQyasuv9Zc4NVARvmCMCQ6IOr4WJjqsyaEqJ4NuErRnsEoil1
+QnJytx6LCIwwLJ/UQpdMDRYw+Ap47OgaZMu5j/HFX2c++IAmiCQ=
+=B83k
+-----END PGP SIGNATURE-----
+
+--uyc5revnwgqxyrfw--
