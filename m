@@ -2,245 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D61C7EE2D
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 12:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F41C77B7A
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 13:09:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231625AbjESMty (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 08:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60082 "EHLO
+        id S230220AbjESNJN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 09:09:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231617AbjESMtq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 08:49:46 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49077106
-        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 05:49:44 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5648e904593so1510297b3.3
-        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 05:49:44 -0700 (PDT)
+        with ESMTP id S230370AbjESNJM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 09:09:12 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B38124
+        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 06:09:09 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2af0eb50b4aso31082581fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 06:09:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684500583; x=1687092583;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GFqTBcslc6DLLEdQujNs5o7w2U9WLB+vITq+ASy0dBI=;
-        b=k6rTK1bCuyU1IZn9OVmF00sEndwQ2WXjTRcbBCViUG3ny9XGVQgVKH7XKn91OJicrj
-         F21KSOQtnCGsOsLouGtuydLE09f219E09pN+CXuV960NNy9YRK2VLHmGzgPwD9pQv/4i
-         pHFvXFsHB2rCqoR0whXlmmLTAfdWIDIrWh7fe1vSLhLnqVlIe2TquFno47/Cp/pacOLQ
-         KE7AP9D/nML+KcxRTNUxrHsYh6shfyUmjkJzXGAyhPhzHZS30eDnJ0VDc8xg2cjNuyRu
-         Qph13ErRzE70yURaq36X1151K4JR9NzYs1mqJd6peyVhVsS+pZIhSfDD3uksPlgjyub0
-         TOng==
+        d=linaro.org; s=google; t=1684501747; x=1687093747;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/Zv1mah4N/HaBlq32OJrOUOQJENrx2Ay1ik5IJM6AVI=;
+        b=E1COi7fX2rR/FXALr7SUoo8vmNVfuubFb6T0kKFyjEycRTKBAFRDmAdnqRsiv96QI+
+         YuksjYw1TCI8YD7OL1HQrzgBRoCAIAFokNHTHkDVC1hU3qngsBeDaYnHcwPs5B3kG3Es
+         u00S6fMxCjT7Mb78GlmwZedLK69dZlMIFKBL02M+7Q+i2qcCqg0QAnEjTlwu+jqP61+t
+         XdH1jZt1ZsHLr3eQuYX9Uk+sJk8rDuB0PHuNDxu1ssWyB4KCdzOdVXgajCPByvWxCIDq
+         eFyq3BBwUZrDO/qwGY7btyI+X5TzriO5HGMlo/fA56RtJOJp3ByAog9e5a2LPgxKgf2g
+         5u5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684500583; x=1687092583;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GFqTBcslc6DLLEdQujNs5o7w2U9WLB+vITq+ASy0dBI=;
-        b=JsB1j6WHu1AmCcgUE6byhu/m65IvAjg+H1irtwkojlEq7bzzwCYH6O6XLfD7BuULeg
-         MrxorH74yA36/lZzo4St7bYHhRLW7h/ElgjcR/oCK7fs+FbzmK8vtO3TjTBCGPyRozJJ
-         CzcFUQC3cV/pOZCcazjeJhLc1iVfzOmc+79ZGy7OonaPPSYBWsdO536JCQ63MnVdqkni
-         rtURl70IcIViqW1OJh/lt6wZgiGhnKdcgQCQ56c43SRrK5Cbk+yYXWmImBvwWBBzYFsw
-         nP5/UjO/0RHfM/Al+HM/+938zZ3EKLmJ5uYQ+G3VKun69I7zpoEf5E76Ar8nOi9KGJkV
-         hTPw==
-X-Gm-Message-State: AC+VfDyK4376LjP9j1NH9bFHWWRrwmnkXnZAtjsW9Zjs06KLW2++nFRo
-        i359BgDiS/eC1IhISNkDzEffgWHdbrblTbvQr9OCVA==
-X-Google-Smtp-Source: ACHHUZ615++0zR/oJu8Lz/o2N60nAqzg3i9l+s8mTV6UAbCaZVNXzAqCHIue51mZ0me14gZz2RBCzicW2XdBYU6q/Bw=
-X-Received: by 2002:a0d:cbd7:0:b0:561:a7d9:7f0f with SMTP id
- n206-20020a0dcbd7000000b00561a7d97f0fmr1874127ywd.29.1684500583458; Fri, 19
- May 2023 05:49:43 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684501747; x=1687093747;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Zv1mah4N/HaBlq32OJrOUOQJENrx2Ay1ik5IJM6AVI=;
+        b=gP64R1VHP6XJL5j60MeLUjsE/RbitSiDYMDV4FiK5shYE+g26JLZRBwthiqIWeyXj5
+         JmVS7tVLDLoBFpHxTF1AB7qg/nKCixiXIAOHH8Xcn7zMmy0xcrFAdoYdaMdcw9Hbz6CB
+         HMCPdPcvK+csj1UjCLtMHdYdMFodh0CXa37RZmHEwPrTXFlxwK/kQpmEBTC4Bbhjx4ZF
+         pwbqX0WxsbRiBWtYwa+zOIuH0NPVmiJy0bVSkPSZPy3VSSOSfOnbF8caakNr2KwGS8Hv
+         U8ZcymhPIs2fT7qtKwMVQQbgGjWrjEzTjeqm8vSUU/sQxH1D+XPyHolNAK14ba70YHoi
+         HMsw==
+X-Gm-Message-State: AC+VfDxZLqYt20s+xJ6bsX93e3fQERaYh9lo1z5xzwzzf6EsNP/ntJ0o
+        kwqgjBRnmwpwJ3l7x5XM6gdOlQ==
+X-Google-Smtp-Source: ACHHUZ7c/wlNtcqnvOYUHVFfllflTtq4Bc0T77kg8q0qZWMwJo/oVsLcE8qIc4ULCRXWHIkvU13COQ==
+X-Received: by 2002:ac2:5a4d:0:b0:4ed:cb37:7d8c with SMTP id r13-20020ac25a4d000000b004edcb377d8cmr716553lfn.67.1684501747257;
+        Fri, 19 May 2023 06:09:07 -0700 (PDT)
+Received: from [192.168.1.101] (abxi58.neoplus.adsl.tpnet.pl. [83.9.2.58])
+        by smtp.gmail.com with ESMTPSA id q30-20020ac25a1e000000b004edc7f6ee44sm278767lfn.234.2023.05.19.06.09.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 May 2023 06:09:06 -0700 (PDT)
+Message-ID: <4a9248c0-96ec-1986-d874-1cb7d8aac0ac@linaro.org>
+Date:   Fri, 19 May 2023 15:09:05 +0200
 MIME-Version: 1.0
-References: <20230509172148.7627-1-quic_tdas@quicinc.com> <20230509172148.7627-3-quic_tdas@quicinc.com>
- <CAA8EJprHgOaiH2CFKmz_E+NvJpA+DRNE-r1wQXbSfYi+5qoBmA@mail.gmail.com> <2b013e9d-e4d9-075f-519b-0ce5c4f62894@quicinc.com>
-In-Reply-To: <2b013e9d-e4d9-075f-519b-0ce5c4f62894@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 19 May 2023 15:49:32 +0300
-Message-ID: <CAA8EJprUd-_9D+Xt=4vrXuzYuadhJFu1mA6Fow3K63U=0N2g5A@mail.gmail.com>
-Subject: Re: [PATCH V4 2/3] clk: qcom: videocc-sm8450: Add video clock
- controller driver for SM8450
-To:     Taniya Das <quic_tdas@quicinc.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 1/4] clk: qcom: clk-alpha-pll: Add support for lucid ole
+ pll ops
+Content-Language: en-US
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_skakitap@quicinc.com, quic_jkona@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230509161218.11979-1-quic_jkona@quicinc.com>
+ <20230509161218.11979-2-quic_jkona@quicinc.com>
+ <019999fd-3c86-8c85-76c7-8d0206e60f4d@linaro.org>
+ <55fc32df-f01b-1ba3-3813-26a5f8c7f730@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <55fc32df-f01b-1ba3-3813-26a5f8c7f730@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 19 May 2023 at 13:53, Taniya Das <quic_tdas@quicinc.com> wrote:
->
-> Hello Dmitry,
->
-> Thank you for your review.
->
-> On 5/10/2023 2:03 AM, Dmitry Baryshkov wrote:
-> > On Tue, 9 May 2023 at 20:22, Taniya Das <quic_tdas@quicinc.com> wrote:
-> >>
-> >> Add support for the video clock controller driver for peripheral clock
-> >> clients to be able to request for video cc clocks.
-> >>
-> >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> >> ---
-> >> Changes since V3:
-> >>   - Use lower case hex.
-> >>   - Check the return value here and bail out early on failure in probe.
-> >>
-> >> Changes since V2:
-> >>   - Update the header file name to match the latest upstream header
-> >>     files.
-> >>
-> >> Changes since V1:
-> >>   - Use DT indices instead of fw_name.
-> >>   - Replace pm_runtime_enable with devm_pm_runtime_enable.
-> >>   - Change license to GPL from GPL V2.
-> >>
-> >>   drivers/clk/qcom/Kconfig          |   9 +
-> >>   drivers/clk/qcom/Makefile         |   1 +
-> >>   drivers/clk/qcom/videocc-sm8450.c | 461 ++++++++++++++++++++++++++++++
-> >>   3 files changed, 471 insertions(+)
-> >>   create mode 100644 drivers/clk/qcom/videocc-sm8450.c
-> >
-> > [skipped]
-> >
-> >
-> >> +static const struct qcom_reset_map video_cc_sm8450_resets[] = {
-> >> +       [CVP_VIDEO_CC_INTERFACE_BCR] = { 0x80e0 },
-> >> +       [CVP_VIDEO_CC_MVS0_BCR] = { 0x8098 },
-> >> +       [CVP_VIDEO_CC_MVS0C_BCR] = { 0x8048 },
-> >> +       [CVP_VIDEO_CC_MVS1_BCR] = { 0x80bc },
-> >> +       [CVP_VIDEO_CC_MVS1C_BCR] = { 0x8070 },
-> >
-> > Can we have a common VIDEO_CC prefix here please?
->
-> The BCR names are coming from hardware plan and software interface, thus
-> we would like to keep them intact.
 
-We have had a similar discussion on the sm8350-videocc driver. While
-keeping the hardware names is nice, name uniformity also should not be
-neglected. It is much easier to follow and verify the patches if all
-videocc resets start with VIDEO_CC name.
 
->
->
-> >
-> >> +       [VIDEO_CC_MVS0C_CLK_ARES] = { 0x8064, 2 },
-> >> +       [VIDEO_CC_MVS1C_CLK_ARES] = { 0x808c, 2 },
-> >> +};
-> >> +
->
-> The ARES resets are coming from VideoCC clocks(CBCR), hence the name
-> starts with VIDEO_CC.
->
-> >> +static const struct regmap_config video_cc_sm8450_regmap_config = {
-> >> +       .reg_bits = 32,
-> >> +       .reg_stride = 4,
-> >> +       .val_bits = 32,
-> >> +       .max_register = 0x9f4c,
-> >> +       .fast_io = true,
-> >> +};
-> >> +
-> >> +static struct qcom_cc_desc video_cc_sm8450_desc = {
-> >> +       .config = &video_cc_sm8450_regmap_config,
-> >> +       .clks = video_cc_sm8450_clocks,
-> >> +       .num_clks = ARRAY_SIZE(video_cc_sm8450_clocks),
-> >> +       .resets = video_cc_sm8450_resets,
-> >> +       .num_resets = ARRAY_SIZE(video_cc_sm8450_resets),
-> >> +       .gdscs = video_cc_sm8450_gdscs,
-> >> +       .num_gdscs = ARRAY_SIZE(video_cc_sm8450_gdscs),
-> >> +};
-> >> +
-> >> +static const struct of_device_id video_cc_sm8450_match_table[] = {
-> >> +       { .compatible = "qcom,sm8450-videocc" },
-> >> +       { }
-> >> +};
-> >> +MODULE_DEVICE_TABLE(of, video_cc_sm8450_match_table);
-> >> +
-> >> +static int video_cc_sm8450_probe(struct platform_device *pdev)
-> >> +{
-> >> +       struct regmap *regmap;
-> >> +       int ret;
-> >> +
-> >> +       ret = devm_pm_runtime_enable(&pdev->dev);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       ret = pm_runtime_resume_and_get(&pdev->dev);
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       regmap = qcom_cc_map(pdev, &video_cc_sm8450_desc);
-> >> +       if (IS_ERR(regmap)) {
-> >> +               pm_runtime_put(&pdev->dev);
-> >> +               return PTR_ERR(regmap);
-> >> +       }
-> >> +
-> >> +       clk_lucid_evo_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
-> >> +       clk_lucid_evo_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
-> >> +
-> >> +       /*
-> >> +        * Keep clocks always enabled:
-> >> +        *      video_cc_ahb_clk
-> >> +        *      video_cc_sleep_clk
-> >> +        *      video_cc_xo_clk
-> >> +        */
-> >> +       regmap_update_bits(regmap, 0x80e4, BIT(0), BIT(0));
-> >> +       regmap_update_bits(regmap, 0x8130, BIT(0), BIT(0));
-> >> +       regmap_update_bits(regmap, 0x8114, BIT(0), BIT(0));
-> >> +
-> >> +       ret = qcom_cc_really_probe(pdev, &video_cc_sm8450_desc, regmap);
-> >> +
-> >> +       pm_runtime_put(&pdev->dev);
-> >> +
-> >> +       return ret;
-> >> +}
-> >> +
-> >> +static struct platform_driver video_cc_sm8450_driver = {
-> >> +       .probe = video_cc_sm8450_probe,
-> >> +       .driver = {
-> >> +               .name = "video_cc-sm8450",
-> >> +               .of_match_table = video_cc_sm8450_match_table,
-> >> +       },
-> >> +};
-> >> +
-> >> +static int __init video_cc_sm8450_init(void)
-> >> +{
-> >> +       return platform_driver_register(&video_cc_sm8450_driver);
-> >> +}
-> >> +subsys_initcall(video_cc_sm8450_init);
-> >> +
-> >> +static void __exit video_cc_sm8450_exit(void)
-> >> +{
-> >> +       platform_driver_unregister(&video_cc_sm8450_driver);
-> >> +}
-> >> +module_exit(video_cc_sm8450_exit);
-> >
-> > module_platform_driver() ?
-> >
->
-> We would like to keep the clock drivers all probed at subsys_initcall.
-> We could revisit and update as cleanup if we want to move them to module
-> init.
+On 19.05.2023 14:49, Jagadeesh Kona wrote:
+> Hi,
+> 
+> Thanks Konrad for your review!
+> 
+> On 5/10/2023 1:36 AM, Konrad Dybcio wrote:
+>>
+>>
+>> On 9.05.2023 18:12, Jagadeesh Kona wrote:
+>>> From: Taniya Das <quic_tdas@quicinc.com>
+>>>
+>>> Add support for lucid ole pll ops to configure and control the
+>>> lucid ole pll. The lucid ole pll has an additional test control
+>>> register which is required to be programmed, add support to
+>>> program the same.
+>>>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> ---
+>> Isn't this commit "write to PLL_TEST_CTL_U2 on LUCID_EVO" instead?
+>>
+>> Meaninglessly duplicating ops does not seem useful.
+>>
+>> Konrad
+> 
+> Though we are reusing same ops for EVO and OLE, PLL_TEST_CTL_U2 register programming is applicable only to OLE PLL type.
+Well, your patch makes it unconditional (modulo programmer error) so
+I think that makes little sense.. A comment would be enough, imo.
 
-Any particular reason?
-
->
-> >> +
-> >> +MODULE_DESCRIPTION("QTI VIDEO_CC SM8450 Driver");
-> >> +MODULE_LICENSE("GPL");
-> >> --
-> >> 2.17.1
-> >>
-> >
-> >
->
-> --
+Konrad
+And PLL type is useful to properly refer respective hardware datasheets. Hence added separate ops for OLE PLL type.
+> 
+> 
+>>>   drivers/clk/qcom/clk-alpha-pll.c | 2 ++
+>>>   drivers/clk/qcom/clk-alpha-pll.h | 4 ++++
+>>>   2 files changed, 6 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>>> index b9f6535a7ba7..f81c7c561352 100644
+>>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>>> @@ -55,6 +55,7 @@
+>>>   #define PLL_TEST_CTL(p)        ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
+>>>   #define PLL_TEST_CTL_U(p)    ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
+>>>   #define PLL_TEST_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U1])
+>>> +#define PLL_TEST_CTL_U2(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U2])
+>>>   #define PLL_STATUS(p)        ((p)->offset + (p)->regs[PLL_OFF_STATUS])
+>>>   #define PLL_OPMODE(p)        ((p)->offset + (p)->regs[PLL_OFF_OPMODE])
+>>>   #define PLL_FRAC(p)        ((p)->offset + (p)->regs[PLL_OFF_FRAC])
+>>> @@ -2096,6 +2097,7 @@ void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
+>>>       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
+>>>       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
+>>>       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
+>>> +    clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U2(pll), config->test_ctl_hi2_val);
+>>>         /* Disable PLL output */
+>>>       regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+>>> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+>>> index d07b17186b90..4d9b6d5b7062 100644
+>>> --- a/drivers/clk/qcom/clk-alpha-pll.h
+>>> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+>>> @@ -125,6 +125,7 @@ struct alpha_pll_config {
+>>>       u32 test_ctl_val;
+>>>       u32 test_ctl_hi_val;
+>>>       u32 test_ctl_hi1_val;
+>>> +    u32 test_ctl_hi2_val;
+>>>       u32 main_output_mask;
+>>>       u32 aux_output_mask;
+>>>       u32 aux2_output_mask;
+>>> @@ -171,6 +172,7 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
+>>>   #define clk_alpha_pll_postdiv_zonda_ops clk_alpha_pll_postdiv_fabia_ops
+>>>     extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
+>>> +#define clk_alpha_pll_lucid_ole_ops clk_alpha_pll_lucid_evo_ops
+>>>   extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
+>>>   #define clk_alpha_pll_reset_lucid_ole_ops clk_alpha_pll_reset_lucid_evo_ops
+>>>   extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
+>>> @@ -196,6 +198,8 @@ void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>>                    const struct alpha_pll_config *config);
+>>>   void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>>                    const struct alpha_pll_config *config);
+>>> +#define clk_lucid_ole_pll_configure(pll, regmap, config) \
+>>> +            clk_lucid_evo_pll_configure(pll, regmap, config)
+>>>   void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>>                     const struct alpha_pll_config *config);
+>>>   void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+> 
 > Thanks & Regards,
-> Taniya Das.
-
-
-
--- 
-With best wishes
-Dmitry
+> Jagadeesh
