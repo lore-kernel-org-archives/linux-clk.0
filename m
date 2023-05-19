@@ -2,105 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CA8C7EE23
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 21:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AA3C7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 21:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229662AbjESVKK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 17:10:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44170 "EHLO
+        id S230423AbjESVhr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 17:37:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbjESVKJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 17:10:09 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6096A199A;
-        Fri, 19 May 2023 14:09:42 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-96b4ed40d97so575742466b.0;
-        Fri, 19 May 2023 14:09:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1684530580; x=1687122580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TorRBbiNSrshF0ap3UL67FrkImFt8D/40YtUQbz9REQ=;
-        b=dpaHBYN0mAs5TZA7Iw/DfHqd5WpnxHSJmDSJe2Y/Qv7suXxR+zk9+Y/a8oNdaR5xs1
-         KubdtoNaExtjhH4Ci1MCYZObY1Ei4uK19ae26VvY/zHjHESnwmEqTBuYpn0NRy8O2CHB
-         XfYU/6neCWR/C5ivNQvsB15+a5rPECxIb6RWOO39MlCGQ9LmmFXEOTjok03KbvEEBWEQ
-         IqOkWYomFa7p9KiFiArPe3YXNBSTDVp5fC0rmo525fVCAhYeZ6+kdmcWbKoQ1Qnc6CqH
-         Pws5Ptp20mQwd87vfjkoFPqQffwywoaVjpnvQPhXW2/DRtEFciU3RoEXoHZWvAJGh+oE
-         kj/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684530580; x=1687122580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TorRBbiNSrshF0ap3UL67FrkImFt8D/40YtUQbz9REQ=;
-        b=YpAwvkL4LSa3ovYgsEDNE5J5BHs8Pppvm0Hr+aaDOQghBmllpl4Kx4dlMO2VClhGHZ
-         BZ3opj0IAtoGFN5gXU0oYaGZ43418sXsl6aF3NQLgPERu5onjXwkrxjqTid4OLyKQ2zD
-         xhZ+6iWf4SAo41j13sKTGaXY1+l7vzrds3l5PFnkg3kQdeZCQEsarHP9nNMU20YT5ZuI
-         9j7+E2Q24IF9lsw5fKVVztNNyF6SuaKAD0qs0fYH9H2rMi/dtgTHkLxSwRrlnEeAzdjV
-         XPDxMsrf6+WhOtAFWfR5liQsRppPx/pSYYQxrEE+NW1zXq7BsiZlq/JLFafdvDl0uZok
-         2/3Q==
-X-Gm-Message-State: AC+VfDzO2HFYgv/erW4LBH0ibMll/Hv7ZijHlIUqivP3qGLbwAHh0mYt
-        7HuGawV57t8aP4ZHjLFJYuTU5peXMw3p+BOajkA=
-X-Google-Smtp-Source: ACHHUZ6s33Zsi7MTUXzy5qgLERqDb+ABr1XwN5aDTGrd5iCKsQ+pQKlGN2FqdAmEp4ZnNXjwMFvf+/hgUtyP29y/vHc=
-X-Received: by 2002:a17:907:971f:b0:96a:ec5c:687b with SMTP id
- jg31-20020a170907971f00b0096aec5c687bmr3096717ejc.64.1684530579899; Fri, 19
- May 2023 14:09:39 -0700 (PDT)
+        with ESMTP id S229877AbjESVhq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 17:37:46 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8621A1B0;
+        Fri, 19 May 2023 14:37:45 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34JLC3wr006345;
+        Fri, 19 May 2023 21:37:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=Acuo//OEBaHHc79dMa8wykfivPvrN1jyzUIJNRNq+rs=;
+ b=oT2squvbvbdJJeKESoYcUS+cfAm0Ai1KWtUeFqiToz+J3bdu8DVdIr6TwWrETO16nvHD
+ yJaQVZ2V97hfPOxGBpmkgpZqbyPCrX0fA3zYBOv2A573+ZA/epB4ldSoe4T8cQXpIBP8
+ c/tNtvs4N6rSm/Fq94s/Ez7HHsKIxRnXgIcGds7Ndl9yaWARr73L8M1EEr5mAMb8DH+I
+ G2IHgMSnh9JoWGJXJBCXqQCeqJfcXxlLGB8eX56DoIIs/qmEeEYbZk7Sl7ftkfqtq6oj
+ qCloN4F7AU7yiN8MsoLZODx3R3MwGGNwqdezpQIYnNXL1oBXOrPUF3/tgOR4omE+GqGP Xw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qp4nt9xhh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 21:37:41 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34JLbeEs024058
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 21:37:40 GMT
+Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 19 May 2023 14:37:35 -0700
+From:   Jagadeesh Kona <quic_jkona@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>
+Subject: [PATCH 0/3] Add graphics clock controller support for SM8550
+Date:   Sat, 20 May 2023 03:06:53 +0530
+Message-ID: <20230519213656.26089-1-quic_jkona@quicinc.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-References: <20230517133309.9874-1-ddrokosov@sberdevices.ru> <20230517133309.9874-6-ddrokosov@sberdevices.ru>
-In-Reply-To: <20230517133309.9874-6-ddrokosov@sberdevices.ru>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 19 May 2023 23:09:29 +0200
-Message-ID: <CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com>
-Subject: Re: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        khilman@baylibre.com, jian.hu@amlogic.com, kernel@sberdevices.ru,
-        rockosov@gmail.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: m6or0cwevYGrGhfeWG4Yg2VG7RSVT40i
+X-Proofpoint-GUID: m6or0cwevYGrGhfeWG4Yg2VG7RSVT40i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-19_16,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015 phishscore=0
+ spamscore=0 impostorscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ mlxlogscore=963 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305190187
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof and Dmitry,
+Add bindings, driver and devicetree node for graphics clock controller on SM8550.
 
-On Wed, May 17, 2023 at 3:33=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
-es.ru> wrote:
-[...]
-> +  clocks:
-> +    items:
-> +      - description: input fixed pll div2
-> +      - description: input fixed pll div3
-> +      - description: input fixed pll div5
-> +      - description: input fixed pll div7
-> +      - description: input hifi pll
-> +      - description: input oscillator (usually at 24MHz)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: fclk_div2
-> +      - const: fclk_div3
-> +      - const: fclk_div5
-> +      - const: fclk_div7
-> +      - const: hifi_pll
-> +      - const: xtal
-This IP block has at least one additional input called "sys_pll_div16".
-My understanding is that the "sys_pll_div16" clock is generated by the
-CPU clock controller. Support for the CPU clock controller
-(dt-bindings and a driver) will be added at a later time by Dmitry.
-How can we manage incrementally implementing the clock controllers?
-From a hardware perspective the "sys_pll_div16" input is mandatory.
-How to manage this in the .dts patches then (for example: does this
-mean that Dmitry can only add the clock controller to the .dts when
-all clock controller bindings have been implemented - or is there
-another way)?
+Depends on [1] for lucid ole pll ops definition
+[1] https://patchwork.kernel.org/project/linux-clk/list/?series=746186&state=%2A&archive=both
 
+Jagadeesh Kona (3):
+  dt-bindings: clock: qcom: Add SM8550 graphics clock controller
+  clk: qcom: gpucc-sm8550: Add support for graphics clock controller
+  arm64: dts: qcom: sm8550: Add graphics clock controller
 
-Best regards,
-Martin
+ .../bindings/clock/qcom,sm8550-gpucc.yaml     |  67 ++
+ arch/arm64/boot/dts/qcom/sm8550.dtsi          |  12 +
+ drivers/clk/qcom/Kconfig                      |   8 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/gpucc-sm8550.c               | 609 ++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8550-gpucc.h |  48 ++
+ 6 files changed, 745 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8550-gpucc.yaml
+ create mode 100644 drivers/clk/qcom/gpucc-sm8550.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm8550-gpucc.h
+
+-- 
+2.40.1
+
