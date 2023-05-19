@@ -2,105 +2,364 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49112C7EE2A
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 19:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02154C7EE26
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 19:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbjESTFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 15:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50996 "EHLO
+        id S230480AbjEST0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 15:26:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjESTF2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 15:05:28 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCAE115;
-        Fri, 19 May 2023 12:05:27 -0700 (PDT)
-Received: from jupiter.universe (dyndsl-091-248-213-050.ewe-ip-backbone.de [91.248.213.50])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id CA6BC6606841;
-        Fri, 19 May 2023 20:05:25 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1684523125;
-        bh=HpjGcJhdbon56V9LWjtK9jrg/LgraseB0ozVjRfM3/4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NmEmBvYU1h3OEZHJG3dkKV9Mi0NeNy1Ehx44n3ehZ+5dFDAYG6CSha+94a9LGuJba
-         vrmYGbQd+2TFdN1dHgq+FfYSHjOnhq646fA7tapYLNl4uYzuZbGspcYBPrwpGZjUD4
-         Pk5LudCePjsEiKa+GIu3Wvn/V3Ru/ft5h3HJcrVg6hGvKCHGq4bEID5Mq/nNtaSSX4
-         MEWRBT4R3sOrj2v07bEhq1yUM3K5Nt/H6iYsVr3AoCAavELYL+KgYFREHaGu071Qv/
-         kZny/UGvEtm64sroFNNbS23Fq3uAlfFvk4W1n8882IU90Un8S1kvbEMLVeX8mBx4ma
-         YVH1QmWeZ+6Ww==
-Received: by jupiter.universe (Postfix, from userid 1000)
-        id 88A2E4805B8; Fri, 19 May 2023 21:05:23 +0200 (CEST)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kernel@collabora.com, stable@vger.kernel.org
-Subject: [PATCH v1 1/2] clk: composite: Fix handling of high clock rates
-Date:   Fri, 19 May 2023 21:05:21 +0200
-Message-Id: <20230519190522.194729-2-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230519190522.194729-1-sebastian.reichel@collabora.com>
-References: <20230519190522.194729-1-sebastian.reichel@collabora.com>
+        with ESMTP id S229914AbjEST0o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 15:26:44 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 165C410D
+        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 12:26:42 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f13d8f74abso4157423e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 12:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684524400; x=1687116400;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GpB4KeaemkhVdvu/d2ARZdmioqBby83Vs2g6NbKJdpg=;
+        b=Pw0ndM+FiV9eNFnRsYKwN3Ioonzwup94M8WIuAtXXLe0daEDX3YFW1TJIFly9m9Uhu
+         Nm4JDtFiwo1JbVObhoP+acxiQmDepJNkpP+0uI7ysOmdYTo2FVxL+0nxXMnnifxcgKJQ
+         s8ioIisvGR6w9566N4s1wLLV84zsRb8H8r7JicTSW/s1N84GE9mIEmX7gvuKjL8TqBTf
+         GKLigZC1AQUQp4ZwEXCZzPdWdpeMjJW0RywlbxAPrqUOzqqJl4RciEvtrhk7VhMn6vYm
+         Fn9Cg25+6yFIBBQbpAdOSzloSg6ufJAGkGX+qEYySz60YHij5sP+L6I77s2Y0yo8EPI0
+         yNjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684524400; x=1687116400;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GpB4KeaemkhVdvu/d2ARZdmioqBby83Vs2g6NbKJdpg=;
+        b=fO2skq8kP8xtxZtyNlUj4Qq1ph+/6Vke+1VPjrKKy6nRMTp8cj6CnxUdUh22RReqzJ
+         NLw6+kNPajZysCsxsKThkvlQoZRv6+U5x6Ou0NxqUNwXglneOyD/oxHLM2oPMQLbnsK/
+         2UjZ3ZGmJ5JcedADSm7RWHYuE+TR151d1B5YEKFsJZameclLYRdypqLEexK+FJHvRDGD
+         fC6GU5YpNATRZBhmBIw411sVncBqGSCs4vPNaaRGXtmIgfFy9KU1vnBY69J3PfIkdDRc
+         p7m+Kev2C5lh6nDAwUoP9vKNnYlNuupAZlS4d9b25WRc1AfncvY6W9Qis0mhWirg80tE
+         uWFg==
+X-Gm-Message-State: AC+VfDxfLu8gSEJx2u3Obqdbe5YZnMBVJnxCz4EbRce4UoWDII/C1RNR
+        5xhhQZDOAJypMPt/3GCoU8wSYg==
+X-Google-Smtp-Source: ACHHUZ6ADBOWW+C9I2r3mhjSH2Mgt70NPVduQ4FcaygLnkmjzTLL5hcJ/kFt8K4oJzUxMyqH2iiRUQ==
+X-Received: by 2002:ac2:5491:0:b0:4f3:a446:8230 with SMTP id t17-20020ac25491000000b004f3a4468230mr1092271lfk.13.1684524400303;
+        Fri, 19 May 2023 12:26:40 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id q6-20020ac25146000000b004efff420b0asm3366lfd.108.2023.05.19.12.26.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 May 2023 12:26:39 -0700 (PDT)
+Message-ID: <1dba8a01-1eac-0bfd-ed7d-21d36495c111@linaro.org>
+Date:   Fri, 19 May 2023 22:26:39 +0300
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v6 2/4] interconnect: add clk-based icc provider support
+Content-Language: en-GB
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-pm@vger.kernel.org, llvm@lists.linux.dev
+References: <20230512001334.2983048-1-dmitry.baryshkov@linaro.org>
+ <20230512001334.2983048-3-dmitry.baryshkov@linaro.org>
+ <ZGeyO6MRBSPf7b1y@google.com>
+ <CAKwvOdn-w2QPmq9_CmpHFurWyo9DiAiMEf0wus6ufW5g+8LKGQ@mail.gmail.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <CAKwvOdn-w2QPmq9_CmpHFurWyo9DiAiMEf0wus6ufW5g+8LKGQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ULONG_MAX is used by a few drivers to figure out the highest available
-clock rate via clk_round_rate(clk, ULONG_MAX). Since abs() takes a
-signed value as input, the current logic effectively calculates with
-ULONG_MAX = -1, which results in the worst parent clock being chosen
-instead of the best one.
+On 19/05/2023 20:32, Nick Desaulniers wrote:
+> On Fri, May 19, 2023 at 10:30 AM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
+>>
+>> On Fri, May 12, 2023 at 03:13:32AM +0300, Dmitry Baryshkov wrote:
+>>> For some devices it is useful to export clocks as interconnect providers,
+>>> if the clock corresponds to bus bandwidth.
+>>>
+>>> For example, on MSM8996 the cluster interconnect clock should be scaled
+>>> according to the cluster frequencies. Exporting it as an interconnect
+>>> allows one to properly describe this as the cluster bandwidth
+>>> requirements.
+>>>
+>>> Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>
+>> Hi Dmitry,
+>> Apologies if this has already been reported elsewhere, but our CI is red
+>> for linux-next today for allmodconfig builds:
+>>
+>>>> ERROR: modpost: missing MODULE_LICENSE() in drivers/interconnect/icc-clk.o
+> 
+> I also suspect these 2 additional errors are related to this series?
+>>> Error: ERROR: modpost: "icc_clk_register" [drivers/clk/qcom/clk-cbf-8996.ko] undefined!
+>>> Error: ERROR: modpost: "icc_clk_unregister" [drivers/clk/qcom/clk-cbf-8996.ko] undefined!
 
-For example on Rockchip RK3588 the eMMC driver tries to figure out
-the highest available clock rate. There are three parent clocks
-available resulting in the following rate diffs with the existing
-logic:
+Ack, thanks for the report. I will send a fix in a few hours.
 
-GPLL:   abs(18446744073709551615 - 1188000000) = 1188000001
-CPLL:   abs(18446744073709551615 - 1500000000) = 1500000001
-XIN24M: abs(18446744073709551615 -   24000000) =   24000001
+> 
+>>
+>> https://github.com/ClangBuiltLinux/continuous-integration2/actions/runs/5024096989/jobs/9011763868
+>>
+>> Can you PTAL?
+>>
+>>> ---
+>>>   drivers/interconnect/Kconfig     |   6 ++
+>>>   drivers/interconnect/Makefile    |   2 +
+>>>   drivers/interconnect/icc-clk.c   | 168 +++++++++++++++++++++++++++++++
+>>>   include/linux/interconnect-clk.h |  22 ++++
+>>>   4 files changed, 198 insertions(+)
+>>>   create mode 100644 drivers/interconnect/icc-clk.c
+>>>   create mode 100644 include/linux/interconnect-clk.h
+>>>
+>>> diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
+>>> index d637a89d4695..5faa8d2aecff 100644
+>>> --- a/drivers/interconnect/Kconfig
+>>> +++ b/drivers/interconnect/Kconfig
+>>> @@ -15,4 +15,10 @@ source "drivers/interconnect/imx/Kconfig"
+>>>   source "drivers/interconnect/qcom/Kconfig"
+>>>   source "drivers/interconnect/samsung/Kconfig"
+>>>
+>>> +config INTERCONNECT_CLK
+>>> +     tristate
+>>> +     depends on COMMON_CLK
+>>> +     help
+>>> +       Support for wrapping clocks into the interconnect nodes.
+>>> +
+>>>   endif
+>>> diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
+>>> index 97d393fd638d..5604ce351a9f 100644
+>>> --- a/drivers/interconnect/Makefile
+>>> +++ b/drivers/interconnect/Makefile
+>>> @@ -7,3 +7,5 @@ obj-$(CONFIG_INTERCONNECT)            += icc-core.o
+>>>   obj-$(CONFIG_INTERCONNECT_IMX)               += imx/
+>>>   obj-$(CONFIG_INTERCONNECT_QCOM)              += qcom/
+>>>   obj-$(CONFIG_INTERCONNECT_SAMSUNG)   += samsung/
+>>> +
+>>> +obj-$(CONFIG_INTERCONNECT_CLK)               += icc-clk.o
+>>> diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
+>>> new file mode 100644
+>>> index 000000000000..0db3b654548b
+>>> --- /dev/null
+>>> +++ b/drivers/interconnect/icc-clk.c
+>>> @@ -0,0 +1,168 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * Copyright (c) 2023, Linaro Ltd.
+>>> + */
+>>> +
+>>> +#include <linux/clk.h>
+>>> +#include <linux/device.h>
+>>> +#include <linux/interconnect-clk.h>
+>>> +#include <linux/interconnect-provider.h>
+>>> +
+>>> +struct icc_clk_node {
+>>> +     struct clk *clk;
+>>> +     bool enabled;
+>>> +};
+>>> +
+>>> +struct icc_clk_provider {
+>>> +     struct icc_provider provider;
+>>> +     int num_clocks;
+>>> +     struct icc_clk_node clocks[];
+>>> +};
+>>> +
+>>> +#define to_icc_clk_provider(_provider) \
+>>> +     container_of(_provider, struct icc_clk_provider, provider)
+>>> +
+>>> +static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
+>>> +{
+>>> +     struct icc_clk_node *qn = src->data;
+>>> +     int ret;
+>>> +
+>>> +     if (!qn || !qn->clk)
+>>> +             return 0;
+>>> +
+>>> +     if (!src->peak_bw) {
+>>> +             if (qn->enabled)
+>>> +                     clk_disable_unprepare(qn->clk);
+>>> +             qn->enabled = false;
+>>> +
+>>> +             return 0;
+>>> +     }
+>>> +
+>>> +     if (!qn->enabled) {
+>>> +             ret = clk_prepare_enable(qn->clk);
+>>> +             if (ret)
+>>> +                     return ret;
+>>> +             qn->enabled = true;
+>>> +     }
+>>> +
+>>> +     return clk_set_rate(qn->clk, icc_units_to_bps(src->peak_bw));
+>>> +}
+>>> +
+>>> +static int icc_clk_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
+>>> +{
+>>> +     struct icc_clk_node *qn = node->data;
+>>> +
+>>> +     if (!qn || !qn->clk)
+>>> +             *peak = INT_MAX;
+>>> +     else
+>>> +             *peak = Bps_to_icc(clk_get_rate(qn->clk));
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +/**
+>>> + * icc_clk_register() - register a new clk-based interconnect provider
+>>> + * @dev: device supporting this provider
+>>> + * @first_id: an ID of the first provider's node
+>>> + * @num_clocks: number of instances of struct icc_clk_data
+>>> + * @data: data for the provider
+>>> + *
+>>> + * Registers and returns a clk-based interconnect provider. It is a simple
+>>> + * wrapper around COMMON_CLK framework, allowing other devices to vote on the
+>>> + * clock rate.
+>>> + *
+>>> + * Return: 0 on success, or an error code otherwise
+>>> + */
+>>> +struct icc_provider *icc_clk_register(struct device *dev,
+>>> +                                   unsigned int first_id,
+>>> +                                   unsigned int num_clocks,
+>>> +                                   const struct icc_clk_data *data)
+>>> +{
+>>> +     struct icc_clk_provider *qp;
+>>> +     struct icc_provider *provider;
+>>> +     struct icc_onecell_data *onecell;
+>>> +     struct icc_node *node;
+>>> +     int ret, i, j;
+>>> +
+>>> +     onecell = devm_kzalloc(dev, struct_size(onecell, nodes, 2 * num_clocks), GFP_KERNEL);
+>>> +     if (!onecell)
+>>> +             return ERR_PTR(-ENOMEM);
+>>> +
+>>> +     qp = devm_kzalloc(dev, struct_size(qp, clocks, num_clocks), GFP_KERNEL);
+>>> +     if (!qp)
+>>> +             return ERR_PTR(-ENOMEM);
+>>> +
+>>> +     qp->num_clocks = num_clocks;
+>>> +
+>>> +     provider = &qp->provider;
+>>> +     provider->dev = dev;
+>>> +     provider->get_bw = icc_clk_get_bw;
+>>> +     provider->set = icc_clk_set;
+>>> +     provider->aggregate = icc_std_aggregate;
+>>> +     provider->xlate = of_icc_xlate_onecell;
+>>> +     INIT_LIST_HEAD(&provider->nodes);
+>>> +     provider->data = onecell;
+>>> +
+>>> +     icc_provider_init(provider);
+>>> +
+>>> +     for (i = 0, j = 0; i < num_clocks; i++) {
+>>> +             qp->clocks[i].clk = data[i].clk;
+>>> +
+>>> +             node = icc_node_create(first_id + j);
+>>> +             if (IS_ERR(node)) {
+>>> +                     ret = PTR_ERR(node);
+>>> +                     goto err;
+>>> +             }
+>>> +
+>>> +             node->name = devm_kasprintf(dev, GFP_KERNEL, "%s_master", data[i].name);
+>>> +             node->data = &qp->clocks[i];
+>>> +             icc_node_add(node, provider);
+>>> +             /* link to the next node, slave */
+>>> +             icc_link_create(node, first_id + j + 1);
+>>> +             onecell->nodes[j++] = node;
+>>> +
+>>> +             node = icc_node_create(first_id + j);
+>>> +             if (IS_ERR(node)) {
+>>> +                     ret = PTR_ERR(node);
+>>> +                     goto err;
+>>> +             }
+>>> +
+>>> +             node->name = devm_kasprintf(dev, GFP_KERNEL, "%s_slave", data[i].name);
+>>> +             /* no data for slave node */
+>>> +             icc_node_add(node, provider);
+>>> +             onecell->nodes[j++] = node;
+>>> +     }
+>>> +
+>>> +     onecell->num_nodes = j;
+>>> +
+>>> +     ret = icc_provider_register(provider);
+>>> +     if (ret)
+>>> +             goto err;
+>>> +
+>>> +     return provider;
+>>> +
+>>> +err:
+>>> +     icc_nodes_remove(provider);
+>>> +
+>>> +     return ERR_PTR(ret);
+>>> +}
+>>> +
+>>> +/**
+>>> + * icc_clk_unregister() - unregister a previously registered clk interconnect provider
+>>> + * @provider: provider returned by icc_clk_register()
+>>> + */
+>>> +void icc_clk_unregister(struct icc_provider *provider)
+>>> +{
+>>> +     struct icc_clk_provider *qp = container_of(provider, struct icc_clk_provider, provider);
+>>> +     int i;
+>>> +
+>>> +     icc_provider_deregister(&qp->provider);
+>>> +     icc_nodes_remove(&qp->provider);
+>>> +
+>>> +     for (i = 0; i < qp->num_clocks; i++) {
+>>> +             struct icc_clk_node *qn = &qp->clocks[i];
+>>> +
+>>> +             if (qn->enabled)
+>>> +                     clk_disable_unprepare(qn->clk);
+>>> +     }
+>>> +}
+>>> diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
+>>> new file mode 100644
+>>> index 000000000000..0cd80112bea5
+>>> --- /dev/null
+>>> +++ b/include/linux/interconnect-clk.h
+>>> @@ -0,0 +1,22 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * Copyright (c) 2023, Linaro Ltd.
+>>> + */
+>>> +
+>>> +#ifndef __LINUX_INTERCONNECT_CLK_H
+>>> +#define __LINUX_INTERCONNECT_CLK_H
+>>> +
+>>> +struct device;
+>>> +
+>>> +struct icc_clk_data {
+>>> +     struct clk *clk;
+>>> +     const char *name;
+>>> +};
+>>> +
+>>> +struct icc_provider *icc_clk_register(struct device *dev,
+>>> +                                   unsigned int first_id,
+>>> +                                   unsigned int num_clocks,
+>>> +                                   const struct icc_clk_data *data);
+>>> +void icc_clk_unregister(struct icc_provider *provider);
+>>> +
+>>> +#endif
+>>> --
+>>> 2.39.2
+>>>
+> 
+> 
+> 
 
-As a result the clock framework will promote a maximum supported
-clock rate of 24 MHz, even though 1.5GHz are possible. With the
-updated logic any casting between signed and unsigned is avoided
-and the numbers look like this instead:
-
-GPLL:   18446744073709551615 - 1188000000 = 18446744072521551615
-CPLL:   18446744073709551615 - 1500000000 = 18446744072209551615
-XIN24M: 18446744073709551615 -   24000000 = 18446744073685551615
-
-As a result the parent with the highest acceptable rate is chosen
-instead of the parent clock with the lowest one.
-
-Cc: stable@vger.kernel.org
-Fixes: 49502408007b ("mmc: sdhci-of-dwcmshc: properly determine max clock on Rockchip")
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- drivers/clk/clk-composite.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index edfa94641bbf..66759fe28fad 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -119,7 +119,10 @@ static int clk_composite_determine_rate(struct clk_hw *hw,
- 			if (ret)
- 				continue;
- 
--			rate_diff = abs(req->rate - tmp_req.rate);
-+			if (req->rate >= tmp_req.rate)
-+				rate_diff = req->rate - tmp_req.rate;
-+			else
-+				rate_diff = tmp_req.rate - req->rate;
- 
- 			if (!rate_diff || !req->best_parent_hw
- 				       || best_rate_diff > rate_diff) {
 -- 
-2.39.2
+With best wishes
+Dmitry
 
