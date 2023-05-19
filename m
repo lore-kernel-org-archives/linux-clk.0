@@ -2,58 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F3EC7EE2D
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 08:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13049C77B7F
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 09:02:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229648AbjESItx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 04:49:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39028 "EHLO
+        id S231137AbjESJCu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 05:02:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231217AbjESItv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 04:49:51 -0400
-X-Greylist: delayed 2576 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 19 May 2023 01:49:50 PDT
-Received: from mail.corrib.pl (mail.corrib.pl [185.58.226.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D98D122
-        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 01:49:50 -0700 (PDT)
-Received: by mail.corrib.pl (Postfix, from userid 1001)
-        id CF30CA4052; Fri, 19 May 2023 09:06:15 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corrib.pl; s=mail;
-        t=1684483575; bh=85MOfYTjIHwki6Ys5IeFKzEzX5V7umZoL3TytLG0W/k=;
-        h=Date:From:To:Subject:From;
-        b=z0Q/M8CS/zEj3cg1eow4lGHPKIUPtzX+Pp0878k0JZGKivL5aKyDmy53MHbIJyVbH
-         b5PMyCk2qJM8m8SYjhwp9siH+LeUeaTwF9eWzZQ2iYplpnQf2N0khSB3wNZHauDWh1
-         F1DgyXRc1PdRdsAvdIwLkjQF+ZAoTybtkHOo9Q5fcDY1cNNB5tVWxdY3MwJWNMm/lh
-         emf94hTL2kUAKYIx8NiLQinl05/rTTX0RD8lXQQsnsLWwCOzsEiqE+XfmLrSz8VxnH
-         o7+l4bZCa9nxFeWS+XBKgeYT+pI5YoBqflPxgjqAk5P04qFhntjNq3g8zEh8Vxl90A
-         MTdKsOl0eZTog==
-Received: by mail.corrib.pl for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 08:06:12 GMT
-Message-ID: <20230519074500-0.1.7b.of5y.0.z0z1o6620r@corrib.pl>
-Date:   Fri, 19 May 2023 08:06:12 GMT
-From:   "Szczepan Andryszczuk" <szczepan.andryszczuk@corrib.pl>
-To:     <linux-clk@vger.kernel.org>
-Subject: Faktoring
-X-Mailer: mail.corrib.pl
+        with ESMTP id S230417AbjESJCt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 05:02:49 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D866C10D0;
+        Fri, 19 May 2023 02:02:47 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34J8GIgq016895;
+        Fri, 19 May 2023 09:02:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=12Id2iNCy+FYiHhY11gLnPTDc+lnbY+nDzvf/MNbTSg=;
+ b=l8TmSq3hcvMZQJ3cTGeCppx0zhpm7OO5A32ouMM4LHqBZu62NKGQhRlt/fg1Vl8vFJ6i
+ YgFq6QG2LmrGM/NP0Yei936i2mX+1BqCmVRHEjc67o/AWBvKPIPjKvn9yp64yUHpETUm
+ QaCRtcjFMKkeFzweaoqOdK9cnrFgqrYONQEQPY1uQ+Zm3wPrKQ2FItaONxdfrsCCmU28
+ vFLN6BuRghA25CPOM4NH3uTJd3ec8kV/bV8DYwRvDtHl/vgr2EharDR7JdLlL8GhwX+6
+ y1uB9mE/YVFSJoXWHqWDdkGnGQeJrW3xfZ1/PQbU00eb/+l/QpvQoi4sx2gaTTqWtlTJ mg== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qp4ccr83t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 09:02:42 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34J92esG025427
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 09:02:40 GMT
+Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 19 May 2023 02:02:33 -0700
+From:   Devi Priya <quic_devipriy@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <mani@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_ipkumar@quicinc.com>
+Subject: [PATCH V4 0/6] Add PCIe support for IPQ9574
+Date:   Fri, 19 May 2023 14:32:13 +0530
+Message-ID: <20230519090219.15925-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: azFRzdq4DwccWZXm1qzlSmonLllWMMCv
+X-Proofpoint-ORIG-GUID: azFRzdq4DwccWZXm1qzlSmonLllWMMCv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-19_05,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 impostorscore=0 spamscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=744 suspectscore=0 malwarescore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305190076
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dzie=C5=84 dobry,
+This series adds support for enabling the PCIe host devices (PCIe0, PCIe1,
+PCIe2, PCIe3) found on IPQ9574 platform.
+The PCIe0 & PCIe1 are 1-lane Gen3 host and PCIe2 & PCIe3 
+are 2-lane Gen3 host.
 
-rozwa=C5=BCali Pa=C5=84stwo wyb=C3=B3r finansowania, kt=C3=B3re spe=C5=82=
-ni potrzeby firmy, zapewniaj=C4=85c natychmiastowy dost=C4=99p do got=C3=B3=
-wki, bez zb=C4=99dnych przestoj=C3=B3w?=20
+DTS patch is based on the below series
+https://lore.kernel.org/linux-arm-msm/20230517172527.1968-1-quic_devipriy@quicinc.com/
 
-Przygotowali=C5=9Bmy rozwi=C4=85zania faktoringowe dopasowane do Pa=C5=84=
-stwa bran=C5=BCy i wielko=C5=9Bci firmy, dzi=C4=99ki kt=C3=B3rym, nie mus=
-z=C4=85 Pa=C5=84stwo martwi=C4=87 si=C4=99 o niewyp=C5=82acalno=C5=9B=C4=87=
- kontrahent=C3=B3w, poniewa=C5=BC transakcje s=C4=85 zabezpieczone i posi=
-adaj=C4=85 gwarancj=C4=99 sp=C5=82aty.=20
+Changes in V4:
+	- Rebased on the below series
+https://lore.kernel.org/linux-arm-msm/20230517172527.1968-1-quic_devipriy@quicinc.com/
+	- Change logs are added to the respective patches.
 
-Chc=C4=85 Pa=C5=84stwo przeanalizowa=C4=87 dost=C4=99pne opcje?
+[V3]
+https://lore.kernel.org/linux-arm-msm/20230421124938.21974-1-quic_devipriy@quicinc.com/
+	- Dropped the phy driver and binding patches as they have been 
+	  posted as a separate series.
+	- Dropped the pinctrl binding fix patch as it is unrelated to the series
+	  dt-bindings: pinctrl: qcom: Add few missing functions.
+	- Rebased on linux-next/master.
+	- Detailed change logs are added to the respective patches.
+	
+[V2]
+https://lore.kernel.org/linux-arm-msm/20230404164828.8031-1-quic_devipriy@quicinc.com/
+	- Reordered the patches and splitted the board DT changes
+	  into a separate patch as suggested
+	- Detailed change logs are added to the respective patches
 
+[V1]
+https://lore.kernel.org/linux-arm-msm/20230214164135.17039-1-quic_devipriy@quicinc.com/
 
-Pozdrawiam
-Szczepan Andryszczuk
+Devi Priya (6):
+  dt-bindings: clock: Add PCIe pipe clock definitions
+  clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
+  dt-bindings: PCI: qcom: Add IPQ9574
+  arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
+  arm64: dts: qcom: ipq9574: Enable PCIe PHYs and controllers
+  PCI: qcom: Add support for IPQ9574
+
+ .../devicetree/bindings/pci/qcom,pcie.yaml    |  48 +++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   | 113 ++++++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 365 ++++++++++++++++++
+ drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++
+ drivers/pci/controller/dwc/pcie-qcom.c        |  57 ++-
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
+ 6 files changed, 645 insertions(+), 18 deletions(-)
+
+-- 
+2.17.1
+
