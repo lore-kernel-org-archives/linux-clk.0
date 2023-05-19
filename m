@@ -2,126 +2,193 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5C2C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 15:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F99EC77B7A
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 16:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbjESP5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 11:57:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34440 "EHLO
+        id S229681AbjESQK4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 12:10:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232355AbjESP5g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 11:57:36 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D67E10FA;
-        Fri, 19 May 2023 08:57:24 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34JEmff0023732;
-        Fri, 19 May 2023 15:57:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=T1k8rEsc1p0ygsuyJorb2hKKhH5mQ8/ePQuTPCRGSjE=;
- b=WeTPyyWVI4VNgd1gt/7q0JPaHeCeT1tCLd4Z317FNJz9FXCPpmmkaQzWkVjG4HPE0Npy
- HGAsdzF5k2bU1nqV5OqiKpdjGD+eZc40sQOSOc1TIePsNDQjQ78XZPgKWUAwBiRt6oik
- pNVfwd2CfxdmibBXC8FjUCN6Gy43uDLXPVprMloFDza78y7dhH2fTPW4t9qFX3DNdXnP
- AQus54wmfjHSPzw8KgwVoRcjQK5CupnCcj/ogPFpgAjMc6jywhgTTKQ8lI+DhoxT4yZg
- HGRH/qbWO7sqkOlZ/34HkEGK84tWM/IZmkJrQe9GI42520CJS1nk3AA2imxKul5s15D5 Eg== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qp8fm0mt7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 15:57:20 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34JFvJw9020438
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 15:57:19 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Fri, 19 May 2023 08:57:15 -0700
-From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Subject: [PATCH 4/4] arm64: dts: qcom: sm8550: Add camera clock controller
-Date:   Fri, 19 May 2023 21:26:02 +0530
-Message-ID: <20230519155602.6642-5-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230519155602.6642-1-quic_jkona@quicinc.com>
-References: <20230519155602.6642-1-quic_jkona@quicinc.com>
+        with ESMTP id S229684AbjESQKz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 12:10:55 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9018FC9;
+        Fri, 19 May 2023 09:10:53 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-94a342f7c4cso654119366b.0;
+        Fri, 19 May 2023 09:10:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684512652; x=1687104652;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=shR9tZ5xiaUJ9C4wWURqYuO7Qqx5kQ3Rtd+uNyelifI=;
+        b=OfjoobpT9uQF4m5zhukOOavH5dDTVfys7/MeRv7VK28aAKRy30BShQ6lKs58R4kMmc
+         MnbpOOTGl0ETnKxnSQaBQl5JDgw8g5zP9JWEQdSMOeAiTsyjCb8sqezzCxjN3OEtDEN2
+         QPPU/2dtmEw9lNinyhObJiQHj14y6YdeIhL8PGuVpei3GjrV9t+ZLXo95fP11FXowRdO
+         Dt8CpxJ5xUk3LPpXVDd1VtZ/PwCd/NZGKu/PkmHgVZpth2mvfH6dTwYeGUDuYhgv2i4A
+         5vNcpC8AZg3ieGBPB5s0dwUlWTl1oF3M1TIIphc7BC0VVVWJgncW17df8uMYjUs1yY7Y
+         /iqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684512652; x=1687104652;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=shR9tZ5xiaUJ9C4wWURqYuO7Qqx5kQ3Rtd+uNyelifI=;
+        b=dv/gstk9BzmawAzDKT982xl7/Wn3ub9EpHvfsrAY00sDgKBHQ0RcGup2AbmzT6klbF
+         vV7oYdZ09o+RgyJN2hs5YW/1O3d7ZpASb5arl3dr6UhJLR24nvX7RFNZd+ZrvoRS4t/r
+         GZ9woVh0v4FPCv3vtERStQTGbgsm3jFiBiP7fptHYfwWAHxrnDO7AkgZP6lCgb57UGjz
+         kBT/8TZpahZ0dRcPN11jrFQ8s7C1o2U/54d7ZvRyJ4sD8VgDyJQj0hbUYJnrOx7bRhQm
+         8+kr0WwPe2tIgIhVSjs+i8Qf5FuMpefp9/IpX/H4Mvh7yBDcMFk187Zvh/EpEaDRZzKD
+         mrzg==
+X-Gm-Message-State: AC+VfDwJ4ArcQtlgvMCd9PrOLLQtPcm1vlT7KseYIRAyTw/fO5B8w58O
+        A1ux8xqSy1HvIivn6u27aBk=
+X-Google-Smtp-Source: ACHHUZ51F8Of6ajEOG4kC19Rjv1qy/hiNer8vMIgrh6QrItztf/4VfKsyoLOjahdva0jY3U7GQ+jug==
+X-Received: by 2002:a17:907:3fa8:b0:960:ddba:e5c5 with SMTP id hr40-20020a1709073fa800b00960ddbae5c5mr3186651ejc.11.1684512651750;
+        Fri, 19 May 2023 09:10:51 -0700 (PDT)
+Received: from ?IPV6:2a01:c23:c53c:ab00:54b1:eb24:1f4e:3a15? (dynamic-2a01-0c23-c53c-ab00-54b1-eb24-1f4e-3a15.c23.pool.telefonica.de. [2a01:c23:c53c:ab00:54b1:eb24:1f4e:3a15])
+        by smtp.googlemail.com with ESMTPSA id e20-20020a170906845400b0096f7b7b6f11sm508427ejy.106.2023.05.19.09.10.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 May 2023 09:10:51 -0700 (PDT)
+Message-ID: <573d96df-7b08-4fa2-668b-58ff674a314e@gmail.com>
+Date:   Fri, 19 May 2023 18:10:50 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Content-Language: en-US
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
+ <20230426095805.15338-7-ddrokosov@sberdevices.ru>
+ <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
+ <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
+ <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
+ <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
+ <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+In-Reply-To: <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: nTh1A7YU-qA1rMkwFmEst8YMYhHPXPsA
-X-Proofpoint-GUID: nTh1A7YU-qA1rMkwFmEst8YMYhHPXPsA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-19_11,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 adultscore=0 mlxlogscore=995 bulkscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 clxscore=1015
- suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305190135
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device node for camera clock controller on Qualcomm
-SM8550 platform.
+On 18.05.2023 22:04, Martin Blumenstingl wrote:
+> Hi Dmitry,
+> 
+> On Wed, May 17, 2023 at 12:34 PM Dmitry Rokosov
+> <ddrokosov@sberdevices.ru> wrote:
+> [...]
+>>>> Additionally, the CCF determines the best ancestor based on how close
+>>>> its rate is to the given one, based on arithmetic calculations. However,
+>>>> we have independent knowledge that a certain clock would be better, with
+>>>> less jitter and fewer intermediaries, which will likely improve energy
+>>>> efficiency. Sadly, the CCF cannot take this into account.
+>>> I agree that the implementation in CCF is fairly simple. There's ways
+>>> to trick it though: IIRC if there are multiple equally suitable clocks
+>>> it picks the first one. For me all of this has worked so far which is
+>>> what makes me curious in this case (not saying that anything is wrong
+>>> with your approach).
+>>>
+>>> Do you have a (real world) example where the RTC clock should be
+>>> preferred over another clock?
+>>>
+>>
+>> Yes, a real-life example is the need for a 32Khz clock for an external
+>> wifi chip. There is one option to provide this clock with high
+>> precision, which is RTC + GENCLK.
+>>
+>>> I'm thinking about the following scenario.
+>>> PWM parents:
+>>> - XTAL: 24MHz
+>>> - sys: not sure - let's say 166.67MHz
+>>> - RTC: 32kHz
+>>>
+>>> Then after that there's a divider and a gate.
+>>>
+>>> Let's say the PWM controller needs a 1MHz clock: it can take that from
+>>> XTAL or sys. Since XTAL is evenly divisible to 1MHz CCF will pick that
+>>> and use the divider.
+>>> But let's say the PWM controller needs a 32kHz clock: CCF would
+>>> automatically pick the RTC clock.
+>>> So is your implementation there to cover let's say 1kHz where
+>>> mathematically 24MHz can be divided evenly to 1kHz (and thus should
+>>> not result in any jitter) but RTC gives better precision in the real
+>>> world (even though it's off by 24Hz)?
+>>>
+>>
+>> I don't think so. The highest precision that RTC can provide is from a
+>> 32KHz rate only. However, I believe that a 1kHz frequency can also be
+>> achieved by using xtal 24MHz with a divider, which can provide high
+>> precision as well.
+> Thank you again for the great discussion on IRC today.
+> Here's my short summary so I don't forget before you'll follow up on this.
+> 
+> In general there's two known cases where the RTC clock needs to be used:
+> a) When using the GENCLK output of the SoC to output the 32kHz RTC
+> clock and connect that to an SDIO WiFi chip clock input (this seems
+> useful in my understanding because the RTC clock provides high
+> precision)
+> b) When using the PWM controller to output a 32kHz clock signal. In
+> this case my understanding is that using the RTC clock as input to the
+> PWM controller results in the best possible signal
+> 
+> The second case won't be supported with Heiner's patches [0] that use
+> CCF (common clock framework) in the PWM controller driver.
+> In this series the parent clock is calculated using:
+>   freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+> 
+> A 32kHz clock means a PWM period of 30518ns. So with the above
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+To be precise: 30517,578125ns
+What means that the PWM framework can't say "I want 32768Hz",
+but just "I want something being very close to 32768Hz".
+So what you need is some simple heuristic to interpret the
+PWM request -> "PWM requests 30518ns, but supposedly it wants
+32768Hz"
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index e67e7c69dae6..ac82d3774ed8 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sm8550-camcc.h>
- #include <dt-bindings/clock/qcom,sm8550-gcc.h>
- #include <dt-bindings/clock/qcom,sm8550-tcsr.h>
- #include <dt-bindings/clock/qcom,sm8550-dispcc.h>
-@@ -2397,6 +2398,20 @@ opp-202000000 {
- 			};
- 		};
- 
-+		camcc: clock-controller@ade0000 {
-+			compatible = "qcom,sm8550-camcc";
-+			reg = <0 0xade0000 0 0x20000>;
-+			clocks = <&bi_tcxo_div2>,
-+				 <&bi_tcxo_ao_div2>,
-+				 <&sleep_clk>,
-+				 <&gcc GCC_CAMERA_AHB_CLK>;
-+			power-domains = <&rpmhpd SM8550_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		mdss: display-subsystem@ae00000 {
- 			compatible = "qcom,sm8550-mdss";
- 			reg = <0 0x0ae00000 0 0x1000>;
--- 
-2.40.1
+NSEC_PER_SEC / 30518 = 32767 (rounded down from 32767,547)
+clk_round_rate(channel->clk, 32767) would return 0 (I *think*),
+because it tries to find the next lower clock.
+
+The SoC families I'm familiar with have fclkin2 as PWM parent.
+That's 1 GHz in my case, what results in a frequency of 32.767,547Hz
+for period = 30518n.
+What you're saying is that newer generations don't have PWM parents
+>24MHz any longer?
+
+
+> calculation the PWM driver is asking for a clock rate of >=2GHz.
+> We concluded that letting the common clock framework choose the best
+> possible parent (meaning: removing CLK_SET_RATE_NO_REPARENT here) can
+> be a way forward.
+> But this means that the PWM controller driver must try to find the
+> best possible parent somehow. The easiest way we came up with
+> (pseudo-code):
+>   freq = NSEC_PER_SEC / period;
+>   fin_freq = clk_round_rate(channel->clk, freq);
+>   if (fin_freq != freq) {
+>     freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+>     fin_freq = clk_round_rate(channel->clk, freq);
+>   }
+> 
+> The idea is: for a requested 32kHz signal the PWM period is 30518ns.
+> The updated logic would find that there's a matching clock input and
+> use that directly. If not: use the original logic as suggested by
+> Heiner.
+> 
+> 
+> Best regards,
+> Martin
+> 
+> 
+> [0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e323e@gmail.com/
 
