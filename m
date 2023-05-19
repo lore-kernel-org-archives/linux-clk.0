@@ -2,169 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F41C77B7A
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 13:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D48C77B7F
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 13:57:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230220AbjESNJN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 09:09:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42662 "EHLO
+        id S230461AbjESN5k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 09:57:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230370AbjESNJM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 09:09:12 -0400
-Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15B38124
-        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 06:09:09 -0700 (PDT)
-Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2af0eb50b4aso31082581fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 19 May 2023 06:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684501747; x=1687093747;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/Zv1mah4N/HaBlq32OJrOUOQJENrx2Ay1ik5IJM6AVI=;
-        b=E1COi7fX2rR/FXALr7SUoo8vmNVfuubFb6T0kKFyjEycRTKBAFRDmAdnqRsiv96QI+
-         YuksjYw1TCI8YD7OL1HQrzgBRoCAIAFokNHTHkDVC1hU3qngsBeDaYnHcwPs5B3kG3Es
-         u00S6fMxCjT7Mb78GlmwZedLK69dZlMIFKBL02M+7Q+i2qcCqg0QAnEjTlwu+jqP61+t
-         XdH1jZt1ZsHLr3eQuYX9Uk+sJk8rDuB0PHuNDxu1ssWyB4KCdzOdVXgajCPByvWxCIDq
-         eFyq3BBwUZrDO/qwGY7btyI+X5TzriO5HGMlo/fA56RtJOJp3ByAog9e5a2LPgxKgf2g
-         5u5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684501747; x=1687093747;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Zv1mah4N/HaBlq32OJrOUOQJENrx2Ay1ik5IJM6AVI=;
-        b=gP64R1VHP6XJL5j60MeLUjsE/RbitSiDYMDV4FiK5shYE+g26JLZRBwthiqIWeyXj5
-         JmVS7tVLDLoBFpHxTF1AB7qg/nKCixiXIAOHH8Xcn7zMmy0xcrFAdoYdaMdcw9Hbz6CB
-         HMCPdPcvK+csj1UjCLtMHdYdMFodh0CXa37RZmHEwPrTXFlxwK/kQpmEBTC4Bbhjx4ZF
-         pwbqX0WxsbRiBWtYwa+zOIuH0NPVmiJy0bVSkPSZPy3VSSOSfOnbF8caakNr2KwGS8Hv
-         U8ZcymhPIs2fT7qtKwMVQQbgGjWrjEzTjeqm8vSUU/sQxH1D+XPyHolNAK14ba70YHoi
-         HMsw==
-X-Gm-Message-State: AC+VfDxZLqYt20s+xJ6bsX93e3fQERaYh9lo1z5xzwzzf6EsNP/ntJ0o
-        kwqgjBRnmwpwJ3l7x5XM6gdOlQ==
-X-Google-Smtp-Source: ACHHUZ7c/wlNtcqnvOYUHVFfllflTtq4Bc0T77kg8q0qZWMwJo/oVsLcE8qIc4ULCRXWHIkvU13COQ==
-X-Received: by 2002:ac2:5a4d:0:b0:4ed:cb37:7d8c with SMTP id r13-20020ac25a4d000000b004edcb377d8cmr716553lfn.67.1684501747257;
-        Fri, 19 May 2023 06:09:07 -0700 (PDT)
-Received: from [192.168.1.101] (abxi58.neoplus.adsl.tpnet.pl. [83.9.2.58])
-        by smtp.gmail.com with ESMTPSA id q30-20020ac25a1e000000b004edc7f6ee44sm278767lfn.234.2023.05.19.06.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 May 2023 06:09:06 -0700 (PDT)
-Message-ID: <4a9248c0-96ec-1986-d874-1cb7d8aac0ac@linaro.org>
-Date:   Fri, 19 May 2023 15:09:05 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/4] clk: qcom: clk-alpha-pll: Add support for lucid ole
- pll ops
-Content-Language: en-US
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S230220AbjESN5j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 09:57:39 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2E5CA;
+        Fri, 19 May 2023 06:57:38 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2005)
+        id B229168C7B; Fri, 19 May 2023 15:57:33 +0200 (CEST)
+Date:   Fri, 19 May 2023 15:57:33 +0200
+From:   Torsten Duwe <duwe@lst.de>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        yanhong.wang@starfivetech.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230509161218.11979-1-quic_jkona@quicinc.com>
- <20230509161218.11979-2-quic_jkona@quicinc.com>
- <019999fd-3c86-8c85-76c7-8d0206e60f4d@linaro.org>
- <55fc32df-f01b-1ba3-3813-26a5f8c7f730@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <55fc32df-f01b-1ba3-3813-26a5f8c7f730@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL
+ clock generator
+Message-ID: <20230519135733.GA10188@lst.de>
+References: <20230512022036.97987-1-xingyu.wu@starfivetech.com> <20230512022036.97987-2-xingyu.wu@starfivetech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230512022036.97987-2-xingyu.wu@starfivetech.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
+[...]
+>  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+>  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+>  
+> +/* PLL clocks */
+> +#define JH7110_CLK_PLL0_OUT			0
+> +#define JH7110_CLK_PLL1_OUT			1
+> +#define JH7110_CLK_PLL2_OUT			2
 
+In U-Boot commit 58c9c60b Yanhong Wang added:
 
-On 19.05.2023 14:49, Jagadeesh Kona wrote:
-> Hi,
-> 
-> Thanks Konrad for your review!
-> 
-> On 5/10/2023 1:36 AM, Konrad Dybcio wrote:
->>
->>
->> On 9.05.2023 18:12, Jagadeesh Kona wrote:
->>> From: Taniya Das <quic_tdas@quicinc.com>
->>>
->>> Add support for lucid ole pll ops to configure and control the
->>> lucid ole pll. The lucid ole pll has an additional test control
->>> register which is required to be programmed, add support to
->>> program the same.
->>>
->>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>> ---
->> Isn't this commit "write to PLL_TEST_CTL_U2 on LUCID_EVO" instead?
->>
->> Meaninglessly duplicating ops does not seem useful.
->>
->> Konrad
-> 
-> Though we are reusing same ops for EVO and OLE, PLL_TEST_CTL_U2 register programming is applicable only to OLE PLL type.
-Well, your patch makes it unconditional (modulo programmer error) so
-I think that makes little sense.. A comment would be enough, imo.
++
++#define JH7110_SYSCLK_PLL0_OUT                       190
++#define JH7110_SYSCLK_PLL1_OUT                       191
++#define JH7110_SYSCLK_PLL2_OUT                       192
++
++#define JH7110_SYSCLK_END                    193
 
-Konrad
-And PLL type is useful to properly refer respective hardware datasheets. Hence added separate ops for OLE PLL type.
-> 
-> 
->>>   drivers/clk/qcom/clk-alpha-pll.c | 2 ++
->>>   drivers/clk/qcom/clk-alpha-pll.h | 4 ++++
->>>   2 files changed, 6 insertions(+)
->>>
->>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
->>> index b9f6535a7ba7..f81c7c561352 100644
->>> --- a/drivers/clk/qcom/clk-alpha-pll.c
->>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
->>> @@ -55,6 +55,7 @@
->>>   #define PLL_TEST_CTL(p)        ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
->>>   #define PLL_TEST_CTL_U(p)    ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
->>>   #define PLL_TEST_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U1])
->>> +#define PLL_TEST_CTL_U2(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U2])
->>>   #define PLL_STATUS(p)        ((p)->offset + (p)->regs[PLL_OFF_STATUS])
->>>   #define PLL_OPMODE(p)        ((p)->offset + (p)->regs[PLL_OFF_OPMODE])
->>>   #define PLL_FRAC(p)        ((p)->offset + (p)->regs[PLL_OFF_FRAC])
->>> @@ -2096,6 +2097,7 @@ void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
->>>       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
->>>       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
->>>       clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
->>> +    clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U2(pll), config->test_ctl_hi2_val);
->>>         /* Disable PLL output */
->>>       regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
->>> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
->>> index d07b17186b90..4d9b6d5b7062 100644
->>> --- a/drivers/clk/qcom/clk-alpha-pll.h
->>> +++ b/drivers/clk/qcom/clk-alpha-pll.h
->>> @@ -125,6 +125,7 @@ struct alpha_pll_config {
->>>       u32 test_ctl_val;
->>>       u32 test_ctl_hi_val;
->>>       u32 test_ctl_hi1_val;
->>> +    u32 test_ctl_hi2_val;
->>>       u32 main_output_mask;
->>>       u32 aux_output_mask;
->>>       u32 aux2_output_mask;
->>> @@ -171,6 +172,7 @@ extern const struct clk_ops clk_alpha_pll_zonda_ops;
->>>   #define clk_alpha_pll_postdiv_zonda_ops clk_alpha_pll_postdiv_fabia_ops
->>>     extern const struct clk_ops clk_alpha_pll_lucid_evo_ops;
->>> +#define clk_alpha_pll_lucid_ole_ops clk_alpha_pll_lucid_evo_ops
->>>   extern const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops;
->>>   #define clk_alpha_pll_reset_lucid_ole_ops clk_alpha_pll_reset_lucid_evo_ops
->>>   extern const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops;
->>> @@ -196,6 +198,8 @@ void clk_zonda_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->>>                    const struct alpha_pll_config *config);
->>>   void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->>>                    const struct alpha_pll_config *config);
->>> +#define clk_lucid_ole_pll_configure(pll, regmap, config) \
->>> +            clk_lucid_evo_pll_configure(pll, regmap, config)
->>>   void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->>>                     const struct alpha_pll_config *config);
->>>   void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-> 
-> Thanks & Regards,
-> Jagadeesh
+in that respective file.
+
+> +#define JH7110_PLLCLK_END			3
+> +
+>  /* SYSCRG clocks */
+>  #define JH7110_SYSCLK_CPU_ROOT			0
+
+If the symbolic names referred to the same items, would it be possible
+to keep the two files in sync somehow?
+
+	Torsten
