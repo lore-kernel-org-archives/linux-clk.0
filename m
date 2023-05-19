@@ -2,178 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05E9C77B75
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 05:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A67C77B7F
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 06:15:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbjESFuH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 01:50:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36894 "EHLO
+        id S229489AbjESGPd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 02:15:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjESFuG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 01:50:06 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B3DAD2;
-        Thu, 18 May 2023 22:50:05 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34J4e5h8031565;
-        Fri, 19 May 2023 05:50:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=5AvLj4D1+tD+hdLGiemWVn/up+Q8oiKbAxawwPwxxrE=;
- b=fAV6JiTZs+zZVgSiSamiu04+U6pfhzmYnBhwsjuM3hy2dCLX3r8AMygbiCiUw85MZFbf
- t3zcXMxAiJCKS3FLC2pYNaL1+OIU07ob2mlYwSp2vdikro3qXuwu2Ryu4Bc5OY5yYMXG
- C4p7LovpdAaLtNFOUZaS+3V2bKWZyT71qXtHAm7VfcjRmzx2y19XmMo9Qm83JS0PcjmR
- 2QLwaVl5vvamI6S6ylXh8NUCU2ELtr6f9WTvQ+6w9eBQ2ePU8Cfx8+K8SpeeizoA5v0T
- iU1cP1Ri22Dxo039/7NJtawmGBnalpULO1KlFMChqisWJweJK9sg4poNVeJ1PWuhrpk8 ZA== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qnbxqjy21-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 05:50:00 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34J5nx9B001340
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 05:50:00 GMT
-Received: from [10.216.41.71] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 18 May
- 2023 22:49:52 -0700
-Message-ID: <7d831dd2-8be3-2061-e566-7d1d4e95c10d@quicinc.com>
-Date:   Fri, 19 May 2023 11:19:48 +0530
+        with ESMTP id S229436AbjESGPc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 02:15:32 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 612711AC
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 23:15:22 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-307d20548adso1871227f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 18 May 2023 23:15:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1684476921; x=1687068921;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yCYh8uS1PtNXF3LwY9umV8pnonHc4qG+wyV47LgNPyE=;
+        b=luy86l3Q6tr9NE36/PaWY/NMcy3vQDicAQDuobaG/T7kxch7KuZ8BVQ+wVi/vL9S6f
+         kY3dQObPjIhNNCCUF+fzApWI0G6ehTqeAzN3LngL2hwTlbsP8Xj4RkODjGjD4FE84HBk
+         CmhrMa40U75tpP4FC10rrbW8OBQK0xBmQgDhR7bDcO+mBlysOh5+1kZx0YHH3J1vqnvo
+         zyQZaRe12+IkmBfektwQgUAerZJs84gM12s/JYFwVYiK8pjU/AByk0NcrVXzBivUThJD
+         PDjMLFdLsf99KtU/w/gFGj+2a78jv7oCqpsn+31Z4z9OB228QG76QUCn6KD+bhBVKF0Y
+         nbtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684476921; x=1687068921;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yCYh8uS1PtNXF3LwY9umV8pnonHc4qG+wyV47LgNPyE=;
+        b=g5QUtQduRBuu8Ko8sJtJjQk4N+iGxs1NSLQMREURkavhKbxjIYz/mjJmcNh25mBjkK
+         0JQJ55vZn28U34JGdltjaDpOAIIVd36YNY+U2ROlLRgYbrc4PputXIKNkkVkRH2bg14e
+         i2cotaLZS1rML+rJfWORiZlYDxoHZoHJlfdVTFgvGlGpNgK+v1ORNc65bk2ZSkeW0JRS
+         pvL8QJnkC1CAQnkZrnhcf6mt6JX846SB8HHvX1Shlj4kbX/2sCOFYjCQbENqM5Tp+a90
+         M4yHcICVKQ8fYaMTHI3BuFTlUhMgXW4tmBldfWAdyQAV/MMAlNLvtBNSfUZUbKiRJagk
+         2HcQ==
+X-Gm-Message-State: AC+VfDykSKdkq/mg6P54VeD1esGj+2D12HKtHVXHNY+kdlPIdSEUSyS5
+        8Kyl3+s7I/6PsE3u9wktTvVn8A==
+X-Google-Smtp-Source: ACHHUZ4ZwhFo+c6dqH/926xcq+W9gpeBGHfa3x8yDrWM5NcnK/XK6011FVVufCnnN9UCun2EEVMjNw==
+X-Received: by 2002:adf:e4c5:0:b0:305:e8db:37df with SMTP id v5-20020adfe4c5000000b00305e8db37dfmr762233wrm.22.1684476920736;
+        Thu, 18 May 2023 23:15:20 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id d18-20020adff852000000b002ca864b807csm4334055wrq.0.2023.05.18.23.15.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 May 2023 23:15:19 -0700 (PDT)
+Date:   Fri, 19 May 2023 08:15:18 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v7 5/8] ice: implement dpll interface to control cgu
+Message-ID: <ZGcT9tx/xsKGVYBU@nanopsycho>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+ <20230428002009.2948020-6-vadfed@meta.com>
+ <ZFJRIY1HM64gFo3a@nanopsycho>
+ <DM6PR11MB4657EAF163220617A94154A39B789@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZGMiE1ByArIr8ARB@nanopsycho>
+ <DM6PR11MB4657F542DD71F61FD2A1C20B9B7F9@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH 09/11] arm64: dtsi: qcom: ipq5018: enable nodes required
- for multipd
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
-        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
-        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
-        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>
-References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
- <1678164097-13247-10-git-send-email-quic_mmanikan@quicinc.com>
- <2fe8e4fe-c4ba-188c-60eb-71e05be82cb8@linaro.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <2fe8e4fe-c4ba-188c-60eb-71e05be82cb8@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YmiydQyBpj41NGndg-hBq07ds0aDzUlO
-X-Proofpoint-GUID: YmiydQyBpj41NGndg-hBq07ds0aDzUlO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-19_02,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0 adultscore=0
- phishscore=0 suspectscore=0 mlxlogscore=984 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305190050
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657F542DD71F61FD2A1C20B9B7F9@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 3/7/2023 9:11 PM, Krzysztof Kozlowski wrote:
-> On 07/03/2023 05:41, Manikanta Mylavarapu wrote:
->> Enable nodes required for multipd remoteproc bring up
+Thu, May 18, 2023 at 06:06:03PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Tuesday, May 16, 2023 8:26 AM
 >>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/ipq5018.dtsi | 130 ++++++++++++++++++++++++++
->>   1 file changed, 130 insertions(+)
->>   	soc: soc@0 {
->>   		#address-cells = <1>;
->>   		#size-cells = <1>;
->> @@ -217,5 +259,93 @@ frame@b128000 {
->>   				status = "disabled";
->>   			};
->>   		};
->> +
->> +		tcsr_mutex: hwlock@1905000 {
-> 
-> This does not look like in correct order. Don't stuff things to the end
-> of lists.
-> 
-Sure. I will keep nodes as per order.
+>>Tue, May 16, 2023 at 12:07:57AM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>Sent: Wednesday, May 3, 2023 2:19 PM
+>>>>
+>>>>Fri, Apr 28, 2023 at 02:20:06AM CEST, vadfed@meta.com wrote:
+>>>>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
 
->> +			compatible = "qcom,tcsr-mutex";
->> +			reg = <0x01905000 0x8000>;
->> +			#hwlock-cells = <1>;
->> +		};
->> +
->> +		apcs_glb: mailbox@b111000 {
->> +			compatible = "qcom,ipq5018-apcs-apps-global";
->> +			reg = <0x0b111000 0x1000>;
->> +			#clock-cells = <1>;
->> +			#mbox-cells = <1>;
->> +		};
->> +
->> +		q6v5_wcss: remoteproc@cd00000 {
->> +			compatible = "qcom,ipq5018-q6-mpd";
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			reg = <0x0cd00000 0x4040>;
->> +			interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
->> +					      <&wcss_smp2p_in 0 0>,
->> +					      <&wcss_smp2p_in 1 0>,
->> +					      <&wcss_smp2p_in 2 0>,
->> +					      <&wcss_smp2p_in 3 0>;
->> +			interrupt-names = "wdog",
->> +					  "fatal",
->> +					  "ready",
->> +					  "handover",
->> +					  "stop-ack";
->> +
->> +			qcom,smem-states = <&wcss_smp2p_out 0>,
->> +					   <&wcss_smp2p_out 1>;
->> +			qcom,smem-state-names = "shutdown",
->> +						"stop";
->> +			memory-region = <&q6_region>;
->> +
->> +			glink-edge {
->> +				interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
->> +				label = "rtr";
->> +				qcom,remote-pid = <1>;
->> +				mboxes = <&apcs_glb 8>;
->> +			};
->> +
->> +			q6_wcss_pd1: remoteproc_pd1 {
-> 
-> No underscores in node names, generic node names. Actually I don't get
-> why do you need empty node at all.
-> 
-I removed underscores, now name should be pd-1/pd-2/pd-3. Yeah, it 
-should not be empty node. I will correct it.
+[...]
 
-Thanks & Regards,
-Manikanta.
->> +				compatible = "qcom,ipq5018-wcss-ahb-mpd";
->> +			};
->> +
->> +			q6_wcss_pd2: remoteproc_pd2 {
->> +				compatible = "qcom,ipq5018-wcss-pcie-mpd";
->> +				interrupts-extended = <&wcss_smp2p_in 16 0>,
->> +					<&wcss_smp2p_in 17 0>,
->> +					<&wcss_smp2p_in 20 0>,
->> +					<&wcss_smp2p_in 19 0>;
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+
+>>>>>+			pins[i].pin = NULL;
+>>>>>+			return -ENOMEM;
+>>>>>+		}
+>>>>>+		if (cgu) {
+>>>>>+			ret = dpll_pin_register(pf->dplls.eec.dpll,
+>>>>>+						pins[i].pin,
+>>>>>+						ops, pf, NULL);
+>>>>>+			if (ret)
+>>>>>+				return ret;
+>>>>>+			ret = dpll_pin_register(pf->dplls.pps.dpll,
+>>>>>+						pins[i].pin,
+>>>>>+						ops, pf, NULL);
+>>>>>+			if (ret)
+>>>>>+				return ret;
+>>>>
+>>>>You have to call dpll_pin_unregister(pf->dplls.eec.dpll, pins[i].pin, ..)
+>>>>here.
+>>>>
+>>>
+>>>No, in case of error, the caller releases everything
+>>ice_dpll_release_all(..).
+>>
+>>
+>>How does ice_dpll_release_all() where you failed? If you need to
+>>unregister one or both or none? I know that in ice you have odd ways to
+>>handle error paths in general, but this one clearly seems to be broken.
+>>
+>
+>It doesn't have to, as release all would release all anyway.
+>Leaving it for now.
+
+So you call dpll_pin_unregister() even for the pin that was not
+registered before? How is that even remotely correct?
+
+Fix your error paths, please. I don't understand the resistance here :)
+
+[...]
