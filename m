@@ -2,162 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FA2C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 10:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC54C7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 11:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231470AbjESKzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 06:55:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40024 "EHLO
+        id S231739AbjESL4L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 07:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjESKzr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 06:55:47 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9D2113;
-        Fri, 19 May 2023 03:55:46 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34J9VBrB029503;
-        Fri, 19 May 2023 10:55:40 GMT
+        with ESMTP id S231741AbjESL4K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 07:56:10 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5CFEE56;
+        Fri, 19 May 2023 04:56:06 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34JBlPiB022113;
+        Fri, 19 May 2023 11:56:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=VwV3eQCsaztxL8cJGw6wSDphKgHYrjvOQCOiIcxEsUY=;
- b=IiZHnz55enVviH7tb5dm0mzMF+7SDRQQFPWLudUUotdzUGQSps4jMa8m3TLO2iY9g3XS
- HsF9sHlQwzpvoGnDTUA5MvFI4FkSAUBRAjF2kGZ3WGLHb0itwSP54NGC6U7Ydy0cbtPN
- QXJpxBoUCSD4C1hhaWniI5t335IUbm081OMukxzkbO0yDIck8kLWcS4hS/Pzez4AOEO3
- s5zNRfxqyu7KRQpPDTzjX2sh67GH1ooDvWEMdoSnj+K4TTtrfBFEUvijDLp8XPp76C/B
- nuQHY3SGOX6WsYnZ1cgxWX10rR9XHlNyVgFDP2sIIPwReuLQyRSuRmSdunGvb41BXBLF 3Q== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qnfpw37n6-1
+ bh=GX9fAx12QWDHgXQjrSIFZn7Fh89w+4jdm1+9nKC5CDI=;
+ b=j87dn2onmvQg7l9+E+Kk1Cwo3IzM0++FIFkDUx+sBBAefQOxq1nF+ScwiF98ood5Fr65
+ EOtU5otHsNac4Xr6cUTMxH3vwls8L50utijVvaPTteJ3ONqEXXG68E0FWlT/U6CCtLrw
+ 0qMY5L/YpSvB4oJ4SV9ABWu4LqTJzxQZcYBehpQfN59i9CY5rY5yLAvB781zLfR8PVsS
+ gqajKJZzkiN0fmcpY2N5BDSm8Sy/KU9zR26U3l1vsd1xrPJsUoyTpqzJlL1n4gv5t8SG
+ eZjBjCq36LV9cr+rVcat5Kxq7LclUtM7NuVy3TsAr8KQRfdJnb7vLads9cZX284kxctN MA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qp4ccrhcu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 10:55:40 +0000
+        Fri, 19 May 2023 11:56:03 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34JAtdhT020174
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34JBu1nN003860
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 May 2023 10:55:39 GMT
-Received: from [10.216.31.56] (10.80.80.8) by nalasex01a.na.qualcomm.com
+        Fri, 19 May 2023 11:56:01 GMT
+Received: from [10.217.216.177] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 19 May
- 2023 03:55:34 -0700
-Message-ID: <19eef429-1fca-c603-f97d-16424a10d9b7@quicinc.com>
-Date:   Fri, 19 May 2023 16:25:31 +0530
+ 2023 04:55:57 -0700
+Message-ID: <8836be9f-e357-14f8-16ac-92177706e7e7@quicinc.com>
+Date:   Fri, 19 May 2023 17:25:40 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH V4 1/3] dt-bindings: clock: qcom: Add SM8450 video clock
- controller
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Thunderbird/102.10.1
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: sm8550: Add video clock controller
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Conor Dooley <conor+dt@kernel.org>
 CC:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
         <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_skakitap@quicinc.com>, <quic_jkona@quicinc.com>
-References: <20230509172148.7627-1-quic_tdas@quicinc.com>
- <20230509172148.7627-2-quic_tdas@quicinc.com>
- <603c177d-07c7-4cb4-da53-0e1a11ee8828@linaro.org>
-From:   Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <603c177d-07c7-4cb4-da53-0e1a11ee8828@linaro.org>
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20230509161218.11979-1-quic_jkona@quicinc.com>
+ <20230509161218.11979-5-quic_jkona@quicinc.com>
+ <7faf4c16-98ff-f27d-d1fd-3058370c06f5@linaro.org>
+From:   Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <7faf4c16-98ff-f27d-d1fd-3058370c06f5@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Wn1Or5TqzG34kXGeN-tYyZ7K-6n2tQ2P
-X-Proofpoint-GUID: Wn1Or5TqzG34kXGeN-tYyZ7K-6n2tQ2P
+X-Proofpoint-GUID: JGW5G8RsxYdGfu40jfSiRUT9tDTZlLdP
+X-Proofpoint-ORIG-GUID: JGW5G8RsxYdGfu40jfSiRUT9tDTZlLdP
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-05-19_06,2023-05-17_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 clxscore=1015 bulkscore=0
- adultscore=0 phishscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305190091
+ definitions=2023-05-19_08,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 impostorscore=0 spamscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=994 suspectscore=0 malwarescore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2304280000
+ definitions=main-2305190101
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks for the review.
+Hi,
 
-On 5/10/2023 12:42 PM, Krzysztof Kozlowski wrote:
-> On 09/05/2023 19:21, Taniya Das wrote:
->> Add device tree bindings for the video clock controller on Qualcomm
->> SM8450 platform.
+Thanks Konrad for your review!
+
+On 5/15/2023 5:58 PM, Konrad Dybcio wrote:
+> 
+> 
+> On 9.05.2023 18:12, Jagadeesh Kona wrote:
+>> Add device node for video clock controller on Qualcomm SM8550 platform.
 >>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Reviewed-by: Rob Herring <robh@kernel.org>
 >> ---
->> Changes since V3:
->>   - None.
+>>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
 >>
->> Changes since V2:
->>   - As per Stephen's comments drop clock-names to match how newer
->>     qcom clk bindings are being done.
->>   - Change the header file name as qcom,sm8450-videocc.h to match
->>     latest upstream header files.
->>
->> Changes since V1:
->>   - Change the properties order to keep reg after the compatible
->>     property.
->>
->>   .../bindings/clock/qcom,sm8450-videocc.yaml   | 77 +++++++++++++++++++
->>   .../dt-bindings/clock/qcom,sm8450-videocc.h   | 38 +++++++++
->>   2 files changed, 115 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>   create mode 100644 include/dt-bindings/clock/qcom,sm8450-videocc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> new file mode 100644
->> index 000000000000..58e59065bb2a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> @@ -0,0 +1,77 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Video Clock & Reset Controller on SM8450
->> +
->> +maintainers:
->> +  - Taniya Das <quic_tdas@quicinc.com>
->> +
->> +description: |
->> +  Qualcomm video clock control module provides the clocks, resets and power
->> +  domains on SM8450.
->> +
->> +  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,sm8450-videocc
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: Video AHB clock from GCC
->> +      - description: Board XO source
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> index 6e9bad8f6f33..e67e7c69dae6 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> @@ -7,6 +7,7 @@
+>>   #include <dt-bindings/clock/qcom,sm8550-gcc.h>
+>>   #include <dt-bindings/clock/qcom,sm8550-tcsr.h>
+>>   #include <dt-bindings/clock/qcom,sm8550-dispcc.h>
+>> +#include <dt-bindings/clock/qcom,sm8550-videocc.h>
+>>   #include <dt-bindings/dma/qcom-gpi.h>
+>>   #include <dt-bindings/gpio/gpio.h>
+>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> @@ -759,6 +760,17 @@ gcc: clock-controller@100000 {
+>>   				 <&usb_dp_qmpphy QMP_USB43DP_USB3_PIPE_CLK>;
+>>   		};
+>>   
+>> +		videocc: clock-controller@aaf0000 {
+> This node should be moved down. Nodes with unit addresses
+> should be sorted alphanumerically.
 > 
-> Why the order is different than all other devices? Board XO is always first.
+Sure, will update in the next series.
+
+>> +			compatible = "qcom,sm8550-videocc";
+>> +			reg = <0 0x0aaf0000 0 0x10000>;
+>> +			clocks = <&bi_tcxo_div2>, <&gcc GCC_VIDEO_AHB_CLK>;
+> One per line, please
 > 
->
+Okay
 
-Yes, will be fixed in the next patch set.
-
-
-> Best regards,
-> Krzysztof
+> Also, any reason the XO clock does not come from RPMhCC?
 > 
+> Konrad
+>> +			power-domains = <&rpmhpd SM8550_MMCX>;
+>> +			required-opps = <&rpmhpd_opp_low_svs>;
+>> +			#clock-cells = <1>;
+>> +			#reset-cells = <1>;
+>> +			#power-domain-cells = <1>;
+>> +		};
+>> +
+>>   		ipcc: mailbox@408000 {
+>>   			compatible = "qcom,sm8550-ipcc", "qcom,ipcc";
+>>   			reg = <0 0x00408000 0 0x1000>;
 
--- 
 Thanks & Regards,
-Taniya Das.
+Jagadeesh
