@@ -2,161 +2,241 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA90C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 10:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C7EC77B7A
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 10:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231324AbjESKpD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 06:45:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35514 "EHLO
+        id S230304AbjESKxT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 06:53:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231824AbjESKpA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 06:45:00 -0400
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5D8EC;
-        Fri, 19 May 2023 03:44:57 -0700 (PDT)
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34JAigHW043525;
-        Fri, 19 May 2023 05:44:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1684493082;
-        bh=pz9X5RVPYmUqGvU6zl4HiycPuT79cB7Xrh/xPmkS/Mk=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=jv7DC0GpQk2ezyDOeRSRiD/+eB4Da++TCy9fJ7+L7jNFAh9cpNto12J9Fr3DF4Akm
-         XpgQ1ISCnduwNT7uuYCWjByFni0+2lWTeRtmh5yObQubjUbjjx0QdhxnbauUYBqi/d
-         AMfMMD5UsqmKlj8s76yi1p7C4fTBRdB2i27OL+BY=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34JAiggE021339
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 19 May 2023 05:44:42 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 19
- May 2023 05:44:42 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 19 May 2023 05:44:42 -0500
-Received: from localhost (ileaxei01-snat2.itg.ti.com [10.180.69.6])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34JAiffV030900;
-        Fri, 19 May 2023 05:44:41 -0500
-Date:   Fri, 19 May 2023 16:14:42 +0530
-From:   Jai Luthra <j-luthra@ti.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     Conor Dooley <conor@kernel.org>, Andrew Davis <afd@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add binding documentation for TI
- Audio REFCLK
-Message-ID: <e3gfl2hqb5ac3lyj3ji7ncvdjdhkkrefwr2xqrjixavdhxcyil@avdo5ovc4bqv>
-References: <20230515-refclk-v1-0-5e89f01d6733@ti.com>
- <20230515-refclk-v1-1-5e89f01d6733@ti.com>
- <20230517-reprise-unroll-e2223cab3846@spud>
- <cd38d95f-95bd-056e-e3d0-d6c95e3fd80e@linaro.org>
+        with ESMTP id S229648AbjESKxS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 06:53:18 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A47E45;
+        Fri, 19 May 2023 03:53:17 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34J9r7e8000745;
+        Fri, 19 May 2023 10:53:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=rxXCTIRRuoxKLQjYaSasSbfZHzS/pXtEXTYcTYZSFVo=;
+ b=LZzsPtSzDeFtlBiyt6ZvStwlCJdFs5qRncf4awtimNwynMon7NEDoYOWNGgS63UYUN6Q
+ La8N2oi6Py4PGkT7zDpe6FAK5GyD0wW6+P8sYoCTo1I/8uonhLecwXCF6WG2MDIZ99NN
+ bDvU+r+xr5N1f1WV6RbJPhZcakrz/12fALVLXsD1SqITA2daU0sAXKY6BLmHMx92LPOu
+ c/ODg53VoOedXE8KDP5sifTojtxlX+qByJXuYdITF1JJ8oTyhTpmbyDyv0XR3NLMmQkQ
+ X2mjeooSkHh3uIEvE2lzh3OS/1+1R8fDR1JiyE8XVN+YmrI9V44Qw8c53MmSbGOBZ6Nx 6Q== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qp0gk8v92-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 10:53:12 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34JArBpQ002947
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 May 2023 10:53:11 GMT
+Received: from [10.216.31.56] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 19 May
+ 2023 03:53:06 -0700
+Message-ID: <2b013e9d-e4d9-075f-519b-0ce5c4f62894@quicinc.com>
+Date:   Fri, 19 May 2023 16:23:03 +0530
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uyc5revnwgqxyrfw"
-Content-Disposition: inline
-In-Reply-To: <cd38d95f-95bd-056e-e3d0-d6c95e3fd80e@linaro.org>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH V4 2/3] clk: qcom: videocc-sm8450: Add video clock
+ controller driver for SM8450
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_skakitap@quicinc.com>, <quic_jkona@quicinc.com>
+References: <20230509172148.7627-1-quic_tdas@quicinc.com>
+ <20230509172148.7627-3-quic_tdas@quicinc.com>
+ <CAA8EJprHgOaiH2CFKmz_E+NvJpA+DRNE-r1wQXbSfYi+5qoBmA@mail.gmail.com>
+Content-Language: en-US
+From:   Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <CAA8EJprHgOaiH2CFKmz_E+NvJpA+DRNE-r1wQXbSfYi+5qoBmA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Gr1aETRR1NR6ksAXQAS2weXToa89lZp0
+X-Proofpoint-ORIG-GUID: Gr1aETRR1NR6ksAXQAS2weXToa89lZp0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-19_06,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 mlxscore=0 phishscore=0 bulkscore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2304280000 definitions=main-2305190091
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---uyc5revnwgqxyrfw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Dmitry,
 
-Hi Krzysztof,
+Thank you for your review.
 
-Thanks for the review,
+On 5/10/2023 2:03 AM, Dmitry Baryshkov wrote:
+> On Tue, 9 May 2023 at 20:22, Taniya Das <quic_tdas@quicinc.com> wrote:
+>>
+>> Add support for the video clock controller driver for peripheral clock
+>> clients to be able to request for video cc clocks.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>> Changes since V3:
+>>   - Use lower case hex.
+>>   - Check the return value here and bail out early on failure in probe.
+>>
+>> Changes since V2:
+>>   - Update the header file name to match the latest upstream header
+>>     files.
+>>
+>> Changes since V1:
+>>   - Use DT indices instead of fw_name.
+>>   - Replace pm_runtime_enable with devm_pm_runtime_enable.
+>>   - Change license to GPL from GPL V2.
+>>
+>>   drivers/clk/qcom/Kconfig          |   9 +
+>>   drivers/clk/qcom/Makefile         |   1 +
+>>   drivers/clk/qcom/videocc-sm8450.c | 461 ++++++++++++++++++++++++++++++
+>>   3 files changed, 471 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/videocc-sm8450.c
+> 
+> [skipped]
+> 
+> 
+>> +static const struct qcom_reset_map video_cc_sm8450_resets[] = {
+>> +       [CVP_VIDEO_CC_INTERFACE_BCR] = { 0x80e0 },
+>> +       [CVP_VIDEO_CC_MVS0_BCR] = { 0x8098 },
+>> +       [CVP_VIDEO_CC_MVS0C_BCR] = { 0x8048 },
+>> +       [CVP_VIDEO_CC_MVS1_BCR] = { 0x80bc },
+>> +       [CVP_VIDEO_CC_MVS1C_BCR] = { 0x8070 },
+> 
+> Can we have a common VIDEO_CC prefix here please?
 
-On May 18, 2023 at 16:09:01 +0200, Krzysztof Kozlowski wrote:
-> On 17/05/2023 19:15, Conor Dooley wrote:
-> > On Wed, May 17, 2023 at 01:04:05PM +0530, Jai Luthra wrote:
-> >> Add DT bindings for TI's audio reference clocks (REFCLK) present on AM=
-62
-> >> SoC.
-> >=20
-> > This seems fine to me. Perhaps Krzysztof will differ...
-> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> >>
-> >> Signed-off-by: Jai Luthra <j-luthra@ti.com>
-> >> ---
-> >>  .../bindings/clock/ti,am62-audio-refclk.yaml       | 44 +++++++++++++=
-+++++++++
-> >>  1 file changed, 44 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/ti,am62-audio-ref=
-clk.yaml b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
-> >> new file mode 100644
-> >> index 000000000000..7c4cf7abe007
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
-> >> @@ -0,0 +1,44 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/clock/ti,am62-audio-refclk.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: TI Audio Reference Clock
-> >> +
-> >> +maintainers:
-> >> +  - Jai Luthra <j-luthra@ti.com>
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    items:
-> >> +      - const: ti,am62-audio-refclk
-> >> +      - const: syscon
->=20
-> I just don't get why this is syscon? There are no references to it, no
-> DTS change and nothing in the driver suggesting it has to be syscon
-> (creating regmap for internal use does not count).
+The BCR names are coming from hardware plan and software interface, thus 
+we would like to keep them intact.
 
-Sorry you're right, I missed Andrew's series removing syscon:
-https://lore.kernel.org/linux-clk/20230516184626.154892-1-afd@ti.com/
 
-Will re-base my patches on top of it and send v2.
+> 
+>> +       [VIDEO_CC_MVS0C_CLK_ARES] = { 0x8064, 2 },
+>> +       [VIDEO_CC_MVS1C_CLK_ARES] = { 0x808c, 2 },
+>> +};
+>> +
 
->=20
-> Andrew,
-> Is this the pattern we discussed and wanted to remove?
->=20
-> Best regards,
-> Krzysztof
->=20
+The ARES resets are coming from VideoCC clocks(CBCR), hence the name 
+starts with VIDEO_CC.
 
-Thanks,
-Jai
+>> +static const struct regmap_config video_cc_sm8450_regmap_config = {
+>> +       .reg_bits = 32,
+>> +       .reg_stride = 4,
+>> +       .val_bits = 32,
+>> +       .max_register = 0x9f4c,
+>> +       .fast_io = true,
+>> +};
+>> +
+>> +static struct qcom_cc_desc video_cc_sm8450_desc = {
+>> +       .config = &video_cc_sm8450_regmap_config,
+>> +       .clks = video_cc_sm8450_clocks,
+>> +       .num_clks = ARRAY_SIZE(video_cc_sm8450_clocks),
+>> +       .resets = video_cc_sm8450_resets,
+>> +       .num_resets = ARRAY_SIZE(video_cc_sm8450_resets),
+>> +       .gdscs = video_cc_sm8450_gdscs,
+>> +       .num_gdscs = ARRAY_SIZE(video_cc_sm8450_gdscs),
+>> +};
+>> +
+>> +static const struct of_device_id video_cc_sm8450_match_table[] = {
+>> +       { .compatible = "qcom,sm8450-videocc" },
+>> +       { }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, video_cc_sm8450_match_table);
+>> +
+>> +static int video_cc_sm8450_probe(struct platform_device *pdev)
+>> +{
+>> +       struct regmap *regmap;
+>> +       int ret;
+>> +
+>> +       ret = devm_pm_runtime_enable(&pdev->dev);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = pm_runtime_resume_and_get(&pdev->dev);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       regmap = qcom_cc_map(pdev, &video_cc_sm8450_desc);
+>> +       if (IS_ERR(regmap)) {
+>> +               pm_runtime_put(&pdev->dev);
+>> +               return PTR_ERR(regmap);
+>> +       }
+>> +
+>> +       clk_lucid_evo_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
+>> +       clk_lucid_evo_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
+>> +
+>> +       /*
+>> +        * Keep clocks always enabled:
+>> +        *      video_cc_ahb_clk
+>> +        *      video_cc_sleep_clk
+>> +        *      video_cc_xo_clk
+>> +        */
+>> +       regmap_update_bits(regmap, 0x80e4, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0x8130, BIT(0), BIT(0));
+>> +       regmap_update_bits(regmap, 0x8114, BIT(0), BIT(0));
+>> +
+>> +       ret = qcom_cc_really_probe(pdev, &video_cc_sm8450_desc, regmap);
+>> +
+>> +       pm_runtime_put(&pdev->dev);
+>> +
+>> +       return ret;
+>> +}
+>> +
+>> +static struct platform_driver video_cc_sm8450_driver = {
+>> +       .probe = video_cc_sm8450_probe,
+>> +       .driver = {
+>> +               .name = "video_cc-sm8450",
+>> +               .of_match_table = video_cc_sm8450_match_table,
+>> +       },
+>> +};
+>> +
+>> +static int __init video_cc_sm8450_init(void)
+>> +{
+>> +       return platform_driver_register(&video_cc_sm8450_driver);
+>> +}
+>> +subsys_initcall(video_cc_sm8450_init);
+>> +
+>> +static void __exit video_cc_sm8450_exit(void)
+>> +{
+>> +       platform_driver_unregister(&video_cc_sm8450_driver);
+>> +}
+>> +module_exit(video_cc_sm8450_exit);
+> 
+> module_platform_driver() ?
+> 
 
---uyc5revnwgqxyrfw
-Content-Type: application/pgp-signature; name="signature.asc"
+We would like to keep the clock drivers all probed at subsys_initcall. 
+We could revisit and update as cleanup if we want to move them to module 
+init.
 
------BEGIN PGP SIGNATURE-----
+>> +
+>> +MODULE_DESCRIPTION("QTI VIDEO_CC SM8450 Driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 2.17.1
+>>
+> 
+> 
 
-iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmRnUxYACgkQQ96R+SSa
-cUWHeg//S9Bd9zlNj0Q8CIjTyzpLh1dChtqtqpJAPnt2JDm4O8/6CyaBF1up7G/2
-kHUhBukHhaoOvsX/e24axalKjMbLkPwgZnjSDNPoAyWUyAx4FNYP2QIbuuHCEcBl
-YUJ6D7RTnptcdbBek8zQ0TGC5nQFKBkjxQafi9aAlQ66zOuDGT9S0h4S1sVgp5u0
-2XcwyKppOgEN9m7nmSfjno5QwhwacH+7GKMwlD/NcBdmsOMVvZd/Fj8ay16akb7A
-cRJ0Vgsh+PYWzCFp5KvqIHilxHhDOPH8BiwHJ/YT8YCoTutIh1AZ3PCKvjnuGr+q
-UoA0cXwsCF31yKRUiGRigpXzNXHYDobovNiyA3A6CKyNXZC4TPOV82SBQ9TSZ/Bi
-4HnG5cM4X5BUu8uSZCNne79c7Vh2BQWrT93kBAw6+bkcPq/OjmVF23SVdsWdbWD9
-rmWxz7Bmyk5Cie13OvUpbz7Zn3VKxoSPpKU0NKGGkQYde28BJMMAf+9qIUK/8s54
-3set9qv3xXVl5EilLIwABF2qX36huiOdpxfEkHw9GrpqMTSn4lb2fvv44bILqptR
-xtF5xK5/BIT2yE6IQyasuv9Zc4NVARvmCMCQ6IOr4WJjqsyaEqJ4NuErRnsEoil1
-QnJytx6LCIwwLJ/UQpdMDRYw+Ap47OgaZMu5j/HFX2c++IAmiCQ=
-=B83k
------END PGP SIGNATURE-----
-
---uyc5revnwgqxyrfw--
+-- 
+Thanks & Regards,
+Taniya Das.
