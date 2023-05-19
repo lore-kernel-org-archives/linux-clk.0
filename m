@@ -2,25 +2,51 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D48C77B7F
-	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 13:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE728C7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 19 May 2023 14:17:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230461AbjESN5k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 May 2023 09:57:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36866 "EHLO
+        id S231148AbjESORU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 May 2023 10:17:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230220AbjESN5j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 09:57:39 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2E5CA;
-        Fri, 19 May 2023 06:57:38 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2005)
-        id B229168C7B; Fri, 19 May 2023 15:57:33 +0200 (CEST)
-Date:   Fri, 19 May 2023 15:57:33 +0200
-From:   Torsten Duwe <duwe@lst.de>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        yanhong.wang@starfivetech.com,
+        with ESMTP id S229546AbjESORT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 May 2023 10:17:19 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183CAD3;
+        Fri, 19 May 2023 07:17:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1684505837; x=1716041837;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Sd2VkJX17zpiW/S4Qia53jgvQaRUOiUOyM2LVozEYUc=;
+  b=Pl/L3pHaS6SX7mqzkGckGzxeTL3AOZUBNfFXbwsKlmFNC44TewMUPMqq
+   x4/s/OhAr2ewR/yU8lWeKqLybP+O8lUmczxR1B6tPuQCf1VuHDYWLhB/E
+   sOHR53XkqQ9rrEK2v2uymdF5TL0YxGa09XaZpr+xvAFTmqIfMN6YuEpxK
+   pEfjAIMvsIGNsz9B7YJoyuBVYfkzZzjUOmQwGBomtTC80tW7BJiIoyQaE
+   Z+v9voQmAYfhRtTObZQO7993CSUzdAqPSdWcPUa9pP8F4LaHyyaeFg6Bt
+   34aw6A6V5pFTPKx0sHAPRSkk7OWzsJu2ZvNlNNYXvUsa8BUpJulnZ9G6i
+   g==;
+X-IronPort-AV: E=Sophos;i="6.00,176,1681196400"; 
+   d="asc'?scan'208";a="214610741"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 May 2023 07:17:16 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Fri, 19 May 2023 07:17:13 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
+ Transport; Fri, 19 May 2023 07:17:10 -0700
+Date:   Fri, 19 May 2023 15:16:49 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Torsten Duwe <duwe@lst.de>
+CC:     Xingyu Wu <xingyu.wu@starfivetech.com>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <yanhong.wang@starfivetech.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -33,47 +59,69 @@ Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Albert Ou <aou@eecs.berkeley.edu>,
         Hal Feng <hal.feng@starfivetech.com>,
         William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL
- clock generator
-Message-ID: <20230519135733.GA10188@lst.de>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com> <20230512022036.97987-2-xingyu.wu@starfivetech.com>
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock
+ generator
+Message-ID: <20230519-smokeless-guileless-2a71cae06509@wendy>
+References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
+ <20230512022036.97987-2-xingyu.wu@starfivetech.com>
+ <20230519135733.GA10188@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="R4Qg/wX5CgaesNEQ"
 Content-Disposition: inline
-In-Reply-To: <20230512022036.97987-2-xingyu.wu@starfivetech.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20230519135733.GA10188@lst.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
-[...]
->  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
->  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
->  
-> +/* PLL clocks */
-> +#define JH7110_CLK_PLL0_OUT			0
-> +#define JH7110_CLK_PLL1_OUT			1
-> +#define JH7110_CLK_PLL2_OUT			2
+--R4Qg/wX5CgaesNEQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In U-Boot commit 58c9c60b Yanhong Wang added:
-
-+
-+#define JH7110_SYSCLK_PLL0_OUT                       190
-+#define JH7110_SYSCLK_PLL1_OUT                       191
-+#define JH7110_SYSCLK_PLL2_OUT                       192
-+
-+#define JH7110_SYSCLK_END                    193
-
-in that respective file.
-
-> +#define JH7110_PLLCLK_END			3
+On Fri, May 19, 2023 at 03:57:33PM +0200, Torsten Duwe wrote:
+> On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
+> [...]
+> >  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+> >  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+> > =20
+> > +/* PLL clocks */
+> > +#define JH7110_CLK_PLL0_OUT			0
+> > +#define JH7110_CLK_PLL1_OUT			1
+> > +#define JH7110_CLK_PLL2_OUT			2
+>=20
+> In U-Boot commit 58c9c60b Yanhong Wang added:
+>=20
 > +
->  /* SYSCRG clocks */
->  #define JH7110_SYSCLK_CPU_ROOT			0
+> +#define JH7110_SYSCLK_PLL0_OUT                       190
+> +#define JH7110_SYSCLK_PLL1_OUT                       191
+> +#define JH7110_SYSCLK_PLL2_OUT                       192
+> +
+> +#define JH7110_SYSCLK_END                    193
+>=20
+> in that respective file.
+>=20
+> > +#define JH7110_PLLCLK_END			3
+> > +
+> >  /* SYSCRG clocks */
+> >  #define JH7110_SYSCLK_CPU_ROOT			0
+>=20
+> If the symbolic names referred to the same items, would it be possible
+> to keep the two files in sync somehow?
 
-If the symbolic names referred to the same items, would it be possible
-to keep the two files in sync somehow?
+Ohh, that's not good.. If you pass the U-Boot dtb to Linux it won't
+understand the numbering. The headers are part of the dt-binding :/
 
-	Torsten
+--R4Qg/wX5CgaesNEQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGeE0QAKCRB4tDGHoIJi
+0j9qAP43YVrZEKNRod6kOuBIre1NM1sSrB1fIk55f7+4mLNEYwEAlTvK/m1TazZN
+R+GITt0fWp/eotW4VJ7EN6IC8v3C3QE=
+=BbP3
+-----END PGP SIGNATURE-----
+
+--R4Qg/wX5CgaesNEQ--
