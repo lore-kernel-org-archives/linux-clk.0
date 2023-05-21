@@ -2,347 +2,213 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2E6C77B7C
-	for <linux-clk@archiver.kernel.org>; Sun, 21 May 2023 17:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE2DC77B7C
+	for <linux-clk@archiver.kernel.org>; Sun, 21 May 2023 18:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230394AbjEURnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 May 2023 13:43:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44218 "EHLO
+        id S231837AbjEUS3D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 May 2023 14:29:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231428AbjEURmy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 May 2023 13:42:54 -0400
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8C7E1
-        for <linux-clk@vger.kernel.org>; Sun, 21 May 2023 10:21:54 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 0mkfqJIn4ZV0d0mkgqyDCA; Sun, 21 May 2023 19:21:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1684689712;
-        bh=GnoOf0xWLQliOYfqdOBB5QyrQ9P0hooDp7U/JgfRxhQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=QDON1IcHnHw69grnW6tznLI6KTYLejaGitd81P2nJq5WPI2l87j3T1kHItWJ/50gh
-         sR+pnniHAug6z7owl99WwN2PEOZYI1vHBZFiloIAUCz2QSUzIf717W/RKRMxtebMZH
-         L7vVSPQGoa3/qDx+Qf3PGPbyDbiR/o8YGlraeSg6jc0dKjjUxXTeZDgfFC9JTkfeS1
-         LLvgqBrEuYF6/EST+4gGjz2Ah1yiZ6vxHFMBa0IM44UUaZAxMPduxCiFhoQmD7Swo/
-         qwoVPe5uavA0bp+bQI54jb7pK8RY5Rdkm2uK92me5x78uQjvN0/s5IDn7bAsnvYS5P
-         4accYLgEahIKw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 21 May 2023 19:21:52 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <0e72c35f-5d9d-45a7-5f85-3971b8029106@wanadoo.fr>
-Date:   Sun, 21 May 2023 19:21:49 +0200
+        with ESMTP id S231791AbjEUSQ0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 May 2023 14:16:26 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDDD121
+        for <linux-clk@vger.kernel.org>; Sun, 21 May 2023 11:10:37 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id 3f1490d57ef6-ba8cf3cb34fso4110473276.1
+        for <linux-clk@vger.kernel.org>; Sun, 21 May 2023 11:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684692636; x=1687284636;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lkjzc+aDypSMI7e9l+x5HsKGmCuqjdvtk76l+YseVrM=;
+        b=n+WUlbPG7U+2MxbjLkfmws8nrRXJXShW2Xrti83ugFG3vzfFfmcSOXShpI7MG5o1Si
+         PViSN5gazzVaDCtWYkvQnuGiDCj5UZxxrf3m9Zs72O/5yQFIRW9jjXiMKXxbQ53HXDmz
+         P+dbNP+X6WcBXBD8P7un7KR6KtvnbILpdRF3PUyt6l+6hWssJWIndDt45xgbB+3qCmVi
+         XTtVtELIUcEw6mjXj0/J7pvdDbxnXcEVuBhrlzzW+HaUNgJKdSkje5LpqbYR93lT8zgE
+         hvUWBMX1fvEv4Ap8KszP/JyGxMABZuOzOPx2+E2me/69YhoX9d6oZFdSMaMqewkFZZON
+         EuyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684692636; x=1687284636;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lkjzc+aDypSMI7e9l+x5HsKGmCuqjdvtk76l+YseVrM=;
+        b=eY3qbVRS31A/ox7iP4PFcIZKkSCKFq9FyqLfV/dg2A6zUWYbeRPdjpdpdzNGyomw+b
+         kjoWGMBdF5p/uXUVAq6M9uaaLOIVobbR/rHUVSiR4OvixsIBAY93ArxzSZTaoB8bG8Fn
+         gc6iT2eKcy9yZ5LOplVYQjMlPB8VLihRtoSN9gPoW0zs0GThJVXDU95greH5S5gfOz1C
+         DLEF5SJBd/ytBAs0GiABBEFKzookHCpswGhTLgWkFXLfRh3Z7c4/tUXVtOcRuyc4urj9
+         gWNOjHENbGWz4OcO/rg3T8GtHVJWt493TSKtBczlZvu4s3xUeT9Rja0qGap95UBuM8dU
+         Bf0A==
+X-Gm-Message-State: AC+VfDzxKLGT1LfL6TGQtETmax+ktIL68utUZreS+21++2Zkcy6lzpT3
+        3CvwPYZNMMEZCWaonmhwMN2EbPL1LfVgICuygjDCZA==
+X-Google-Smtp-Source: ACHHUZ55W84sCFiOxOJpLNBhRJQ8wI4F5e70a7F/5r8/nyLXHtEwHzpYQsd9caGfXD1Y3CXq9xw91dvDYW+yC7cT0WY=
+X-Received: by 2002:a25:250e:0:b0:b9a:affd:64d3 with SMTP id
+ l14-20020a25250e000000b00b9aaffd64d3mr8761953ybl.15.1684692636458; Sun, 21
+ May 2023 11:10:36 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v16 1/1] clk: npcm8xx: add clock controller
-Content-Language: fr
-To:     Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, avifishman70@gmail.com, tali.perry1@gmail.com,
-        joel@jms.id.au, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com
-Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230521143202.155399-1-tmaimon77@gmail.com>
- <20230521143202.155399-2-tmaimon77@gmail.com>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230521143202.155399-2-tmaimon77@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
+ <366ed962-dedb-0e88-036d-a1a806d0b589@quicinc.com> <f63c86fd-4c39-7523-1971-6d8df91afcf4@quicinc.com>
+In-Reply-To: <f63c86fd-4c39-7523-1971-6d8df91afcf4@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Sun, 21 May 2023 21:10:25 +0300
+Message-ID: <CAA8EJpoH51ajGvSdb1VBmtkKdLUnVGNhoBay93whz+hJh4ApXA@mail.gmail.com>
+Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc driver
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jassisinghbrar@gmail.com, mathieu.poirier@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_gurus@quicinc.com,
+        loic.poulain@linaro.org, quic_eberman@quicinc.com,
+        robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org,
+        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_anusha@quicinc.com, quic_poovendh@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le 21/05/2023 à 16:32, Tomer Maimon a écrit :
-> Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller which
-> generates and supplies clocks to all modules within the BMC.
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+On Sun, 21 May 2023 at 18:48, Manikanta Mylavarapu
+<quic_mmanikan@quicinc.com> wrote:
+>
+>
+>
+> On 3/7/2023 6:47 PM, Sricharan Ramabadhran wrote:
+> >
+> >
+> > On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
+> >> APSS brings Q6 out of reset and then Q6 brings
+> >> WCSS block (wifi radio's) out of reset.
+> >>
+> >>                    ---------------
+> >>                   -->  |WiFi 2G radio|
+> >>                   |       --------------
+> >>                   |
+> >> --------    -------          |
+> >> | APSS | --->   |QDSP6|  -----|
+> >> ---------    -------       |
+> >>                                |
+> >>                          |
+> >>                   |   --------------
+> >>                   --> |WiFi 5G radio|
+> >>                   --------------
+> >>
+> >> Problem here is if any radio crashes, subsequently other
+> >> radio also should crash because Q6 crashed. Let's say
+> >> 2G radio crashed, Q6 should pass this info to APSS. Only
+> >> Q6 processor interrupts registered with APSS. Obviously
+> >> Q6 should crash and raise fatal interrupt to APSS. Due
+> >> to this 5G radio also crashed. But no issue in 5G radio,
+> >> because of 2G radio crash 5G radio also impacted.
+> >>
+> >> In multi pd model, this problem is resolved. Here WCSS
+> >> functionality (WiFi radio's) moved out from Q6 root pd
+> >> to a separate user pd. Due to this, radio's independently
+> >> pass their status info to APPS with out crashing Q6. So
+> >> other radio's won't be impacted.
+> >>
+> >>                         ---------
+> >>                             |WiFi    |
+> >>                         --> |2G radio|
+> >>                         |     ---------
+> >> ------    Start Q6             -------     |
+> >> |    |    ------------------>     |     |     |
+> >> |    |  Start WCSS PD1 (2G)       |     |        |
+> >> |APSS|    ----------------------->|QDSP6|-----|
+> >> |    |    Start WCSS PD1 (5G)    |     |
+> >> |    |    ----------------------->|     |-----|
+> >> ------                     -------     |
+> >>                         |
+> >>                         |    -----------
+> >>                         |-->|WiFi      |
+> >>                         |5G radio |
+> >>                         -----------
+> >> According to linux terminology, here consider Q6 as root
+> >> i.e it provide all services, WCSS (wifi radio's) as user
+> >> i.e it uses services provided by root.
+> >>
+> >> Since Q6 root & WCSS user pd's able to communicate with
+> >> APSS individually, multipd remoteproc driver registers
+> >> each PD with rproc framework. Here clients (Wifi host drivers)
+> >> intrested on WCSS PD rproc, so multipd driver start's root
+> >> pd in the context of WCSS user pd rproc start. Similarly
+> >> on down path, root pd will be stopped after wcss user pd
+> >> stopped.
+> >>
+> >> Here WCSS(user) PD is dependent on Q6(root) PD, so first
+> >> q6 pd should be up before wcss pd. After wcss pd goes down,
+> >> q6 pd should be turned off.
+> >>
+> >> rproc->ops->start(userpd_rproc) {
+> >>     /* Boot root pd rproc */
+> >>     rproc_boot(upd_dev->parent);
+> >>     ---
+> >>     /* user pd rproc start sequence */
+> >>     ---
+> >>     ---
+> >> }
+> >> With this way we ensure that root pd brought up before userpd.
+> >>
+> >> rproc->ops->stop(userpd_rproc) {
+> >>     ---
+> >>     ---
+> >>     /* user pd rproc stop sequence */
+> >>     ---
+> >>     ---
+> >>     /* Shutdown root pd rproc */
+> >>     rproc_shutdown(upd_dev->parent);
+> >> }
+> >> After userpd rproc stops, root pd rproc will be stopped.
+> >> IPQ5018, IPQ9574 supports multipd remoteproc driver.
+> >>
+> >> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> >> ---
+> >>   drivers/firmware/qcom_scm.c            | 114 +++++
+> >>   drivers/firmware/qcom_scm.h            |   6 +
+> >>   drivers/remoteproc/Kconfig             |  20 +
+> >>   drivers/remoteproc/Makefile            |   1 +
+> >>   drivers/remoteproc/qcom_common.c       |  23 +
+> >>   drivers/remoteproc/qcom_common.h       |   1 +
+> >>   drivers/remoteproc/qcom_q6v5.c         |  41 +-
+> >>   drivers/remoteproc/qcom_q6v5.h         |  15 +-
+> >>   drivers/remoteproc/qcom_q6v5_adsp.c    |   5 +-
+> >>   drivers/remoteproc/qcom_q6v5_mpd.c     | 668 +++++++++++++++++++++++++
+> >>   drivers/remoteproc/qcom_q6v5_mss.c     |   4 +-
+> >>   drivers/remoteproc/qcom_q6v5_pas.c     |   3 +-
+> >>   drivers/soc/qcom/mdt_loader.c          | 314 ++++++++++++
+> >>   include/linux/firmware/qcom/qcom_scm.h |   3 +
+> >>   include/linux/soc/qcom/mdt_loader.h    |  19 +
+> >>   15 files changed, 1228 insertions(+), 9 deletions(-)
+> >>   create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
+> >>
+> >> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+> >> index d88c5f14bd54..d69560963353 100644
+> >> --- a/drivers/firmware/qcom_scm.c
+> >> +++ b/drivers/firmware/qcom_scm.c
+> >> @@ -654,6 +654,120 @@ int qcom_scm_pas_shutdown(u32 peripheral)
+> >>   }
+> >>   EXPORT_SYMBOL(qcom_scm_pas_shutdown);
+> >> +/**
+> >> + * qti_scm_int_radio_powerup - Bring up internal radio userpd
+> >> + *
+> >> + * @peripheral:    peripheral id
+> >> + *
+> >> + * Return 0 on success.
+> >> + */
+> >> +int qti_scm_int_radio_powerup(u32 peripheral)
+> >> +{
+> >
+> > qcom instead and in other places too.
+> >
+> Internal open source team suggested to use qti.
 
-Hi,
+All existing drivers use qcom_ prefix. Other functions in qcom_scm.c
+use qcom_ prefix. Please stick to it.
 
-should there be a v17, below a few nits and questions.
-
-Jusrt my 2c,
-
-> ---
->   drivers/clk/Kconfig       |   8 +
->   drivers/clk/Makefile      |   1 +
->   drivers/clk/clk-npcm8xx.c | 566 ++++++++++++++++++++++++++++++++++++++
->   3 files changed, 575 insertions(+)
->   create mode 100644 drivers/clk/clk-npcm8xx.c
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 016814e15536..2249de28a46a 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -325,6 +325,14 @@ config COMMON_CLK_LOCHNAGAR
->   	  This driver supports the clocking features of the Cirrus Logic
->   	  Lochnagar audio development board.
->   
-> +config COMMON_CLK_NPCM8XX
-> +	tristate "Clock driver for the NPCM8XX SoC Family"
-> +	depends on ARCH_NPCM || COMPILE_TEST
-> +	help
-> +	  This driver supports the clocks on the Nuvoton BMC NPCM8XX SoC Family,
-> +	  all the clocks are initialized by the bootloader, so this driver
-> +	  allows only reading of current settings directly from the hardware.
-> +
->   config COMMON_CLK_LOONGSON2
->   	bool "Clock driver for Loongson-2 SoC"
->   	depends on LOONGARCH || COMPILE_TEST
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 0aebef17edc6..88713cbfbab5 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -51,6 +51,7 @@ obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
->   obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
->   obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
->   obj-$(CONFIG_ARCH_NPCM7XX)	    	+= clk-npcm7xx.o
-> +obj-$(CONFIG_COMMON_CLK_NPCM8XX)	+= clk-npcm8xx.o
->   obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
->   obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
->   obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
-> diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
-> new file mode 100644
-> index 000000000000..9e6ed073d124
-> --- /dev/null
-> +++ b/drivers/clk/clk-npcm8xx.c
-> @@ -0,0 +1,566 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Nuvoton NPCM8xx Clock Generator
-> + * All the clocks are initialized by the bootloader, so this driver allow only
-
-nit: allows (as in Kconfig)
-
-[...]
-
-> +/* npcm8xx clock registers*/
-> +#define NPCM8XX_CLKSEL          (0x04)
-> +#define NPCM8XX_CLKDIV1         (0x08)
-> +#define NPCM8XX_CLKDIV2         (0x2C)
-> +#define NPCM8XX_CLKDIV3         (0x58)
-> +#define NPCM8XX_CLKDIV4         (0x7C)
-> +#define NPCM8XX_PLLCON0         (0x0C)
-> +#define NPCM8XX_PLLCON1         (0x10)
-> +#define NPCM8XX_PLLCON2         (0x54)
-> +#define NPCM8XX_PLLCONG         (0x60)
-> +#define NPCM8XX_THRTL_CNT       (0xC0)
-
-nit: () around this values looks superfluous.
-
-> +
-> +#define PLLCON_LOKI	BIT(31)
-> +#define PLLCON_LOKS	BIT(30)
-
-[...]
-
-> +static struct clk_hw *
-> +npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
-> +			 const char *name, const struct clk_parent_data *parent,
-> +			 unsigned long flags)
-> +{
-> +	struct npcm8xx_clk_pll *pll;
-> +	struct clk_init_data init = {};
-> +	int ret;
-> +
-> +	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-
-Everything looks devm_()'ed in this driver, except this kzalloc.
-Except the one below, there is no kfree to free this memory, and no 
-.remove() function.
-
-Is it on purpose?
-
-> +	if (!pll)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name = name;
-> +	init.ops = &npcm8xx_clk_pll_ops;
-> +	init.parent_data = parent;
-> +	init.num_parents = 1;
-> +	init.flags = flags;
-> +
-> +	pll->pllcon = pllcon;
-> +	pll->hw.init = &init;
-> +
-> +	ret = devm_clk_hw_register(dev, &pll->hw);
-> +	if (ret) {
-> +		kfree(pll);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	return &pll->hw;
-> +}
-> +
-> +static DEFINE_SPINLOCK(npcm8xx_clk_lock);
-> +
-> +static int npcm8xx_clk_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *npcm8xx_clk_data;
-> +	struct device *dev = &pdev->dev;
-> +	void __iomem *clk_base;
-> +	struct resource *res;
-> +	struct clk_hw *hw;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	npcm8xx_clk_data = devm_kzalloc(dev, struct_size(npcm8xx_clk_data, hws,
-> +							 NPCM8XX_NUM_CLOCKS),
-> +					GFP_KERNEL);
-> +	if (!npcm8xx_clk_data)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	clk_base = devm_ioremap(dev, res->start, resource_size(res));
-> +	if (!clk_base) {
-> +		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
-
-Here and below: mostly a matter of taste, but usually return 
-dev_err_probe() saves a few LoC and keep the error code in the error 
-message.
-
-> +		return -ENOMEM;
-> +	}
-> +
-> +	npcm8xx_clk_data->num = NPCM8XX_NUM_CLOCKS;
-> +
-> +	for (i = 0; i < NPCM8XX_NUM_CLOCKS; i++)
-> +		npcm8xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
-> +
-> +	/* Register plls */
-> +	for (i = 0; i < ARRAY_SIZE(npcm8xx_pll_clks); i++) {
-> +		struct npcm8xx_pll_data *pll_clk = &npcm8xx_pll_clks[i];
-> +
-> +		hw = npcm8xx_clk_register_pll(dev, clk_base + pll_clk->reg,
-> +					      pll_clk->name, &pll_clk->parent,
-> +					      pll_clk->flags);
-> +		if (IS_ERR(hw)) {
-> +			dev_err(dev, "npcm8xx_clk: Can't register pll\n");
-> +			return PTR_ERR(hw);
-> +		}
-> +		pll_clk->hw = *hw;
-> +	}
-> +
-> +	/* Register fixed dividers */
-> +	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL1_DIV2,
-> +					       NPCM8XX_CLK_S_PLL1, 0, 1, 2);
-> +	if (IS_ERR(hw)) {
-> +		dev_err(dev, "npcm8xx_clk: Can't register fixed div\n");
-> +		return PTR_ERR(hw);
-> +	}
-> +	hw_pll1_div2 = *hw;
-> +
-> +	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL2_DIV2,
-> +					       NPCM8XX_CLK_S_PLL2, 0, 1, 2);
-> +	if (IS_ERR(hw)) {
-> +		dev_err(dev, "npcm8xx_clk: Can't register pll2 div2\n");
-> +		return PTR_ERR(hw);
-> +	}
-> +	hw_pll2_div2 = *hw;
-> +
-> +	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL_GFX_DIV2,
-> +					       NPCM8XX_CLK_S_PLL_GFX, 0, 1, 2);
-> +	if (IS_ERR(hw)) {
-> +		dev_err(dev, "npcm8xx_clk: Can't register gfx div2\n");
-> +		return PTR_ERR(hw);
-> +	}
-> +	hw_gfx_div2 = *hw;
-> +
-> +	/* Register muxes */
-> +	for (i = 0; i < ARRAY_SIZE(npcm8xx_muxes); i++) {
-> +		struct npcm8xx_clk_mux_data *mux_data = &npcm8xx_muxes[i];
-> +
-> +		hw = devm_clk_hw_register_mux_parent_data_table(dev,
-> +								mux_data->name,
-> +								mux_data->parent_data,
-> +								mux_data->num_parents,
-> +								mux_data->flags,
-> +								clk_base + NPCM8XX_CLKSEL,
-> +								mux_data->shift,
-> +								mux_data->mask,
-> +								0,
-> +								mux_data->table,
-> +								&npcm8xx_clk_lock);
-> +		if (IS_ERR(hw)) {
-> +			dev_err(dev, "npcm8xx_clk: Can't register mux\n");
-> +			return PTR_ERR(hw);
-> +		}
-> +		mux_data->hw = *hw;
-> +	}
-> +
-> +	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PRE_CLK,
-> +					       NPCM8XX_CLK_S_CPU_MUX, 0, 1, 2);
-> +	if (IS_ERR(hw)) {
-> +		dev_err(dev, "npcm8xx_clk: Can't register ckclk div2\n");
-
-ckclk or just clk?
-
-Based on naming only, this div2 (here and below) looks strange.
-Is it on purpose, on just a cut'n'paste  from the previous message?
-
-> +		return PTR_ERR(hw);
-> +	}
-> +	hw_pre_clk = *hw;
-> +
-> +	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_AXI,
-> +					       NPCM8XX_CLK_S_TH, 0, 1, 2);
-> +	if (IS_ERR(hw)) {
-> +		dev_err(dev, "npcm8xx_clk: Can't register axi div2\n");
-> +		return PTR_ERR(hw);
-> +	}
-> +	npcm8xx_clk_data->hws[NPCM8XX_CLK_AXI] = hw;
-> +
-> +	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_ATB,
-> +					       NPCM8XX_CLK_S_AXI, 0, 1, 2);
-> +	if (IS_ERR(hw)) {
-> +		dev_err(dev, "npcm8xx_clk: Can't register atb div2\n");
-> +		return PTR_ERR(hw);
-> +	}
-> +	npcm8xx_clk_data->hws[NPCM8XX_CLK_ATB] = hw;
-> +
-> +	/* Register clock dividers specified in npcm8xx_divs */
-> +	for (i = 0; i < ARRAY_SIZE(npcm8xx_divs); i++) {
-> +		const struct npcm8xx_clk_div_data *div_data = &npcm8xx_divs[i];
-> +
-> +		hw = clk_hw_register_divider_parent_data(dev, div_data->name,
-> +							 &div_data->parent_data,
-> +							 div_data->flags,
-> +							 clk_base + div_data->reg,
-> +							 div_data->shift,
-> +							 div_data->width,
-> +							 div_data->clk_divider_flags,
-> +							 &npcm8xx_clk_lock);
-> +		if (IS_ERR(hw)) {
-> +			dev_err(dev, "npcm8xx_clk: Can't register div table\n");
-> +			goto err_div_clk;
-> +		}
-> +
-> +		if (div_data->onecell_idx >= 0)
-> +			npcm8xx_clk_data->hws[div_data->onecell_idx] = hw;
-> +	}
-> +
-> +	err = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					  npcm8xx_clk_data);
-> +	if (err) {
-> +		dev_err(dev, "unable to add clk provider\n");
-> +		hw = ERR_PTR(err);
-> +		goto err_div_clk;
-> +	}
-> +
-> +	return err;
-> +
-> +err_div_clk:
-> +	while (i--) {
-> +		if (npcm8xx_divs[i].onecell_idx >= 0)
-> +			clk_hw_unregister_divider(npcm8xx_clk_data->hws[npcm8xx_divs[i].onecell_idx]);
-> +	}
-
-There is an error handling path in the probe, but no .remove() function.
-Should there be one?
-
-CJ
-
-[...]
+-- 
+With best wishes
+Dmitry
