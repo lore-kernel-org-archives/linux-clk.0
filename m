@@ -2,721 +2,632 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A935C7EE2D
-	for <linux-clk@archiver.kernel.org>; Sun, 21 May 2023 14:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314AAC7EE2D
+	for <linux-clk@archiver.kernel.org>; Sun, 21 May 2023 15:48:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbjEUOcP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 May 2023 10:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43802 "EHLO
+        id S229985AbjEUPst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 May 2023 11:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbjEUOcO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 May 2023 10:32:14 -0400
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2068.outbound.protection.outlook.com [40.107.117.68])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F095C2;
-        Sun, 21 May 2023 07:32:11 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aT/9XqQ/b68O0sbaOhPD9VSJf1T5ocDHoYPfJXwgAay9bFdB0C+9ccid3sspRkKXcm4PXC2MC2vEHNhXxss0Fmib4Baocai3PxCyCMqpkmLecpiPWySpIJxo1k4QcqCz0Bx3e55Jj+S8M7PhzTacfZTIcUEJku246JZNC4slGWDMIIWmaDO9NffU33fGrVc9XzLMBbEHhoia4AYY943J+6Apd2ngjsitHcnWnPiypxZgcX2fhc9rrVyVk/ORn2M3/eGb8cKBQKl9PjX2m/xIi6kOgUoLTY9mG4vSU94fQLQFuKDoL0kawlD7CgAfV1QEJdtlMLUcEw8/NRmfxLhkBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GwWgSYFVOqkXbP0MbM8ZBbYowpiA6F7xNW2GkLwHaao=;
- b=Yk4b/Q9TUITv5vJTm1Q5RDpqVjPSobtrAAu96dAJ0gPGHVAs81pM3RM8jVS9VSxXokFxSSXN20j+G34seXkvpsot3GF8iJCChr0dE/1pn8TvmPOe9/XmPbubImQ31b7J+IzKB+krzbWcOzcJcSWzW5EXHCKm3HXy5UrhofMvE0VNViRWyyBmzulOvtbMcVkhn/SdKrcF0ryROYIpNh5gN13RBDDN+wv7QuB40CgwP8NyxNwJfq00NeK3M9PJLTN1qZfO8azEBXV2X6Q2op+Grlmg7mIaeYOrAqaIg/Lp4aP1Ko9KEhaYgX1ptRWcG9+jCE2UBouVTElKTanOrugFjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 175.98.123.7) smtp.rcpttodomain=baylibre.com smtp.mailfrom=nuvoton.com;
- dmarc=fail (p=none sp=quarantine pct=100) action=none header.from=gmail.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GwWgSYFVOqkXbP0MbM8ZBbYowpiA6F7xNW2GkLwHaao=;
- b=YOMYKFqWvNpKHbxOcEdsWp1P8lxjv3xgMjjU9PLCIPbpSp8kywIh5jIIaFBLnugJu4xBjkTjoepq17lgLwGanYxgaNgpAlu6vBuqr0q/W9D6aAT8dYfZACCG+pKibWkB/9VUKsTmW/olLN5Q/zm9uiiOucU6Ule8LustTpwRhtk=
-Received: from TY2PR01CA0005.jpnprd01.prod.outlook.com (2603:1096:404:a::17)
- by SI2PR03MB5433.apcprd03.prod.outlook.com (2603:1096:4:10b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.27; Sun, 21 May
- 2023 14:32:07 +0000
-Received: from TYZAPC01FT020.eop-APC01.prod.protection.outlook.com
- (2603:1096:404:a:cafe::84) by TY2PR01CA0005.outlook.office365.com
- (2603:1096:404:a::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.27 via Frontend
- Transport; Sun, 21 May 2023 14:32:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 175.98.123.7)
- smtp.mailfrom=nuvoton.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=gmail.com;
-Received-SPF: Pass (protection.outlook.com: domain of nuvoton.com designates
- 175.98.123.7 as permitted sender) receiver=protection.outlook.com;
- client-ip=175.98.123.7; helo=NTHCCAS04.nuvoton.com; pr=C
-Received: from NTHCCAS04.nuvoton.com (175.98.123.7) by
- TYZAPC01FT020.mail.protection.outlook.com (10.118.152.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.6433.13 via Frontend Transport; Sun, 21 May 2023 14:32:07 +0000
-Received: from NTHCCAS03.nuvoton.com (10.1.20.28) by NTHCCAS04.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Sun, 21
- May 2023 22:32:06 +0800
-Received: from NTHCCAS04.nuvoton.com (10.1.8.29) by NTHCCAS03.nuvoton.com
- (10.1.20.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1847.3; Sun, 21 May
- 2023 22:32:05 +0800
-Received: from taln60.nuvoton.co.il (10.191.1.180) by NTHCCAS04.nuvoton.com
- (10.1.8.29) with Microsoft SMTP Server id 15.1.2176.2 via Frontend Transport;
- Sun, 21 May 2023 22:32:05 +0800
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id DBD99639D7; Sun, 21 May 2023 17:32:04 +0300 (IDT)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <avifishman70@gmail.com>, <tali.perry1@gmail.com>,
-        <joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>
-CC:     <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v16 1/1] clk: npcm8xx: add clock controller
-Date:   Sun, 21 May 2023 17:32:02 +0300
-Message-ID: <20230521143202.155399-2-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20230521143202.155399-1-tmaimon77@gmail.com>
-References: <20230521143202.155399-1-tmaimon77@gmail.com>
+        with ESMTP id S229951AbjEUPss (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 May 2023 11:48:48 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9898AE3;
+        Sun, 21 May 2023 08:48:46 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34LFlShd017419;
+        Sun, 21 May 2023 15:48:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=NUTBc1xORa5ulkz4rTxoTTP07JM5rWNkZD3lV+ZKALI=;
+ b=Wj1/0uxS0h69MGZLwZWS+2BCipYQMSSRjulDXzy/k/mainTu+Atpb7+7pQBwGizMBjL4
+ 8UD6JIk9zoaS9846dvs9CZ2NQ5L1zQobNAz3OBRvEB1OK8a+sv4kU0zFlB2a3OqMWZYp
+ lDZd+c69kVi9a320xRfn2POKxLkI4pT2NYq5x1El+ElI9bvzXxJ19658WWQ0W6q/xUZZ
+ T9w2H7na+B1QZIcDj57M6igHSySBYRBJVFsb8o5uRFSkRz/uZZSYUAChu4OA+jPy3ic4
+ TJDS8BMFgK99mrhhcS5L0QvbfA9RfRYNTjD43iY931rKcBsWUOcHOwc39fuJ4ZkFwbyb Mg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qppyp9vgj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 21 May 2023 15:48:35 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34LFmYXX014584
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 21 May 2023 15:48:34 GMT
+Received: from [10.216.45.27] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sun, 21 May
+ 2023 08:48:26 -0700
+Message-ID: <f63c86fd-4c39-7523-1971-6d8df91afcf4@quicinc.com>
+Date:   Sun, 21 May 2023 21:18:22 +0530
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH 08/11] remoteproc: qcom: Add Hexagon based multipd rproc
+ driver
+Content-Language: en-US
+To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <jassisinghbrar@gmail.com>,
+        <mathieu.poirier@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_gurus@quicinc.com>,
+        <loic.poulain@linaro.org>, <quic_eberman@quicinc.com>,
+        <robimarko@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_gokulsri@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_arajkuma@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-9-git-send-email-quic_mmanikan@quicinc.com>
+ <366ed962-dedb-0e88-036d-a1a806d0b589@quicinc.com>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <366ed962-dedb-0e88-036d-a1a806d0b589@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NotSetDelaration: True
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZAPC01FT020:EE_|SI2PR03MB5433:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84b18bb9-0606-4fc5-ecbd-08db5a0827b7
-X-MS-Exchange-SenderADCheck: 0
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +qi2gF7I3Rx4RvtxMKn1GD6RlRULRX9xCWgKQJ9uVCH58WViClLSRImNyokn3kZK/itz9DGBv3O78wuSuvkZPdl//gX4mx1f+aWqLUWsahouTlbumboNRAYFG8BghiyFWpgll5ovuStaGmk0dDquxkrw4qZJxpd0SkkAM1rwHZ/UHkmJbbtHbB7xKXb1pFEIr/24czehs+B8b3x/EbQU+lRWt74UD58ngAZgHxPreBckFwsx3Me3S6vlbseOlGDlZWdixswxqOtsUj4Vs43EWx5d7aCn1eSV5O3a0ohV3JNxsL70JR4+wswjbFFjQH7Z2AxuVOIfObGYRy8PoG4EdeWqelyGGjnffMEvH0PAqcAiRCELQDRHQzROl36lwOZ0D0JvSqnioP5O9D2SsJSUoHO1eNT5zOudrBssC/YVL1gXYEpuGVxIBFAhQZiAxWNZjROz2nGv7AHBhHKOyPJwfeEnx+ZilfcQBZ/qIPa4RTP9AqDvWwBGpEprIJ0z8rNm1mUK4rzxC0pqHBTwojj23GSE1PciBiT4L/WDoU4rIe3Ku0OsihBjKu28THaCx+VMYh/kEONyLS7GZAMn+wDixZ14dm/mQVo57eQDb5eE3acHq1QfFaVq7Cxt9APXhkPLyJcF3yEWDN3+AQnV48Kcxw0OO4npoPTXWnw/hqSU8EAZlAakVU0b3QTfNnaToR7tjJdBWYgZTKUggXBXU8tRtEfKtIMjAICxi1zaV6cOmsg4iTlXhyOSQ5XWy9xEa6wj61qPakmNA3HTp/WFREanP1vLQ2f7Gh5jxlIi2mNA+hA+X/JQT/ie1Q8pfGDHRZifO84uZI4HKQjWWTJIXQ1pDA==
-X-Forefront-Antispam-Report: CIP:175.98.123.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS04.nuvoton.com;PTR:175-98-123-7.static.tfn.net.tw;CAT:NONE;SFS:(13230028)(4636009)(376002)(136003)(396003)(39860400002)(346002)(451199021)(46966006)(40470700004)(36840700001)(81166007)(356005)(83170400001)(82740400003)(40480700001)(40460700003)(55446002)(82310400005)(36756003)(73392003)(82202003)(1076003)(6266002)(8676002)(8936002)(7416002)(336012)(42882007)(2616005)(47076005)(2906002)(42186006)(54906003)(76482006)(478600001)(110136005)(186003)(316002)(4326008)(26005)(41300700001)(5660300002)(30864003)(70206006)(70586007)(83380400001)(36860700001)(45356006)(32563001)(35450700002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: nuvoton.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 May 2023 14:32:07.4879
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84b18bb9-0606-4fc5-ecbd-08db5a0827b7
-X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[175.98.123.7];Helo=[NTHCCAS04.nuvoton.com]
-X-MS-Exchange-CrossTenant-AuthSource: TYZAPC01FT020.eop-APC01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB5433
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Z_kex2yC5ScYScyRtdZovxYkdONRSVWO
+X-Proofpoint-GUID: Z_kex2yC5ScYScyRtdZovxYkdONRSVWO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-05-21_11,2023-05-17_02,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ clxscore=1015 mlxlogscore=999 phishscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 malwarescore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305210139
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Nuvoton Arbel BMC NPCM8XX contains an integrated clock controller which
-generates and supplies clocks to all modules within the BMC.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- drivers/clk/Kconfig       |   8 +
- drivers/clk/Makefile      |   1 +
- drivers/clk/clk-npcm8xx.c | 566 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 575 insertions(+)
- create mode 100644 drivers/clk/clk-npcm8xx.c
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 016814e15536..2249de28a46a 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -325,6 +325,14 @@ config COMMON_CLK_LOCHNAGAR
- 	  This driver supports the clocking features of the Cirrus Logic
- 	  Lochnagar audio development board.
- 
-+config COMMON_CLK_NPCM8XX
-+	tristate "Clock driver for the NPCM8XX SoC Family"
-+	depends on ARCH_NPCM || COMPILE_TEST
-+	help
-+	  This driver supports the clocks on the Nuvoton BMC NPCM8XX SoC Family,
-+	  all the clocks are initialized by the bootloader, so this driver
-+	  allows only reading of current settings directly from the hardware.
-+
- config COMMON_CLK_LOONGSON2
- 	bool "Clock driver for Loongson-2 SoC"
- 	depends on LOONGARCH || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 0aebef17edc6..88713cbfbab5 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -51,6 +51,7 @@ obj-$(CONFIG_ARCH_MILBEAUT_M10V)	+= clk-milbeaut.o
- obj-$(CONFIG_ARCH_MOXART)		+= clk-moxart.o
- obj-$(CONFIG_ARCH_NOMADIK)		+= clk-nomadik.o
- obj-$(CONFIG_ARCH_NPCM7XX)	    	+= clk-npcm7xx.o
-+obj-$(CONFIG_COMMON_CLK_NPCM8XX)	+= clk-npcm8xx.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
- obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
-diff --git a/drivers/clk/clk-npcm8xx.c b/drivers/clk/clk-npcm8xx.c
-new file mode 100644
-index 000000000000..9e6ed073d124
---- /dev/null
-+++ b/drivers/clk/clk-npcm8xx.c
-@@ -0,0 +1,566 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Nuvoton NPCM8xx Clock Generator
-+ * All the clocks are initialized by the bootloader, so this driver allow only
-+ * reading of current settings directly from the hardware.
-+ *
-+ * Copyright (C) 2020 Nuvoton Technologies
-+ * Author: Tomer Maimon <tomer.maimon@nuvoton.com>
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/nuvoton,npcm845-clk.h>
-+
-+/* npcm8xx clock registers*/
-+#define NPCM8XX_CLKSEL          (0x04)
-+#define NPCM8XX_CLKDIV1         (0x08)
-+#define NPCM8XX_CLKDIV2         (0x2C)
-+#define NPCM8XX_CLKDIV3         (0x58)
-+#define NPCM8XX_CLKDIV4         (0x7C)
-+#define NPCM8XX_PLLCON0         (0x0C)
-+#define NPCM8XX_PLLCON1         (0x10)
-+#define NPCM8XX_PLLCON2         (0x54)
-+#define NPCM8XX_PLLCONG         (0x60)
-+#define NPCM8XX_THRTL_CNT       (0xC0)
-+
-+#define PLLCON_LOKI	BIT(31)
-+#define PLLCON_LOKS	BIT(30)
-+#define PLLCON_FBDV	GENMASK(27, 16)
-+#define PLLCON_OTDV2	GENMASK(15, 13)
-+#define PLLCON_PWDEN	BIT(12)
-+#define PLLCON_OTDV1	GENMASK(10, 8)
-+#define PLLCON_INDV	GENMASK(5, 0)
-+
-+struct npcm8xx_clk_pll {
-+	void __iomem	*pllcon;
-+	unsigned int	id;
-+	const char	*name;
-+	unsigned long	flags;
-+	struct clk_hw	hw;
-+};
-+
-+#define to_npcm8xx_clk_pll(_hw) container_of(_hw, struct npcm8xx_clk_pll, hw)
-+
-+struct npcm8xx_pll_data {
-+	const char *name;
-+	struct clk_parent_data parent;
-+	unsigned int reg;
-+	unsigned long flags;
-+	struct clk_hw hw;
-+};
-+
-+struct npcm8xx_clk_div_data {
-+	u32 reg;
-+	u8 shift;
-+	u8 width;
-+	const char *name;
-+	const struct clk_parent_data parent_data;
-+	u8 clk_divider_flags;
-+	unsigned long flags;
-+	int onecell_idx;
-+};
-+
-+struct npcm8xx_clk_mux_data {
-+	u8 shift;
-+	u32 mask;
-+	const u32 *table;
-+	const char *name;
-+	const struct clk_parent_data *parent_data;
-+	u8 num_parents;
-+	unsigned long flags;
-+	struct clk_hw hw;
-+};
-+
-+/* external clock definition */
-+#define NPCM8XX_CLK_S_REFCLK	"refclk"
-+
-+/* pll definition */
-+#define NPCM8XX_CLK_S_PLL0	"pll0"
-+#define NPCM8XX_CLK_S_PLL1	"pll1"
-+#define NPCM8XX_CLK_S_PLL2	"pll2"
-+#define NPCM8XX_CLK_S_PLL_GFX	"pll_gfx"
-+
-+/* early divider definition */
-+#define NPCM8XX_CLK_S_PLL2_DIV2		"pll2_div2"
-+#define NPCM8XX_CLK_S_PLL_GFX_DIV2	"pll_gfx_div2"
-+#define NPCM8XX_CLK_S_PLL1_DIV2		"pll1_div2"
-+
-+/* mux definition */
-+#define NPCM8XX_CLK_S_CPU_MUX     "cpu_mux"
-+#define NPCM8XX_CLK_S_PIX_MUX     "gfx_pixel_mux"
-+#define NPCM8XX_CLK_S_SD_MUX      "sd_mux"
-+#define NPCM8XX_CLK_S_UART_MUX    "uart_mux"
-+#define NPCM8XX_CLK_S_SU_MUX      "serial_usb_mux"
-+#define NPCM8XX_CLK_S_MC_MUX      "mc_mux"
-+#define NPCM8XX_CLK_S_ADC_MUX     "adc_mux"
-+#define NPCM8XX_CLK_S_GFX_MUX     "gfx_mux"
-+#define NPCM8XX_CLK_S_CLKOUT_MUX  "clkout_mux"
-+#define NPCM8XX_CLK_S_GFXM_MUX    "gfxm_mux"
-+#define NPCM8XX_CLK_S_DVC_MUX     "dvc_mux"
-+#define NPCM8XX_CLK_S_RG_MUX	  "rg_mux"
-+#define NPCM8XX_CLK_S_RCP_MUX	  "rcp_mux"
-+
-+/* div definition */
-+#define NPCM8XX_CLK_S_MC          "mc"
-+#define NPCM8XX_CLK_S_AXI         "axi"
-+#define NPCM8XX_CLK_S_AHB         "ahb"
-+#define NPCM8XX_CLK_S_SPI0        "spi0"
-+#define NPCM8XX_CLK_S_SPI1        "spi1"
-+#define NPCM8XX_CLK_S_SPI3        "spi3"
-+#define NPCM8XX_CLK_S_SPIX        "spix"
-+#define NPCM8XX_CLK_S_APB1        "apb1"
-+#define NPCM8XX_CLK_S_APB2        "apb2"
-+#define NPCM8XX_CLK_S_APB3        "apb3"
-+#define NPCM8XX_CLK_S_APB4        "apb4"
-+#define NPCM8XX_CLK_S_APB5        "apb5"
-+#define NPCM8XX_CLK_S_APB19       "apb19"
-+#define NPCM8XX_CLK_S_TOCK        "tock"
-+#define NPCM8XX_CLK_S_CLKOUT      "clkout"
-+#define NPCM8XX_CLK_S_PRE_ADC     "pre adc"
-+#define NPCM8XX_CLK_S_UART        "uart"
-+#define NPCM8XX_CLK_S_UART2       "uart2"
-+#define NPCM8XX_CLK_S_TIMER       "timer"
-+#define NPCM8XX_CLK_S_MMC         "mmc"
-+#define NPCM8XX_CLK_S_SDHC        "sdhc"
-+#define NPCM8XX_CLK_S_ADC         "adc"
-+#define NPCM8XX_CLK_S_GFX         "gfx0_gfx1_mem"
-+#define NPCM8XX_CLK_S_USBIF       "serial_usbif"
-+#define NPCM8XX_CLK_S_USB_HOST    "usb_host"
-+#define NPCM8XX_CLK_S_USB_BRIDGE  "usb_bridge"
-+#define NPCM8XX_CLK_S_PCI         "pci"
-+#define NPCM8XX_CLK_S_TH          "th"
-+#define NPCM8XX_CLK_S_ATB         "atb"
-+#define NPCM8XX_CLK_S_PRE_CLK     "pre_clk"
-+#define NPCM8XX_CLK_S_RG	  "rg"
-+#define NPCM8XX_CLK_S_RCP	  "rcp"
-+
-+static struct clk_hw hw_pll1_div2, hw_pll2_div2, hw_gfx_div2, hw_pre_clk;
-+static struct npcm8xx_pll_data npcm8xx_pll_clks[] = {
-+	{ NPCM8XX_CLK_S_PLL0, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON0, 0 },
-+	{ NPCM8XX_CLK_S_PLL1, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON1, 0 },
-+	{ NPCM8XX_CLK_S_PLL2, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCON2, 0 },
-+	{ NPCM8XX_CLK_S_PLL_GFX, { .name = NPCM8XX_CLK_S_REFCLK }, NPCM8XX_PLLCONG, 0 },
-+};
-+
-+static const u32 cpuck_mux_table[] = { 0, 1, 2, 7 };
-+static const struct clk_parent_data cpuck_mux_parents[] = {
-+	{ .hw = &npcm8xx_pll_clks[0].hw },
-+	{ .hw = &npcm8xx_pll_clks[1].hw },
-+	{ .index = 0 },
-+	{ .hw = &npcm8xx_pll_clks[2].hw }
-+};
-+
-+static const u32 pixcksel_mux_table[] = { 0, 2 };
-+static const struct clk_parent_data pixcksel_mux_parents[] = {
-+	{ .hw = &npcm8xx_pll_clks[3].hw },
-+	{ .index = 0 }
-+};
-+
-+static const u32 default_mux_table[] = { 0, 1, 2, 3 };
-+static const struct clk_parent_data default_mux_parents[] = {
-+	{ .hw = &npcm8xx_pll_clks[0].hw },
-+	{ .hw = &npcm8xx_pll_clks[1].hw },
-+	{ .index = 0 },
-+	{ .hw = &hw_pll2_div2 }
-+};
-+
-+static const u32 sucksel_mux_table[] = { 2, 3 };
-+static const struct clk_parent_data sucksel_mux_parents[] = {
-+	{ .index = 0 },
-+	{ .hw = &hw_pll2_div2 }
-+};
-+
-+static const u32 mccksel_mux_table[] = { 0, 2 };
-+static const struct clk_parent_data mccksel_mux_parents[] = {
-+	{ .hw = &hw_pll1_div2 },
-+	{ .index = 0 }
-+};
-+
-+static const u32 clkoutsel_mux_table[] = { 0, 1, 2, 3, 4 };
-+static const struct clk_parent_data clkoutsel_mux_parents[] = {
-+	{ .hw = &npcm8xx_pll_clks[0].hw },
-+	{ .hw = &npcm8xx_pll_clks[1].hw },
-+	{ .index = 0 },
-+	{ .hw = &hw_gfx_div2 },
-+	{ .hw = &hw_pll2_div2 }
-+};
-+
-+static const u32 gfxmsel_mux_table[] = { 2, 3 };
-+static const struct clk_parent_data gfxmsel_mux_parents[] = {
-+	{ .index = 0 },
-+	{ .hw = &npcm8xx_pll_clks[2].hw }
-+};
-+
-+static const u32 dvcssel_mux_table[] = { 2, 3 };
-+static const struct clk_parent_data dvcssel_mux_parents[] = {
-+	{ .index = 0 },
-+	{ .hw = &npcm8xx_pll_clks[2].hw }
-+};
-+
-+static const u32 default3_mux_table[] = { 0, 1, 2 };
-+static const struct clk_parent_data default3_mux_parents[] = {
-+	{ .hw = &npcm8xx_pll_clks[0].hw },
-+	{ .hw = &npcm8xx_pll_clks[1].hw },
-+	{ .index = 0 }
-+};
-+
-+static struct npcm8xx_clk_mux_data npcm8xx_muxes[] = {
-+	{ 0, 3, cpuck_mux_table, NPCM8XX_CLK_S_CPU_MUX, cpuck_mux_parents,
-+		ARRAY_SIZE(cpuck_mux_parents), CLK_IS_CRITICAL },
-+	{ 4, 2, pixcksel_mux_table, NPCM8XX_CLK_S_PIX_MUX, pixcksel_mux_parents,
-+		ARRAY_SIZE(pixcksel_mux_parents), 0 },
-+	{ 6, 2, default_mux_table, NPCM8XX_CLK_S_SD_MUX, default_mux_parents,
-+		ARRAY_SIZE(default_mux_parents), 0 },
-+	{ 8, 2, default_mux_table, NPCM8XX_CLK_S_UART_MUX, default_mux_parents,
-+		ARRAY_SIZE(default_mux_parents), 0 },
-+	{ 10, 2, sucksel_mux_table, NPCM8XX_CLK_S_SU_MUX, sucksel_mux_parents,
-+		ARRAY_SIZE(sucksel_mux_parents), 0 },
-+	{ 12, 2, mccksel_mux_table, NPCM8XX_CLK_S_MC_MUX, mccksel_mux_parents,
-+		ARRAY_SIZE(mccksel_mux_parents), 0 },
-+	{ 14, 2, default_mux_table, NPCM8XX_CLK_S_ADC_MUX, default_mux_parents,
-+		ARRAY_SIZE(default_mux_parents), 0 },
-+	{ 16, 2, default_mux_table, NPCM8XX_CLK_S_GFX_MUX, default_mux_parents,
-+		ARRAY_SIZE(default_mux_parents), 0 },
-+	{ 18, 3, clkoutsel_mux_table, NPCM8XX_CLK_S_CLKOUT_MUX, clkoutsel_mux_parents,
-+		ARRAY_SIZE(clkoutsel_mux_parents), 0 },
-+	{ 21, 2, gfxmsel_mux_table, NPCM8XX_CLK_S_GFXM_MUX, gfxmsel_mux_parents,
-+		ARRAY_SIZE(gfxmsel_mux_parents), 0 },
-+	{ 23, 2, dvcssel_mux_table, NPCM8XX_CLK_S_DVC_MUX, dvcssel_mux_parents,
-+		ARRAY_SIZE(dvcssel_mux_parents), 0 },
-+	{ 25, 2, default3_mux_table, NPCM8XX_CLK_S_RG_MUX, default3_mux_parents,
-+		ARRAY_SIZE(default3_mux_parents), 0 },
-+	{ 27, 2, default3_mux_table, NPCM8XX_CLK_S_RCP_MUX, default3_mux_parents,
-+		ARRAY_SIZE(default3_mux_parents), 0 },
-+};
-+
-+/* configurable dividers: */
-+static const struct npcm8xx_clk_div_data npcm8xx_divs[] = {
-+	{ NPCM8XX_CLKDIV1, 28, 3, NPCM8XX_CLK_S_ADC,
-+	{ .name = NPCM8XX_CLK_S_PRE_ADC, .index = -1 },
-+	CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_ADC },
-+	{ NPCM8XX_CLKDIV1, 26, 2, NPCM8XX_CLK_S_AHB, { .hw = &hw_pre_clk },
-+	CLK_DIVIDER_READ_ONLY, CLK_IS_CRITICAL, NPCM8XX_CLK_AHB },
-+	{ NPCM8XX_CLKDIV1, 21, 5, NPCM8XX_CLK_S_PRE_ADC,
-+	{ .hw = &npcm8xx_muxes[6].hw }, CLK_DIVIDER_READ_ONLY, 0, -1 },
-+	{ NPCM8XX_CLKDIV1, 16, 5, NPCM8XX_CLK_S_UART,
-+	{ .hw = &npcm8xx_muxes[3].hw }, 0, 0, NPCM8XX_CLK_UART },
-+	{ NPCM8XX_CLKDIV1, 11, 5, NPCM8XX_CLK_S_MMC,
-+	{ .hw = &npcm8xx_muxes[2].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_MMC },
-+	{ NPCM8XX_CLKDIV1, 6, 5, NPCM8XX_CLK_S_SPI3,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB }, 0, 0,
-+	NPCM8XX_CLK_SPI3 },
-+	{ NPCM8XX_CLKDIV1, 2, 4, NPCM8XX_CLK_S_PCI,
-+	{ .hw = &npcm8xx_muxes[7].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_PCI },
-+
-+	{ NPCM8XX_CLKDIV2, 30, 2, NPCM8XX_CLK_S_APB4,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB4 },
-+	{ NPCM8XX_CLKDIV2, 28, 2, NPCM8XX_CLK_S_APB3,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB3 },
-+	{ NPCM8XX_CLKDIV2, 26, 2, NPCM8XX_CLK_S_APB2,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB2 },
-+	{ NPCM8XX_CLKDIV2, 24, 2, NPCM8XX_CLK_S_APB1,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB1 },
-+	{ NPCM8XX_CLKDIV2, 22, 2, NPCM8XX_CLK_S_APB5,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_APB5 },
-+	{ NPCM8XX_CLKDIV2, 16, 5, NPCM8XX_CLK_S_CLKOUT,
-+	{ .hw = &npcm8xx_muxes[8].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_CLKOUT },
-+	{ NPCM8XX_CLKDIV2, 13, 3, NPCM8XX_CLK_S_GFX,
-+	{ .hw = &npcm8xx_muxes[7].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_GFX },
-+	{ NPCM8XX_CLKDIV2, 8, 5, NPCM8XX_CLK_S_USB_BRIDGE,
-+	{ .hw = &npcm8xx_muxes[4].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_SU },
-+	{ NPCM8XX_CLKDIV2, 4, 4, NPCM8XX_CLK_S_USB_HOST,
-+	{ .hw = &npcm8xx_muxes[4].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_SU48 },
-+	{ NPCM8XX_CLKDIV2, 0, 4, NPCM8XX_CLK_S_SDHC,
-+	{ .hw = &npcm8xx_muxes[2].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_SDHC },
-+
-+	{ NPCM8XX_CLKDIV3, 16, 8, NPCM8XX_CLK_S_SPI1,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPI1 },
-+	{ NPCM8XX_CLKDIV3, 11, 5, NPCM8XX_CLK_S_UART2,
-+	{ .hw = &npcm8xx_muxes[3].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_UART2 },
-+	{ NPCM8XX_CLKDIV3, 6, 5, NPCM8XX_CLK_S_SPI0,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPI0 },
-+	{ NPCM8XX_CLKDIV3, 1, 5, NPCM8XX_CLK_S_SPIX,
-+	{ .fw_name = NPCM8XX_CLK_S_AHB, .name = NPCM8XX_CLK_S_AHB },
-+	CLK_DIVIDER_READ_ONLY, 0, NPCM8XX_CLK_SPIX },
-+
-+	{ NPCM8XX_CLKDIV4, 28, 4, NPCM8XX_CLK_S_RG,
-+	{ .hw = &npcm8xx_muxes[11].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_RG },
-+	{ NPCM8XX_CLKDIV4, 12, 4, NPCM8XX_CLK_S_RCP,
-+	{ .hw = &npcm8xx_muxes[12].hw }, CLK_DIVIDER_READ_ONLY, 0,
-+	NPCM8XX_CLK_RCP },
-+
-+	{ NPCM8XX_THRTL_CNT, 0, 2, NPCM8XX_CLK_S_TH,
-+	{ .hw = &npcm8xx_muxes[0].hw },
-+	CLK_DIVIDER_READ_ONLY | CLK_DIVIDER_POWER_OF_TWO, 0, NPCM8XX_CLK_TH },
-+};
-+
-+static unsigned long npcm8xx_clk_pll_recalc_rate(struct clk_hw *hw,
-+						 unsigned long parent_rate)
-+{
-+	struct npcm8xx_clk_pll *pll = to_npcm8xx_clk_pll(hw);
-+	unsigned long fbdv, indv, otdv1, otdv2;
-+	unsigned int val;
-+	u64 ret;
-+
-+	if (parent_rate == 0) {
-+		pr_debug("%s: parent rate is zero\n", __func__);
-+		return 0;
-+	}
-+
-+	val = readl_relaxed(pll->pllcon);
-+
-+	indv = FIELD_GET(PLLCON_INDV, val);
-+	fbdv = FIELD_GET(PLLCON_FBDV, val);
-+	otdv1 = FIELD_GET(PLLCON_OTDV1, val);
-+	otdv2 = FIELD_GET(PLLCON_OTDV2, val);
-+
-+	ret = (u64)parent_rate * fbdv;
-+	do_div(ret, indv * otdv1 * otdv2);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops npcm8xx_clk_pll_ops = {
-+	.recalc_rate = npcm8xx_clk_pll_recalc_rate,
-+};
-+
-+static struct clk_hw *
-+npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
-+			 const char *name, const struct clk_parent_data *parent,
-+			 unsigned long flags)
-+{
-+	struct npcm8xx_clk_pll *pll;
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.ops = &npcm8xx_clk_pll_ops;
-+	init.parent_data = parent;
-+	init.num_parents = 1;
-+	init.flags = flags;
-+
-+	pll->pllcon = pllcon;
-+	pll->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &pll->hw);
-+	if (ret) {
-+		kfree(pll);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return &pll->hw;
-+}
-+
-+static DEFINE_SPINLOCK(npcm8xx_clk_lock);
-+
-+static int npcm8xx_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk_hw_onecell_data *npcm8xx_clk_data;
-+	struct device *dev = &pdev->dev;
-+	void __iomem *clk_base;
-+	struct resource *res;
-+	struct clk_hw *hw;
-+	unsigned int i;
-+	int err;
-+
-+	npcm8xx_clk_data = devm_kzalloc(dev, struct_size(npcm8xx_clk_data, hws,
-+							 NPCM8XX_NUM_CLOCKS),
-+					GFP_KERNEL);
-+	if (!npcm8xx_clk_data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	clk_base = devm_ioremap(dev, res->start, resource_size(res));
-+	if (!clk_base) {
-+		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
-+		return -ENOMEM;
-+	}
-+
-+	npcm8xx_clk_data->num = NPCM8XX_NUM_CLOCKS;
-+
-+	for (i = 0; i < NPCM8XX_NUM_CLOCKS; i++)
-+		npcm8xx_clk_data->hws[i] = ERR_PTR(-EPROBE_DEFER);
-+
-+	/* Register plls */
-+	for (i = 0; i < ARRAY_SIZE(npcm8xx_pll_clks); i++) {
-+		struct npcm8xx_pll_data *pll_clk = &npcm8xx_pll_clks[i];
-+
-+		hw = npcm8xx_clk_register_pll(dev, clk_base + pll_clk->reg,
-+					      pll_clk->name, &pll_clk->parent,
-+					      pll_clk->flags);
-+		if (IS_ERR(hw)) {
-+			dev_err(dev, "npcm8xx_clk: Can't register pll\n");
-+			return PTR_ERR(hw);
-+		}
-+		pll_clk->hw = *hw;
-+	}
-+
-+	/* Register fixed dividers */
-+	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL1_DIV2,
-+					       NPCM8XX_CLK_S_PLL1, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "npcm8xx_clk: Can't register fixed div\n");
-+		return PTR_ERR(hw);
-+	}
-+	hw_pll1_div2 = *hw;
-+
-+	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL2_DIV2,
-+					       NPCM8XX_CLK_S_PLL2, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "npcm8xx_clk: Can't register pll2 div2\n");
-+		return PTR_ERR(hw);
-+	}
-+	hw_pll2_div2 = *hw;
-+
-+	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PLL_GFX_DIV2,
-+					       NPCM8XX_CLK_S_PLL_GFX, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "npcm8xx_clk: Can't register gfx div2\n");
-+		return PTR_ERR(hw);
-+	}
-+	hw_gfx_div2 = *hw;
-+
-+	/* Register muxes */
-+	for (i = 0; i < ARRAY_SIZE(npcm8xx_muxes); i++) {
-+		struct npcm8xx_clk_mux_data *mux_data = &npcm8xx_muxes[i];
-+
-+		hw = devm_clk_hw_register_mux_parent_data_table(dev,
-+								mux_data->name,
-+								mux_data->parent_data,
-+								mux_data->num_parents,
-+								mux_data->flags,
-+								clk_base + NPCM8XX_CLKSEL,
-+								mux_data->shift,
-+								mux_data->mask,
-+								0,
-+								mux_data->table,
-+								&npcm8xx_clk_lock);
-+		if (IS_ERR(hw)) {
-+			dev_err(dev, "npcm8xx_clk: Can't register mux\n");
-+			return PTR_ERR(hw);
-+		}
-+		mux_data->hw = *hw;
-+	}
-+
-+	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_PRE_CLK,
-+					       NPCM8XX_CLK_S_CPU_MUX, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "npcm8xx_clk: Can't register ckclk div2\n");
-+		return PTR_ERR(hw);
-+	}
-+	hw_pre_clk = *hw;
-+
-+	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_AXI,
-+					       NPCM8XX_CLK_S_TH, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "npcm8xx_clk: Can't register axi div2\n");
-+		return PTR_ERR(hw);
-+	}
-+	npcm8xx_clk_data->hws[NPCM8XX_CLK_AXI] = hw;
-+
-+	hw = devm_clk_hw_register_fixed_factor(dev, NPCM8XX_CLK_S_ATB,
-+					       NPCM8XX_CLK_S_AXI, 0, 1, 2);
-+	if (IS_ERR(hw)) {
-+		dev_err(dev, "npcm8xx_clk: Can't register atb div2\n");
-+		return PTR_ERR(hw);
-+	}
-+	npcm8xx_clk_data->hws[NPCM8XX_CLK_ATB] = hw;
-+
-+	/* Register clock dividers specified in npcm8xx_divs */
-+	for (i = 0; i < ARRAY_SIZE(npcm8xx_divs); i++) {
-+		const struct npcm8xx_clk_div_data *div_data = &npcm8xx_divs[i];
-+
-+		hw = clk_hw_register_divider_parent_data(dev, div_data->name,
-+							 &div_data->parent_data,
-+							 div_data->flags,
-+							 clk_base + div_data->reg,
-+							 div_data->shift,
-+							 div_data->width,
-+							 div_data->clk_divider_flags,
-+							 &npcm8xx_clk_lock);
-+		if (IS_ERR(hw)) {
-+			dev_err(dev, "npcm8xx_clk: Can't register div table\n");
-+			goto err_div_clk;
-+		}
-+
-+		if (div_data->onecell_idx >= 0)
-+			npcm8xx_clk_data->hws[div_data->onecell_idx] = hw;
-+	}
-+
-+	err = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					  npcm8xx_clk_data);
-+	if (err) {
-+		dev_err(dev, "unable to add clk provider\n");
-+		hw = ERR_PTR(err);
-+		goto err_div_clk;
-+	}
-+
-+	return err;
-+
-+err_div_clk:
-+	while (i--) {
-+		if (npcm8xx_divs[i].onecell_idx >= 0)
-+			clk_hw_unregister_divider(npcm8xx_clk_data->hws[npcm8xx_divs[i].onecell_idx]);
-+	}
-+
-+	return PTR_ERR(hw);
-+}
-+
-+static const struct of_device_id npcm8xx_clk_dt_ids[] = {
-+	{ .compatible = "nuvoton,npcm845-clk", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, npcm8xx_clk_dt_ids);
-+
-+static struct platform_driver npcm8xx_clk_driver = {
-+	.probe  = npcm8xx_clk_probe,
-+	.driver = {
-+		.name = "npcm8xx_clk",
-+		.of_match_table = npcm8xx_clk_dt_ids,
-+	},
-+};
-+
-+static int __init npcm8xx_clk_driver_init(void)
-+{
-+	return platform_driver_register(&npcm8xx_clk_driver);
-+}
-+arch_initcall(npcm8xx_clk_driver_init);
-+
-+static void __exit npcm8xx_clk_exit(void)
-+{
-+	platform_driver_unregister(&npcm8xx_clk_driver);
-+}
-+module_exit(npcm8xx_clk_exit);
-+
-+MODULE_DESCRIPTION("Clock driver for Nuvoton NPCM8XX BMC SoC");
-+MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
-+MODULE_LICENSE("GPL v2");
-+
--- 
-2.33.0
-
+On 3/7/2023 6:47 PM, Sricharan Ramabadhran wrote:
+> 
+> 
+> On 3/7/2023 10:11 AM, Manikanta Mylavarapu wrote:
+>> APSS brings Q6 out of reset and then Q6 brings
+>> WCSS block (wifi radio's) out of reset.
+>>
+>>                    ---------------
+>>                   -->  |WiFi 2G radio|
+>>                   |       --------------
+>>                   |
+>> --------    -------          |
+>> | APSS | --->   |QDSP6|  -----|
+>> ---------    -------       |
+>>                                |
+>>                          |
+>>                   |   --------------
+>>                   --> |WiFi 5G radio|
+>>                   --------------
+>>
+>> Problem here is if any radio crashes, subsequently other
+>> radio also should crash because Q6 crashed. Let's say
+>> 2G radio crashed, Q6 should pass this info to APSS. Only
+>> Q6 processor interrupts registered with APSS. Obviously
+>> Q6 should crash and raise fatal interrupt to APSS. Due
+>> to this 5G radio also crashed. But no issue in 5G radio,
+>> because of 2G radio crash 5G radio also impacted.
+>>
+>> In multi pd model, this problem is resolved. Here WCSS
+>> functionality (WiFi radio's) moved out from Q6 root pd
+>> to a separate user pd. Due to this, radio's independently
+>> pass their status info to APPS with out crashing Q6. So
+>> other radio's won't be impacted.
+>>
+>>                         ---------
+>>                             |WiFi    |
+>>                         --> |2G radio|
+>>                         |     ---------
+>> ------    Start Q6             -------     |
+>> |    |    ------------------>     |     |     |
+>> |    |  Start WCSS PD1 (2G)       |     |        |
+>> |APSS|    ----------------------->|QDSP6|-----|
+>> |    |    Start WCSS PD1 (5G)    |     |
+>> |    |    ----------------------->|     |-----|
+>> ------                     -------     |
+>>                         |
+>>                         |    -----------
+>>                         |-->|WiFi      |
+>>                         |5G radio |
+>>                         -----------
+>> According to linux terminology, here consider Q6 as root
+>> i.e it provide all services, WCSS (wifi radio's) as user
+>> i.e it uses services provided by root.
+>>
+>> Since Q6 root & WCSS user pd's able to communicate with
+>> APSS individually, multipd remoteproc driver registers
+>> each PD with rproc framework. Here clients (Wifi host drivers)
+>> intrested on WCSS PD rproc, so multipd driver start's root
+>> pd in the context of WCSS user pd rproc start. Similarly
+>> on down path, root pd will be stopped after wcss user pd
+>> stopped.
+>>
+>> Here WCSS(user) PD is dependent on Q6(root) PD, so first
+>> q6 pd should be up before wcss pd. After wcss pd goes down,
+>> q6 pd should be turned off.
+>>
+>> rproc->ops->start(userpd_rproc) {
+>>     /* Boot root pd rproc */
+>>     rproc_boot(upd_dev->parent);
+>>     ---
+>>     /* user pd rproc start sequence */
+>>     ---
+>>     ---
+>> }
+>> With this way we ensure that root pd brought up before userpd.
+>>
+>> rproc->ops->stop(userpd_rproc) {
+>>     ---
+>>     ---
+>>     /* user pd rproc stop sequence */
+>>     ---
+>>     ---
+>>     /* Shutdown root pd rproc */
+>>     rproc_shutdown(upd_dev->parent);
+>> }
+>> After userpd rproc stops, root pd rproc will be stopped.
+>> IPQ5018, IPQ9574 supports multipd remoteproc driver.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>   drivers/firmware/qcom_scm.c            | 114 +++++
+>>   drivers/firmware/qcom_scm.h            |   6 +
+>>   drivers/remoteproc/Kconfig             |  20 +
+>>   drivers/remoteproc/Makefile            |   1 +
+>>   drivers/remoteproc/qcom_common.c       |  23 +
+>>   drivers/remoteproc/qcom_common.h       |   1 +
+>>   drivers/remoteproc/qcom_q6v5.c         |  41 +-
+>>   drivers/remoteproc/qcom_q6v5.h         |  15 +-
+>>   drivers/remoteproc/qcom_q6v5_adsp.c    |   5 +-
+>>   drivers/remoteproc/qcom_q6v5_mpd.c     | 668 +++++++++++++++++++++++++
+>>   drivers/remoteproc/qcom_q6v5_mss.c     |   4 +-
+>>   drivers/remoteproc/qcom_q6v5_pas.c     |   3 +-
+>>   drivers/soc/qcom/mdt_loader.c          | 314 ++++++++++++
+>>   include/linux/firmware/qcom/qcom_scm.h |   3 +
+>>   include/linux/soc/qcom/mdt_loader.h    |  19 +
+>>   15 files changed, 1228 insertions(+), 9 deletions(-)
+>>   create mode 100644 drivers/remoteproc/qcom_q6v5_mpd.c
+>>
+>> diff --git a/drivers/firmware/qcom_scm.c b/drivers/firmware/qcom_scm.c
+>> index d88c5f14bd54..d69560963353 100644
+>> --- a/drivers/firmware/qcom_scm.c
+>> +++ b/drivers/firmware/qcom_scm.c
+>> @@ -654,6 +654,120 @@ int qcom_scm_pas_shutdown(u32 peripheral)
+>>   }
+>>   EXPORT_SYMBOL(qcom_scm_pas_shutdown);
+>> +/**
+>> + * qti_scm_int_radio_powerup - Bring up internal radio userpd
+>> + *
+>> + * @peripheral:    peripheral id
+>> + *
+>> + * Return 0 on success.
+>> + */
+>> +int qti_scm_int_radio_powerup(u32 peripheral)
+>> +{
+> 
+> qcom instead and in other places too.
+> 
+Internal open source team suggested to use qti.
+>> +    int ret;
+>> +    struct qcom_scm_desc desc = {
+>> +        .svc = QCOM_SCM_PD_LOAD_SVC_ID,
+>> +        .cmd = QCOM_SCM_INT_RAD_PWR_UP_CMD_ID,
+>> +        .arginfo = QCOM_SCM_ARGS(1),
+>> +        .args[0] = peripheral,
+>> +        .owner = ARM_SMCCC_OWNER_SIP,
+>> +    };
+>> +    struct qcom_scm_res res;
+>> +
+>> +    ret = qcom_scm_clk_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_bw_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +    qcom_scm_bw_disable();
+>> +    qcom_scm_clk_disable();
+>> +
+>> +    return ret ? : res.result[0];
+>> +}
+>> +EXPORT_SYMBOL(qti_scm_int_radio_powerup);
+>> +
+>> +/**
+>> + * qti_scm_int_radio_powerdown() - Shut down internal radio userpd
+>> + *
+>> + * @peripheral: peripheral id
+>> + *
+>> + * Returns 0 on success.
+>> + */
+>> +int qti_scm_int_radio_powerdown(u32 peripheral)
+>> +{
+>> +    int ret;
+>> +    struct qcom_scm_desc desc = {
+>> +        .svc = QCOM_SCM_PD_LOAD_SVC_ID,
+>> +        .cmd = QCOM_SCM_INT_RAD_PWR_DN_CMD_ID,
+>> +        .arginfo = QCOM_SCM_ARGS(1),
+>> +        .args[0] = peripheral,
+>> +        .owner = ARM_SMCCC_OWNER_SIP,
+>> +    };
+>> +    struct qcom_scm_res res;
+>> +
+>> +    ret = qcom_scm_clk_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_bw_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +    qcom_scm_bw_disable();
+>> +    qcom_scm_clk_disable();
+>> +
+>> +    return ret ? : res.result[0];
+>> +}
+>> +EXPORT_SYMBOL(qti_scm_int_radio_powerdown);
+>> +
+>> +/**
+>> + * qti_scm_pdseg_memcpy_v2() - copy userpd PIL segments data to dma 
+>> blocks
+>> + *
+>> + * @peripheral:        peripheral id
+>> + * @phno:        program header no
+>> + * @dma:        handle of dma region
+>> + * @seg_cnt:        no of dma blocks
+>> + *
+>> + * Returns 0 if trustzone successfully loads userpd PIL segments from 
+>> dma
+>> + * blocks to DDR
+>> + */
+>> +int qti_scm_pdseg_memcpy_v2(u32 peripheral, int phno, dma_addr_t dma,
+>> +                int seg_cnt)
+>> +{
+>> +    int ret;
+>> +    struct qcom_scm_desc desc = {
+>> +        .svc = QCOM_SCM_PD_LOAD_SVC_ID,
+>> +        .cmd = QCOM_SCM_PD_LOAD_V2_CMD_ID,
+>> +        .arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_VAL, QCOM_SCM_VAL,
+>> +                        QCOM_SCM_RW, QCOM_SCM_VAL),
+>> +        .args[0] = peripheral,
+>> +        .args[1] = phno,
+>> +        .args[2] = dma,
+>> +        .args[3] = seg_cnt,
+>> +        .owner = ARM_SMCCC_OWNER_SIP,
+>> +    };
+>> +    struct qcom_scm_res res;
+>> +
+>> +    ret = qcom_scm_clk_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_bw_enable();
+>> +    if (ret)
+>> +        return ret;
+>> +
+>> +    ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +    qcom_scm_bw_disable();
+>> +    qcom_scm_clk_disable();
+>> +
+>> +    return ret ? : res.result[0];
+>> +}
+>> +EXPORT_SYMBOL(qti_scm_pdseg_memcpy_v2);
+>> +
+> 
+> This patch should be split further.
+> btw, this new scm apis should go in as one patch first separately.
+> 
+Sure, will do it.
+>>   /**
+>>    * qcom_scm_pas_supported() - Check if the peripheral authentication 
+>> service is
+>>    *                  available for the given peripherial
+>> diff --git a/drivers/firmware/qcom_scm.h b/drivers/firmware/qcom_scm.h
+>> index e6e512bd57d1..99e3ab2f1986 100644
+>> --- a/drivers/firmware/qcom_scm.h
+>> +++ b/drivers/firmware/qcom_scm.h
+>> @@ -132,6 +132,12 @@ extern int scm_legacy_call(struct device *dev, 
+>> const struct qcom_scm_desc *desc,
+>>   #define QCOM_SCM_SMMU_CONFIG_ERRATA1        0x03
+>>   #define QCOM_SCM_SMMU_CONFIG_ERRATA1_CLIENT_ALL    0x02
+>> +#define QCOM_SCM_PD_LOAD_SVC_ID            0x2
+>> +#define QCOM_SCM_PD_LOAD_CMD_ID            0x16
+>> +#define QCOM_SCM_PD_LOAD_V2_CMD_ID        0x19
+>> +#define QCOM_SCM_INT_RAD_PWR_UP_CMD_ID        0x17
+>> +#define QCOM_SCM_INT_RAD_PWR_DN_CMD_ID        0x18
+>> +
+>>   #define QCOM_SCM_SVC_WAITQ            0x24
+>>   #define QCOM_SCM_WAITQ_RESUME            0x02
+>>   #define QCOM_SCM_WAITQ_GET_WQ_CTX        0x03
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index a850e9f486dd..44af5c36f67e 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -234,6 +234,26 @@ config QCOM_Q6V5_PAS
+>>         CDSP (Compute DSP), MPSS (Modem Peripheral SubSystem), and
+>>         SLPI (Sensor Low Power Island).
+>> +config QCOM_Q6V5_MPD
+>> +    tristate "Qualcomm Hexagon based MPD model Peripheral Image Loader"
+>> +    depends on OF && ARCH_QCOM
+>> +    depends on QCOM_SMEM
+>> +    depends on RPMSG_QCOM_SMD || RPMSG_QCOM_SMD=n
+>> +    depends on RPMSG_QCOM_GLINK_SMEM || RPMSG_QCOM_GLINK_SMEM=n
+>> +    depends on QCOM_SYSMON || QCOM_SYSMON=n
+>> +    depends on RPMSG_QCOM_GLINK || RPMSG_QCOM_GLINK=n
+>> +    depends on QCOM_AOSS_QMP || QCOM_AOSS_QMP=n
+>> +    select MFD_SYSCON
+>> +    select QCOM_MDT_LOADER
+>> +    select QCOM_PIL_INFO
+>> +    select QCOM_Q6V5_COMMON
+>> +    select QCOM_RPROC_COMMON
+>> +    select QCOM_SCM
+>> +    help
+>> +      Say y here to support the Qualcomm Secure Peripheral Image Loader
+>> +      for the Hexagon based MultiPD model remote processors on e.g. 
+>> IPQ5018.
+>> +      This is trustZone wireless subsystem.
+>> +
+>>   config QCOM_Q6V5_WCSS
+>>       tristate "Qualcomm Hexagon based WCSS Peripheral Image Loader"
+>>       depends on OF && ARCH_QCOM
+>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>> index 91314a9b43ce..b64051080ec1 100644
+>> --- a/drivers/remoteproc/Makefile
+>> +++ b/drivers/remoteproc/Makefile
+>> @@ -25,6 +25,7 @@ obj-$(CONFIG_QCOM_PIL_INFO)        += qcom_pil_info.o
+>>   obj-$(CONFIG_QCOM_RPROC_COMMON)        += qcom_common.o
+>>   obj-$(CONFIG_QCOM_Q6V5_COMMON)        += qcom_q6v5.o
+>>   obj-$(CONFIG_QCOM_Q6V5_ADSP)        += qcom_q6v5_adsp.o
+>> +obj-$(CONFIG_QCOM_Q6V5_MPD)        += qcom_q6v5_mpd.o
+>>   obj-$(CONFIG_QCOM_Q6V5_MSS)        += qcom_q6v5_mss.o
+>>   obj-$(CONFIG_QCOM_Q6V5_PAS)        += qcom_q6v5_pas.o
+>>   obj-$(CONFIG_QCOM_Q6V5_WCSS)        += qcom_q6v5_wcss.o
+>> diff --git a/drivers/remoteproc/qcom_common.c 
+>> b/drivers/remoteproc/qcom_common.c
+>> index a0d4238492e9..b72fbda02242 100644
+>> --- a/drivers/remoteproc/qcom_common.c
+>> +++ b/drivers/remoteproc/qcom_common.c
+>> @@ -510,5 +510,28 @@ void qcom_remove_ssr_subdev(struct rproc *rproc, 
+>> struct qcom_rproc_ssr *ssr)
+>>   }
+>>   EXPORT_SYMBOL_GPL(qcom_remove_ssr_subdev);
+>> +/**
+>> + * qcom_get_pd_asid() - get the pd asid number from DT node
+>> + * @node:    device tree node
+>> + *
+>> + * Returns asid if node name has 'pd' string
+>> + */
+>> +s8 qcom_get_pd_asid(struct device_node *node)
+>> +{
+>> +    char *str;
+>> +    u8 pd_asid;
+>> +
+>> +    if (!node)
+>> +        return -EINVAL;
+>> +
+>> +    str = strstr(node->name, "pd");
+>> +    if (!str)
+>> +        return 0;
+>> +
+>> +    str += strlen("pd");
+>> +    return kstrtos8(str, 10, &pd_asid) ? -EINVAL : pd_asid;
+>> +}
+>> +EXPORT_SYMBOL(qcom_get_pd_asid);
+>> +
+>>   MODULE_DESCRIPTION("Qualcomm Remoteproc helper driver");
+>>   MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/remoteproc/qcom_common.h 
+>> b/drivers/remoteproc/qcom_common.h
+>> index 9ef4449052a9..9f3fb11224aa 100644
+>> --- a/drivers/remoteproc/qcom_common.h
+>> +++ b/drivers/remoteproc/qcom_common.h
+>> @@ -75,5 +75,6 @@ static inline bool qcom_sysmon_shutdown_acked(struct 
+>> qcom_sysmon *sysmon)
+>>       return false;
+>>   }
+>>   #endif
+>> +s8 qcom_get_pd_asid(struct device_node *node);
+>>   #endif
+>> diff --git a/drivers/remoteproc/qcom_q6v5.c 
+>> b/drivers/remoteproc/qcom_q6v5.c
+>> index 192c7aa0e39e..b88bf3a8e53b 100644
+>> --- a/drivers/remoteproc/qcom_q6v5.c
+>> +++ b/drivers/remoteproc/qcom_q6v5.c
+>> @@ -118,7 +118,7 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, 
+>> void *data)
+>>       return IRQ_HANDLED;
+>>   }
+>> -static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+>> +irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
+>>   {
+>>       struct qcom_q6v5 *q6v5 = data;
+>>       size_t len;
+>> @@ -139,7 +139,7 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, 
+>> void *data)
+>>       return IRQ_HANDLED;
+>>   }
+>> -static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
+>> +irqreturn_t q6v5_ready_interrupt(int irq, void *data)
+>>   {
+>>       struct qcom_q6v5 *q6v5 = data;
+>> @@ -183,7 +183,16 @@ static irqreturn_t q6v5_handover_interrupt(int 
+>> irq, void *data)
+>>       return IRQ_HANDLED;
+>>   }
+>> -static irqreturn_t q6v5_stop_interrupt(int irq, void *data)
+>> +irqreturn_t q6v5_spawn_interrupt(int irq, void *data)
+>> +{
+>> +    struct qcom_q6v5 *q6v5 = data;
+>> +
+>> +    complete(&q6v5->spawn_done);
+>> +
+>> +    return IRQ_HANDLED;
+>> +}
+>> +
+>> +irqreturn_t q6v5_stop_interrupt(int irq, void *data)
+>>   {
+>>       struct qcom_q6v5 *q6v5 = data;
+>> @@ -220,6 +229,28 @@ int qcom_q6v5_request_stop(struct qcom_q6v5 
+>> *q6v5, struct qcom_sysmon *sysmon)
+>>   }
+>>   EXPORT_SYMBOL_GPL(qcom_q6v5_request_stop);
+>> +/**
+>> + * qcom_q6v5_request_spawn() - request the remote processor to spawn
+>> + * @q6v5:      reference to qcom_q6v5 context
+>> + *
+>> + * Return: 0 on success, negative errno on failure
+>> + */
+>> +int qcom_q6v5_request_spawn(struct qcom_q6v5 *q6v5)
+>> +{
+>> +    int ret;
+>> +
+>> +    ret = qcom_smem_state_update_bits(q6v5->spawn_state,
+>> +                      BIT(q6v5->spawn_bit), BIT(q6v5->spawn_bit));
+>> +
+>> +    ret = wait_for_completion_timeout(&q6v5->spawn_done, 5 * HZ);
+>> +
+>> +    qcom_smem_state_update_bits(q6v5->spawn_state,
+>> +                    BIT(q6v5->spawn_bit), 0);
+>> +
+>> +    return ret == 0 ? -ETIMEDOUT : 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(qcom_q6v5_request_spawn);
+>> +
+>>   /**
+>>    * qcom_q6v5_panic() - panic handler to invoke a stop on the remote
+>>    * @q6v5:    reference to qcom_q6v5 context
+>> @@ -250,7 +281,8 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>>    * Return: 0 on success, negative errno on failure
+>>    */
+>>   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device 
+>> *pdev,
+>> -           struct rproc *rproc, int crash_reason, const char 
+>> *load_state,
+>> +           struct rproc *rproc, int remote_id, int crash_reason,
+>> +           const char *load_state,
+>>              void (*handover)(struct qcom_q6v5 *q6v5))
+>>   {
+>>       int ret;
+>> @@ -258,6 +290,7 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct 
+>> platform_device *pdev,
+>>       q6v5->rproc = rproc;
+>>       q6v5->dev = &pdev->dev;
+>>       q6v5->crash_reason = crash_reason;
+>> +    q6v5->remote_id = remote_id;
+>>       q6v5->handover = handover;
+>>       init_completion(&q6v5->start_done);
+>> diff --git a/drivers/remoteproc/qcom_q6v5.h 
+>> b/drivers/remoteproc/qcom_q6v5.h
+>> index 5a859c41896e..d00568339d46 100644
+>> --- a/drivers/remoteproc/qcom_q6v5.h
+>> +++ b/drivers/remoteproc/qcom_q6v5.h
+>> @@ -18,22 +18,29 @@ struct qcom_q6v5 {
+>>       struct qcom_smem_state *state;
+>>       struct qmp *qmp;
+>> +    struct qcom_smem_state *shutdown_state;
+>> +    struct qcom_smem_state *spawn_state;
+>>       struct icc_path *path;
+>>       unsigned stop_bit;
+>> +    unsigned shutdown_bit;
+>> +    unsigned spawn_bit;
+>>       int wdog_irq;
+>>       int fatal_irq;
+>>       int ready_irq;
+>>       int handover_irq;
+>>       int stop_irq;
+>> +    int spawn_irq;
+>>       bool handover_issued;
+>>       struct completion start_done;
+>>       struct completion stop_done;
+>> +    struct completion spawn_done;
+>> +    int remote_id;
+>>       int crash_reason;
+>>       bool running;
+>> @@ -43,14 +50,20 @@ struct qcom_q6v5 {
+>>   };
+>>   int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device 
+>> *pdev,
+>> -           struct rproc *rproc, int crash_reason, const char 
+>> *load_state,
+>> +           struct rproc *rproc, int remote_id, int crash_reason,
+>> +           const char *load_state,
+>>              void (*handover)(struct qcom_q6v5 *q6v5));
+>>   void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct 
+>> qcom_sysmon *sysmon);
+>> +int qcom_q6v5_request_spawn(struct qcom_q6v5 *q6v5);
+>>   int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+>>   unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+>> +irqreturn_t q6v5_fatal_interrupt(int irq, void *data);
+>> +irqreturn_t q6v5_ready_interrupt(int irq, void *data);
+>> +irqreturn_t q6v5_spawn_interrupt(int irq, void *data);
+>> +irqreturn_t q6v5_stop_interrupt(int irq, void *data);
+> 
+> Even this also you can keep it as a separate preparatory patch to pull
+> out the common functions.
+> 
+Sure, will raise a new patch.
+>>   #endif
+>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c 
+>> b/drivers/remoteproc/qcom_q6v5_adsp.c
+>> index 08d8dad22ca7..bf8909ad5ff5 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+>> @@ -733,8 +733,9 @@ static int adsp_probe(struct platform_device *pdev)
+>>       if (ret)
+>>           goto disable_pm;
+>> -    ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, 
+>> desc->crash_reason_smem,
+>> -                 desc->load_state, qcom_adsp_pil_handover);
+>> +    ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, QCOM_SMEM_HOST_ANY,
+>> +                 desc->crash_reason_smem, desc->load_state,
+>> +                 qcom_adsp_pil_handover);
+>>       if (ret)
+>>           goto disable_pm;
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mpd.c 
+>> b/drivers/remoteproc/qcom_q6v5_mpd.c
+>> new file mode 100644
+>> index 000000000000..853aa3bc5859
+>> --- /dev/null
+>> +++ b/drivers/remoteproc/qcom_q6v5_mpd.c
+>> @@ -0,0 +1,668 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2016-2018 Linaro Ltd.
+>> + * Copyright (C) 2014 Sony Mobile Communications AB
+>> + * Copyright (c) 2012-2018, 2021 The Linux Foundation. All rights 
+>> reserved.
+>> + */
+>> +#include <linux/clk.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/io.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/of_reserved_mem.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/reset.h>
+>> +#include <linux/soc/qcom/mdt_loader.h>
+>> +#include <linux/soc/qcom/smem.h>
+>> +#include <linux/soc/qcom/smem_state.h>
+>> +#include <linux/firmware/qcom/qcom_scm.h>
+>> +#include <linux/interrupt.h>
+> 
+>   Alphabetical order.
+> 
+I will update.
+> Regards,
+>   Sricharan
