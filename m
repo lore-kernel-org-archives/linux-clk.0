@@ -2,129 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCEBBC7EE2E
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 13:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C321C7EE2D
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 13:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233374AbjEVNAx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 09:00:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58754 "EHLO
+        id S230489AbjEVNDO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 09:03:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231236AbjEVNAw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 09:00:52 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87320AC;
-        Mon, 22 May 2023 06:00:49 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id C31025FD58;
-        Mon, 22 May 2023 16:00:39 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1684760439;
-        bh=T6WKzzi3geeqvAy+HEhZbkW5M1xIRqiwgNjBVb8OkRo=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=aHg2wtT4t/YN+m4Hm0+/DjlM7GcCu0BxVK16ZlSnw3gvWKJI/NzF36myC7IqP4Y2f
-         vE9xnUnxtI6pIAo7ih/uPeyKffuh2qI1ecqFdomMfc0Ny+WuXQTuvYDgbXi4Cs+Opx
-         ftwwtpVUpMWH3bGl+LXPpzfrOL2Izh+WaY0sNBAhj68J77x82Iw8NSQQxglHUNE4x/
-         lU20fYZqzzr/LkdS9ySyJ2Dj1loK83Mr9A48dHdiFcRcfYnNAc18xjYKj0kCHOvdxR
-         uuQ3SX8BFMDdBC55gOrZziq8P1Wt94Tgwde5Qp6oMvOxiq5+0dCH4gvQwyaAWIqxO4
-         jyfqGm0CvLjDA==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Mon, 22 May 2023 16:00:38 +0300 (MSK)
-Date:   Mon, 22 May 2023 16:00:33 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <krzysztof.kozlowski+dt@linaro.org>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <khilman@baylibre.com>,
-        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-Message-ID: <20230522130033.a47vlybocme66rev@CAB-WSD-L081021>
-References: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
- <20230517133309.9874-6-ddrokosov@sberdevices.ru>
- <CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com>
-MIME-Version: 1.0
+        with ESMTP id S233763AbjEVNDM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 09:03:12 -0400
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2118.outbound.protection.outlook.com [40.107.114.118])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBBA4B7;
+        Mon, 22 May 2023 06:03:09 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VJvPmSYpBS6YPIAZpcOrbe3B8K4F3vNMkZvZaPgIW07tJmzLFA4jpPap4uXb/3b4nrETVmG6SdX842Hch+wI8RQ/dd/eiYXfJriacI632ZmhHUtcoqmAIpimZbfLBF8+tg8/mQ/teOGBI7OWtI4HSEW8wyLctyTGS6G30m2CVjKuqgir3jwYbtjm6HDGm39ht98dDP4LFnzt4e2KcpsRAO1tL1YUHOzSs34yxqYiKY79Vru6YPqcR98AF+3cwi4hl8EEKVwg5a3kAVxA9dAwLon5UoMzJw82uLIZwRQ8Nzfwaz2dhReAY9dMisOknyMouBlLjQGdSMCisHpN/vYUtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XWf9/WDseahST0I3TXpNdlrSJ7CDca/ftnCBRr9kjdE=;
+ b=lvbjIVM2y5aZBT+cXLWkuJjgXaf2Fxn5XDW7ZtmEwP6xQXmVsZgFcIFX6/uXz4P/5Xb/E7AXdud3bBdbACmV3DlvHQVsSYAenqOmmU8j1PzROlEPNbe9cBG5llRrqYXOiY29OkqPbIpUVM4+VzAChSYRhd5jmGUNmILJ/0EvEkglYCXHZEZIXuiLGIirI7jMNR7FuCB8SdXAF8qSeQBLpPftgLYe18eKoQyanoeXOabT2TRfC2zx90+cvnD75CXCaNEZp5lB7O1phILQObNEiwzQzdinHdR11NauMuv2zrlsRpdm+0u6k57063z28lI+dVqXyDCliTSn7vXPby94yA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XWf9/WDseahST0I3TXpNdlrSJ7CDca/ftnCBRr9kjdE=;
+ b=QToxcw2X05hOoQDO6oHoqelYnIK5CC9toUik/Zog1ZqjOomb1o6rqwIjcR9tRy8N8ziwjX8wwupKZrXdiIsoyVIpDHfxCF2wXeE6Yr5VIpbvBrLtIRCNfyN9ABB1020rDBdSKHtY92uYIlJOUv0b0tdTJ7AI+iAbAwitnyjMEK8=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by TYCPR01MB11124.jpnprd01.prod.outlook.com (2603:1096:400:3bd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.28; Mon, 22 May
+ 2023 13:03:06 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::bd0a:a38d:b4d2:5d2]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::bd0a:a38d:b4d2:5d2%6]) with mapi id 15.20.6411.028; Mon, 22 May 2023
+ 13:03:06 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Subject: RE: [PATCH] clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write
+Thread-Topic: [PATCH] clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write
+Thread-Index: AQHZiZy5sNa0Nnaz80KmiWf8cA57PK9mRTmAgAAC3vA=
+Date:   Mon, 22 May 2023 13:03:06 +0000
+Message-ID: <OS0PR01MB59229A255B96E159B9745B4D86439@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20230518152334.514922-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdU7VgoOxo8LHgJvJEc7ZSoAbqTUgU390Cb9-V-8fGEjag@mail.gmail.com>
+In-Reply-To: <CAMuHMdU7VgoOxo8LHgJvJEc7ZSoAbqTUgU390Cb9-V-8fGEjag@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|TYCPR01MB11124:EE_
+x-ms-office365-filtering-correlation-id: 77cca729-4914-4d26-2e7d-08db5ac4e2b6
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: qB5SavMOlAnbfESZpKU0EawhXvEsd0zmINsDI4spG2Ojap6j446UY61/lR5rRy79INnynPjSSjmoQAoU3mNTkR748GlO99s+SQZtfewW9g7gpW/8svjMIEIzCaxsP7odIjxdZRNLDfXwYxM4cGK/+vsnwfu0sO82hwEhKMu3jy6iGq8r1/ptXI9WK/IXV1C8j7uHNP1YZbFGmJTprSbP3zBIf0eKq95y6cLmiabAr4hiGGuCLb4tgHY36zvUepcDlNirGdxXzNLaAZMb4+Qa2DNhJw3h/UZG5cQGfC0M6kYZQdgFgr+tybXIaaThA3fcGgfg555E5QaSuXRA2H4D+WpeMdnWnkkk4wldCQFdLEypZ8fBdJS27AUNTgaZlMENKrBVYCzd+ZG1fYhB7kpt+jRDSXlU+CYDyIEMUbOZ7OhnozJmY1f8+gNUnfGUKzBi4kcjUltTi8v7YXXRREKDy2JXaKdnIZJQhbOCf/7NaI3mGdsN/WKEePbc31m9CBEbcjt+0BQlerRKuxBGQnR9j440o4/nMa1khEwot+NoSuG72AiOFow13HVqAc+IAUt/skNv8At124lN1ctyI3Pedgx8SVCuAkGZT36xs6maILHMt814h4KObJ+sicEXPsJI
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(366004)(396003)(136003)(39860400002)(376002)(451199021)(2906002)(52536014)(5660300002)(83380400001)(8676002)(8936002)(76116006)(66946007)(64756008)(66556008)(66476007)(4326008)(6916009)(54906003)(316002)(7696005)(478600001)(41300700001)(55016003)(71200400001)(66446008)(33656002)(86362001)(107886003)(122000001)(26005)(186003)(6506007)(53546011)(9686003)(38070700005)(38100700002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RG5jd2taQzgyQ3hNekVqeXpUSWc2R09pN2hnRW15b3djSi92S2VjZmJIeTh1?=
+ =?utf-8?B?ZkZDWlhZS0ljeC96akh1L29zVkRjU2dJYlQ5ZjJNaVc4Q0pNK3JBbFFQRFhH?=
+ =?utf-8?B?TTlnSG9tRlAwTnZxWnEwRVBpRjRIS1lQL1BPNUswLzFqOG83c05xSVhHeWxG?=
+ =?utf-8?B?eGQ2d21vWVFmbzVhclNxV3pjTGNpd0hPVGVMZ0JkK0UvdW85YWxmOXNwWHlL?=
+ =?utf-8?B?cVZiZyt6NE1BZFJTdG8vR24rTldBcjlqemgwNHF3bEYxVGkvZHZSMjNQeTFS?=
+ =?utf-8?B?dk93L25vb1J0OGd1dmNjL3lodXNCOVc5QnU3czJ3YlBkbVhoTXlYNFRzRHFF?=
+ =?utf-8?B?Tk5xYTRNYnhhS0M3cVhEem8xUmNuOVBoVll1TVJESHFxNjJRclhUQWNZNzhq?=
+ =?utf-8?B?T0dsalBya2ZvQkJoaXZyY1Zkc2Z4UzNHaUJBTkd5T3NiQVMxVXBGVFdEdmNB?=
+ =?utf-8?B?UHN2dHJKa05QMVdJZTJHS0o2blNFTEJ1UWsydnd3bFBEYVdFaUVXMUs4RWtJ?=
+ =?utf-8?B?S1hKZXVMTUhXZnU5TVpIeWhNQmYyRnhreUVwcjRFbnF1RGRGT3V5SkZVdUZr?=
+ =?utf-8?B?alEyZVR2ZUhSczlpOW5mOU9WT0R6YU01c3Z2cWRESngyeDd2WldIQUNxamRz?=
+ =?utf-8?B?S2FEMXg0ZFJrUjM4dHd0aGNaMVVRZDR4bFVOSkpoSGp5TFBRSmZWUEIydFd6?=
+ =?utf-8?B?VGVETXJLTFg0YnNhZmp6S28xRXNSZ3k5cUZGaUtOQnJDRnNqbkF3eE1YNjF4?=
+ =?utf-8?B?OUkwTHNEYlpyVmNZNUtuUGlxaEFRdisyOWhtbmsvVkdhb1RZSnJGMWs4TnRk?=
+ =?utf-8?B?K0prS2F3eXpWc3RrOG5WY1N6TFNEc1BhcDJ0L201OUI1L1ozYjRRRXZ3aTRZ?=
+ =?utf-8?B?VGhjaEYwNm1KUHB4VlZuVFg5dnBqMEFNeGxyWTRJNUdkUWp3RmpRM2lqNHRC?=
+ =?utf-8?B?SXUveTN6TUFjVFRwYWk1YTUxbFJmSkRRSnZYQUlueElRQ2lta3E2YmVxaGg5?=
+ =?utf-8?B?N25rMWFKcFNkOXJVdnUrM0ZLd2NQZzNHNFhTZzdiY05ISlJvVUo4YlY2QkdQ?=
+ =?utf-8?B?Y3pLOWZ2c1IvVDRDWFJ6bWU1RXl6NVlVWFlzYzQrVStMdVo5eWZtM0s3ZUJo?=
+ =?utf-8?B?Y3E5L05td1YwYllSQk1TREtRMVB4UUt1YnJQQkRmNGpJYTgyZkh1d2wrQ3Za?=
+ =?utf-8?B?MVZnRjVCWDRwMytUSlNXQVQvY3lxTVpVRmNKNmFBRnhXZFp4aG1wY050THJ2?=
+ =?utf-8?B?SFVlUlhoaTE3VVpqdE5iSVE3c1NFc05IMTRyaWRKM0RCZWZYWG8rb0c5WTgz?=
+ =?utf-8?B?QjhJTXFaQWtRblBsSXhoQlRLT3E4bW8xM1RLdHloSXc5RVJGVERTakMvVmFi?=
+ =?utf-8?B?Z0RTNjRVTFN5VURGMVJjdHlBaVJhY2ZXeVVwdm1PRytWczMveEkwV2dkQ1kx?=
+ =?utf-8?B?ajFWWFBxVDBBRU5KSmtsMFViZDEwWDRvWTNmaTNhREx2SVJqcjgyUHBTOUVo?=
+ =?utf-8?B?SmljckZMZ2l5ampXcUpEVDV4cDJveGNGeGt1SDE3aENYc3VGZDJtUkhJU1Fs?=
+ =?utf-8?B?bmFhRnJycUVKaEFnTks2QTZ2RUwvZHM5bWtMOUZUa1RqU253QWZleWJES25N?=
+ =?utf-8?B?QWxSSGlmc0h0SnZySWpxU1ExNUpEM29rY1NoL3A3NU5IU1NTVW1ZVWN6MERo?=
+ =?utf-8?B?SjVUSXNOdmZFa2VFQW56a3FmMkZDTHVHeENZMEpNYkxTSGZhTk9JSmxWTVcv?=
+ =?utf-8?B?d0Rubk5VZGNNU0dqaDZUVTdjTmpnRzcrc29iWVh0RU44NGJ4c2ptbUY0QVN6?=
+ =?utf-8?B?WUZLM3BRTFJ4U2xYK1dVQkN6aU1nNlEzejFaWmN6d3dGaG44YitGMzhEYy9O?=
+ =?utf-8?B?aHJVNU1Fc1JqdTIwRUtxTUpKREVwVCtFWXNyZENjeWg2MmFjVHpibDZwSTV2?=
+ =?utf-8?B?c1orOU1WTFZRTnRSa1ZpVDNkYUVkTzFZYzNkeXpSTjRhdGF2ZlJiZmJIaGFm?=
+ =?utf-8?B?ckxXWkhMUWJtR1Jxd2U1UGlkTTNOWmtySFV1NSswdlpCSVA4SjFER01abExB?=
+ =?utf-8?B?QWh4VDhaTTVsOFhTMDlkd1BCQnZyN2Z5eDA1blczMXdTRzl2ZXN3QVBMZ0Jp?=
+ =?utf-8?Q?d1AiYyAiNZULXjtIv9jzkeuZa?=
 Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/22 08:14:00 #21365129
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77cca729-4914-4d26-2e7d-08db5ac4e2b6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 May 2023 13:03:06.6364
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l8EEOJqvYABPTPtvlcq3uFt2ZzJC0MWFAUVEIqcZMfnXXWSpPLty6ne/oSmdqu+xLZBMgZouZGzHliTp2aYwgWu0vza5dS05ddv4A6Kv6iY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11124
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Martin,
-
-On Fri, May 19, 2023 at 11:09:29PM +0200, Martin Blumenstingl wrote:
-> Hi Krzysztof and Dmitry,
-> 
-> On Wed, May 17, 2023 at 3:33 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> [...]
-> > +  clocks:
-> > +    items:
-> > +      - description: input fixed pll div2
-> > +      - description: input fixed pll div3
-> > +      - description: input fixed pll div5
-> > +      - description: input fixed pll div7
-> > +      - description: input hifi pll
-> > +      - description: input oscillator (usually at 24MHz)
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: fclk_div2
-> > +      - const: fclk_div3
-> > +      - const: fclk_div5
-> > +      - const: fclk_div7
-> > +      - const: hifi_pll
-> > +      - const: xtal
-> This IP block has at least one additional input called "sys_pll_div16".
-> My understanding is that the "sys_pll_div16" clock is generated by the
-> CPU clock controller. Support for the CPU clock controller
-> (dt-bindings and a driver) will be added at a later time by Dmitry.
-> How can we manage incrementally implementing the clock controllers?
-> From a hardware perspective the "sys_pll_div16" input is mandatory.
-> How to manage this in the .dts patches then (for example: does this
-> mean that Dmitry can only add the clock controller to the .dts when
-> all clock controller bindings have been implemented - or is there
-> another way)?
-
-You're absolutely right: currently, not all inputs are supported because
-the CPU clock controller isn't ready yet – I'm working on it at the
-moment.
-
-I understand your concerns about bindings and schema description, but
-there is an issue to be considered. I'm developing the entire clock
-controller A1 subsystem incrementally in three stages: peripherals and
-PLL, CPU, and Audio. This is because the CPU can operate at a static
-frequency and voltage, and the board boots normally without the CPU
-clock controller, thermal sensor, and OPP table. Audio is also
-important, but it's optional. On the other hand, without setting up the
-peripherals and PLL controllers, the board won't function because
-they're fundamental.
-
-Right now, we're in the first stage of the plan. Unfortunately, I can't
-disclose the exact names and number of clock bindings for the CPU and
-Audio, as they're still in development and only exist in my head or
-draft versions.
-
-If possible, I'd prefer to provide the new bindings and connections once
-all the appropriate drivers are finalized.
-
--- 
-Thank you,
-Dmitry
+SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0hdIGNsazogcmVuZXNhczogcnpnMmw6IEZpeCBDUEdfU0lQTEw1X0NMSzEgcmVnaXN0ZXIN
+Cj4gd3JpdGUNCj4gDQo+IEhpIEJpanUsDQo+IA0KPiBPbiBUaHUsIE1heSAxOCwgMjAyMyBhdCA1
+OjIz4oCvUE0gQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0KPiB3cm90ZToN
+Cj4gPiBBcyBwZXIgUlovRzJMIEhXKFJldi4xLjMwIE1heTIwMjMpIG1hbnVhbCwgdGhlcmUgaXMg
+bm8gIndyaXRlIGVuYWJsZSINCj4gPiBiaXRzIGZvciBDUEdfU0lQTEw1X0NMSzEgcmVnaXN0ZXIu
+IFNvIGZpeCB0aGUgQ1BHX1NJUExMNV9DTEsgcmVnaXN0ZXINCj4gPiB3cml0ZSBieSByZW1vdmlu
+ZyAid3JpdGUgZW5hYmxlIiBiaXRzLg0KPiA+DQo+ID4gRml4ZXM6IDE1NjEzODBlZTcyZiAoImNs
+azogcmVuZXNhczogcnpnMmw6IEFkZCBGT1VUUE9TVERJViBjbGsNCj4gPiBzdXBwb3J0IikNCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+DQo+
+IA0KPiBUaGFua3MgZm9yIHlvdXIgcGF0Y2ghDQo+IA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL3Jl
+bmVzYXMvcnpnMmwtY3BnLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9yZW5lc2FzL3J6ZzJsLWNw
+Zy5jDQo+ID4gQEAgLTYwMywxMCArNjAzLDggQEAgc3RhdGljIGludCByemcybF9jcGdfc2lwbGw1
+X3NldF9yYXRlKHN0cnVjdA0KPiBjbGtfaHcgKmh3LA0KPiA+ICAgICAgICAgfQ0KPiA+DQo+ID4g
+ICAgICAgICAvKiBPdXRwdXQgY2xvY2sgc2V0dGluZyAxICovDQo+ID4gLSAgICAgICB3cml0ZWwo
+Q1BHX1NJUExMNV9DTEsxX1BPU1RESVYxX1dFTiB8DQo+IENQR19TSVBMTDVfQ0xLMV9QT1NURElW
+Ml9XRU4gfA0KPiA+IC0gICAgICAgICAgICAgIENQR19TSVBMTDVfQ0xLMV9SRUZESVZfV0VOICB8
+IChwYXJhbXMucGw1X3Bvc3RkaXYxIDw8DQo+IDApIHwNCj4gPiAtICAgICAgICAgICAgICAocGFy
+YW1zLnBsNV9wb3N0ZGl2MiA8PCA0KSB8IChwYXJhbXMucGw1X3JlZmRpdiA8PCA4KSwNCj4gPiAt
+ICAgICAgICAgICAgICBwcml2LT5iYXNlICsgQ1BHX1NJUExMNV9DTEsxKTsNCj4gPiArICAgICAg
+IHdyaXRlbCgocGFyYW1zLnBsNV9wb3N0ZGl2MSA8PCAwKSB8IChwYXJhbXMucGw1X3Bvc3RkaXYy
+IDw8IDQpDQo+IHwNCj4gPiArICAgICAgICAgICAgICAocGFyYW1zLnBsNV9yZWZkaXYgPDwgOCks
+IHByaXYtPmJhc2UgKw0KPiA+ICsgQ1BHX1NJUExMNV9DTEsxKTsNCj4gPg0KPiA+ICAgICAgICAg
+LyogT3V0cHV0IGNsb2NrIHNldHRpbmcsIFNTQ0cgbW9kdWxhdGlvbiB2YWx1ZSBzZXR0aW5nIDMg
+Ki8NCj4gPiAgICAgICAgIHdyaXRlbCgocGFyYW1zLnBsNV9mcmFjaW4gPDwgOCksIHByaXYtPmJh
+c2UgKw0KPiA+IENQR19TSVBMTDVfQ0xLMyk7DQo+IA0KPiBNYXRjaGVzIHRoZSBkb2N1bWVudGF0
+aW9uLCBzbw0KPiBSZXZpZXdlZC1ieTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydCtyZW5lc2Fz
+QGdsaWRlci5iZT4NCj4gDQo+IEJ1dCBJIGd1ZXNzIHRoZSBhY3R1YWwgQ1BHX1NJUExMNV9DTEsx
+XypfV0VOIGJpdCBkZWZpbml0aW9ucyBzaG91bGQgYmUNCj4gcmVtb3ZlZCwgdG9vPyBJIGNhbiBk
+byB0aGF0IHdoaWxlIGFwcGx5aW5nLi4uDQoNClllcywgaXQgaXMgbm90IHJlcXVpcmVkLg0KDQpU
+aGFua3MsDQpCaWp1DQo=
