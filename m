@@ -2,113 +2,98 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAF2C7EE2A
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 09:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FC8C7EE2A
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 12:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232803AbjEVJWh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 05:22:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54396 "EHLO
+        id S233980AbjEVM0n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 08:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232820AbjEVJWc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 05:22:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED1EB9;
-        Mon, 22 May 2023 02:22:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E1A9F61F54;
-        Mon, 22 May 2023 09:22:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3E9C4339B;
-        Mon, 22 May 2023 09:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684747342;
-        bh=4UAOuaxRjDW/VUdv5PEW8PO3y6sk2Abupc99dtDqXVk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V6eKgFClyIfM6DBk8bSWMM3kIhcX0FqIj79QDbMDa1JsTHY8WxRYwz7V6xy62/Q8O
-         RmK1nRSYtsmLgE3Rkp6z84Y6gW/bPI4GNywRLtRGd1vEBrr3iIVcEa9D1pid1tKbLR
-         ghIlYoHpj0ZaGXp025wa4QzbRJDTwnGZWOkyM6ifMmPC6nrOSnPTGUbpOjiEnJjSi2
-         /n9hCVYUG5+GJ6oIYrWmKBse+n+M+uXFtakwEVHB7ZzHA2kK2xDkEfg5wtKhhxf9ZB
-         9Cslxd1y2sv/xlJ53XtGl5iS4VPqtQAkyvbS4ZqaRJ12LXYBeBP4a6w13f7PPIgw2U
-         cFJzr9JUc5eIA==
-Date:   Mon, 22 May 2023 11:22:12 +0200
-From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        kw@linux.com, robh@kernel.org, bhelgaas@google.com,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mani@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_ipkumar@quicinc.com
-Subject: Re: [PATCH V4 0/6] Add PCIe support for IPQ9574
-Message-ID: <ZGs0RJ2y+3lSZLIC@lpieralisi>
-References: <20230519090219.15925-1-quic_devipriy@quicinc.com>
+        with ESMTP id S233424AbjEVM03 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 08:26:29 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82CF2683;
+        Mon, 22 May 2023 05:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1684758276; x=1716294276;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xn6Sbd2vOZ1d1aJBz+nBV1P/3DRv4zUBXdD9oXRheJU=;
+  b=uK/pmxRAC7y8JyYslzbsQbjmPeIpm6dGvhzdXd8V5HGw2YfDGRZZFZrI
+   Z9kLfVXPMdlSit1kMpZH7QKiQ7B0fN1HF3eCefkqiMOfEtwaintiKYcNu
+   VSMxSvYvbO26JGZRjQa+iYh6CHcIVulAd5wYMgdjZBZ38bdz7VSJtLjNO
+   m+ibFdSk7ZCVRzA7IOerMc+l093V/n+VYqrX4URuVfOU7d0/DyGQtELrn
+   BifHURvR7ETMeP9HnyqpigSiD0LywXfs5xyW5VrikMyjozSaxeglTQuY0
+   tYZYNyHbYbFmKu5F6zL9NqDK2MwlA1YB1zt1bmqRNY0KKrMYx2NtMXlvx
+   g==;
+X-IronPort-AV: E=Sophos;i="6.00,184,1681196400"; 
+   d="asc'?scan'208";a="216636251"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 May 2023 05:24:13 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Mon, 22 May 2023 05:24:13 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
+ Transport; Mon, 22 May 2023 05:24:11 -0700
+Date:   Mon, 22 May 2023 13:23:49 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Jai Luthra <j-luthra@ti.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Andrew Davis <afd@ti.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add binding documentation for
+ TI Audio REFCLK
+Message-ID: <20230522-preaching-thieving-d0a983a5a058@wendy>
+References: <20230515-refclk-v2-0-fc9ff08826f5@ti.com>
+ <20230515-refclk-v2-1-fc9ff08826f5@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0HT54K5oO9Sb0rsX"
 Content-Disposition: inline
-In-Reply-To: <20230519090219.15925-1-quic_devipriy@quicinc.com>
+In-Reply-To: <20230515-refclk-v2-1-fc9ff08826f5@ti.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 19, 2023 at 02:32:13PM +0530, Devi Priya wrote:
-> This series adds support for enabling the PCIe host devices (PCIe0, PCIe1,
-> PCIe2, PCIe3) found on IPQ9574 platform.
-> The PCIe0 & PCIe1 are 1-lane Gen3 host and PCIe2 & PCIe3 
-> are 2-lane Gen3 host.
-> 
-> DTS patch is based on the below series
-> https://lore.kernel.org/linux-arm-msm/20230517172527.1968-1-quic_devipriy@quicinc.com/
-> 
-> Changes in V4:
-> 	- Rebased on the below series
-> https://lore.kernel.org/linux-arm-msm/20230517172527.1968-1-quic_devipriy@quicinc.com/
-> 	- Change logs are added to the respective patches.
+--0HT54K5oO9Sb0rsX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Mani, all,
+On Mon, May 22, 2023 at 12:01:55PM +0530, Jai Luthra wrote:
+> Add DT bindings for TI's audio reference clocks (REFCLK) present on AM62
+> SoC.
+>=20
+> Signed-off-by: Jai Luthra <j-luthra@ti.com>
 
-can I pick up patches 3 and 6 from this series ?
+Well since I was happy with the old, wrong patch:
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Lorenzo
+Thanks,
+Conor.
 
-> [V3]
-> https://lore.kernel.org/linux-arm-msm/20230421124938.21974-1-quic_devipriy@quicinc.com/
-> 	- Dropped the phy driver and binding patches as they have been 
-> 	  posted as a separate series.
-> 	- Dropped the pinctrl binding fix patch as it is unrelated to the series
-> 	  dt-bindings: pinctrl: qcom: Add few missing functions.
-> 	- Rebased on linux-next/master.
-> 	- Detailed change logs are added to the respective patches.
-> 	
-> [V2]
-> https://lore.kernel.org/linux-arm-msm/20230404164828.8031-1-quic_devipriy@quicinc.com/
-> 	- Reordered the patches and splitted the board DT changes
-> 	  into a separate patch as suggested
-> 	- Detailed change logs are added to the respective patches
-> 
-> [V1]
-> https://lore.kernel.org/linux-arm-msm/20230214164135.17039-1-quic_devipriy@quicinc.com/
-> 
-> Devi Priya (6):
->   dt-bindings: clock: Add PCIe pipe clock definitions
->   clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
->   dt-bindings: PCI: qcom: Add IPQ9574
->   arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
->   arm64: dts: qcom: ipq9574: Enable PCIe PHYs and controllers
->   PCI: qcom: Add support for IPQ9574
-> 
->  .../devicetree/bindings/pci/qcom,pcie.yaml    |  48 +++
->  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   | 113 ++++++
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 365 ++++++++++++++++++
->  drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++
->  drivers/pci/controller/dwc/pcie-qcom.c        |  57 ++-
->  include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
->  6 files changed, 645 insertions(+), 18 deletions(-)
-> 
-> -- 
-> 2.17.1
-> 
+--0HT54K5oO9Sb0rsX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGte1QAKCRB4tDGHoIJi
+0mSsAQC/7GtBW+66cZg+ZPxgaarqrI+Jztz+RIMxk70nhIIdowD9FXPLpWowhg1B
+b9B1kbtSprJ2Ddas88ynkWtksM8xhgA=
+=N1Sl
+-----END PGP SIGNATURE-----
+
+--0HT54K5oO9Sb0rsX--
