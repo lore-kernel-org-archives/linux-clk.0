@@ -2,98 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FC8C7EE2A
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 12:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E05BDC7EE2D
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 12:52:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233980AbjEVM0n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 08:26:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57628 "EHLO
+        id S232856AbjEVMw0 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 08:52:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233424AbjEVM03 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 08:26:29 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C82CF2683;
-        Mon, 22 May 2023 05:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1684758276; x=1716294276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xn6Sbd2vOZ1d1aJBz+nBV1P/3DRv4zUBXdD9oXRheJU=;
-  b=uK/pmxRAC7y8JyYslzbsQbjmPeIpm6dGvhzdXd8V5HGw2YfDGRZZFZrI
-   Z9kLfVXPMdlSit1kMpZH7QKiQ7B0fN1HF3eCefkqiMOfEtwaintiKYcNu
-   VSMxSvYvbO26JGZRjQa+iYh6CHcIVulAd5wYMgdjZBZ38bdz7VSJtLjNO
-   m+ibFdSk7ZCVRzA7IOerMc+l093V/n+VYqrX4URuVfOU7d0/DyGQtELrn
-   BifHURvR7ETMeP9HnyqpigSiD0LywXfs5xyW5VrikMyjozSaxeglTQuY0
-   tYZYNyHbYbFmKu5F6zL9NqDK2MwlA1YB1zt1bmqRNY0KKrMYx2NtMXlvx
-   g==;
-X-IronPort-AV: E=Sophos;i="6.00,184,1681196400"; 
-   d="asc'?scan'208";a="216636251"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 May 2023 05:24:13 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Mon, 22 May 2023 05:24:13 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Mon, 22 May 2023 05:24:11 -0700
-Date:   Mon, 22 May 2023 13:23:49 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Jai Luthra <j-luthra@ti.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Andrew Davis <afd@ti.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add binding documentation for
- TI Audio REFCLK
-Message-ID: <20230522-preaching-thieving-d0a983a5a058@wendy>
-References: <20230515-refclk-v2-0-fc9ff08826f5@ti.com>
- <20230515-refclk-v2-1-fc9ff08826f5@ti.com>
+        with ESMTP id S229689AbjEVMwZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 08:52:25 -0400
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAF3892;
+        Mon, 22 May 2023 05:52:24 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-561c1768bacso79771637b3.1;
+        Mon, 22 May 2023 05:52:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684759944; x=1687351944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ctm1DKvTZj7hLz3AqtI5kCtrJBMKGOQ4SPUJ7xCGoy4=;
+        b=dTCwPYtcaytWQcxB/rMV0F+GIlLm5lQb6PNVVWJE2PWA3MgZ1+SbiFDvITwSjQ70Nb
+         kkopsI+uY+kccNoEbdisJpaXKZ7AkZygppAK+PnIf3qk3wEuxXb027H+Af93hXM6tMUb
+         1X920E1CatniWEC5KWEUKpNDWKj0LpWOniRAmYYW3cjf227hmW7r1jYfUIQsVerBQ20B
+         +rGVtdSC54XeXp304kV2x4IQOGCmviBx5iuKL3Hffe8F4sE4qAlTghAGs4I4A8Y0ohqd
+         i26/TjcXuhypAoQcb6de0L7o8GTkuV18HEccwIlWRpC8QZrd23Oab9kvke5iymbwxVhs
+         Op+w==
+X-Gm-Message-State: AC+VfDy6jGmOeNo6OjLnjVlCTB29gXBGb9kx/sx+iH7GJbWUhKDFgQ95
+        RrZDqIS4EaZl1VHP6EEzT4WvXSoGmkl38w==
+X-Google-Smtp-Source: ACHHUZ7EfsOq1VuOvRmdWtaAvhOpCNjdCzQXLcPZLbiaK5j4B+EY4Ue+uxmWczpcmk+NGWnMZQRC6w==
+X-Received: by 2002:a81:7508:0:b0:561:a422:f3cd with SMTP id q8-20020a817508000000b00561a422f3cdmr10876901ywc.30.1684759943893;
+        Mon, 22 May 2023 05:52:23 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id o9-20020a817309000000b00556aa81f615sm2023521ywc.68.2023.05.22.05.52.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 May 2023 05:52:22 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-561c1768bacso79771177b3.1;
+        Mon, 22 May 2023 05:52:22 -0700 (PDT)
+X-Received: by 2002:a0d:d44a:0:b0:561:da0d:6488 with SMTP id
+ w71-20020a0dd44a000000b00561da0d6488mr11245505ywd.50.1684759942356; Mon, 22
+ May 2023 05:52:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0HT54K5oO9Sb0rsX"
-Content-Disposition: inline
-In-Reply-To: <20230515-refclk-v2-1-fc9ff08826f5@ti.com>
+References: <20230518152334.514922-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230518152334.514922-1-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 22 May 2023 14:52:11 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU7VgoOxo8LHgJvJEc7ZSoAbqTUgU390Cb9-V-8fGEjag@mail.gmail.com>
+Message-ID: <CAMuHMdU7VgoOxo8LHgJvJEc7ZSoAbqTUgU390Cb9-V-8fGEjag@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---0HT54K5oO9Sb0rsX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Biju,
 
-On Mon, May 22, 2023 at 12:01:55PM +0530, Jai Luthra wrote:
-> Add DT bindings for TI's audio reference clocks (REFCLK) present on AM62
-> SoC.
->=20
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+On Thu, May 18, 2023 at 5:23 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> As per RZ/G2L HW(Rev.1.30 May2023) manual, there is no "write enable"
+> bits for CPG_SIPLL5_CLK1 register. So fix the CPG_SIPLL5_CLK register
+> write by removing "write enable" bits.
+>
+> Fixes: 1561380ee72f ("clk: renesas: rzg2l: Add FOUTPOSTDIV clk support")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Well since I was happy with the old, wrong patch:
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Thanks for your patch!
 
-Thanks,
-Conor.
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -603,10 +603,8 @@ static int rzg2l_cpg_sipll5_set_rate(struct clk_hw *hw,
+>         }
+>
+>         /* Output clock setting 1 */
+> -       writel(CPG_SIPLL5_CLK1_POSTDIV1_WEN | CPG_SIPLL5_CLK1_POSTDIV2_WEN |
+> -              CPG_SIPLL5_CLK1_REFDIV_WEN  | (params.pl5_postdiv1 << 0) |
+> -              (params.pl5_postdiv2 << 4) | (params.pl5_refdiv << 8),
+> -              priv->base + CPG_SIPLL5_CLK1);
+> +       writel((params.pl5_postdiv1 << 0) | (params.pl5_postdiv2 << 4) |
+> +              (params.pl5_refdiv << 8), priv->base + CPG_SIPLL5_CLK1);
+>
+>         /* Output clock setting, SSCG modulation value setting 3 */
+>         writel((params.pl5_fracin << 8), priv->base + CPG_SIPLL5_CLK3);
 
---0HT54K5oO9Sb0rsX
-Content-Type: application/pgp-signature; name="signature.asc"
+Matches the documentation, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
------BEGIN PGP SIGNATURE-----
+But I guess the actual CPG_SIPLL5_CLK1_*_WEN bit definitions
+should be removed, too? I can do that while applying...
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGte1QAKCRB4tDGHoIJi
-0mSsAQC/7GtBW+66cZg+ZPxgaarqrI+Jztz+RIMxk70nhIIdowD9FXPLpWowhg1B
-b9B1kbtSprJ2Ddas88ynkWtksM8xhgA=
-=N1Sl
------END PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
---0HT54K5oO9Sb0rsX--
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
