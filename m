@@ -2,140 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DE62C77B73
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 15:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE8AC77B73
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 17:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231810AbjEVPAc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 11:00:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41210 "EHLO
+        id S229555AbjEVRgz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 13:36:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234133AbjEVPAT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 11:00:19 -0400
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2040.outbound.protection.outlook.com [40.107.241.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDD54100;
-        Mon, 22 May 2023 08:00:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hsIXfpFc22j9LApHjHpOwcNpZkmGG6sUWn7G6Iwyayp+ves8003hr58N7WgMDqCSsHkn/inJ/3A9FbjfUWSmUNzkzpq0fEls8f7L/CwHrWbxGMyP5pyammwvnctwo8MceJ+5yNUEb4/Ooqi1js0QB1LjOUTrL1VeMVVCVMyfy7MGu/SJnZpqUO5cV2O6MqmGkap5daULVqrnANgDB6domWKhMPEiVCoxN1XOk3/dGvde0GQD/k2e0ugexeYnG8S43eD8vOxxYaSnRb9OQ/xt0m4EJPhzU2FMTsukAoAVxpDNYCVqki16M68s1lS8bntfvT8970Ivfx19aDpbdzLa/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EB71iksn3qiV/RSIqRzeMbEh4hotab3QdoJm2tor1yA=;
- b=HjA39FFkAi1JT/adn9RoRPZ9OKYAviEybiFAHB+7L+58qxlb2ZFxQ0zE19wFouhzImjiz34izgsL5GUKQ8+Ot8h1G76Y6+HyohpWwjj8UkgmCDEP603TcUy9LJ2Ta2YvS9Y/0dwQS7koksfHncpfNcpCzGVIJdagN643ZHMx9fIyOIi6YRB3P9dhFL0KNDYZH0wyY4yWe0b4PZXHEXt1QyMdocAHrJaOaeOgc7TOhY4QA8lvQsvcae5XH9AT7UNXcj2iiwCN1i3f9w3w6rQD/5afiv99WsHV1e7ZTytVNI7hIS2qvMbXptcoKcWMMpwX0aaEyiHM7CgMQGHPCCtpxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EB71iksn3qiV/RSIqRzeMbEh4hotab3QdoJm2tor1yA=;
- b=fxK+MF7VuVOPdBXBcRHPvAfaegNKmjhDLa5FG/Xw+9Cz9IXZXfKO6zsWfhePQqAseUNRl9u7SF0fYgIGgyMRfpNIpGpYLIpZH8G9GWHpahpR3SjgmMTDNigiVSLla3QwDlUMz79tsx8H0Pv/Zw5761gI67VdxtywCLN6zPYcFn8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB6452.eurprd04.prod.outlook.com (2603:10a6:208:16d::21)
- by AS8PR04MB7670.eurprd04.prod.outlook.com (2603:10a6:20b:297::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6411.27; Mon, 22 May
- 2023 15:00:14 +0000
-Received: from AM0PR04MB6452.eurprd04.prod.outlook.com
- ([fe80::b027:17aa:e5f5:4fea]) by AM0PR04MB6452.eurprd04.prod.outlook.com
- ([fe80::b027:17aa:e5f5:4fea%6]) with mapi id 15.20.6411.028; Mon, 22 May 2023
- 15:00:14 +0000
-Date:   Mon, 22 May 2023 18:00:10 +0300
-From:   Vladimir Oltean <vladimir.oltean@nxp.com>
-To:     Sean Anderson <sean.anderson@seco.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?utf-8?B?RmVybuKUnMOtbmRleg==?= Rojas <noltari@gmail.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
-Message-ID: <20230522150010.q5zndfwcuvrb6pg2@skbuf>
-References: <b7779674-c3ac-e0ab-3ca8-db1ec5953a97@seco.com>
- <20230426105140.t4yqv6irtjcwptm5@skbuf>
- <20230425195002.fls5cmwolyrslpad@skbuf>
- <b7779674-c3ac-e0ab-3ca8-db1ec5953a97@seco.com>
- <20230426105140.t4yqv6irtjcwptm5@skbuf>
- <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
- <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
- <20230429172422.vc35tnwkekfieoru@skbuf>
- <c81d23b6-ed22-0b37-d71b-ddce9d5d58eb@seco.com>
- <c2f928d2-25f6-0e31-9ab3-9d585968df1b@seco.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2f928d2-25f6-0e31-9ab3-9d585968df1b@seco.com>
-X-ClientProxiedBy: AS4P189CA0015.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d7::19) To AM0PR04MB6452.eurprd04.prod.outlook.com
- (2603:10a6:208:16d::21)
+        with ESMTP id S229788AbjEVRgy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 13:36:54 -0400
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFEFBFF
+        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 10:36:51 -0700 (PDT)
+Received: from [192.168.1.18] ([86.243.2.178])
+        by smtp.orange.fr with ESMTPA
+        id 19Siq1SEJ0h9k19Siqvch6; Mon, 22 May 2023 19:36:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+        s=t20230301; t=1684777010;
+        bh=N2xeMMt507hgLYLfEZ8Hr/iAkxhU2Bot31n27SNKL3Q=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=CbtRPseUNMnLVW7YNBpro4cTwHUAf10/+3NYlms9nzDozd9I4w3nY0HrMVDunCe50
+         n7ytgccw3z8ursUZ4gnbmIlaau/el9jLxWoMa3JAdrNHRqGGrLM2RV1vCLwJQP5G7N
+         uIhwHemIzNXHY1L95+fQuiIm0rpXrbfG01s6cVKc/UUF/OiBOZzDXl414J5LadVLm5
+         wbQZ/hsdQlJjpR3QyUh3X6HFdg4G52NVaG5wb278n0+ZoEIsmFgl2Z1CJiHLC4JOOq
+         Ka7mqKyL22nKz3QJnnKU3Usiz4vBPfB20Nmtpxn3gxbIFh3UaCCb2Xy362H52FAgzh
+         RQbUnvMieiQfA==
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 22 May 2023 19:36:50 +0200
+X-ME-IP: 86.243.2.178
+Message-ID: <fa7a8bc4-d1a1-3b1a-8b9e-618681d281dd@wanadoo.fr>
+Date:   Mon, 22 May 2023 19:36:47 +0200
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6452:EE_|AS8PR04MB7670:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd6f4d8b-8da7-4396-2012-08db5ad53fb5
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: foszXlwfKuk2yurSmEzFeqnhdf9iE9hDoUOPBTEUp7CyzZ7VzZXHartFN/cO0opz57sIui8oUkSY12zIFsi7TqWaAvBv2Vo0NllKnvun6I/mI38SAKtV0ValsV5UoFp8Lfkyt+NKAQoK9ZdoUNmxyjFIHYHfBCBiZVNL7pg7Li3Si56mtG0OpmoRNd58nSKj3w6lEyQOwyxnpMokouAS2bdjRG0589RMfhESEsEtXN1IGhViToApaexoVo3J4OfX5/1+8bBmFNy6Lgp1QLpYf/D7l1JoAwHJrNSImCSfElBY8afd+wA5L+M8j/aEIdcjsWXITLG6dtABSvSmuiygWx8We8YeBv1v5RZj6+ESEUmCcYIvE+SCmqQab3y/rxPw5M4VOCs+0jAORGGk2yRq0DL2nt/zFL5Z5Y52Iy4uDAmHLNedLkYYmzv+8NK2x0H3MgainWRtdrNqBtrbBrmngSBTaFf8bm7AVPyO5akVOoLTWMzyDFXydRJCQUkp61hktW43uJODJNfnhYx7bsOCkyH4UUpAmTkYVJ4EVcqhvEM11J0CQ+h1a63bqoyLyBRB
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6452.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(7916004)(4636009)(136003)(376002)(346002)(396003)(366004)(39860400002)(451199021)(8676002)(8936002)(7416002)(44832011)(5660300002)(186003)(6512007)(6506007)(33716001)(26005)(1076003)(9686003)(86362001)(38100700002)(41300700001)(6666004)(558084003)(6486002)(478600001)(6916009)(4326008)(66946007)(66476007)(66556008)(54906003)(316002)(2906002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?s3v7KPkWB2B4nMS7Q2RVIg6K2MnDBWFfW13xRM3q4gyhnAZz1q4mNQ7P+tp3?=
- =?us-ascii?Q?GewXD2JCbyBidPxTTwJUuwkDDdoGDBG73KFRhFGMXbACNDvYVS89ueUuZMUx?=
- =?us-ascii?Q?ogwwwDYRUwRnEF3vKeZy1CqPkpokfPAeqgOM8QqLbN0FX370VvIf/UR8Kxpr?=
- =?us-ascii?Q?R67hPqsYo16XAq6jfm1WK2OvfJFIEi5kUFP07MJ+qwvuSVi0cIFsTFim02UK?=
- =?us-ascii?Q?OvbR4Ng1QNtrlF+cNxjfPTqXgQM6W3MfgATUFHvQoXvaXhuVnJcyuVMvPESi?=
- =?us-ascii?Q?tHOyR36jA9Vn5s0QykSIqmvLWLBPcSVNoO9bC5A5Sob2UQ6cCvwaWUX6kuPJ?=
- =?us-ascii?Q?dBGM5eyHXNfWcI1CsVKsbS1FTOFqlZNlx6ZWk6YluFuV3sNFf/xvdw5gR9XN?=
- =?us-ascii?Q?pqxIMpcbjmt/ZFeDPstwxA04Vk9EzGyqQZbApEw7VAcRSkp7fQvcmNbbju7t?=
- =?us-ascii?Q?y2ADfEYBJ/wfrV5Ls2hpCckc0egAIDgHwNkmEDIdlaqGPqllZBFhEtKC1f3O?=
- =?us-ascii?Q?dL02yvTVwBIAC5ulVS1Ye0fEYqbCpf11uueWH5Mvb+FNAlrs4KY/PHU78QeY?=
- =?us-ascii?Q?/39xTfhtC/whrzQx9w3xcb/rgwTnSL13V1Xl05QF0jmLGW129W3g5dV2tZH1?=
- =?us-ascii?Q?9JpFTLrAQxPDnR3SJHlb+ORB168pP1DspCmuBtWpais7bD7aJXH+i/WtXUZI?=
- =?us-ascii?Q?LevTokE3ciHSxKTE5HWNFSJlG6QeM07MfUPD98zFv7dZqRUzeWnZ+9iS4USz?=
- =?us-ascii?Q?7ei8VVXuqbQrg0ebaiRi2SJTNwfwY6/Jn8LhTP6TpnlXWjm4RSsX1KIXF0yE?=
- =?us-ascii?Q?COAlsNM6iDNoPuJELJD14UjxGjrXBVu3Me04Yi1YRt9VZcpmOUY0T848C3Ra?=
- =?us-ascii?Q?TORYhnRnG2R20UyKm4AtBf3xpHDbQoNZyhHAc7QgXe2ZREhQpsvlrMphb+W2?=
- =?us-ascii?Q?AVPzMFuGVVB27ePFJucRdBD53l3sa5ItKeADnDDZFrKW3/lDoK5Ip8ifH2hu?=
- =?us-ascii?Q?2zVchP0/PvTVWeBDvwneY3B0caYzEo9/8tfOK67F+ThYKzIHBVRXDjGTBRyO?=
- =?us-ascii?Q?LANn2JPttnRrYpUWcU1KDxsH6VOt6GCyoeWf5pE6tK/GFbFFlhHk11nGlVse?=
- =?us-ascii?Q?dfOirQg5LkA/cNXcRRn8CHeHU68Fe5/fy63QTnQYmeC8vBCCwatWw5y4LASl?=
- =?us-ascii?Q?5rAQEyvxJP7LpxudixxrFjiaKzML3wBYymsMOEADXnEySTVDEE/CVGsQn/4g?=
- =?us-ascii?Q?RuyCcRVAoYlvoZNz0sZooyYDO8eBiREvX8BPBoy5YEJDfOgS/jgEOVn0NWuQ?=
- =?us-ascii?Q?qdIOrOBoSyiUD2kG66e/DOXvzmIwqWyADPRXgbCtL4tZlm0Bqf5Mazb7vlAN?=
- =?us-ascii?Q?LVcP61n+TZLIADhQIXBQPFvMrK3/J2YDyAFejANwET378bdoTGg5rYQrBlZg?=
- =?us-ascii?Q?dLtgRo4DvbqCPBVL6w1IhmmyqktrJQr+/V2fptIob4TEtI+Ubr2MpoMKe7qn?=
- =?us-ascii?Q?pjf2BL99L7laWhw3IyevDLZb7IcNXKs7xFM+Yy2Vxk3kLs2A/6A+GiVohOmD?=
- =?us-ascii?Q?u6PUaB1Mcm+Tu0URfMfstiyhgdXEfiUd3UJX35xz30oObFwKdVLGprzov9gl?=
- =?us-ascii?Q?xA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd6f4d8b-8da7-4396-2012-08db5ad53fb5
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6452.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2023 15:00:14.8215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AJ205IlLv9ZHXAEkkXMBhX32pGbzWUQQ81URgVJENksORwKoO3+t3pfoUq4q8VYgHFwZVQjkOqYDAH0pmWlHnQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7670
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v16 1/1] clk: npcm8xx: add clock controller
+Content-Language: fr
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com,
+        openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230521143202.155399-1-tmaimon77@gmail.com>
+ <20230521143202.155399-2-tmaimon77@gmail.com>
+ <0e72c35f-5d9d-45a7-5f85-3971b8029106@wanadoo.fr>
+ <CAP6Zq1jOSKpzFvto1LMs=JftLK0fxrrg+73Sh34GunuLfcAfEA@mail.gmail.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAP6Zq1jOSKpzFvto1LMs=JftLK0fxrrg+73Sh34GunuLfcAfEA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 22, 2023 at 10:42:04AM -0400, Sean Anderson wrote:
-> Have you had a chance to review this driver?
+Le 22/05/2023 à 14:56, Tomer Maimon a écrit :
+> Hi Christophe,
+> 
+> Thanks for your comments
+> 
 
-Partially / too little (and no, I don't have an answer yet). I am
-debugging a SERDES protocol change procedure from XFI to SGMII.
+[...]
+
+>>> +static struct clk_hw *
+>>> +npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
+>>> +                      const char *name, const struct clk_parent_data *parent,
+>>> +                      unsigned long flags)
+>>> +{
+>>> +     struct npcm8xx_clk_pll *pll;
+>>> +     struct clk_init_data init = {};
+>>> +     int ret;
+>>> +
+>>> +     pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+>>
+>> Everything looks devm_()'ed in this driver, except this kzalloc.
+>> Except the one below, there is no kfree to free this memory, and no
+>> .remove() function.
+> Also  clk_hw_register_divider_parent_data doesn't use devm_
+> about free the pll, we use it, return at the end of the function.
+> about adding remove, we had a dissection about it in V4, since the
+> clock is a service driver it shouldn't be removed.
+> https://patchwork.kernel.org/project/linux-watchdog/patch/20220621131424.162355-7-tmaimon77@gmail.com/
+
+LoL.
+At least, I'm consistent :).
+
+Just to make it clear, what I mean about kfree() is not to add one here, 
+but either:
+    - to use devm_kzalloc() here, to avoid a leak, should loading the 
+driver fails      OR
+    - have some kfree() where needed (at least in the error handling 
+path of the probe, if the remove function makes no point)
+
+CJ
