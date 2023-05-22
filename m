@@ -2,53 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EE8C7EE2D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CF4C7EE29
 	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 06:32:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229621AbjEVGcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S230357AbjEVGcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 22 May 2023 02:32:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47240 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229649AbjEVGcW (ORCPT
+        with ESMTP id S229621AbjEVGcW (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 02:32:22 -0400
 Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11EABDB;
-        Sun, 21 May 2023 23:32:16 -0700 (PDT)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34M6W1jO087189;
-        Mon, 22 May 2023 01:32:01 -0500
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9982CF;
+        Sun, 21 May 2023 23:32:17 -0700 (PDT)
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 34M6Vwcl087174;
+        Mon, 22 May 2023 01:31:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1684737121;
-        bh=ogPbVDCU54/sxqzMwna8jLDsQGKPOdbkB99e+HaBCQ8=;
-        h=From:Date:Subject:References:In-Reply-To:To:CC;
-        b=rZuRqLUQ29HStom512qOF1e4EuF0Ll9yIEbWvY8R3rdecptjeWXbAJuqSbO8jPPCG
-         iQ+OOKOt//32nm+o+VtryHJXuOyL2Wv8otVYpGJk1xv/ThTVaiDTHoCb3xJX3iCtsj
-         7Q6xvX5aCZXKhSBckC5Yz6TG7vr4mZCV6GbUdluY=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34M6W1L1112686
+        s=ti-com-17Q1; t=1684737118;
+        bh=Y1PgBFAW58oQQelrLWGs2ihl4Rz/2sGaWxADqzqTSGU=;
+        h=From:Subject:Date:To:CC;
+        b=L1TV4L3zw4Bs6wZFDIPS/7eC0hB/RaviAvzD0mI3pAThPQpwnRrAujSLbbLdHvsit
+         YcXhFPLIOu9MGeq72RN3L7dTLQL1frC8CcHbzvvLDhTiyrpabXn3iiuBrkvOi7S0cs
+         R9AfnGGRB/xVMgn6os/SvglgrpwNagXB23FebX7g=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 34M6VweZ027528
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 May 2023 01:32:01 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 22 May 2023 01:31:58 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 22
- May 2023 01:32:01 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ May 2023 01:31:58 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 22 May 2023 01:32:01 -0500
+ Frontend Transport; Mon, 22 May 2023 01:31:58 -0500
 Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34M6W05T014378;
-        Mon, 22 May 2023 01:32:01 -0500
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 34M6VvXb086761;
+        Mon, 22 May 2023 01:31:58 -0500
 From:   Jai Luthra <j-luthra@ti.com>
-Date:   Mon, 22 May 2023 12:01:56 +0530
-Subject: [PATCH v2 2/2] clk: keystone: syscon-clk: Add support for audio
- refclk
+Subject: [PATCH v2 0/2] clk: keystone: syscon-clk: Enable audio reference
+ clock
+Date:   Mon, 22 May 2023 12:01:54 +0530
+Message-ID: <20230515-refclk-v2-0-fc9ff08826f5@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20230515-refclk-v2-2-fc9ff08826f5@ti.com>
-References: <20230515-refclk-v2-0-fc9ff08826f5@ti.com>
-In-Reply-To: <20230515-refclk-v2-0-fc9ff08826f5@ti.com>
+X-B4-Tracking: v=1; b=H4sIAFoMa2QC/2WNyw6CMBBFf4XM2po+fbDyPwwLaAeZqK1pCcGQ/
+ rstW5fn5uTcDRJGwgRts0HEhRIFX0AeGrBT7x/IyBUGyaXiRhgWcbSvJzOD0dopoa1UUOShT8i
+ G2Hs7Vd3jOtf5U3Ra9/69KzxRmkP87neLqOtfeRGMM4OX68iFO52Vus10tOENXc75BypTDkuwA
+ AAA
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -60,20 +62,20 @@ CC:     Vignesh Raghavendra <vigneshr@ti.com>, Andrew Davis <afd@ti.com>,
         <linux-arm-kernel@lists.infradead.org>,
         Jai Luthra <j-luthra@ti.com>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4211; i=j-luthra@ti.com;
- h=from:subject:message-id; bh=1OzTfUSpjR4REarTZh76zHNZ7RzUS4w0+ba0D9vqK7s=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBkawxfQnHmMzLFiY78JW5j1v1AX7PO7magNPFId
- Js5a0KWrAmJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZGsMXwAKCRBD3pH5JJpx
- RVUWD/9rUv52D/C/WSBmzCrn3o3TtU7wabRaGg62QL9M5tP4DgOkhKMCM1wKYxSI8TiNi5UC+Ri
- 0K3h17r53i5yW90bJ7/mp47+PpL2VNm3Ag/VKQx7YwiUkUIj28xhySmg9yFH93PJmcSHh5fSLD/
- tPzfAGY/6VvzHk6KB4v8XNh6kjs7hXbDG5FxQbW/gqxcbSro7Jlg0n9ZPImc/qXHHt7k5tjkh/t
- mhZ6LSOA90szKELTbUaqjhGJ1zO3HypQZ1Mpw08Y0twBsdJS/qEcAzDrhSUFYcCRa3pctEddg+z
- Fvo05WuQ0UUFuH0KZZTKOR2qyWvLG2vnhf66z/3eoSxtQ50PPUtKvAoHLvz51NBmpro2Vkm5mjt
- cE8a0GaoZccX2yUxJE9iPLtRPiORHkkhyUPwVxfX5fbBQTWUFZmGx0hY7sgfw2QDstKT6KHxn5E
- dGmBORWKymb1NNk/pntzpsoU1f/Mn4nMcYhaTY101FU5CUIi1ritqYiFFJEDaMJ6Enl47f7g3MK
- Y+jLCstgVCftzoxE2VDLQmLtL617LiUvmeyo4YFCnIbL/VT/rPqeUOd+nF0o4BmvjnWotPSCQqy
- jz297uHYGBVp3pmnpwx4uHVna8mzsIP1/JIb5d8cYG9GfoZje3+RCENfXh1xyx9mJU4zjUcbyiU
- Z5+/YqdjUXKCCIw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2633; i=j-luthra@ti.com;
+ h=from:subject:message-id; bh=00+PDpG4Jh6Ip7rfWxUl0DcfQvjrKR/hkRa7/qnO7QY=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBkawxbG16yp1rV4j7+lfvIbmXvUHA3Kg9cA3QcM
+ SsXiQhv+hCJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZGsMWwAKCRBD3pH5JJpx
+ Rf5REAC5+mNi8dliL12u8XTdPamsw72iVxGm2JblwiDvBw5acWQnWZnHnkE9IkwMrQd8ClSlgBI
+ zWPXCstQqylbVElX2llbgs8I9KuXjkb2mHvTXsiFaQSlKJJCabsy7A0qVlsk6mf/09DMb6AKVCv
+ T6OwTGIOFta74gzsHEu7wOFDzGVQXynVbXa5HPYwogx/CNwBdl/k/h1qbbpw8LVunW5wXz5qRxs
+ 6jsXMAn02mABr+jmS38Unk6TSeFB9+rL2ySl1TNK+Ak/Pgh4zRrDe8NZ72Vdt0waQgys+SBhWuj
+ 1QlYs2/EJaQGZJFIqImj82yj6QwyBOJ1EAb8ec2Kd5tcxUTjmKDJUz0SwGuK98rOHg/x5cbOeOn
+ mS/BOUVVRMnf57TzS8bcXUZTTtjVM1/ffz/ADMeXYcDlaxaIPRa3RfAi5ilTKENu0mFtLJ8MMG4
+ 9EtpsT7NRf6L3ozFeVJJJU5+Szuu7g/FW7JyvJbcr9P7u7j1bgurRvvDTS/q3unzUdYQXrVXRcz
+ 2ELTuSGZ/oDSIIT9qT4ptdxQRxLkrh9HTe9mDQmCqHDdO9Vf2IhPsObs+T8AmZIITC5TtMImNQR
+ xPl5Gb2ltbYPxGgd1IDRGnkEtouUXaQfMILWU36ba6CrGzqLao9HedNU04/k9npqjQdlcnaywDM
+ GhXAGk2vT5oK0QQ==
 X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
  fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -82,133 +84,79 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 TI's AM62 SoC can optionally provide two audio reference clocks
-(AUDIO_REFCLKx) to external peripherals.
+(AUDIO_REFCLKx) to external peripherals. By default the reference clock
+is looped-back inside the SoC to a mux that goes to McASP AHCLK, but can
+optionally be enabled as an output to peripherals outside the SoC by
+setting a bit through CTRL_MMR registers.
 
-By default this reference clock is looped-back inside the SoC to a mux
-that goes to McASP AHCLK, but can optionally be enabled as an output to
-peripherals outside the SoC by setting a bit through CTRL_MMR registers.
+This patch series extends the existing syscon-clk driver to support
+the audio reference clock, and also adds new device tree bindings
+documentation.
 
-This bit only controls the direction of the clock, while the parent
-is a muxed input from sci-clk [1] which may be a configurable PLL or a
-master clock from one of the McASP instances.
+Please apply this on-top-of Andrew's series [1] removing the unnecessary
+dependency on syscon compatible.
 
-Link: http://downloads.ti.com/tisci/esd/latest/5_soc_doc/am62x/clocks.html#clocks-for-board0-device [1]
 Signed-off-by: Jai Luthra <j-luthra@ti.com>
 ---
- drivers/clk/keystone/syscon-clk.c | 43 ++++++++++++++++++++++++++++++++++-----
- 1 file changed, 38 insertions(+), 5 deletions(-)
+Changes in v2:
+- Removed "syscon" compatible and rebased on top of [1]
+- Moved reg above other properties in bindings yaml
+- Link to v1: https://lore.kernel.org/r/20230515-refclk-v1-0-5e89f01d6733@ti.com
 
-diff --git a/drivers/clk/keystone/syscon-clk.c b/drivers/clk/keystone/syscon-clk.c
-index bd5cec0bd12d..7f686c12a109 100644
---- a/drivers/clk/keystone/syscon-clk.c
-+++ b/drivers/clk/keystone/syscon-clk.c
-@@ -61,21 +61,31 @@ static const struct clk_ops ti_syscon_gate_clk_ops = {
- 
- static struct clk_hw
- *ti_syscon_gate_clk_register(struct device *dev, struct regmap *regmap,
-+			     const char *parent_name,
- 			     const struct ti_syscon_gate_clk_data *data)
- {
- 	struct ti_syscon_gate_clk_priv *priv;
- 	struct clk_init_data init;
-+	char *name = NULL;
- 	int ret;
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
- 		return ERR_PTR(-ENOMEM);
- 
--	init.name = data->name;
- 	init.ops = &ti_syscon_gate_clk_ops;
--	init.parent_names = NULL;
--	init.num_parents = 0;
--	init.flags = 0;
-+	if (parent_name) {
-+		name = kasprintf(GFP_KERNEL, "%s:%s", data->name, parent_name);
-+		init.name = name;
-+		init.parent_names = &parent_name;
-+		init.num_parents = 1;
-+		init.flags = CLK_SET_RATE_PARENT;
-+	} else {
-+		init.name = data->name;
-+		init.parent_names = NULL;
-+		init.num_parents = 0;
-+		init.flags = 0;
-+	}
- 
- 	priv->regmap = regmap;
- 	priv->reg = data->offset;
-@@ -83,6 +93,10 @@ static struct clk_hw
- 	priv->hw.init = &init;
- 
- 	ret = devm_clk_hw_register(dev, &priv->hw);
-+
-+	if (name)
-+		kfree(init.name);
-+
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-@@ -94,8 +108,9 @@ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
- 	const struct ti_syscon_gate_clk_data *data, *p;
- 	struct clk_hw_onecell_data *hw_data;
- 	struct device *dev = &pdev->dev;
-+	int num_clks, num_parents, i;
-+	const char *parent_name;
- 	struct regmap *regmap;
--	int num_clks, i;
- 
- 	data = device_get_match_data(dev);
- 	if (!data)
-@@ -110,6 +125,13 @@ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
- 	for (p = data; p->name; p++)
- 		num_clks++;
- 
-+	num_parents = of_clk_get_parent_count(dev->of_node);
-+	if (of_device_is_compatible(dev->of_node, "ti,am62-audio-refclk") &&
-+	    num_parents == 0) {
-+		return dev_err_probe(dev, -EINVAL,
-+				     "must specify a parent clock\n");
-+	}
-+
- 	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, num_clks),
- 			       GFP_KERNEL);
- 	if (!hw_data)
-@@ -117,8 +139,10 @@ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
- 
- 	hw_data->num = num_clks;
- 
-+	parent_name = of_clk_get_parent_name(dev->of_node, 0);
- 	for (i = 0; i < num_clks; i++) {
- 		hw_data->hws[i] = ti_syscon_gate_clk_register(dev, regmap,
-+							      parent_name,
- 							      &data[i]);
- 		if (IS_ERR(hw_data->hws[i]))
- 			dev_warn(dev, "failed to register %s\n",
-@@ -166,6 +190,11 @@ static const struct ti_syscon_gate_clk_data am62_clk_data[] = {
- 	{ /* Sentinel */ },
- };
- 
-+static const struct ti_syscon_gate_clk_data am62_audio_clk_data[] = {
-+	TI_SYSCON_CLK_GATE("audio_refclk", 0x0, 15),
-+	{ /* Sentinel */ },
-+};
-+
- static const struct of_device_id ti_syscon_gate_clk_ids[] = {
- 	{
- 		.compatible = "ti,am654-ehrpwm-tbclk",
-@@ -179,6 +208,10 @@ static const struct of_device_id ti_syscon_gate_clk_ids[] = {
- 		.compatible = "ti,am62-epwm-tbclk",
- 		.data = &am62_clk_data,
- 	},
-+	{
-+		.compatible = "ti,am62-audio-refclk",
-+		.data = &am62_audio_clk_data,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, ti_syscon_gate_clk_ids);
+[1]: https://lore.kernel.org/linux-clk/20230516184626.154892-1-afd@ti.com/#t
 
+Range-diff from v1:
+1:  8107cb140f7d ! 1:  a690c2044971 dt-bindings: clock: Add binding documentation for TI Audio REFCLK
+    @@ Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml (new)
+     +  compatible:
+     +    items:
+     +      - const: ti,am62-audio-refclk
+    -+      - const: syscon
+    -+
+    -+  "#clock-cells":
+    -+    const: 0
+     +
+     +  reg:
+     +    maxItems: 1
+     +
+    ++  "#clock-cells":
+    ++    const: 0
+    ++
+     +  clocks:
+     +    maxItems: 1
+     +
+     +required:
+     +  - compatible
+    -+  - "#clock-cells"
+     +  - reg
+    ++  - "#clock-cells"
+     +  - clocks
+     +
+     +additionalProperties: false
+    @@ Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml (new)
+     +examples:
+     +  - |
+     +    audio_refclk0: clock@82e0 {
+    -+        compatible = "ti,am62-audio-refclk", "syscon";
+    ++        compatible = "ti,am62-audio-refclk";
+     +        reg = <0x82e0 0x4>;
+     +        clocks = <&k3_clks 157 0>;
+     +        assigned-clocks = <&k3_clks 157 0>;
+2:  5a555757fe42 = 2:  854166d4305f clk: keystone: syscon-clk: Add support for audio refclk
+
+---
+Jai Luthra (2):
+      dt-bindings: clock: Add binding documentation for TI Audio REFCLK
+      clk: keystone: syscon-clk: Add support for audio refclk
+
+ .../bindings/clock/ti,am62-audio-refclk.yaml       | 43 ++++++++++++++++++++++
+ drivers/clk/keystone/syscon-clk.c                  | 43 +++++++++++++++++++---
+ 2 files changed, 81 insertions(+), 5 deletions(-)
+---
+base-commit: 62f117ff3cbc8ea2bf9be36f019eba60369b6a81
+change-id: 20230515-refclk-5b544d314c23
+
+Best regards,
 -- 
-2.40.1
+Jai Luthra <j-luthra@ti.com>
 
