@@ -2,121 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5ACDC77B75
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 08:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295EFC7EE26
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 08:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232029AbjEVIdj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 04:33:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59340 "EHLO
+        id S232335AbjEVIgA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 04:36:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbjEVIdh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 04:33:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AD94BB;
-        Mon, 22 May 2023 01:33:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B44A561825;
-        Mon, 22 May 2023 08:33:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B26C433D2;
-        Mon, 22 May 2023 08:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684744414;
-        bh=Wv3m8nOFsRLwTg0GC/begIbxiUqM/YM8a3C1A+CGHKA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GXrj5C8iCl3PlcT9Q/UsRwdDx0MHcaaVpRf2pI0PTRXVCobXweIlOIwNkaZTdNBGt
-         1GlW58Dv6R15J1rjeGQUkwT1Xj/bDrXYw4x12Nl635XCO2D9lLmm2fdZz+8o7YeK9y
-         rpeMdoKAD2Wx/U3dT7n3h9vAq1wY11zvQNScw9H1u7UtykMsjU92R1JrS7IcUeNhW/
-         87qho6ORkfnyBILUC7MoYCJOtJ89jCtEMo84noR3k8sAgeXamC1kXgvgDNob39dR2t
-         IKA9HZMh0lejv7g25+SC5INnB85cGwuPcCLaK6JlO5zJRjD4sT87/m84obKzb4zZ/e
-         KiY3GduLap80g==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1q10z0-0004Sm-1j; Mon, 22 May 2023 10:33:34 +0200
-Date:   Mon, 22 May 2023 10:33:34 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, johan+linaro@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] clk: qcom: Add lpass audio clock controller driver
- for SC8280XP
-Message-ID: <ZGso3u6e0L5jXBLf@hovoldconsulting.com>
-References: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
- <20230518113800.339158-5-srinivas.kandagatla@linaro.org>
+        with ESMTP id S232366AbjEVIfu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 04:35:50 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C7F3F9
+        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 01:35:47 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id d2e1a72fcca58-64d30ab1ef2so2264000b3a.2
+        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 01:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684744546; x=1687336546;
+        h=content-transfer-encoding:in-reply-to:references:subject:to:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8u81+gNqpoMK774yWwCBHKk+pd5Ao3K0ld1AoX7VQD8=;
+        b=NLNaXASyCE30Cfo/nFeN62e7oRbOpQAk3mNc5Vux+PxdODqbeBzx/fyJj5pK8jB0wJ
+         9fAZQynq/nhXzFv34mcmJFWS+ksIFnkkQl1gdnBcg2aavyP8+tQUAjlZ490n2JYYcNvN
+         t4pjqqFUbhb5WwMjjttyQVR9n8z3Im9KFDrGyOfOZM56jDBtjA4xETSHPMogK0MPUcKg
+         LsXn+e+kpHBYg5UeYseQLbdjjRg7F1AOtg0hIWopk7UiGRRIrmC/rGBPNCvq4BQOA0gp
+         Q87GNmF39jjQkKYVASoHe7jKxKyuJ071ITUFXKzS76SIIDDIMoZ/o6hQ5KjJoL6aa9cJ
+         f4RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684744546; x=1687336546;
+        h=content-transfer-encoding:in-reply-to:references:subject:to:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8u81+gNqpoMK774yWwCBHKk+pd5Ao3K0ld1AoX7VQD8=;
+        b=ZcN2VTEQSi8PQZFP6M/DjRxO5dq69140FjgMR5GgZV18jcVtoS4W7w5G5X+jYIiqum
+         uL6nQ1iZ1bEJ8MNhZmDkyIfrZ/CKRBI6pAHsnCiEesJfTqR2YXj0/HiRGhHyi64p2rLD
+         rU6QPaeP9x0vtAo415fHNyEV2PPA4PULQzQJqapDZsPzNTNJbT3zxb0oB2kz20A5I8FG
+         wB6+85z29fESZXQ2YJXu/ZjERA1miNMYThBZUT1fEJY4OX5Cllk9exehJ6KrepaR7Wb0
+         eqysjSDtR9vNMxewct3BzqBupDGT+Po+Tfg0C/OkYlSSfBhLbm+1u6ujYyWKM9CvybSl
+         Ht0A==
+X-Gm-Message-State: AC+VfDyj4qR+tdU35zJfccd0Ip0S5sItkyWcp6m8Suq4DhoI/XxogBku
+        bP/57zXxk514m2pFqOgTPJDi1A==
+X-Google-Smtp-Source: ACHHUZ6MSwGF1WZDtb2DuJRHLwLiWl/saCrKgyrPeuZgMnchUsoJ34hpcutGb5dfceyxYajJ++kA7Q==
+X-Received: by 2002:a05:6a21:6d88:b0:104:923b:4d00 with SMTP id wl8-20020a056a216d8800b00104923b4d00mr11247917pzb.36.1684744546529;
+        Mon, 22 May 2023 01:35:46 -0700 (PDT)
+Received: from ?IPV6:2401:4900:1c60:d309:883d:817e:8e91:be39? ([2401:4900:1c60:d309:883d:817e:8e91:be39])
+        by smtp.gmail.com with ESMTPSA id a22-20020a62bd16000000b0063afb08afeesm707621pff.67.2023.05.22.01.35.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 May 2023 01:35:46 -0700 (PDT)
+Message-ID: <b2009411-1822-b16e-6da4-44d399c52a19@linaro.org>
+Date:   Mon, 22 May 2023 14:05:37 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230518113800.339158-5-srinivas.kandagatla@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+From:   bhupesh.sharma@linaro.org
+To:     Anusha Rao <quic_anusha@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        thara.gopinath@gmail.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
+        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_poovendh@quicinc.com
+Subject: Re: [PATCH V3 1/4] dt-bindings: clock: Add crypto clock and reset
+ definitions
+References: <20230518141105.24741-1-quic_anusha@quicinc.com>
+ <20230518141105.24741-2-quic_anusha@quicinc.com>
+In-Reply-To: <20230518141105.24741-2-quic_anusha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 18, 2023 at 12:37:59PM +0100, Srinivas Kandagatla wrote:
-> Add support for the lpass audio clock controller found on SC8280XP based
-> devices. This would allow lpass peripheral loader drivers to control the
-> clocks and bring the subsystems out of reset.
+
+
+On 5/18/23 7:41 PM, Anusha Rao <quic_anusha@quicinc.com> wrote:
+> Add crypto clock and reset ID definitions for ipq9574.
 > 
-> Currently this patch only supports resets as the Q6DSP is in control of
-> LPASS IP which manages most of the clocks via Q6PRM service on GPR rpmsg
-> channel.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
 > ---
->  drivers/clk/qcom/lpasscc-sc8280xp.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+>   Changes in V3:
+> 	- Added GCC prefix to CRYPTO_CLK_SRC.
+> 	- Picked up Acked-by tag.
 > 
-> diff --git a/drivers/clk/qcom/lpasscc-sc8280xp.c b/drivers/clk/qcom/lpasscc-sc8280xp.c
-> index 118320f8ee40..e221ae2d40ae 100644
-> --- a/drivers/clk/qcom/lpasscc-sc8280xp.c
-> +++ b/drivers/clk/qcom/lpasscc-sc8280xp.c
-> @@ -13,6 +13,26 @@
->  #include "common.h"
->  #include "reset.h"
->  
-> +static const struct qcom_reset_map lpass_audio_csr_sc8280xp_resets[] = {
-> +	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
-> +	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-> +	[LPASS_AUDIO_SWR_WSA2_CGCR] =  { 0xd8, 1 },
-> +};
-> +
-> +static struct regmap_config lpass_audio_csr_sc8280xp_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.name = "lpass-audio-csr",
+>   include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
+>   include/dt-bindings/reset/qcom,ipq9574-gcc.h | 1 +
+>   2 files changed, 5 insertions(+)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> index 5a2961bfe893..b32a7aa65349 100644
+> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+> @@ -210,4 +210,8 @@
+>   #define GCC_SNOC_PCIE1_1LANE_S_CLK			201
+>   #define GCC_SNOC_PCIE2_2LANE_S_CLK			202
+>   #define GCC_SNOC_PCIE3_2LANE_S_CLK			203
+> +#define GCC_CRYPTO_CLK_SRC				204
+> +#define GCC_CRYPTO_CLK					205
+> +#define GCC_CRYPTO_AXI_CLK				206
+> +#define GCC_CRYPTO_AHB_CLK				207
+>   #endif
+> diff --git a/include/dt-bindings/reset/qcom,ipq9574-gcc.h b/include/dt-bindings/reset/qcom,ipq9574-gcc.h
+> index d01dc6a24cf1..c709d103673d 100644
+> --- a/include/dt-bindings/reset/qcom,ipq9574-gcc.h
+> +++ b/include/dt-bindings/reset/qcom,ipq9574-gcc.h
+> @@ -160,5 +160,6 @@
+>   #define GCC_WCSS_Q6_BCR						151
+>   #define GCC_WCSS_Q6_TBU_BCR					152
+>   #define GCC_TCSR_BCR						153
+> +#define GCC_CRYPTO_BCR						154
+>   
+>   #endif
 
-Should you update this name to match the new compatible
-("lpassaudiocc")?
+Reviewed-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 
-> +	.max_register = 0x1000,
-> +};
-> +
-> +static const struct qcom_cc_desc lpass_audio_csr_reset_sc8280xp_desc = {
-
-Same here (and for the reset struct as well as previous patch).
-
-> +	.config = &lpass_audio_csr_sc8280xp_regmap_config,
-> +	.resets = lpass_audio_csr_sc8280xp_resets,
-> +	.num_resets = ARRAY_SIZE(lpass_audio_csr_sc8280xp_resets),
-> +};
-> +
->  static const struct qcom_reset_map lpass_tcsr_sc8280xp_resets[] = {
->  	[LPASS_AUDIO_SWR_TX_CGCR] = { 0xc010, 1 },
->  };
-> @@ -33,6 +53,9 @@ static const struct qcom_cc_desc lpass_tcsr_reset_sc8280xp_desc = {
->  
->  static const struct of_device_id lpasscc_sc8280xp_match_table[] = {
->  	{
-> +		.compatible = "qcom,sc8280xp-lpassaudiocc",
-> +		.data = &lpass_audio_csr_reset_sc8280xp_desc,
-> +	}, {
->  		.compatible = "qcom,sc8280xp-lpasscc",
->  		.data = &lpass_tcsr_reset_sc8280xp_desc,
->  	},
-
-Johan
+Thanks.
