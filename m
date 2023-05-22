@@ -2,71 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E9CC77B73
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 08:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F54C7EE2A
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 08:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229571AbjEVIpZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 04:45:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36184 "EHLO
+        id S232554AbjEVIxm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 04:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232394AbjEVIpY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 04:45:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9E16DB;
-        Mon, 22 May 2023 01:45:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 54C1561B57;
-        Mon, 22 May 2023 08:45:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB16C433D2;
-        Mon, 22 May 2023 08:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684745121;
-        bh=AMDkX5eWT1bT4M55bmCaK6BJwJkRq6T2cCAN6skPfzE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JlJxQvjBp4vl2BGp/p278JcbGgtzQh8OF4n26UdAUwq3sW6IePsjD05rkGXotmYJz
-         kKSdGTODErH9usfutKOM2bAMOFemp/4eZxXDRCrVyFDQ/b6knURiILODe5p2P601mr
-         zAd+RD1MFNfmRILk+1iEezfwqRqTJ6EX+VmKan2nDOSsamOHzUIR0fSYo/Xp/7DnYV
-         yMm+91qUejMvxbmc/GTfOwFaQo9YI9RHSRVbeU94jeBLZ+XOJL0fCvThfeSqMQ+ANy
-         8gRQE8EMEEoLjaxnofFjvBq8AeRLHg2oZiZoq0PZtGf9ddMLRYzyyGpiMP4Wtgmh44
-         StSlgRuON0ALw==
-Received: from johan by xi.lan with local (Exim 4.94.2)
-        (envelope-from <johan@kernel.org>)
-        id 1q11AP-0004YD-Jp; Mon, 22 May 2023 10:45:21 +0200
-Date:   Mon, 22 May 2023 10:45:21 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, johan+linaro@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] clk: qcom: Add lpass clock controller driver for
- SC8280XP
-Message-ID: <ZGsrocJoPne6wn4H@hovoldconsulting.com>
-References: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
- <20230518113800.339158-4-srinivas.kandagatla@linaro.org>
+        with ESMTP id S232537AbjEVIxb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 04:53:31 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94DD7ED
+        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 01:53:28 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id d9443c01a7336-1ae51b07338so39325065ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 01:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1684745608; x=1687337608;
+        h=content-transfer-encoding:in-reply-to:references:subject:to:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yy4zVkssg8FiC+/RzC34Xwny+YRkysiolleunptsSl0=;
+        b=goP3fJOI9f2dj4q3zt7G8HUTP5BfxehAiYHW67aGWbby0GWZt7LwqnVO81ZhudtxKe
+         Hy1dBAmCCH05/+ctPzMqLgdiQq7GrwpQa9tvF1tkmESm/5p2HmwiCsjGcxd2ge80lvgu
+         03iGnj8GIx1OP0L3y78MVRzwyF4RuHUryJhcHtwg5/XatOvxlUOZ5+3s9hM81lTsqn15
+         +IH4niDECGBfRR30MOy3+8ozs5b0vu0tr/ftUTe+LqaVHS2W3bA5u4qP/kmPe/akcx9s
+         yiym+TXWcg7362wL1g3pJ7C98VTesi1nk7YvuxSfHQsUPguAZg2iAW5QjzK368ffmXVy
+         HfQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684745608; x=1687337608;
+        h=content-transfer-encoding:in-reply-to:references:subject:to:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yy4zVkssg8FiC+/RzC34Xwny+YRkysiolleunptsSl0=;
+        b=IKurFPT0HEQnkvaP3B1Vi6GU/4Uc+KTu3A9/X+PYSfsP1sUQOtQI5BJvcdXUcuYJs5
+         s3vhEo7Smy9mZV/npFQ7LH6uFqsfkNzvt21FofVWvQyUPRxmRYCFmakfDPqCibgAYXQU
+         dVgcy8j7Zf1OyPtaUd27J27aHg7+uX3ZL1lBsDoYkJ/e+JgNRkwNILqiZ1A0r3lOEHTz
+         z47AA0Zq+fc0jRoUr2cyUb/BHwYMgs0eL5FCPya2XAjj79uTM7ht+QxLjLO/ETQLi39I
+         A4gi/HE6oT2hkm+5q+gLSc/dBgr7LOudg5hNHb4jWcmJ1h2z6FnuzSo4OmCEiwlN4ao1
+         bVyg==
+X-Gm-Message-State: AC+VfDzJTpEV0Y0qZ6RTG/T2MAONj710kCCKSr56vOQ0yhOIU8dv/dr7
+        MuJ4maKT8zsjdTLY1HqbWRScbw==
+X-Google-Smtp-Source: ACHHUZ4DcbvSTtZeRWniTVD7cIXlVTqrwop9sJluPZE1NASnzxNdtPS/2/7r53dSGhstBwpZYfU6/w==
+X-Received: by 2002:a17:902:ecc1:b0:1ad:f7d9:1ae0 with SMTP id a1-20020a170902ecc100b001adf7d91ae0mr11742345plh.38.1684745608044;
+        Mon, 22 May 2023 01:53:28 -0700 (PDT)
+Received: from ?IPV6:2401:4900:1c60:d309:883d:817e:8e91:be39? ([2401:4900:1c60:d309:883d:817e:8e91:be39])
+        by smtp.gmail.com with ESMTPSA id jc1-20020a17090325c100b001a1b66af22fsm4344017plb.62.2023.05.22.01.53.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 May 2023 01:53:27 -0700 (PDT)
+Message-ID: <93db4ee5-4fb8-f159-0cf4-ec1669c36dd1@linaro.org>
+Date:   Mon, 22 May 2023 14:23:19 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230518113800.339158-4-srinivas.kandagatla@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+From:   bhupesh.sharma@linaro.org
+To:     Anusha Rao <quic_anusha@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        thara.gopinath@gmail.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
+        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
+        quic_poovendh@quicinc.com
+Subject: Re: [PATCH V3 4/4] arm64: dts: qcom: ipq9574: Enable crypto nodes
+References: <20230518141105.24741-1-quic_anusha@quicinc.com>
+ <20230518141105.24741-5-quic_anusha@quicinc.com>
+In-Reply-To: <20230518141105.24741-5-quic_anusha@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 18, 2023 at 12:37:58PM +0100, Srinivas Kandagatla wrote:
+On 5/18/23 7:41 PM, Anusha Rao <quic_anusha@quicinc.com> wrote:
+> Enable crypto support for ipq9574.
+> 
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> ---
+>   Changes in V3:
+> 	- No change.
+> 
+>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index fea15f3cf910..6e52d35a6a15 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -123,6 +123,26 @@
+>   			clock-names = "core";
+>   		};
+>   
+> +		cryptobam: dma-controller@704000 {
+> +			compatible = "qcom,bam-v1.7.0";
 
-> +config SC_LPASSCC_8280XP
-> +	tristate "SC8280 Low Power Audio Subsystem (LPASS) Clock Controller"
-> +	select SC_GCC_8280XP
-> +	help
-> +	  Support for the LPASS clock controller on SC8280XP devices.
-> +	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
-> +	  controller to reset the LPASS subsystem.
+Please confirm if this is "qcom,bam-v1.7.4" or "qcom,bam-v1.7.0". If "qcom,bam-v1.7.4" please use the newer compatible format.
 
-And please include a defconfig update for this one as a separate patch
-in the next revision as it is needed for audio on the X13s.
+Thanks,
+Bhupesh
 
-Johan
+> +			reg = <0x00704000 0x20000>;
+> +			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
+> +			#dma-cells = <1>;
+> +			qcom,ee = <1>;
+> +			qcom,controlled-remotely;
+> +		};
+> +
+> +		crypto: crypto@73a000 {
+> +			compatible = "qcom,ipq9574-qce", "qcom,ipq4019-qce", "qcom,qce";
+> +			reg = <0x0073a000 0x6000>;
+> +			clocks = <&gcc GCC_CRYPTO_AHB_CLK>,
+> +				 <&gcc GCC_CRYPTO_AXI_CLK>,
+> +				 <&gcc GCC_CRYPTO_CLK>;
+> +			clock-names = "iface", "bus", "core";
+> +			dmas = <&cryptobam 2>, <&cryptobam 3>;
+> +			dma-names = "rx", "tx";
+> +		};
+> +
+>   		tlmm: pinctrl@1000000 {
+>   			compatible = "qcom,ipq9574-tlmm";
+>   			reg = <0x01000000 0x300000>;
+> 
