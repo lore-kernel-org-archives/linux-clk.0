@@ -2,206 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C75C7EE26
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 08:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAF2C7EE2A
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 09:22:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232195AbjEVI7p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 04:59:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40718 "EHLO
+        id S232803AbjEVJWh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 05:22:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232133AbjEVI7U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 04:59:20 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0979EE77
-        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 01:58:37 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id d9443c01a7336-1ae54b623c2so53422645ad.3
-        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 01:58:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1684745916; x=1687337916;
-        h=content-transfer-encoding:in-reply-to:references:subject:to:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WVVEKPnXkSILTss/P2zaQmuQ5vs6PfUPsMsOFGsk8/M=;
-        b=Ql0qKVg8nKHPlO3LwnQK70xhH1YY18RDJ/jp8+QbdPUKQj/xMBIjs8YdP+RbTdGy8o
-         un7B0gd92OPgrULN/uskxekvP2KHntPf5K3teVTAow68P6BKUw7JOGc36akTxJXxTaTO
-         1Oz/EGCd2/FIJeE0UVTRnPqM4pllTdRzyzRDaK8DYLvT0UDQ53v2KPHA9bPS3umni37i
-         ojXwupNlP2JzASRvNu8BJHpk9LaqJwgVXFcjMU5/9gTxXAvZpQClz72/h730jFisC480
-         cRUwPmZQnoSEw4wQ0ATbD6NC33eu53YxhJM59qKi060tlSs5e0GhfD80QlJEZ/bRSXSJ
-         TsJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684745916; x=1687337916;
-        h=content-transfer-encoding:in-reply-to:references:subject:to:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WVVEKPnXkSILTss/P2zaQmuQ5vs6PfUPsMsOFGsk8/M=;
-        b=YWGc3T0rY7iKbCzLti5Ghb+9IF3MOPt0mA+lSV1S62zqx9a7MuJ0zxsQ9+Q01oh6bT
-         sUZC4pdT4mV1nVT1BrVZp8LKYpiHTG+NsOmkN8MPvi0wVBogVKQLhAS6y0pOBpZtVmJk
-         03OfuzUom3DWZdSapXY7m+2uyPx3yM3UoLC8Gm08K56zuSt4xzApoHVbQU4R+NcpcH90
-         hTLLi4rFfBb0j0ayZUkDUJtRpI5l72+G5tnTzMw3jfKk9/4igtlITwD/z6h5waWtUWvw
-         PVQbfESLVjC4Sws5WHdMD+9d3i3BBjc0o7WUmM5Umj8TkLRTc7TsIV6zHvA4pRGYXZ82
-         bYkQ==
-X-Gm-Message-State: AC+VfDwM8DK0lYzFDGMVhDsVdtjrY51RHuKlJfhISpOtbF1D/dtYw/d4
-        M2+Ym17CJvRDfhjMy3RHGEGFyA==
-X-Google-Smtp-Source: ACHHUZ4uhzrBezRPGNp3O4yAik4A3kP5KYKhP29A86ySFHnLnzIEoz/7dLeytbx4+onNWQEISTP78w==
-X-Received: by 2002:a17:902:f2cc:b0:1aa:fbaa:ee09 with SMTP id h12-20020a170902f2cc00b001aafbaaee09mr7905892plc.49.1684745916446;
-        Mon, 22 May 2023 01:58:36 -0700 (PDT)
-Received: from ?IPV6:2401:4900:1c60:d309:883d:817e:8e91:be39? ([2401:4900:1c60:d309:883d:817e:8e91:be39])
-        by smtp.gmail.com with ESMTPSA id y3-20020a17090322c300b001a1d553de0fsm4308539plg.271.2023.05.22.01.58.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 May 2023 01:58:36 -0700 (PDT)
-Message-ID: <c451dc43-b5a2-df42-c4a5-0db4c6641b1c@linaro.org>
-Date:   Mon, 22 May 2023 14:28:28 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-From:   bhupesh.sharma@linaro.org
-To:     Anusha Rao <quic_anusha@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        thara.gopinath@gmail.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, robh+dt@kernel.org,
+        with ESMTP id S232820AbjEVJWc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 05:22:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED1EB9;
+        Mon, 22 May 2023 02:22:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E1A9F61F54;
+        Mon, 22 May 2023 09:22:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A3E9C4339B;
+        Mon, 22 May 2023 09:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684747342;
+        bh=4UAOuaxRjDW/VUdv5PEW8PO3y6sk2Abupc99dtDqXVk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V6eKgFClyIfM6DBk8bSWMM3kIhcX0FqIj79QDbMDa1JsTHY8WxRYwz7V6xy62/Q8O
+         RmK1nRSYtsmLgE3Rkp6z84Y6gW/bPI4GNywRLtRGd1vEBrr3iIVcEa9D1pid1tKbLR
+         ghIlYoHpj0ZaGXp025wa4QzbRJDTwnGZWOkyM6ifMmPC6nrOSnPTGUbpOjiEnJjSi2
+         /n9hCVYUG5+GJ6oIYrWmKBse+n+M+uXFtakwEVHB7ZzHA2kK2xDkEfg5wtKhhxf9ZB
+         9Cslxd1y2sv/xlJ53XtGl5iS4VPqtQAkyvbS4ZqaRJ12LXYBeBP4a6w13f7PPIgw2U
+         cFJzr9JUc5eIA==
+Date:   Mon, 22 May 2023 11:22:12 +0200
+From:   Lorenzo Pieralisi <lpieralisi@kernel.org>
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        kw@linux.com, robh@kernel.org, bhelgaas@google.com,
         krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mani@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
-        quic_gokulsri@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_arajkuma@quicinc.com,
-        quic_poovendh@quicinc.com
-Subject: Re: [PATCH V3 2/4] clk: qcom: gcc-ipq9574: Enable crypto clocks
-References: <20230518141105.24741-1-quic_anusha@quicinc.com>
- <20230518141105.24741-3-quic_anusha@quicinc.com>
-In-Reply-To: <20230518141105.24741-3-quic_anusha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_ipkumar@quicinc.com
+Subject: Re: [PATCH V4 0/6] Add PCIe support for IPQ9574
+Message-ID: <ZGs0RJ2y+3lSZLIC@lpieralisi>
+References: <20230519090219.15925-1-quic_devipriy@quicinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230519090219.15925-1-quic_devipriy@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 5/18/23 7:41 PM, Anusha Rao <quic_anusha@quicinc.com> wrote:
-> Enable the clocks required for crypto operation.
+On Fri, May 19, 2023 at 02:32:13PM +0530, Devi Priya wrote:
+> This series adds support for enabling the PCIe host devices (PCIe0, PCIe1,
+> PCIe2, PCIe3) found on IPQ9574 platform.
+> The PCIe0 & PCIe1 are 1-lane Gen3 host and PCIe2 & PCIe3 
+> are 2-lane Gen3 host.
 > 
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> ---
->   Changes in V3:
-> 	- Added GCC prefix to CRYPTO_CLK_SRC.
+> DTS patch is based on the below series
+> https://lore.kernel.org/linux-arm-msm/20230517172527.1968-1-quic_devipriy@quicinc.com/
 > 
->   drivers/clk/qcom/gcc-ipq9574.c | 72 ++++++++++++++++++++++++++++++++++
->   1 file changed, 72 insertions(+)
+> Changes in V4:
+> 	- Rebased on the below series
+> https://lore.kernel.org/linux-arm-msm/20230517172527.1968-1-quic_devipriy@quicinc.com/
+> 	- Change logs are added to the respective patches.
+
+Mani, all,
+
+can I pick up patches 3 and 6 from this series ?
+
+Lorenzo
+
+> [V3]
+> https://lore.kernel.org/linux-arm-msm/20230421124938.21974-1-quic_devipriy@quicinc.com/
+> 	- Dropped the phy driver and binding patches as they have been 
+> 	  posted as a separate series.
+> 	- Dropped the pinctrl binding fix patch as it is unrelated to the series
+> 	  dt-bindings: pinctrl: qcom: Add few missing functions.
+> 	- Rebased on linux-next/master.
+> 	- Detailed change logs are added to the respective patches.
+> 	
+> [V2]
+> https://lore.kernel.org/linux-arm-msm/20230404164828.8031-1-quic_devipriy@quicinc.com/
+> 	- Reordered the patches and splitted the board DT changes
+> 	  into a separate patch as suggested
+> 	- Detailed change logs are added to the respective patches
 > 
-> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-> index 7b0505f5c255..73663168d72a 100644
-> --- a/drivers/clk/qcom/gcc-ipq9574.c
-> +++ b/drivers/clk/qcom/gcc-ipq9574.c
-> @@ -728,6 +728,41 @@ static struct clk_rcg2 blsp1_uart6_apps_clk_src = {
->   	},
->   };
->   
-> +static const struct freq_tbl ftbl_gcc_crypto_clk_src[] = {
-> +	F(160000000, P_GPLL0, 5, 0, 0),
-> +	{ }
-> +};
-> +
-> +static struct clk_rcg2 gcc_crypto_clk_src = {
-> +	.cmd_rcgr = 0x16004,
-> +	.freq_tbl = ftbl_gcc_crypto_clk_src,
-> +	.hid_width = 5,
-> +	.parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
-> +	.clkr.hw.init = &(const struct clk_init_data) {
-> +		.name = "gcc_crypto_clk_src",
-> +		.parent_data = gcc_xo_gpll0_gpll0_out_main_div2,
-> +		.num_parents = ARRAY_SIZE(gcc_xo_gpll0_gpll0_out_main_div2),
-> +		.ops = &clk_rcg2_ops,
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_crypto_clk = {
-> +	.halt_reg = 0x1600c,
-> +	.halt_check = BRANCH_HALT_VOTED,
-> +	.clkr = {
-> +		.enable_reg = 0x0b004,
-> +		.enable_mask = BIT(14),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "gcc_crypto_clk",
-> +			.parent_hws = (const struct clk_hw *[]) {
-> +				&gcc_crypto_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_apss_ahb_clk = {
->   	.halt_reg = 0x24018,
->   	.halt_check = BRANCH_HALT_VOTED,
-> @@ -2071,6 +2106,38 @@ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
->   	},
->   };
->   
-> +static struct clk_branch gcc_crypto_axi_clk = {
-> +	.halt_reg = 0x16010,
-> +	.clkr = {
-> +		.enable_reg = 0x16010,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "gcc_crypto_axi_clk",
-> +			.parent_hws = (const struct clk_hw *[]) {
-> +				&pcnoc_bfdcd_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_branch gcc_crypto_ahb_clk = {
-> +	.halt_reg = 0x16014,
-> +	.clkr = {
-> +		.enable_reg = 0x16014,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "gcc_crypto_ahb_clk",
-> +			.parent_hws = (const struct clk_hw *[]) {
-> +				&pcnoc_bfdcd_clk_src.clkr.hw },
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->   static struct clk_branch gcc_nsscfg_clk = {
->   	.halt_reg = 0x1702c,
->   	.clkr = {
-> @@ -4036,6 +4103,10 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->   	[GCC_SNOC_PCIE1_1LANE_S_CLK] = &gcc_snoc_pcie1_1lane_s_clk.clkr,
->   	[GCC_SNOC_PCIE2_2LANE_S_CLK] = &gcc_snoc_pcie2_2lane_s_clk.clkr,
->   	[GCC_SNOC_PCIE3_2LANE_S_CLK] = &gcc_snoc_pcie3_2lane_s_clk.clkr,
-> +	[GCC_CRYPTO_CLK_SRC] = &gcc_crypto_clk_src.clkr,
-> +	[GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
-> +	[GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
-> +	[GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
->   };
-
-Can we please add these in alphabetical order. For e.g. here these entries would follow those for '[GCC_CMN_BLK_APU_ARES] = { 0x3a010, 2 },'
-
->   static const struct qcom_reset_map gcc_ipq9574_resets[] = {
-> @@ -4193,6 +4264,7 @@ static const struct qcom_reset_map gcc_ipq9574_resets[] = {
->   	[GCC_WCSS_ECAHB_ARES] = { 0x25070, 0 },
->   	[GCC_WCSS_Q6_BCR] = { 0x18000, 0 },
->   	[GCC_WCSS_Q6_TBU_BCR] = { 0x12054, 0 },
-> +	[GCC_CRYPTO_BCR] = { 0x16000, 0 },
-
-Same as above.
-
-With the above addressed:
-Reviewed-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
-
-Thanks.
-
->   };
->   
->   static const struct of_device_id gcc_ipq9574_match_table[] = {
+> [V1]
+> https://lore.kernel.org/linux-arm-msm/20230214164135.17039-1-quic_devipriy@quicinc.com/
+> 
+> Devi Priya (6):
+>   dt-bindings: clock: Add PCIe pipe clock definitions
+>   clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
+>   dt-bindings: PCI: qcom: Add IPQ9574
+>   arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
+>   arm64: dts: qcom: ipq9574: Enable PCIe PHYs and controllers
+>   PCI: qcom: Add support for IPQ9574
+> 
+>  .../devicetree/bindings/pci/qcom,pcie.yaml    |  48 +++
+>  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   | 113 ++++++
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 365 ++++++++++++++++++
+>  drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++
+>  drivers/pci/controller/dwc/pcie-qcom.c        |  57 ++-
+>  include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
+>  6 files changed, 645 insertions(+), 18 deletions(-)
+> 
+> -- 
+> 2.17.1
 > 
