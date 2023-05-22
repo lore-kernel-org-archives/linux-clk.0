@@ -2,131 +2,187 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5B0C7EE26
-	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 08:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3E9C77B75
+	for <linux-clk@archiver.kernel.org>; Mon, 22 May 2023 08:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbjEVITP convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 04:19:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51222 "EHLO
+        id S232144AbjEVIWA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 May 2023 04:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjEVITL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 04:19:11 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB47EED
-        for <linux-clk@vger.kernel.org>; Mon, 22 May 2023 01:19:09 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-147-ariLRcbvMsic7sM9JfpM6Q-1; Mon, 22 May 2023 09:18:59 +0100
-X-MC-Unique: ariLRcbvMsic7sM9JfpM6Q-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 22 May
- 2023 09:18:53 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 22 May 2023 09:18:53 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Sebastian Reichel' <sebastian.reichel@collabora.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "kernel@collabora.com" <kernel@collabora.com>
-Subject: RE: [PATCH v1 2/2] clk: divider: Properly handle rates exceeding
- UINT_MAX
-Thread-Topic: [PATCH v1 2/2] clk: divider: Properly handle rates exceeding
- UINT_MAX
-Thread-Index: AQHZioTsgOA8rKF4Y0+0s2ErF0La269l9j4w
-Date:   Mon, 22 May 2023 08:18:53 +0000
-Message-ID: <1b74d2ea2c3a458694c4c74f2381fcab@AcuMS.aculab.com>
-References: <20230519190522.194729-1-sebastian.reichel@collabora.com>
- <20230519190522.194729-3-sebastian.reichel@collabora.com>
-In-Reply-To: <20230519190522.194729-3-sebastian.reichel@collabora.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        with ESMTP id S232299AbjEVIVl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 04:21:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C45B1BE;
+        Mon, 22 May 2023 01:21:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DEA6461046;
+        Mon, 22 May 2023 08:21:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45803C433EF;
+        Mon, 22 May 2023 08:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684743691;
+        bh=X1dl0BdIV9APH8eAgp4Q3DNkcGW1XH11ZR81ccznbGo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Qi6QYJmUtdl311CXBvCYBhAX6Gt2KOBgSmhAIwhpBu28dfLGNsjdhY4XzIDFPtUkj
+         JeueI05C5MnqwyI3+EMN7WaonLKB/5/2KLSvQ5e9PfcC/RKy4Vne7i7YXM33Ogrqde
+         hW/21Id5jGKWnFmNqZ2kaMQpIsj57QpiWLD7WeZ+MFLtvphdNnrjaJhFrDubGRmkGx
+         /B9PDQAfFS2GrEnWRQ10jweqQtk2p2fque+FGV52sFrFF46qiz13ZVZIbDLisbuHVg
+         cG5arHe4w4EaEseBvPbVhht+mBIWH0CwRMwBGUiqyBbD1LaOVkaBsZMMEBxLPCa1W+
+         Wf2wg2pArOjwg==
+Received: from johan by xi.lan with local (Exim 4.94.2)
+        (envelope-from <johan@kernel.org>)
+        id 1q10nK-0004MP-Ve; Mon, 22 May 2023 10:21:31 +0200
+Date:   Mon, 22 May 2023 10:21:30 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, johan+linaro@kernel.org,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add YAML schemas for LPASSCC and
+ reset on SC8280XP
+Message-ID: <ZGsmCmEdoWIkcVDd@hovoldconsulting.com>
+References: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
+ <20230518113800.339158-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230518113800.339158-2-srinivas.kandagatla@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Sebastian Reichel
-> Sent: 19 May 2023 20:05
-> 
-> Requesting rates exceeding UINT_MAX (so roughly 4.3 GHz) results
-> in very small rate being chosen instead of very high ones, since
-> DIV_ROUND_UP_ULL takes a 32 bit integer as second argument.
-> 
-> Correct this by using DIV64_U64_ROUND_UP instead, which takes proper
-> 64 bit values for dividend and divisor.
+On Thu, May 18, 2023 at 12:37:56PM +0100, Srinivas Kandagatla wrote:
+> The LPASS(Low Power Audio Subsystem) clock provider provides reset
 
-This doesn't look right on 32-bit architectures.
-While you really don't want to be doing full 64bit divides
-there is also the problem that any input values over 4.3Ghz
-have already been masked.
+Missing space after LPASS acronym.
 
-In the values can be over 4.3GHz then the function arguments
-need to be 64bit - not long.
+s/provider/controller/?
 
-	David
+> controller support when is driven by the Q6DSP.
 
+s/controller//?
+
+"when is driven by": sounds like there are some words missing here.
+
+> This patch adds support for those resets and adds IDs for clients
+
+There is never any need to say "this patch" in a commit message. Just say
+
+	Add support for...
+
+> to request the reset.
 > 
-> Note, that this is usually not an issue. ULONG_MAX sets the lower
-> 32 bits and thus effectively requests UINT_MAX. On most platforms
-> that is good enough. To trigger a real bug one of the following
-> conditions must be met:
-> 
->  * A parent clock with more than 8.5 GHz is available
->  * Instead of ULONG_MAX a specific frequency like 4.3 GHz is
->    requested. That would end up becoming 5 MHz instead :)
-> 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
->  drivers/clk/clk-divider.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  .../bindings/clock/qcom,sc8280xp-lpasscc.yaml | 57 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,lpasscc-sc8280xp.h | 12 ++++
+>  2 files changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
 > 
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index a2c2b5203b0a..dddaaf0f9d25 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -220,7 +220,7 @@ static int _div_round_up(const struct clk_div_table *table,
->  			 unsigned long parent_rate, unsigned long rate,
->  			 unsigned long flags)
->  {
-> -	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +	int div = DIV64_U64_ROUND_UP(parent_rate, rate);
-> 
->  	if (flags & CLK_DIVIDER_POWER_OF_TWO)
->  		div = __roundup_pow_of_two(div);
-> @@ -237,7 +237,7 @@ static int _div_round_closest(const struct clk_div_table *table,
->  	int up, down;
->  	unsigned long up_rate, down_rate;
-> 
-> -	up = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +	up = DIV64_U64_ROUND_UP(parent_rate, rate);
->  	down = parent_rate / rate;
-> 
->  	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
-> @@ -473,7 +473,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
->  {
->  	unsigned int div, value;
-> 
-> -	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +	div = DIV64_U64_ROUND_UP(parent_rate, rate);
-> 
->  	if (!_is_valid_div(table, div, flags))
->  		return -EINVAL;
-> --
-> 2.39.2
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+> new file mode 100644
+> index 000000000000..7c30614a0af9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm LPASS Core & Audio Clock Controller on SC8280XP
+> +
+> +maintainers:
+> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> +
+> +description: |
+> +  Qualcomm LPASS core and audio clock control module provides the clocks,
+> +  reset and power domains on SC8280XP.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+"power domains"? copy-paste error?
 
+> +
+> +  See also::
+> +    include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+> +
+> +properties:
+> +  reg: true
+> +
+> +  compatible:
+> +    enum:
+> +      - qcom,sc8280xp-lpasscc
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+
+Move above #reset-cells for some sorting of related attributes. Same
+below (in two places).
+
+> +
+> +  qcom,adsp-pil-mode:
+> +    description:
+> +      Indicates if the LPASS would be brought out of reset using
+> +      peripheral loader.
+> +    type: boolean
+
+Move above the provider cells properties?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - qcom,adsp-pil-mode
+
+If this boolean property is always needed, shouldn't that simply be
+handled by the driver based on the compatible?
+
+> +  - '#reset-cells'
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
+> +    lpasscc: clock-controller@3900000 {
+> +      compatible = "qcom,sc8280xp-lpasscc";
+
+binding examples use 4-space indentation.
+
+> +      reg = <0x033e0000 0x12000>;
+
+Does not match the node unit address.
+
+> +      #reset-cells = <1>;
+> +      #clock-cells = <1>;
+> +      qcom,adsp-pil-mode;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+> new file mode 100644
+> index 000000000000..df800ea2741c
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2023, Linaro Ltd.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
+> +#define _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
+> +
+> +/* LPASS TCSR */
+> +#define LPASS_AUDIO_SWR_TX_CGCR				0
+> +
+> +#endif
