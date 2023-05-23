@@ -2,213 +2,268 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7010BC77B75
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 09:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6DEC7EE29
+	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 09:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235937AbjEWJmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 05:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59332 "EHLO
+        id S236217AbjEWJsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 05:48:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236377AbjEWJmo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 05:42:44 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FAA130;
-        Tue, 23 May 2023 02:42:40 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id E4B2D5FD61;
-        Tue, 23 May 2023 12:42:38 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1684834958;
-        bh=1FcUH+gy4sE3bLG9rlfUvTj4cejOMNUNBOL1S8qRl24=;
-        h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
-        b=avoLwrryQ4PNjwF5CEDnT1JiMHDIsEQlZVpwuECSQQeZEGqJLHdIOTUdp6mDabphs
-         dww4IAuB4OQdiU8A0dNjif2HdoBwS7oKqllPU6yclJ768z5ipoX8uaT6ww8rndFyHV
-         kva6cMUQlPhb5R8ceaJ/I1H29pdIkomfTnyEmoNNRZakPZFwqaV58NXFei/s5aK946
-         lWiiGGt0pCw88K2YvvePMr1FeKUpkP46ilecgfwSrlGVR3ouWv/58Pn4ICd4oHGPQd
-         XgVEv5G//+8mRMS0871jAzBTryLTVt44VLMjEgBpEZKbTY5k9bYR78PTBwQyYGWULs
-         OrTvpJVqDKniw==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Tue, 23 May 2023 12:42:38 +0300 (MSK)
-From:   =?utf-8?B?0KHRgtCw0YDQuiDQk9C10L7RgNCz0LjQuSDQndC40LrQvtC70LDQtdCy0Lg=?=
-         =?utf-8?B?0Yc=?= <GNStark@sberdevices.ru>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-CC:     Dmitry Rokosov <DDRokosov@sberdevices.ru>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "jian.hu@amlogic.com" <jian.hu@amlogic.com>,
-        kernel <kernel@sberdevices.ru>,
-        "rockosov@gmail.com" <rockosov@gmail.com>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
- controller driver
-Thread-Topic: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
- controller driver
-Thread-Index: AQHZeCWgh7Cra6robkiAd2dht8ZDaq9FnXUAgBD12wCABr+9gIAA4M8AgAIxhICAAVD/AIAEjhaAgABy/YCAANqgAA==
-Date:   Tue, 23 May 2023 09:42:37 +0000
-Message-ID: <88425ad1-8070-5952-a8c0-bfd10ba4868e@sberdevices.ru>
-References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
- <20230426095805.15338-7-ddrokosov@sberdevices.ru>
- <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
- <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
- <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
- <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
- <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
- <573d96df-7b08-4fa2-668b-58ff674a314e@gmail.com>
- <20230522134425.pc5fhojf53v6q2jz@CAB-WSD-L081021>
- <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
-In-Reply-To: <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.16.1.13]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1F32683ABBC69E4BB75B7E24D487CED2@sberdevices.ru>
-Content-Transfer-Encoding: base64
+        with ESMTP id S236041AbjEWJsJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 05:48:09 -0400
+Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA685E4B;
+        Tue, 23 May 2023 02:47:58 -0700 (PDT)
+Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-39212bf4ff0so3948172b6e.1;
+        Tue, 23 May 2023 02:47:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684835278; x=1687427278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qq7CNPaF4NbXPimNw4H7TDkWjTz2SdZxq4zob7zuH7s=;
+        b=FPIzkfBl6Z4fOQadR+ItT5mRFzrpgGP30SMMNKl21h6elyzGRKew/4yIP2FBL0GzHh
+         /3YfyDePzf6Sn3TQOi+FnFerc2tvGJuyuCjXBYAPmfukGy1h4Mp48yTVwcvN3mfcDN2x
+         EsKEry9bUgctWJ5RqDJ0UZVrND1hUF7VFNjovcv1j7X6UxVt28k4iHL/2gTLGwWjeXF1
+         Rxjr93lT+rGQZ9HKBMGfHyD3QDi6Ya/f9jJRgKy/qdJvJ5Q4hpZqsyd7GKTz32WERg7x
+         6hA6bQod6AcZeFX4s0H2mvT5TwAINR36WEg0fPy3ncBTWlj2jifXkReTg3aZorgYwFJv
+         6OTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684835278; x=1687427278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qq7CNPaF4NbXPimNw4H7TDkWjTz2SdZxq4zob7zuH7s=;
+        b=QDZc6pGqmzlOG5St+bO1VR+UVXUk2WUIveCL0O05GWMZaG+giwFSHXeg7zx8mJx2qy
+         tRgk/O3WPI+IRUiN2fyi5UxoModJxHwqLNO81HIQKudPQaP8oqgB2i7lzbsWkcLgkkdZ
+         TN1hM3qLklofqr/dEdX8YqUgpM0ZZlI0ivhecnzVzEaHIxBo8A5nZ3Zvt8TFzxf20Hxj
+         Dz+U98eqZE31KZYyVEhs6xnEOYexEObfXtVJyzMtH9a2QJz2gG1p4S1ktmzfGxLQJQEm
+         sd4ZjcIGWFokpnlqmaap4al/74pEdraSx61qcatfkuEbtkeRp/pw8oew4cVjIen5Y1a2
+         l30w==
+X-Gm-Message-State: AC+VfDz1tbwnXOk6jwIwBskroNaFCod7aET7bclUj0qkd5iINd4pLC2/
+        znVfIpYhE4amR4Qs0mIvJ5na97dXLb6QB4Dd1APWpjod
+X-Google-Smtp-Source: ACHHUZ4zBGa6aopRQ69KB08F4/g/QRlURihGVyQ02JlWgdGnUnrxk5nRaquQO17MWhgOsTmD0PFDkNIPZNvYviDfjAw=
+X-Received: by 2002:a05:6808:3ce:b0:395:dd8c:f833 with SMTP id
+ o14-20020a05680803ce00b00395dd8cf833mr7348653oie.27.1684835277778; Tue, 23
+ May 2023 02:47:57 -0700 (PDT)
 MIME-Version: 1.0
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/23 05:11:00 #21371280
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com> <CAMhs-H_yn_76RAFNk4ux_-rn9FdKna9Vsu0raFQXfr3ykkRWPw@mail.gmail.com>
+In-Reply-To: <CAMhs-H_yn_76RAFNk4ux_-rn9FdKna9Vsu0raFQXfr3ykkRWPw@mail.gmail.com>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Tue, 23 May 2023 11:47:46 +0200
+Message-ID: <CAMhs-H_NxauVCL7Sc7SWBk4dTQ8CyqLbPnTZO66VAqycPoOyTw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] mips: ralink: add complete clock and reset driver
+ for mtmips SoCs
+To:     linux-clk@vger.kernel.org
+Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
+        john@phrozen.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
+        arinc.unal@arinc9.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gNS8yMi8yMyAyMzozNiwgSGVpbmVyIEthbGx3ZWl0IHdyb3RlOg0KPiBPbiAyMi4wNS4yMDIz
-IDE1OjQ0LCBEbWl0cnkgUm9rb3NvdiB3cm90ZToNCj4+IEhlaW5lciwNCj4+DQo+PiBPbiBGcmks
-IE1heSAxOSwgMjAyMyBhdCAwNjoxMDo1MFBNICswMjAwLCBIZWluZXIgS2FsbHdlaXQgd3JvdGU6
-DQo+Pj4gT24gMTguMDUuMjAyMyAyMjowNCwgTWFydGluIEJsdW1lbnN0aW5nbCB3cm90ZToNCj4+
-Pj4gSGkgRG1pdHJ5LA0KPj4+Pg0KPj4+PiBPbiBXZWQsIE1heSAxNywgMjAyMyBhdCAxMjozNOKA
-r1BNIERtaXRyeSBSb2tvc292DQo+Pj4+IDxkZHJva29zb3ZAc2JlcmRldmljZXMucnU+IHdyb3Rl
-Og0KPj4+PiBbLi4uXQ0KPj4+Pj4+PiBBZGRpdGlvbmFsbHksIHRoZSBDQ0YgZGV0ZXJtaW5lcyB0
-aGUgYmVzdCBhbmNlc3RvciBiYXNlZCBvbiBob3cgY2xvc2UNCj4+Pj4+Pj4gaXRzIHJhdGUgaXMg
-dG8gdGhlIGdpdmVuIG9uZSwgYmFzZWQgb24gYXJpdGhtZXRpYyBjYWxjdWxhdGlvbnMuIEhvd2V2
-ZXIsDQo+Pj4+Pj4+IHdlIGhhdmUgaW5kZXBlbmRlbnQga25vd2xlZGdlIHRoYXQgYSBjZXJ0YWlu
-IGNsb2NrIHdvdWxkIGJlIGJldHRlciwgd2l0aA0KPj4+Pj4+PiBsZXNzIGppdHRlciBhbmQgZmV3
-ZXIgaW50ZXJtZWRpYXJpZXMsIHdoaWNoIHdpbGwgbGlrZWx5IGltcHJvdmUgZW5lcmd5DQo+Pj4+
-Pj4+IGVmZmljaWVuY3kuIFNhZGx5LCB0aGUgQ0NGIGNhbm5vdCB0YWtlIHRoaXMgaW50byBhY2Nv
-dW50Lg0KPj4+Pj4+IEkgYWdyZWUgdGhhdCB0aGUgaW1wbGVtZW50YXRpb24gaW4gQ0NGIGlzIGZh
-aXJseSBzaW1wbGUuIFRoZXJlJ3Mgd2F5cw0KPj4+Pj4+IHRvIHRyaWNrIGl0IHRob3VnaDogSUlS
-QyBpZiB0aGVyZSBhcmUgbXVsdGlwbGUgZXF1YWxseSBzdWl0YWJsZSBjbG9ja3MNCj4+Pj4+PiBp
-dCBwaWNrcyB0aGUgZmlyc3Qgb25lLiBGb3IgbWUgYWxsIG9mIHRoaXMgaGFzIHdvcmtlZCBzbyBm
-YXIgd2hpY2ggaXMNCj4+Pj4+PiB3aGF0IG1ha2VzIG1lIGN1cmlvdXMgaW4gdGhpcyBjYXNlIChu
-b3Qgc2F5aW5nIHRoYXQgYW55dGhpbmcgaXMgd3JvbmcNCj4+Pj4+PiB3aXRoIHlvdXIgYXBwcm9h
-Y2gpLg0KPj4+Pj4+DQo+Pj4+Pj4gRG8geW91IGhhdmUgYSAocmVhbCB3b3JsZCkgZXhhbXBsZSB3
-aGVyZSB0aGUgUlRDIGNsb2NrIHNob3VsZCBiZQ0KPj4+Pj4+IHByZWZlcnJlZCBvdmVyIGFub3Ro
-ZXIgY2xvY2s/DQo+Pj4+Pj4NCj4+Pj4+IFllcywgYSByZWFsLWxpZmUgZXhhbXBsZSBpcyB0aGUg
-bmVlZCBmb3IgYSAzMktoeiBjbG9jayBmb3IgYW4gZXh0ZXJuYWwNCj4+Pj4+IHdpZmkgY2hpcC4g
-VGhlcmUgaXMgb25lIG9wdGlvbiB0byBwcm92aWRlIHRoaXMgY2xvY2sgd2l0aCBoaWdoDQo+Pj4+
-PiBwcmVjaXNpb24sIHdoaWNoIGlzIFJUQyArIEdFTkNMSy4NCj4+Pj4+DQo+Pj4+Pj4gSSdtIHRo
-aW5raW5nIGFib3V0IHRoZSBmb2xsb3dpbmcgc2NlbmFyaW8uDQo+Pj4+Pj4gUFdNIHBhcmVudHM6
-DQo+Pj4+Pj4gLSBYVEFMOiAyNE1Ieg0KPj4+Pj4+IC0gc3lzOiBub3Qgc3VyZSAtIGxldCdzIHNh
-eSAxNjYuNjdNSHoNCj4+Pj4+PiAtIFJUQzogMzJrSHoNCj4+Pj4+Pg0KPj4+Pj4+IFRoZW4gYWZ0
-ZXIgdGhhdCB0aGVyZSdzIGEgZGl2aWRlciBhbmQgYSBnYXRlLg0KPj4+Pj4+DQo+Pj4+Pj4gTGV0
-J3Mgc2F5IHRoZSBQV00gY29udHJvbGxlciBuZWVkcyBhIDFNSHogY2xvY2s6IGl0IGNhbiB0YWtl
-IHRoYXQgZnJvbQ0KPj4+Pj4+IFhUQUwgb3Igc3lzLiBTaW5jZSBYVEFMIGlzIGV2ZW5seSBkaXZp
-c2libGUgdG8gMU1IeiBDQ0Ygd2lsbCBwaWNrIHRoYXQNCj4+Pj4+PiBhbmQgdXNlIHRoZSBkaXZp
-ZGVyLg0KPj4+Pj4+IEJ1dCBsZXQncyBzYXkgdGhlIFBXTSBjb250cm9sbGVyIG5lZWRzIGEgMzJr
-SHogY2xvY2s6IENDRiB3b3VsZA0KPj4+Pj4+IGF1dG9tYXRpY2FsbHkgcGljayB0aGUgUlRDIGNs
-b2NrLg0KPj4+Pj4+IFNvIGlzIHlvdXIgaW1wbGVtZW50YXRpb24gdGhlcmUgdG8gY292ZXIgbGV0
-J3Mgc2F5IDFrSHogd2hlcmUNCj4+Pj4+PiBtYXRoZW1hdGljYWxseSAyNE1IeiBjYW4gYmUgZGl2
-aWRlZCBldmVubHkgdG8gMWtIeiAoYW5kIHRodXMgc2hvdWxkDQo+Pj4+Pj4gbm90IHJlc3VsdCBp
-biBhbnkgaml0dGVyKSBidXQgUlRDIGdpdmVzIGJldHRlciBwcmVjaXNpb24gaW4gdGhlIHJlYWwN
-Cj4+Pj4+PiB3b3JsZCAoZXZlbiB0aG91Z2ggaXQncyBvZmYgYnkgMjRIeik/DQo+Pj4+Pj4NCj4+
-Pj4+IEkgZG9uJ3QgdGhpbmsgc28uIFRoZSBoaWdoZXN0IHByZWNpc2lvbiB0aGF0IFJUQyBjYW4g
-cHJvdmlkZSBpcyBmcm9tIGENCj4+Pj4+IDMyS0h6IHJhdGUgb25seS4gSG93ZXZlciwgSSBiZWxp
-ZXZlIHRoYXQgYSAxa0h6IGZyZXF1ZW5jeSBjYW4gYWxzbyBiZQ0KPj4+Pj4gYWNoaWV2ZWQgYnkg
-dXNpbmcgeHRhbCAyNE1IeiB3aXRoIGEgZGl2aWRlciwgd2hpY2ggY2FuIHByb3ZpZGUgaGlnaA0K
-Pj4+Pj4gcHJlY2lzaW9uIGFzIHdlbGwuDQo+Pj4+IFRoYW5rIHlvdSBhZ2FpbiBmb3IgdGhlIGdy
-ZWF0IGRpc2N1c3Npb24gb24gSVJDIHRvZGF5Lg0KPj4+PiBIZXJlJ3MgbXkgc2hvcnQgc3VtbWFy
-eSBzbyBJIGRvbid0IGZvcmdldCBiZWZvcmUgeW91J2xsIGZvbGxvdyB1cCBvbiB0aGlzLg0KPj4+
-Pg0KPj4+PiBJbiBnZW5lcmFsIHRoZXJlJ3MgdHdvIGtub3duIGNhc2VzIHdoZXJlIHRoZSBSVEMg
-Y2xvY2sgbmVlZHMgdG8gYmUgdXNlZDoNCj4+Pj4gYSkgV2hlbiB1c2luZyB0aGUgR0VOQ0xLIG91
-dHB1dCBvZiB0aGUgU29DIHRvIG91dHB1dCB0aGUgMzJrSHogUlRDDQo+Pj4+IGNsb2NrIGFuZCBj
-b25uZWN0IHRoYXQgdG8gYW4gU0RJTyBXaUZpIGNoaXAgY2xvY2sgaW5wdXQgKHRoaXMgc2VlbXMN
-Cj4+Pj4gdXNlZnVsIGluIG15IHVuZGVyc3RhbmRpbmcgYmVjYXVzZSB0aGUgUlRDIGNsb2NrIHBy
-b3ZpZGVzIGhpZ2gNCj4+Pj4gcHJlY2lzaW9uKQ0KPj4+PiBiKSBXaGVuIHVzaW5nIHRoZSBQV00g
-Y29udHJvbGxlciB0byBvdXRwdXQgYSAzMmtIeiBjbG9jayBzaWduYWwuIEluDQo+Pj4+IHRoaXMg
-Y2FzZSBteSB1bmRlcnN0YW5kaW5nIGlzIHRoYXQgdXNpbmcgdGhlIFJUQyBjbG9jayBhcyBpbnB1
-dCB0byB0aGUNCj4+Pj4gUFdNIGNvbnRyb2xsZXIgcmVzdWx0cyBpbiB0aGUgYmVzdCBwb3NzaWJs
-ZSBzaWduYWwNCj4+Pj4NCj4+Pj4gVGhlIHNlY29uZCBjYXNlIHdvbid0IGJlIHN1cHBvcnRlZCB3
-aXRoIEhlaW5lcidzIHBhdGNoZXMgWzBdIHRoYXQgdXNlDQo+Pj4+IENDRiAoY29tbW9uIGNsb2Nr
-IGZyYW1ld29yaykgaW4gdGhlIFBXTSBjb250cm9sbGVyIGRyaXZlci4NCj4+Pj4gSW4gdGhpcyBz
-ZXJpZXMgdGhlIHBhcmVudCBjbG9jayBpcyBjYWxjdWxhdGVkIHVzaW5nOg0KPj4+PiAgICBmcmVx
-ID0gZGl2NjRfdTY0KE5TRUNfUEVSX1NFQyAqICh1NjQpMHhmZmZmLCBwZXJpb2QpOw0KPj4+Pg0K
-Pj4+PiBBIDMya0h6IGNsb2NrIG1lYW5zIGEgUFdNIHBlcmlvZCBvZiAzMDUxOG5zLiBTbyB3aXRo
-IHRoZSBhYm92ZQ0KPj4+IFRvIGJlIHByZWNpc2U6IDMwNTE3LDU3ODEyNW5zDQo+Pj4gV2hhdCBt
-ZWFucyB0aGF0IHRoZSBQV00gZnJhbWV3b3JrIGNhbid0IHNheSAiSSB3YW50IDMyNzY4SHoiLA0K
-Pj4+IGJ1dCBqdXN0ICJJIHdhbnQgc29tZXRoaW5nIGJlaW5nIHZlcnkgY2xvc2UgdG8gMzI3NjhI
-eiIuDQo+Pj4gU28gd2hhdCB5b3UgbmVlZCBpcyBzb21lIHNpbXBsZSBoZXVyaXN0aWMgdG8gaW50
-ZXJwcmV0IHRoZQ0KPj4+IFBXTSByZXF1ZXN0IC0+ICJQV00gcmVxdWVzdHMgMzA1MThucywgYnV0
-IHN1cHBvc2VkbHkgaXQgd2FudHMNCj4+PiAzMjc2OEh6Ig0KPj4+DQo+Pj4gTlNFQ19QRVJfU0VD
-IC8gMzA1MTggPSAzMjc2NyAocm91bmRlZCBkb3duIGZyb20gMzI3NjcsNTQ3KQ0KPj4+IGNsa19y
-b3VuZF9yYXRlKGNoYW5uZWwtPmNsaywgMzI3NjcpIHdvdWxkIHJldHVybiAwIChJICp0aGluayop
-LA0KPj4+IGJlY2F1c2UgaXQgdHJpZXMgdG8gZmluZCB0aGUgbmV4dCBsb3dlciBjbG9jay4NCj4+
-Pg0KPj4+IFRoZSBTb0MgZmFtaWxpZXMgSSdtIGZhbWlsaWFyIHdpdGggaGF2ZSBmY2xraW4yIGFz
-IFBXTSBwYXJlbnQuDQo+Pj4gVGhhdCdzIDEgR0h6IGluIG15IGNhc2UsIHdoYXQgcmVzdWx0cyBp
-biBhIGZyZXF1ZW5jeSBvZiAzMi43NjcsNTQ3SHoNCj4+PiBmb3IgcGVyaW9kID0gMzA1MThuLg0K
-Pj4+IFdoYXQgeW91J3JlIHNheWluZyBpcyB0aGF0IG5ld2VyIGdlbmVyYXRpb25zIGRvbid0IGhh
-dmUgUFdNIHBhcmVudHMNCj4+Pj4gMjRNSHogYW55IGxvbmdlcj8NCj4+IE5vLCBvZiBjb3Vyc2Ug
-bm90LiBGb3IgZXhhbXBsZSwgYSBmaXhlZCBQTEwgKHdpdGggYWxsIGZjbGtfZGl2WA0KPj4gc2V0
-dGluZ3MpIGhhcyByYXRlcyBoaWdoZXIgdGhhbiAyNE1Iei4gSG93ZXZlciwgd2UgbmVlZCB0byBj
-b25zaWRlciB0aGUNCj4+ICdoZWF2eScgYmFja2dyb3VuZCBvZiBzdWNoIFBXTS4NCj4+DQo+PiBI
-b3dldmVyLCB3ZSBoYXZlIGEgImxpZ2h0d2VpZ2h0IiBjbGtpbiAoc3BlY2lhbCBydGMzMmspIHdp
-dGggYSByYXRlIG9mDQo+PiAzMmtIeiB0aGF0IHdlIGNvdWxkIHBvdGVudGlhbGx5IHVzZSBhcyBh
-biBpbnB1dCB0byBwcm9kdWNlIGEgMzJrSHoNCj4+IG91dHB1dCBvbiB0aGUgUFdNIGxpbmVzLiBJ
-IGRvbid0IHNlZSBhbnkgcmVhc29uIHdoeSB3ZSBzaG91bGQgbm90DQo+PiBzdXBwb3J0IHN1Y2gg
-c3BlY2lhbCBjYXNlcy4NCj4+DQo+IFR3byBtb3JlIHRoaW5ncyB0byBjb25zaWRlcjoNCj4gMS4g
-V2hlbiB3YW50aW5nIGEgMzJrSHogKHdlbGwsIDMyNzY4SHopIG91dHB1dCB3aXRoIGEgNTAlIGR1
-dHkgY3ljbGUsDQo+ICAgICB0aGVuIHdlIG5lZWQgaGk9MCBhbmQgbG89MCB3aXRoIGEgNjRrSHog
-aW5wdXQgY2xvY2suDQo+ICAgICBTZWUgcG9pbnQgMiBmb3IgYW4gZXhwbGFuYXRpb24gb2Ygd2h5
-IDAgYW5kIG5vdCAxLg0KPiAgICAgTWVhbnMgd2UgY291bGRuJ3QgdXNlIHRoZSBSVEMgaW5wdXQg
-Y2xvY2suIERpZCB5b3UgY29uc2lkZXIgdGhpcz8NCj4gICAgIE9yIGRvIEkgbWlzcyBzb21ldGhp
-bmc/DQo+IDIuIFNlZW1zIHRoZSBQV00gYmxvY2sgaW50ZXJuYWxseSBpbmNyZW1lbnRzIGhpIGFu
-ZCBsbywgZXhjZXB0IHRoZQ0KPiAgICAgY29uc3RhbnRfZW4gYml0IGlzIHNldCBvbiBuZXdlciBQ
-V00gYmxvY2sgdmVyc2lvbnMuDQo+ICAgICBGb3IgYmlnZ2VyIGNudCB2YWx1ZXMgdGhlIGltcGFj
-dCBpcyBuZWdsaWdpYmxlLCBidXQgZm9yIHZlcnkgc21hbGwNCj4gICAgIHZhbHVlcyBpdCdzIHNv
-bWV0aGluZyB3ZSBoYXZlIHRvIGNvbnNpZGVyLg0KPiAgICAgVGhpcyB3YXMgb25lIGFkZGl0aW9u
-YWwgbW90aXZhdGlvbiBmb3IgbWUgdG8gY2hvb3NlIGFuIGlucHV0DQo+ICAgICBmcmVxdWVuY3kg
-dGhhdCBjcmVhdGVzIGJpZyBjbnQgdmFsdWVzLg0KDQpIZWxsbyBIZWluZXINCg0KMS4geWVzLCB5
-b3UncmUgcmlnaHQuIFRvIGdldCBwd20gb3V0cHV0IDMyayBjbG9jayBwYXJlbnQgY2xvY2sgc2hv
-dWxkIGJlIDY0ayBhdCBsZWFzdC4NCjIuIHllcywgeW91J3JlIHJpZ2h0LiBXZSBoYXZlIHRoZSBz
-YW1lIHZpc2lvbiBvZiBwd20gSVAgd29ya2luZy4gU2VlbXMgbGlrZSBsbyBhbmQgaGkgcmVncyBh
-cmUgdHJlYXRlZCBsaWtlIGRpdmlkZXIgcmVncyAoaW50ZXJuYWwgaW5jcmVtZW50KSBleGNlcHQg
-c3BlY2lhbCBjYXNlIHdoZW4gY29uc3RhbnQgYml0IG9uLg0KDQpXZSBoYXZlIHBhdGNoZXMgc3Vw
-cG9ydGluZyBjb25zdGFudCBiaXQgYW5kdGFraW5nIGludG8gYWNjb3VudCBoaVxsbyAic2hhZG93
-IiBpbmNyZW1lbnRpbmcsIHdpbGwgcHVibGljIGl0IHNvb24NCkJlc3QgcmVnYXJkcw0KR2Vvcmdl
-DQoNCj4+Pg0KPj4+PiBjYWxjdWxhdGlvbiB0aGUgUFdNIGRyaXZlciBpcyBhc2tpbmcgZm9yIGEg
-Y2xvY2sgcmF0ZSBvZiA+PTJHSHouDQo+Pj4+IFdlIGNvbmNsdWRlZCB0aGF0IGxldHRpbmcgdGhl
-IGNvbW1vbiBjbG9jayBmcmFtZXdvcmsgY2hvb3NlIHRoZSBiZXN0DQo+Pj4+IHBvc3NpYmxlIHBh
-cmVudCAobWVhbmluZzogcmVtb3ZpbmcgQ0xLX1NFVF9SQVRFX05PX1JFUEFSRU5UIGhlcmUpIGNh
-bg0KPj4+PiBiZSBhIHdheSBmb3J3YXJkLg0KPj4+PiBCdXQgdGhpcyBtZWFucyB0aGF0IHRoZSBQ
-V00gY29udHJvbGxlciBkcml2ZXIgbXVzdCB0cnkgdG8gZmluZCB0aGUNCj4+Pj4gYmVzdCBwb3Nz
-aWJsZSBwYXJlbnQgc29tZWhvdy4gVGhlIGVhc2llc3Qgd2F5IHdlIGNhbWUgdXAgd2l0aA0KPj4+
-PiAocHNldWRvLWNvZGUpOg0KPj4+PiAgICBmcmVxID0gTlNFQ19QRVJfU0VDIC8gcGVyaW9kOw0K
-Pj4+PiAgICBmaW5fZnJlcSA9IGNsa19yb3VuZF9yYXRlKGNoYW5uZWwtPmNsaywgZnJlcSk7DQo+
-Pj4+ICAgIGlmIChmaW5fZnJlcSAhPSBmcmVxKSB7DQo+Pj4+ICAgICAgZnJlcSA9IGRpdjY0X3U2
-NChOU0VDX1BFUl9TRUMgKiAodTY0KTB4ZmZmZiwgcGVyaW9kKTsNCj4+Pj4gICAgICBmaW5fZnJl
-cSA9IGNsa19yb3VuZF9yYXRlKGNoYW5uZWwtPmNsaywgZnJlcSk7DQo+Pj4+ICAgIH0NCj4+Pj4N
-Cj4+Pj4gVGhlIGlkZWEgaXM6IGZvciBhIHJlcXVlc3RlZCAzMmtIeiBzaWduYWwgdGhlIFBXTSBw
-ZXJpb2QgaXMgMzA1MThucy4NCj4+Pj4gVGhlIHVwZGF0ZWQgbG9naWMgd291bGQgZmluZCB0aGF0
-IHRoZXJlJ3MgYSBtYXRjaGluZyBjbG9jayBpbnB1dCBhbmQNCj4+Pj4gdXNlIHRoYXQgZGlyZWN0
-bHkuIElmIG5vdDogdXNlIHRoZSBvcmlnaW5hbCBsb2dpYyBhcyBzdWdnZXN0ZWQgYnkNCj4+Pj4g
-SGVpbmVyLg0KPj4+Pg0KPj4+Pg0KPj4+PiBCZXN0IHJlZ2FyZHMsDQo+Pj4+IE1hcnRpbg0KPj4+
-Pg0KPj4+Pg0KPj4+PiBbMF0gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtYW1sb2dpYy85
-ZmFjYTJlNi1iN2ExLTQ3NDgtN2ViMC00OGY4MDY0ZTMyM2VAZ21haWwuY29tLw0KPg0KDQo=
+On Thu, May 4, 2023 at 4:48=E2=80=AFPM Sergio Paracuellos
+<sergio.paracuellos@gmail.com> wrote:
+>
+> On Tue, Apr 18, 2023 at 11:03=E2=80=AFAM Sergio Paracuellos
+> <sergio.paracuellos@gmail.com> wrote:
+> >
+> > Hi all!
+> >
+> > This patchset is a big effort to properly implement a clock and reset
+> > driver for old ralink SoCs. This allow to properly define clocks in
+> > device tree and avoid to use fixed-clocks directly from 'arch/mips/rali=
+nk'
+> > architecture directory code.
+> >
+> > Device tree 'sysc' node will be both clock and reset provider using
+> > 'clock-cells' and 'reset-cells' properties.
+> >
+> > The ralink SoCs we are taking about are RT2880, RT3050, RT3052, RT3350,
+> > RT3352, RT3883, RT5350, MT7620, MT7628 and MT7688. Mostly the code in
+> > this new driver has been extracted from 'arch/mips/ralink' and cleanly
+> > put using kernel clock and reset driver APIs. The clock plans for this
+> > SoCs only talks about relation between CPU frequency and BUS frequency.
+> > This relation is different depending on the particular SoC. CPU clock i=
+s
+> > derived from XTAL frequencies.
+> >
+> >  Depending on the SoC we have the following frequencies:
+> >  * RT2880 SoC:
+> >      - XTAL: 40 MHz.
+> >      - CPU: 250, 266, 280 or 300 MHz.
+> >      - BUS: CPU / 2 MHz.
+> >   * RT3050, RT3052, RT3350:
+> >      - XTAL: 40 MHz.
+> >      - CPU: 320 or 384 MHz.
+> >      - BUS: CPU / 3 MHz.
+> >   * RT3352:
+> >      - XTAL: 40 MHz.
+> >      - CPU: 384 or 400 MHz.
+> >      - BUS: CPU / 3 MHz.
+> >      - PERIPH: 40 MHz.
+> >   * RT3383:
+> >      - XTAL: 40 MHz.
+> >      - CPU: 250, 384, 480 or 500 MHz.
+> >      - BUS: Depends on RAM Type and CPU:
+> >        + RAM DDR2: 125. ELSE 83 MHz.
+> >        + RAM DDR2: 128. ELSE 96 MHz.
+> >        + RAM DDR2: 160. ELSE 120 MHz.
+> >        + RAM DDR2: 166. ELSE 125 MHz.
+> >   * RT5350:
+> >       - XTAL: 40 MHz.
+> >       - CPU: 300, 320 or 360 MHz.
+> >       - BUS: CPU / 3, CPU / 4, CPU / 3 MHz.
+> >       - PERIPH: 40 MHz.
+> >   * MT7628 and MT7688:
+> >      - XTAL: 20 MHz or 40 MHz.
+> >      - CPU: 575 or 580 MHz.
+> >      - BUS: CPU / 3.
+> >      - PCMI2S: 480 MHz.
+> >      - PERIPH: 40 MHz.
+> >   * MT7620:
+> >      - XTAL: 20 MHz or 40 MHz.
+> >      - PLL: XTAL, 480, 600 MHz.
+> >      - CPU: depends on PLL and some mult and dividers.
+> >      - BUS: depends on PLL and some mult and dividers.
+> >      - PERIPH: 40 or XTAL MHz.
+> >
+> > MT7620 is a bit more complex deriving CPU clock from a PLL and an bunch=
+ of
+> > register reads and predividers. To derive CPU and BUS frequencies in th=
+e
+> > MT7620 SoC 'mt7620_calc_rate()' helper is used.
+> > In the case XTAL can have different frequencies and we need a different
+> > clock frequency for peripherals 'periph' clock in introduced.
+> > The rest of the peripherals present in the SoC just follow their parent
+> > frequencies.
+> >
+> > I am using 'mtmips' inside for ralink clock driver. This is aligned wit=
+h
+> > pinctrl series recently merged through pinctrl git tree [0].
+> >
+> > I am maintaining ralink as prefix for compatible strings after discussi=
+ons
+> > between Rob and Arinc in v2 of this series [1].
+> >
+> > Changes have been compile tested for:
+> > - RT2880
+> > - RT3883
+> > - MT7620
+> >
+> > Changes have been properly tested in RT5350 SoC based board (ALL5003 bo=
+ard)
+> > resulting in a working platform.
+> >
+> > Dts files for these SoCs in-tree except MT7621 are incomplete. We are
+> > planning to align with openWRT files at some point and add extra needed
+> > changes. Hence I am not touching them at all in these series. If this i=
+s
+> > a problem, please let me know and I will update them.
+> >
+> > Talking about merging this series I'd like all of the patches going thr=
+ough
+> > the MIPS tree if possible.
+> >
+> > Thanks in advance for your time.
+> >
+> > Best regards,
+> >     Sergio Paracuellos
+> >
+> > Changes in v3:
+> > - Address Stephen comments in v2:
+> >     + Drop unsused include '<linux/clk.h>'.
+> >     + Add fixed and factor clocks when it makes sense.
+> >     + Make 'mtmips_periph_clk_ops' named variable.
+> >     + WARN_ON -> WARN_ON_ONCE.
+> >     + Avoid CONFIG_USB dependent code. Introduce new 'mtmips_clk_regs_i=
+nit'.
+> >     + Don't validate the bindings in the driver.
+> >     + Make const 'struct clk_init_data' used inside macros.
+> >     + do_div -> div_u64.
+> >     + Make use of dev_err_probe.
+>
+> Hi Stephen,
+>
+> Does anything else need to be addressed to have all of these added?
+>
+> Philipp, can you please review the reset related code in PATCH 2/9 of
+> these series?
+>
+> Thanks in advance for your time!
+>
+> Best regards,
+>     Sergio Paracuellos
+
+Gentle ping for this series :-)
+
+Thanks,
+    Sergio Paracuellos
+>
+> >
+> > Changes in v2:
+> > - Address bindings documentation changes pointed out by Krzysztof:
+> >     + Rename the file into 'mediatek,mtmips-sysc.yaml'.
+> >     + Redo commit subject and log message.
+> >     + Order compatibles alphabetically.
+> >     + Redo bindings description taking into account this is a system
+> >       controller node which provides both clocks and resets to the worl=
+d.
+> >     + Drop label from example.
+> >     + Use 'syscon' as node name in example.
+> >     + Drop no sense 'ralink,rt2880-reset' compatible string
+> > - Squash patches 6 and 7 together as pointed out by Stephen Boyd.
+> >
+> > Previoous series:
+> > v2: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=3DLeJ4vT22uibQ1=
+DnaZsfTrtRxSiv=3D8L5RA@mail.gmail.com/T/#t
+> > v1: https://lore.kernel.org/linux-clk/20230320161823.1424278-1-sergio.p=
+aracuellos@gmail.com/T/#t
+> >
+> > [0]: https://lore.kernel.org/linux-gpio/e9e6ad87-2db5-9767-ff39-64a302b=
+06185@arinc9.com/T/#t
+> > [1]: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=3DLeJ4vT22uibQ=
+1DnaZsfTrtRxSiv=3D8L5RA@mail.gmail.com/T/#mfe725b6e3382c6fb09736472a846cbbc=
+84f264dc
+> >
+> > Sergio Paracuellos (9):
+> >   dt-bindings: clock: add mtmips SoCs system controller
+> >   clk: ralink: add clock and reset driver for MTMIPS SoCs
+> >   mips: ralink: rt288x: remove clock related code
+> >   mips: ralink: rt305x: remove clock related code
+> >   mips: ralink: rt3883: remove clock related code
+> >   mips: ralink: mt7620: remove clock related code
+> >   mips: ralink: remove reset related code
+> >   mips: ralink: get cpu rate from new driver code
+> >   MAINTAINERS: add Mediatek MTMIPS Clock maintainer
+> >
+> >  .../bindings/clock/mediatek,mtmips-sysc.yaml  |   65 +
+> >  MAINTAINERS                                   |    6 +
+> >  arch/mips/include/asm/mach-ralink/mt7620.h    |   35 -
+> >  arch/mips/include/asm/mach-ralink/rt288x.h    |   10 -
+> >  arch/mips/include/asm/mach-ralink/rt305x.h    |   21 -
+> >  arch/mips/include/asm/mach-ralink/rt3883.h    |    8 -
+> >  arch/mips/ralink/clk.c                        |   26 +-
+> >  arch/mips/ralink/common.h                     |    5 -
+> >  arch/mips/ralink/mt7620.c                     |  226 ----
+> >  arch/mips/ralink/of.c                         |    4 -
+> >  arch/mips/ralink/reset.c                      |   61 -
+> >  arch/mips/ralink/rt288x.c                     |   31 -
+> >  arch/mips/ralink/rt305x.c                     |   78 --
+> >  arch/mips/ralink/rt3883.c                     |   44 -
+> >  drivers/clk/ralink/Kconfig                    |    7 +
+> >  drivers/clk/ralink/Makefile                   |    1 +
+> >  drivers/clk/ralink/clk-mtmips.c               | 1134 +++++++++++++++++
+> >  17 files changed, 1232 insertions(+), 530 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt=
+mips-sysc.yaml
+> >  create mode 100644 drivers/clk/ralink/clk-mtmips.c
+> >
+> > --
+> > 2.25.1
+> >
