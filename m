@@ -2,97 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA08EC7EE26
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 10:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 550CDC77B75
+	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 11:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235624AbjEWK6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 06:58:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39518 "EHLO
+        id S235259AbjEWLK5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 07:10:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233037AbjEWK6h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 06:58:37 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 451DAFF
-        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 03:58:36 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f60e730c4bso1993555e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 03:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684839515; x=1687431515;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i6w3sPrSomaK6vYQVMgu/kzGmiGHSmd5gsIIpynPqCg=;
-        b=ZqWAbyEakVKPpFD/J/z3kYo7lHMPrxJjYYN7fnLelta0e/YR9Xmz3GMlu5Ym+Zr2pK
-         ouFcbNJFQknKe98Zw+zI8kbqTwTPY6eLMWhFxiCcav6cBhxAlYya8e7aJifoqv0YAQzU
-         fqpJjF/TVcp938OLCWo5wRRGjYd1aLzQskm3YZ/H1fsua80DSr8LOwtPOSAFSfUcYw3z
-         LSIYmux9uryyokaXuXLYEvDl5CAxAu4mGn9Kb6kFhXm+Zq+FUdatjGkmMo43fAjnaKD3
-         Sj39zh1BKS0x+qo2iOwFlMoYkW3UXJZ1dgius2stQHDAsri6U35E6rETfSLp0N6DFzc9
-         sYKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684839515; x=1687431515;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i6w3sPrSomaK6vYQVMgu/kzGmiGHSmd5gsIIpynPqCg=;
-        b=caVtf71MInlFWOIGAeXEgROakR1ktPq7u2M3nJLKrpBXRhzzIeisbMcv36d8MpwCcv
-         PQ0HTdwZwvkqwjXTWI3m8CViDhhuSNXPsop6xq6YEfxqAQ/L3myZQ0S5MWPpqrJiS4NS
-         GKtXLEuGJYXpsiCMDTbdH+IsQeAS02u6yC12Xd9VSFR+O3/QbGCtQpP03OKQ2l513bs9
-         8bOM51rzjvzIGgZl+1EWU93AbS8fUhNDlBASEeyPRht9q6DFuEvcg3pbUshL0GsewvBH
-         Ai/v/qn2TceJ3akm44/M7nGPXRKyp16WXGtkK+y4SmtwvOnrKpz8reVEG+HSSbOXzmQ2
-         Z1fQ==
-X-Gm-Message-State: AC+VfDwdXSBVrVqXVwty965KwC81dzD8BBWs5uZ1/OtOLGRAU7Lz7SXw
-        CibhZECyIpIXiQvrIzfzZsXzyQ==
-X-Google-Smtp-Source: ACHHUZ7S/7Vokqqrj6HwXGeGDqC/4hlfaVpowDnOSEx8UktgQIfdViz/chTBaLrC2s80+i7yUZqCxA==
-X-Received: by 2002:a1c:f402:0:b0:3f4:23a4:7a93 with SMTP id z2-20020a1cf402000000b003f423a47a93mr10738378wma.25.1684839514687;
-        Tue, 23 May 2023 03:58:34 -0700 (PDT)
-Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id y21-20020a7bcd95000000b003f4e8530696sm11286717wmj.46.2023.05.23.03.58.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 May 2023 03:58:34 -0700 (PDT)
-Message-ID: <af25cbbe-bfa9-3d29-360e-e4f932d286c8@baylibre.com>
-Date:   Tue, 23 May 2023 12:58:32 +0200
+        with ESMTP id S236022AbjEWLK5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 07:10:57 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ABA0129;
+        Tue, 23 May 2023 04:10:44 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 107)
+        id 4927E68B05; Tue, 23 May 2023 13:10:41 +0200 (CEST)
+Received: from blackhole.lan (p5b33fa9c.dip0.t-ipconnect.de [91.51.250.156])
+        by verein.lst.de (Postfix) with ESMTPSA id 676E867328;
+        Tue, 23 May 2023 13:10:11 +0200 (CEST)
+Date:   Tue, 23 May 2023 13:10:06 +0200
+From:   Torsten Duwe <duwe@lst.de>
+To:     Conor Dooley <conor.dooley@microchip.com>
+Cc:     Xingyu Wu <xingyu.wu@starfivetech.com>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <yanhong.wang@starfivetech.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL
+ clock generator
+Message-ID: <20230523131006.46997d84@blackhole.lan>
+In-Reply-To: <20230523-fondue-monotype-0c751a8f0c13@wendy>
+References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
+        <20230512022036.97987-2-xingyu.wu@starfivetech.com>
+        <20230519135733.GA10188@lst.de>
+        <20230519-smokeless-guileless-2a71cae06509@wendy>
+        <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
+        <20230523-fondue-monotype-0c751a8f0c13@wendy>
+Organization: LST e.V.
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.34; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 2/2] clk: mediatek: Remove CLK_SET_PARENT from all MSDC
- core clocks
-Content-Language: en-US
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, mturquette@baylibre.com
-Cc:     sboyd@kernel.org, matthias.bgg@gmail.com, wenst@chromium.org,
-        chun-jie.chen@mediatek.com, mandyjh.liu@mediatek.com,
-        miles.chen@mediatek.com, zhaojh329@gmail.com,
-        daniel@makrotopia.org, nfraprado@collabora.com,
-        rex-bc.chen@mediatek.com, Garmin.Chang@mediatek.com,
-        msp@baylibre.com, yangyingliang@huawei.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20230516135205.372951-1-angelogioacchino.delregno@collabora.com>
- <20230516135205.372951-3-angelogioacchino.delregno@collabora.com>
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20230516135205.372951-3-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16/05/2023 15:52, AngeloGioacchino Del Regno wrote:
-> Various MSDC core clocks, used for multiple MSDC controller instances,
-> share the same parent(s): in order to add parents selection in the
-> mtk-sd driver to achieve an accurate clock rate for all modes, remove
-> the CLK_SET_RATE_PARENT flag from all MSDC clocks for all SoCs: this
-> will make sure that a clk_set_rate() call performed for a clock on
-> a secondary controller will not change the rate of a common parent,
-> which would result in an overclock or underclock of one of the
-> controllers.
+On Tue, 23 May 2023 09:28:39 +0100
+Conor Dooley <conor.dooley@microchip.com> wrote:
+
+> On Tue, May 23, 2023 at 10:56:43AM +0800, Xingyu Wu wrote:
+> > On 2023/5/19 22:16, Conor Dooley wrote:
+> > > On Fri, May 19, 2023 at 03:57:33PM +0200, Torsten Duwe wrote:
+> > >> On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
+> > >> [...]
+
+> > >> > +/* PLL clocks */
+> > >> > +#define JH7110_CLK_PLL0_OUT			0
+> > >> > +#define JH7110_CLK_PLL1_OUT			1
+> > >> > +#define JH7110_CLK_PLL2_OUT			2
+> > >> 
+> > >> In U-Boot commit 58c9c60b Yanhong Wang added:
+> > >> 
+> > >> +
+> > >> +#define JH7110_SYSCLK_PLL0_OUT                       190
+> > >> +#define JH7110_SYSCLK_PLL1_OUT                       191
+> > >> +#define JH7110_SYSCLK_PLL2_OUT                       192
+> > >> +
+> > >> +#define JH7110_SYSCLK_END                    193
+[...]
+> > > Ohh, that's not good.. If you pass the U-Boot dtb to Linux it
+> > > won't understand the numbering. The headers are part of the
+> > > dt-binding :/
+
+In fact, the clock index >= 190 makes linux hang on boot, waiting with
+EPROBE_DEFER for every device's clock, because the sysclk driver errors
+out with EINVAL (jh7110_sysclk_get()).
+
+> > Because PLL driver is separated from SYSCRG drivers in Linux, the
+> > numbering starts from 0. But in Uboot, the PLL driver is included
+> > in the SYSCRG driver, and the number follows the SYSCRG.
 > 
-> Signed-off-by: AngeloGioacchino Del Regno<angelogioacchino.delregno@collabora.com>
-> Reviewed-by: Matthias Brugger<matthias.bgg@gmail.com>
-> Reviewed-by: Markus Schneider-Pargmann<msp@baylibre.com>
+> Unfortunately, how you choose to construct your drivers has nothing to
+> do with this.
+> These defines/numbers appear in the dts and are part of the DT ABI.
+> The same dts is supposed to work for Linux & U-Boot.
 
-Tested on mt8365-evk board.
+The JH7110 has 6 blocks of 64k iomem in that functional area:
+{SYS,STG,AON} x {CRG,SYSCON}. None of these has 190 clocks.
+The good news: the current DTS, as proposed here and in U-Boot master,
+provides nodes for all 6 entities. The bad news is that the clock
+assignments to those nodes and their numbering is messed up.
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
-Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
+AFAICT PLL{0,1,2} _are_ generated in SYS_SYSCON and thus U-Boot gets it
+wrong, in addition to the erroneous DTS.
+
+	Torsten
