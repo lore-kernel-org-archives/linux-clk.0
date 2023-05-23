@@ -2,205 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E42E9C7EE23
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 03:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA8DC77B75
+	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 07:42:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233674AbjEWDXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 May 2023 23:23:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40434 "EHLO
+        id S230146AbjEWHm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 03:42:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232495AbjEWDXA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 May 2023 23:23:00 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3936BF;
-        Mon, 22 May 2023 20:22:58 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id 98e67ed59e1d1-25355609a04so5251314a91.0;
-        Mon, 22 May 2023 20:22:58 -0700 (PDT)
+        with ESMTP id S231929AbjEWHm1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 03:42:27 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9869E94
+        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 00:42:24 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-510f3db1cd8so1001756a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 00:42:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684812178; x=1687404178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=flrKSz8wj7uBPovX7y+XUIJRT3fF/6yUn+0B3i6QKLQ=;
-        b=qMRvLgPaqR4txaUrf5nU0xI9zLcmfjZV20W9G7tOlAJnOALWFU4kZaBYjLUfsXWr6/
-         8WywItsot2a3wd3NETDp9+VWK7bH44iinPMenyhjnWtg1yFy43h+u/6H1LjaRKftURic
-         JE4vdmXHvnSplemzQOzwkwi0pP7uBWLi7LavbDwCcJZYHLz4ZXmRx3/5pf+46dqSXl4b
-         QSFkb6go880G+6On5eeUkiAwqT244pRa4Jzg/O3EBbZj4nthNgS9qOHxxyw9D2B1LA6q
-         y8JBFOzeKTh6a+pLfEI6LhpLyAC2O7skz0z433pP10qaDtpSpx6DdqVJOvZS5hND7pW5
-         csSA==
+        d=linaro.org; s=google; t=1684827742; x=1687419742;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J3RG61/5+/WSVFHjkPw5mlqbSw7Nb1Tx6G3f5gWMvqU=;
+        b=pwoo+Ug/wK+S8XcSbWP9wKgfJ91G8J/lzEpcbk/vzPMhhstlGmmE/SIppkD1vMDHSB
+         m8+GabWzFmjcOcHWQnN1zXkf7LlYf0p7qvFSry939MZ519HVgwtiPJUVznDRbOAAEtVH
+         swn7Mkz76VMLytFuP0dFFM2MBtNor5Ih6DuKZ9isCSR48BlTBfjZKJcpxSOCxSQ35IWu
+         lJk1Fdj7oyYVMjhslPdSs/ShWgPiRD2JDCwYYVNM8T/QRrA2DWmbrmlENWmITUzLx/3f
+         R0Hpk3K2TBhCNrb3DoYNh/cmcTbw1I+klvyz4bUHZ7Kt5mnk5x/TSGjKhMRQsNoCqfrh
+         Pdtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684812178; x=1687404178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=flrKSz8wj7uBPovX7y+XUIJRT3fF/6yUn+0B3i6QKLQ=;
-        b=OvZxGwVri16jXCzfdn1p1CO8c89uRYPzBEWjOa0mjMmG2Hb5KcVdgX8CNNblx1EmSn
-         Bo4ZtEZmDUGAIZpnwb/7u4a9hmbTyLCOJ3cj84RzRvl6NhhSuEWRwH6CaxCZnGdIYlcX
-         J3zRZd1cpXvEdNwRxP1QjsRYvTA/iD/KH3EKxu1uMDIe8CIxyQnYvowo7LLiT+WinASu
-         tTc8KZVg6/xb0HuK4H2lXQT+bQW6E9Nkg9zSld+NUQoHUSxMvCC1FaEejTXNV05TeQGQ
-         WrR/Nx5ZhEAe4FBGimfGJsKkYxrzbWpYgIqKCAqGT4KIdCUx72+fHxQMaH4/Me9zaJ+5
-         Qf8Q==
-X-Gm-Message-State: AC+VfDwcH1G2PkaadvNqF5mbHCBcje4gVHszFp9gWvHSburddmtj2QuX
-        cUkztjuar+tthIpYhoxUiXLRk6uvTH/yDz0EyJA=
-X-Google-Smtp-Source: ACHHUZ7z1WDZBaYSaTHU5IxjZOGjsVGkql682gndzZa3dcPcYMqiCcl4QqztD/zczGZbTNK4uUXOIa7CHSy497kFm/M=
-X-Received: by 2002:a17:90a:5303:b0:24e:4b1c:74d2 with SMTP id
- x3-20020a17090a530300b0024e4b1c74d2mr12181474pjh.32.1684812178107; Mon, 22
- May 2023 20:22:58 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1684827742; x=1687419742;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J3RG61/5+/WSVFHjkPw5mlqbSw7Nb1Tx6G3f5gWMvqU=;
+        b=ctASt+R8JAFfOebrtMeYdsrprt3eP2XKfWVZPXgNbUtV3a4+r0vK2H/ibBqCghsP7y
+         nNFefFGS5SiM1fnNoRLFAbwTICUssMLPysqOHVYBQsuVAG1rbsNYeWvGQndflsNMppNe
+         Fv7Ip/UcwfvMtQs3FQU92IfKY2fLe9RkutitxBTnmZEajGBDM2s7K/ns1o9BOuq6fGLW
+         CCzsBCjCXMv5iEHRmtUqX6RcfnXsPkHt9X1ubu9/xS8zyDP3vu2zgfqb4aqbQ/5fZyjj
+         VhGYneHgrWfqYYO291276tE57e5AkGe4cyovXprefHvOfZV6gLkwqrjlX7pZZwsF1eiI
+         BeuQ==
+X-Gm-Message-State: AC+VfDz/tM2hZSNWb7gx4ssdi9s9chM5ZCJ1P5RTsgM36TvfGBScwAjH
+        6DObCzfRK0z6LyVcKFTzg0Wdpdc7eSmVfnI92mw=
+X-Google-Smtp-Source: ACHHUZ6HRyf/NCQ88ZSlgqg8T9QJtsOCFVuwQZlk584ddQWpQWfvPDdxbTa3oq+weEAWe7eT4qiSBg==
+X-Received: by 2002:a2e:4941:0:b0:2ab:bd1:93da with SMTP id b1-20020a2e4941000000b002ab0bd193damr4648474ljd.10.1684827059258;
+        Tue, 23 May 2023 00:30:59 -0700 (PDT)
+Received: from [192.168.1.101] (abyk138.neoplus.adsl.tpnet.pl. [83.9.30.138])
+        by smtp.gmail.com with ESMTPSA id s16-20020a2e81d0000000b002aecfa8c58bsm1494161ljg.40.2023.05.23.00.30.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 May 2023 00:30:58 -0700 (PDT)
+Message-ID: <552d20f5-ed3c-2f69-2715-ab64914e131d@linaro.org>
+Date:   Tue, 23 May 2023 09:30:57 +0200
 MIME-Version: 1.0
-References: <20230506195325.876871-1-aford173@gmail.com> <02e4e072-a2bb-8455-304d-49552ce9c866@oss.nxp.com>
-In-Reply-To: <02e4e072-a2bb-8455-304d-49552ce9c866@oss.nxp.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 22 May 2023 22:23:16 -0500
-Message-ID: <CAHCN7x+pFM7_yAWxVaUCKyLQ1A_5-F4sQ_t2k2iug7DdD9PwmQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-To:     Peng Fan <peng.fan@oss.nxp.com>
-Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] dt-bindings: clock: qcom: Accept power-domains for GPUCC
+Content-Language: en-US
+To:     Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230523010348.63043-1-quic_bjorande@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230523010348.63043-1-quic_bjorande@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 22, 2023 at 9:33=E2=80=AFPM Peng Fan <peng.fan@oss.nxp.com> wro=
-te:
->
->
->
-> On 5/7/2023 3:53 AM, Adam Ford wrote:
-> > Caution: This is an external email. Please take care when clicking link=
-s or opening attachments. When in doubt, report the message using the 'Repo=
-rt this email' button
-> >
-> >
-> > Currently, certain clocks are derrived as a divider from their
-> > parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
-> > is set, the parent clock is not properly set which can lead
-> > to some relatively inaccurate clock values.
-> >
-> > Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
-> > cannot rely on calling a standard determine_rate function,
-> > because the 8m composite clocks have a pre-divider and
-> > post-divider. Because of this, a custom determine_rate
-> > function is necessary to determine the maximum clock
-> > division which is equivalent to pre-divider * the
-> > post-divider.
-> >
-> > With this added, the system can attempt to adjust the parent rate
-> > when the proper flags are set which can lead to a more precise clock
-> > value.
-> >
-> > On the imx8mplus, no clock changes are present.
-> > On the Mini and Nano, this can help achieve more accurate
-> > lcdif clocks. When trying to get a pixel clock of 31.500MHz
-> > on an imx8m Nano, the clocks divided the 594MHz down, but
-> > left the parent rate untouched which caused a calulation error.
->
-> Not all clocks has pre/post div both.
->
-> If CLK_SET_RATE_PARENT not set, would there be any issues for
-> other clocks?
 
-I did a dump of the clk_summary for Mini, Nano and Plus, and I found
-no changes to any clock other than the video_pll, and most of the
-clocks do not have CLK_SET_RATE_PARENT set, so from what I could tell
-it seemed harmless.
 
->
-> Regards,
-> Peng.
->
-> >
-> > Before:
-> > video_pll              594000000
-> >    video_pll_bypass     594000000
-> >      video_pll_out      594000000
-> >        disp_pixel       31263158
-> >          disp_pixel_clk 31263158
-> >
-> > Variance =3D -236842 Hz
-> >
-> > After this patch:
-> > video_pll               31500000
-> >    video_pll_bypass      31500000
-> >      video_pll_out       31500000
-> >        disp_pixel        31500000
-> >          disp_pixel_clk  31500000
-> >
-> > Variance =3D 0 Hz
-> >
-> > All other clocks rates and parent were the same.
-> > Similar results on imx8mm were found.
-> >
-> > Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support to de=
-termine_rate"")
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > ---
-> > V2:  Fix build warning found by build bot and fix prediv_value
-> >       and div_value because the values stored are the divisor - 1,
-> >       so we need to add 1 to the values to be correct.
-> >
-> > diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-c=
-omposite-8m.c
-> > index cbf0d7955a00..7a6e3ce97133 100644
-> > --- a/drivers/clk/imx/clk-composite-8m.c
-> > +++ b/drivers/clk/imx/clk-composite-8m.c
-> > @@ -119,10 +119,41 @@ static int imx8m_clk_composite_divider_set_rate(s=
-truct clk_hw *hw,
-> >          return ret;
-> >   }
-> >
-> > +static int imx8m_divider_determine_rate(struct clk_hw *hw,
-> > +                                     struct clk_rate_request *req)
-> > +{
-> > +       struct clk_divider *divider =3D to_clk_divider(hw);
-> > +       int prediv_value;
-> > +       int div_value;
-> > +
-> > +       /* if read only, just return current value */
-> > +       if (divider->flags & CLK_DIVIDER_READ_ONLY) {
-> > +               u32 val;
-> > +
-> > +               val =3D readl(divider->reg);
-> > +               prediv_value =3D val >> divider->shift;
-> > +               prediv_value &=3D clk_div_mask(divider->width);
-> > +               prediv_value++;
-> > +
-> > +               div_value =3D val >> PCG_DIV_SHIFT;
-> > +               div_value &=3D clk_div_mask(PCG_DIV_WIDTH);
-> > +               div_value++;
-> > +
-> > +               return divider_ro_determine_rate(hw, req, divider->tabl=
-e,
-> > +                                                PCG_PREDIV_WIDTH + PCG=
-_DIV_WIDTH,
-> > +                                                divider->flags, prediv=
-_value * div_value);
-> > +       }
-> > +
-> > +       return divider_determine_rate(hw, req, divider->table,
-> > +                                     PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
-> > +                                     divider->flags);
-> > +}
-> > +
-> >   static const struct clk_ops imx8m_clk_composite_divider_ops =3D {
-> >          .recalc_rate =3D imx8m_clk_composite_divider_recalc_rate,
-> >          .round_rate =3D imx8m_clk_composite_divider_round_rate,
-> >          .set_rate =3D imx8m_clk_composite_divider_set_rate,
-> > +       .determine_rate =3D imx8m_divider_determine_rate,
-> >   };
-> >
-> >   static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
-> > --
-> > 2.39.2
-> >
+On 23.05.2023 03:03, Bjorn Andersson wrote:
+> In many designs the power-domains provided by the GPU clock controller
+> are powered by some GFX rail, add power-domains as a valid property to
+> allow this to be specified.
+> 
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+You may also wanna add some runtime pm enable calls in the driver
+
+Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+>  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+> index 1e3dc9deded9..a00216b3b15a 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+> @@ -50,6 +50,9 @@ properties:
+>        - const: gcc_gpu_gpll0_clk_src
+>        - const: gcc_gpu_gpll0_div_clk_src
+>  
+> +  power-domains:
+> +    maxItems: 1
+> +
+>    '#clock-cells':
+>      const: 1
+>  
