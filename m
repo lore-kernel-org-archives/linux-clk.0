@@ -2,168 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F3BC77B75
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 11:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A742C77B75
+	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 11:46:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233832AbjEWL3P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 07:29:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53186 "EHLO
+        id S236678AbjEWLqX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 07:46:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232119AbjEWL3O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 07:29:14 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09D77FA;
-        Tue, 23 May 2023 04:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1684841352; x=1716377352;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8ERDBnHnLv/O/sXjD4JjS2N6Q49PCHOq6wfY9yfihEY=;
-  b=QW/K8VVdJkX5Ll3E/7mex+bKSwvQpQBQLVUWdBA2yyi8VOw6vXEj+Y8A
-   9+uOt8oBTfYVwNrEOoVl7IcUPbpVLW/dC3j2yon4oBV5ndKCsvNTakKyd
-   J88ehOug0uKlX5Gx3SfzQhLq+gElisCdyCjLkj03Z1cRLYTAvaf2FwRIF
-   SVlZwYzxWohoTWK6Pr4a9RxGsh5UJP1huo/4amOfq8OitJAa1bScZG+2a
-   chmMI0GBC4PF0HSrqAfH0wjKCxZHcxhOUVAqaRD3UZhwA4tTawVR8sw/P
-   I4m1oZOni5dQ29/Dz73DQqUz3WoeDmrKIv7HxpZ2SZNg24pHcCL5VUHdV
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.00,186,1681196400"; 
-   d="asc'?scan'208";a="153476304"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 May 2023 04:29:11 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 23 May 2023 04:29:11 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Tue, 23 May 2023 04:29:08 -0700
-Date:   Tue, 23 May 2023 12:28:46 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Torsten Duwe <duwe@lst.de>
-CC:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <yanhong.wang@starfivetech.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230255AbjEWLqX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 07:46:23 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD7E118
+        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 04:46:21 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3095557dd99so4549696f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 04:46:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1684842380; x=1687434380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wXiSekeK0+dNYQ7Rl2lu7vRoSGRXoE72FsEwh/pkNec=;
+        b=t+w5SJpb+2rMXjGSrr+ycYAAGx3jSe8ZceNk2+WtAc/Sr1DyRn6buZJ1jzbRtn7zho
+         xGL4A42tPWO2M2/8+rUPZiO25rWJ8jQHwfM+AOrPG0ADTxM9ph3ThMrRLEKW5XAHpdDi
+         A83Joe5XH2/cQVUJoA+HwPS3S/obukDQo0SY2UjxHZEz4mDrU1dCojbSqWQo0nugyFcT
+         ZCPDGkkyyouOas7o+JuldkAx407Zo2PuAfqHDCIb1x+NlfQuJzEpSpQ9O53lEvPdVsd5
+         TlL0h2hmPIGc7rX69ilptpzz/OEQNnQiXbp5M1rEUbK22g2/Kg0pnsVSp4Dg8VL73JBb
+         qpRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684842380; x=1687434380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wXiSekeK0+dNYQ7Rl2lu7vRoSGRXoE72FsEwh/pkNec=;
+        b=BbRusBW8nOXtihIV632ihRndLu99v41OIoJ+jxP4hYSSJGrP4feWO1F2mTGBMQTzoe
+         2REUB33b5k7FAkjWuO0l8KMTw0AAdcq7r7sHIWBY8bD/mCUQJwZ5kUPheDzWfKSUruW8
+         C8jBEyzaK2Oaq1VkTJxqAuXJTURdLKdV/oDa7HvpMdVzqSh4GmK+TfAjPU4uO20MPZJZ
+         BhBl996ATeS+/SrR6HOY28mnmiT5NtRlRvzevWlz1pINiNV+OqAHzKHe45kda5yo/ifj
+         zuOSCqDmmYR5Bf1G8lEHoil98ZZ1SaLgNnRgFcbEbd4D5y0ixPt/McevnfvrsEvKz/wR
+         n3rA==
+X-Gm-Message-State: AC+VfDyVTW8LYHUkScN3gk5Aq3DF+PuG7Sdush7m0B0beteixwFV5WO/
+        VlaQ6Qqn1JQ2AWrgrvrA70qf7A==
+X-Google-Smtp-Source: ACHHUZ4vJR8IdN6rXRgEnWf9szojVeR1Ubr3de6/rFKhcPiTu8ggdv+zZEpWXWPQvFRZK8+eQJV04A==
+X-Received: by 2002:adf:dd09:0:b0:2f6:208d:2234 with SMTP id a9-20020adfdd09000000b002f6208d2234mr10158434wrm.2.1684842379718;
+        Tue, 23 May 2023 04:46:19 -0700 (PDT)
+Received: from blmsp ([2001:4090:a245:802c:7f03:2fe0:bd27:d746])
+        by smtp.gmail.com with ESMTPSA id i18-20020adffc12000000b0030631a599a0sm10805590wrr.24.2023.05.23.04.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 May 2023 04:46:19 -0700 (PDT)
+Date:   Tue, 23 May 2023 13:46:18 +0200
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <u-boot@lists.denx.de>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock
- generator
-Message-ID: <20230523-saturate-axis-f46b78b7b82b@wendy>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
- <20230512022036.97987-2-xingyu.wu@starfivetech.com>
- <20230519135733.GA10188@lst.de>
- <20230519-smokeless-guileless-2a71cae06509@wendy>
- <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
- <20230523-fondue-monotype-0c751a8f0c13@wendy>
- <20230523131006.46997d84@blackhole.lan>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Mergnat <amergnat@baylibre.com>
+Subject: Re: [PATCH] clk: mediatek: mt8365: Fix inverted topclk operations
+Message-ID: <20230523114618.laajn2et5nbcxszv@blmsp>
+References: <20230511133226.913600-1-msp@baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Zph+Miw3ashxgetF"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230523131006.46997d84@blackhole.lan>
+In-Reply-To: <20230511133226.913600-1-msp@baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---Zph+Miw3ashxgetF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Tue, May 23, 2023 at 01:10:06PM +0200, Torsten Duwe wrote:
-> On Tue, 23 May 2023 09:28:39 +0100
-> Conor Dooley <conor.dooley@microchip.com> wrote:
->=20
-> > On Tue, May 23, 2023 at 10:56:43AM +0800, Xingyu Wu wrote:
-> > > On 2023/5/19 22:16, Conor Dooley wrote:
-> > > > On Fri, May 19, 2023 at 03:57:33PM +0200, Torsten Duwe wrote:
-> > > >> On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
-> > > >> [...]
->=20
-> > > >> > +/* PLL clocks */
-> > > >> > +#define JH7110_CLK_PLL0_OUT			0
-> > > >> > +#define JH7110_CLK_PLL1_OUT			1
-> > > >> > +#define JH7110_CLK_PLL2_OUT			2
-> > > >>=20
-> > > >> In U-Boot commit 58c9c60b Yanhong Wang added:
-> > > >>=20
-> > > >> +
-> > > >> +#define JH7110_SYSCLK_PLL0_OUT                       190
-> > > >> +#define JH7110_SYSCLK_PLL1_OUT                       191
-> > > >> +#define JH7110_SYSCLK_PLL2_OUT                       192
-> > > >> +
-> > > >> +#define JH7110_SYSCLK_END                    193
-> [...]
-> > > > Ohh, that's not good.. If you pass the U-Boot dtb to Linux it
-> > > > won't understand the numbering. The headers are part of the
-> > > > dt-binding :/
->=20
-> In fact, the clock index >=3D 190 makes linux hang on boot, waiting with
-> EPROBE_DEFER for every device's clock, because the sysclk driver errors
-> out with EINVAL (jh7110_sysclk_get()).
+just wanted to ask if I need to do something specific for it to go into
+a rc? Sorry if I missed doing something for that, I haven't had to fix
+something in an rc that often before.
 
-Yup, that's about what I expected to happen.
+Best,
+Markus
 
-> > > Because PLL driver is separated from SYSCRG drivers in Linux, the
-> > > numbering starts from 0. But in Uboot, the PLL driver is included
-> > > in the SYSCRG driver, and the number follows the SYSCRG.
-> >=20
-> > Unfortunately, how you choose to construct your drivers has nothing to
-> > do with this.
-> > These defines/numbers appear in the dts and are part of the DT ABI.
-> > The same dts is supposed to work for Linux & U-Boot.
->=20
-> The JH7110 has 6 blocks of 64k iomem in that functional area:
-> {SYS,STG,AON} x {CRG,SYSCON}. None of these has 190 clocks.
-> The good news: the current DTS, as proposed here and in U-Boot master,
-> provides nodes for all 6 entities. The bad news is that the clock
-> assignments to those nodes and their numbering is messed up.
->=20
-> AFAICT PLL{0,1,2} _are_ generated in SYS_SYSCON and thus U-Boot gets it
-> wrong, in addition to the erroneous DTS.
-
-The numbers are kinda hocus-pocus anyway, they are just made up since the
-clock numbering usually isn't something with a nice TRM to go and
-reference (unlike interrupts which usually are documented in that way).
-It is very helpful to make them aligned some register/bit positions or,
-but that is not required.
-IOW U-Boot is not wrong per se to use 190 instead of 0, but it is wrong
-to have different numbers in both places.
-
-It sounds like you're saying that (and I have not looked) the U-Boot dts
-actually has structural difference w.r.t. what provides which clock?
-If so, that'll need to be fixed independently of the numbering problem.
-
-Otherwise Xingyu & Yanhong should coordinate on which is the "correct"
-way of doing things & do it in both places.
-
-Thanks,
-Conor.
-
---Zph+Miw3ashxgetF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZGyjbgAKCRB4tDGHoIJi
-0nWNAQCl0+Oajv0+WviUX41q7gnY6/ROmNpaw9Cwk/tbztgTrgEAwnHUKh2L1DIZ
-essd134nm8Py1uvt2pf9pfOKbU8dOAw=
-=y0FI
------END PGP SIGNATURE-----
-
---Zph+Miw3ashxgetF--
+On Thu, May 11, 2023 at 03:32:26PM +0200, Markus Schneider-Pargmann wrote:
+> The given operations are inverted for the wrong registers which makes
+> multiple of the mt8365 hardware units unusable. In my setup at least usb
+> did not work.
+> 
+> Fixed by swapping the operations with the inverted ones.
+> 
+> Reported-by: Alexandre Mergnat <amergnat@baylibre.com>
+> Fixes: 905b7430d3cc ("clk: mediatek: mt8365: Convert simple_gate to mtk_gate clocks")
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> ---
+>  drivers/clk/mediatek/clk-mt8365.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt8365.c b/drivers/clk/mediatek/clk-mt8365.c
+> index 6b4e193f648d..6d785ec5754d 100644
+> --- a/drivers/clk/mediatek/clk-mt8365.c
+> +++ b/drivers/clk/mediatek/clk-mt8365.c
+> @@ -583,15 +583,15 @@ static const struct mtk_gate_regs top2_cg_regs = {
+>  
+>  #define GATE_TOP0(_id, _name, _parent, _shift)			\
+>  	GATE_MTK(_id, _name, _parent, &top0_cg_regs,		\
+> -		 _shift, &mtk_clk_gate_ops_no_setclr_inv)
+> +		 _shift, &mtk_clk_gate_ops_no_setclr)
+>  
+>  #define GATE_TOP1(_id, _name, _parent, _shift)			\
+>  	GATE_MTK(_id, _name, _parent, &top1_cg_regs,		\
+> -		 _shift, &mtk_clk_gate_ops_no_setclr)
+> +		 _shift, &mtk_clk_gate_ops_no_setclr_inv)
+>  
+>  #define GATE_TOP2(_id, _name, _parent, _shift)			\
+>  	GATE_MTK(_id, _name, _parent, &top2_cg_regs,		\
+> -		 _shift, &mtk_clk_gate_ops_no_setclr)
+> +		 _shift, &mtk_clk_gate_ops_no_setclr_inv)
+>  
+>  static const struct mtk_gate top_clk_gates[] = {
+>  	GATE_TOP0(CLK_TOP_CONN_32K, "conn_32k", "clk32k", 10),
+> -- 
+> 2.40.1
+> 
