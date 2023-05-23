@@ -2,268 +2,238 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6DEC7EE29
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 09:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AE7C7EE26
+	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 10:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236217AbjEWJsQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 05:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34164 "EHLO
+        id S236554AbjEWKXY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 06:23:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236041AbjEWJsJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 05:48:09 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA685E4B;
-        Tue, 23 May 2023 02:47:58 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id 5614622812f47-39212bf4ff0so3948172b6e.1;
-        Tue, 23 May 2023 02:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1684835278; x=1687427278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qq7CNPaF4NbXPimNw4H7TDkWjTz2SdZxq4zob7zuH7s=;
-        b=FPIzkfBl6Z4fOQadR+ItT5mRFzrpgGP30SMMNKl21h6elyzGRKew/4yIP2FBL0GzHh
-         /3YfyDePzf6Sn3TQOi+FnFerc2tvGJuyuCjXBYAPmfukGy1h4Mp48yTVwcvN3mfcDN2x
-         EsKEry9bUgctWJ5RqDJ0UZVrND1hUF7VFNjovcv1j7X6UxVt28k4iHL/2gTLGwWjeXF1
-         Rxjr93lT+rGQZ9HKBMGfHyD3QDi6Ya/f9jJRgKy/qdJvJ5Q4hpZqsyd7GKTz32WERg7x
-         6hA6bQod6AcZeFX4s0H2mvT5TwAINR36WEg0fPy3ncBTWlj2jifXkReTg3aZorgYwFJv
-         6OTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684835278; x=1687427278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qq7CNPaF4NbXPimNw4H7TDkWjTz2SdZxq4zob7zuH7s=;
-        b=QDZc6pGqmzlOG5St+bO1VR+UVXUk2WUIveCL0O05GWMZaG+giwFSHXeg7zx8mJx2qy
-         tRgk/O3WPI+IRUiN2fyi5UxoModJxHwqLNO81HIQKudPQaP8oqgB2i7lzbsWkcLgkkdZ
-         TN1hM3qLklofqr/dEdX8YqUgpM0ZZlI0ivhecnzVzEaHIxBo8A5nZ3Zvt8TFzxf20Hxj
-         Dz+U98eqZE31KZYyVEhs6xnEOYexEObfXtVJyzMtH9a2QJz2gG1p4S1ktmzfGxLQJQEm
-         sd4ZjcIGWFokpnlqmaap4al/74pEdraSx61qcatfkuEbtkeRp/pw8oew4cVjIen5Y1a2
-         l30w==
-X-Gm-Message-State: AC+VfDz1tbwnXOk6jwIwBskroNaFCod7aET7bclUj0qkd5iINd4pLC2/
-        znVfIpYhE4amR4Qs0mIvJ5na97dXLb6QB4Dd1APWpjod
-X-Google-Smtp-Source: ACHHUZ4zBGa6aopRQ69KB08F4/g/QRlURihGVyQ02JlWgdGnUnrxk5nRaquQO17MWhgOsTmD0PFDkNIPZNvYviDfjAw=
-X-Received: by 2002:a05:6808:3ce:b0:395:dd8c:f833 with SMTP id
- o14-20020a05680803ce00b00395dd8cf833mr7348653oie.27.1684835277778; Tue, 23
- May 2023 02:47:57 -0700 (PDT)
+        with ESMTP id S236539AbjEWKXX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 06:23:23 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 403F8121;
+        Tue, 23 May 2023 03:23:21 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 8B0215FD63;
+        Tue, 23 May 2023 13:23:19 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1684837399;
+        bh=kbeWBtzqNFUmsHcLzFjGAg/5W9O3WZjatEnusir4H08=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=QWwbsUAiM8G7JidOP+RuxaDuh8JxKSBR+AaB2PbvJ6Kd5XNc42rV5EbeN5c1GvTFz
+         c7mJ0gABIQZwfp26wpiuGUGvvlvZxW1muBwps3Nqc79klBlPdzXR5YgLFlCraae4dJ
+         mlbNDdw45JVjaPnXAekmFPwlLnRT+0RjMGDEZx4Ljc4GzbiLahlOMunArd0dtZT8X7
+         DtLWdUnmL5t2zvruSfGRhNE1BaEGH4z2wf9t4rD7wuxQTKJJf1izehsUkwjiA6x9Th
+         t/irFylC0lXPZX/jzKs/D1wXvAaMP1nPYbWR3qQD7DwjmX9ia6OvZool0D6z8LSvg9
+         G5FHTs3Vbjdtw==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Tue, 23 May 2023 13:23:18 +0300 (MSK)
+Date:   Tue, 23 May 2023 13:23:18 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+Message-ID: <20230523102318.kf3o5rtmqdy2patg@CAB-WSD-L081021>
+References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
+ <20230426095805.15338-7-ddrokosov@sberdevices.ru>
+ <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
+ <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
+ <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
+ <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
+ <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
+ <573d96df-7b08-4fa2-668b-58ff674a314e@gmail.com>
+ <20230522134425.pc5fhojf53v6q2jz@CAB-WSD-L081021>
+ <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
 MIME-Version: 1.0
-References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com> <CAMhs-H_yn_76RAFNk4ux_-rn9FdKna9Vsu0raFQXfr3ykkRWPw@mail.gmail.com>
-In-Reply-To: <CAMhs-H_yn_76RAFNk4ux_-rn9FdKna9Vsu0raFQXfr3ykkRWPw@mail.gmail.com>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Tue, 23 May 2023 11:47:46 +0200
-Message-ID: <CAMhs-H_NxauVCL7Sc7SWBk4dTQ8CyqLbPnTZO66VAqycPoOyTw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] mips: ralink: add complete clock and reset driver
- for mtmips SoCs
-To:     linux-clk@vger.kernel.org
-Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
-        john@phrozen.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        arinc.unal@arinc9.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/23 05:11:00 #21371280
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 4, 2023 at 4:48=E2=80=AFPM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
->
-> On Tue, Apr 18, 2023 at 11:03=E2=80=AFAM Sergio Paracuellos
-> <sergio.paracuellos@gmail.com> wrote:
-> >
-> > Hi all!
-> >
-> > This patchset is a big effort to properly implement a clock and reset
-> > driver for old ralink SoCs. This allow to properly define clocks in
-> > device tree and avoid to use fixed-clocks directly from 'arch/mips/rali=
-nk'
-> > architecture directory code.
-> >
-> > Device tree 'sysc' node will be both clock and reset provider using
-> > 'clock-cells' and 'reset-cells' properties.
-> >
-> > The ralink SoCs we are taking about are RT2880, RT3050, RT3052, RT3350,
-> > RT3352, RT3883, RT5350, MT7620, MT7628 and MT7688. Mostly the code in
-> > this new driver has been extracted from 'arch/mips/ralink' and cleanly
-> > put using kernel clock and reset driver APIs. The clock plans for this
-> > SoCs only talks about relation between CPU frequency and BUS frequency.
-> > This relation is different depending on the particular SoC. CPU clock i=
-s
-> > derived from XTAL frequencies.
-> >
-> >  Depending on the SoC we have the following frequencies:
-> >  * RT2880 SoC:
-> >      - XTAL: 40 MHz.
-> >      - CPU: 250, 266, 280 or 300 MHz.
-> >      - BUS: CPU / 2 MHz.
-> >   * RT3050, RT3052, RT3350:
-> >      - XTAL: 40 MHz.
-> >      - CPU: 320 or 384 MHz.
-> >      - BUS: CPU / 3 MHz.
-> >   * RT3352:
-> >      - XTAL: 40 MHz.
-> >      - CPU: 384 or 400 MHz.
-> >      - BUS: CPU / 3 MHz.
-> >      - PERIPH: 40 MHz.
-> >   * RT3383:
-> >      - XTAL: 40 MHz.
-> >      - CPU: 250, 384, 480 or 500 MHz.
-> >      - BUS: Depends on RAM Type and CPU:
-> >        + RAM DDR2: 125. ELSE 83 MHz.
-> >        + RAM DDR2: 128. ELSE 96 MHz.
-> >        + RAM DDR2: 160. ELSE 120 MHz.
-> >        + RAM DDR2: 166. ELSE 125 MHz.
-> >   * RT5350:
-> >       - XTAL: 40 MHz.
-> >       - CPU: 300, 320 or 360 MHz.
-> >       - BUS: CPU / 3, CPU / 4, CPU / 3 MHz.
-> >       - PERIPH: 40 MHz.
-> >   * MT7628 and MT7688:
-> >      - XTAL: 20 MHz or 40 MHz.
-> >      - CPU: 575 or 580 MHz.
-> >      - BUS: CPU / 3.
-> >      - PCMI2S: 480 MHz.
-> >      - PERIPH: 40 MHz.
-> >   * MT7620:
-> >      - XTAL: 20 MHz or 40 MHz.
-> >      - PLL: XTAL, 480, 600 MHz.
-> >      - CPU: depends on PLL and some mult and dividers.
-> >      - BUS: depends on PLL and some mult and dividers.
-> >      - PERIPH: 40 or XTAL MHz.
-> >
-> > MT7620 is a bit more complex deriving CPU clock from a PLL and an bunch=
- of
-> > register reads and predividers. To derive CPU and BUS frequencies in th=
-e
-> > MT7620 SoC 'mt7620_calc_rate()' helper is used.
-> > In the case XTAL can have different frequencies and we need a different
-> > clock frequency for peripherals 'periph' clock in introduced.
-> > The rest of the peripherals present in the SoC just follow their parent
-> > frequencies.
-> >
-> > I am using 'mtmips' inside for ralink clock driver. This is aligned wit=
-h
-> > pinctrl series recently merged through pinctrl git tree [0].
-> >
-> > I am maintaining ralink as prefix for compatible strings after discussi=
-ons
-> > between Rob and Arinc in v2 of this series [1].
-> >
-> > Changes have been compile tested for:
-> > - RT2880
-> > - RT3883
-> > - MT7620
-> >
-> > Changes have been properly tested in RT5350 SoC based board (ALL5003 bo=
-ard)
-> > resulting in a working platform.
-> >
-> > Dts files for these SoCs in-tree except MT7621 are incomplete. We are
-> > planning to align with openWRT files at some point and add extra needed
-> > changes. Hence I am not touching them at all in these series. If this i=
-s
-> > a problem, please let me know and I will update them.
-> >
-> > Talking about merging this series I'd like all of the patches going thr=
-ough
-> > the MIPS tree if possible.
-> >
-> > Thanks in advance for your time.
-> >
-> > Best regards,
-> >     Sergio Paracuellos
-> >
-> > Changes in v3:
-> > - Address Stephen comments in v2:
-> >     + Drop unsused include '<linux/clk.h>'.
-> >     + Add fixed and factor clocks when it makes sense.
-> >     + Make 'mtmips_periph_clk_ops' named variable.
-> >     + WARN_ON -> WARN_ON_ONCE.
-> >     + Avoid CONFIG_USB dependent code. Introduce new 'mtmips_clk_regs_i=
-nit'.
-> >     + Don't validate the bindings in the driver.
-> >     + Make const 'struct clk_init_data' used inside macros.
-> >     + do_div -> div_u64.
-> >     + Make use of dev_err_probe.
->
-> Hi Stephen,
->
-> Does anything else need to be addressed to have all of these added?
->
-> Philipp, can you please review the reset related code in PATCH 2/9 of
-> these series?
->
-> Thanks in advance for your time!
->
-> Best regards,
->     Sergio Paracuellos
+Heiner,
 
-Gentle ping for this series :-)
+On Mon, May 22, 2023 at 10:35:59PM +0200, Heiner Kallweit wrote:
+> On 22.05.2023 15:44, Dmitry Rokosov wrote:
+> > Heiner,
+> > 
+> > On Fri, May 19, 2023 at 06:10:50PM +0200, Heiner Kallweit wrote:
+> >> On 18.05.2023 22:04, Martin Blumenstingl wrote:
+> >>> Hi Dmitry,
+> >>>
+> >>> On Wed, May 17, 2023 at 12:34 PM Dmitry Rokosov
+> >>> <ddrokosov@sberdevices.ru> wrote:
+> >>> [...]
+> >>>>>> Additionally, the CCF determines the best ancestor based on how close
+> >>>>>> its rate is to the given one, based on arithmetic calculations. However,
+> >>>>>> we have independent knowledge that a certain clock would be better, with
+> >>>>>> less jitter and fewer intermediaries, which will likely improve energy
+> >>>>>> efficiency. Sadly, the CCF cannot take this into account.
+> >>>>> I agree that the implementation in CCF is fairly simple. There's ways
+> >>>>> to trick it though: IIRC if there are multiple equally suitable clocks
+> >>>>> it picks the first one. For me all of this has worked so far which is
+> >>>>> what makes me curious in this case (not saying that anything is wrong
+> >>>>> with your approach).
+> >>>>>
+> >>>>> Do you have a (real world) example where the RTC clock should be
+> >>>>> preferred over another clock?
+> >>>>>
+> >>>>
+> >>>> Yes, a real-life example is the need for a 32Khz clock for an external
+> >>>> wifi chip. There is one option to provide this clock with high
+> >>>> precision, which is RTC + GENCLK.
+> >>>>
+> >>>>> I'm thinking about the following scenario.
+> >>>>> PWM parents:
+> >>>>> - XTAL: 24MHz
+> >>>>> - sys: not sure - let's say 166.67MHz
+> >>>>> - RTC: 32kHz
+> >>>>>
+> >>>>> Then after that there's a divider and a gate.
+> >>>>>
+> >>>>> Let's say the PWM controller needs a 1MHz clock: it can take that from
+> >>>>> XTAL or sys. Since XTAL is evenly divisible to 1MHz CCF will pick that
+> >>>>> and use the divider.
+> >>>>> But let's say the PWM controller needs a 32kHz clock: CCF would
+> >>>>> automatically pick the RTC clock.
+> >>>>> So is your implementation there to cover let's say 1kHz where
+> >>>>> mathematically 24MHz can be divided evenly to 1kHz (and thus should
+> >>>>> not result in any jitter) but RTC gives better precision in the real
+> >>>>> world (even though it's off by 24Hz)?
+> >>>>>
+> >>>>
+> >>>> I don't think so. The highest precision that RTC can provide is from a
+> >>>> 32KHz rate only. However, I believe that a 1kHz frequency can also be
+> >>>> achieved by using xtal 24MHz with a divider, which can provide high
+> >>>> precision as well.
+> >>> Thank you again for the great discussion on IRC today.
+> >>> Here's my short summary so I don't forget before you'll follow up on this.
+> >>>
+> >>> In general there's two known cases where the RTC clock needs to be used:
+> >>> a) When using the GENCLK output of the SoC to output the 32kHz RTC
+> >>> clock and connect that to an SDIO WiFi chip clock input (this seems
+> >>> useful in my understanding because the RTC clock provides high
+> >>> precision)
+> >>> b) When using the PWM controller to output a 32kHz clock signal. In
+> >>> this case my understanding is that using the RTC clock as input to the
+> >>> PWM controller results in the best possible signal
+> >>>
+> >>> The second case won't be supported with Heiner's patches [0] that use
+> >>> CCF (common clock framework) in the PWM controller driver.
+> >>> In this series the parent clock is calculated using:
+> >>>   freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+> >>>
+> >>> A 32kHz clock means a PWM period of 30518ns. So with the above
+> >>
+> >> To be precise: 30517,578125ns
+> >> What means that the PWM framework can't say "I want 32768Hz",
+> >> but just "I want something being very close to 32768Hz".
+> >> So what you need is some simple heuristic to interpret the
+> >> PWM request -> "PWM requests 30518ns, but supposedly it wants
+> >> 32768Hz"
+> >>
+> >> NSEC_PER_SEC / 30518 = 32767 (rounded down from 32767,547)
+> >> clk_round_rate(channel->clk, 32767) would return 0 (I *think*),
+> >> because it tries to find the next lower clock.
+> >>
+> >> The SoC families I'm familiar with have fclkin2 as PWM parent.
+> >> That's 1 GHz in my case, what results in a frequency of 32.767,547Hz
+> >> for period = 30518n.
+> >> What you're saying is that newer generations don't have PWM parents
+> >>> 24MHz any longer?
+> > 
+> > No, of course not. For example, a fixed PLL (with all fclk_divX
+> > settings) has rates higher than 24MHz. However, we need to consider the
+> > 'heavy' background of such PWM.
+> > 
+> > However, we have a "lightweight" clkin (special rtc32k) with a rate of
+> > 32kHz that we could potentially use as an input to produce a 32kHz
+> > output on the PWM lines. I don't see any reason why we should not
+> > support such special cases.
+> > 
+> 
+> Two more things to consider:
+> 1. When wanting a 32kHz (well, 32768Hz) output with a 50% duty cycle,
+>    then we need hi=0 and lo=0 with a 64kHz input clock.
+>    See point 2 for an explanation of why 0 and not 1.
+>    Means we couldn't use the RTC input clock. Did you consider this?
+>    Or do I miss something?
 
-Thanks,
-    Sergio Paracuellos
->
-> >
-> > Changes in v2:
-> > - Address bindings documentation changes pointed out by Krzysztof:
-> >     + Rename the file into 'mediatek,mtmips-sysc.yaml'.
-> >     + Redo commit subject and log message.
-> >     + Order compatibles alphabetically.
-> >     + Redo bindings description taking into account this is a system
-> >       controller node which provides both clocks and resets to the worl=
-d.
-> >     + Drop label from example.
-> >     + Use 'syscon' as node name in example.
-> >     + Drop no sense 'ralink,rt2880-reset' compatible string
-> > - Squash patches 6 and 7 together as pointed out by Stephen Boyd.
-> >
-> > Previoous series:
-> > v2: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=3DLeJ4vT22uibQ1=
-DnaZsfTrtRxSiv=3D8L5RA@mail.gmail.com/T/#t
-> > v1: https://lore.kernel.org/linux-clk/20230320161823.1424278-1-sergio.p=
-aracuellos@gmail.com/T/#t
-> >
-> > [0]: https://lore.kernel.org/linux-gpio/e9e6ad87-2db5-9767-ff39-64a302b=
-06185@arinc9.com/T/#t
-> > [1]: https://lore.kernel.org/linux-clk/CAMhs-H-BfZb3mD8E=3DLeJ4vT22uibQ=
-1DnaZsfTrtRxSiv=3D8L5RA@mail.gmail.com/T/#mfe725b6e3382c6fb09736472a846cbbc=
-84f264dc
-> >
-> > Sergio Paracuellos (9):
-> >   dt-bindings: clock: add mtmips SoCs system controller
-> >   clk: ralink: add clock and reset driver for MTMIPS SoCs
-> >   mips: ralink: rt288x: remove clock related code
-> >   mips: ralink: rt305x: remove clock related code
-> >   mips: ralink: rt3883: remove clock related code
-> >   mips: ralink: mt7620: remove clock related code
-> >   mips: ralink: remove reset related code
-> >   mips: ralink: get cpu rate from new driver code
-> >   MAINTAINERS: add Mediatek MTMIPS Clock maintainer
-> >
-> >  .../bindings/clock/mediatek,mtmips-sysc.yaml  |   65 +
-> >  MAINTAINERS                                   |    6 +
-> >  arch/mips/include/asm/mach-ralink/mt7620.h    |   35 -
-> >  arch/mips/include/asm/mach-ralink/rt288x.h    |   10 -
-> >  arch/mips/include/asm/mach-ralink/rt305x.h    |   21 -
-> >  arch/mips/include/asm/mach-ralink/rt3883.h    |    8 -
-> >  arch/mips/ralink/clk.c                        |   26 +-
-> >  arch/mips/ralink/common.h                     |    5 -
-> >  arch/mips/ralink/mt7620.c                     |  226 ----
-> >  arch/mips/ralink/of.c                         |    4 -
-> >  arch/mips/ralink/reset.c                      |   61 -
-> >  arch/mips/ralink/rt288x.c                     |   31 -
-> >  arch/mips/ralink/rt305x.c                     |   78 --
-> >  arch/mips/ralink/rt3883.c                     |   44 -
-> >  drivers/clk/ralink/Kconfig                    |    7 +
-> >  drivers/clk/ralink/Makefile                   |    1 +
-> >  drivers/clk/ralink/clk-mtmips.c               | 1134 +++++++++++++++++
-> >  17 files changed, 1232 insertions(+), 530 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt=
-mips-sysc.yaml
-> >  create mode 100644 drivers/clk/ralink/clk-mtmips.c
-> >
-> > --
-> > 2.25.1
-> >
+Nope, that's my fault. Using a 32kHz base clock for rates of 16kHz or
+lower that can be divided evenly is a good choice. However, as you
+mentioned in point 2, the problem with autoincrements should be fixed
+first.
+
+> 2. Seems the PWM block internally increments hi and lo, except the
+>    constant_en bit is set on newer PWM block versions.
+>    For bigger cnt values the impact is negligible, but for very small
+>    values it's something we have to consider.
+>    This was one additional motivation for me to choose an input
+>    frequency that creates big cnt values.
+
+George has a patchset for this and he will send it very soon as he
+mentioned in another email. Let's assume the code is already fixed and
+no longer has any issues. In my opinion, if we want to generate rates of
+16kHz, 8kHz, 4kHz, etc., the best parent clock to use is a 32kHz RTC.
+High-rate clocks may not divide evenly and may not generate an accurate
+output rate. What do you think about it?
+
+> 
+> >>
+> >>
+> >>> calculation the PWM driver is asking for a clock rate of >=2GHz.
+> >>> We concluded that letting the common clock framework choose the best
+> >>> possible parent (meaning: removing CLK_SET_RATE_NO_REPARENT here) can
+> >>> be a way forward.
+> >>> But this means that the PWM controller driver must try to find the
+> >>> best possible parent somehow. The easiest way we came up with
+> >>> (pseudo-code):
+> >>>   freq = NSEC_PER_SEC / period;
+> >>>   fin_freq = clk_round_rate(channel->clk, freq);
+> >>>   if (fin_freq != freq) {
+> >>>     freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+> >>>     fin_freq = clk_round_rate(channel->clk, freq);
+> >>>   }
+> >>>
+> >>> The idea is: for a requested 32kHz signal the PWM period is 30518ns.
+> >>> The updated logic would find that there's a matching clock input and
+> >>> use that directly. If not: use the original logic as suggested by
+> >>> Heiner.
+> >>>
+> >>>
+> >>> Best regards,
+> >>> Martin
+> >>>
+> >>>
+> >>> [0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e323e@gmail.com/
+> >>
+> > 
+> 
+
+-- 
+Thank you,
+Dmitry
