@@ -2,124 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F86C77B75
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 20:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51562C7EE23
+	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 20:45:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231697AbjEWUXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 16:23:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32978 "EHLO
+        id S238384AbjEWUpM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 16:45:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbjEWUXc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 16:23:32 -0400
-X-Greylist: delayed 343 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 May 2023 13:23:31 PDT
-Received: from mail.mleia.com (mleia.com [178.79.152.223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38FF2129
-        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 13:23:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-        t=1684873066; bh=09CTwGtCwgqIKNSsEvY2eczqQBaTuZs3wRO9EsOKxfQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=jSzJuLZGCRCwxDW0kck7iHhJkaWxzX2g50Sf4XlKqSlYzGbcX5y4Ot27bH3UnCuAy
-         xXFzaH/eqQFQdM25pwGVzE77PTPjLENrEanS5Stmh1eiw72HZHu4WyASHV1X4lWRPU
-         Sbvxe56qXNAbmchx3Fgp3rSZV9fdffeY/gKOF2xlaKYrXJg8QmO8ckB88R8JkXgW4p
-         WOW5cah5PDX66QCW4H/t24wBmSn3Qh1jYqOmoGmD5b0yqwjohwRDoNVUqrfrE85px/
-         S/m8vWUEiVua6QGU0I27doLb3zPgqLAkahg7ybRE8nOk3MFv/Gm9r/JoosmYYOqfwf
-         PXgN13JbZhLMQ==
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id 644274228A9;
-        Tue, 23 May 2023 20:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
-        t=1684873066; bh=09CTwGtCwgqIKNSsEvY2eczqQBaTuZs3wRO9EsOKxfQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=jSzJuLZGCRCwxDW0kck7iHhJkaWxzX2g50Sf4XlKqSlYzGbcX5y4Ot27bH3UnCuAy
-         xXFzaH/eqQFQdM25pwGVzE77PTPjLENrEanS5Stmh1eiw72HZHu4WyASHV1X4lWRPU
-         Sbvxe56qXNAbmchx3Fgp3rSZV9fdffeY/gKOF2xlaKYrXJg8QmO8ckB88R8JkXgW4p
-         WOW5cah5PDX66QCW4H/t24wBmSn3Qh1jYqOmoGmD5b0yqwjohwRDoNVUqrfrE85px/
-         S/m8vWUEiVua6QGU0I27doLb3zPgqLAkahg7ybRE8nOk3MFv/Gm9r/JoosmYYOqfwf
-         PXgN13JbZhLMQ==
-Message-ID: <f39da4b5-528b-e389-c0ee-d31add169620@mleia.com>
-Date:   Tue, 23 May 2023 23:17:37 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.0.2
-Subject: Re: [PATCH 06/13] ARM: lpc32xx: add missing include
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@kernel.org>, soc@kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>, Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S229483AbjEWUpL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 16:45:11 -0400
+Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99981DD;
+        Tue, 23 May 2023 13:45:09 -0700 (PDT)
+Received: from g550jk.localnet (84-115-214-73.cable.dynamic.surfer.at [84.115.214.73])
+        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 549F7CFB2A;
+        Tue, 23 May 2023 20:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
+        t=1684874677; bh=hf2bRrtkE7BS5A0mmGFa7Qf7cV1g96tWEvxW3j9c9ZE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=sz9Zzt9hEHTckVzVId8EBNby0cpihMPdqKh3pLJ+bap8ADKknIv57R1YI1dkrF0Oj
+         SOIA4u/PTLozaCgbLQY6tDr7bCdnjkTT9TZNs+xZMPj2J8rkOWREBx0Ir8CV8+RWGT
+         7zSXFC1TTVzJH/fOG6zUf14Pjhg3/StKd6QtHI48=
+From:   Luca Weiss <luca@z3ntu.xyz>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-usb@vger.kernel.org
-References: <20230516153109.514251-1-arnd@kernel.org>
- <20230516153109.514251-7-arnd@kernel.org>
-From:   Vladimir Zapolskiy <vz@mleia.com>
-In-Reply-To: <20230516153109.514251-7-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20230523_201746_460868_EF02DC5F 
-X-CRM114-Status: GOOD (  14.88  )
+        Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: Add OXILICX_GDSC for msm8226
+Date:   Tue, 23 May 2023 22:44:36 +0200
+Message-ID: <2679976.mvXUDI8C0e@z3ntu.xyz>
+In-Reply-To: <275c997a-a09d-113f-631d-bb677a05ac5f@linaro.org>
+References: <20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz>
+ <2528191.PYKUYFuaPT@z3ntu.xyz>
+ <275c997a-a09d-113f-631d-bb677a05ac5f@linaro.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/16/23 18:31, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Dienstag, 16. Mai 2023 02:15:06 CEST Konrad Dybcio wrote:
+> On 9.05.2023 18:57, Luca Weiss wrote:
+> > On Montag, 8. Mai 2023 13:35:07 CEST Konrad Dybcio wrote:
+> >> On 8.05.2023 13:32, Dmitry Baryshkov wrote:
+> >>> On 08/05/2023 10:23, Konrad Dybcio wrote:
+> >>>> On 6.05.2023 23:20, Luca Weiss wrote:
+> >>>>> On msm8226 we also have OXILICX_GDSC but we need a slighly different
+> >>>>> config, with a .cxcs defined for clock but with no parent.
+> >>>> 
+> >>>> Hm, on newer (a5xx+) GPUs, CX needs to be turned on first and
+> >>>> to achieve that, we sometimes define it to be the GX's (also
+> >>>> implicitly known as "oxili-non-CX" in before-a6xx-times) parent..
+> >>>> 
+> >>>> Roughly speaking CX powers the "GPU hardware owned by the broader
+> >>>> SoC that may not need the GPU core clock to be up" and GX powers
+> >>>> the "GPU hardware owned strictly by the GPU that needs at least some
+> >>>> GPU clocks to be enabled"
+> >>>> 
+> >>>> Maybe 8974 simply has a bug in the driver that would do the reverse?
+> >>>> Could you (and perhaps Dmitry on his shiny new 13yo board) test that
+> >>>> theory, preferably on both SoCs?
+> >>>> 
+> >>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+> >>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> >>>> @@ -2431,6 +2431,7 @@ static struct gdsc oxili_gdsc = {
+> >>>> 
+> >>>>          .pd = {
+> >>>>          
+> >>>>                  .name = "oxili",
+> >>>>          
+> >>>>          },
+> >>>> 
+> >>>> +       .parent = &oxili_gdsc.pd,
+> >>>> 
+> >>>>          .pwrsts = PWRSTS_OFF_ON,
+> >>>>   
+> >>>>   };
+> >>> 
+> >>> Are you declaring oxili_gdsc to be a parent of itself?
+> >> 
+> >> lol.. nice catch of course this line should have been
+> >> 
+> >> +       .parent = &oxilicx_gdsc.pd,
+> >> 
+> >> and the definitions would need to be swapped
+> > 
+> > The 0x4024 oxili_gdsc (downstream name gdsc_oxili_gx) is disabled in 8226
+> > dts.
+> > 
+> > Only in downstream msm8974.dtsi this gdsc gets "parent-supply =
+> > <&pm8841_s4_corner>;", on 8226 there's no parent-supply. And the gdsc
+> > parent doesn't even seem to be described there.
+> > 
+> > Should I still try?
 > 
-> lpc32xx_loopback_set() is defined in linux/soc/nxp/lpc32xx-misc.h but
-> this is not included before the function definition.
+> No, nevermind, this SoC is cut down more than I had initially thought.
 > 
-> arch/arm/mach-lpc32xx/serial.c:63:6: error: no previous prototype for 'lpc32xx_loopback_set'
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   arch/arm/mach-lpc32xx/serial.c | 1 +
->   1 file changed, 1 insertion(+)
+> with a minor nit: oxilicx -> oxili_cx
+
+Hi Konrad,
+
+where do you want this changed? Just the .name field? But even that one is now 
+matching the other oxilicx variant. And there's also gdscs like 
+oxilicx_ahb_clk.
+
+Let me know.
+
+Regards
+Luca
+
 > 
-> diff --git a/arch/arm/mach-lpc32xx/serial.c b/arch/arm/mach-lpc32xx/serial.c
-> index 3e765c4bf986..3b1203db81b2 100644
-> --- a/arch/arm/mach-lpc32xx/serial.c
-> +++ b/arch/arm/mach-lpc32xx/serial.c
-> @@ -15,6 +15,7 @@
->   #include <linux/serial_8250.h>
->   #include <linux/clk.h>
->   #include <linux/io.h>
-> +#include <linux/soc/nxp/lpc32xx-misc.h>
->   
->   #include "lpc32xx.h"
->   #include "common.h"
+> Konrad
+> 
+> >> Konrad
+> >> 
+> >>>>   @@ -2439,7 +2440,6 @@ static struct gdsc oxilicx_gdsc = {
+> >>>>   
+> >>>>          .pd = {
+> >>>>          
+> >>>>                  .name = "oxilicx",
+> >>>>          
+> >>>>          },
+> >>>> 
+> >>>> -       .parent = &oxili_gdsc.pd,
+> >>>> 
+> >>>>          .pwrsts = PWRSTS_OFF_ON,
+> >>>>   
+> >>>>   };
+> >>>> 
+> >>>> Konrad
+> >>>> 
+> >>>>> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+> >>>>> ---
+> >>>>> 
+> >>>>>   drivers/clk/qcom/mmcc-msm8974.c | 11 +++++++++++
+> >>>>>   1 file changed, 11 insertions(+)
+> >>>>> 
+> >>>>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c
+> >>>>> b/drivers/clk/qcom/mmcc-msm8974.c index 4273fce9a4a4..39ee3953567c
+> >>>>> 100644
+> >>>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+> >>>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> >>>>> @@ -2443,6 +2443,16 @@ static struct gdsc oxilicx_gdsc = {
+> >>>>> 
+> >>>>>       .pwrsts = PWRSTS_OFF_ON,
+> >>>>>   
+> >>>>>   };
+> >>>>>   +static struct gdsc oxilicx_gdsc_msm8226 = {
+> >>>>> 
+> >>>>> +    .gdscr = 0x4034,
+> >>>>> +    .cxcs = (unsigned int []){ 0x4028 },
+> >>>>> +    .cxc_count = 1,
+> >>>>> +    .pd = {
+> >>>>> +        .name = "oxilicx",
+> >>>>> +    },
+> >>>>> +    .pwrsts = PWRSTS_OFF_ON,
+> >>>>> +};
+> >>>>> +
+> >>>>> 
+> >>>>>   static struct clk_regmap *mmcc_msm8226_clocks[] = {
+> >>>>>   
+> >>>>>       [MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
+> >>>>>       [MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
+> >>>>> 
+> >>>>> @@ -2533,6 +2543,7 @@ static struct gdsc *mmcc_msm8226_gdscs[] = {
+> >>>>> 
+> >>>>>       [MDSS_GDSC] = &mdss_gdsc,
+> >>>>>       [CAMSS_JPEG_GDSC] = &camss_jpeg_gdsc,
+> >>>>>       [CAMSS_VFE_GDSC] = &camss_vfe_gdsc,
+> >>>>> 
+> >>>>> +    [OXILICX_GDSC] = &oxilicx_gdsc_msm8226,
+> >>>>> 
+> >>>>>   };
+> >>>>>   
+> >>>>>     static const struct regmap_config mmcc_msm8226_regmap_config = {
+> >>>>> 
+> >>>>> ---
+> >>>>> base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
+> >>>>> change-id: 20230506-msm8226-oxilicx-7f3f0f8e491d
+> >>>>> 
+> >>>>> Best regards,
 
-Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 
-If you wish, you may consider to add one more tag:
 
-Fixes: ffba29c9ebd0 ("serial: lpc32xx: allow compile testing")
 
---
-Best wishes,
-Vladimir
