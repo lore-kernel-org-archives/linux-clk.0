@@ -2,70 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CCEC7EE23
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 19:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F86C77B75
+	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 20:23:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238433AbjEWTgg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 15:36:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42204 "EHLO
+        id S231697AbjEWUXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 16:23:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238396AbjEWTge (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 15:36:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40AE6198;
-        Tue, 23 May 2023 12:36:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C4FFC63601;
-        Tue, 23 May 2023 19:36:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F3CC433D2;
-        Tue, 23 May 2023 19:36:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684870578;
-        bh=JYLPBRrpHknapscwDa20NqpaHmoXAwkDo65KNIj3lMY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X1yAu6cdBqmotndVC6762F8yOEu75ie9Uu1hCRJxU9xFJS4xkzbVxS1UteRK1cGNB
-         lu4fqjKRxHqIn2SmSIVjjU/IHQqtSCBXsEEloLXeKOEc2EofpTlA/yJecOC62Da8hY
-         nu8mCCdzA8oRoB+kWq9V9PWBaFaxCVLQy0xJ9I7vqGutk+Gbd1MFKcJZZ+9g7UYhya
-         1TU3ry1sIl/zMNg953q+Q1AQB7XeOil/ZOhrmSsUgK8DO7lkFU9IGlQIocHyyDluqD
-         TiSECSCdAQKCL0/PMyl7ps/PFrP13rTDjbOucYzL9x4Ijfgt6PAmBobUW4GPtV8fj2
-         sehe6L65LL+lg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: qcom: Accept power-domains for GPUCC
-Date:   Tue, 23 May 2023 12:40:07 -0700
-Message-Id: <168487080174.3522253.8223523756874721928.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230523010348.63043-1-quic_bjorande@quicinc.com>
-References: <20230523010348.63043-1-quic_bjorande@quicinc.com>
+        with ESMTP id S230409AbjEWUXc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 16:23:32 -0400
+X-Greylist: delayed 343 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 23 May 2023 13:23:31 PDT
+Received: from mail.mleia.com (mleia.com [178.79.152.223])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38FF2129
+        for <linux-clk@vger.kernel.org>; Tue, 23 May 2023 13:23:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+        t=1684873066; bh=09CTwGtCwgqIKNSsEvY2eczqQBaTuZs3wRO9EsOKxfQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=jSzJuLZGCRCwxDW0kck7iHhJkaWxzX2g50Sf4XlKqSlYzGbcX5y4Ot27bH3UnCuAy
+         xXFzaH/eqQFQdM25pwGVzE77PTPjLENrEanS5Stmh1eiw72HZHu4WyASHV1X4lWRPU
+         Sbvxe56qXNAbmchx3Fgp3rSZV9fdffeY/gKOF2xlaKYrXJg8QmO8ckB88R8JkXgW4p
+         WOW5cah5PDX66QCW4H/t24wBmSn3Qh1jYqOmoGmD5b0yqwjohwRDoNVUqrfrE85px/
+         S/m8vWUEiVua6QGU0I27doLb3zPgqLAkahg7ybRE8nOk3MFv/Gm9r/JoosmYYOqfwf
+         PXgN13JbZhLMQ==
+Received: from mail.mleia.com (localhost [127.0.0.1])
+        by mail.mleia.com (Postfix) with ESMTP id 644274228A9;
+        Tue, 23 May 2023 20:17:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mleia.com; s=mail;
+        t=1684873066; bh=09CTwGtCwgqIKNSsEvY2eczqQBaTuZs3wRO9EsOKxfQ=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=jSzJuLZGCRCwxDW0kck7iHhJkaWxzX2g50Sf4XlKqSlYzGbcX5y4Ot27bH3UnCuAy
+         xXFzaH/eqQFQdM25pwGVzE77PTPjLENrEanS5Stmh1eiw72HZHu4WyASHV1X4lWRPU
+         Sbvxe56qXNAbmchx3Fgp3rSZV9fdffeY/gKOF2xlaKYrXJg8QmO8ckB88R8JkXgW4p
+         WOW5cah5PDX66QCW4H/t24wBmSn3Qh1jYqOmoGmD5b0yqwjohwRDoNVUqrfrE85px/
+         S/m8vWUEiVua6QGU0I27doLb3zPgqLAkahg7ybRE8nOk3MFv/Gm9r/JoosmYYOqfwf
+         PXgN13JbZhLMQ==
+Message-ID: <f39da4b5-528b-e389-c0ee-d31add169620@mleia.com>
+Date:   Tue, 23 May 2023 23:17:37 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0.2
+Subject: Re: [PATCH 06/13] ARM: lpc32xx: add missing include
+Content-Language: en-US
+To:     Arnd Bergmann <arnd@kernel.org>, soc@kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-usb@vger.kernel.org
+References: <20230516153109.514251-1-arnd@kernel.org>
+ <20230516153109.514251-7-arnd@kernel.org>
+From:   Vladimir Zapolskiy <vz@mleia.com>
+In-Reply-To: <20230516153109.514251-7-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
+X-CRM114-CacheID: sfid-20230523_201746_460868_EF02DC5F 
+X-CRM114-Status: GOOD (  14.88  )
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 22 May 2023 18:03:48 -0700, Bjorn Andersson wrote:
-> In many designs the power-domains provided by the GPU clock controller
-> are powered by some GFX rail, add power-domains as a valid property to
-> allow this to be specified.
+On 5/16/23 18:31, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
+> lpc32xx_loopback_set() is defined in linux/soc/nxp/lpc32xx-misc.h but
+> this is not included before the function definition.
 > 
+> arch/arm/mach-lpc32xx/serial.c:63:6: error: no previous prototype for 'lpc32xx_loopback_set'
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   arch/arm/mach-lpc32xx/serial.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/mach-lpc32xx/serial.c b/arch/arm/mach-lpc32xx/serial.c
+> index 3e765c4bf986..3b1203db81b2 100644
+> --- a/arch/arm/mach-lpc32xx/serial.c
+> +++ b/arch/arm/mach-lpc32xx/serial.c
+> @@ -15,6 +15,7 @@
+>   #include <linux/serial_8250.h>
+>   #include <linux/clk.h>
+>   #include <linux/io.h>
+> +#include <linux/soc/nxp/lpc32xx-misc.h>
+>   
+>   #include "lpc32xx.h"
+>   #include "common.h"
 
-Applied, thanks!
+Acked-by: Vladimir Zapolskiy <vz@mleia.com>
 
-[1/1] dt-bindings: clock: qcom: Accept power-domains for GPUCC
-      commit: de6d1f0c4919852514459f1876d7168212e5e1cd
+If you wish, you may consider to add one more tag:
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Fixes: ffba29c9ebd0 ("serial: lpc32xx: allow compile testing")
+
+--
+Best wishes,
+Vladimir
