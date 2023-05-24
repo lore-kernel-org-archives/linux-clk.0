@@ -2,223 +2,237 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4299FC77B7A
-	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 05:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B7FC77B7C
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 07:43:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232128AbjEXFbl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 May 2023 01:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58938 "EHLO
+        id S239670AbjEXHn0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 May 2023 03:43:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239434AbjEXFbd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 01:31:33 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B03E21B0;
-        Tue, 23 May 2023 22:31:30 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34O4qwR4029948;
-        Wed, 24 May 2023 05:31:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=N8dCo+fSH4BbOaNI+Pps9tRlJmwJT9ZWwK4a73Q6ICI=;
- b=Kca/ULd1+v/amqLPEqojR0HrMgUlGwN7u4ED/JtJsoIqvvG+DYDD2K9BfEIQ+5i+vkLr
- N9T+Q1PKDPIjtkPu7jK3Lr/m7rMTaCezejwuEKlig2Rgju0fAeN2x1KM/9oC14TANZFp
- FqxtnDgFyl0Rs8GrGdOOqpgAgTXJqNKJ+sw9J3QZ5yjgvHm1DVWR6flW9TrTBr0OxGXo
- cHQXIko8TGmBRHA746vYogBRRMuvLKB2X9yBw5zLVS55Ztdqmc5FCNSpCwPMXhkGDvBz
- McRdNyQih20GGuGlx+0OZbfRBeckM85XERer+qOaLCMOpAMb2pOBNpb5xJ2trR/b+0CM tQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qrsx0tpcc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 05:31:18 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34O5VINA013184
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 05:31:18 GMT
-Received: from [10.216.39.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 23 May
- 2023 22:31:10 -0700
-Message-ID: <8464057e-2092-ef48-8f51-f37766b98a5a@quicinc.com>
-Date:   Wed, 24 May 2023 11:01:07 +0530
+        with ESMTP id S235054AbjEXHnZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 03:43:25 -0400
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F4AE9;
+        Wed, 24 May 2023 00:43:02 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-96fb1642b09so85133666b.0;
+        Wed, 24 May 2023 00:43:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684914172; x=1687506172;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wwgrcZ2UwBjm9qvElzAVRShxkr9NVzmzmVcR8DMPVj8=;
+        b=gwoCb4k7kosytRstrrwY+/Tfkh5Be2VOlVsSVd1a+ofL8nOe8lDKE86qIOJhCgtWvr
+         VQxm1jdtc88aK57m+xQHXgYf5CjriNPEv5ngisp4QgkMMCTovECQ85j00JmG87QxlIf4
+         KmSwjT2mtafiFDq+9LNYPb78qFXn70qt/Tr+JKINF9dRocHaKIePn7DiiOKfKwFjIOgc
+         sjGVlLBKAoRrN2Qmiv5BNkOJQPRFTcmI7FZxHa6bpzkIl0eDOJ6U3u1F782MQeks60jc
+         7N3Ni87XmbBDyR9uQVAAu2vzBRkxThSSRgomkvakO+LhzwQbH1tf1jWqIZ5Ard2w01t+
+         aBEg==
+X-Gm-Message-State: AC+VfDxLWwQtboeGa/pDyikCtjiALgzx/HQQLlCHN8J3Mo2pHU61HOUM
+        WWkj4M3ewkQl+80ZNU9TKQs=
+X-Google-Smtp-Source: ACHHUZ4HvOu04Y5mGSqqaAuE6ebBkKg8OJvbfmZxEJbWTMKb6kSYysDu9rwF9z+yUleqxo4VhBArLg==
+X-Received: by 2002:a17:907:2cc7:b0:959:18b2:454a with SMTP id hg7-20020a1709072cc700b0095918b2454amr15794693ejc.76.1684914172213;
+        Wed, 24 May 2023 00:42:52 -0700 (PDT)
+Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id mj14-20020a170906af8e00b009659fa6eeddsm5381880ejb.196.2023.05.24.00.42.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 May 2023 00:42:51 -0700 (PDT)
+Message-ID: <3d4acb20-c80e-fd39-c0d0-e9b1e0309d81@kernel.org>
+Date:   Wed, 24 May 2023 09:42:50 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V3 2/4] clk: qcom: gcc-ipq9574: Enable crypto clocks
-To:     <bhupesh.sharma@linaro.org>, <agross@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <linux-arm-msm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
-        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
-References: <20230518141105.24741-1-quic_anusha@quicinc.com>
- <20230518141105.24741-3-quic_anusha@quicinc.com>
- <c451dc43-b5a2-df42-c4a5-0db4c6641b1c@linaro.org>
-From:   Anusha Canchi <quic_anusha@quicinc.com>
-In-Reply-To: <c451dc43-b5a2-df42-c4a5-0db4c6641b1c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UfzkQLZWGDQ73FgkYU3RVG4E6KoyffPo
-X-Proofpoint-GUID: UfzkQLZWGDQ73FgkYU3RVG4E6KoyffPo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-24_02,2023-05-23_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
- clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305240046
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Content-Language: en-US
+To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, tmaimon77@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-serial@vger.kernel.org, arnd@arndb.de, soc@kernel.org,
+        schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230516075217.205401-1-ychuang570808@gmail.com>
+ <20230516075217.205401-11-ychuang570808@gmail.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v11 10/10] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
+In-Reply-To: <20230516075217.205401-11-ychuang570808@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 16. 05. 23, 9:52, Jacky Huang wrote:
+> +static void ma35d1serial_config_port(struct uart_port *port, int flags)
+> +{
+> +	/*
+> +	 * Driver core for serial ports forces a non-zero value for port type.
+> +	 * Write an arbitrary value here to accommodate the serial core driver,
+> +	 * as ID part of UAPI is redundant.
+> +	 */
+> +	port->type = 1;
 
+So this 1 translates to PORT_8250. Why not to use it directly? Or 
+something more saner like PORT_16550A?
 
-On 5/22/2023 2:28 PM, bhupesh.sharma@linaro.org wrote:
->
->
-> On 5/18/23 7:41 PM, Anusha Rao <quic_anusha@quicinc.com> wrote:
->> Enable the clocks required for crypto operation.
->>
->> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
->> ---
->>   Changes in V3:
->>     - Added GCC prefix to CRYPTO_CLK_SRC.
->>
->>   drivers/clk/qcom/gcc-ipq9574.c | 72 ++++++++++++++++++++++++++++++++++
->>   1 file changed, 72 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gcc-ipq9574.c 
->> b/drivers/clk/qcom/gcc-ipq9574.c
->> index 7b0505f5c255..73663168d72a 100644
->> --- a/drivers/clk/qcom/gcc-ipq9574.c
->> +++ b/drivers/clk/qcom/gcc-ipq9574.c
->> @@ -728,6 +728,41 @@ static struct clk_rcg2 blsp1_uart6_apps_clk_src = {
->>       },
->>   };
->>   +static const struct freq_tbl ftbl_gcc_crypto_clk_src[] = {
->> +    F(160000000, P_GPLL0, 5, 0, 0),
->> +    { }
->> +};
->> +
->> +static struct clk_rcg2 gcc_crypto_clk_src = {
->> +    .cmd_rcgr = 0x16004,
->> +    .freq_tbl = ftbl_gcc_crypto_clk_src,
->> +    .hid_width = 5,
->> +    .parent_map = gcc_xo_gpll0_gpll0_out_main_div2_map,
->> +    .clkr.hw.init = &(const struct clk_init_data) {
->> +        .name = "gcc_crypto_clk_src",
->> +        .parent_data = gcc_xo_gpll0_gpll0_out_main_div2,
->> +        .num_parents = ARRAY_SIZE(gcc_xo_gpll0_gpll0_out_main_div2),
->> +        .ops = &clk_rcg2_ops,
->> +    },
->> +};
->> +
->> +static struct clk_branch gcc_crypto_clk = {
->> +    .halt_reg = 0x1600c,
->> +    .halt_check = BRANCH_HALT_VOTED,
->> +    .clkr = {
->> +        .enable_reg = 0x0b004,
->> +        .enable_mask = BIT(14),
->> +        .hw.init = &(const struct clk_init_data) {
->> +            .name = "gcc_crypto_clk",
->> +            .parent_hws = (const struct clk_hw *[]) {
->> +                &gcc_crypto_clk_src.clkr.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->>   static struct clk_branch gcc_apss_ahb_clk = {
->>       .halt_reg = 0x24018,
->>       .halt_check = BRANCH_HALT_VOTED,
->> @@ -2071,6 +2106,38 @@ static struct clk_rcg2 pcnoc_bfdcd_clk_src = {
->>       },
->>   };
->>   +static struct clk_branch gcc_crypto_axi_clk = {
->> +    .halt_reg = 0x16010,
->> +    .clkr = {
->> +        .enable_reg = 0x16010,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(const struct clk_init_data) {
->> +            .name = "gcc_crypto_axi_clk",
->> +            .parent_hws = (const struct clk_hw *[]) {
->> +                &pcnoc_bfdcd_clk_src.clkr.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->> +static struct clk_branch gcc_crypto_ahb_clk = {
->> +    .halt_reg = 0x16014,
->> +    .clkr = {
->> +        .enable_reg = 0x16014,
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(const struct clk_init_data) {
->> +            .name = "gcc_crypto_ahb_clk",
->> +            .parent_hws = (const struct clk_hw *[]) {
->> +                &pcnoc_bfdcd_clk_src.clkr.hw },
->> +            .num_parents = 1,
->> +            .flags = CLK_SET_RATE_PARENT,
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->>   static struct clk_branch gcc_nsscfg_clk = {
->>       .halt_reg = 0x1702c,
->>       .clkr = {
->> @@ -4036,6 +4103,10 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
->>       [GCC_SNOC_PCIE1_1LANE_S_CLK] = &gcc_snoc_pcie1_1lane_s_clk.clkr,
->>       [GCC_SNOC_PCIE2_2LANE_S_CLK] = &gcc_snoc_pcie2_2lane_s_clk.clkr,
->>       [GCC_SNOC_PCIE3_2LANE_S_CLK] = &gcc_snoc_pcie3_2lane_s_clk.clkr,
->> +    [GCC_CRYPTO_CLK_SRC] = &gcc_crypto_clk_src.clkr,
->> +    [GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
->> +    [GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
->> +    [GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
->>   };
->
-> Can we please add these in alphabetical order. For e.g. here these 
-> entries would follow those for '[GCC_CMN_BLK_APU_ARES] = { 0x3a010, 2 },'
-Okay, will update.
+> +}
+> +
+> +static int ma35d1serial_verify_port(struct uart_port *port, struct serial_struct *ser)
+> +{
+> +	if (port->type != PORT_UNKNOWN && ser->type != 1)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+...
+> +static int __init ma35d1serial_console_setup(struct console *co, char *options)
+> +{
+> +	struct device_node *np = ma35d1serial_uart_nodes[co->index];
+> +	struct uart_ma35d1_port *p = &ma35d1serial_ports[co->index];
+> +	u32 val32[4];
+> +	struct uart_port *port;
+> +	int baud = 115200;
+> +	int bits = 8;
+> +	int parity = 'n';
+> +	int flow = 'n';
+> +
+> +	/*
+> +	 * Check whether an invalid uart number has been specified, and
 
-Thanks,
-Anusha
->
->>   static const struct qcom_reset_map gcc_ipq9574_resets[] = {
->> @@ -4193,6 +4264,7 @@ static const struct qcom_reset_map 
->> gcc_ipq9574_resets[] = {
->>       [GCC_WCSS_ECAHB_ARES] = { 0x25070, 0 },
->>       [GCC_WCSS_Q6_BCR] = { 0x18000, 0 },
->>       [GCC_WCSS_Q6_TBU_BCR] = { 0x12054, 0 },
->> +    [GCC_CRYPTO_BCR] = { 0x16000, 0 },
->
-> Same as above.
-Okay.
+You dereferenced ma35d1serial_uart_nodes already. Doesn't 
+console=ttyNVT1000 (or something like that) crash the system?
 
-Thanks,
-Anusha
->
-> With the above addressed:
-> Reviewed-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
->
-> Thanks.
->
->>   };
->>     static const struct of_device_id gcc_ipq9574_match_table[] = {
->>
+> +	 * if so, search for the first available port that does have
+> +	 * console support.
+
+The code below doesn't match this comment.
+
+> +	 */
+> +	if ((co->index < 0) || (co->index >= MA35_UART_NR)) {
+> +		pr_debug("Console Port%x out of range\n", co->index);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (of_property_read_u32_array(np, "reg", val32, 4) != 0)
+
+Shouldn't that 4 be ARRAY_SIZE(val32) instead?
+
+> +		return -EINVAL;
+
+One \n here please.
+
+> +	p->port.iobase = val32[1];
+> +	p->port.membase = ioremap(p->port.iobase, MA35_UART_REG_SIZE);
+
+What if this fails?
+
+> +	p->port.ops = &ma35d1serial_ops;
+> +	p->port.line = 0;
+> +	p->port.uartclk = MA35_UART_CONSOLE_CLK;
+> +
+> +	port = &ma35d1serial_ports[co->index].port;
+
+Isn't this:
+   port = &p->port;
+?
+
+Either use port on all above lines or drop the "port" variable 
+completely and use "p->port" below instead.
+
+> +
+> +	if (options)
+> +		uart_parse_options(options, &baud, &parity, &bits, &flow);
+> +
+> +	return uart_set_options(port, co, baud, parity, bits, flow);
+> +}
+> +
+> +static struct console ma35d1serial_console = {
+> +	.name    = "ttyNVT",
+> +	.write   = ma35d1serial_console_write,
+> +	.device  = uart_console_device,
+> +	.setup   = ma35d1serial_console_setup,
+> +	.flags   = CON_PRINTBUFFER | CON_ENABLED,
+> +	.index   = -1,
+> +	.data    = &ma35d1serial_reg,
+
+I don't see console->data used anywhere in the driver?
+
+> +};
+...
+> +static int ma35d1serial_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res_mem;
+> +	struct uart_ma35d1_port *up;
+> +	int ret = 0;
+> +
+> +	if (pdev->dev.of_node) {
+> +		ret = of_alias_get_id(pdev->dev.of_node, "serial");
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +	up = &ma35d1serial_ports[ret];
+> +	up->port.line = ret;
+> +	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res_mem)
+> +		return -ENODEV;
+> +
+> +	up->port.iobase = res_mem->start;
+> +	up->port.membase = ioremap(up->port.iobase, MA35_UART_REG_SIZE);
+
+Check this too.
+
+> +	up->port.ops = &ma35d1serial_ops;
+> +
+> +	spin_lock_init(&up->port.lock);
+> +
+> +	up->clk = of_clk_get(pdev->dev.of_node, 0);
+> +	if (IS_ERR(up->clk)) {
+> +		ret = PTR_ERR(up->clk);
+> +		dev_err(&pdev->dev, "failed to get core clk: %d\n", ret);
+> +		goto err_iounmap;
+> +	}
+> +
+> +	ret = clk_prepare_enable(up->clk);
+> +	if (ret)
+> +		goto err_iounmap;
+> +
+> +	if (up->port.line != 0)
+> +		up->port.uartclk = clk_get_rate(up->clk);
+> +
+> +	ret = platform_get_irq(pdev, 0);
+> +	if (ret < 0)
+> +		goto err_clk_disable;
+> +
+> +	up->port.irq = ret;
+> +	up->port.dev = &pdev->dev;
+> +	up->port.flags = UPF_BOOT_AUTOCONF;
+> +
+> +	platform_set_drvdata(pdev, up);
+> +
+> +	ret = uart_add_one_port(&ma35d1serial_reg, &up->port);
+> +	if (ret < 0)
+> +		goto err_free_irq;
+> +
+> +	return 0;
+> +
+> +err_free_irq:
+> +	free_irq(up->port.irq, &up->port);
+> +
+> +err_clk_disable:
+> +	clk_disable_unprepare(up->clk);
+> +
+> +err_iounmap:
+> +	iounmap(up->port.membase);
+> +	return ret;
+> +}
+
+thanks,
+-- 
+js
+suse labs
 
