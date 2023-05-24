@@ -2,151 +2,259 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69902C7EE23
-	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 09:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91B0C7EE2C
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 09:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234511AbjEXJCI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 May 2023 05:02:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34886 "EHLO
+        id S236395AbjEXJ15 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 May 2023 05:27:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236330AbjEXJCH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 05:02:07 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2E218E;
-        Wed, 24 May 2023 02:02:01 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 1012524E26B;
-        Wed, 24 May 2023 17:01:53 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 24 May
- 2023 17:01:52 +0800
-Received: from [192.168.125.131] (183.27.98.143) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 24 May
- 2023 17:01:51 +0800
-Message-ID: <38a9cb77-18b3-4daa-724b-9f2282f7d948@starfivetech.com>
-Date:   Wed, 24 May 2023 17:00:02 +0800
+        with ESMTP id S231422AbjEXJ14 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 05:27:56 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC01F90;
+        Wed, 24 May 2023 02:27:54 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 771EA5FD41;
+        Wed, 24 May 2023 12:27:51 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1684920471;
+        bh=EfIel68BfcMlk4RH9fou0d53InM6tvfEdFTRJf8LhVY=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=h/nzMME2gPZvUYWTE1gtwmIunx70knYY/bSk5aLhD3yJ3AfRlG/ele4u4CoqPz7Bi
+         4LcjfAqg7bzivB5VpKllWnA17Ny8H4GU0Z1cXCAmE6uESh0DRwFP3QHNJdO45w/57J
+         7DXBPb+/XE3cYHC1kyVZSGBap7+g2QLs2KoOzBIrAKLLU2TOQ2CIu/hPsLHwq+Ojig
+         e7IUZOFqH12o/mY1oxyczkJEG1CBc5D+w9U60i+R2u6JQC+UpvRjBknB2lkG4ZL+Y4
+         GaWoxb0SFk2nR9pi8i+vQE4SPJji4BVDFbuhNkQ0YtG8yOyP7grGuBuFqsM7l1H21I
+         9jQSDWmM4L6uQ==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Wed, 24 May 2023 12:27:50 +0300 (MSK)
+Date:   Wed, 24 May 2023 12:27:50 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <khilman@baylibre.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+Message-ID: <20230524092750.ldm362chnpkwkcj4@CAB-WSD-L081021>
+References: <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
+ <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
+ <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
+ <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
+ <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
+ <573d96df-7b08-4fa2-668b-58ff674a314e@gmail.com>
+ <20230522134425.pc5fhojf53v6q2jz@CAB-WSD-L081021>
+ <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
+ <20230523102318.kf3o5rtmqdy2patg@CAB-WSD-L081021>
+ <2c1f7878-e58c-258f-283d-38d08ebaa07a@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock
- generator
-Content-Language: en-US
-To:     Conor Dooley <conor.dooley@microchip.com>,
-        Torsten Duwe <duwe@lst.de>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <yanhong.wang@starfivetech.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Hal Feng" <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <u-boot@lists.denx.de>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
- <20230512022036.97987-2-xingyu.wu@starfivetech.com>
- <20230519135733.GA10188@lst.de>
- <20230519-smokeless-guileless-2a71cae06509@wendy>
- <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
- <20230523-fondue-monotype-0c751a8f0c13@wendy>
- <20230523131006.46997d84@blackhole.lan>
- <20230523-saturate-axis-f46b78b7b82b@wendy>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <20230523-saturate-axis-f46b78b7b82b@wendy>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.98.143]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2c1f7878-e58c-258f-283d-38d08ebaa07a@gmail.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/24 06:36:00 #21405912
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/5/23 19:28, Conor Dooley wrote:
-> On Tue, May 23, 2023 at 01:10:06PM +0200, Torsten Duwe wrote:
->> On Tue, 23 May 2023 09:28:39 +0100
->> Conor Dooley <conor.dooley@microchip.com> wrote:
->> 
->> > On Tue, May 23, 2023 at 10:56:43AM +0800, Xingyu Wu wrote:
->> > > On 2023/5/19 22:16, Conor Dooley wrote:
->> > > > On Fri, May 19, 2023 at 03:57:33PM +0200, Torsten Duwe wrote:
->> > > >> On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
->> > > >> [...]
->> 
->> > > >> > +/* PLL clocks */
->> > > >> > +#define JH7110_CLK_PLL0_OUT			0
->> > > >> > +#define JH7110_CLK_PLL1_OUT			1
->> > > >> > +#define JH7110_CLK_PLL2_OUT			2
->> > > >> 
->> > > >> In U-Boot commit 58c9c60b Yanhong Wang added:
->> > > >> 
->> > > >> +
->> > > >> +#define JH7110_SYSCLK_PLL0_OUT                       190
->> > > >> +#define JH7110_SYSCLK_PLL1_OUT                       191
->> > > >> +#define JH7110_SYSCLK_PLL2_OUT                       192
->> > > >> +
->> > > >> +#define JH7110_SYSCLK_END                    193
->> [...]
->> > > > Ohh, that's not good.. If you pass the U-Boot dtb to Linux it
->> > > > won't understand the numbering. The headers are part of the
->> > > > dt-binding :/
->> 
->> In fact, the clock index >= 190 makes linux hang on boot, waiting with
->> EPROBE_DEFER for every device's clock, because the sysclk driver errors
->> out with EINVAL (jh7110_sysclk_get()).
-> 
-> Yup, that's about what I expected to happen.
-> 
->> > > Because PLL driver is separated from SYSCRG drivers in Linux, the
->> > > numbering starts from 0. But in Uboot, the PLL driver is included
->> > > in the SYSCRG driver, and the number follows the SYSCRG.
->> > 
->> > Unfortunately, how you choose to construct your drivers has nothing to
->> > do with this.
->> > These defines/numbers appear in the dts and are part of the DT ABI.
->> > The same dts is supposed to work for Linux & U-Boot.
->> 
->> The JH7110 has 6 blocks of 64k iomem in that functional area:
->> {SYS,STG,AON} x {CRG,SYSCON}. None of these has 190 clocks.
->> The good news: the current DTS, as proposed here and in U-Boot master,
->> provides nodes for all 6 entities. The bad news is that the clock
->> assignments to those nodes and their numbering is messed up.
->> 
->> AFAICT PLL{0,1,2} _are_ generated in SYS_SYSCON and thus U-Boot gets it
->> wrong, in addition to the erroneous DTS.
-> 
-> The numbers are kinda hocus-pocus anyway, they are just made up since the
-> clock numbering usually isn't something with a nice TRM to go and
-> reference (unlike interrupts which usually are documented in that way).
-> It is very helpful to make them aligned some register/bit positions or,
-> but that is not required.
-> IOW U-Boot is not wrong per se to use 190 instead of 0, but it is wrong
-> to have different numbers in both places.
-> 
-> It sounds like you're saying that (and I have not looked) the U-Boot dts
-> actually has structural difference w.r.t. what provides which clock?
-> If so, that'll need to be fixed independently of the numbering problem.
-> 
-> Otherwise Xingyu & Yanhong should coordinate on which is the "correct"
-> way of doing things & do it in both places.
+On Tue, May 23, 2023 at 09:13:46PM +0200, Heiner Kallweit wrote:
+> On 23.05.2023 12:23, Dmitry Rokosov wrote:
+> > Heiner,
+> > 
+> > On Mon, May 22, 2023 at 10:35:59PM +0200, Heiner Kallweit wrote:
+> >> On 22.05.2023 15:44, Dmitry Rokosov wrote:
+> >>> Heiner,
+> >>>
+> >>> On Fri, May 19, 2023 at 06:10:50PM +0200, Heiner Kallweit wrote:
+> >>>> On 18.05.2023 22:04, Martin Blumenstingl wrote:
+> >>>>> Hi Dmitry,
+> >>>>>
+> >>>>> On Wed, May 17, 2023 at 12:34 PM Dmitry Rokosov
+> >>>>> <ddrokosov@sberdevices.ru> wrote:
+> >>>>> [...]
+> >>>>>>>> Additionally, the CCF determines the best ancestor based on how close
+> >>>>>>>> its rate is to the given one, based on arithmetic calculations. However,
+> >>>>>>>> we have independent knowledge that a certain clock would be better, with
+> >>>>>>>> less jitter and fewer intermediaries, which will likely improve energy
+> >>>>>>>> efficiency. Sadly, the CCF cannot take this into account.
+> >>>>>>> I agree that the implementation in CCF is fairly simple. There's ways
+> >>>>>>> to trick it though: IIRC if there are multiple equally suitable clocks
+> >>>>>>> it picks the first one. For me all of this has worked so far which is
+> >>>>>>> what makes me curious in this case (not saying that anything is wrong
+> >>>>>>> with your approach).
+> >>>>>>>
+> >>>>>>> Do you have a (real world) example where the RTC clock should be
+> >>>>>>> preferred over another clock?
+> >>>>>>>
+> >>>>>>
+> >>>>>> Yes, a real-life example is the need for a 32Khz clock for an external
+> >>>>>> wifi chip. There is one option to provide this clock with high
+> >>>>>> precision, which is RTC + GENCLK.
+> >>>>>>
+> >>>>>>> I'm thinking about the following scenario.
+> >>>>>>> PWM parents:
+> >>>>>>> - XTAL: 24MHz
+> >>>>>>> - sys: not sure - let's say 166.67MHz
+> >>>>>>> - RTC: 32kHz
+> >>>>>>>
+> >>>>>>> Then after that there's a divider and a gate.
+> >>>>>>>
+> >>>>>>> Let's say the PWM controller needs a 1MHz clock: it can take that from
+> >>>>>>> XTAL or sys. Since XTAL is evenly divisible to 1MHz CCF will pick that
+> >>>>>>> and use the divider.
+> >>>>>>> But let's say the PWM controller needs a 32kHz clock: CCF would
+> >>>>>>> automatically pick the RTC clock.
+> >>>>>>> So is your implementation there to cover let's say 1kHz where
+> >>>>>>> mathematically 24MHz can be divided evenly to 1kHz (and thus should
+> >>>>>>> not result in any jitter) but RTC gives better precision in the real
+> >>>>>>> world (even though it's off by 24Hz)?
+> >>>>>>>
+> >>>>>>
+> >>>>>> I don't think so. The highest precision that RTC can provide is from a
+> >>>>>> 32KHz rate only. However, I believe that a 1kHz frequency can also be
+> >>>>>> achieved by using xtal 24MHz with a divider, which can provide high
+> >>>>>> precision as well.
+> >>>>> Thank you again for the great discussion on IRC today.
+> >>>>> Here's my short summary so I don't forget before you'll follow up on this.
+> >>>>>
+> >>>>> In general there's two known cases where the RTC clock needs to be used:
+> >>>>> a) When using the GENCLK output of the SoC to output the 32kHz RTC
+> >>>>> clock and connect that to an SDIO WiFi chip clock input (this seems
+> >>>>> useful in my understanding because the RTC clock provides high
+> >>>>> precision)
+> >>>>> b) When using the PWM controller to output a 32kHz clock signal. In
+> >>>>> this case my understanding is that using the RTC clock as input to the
+> >>>>> PWM controller results in the best possible signal
+> >>>>>
+> >>>>> The second case won't be supported with Heiner's patches [0] that use
+> >>>>> CCF (common clock framework) in the PWM controller driver.
+> >>>>> In this series the parent clock is calculated using:
+> >>>>>   freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+> >>>>>
+> >>>>> A 32kHz clock means a PWM period of 30518ns. So with the above
+> >>>>
+> >>>> To be precise: 30517,578125ns
+> >>>> What means that the PWM framework can't say "I want 32768Hz",
+> >>>> but just "I want something being very close to 32768Hz".
+> >>>> So what you need is some simple heuristic to interpret the
+> >>>> PWM request -> "PWM requests 30518ns, but supposedly it wants
+> >>>> 32768Hz"
+> >>>>
+> >>>> NSEC_PER_SEC / 30518 = 32767 (rounded down from 32767,547)
+> >>>> clk_round_rate(channel->clk, 32767) would return 0 (I *think*),
+> >>>> because it tries to find the next lower clock.
+> >>>>
+> >>>> The SoC families I'm familiar with have fclkin2 as PWM parent.
+> >>>> That's 1 GHz in my case, what results in a frequency of 32.767,547Hz
+> >>>> for period = 30518n.
+> >>>> What you're saying is that newer generations don't have PWM parents
+> >>>>> 24MHz any longer?
+> >>>
+> >>> No, of course not. For example, a fixed PLL (with all fclk_divX
+> >>> settings) has rates higher than 24MHz. However, we need to consider the
+> >>> 'heavy' background of such PWM.
+> >>>
+> >>> However, we have a "lightweight" clkin (special rtc32k) with a rate of
+> >>> 32kHz that we could potentially use as an input to produce a 32kHz
+> >>> output on the PWM lines. I don't see any reason why we should not
+> >>> support such special cases.
+> >>>
+> >>
+> >> Two more things to consider:
+> >> 1. When wanting a 32kHz (well, 32768Hz) output with a 50% duty cycle,
+> >>    then we need hi=0 and lo=0 with a 64kHz input clock.
+> >>    See point 2 for an explanation of why 0 and not 1.
+> >>    Means we couldn't use the RTC input clock. Did you consider this?
+> >>    Or do I miss something?
+> > 
+> > Nope, that's my fault. Using a 32kHz base clock for rates of 16kHz or
+> > lower that can be divided evenly is a good choice. However, as you
+> > mentioned in point 2, the problem with autoincrements should be fixed
+> > first.
+> > 
+> >> 2. Seems the PWM block internally increments hi and lo, except the
+> >>    constant_en bit is set on newer PWM block versions.
+> >>    For bigger cnt values the impact is negligible, but for very small
+> >>    values it's something we have to consider.
+> >>    This was one additional motivation for me to choose an input
+> >>    frequency that creates big cnt values.
+> > 
+> > George has a patchset for this and he will send it very soon as he
+> > mentioned in another email. Let's assume the code is already fixed and
+> > no longer has any issues. In my opinion, if we want to generate rates of
+> > 16kHz, 8kHz, 4kHz, etc., the best parent clock to use is a 32kHz RTC.
+> > High-rate clocks may not divide evenly and may not generate an accurate
+> > output rate. What do you think about it?
+> > 
+> With the logic in the CCF conversion patch set for these rates the 24MHz
+> xtal mux input would be used, creating exactly the requested rates.
+> So I see no difference here. What I don't know is whether power
+> consumption may be higher with a higher input rate, or whether quality
+> of the mux parent clocks differs.
 > 
 
-Oh, unfortunately, the 7110 can not support to mix the uboot dtb and linux dtb up.
-If boot the Linux and should use the linux dtb instead of the uboot dtb.
-Because all clock ids and reset ids in Linux and Uboot are different include
-PLL, and some modules can work in Linux but not in uboot.
-I suggest to boot Linux with its own linux dtb.
+We conducted some experiments on our end and tried using different
+clocks as inputs for PWM to generate small rates like 16kHz. The clock
+with the least amount of jitter for the resulting output was the RTC
+parent at 32kHz, while using the 64MHz (system clock) or the 24MHz (xtal
+clock) resulted in more jitter values but was still acceptable.
 
-Best regards,
-Xingyu Wu
+As for power consumption, I'm not knowledgeable about it; it's something
+only Amlolgic has all the secrets to. However, I presume there was a
+strong reason to create a separate RTC clock with good 32kHz quality.
 
+> >>
+> >>>>
+> >>>>
+> >>>>> calculation the PWM driver is asking for a clock rate of >=2GHz.
+> >>>>> We concluded that letting the common clock framework choose the best
+> >>>>> possible parent (meaning: removing CLK_SET_RATE_NO_REPARENT here) can
+> >>>>> be a way forward.
+> >>>>> But this means that the PWM controller driver must try to find the
+> >>>>> best possible parent somehow. The easiest way we came up with
+> >>>>> (pseudo-code):
+> >>>>>   freq = NSEC_PER_SEC / period;
+> >>>>>   fin_freq = clk_round_rate(channel->clk, freq);
+> >>>>>   if (fin_freq != freq) {
+> >>>>>     freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+> >>>>>     fin_freq = clk_round_rate(channel->clk, freq);
+> >>>>>   }
+> >>>>>
+> >>>>> The idea is: for a requested 32kHz signal the PWM period is 30518ns.
+> >>>>> The updated logic would find that there's a matching clock input and
+> >>>>> use that directly. If not: use the original logic as suggested by
+> >>>>> Heiner.
+> >>>>>
+> >>>>>
+> >>>>> Best regards,
+> >>>>> Martin
+> >>>>>
+> >>>>>
+> >>>>> [0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e323e@gmail.com/
+> >>>>
+> >>>
+> >>
+> > 
+> 
 
+-- 
+Thank you,
+Dmitry
