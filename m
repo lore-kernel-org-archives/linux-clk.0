@@ -2,140 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B58C7EE23
-	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 01:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E620DC77B73
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 05:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239071AbjEXBtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 21:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43138 "EHLO
+        id S233709AbjEXF14 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 May 2023 01:27:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238919AbjEXBtc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 21:49:32 -0400
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 174EF13E;
-        Tue, 23 May 2023 18:49:29 -0700 (PDT)
-Received: from loongson.cn (unknown [223.106.25.146])
-        by gateway (Coremail) with SMTP id _____8BxGvIobW1kr0QAAA--.909S3;
-        Wed, 24 May 2023 09:49:28 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.106.25.146])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxsOQnbW1kJ3tyAA--.60436S2;
-        Wed, 24 May 2023 09:49:27 +0800 (CST)
-From:   Binbin Zhou <zhoubinbin@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Huacai Chen <chenhuacai@loongson.cn>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        loongson-kernel@lists.loongnix.cn,
-        Binbin Zhou <zhoubinbin@loongson.cn>, stable@vger.kernel.org,
-        Yinbo Zhu <zhuyinbo@loongson.cn>
-Subject: [PATCH] clk: clk-loongson2: Zero init clk_init_data
-Date:   Wed, 24 May 2023 09:49:24 +0800
-Message-Id: <20230524014924.2869051-1-zhoubinbin@loongson.cn>
-X-Mailer: git-send-email 2.39.1
+        with ESMTP id S229920AbjEXF1z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 01:27:55 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2BDF13E;
+        Tue, 23 May 2023 22:27:53 -0700 (PDT)
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34O5QJMQ011402;
+        Wed, 24 May 2023 05:27:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=vDRlbCPueHl+m8WtGe+G1vGaIcLuvwNJ0UbZoqCVEc0=;
+ b=QXoCVMQch7LvvVFKg6nD4rTAUdUKkfjc4PsppUClxRYNfNrqQU8GtXGU4g7rQ+GbXDtx
+ eSx4M328aAR7wtWLYr9LDSWQ9vVxpPyHXVDBs3/gnIYmX5iPBt2Kl0s/a8jYHyhMVKcM
+ WVn//4FE0D28FKDyIM7HvWPZEDilcx1NjIhVAaBFsOb5vJD4qTdZeAKO7Xq5rIY3ZkT0
+ iNWFq8N3QkU+5f8DNMEHm39wgNN8OAjgr10lRSSjclPyrAYzVoNmZElbMXAgyyQUAupy
+ ikHOpBo/W/6waIbnoH32r1MvTazBtpz4vjx60AN5fStDlILlXDA77KmtREK25os4t2f+ ZA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qscaur0fj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 May 2023 05:27:40 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34O5RdS0010827
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 May 2023 05:27:39 GMT
+Received: from [10.216.39.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 23 May
+ 2023 22:27:32 -0700
+Message-ID: <28a4d1e6-224d-9ecb-6b94-cffc3ecb408d@quicinc.com>
+Date:   Wed, 24 May 2023 10:57:28 +0530
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V3 4/4] arm64: dts: qcom: ipq9574: Enable crypto nodes
+To:     <bhupesh.sharma@linaro.org>, <agross@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <thara.gopinath@gmail.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <linux-arm-msm@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
+References: <20230518141105.24741-1-quic_anusha@quicinc.com>
+ <20230518141105.24741-5-quic_anusha@quicinc.com>
+ <93db4ee5-4fb8-f159-0cf4-ec1669c36dd1@linaro.org>
+From:   Anusha Canchi <quic_anusha@quicinc.com>
+In-Reply-To: <93db4ee5-4fb8-f159-0cf4-ec1669c36dd1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8CxsOQnbW1kJ3tyAA--.60436S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjvJXoWxZw15XFy7Cw4rAF43ury7Awb_yoW7JryrpF
-        y7JrW8Gr48Jr1DAF48AF1UJr45Ja47AF48Gr1UJr1UZr1UWr1DXFyjyrWUJr17Ar45Jry7
-        Jr1vqr15Kr1DG3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        b7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
-        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-        wVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
-        x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AI
-        xVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64
-        kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm
-        72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I
-        0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
-        GVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
-        0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0
-        rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r
-        4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4xb4uA5YvSKQvmVFDQ08UJ5O6mIQuv41
+X-Proofpoint-GUID: 4xb4uA5YvSKQvmVFDQ08UJ5O6mIQuv41
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-24_02,2023-05-23_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ impostorscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305240045
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As clk_core_populate_parent_map() checks clk_init_data.num_parents
-first, and checks clk_init_data.parent_names[] before
-clk_init_data.parent_data[] and clk_init_data.parent_hws[].
 
-Therefore the clk_init_data structure needs to be explicitly initialised
-to prevent an unexpected crash if clk_init_data.parent_names[] is a
-random value.
 
-[    1.374074] CPU 0 Unable to handle kernel paging request at virtual address 0000000000000dc0, era == 9000000002986290, ra == 900000000298624c
-[    1.386856] Oops[#1]:
-[    1.389151] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.4.0-rc2+ #4582
-[    1.395717] pc 9000000002986290 ra 900000000298624c tp 9000000100094000 sp 9000000100097a60
-[    1.404126] a0 9000000104541e00 a1 0000000000000000 a2 0000000000000dc0 a3 0000000000000001
-[    1.412533] a4 90000001000979f0 a5 90000001800977d7 a6 0000000000000000 a7 900000000362a000
-[    1.420939] t0 90000000034f3548 t1 6f8c2a9cb5ab5f64 t2 0000000000011340 t3 90000000031cf5b0
-[    1.429346] t4 0000000000000dc0 t5 0000000000000004 t6 0000000000011300 t7 9000000104541e40
-[    1.437753] t8 000000000005a4f8 u0 9000000104541e00 s9 9000000104541e00 s0 9000000104bc4700
-[    1.446159] s1 9000000104541da8 s2 0000000000000001 s3 900000000356f9d8 s4 ffffffffffffffff
-[    1.454565] s5 0000000000000000 s6 0000000000000dc0 s7 90000000030d0a88 s8 0000000000000000
-[    1.462972]    ra: 900000000298624c __clk_register+0x228/0x84c
-[    1.468854]   ERA: 9000000002986290 __clk_register+0x26c/0x84c
-[    1.474724]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
-[    1.480975]  PRMD: 00000004 (PPLV0 +PIE -PWE)
-[    1.485373]  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
-[    1.490209]  ECFG: 00071c1c (LIE=2-4,10-12 VS=7)
-[    1.494865] ESTAT: 00010000 [PIL] (IS= ECode=1 EsubCode=0)
-[    1.500390]  BADV: 0000000000000dc0
-[    1.503899]  PRID: 0014a000 (Loongson-64bit, )
-[    1.508369] Modules linked in:
-[    1.511447] Process swapper/0 (pid: 1, threadinfo=(____ptrval____), task=(____ptrval____))
-[    1.519768] Stack : 90000000031c1810 90000000030d0a88 900000000325bac0 90000000034f3548
-[    1.527848]         90000001002ab410 9000000104541e00 0000000000000dc0 9000000003150098
-[    1.535923]         90000000031c1810 90000000031a0460 900000000362a000 90000001002ab410
-[    1.543998]         900000000362a000 9000000104541da8 9000000104541de8 90000001002ab410
-[    1.552073]         900000000362a000 9000000002986a68 90000000034f3ed8 90000000030d0aa8
-[    1.560148]         9000000104541da8 900000000298d3b8 90000000031c1810 0000000000000000
-[    1.568223]         90000000034f3ed8 90000000030d0aa8 0000000000000dc0 90000000030d0a88
-[    1.576298]         90000001002ab410 900000000298d401 0000000000000000 6f8c2a9cb5ab5f64
-[    1.584373]         90000000034f4000 90000000030d0a88 9000000003a48a58 90000001002ab410
-[    1.592448]         9000000104bd81a8 900000000298d484 9000000100020260 0000000000000000
-[    1.600523]         ...
-[    1.602993] Call Trace:
-[    1.603000] [<9000000002986290>] __clk_register+0x26c/0x84c
-[    1.611072] [<9000000002986a68>] devm_clk_hw_register+0x5c/0xe0
-[    1.617031] [<900000000298d3b8>] loongson2_clk_register.constprop.0+0xdc/0x10c
-[    1.624314] [<900000000298d484>] loongson2_clk_probe+0x9c/0x4ac
-[    1.630270] [<9000000002a4eba4>] platform_probe+0x68/0xc8
-[    1.635703] [<9000000002a4bf80>] really_probe+0xbc/0x2f0
-[    1.641054] [<9000000002a4c23c>] __driver_probe_device+0x88/0x128
-[    1.647185] [<9000000002a4c318>] driver_probe_device+0x3c/0x11c
-[    1.653142] [<9000000002a4c5dc>] __driver_attach+0x98/0x18c
-[    1.658749] [<9000000002a49ca0>] bus_for_each_dev+0x80/0xe0
-[    1.664357] [<9000000002a4b0dc>] bus_add_driver+0xfc/0x1ec
-[    1.669878] [<9000000002a4d4a8>] driver_register+0x68/0x134
-[    1.675486] [<90000000020f0110>] do_one_initcall+0x50/0x188
-[    1.681094] [<9000000003150f00>] kernel_init_freeable+0x224/0x294
-[    1.687226] [<90000000030240fc>] kernel_init+0x20/0x110
-[    1.692493] [<90000000020f1568>] ret_from_kernel_thread+0xc/0xa4
+On 5/22/2023 2:23 PM, bhupesh.sharma@linaro.org wrote:
+> On 5/18/23 7:41 PM, Anusha Rao <quic_anusha@quicinc.com> wrote:
+>> Enable crypto support for ipq9574.
+>>
+>> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+>> ---
+>>   Changes in V3:
+>>     - No change.
+>>
+>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi 
+>> b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> index fea15f3cf910..6e52d35a6a15 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> @@ -123,6 +123,26 @@
+>>               clock-names = "core";
+>>           };
+>>   +        cryptobam: dma-controller@704000 {
+>> +            compatible = "qcom,bam-v1.7.0";
+>
+> Please confirm if this is "qcom,bam-v1.7.4" or "qcom,bam-v1.7.0". If 
+> "qcom,bam-v1.7.4" please use the newer compatible format.
+Sure, will update.
 
-Fixes: acc0ccffec50 ("clk: clk-loongson2: add clock controller driver support")
-Cc: stable@vger.kernel.org
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>
-Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
----
- drivers/clk/clk-loongson2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index 70ae1dd2e474..b839edd7271b 100644
---- a/drivers/clk/clk-loongson2.c
-+++ b/drivers/clk/clk-loongson2.c
-@@ -40,7 +40,7 @@ static struct clk_hw *loongson2_clk_register(struct device *dev,
- {
- 	int ret;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 
- 	hw = devm_kzalloc(dev, sizeof(*hw), GFP_KERNEL);
- 	if (!hw)
--- 
-2.39.1
+Thanks,
+Anusha
+>
+> Thanks,
+> Bhupesh
+>
+>> +            reg = <0x00704000 0x20000>;
+>> +            interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
+>> +            #dma-cells = <1>;
+>> +            qcom,ee = <1>;
+>> +            qcom,controlled-remotely;
+>> +        };
+>> +
+>> +        crypto: crypto@73a000 {
+>> +            compatible = "qcom,ipq9574-qce", "qcom,ipq4019-qce", 
+>> "qcom,qce";
+>> +            reg = <0x0073a000 0x6000>;
+>> +            clocks = <&gcc GCC_CRYPTO_AHB_CLK>,
+>> +                 <&gcc GCC_CRYPTO_AXI_CLK>,
+>> +                 <&gcc GCC_CRYPTO_CLK>;
+>> +            clock-names = "iface", "bus", "core";
+>> +            dmas = <&cryptobam 2>, <&cryptobam 3>;
+>> +            dma-names = "rx", "tx";
+>> +        };
+>> +
+>>           tlmm: pinctrl@1000000 {
+>>               compatible = "qcom,ipq9574-tlmm";
+>>               reg = <0x01000000 0x300000>;
+>>
 
