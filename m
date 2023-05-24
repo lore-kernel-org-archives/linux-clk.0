@@ -2,127 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F43C7EE2E
-	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 18:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21936C77B7C
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 19:04:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236396AbjEXSTb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 May 2023 14:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50568 "EHLO
+        id S231688AbjEXTDb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 May 2023 15:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237166AbjEXSTX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 14:19:23 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FA1798;
-        Wed, 24 May 2023 11:19:14 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34OEnR9D015569;
-        Wed, 24 May 2023 18:19:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=BePHY609kxh/0jqG1ytMzLiAyWzRWBWwdGc9FfWw98U=;
- b=Y1RJQn5ZWTr04CeOKNboFrYurnpVXqqy9V6ERjUF1VK0T9pDOWJgxJZF0OZnbWgVc8cU
- xcB5unQ3ZFV0sxI4T/a6ZbIa8+xf+ZVjNwfFnFAvK8u5bHnZYO9rG9262smyjF5gx1nN
- KyBELoKlkriSm/La21H5GcMWAgJQU5dzaEk8JvGd7U85hVXmRaykMJ3W6zysUO4pgK4o
- lqVu5nvLj9s5S0BRXFlItbyxJiawkz+j937nib83n7QpaUEDBOz45DeHpr8vYs0eOHpJ
- ArohBmxGyWP1M30ovXZs93shjdSU+Jb1EZe7sGvguPhLhndbsk5/jBSv74aYSFsbBqH3 jw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qsf881d0u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 18:19:11 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34OIInt5007327
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 18:18:49 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 24 May 2023 11:18:44 -0700
-From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S232956AbjEXTDU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 15:03:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2AA712E;
+        Wed, 24 May 2023 12:03:19 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 45B0963F15;
+        Wed, 24 May 2023 19:03:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A722C433EF;
+        Wed, 24 May 2023 19:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684954998;
+        bh=UQc7sqI+omtijBWOP3aJiUq6sJnEgSYIqfC+1+bdXDo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bllWg1WKAYqSqpLR6Y6TS6A6BpF6BUITfN1spBb+rsL5wyoiY5wIr9Jy5kq6sQiIL
+         /eywATv83ejYaXUBdQLeAspAg8Rh2TUVtPnesyOoD1MIxmJg0ZLx3oRav6wWax2OIg
+         75JXJNWFGwkzgc0eKMf5AubycsSIsfF1S3c1ZyNL7YQkQfEh5IagYbTIRELGKJEvJs
+         lPsHYPziTAl6i1qnbHqQWCcA5JD23fvWxH/aqSe6uJmqiVyaj4x8spqx8yW6x79JVV
+         pZu3N2eci+uSE/6u7NsmM72ASBf7lmUpaW8QOX/5/cuWmGtHL25i+/n3Z0tyScseVE
+         9gjAcEqV1r5qQ==
+Date:   Wed, 24 May 2023 20:03:12 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
         Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
         Imran Shaik <quic_imrashai@quicinc.com>,
-        "Ajit Pandey" <quic_ajipan@quicinc.com>
-Subject: [PATCH V2 3/3] arm64: dts: qcom: sm8550: Add graphics clock controller
-Date:   Wed, 24 May 2023 23:48:00 +0530
-Message-ID: <20230524181800.28717-4-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230524181800.28717-1-quic_jkona@quicinc.com>
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: Re: [PATCH V2 1/3] dt-bindings: clock: qcom: Add SM8550 graphics
+ clock controller
+Message-ID: <20230524-blimp-hyperlink-6b235104028b@spud>
 References: <20230524181800.28717-1-quic_jkona@quicinc.com>
+ <20230524181800.28717-2-quic_jkona@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hcfZIqRYWvE9Ax43KRrjQZmTGRxpm8kX
-X-Proofpoint-GUID: hcfZIqRYWvE9Ax43KRrjQZmTGRxpm8kX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-24_13,2023-05-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 adultscore=0 bulkscore=0 spamscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=970 mlxscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305240152
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="oY3pL3KuASb4J59F"
+Content-Disposition: inline
+In-Reply-To: <20230524181800.28717-2-quic_jkona@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device node for graphics clock controller on Qualcomm
-SM8550 platform.
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
----
-Changes since V1:
- - No changes.
- 
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+--oY3pL3KuASb4J59F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index bef33b253813..d712640ee426 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -6,6 +6,7 @@
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sm8450-videocc.h>
- #include <dt-bindings/clock/qcom,sm8550-gcc.h>
-+#include <dt-bindings/clock/qcom,sm8550-gpucc.h>
- #include <dt-bindings/clock/qcom,sm8550-tcsr.h>
- #include <dt-bindings/clock/qcom,sm8550-dispcc.h>
- #include <dt-bindings/dma/qcom-gpi.h>
-@@ -1952,6 +1953,17 @@ tcsr: clock-controller@1fc0000 {
- 			#reset-cells = <1>;
- 		};
- 
-+		gpucc: clock-controller@3d90000 {
-+			compatible = "qcom,sm8550-gpucc";
-+			reg = <0 0x03d90000 0 0xa000>;
-+			clocks = <&bi_tcxo_div2>,
-+				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-+				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		remoteproc_mpss: remoteproc@4080000 {
- 			compatible = "qcom,sm8550-mpss-pas";
- 			reg = <0x0 0x04080000 0x0 0x4040>;
--- 
-2.40.1
+On Wed, May 24, 2023 at 11:47:58PM +0530, Jagadeesh Kona wrote:
+> Add device tree bindings for the graphics clock controller on
+> Qualcomm SM8550 platform.
+>=20
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+--oY3pL3KuASb4J59F
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG5fcAAKCRB4tDGHoIJi
+0oKTAQDoK99KS4eJud5cuC1zJi3DX/YYbzcwmOusRVfhUZwhdQEA2QVqOx7Vw9if
+cKgmaH9u5n6WZQK1w+OGMe5lsQVRFw0=
+=iU0j
+-----END PGP SIGNATURE-----
+
+--oY3pL3KuASb4J59F--
