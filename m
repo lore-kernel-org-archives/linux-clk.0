@@ -2,237 +2,123 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B7FC77B7C
-	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 07:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6AAC77B7A
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 07:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239670AbjEXHn0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 May 2023 03:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43162 "EHLO
+        id S234264AbjEXH5z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 May 2023 03:57:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235054AbjEXHnZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 03:43:25 -0400
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F4AE9;
-        Wed, 24 May 2023 00:43:02 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-96fb1642b09so85133666b.0;
-        Wed, 24 May 2023 00:43:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684914172; x=1687506172;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwgrcZ2UwBjm9qvElzAVRShxkr9NVzmzmVcR8DMPVj8=;
-        b=gwoCb4k7kosytRstrrwY+/Tfkh5Be2VOlVsSVd1a+ofL8nOe8lDKE86qIOJhCgtWvr
-         VQxm1jdtc88aK57m+xQHXgYf5CjriNPEv5ngisp4QgkMMCTovECQ85j00JmG87QxlIf4
-         KmSwjT2mtafiFDq+9LNYPb78qFXn70qt/Tr+JKINF9dRocHaKIePn7DiiOKfKwFjIOgc
-         sjGVlLBKAoRrN2Qmiv5BNkOJQPRFTcmI7FZxHa6bpzkIl0eDOJ6U3u1F782MQeks60jc
-         7N3Ni87XmbBDyR9uQVAAu2vzBRkxThSSRgomkvakO+LhzwQbH1tf1jWqIZ5Ard2w01t+
-         aBEg==
-X-Gm-Message-State: AC+VfDxLWwQtboeGa/pDyikCtjiALgzx/HQQLlCHN8J3Mo2pHU61HOUM
-        WWkj4M3ewkQl+80ZNU9TKQs=
-X-Google-Smtp-Source: ACHHUZ4HvOu04Y5mGSqqaAuE6ebBkKg8OJvbfmZxEJbWTMKb6kSYysDu9rwF9z+yUleqxo4VhBArLg==
-X-Received: by 2002:a17:907:2cc7:b0:959:18b2:454a with SMTP id hg7-20020a1709072cc700b0095918b2454amr15794693ejc.76.1684914172213;
-        Wed, 24 May 2023 00:42:52 -0700 (PDT)
-Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
-        by smtp.gmail.com with ESMTPSA id mj14-20020a170906af8e00b009659fa6eeddsm5381880ejb.196.2023.05.24.00.42.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 May 2023 00:42:51 -0700 (PDT)
-Message-ID: <3d4acb20-c80e-fd39-c0d0-e9b1e0309d81@kernel.org>
-Date:   Wed, 24 May 2023 09:42:50 +0200
+        with ESMTP id S231432AbjEXH5z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 03:57:55 -0400
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7E4393;
+        Wed, 24 May 2023 00:57:52 -0700 (PDT)
+Received: from [IPV6:2001:250:4000:511d:8894:e09e:de:de24] ([172.16.0.254])
+        (user=lyx2022@hust.edu.cn mech=PLAIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 34O7rxBA003146-34O7rxBB003146
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Wed, 24 May 2023 15:53:59 +0800
+Message-ID: <60946593-0df4-a131-fc4b-5c43b73df6ea@hust.edu.cn>
+Date:   Wed, 24 May 2023 15:53:59 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Content-Language: en-US
-To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, tmaimon77@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-serial@vger.kernel.org, arnd@arndb.de, soc@kernel.org,
-        schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230516075217.205401-1-ychuang570808@gmail.com>
- <20230516075217.205401-11-ychuang570808@gmail.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v11 10/10] tty: serial: Add Nuvoton ma35d1 serial driver
- support
-In-Reply-To: <20230516075217.205401-11-ychuang570808@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH] clk: imx: clk-imx8mp: improve error handling in
+ imx8mp_clocks_probe()
+To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20230503070607.2462-1-lyx2022@hust.edu.cn>
+From:   Yuxing Liu <lyx2022@hust.edu.cn>
+In-Reply-To: <20230503070607.2462-1-lyx2022@hust.edu.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-FEAS-AUTH-USER: lyx2022@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 16. 05. 23, 9:52, Jacky Huang wrote:
-> +static void ma35d1serial_config_port(struct uart_port *port, int flags)
-> +{
-> +	/*
-> +	 * Driver core for serial ports forces a non-zero value for port type.
-> +	 * Write an arbitrary value here to accommodate the serial core driver,
-> +	 * as ID part of UAPI is redundant.
-> +	 */
-> +	port->type = 1;
+ping?
 
-So this 1 translates to PORT_8250. Why not to use it directly? Or 
-something more saner like PORT_16550A?
-
-> +}
-> +
-> +static int ma35d1serial_verify_port(struct uart_port *port, struct serial_struct *ser)
-> +{
-> +	if (port->type != PORT_UNKNOWN && ser->type != 1)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-...
-> +static int __init ma35d1serial_console_setup(struct console *co, char *options)
-> +{
-> +	struct device_node *np = ma35d1serial_uart_nodes[co->index];
-> +	struct uart_ma35d1_port *p = &ma35d1serial_ports[co->index];
-> +	u32 val32[4];
-> +	struct uart_port *port;
-> +	int baud = 115200;
-> +	int bits = 8;
-> +	int parity = 'n';
-> +	int flow = 'n';
-> +
-> +	/*
-> +	 * Check whether an invalid uart number has been specified, and
-
-You dereferenced ma35d1serial_uart_nodes already. Doesn't 
-console=ttyNVT1000 (or something like that) crash the system?
-
-> +	 * if so, search for the first available port that does have
-> +	 * console support.
-
-The code below doesn't match this comment.
-
-> +	 */
-> +	if ((co->index < 0) || (co->index >= MA35_UART_NR)) {
-> +		pr_debug("Console Port%x out of range\n", co->index);
-> +		return -EINVAL;
+在 2023/5/3 15:06, Yuxing Liu 写道:
+> Replace of_iomap() and kzalloc() with devm_of_iomap() and devm_kzalloc()
+> which can automatically release the related memory when the device
+> or driver is removed or unloaded to avoid potential memory leak.
+>
+> In this case, iounmap(anatop_base) in line 427,433 are removed
+> as manual release is not required.
+>
+> Besides, referring to clk-imx8mq.c, check the return code of
+> of_clk_add_hw_provider, if it returns negtive, print error info
+> and unregister hws, which makes the program more robust.
+>
+> Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
+> Signed-off-by: Yuxing Liu <lyx2022@hust.edu.cn>
+> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+> ---
+> This issue is found by static analysis and remains untested.
+> ---
+>   drivers/clk/imx/clk-imx8mp.c | 24 +++++++++++++-----------
+>   1 file changed, 13 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 3253589851ff..de7d2d2176be 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -414,25 +414,22 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>   	struct device *dev = &pdev->dev;
+>   	struct device_node *np;
+>   	void __iomem *anatop_base, *ccm_base;
+> +	int err;
+>   
+>   	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
+> -	anatop_base = of_iomap(np, 0);
+> +	anatop_base = devm_of_iomap(dev, np, 0, NULL);
+>   	of_node_put(np);
+> -	if (WARN_ON(!anatop_base))
+> -		return -ENOMEM;
+> +	if (WARN_ON(IS_ERR(anatop_base)))
+> +		return PTR_ERR(anatop_base);
+>   
+>   	np = dev->of_node;
+>   	ccm_base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (WARN_ON(IS_ERR(ccm_base))) {
+> -		iounmap(anatop_base);
+> +	if (WARN_ON(IS_ERR(ccm_base)))
+>   		return PTR_ERR(ccm_base);
+> -	}
+>   
+> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
+> -	if (WARN_ON(!clk_hw_data)) {
+> -		iounmap(anatop_base);
+> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
+> +	if (WARN_ON(!clk_hw_data))
+>   		return -ENOMEM;
+> -	}
+>   
+>   	clk_hw_data->num = IMX8MP_CLK_END;
+>   	hws = clk_hw_data->hws;
+> @@ -721,7 +718,12 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+>   
+>   	imx_check_clk_hws(hws, IMX8MP_CLK_END);
+>   
+> -	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+> +	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to register hws for i.MX8MP\n");
+> +		imx_unregister_hw_clocks(hws, IMX8MP_CLK_END);
+> +		return err;
 > +	}
-> +
-> +	if (of_property_read_u32_array(np, "reg", val32, 4) != 0)
-
-Shouldn't that 4 be ARRAY_SIZE(val32) instead?
-
-> +		return -EINVAL;
-
-One \n here please.
-
-> +	p->port.iobase = val32[1];
-> +	p->port.membase = ioremap(p->port.iobase, MA35_UART_REG_SIZE);
-
-What if this fails?
-
-> +	p->port.ops = &ma35d1serial_ops;
-> +	p->port.line = 0;
-> +	p->port.uartclk = MA35_UART_CONSOLE_CLK;
-> +
-> +	port = &ma35d1serial_ports[co->index].port;
-
-Isn't this:
-   port = &p->port;
-?
-
-Either use port on all above lines or drop the "port" variable 
-completely and use "p->port" below instead.
-
-> +
-> +	if (options)
-> +		uart_parse_options(options, &baud, &parity, &bits, &flow);
-> +
-> +	return uart_set_options(port, co, baud, parity, bits, flow);
-> +}
-> +
-> +static struct console ma35d1serial_console = {
-> +	.name    = "ttyNVT",
-> +	.write   = ma35d1serial_console_write,
-> +	.device  = uart_console_device,
-> +	.setup   = ma35d1serial_console_setup,
-> +	.flags   = CON_PRINTBUFFER | CON_ENABLED,
-> +	.index   = -1,
-> +	.data    = &ma35d1serial_reg,
-
-I don't see console->data used anywhere in the driver?
-
-> +};
-...
-> +static int ma35d1serial_probe(struct platform_device *pdev)
-> +{
-> +	struct resource *res_mem;
-> +	struct uart_ma35d1_port *up;
-> +	int ret = 0;
-> +
-> +	if (pdev->dev.of_node) {
-> +		ret = of_alias_get_id(pdev->dev.of_node, "serial");
-> +		if (ret < 0) {
-> +			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +	up = &ma35d1serial_ports[ret];
-> +	up->port.line = ret;
-> +	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res_mem)
-> +		return -ENODEV;
-> +
-> +	up->port.iobase = res_mem->start;
-> +	up->port.membase = ioremap(up->port.iobase, MA35_UART_REG_SIZE);
-
-Check this too.
-
-> +	up->port.ops = &ma35d1serial_ops;
-> +
-> +	spin_lock_init(&up->port.lock);
-> +
-> +	up->clk = of_clk_get(pdev->dev.of_node, 0);
-> +	if (IS_ERR(up->clk)) {
-> +		ret = PTR_ERR(up->clk);
-> +		dev_err(&pdev->dev, "failed to get core clk: %d\n", ret);
-> +		goto err_iounmap;
-> +	}
-> +
-> +	ret = clk_prepare_enable(up->clk);
-> +	if (ret)
-> +		goto err_iounmap;
-> +
-> +	if (up->port.line != 0)
-> +		up->port.uartclk = clk_get_rate(up->clk);
-> +
-> +	ret = platform_get_irq(pdev, 0);
-> +	if (ret < 0)
-> +		goto err_clk_disable;
-> +
-> +	up->port.irq = ret;
-> +	up->port.dev = &pdev->dev;
-> +	up->port.flags = UPF_BOOT_AUTOCONF;
-> +
-> +	platform_set_drvdata(pdev, up);
-> +
-> +	ret = uart_add_one_port(&ma35d1serial_reg, &up->port);
-> +	if (ret < 0)
-> +		goto err_free_irq;
-> +
-> +	return 0;
-> +
-> +err_free_irq:
-> +	free_irq(up->port.irq, &up->port);
-> +
-> +err_clk_disable:
-> +	clk_disable_unprepare(up->clk);
-> +
-> +err_iounmap:
-> +	iounmap(up->port.membase);
-> +	return ret;
-> +}
-
-thanks,
--- 
-js
-suse labs
-
+>   
+>   	imx_register_uart_clocks();
+>   
