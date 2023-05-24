@@ -2,234 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7679C7EE29
-	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 00:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B58C7EE23
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 01:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238803AbjEXA40 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 20:56:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51688 "EHLO
+        id S239071AbjEXBtl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 21:49:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjEXA4W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 20:56:22 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A9BCD;
-        Tue, 23 May 2023 17:56:19 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 7F1085FD1B;
-        Wed, 24 May 2023 03:56:17 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1684889777;
-        bh=6UJu4At4JTYJZJm3ufdH8BuFWlW2L/vFJ5Zl0oCFuaU=;
-        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-        b=DyrqPvLXGsYToa8iWySrhnm3P5Z/mM8+b7Ss+5iIy3ovu7u3BaO9/wkN1Etw9JcaC
-         KM+5eMnqEmclo/iRjGd1wbCsLYLRtR1RoyTQCBIh8jGIpXL94EUUWsynGEoFzXu/zQ
-         MGn2eFGDaedaH+FQ4a7EpO66CEP27dhPSjU8+Z0iLoBCzpX0d1gqziMwLIO49gjoal
-         0OhojjOEUcuE+5KLhe3++MIy7NihYhcUR7G4GPd2XMb7PqyGzrvDS8JLFlq4+Au+m5
-         J5CtV3pjcKpje3XRe36ZjodKBhW7PaL+TYPwu2E3dfg2//oRq4wxjJ2gLdqgAkQDLt
-         KwzwYfM0U4DOw==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Wed, 24 May 2023 03:56:16 +0300 (MSK)
-Message-ID: <3fb39050-9543-f4a4-c8f2-a996e24c8e16@sberdevices.ru>
-Date:   Wed, 24 May 2023 03:52:06 +0300
+        with ESMTP id S238919AbjEXBtc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 21:49:32 -0400
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 174EF13E;
+        Tue, 23 May 2023 18:49:29 -0700 (PDT)
+Received: from loongson.cn (unknown [223.106.25.146])
+        by gateway (Coremail) with SMTP id _____8BxGvIobW1kr0QAAA--.909S3;
+        Wed, 24 May 2023 09:49:28 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.106.25.146])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxsOQnbW1kJ3tyAA--.60436S2;
+        Wed, 24 May 2023 09:49:27 +0800 (CST)
+From:   Binbin Zhou <zhoubinbin@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Huacai Chen <chenhuacai@loongson.cn>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        loongson-kernel@lists.loongnix.cn,
+        Binbin Zhou <zhoubinbin@loongson.cn>, stable@vger.kernel.org,
+        Yinbo Zhu <zhuyinbo@loongson.cn>
+Subject: [PATCH] clk: clk-loongson2: Zero init clk_init_data
+Date:   Wed, 24 May 2023 09:49:24 +0800
+Message-Id: <20230524014924.2869051-1-zhoubinbin@loongson.cn>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
- controller driver
-Content-Language: en-US
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
-        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "jian.hu@amlogic.com" <jian.hu@amlogic.com>,
-        kernel <kernel@sberdevices.ru>,
-        "rockosov@gmail.com" <rockosov@gmail.com>,
-        "linux-amlogic@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Dmitry Rokosov <DDRokosov@sberdevices.ru>
-References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
- <20230426095805.15338-7-ddrokosov@sberdevices.ru>
- <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
- <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
- <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
- <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
- <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
- <573d96df-7b08-4fa2-668b-58ff674a314e@gmail.com>
- <20230522134425.pc5fhojf53v6q2jz@CAB-WSD-L081021>
- <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
-From:   George Stark <gnstark@sberdevices.ru>
-In-Reply-To: <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/23 21:43:00 #21378639
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-CM-TRANSID: AQAAf8CxsOQnbW1kJ3tyAA--.60436S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxZw15XFy7Cw4rAF43ury7Awb_yoW7JryrpF
+        y7JrW8Gr48Jr1DAF48AF1UJr45Ja47AF48Gr1UJr1UZr1UWr1DXFyjyrWUJr17Ar45Jry7
+        Jr1vqr15Kr1DG3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        b7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
+        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+        wVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
+        x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AI
+        xVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64
+        kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm
+        72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I
+        0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
+        GVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
+        0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0
+        rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r
+        4UYxBIdaVFxhVjvjDU0xZFpf9x07j1WlkUUUUU=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/22/23 23:36, Heiner Kallweit wrote:
-> On 22.05.2023 15:44, Dmitry Rokosov wrote:
->> Heiner,
->>
->> On Fri, May 19, 2023 at 06:10:50PM +0200, Heiner Kallweit wrote:
->>> On 18.05.2023 22:04, Martin Blumenstingl wrote:
->>>> Hi Dmitry,
->>>>
->>>> On Wed, May 17, 2023 at 12:34 PM Dmitry Rokosov
->>>> <ddrokosov@sberdevices.ru> wrote:
->>>> [...]
->>>>>>> Additionally, the CCF determines the best ancestor based on how close
->>>>>>> its rate is to the given one, based on arithmetic calculations. However,
->>>>>>> we have independent knowledge that a certain clock would be better, with
->>>>>>> less jitter and fewer intermediaries, which will likely improve energy
->>>>>>> efficiency. Sadly, the CCF cannot take this into account.
->>>>>> I agree that the implementation in CCF is fairly simple. There's ways
->>>>>> to trick it though: IIRC if there are multiple equally suitable clocks
->>>>>> it picks the first one. For me all of this has worked so far which is
->>>>>> what makes me curious in this case (not saying that anything is wrong
->>>>>> with your approach).
->>>>>>
->>>>>> Do you have a (real world) example where the RTC clock should be
->>>>>> preferred over another clock?
->>>>>>
->>>>> Yes, a real-life example is the need for a 32Khz clock for an external
->>>>> wifi chip. There is one option to provide this clock with high
->>>>> precision, which is RTC + GENCLK.
->>>>>
->>>>>> I'm thinking about the following scenario.
->>>>>> PWM parents:
->>>>>> - XTAL: 24MHz
->>>>>> - sys: not sure - let's say 166.67MHz
->>>>>> - RTC: 32kHz
->>>>>>
->>>>>> Then after that there's a divider and a gate.
->>>>>>
->>>>>> Let's say the PWM controller needs a 1MHz clock: it can take that from
->>>>>> XTAL or sys. Since XTAL is evenly divisible to 1MHz CCF will pick that
->>>>>> and use the divider.
->>>>>> But let's say the PWM controller needs a 32kHz clock: CCF would
->>>>>> automatically pick the RTC clock.
->>>>>> So is your implementation there to cover let's say 1kHz where
->>>>>> mathematically 24MHz can be divided evenly to 1kHz (and thus should
->>>>>> not result in any jitter) but RTC gives better precision in the real
->>>>>> world (even though it's off by 24Hz)?
->>>>>>
->>>>> I don't think so. The highest precision that RTC can provide is from a
->>>>> 32KHz rate only. However, I believe that a 1kHz frequency can also be
->>>>> achieved by using xtal 24MHz with a divider, which can provide high
->>>>> precision as well.
->>>> Thank you again for the great discussion on IRC today.
->>>> Here's my short summary so I don't forget before you'll follow up on this.
->>>>
->>>> In general there's two known cases where the RTC clock needs to be used:
->>>> a) When using the GENCLK output of the SoC to output the 32kHz RTC
->>>> clock and connect that to an SDIO WiFi chip clock input (this seems
->>>> useful in my understanding because the RTC clock provides high
->>>> precision)
->>>> b) When using the PWM controller to output a 32kHz clock signal. In
->>>> this case my understanding is that using the RTC clock as input to the
->>>> PWM controller results in the best possible signal
->>>>
->>>> The second case won't be supported with Heiner's patches [0] that use
->>>> CCF (common clock framework) in the PWM controller driver.
->>>> In this series the parent clock is calculated using:
->>>>    freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
->>>>
->>>> A 32kHz clock means a PWM period of 30518ns. So with the above
->>> To be precise: 30517,578125ns
->>> What means that the PWM framework can't say "I want 32768Hz",
->>> but just "I want something being very close to 32768Hz".
->>> So what you need is some simple heuristic to interpret the
->>> PWM request -> "PWM requests 30518ns, but supposedly it wants
->>> 32768Hz"
->>>
->>> NSEC_PER_SEC / 30518 = 32767 (rounded down from 32767,547)
->>> clk_round_rate(channel->clk, 32767) would return 0 (I *think*),
->>> because it tries to find the next lower clock.
->>>
->>> The SoC families I'm familiar with have fclkin2 as PWM parent.
->>> That's 1 GHz in my case, what results in a frequency of 32.767,547Hz
->>> for period = 30518n.
->>> What you're saying is that newer generations don't have PWM parents
->>>> 24MHz any longer?
->> No, of course not. For example, a fixed PLL (with all fclk_divX
->> settings) has rates higher than 24MHz. However, we need to consider the
->> 'heavy' background of such PWM.
->>
->> However, we have a "lightweight" clkin (special rtc32k) with a rate of
->> 32kHz that we could potentially use as an input to produce a 32kHz
->> output on the PWM lines. I don't see any reason why we should not
->> support such special cases.
->>
-> Two more things to consider:
-> 1. When wanting a 32kHz (well, 32768Hz) output with a 50% duty cycle,
->     then we need hi=0 and lo=0 with a 64kHz input clock.
->     See point 2 for an explanation of why 0 and not 1.
->     Means we couldn't use the RTC input clock. Did you consider this?
->     Or do I miss something?
-> 2. Seems the PWM block internally increments hi and lo, except the
->     constant_en bit is set on newer PWM block versions.
->     For bigger cnt values the impact is negligible, but for very small
->     values it's something we have to consider.
->     This was one additional motivation for me to choose an input
->     frequency that creates big cnt values.
->
-Hello Heiner
+As clk_core_populate_parent_map() checks clk_init_data.num_parents
+first, and checks clk_init_data.parent_names[] before
+clk_init_data.parent_data[] and clk_init_data.parent_hws[].
 
-As I mentioned earlier I have some changes to take into account lo and hi regs incrementing.
+Therefore the clk_init_data structure needs to be explicitly initialised
+to prevent an unexpected crash if clk_init_data.parent_names[] is a
+random value.
 
-But it's more convenient to base my patch on top on one of yours (https://lore.kernel.org/linux-amlogic/23fe625e-dc23-4db8-3dce-83167cd3b206@gmail.com/)
+[    1.374074] CPU 0 Unable to handle kernel paging request at virtual address 0000000000000dc0, era == 9000000002986290, ra == 900000000298624c
+[    1.386856] Oops[#1]:
+[    1.389151] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.4.0-rc2+ #4582
+[    1.395717] pc 9000000002986290 ra 900000000298624c tp 9000000100094000 sp 9000000100097a60
+[    1.404126] a0 9000000104541e00 a1 0000000000000000 a2 0000000000000dc0 a3 0000000000000001
+[    1.412533] a4 90000001000979f0 a5 90000001800977d7 a6 0000000000000000 a7 900000000362a000
+[    1.420939] t0 90000000034f3548 t1 6f8c2a9cb5ab5f64 t2 0000000000011340 t3 90000000031cf5b0
+[    1.429346] t4 0000000000000dc0 t5 0000000000000004 t6 0000000000011300 t7 9000000104541e40
+[    1.437753] t8 000000000005a4f8 u0 9000000104541e00 s9 9000000104541e00 s0 9000000104bc4700
+[    1.446159] s1 9000000104541da8 s2 0000000000000001 s3 900000000356f9d8 s4 ffffffffffffffff
+[    1.454565] s5 0000000000000000 s6 0000000000000dc0 s7 90000000030d0a88 s8 0000000000000000
+[    1.462972]    ra: 900000000298624c __clk_register+0x228/0x84c
+[    1.468854]   ERA: 9000000002986290 __clk_register+0x26c/0x84c
+[    1.474724]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
+[    1.480975]  PRMD: 00000004 (PPLV0 +PIE -PWE)
+[    1.485373]  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+[    1.490209]  ECFG: 00071c1c (LIE=2-4,10-12 VS=7)
+[    1.494865] ESTAT: 00010000 [PIL] (IS= ECode=1 EsubCode=0)
+[    1.500390]  BADV: 0000000000000dc0
+[    1.503899]  PRID: 0014a000 (Loongson-64bit, )
+[    1.508369] Modules linked in:
+[    1.511447] Process swapper/0 (pid: 1, threadinfo=(____ptrval____), task=(____ptrval____))
+[    1.519768] Stack : 90000000031c1810 90000000030d0a88 900000000325bac0 90000000034f3548
+[    1.527848]         90000001002ab410 9000000104541e00 0000000000000dc0 9000000003150098
+[    1.535923]         90000000031c1810 90000000031a0460 900000000362a000 90000001002ab410
+[    1.543998]         900000000362a000 9000000104541da8 9000000104541de8 90000001002ab410
+[    1.552073]         900000000362a000 9000000002986a68 90000000034f3ed8 90000000030d0aa8
+[    1.560148]         9000000104541da8 900000000298d3b8 90000000031c1810 0000000000000000
+[    1.568223]         90000000034f3ed8 90000000030d0aa8 0000000000000dc0 90000000030d0a88
+[    1.576298]         90000001002ab410 900000000298d401 0000000000000000 6f8c2a9cb5ab5f64
+[    1.584373]         90000000034f4000 90000000030d0a88 9000000003a48a58 90000001002ab410
+[    1.592448]         9000000104bd81a8 900000000298d484 9000000100020260 0000000000000000
+[    1.600523]         ...
+[    1.602993] Call Trace:
+[    1.603000] [<9000000002986290>] __clk_register+0x26c/0x84c
+[    1.611072] [<9000000002986a68>] devm_clk_hw_register+0x5c/0xe0
+[    1.617031] [<900000000298d3b8>] loongson2_clk_register.constprop.0+0xdc/0x10c
+[    1.624314] [<900000000298d484>] loongson2_clk_probe+0x9c/0x4ac
+[    1.630270] [<9000000002a4eba4>] platform_probe+0x68/0xc8
+[    1.635703] [<9000000002a4bf80>] really_probe+0xbc/0x2f0
+[    1.641054] [<9000000002a4c23c>] __driver_probe_device+0x88/0x128
+[    1.647185] [<9000000002a4c318>] driver_probe_device+0x3c/0x11c
+[    1.653142] [<9000000002a4c5dc>] __driver_attach+0x98/0x18c
+[    1.658749] [<9000000002a49ca0>] bus_for_each_dev+0x80/0xe0
+[    1.664357] [<9000000002a4b0dc>] bus_add_driver+0xfc/0x1ec
+[    1.669878] [<9000000002a4d4a8>] driver_register+0x68/0x134
+[    1.675486] [<90000000020f0110>] do_one_initcall+0x50/0x188
+[    1.681094] [<9000000003150f00>] kernel_init_freeable+0x224/0x294
+[    1.687226] [<90000000030240fc>] kernel_init+0x20/0x110
+[    1.692493] [<90000000020f1568>] ret_from_kernel_thread+0xc/0xa4
 
-Is that ok if I resend your patch along with mine in series?
+Fixes: acc0ccffec50 ("clk: clk-loongson2: add clock controller driver support")
+Cc: stable@vger.kernel.org
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>
+Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+---
+ drivers/clk/clk-loongson2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards
-George
-
->>>
->>>> calculation the PWM driver is asking for a clock rate of >=2GHz.
->>>> We concluded that letting the common clock framework choose the best
->>>> possible parent (meaning: removing CLK_SET_RATE_NO_REPARENT here) can
->>>> be a way forward.
->>>> But this means that the PWM controller driver must try to find the
->>>> best possible parent somehow. The easiest way we came up with
->>>> (pseudo-code):
->>>>    freq = NSEC_PER_SEC / period;
->>>>    fin_freq = clk_round_rate(channel->clk, freq);
->>>>    if (fin_freq != freq) {
->>>>      freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
->>>>      fin_freq = clk_round_rate(channel->clk, freq);
->>>>    }
->>>>
->>>> The idea is: for a requested 32kHz signal the PWM period is 30518ns.
->>>> The updated logic would find that there's a matching clock input and
->>>> use that directly. If not: use the original logic as suggested by
->>>> Heiner.
->>>>
->>>>
->>>> Best regards,
->>>> Martin
->>>>
->>>>
->>>> [0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e323e@gmail.com/
->
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+index 70ae1dd2e474..b839edd7271b 100644
+--- a/drivers/clk/clk-loongson2.c
++++ b/drivers/clk/clk-loongson2.c
+@@ -40,7 +40,7 @@ static struct clk_hw *loongson2_clk_register(struct device *dev,
+ {
+ 	int ret;
+ 	struct clk_hw *hw;
+-	struct clk_init_data init;
++	struct clk_init_data init = { NULL };
+ 
+ 	hw = devm_kzalloc(dev, sizeof(*hw), GFP_KERNEL);
+ 	if (!hw)
+-- 
+2.39.1
 
