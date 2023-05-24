@@ -2,196 +2,234 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51562C7EE23
-	for <linux-clk@archiver.kernel.org>; Tue, 23 May 2023 20:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7679C7EE29
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 00:56:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238384AbjEWUpM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 May 2023 16:45:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42094 "EHLO
+        id S238803AbjEXA40 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 May 2023 20:56:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229483AbjEWUpL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 16:45:11 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99981DD;
-        Tue, 23 May 2023 13:45:09 -0700 (PDT)
-Received: from g550jk.localnet (84-115-214-73.cable.dynamic.surfer.at [84.115.214.73])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 549F7CFB2A;
-        Tue, 23 May 2023 20:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1684874677; bh=hf2bRrtkE7BS5A0mmGFa7Qf7cV1g96tWEvxW3j9c9ZE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=sz9Zzt9hEHTckVzVId8EBNby0cpihMPdqKh3pLJ+bap8ADKknIv57R1YI1dkrF0Oj
-         SOIA4u/PTLozaCgbLQY6tDr7bCdnjkTT9TZNs+xZMPj2J8rkOWREBx0Ir8CV8+RWGT
-         7zSXFC1TTVzJH/fOG6zUf14Pjhg3/StKd6QtHI48=
-From:   Luca Weiss <luca@z3ntu.xyz>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Dudziak <bartosz.dudziak@snejp.pl>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: Add OXILICX_GDSC for msm8226
-Date:   Tue, 23 May 2023 22:44:36 +0200
-Message-ID: <2679976.mvXUDI8C0e@z3ntu.xyz>
-In-Reply-To: <275c997a-a09d-113f-631d-bb677a05ac5f@linaro.org>
-References: <20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz>
- <2528191.PYKUYFuaPT@z3ntu.xyz>
- <275c997a-a09d-113f-631d-bb677a05ac5f@linaro.org>
+        with ESMTP id S229632AbjEXA4W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 May 2023 20:56:22 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A9BCD;
+        Tue, 23 May 2023 17:56:19 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 7F1085FD1B;
+        Wed, 24 May 2023 03:56:17 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1684889777;
+        bh=6UJu4At4JTYJZJm3ufdH8BuFWlW2L/vFJ5Zl0oCFuaU=;
+        h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+        b=DyrqPvLXGsYToa8iWySrhnm3P5Z/mM8+b7Ss+5iIy3ovu7u3BaO9/wkN1Etw9JcaC
+         KM+5eMnqEmclo/iRjGd1wbCsLYLRtR1RoyTQCBIh8jGIpXL94EUUWsynGEoFzXu/zQ
+         MGn2eFGDaedaH+FQ4a7EpO66CEP27dhPSjU8+Z0iLoBCzpX0d1gqziMwLIO49gjoal
+         0OhojjOEUcuE+5KLhe3++MIy7NihYhcUR7G4GPd2XMb7PqyGzrvDS8JLFlq4+Au+m5
+         J5CtV3pjcKpje3XRe36ZjodKBhW7PaL+TYPwu2E3dfg2//oRq4wxjJ2gLdqgAkQDLt
+         KwzwYfM0U4DOw==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Wed, 24 May 2023 03:56:16 +0300 (MSK)
+Message-ID: <3fb39050-9543-f4a4-c8f2-a996e24c8e16@sberdevices.ru>
+Date:   Wed, 24 May 2023 03:52:06 +0300
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v14 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+Content-Language: en-US
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+        "jbrunet@baylibre.com" <jbrunet@baylibre.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "krzysztof.kozlowski+dt@linaro.org" 
+        <krzysztof.kozlowski+dt@linaro.org>,
+        "khilman@baylibre.com" <khilman@baylibre.com>,
+        "jian.hu@amlogic.com" <jian.hu@amlogic.com>,
+        kernel <kernel@sberdevices.ru>,
+        "rockosov@gmail.com" <rockosov@gmail.com>,
+        "linux-amlogic@lists.infradead.org" 
+        <linux-amlogic@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Dmitry Rokosov <DDRokosov@sberdevices.ru>
+References: <20230426095805.15338-1-ddrokosov@sberdevices.ru>
+ <20230426095805.15338-7-ddrokosov@sberdevices.ru>
+ <CAFBinCA2OhtVaCJDi8ZfAFLSE4oUgxYBDScaP_WW63curEK8Mg@mail.gmail.com>
+ <20230512140630.qd33rwzaalmadpmk@CAB-WSD-L081021>
+ <CAFBinCA8e9evk+9hTEgoNOD_+3DBst6vYDcradmr2c996jdUmw@mail.gmail.com>
+ <20230517103456.p3sjxzbepvg7cr2r@CAB-WSD-L081021>
+ <CAFBinCCPf+asVakAxeBqV-jhsZp=i2zbShByTCXfYYAQ6cCnHg@mail.gmail.com>
+ <573d96df-7b08-4fa2-668b-58ff674a314e@gmail.com>
+ <20230522134425.pc5fhojf53v6q2jz@CAB-WSD-L081021>
+ <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
+From:   George Stark <gnstark@sberdevices.ru>
+In-Reply-To: <a121266a-110a-8c4e-cd71-4e35165fc789@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/23 21:43:00 #21378639
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Dienstag, 16. Mai 2023 02:15:06 CEST Konrad Dybcio wrote:
-> On 9.05.2023 18:57, Luca Weiss wrote:
-> > On Montag, 8. Mai 2023 13:35:07 CEST Konrad Dybcio wrote:
-> >> On 8.05.2023 13:32, Dmitry Baryshkov wrote:
-> >>> On 08/05/2023 10:23, Konrad Dybcio wrote:
-> >>>> On 6.05.2023 23:20, Luca Weiss wrote:
-> >>>>> On msm8226 we also have OXILICX_GDSC but we need a slighly different
-> >>>>> config, with a .cxcs defined for clock but with no parent.
-> >>>> 
-> >>>> Hm, on newer (a5xx+) GPUs, CX needs to be turned on first and
-> >>>> to achieve that, we sometimes define it to be the GX's (also
-> >>>> implicitly known as "oxili-non-CX" in before-a6xx-times) parent..
-> >>>> 
-> >>>> Roughly speaking CX powers the "GPU hardware owned by the broader
-> >>>> SoC that may not need the GPU core clock to be up" and GX powers
-> >>>> the "GPU hardware owned strictly by the GPU that needs at least some
-> >>>> GPU clocks to be enabled"
-> >>>> 
-> >>>> Maybe 8974 simply has a bug in the driver that would do the reverse?
-> >>>> Could you (and perhaps Dmitry on his shiny new 13yo board) test that
-> >>>> theory, preferably on both SoCs?
-> >>>> 
-> >>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> >>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> >>>> @@ -2431,6 +2431,7 @@ static struct gdsc oxili_gdsc = {
-> >>>> 
-> >>>>          .pd = {
-> >>>>          
-> >>>>                  .name = "oxili",
-> >>>>          
-> >>>>          },
-> >>>> 
-> >>>> +       .parent = &oxili_gdsc.pd,
-> >>>> 
-> >>>>          .pwrsts = PWRSTS_OFF_ON,
-> >>>>   
-> >>>>   };
-> >>> 
-> >>> Are you declaring oxili_gdsc to be a parent of itself?
-> >> 
-> >> lol.. nice catch of course this line should have been
-> >> 
-> >> +       .parent = &oxilicx_gdsc.pd,
-> >> 
-> >> and the definitions would need to be swapped
-> > 
-> > The 0x4024 oxili_gdsc (downstream name gdsc_oxili_gx) is disabled in 8226
-> > dts.
-> > 
-> > Only in downstream msm8974.dtsi this gdsc gets "parent-supply =
-> > <&pm8841_s4_corner>;", on 8226 there's no parent-supply. And the gdsc
-> > parent doesn't even seem to be described there.
-> > 
-> > Should I still try?
-> 
-> No, nevermind, this SoC is cut down more than I had initially thought.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> with a minor nit: oxilicx -> oxili_cx
+On 5/22/23 23:36, Heiner Kallweit wrote:
+> On 22.05.2023 15:44, Dmitry Rokosov wrote:
+>> Heiner,
+>>
+>> On Fri, May 19, 2023 at 06:10:50PM +0200, Heiner Kallweit wrote:
+>>> On 18.05.2023 22:04, Martin Blumenstingl wrote:
+>>>> Hi Dmitry,
+>>>>
+>>>> On Wed, May 17, 2023 at 12:34 PM Dmitry Rokosov
+>>>> <ddrokosov@sberdevices.ru> wrote:
+>>>> [...]
+>>>>>>> Additionally, the CCF determines the best ancestor based on how close
+>>>>>>> its rate is to the given one, based on arithmetic calculations. However,
+>>>>>>> we have independent knowledge that a certain clock would be better, with
+>>>>>>> less jitter and fewer intermediaries, which will likely improve energy
+>>>>>>> efficiency. Sadly, the CCF cannot take this into account.
+>>>>>> I agree that the implementation in CCF is fairly simple. There's ways
+>>>>>> to trick it though: IIRC if there are multiple equally suitable clocks
+>>>>>> it picks the first one. For me all of this has worked so far which is
+>>>>>> what makes me curious in this case (not saying that anything is wrong
+>>>>>> with your approach).
+>>>>>>
+>>>>>> Do you have a (real world) example where the RTC clock should be
+>>>>>> preferred over another clock?
+>>>>>>
+>>>>> Yes, a real-life example is the need for a 32Khz clock for an external
+>>>>> wifi chip. There is one option to provide this clock with high
+>>>>> precision, which is RTC + GENCLK.
+>>>>>
+>>>>>> I'm thinking about the following scenario.
+>>>>>> PWM parents:
+>>>>>> - XTAL: 24MHz
+>>>>>> - sys: not sure - let's say 166.67MHz
+>>>>>> - RTC: 32kHz
+>>>>>>
+>>>>>> Then after that there's a divider and a gate.
+>>>>>>
+>>>>>> Let's say the PWM controller needs a 1MHz clock: it can take that from
+>>>>>> XTAL or sys. Since XTAL is evenly divisible to 1MHz CCF will pick that
+>>>>>> and use the divider.
+>>>>>> But let's say the PWM controller needs a 32kHz clock: CCF would
+>>>>>> automatically pick the RTC clock.
+>>>>>> So is your implementation there to cover let's say 1kHz where
+>>>>>> mathematically 24MHz can be divided evenly to 1kHz (and thus should
+>>>>>> not result in any jitter) but RTC gives better precision in the real
+>>>>>> world (even though it's off by 24Hz)?
+>>>>>>
+>>>>> I don't think so. The highest precision that RTC can provide is from a
+>>>>> 32KHz rate only. However, I believe that a 1kHz frequency can also be
+>>>>> achieved by using xtal 24MHz with a divider, which can provide high
+>>>>> precision as well.
+>>>> Thank you again for the great discussion on IRC today.
+>>>> Here's my short summary so I don't forget before you'll follow up on this.
+>>>>
+>>>> In general there's two known cases where the RTC clock needs to be used:
+>>>> a) When using the GENCLK output of the SoC to output the 32kHz RTC
+>>>> clock and connect that to an SDIO WiFi chip clock input (this seems
+>>>> useful in my understanding because the RTC clock provides high
+>>>> precision)
+>>>> b) When using the PWM controller to output a 32kHz clock signal. In
+>>>> this case my understanding is that using the RTC clock as input to the
+>>>> PWM controller results in the best possible signal
+>>>>
+>>>> The second case won't be supported with Heiner's patches [0] that use
+>>>> CCF (common clock framework) in the PWM controller driver.
+>>>> In this series the parent clock is calculated using:
+>>>>    freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+>>>>
+>>>> A 32kHz clock means a PWM period of 30518ns. So with the above
+>>> To be precise: 30517,578125ns
+>>> What means that the PWM framework can't say "I want 32768Hz",
+>>> but just "I want something being very close to 32768Hz".
+>>> So what you need is some simple heuristic to interpret the
+>>> PWM request -> "PWM requests 30518ns, but supposedly it wants
+>>> 32768Hz"
+>>>
+>>> NSEC_PER_SEC / 30518 = 32767 (rounded down from 32767,547)
+>>> clk_round_rate(channel->clk, 32767) would return 0 (I *think*),
+>>> because it tries to find the next lower clock.
+>>>
+>>> The SoC families I'm familiar with have fclkin2 as PWM parent.
+>>> That's 1 GHz in my case, what results in a frequency of 32.767,547Hz
+>>> for period = 30518n.
+>>> What you're saying is that newer generations don't have PWM parents
+>>>> 24MHz any longer?
+>> No, of course not. For example, a fixed PLL (with all fclk_divX
+>> settings) has rates higher than 24MHz. However, we need to consider the
+>> 'heavy' background of such PWM.
+>>
+>> However, we have a "lightweight" clkin (special rtc32k) with a rate of
+>> 32kHz that we could potentially use as an input to produce a 32kHz
+>> output on the PWM lines. I don't see any reason why we should not
+>> support such special cases.
+>>
+> Two more things to consider:
+> 1. When wanting a 32kHz (well, 32768Hz) output with a 50% duty cycle,
+>     then we need hi=0 and lo=0 with a 64kHz input clock.
+>     See point 2 for an explanation of why 0 and not 1.
+>     Means we couldn't use the RTC input clock. Did you consider this?
+>     Or do I miss something?
+> 2. Seems the PWM block internally increments hi and lo, except the
+>     constant_en bit is set on newer PWM block versions.
+>     For bigger cnt values the impact is negligible, but for very small
+>     values it's something we have to consider.
+>     This was one additional motivation for me to choose an input
+>     frequency that creates big cnt values.
+>
+Hello Heiner
 
-Hi Konrad,
+As I mentioned earlier I have some changes to take into account lo and hi regs incrementing.
 
-where do you want this changed? Just the .name field? But even that one is now 
-matching the other oxilicx variant. And there's also gdscs like 
-oxilicx_ahb_clk.
+But it's more convenient to base my patch on top on one of yours (https://lore.kernel.org/linux-amlogic/23fe625e-dc23-4db8-3dce-83167cd3b206@gmail.com/)
 
-Let me know.
+Is that ok if I resend your patch along with mine in series?
 
-Regards
-Luca
+Best regards
+George
 
-> 
-> Konrad
-> 
-> >> Konrad
-> >> 
-> >>>>   @@ -2439,7 +2440,6 @@ static struct gdsc oxilicx_gdsc = {
-> >>>>   
-> >>>>          .pd = {
-> >>>>          
-> >>>>                  .name = "oxilicx",
-> >>>>          
-> >>>>          },
-> >>>> 
-> >>>> -       .parent = &oxili_gdsc.pd,
-> >>>> 
-> >>>>          .pwrsts = PWRSTS_OFF_ON,
-> >>>>   
-> >>>>   };
-> >>>> 
-> >>>> Konrad
-> >>>> 
-> >>>>> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
-> >>>>> ---
-> >>>>> 
-> >>>>>   drivers/clk/qcom/mmcc-msm8974.c | 11 +++++++++++
-> >>>>>   1 file changed, 11 insertions(+)
-> >>>>> 
-> >>>>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c
-> >>>>> b/drivers/clk/qcom/mmcc-msm8974.c index 4273fce9a4a4..39ee3953567c
-> >>>>> 100644
-> >>>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> >>>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> >>>>> @@ -2443,6 +2443,16 @@ static struct gdsc oxilicx_gdsc = {
-> >>>>> 
-> >>>>>       .pwrsts = PWRSTS_OFF_ON,
-> >>>>>   
-> >>>>>   };
-> >>>>>   +static struct gdsc oxilicx_gdsc_msm8226 = {
-> >>>>> 
-> >>>>> +    .gdscr = 0x4034,
-> >>>>> +    .cxcs = (unsigned int []){ 0x4028 },
-> >>>>> +    .cxc_count = 1,
-> >>>>> +    .pd = {
-> >>>>> +        .name = "oxilicx",
-> >>>>> +    },
-> >>>>> +    .pwrsts = PWRSTS_OFF_ON,
-> >>>>> +};
-> >>>>> +
-> >>>>> 
-> >>>>>   static struct clk_regmap *mmcc_msm8226_clocks[] = {
-> >>>>>   
-> >>>>>       [MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
-> >>>>>       [MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
-> >>>>> 
-> >>>>> @@ -2533,6 +2543,7 @@ static struct gdsc *mmcc_msm8226_gdscs[] = {
-> >>>>> 
-> >>>>>       [MDSS_GDSC] = &mdss_gdsc,
-> >>>>>       [CAMSS_JPEG_GDSC] = &camss_jpeg_gdsc,
-> >>>>>       [CAMSS_VFE_GDSC] = &camss_vfe_gdsc,
-> >>>>> 
-> >>>>> +    [OXILICX_GDSC] = &oxilicx_gdsc_msm8226,
-> >>>>> 
-> >>>>>   };
-> >>>>>   
-> >>>>>     static const struct regmap_config mmcc_msm8226_regmap_config = {
-> >>>>> 
-> >>>>> ---
-> >>>>> base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
-> >>>>> change-id: 20230506-msm8226-oxilicx-7f3f0f8e491d
-> >>>>> 
-> >>>>> Best regards,
-
-
-
+>>>
+>>>> calculation the PWM driver is asking for a clock rate of >=2GHz.
+>>>> We concluded that letting the common clock framework choose the best
+>>>> possible parent (meaning: removing CLK_SET_RATE_NO_REPARENT here) can
+>>>> be a way forward.
+>>>> But this means that the PWM controller driver must try to find the
+>>>> best possible parent somehow. The easiest way we came up with
+>>>> (pseudo-code):
+>>>>    freq = NSEC_PER_SEC / period;
+>>>>    fin_freq = clk_round_rate(channel->clk, freq);
+>>>>    if (fin_freq != freq) {
+>>>>      freq = div64_u64(NSEC_PER_SEC * (u64)0xffff, period);
+>>>>      fin_freq = clk_round_rate(channel->clk, freq);
+>>>>    }
+>>>>
+>>>> The idea is: for a requested 32kHz signal the PWM period is 30518ns.
+>>>> The updated logic would find that there's a matching clock input and
+>>>> use that directly. If not: use the original logic as suggested by
+>>>> Heiner.
+>>>>
+>>>>
+>>>> Best regards,
+>>>> Martin
+>>>>
+>>>>
+>>>> [0] https://lore.kernel.org/linux-amlogic/9faca2e6-b7a1-4748-7eb0-48f8064e323e@gmail.com/
+>
 
