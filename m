@@ -2,131 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11659C83003
-	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 14:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB39EC7EE2E
+	for <linux-clk@archiver.kernel.org>; Wed, 24 May 2023 18:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236164AbjEXOxd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 May 2023 10:53:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42166 "EHLO
+        id S237001AbjEXSQ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 May 2023 14:16:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235913AbjEXOx1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 10:53:27 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C81E4B;
-        Wed, 24 May 2023 07:52:59 -0700 (PDT)
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34OAQeHP002613;
-        Wed, 24 May 2023 14:52:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=Iqr6g+qe5cjYyM8XWX+BH5wCqWhDn76KtEevdZl8cvU=;
- b=X8KKzOsmMWnTCcoyQS/zLh6nqGpul4V5baz8d7/PmUZr7BOB8V1Gl9Wjml1c0Eiluotc
- xRoZvKJ2RVEA8YBFav9JRv2KXbGEiZ/6YWR1bGKXJ5PkiCXDIjJxQBgZel9jBABxSkcr
- 4t0pZW1TiKnYE3ASvHd8X/PuCNXXAjCXNpR1Wox5IBxDl5LAi5Epld8spkwxSeVW/bJV
- vBv5HP7XWdYEOKgKt5M6CsRcQHMI+wBHIdnH2ozrkPUKHCyEs2ZzyAKkjAT7Emff1yH5
- PJVTE3Uaqb35KaTtLDYyqz/R3OUrQwLT28mp/9ZaA3g/whB/ZVfUjZowkBY+gtqjnPBp TQ== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qscaus7at-1
+        with ESMTP id S233587AbjEXSQz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 May 2023 14:16:55 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE14898;
+        Wed, 24 May 2023 11:16:53 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34OGs0oS027823;
+        Wed, 24 May 2023 18:16:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=VVcf3WP76UEbHeuge7bWC4FsIaQYADQLxZE6F4Bp/xk=;
+ b=jJuy1tNSCieGU4p+mK4V9Q0xdJ1dQIiOSyKNB44ZjUPwc/sNeWpF43z5IbUCSGksO/ap
+ yVTNnNlEbiaM4WLcNnLWYVgm2dVl5iNZnc4zNNsORxK2E0gjU6rF+sMQDjNRhL4aUyMb
+ tpTI8cr4GfdcKBiIlHeQapIPTh36xohFX5Al+SJbmS9E8RuFiqsCKuYgSk+6Qi8oIS9l
+ GTgpubtSVBTxoNDUs0m1bOrzXxZ5Bmq4VuvLsQCUQ+DtEyWgkq/IYHlVPke9zGgUzk39
+ Oup45Tpi/TxT12NTgDTs/NfT2BJDQ73m0IiTWHtqVLC6MaRUH71G9Q8xzbkXjDr11XwU BQ== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qsdhh1j8w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 14:52:31 +0000
+        Wed, 24 May 2023 18:16:50 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34OEqTER010416
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34OIGnN9025539
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 May 2023 14:52:30 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 24 May 2023 07:52:25 -0700
-From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
+        Wed, 24 May 2023 18:16:49 GMT
+Received: from [10.216.58.102] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 24 May
+ 2023 11:16:44 -0700
+Message-ID: <61d352f4-d486-acf0-73a1-b9ed4e9bf669@quicinc.com>
+Date:   Wed, 24 May 2023 23:46:41 +0530
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH 2/3] clk: qcom: gpucc-sm8550: Add support for graphics
+ clock controller
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
         Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Ajit Pandey" <quic_ajipan@quicinc.com>
-Subject: [PATCH V2 1/4] clk: qcom: clk-alpha-pll: Add support to configure PLL_TEST_CTL_U2
-Date:   Wed, 24 May 2023 20:22:00 +0530
-Message-ID: <20230524145203.13153-2-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230524145203.13153-1-quic_jkona@quicinc.com>
-References: <20230524145203.13153-1-quic_jkona@quicinc.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+        <quic_imrashai@quicinc.com>, <quic_ajipan@quicinc.com>
+References: <20230519213656.26089-1-quic_jkona@quicinc.com>
+ <20230519213656.26089-3-quic_jkona@quicinc.com>
+ <31b311d7-7150-fe4c-1851-a9372878603c@linaro.org>
+From:   Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <31b311d7-7150-fe4c-1851-a9372878603c@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: RC8Otj10Cwq1s1apHpCPJ6NCQZVkl2ca
-X-Proofpoint-GUID: RC8Otj10Cwq1s1apHpCPJ6NCQZVkl2ca
+X-Proofpoint-GUID: JhtOqa4c3wRY6pXGE36d2vWI2daG-5r5
+X-Proofpoint-ORIG-GUID: JhtOqa4c3wRY6pXGE36d2vWI2daG-5r5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-24_09,2023-05-24_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- impostorscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 suspectscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=487 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305240120
+ definitions=2023-05-24_13,2023-05-24_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 clxscore=1015 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 impostorscore=0
+ mlxlogscore=948 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305240151
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The lucid ole pll reuses lucid evo ops but it has an additional test
-control register which is required to be programmed, add support to
-program the same.
+Hi Konrad,
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
----
-Changes since V1:
- - Removed redefining ole ops same as evo ops
+Thanks for your review and sharing your changes!
 
- drivers/clk/qcom/clk-alpha-pll.c | 2 ++
- drivers/clk/qcom/clk-alpha-pll.h | 1 +
- 2 files changed, 3 insertions(+)
+On 5/20/2023 4:31 AM, Konrad Dybcio wrote:
+> 
+> 
+> On 19.05.2023 23:36, Jagadeesh Kona wrote:
+>> Add support for gpucc driver on SM8550, which provides clocks for the
+>> graphics subsystem.
+>>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+> Looks like we did some duplicate work..
+> 
+> Please diff it against my take on the driver and check any discrepancies.
+> 
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index b9f6535a7ba7..f81c7c561352 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -55,6 +55,7 @@
- #define PLL_TEST_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
- #define PLL_TEST_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
- #define PLL_TEST_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U1])
-+#define PLL_TEST_CTL_U2(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U2])
- #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
- #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
- #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
-@@ -2096,6 +2097,7 @@ void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
- 	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
- 	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
- 	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
-+	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U2(pll), config->test_ctl_hi2_val);
- 
- 	/* Disable PLL output */
- 	regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index d07b17186b90..6ff0d08eb938 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -125,6 +125,7 @@ struct alpha_pll_config {
- 	u32 test_ctl_val;
- 	u32 test_ctl_hi_val;
- 	u32 test_ctl_hi1_val;
-+	u32 test_ctl_hi2_val;
- 	u32 main_output_mask;
- 	u32 aux_output_mask;
- 	u32 aux2_output_mask;
--- 
-2.40.1
+> https://github.com/SoMainline/linux/commit/74320ee22f200fb21a8dbfc65aa55cf454825158
+> 
+The main difference I see is your driver also have clocks under gx 
+domain (gpu_cc_gx_*_clk) modelled, but they are really not required 
+since there are no clients in linux voting directly on these clocks.
 
+> 
+> I also reused 8450 GPUCC (which I sent recently and is likely to get in)
+> bindings, you may wish to do something similar.
+> 
+> https://github.com/SoMainline/linux/commit/aabc4357c975f288add8b9dfa7601c5aa36f2798
+> 
+Yes, will take care of this in the next series.
+
+> Konrad
+>>   drivers/clk/qcom/Kconfig        |   8 +
+>>   drivers/clk/qcom/Makefile       |   1 +
+>>   drivers/clk/qcom/gpucc-sm8550.c | 609 ++++++++++++++++++++++++++++++++
+>>   3 files changed, 618 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/gpucc-sm8550.c
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 6bb9b4aff047..b730dd9ed6b1 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -900,6 +900,14 @@ config SM_GPUCC_8350
+>>   	  Say Y if you want to support graphics controller devices and
+>>   	  functionality such as 3D graphics.
+>>   
+[skipped]
+
+Thanks & Regards,
+Jagadeesh
