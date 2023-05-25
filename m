@@ -2,120 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A561C77B7E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 17:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6B4C7EE29
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 21:42:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbjEYRvj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 13:51:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55672 "EHLO
+        id S235290AbjEYVmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 17:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234713AbjEYRvh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 13:51:37 -0400
+        with ESMTP id S230126AbjEYVmw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 17:42:52 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B99713A;
-        Thu, 25 May 2023 10:51:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF9E99;
+        Thu, 25 May 2023 14:42:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A48DE6480B;
-        Thu, 25 May 2023 17:51:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167E6C433EF;
-        Thu, 25 May 2023 17:51:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B07164B50;
+        Thu, 25 May 2023 21:42:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FCC5C433EF;
+        Thu, 25 May 2023 21:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685037095;
-        bh=mHitxRuzsrCDz6wDtNkPxZg0+Qj9SmhuC0cgq49LxIc=;
+        s=k20201202; t=1685050971;
+        bh=FjzpokD3KlPp8OLgmScsmPYAiivMUvZd0d1dgeN/VZM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tR70UQHUyQLmkKcT9W7ECQblM2idV7tY1F7GXcQ5RJr1FKLYiTgrQaByckJxSrQTy
-         X7P7eBJ+koJyFqxOyogc2FfJjWHlhKHt55A1gy8Rucz+95H7x21E0xbXhRQQWcdOH5
-         0NJB3uG/wDQfBtj7kFZd3ShcFc5X1kfJemTTM7a5Xselgi3D8kWGRatL1rS2ZCTSCK
-         lOV50B8onXaN4Wuz6ew/EoCAk22YPm65z5lKBFjqDalaQaxo4IhWvRmUCL0e+nZP2Z
-         2EcBNnoELEmnWC6Ff3ebzBgllFLua2s9uZmZyM/YlixCxciD82eSPZaOu/xQBunjFO
-         jAYpjylzuIrgQ==
-Date:   Thu, 25 May 2023 18:51:29 +0100
+        b=jJoyh+4n68Ju6BaUjIkoD3sxPvcYo48wGZOVliY/Qu5DJK2G8lxGnOhq0PfX6XdHg
+         PrxvI42P/D4vV/+J3ljjgB2+p9eNhClm1ROwAa72bND4XzUJc+IiMkz7VY7/YHNSJE
+         qeJC8d9HwMEzfpkb9KRxUzoHpzH7DH7nMOQyTgwX7XWcrrujDbXu1foblWM9mXi2x1
+         Gsy3oHLog8I4eL2JMhJhRlRfxxtZ6I6J2/RQFsqLoHh4wyCgzfD+tPhLFsinVpEFRd
+         aOeZSfWeBwcAGoLQKl2RRuu/ifXDJpF/hazBAFos9poa1PJrDGqHjqHM6fCsBZn26q
+         hkyW07t/y2KPQ==
+Date:   Thu, 25 May 2023 22:42:45 +0100
 From:   Conor Dooley <conor@kernel.org>
-To:     Alexandre Mergnat <amergnat@baylibre.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Markus Schneider-Pargmann <msp@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: replace unusable
- clock
-Message-ID: <20230525-snuggle-twine-ed1bfc2aee51@spud>
-References: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
- <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v6 09/11] riscv: dts: starfive: jh7110: add pmu
+ controller node
+Message-ID: <20230525-unwarlike-mule-f37ec29cf7c5@spud>
+References: <20230518101234.143748-1-xingyu.wu@starfivetech.com>
+ <20230518101234.143748-10-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gOHHGwI3MUXVEdah"
+        protocol="application/pgp-signature"; boundary="ammaxlZe6GO1q9SH"
 Content-Disposition: inline
-In-Reply-To: <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+In-Reply-To: <20230518101234.143748-10-xingyu.wu@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---gOHHGwI3MUXVEdah
-Content-Type: text/plain; charset=utf-8
+--ammaxlZe6GO1q9SH
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 25, 2023 at 04:50:27PM +0200, Alexandre Mergnat wrote:
-> The =E2=80=9Cmcu_pm_bclk_ck_cg=E2=80=9D clock is used by co-processors an=
-d should not be
-> added to the kernel driver, otherwise the CPU just halt and the board is
-> rebooted by the wathdog.
+On Thu, May 18, 2023 at 06:12:32PM +0800, Xingyu Wu wrote:
+> From: Walker Chen <walker.chen@starfivetech.com>
 >=20
-> Instead, add the "aes_top0_bclk_ck_cg" missing clock to prevent
-> re-shuffling index and then preserve the ABI.
+> Add the pmu controller node for the Starfive JH7110 SoC. The PMU needs
+> to be used by other modules such as VPU, ISP, etc.
+>=20
+> Signed-off-by: Walker Chen <walker.chen@starfivetech.com>
 
-How does this preserve the ABI exactly? Please describe exactly what you
-mean by that.
-Also, what about any other users of these definitions, outside of Linux?
+Firstly, this is missing your SoB - but more importantly this is already
+in my tree as 6a887bcc4138 ("riscv: dts: starfive: Add PMU controller
+node").
 
-Cheers,
-Conor
+Thanks,
+Conor.
 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 > ---
->  include/dt-bindings/clock/mediatek,mt8365-clk.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >=20
-> diff --git a/include/dt-bindings/clock/mediatek,mt8365-clk.h b/include/dt=
--bindings/clock/mediatek,mt8365-clk.h
-> index f9aff1775810..0a841e7cc1c3 100644
-> --- a/include/dt-bindings/clock/mediatek,mt8365-clk.h
-> +++ b/include/dt-bindings/clock/mediatek,mt8365-clk.h
-> @@ -199,7 +199,7 @@
->  #define CLK_IFR_PWRAP_TMR		46
->  #define CLK_IFR_PWRAP_SPI		47
->  #define CLK_IFR_PWRAP_SYS		48
-> -#define CLK_IFR_MCU_PM_BK		49
-> +#define CLK_IFR_AES_TOP0_BK		49
->  #define CLK_IFR_IRRX_26M		50
->  #define CLK_IFR_IRRX_32K		51
->  #define CLK_IFR_I2C0_AXI		52
->=20
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/d=
+ts/starfive/jh7110.dtsi
+> index 4c5fdb905da8..30e1f34d5cf8 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -496,5 +496,12 @@ aongpio: pinctrl@17020000 {
+>  			gpio-controller;
+>  			#gpio-cells =3D <2>;
+>  		};
+> +
+> +		pwrc: power-controller@17030000 {
+> +			compatible =3D "starfive,jh7110-pmu";
+> +			reg =3D <0x0 0x17030000 0x0 0x10000>;
+> +			interrupts =3D <111>;
+> +			#power-domain-cells =3D <1>;
+> +		};
+>  	};
+>  };
 > --=20
 > 2.25.1
 >=20
 
---gOHHGwI3MUXVEdah
+--ammaxlZe6GO1q9SH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG+gIQAKCRB4tDGHoIJi
-0gjeAP9v0bdBygFs8MHWwrW4JshVYCnje5trYdbmwkeisP5Q7wEAjon3h1OrMg3d
-GI0plInpgzPg0QIkgLGH6LFkO/vw/Qk=
-=p2Bs
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG/WVQAKCRB4tDGHoIJi
+0utfAP4iYxhTjF7eRb0ilQrW5LNMGhk1Qr4ecLfvdWIrU21NsAEA1DnG2vnKfoRI
+nCZWaxxfvH6O1DXPEMFiiEh8Evllvgk=
+=MphS
 -----END PGP SIGNATURE-----
 
---gOHHGwI3MUXVEdah--
+--ammaxlZe6GO1q9SH--
