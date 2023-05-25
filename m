@@ -2,222 +2,325 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 414E1C7EE2E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 09:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3E9C7EE2E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 09:39:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbjEYJVm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 05:21:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54178 "EHLO
+        id S240745AbjEYJji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 05:39:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236436AbjEYJVk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 05:21:40 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A37819D
-        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 02:21:38 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f6cbdf16d2so2599815e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 02:21:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685006497; x=1687598497;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Zm/p2k/RehOfZBljDwc/bYZKGcOcF2/sVmCcVGUSgc=;
-        b=h/WfuPez2QrX3mfUg4JCwKeOj2YjWD8wYM2Ie82UqDSiqAkNZfJBMYmBbQDdyHR2Cm
-         UiXjRaSPu3slN288hugGIaOKrLB7Ir31pufgu9IPTY9Mxuwt2WLPZ/RZxpqIAmI8Prfl
-         D/AcSaWSHjj/urr4wn16iczX0d1SNsBBILDaGxMXwsYYbb/raR7djRFAdCCYnC/Ocfmh
-         zz02DsargQN9DqEeUk7RDxtyCx8bZJ9En6hwrmHSF3HW4MoJErK8rAVP/2QpgZaVvKla
-         ATBbWfn1UgrKBDOJvJJI85NQbsQAkBh+P9fiuaMM+KgBzcad3oOpODO0gr7UBm9a5PkX
-         8IzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685006497; x=1687598497;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Zm/p2k/RehOfZBljDwc/bYZKGcOcF2/sVmCcVGUSgc=;
-        b=YWtsGZbsOJbM559CusTb439qm6YUOPjXxhstN0GGmsgPU+SfgY3pa6AA8SAXW2d7fA
-         lM5gKDc7UIYPnS7xOgGuKeeTWPv85H/vRVI1wFvkHVMCVSbL9PDp4CYEGMf9r6x1YF9O
-         VAqTzL2UlfU3txoC1W5kwQq/0ACFPJXzI0x90XHtuF2xkXuoq06olI4Prck80W7N1azv
-         y7CjBdoKSk6ue6lrCokmI5Vl9DgOX+m3uKhEMAucGdIyU8Hmn8lTLf4ynByq/zUk93vx
-         Cp2OwwVp5AklvNbWOpUpKNcXOaqMLqT1jbdoQNNPxTtYw+0mXLVT2/zMrTHAvv+IbiJA
-         +jEA==
-X-Gm-Message-State: AC+VfDyPKwlUZMq/g+YwR6W/+QEIuMAdQhM51riuy+NtqXv69bV1k2OJ
-        VpvDyiTq9uDhTIGuNoosSgHfRw==
-X-Google-Smtp-Source: ACHHUZ46dCc6t483kZe7a5eqGwSuR+0q2RWeVmzINPLITJx84wP7C+7JeIn1F7zdWCNRGS2rp27aiA==
-X-Received: by 2002:adf:e9cf:0:b0:304:6762:2490 with SMTP id l15-20020adfe9cf000000b0030467622490mr1948466wrn.3.1685006496902;
-        Thu, 25 May 2023 02:21:36 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id b4-20020a5d5504000000b003062b6a522bsm1088916wrv.96.2023.05.25.02.21.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 May 2023 02:21:36 -0700 (PDT)
-Message-ID: <dee69294-e743-e249-3075-e83f5c668c88@linaro.org>
-Date:   Thu, 25 May 2023 10:21:34 +0100
+        with ESMTP id S240760AbjEYJjJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 05:39:09 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641F4173B;
+        Thu, 25 May 2023 02:37:42 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 78BBB5FD26;
+        Thu, 25 May 2023 12:37:39 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1685007459;
+        bh=qobywYVJnOUHz0WjaEufUy7pJlPh58rBIf/mWyapB+0=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=AENyLL0j+KpGwEjQ+QN4FhtCnfmpVnRqackEWrrImh2HMKI+3EJgJ9YbzKCDpArvX
+         1ubecqHpf+cgs5eMtoTj8UQY1eUlDxLG1jON6IF4aqoT1vEjxggCOphXp6x+CYeTeH
+         ZpzMKCHUYnENITvHg5wyx2D3Kd0zfHRS/1xQE5KmI+m5h6BDDrnktxO6fRRFPbiWGg
+         6P7wlkOrFPPJPdOAQYskJGa4JPxdcvd6qpCbk9FxrQwguTlLeAn0x2yL1aPnujQzA+
+         0fdgUgU7z7g5yNv7qGgu0ihqdQ7szh4SYszTjyfRFc/Q4MwQ6amkZQx1dGQwW5CHM9
+         QA5m0NMigP5uw==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Thu, 25 May 2023 12:37:37 +0300 (MSK)
+Date:   Thu, 25 May 2023 12:37:36 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor@kernel.org>
+CC:     <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v16 5/6] dt-bindings: clock: meson: add A1 Peripherals
+ clock controller bindings
+Message-ID: <20230525093736.naztwqlhvskujsoa@CAB-WSD-L081021>
+References: <20230523135351.19133-1-ddrokosov@sberdevices.ru>
+ <20230523135351.19133-6-ddrokosov@sberdevices.ru>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add YAML schemas for LPASSCC and
- reset on SC8280XP
-To:     Johan Hovold <johan@kernel.org>
-Cc:     andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, johan+linaro@kernel.org,
-        agross@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
- <20230518113800.339158-2-srinivas.kandagatla@linaro.org>
- <ZGsmCmEdoWIkcVDd@hovoldconsulting.com>
-Content-Language: en-US
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <ZGsmCmEdoWIkcVDd@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230523135351.19133-6-ddrokosov@sberdevices.ru>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/25 04:52:00 #21357441
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-thanks Johan for review,
+Hello Rob, Krzysztof and Conor,
 
-On 22/05/2023 09:21, Johan Hovold wrote:
-> On Thu, May 18, 2023 at 12:37:56PM +0100, Srinivas Kandagatla wrote:
->> The LPASS(Low Power Audio Subsystem) clock provider provides reset
-> 
-> Missing space after LPASS acronym.
-> 
-> s/provider/controller/?
-> 
->> controller support when is driven by the Q6DSP.
-> 
-> s/controller//?
-> 
-> "when is driven by": sounds like there are some words missing here.
-> 
->> This patch adds support for those resets and adds IDs for clients
-> 
-> There is never any need to say "this patch" in a commit message. Just say
-> 
-> 	Add support for...
-> 
->> to request the reset.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   .../bindings/clock/qcom,sc8280xp-lpasscc.yaml | 57 +++++++++++++++++++
->>   .../dt-bindings/clock/qcom,lpasscc-sc8280xp.h | 12 ++++
->>   2 files changed, 69 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
->>   create mode 100644 include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
->> new file mode 100644
->> index 000000000000..7c30614a0af9
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
->> @@ -0,0 +1,57 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm LPASS Core & Audio Clock Controller on SC8280XP
->> +
->> +maintainers:
->> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> +
->> +description: |
->> +  Qualcomm LPASS core and audio clock control module provides the clocks,
->> +  reset and power domains on SC8280XP.
-> 
-> "power domains"? copy-paste error?
-> 
->> +
->> +  See also::
->> +    include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
->> +
->> +properties:
->> +  reg: true
->> +
->> +  compatible:
->> +    enum:
->> +      - qcom,sc8280xp-lpasscc
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
-> 
-> Move above #reset-cells for some sorting of related attributes. Same
-> below (in two places).
-> 
->> +
->> +  qcom,adsp-pil-mode:
->> +    description:
->> +      Indicates if the LPASS would be brought out of reset using
->> +      peripheral loader.
->> +    type: boolean
-> 
-> Move above the provider cells properties?
-> 
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - qcom,adsp-pil-mode
-> 
-> If this boolean property is always needed, shouldn't that simply be
-> handled by the driver based on the compatible?
+Could you please take a look at this patch version? Before Rob marked
+this patchset with RvB at v13 -
+https://lore.kernel.org/linux-amlogic/168130720431.2218249.7671061964988064525.robh@kernel.org/
 
-Traditionally in Qcom SoCs LPASS is under the control of ADSP, there 
-have been some other variants specially chrome platforms that have moved 
-this control to APPs processor.
+However, due to several comments from other maintainers, unfortunately,
+I had to rename the 'a1-clkc' controller to 'a1-peripherals-clkc' and
+remove Rob's RvB.
 
-Having this property at Device tree level provides more flexibility, 
-given that both the cases use same compatible strings.
+I would be grateful for your assistance!
 
+On Tue, May 23, 2023 at 04:53:50PM +0300, Dmitry Rokosov wrote:
+> Add documentation and dt bindings for the Amlogic A1 Peripherals clock
+> controller.
+> A1 PLL clock controller has references to A1 Peripherals clock
+> controller objects, so reflect them in the schema.
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> ---
+>  .../clock/amlogic,a1-peripherals-clkc.yaml    |  73 +++++++++++
+>  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   5 +-
+>  .../clock/amlogic,a1-peripherals-clkc.h       | 115 ++++++++++++++++++
+>  3 files changed, 191 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+> new file mode 100644
+> index 000000000000..6d84cee1bd75
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/amlogic,a1-peripherals-clkc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic A1 Peripherals Clock Control Unit
+> +
+> +maintainers:
+> +  - Neil Armstrong <neil.armstrong@linaro.org>
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +  - Jian Hu <jian.hu@jian.hu.com>
+> +  - Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> +
+> +properties:
+> +  compatible:
+> +    const: amlogic,a1-peripherals-clkc
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: input fixed pll div2
+> +      - description: input fixed pll div3
+> +      - description: input fixed pll div5
+> +      - description: input fixed pll div7
+> +      - description: input hifi pll
+> +      - description: input oscillator (usually at 24MHz)
+> +
+> +  clock-names:
+> +    items:
+> +      - const: fclk_div2
+> +      - const: fclk_div3
+> +      - const: fclk_div5
+> +      - const: fclk_div7
+> +      - const: hifi_pll
+> +      - const: xtal
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
+> +    apb {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clock-controller@800 {
+> +            compatible = "amlogic,a1-peripherals-clkc";
+> +            reg = <0 0x800 0 0x104>;
+> +            #clock-cells = <1>;
+> +            clocks = <&clkc_pll CLKID_FCLK_DIV2>,
+> +                     <&clkc_pll CLKID_FCLK_DIV3>,
+> +                     <&clkc_pll CLKID_FCLK_DIV5>,
+> +                     <&clkc_pll CLKID_FCLK_DIV7>,
+> +                     <&clkc_pll CLKID_HIFI_PLL>,
+> +                     <&xtal>;
+> +            clock-names = "fclk_div2", "fclk_div3",
+> +                          "fclk_div5", "fclk_div7",
+> +                          "hifi_pll", "xtal";
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> index 5c6fa620a63c..a59b188a8bf5 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> @@ -43,6 +43,7 @@ additionalProperties: false
+>  
+>  examples:
+>    - |
+> +    #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
+>      apb {
+>          #address-cells = <2>;
+>          #size-cells = <2>;
+> @@ -51,8 +52,8 @@ examples:
+>              compatible = "amlogic,a1-pll-clkc";
+>              reg = <0 0x7c80 0 0x18c>;
+>              #clock-cells = <1>;
+> -            clocks = <&clkc_periphs_fixpll_in>,
+> -                     <&clkc_periphs_hifipll_in>;
+> +            clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
+> +                     <&clkc_periphs CLKID_HIFIPLL_IN>;
+>              clock-names = "fixpll_in", "hifipll_in";
+>          };
+>      };
+> diff --git a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
+> new file mode 100644
+> index 000000000000..ff2730f398a6
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
+> @@ -0,0 +1,115 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +/*
+> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> + * Author: Jian Hu <jian.hu@amlogic.com>
+> + *
+> + * Copyright (c) 2023, SberDevices. All Rights Reserved.
+> + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> + */
+> +
+> +#ifndef __A1_PERIPHERALS_CLKC_H
+> +#define __A1_PERIPHERALS_CLKC_H
+> +
+> +#define CLKID_FIXPLL_IN		1
+> +#define CLKID_USB_PHY_IN	2
+> +#define CLKID_USB_CTRL_IN	3
+> +#define CLKID_HIFIPLL_IN	4
+> +#define CLKID_SYSPLL_IN		5
+> +#define CLKID_DDS_IN		6
+> +#define CLKID_SYS		7
+> +#define CLKID_CLKTREE		8
+> +#define CLKID_RESET_CTRL	9
+> +#define CLKID_ANALOG_CTRL	10
+> +#define CLKID_PWR_CTRL		11
+> +#define CLKID_PAD_CTRL		12
+> +#define CLKID_SYS_CTRL		13
+> +#define CLKID_TEMP_SENSOR	14
+> +#define CLKID_AM2AXI_DIV	15
+> +#define CLKID_SPICC_B		16
+> +#define CLKID_SPICC_A		17
+> +#define CLKID_MSR		18
+> +#define CLKID_AUDIO		19
+> +#define CLKID_JTAG_CTRL		20
+> +#define CLKID_SARADC_EN		21
+> +#define CLKID_PWM_EF		22
+> +#define CLKID_PWM_CD		23
+> +#define CLKID_PWM_AB		24
+> +#define CLKID_CEC		25
+> +#define CLKID_I2C_S		26
+> +#define CLKID_IR_CTRL		27
+> +#define CLKID_I2C_M_D		28
+> +#define CLKID_I2C_M_C		29
+> +#define CLKID_I2C_M_B		30
+> +#define CLKID_I2C_M_A		31
+> +#define CLKID_ACODEC		32
+> +#define CLKID_OTP		33
+> +#define CLKID_SD_EMMC_A		34
+> +#define CLKID_USB_PHY		35
+> +#define CLKID_USB_CTRL		36
+> +#define CLKID_SYS_DSPB		37
+> +#define CLKID_SYS_DSPA		38
+> +#define CLKID_DMA		39
+> +#define CLKID_IRQ_CTRL		40
+> +#define CLKID_NIC		41
+> +#define CLKID_GIC		42
+> +#define CLKID_UART_C		43
+> +#define CLKID_UART_B		44
+> +#define CLKID_UART_A		45
+> +#define CLKID_SYS_PSRAM		46
+> +#define CLKID_RSA		47
+> +#define CLKID_CORESIGHT		48
+> +#define CLKID_AM2AXI_VAD	49
+> +#define CLKID_AUDIO_VAD		50
+> +#define CLKID_AXI_DMC		51
+> +#define CLKID_AXI_PSRAM		52
+> +#define CLKID_RAMB		53
+> +#define CLKID_RAMA		54
+> +#define CLKID_AXI_SPIFC		55
+> +#define CLKID_AXI_NIC		56
+> +#define CLKID_AXI_DMA		57
+> +#define CLKID_CPU_CTRL		58
+> +#define CLKID_ROM		59
+> +#define CLKID_PROC_I2C		60
+> +#define CLKID_DSPA_EN		63
+> +#define CLKID_DSPA_EN_NIC	64
+> +#define CLKID_DSPB_EN		65
+> +#define CLKID_DSPB_EN_NIC	66
+> +#define CLKID_RTC		67
+> +#define CLKID_CECA_32K		68
+> +#define CLKID_CECB_32K		69
+> +#define CLKID_24M		70
+> +#define CLKID_12M		71
+> +#define CLKID_FCLK_DIV2_DIVN	72
+> +#define CLKID_GEN		73
+> +#define CLKID_SARADC		75
+> +#define CLKID_PWM_A		76
+> +#define CLKID_PWM_B		77
+> +#define CLKID_PWM_C		78
+> +#define CLKID_PWM_D		79
+> +#define CLKID_PWM_E		80
+> +#define CLKID_PWM_F		81
+> +#define CLKID_SPICC		82
+> +#define CLKID_TS		83
+> +#define CLKID_SPIFC		84
+> +#define CLKID_USB_BUS		85
+> +#define CLKID_SD_EMMC		86
+> +#define CLKID_PSRAM		87
+> +#define CLKID_DMC		88
+> +#define CLKID_DSPA_A_SEL	95
+> +#define CLKID_DSPA_B_SEL	98
+> +#define CLKID_DSPB_A_SEL	101
+> +#define CLKID_DSPB_B_SEL	104
+> +#define CLKID_CECB_32K_SEL_PRE	113
+> +#define CLKID_CECB_32K_SEL	114
+> +#define CLKID_CECA_32K_SEL_PRE	117
+> +#define CLKID_CECA_32K_SEL	118
+> +#define CLKID_GEN_SEL		121
+> +#define CLKID_PWM_A_SEL		124
+> +#define CLKID_PWM_B_SEL		126
+> +#define CLKID_PWM_C_SEL		128
+> +#define CLKID_PWM_D_SEL		130
+> +#define CLKID_PWM_E_SEL		132
+> +#define CLKID_PWM_F_SEL		134
+> +#define CLKID_SD_EMMC_SEL2	147
+> +
+> +#endif /* __A1_PERIPHERALS_CLKC_H */
+> -- 
+> 2.36.0
+> 
 
-Am okay with reset of the comments, Will fix them in v2.
-thanks,
-Srini
-
-> 
->> +  - '#reset-cells'
->> +  - '#clock-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
->> +    lpasscc: clock-controller@3900000 {
->> +      compatible = "qcom,sc8280xp-lpasscc";
-> 
-> binding examples use 4-space indentation.
-> 
->> +      reg = <0x033e0000 0x12000>;
-> 
-> Does not match the node unit address.
-> 
->> +      #reset-cells = <1>;
->> +      #clock-cells = <1>;
->> +      qcom,adsp-pil-mode;
->> +    };
->> +...
->> diff --git a/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
->> new file mode 100644
->> index 000000000000..df800ea2741c
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
->> @@ -0,0 +1,12 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->> +/*
->> + * Copyright (c) 2023, Linaro Ltd.
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
->> +#define _DT_BINDINGS_CLK_QCOM_LPASSCC_SC8280XP_H
->> +
->> +/* LPASS TCSR */
->> +#define LPASS_AUDIO_SWR_TX_CGCR				0
->> +
->> +#endif
+-- 
+Thank you,
+Dmitry
