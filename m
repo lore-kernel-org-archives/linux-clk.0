@@ -2,90 +2,179 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAA1C77B7E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 21:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A4A2C77B7E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 23:01:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241917AbjEYVpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 17:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
+        id S232645AbjEYXBd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 19:01:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240832AbjEYVpp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 17:45:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BAFE4D;
-        Thu, 25 May 2023 14:45:27 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S231451AbjEYXBb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 19:01:31 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7570194;
+        Thu, 25 May 2023 16:01:28 -0700 (PDT)
+Received: from mercury (unknown [185.254.75.45])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6673364B71;
-        Thu, 25 May 2023 21:44:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF540C433EF;
-        Thu, 25 May 2023 21:44:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685051098;
-        bh=1d20bjdX5HUdVvZRPf4VGSbqIqinzRsHvwcKXpOUIoQ=;
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E675166032BE;
+        Fri, 26 May 2023 00:01:26 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1685055687;
+        bh=4Mji/tVJEhy+99y3+UaKpEsXd7MFjzEF3KJK23IqH+Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oAcQUkkSOjsmVnkbAo4rOPwsRIs+qW+MUrnXDJbyzI1Pifb67gOi0pDVzmXxEiaRF
-         w26LgUXziy2EcR4xt0dZ2jqo1wPKGCGD+Mx1CZ6QVeuLCKqxiQtZuI6Axo+9pID+RU
-         HGVtbDxkNNoSH8t1E++SMFq7Wv63fT9+ocO6MJED+HjPs67A78PRR+dcVRDiXtxznK
-         NcUe1wFCrzkRoDF8rqA7NodXIuuB/RfyhdBGqzPowYgn4GrAOVKig2tVjFUSro4jkN
-         SzJfi051sYZyOoljcfNKrmt5kgZX8y/wTvzJ4XhNmTQnocUfzg8D7/3Glsu+Of4IiS
-         /AlNRIjLaIeyQ==
-Date:   Thu, 25 May 2023 22:44:53 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
+        b=LHnBw0KSuRmKkHfn3/DJzQgi12/tpWjyDflZfhOKKDqW4NYpYxKK21V08eJnOKiWn
+         e0g5AnapXrVDEIES/nTWZBsZ9BI0bHcZQiJhNa62rOBCKCuo59d4kHTj9oVu1cwIE7
+         BwDJMi9Nwat4GG0l8Ruew000sxjy9Unyp2K3F3UGD9hwjQ7uU1vnhl9SODlO/06hXg
+         sWVssv8OEhuvI6j65fLC31ram1m+SYHtRuc1MRx9ED5zQ4v1ehaYanXjX5OwOjY6QG
+         D/DBm5HXgcajHnBbnicXUjiT+f7ud0Bm3pL39Tl1VrKYLWn8JmsDYuwyafT03hRtaJ
+         e3AB95Qk5wHhg==
+Received: by mercury (Postfix, from userid 1000)
+        id B43181060A3F; Fri, 26 May 2023 01:01:24 +0200 (CEST)
+Date:   Fri, 26 May 2023 01:01:24 +0200
+From:   'Sebastian Reichel' <sebastian.reichel@collabora.com>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 10/11] riscv: dts: starfive: jh7110: Add DVP and HDMI
- TX pixel external clocks
-Message-ID: <20230525-upscale-siberian-54c5f003334c@spud>
-References: <20230518101234.143748-1-xingyu.wu@starfivetech.com>
- <20230518101234.143748-11-xingyu.wu@starfivetech.com>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel@collabora.com" <kernel@collabora.com>
+Subject: Re: [PATCH v1 2/2] clk: divider: Properly handle rates exceeding
+ UINT_MAX
+Message-ID: <20230525230124.zj5frkpynnnfecw6@mercury.elektranox.org>
+References: <20230519190522.194729-1-sebastian.reichel@collabora.com>
+ <20230519190522.194729-3-sebastian.reichel@collabora.com>
+ <1b74d2ea2c3a458694c4c74f2381fcab@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="14g6l7gbkD9WOY4x"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kza6lpa52hxd2e5z"
 Content-Disposition: inline
-In-Reply-To: <20230518101234.143748-11-xingyu.wu@starfivetech.com>
+In-Reply-To: <1b74d2ea2c3a458694c4c74f2381fcab@AcuMS.aculab.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---14g6l7gbkD9WOY4x
+--kza6lpa52hxd2e5z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 18, 2023 at 06:12:33PM +0800, Xingyu Wu wrote:
-> Add DVP and HDMI TX pixel external fixed clocks and the rates are
-> 74.25MHz and 297MHz.
+Hi,
+
+On Mon, May 22, 2023 at 08:18:53AM +0000, David Laight wrote:
+> From: Sebastian Reichel
+> > Sent: 19 May 2023 20:05
+> >=20
+> > Requesting rates exceeding UINT_MAX (so roughly 4.3 GHz) results
+> > in very small rate being chosen instead of very high ones, since
+> > DIV_ROUND_UP_ULL takes a 32 bit integer as second argument.
+> >=20
+> > Correct this by using DIV64_U64_ROUND_UP instead, which takes proper
+> > 64 bit values for dividend and divisor.
 >=20
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> This doesn't look right on 32-bit architectures.
+> While you really don't want to be doing full 64bit divides
+> there is also the problem that any input values over 4.3Ghz
+> have already been masked.
+> In the values can be over 4.3GHz then the function arguments
+> need to be 64bit - not long.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+The common clock framework uses 'unsigned long' for clock rates
+everywhere, so it's limited to ~4.3 GHz on 32-bit. I guess it does
+not really matter - at least I don't expect new 32-bit platforms
+with such high clock rates. Considering Intel and AMD already reach
+5 GHz boost rates nowadays this is definetly not true for 64-bit.
 
-Thanks,
-Conor.
+The current function does (u64 / u32), so it's wrong on 32-bit
+(rate can never be bigger than u32, so the u64 is useless) and
+also wrong on 64-bit architectures (second argument may be bigger
+than u32).
 
---14g6l7gbkD9WOY4x
+I will prepare a v2 using DIV_ROUND_UP(), which should improve the
+performance on 32-bit and fix the bug on 64-bit architectures.
+
+-- Sebastian
+
+> 	David
+>=20
+> > Note, that this is usually not an issue. ULONG_MAX sets the lower
+> > 32 bits and thus effectively requests UINT_MAX. On most platforms
+> > that is good enough. To trigger a real bug one of the following
+> > conditions must be met:
+> >=20
+> >  * A parent clock with more than 8.5 GHz is available
+> >  * Instead of ULONG_MAX a specific frequency like 4.3 GHz is
+> >    requested. That would end up becoming 5 MHz instead :)
+> >=20
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > ---
+> >  drivers/clk/clk-divider.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> > index a2c2b5203b0a..dddaaf0f9d25 100644
+> > --- a/drivers/clk/clk-divider.c
+> > +++ b/drivers/clk/clk-divider.c
+> > @@ -220,7 +220,7 @@ static int _div_round_up(const struct clk_div_table=
+ *table,
+> >  			 unsigned long parent_rate, unsigned long rate,
+> >  			 unsigned long flags)
+> >  {
+> > -	int div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> > +	int div =3D DIV64_U64_ROUND_UP(parent_rate, rate);
+> >=20
+> >  	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+> >  		div =3D __roundup_pow_of_two(div);
+> > @@ -237,7 +237,7 @@ static int _div_round_closest(const struct clk_div_=
+table *table,
+> >  	int up, down;
+> >  	unsigned long up_rate, down_rate;
+> >=20
+> > -	up =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> > +	up =3D DIV64_U64_ROUND_UP(parent_rate, rate);
+> >  	down =3D parent_rate / rate;
+> >=20
+> >  	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
+> > @@ -473,7 +473,7 @@ int divider_get_val(unsigned long rate, unsigned lo=
+ng parent_rate,
+> >  {
+> >  	unsigned int div, value;
+> >=20
+> > -	div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> > +	div =3D DIV64_U64_ROUND_UP(parent_rate, rate);
+> >=20
+> >  	if (!_is_valid_div(table, div, flags))
+> >  		return -EINVAL;
+> > --
+> > 2.39.2
+>=20
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1=
+ 1PT, UK
+> Registration No: 1397386 (Wales)
+>=20
+
+--kza6lpa52hxd2e5z
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG/W1QAKCRB4tDGHoIJi
-0tacAQDzU7wda2zCGFCxnqT+sHimB4/P36sZ0pPmFeBEUk3dIAD/UZFrrFZD0rlX
-S99BGmiDwdA9CkSxOXkuNlTIIz+rdAE=
-=wubc
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmRv6LoACgkQ2O7X88g7
++pqBZxAAo2Mt27gtCMiHbEGUAHvFcYxWyZPbVO4t2h8B6fg1RcAIM+4sUTZlIxlC
+XvMFFpCgcO2r3F/0zSPZK70i1/vGtOKFSyxJjR20V9koOwTfG808wuO5gIccFxVL
+6FMJiGYQNXMT/+ByYfoEt39PQmpv9PsEuoL89eVuOjim9CUh/9qJiuQhMPOlDyiz
+isxsFusZ4yqA+67bIvyPEBnsRTabntSUtNjAuc8TjCAHtF/YuBSaxipG1bnwj7jM
+lR6oiImd9TNTLcoPoSYoz4iEAT+MmZ40U95DOcJVGx4DoFtLZMwzBbdiRErjqEBq
+XGRVZJWHTRyCQyeb69xn0lbpIDo1aWqb2jsJmtgUW52AqvIzN96pHkEhTZi+iBn9
+yKUvwnmMlZo7acsL/NmCG4IZq/Orqe0f+llPYUg6DSFb79ibUkrwDLyuDDbE73hV
+LE2TcHJChv5DBlB4gvFH6xHV8zYomlYFvTgh4milqsZNN31CmpIG8CdmzNP/1kV2
+LwjTW9gfG3YrYR2B1oad8n36HR7bEYf6zEPB1NqJjrUm1eydDFAkumsEms+v4CRF
+3G1gc3r8yRCEhitslqBv9WapU7vQHColzCvMD2z7Cl3YqrqrExpyuiQSPMcRM3yi
+PjtdcCudTwuE+sJylbYupDc8YnoLZStMbOJUY1WgVOaVrFrtRfU=
+=nRAl
 -----END PGP SIGNATURE-----
 
---14g6l7gbkD9WOY4x--
+--kza6lpa52hxd2e5z--
