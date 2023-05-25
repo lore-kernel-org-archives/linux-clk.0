@@ -2,37 +2,48 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0ACDC7EE29
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 14:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F20C77B7A
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 14:06:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241471AbjEYOBy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 10:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41254 "EHLO
+        id S233915AbjEYOG5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 10:06:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241401AbjEYOBu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 10:01:50 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3403E186;
-        Thu, 25 May 2023 07:01:12 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 9CC4D5FD51;
-        Thu, 25 May 2023 17:01:02 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1685023262;
-        bh=bpPitjV95L3ioVshJeARXDTfhB1q4NXomIjqNtoVQq0=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=g542J5yIh9b82dadzQ8Wzl6DX57oGV8BuX0mh2ze4Lxm+6swAF021XvoO8GlwxhT6
-         Pq7nf95oLmZnAL7nbuuLJrlbpPy+Ls62/SpbtMjJ1+zYrgZRm+mv6c9jEW7PG11L7K
-         MWOZeU+48k2eWJJPd5jBSlocvi6aBbF883AvvL3TtR5N3LA9lLGt0Mgy6Vufx4y4v0
-         UZeg7QdcWiUFvEEKDnq6/udXmN2PqmQeLhV2nI8+vkeOpEFcvawVE/FCbXyq4nxnEJ
-         tTtWSfufJTfkg06kJ5qH2vEyV2UYNmOpwFKsXlspxbSAfqDIQtzzNyjs8AnRfB8Y2s
-         AWQ3QJod3p4IA==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Thu, 25 May 2023 17:01:01 +0300 (MSK)
-Date:   Thu, 25 May 2023 17:01:00 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Conor Dooley <conor.dooley@microchip.com>
+        with ESMTP id S241519AbjEYOG4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 10:06:56 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 580E7E4B;
+        Thu, 25 May 2023 07:06:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1685023603; x=1716559603;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=upPO4QUm0taAdlDSGlmbwceJ4JBD1WN4nd0/HmurPiU=;
+  b=UN71+bSlBvm5eO/lGHyIRB87X5WOqMWBzpFzqCA4wpeGg7Njx9QxMFFD
+   QUssdn7pMl+7+R4K5fAbibz8gCaKuIIGfQPewfwFJnoqFfvfcKS1k47Dv
+   1TbiJpBI05HMsSyKSOwtbJevuNFU2Eho1K+G6joDLHmBBRnUUKXRj0ksB
+   FJgCv7WsVb+ZOD5KWD9x4qX/aHD4Iq00Qz52C9O3lWE9TY/PFYXs+v0MF
+   UqqvDkW0/4xs8WMd2bfUsWyA2MXwu+wd5EDutFbN4THjBYgaek6wuW5xq
+   L+sZ9s9Qj+IN2PcqJsDx2od5T3SjNOUQ7xeqt7dQ3NCf3/IX7hYrXWQbe
+   w==;
+X-IronPort-AV: E=Sophos;i="6.00,191,1681196400"; 
+   d="asc'?scan'208";a="226989442"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 May 2023 07:06:42 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Thu, 25 May 2023 07:06:40 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
+ Transport; Thu, 25 May 2023 07:06:37 -0700
+Date:   Thu, 25 May 2023 15:06:15 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
 CC:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
         <conor@kernel.org>, <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
         <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
@@ -44,57 +55,42 @@ CC:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
         <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>
 Subject: Re: [PATCH v16 5/6] dt-bindings: clock: meson: add A1 Peripherals
  clock controller bindings
-Message-ID: <20230525140100.mdzuhyfhxxkf4mx7@CAB-WSD-L081021>
+Message-ID: <20230525-ranging-plow-e3f4427f44b3@wendy>
 References: <20230523135351.19133-1-ddrokosov@sberdevices.ru>
  <20230523135351.19133-6-ddrokosov@sberdevices.ru>
  <20230525093736.naztwqlhvskujsoa@CAB-WSD-L081021>
  <20230525-connected-skipper-442c6d0b52c1@wendy>
+ <20230525140100.mdzuhyfhxxkf4mx7@CAB-WSD-L081021>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="98dEgcHdS9y24H6f"
 Content-Disposition: inline
-In-Reply-To: <20230525-connected-skipper-442c6d0b52c1@wendy>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/25 11:25:00 #21349968
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <20230525140100.mdzuhyfhxxkf4mx7@CAB-WSD-L081021>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Conor,
+--98dEgcHdS9y24H6f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thank you for quick reply!
+On Thu, May 25, 2023 at 05:01:00PM +0300, Dmitry Rokosov wrote:
 
-On Thu, May 25, 2023 at 02:16:02PM +0100, Conor Dooley wrote:
-> On Thu, May 25, 2023 at 12:37:36PM +0300, Dmitry Rokosov wrote:
-> > Hello Rob, Krzysztof and Conor,
-> > 
-> > Could you please take a look at this patch version? Before Rob marked
-> > this patchset with RvB at v13 -
-> > https://lore.kernel.org/linux-amlogic/168130720431.2218249.7671061964988064525.robh@kernel.org/
-> > 
-> > However, due to several comments from other maintainers, unfortunately,
-> > I had to rename the 'a1-clkc' controller to 'a1-peripherals-clkc' and
-> > remove Rob's RvB.
-> 
-> I dunno if the compatible change is worth dropping the tag for tbh.
-> That seems to be the only change, so I guess you can have my R-b instead
-> of Rob's...
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> 
-> Cheers,
-> Conor.
+> I was unaware of the official policy regarding the removal of RvB during
+> renaming changes. I took a cautious approach to the situation :)
 
-I was unaware of the official policy regarding the removal of RvB during
-renaming changes. I took a cautious approach to the situation :)
+Better safe than sorry!
 
--- 
-Thank you,
-Dmitry
+
+--98dEgcHdS9y24H6f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG9rVwAKCRB4tDGHoIJi
+0qfyAQCEDt2Wmdd7sQ0AFn0qT0m1S6WB+FG53v9IrhD+R5MRiQEAlgl5pqnYxIZ5
+1D4vdPj2SIBYSAryBd9N2bDPGtAFTQ0=
+=cV7U
+-----END PGP SIGNATURE-----
+
+--98dEgcHdS9y24H6f--
