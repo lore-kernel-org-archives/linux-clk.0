@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93628C7EE2D
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 14:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328E5C7EE29
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 14:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241661AbjEYOuo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 10:50:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35492 "EHLO
+        id S241664AbjEYOup (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 10:50:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241137AbjEYOun (ORCPT
+        with ESMTP id S241658AbjEYOun (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 10:50:43 -0400
 Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F280F101
-        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 07:50:40 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f6cbf02747so5337865e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 07:50:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 650E1187
+        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 07:50:42 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f6a6b9c079so5322525e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 07:50:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685026239; x=1687618239;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oeLXr/ztgvOtVsK+Kl+n0JOEyozvguRk+veU2UYviCg=;
-        b=N1q2y9PxsUwtmnergtMtlKIEo5yB8DE1LaJOQmZOxctO0npZLLxgcZpWp1MlAFKVuX
-         fd/3QOUX6duwieVU7egfpm72qHByhULGPh6QoLcp27T1Ta1aoRXoU2zzmRN+Djl+a/nj
-         8RT42EHCVaxcxAdoh07FhJpYj9zAa1XEiTNPcPuzby9JkCSKWz+1OCjP9I3TvOg2DcVa
-         Y3ns+bTt7AbWE/roWBBzulJMuMqikbfisGkNnvBDM09RV/PfnQSZYhR8UPG6jGVq/yKA
-         bllZaPxRIm02cbuDoN6dQsxpETd4yLqPCPEKZaAGXlgX997P96sHp9B7X1e3ABuuexOn
-         gcfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685026239; x=1687618239;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685026241; x=1687618241;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oeLXr/ztgvOtVsK+Kl+n0JOEyozvguRk+veU2UYviCg=;
-        b=QonsUfzSkJMzTRSLlu36e3LPH+ZRq8ptkEoD10GGyn5YhhP3LLZBKYOTtgdUv4ydkq
-         hG7cyrhhykYlORXipGybDWrPwEOx3wgdLi5bQXUc1WWJNbyvq1Xes8BkBdBP6+t6Souk
-         iz7HIY6psxgWLB9F6nnb0EXu8iqfkoCD19B+Z3/72Dbh76oESBa5YZL8XsPKXh9LIlBI
-         zJY1/FYp+STCEcAfUAlgAqqfLlzM2JX9JXq49LTgBoM7PuO2rlKt1ZOrjWfW+YXItTrk
-         KhlEqsg1nlCUOP7oErdPsSIwJlYn8xn47Cz5bUTxp+na87x+TpFxgK1ipS7lV4k2GDDi
-         7YVw==
-X-Gm-Message-State: AC+VfDzQWEQeAIdBhGv1VivzJli+eflu2pIAZBYr/8dsa4wHDawKmPy+
-        Bh3q69Wrp8dz0u8N+97XXln6LQ==
-X-Google-Smtp-Source: ACHHUZ61k/sCKf41zD6WPEp1UUz7BzalUtlMAH6Mf0Oxs5zHLKiCMmMLMIuF82QNh9dW5i5xV7F6yg==
-X-Received: by 2002:a7b:c5da:0:b0:3f6:774:fec with SMTP id n26-20020a7bc5da000000b003f607740fecmr2762120wmk.29.1685026239445;
-        Thu, 25 May 2023 07:50:39 -0700 (PDT)
+        bh=5TpRYfzHZx9/tYc3Y2Xk8BfOtPKBqHSj0KnEjzeNrxg=;
+        b=AaPqVFvrAOWUK3qmHkZXUicT1qRBkEZv57Fe+e/GAE0StnFP4aZxpfDnw9g8YpPTkW
+         axzTngNoWUl0jSZ8kkpyUFJgVGdXm/AXUUSgnnDpcHXFoamZjOITehuH71aUTrLwVOaJ
+         5n3XT4YxPJSxTx6GzBE5vqHSxRY7DvgEGy4om5YrhWdLBDhA/67jd3Dt4P9d2LjX99tQ
+         RXA/i6b0wBKRnnMJRuIRHYG7B6s9M0tBOhoFNCwXgYBqSP7iH2WukkaLTpw7uUuW9Hp/
+         6q+9d6xAyN6e4CyaH5qAFDm1OXHOTIeomBPn/k4Z0OOEL4VqHkANdIPqF2GWFcAIhISz
+         XQxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685026241; x=1687618241;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5TpRYfzHZx9/tYc3Y2Xk8BfOtPKBqHSj0KnEjzeNrxg=;
+        b=MlLMHwnVkRHqZec/5q2uSB4uwGJSasNKku3uI9qSHFLV01WQLCmr6b/SinlYAjmgSY
+         1055YQ5IVkbEQVjJFzMp2q/V7VP9rCIEv5RGilkN26SyCIgjkA8OC/QFUgSEAqKDc/8U
+         SZbyfPCu9Ya47VWNqAPqnMOnnS4pWQrkU/YdjOgRJctGr1V93HXNYU88nhQGydptb1Ew
+         v9EvO7gR/ZeF751xozIhaJZUXYqdcXneA1hqLZzSJmTM3PTWYq9/Cfz5o8qbqaR8VQ99
+         Wr+PueMgGPmGZjlVwlHf8wTSbUwJXZ2EjQJIjmBXlcX6r8VMAAV5KpGUPjyr5FBQiOe+
+         40cQ==
+X-Gm-Message-State: AC+VfDyBdH5XLntwZPbBp3zgE9KyiOp/Sm5jv3hA3rppNku4yzysNd3U
+        I5WXFRvVzup3HhEFrLEzsF7yoQ==
+X-Google-Smtp-Source: ACHHUZ5oD1eJuOOXwhB3oSh2MYj9wjWgnlLFROvNmXdM0XO9cA+T02XHE8k1Y8GTJcBaWsddllrKRA==
+X-Received: by 2002:a05:600c:3784:b0:3f6:552:8722 with SMTP id o4-20020a05600c378400b003f605528722mr2994082wmr.18.1685026240799;
+        Thu, 25 May 2023 07:50:40 -0700 (PDT)
 Received: from [127.0.1.1] (158.22.5.93.rev.sfr.net. [93.5.22.158])
-        by smtp.googlemail.com with ESMTPSA id n4-20020a05600c294400b003f3157988f8sm2349559wmd.26.2023.05.25.07.50.38
+        by smtp.googlemail.com with ESMTPSA id n4-20020a05600c294400b003f3157988f8sm2349559wmd.26.2023.05.25.07.50.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 May 2023 07:50:38 -0700 (PDT)
+        Thu, 25 May 2023 07:50:40 -0700 (PDT)
 From:   Alexandre Mergnat <amergnat@baylibre.com>
-Subject: [PATCH v2 0/2] Fix and clean MT8365 clock indexes
-Date:   Thu, 25 May 2023 16:50:26 +0200
-Message-Id: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
+Date:   Thu, 25 May 2023 16:50:27 +0200
+Subject: [PATCH v2 1/2] dt-bindings: clock: mediatek: replace unusable
+ clock
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALN1b2QC/3WOOw6DMBAFr4JcZ8E2vyRV7hFR2GYJq4BBNkEgx
- N1j6FKknCfN02zMoyP07B5tzOFMngYbQF4iZlplXwhUB2aSy5TnooSGFjDdG8jWuMCt4FmqVVP
- kGllwtPII2ilr2sP6jMlcxBk4I5JpGMkk/XRNizz5eTnE0WHYzpBnFbglPw1uPbtmcaz/EmYBH
- EQmeVkqUaZSP7RaO9IOYzP0rNr3/QvBW6pQ5gAAAA==
+Content-Transfer-Encoding: 8bit
+Message-Id: <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+References: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
+In-Reply-To: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -74,53 +74,51 @@ Cc:     Markus Schneider-Pargmann <msp@baylibre.com>,
         linux-mediatek@lists.infradead.org,
         Alexandre Mergnat <amergnat@baylibre.com>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1079; i=amergnat@baylibre.com;
- h=from:subject:message-id; bh=mJgIzKbuG8pOxtxWfLmmBivGM0R6E16D6cc2oakm5fM=;
- b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkb3W+7R4+WpLQFt5TQvVau/Q3VcVbO3w8VqqssbLY
- g5NzkRyJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZG91vgAKCRArRkmdfjHURclZD/
- 9QLAUKtYzpR4BF4chcuH2K+VHCEK/q+A72ywFvKsKuqPYRq3bl/hB3x9pw/ZIf8ZTIn0jdVYXxicFt
- 4v66fpwPsT7bZFvIWwt3pOy7NgbWH+xHHRXh2y4V6RS/fIwekCb9vwty3//kGvBan7/Z2/+sbpSJkp
- zzMy/9Mcw5n9MdE4KvbK5TvB6RIRBOFs2/Oli0bZqhW/M0YTByzZPbqK89UtpCgxs3ok1vtCsC5u4M
- v15AywGqae1FGszDfABRIIr5I2oJWjTm4zz16RH6B4dC90EmM0/2unf8fIZQK3sFnxS/58XsaKnyGm
- INyRxjk5FfNaMzWZorK5s7PRTiTYokSnVpqbL/O1YwCfG15QLTd8xlYzMk5jOROui+mcv3ZDzGOe2r
- M3jEMABp7BPr3k+yxCluJ9rQXh2kfAd36EpgRzVgoOZTQnjHW5+lrpbxhqCwZGFfnx3aiT3JPbqLLK
- x+KK6oN/1l90s7lrSAdoNfDMhcKda+Ghv2ZWNBYxVGh+oHz03B4a5HnicdgxYsXFytTVC2/hw4W7DZ
- JBSlS/aVAmHJMam/I9GpfPLL1obX+zETV9SwV2iruVVx9Eb7+THBnB5Bg9L6DX6qlW0t3gdhfwDn+w
- g/h4HGJcjlSWUYC1F0X413yT93KRezxA/bm+7jABjd3Uoty15pMrAB+04Jdg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1018; i=amergnat@baylibre.com;
+ h=from:subject:message-id; bh=OTCpf/cGWX/QOa+k7U0XGlCX28v0JhFQ08iD6/fULvs=;
+ b=owEBbQKS/ZANAwAKAStGSZ1+MdRFAcsmYgBkb3W+pK5Qktvbj+oP/LMTRHEHloR67cHOvXTgd2LW
+ dFOw9wSJAjMEAAEKAB0WIQQjG17X8+qqcA5g/osrRkmdfjHURQUCZG91vgAKCRArRkmdfjHURfElD/
+ 4hfHecM1fx+yBLw5NYTj/6RqIFsLxIIyQbHNLDQ5/s8ICD8S77k6rhGsLhdrps8Buh/RmvzxD4spRV
+ kCYEfz6n5CwEktvF3Wzi3p0Ybmw+WMnk2mBiP4F5Q1243KtrAr6pJbKuOxuRRXTTOmhHCWhH28OlSz
+ +DhTPwzTlXfMBhkL8bF36YRgFuCEDDKd4LXk7tLd2j0SptQp8vK4emu72Z0SknrP8ISVeDf+9kc9jW
+ 2oFagHjJ93dMCu5s9qIuaMTvcgs6GtPcSf6HBxGKc2/6aSxnigUQr4N2Q2V5kwMrPadNIzqsXqG9Rt
+ zoUskveZR0+Y4kH5SaNUpGIdOV9fTzEx/9ZBE5pCVFCxv7wE8sbLQuL8ydX/VRO8a527B0OMTmTwLC
+ aHBhs2hbL/RiffOWhuyLwnhnsTm4Wxf6D4DrjkoEChXmgTCwCeYUXMo3AfU48Qp1Lwfkk3ElMXB7qI
+ e38e1/pVG1tfdkhR/XFJvzDx1ATbsN6/wHC7+DB/1mBFU6PIM38y1FKiXe+zz7GT+kpgBmP+g4Pqmm
+ v3NSNm7VP4tqy6NicpXR78U0hJHUREee7xc62d24qaHG0xqWZhSeU+5iEBDBtJ64xjeoYIcthDSMzS
+ eTOhjSjMialozHY9QY+pZ6oa2mLQp2ydFlGWTKpnXc4qZV6ynS2OuIKU+6vg==
 X-Developer-Key: i=amergnat@baylibre.com; a=openpgp;
  fpr=231B5ED7F3EAAA700E60FE8B2B46499D7E31D445
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The first commit replace un unusable clock by another one.
+The “mcu_pm_bclk_ck_cg” clock is used by co-processors and should not be
+added to the kernel driver, otherwise the CPU just halt and the board is
+rebooted by the wathdog.
 
-The second one fix a regression which prevent the initialization of the
-latest indexed clocks. The regression is introduced with [1].
-
-[1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
-     mtk_clk_simple_{probe,remove}()")
+Instead, add the "aes_top0_bclk_ck_cg" missing clock to prevent
+re-shuffling index and then preserve the ABI.
 
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
-Changes in v2:
-- Add the missing clocks in the mt8365 clock driver.
-- Revert all change in binding file except for one clock.
-- Link to v1: https://lore.kernel.org/r/20230517-fix-clk-index-v1-0-142077a1732b@baylibre.com
+ include/dt-bindings/clock/mediatek,mt8365-clk.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-Alexandre Mergnat (2):
-      dt-bindings: clock: mediatek: replace unusable clock
-      clk: mediatek: mt8365: Fix index issue
+diff --git a/include/dt-bindings/clock/mediatek,mt8365-clk.h b/include/dt-bindings/clock/mediatek,mt8365-clk.h
+index f9aff1775810..0a841e7cc1c3 100644
+--- a/include/dt-bindings/clock/mediatek,mt8365-clk.h
++++ b/include/dt-bindings/clock/mediatek,mt8365-clk.h
+@@ -199,7 +199,7 @@
+ #define CLK_IFR_PWRAP_TMR		46
+ #define CLK_IFR_PWRAP_SPI		47
+ #define CLK_IFR_PWRAP_SYS		48
+-#define CLK_IFR_MCU_PM_BK		49
++#define CLK_IFR_AES_TOP0_BK		49
+ #define CLK_IFR_IRRX_26M		50
+ #define CLK_IFR_IRRX_32K		51
+ #define CLK_IFR_I2C0_AXI		52
 
- drivers/clk/mediatek/clk-mt8365.c               | 11 +++++++++++
- include/dt-bindings/clock/mediatek,mt8365-clk.h |  2 +-
- 2 files changed, 12 insertions(+), 1 deletion(-)
----
-base-commit: ac9a78681b921877518763ba0e89202254349d1b
-change-id: 20230517-fix-clk-index-96043baf65be
-
-Best regards,
 -- 
-Alexandre Mergnat <amergnat@baylibre.com>
+2.25.1
 
