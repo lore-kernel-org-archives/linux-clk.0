@@ -2,46 +2,56 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B5EC7EE33
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 04:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CF0C77B7E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 04:57:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240079AbjEYE5H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 00:57:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54222 "EHLO
+        id S240143AbjEYE5W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 00:57:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239636AbjEYEzZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 00:55:25 -0400
+        with ESMTP id S239758AbjEYEzf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 00:55:35 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB73319AE;
-        Wed, 24 May 2023 21:52:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E85DE48;
+        Wed, 24 May 2023 21:52:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4024D642D4;
-        Thu, 25 May 2023 04:51:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05489C433EF;
-        Thu, 25 May 2023 04:51:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CFD78642B3;
+        Thu, 25 May 2023 04:52:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08192C433A4;
+        Thu, 25 May 2023 04:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684990317;
-        bh=rIPZFZpqIyb9U/9HI1HqKJ9j46kFAYPkBG128IeLSDs=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=QDJCRUnhJM6wGUtlpxLPMPwggVCAokWCGx/HAIO4JOVqvGtpTGjE3xQu+sYJg4sKj
-         xqyO1Te4tCjPYkTanxui4GevUrkew8by9OfhjFwmQcsbwMxN8S1TJWE1KfHyk7qHrX
-         vnhBg6KFdI5eSJyijKwenIIj5bCcWaJk5QE75N4OncONToZzESo1H1VGZn3RP5o6VB
-         fsgaf/UtfULrgXtUMyAoA5jG8TxciUPMwXDC+AWEZroqNXCllnMU9s1aIBPaupjcna
-         wZnBa1g3DBRCsTM3U+9F1U7+MZtZO5ohjXocDQJjf3NxcMQsHy1FUuZp+B31SMdLuy
-         gJniHQadSPUnQ==
+        s=k20201202; t=1684990322;
+        bh=wbuqSr/dpQZAWNfRhRWhjk92q+VPd7IY9nI6I0haJc8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hiuDBew7VBo2HHdEmQ55CNhozIfR4j7iDQjfwkU4miS1db86JvKZ+VNXb/3xz0K8m
+         E08J7bukhI8hTtLI65/NR3Y9uKdkxvDIvWuTbpF3/pzsWMq7XJX0/SkFScxSS0yy2v
+         mckEp+vuLMm5t2VWiq8Bb7xe4+IR8ms+rIyQNxJSSxe3bJhI2rILwtXLKXdh8PuFFF
+         QwRMr4TpsUNf7BLCgHk8CfrhdKiRfHIQSEUNjasKqgi8L49G7Y+Ik+8TE9Ozj2PvU5
+         AGykGkUhCw38vB1iU9L5T0/boiWgfaIvVctEUvrPwz6OTfOoMEaqSKCrGIq9LICtnz
+         TDjmgCs1L1Q/A==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Kathiravan T <quic_kathirav@quicinc.com>,
-        linux-kernel@vger.kernel.org, agross@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, konrad.dybcio@linaro.org, sboyd@kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc: ipq5332: Use floor ops for SDCC clocks
-Date:   Wed, 24 May 2023 21:54:35 -0700
-Message-Id: <168499048178.3998961.12783025021801928480.b4-ty@kernel.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        jkona@quicinc.com, Konrad Dybcio <konrad.dybcio@linaro.org>,
+        devicetree@vger.kernel.org,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        linux-clk@vger.kernel.org, quic_rohiagar@quicinc.com,
+        netdev@vger.kernel.org
+Subject: Re: (subset) [PATCH V2 0/5] Add GCC and RPMHCC support for sdx75
+Date:   Wed, 24 May 2023 21:54:39 -0700
+Message-Id: <168499048185.3998961.8118041081683162755.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230508163145.9678-1-quic_kathirav@quicinc.com>
-References: <20230508163145.9678-1-quic_kathirav@quicinc.com>
+In-Reply-To: <20230512122347.1219-1-quic_tdas@quicinc.com>
+References: <20230512122347.1219-1-quic_tdas@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -49,15 +59,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 8 May 2023 22:01:45 +0530, Kathiravan T wrote:
-> SDCC clocks must be rounded down to avoid overclocking the controller.
+On Fri, 12 May 2023 17:53:42 +0530, Taniya Das wrote:
+> This series of patches extends the invert logic for branch2 clocks and adds
+> GCC, RPMH clocks devicetree bindings and driver support for SDX75 platform.
 > 
+> Imran Shaik (5):
+>   clk: qcom: branch: Extend the invert logic for branch2 clocks
+>   dt-bindings: clock: qcom: Add GCC clocks for SDX75
+>   dt-bindings: clock: qcom: Add RPMHCC for SDX75
+>   clk: qcom: rpmh: Add RPMH clocks support for SDX75
+>   clk: qcom: Add GCC driver support for SDX75
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc: ipq5332: Use floor ops for SDCC clocks
-      commit: a30e62bf6bf4d3230fa9164c7e174e32b9be7ba5
+[1/5] clk: qcom: branch: Extend the invert logic for branch2 clocks
+      commit: 9092d1083a6253757c7f9449340173443c81768c
+[3/5] dt-bindings: clock: qcom: Add RPMHCC for SDX75
+      commit: 379d72721bc4308fbc038e9858b7d2e9191725b5
+[4/5] clk: qcom: rpmh: Add RPMH clocks support for SDX75
+      commit: 1c2360ff58162ab3a91c619ab8172c0061174151
+[5/5] clk: qcom: Add GCC driver support for SDX75
+      commit: 108cdc09b2dea5110533bba495b6953ca9c7c2a9
 
 Best regards,
 -- 
