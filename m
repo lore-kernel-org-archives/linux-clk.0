@@ -2,325 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3E9C7EE2E
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 09:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC359C7EE29
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 10:31:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240745AbjEYJji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 05:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33188 "EHLO
+        id S240825AbjEYKb4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 06:31:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240760AbjEYJjJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 05:39:09 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641F4173B;
-        Thu, 25 May 2023 02:37:42 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 78BBB5FD26;
-        Thu, 25 May 2023 12:37:39 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1685007459;
-        bh=qobywYVJnOUHz0WjaEufUy7pJlPh58rBIf/mWyapB+0=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=AENyLL0j+KpGwEjQ+QN4FhtCnfmpVnRqackEWrrImh2HMKI+3EJgJ9YbzKCDpArvX
-         1ubecqHpf+cgs5eMtoTj8UQY1eUlDxLG1jON6IF4aqoT1vEjxggCOphXp6x+CYeTeH
-         ZpzMKCHUYnENITvHg5wyx2D3Kd0zfHRS/1xQE5KmI+m5h6BDDrnktxO6fRRFPbiWGg
-         6P7wlkOrFPPJPdOAQYskJGa4JPxdcvd6qpCbk9FxrQwguTlLeAn0x2yL1aPnujQzA+
-         0fdgUgU7z7g5yNv7qGgu0ihqdQ7szh4SYszTjyfRFc/Q4MwQ6amkZQx1dGQwW5CHM9
-         QA5m0NMigP5uw==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Thu, 25 May 2023 12:37:37 +0300 (MSK)
-Date:   Thu, 25 May 2023 12:37:36 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor@kernel.org>
-CC:     <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v16 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-Message-ID: <20230525093736.naztwqlhvskujsoa@CAB-WSD-L081021>
-References: <20230523135351.19133-1-ddrokosov@sberdevices.ru>
- <20230523135351.19133-6-ddrokosov@sberdevices.ru>
+        with ESMTP id S240987AbjEYKbz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 06:31:55 -0400
+Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C6C1A2
+        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 03:31:50 -0700 (PDT)
+Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f611ccd06eso3170405e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 25 May 2023 03:31:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685010708; x=1687602708;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UZdgPEgDAoSmA/7SXhnwPx/sNtYd4qe0zdzgh7q8GVQ=;
+        b=RPaw11UGtfXADUXUfw2DDLPIgvC68J74KrQRPWKR+hyYRcmAT5tBWE5Z4I4zfOkzuF
+         ISHguIAzubWqsAa82mfX01T351JOjnE8n4Hg/+vNBGfP3PjIzciO+zwDxFqiufu/ufdd
+         j3mW8nlUk6RVK8t4PqmHvJJbJY6krCiVBMZ2KehWrYaIkoRsvxQ4Tggcpd4+6V9uKLD7
+         8mMqbsRwnGjdJ5NcYgDFwcVwghsonEMP+fp4jg0Zrg/43MEyIkVRZuV0rxQX9HggMOYg
+         LUgx5UqcdLVxPeYhKZ3+xfgGEYYdtExIBytQuk9jd/FFVoBOluohjxZ7QMp/D3j5OYk6
+         ZTLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685010708; x=1687602708;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UZdgPEgDAoSmA/7SXhnwPx/sNtYd4qe0zdzgh7q8GVQ=;
+        b=BOwfueyQSkNcXJQ4+UL+3FtPUnaOv4i7Payf3T6fHXeRlmRZ43gx587AiRShT2Qtb5
+         hJN3w+avc5flEvmav19WdnMdO0LbQoLVK+70DrmxvDqvg+vQA6DUG54/sJUKI/wYPhYz
+         xRafxB54sGDchM/PgwcieA6/t17xgyQYlwZN3lV0/d7az61vHPmBKyZru9Y74251Ku0Y
+         H25GxNcuJ5xUg3V6fHFLMnJm493+H4059OD8wRUX7M8lAuq6ZBkP3s1T8YPu4RPj8YPk
+         S3NN709LzilsmqzddWuoSlaq3yAJkaFQQn0oNwG+Dr+3sGgv4tb7uYQ8N5q1U6SBO3Cz
+         8dcQ==
+X-Gm-Message-State: AC+VfDy4pTB2RJ0a46VTMftNpeFqGLuXMkrqjBUEkU2oLS6UZ+UdyD7u
+        fEC5PNl5k9emklHZ933pjVjFDQ==
+X-Google-Smtp-Source: ACHHUZ7UwxI8JOpqpaFtEvnkFO+1r7zo82NNT05WijoC2pcObFhz7kY3Z3YRG1f8HIHMRuJxFFemSA==
+X-Received: by 2002:a7b:cd8e:0:b0:3f6:a66:a372 with SMTP id y14-20020a7bcd8e000000b003f60a66a372mr1968045wmj.1.1685010708356;
+        Thu, 25 May 2023 03:31:48 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id l18-20020a5d5272000000b002fefe2edb72sm1335523wrc.17.2023.05.25.03.31.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 May 2023 03:31:47 -0700 (PDT)
+Message-ID: <497f6543-4d6d-256d-2fa0-be47a594a55c@linaro.org>
+Date:   Thu, 25 May 2023 11:31:46 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230523135351.19133-6-ddrokosov@sberdevices.ru>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/25 04:52:00 #21357441
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 4/5] clk: qcom: Add lpass audio clock controller driver
+ for SC8280XP
+Content-Language: en-US
+To:     Johan Hovold <johan@kernel.org>
+Cc:     andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, johan+linaro@kernel.org,
+        agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230518113800.339158-1-srinivas.kandagatla@linaro.org>
+ <20230518113800.339158-5-srinivas.kandagatla@linaro.org>
+ <ZGso3u6e0L5jXBLf@hovoldconsulting.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <ZGso3u6e0L5jXBLf@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Rob, Krzysztof and Conor,
 
-Could you please take a look at this patch version? Before Rob marked
-this patchset with RvB at v13 -
-https://lore.kernel.org/linux-amlogic/168130720431.2218249.7671061964988064525.robh@kernel.org/
 
-However, due to several comments from other maintainers, unfortunately,
-I had to rename the 'a1-clkc' controller to 'a1-peripherals-clkc' and
-remove Rob's RvB.
-
-I would be grateful for your assistance!
-
-On Tue, May 23, 2023 at 04:53:50PM +0300, Dmitry Rokosov wrote:
-> Add documentation and dt bindings for the Amlogic A1 Peripherals clock
-> controller.
-> A1 PLL clock controller has references to A1 Peripherals clock
-> controller objects, so reflect them in the schema.
+On 22/05/2023 09:33, Johan Hovold wrote:
+> On Thu, May 18, 2023 at 12:37:59PM +0100, Srinivas Kandagatla wrote:
+>> Add support for the lpass audio clock controller found on SC8280XP based
+>> devices. This would allow lpass peripheral loader drivers to control the
+>> clocks and bring the subsystems out of reset.
+>>
+>> Currently this patch only supports resets as the Q6DSP is in control of
+>> LPASS IP which manages most of the clocks via Q6PRM service on GPR rpmsg
+>> channel.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   drivers/clk/qcom/lpasscc-sc8280xp.c | 23 +++++++++++++++++++++++
+>>   1 file changed, 23 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/lpasscc-sc8280xp.c b/drivers/clk/qcom/lpasscc-sc8280xp.c
+>> index 118320f8ee40..e221ae2d40ae 100644
+>> --- a/drivers/clk/qcom/lpasscc-sc8280xp.c
+>> +++ b/drivers/clk/qcom/lpasscc-sc8280xp.c
+>> @@ -13,6 +13,26 @@
+>>   #include "common.h"
+>>   #include "reset.h"
+>>   
+>> +static const struct qcom_reset_map lpass_audio_csr_sc8280xp_resets[] = {
+>> +	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
+>> +	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+>> +	[LPASS_AUDIO_SWR_WSA2_CGCR] =  { 0xd8, 1 },
+>> +};
+>> +
+>> +static struct regmap_config lpass_audio_csr_sc8280xp_regmap_config = {
+>> +	.reg_bits = 32,
+>> +	.reg_stride = 4,
+>> +	.val_bits = 32,
+>> +	.name = "lpass-audio-csr",
 > 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> ---
->  .../clock/amlogic,a1-peripherals-clkc.yaml    |  73 +++++++++++
->  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   5 +-
->  .../clock/amlogic,a1-peripherals-clkc.h       | 115 ++++++++++++++++++
->  3 files changed, 191 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> new file mode 100644
-> index 000000000000..6d84cee1bd75
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> @@ -0,0 +1,73 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/amlogic,a1-peripherals-clkc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic A1 Peripherals Clock Control Unit
-> +
-> +maintainers:
-> +  - Neil Armstrong <neil.armstrong@linaro.org>
-> +  - Jerome Brunet <jbrunet@baylibre.com>
-> +  - Jian Hu <jian.hu@jian.hu.com>
-> +  - Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> +
-> +properties:
-> +  compatible:
-> +    const: amlogic,a1-peripherals-clkc
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: input fixed pll div2
-> +      - description: input fixed pll div3
-> +      - description: input fixed pll div5
-> +      - description: input fixed pll div7
-> +      - description: input hifi pll
-> +      - description: input oscillator (usually at 24MHz)
-> +
-> +  clock-names:
-> +    items:
-> +      - const: fclk_div2
-> +      - const: fclk_div3
-> +      - const: fclk_div5
-> +      - const: fclk_div7
-> +      - const: hifi_pll
-> +      - const: xtal
-> +
-> +required:
-> +  - compatible
-> +  - '#clock-cells'
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
-> +    apb {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@800 {
-> +            compatible = "amlogic,a1-peripherals-clkc";
-> +            reg = <0 0x800 0 0x104>;
-> +            #clock-cells = <1>;
-> +            clocks = <&clkc_pll CLKID_FCLK_DIV2>,
-> +                     <&clkc_pll CLKID_FCLK_DIV3>,
-> +                     <&clkc_pll CLKID_FCLK_DIV5>,
-> +                     <&clkc_pll CLKID_FCLK_DIV7>,
-> +                     <&clkc_pll CLKID_HIFI_PLL>,
-> +                     <&xtal>;
-> +            clock-names = "fclk_div2", "fclk_div3",
-> +                          "fclk_div5", "fclk_div7",
-> +                          "hifi_pll", "xtal";
-> +        };
-> +    };
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> index 5c6fa620a63c..a59b188a8bf5 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> @@ -43,6 +43,7 @@ additionalProperties: false
->  
->  examples:
->    - |
-> +    #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
->      apb {
->          #address-cells = <2>;
->          #size-cells = <2>;
-> @@ -51,8 +52,8 @@ examples:
->              compatible = "amlogic,a1-pll-clkc";
->              reg = <0 0x7c80 0 0x18c>;
->              #clock-cells = <1>;
-> -            clocks = <&clkc_periphs_fixpll_in>,
-> -                     <&clkc_periphs_hifipll_in>;
-> +            clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
-> +                     <&clkc_periphs CLKID_HIFIPLL_IN>;
->              clock-names = "fixpll_in", "hifipll_in";
->          };
->      };
-> diff --git a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> new file mode 100644
-> index 000000000000..ff2730f398a6
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> @@ -0,0 +1,115 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +/*
-> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-> + * Author: Jian Hu <jian.hu@amlogic.com>
-> + *
-> + * Copyright (c) 2023, SberDevices. All Rights Reserved.
-> + * Author: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> + */
-> +
-> +#ifndef __A1_PERIPHERALS_CLKC_H
-> +#define __A1_PERIPHERALS_CLKC_H
-> +
-> +#define CLKID_FIXPLL_IN		1
-> +#define CLKID_USB_PHY_IN	2
-> +#define CLKID_USB_CTRL_IN	3
-> +#define CLKID_HIFIPLL_IN	4
-> +#define CLKID_SYSPLL_IN		5
-> +#define CLKID_DDS_IN		6
-> +#define CLKID_SYS		7
-> +#define CLKID_CLKTREE		8
-> +#define CLKID_RESET_CTRL	9
-> +#define CLKID_ANALOG_CTRL	10
-> +#define CLKID_PWR_CTRL		11
-> +#define CLKID_PAD_CTRL		12
-> +#define CLKID_SYS_CTRL		13
-> +#define CLKID_TEMP_SENSOR	14
-> +#define CLKID_AM2AXI_DIV	15
-> +#define CLKID_SPICC_B		16
-> +#define CLKID_SPICC_A		17
-> +#define CLKID_MSR		18
-> +#define CLKID_AUDIO		19
-> +#define CLKID_JTAG_CTRL		20
-> +#define CLKID_SARADC_EN		21
-> +#define CLKID_PWM_EF		22
-> +#define CLKID_PWM_CD		23
-> +#define CLKID_PWM_AB		24
-> +#define CLKID_CEC		25
-> +#define CLKID_I2C_S		26
-> +#define CLKID_IR_CTRL		27
-> +#define CLKID_I2C_M_D		28
-> +#define CLKID_I2C_M_C		29
-> +#define CLKID_I2C_M_B		30
-> +#define CLKID_I2C_M_A		31
-> +#define CLKID_ACODEC		32
-> +#define CLKID_OTP		33
-> +#define CLKID_SD_EMMC_A		34
-> +#define CLKID_USB_PHY		35
-> +#define CLKID_USB_CTRL		36
-> +#define CLKID_SYS_DSPB		37
-> +#define CLKID_SYS_DSPA		38
-> +#define CLKID_DMA		39
-> +#define CLKID_IRQ_CTRL		40
-> +#define CLKID_NIC		41
-> +#define CLKID_GIC		42
-> +#define CLKID_UART_C		43
-> +#define CLKID_UART_B		44
-> +#define CLKID_UART_A		45
-> +#define CLKID_SYS_PSRAM		46
-> +#define CLKID_RSA		47
-> +#define CLKID_CORESIGHT		48
-> +#define CLKID_AM2AXI_VAD	49
-> +#define CLKID_AUDIO_VAD		50
-> +#define CLKID_AXI_DMC		51
-> +#define CLKID_AXI_PSRAM		52
-> +#define CLKID_RAMB		53
-> +#define CLKID_RAMA		54
-> +#define CLKID_AXI_SPIFC		55
-> +#define CLKID_AXI_NIC		56
-> +#define CLKID_AXI_DMA		57
-> +#define CLKID_CPU_CTRL		58
-> +#define CLKID_ROM		59
-> +#define CLKID_PROC_I2C		60
-> +#define CLKID_DSPA_EN		63
-> +#define CLKID_DSPA_EN_NIC	64
-> +#define CLKID_DSPB_EN		65
-> +#define CLKID_DSPB_EN_NIC	66
-> +#define CLKID_RTC		67
-> +#define CLKID_CECA_32K		68
-> +#define CLKID_CECB_32K		69
-> +#define CLKID_24M		70
-> +#define CLKID_12M		71
-> +#define CLKID_FCLK_DIV2_DIVN	72
-> +#define CLKID_GEN		73
-> +#define CLKID_SARADC		75
-> +#define CLKID_PWM_A		76
-> +#define CLKID_PWM_B		77
-> +#define CLKID_PWM_C		78
-> +#define CLKID_PWM_D		79
-> +#define CLKID_PWM_E		80
-> +#define CLKID_PWM_F		81
-> +#define CLKID_SPICC		82
-> +#define CLKID_TS		83
-> +#define CLKID_SPIFC		84
-> +#define CLKID_USB_BUS		85
-> +#define CLKID_SD_EMMC		86
-> +#define CLKID_PSRAM		87
-> +#define CLKID_DMC		88
-> +#define CLKID_DSPA_A_SEL	95
-> +#define CLKID_DSPA_B_SEL	98
-> +#define CLKID_DSPB_A_SEL	101
-> +#define CLKID_DSPB_B_SEL	104
-> +#define CLKID_CECB_32K_SEL_PRE	113
-> +#define CLKID_CECB_32K_SEL	114
-> +#define CLKID_CECA_32K_SEL_PRE	117
-> +#define CLKID_CECA_32K_SEL	118
-> +#define CLKID_GEN_SEL		121
-> +#define CLKID_PWM_A_SEL		124
-> +#define CLKID_PWM_B_SEL		126
-> +#define CLKID_PWM_C_SEL		128
-> +#define CLKID_PWM_D_SEL		130
-> +#define CLKID_PWM_E_SEL		132
-> +#define CLKID_PWM_F_SEL		134
-> +#define CLKID_SD_EMMC_SEL2	147
-> +
-> +#endif /* __A1_PERIPHERALS_CLKC_H */
-> -- 
-> 2.36.0
-> 
+> Should you update this name to match the new compatible
+> ("lpassaudiocc")?
 
--- 
-Thank you,
-Dmitry
+This name reflects the name from data sheet, keeping it that way would 
+be useful.
+
+--srini
+> 
+>> +	.max_register = 0x1000,
+>> +};
+>> +
+>> +static const struct qcom_cc_desc lpass_audio_csr_reset_sc8280xp_desc = {
+> 
+> Same here (and for the reset struct as well as previous patch).
+> 
+>> +	.config = &lpass_audio_csr_sc8280xp_regmap_config,
+>> +	.resets = lpass_audio_csr_sc8280xp_resets,
+>> +	.num_resets = ARRAY_SIZE(lpass_audio_csr_sc8280xp_resets),
+>> +};
+>> +
+>>   static const struct qcom_reset_map lpass_tcsr_sc8280xp_resets[] = {
+>>   	[LPASS_AUDIO_SWR_TX_CGCR] = { 0xc010, 1 },
+>>   };
+>> @@ -33,6 +53,9 @@ static const struct qcom_cc_desc lpass_tcsr_reset_sc8280xp_desc = {
+>>   
+>>   static const struct of_device_id lpasscc_sc8280xp_match_table[] = {
+>>   	{
+>> +		.compatible = "qcom,sc8280xp-lpassaudiocc",
+>> +		.data = &lpass_audio_csr_reset_sc8280xp_desc,
+>> +	}, {
+>>   		.compatible = "qcom,sc8280xp-lpasscc",
+>>   		.data = &lpass_tcsr_reset_sc8280xp_desc,
+>>   	},
+> 
+> Johan
