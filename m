@@ -2,36 +2,36 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6B4C7EE29
-	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 21:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAA1C77B7E
+	for <linux-clk@archiver.kernel.org>; Thu, 25 May 2023 21:45:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235290AbjEYVmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 May 2023 17:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
+        id S241917AbjEYVpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 May 2023 17:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbjEYVmw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 17:42:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FF9E99;
-        Thu, 25 May 2023 14:42:52 -0700 (PDT)
+        with ESMTP id S240832AbjEYVpp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 May 2023 17:45:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79BAFE4D;
+        Thu, 25 May 2023 14:45:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8B07164B50;
-        Thu, 25 May 2023 21:42:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FCC5C433EF;
-        Thu, 25 May 2023 21:42:47 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6673364B71;
+        Thu, 25 May 2023 21:44:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF540C433EF;
+        Thu, 25 May 2023 21:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685050971;
-        bh=FjzpokD3KlPp8OLgmScsmPYAiivMUvZd0d1dgeN/VZM=;
+        s=k20201202; t=1685051098;
+        bh=1d20bjdX5HUdVvZRPf4VGSbqIqinzRsHvwcKXpOUIoQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jJoyh+4n68Ju6BaUjIkoD3sxPvcYo48wGZOVliY/Qu5DJK2G8lxGnOhq0PfX6XdHg
-         PrxvI42P/D4vV/+J3ljjgB2+p9eNhClm1ROwAa72bND4XzUJc+IiMkz7VY7/YHNSJE
-         qeJC8d9HwMEzfpkb9KRxUzoHpzH7DH7nMOQyTgwX7XWcrrujDbXu1foblWM9mXi2x1
-         Gsy3oHLog8I4eL2JMhJhRlRfxxtZ6I6J2/RQFsqLoHh4wyCgzfD+tPhLFsinVpEFRd
-         aOeZSfWeBwcAGoLQKl2RRuu/ifXDJpF/hazBAFos9poa1PJrDGqHjqHM6fCsBZn26q
-         hkyW07t/y2KPQ==
-Date:   Thu, 25 May 2023 22:42:45 +0100
+        b=oAcQUkkSOjsmVnkbAo4rOPwsRIs+qW+MUrnXDJbyzI1Pifb67gOi0pDVzmXxEiaRF
+         w26LgUXziy2EcR4xt0dZ2jqo1wPKGCGD+Mx1CZ6QVeuLCKqxiQtZuI6Axo+9pID+RU
+         HGVtbDxkNNoSH8t1E++SMFq7Wv63fT9+ocO6MJED+HjPs67A78PRR+dcVRDiXtxznK
+         NcUe1wFCrzkRoDF8rqA7NodXIuuB/RfyhdBGqzPowYgn4GrAOVKig2tVjFUSro4jkN
+         SzJfi051sYZyOoljcfNKrmt5kgZX8y/wTvzJ4XhNmTQnocUfzg8D7/3Glsu+Of4IiS
+         /AlNRIjLaIeyQ==
+Date:   Thu, 25 May 2023 22:44:53 +0100
 From:   Conor Dooley <conor@kernel.org>
 To:     Xingyu Wu <xingyu.wu@starfivetech.com>
 Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
@@ -46,76 +46,46 @@ Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Albert Ou <aou@eecs.berkeley.edu>,
         Hal Feng <hal.feng@starfivetech.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 09/11] riscv: dts: starfive: jh7110: add pmu
- controller node
-Message-ID: <20230525-unwarlike-mule-f37ec29cf7c5@spud>
+Subject: Re: [PATCH v6 10/11] riscv: dts: starfive: jh7110: Add DVP and HDMI
+ TX pixel external clocks
+Message-ID: <20230525-upscale-siberian-54c5f003334c@spud>
 References: <20230518101234.143748-1-xingyu.wu@starfivetech.com>
- <20230518101234.143748-10-xingyu.wu@starfivetech.com>
+ <20230518101234.143748-11-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ammaxlZe6GO1q9SH"
+        protocol="application/pgp-signature"; boundary="14g6l7gbkD9WOY4x"
 Content-Disposition: inline
-In-Reply-To: <20230518101234.143748-10-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230518101234.143748-11-xingyu.wu@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ammaxlZe6GO1q9SH
+--14g6l7gbkD9WOY4x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 18, 2023 at 06:12:32PM +0800, Xingyu Wu wrote:
-> From: Walker Chen <walker.chen@starfivetech.com>
+On Thu, May 18, 2023 at 06:12:33PM +0800, Xingyu Wu wrote:
+> Add DVP and HDMI TX pixel external fixed clocks and the rates are
+> 74.25MHz and 297MHz.
 >=20
-> Add the pmu controller node for the Starfive JH7110 SoC. The PMU needs
-> to be used by other modules such as VPU, ISP, etc.
->=20
-> Signed-off-by: Walker Chen <walker.chen@starfivetech.com>
+> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 
-Firstly, this is missing your SoB - but more importantly this is already
-in my tree as 6a887bcc4138 ("riscv: dts: starfive: Add PMU controller
-node").
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
 Thanks,
 Conor.
 
-> ---
->  arch/riscv/boot/dts/starfive/jh7110.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/d=
-ts/starfive/jh7110.dtsi
-> index 4c5fdb905da8..30e1f34d5cf8 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> @@ -496,5 +496,12 @@ aongpio: pinctrl@17020000 {
->  			gpio-controller;
->  			#gpio-cells =3D <2>;
->  		};
-> +
-> +		pwrc: power-controller@17030000 {
-> +			compatible =3D "starfive,jh7110-pmu";
-> +			reg =3D <0x0 0x17030000 0x0 0x10000>;
-> +			interrupts =3D <111>;
-> +			#power-domain-cells =3D <1>;
-> +		};
->  	};
->  };
-> --=20
-> 2.25.1
->=20
-
---ammaxlZe6GO1q9SH
+--14g6l7gbkD9WOY4x
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG/WVQAKCRB4tDGHoIJi
-0utfAP4iYxhTjF7eRb0ilQrW5LNMGhk1Qr4ecLfvdWIrU21NsAEA1DnG2vnKfoRI
-nCZWaxxfvH6O1DXPEMFiiEh8Evllvgk=
-=MphS
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZG/W1QAKCRB4tDGHoIJi
+0tacAQDzU7wda2zCGFCxnqT+sHimB4/P36sZ0pPmFeBEUk3dIAD/UZFrrFZD0rlX
+S99BGmiDwdA9CkSxOXkuNlTIIz+rdAE=
+=wubc
 -----END PGP SIGNATURE-----
 
---ammaxlZe6GO1q9SH--
+--14g6l7gbkD9WOY4x--
