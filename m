@@ -2,62 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D71EC7EE2C
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 15:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E0FC7EE2E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 15:55:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244213AbjEZPxy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 11:53:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50574 "EHLO
+        id S230156AbjEZPzD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 11:55:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244216AbjEZPxw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 11:53:52 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E72D119
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 08:53:50 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-510f525e06cso1509302a12.2
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 08:53:50 -0700 (PDT)
+        with ESMTP id S244004AbjEZPyw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 11:54:52 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A947F3
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 08:54:51 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f6e4554453so6817255e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 08:54:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685116428; x=1687708428;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1685116489; x=1687708489;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=dn6aRVtsB7lJHlQ+n3cjJ7Hpri7VOVYN2SL9x9E1NRA=;
-        b=Q3L0DQh3ZNrcNumkcoYeh19QFAYjP2+Wit2aWVCaU5p8BCmKAhQiz2Ys+9M+2Vr3ed
-         xDgzXdBwjJkV/cVl7ep7MO5xfuAPkzwI3GGa/pSrrNUE9We2pPNvqY43SW+4SIZEa/M+
-         VXSM00wfEujSPtaG2C/UXVAZPxzSUfCL1IKMczI9oPZILIhtO1eYmREN3GQ3U/CekD1i
-         ri7XKn/wlQwqRyum3s5usItRE6zSo0mc7aJNe1GgqVB2P+9inzVUeinJzLRsT7tu5eEy
-         PeNqOnskk9yc6pMDweKCN/Mx73jBDwxj3Z1mcy85T+GF8sZNmhu02JF8La/ow1sEL3Tm
-         Oc5g==
+        bh=UxJRX95nR7lgawLbY9ei/X7hSzGOF/KUvLucc8yijNM=;
+        b=g7PSHot2l7VS8EXyTj17hqAOLoSsCnLRDW6gY0Spb1atRcCo3AyvjDAQdFQmYEhL3g
+         DIvb/y/nRRwgZNWt65p58Iz/nQWLCJ1XMLBqQ3jxrvcC1K1eiRzqeF66lxDnBUNnf01U
+         q+MtowiYszrvL5JxgMgiD6m0/h5HDxVgGjD29lE9rGSYgElFnPnaNFCkIYGRHsJvfLLb
+         yRHcbrZUVkKmbIQnigv6vgukxaCmLcL5R+XltVbbnHB+ZlxD5L9pmLW5Jho3Nxxl/td+
+         l1TKWDQZnEj0c5RYy4V52YhvZ53SAU8tMwoSJzqY04pcFUQARJMwSyL4rK2etQ4S4E4i
+         oruw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685116428; x=1687708428;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1685116489; x=1687708489;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dn6aRVtsB7lJHlQ+n3cjJ7Hpri7VOVYN2SL9x9E1NRA=;
-        b=f8zuxnCYTf6CnPYz+y/ffJE8Bq13GC9425DvhlHosuGmoMrUFVbbrDdpH6Ls+PvMSJ
-         z/S76PGXsqPjH+9kttS4N2+wYyBNNlZ0552/bR1rMpJIF6LeRlUefDSGqtoYAr2bbYRV
-         0KgYZ4B/qveCLTWxpH5QnZB0shI69bsz0RiWhE1Rt9+qrlDKGBZ6QcBGRMEUPokZ1Obg
-         jnGq3kc9YzkBmPfWhxCg2p2t1IrBBiDjTGMvFUHp+HNiGvE+FuPTie98HgqTxmi3FmNE
-         wWdMqVRWRr9o6AN60aqxJc+BD/25XjQhRi9TaV5J6bN1MNel1/lquOpRLlr+5hh1Sr7n
-         GEJA==
-X-Gm-Message-State: AC+VfDxK9JUYmy0dYfZxtRdAFrpBH+5GAvNcAGLKXr9LVvLNDg8zhjKU
-        oxiO0elhlE3GVNrk5lzYRB/JUg==
-X-Google-Smtp-Source: ACHHUZ6VEuV8/df/LpPQcZFhpinqdGRwuetT29m9eh7mboiTxmRAM1CNcXRbK/iX7kdA2y4v/XUhTg==
-X-Received: by 2002:aa7:d8d4:0:b0:514:25a4:3074 with SMTP id k20-20020aa7d8d4000000b0051425a43074mr1750283eds.3.1685116428674;
-        Fri, 26 May 2023 08:53:48 -0700 (PDT)
-Received: from [10.10.15.130] ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id u14-20020aa7d88e000000b0050da1edb2e4sm85463edq.31.2023.05.26.08.53.47
+        bh=UxJRX95nR7lgawLbY9ei/X7hSzGOF/KUvLucc8yijNM=;
+        b=dRJYCem928dd1v2Aw59lWMrXzeedNymqDnjCmg6On9tu2jC0p/aT7LqNhRfP9Tyo9H
+         bYPVDxqWVA1mrQu9XKbGOpNEdC4Q8D3GrM3r6HAULzsQsuxdqzQ1iaAUSXQ+CsGyL397
+         Yda+HdFk+TJ9t4TqjAglv+OJIZKc3n7NvSfVPfkLFZVKLtYCaV1PaKU6fcTQ14vmNDfF
+         QtRu6zDoZnsCwZjWrIm2BDJM2TG6w78irtfojeFuwcTr4bvsx7oew9BqftyBvT/wSDE2
+         WYD54xsQtxnYBChNgYlgAB1ubmcJ1Homb0Rz/fSkEoCISc9LCPLP575q7UmcH800wYE/
+         RrVA==
+X-Gm-Message-State: AC+VfDyyRhKyURXq229nN1HcnPa7+fE9f/gq8jiG41/Vp3taU8Brns5e
+        bRcKcGPuAmGfDeReGaXlkCSzqw==
+X-Google-Smtp-Source: ACHHUZ7VBICs66Xv1eWHGLAdsaUs4Rm1TwIh0QnGVY2XmsmEvwuQiqIHqwluaA2IgFSdB/I1iexJNw==
+X-Received: by 2002:a05:6000:505:b0:309:42f3:4c3a with SMTP id a5-20020a056000050500b0030942f34c3amr2040157wrf.32.1685116489672;
+        Fri, 26 May 2023 08:54:49 -0700 (PDT)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id e18-20020adfef12000000b00304b5b2f5ffsm5419516wro.53.2023.05.26.08.54.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 May 2023 08:53:48 -0700 (PDT)
-Message-ID: <7074f718-a3d5-8a03-3830-77a5a0b15500@linaro.org>
-Date:   Fri, 26 May 2023 18:53:46 +0300
+        Fri, 26 May 2023 08:54:49 -0700 (PDT)
+Message-ID: <240fa683-afb1-eb60-c24f-2b3f1d7f1339@linaro.org>
+Date:   Fri, 26 May 2023 16:54:48 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
+ Thunderbird/102.8.0
 Subject: Re: [PATCH V2 3/6] clk: qcom: clk-alpha-pll: Remove explicit CAL_L
  configuration for EVO PLL
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
+Content-Language: en-US
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -65,6 +65,7 @@ To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
         Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -74,53 +75,29 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         Ajit Pandey <quic_ajipan@quicinc.com>
 References: <20230525172142.9039-1-quic_jkona@quicinc.com>
  <20230525172142.9039-4-quic_jkona@quicinc.com>
- <6e1d098d-03b9-aa63-a0bf-6cf748a0db0d@linaro.org>
-Content-Language: en-GB
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <6e1d098d-03b9-aa63-a0bf-6cf748a0db0d@linaro.org>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20230525172142.9039-4-quic_jkona@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/05/2023 12:33, Konrad Dybcio wrote:
-> 
-> 
-> On 25.05.2023 19:21, Jagadeesh Kona wrote:
->> In lucid evo pll, the CAL_L field is part of L value register itself, and
->> the l value configuration passed from clock controller driver includes
->> CAL_L and L values as well. Hence remove explicit configuration of CAL_L
->> for evo pll.
->>
->> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->> ---
-> Oh that isn't obvious at first sight, nice find!
-> 
-> I'd suggest a different solution though:
-> 
-> #define LUCID_EVO_PLL_L_LVAL	GENMASK(..
-> #define LUCID_EVO_PLL_L_CAL_L	GENMASK(..
-> 
-> lval = FIELD_PREP(LUCID_EVO_PLL_L_LVAL, config->l) |
->         FIELD_PREP(LUCID_EVO_PLL_L_CAL_L, config->cal_l);
-> 
-> This would make the separation between the two parts more explicit
-> 
-> however
-> 
-> config->l would then represent the L value and not the end value
-> written to the L register
+On 25/05/2023 18:21, Jagadeesh Kona wrote:
+> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
 
-Yes. I think there should be separate config->l and config->cal_l values 
-(and probably ringosc_cal_l, basing on the comment in the source).
+Is this a "Fixes" without the previous patch to stuff the CAL_L_VAL and 
+VAL_L fields ?
 
-Just a question: is camcc-sm8550 using the same PLL type or is it some 
-kind of subtype of lucid_evo PLL?
+[PATCH V2 3/6] clk: qcom: clk-alpha-pll: Remove explicit CAL_L 
+configuration for EVO PLL
 
--- 
-With best wishes
-Dmitry
+Surely you need _both_ with this patch depending on the previous, per 
+your comment ?
 
+-	.l = 0x3e,
++	/* .l includes CAL_L_VAL, L_VAL fields */
++	.l = 0x0044003e,
+
+---
+bod
