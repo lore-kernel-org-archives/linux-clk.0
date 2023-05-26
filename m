@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39A2C77B7A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BE6C7EE2C
 	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 16:12:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244248AbjEZQM0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 12:12:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57686 "EHLO
+        id S244221AbjEZQMd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 12:12:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243699AbjEZQMT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 12:12:19 -0400
+        with ESMTP id S244256AbjEZQM2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 12:12:28 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A1779C;
-        Fri, 26 May 2023 09:12:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FC21BC;
+        Fri, 26 May 2023 09:12:26 -0700 (PDT)
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34QBnhxJ004221;
-        Fri, 26 May 2023 16:12:08 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34QElbA6008886;
+        Fri, 26 May 2023 16:12:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=ViN+TpIVYQck34lVIxwucyPK83MbsN1vkG8X8Y7ni8M=;
- b=K2C5rAi+oWIKI/GeYwIP4AM+aG1Eu2oMmh3wOv7mhpIQUXLqxf2ZX2PVGZ0PK5KMOd57
- Hq8oksJxlsCLoDzFAF6+xCuTlJ8PzMkXU60f3qxDi9RRmRFqU/DvIWCeTd2Jy0fPoHp3
- 0xSEbFKeUS6NFjHeV/J3ZIwDuQQTVZ/LSy8QqpI3jJPZG5oOgFpYQHKFJdxy0dN2mMqt
- EyFRj/ogz8eiUZLD07XTpOrjXkXEkjCjwaJndAvqwJCz+KKIx+lZy8OkQFpI7shMycJw
- ajIdniTcqG0IX+NFzecIMo44ykws5+xSoF6Ir74NG39Fa0sNYlBuNSoMEr03DaRHystz nw== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qtkxwhnpm-1
+ bh=TJwJxZH1CrqnV4MGFIJ542NvjP0Mhx6obEdbDO3CdSo=;
+ b=eSTxoLmgj5XcOPVRKS5CPA5diwFEU1EF65BZMkYVeJFK4OIRsA7rsIoG5Plj+cy/dFnw
+ dKOERQNB3+dNG0Q6duNkvajrbvDURZ7CDKRyPWMivxdDJfOSQ5RMXwh90012W1wWh26e
+ 3eswh+Q8/2OGMKGBPQltgJ9KNm0ryDso1rFmzsYNVVPzQEGXqgqRjEu3BhIpRXut3dJW
+ g/tTS57VumYQB4oXmDgDMIdRLKOK1+s1ZmYldfc1PFHXqY97ER6WrL0wDAIDG1/as5ul
+ mzFhwXeVp8sHtuZ9TGYVgmQUvUMMqAdxo10B7FIlkRl3BC01FWVP1UV96fWyBFDAjWwq DA== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qtkxwhnq2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 May 2023 16:12:08 +0000
+        Fri, 26 May 2023 16:12:18 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34QGC1CE000446
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34QGCHsH023090
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 May 2023 16:12:01 GMT
+        Fri, 26 May 2023 16:12:17 GMT
 Received: from anusha-linux.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Fri, 26 May 2023 09:11:54 -0700
+ 15.2.986.42; Fri, 26 May 2023 09:12:09 -0700
 From:   Anusha Rao <quic_anusha@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <thara.gopinath@gmail.com>,
@@ -51,9 +51,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
 CC:     <quic_srichara@quicinc.com>, <quic_gokulsri@quicinc.com>,
         <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
         <quic_arajkuma@quicinc.com>, <quic_poovendh@quicinc.com>
-Subject: [PATCH V4 1/4] dt-bindings: clock: Add crypto clock and reset definitions
-Date:   Fri, 26 May 2023 21:41:26 +0530
-Message-ID: <20230526161129.1454-2-quic_anusha@quicinc.com>
+Subject: [PATCH V4 3/4] dt-bindings: qcom-qce: add SoC compatible string for ipq9574
+Date:   Fri, 26 May 2023 21:41:28 +0530
+Message-ID: <20230526161129.1454-4-quic_anusha@quicinc.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230526161129.1454-1-quic_anusha@quicinc.com>
 References: <20230526161129.1454-1-quic_anusha@quicinc.com>
@@ -64,8 +64,8 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: djz9uN0lQhSTZ8yVJ5aHyRMtCzxzrMYr
-X-Proofpoint-ORIG-GUID: djz9uN0lQhSTZ8yVJ5aHyRMtCzxzrMYr
+X-Proofpoint-GUID: t8Or3m93s1vXeNnwIRjL_RlUgPoJaKqe
+X-Proofpoint-ORIG-GUID: t8Or3m93s1vXeNnwIRjL_RlUgPoJaKqe
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-05-26_06,2023-05-25_03,2023-05-22_02
@@ -78,43 +78,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add crypto clock and reset ID definitions for ipq9574.
+Document the compatible string for ipq9574.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
 Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
 ---
  Changes in V4:
 	- Picked up Reviewed-by tag.
 
- include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
- include/dt-bindings/reset/qcom,ipq9574-gcc.h | 1 +
- 2 files changed, 5 insertions(+)
+ Documentation/devicetree/bindings/crypto/qcom-qce.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-index 5a2961bfe893..b32a7aa65349 100644
---- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-+++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-@@ -210,4 +210,8 @@
- #define GCC_SNOC_PCIE1_1LANE_S_CLK			201
- #define GCC_SNOC_PCIE2_2LANE_S_CLK			202
- #define GCC_SNOC_PCIE3_2LANE_S_CLK			203
-+#define GCC_CRYPTO_CLK_SRC				204
-+#define GCC_CRYPTO_CLK					205
-+#define GCC_CRYPTO_AXI_CLK				206
-+#define GCC_CRYPTO_AHB_CLK				207
- #endif
-diff --git a/include/dt-bindings/reset/qcom,ipq9574-gcc.h b/include/dt-bindings/reset/qcom,ipq9574-gcc.h
-index d01dc6a24cf1..c709d103673d 100644
---- a/include/dt-bindings/reset/qcom,ipq9574-gcc.h
-+++ b/include/dt-bindings/reset/qcom,ipq9574-gcc.h
-@@ -160,5 +160,6 @@
- #define GCC_WCSS_Q6_BCR						151
- #define GCC_WCSS_Q6_TBU_BCR					152
- #define GCC_TCSR_BCR						153
-+#define GCC_CRYPTO_BCR						154
- 
- #endif
+diff --git a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+index e375bd981300..0d1deae06e2d 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
++++ b/Documentation/devicetree/bindings/crypto/qcom-qce.yaml
+@@ -28,6 +28,7 @@ properties:
+           - enum:
+               - qcom,ipq6018-qce
+               - qcom,ipq8074-qce
++              - qcom,ipq9574-qce
+               - qcom,msm8996-qce
+               - qcom,sdm845-qce
+           - const: qcom,ipq4019-qce
 -- 
 2.17.1
 
