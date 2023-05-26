@@ -2,67 +2,68 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A486FC77B7A
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 20:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524B7C77B7A
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 20:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243688AbjEZUvT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 16:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52604 "EHLO
+        id S243438AbjEZUwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 16:52:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243958AbjEZUvN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 16:51:13 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E125E55
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 13:51:09 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2af2696fd1cso12027371fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 13:51:08 -0700 (PDT)
+        with ESMTP id S242952AbjEZUwL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 16:52:11 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0245DA9
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 13:52:08 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f4b384c09fso1351298e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 13:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685134267; x=1687726267;
+        d=linaro.org; s=google; t=1685134327; x=1687726327;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5AatKw6EtxzG9E4dF0UYt5pzjSCEqOZGHssidQMlz4=;
-        b=CFWTVoeRCdniU+x2qGDJhodKgGHp1JKCle+Ga8fFPMpQ7B4BhuvPLNIgT2gNcBWdm/
-         rmJ7+zhRGA6CfusOOvkE6UET4zEm7HKXXbh+9AR7VUFcS0AeuvvYB0dTERm7ZO1Z9tnc
-         Ea39RjrFKznDv7D/pH8AQScSp3cSmSY6qfHGxmiizl+fCTnqfwLwzekBcTLkIXWr8+nk
-         TF0zAPIqz8VKE6uVTAYzgP/RSPXJyH6SwKZgXPHq/6/QyY8TEkLNUQC4bN0/lnh3XQs+
-         Oui3IOpPCgrKQs5GJUUM2HLW2rjR1OFZQ+3SlBpjkO8AUkNMsVv7gAwxub1v1K0pVseJ
-         0Qxw==
+        bh=nOtEQ35IPkwIpGkFbmSz/EpWP/HTUv2mT/RCQs7Eigk=;
+        b=j2L8fZi4cmoxoC/MS2awmvNvm0Owk8CYBu/8OITteaZYDFftdofWiRr/SbfXw7f5OQ
+         ssQ7UbyTM71yF1zYUvUbQ6NawWT96oIJjuE4f8WEm8wOmAChfQZgW+X3OSDEcNIhyHnS
+         QBE+N3G3DyTvYb10qoScxWrKjrfY6plGWL38LXk/yCcR3SIQebZnw+CeT/yCzWe0YZin
+         re92DJdFWJzwRzMEV3VGbMdmGs+0ZXylFV3TY6aK0EplAwyx95+63BLamyYS+15RGZGR
+         zxq4vAv9GUoAbt1ZpE5TQQ0id0BUqYOq2JVP9TzI8avHA3cdUCPLp86XFMq22P83iWHE
+         J4Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685134267; x=1687726267;
+        d=1e100.net; s=20221208; t=1685134327; x=1687726327;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5AatKw6EtxzG9E4dF0UYt5pzjSCEqOZGHssidQMlz4=;
-        b=HbdPwZ7SYZSjvLTDnZzAnO2zn1BOumsl71uNQtG09UICQmyb2hhJj+ruy1c1jqCBNd
-         W3PTEoGD4RmfsGR+i+wxaXkN4M2PDE7S5gvTGbvsyp20Z5S27nUUmdfP6zGO27Ws45LT
-         dU4mlmkFc/t23osyO/q3fT5/2wkqsTM1SCuxeCKnL7eUPfWhmBDLhnu4MxgoxoKRfm8h
-         6cTrUla8+sNFD9rTwy9/Gs7k3/bdf9U+LpfYHt0QE441jlLmUDOTtP8C9Jv4HAFD03pN
-         2uadszbPfY3YepbG9tzT9DD6lSRUJIrtUDnZU2SI+H+TEqwps5GYx9Cmmvn8768+I05b
-         pdeA==
-X-Gm-Message-State: AC+VfDxQP1cx6ZgjUpUHJTHqK1FlslMFf3B7f0Fm/GabM6hhitJ/Au90
-        Fd0T4z/C17fdUpIklvfbO7m7tQ==
-X-Google-Smtp-Source: ACHHUZ7eoEEQ+WYgy29uaLJ4siKa8UDIyEBc1moLD4g7vHo2xRi2pXCLl62zxT4o/c1z5ryQM/t2NA==
-X-Received: by 2002:a2e:9e8e:0:b0:29f:58c6:986e with SMTP id f14-20020a2e9e8e000000b0029f58c6986emr821078ljk.52.1685134267123;
-        Fri, 26 May 2023 13:51:07 -0700 (PDT)
+        bh=nOtEQ35IPkwIpGkFbmSz/EpWP/HTUv2mT/RCQs7Eigk=;
+        b=h2RiqD3OTcS9i0pdQZNeryHoInP+WdAyL29eyvsvT2y7u4Xh+bz+q3J1KCFQqU8kSo
+         gvOgscVwSgL10DLxH7DgFT1rp0zrl6+hzlmSczRLqI2zV7/WFamJXTyGR1mUyRrXXscE
+         wGmm+N7KSkfVvg4R8wO2v88FOTRnC3Acb/OuPFn1+/65m8FB8mUijWIp8+mpEC48qzgy
+         nqHXU0IzEW7Fo4j+lF/rhYYXavBKXRUww9ziIjtC56e6NYX0gW2nMK7D0uwxkhDNamHo
+         AIhA1UqCxLIGC5/nxyPV21TJOT0RUy8h/GOLeXtRafBnmlmoDznJBQ3xFxlExf6DII5O
+         pgSg==
+X-Gm-Message-State: AC+VfDzgTS5SgA9K8ZN2UCalBvK6/7qs9DzaAWcPMr36E6xuuC7J4bI8
+        TibpQdsBD1cnJQSWX2Q28UZ2Nw==
+X-Google-Smtp-Source: ACHHUZ4Gm25jkLb+czSn7UCVBJM6klFJZXCmLn+TQl6e0hT+v8L49SM7vb4ELfePZ6yNsFav1N/xlg==
+X-Received: by 2002:ac2:5dfc:0:b0:4e8:44e3:f3da with SMTP id z28-20020ac25dfc000000b004e844e3f3damr873410lfq.39.1685134327163;
+        Fri, 26 May 2023 13:52:07 -0700 (PDT)
 Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id p19-20020a2e9a93000000b002ad8fc8dda6sm935227lji.17.2023.05.26.13.51.06
+        by smtp.gmail.com with ESMTPSA id y24-20020a197518000000b004ef92c6e645sm773699lfe.263.2023.05.26.13.52.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 May 2023 13:51:06 -0700 (PDT)
-Message-ID: <83465b41-3894-3490-e030-a523073e498f@linaro.org>
-Date:   Fri, 26 May 2023 22:51:05 +0200
+        Fri, 26 May 2023 13:52:06 -0700 (PDT)
+Message-ID: <5833388f-51c6-ad42-f8c2-2ad37cecc31f@linaro.org>
+Date:   Fri, 26 May 2023 22:52:05 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-ipq6018: update UBI32 PLL
+Subject: Re: [PATCH 2/2] clk: qcom: ipq6018: fix networking resets
 Content-Language: en-US
 To:     Robert Marko <robimarko@gmail.com>, andersson@kernel.org,
         agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20230526190855.2941291-1-robimarko@gmail.com>
+ <20230526190855.2941291-2-robimarko@gmail.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230526190855.2941291-1-robimarko@gmail.com>
+In-Reply-To: <20230526190855.2941291-2-robimarko@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -72,40 +73,63 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 26.05.2023 21:08, Robert Marko wrote:
-> Update the UBI32 alpha PLL config to the latest values from the downstream
-> QCA 5.4 kernel.
+> Networking resets in IPQ6018 all use bitmask as they require multiple
+> bits to be set and cleared instead of a single bit.
 > 
+> So, current networking resets have the same register and bit 0 set which
+> is clearly incorrect.
+> 
+> Fixes: d9db07f088af ("clk: qcom: Add ipq6018 Global Clock Controller support")
 > Signed-off-by: Robert Marko <robimarko@gmail.com>
 > ---
->  drivers/clk/qcom/gcc-ipq6018.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+>  drivers/clk/qcom/gcc-ipq6018.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
 > 
 > diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-> index 350ead66914ca..abd97b939850f 100644
+> index abd97b939850f..b8310f29a8ff4 100644
 > --- a/drivers/clk/qcom/gcc-ipq6018.c
 > +++ b/drivers/clk/qcom/gcc-ipq6018.c
-> @@ -4149,15 +4149,20 @@ static struct clk_branch gcc_dcc_clk = {
->  
->  static const struct alpha_pll_config ubi32_pll_config = {
->  	.l = 0x3e,
-> -	.alpha = 0x57,
-> +	.alpha = 0x6667,
->  	.config_ctl_val = 0x240d6aa8,
->  	.config_ctl_hi_val = 0x3c2,
-> +	.config_ctl_val = 0x240d4828,
-> +	.config_ctl_hi_val = 0x6,
->  	.main_output_mask = BIT(0),
->  	.aux_output_mask = BIT(1),
->  	.pre_div_val = 0x0,
->  	.pre_div_mask = BIT(12),
->  	.post_div_val = 0x0,
->  	.post_div_mask = GENMASK(9, 8),
-> +	.alpha_en_mask = BIT(24),
-> +	.test_ctl_val = 0x1C0000C0,
-Please use lowercase hex.
+> @@ -4520,24 +4520,24 @@ static const struct qcom_reset_map gcc_ipq6018_resets[] = {
+>  	[GCC_PCIE0_AHB_ARES] = { 0x75040, 5 },
+>  	[GCC_PCIE0_AXI_MASTER_STICKY_ARES] = { 0x75040, 6 },
+>  	[GCC_PCIE0_AXI_SLAVE_STICKY_ARES] = { 0x75040, 7 },
+> -	[GCC_PPE_FULL_RESET] = { 0x68014, 0 },
+> -	[GCC_UNIPHY0_SOFT_RESET] = { 0x56004, 0 },
+> +	[GCC_PPE_FULL_RESET] = { .reg = 0x68014, .bitmask = 0xf0000 },
+GENMASK / GENMASK|GENMASK / GENMASK|BIT?
 
 Konrad
-> +	.test_ctl_hi_val = 0x4000,
->  };
->  
->  static const struct alpha_pll_config nss_crypto_pll_config = {
+> +	[GCC_UNIPHY0_SOFT_RESET] = { .reg = 0x56004, .bitmask = 0x3ff2 },
+>  	[GCC_UNIPHY0_XPCS_RESET] = { 0x56004, 2 },
+> -	[GCC_UNIPHY1_SOFT_RESET] = { 0x56104, 0 },
+> +	[GCC_UNIPHY1_SOFT_RESET] = { .reg = 0x56104, .bitmask = 0x32 },
+>  	[GCC_UNIPHY1_XPCS_RESET] = { 0x56104, 2 },
+> -	[GCC_EDMA_HW_RESET] = { 0x68014, 0 },
+> -	[GCC_NSSPORT1_RESET] = { 0x68014, 0 },
+> -	[GCC_NSSPORT2_RESET] = { 0x68014, 0 },
+> -	[GCC_NSSPORT3_RESET] = { 0x68014, 0 },
+> -	[GCC_NSSPORT4_RESET] = { 0x68014, 0 },
+> -	[GCC_NSSPORT5_RESET] = { 0x68014, 0 },
+> -	[GCC_UNIPHY0_PORT1_ARES] = { 0x56004, 0 },
+> -	[GCC_UNIPHY0_PORT2_ARES] = { 0x56004, 0 },
+> -	[GCC_UNIPHY0_PORT3_ARES] = { 0x56004, 0 },
+> -	[GCC_UNIPHY0_PORT4_ARES] = { 0x56004, 0 },
+> -	[GCC_UNIPHY0_PORT5_ARES] = { 0x56004, 0 },
+> -	[GCC_UNIPHY0_PORT_4_5_RESET] = { 0x56004, 0 },
+> -	[GCC_UNIPHY0_PORT_4_RESET] = { 0x56004, 0 },
+> +	[GCC_EDMA_HW_RESET] = { .reg = 0x68014, .bitmask = 0x300000 },
+> +	[GCC_NSSPORT1_RESET] = { .reg = 0x68014, .bitmask = 0x1000003 },
+> +	[GCC_NSSPORT2_RESET] = { .reg = 0x68014, .bitmask = 0x200000c },
+> +	[GCC_NSSPORT3_RESET] = { .reg = 0x68014, .bitmask = 0x4000030 },
+> +	[GCC_NSSPORT4_RESET] = { .reg = 0x68014, .bitmask = 0x8000300 },
+> +	[GCC_NSSPORT5_RESET] = { .reg = 0x68014, .bitmask = 0x10000c00 },
+> +	[GCC_UNIPHY0_PORT1_ARES] = { .reg = 0x56004, .bitmask = 0x30 },
+> +	[GCC_UNIPHY0_PORT2_ARES] = { .reg = 0x56004, .bitmask = 0xc0 },
+> +	[GCC_UNIPHY0_PORT3_ARES] = { .reg = 0x56004, .bitmask = 0x300 },
+> +	[GCC_UNIPHY0_PORT4_ARES] = { .reg = 0x56004, .bitmask = 0xc00 },
+> +	[GCC_UNIPHY0_PORT5_ARES] = { .reg = 0x56004, .bitmask = 0x3000 },
+> +	[GCC_UNIPHY0_PORT_4_5_RESET] = { .reg = 0x56004, .bitmask = 0x3c02 },
+> +	[GCC_UNIPHY0_PORT_4_RESET] = { .reg = 0x56004, .bitmask = 0xc02 },
+>  	[GCC_LPASS_BCR] = {0x1F000, 0},
+>  	[GCC_UBI32_TBU_BCR] = {0x65000, 0},
+>  	[GCC_LPASS_TBU_BCR] = {0x6C000, 0},
