@@ -2,209 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A57D8C77B73
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 18:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8B6C77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 19:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242344AbjEZSrV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 14:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55506 "EHLO
+        id S243809AbjEZTJD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 15:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230280AbjEZSrT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 14:47:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B24D912A;
-        Fri, 26 May 2023 11:47:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 45E636529B;
-        Fri, 26 May 2023 18:47:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0B59C433D2;
-        Fri, 26 May 2023 18:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685126837;
-        bh=KVm/h7/hQejLAPfbXJ0XNl6nVho+GiUZ5mBW9zeA4JM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FZ2g8yrvQf7mM1/oXZVaJJ9fdV8N06kJJb1K+Y+CWDT0gJSCfbiUC+xQJljkdlzBs
-         dDwPaFexqYfItJo7/U4WfeFuL1FUIr5sOln2lLOSiCL/MC7BK7bnYjRU+48W63P/kM
-         XSz6Otrx6RV/Ftr7TYp/HE/IbyQQKszmCJwQAnL4otIOIPbYGeLPIM0K7GT4D/nWdJ
-         IH06nhz9fmUfboZjmS7hObQRWuYloPW6VZoomHVI8O1wc80OMH+muUXpqGHSYAVUfK
-         BeDGE1mFwZgVTuAD9gK3aGYn2udlAR1xfgdCTaRXygqEhZFN/kT3WeMltfkBZAs1VW
-         gVR3UjO16FSmg==
-Date:   Fri, 26 May 2023 19:47:13 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Mike Looijmans <mike.looijmans@topic.nl>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add nvmem-clock
-Message-ID: <20230526-wok-thwarting-90b7170d9e99@spud>
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.2167d5ad-7e99-4eb9-a313-030fc7a7d546@emailsignatures365.codetwo.com>
- <20230526143807.10164-1-mike.looijmans@topic.nl>
+        with ESMTP id S243481AbjEZTJC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 15:09:02 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12D0B187;
+        Fri, 26 May 2023 12:09:00 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-510f525e06cso1860846a12.2;
+        Fri, 26 May 2023 12:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685128138; x=1687720138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aVzy92SBUMkeNgqTWxtWDoFkJg92aZ4R1TOIJLd57RQ=;
+        b=iHtKIRTeumWIXEMU5r1wOj/WWNzofk21Ob8ZqpeIm+F4yNhfk4nRShLBkTbXwhwekF
+         fxtKu5Lg1/SSMuqu3pl8wvQooqugsQ5ED/VIFbbW/KDCn5JYf3CEl9ZGiHd5jmTv4ZGE
+         SxNfDO5lKW1u6eJBrQTvdYyZxM4O14gQFeNFY+lWTqBsGyGaxkW78bNgvZqCqMN2wHx8
+         kyvgfVd8W1Au+qh4Khhkm1Oh/+1Jp9XAeQ5t4ND9krC7/5C1CNaBWyvbrM9+Qw8VRscs
+         yCfxtKwpslqJuXytEyLSWSfJYeupzBWTaXqUTUGb8LieKIuPzyFgjyMQUgB+oVsb19LT
+         xKcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685128138; x=1687720138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aVzy92SBUMkeNgqTWxtWDoFkJg92aZ4R1TOIJLd57RQ=;
+        b=idtiJ7Be+/N4QYKUDWFOQrQnG2w0nYPIXdOeqvHhIKLTBV5M8YdE6eodTFs0HYUJww
+         RH+0JNcvLIL61gTnp09Zd90OipX/pY111QW2x9JigrCYhoMVHLfeujOt0TwKjeJguBNU
+         Yh4s9UI1EdqRwS75uOJry52OJy0JHmEJQ1rXlKRKhekJinrOGBom2AgrQUqyxSfKBi3c
+         78OLKs/ztogxnq2Av/AAif/oLn7zuDFIDkPu0eXfYzSBvxGOwrXNXkdNKJSUPDwQ4hko
+         5FINVUmcXSQr+6ouGBE1EZjJ3+7jQ5dY4wvS/AKjIYqFX43rfP9pz59Xn21DUML7e3jT
+         y6xw==
+X-Gm-Message-State: AC+VfDxjPxPb6BeZcp/tFI1lftoOzxNpcADdXURrBTg21nChlzpVmEN/
+        rhkTsb8rKcBxs7xK9ZkP/Lg=
+X-Google-Smtp-Source: ACHHUZ5XSk2ILjGdLZteuicFA2+l9lIwrFaWtw5//Xo/jHy35YGqdGcVs/Mh1riYll17Z1eu+usSwg==
+X-Received: by 2002:a17:907:26c3:b0:969:e9ec:9a0 with SMTP id bp3-20020a17090726c300b00969e9ec09a0mr2656362ejc.77.1685128137481;
+        Fri, 26 May 2023 12:08:57 -0700 (PDT)
+Received: from fedora.. (dh207-98-6.xnet.hr. [88.207.98.6])
+        by smtp.googlemail.com with ESMTPSA id q18-20020a170906b29200b0095844605bb8sm2507439ejz.10.2023.05.26.12.08.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 May 2023 12:08:56 -0700 (PDT)
+From:   Robert Marko <robimarko@gmail.com>
+To:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Robert Marko <robimarko@gmail.com>
+Subject: [PATCH 1/2] clk: qcom: gcc-ipq6018: update UBI32 PLL
+Date:   Fri, 26 May 2023 21:08:54 +0200
+Message-Id: <20230526190855.2941291-1-robimarko@gmail.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XcYMVmXJ/sJCP8Sh"
-Content-Disposition: inline
-In-Reply-To: <20230526143807.10164-1-mike.looijmans@topic.nl>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Update the UBI32 alpha PLL config to the latest values from the downstream
+QCA 5.4 kernel.
 
---XcYMVmXJ/sJCP8Sh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+---
+ drivers/clk/qcom/gcc-ipq6018.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Hey Mike,
+diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+index 350ead66914ca..abd97b939850f 100644
+--- a/drivers/clk/qcom/gcc-ipq6018.c
++++ b/drivers/clk/qcom/gcc-ipq6018.c
+@@ -4149,15 +4149,20 @@ static struct clk_branch gcc_dcc_clk = {
+ 
+ static const struct alpha_pll_config ubi32_pll_config = {
+ 	.l = 0x3e,
+-	.alpha = 0x57,
++	.alpha = 0x6667,
+ 	.config_ctl_val = 0x240d6aa8,
+ 	.config_ctl_hi_val = 0x3c2,
++	.config_ctl_val = 0x240d4828,
++	.config_ctl_hi_val = 0x6,
+ 	.main_output_mask = BIT(0),
+ 	.aux_output_mask = BIT(1),
+ 	.pre_div_val = 0x0,
+ 	.pre_div_mask = BIT(12),
+ 	.post_div_val = 0x0,
+ 	.post_div_mask = GENMASK(9, 8),
++	.alpha_en_mask = BIT(24),
++	.test_ctl_val = 0x1C0000C0,
++	.test_ctl_hi_val = 0x4000,
+ };
+ 
+ static const struct alpha_pll_config nss_crypto_pll_config = {
+-- 
+2.40.1
 
-I have no comments about whether this is a good idea or not, I'll leave
-that Stephen, Krzysztof etc..
-
-On Fri, May 26, 2023 at 04:38:06PM +0200, Mike Looijmans wrote:
-> Add bindings for a fixed-rate clock that retrieves its rate from an
-> NVMEM provider. This allows to store clock settings in EEPROM or EFUSE
-> or similar device.
->=20
-> Component shortages lead to boards being shipped with different clock
-> crystals, based on what was available at the time. The clock frequency
-> was written to EEPROM at production time. Systems can adapt to a wide
-> range of input frequencies using the clock framework, but this required
-> us to patch the devicetree at runtime or use some custom driver. This
-> provides a more generic solution.
->=20
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->=20
-> ---
->=20
-> Changes in v2:
-> Changed "fixed-clock" into "nvmem-clock" in dts example
-> Add minItems:1 to nvmem-cell-names
->=20
->  .../bindings/clock/nvmem-clock.yaml           | 63 +++++++++++++++++++
->  1 file changed, 63 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/nvmem-clock.y=
-aml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/nvmem-clock.yaml b/D=
-ocumentation/devicetree/bindings/clock/nvmem-clock.yaml
-> new file mode 100644
-> index 000000000000..af96a5e9372d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/nvmem-clock.yaml
-> @@ -0,0 +1,63 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/nvmem-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Simple fixed-rate clock source from NVMEM
-> +
-> +maintainers:
-> +  - Mike Looijmans <mike.looijmans@topic.nl>
-> +
-> +description:
-> +  Provides a clock rate from NVMEM. Typical usage is that the factory pl=
-aces a
-> +  crystal on the board and writes the rate into an EEPROM or EFUSE. If s=
-ome math
-> +  is required, one can add a fixed-factor clock using this clock as inpu=
-t.
-> +
-> +properties:
-> +  compatible:
-> +    const: nvmem-clock
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  nvmem-cells:
-> +    minItems: 1
-> +    maxItems: 2
-> +    description:
-> +      Reads clock-frequency and optionally clock-accuracy from an NVMEM =
-provider
-> +      in binary native integer format. The size of the NVMEM cell can be=
- 1, 2, 4
-> +      or 8 bytes.
-
-How is that size communicated to the driver? Some nvmem magic just takes
-care of it?
-
-> +
-> +  nvmem-cell-names:
-> +    minItems: 1
-> +    items:
-> +      - const: clock-frequency
-> +      - const: clock-accuracy
-> +
-> +  clock-accuracy:
-
-I think the common pattern is to add a unit suffix for things like
-this, which I guess would be -ppb?
-
-Cheers,
-Conor.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      accuracy of clock in ppb (parts per billion). Alternative for prov=
-iding
-> +      this through nvmem, the nvmem provided value takes precedence.
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - nvmem-cells
-> +  - nvmem-cell-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    xtal {
-> +      compatible =3D "nvmem-clock";
-> +      #clock-cells =3D <0>;
-> +      nvmem-cells =3D <&efuse_xtal_freq>;
-> +      nvmem-cell-names =3D "clock-frequency";
-> +    };
-> +...
-> --=20
-> 2.17.1
->=20
->=20
-> Met vriendelijke groet / kind regards,
->=20
-> Mike Looijmans
-> System Expert
->=20
->=20
-> TOPIC Embedded Products B.V.
-> Materiaalweg 4, 5681 RJ Best
-> The Netherlands
->=20
-> T: +31 (0) 499 33 69 69
-> E: mike.looijmans@topicproducts.com
-> W: www.topic.nl
->=20
-> Please consider the environment before printing this e-mail
-
---XcYMVmXJ/sJCP8Sh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHD+sQAKCRB4tDGHoIJi
-0gXlAP9tM6VZjMbCk7uDsxgVhuxkssWXoWpS9GExKxdhR2SuNAEA+ZWMC6Qu2G9A
-ilC37CZ8ryNiVLmlQXyADnGi4Q0wIQU=
-=ix/J
------END PGP SIGNATURE-----
-
---XcYMVmXJ/sJCP8Sh--
