@@ -2,99 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 307ACC7EE23
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 11:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35AFC77B7A
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 11:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230096AbjEZLKZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 07:10:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54074 "EHLO
+        id S243407AbjEZLkH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 07:40:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229747AbjEZLKY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 07:10:24 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AA5FF7;
-        Fri, 26 May 2023 04:10:23 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34QAi2qS002420;
-        Fri, 26 May 2023 11:10:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=CRrNtT48/agfTTOGQnq/S02EfFlooFG80KnqCaI2A3Q=;
- b=aIcLdf1PWJBxzObO9/Jiz/fdEzXC3UyA4ZEG3988/LKbuihKAgp6v9//p6YIoN2YmbxJ
- 9fWDa7vm+VixIB0wv9x3yYJZcuX1vwIK8yMsdDrLb7KFNvEvhtfwnOCcY3KZr4cVZyV1
- Rlrln+RUX7iKdVIfRuIutAvAON3SBR+c0UC6rQs3Nht468Sgx/IueBExONxtzzIkPd1f
- Bhbmh4KTyEZn099Wm2fwNJ/oxprigSuYbkG5ksEdPzhQMu+3djsv29ySv1JCAKqwSvJO
- 1x0MKzzlITdJbs64qpPPGuClStOBCetnLoLtgPwjQeBnPC7xcFTF4y5w25x4Fngyv+86 RA== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qtu0u02kk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 May 2023 11:10:17 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34QBAGGB014757
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 26 May 2023 11:10:16 GMT
-Received: from [10.50.37.96] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 26 May
- 2023 04:10:13 -0700
-Message-ID: <08a6ee40-0729-3573-9938-aa44a6ef297c@quicinc.com>
-Date:   Fri, 26 May 2023 16:40:09 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH V2] clk: qcom: camcc-sc7180: Add parent dependency to all
- camera GDSCs
-Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
+        with ESMTP id S243395AbjEZLkF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 07:40:05 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A59DA7;
+        Fri, 26 May 2023 04:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1685101205; x=1716637205;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lYuy1LD8bWujUTSaX1+mmd0Ol6dxdh+UWPikKfhDyxQ=;
+  b=CEY8WoPFrtzFWPttZ0L/VkL86EyQxG59XUHPWmLNED8xdw93HBL7U+TE
+   4wmi1G3Sgd8WP4HKuNwmBiBIK7IcPL9IspY58Yz3RGpieYrYh7eR7jcFo
+   QkshciaVTXWOKJKmdTiF8egqBqsJLoZ0hhOEklg3zU3CRNu61p97mWICJ
+   33uqkSJa9llGWIW0hNURMTKlwqvuswQ/SMlehaCkPqYLjBCJVJfpGII/W
+   5vSaKj9WygfVXjh6VkYYKgHDxu8nwamSGjVO+sxa81V0H4hletc73iyFZ
+   WB307kGJTiPDvwM4ejxfkb6FLrVQhnyE7aLaNrpTbFExZgaiEpVOwrGyF
+   w==;
+X-IronPort-AV: E=Sophos;i="6.00,194,1681196400"; 
+   d="asc'?scan'208";a="215607885"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 May 2023 04:40:04 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Fri, 26 May 2023 04:40:02 -0700
+Received: from wendy (10.10.115.15) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
+ Transport; Fri, 26 May 2023 04:40:00 -0700
+Date:   Fri, 26 May 2023 12:39:37 +0100
+From:   Conor Dooley <conor.dooley@microchip.com>
+To:     Alexandre Mergnat <amergnat@baylibre.com>
+CC:     Conor Dooley <conor@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_cponnapa@quicinc.com>
-References: <20230501142932.13049-1-quic_tdas@quicinc.com>
- <f450c63a57fc5a9536d3c48df26244cf.sboyd@kernel.org>
-From:   "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <f450c63a57fc5a9536d3c48df26244cf.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Y_s3zw8lY4QNOhqq0TokKBzzywTgCWMT
-X-Proofpoint-GUID: Y_s3zw8lY4QNOhqq0TokKBzzywTgCWMT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-26_01,2023-05-25_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxlogscore=810
- impostorscore=0 phishscore=0 mlxscore=0 spamscore=0 bulkscore=0
- priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2304280000 definitions=main-2305260096
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Markus Schneider-Pargmann <msp@baylibre.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: replace unusable
+ clock
+Message-ID: <20230526-acorn-unwound-34816283b187@wendy>
+References: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
+ <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+ <20230525-snuggle-twine-ed1bfc2aee51@spud>
+ <c1e706f3-9d80-3dd5-eeab-c24830f9ef03@baylibre.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ia81GYyjYwkAUf9K"
+Content-Disposition: inline
+In-Reply-To: <c1e706f3-9d80-3dd5-eeab-c24830f9ef03@baylibre.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+--ia81GYyjYwkAUf9K
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 5/11/2023 1:02 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2023-05-01 07:29:32)
->> Camera titan top GDSC is a parent supply to all other camera GDSCs. Titan
->> top GDSC is required to be enabled before enabling any other camera GDSCs
->> and it should be disabled only after all other camera GDSCs are disabled.
->> Ensure this behavior by marking titan top GDSC as parent of all other
->> camera GDSCs.
->>
->> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Is something broken right now? The commit text doesn't tell me if we
-> need to backport this to stable kernels or merge it as soon as possible.
-> What's the priority of this fix?
+On Fri, May 26, 2023 at 10:54:04AM +0200, Alexandre Mergnat wrote:
+> On 25/05/2023 19:51, Conor Dooley wrote:
+> > On Thu, May 25, 2023 at 04:50:27PM +0200, Alexandre Mergnat wrote:
+> > > The =E2=80=9Cmcu_pm_bclk_ck_cg=E2=80=9D clock is used by co-processor=
+s and should not be
+> > > added to the kernel driver, otherwise the CPU just halt and the board=
+ is
+> > > rebooted by the wathdog.
+> > >=20
+> > > Instead, add the "aes_top0_bclk_ck_cg" missing clock to prevent
+> > > re-shuffling index and then preserve the ABI.
+> >=20
+> > How does this preserve the ABI exactly? Please describe exactly what you
+> > mean by that.
+>=20
+> I mean that reduce the impact of the change compared to the v1 where I've
+> changed the index of the following defines to be clean.
 
+Oh, you can't do that at all as you probably discovered!
 
-Modularization of camx driver triggered this issue now, but there could 
-be some other scenarios which could trigger the same issue on stable 
-kernels.  Hence it needs to be back ported to stable kernels.
+> > Also, what about any other users of these definitions, outside of Linux?
+>=20
+> The clock driver and bindings are only a couple of kernel versions old, I=
+'m
+> pretty sure no one is using it.
 
+Pretty sure, or sure?
+
+> Also, if someone use CLK_IFR_MCU_PM_BK
+> define, I'm wondering how his CPU is working since Mediatek told me that
+> shouldn't be used, and after some try, I confirm.
+
+Maybe that person is actually using the index to make sure that the
+clock at that index is left untouched.
+
+> I've a question: If something is wrong in the binding, you don't fix it to
+> avoid ABI change ?
+
+I don't quite get what you mean by "wrong". These header files just
+define a set of arbitrary meanings, since the clock numbers are really
+just something that developers came up with rather than being lifted
+=66rom a TRM. They don't prescribe behaviour for each of these clocks, or
+that these clocks should actually be used - just a simple "this number
+means this clock".
+It sounds more like a driver or devicetree is _using_ the number
+incorrectly, but that does not make the binding wrong :)
+
+> TBH, I just try to clean the binding. I can fix the driver index issue
+> (patch 2/2) without fixing the binding if you prefer. But IMHO, keep an
+> unusable define isn't great...
+
+I, at least, would prefer that.
+
+Thanks,
+Conor.
+
+--ia81GYyjYwkAUf9K
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHCaeQAKCRB4tDGHoIJi
+0ljiAQDW7cAtkJiUVftFCHctuq0rAX7Y8PATQhIkWAgesm/55QEAgD3TxCEUtXrf
+7eREpLfSvnpwJMHbf49qtnOj7Rw29gQ=
+=PFKY
+-----END PGP SIGNATURE-----
+
+--ia81GYyjYwkAUf9K--
