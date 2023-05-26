@@ -2,165 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EE6C77B7C
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 07:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F375C77B7A
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 08:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242534AbjEZHgn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 03:36:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34152 "EHLO
+        id S242702AbjEZIaZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 04:30:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242498AbjEZHgW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 03:36:22 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85961E58;
-        Fri, 26 May 2023 00:35:41 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 107)
-        id 2525C68D0E; Fri, 26 May 2023 09:35:29 +0200 (CEST)
-Received: from blackhole.lan (p5b33fa9c.dip0.t-ipconnect.de [91.51.250.156])
-        by verein.lst.de (Postfix) with ESMTPSA id 3440168D07;
-        Fri, 26 May 2023 09:34:37 +0200 (CEST)
-Date:   Fri, 26 May 2023 09:34:32 +0200
-From:   Torsten Duwe <duwe@lst.de>
-To:     Conor Dooley <conor.dooley@microchip.com>
-Cc:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <yanhong.wang@starfivetech.com>,
+        with ESMTP id S242682AbjEZIaV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 04:30:21 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003E613A;
+        Fri, 26 May 2023 01:30:19 -0700 (PDT)
+Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8F4076606E83;
+        Fri, 26 May 2023 09:30:17 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1685089818;
+        bh=gg3PXZMm/8qSIeSloKT4Q2tmhI1GwPnD9NTPJMDIL0Q=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Ul4aYUWqkAaDION+dPRYmOTTBp5YFpvXXgyq8i27Rc6zJGXSjE8nTF3T6QlgArrv5
+         XAmtQM35alw/+N0CB2yodcSSG0SFqvv2nfFLB1AqaHUvdUJxSzHiM2cgnnxOLgq/Ol
+         hNa1bz9lMwy7CkGX4pjdaQhbmcUAz3D2vpV9usC2GKWRgR11ZV/cUtttBohJdbpTRM
+         1uAHsEa9ivaVeBvNnDYLpN9xdeFrDX6+ZinR8aAsXSOSxbmPp3KCWFidy1qdgkj1RY
+         sCG9BDkziPRXRGbl1RJb+V+a4kyy6xo0ftJoU9UcxiclAXHpGu/gYLozjGKoHBLgAp
+         iEpcqklNY/k1g==
+Message-ID: <f3f7df94-74f1-dd41-00d7-0ab4fa2e4d61@collabora.com>
+Date:   Fri, 26 May 2023 10:30:14 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: replace unusable
+ clock
+To:     Alexandre Mergnat <amergnat@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
         Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <u-boot@lists.denx.de>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL
- clock generator
-Message-ID: <20230526093432.4682eab8@blackhole.lan>
-In-Reply-To: <20230524-jittery-sway-41b578b24153@wendy>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
-        <20230512022036.97987-2-xingyu.wu@starfivetech.com>
-        <20230519135733.GA10188@lst.de>
-        <20230519-smokeless-guileless-2a71cae06509@wendy>
-        <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
-        <20230523-fondue-monotype-0c751a8f0c13@wendy>
-        <20230523131006.46997d84@blackhole.lan>
-        <20230523-saturate-axis-f46b78b7b82b@wendy>
-        <38a9cb77-18b3-4daa-724b-9f2282f7d948@starfivetech.com>
-        <20230524-jittery-sway-41b578b24153@wendy>
-Organization: LST e.V.
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.34; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chen-Yu Tsai <wenst@chromium.org>
+Cc:     Markus Schneider-Pargmann <msp@baylibre.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
+ <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+Content-Language: en-US
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 24 May 2023 11:19:48 +0100
-Conor Dooley <conor.dooley@microchip.com> wrote:
-
-> On Wed, May 24, 2023 at 05:00:02PM +0800, Xingyu Wu wrote:
-> > On 2023/5/23 19:28, Conor Dooley wrote:
-> > > On Tue, May 23, 2023 at 01:10:06PM +0200, Torsten Duwe wrote:
-> > >> On Tue, 23 May 2023 09:28:39 +0100
-> > >> Conor Dooley <conor.dooley@microchip.com> wrote:
-> > >> 
-> > >> > On Tue, May 23, 2023 at 10:56:43AM +0800, Xingyu Wu wrote:
-> > >> > > On 2023/5/19 22:16, Conor Dooley wrote:
-> > >> > > > On Fri, May 19, 2023 at 03:57:33PM +0200, Torsten Duwe
-> > >> > > > wrote:
-> > >> > > >> On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
-[...]
-
-> > >> > > Because PLL driver is separated from SYSCRG drivers in
-> > >> > > Linux, the numbering starts from 0. But in Uboot, the PLL
-> > >> > > driver is included in the SYSCRG driver, and the number
-> > >> > > follows the SYSCRG.
-> > >> > 
-> > >> > Unfortunately, how you choose to construct your drivers has
-> > >> > nothing to do with this.
-
-Exactly. As I wrote (quote below), the PLLx frequencies are controlled
-by the I/O block SYS_SYSCON (starting there at offset 0x18), according
-to the public datasheets. All(?) other clocks are derived from those in
-the *_CRG units. That *is* the hardware to be described, in *the* (one
-and only!) DT. U-Boot, and any OS, are free to reorganise their driver
-framework around that, but the hardware description is quite clear.
-
-> > >> > These defines/numbers appear in the dts and are part of the DT
-> > >> > ABI. The same dts is supposed to work for Linux & U-Boot.
-> > >> 
-> > >> The JH7110 has 6 blocks of 64k iomem in that functional area:
-> > >> {SYS,STG,AON} x {CRG,SYSCON}. None of these has 190 clocks.
-> > >> The good news: the current DTS, as proposed here and in U-Boot
-> > >> master, provides nodes for all 6 entities. The bad news is that
-> > >> the clock assignments to those nodes and their numbering is
-> > >> messed up.
-> > >> 
-> > >> AFAICT PLL{0,1,2} _are_ generated in SYS_SYSCON and thus U-Boot
-> > >> gets it wrong, in addition to the erroneous DTS.
-> > > 
-> > > The numbers are kinda hocus-pocus anyway, they are just made up
-> > > since the clock numbering usually isn't something with a nice TRM
-> > > to go and reference (unlike interrupts which usually are
-> > > documented in that way). It is very helpful to make them aligned
-> > > some register/bit positions or, but that is not required.
-> > > IOW U-Boot is not wrong per se to use 190 instead of 0, but it is
-> > > wrong to have different numbers in both places.
-
-U-Boot reuses the Common Clock Framework from Linux, and I'm not sure
-whether the clock IDs need to be unique in order for the appropriate
-clock to be found. But that would be the only restriction, if it
-applies. Even then, each driver could register a clock with its own,
-arbitrarily chosen base offset with the CCF, so each CRG unit could
-still have its own clocks enumerated starting with 0 in the DTB.
-
-> > > It sounds like you're saying that (and I have not looked) the
-> > > U-Boot dts actually has structural difference w.r.t. what
-> > > provides which clock? If so, that'll need to be fixed
-> > > independently of the numbering problem.
-
-> > 
-> > Oh, unfortunately, the 7110 can not support to mix the uboot dtb
-> > and linux dtb up.
+Il 25/05/23 16:50, Alexandre Mergnat ha scritto:
+> The “mcu_pm_bclk_ck_cg” clock is used by co-processors and should not be
+> added to the kernel driver, otherwise the CPU just halt and the board is
+> rebooted by the wathdog.
 > 
-> What does "cannot support" mean? It's normal and desirable for the
+> Instead, add the "aes_top0_bclk_ck_cg" missing clock to prevent
+> re-shuffling index and then preserve the ABI.
 
-IMHO "desirable" is too weak.
+It's still a breakage. Besides, have you tried to add it as CLK_IS_CRITICAL? :-)
 
-> same dtb to be usable for both. The Linux kernel's dt-bindings are
-> used for multiple projects, not just Linux - it'd be silly for
-> U-Boot, FreeBSD etc etc to go off and each have their open set of
-> (incompatible) bindings.
+Cheers,
+Angelo
+
 > 
-> > If boot the Linux and should use the linux dtb instead of the uboot
-> > dtb. Because all clock ids and reset ids in Linux and Uboot are
-> > different include PLL, and some modules can work in Linux but not
-> > in uboot.
-[...]
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
+> ---
+>   include/dt-bindings/clock/mediatek,mt8365-clk.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> > I suggest to boot Linux with its own linux dtb.
-
-This is a fragile band-aid, to be used only as a last resort. It
-creates more problems than it solves. Your DTB will then match your
-kernel, but whether it describes the actual hardware is a game of
-chance. Doesn't the VisionFive2 have an RPi connector... ?
-
-One of the IMO few valid use cases of adding a DTB to the kernel
-at boot is OpenWRT, when you build an OS Image for a particular piece
-of hardware you have at hand.
-
-> I suggest to make sure that you can use the same dtb for both.
-
-Interestingly enough, U-Boot already has the PLL driver in a separate
-file. I have a half-baked patch here that moves the sys_syscon DT
-matching into that file...
-
-	Torsten
+> diff --git a/include/dt-bindings/clock/mediatek,mt8365-clk.h b/include/dt-bindings/clock/mediatek,mt8365-clk.h
+> index f9aff1775810..0a841e7cc1c3 100644
+> --- a/include/dt-bindings/clock/mediatek,mt8365-clk.h
+> +++ b/include/dt-bindings/clock/mediatek,mt8365-clk.h
+> @@ -199,7 +199,7 @@
+>   #define CLK_IFR_PWRAP_TMR		46
+>   #define CLK_IFR_PWRAP_SPI		47
+>   #define CLK_IFR_PWRAP_SYS		48
+> -#define CLK_IFR_MCU_PM_BK		49
+> +#define CLK_IFR_AES_TOP0_BK		49
+>   #define CLK_IFR_IRRX_26M		50
+>   #define CLK_IFR_IRRX_32K		51
+>   #define CLK_IFR_I2C0_AXI		52
+> 
 
