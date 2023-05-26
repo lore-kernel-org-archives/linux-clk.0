@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFA2C77B7A
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 17:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A3BC7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 17:11:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236460AbjEZRLC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 13:11:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33252 "EHLO
+        id S242186AbjEZRLD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 13:11:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbjEZRLC (ORCPT
+        with ESMTP id S230144AbjEZRLC (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 13:11:02 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00D8AF2;
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00EA0F3;
         Fri, 26 May 2023 10:11:00 -0700 (PDT)
 Received: from jupiter.universe (dyndsl-091-248-132-021.ewe-ip-backbone.de [91.248.132.21])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 746796606E90;
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 918536606E95;
         Fri, 26 May 2023 18:10:59 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
         s=mail; t=1685121059;
-        bh=8eB9AnYSCt+Yx89BjWAzjTBX54X+yIdd1MahV6KNCEA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ocfqrq1NBZKtoJBhWc9oqb3vqtHHPAh7/6rZmj0hTfUrnYN/J6zH3kLods+tN++Xx
-         ef6Duww05ebBxEK+QOAX94u/GIgiITIBLtOaOdpDCqEWsw0IAFHwaCG8zO5QUd4aQ0
-         eTgatWH0VcKfG45aSadyBApHC7RwYUg5Usya1wES3MW1MJXuh43EXMeAajo8fexbnE
-         M1+hJUrlHtMH6n/zorpbtM2jRsiaAx3uhJsWrX8yeaoTha946MY5i5nNTYHFyfNXKJ
-         LeLTuSKYli4IGBEfLDWEXBncE+Mb/rSNVmmX9exejaGrKBLNWn9xRRX7wqbxPzpRLl
-         PjS3f82tiB9qg==
+        bh=T4lpsRVLH6x7IReX3htoV7ctOeRMnG2Z8G+kSXW+NWE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CQMmdb+lt47Nfyk60vuz43mxBRGxAFCuth1e7EdEYjEs4yei18dyATChn8dt2sqYz
+         mTXJthprnnFujc8KXNsnukL+v6lc7oOLF1EH5FWqiCCNsILbqkBG82sQAlOGNiTFRU
+         iGZ37UJspuNS561holzqTqRltGh7PCKgwi7lfznv7aS8LDOQhfH6tohw5YhezK1UzG
+         kU/ifwIaMRaWzDU432gRJTscGZZpQXOkmRjlp5B1R/Bq/js+2gjnwLC2hUXzEVub70
+         pmxTBTJTW42CuKlTRDs5pRSyQR/ez5QtzAZK1kqx83gUfFLY0iDBfSIIaIuilxB7xw
+         fy1IZcNMojGdA==
 Received: by jupiter.universe (Postfix, from userid 1000)
-        id D00C34807E1; Fri, 26 May 2023 19:10:57 +0200 (CEST)
+        id D41714807E3; Fri, 26 May 2023 19:10:57 +0200 (CEST)
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
@@ -41,38 +41,67 @@ Cc:     Christopher Obbard <chris.obbard@collabora.com>,
         David Laight <David.Laight@ACULAB.COM>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v2 0/2] Fix 64 bit issues in common clock framework
-Date:   Fri, 26 May 2023 19:10:55 +0200
-Message-Id: <20230526171057.66876-1-sebastian.reichel@collabora.com>
+Subject: [PATCH v2 2/2] clk: divider: Fix divisions
+Date:   Fri, 26 May 2023 19:10:57 +0200
+Message-Id: <20230526171057.66876-3-sebastian.reichel@collabora.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230526171057.66876-1-sebastian.reichel@collabora.com>
+References: <20230526171057.66876-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+The clock framework handles clock rates as "unsigned long", so u32 on
+32-bit architectures and u64 on 64-bit architectures.
 
-I found two independent issues related to handling of big rates
-in the common clock framework.
+The current code pointlessly casts the dividend to u64 on 32-bit
+architectures and thus pointlessly reducing the performance.
 
-Changes since PATCHv1:
- * https://lore.kernel.org/linux-clk/20230519190522.194729-1-sebastian.reichel@collabora.com/
- * Add Christopher Obbard's Reviewed-by to the first patch
- * Update the second patch to use DIV_ROUND_UP instead of DIV64_U64_ROUND_UP
+On the other hand on 64-bit architectures the divisor is masked and only
+the lower 32-bit are used. Thus requesting a frequency >= 4.3GHz results
+in incorrect values. For example requesting 4300000000 (4.3 GHz) will
+effectively request ca. 5 MHz. Requesting clk_round_rate(clk, ULONG_MAX)
+is a bit of a special case, since that still returns correct values as
+long as the parent clock is below 8.5 GHz.
 
-Thanks,
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+ drivers/clk/clk-divider.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
--- Sebastian
-
-Sebastian Reichel (2):
-  clk: composite: Fix handling of high clock rates
-  clk: divider: Fix divisions
-
- drivers/clk/clk-composite.c | 5 ++++-
- drivers/clk/clk-divider.c   | 6 +++---
- 2 files changed, 7 insertions(+), 4 deletions(-)
-
+diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+index a2c2b5203b0a..c38e8aa60e54 100644
+--- a/drivers/clk/clk-divider.c
++++ b/drivers/clk/clk-divider.c
+@@ -220,7 +220,7 @@ static int _div_round_up(const struct clk_div_table *table,
+ 			 unsigned long parent_rate, unsigned long rate,
+ 			 unsigned long flags)
+ {
+-	int div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++	int div = DIV_ROUND_UP(parent_rate, rate);
+ 
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO)
+ 		div = __roundup_pow_of_two(div);
+@@ -237,7 +237,7 @@ static int _div_round_closest(const struct clk_div_table *table,
+ 	int up, down;
+ 	unsigned long up_rate, down_rate;
+ 
+-	up = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++	up = DIV_ROUND_UP(parent_rate, rate);
+ 	down = parent_rate / rate;
+ 
+ 	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
+@@ -473,7 +473,7 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
+ {
+ 	unsigned int div, value;
+ 
+-	div = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
++	div = DIV_ROUND_UP(parent_rate, rate);
+ 
+ 	if (!_is_valid_div(table, div, flags))
+ 		return -EINVAL;
 -- 
 2.39.2
 
