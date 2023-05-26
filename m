@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F375C77B7A
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 08:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED24C77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 08:33:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242702AbjEZIaZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 04:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35334 "EHLO
+        id S242693AbjEZIdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 04:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242682AbjEZIaV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 04:30:21 -0400
+        with ESMTP id S242692AbjEZIdf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 04:33:35 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 003E613A;
-        Fri, 26 May 2023 01:30:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF4BD135;
+        Fri, 26 May 2023 01:33:34 -0700 (PDT)
 Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8F4076606E83;
-        Fri, 26 May 2023 09:30:17 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id C96D46606E83;
+        Fri, 26 May 2023 09:33:32 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1685089818;
-        bh=gg3PXZMm/8qSIeSloKT4Q2tmhI1GwPnD9NTPJMDIL0Q=;
+        s=mail; t=1685090013;
+        bh=WrowHc+4yGRPLiyYPvvG4JYOR+mPGcHxjVgb39lx+FA=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=Ul4aYUWqkAaDION+dPRYmOTTBp5YFpvXXgyq8i27Rc6zJGXSjE8nTF3T6QlgArrv5
-         XAmtQM35alw/+N0CB2yodcSSG0SFqvv2nfFLB1AqaHUvdUJxSzHiM2cgnnxOLgq/Ol
-         hNa1bz9lMwy7CkGX4pjdaQhbmcUAz3D2vpV9usC2GKWRgR11ZV/cUtttBohJdbpTRM
-         1uAHsEa9ivaVeBvNnDYLpN9xdeFrDX6+ZinR8aAsXSOSxbmPp3KCWFidy1qdgkj1RY
-         sCG9BDkziPRXRGbl1RJb+V+a4kyy6xo0ftJoU9UcxiclAXHpGu/gYLozjGKoHBLgAp
-         iEpcqklNY/k1g==
-Message-ID: <f3f7df94-74f1-dd41-00d7-0ab4fa2e4d61@collabora.com>
-Date:   Fri, 26 May 2023 10:30:14 +0200
+        b=g06/xOFhstlgqDPNyk+/b7fjllrKt0tkTDvq7y0ngnvPTprNQuq5i0YgwajJs9OQw
+         X/4USKtVZL/Wu9KOcc2cIbxveNH4uoOaK7qTOq9yC7K/0CxV03XFrNO+q0puTfxDsR
+         ApkxwhKWE6ufg5ra4TtGQ7Ma5JrML7zrZYgETMaGqhTkQuL/IInaT/LNDBxgaeg/78
+         fLmcppUB9dd5UJE7gxFk5yedjn0F1t78UdQn2kGcG2HWsUgk0Cq0Xhexee6Idd0a/L
+         6ME28Ex9/Umy0DJM0260BvM5gGO5X07i4iKe7cNj1Y3q2xbyuWHGZ4Je97B4oZUkr7
+         cH7UXwUmFpq0A==
+Message-ID: <2a60740f-782d-08d5-f62f-dcc67aaf4d32@collabora.com>
+Date:   Fri, 26 May 2023 10:33:30 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.1
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: replace unusable
- clock
+Subject: Re: [PATCH v2 2/2] clk: mediatek: mt8365: Fix index issue
+Content-Language: en-US
 To:     Alexandre Mergnat <amergnat@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -51,48 +51,52 @@ Cc:     Markus Schneider-Pargmann <msp@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
- <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
-Content-Language: en-US
+ <20230517-fix-clk-index-v2-2-1b686cefcb7e@baylibre.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+In-Reply-To: <20230517-fix-clk-index-v2-2-1b686cefcb7e@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Il 25/05/23 16:50, Alexandre Mergnat ha scritto:
-> The “mcu_pm_bclk_ck_cg” clock is used by co-processors and should not be
-> added to the kernel driver, otherwise the CPU just halt and the board is
-> rebooted by the wathdog.
+> Before the patch [1], the clock probe was done directly in the
+> clk-mt8365 driver. In this probe function, the array which stores the
+> data clocks is sized using the higher defined numbers (*_NR_CLOCK) in
+> the clock lists [2]. Currently, with the patch [1], the specific
+> clk-mt8365 probe function is replaced by the mtk generic one [3], which
+> size the clock data array by adding all the clock descriptor array size
+> provided by the clk-mt8365 driver.
 > 
-> Instead, add the "aes_top0_bclk_ck_cg" missing clock to prevent
-> re-shuffling index and then preserve the ABI.
+> Actually, all clock indexes come from the header file [2], that mean, if
+> there are more clock (then more index) in the header file [2] than the
+> number of clock declared in the clock descriptor arrays (which is the
+> case currently), the clock data array will be undersized and then the
+> generic probe function will overflow when it will try to write in
+> "clk_data[CLK_INDEX]". Actually, instead of crashing at boot, the probe
+> function returns an error in the log which looks like:
+> "of_clk_hw_onecell_get: invalid index 135", then this clock isn't
+> enabled.
+> 
+> Solve this issue by adding in the driver the missing clocks declared in
+> the header clock file [2].
+> 
+> [1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
+>       mtk_clk_simple_{probe,remove}()")
+> [2]: include/dt-bindings/clock/mediatek,mt8365-clk.h
+> [3]: drivers/clk/mediatek/clk-mtk.c
+> 
+> Fixes: ffe91cb28f6a ("clk: mediatek: mt8365: Convert to mtk_clk_simple_{probe,remove}()")
 
-It's still a breakage. Besides, have you tried to add it as CLK_IS_CRITICAL? :-)
+This is not fixing the conversion, but the clock driver, as it originally missed
+clock entries and hence was not compliant with its binding (header).
+It worked before, probably, but this doesn't mean that this driver didn't contain
+a logic mistake from the beginning :-)
+
+So, add (or replace the current one with) the relevant Fixes tag...
 
 Cheers,
 Angelo
-
-> 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> ---
->   include/dt-bindings/clock/mediatek,mt8365-clk.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/dt-bindings/clock/mediatek,mt8365-clk.h b/include/dt-bindings/clock/mediatek,mt8365-clk.h
-> index f9aff1775810..0a841e7cc1c3 100644
-> --- a/include/dt-bindings/clock/mediatek,mt8365-clk.h
-> +++ b/include/dt-bindings/clock/mediatek,mt8365-clk.h
-> @@ -199,7 +199,7 @@
->   #define CLK_IFR_PWRAP_TMR		46
->   #define CLK_IFR_PWRAP_SPI		47
->   #define CLK_IFR_PWRAP_SYS		48
-> -#define CLK_IFR_MCU_PM_BK		49
-> +#define CLK_IFR_AES_TOP0_BK		49
->   #define CLK_IFR_IRRX_26M		50
->   #define CLK_IFR_IRRX_32K		51
->   #define CLK_IFR_I2C0_AXI		52
-> 
 
