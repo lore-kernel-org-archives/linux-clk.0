@@ -2,146 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F588C77B7A
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 09:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB98C7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 09:40:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243254AbjEZJeg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 05:34:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41812 "EHLO
+        id S230121AbjEZJkN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 05:40:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243155AbjEZJeN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 05:34:13 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0EDF1A7
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 02:33:35 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f4bd608cf4so552544e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 02:33:35 -0700 (PDT)
+        with ESMTP id S243295AbjEZJj3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 05:39:29 -0400
+Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F67E4C
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 02:38:57 -0700 (PDT)
+Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-3093eb8cd1fso300819f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 02:38:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685093603; x=1687685603;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685093935; x=1687685935;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7/oBlibUgPrZBjTfRBirdiuXhFmBs+58msrliDKw+mY=;
-        b=KoGqzYwcPZDy0P7xRldOcnXupUtJ+OB7H0ZpZPKhb1KtMCJj3127Toriic3RgG79sv
-         1FN+feWvMCT5HWrA7sgpFvh4jRJX2kk/pkx3cN8Sg4fRKrzrRZMwz5MdAg4nIcOj+5GF
-         /VGmQUIIqNjUPtgs8j+9TCUzRo6fA53EtKqzb53WSvI9E2Ut8QNd9IAlhZVZNVVww/cF
-         a5Dq5rbMa9f9g+0gVz8cTO2HusCyCJ1+XtHsTty+Ua7uhoGr/Z1tjUUEkJNf50Oj2Zgy
-         PEcPe3A3DC5MRNMLGMBqrN8ogvDJxJYHtD1uTF0DsfMARexZ7wsleU88v54cf8wKhJg1
-         nc/A==
+        bh=c9FbcJ8ok/dJicjZGixTx1rLY7WoaIvuxCHaDotirU4=;
+        b=JL9AIH+1JLjqI1bMy4zyAC7GHDy/nihvR99pjHry6l2XVXgzqeSd/O9B6T2oGdIPvA
+         VkgZBzOgUU608sykszofbkMZecWAa0HoGE9t5egEInksaJ2dQoLSSbMUQWNa5bwOV1rx
+         ohf/QuYu7rZKisOi0K2vsLSoVlPGCAscrZLaxrq3if7gialce24YicNKzQ2ugRFFnmV2
+         jbxy7WDzGnpwoxmZmZvtFkTQa2PwwcuXAHHrU9gpVzAaDI2ry12Jwe4qqtx5CeILc0O4
+         MSzVeVif0r/3wOiSpEkLOskM81rNKfB4zCaZUeRdYCujEGGmUNjWaRbZrf28KaMAzkc0
+         5P0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685093603; x=1687685603;
+        d=1e100.net; s=20221208; t=1685093935; x=1687685935;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7/oBlibUgPrZBjTfRBirdiuXhFmBs+58msrliDKw+mY=;
-        b=csiRqSYhDvMl1Hg3YHmB1NR50IZ54BngVCgY60SIdUaulGfXr0beYX+aRTRgfbpzpr
-         OHGepLp4yrm52eNDZY8xZ/GzVnjaLP9c9frB0jQAYaU/jUSXHQiep1I1l6qyC5TlkWG8
-         /zg0r83PZjv7UdPocWngol9mRnag15dyzEGJz/mGvM65o4da5uBiZaxhyGpJArCdO4Uw
-         0MuY7BjahlzvSkUyiAV5BvPYry4K0dwhCnPSgdjxT0ocCIbY6Pex2I4JGSBKvznMU+z0
-         9nMmxud9xMfpCNJiqtj2mYge2pWCsZ5CYCwdp8JkPooJGLTRD0WdPXb3ArcF1t7+tSPU
-         +o4A==
-X-Gm-Message-State: AC+VfDxK2Zqw/pU0oTueQPjedzkEbfL/T0Dss8XhziBn7bY5c2eke1xh
-        +0sae7vgKQsINSGIASIIA0VkrpH2GfYr3sd6ZgA=
-X-Google-Smtp-Source: ACHHUZ5IMHjQOJzbUB1xcWxYldyP1P7V6EO/+PSAu1YT7XY3jrPux0ZQoExBpf+yW22mPCrPp614EA==
-X-Received: by 2002:a19:f80c:0:b0:4f4:cda3:8c99 with SMTP id a12-20020a19f80c000000b004f4cda38c99mr441265lff.42.1685093603377;
-        Fri, 26 May 2023 02:33:23 -0700 (PDT)
-Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id i20-20020ac25234000000b004efe73ee01fsm535345lfl.306.2023.05.26.02.33.22
+        bh=c9FbcJ8ok/dJicjZGixTx1rLY7WoaIvuxCHaDotirU4=;
+        b=Hkn/ywmLzan+c1+7oGQ2EU8OkfDudt4nR7G/IY41AOWJMK+J2vqe8LbeiwtcYAI8PE
+         i+cxJhmm+4/7B56mfxkeNYQvyuZtgwCCOSIseOEU39g5RuFzDE3o4us6lUdU0gmcG/zd
+         nAe/+e0nGtkCk5b0ZrCn43AeBmdEnyrJDaVxyvGWWCndj7XBcIQs9vtNViH2ELK/Cd8g
+         ANSmGUgU+GduMDtyJXzWQANidFkS/bc7uONhp46kgEd4ehuR7QZLl7HD6q5PyFcbGRGA
+         ObBo76sZKQIeW4KZml7e3M1cYYFUDft0tehRaWQP3Gt64VmvYsXs3imG57TxOhcUacdv
+         3WKg==
+X-Gm-Message-State: AC+VfDxqM5CtIy7v/pBACck7yVcZGUmajQH23tCHS+x4Y2Le7OyNpeej
+        yl2tK5zRRvL/QjFoTZK0DqTYVA==
+X-Google-Smtp-Source: ACHHUZ5Z/uuwFU/rDxZADcj66dYaAGt7iBmpqRVcOw6fAUTz20CCVBeanIlci2qhrpcJchgxcIz/3A==
+X-Received: by 2002:a5d:640c:0:b0:30a:6958:456 with SMTP id z12-20020a5d640c000000b0030a69580456mr1091222wru.4.1685093935490;
+        Fri, 26 May 2023 02:38:55 -0700 (PDT)
+Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id y15-20020a5d4acf000000b00306299be5a2sm4489937wrs.72.2023.05.26.02.38.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 May 2023 02:33:22 -0700 (PDT)
-Message-ID: <6e1d098d-03b9-aa63-a0bf-6cf748a0db0d@linaro.org>
-Date:   Fri, 26 May 2023 11:33:21 +0200
+        Fri, 26 May 2023 02:38:55 -0700 (PDT)
+Message-ID: <d2ed4cce-108f-c861-5f84-0c7ac5954346@baylibre.com>
+Date:   Fri, 26 May 2023 11:38:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH V2 3/6] clk: qcom: clk-alpha-pll: Remove explicit CAL_L
- configuration for EVO PLL
+Subject: Re: [PATCH v2 2/2] clk: mediatek: mt8365: Fix index issue
 Content-Language: en-US
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Chen-Yu Tsai <wenst@chromium.org>
+Cc:     Markus Schneider-Pargmann <msp@baylibre.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230525172142.9039-1-quic_jkona@quicinc.com>
- <20230525172142.9039-4-quic_jkona@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230525172142.9039-4-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
+ <20230517-fix-clk-index-v2-2-1b686cefcb7e@baylibre.com>
+ <2a60740f-782d-08d5-f62f-dcc67aaf4d32@collabora.com>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <2a60740f-782d-08d5-f62f-dcc67aaf4d32@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+On 26/05/2023 10:33, AngeloGioacchino Del Regno wrote:
+> Il 25/05/23 16:50, Alexandre Mergnat ha scritto:
+>> Before the patch [1], the clock probe was done directly in the
+>> clk-mt8365 driver. In this probe function, the array which stores the
+>> data clocks is sized using the higher defined numbers (*_NR_CLOCK) in
+>> the clock lists [2]. Currently, with the patch [1], the specific
+>> clk-mt8365 probe function is replaced by the mtk generic one [3], which
+>> size the clock data array by adding all the clock descriptor array size
+>> provided by the clk-mt8365 driver.
+>>
+>> Actually, all clock indexes come from the header file [2], that mean, if
+>> there are more clock (then more index) in the header file [2] than the
+>> number of clock declared in the clock descriptor arrays (which is the
+>> case currently), the clock data array will be undersized and then the
+>> generic probe function will overflow when it will try to write in
+>> "clk_data[CLK_INDEX]". Actually, instead of crashing at boot, the probe
+>> function returns an error in the log which looks like:
+>> "of_clk_hw_onecell_get: invalid index 135", then this clock isn't
+>> enabled.
+>>
+>> Solve this issue by adding in the driver the missing clocks declared in
+>> the header clock file [2].
+>>
+>> [1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
+>>       mtk_clk_simple_{probe,remove}()")
+>> [2]: include/dt-bindings/clock/mediatek,mt8365-clk.h
+>> [3]: drivers/clk/mediatek/clk-mtk.c
+>>
+>> Fixes: ffe91cb28f6a ("clk: mediatek: mt8365: Convert to 
+>> mtk_clk_simple_{probe,remove}()")
+>
+> This is not fixing the conversion, but the clock driver, as it 
+> originally missed
+> clock entries and hence was not compliant with its binding (header).
+> It worked before, probably, but this doesn't mean that this driver 
+> didn't contain
+> a logic mistake from the beginning :-)
+>
+> So, add (or replace the current one with) the relevant Fixes tag...
+>
 
-On 25.05.2023 19:21, Jagadeesh Kona wrote:
-> In lucid evo pll, the CAL_L field is part of L value register itself, and
-> the l value configuration passed from clock controller driver includes
-> CAL_L and L values as well. Hence remove explicit configuration of CAL_L
-> for evo pll.
-> 
-> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
-Oh that isn't obvious at first sight, nice find!
+Briefly and factually, the mt8365 clk probe mechanism was different
 
-I'd suggest a different solution though:
+compared to the mtk clk driver. Even if it was an issue or not, it was
 
-#define LUCID_EVO_PLL_L_LVAL	GENMASK(..
-#define LUCID_EVO_PLL_L_CAL_L	GENMASK(..
+working (for sure). When [1] improved the mt8365 clk driver by using
 
-lval = FIELD_PREP(LUCID_EVO_PLL_L_LVAL, config->l) |
-       FIELD_PREP(LUCID_EVO_PLL_L_CAL_L, config->cal_l);
+the mtk clk generic probe, some clocks (USB here) no longer worked.
 
-This would make the separation between the two parts more explicit
+So, IMHO, it still a functional regression introduced by [1], because it
 
-however
+come from the switch of the probe function.
 
-config->l would then represent the L value and not the end value
-written to the L register
 
-Up to you, whichever you find saner!
+I'm not blaming & shaming the author of [1], as you said, it originally
 
-Konrad
+missed clock entries and hence was not compliant with its binding
 
-> Changes since V1:
->  - Newly added.
-> 
->  drivers/clk/qcom/clk-alpha-pll.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index f81c7c561352..68a80395997b 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -270,7 +270,6 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
->  #define LUCID_EVO_PCAL_NOT_DONE		BIT(8)
->  #define LUCID_EVO_ENABLE_VOTE_RUN       BIT(25)
->  #define LUCID_EVO_PLL_L_VAL_MASK        GENMASK(15, 0)
-> -#define LUCID_EVO_PLL_CAL_L_VAL_SHIFT	16
->  
->  /* ZONDA PLL specific */
->  #define ZONDA_PLL_OUT_MASK	0xf
-> @@ -2084,10 +2083,7 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
->  void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->  				 const struct alpha_pll_config *config)
->  {
-> -	u32 lval = config->l;
-> -
-> -	lval |= TRION_PLL_CAL_VAL << LUCID_EVO_PLL_CAL_L_VAL_SHIFT;
-> -	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), lval);
-> +	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
->  	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
->  	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
->  	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
+(whereas other MTK SoC was I guess). This commit is pointed thanks
+
+to the bisect + test.
+
+
+-- 
+Regards,
+Alexandre
+
