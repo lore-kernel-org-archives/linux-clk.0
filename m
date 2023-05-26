@@ -2,101 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED24C77B7C
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 08:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26629C7EE2D
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 08:54:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242693AbjEZIdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 04:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37054 "EHLO
+        id S242833AbjEZIyM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 04:54:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242692AbjEZIdf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 04:33:35 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF4BD135;
-        Fri, 26 May 2023 01:33:34 -0700 (PDT)
-Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C96D46606E83;
-        Fri, 26 May 2023 09:33:32 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1685090013;
-        bh=WrowHc+4yGRPLiyYPvvG4JYOR+mPGcHxjVgb39lx+FA=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=g06/xOFhstlgqDPNyk+/b7fjllrKt0tkTDvq7y0ngnvPTprNQuq5i0YgwajJs9OQw
-         X/4USKtVZL/Wu9KOcc2cIbxveNH4uoOaK7qTOq9yC7K/0CxV03XFrNO+q0puTfxDsR
-         ApkxwhKWE6ufg5ra4TtGQ7Ma5JrML7zrZYgETMaGqhTkQuL/IInaT/LNDBxgaeg/78
-         fLmcppUB9dd5UJE7gxFk5yedjn0F1t78UdQn2kGcG2HWsUgk0Cq0Xhexee6Idd0a/L
-         6ME28Ex9/Umy0DJM0260BvM5gGO5X07i4iKe7cNj1Y3q2xbyuWHGZ4Je97B4oZUkr7
-         cH7UXwUmFpq0A==
-Message-ID: <2a60740f-782d-08d5-f62f-dcc67aaf4d32@collabora.com>
-Date:   Fri, 26 May 2023 10:33:30 +0200
+        with ESMTP id S242705AbjEZIyK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 04:54:10 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1AA6198
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 01:54:07 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-30789a4c537so245812f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 01:54:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685091246; x=1687683246;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=euKZ+WSAhXyrVn0AyoceS6rsEoXdp7CnlhslJOnii3c=;
+        b=4Mm7af47pTxR8J3orNP08NtPkDhpbxyDPcERzqr+7U/N9u+uMixl2dJYKKbuHTmR86
+         v+NDc0vAa6NNFOVw9ScYMGioN8DydRKZet4zZpk1nABJI/PzJUJYmzc8VyZ4sk+cdY9k
+         JrI/McdCRlBbQ4IBhRNJTN7gx1AnDEPBuMmc/6F5+TQe2F1k5hHesJ4mwbQ3EzHwulUM
+         9jCKozEpuyi5ofzSyhMQ2skTuXInpgS48bPPKQKdCnYCm/MFtiWZtT467tQkswk5Zm2R
+         LSOgP+ah4r5PtfHCF7IGnCUE5ef/rDost6+fU+ioS34Z1vl8fbABqWdc5Z1zA2y6Kr94
+         IrVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685091246; x=1687683246;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=euKZ+WSAhXyrVn0AyoceS6rsEoXdp7CnlhslJOnii3c=;
+        b=Czao/2RR/ehv3aJnhCtGSpzu6bJiODZIB6eHYaq0KXe2sUnc9100KrctCop8g/etAd
+         l1ySgQ3J5tFx9g2MpLb5lqNe8xiwOZiVzaz7kAhireEFOq94sM7FY+Fr4wLPUQaZOlok
+         GHsjwaP8i+JFH4XhpbOpCvRZVW2s/Zfsu+8diaIsB9rSUFKmQSLkugpEw21M1OOSqQAP
+         BN56yLDzG9HmUuuhgzU2M9nVSj8/LCS0zsi9vxpoiYHSP+kSRkB96gpHv3WodvGvaMdo
+         dI8nw2272tSvt2LWgucj+73O/JpZmy2BlkN7foooSenMOvpO+jS6/IzbTx4us72VQeVP
+         oSdQ==
+X-Gm-Message-State: AC+VfDx/TjhmaZiPujsCOT1p4C+mgxVTdjK0MMdwyO2knYDcB2BJBN85
+        EQt8IkC4ANlwHBjgnLWM0H1apQ==
+X-Google-Smtp-Source: ACHHUZ7d59AY8hMyzp5lhJ8jqZmAoLniSNjqiPcXwIZvvpqz+lxlM0eOFDwJJVHGsHbG8WD1qsPlyQ==
+X-Received: by 2002:a05:6000:9:b0:306:4125:5f61 with SMTP id h9-20020a056000000900b0030641255f61mr971698wrx.44.1685091246156;
+        Fri, 26 May 2023 01:54:06 -0700 (PDT)
+Received: from [192.168.1.172] (158.22.5.93.rev.sfr.net. [93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id l21-20020a1c7915000000b003f603b8eb5asm4564045wme.7.2023.05.26.01.54.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 May 2023 01:54:05 -0700 (PDT)
+Message-ID: <c1e706f3-9d80-3dd5-eeab-c24830f9ef03@baylibre.com>
+Date:   Fri, 26 May 2023 10:54:04 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-Subject: Re: [PATCH v2 2/2] clk: mediatek: mt8365: Fix index issue
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: replace unusable
+ clock
 Content-Language: en-US
-To:     Alexandre Mergnat <amergnat@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Conor Dooley <conor@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Markus Schneider-Pargmann <msp@baylibre.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Markus Schneider-Pargmann <msp@baylibre.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <20230517-fix-clk-index-v2-0-1b686cefcb7e@baylibre.com>
- <20230517-fix-clk-index-v2-2-1b686cefcb7e@baylibre.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230517-fix-clk-index-v2-2-1b686cefcb7e@baylibre.com>
+ <20230517-fix-clk-index-v2-1-1b686cefcb7e@baylibre.com>
+ <20230525-snuggle-twine-ed1bfc2aee51@spud>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <20230525-snuggle-twine-ed1bfc2aee51@spud>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 25/05/23 16:50, Alexandre Mergnat ha scritto:
-> Before the patch [1], the clock probe was done directly in the
-> clk-mt8365 driver. In this probe function, the array which stores the
-> data clocks is sized using the higher defined numbers (*_NR_CLOCK) in
-> the clock lists [2]. Currently, with the patch [1], the specific
-> clk-mt8365 probe function is replaced by the mtk generic one [3], which
-> size the clock data array by adding all the clock descriptor array size
-> provided by the clk-mt8365 driver.
+On 25/05/2023 19:51, Conor Dooley wrote:
+> On Thu, May 25, 2023 at 04:50:27PM +0200, Alexandre Mergnat wrote:
+>> The “mcu_pm_bclk_ck_cg” clock is used by co-processors and should not be
+>> added to the kernel driver, otherwise the CPU just halt and the board is
+>> rebooted by the wathdog.
+>>
+>> Instead, add the "aes_top0_bclk_ck_cg" missing clock to prevent
+>> re-shuffling index and then preserve the ABI.
 > 
-> Actually, all clock indexes come from the header file [2], that mean, if
-> there are more clock (then more index) in the header file [2] than the
-> number of clock declared in the clock descriptor arrays (which is the
-> case currently), the clock data array will be undersized and then the
-> generic probe function will overflow when it will try to write in
-> "clk_data[CLK_INDEX]". Actually, instead of crashing at boot, the probe
-> function returns an error in the log which looks like:
-> "of_clk_hw_onecell_get: invalid index 135", then this clock isn't
-> enabled.
-> 
-> Solve this issue by adding in the driver the missing clocks declared in
-> the header clock file [2].
-> 
-> [1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
->       mtk_clk_simple_{probe,remove}()")
-> [2]: include/dt-bindings/clock/mediatek,mt8365-clk.h
-> [3]: drivers/clk/mediatek/clk-mtk.c
-> 
-> Fixes: ffe91cb28f6a ("clk: mediatek: mt8365: Convert to mtk_clk_simple_{probe,remove}()")
+> How does this preserve the ABI exactly? Please describe exactly what you
+> mean by that.
 
-This is not fixing the conversion, but the clock driver, as it originally missed
-clock entries and hence was not compliant with its binding (header).
-It worked before, probably, but this doesn't mean that this driver didn't contain
-a logic mistake from the beginning :-)
+I mean that reduce the impact of the change compared to the v1 where 
+I've changed the index of the following defines to be clean.
 
-So, add (or replace the current one with) the relevant Fixes tag...
+> Also, what about any other users of these definitions, outside of Linux?
 
-Cheers,
-Angelo
+The clock driver and bindings are only a couple of kernel versions old, 
+I'm pretty sure no one is using it. Also, if someone use 
+CLK_IFR_MCU_PM_BK define, I'm wondering how his CPU is working since 
+Mediatek told me that shouldn't be used, and after some try, I confirm.
+
+I've a question: If something is wrong in the binding, you don't fix it 
+to avoid ABI change ?
+
+TBH, I just try to clean the binding. I can fix the driver index issue 
+(patch 2/2) without fixing the binding if you prefer. But IMHO, keep an 
+unusable define isn't great...
+
+-- 
+Regards,
+Alexandre
 
