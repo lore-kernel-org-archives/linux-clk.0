@@ -2,74 +2,238 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B55C7EE37
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 19:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE0DC7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 19:42:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243802AbjEZTe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 15:34:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51458 "EHLO
+        id S237439AbjEZTmC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 15:42:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243809AbjEZTe5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 15:34:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74BF9A3;
-        Fri, 26 May 2023 12:34:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B9816530C;
-        Fri, 26 May 2023 19:34:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E94C433A0;
-        Fri, 26 May 2023 19:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685129695;
-        bh=gT9IKrR0prQstcetiEJhX3nmV1xde8J90JVRdjDHsEA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U4Z8sFB1uz2LsZIgyrwMRjwu6yEXVUo/R+l/xHjqrzasRTnO+dhaE15asdlqpr+Gv
-         wQJ+rd21J0jI0l/EKIH4vHoiGctVO4VHF5GvCsVFpY535Z1rIF2lZ+Zey5+cb6NnYs
-         Lzx86bjC/9TEE1x4sy8/wSG0xBPWeNbprfaqb3ztlnWcH8W25UuDdxoYNqdpVKJ/gR
-         r0hwBjFFoy6GFefyvd6UDDOqcUnX7Mkfnai36TbehzawMSbqqkhhRtZerRzqQAgzzs
-         sUZwC+09mg3ynZ714t8CYEgFlnDXqnwMMhcjHQWODpl5U/tyMSZp52gk5/Fyg3d0Wu
-         Ih2W8xwghkhLA==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     agross@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        konrad.dybcio@linaro.org, sboyd@kernel.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, krzysztof.kozlowski+dt@linaro.org,
-        linux-arm-msm@vger.kernel.org,
-        Devi Priya <quic_devipriy@quicinc.com>
-Cc:     quic_poovendh@quicinc.com, quic_kathirav@quicinc.com,
-        quic_anusha@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_srichara@quicinc.com, quic_arajkuma@quicinc.com
-Subject: Re: (subset) [PATCH V3 0/6] Incremental patches on minimal boot support
-Date:   Fri, 26 May 2023 12:38:34 -0700
-Message-Id: <168512991477.248818.1956117241654375356.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230425084010.15581-1-quic_devipriy@quicinc.com>
-References: <20230425084010.15581-1-quic_devipriy@quicinc.com>
+        with ESMTP id S237475AbjEZTmB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 15:42:01 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D63C6BD
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 12:41:57 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f37b860173so1284023e87.2
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 12:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685130116; x=1687722116;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FSe8dTaK8x4aBUD/jMFuOWtPgrWFHesEVp3wlm3KGkk=;
+        b=ha1QwaR1QQdIGvTgl7YfQKTBclcjdV8nvj4Meclx31HBbHsAPMAqdge8vlskJcF97f
+         YA9NDySXWPE5zGwNGWbPLR67cmLh3F2mv2OTW+D7V8Pi7jXuztbkX+gnb2F8/vEv0pZY
+         pu7BPT1Wckyr565XhI9Ckk/rtz6wjqGxZ97ZR8C4a32IfRXg0PbDHYLZo18glGZqK27x
+         llnkzsuJ+UaTIgdoC2LAqRYfc5eVT0RqV5ZE7vd+t2QaowwmevzOIWyitJUG7QhkcU/f
+         mHRcFVOwTvBpqKBWP64uLhxnknXCYVVX174j3czZ9UbeuUIBCQLe4m0k8GgfQvFcJFnw
+         51lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685130116; x=1687722116;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FSe8dTaK8x4aBUD/jMFuOWtPgrWFHesEVp3wlm3KGkk=;
+        b=et0KrbgSWWMlu0ZKs6p3iyXGPsHKhY8NIMTVO4oW5hmKRS9pJBKECVm7mU2HL+1InP
+         0uuTOkxk83kMwiIC+vUI/F2pexEG0cO7dIxGgfYbFaBOlABt9RSJPcA47fWI7spVQ0It
+         ANuHihK1hvJMsKVSwzWOjs0q2dCMIhZzbwZvFrhqjMw7Ep11Wk+90lC9eQfmGytNaPdX
+         YmKCKctgqM3Alfy3aIpfEqyg4SYN5bYIHMp54w6WjNIUTdq/lExa6jONbCFOMQoSKlmf
+         JGJ1pWY5i+uSuDcwP9E01ysZZUsi4YlY2qrLRHeMlJSnuqDZMBUZzjaFNagMerdiZeAS
+         tFpw==
+X-Gm-Message-State: AC+VfDzpl1xZlDbI/ul4c2DgrBciFCLIDYUxiw1R1eZImzh6FDZH8yAM
+        2QfQ4WUmhWldqSTY8ZKURkWt2g==
+X-Google-Smtp-Source: ACHHUZ6T1cUYaGXiFt+9m4Oaj8GpUS+9Sh/LhkT7fJ1Q60tcGrFF4cp3WGcLFm7trLws+/urkErSjg==
+X-Received: by 2002:a19:f715:0:b0:4f2:40dd:e2cf with SMTP id z21-20020a19f715000000b004f240dde2cfmr875000lfe.55.1685130115941;
+        Fri, 26 May 2023 12:41:55 -0700 (PDT)
+Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
+        by smtp.gmail.com with ESMTPSA id p18-20020ac246d2000000b004f387d97dafsm754263lfo.147.2023.05.26.12.41.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 May 2023 12:41:55 -0700 (PDT)
+Message-ID: <de0512b1-a8c7-2dc9-ab48-158a47e6d5a6@linaro.org>
+Date:   Fri, 26 May 2023 21:41:54 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] clk: qcom: mmcc-msm8974: Add OXILICX_GDSC for msm8226
+Content-Language: en-US
+To:     Luca Weiss <luca@z3ntu.xyz>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Dudziak <bartosz.dudziak@snejp.pl>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz>
+ <2528191.PYKUYFuaPT@z3ntu.xyz>
+ <275c997a-a09d-113f-631d-bb677a05ac5f@linaro.org>
+ <2679976.mvXUDI8C0e@z3ntu.xyz>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <2679976.mvXUDI8C0e@z3ntu.xyz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 25 Apr 2023 14:10:04 +0530, Devi Priya wrote:
-> Patchset V9 of the series: Add minimal boot support for IPQ9574 has been
-> merged and is available in linux-next/master.
-> V12 being the latest revision posted in the series, the delta between
-> revisions V9 and V12 is posted as a separate series as suggested by
-> Bjorn to avoid possible confusions.
+
+
+On 23.05.2023 22:44, Luca Weiss wrote:
+> On Dienstag, 16. Mai 2023 02:15:06 CEST Konrad Dybcio wrote:
+>> On 9.05.2023 18:57, Luca Weiss wrote:
+>>> On Montag, 8. Mai 2023 13:35:07 CEST Konrad Dybcio wrote:
+>>>> On 8.05.2023 13:32, Dmitry Baryshkov wrote:
+>>>>> On 08/05/2023 10:23, Konrad Dybcio wrote:
+>>>>>> On 6.05.2023 23:20, Luca Weiss wrote:
+>>>>>>> On msm8226 we also have OXILICX_GDSC but we need a slighly different
+>>>>>>> config, with a .cxcs defined for clock but with no parent.
+>>>>>>
+>>>>>> Hm, on newer (a5xx+) GPUs, CX needs to be turned on first and
+>>>>>> to achieve that, we sometimes define it to be the GX's (also
+>>>>>> implicitly known as "oxili-non-CX" in before-a6xx-times) parent..
+>>>>>>
+>>>>>> Roughly speaking CX powers the "GPU hardware owned by the broader
+>>>>>> SoC that may not need the GPU core clock to be up" and GX powers
+>>>>>> the "GPU hardware owned strictly by the GPU that needs at least some
+>>>>>> GPU clocks to be enabled"
+>>>>>>
+>>>>>> Maybe 8974 simply has a bug in the driver that would do the reverse?
+>>>>>> Could you (and perhaps Dmitry on his shiny new 13yo board) test that
+>>>>>> theory, preferably on both SoCs?
+>>>>>>
+>>>>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>> @@ -2431,6 +2431,7 @@ static struct gdsc oxili_gdsc = {
+>>>>>>
+>>>>>>          .pd = {
+>>>>>>          
+>>>>>>                  .name = "oxili",
+>>>>>>          
+>>>>>>          },
+>>>>>>
+>>>>>> +       .parent = &oxili_gdsc.pd,
+>>>>>>
+>>>>>>          .pwrsts = PWRSTS_OFF_ON,
+>>>>>>   
+>>>>>>   };
+>>>>>
+>>>>> Are you declaring oxili_gdsc to be a parent of itself?
+>>>>
+>>>> lol.. nice catch of course this line should have been
+>>>>
+>>>> +       .parent = &oxilicx_gdsc.pd,
+>>>>
+>>>> and the definitions would need to be swapped
+>>>
+>>> The 0x4024 oxili_gdsc (downstream name gdsc_oxili_gx) is disabled in 8226
+>>> dts.
+>>>
+>>> Only in downstream msm8974.dtsi this gdsc gets "parent-supply =
+>>> <&pm8841_s4_corner>;", on 8226 there's no parent-supply. And the gdsc
+>>> parent doesn't even seem to be described there.
+>>>
+>>> Should I still try?
+>>
+>> No, nevermind, this SoC is cut down more than I had initially thought.
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>
+>> with a minor nit: oxilicx -> oxili_cx
 > 
-> This series adds the delta changes between revisions V9 and V12.
+> Hi Konrad,
 > 
-> [...]
+> where do you want this changed? Just the .name field?
+Yes and maybe the struct name. We shouldn't be messing with bindings
+since it's cosmetic.
 
-Applied, thanks!
+ But even that one is now 
+> matching the other oxilicx variant. And there's also gdscs like 
+> oxilicx_ahb_clk.
+oxilicx literally means "the CX side of OXILI", or translating from
+Qualcommish to English "GPU registers accessible from the AP, not
+necessarily the GPU itself"
 
-[6/6] arm64: dts: qcom: ipq9574: rename al02-c7 dts to rdp433
-      commit: d9556c5c6c51aad2c2f760ce953735afa9162f94
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Konrad
+> 
+> Let me know.
+> 
+> Regards
+> Luca
+> 
+>>
+>> Konrad
+>>
+>>>> Konrad
+>>>>
+>>>>>>   @@ -2439,7 +2440,6 @@ static struct gdsc oxilicx_gdsc = {
+>>>>>>   
+>>>>>>          .pd = {
+>>>>>>          
+>>>>>>                  .name = "oxilicx",
+>>>>>>          
+>>>>>>          },
+>>>>>>
+>>>>>> -       .parent = &oxili_gdsc.pd,
+>>>>>>
+>>>>>>          .pwrsts = PWRSTS_OFF_ON,
+>>>>>>   
+>>>>>>   };
+>>>>>>
+>>>>>> Konrad
+>>>>>>
+>>>>>>> Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
+>>>>>>> ---
+>>>>>>>
+>>>>>>>   drivers/clk/qcom/mmcc-msm8974.c | 11 +++++++++++
+>>>>>>>   1 file changed, 11 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>>> b/drivers/clk/qcom/mmcc-msm8974.c index 4273fce9a4a4..39ee3953567c
+>>>>>>> 100644
+>>>>>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>>> @@ -2443,6 +2443,16 @@ static struct gdsc oxilicx_gdsc = {
+>>>>>>>
+>>>>>>>       .pwrsts = PWRSTS_OFF_ON,
+>>>>>>>   
+>>>>>>>   };
+>>>>>>>   +static struct gdsc oxilicx_gdsc_msm8226 = {
+>>>>>>>
+>>>>>>> +    .gdscr = 0x4034,
+>>>>>>> +    .cxcs = (unsigned int []){ 0x4028 },
+>>>>>>> +    .cxc_count = 1,
+>>>>>>> +    .pd = {
+>>>>>>> +        .name = "oxilicx",
+>>>>>>> +    },
+>>>>>>> +    .pwrsts = PWRSTS_OFF_ON,
+>>>>>>> +};
+>>>>>>> +
+>>>>>>>
+>>>>>>>   static struct clk_regmap *mmcc_msm8226_clocks[] = {
+>>>>>>>   
+>>>>>>>       [MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
+>>>>>>>       [MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
+>>>>>>>
+>>>>>>> @@ -2533,6 +2543,7 @@ static struct gdsc *mmcc_msm8226_gdscs[] = {
+>>>>>>>
+>>>>>>>       [MDSS_GDSC] = &mdss_gdsc,
+>>>>>>>       [CAMSS_JPEG_GDSC] = &camss_jpeg_gdsc,
+>>>>>>>       [CAMSS_VFE_GDSC] = &camss_vfe_gdsc,
+>>>>>>>
+>>>>>>> +    [OXILICX_GDSC] = &oxilicx_gdsc_msm8226,
+>>>>>>>
+>>>>>>>   };
+>>>>>>>   
+>>>>>>>     static const struct regmap_config mmcc_msm8226_regmap_config = {
+>>>>>>>
+>>>>>>> ---
+>>>>>>> base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
+>>>>>>> change-id: 20230506-msm8226-oxilicx-7f3f0f8e491d
+>>>>>>>
+>>>>>>> Best regards,
+> 
+> 
+> 
+> 
