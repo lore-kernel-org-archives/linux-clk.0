@@ -2,228 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA61C77B7C
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 12:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88161C77B7C
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 12:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243319AbjEZMXh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 08:23:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56904 "EHLO
+        id S230022AbjEZMax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 08:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231270AbjEZMXg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 08:23:36 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1BD6D8;
-        Fri, 26 May 2023 05:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1685103815; x=1716639815;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N0p4xIBGqTuIaskXSeOSjiy9vfxUe/NL9WXqetZ8YJw=;
-  b=tKk6dTcW8YY3WrAIv+qjBhvhb2lFKZLGN8+CnbKuwj7vFoPq1QtFowg2
-   WedgYbr1X8ChoNFIGWTAL2aArrvAeSmhvj+n4lI31JXSxFzF9RoiCfRP2
-   JNoTv53Ob7qX4eVTevEa8ISEXeZgzQwiPuwgOGaZijXa3nWc/8BMF9skD
-   7Ir3VmW5ggC0MaIqqTtasYLi8H55CwAIKhkfvLzgdZbIJ09wMZb+gv6mo
-   iMZVm+uD/ErAptPOCNE8ZcKBwBd3gXV4dI0u88g49GKQ7cKaz2FojXq1s
-   YVVYyq2kKx4/ONKu4AoDotwzn4IWgDihpYJRviV0i4wXOQ7YJux6m9ujJ
-   A==;
-X-IronPort-AV: E=Sophos;i="6.00,194,1681196400"; 
-   d="asc'?scan'208";a="215611840"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 May 2023 05:23:34 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 26 May 2023 05:23:33 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Fri, 26 May 2023 05:23:30 -0700
-Date:   Fri, 26 May 2023 13:23:07 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Torsten Duwe <duwe@lst.de>
-CC:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <yanhong.wang@starfivetech.com>,
+        with ESMTP id S242986AbjEZMav (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 08:30:51 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6665110D1
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 05:30:24 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-309553c5417so611066f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 05:30:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685104187; x=1687696187;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7DgLeFcVKugZ1jHV952TG/acpJ3CYaYDRk+S+7y1opI=;
+        b=JJvTXawYK+2eKFBee5z6PBwWI5k4qXYQepgb/dOh40ONIfiNE4vQ9C5JZS9sngNYhg
+         jKAqABQKcPpFCxaSTHzNRTJh1NZA9QyRaeOZY1W6wo0FCJG+12yEHnJk2NO1DgadbHko
+         SXSrT3LLSZujHZOb4HyIWpS8gGRib7Sl7sEBd71FdNT6s4mX2O4QpiCkFVa9qXC//z3n
+         BL3r0fgeLMCTZ3qonHJ6AOvpUyATULG7xQO2b3uScW7N2yIporOw7/OnSPXyTG6/vxE6
+         ky7koh3XPDV1LI+z3hdqe8uaxn4vkoTeZ6obSssLU6VS6sfAL7NtZTRBfKYS3+fqa4Eq
+         /IPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685104187; x=1687696187;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7DgLeFcVKugZ1jHV952TG/acpJ3CYaYDRk+S+7y1opI=;
+        b=Jy7TfOOcLPDCfrn/FHNoYyW6twzJYM39xR7ObRmPwXgQ+ef2lMfLAT+kFph5iuB/4q
+         XOfwC8nci5yKVaxj9S+JmJKCejsQiqy4/JvBnm2XnMLYg0lAS3tnnfAHs6Nu1h1NBTLi
+         05KkLtFhnx4Zab9BWSpUVGBzZE7h6K+IODSp2bnZDKSpO8YxfQGFPMxy7HOz1oN7Adt0
+         2h5K/Mk+dcrZHc64J3z45BxWqxD7cH7D9c1TTfq7qzlcm0CsU4Nho3s+oi5RE80X2gv/
+         9gEUQ2E4wl4NiLCP6XoDHjg1HcxjuiqmCE0GHPhvk9yYvz8WVANKeaGWU54vtvg0ssQd
+         0Yjw==
+X-Gm-Message-State: AC+VfDxBYdeyEL3YrUHmmtrACabFWn501o1Xc0A3iqKf0i/Ij7I8Yu6a
+        e3RPu44I4UN6glXoALqR08htqw==
+X-Google-Smtp-Source: ACHHUZ4Yzdh1OVvZfHTDfTPDF27Lm7PQ6wRYFT/sfIDkuo8DGhJzYx6iAQS1jK8kdTtAXhGTfBVkdw==
+X-Received: by 2002:adf:f307:0:b0:30a:c89c:c338 with SMTP id i7-20020adff307000000b0030ac89cc338mr1348537wro.50.1685104186834;
+        Fri, 26 May 2023 05:29:46 -0700 (PDT)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id h3-20020a5d5483000000b00307c46f4f08sm2325314wrv.79.2023.05.26.05.29.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 May 2023 05:29:46 -0700 (PDT)
+Message-ID: <546876ba-970d-5cd5-648e-723698ca74fd@linaro.org>
+Date:   Fri, 26 May 2023 13:29:44 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH V2 1/6] dt-bindings: clock: qcom: Add SM8550 camera clock
+ controller
+Content-Language: en-US
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
         Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <u-boot@lists.denx.de>
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock
- generator
-Message-ID: <20230526-unwashed-musty-dee883f1d6a7@wendy>
-References: <20230512022036.97987-2-xingyu.wu@starfivetech.com>
- <20230519135733.GA10188@lst.de>
- <20230519-smokeless-guileless-2a71cae06509@wendy>
- <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
- <20230523-fondue-monotype-0c751a8f0c13@wendy>
- <20230523131006.46997d84@blackhole.lan>
- <20230523-saturate-axis-f46b78b7b82b@wendy>
- <38a9cb77-18b3-4daa-724b-9f2282f7d948@starfivetech.com>
- <20230524-jittery-sway-41b578b24153@wendy>
- <20230526093432.4682eab8@blackhole.lan>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RTLt+oLiwQtApFlh"
-Content-Disposition: inline
-In-Reply-To: <20230526093432.4682eab8@blackhole.lan>
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230525172142.9039-1-quic_jkona@quicinc.com>
+ <20230525172142.9039-2-quic_jkona@quicinc.com>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20230525172142.9039-2-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---RTLt+oLiwQtApFlh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 25/05/2023 18:21, Jagadeesh Kona wrote:
+> Add device tree bindings for the camera clock controller on
+> Qualcomm SM8550 platform.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+> Changes since V1:
+>   - Removed new YAML file and reused SM8450 CAMCC YAML file for SM8550
+> 
+>   .../bindings/clock/qcom,sm8450-camcc.yaml     |   8 +-
+>   include/dt-bindings/clock/qcom,sm8550-camcc.h | 187 ++++++++++++++++++
+>   2 files changed, 193 insertions(+), 2 deletions(-)
+>   create mode 100644 include/dt-bindings/clock/qcom,sm8550-camcc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> index 87ae74166807..8dbc9004202f 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> @@ -13,11 +13,15 @@ description: |
+>     Qualcomm camera clock control module provides the clocks, resets and power
+>     domains on SM8450.
+>   
+> -  See also:: include/dt-bindings/clock/qcom,sm8450-camcc.h
+> +  See also::
+> +    include/dt-bindings/clock/qcom,sm8450-camcc.h
+> +    include/dt-bindings/clock/qcom,sm8550-camcc.h
+>   
+>   properties:
+>     compatible:
+> -    const: qcom,sm8450-camcc
+> +    enum:
+> +      - qcom,sm8450-camcc
+> +      - qcom,sm8550-camcc
 
-On Fri, May 26, 2023 at 09:34:32AM +0200, Torsten Duwe wrote:
-> On Wed, 24 May 2023 11:19:48 +0100
-> Conor Dooley <conor.dooley@microchip.com> wrote:
->=20
-> > On Wed, May 24, 2023 at 05:00:02PM +0800, Xingyu Wu wrote:
-> > > On 2023/5/23 19:28, Conor Dooley wrote:
-> > > > On Tue, May 23, 2023 at 01:10:06PM +0200, Torsten Duwe wrote:
-> > > >> On Tue, 23 May 2023 09:28:39 +0100
-> > > >> Conor Dooley <conor.dooley@microchip.com> wrote:
-> > > >>=20
-> > > >> > On Tue, May 23, 2023 at 10:56:43AM +0800, Xingyu Wu wrote:
-> > > >> > > On 2023/5/19 22:16, Conor Dooley wrote:
-> > > >> > > > On Fri, May 19, 2023 at 03:57:33PM +0200, Torsten Duwe
-> > > >> > > > wrote:
-> > > >> > > >> On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
-> [...]
->=20
-> > > >> > > Because PLL driver is separated from SYSCRG drivers in
-> > > >> > > Linux, the numbering starts from 0. But in Uboot, the PLL
-> > > >> > > driver is included in the SYSCRG driver, and the number
-> > > >> > > follows the SYSCRG.
-> > > >> >=20
-> > > >> > Unfortunately, how you choose to construct your drivers has
-> > > >> > nothing to do with this.
->=20
-> Exactly. As I wrote (quote below), the PLLx frequencies are controlled
-> by the I/O block SYS_SYSCON (starting there at offset 0x18), according
-> to the public datasheets. All(?) other clocks are derived from those in
-> the *_CRG units. That *is* the hardware to be described, in *the* (one
-> and only!) DT. U-Boot, and any OS, are free to reorganise their driver
-> framework around that, but the hardware description is quite clear.
+Hmm,
 
-The dt-binding that is in this series specifies that the pll clock
-controller is a child of the syscon:
-https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@starfi=
-vetech.com/T/#Z2e.:..:20230512022036.97987-6-xingyu.wu::40starfivetech.com:=
-1soc:starfive:starfive::2cjh7110-syscon.yaml
+So looking at Documentation/devicetree/bindings/clock/*camcc*.yaml we 
+seem to be repeating yaml over and over again with no substantial 
+difference between one description and another.
 
-That seems correct to me & U-Boot's devicetree is not compliant.
+You've picked at the thread here by adding sm8550 into sm8450.
 
-> > > >> > These defines/numbers appear in the dts and are part of the DT
-> > > >> > ABI. The same dts is supposed to work for Linux & U-Boot.
-> > > >>=20
-> > > >> The JH7110 has 6 blocks of 64k iomem in that functional area:
-> > > >> {SYS,STG,AON} x {CRG,SYSCON}. None of these has 190 clocks.
-> > > >> The good news: the current DTS, as proposed here and in U-Boot
-> > > >> master, provides nodes for all 6 entities. The bad news is that
-> > > >> the clock assignments to those nodes and their numbering is
-> > > >> messed up.
-> > > >>=20
-> > > >> AFAICT PLL{0,1,2} _are_ generated in SYS_SYSCON and thus U-Boot
-> > > >> gets it wrong, in addition to the erroneous DTS.
-> > > >=20
-> > > > The numbers are kinda hocus-pocus anyway, they are just made up
-> > > > since the clock numbering usually isn't something with a nice TRM
-> > > > to go and reference (unlike interrupts which usually are
-> > > > documented in that way). It is very helpful to make them aligned
-> > > > some register/bit positions or, but that is not required.
-> > > > IOW U-Boot is not wrong per se to use 190 instead of 0, but it is
-> > > > wrong to have different numbers in both places.
->=20
-> U-Boot reuses the Common Clock Framework from Linux, and I'm not sure
-> whether the clock IDs need to be unique in order for the appropriate
-> clock to be found.
+I think sm8250, sm8450, sm8550, sc7280 and ... probably sm6350 should 
+live in the one yaml description 
+Documentation/devicetree/bindings/clock/qcom,camcc.yaml
 
-Unique within the clock controller, otherwise it is impossible to tell
-the difference between <&cctrl 1> and <&cctrl 1> apart! (The same
-follows even with increased #clock-cells, something must be unique).
-That's besides the point of this particular issue though.
+sm6350 looks a bit sparse/incomplete to me so perhaps leave that out. 
+The others sc7280, sm8250, sm8450 and sm8550 can/should all be moved 
+into the same yaml file with a list of compatibles.
 
-> But that would be the only restriction, if it
-> applies. Even then, each driver could register a clock with its own,
-> arbitrarily chosen base offset with the CCF, so each CRG unit could
-> still have its own clocks enumerated starting with 0 in the DTB.
->=20
-> > > > It sounds like you're saying that (and I have not looked) the
-> > > > U-Boot dts actually has structural difference w.r.t. what
-> > > > provides which clock? If so, that'll need to be fixed
-> > > > independently of the numbering problem.
->=20
-> > >=20
-> > > Oh, unfortunately, the 7110 can not support to mix the uboot dtb
-> > > and linux dtb up.
-> >=20
-> > What does "cannot support" mean? It's normal and desirable for the
->=20
-> IMHO "desirable" is too weak.
-
-Yeah, agreed. I just don't like being prescriptive about what happens in
-projects that I do not maintain things for I guess.
-
-> > same dtb to be usable for both. The Linux kernel's dt-bindings are
-> > used for multiple projects, not just Linux - it'd be silly for
-> > U-Boot, FreeBSD etc etc to go off and each have their open set of
-> > (incompatible) bindings.
-> >=20
-> > > If boot the Linux and should use the linux dtb instead of the uboot
-> > > dtb. Because all clock ids and reset ids in Linux and Uboot are
-> > > different include PLL, and some modules can work in Linux but not
-> > > in uboot.
-> [...]
-> >=20
-> > > I suggest to boot Linux with its own linux dtb.
->=20
-> This is a fragile band-aid, to be used only as a last resort. It
-> creates more problems than it solves. Your DTB will then match your
-> kernel, but whether it describes the actual hardware is a game of
-> chance. Doesn't the VisionFive2 have an RPi connector... ?
->=20
-> One of the IMO few valid use cases of adding a DTB to the kernel
-> at boot is OpenWRT, when you build an OS Image for a particular piece
-> of hardware you have at hand.
->=20
-> > I suggest to make sure that you can use the same dtb for both.
->=20
-> Interestingly enough, U-Boot already has the PLL driver in a separate
-> file. I have a half-baked patch here that moves the sys_syscon DT
-> matching into that file...
-
-If you have patches that fix the devicetree & drivers in U-Boot, please
-post them. I don't really care at all which set of arbitrary numbers are
-chosen (as long as there is one and one only) but it looks like U-Boot's
-devicetree has an incorrect description of the clock controllers.
-
-Thanks,
-Conor.
-
---RTLt+oLiwQtApFlh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHCkqwAKCRB4tDGHoIJi
-0vdkAP43YzMMBIOP4qCklag39nbgwA7LSz09sTVxhoohdmu7wQEA5hXKARvXO2uQ
-B83EN/ygq00FWZGY0aFccStWog1ZRw8=
-=W4DW
------END PGP SIGNATURE-----
-
---RTLt+oLiwQtApFlh--
+---
+bod
