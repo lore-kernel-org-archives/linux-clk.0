@@ -2,278 +2,99 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F53C7EE23
-	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 10:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307ACC7EE23
+	for <linux-clk@archiver.kernel.org>; Fri, 26 May 2023 11:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242799AbjEZKjg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 06:39:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43874 "EHLO
+        id S230096AbjEZLKZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 07:10:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242667AbjEZKjd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 06:39:33 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76DF8128
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 03:39:31 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-510eb980ce2so769448a12.2
-        for <linux-clk@vger.kernel.org>; Fri, 26 May 2023 03:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1685097570; x=1687689570;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nnaGXZy0EI8Syg5zP9M4YNVm4y2Oe3wo0VJ6UyZ1uIw=;
-        b=zxrhNc1mJUsS4852rPJmlSFlhzK0Pcla7b/5zqYZ6cP7hUIgnNPSF/qXPFuIUiKhZp
-         YeS10qFFVqQ5SqMADLMxsDLx/4MGQV/DSQrGea9mBB0pti04AZdXYLyj/KBIYa/EMni3
-         +EO0Plwxs7gEJrdTbGS0po0d3jTanw8Pxfd24Jg87/kbA++olBDUHGhNy0NOSqRRkspp
-         1C/tiX1Ag8k71mR9y2E9YXf2ABey+KPfyIia7AkyMKeEW1F8sEQi1vOvcKv+zJCPN7fr
-         /uvnFID3VJUquh2wrIYO9iGVSAuyRjZBpch/PorT1Q+eSMgXAnoJerB2IobjDMHciQFR
-         qXcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685097570; x=1687689570;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nnaGXZy0EI8Syg5zP9M4YNVm4y2Oe3wo0VJ6UyZ1uIw=;
-        b=RNuyoQV4LGO75pOwnI5+2/iXpzHHiEVa+NV5eJ9X0Nlu/K9sSOmE8Xa6f7Gg1IK77L
-         a5cJmV2elMcrnFVrWB7/4jFXnLAuA4GwuKk+EqvIvq0XDdSOg5CImOkdgYeAIt9dIJoM
-         2K2VQfLxWYjhn+7gsseZNnTQOrYbDWCK042RvllHwrp2zG7C0oBZfNKDZWnX6IBT37Yq
-         R0FQwby3GQGvXCLfA4eN8nXhB0H531hdGJwZwV0CR9TwdZvR2v3kpCO70PnmHESHvjhQ
-         y1tLnF/lShJZ2VCKSCG18qWDeBOQSimcMgMCj4ds7xoWt5ruwZXZWbef1XRHLjiWQz3K
-         mY7Q==
-X-Gm-Message-State: AC+VfDxa57xMoMb8xPci6kSH2kcnFT1Kq8jkTDZAPaM3DGSzA38S24Ok
-        lmr9oGRjo6wfoxqWPbNm2NSNcg==
-X-Google-Smtp-Source: ACHHUZ7QzX0ywzRsxsFjcM6NqyJniGVWg4W4KK8SfdbnzGuSeMSCR+HCckHhxmEXu8FOMB75MTSN4Q==
-X-Received: by 2002:aa7:d8cd:0:b0:510:f1dc:86c0 with SMTP id k13-20020aa7d8cd000000b00510f1dc86c0mr937375eds.32.1685097569882;
-        Fri, 26 May 2023 03:39:29 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id z6-20020aa7c646000000b00501d73cfc86sm1426697edr.9.2023.05.26.03.39.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 May 2023 03:39:29 -0700 (PDT)
-Date:   Fri, 26 May 2023 12:39:28 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Vadim Fedorenko <vadfed@meta.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [RFC PATCH v7 0/8] Create common DPLL configuration API
-Message-ID: <ZHCMYJGMYS5a2+Bf@nanopsycho>
-References: <20230428002009.2948020-1-vadfed@meta.com>
- <ZGSp/XRLExRqOKQs@nanopsycho>
- <DM6PR11MB46572080791FCA02107289549B479@DM6PR11MB4657.namprd11.prod.outlook.com>
+        with ESMTP id S229747AbjEZLKY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 07:10:24 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AA5FF7;
+        Fri, 26 May 2023 04:10:23 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34QAi2qS002420;
+        Fri, 26 May 2023 11:10:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=CRrNtT48/agfTTOGQnq/S02EfFlooFG80KnqCaI2A3Q=;
+ b=aIcLdf1PWJBxzObO9/Jiz/fdEzXC3UyA4ZEG3988/LKbuihKAgp6v9//p6YIoN2YmbxJ
+ 9fWDa7vm+VixIB0wv9x3yYJZcuX1vwIK8yMsdDrLb7KFNvEvhtfwnOCcY3KZr4cVZyV1
+ Rlrln+RUX7iKdVIfRuIutAvAON3SBR+c0UC6rQs3Nht468Sgx/IueBExONxtzzIkPd1f
+ Bhbmh4KTyEZn099Wm2fwNJ/oxprigSuYbkG5ksEdPzhQMu+3djsv29ySv1JCAKqwSvJO
+ 1x0MKzzlITdJbs64qpPPGuClStOBCetnLoLtgPwjQeBnPC7xcFTF4y5w25x4Fngyv+86 RA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qtu0u02kk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 May 2023 11:10:17 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34QBAGGB014757
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 May 2023 11:10:16 GMT
+Received: from [10.50.37.96] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 26 May
+ 2023 04:10:13 -0700
+Message-ID: <08a6ee40-0729-3573-9938-aa44a6ef297c@quicinc.com>
+Date:   Fri, 26 May 2023 16:40:09 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB46572080791FCA02107289549B479@DM6PR11MB4657.namprd11.prod.outlook.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH V2] clk: qcom: camcc-sc7180: Add parent dependency to all
+ camera GDSCs
+Content-Language: en-US
+To:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+CC:     <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cponnapa@quicinc.com>
+References: <20230501142932.13049-1-quic_tdas@quicinc.com>
+ <f450c63a57fc5a9536d3c48df26244cf.sboyd@kernel.org>
+From:   "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <f450c63a57fc5a9536d3c48df26244cf.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Y_s3zw8lY4QNOhqq0TokKBzzywTgCWMT
+X-Proofpoint-GUID: Y_s3zw8lY4QNOhqq0TokKBzzywTgCWMT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-26_01,2023-05-25_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxlogscore=810
+ impostorscore=0 phishscore=0 mlxscore=0 spamscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2304280000 definitions=main-2305260096
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, May 26, 2023 at 12:14:00PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Wednesday, May 17, 2023 12:19 PM
+Hi Stephen,
+
+On 5/11/2023 1:02 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2023-05-01 07:29:32)
+>> Camera titan top GDSC is a parent supply to all other camera GDSCs. Titan
+>> top GDSC is required to be enabled before enabling any other camera GDSCs
+>> and it should be disabled only after all other camera GDSCs are disabled.
+>> Ensure this behavior by marking titan top GDSC as parent of all other
+>> camera GDSCs.
 >>
->>Let me summarize the outcome of the discussion between me and Jakub
->>regarding attributes, handles and ID lookups in the RFCv7 thread:
->>
->>--------------------------------------------------------------
->>** Needed changes for RFCv8 **
->>
->>1) No scoped indexes.
->>   The indexes passed from driver to dpll core during call of:
->>        dpll_device_get() - device_idx
->>        dpll_pin_get() - pin_idx
->>   should be for INTERNAL kernel use only and NOT EXPOSED over uapi.
->>   Therefore following attributes need to be removed:
->>   DPLL_A_PIN_IDX
->>   DPLL_A_PIN_PARENT_IDX
->>
->
->Seems doable.
->So just to be clear, configuring a pin-pair (MUXed pins) will now be done
->with DPLL_A_PIN_PARENT nested attribute.
->I.e. configuring state of pin on parent:
->DPLL_CMD_PIN_SET
->	DPLL_A_PIN_ID		(id of pin being configured)
->	DPLL_A_PIN_PARENT	(nested)
->		DPLL_A_PIN_ID	(id of parent pin)
->		DPLL_A_PIN_STATE(expected state)
->		...		(other pin-pair attributes to be set)
->
->Is that ok, or we need separated attribute like DPLL_A_PIN_PARENT_ID??
->I think there is no need for separated one, documentation shall just reflect
->that.
->Also we have nested attribute DPLL_A_DEVICE which is used to show connections
->between PIN and multiple dpll devices, to make it consistent I will rename
->it to `DPLL_A_DEVICE_PARENT` and make configuration set cmd for the pin-dpll
->pair similar to the above:
->DPLL_CMD_PIN_SET
->	DPLL_A_PIN_ID		(id of pin being configured)
->	DPLL_A_DEVICE_PARENT	(nested)
-
-It is a parent of pin, not device. The name is confusing. But see below.
+>> Fixes: 15d09e830bbc ("clk: qcom: camcc: Add camera clock controller driver for SC7180")
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Is something broken right now? The commit text doesn't tell me if we
+> need to backport this to stable kernels or merge it as soon as possible.
+> What's the priority of this fix?
 
 
->		DPLL_A_ID	(id of parent dpll)
->		DPLL_A_PIN_STATE(expected state)
->		...		(other pin-dpll attributes to be set)
->
->Does it make sense?
+Modularization of camx driver triggered this issue now, but there could 
+be some other scenarios which could trigger the same issue on stable 
+kernels.  Hence it needs to be back ported to stable kernels.
 
-Yeah, good idea. I like this. We will have consistent approach for
-parent pin and device. To take it even further, we can have one nested
-attr for parent and decide the parent type according to the id attr
-given:
-
-DPLL_CMD_PIN_SET
-	DPLL_A_PIN_ID		(id of pin being configured)
-	DPLL_A_PIN_PARENT	(nested)
-		DPLL_A_PIN_ID	(id of parent pin)
-		DPLL_A_PIN_STATE(expected state)
-		...		(other pin-pair attributes to be set)
-
-DPLL_CMD_PIN_SET
-	DPLL_A_PIN_ID		(id of pin being configured)
-	DPLL_A_PIN_PARENT	(nested)
-		DPLL_A_ID	(id of parent dpll)
-		DPLL_A_PIN_STATE(expected state)
-		...		(other pin-dpll attributes to be set)
-
-
-Same for PIN_GET
-
-Makes sense?
-
-
-
->
->
->>2) For device, the handle will be DPLL_A_ID == dpll->id.
->>   This will be the only handle for device for every
->>   device related GET, SET command and every device related notification.
->>   Note: this ID is not deterministing and may be different depending on
->>   order of device probes etc.
->>
->
->Seems doable.
->
->>3) For pin, the handle will be DPLL_A_PIN_ID == pin->id
->>   This will be the only handle for pin for every
->>   pin related GET, SET command and every pin related notification.
->>   Note: this ID is not deterministing and may be different depending on
->>   order of device probes etc.
->>
->
->Seems doable.
->
->>4) Remove attribute:
->>   DPLL_A_PIN_LABEL
->>   and replace it with:
->>   DPLL_A_PIN_PANEL_LABEL (string)
->>   DPLL_A_PIN_XXX (string)
->>   where XXX is a label type, like for example:
->>     DPLL_A_PIN_BOARD_LABEL
->>     DPLL_A_PIN_BOARD_TRACE
->>     DPLL_A_PIN_PACKAGE_PIN
->>
->
->Sorry, I don't get this idea, what are those types?
->What are they for?
-
-The point is to make the driver developer to think before passing
-randomly constructed label strings. For example, "board_label" would lead
-the developer to check how the pin is labeled on the board. The
-"panel_label" indicates this is label on a panel. Also, developer can
-fill multiple labels for the same pin.
-
-
-
->
->>5) Make sure you expose following attributes for every device and
->>   pin GET/DUMP command reply message:
->>   DPLL_A_MODULE_NAME
->>   DPLL_A_CLOCK_ID
->>
->
->Seems doable.
->
->>6) Remove attributes:
->>   DPLL_A_DEV_NAME
->>   DPLL_A_BUS_NAME
->>   as they no longer have any value and do no make sense (even in RFCv7)
->>
->
->Seems doable.
->
->>
->>--------------------------------------------------------------
->>** Lookup commands **
->>
->>Basically these would allow user to query DEVICE_ID and PIN_ID
->>according to provided atributes (see examples below).
->>
->>These would be from my perspective optional for this patchsets.
->>I believe we can do it as follow-up if needed. For example for mlx5
->>I don't have usecase for it, since I can consistently get PIN_ID
->>using RT netlink for given netdev. But I can imagine that for non-SyncE
->>dpll driver this would make sense to have.
->>
->>1) Introduce CMD_GET_ID - query the kernel for a dpll device
->>                          specified by given attrs
->>   Example:
->>   -> DPLL_A_MODULE_NAME
->>      DPLL_A_CLOCK_ID
->>      DPLL_A_TYPE
->>   <- DPLL_A_ID
->>   Example:
->>   -> DPLL_A_MODULE_NAME
->>      DPLL_A_CLOCK_ID
->>   <- DPLL_A_ID
->>   Example:
->>   -> DPLL_A_MODULE_NAME
->>   <- -EINVAL (Extack: "multiple devices matched")
->>
->>   If user passes a subset of attrs which would not result in
->>   a single match, kernel returns -EINVAL and proper extack message.
->>
->
->Seems ok.
->
->>2) Introduce CMD_GET_PIN_ID - query the kernel for a dpll pin
->>                              specified by given attrs
->>   Example:
->>   -> DPLL_A_MODULE_NAME
->>      DPLL_A_CLOCK_ID
->>      DPLL_A_PIN_TYPE
->>      DPLL_A_PIN_PANEL_LABEL
->>   <- DPLL_A_PIN_ID
->>   Example:
->>   -> DPLL_A_MODULE_NAME
->>      DPLL_A_CLOCK_ID
->>   <- DPLL_A_PIN_ID    (There was only one pin for given module/clock_id)
->>   Example:
->>   -> DPLL_A_MODULE_NAME
->>      DPLL_A_CLOCK_ID
->>   <- -EINVAL (Extack: "multiple pins matched")
->>
->>   If user passes a subset of attrs which would not result in
->>   a single match, kernel returns -EINVAL and proper extack message.
->
->
->Seems ok.
->
->Will try to implement those now.
-
-Cool, thx!
-
-
->
->Thank you,
->Arkadiusz
