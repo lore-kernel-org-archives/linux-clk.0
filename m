@@ -2,82 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE03DC7EE33
-	for <linux-clk@archiver.kernel.org>; Sat, 27 May 2023 03:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E486C77B7C
+	for <linux-clk@archiver.kernel.org>; Sat, 27 May 2023 09:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231386AbjE0D5D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 23:57:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33232 "EHLO
+        id S231874AbjE0JkM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 May 2023 05:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231313AbjE0D47 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 23:56:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC173A3;
-        Fri, 26 May 2023 20:56:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8120F64FF3;
-        Sat, 27 May 2023 03:56:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D7EC433D2;
-        Sat, 27 May 2023 03:56:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685159815;
-        bh=gYYuQfw+qiqjwRtGrHsitvZtkzNXkhUWtUh+q9gcwxg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f2DBWNKSxIxZy9UI2Acbi4FkUe5d2UWgCfNAG/gs1FYF/9109I/FYCwG9PS2kE1Ez
-         Y589NqoGj9y6oPBacA5S2UMRxWfiCZrzUA6GC51cfrdj4TNK+f+6B4QZmJW4tneypF
-         1gd+DZBLjbvzyy3GAwiCKym9TEI626lkn0k8PSPsWZYVevjuwIk0IK041PViSSMm3P
-         jWaTGy+6ALHNjNqsfC9sjs4rKS+w3+bCKMcR8yi6c9g/+pfp83sx1sHSeQ3MCZx+Cx
-         iH/JZFcLm8tciAcB/zFuENmflZm11gkVNgM4Hv4t54HXwS4Kb0L4XaptZGxeJAMAYu
-         X/8WG0Ghp8bxw==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        with ESMTP id S232160AbjE0JkA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 May 2023 05:40:00 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43B90DE;
+        Sat, 27 May 2023 02:39:59 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-96f7377c86aso281476266b.1;
+        Sat, 27 May 2023 02:39:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685180398; x=1687772398;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Np2TY4wzluYjw6tvBst2SYU6co+dQh0uK/Q/WT/NspM=;
+        b=fQM6Hilq3wWlqNn7ZUh7pa2JPh3q2D1ecibqbwZpL2dseryd4IVDDqU7WPm7Yqayl7
+         JS8c6KW0KTxrAjKif0wMTDHuqQuGRpEXA4PnqYbkwJSuYRN7sBt4r7NJNSq7k8VUHg/P
+         ZYTNCWgy3BPS0iEY3oS7GkiJaUkujMlZB4EzF+x4O4hr6K7VzfFPm2Nt7mO6Oqrh95m+
+         3V4PLk9StJWPbL8yCz5rzQ9jDq0GtCk/frzJexGqAhzu6E4SgvXTesAT/JspksDv0M0y
+         JKESjO9U3jAeApv1zX75mKwraMofG7Fl1Lhnrdf8OkucHpd8GK41/O1La/DcodmaXdKH
+         kvng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685180398; x=1687772398;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Np2TY4wzluYjw6tvBst2SYU6co+dQh0uK/Q/WT/NspM=;
+        b=kf9uHqodSVwbU9CRfIxgRVGjlXWGOAYlC9s+smuVQONVg2sva7yyUTvZ7plN77jejK
+         41eUYpIBPGDuPsa74QgublYU064Di+BEVYuiMLzrdyZ5TKDWmTXkUhOo6CnDOABnzIld
+         yUT7041NsC0mpR4e5dQJUzWw4mWx8q8eMn/sC+mkP6z88Cq34p03VLjqGi1Xjo+uaeNT
+         D/xS8OrphHdXrVEDXPmh8YyPR8ZcOV9D/2FnRKbjrhTTfez0xqn/QN+Sw59OBz2jLLAG
+         gZotTUKjKbaZSSzlT7Dwo0rrnrBdb/ZrHzoYd9yqAsf9GlYTkAh/KapsCremnO0jtysk
+         g/Kw==
+X-Gm-Message-State: AC+VfDydmE3JFedwf8s+5rV3Lwe8yiCTQBgWpkzdVItlfoAxSL7qHGqc
+        495bjtJVMjjlT3395ZhBbHo=
+X-Google-Smtp-Source: ACHHUZ6ma5N5Q1VKocHdFAPIRxqCBhpTqxAdCHN8no9X2aXP7GN9ZhXjf2eGNgpvRHb1DN4+mjjaIQ==
+X-Received: by 2002:a17:906:ee88:b0:96a:928c:d382 with SMTP id wt8-20020a170906ee8800b0096a928cd382mr4311846ejb.48.1685180397384;
+        Sat, 27 May 2023 02:39:57 -0700 (PDT)
+Received: from localhost.localdomain ([95.183.227.33])
+        by smtp.gmail.com with ESMTPSA id kq12-20020a170906abcc00b009596e7e0dbasm3163623ejb.162.2023.05.27.02.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 May 2023 02:39:56 -0700 (PDT)
+From:   Yassine Oudjana <yassine.oudjana@gmail.com>
+X-Google-Original-From: Yassine Oudjana <y.oudjana@protonmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-Subject: Re: (subset) [PATCH V2 0/3] Add graphics clock controller support for SM8550
-Date:   Fri, 26 May 2023 21:00:37 -0700
-Message-Id: <168516003598.405989.523653148468388499.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230524181800.28717-1-quic_jkona@quicinc.com>
-References: <20230524181800.28717-1-quic_jkona@quicinc.com>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        Yassine Oudjana <yassine.oudjana@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] MSM8996 Pro CBF scaling support
+Date:   Sat, 27 May 2023 12:39:31 +0300
+Message-Id: <20230527093934.101335-1-y.oudjana@protonmail.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 24 May 2023 23:47:57 +0530, Jagadeesh Kona wrote:
-> Add bindings, driver and devicetree node for graphics clock controller on SM8550.
-> 
-> Depends on [1] and [2] for PLL_TEST_CTL_U2 programming and SM8450 GPUCC YAML file
-> [1] https://patchwork.kernel.org/project/linux-clk/list/?series=750700
-> [2] https://patchwork.kernel.org/project/linux-clk/list/?series=748562
-> 
-> Jagadeesh Kona (3):
->   dt-bindings: clock: qcom: Add SM8550 graphics clock controller
->   clk: qcom: gpucc-sm8550: Add support for graphics clock controller
->   arm64: dts: qcom: sm8550: Add graphics clock controller
-> 
-> [...]
+From: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Applied, thanks!
+MSM8996 Pro has a /4 post divisor on its CBF PLL instead of /2, allowing
+it to reach 192000000Hz on the lowest CPU OPPs (compared to 307200000Hz
+on MSM8996). Add a compatible string to differentiate between the two and
+handle the different divisor in the driver. Finally, add peak bandwidths
+to CPU OPPs in msm8996pro.dtsi.
 
-[3/3] arm64: dts: qcom: sm8550: Add graphics clock controller
-      commit: 9f7579423d2d619064dc84cfa8068e3c83b09e3f
+This series depends on the following patch series:
+  clk: qcom: msm8996: add support for the CBF clock
+  https://lore.kernel.org/linux-arm-msm/20230410200014.432418-1-dmitry.baryshkov@linaro.org/
 
-Best regards,
+Changes since v1:
+  - Patch structs during probe instead of defining new ones.
+
+Yassine Oudjana (3):
+  dt-bindings: clock: qcom,msm8996-cbf: Add compatible for MSM8996 Pro
+  arm64: dts: qcom: msm8996pro: Add CBF scaling support
+  clk: qcom: cbf-msm8996: Add support for MSM8996 Pro
+
+ .../bindings/clock/qcom,msm8996-cbf.yaml      |  4 +-
+ arch/arm64/boot/dts/qcom/msm8996pro.dtsi      | 51 +++++++++++++++++++
+ drivers/clk/qcom/clk-cbf-8996.c               | 10 +++-
+ 3 files changed, 62 insertions(+), 3 deletions(-)
+
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.40.1
+
