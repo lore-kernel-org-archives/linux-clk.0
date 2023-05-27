@@ -2,55 +2,56 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A4AC7EE2E
-	for <linux-clk@archiver.kernel.org>; Sat, 27 May 2023 03:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE03DC7EE33
+	for <linux-clk@archiver.kernel.org>; Sat, 27 May 2023 03:57:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231402AbjE0D5B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 May 2023 23:57:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33230 "EHLO
+        id S231386AbjE0D5D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 May 2023 23:57:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbjE0D46 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 23:56:58 -0400
+        with ESMTP id S231313AbjE0D47 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 May 2023 23:56:59 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA1AA116;
-        Fri, 26 May 2023 20:56:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC173A3;
+        Fri, 26 May 2023 20:56:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4D5CC64FF1;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8120F64FF3;
+        Sat, 27 May 2023 03:56:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7D7EC433D2;
         Sat, 27 May 2023 03:56:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4075C433D2;
-        Sat, 27 May 2023 03:56:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685159813;
-        bh=ZD7Ij+Drs1pqMm30ZIHkyCeAKzFLEQBg9YtscwC86Sg=;
+        s=k20201202; t=1685159815;
+        bh=gYYuQfw+qiqjwRtGrHsitvZtkzNXkhUWtUh+q9gcwxg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rBBMkQcvApk99FYiqc4zhW0EC+VurFT2Cr9fUuQTjLr1mYTVQQbV5YY1lHk7rgXhS
-         9LdHc8xZHImLpYCaohbVk5T8SCvOYZhG7Zlpp7CaSYtQF5nEyFB///nLG2HmFMTPTl
-         Pl1inO2qXz5vMsDS8M2MX1owRqE0CI8zp+65ErtkwtcMP8OkOg8LyS7iS5GdRaAhxd
-         ToISuSscUwaA3F7YLR386jeFcIdHpwVlrcczeXhMvu5QG4gvSDt2A3319CRR9jjmpo
-         F+eyL5zMIsasQITX+0iWTJxkP7Gw0Sc+O6PmFFvNYmrpDfO1cDYUINFh1krHjNOsKb
-         mRNg19EprQX9Q==
+        b=f2DBWNKSxIxZy9UI2Acbi4FkUe5d2UWgCfNAG/gs1FYF/9109I/FYCwG9PS2kE1Ez
+         Y589NqoGj9y6oPBacA5S2UMRxWfiCZrzUA6GC51cfrdj4TNK+f+6B4QZmJW4tneypF
+         1gd+DZBLjbvzyy3GAwiCKym9TEI626lkn0k8PSPsWZYVevjuwIk0IK041PViSSMm3P
+         jWaTGy+6ALHNjNqsfC9sjs4rKS+w3+bCKMcR8yi6c9g/+pfp83sx1sHSeQ3MCZx+Cx
+         iH/JZFcLm8tciAcB/zFuENmflZm11gkVNgM4Hv4t54HXwS4Kb0L4XaptZGxeJAMAYu
+         X/8WG0Ghp8bxw==
 From:   Bjorn Andersson <andersson@kernel.org>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
         Conor Dooley <conor+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
         Andy Gross <agross@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/4] SM8450 GPUCC
-Date:   Fri, 26 May 2023 21:00:35 -0700
-Message-Id: <168516003598.405989.9713462057366695068.b4-ty@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>
+Subject: Re: (subset) [PATCH V2 0/3] Add graphics clock controller support for SM8550
+Date:   Fri, 26 May 2023 21:00:37 -0700
+Message-Id: <168516003598.405989.523653148468388499.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230517-topic-waipio-gpucc-v1-0-4f40e282af1d@linaro.org>
-References: <20230517-topic-waipio-gpucc-v1-0-4f40e282af1d@linaro.org>
+In-Reply-To: <20230524181800.28717-1-quic_jkona@quicinc.com>
+References: <20230524181800.28717-1-quic_jkona@quicinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -58,20 +59,24 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 17 May 2023 18:40:37 +0200, Konrad Dybcio wrote:
-> Introduce hardware clock control to ultimately avoid spurious rcg
-> (re)configurations and introduce GPUCC for SM8450.
+On Wed, 24 May 2023 23:47:57 +0530, Jagadeesh Kona wrote:
+> Add bindings, driver and devicetree node for graphics clock controller on SM8550.
 > 
+> Depends on [1] and [2] for PLL_TEST_CTL_U2 programming and SM8450 GPUCC YAML file
+> [1] https://patchwork.kernel.org/project/linux-clk/list/?series=750700
+> [2] https://patchwork.kernel.org/project/linux-clk/list/?series=748562
 > 
+> Jagadeesh Kona (3):
+>   dt-bindings: clock: qcom: Add SM8550 graphics clock controller
+>   clk: qcom: gpucc-sm8550: Add support for graphics clock controller
+>   arm64: dts: qcom: sm8550: Add graphics clock controller
+> 
+> [...]
 
 Applied, thanks!
 
-[2/4] clk: qcom: rcg2: Make hw_clk_ctrl toggleable
-      commit: a0e0ec7424c99a0459b44fbf0459de9728be37ab
-[3/4] clk: qcom: gcc-sm8450: Enable hw_clk_ctrl
-      commit: d4113d5f2bc9b58d3243df0edd2c42247181dbdd
-[4/4] clk: qcom: Add support for SM8450 GPUCC
-      commit: 728692d49edce3cdc77be92f3c79a6c56f81e531
+[3/3] arm64: dts: qcom: sm8550: Add graphics clock controller
+      commit: 9f7579423d2d619064dc84cfa8068e3c83b09e3f
 
 Best regards,
 -- 
