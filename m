@@ -2,398 +2,219 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB0EC77B73
-	for <linux-clk@archiver.kernel.org>; Sat, 27 May 2023 16:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9490C77B7C
+	for <linux-clk@archiver.kernel.org>; Sat, 27 May 2023 23:19:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229493AbjE0QQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 May 2023 12:16:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51334 "EHLO
+        id S229519AbjE0XTv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 May 2023 19:19:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbjE0QQP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 May 2023 12:16:15 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26113C7
-        for <linux-clk@vger.kernel.org>; Sat, 27 May 2023 09:16:13 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4ec8eca56cfso2122279e87.0
-        for <linux-clk@vger.kernel.org>; Sat, 27 May 2023 09:16:13 -0700 (PDT)
+        with ESMTP id S229437AbjE0XTu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 May 2023 19:19:50 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002F9D3;
+        Sat, 27 May 2023 16:19:48 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-6261a1a7454so3501186d6.3;
+        Sat, 27 May 2023 16:19:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685204171; x=1687796171;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JzqcMXV8aXA/E+ztgmw9/NYRg5djZnCXl7rg+fvKKrc=;
-        b=TtMAQUviQJGDF72CxJTvYtB5tPNXNF9VrGvM7O32PAiE28IptQtNzU5U1Ci0pS3Q91
-         Fg28aqMjXlZQrZU9jIig/mffAquE6EuETpOdOd0ASBJ38c3w8sntsNI3Q7qlIBep++eA
-         /xo70HT+P2aanYp0tqSCWWpa+ojpMu5E6y96isiGlQKtweI1GfYpj86fbpKPF6XqlxvA
-         KmWfi5J7Xa0Cox/8FKrUNRiREiEyGFB0cUjBPxk1PiQbpk4jl8fCMShVHa8uIZlQWY1Q
-         QlQPHeuZsGvBLoaf+QSN77hPQt3+z+iNnPWtyxCQa61eIDmU8rG43o7aVUpYPN5WfVpn
-         a94g==
+        d=gmail.com; s=20221208; t=1685229588; x=1687821588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mmP1Wdih2jmgBNgRuCig0lHf98Ze9PVsZQRiONBAQjA=;
+        b=cCTy9nvcJ9criXQ2j7Lz+pQJSyBaMFLoiyppyEHcrcL+DY7QzoLAlrXhyU2EPtNWcI
+         O79vXDay9SIYQFNzO/t/qMhucaSz2FQYz2AhjbOgbxfxkmaosfVZcZV7OSS6fkl7cykW
+         vJ9En8xx29w1kTpgAoF4azHYTarhmxf9BNszzGmHSwogXBlYLLYR2wY1nG0i58NXrwlS
+         r8SY35fqHW3T6x/Mdm8WW62lW/fAos/JcBfLy0EmL5+GOYUbbMw9BgT+dse3YIHh7naz
+         3O0GGlRSCr0MVVRdlmeAu3FvgFpWdO/92/a+5bBL1hSNcRQXxxEX1h+FAlAJd/sRzpAh
+         k5lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685204171; x=1687796171;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JzqcMXV8aXA/E+ztgmw9/NYRg5djZnCXl7rg+fvKKrc=;
-        b=JFy7/ouWBmMKCwAE1RasGXuFOR5crY9DElFor2INN8B3w+i9s6weTWL7vmNq/hrmob
-         DhrKV0/PeKPBUlc7xWXMLwcn8HtLlxyuLU+nGPsj6mk2EeMV1+YjCkkLuRhiaPBOdtwD
-         5OiFo5gRRnBoi74pjdtBilzytUBDBAixsKf7mHV0lxr4oaw3js/yCM6kPYGLjQiWoEor
-         rJExIJ65zLDmPClVloLFsGzhOGLHvOxcozoAPb9BknGIZBBLxHd+cbyZARGNVGS4De6s
-         n5DyQrinx8kjppjjFn35v+HWIcfvNI8vkDrnmMZDTGbF8a53rODN4CVyhco6GZhhh0p0
-         rIJg==
-X-Gm-Message-State: AC+VfDykYcvPOi4XWglhTgQZ4HU+k+degHn67A077zVreSvd7K53kOin
-        LLW7xRhDN+8wzJHpQr69OsRgcg==
-X-Google-Smtp-Source: ACHHUZ4VFGTXe0x62XEJ3vBr9o9yIQ7A76CQBcp/c/JXEH03cAQIi/MjgGe/3z2upGj/n3XlhGanVg==
-X-Received: by 2002:a05:6512:64:b0:4f0:c18:5114 with SMTP id i4-20020a056512006400b004f00c185114mr1623049lfo.26.1685204171275;
-        Sat, 27 May 2023 09:16:11 -0700 (PDT)
-Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id x14-20020a19f60e000000b004efe9a169d2sm1175071lfe.64.2023.05.27.09.16.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 May 2023 09:16:10 -0700 (PDT)
-Message-ID: <f2ed6b88-13df-8df7-55e0-5d11bf5a1ef0@linaro.org>
-Date:   Sat, 27 May 2023 18:16:09 +0200
+        d=1e100.net; s=20221208; t=1685229588; x=1687821588;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mmP1Wdih2jmgBNgRuCig0lHf98Ze9PVsZQRiONBAQjA=;
+        b=EiH0pSQZ03eI4KwSZVrJ4rgGd1EReblzfZWIny4f2SopCnbQfc4pa98H4+inJo9U8k
+         GK3iLNAMfcQJ1f/jguO1OYl2VeQK6Wi45h0w7tUkcz/dBd7UC62PzgN+whAOGHCf4u9H
+         bkZq252DncyIXFLHQWescWNOzFkuFodycDZvCW/FgcOY4l9MfOMeKC7XtCA3q5YAPj+h
+         m+dK96v9AmDdZhg3l+U9l5v1Gm7VVhW/PuJW1O1CAgLdVFN/fEjzWsM7z5/iSiHChQyQ
+         /lHqtnVVDhoVZH+b/X2YeW2dH3Fd/NbJuuuORT1ZZojEUCZOk6iDOp/9NkZIfLho6Iay
+         V5CA==
+X-Gm-Message-State: AC+VfDxjTQhuz7RXd68R2ndRArtz7M+syIkPaqP5kZux6yEXu2vndhCB
+        jr34lQd4vxTXczqxKwDj+pGIB8ayte1/BSbX7jY=
+X-Google-Smtp-Source: ACHHUZ4MCtxUZFmkT+8bmXt4CiwAFqv/7/SCQ8/6kvUZrRdEdOFHgryDuAvZCnH8gitKstn1hxlben+HE603wHzNJ44=
+X-Received: by 2002:a05:6214:29e9:b0:625:aa49:c341 with SMTP id
+ jv9-20020a05621429e900b00625aa49c341mr5556910qvb.53.1685229587968; Sat, 27
+ May 2023 16:19:47 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: msm8996pro: Add CBF scaling
- support
-Content-Language: en-US
-To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+References: <20230527132747.83196-1-frank@oltmanns.dev> <20230527132747.83196-3-frank@oltmanns.dev>
+In-Reply-To: <20230527132747.83196-3-frank@oltmanns.dev>
+From:   Julian Calaby <julian.calaby@gmail.com>
+Date:   Sun, 28 May 2023 09:19:36 +1000
+Message-ID: <CAGRGNgWP6McbfORNQrrdvktEOVMgS-KCXuhC5GRYz-+SgsFx1w@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] clk: sunxi-ng: Implement precalculated NKM rate selection
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230527093934.101335-1-y.oudjana@protonmail.com>
- <20230527093934.101335-3-y.oudjana@protonmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230527093934.101335-3-y.oudjana@protonmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Frank,
 
-
-On 27.05.2023 11:39, Yassine Oudjana wrote:
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
-> 
-> Add opp-peak-kBps to CPU OPPs to allow for CBF scaling, and change the
-> CBF compatible to reflect the difference between it and the one on
-> MSM8996.
-> 
-> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Sat, May 27, 2023 at 11:37=E2=80=AFPM Frank Oltmanns <frank@oltmanns.dev=
+> wrote:
+>
+> Add a new precalculation method for NKM clock rate selection in the
+> sunxi-ng clock driver. Introduce ccu_nkm_find_best_precalc which uses a
+> precalculated table of valid NKM combinations (struct clk_nkm_table and
+> struct clk_nkm_combo) to find the best rate. This approach provides
+> faster rate selection by searching a table of valid combinations rather
+> than calculating for all possible combinations.
+>
+> The table of NKM combinations needs to be initialized with meaningful
+> combinations only, i.e. removing redundant combinations that result in
+> the same rate.
+>
+> Keep the existing ccu_nkm_find_best function in place and use it as a
+> fallback if no precalculated table is provided.
+>
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
 > ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Now let's sprinkle some BWMON, CPR and GPMU and 8996 will be
-fairly complete as far as the core hw goes.. At last!
-
-Konrad
->  arch/arm64/boot/dts/qcom/msm8996pro.dtsi | 51 ++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996pro.dtsi b/arch/arm64/boot/dts/qcom/msm8996pro.dtsi
-> index a679a9c0cf99..b74cff06f300 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996pro.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996pro.dtsi
-> @@ -24,101 +24,121 @@ opp-307200000 {
->  			opp-hz = /bits/ 64 <307200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-384000000 {
->  			opp-hz = /bits/ 64 <384000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-460800000 {
->  			opp-hz = /bits/ 64 <460800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-537600000 {
->  			opp-hz = /bits/ 64 <537600000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-614400000 {
->  			opp-hz = /bits/ 64 <614400000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-691200000 {
->  			opp-hz = /bits/ 64 <691200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <307200>;
->  		};
->  		opp-768000000 {
->  			opp-hz = /bits/ 64 <768000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <307200>;
->  		};
->  		opp-844800000 {
->  			opp-hz = /bits/ 64 <844800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <384000>;
->  		};
->  		opp-902400000 {
->  			opp-hz = /bits/ 64 <902400000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <441600>;
->  		};
->  		opp-979200000 {
->  			opp-hz = /bits/ 64 <979200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <537600>;
->  		};
->  		opp-1056000000 {
->  			opp-hz = /bits/ 64 <1056000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <614400>;
->  		};
->  		opp-1132800000 {
->  			opp-hz = /bits/ 64 <1132800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <691200>;
->  		};
->  		opp-1209600000 {
->  			opp-hz = /bits/ 64 <1209600000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <768000>;
->  		};
->  		opp-1286400000 {
->  			opp-hz = /bits/ 64 <1286400000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <844800>;
->  		};
->  		opp-1363200000 {
->  			opp-hz = /bits/ 64 <1363200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <902400>;
->  		};
->  		opp-1440000000 {
->  			opp-hz = /bits/ 64 <1440000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <979200>;
->  		};
->  		opp-1516800000 {
->  			opp-hz = /bits/ 64 <1516800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1132800>;
->  		};
->  		opp-1593600000 {
->  			opp-hz = /bits/ 64 <1593600000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1190400>;
->  		};
->  		opp-1996800000 {
->  			opp-hz = /bits/ 64 <1996800000>;
->  			opp-supported-hw = <0x20>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1516800>;
->  		};
->  		opp-2188800000 {
->  			opp-hz = /bits/ 64 <2188800000>;
->  			opp-supported-hw = <0x10>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1593600>;
->  		};
->  	};
->  
-> @@ -131,136 +151,163 @@ opp-307200000 {
->  			opp-hz = /bits/ 64 <307200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-384000000 {
->  			opp-hz = /bits/ 64 <384000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-460800000 {
->  			opp-hz = /bits/ 64 <460800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-537600000 {
->  			opp-hz = /bits/ 64 <537600000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-614400000 {
->  			opp-hz = /bits/ 64 <614400000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <192000>;
->  		};
->  		opp-691200000 {
->  			opp-hz = /bits/ 64 <691200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <307200>;
->  		};
->  		opp-748800000 {
->  			opp-hz = /bits/ 64 <748800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <307200>;
->  		};
->  		opp-825600000 {
->  			opp-hz = /bits/ 64 <825600000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <384000>;
->  		};
->  		opp-902400000 {
->  			opp-hz = /bits/ 64 <902400000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <441600>;
->  		};
->  		opp-979200000 {
->  			opp-hz = /bits/ 64 <979200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <441600>;
->  		};
->  		opp-1056000000 {
->  			opp-hz = /bits/ 64 <1056000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <537600>;
->  		};
->  		opp-1132800000 {
->  			opp-hz = /bits/ 64 <1132800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <614400>;
->  		};
->  		opp-1209600000 {
->  			opp-hz = /bits/ 64 <1209600000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <691200>;
->  		};
->  		opp-1286400000 {
->  			opp-hz = /bits/ 64 <1286400000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <768000>;
->  		};
->  		opp-1363200000 {
->  			opp-hz = /bits/ 64 <1363200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <844800>;
->  		};
->  		opp-1440000000 {
->  			opp-hz = /bits/ 64 <1440000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <902400>;
->  		};
->  		opp-1516800000 {
->  			opp-hz = /bits/ 64 <1516800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <979200>;
->  		};
->  		opp-1593600000 {
->  			opp-hz = /bits/ 64 <1593600000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1056000>;
->  		};
->  		opp-1670400000 {
->  			opp-hz = /bits/ 64 <1670400000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1132800>;
->  		};
->  		opp-1747200000 {
->  			opp-hz = /bits/ 64 <1747200000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1190400>;
->  		};
->  		opp-1824000000 {
->  			opp-hz = /bits/ 64 <1824000000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1286400>;
->  		};
->  		opp-1900800000 {
->  			opp-hz = /bits/ 64 <1900800000>;
->  			opp-supported-hw = <0x70>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1363200>;
->  		};
->  		opp-1977600000 {
->  			opp-hz = /bits/ 64 <1977600000>;
->  			opp-supported-hw = <0x30>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1440000>;
->  		};
->  		opp-2054400000 {
->  			opp-hz = /bits/ 64 <2054400000>;
->  			opp-supported-hw = <0x30>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1516800>;
->  		};
->  		opp-2150400000 {
->  			opp-hz = /bits/ 64 <2150400000>;
->  			opp-supported-hw = <0x30>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1593600>;
->  		};
->  		opp-2246400000 {
->  			opp-hz = /bits/ 64 <2246400000>;
->  			opp-supported-hw = <0x10>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1593600>;
->  		};
->  		opp-2342400000 {
->  			opp-hz = /bits/ 64 <2342400000>;
->  			opp-supported-hw = <0x10>;
->  			clock-latency-ns = <200000>;
-> +			opp-peak-kBps = <1593600>;
->  		};
->  	};
->  };
-> @@ -289,3 +336,7 @@ opp-560000000 {
->  	};
->  	/* The rest is inherited from msm8996 */
->  };
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 84 +++++++++++++++++++++++++++-------
+>  drivers/clk/sunxi-ng/ccu_nkm.h | 26 +++++++++++
+>  2 files changed, 94 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nk=
+m.c
+> index 94d2a83992b2..9652f6df17bd 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -54,6 +54,49 @@ static unsigned long ccu_nkm_find_best(unsigned long p=
+arent, unsigned long rate,
+>         return best_rate;
+>  }
+>
+> +static unsigned long ccu_nkm_find_best_precalc(unsigned long parent,
+> +                                              unsigned long rate,
+> +                                              struct _ccu_nkm *nkm,
+> +                                              struct clk_nkm_table *tabl=
+e)
+> +{
+> +       unsigned long best_rate =3D 0, best_diff =3D ULONG_MAX;
+> +       unsigned long best_n =3D 0, best_k =3D 0, best_m =3D 0;
+> +       int start =3D 0, end =3D table->num - 1, mid;
 > +
-> +&cbf {
-> +	compatible = "qcom,msm8996pro-cbf";
+> +       while (start <=3D end) {
+> +               unsigned long tmp_rate;
+> +               unsigned long tmp_diff;
+> +
+> +               mid =3D (start + end) / 2;
+> +
+> +               tmp_rate =3D parent * table->combos[mid].n * table->combo=
+s[mid].k /
+> +                          table->combos[mid].m;
+> +
+> +               tmp_diff =3D abs(rate - tmp_rate);
+> +
+> +               if (tmp_diff < best_diff) {
+> +                       best_rate =3D tmp_rate;
+> +                       best_diff =3D tmp_diff;
+> +                       best_n =3D table->combos[mid].n;
+> +                       best_k =3D table->combos[mid].k;
+> +                       best_m =3D table->combos[mid].m;
+> +                       if (best_diff =3D=3D 0)
+> +                               goto out;
+> +               }
+
+If the table was sorted by n * k / m, this could just be a process of
+searching through until we either:
+- find that the first rate in the table is too high
+- find an exact rate
+- go above the requested rate, then there's only two to compare: our
+current rate and the previous one
+
+This should massively simplify this function and would still work with
+a binary search.
+
+> +               if (rate < tmp_rate)
+> +                       end =3D mid - 1;
+> +               else
+> +                       start =3D mid + 1;
+> +       }
+> +
+> +out:
+> +       nkm->n =3D best_n;
+> +       nkm->k =3D best_k;
+> +       nkm->m =3D best_m;
+> +
+> +       return best_rate;
+> +}
+> +
+>  static void ccu_nkm_disable(struct clk_hw *hw)
+>  {
+>         struct ccu_nkm *nkm =3D hw_to_ccu_nkm(hw);
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nk=
+m.h
+> index 6601defb3f38..fa5551724921 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+> @@ -12,6 +12,30 @@
+>  #include "ccu_div.h"
+>  #include "ccu_mult.h"
+>
+> +struct clk_nkm_combo {
+> +       u8      n;
+> +       u8      k;
+> +       u8      m;
 > +};
+> +
+> +/**
+> + * struct clk_nkm_table - Table of all meaningful combinations for n, k,=
+ and m
+> + *
+> + * @num: Number of entries in the table
+> + * @combos: Array of combos (of size num) that are supported by this clo=
+ck.
+> + *
+> + * This table shall contain all meaningful combinations of n, k, and m. =
+That
+> + * means that combinations that result in the same clock rate shall only=
+ be
+> + * listed once. For example, if both
+> + * { .n =3D 1, .k =3D 2, .m =3D 2} and  { .n =3D 2, .k =3D 2, .m =3D 4}
+> + * are valid values for n, k, and m, only one of them would be allowed b=
+ecause
+> + * both result in a factor of 1.0.
+> + */
+> +struct clk_nkm_table {
+> +       size_t                  num;
+> +       struct clk_nkm_combo    *combos;
+
+Should this be a "flex" array, i.e.
+
+struct clk_nkm_combo combos[]
+
+> +};
+> +
+>  /*
+>   * struct ccu_nkm - Definition of an N-K-M clock
+>   *
+
+Thanks,
+
+--=20
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
