@@ -2,176 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6475DC77B7E
-	for <linux-clk@archiver.kernel.org>; Sun, 28 May 2023 14:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAE5C77B7E
+	for <linux-clk@archiver.kernel.org>; Sun, 28 May 2023 14:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbjE1ORl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 28 May 2023 10:17:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
+        id S229489AbjE1OSG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 28 May 2023 10:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbjE1ORk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 May 2023 10:17:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 519CFBD;
-        Sun, 28 May 2023 07:17:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S229645AbjE1OSF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 May 2023 10:18:05 -0400
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050:0:465::201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2114FD9;
+        Sun, 28 May 2023 07:18:01 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CF0A760C3A;
-        Sun, 28 May 2023 14:17:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDEBC433EF;
-        Sun, 28 May 2023 14:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685283458;
-        bh=ZcxgB136p3hk0as9toDTgLvODHgCQ2FC/7oQEioZVEw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iqWnwVb7ITUvf0o83xC7036ivo76GCzphkD73YDylcbLT4wfEvTHDEFgc9diJMlmq
-         AnbVXAJQ9cruHK/Nai9PSeubS2eJWGPu2NCt3c5QovAT/fwMru9G1NvzDsuAKt/kRu
-         qFrCV0FtTgeFQH3tQStXX2XbLHgDOyRNrJ++lzX0+uMI28wN5QlgsTTWluLS8rq1Ou
-         rPnJrK46hSwSbqoVTyNVp2CjKZrw5Thjb1U8a3jn/MjgzR2WKev/Op0rxOMRCyWrEk
-         VxDJ0kK/tEn6uP2KgowdHKg1upox5/6hntpQxO48zUi7FDWQxuLc183qcsEVQRMVkv
-         vNGR+sXL8JCIA==
-Date:   Sun, 28 May 2023 19:47:13 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Devi Priya <quic_devipriy@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        bhelgaas@google.com, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, quic_srichara@quicinc.com,
-        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
-        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
-        quic_ipkumar@quicinc.com
-Subject: Re: [PATCH V4 3/6] dt-bindings: PCI: qcom: Add IPQ9574
-Message-ID: <20230528141713.GB2814@thinkpad>
-References: <20230519090219.15925-1-quic_devipriy@quicinc.com>
- <20230519090219.15925-4-quic_devipriy@quicinc.com>
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4QTgjX2vvjz9sZH;
+        Sun, 28 May 2023 16:17:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1685283472;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xzUVdYeAH8jp/PzYak2ComKpKMAD3HgKKWTIJYkbXDM=;
+        b=Odf9yP/6KGvoyEBrZCS1fYs+S+Lkf/N2ezZJ7KD876O6Bt2/WeihntpBl4/IW23QaRbPHl
+        gwE0PCZfzDJYA4i38gCooedJyp4Mh2hzNB/+R7vzd+qtJTpTn1gw9xH44iX2e+H4oVwKeW
+        4+r+gnVpzNPf/fK0MtgD3l2m+ubiGqpj+IRanaaLlZkaW/RahwZj3SFuusN7J38fhaiXQa
+        s7ZZpzPFI/pMSCxo1EsH9PatVNo2szAUxsKAmtyJIviAFN8rjzG77iRLEzbYpMHsAC7NEb
+        TYQUVrIWeQBHygdIXUNEK3uWHVFkaD/gcVGk8UlRPDAON6sXTaVjXOHlb+v1Sg==
+References: <20230527132747.83196-1-frank@oltmanns.dev>
+ <20230527132747.83196-3-frank@oltmanns.dev>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH 2/3] clk: sunxi-ng: Implement precalculated NKM rate
+ selection
+Date:   Sun, 28 May 2023 16:11:02 +0200
+In-reply-to: <20230527132747.83196-3-frank@oltmanns.dev>
+Message-ID: <87o7m4wneg.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230519090219.15925-4-quic_devipriy@quicinc.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 19, 2023 at 02:32:16PM +0530, Devi Priya wrote:
-> Add bindings for PCIe hosts on IPQ9574 platform and allow
-> msi-parent property.
-> 
 
-Why can't you use existing "msi-map" property instead of "msi-parent"?
+On 2023-05-27 at 15:27:46 +0200, Frank Oltmanns <frank@oltmanns.dev> wrote:
+[...]
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index 94d2a83992b2..9652f6df17bd 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+[...]
+> @@ -157,14 +205,18 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  		rate *= nkm->fixed_post_div;
+>
+> -	_nkm.min_n = nkm->n.min ?: 1;
+> -	_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+> -	_nkm.min_k = nkm->k.min ?: 1;
+> -	_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+> -	_nkm.min_m = 1;
+> -	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+> -
+> -	ccu_nkm_find_best(parent_rate, rate, &_nkm);
+> +	if (nkm->table.num)
+> +		rate = ccu_nkm_find_best_precalc(*parent_rate, rate, &_nkm,
 
-- Mani
+Ugh! s/*parent_rate/parent_rate/
+Sorry! Thanks to intel kernel test robot for pointing it out:
+https://lore.kernel.org/oe-kbuild-all/202305280405.bUAMrEtn-lkp@intel.com/
 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->  Changes in V4:
-> 	- Dropped msi-parent from anyOf: as msi-parent and msi-map
-> 	  cannot coexist and added it specific to ipq9574
-> 
->  .../devicetree/bindings/pci/qcom,pcie.yaml    | 48 +++++++++++++++++++
->  1 file changed, 48 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> index 81971be4e554..af5c7a390df1 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> @@ -26,6 +26,7 @@ properties:
->            - qcom,pcie-ipq8064-v2
->            - qcom,pcie-ipq8074
->            - qcom,pcie-ipq8074-gen3
-> +          - qcom,pcie-ipq9574
->            - qcom,pcie-msm8996
->            - qcom,pcie-qcs404
->            - qcom,pcie-sa8540p
-> @@ -113,6 +114,8 @@ properties:
->    power-domains:
->      maxItems: 1
->  
-> +  msi-parent: true
+Cheers,
+  Frank
+
+> +						 &nkm->table);
+> +	else {
+> +		_nkm.min_n = nkm->n.min ?: 1;
+> +		_nkm.max_n = nkm->n.max ?: 1 << nkm->n.width;
+> +		_nkm.min_k = nkm->k.min ?: 1;
+> +		_nkm.max_k = nkm->k.max ?: 1 << nkm->k.width;
+> +		_nkm.min_m = 1;
+> +		_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+> +		ccu_nkm_find_best(parent_rate, rate, &_nkm);
+> +	}
+>
+>  	spin_lock_irqsave(nkm->common.lock, flags);
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
+> index 6601defb3f38..fa5551724921 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+> @@ -12,6 +12,30 @@
+>  #include "ccu_div.h"
+>  #include "ccu_mult.h"
+>
+> +struct clk_nkm_combo {
+> +	u8	n;
+> +	u8	k;
+> +	u8	m;
+> +};
 > +
->    perst-gpios:
->      description: GPIO controlled connection to PERST# signal
->      maxItems: 1
-> @@ -171,6 +174,7 @@ allOf:
->              enum:
->                - qcom,pcie-ipq6018
->                - qcom,pcie-ipq8074-gen3
-> +              - qcom,pcie-ipq9574
->      then:
->        properties:
->          reg:
-> @@ -382,6 +386,39 @@ allOf:
->              - const: ahb # AHB Reset
->              - const: axi_m_sticky # AXI Master Sticky reset
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,pcie-ipq9574
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 6
-> +          maxItems: 6
-> +        clock-names:
-> +          items:
-> +            - const: ahb  # AHB clock
-> +            - const: aux  # Auxiliary clock
-> +            - const: axi_m # AXI Master clock
-> +            - const: axi_s # AXI Slave clock
-> +            - const: axi_bridge # AXI bridge clock
-> +            - const: rchng
-> +        resets:
-> +          minItems: 8
-> +          maxItems: 8
-> +        reset-names:
-> +          items:
-> +            - const: pipe # PIPE reset
-> +            - const: sticky # Core Sticky reset
-> +            - const: axi_s_sticky # AXI Slave Sticky reset
-> +            - const: axi_s # AXI Slave reset
-> +            - const: axi_m_sticky # AXI Master Sticky reset
-> +            - const: axi_m # AXI Master reset
-> +            - const: aux # AUX Reset
-> +            - const: ahb # AHB Reset
+> +/**
+> + * struct clk_nkm_table - Table of all meaningful combinations for n, k, and m
+> + *
+> + * @num: Number of entries in the table
+> + * @combos: Array of combos (of size num) that are supported by this clock.
+> + *
+> + * This table shall contain all meaningful combinations of n, k, and m. That
+> + * means that combinations that result in the same clock rate shall only be
+> + * listed once. For example, if both
+> + * { .n = 1, .k = 2, .m = 2} and  { .n = 2, .k = 2, .m = 4}
+> + * are valid values for n, k, and m, only one of them would be allowed because
+> + * both result in a factor of 1.0.
+> + */
+> +struct clk_nkm_table {
+> +	size_t			num;
+> +	struct clk_nkm_combo	*combos;
+> +};
 > +
->    - if:
->        properties:
->          compatible:
-> @@ -767,6 +804,7 @@ allOf:
->                  - qcom,pcie-ipq8064v2
->                  - qcom,pcie-ipq8074
->                  - qcom,pcie-ipq8074-gen3
-> +                - qcom,pcie-ipq9574
->                  - qcom,pcie-qcs404
->      then:
->        required:
-> @@ -862,6 +900,16 @@ allOf:
->            items:
->              - const: msi
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,pcie-ipq9574
-> +    then:
-> +      required:
-> +        - msi-parent
+>  /*
+>   * struct ccu_nkm - Definition of an N-K-M clock
+>   *
+> @@ -29,6 +53,8 @@ struct ccu_nkm {
+>  	unsigned int		fixed_post_div;
+>
+>  	struct ccu_common	common;
 > +
->  unevaluatedProperties: false
->  
->  examples:
-> -- 
-> 2.17.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+> +	struct clk_nkm_table	table;
+>  };
+>
+>  #define SUNXI_CCU_NKM_WITH_MUX_GATE_LOCK(_struct, _name, _parents, _reg, \
