@@ -2,219 +2,224 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9490C77B7C
-	for <linux-clk@archiver.kernel.org>; Sat, 27 May 2023 23:19:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A528C77B7E
+	for <linux-clk@archiver.kernel.org>; Sun, 28 May 2023 03:31:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbjE0XTv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 May 2023 19:19:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46454 "EHLO
+        id S229441AbjE1Dbh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 May 2023 23:31:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjE0XTu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 May 2023 19:19:50 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002F9D3;
-        Sat, 27 May 2023 16:19:48 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id 6a1803df08f44-6261a1a7454so3501186d6.3;
-        Sat, 27 May 2023 16:19:48 -0700 (PDT)
+        with ESMTP id S229437AbjE1Dbf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 27 May 2023 23:31:35 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96290C7;
+        Sat, 27 May 2023 20:31:33 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1ae763f9c0bso14607765ad.2;
+        Sat, 27 May 2023 20:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685229588; x=1687821588;
+        d=gmail.com; s=20221208; t=1685244693; x=1687836693;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mmP1Wdih2jmgBNgRuCig0lHf98Ze9PVsZQRiONBAQjA=;
-        b=cCTy9nvcJ9criXQ2j7Lz+pQJSyBaMFLoiyppyEHcrcL+DY7QzoLAlrXhyU2EPtNWcI
-         O79vXDay9SIYQFNzO/t/qMhucaSz2FQYz2AhjbOgbxfxkmaosfVZcZV7OSS6fkl7cykW
-         vJ9En8xx29w1kTpgAoF4azHYTarhmxf9BNszzGmHSwogXBlYLLYR2wY1nG0i58NXrwlS
-         r8SY35fqHW3T6x/Mdm8WW62lW/fAos/JcBfLy0EmL5+GOYUbbMw9BgT+dse3YIHh7naz
-         3O0GGlRSCr0MVVRdlmeAu3FvgFpWdO/92/a+5bBL1hSNcRQXxxEX1h+FAlAJd/sRzpAh
-         k5lQ==
+        bh=+hBuvyZ7EBqdYU4iAk4lEaxieNGNBcEc+yeHvMinBFM=;
+        b=UkDNJY5WAPy4ZZxuHN2RFaIHIKD2XQ1cX14DmFKIVD4dC4PTrosSQeO/hXea4EQns8
+         l9Rr7uFSrlRrfz7Z65s6lOTJeKFSNvzTXnp+KHb1CahRxffEeXNpQgEbMB5YDwEXzGfo
+         tgwZY8vYMgOHljgRUUQxmrFpE9ngkDmF897lBdXe8b3h+MKb+DmDL/DHda02PMgK9k/4
+         RnE/h1sjTwe4DotVveQ2osun4HeGnGMo6PIgq22ikfMYSoaEacyHRHId7l0JRVIjwNT6
+         6lS0McFXmQbuRmxop5mMlQTDMGMbCF8NWDuT5I9cPtgzpkoMwmd8R++5985yJiB4PSki
+         n75w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685229588; x=1687821588;
+        d=1e100.net; s=20221208; t=1685244693; x=1687836693;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mmP1Wdih2jmgBNgRuCig0lHf98Ze9PVsZQRiONBAQjA=;
-        b=EiH0pSQZ03eI4KwSZVrJ4rgGd1EReblzfZWIny4f2SopCnbQfc4pa98H4+inJo9U8k
-         GK3iLNAMfcQJ1f/jguO1OYl2VeQK6Wi45h0w7tUkcz/dBd7UC62PzgN+whAOGHCf4u9H
-         bkZq252DncyIXFLHQWescWNOzFkuFodycDZvCW/FgcOY4l9MfOMeKC7XtCA3q5YAPj+h
-         m+dK96v9AmDdZhg3l+U9l5v1Gm7VVhW/PuJW1O1CAgLdVFN/fEjzWsM7z5/iSiHChQyQ
-         /lHqtnVVDhoVZH+b/X2YeW2dH3Fd/NbJuuuORT1ZZojEUCZOk6iDOp/9NkZIfLho6Iay
-         V5CA==
-X-Gm-Message-State: AC+VfDxjTQhuz7RXd68R2ndRArtz7M+syIkPaqP5kZux6yEXu2vndhCB
-        jr34lQd4vxTXczqxKwDj+pGIB8ayte1/BSbX7jY=
-X-Google-Smtp-Source: ACHHUZ4MCtxUZFmkT+8bmXt4CiwAFqv/7/SCQ8/6kvUZrRdEdOFHgryDuAvZCnH8gitKstn1hxlben+HE603wHzNJ44=
-X-Received: by 2002:a05:6214:29e9:b0:625:aa49:c341 with SMTP id
- jv9-20020a05621429e900b00625aa49c341mr5556910qvb.53.1685229587968; Sat, 27
- May 2023 16:19:47 -0700 (PDT)
+        bh=+hBuvyZ7EBqdYU4iAk4lEaxieNGNBcEc+yeHvMinBFM=;
+        b=bNWv1LpleYzJrqXsmrBek6mufV3XAFmipmDN/uQ5J92jddZNoLZngtwpw9Zj1uh4lh
+         aKc/OM4s18+z3dYAu3FXuNv8Ix9zKtGgP4xkaM6jQlPaop0QO0BaphiXEIIAk6RLgOiw
+         TskhrGtxTBrpiXhZYUZayjOYAkB2skQOKNFrCdunf0qLQBelLVg9iOhurpPixsUl6OlC
+         rQaetM4FjwAt80A76xJyS4wG97C+yPlJvtB1LD1U5gi29hvg1nlOvP8m0CNVFLL91JBB
+         LQllI0Tn/lnd+1taVBJ+f2aLjWCUsuUpaKvqAGfrtDF+aP/FHfAw6A2eCevo4YPhrNxF
+         RxOA==
+X-Gm-Message-State: AC+VfDwQJ3JNZngQVS5M1NgiJmdnKUWvsTwUtYZaD0RRCswOnzkgNtfk
+        v9olCskcKNa31jFytYkLvh9vvkmLxYs61Qj98Og=
+X-Google-Smtp-Source: ACHHUZ4dbKp82EtIQsuPmla6IBhLoZHwe7fqdkZkWoqmLJqEVoC1DSozw66kEghoWZuTypbeXEZBrMaz2JwvCIwrZ5U=
+X-Received: by 2002:a17:902:d4c8:b0:1ac:528c:e71 with SMTP id
+ o8-20020a170902d4c800b001ac528c0e71mr10187133plg.18.1685244692756; Sat, 27
+ May 2023 20:31:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230527132747.83196-1-frank@oltmanns.dev> <20230527132747.83196-3-frank@oltmanns.dev>
-In-Reply-To: <20230527132747.83196-3-frank@oltmanns.dev>
-From:   Julian Calaby <julian.calaby@gmail.com>
-Date:   Sun, 28 May 2023 09:19:36 +1000
-Message-ID: <CAGRGNgWP6McbfORNQrrdvktEOVMgS-KCXuhC5GRYz-+SgsFx1w@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] clk: sunxi-ng: Implement precalculated NKM rate selection
-To:     Frank Oltmanns <frank@oltmanns.dev>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
+References: <20230506195325.876871-1-aford173@gmail.com> <02e4e072-a2bb-8455-304d-49552ce9c866@oss.nxp.com>
+ <CAHCN7x+pFM7_yAWxVaUCKyLQ1A_5-F4sQ_t2k2iug7DdD9PwmQ@mail.gmail.com>
+In-Reply-To: <CAHCN7x+pFM7_yAWxVaUCKyLQ1A_5-F4sQ_t2k2iug7DdD9PwmQ@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Sat, 27 May 2023 22:31:21 -0500
+Message-ID: <CAHCN7xJY6ayQAGqzK58qVd=owGMLMU5U5zia3zwhaK0aR2iKwQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
+To:     Peng Fan <peng.fan@oss.nxp.com>
+Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Frank,
-
-On Sat, May 27, 2023 at 11:37=E2=80=AFPM Frank Oltmanns <frank@oltmanns.dev=
-> wrote:
+On Mon, May 22, 2023 at 10:23=E2=80=AFPM Adam Ford <aford173@gmail.com> wro=
+te:
 >
-> Add a new precalculation method for NKM clock rate selection in the
-> sunxi-ng clock driver. Introduce ccu_nkm_find_best_precalc which uses a
-> precalculated table of valid NKM combinations (struct clk_nkm_table and
-> struct clk_nkm_combo) to find the best rate. This approach provides
-> faster rate selection by searching a table of valid combinations rather
-> than calculating for all possible combinations.
+> On Mon, May 22, 2023 at 9:33=E2=80=AFPM Peng Fan <peng.fan@oss.nxp.com> w=
+rote:
+> >
+> >
+> >
+> > On 5/7/2023 3:53 AM, Adam Ford wrote:
+> > > Caution: This is an external email. Please take care when clicking li=
+nks or opening attachments. When in doubt, report the message using the 'Re=
+port this email' button
+> > >
+> > >
+> > > Currently, certain clocks are derrived as a divider from their
+> > > parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
+> > > is set, the parent clock is not properly set which can lead
+> > > to some relatively inaccurate clock values.
+> > >
+> > > Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
+> > > cannot rely on calling a standard determine_rate function,
+> > > because the 8m composite clocks have a pre-divider and
+> > > post-divider. Because of this, a custom determine_rate
+> > > function is necessary to determine the maximum clock
+> > > division which is equivalent to pre-divider * the
+> > > post-divider.
+> > >
+> > > With this added, the system can attempt to adjust the parent rate
+> > > when the proper flags are set which can lead to a more precise clock
+> > > value.
+> > >
+> > > On the imx8mplus, no clock changes are present.
+> > > On the Mini and Nano, this can help achieve more accurate
+> > > lcdif clocks. When trying to get a pixel clock of 31.500MHz
+> > > on an imx8m Nano, the clocks divided the 594MHz down, but
+> > > left the parent rate untouched which caused a calulation error.
+> >
+> > Not all clocks has pre/post div both.
+
+Peng,
+
+Any suggestions on how to identify this?  looking at the code that
+sets the clock rates, it seemed to me like the code was mostly common
+code and it looked like the pre and post div's were basically the
+same.  CAn you point me to an example where they're identified with
+different values?
+> >
+> > If CLK_SET_RATE_PARENT not set, would there be any issues for
+> > other clocks?
 >
-> The table of NKM combinations needs to be initialized with meaningful
-> combinations only, i.e. removing redundant combinations that result in
-> the same rate.
+> I did a dump of the clk_summary for Mini, Nano and Plus, and I found
+> no changes to any clock other than the video_pll, and most of the
+> clocks do not have CLK_SET_RATE_PARENT set, so from what I could tell
+> it seemed harmless.
+
+What do you need from me to be able to move this forward?
+
+thanks
+
+adam
 >
-> Keep the existing ccu_nkm_find_best function in place and use it as a
-> fallback if no precalculated table is provided.
->
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> ---
->  drivers/clk/sunxi-ng/ccu_nkm.c | 84 +++++++++++++++++++++++++++-------
->  drivers/clk/sunxi-ng/ccu_nkm.h | 26 +++++++++++
->  2 files changed, 94 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nk=
-m.c
-> index 94d2a83992b2..9652f6df17bd 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -54,6 +54,49 @@ static unsigned long ccu_nkm_find_best(unsigned long p=
-arent, unsigned long rate,
->         return best_rate;
->  }
->
-> +static unsigned long ccu_nkm_find_best_precalc(unsigned long parent,
-> +                                              unsigned long rate,
-> +                                              struct _ccu_nkm *nkm,
-> +                                              struct clk_nkm_table *tabl=
-e)
-> +{
-> +       unsigned long best_rate =3D 0, best_diff =3D ULONG_MAX;
-> +       unsigned long best_n =3D 0, best_k =3D 0, best_m =3D 0;
-> +       int start =3D 0, end =3D table->num - 1, mid;
-> +
-> +       while (start <=3D end) {
-> +               unsigned long tmp_rate;
-> +               unsigned long tmp_diff;
-> +
-> +               mid =3D (start + end) / 2;
-> +
-> +               tmp_rate =3D parent * table->combos[mid].n * table->combo=
-s[mid].k /
-> +                          table->combos[mid].m;
-> +
-> +               tmp_diff =3D abs(rate - tmp_rate);
-> +
-> +               if (tmp_diff < best_diff) {
-> +                       best_rate =3D tmp_rate;
-> +                       best_diff =3D tmp_diff;
-> +                       best_n =3D table->combos[mid].n;
-> +                       best_k =3D table->combos[mid].k;
-> +                       best_m =3D table->combos[mid].m;
-> +                       if (best_diff =3D=3D 0)
-> +                               goto out;
-> +               }
-
-If the table was sorted by n * k / m, this could just be a process of
-searching through until we either:
-- find that the first rate in the table is too high
-- find an exact rate
-- go above the requested rate, then there's only two to compare: our
-current rate and the previous one
-
-This should massively simplify this function and would still work with
-a binary search.
-
-> +               if (rate < tmp_rate)
-> +                       end =3D mid - 1;
-> +               else
-> +                       start =3D mid + 1;
-> +       }
-> +
-> +out:
-> +       nkm->n =3D best_n;
-> +       nkm->k =3D best_k;
-> +       nkm->m =3D best_m;
-> +
-> +       return best_rate;
-> +}
-> +
->  static void ccu_nkm_disable(struct clk_hw *hw)
->  {
->         struct ccu_nkm *nkm =3D hw_to_ccu_nkm(hw);
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nk=
-m.h
-> index 6601defb3f38..fa5551724921 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.h
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.h
-> @@ -12,6 +12,30 @@
->  #include "ccu_div.h"
->  #include "ccu_mult.h"
->
-> +struct clk_nkm_combo {
-> +       u8      n;
-> +       u8      k;
-> +       u8      m;
-> +};
-> +
-> +/**
-> + * struct clk_nkm_table - Table of all meaningful combinations for n, k,=
- and m
-> + *
-> + * @num: Number of entries in the table
-> + * @combos: Array of combos (of size num) that are supported by this clo=
-ck.
-> + *
-> + * This table shall contain all meaningful combinations of n, k, and m. =
-That
-> + * means that combinations that result in the same clock rate shall only=
- be
-> + * listed once. For example, if both
-> + * { .n =3D 1, .k =3D 2, .m =3D 2} and  { .n =3D 2, .k =3D 2, .m =3D 4}
-> + * are valid values for n, k, and m, only one of them would be allowed b=
-ecause
-> + * both result in a factor of 1.0.
-> + */
-> +struct clk_nkm_table {
-> +       size_t                  num;
-> +       struct clk_nkm_combo    *combos;
-
-Should this be a "flex" array, i.e.
-
-struct clk_nkm_combo combos[]
-
-> +};
-> +
->  /*
->   * struct ccu_nkm - Definition of an N-K-M clock
->   *
-
-Thanks,
-
---=20
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+> >
+> > Regards,
+> > Peng.
+> >
+> > >
+> > > Before:
+> > > video_pll              594000000
+> > >    video_pll_bypass     594000000
+> > >      video_pll_out      594000000
+> > >        disp_pixel       31263158
+> > >          disp_pixel_clk 31263158
+> > >
+> > > Variance =3D -236842 Hz
+> > >
+> > > After this patch:
+> > > video_pll               31500000
+> > >    video_pll_bypass      31500000
+> > >      video_pll_out       31500000
+> > >        disp_pixel        31500000
+> > >          disp_pixel_clk  31500000
+> > >
+> > > Variance =3D 0 Hz
+> > >
+> > > All other clocks rates and parent were the same.
+> > > Similar results on imx8mm were found.
+> > >
+> > > Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support to =
+determine_rate"")
+> > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > > ---
+> > > V2:  Fix build warning found by build bot and fix prediv_value
+> > >       and div_value because the values stored are the divisor - 1,
+> > >       so we need to add 1 to the values to be correct.
+> > >
+> > > diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk=
+-composite-8m.c
+> > > index cbf0d7955a00..7a6e3ce97133 100644
+> > > --- a/drivers/clk/imx/clk-composite-8m.c
+> > > +++ b/drivers/clk/imx/clk-composite-8m.c
+> > > @@ -119,10 +119,41 @@ static int imx8m_clk_composite_divider_set_rate=
+(struct clk_hw *hw,
+> > >          return ret;
+> > >   }
+> > >
+> > > +static int imx8m_divider_determine_rate(struct clk_hw *hw,
+> > > +                                     struct clk_rate_request *req)
+> > > +{
+> > > +       struct clk_divider *divider =3D to_clk_divider(hw);
+> > > +       int prediv_value;
+> > > +       int div_value;
+> > > +
+> > > +       /* if read only, just return current value */
+> > > +       if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+> > > +               u32 val;
+> > > +
+> > > +               val =3D readl(divider->reg);
+> > > +               prediv_value =3D val >> divider->shift;
+> > > +               prediv_value &=3D clk_div_mask(divider->width);
+> > > +               prediv_value++;
+> > > +
+> > > +               div_value =3D val >> PCG_DIV_SHIFT;
+> > > +               div_value &=3D clk_div_mask(PCG_DIV_WIDTH);
+> > > +               div_value++;
+> > > +
+> > > +               return divider_ro_determine_rate(hw, req, divider->ta=
+ble,
+> > > +                                                PCG_PREDIV_WIDTH + P=
+CG_DIV_WIDTH,
+> > > +                                                divider->flags, pred=
+iv_value * div_value);
+> > > +       }
+> > > +
+> > > +       return divider_determine_rate(hw, req, divider->table,
+> > > +                                     PCG_PREDIV_WIDTH + PCG_DIV_WIDT=
+H,
+> > > +                                     divider->flags);
+> > > +}
+> > > +
+> > >   static const struct clk_ops imx8m_clk_composite_divider_ops =3D {
+> > >          .recalc_rate =3D imx8m_clk_composite_divider_recalc_rate,
+> > >          .round_rate =3D imx8m_clk_composite_divider_round_rate,
+> > >          .set_rate =3D imx8m_clk_composite_divider_set_rate,
+> > > +       .determine_rate =3D imx8m_divider_determine_rate,
+> > >   };
+> > >
+> > >   static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
+> > > --
+> > > 2.39.2
+> > >
