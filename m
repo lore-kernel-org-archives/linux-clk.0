@@ -2,126 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC44C77B7A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 17:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C43C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 20:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229504AbjE2Ry6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 May 2023 13:54:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34328 "EHLO
+        id S229626AbjE2UUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 May 2023 16:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229473AbjE2Ry5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 13:54:57 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA202CD;
-        Mon, 29 May 2023 10:54:56 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id 41be03b00d2f7-53f8daa1b6fso786786a12.0;
-        Mon, 29 May 2023 10:54:56 -0700 (PDT)
+        with ESMTP id S229540AbjE2UUN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 16:20:13 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20EFDB7;
+        Mon, 29 May 2023 13:20:12 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-514924ca903so3625347a12.2;
+        Mon, 29 May 2023 13:20:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685382896; x=1687974896;
+        d=googlemail.com; s=20221208; t=1685391610; x=1687983610;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FXQhl/1DReICEmpN3fsZjB8PYW6gvWRFYFP7IKx3m+s=;
-        b=D7L+qlW4ZbhvuXCv6VYVRnroKmEVoht78yHzYiZJ6m2QAHhlimsZSrQaWw+jwGWiYy
-         yrgNogKZjClDf/hTyufLfkc4BkN6hWLZC4e7mziU/RusrAVcajN5UV1S8ROw6HEkNuQi
-         KDqPVBsZC1I/ybwCuPqHu0I1GWglNJZNhSNFAc+35hO5HoXj7zFXFLuw6iMOscuk1TN8
-         VvcRAnUH3FE03V/G9aY5Rn6zcchIscrGceX68YEYdyAncPqiiS16ymr/U2ov30XcML70
-         GZJSSm27KxLwmcu6G8x/5RaU8UQbuHm7SzrI/pCVuGRaqd/MvJZA0SIlXqBoybwZzfVl
-         X+lw==
+        bh=UaBaGYCNxPZhOfoDjvgva3si6aUdokMc6Gw8fHEKHuE=;
+        b=KfiVQLPJLi42XivH0/2I8b8IaA4agFdHz0r3rtjNs1W6EuPkAsmXg7WOKbVeJPCPgT
+         BbK0uX3pJnS3Pv7eVitih7ohKpQyGAZpvzh0Lq5PlbePkTBxQ7ICu32LIfc5yMmVVeHF
+         tc/kOgBTSJ1v8YHX3QYrTPPJ0SuGiCm2OPzXsaHvX8FN05aWy9lyslWGWQeB46GmUq86
+         1MPdU6XyMhjIOyuN264W/iP03wRp9m2gWqR0AiR1NLka9qoFT/MXtB34mXzIka1VcT9i
+         sEAaNpRH+Q3+D8ouWrS0kEQp6mE0jIQ8Wjmum7s1UuODLmWVEMhJaqTugd+qtHHa2Q5v
+         G7WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685382896; x=1687974896;
+        d=1e100.net; s=20221208; t=1685391610; x=1687983610;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FXQhl/1DReICEmpN3fsZjB8PYW6gvWRFYFP7IKx3m+s=;
-        b=VfUI22r/P/qFGz8i2AmdgSdQDpVB49L7BfH7Zh1TFMionmcWwqUFF54a05u/OwRTiK
-         u1vBROCWsv9e5+AZ4K4m1XFBQVyNLEE5Ulj3WCrorsU2cwGvMLtvpL+VCaCAmP831TZE
-         UwioL2Gnq1IZFk77Kf4PcWa//PaGKI+EfoTEeSV7enEyJt69lqo7PUmEUtxQMKRbQV/8
-         q3yzkmZmIrFI8js2dBXlNg17oFu0x3qI5ZoVIFMvGMZJlMGnaMicVLa1OSrZOpppRObP
-         fncvIWdCsLE6If2ktBHgQNPDKUvdqWhJfLF5e6Y31MO5i/tWSajKDRGlnwIzHD1lLgNy
-         1e4g==
-X-Gm-Message-State: AC+VfDzuAR0gdfoMrUJDm6mz5uN0dsw3txqa/CVs3IVdD3lZe4ozBCLi
-        A768HZK3wFDpE1GDC2fLPpVhMd5gAZVIYPpSSwM=
-X-Google-Smtp-Source: ACHHUZ7qmypDRrl70hrlW+MkwEOcNT8uZXr+Gyh3y3jdUdsZ80CkNjcW6b1CxZTvjCLMDdahrlG+3gxsqJDbqbUydhc=
-X-Received: by 2002:a17:902:ab58:b0:1ac:7ae7:3fdf with SMTP id
- ij24-20020a170902ab5800b001ac7ae73fdfmr11925390plb.41.1685382896047; Mon, 29
- May 2023 10:54:56 -0700 (PDT)
+        bh=UaBaGYCNxPZhOfoDjvgva3si6aUdokMc6Gw8fHEKHuE=;
+        b=W/ToIMKn40XYi2vU8tTIyoJfZNiry9mlsbNlSSXJT1XzZlVxpSF/NRSgO+DNRoMNjQ
+         WDObIeTc8SFUUWnz5uqGrBJ1xTE4F1Phe9Uh67P137RzCzC8FRyzqJRyRk5OqJIeiTxA
+         kSU7QcfGLlfqFgGfESojjiKHZMFREqlpwqSj+F9o+AB2Ti7DaOJy5MPy9vjNNQcXbK6h
+         UG43IPd+U9GrFubvhMQO249jIa4Jd9YDV1uv8V4amWtNBiMikXfsKvvDPsdzKbI1Dnf7
+         Z7eZOP4FjcMAro8mLOFMqio/2teRQxutAqHikBoeuXnMejn/tflgbuKdqk8cty0lo2LE
+         R3sw==
+X-Gm-Message-State: AC+VfDxnMwuHHQV/xI84pjZZLMTjKRoTQn86advsY+taXeIhOt0CumGu
+        WNSQqcx1dBhB0F1BUSk+sVpjSmuyLvyU1DqH6y8=
+X-Google-Smtp-Source: ACHHUZ7rEdsB1abIjXBwnJgb2QaZ3rA+DNo7mrBeOxfo1iuRO9GdPORptUnmUP9H+tnsnEMOzr4noDOfQ+3s5zbIE2Q=
+X-Received: by 2002:a17:907:9813:b0:965:6cb9:b768 with SMTP id
+ ji19-20020a170907981300b009656cb9b768mr250326ejc.31.1685391610344; Mon, 29
+ May 2023 13:20:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230418113451.151312-1-kaima@hust.edu.cn> <ZGX/PjYBVGuECcPg@linaro.org>
- <22043583.EfDdHjke4D@sophie-lab>
-In-Reply-To: <22043583.EfDdHjke4D@sophie-lab>
-From:   Jesse T <mr.bossman075@gmail.com>
-Date:   Mon, 29 May 2023 13:54:45 -0400
-Message-ID: <CAJFTR8R=QkWSoMstqer_eEwA5YmvEZetENT8hkxx62QCt2ztjg@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: clk-imxrt1050: fix memory leak in imxrt1050_clocks_probe
-To:     Kai Ma <kaima@hust.edu.cn>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abel.vesa@linaro.org>,
-        Dongliang Mu <dzm91@hust.edu.cn>,
-        Zhanhao Hu <zero12113@hust.edu.cn>
+References: <20230523135351.19133-1-ddrokosov@sberdevices.ru> <20230523135351.19133-7-ddrokosov@sberdevices.ru>
+In-Reply-To: <20230523135351.19133-7-ddrokosov@sberdevices.ru>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 29 May 2023 22:19:59 +0200
+Message-ID: <CAFBinCA35XC5mo+t-RV+yBA2XzAiVXPR_gX3jO25HA=V5XgnOw@mail.gmail.com>
+Subject: Re: [PATCH v16 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
+ controller driver
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 29, 2023 at 12:55=E2=80=AFAM Kai Ma <kaima@hust.edu.cn> wrote:
+On Tue, May 23, 2023 at 3:54=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
+es.ru> wrote:
 >
-> On Thursday, May 18, 2023 6:34:38 PM CST Abel Vesa wrote:
-> > On 23-04-18 11:34:51, Kai Ma wrote:
-> > > Use devm_of_iomap() instead of of_iomap() to automatically
-> > > handle the unused ioremap region. If any error occurs, regions alloca=
-ted by
-> > > kzalloc() will leak, but using devm_kzalloc() instead will automatica=
-lly
-> > > free the memory using devm_kfree().
-> > >
-> > > Also, fix error handling of hws by adding unregister_hws label, which
-> > > unregisters remaining hws when iomap failed.
-> > >
-> > > Fixes: 7154b046d8f3 ("clk: imx: Add initial support for i.MXRT1050 cl=
-ock driver")
-> > > Signed-off-by: Kai Ma <kaima@hust.edu.cn>
-> >
-> > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> >
-> > Stephen, can you apply this through clk-fixes?
-> >
+> Introduce Peripherals clock controller for Amlogic A1 SoC family.
 >
-> Thanks for your review, I am glad to let you know that I am a student at =
-a
-> university and we collaborate to contribute to the Linux kernel.
-
-That's cool, I am too!
-Is there going to be a V2 of
-https://lore.kernel.org/linux-arm-kernel/20230426142552.217435-1-zero12113@=
-hust.edu.cn/T/
-
-Thanks,
-Jesse Taube
-
-> Here we
-> have some similar patches for clk. Could you please take care of them?
+> A1 SoC has four clock controllers on the board: PLL, Peripherals, CPU,
+> and Audio.
+> This patchset adds support for Amlogic A1 Peripherals clock driver and
+> allows to generate clocks for all A1 SoC peripheral IPs.
 >
-> [1] https://lore.kernel.org/linux-arm-kernel/DU0PR04MB9417B63DE97D4A2A77B=
-4176C88969@DU0PR04MB9417.eurprd04.prod.outlook.com/T/
-> [2] https://lore.kernel.org/linux-arm-kernel/20230503070607.2462-1-lyx202=
-2@hust.edu.cn/T/
-> [3] https://lore.kernel.org/linux-arm-kernel/dc0f2863-d5d5-5102-eb8e-ceea=
-92c03fda@oss.nxp.com/
-> [4] https://lore.kernel.org/linux-arm-kernel/9a2ab7ec-07ee-255f-a143-9b6c=
-8df7c1e2@gmail.com/
->
-> Thank you very much!
->
-> Regards,
-> Kai Ma
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
