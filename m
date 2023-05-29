@@ -2,109 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA06C7EE23
-	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 05:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B391C7EE31
+	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 08:19:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbjE2FIR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 May 2023 01:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51716 "EHLO
+        id S231487AbjE2ITC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 May 2023 04:19:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbjE2FIR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 01:08:17 -0400
-Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E59B83;
-        Sun, 28 May 2023 22:08:13 -0700 (PDT)
-Received: from sophie-lab.localnet ([172.16.0.254])
-        (user=kaima@hust.edu.cn mech=LOGIN bits=0)
-        by mx1.hust.edu.cn  with ESMTP id 34T4t7pt020146-34T4t7pu020146
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 29 May 2023 12:55:07 +0800
-From:   Kai Ma <kaima@hust.edu.cn>
-To:     Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <linux-imx@nxp.com>
-Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        with ESMTP id S231640AbjE2ITB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 04:19:01 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0DAB8
+        for <linux-clk@vger.kernel.org>; Mon, 29 May 2023 01:18:56 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2af2e1725bdso37386391fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 29 May 2023 01:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685348335; x=1687940335;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z+6vJ9zaGIlrddWwekztTVVNTWoY7fyIbT1woEoNQSA=;
+        b=CevULIUtfh0nY4vuRH08Yxw24vpwpTFAzdgVFCNAtb1J0NE0GzFw9nsECTnJ+1s/g6
+         QPENun5ACL0cilue2pMR+SutPLJuorgv1lxiUMR/UnmPh0uuYM0w7lBi3a/It2Kwsn4d
+         sJrwiHFUZXG3UcXQK8gaCjT5NToBo/xCWtpqu+CydTt1fYu2nJHagyQApdHJFTmeZiX1
+         tXcBinKL5zbMhXHlNOOJwCUYP9aCJFcWA8/gxeoWnl7CRuwp+xSs0cR+PHZGaSCo+osj
+         qMD7GpAEWw1hOfOegwwxoVVbcesXAVl9nwYZGXNPOxr6m73FMsADtJpVN5IXugLtupDn
+         f+0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685348335; x=1687940335;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z+6vJ9zaGIlrddWwekztTVVNTWoY7fyIbT1woEoNQSA=;
+        b=YjZ4568DFT94KsAb4TvDiyzT5cs6IiFSuaxXL6kulik4t+30KAOrRYGs/AtEj4cIMw
+         S1Lgugpq5ZqXliAD8Jeo83PO5WUkpVVM3oPVuBZmsi33TbDava+7Z+tFlVH3eTC/cs2e
+         3Rohe1rxY3iGnDBg1TuEoODKMbThsw1V8htefuVJb0YjbOzwdgl4UbLXxRq1apOFvr6o
+         5iC2GTVHOvCBiBhGv7YDtQVBFZMPDa8w0FM/lGxsTJ6n0cY91jEva/Zn4ZZ6VSIpM6t/
+         0UG+VDOVuLn/10gAbRwian20E7Pa4HdJcSePm9J/No19MU7WrGh8boJhhn+k8skZjJjk
+         XU/Q==
+X-Gm-Message-State: AC+VfDxQDsMVMUh1+X5T+/n8Sye0bkV7IscjuACLbmVtMduDoaONGqk6
+        BTpSAMA2CTyQK7HVpx+nfEeCoA==
+X-Google-Smtp-Source: ACHHUZ4SfeeXfI9O7GCTsvx6bNolt5z6hJK7Y92EsXY8u2VrW16ZAXWEk39LHaYMdb+xl7nS1PnuKQ==
+X-Received: by 2002:a2e:9f09:0:b0:295:a8e6:6b15 with SMTP id u9-20020a2e9f09000000b00295a8e66b15mr2416620ljk.4.1685348334930;
+        Mon, 29 May 2023 01:18:54 -0700 (PDT)
+Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
+        by smtp.gmail.com with ESMTPSA id s10-20020a2e98ca000000b002aa4713b925sm2341755ljj.21.2023.05.29.01.18.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 May 2023 01:18:54 -0700 (PDT)
+Message-ID: <2d044f14-65c0-be3f-595f-4ddb46df6fef@linaro.org>
+Date:   Mon, 29 May 2023 10:18:52 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v2 3/3] clk: qcom: cbf-msm8996: Add support for MSM8996
+ Pro
+Content-Language: en-US
+To:     Yassine Oudjana <yassine.oudjana@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Jesse Taube <mr.bossman075@gmail.com>,
-        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH] clk: imx: clk-imxrt1050: fix memory leak in
- imxrt1050_clocks_probe
-Date:   Mon, 29 May 2023 12:55:07 +0800
-Message-ID: <22043583.EfDdHjke4D@sophie-lab>
-In-Reply-To: <ZGX/PjYBVGuECcPg@linaro.org>
-References: <20230418113451.151312-1-kaima@hust.edu.cn> <ZGX/PjYBVGuECcPg@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7679923.EvYhyI6sBW";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-FEAS-AUTH-USER: kaima@hust.edu.cn
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230527093934.101335-1-y.oudjana@protonmail.com>
+ <20230527093934.101335-4-y.oudjana@protonmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230527093934.101335-4-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---nextPart7679923.EvYhyI6sBW
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Kai Ma <kaima@hust.edu.cn>
-Date: Mon, 29 May 2023 12:55:07 +0800
-Message-ID: <22043583.EfDdHjke4D@sophie-lab>
-In-Reply-To: <ZGX/PjYBVGuECcPg@linaro.org>
-MIME-Version: 1.0
 
-On Thursday, May 18, 2023 6:34:38 PM CST Abel Vesa wrote:
-> On 23-04-18 11:34:51, Kai Ma wrote:
-> > Use devm_of_iomap() instead of of_iomap() to automatically
-> > handle the unused ioremap region. If any error occurs, regions allocated by
-> > kzalloc() will leak, but using devm_kzalloc() instead will automatically
-> > free the memory using devm_kfree().
-> > 
-> > Also, fix error handling of hws by adding unregister_hws label, which
-> > unregisters remaining hws when iomap failed.
-> > 
-> > Fixes: 7154b046d8f3 ("clk: imx: Add initial support for i.MXRT1050 clock driver")
-> > Signed-off-by: Kai Ma <kaima@hust.edu.cn>
+
+On 27.05.2023 11:39, Yassine Oudjana wrote:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
 > 
-> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> The CBF PLL on MSM8996 Pro has a /4 post divisor instead of /2. Handle the
+> difference accordingly.
 > 
-> Stephen, can you apply this through clk-fixes?
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> ---
+>  drivers/clk/qcom/clk-cbf-8996.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
+> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
+> index cfd567636f4e..ab988e6f1976 100644
+> --- a/drivers/clk/qcom/clk-cbf-8996.c
+> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+> @@ -48,7 +48,7 @@ static const u8 cbf_pll_regs[PLL_OFF_MAX_REGS] = {
+>  	[PLL_OFF_STATUS] = 0x28,
+>  };
+>  
+> -static const struct alpha_pll_config cbfpll_config = {
+> +static struct alpha_pll_config cbfpll_config = {
+>  	.l = 72,
+>  	.config_ctl_val = 0x200d4828,
+>  	.config_ctl_hi_val = 0x006,
+> @@ -137,7 +137,7 @@ static int clk_cbf_8996_mux_determine_rate(struct clk_hw *hw,
+>  {
+>  	struct clk_hw *parent;
+>  
+> -	if (req->rate < (DIV_THRESHOLD / 2))
+> +	if (req->rate < (DIV_THRESHOLD / cbf_pll_postdiv.div))
+>  		return -EINVAL;
+>  
+>  	if (req->rate < DIV_THRESHOLD)
+> @@ -265,6 +265,11 @@ static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
+>  	/* Switch CBF to use the primary PLL */
+>  	regmap_update_bits(regmap, CBF_MUX_OFFSET, CBF_MUX_PARENT_MASK, 0x1);
+>  
+> +	if (of_device_is_compatible(dev->of_node, "qcom,msm8996pro-cbf")) {
+If this was a driver for more than 1.5 SoCs, I'd propose using a
+different mechanism here (match data flags or something), but since
+there aren't (and hopefully won't ever be) more 8996s (automotive etc.
+inherit one of these configurations so that doesn't count), I'm willing
+to say
 
-Thanks for your review, I am glad to let you know that I am a student at a
-university and we collaborate to contribute to the Linux kernel. Here we
-have some similar patches for clk. Could you please take care of them?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-[1] https://lore.kernel.org/linux-arm-kernel/DU0PR04MB9417B63DE97D4A2A77B4176C88969@DU0PR04MB9417.eurprd04.prod.outlook.com/T/
-[2] https://lore.kernel.org/linux-arm-kernel/20230503070607.2462-1-lyx2022@hust.edu.cn/T/
-[3] https://lore.kernel.org/linux-arm-kernel/dc0f2863-d5d5-5102-eb8e-ceea92c03fda@oss.nxp.com/
-[4] https://lore.kernel.org/linux-arm-kernel/9a2ab7ec-07ee-255f-a143-9b6c8df7c1e2@gmail.com/
-
-Thank you very much!
-
-Regards,
-Kai Ma
-
---nextPart7679923.EvYhyI6sBW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEOL4x3UcITzqVpkF5dHxtpLztq4UFAmR0MCsACgkQdHxtpLzt
-q4UphAgAnrurl7BzADxMZ3h8kBcriFp9uk4EAUxcpokix8jD7dp9y6SBJsckqVTG
-KWGX5guMpVJ44+vClDOJVcT+odTlO5/I2f+ckamSCp2xdTFPZ/TEjpZTfbHI2csL
-rXD/h/5dbZ4MjGbngWrkq+teS6LqMYuofyosEV9wBpe85bMpfqy1ti5wGQJH2Kzg
-0BSyGYi6obWDsPu05HLaBiwVQY5EJJX3ss7QW0ErtQOajGbRTqW3A+SUluUrvFUg
-7uRNmox67KDcgkA07BFWZ/IkrFsv/4E3DLR98B9oOq/DTqHEGz+g9pB7T14PhR2u
-PTyXpcPtzqGoTaTzjcs22grJt2TsGw==
-=CDQ6
------END PGP SIGNATURE-----
-
---nextPart7679923.EvYhyI6sBW--
-
-
-
+Konrad
+> +		cbfpll_config.post_div_val = 0x3 << 8;
+> +		cbf_pll_postdiv.div = 4;
+> +	}
+> +
+>  	for (i = 0; i < ARRAY_SIZE(cbf_msm8996_hw_clks); i++) {
+>  		ret = devm_clk_hw_register(dev, cbf_msm8996_hw_clks[i]);
+>  		if (ret)
+> @@ -286,6 +291,7 @@ static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
+>  
+>  static const struct of_device_id qcom_msm8996_cbf_match_table[] = {
+>  	{ .compatible = "qcom,msm8996-cbf" },
+> +	{ .compatible = "qcom,msm8996pro-cbf" },
+>  	{ /* sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, qcom_msm8996_cbf_match_table);
