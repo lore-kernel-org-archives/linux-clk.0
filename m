@@ -2,220 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44CA4C7EE23
-	for <linux-clk@archiver.kernel.org>; Sun, 28 May 2023 23:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA06C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 05:08:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbjE1X1N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 28 May 2023 19:27:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56138 "EHLO
+        id S229679AbjE2FIR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 May 2023 01:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjE1X1M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 May 2023 19:27:12 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 062819E;
-        Sun, 28 May 2023 16:27:11 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-30ae5f2ac94so1044039f8f.1;
-        Sun, 28 May 2023 16:27:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685316429; x=1687908429;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fmWkLfh/pINE4f3LXfsQzdk5y0tPlTxJr1z7LqH2sKo=;
-        b=RMWr4oyzMgHYNiOgKrY8wnr7S9WMH/5JccxgfWsoUhx4XE7Emkj/Xifh1rSNdXZF2d
-         2y+g+MbQlS98z23FslKyCQwI1/fhUTS7FH94wwFz72CWyMNKwO82gmeBgtoOdZHQnhLc
-         C843ffAVlI9vp6JpEK4W/doCWt8NPu9TK1uT09oTKkq5Hj1qNIohxGa7GVLppIkOsTSh
-         5OuzQlHvJOXUY4c1K/hwJ/wVEzHu19cxioMFBMQsD7tR+0tXWEDkvsqXEEVVX2ElleQJ
-         /8DUnq3LBwHXbZup3igL1t5Fx6xRVHTXBc7xCdjgUTElJoKL1ISLBW0D8g1JPRHmZlPg
-         /ygQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685316429; x=1687908429;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fmWkLfh/pINE4f3LXfsQzdk5y0tPlTxJr1z7LqH2sKo=;
-        b=CxL2K3Y/oR9if6kv3WPT/JALj6lJE2Cfnor6b+ghuwMfBW73hHMva5G4tJcGvcQ2BQ
-         GI2X5xBmiSP51+wq0XwsbOaimCj5jZI7NQn15wkYixtCdDMfMPsZ+7BvkIzA2bMq0re6
-         0i18ZBYquDwzQN/rZ8hfYAi7Ryjb+MYTJKYmh8qD49pbo1w/smZmOPEJ9YvWUHlLb3Aq
-         kQFRCuCeQMXTHXmqY1MJkhkv/JvIfUSMwri7EKBW2Cw+p+Q7AQTHdOn94YRnzmQGA8SJ
-         GpXa9AEht3PPMTuJevgJrAc0aRP3VPuoFnj4Iz6jNtv3wVeL/O7jFz0xG3MuyBK5GJaV
-         Jmzw==
-X-Gm-Message-State: AC+VfDw1zmwye9lcgZYvzSRisCuFWnN/DHP89sh1b9k/nw26hIHNTJwY
-        DimkNH9QMgoNuVOjWobWmHU=
-X-Google-Smtp-Source: ACHHUZ5nXUjrkHJJqZubtc4QIx+lUpo9lpetj+xJnjsSbOOPwPGl3DLmwZ/4eyGZitvMdpnXO1gDng==
-X-Received: by 2002:a5d:640c:0:b0:301:8551:446a with SMTP id z12-20020a5d640c000000b003018551446amr8855533wru.2.1685316429065;
-        Sun, 28 May 2023 16:27:09 -0700 (PDT)
-Received: from Ansuel-xps. (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.gmail.com with ESMTPSA id e2-20020adffc42000000b002ff2c39d072sm11877937wrs.104.2023.05.28.16.27.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 May 2023 16:27:08 -0700 (PDT)
-Message-ID: <6473e34c.df0a0220.33a79.6c95@mx.google.com>
-X-Google-Original-Message-ID: <ZHNLBp9skiowFgxL@Ansuel-xps.>
-Date:   Sun, 28 May 2023 14:37:26 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S229691AbjE2FIR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 01:08:17 -0400
+Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E59B83;
+        Sun, 28 May 2023 22:08:13 -0700 (PDT)
+Received: from sophie-lab.localnet ([172.16.0.254])
+        (user=kaima@hust.edu.cn mech=LOGIN bits=0)
+        by mx1.hust.edu.cn  with ESMTP id 34T4t7pt020146-34T4t7pu020146
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 29 May 2023 12:55:07 +0800
+From:   Kai Ma <kaima@hust.edu.cn>
+To:     Stephen Boyd <sboyd@kernel.org>, NXP Linux Team <linux-imx@nxp.com>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
- multi ops
-References: <20230427150717.20860-1-ansuelsmth@gmail.com>
- <20230427150717.20860-3-ansuelsmth@gmail.com>
- <82072c2b-8483-6fb6-a9d1-c9882825c9cb@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Jesse Taube <mr.bossman075@gmail.com>,
+        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH] clk: imx: clk-imxrt1050: fix memory leak in
+ imxrt1050_clocks_probe
+Date:   Mon, 29 May 2023 12:55:07 +0800
+Message-ID: <22043583.EfDdHjke4D@sophie-lab>
+In-Reply-To: <ZGX/PjYBVGuECcPg@linaro.org>
+References: <20230418113451.151312-1-kaima@hust.edu.cn> <ZGX/PjYBVGuECcPg@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82072c2b-8483-6fb6-a9d1-c9882825c9cb@linaro.org>
+Content-Type: multipart/signed; boundary="nextPart7679923.EvYhyI6sBW";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-FEAS-AUTH-USER: kaima@hust.edu.cn
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, May 27, 2023 at 06:11:16PM +0200, Konrad Dybcio wrote:
-> 
-> 
-> On 27.04.2023 17:07, Christian Marangi wrote:
-> > Some RCG frequency can be reached by multiple configuration.
+--nextPart7679923.EvYhyI6sBW
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Kai Ma <kaima@hust.edu.cn>
+Date: Mon, 29 May 2023 12:55:07 +0800
+Message-ID: <22043583.EfDdHjke4D@sophie-lab>
+In-Reply-To: <ZGX/PjYBVGuECcPg@linaro.org>
+MIME-Version: 1.0
+
+On Thursday, May 18, 2023 6:34:38 PM CST Abel Vesa wrote:
+> On 23-04-18 11:34:51, Kai Ma wrote:
+> > Use devm_of_iomap() instead of of_iomap() to automatically
+> > handle the unused ioremap region. If any error occurs, regions allocated by
+> > kzalloc() will leak, but using devm_kzalloc() instead will automatically
+> > free the memory using devm_kfree().
 > > 
-> > Add clk_rcg2_fm_ops ops to support these special RCG configurations.
+> > Also, fix error handling of hws by adding unregister_hws label, which
+> > unregisters remaining hws when iomap failed.
 > > 
-> > These alternative ops will select the frequency using a CEIL policy.
-> > 
-> > When the correct frequency is found, the correct config is selected by
-> > calculating the final rate (by checking the defined parent and values
-> > in the config that is being checked) and deciding based on the one that
-> > is less different than the requested one.
-> > 
-> > These check are skipped if there is just on config for the requested
-> > freq.
-> > 
-> > qcom_find_freq_multi is added to search the freq with the new struct
-> > freq_multi_tbl.
-> > __clk_rcg2_select_conf is used to select the correct conf by simulating
-> > the final clock.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > ---
-> >  drivers/clk/qcom/clk-rcg.h  |   1 +
-> >  drivers/clk/qcom/clk-rcg2.c | 152 ++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/qcom/common.c   |  18 +++++
-> >  drivers/clk/qcom/common.h   |   2 +
-> >  4 files changed, 173 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> > index dc85b46b0d79..f8ec989ed3d9 100644
-> > --- a/drivers/clk/qcom/clk-rcg.h
-> > +++ b/drivers/clk/qcom/clk-rcg.h
-> > @@ -188,6 +188,7 @@ struct clk_rcg2_gfx3d {
-> >  
-> >  extern const struct clk_ops clk_rcg2_ops;
-> >  extern const struct clk_ops clk_rcg2_floor_ops;
-> > +extern const struct clk_ops clk_rcg2_fm_ops;
-> >  extern const struct clk_ops clk_rcg2_mux_closest_ops;
-> >  extern const struct clk_ops clk_edp_pixel_ops;
-> >  extern const struct clk_ops clk_byte_ops;
-> > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> > index 76551534f10d..4f2fe012ef5f 100644
-> > --- a/drivers/clk/qcom/clk-rcg2.c
-> > +++ b/drivers/clk/qcom/clk-rcg2.c
-> > @@ -266,6 +266,104 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
-> >  	return 0;
-> >  }
-> >  
-> > +static const struct freq_conf *
-> > +__clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
-> > +		       unsigned long req_rate)
-> > +{
-> > +	unsigned long best_rate = 0, parent_rate, rate;
-> > +	const struct freq_conf *conf, *best_conf;
-> > +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> > +	struct clk_hw *p;
-> > +	int index, i;
-> > +
-> > +	/* Exit early if only one config is defined */
-> > +	if (f->num_confs == 1)
-> > +		return f->confs;
-> > +
-> > +	/* Search in each provided config the one that is near the wanted rate */
-> > +	for (i = 0, conf = f->confs; i < f->num_confs; i++, conf++) {
-> > +		index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
-> > +		if (index < 0)
-> > +			continue;
-> > +
-> > +		p = clk_hw_get_parent_by_index(hw, index);
-> > +		if (!p)
-> > +			continue;
-> > +
-> > +		parent_rate =  clk_hw_get_rate(p);
-> > +		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
-> > +
-> > +		if (rate == req_rate) {
-> > +			best_conf = conf;
-> > +			break;
-> > +		}
-> > +
-> > +		if (abs(req_rate - rate) < abs(best_rate - rate)) {
-> Shouldn't this be:
+> > Fixes: 7154b046d8f3 ("clk: imx: Add initial support for i.MXRT1050 clock driver")
+> > Signed-off-by: Kai Ma <kaima@hust.edu.cn>
 > 
-> if (abs(req_rate - rate) < abs(best_rate - req_rate)
+> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 > 
-> ?
-> 
-> this way it'd say
-> 
-> "if this iteration's rate is closer to the requested one than the
-> best one we've found yet, it's better"
->
-
-Hi, thanks for the review!
-
-I wonder if even better would be something where we save the best rate
-diff and just compare that.
-
-rate_diff = abs(req_rate - rate)
-if (rate_diff < best_rate_diff) {
-	best_rate_diff = rate_diff;
-	best_conf = conf;
-}
-
-And best_rate_diff init to ULONG_MAX?
-
-> > +			best_rate = rate;
-> > +			best_conf = conf;
-> > +		}
-> > +	}
-> > +
-> > +	/*
-> > +	 * Very unlikely.
-> > +	 * Force the first conf if we can't find a correct config.
-> > +	 */
-> > +	if (unlikely(i == f->num_confs))
-> > +		best_conf = f->confs;
-> Is that a supported scenario or would it be a device driver / clock
-> driver error?
+> Stephen, can you apply this through clk-fixes?
 > 
 
-It's to handle case for the 2 continue in the loop and arriving in a
-situation where best_conf was never set?
+Thanks for your review, I am glad to let you know that I am a student at a
+university and we collaborate to contribute to the Linux kernel. Here we
+have some similar patches for clk. Could you please take care of them?
 
-Should we return a warning and an ERR_PTR? Idea was to provide a best
-effort selection.
+[1] https://lore.kernel.org/linux-arm-kernel/DU0PR04MB9417B63DE97D4A2A77B4176C88969@DU0PR04MB9417.eurprd04.prod.outlook.com/T/
+[2] https://lore.kernel.org/linux-arm-kernel/20230503070607.2462-1-lyx2022@hust.edu.cn/T/
+[3] https://lore.kernel.org/linux-arm-kernel/dc0f2863-d5d5-5102-eb8e-ceea92c03fda@oss.nxp.com/
+[4] https://lore.kernel.org/linux-arm-kernel/9a2ab7ec-07ee-255f-a143-9b6c8df7c1e2@gmail.com/
 
-> > +
-> > +	return best_conf;
-> > +}
-> > +
-> > +static int _freq_tbl_fm_determine_rate(struct clk_hw *hw, const struct freq_multi_tbl *f,
-> > +				       struct clk_rate_request *req)
-> > +{
-> > +	unsigned long clk_flags, rate = req->rate;
-> > +	const struct freq_conf *conf;
-> > +	struct clk_hw *p;
-> > +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> swap lines 2, 3, 4 to 4, 2, 3 and you'll get a revers-Christmas-tree!
-> 
+Thank you very much!
 
-Thanks, didn't notice this. Will do in v5.
+Regards,
+Kai Ma
 
--- 
-	Ansuel
+--nextPart7679923.EvYhyI6sBW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEOL4x3UcITzqVpkF5dHxtpLztq4UFAmR0MCsACgkQdHxtpLzt
+q4UphAgAnrurl7BzADxMZ3h8kBcriFp9uk4EAUxcpokix8jD7dp9y6SBJsckqVTG
+KWGX5guMpVJ44+vClDOJVcT+odTlO5/I2f+ckamSCp2xdTFPZ/TEjpZTfbHI2csL
+rXD/h/5dbZ4MjGbngWrkq+teS6LqMYuofyosEV9wBpe85bMpfqy1ti5wGQJH2Kzg
+0BSyGYi6obWDsPu05HLaBiwVQY5EJJX3ss7QW0ErtQOajGbRTqW3A+SUluUrvFUg
+7uRNmox67KDcgkA07BFWZ/IkrFsv/4E3DLR98B9oOq/DTqHEGz+g9pB7T14PhR2u
+PTyXpcPtzqGoTaTzjcs22grJt2TsGw==
+=CDQ6
+-----END PGP SIGNATURE-----
+
+--nextPart7679923.EvYhyI6sBW--
+
+
+
