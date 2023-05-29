@@ -2,144 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E64C77B7A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 20:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F950C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 23:47:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbjE2Uis (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 May 2023 16:38:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51270 "EHLO
+        id S229825AbjE2XrY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 May 2023 19:47:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjE2Uir (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 16:38:47 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF703C9;
-        Mon, 29 May 2023 13:38:45 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-96f9cfa7eddso666030866b.2;
-        Mon, 29 May 2023 13:38:45 -0700 (PDT)
+        with ESMTP id S229572AbjE2XrY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 19:47:24 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA34BE
+        for <linux-clk@vger.kernel.org>; Mon, 29 May 2023 16:47:21 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f3b39cea1eso4072677e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 29 May 2023 16:47:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1685392724; x=1687984724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U1toJ4Ziiwkh6Uorqj0Y7CR8iggvNFOiNmMnjnIZtME=;
-        b=jSTFRK90J4fjGPvkA2TKfJY2v4K96Gd0EFHgmeeisj5WF0B697V0YN8iDEI8dq8F2S
-         BjddDb5lARn85ymxhNdSfn+wPq7QHypoBDjF/PNnq5T0OVqWPRusr3g+WMR7MSWBgJFZ
-         ithPzxjE4liO2A6ntGlySxN3wZiLQlYUuAF4gnHRQOaQDq29zg9Ugjjjq9Ywcph+Eu0x
-         b5t7d07GEsR9E24MlEPXWOwV/Knq1HXU3aMF+yhkSzDVdkzWWzxQz1gnTuXAp+VYFhwM
-         uinEs07l7yXB7O4WcXQKa/4Obpp3VCIyclSTDBKV8oyIpcaHqiPwW8XvMRo86vBk/n67
-         XR5Q==
+        d=linaro.org; s=google; t=1685404039; x=1687996039;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KksDJiPehvkAehMey594LHHeO0S0qiD/74RAy1ncX20=;
+        b=Wjh1XeibYGOcuXpSpjleavimti87a29KpU8h4c2ujfQBJnFblS65GsguvZlLm8ztYp
+         nGLySLSfR1kuswi5790jyAukoC78yO1k2nBRsv+qJJWW+2uLLkMpCtNsChamEsTbMMRM
+         NU6dzLAcrwMy+B6Bpo19xPbPTwPqa58TBfw8PvYWViU42QAy1uxFHUx61irKgyq4UU7L
+         ONQpmCZkSYyPEtHVzMEja2TMrCaEmhvGxILkD8PAAk2tiVuTEGKwittHQTM6ciQX1+Xk
+         wHXN6JF6dMhd2yUffILZ8JNNvrXvK/QttFvC64zBZaPRx/IiFqsNdz4ppNrbz5Jt3rpv
+         R5fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685392724; x=1687984724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U1toJ4Ziiwkh6Uorqj0Y7CR8iggvNFOiNmMnjnIZtME=;
-        b=V2N/R9ojq/C/f8JRxNojrFsH3gQAFFYfoEuDDZ4Sqgz7M9coHAOloiyOZtHSW03lfK
-         jXo5BYK1XGUqf3KZ3FFpbpxYCBx4fLEixKmp2iHWjTLnhoESzXRrUuEhOoiAvhk73FI9
-         Et6U9waqC18icv7A5kQu3WJGkwUlgitC2egNx6wRqEg4b3W+2HmUNrNwkcf7ib8urWRY
-         mzfW9bMcnUWsroaNyOZ1yxQKKpgZJo0m3wp7XKfQ8HUGceLkFGarGcVkxphfH03SRF0c
-         NoctfvWFwJmo1k9fnf58hwziWmyWCzx3XA+bg5d3SrZrRGPDcP4Qc+Un2CaA6B0R1jXv
-         ir4w==
-X-Gm-Message-State: AC+VfDyeuExoZ0jK5cQDIJ9iQFJ1fFNu5o8FixES5x6+OfSpoGFP0HfQ
-        KuoTP6y+Zjmaj86h4TJxfwZU+gDJ1rOEbvh2aRQ=
-X-Google-Smtp-Source: ACHHUZ4UtXw5S6P31cGYC8SENa/qvkWQuSzFjsy13hgt+tpBjTHl3HQ3Xk+hjLn2wdue1VC2ihr2v8r1mi/Prs9uGvU=
-X-Received: by 2002:a17:907:7fa7:b0:94f:59aa:8a7c with SMTP id
- qk39-20020a1709077fa700b0094f59aa8a7cmr409487ejc.20.1685392724055; Mon, 29
- May 2023 13:38:44 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1685404039; x=1687996039;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KksDJiPehvkAehMey594LHHeO0S0qiD/74RAy1ncX20=;
+        b=IbIqcbXePYP4SMA1UWfiKmz95Oxlb0JgQ1/W/rZju4Avwi9APYE2dBFmb4essY+/uN
+         wEmvzgMuFpfHm0PmwTWrc5GScJOzRi/v+/Gt1pAhRfcmeqBesyjcP3YJNnwnEeAid0kS
+         CaAnRwfbhhZgqG1S5XS+F0asmkf7sUvXAf/eAmS16KM20QVgz4Us95ujtzLbfd2UCJCE
+         rex/GNwWqB/o/tdxjfBGAFjVpeAqzo3fQia/stzpoibi7ecSK8NXIanSs5i+cndSnbxx
+         x6ZNYSw7cq/Ni9cLBE77nLOGVgOOZNvuaP44hxs4zzsM26RAuz0DZswbGCzU6tEU5UT4
+         WLzA==
+X-Gm-Message-State: AC+VfDySHUlc/reOGdKfPqaxMX66fg5s8nrVhuYgQ9+7jRridwBnFFdd
+        N4GWMFc1Qf5KdRWvbge3IIEU1w==
+X-Google-Smtp-Source: ACHHUZ6ajtqYPSD7aDQff1OU2KWegonez+0cK/al21X0T5/5kIlO0VeQxeRzM79iIh6GKdWvIlAWOg==
+X-Received: by 2002:ac2:5292:0:b0:4f2:5c4b:e69b with SMTP id q18-20020ac25292000000b004f25c4be69bmr75003lfm.67.1685404039605;
+        Mon, 29 May 2023 16:47:19 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id t19-20020ac25493000000b004f13ca69dc8sm148539lfk.72.2023.05.29.16.47.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 May 2023 16:47:18 -0700 (PDT)
+Message-ID: <d4e8f17b-78a2-b6c6-36e2-ccc526430df1@linaro.org>
+Date:   Tue, 30 May 2023 02:47:18 +0300
 MIME-Version: 1.0
-References: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
- <20230517133309.9874-6-ddrokosov@sberdevices.ru> <CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com>
- <20230522130033.a47vlybocme66rev@CAB-WSD-L081021>
-In-Reply-To: <20230522130033.a47vlybocme66rev@CAB-WSD-L081021>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 29 May 2023 22:38:33 +0200
-Message-ID: <CAFBinCAk9+Km3BssA8d8nc_Z_GbhY87FD3qQRpZ2k7ChKt7TBg@mail.gmail.com>
-Subject: Re: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        khilman@baylibre.com, jian.hu@amlogic.com, kernel@sberdevices.ru,
-        rockosov@gmail.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
+Content-Language: en-GB
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
+ <20230507175335.2321503-2-dmitry.baryshkov@linaro.org>
+ <20230509055044.GA4823@thinkpad>
+ <CAA8EJpoJr6gK=7fmwmF4+Xi5Ch_-+8L1q1WHkfVOOg+6qj=P3w@mail.gmail.com>
+ <20230511081504.GA12021@thinkpad>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230511081504.GA12021@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Dmitry,
+On 11/05/2023 11:15, Manivannan Sadhasivam wrote:
+> On Tue, May 09, 2023 at 02:20:07PM +0300, Dmitry Baryshkov wrote:
+>> On Tue, 9 May 2023 at 08:50, Manivannan Sadhasivam
+>> <manivannan.sadhasivam@linaro.org> wrote:
+>>>
+>>> On Sun, May 07, 2023 at 08:53:35PM +0300, Dmitry Baryshkov wrote:
+>>>> Using PWRSTS_RET on msm8974's MDSS_GDSC causes display to stop working.
+>>>> The gdsc doesn't fully come out of retention mode. Change it's pwrsts
+>>>> flags to PWRSTS_OFF_ON.
+>>>>
+>>>
+>>> What does "stop working" implies? Does it work during boot and randomly stopped
+>>> working or it stopped working after resume from suspend?
+>>
+>> It stops working during the boot. I observed the MDP not starting up
+>> properly. Mea culpa, I did not look deep enough into the details, just
+>> stomped upon this change which fixes the problem for me.
+>>
+> 
+> IIUC, GDSC will be transitioned to retention mode only if the parent domain goes
+> to low power mode. So if the MDSS GDSC goes to retention mode during boot, then
+> it suggests that the parent domain is not voted properly. Unless I misunderstood
+> something...
 
-On Mon, May 22, 2023 at 3:00=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
-es.ru> wrote:
-[...]
-> > This IP block has at least one additional input called "sys_pll_div16".
-> > My understanding is that the "sys_pll_div16" clock is generated by the
-> > CPU clock controller. Support for the CPU clock controller
-> > (dt-bindings and a driver) will be added at a later time by Dmitry.
-> > How can we manage incrementally implementing the clock controllers?
-> > From a hardware perspective the "sys_pll_div16" input is mandatory.
-> > How to manage this in the .dts patches then (for example: does this
-> > mean that Dmitry can only add the clock controller to the .dts when
-> > all clock controller bindings have been implemented - or is there
-> > another way)?
->
-> You're absolutely right: currently, not all inputs are supported because
-> the CPU clock controller isn't ready yet =E2=80=93 I'm working on it at t=
-he
-> moment.
->
-> I understand your concerns about bindings and schema description, but
-> there is an issue to be considered. I'm developing the entire clock
-> controller A1 subsystem incrementally in three stages: peripherals and
-> PLL, CPU, and Audio. This is because the CPU can operate at a static
-> frequency and voltage, and the board boots normally without the CPU
-> clock controller, thermal sensor, and OPP table. Audio is also
-> important, but it's optional. On the other hand, without setting up the
-> peripherals and PLL controllers, the board won't function because
-> they're fundamental.
-I understand your approach and I like it (without that incremental
-approach you would probably be looking at a series with 15-20
-patches).
+Not sure, what is the parent domain here. Note, it is a pretty old 
+implementation.
 
-Maybe the dt-binding maintainers have a suggestion for us here?
-Let me try to summarize the issue in a few bullet points:
-- There's (at least) four clock controllers on the Amlogic A1 SoC
-- Some of these clock controllers take the outputs of another clock
-controller as inputs
-- In this series patch the peripheral clock controller has an input
-called "sys_pll_div16"
-- The clock controller which provides the "sys_pll_div16" clock is not
-implemented yet (my understanding is that implementing it and adding
-it to this series is not easy: it would add even more patches that
-need to be reviewed and in general it's a tricky clock controller to
-implement as it manages the CPU clocks)
+> 
+> Or is the GDSC behavior changes between RPM and RPMh?
+> 
+> - Mani
+> 
+>>>
+>>> Even though reverting to non-retention mode works, I think the issue might be
+>>> somewhere else. Like the vote might be missing to get the GDSC out of retention
+>>> mode.
+>>
+>> I don't think there is a vote missing. The driver votes on MDSS_GDSC
+>> before enabling access to any of the registers from the MDSS region.
+>>
+>>>
+>>> - Mani
+>>>
+>>>> Fixes: d399723950c4 ("clk: qcom: gdsc: Fix the handling of PWRSTS_RET support")
+>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>> ---
+>>>>   drivers/clk/qcom/mmcc-msm8974.c | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+>>>> index aa29c79fcd55..277ef0065aae 100644
+>>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+>>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+>>>> @@ -2401,7 +2401,7 @@ static struct gdsc mdss_gdsc = {
+>>>>        .pd = {
+>>>>                .name = "mdss",
+>>>>        },
+>>>> -     .pwrsts = PWRSTS_RET_ON,
+>>>> +     .pwrsts = PWRSTS_OFF_ON,
+>>>>   };
+>>>>
+>>>>   static struct gdsc camss_jpeg_gdsc = {
+>>>> --
+>>>> 2.39.2
+>>>>
+>>>
+>>> --
+>>> மணிவண்ணன் சதாசிவம்
+>>
+>>
+>>
+>> -- 
+>> With best wishes
+>> Dmitry
+> 
 
-> Right now, we're in the first stage of the plan. Unfortunately, I can't
-> disclose the exact names and number of clock bindings for the CPU and
-> Audio, as they're still in development and only exist in my head or
-> draft versions.
->
-> If possible, I'd prefer to provide the new bindings and connections once
-> all the appropriate drivers are finalized.
-Question to Conor and Krzysztof (assuming you read my summary above):
-Is it fine that Dmitry adds additional inputs to the peripheral clock
-controller binding in later patches?
-If not: how can we proceed in case we need to add them now (the
-dt-binding example is the easy part for me as we can just make up a
-phandle like &sys_pll_div16_clk and use that - but this can't work
-when Dmitry tries to add the clock controller to meson-a1.dtsi)
+-- 
+With best wishes
+Dmitry
 
-PS: Dmitry is trying to get this series into Linux 6.5. As far as I
-remember the common clock maintainers don't take pull requests with
-new features after -rc6 (which is in less than two weeks).
-So time is getting a bit short and for me this is the very last
-outstanding question. If you say that it's fine to add clocks later on
-this will immediately get my Reviewed-by.
-
-
-Best regards,
-Martin
