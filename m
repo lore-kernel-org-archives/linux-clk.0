@@ -2,117 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A3EC77B7A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 08:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048B2C7EE32
+	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 08:51:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbjE2Ifa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 May 2023 04:35:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43950 "EHLO
+        id S231758AbjE2IvS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 May 2023 04:51:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231437AbjE2If1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 04:35:27 -0400
-Received: from mail.z3ntu.xyz (mail.z3ntu.xyz [128.199.32.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE411A7;
-        Mon, 29 May 2023 01:35:25 -0700 (PDT)
-Received: from [192.168.122.1] (217-149-172-244.nat.highway.telekom.at [217.149.172.244])
-        by mail.z3ntu.xyz (Postfix) with ESMTPSA id 9EFA3C6A55;
-        Mon, 29 May 2023 08:35:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=z3ntu.xyz; s=z3ntu;
-        t=1685349324; bh=pRZ6AHRKQHHZmbPpd+nFn/VwicGcOul2r6Hztykw67M=;
-        h=From:Date:Subject:To:Cc;
-        b=qM0mA/JQ7ZP/BUB88GX6aRcgYqx7gnSPix/bnYQSKGCaJtstJ0ww0U1yrNam5jPjl
-         NOCFUZ0VjfEhKMXTQ9EUA2SSfjROJ2X4pvXpYnnlTP2pxH8lHsFCmnFciZqdTOn+7T
-         QoBj5l3jSCDxdMh/tUTZvAEnU5gcY7lDQGjoG1rc=
-From:   Luca Weiss <luca@z3ntu.xyz>
-Date:   Mon, 29 May 2023 10:34:40 +0200
-Subject: [PATCH v2] clk: qcom: mmcc-msm8974: Add OXILICX_GDSC for msm8226
+        with ESMTP id S231745AbjE2IvI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 04:51:08 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93546C2;
+        Mon, 29 May 2023 01:50:55 -0700 (PDT)
+Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 86F9E6605961;
+        Mon, 29 May 2023 09:50:53 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1685350254;
+        bh=jtQ3UzAAL9SWJIafGv8zGAcWl+Tvfd/waNo7frdU8ns=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=NDptBfeV6vql8MIEM5QwYBfSorO2E/aNOk11MUi0WgNVihvFcC30yxaXBK2BG6Cwf
+         hWfuHgtyQGUzqQ2NGpY0Zo8wXEqN477MTTdR2yd+d5GK9S1HKWyU22vEqw2Z6t8gMz
+         yk35QRpPw+/sH5iuq0l597lv95EnufaqrWvHLAEhGixyO3vstzyOKdLNBgLB4nxgj1
+         D0oLsol8kV2xoELZPp4PXPX2hfqTa07UiKpScpWN492iHieI6FhMAe2BIS5rcDuaDU
+         sLZEMFVjbst1wn1scDKbu4/24md9DeKrS7nzB7HM3/UXrCBpS7bvg1nbX8qj37Dhp3
+         2Vxbem/RuvvlQ==
+Message-ID: <89b3e3bb-d725-1f92-7a0d-b5bc1109dafc@collabora.com>
+Date:   Mon, 29 May 2023 10:50:50 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230506-msm8226-oxilicx-v2-1-f7e4ebff3d61@z3ntu.xyz>
-X-B4-Tracking: v=1; b=H4sIAJ9jdGQC/3WNyw6CMBAAf4Xs2Zp2Cwie/A/DgcdWNoFiWiAFw
- r9bvXucSSZzgCfH5OGeHOBoZc+TjYCXBNq+ti8S3EUGlKhlJnMx+rFAzMUUeOA2iJvRRpqC0lJ
- 1EKum9iQaV9u2j51dhiHKtyPD4bd5VpF79vPktt91VV/7f7AqoUSGpNOmTI1BfOzazss1bDtU5
- 3l+AJf3M+bDAAAA
-To:     ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH v2 1/2] clk: composite: Fix handling of high clock rates
+Content-Language: en-US
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Dudziak <bartosz.dudziak@snejp.pl>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luca Weiss <luca@z3ntu.xyz>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1618; i=luca@z3ntu.xyz;
- h=from:subject:message-id; bh=pRZ6AHRKQHHZmbPpd+nFn/VwicGcOul2r6Hztykw67M=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBkdGPG8aHQT1XHMemI7VxuRpi3tHbKQMOP++yoI
- /sYjvNBsWaJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZHRjxgAKCRBy2EO4nU3X
- VutjD/9VbZpFUfSOrWaLmRwRJ5W8sUG9Y+ZuEBundE4vJXfbdoLcqkNvFuewmL6E0Thxh5Sa4wm
- NR5TQsQWeN+++LyLS5ByZcMvWm6DILCoH2Nwkwvt9hTO6LRR83mBOarhwEC9sOFw9ZxPoV5gnJg
- J6z1IayW3dl9FljI5aHoEV73hUU1ezIsGDJlx3sQ/vY9uN3IbXfOmBZvPqlZLyanWyWznOUinB2
- R20qv3UwUdQ0p9Wus3ljGt594LCd998k8HUZ7iuXYaUSXees5ljqSdyoZzHdNpiWhrNlmINX+Ca
- mqIWcTVDJp5QG6Q6naqPMC78LrPlivqSIe1QM/l5YsWkKF/QXMzczfQLIdWvrQ5zy1rxufCEz3R
- gzE8VgH79Dw2XB0Ca1OScM5WpDm8pzayyrljE28inUwdOAtlE3ocUNqME+ZTxdganPCWlaqSX71
- CldQ9XqJE6FnwVe+tTmEBjXWDUa/2H2XPKCHgXfHTBC2fauXRCOeNmkqKAIEthPHXP1Smy4JQoz
- DpoMvdGZBJkkNSeVBtWdidw0oMOTEMJFhYPPrEKDwWjuA9erQWg4IdzbYpnbBw7cOi1H5QdNcfr
- VhBL405KNb1NvFUAC9np7iw1qz6rzGZ//VKQTBV9/QJvWjaSCrYaMsWHPGydAGkaGmfmjpqIty2
- AImKWJu8/7nXhzA==
-X-Developer-Key: i=luca@z3ntu.xyz; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christopher Obbard <chris.obbard@collabora.com>,
+        David Laight <David.Laight@ACULAB.COM>, kernel@collabora.com,
+        stable@vger.kernel.org
+References: <20230526171057.66876-1-sebastian.reichel@collabora.com>
+ <20230526171057.66876-2-sebastian.reichel@collabora.com>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230526171057.66876-2-sebastian.reichel@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On msm8226 we also have OXILICX_GDSC but we need a slighly different
-config, with a .cxcs defined for clock but with no parent.
+Il 26/05/23 19:10, Sebastian Reichel ha scritto:
+> ULONG_MAX is used by a few drivers to figure out the highest available
+> clock rate via clk_round_rate(clk, ULONG_MAX). Since abs() takes a
+> signed value as input, the current logic effectively calculates with
+> ULONG_MAX = -1, which results in the worst parent clock being chosen
+> instead of the best one.
+> 
+> For example on Rockchip RK3588 the eMMC driver tries to figure out
+> the highest available clock rate. There are three parent clocks
+> available resulting in the following rate diffs with the existing
+> logic:
+> 
+> GPLL:   abs(18446744073709551615 - 1188000000) = 1188000001
+> CPLL:   abs(18446744073709551615 - 1500000000) = 1500000001
+> XIN24M: abs(18446744073709551615 -   24000000) =   24000001
+> 
+> As a result the clock framework will promote a maximum supported
+> clock rate of 24 MHz, even though 1.5GHz are possible. With the
+> updated logic any casting between signed and unsigned is avoided
+> and the numbers look like this instead:
+> 
+> GPLL:   18446744073709551615 - 1188000000 = 18446744072521551615
+> CPLL:   18446744073709551615 - 1500000000 = 18446744072209551615
+> XIN24M: 18446744073709551615 -   24000000 = 18446744073685551615
+> 
+> As a result the parent with the highest acceptable rate is chosen
+> instead of the parent clock with the lowest one.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 49502408007b ("mmc: sdhci-of-dwcmshc: properly determine max clock on Rockchip")
+> Tested-by: Christopher Obbard <chris.obbard@collabora.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Luca Weiss <luca@z3ntu.xyz>
----
-Changes in v2:
-- oxilicx -> oxili_cx in variable name and .name field
-- Pick up tags
-- Link to v1: https://lore.kernel.org/r/20230506-msm8226-oxilicx-v1-1-52e34b94ff22@z3ntu.xyz
----
- drivers/clk/qcom/mmcc-msm8974.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index 4273fce9a4a4..61f1925d2817 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -2443,6 +2443,16 @@ static struct gdsc oxilicx_gdsc = {
- 	.pwrsts = PWRSTS_OFF_ON,
- };
- 
-+static struct gdsc oxili_cx_gdsc_msm8226 = {
-+	.gdscr = 0x4034,
-+	.cxcs = (unsigned int []){ 0x4028 },
-+	.cxc_count = 1,
-+	.pd = {
-+		.name = "oxili_cx",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
- static struct clk_regmap *mmcc_msm8226_clocks[] = {
- 	[MMSS_AHB_CLK_SRC] = &mmss_ahb_clk_src.clkr,
- 	[MMSS_AXI_CLK_SRC] = &mmss_axi_clk_src.clkr,
-@@ -2533,6 +2543,7 @@ static struct gdsc *mmcc_msm8226_gdscs[] = {
- 	[MDSS_GDSC] = &mdss_gdsc,
- 	[CAMSS_JPEG_GDSC] = &camss_jpeg_gdsc,
- 	[CAMSS_VFE_GDSC] = &camss_vfe_gdsc,
-+	[OXILICX_GDSC] = &oxili_cx_gdsc_msm8226,
- };
- 
- static const struct regmap_config mmcc_msm8226_regmap_config = {
-
----
-base-commit: dd9e11d6477a52ede9ebe575c83285e79e823889
-change-id: 20230506-msm8226-oxilicx-7f3f0f8e491d
-
-Best regards,
--- 
-Luca Weiss <luca@z3ntu.xyz>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
