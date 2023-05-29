@@ -2,235 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E0AC77B7A
-	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 12:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178C2C77B7A
+	for <linux-clk@archiver.kernel.org>; Mon, 29 May 2023 13:14:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231565AbjE2MfU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 May 2023 08:35:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52538 "EHLO
+        id S229606AbjE2NO3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 May 2023 09:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231479AbjE2MfT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 08:35:19 -0400
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F442114;
-        Mon, 29 May 2023 05:35:02 -0700 (PDT)
-Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-307d58b3efbso1974136f8f.0;
-        Mon, 29 May 2023 05:35:02 -0700 (PDT)
+        with ESMTP id S229548AbjE2NO2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 09:14:28 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA309B
+        for <linux-clk@vger.kernel.org>; Mon, 29 May 2023 06:14:27 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id 38308e7fff4ca-2af1a7d2f6aso35068171fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 May 2023 06:14:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685363701; x=1687955701;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVPOX1ZSOyV9Mwnc15tpUCMgaKJSRSoaxmZiy7ixDwk=;
-        b=eS5BKpvvfKUXAVueSxHPOSIxgHU0GOC5Oiu+17YNYlIYpz3BHb1YcHVZv6Sv/VKytI
-         uDn3S+fGXUBWAEXey+flfTKtZnorejS/HhZKSfAhPGbcwIMXtNHBYoABYzrBrtDDnkos
-         61909pmvMy+Tslia++AcUID/T50Gswh28I7IQw0/RdL5asc5ApagPx5gy9mY+DwKKmky
-         LqMAnpiZt6vjoUiG8/XWIRyH+iodgTOIy0BGBwxl5leoAbfnmysy9EHCOaYrCv5c1RmW
-         SyBgR8ciNRm9fpEo1es0YhE35R8QIEiSV3KY3BJT1HV9CwKmncQE8d5LRyqFQDSFQL8E
-         rdpQ==
+        d=linaro.org; s=google; t=1685366065; x=1687958065;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pI47SJKAmBdp/XyFbI1qkN5JuIitULutvqrTPDi5OOc=;
+        b=StyOwK4j+8Ewb1qcNqHTB2+vZF92BeMmzpcndklgtsIIeeiwOOD2r2JWOSHSB17oc2
+         JwfytK7the+sxr8XNr438nNtsr3sYj756bJdLJ87OKP0yDPgCqIga2sNIIYFfBs89TEI
+         DCdgF8eUvHf9A8ojIs2ooQuWHaCqT6f71X0ld0zk0ro3fg+lQwZWleEhM3nMnEBC9EBy
+         PefIw4+8nNqRsecedFWKWpF3jRFf8Vy0tiTCclOiEZLxom8KFnerJK0cn4/uZ9tbkCgS
+         7Gbs+GfvANU/LFTwZHGM9Qb6E2iOUijSwuHjOLmx53AROz9BSM1utE14Cvu+CSS2DrCu
+         qRSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685363701; x=1687955701;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pVPOX1ZSOyV9Mwnc15tpUCMgaKJSRSoaxmZiy7ixDwk=;
-        b=R/AQ4v8SHjcB1xzmBZk8b2pcBF1ta1es7P6fUaQVdyj2qpRk/Yjo1+Ttx6tVD1+qz5
-         yk7sdIJQ16Zy8k7apKYYScQiVewC6ylQMMBSOHTJhKawmEtrRoBVN+BW3jVcHeYU5mmx
-         lpQyltgLAOu/VtnvaEjz6FnqqdcEp7KLBHwUcidUUwQcwUi1Nc6j8kLvb3fC61keKore
-         bw2YEHCvlKEW6zeIrGC9BANrtNLI2H6kKWMHXe96n5yVC8CS8DdEUH8sdg/qvUIhkWwD
-         WQEAmwVkjJMl8e9igfaUyassVtLVIP7RQxk6J6jtgqdhKGlIo0Amt9KmUIm+9UKTht6i
-         UqbQ==
-X-Gm-Message-State: AC+VfDx/E2B6+n4Mdohsv2cfRFkfsAtSWselcdVOJymg4Z/M0rSSR7qg
-        4u25WhJna61fUu6aZpdiYIw=
-X-Google-Smtp-Source: ACHHUZ7d73t2t9td6jGLO4CsnsAHDpAB78W9VG3Ttn7TlZwIVdRD+SON2kTvpbvY7QCuFM69kDMEnw==
-X-Received: by 2002:adf:df0b:0:b0:30a:ab38:3104 with SMTP id y11-20020adfdf0b000000b0030aab383104mr10392208wrl.34.1685363700415;
-        Mon, 29 May 2023 05:35:00 -0700 (PDT)
-Received: from Ansuel-xps. (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.gmail.com with ESMTPSA id e12-20020a5d500c000000b0030ae87bd3e3sm4485906wrt.18.2023.05.29.05.34.59
+        d=1e100.net; s=20221208; t=1685366065; x=1687958065;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pI47SJKAmBdp/XyFbI1qkN5JuIitULutvqrTPDi5OOc=;
+        b=ZuCyvXp2EkrHvfR7mgA91BvJZrqiFoI11aiC1sinrZ2Kw9S/Akb/mFYAxZiSo96EQd
+         S6C1Oh+DBZWoo3oPNn8dn4+wf4uV3sAjD7dMktJ1v3E//CwCZeyON9h1Ft6SEs41Lvdb
+         +ZM2rnM4Rye5V3S0DKLaoGQpdzzIqNbXCSAvi2d7DTzqVmhmXoa/KCOmM714eWT3Gcif
+         gqE9vD6vcCsNEyBi5GhaMTdXHsRzDY2kExRLcO2/12m/qHJylS/7OGALD0g6IAm8CAbD
+         tmCeFrK5wlZz5Aa/kuLkmgsvj6Xe7nF+TfTINONHZc9rbER9ssBik1Gl5EtvBUGUC3S7
+         1YTQ==
+X-Gm-Message-State: AC+VfDzc5HBZB5eAZqkxF0Z+sfoR8yRNCQML+QMHZkPQ9l0WXBxMG7TB
+        w9YPQTpGRi8RSys/5kntgV24Vw==
+X-Google-Smtp-Source: ACHHUZ65Slrl6WIt/Oko8TfXtgc4aHDRSFooOnYTf1cwlRbhdTK/wcV5M5PldBOgz0mVbNLOS/61hg==
+X-Received: by 2002:ac2:554b:0:b0:4ea:e688:a048 with SMTP id l11-20020ac2554b000000b004eae688a048mr3518297lfk.69.1685366065295;
+        Mon, 29 May 2023 06:14:25 -0700 (PDT)
+Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
+        by smtp.gmail.com with ESMTPSA id b30-20020ac25e9e000000b004eff4f67f1csm1966375lfq.304.2023.05.29.06.14.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 May 2023 05:35:00 -0700 (PDT)
-Message-ID: <64749bf4.5d0a0220.325c0.64b5@mx.google.com>
-X-Google-Original-Message-ID: <ZHSb8Q5iyGnYJvKH@Ansuel-xps.>
-Date:   Mon, 29 May 2023 14:34:57 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
+        Mon, 29 May 2023 06:14:24 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 0/2] Add VDD_GX to SM6375 GPUCC
+Date:   Mon, 29 May 2023 15:14:22 +0200
+Message-Id: <20230529-topic-sm6375gpuccpd-v1-0-8d57c41a6066@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC6ldGQC/x2NywqDQAwAf0Vy7oKur7a/UnrIxqgBuy6bWgTx3
+ w09zsAwByhnYYVncUDmn6is0aC6FUAzxomdDMbgS1+XrX+475qEnH66um+ntBGlwRH2TYVdE3C
+ 8g5UBlV3IGGm2Nm7LYjJlHmX/r17v87wAHeVfGHoAAAA=
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
- multi ops
-References: <20230427150717.20860-1-ansuelsmth@gmail.com>
- <20230427150717.20860-3-ansuelsmth@gmail.com>
- <82072c2b-8483-6fb6-a9d1-c9882825c9cb@linaro.org>
- <6473e34c.df0a0220.33a79.6c95@mx.google.com>
- <4afbcdd0-a11c-4826-d669-2ffc9488a8b6@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4afbcdd0-a11c-4826-d669-2ffc9488a8b6@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1685366063; l=718;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=HCX2t2IpEJi3Ewotxu4yw477Xe5XBmpX0dNgEJX7HRE=;
+ b=nu3AraB4RuAKTz/bmTDjL+iPvuPh+vQEXzapurFyk7mkgB0ZA/6feFwBbXFFTGFUZ5xL7YMaA
+ +WgPuuESRNoCu6cN3u5vkMonudeJ6V369hYUPU20WxXzmvlMTQaftHx
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 29, 2023 at 02:12:23PM +0200, Konrad Dybcio wrote:
-> 
-> 
-> On 28.05.2023 14:37, Christian Marangi wrote:
-> > On Sat, May 27, 2023 at 06:11:16PM +0200, Konrad Dybcio wrote:
-> >>
-> >>
-> >> On 27.04.2023 17:07, Christian Marangi wrote:
-> >>> Some RCG frequency can be reached by multiple configuration.
-> >>>
-> >>> Add clk_rcg2_fm_ops ops to support these special RCG configurations.
-> >>>
-> >>> These alternative ops will select the frequency using a CEIL policy.
-> >>>
-> >>> When the correct frequency is found, the correct config is selected by
-> >>> calculating the final rate (by checking the defined parent and values
-> >>> in the config that is being checked) and deciding based on the one that
-> >>> is less different than the requested one.
-> >>>
-> >>> These check are skipped if there is just on config for the requested
-> >>> freq.
-> >>>
-> >>> qcom_find_freq_multi is added to search the freq with the new struct
-> >>> freq_multi_tbl.
-> >>> __clk_rcg2_select_conf is used to select the correct conf by simulating
-> >>> the final clock.
-> >>>
-> >>> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> >>> ---
-> >>>  drivers/clk/qcom/clk-rcg.h  |   1 +
-> >>>  drivers/clk/qcom/clk-rcg2.c | 152 ++++++++++++++++++++++++++++++++++++
-> >>>  drivers/clk/qcom/common.c   |  18 +++++
-> >>>  drivers/clk/qcom/common.h   |   2 +
-> >>>  4 files changed, 173 insertions(+)
-> >>>
-> >>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> >>> index dc85b46b0d79..f8ec989ed3d9 100644
-> >>> --- a/drivers/clk/qcom/clk-rcg.h
-> >>> +++ b/drivers/clk/qcom/clk-rcg.h
-> >>> @@ -188,6 +188,7 @@ struct clk_rcg2_gfx3d {
-> >>>  
-> >>>  extern const struct clk_ops clk_rcg2_ops;
-> >>>  extern const struct clk_ops clk_rcg2_floor_ops;
-> >>> +extern const struct clk_ops clk_rcg2_fm_ops;
-> >>>  extern const struct clk_ops clk_rcg2_mux_closest_ops;
-> >>>  extern const struct clk_ops clk_edp_pixel_ops;
-> >>>  extern const struct clk_ops clk_byte_ops;
-> >>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> >>> index 76551534f10d..4f2fe012ef5f 100644
-> >>> --- a/drivers/clk/qcom/clk-rcg2.c
-> >>> +++ b/drivers/clk/qcom/clk-rcg2.c
-> >>> @@ -266,6 +266,104 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
-> >>>  	return 0;
-> >>>  }
-> >>>  
-> >>> +static const struct freq_conf *
-> >>> +__clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
-> >>> +		       unsigned long req_rate)
-> >>> +{
-> >>> +	unsigned long best_rate = 0, parent_rate, rate;
-> >>> +	const struct freq_conf *conf, *best_conf;
-> >>> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> >>> +	struct clk_hw *p;
-> >>> +	int index, i;
-> >>> +
-> >>> +	/* Exit early if only one config is defined */
-> >>> +	if (f->num_confs == 1)
-> >>> +		return f->confs;
-> >>> +
-> >>> +	/* Search in each provided config the one that is near the wanted rate */
-> >>> +	for (i = 0, conf = f->confs; i < f->num_confs; i++, conf++) {
-> >>> +		index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
-> >>> +		if (index < 0)
-> >>> +			continue;
-> >>> +
-> >>> +		p = clk_hw_get_parent_by_index(hw, index);
-> >>> +		if (!p)
-> >>> +			continue;
-> >>> +
-> >>> +		parent_rate =  clk_hw_get_rate(p);
-> >>> +		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
-> >>> +
-> >>> +		if (rate == req_rate) {
-> >>> +			best_conf = conf;
-> >>> +			break;
-> >>> +		}
-> >>> +
-> >>> +		if (abs(req_rate - rate) < abs(best_rate - rate)) {
-> >> Shouldn't this be:
-> >>
-> >> if (abs(req_rate - rate) < abs(best_rate - req_rate)
-> >>
-> >> ?
-> >>
-> >> this way it'd say
-> >>
-> >> "if this iteration's rate is closer to the requested one than the
-> >> best one we've found yet, it's better"
-> >>
-> > 
-> > Hi, thanks for the review!
-> > 
-> > I wonder if even better would be something where we save the best rate
-> > diff and just compare that.
-> > 
-> > rate_diff = abs(req_rate - rate)
-> > if (rate_diff < best_rate_diff) {
-> > 	best_rate_diff = rate_diff;
-> > 	best_conf = conf;
-> > }
-> > 
-> > And best_rate_diff init to ULONG_MAX?
-> Yeah that would be more readable!
-> 
-> > 
-> >>> +			best_rate = rate;
-> >>> +			best_conf = conf;
-> >>> +		}
-> >>> +	}
-> >>> +
-> >>> +	/*
-> >>> +	 * Very unlikely.
-> >>> +	 * Force the first conf if we can't find a correct config.
-> >>> +	 */
-> >>> +	if (unlikely(i == f->num_confs))
-> >>> +		best_conf = f->confs;
-> >> Is that a supported scenario or would it be a device driver / clock
-> >> driver error?
-> >>
-> > 
-> > It's to handle case for the 2 continue in the loop and arriving in a
-> > situation where best_conf was never set?
-> > 
-> > Should we return a warning and an ERR_PTR? Idea was to provide a best
-> > effort selection.
-> Hm.. I'm not sure what's the expected behavior here.. Stephen?
-> 
+The GPUCC block on SM6375 is powered by VDD_CX and VDD_GX. If the latter
+rail is not online, GX_GDSC will never turn on. Take care of this.
 
-I have this implementation rady, if you want I can send this revision
-and discuss that in v5 directly. It's WARN and returning -EINVAL.
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (2):
+      dt-bindings: clock: sm6375-gpucc: Add VDD_GX
+      clk: qcom: gpucc-sm6375: Enable runtime pm
 
-> > 
-> >>> +
-> >>> +	return best_conf;
-> >>> +}
-> >>> +
-> >>> +static int _freq_tbl_fm_determine_rate(struct clk_hw *hw, const struct freq_multi_tbl *f,
-> >>> +				       struct clk_rate_request *req)
-> >>> +{
-> >>> +	unsigned long clk_flags, rate = req->rate;
-> >>> +	const struct freq_conf *conf;
-> >>> +	struct clk_hw *p;
-> >>> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> >> swap lines 2, 3, 4 to 4, 2, 3 and you'll get a revers-Christmas-tree!
-> >>
-> > 
-> > Thanks, didn't notice this. Will do in v5.
-> > 
+ .../devicetree/bindings/clock/qcom,sm6375-gpucc.yaml  | 15 +++++++++++++++
+ drivers/clk/qcom/gpucc-sm6375.c                       | 19 +++++++++++++++++--
+ 2 files changed, 32 insertions(+), 2 deletions(-)
+---
+base-commit: 6a3d37b4d885129561e1cef361216f00472f7d2e
+change-id: 20230529-topic-sm6375gpuccpd-ca741a64baf8
 
+Best regards,
 -- 
-	Ansuel
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
