@@ -2,109 +2,427 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4271C77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 08:17:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C099FC77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 08:25:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbjE3IRd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 04:17:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35152 "EHLO
+        id S229717AbjE3IZe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 04:25:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229659AbjE3IRd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 04:17:33 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F9DAB2
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 01:17:30 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-96f5d651170so1035696966b.1
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 01:17:30 -0700 (PDT)
+        with ESMTP id S229504AbjE3IZd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 04:25:33 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66249D
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 01:25:30 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-30aef0499b6so1003521f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 01:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685434648; x=1688026648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Dej/FFOhlE209KZmIstjtLDQxOMnp2DLbpIJPYah0A=;
-        b=rEufenXkmE+fxdBlKUC1YtyC9X07+Ci2rPmXRsV3WUV9jRjRbQuIrPDnNZvxSM2mxf
-         X3RNTWjoWWpRxl8BL/JW5dYXMmPsneBLDl1Dmc6BP2bPa1lDf2bE33qwb4Prv3FsTbML
-         /71z6JhU30309RGtVFkstiUwREa1kJ5ofNQ6vN5Dlh/dhVBM23xvaiD/ufCjCYPAjBF3
-         XI4+MVi9AXdyxrFKwYuvqgdQ96YEo1lXf5Xs7b+rTjAiHGiy8iOscayzY2bWxOH5iwrW
-         pLzGv8SgZ58jXBhoR0tSMtOHn3g+APVxq/t6A9dCV+PFv/YPhbCNsejnl+LzPM1udCKI
-         1dZA==
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685435129; x=1688027129;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=SvIiC0tOn9JXjgEEMb2AHKhOD9R5hXhsC5m8XidP4wE=;
+        b=hHwXEXJDcZfSy1cHOIb+C4vds2lK2fU4gM1AYiPuppLxTFqTQEiF53w6enCM4NEcSJ
+         e9hdovgvTk7yx8sr8kM6R0pdTZZNdnwiOGYkdN61lMLK2pHUu+zac+bPF8eWYVVLb6IJ
+         FfGcKFexE41CCeHIg08+QyEiBQnGDblXpyJ7y8X5RyDS3zKbVODwwGk3Wz9cj4drWh/e
+         +e59OiG9QjLLN/Sd0cGkJj+bF3FU+CX+fV3OJ2MyrQ2iq+OgqE4HWjghOaiw04Nqwl74
+         eOoKck/Vm0euPB2Q6AvIDdUQzD4SOqhpw4G0udS7lySowMiEZB/SLq3QzwF69PSPKOlG
+         xs/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685434648; x=1688026648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20221208; t=1685435129; x=1688027129;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8Dej/FFOhlE209KZmIstjtLDQxOMnp2DLbpIJPYah0A=;
-        b=CXDmEKPB6fHSo34dZ//lzTgu7boQqR+F2+/e/sh5VJOLbpzMSaYkfZnCH3nvLMWBqH
-         nJTpJO6jpSL/q6ULAmjacGzda1xFriD9fXy2rdt71TuYMlsEliTZoSqEmA1S7SS+b5nI
-         +bEyIyi99cBtXFO1Gn4XlXP6OocmoHA9viWEIeRvIoEW+Tn+nnqOEcpqa2W41hyjnnSg
-         NEKhhdNGGmcOBTqxQcvkx2K2lZ/2wyq864APFBr3dX9K30wuvDndspC73DpGKMdwUbqx
-         1DQyJUu33a07D3/rZzr8wJ5Lso8xh/t/ZXjhQcmhiOS4xReRiNcd7Uj64QL9lS5J4uMW
-         xQgQ==
-X-Gm-Message-State: AC+VfDycDIzMkTXuBlic2Tq7f6HSiwB+RNID7J011qF91YVxc8R6aGUI
-        FUJM7gwPd/jVgPNqL5uK+HkA37Q4fQRH35iUGsY=
-X-Google-Smtp-Source: ACHHUZ4yZU/IUfHWVCAaHSvVKWusYU73uAxcR1RUnuf/v1Ip6xt3HYUd1Y/9cpLkPOB1X4DLiH0K1A==
-X-Received: by 2002:a17:907:784:b0:96f:a412:8b03 with SMTP id xd4-20020a170907078400b0096fa4128b03mr1486035ejb.5.1685434648674;
-        Tue, 30 May 2023 01:17:28 -0700 (PDT)
-Received: from blmsp ([2001:4090:a245:802c:bc2b:8db8:9210:41eb])
-        by smtp.gmail.com with ESMTPSA id f7-20020a170906494700b0095807ab4b57sm7116229ejt.178.2023.05.30.01.17.27
+        bh=SvIiC0tOn9JXjgEEMb2AHKhOD9R5hXhsC5m8XidP4wE=;
+        b=HyDW27nCG+cipD3XfN7kj4pqyuv3tBB9fqwWs5CRETF+JWtJvNE52KFXEL9peKDhMU
+         rMJFScjw4MBdYm4ivrLvt1yysq9jgqtR60rxAmzmFYoPUvj3iiWE7bKvfC0gPsUJBRVe
+         bj8+zl8bRa7PV/c0ax4kpROwhIi5jlTjAFY7nsdz1aoCle9wOUd0y6LeMJt7v4c2Niad
+         RuFWTO/xyBnruxZbdmD+cSdckJSk7b1p79eBT0CPfiEZowXuV/R2LXmG7W4qTYX1MCMP
+         CR4D3TixnSnxyCs8LNsiQJMaJq7uAtGlk5UtmvoZK/9sieoDnWqWg9KuzsBSF9witkp0
+         bd4A==
+X-Gm-Message-State: AC+VfDzKeTL+ZSniFmlqeCvuT4rCSQKDhCjy2+CdPW0fA5e3sMWMuvav
+        csEle9JX+cKgeKUBXt9lYwPSAw==
+X-Google-Smtp-Source: ACHHUZ48T0Rf/UZpdnaERcC1zFBnmkpHQ7DfgsP9176iJ0HDszOp74yGqHswf6xmv5a9/OD6tkX1QQ==
+X-Received: by 2002:a5d:4808:0:b0:306:3284:824f with SMTP id l8-20020a5d4808000000b003063284824fmr1047151wrq.8.1685435129123;
+        Tue, 30 May 2023 01:25:29 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t4-20020a5d5344000000b00307acec258esm2485843wrv.3.2023.05.30.01.25.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 01:17:28 -0700 (PDT)
-Date:   Tue, 30 May 2023 10:17:27 +0200
-From:   Markus Schneider-Pargmann <msp@baylibre.com>
-To:     Alexandre Mergnat <amergnat@baylibre.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Tue, 30 May 2023 01:25:28 -0700 (PDT)
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-5-56eb7a4d5b8e@linaro.org>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v3] clk: mediatek: mt8365: Fix index issue
-Message-ID: <20230530081727.br3fm6zombgipjer@blmsp>
-References: <20230517-fix-clk-index-v3-1-be4df46065c4@baylibre.com>
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     "Lukas F. Hartmann" <lukas@mntre.com>,
+        Nicolas Belin <nbelin@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-phy@lists.infradead.org
+Subject: Re: [PATCH v5 05/17] clk: meson: g12a: make VCLK2 and ENCL clock
+ path configurable by CCF
+Date:   Tue, 30 May 2023 10:14:51 +0200
+In-reply-to: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-5-56eb7a4d5b8e@linaro.org>
+Message-ID: <1jv8ga445j.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230517-fix-clk-index-v3-1-be4df46065c4@baylibre.com>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 26, 2023 at 03:10:43PM +0200, Alexandre Mergnat wrote:
-> Before the patch [1], the clock probe was done directly in the
-> clk-mt8365 driver. In this probe function, the array which stores the
-> data clocks is sized using the higher defined numbers (*_NR_CLOCK) in
-> the clock lists [2]. Currently, with the patch [1], the specific
-> clk-mt8365 probe function is replaced by the mtk generic one [3], which
-> size the clock data array by adding all the clock descriptor array size
-> provided by the clk-mt8365 driver.
-> 
-> Actually, all clock indexes come from the header file [2], that mean, if
-> there are more clock (then more index) in the header file [2] than the
-> number of clock declared in the clock descriptor arrays (which is the
-> case currently), the clock data array will be undersized and then the
-> generic probe function will overflow when it will try to write in
-> "clk_data[CLK_INDEX]". Actually, instead of crashing at boot, the probe
-> function returns an error in the log which looks like:
-> "of_clk_hw_onecell_get: invalid index 135", then this clock isn't
-> enabled.
-> 
-> Solve this issue by adding in the driver the missing clocks declared in
-> the header clock file [2].
-> 
-> [1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
->      mtk_clk_simple_{probe,remove}()")
-> [2]: include/dt-bindings/clock/mediatek,mt8365-clk.h
-> [3]: drivers/clk/mediatek/clk-mtk.c
-> 
-> Fixes: ffe91cb28f6a ("clk: mediatek: mt8365: Convert to mtk_clk_simple_{probe,remove}()")
-> 
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 
-Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
-Tested-by: Markus Schneider-Pargmann <msp@baylibre.com>
+On Tue 30 May 2023 at 09:38, Neil Armstrong <neil.armstrong@linaro.org> wrote:
 
-Best,
-Markus
+> In order to setup the DSI clock, let's make the unused VCLK2 clock path
+> configuration via CCF.
+>
+> The nocache option is removed from following clocks:
+> - vclk2_sel
+> - vclk2_input
+> - vclk2_div
+> - vclk2
+> - vclk_div1
+> - vclk2_div2_en
+> - vclk2_div4_en
+> - vclk2_div6_en
+> - vclk2_div12_en
+> - vclk2_div2
+> - vclk2_div4
+> - vclk2_div6
+> - vclk2_div12
+> - cts_encl_sel
+>
+> The missing vclk2 reset sequence is handled via new clkc notifiers
+> in order to reset the vclk2 after each rate change as done by Amlogic
+> in the vendor implementation.
+>
+> In order to set a rate on cts_encl via the vclk2 clock path,
+> the NO_REPARENT flag is set on cts_encl_sel & vclk2_sel in order
+> to keep CCF from selection a parent.
+> The parents of cts_encl_sel & vclk2_sel are expected to be defined
+> in DT.
+>
+> The following clock scheme is to be used for DSI:
+>
+> xtal
+> \_ gp0_pll_dco
+>    \_ gp0_pll
+>       |- vclk2_sel
+>       |  \_ vclk2_input
+>       |     \_ vclk2_div
+>       |        \_ vclk2
+>       |           \_ vclk2_div1
+>       |              \_ cts_encl_sel
+>       |                 \_ cts_encl	-> to VPU LCD Encoder
+>       |- mipi_dsi_pxclk_sel
+>       \_ mipi_dsi_pxclk_div
+>          \_ mipi_dsi_pxclk		-> to DSI controller
+>
+> The mipi_dsi_pxclk_div is set as RO in order to use the same GP0
+> for mipi_dsi_pxclk and vclk2_input.
+
+I don't think notifiers is the appropriate approach here.
+Whenever there is clock change the motifiers would trigger an off/on of
+the clock, regardless of the clock usage or state.
+If you have several consummers on this vclk2, this would
+cause glitches and maybe this is not desirable.
+
+I think it would be better to handle the enable and reset with a
+specific gate driver, in prepare() or enable(), and the give the clock
+CLK_SET_RATE_GATE flag.
+
+This would require the clock to be properly turn off before changing the
+rate.
+
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/clk/meson/g12a.c | 131 +++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 120 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index 461ebd79497c..e4053f4957d5 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -3163,7 +3163,7 @@ static struct clk_regmap g12a_vclk2_sel = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = g12a_vclk_parent_hws,
+>  		.num_parents = ARRAY_SIZE(g12a_vclk_parent_hws),
+> -		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
+> +		.flags = CLK_SET_RATE_NO_REPARENT,
+>  	},
+>  };
+>  
+> @@ -3191,7 +3191,6 @@ static struct clk_regmap g12a_vclk2_input = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_sel.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>  	},
+>  };
+>  
+> @@ -3212,6 +3211,40 @@ static struct clk_regmap g12a_vclk_div = {
+>  	},
+>  };
+>  
+> +struct g12a_vclk_div_notifier {
+> +	struct clk_regmap *clk;
+> +	unsigned int offset;
+> +	u8 en_bit_idx;
+> +	u8 reset_bit_idx;
+> +	struct notifier_block nb;
+> +};
+> +
+> +static int g12a_vclk_div_notifier_cb(struct notifier_block *nb,
+> +				  unsigned long event, void *data)
+> +{
+> +	struct g12a_vclk_div_notifier *nb_data =
+> +		container_of(nb, struct g12a_vclk_div_notifier, nb);
+> +
+> +	switch (event) {
+> +	case PRE_RATE_CHANGE:
+> +		/* disable and reset vclk2 divider */
+> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
+> +				   BIT(nb_data->en_bit_idx) |
+> +				   BIT(nb_data->reset_bit_idx),
+> +				   BIT(nb_data->reset_bit_idx));
+> +		return NOTIFY_OK;
+> +	case POST_RATE_CHANGE:
+> +		/* enabled and release reset */
+> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
+> +				   BIT(nb_data->en_bit_idx) |
+> +				   BIT(nb_data->reset_bit_idx),
+> +				   BIT(nb_data->en_bit_idx));
+> +		return NOTIFY_OK;
+> +	default:
+> +		return NOTIFY_DONE;
+> +	};
+> +};
+> +
+>  static struct clk_regmap g12a_vclk2_div = {
+>  	.data = &(struct clk_regmap_div_data){
+>  		.offset = HHI_VIID_CLK_DIV,
+> @@ -3225,10 +3258,18 @@ static struct clk_regmap g12a_vclk2_div = {
+>  			&g12a_vclk2_input.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_GET_RATE_NOCACHE,
+> +		.flags = CLK_DIVIDER_ROUND_CLOSEST,
+>  	},
+>  };
+>  
+> +static struct g12a_vclk_div_notifier g12a_vclk2_div_data = {
+> +	.clk = &g12a_vclk2_div,
+> +	.offset = HHI_VIID_CLK_DIV,
+> +	.en_bit_idx = 16,
+> +	.reset_bit_idx = 17,
+> +	.nb.notifier_call = g12a_vclk_div_notifier_cb,
+> +};
+> +
+>  static struct clk_regmap g12a_vclk = {
+>  	.data = &(struct clk_regmap_gate_data){
+>  		.offset = HHI_VID_CLK_CNTL,
+> @@ -3243,6 +3284,33 @@ static struct clk_regmap g12a_vclk = {
+>  	},
+>  };
+>  
+> +struct g12a_vclk_reset_notifier {
+> +	struct clk_regmap *clk;
+> +	unsigned int offset;
+> +	u8 bit_idx;
+> +	struct notifier_block nb;
+> +};
+> +
+> +static int g12a_vclk_notifier_cb(struct notifier_block *nb,
+> +				  unsigned long event, void *data)
+> +{
+> +	struct g12a_vclk_reset_notifier *nb_data =
+> +		container_of(nb, struct g12a_vclk_reset_notifier, nb);
+> +
+> +	switch (event) {
+> +	case POST_RATE_CHANGE:
+> +		/* reset vclk2 */
+> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
+> +				   BIT(nb_data->bit_idx), BIT(nb_data->bit_idx));
+> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
+> +				   BIT(nb_data->bit_idx), 0);
+> +
+> +		return NOTIFY_OK;
+> +	default:
+> +		return NOTIFY_DONE;
+> +	};
+> +}
+> +
+>  static struct clk_regmap g12a_vclk2 = {
+>  	.data = &(struct clk_regmap_gate_data){
+>  		.offset = HHI_VIID_CLK_CNTL,
+> @@ -3253,10 +3321,17 @@ static struct clk_regmap g12a_vclk2 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> +static struct g12a_vclk_reset_notifier g12a_vclk2_data = {
+> +	.clk = &g12a_vclk2,
+> +	.offset = HHI_VIID_CLK_CNTL,
+> +	.bit_idx = 15,
+> +	.nb.notifier_call = g12a_vclk_notifier_cb,
+> +};
+> +
+>  static struct clk_regmap g12a_vclk_div1 = {
+>  	.data = &(struct clk_regmap_gate_data){
+>  		.offset = HHI_VID_CLK_CNTL,
+> @@ -3337,7 +3412,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3351,7 +3426,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3365,7 +3440,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3379,7 +3454,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3393,7 +3468,7 @@ static struct clk_regmap g12a_vclk2_div12_en = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3459,6 +3534,7 @@ static struct clk_fixed_factor g12a_vclk2_div2 = {
+>  			&g12a_vclk2_div2_en.hw
+>  		},
+>  		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3472,6 +3548,7 @@ static struct clk_fixed_factor g12a_vclk2_div4 = {
+>  			&g12a_vclk2_div4_en.hw
+>  		},
+>  		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3485,6 +3562,7 @@ static struct clk_fixed_factor g12a_vclk2_div6 = {
+>  			&g12a_vclk2_div6_en.hw
+>  		},
+>  		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3498,6 +3576,7 @@ static struct clk_fixed_factor g12a_vclk2_div12 = {
+>  			&g12a_vclk2_div12_en.hw
+>  		},
+>  		.num_parents = 1,
+> +		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3559,7 +3638,7 @@ static struct clk_regmap g12a_cts_encl_sel = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_hws = g12a_cts_parent_hws,
+>  		.num_parents = ARRAY_SIZE(g12a_cts_parent_hws),
+> -		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
+> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
+>  	},
+>  };
+>  
+> @@ -3727,7 +3806,7 @@ static struct clk_regmap g12a_mipi_dsi_pxclk_div = {
+>  	},
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mipi_dsi_pxclk_div",
+> -		.ops = &clk_regmap_divider_ops,
+> +		.ops = &clk_regmap_divider_ro_ops,
+>  		.parent_hws = (const struct clk_hw *[]) {
+>  			&g12a_mipi_dsi_pxclk_sel.hw
+>  		},
+> @@ -5421,6 +5500,32 @@ static int meson_g12a_dvfs_setup(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> +static int meson_g12a_vclk_setup(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct clk *notifier_clk;
+> +	int ret;
+> +
+> +	/* Setup clock notifier for vclk2 */
+> +	notifier_clk = devm_clk_hw_get_clk(dev, &g12a_vclk2.hw, DVFS_CON_ID);
+> +	ret = devm_clk_notifier_register(dev, notifier_clk, &g12a_vclk2_data.nb);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register the vlkc2 notifier\n");
+> +		return ret;
+> +	}
+> +
+> +	/* Setup clock notifier for vclk2_div */
+> +	notifier_clk = devm_clk_hw_get_clk(dev, &g12a_vclk2_div.hw, DVFS_CON_ID);
+> +	ret = devm_clk_notifier_register(dev, notifier_clk,
+> +					 &g12a_vclk2_div_data.nb);
+> +	if (ret) {
+> +		dev_err(dev, "failed to register the vclk2_div notifier\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  struct meson_g12a_data {
+>  	const struct meson_eeclkc_data eeclkc_data;
+>  	int (*dvfs_setup)(struct platform_device *pdev);
+> @@ -5443,6 +5548,10 @@ static int meson_g12a_probe(struct platform_device *pdev)
+>  	g12a_data = container_of(eeclkc_data, struct meson_g12a_data,
+>  				 eeclkc_data);
+>  
+> +	ret = meson_g12a_vclk_setup(pdev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	if (g12a_data->dvfs_setup)
+>  		return g12a_data->dvfs_setup(pdev);
+
