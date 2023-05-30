@@ -2,193 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1ECC7EE23
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 09:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC4CC77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 09:39:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229520AbjE3Jei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 05:34:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
+        id S230195AbjE3Jjl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 05:39:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjE3Jef (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 05:34:35 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C0B93;
-        Tue, 30 May 2023 02:34:33 -0700 (PDT)
+        with ESMTP id S229550AbjE3Jjk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 05:39:40 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 299BBFC;
+        Tue, 30 May 2023 02:39:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1685439274; x=1716975274;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wp2pAf3CqrBt5skpkT7zvWMDCqetgcUZchDB3RC0Ee0=;
-  b=kXIirub0TyEkQRY6Ysquy7FBA3PGu3ATzksW1IY/Jz8Df2EbGHBsOXoC
-   CBB5HVIm/pkx9lz+I6nvndUMyBrEHG//323opXgmWHrvDXGEsaJaLWIOR
-   55f9sADJdIn4tLB3glUx4umCXPIe36G5elhy9sG6czl7dwb3VZk2quFeS
-   YbYvdvk4ae/df60WUu0PeuKfh/mX9D7h8Aef4XMUhlBwYEkXR4UB4YSwf
-   a8fCiQN3YxfXzPoDSCn28eo+UEsPaA+/LufMW5L4AEyZ9xss8Zell3Obb
-   tYtTmDg2Fz4wUlkeYgUpgkoXb1aLDvNCyrIaNkT3yTHJvg4AQ8hUoJh7u
-   A==;
+  t=1685439577; x=1716975577;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EilXIOvUaLl6Wbm/Y1NuawMKvR7ssqkmCU3WRLSqQPs=;
+  b=2FMHPj05fwHXm5WAAun6rvJUVbsgFB+m6GteUEJ1R9YycQJJpc0QzyBu
+   m6K2QWC4UEhmn1iaDEbwJ/jNJVFpbo16eUsol62ErHBn2W3GCPmKanR1n
+   8e6thTzVkpSoVw3nwEnSEMEdgEj4SK06ZxLZokowgkVnECerM7Qw78taR
+   qdFoM7PBypOiocFvrc7HZNpR1tqdVGvf3CmwWd5AyGXT2nunPUiPt7hPr
+   W/PTkI72iL96OaSy7DgvhmxOEj0NzOmjU067QdYCt5miEmRKjpbzbOcuA
+   YVD/Ij9cblbJNiOnnJhZm2iEHoZHTHzFIPnhhA4OHDFdaAirmQdeEbPru
+   Q==;
 X-IronPort-AV: E=Sophos;i="6.00,203,1681196400"; 
-   d="asc'?scan'208";a="216005891"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+   d="scan'208";a="217918973"
+X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 May 2023 02:34:34 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 May 2023 02:39:36 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 30 May 2023 02:34:32 -0700
-Received: from wendy (10.10.115.15) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.21 via Frontend
- Transport; Tue, 30 May 2023 02:34:29 -0700
-Date:   Tue, 30 May 2023 10:34:07 +0100
-From:   Conor Dooley <conor.dooley@microchip.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-        <krzysztof.kozlowski+dt@linaro.org>, <neil.armstrong@linaro.org>,
-        <jbrunet@baylibre.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>, <khilman@baylibre.com>,
-        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ 15.1.2507.21; Tue, 30 May 2023 02:39:35 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.21 via Frontend Transport; Tue, 30 May 2023 02:39:31 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <luca.ceresoli@bootlin.com>, <nm@ti.com>, <kristo@kernel.org>,
+        <ssantosh@kernel.org>, <michal.simek@xilinx.com>
+CC:     <aford173@gmail.com>, <mike.looijmans@topic.nl>,
+        <robert.hancock@calian.com>, <shawn.guo@linaro.org>,
+        <fabio.estevam@freescale.com>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-Message-ID: <20230530-illusive-pushpin-1e35d0a50e0d@wendy>
-References: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
- <20230517133309.9874-6-ddrokosov@sberdevices.ru>
- <CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com>
- <20230522130033.a47vlybocme66rev@CAB-WSD-L081021>
- <CAFBinCAk9+Km3BssA8d8nc_Z_GbhY87FD3qQRpZ2k7ChKt7TBg@mail.gmail.com>
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/8] clk: check memory returned by {devm_}kasprintf()
+Date:   Tue, 30 May 2023 12:39:05 +0300
+Message-ID: <20230530093913.1656095-1-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="36vkeFCCRp4Cr9uu"
-Content-Disposition: inline
-In-Reply-To: <CAFBinCAk9+Km3BssA8d8nc_Z_GbhY87FD3qQRpZ2k7ChKt7TBg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---36vkeFCCRp4Cr9uu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Yo,
+While browsing some code I noticed that there are places where pointer
+returned by devm_kasprintf() or kasprintf() is not checked. Thus I've
+tooked the chance and fixed this (by updating kmerr.cocci script,
+changes published at [1]). Along with it some other places where
+resources may need to be freed on failure paths were updated.
 
-On Mon, May 29, 2023 at 10:38:33PM +0200, Martin Blumenstingl wrote:
-> On Mon, May 22, 2023 at 3:00=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdev=
-ices.ru> wrote:
-> [...]
-> > > This IP block has at least one additional input called "sys_pll_div16=
-".
-> > > My understanding is that the "sys_pll_div16" clock is generated by the
-> > > CPU clock controller. Support for the CPU clock controller
-> > > (dt-bindings and a driver) will be added at a later time by Dmitry.
-> > > How can we manage incrementally implementing the clock controllers?
-> > > From a hardware perspective the "sys_pll_div16" input is mandatory.
-> > > How to manage this in the .dts patches then (for example: does this
-> > > mean that Dmitry can only add the clock controller to the .dts when
-> > > all clock controller bindings have been implemented - or is there
-> > > another way)?
-> >
-> > You're absolutely right: currently, not all inputs are supported because
-> > the CPU clock controller isn't ready yet =E2=80=93 I'm working on it at=
- the
-> > moment.
-> >
-> > I understand your concerns about bindings and schema description, but
-> > there is an issue to be considered. I'm developing the entire clock
-> > controller A1 subsystem incrementally in three stages: peripherals and
-> > PLL, CPU, and Audio. This is because the CPU can operate at a static
-> > frequency and voltage, and the board boots normally without the CPU
-> > clock controller, thermal sensor, and OPP table. Audio is also
-> > important, but it's optional. On the other hand, without setting up the
-> > peripherals and PLL controllers, the board won't function because
-> > they're fundamental.
-> I understand your approach and I like it (without that incremental
-> approach you would probably be looking at a series with 15-20
-> patches).
->=20
-> Maybe the dt-binding maintainers have a suggestion for us here?
-> Let me try to summarize the issue in a few bullet points:
-> - There's (at least) four clock controllers on the Amlogic A1 SoC
-> - Some of these clock controllers take the outputs of another clock
-> controller as inputs
-> - In this series patch the peripheral clock controller has an input
-> called "sys_pll_div16"
-> - The clock controller which provides the "sys_pll_div16" clock is not
-> implemented yet (my understanding is that implementing it and adding
-> it to this series is not easy: it would add even more patches that
-> need to be reviewed and in general it's a tricky clock controller to
-> implement as it manages the CPU clocks)
+Thank you,
+Claudiu Beznea
 
-If I am understanding correctly, this series implements the child
-controller and a parent, which is unimplemented, provides the child with
-sys_pll_div16.
-The thing I am missing is whether the child controller has some outputs
-that depend on this sys_pll_div16 input & whether those are documented
-in this series. Regardless, you should be able to add more output clocks
-without compatibility issues.
+[1] https://lore.kernel.org/all/20230530074044.1603426-1-claudiu.beznea@microchip.com/
 
-> > Right now, we're in the first stage of the plan. Unfortunately, I can't
-> > disclose the exact names and number of clock bindings for the CPU and
-> > Audio, as they're still in development and only exist in my head or
-> > draft versions.
-> >
-> > If possible, I'd prefer to provide the new bindings and connections once
-> > all the appropriate drivers are finalized.
-> Question to Conor and Krzysztof (assuming you read my summary above):
-> Is it fine that Dmitry adds additional inputs to the peripheral clock
-> controller binding in later patches?
+Claudiu Beznea (8):
+  clk: vc5: check memory returned by kasprintf()
+  clk: cdce925: check return value of kasprintf()
+  clk: si5341: return error if one synth clock registration fails
+  clk: si5341: check return value of {devm_}kasprintf()
+  clk: si5341: free unused memory on probe failure
+  clk: keystone: sci-clk: check return value of kasprintf()
+  clk: ti: clkctrl: check return value of kasprintf()
+  clk: clocking-wizard: check return value of devm_kasprintf()
 
-Perhaps Krzysztof will disagree with me, but my take on it would be that
-the binding should describe the individual clock controller in its
-totality, but the driver can choose to only implement a subset of it.
+ drivers/clk/clk-cdce925.c                  | 12 +++++++
+ drivers/clk/clk-si5341.c                   | 38 +++++++++++++---------
+ drivers/clk/clk-versaclock5.c              | 29 +++++++++++++++++
+ drivers/clk/keystone/sci-clk.c             |  2 ++
+ drivers/clk/ti/clkctrl.c                   |  7 ++++
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c |  5 +++
+ 6 files changed, 78 insertions(+), 15 deletions(-)
 
-If you define the binding as only needing N inputs, but then later
-expand it to having N+M inputs, the driver will have to support N & N+M
-input clocks to preserve compatibility.
-If you define it as needing N+M inputs from the beginning, but only use
-N, there is no issue with backwards compatibility when you later use
-them all.
+-- 
+2.34.1
 
-> If not: how can we proceed in case we need to add them now (the
-> dt-binding example is the easy part for me as we can just make up a
-> phandle like &sys_pll_div16_clk and use that - but this can't work
-> when Dmitry tries to add the clock controller to meson-a1.dtsi)
-
-I would be inclined to do the same thing in the dts as the example,
-and make up a fixed-frequency clock and use it to plug the hole.
-When you have bindings etc written for the clock controller providing
-that clock, the fixed-frequency clock could be swapped out for the real
-one.
-
-> PS: Dmitry is trying to get this series into Linux 6.5. As far as I
-> remember the common clock maintainers don't take pull requests with
-> new features after -rc6 (which is in less than two weeks).
-> So time is getting a bit short and for me this is the very last
-> outstanding question. If you say that it's fine to add clocks later on
-> this will immediately get my Reviewed-by.
-
-I *think* that what I've just said should not get in the way of such a
-timeline, as it would only involve a "small" change to the dt-binding,
-but not require additional bindings or driver.
-
-Cheers,
-Conor.
-
-
---36vkeFCCRp4Cr9uu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHXDDgAKCRB4tDGHoIJi
-0tPiAQDxJgM01v9LEi2iF1dr7RKotniwIpWYNsLXwvRueTh4JAEAz4CqON+2GW8z
-dmSUkX/YHEFtQPiocrOvOz8I74RHVg0=
-=ipL3
------END PGP SIGNATURE-----
-
---36vkeFCCRp4Cr9uu--
