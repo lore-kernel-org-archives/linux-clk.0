@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B1FC7EE29
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 10:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F9DC7EE31
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 10:58:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231479AbjE3Kq7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 06:46:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39594 "EHLO
+        id S231522AbjE3K6g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 06:58:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231653AbjE3Kqa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 06:46:30 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EBE6E4E
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:46:13 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-51403554f1dso6762922a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:46:13 -0700 (PDT)
+        with ESMTP id S231673AbjE3K6U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 06:58:20 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B5A519A
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:58:12 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-96fe2a1db26so770747266b.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:58:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685443572; x=1688035572;
+        d=linaro.org; s=google; t=1685444290; x=1688036290;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=X1uTxJ2P81Ei8I+IeH2RtXBJYqlWc9UuiwCU03Ga55I=;
-        b=Bf0uZYLU+w0KPaD5ItfunQljt6/D4tYqlLnMrUM8gvv1A8nElk9oCIDfnqZERV14nH
-         LJICXpYOBGvWLs6LEyDvKvXTDq8iemxmrOFaC4cRW179qzcvLW60y1g/cAqiYRuknWRu
-         0xGVFM9S9IHSyF5FKWmf82rMJbRtuag26I5LCM+TYa+FngBvlmJ4IjTDsd7+Qbh5KFgu
-         BkcZ96HY5UiXLNK4bj6E9+EMMW8bNekRD4D8e2cgJEGBtLUZXLR4SIbK3d9C6uq2snoX
-         nhJN0TNYBjIwni97zaziepR8tmAuFPPecVV68MOD7g/RUTQsWlvsGUOz0aAF5FW2rAHh
-         oQEw==
+        bh=R5pWU4QsV9gBARzJEPls+6cr2Fd5OnRMlIjkCmxuQh8=;
+        b=W0NAk2JVJy/G74q4kpqOkA0pHtjVVKSKn2nq/kPWUmEAjR9mXtgY36AGQUBhLAHzko
+         7Sj7GAqhILsZ4qrHuiAMJPtTNcHUIeuAB0It2u0ky02Io1lifZ+ZprjiAW+jaBNYWP68
+         +4/GBdY9LqLFZNydW8B6Ck6zwn9y+BpWtdXxRCan4emLsGxJv0Oasa/xB5FiSwPqjeKu
+         tG8r4ohWlrg0XRULYGclmpZsfuZXKeo//xSABk8hsUJELxCh5FaQgxxcr9VjW0gJ04X0
+         1CcsdvoiKoNjVZhYJutdrwiSRt85SnEIz6tg0weYtQNl8v3ZxyajGLVPfyLI+Im/kN7m
+         gOug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685443572; x=1688035572;
+        d=1e100.net; s=20221208; t=1685444290; x=1688036290;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X1uTxJ2P81Ei8I+IeH2RtXBJYqlWc9UuiwCU03Ga55I=;
-        b=khLQIFfpWLHb5EpS2FvxuSPmMPh8fGHbsIKm4aIjgEtH362Mp7o663/mdhxPA13r6N
-         GraTL9kz55xxj7actmBvXWoG5Y6JtlbHwJ8domQSlXs1iXzJgm+yrDeSNDcwnR5c5d8O
-         IhcpFufLgVuDyl3zd9Vghkn6f+KEp8mNMt1JBPjadx1PkAUiFJ3XXs+1rNzlrVzKwCSp
-         3MrvUnXDu8KLt2bixgh8yWNKWg476xBMANmdT2iD3vVK7qZoBdOp8Qi7RZY8KHKKPXUs
-         FLL5UeNZ141BEU7HiAvxpRjudrPXf7/iHKe+PXu2/BSC2TJP5jS6QyA4t4QQm27tU1mK
-         xE7g==
-X-Gm-Message-State: AC+VfDxpKD/Sp0PrZ5P/dJe1QB7eOZzJIWRJemEB2LduDAMR4Y/BW3QD
-        ArdhCAun2PPTbEASkj1MqAASGQ==
-X-Google-Smtp-Source: ACHHUZ5afVrXFA3pQbZViPGRRFzAs4wbVuezJ2AoA/De2vgc7Ia1EU84pNDyESAQkxbwCcUt+RHOaQ==
-X-Received: by 2002:aa7:c451:0:b0:50d:8979:5722 with SMTP id n17-20020aa7c451000000b0050d89795722mr1207210edr.39.1685443571866;
-        Tue, 30 May 2023 03:46:11 -0700 (PDT)
+        bh=R5pWU4QsV9gBARzJEPls+6cr2Fd5OnRMlIjkCmxuQh8=;
+        b=TgXvdYhCFrkSY7XYjX9Pkn+BfIVingJG9JtemFYnrodFP6rY/ayngqqvfCUup7/jQP
+         nOYBEI5duNi18deLT9YIQTWBS0JxB1b12TKK/V7i0Dm+JvfUAZj4PgrkxzIH8yK2mccQ
+         cAdn2YKu7rMZE7H8WWVuW1HxjfWL1AgguVzkSYFG4GVSXcXxlYuTyvE+zK35WI32ExxX
+         lvvegyAC2Ej+7FyG54W4IIq4wzgt2rZbHLS2sslahykjgMCKawRUyUs2j9YnnQdPLVxa
+         B5NrCS3qhZ1NBYeEu14oDOjw0WycamolLG3Bob7/rxGQadxlG0MRI8yKP/Gp2kaMn6Ii
+         W2Yw==
+X-Gm-Message-State: AC+VfDzMRIbyzYLI2TpqzbOLKv44DvUY2+JwYBDvA++SgRx8av8E0zcy
+        mmJdc7WgcnmVFKwmt1FM+YecsA==
+X-Google-Smtp-Source: ACHHUZ7jDIiifvdOVGY3NcEyNLrj1sgOTWNjiSIsxMPiuolxBidlIlNWp76Me3UfghtGTD7RsxCafg==
+X-Received: by 2002:a17:907:1c14:b0:968:2bb1:f39d with SMTP id nc20-20020a1709071c1400b009682bb1f39dmr2466438ejc.36.1685444290363;
+        Tue, 30 May 2023 03:58:10 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.199.204])
-        by smtp.gmail.com with ESMTPSA id m2-20020a50ef02000000b00514a97b6b80sm1261806eds.78.2023.05.30.03.46.09
+        by smtp.gmail.com with ESMTPSA id a9-20020a170906244900b0096629607bb2sm7212134ejb.98.2023.05.30.03.58.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 May 2023 03:46:11 -0700 (PDT)
-Message-ID: <b03dfbeb-dcc4-4dda-18dc-84243534d41a@linaro.org>
-Date:   Tue, 30 May 2023 12:46:08 +0200
+        Tue, 30 May 2023 03:58:09 -0700 (PDT)
+Message-ID: <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+Date:   Tue, 30 May 2023 12:58:07 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
@@ -117,8 +117,17 @@ On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
 > +
 > +description:
 > +  Multipd Peripheral Image Loader loads firmware and boots Q6 pd, WCSS pd
-> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC. Pd means protection
-> +  domain. It's similar to process in Linux. Here QDSP6 processor runs each
+
+... boots Q6 Protection Domain (PD), WCSS PD ...
+
+> +  remoteproc's on the Qualcomm IPQ5018, IPQ9574 SoC.
+
+> Pd means protection
+> +  domain. 
+
+so you can skip this sentence as it is explained already.
+
+> It's similar to process in Linux. Here QDSP6 processor runs each
 > +  wifi radio functionality on a separate process. One process can't access
 > +  other process resources, so this is termed as PD i.e protection domain.
 > +
@@ -134,6 +143,9 @@ On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
 > +  firmware-name:
 > +    $ref: /schemas/types.yaml#/definitions/string-array
 > +    description: Firmware name of the Hexagon core
+
+No need for ref and description. Instead maxItems.
+
 > +
 > +  interrupts-extended:
 > +    items:
@@ -142,10 +154,166 @@ On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
 > +      - description: Ready interrupt
 > +      - description: Handover interrupt
 > +      - description: Stop acknowledge interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: States used by the AP to signal the remote processor
+> +    items:
+> +      - description: Shutdown Q6
+> +      - description: Stop Q6
+> +
+> +  qcom,smem-state-names:
+> +    description:
+> +      Names of the states used by the AP to signal the remote processor
+> +    items:
+> +      - const: shutdown
+> +      - const: stop
+> +
+> +  memory-region:
+> +    items:
+> +      - description: Q6 pd reserved region
+> +
+> +  glink-edge:
+> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+> +    description:
+> +      Qualcomm G-Link subnode which represents communication edge, channels
+> +      and devices related to the Modem.
+> +
+> +patternProperties:
+> +  "^pd-1|pd-2|pd-3":
+> +    type: object
+> +    description:
+> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
+> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
+> +      device node.
 
+That's not enough. Your description does not say what is this, why you
+have two protection domains for same compatible. What's more, it a bit
+deviates from hardware description.
 
-interrupts instead. The same in required:. I replied also to your
-comment on your comment. :)
+> +
+> +    properties:
+> +      compatible:
+> +        enum:
+> +          - qcom,ipq5018-wcss-ahb-mpd
+> +          - qcom,ipq9574-wcss-ahb-mpd
+> +          - qcom,ipq5018-wcss-pcie-mpd
+
+Keep rather alphabetical order (so both 5018 together).
+
+I also do not understand these at all. Why adding bus type to
+compatible? This rarely is allowed (unless it is PCIe controller within
+soc).
+
+> +
+> +      firmware-name:
+> +        $ref: /schemas/types.yaml#/definitions/string-array
+> +        items:
+> +          - description: Firmware name of the Hexagon core
+
+same comments
+
+> +
+> +      interrupts-extended:
+> +        items:
+> +          - description: Fatal interrupt
+> +          - description: Ready interrupt
+> +          - description: Spawn acknowledge interrupt
+> +          - description: Stop acknowledge interrupt
+
+ditto
+
+> +
+> +      interrupt-names:
+> +        items:
+> +          - const: fatal
+> +          - const: ready
+> +          - const: spawn-ack
+> +          - const: stop-ack
+> +
+> +      qcom,smem-states:
+> +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> +        description: States used by the AP to signal the remote processor
+> +        items:
+> +          - description: Shutdown WCSS pd
+> +          - description: Stop WCSS pd
+> +          - description: Spawn WCSS pd
+> +
+> +      qcom,smem-state-names:
+> +        description:
+> +          Names of the states used by the AP to signal the remote processor
+> +        items:
+> +          - const: shutdown
+> +          - const: stop
+> +          - const: spawn
+> +
+> +    required:
+> +      - compatible
+> +      - firmware-name
+> +      - interrupts-extended
+> +      - interrupt-names
+> +      - qcom,smem-states
+> +      - qcom,smem-state-names
+> +
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - firmware-name
+> +  - reg
+> +  - interrupts-extended
+> +  - interrupt-names
+> +  - qcom,smem-states
+> +  - qcom,smem-state-names
+> +  - memory-region
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,ipq5018-q6-mpd
+> +    then:
+> +      properties:
+> +        firmware-name:
+> +          items:
+> +            - const: IPQ5018/q6_fw.mdt
+> +            - const: IPQ5018/m3_fw.mdt
+> +            - const: qcn6122/m3_fw.mdt
+
+No, names are not part of bindings. Also paths do not look correct. Open
+linux-firmware package and verify these are good...
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,ipq9574-q6-mpd
+> +    then:
+> +      properties:
+> +        firmware-name:
+> +          items:
+> +            - const: IPQ9574/q6_fw.mdt
+> +            - const: IPQ9574/m3_fw.mdt
+
+Drop.
+
+> +
+> +unevaluatedProperties: false
+
+This changed... why?
+
 
 Best regards,
 Krzysztof
