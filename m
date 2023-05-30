@@ -2,240 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B597C77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 16:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A6AC7EE23
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 16:15:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230514AbjE3QEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 12:04:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51154 "EHLO
+        id S233395AbjE3QPT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 12:15:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232476AbjE3QEa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 12:04:30 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBDC138;
-        Tue, 30 May 2023 09:03:59 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 2F4F95FD3A;
-        Tue, 30 May 2023 19:03:36 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1685462616;
-        bh=rHLpWB2idDx6NUu9uDREPJ6CN0gKgc15y+Jr03H4B7w=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=AjAmrRH9suMXhwS9xcW/H6stcTQmHozkPsHnFyr+6PSubFUTXZqpydgCgJ5UixBWB
-         Z46yKsfJmCR0WUdFVkhLVk4fVXPDuM7Xx4XqyCldWzeECPUJjwDf4wJRXSF33Wl9gX
-         aKrVxGMPrdJ6lhbvEPLaiZxn1gLz3/bN26CAc/GmmAriYxjsdDuJkuF+6mI4pI6cZq
-         x7J+h3Z6id3sSCc/+CpolgrCLc5MJI6wRS4WFwY8lEYZxrp7YhxbbZtMRaGgNAjtx4
-         zlTrS+ylpqDJWYCy+0g1ed3ztuTJTCQsp3HW9S9ujWoOFzvw/3l8Xna3Zfz0l+UXkN
-         nemWqWE2fV9KQ==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Tue, 30 May 2023 19:03:35 +0300 (MSK)
-Date:   Tue, 30 May 2023 19:03:34 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Conor Dooley <conor.dooley@microchip.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <jbrunet@baylibre.com>
-CC:     <krzysztof.kozlowski+dt@linaro.org>, <neil.armstrong@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <khilman@baylibre.com>,
-        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-Message-ID: <20230530160334.z6sclbmqccs6ju4y@CAB-WSD-L081021>
-References: <20230517133309.9874-1-ddrokosov@sberdevices.ru><20230517133309.9874-6-ddrokosov@sberdevices.ru><CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com><20230522130033.a47vlybocme66rev@CAB-WSD-L081021><CAFBinCAk9+Km3BssA8d8nc_Z_GbhY87FD3qQRpZ2k7ChKt7TBg@mail.gmail.com><20230530-illusive-pushpin-1e35d0a50e0d@wendy>
+        with ESMTP id S233539AbjE3QPQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 12:15:16 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDE4E1AE
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 09:14:31 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f6dfc4dffaso33360755e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 09:14:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685463268; x=1688055268;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=8E/XALJcqXkwZP5gRRQxOrP1E6GYgsvl1mdzFrPwoHs=;
+        b=j7m5TLNGHYPks/DB5NwpJEaJxEUZvnwmAKhmJYFtmqFeCgOHe8TS50IiAFQL2HcLgq
+         lM7rpvgWzLPAF2PY6LDDwM+Ga+MCp4PWHjlq7IoaCp0mQytpFLLwlWqJW04FEdagUmh1
+         5F5WPw8m/NgBWnJ7Nlj+Y6b95Qp2ZvzXWn9jVPme1qcq6vYBxnWUtONnLfZ/2sDty/i2
+         lI1Mz/lSVzybNmw7d+ig33KtqN4Tmb7TGgXwql9s0F86XgS906kfLIhMAmD3OiOoOZK4
+         9jJb5VblFBNf9mKmyd9FZKKovWKueEBnzstsZUeIWoH9XIp6thMxkGUc7GNJRDbPCIc2
+         JlPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685463268; x=1688055268;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8E/XALJcqXkwZP5gRRQxOrP1E6GYgsvl1mdzFrPwoHs=;
+        b=EqfHsdUEup3UbYoOdVv0U2hBQpUy6Xl7LlQMEBt6kq67RhV5JLAGGLzt5KIs8a7UB0
+         Y2k0OSTsgnE784gi7+SSB36Q7NV0e0BEudmsVMVNbsb5+s8LjbeR/enYwzO4wBd4WOTz
+         ZUDOVFKvTzZ4vLwi+Y9kzIsd0B0XvffSqwXt/C72FzwMsedHAFKZASZ0N5I163J/735D
+         iKgeJgrJPXOCYRZ1JXhgD4IE7c3xiSQ6Vah3GIxobgVLpMbsyybChGwUOZaFNs8thO0C
+         jR/hlsT6NcF6txXWEJaKrND75f1PgwzCTEqNFngiO5jO17jbHMOySu4QsiLArefUbC1D
+         QMcQ==
+X-Gm-Message-State: AC+VfDwIX51QxNgjnCsy7/HWa20mVOLFqmW3fRIIh/GAHTZSWU1Hqi7B
+        H1GCP9QrNFeN+MH08jkOPQnGvg==
+X-Google-Smtp-Source: ACHHUZ6WWApvC/NMBiE72EVqrmA/84lk/cV8yiAqD8+jVocG4E4+KuL2cR+91Sc1Wzm58YlqYiG3DQ==
+X-Received: by 2002:a05:600c:2214:b0:3f6:2d8:4823 with SMTP id z20-20020a05600c221400b003f602d84823mr2080466wml.3.1685463268024;
+        Tue, 30 May 2023 09:14:28 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 8-20020a05600c024800b003f4e8530696sm17729719wmj.46.2023.05.30.09.14.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 09:14:27 -0700 (PDT)
+References: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        neil.armstrong@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        martin.blumenstingl@googlemail.com
+Cc:     jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v15 0/6] add Amlogic A1 clock controller drivers
+Date:   Tue, 30 May 2023 18:14:01 +0200
+In-reply-to: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
+Message-ID: <1jilc94x0d.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230530-illusive-pushpin-1e35d0a50e0d@wendy>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/30 11:20:00 #21377521
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Conor, Martin and Jerome,
 
-Thank you so much for the detailed information and thoughts you shared
-about the important process of changing DT bindings. Please find my
-comments below.
+On Wed 17 May 2023 at 16:33, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
 
-On Tue, May 30, 2023 at 10:34:07AM +0100, Conor Dooley wrote:
-> Yo,
-> 
-> On Mon, May 29, 2023 at 10:38:33PM +0200, Martin Blumenstingl wrote:
-> > On Mon, May 22, 2023 at 3:00 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> > [...]
-> > > > This IP block has at least one additional input called "sys_pll_div16".
-> > > > My understanding is that the "sys_pll_div16" clock is generated by the
-> > > > CPU clock controller. Support for the CPU clock controller
-> > > > (dt-bindings and a driver) will be added at a later time by Dmitry.
-> > > > How can we manage incrementally implementing the clock controllers?
-> > > > From a hardware perspective the "sys_pll_div16" input is mandatory.
-> > > > How to manage this in the .dts patches then (for example: does this
-> > > > mean that Dmitry can only add the clock controller to the .dts when
-> > > > all clock controller bindings have been implemented - or is there
-> > > > another way)?
-> > >
-> > > You're absolutely right: currently, not all inputs are supported because
-> > > the CPU clock controller isn't ready yet – I'm working on it at the
-> > > moment.
-> > >
-> > > I understand your concerns about bindings and schema description, but
-> > > there is an issue to be considered. I'm developing the entire clock
-> > > controller A1 subsystem incrementally in three stages: peripherals and
-> > > PLL, CPU, and Audio. This is because the CPU can operate at a static
-> > > frequency and voltage, and the board boots normally without the CPU
-> > > clock controller, thermal sensor, and OPP table. Audio is also
-> > > important, but it's optional. On the other hand, without setting up the
-> > > peripherals and PLL controllers, the board won't function because
-> > > they're fundamental.
-> > I understand your approach and I like it (without that incremental
-> > approach you would probably be looking at a series with 15-20
-> > patches).
-> > 
-> > Maybe the dt-binding maintainers have a suggestion for us here?
-> > Let me try to summarize the issue in a few bullet points:
-> > - There's (at least) four clock controllers on the Amlogic A1 SoC
-> > - Some of these clock controllers take the outputs of another clock
-> > controller as inputs
-> > - In this series patch the peripheral clock controller has an input
-> > called "sys_pll_div16"
-> > - The clock controller which provides the "sys_pll_div16" clock is not
-> > implemented yet (my understanding is that implementing it and adding
-> > it to this series is not easy: it would add even more patches that
-> > need to be reviewed and in general it's a tricky clock controller to
-> > implement as it manages the CPU clocks)
-> 
-> If I am understanding correctly, this series implements the child
-> controller and a parent, which is unimplemented, provides the child with
-> sys_pll_div16.
-> The thing I am missing is whether the child controller has some outputs
-> that depend on this sys_pll_div16 input & whether those are documented
-> in this series. Regardless, you should be able to add more output clocks
-> without compatibility issues.
-> 
-> > > Right now, we're in the first stage of the plan. Unfortunately, I can't
-> > > disclose the exact names and number of clock bindings for the CPU and
-> > > Audio, as they're still in development and only exist in my head or
-> > > draft versions.
-> > >
-> > > If possible, I'd prefer to provide the new bindings and connections once
-> > > all the appropriate drivers are finalized.
-> > Question to Conor and Krzysztof (assuming you read my summary above):
-> > Is it fine that Dmitry adds additional inputs to the peripheral clock
-> > controller binding in later patches?
-> 
-> Perhaps Krzysztof will disagree with me, but my take on it would be that
-> the binding should describe the individual clock controller in its
-> totality, but the driver can choose to only implement a subset of it.
-> 
-> If you define the binding as only needing N inputs, but then later
-> expand it to having N+M inputs, the driver will have to support N & N+M
-> input clocks to preserve compatibility.
-> If you define it as needing N+M inputs from the beginning, but only use
-> N, there is no issue with backwards compatibility when you later use
-> them all.
-> 
+> A1 SoC has four clock controllers on the board: PLL, Peripherals, CPU,
+> and Audio. The audio clock controller is different from others, but the
+> rest are very similar from a functional and regmap point of view.
+> This patch series add support for Amlogic A1 PLL and Peripherals clock
+> drivers.
+> It blocks all A1 peripherals mainline support and a couple of patch series,
+> which were already reviewed and acked, but weren't merged due to pending
+> clock controller drivers series, e.g.
+> https://lore.kernel.org/all/20230418111612.19479-1-ddrokosov@sberdevices.ru/
+>
+> TODO: CPU and Audio clock controllers are not included in this patch
+> series, it will be sent later. The following clks from these controllers
+> are not supported for now:
+> * Audio clks - vad, mclk_vad, mclk_d, resample_a, locker_in, mclk_b,
+>    pdmdclk, pdmsysclk, eqdrc, spdifin, mclk_a, audio2_toaudiotop,
+>    audio2_tovad, audio2_toddr_vad, audio2_tdmin_vad, audio2_pdm,
+>    audio2_ddr_arb, audio_audiolocker, audio_eqdrc, audio_resamplea,
+>    audio_spdifin, audio_toddrb, audio_toddra, audio_frddrb, audio_frddra,
+>    audio_tdmoutb, audio_tdmouta, audio_loopbacka, audio_tdminlb,
+>    audio_tdminb, audio_tdmina, audio_ddr_arb, mclk_c
+>
+> * CPU clks: cpu_fixed_source_sel0, cpu_fixed_source_div0,
+>             cpu_fixed_source_sel1, cpu_fixed_source_div1, cpu_clk
+>
+> Validation:
+> * to double check all clk flags run below helper script:
+>     pushd /sys/kernel/debug/clk
+>     for f in *; do
+>         if [[ -f "$f/clk_flags" ]]; then
+>             flags="$(cat $f/clk_flags | awk '{$1=$1};1' | sed ':a;N;$!ba;s/\n/ | /g')"
+>             echo -e "$f: $flags"
+>         fi
+>     done
+>     popd
+>
+> * to trace current clks state use '/sys/kernel/debug/clk/clk_dump' node
+>   with jq post-processing:
+>     $ cat /sys/kernel/debug/clk/clk_dump | jq '.' > clk_dump.json
+>
+> * to debug clk rate propagation, compile kernel with the following
+>   definition:
+>     $ sed -i "s/undef CLOCK_ALLOW_WRITE_DEBUGFS/define CLOCK_ALLOW_WRITE_DEBUGFS/g" drivers/clk/clk.c
+>   after that, clk_rate debug node for each clock will be available for
+>   write operation
+>
 
-In short, I agree with Jerome's position, which he shared in the
-parallel email:
-https://lore.kernel.org/all/1jmt1m42m1.fsf@starbuckisacylon.baylibre.com/
-
-Below I will try to explain my position.
-
-Please correct me if I am mistaken, but it appears we are currently
-discussing a scenario where a new kernel X+1 image version is flashed
-onto a device with a device tree from kernel X-1 image version, and
-whether a new driver with clock object connections can function on the
-previous Device Tree version.
-
-If I'm grasping the issue correctly, it seems that we have four
-potential scenarios at play here:
-1) we may have altered the relationships between internal clock objects;
-2) we may have introduced new output clock connections;
-3) we may have introduced new input clock connections;
-4) we may have removed existing connections from the driver.
-
-It seems that options 1 and 4 are straightforward and easy to
-understand.
-The 4 case is fully prohibited. We cannot remove
-any object or connection from the clock driver if another consumer uses
-it in the previous Device Tree versions. It is also important to note
-that any internal changes within the driver do not affect the device
-tree connections, as this is already clear.
-
-The second and third cases are more complex.
-
-For instance, let's say we are preparing a new patchset for an existing
-clock driver, such as Peripherals, where we are adding an Audio clock
-that is handled by an MMIO register inside Peripherals clock driver. X-1
-dts does not recognize this new clock and doesn't have any connection to
-any node or to any other clock driver, thereby eliminating any backwards
-compatibility issues.
-
-As for new input clock connections, such as the cpu_clock
-(sys_pll_div16), these are handled by clock muxing abstraction, allowing
-CCF to find the clock object by fw.name and returning -ENOENT if the
-connection is missing without breaking any CCF flow. It happens in the
-kernel function clk_core_fill_parent_index()
-https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L424
-Despite not having the connection for the new input in the old Device
-Tree version, this will not break kernel boot flow and workflow, and the
-new clock object just would not be utilized.
-
-Based on the presented arguments, I fully agree with Jerome's position.
-We can add new connections and objects in new driver versions, but their
-removal is prohibited.
-
-If it's alright with you, I would prefer to keep the Peripherals and PLL
-clock driver and their bindings as they are, and continue with the CPU
-and Audio clock controllers in a separate patch series. Would that be
-feasible for you?
-
-> > If not: how can we proceed in case we need to add them now (the
-> > dt-binding example is the easy part for me as we can just make up a
-> > phandle like &sys_pll_div16_clk and use that - but this can't work
-> > when Dmitry tries to add the clock controller to meson-a1.dtsi)
-> 
-> I would be inclined to do the same thing in the dts as the example,
-> and make up a fixed-frequency clock and use it to plug the hole.
-> When you have bindings etc written for the clock controller providing
-> that clock, the fixed-frequency clock could be swapped out for the real
-> one.
-> 
-> > PS: Dmitry is trying to get this series into Linux 6.5. As far as I
-> > remember the common clock maintainers don't take pull requests with
-> > new features after -rc6 (which is in less than two weeks).
-> > So time is getting a bit short and for me this is the very last
-> > outstanding question. If you say that it's fine to add clocks later on
-> > this will immediately get my Reviewed-by.
-> 
-> I *think* that what I've just said should not get in the way of such a
-> timeline, as it would only involve a "small" change to the dt-binding,
-> but not require additional bindings or driver.
-> 
-> Cheers,
-> Conor.
-> 
-
--- 
-Thank you,
-Dmitry
-
-УВЕДОМЛЕНИЕ О КОНФИДЕНЦИАЛЬНОСТИ: Это электронное сообщение и любые документы, приложенные к нему, содержат конфиденциальную информацию. Настоящим уведомляем Вас о том, что если это сообщение не предназначено Вам, использование, копирование, распространение информации, содержащейся в настоящем сообщении, а также осуществление любых действий на основе этой информации, строго запрещено. Если Вы получили это сообщение по ошибке, пожалуйста, сообщите об этом отправителю по электронной почте и удалите это сообщение.
-CONFIDENTIALITY NOTICE: This email and any files attached to it are confidential. If you are not the intended recipient you are notified that using, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited. If you have received this email in error please notify the sender and delete this email.
+Applied, Thx
