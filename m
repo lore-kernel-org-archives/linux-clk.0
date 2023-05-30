@@ -2,141 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E97C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 16:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46FDC77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 17:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230367AbjE3Qtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 12:49:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58710 "EHLO
+        id S232909AbjE3R0E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 13:26:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbjE3Qtl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 12:49:41 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F5DA7;
-        Tue, 30 May 2023 09:49:37 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 9DEDB5FD3D;
-        Tue, 30 May 2023 19:49:34 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1685465374;
-        bh=6QfHdz+QFGSro1lLX069r4LLDn31Yt+etPSZIg88FW0=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=dpGK3rAAHlcU7PfwWR89EoEznPx/N8kZhkidmhRJz6yqgZGAR4nH7fsRgxqWHEqSd
-         bzX1QR3+HMqMpVsR+0KL4BnbBKsGgfP65KUq+6QDdgCRC2ekIGjKRF2VesXq4r/WJP
-         mbdSRqdI23TBXABczaqRHl68bhmYrbN9zydeDRnSPqVoEZPCOu+A9lU3Yc0Bj5FcZZ
-         JxiYnhq7hO6A4sepY9aC5GjJJWdvoYuuhG/2myN+B17z28Nti/GJcNJRpRksPaZfbc
-         tZq0W2akM9DSEXckGogDnR9Dt029wH6NGsSF7N6YYg5d0vBh+AS9lXYocbupn+K2Ew
-         mBZXBXGllW4CA==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Tue, 30 May 2023 19:49:33 +0300 (MSK)
-Date:   Tue, 30 May 2023 19:49:33 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v15 0/6] add Amlogic A1 clock controller drivers
-Message-ID: <20230530164933.m42ojv357atxd4gc@CAB-WSD-L081021>
-References: <20230517133309.9874-1-ddrokosov@sberdevices.ru><1jilc94x0d.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S232417AbjE3RZs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 13:25:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B79AF10E3;
+        Tue, 30 May 2023 10:25:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 90DE56311F;
+        Tue, 30 May 2023 17:23:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A21C433D2;
+        Tue, 30 May 2023 17:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685467431;
+        bh=UzR1fj++02HkyWwFEbtMSGXQjQFGcPmg+nk6CBoorTQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XRVqqSg7l3gtvrJQiZxWUs3sW3dpPsMZeLs0xK9uSL6mJjYdIfftdEHjGyAasA93F
+         vp0gLpUnS8qcpk9a3/voHcP+fe0HcgZAQiKxsgSvam2RRuNhrt3VDiHL2skxmXmfz0
+         UHgEUyQ6JGLAJM989kYc/NlVsmrAxHCIIr/mJrjU+z/jyfCIDmpYobEEaG7Jdff0aL
+         ptUgFtjkatqQWlWJzTIrFj/ck17aguEcEqHWg/QiVbq37aW3cLY4mOtG4O/KNC2yLK
+         zZBBLpYcKu8Wous2xnJ4zlBIq3hDm3aDhdBZB4h0Yjhi4MLkcdhGk2cSj+YnhXzP9N
+         A6/p2tUZSaTqw==
+Date:   Tue, 30 May 2023 18:23:44 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Lukas F. Hartmann" <lukas@mntre.com>,
+        Nicolas Belin <nbelin@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-phy@lists.infradead.org
+Subject: Re: [PATCH v5 16/17] dt-bindings: arm: amlogic: Document the MNT
+ Reform 2 CM4 adapter with a BPI-CM4 Module
+Message-ID: <20230530-switch-riverbank-8a2ae8e5ea4a@spud>
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-16-56eb7a4d5b8e@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="U7YSC210J2lnKh/+"
 Content-Disposition: inline
-In-Reply-To: <1jilc94x0d.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/30 11:20:00 #21377521
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-16-56eb7a4d5b8e@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Jerome,
 
-On Tue, May 30, 2023 at 06:14:01PM +0200, Jerome Brunet wrote:
-> On Wed 17 May 2023 at 16:33, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> 
-> > A1 SoC has four clock controllers on the board: PLL, Peripherals, CPU,
-> > and Audio. The audio clock controller is different from others, but the
-> > rest are very similar from a functional and regmap point of view.
-> > This patch series add support for Amlogic A1 PLL and Peripherals clock
-> > drivers.
-> > It blocks all A1 peripherals mainline support and a couple of patch series,
-> > which were already reviewed and acked, but weren't merged due to pending
-> > clock controller drivers series, e.g.
-> > https://lore.kernel.org/all/20230418111612.19479-1-ddrokosov@sberdevices.ru/
-> >
-> > TODO: CPU and Audio clock controllers are not included in this patch
-> > series, it will be sent later. The following clks from these controllers
-> > are not supported for now:
-> > * Audio clks - vad, mclk_vad, mclk_d, resample_a, locker_in, mclk_b,
-> >    pdmdclk, pdmsysclk, eqdrc, spdifin, mclk_a, audio2_toaudiotop,
-> >    audio2_tovad, audio2_toddr_vad, audio2_tdmin_vad, audio2_pdm,
-> >    audio2_ddr_arb, audio_audiolocker, audio_eqdrc, audio_resamplea,
-> >    audio_spdifin, audio_toddrb, audio_toddra, audio_frddrb, audio_frddra,
-> >    audio_tdmoutb, audio_tdmouta, audio_loopbacka, audio_tdminlb,
-> >    audio_tdminb, audio_tdmina, audio_ddr_arb, mclk_c
-> >
-> > * CPU clks: cpu_fixed_source_sel0, cpu_fixed_source_div0,
-> >             cpu_fixed_source_sel1, cpu_fixed_source_div1, cpu_clk
-> >
-> > Validation:
-> > * to double check all clk flags run below helper script:
-> >     pushd /sys/kernel/debug/clk
-> >     for f in *; do
-> >         if [[ -f "$f/clk_flags" ]]; then
-> >             flags="$(cat $f/clk_flags | awk '{$1=$1};1' | sed ':a;N;$!ba;s/\n/ | /g')"
-> >             echo -e "$f: $flags"
-> >         fi
-> >     done
-> >     popd
-> >
-> > * to trace current clks state use '/sys/kernel/debug/clk/clk_dump' node
-> >   with jq post-processing:
-> >     $ cat /sys/kernel/debug/clk/clk_dump | jq '.' > clk_dump.json
-> >
-> > * to debug clk rate propagation, compile kernel with the following
-> >   definition:
-> >     $ sed -i "s/undef CLOCK_ALLOW_WRITE_DEBUGFS/define CLOCK_ALLOW_WRITE_DEBUGFS/g" drivers/clk/clk.c
-> >   after that, clk_rate debug node for each clock will be available for
-> >   write operation
-> >
-> 
-> Applied, Thx
+--U7YSC210J2lnKh/+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you very much!
+On Tue, May 30, 2023 at 09:38:17AM +0200, Neil Armstrong wrote:
+> The MNT Reform 2 CM4 adapter can be populated with any Raspberry Pi CM4
+> compatible module such as a BPI-CM4 Module, document that.
+>=20
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-I noticed that you have applied version 15 of the patch. If I understand
-correctly, this is because CLK_SET_RATE_NO_REPARENT for all RTC children
-is preferred from your perspective. I agree with this decision. However,
-version 16 includes a small refactoring patch that corrects a
-misstyping by changing all sys_* related dividers and gates to
-read-only operations, since they are set up from BootROM. Should I
-submit this patch separately at a later time?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Also could you please clarify the official process for handling these
-patches? Currently, I don't see them in the linux-amlogic for-next
-branches. Is there a separate repository for clock changes? I believe
-the next repository is a fork of the clock framework, but unfortunately,
-I cannot seem to locate it on git.kernel.org... Apologies for the
-potentially simple questions...
+Thanks,
+Conor.
 
--- 
-Thank you,
-Dmitry
+--U7YSC210J2lnKh/+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  :      ,   ,   .     ,       , , ,  ,    ,         ,  .       , ,           .
-CONFIDENTIALITY NOTICE: This email and any files attached to it are confidential. If you are not the intended recipient you are notified that using, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited. If you have received this email in error please notify the sender and delete this email.
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHYxIAAKCRB4tDGHoIJi
+0jYwAQCUXtrTR7MIODftWUrB77h5/mo+g9I8GUIGCkjmSOVnAwD/fepTgXRQjx2p
+dKfe5rmv2Fw9D0GFz7KPFbFjaNP3Wgc=
+=vEeV
+-----END PGP SIGNATURE-----
+
+--U7YSC210J2lnKh/+--
