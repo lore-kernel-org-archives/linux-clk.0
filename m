@@ -2,189 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7409C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 16:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E97C77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 16:49:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232012AbjE3Qcl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 12:32:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47558 "EHLO
+        id S230367AbjE3Qtm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 12:49:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232646AbjE3Qcd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 12:32:33 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8461BA1
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 09:32:11 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f4f757d575so3627253e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 09:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685464327; x=1688056327;
-        h=content-transfer-encoding:in-reply-to:subject:from:content-language
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uh8bp8/N+tK7m/qngGoSnlIckrTNqW73X1nH+GEEZ04=;
-        b=I992L0kdjAMvDOU10MyEwZLBJ9kglidWBiS8y95NrZnyENV8f+wdP2Oki6Oiq2k4C7
-         kre68MArgwNwvBKLYJKH6HlHS5gYIXZtNx5LK7+dxkZyRYwFY7nC7xR0IjQqEA7CnsRV
-         W1eD2kwnVBJKhc8ycVXh53+tPfj81OtFsMewMgro4iGxlUgGK/XgS9aeIbtBXd/rsBdS
-         3jpYHAm/v32KxCvvdK4Vn219S+IbrWTrwCVXYZPB6YfCRd5YrRAxCW1oCbr2BnTGFV7t
-         94BhxY8DqLsrXsTVA6ZWldtUSyaBFJCC3wd1gMKYZ7zkosF4zW7eR/gDtRIi4ky3SwNJ
-         jshQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685464327; x=1688056327;
-        h=content-transfer-encoding:in-reply-to:subject:from:content-language
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uh8bp8/N+tK7m/qngGoSnlIckrTNqW73X1nH+GEEZ04=;
-        b=jcev2fZoT0iPd+ytWJdFDS62ar86CqQaHycsS+/1vZTP1iaPimBIKv8uPrubbWR0yb
-         T8eyLmK6OT0UDwPcENvr+A5WfdCUcxk1c/g6M5+q6K80xv7tsmA0FatCX98uqKI5QUKw
-         VDsLpWweZQWQRiwpxsqfsbZbsr+AU4DkUWvgco+rhfchNzvg74TEfTv4YPU+hVksJwyU
-         ZUa2xRGVuyAcCE2J3QOOtNtZL+bC3p3eSLWp0txUV4upYsSRjzwDOy5O9AzqljlYCMuR
-         uOAVRVniMHjlesdQFqpfc7FV8TbMc2cOGuVkV1TqJ5zpKfBVb9GnvifAircuGCcj+TjA
-         O1+A==
-X-Gm-Message-State: AC+VfDylb4rgHYj3buAfu2J02MGQIS0ejTqsh+qklCHDP2ZFwuZJP14U
-        FIaNdOEVmoJyha8tKUsd4Y44+1HCIFmxQJ3xtxM=
-X-Google-Smtp-Source: ACHHUZ4oCmCBcr/w6q63AE5PHt6atRdVEiJTRNk2+IUqht5cc2lVYIGFEh7FiYS+1l0O4rgLVLUi8A==
-X-Received: by 2002:a05:6512:6ca:b0:4f3:a763:ccb7 with SMTP id u10-20020a05651206ca00b004f3a763ccb7mr3626951lff.2.1685464326959;
-        Tue, 30 May 2023 09:32:06 -0700 (PDT)
-Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id c15-20020ac244af000000b004f4b42e2d7dsm386045lfm.230.2023.05.30.09.32.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 May 2023 09:32:06 -0700 (PDT)
-Message-ID: <5a26e456-fe45-6def-27f9-26ec00c333e6@linaro.org>
-Date:   Tue, 30 May 2023 18:32:04 +0200
+        with ESMTP id S230352AbjE3Qtl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 12:49:41 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04F5DA7;
+        Tue, 30 May 2023 09:49:37 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 9DEDB5FD3D;
+        Tue, 30 May 2023 19:49:34 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1685465374;
+        bh=6QfHdz+QFGSro1lLX069r4LLDn31Yt+etPSZIg88FW0=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=dpGK3rAAHlcU7PfwWR89EoEznPx/N8kZhkidmhRJz6yqgZGAR4nH7fsRgxqWHEqSd
+         bzX1QR3+HMqMpVsR+0KL4BnbBKsGgfP65KUq+6QDdgCRC2ekIGjKRF2VesXq4r/WJP
+         mbdSRqdI23TBXABczaqRHl68bhmYrbN9zydeDRnSPqVoEZPCOu+A9lU3Yc0Bj5FcZZ
+         JxiYnhq7hO6A4sepY9aC5GjJJWdvoYuuhG/2myN+B17z28Nti/GJcNJRpRksPaZfbc
+         tZq0W2akM9DSEXckGogDnR9Dt029wH6NGsSF7N6YYg5d0vBh+AS9lXYocbupn+K2Ew
+         mBZXBXGllW4CA==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Tue, 30 May 2023 19:49:33 +0300 (MSK)
+Date:   Tue, 30 May 2023 19:49:33 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+CC:     <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+        <martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+        <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v15 0/6] add Amlogic A1 clock controller drivers
+Message-ID: <20230530164933.m42ojv357atxd4gc@CAB-WSD-L081021>
+References: <20230517133309.9874-1-ddrokosov@sberdevices.ru><1jilc94x0d.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>, Evan Green <evgreen@chromium.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephan Gerhold <stephan@gerhold.net>
-References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
- <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
-Content-Language: en-US
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH 20/20] interconnect: qcom: Divide clk rate by src node bus
- width
-In-Reply-To: <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+ charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1jilc94x0d.fsf@starbuckisacylon.baylibre.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/30 11:20:00 #21377521
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Jerome,
 
-
-On 30.05.2023 12:20, Konrad Dybcio wrote:
-> Ever since the introduction of SMD RPM ICC, we've been dividing the
-> clock rate by the wrong bus width. This has resulted in:
+On Tue, May 30, 2023 at 06:14:01PM +0200, Jerome Brunet wrote:
+> On Wed 17 May 2023 at 16:33, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
 > 
-> - setting wrong (mostly too low) rates, affecting performance
->   - most often /2 or /4
->   - things like DDR never hit their full potential
->   - the rates were only correct if src bus width == dst bus width
->     for all src, dst pairs on a given bus
+> > A1 SoC has four clock controllers on the board: PLL, Peripherals, CPU,
+> > and Audio. The audio clock controller is different from others, but the
+> > rest are very similar from a functional and regmap point of view.
+> > This patch series add support for Amlogic A1 PLL and Peripherals clock
+> > drivers.
+> > It blocks all A1 peripherals mainline support and a couple of patch series,
+> > which were already reviewed and acked, but weren't merged due to pending
+> > clock controller drivers series, e.g.
+> > https://lore.kernel.org/all/20230418111612.19479-1-ddrokosov@sberdevices.ru/
+> >
+> > TODO: CPU and Audio clock controllers are not included in this patch
+> > series, it will be sent later. The following clks from these controllers
+> > are not supported for now:
+> > * Audio clks - vad, mclk_vad, mclk_d, resample_a, locker_in, mclk_b,
+> >    pdmdclk, pdmsysclk, eqdrc, spdifin, mclk_a, audio2_toaudiotop,
+> >    audio2_tovad, audio2_toddr_vad, audio2_tdmin_vad, audio2_pdm,
+> >    audio2_ddr_arb, audio_audiolocker, audio_eqdrc, audio_resamplea,
+> >    audio_spdifin, audio_toddrb, audio_toddra, audio_frddrb, audio_frddra,
+> >    audio_tdmoutb, audio_tdmouta, audio_loopbacka, audio_tdminlb,
+> >    audio_tdminb, audio_tdmina, audio_ddr_arb, mclk_c
+> >
+> > * CPU clks: cpu_fixed_source_sel0, cpu_fixed_source_div0,
+> >             cpu_fixed_source_sel1, cpu_fixed_source_div1, cpu_clk
+> >
+> > Validation:
+> > * to double check all clk flags run below helper script:
+> >     pushd /sys/kernel/debug/clk
+> >     for f in *; do
+> >         if [[ -f "$f/clk_flags" ]]; then
+> >             flags="$(cat $f/clk_flags | awk '{$1=$1};1' | sed ':a;N;$!ba;s/\n/ | /g')"
+> >             echo -e "$f: $flags"
+> >         fi
+> >     done
+> >     popd
+> >
+> > * to trace current clks state use '/sys/kernel/debug/clk/clk_dump' node
+> >   with jq post-processing:
+> >     $ cat /sys/kernel/debug/clk/clk_dump | jq '.' > clk_dump.json
+> >
+> > * to debug clk rate propagation, compile kernel with the following
+> >   definition:
+> >     $ sed -i "s/undef CLOCK_ALLOW_WRITE_DEBUGFS/define CLOCK_ALLOW_WRITE_DEBUGFS/g" drivers/clk/clk.c
+> >   after that, clk_rate debug node for each clock will be available for
+> >   write operation
+> >
 > 
-> - Qualcomm using the same wrong logic in their BSP driver in msm-5.x
->   that ships in production devices today
-> 
-> - me losing my sanity trying to find this
-> 
-> Resolve it by using dst_qn, if it exists.
-> 
-> Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
-The problem is deeper.
+> Applied, Thx
 
-Chatting with Stephan (+CC), we tackled a few issues (that I will send
-fixes for in v2):
+Thank you very much!
 
-1. qcom_icc_rpm_set() should take per-node (src_qn->sum_avg, dst_qn->sum_avg)
-   and NOT aggregated bw (unless you want ALL of your nodes on a given provider
-   to "go very fast")
+I noticed that you have applied version 15 of the patch. If I understand
+correctly, this is because CLK_SET_RATE_NO_REPARENT for all RTC children
+is preferred from your perspective. I agree with this decision. However,
+version 16 includes a small refactoring patch that corrects a
+misstyping by changing all sys_* related dividers and gates to
+read-only operations, since they are set up from BootROM. Should I
+submit this patch separately at a later time?
 
-2. the aggregate bw/clk rate calculation should use the node-specific bus widths
-   and not only the bus width of the src/dst node, otherwise the average bw
-   values will be utterly meaningless
+Also could you please clarify the official process for handling these
+patches? Currently, I don't see them in the linux-amlogic for-next
+branches. Is there a separate repository for clock changes? I believe
+the next repository is a fork of the clock framework, but unfortunately,
+I cannot seem to locate it on git.kernel.org... Apologies for the
+potentially simple questions...
 
-3. thanks to (1) and (2) qcom_icc_bus_aggregate() can be remodeled to instead
-   calculate the clock rates for the two rpm contexts, which we can then max()
-   and pass on to the ratesetting call
+-- 
+Thank you,
+Dmitry
 
-
-----8<---- Cutting off Stephan's seal of approval, this is my thinking ----
-
-4. I *think* Qualcomm really made a mistake in their msm-5.4 driver where they
-   took most of the logic from the current -next state and should have been
-   setting the rate based on the *DST* provider, or at least that's my
-   understanding trying to read the "known good" msm-4.19 driver
-   (which remembers msm-3.0 lol).. Or maybe we should keep src but ensure there's
-   also a final (dst, dst) vote cast:
-
-provider->inter_set = false // current state upstream
-
-setting apps_proc<->slv_bimc_snoc
-setting mas_bimc_snoc<->slv_snoc_cnoc
-setting mas_snoc_cnoc<->qhs_sdc2
-
-
-provider->inter_set = true // I don't think there's effectively a difference?
-
-setting apps_proc<->slv_bimc_snoc
-setting slv_bimc_snoc<->mas_bimc_snoc
-setting mas_bimc_snoc<->slv_snoc_cnoc
-setting slv_snoc_cnoc<->mas_snoc_cnoc
-setting mas_snoc_cnoc<->qhs_sdc2
-
-all the (mas|slv)_bus1_bus2 are very wide whereas the target nodes are usually
-4-, 8- or 16-wide, which without this patch or something equivalent decimates
-(or actually 2^n-ates) the calculated rates..
-
-Konrad
-
-
->  drivers/interconnect/qcom/icc-rpm.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-> index 59be704364bb..58e2a8b1b7c3 100644
-> --- a/drivers/interconnect/qcom/icc-rpm.c
-> +++ b/drivers/interconnect/qcom/icc-rpm.c
-> @@ -340,7 +340,7 @@ static void qcom_icc_bus_aggregate(struct icc_provider *provider,
->  static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
->  {
->  	struct qcom_icc_provider *qp;
-> -	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
-> +	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL, *qn = NULL;
->  	struct icc_provider *provider;
->  	u64 active_rate, sleep_rate;
->  	u64 agg_avg[QCOM_SMD_RPM_STATE_NUM], agg_peak[QCOM_SMD_RPM_STATE_NUM];
-> @@ -353,6 +353,8 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
->  	provider = src->provider;
->  	qp = to_qcom_provider(provider);
->  
-> +	qn = dst_qn ? dst_qn : src_qn;
-> +
->  	qcom_icc_bus_aggregate(provider, agg_avg, agg_peak, &max_agg_avg);
->  
->  	ret = qcom_icc_rpm_set(src_qn, agg_avg);
-> @@ -372,11 +374,11 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
->  	/* Intentionally keep the rates in kHz as that's what RPM accepts */
->  	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
->  			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
-> -	do_div(active_rate, src_qn->buswidth);
-> +	do_div(active_rate, qn->buswidth);
->  
->  	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
->  			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
-> -	do_div(sleep_rate, src_qn->buswidth);
-> +	do_div(sleep_rate, qn->buswidth);
->  
->  	/*
->  	 * Downstream checks whether the requested rate is zero, but it makes little sense
-> 
+  :      ,   ,   .     ,       , , ,  ,    ,         ,  .       , ,           .
+CONFIDENTIALITY NOTICE: This email and any files attached to it are confidential. If you are not the intended recipient you are notified that using, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited. If you have received this email in error please notify the sender and delete this email.
