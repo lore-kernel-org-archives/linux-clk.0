@@ -2,156 +2,147 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FA5C7EE29
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 11:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09509C77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 11:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbjE3LGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 07:06:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51592 "EHLO
+        id S231578AbjE3LVH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 07:21:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbjE3LGo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 07:06:44 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64C66F3
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 04:06:39 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-5147e8972a1so6906787a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 04:06:39 -0700 (PDT)
+        with ESMTP id S231620AbjE3LVE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 07:21:04 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C36A8114;
+        Tue, 30 May 2023 04:21:02 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id ca18e2360f4ac-77487fcb522so120287939f.2;
+        Tue, 30 May 2023 04:21:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685444798; x=1688036798;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JYFJ+H1VAY9LSysZ7K+45YdOSI8zV/BM4XST8evs3Lk=;
-        b=GRaHLdJjqrz/j8TuJaGorsmpvVlJ/aJ8ZTKWe7B6d0ygiVJvNWPO97kbjZSe9OPY2z
-         7fY5/TH8WkL5SRTPlFJg8Mxc5e/vIHfsTGYcXcANZILRSiAuzE1ua1lF8v65u+Vh9DZG
-         I2obghP9lHIWQ08HFR6XlFh2vneQ+yMzfHbT5UXIe5aNUYAHN2jVxFFKjthrR+ovnCf6
-         GF8A9g981k9sBfJnVAdDMH4YKMczM5mUjrbc0tiJjyqZ093jnizaiMWWEK4eVvClQT6u
-         XyPrPim9jb/LT8aUqk0rpy51VsGYStIIuppcgYGnUAbjIXhKlUEtYYu+pj9CqayKU5fY
-         xo2w==
+        d=gmail.com; s=20221208; t=1685445662; x=1688037662;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TKOVEGYHxWU1Tm4Om2FNng9wfK8qi7L3C4EYFqaB2Vo=;
+        b=ruJ+IgmgaxQKj1pFMEOfoVBkLMWGbox8DDd1SeHiVjY5Pek9v7/rtEvrleVSjmP/ED
+         /XnCx3Uaa5sLI6dyxItIGW+aS6CemTOIyxynjqJDYp1ZIRoxk+a4zWLooWBOwaoDUSDJ
+         fcaK7RxxdbN83lAgK8rsay8+5b4Bpfq610J3Jppk9l87ssGgSmTnANIlXStO2+K1dWEJ
+         FsE/qWR/FkgVnePqIwv2J+nzBG5fcc853ZkJLsBXOUNPbTpKp1s//FmswpDpmdGG9/Ef
+         q2DASnrNNxBfXDCLnh7Ajms798mGPHSIUELdlgBFrzqUNS5j3E3C862V0vmkZGxEGDRf
+         rT9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685444798; x=1688036798;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYFJ+H1VAY9LSysZ7K+45YdOSI8zV/BM4XST8evs3Lk=;
-        b=eP+JU1wKkCROvM5JoeWZUQEr6ZMdqZhVkgpHmR7omZnOSIEiAGdE6iwlTHLecnOnPu
-         VeRt0pvdan9ZOgEc2J4A+FBom7K/AtPNZmRi/Chln0daJBFH8/vAxi0GYUlQLaAcBacq
-         ALa3yyxGBk5yJSCV5WGrywdZ899uL/AAWZFBrdMytwA/c2d7gjzsYBGd6LD1c7nh1D65
-         BvpKLC91TmtQcK5CimXylNRm1XCLP5C4rG5CHm9mVbnsxs8L2OH4x/698WGFFhE9KjdI
-         SJpfIjxE2p166oFhezitV/+cc2tSiWpo1HfLaL4qyo6GzqxXUR31ZuzF0VPFZrxoASiK
-         JFzA==
-X-Gm-Message-State: AC+VfDxUu8PxFuTQAnMUFT5CDfecBjGftLeoFjYsihoLq+kPTl8uPFz4
-        DHJyw0X3RooJmkWps9AlkktGMA==
-X-Google-Smtp-Source: ACHHUZ64Q/ay65U65CSNrCAMOYDxWnNJb1JH1XN/eF5xsCwlNK2bd3s7+QCeYD7ZV7qF30UTRIgleA==
-X-Received: by 2002:a17:907:9716:b0:94f:6218:191d with SMTP id jg22-20020a170907971600b0094f6218191dmr1989845ejc.32.1685444797753;
-        Tue, 30 May 2023 04:06:37 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.199.204])
-        by smtp.gmail.com with ESMTPSA id j21-20020a17090686d500b00965a0f30fbfsm7143145ejy.186.2023.05.30.04.06.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 May 2023 04:06:37 -0700 (PDT)
-Message-ID: <ea6d31cc-68b2-3b73-ae12-dad122a85857@linaro.org>
-Date:   Tue, 30 May 2023 13:06:33 +0200
+        d=1e100.net; s=20221208; t=1685445662; x=1688037662;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TKOVEGYHxWU1Tm4Om2FNng9wfK8qi7L3C4EYFqaB2Vo=;
+        b=VQSc+JGqzOh4k2YFMEf+cT8AQJqQqpa5onbzJXODH14cbBEan9ZVOwe9ObT7GlR1aw
+         qZBQVdwi0Wh+4srXe2/F8LqcQLvhSpsJ3i8MRXYbn9ngmN7DISjHmDFEHzjJTNpQ18bc
+         zhOxA3/3rO53Leho1iN8AcyAocdzKRTZXQ++Y56dGE6Muo3cDU0kyBE276Zzw8q2+yt9
+         drOXgd36Anby7+v6BpgviAQmlvCTpmtT19suzoEJ6NymhRlM5GXJ8Y5ecScTIxp0GcuA
+         J2qGvTwq3RyBlQsVcTXoegeD8+59CMxDgL4I7B75sR/UmgazbZ5VnJ2INoJgSLlP1x8z
+         9R3w==
+X-Gm-Message-State: AC+VfDx2zdJ6CL2409ESnJH48F6RZxPIFCSIrJnG3ybzIfs11dwczRnS
+        bI4DLxN0Cbj7FcbMwTY+jCRNOQ6tnkg=
+X-Google-Smtp-Source: ACHHUZ7W0qid6AdPyodyq/TeyV+NlOb+jn7jEYueEwTbtsu8yqV2BotTe962efGWUmqO4tQHst5jFQ==
+X-Received: by 2002:a6b:6402:0:b0:776:f992:78cf with SMTP id t2-20020a6b6402000000b00776f99278cfmr1246448iog.12.1685445661517;
+        Tue, 30 May 2023 04:21:01 -0700 (PDT)
+Received: from aford-B741.lan ([2601:447:d001:897f:a5e7:c9e9:bb20:39c1])
+        by smtp.gmail.com with ESMTPSA id co17-20020a0566383e1100b003c4e02148e5sm634363jab.53.2023.05.30.04.21.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 04:21:01 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     biju.das.jz@bp.renesas.com, marek.vasut+renesas@gmail.com,
+        cstevens@beaconembedded.com, aford@beaconembedded.com,
+        Adam Ford <aford173@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [RFC 1/3] clk: renesas: rcar-gen3: Add support for ZG clock
+Date:   Tue, 30 May 2023 06:20:47 -0500
+Message-Id: <20230530112050.5635-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V2 12/13] arm64: dts: qcom: ipq5018: Add RDP432-c1 board
- support
-Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jassisinghbrar@gmail.com,
-        mathieu.poirier@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
-        kvalo@kernel.org, loic.poulain@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
-        quic_devipriy@quicinc.com
-References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
- <20230521222852.5740-13-quic_mmanikan@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230521222852.5740-13-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
-> Add initial device tree support for the RDP432-C1 board.
-> 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
-> Changes in V2:
-> 	- Renamed mp03.5-c1 to RDP432-c1
-> 	- Removed boot-args
-> 	- Resolved dt-binding error's
-> 
->  arch/arm64/boot/dts/qcom/Makefile             |  1 +
->  .../arm64/boot/dts/qcom/ipq5018-rdp432-c1.dts | 49 +++++++++++++++++++
->  2 files changed, 50 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/ipq5018-rdp432-c1.dts
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 259bd57c6064..bb9164de75b0 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -3,6 +3,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8016-sbc.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-rdp432-c1.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-rdp432-c2.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-mi01.2.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp468.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c1.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c1.dts
-> new file mode 100644
-> index 000000000000..7fe28d9859b0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c1.dts
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause
-> +/*
-> + * IPQ5018 RDP432-C1 board device tree source
-> + *
-> + * Copyright (c) 2023, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "ipq5018.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. IPQ5018/AP-RDP432.1-C1";
-> +	compatible = "qcom,ipq5018-rdp432-c1", "qcom,ipq5018";
-> +
-> +	aliases {
-> +		serial0 = &blsp1_uart1;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +};
-> +
-> +&blsp1_uart1 {
-> +	pinctrl-0 = <&uart1_pins>;
-> +	pinctrl-names = "default";
-> +	status = "okay";
-> +};
-> +
-> +&q6v5_wcss {
-> +	pd-2 {
-> +		firmware-name = "IPQ5018/q6_fw.mdt";
+A clock used for the 3D graphics appears to be common
+among multiple SoC's, so add a generic gen3 clock
+for clocking the graphics.
 
-Does not look like correct paths. Please open firmware and look there.
-Or open other DTS files and check example. Missing qcom, lowercase,
-that's minimum of fixes needed.
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index b3ef62fa612e..7abfbf77a497 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -301,6 +301,39 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+ 	return clk;
+ }
+ 
++static struct clk * __init cpg_zg_clk_register(const char *name,
++					       const char *parent_name,
++					       void __iomem *reg,
++					       unsigned int div,
++					       unsigned int offset)
++{
++	struct clk_init_data init;
++	struct cpg_z_clk *zclk;
++	struct clk *clk;
++
++	zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
++	if (!zclk)
++		return ERR_PTR(-ENOMEM);
++
++	init.name = name;
++	init.ops = &cpg_z_clk_ops;
++	init.flags = 0;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++
++	zclk->reg = reg + CPG_FRQCRB;
++	zclk->kick_reg = reg + CPG_FRQCRB;
++	zclk->hw.init = &init;
++	zclk->mask = GENMASK(offset + 4, offset);
++	zclk->fixed_div = div; /* PLLVCO x 1/div1 x 3DGE divider x 1/div2 */
++
++	clk = clk_register(NULL, &zclk->hw);
++	if (IS_ERR(clk))
++		kfree(zclk);
++
++	return clk;
++}
++
+ static const struct clk_div_table cpg_rpcsrc_div_table[] = {
+ 	{ 2, 5 }, { 3, 6 }, { 0, 0 },
+ };
+@@ -502,6 +535,9 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 	case CLK_TYPE_GEN3_RPCD2:
+ 		return cpg_rpcd2_clk_register(core->name, base + CPG_RPCCKCR,
+ 					      __clk_get_name(parent));
++	case CLK_TYPE_GEN3_ZG:
++		return cpg_zg_clk_register(core->name, __clk_get_name(parent),
++					   base, core->div, core->offset);
+ 
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
+index 9028bf4295ce..bfdc649bdf12 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.h
++++ b/drivers/clk/renesas/rcar-gen3-cpg.h
+@@ -22,6 +22,7 @@ enum rcar_gen3_clk_types {
+ 	CLK_TYPE_GEN3_R,
+ 	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
+ 	CLK_TYPE_GEN3_Z,
++	CLK_TYPE_GEN3_ZG,
+ 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
+ 	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
+ 	CLK_TYPE_GEN3_RPCSRC,
+-- 
+2.39.2
 
