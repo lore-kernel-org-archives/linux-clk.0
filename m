@@ -2,144 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48DDC7EE23
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 10:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 897DAC7EE2F
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 10:28:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231551AbjE3KWS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 06:22:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52406 "EHLO
+        id S231585AbjE3K2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 06:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231592AbjE3KVa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 06:21:30 -0400
-Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EE46E72
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:20:31 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4f4db9987f8so5729074e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:20:31 -0700 (PDT)
+        with ESMTP id S231460AbjE3K1r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 06:27:47 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE731712
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:25:54 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-30959c0dfd6so4288154f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685442030; x=1688034030;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=icKa1TRoM7DxejwPmdVHGrJaHkiX0Km/DDITg5zb2s4=;
-        b=YZi+UfbQYz7t48Wol2/Wyu6Qfj80RS0lW7omeRsHrtjNm5tFmQFrPhwLE1ikHHw4xd
-         mFelSppQgYgOdjHtJLYtYvMZpeBEcmBCauPZP54E/QsD1IjGmCf+h5kxtVYpJBSq4alM
-         ux2TteNF6Mgrzu63KZllpBB8Z0meZkZiLXHkvphipdg+a9Q/B+x1UWiGWO/vD6Tf2fej
-         phiYblDBmiP09bUkIkRtZfxTSre51NHPL4BSMsiF5ECKHraNyeriGg77yPDbPl91Mak1
-         md5y65S6MDMHxwPt+Iw3804HyoApSmQhrkiPtkVunZ/JyXYNYZcZmnzkzzWPGHpkSMYg
-         cdcw==
+        d=linaro.org; s=google; t=1685442352; x=1688034352;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vkw4yuYcd/6fz17L5CgIxbKkR70sSWZlSJ8WTXxy2UQ=;
+        b=muTUhg7e8JQ0TBPhOp/oEEhXJj3eulvy+fxTk3/7sJd+npS3dqWMMYv5xngisJn0ru
+         W8uPGfFqxcBriXD7cIJfuDRQQFPtIwMYBUq3BGtbhiP7MxW0y+EIZQ69kCKVYMHSzjaX
+         v0APavwm39uiZmyppZHlKUSC+69wkfiZMDMwF1XeO1qEAcaevs02hohQEnVx5/aHb7T2
+         Pbxipi4CerzC0qQkEWVG5usM5YOlQKLdyyh0qmG3qtwp30R8+7YRlV01W2+qjQkeI0eG
+         JEvGSQywFnuNMevsnNzAm4uhQgSykZr8WG9M7c0drawzSNn5U7uF5HV03XBlU0cXjSNs
+         aUMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685442030; x=1688034030;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=icKa1TRoM7DxejwPmdVHGrJaHkiX0Km/DDITg5zb2s4=;
-        b=ld4AAVaSGqgt1QHEVNqz3VQhGgkVvV7K2PgvftaEWQjXy0oquEPLOEBPWzJq1GRKX+
-         BMktaNb0rumalOq0e/MrpRTB3jf1sk3h4H45UQyGTytwSJv3rVjVOXciNCthMBXf+U4q
-         XIRBRUM71JlZSpUDJmV91wUt5WajHRDqEoNhFPxAdSMhyXco+6v6UnBFqlhSjcNUtVwL
-         btBizQmhsLctCYXSeHDM/4Gllw4oFpiw7h3IPNWKA1r+8DQbxrxKFy93sKFD4L+u6KXZ
-         NB/hNXS/YlilzY6EMr1PRwmnQxWNLW/8nUvG1UTIrFSewdFl7GNz1Ytkc4jcZF8X+P0/
-         L6PQ==
-X-Gm-Message-State: AC+VfDw+t3JUXF6AcxNwypATGgWhDBOs5sPZRwFw2CbyNHrQ7SdAQwhc
-        BPNbxLcJCVcXHdBQRRRy80r1y8lPaT8afdF4VRI=
-X-Google-Smtp-Source: ACHHUZ7jPScxjpLTKucDXjf+vYaR3gcwVgpOngsLOvc74dQRNDzywoqe0oXy9JGGDR+TUKM77Wj1ww==
-X-Received: by 2002:ac2:41c5:0:b0:4f3:b9c8:5da with SMTP id d5-20020ac241c5000000b004f3b9c805damr607469lfi.33.1685442029999;
-        Tue, 30 May 2023 03:20:29 -0700 (PDT)
-Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id c25-20020ac24159000000b004cc8196a308sm290902lfi.98.2023.05.30.03.20.28
+        d=1e100.net; s=20221208; t=1685442352; x=1688034352;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vkw4yuYcd/6fz17L5CgIxbKkR70sSWZlSJ8WTXxy2UQ=;
+        b=KmTUBIwtj+au3Go0UbK0IHzb5UiSAAou08rpR4B6BOyjAkGi7ZXanq9kgZd40CBHGL
+         u190d5p4436giUX+9W8t2uLvhN6mK7XBrLzQBHP2Zh+Qsc4qDmN5ZrJxF6bYtUxrrbQY
+         bmwI951dOdFevwUsc3eA/LrN8ddBaY5ihWypaAZGSUVFBnFX1XqL42y5UkYDepSdyp6o
+         +G8zLg0i+CMi/UYQ/nBBKU3tgVbLRXreHl2Ql6lbqJiNvWnFA6QIHRfEq1+0BriZATCe
+         uh/qcskXlOYOKKM5A6FnvKsBrn3tx0DL0SGKrT8fJtQVltL6d4wiymwO+U+FszFlXS42
+         Qfgw==
+X-Gm-Message-State: AC+VfDwmJ5ASrFMv+T0rAyP+Uh0EPVjwRLUuS1mn3UBs+tI/9WSN/7qk
+        qtwptobRX26u+VZNFZmIO0cybg==
+X-Google-Smtp-Source: ACHHUZ6n52yyVYwzLBwekl/HrBhTIt4qjRT+tt3BVirlo0xYwYiNpYbioIzVyC/m9l3/pItsUnZCow==
+X-Received: by 2002:adf:f20c:0:b0:30a:f3ca:17ad with SMTP id p12-20020adff20c000000b0030af3ca17admr1213582wro.66.1685442352514;
+        Tue, 30 May 2023 03:25:52 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id x2-20020adff0c2000000b0030af20aaa3fsm2818104wro.71.2023.05.30.03.25.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 03:20:29 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Tue, 30 May 2023 12:20:19 +0200
-Subject: [PATCH 20/20] interconnect: qcom: Divide clk rate by src node bus
- width
+        Tue, 30 May 2023 03:25:51 -0700 (PDT)
+Date:   Tue, 30 May 2023 13:25:47 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     shubhrajyoti.datta@amd.com
+Cc:     linux-clk@vger.kernel.org
+Subject: [bug report] clocking-wizard: Support higher frequency accuracy
+Message-ID: <563faee5-cc16-4e57-870a-29516724ce7b@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
-References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
-In-Reply-To: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>, Evan Green <evgreen@chromium.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1685442001; l=2453;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=A2xuhtZVawiVfe99Wd1nS5W5Zg3I4zNjmwvGs3s+zi0=;
- b=hkQXVBfrqCLUDeLOKO2rhZ5dD/3o6xqfIHgI3EXCatqQweKw8yTc3FhFffUDySUhf/LCxUByx
- +Yb4EPlILCzAbDncb5Lgpb65iONQ74ZFI9cP48gahIkZsk8/cTTuqBk
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ever since the introduction of SMD RPM ICC, we've been dividing the
-clock rate by the wrong bus width. This has resulted in:
+Hello Shubhrajyoti Datta,
 
-- setting wrong (mostly too low) rates, affecting performance
-  - most often /2 or /4
-  - things like DDR never hit their full potential
-  - the rates were only correct if src bus width == dst bus width
-    for all src, dst pairs on a given bus
+The patch 595c88cda65d: "clocking-wizard: Support higher frequency
+accuracy" from Mar 27, 2023, leads to the following Smatch static
+checker warning:
 
-- Qualcomm using the same wrong logic in their BSP driver in msm-5.x
-  that ships in production devices today
+	drivers/clk/xilinx/clk-xlnx-clock-wizard.c:286 clk_wzrd_dynamic_all_nolock()
+	warn: sleeping in atomic context
 
-- me losing my sanity trying to find this
+drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+    254 static int clk_wzrd_dynamic_all_nolock(struct clk_hw *hw, unsigned long rate,
+    255                                        unsigned long parent_rate)
+    256 {
+    257         struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
+    258         unsigned long vco_freq, rate_div, clockout0_div;
+    259         u32 reg, pre, value, f;
+    260         int err;
+    261 
+    262         err = clk_wzrd_get_divisors(hw, rate, parent_rate);
+    263         if (err)
+    264                 return err;
+    265 
+    266         vco_freq = DIV_ROUND_CLOSEST(parent_rate * divider->m, divider->d);
+    267         rate_div = DIV_ROUND_CLOSEST_ULL((vco_freq * WZRD_FRAC_POINTS), rate);
+    268 
+    269         clockout0_div = div_u64(rate_div,  WZRD_FRAC_POINTS);
+    270 
+    271         pre = DIV_ROUND_CLOSEST_ULL(vco_freq * WZRD_FRAC_POINTS, rate);
+    272         f = (pre - (clockout0_div * WZRD_FRAC_POINTS));
+    273         f &= WZRD_CLKOUT_FRAC_MASK;
+    274 
+    275         reg = FIELD_PREP(WZRD_CLKOUT_DIVIDE_MASK, clockout0_div) |
+    276               FIELD_PREP(WZRD_CLKOUT0_FRAC_MASK, f);
+    277 
+    278         writel(reg, divider->base + WZRD_CLK_CFG_REG(2));
+    279         /* Set divisor and clear phase offset */
+    280         reg = FIELD_PREP(WZRD_CLKFBOUT_MULT_MASK, divider->m) |
+    281               FIELD_PREP(WZRD_DIVCLK_DIVIDE_MASK, divider->d);
+    282         writel(reg, divider->base + WZRD_CLK_CFG_REG(0));
+    283         writel(divider->o, divider->base + WZRD_CLK_CFG_REG(2));
+    284         writel(0, divider->base + WZRD_CLK_CFG_REG(3));
+    285         /* Check status register */
+--> 286         err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
+    287                                  value & WZRD_DR_LOCK_BIT_MASK,
+    288                                  WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+                                         ^^^^^^^^^^^^^^
+The clk_wzrd_dynamic_all() function is holding a spinlock so we cannot
+sleep here.
 
-Resolve it by using dst_qn, if it exists.
+    289         if (err)
+    290                 return -ETIMEDOUT;
+    291 
+    292         /* Initiate reconfiguration */
+    293         writel(WZRD_DR_BEGIN_DYNA_RECONF,
+    294                divider->base + WZRD_DR_INIT_REG_OFFSET);
+    295 
+    296         /* Check status register */
+    297         return readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
+    298                                  value & WZRD_DR_LOCK_BIT_MASK,
+    299                                  WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
+    300 }
 
-Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/interconnect/qcom/icc-rpm.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index 59be704364bb..58e2a8b1b7c3 100644
---- a/drivers/interconnect/qcom/icc-rpm.c
-+++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -340,7 +340,7 @@ static void qcom_icc_bus_aggregate(struct icc_provider *provider,
- static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- {
- 	struct qcom_icc_provider *qp;
--	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
-+	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL, *qn = NULL;
- 	struct icc_provider *provider;
- 	u64 active_rate, sleep_rate;
- 	u64 agg_avg[QCOM_SMD_RPM_STATE_NUM], agg_peak[QCOM_SMD_RPM_STATE_NUM];
-@@ -353,6 +353,8 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	provider = src->provider;
- 	qp = to_qcom_provider(provider);
- 
-+	qn = dst_qn ? dst_qn : src_qn;
-+
- 	qcom_icc_bus_aggregate(provider, agg_avg, agg_peak, &max_agg_avg);
- 
- 	ret = qcom_icc_rpm_set(src_qn, agg_avg);
-@@ -372,11 +374,11 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	/* Intentionally keep the rates in kHz as that's what RPM accepts */
- 	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
- 			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
--	do_div(active_rate, src_qn->buswidth);
-+	do_div(active_rate, qn->buswidth);
- 
- 	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
- 			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
--	do_div(sleep_rate, src_qn->buswidth);
-+	do_div(sleep_rate, qn->buswidth);
- 
- 	/*
- 	 * Downstream checks whether the requested rate is zero, but it makes little sense
-
--- 
-2.40.1
-
+regards,
+dan carpenter
