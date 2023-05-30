@@ -2,173 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFADC77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 19:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D1FC77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 19:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231203AbjE3TI7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 15:08:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
+        id S231173AbjE3Tgc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 15:36:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbjE3TI6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 15:08:58 -0400
-X-Greylist: delayed 177 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 30 May 2023 12:08:56 PDT
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECE108E;
-        Tue, 30 May 2023 12:08:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1685473370; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=plssoWGxVp5BPYTx2+4C7urE+H41aEECJ2LdQps1jhkPqW1ez4mUuZjbOqBj1S07Lx
-    hOH2dJFKlyCyN+JjEvnPFrf856NMl2MaLGYLFhzyYWLJ8ZKytEd5q2+tPRh+wsH7JS+f
-    R97bfQpmv9vwvexplrNW1SWt3YvCZFeH6yt8Y0Z+2jXvyryUzzgvQzyz0ZfNg2xfwZ4U
-    ehQ5iKvAWWrVq/YHntXz0T86+/0KyDHJ0TeMmdGOzCnOf9l6OPXgS2gSIp9xKvueugmj
-    5sRyOtTempln229C+36uR1TNh0TYMZZJW4G4X34h7M+aaCWVRvJ5DAKLiRo/pQEtH+Zi
-    mapQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1685473370;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=PBQJbM/1VwwL+Dwm7PX4+lP0VLh7Yt21pAuc2HfyKCA=;
-    b=XHEMXZa9Yw6d5Uzm2a4kXHZLb8kA4PRaDrvuPNsku3vzl32xiu2e8sdcR9BUiq/jZL
-    N5EjyLO4qceT/IDKiZz41qnsN5vKe/Z9gkL1YR3YXHAiReurPGzfOkNwOz/g/kZxy+Yf
-    H74dJIJmGZFSHeyOdpEyCLIKDwyMvDt7LLVHeVLYGx+pQAMLdaUXc+Xv2ADIEGdKrccF
-    zt5k1BR8AkKG25MJguVpQc5vKxCybYqfiwmR9MpSSV9Xsa/cAhr+5Q0DyCXts9WjkMG3
-    pQFrRfV+tG/8gHByFjC4o9fVy3BjOzM2JMJpeWbgkc2I0NNhf67cGEOneDQFglF3NAj3
-    d9YQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1685473370;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=PBQJbM/1VwwL+Dwm7PX4+lP0VLh7Yt21pAuc2HfyKCA=;
-    b=mUAfmPdGeTzBcVJckcuNUNHXly4Lg804KbJvST6kh1unODICF18xjD57kZpBBaS+yz
-    uYZIqc8MQAknQfXxupFJtPFDKiNgfYxLBsaG0oTdTrXZTcZwOxx6r3uS6DFVoul80EpG
-    WWS98bcXpoGPCQ1enl2neVlVWorrMEVTEUmwNXHzPna0M/SzlbQOp9NBhJ+3V18MeBkj
-    t7jg13TVmODkCwSdjTLsdsIJzHIBZLVtiNUeGg4mDC3/q6gFGbldx2hRhC6Zgt86TXMS
-    2X0xzbg4zs1EO4ZjqI7C38GxNAzZb2TpzzV81Mag1OsMuVl0P4c/tFXVFRUHsIYq7dnn
-    MwrQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1685473370;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=PBQJbM/1VwwL+Dwm7PX4+lP0VLh7Yt21pAuc2HfyKCA=;
-    b=JAckuUGdbq4m5mJBc6CkK66c7uDrC5JXOFHgMaPEIVYxDf3SgRdl5c7afSdgJS7wcI
-    eMzo5+kFfsXBi4hdw5Dg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA95nh"
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.4.0 DYNA|AUTH)
-    with ESMTPSA id j6420az4UJ2njmA
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Tue, 30 May 2023 21:02:49 +0200 (CEST)
-Date:   Tue, 30 May 2023 21:02:44 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S230219AbjE3Tgb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 15:36:31 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45341137;
+        Tue, 30 May 2023 12:36:22 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f3baf04f0cso5520560e87.1;
+        Tue, 30 May 2023 12:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20221208; t=1685475380; x=1688067380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QEE5HR8KnTXDzE7qIjWjCheMHM5HqAaaQn2y8Q+rxV8=;
+        b=IVNYUCmhiNFu0EgZ0lRI69pOYybAw0Roa8Zps1B2zd6CwZ7FdSroL2EOxDfml0hl2k
+         qo04Uq1vSu9zxk3gbbRpCUq+kbB4EYsM4sMt9kIpzRVLpuenwvbcptbkDrlFjz12s+jq
+         Scm6s+4dseL2zUnMkuF3CYBxGsMySIe2Fb7A5mFYMwNE68P9YxV/Fl9CbWB02Ef8mvKK
+         ZitD/QzB1WKggCor0rhynySgN8NAXQQ+YISaEfdcnHBcfTYnBfKh+elXdbA0muZjv4WC
+         WhNKhfsMy0lBtIqF9wiFwHe13B4CIBjJ2815jAkuozg8QmHhGJJdZtGzvf2u7K6N7b3l
+         /Etw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685475380; x=1688067380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QEE5HR8KnTXDzE7qIjWjCheMHM5HqAaaQn2y8Q+rxV8=;
+        b=PvJ+2RPX+aXc1nQsd76lfSZUU7kg1vIPFlj35IjwFznnK3wySeli5oBBQp9QF1j31w
+         wCwQ+2DyF71mUalN40hxgFCZCRYjlC8s/TkKIPTC3o/UMX68190pSC2tWNbiw3tngWkG
+         OfNu2bexDgHrKfZuRkL7HhCJZE/5dtAmc1jsG8C+v1zOHQ5VsbQTvBcA262taiHBWg7X
+         XJbA3f7SVsZY203h4gxvB971HC9aD/uFY4Ln9tJiHUmN+WPhsOKw+FgV+qHXLnZ7shrA
+         FU3AT6iNvUvszlgxxJNemkkvolYkpXyuPDMowPOrkMC97dvTvZv0ko2F9W2eYv2fQN9v
+         4vaQ==
+X-Gm-Message-State: AC+VfDyxIsGz5+up22DzMcWdXLQs0w6qAIiVNmIw8wrYRuaClsaPfgoY
+        nAGVdzRqqvVW1QIDZtWvO692GbfqjssxzEeGdj0=
+X-Google-Smtp-Source: ACHHUZ5gc/hxHeYex2Y8Okc8JH1HtS8SizLAVO7CtDJbdkVMJw6syU7DTQmP8/PMv1wx+1QnYFOncA22xyJ5j/x0vzw=
+X-Received: by 2002:ac2:4c13:0:b0:4f3:8258:5894 with SMTP id
+ t19-20020ac24c13000000b004f382585894mr1358968lfq.27.1685475380186; Tue, 30
+ May 2023 12:36:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-5-56eb7a4d5b8e@linaro.org>
+ <1jv8ga445j.fsf@starbuckisacylon.baylibre.com> <c24502f9-f717-6ff9-211c-1d129ef02f24@linaro.org>
+In-Reply-To: <c24502f9-f717-6ff9-211c-1d129ef02f24@linaro.org>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 30 May 2023 21:36:09 +0200
+Message-ID: <CAFBinCD4nZPp4JKpGARBkWL5pKVHJ0GSLTvy3S_q9mF=1d37Kg@mail.gmail.com>
+Subject: Re: [PATCH v5 05/17] clk: meson: g12a: make VCLK2 and ENCL clock path
+ configurable by CCF
+To:     neil.armstrong@linaro.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 20/20] interconnect: qcom: Divide clk rate by src node
- bus width
-Message-ID: <ZHZIVJFd-HU_AO2F@gerhold.net>
-References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
- <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
- <5a26e456-fe45-6def-27f9-26ec00c333e6@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a26e456-fe45-6def-27f9-26ec00c333e6@linaro.org>
-Content-Transfer-Encoding: 7bit
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Lukas F. Hartmann" <lukas@mntre.com>,
+        Nicolas Belin <nbelin@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-phy@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 30, 2023 at 06:32:04PM +0200, Konrad Dybcio wrote:
-> On 30.05.2023 12:20, Konrad Dybcio wrote:
-> > Ever since the introduction of SMD RPM ICC, we've been dividing the
-> > clock rate by the wrong bus width. This has resulted in:
-> > 
-> > - setting wrong (mostly too low) rates, affecting performance
-> >   - most often /2 or /4
-> >   - things like DDR never hit their full potential
-> >   - the rates were only correct if src bus width == dst bus width
-> >     for all src, dst pairs on a given bus
-> > 
-> > - Qualcomm using the same wrong logic in their BSP driver in msm-5.x
-> >   that ships in production devices today
-> > 
-> > - me losing my sanity trying to find this
-> > 
-> > Resolve it by using dst_qn, if it exists.
-> > 
-> > Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > ---
-> The problem is deeper.
-> 
-> Chatting with Stephan (+CC), we tackled a few issues (that I will send
-> fixes for in v2):
-> 
-> 1. qcom_icc_rpm_set() should take per-node (src_qn->sum_avg, dst_qn->sum_avg)
->    and NOT aggregated bw (unless you want ALL of your nodes on a given provider
->    to "go very fast")
-> 
-> 2. the aggregate bw/clk rate calculation should use the node-specific bus widths
->    and not only the bus width of the src/dst node, otherwise the average bw
->    values will be utterly meaningless
-> 
+Hi Neil,
 
-The peak bandwidth / clock rate is wrong as well if you have two paths
-with different buswidths on the same bus/NoC. (If someone is interested
-in details I can post my specific example I had in the chat, it shows
-this more clearly.)
+On Tue, May 30, 2023 at 5:57=E2=80=AFPM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
+[...]
+> >> The mipi_dsi_pxclk_div is set as RO in order to use the same GP0
+> >> for mipi_dsi_pxclk and vclk2_input.
+> >
+> > I don't think notifiers is the appropriate approach here.
+> > Whenever there is clock change the motifiers would trigger an off/on of
+> > the clock, regardless of the clock usage or state.
+> > If you have several consummers on this vclk2, this would
+> > cause glitches and maybe this is not desirable.
+> >
+> > I think it would be better to handle the enable and reset with a
+> > specific gate driver, in prepare() or enable(), and the give the clock
+> > CLK_SET_RATE_GATE flag.
+> >
+> > This would require the clock to be properly turn off before changing th=
+e
+> > rate.
+>
+> Sure, will see how to switch to that, seem Martin did than on Meson8.
+You can start here: [0]
+It may not be the nicest logic but so far it works (for me).
 
-> 3. thanks to (1) and (2) qcom_icc_bus_aggregate() can be remodeled to instead
->    calculate the clock rates for the two rpm contexts, which we can then max()
->    and pass on to the ratesetting call
-> 
+Please note that I don't mix between CCF and direct register IO clock handl=
+ing:
+For the old SoCs I'm relying only on CCF to manage the clocks.
 
-Sounds good.
 
-> 
-> ----8<---- Cutting off Stephan's seal of approval, this is my thinking ----
-> 
-> 4. I *think* Qualcomm really made a mistake in their msm-5.4 driver where they
->    took most of the logic from the current -next state and should have been
->    setting the rate based on the *DST* provider, or at least that's my
->    understanding trying to read the "known good" msm-4.19 driver
->    (which remembers msm-3.0 lol).. Or maybe we should keep src but ensure there's
->    also a final (dst, dst) vote cast:
-> 
-> provider->inter_set = false // current state upstream
-> 
-> setting apps_proc<->slv_bimc_snoc
-> setting mas_bimc_snoc<->slv_snoc_cnoc
-> setting mas_snoc_cnoc<->qhs_sdc2
-> 
-> 
-> provider->inter_set = true // I don't think there's effectively a difference?
-> 
-> setting apps_proc<->slv_bimc_snoc
-> setting slv_bimc_snoc<->mas_bimc_snoc
-> setting mas_bimc_snoc<->slv_snoc_cnoc
-> setting slv_snoc_cnoc<->mas_snoc_cnoc
-> setting mas_snoc_cnoc<->qhs_sdc2
-> 
+Best regards,
+Martin
 
-I think with our proposed changes above it does no longer matter if a
-node is passed as "src" or "dst". This means in your example above you
-just waste additional time setting the bandwidth twice for
-slv_bimc_snoc, mas_bimc_snoc, slv_snoc_cnoc and mas_snoc_cnoc.
-The final outcome is the same with or without "inter_set".
 
-Thanks,
-Stephan
+[0] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.3-20230=
+410/drivers/gpu/drm/meson/meson_vclk.c#L1177-L1179
