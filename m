@@ -2,125 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 897DAC7EE2F
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 10:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CC7C77B73
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 10:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231585AbjE3K2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 06:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57026 "EHLO
+        id S231642AbjE3Kpv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 06:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231460AbjE3K1r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 06:27:47 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE731712
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:25:54 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-30959c0dfd6so4288154f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:25:54 -0700 (PDT)
+        with ESMTP id S231701AbjE3Kpd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 06:45:33 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BB171B1
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:45:13 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9741caaf9d4so101324866b.0
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685442352; x=1688034352;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=linaro.org; s=google; t=1685443512; x=1688035512;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vkw4yuYcd/6fz17L5CgIxbKkR70sSWZlSJ8WTXxy2UQ=;
-        b=muTUhg7e8JQ0TBPhOp/oEEhXJj3eulvy+fxTk3/7sJd+npS3dqWMMYv5xngisJn0ru
-         W8uPGfFqxcBriXD7cIJfuDRQQFPtIwMYBUq3BGtbhiP7MxW0y+EIZQ69kCKVYMHSzjaX
-         v0APavwm39uiZmyppZHlKUSC+69wkfiZMDMwF1XeO1qEAcaevs02hohQEnVx5/aHb7T2
-         Pbxipi4CerzC0qQkEWVG5usM5YOlQKLdyyh0qmG3qtwp30R8+7YRlV01W2+qjQkeI0eG
-         JEvGSQywFnuNMevsnNzAm4uhQgSykZr8WG9M7c0drawzSNn5U7uF5HV03XBlU0cXjSNs
-         aUMg==
+        bh=ZVwdZi18tOx4F5EpOQikJaJC+N1FG0YCZmCcPhomPHk=;
+        b=S73mFiWbxirjBnXaVpi44ZylcB1rk2ju47gQOmZCRxQN2+s/sqVV1D8hvtUrluFh6E
+         no9M/snhG8IGrnRjrp/0xLZxudsQlPuvOzuHvd6vBtx2b5F5l1Szqih9fBYKrBVG1v7U
+         lpyV9KLdT4b8zcRvAjcdbvA9YuzHeVxK0SSiTx2LfKVerRUEZBhuAIyQn9Wewc7oGq8v
+         qg6nkPqS67PIzeqbmPQU8BlGbbmOfLOx9xTCXFfNPCojYzzzenV/f+Yy1FlbU8C2V0ZS
+         uFqTcCVCsSf+3x+VWGzFUnCDVvsrIA9qbSooaz8Vi37COFaDiRwwXAljEV0iT5P/kk50
+         swJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685442352; x=1688034352;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1685443512; x=1688035512;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vkw4yuYcd/6fz17L5CgIxbKkR70sSWZlSJ8WTXxy2UQ=;
-        b=KmTUBIwtj+au3Go0UbK0IHzb5UiSAAou08rpR4B6BOyjAkGi7ZXanq9kgZd40CBHGL
-         u190d5p4436giUX+9W8t2uLvhN6mK7XBrLzQBHP2Zh+Qsc4qDmN5ZrJxF6bYtUxrrbQY
-         bmwI951dOdFevwUsc3eA/LrN8ddBaY5ihWypaAZGSUVFBnFX1XqL42y5UkYDepSdyp6o
-         +G8zLg0i+CMi/UYQ/nBBKU3tgVbLRXreHl2Ql6lbqJiNvWnFA6QIHRfEq1+0BriZATCe
-         uh/qcskXlOYOKKM5A6FnvKsBrn3tx0DL0SGKrT8fJtQVltL6d4wiymwO+U+FszFlXS42
-         Qfgw==
-X-Gm-Message-State: AC+VfDwmJ5ASrFMv+T0rAyP+Uh0EPVjwRLUuS1mn3UBs+tI/9WSN/7qk
-        qtwptobRX26u+VZNFZmIO0cybg==
-X-Google-Smtp-Source: ACHHUZ6n52yyVYwzLBwekl/HrBhTIt4qjRT+tt3BVirlo0xYwYiNpYbioIzVyC/m9l3/pItsUnZCow==
-X-Received: by 2002:adf:f20c:0:b0:30a:f3ca:17ad with SMTP id p12-20020adff20c000000b0030af3ca17admr1213582wro.66.1685442352514;
-        Tue, 30 May 2023 03:25:52 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id x2-20020adff0c2000000b0030af20aaa3fsm2818104wro.71.2023.05.30.03.25.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 May 2023 03:25:51 -0700 (PDT)
-Date:   Tue, 30 May 2023 13:25:47 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     shubhrajyoti.datta@amd.com
-Cc:     linux-clk@vger.kernel.org
-Subject: [bug report] clocking-wizard: Support higher frequency accuracy
-Message-ID: <563faee5-cc16-4e57-870a-29516724ce7b@kili.mountain>
+        bh=ZVwdZi18tOx4F5EpOQikJaJC+N1FG0YCZmCcPhomPHk=;
+        b=eFFvwiIwnOour8ghHKEGdWlmmMWR5N4YDLomAC41xKOLMx2t+dEAx3XISRdG5mFcID
+         c8qHLHfqxq6Vn/enSNn93OMNYYdvTk+RFmHFTebputIkrm21cTxJ9NRXEXc3V8RghXgp
+         SVartkefcjcJEmtTjPNlh8kJDoiBV7YAXrRrs6K0aum9zPd3uila7zok0IhCpWh5D0YZ
+         8y21eLcvCRp/ktrFH8pQ9W4IBTVTWU9bwYJXe+xJT5KsJtJ6Xf916UD32QNq/PMalY9e
+         em51iQOXzLmC1hd4sALHNrzi7FL0GTTHQT7299+/bGCteuyCo21Le6J6vOGQWSWuvMzD
+         XUew==
+X-Gm-Message-State: AC+VfDzjJj+nuMyY+1s8kvBERbw3GnWz43KMYehEQ6+Hg2QA5DqxZoLH
+        2I9hwe/QUkz5lMr7/GRGebmMrQ==
+X-Google-Smtp-Source: ACHHUZ5uBamxXB8i6XT3BS/ZYvZ++f/DXv7dyXHtwOOk5zHSIIHgpWmLsU4LBbiyiCdthKlAqh1erw==
+X-Received: by 2002:a17:907:7d94:b0:973:e184:e0fd with SMTP id oz20-20020a1709077d9400b00973e184e0fdmr1899181ejc.70.1685443511792;
+        Tue, 30 May 2023 03:45:11 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.199.204])
+        by smtp.gmail.com with ESMTPSA id o2-20020a1709062e8200b0094f698073e0sm7040396eji.123.2023.05.30.03.45.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 May 2023 03:45:11 -0700 (PDT)
+Message-ID: <30832bc4-c5b9-9131-2450-3522197ee05d@linaro.org>
+Date:   Tue, 30 May 2023 12:45:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 01/11] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        jassisinghbrar@gmail.com, mathieu.poirier@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, quic_gurus@quicinc.com,
+        loic.poulain@linaro.org, quic_eberman@quicinc.com,
+        robimarko@gmail.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_gokulsri@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_arajkuma@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com
+References: <1678164097-13247-1-git-send-email-quic_mmanikan@quicinc.com>
+ <1678164097-13247-2-git-send-email-quic_mmanikan@quicinc.com>
+ <38a5a268-7d8a-6e61-4272-8e9155df0034@linaro.org>
+ <790496d7-98dc-c92e-dedc-1c89395a1ad8@quicinc.com>
+ <4669eed6-b76c-8e68-74b1-36ea52a4bd5b@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <4669eed6-b76c-8e68-74b1-36ea52a4bd5b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Shubhrajyoti Datta,
+On 18/05/2023 19:22, Manikanta Mylavarapu wrote:
+>>>
+>> It's not required. I am going to remove it.
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  interrupts-extended:
+>>>
+>>> Instead interrupts
+>>>
+>> Sure. I will use 'interrupts'.
+>>
+> Please discard my previous reply. Here i couldn't able to use 
+> 'interrupts' because i am using interrupts from two different interrupt 
+> controllers. Sorry for previous wrong reply.
 
-The patch 595c88cda65d: "clocking-wizard: Support higher frequency
-accuracy" from Mar 27, 2023, leads to the following Smatch static
-checker warning:
+The bindings still should have interrupts. I did not comment on DTS, but
+on bindings. interrupts imply (or allow) interrupts-extended.
 
-	drivers/clk/xilinx/clk-xlnx-clock-wizard.c:286 clk_wzrd_dynamic_all_nolock()
-	warn: sleeping in atomic context
 
-drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-    254 static int clk_wzrd_dynamic_all_nolock(struct clk_hw *hw, unsigned long rate,
-    255                                        unsigned long parent_rate)
-    256 {
-    257         struct clk_wzrd_divider *divider = to_clk_wzrd_divider(hw);
-    258         unsigned long vco_freq, rate_div, clockout0_div;
-    259         u32 reg, pre, value, f;
-    260         int err;
-    261 
-    262         err = clk_wzrd_get_divisors(hw, rate, parent_rate);
-    263         if (err)
-    264                 return err;
-    265 
-    266         vco_freq = DIV_ROUND_CLOSEST(parent_rate * divider->m, divider->d);
-    267         rate_div = DIV_ROUND_CLOSEST_ULL((vco_freq * WZRD_FRAC_POINTS), rate);
-    268 
-    269         clockout0_div = div_u64(rate_div,  WZRD_FRAC_POINTS);
-    270 
-    271         pre = DIV_ROUND_CLOSEST_ULL(vco_freq * WZRD_FRAC_POINTS, rate);
-    272         f = (pre - (clockout0_div * WZRD_FRAC_POINTS));
-    273         f &= WZRD_CLKOUT_FRAC_MASK;
-    274 
-    275         reg = FIELD_PREP(WZRD_CLKOUT_DIVIDE_MASK, clockout0_div) |
-    276               FIELD_PREP(WZRD_CLKOUT0_FRAC_MASK, f);
-    277 
-    278         writel(reg, divider->base + WZRD_CLK_CFG_REG(2));
-    279         /* Set divisor and clear phase offset */
-    280         reg = FIELD_PREP(WZRD_CLKFBOUT_MULT_MASK, divider->m) |
-    281               FIELD_PREP(WZRD_DIVCLK_DIVIDE_MASK, divider->d);
-    282         writel(reg, divider->base + WZRD_CLK_CFG_REG(0));
-    283         writel(divider->o, divider->base + WZRD_CLK_CFG_REG(2));
-    284         writel(0, divider->base + WZRD_CLK_CFG_REG(3));
-    285         /* Check status register */
---> 286         err = readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
-    287                                  value & WZRD_DR_LOCK_BIT_MASK,
-    288                                  WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
-                                         ^^^^^^^^^^^^^^
-The clk_wzrd_dynamic_all() function is holding a spinlock so we cannot
-sleep here.
+Best regards,
+Krzysztof
 
-    289         if (err)
-    290                 return -ETIMEDOUT;
-    291 
-    292         /* Initiate reconfiguration */
-    293         writel(WZRD_DR_BEGIN_DYNA_RECONF,
-    294                divider->base + WZRD_DR_INIT_REG_OFFSET);
-    295 
-    296         /* Check status register */
-    297         return readl_poll_timeout(divider->base + WZRD_DR_STATUS_REG_OFFSET, value,
-    298                                  value & WZRD_DR_LOCK_BIT_MASK,
-    299                                  WZRD_USEC_POLL, WZRD_TIMEOUT_POLL);
-    300 }
-
-regards,
-dan carpenter
