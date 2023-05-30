@@ -2,119 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D1FC77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 19:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B50C7EE24
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 19:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231173AbjE3Tgc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 15:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58324 "EHLO
+        id S232372AbjE3Tzl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 15:55:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230219AbjE3Tgb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 15:36:31 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45341137;
-        Tue, 30 May 2023 12:36:22 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f3baf04f0cso5520560e87.1;
-        Tue, 30 May 2023 12:36:22 -0700 (PDT)
+        with ESMTP id S233401AbjE3Tze (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 15:55:34 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E346129;
+        Tue, 30 May 2023 12:55:29 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5148ebc4b89so7126707a12.3;
+        Tue, 30 May 2023 12:55:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1685475380; x=1688067380;
+        d=googlemail.com; s=20221208; t=1685476527; x=1688068527;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QEE5HR8KnTXDzE7qIjWjCheMHM5HqAaaQn2y8Q+rxV8=;
-        b=IVNYUCmhiNFu0EgZ0lRI69pOYybAw0Roa8Zps1B2zd6CwZ7FdSroL2EOxDfml0hl2k
-         qo04Uq1vSu9zxk3gbbRpCUq+kbB4EYsM4sMt9kIpzRVLpuenwvbcptbkDrlFjz12s+jq
-         Scm6s+4dseL2zUnMkuF3CYBxGsMySIe2Fb7A5mFYMwNE68P9YxV/Fl9CbWB02Ef8mvKK
-         ZitD/QzB1WKggCor0rhynySgN8NAXQQ+YISaEfdcnHBcfTYnBfKh+elXdbA0muZjv4WC
-         WhNKhfsMy0lBtIqF9wiFwHe13B4CIBjJ2815jAkuozg8QmHhGJJdZtGzvf2u7K6N7b3l
-         /Etw==
+        bh=JosYzEY1lGmppLDev48gkCgWxDTfd3euZCE7PWnGECE=;
+        b=JRMxSf2z2l5ohNt0RMgYCYxWjbyqpDdm1OrbpPj43wHx4EBfg1PjnEt9XDhLl9nwIS
+         jMOsDOPB6K3tKj7imM/7qXNSCr69jY0ngoXTrHdI6pn3ItphR4sLe2+POS3Mw/Mltmey
+         1f7/+oTEhumsfTLYumWWb26roMeyb+JoxfysZ2q0nm/GHAhZfp7KoKR/l7PdLZ0j30hn
+         +dDsVpOAc0kCrbrGIcjGUlbkIZMLjN3zjdwQX8zsflGGMjEQYfyjIaTvTocfKaPY8wSe
+         Z97RtyYlmM4r1mpbMSm/x0TCIzz/d2I8tatGJSZU9h2ylaZ9w4Ii3bLPRUM49TlQOwHL
+         HdyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685475380; x=1688067380;
+        d=1e100.net; s=20221208; t=1685476527; x=1688068527;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QEE5HR8KnTXDzE7qIjWjCheMHM5HqAaaQn2y8Q+rxV8=;
-        b=PvJ+2RPX+aXc1nQsd76lfSZUU7kg1vIPFlj35IjwFznnK3wySeli5oBBQp9QF1j31w
-         wCwQ+2DyF71mUalN40hxgFCZCRYjlC8s/TkKIPTC3o/UMX68190pSC2tWNbiw3tngWkG
-         OfNu2bexDgHrKfZuRkL7HhCJZE/5dtAmc1jsG8C+v1zOHQ5VsbQTvBcA262taiHBWg7X
-         XJbA3f7SVsZY203h4gxvB971HC9aD/uFY4Ln9tJiHUmN+WPhsOKw+FgV+qHXLnZ7shrA
-         FU3AT6iNvUvszlgxxJNemkkvolYkpXyuPDMowPOrkMC97dvTvZv0ko2F9W2eYv2fQN9v
-         4vaQ==
-X-Gm-Message-State: AC+VfDyxIsGz5+up22DzMcWdXLQs0w6qAIiVNmIw8wrYRuaClsaPfgoY
-        nAGVdzRqqvVW1QIDZtWvO692GbfqjssxzEeGdj0=
-X-Google-Smtp-Source: ACHHUZ5gc/hxHeYex2Y8Okc8JH1HtS8SizLAVO7CtDJbdkVMJw6syU7DTQmP8/PMv1wx+1QnYFOncA22xyJ5j/x0vzw=
-X-Received: by 2002:ac2:4c13:0:b0:4f3:8258:5894 with SMTP id
- t19-20020ac24c13000000b004f382585894mr1358968lfq.27.1685475380186; Tue, 30
- May 2023 12:36:20 -0700 (PDT)
+        bh=JosYzEY1lGmppLDev48gkCgWxDTfd3euZCE7PWnGECE=;
+        b=fnDZRDfeNkTcI4xVYeDdjAw0YN7jhaE+1h+Med4B7zr4A3kfvnhi5v7Rn8D2k0IOqb
+         XAw7LKDoded5l5omucaDKrwHLZ5NADcqu5qFAAyQ8J5vxWxFOI/cjZ98oONtcgrqCJMz
+         KC6air92v3TTLdJTOO1qadHGeETIz+zbHyoc8QpHUOdpffw25M6Psy9b/zj8ebedJLbY
+         a7d54x1zDp6vnhGjMuppQ3HM/0IwqB2PGa3WkPQJSoQ0PMdHRbRTQI8dEKfuhEFxNSKt
+         RpvnNkdLD0jJ2YlvYJ5UjZphFBJBJ7KXfabIH/inWFvRxou3i6lF64Fvp2dr8LIdnR1s
+         y5yg==
+X-Gm-Message-State: AC+VfDwn2DYKGwA5dyVl3CS97o43LYtDveHCWIsBSwdaO4o4hzbkTdzo
+        09om3f58uJBmWJ1rLsH9DC7zyYnWCfv9G/MUXVc=
+X-Google-Smtp-Source: ACHHUZ4P8r71ifJ+3o1ntKGm5WKvUQG9mQEAudtmzYAquTKx6MuMQE9ysPL3S5YD6wpSRL7NZm6o//GZQRb4UWb/U9Y=
+X-Received: by 2002:a17:907:318d:b0:961:69a2:c8d6 with SMTP id
+ xe13-20020a170907318d00b0096169a2c8d6mr3858560ejb.69.1685476527225; Tue, 30
+ May 2023 12:55:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
- <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-5-56eb7a4d5b8e@linaro.org>
- <1jv8ga445j.fsf@starbuckisacylon.baylibre.com> <c24502f9-f717-6ff9-211c-1d129ef02f24@linaro.org>
-In-Reply-To: <c24502f9-f717-6ff9-211c-1d129ef02f24@linaro.org>
+References: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
+ <20230517133309.9874-6-ddrokosov@sberdevices.ru> <CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com>
+ <20230522130033.a47vlybocme66rev@CAB-WSD-L081021> <CAFBinCAk9+Km3BssA8d8nc_Z_GbhY87FD3qQRpZ2k7ChKt7TBg@mail.gmail.com>
+ <20230530-illusive-pushpin-1e35d0a50e0d@wendy> <20230530160334.z6sclbmqccs6ju4y@CAB-WSD-L081021>
+In-Reply-To: <20230530160334.z6sclbmqccs6ju4y@CAB-WSD-L081021>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 30 May 2023 21:36:09 +0200
-Message-ID: <CAFBinCD4nZPp4JKpGARBkWL5pKVHJ0GSLTvy3S_q9mF=1d37Kg@mail.gmail.com>
-Subject: Re: [PATCH v5 05/17] clk: meson: g12a: make VCLK2 and ENCL clock path
- configurable by CCF
-To:     neil.armstrong@linaro.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "Lukas F. Hartmann" <lukas@mntre.com>,
-        Nicolas Belin <nbelin@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-phy@lists.infradead.org
+Date:   Tue, 30 May 2023 21:55:16 +0200
+Message-ID: <CAFBinCCZcT=7BZsgXDjzbcqAZpEkKYZRBDRwDX1poWZHa9Hxdg@mail.gmail.com>
+Subject: Re: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals
+ clock controller bindings
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     Conor Dooley <conor.dooley@microchip.com>, jbrunet@baylibre.com,
+        krzysztof.kozlowski+dt@linaro.org, neil.armstrong@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        khilman@baylibre.com, jian.hu@amlogic.com, kernel@sberdevices.ru,
+        rockosov@gmail.com, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Neil,
+Hi,
 
-On Tue, May 30, 2023 at 5:57=E2=80=AFPM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
+On Tue, May 30, 2023 at 6:03=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
+es.ru> wrote:
 [...]
-> >> The mipi_dsi_pxclk_div is set as RO in order to use the same GP0
-> >> for mipi_dsi_pxclk and vclk2_input.
-> >
-> > I don't think notifiers is the appropriate approach here.
-> > Whenever there is clock change the motifiers would trigger an off/on of
-> > the clock, regardless of the clock usage or state.
-> > If you have several consummers on this vclk2, this would
-> > cause glitches and maybe this is not desirable.
-> >
-> > I think it would be better to handle the enable and reset with a
-> > specific gate driver, in prepare() or enable(), and the give the clock
-> > CLK_SET_RATE_GATE flag.
-> >
-> > This would require the clock to be properly turn off before changing th=
-e
-> > rate.
->
-> Sure, will see how to switch to that, seem Martin did than on Meson8.
-You can start here: [0]
-It may not be the nicest logic but so far it works (for me).
+> > If I am understanding correctly, this series implements the child
+> > controller and a parent, which is unimplemented, provides the child wit=
+h
+> > sys_pll_div16.
+> > The thing I am missing is whether the child controller has some outputs
+> > that depend on this sys_pll_div16 input & whether those are documented
+> > in this series. Regardless, you should be able to add more output clock=
+s
+> > without compatibility issues.
+Conor, the short answer is yes, the "gen_sel" mux (see patch 6/6 from
+this series, which is then part of a clock tree that's an output of
+the peripheral clock controller) uses sys_pll_div16 as input.
+Dmitry goes into more details below.
 
-Please note that I don't mix between CCF and direct register IO clock handl=
-ing:
-For the old SoCs I'm relying only on CCF to manage the clocks.
+[...]
+> As for new input clock connections, such as the cpu_clock
+> (sys_pll_div16), these are handled by clock muxing abstraction, allowing
+> CCF to find the clock object by fw.name and returning -ENOENT if the
+> connection is missing without breaking any CCF flow. It happens in the
+> kernel function clk_core_fill_parent_index()
+> https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L424
+> Despite not having the connection for the new input in the old Device
+> Tree version, this will not break kernel boot flow and workflow, and the
+> new clock object just would not be utilized.
+>
+> Based on the presented arguments, I fully agree with Jerome's position.
+> We can add new connections and objects in new driver versions, but their
+> removal is prohibited.
+>
+> If it's alright with you, I would prefer to keep the Peripherals and PLL
+> clock driver and their bindings as they are, and continue with the CPU
+> and Audio clock controllers in a separate patch series. Would that be
+> feasible for you?
+To me this sounds good!
 
 
 Best regards,
 Martin
-
-
-[0] https://github.com/xdarklight/linux/blob/meson-mx-integration-6.3-20230=
-410/drivers/gpu/drm/meson/meson_vclk.c#L1177-L1179
