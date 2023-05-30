@@ -2,103 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59E87C77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 09:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5787BC7EE31
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 10:20:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbjE3JlU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 05:41:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52948 "EHLO
+        id S231229AbjE3KUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 06:20:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231255AbjE3Jkq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 05:40:46 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CC36EA;
-        Tue, 30 May 2023 02:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1685439622; x=1716975622;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=nxrrZgHgB/r7B5X5lLa7hKpzs6DxYZu4C3x1MeJ23Yc=;
-  b=e2j1C+8Ovonc0fF0beuVcwoAhChnhp4Y4A9XXCyUpyTQulZZTu7LnCDN
-   lGfPcC8RAiHMLIv2gZyPiT7k/NqzPHhf6Odq9qBDigGBUP+Flzd+XsdN2
-   F3VEztRfallxTK5GRngQ09VK35JbqtKoHHpjdjsljFz7RGD4X+W32fSwt
-   c4bQUPHxcxPW0tqiugI//VypOkaDzHmJD0jlGDg7wfBIR2Ucu73AXoeFm
-   CZ9yo7VpH9aeT3ansNd+rffjc8BzTGZGmkOIFYZgV0jDyCxKqBMBhFl2b
-   hBDAlNBDh6453W5y53Awt5grcJ68DLwQcKDfgC84QUdob00BF461Ctwxv
-   w==;
-X-IronPort-AV: E=Sophos;i="6.00,203,1681196400"; 
-   d="scan'208";a="213686540"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 May 2023 02:40:15 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Tue, 30 May 2023 02:40:10 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Tue, 30 May 2023 02:40:06 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <luca.ceresoli@bootlin.com>, <nm@ti.com>, <kristo@kernel.org>,
-        <ssantosh@kernel.org>, <michal.simek@xilinx.com>
-CC:     <aford173@gmail.com>, <mike.looijmans@topic.nl>,
-        <robert.hancock@calian.com>, <shawn.guo@linaro.org>,
-        <fabio.estevam@freescale.com>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-omap@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 7/8] clk: ti: clkctrl: check return value of kasprintf()
-Date:   Tue, 30 May 2023 12:39:12 +0300
-Message-ID: <20230530093913.1656095-8-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230530093913.1656095-1-claudiu.beznea@microchip.com>
-References: <20230530093913.1656095-1-claudiu.beznea@microchip.com>
+        with ESMTP id S231406AbjE3KUI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 06:20:08 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D51F5F0
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:20:06 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f3bb395e69so4838874e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 03:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685442005; x=1688034005;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=77NLmH6v9od1ob++a2CgJj2yTxYlz4uZEBXOcINbeNo=;
+        b=Cjbv3XEBkFdWGxRKo0MN/14XiXVsgf+CzADHLnjJwDf/UM9HKIs3ds1Y/fs1zt4+2X
+         5AaP+VpQNjMybkr8eTtyItX5KI5KvUAVO3gXYCAbf4sqEEtMXhMCl5Qg0LOCQGHKS7Dy
+         830vDqJ/SUgcU0VfIKk73DswdYl3D9+s2e2xVUue3SUMqQ5WDT+v+3ndrYK2ZqyRXg0X
+         jdox2DbQrieOR2RfLuEu1ToxwPBIq/ty6N1+yYLVkWc+dKrQftd324QmVe98P0rwx0M0
+         7nGw5Aoo9bjufNJjEzrLjVsIszFRMZoNZtz1XRYypOLLLqYGYrgoDHpOgqobhFFSOXlK
+         Pq3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685442005; x=1688034005;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=77NLmH6v9od1ob++a2CgJj2yTxYlz4uZEBXOcINbeNo=;
+        b=Gc12siknAWU+9SSzOmvFNTczqAlA2aErfALynwq8qd+ydDkeoVm9i5SFnyJVGweR9n
+         fhfSRwmy0yaE1iMC0qp2Y1ObsMP0ndKvFTEo4H++QLLkjhnRYKlERApswHP+QDM1eTsQ
+         ICVDJPpqCBGU7gzTe7VdV3zDWxYZ8W7y8mxKfuSXBecYbB8WQQiu9MFX1o6o8xQuCuNZ
+         HwvxKdCqJ16axziyFWDvBSFK2604ekQwPkIAdwD13SSQpTF9R9fQa82H+X+FWb+jkZRL
+         mlpm7CY3oV03doJDsK3WJEGXlQqUuewDIX2V84k37Z3HS66gvoK2IEsJD3vSjqQvbS5k
+         LTMw==
+X-Gm-Message-State: AC+VfDxGph9scZK6f7QjVSwkLsZtzdFScpvnlgx5txcdw0QjqYLYOlLe
+        flmHH4mzOsKK1qo+OK6FACbndQ==
+X-Google-Smtp-Source: ACHHUZ6/xo/OLZMXuevUu4Bt6wyyig1dVMyfyogbTcj0tGcewRL1b9WzTu3NPWilGXORO4klfTL1DA==
+X-Received: by 2002:a19:f502:0:b0:4f1:3ca4:926f with SMTP id j2-20020a19f502000000b004f13ca4926fmr542221lfb.21.1685442005001;
+        Tue, 30 May 2023 03:20:05 -0700 (PDT)
+Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
+        by smtp.gmail.com with ESMTPSA id c25-20020ac24159000000b004cc8196a308sm290902lfi.98.2023.05.30.03.20.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 May 2023 03:20:04 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Tue, 30 May 2023 12:20:00 +0200
+Subject: [PATCH 01/20] soc: qcom: smd-rpm: Add QCOM_SMD_RPM_STATE_NUM
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230526-topic-smd_icc-v1-1-1bf8e6663c4e@linaro.org>
+References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
+In-Reply-To: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>, Evan Green <evgreen@chromium.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1685442001; l=832;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=4N6lbOSoAygpQXj0UMs5Vps30KIKUCiMTFGnd+cpG9Q=;
+ b=Apzq1+DyQ99gBM5pYzms5dwSiiuvW/23Rvc3hwmN3t9CEO+k4c8sJkLtc6ORu+84mOo5C7tlb
+ bHCmQn3jOssC4SBuA9g3chvH/9VTnnMjWigFcmCvoClH1/3zLpvILMf
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-kasprintf() returns a pointer to dynamically allocated memory.
-Pointer could be NULL in case allocation fails. Check pointer validity.
-Identified with coccinelle (kmerr.cocci script).
+Add a preprocessor define to indicate the number of RPM contexts/states.
+While at it, use tabs instead of spaces for the existing entries.
 
-Fixes: 852049594b9a ("clk: ti: clkctrl: convert subclocks to use proper names also")
-Fixes: 6c3090520554 ("clk: ti: clkctrl: Fix hidden dependency to node name")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/ti/clkctrl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/soc/qcom/smd-rpm.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index b6fce916967c..8c40f10280b7 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -258,6 +258,9 @@ static const char * __init clkctrl_get_clock_name(struct device_node *np,
- 	if (clkctrl_name && !legacy_naming) {
- 		clock_name = kasprintf(GFP_KERNEL, "%s-clkctrl:%04x:%d",
- 				       clkctrl_name, offset, index);
-+		if (!clock_name)
-+			return NULL;
-+
- 		strreplace(clock_name, '_', '-');
+diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
+index 2990f425fdef..99499e4b080e 100644
+--- a/include/linux/soc/qcom/smd-rpm.h
++++ b/include/linux/soc/qcom/smd-rpm.h
+@@ -4,8 +4,9 @@
  
- 		return clock_name;
-@@ -586,6 +589,10 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 	if (clkctrl_name) {
- 		provider->clkdm_name = kasprintf(GFP_KERNEL,
- 						 "%s_clkdm", clkctrl_name);
-+		if (!provider->clkdm_name) {
-+			kfree(provider);
-+			return;
-+		}
- 		goto clkdm_found;
- 	}
+ struct qcom_smd_rpm;
  
+-#define QCOM_SMD_RPM_ACTIVE_STATE        0
+-#define QCOM_SMD_RPM_SLEEP_STATE         1
++#define QCOM_SMD_RPM_ACTIVE_STATE	0
++#define QCOM_SMD_RPM_SLEEP_STATE	1
++#define QCOM_SMD_RPM_STATE_NUM		2
+ 
+ /*
+  * Constants used for addressing resources in the RPM.
+
 -- 
-2.34.1
+2.40.1
 
