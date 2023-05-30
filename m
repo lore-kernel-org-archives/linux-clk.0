@@ -2,213 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC42C77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 12:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2CCC7EE23
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 12:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231736AbjE3MHq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 08:07:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40264 "EHLO
+        id S229639AbjE3MQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 08:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231298AbjE3MHm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 08:07:42 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81CF018B;
-        Tue, 30 May 2023 05:07:22 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 629495FD27;
-        Tue, 30 May 2023 15:06:42 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1685448402;
-        bh=bZ/3zHJMAac2f/gPspgrR1bhRNJwTftEFFtSQZKfL4w=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=T/VLAf3TNfoVJrOANf6hHbbJuExBwVn1s34Zx2Avqmyr6aXJUY2cIo81qtQqduPh8
-         BRa6Cbzg+AbH9OJ+qZd2mrV3FqE8gfStR9callJ9oUXpm3tjNzQK7h1HNqqAsu8rmg
-         eynLSLUc+P+lB580prvqse1tiznlr56Bbrcy6ount+MMBrPSPhXvWI9tx4IuO3CKFe
-         QGZOXXGVoUiOrKq64nQtTMBkGHDE6B7gW1H63mZOAW5pYCSvhg5H0CHwOFmL4NnLY1
-         xTyJlBAWxZgPUe7+fCSSzsXOkB1Gb1GfJ6UNLz9IYtm8fxH7vtJ4BHYVgUOKvswm0t
-         +/XTIkInKJ/oQ==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Tue, 30 May 2023 15:06:41 +0300 (MSK)
-Date:   Tue, 30 May 2023 15:06:40 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v15 6/6] clk: meson: a1: add Amlogic A1 Peripherals clock
- controller driver
-Message-ID: <20230530120640.irugyrio3qa7czjy@CAB-WSD-L081021>
-References: <20230517133309.9874-1-ddrokosov@sberdevices.ru>
- <20230517133309.9874-7-ddrokosov@sberdevices.ru>
- <CAFBinCBs7-9CvfQLxLoG5=FjmSK+S5eGsLXOAyQN9kNOg2q-2g@mail.gmail.com>
- <20230522133212.fcxgsml4hmvj65bb@CAB-WSD-L081021>
- <1jr0qy42tn.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S229935AbjE3MQf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 08:16:35 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49390FF
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 05:16:30 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f3a99b9177so4996146e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 05:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685448988; x=1688040988;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5uD3+suOcpbgdqFW0GkZogqfSEcYKxt6e0zHCfxECmw=;
+        b=ohYB0D566NjRxX69H7xtKhz+iJYxu/BY3KPkHmrLerOmX1LD9eNiMaP25GIX5MtoYL
+         c5nYyGwieNiS0xryV4M77yzPPLXUD5Z36v1q0cbmW1mXhi7I10m0ymgZLa65vrb3M2yV
+         BWBTmpavyt9XFbiIjGz/N/pL501nqIdt85denSxKP/KVyYSydL+kLxqZ7EtcM644bhDN
+         B1EDVjCjAjnr6h2J5rNlppthY7iCGzQ21xfGkO9CWwCaZNmMLLDE7hY2bupycclQl5NP
+         U+aU/D+lX643viWDe6RM5E9FIRyHk7i7XAoumRShkST+neoZFPh5gjJkjHu2+uQfLPh+
+         TCpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685448988; x=1688040988;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5uD3+suOcpbgdqFW0GkZogqfSEcYKxt6e0zHCfxECmw=;
+        b=Z+fyg3V60ns71cAgE9t+PUA2WytBbB2N5C8HnuAy76jDzY7Ofpc/1BxVrMnz7d7HW3
+         9xTWCzpE2vlhnBTESNG1RV82jxLmXh8kx1Uw6asqI1t+2SVD4hitqgK8Y44DtbwhQYju
+         slKvr2Ml81mTdCRvYzXtn1C5/XZT4YXo/U7DfDzJLfd8P0qPArSUz64fwBrE7Y8qoiw9
+         d0v5FOKSgAYgst5KzXoc8g2OKZM/DYWE47+7pm2jRIHIDDqowdFA239J26K7OsycQewm
+         /l0FDBuKB0+sib1AMBqt2MGEGb9EPJmFcAIaGXBXeJ1oBh1XdNvPMO5hVIOS/qvyt+O5
+         1pZw==
+X-Gm-Message-State: AC+VfDznEkns/5+v2IIsl2q49+1OQ79ko2b+aRsGt2LfsfCKacBmHIyE
+        Pv8yYoz2YI1XFBruCpjulS+PXg==
+X-Google-Smtp-Source: ACHHUZ6Ww0h+GaMyC1dkoIaj9nYT0oX8YdJ01HzwsJyaD9FCIelgw3F49GrnRv0+ct/oXUCi81jKUA==
+X-Received: by 2002:ac2:4473:0:b0:4f4:c32f:2a86 with SMTP id y19-20020ac24473000000b004f4c32f2a86mr671461lfl.33.1685448988344;
+        Tue, 30 May 2023 05:16:28 -0700 (PDT)
+Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
+        by smtp.gmail.com with ESMTPSA id u11-20020ac243cb000000b004efedad4604sm328571lfl.18.2023.05.30.05.16.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 May 2023 05:16:27 -0700 (PDT)
+Message-ID: <e1a38af8-2b48-1e47-e400-3cd9d17efa3b@linaro.org>
+Date:   Tue, 30 May 2023 14:16:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1jr0qy42tn.fsf@starbuckisacylon.baylibre.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/30 07:59:00 #21376339
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 20/20] interconnect: qcom: Divide clk rate by src node bus
+ width
+Content-Language: en-US
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>, Evan Green <evgreen@chromium.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
+ <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Jerome,
+Note: the commit title is wrong (src -> dst obviously).
+Thanks Stephan for spotting this.
 
-Thank you for the review!
+Konrad
 
-On Tue, May 30, 2023 at 10:32:57AM +0200, Jerome Brunet wrote:
+On 30.05.2023 12:20, Konrad Dybcio wrote:
+> Ever since the introduction of SMD RPM ICC, we've been dividing the
+> clock rate by the wrong bus width. This has resulted in:
 > 
-> On Mon 22 May 2023 at 16:32, Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> - setting wrong (mostly too low) rates, affecting performance
+>   - most often /2 or /4
+>   - things like DDR never hit their full potential
+>   - the rates were only correct if src bus width == dst bus width
+>     for all src, dst pairs on a given bus
 > 
-> > Hello Martin,
-> >
-> > Thank you so much for the review, I really appreciate it!
-> > Please find my comments below.
-> >
-> > On Fri, May 19, 2023 at 11:03:54PM +0200, Martin Blumenstingl wrote:
-> >> Hi Dmitry,
-> >> 
-> >> On Wed, May 17, 2023 at 3:33 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> >> [...]
-> >> > +static struct clk_regmap sys_b_sel = {
-> >> > +       .data = &(struct clk_regmap_mux_data){
-> >> > +               .offset = SYS_CLK_CTRL0,
-> >> > +               .mask = 0x7,
-> >> > +               .shift = 26,
-> >> > +               .table = mux_table_sys,
-> >> > +       },
-> >> > +       .hw.init = &(struct clk_init_data){
-> >> > +               .name = "sys_b_sel",
-> >> > +               .ops = &clk_regmap_mux_ro_ops,
-> >> the sys_*_sel muxes and sys_*_gate are _ro...
-> >> 
-> >> > +               .parent_data = sys_parents,
-> >> > +               .num_parents = ARRAY_SIZE(sys_parents),
-> >> > +       },
-> >> > +};
-> >> > +
-> >> > +static struct clk_regmap sys_b_div = {
-> >> > +       .data = &(struct clk_regmap_div_data){
-> >> > +               .offset = SYS_CLK_CTRL0,
-> >> > +               .shift = 16,
-> >> > +               .width = 10,
-> >> > +       },
-> >> > +       .hw.init = &(struct clk_init_data){
-> >> > +               .name = "sys_b_div",
-> >> > +               .ops = &clk_regmap_divider_ops,
-> >> ...but the sys_*_div aren't
-> >> Is this on purpose? If it is: why can the divider be changed at
-> >> runtime but the mux can't?
-> >> 
-> >
-> > Ah, that's a good catch. Since the system clock is set up by the BootROM
-> > code, all sys_* dividers and gates should be read-only. I'll make sure
-> > to change that in the next version.
-> >
-> >> [...]
-> >> > +/*
-> >> > + * the index 2 is sys_pll_div16, it will be implemented in the CPU clock driver,
-> >> We need to add the "sys_pll_div16" input to the dt-bindings since they
-> >> should always describe the hardware (regardless of what the driver
-> >> implements currently).
-> >> I'm not sure how to manage this while we don't have the CPU clock
-> >> driver ready yet but I'm sure Rob or Krzysztof will be able to help us
-> >> here.
-> >> 
-> >
-> > I've shared my thoughts about it in the bindings thread. Please take a
-> > look.
-> >
-> >> > + * the index 4 is the clock measurement source, it's not supported yet
-> >> I suspect that this comes from the clock measurer IP block and if so
-> >> the dt-bindings should probably describe this input. But again, we'd
-> >> need to keep it optional for now since our clock measurer driver
-> >> doesn't even implement a clock controller.
-> >> 
-> >
-> > Indeed, this is a similar situation to what we have with the inputs and
-> > clocks of the CPU and Audio clock controllers. It seems like there is
-> > only one option here: we should mark it with a TODO tag...
-> >
-> >> [...]
-> >> > +static struct clk_regmap pwm_a_sel = {
-> >> > +       .data = &(struct clk_regmap_mux_data){
-> >> > +               .offset = PWM_CLK_AB_CTRL,
-> >> > +               .mask = 0x1,
-> >> > +               .shift = 9,
-> >> > +       },
-> >> > +       .hw.init = &(struct clk_init_data){
-> >> > +               .name = "pwm_a_sel",
-> >> > +               .ops = &clk_regmap_mux_ops,
-> >> > +               .parent_data = pwm_abcd_parents,
-> >> > +               .num_parents = ARRAY_SIZE(pwm_abcd_parents),
-> >> > +               /* For more information, please refer to rtc clock */
-> >> > +               .flags = CLK_SET_RATE_NO_REPARENT,
-> >> As mentioned in [0] we'll work with Heiner to see if we can improve
-> >> the decision making process of the PWM controller driver so that we
-> >> can just have .flags = 0 here.
-> >> This applies to all other occurrences of the same comment about the rtc clock.
-> >
-> > Sure, I'll make the change in v16. In my opinion, we should remove the
-> > CLK_SET_RATE_NO_REPARENT flag from all RTC related clock objects,
-> > including PWM, regardless of the outcome of the Heiner discussion. Based
-> > on our IRC talk, the decision has more pros than cons -
-> > https://libera.irclog.whitequark.org/linux-amlogic/2023-05-18
+> - Qualcomm using the same wrong logic in their BSP driver in msm-5.x
+>   that ships in production devices today
 > 
-> The clock scheme of PWM could indeed be handled like audio is but it
-> not strictly required.
+> - me losing my sanity trying to find this
 > 
-> In audio we have a limited number of PLLs (root sources). There is a lot
-> more consummers than there is root sources. If the root sources rate is
-> not carefully chosen to statisfy all needs, we could end in a situation
-> where we can't satisfy all consummers or we must glitch the source to do
-> so.
+> Resolve it by using dst_qn, if it exists.
 > 
-> For the PWM, I think (but I'm not 100% sure) that the main clock controller
-> provides a source for each PWM. No risk of race there. That is why AML
-> decided to completly ignore the clock element in the PWM IP, because
-> they can do almost everything with what is in the main controller ... Still
-> ignoring those part is wrong
+> Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/interconnect/qcom/icc-rpm.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> For the RTC, If you want/need to handle external RTCs, I don't think you
-> have much of a choice. If both the internal and external *report* the
-> same rate, CCF can't really know if one is best. It will just pick one,
-> no necessarily the one you want. I don't really see a way around manual
-> selection for this.
+> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> index 59be704364bb..58e2a8b1b7c3 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.c
+> +++ b/drivers/interconnect/qcom/icc-rpm.c
+> @@ -340,7 +340,7 @@ static void qcom_icc_bus_aggregate(struct icc_provider *provider,
+>  static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+>  {
+>  	struct qcom_icc_provider *qp;
+> -	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
+> +	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL, *qn = NULL;
+>  	struct icc_provider *provider;
+>  	u64 active_rate, sleep_rate;
+>  	u64 agg_avg[QCOM_SMD_RPM_STATE_NUM], agg_peak[QCOM_SMD_RPM_STATE_NUM];
+> @@ -353,6 +353,8 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+>  	provider = src->provider;
+>  	qp = to_qcom_provider(provider);
+>  
+> +	qn = dst_qn ? dst_qn : src_qn;
+> +
+>  	qcom_icc_bus_aggregate(provider, agg_avg, agg_peak, &max_agg_avg);
+>  
+>  	ret = qcom_icc_rpm_set(src_qn, agg_avg);
+> @@ -372,11 +374,11 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+>  	/* Intentionally keep the rates in kHz as that's what RPM accepts */
+>  	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
+>  			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
+> -	do_div(active_rate, src_qn->buswidth);
+> +	do_div(active_rate, qn->buswidth);
+>  
+>  	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
+>  			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
+> -	do_div(sleep_rate, src_qn->buswidth);
+> +	do_div(sleep_rate, qn->buswidth);
+>  
+>  	/*
+>  	 * Downstream checks whether the requested rate is zero, but it makes little sense
 > 
-
-Per my understading, the rtc32k Amlogic clock is an internal clock and
-cannot be an external one. Amlogic has provided it as an internal 32k
-stable clock with low jitter.
-
-You're absolutely right that there is no data available to confirm the
-choice of an external RTC clock in the CCF. However, as per the approach
-we discussed with Martin and Heiner, we can still use the RTC clock as a
-parent for PWM in the current implementation. If the parent clock
-already has 32k, we do not change the rate from the PWM driver. The
-benefit of this approach is that reparenting is still available, but the
-PWM child cannot change the RTC frequency; it simply uses the
-appropriate parent clock. Additionally, if the parent is already set to
-rtc32k, we shouldn't change it.
-
--- 
-Thank you,
-Dmitry
