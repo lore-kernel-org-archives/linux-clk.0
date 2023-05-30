@@ -2,442 +2,240 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5592C77B73
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 15:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B597C77B73
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 16:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231408AbjE3P6L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 May 2023 11:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45750 "EHLO
+        id S230514AbjE3QEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 12:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233050AbjE3P6J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 11:58:09 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 862EE109
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 08:57:57 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f6da07feb2so47834465e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 May 2023 08:57:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685462276; x=1688054276;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=soD7KF236fVdv2fwYKiHqpw4d6B1nafnm4/p2DE5I88=;
-        b=MTcBKUpy4tR6lLTlD+Y89QSKhzPlk7dnG3Vy8L6fXEAoz64IMHhHdz6VGzsefppXhu
-         wmHmT7TJhOpKppFgf6kIyFlJjytexBGylAuRTWDVY8daJwftQYPNs3XkrDkQfNxlC/+u
-         Y6p6euSYceST9/gTaWJBg016jaCsSAdDxUeTrfzJHZNROYE1eL+IsMAaFJUQj/lxd15J
-         8DLEOuU729hex6HElXm4WGnYk8v93LI8BZNrERU3/aVgBfpIZ5EHntv1rymP3xRQMEi7
-         qco5f+9qOToPFLKQA0unDJbYcE/Cbm9iafuRjnXD+wBIpsJiVlJ6JyfHyhidjL9ruWmW
-         fLAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685462276; x=1688054276;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=soD7KF236fVdv2fwYKiHqpw4d6B1nafnm4/p2DE5I88=;
-        b=VRdnNe3T+ONxrwJDjWtj1N+181P611I5I9qgL0mS7Beh0jlQIpeTo4VHoSrA9QlO1Q
-         bo0+g+EGWzCnFhCYiMNf5E74xtEkkeZeFpzOxfHL58emgLNxxL6opbB6u2ijSp6lR9cM
-         ZpEAQDlIRiw4cN98xrdwicf3/1cwp8Bwj2j2ECG6lEzSefdivaPTHiWaY/nx9uv/oz0N
-         vJfwgqq3BGD4AJ3iUl9OVd3Yc9fDD2nPr4ZJ1GFBtGD4ef6NhuXtAA4QXu7UoR1Ggbpy
-         /pgCcXQNzDWjRC48kiKnC5NTLBgaseiZjODcbXeqx498VKdb1/VyNCIhSZxGbhCEQjNi
-         DavQ==
-X-Gm-Message-State: AC+VfDwbZNJKZbeJ88pP3CBeQwR0Q57is+fq+uVi3oJ2M0poyyF85FTs
-        6fnG2ote2iPjrCaUhmX9EMKKhw==
-X-Google-Smtp-Source: ACHHUZ4PI3+RU/VHtMz95ap8CicMr/pqwOn3JEnKSr6jW7kKz7iW5Xn12uDh1TwBu1EIbWNrHGU/Nw==
-X-Received: by 2002:a1c:7708:0:b0:3f6:1377:8b15 with SMTP id t8-20020a1c7708000000b003f613778b15mr1856995wmi.21.1685462275850;
-        Tue, 30 May 2023 08:57:55 -0700 (PDT)
-Received: from [192.168.27.65] (home.beaume.starnux.net. [82.66.176.246])
-        by smtp.gmail.com with ESMTPSA id k5-20020a7bc405000000b003f31cb7a203sm17789085wmi.14.2023.05.30.08.57.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 May 2023 08:57:55 -0700 (PDT)
-Message-ID: <c24502f9-f717-6ff9-211c-1d129ef02f24@linaro.org>
-Date:   Tue, 30 May 2023 17:57:51 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.1
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v5 05/17] clk: meson: g12a: make VCLK2 and ENCL clock path
- configurable by CCF
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
+        with ESMTP id S232476AbjE3QEa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 12:04:30 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBDC138;
+        Tue, 30 May 2023 09:03:59 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 2F4F95FD3A;
+        Tue, 30 May 2023 19:03:36 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1685462616;
+        bh=rHLpWB2idDx6NUu9uDREPJ6CN0gKgc15y+Jr03H4B7w=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=AjAmrRH9suMXhwS9xcW/H6stcTQmHozkPsHnFyr+6PSubFUTXZqpydgCgJ5UixBWB
+         Z46yKsfJmCR0WUdFVkhLVk4fVXPDuM7Xx4XqyCldWzeECPUJjwDf4wJRXSF33Wl9gX
+         aKrVxGMPrdJ6lhbvEPLaiZxn1gLz3/bN26CAc/GmmAriYxjsdDuJkuF+6mI4pI6cZq
+         x7J+h3Z6id3sSCc/+CpolgrCLc5MJI6wRS4WFwY8lEYZxrp7YhxbbZtMRaGgNAjtx4
+         zlTrS+ylpqDJWYCy+0g1ed3ztuTJTCQsp3HW9S9ujWoOFzvw/3l8Xna3Zfz0l+UXkN
+         nemWqWE2fV9KQ==
+Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Tue, 30 May 2023 19:03:35 +0300 (MSK)
+Date:   Tue, 30 May 2023 19:03:34 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Conor Dooley <conor.dooley@microchip.com>,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     "Lukas F. Hartmann" <lukas@mntre.com>,
-        Nicolas Belin <nbelin@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-phy@lists.infradead.org
-References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
- <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-5-56eb7a4d5b8e@linaro.org>
- <1jv8ga445j.fsf@starbuckisacylon.baylibre.com>
-Organization: Linaro Developer Services
-In-Reply-To: <1jv8ga445j.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        <jbrunet@baylibre.com>
+CC:     <krzysztof.kozlowski+dt@linaro.org>, <neil.armstrong@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <khilman@baylibre.com>,
+        <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v15 5/6] dt-bindings: clock: meson: add A1 Peripherals
+ clock controller bindings
+Message-ID: <20230530160334.z6sclbmqccs6ju4y@CAB-WSD-L081021>
+References: <20230517133309.9874-1-ddrokosov@sberdevices.ru><20230517133309.9874-6-ddrokosov@sberdevices.ru><CAFBinCC3kQ9Nz3R2W-Qj9tbPJfS8JsB_4AkmPgS6xpQ96DBy2w@mail.gmail.com><20230522130033.a47vlybocme66rev@CAB-WSD-L081021><CAFBinCAk9+Km3BssA8d8nc_Z_GbhY87FD3qQRpZ2k7ChKt7TBg@mail.gmail.com><20230530-illusive-pushpin-1e35d0a50e0d@wendy>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230530-illusive-pushpin-1e35d0a50e0d@wendy>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
+ S-MS-EXCH01.sberdevices.ru (172.16.1.4)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/05/30 11:20:00 #21377521
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/05/2023 10:14, Jerome Brunet wrote:
-> 
-> On Tue 30 May 2023 at 09:38, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> 
->> In order to setup the DSI clock, let's make the unused VCLK2 clock path
->> configuration via CCF.
->>
->> The nocache option is removed from following clocks:
->> - vclk2_sel
->> - vclk2_input
->> - vclk2_div
->> - vclk2
->> - vclk_div1
->> - vclk2_div2_en
->> - vclk2_div4_en
->> - vclk2_div6_en
->> - vclk2_div12_en
->> - vclk2_div2
->> - vclk2_div4
->> - vclk2_div6
->> - vclk2_div12
->> - cts_encl_sel
->>
->> The missing vclk2 reset sequence is handled via new clkc notifiers
->> in order to reset the vclk2 after each rate change as done by Amlogic
->> in the vendor implementation.
->>
->> In order to set a rate on cts_encl via the vclk2 clock path,
->> the NO_REPARENT flag is set on cts_encl_sel & vclk2_sel in order
->> to keep CCF from selection a parent.
->> The parents of cts_encl_sel & vclk2_sel are expected to be defined
->> in DT.
->>
->> The following clock scheme is to be used for DSI:
->>
->> xtal
->> \_ gp0_pll_dco
->>     \_ gp0_pll
->>        |- vclk2_sel
->>        |  \_ vclk2_input
->>        |     \_ vclk2_div
->>        |        \_ vclk2
->>        |           \_ vclk2_div1
->>        |              \_ cts_encl_sel
->>        |                 \_ cts_encl	-> to VPU LCD Encoder
->>        |- mipi_dsi_pxclk_sel
->>        \_ mipi_dsi_pxclk_div
->>           \_ mipi_dsi_pxclk		-> to DSI controller
->>
->> The mipi_dsi_pxclk_div is set as RO in order to use the same GP0
->> for mipi_dsi_pxclk and vclk2_input.
-> 
-> I don't think notifiers is the appropriate approach here.
-> Whenever there is clock change the motifiers would trigger an off/on of
-> the clock, regardless of the clock usage or state.
-> If you have several consummers on this vclk2, this would
-> cause glitches and maybe this is not desirable.
-> 
-> I think it would be better to handle the enable and reset with a
-> specific gate driver, in prepare() or enable(), and the give the clock
-> CLK_SET_RATE_GATE flag.
-> 
-> This would require the clock to be properly turn off before changing the
-> rate.
+Hello Conor, Martin and Jerome,
 
-Sure, will see how to switch to that, seem Martin did than on Meson8.
+Thank you so much for the detailed information and thoughts you shared
+about the important process of changing DT bindings. Please find my
+comments below.
 
-Neil
-
+On Tue, May 30, 2023 at 10:34:07AM +0100, Conor Dooley wrote:
+> Yo,
 > 
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/clk/meson/g12a.c | 131 +++++++++++++++++++++++++++++++++++++++++++----
->>   1 file changed, 120 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> index 461ebd79497c..e4053f4957d5 100644
->> --- a/drivers/clk/meson/g12a.c
->> +++ b/drivers/clk/meson/g12a.c
->> @@ -3163,7 +3163,7 @@ static struct clk_regmap g12a_vclk2_sel = {
->>   		.ops = &clk_regmap_mux_ops,
->>   		.parent_hws = g12a_vclk_parent_hws,
->>   		.num_parents = ARRAY_SIZE(g12a_vclk_parent_hws),
->> -		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +		.flags = CLK_SET_RATE_NO_REPARENT,
->>   	},
->>   };
->>   
->> @@ -3191,7 +3191,6 @@ static struct clk_regmap g12a_vclk2_input = {
->>   		.ops = &clk_regmap_gate_ops,
->>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_sel.hw },
->>   		.num_parents = 1,
->> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->>   	},
->>   };
->>   
->> @@ -3212,6 +3211,40 @@ static struct clk_regmap g12a_vclk_div = {
->>   	},
->>   };
->>   
->> +struct g12a_vclk_div_notifier {
->> +	struct clk_regmap *clk;
->> +	unsigned int offset;
->> +	u8 en_bit_idx;
->> +	u8 reset_bit_idx;
->> +	struct notifier_block nb;
->> +};
->> +
->> +static int g12a_vclk_div_notifier_cb(struct notifier_block *nb,
->> +				  unsigned long event, void *data)
->> +{
->> +	struct g12a_vclk_div_notifier *nb_data =
->> +		container_of(nb, struct g12a_vclk_div_notifier, nb);
->> +
->> +	switch (event) {
->> +	case PRE_RATE_CHANGE:
->> +		/* disable and reset vclk2 divider */
->> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
->> +				   BIT(nb_data->en_bit_idx) |
->> +				   BIT(nb_data->reset_bit_idx),
->> +				   BIT(nb_data->reset_bit_idx));
->> +		return NOTIFY_OK;
->> +	case POST_RATE_CHANGE:
->> +		/* enabled and release reset */
->> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
->> +				   BIT(nb_data->en_bit_idx) |
->> +				   BIT(nb_data->reset_bit_idx),
->> +				   BIT(nb_data->en_bit_idx));
->> +		return NOTIFY_OK;
->> +	default:
->> +		return NOTIFY_DONE;
->> +	};
->> +};
->> +
->>   static struct clk_regmap g12a_vclk2_div = {
->>   	.data = &(struct clk_regmap_div_data){
->>   		.offset = HHI_VIID_CLK_DIV,
->> @@ -3225,10 +3258,18 @@ static struct clk_regmap g12a_vclk2_div = {
->>   			&g12a_vclk2_input.hw
->>   		},
->>   		.num_parents = 1,
->> -		.flags = CLK_GET_RATE_NOCACHE,
->> +		.flags = CLK_DIVIDER_ROUND_CLOSEST,
->>   	},
->>   };
->>   
->> +static struct g12a_vclk_div_notifier g12a_vclk2_div_data = {
->> +	.clk = &g12a_vclk2_div,
->> +	.offset = HHI_VIID_CLK_DIV,
->> +	.en_bit_idx = 16,
->> +	.reset_bit_idx = 17,
->> +	.nb.notifier_call = g12a_vclk_div_notifier_cb,
->> +};
->> +
->>   static struct clk_regmap g12a_vclk = {
->>   	.data = &(struct clk_regmap_gate_data){
->>   		.offset = HHI_VID_CLK_CNTL,
->> @@ -3243,6 +3284,33 @@ static struct clk_regmap g12a_vclk = {
->>   	},
->>   };
->>   
->> +struct g12a_vclk_reset_notifier {
->> +	struct clk_regmap *clk;
->> +	unsigned int offset;
->> +	u8 bit_idx;
->> +	struct notifier_block nb;
->> +};
->> +
->> +static int g12a_vclk_notifier_cb(struct notifier_block *nb,
->> +				  unsigned long event, void *data)
->> +{
->> +	struct g12a_vclk_reset_notifier *nb_data =
->> +		container_of(nb, struct g12a_vclk_reset_notifier, nb);
->> +
->> +	switch (event) {
->> +	case POST_RATE_CHANGE:
->> +		/* reset vclk2 */
->> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
->> +				   BIT(nb_data->bit_idx), BIT(nb_data->bit_idx));
->> +		regmap_update_bits(nb_data->clk->map, nb_data->offset,
->> +				   BIT(nb_data->bit_idx), 0);
->> +
->> +		return NOTIFY_OK;
->> +	default:
->> +		return NOTIFY_DONE;
->> +	};
->> +}
->> +
->>   static struct clk_regmap g12a_vclk2 = {
->>   	.data = &(struct clk_regmap_gate_data){
->>   		.offset = HHI_VIID_CLK_CNTL,
->> @@ -3253,10 +3321,17 @@ static struct clk_regmap g12a_vclk2 = {
->>   		.ops = &clk_regmap_gate_ops,
->>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
->>   		.num_parents = 1,
->> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> +static struct g12a_vclk_reset_notifier g12a_vclk2_data = {
->> +	.clk = &g12a_vclk2,
->> +	.offset = HHI_VIID_CLK_CNTL,
->> +	.bit_idx = 15,
->> +	.nb.notifier_call = g12a_vclk_notifier_cb,
->> +};
->> +
->>   static struct clk_regmap g12a_vclk_div1 = {
->>   	.data = &(struct clk_regmap_gate_data){
->>   		.offset = HHI_VID_CLK_CNTL,
->> @@ -3337,7 +3412,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
->>   		.ops = &clk_regmap_gate_ops,
->>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->>   		.num_parents = 1,
->> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3351,7 +3426,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
->>   		.ops = &clk_regmap_gate_ops,
->>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->>   		.num_parents = 1,
->> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3365,7 +3440,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
->>   		.ops = &clk_regmap_gate_ops,
->>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->>   		.num_parents = 1,
->> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3379,7 +3454,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
->>   		.ops = &clk_regmap_gate_ops,
->>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->>   		.num_parents = 1,
->> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3393,7 +3468,7 @@ static struct clk_regmap g12a_vclk2_div12_en = {
->>   		.ops = &clk_regmap_gate_ops,
->>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->>   		.num_parents = 1,
->> -		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3459,6 +3534,7 @@ static struct clk_fixed_factor g12a_vclk2_div2 = {
->>   			&g12a_vclk2_div2_en.hw
->>   		},
->>   		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3472,6 +3548,7 @@ static struct clk_fixed_factor g12a_vclk2_div4 = {
->>   			&g12a_vclk2_div4_en.hw
->>   		},
->>   		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3485,6 +3562,7 @@ static struct clk_fixed_factor g12a_vclk2_div6 = {
->>   			&g12a_vclk2_div6_en.hw
->>   		},
->>   		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3498,6 +3576,7 @@ static struct clk_fixed_factor g12a_vclk2_div12 = {
->>   			&g12a_vclk2_div12_en.hw
->>   		},
->>   		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3559,7 +3638,7 @@ static struct clk_regmap g12a_cts_encl_sel = {
->>   		.ops = &clk_regmap_mux_ops,
->>   		.parent_hws = g12a_cts_parent_hws,
->>   		.num_parents = ARRAY_SIZE(g12a_cts_parent_hws),
->> -		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
->> +		.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
->>   	},
->>   };
->>   
->> @@ -3727,7 +3806,7 @@ static struct clk_regmap g12a_mipi_dsi_pxclk_div = {
->>   	},
->>   	.hw.init = &(struct clk_init_data){
->>   		.name = "mipi_dsi_pxclk_div",
->> -		.ops = &clk_regmap_divider_ops,
->> +		.ops = &clk_regmap_divider_ro_ops,
->>   		.parent_hws = (const struct clk_hw *[]) {
->>   			&g12a_mipi_dsi_pxclk_sel.hw
->>   		},
->> @@ -5421,6 +5500,32 @@ static int meson_g12a_dvfs_setup(struct platform_device *pdev)
->>   	return 0;
->>   }
->>   
->> +static int meson_g12a_vclk_setup(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct clk *notifier_clk;
->> +	int ret;
->> +
->> +	/* Setup clock notifier for vclk2 */
->> +	notifier_clk = devm_clk_hw_get_clk(dev, &g12a_vclk2.hw, DVFS_CON_ID);
->> +	ret = devm_clk_notifier_register(dev, notifier_clk, &g12a_vclk2_data.nb);
->> +	if (ret) {
->> +		dev_err(dev, "failed to register the vlkc2 notifier\n");
->> +		return ret;
->> +	}
->> +
->> +	/* Setup clock notifier for vclk2_div */
->> +	notifier_clk = devm_clk_hw_get_clk(dev, &g12a_vclk2_div.hw, DVFS_CON_ID);
->> +	ret = devm_clk_notifier_register(dev, notifier_clk,
->> +					 &g12a_vclk2_div_data.nb);
->> +	if (ret) {
->> +		dev_err(dev, "failed to register the vclk2_div notifier\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   struct meson_g12a_data {
->>   	const struct meson_eeclkc_data eeclkc_data;
->>   	int (*dvfs_setup)(struct platform_device *pdev);
->> @@ -5443,6 +5548,10 @@ static int meson_g12a_probe(struct platform_device *pdev)
->>   	g12a_data = container_of(eeclkc_data, struct meson_g12a_data,
->>   				 eeclkc_data);
->>   
->> +	ret = meson_g12a_vclk_setup(pdev);
->> +	if (ret)
->> +		return ret;
->> +
->>   	if (g12a_data->dvfs_setup)
->>   		return g12a_data->dvfs_setup(pdev);
+> On Mon, May 29, 2023 at 10:38:33PM +0200, Martin Blumenstingl wrote:
+> > On Mon, May 22, 2023 at 3:00 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> > [...]
+> > > > This IP block has at least one additional input called "sys_pll_div16".
+> > > > My understanding is that the "sys_pll_div16" clock is generated by the
+> > > > CPU clock controller. Support for the CPU clock controller
+> > > > (dt-bindings and a driver) will be added at a later time by Dmitry.
+> > > > How can we manage incrementally implementing the clock controllers?
+> > > > From a hardware perspective the "sys_pll_div16" input is mandatory.
+> > > > How to manage this in the .dts patches then (for example: does this
+> > > > mean that Dmitry can only add the clock controller to the .dts when
+> > > > all clock controller bindings have been implemented - or is there
+> > > > another way)?
+> > >
+> > > You're absolutely right: currently, not all inputs are supported because
+> > > the CPU clock controller isn't ready yet – I'm working on it at the
+> > > moment.
+> > >
+> > > I understand your concerns about bindings and schema description, but
+> > > there is an issue to be considered. I'm developing the entire clock
+> > > controller A1 subsystem incrementally in three stages: peripherals and
+> > > PLL, CPU, and Audio. This is because the CPU can operate at a static
+> > > frequency and voltage, and the board boots normally without the CPU
+> > > clock controller, thermal sensor, and OPP table. Audio is also
+> > > important, but it's optional. On the other hand, without setting up the
+> > > peripherals and PLL controllers, the board won't function because
+> > > they're fundamental.
+> > I understand your approach and I like it (without that incremental
+> > approach you would probably be looking at a series with 15-20
+> > patches).
+> > 
+> > Maybe the dt-binding maintainers have a suggestion for us here?
+> > Let me try to summarize the issue in a few bullet points:
+> > - There's (at least) four clock controllers on the Amlogic A1 SoC
+> > - Some of these clock controllers take the outputs of another clock
+> > controller as inputs
+> > - In this series patch the peripheral clock controller has an input
+> > called "sys_pll_div16"
+> > - The clock controller which provides the "sys_pll_div16" clock is not
+> > implemented yet (my understanding is that implementing it and adding
+> > it to this series is not easy: it would add even more patches that
+> > need to be reviewed and in general it's a tricky clock controller to
+> > implement as it manages the CPU clocks)
+> 
+> If I am understanding correctly, this series implements the child
+> controller and a parent, which is unimplemented, provides the child with
+> sys_pll_div16.
+> The thing I am missing is whether the child controller has some outputs
+> that depend on this sys_pll_div16 input & whether those are documented
+> in this series. Regardless, you should be able to add more output clocks
+> without compatibility issues.
+> 
+> > > Right now, we're in the first stage of the plan. Unfortunately, I can't
+> > > disclose the exact names and number of clock bindings for the CPU and
+> > > Audio, as they're still in development and only exist in my head or
+> > > draft versions.
+> > >
+> > > If possible, I'd prefer to provide the new bindings and connections once
+> > > all the appropriate drivers are finalized.
+> > Question to Conor and Krzysztof (assuming you read my summary above):
+> > Is it fine that Dmitry adds additional inputs to the peripheral clock
+> > controller binding in later patches?
+> 
+> Perhaps Krzysztof will disagree with me, but my take on it would be that
+> the binding should describe the individual clock controller in its
+> totality, but the driver can choose to only implement a subset of it.
+> 
+> If you define the binding as only needing N inputs, but then later
+> expand it to having N+M inputs, the driver will have to support N & N+M
+> input clocks to preserve compatibility.
+> If you define it as needing N+M inputs from the beginning, but only use
+> N, there is no issue with backwards compatibility when you later use
+> them all.
 > 
 
+In short, I agree with Jerome's position, which he shared in the
+parallel email:
+https://lore.kernel.org/all/1jmt1m42m1.fsf@starbuckisacylon.baylibre.com/
+
+Below I will try to explain my position.
+
+Please correct me if I am mistaken, but it appears we are currently
+discussing a scenario where a new kernel X+1 image version is flashed
+onto a device with a device tree from kernel X-1 image version, and
+whether a new driver with clock object connections can function on the
+previous Device Tree version.
+
+If I'm grasping the issue correctly, it seems that we have four
+potential scenarios at play here:
+1) we may have altered the relationships between internal clock objects;
+2) we may have introduced new output clock connections;
+3) we may have introduced new input clock connections;
+4) we may have removed existing connections from the driver.
+
+It seems that options 1 and 4 are straightforward and easy to
+understand.
+The 4 case is fully prohibited. We cannot remove
+any object or connection from the clock driver if another consumer uses
+it in the previous Device Tree versions. It is also important to note
+that any internal changes within the driver do not affect the device
+tree connections, as this is already clear.
+
+The second and third cases are more complex.
+
+For instance, let's say we are preparing a new patchset for an existing
+clock driver, such as Peripherals, where we are adding an Audio clock
+that is handled by an MMIO register inside Peripherals clock driver. X-1
+dts does not recognize this new clock and doesn't have any connection to
+any node or to any other clock driver, thereby eliminating any backwards
+compatibility issues.
+
+As for new input clock connections, such as the cpu_clock
+(sys_pll_div16), these are handled by clock muxing abstraction, allowing
+CCF to find the clock object by fw.name and returning -ENOENT if the
+connection is missing without breaking any CCF flow. It happens in the
+kernel function clk_core_fill_parent_index()
+https://elixir.bootlin.com/linux/latest/source/drivers/clk/clk.c#L424
+Despite not having the connection for the new input in the old Device
+Tree version, this will not break kernel boot flow and workflow, and the
+new clock object just would not be utilized.
+
+Based on the presented arguments, I fully agree with Jerome's position.
+We can add new connections and objects in new driver versions, but their
+removal is prohibited.
+
+If it's alright with you, I would prefer to keep the Peripherals and PLL
+clock driver and their bindings as they are, and continue with the CPU
+and Audio clock controllers in a separate patch series. Would that be
+feasible for you?
+
+> > If not: how can we proceed in case we need to add them now (the
+> > dt-binding example is the easy part for me as we can just make up a
+> > phandle like &sys_pll_div16_clk and use that - but this can't work
+> > when Dmitry tries to add the clock controller to meson-a1.dtsi)
+> 
+> I would be inclined to do the same thing in the dts as the example,
+> and make up a fixed-frequency clock and use it to plug the hole.
+> When you have bindings etc written for the clock controller providing
+> that clock, the fixed-frequency clock could be swapped out for the real
+> one.
+> 
+> > PS: Dmitry is trying to get this series into Linux 6.5. As far as I
+> > remember the common clock maintainers don't take pull requests with
+> > new features after -rc6 (which is in less than two weeks).
+> > So time is getting a bit short and for me this is the very last
+> > outstanding question. If you say that it's fine to add clocks later on
+> > this will immediately get my Reviewed-by.
+> 
+> I *think* that what I've just said should not get in the way of such a
+> timeline, as it would only involve a "small" change to the dt-binding,
+> but not require additional bindings or driver.
+> 
+> Cheers,
+> Conor.
+> 
+
+-- 
+Thank you,
+Dmitry
+
+УВЕДОМЛЕНИЕ О КОНФИДЕНЦИАЛЬНОСТИ: Это электронное сообщение и любые документы, приложенные к нему, содержат конфиденциальную информацию. Настоящим уведомляем Вас о том, что если это сообщение не предназначено Вам, использование, копирование, распространение информации, содержащейся в настоящем сообщении, а также осуществление любых действий на основе этой информации, строго запрещено. Если Вы получили это сообщение по ошибке, пожалуйста, сообщите об этом отправителю по электронной почте и удалите это сообщение.
+CONFIDENTIALITY NOTICE: This email and any files attached to it are confidential. If you are not the intended recipient you are notified that using, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited. If you have received this email in error please notify the sender and delete this email.
