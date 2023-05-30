@@ -2,324 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE490C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 01:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A40C7EE2C
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 03:59:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbjE3BJY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 May 2023 21:09:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55372 "EHLO
+        id S229926AbjE3D7p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 May 2023 23:59:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbjE3BJY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 21:09:24 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7232CF;
-        Mon, 29 May 2023 18:09:22 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id 98e67ed59e1d1-2568befcf1dso912564a91.0;
-        Mon, 29 May 2023 18:09:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685408962; x=1688000962;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d1wG3ZzBNrC3Iuv0Sazp7NPX3sgvbpQA8Twr3uxU34s=;
-        b=kXw1U6akBeszmRiZ1MVvqGt5eDQuWhg17xwHKHH1jEX/9yaFkD1SOvWX/DEiaSJ8V9
-         a39ZEYAGgARyRX7UhQmHCk6Ej8CON2madP8nOXK+2PwuqPMl7c39mDtdlgUY2qONvt4O
-         17GOFsEwtbE1glmbzKXvHUnmFP86NdwnWvazFzlNQSlmKMm0RxUAnSXNw3RXzsnw3mma
-         adXNWyoyVDsjz+4PA2AMk3EJ9+cLtETJoBicLQLeaR+5EPBiZN0vSR7ej7T6bl5azXNN
-         gXCpv+CXrKKrWXCo74OPAUXxjC/6Kj8uND/4IW5e5bLShDEOZKg7DeX93UwgYWKlPIGn
-         TYuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685408962; x=1688000962;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d1wG3ZzBNrC3Iuv0Sazp7NPX3sgvbpQA8Twr3uxU34s=;
-        b=GZYbuKS9LvAHhiCTaKE6/o8aWjPJ4ZVYeQPWN+w3FNy51OnH6dS1N9DooT0/CHYKLP
-         5GFrE4auFAOf7AQvn+fI8SyQbq81WTLireYtp1XSw+2LLp5XMUPOfUbJvP07KRS7UKEP
-         5ZZH5F0sQwIDVvsh18PCxvjjYAqbMWR4fvl4Ky1UQZj3ZTh1WwDmdkTRoVvYo9bcbkHn
-         cbFaRO+AceO/UVRW7dLdgwfzfTOZO5iXFNaQfcfXcJXCqbQHi+AsAPIAef7xEAE1Tck2
-         sELSuSGvbW/3fFl24E4Y9lSVDnZlHzMXyXBHQxZPNaq889ygucZvzIGJrQFy7rwoi0X+
-         phxg==
-X-Gm-Message-State: AC+VfDwP5L7KbjyLUTDpSmgzleEelqj8U8lC13QMZqGMvJN+x8pjjLq3
-        9jjxsNYbmbfGkptFUS0S790=
-X-Google-Smtp-Source: ACHHUZ4lRcccoA8lGODePVC271WFd12PsoH9zTA9AafQ4ZPdWcMilHiDIITrvpbD1M0gojDXw1+KCw==
-X-Received: by 2002:a17:90b:3a91:b0:24e:3752:194f with SMTP id om17-20020a17090b3a9100b0024e3752194fmr9899966pjb.21.1685408961878;
-        Mon, 29 May 2023 18:09:21 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id b1-20020a17090a100100b002532eef4fc5sm8271339pja.34.2023.05.29.18.09.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 May 2023 18:09:21 -0700 (PDT)
-Message-ID: <c9493f4d-8056-20a0-6ed2-161fbcc3d34e@gmail.com>
-Date:   Tue, 30 May 2023 09:09:16 +0800
+        with ESMTP id S229478AbjE3D7n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 23:59:43 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9144494;
+        Mon, 29 May 2023 20:59:42 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34U2X6uw000824;
+        Tue, 30 May 2023 03:59:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : from : subject : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=fQim3q8iOjpLNRj2uSbSbhxVGXrNRMfRVaKA9f/ozBk=;
+ b=FuWxvZHkT2h7mQXM5XSOUBzo4yuO6KwEzuusyXZ613e7xiNE6pBf5XP1XBQ4c91WV1ja
+ jM4cUeSIqqCiPmGMg4RboVVTFIofOJUQbuqXKIwgy94W0wZnGleHFwzCK5RL1jh6V21I
+ yg6vGfBChLlEPGm9s+yM1JWKUfOo/5z6wb3vQZMlV5bRnGB9b4f5dKO5PHLYHdmBNdKY
+ 6Nex70F6rMht5QwFycq0wtjs9/8xh8s9AuyX/2O84k6FDJSjj3uAZKN91tD3k8bKRdV5
+ 2DCcM61Q5wzc9Q8ZGmHkH50O4lfLl2WV0bLIT+42I1l8MrrCcmUtUS/YKMN34vEg/NMy ZA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qw7rtr5qp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 May 2023 03:59:10 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34U3x9NQ003442
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 May 2023 03:59:09 GMT
+Received: from [10.216.48.5] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 29 May
+ 2023 20:59:01 -0700
+Message-ID: <c19122ca-58b7-a407-0ce3-41dab4218c81@quicinc.com>
+Date:   Tue, 30 May 2023 09:28:52 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v11 10/10] tty: serial: Add Nuvoton ma35d1 serial driver
- support
-From:   Jacky Huang <ychuang570808@gmail.com>
-To:     Jiri Slaby <jirislaby@kernel.org>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        gregkh@linuxfoundation.org, tmaimon77@gmail.com,
-        catalin.marinas@arm.com, will@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-serial@vger.kernel.org, arnd@arndb.de, soc@kernel.org,
-        schung@nuvoton.com, mjchen@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230516075217.205401-1-ychuang570808@gmail.com>
- <20230516075217.205401-11-ychuang570808@gmail.com>
- <3d4acb20-c80e-fd39-c0d0-e9b1e0309d81@kernel.org>
- <aaef529f-69dc-8bec-0ae1-959a1ede87e0@gmail.com>
+ Thunderbird/102.10.0
+From:   Devi Priya <quic_devipriy@quicinc.com>
+Subject: Re: (subset) [PATCH V3 0/5] Add APSS clock controller support for
+ IPQ9574
+To:     Bjorn Andersson <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <will@kernel.org>, <arnd@arndb.de>,
+        <catalin.marinas@arm.com>, <krzysztof.kozlowski+dt@linaro.org>,
+        <agross@kernel.org>, <jassisinghbrar@gmail.com>,
+        <nfraprado@collabora.com>, <geert+renesas@glider.be>,
+        <sboyd@kernel.org>, <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <rafal@milecki.pl>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh+dt@kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <broonie@kernel.org>
+CC:     <quic_arajkuma@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_srichara@quicinc.com>, <quic_ipkumar@quicinc.com>
+References: <20230406061314.10916-1-quic_devipriy@quicinc.com>
+ <168512991479.248818.11621497605486086318.b4-ty@kernel.org>
 Content-Language: en-US
-In-Reply-To: <aaef529f-69dc-8bec-0ae1-959a1ede87e0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <168512991479.248818.11621497605486086318.b4-ty@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8g5kwYEPPjTnIhW8SIU3jAlS04W-2qzV
+X-Proofpoint-ORIG-GUID: 8g5kwYEPPjTnIhW8SIU3jAlS04W-2qzV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-05-30_01,2023-05-29_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ phishscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2305300031
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear Jiri,
 
 
-On 2023/5/24 下午 04:34, Jacky Huang wrote:
-> Dear Jiri,
->
-> Thanks for your advice.
->
-> On 2023/5/24 下午 03:42, Jiri Slaby wrote:
->> On 16. 05. 23, 9:52, Jacky Huang wrote:
->>> +static void ma35d1serial_config_port(struct uart_port *port, int 
->>> flags)
->>> +{
->>> +    /*
->>> +     * Driver core for serial ports forces a non-zero value for 
->>> port type.
->>> +     * Write an arbitrary value here to accommodate the serial core 
->>> driver,
->>> +     * as ID part of UAPI is redundant.
->>> +     */
->>> +    port->type = 1;
+On 5/27/2023 1:08 AM, Bjorn Andersson wrote:
+> On Thu, 6 Apr 2023 11:43:09 +0530, Devi Priya wrote:
+>> APSS PLL found in IPQ9574 platform is of type Huayra.
+>> This series adds support for the APSS clock to bump the CPU frequency
+>> above 800MHz.
 >>
->> So this 1 translates to PORT_8250. Why not to use it directly? Or 
->> something more saner like PORT_16550A?
+>> DTS patch is based on the below series
+>> https://lore.kernel.org/linux-arm-msm/20230404164828.8031-1-quic_devipriy@quicinc.com/
 >>
-> It's not actually 8250 or 16550A.
-> Can we add the following definition to 
-> 'include/uapi/linux/serial_core.h' and use PORT_MA35 instead?
->
-> #define PORT_MA35    124
->
->
->>> +}
->>> +
->>> +static int ma35d1serial_verify_port(struct uart_port *port, struct 
->>> serial_struct *ser)
->>> +{
->>> +    if (port->type != PORT_UNKNOWN && ser->type != 1)
->>> +        return -EINVAL;
->>> +
->>> +    return 0;
->>> +}
->> ...
->>> +static int __init ma35d1serial_console_setup(struct console *co, 
->>> char *options)
->>> +{
->>> +    struct device_node *np = ma35d1serial_uart_nodes[co->index];
->>> +    struct uart_ma35d1_port *p = &ma35d1serial_ports[co->index];
->>> +    u32 val32[4];
->>> +    struct uart_port *port;
->>> +    int baud = 115200;
->>> +    int bits = 8;
->>> +    int parity = 'n';
->>> +    int flow = 'n';
->>> +
->>> +    /*
->>> +     * Check whether an invalid uart number has been specified, and
->>
->> You dereferenced ma35d1serial_uart_nodes already. Doesn't 
->> console=ttyNVT1000 (or something like that) crash the system?
->>
->
-> I will add the following check before np = 
-> "ma35d1serial_uart_nodes[co->index]".
->
-> if (co->index < 0 || co->index >= MA35_UART_NR)
->     return -EINVAL;
->
->
->>> +     * if so, search for the first available port that does have
->>> +     * console support.
->>
->> The code below doesn't match this comment.
->
-> Yes, I will remove the above comment.
->
->>
->>> +     */
->>> +    if ((co->index < 0) || (co->index >= MA35_UART_NR)) {
->>> +        pr_debug("Console Port%x out of range\n", co->index);
->>> +        return -EINVAL;
->>> +    }
->>> +
->>> +    if (of_property_read_u32_array(np, "reg", val32, 4) != 0)
->>
->> Shouldn't that 4 be ARRAY_SIZE(val32) instead?
->>
->
-> Will be fixed.
->
->>> +        return -EINVAL;
->>
->> One \n here please.
->>
->
-> Okay, I will add it.
->
->>> +    p->port.iobase = val32[1];
->>> +    p->port.membase = ioremap(p->port.iobase, MA35_UART_REG_SIZE);
->>
->> What if this fails?
->>
->
-> I will add a check for the return value.
->
->>> +    p->port.ops = &ma35d1serial_ops;
->>> +    p->port.line = 0;
->>> +    p->port.uartclk = MA35_UART_CONSOLE_CLK;
->>> +
->>> +    port = &ma35d1serial_ports[co->index].port;
->>
->> Isn't this:
->>   port = &p->port;
->> ?
->>
->> Either use port on all above lines or drop the "port" variable 
->> completely and use "p->port" below instead.
->>
->
-> I will remove port variable and use p->port only.
->
->>> +
->>> +    if (options)
->>> +        uart_parse_options(options, &baud, &parity, &bits, &flow);
->>> +
->>> +    return uart_set_options(port, co, baud, parity, bits, flow);
->>> +}
->>> +
->>> +static struct console ma35d1serial_console = {
->>> +    .name    = "ttyNVT",
->>> +    .write   = ma35d1serial_console_write,
->>> +    .device  = uart_console_device,
->>> +    .setup   = ma35d1serial_console_setup,
->>> +    .flags   = CON_PRINTBUFFER | CON_ENABLED,
->>> +    .index   = -1,
->>> +    .data    = &ma35d1serial_reg,
->>
->> I don't see console->data used anywhere in the driver?
->>
->
-> I will remove it.
->
+>> [...]
+> 
+Thanks! To update on the dependency, This series does not hold any 
+dependencies as the DTS patch cleanly applies on [1] which has already 
+been picked up for linux-next.
 
-I removed the " .data    = &ma35d1serial_reg", but kernel crashed in 
-'drivers/tty/serial/serial_core.c'.
+[PATCH V3 4/5] arm64: dts: qcom: ipq9574: Add support for APSS clock 
+controller
 
-The variable 'p' of  uart_console_device() refer to a NULL, because 
-co->data is NULL.
-As a result, kernel crashed at 'p->tty_driver'.
+[1] - 
+https://lore.kernel.org/linux-arm-msm/20230517072806.13170-1-quic_kathirav@quicinc.com/
 
-struct tty_driver *uart_console_device(struct console *co, int *index)
-{
-     struct uart_driver *p = co->data;
-     *index = co->index;
-     return p->tty_driver;
-}
-
-We seem to be unable to remove it.
-If there are no other considerations, I will keep it in the next version.
-
->>> +};
->> ...
->>> +static int ma35d1serial_probe(struct platform_device *pdev)
->>> +{
->>> +    struct resource *res_mem;
->>> +    struct uart_ma35d1_port *up;
->>> +    int ret = 0;
->>> +
->>> +    if (pdev->dev.of_node) {
->>> +        ret = of_alias_get_id(pdev->dev.of_node, "serial");
->>> +        if (ret < 0) {
->>> +            dev_err(&pdev->dev, "failed to get alias/pdev id, errno 
->>> %d\n", ret);
->>> +            return ret;
->>> +        }
->>> +    }
->>> +    up = &ma35d1serial_ports[ret];
->>> +    up->port.line = ret;
->>> +    res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>> +    if (!res_mem)
->>> +        return -ENODEV;
->>> +
->>> +    up->port.iobase = res_mem->start;
->>> +    up->port.membase = ioremap(up->port.iobase, MA35_UART_REG_SIZE);
->>
->> Check this too.
->>
->
-> Okay, sure.
->
->>> +    up->port.ops = &ma35d1serial_ops;
->>> +
->>> +    spin_lock_init(&up->port.lock);
->>> +
->>> +    up->clk = of_clk_get(pdev->dev.of_node, 0);
->>> +    if (IS_ERR(up->clk)) {
->>> +        ret = PTR_ERR(up->clk);
->>> +        dev_err(&pdev->dev, "failed to get core clk: %d\n", ret);
->>> +        goto err_iounmap;
->>> +    }
->>> +
->>> +    ret = clk_prepare_enable(up->clk);
->>> +    if (ret)
->>> +        goto err_iounmap;
->>> +
->>> +    if (up->port.line != 0)
->>> +        up->port.uartclk = clk_get_rate(up->clk);
->>> +
->>> +    ret = platform_get_irq(pdev, 0);
->>> +    if (ret < 0)
->>> +        goto err_clk_disable;
->>> +
->>> +    up->port.irq = ret;
->>> +    up->port.dev = &pdev->dev;
->>> +    up->port.flags = UPF_BOOT_AUTOCONF;
->>> +
->>> +    platform_set_drvdata(pdev, up);
->>> +
->>> +    ret = uart_add_one_port(&ma35d1serial_reg, &up->port);
->>> +    if (ret < 0)
->>> +        goto err_free_irq;
->>> +
->>> +    return 0;
->>> +
->>> +err_free_irq:
->>> +    free_irq(up->port.irq, &up->port);
->>> +
->>> +err_clk_disable:
->>> +    clk_disable_unprepare(up->clk);
->>> +
->>> +err_iounmap:
->>> +    iounmap(up->port.membase);
->>> +    return ret;
->>> +}
->>
->> thanks,
->
+> Applied, thanks!
+> 
+> [5/5] arm64: defconfig: Enable ipq6018 apss clock and PLL controller
+>        commit: 3098f34977480c9aa75cf328501f1b47ec49fec7
+> 
 > Best regards,
-> Jacky Huang
->
-
-Best regards,
-Jacky Huang
-
