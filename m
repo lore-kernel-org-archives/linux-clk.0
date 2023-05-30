@@ -2,115 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A40C7EE2C
-	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 03:59:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EABC77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 30 May 2023 05:35:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229926AbjE3D7p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 May 2023 23:59:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53008 "EHLO
+        id S229540AbjE3Ffy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 May 2023 01:35:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229478AbjE3D7n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 May 2023 23:59:43 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9144494;
-        Mon, 29 May 2023 20:59:42 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 34U2X6uw000824;
-        Tue, 30 May 2023 03:59:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : from : subject : to : cc : references : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=fQim3q8iOjpLNRj2uSbSbhxVGXrNRMfRVaKA9f/ozBk=;
- b=FuWxvZHkT2h7mQXM5XSOUBzo4yuO6KwEzuusyXZ613e7xiNE6pBf5XP1XBQ4c91WV1ja
- jM4cUeSIqqCiPmGMg4RboVVTFIofOJUQbuqXKIwgy94W0wZnGleHFwzCK5RL1jh6V21I
- yg6vGfBChLlEPGm9s+yM1JWKUfOo/5z6wb3vQZMlV5bRnGB9b4f5dKO5PHLYHdmBNdKY
- 6Nex70F6rMht5QwFycq0wtjs9/8xh8s9AuyX/2O84k6FDJSjj3uAZKN91tD3k8bKRdV5
- 2DCcM61Q5wzc9Q8ZGmHkH50O4lfLl2WV0bLIT+42I1l8MrrCcmUtUS/YKMN34vEg/NMy ZA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qw7rtr5qp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 May 2023 03:59:10 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 34U3x9NQ003442
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 May 2023 03:59:09 GMT
-Received: from [10.216.48.5] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 29 May
- 2023 20:59:01 -0700
-Message-ID: <c19122ca-58b7-a407-0ce3-41dab4218c81@quicinc.com>
-Date:   Tue, 30 May 2023 09:28:52 +0530
+        with ESMTP id S230184AbjE3Ffw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 May 2023 01:35:52 -0400
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A4EEC;
+        Mon, 29 May 2023 22:35:51 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5147e8972a1so6402851a12.0;
+        Mon, 29 May 2023 22:35:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685424950; x=1688016950;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cV4g2QqFAx0Qg2GEdFeROXzdUlE1iPO7BwJG8HSPHco=;
+        b=V0ur1r5ZpyYdebIDkztcNCTvjnsnnf7UqOJaf/oyd5y/e3JkrROHrDVGLfaT/6izQc
+         +CO3o2W9hYzE+LgJXVdiKKRspzN7FWlxOF0Ul66aEZl15bXB8gIEcoGbfyZn4+Xlswkj
+         VAW2S+G7OP+NyEYsZfdAiNrH1NSq4ojDnIx43yan/XtgMoH05OA1xIjg9/v6RlCrewOB
+         F1/ITnC0cbITooyJRWScaK0CaFbzkZ81Fg8AT/XM5oTYb9UM1vH5RSfjHjbqJgWgHXWq
+         rxdpAh1zNtFfHCLed+pT/KAOV2uITjCx15qKSR/J9ZZ/fNWbe8JPIca1hD9BecyjdEU+
+         lhqg==
+X-Gm-Message-State: AC+VfDw8VKPjB/E4ZxZhUrJXF2du2OA+Urcf+B9QRtZ8msDP3qlwiYZk
+        dLodQNJ+vsQC3OhcPhr/XZE=
+X-Google-Smtp-Source: ACHHUZ7d//vbJPuMcuuguqHEIhsa256pT0itLFARVDscaeij15+LBFgsDcQeytTG/QPiy2HgYWfrWQ==
+X-Received: by 2002:a17:907:3f1c:b0:970:d85:59e9 with SMTP id hq28-20020a1709073f1c00b009700d8559e9mr1267463ejc.5.1685424949500;
+        Mon, 29 May 2023 22:35:49 -0700 (PDT)
+Received: from [192.168.1.58] (185-219-167-24-static.vivo.cz. [185.219.167.24])
+        by smtp.gmail.com with ESMTPSA id j23-20020a17090643d700b0095850aef138sm6829336ejn.6.2023.05.29.22.35.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 May 2023 22:35:49 -0700 (PDT)
+Message-ID: <75747efd-2bfd-d1db-42d9-7a6c90240475@kernel.org>
+Date:   Tue, 30 May 2023 07:35:47 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-From:   Devi Priya <quic_devipriy@quicinc.com>
-Subject: Re: (subset) [PATCH V3 0/5] Add APSS clock controller support for
- IPQ9574
-To:     Bjorn Andersson <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <will@kernel.org>, <arnd@arndb.de>,
-        <catalin.marinas@arm.com>, <krzysztof.kozlowski+dt@linaro.org>,
-        <agross@kernel.org>, <jassisinghbrar@gmail.com>,
-        <nfraprado@collabora.com>, <geert+renesas@glider.be>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <rafal@milecki.pl>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <robh+dt@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <broonie@kernel.org>
-CC:     <quic_arajkuma@quicinc.com>, <quic_kathirav@quicinc.com>,
-        <quic_anusha@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_srichara@quicinc.com>, <quic_ipkumar@quicinc.com>
-References: <20230406061314.10916-1-quic_devipriy@quicinc.com>
- <168512991479.248818.11621497605486086318.b4-ty@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v11 10/10] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
 Content-Language: en-US
-In-Reply-To: <168512991479.248818.11621497605486086318.b4-ty@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8g5kwYEPPjTnIhW8SIU3jAlS04W-2qzV
-X-Proofpoint-ORIG-GUID: 8g5kwYEPPjTnIhW8SIU3jAlS04W-2qzV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-05-30_01,2023-05-29_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- phishscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0 impostorscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2305300031
+To:     Jacky Huang <ychuang570808@gmail.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, lee@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+        gregkh@linuxfoundation.org, tmaimon77@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-serial@vger.kernel.org, arnd@arndb.de, soc@kernel.org,
+        schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230516075217.205401-1-ychuang570808@gmail.com>
+ <20230516075217.205401-11-ychuang570808@gmail.com>
+ <3d4acb20-c80e-fd39-c0d0-e9b1e0309d81@kernel.org>
+ <aaef529f-69dc-8bec-0ae1-959a1ede87e0@gmail.com>
+ <c9493f4d-8056-20a0-6ed2-161fbcc3d34e@gmail.com>
+From:   Jiri Slaby <jirislaby@kernel.org>
+In-Reply-To: <c9493f4d-8056-20a0-6ed2-161fbcc3d34e@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
-
-On 5/27/2023 1:08 AM, Bjorn Andersson wrote:
-> On Thu, 6 Apr 2023 11:43:09 +0530, Devi Priya wrote:
->> APSS PLL found in IPQ9574 platform is of type Huayra.
->> This series adds support for the APSS clock to bump the CPU frequency
->> above 800MHz.
+On 30. 05. 23, 3:09, Jacky Huang wrote:
+>>>> +
+>>>> +    if (options)
+>>>> +        uart_parse_options(options, &baud, &parity, &bits, &flow);
+>>>> +
+>>>> +    return uart_set_options(port, co, baud, parity, bits, flow);
+>>>> +}
+>>>> +
+>>>> +static struct console ma35d1serial_console = {
+>>>> +    .name    = "ttyNVT",
+>>>> +    .write   = ma35d1serial_console_write,
+>>>> +    .device  = uart_console_device,
+>>>> +    .setup   = ma35d1serial_console_setup,
+>>>> +    .flags   = CON_PRINTBUFFER | CON_ENABLED,
+>>>> +    .index   = -1,
+>>>> +    .data    = &ma35d1serial_reg,
+>>>
+>>> I don't see console->data used anywhere in the driver?
+>>>
 >>
->> DTS patch is based on the below series
->> https://lore.kernel.org/linux-arm-msm/20230404164828.8031-1-quic_devipriy@quicinc.com/
+>> I will remove it.
 >>
->> [...]
 > 
-Thanks! To update on the dependency, This series does not hold any 
-dependencies as the DTS patch cleanly applies on [1] which has already 
-been picked up for linux-next.
-
-[PATCH V3 4/5] arm64: dts: qcom: ipq9574: Add support for APSS clock 
-controller
-
-[1] - 
-https://lore.kernel.org/linux-arm-msm/20230517072806.13170-1-quic_kathirav@quicinc.com/
-
-> Applied, thanks!
+> I removed the " .data    = &ma35d1serial_reg", but kernel crashed in 
+> 'drivers/tty/serial/serial_core.c'.
 > 
-> [5/5] arm64: defconfig: Enable ipq6018 apss clock and PLL controller
->        commit: 3098f34977480c9aa75cf328501f1b47ec49fec7
+> The variable 'p' of  uart_console_device() refer to a NULL, because 
+> co->data is NULL.
+> As a result, kernel crashed at 'p->tty_driver'.
 > 
-> Best regards,
+> struct tty_driver *uart_console_device(struct console *co, int *index)
+> {
+>      struct uart_driver *p = co->data;
+>      *index = co->index;
+>      return p->tty_driver;
+> }
+> 
+> We seem to be unable to remove it.
+> If there are no other considerations, I will keep it in the next version.
+
+Ah, yeah. Sorry, my bad.
+
+-- 
+js
+suse labs
+
