@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6741C7EE24
-	for <linux-clk@archiver.kernel.org>; Wed, 31 May 2023 09:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951D6C77B7A
+	for <linux-clk@archiver.kernel.org>; Wed, 31 May 2023 09:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231495AbjEaJUB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 May 2023 05:20:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58852 "EHLO
+        id S235361AbjEaJVd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 May 2023 05:21:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235411AbjEaJTu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 May 2023 05:19:50 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475BDA0
-        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:19:44 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1b065154b79so5561405ad.1
-        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:19:44 -0700 (PDT)
+        with ESMTP id S232213AbjEaJVa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 May 2023 05:21:30 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AD1D10E
+        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:21:28 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id e9e14a558f8ab-33b00ce51caso9622095ab.2
+        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:21:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685524783; x=1688116783;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685524887; x=1688116887;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e/F8jIF8NqATxdAvMuHV954nGjADHoS+vIBQmhEkWOs=;
-        b=g2QKglMZH/mJ1PlHw0xaAb1Atu0wvBgVAqYnuu8mReQEONCqAC+kuvmXr1GOl2K8hi
-         PELXRr9/ZHFzDZ1y3TGPnhTkxyRxzi2WWpiULuLFvRre0MOUR2wmfXd4PYcyHYisgga9
-         vIxf3UCExwjWT2hL5wZhyPw1/THRLmg9F35utlvE2h3bHMSJOdGF1FVhqXM8zvkuKeiA
-         QDOmg7HzxXmpRYriQ+VggWvGgLlVCw55VPwJnR21xsMdQuKGIVaBL+9JKvxwHIb3unI0
-         dNbqyoJWOojJolHETOZRlnmey1S+0lkpPlrlK4bJKbtj2DG0b51oWPxTwnJeIwJ9apJ4
-         TZiA==
+        bh=qqZtyuK0U15DxZmjBsyfHeiLrrKr6W4JwftADT3FJhk=;
+        b=4qC36suMHU6JStzGoINSAsJQMh6mklFEHuUchbO29b+s0jEjA05FUl6zoMoZcTpZoS
+         oeAvnDggv/NdN2RHO/JYaxxkKjcQoymLf3On58NMUTcsUBHLwtd14mlCoObYepeZMGa4
+         28CkUtsq8b3j0z9EF0NCRn4YdLem/92uWjpocIG3rpbUd62MbyOSLDPLlAYbefN99eVN
+         qkYl99/Z2FZGjA8YGrchPpbz9bF4eFTxEux1kINW7KpiemoLomj85QHY4OchO4y80p3/
+         4OySMVSLs9R/36wFuR2T7//IUiL4BuyFweh4QGIvJDrI7xyZp0VqvGcTGWIuxJ0EdEv1
+         nEBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685524783; x=1688116783;
+        d=1e100.net; s=20221208; t=1685524887; x=1688116887;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e/F8jIF8NqATxdAvMuHV954nGjADHoS+vIBQmhEkWOs=;
-        b=F+a+Q43f3NY0plbseXufiYqC2pLPoNHDJUuPx0Zekpbl1BPo+pHLm13vsN8U42knrQ
-         pmN+QJoouxOjfmaUy4z75wtYW5+Z/YVicY8YIc6FvVRZdH5vC/a5v0wBPBXaCJRxKVEQ
-         2xSzi3vEgP3/osfXR/hJD6T9cllyjKHRSJhnFNlTH21y53Y/wJ99KO9gOPA94qLvcesx
-         AlOkHuCK/EZcEotgr/K5+xjEKPNYiZfBVGo3sd3ZLpANjdHPtwFDSIcdZAEgbe12au6p
-         CS1K3bm67rig1A+Gn/6oRyJXrR1qa+eA5Ejy6Eli1q5sYhvhoqGo306zmc35t4qwBSAG
-         /LOw==
-X-Gm-Message-State: AC+VfDxGM7UFvm+gPPFvQsSH5SxOiZ09BFkUNd0/tAdAeRZHTjvwq6TY
-        i8x7rP+au1euZRAT0IYbZAgkSvnoJm2+8gZwJCoi6OZpjX5aF1gJ46A=
-X-Google-Smtp-Source: ACHHUZ6Ofzg7tjk5fXnBtT7CKLOKxvtwCuBdh95OKJ7ZvI9XlppTjSg852EOtBKSeeNZAfFL9zCpUaqHc9KwNzmaA5U=
-X-Received: by 2002:a17:902:e744:b0:1ac:86b5:70d9 with SMTP id
- p4-20020a170902e74400b001ac86b570d9mr14542055plf.32.1685524783362; Wed, 31
- May 2023 02:19:43 -0700 (PDT)
+        bh=qqZtyuK0U15DxZmjBsyfHeiLrrKr6W4JwftADT3FJhk=;
+        b=LUXSGiRtQh6STjSMH6uFEFcI2BYc+pXiqImzgy6agbqkQLIiDjQMdFwQn7rSQzt0wM
+         YC5xwwLGxYAAkfwt5SywAmWDIftO7eXes/AfC9rXEDuEKgfxxjGit53jfEcM/0xU5uCt
+         CXZk1+NRuulhlQaY9QeNem7jSamKDzkanrgMlC1buiNerBCw9rX5Fw9V1V8+aXvGg9Im
+         mM3f83hG1rHVqZn5nudjESkZunA1JxGaHbpqRme2GXzaQs3CndvGG1wubZdJbQ0Wrjqr
+         KxTZDKLiY+Bm5+otmI0CtlaZSM7xkfhr+WDa7tIKU6+rwrfb3+7oMwYZ5GzFINS17Jah
+         Nxlw==
+X-Gm-Message-State: AC+VfDwyDxqq+g52gb4TtXswp7f8BVAuZ87wOQuRTKcHv+N91d0b73TN
+        mRyqirvXHM9WMQwmNo0AkYP/LLJchK+2Zeo81d1ZFg==
+X-Google-Smtp-Source: ACHHUZ7LyNPt0HxypRayhfIi1WaR82cDETNK2Qlv3mO6R6AEg1TP7OgHUVcQmfU3nr4LBKzkcW68vrtg/txWvI6ifcw=
+X-Received: by 2002:a92:d0c3:0:b0:33b:16e9:bba5 with SMTP id
+ y3-20020a92d0c3000000b0033b16e9bba5mr1903781ila.28.1685524887536; Wed, 31 May
+ 2023 02:21:27 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
- <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-8-56eb7a4d5b8e@linaro.org>
-In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-8-56eb7a4d5b8e@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-9-56eb7a4d5b8e@linaro.org>
+In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-9-56eb7a4d5b8e@linaro.org>
 From:   Nicolas Belin <nbelin@baylibre.com>
-Date:   Wed, 31 May 2023 11:19:32 +0200
-Message-ID: <CAJZgTGEQ3B5M9BtDfUdyMiH+VQkWcFHU2fOJgE_1=a4E1bxMTA@mail.gmail.com>
-Subject: Re: [PATCH v5 08/17] drm/meson: fix unbind path if HDMI fails to bind
+Date:   Wed, 31 May 2023 11:21:16 +0200
+Message-ID: <CAJZgTGF7VJEW0-5Gctfft6r-9tFzw9oFV8hmeEqhSUrqmQ3tZg@mail.gmail.com>
+Subject: Re: [PATCH v5 09/17] drm/meson: only use components with dw-hdmi
 To:     Neil Armstrong <neil.armstrong@linaro.org>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -82,98 +82,93 @@ X-Mailing-List: linux-clk@vger.kernel.org
 Le mar. 30 mai 2023 =C3=A0 09:38, Neil Armstrong
 <neil.armstrong@linaro.org> a =C3=A9crit :
 >
-> If the case the HDMI controller fails to bind, we try to unbind
-> all components before calling drm_dev_put() which makes drm_bridge_detach=
-()
-> crash because unbinding the HDMI controller frees the bridge memory.
+> Only DW-HDMI currently needs components since it reuses
+> the drm-meson driver context to access HHI registers (sic).
 >
-> The solution is the unbind all components at the end like in the remove
-> path.
+> Once this is solved, we can get rid on components.
 >
+> Until now, limit the components matching to the dw-hdmi compatibles
+> we know to require this hack, for other bridges simply use probe defer
+> instead and get over this components sitation.
+>
+> The back story is that we simply cannot attach DSI adapters bridges
+> if we use components, only DSI panels, this is because we bind/unbind
+> the DSI controller at each drm-meson driver master bind tentative.
+> With this the I2C DSI bridge is unable to find the DSI controller
+> host and everything fails to probe.
+>
+> This will simplify a lot adding new or older HDMI bridges.
+>
+> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  drivers/gpu/drm/meson/meson_drv.c | 23 ++++++++++++++---------
->  1 file changed, 14 insertions(+), 9 deletions(-)
+>  drivers/gpu/drm/meson/meson_drv.c | 30 ++++++++++++++++--------------
+>  1 file changed, 16 insertions(+), 14 deletions(-)
 >
 > diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/me=
 son_drv.c
-> index ca6d1e59e5d9..e060279dc80a 100644
+> index e060279dc80a..e935c0286a20 100644
 > --- a/drivers/gpu/drm/meson/meson_drv.c
 > +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -316,32 +316,34 @@ static int meson_drv_bind_master(struct device *dev=
-, bool has_components)
->                 goto exit_afbcd;
->
->         if (has_components) {
-> -               ret =3D component_bind_all(drm->dev, drm);
-> +               ret =3D component_bind_all(dev, drm);
->                 if (ret) {
->                         dev_err(drm->dev, "Couldn't bind all components\n=
-");
-> +                       /* Do not try to unbind */
-> +                       has_components =3D false;
->                         goto exit_afbcd;
->                 }
->         }
->
->         ret =3D meson_encoder_hdmi_init(priv);
->         if (ret)
-> -               goto unbind_all;
-> +               goto exit_afbcd;
->
->         ret =3D meson_plane_create(priv);
->         if (ret)
-> -               goto unbind_all;
-> +               goto exit_afbcd;
->
->         ret =3D meson_overlay_create(priv);
->         if (ret)
-> -               goto unbind_all;
-> +               goto exit_afbcd;
->
->         ret =3D meson_crtc_create(priv);
->         if (ret)
-> -               goto unbind_all;
-> +               goto exit_afbcd;
->
->         ret =3D request_irq(priv->vsync_irq, meson_irq, 0, drm->driver->n=
-ame, drm);
->         if (ret)
-> -               goto unbind_all;
-> +               goto exit_afbcd;
->
->         drm_mode_config_reset(drm);
->
-> @@ -359,15 +361,18 @@ static int meson_drv_bind_master(struct device *dev=
-, bool has_components)
->
->  uninstall_irq:
->         free_irq(priv->vsync_irq, drm);
-> -unbind_all:
-> -       if (has_components)
-> -               component_unbind_all(drm->dev, drm);
->  exit_afbcd:
->         if (priv->afbcd.ops)
->                 priv->afbcd.ops->exit(priv);
->  free_drm:
->         drm_dev_put(drm);
->
-> +       meson_encoder_hdmi_remove(priv);
-> +       meson_encoder_cvbs_remove(priv);
-> +
-> +       if (has_components)
-> +               component_unbind_all(dev, drm);
-> +
->         return ret;
+> @@ -451,10 +451,17 @@ static void meson_drv_shutdown(struct platform_devi=
+ce *pdev)
+>         drm_atomic_helper_shutdown(priv->drm);
 >  }
+>
+> -/* Possible connectors nodes to ignore */
+> -static const struct of_device_id connectors_match[] =3D {
+> -       { .compatible =3D "composite-video-connector" },
+> -       { .compatible =3D "svideo-connector" },
+> +/*
+> + * Only devices to use as components
+> + * TOFIX: get rid of components when we can finally
+> + * get meson_dx_hdmi to stop using the meson_drm
+> + * private structure for HHI registers.
+> + */
+> +static const struct of_device_id components_dev_match[] =3D {
+> +       { .compatible =3D "amlogic,meson-gxbb-dw-hdmi" },
+> +       { .compatible =3D "amlogic,meson-gxl-dw-hdmi" },
+> +       { .compatible =3D "amlogic,meson-gxm-dw-hdmi" },
+> +       { .compatible =3D "amlogic,meson-g12a-dw-hdmi" },
+>         {}
+>  };
+>
+> @@ -472,17 +479,12 @@ static int meson_drv_probe(struct platform_device *=
+pdev)
+>                         continue;
+>                 }
+>
+> -               /* If an analog connector is detected, count it as an out=
+put */
+> -               if (of_match_node(connectors_match, remote)) {
+> -                       ++count;
+> -                       of_node_put(remote);
+> -                       continue;
+> -               }
+> -
+> -               dev_dbg(&pdev->dev, "parent %pOF remote match add %pOF pa=
+rent %s\n",
+> -                       np, remote, dev_name(&pdev->dev));
+> +               if (of_match_node(components_dev_match, remote)) {
+> +                       component_match_add(&pdev->dev, &match, component=
+_compare_of, remote);
+>
+> -               component_match_add(&pdev->dev, &match, component_compare=
+_of, remote);
+> +                       dev_dbg(&pdev->dev, "parent %pOF remote match add=
+ %pOF parent %s\n",
+> +                               np, remote, dev_name(&pdev->dev));
+> +               }
+>
+>                 of_node_put(remote);
 >
 >
 > --
 > 2.34.1
 >
-
-Works fine on a Khadas VIM3 using a TS050 panel,
-Thanks
-
 Reviewed-by: Nicolas Belin <nbelin@baylibre.com>
-Tested-by: Nicolas Belin <nbelin@baylibre.com>
+Tested-by: Nicolas Belin <nbelin@baylibre.com> # on Khadas VIM3 + TS050 Pan=
+el
+
+Thanks,
+Nicolas
