@@ -2,127 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0851C7EE31
-	for <linux-clk@archiver.kernel.org>; Wed, 31 May 2023 09:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6741C7EE24
+	for <linux-clk@archiver.kernel.org>; Wed, 31 May 2023 09:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235281AbjEaJBl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 May 2023 05:01:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44600 "EHLO
+        id S231495AbjEaJUB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 May 2023 05:20:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235269AbjEaJBi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 May 2023 05:01:38 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9014136
-        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:01:36 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f4b2bc1565so6179188e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:01:36 -0700 (PDT)
+        with ESMTP id S235411AbjEaJTu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 May 2023 05:19:50 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475BDA0
+        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:19:44 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1b065154b79so5561405ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 31 May 2023 02:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685523695; x=1688115695;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TRDkbjMTdDqIX5txCgAI4qwPmqTuC0wBW6Dd+QET4Vg=;
-        b=aJfxubRXb5x1zHRFjCAXEHB4LdoqpZF7IAqlg4LUNeG2wdmcLSFNxGHJ2ggXXozOEG
-         iSunyTSAz+yAYvBKwU3fb+qUTV5jdOuD6S7dUSyMZScotapFVvlXvDWaUHoQIJgO/irm
-         xIuqb/EPQYgGgY/naa9xVq7hU+L7UbzgjEYwz6Sr4kwrz2WznMC3Otzay9/d7IQ74XKL
-         JuozV8swJzhGH2gwnNs1c3NwxvxvCjBllT7FpEQ7MzXRGoI9lSl21oUkwiFT5oRP6LxD
-         qbyVAR70MBV53ZZtSyDUwZN15WS9bZslb7Tg2EILJ9AyG20FHoXdLbdNCu5HBjKjJtL8
-         NKGQ==
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1685524783; x=1688116783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e/F8jIF8NqATxdAvMuHV954nGjADHoS+vIBQmhEkWOs=;
+        b=g2QKglMZH/mJ1PlHw0xaAb1Atu0wvBgVAqYnuu8mReQEONCqAC+kuvmXr1GOl2K8hi
+         PELXRr9/ZHFzDZ1y3TGPnhTkxyRxzi2WWpiULuLFvRre0MOUR2wmfXd4PYcyHYisgga9
+         vIxf3UCExwjWT2hL5wZhyPw1/THRLmg9F35utlvE2h3bHMSJOdGF1FVhqXM8zvkuKeiA
+         QDOmg7HzxXmpRYriQ+VggWvGgLlVCw55VPwJnR21xsMdQuKGIVaBL+9JKvxwHIb3unI0
+         dNbqyoJWOojJolHETOZRlnmey1S+0lkpPlrlK4bJKbtj2DG0b51oWPxTwnJeIwJ9apJ4
+         TZiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685523695; x=1688115695;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1685524783; x=1688116783;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TRDkbjMTdDqIX5txCgAI4qwPmqTuC0wBW6Dd+QET4Vg=;
-        b=EHSd1ePhPETLc6J6sb60CmH4ZW9YXKKhyJGF/UKVmmhpLQx9tazl947zW7FSMIV127
-         JlQDBIl64UJ96K1bbUO5WsUqg2jWea7WiTrnsxlQTm4cJwuUrg/LGH6+jXkKV3dwdfwO
-         e97hfiuRsy3nyhIF3eSym2lVWAch6/g+dbwAYoGdXVf28XYmlAJ8S7KlwQyOS+WOeJW0
-         zphJWrhb7q9ekeDMmd/p6/iYnQlaZ+JDFCBjv7rD94boMLATESITbzVz8zI+42T4pv2H
-         SdqKOucC+CTUNzjP7Sy4l4FdeuZvbyLWinIIGEspMPSRTPgCjtTbKwlBdRjp2MO/d0NR
-         nBJQ==
-X-Gm-Message-State: AC+VfDwSmf6mCbcxx3WZO2RPs9Oqh8zugSyMASX22h+czuQ9L358TzGf
-        4y+TKwAbxcBDqQ9Ke44a59BADw==
-X-Google-Smtp-Source: ACHHUZ6+/Qk5gAJYAjLG8FzKNVMug7bY6Nbrgy6YrjoDolg3NgEkWoyRilUbuWh7St3iWPxUWnbsjQ==
-X-Received: by 2002:a2e:924b:0:b0:2b0:497a:2029 with SMTP id v11-20020a2e924b000000b002b0497a2029mr2279050ljg.23.1685523694853;
-        Wed, 31 May 2023 02:01:34 -0700 (PDT)
-Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id f4-20020a2e9184000000b002adbe01cd69sm3217446ljg.9.2023.05.31.02.01.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 May 2023 02:01:34 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 31 May 2023 11:01:23 +0200
-Subject: [PATCH 4/4] clk: qcom: mmcc-msm8998: Fix the SMMU GDSC
+        bh=e/F8jIF8NqATxdAvMuHV954nGjADHoS+vIBQmhEkWOs=;
+        b=F+a+Q43f3NY0plbseXufiYqC2pLPoNHDJUuPx0Zekpbl1BPo+pHLm13vsN8U42knrQ
+         pmN+QJoouxOjfmaUy4z75wtYW5+Z/YVicY8YIc6FvVRZdH5vC/a5v0wBPBXaCJRxKVEQ
+         2xSzi3vEgP3/osfXR/hJD6T9cllyjKHRSJhnFNlTH21y53Y/wJ99KO9gOPA94qLvcesx
+         AlOkHuCK/EZcEotgr/K5+xjEKPNYiZfBVGo3sd3ZLpANjdHPtwFDSIcdZAEgbe12au6p
+         CS1K3bm67rig1A+Gn/6oRyJXrR1qa+eA5Ejy6Eli1q5sYhvhoqGo306zmc35t4qwBSAG
+         /LOw==
+X-Gm-Message-State: AC+VfDxGM7UFvm+gPPFvQsSH5SxOiZ09BFkUNd0/tAdAeRZHTjvwq6TY
+        i8x7rP+au1euZRAT0IYbZAgkSvnoJm2+8gZwJCoi6OZpjX5aF1gJ46A=
+X-Google-Smtp-Source: ACHHUZ6Ofzg7tjk5fXnBtT7CKLOKxvtwCuBdh95OKJ7ZvI9XlppTjSg852EOtBKSeeNZAfFL9zCpUaqHc9KwNzmaA5U=
+X-Received: by 2002:a17:902:e744:b0:1ac:86b5:70d9 with SMTP id
+ p4-20020a170902e74400b001ac86b570d9mr14542055plf.32.1685524783362; Wed, 31
+ May 2023 02:19:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230531-topic-8998_mmssclk-v1-4-2b5a8fc90991@linaro.org>
-References: <20230531-topic-8998_mmssclk-v1-0-2b5a8fc90991@linaro.org>
-In-Reply-To: <20230531-topic-8998_mmssclk-v1-0-2b5a8fc90991@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-8-56eb7a4d5b8e@linaro.org>
+In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-8-56eb7a4d5b8e@linaro.org>
+From:   Nicolas Belin <nbelin@baylibre.com>
+Date:   Wed, 31 May 2023 11:19:32 +0200
+Message-ID: <CAJZgTGEQ3B5M9BtDfUdyMiH+VQkWcFHU2fOJgE_1=a4E1bxMTA@mail.gmail.com>
+Subject: Re: [PATCH v5 08/17] drm/meson: fix unbind path if HDMI fails to bind
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Imran Khan <kimran@codeaurora.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Joonwoo Park <joonwoop@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1685523686; l=1105;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=U11cPNBCetgr5hd+fDIKoJDD5fDRdvw6Gnlma9DUXKU=;
- b=N3+OLnogrIsl+g8OU9USSSHaW3r6dF+xQp++9Sdi5dDUtVtkR4Fsz0TOp+XZXk2eA25+y0lcX
- zb4+VCa6xi+BhsZqQAlHww+t/C/O0XsXx8tNBBbragw5+aSpME8EHtT
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        "Lukas F. Hartmann" <lukas@mntre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-phy@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SMMU GDSC doesn't have to be ALWAYS-ON and shouldn't feature the
-HW_CTRL flag (it's separate from hw_ctrl_addr).  In addition to that,
-it should feature a cxc entry for bimc_smmu_axi_clk and be marked as
-votable.
+Le mar. 30 mai 2023 =C3=A0 09:38, Neil Armstrong
+<neil.armstrong@linaro.org> a =C3=A9crit :
+>
+> If the case the HDMI controller fails to bind, we try to unbind
+> all components before calling drm_dev_put() which makes drm_bridge_detach=
+()
+> crash because unbinding the HDMI controller frees the bridge memory.
+>
+> The solution is the unbind all components at the end like in the remove
+> path.
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/gpu/drm/meson/meson_drv.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/me=
+son_drv.c
+> index ca6d1e59e5d9..e060279dc80a 100644
+> --- a/drivers/gpu/drm/meson/meson_drv.c
+> +++ b/drivers/gpu/drm/meson/meson_drv.c
+> @@ -316,32 +316,34 @@ static int meson_drv_bind_master(struct device *dev=
+, bool has_components)
+>                 goto exit_afbcd;
+>
+>         if (has_components) {
+> -               ret =3D component_bind_all(drm->dev, drm);
+> +               ret =3D component_bind_all(dev, drm);
+>                 if (ret) {
+>                         dev_err(drm->dev, "Couldn't bind all components\n=
+");
+> +                       /* Do not try to unbind */
+> +                       has_components =3D false;
+>                         goto exit_afbcd;
+>                 }
+>         }
+>
+>         ret =3D meson_encoder_hdmi_init(priv);
+>         if (ret)
+> -               goto unbind_all;
+> +               goto exit_afbcd;
+>
+>         ret =3D meson_plane_create(priv);
+>         if (ret)
+> -               goto unbind_all;
+> +               goto exit_afbcd;
+>
+>         ret =3D meson_overlay_create(priv);
+>         if (ret)
+> -               goto unbind_all;
+> +               goto exit_afbcd;
+>
+>         ret =3D meson_crtc_create(priv);
+>         if (ret)
+> -               goto unbind_all;
+> +               goto exit_afbcd;
+>
+>         ret =3D request_irq(priv->vsync_irq, meson_irq, 0, drm->driver->n=
+ame, drm);
+>         if (ret)
+> -               goto unbind_all;
+> +               goto exit_afbcd;
+>
+>         drm_mode_config_reset(drm);
+>
+> @@ -359,15 +361,18 @@ static int meson_drv_bind_master(struct device *dev=
+, bool has_components)
+>
+>  uninstall_irq:
+>         free_irq(priv->vsync_irq, drm);
+> -unbind_all:
+> -       if (has_components)
+> -               component_unbind_all(drm->dev, drm);
+>  exit_afbcd:
+>         if (priv->afbcd.ops)
+>                 priv->afbcd.ops->exit(priv);
+>  free_drm:
+>         drm_dev_put(drm);
+>
+> +       meson_encoder_hdmi_remove(priv);
+> +       meson_encoder_cvbs_remove(priv);
+> +
+> +       if (has_components)
+> +               component_unbind_all(dev, drm);
+> +
+>         return ret;
+>  }
+>
+>
+> --
+> 2.34.1
+>
 
-Fix all of these issues.
+Works fine on a Khadas VIM3 using a TS050 panel,
+Thanks
 
-Fixes: d14b15b5931c ("clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/mmcc-msm8998.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/qcom/mmcc-msm8998.c b/drivers/clk/qcom/mmcc-msm8998.c
-index 9b98e0fb8b91..7b1d105afbd8 100644
---- a/drivers/clk/qcom/mmcc-msm8998.c
-+++ b/drivers/clk/qcom/mmcc-msm8998.c
-@@ -2628,11 +2628,13 @@ static struct gdsc camss_cpp_gdsc = {
- static struct gdsc bimc_smmu_gdsc = {
- 	.gdscr = 0xe020,
- 	.gds_hw_ctrl = 0xe024,
-+	.cxcs = (unsigned int []){ 0xe008 },
-+	.cxc_count = 1,
- 	.pd = {
- 		.name = "bimc_smmu",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL | ALWAYS_ON,
-+	.flags = VOTABLE,
- };
- 
- static struct clk_regmap *mmcc_msm8998_clocks[] = {
-
--- 
-2.40.1
-
+Reviewed-by: Nicolas Belin <nbelin@baylibre.com>
+Tested-by: Nicolas Belin <nbelin@baylibre.com>
