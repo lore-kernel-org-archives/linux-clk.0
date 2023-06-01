@@ -2,186 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9121AC77B7E
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 13:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E4CC7EE23
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 14:13:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233955AbjFANaF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 09:30:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35762 "EHLO
+        id S234044AbjFAONA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 10:13:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233874AbjFAN3i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 09:29:38 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC46719A
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 06:29:16 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f5021faa16so1013289e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 06:29:16 -0700 (PDT)
+        with ESMTP id S233996AbjFAOM5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 10:12:57 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1561AD
+        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 07:12:49 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f6042d610fso8886145e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 07:12:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685626149; x=1688218149;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bi4W45hTLVZELv8za/V/2Zxr2Ta54wvM2WdGCMd0O68=;
-        b=usImXdnWeIdqEvzWwlkFEyzWjMmuHQv5QUbYFpAKRMLB8He1y/ZwMjOrjfF1jlFZPJ
-         PCf5j44mSgnLPhk/j3P3qzv1eP8CT5YysheWpWPC++9ltw/wFL/7dqkLq5gEcBRYdQ29
-         6i5o5oRWrH1HYCLZZnO4SjVOVX4pVjtWDBVMraNHklYD5gxb4gVFg3OtOSB+woHK38Mi
-         pj7HWN15JxJAJoggGokB3aBDvvPP39g9cThhZmfktvefJYGhNtyxSGjCQ9dqD+TRatb0
-         a4MU+Gl4BfE8Xgmh5lf2nwsznu/7KS6SNnX4UMj88t2IdUBlTf4xaOlj3k0tRY6iODj8
-         ypfw==
+        d=linaro.org; s=google; t=1685628768; x=1688220768;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=blRDmP8zwUxnWYu3O2q7G8SVs+SLeK3eRrnyEq5ozP4=;
+        b=qdN3sFmE0bkWjRKWetOAT0HHLZIxe86o4BV9VjIYHiUK3XPu2S8gc0aoVmeWcrs4cy
+         agjoc2/Hh7uBRXSKUK6reJT3RUJmkZAEwpys5HDX5bJr6n6VJa7oPa+LItSY9540le1v
+         c5xeuCTZ1QVljMhR3nmnMXrrL0arqyhLw8IIxDSf/EhE6ILbEj1sEW03f3QystUPuj5Z
+         bDEUctCPLc84Ov0ke0ettWxLK3yjWZ3RCAHD2zRdmVaAybo0NiXe5TLVYrUVI645Qq06
+         9BbZlfyjNk5aeQp4Zj1+EaGkNAjjCWOgccsS3/JaCUwjXDNUT+G0TrhVnq5XV5ORs7dF
+         6+6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685626149; x=1688218149;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bi4W45hTLVZELv8za/V/2Zxr2Ta54wvM2WdGCMd0O68=;
-        b=FK+nJ+VVOvKPQiX40Hca9q1E5BbGjyexvEe8vlUUNp+uPBSG/Zfm5ar7LrSJqZR1XY
-         BeDHyxAdPZg0Zg1gPd1QFsmRzih7JQxO+SjyCXhoZzgUqXfhTl1kgK5oK9blUTs7ehBB
-         DxPbapYalyQNDc2M3JIGmt3est18URs+MEiBFZ5uJDROj5bj10+pLqgZO8SjCwdH3boY
-         OZqm+pn88mv/rJ4VVO4qwYZ2XH9MkOrvCEWy5xL82GwG2F6jNePrxWcaLN9gHTO6tdiA
-         CuHEsQETLi62LEpe3QgXl9Cys7UiQsaXiHu0++mmdxWrbkHcll3yo5l5U9ausE5ZPWDX
-         Ksdg==
-X-Gm-Message-State: AC+VfDxgLaKjfe5ZXJ7UhoKYG9xktAC/RitMQ2xxeinwa2z7Aaq7/3wu
-        IO8EMdmQRukGr2pjTObY47FS2A==
-X-Google-Smtp-Source: ACHHUZ7xdhJFrnEy0COc6Xnf+tMXkERGlnWTaEpzDFcQgu4QYbHbjeFepEL1SVezrW0HikHmrmE7xQ==
-X-Received: by 2002:ac2:4312:0:b0:4f3:afcc:e1bb with SMTP id l18-20020ac24312000000b004f3afcce1bbmr1756419lfh.1.1685626149679;
-        Thu, 01 Jun 2023 06:29:09 -0700 (PDT)
-Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id c25-20020ac24159000000b004f20d0ebe50sm1084096lfi.94.2023.06.01.06.29.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jun 2023 06:29:09 -0700 (PDT)
-Message-ID: <98c8fb8f-1fe6-1c05-2093-67efc7ec582a@linaro.org>
-Date:   Thu, 1 Jun 2023 15:29:07 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH 20/20] interconnect: qcom: Divide clk rate by src node bus
- width
-Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        d=1e100.net; s=20221208; t=1685628768; x=1688220768;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=blRDmP8zwUxnWYu3O2q7G8SVs+SLeK3eRrnyEq5ozP4=;
+        b=N2ljclREagku27FMH0QuamK2yezxZsnDVBLCBAkj/8juSOj4qi0EevGNmns2C5pyA1
+         ceHSTDkZzsdY0PapqlYa7fsR+OL3eL083UJFCsuuahNz5PBER8/SixtfBnnQ/wJnf/hA
+         o+RmZ2siUdbQOR4o/WwPm6WmJlzFKI31FlHA4KZoGHC5Tog466HjTJDuZ67ZbkQWwGji
+         yUb+PQ9i1Wvcf+ssXJczIMaJYKq67vEDr0W/dlTigljn3IK8L6ud+NZ3qa4tM+MB7L8a
+         SFHRtjmaaA1IX/s9MYZWuRcszoBTKMchf9yIAdAje2Fs1U3PIG3ebcNqGxAFnvM5QqwY
+         rw8g==
+X-Gm-Message-State: AC+VfDxj2BTf2cgcXL7RmnRFLopK6f9smz4iRYuh3ys4VHQDi4H+Ep7V
+        sjD0roj5wv/kJu+XEzX0m7RZKw==
+X-Google-Smtp-Source: ACHHUZ6/ivQPA2lY433i2n8DT8ybJaluMhJNQm/WfFkDzmtsk8A31ifylaUb4N2I4BWnvbWtYj/ztw==
+X-Received: by 2002:adf:f244:0:b0:2f6:bf04:c8cc with SMTP id b4-20020adff244000000b002f6bf04c8ccmr2034350wrp.55.1685628767960;
+        Thu, 01 Jun 2023 07:12:47 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id p12-20020adfcc8c000000b0030adfa48e1esm10629591wrj.29.2023.06.01.07.12.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Jun 2023 07:12:47 -0700 (PDT)
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
- <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
- <5a26e456-fe45-6def-27f9-26ec00c333e6@linaro.org>
- <ZHZIVJFd-HU_AO2F@gerhold.net>
- <4943572a-3456-ae33-387f-db476ff382e4@linaro.org>
- <ZHib62imkvHds-9a@gerhold.net>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZHib62imkvHds-9a@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     "Lukas F. Hartmann" <lukas@mntre.com>,
+        Nicolas Belin <nbelin@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-phy@lists.infradead.org, Rob Herring <robh@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>
+In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
+Subject: Re: (subset) [PATCH v5 00/17] drm/meson: add support for MIPI DSI
+ Display
+Message-Id: <168562876692.86739.7052062833690353953.b4-ty@linaro.org>
+Date:   Thu, 01 Jun 2023 16:12:46 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.2
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
+On Tue, 30 May 2023 09:38:01 +0200, Neil Armstrong wrote:
+> The Amlogic G12A, G12B & SM1 SoCs embeds a Synopsys DW-MIPI-DSI transceiver (ver 1.21a),
+> with a custom glue managing the IP resets, clock and data input similar to the DW-HDMI
+> glue on the same Amlogic SoCs.
+> 
+> This adds support for the glue managing the transceiver, mimicing the init flow provided
+> by Amlogic to setup the ENCL encoder, the glue, the transceiver, the digital D-PHY and the
+> Analog PHY in the proper way.
+> 
+> [...]
 
-On 1.06.2023 15:23, Stephan Gerhold wrote:
-> On Thu, Jun 01, 2023 at 02:43:50PM +0200, Konrad Dybcio wrote:
->> On 30.05.2023 21:02, Stephan Gerhold wrote:
->>> On Tue, May 30, 2023 at 06:32:04PM +0200, Konrad Dybcio wrote:
->>>> On 30.05.2023 12:20, Konrad Dybcio wrote:
->>>>> Ever since the introduction of SMD RPM ICC, we've been dividing the
->>>>> clock rate by the wrong bus width. This has resulted in:
->>>>>
->>>>> - setting wrong (mostly too low) rates, affecting performance
->>>>>   - most often /2 or /4
->>>>>   - things like DDR never hit their full potential
->>>>>   - the rates were only correct if src bus width == dst bus width
->>>>>     for all src, dst pairs on a given bus
->>>>>
->>>>> - Qualcomm using the same wrong logic in their BSP driver in msm-5.x
->>>>>   that ships in production devices today
->>>>>
->>>>> - me losing my sanity trying to find this
->>>>>
->>>>> Resolve it by using dst_qn, if it exists.
->>>>>
->>>>> Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
->>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>>> ---
->>>> The problem is deeper.
->>>>
->>>> Chatting with Stephan (+CC), we tackled a few issues (that I will send
->>>> fixes for in v2):
->>>>
->>>> 1. qcom_icc_rpm_set() should take per-node (src_qn->sum_avg, dst_qn->sum_avg)
->>>>    and NOT aggregated bw (unless you want ALL of your nodes on a given provider
->>>>    to "go very fast")
->>>>
->>>> 2. the aggregate bw/clk rate calculation should use the node-specific bus widths
->>>>    and not only the bus width of the src/dst node, otherwise the average bw
->>>>    values will be utterly meaningless
->>>>
->>>
->>> The peak bandwidth / clock rate is wrong as well if you have two paths
->>> with different buswidths on the same bus/NoC. (If someone is interested
->>> in details I can post my specific example I had in the chat, it shows
->>> this more clearly.)
->> agg_peak takes care of that, I believe..
->>
-> 
-> I was just nitpicking on your description here, I think the solution
-> you/we had in mind was already correct. :)
-> 
->>
->>>
->>>> 3. thanks to (1) and (2) qcom_icc_bus_aggregate() can be remodeled to instead
->>>>    calculate the clock rates for the two rpm contexts, which we can then max()
->>>>    and pass on to the ratesetting call
->>>>
->>>
->>> Sounds good.
->>>
->>>>
->>>> ----8<---- Cutting off Stephan's seal of approval, this is my thinking ----
->>>>
->>>> 4. I *think* Qualcomm really made a mistake in their msm-5.4 driver where they
->>>>    took most of the logic from the current -next state and should have been
->>>>    setting the rate based on the *DST* provider, or at least that's my
->>>>    understanding trying to read the "known good" msm-4.19 driver
->>>>    (which remembers msm-3.0 lol).. Or maybe we should keep src but ensure there's
->>>>    also a final (dst, dst) vote cast:
->>>>
->>>> provider->inter_set = false // current state upstream
->>>>
->>>> setting apps_proc<->slv_bimc_snoc
->>>> setting mas_bimc_snoc<->slv_snoc_cnoc
->>>> setting mas_snoc_cnoc<->qhs_sdc2
->>>>
->>>>
->>>> provider->inter_set = true // I don't think there's effectively a difference?
->>>>
->>>> setting apps_proc<->slv_bimc_snoc
->>>> setting slv_bimc_snoc<->mas_bimc_snoc
->>>> setting mas_bimc_snoc<->slv_snoc_cnoc
->>>> setting slv_snoc_cnoc<->mas_snoc_cnoc
->>>> setting mas_snoc_cnoc<->qhs_sdc2
->>>>
->>>
->>> I think with our proposed changes above it does no longer matter if a
->>> node is passed as "src" or "dst". This means in your example above you
->>> just waste additional time setting the bandwidth twice for
->>> slv_bimc_snoc, mas_bimc_snoc, slv_snoc_cnoc and mas_snoc_cnoc.
->>> The final outcome is the same with or without "inter_set".
->> Yeah I guess due to the fact that two "real" nodes are always
->> connected by a set of "gateway" nodes, the rate will be applied..
->>
->> I am however not sure if we're supposed to set the bandwidth
->> (via qcom_icc_rpm_set()) on all of them..
->>
-> 
-> I think so? The nodes RPM doesn't care about shouldn't have
-> a slv/mas_rpm_id.
-Hm I guess the inter_set doesn't make a difference anyway, as you
-pointed out.. Thankfully one thing less to fix :D
+Thanks, Applied to https://anongit.freedesktop.org/git/drm/drm-misc.git (drm-misc-next)
 
-Konrad
+[06/17] dt-bindings: display: add Amlogic MIPI DSI Host Controller bindings
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0628f2341e96213c9f2d074853b255f65acd3795
+[07/17] dt-bindings: display: meson-vpu: add third DPI output port
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=25b3b35cd51ef0d98165666d250a51f39db6a1fc
+[08/17] drm/meson: fix unbind path if HDMI fails to bind
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=6a044642988b5f8285f3173b8e88784bef2bc306
+[09/17] drm/meson: only use components with dw-hdmi
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=44e16166e0e9b94d8bcdf55fc0e5fcceca1154f0
+[10/17] drm/meson: venc: add ENCL encoder setup for MIPI-DSI output
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=51fc01a03442cce5e4c21375a1ceb2e4ec93c833
+[11/17] drm/meson: add DSI encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=42dcf15f901c8222352da31d622b4ee844068f42
+[12/17] drm/meson: add support for MIPI-DSI transceiver
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=77d9e1e6b8468f701ab024a060aa9c0339356870
+[13/17] drm/panel: khadas-ts050: update timings to achieve 60Hz refresh rate
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=29c6df0d942454cb43334cf0e36de068f4124b94
+
+-- 
+Neil
+
