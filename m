@@ -2,94 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB059C7EE23
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 09:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7A5C77B7A
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 09:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbjFAJZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 05:25:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45408 "EHLO
+        id S232070AbjFAJ1t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 05:27:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232832AbjFAJYu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 05:24:50 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E7E0124
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 02:24:49 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f3b9755961so665497e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 02:24:49 -0700 (PDT)
+        with ESMTP id S232417AbjFAJ1s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 05:27:48 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BAB124;
+        Thu,  1 Jun 2023 02:27:47 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4f3ba703b67so631184e87.1;
+        Thu, 01 Jun 2023 02:27:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685611487; x=1688203487;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l67mFELnQ95kbBDf6A1lIfQC3w6WT7OnCfmvnOjywXo=;
-        b=XK1cjGtLxZ5LBtefdHPG1FRjfnuDDWOqhcrS5UL0wuXLhvSIbTOsMd2j4Sz0INoHrM
-         ExJTBMJXGj4ayH95V+S4eGBLw3Yx1X0A8Yvi8tgsgInZbRJczYwTsuJKNKcUJWnEP+19
-         Ohj+PrnPlgClaC0RIk9gPPPM5NShuttADjGjG502gVKuvEeoRssu2kzKGLE5hfECGmov
-         gjVyf52jlKHKwN2lVG2C/GxNh2TqOV5NhJX3jHJmvrjyxahoM0+VCctX1lVwUtEq874c
-         spMy4KJySKc2olfoxJoi9/hB+cuk47R066u+o2wdbWPmlDfEBQpe9z+83oUOmpq0KqPG
-         ZF7Q==
+        d=gmail.com; s=20221208; t=1685611665; x=1688203665;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZirR1WPIJZVNOLvDsPuKt8AD0CB88Nj04n86hhjg6i4=;
+        b=bcFdQRt/Wb1QEUUyH/8czxy/qX1tuWNPn16ZkMi/qptS5kWAuWYaxBeIGNmgDz3qbz
+         Qg3nQQF/fIkfE4R/n3S8sPvSdn8f2rZ9gT7wLyHP0BY8lgkrkr1CEf9AkVG3YImKSxB/
+         Xyf4Jm0advOdKas6jyQj0AVOnHrCR4IqWiX7XB84QGN4SuwKlF6CjMyo1vuJij2L7zmt
+         +ICG3wAEYxmG5/ueQIt09FTvsJYZkSzpJir3cIODfnIThrSxNiNwm9zpnX1L6V7EgK+F
+         dNheodiIBH5pwSBPyYWcsLnZBfMAU28wm7rgdSZzGXYQ7gdO1asBwYe+5YnYSTcN4Aca
+         oC8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685611487; x=1688203487;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l67mFELnQ95kbBDf6A1lIfQC3w6WT7OnCfmvnOjywXo=;
-        b=aJPj4h041jVXrPnsWuE0nGtZ7REPgXjRrG9/xcrEEePU1vuuznGf8Jm6bGU/xH6Wg+
-         jGc4EO6ss7kUI5NrU7PSaegnUs4DlZZLb7y16kjRGvW2Sc0xAeUQM9xts9dnxvMAXKLS
-         tBHvDGHZb433q7fam4zm0PAgg6n5p4YITy7PqRfLWq/cheaQzxaPM7MEh7Z91AMEuFr6
-         c8bJfP6we0voe1NlxY/e1sknhW1CvIW7o0v8W67q+HH66QBVCpFGl9KXHCnajW0Wuzjy
-         v10IlZN9avLDzwdICu/q6kI1x9Em76zIW6uaZIegqPkZvyfg8ZWbx9d9mSL/1q3D/+qF
-         4jiA==
-X-Gm-Message-State: AC+VfDyDFKkKXrsrvT6EWb2bG2KJG/97IBd55yGc37gglc1RoQvdTZ3n
-        Ju0wtlafoFTX/Bp3NzXsF/h1Eg==
-X-Google-Smtp-Source: ACHHUZ7HcjNC1bJcGD2PdyRwxkAxsYZQebckEFIFDjgvBwLLbC/nPA7T78B4LmWGk2j9nHbfsG9x8w==
-X-Received: by 2002:a05:6512:4c8:b0:4f0:81c:73eb with SMTP id w8-20020a05651204c800b004f0081c73ebmr1014009lfq.42.1685611487409;
-        Thu, 01 Jun 2023 02:24:47 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id w17-20020a05651204d100b004f13f4ec267sm1022689lfq.186.2023.06.01.02.24.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jun 2023 02:24:47 -0700 (PDT)
-Message-ID: <f4124824-7976-507b-278e-1b632ffd2c31@linaro.org>
-Date:   Thu, 1 Jun 2023 12:24:46 +0300
+        d=1e100.net; s=20221208; t=1685611665; x=1688203665;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZirR1WPIJZVNOLvDsPuKt8AD0CB88Nj04n86hhjg6i4=;
+        b=gzYM81k26RAldjIro03sT6LhfwDMbfVULrpQK+r6gjybgwZhbNArYBdUEHo2NjhEyv
+         iByq9NdbO3IWPKAO2Pum+ieyRS5d/Y3T//+j4WFXCZjI1L9AcTGsT4r8FWM1An3f3rag
+         lqHd6NDzsQS/cJ94ZH6UrwCUEMTRpPmohjmIizbqX0TzMgDZ+7vccLnJXbf+aKJtZtzk
+         XJ79Xu1dt1p5pAQaOiUWvfFbARiKJo4mq1g3VachHfWWEAaOUL/sQrLipw7m+WpHIgZm
+         Qzks6ESr8CdMU07MpVa59eonYXiGa5XHQ7JGPX9P5Kac8b4qvoGgCWqp4VrJ8GDrv+qX
+         8sUQ==
+X-Gm-Message-State: AC+VfDyPhso0GgZf5QGgUk4tjwLoGuMWPgfeR+xEmYZ9kNZeNyRvOa8i
+        zs3tux66aXuCJBkLeQwFxedJ06mhzT89Y6wjHpg=
+X-Google-Smtp-Source: ACHHUZ7/Ek8dsYRsbGXaINIgFwouECA0acE7aYF3Bt0x3Z5Dc3mGC3JPbOqKTKJ/13SDDQujvXDk1qAnt2/UY7Q7zu0=
+X-Received: by 2002:a2e:7215:0:b0:2b0:4c72:98ff with SMTP id
+ n21-20020a2e7215000000b002b04c7298ffmr4131381ljc.7.1685611665030; Thu, 01 Jun
+ 2023 02:27:45 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 02/20] clk: qcom: smd-rpm: Move some RPM resources to the
- common header
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>, Evan Green <evgreen@chromium.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
- <20230526-topic-smd_icc-v1-2-1bf8e6663c4e@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230526-topic-smd_icc-v1-2-1bf8e6663c4e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230521143202.155399-1-tmaimon77@gmail.com> <20230521143202.155399-2-tmaimon77@gmail.com>
+ <0e72c35f-5d9d-45a7-5f85-3971b8029106@wanadoo.fr> <CAP6Zq1jOSKpzFvto1LMs=JftLK0fxrrg+73Sh34GunuLfcAfEA@mail.gmail.com>
+ <fa7a8bc4-d1a1-3b1a-8b9e-618681d281dd@wanadoo.fr> <CAP6Zq1gb8zJc=2QwNbes-AXP25thKsEVJ11pQfX24eWN62zDMQ@mail.gmail.com>
+In-Reply-To: <CAP6Zq1gb8zJc=2QwNbes-AXP25thKsEVJ11pQfX24eWN62zDMQ@mail.gmail.com>
+From:   Tomer Maimon <tmaimon77@gmail.com>
+Date:   Thu, 1 Jun 2023 12:27:33 +0300
+Message-ID: <CAP6Zq1g00SVfPjfQLsgz3V+vU4VHq_MYFcoy0Um46NDZZ9iY_w@mail.gmail.com>
+Subject: Re: [PATCH v16 1/1] clk: npcm8xx: add clock controller
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, avifishman70@gmail.com,
+        tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
+        yuenn@google.com, benjaminfair@google.com,
+        openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/05/2023 13:20, Konrad Dybcio wrote:
-> In preparation for handling the bus clocks in the icc driver, carve out
-> some defines and a struct definition to the common rpm header.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->   drivers/clk/qcom/clk-smd-rpm.c   | 13 -------------
->   include/linux/soc/qcom/smd-rpm.h | 15 +++++++++++++++
->   2 files changed, 15 insertions(+), 13 deletions(-)
+Hi Stephen,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Kind reminder regarding the patch, appreciate your comments.
 
--- 
-With best wishes
-Dmitry
+Thanks,
 
+Tomer
+
+On Mon, 29 May 2023 at 18:52, Tomer Maimon <tmaimon77@gmail.com> wrote:
+>
+> On Mon, 22 May 2023 at 20:36, Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+> >
+> > Le 22/05/2023 =C3=A0 14:56, Tomer Maimon a =C3=A9crit :
+> > > Hi Christophe,
+> > >
+> > > Thanks for your comments
+> > >
+> >
+> > [...]
+> >
+> > >>> +static struct clk_hw *
+> > >>> +npcm8xx_clk_register_pll(struct device *dev, void __iomem *pllcon,
+> > >>> +                      const char *name, const struct clk_parent_da=
+ta *parent,
+> > >>> +                      unsigned long flags)
+> > >>> +{
+> > >>> +     struct npcm8xx_clk_pll *pll;
+> > >>> +     struct clk_init_data init =3D {};
+> > >>> +     int ret;
+> > >>> +
+> > >>> +     pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
+> > >>
+> > >> Everything looks devm_()'ed in this driver, except this kzalloc.
+> > >> Except the one below, there is no kfree to free this memory, and no
+> > >> .remove() function.
+> > > Also  clk_hw_register_divider_parent_data doesn't use devm_
+> > > about free the pll, we use it, return at the end of the function.
+> > > about adding remove, we had a dissection about it in V4, since the
+> > > clock is a service driver it shouldn't be removed.
+> > > https://patchwork.kernel.org/project/linux-watchdog/patch/20220621131=
+424.162355-7-tmaimon77@gmail.com/
+> >
+> > LoL.
+> > At least, I'm consistent :).
+> >
+> > Just to make it clear, what I mean about kfree() is not to add one here=
+,
+> > but either:
+> >     - to use devm_kzalloc() here, to avoid a leak, should loading the
+> > driver fails      OR
+> >     - have some kfree() where needed (at least in the error handling
+> > path of the probe, if the remove function makes no point)
+> O.K. Thanks for your clarification.
+> >
+> > CJ
+>
+> Best regards,
+>
+> Tomer
