@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD285C77B7A
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 14:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E94EC7EE32
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 14:36:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234328AbjFAOgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 10:36:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50690 "EHLO
+        id S234053AbjFAOgJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 10:36:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234304AbjFAOf6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 10:35:58 -0400
+        with ESMTP id S233936AbjFAOgE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 10:36:04 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 735F9E59;
-        Thu,  1 Jun 2023 07:35:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4DE1180;
+        Thu,  1 Jun 2023 07:35:36 -0700 (PDT)
 Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 351DVoeR026972;
-        Thu, 1 Jun 2023 14:35:21 GMT
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3516Hnlw019305;
+        Thu, 1 Jun 2023 14:35:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=qcppdkim1;
- bh=kxLRDQdPZnbg9t1qi33zyS+kkQehrhxlvDPCOdAwb5o=;
- b=OnyFGo33hkbpAcCYL/Nvn1y4++c3edvrEYpyFso3BULbCPNHsKoIHBMfuJGbEy7EoHo6
- jnPbNVMIESl6/kKl+RYbTv1vTxX0T21yaPUAALUj4XPYxp2F+J9hTekpGlGn7XJhYiJf
- pREB9bR5Bdi9Z7WaNiOoyQeHZJ1tSnzA6zIIAEfLuL5IYVC4VHInv897i8LD5Ly8WFkk
- M3P9rsi20i7eiuRIubS8JYvuJT1oCg4wSC7yPs/RImJg0z8VYiAlX93pm4e+ep5K8TDG
- NilBZW3i6VhTvP3vmkk0PY43AwhnBIuZpDgRIIH1BIHFXjgPDUWHobjyUHmUHWVXnWVC Bw== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qxnwv18te-1
+ bh=1/K7AfReVJLBuMgol8m5iQdGbecK4EwBXqr+m8hQlEQ=;
+ b=HOvpYGtm2Zja+CrAqLP6n1zWJQre3I7SOvPe2SJaUwN5BN82sU2CKu9v9l2Uk3aFodVy
+ mVsVbDnJR4fhr7wr84Ji6dQpYLp2bEx5F9zEIC4QwPX3FPk3QkcnLZkK6ugqsl0cGT2h
+ 2PTWpDL5iCKW7w8xMfZzvAGxeg/1zY9UqoC3QKvFEE5WjYigy1wZkA1g6xajDL0/NAY+
+ lAGwVq6eNfjUWxX9JyF07C3jDxPfzBeG6cJSe1QS3bqKKthc9BTfRHOPDbPcek0m4EId
+ bX2Mr7K7hAXSXWH2Sr/1CcbpDrRfBPORwvXjqiiArE7B0KdTF/R7zIbbyy09+xEG0ld9 gA== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qxnwv18tu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Jun 2023 14:35:20 +0000
+        Thu, 01 Jun 2023 14:35:32 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 351EZJj3015976
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 351EZVig011265
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 1 Jun 2023 14:35:19 GMT
+        Thu, 1 Jun 2023 14:35:31 GMT
 Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Thu, 1 Jun 2023 07:35:14 -0700
+ 15.2.986.42; Thu, 1 Jun 2023 07:35:25 -0700
 From:   Jagadeesh Kona <quic_jkona@quicinc.com>
 To:     Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -55,9 +55,9 @@ CC:     Bjorn Andersson <andersson@kernel.org>,
         "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
         Imran Shaik <quic_imrashai@quicinc.com>,
         Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: [PATCH V3 2/5] clk: qcom: Remove support to set CAL_L field in lucid evo pll configure
-Date:   Thu, 1 Jun 2023 20:04:27 +0530
-Message-ID: <20230601143430.5595-3-quic_jkona@quicinc.com>
+Subject: [PATCH V3 4/5] clk: qcom: camcc-sm8550: Add support for qdss, sleep and xo clocks
+Date:   Thu, 1 Jun 2023 20:04:29 +0530
+Message-ID: <20230601143430.5595-5-quic_jkona@quicinc.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20230601143430.5595-1-quic_jkona@quicinc.com>
 References: <20230601143430.5595-1-quic_jkona@quicinc.com>
@@ -69,250 +69,309 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EzMpEdVyv6x3ZlCo1bCovgEP-Ju1lvHj
-X-Proofpoint-ORIG-GUID: EzMpEdVyv6x3ZlCo1bCovgEP-Ju1lvHj
+X-Proofpoint-GUID: zXPDo2RVpvcJYkNw0b8ob7-8zeV4nxS1
+X-Proofpoint-ORIG-GUID: zXPDo2RVpvcJYkNw0b8ob7-8zeV4nxS1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-06-01_08,2023-05-31_03,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
  priorityscore=1501 lowpriorityscore=0 phishscore=0 suspectscore=0
  bulkscore=0 clxscore=1015 malwarescore=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ mlxlogscore=835 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2304280000 definitions=main-2306010128
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For lucid evo and ole pll's the CAL_L, RINGOSC_CAL_L and L_VAL are
-part of the same register, hence update the l configuration value
-to include these fields across all the chipsets.
+Add support for camera qdss, sleep and xo clocks.
 
-Since the l configuration value now includes both L and CAL_L fields,
-there is no need to explicitly set CAL_L field again in lucid evo pll
-configure, Hence remove support to explicity set CAL_L field for evo pll.
-
-Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL configuration interfaces")
 Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 ---
 Changes since V2:
- - Squashed update L val and remove explicit cal_l configuration to single patch
- - Updated L configuration for gpucc-sm8450 as well which was merged recently
+ - No changes.
 Changes since V1:
  - Newly added.
 
- drivers/clk/qcom/camcc-sm8450.c  | 24 ++++++++++++++++--------
- drivers/clk/qcom/clk-alpha-pll.c |  6 +-----
- drivers/clk/qcom/dispcc-sm8450.c |  6 ++++--
- drivers/clk/qcom/dispcc-sm8550.c |  6 ++++--
- drivers/clk/qcom/gpucc-sa8775p.c |  6 ++++--
- drivers/clk/qcom/gpucc-sm8450.c  |  6 ++++--
- 6 files changed, 33 insertions(+), 21 deletions(-)
+ drivers/clk/qcom/camcc-sm8550.c | 180 ++++++++++++++++++++++++++++++++
+ 1 file changed, 180 insertions(+)
 
-diff --git a/drivers/clk/qcom/camcc-sm8450.c b/drivers/clk/qcom/camcc-sm8450.c
-index 51338a2884d2..6a5a08f88598 100644
---- a/drivers/clk/qcom/camcc-sm8450.c
-+++ b/drivers/clk/qcom/camcc-sm8450.c
-@@ -57,7 +57,8 @@ static const struct pll_vco rivian_evo_vco[] = {
- static const struct clk_parent_data pll_parent_data_tcxo = { .index = DT_BI_TCXO };
- 
- static const struct alpha_pll_config cam_cc_pll0_config = {
--	.l = 0x3e,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044003e,
- 	.alpha = 0x8000,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -128,7 +129,8 @@ static struct clk_alpha_pll_postdiv cam_cc_pll0_out_odd = {
+diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
+index 85f0c1e09b2b..82374091b450 100644
+--- a/drivers/clk/qcom/camcc-sm8550.c
++++ b/drivers/clk/qcom/camcc-sm8550.c
+@@ -22,6 +22,8 @@
+ enum {
+ 	DT_IFACE,
+ 	DT_BI_TCXO,
++	DT_BI_TCXO_AO,
++	DT_SLEEP_CLK,
  };
  
- static const struct alpha_pll_config cam_cc_pll1_config = {
--	.l = 0x25,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x00440025,
- 	.alpha = 0xeaaa,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -199,7 +201,8 @@ static struct clk_alpha_pll cam_cc_pll2 = {
+ enum {
+@@ -43,6 +45,7 @@ enum {
+ 	P_CAM_CC_PLL10_OUT_EVEN,
+ 	P_CAM_CC_PLL11_OUT_EVEN,
+ 	P_CAM_CC_PLL12_OUT_EVEN,
++	P_SLEEP_CLK,
  };
  
- static const struct alpha_pll_config cam_cc_pll3_config = {
--	.l = 0x2d,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044002d,
- 	.alpha = 0x0,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -247,7 +250,8 @@ static struct clk_alpha_pll_postdiv cam_cc_pll3_out_even = {
+ static const struct pll_vco lucid_ole_vco[] = {
+@@ -893,6 +896,22 @@ static const struct clk_parent_data cam_cc_parent_data_11[] = {
+ 	{ .hw = &cam_cc_pll7_out_even.clkr.hw },
  };
  
- static const struct alpha_pll_config cam_cc_pll4_config = {
--	.l = 0x2d,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044002d,
- 	.alpha = 0x0,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -295,7 +299,8 @@ static struct clk_alpha_pll_postdiv cam_cc_pll4_out_even = {
++static const struct parent_map cam_cc_parent_map_12[] = {
++	{ P_SLEEP_CLK, 0 },
++};
++
++static const struct clk_parent_data cam_cc_parent_data_12[] = {
++	{ .index = DT_SLEEP_CLK },
++};
++
++static const struct parent_map cam_cc_parent_map_13[] = {
++	{ P_BI_TCXO, 0 },
++};
++
++static const struct clk_parent_data cam_cc_parent_data_13_ao[] = {
++	{ .index = DT_BI_TCXO_AO },
++};
++
+ static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+ 	F(200000000, P_CAM_CC_PLL8_OUT_EVEN, 1, 0, 0),
+@@ -1577,6 +1596,29 @@ static struct clk_rcg2 cam_cc_mclk7_clk_src = {
+ 	},
  };
  
- static const struct alpha_pll_config cam_cc_pll5_config = {
--	.l = 0x2d,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044002d,
- 	.alpha = 0x0,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -343,7 +348,8 @@ static struct clk_alpha_pll_postdiv cam_cc_pll5_out_even = {
++static const struct freq_tbl ftbl_cam_cc_qdss_debug_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	F(75000000, P_CAM_CC_PLL0_OUT_EVEN, 8, 0, 0),
++	F(150000000, P_CAM_CC_PLL0_OUT_EVEN, 4, 0, 0),
++	F(300000000, P_CAM_CC_PLL0_OUT_MAIN, 4, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_qdss_debug_clk_src = {
++	.cmd_rcgr = 0x13f24,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_0,
++	.freq_tbl = ftbl_cam_cc_qdss_debug_clk_src,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "cam_cc_qdss_debug_clk_src",
++		.parent_data = cam_cc_parent_data_0,
++		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
+ static const struct freq_tbl ftbl_cam_cc_sfe_0_clk_src[] = {
+ 	F(466000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+ 	F(594000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+@@ -1623,6 +1665,26 @@ static struct clk_rcg2 cam_cc_sfe_1_clk_src = {
+ 	},
  };
  
- static const struct alpha_pll_config cam_cc_pll6_config = {
--	.l = 0x2d,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044002d,
- 	.alpha = 0x0,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -391,7 +397,8 @@ static struct clk_alpha_pll_postdiv cam_cc_pll6_out_even = {
++static const struct freq_tbl ftbl_cam_cc_sleep_clk_src[] = {
++	F(32000, P_SLEEP_CLK, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_sleep_clk_src = {
++	.cmd_rcgr = 0x141a0,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_12,
++	.freq_tbl = ftbl_cam_cc_sleep_clk_src,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "cam_cc_sleep_clk_src",
++		.parent_data = cam_cc_parent_data_12,
++		.num_parents = ARRAY_SIZE(cam_cc_parent_data_12),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
+ static const struct freq_tbl ftbl_cam_cc_slow_ahb_clk_src[] = {
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+ 	F(80000000, P_CAM_CC_PLL0_OUT_EVEN, 7.5, 0, 0),
+@@ -1644,6 +1706,26 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
+ 	},
  };
  
- static const struct alpha_pll_config cam_cc_pll7_config = {
--	.l = 0x2d,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044002d,
- 	.alpha = 0x0,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -439,7 +446,8 @@ static struct clk_alpha_pll_postdiv cam_cc_pll7_out_even = {
++static const struct freq_tbl ftbl_cam_cc_xo_clk_src[] = {
++	F(19200000, P_BI_TCXO, 1, 0, 0),
++	{ }
++};
++
++static struct clk_rcg2 cam_cc_xo_clk_src = {
++	.cmd_rcgr = 0x14070,
++	.mnd_width = 0,
++	.hid_width = 5,
++	.parent_map = cam_cc_parent_map_13,
++	.freq_tbl = ftbl_cam_cc_xo_clk_src,
++	.clkr.hw.init = &(const struct clk_init_data) {
++		.name = "cam_cc_xo_clk_src",
++		.parent_data = cam_cc_parent_data_13_ao,
++		.num_parents = ARRAY_SIZE(cam_cc_parent_data_13_ao),
++		.flags = CLK_SET_RATE_PARENT,
++		.ops = &clk_rcg2_shared_ops,
++	},
++};
++
+ static struct clk_branch cam_cc_bps_ahb_clk = {
+ 	.halt_reg = 0x10274,
+ 	.halt_check = BRANCH_HALT,
+@@ -1716,6 +1798,42 @@ static struct clk_branch cam_cc_camnoc_axi_clk = {
+ 	},
  };
  
- static const struct alpha_pll_config cam_cc_pll8_config = {
--	.l = 0x32,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x00440032,
- 	.alpha = 0x0,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index f81c7c561352..68a80395997b 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -270,7 +270,6 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
- #define LUCID_EVO_PCAL_NOT_DONE		BIT(8)
- #define LUCID_EVO_ENABLE_VOTE_RUN       BIT(25)
- #define LUCID_EVO_PLL_L_VAL_MASK        GENMASK(15, 0)
--#define LUCID_EVO_PLL_CAL_L_VAL_SHIFT	16
- 
- /* ZONDA PLL specific */
- #define ZONDA_PLL_OUT_MASK	0xf
-@@ -2084,10 +2083,7 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
- void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 				 const struct alpha_pll_config *config)
- {
--	u32 lval = config->l;
--
--	lval |= TRION_PLL_CAL_VAL << LUCID_EVO_PLL_CAL_L_VAL_SHIFT;
--	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), lval);
-+	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
- 	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
- 	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
- 	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
-diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
-index adbfd30bfc96..293eae670a23 100644
---- a/drivers/clk/qcom/dispcc-sm8450.c
-+++ b/drivers/clk/qcom/dispcc-sm8450.c
-@@ -76,7 +76,8 @@ static struct pll_vco lucid_evo_vco[] = {
++static struct clk_branch cam_cc_camnoc_dcd_xo_clk = {
++	.halt_reg = 0x13f18,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x13f18,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "cam_cc_camnoc_dcd_xo_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&cam_cc_xo_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_camnoc_xo_clk = {
++	.halt_reg = 0x13f1c,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x13f1c,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "cam_cc_camnoc_xo_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&cam_cc_xo_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch cam_cc_cci_0_clk = {
+ 	.halt_reg = 0x13a2c,
+ 	.halt_check = BRANCH_HALT,
+@@ -2382,6 +2500,24 @@ static struct clk_branch cam_cc_drv_ahb_clk = {
+ 	},
  };
  
- static const struct alpha_pll_config disp_cc_pll0_config = {
--	.l = 0xD,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044000d,
- 	.alpha = 0x6492,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -103,7 +104,8 @@ static struct clk_alpha_pll disp_cc_pll0 = {
++static struct clk_branch cam_cc_drv_xo_clk = {
++	.halt_reg = 0x142d4,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x142d4,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "cam_cc_drv_xo_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&cam_cc_xo_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch cam_cc_icp_ahb_clk = {
+ 	.halt_reg = 0x138fc,
+ 	.halt_check = BRANCH_HALT,
+@@ -2922,6 +3058,42 @@ static struct clk_branch cam_cc_mclk7_clk = {
+ 	},
  };
  
- static const struct alpha_pll_config disp_cc_pll1_config = {
--	.l = 0x1F,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044001f,
- 	.alpha = 0x4000,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-index 1e5a11081860..b0d4c623731d 100644
---- a/drivers/clk/qcom/dispcc-sm8550.c
-+++ b/drivers/clk/qcom/dispcc-sm8550.c
-@@ -76,7 +76,8 @@ static struct pll_vco lucid_ole_vco[] = {
++static struct clk_branch cam_cc_qdss_debug_clk = {
++	.halt_reg = 0x14050,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x14050,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "cam_cc_qdss_debug_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&cam_cc_qdss_debug_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch cam_cc_qdss_debug_xo_clk = {
++	.halt_reg = 0x14054,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x14054,
++		.enable_mask = BIT(0),
++		.hw.init = &(const struct clk_init_data) {
++			.name = "cam_cc_qdss_debug_xo_clk",
++			.parent_hws = (const struct clk_hw*[]) {
++				&cam_cc_xo_clk_src.clkr.hw,
++			},
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch cam_cc_sbi_clk = {
+ 	.halt_reg = 0x10540,
+ 	.halt_check = BRANCH_HALT,
+@@ -3145,6 +3317,8 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+ 	[CAM_CC_BPS_FAST_AHB_CLK] = &cam_cc_bps_fast_ahb_clk.clkr,
+ 	[CAM_CC_CAMNOC_AXI_CLK] = &cam_cc_camnoc_axi_clk.clkr,
+ 	[CAM_CC_CAMNOC_AXI_CLK_SRC] = &cam_cc_camnoc_axi_clk_src.clkr,
++	[CAM_CC_CAMNOC_DCD_XO_CLK] = &cam_cc_camnoc_dcd_xo_clk.clkr,
++	[CAM_CC_CAMNOC_XO_CLK] = &cam_cc_camnoc_xo_clk.clkr,
+ 	[CAM_CC_CCI_0_CLK] = &cam_cc_cci_0_clk.clkr,
+ 	[CAM_CC_CCI_0_CLK_SRC] = &cam_cc_cci_0_clk_src.clkr,
+ 	[CAM_CC_CCI_1_CLK] = &cam_cc_cci_1_clk.clkr,
+@@ -3196,6 +3370,7 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+ 	[CAM_CC_CSIPHY6_CLK] = &cam_cc_csiphy6_clk.clkr,
+ 	[CAM_CC_CSIPHY7_CLK] = &cam_cc_csiphy7_clk.clkr,
+ 	[CAM_CC_DRV_AHB_CLK] = &cam_cc_drv_ahb_clk.clkr,
++	[CAM_CC_DRV_XO_CLK] = &cam_cc_drv_xo_clk.clkr,
+ 	[CAM_CC_FAST_AHB_CLK_SRC] = &cam_cc_fast_ahb_clk_src.clkr,
+ 	[CAM_CC_ICP_AHB_CLK] = &cam_cc_icp_ahb_clk.clkr,
+ 	[CAM_CC_ICP_CLK] = &cam_cc_icp_clk.clkr,
+@@ -3272,6 +3447,9 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+ 	[CAM_CC_PLL11_OUT_EVEN] = &cam_cc_pll11_out_even.clkr,
+ 	[CAM_CC_PLL12] = &cam_cc_pll12.clkr,
+ 	[CAM_CC_PLL12_OUT_EVEN] = &cam_cc_pll12_out_even.clkr,
++	[CAM_CC_QDSS_DEBUG_CLK] = &cam_cc_qdss_debug_clk.clkr,
++	[CAM_CC_QDSS_DEBUG_CLK_SRC] = &cam_cc_qdss_debug_clk_src.clkr,
++	[CAM_CC_QDSS_DEBUG_XO_CLK] = &cam_cc_qdss_debug_xo_clk.clkr,
+ 	[CAM_CC_SBI_CLK] = &cam_cc_sbi_clk.clkr,
+ 	[CAM_CC_SBI_FAST_AHB_CLK] = &cam_cc_sbi_fast_ahb_clk.clkr,
+ 	[CAM_CC_SFE_0_CLK] = &cam_cc_sfe_0_clk.clkr,
+@@ -3280,7 +3458,9 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+ 	[CAM_CC_SFE_1_CLK] = &cam_cc_sfe_1_clk.clkr,
+ 	[CAM_CC_SFE_1_CLK_SRC] = &cam_cc_sfe_1_clk_src.clkr,
+ 	[CAM_CC_SFE_1_FAST_AHB_CLK] = &cam_cc_sfe_1_fast_ahb_clk.clkr,
++	[CAM_CC_SLEEP_CLK_SRC] = &cam_cc_sleep_clk_src.clkr,
+ 	[CAM_CC_SLOW_AHB_CLK_SRC] = &cam_cc_slow_ahb_clk_src.clkr,
++	[CAM_CC_XO_CLK_SRC] = &cam_cc_xo_clk_src.clkr,
  };
  
- static const struct alpha_pll_config disp_cc_pll0_config = {
--	.l = 0xd,
-+	/* .l includes RINGOSC_CAL_L_VAL, CAL_L_VAL, L_VAL fields */
-+	.l = 0x4444000d,
- 	.alpha = 0x6492,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -103,7 +104,8 @@ static struct clk_alpha_pll disp_cc_pll0 = {
- };
- 
- static const struct alpha_pll_config disp_cc_pll1_config = {
--	.l = 0x1f,
-+	/* .l includes RINGOSC_CAL_L_VAL, CAL_L_VAL, L_VAL fields */
-+	.l = 0x4444001f,
- 	.alpha = 0x4000,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
-index 18d23be8d435..153bf6ecb795 100644
---- a/drivers/clk/qcom/gpucc-sa8775p.c
-+++ b/drivers/clk/qcom/gpucc-sa8775p.c
-@@ -46,7 +46,8 @@ static const struct pll_vco lucid_evo_vco[] = {
- 
- /* 810MHz configuration */
- static struct alpha_pll_config gpu_cc_pll0_config = {
--	.l = 0x2a,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044002a,
- 	.alpha = 0x3000,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -72,7 +73,8 @@ static struct clk_alpha_pll gpu_cc_pll0 = {
- 
- /* 1000MHz configuration */
- static struct alpha_pll_config gpu_cc_pll1_config = {
--	.l = 0x34,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x00440034,
- 	.alpha = 0x1555,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-diff --git a/drivers/clk/qcom/gpucc-sm8450.c b/drivers/clk/qcom/gpucc-sm8450.c
-index 16c0381b3087..dddfda880202 100644
---- a/drivers/clk/qcom/gpucc-sm8450.c
-+++ b/drivers/clk/qcom/gpucc-sm8450.c
-@@ -40,7 +40,8 @@ static struct pll_vco lucid_evo_vco[] = {
- };
- 
- static struct alpha_pll_config gpu_cc_pll0_config = {
--	.l = 0x1d,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x0044001d,
- 	.alpha = 0xb000,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
-@@ -67,7 +68,8 @@ static struct clk_alpha_pll gpu_cc_pll0 = {
- };
- 
- static struct alpha_pll_config gpu_cc_pll1_config = {
--	.l = 0x34,
-+	/* .l includes CAL_L_VAL, L_VAL fields */
-+	.l = 0x00440034,
- 	.alpha = 0x1555,
- 	.config_ctl_val = 0x20485699,
- 	.config_ctl_hi_val = 0x00182261,
+ static struct gdsc *cam_cc_sm8550_gdscs[] = {
 -- 
 2.40.1
 
