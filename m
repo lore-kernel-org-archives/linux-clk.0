@@ -2,121 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E4CC7EE23
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 14:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAA1C7EE2A
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 14:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234044AbjFAONA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 10:13:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34412 "EHLO
+        id S234097AbjFAOPA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 10:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233996AbjFAOM5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 10:12:57 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F1561AD
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 07:12:49 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f6042d610fso8886145e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 07:12:49 -0700 (PDT)
+        with ESMTP id S234294AbjFAOOz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 10:14:55 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 578CBFC;
+        Thu,  1 Jun 2023 07:14:54 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f50470d77cso1170216e87.0;
+        Thu, 01 Jun 2023 07:14:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685628768; x=1688220768;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1685628892; x=1688220892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=blRDmP8zwUxnWYu3O2q7G8SVs+SLeK3eRrnyEq5ozP4=;
-        b=qdN3sFmE0bkWjRKWetOAT0HHLZIxe86o4BV9VjIYHiUK3XPu2S8gc0aoVmeWcrs4cy
-         agjoc2/Hh7uBRXSKUK6reJT3RUJmkZAEwpys5HDX5bJr6n6VJa7oPa+LItSY9540le1v
-         c5xeuCTZ1QVljMhR3nmnMXrrL0arqyhLw8IIxDSf/EhE6ILbEj1sEW03f3QystUPuj5Z
-         bDEUctCPLc84Ov0ke0ettWxLK3yjWZ3RCAHD2zRdmVaAybo0NiXe5TLVYrUVI645Qq06
-         9BbZlfyjNk5aeQp4Zj1+EaGkNAjjCWOgccsS3/JaCUwjXDNUT+G0TrhVnq5XV5ORs7dF
-         6+6g==
+        bh=DeEt3ZtY/qgPpIG3Juy6jxgig7CNozbybAWZDbKu/2U=;
+        b=EA6QMh0SF1z/MTpMCRKX9Wem4Jbt9wiCcnjreK854AVtiORKI2PsSN79zxKO/ZRuvH
+         he7xl4p/EgXNjbb0tGcGODweznwFnioHPqiX1EZuVwCn8HNL+2VENunXXh0TUIRIgtoO
+         SNWIsXG1pOToRqQL8NGZ5TVMAwYkgYUkjnecI1TL2VCAy99EVn5bWCW+fJILMGZfWEYP
+         SK2W9Irhygls/2htBENC8xH8KNvPZ4SV11mlGK86spve9XhKwz6YVDsvkPbc3Aaan//D
+         RilNeQcQojDJ1HsnPi2lZSFpdQoO6QjsfaZeSqevXWkx8yZAWqTKJM6VQPqC5BmSMLE6
+         khNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685628768; x=1688220768;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1685628892; x=1688220892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=blRDmP8zwUxnWYu3O2q7G8SVs+SLeK3eRrnyEq5ozP4=;
-        b=N2ljclREagku27FMH0QuamK2yezxZsnDVBLCBAkj/8juSOj4qi0EevGNmns2C5pyA1
-         ceHSTDkZzsdY0PapqlYa7fsR+OL3eL083UJFCsuuahNz5PBER8/SixtfBnnQ/wJnf/hA
-         o+RmZ2siUdbQOR4o/WwPm6WmJlzFKI31FlHA4KZoGHC5Tog466HjTJDuZ67ZbkQWwGji
-         yUb+PQ9i1Wvcf+ssXJczIMaJYKq67vEDr0W/dlTigljn3IK8L6ud+NZ3qa4tM+MB7L8a
-         SFHRtjmaaA1IX/s9MYZWuRcszoBTKMchf9yIAdAje2Fs1U3PIG3ebcNqGxAFnvM5QqwY
-         rw8g==
-X-Gm-Message-State: AC+VfDxj2BTf2cgcXL7RmnRFLopK6f9smz4iRYuh3ys4VHQDi4H+Ep7V
-        sjD0roj5wv/kJu+XEzX0m7RZKw==
-X-Google-Smtp-Source: ACHHUZ6/ivQPA2lY433i2n8DT8ybJaluMhJNQm/WfFkDzmtsk8A31ifylaUb4N2I4BWnvbWtYj/ztw==
-X-Received: by 2002:adf:f244:0:b0:2f6:bf04:c8cc with SMTP id b4-20020adff244000000b002f6bf04c8ccmr2034350wrp.55.1685628767960;
-        Thu, 01 Jun 2023 07:12:47 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id p12-20020adfcc8c000000b0030adfa48e1esm10629591wrj.29.2023.06.01.07.12.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jun 2023 07:12:47 -0700 (PDT)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        bh=DeEt3ZtY/qgPpIG3Juy6jxgig7CNozbybAWZDbKu/2U=;
+        b=gzDGDOM8sHpEbLTuDsQyvKVQGhfhYHosEKAyBnJXe6OLBhOTQ25NHgBtNlszSiQnGt
+         KyVdYJZ08RNw/ahBHeC/Yp8+RABSAcJZ/bcWW8Z7QRydCTohhx+9VEayzXoLtRm64Ct5
+         J/qrZSovYhhzV93zllwxDyiY3XOCuqNd81aTriaF+0LSV1fdmhMqh0DQ5Q/8ld3EF+kd
+         1CarRccA3nyVU0pk/c1GHBUbAIUou7EfvavZNCqcqfAn9PZ9W4/EPHyjpBVURHTet59i
+         DdONXBSgBLscBmFkZmM0WsNT2+M0MO5ew0ozrx10UrwFb4NGczDEkG/gIYJ1q+7spKnx
+         ytEg==
+X-Gm-Message-State: AC+VfDxEyoQuQPNKIJH+d9AsbrYsGjqD5HDWC5IU0dlHcU39Klg0Ijr2
+        XiaK+WMqHKyl5PgfEe3Y6jKOMROpuOmA+kCYAQQ=
+X-Google-Smtp-Source: ACHHUZ5aZbU8uqtUstqjsROwRBmYjoZddv/BBhfDrYD2/3YDUKKqXKbBGkdUqIRDFOIon0Wjh3OmpR/FjZOPjI6eNUU=
+X-Received: by 2002:ac2:4c2b:0:b0:4f4:b41c:a8c1 with SMTP id
+ u11-20020ac24c2b000000b004f4b41ca8c1mr171lfq.69.1685628892019; Thu, 01 Jun
+ 2023 07:14:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230531-topic-8998_mmssclk-v1-0-2b5a8fc90991@linaro.org> <20230531-topic-8998_mmssclk-v1-4-2b5a8fc90991@linaro.org>
+In-Reply-To: <20230531-topic-8998_mmssclk-v1-4-2b5a8fc90991@linaro.org>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Thu, 1 Jun 2023 08:14:41 -0600
+Message-ID: <CAOCk7Nogy3+5rvyzPEgsyJe7xE_17MXVs-=mniJJj=ELsCqzNQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] clk: qcom: mmcc-msm8998: Fix the SMMU GDSC
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     "Lukas F. Hartmann" <lukas@mntre.com>,
-        Nicolas Belin <nbelin@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-phy@lists.infradead.org, Rob Herring <robh@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>
-In-Reply-To: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
-References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v5-0-56eb7a4d5b8e@linaro.org>
-Subject: Re: (subset) [PATCH v5 00/17] drm/meson: add support for MIPI DSI
- Display
-Message-Id: <168562876692.86739.7052062833690353953.b4-ty@linaro.org>
-Date:   Thu, 01 Jun 2023 16:12:46 +0200
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.2
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@somainline.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Imran Khan <kimran@codeaurora.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Joonwoo Park <joonwoop@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Wed, May 31, 2023 at 3:01=E2=80=AFAM Konrad Dybcio <konrad.dybcio@linaro=
+.org> wrote:
+>
+> The SMMU GDSC doesn't have to be ALWAYS-ON and shouldn't feature the
+> HW_CTRL flag (it's separate from hw_ctrl_addr).  In addition to that,
+> it should feature a cxc entry for bimc_smmu_axi_clk and be marked as
+> votable.
+>
+> Fix all of these issues.
+>
+> Fixes: d14b15b5931c ("clk: qcom: Add MSM8998 Multimedia Clock Controller =
+(MMCC) driver")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-On Tue, 30 May 2023 09:38:01 +0200, Neil Armstrong wrote:
-> The Amlogic G12A, G12B & SM1 SoCs embeds a Synopsys DW-MIPI-DSI transceiver (ver 1.21a),
-> with a custom glue managing the IP resets, clock and data input similar to the DW-HDMI
-> glue on the same Amlogic SoCs.
-> 
-> This adds support for the glue managing the transceiver, mimicing the init flow provided
-> by Amlogic to setup the ENCL encoder, the glue, the transceiver, the digital D-PHY and the
-> Analog PHY in the proper way.
-> 
-> [...]
+Was this tested on a system where the bootloader has enabled the
+display and it is active during Linux boot?
 
-Thanks, Applied to https://anongit.freedesktop.org/git/drm/drm-misc.git (drm-misc-next)
+I seem to recall that in that scenario, Linux would boot up, see that
+the GDSC is on, not see any clients for it (still initializing), turn
+it off, and kill the display which then results in either a mess of
+errors or a bus lockup.
 
-[06/17] dt-bindings: display: add Amlogic MIPI DSI Host Controller bindings
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0628f2341e96213c9f2d074853b255f65acd3795
-[07/17] dt-bindings: display: meson-vpu: add third DPI output port
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=25b3b35cd51ef0d98165666d250a51f39db6a1fc
-[08/17] drm/meson: fix unbind path if HDMI fails to bind
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=6a044642988b5f8285f3173b8e88784bef2bc306
-[09/17] drm/meson: only use components with dw-hdmi
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=44e16166e0e9b94d8bcdf55fc0e5fcceca1154f0
-[10/17] drm/meson: venc: add ENCL encoder setup for MIPI-DSI output
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=51fc01a03442cce5e4c21375a1ceb2e4ec93c833
-[11/17] drm/meson: add DSI encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=42dcf15f901c8222352da31d622b4ee844068f42
-[12/17] drm/meson: add support for MIPI-DSI transceiver
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=77d9e1e6b8468f701ab024a060aa9c0339356870
-[13/17] drm/panel: khadas-ts050: update timings to achieve 60Hz refresh rate
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=29c6df0d942454cb43334cf0e36de068f4124b94
-
--- 
-Neil
-
+-Jeff
