@@ -2,64 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB812C7EE23
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 21:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE5AC7EE29
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 22:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232594AbjFAV5y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 17:57:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36362 "EHLO
+        id S230298AbjFAWFr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 18:05:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231600AbjFAV5x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 17:57:53 -0400
-Received: from mail-oo1-xc29.google.com (mail-oo1-xc29.google.com [IPv6:2607:f8b0:4864:20::c29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C259F18C
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 14:57:52 -0700 (PDT)
-Received: by mail-oo1-xc29.google.com with SMTP id 006d021491bc7-5556e2bddf9so794050eaf.1
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 14:57:52 -0700 (PDT)
+        with ESMTP id S229800AbjFAWFq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 18:05:46 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D32180;
+        Thu,  1 Jun 2023 15:05:42 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-256e1d87998so1118210a91.3;
+        Thu, 01 Jun 2023 15:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685656672; x=1688248672;
+        d=gmail.com; s=20221208; t=1685657142; x=1688249142;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ruzONHVQNNLn5cbL5oGqVupApwre43YqM07fYPN5vjI=;
-        b=xJ3xHiRVsz8R7jMctT41qJPcKiBMuq002UN7r9mY5OoIHL4nk4TNU9bO882krVSeYl
-         F+LcWIkkh8dut/CrRkIeYQNJv6Ztxuc0L2yqyg4BJkzX/oLWAjHj8uUVy2NMG38qcZHc
-         gC/em/1iWrZyeWApUBNlPAkCo7rQzXVHwMr/25D/rcQHwBuJfqUlvl4MeK/Hpv3W5dRW
-         70yYkXlrOJMMOozJJKV0N9A775LDDzO0Gx7E/gUu6vBu7eExVkS/OZkNP5tdatwIjnaY
-         ZHjT+b0sxqybeL48s/zonqK9gyu1fGwFq+/ETOHCM407OJwxK06Qr+TFUBzsrmmQNnRj
-         EfKQ==
+        bh=r6m06uJZ1FcfQQQ+zQbt4FBMdkqZwEjZRMbiHdQiMhk=;
+        b=MVRjfvzuQmigtaIpnBg868k8EJAvZXM6L0PhCAaZrPI8Yqi/CeUJlFgroYi+DdS3PB
+         MLZGiK3HIgyG6uxdk0K7CafGbmBWwyCnwYJzBO6Mp2pfD6tgUFJq+J3DPvTyFnyxQaYl
+         2aYbS9pPxD352nvrEboI7bMwf6wdOwWoelqQh1+m19Djq/glMR0pYoKXxXYcSFAZ716A
+         UhlxfJ6IVGRHQel0p28pi5FxFGzbgK6gtpvJr4DAX3wJoOlDQ7aTiUvfd0trNr0upJs4
+         H4UIerjjHqGWr0ColesVFer1vJO5kR+8IqZADcfGClvKuXiqwszWmMaBTzfmpJr/5XUx
+         4Xhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685656672; x=1688248672;
+        d=1e100.net; s=20221208; t=1685657142; x=1688249142;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ruzONHVQNNLn5cbL5oGqVupApwre43YqM07fYPN5vjI=;
-        b=ioCi5/yh1dVFiFR1fXmymKvR1DZE7V6DKajPytVngWlXHNDfoOyVKwoLhUrxE4GRJ0
-         mKj3ESPZZ8LA3bv7PiZBBm1Ci/7VdSeGMKRFsjDThHtqIxS4FdgtJTHtaAvkspiYNe3V
-         v1AEaEz72/nTeY5R6djr5Kh3BeGPBobc0p+pM2JwRLIFzbQFp3Qx1timnajTCqvV7suH
-         K+TE/kVEVYC7c8DsQDZJPd1uIxUjs8ICp9j79FMIRmmIs/nveN6BRIHtX1b9UTqXLgrE
-         7JBLmIKRgSr2pjOhCIcySbnVww/rma7WETAywz0jchgpXNtkNlyPJ7Hl/c90WTBVEaS6
-         AnnQ==
-X-Gm-Message-State: AC+VfDz0wlxcYmT8KD5ol/3Z3hpOGsE8RB6JNdPyHWkXJhgKeQU6zRQ+
-        2+Tb73kaSliFQ8CsSTyY5qO/VGjE9YQ4Pvz6s799aw==
-X-Google-Smtp-Source: ACHHUZ56tRKln5Zko0KXJAcfvYlxi6GxnyaGVCrS/sW2jiWiCLzSvzQWu0NgIDvAnsayfumJnSDtE29yp2/8bVVKkD8=
-X-Received: by 2002:a05:6358:3408:b0:123:896:851e with SMTP id
- h8-20020a056358340800b001230896851emr4756088rwd.12.1685656671940; Thu, 01 Jun
- 2023 14:57:51 -0700 (PDT)
+        bh=r6m06uJZ1FcfQQQ+zQbt4FBMdkqZwEjZRMbiHdQiMhk=;
+        b=iWaYFBeX0fVnj1XtiKBX3brIpz2/0xa4lUdWiOaQYD6QVHZg3p2Ed2VtXqrK0FE7U9
+         R0myr2O8PyVGwa62YdcjwXp31GRuNdHAsmdP/AaaQnCyjlF2YOpwzeAzrQWIP3Nr0qEh
+         BTVG3zZBQnIp7rNoFchD22+sqo9+T5/RQOgUw73pwFG6e8zJ6ofoAxYTSXcDItXGh4B3
+         WFMTJuqksokEuhIqV5EGmviRftFpw41aAmBpRJdkCz9ecigI1eRpxCnjRZquL1ahyPIc
+         fwsogpSKgxbLu2qW0cjfbdhZECb0XTkS8TinWPr97LskytbVOXyloa6HY5Uv6+XwRi2O
+         VYmQ==
+X-Gm-Message-State: AC+VfDw+4PKp9xS/KSyYZ/KCBsQ1RScwhRxltDgcVsjZd5/JM7UQF5Gd
+        pWRDD6laaFv1hyLxo6iRvRsxQjsLfTXXk9Uo/Ik=
+X-Google-Smtp-Source: ACHHUZ4gT9Uz11PX2It9sJbwkqfOByKhOKQcVu6O4hJx58nfJehfCdmwKcEoYgo5RwTms1ghyvToylm8obOwqw9fgmU=
+X-Received: by 2002:a17:90b:fc9:b0:24d:f59a:d331 with SMTP id
+ gd9-20020a17090b0fc900b0024df59ad331mr611951pjb.26.1685657142032; Thu, 01 Jun
+ 2023 15:05:42 -0700 (PDT)
 MIME-Version: 1.0
 References: <20230601213416.3373599-1-arnd@kernel.org>
 In-Reply-To: <20230601213416.3373599-1-arnd@kernel.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Fri, 2 Jun 2023 00:57:40 +0300
-Message-ID: <CAA8EJpqRUf2bp1SxyvKg9t+1AM9gqd_6JHq8LAp=6Dd32+h2rA@mail.gmail.com>
+From:   Robert Marko <robimarko@gmail.com>
+Date:   Fri, 2 Jun 2023 00:05:30 +0200
+Message-ID: <CAOX2RU7mQgwVV=aNXxMQKd4Xrf6iHi8gBCzccE0gz-3_UwW6jQ@mail.gmail.com>
 Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: remove duplicate initializers
 To:     Arnd Bergmann <arnd@kernel.org>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Mantas Pucka <mantas@8devices.com>,
         Christian Marangi <ansuelsmth@gmail.com>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -69,7 +67,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2 Jun 2023 at 00:34, Arnd Bergmann <arnd@kernel.org> wrote:
+On Thu, 1 Jun 2023 at 23:34, Arnd Bergmann <arnd@kernel.org> wrote:
 >
 > From: Arnd Bergmann <arnd@arndb.de>
 >
@@ -87,12 +85,29 @@ On Fri, 2 Jun 2023 at 00:34, Arnd Bergmann <arnd@kernel.org> wrote:
 >
 > Fixes: f4f0c8acee0e4 ("clk: qcom: gcc-ipq6018: update UBI32 PLL")
 > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Thanks for fixing my mess up.
+Reviewed-by: Robert Marko <robimarko@gmail.com>
+
+Regards,
+Robert
 > ---
 >  drivers/clk/qcom/gcc-ipq6018.c | 2 --
 >  1 file changed, 2 deletions(-)
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
--- 
-With best wishes
-Dmitry
+>
+> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+> index 48f9bff7c80fb..86b43175b0422 100644
+> --- a/drivers/clk/qcom/gcc-ipq6018.c
+> +++ b/drivers/clk/qcom/gcc-ipq6018.c
+> @@ -4150,8 +4150,6 @@ static struct clk_branch gcc_dcc_clk = {
+>  static const struct alpha_pll_config ubi32_pll_config = {
+>         .l = 0x3e,
+>         .alpha = 0x6667,
+> -       .config_ctl_val = 0x240d6aa8,
+> -       .config_ctl_hi_val = 0x3c2,
+>         .config_ctl_val = 0x240d4828,
+>         .config_ctl_hi_val = 0x6,
+>         .main_output_mask = BIT(0),
+> --
+> 2.39.2
+>
