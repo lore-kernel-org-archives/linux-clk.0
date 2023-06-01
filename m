@@ -2,182 +2,175 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1B9C77B7A
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 11:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88035C7EE23
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 12:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232354AbjFALZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 07:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38530 "EHLO
+        id S233109AbjFAMn7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 08:43:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231970AbjFALZj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 07:25:39 -0400
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12234123;
-        Thu,  1 Jun 2023 04:25:37 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4QX3hr1bhPz9scT;
-        Thu,  1 Jun 2023 13:25:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1685618732;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Pwp2W8cQUmBk1nwG6nolUJv04uH+qo31sa1TLF5qFwQ=;
-        b=LRylmHsg4FUbZTcfmCgHjVYLcjWKChNx7sUBgD/hPw17j7dcrd6xCcnFTR6vSzqy96k0i5
-        IeEMLETJObiBboemmSJwvzag/ItT4bFc7WalRWUjTJLG7G6EFmlrDMG41JVck/IWpuX3+n
-        j82eUbYLdooxtcdFg6tPjysXRRNND5XACZBJ6OEPkVghyJZNsnDM4gPYKJdAjTZqHJ+oQa
-        jRGqOPpYe+nRXEW92IAUeP+NlEY2UoICqF4kaAzPtdDBKBo5647B8JJjmoaZ5U6Vz7fR6W
-        tsBiPWo8E0lCI9Jpixu+eVQ9RYRDVK8dAtDj0ZZu1MBfFhDAd097q4AadxAiwg==
-References: <20230527132747.83196-1-frank@oltmanns.dev>
- <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH 0/3] clk: sunxi-ng: Optimize rate selection for NKM
- clocks
-Date:   Thu, 01 Jun 2023 07:16:45 +0200
-In-reply-to: <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
-Message-ID: <87mt1jbf18.fsf@oltmanns.dev>
+        with ESMTP id S233093AbjFAMn6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 08:43:58 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBDD213E
+        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 05:43:55 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4f4b80bf93aso938968e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 05:43:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685623434; x=1688215434;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hZj6+TO9cetRqFmZScJnzrH91ahC5Pe0XUE1xU0CNO0=;
+        b=rSQYgK6Tpo+MABXaIL1N2j7Fn0MuV25MUc6OWn4uinv1045fU2ZTGiwD/vsQMZ38xC
+         Mm6RDZNcLCHjgJMZ+EXnUaxoe0gVFEkdrc/A0K5VYFY3e/lsEaQjDKsTOOHG8GIQC+pj
+         XN4vyxARephQWmvC4c/zQBnyv9R4VXRkHmtAExxRhbrlBrC9TabmFXqA16IiPTVXMWcn
+         bnTAso+N1SM/nC1xCAe3UcCP1wozeaBIckVVh5j4f+elbDxBCsCKM9+/I1h0Xk1qJaqA
+         3S86f3ztabuvewtdjYEmggS0P7t+Ab7vIxdoWwZkWSTraqsrjw1f1edG25lp/2CJ3FtB
+         kwtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685623434; x=1688215434;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hZj6+TO9cetRqFmZScJnzrH91ahC5Pe0XUE1xU0CNO0=;
+        b=jogdYXO6FfxLm5agb7SRjs1n9exjrGit9910H2b6JCagjvkxG0kU8y+lXjJY4T9SQC
+         jPpSaAP3gj/V0CV3NkTOgYftuDzBUuVzjzp8a46s0zic7RvbFmKzRZzPwLbuSuJJ8q7R
+         aLjIRUJZ2VSABhysSQXGF+PXa8Bw0XooEPQzjsp1x/UBgj9BHJuoRUyPaou5NbspVvTG
+         tQRotNJWjUmAAwmVdrJc5Gl8DHqpKcXp6sJYWm9EnPdoMe6d7E3eh/yu1s87epJYIk/v
+         rZd3JwxhNrPAgHLKMR3v8rrnrYbduoXLJi0SyY2otX+Vr40apjCOpR4iDA6K0of+Zour
+         4+zA==
+X-Gm-Message-State: AC+VfDyX5es8k3czD9Pk9rDkvwsxAFg66v1ABkIUC1eOt4aTzE6HSfIV
+        UpBzGqaQT5Y5qCbqc9Y+UxXuIg==
+X-Google-Smtp-Source: ACHHUZ6FJWrak/ultHHEb2CoK21JhwC0uCB93REGoqO+GGWVnkSpZNI4KWn+YR8yS6VhHa25ulvB5g==
+X-Received: by 2002:ac2:44d8:0:b0:4f3:859c:a01d with SMTP id d24-20020ac244d8000000b004f3859ca01dmr1465371lfm.69.1685623433986;
+        Thu, 01 Jun 2023 05:43:53 -0700 (PDT)
+Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
+        by smtp.gmail.com with ESMTPSA id h6-20020a197006000000b004f608eb50d7sm140878lfc.232.2023.06.01.05.43.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Jun 2023 05:43:52 -0700 (PDT)
+Message-ID: <4943572a-3456-ae33-387f-db476ff382e4@linaro.org>
+Date:   Thu, 1 Jun 2023 14:43:50 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4QX3hr1bhPz9scT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org>
+ <20230526-topic-smd_icc-v1-20-1bf8e6663c4e@linaro.org>
+ <5a26e456-fe45-6def-27f9-26ec00c333e6@linaro.org>
+ <ZHZIVJFd-HU_AO2F@gerhold.net>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH 20/20] interconnect: qcom: Divide clk rate by src node bus
+ width
+In-Reply-To: <ZHZIVJFd-HU_AO2F@gerhold.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime,
-
-On 2023-05-31 at 15:48:43 +0200, Maxime Ripard <mripard@kernel.org> wrote:
-> [[PGP Signed Part:Undecided]]
-> Hi Frank,
->
-> On Sat, May 27, 2023 at 03:27:44PM +0200, Frank Oltmanns wrote:
->> I would like to bring your attention to the current process of setting
->> the rate of an NKM clock. As it stands, when setting the rate of an
->> NKM clock, the rate nearest but less than or equal to the requested
->> rate is found, instead of the nearest rate.
->
-> Yeah, it's actually pretty common, see clk_mux_determine_rate_flags()
-> for example. Some devices require that we don't overshoot, while some
-> prefer to have the closest rate.
->
-> Both are fine, and it's a bit context specific which one we should
-> favour. If we were to do anything, it would be to support both and let
-> the clock driver select which behaviour it wants.
->
-
-Ok, understood. Thank you for the explanation! Now, I'm wondering if
-anyone would be using such a flag, if I added it.
-
->
->> Moreover, ccu_nkm_find_best() is called multiple times (footnote [1])
->> when setting a rate, each time iterating over all combinations of n,
->> k, and m.
->
-> Yeah, that's expected as well.
-
-I'm wondering though, if iterating over all combinations is set in
-stone, or if some kind of optimization would be in order.
-
->
->> In response to this, I propose the following refinements to optimize the NKM
->> clock setting:
->>  a. when finding the best rate use the nearest rate, even if it is greater than
->>     the requested rate (PATCH 1)
->>  b. utilize binary search to find the best rate by going through a
->>     precalculated, ordered list of all meaningful combinations of n, k, and m
->>     (PATCH 2)
->
-> One thing you haven't really addressed is why we would be doing this? Is
-> there some clocks that require a more precise clock and don't? Is the
-> factor calculation a bottleneck for some workloads?
-
-Background
-==========
-I'm a pinephone user (ccu-sun50i-a64). I'm using U-Boot which sets the
-pll-video0 to 294 MHz on boot. The phone's panel requires DCLK to run at
-108 MHz to get a nice 60 Hz vertical refresh rate. The clock structure
-is this:
-
-    clock                       clock type
-    --------------------------------------
-    pll-video0                  ccu_nm
-       pll-mipi                 ccu_nkm
-          tcon0                 ccu_mux
-             tcon-data-clock    sun4i_dclk
-
-The divider between tcon0 and tcon-data-clock is fixed at 4. So, I need
-pll-mipi to run at 432 MHz to get the desired vertical refresh rate.
-When pll-vdeo0 is at 294 MHz this is that rate cannot be matched exactly
-with any combination. The best we can get is 431.2 MHz (n=11, k=2,
-m=15).
-
-The pinephone has some "vendor" patches (megi kernel) that
- a. add HDMI
- b. allow re-setting pll-mipi's rate when pll-video0 changes
-
-Re: Who needs a more precise clock?
-===================================
-When plugging in HDMI, pll-video's rate is set to 297 MHz, which - in
-the vendor kernel, not mainline - triggers recalculation of pll-mipi
-(trying to set it to 431.2 MHz). It ends up with a rate of 424.285714
-MHz, because this is the nearest, but less than 431.2 MHz (n=5, k=2,
-m=7). The nearest rate would be 432 MHz.
-
-So, while analyzing the whole situation that I described above, I found
-out that the NKM clocks are not set to the closest rate and wondered why
-that is. Hence my request for comments.
-
-Now, one could argue that pll-video0 should be set to 297MHz at boot or
-that pll-mipi should try to set the *requested* rate instead of the
-previous rate when the pll-video0 changes. And I think that both are
-valid or even better approaches than my proposal in this RFC to address
-this specific problem and I'll probably sent patches to discuss this as
-well.
 
 
-Re: Why speed up factor calculation?
-====================================
-I'm not aware that the current implementation of calculating n, k, and m
-poses a bottleneck in any situation. Again, while going through the
-code, I wondered why not save a few CPU cycles by precalculating the
-meaningful combinations. In my opinion, it does not have any side
-effects, so we might as well do it. (There is of course the side effect
-of using a higher rate, but this is unrelated to precalculation as I
-could as well employ a rate comparison that only allows lower rates, or
-only optionally higher rates.)
+On 30.05.2023 21:02, Stephan Gerhold wrote:
+> On Tue, May 30, 2023 at 06:32:04PM +0200, Konrad Dybcio wrote:
+>> On 30.05.2023 12:20, Konrad Dybcio wrote:
+>>> Ever since the introduction of SMD RPM ICC, we've been dividing the
+>>> clock rate by the wrong bus width. This has resulted in:
+>>>
+>>> - setting wrong (mostly too low) rates, affecting performance
+>>>   - most often /2 or /4
+>>>   - things like DDR never hit their full potential
+>>>   - the rates were only correct if src bus width == dst bus width
+>>>     for all src, dst pairs on a given bus
+>>>
+>>> - Qualcomm using the same wrong logic in their BSP driver in msm-5.x
+>>>   that ships in production devices today
+>>>
+>>> - me losing my sanity trying to find this
+>>>
+>>> Resolve it by using dst_qn, if it exists.
+>>>
+>>> Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
+>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>> ---
+>> The problem is deeper.
+>>
+>> Chatting with Stephan (+CC), we tackled a few issues (that I will send
+>> fixes for in v2):
+>>
+>> 1. qcom_icc_rpm_set() should take per-node (src_qn->sum_avg, dst_qn->sum_avg)
+>>    and NOT aggregated bw (unless you want ALL of your nodes on a given provider
+>>    to "go very fast")
+>>
+>> 2. the aggregate bw/clk rate calculation should use the node-specific bus widths
+>>    and not only the bus width of the src/dst node, otherwise the average bw
+>>    values will be utterly meaningless
+>>
+> 
+> The peak bandwidth / clock rate is wrong as well if you have two paths
+> with different buswidths on the same bus/NoC. (If someone is interested
+> in details I can post my specific example I had in the chat, it shows
+> this more clearly.)
+agg_peak takes care of that, I believe..
 
-> Clocks in general are very regression-prone, so I'd rather be a bit
-> conservative there, and "if it ain't broke, don't fix it".
 
-Sure, I get that.
+> 
+>> 3. thanks to (1) and (2) qcom_icc_bus_aggregate() can be remodeled to instead
+>>    calculate the clock rates for the two rpm contexts, which we can then max()
+>>    and pass on to the ratesetting call
+>>
+> 
+> Sounds good.
+> 
+>>
+>> ----8<---- Cutting off Stephan's seal of approval, this is my thinking ----
+>>
+>> 4. I *think* Qualcomm really made a mistake in their msm-5.4 driver where they
+>>    took most of the logic from the current -next state and should have been
+>>    setting the rate based on the *DST* provider, or at least that's my
+>>    understanding trying to read the "known good" msm-4.19 driver
+>>    (which remembers msm-3.0 lol).. Or maybe we should keep src but ensure there's
+>>    also a final (dst, dst) vote cast:
+>>
+>> provider->inter_set = false // current state upstream
+>>
+>> setting apps_proc<->slv_bimc_snoc
+>> setting mas_bimc_snoc<->slv_snoc_cnoc
+>> setting mas_snoc_cnoc<->qhs_sdc2
+>>
+>>
+>> provider->inter_set = true // I don't think there's effectively a difference?
+>>
+>> setting apps_proc<->slv_bimc_snoc
+>> setting slv_bimc_snoc<->mas_bimc_snoc
+>> setting mas_bimc_snoc<->slv_snoc_cnoc
+>> setting slv_snoc_cnoc<->mas_snoc_cnoc
+>> setting mas_snoc_cnoc<->qhs_sdc2
+>>
+> 
+> I think with our proposed changes above it does no longer matter if a
+> node is passed as "src" or "dst". This means in your example above you
+> just waste additional time setting the bandwidth twice for
+> slv_bimc_snoc, mas_bimc_snoc, slv_snoc_cnoc and mas_snoc_cnoc.
+> The final outcome is the same with or without "inter_set".
+Yeah I guess due to the fact that two "real" nodes are always
+connected by a set of "gateway" nodes, the rate will be applied..
 
-As I stated in my cover letter:
-"The motivation for these proposed changes lies in the current behavior
-of rate selection for NKM clocks, which doesn't observe the
-CLK_SET_RATE_PARENT flag. I.e. it does not select a different rate for
-the parent clock to find the optimal rate."
+I am however not sure if we're supposed to set the bandwidth
+(via qcom_icc_rpm_set()) on all of them..
 
-I thought that this required this optimization to be implemented, but by
-now, I'm no longer sure. I'll probably continue investigating different
-paths for CLK_SET_RATE_PARENT for NKM clocks and follow up with new
-findings.
-
-Thanks,
-  Frank
-
->
-> Maxime
->
-> [[End of PGP Signed Part]]
+Konrad
+> 
+> Thanks,
+> Stephan
