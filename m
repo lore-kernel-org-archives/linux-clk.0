@@ -2,62 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F12C7EE29
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 09:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C56BC77B7E
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 09:39:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232670AbjFAJji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 05:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52830 "EHLO
+        id S232297AbjFAJjk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 05:39:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232905AbjFAJja (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 05:39:30 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A35E6F
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 02:39:13 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f5f728c4aaso470470e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 02:39:13 -0700 (PDT)
+        with ESMTP id S232935AbjFAJjc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 05:39:32 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67774E77
+        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 02:39:15 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f3a99b9177so698334e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 02:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685612351; x=1688204351;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kRvNGrsibEvu6jhRJBq1cBQ4kF2HTrS/VOtbw4oxVa0=;
-        b=oJPY1B0tSvI82MXYYsTcHjaCd69oP8/C2oPLYL9IUuIiHqI97BuOG6qIrAR9hYgIXD
-         LHSp/oMeX5OSTSqjvwgU8UWvU91sUqzidwpeKEC/1A3cw+cCK0T/34coH7nQDgiGt7mW
-         Z2lnNzMFh+nNRBtjNDJvDRhrH2rRn59XpPzqzwzz+N1/TpmU8o6AGhS78klDJ8L+GIto
-         tiFPKi6K5gVwAYoNCV/6oEkTI7aEt77KujZLxh9nZCOJzl8XlDBTxUH5yiATR/M03T/9
-         Uz+Lgote1m/ev2mBXpLE++WvRRrvdbzEJjYHsX0c52q0TOmDD2vlcFZP85HuUlTKlIny
-         lX1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685612351; x=1688204351;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1685612353; x=1688204353;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kRvNGrsibEvu6jhRJBq1cBQ4kF2HTrS/VOtbw4oxVa0=;
-        b=ElnrQfhAOZqXnG6zKiR8MXfhOJ2LCTnQbyUQgGIlNeJ/hl+33y+0JLGNXqrTGstfY5
-         Q+vGjTw8t7zueK/7hYVVayuAVU4Tq0Nwe5ILH/xTfWv8RG2XF+5C3NEH44K1vLPoHl6H
-         KK4wstxlQsvn5nhOkTA87qnEpi2MZBnM04WvPZy/2SqhwfEY+d+J9e2NUURK0RRUidQn
-         C2/50Ns1xMrnAN15S/N77WJzAW3m2WdtvV0jnZMb4Zj7v6Emmf9Efb7+iRKXoKY7vF5d
-         qCRe211m02CM+tepPJBbz30o+JzEUrjFL/3Ys/A3r446+rDiVCncEilffCTs5mfw5JFT
-         aRrA==
-X-Gm-Message-State: AC+VfDzi/eUFKYE4mkZadldKRR/5XTdaoYqKysSPnUNGCLYw8z2mqXNR
-        pgePRqZwvaFoxZVFHnyF4SjdaQ==
-X-Google-Smtp-Source: ACHHUZ4wl5eRmVoSl9UH26pnAgkcofTJ38V9G+G3IT8dqT7qVyiM/5Nvy+pDD+XL//satwDo0Gcydw==
-X-Received: by 2002:a05:6512:4018:b0:4f3:a763:ccb7 with SMTP id br24-20020a056512401800b004f3a763ccb7mr356822lfb.2.1685612351343;
-        Thu, 01 Jun 2023 02:39:11 -0700 (PDT)
+        bh=Xc5Z7FdibsmGdwgiV/8KbQWxOT9Tiw8Cs0GSujQgOBc=;
+        b=V6vNXKj3f3bcLUGmfjMz1T8gwhhuAfK6vlnFGaabrtwXigrsETkfdE+uPDOEY/GHU7
+         uNN32i4fXCGshKm7FNAfx8hlkyLo2L2nMBUKLeEi2n9nV5uN3UO3LmHOZobhqadBar0x
+         6QfZ515Z09n5cbOp2tl8z2NPPAxOTRhzxGGyQH978ElFZSVKxCaE6EADUXziPXN4Wo31
+         Ddw3UqawQPgq5zBwUApGZPZvCegs9Dg8+UOzxm0zMnia2Jd6vDnbXKGAiNdxCnnnog12
+         ENE3baNWaovtzbPLj4rMQPBCfwBSLbSOvXuL+EtyitzbjdDe30h29kd1FXxaSUXHIEBI
+         MgAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685612353; x=1688204353;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xc5Z7FdibsmGdwgiV/8KbQWxOT9Tiw8Cs0GSujQgOBc=;
+        b=RNFC04G0TTrbkkksrF5vV9RQeXYU5Lv51o6qF1sSapUsUov5O8tXNMmKVYRpdkQIst
+         rPRuc76Ui6X9Qo6Ku7QvdQi9fR/488cma2sS6L0vYsRdo17q591qGTbSyM6jRVorghCf
+         DdAKdBGVoeZ6J7PLZ3ws/KI0WksymLiExiWdSG5La5w7N25yDJJQ3qyiFp76vgR1J2m1
+         ZvvIqzhXV3p1WP0HtxmULgPuuECqT2ky6dZxljT7sRXvKCXwaaP2GwbnC7V3p/HHsHkM
+         ufXHODR7qvmdLXYxUeoxpv2+vdWU+Xl2JSQoFz3Cw/cBcf/efZ8qJDhRLs+N1ptRQS/O
+         Prxg==
+X-Gm-Message-State: AC+VfDyT2GTpgCoO/NGKLnFlMwfA30j/e7VWsYTuVA35Vt/4m8TlcZ3P
+        erERNGvZaPFO+3Vy/GgTmeKhxA==
+X-Google-Smtp-Source: ACHHUZ7IFtTrJRawCjuqtPt6AMA2+XViWBjkBWsRc8UqEwdcLoyo8qk51EgzMkfXz9GQPXlSx0QP3Q==
+X-Received: by 2002:ac2:4214:0:b0:4ec:8524:65a4 with SMTP id y20-20020ac24214000000b004ec852465a4mr801852lfh.55.1685612353425;
+        Thu, 01 Jun 2023 02:39:13 -0700 (PDT)
 Received: from [192.168.1.101] (abyj77.neoplus.adsl.tpnet.pl. [83.9.29.77])
-        by smtp.gmail.com with ESMTPSA id v3-20020a056512048300b004f3b258feefsm1031119lfq.179.2023.06.01.02.39.10
+        by smtp.gmail.com with ESMTPSA id v3-20020a056512048300b004f3b258feefsm1031119lfq.179.2023.06.01.02.39.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jun 2023 02:39:11 -0700 (PDT)
+        Thu, 01 Jun 2023 02:39:13 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [PATCH 0/2] Update parts of PLL_TEST_CTL(_U) if required
-Date:   Thu, 01 Jun 2023 11:39:06 +0200
-Message-Id: <20230601-topic-alpha_ctl-v1-0-b6a932dfcf68@linaro.org>
+Date:   Thu, 01 Jun 2023 11:39:08 +0200
+Subject: [PATCH 2/2] clk: qcom: gcc-sm6115: Add missing PLL config
+ properties
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADpneGQC/x2N0QrCMAwAf2Xk2UC26R78FRFJ02gDpSvtFGHs3
- w0+3sFxO3Rtph2uww5NP9ZtLQ7jaQBJXF6KFp1hommmhUbc1mqCnGvih2wZOVAU4jgvlzN4Fbg
- rhsZFknflnbPL2vRp3//mdj+OHyl+21d2AAAA
+Message-Id: <20230601-topic-alpha_ctl-v1-2-b6a932dfcf68@linaro.org>
+References: <20230601-topic-alpha_ctl-v1-0-b6a932dfcf68@linaro.org>
+In-Reply-To: <20230601-topic-alpha_ctl-v1-0-b6a932dfcf68@linaro.org>
 To:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -68,38 +69,67 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-kernel@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1685612350; l=944;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1685612350; l=1703;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=IIHix1miPp0qtL4poKUvHfug4CBiAQj5S40QUBQ09Oc=;
- b=5RhikQiQfI+zL877J08QzRcusiyGzh3STK6XsgsBunSmpZG/FRrazcjiVqijI8nlRuz9Zkql3
- OzKofyptzZZCCYboY2jT4W2Tlc/vEDd2w48En2F4F3MvUXB/BdFZoI8
+ bh=SPvCmzGhftB/XAFnbpI3W945MryOao+OxYb3yPb5WLA=;
+ b=uGXQdD8bVwAhRq4ZoZThpA9708kDy5PvmDdfw0OR+wSrx/VVrfjEvTo0oMvQnX2USKv7X49/s
+ sqLe0MHvgTTCKwf2DsNlypPUHln9cUvl2/My+YBt5zNO26e3gpZc/UV
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some recent-ish clock drivers touching on the "standard" Alpha PLLs
-have been specifying the values that should be written into the CTL
-registers as mask-value combos, but that wasn't always reflected
-properly (or at all). This series tries to fix that without affecitng
-the drivers that actually provide the full register values.
+When the driver was ported upstream, PLL ctl register values were omitted.
+Add them to ensure the PLLs are fully configured like we expect them to.
 
+Fixes: cbe63bfdc54f ("clk: qcom: Add Global Clock controller (GCC) driver for SM6115")
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
-Konrad Dybcio (2):
-      clk: qcom: clk-alpha-pll: Add a way to update some bits of test_ctl(_hi)
-      clk: qcom: gcc-sm6115: Add missing PLL config properties
+ drivers/clk/qcom/gcc-sm6115.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- drivers/clk/qcom/clk-alpha-pll.c | 19 +++++++++++++++----
- drivers/clk/qcom/clk-alpha-pll.h |  2 ++
- drivers/clk/qcom/gcc-sm6115.c    |  8 ++++++++
- 3 files changed, 25 insertions(+), 4 deletions(-)
----
-base-commit: 571d71e886a5edc89b4ea6d0fe6f445282938320
-change-id: 20230601-topic-alpha_ctl-ab0dc0ad3654
+diff --git a/drivers/clk/qcom/gcc-sm6115.c b/drivers/clk/qcom/gcc-sm6115.c
+index 5f09aefa7fb9..033e308ff865 100644
+--- a/drivers/clk/qcom/gcc-sm6115.c
++++ b/drivers/clk/qcom/gcc-sm6115.c
+@@ -119,6 +119,8 @@ static const struct alpha_pll_config gpll10_config = {
+ 	.vco_mask = GENMASK(21, 20),
+ 	.main_output_mask = BIT(0),
+ 	.config_ctl_val = 0x4001055b,
++	.test_ctl_hi1_val = 0x1,
++	.test_ctl_hi_mask = 0x1,
+ };
+ 
+ static struct clk_alpha_pll gpll10 = {
+@@ -170,6 +172,8 @@ static const struct alpha_pll_config gpll11_config = {
+ 	.vco_val = 0x2 << 20,
+ 	.vco_mask = GENMASK(21, 20),
+ 	.config_ctl_val = 0x4001055b,
++	.test_ctl_hi1_val = 0x1,
++	.test_ctl_hi_mask = 0x1,
+ };
+ 
+ static struct clk_alpha_pll gpll11 = {
+@@ -362,6 +366,8 @@ static const struct alpha_pll_config gpll8_config = {
+ 	.post_div_val = 0x1 << 8,
+ 	.post_div_mask = GENMASK(11, 8),
+ 	.config_ctl_val = 0x4001055b,
++	.test_ctl_hi1_val = 0x1,
++	.test_ctl_hi_mask = 0x1,
+ };
+ 
+ static struct clk_alpha_pll gpll8 = {
+@@ -413,6 +419,8 @@ static const struct alpha_pll_config gpll9_config = {
+ 	.post_div_mask = GENMASK(9, 8),
+ 	.main_output_mask = BIT(0),
+ 	.config_ctl_val = 0x00004289,
++	.test_ctl_mask = GENMASK(31, 0),
++	.test_ctl_val = 0x08000000,
+ };
+ 
+ static struct clk_alpha_pll gpll9 = {
 
-Best regards,
 -- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
+2.40.1
 
