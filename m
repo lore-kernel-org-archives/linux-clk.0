@@ -2,106 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF5EC77B7E
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 14:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B41BC77B7A
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 18:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233763AbjFAOxx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 10:53:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37428 "EHLO
+        id S231279AbjFASSm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Jun 2023 14:18:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233251AbjFAOxw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 10:53:52 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A326918F
-        for <linux-clk@vger.kernel.org>; Thu,  1 Jun 2023 07:53:50 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4f3a99b9177so1233994e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 01 Jun 2023 07:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685631229; x=1688223229;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=790tI55xNKd3xmitEfyE+MxPAwHRUWPcKekWE/6Wxf4=;
-        b=iIEeuwI+RFGpPQMHkXqwx96h/6EIRBcmwyVDM/IRTV++XS0GtO/ixK9K9/wKNq8ll3
-         /PyRDIL+9iYNDAzOt7iqUDtQWW/xc76JEGUNVmoYl4SRTMUH1Lg9rA6BHnczdW3Lf2HN
-         X+rOjlBf2uGMHRFGYO37RqrKR+OGgdmiS6WGMLwvLyUYUX7m384QmDZ7MKNLnbW+VxWi
-         FxWsyY8b/6rrnQctFVsjk2OvMbQA7IEVNUhdn51xQ/HsZTmwtOClFKlDKAiioL9Pj78H
-         S+k2NhSS1MQazhKDh3HIx1Hr3DuTiIhI2/bA0/5HoUyM9tNBpwp9hmhTE8kc3N68Mv35
-         EadQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685631229; x=1688223229;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=790tI55xNKd3xmitEfyE+MxPAwHRUWPcKekWE/6Wxf4=;
-        b=lGQQ1m9+NA+yZvOVEdCtTSB18GSADcPdePV4AR/uVD5aFNvq2ldH84HKCBoz+CcNNm
-         if7DOG9WfQ5z2/54acNwCfk0dlVZVtbWp7Y+WcYvFBq99j8I1srFGKv1ZNFb4YurWz9G
-         XlFUdI/8CyTnrstHTR8WF+DAF/oQUCZE9SZA7AP4hXzIA/qeJ+xA4prieo0iRjXoj5Us
-         ZP05I+V+IPvKPZUWOsBsrB78DGP3eSjM49iJO/TcQg5R3uHAzq7XhEqGxPhwAjAWay6n
-         UWu+XVwJMUnCbGifl9n9lFGZlTFgtWTtfzr69GkNo4q9nZxFCzar851oW+3JKNuRaAwH
-         dvdA==
-X-Gm-Message-State: AC+VfDyDWbjfsRJ2V0W/aeyiOUKgz+4Ze9v8+NEUxjlgpoDOC3ivMpPf
-        GckV7t007KTaRCsQxb678NXf6A==
-X-Google-Smtp-Source: ACHHUZ7enKascLJElckDsSOJWra6TM0JOvnbj8p/kfmTwGYiLGJ8vdY5feC0cuc5xFG4hKI3kFzfgg==
-X-Received: by 2002:ac2:44a5:0:b0:4eb:1048:1285 with SMTP id c5-20020ac244a5000000b004eb10481285mr106207lfm.47.1685631228904;
-        Thu, 01 Jun 2023 07:53:48 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id t4-20020a19ad04000000b004f24e797c55sm1113384lfc.25.2023.06.01.07.53.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jun 2023 07:53:48 -0700 (PDT)
-Message-ID: <ee48f7fd-35f1-288f-2133-1c473e8804ab@linaro.org>
-Date:   Thu, 1 Jun 2023 17:53:47 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V3 4/5] clk: qcom: camcc-sm8550: Add support for qdss,
- sleep and xo clocks
-Content-Language: en-GB
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S230471AbjFASSl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 14:18:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2D45123;
+        Thu,  1 Jun 2023 11:18:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3EE036484B;
+        Thu,  1 Jun 2023 18:18:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDCAEC433D2;
+        Thu,  1 Jun 2023 18:18:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685643519;
+        bh=SBQxh2+ToyiB9ICBSOpcMeGoo9NUjEEwMfXF8u7aW30=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=an/91JvUBIgIJIIKiGflzBrkvpPoX2M2hXeuZLim/QIu6MldFN+9xZb83MQxB0gaO
+         a3IMs9izaGmlLwmU9vtB9oL3u09jUYRphLtEOZCds/q4ibS6EQYo39wQy46v+8IM83
+         ndsuhXHlCCAuOzhKuHSTSAfDR7l8q7ri0o4ontB3uggNjKRZr3g1nwQjuu8csyDnRt
+         Oo0USOkwzYd7G+7q/nF6ojshA/tKnUon5EmqQAq/r2gARqvKwwydptJaHtEgpJGpJ+
+         5mrk0Y4hW2b1178a8GxGssEjZ3uKEv1daL3MXHl4YANJBBvRDIc1R4Vn70tb1cgfzT
+         SRpR5vEhL9TZQ==
+Date:   Thu, 1 Jun 2023 19:18:31 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
+        Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Anson Huang <Anson.Huang@nxp.com>, Marek Vasut <marex@denx.de>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230601143430.5595-1-quic_jkona@quicinc.com>
- <20230601143430.5595-5-quic_jkona@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230601143430.5595-5-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v1 1/7] dt-bindings: mmc: fsl-imx-esdhc: Add imx6ul
+ support
+Message-ID: <20230601-obnoxious-sterility-e89541412bb4@spud>
+References: <20230601101451.357662-1-o.rempel@pengutronix.de>
+ <20230601101451.357662-2-o.rempel@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="biMuZ975ln5b9eCw"
+Content-Disposition: inline
+In-Reply-To: <20230601101451.357662-2-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 01/06/2023 17:34, Jagadeesh Kona wrote:
-> Add support for camera qdss, sleep and xo clocks.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 
-You probably missed the Co-developed-by tag.
+--biMuZ975ln5b9eCw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 01, 2023 at 12:14:45PM +0200, Oleksij Rempel wrote:
+> Add the 'fsl,imx6ul-usdhc' value to the compatible properties list in
+> the fsl-imx-esdhc.yaml file. This is required to match the compatible
+> strings present in the 'mmc@2190000' node of 'imx6ul-prti6g.dtb'. This
+> commit addresses the following dtbs_check warning:
+>   imx6ul-prti6g.dtb: mmc@2190000: compatible: 'oneOf' conditional failed,
+>     one must be fixed: ['fsl,imx6ul-usdhc', 'fsl,imx6sx-usdhc'] is too lo=
+ng
+>     'fsl,imx6ul-usdhc' is not one of ['fsl,imx25-esdhc', 'fsl,imx35-esdhc=
+',
+>     'fsl,imx51-esdhc', 'fsl,imx53-esdhc', 'fsl,imx6q-usdhc',
+>     'fsl,imx6sl-usdhc', 'fsl,imx6sx-usdhc', 'fsl,imx7d-usdhc',
+>     'fsl,imx7ulp-usdhc', 'fsl,imx8mm-usdhc', 'fsl,imxrt1050-usdhc',
+>     'nxp,s32g2-usdhc']
+>   From schema: Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+>=20
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 > ---
-> Changes since V2:
->   - No changes.
-> Changes since V1:
->   - Newly added.
-> 
->   drivers/clk/qcom/camcc-sm8550.c | 180 ++++++++++++++++++++++++++++++++
->   1 file changed, 180 insertions(+)
+>  Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml b/D=
+ocumentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> index fbfd822b9270..090e781705d3 100644
+> --- a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> @@ -30,6 +30,7 @@ properties:
+>            - fsl,imx6q-usdhc
+>            - fsl,imx6sl-usdhc
+>            - fsl,imx6sx-usdhc
+> +          - fsl,imx6ul-usdhc
 
+How come this gets added as a standalone compatible _and_ one that
+should fall back to imx6sx?
 
--- 
-With best wishes
-Dmitry
+>            - fsl,imx7d-usdhc
+>            - fsl,imx7ulp-usdhc
+>            - fsl,imx8mm-usdhc
+> @@ -42,6 +43,7 @@ properties:
+>            - enum:
+>                - fsl,imx6sll-usdhc
+>                - fsl,imx6ull-usdhc
+> +              - fsl,imx6ul-usdhc
+>            - const: fsl,imx6sx-usdhc
+>        - items:
+>            - const: fsl,imx7d-usdhc
+> --=20
+> 2.39.2
+>=20
 
+--biMuZ975ln5b9eCw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHjg9wAKCRB4tDGHoIJi
+0ut/AP9F46XeYtXvp51EgPcfCAk62B/ruwOmoh+FIfvQ2uIYUAEAr+BafXmYjdXA
+178tOtlxudsrD3V6ICAbE3GNJ3ipyAA=
+=oCZ8
+-----END PGP SIGNATURE-----
+
+--biMuZ975ln5b9eCw--
