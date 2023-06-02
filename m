@@ -2,112 +2,214 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE5AC7EE29
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Jun 2023 22:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC63C7EE24
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 07:32:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbjFAWFr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Jun 2023 18:05:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
+        id S234219AbjFBHcG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jun 2023 03:32:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229800AbjFAWFq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Jun 2023 18:05:46 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D32180;
-        Thu,  1 Jun 2023 15:05:42 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id 98e67ed59e1d1-256e1d87998so1118210a91.3;
-        Thu, 01 Jun 2023 15:05:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685657142; x=1688249142;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r6m06uJZ1FcfQQQ+zQbt4FBMdkqZwEjZRMbiHdQiMhk=;
-        b=MVRjfvzuQmigtaIpnBg868k8EJAvZXM6L0PhCAaZrPI8Yqi/CeUJlFgroYi+DdS3PB
-         MLZGiK3HIgyG6uxdk0K7CafGbmBWwyCnwYJzBO6Mp2pfD6tgUFJq+J3DPvTyFnyxQaYl
-         2aYbS9pPxD352nvrEboI7bMwf6wdOwWoelqQh1+m19Djq/glMR0pYoKXxXYcSFAZ716A
-         UhlxfJ6IVGRHQel0p28pi5FxFGzbgK6gtpvJr4DAX3wJoOlDQ7aTiUvfd0trNr0upJs4
-         H4UIerjjHqGWr0ColesVFer1vJO5kR+8IqZADcfGClvKuXiqwszWmMaBTzfmpJr/5XUx
-         4Xhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685657142; x=1688249142;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r6m06uJZ1FcfQQQ+zQbt4FBMdkqZwEjZRMbiHdQiMhk=;
-        b=iWaYFBeX0fVnj1XtiKBX3brIpz2/0xa4lUdWiOaQYD6QVHZg3p2Ed2VtXqrK0FE7U9
-         R0myr2O8PyVGwa62YdcjwXp31GRuNdHAsmdP/AaaQnCyjlF2YOpwzeAzrQWIP3Nr0qEh
-         BTVG3zZBQnIp7rNoFchD22+sqo9+T5/RQOgUw73pwFG6e8zJ6ofoAxYTSXcDItXGh4B3
-         WFMTJuqksokEuhIqV5EGmviRftFpw41aAmBpRJdkCz9ecigI1eRpxCnjRZquL1ahyPIc
-         fwsogpSKgxbLu2qW0cjfbdhZECb0XTkS8TinWPr97LskytbVOXyloa6HY5Uv6+XwRi2O
-         VYmQ==
-X-Gm-Message-State: AC+VfDw+4PKp9xS/KSyYZ/KCBsQ1RScwhRxltDgcVsjZd5/JM7UQF5Gd
-        pWRDD6laaFv1hyLxo6iRvRsxQjsLfTXXk9Uo/Ik=
-X-Google-Smtp-Source: ACHHUZ4gT9Uz11PX2It9sJbwkqfOByKhOKQcVu6O4hJx58nfJehfCdmwKcEoYgo5RwTms1ghyvToylm8obOwqw9fgmU=
-X-Received: by 2002:a17:90b:fc9:b0:24d:f59a:d331 with SMTP id
- gd9-20020a17090b0fc900b0024df59ad331mr611951pjb.26.1685657142032; Thu, 01 Jun
- 2023 15:05:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230601213416.3373599-1-arnd@kernel.org>
-In-Reply-To: <20230601213416.3373599-1-arnd@kernel.org>
-From:   Robert Marko <robimarko@gmail.com>
-Date:   Fri, 2 Jun 2023 00:05:30 +0200
-Message-ID: <CAOX2RU7mQgwVV=aNXxMQKd4Xrf6iHi8gBCzccE0gz-3_UwW6jQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: remove duplicate initializers
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S233933AbjFBHcE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 03:32:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41923C0;
+        Fri,  2 Jun 2023 00:32:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C502E64CE6;
+        Fri,  2 Jun 2023 07:32:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4865C433EF;
+        Fri,  2 Jun 2023 07:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685691122;
+        bh=6iHuX3uLHEp1J9fcDwMcWRd3yhdnvne0WcvP9Yv5swI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ksxp3wwdRT7mXkPVNQT/GV2o+bCyg8HGnoxSuyb1QUndyU8g1vK52OkWroKRDxV9l
+         p1fIbVilRp/59RlSYBKadkiNVoOSjXtMK0HL5Cdzhj9vbz7kyTIoMHsi4u3vE3urnY
+         olGnBq1s6Nv+T2SmNplrhl6ZSS9vbnvDoDDGBaIhLey7F5iThz0bPzQ8aItQketulV
+         SQ/but6KIi0ayJlnRrb68s9SoduKMp4yRqq0ZU2PLiNyng9EjM+Zr8J3hW8JFjSk0Z
+         V/kNI/pG0yK1WHeOLf46Vi8G6n3aqKvmhucfUc6MTLXUijvO+rapLj1M42Jt6GNAxa
+         G74Axy4HlO7RA==
+Date:   Fri, 2 Jun 2023 09:31:59 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Mantas Pucka <mantas@8devices.com>,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH 0/3] clk: sunxi-ng: Optimize rate selection for NKM
+ clocks
+Message-ID: <uvjlkaq4drqsndpwwflmbfnxseiftkrhq5qqmpfx5vfmduazed@wcohoxcd23wc>
+References: <20230527132747.83196-1-frank@oltmanns.dev>
+ <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
+ <87mt1jbf18.fsf@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rfgafmbx7bxa2ywm"
+Content-Disposition: inline
+In-Reply-To: <87mt1jbf18.fsf@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Jun 2023 at 23:34, Arnd Bergmann <arnd@kernel.org> wrote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> A recent change added new initializers for .config_ctl_val and
-> .config_ctl_hi_val but left the old values in place:
->
-> drivers/clk/qcom/gcc-ipq6018.c:4155:27: error: initialized field overwritten [-Werror=override-init]
->  4155 |         .config_ctl_val = 0x240d4828,
->       |                           ^~~~~~~~~~
-> drivers/clk/qcom/gcc-ipq6018.c:4156:30: error: initialized field overwritten [-Werror=override-init]
->  4156 |         .config_ctl_hi_val = 0x6,
->       |                              ^~~
->
-> Remove the unused ones now to avoid confusion.
->
-> Fixes: f4f0c8acee0e4 ("clk: qcom: gcc-ipq6018: update UBI32 PLL")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks for fixing my mess up.
-Reviewed-by: Robert Marko <robimarko@gmail.com>
+--rfgafmbx7bxa2ywm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Regards,
-Robert
-> ---
->  drivers/clk/qcom/gcc-ipq6018.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-> index 48f9bff7c80fb..86b43175b0422 100644
-> --- a/drivers/clk/qcom/gcc-ipq6018.c
-> +++ b/drivers/clk/qcom/gcc-ipq6018.c
-> @@ -4150,8 +4150,6 @@ static struct clk_branch gcc_dcc_clk = {
->  static const struct alpha_pll_config ubi32_pll_config = {
->         .l = 0x3e,
->         .alpha = 0x6667,
-> -       .config_ctl_val = 0x240d6aa8,
-> -       .config_ctl_hi_val = 0x3c2,
->         .config_ctl_val = 0x240d4828,
->         .config_ctl_hi_val = 0x6,
->         .main_output_mask = BIT(0),
-> --
-> 2.39.2
->
+Hi,
+
+On Thu, Jun 01, 2023 at 07:16:45AM +0200, Frank Oltmanns wrote:
+> On 2023-05-31 at 15:48:43 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > Hi Frank,
+> >
+> > On Sat, May 27, 2023 at 03:27:44PM +0200, Frank Oltmanns wrote:
+> >> I would like to bring your attention to the current process of setting
+> >> the rate of an NKM clock. As it stands, when setting the rate of an
+> >> NKM clock, the rate nearest but less than or equal to the requested
+> >> rate is found, instead of the nearest rate.
+> >
+> > Yeah, it's actually pretty common, see clk_mux_determine_rate_flags()
+> > for example. Some devices require that we don't overshoot, while some
+> > prefer to have the closest rate.
+> >
+> > Both are fine, and it's a bit context specific which one we should
+> > favour. If we were to do anything, it would be to support both and let
+> > the clock driver select which behaviour it wants.
+> >
+>=20
+> Ok, understood. Thank you for the explanation! Now, I'm wondering if
+> anyone would be using such a flag, if I added it.
+
+I guess that's another thing :) If no-one is going to use it, why should
+we do it in the first place?
+
+But most likely the display and audio clocks are usually fairly ok with
+overshooting a bit, and a closest rate is usually better.
+
+> >> Moreover, ccu_nkm_find_best() is called multiple times (footnote [1])
+> >> when setting a rate, each time iterating over all combinations of n,
+> >> k, and m.
+> >
+> > Yeah, that's expected as well.
+>=20
+> I'm wondering though, if iterating over all combinations is set in
+> stone, or if some kind of optimization would be in order.
+
+The thing with optimization is that you need to optimize for something.
+So you need to show that this code is suboptimal (by whatever metric you
+want to optimize for), and that your code is more optimal that it used
+to be.
+
+It means identifying a problem, writing benchmarks, and showing that the
+new code performs better there.
+
+For example, your code might very well be faster, but it will increase
+the kernel image (and thus the RAM usage). One is not more optimal than
+the other in absolute, they both are, using a different metric.
+
+And then you have the more social factors that play a huge part too:
+readibility, maintainability, etc.
+
+> >> In response to this, I propose the following refinements to optimize t=
+he NKM
+> >> clock setting:
+> >>  a. when finding the best rate use the nearest rate, even if it is gre=
+ater than
+> >>     the requested rate (PATCH 1)
+> >>  b. utilize binary search to find the best rate by going through a
+> >>     precalculated, ordered list of all meaningful combinations of n, k=
+, and m
+> >>     (PATCH 2)
+> >
+> > One thing you haven't really addressed is why we would be doing this? Is
+> > there some clocks that require a more precise clock and don't? Is the
+> > factor calculation a bottleneck for some workloads?
+>=20
+> Background
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> I'm a pinephone user (ccu-sun50i-a64). I'm using U-Boot which sets the
+> pll-video0 to 294 MHz on boot. The phone's panel requires DCLK to run at
+> 108 MHz to get a nice 60 Hz vertical refresh rate. The clock structure
+> is this:
+>=20
+>     clock                       clock type
+>     --------------------------------------
+>     pll-video0                  ccu_nm
+>        pll-mipi                 ccu_nkm
+>           tcon0                 ccu_mux
+>              tcon-data-clock    sun4i_dclk
+>=20
+> The divider between tcon0 and tcon-data-clock is fixed at 4. So, I need
+> pll-mipi to run at 432 MHz to get the desired vertical refresh rate.
+> When pll-vdeo0 is at 294 MHz this is that rate cannot be matched exactly
+> with any combination. The best we can get is 431.2 MHz (n=3D11, k=3D2,
+> m=3D15).
+>=20
+> The pinephone has some "vendor" patches (megi kernel) that
+>  a. add HDMI
+>  b. allow re-setting pll-mipi's rate when pll-video0 changes
+>=20
+> Re: Who needs a more precise clock?
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> When plugging in HDMI, pll-video's rate is set to 297 MHz, which - in
+> the vendor kernel, not mainline - triggers recalculation of pll-mipi
+> (trying to set it to 431.2 MHz). It ends up with a rate of 424.285714
+> MHz, because this is the nearest, but less than 431.2 MHz (n=3D5, k=3D2,
+> m=3D7). The nearest rate would be 432 MHz.
+>=20
+> So, while analyzing the whole situation that I described above, I found
+> out that the NKM clocks are not set to the closest rate and wondered why
+> that is. Hence my request for comments.
+
+It all makes sense, but I'm not sure why it requires a complete rewrite
+of the factor calculation algo?
+
+> Now, one could argue that pll-video0 should be set to 297MHz at boot
+
+Not really no, we should strive to be as immune as possible from the
+boot state.
+
+> or that pll-mipi should try to set the *requested* rate instead of the
+> previous rate when the pll-video0 changes.
+
+It's not clear to me what is the distinction you make here between the
+requested rate and the previous rate?
+
+Do you mean that you have two clk_set_rate in sequence, with the first
+one on pll-mipi (or one of its child clocks), and the second one on
+pll-video0 (but on a different sub-tree than pll-mipi) and thus pll-mipi
+has its rate changed by the second, but doesn't match the previous rate
+enforced?
+
+If so, that's kind of expected: clk_set_rate doesn't provide any
+warranty on for how long the rate is going to stay there. There's two
+way to prevent that. Either we call clk_set_rate_exclusive (on the
+first) instead, but it will effectively lock a clock subtree and prevent
+any rate change which is a pretty big constraint. Or you add a notifier
+to adjust to the parent clock rate change and still provide the same
+output rate, with a different set of parameters.
+
+Maxime
+
+--rfgafmbx7bxa2ywm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZHma7wAKCRDj7w1vZxhR
+xT6PAQC0c9UVSLFWvbVCqXRf35M+nKt6zaOLCrSsqq/GVMGhWQEA2odSUgp35a7D
+WOd65Yy70MbeYpR0fau7/aVfMyEZPgs=
+=iHML
+-----END PGP SIGNATURE-----
+
+--rfgafmbx7bxa2ywm--
