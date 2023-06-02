@@ -2,122 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC37CC7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 07:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9AEC7EE31
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 08:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234035AbjFBHeL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jun 2023 03:34:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42142 "EHLO
+        id S234379AbjFBI2u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jun 2023 04:28:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234295AbjFBHeI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 03:34:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF4D19B;
-        Fri,  2 Jun 2023 00:34:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 173C9616CD;
-        Fri,  2 Jun 2023 07:34:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E88C1C433D2;
-        Fri,  2 Jun 2023 07:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685691246;
-        bh=9mKK9xIT/M/5/jc96vgkpb/vVwKfqaNG0PLckzjbiG4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F16FgOCcSPoEmt05v6oK+gE/WgeGCUBoueZaoq/VqkZdscoUAVuEVZnuUClN4ew/v
-         Q2nOUi8xp/Ql3jqboZ0xVrYwINNEws3Pk2n3YJhhDVl7QFiNuRrM/SkuwTJYkF0NIE
-         gUvNYg35gH5qJ25d1FRg/6okgyJ/+mR3W22YpU3G2Ci4JdMtUSLVi7XzkZRR9BBezg
-         Ynhtsi8C/thkWiT51VYf6Yo0JvsfRFCm8P8m9RMgvyQ5ZpKSzNvDzlk8po+fGpHnJr
-         zoGTeZ7YUh9G5zTEhXt1ecETeKaT8NzWQK5ur1R49ueGY3AdQXOtfDCkAYbHLJ/THD
-         IvK4wfJpkr90g==
-Date:   Fri, 2 Jun 2023 09:34:03 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
-Cc:     Frank Oltmanns <frank@oltmanns.dev>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH 0/3] clk: sunxi-ng: Optimize rate selection for NKM
- clocks
-Message-ID: <bhjq4yxo7fvddq3kvvvbgefhyaygb5bwkzhsjp3adc5kp7ohtx@iclghpep3zkw>
-References: <20230527132747.83196-1-frank@oltmanns.dev>
- <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
- <87mt1jbf18.fsf@oltmanns.dev>
- <4831731.31r3eYUQgx@jernej-laptop>
+        with ESMTP id S234652AbjFBI22 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 04:28:28 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C9E10FC
+        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 01:27:41 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51491b87565so2630976a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jun 2023 01:27:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685694436; x=1688286436;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rqiBV30sd6pVAOr/JC2i8NEvFQRhidh6InexBKyx7mo=;
+        b=rIl0eivXD4yxDCT/YgMEsx+zB95XosuikN/Qy10i57lfY0bUaZOBftlmQqO+cFMD0D
+         HZAAhd0VW/ieFo5zYGo6vv2v0zUDlZ52siklLw4uV81kybENAfWJX5R3rwrvf1buexm1
+         yEMYUIUSzh/qNzwQBiwrUVRoKsvabnkfIAmeTWvOidfzk0NWYH9cT8KdwNTwXDRoHenP
+         EInC+vD5ibY9evurg3TMnF2a3tcxmfxxjvXFWOSqpjcgLZIxu/CI4Luehlm1nqH4vHwD
+         X0FqymZc2B+ehA1Y5i2CI/W5+vwNvIxBm+FpLQN812zDX0RThsO/Sk+wpIPeOHKFX7Xs
+         uPSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685694436; x=1688286436;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rqiBV30sd6pVAOr/JC2i8NEvFQRhidh6InexBKyx7mo=;
+        b=epvHBQrzY4BnDfn7QOEUzzmgiaTCQ8x4rPUhdAGcTbATJQuDgic139xZmApddrgb8K
+         JqgiRwiRl6J0zCW4xtLnGFjRGeisVpn1Lu5ACCIIBn0O2uDsvFKVgPQ8nZcSoI+GDcOq
+         hS94qrBZbpfZAqurAbglHPTncNgPQeqUcl2B1zI/UYBGxyGONg+sli2Zl9ACu4BsEk+V
+         1ygJ2vo4LgvA3v2UJQezqB7PZPVWDmNL+rNIo+HXdDVbgZKndxU+z4knR/WqP9vHEP/L
+         Ybd+6fqfR9BEsHYkIFDRnjtOvWLudJSoCWeSNAPZMABQiBqSuQ57a8w95zu26ae2enNo
+         wcfw==
+X-Gm-Message-State: AC+VfDyTC+Pm53hwAsPg6rbmwwJ6a52PaIwmFOMLSP/0q/SEBuambLoF
+        QXBqTH2GxNaGgzvCrvzo7Qu5tQ==
+X-Google-Smtp-Source: ACHHUZ7QkKl0T36/hmXWtoKKBK/0HSPptyUZfw8AKnhu87xXvJCANWT/QJH7XR+fLH3RF42PD2as2Q==
+X-Received: by 2002:a05:6402:2cd:b0:506:976e:5242 with SMTP id b13-20020a05640202cd00b00506976e5242mr1511546edx.25.1685694436433;
+        Fri, 02 Jun 2023 01:27:16 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.199.204])
+        by smtp.gmail.com with ESMTPSA id x26-20020aa7cd9a000000b005149461b1e0sm414404edv.25.2023.06.02.01.27.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Jun 2023 01:27:15 -0700 (PDT)
+Message-ID: <1d6f70ab-e971-4a83-a9b3-e049b38c29a0@linaro.org>
+Date:   Fri, 2 Jun 2023 10:27:12 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mepy56bihzsswzod"
-Content-Disposition: inline
-In-Reply-To: <4831731.31r3eYUQgx@jernej-laptop>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v1 1/7] dt-bindings: mmc: fsl-imx-esdhc: Add imx6ul
+ support
+To:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     kernel@pengutronix.de, Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Anson Huang <Anson.Huang@nxp.com>, Marek Vasut <marex@denx.de>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+References: <20230601101451.357662-1-o.rempel@pengutronix.de>
+ <20230601101451.357662-2-o.rempel@pengutronix.de>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230601101451.357662-2-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 01/06/2023 12:14, Oleksij Rempel wrote:
+> Add the 'fsl,imx6ul-usdhc' value to the compatible properties list in
+> the fsl-imx-esdhc.yaml file. This is required to match the compatible
+> strings present in the 'mmc@2190000' node of 'imx6ul-prti6g.dtb'. This
+> commit addresses the following dtbs_check warning:
+>   imx6ul-prti6g.dtb: mmc@2190000: compatible: 'oneOf' conditional failed,
+>     one must be fixed: ['fsl,imx6ul-usdhc', 'fsl,imx6sx-usdhc'] is too long
+>     'fsl,imx6ul-usdhc' is not one of ['fsl,imx25-esdhc', 'fsl,imx35-esdhc',
+>     'fsl,imx51-esdhc', 'fsl,imx53-esdhc', 'fsl,imx6q-usdhc',
+>     'fsl,imx6sl-usdhc', 'fsl,imx6sx-usdhc', 'fsl,imx7d-usdhc',
+>     'fsl,imx7ulp-usdhc', 'fsl,imx8mm-usdhc', 'fsl,imxrt1050-usdhc',
+>     'nxp,s32g2-usdhc']
+>   From schema: Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
 
---mepy56bihzsswzod
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Except what Conor wrote, please don't wrap that much the error log - it
+is unreadable. Trim it, remove unneeded parts and keep some decent
+one/two lines even if it exceeds the commit msg. This applies to other
+patches as well.
 
-On Thu, Jun 01, 2023 at 09:41:30PM +0200, Jernej =C5=A0krabec wrote:
-> Dne =C4=8Detrtek, 01. junij 2023 ob 07:16:45 CEST je Frank Oltmanns napis=
-al(a):
-> > Re: Why speed up factor calculation?
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > I'm not aware that the current implementation of calculating n, k, and m
-> > poses a bottleneck in any situation. Again, while going through the
-> > code, I wondered why not save a few CPU cycles by precalculating the
-> > meaningful combinations. In my opinion, it does not have any side
-> > effects, so we might as well do it. (There is of course the side effect
-> > of using a higher rate, but this is unrelated to precalculation as I
-> > could as well employ a rate comparison that only allows lower rates, or
-> > only optionally higher rates.)
-> >=20
-> > > Clocks in general are very regression-prone, so I'd rather be a bit
-> > > conservative there, and "if it ain't broke, don't fix it".
-> >=20
-> > Sure, I get that.
-> >=20
-> > As I stated in my cover letter:
-> > "The motivation for these proposed changes lies in the current behavior
-> > of rate selection for NKM clocks, which doesn't observe the
-> > CLK_SET_RATE_PARENT flag. I.e. it does not select a different rate for
-> > the parent clock to find the optimal rate."
-> >=20
-> > I thought that this required this optimization to be implemented, but by
-> > now, I'm no longer sure. I'll probably continue investigating different
-> > paths for CLK_SET_RATE_PARENT for NKM clocks and follow up with new
-> > findings.
->=20
-> Let's leave out any optimizations that are not apparently needed. Most cl=
-ock
-> rates are set only once at boot and others, like video clocks, not that o=
-ften,
-> so a suboptimal code speed doesn't hurt currently.
+Best regards,
+Krzysztof
 
-I'm not even sure we can make that assumption for video clocks. We might
-for a panel, but for a more "dynamic" output like HDMI all bets are off
-and depending on the monitor, the user settings and the userspace stack
-we can definitely expect the video clock to change quite frequently.
-
-Maxime
-
---mepy56bihzsswzod
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZHmbawAKCRDj7w1vZxhR
-xShKAPwNIDbWuVsfmQMaSWHoQcEXxKCSyuOn0P8yvZSBP9ukvgD+KAz6Y83cu2l3
-Z/9DTMMbQ1AU1SWfM/GStx6AOU9woQA=
-=+40T
------END PGP SIGNATURE-----
-
---mepy56bihzsswzod--
