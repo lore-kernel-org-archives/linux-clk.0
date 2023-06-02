@@ -2,112 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4BEC7EE2A
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 16:59:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E4CC7EE2C
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 22:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236725AbjFBQ7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jun 2023 12:59:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37856 "EHLO
+        id S236194AbjFBWQS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jun 2023 18:16:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236135AbjFBQ7h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 12:59:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26D9C0;
-        Fri,  2 Jun 2023 09:59:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8335D6392F;
-        Fri,  2 Jun 2023 16:59:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFE3C433EF;
-        Fri,  2 Jun 2023 16:59:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1685725175;
-        bh=ZWc5cZxtTS+a1oL1ydW5dbNhJFyKN9X07jEjL3vo4F0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Yr1ixOHRpeMSDtrK7hRUT1s/0/qLRE2e3isq8Mfa3h2oRl0Yvt80e8hhTMByt+lNs
-         0rVtjxaj6u0ZMI00E1cEVmq5Fh/Erh65RD47dR8e9CVp232dlueC/mcy0NfTqa9Q8j
-         QtacFTzHjCSq9Cfmhke84byQZ5VEPFgsPMMQqx32TkjNwezziZCKDy3xg1r2qtOAG5
-         6KIbWxykc+s4dN+rEYRKyXLTw4dexOfSy2rd94UX+P0IqBoQqL4xXzyIpEZvAIRiKQ
-         yiV8ighGjFeAewoOGgQGegtHeDatgmDsr89MmcaSuWOP5J4EGGfubZp3u+DMuO0jQ+
-         sEB3gCeVKXWYg==
-Date:   Fri, 2 Jun 2023 17:59:29 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        yanhong.wang@starfivetech.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock
- generator
-Message-ID: <20230602-wise-entomb-975a2474d97a@spud>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
- <20230512022036.97987-2-xingyu.wu@starfivetech.com>
- <20230519135733.GA10188@lst.de>
- <20230519-smokeless-guileless-2a71cae06509@wendy>
- <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
- <20230602183922.649b8e88@blackhole.lan>
- <20230602-drained-wheat-b6c5ea009f16@spud>
- <20230602165713.GA27915@lst.de>
+        with ESMTP id S235994AbjFBWQR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 18:16:17 -0400
+Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F3C1B7
+        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 15:16:16 -0700 (PDT)
+Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-19a34a63522so525752fac.0
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jun 2023 15:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1685744175; x=1688336175;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YaPsyLeb5FyKRIBkJzm+0FR3Zt6fEWpe98Trce5vtAY=;
+        b=j4LEKIeBvGlQxksrmagLpuwp15x2hZ5EARGIfhIcdtCCP8GhSDc4bZX0BAmc05dnbI
+         Ved/4LtLd+FMmL5kTxmnjbX6F5oLjIGeb76iAZHtVPKV6HFXXzdij9NCOKtcqGXmXosj
+         ubhKnTERh+JsC9QpT7hRKXJmtzlZBCeMfsrJK2EDJYj1QOWh9hxWoJPxRIqJD8uZxjIq
+         9uYHnfy8LyVXP9MlHeF6+37bodx+oBsXs+BWRN5ABPYodF2SM08cIrpn80IKhBj2lzAh
+         OQ8lH1dxerL9ly8Xj0hHK8S1VqANBmNbQrkHLXAfGfnHTZ6+IXvN1tjjpPpUPsCOZ4r9
+         J88Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685744175; x=1688336175;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YaPsyLeb5FyKRIBkJzm+0FR3Zt6fEWpe98Trce5vtAY=;
+        b=PgMqw5Rrw4tZmuZl3lSErSUzbBbEh0QFP572zZDIw7wYDxQFB5ToxI+0zL0WhSEwxx
+         tkSauVkbbodshtXGXtLMeeCLTOP/1tM0nHn1gLcZ3hkwrtw8AtgrIWkU7tHszX7popnp
+         NpRxTCK0Wgs2nEQTjRSIxsxggPtanap4/nlUbu1JfwvfTkYO4l6V/vf70rzd7nJLe1dF
+         aCQ7aVSxVow7qomwgV0pXF6ERzM0GFhxW6bfDxb0k1xAgydCLNp4z+gPw2nlpxUtEIYh
+         nYv45Uo8IBxHmjS7cFmbcr3F70vvYmZEfrmKxDgQ/eEqoEi6HJQKzZGAXW8Sz1k/XqLl
+         OoYw==
+X-Gm-Message-State: AC+VfDy+1OwxG+UfYuEuzPQ1t1tV6d2viNibDdAHD/a7YLoYhNdw7A1C
+        s9+LZuCzIh/uvY95gs21D1k=
+X-Google-Smtp-Source: ACHHUZ6RqSGNNXksBXWmvjRaNtjha/H2AFlj+aOTib8aUYjfs5QsvNzi4Og5/aTAtwzKt9LaY+8mNQ==
+X-Received: by 2002:a05:6870:c08e:b0:192:beba:7bd with SMTP id c14-20020a056870c08e00b00192beba07bdmr8503650oad.2.1685744175578;
+        Fri, 02 Jun 2023 15:16:15 -0700 (PDT)
+Received: from fabio-Precision-3551.. ([2804:14c:485:4b61:dad1:c980:e6de:3901])
+        by smtp.gmail.com with ESMTPSA id k4-20020a4a4304000000b005584e0c8f9csm951587ooj.3.2023.06.02.15.16.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Jun 2023 15:16:15 -0700 (PDT)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     shawnguo@kernel.org
+Cc:     hs@denx.de, abelvesa@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@denx.de>
+Subject: [PATCH 1/3] ARM: dts: imx6sx: Remove LDB endpoint
+Date:   Fri,  2 Jun 2023 19:16:02 -0300
+Message-Id: <20230602221604.155027-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gTOiipfmNTlMqeKP"
-Content-Disposition: inline
-In-Reply-To: <20230602165713.GA27915@lst.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Fabio Estevam <festevam@denx.de>
 
---gTOiipfmNTlMqeKP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Remove the LDB endpoint description from the common imx6sx.dtsi
+as it causes regression for boards that has the LCDIF connected
+directly to a parallel display.
 
-On Fri, Jun 02, 2023 at 06:57:13PM +0200, Torsten Duwe wrote:
-> On Fri, Jun 02, 2023 at 05:43:25PM +0100, Conor Dooley wrote:
-> > >=20
-> > > Can you _please_ point me at that "PLL driver" "in Linux" ?
-> >=20
-> > It's patch 2 in this series:
-> > https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@st=
-arfivetech.com/T/#m4b2d74c36b3bb961a1187ec5cda1a0a0de875f0e
-> >=20
-> Unfortunately, it's not, AFAICS. I'm looking for the driver that
-> will control the PLLs' parameters, grepping for "pll" should yield
-> results, to start with. The thing should act on the SYS_SYSCON iomem,
-> at 0x13030000. Ideally, a DT node should point it there...
+Let the LDB endpoint be described in the board devicetree file
+instead.
 
-The driver binds against a child node of the syscon @ 1303_0000:
-https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@starfi=
-vetech.com/T/#m882de9210850eb6f871cafc3418f3202ba915de8
+Fixes: b74edf626c4f ("ARM: dts: imx6sx: Add LDB support")
+Signed-off-by: Fabio Estevam <festevam@denx.de>
+---
+ arch/arm/boot/dts/imx6sx.dtsi | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Am I missing something?
+diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
+index 3a4308666552..41c900929758 100644
+--- a/arch/arm/boot/dts/imx6sx.dtsi
++++ b/arch/arm/boot/dts/imx6sx.dtsi
+@@ -863,7 +863,6 @@ port@0 {
+ 							reg = <0>;
+ 
+ 							ldb_from_lcdif1: endpoint {
+-								remote-endpoint = <&lcdif1_to_ldb>;
+ 							};
+ 						};
+ 
+@@ -1309,11 +1308,8 @@ lcdif1: lcdif@2220000 {
+ 					power-domains = <&pd_disp>;
+ 					status = "disabled";
+ 
+-					ports {
+-						port {
+-							lcdif1_to_ldb: endpoint {
+-								remote-endpoint = <&ldb_from_lcdif1>;
+-							};
++					port {
++						lcdif1_to_ldb: endpoint {
+ 						};
+ 					};
+ 				};
+-- 
+2.34.1
 
-Cheers,
-Conor.
-
---gTOiipfmNTlMqeKP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHof8QAKCRB4tDGHoIJi
-0iZeAP94HgEHJBXSFHCDIA1ukvah1gLeQDcWwDzLZAjguwUY7QEAm10ukzpdoakk
-IyPtDFhAnVt38/uZdD4pShSOPC8IUg4=
-=9Kxn
------END PGP SIGNATURE-----
-
---gTOiipfmNTlMqeKP--
