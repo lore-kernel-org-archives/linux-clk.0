@@ -2,23 +2,38 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCD6C7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 16:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4BEC7EE2A
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 16:59:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236294AbjFBQ5X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jun 2023 12:57:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37140 "EHLO
+        id S236725AbjFBQ7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jun 2023 12:59:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236827AbjFBQ5W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 12:57:22 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F70D1B1;
-        Fri,  2 Jun 2023 09:57:17 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2005)
-        id 92B1B68AA6; Fri,  2 Jun 2023 18:57:13 +0200 (CEST)
-Date:   Fri, 2 Jun 2023 18:57:13 +0200
-From:   Torsten Duwe <duwe@lst.de>
-To:     Conor Dooley <conor@kernel.org>
+        with ESMTP id S236135AbjFBQ7h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 12:59:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26D9C0;
+        Fri,  2 Jun 2023 09:59:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8335D6392F;
+        Fri,  2 Jun 2023 16:59:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFE3C433EF;
+        Fri,  2 Jun 2023 16:59:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685725175;
+        bh=ZWc5cZxtTS+a1oL1ydW5dbNhJFyKN9X07jEjL3vo4F0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Yr1ixOHRpeMSDtrK7hRUT1s/0/qLRE2e3isq8Mfa3h2oRl0Yvt80e8hhTMByt+lNs
+         0rVtjxaj6u0ZMI00E1cEVmq5Fh/Erh65RD47dR8e9CVp232dlueC/mcy0NfTqa9Q8j
+         QtacFTzHjCSq9Cfmhke84byQZ5VEPFgsPMMQqx32TkjNwezziZCKDy3xg1r2qtOAG5
+         6KIbWxykc+s4dN+rEYRKyXLTw4dexOfSy2rd94UX+P0IqBoQqL4xXzyIpEZvAIRiKQ
+         yiV8ighGjFeAewoOGgQGegtHeDatgmDsr89MmcaSuWOP5J4EGGfubZp3u+DMuO0jQ+
+         sEB3gCeVKXWYg==
+Date:   Fri, 2 Jun 2023 17:59:29 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Torsten Duwe <duwe@lst.de>
 Cc:     Xingyu Wu <xingyu.wu@starfivetech.com>,
         Conor Dooley <conor.dooley@microchip.com>,
         linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
@@ -35,32 +50,64 @@ Cc:     Xingyu Wu <xingyu.wu@starfivetech.com>,
         Hal Feng <hal.feng@starfivetech.com>,
         William Qiu <william.qiu@starfivetech.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL
- clock generator
-Message-ID: <20230602165713.GA27915@lst.de>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com> <20230512022036.97987-2-xingyu.wu@starfivetech.com> <20230519135733.GA10188@lst.de> <20230519-smokeless-guileless-2a71cae06509@wendy> <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com> <20230602183922.649b8e88@blackhole.lan> <20230602-drained-wheat-b6c5ea009f16@spud>
+Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock
+ generator
+Message-ID: <20230602-wise-entomb-975a2474d97a@spud>
+References: <20230512022036.97987-1-xingyu.wu@starfivetech.com>
+ <20230512022036.97987-2-xingyu.wu@starfivetech.com>
+ <20230519135733.GA10188@lst.de>
+ <20230519-smokeless-guileless-2a71cae06509@wendy>
+ <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
+ <20230602183922.649b8e88@blackhole.lan>
+ <20230602-drained-wheat-b6c5ea009f16@spud>
+ <20230602165713.GA27915@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gTOiipfmNTlMqeKP"
 Content-Disposition: inline
-In-Reply-To: <20230602-drained-wheat-b6c5ea009f16@spud>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20230602165713.GA27915@lst.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 05:43:25PM +0100, Conor Dooley wrote:
-> > 
-> > Can you _please_ point me at that "PLL driver" "in Linux" ?
-> 
-> It's patch 2 in this series:
-> https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@starfivetech.com/T/#m4b2d74c36b3bb961a1187ec5cda1a0a0de875f0e
-> 
-Unfortunately, it's not, AFAICS. I'm looking for the driver that
-will control the PLLs' parameters, grepping for "pll" should yield
-results, to start with. The thing should act on the SYS_SYSCON iomem,
-at 0x13030000. Ideally, a DT node should point it there...
 
-	Torsten
+--gTOiipfmNTlMqeKP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- 
+On Fri, Jun 02, 2023 at 06:57:13PM +0200, Torsten Duwe wrote:
+> On Fri, Jun 02, 2023 at 05:43:25PM +0100, Conor Dooley wrote:
+> > >=20
+> > > Can you _please_ point me at that "PLL driver" "in Linux" ?
+> >=20
+> > It's patch 2 in this series:
+> > https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@st=
+arfivetech.com/T/#m4b2d74c36b3bb961a1187ec5cda1a0a0de875f0e
+> >=20
+> Unfortunately, it's not, AFAICS. I'm looking for the driver that
+> will control the PLLs' parameters, grepping for "pll" should yield
+> results, to start with. The thing should act on the SYS_SYSCON iomem,
+> at 0x13030000. Ideally, a DT node should point it there...
 
+The driver binds against a child node of the syscon @ 1303_0000:
+https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@starfi=
+vetech.com/T/#m882de9210850eb6f871cafc3418f3202ba915de8
+
+Am I missing something?
+
+Cheers,
+Conor.
+
+--gTOiipfmNTlMqeKP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHof8QAKCRB4tDGHoIJi
+0iZeAP94HgEHJBXSFHCDIA1ukvah1gLeQDcWwDzLZAjguwUY7QEAm10ukzpdoakk
+IyPtDFhAnVt38/uZdD4pShSOPC8IUg4=
+=9Kxn
+-----END PGP SIGNATURE-----
+
+--gTOiipfmNTlMqeKP--
