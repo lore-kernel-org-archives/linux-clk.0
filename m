@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B592BC77B7A
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 08:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C338AC7EE2A
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 08:52:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235019AbjFBIwn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jun 2023 04:52:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51098 "EHLO
+        id S234416AbjFBIwz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jun 2023 04:52:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234923AbjFBIwB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 04:52:01 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72CF91738
-        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 01:51:16 -0700 (PDT)
+        with ESMTP id S234687AbjFBIwD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 04:52:03 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 843FA173D
+        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 01:51:20 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:158c:2ccf:1f70:e136])
-        by laurent.telenet-ops.be with bizsmtp
-        id 48qo2A00F1tRZS8018qoyb; Fri, 02 Jun 2023 10:51:14 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id 48qo2A0031tRZS8018qoDE; Fri, 02 Jun 2023 10:51:12 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q50UP-00BhYW-0P;
+        id 1q50UO-00BhY8-RL;
         Fri, 02 Jun 2023 10:50:48 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
         (envelope-from <geert@linux-m68k.org>)
-        id 1q50Ui-00APxr-3g;
-        Fri, 02 Jun 2023 10:50:48 +0200
+        id 1q50Uh-00APxP-UC;
+        Fri, 02 Jun 2023 10:50:47 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -55,64 +55,109 @@ Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
         linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
         iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 7/7] iommu/ipmmu-vmsa: Convert to read_poll_timeout_atomic()
-Date:   Fri,  2 Jun 2023 10:50:42 +0200
-Message-Id: <dd0ba3ebc63a4b2ef1b59b798a0a7ef445af4b3b.1685692810.git.geert+renesas@glider.be>
+Subject: [PATCH v3 0/7] iopoll: Busy loop and timeout improvements + conversions
+Date:   Fri,  2 Jun 2023 10:50:35 +0200
+Message-Id: <cover.1685692810.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1685692810.git.geert+renesas@glider.be>
-References: <cover.1685692810.git.geert+renesas@glider.be>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use read_poll_timeout_atomic() instead of open-coding the same
-operation.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v3:
-  - New.
----
- drivers/iommu/ipmmu-vmsa.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+When implementing a polling loop, a common review comment is to use one
+of the read*_poll_timeout*() helpers.  Unfortunately this is not always
+possible, or might introduce subtle bugs.  This patch series aims to
+improve these helpers, so they can gain wider use.
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index 9f64c5c9f5b90ace..3b58a8ea3bdef190 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -14,6 +14,7 @@
- #include <linux/init.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/io-pgtable.h>
- #include <linux/iommu.h>
- #include <linux/of.h>
-@@ -253,17 +254,13 @@ static void ipmmu_imuctr_write(struct ipmmu_vmsa_device *mmu,
- /* Wait for any pending TLB invalidations to complete */
- static void ipmmu_tlb_sync(struct ipmmu_vmsa_domain *domain)
- {
--	unsigned int count = 0;
-+	u32 val;
- 
--	while (ipmmu_ctx_read_root(domain, IMCTR) & IMCTR_FLUSH) {
--		cpu_relax();
--		if (++count == TLB_LOOP_TIMEOUT) {
--			dev_err_ratelimited(domain->mmu->dev,
-+	if (read_poll_timeout_atomic(ipmmu_ctx_read_root, val,
-+				     !(val & IMCTR_FLUSH), 1, TLB_LOOP_TIMEOUT,
-+				     false, domain, IMCTR))
-+		dev_err_ratelimited(domain->mmu->dev,
- 			"TLB sync timed out -- MMU may be deadlocked\n");
--			return;
--		}
--		udelay(1);
--	}
- }
- 
- static void ipmmu_tlb_invalidate(struct ipmmu_vmsa_domain *domain)
+  1. The first patch improves busy-looping behavior of both the atomic
+     and non-atomic read*_poll_timeout*() helpers.
+     The issue addressed by this patch was discussed before[1-2], but I
+     am not aware of any patches moving forward.
+
+  2. The second patch fixes timeout handling of the atomic variants.
+     Some of the issues addressed by this patch were mitigated in
+     various places[3-5], and some of these findings may be of interest
+     to the authors of [6-8].
+
+The first two patches were sent before, and already received some acks
+and reviews.  I plan to queue these in an immutable and tagged branch
+after the weekend, for consumption by myself, and by other interested
+parties.
+
+The last five patches are new, and convert several Renesas-specific
+drivers from open-coded loops to the fixed read*_poll_timeout_atomic()
+helpers:
+  - I plan to queue the clk and soc patches in renesas-devel resp.
+    renesas-clk for v6.5,
+  - The IOMMU patch can wait for v6.6, unless the IOMMU maintainers
+    already want to merge the immutable branch, too.
+
+Thanks for your comments!
+
+Changes compared to v2[9]:
+  - Add Acked-by, Reviewed-by,
+  - Add comment about not using timekeeping, and its impact,
+  - Add conversion patches 3-7.
+
+Changes compared to v1[10]:
+  - Add Acked-by,
+  - Add compiler barrier and inlining explanation (thanks, Peter!),
+  - Add patch [2/2].
+
+Thanks for your comments!
+
+[1] "Re: [PATCH 6/7] clk: renesas: rcar-gen3: Add custom clock for PLLs"
+    https://lore.kernel.org/all/CAMuHMdWUEhs=nwP+a0vO2jOzkq-7FEOqcJ+SsxAGNXX1PQ2KMA@mail.gmail.com
+[2] "Re: [PATCH v2] clk: samsung: Prevent potential endless loop in the
+    PLL set_rate ops"
+    https://lore.kernel.org/all/20200811164628.GA7958@kozik-lap
+[3] b3e9431854e8f305 ("bus: ti-sysc: Fix timekeeping_suspended warning
+		       on resume")
+[4] 44a9e78f9242872c ("clk: samsung: Prevent potential endless loop in
+		       the PLL ops")
+[5] 3d8598fb9c5a7783 ("clk: ti: clkctrl: use fallback udelay approach if
+		      timekeeping is suspended")
+[6] bd40cbb0e3b37a4d ("PM: domains: Move genpd's time-accounting to
+		       ktime_get_mono_fast_ns()")
+[7] c155f6499f9797f2 ("PM-runtime: Switch accounting over to
+		       ktime_get_mono_fast_ns()")
+[8] 15efb47dc560849d ("PM-runtime: Fix deadlock with ktime_get()")
+
+[9] https://lore.kernel.org/all/cover.1683722688.git.geert+renesas@glider.be
+
+[10] https://lore.kernel.org/r/8d492ee4a391bd089a01c218b0b4e05cf8ea593c.1674729407.git.geert+renesas@glider.be/
+
+Geert Uytterhoeven (7):
+  iopoll: Call cpu_relax() in busy loops
+  iopoll: Do not use timekeeping in read_poll_timeout_atomic()
+  clk: renesas: cpg-mssr: Convert to readl_poll_timeout_atomic()
+  clk: renesas: mstp: Convert to readl_poll_timeout_atomic()
+  clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic()
+  soc: renesas: rmobile-sysc: Convert to readl_poll_timeout_atomic()
+  iommu/ipmmu-vmsa: Convert to read_poll_timeout_atomic()
+
+ drivers/clk/renesas/clk-mstp.c         | 18 ++++++---------
+ drivers/clk/renesas/renesas-cpg-mssr.c | 31 +++++++++-----------------
+ drivers/clk/renesas/rzg2l-cpg.c        | 16 +++++--------
+ drivers/iommu/ipmmu-vmsa.c             | 15 +++++--------
+ drivers/soc/renesas/rmobile-sysc.c     | 31 +++++++++-----------------
+ include/linux/iopoll.h                 | 24 +++++++++++++++-----
+ 6 files changed, 58 insertions(+), 77 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
