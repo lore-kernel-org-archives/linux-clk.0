@@ -2,80 +2,185 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BC6C7EE2C
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 11:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 833BCC7EE24
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 13:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232570AbjFBLXf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jun 2023 07:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56278 "EHLO
+        id S236084AbjFBNRr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jun 2023 09:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjFBLXe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 07:23:34 -0400
-X-Greylist: delayed 792 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 02 Jun 2023 04:23:33 PDT
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C184C18D
-        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 04:23:33 -0700 (PDT)
-DKIM-Signature: a=rsa-sha256; b=61q3OwamPbGx/ro9KiQNc+v6drxwXKz2zrM0A0GL1uedVHnoxXJDAFSJa490A4aQHlZlHNbXEM2LwX3x52KUm+bBHnBDZ6VuCa6ZY81S3g1/0vtDW9rgCHGSAbAQVgVq2FhethrEuWDs9oPVD/b+HChDdV8agNp+RmLYLwSkn5JJQLmLAMmP3qE3Epno7AQW+95/sGy9Bi9yNn3Q8ngsH7/RAz/MmIKH1KH/QSPeFxFU6SmqIZX2H9f13xNGsfnYW/UDfqHZgeR+IeEd8LOqAk4feEAupmDuMLtqac4HVhJf9CzPs2c7iXk8+9VVsqW89QDWF+SxDmQ6NaaxwNXhvQ==; s=purelymail1; d=iskren.info; v=1; bh=9glP7S3bzL4kyCTsFMdSym0Q2pPbCIRMlIsGoQdrp3k=; h=Received:From:To:Subject;
-DKIM-Signature: a=rsa-sha256; b=7GAh/pzd6kx0tAv72MXMlwua0xEuxQHe3LDW48s4D6cSWHQPIIrgrDymIbL7hp1r+WzN9kGfj0D02JQrRdmulPHJaYTu7ADu2I2vWH6KKIiyRNvLcjhk/Ur/doPa3kqWntNtaY+j+9/O1OuIBCqPecTWRmcJxLGheljG1cWj8iKf24opIw9eHnvqZgnw/mUioyG4fRrtcMMFheXNYlVIu4mg/+pyA65cuYkOP2TM/tV3XuUbhSTDoerySLrznZ9EWyM2z3HYOWuz+SC3ugc0caYAperK2a7Liz6AQEbCHfa2zdLjUsWXkHmlYMjH+DWnBHDBhyNHrDw9qWPatSZMRg==; s=purelymail1; d=purelymail.com; v=1; bh=9glP7S3bzL4kyCTsFMdSym0Q2pPbCIRMlIsGoQdrp3k=; h=Feedback-ID:Received:From:To:Subject;
-Feedback-ID: 10275:2339:null:purelymail
-X-Pm-Original-To: linux-clk@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1231945857;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Fri, 02 Jun 2023 11:08:40 +0000 (UTC)
-Date:   Fri, 02 Jun 2023 14:08:37 +0300
-From:   Iskren Chernev <me@iskren.info>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Update parts of PLL_TEST_CTL(_U) if required
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20230601-topic-alpha_ctl-v1-0-b6a932dfcf68@linaro.org>
-References: <20230601-topic-alpha_ctl-v1-0-b6a932dfcf68@linaro.org>
-Message-ID: <9F5D5FD2-1D35-4EFF-B7A5-9459CB409309@iskren.info>
+        with ESMTP id S236082AbjFBNRq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 09:17:46 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B609E73
+        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 06:17:30 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-514924b4f8cso2951529a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jun 2023 06:17:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685711848; x=1688303848;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4fY7bbQIPT2xA10x1UgE0E5+ayGshUTrJHxa3pbabpo=;
+        b=bE7jyu4/I1cepLQjzEZDIWtav5BzekEP+h5PinZX8fXandcuko9zpaMUXPkIMXza52
+         JKUjDkOCO//2dNgFo7cACkNhMQhajVTh5gPZ7St39C1JVbu0sYrd1GLPmYmtYK73a19Y
+         f3LusTLCEdWA/YzaY4mTWr3jGMvI6/POvErtT5095YmuWGLiYI5X5LBi90RujUOLcHIj
+         e+OVANNoH/B5GCI5g4mr1P8czOfQ1gcGdG/UGcFYjPesFfkMHBPW5TscEmj1XIVMDGmO
+         PRguTu3vJaHrPwmrKA2IB4+5/TZebwdhqLMigpPmQaKPr38s0IOH7KPYSr3G8cKl8/z+
+         GpKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685711848; x=1688303848;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4fY7bbQIPT2xA10x1UgE0E5+ayGshUTrJHxa3pbabpo=;
+        b=Yd8fHTxbJChcSEGNuvabydvk7O4lE7m8HMSQosGKj+LvZcuMnshNL2PXcr1ug53o+3
+         FVVNi2J/QVyUoIEq6u8CYct8Ch/ivQsOSrmz3MxMyekvPASYomwVoGqJQyliyvvSZ1r9
+         LwX9wELgP01nPXnfnMX4vDhgLk2P/GTsJ+Fq2X2tWvm5VbBzATxhfCCjvQCTcHFWFNVp
+         rIFvKAdK4JQAbTXx7Bk3+KorzVH7npsTTdF4W+fdB67O+geQA72WB2IZ0doiEcFnTAkz
+         QUFvJE0kM0AttJqrxNldWEEhOzbD++CUjBd1EbAfZOBUC5LGE6t8En5bxAuekwJQh/Ud
+         sx1w==
+X-Gm-Message-State: AC+VfDzQsc5aiXZWiKk5dFXnf+Lz97da8ZoUJ5ClGUNvRAJs4Km8VykL
+        LSsXv3VdBf83U1n+/IfZpYLZ1Q==
+X-Google-Smtp-Source: ACHHUZ418rmLGTtFNlp2AvZEOomlBzrjFdBzEmOPlaaC7qbEdkVU1W12n9pmOvk3BSRvocfUgElUxg==
+X-Received: by 2002:a05:6402:7ca:b0:50b:fd52:2f4b with SMTP id u10-20020a05640207ca00b0050bfd522f4bmr2106421edy.24.1685711848503;
+        Fri, 02 Jun 2023 06:17:28 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.199.204])
+        by smtp.gmail.com with ESMTPSA id q22-20020aa7d456000000b0051631518aabsm670509edr.93.2023.06.02.06.17.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Jun 2023 06:17:27 -0700 (PDT)
+Message-ID: <bedb5ab1-59f4-98f7-1a0f-8d3be6e10569@linaro.org>
+Date:   Fri, 2 Jun 2023 15:17:25 +0200
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: Add YAML schemas for LPASSCC
+ and reset on SC8280XP
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     johan+linaro@kernel.org, agross@kernel.org,
+        konrad.dybcio@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230525122930.17141-1-srinivas.kandagatla@linaro.org>
+ <20230525122930.17141-2-srinivas.kandagatla@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20230525122930.17141-2-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Resending as my previous email probably got lost. If you got it twice,
+apologies.
+
+On 25/05/2023 14:29, Srinivas Kandagatla wrote:
+> The LPASS (Low Power Audio Subsystem) clock controller provides reset
+> support when it is under the control of Q6DSP.
+> 
+
+Thank you for your patch. There is something to discuss/improve.
 
 
-On June 1, 2023 12:39:06 PM GMT+03:00, Konrad Dybcio <konrad=2Edybcio@lina=
-ro=2Eorg> wrote:
->Some recent-ish clock drivers touching on the "standard" Alpha PLLs
->have been specifying the values that should be written into the CTL
->registers as mask-value combos, but that wasn't always reflected
->properly (or at all)=2E
+> Add support for those resets and adds IDs for clients to request the reset.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../bindings/clock/qcom,sc8280xp-lpasscc.yaml | 57 +++++++++++++++++++
+>  .../dt-bindings/clock/qcom,lpasscc-sc8280xp.h | 12 ++++
+>  2 files changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+> new file mode 100644
+> index 000000000000..08a9ae60a365
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+> @@ -0,0 +1,57 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm LPASS Core & Audio Clock Controller on SC8280XP
+> +
+> +maintainers:
+> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> +
+> +description: |
+> +  Qualcomm LPASS core and audio clock control module provides the clocks,
+> +  and reset on SC8280XP.
+> +
+> +  See also::
+> +    include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+> +
+> +properties:
+> +  reg: true
 
-Yeah, that would be me=2E I didn't feel confident enough to add the mask p=
-arameter, but it seems very reasonable=2E
+maxItems: 1
 
-> This series tries to fix that without affecitng
->the drivers that actually provide the full register values=2E
->
->Signed-off-by: Konrad Dybcio <konrad=2Edybcio@linaro=2Eorg>
+> +
+> +  compatible:
 
-Reviewed-by: Iskren Chernev <me@iskren=2Einfo>
+compatible is first in the list
 
->---
->Konrad Dybcio (2):
->      clk: qcom: clk-alpha-pll: Add a way to update some bits of test_ctl=
-(_hi)
->      clk: qcom: gcc-sm6115: Add missing PLL config properties
->
-> drivers/clk/qcom/clk-alpha-pll=2Ec | 19 +++++++++++++++----
-> drivers/clk/qcom/clk-alpha-pll=2Eh |  2 ++
-> drivers/clk/qcom/gcc-sm6115=2Ec    |  8 ++++++++
-> 3 files changed, 25 insertions(+), 4 deletions(-)
->---
->base-commit: 571d71e886a5edc89b4ea6d0fe6f445282938320
->change-id: 20230601-topic-alpha_ctl-ab0dc0ad3654
->
->Best regards,
+> +    enum:
+> +      - qcom,sc8280xp-lpasscc
+> +
+> +  qcom,adsp-pil-mode:
+> +    description:
+> +      Indicates if the LPASS would be brought out of reset using
+> +      peripheral loader.
+> +    type: boolean
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - qcom,adsp-pil-mode
+> +  - '#reset-cells'
+> +  - '#clock-cells'
+
+Keep the same order as in list of properties.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
+> +    lpasscc: clock-controller@33e0000 {
+> +        compatible = "qcom,sc8280xp-lpasscc";
+> +        reg = <0x033e0000 0x12000>;
+> +        qcom,adsp-pil-mode;
+> +        #reset-cells = <1>;
+> +        #clock-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+> new file mode 100644
+> index 000000000000..df800ea2741c
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h
+
+Filename matching compatible and bindings, so qcom,sc8280xp-lpasscc.h
+
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2023, Linaro Ltd.
+> + */
+Best regards,
+Krzysztof
+
