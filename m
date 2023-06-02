@@ -2,73 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71361C7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 13:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 616F5C7EE2C
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 13:19:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236131AbjFBNSf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jun 2023 09:18:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36064 "EHLO
+        id S236204AbjFBNTl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Jun 2023 09:19:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236151AbjFBNSd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 09:18:33 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C51B1B6
-        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 06:18:12 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51478f6106cso2957529a12.1
-        for <linux-clk@vger.kernel.org>; Fri, 02 Jun 2023 06:18:12 -0700 (PDT)
+        with ESMTP id S236150AbjFBNTj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 09:19:39 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2B98E55
+        for <linux-clk@vger.kernel.org>; Fri,  2 Jun 2023 06:19:19 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-969f90d71d4so290062666b.3
+        for <linux-clk@vger.kernel.org>; Fri, 02 Jun 2023 06:19:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685711891; x=1688303891;
+        d=linaro.org; s=google; t=1685711958; x=1688303958;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=+NwS3zwEZvLwZpFK4ZiaFDiysXGsoIUw128QiW5LtVU=;
-        b=y4SvAQHWgG5smj0nfr9cPL7rQvdt+tK6xIKJN0ulw65aVNy/YL45IdSDjNDnQcMYUs
-         Kj0wjGYzG93cyd6LOUYTn21uAVPRLY6nXj0urvDaZy4/6Fdo0KvV58x2jBQjl8sxMGkp
-         F17BWTrDcCC1zPba7hYt12q4F/0G742A1CshaNWFJdzOX+mCMg9p2fb3J9/BRvCQqD2C
-         MI7BP2tA1WBhHD4vzsFGkkvrOFS0WVTi7AHK92+OYpbpEvBg0jdSoj/a8zKeOcVQk1Kv
-         NGk/Ate+EL5OQhweq+scBl3NcZEh6E88/c86+0VHj54iid0E8n97Hk7e8XiHhcFwVcHV
-         fmSA==
+        bh=zBNFld6x+FD3yAk+79YEoPyi/MHsa3BOoLdsyaVmPR8=;
+        b=MkPFzKJ1ZteRe5HoTqFkv1oW7AGMHQG8UQ/9I+yFUC8OF38sPc+TJT+HuxeWywaHvK
+         6svn/iw/BInzAoScleJskTvDJ05OaL6zEsyMdVo+WMeQ8A4OHIfpsoizYR9DPB+9i+hQ
+         HYyUkSeoo/tROlPVW+0+b2ljDaEHZO9FZsY58G3IcdGIdznGEM6dkOmV8RZoMg12LWk4
+         dQBMqiGNufdG9NB0obeLQl5l4k178c4GpjD4TCihvpiEU83XKFj23a4m+KHE2BG1hYQS
+         XQSf16s9g1s2WUkcWMUHh9lk0YutqEf0S7+x4f8f6Avhb3BDTHEmlPFwa6ist+XLU0XH
+         duBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685711891; x=1688303891;
+        d=1e100.net; s=20221208; t=1685711958; x=1688303958;
         h=content-transfer-encoding:in-reply-to:content-language:references
          :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+NwS3zwEZvLwZpFK4ZiaFDiysXGsoIUw128QiW5LtVU=;
-        b=VC3l2qsaRdVuFvPyedbuciHcrGJSIkZasc2wrXu41ooSGcb/ctg2j03HRamjWDRbWl
-         4Ur0pDnVrCFnh2EWlkWR/Lm9JmOwkQz+ZVmVJAogYTZ+4omdOmK1Ezgvu8RE5kLoDuVw
-         jnSWUn0Cmsrjq6oJk7YqI5fp1Io6VdAZxxQO0MXHqYdX4AUiBOHoJ4uyxuqTaTOSz3Op
-         wluwgIn4VmuVPTDvIP0lagw46MqygG8SsVGteNeoyV9BTtc91Hxwhcp7XLw3E8CdHoi7
-         8P7QzCDiUiXL78KKc6bQSbRa7NZEHJMmUJ8NN894m1bWi3RTmR024jpYdJMM5THzbCIr
-         0bOQ==
-X-Gm-Message-State: AC+VfDxGSQfrYpn67FOeJu/ipJRoyZAEkJMXxJwYyp7D5odqQNsIQafS
-        486hNpUoYfvNbLBgjTniFFzItQ==
-X-Google-Smtp-Source: ACHHUZ6JYFwp/knwwWxf+ufp1RJgv7D7BecZvMAW0KHV56DSQ8VwVIvFUeqNQttcyPPpjVyDgEDmXg==
-X-Received: by 2002:a17:907:3e14:b0:974:545d:cfa3 with SMTP id hp20-20020a1709073e1400b00974545dcfa3mr3324224ejc.64.1685711891425;
-        Fri, 02 Jun 2023 06:18:11 -0700 (PDT)
+        bh=zBNFld6x+FD3yAk+79YEoPyi/MHsa3BOoLdsyaVmPR8=;
+        b=bnrKOsyW/5vN6m7MUC1EaxP8abxcl9zqaA9adywXpkSQbJNBPHWEOgx9puWwPocl1+
+         f9IyQyzHr0lF14klcblBHcuNhtMgTzRaD9WJoAK5WzKsJWGeKrSEO0sUJ4GAu/KZVC9W
+         2Xs/vAqMzTxMss8nFaCYlSKgLQQ1rm6ED7LPKjcJJs6d1QYg3OS9uQ0xtZVWbZvXxtf0
+         lOnL08bKgWudzYTsekPryzmjNjOD/q9EEV59fAJEFZd4FTxluzTQSPLSegKl0HS6pRLb
+         Em9bSD/b2AqhvGyguTKIA9P2Z1+770fxo3BwspldC81buL9hWuH2n7nhOEM8+291HBzZ
+         2cJA==
+X-Gm-Message-State: AC+VfDykuUyCWZkucNZM3pPlmiGnqEt5Zh/2IYZ9mOk5aOFd5JP4hjY7
+        F9M90c/l2nQaXc9n7cBzSAM62A==
+X-Google-Smtp-Source: ACHHUZ7zMgpL53XXDN3fliIzzCq2tEI+Abjh93xl4xgpetYD0ZyxlHnaj+VktT5BO058F/xfMpgo3A==
+X-Received: by 2002:a17:907:9813:b0:965:6cb9:b768 with SMTP id ji19-20020a170907981300b009656cb9b768mr8974330ejc.31.1685711958189;
+        Fri, 02 Jun 2023 06:19:18 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.199.204])
-        by smtp.gmail.com with ESMTPSA id x17-20020a170906149100b009764f0c5fe6sm19622ejc.7.2023.06.02.06.18.09
+        by smtp.gmail.com with ESMTPSA id i21-20020a170906851500b00965e9a23f2bsm747873ejx.134.2023.06.02.06.19.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Jun 2023 06:18:11 -0700 (PDT)
-Message-ID: <b06070d3-a272-9a0b-2d02-df8fbca4e951@linaro.org>
-Date:   Fri, 2 Jun 2023 15:18:08 +0200
+        Fri, 02 Jun 2023 06:19:17 -0700 (PDT)
+Message-ID: <92428212-2fe5-a07a-66d1-67b6939c7c9b@linaro.org>
+Date:   Fri, 2 Jun 2023 15:19:15 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.2
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 6/6] arm64: defconfig: Enable sc828x0xp lpasscc clock
- controller
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     johan+linaro@kernel.org, agross@kernel.org,
-        konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230525122930.17141-1-srinivas.kandagatla@linaro.org>
- <20230525122930.17141-7-srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add nvmem-clock
+To:     Mike Looijmans <mike.looijmans@topic.nl>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.2167d5ad-7e99-4eb9-a313-030fc7a7d546@emailsignatures365.codetwo.com>
+ <20230526143807.10164-1-mike.looijmans@topic.nl>
 Content-Language: en-US
-In-Reply-To: <20230525122930.17141-7-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20230526143807.10164-1-mike.looijmans@topic.nl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -78,14 +76,27 @@ X-Mailing-List: linux-clk@vger.kernel.org
 Resending as my previous email probably got lost. If you got it twice,
 apologies.
 
-On 25/05/2023 14:29, Srinivas Kandagatla wrote:
-> Enabled sc828x0xp lpasscc clock controller driver required for X13s laptop.
+
+On 26/05/2023 16:38, Mike Looijmans wrote:
+> Add bindings for a fixed-rate clock that retrieves its rate from an
+> NVMEM provider. This allows to store clock settings in EEPROM or EFUSE
+> or similar device.
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
+> Component shortages lead to boards being shipped with different clock
+> crystals, based on what was available at the time. The clock frequency
+> was written to EEPROM at production time. Systems can adapt to a wide
+> range of input frequencies using the clock framework, but this required
+> us to patch the devicetree at runtime or use some custom driver. This
+> provides a more generic solution.
+
+This does not look like real hardware. I mean, the clock does not fetch
+its rate from nvmem, right? It's the Linux which does it, so basically
+you described here driver, not hardware.
+
+Extend existing fixed-clock bindings to allow reading frequency via
+nvmem cells.
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
