@@ -2,82 +2,207 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C80C7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Jun 2023 22:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BDEC7EE24
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Jun 2023 07:44:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236281AbjFBW41 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Jun 2023 18:56:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41654 "EHLO
+        id S232236AbjFCHot (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Jun 2023 03:44:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234452AbjFBW40 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Jun 2023 18:56:26 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E67D419B;
-        Fri,  2 Jun 2023 15:56:25 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2005)
-        id C141F68AA6; Sat,  3 Jun 2023 00:56:21 +0200 (CEST)
-Date:   Sat, 3 Jun 2023 00:56:21 +0200
-From:   Torsten Duwe <duwe@lst.de>
-To:     Conor Dooley <conor@kernel.org>
-Cc:     Xingyu Wu <xingyu.wu@starfivetech.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        yanhong.wang@starfivetech.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL
- clock generator
-Message-ID: <20230602225621.GC27915@lst.de>
-References: <20230512022036.97987-1-xingyu.wu@starfivetech.com> <20230512022036.97987-2-xingyu.wu@starfivetech.com> <20230519135733.GA10188@lst.de> <20230519-smokeless-guileless-2a71cae06509@wendy> <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com> <20230602183922.649b8e88@blackhole.lan> <20230602-drained-wheat-b6c5ea009f16@spud> <20230602165713.GA27915@lst.de> <20230602-wise-entomb-975a2474d97a@spud>
+        with ESMTP id S229647AbjFCHot (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Jun 2023 03:44:49 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 011221B4;
+        Sat,  3 Jun 2023 00:44:47 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3537hDWj013214;
+        Sat, 3 Jun 2023 07:44:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=nTaklHgzvpTd6uAPk3GvsJsBWro+3RpxJdi5w+6YHDo=;
+ b=BSm+ZxTl6Yy5pcjdje940z1B8eUnc6mD/Wm+Sw400xRm+d5zoLG+GFyrDqUaD+GW3PbT
+ al1WFvK0v4PP1UcujH077QCLRjoy7rBESTp+L9azNEyR8ND7KZ0uuj6dJ7uTaJS43ETF
+ RRbq7k5wUzmwmbYBloZeFfI4XFh/LKDRoqNoIyCfya1q9UcbKru4So9dQOdCeEEEkI7H
+ SCOcB8iDqObCb0ov7Em8wl7v5YdLvsikRdwlur6zhPFwSMdiCyo0W6S1B+wElJrWyUej
+ egX+rcIu5dSTN7P99Ka5YMxrXpu1clXMEWvaBpFrs8KdM6s/4vVGcxxmEGT3bnrg9PjS Sg== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qyvfxga60-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 03 Jun 2023 07:44:36 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3537iZGV000795
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 3 Jun 2023 07:44:35 GMT
+Received: from [10.216.19.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sat, 3 Jun 2023
+ 00:44:28 -0700
+Message-ID: <d47d3077-31e1-329b-5e19-c8d2ec3b5f30@quicinc.com>
+Date:   Sat, 3 Jun 2023 13:14:19 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230602-wise-entomb-975a2474d97a@spud>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH V4 3/6] dt-bindings: PCI: qcom: Add IPQ9574
+To:     Manivannan Sadhasivam <mani@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_kathirav@quicinc.com>,
+        <quic_arajkuma@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_ipkumar@quicinc.com>
+References: <20230519090219.15925-1-quic_devipriy@quicinc.com>
+ <20230519090219.15925-4-quic_devipriy@quicinc.com>
+ <20230528141713.GB2814@thinkpad>
+Content-Language: en-US
+From:   Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <20230528141713.GB2814@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uoBSBZLx_iwDSIdU7scd4k1Hup1vYm3I
+X-Proofpoint-ORIG-GUID: uoBSBZLx_iwDSIdU7scd4k1Hup1vYm3I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-03_04,2023-06-02_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 adultscore=0 priorityscore=1501 phishscore=0 bulkscore=0
+ impostorscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2304280000 definitions=main-2306030071
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 02, 2023 at 05:59:29PM +0100, Conor Dooley wrote:
-> On Fri, Jun 02, 2023 at 06:57:13PM +0200, Torsten Duwe wrote:
-> > On Fri, Jun 02, 2023 at 05:43:25PM +0100, Conor Dooley wrote:
-> > > > 
-> > > > Can you _please_ point me at that "PLL driver" "in Linux" ?
-> > > 
-> > > It's patch 2 in this series:
-> > > https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@starfivetech.com/T/#m4b2d74c36b3bb961a1187ec5cda1a0a0de875f0e
-> > > 
-> > Unfortunately, it's not, AFAICS. I'm looking for the driver that
-> > will control the PLLs' parameters, grepping for "pll" should yield
-> > results, to start with. The thing should act on the SYS_SYSCON iomem,
-> > at 0x13030000. Ideally, a DT node should point it there...
+
+
+On 5/28/2023 7:47 PM, Manivannan Sadhasivam wrote:
+> On Fri, May 19, 2023 at 02:32:16PM +0530, Devi Priya wrote:
+>> Add bindings for PCIe hosts on IPQ9574 platform and allow
+>> msi-parent property.
+>>
 > 
-> The driver binds against a child node of the syscon @ 1303_0000:
-> https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@starfivetech.com/T/#m882de9210850eb6f871cafc3418f3202ba915de8
+> Why can't you use existing "msi-map" property instead of "msi-parent"?
 > 
-> Am I missing something?
+> - Mani
+Sure, will update.
 
-No, you're right. Seems I took a wrong turn somewhere. I prefer
-patchwork, where available, and probably got into the wrong series.
-Found the correct one:
-
-https://patchwork.kernel.org/project/linux-riscv/patch/20230512022036.97987-3-xingyu.wu@starfivetech.com/
-
-Now only the device tree needs to match against that, and U-Boot
-needs to remain still functional...
-
-Thanks and sorry for the noise.
-
-	Torsten
-
-
+Thanks,
+Devi Priya
+> 
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> ---
+>>   Changes in V4:
+>> 	- Dropped msi-parent from anyOf: as msi-parent and msi-map
+>> 	  cannot coexist and added it specific to ipq9574
+>>
+>>   .../devicetree/bindings/pci/qcom,pcie.yaml    | 48 +++++++++++++++++++
+>>   1 file changed, 48 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>> index 81971be4e554..af5c7a390df1 100644
+>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
+>> @@ -26,6 +26,7 @@ properties:
+>>             - qcom,pcie-ipq8064-v2
+>>             - qcom,pcie-ipq8074
+>>             - qcom,pcie-ipq8074-gen3
+>> +          - qcom,pcie-ipq9574
+>>             - qcom,pcie-msm8996
+>>             - qcom,pcie-qcs404
+>>             - qcom,pcie-sa8540p
+>> @@ -113,6 +114,8 @@ properties:
+>>     power-domains:
+>>       maxItems: 1
+>>   
+>> +  msi-parent: true
+>> +
+>>     perst-gpios:
+>>       description: GPIO controlled connection to PERST# signal
+>>       maxItems: 1
+>> @@ -171,6 +174,7 @@ allOf:
+>>               enum:
+>>                 - qcom,pcie-ipq6018
+>>                 - qcom,pcie-ipq8074-gen3
+>> +              - qcom,pcie-ipq9574
+>>       then:
+>>         properties:
+>>           reg:
+>> @@ -382,6 +386,39 @@ allOf:
+>>               - const: ahb # AHB Reset
+>>               - const: axi_m_sticky # AXI Master Sticky reset
+>>   
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - qcom,pcie-ipq9574
+>> +    then:
+>> +      properties:
+>> +        clocks:
+>> +          minItems: 6
+>> +          maxItems: 6
+>> +        clock-names:
+>> +          items:
+>> +            - const: ahb  # AHB clock
+>> +            - const: aux  # Auxiliary clock
+>> +            - const: axi_m # AXI Master clock
+>> +            - const: axi_s # AXI Slave clock
+>> +            - const: axi_bridge # AXI bridge clock
+>> +            - const: rchng
+>> +        resets:
+>> +          minItems: 8
+>> +          maxItems: 8
+>> +        reset-names:
+>> +          items:
+>> +            - const: pipe # PIPE reset
+>> +            - const: sticky # Core Sticky reset
+>> +            - const: axi_s_sticky # AXI Slave Sticky reset
+>> +            - const: axi_s # AXI Slave reset
+>> +            - const: axi_m_sticky # AXI Master Sticky reset
+>> +            - const: axi_m # AXI Master reset
+>> +            - const: aux # AUX Reset
+>> +            - const: ahb # AHB Reset
+>> +
+>>     - if:
+>>         properties:
+>>           compatible:
+>> @@ -767,6 +804,7 @@ allOf:
+>>                   - qcom,pcie-ipq8064v2
+>>                   - qcom,pcie-ipq8074
+>>                   - qcom,pcie-ipq8074-gen3
+>> +                - qcom,pcie-ipq9574
+>>                   - qcom,pcie-qcs404
+>>       then:
+>>         required:
+>> @@ -862,6 +900,16 @@ allOf:
+>>             items:
+>>               - const: msi
+>>   
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - qcom,pcie-ipq9574
+>> +    then:
+>> +      required:
+>> +        - msi-parent
+>> +
+>>   unevaluatedProperties: false
+>>   
+>>   examples:
+>> -- 
+>> 2.17.1
+>>
+> 
