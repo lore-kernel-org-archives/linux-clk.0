@@ -2,95 +2,127 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0931DC7EE2E
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Jun 2023 20:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA43FC77B7A
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Jun 2023 21:16:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232259AbjFCUJ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Jun 2023 16:09:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51458 "EHLO
+        id S229501AbjFCVQK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Jun 2023 17:16:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232334AbjFCUIt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Jun 2023 16:08:49 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1852610FA;
-        Sat,  3 Jun 2023 13:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1685822893; x=1717358893;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ckwb7C/ObR0uOQ3Mcarmvv2Gqnc2rITKWQmy9lDAB4M=;
-  b=iUFt2heNUh8mXhLC1hP37qRBFL6rUIbNKi9wNVU/FxZFLrP4OHr6b5Ur
-   Eo1xhH6gqX6f125VEK+3bXrQis+slhSrM5c7sGDxglgDg+Q1MmtGpr+5l
-   dq0PVPehhFou6YyyDWup2CZ9NO2WBNiV5THOPzVSH0HsRFWp7A+qLjUaC
-   PmqqPplACneygUv5QuBMes2MZ6+oRxax0V93SsZswmo+JMrzuRu0IoACl
-   h4YDmpQj10qHkM9Xay82cuWH8ru9ZvD1qHi398eqv2TG+j8tC3PljVnjd
-   XLhQl35OF+Hd3Pobhihwrl2WJ30Q07HMsfo+S1puyvnJ2o+EtNwhRyK80
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.00,216,1681196400"; 
-   d="scan'208";a="216104679"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 Jun 2023 13:07:27 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Sat, 3 Jun 2023 13:07:27 -0700
-Received: from che-lt-i67070.amer.actel.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Sat, 3 Jun 2023 13:07:14 -0700
-From:   Varshini Rajendran <varshini.rajendran@microchip.com>
-To:     <tglx@linutronix.de>, <maz@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <claudiu.beznea@microchip.com>, <davem@davemloft.net>,
-        <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-        <gregkh@linuxfoundation.org>, <linux@armlinux.org.uk>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <sre@kernel.org>,
-        <broonie@kernel.org>, <varshini.rajendran@microchip.com>,
-        <arnd@arndb.de>, <gregory.clement@bootlin.com>,
-        <sudeep.holla@arm.com>, <balamanikandan.gunasundar@microchip.com>,
-        <mihai.sain@microchip.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-CC:     <Hari.PrasathGE@microchip.com>, <cristian.birsan@microchip.com>,
-        <durai.manickamkr@microchip.com>, <manikandan.m@microchip.com>,
-        <dharma.b@microchip.com>, <nayabbasha.sayed@microchip.com>,
-        <balakrishnan.s@microchip.com>
-Subject: [PATCH 20/21] dt-bindings: net: cdns,macb: add documentation for sam9x7 ethernet interface
-Date:   Sun, 4 Jun 2023 01:32:42 +0530
-Message-ID: <20230603200243.243878-21-varshini.rajendran@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230603200243.243878-1-varshini.rajendran@microchip.com>
+        with ESMTP id S229452AbjFCVQK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 3 Jun 2023 17:16:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF9097;
+        Sat,  3 Jun 2023 14:16:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6013760B61;
+        Sat,  3 Jun 2023 21:16:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9503C433EF;
+        Sat,  3 Jun 2023 21:15:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1685826963;
+        bh=LJM8vKQSQ2RdRTp9RFziQNMxva4VRFMhJsh8lrUlmRk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EO0knllIEbHgMKF9bb/HSLeEyrNl2gcHYO2cqrr9UA3PsTXJnenHYAu7K+VbJFIwD
+         /RZU4zUCB9del9munixsYO0lqFugBAPh8B/HVIOstiqgvxT2MxYCkWZued6iiRDo5T
+         TicTu0H+y5VyOZ1R2mFWS4yPBozVSEnS0swMQDPRRxmiEPpsDoPVbY8Gsv6TKNwi2F
+         g5xp88gpKILBB5VyNZNZlSKa0G/txR0MYTC17ZrrCMRN7CyXARTMkqG227wm3T0GoO
+         XJI42e1GoB3IlVA+Kk+Sl34DruJbEIG6YAw6Id3Cbzqo1okisfHBVXK2bw3wO+vMey
+         cdrkXhcxZPQOA==
+Date:   Sat, 3 Jun 2023 22:15:54 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc:     tglx@linutronix.de, maz@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@microchip.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        gregkh@linuxfoundation.org, linux@armlinux.org.uk,
+        mturquette@baylibre.com, sboyd@kernel.org, sre@kernel.org,
+        broonie@kernel.org, arnd@arndb.de, gregory.clement@bootlin.com,
+        sudeep.holla@arm.com, balamanikandan.gunasundar@microchip.com,
+        mihai.sain@microchip.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
+        durai.manickamkr@microchip.com, manikandan.m@microchip.com,
+        dharma.b@microchip.com, nayabbasha.sayed@microchip.com,
+        balakrishnan.s@microchip.com
+Subject: Re: [PATCH 03/21] dt-bindings: usb: generic-ehci: Document
+ clock-names property
+Message-ID: <20230603-skincare-ideology-bfbc3fd384c5@spud>
 References: <20230603200243.243878-1-varshini.rajendran@microchip.com>
+ <20230603200243.243878-4-varshini.rajendran@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nAMUQ1Zej8t05qRN"
+Content-Disposition: inline
+In-Reply-To: <20230603200243.243878-4-varshini.rajendran@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add documentation for sam9x7 ethernet interface
 
-Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
----
- Documentation/devicetree/bindings/net/cdns,macb.yaml | 1 +
- 1 file changed, 1 insertion(+)
+--nAMUQ1Zej8t05qRN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-index bef5e0f895be..e4f9e9b353e5 100644
---- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
-+++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-@@ -54,6 +54,7 @@ properties:
-           - cdns,np4-macb             # NP4 SoC devices
-           - microchip,sama7g5-emac    # Microchip SAMA7G5 ethernet interface
-           - microchip,sama7g5-gem     # Microchip SAMA7G5 gigabit ethernet interface
-+          - microchip,sam9x7-gem      # Microchip SAM9X7 gigabit ethernet interface
-           - sifive,fu540-c000-gem     # SiFive FU540-C000 SoC
-           - cdns,emac                 # Generic
-           - cdns,gem                  # Generic
--- 
-2.25.1
+Hey Varshini,
 
+On Sun, Jun 04, 2023 at 01:32:25AM +0530, Varshini Rajendran wrote:
+> Document the property clock-names in the schema.
+>=20
+> It fixes the dtbs_warning,
+
+s/dtbs_warning/dtbs_check warning/?
+
+> 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+
+Does this fix a warning currently in the tree, or fix a warning
+introduced by some patches in this series? (Or both?)
+
+Cheers,
+Conor.
+
+>=20
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/usb/generic-ehci.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Do=
+cumentation/devicetree/bindings/usb/generic-ehci.yaml
+> index 7e486cc6cfb8..542ac26960fc 100644
+> --- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+> +++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+> @@ -102,6 +102,10 @@ properties:
+>          - if a USB DRD channel: first clock should be host and second
+>            one should be peripheral
+> =20
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 4
+> +
+>    power-domains:
+>      maxItems: 1
+> =20
+> --=20
+> 2.25.1
+>
+
+--nAMUQ1Zej8t05qRN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZHutdAAKCRB4tDGHoIJi
+0qo0AP492GWxNAZm5/JMwehSB/wjebZYTgg7CggXNDp4e+9ZmAEAqBHDVLVYKYXY
+7h8c0U3NLQA8eGWDBjGhhXJ+h5Ab0gc=
+=sdYv
+-----END PGP SIGNATURE-----
+
+--nAMUQ1Zej8t05qRN--
