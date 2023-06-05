@@ -2,232 +2,233 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DE7C77B73
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 14:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6790EC7EE24
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 14:02:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232463AbjFEOAa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jun 2023 10:00:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58840 "EHLO
+        id S234255AbjFEOCQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jun 2023 10:02:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232281AbjFEOA3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 10:00:29 -0400
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2047.outbound.protection.outlook.com [40.107.7.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5A179C;
-        Mon,  5 Jun 2023 07:00:27 -0700 (PDT)
+        with ESMTP id S234229AbjFEOCH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 10:02:07 -0400
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2048.outbound.protection.outlook.com [40.107.13.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F7A116;
+        Mon,  5 Jun 2023 07:02:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gFHaM/Yg+z6PiN+yCwkKDmPrukzUL2NSS/b0FLnSbkwHFpMYS4Rj5SrGAMo8mzr5NAq8KxM7DL3nx2KulSxzmML3MjHZwIPWSvoCJpah9bczNvRCYAWG9l5gg7c2ZEYEAL9SVm6EuOxuuD5y/libP+FvAHruUyaE72dm8PAgNLUHeQOXtmjJ+ceabFwMQnCZLXEZW54g9w6iwiqa81cet6Ds83lruURBlr7dVA69j1yQkT75YFFdI95FuLBgVlCT3XTrGrYnZqgWJpEY8yzECNCvsjl7xptulB5Uv0TWwtWLmuKonj30YtUVzaW6+zXAD5MVvZ0kqTQYA5y3W/vNqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+lNXeiXeKaOrPCfdcNDTCRrucNM2b7pPwuqXjA/Aefw=;
+ b=kI9DM6VF320TaovQ9Lv8iTtiyoNQTNO3/1f7eh1XsyPYTRwvUZql7rBu2+Sina3pOBxA30jOpesThCvvyJpn2iU/X0tWP+C7ojCiYzntP/piK/WV2C8NpHZaiWYQ+SnVOMtmCUPSCH9i+UzjofWXtEJS9+uH29i5hCAQl9xoyv66AQVi2KWgwJ2Xkdo8t7jdDIeKsHoEu3sKZ85l0foUNJhlDLgWTfrxX0ZOhHYBTI8APYuObnIGRzxp/uNTkA+v9CUQGrFG039/iSchVy23g3ajftMBDQSjis4WijfHlbz4jCqLx26nVCYhc0k2leR+a5aNXcY0LhHLOwDVkgEmBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 13.93.42.39) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=topicproducts.com; dmarc=none action=none header.from=topic.nl;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sBez5Uy5DWoPCxP9y4Hr85uL78tonqtZFZUmaFwmuuw=;
- b=YjdvCFyrEhws0pKi8kjucJ6++NQgFdWuHmgB1hWelHgzkWo6ISwdVrRRZSLOLHy/XdzEVQmPFrEh2HApessShyYwPodZicY9V/hU+8YEPzlQYNcfUtUvyCm+DNbP4MLksjR2ndGjen3LM1xMhDoz6afhho2827W/9nKGwJsNnsFwoIko0YEftOgSidgGpx5wxtLUM86tRWMaHoIzFuMAZz6GH9DTAmSnnszcx5ZnOR4RJgWmNU2qOtc7GemI8JeweDi1dosGw76WM6J3y8pJ+aWbPHZdtJuez3ce6MzXbu00ePu0+S2QwwjMmVDVpXXzI1KD3tAmx3C7cVu8dIiXiQ==
-Received: from AM5P194CA0012.EURP194.PROD.OUTLOOK.COM (2603:10a6:203:8f::22)
- by DB8PR04MB7017.eurprd04.prod.outlook.com (2603:10a6:10:123::20) with
+ bh=+lNXeiXeKaOrPCfdcNDTCRrucNM2b7pPwuqXjA/Aefw=;
+ b=ATvSWnHtNHRjKAK9S76+9SDbtBZoc17ddvs4/fyOFsi7795CPC16AX0DVTUe4ht1FZVssrZZq6bfXDbeziK62my5axN3gkbWe4Tse9y3bfsRi0F5RxwQDBSaHlexByRiFoZIJ/ZsYeYfD8jo+9XwbGybCdQ7f4RDjAor3+b039g4zALinilI7ydELeeCRPsnIr7Vd0XGvPTF5UJ0qrQ8CAKhwDpq33vG+vAeo0RYjD3nvWNfUgY/+J0o/trVKB18eiIGsB00akd/bO0DqHz7FjE1cttdoPgKu8RnUZhHQaa76MPLPDU4s7bLrZiXeFtSwljd7stqQDrh5hs4ElUULA==
+Received: from DU2P250CA0021.EURP250.PROD.OUTLOOK.COM (2603:10a6:10:231::26)
+ by AS1PR04MB9264.eurprd04.prod.outlook.com (2603:10a6:20b:4c4::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.27; Mon, 5 Jun
- 2023 14:00:24 +0000
-Received: from VE1EUR01FT082.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:203:8f:cafe::e2) by AM5P194CA0012.outlook.office365.com
- (2603:10a6:203:8f::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Mon, 5 Jun
+ 2023 14:02:00 +0000
+Received: from DB5EUR01FT003.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:10:231:cafe::2a) by DU2P250CA0021.outlook.office365.com
+ (2603:10a6:10:231::26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32 via Frontend
- Transport; Mon, 5 Jun 2023 14:00:24 +0000
+ Transport; Mon, 5 Jun 2023 14:01:59 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 13.93.42.39)
- smtp.mailfrom=topicproducts.com; dkim=fail (signature did not verify)
- header.d=topic.nl;dmarc=none action=none header.from=topic.nl;
+ smtp.mailfrom=topicproducts.com; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=topic.nl;
 Received-SPF: Pass (protection.outlook.com: domain of topicproducts.com
  designates 13.93.42.39 as permitted sender) receiver=protection.outlook.com;
  client-ip=13.93.42.39; helo=westeu12-emailsignatures-cloud.codetwo.com; pr=C
 Received: from westeu12-emailsignatures-cloud.codetwo.com (13.93.42.39) by
- VE1EUR01FT082.mail.protection.outlook.com (10.152.3.71) with Microsoft SMTP
+ DB5EUR01FT003.mail.protection.outlook.com (10.152.4.101) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6477.19 via Frontend Transport; Mon, 5 Jun 2023 14:00:24 +0000
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (104.47.51.239) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Mon, 05 Jun 2023 14:00:23 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aQBMHHxUol50oCpzm6C1Qbl/+FUTbIiA6y6J/L5yiiDj8x1XZ5aKJ5ooPpgP1+CGkjvbQfkGmOtAqfCSnTYO8muUro8qZYB3dWrcTNT0fNpEaO5fkz7q8Ixz04McFfElRv5nCcvBoalgdeHKkC0+YqC6WhabguJmwkaVl35I25rHgTUcEZrcedGjN0c5YLbqQvIGZnP2Y6+vB0Cm0DWsjtt9KxqEnReg/YzjvOxWFT8JbgRxIvctbsuVmVC4UPXvIh3gtdQjGS1rXsT+Je8i6wA/pSb/ZLkPea3w7BJ897G/dIW7wH4IRvZUT12F9xbRkO+yHx/lX3jaM58QevBwGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X6E3B9K6la7BJadEYu29JuKU+wZVVrax4SFJ7R34q5Y=;
- b=PAL89UH7na9raW/Jlilb+UGli6LuQvOB4zmX2a3WHDWnjr0daqczzkIMmNj0/VDY3jW1wQW5KHnKHI6AGhShuAltktp0kKJ4HDBp7i8VFpEDR0Ro6uhNjAW8DeduR2JUGNAprVUJx0D1ACcaKuOemPJJjkz/dFuRraaqlatnSESwJSsEzLn1xUtpkdTvHm4kqIHTs5QFQVqNSG32UPRQ6ufJRWyxuzwScUx4SOBjuGLRu7D9SRKDKkjI94jXBPeHxe5iZTkyTSlQNBKTt/CJwY+W22jqvMNXtCkTLzj/MniDRheSh5ojw+GX6+oTh2HoIMNY9W7UBOp1/AJZbo9FYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=topicproducts.com; dmarc=pass action=none header.from=topic.nl;
- dkim=pass header.d=topic.nl; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X6E3B9K6la7BJadEYu29JuKU+wZVVrax4SFJ7R34q5Y=;
- b=zdA4R27n5P6H3m+RUSp0gUtD7Ang1j8gw2ALS52sGqkoJfP7LzwoD311FXkVF8Wdr9T61UXk9EnQzS4Xft/TG0kesOC4hWyiZmGDHFfnhrR9Od+b5W1Mlva2+XMLorfQ1633RiZvUYWftScThRAAMFlxF7+2auOm8Tv/27qRFEyPclpp05ijs8IJwbZX2ZS9SjT9g7nGnLecYGt1n8pYs7BF0H2cqfuBnutJ+suwn/O6iZNv8/dBbyOUIPutvKCZcFb7KsXZokezzTmK79NnqnY83zJHPzF9JCCDW8wzX0rsnuUG7vKlhF0sk703laiG08fmD8ePy+oltClMJqSBSA==
+ 15.20.6477.13 via Frontend Transport; Mon, 5 Jun 2023 14:01:59 +0000
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (104.47.0.58) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Mon, 05 Jun 2023 14:01:58 +0000
 Authentication-Results-Original: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=topic.nl;
 Received: from DB8PR04MB6523.eurprd04.prod.outlook.com (2603:10a6:10:10f::26)
  by AM9PR04MB8193.eurprd04.prod.outlook.com (2603:10a6:20b:3ea::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33; Mon, 5 Jun
- 2023 14:00:18 +0000
+ 2023 14:01:56 +0000
 Received: from DB8PR04MB6523.eurprd04.prod.outlook.com
  ([fe80::4cd1:3e90:54e5:9696]) by DB8PR04MB6523.eurprd04.prod.outlook.com
  ([fe80::4cd1:3e90:54e5:9696%5]) with mapi id 15.20.6455.030; Mon, 5 Jun 2023
- 14:00:17 +0000
-Message-ID: <96004048-0ba5-4cd6-406f-e1235c819c97@topic.nl>
-Date:   Mon, 5 Jun 2023 16:00:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
+ 14:01:56 +0000
 From:   Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: fixed-clock: Add nvmem support
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-CC:     Conor Dooley <conor+dt@kernel.org>,
+To:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+CC:     Mike Looijmans <mike.looijmans@topic.nl>,
+        Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.1d0217a8-661f-4359-b77b-02222c761b01@emailsignatures365.codetwo.com>
- <20230605133410.15076-1-mike.looijmans@topic.nl>
- <5d1f08f1-792b-255b-89f0-dd5fa2f0baa4@linaro.org>
-Organization: Topic
-In-Reply-To: <5d1f08f1-792b-255b-89f0-dd5fa2f0baa4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: AM0PR04CA0144.eurprd04.prod.outlook.com
- (2603:10a6:208:55::49) To DB8PR04MB6523.eurprd04.prod.outlook.com
+Subject: [PATCH v4 1/2] dt-bindings: clock: fixed-clock: Add nvmem support
+Date:   Mon, 5 Jun 2023 16:01:48 +0200
+Message-ID: <20230605140149.16841-1-mike.looijmans@topic.nl>
+X-Mailer: git-send-email 2.17.1
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P190CA0048.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:20b:656::21) To DB8PR04MB6523.eurprd04.prod.outlook.com
  (2603:10a6:10:10f::26)
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB8PR04MB6523:EE_|AM9PR04MB8193:EE_|VE1EUR01FT082:EE_|DB8PR04MB7017:EE_
-X-MS-Office365-Filtering-Correlation-Id: f5b1740f-78a4-484d-36ec-08db65cd3582
+X-MS-TrafficTypeDiagnostic: DB8PR04MB6523:EE_|AM9PR04MB8193:EE_|DB5EUR01FT003:EE_|AS1PR04MB9264:EE_
+X-MS-Office365-Filtering-Correlation-Id: d5955bbc-e96c-4cb2-911e-08db65cd6e4d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: TWok8VDb3TaZt3jk6c+Mk+Y8OgjV1O1OypEsN4zyXeX0NZt8BFlYN1y1ZrjG9lvs7i52EbTpypX2UbczKr0AwO0AUHTefbN/ZfdlwjztjU1XXd5sDKGxu0mir4ArrRSlzvtrrmQ2Xzp6i/2ACJzfj4MF5puQKiAa+rZOOYoVwjt76erNMHSQX9z8bQtvrgSWO+vhdCVOJmi4Xf3/+wMxOKtkFAv4U3n1A3qxu7sIDsA+FkWL/c3NM/G/T9dwttoHxhI4MBrh2OvSoft7u/HT1rrZFFpp2n2OSKtJASR0w43oz+SIZd8DgFzrJlqDgQNzpkAozEu1hJmGAF4VG0tq/97GLS9UufIqLgEP0HPeNW3+QMNjaKNYMUxJo3XsrNomBl9IjzdYC/NvgDnthp0A+KrmAFxsfc/mwpZFv/Paq52dTm1C6Z/YKADN6ytXYzEnyPwDNBO1X5C0yWaYyal4nwgQ83DbQ3Rs4z0S1RHRpKqkOdbA9zUFaEmTRTRoSeZJ+bg9t/E0DKUcwoz2d7xD1nzKSlp0MezzEoni51qVLz1zcxHLAF7FZJKZIzI9XaHYp9j4S0prWNcqsTMISXbRz67NCaqJzJ8QLp93J14XBIATkKrA+FwhV+fUMLwlaSJLyxcL6kpPU2ugD+BIql8EFaQ6xgjnki1DR/TWjo5VJuw=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB6523.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(366004)(396003)(136003)(39840400004)(346002)(451199021)(83380400001)(15974865002)(42882007)(83170400001)(44832011)(54906003)(478600001)(8676002)(8936002)(41300700001)(316002)(66476007)(66946007)(66556008)(31696002)(5660300002)(38100700002)(38350700002)(4326008)(6486002)(36756003)(52116002)(36916002)(2906002)(6512007)(186003)(6506007)(26005)(53546011)(31686004)(2616005)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info-Original: +1YJIbKTxhmr40D6ks/9k1REx4EnXf8xOsB2iySDRNb4wijnxFgNvHtEFf7UuXfAzvGjoqKCt/xPpWD5PkL6IKVDftyV0wB/q3ya6IUS7CjMsWdz1g+WmEpTCas9RECnBVT7aChXiK6D+umRNT2QNZnooLIaRtfWao+Xjg3yxT0aXXoyRZ1Mfk3ZMFgyPELShJlIr26tNI7lCAhWo781HjZ0a802x4MXwgJDmA6a4AE/yLCGOQ8rjHTQmNv42vDvkR6rgqcv2c5BAsnV0kskuavJ7Ea1+JxH8F6Ua2O/eLnPuRExv91kz1qiV11V1c+aig+uqxFpNb39En/3N+RWHAWhLmzCEdNGvdEwVrd9UOOIlJVfLGk6cPSJW0i94+yRA1uvcheWS+rZHZFiySGIDDESZsQ5Ao3deC1K5CbCTzOS0NRmtFPYGkeAlviQkn+lig5v1mOBvzO8/7JdPurIp3w0HlhL+IeY2d+it4jEMrwB8o0wfMZQEgjdDKOD8KrXxaQu1IHHRQr4G7qdKjVG6ih+URmbxzWPVRZimAQM9r/pYHaSlgty6sTGGv5HRsc+yQKssRjVKeRP8ZG3TNnTVrWkq+UfSAEt+4ziNXOz3+mrBFq46YuF6AmTHsupeZVf
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB6523.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(366004)(396003)(136003)(39840400004)(346002)(451199021)(83380400001)(42882007)(83170400001)(44832011)(54906003)(478600001)(8676002)(8936002)(41300700001)(316002)(66476007)(66946007)(66556008)(5660300002)(38100700002)(38350700002)(4326008)(6486002)(36756003)(6666004)(52116002)(2906002)(6512007)(186003)(6506007)(1076003)(26005)(2616005);DIR:OUT;SFP:1101;
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8193
-X-CodeTwo-MessageID: fdfeb8f2-69a4-4825-9aca-b7ce6a7825e1.20230605140023@westeu12-emailsignatures-cloud.codetwo.com
+X-CodeTwo-MessageID: dfc8aea8-809c-42e7-97dc-b341cdba78b5.20230605140158@westeu12-emailsignatures-cloud.codetwo.com
 X-CodeTwoProcessed: true
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.2d27bfea-4746-444c-89f4-e5d35cb7de66@emailsignatures365.codetwo.com>
+Content-Transfer-Encoding: quoted-printable
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR01FT082.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR01FT003.eop-EUR01.prod.protection.outlook.com
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: b1bb85eb-b81b-4547-47dc-08db65cd318f
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 8a71bac3-1948-469f-02b4-08db65cd6c1e
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wdb9wMNYIBnKbale7z9ijcDkRJp/LhalLYSGPhtLKddkEOvmsuZlPl+fZjwX6HJdBs+X6vLbMAh9XlFJG3qeTKb76LFJqjSsn/PzOHpuH0//yTdl7vQ66y5rHQHtVQA/waRjHdUYRToE6oDBjXzQD7EC/AC8+YBmX59i/3bDwNnjAjFYcQpEpTROnOrpZjryXKxVko/WQcq0yct8zSfJR4o8uS7PXYuEn1/NJ8EuGdkak1eh3swXVc5vaOjWBkTbHMJ9pQmAfL+dxvxlmRsCnitU7GV3OQNJ4wXGNljmYt7Uwuod/XZT6YoJw1eLnycmkmaICDjhZ72zNXvxpG1d0/nv9jNHjVtokvjrfqK5uNnn76rkzjTYTR6AKl6LxMieukrD2PFWwyUPjJQe8YjFK8MmcB+G5NCNfX0uJba49tSESdN77MacCKq3UIgq1zoUXbHNs3pLaF4zQ/1GP/oe06gPgka6T2wYHOGmVPJIZiOV2qc/oUGt6dVXw5uQdUVL6abBL7gNg03sNk0uGoCvVQAwRfPEd7nE2GJ+LGYMm1iPM0Bs6qZnU6KT0ei/tAGtzHwuAjRFp7Zo9Vq/jSq82sMOEkLB1wy7Vjqg1PJCgB6/dggVCNyuXLISSO2O4DwiiXklXFv6EXD52L2ac+L3UxhAga1JHlKup9+ETW8lIDOwh/gnnrMqCxTIoA3Nxt21bYowaTTrcuhTIFekPYb8AOTCU3p1qLRlJHpGeUU66L0WDrCUWSwUtS0M5BC1eO/IKtydFnhw5oU++PVB+D8QwQ==
-X-Forefront-Antispam-Report: CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230028)(4636009)(39840400004)(136003)(396003)(376002)(346002)(451199021)(36840700001)(46966006)(8936002)(8676002)(478600001)(54906003)(83170400001)(7636003)(7596003)(356005)(36916002)(316002)(5660300002)(6486002)(41300700001)(186003)(26005)(53546011)(42882007)(44832011)(31686004)(70206006)(4326008)(6506007)(70586007)(6512007)(83380400001)(15974865002)(336012)(2906002)(36756003)(2616005)(47076005)(31696002)(36860700001)(40480700001)(82310400005)(43740500002)(18886075002);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: +wn57WN3gC7M83faiCQMM+7wN20PAfyzlagr3liDC1dT1jOnUA1icrCyEGxya5AxVS6inSSH++DTQqhCGjhIrWTaz4Ah010qxw9IdCsTYGJqUypFYzovv5feUMD8Kt+/EFWf4S3SI3dTASAffP9lV8L9GkxQ0X/CEnq/E/b0u2tJHOzV3va+97aogkHNOfc3W2HSVV7fb6MGBMSRDWKNISS8vC/FevQrCpEp1mKTqHGgs7P4ksQFfD1YeDxY8/KPmAkUZ0CQQFNo0aInYMBT9d7Qx2tbP8va9dNHYL+E49f9HJw4t8EGknKKycVyHD49dBvgK370w4HFYGnT8Y3SVKFHwitrVXWHBy5SQNXq/wHmPLkZATc6k3Ita8jr4p8eezEy809zpgXfRpPgDYEQqvBcMznvvyLjkg558zvrWpabkcjZSDI2PJfd2tGjY9G4Ph0VP/aUwzd2Q6zt26FqmdoQ/v/8+kics1sSQGX5ZTvdP1p74hF6ltlwSDZcDJ/P+TZWD2hx/3qQvdA/HcYx02+tFiZubdRuuH2bbILDR+2XXz0SbL8f1DqDB2gR59T31LKojATzgAx2scVS0U7McCNKhWGHBOF2R+P5sEC9ooORd362c6N0KEphWb4itR1rva/aMFuaCa8pEy0xnWNhisHJ0E8Vs5EKahNoomp6xey+9lZE5CliRnNeU3NlgkW7
+X-Forefront-Antispam-Report: CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230028)(4636009)(376002)(39840400004)(396003)(346002)(136003)(451199021)(46966006)(36840700001)(47076005)(83380400001)(336012)(42882007)(15974865002)(83170400001)(44832011)(54906003)(40480700001)(478600001)(8676002)(8936002)(316002)(70206006)(70586007)(356005)(7596003)(7636003)(4326008)(5660300002)(41300700001)(36756003)(6486002)(6666004)(2906002)(82310400005)(36860700001)(186003)(6506007)(1076003)(26005)(6512007)(2616005);DIR:OUT;SFP:1101;
 X-OriginatorOrg: topic.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2023 14:00:24.1140
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2023 14:01:59.2429
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5b1740f-78a4-484d-36ec-08db65cd3582
+X-MS-Exchange-CrossTenant-Network-Message-Id: d5955bbc-e96c-4cb2-911e-08db65cd6e4d
 X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[13.93.42.39];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-AuthSource: VE1EUR01FT082.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR01FT003.eop-EUR01.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7017
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9264
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05-06-2023 15:38, Krzysztof Kozlowski wrote:
-> On 05/06/2023 15:34, Mike Looijmans wrote:
->> Add bindings for a fixed-rate clock that retrieves its rate from an
->> NVMEM provider. This allows to store clock settings in EEPROM or EFUSE
->> or similar device.
->>
->> Component shortages lead to boards being shipped with different clock
->> crystals, based on what was available at the time. The clock frequency
->> was written to EEPROM at production time. Systems can adapt to a wide
->> range of input frequencies using the clock framework, but this required
->> us to patch the devicetree at runtime or use some custom driver. This
->> provides a more generic solution.
->>
->> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->>
->> ---
->>
->> Changes in v3:
->> Modify fixed-clock instead of introducing nvmem-clock
->>
->> Changes in v2:
->> Changed "fixed-clock" into "nvmem-clock" in dts example
->> Add minItems:1 to nvmem-cell-names
->>
->>   .../bindings/clock/fixed-clock.yaml           | 25 ++++++++++++++++++-
->>   1 file changed, 24 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/=
-Documentation/devicetree/bindings/clock/fixed-clock.yaml
->> index b0a4fb8256e2..23e4df96d3b0 100644
->> --- a/Documentation/devicetree/bindings/clock/fixed-clock.yaml
->> +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
->> @@ -12,7 +12,9 @@ maintainers:
->>  =20
->>   properties:
->>     compatible:
->> -    const: fixed-clock
->> +    enum:
->> +      - fixed-clock
->> +      - fixed-clock-nvmem
-> Do you even need new compatible? Isn't this the same clock from the
-> hardware point of view?
+Add bindings for a fixed-rate clock that retrieves its rate from an
+NVMEM provider. This allows to store clock settings in EEPROM or EFUSE
+or similar device.
 
-I need a new compatible because a "fixed-clock" only loads at init time.=20
-It registers using CLK_OF_DECLARE, which requires the clock to register=20
-early. NVMEM providers are typical devices like I2C EEPROMs that won't=20
-be available at that point, hence I needed to create a clock that=20
-registers as a regular clock driver and can handle deferral and similar.
+Component shortages lead to boards being shipped with different clock
+crystals, based on what was available at the time. The clock frequency
+was written to EEPROM at production time. Systems can adapt to a wide
+range of input frequencies using the clock framework, but this required
+us to patch the devicetree at runtime or use some custom driver. This
+provides a more generic solution.
 
+Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
 
->
->>     "#clock-cells":
->>       const: 0
->> @@ -33,6 +35,27 @@ required:
->>  =20
->>   additionalProperties: false
->>  =20
-> Put it under allOf. Entire block should be before additionalProperties
-> (just like in example-schema).
->
->> +if:
->> +  properties:
->> +    compatible:
->> +      contains:
->> +        const: fixed-clock-nvmem
->> +
->> +then:
->> +  properties:
->> +    nvmem-cells:
->> +      maxItems: 2
-> Anyway, I don't think you tested it. Provide a DTS user of this. I don't
-> think it works and such user would point to mistakes.
->
-> Properties should be defined in top-level properties:, not in
-> allOf:if:then. In allOf:if:then you only narrow them.
+---
 
-Ah, got it. Added an example dts block to the document, this revealed=20
-the issues, indeed didn't test the bindings.
+Changes in v4:
+Use proper "if" block and add example dts
 
-Fixed it into an "allOf" to properly narrow the properties.
+Changes in v3:
+Modify fixed-clock instead of introducing nvmem-clock
 
-I'll test and post a v4 in a jiffie.
+Changes in v2:
+Changed "fixed-clock" into "nvmem-clock" in dts example
+Add minItems:1 to nvmem-cell-names
 
->
->> +      description:
->> +        Reads clock-frequency and/or clock-accuracy from an NVMEM provi=
-der in
->> +        binary native integer format. The size of the NVMEM cell can be=
- 1, 2, 4
->> +        or 8 bytes. If the contents of the nvmem are all zeroes or all =
-0xff, the
->> +        value reverts to the one given in the property.
->> +
-> Best regards,
-> Krzysztof
->
+ .../bindings/clock/fixed-clock.yaml           | 42 ++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/Doc=
+umentation/devicetree/bindings/clock/fixed-clock.yaml
+index b0a4fb8256e2..71a5791da438 100644
+--- a/Documentation/devicetree/bindings/clock/fixed-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+@@ -12,7 +12,9 @@ maintainers:
+=20
+ properties:
+   compatible:
+-    const: fixed-clock
++    enum:
++      - fixed-clock
++      - fixed-clock-nvmem
+=20
+   "#clock-cells":
+     const: 0
+@@ -26,11 +28,41 @@ properties:
+   clock-output-names:
+     maxItems: 1
+=20
++  nvmem-cells:
++    minItems: 1
++    maxItems: 2
++    description:
++      Reads clock-frequency and/or clock-accuracy from an NVMEM provider i=
+n
++      binary native integer format. The size of the NVMEM cell can be 1, 2=
+, 4
++      or 8 bytes. If the contents of the nvmem are all zeroes or all 0xff,=
+ the
++      value reverts to the one given in the property.
++
++  nvmem-cell-names:
++    minItems: 1
++    items:
++      - const: clock-frequency
++      - const: clock-accuracy
++
+ required:
+   - compatible
+   - "#clock-cells"
+   - clock-frequency
+=20
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: fixed-clock-nvmem
++    then:
++      required:
++        - nvmem-cells
++        - nvmem-cell-names
++    else:
++      properties:
++        nvmem-cells: false
++        nvmem-cell-names: false
++
+ additionalProperties: false
+=20
+ examples:
+@@ -41,4 +73,12 @@ examples:
+       clock-frequency =3D <1000000000>;
+       clock-accuracy =3D <100>;
+     };
++  - |
++    clock {
++      compatible =3D "fixed-clock-nvmem";
++      #clock-cells =3D <0>;
++      clock-frequency =3D <48000000>;
++      nvmem-cells =3D <&efuse_xtal_freq>;
++      nvmem-cell-names =3D "clock-frequency";
++    };
+ ...
 --=20
-Mike Looijmans
-System Expert
-
-TOPIC Embedded Products B.V.
-Materiaalweg 4, 5681 RJ Best
-The Netherlands
-
-T: +31 (0) 499 33 69 69
-E: mike.looijmans@topic.nl
-W: www.topic.nl
+2.17.1
 
 
-
+Met vriendelijke groet / kind regards,=0A=
+=0A=
+Mike Looijmans=0A=
+System Expert=0A=
+=0A=
+=0A=
+TOPIC Embedded Products B.V.=0A=
+Materiaalweg 4, 5681 RJ Best=0A=
+The Netherlands=0A=
+=0A=
+T: +31 (0) 499 33 69 69=0A=
+E: mike.looijmans@topicproducts.com=0A=
+W: www.topic.nl=0A=
+=0A=
+Please consider the environment before printing this e-mail=0A=
