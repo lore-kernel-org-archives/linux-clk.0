@@ -2,144 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4009FC7EE39
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 15:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EFFC77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 16:21:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234726AbjFEPJK convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jun 2023 11:09:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48184 "EHLO
+        id S231337AbjFEQV0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jun 2023 12:21:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234356AbjFEPIs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 11:08:48 -0400
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5FC7E8;
-        Mon,  5 Jun 2023 08:08:47 -0700 (PDT)
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-652d76be8c2so4031464b3a.3;
-        Mon, 05 Jun 2023 08:08:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685977727; x=1688569727;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Aiwp/bDLmwSr5erFDhpBQgGpKXSsi00J2xGn70rauW0=;
-        b=i/t6YyMlsjxqkrnXcHZz40E0tIOs/MX1dkTUnkQFq3Whz5BuqPrf8MmlMlfTUTIeq5
-         GzgzH6ufZFkL8dUCo86PsKTMhdtrki3W8CWh6JmdrFxKh+Tmve4A9RrKYgXkelwFFRPV
-         05JQHomJITaILvFidLUhVK7fLCbtTe0jCbQn2D18vcqrn9LtD3qnMFy7xQnj/SGQESIT
-         G8ckZm8GVVpLogGt1Nf65lCfZQiUVroc/Muf6Stka0dTMEltCgABJ2/1eVehkOT406W0
-         t0sg41pWIQcd3sQMALvLyygMJUHjP2jtild2HauQlIty+Af4Q5VWE1v92N/a+TYQj82E
-         O9UQ==
-X-Gm-Message-State: AC+VfDz7JqZcupCyyg8bHRmkBkhgsw/iX7sW9c87/IEUK9eqWbOm2jvp
-        OCani0oj7Wb0BoANli1zgm5Jlxu5fkuFlQ==
-X-Google-Smtp-Source: ACHHUZ4MY6YnuUEHDcUmTbFEAZ6SSspWqZ1lBBkbZm3P116kLzJ54SkD8Rf/7C8YgiKfKUsZ330efg==
-X-Received: by 2002:a05:6a20:7490:b0:109:c161:a679 with SMTP id p16-20020a056a20749000b00109c161a679mr9141445pzd.19.1685977726567;
-        Mon, 05 Jun 2023 08:08:46 -0700 (PDT)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com. [209.85.210.173])
-        by smtp.gmail.com with ESMTPSA id q16-20020a62e110000000b0063d29df1589sm5302851pfh.136.2023.06.05.08.08.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jun 2023 08:08:46 -0700 (PDT)
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6532671ccc7so3740863b3a.2;
-        Mon, 05 Jun 2023 08:08:46 -0700 (PDT)
-X-Received: by 2002:a05:6870:3e4:b0:19e:86e4:55b0 with SMTP id
- h36-20020a05687003e400b0019e86e455b0mr54853oaf.1.1685977705560; Mon, 05 Jun
- 2023 08:08:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1685692810.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1685692810.git.geert+renesas@glider.be>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 5 Jun 2023 17:08:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXrgyWT=RtS6cuUP6sT-Ta9Oa4cU2kHP10ah-U50DOSsg@mail.gmail.com>
-Message-ID: <CAMuHMdXrgyWT=RtS6cuUP6sT-Ta9Oa4cU2kHP10ah-U50DOSsg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] iopoll: Busy loop and timeout improvements + conversions
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229546AbjFEQVZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 12:21:25 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A04394;
+        Mon,  5 Jun 2023 09:21:24 -0700 (PDT)
+Received: from notapiano.myfiosgateway.com (zone.collabora.co.uk [167.235.23.81])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id E07336602242;
+        Mon,  5 Jun 2023 17:21:19 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1685982082;
+        bh=2xM4D3RXODTjflo/pDhE5ajGirQ2J1DJCOKW4dD1ots=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F++k+VTwB0Fu79tr3WdJ3h/zt13mnAkCtnn5Fppc1BzEzL/Eys+buzrlbawcEK1uj
+         sbxLt27KtZDuoJ2aLDZwS+cd4BOb9vf0Jbw1NeoU4w4xJHhl68fiB/qbwrn7jec3ub
+         Y3DN8Br4UJjhA2hgbivcTYT5WqXWxJlFQz4Yq5gPwsvBZ6cbVSgecTCJa1jXg8dPED
+         Wo6fsNwR8eqZM0D0oU9OtZuEbs3ZbbPVN7nBRz5j9qgkMUuRkMgu6y/A2+YYdX3GFq
+         OoyYAg8+xLTkrqwwgV6iCeL3oW071cmoWCeuic6rX4tzqaV6xwoA87je9nmz0uJmP1
+         YsAZFmnZ0riFQ==
+From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Dejin Zheng <zhengdejin5@gmail.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Russell King <linux@armlinux.org.uk>,
-        John Stultz <jstultz@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Tero Kristo <tero.kristo@linux.intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH 0/6] Enable decoder for mt8183
+Date:   Mon,  5 Jun 2023 12:20:24 -0400
+Message-Id: <20230605162030.274395-1-nfraprado@collabora.com>
+X-Mailer: git-send-email 2.40.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 2, 2023 at 10:51 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> When implementing a polling loop, a common review comment is to use one
-> of the read*_poll_timeout*() helpers.  Unfortunately this is not always
-> possible, or might introduce subtle bugs.  This patch series aims to
-> improve these helpers, so they can gain wider use.
->
->   1. The first patch improves busy-looping behavior of both the atomic
->      and non-atomic read*_poll_timeout*() helpers.
->      The issue addressed by this patch was discussed before[1-2], but I
->      am not aware of any patches moving forward.
->
->   2. The second patch fixes timeout handling of the atomic variants.
->      Some of the issues addressed by this patch were mitigated in
->      various places[3-5], and some of these findings may be of interest
->      to the authors of [6-8].
->
-> The first two patches were sent before, and already received some acks
-> and reviews.  I plan to queue these in an immutable and tagged branch
-> after the weekend, for consumption by myself, and by other interested
-> parties.
 
-FTR...
-The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+This series enables the hardware decoder present on mt8183. At first
+glance, the only missing piece is the devicetree node for it, however,
+simply adding it as is would cause an address collision between the
+first register iospace and the clock-controller node, so a rework of the
+dt-binding and driver, as well as addition of a clock, were needed
+first.
 
-  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+Tested that H264 decoding works with the hardware decoder on
+mt8183-kukui-jacuzzi-juniper-sku16, giving a fluster score of 98/135 on
+the JVT-AVC_V1 test suite. And ensured other SoCs (MT8192 and MT8195)
+still work as usual.
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-tags/iopoll-busy-loop-timeout-tag
+Nícolas F. R. A. Prado (5):
+  media: dt-bindings: mediatek,vcodec: Allow single clock for mt8183
+  media: dt-bindings: mediatek,vcodec: Don't require assigned-clocks
+  media: dt-bindings: mediatek,vcodec: Remove VDEC_SYS for mt8183
+  media: mediatek: vcodec: Read HW active status from clock
+  clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
 
-for you to fetch changes up to 7349a69cf3125e92d48e442d9f400ba446fa314f:
+Yunfei Dong (1):
+  arm64: dts: mediatek: mt8183: Add decoder
 
-  iopoll: Do not use timekeeping in read_poll_timeout_atomic()
-(2023-06-05 15:35:27 +0200)
-
-----------------------------------------------------------------
-iopoll: Busy loop and timeout improvements
-
-----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      iopoll: Call cpu_relax() in busy loops
-      iopoll: Do not use timekeeping in read_poll_timeout_atomic()
-
- include/linux/iopoll.h | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../media/mediatek,vcodec-decoder.yaml        | 56 ++++++++++++++----
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 39 ++++++++++++
+ drivers/clk/mediatek/clk-mt8183-vdec.c        |  5 ++
+ .../mediatek/vcodec/mtk_vcodec_dec_drv.c      | 59 +++++++++++++++----
+ .../mediatek/vcodec/mtk_vcodec_dec_hw.c       | 20 +++++--
+ .../mediatek/vcodec/mtk_vcodec_dec_pm.c       | 12 +++-
+ .../platform/mediatek/vcodec/mtk_vcodec_drv.h |  1 +
+ include/dt-bindings/clock/mt8183-clk.h        |  3 +-
+ 8 files changed, 165 insertions(+), 30 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.40.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
