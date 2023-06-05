@@ -2,111 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E93C7EE33
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 16:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B82C7EE24
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 19:08:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234910AbjFEQVk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jun 2023 12:21:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39450 "EHLO
+        id S234841AbjFETIg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jun 2023 15:08:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232988AbjFEQVi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 12:21:38 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 698EC106;
-        Mon,  5 Jun 2023 09:21:37 -0700 (PDT)
-Received: from notapiano.myfiosgateway.com (zone.collabora.co.uk [167.235.23.81])
+        with ESMTP id S231282AbjFETIe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 15:08:34 -0400
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1258A102;
+        Mon,  5 Jun 2023 12:08:28 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: nfraprado)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id E67D26602242;
-        Mon,  5 Jun 2023 17:21:33 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1685982096;
-        bh=0r6cQNK3uGc3pJiztNyfHAD9LI2rH/+twn3IcKzXoIo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V4JpGvCB73IwzBPjm0YatoVY3mRol/XEoRAZ3+D1ASiZxJth7e6ICWfWJeqBWhimK
-         BcLbtD6U02KToCRPB6XzmesJlXIS/Bt+u6XO1cnk9kZk2hWb/eHHFYuKyi5Wv5T55I
-         MSiybdyFVOttuRwEafHjMNlGmffYoW0qo6JWIpPRPJoxAa1XhLwHnQcGQ+3Vi/7Ssn
-         M02O2owhQXpJCltgx4O1yvn8hJ6vzkJjNqVR+5JccMrpLw2v/DHhr3w78kjHFm/pPU
-         2IKG13naY6jadkBvhkwOxpqvKNoUP8NnUZKrkymSyF+rRzOStH1OucJWsyLdIn5bL3
-         Y2Yd5t9Hi0zAw==
-From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, kernel@collabora.com,
-        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4QZjn46Hj8z9sT5;
+        Mon,  5 Jun 2023 21:08:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1685992104;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=08rp19H8fuvYiOt8wL0CXCOqu/pQ3k1ExE2PHzxQJg4=;
+        b=g/HyqF8C5l/L8hZlVZNqFwjALTelM3J+Hla7XLbfCyNKnZuM4jIgsu36tJ6AZdPL7cxfF+
+        2WCSveudu/64YhgOTAd3JYDRFJIZcDM0LcbVP2U1/tzfQRbPQVVW1QUrPUBglDPU/QM353
+        eziEieDeT/ZTBim+wK6txBKlLGaq6UJKZaHSzSWQhf2uLCHKaoZ2svtNV60vns9+al7XAu
+        5I4dqFcWA16zLZoM7khymtivCxsPQDh6CyziX/xQjxG0TApqgGJSLYd+hkyxuxOhO64MYV
+        hKVDKoEk/ysro/u+X+zpUX6q1DvnjkHMxatKCvKL6FqWUbAITkGcy84vNYMTrw==
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Frank Oltmanns <frank@oltmanns.dev>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
         Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH 5/6] clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
-Date:   Mon,  5 Jun 2023 12:20:29 -0400
-Message-Id: <20230605162030.274395-6-nfraprado@collabora.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230605162030.274395-1-nfraprado@collabora.com>
-References: <20230605162030.274395-1-nfraprado@collabora.com>
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH 1/2] clk: sunxi-ng: nkm: consider alternative parent rates when finding rate
+Date:   Mon,  5 Jun 2023 21:07:44 +0200
+Message-Id: <20230605190745.366882-2-frank@oltmanns.dev>
+In-Reply-To: <20230605190745.366882-1-frank@oltmanns.dev>
+References: <20230605190745.366882-1-frank@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4QZjn46Hj8z9sT5
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the CLK_VDEC_ACTIVE clock to the vdec clock driver. This clock is
-enabled by the VPU once it starts decoding.
+In case the CLK_SET_RATE_PARENT flag is set, consider using a different
+parent rate when determining a new rate.
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+To find the best match for the requested rate, perform the following
+steps for each NKM combination:
+ - calculate the optimal parent rate,
+ - find the best parent rate that the parent clock actually supports
+ - use that parent rate to calculate the effective rate.
+
+In case the clk does not support setting the parent rate, use the same
+algorithm as before.
+
+Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
 ---
+ drivers/clk/sunxi-ng/ccu_nkm.c | 40 ++++++++++++++++++++++++++--------
+ 1 file changed, 31 insertions(+), 9 deletions(-)
 
- drivers/clk/mediatek/clk-mt8183-vdec.c | 5 +++++
- include/dt-bindings/clock/mt8183-clk.h | 3 ++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8183-vdec.c b/drivers/clk/mediatek/clk-mt8183-vdec.c
-index 513b7956cbea..5830934a6d25 100644
---- a/drivers/clk/mediatek/clk-mt8183-vdec.c
-+++ b/drivers/clk/mediatek/clk-mt8183-vdec.c
-@@ -27,6 +27,10 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
- 	GATE_MTK(_id, _name, _parent, &vdec0_cg_regs, _shift,	\
- 		&mtk_clk_gate_ops_setclr_inv)
- 
-+#define GATE_VDEC0(_id, _name, _parent, _shift)		\
-+	GATE_MTK(_id, _name, _parent, &vdec0_cg_regs, _shift,	\
-+		&mtk_clk_gate_ops_setclr)
-+
- #define GATE_VDEC1_I(_id, _name, _parent, _shift)		\
- 	GATE_MTK(_id, _name, _parent, &vdec1_cg_regs, _shift,	\
- 		&mtk_clk_gate_ops_setclr_inv)
-@@ -34,6 +38,7 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
- static const struct mtk_gate vdec_clks[] = {
- 	/* VDEC0 */
- 	GATE_VDEC0_I(CLK_VDEC_VDEC, "vdec_vdec", "mm_sel", 0),
-+	GATE_VDEC0(CLK_VDEC_ACTIVE, "vdec_active", "mm_sel", 4),
- 	/* VDEC1 */
- 	GATE_VDEC1_I(CLK_VDEC_LARB1, "vdec_larb1", "mm_sel", 0),
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index a0978a50edae..c71e237226f2 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -16,10 +16,10 @@ struct _ccu_nkm {
+ 	unsigned long	m, min_m, max_m;
  };
-diff --git a/include/dt-bindings/clock/mt8183-clk.h b/include/dt-bindings/clock/mt8183-clk.h
-index a7b470b0ec8a..32dd7d91dbe2 100644
---- a/include/dt-bindings/clock/mt8183-clk.h
-+++ b/include/dt-bindings/clock/mt8183-clk.h
-@@ -357,7 +357,8 @@
- /* VDEC_GCON */
- #define CLK_VDEC_VDEC			0
- #define CLK_VDEC_LARB1			1
--#define CLK_VDEC_NR_CLK			2
-+#define CLK_VDEC_ACTIVE			2
-+#define CLK_VDEC_NR_CLK			3
  
- /* VENC_GCON */
- #define CLK_VENC_LARB			0
+-static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+-				       struct _ccu_nkm *nkm)
++static unsigned long ccu_nkm_find_best(unsigned long *parent, unsigned long rate,
++				       struct _ccu_nkm *nkm, struct clk_hw *parent_hw)
+ {
+-	unsigned long best_rate = 0;
++	unsigned long best_rate = 0, best_parent_rate = 0, tmp_parent = *parent;
+ 	unsigned long best_n = 0, best_k = 0, best_m = 0;
+ 	unsigned long _n, _k, _m;
+ 
+@@ -28,12 +28,29 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+ 			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+ 				unsigned long tmp_rate;
+ 
+-				tmp_rate = parent * _n * _k / _m;
++				if (parent_hw) {
++					// We must round up the desired parent rate, because the
++					// rounding down happens when calculating tmp_rate. If we
++					// round down also here, we'd round down twice.
++					unsigned long optimal_parent =
++							(rate * _m + (_n * _k - 1)) / _n / _k;
++
++					tmp_parent = clk_hw_round_rate(parent_hw, optimal_parent);
++
++					// if the optimal parent rate is below the minimum rate of
++					// the parent ignore this combination
++					if (tmp_parent > optimal_parent)
++						continue;
++					tmp_rate = tmp_parent * _n * _k / _m;
++				} else {
++					tmp_rate = tmp_parent * _n * _k / _m;
++					if (tmp_rate > rate)
++						continue;
++				}
+ 
+-				if (tmp_rate > rate)
+-					continue;
+ 				if ((rate - tmp_rate) < (rate - best_rate)) {
+ 					best_rate = tmp_rate;
++					best_parent_rate = tmp_parent;
+ 					best_n = _n;
+ 					best_k = _k;
+ 					best_m = _m;
+@@ -46,6 +63,8 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+ 	nkm->k = best_k;
+ 	nkm->m = best_m;
+ 
++	*parent = best_parent_rate;
++
+ 	return best_rate;
+ }
+ 
+@@ -106,7 +125,7 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+-					struct clk_hw *hw,
++					struct clk_hw *parent_hw,
+ 					unsigned long *parent_rate,
+ 					unsigned long rate,
+ 					void *data)
+@@ -124,7 +143,10 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nkm->fixed_post_div;
+ 
+-	rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm);
++	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
++		rate = ccu_nkm_find_best(parent_rate, rate, &_nkm, NULL);
++	else
++		rate = ccu_nkm_find_best(parent_rate, rate, &_nkm, parent_hw);
+ 
+ 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate /= nkm->fixed_post_div;
+@@ -159,7 +181,7 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	_nkm.min_m = 1;
+ 	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+ 
+-	ccu_nkm_find_best(parent_rate, rate, &_nkm);
++	ccu_nkm_find_best(&parent_rate, rate, &_nkm, NULL);
+ 
+ 	spin_lock_irqsave(nkm->common.lock, flags);
+ 
 -- 
 2.40.1
 
