@@ -2,125 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABE5C7EE23
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 13:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB92CC77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 13:38:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234194AbjFENes (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jun 2023 09:34:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45004 "EHLO
+        id S231523AbjFENiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jun 2023 09:38:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234135AbjFENeh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 09:34:37 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFEFA102
-        for <linux-clk@vger.kernel.org>; Mon,  5 Jun 2023 06:34:32 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-978345f3798so2538866b.3
-        for <linux-clk@vger.kernel.org>; Mon, 05 Jun 2023 06:34:32 -0700 (PDT)
+        with ESMTP id S230189AbjFENiS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 09:38:18 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53E11A7
+        for <linux-clk@vger.kernel.org>; Mon,  5 Jun 2023 06:38:17 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-977d7bdde43so235233666b.0
+        for <linux-clk@vger.kernel.org>; Mon, 05 Jun 2023 06:38:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1685972071; x=1688564071;
+        d=linaro.org; s=google; t=1685972296; x=1688564296;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5rq3Widh6hOEiY5YdsfneGamzIlwkE0sJ5k3vngcFSc=;
-        b=H1IHNMyQRtp1DX11ax4fGQWgXmX7bBwuCedLwUTO/0JImjrcWQ7PGrGucaNUYW9QWq
-         OUft8vP7ux3whhgItsECM02LirXUQBIyB6Ybw9GTQC2z3G1v9H7yKm7biLhmZQAmiF84
-         fxrMtDdPeYmoM9gROxzDXjylvVQydkQmK7fvG5bBtrNELPq2EFtAbWquJc67We1IWHvV
-         HBU8TNQWja6X0MwKURm6oaVdSzqmJN6qbm5yOpZarC2wmli/OIP6zZ1esJivH5vJaiA4
-         ODag4hmmTEijO9vsz5QmSXv3wxbgmkd1Lx74f0Zmt6RoBg/OR/6gQJp/fxXMXcaHcn+1
-         nWLg==
+        bh=YLyoEValMocGeR7hgOgzE/kheQnkrpszWV0a0C9TVl4=;
+        b=fkvn2QYrPsJfos5zBtbo/hdXMcMJOBJROMI85p4dwCpA++lAv4Uz8+tbjB6Hugq67x
+         RFGVo5QcaeR85lG7f76G5FxJ+NynJxG/QHomah2/n+pD8nibSMVWdFNmtp8HonJ76i3h
+         T4cXpYhYCcAFQWP8fWfPUZKQK2okCLiyizAutElK/0AhdEyl9FTH0P99aBEdq+cZPbrB
+         ekJA2v5jy//BUJDjyi6WwUEDytl+vZfymqwyXe7XGgxD0Cu3vx6OyC0nB7BBZg3+WvVK
+         8jfkSIBxWm+hEvO3XHhmLLUz2cZtrpcxz6UQ/D1DHYAmXB2I79xzsFQpemovzTZp8gTc
+         GBJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685972071; x=1688564071;
+        d=1e100.net; s=20221208; t=1685972296; x=1688564296;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5rq3Widh6hOEiY5YdsfneGamzIlwkE0sJ5k3vngcFSc=;
-        b=dxZhjW83btg1jI9i8H7Eul4y5PS+W9cVq2NyCdRbLbWMW5PHQOMrgLBlYq5WGcnfS7
-         LdvN1g423i2gT0t505cGAMfBX2XKXSmLFsdlDv8lKRpUczwgK7T+Ja0aGExkEFtXHq4L
-         nfNYSDZDrWDWvdLg8ZIC844a9w+imHzdZCHaIDBDV2bW4I1Da6eXiDJrk/ZOY/UbOVXK
-         Z6BA2L1xhiAt9RGx3MPfE2nhC+Sl2/NarQKoLcZ2TXzpwfRBWAzxcWC/fNqgj1S6Lmg2
-         FXlr89lawap6I1GwEISdYdgd44C1bpZCwtu0aus6ORtdwwZ1/paf6NgP1wDOUFroVFP8
-         bysQ==
-X-Gm-Message-State: AC+VfDx8Z28CBbxxUWQDO/v8NQSKVe90E4Qsk8J+3rIHoczJXa81sL/a
-        w4c/FCvPcIBzbAYPZrGFCPSWKA==
-X-Google-Smtp-Source: ACHHUZ7s745giAKDDO4doxV94noEtK/FRaEwLZP9MaulFyeyXHe/0hxRLNnut3NFVjxtd4jewVlWpA==
-X-Received: by 2002:a17:907:848:b0:974:61dc:107c with SMTP id ww8-20020a170907084800b0097461dc107cmr6376623ejb.44.1685972071027;
-        Mon, 05 Jun 2023 06:34:31 -0700 (PDT)
+        bh=YLyoEValMocGeR7hgOgzE/kheQnkrpszWV0a0C9TVl4=;
+        b=lzvCto9YAY3Z2zrqyKI9rsQDdwbEsbzzZxJXhI5TagHuLFQ+r+ReDemesDuqem8j24
+         xuxblLaTyBz8MTS/LS4Rk5dRUYGifHgPFumcpTxqzB3RN7Dy6JaTqWcbFIZDKxoRI+2f
+         u9lhu43wSZR5Y2QPR7lgGtLvOulXnGvQumJuI8GQ4r+euc/6+sHLWoC9Cazy2xxhsuYL
+         LPyu7a5TF5XRmQBFsQcRv2nTGAAUCWq96jhfT0/vGq59fGgiDokb7NnsnJ08Pz7vP/Nu
+         /aiApvPN5zIlBHlntBK+uNTyIedQnE7QKMo+Yik41D83MpdpwxLux6gwfUjHGkH6wFc1
+         9hzg==
+X-Gm-Message-State: AC+VfDzxukr1fyhmEByyUHUDEPbKfaif2nj+SzTpaDE6rTZPhxMguE9i
+        VmB29PAzDN9kCGel2BmNmAV6qQ==
+X-Google-Smtp-Source: ACHHUZ7XI9buLjboedG2CXZeO60+HVdfffsOtvJfrjVcif+HXPZhSTUxG2pyGFmoNV5clXR1o54RsQ==
+X-Received: by 2002:a17:907:7b88:b0:973:8edc:5a57 with SMTP id ne8-20020a1709077b8800b009738edc5a57mr6594638ejc.4.1685972295769;
+        Mon, 05 Jun 2023 06:38:15 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id g19-20020a170906869300b0097461a7ebdcsm4251734ejx.82.2023.06.05.06.34.27
+        by smtp.gmail.com with ESMTPSA id y10-20020a170906914a00b00965ac8f8a3dsm4364101ejw.173.2023.06.05.06.38.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jun 2023 06:34:30 -0700 (PDT)
-Message-ID: <9b8a4221-beac-4394-8d71-a9060d4457f1@linaro.org>
-Date:   Mon, 5 Jun 2023 15:34:26 +0200
+        Mon, 05 Jun 2023 06:38:15 -0700 (PDT)
+Message-ID: <5d1f08f1-792b-255b-89f0-dd5fa2f0baa4@linaro.org>
+Date:   Mon, 5 Jun 2023 15:38:13 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.2
-Subject: Re: [PATCH 21/21] net: macb: add support for gmac to sam9x7
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: fixed-clock: Add nvmem support
 Content-Language: en-US
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Varshini Rajendran <varshini.rajendran@microchip.com>,
-        tglx@linutronix.de, maz@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, gregkh@linuxfoundation.org,
-        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
-        sre@kernel.org, broonie@kernel.org, arnd@arndb.de,
-        gregory.clement@bootlin.com, sudeep.holla@arm.com,
-        balamanikandan.gunasundar@microchip.com, mihai.sain@microchip.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
-        durai.manickamkr@microchip.com, manikandan.m@microchip.com,
-        dharma.b@microchip.com, nayabbasha.sayed@microchip.com,
-        balakrishnan.s@microchip.com
-References: <20230603200243.243878-1-varshini.rajendran@microchip.com>
- <20230603200243.243878-22-varshini.rajendran@microchip.com>
- <be3716e0-383f-e79a-b441-c606c0e049df@linaro.org>
- <3e262485-bf5f-1a98-e399-e02add3eaa89@microchip.com>
+To:     Mike Looijmans <mike.looijmans@topic.nl>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.1d0217a8-661f-4359-b77b-02222c761b01@emailsignatures365.codetwo.com>
+ <20230605133410.15076-1-mike.looijmans@topic.nl>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <3e262485-bf5f-1a98-e399-e02add3eaa89@microchip.com>
+In-Reply-To: <20230605133410.15076-1-mike.looijmans@topic.nl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/06/2023 14:07, Nicolas Ferre wrote:
-> On 05/06/2023 at 08:42, Krzysztof Kozlowski wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> On 03/06/2023 22:02, Varshini Rajendran wrote:
->>> From: Nicolas Ferre <nicolas.ferre@microchip.com>
->>>
->>> Add support for GMAC in sam9x7 SoC family
->>>
->>> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
->>> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->>> ---
->>>   drivers/net/ethernet/cadence/macb_main.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
->>> index 29a1199dad14..609c8e9305ba 100644
->>> --- a/drivers/net/ethernet/cadence/macb_main.c
->>> +++ b/drivers/net/ethernet/cadence/macb_main.c
->>> @@ -4913,6 +4913,7 @@ static const struct of_device_id macb_dt_ids[] = {
->>>        { .compatible = "microchip,mpfs-macb", .data = &mpfs_config },
->>>        { .compatible = "microchip,sama7g5-gem", .data = &sama7g5_gem_config },
->>>        { .compatible = "microchip,sama7g5-emac", .data = &sama7g5_emac_config },
->>> +     { .compatible = "microchip,sam9x7-gem", .data = &sama7g5_gem_config },
->>
->> These are compatible, aren't they? Why do you need new entry?
+On 05/06/2023 15:34, Mike Looijmans wrote:
+> Add bindings for a fixed-rate clock that retrieves its rate from an
+> NVMEM provider. This allows to store clock settings in EEPROM or EFUSE
+> or similar device.
 > 
-> The hardware itself is different, even if the new features are not 
-> supported yet in the macb driver.
-> The macb driver will certainly evolve in order to add these features so 
-> we decided to match a new compatible string all the way to the driver.
+> Component shortages lead to boards being shipped with different clock
+> crystals, based on what was available at the time. The clock frequency
+> was written to EEPROM at production time. Systems can adapt to a wide
+> range of input frequencies using the clock framework, but this required
+> us to patch the devicetree at runtime or use some custom driver. This
+> provides a more generic solution.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> 
+> ---
+> 
+> Changes in v3:
+> Modify fixed-clock instead of introducing nvmem-clock
+> 
+> Changes in v2:
+> Changed "fixed-clock" into "nvmem-clock" in dts example
+> Add minItems:1 to nvmem-cell-names
+> 
+>  .../bindings/clock/fixed-clock.yaml           | 25 ++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> index b0a4fb8256e2..23e4df96d3b0 100644
+> --- a/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> @@ -12,7 +12,9 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    const: fixed-clock
+> +    enum:
+> +      - fixed-clock
+> +      - fixed-clock-nvmem
 
-You claim to be fully compatible with sama7g5-gem, so adding new
-features does not warrant not-reusing old match entry now.
+Do you even need new compatible? Isn't this the same clock from the
+hardware point of view?
+
+>  
+>    "#clock-cells":
+>      const: 0
+> @@ -33,6 +35,27 @@ required:
+>  
+>  additionalProperties: false
+>  
+
+Put it under allOf. Entire block should be before additionalProperties
+(just like in example-schema).
+
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: fixed-clock-nvmem
+> +
+> +then:
+> +  properties:
+> +    nvmem-cells:
+> +      maxItems: 2
+
+Anyway, I don't think you tested it. Provide a DTS user of this. I don't
+think it works and such user would point to mistakes.
+
+Properties should be defined in top-level properties:, not in
+allOf:if:then. In allOf:if:then you only narrow them.
+
+
+> +      description:
+> +        Reads clock-frequency and/or clock-accuracy from an NVMEM provider in
+> +        binary native integer format. The size of the NVMEM cell can be 1, 2, 4
+> +        or 8 bytes. If the contents of the nvmem are all zeroes or all 0xff, the
+> +        value reverts to the one given in the property.
+> +
 
 Best regards,
 Krzysztof
