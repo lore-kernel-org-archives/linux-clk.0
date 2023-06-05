@@ -2,129 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B974C77B73
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 06:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB01C77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 06:35:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229714AbjFEGXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jun 2023 02:23:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46192 "EHLO
+        id S229837AbjFEGfQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jun 2023 02:35:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbjFEGXR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 02:23:17 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BBA4B3;
-        Sun,  4 Jun 2023 23:23:15 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3555vJGq030898;
-        Mon, 5 Jun 2023 06:23:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=RCBSXqnqd8SXWD2jLzPWHFxvq4Xzphwc5Yh9xwjmR7Y=;
- b=AUHzGkvz938gmjinpj0mExMp3t7PHkF2L0rRFidAcJ808MqMFrCJvC1ITDF4C4tlJY5W
- qR4QBlOTikXpl2A/vdFwdqKk1HWISks+/tniPKBYfKPNFrZhsSe2dsr8pmVKmd+5MlQl
- EdG60HsYHsohi6yOmzr7aDIuUvDWecalC88dL8umGCB8SL3Y7oyZVZBSfhpBOcuJ9U0z
- QfrxREdTdlYv26PNXHYTMCseeLUmMQo3oha2ls17urBzBHBBMqP0n/GXIOz281+R6yTM
- 6Mo33vI59ULs8XD8OhTIILSAT9ypqYqeWSu3gpm4h6f3xBrdGSprRWkENUjwKfYvyDZD cw== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3qyw46aqvx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 05 Jun 2023 06:23:10 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3556N9EN019973
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 5 Jun 2023 06:23:09 GMT
-Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Sun, 4 Jun 2023
- 23:23:00 -0700
-Message-ID: <eda6ad87-5ae0-b62a-e877-541fcfe59718@quicinc.com>
-Date:   Mon, 5 Jun 2023 11:52:57 +0530
+        with ESMTP id S229820AbjFEGfP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 02:35:15 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68FA6DF
+        for <linux-clk@vger.kernel.org>; Sun,  4 Jun 2023 23:35:13 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5147dce372eso6574742a12.0
+        for <linux-clk@vger.kernel.org>; Sun, 04 Jun 2023 23:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1685946912; x=1688538912;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HAkCrvHOWXDqwj1iMGZRedd16rhqvqKQgu07G0b3u+w=;
+        b=e7E3JztSPDwCFOVrzxyEbVKg2EBeBOYgZaTU4BRpwJs1h7uHWXDo+l4Zk5OwWH3gxO
+         EqYoWrI2nluRnjKjwdlqLEnBcCpOkMVsq/NL07i8ATGoappT2Y7Iu+bHCO+sxDx/d6PF
+         m1yW2VgipEcnRLFaW68NCN+FFcFIJPbw/eYHR3Y07vtSoQ9V57ZsG/OrkuBfp0zcE7uO
+         mUMJdZb3Ktm56WuGjYfV4znaUsZVjWccpeON3w72rzjU7HO+wQmcEKdi3vZPb9spMHEO
+         MAxQO8sclY35BjwjlYS1iRkx51Kv62cQ0tFvY3zdkd4n9Jlo0VDzxWWtcb/m129XFaB6
+         19jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685946912; x=1688538912;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HAkCrvHOWXDqwj1iMGZRedd16rhqvqKQgu07G0b3u+w=;
+        b=Wc7x0ULvgeNAjzAm23XNj5+YgVIug7IDwEK8wpUz7a7dBiIXvjVyIw3/ARG2eGN5q1
+         raHQ/dSQglz5wy2vnS8FLsy0UwLlL4cCcJ9pGDGAMNegZAN4NGiLq4fd4+vr/yQqWmHU
+         wnxicLe5SS3uHUFwC3LuxTQF4bNQBbTGeD4BZbme/X03Znvxb24YLd+H+Olu4DPujy58
+         Zvduu1iJA6bLKccikEM/qgAUkFEArebsS+p5u246QhPZ1p1nf7AdVUFiBMyiS5KnoBKB
+         DK5z1ZhLYLa/p6L73m3apGAaSH3gSV2xoHjcDoo7lxB00aPmcXwFkf9m41khsuejOd3O
+         iHXg==
+X-Gm-Message-State: AC+VfDyHPskUwYkO38fHxTGLzk3nKub2I7yzL2uUHiJQOq5cAwlyyAcV
+        nIinMXK+fuzKWFMfZTcauKSTHg==
+X-Google-Smtp-Source: ACHHUZ4BgooRJqWw2thRF8QqkzdRcCJ+hGa1VmZ7YEgpaG6Ikj580m9cbKbqSO9oirFRyquUlSnLew==
+X-Received: by 2002:aa7:cd10:0:b0:513:53f7:8ca2 with SMTP id b16-20020aa7cd10000000b0051353f78ca2mr6734317edw.9.1685946911857;
+        Sun, 04 Jun 2023 23:35:11 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id v1-20020aa7dbc1000000b005163a0f84a1sm3636951edt.48.2023.06.04.23.35.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 04 Jun 2023 23:35:11 -0700 (PDT)
+Message-ID: <c72f45ec-c185-8676-b31c-ec48cd46278c@linaro.org>
+Date:   Mon, 5 Jun 2023 08:35:07 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH V2 04/13] dt-bindings: clock: qcom: gcc-ipq5018: remove q6
- clocks macros
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 01/21] dt-bindings: microchip: atmel,at91rm9200-tcb: add
+ sam9x60 compatible
 Content-Language: en-US
-To:     Robert Marko <robimarko@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
-        <kvalo@kernel.org>, <loic.poulain@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_devipriy@quicinc.com>
-References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
- <20230521222852.5740-5-quic_mmanikan@quicinc.com>
- <514a9e26-aeb9-ce05-1055-337646098ec1@linaro.org>
- <d64b9718-0c85-6e5d-7c5b-6ea617e36a32@gmail.com>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <d64b9718-0c85-6e5d-7c5b-6ea617e36a32@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: WdW1Ji5aEIMWml-lCuoVBdN2GVj67_qN
-X-Proofpoint-GUID: WdW1Ji5aEIMWml-lCuoVBdN2GVj67_qN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-03_08,2023-06-02_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 phishscore=0 priorityscore=1501
- lowpriorityscore=0 spamscore=0 bulkscore=0 malwarescore=0 clxscore=1015
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2306050056
+To:     Varshini Rajendran <varshini.rajendran@microchip.com>,
+        tglx@linutronix.de, maz@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@microchip.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        gregkh@linuxfoundation.org, linux@armlinux.org.uk,
+        mturquette@baylibre.com, sboyd@kernel.org, sre@kernel.org,
+        broonie@kernel.org, arnd@arndb.de, gregory.clement@bootlin.com,
+        sudeep.holla@arm.com, balamanikandan.gunasundar@microchip.com,
+        mihai.sain@microchip.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
+        durai.manickamkr@microchip.com, manikandan.m@microchip.com,
+        dharma.b@microchip.com, nayabbasha.sayed@microchip.com,
+        balakrishnan.s@microchip.com
+References: <20230603200243.243878-1-varshini.rajendran@microchip.com>
+ <20230603200243.243878-2-varshini.rajendran@microchip.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230603200243.243878-2-varshini.rajendran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 6/2/2023 12:25 AM, Robert Marko wrote:
-> On 30. 05. 2023. 13:01, Krzysztof Kozlowski wrote:
+On 03/06/2023 22:02, Varshini Rajendran wrote:
+> Add sam9x60 compatible string support in the schema file
 > 
->> On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
->>> Since Q6 firmware takes care of bring up clocks in multipd
->>> model, remove bring up clock macros.
->>>
->>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>> ---
->>>   include/dt-bindings/clock/qcom,gcc-ipq5018.h | 21 --------------------
->>>   1 file changed, 21 deletions(-)
->>>
->> I am fine with this if it still compiles... I have doubts about it,
->> unless of some depedencies (you mentioned three !)... but then it gets
->> complicated.
->>
->> Keep patches doing same logical change in same patchset. This dependency
->> dance in recent submissions is making things tricky and prolonging your
->> upstreaming process significantly.
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+>  .../devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml  | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Considering that the basic IPQ5018 patchset that this series depends on
-> has not yet been merged, why not just drop these there instead?
-> 
-> Regards,
-> Robert
-> 
-Yeah i agree. I will drop this patch in this series.
+> diff --git a/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml b/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml
+> index a46411149571..c70c77a5e8e5 100644
+> --- a/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml
+> +++ b/Documentation/devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml
+> @@ -20,6 +20,7 @@ properties:
+>            - atmel,at91rm9200-tcb
+>            - atmel,at91sam9x5-tcb
+>            - atmel,sama5d2-tcb
+> +          - microchip,sam9x60-tcb
 
-Thanks & Regards,
-Manikanta.
+No wildcards.
 
->>
->> Best regards,
->> Krzysztof
->>
->>
->>
+Best regards,
+Krzysztof
+
