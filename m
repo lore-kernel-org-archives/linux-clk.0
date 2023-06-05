@@ -2,166 +2,374 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8750FC7EE23
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 10:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D9FC77B73
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Jun 2023 10:07:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229604AbjFEKBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Jun 2023 06:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36926 "EHLO
+        id S230403AbjFEKHL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Jun 2023 06:07:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjFEKBt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 06:01:49 -0400
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2048.outbound.protection.outlook.com [40.107.20.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 967EED3;
-        Mon,  5 Jun 2023 03:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pbcqn1K9SkzXE4jgb6WG17EyM/TsnH6TD1w3HWfUg5o=;
- b=D+7J+Sx7hhYj3mZv4nEaMQIZaR5Z7MZElQWb6ibp1pkyl2lZRZE8gqwVAOrpmqHm3bxIeplEmE8jOepiKySQ6aJnmiNiNAHYusPScyldquDtXxQXz8Owbt/1yAWqrN4pDv2xRwUbdtsLDbzVodYmWUIxZ0MHmyGNW9z23EtRyFlTWFkEaEzlX+zt1GUtsPp3J6+l5CGWB3qkb9ST2QXYfVUevSd+h2U22w2dYi7IPODC54usWw4oeJY7eRQNUW5KkxDRZWDcny52xxZHwqePr6ckPYzP3hgMSwXQI+ndt8x+dNj5Ffp52piF8XGkMl62JqP8vzJ7XwLuq3aQvGXFXQ==
-Received: from ZR0P278CA0184.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:44::19)
- by DBBPR04MB7660.eurprd04.prod.outlook.com (2603:10a6:10:20f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Mon, 5 Jun
- 2023 10:01:41 +0000
-Received: from VE1EUR01FT023.eop-EUR01.prod.protection.outlook.com
- (2603:10a6:910:44:cafe::50) by ZR0P278CA0184.outlook.office365.com
- (2603:10a6:910:44::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33 via Frontend
- Transport; Mon, 5 Jun 2023 10:01:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 13.93.42.39)
- smtp.mailfrom=topicproducts.com; dkim=fail (signature did not verify)
- header.d=topic.nl;dmarc=none action=none header.from=topic.nl;
-Received-SPF: Pass (protection.outlook.com: domain of topicproducts.com
- designates 13.93.42.39 as permitted sender) receiver=protection.outlook.com;
- client-ip=13.93.42.39; helo=westeu12-emailsignatures-cloud.codetwo.com; pr=C
-Received: from westeu12-emailsignatures-cloud.codetwo.com (13.93.42.39) by
- VE1EUR01FT023.mail.protection.outlook.com (10.152.2.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6477.18 via Frontend Transport; Mon, 5 Jun 2023 10:01:40 +0000
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (104.47.11.49) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Mon, 05 Jun 2023 10:01:39 +0000
+        with ESMTP id S229604AbjFEKHK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Jun 2023 06:07:10 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52131DF;
+        Mon,  5 Jun 2023 03:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1685959629; x=1717495629;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=+mRyqVSwIxawmUyerq3HAIPe6kNjauPExnc9wx+YFFs=;
+  b=CGpPha6OkWDdZvts4QTBJkGs4Hswt7Tp2TuqHp42dLB/5Skz5I9KinCC
+   ht4dHdJAMYZzH3QTkjkIUg7l16agTQPv21uUgcGifeNkNfMTJoBJ81whB
+   4AzvHM2MYCFA2I7Y/dFD6/UdfRBkfHxxBSAQ5Ec1Py7OQmEJKZsku6N3l
+   RVi9rug+4UV+fZ8AICW6h+HeK7pHJsjzmUgAy22watQ0V2CIAjs7LuTUi
+   yj0v7zVV7zbgi8mlTTd4QE2vyQqtrPeKfmsAIhSfRkajN56x23q+Y5hOf
+   wUlqM8+Jp87bg9zIWwFpMSWZYIr3xDtCqDXKSpRuL5V7IWvZQOpLqnLqm
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10731"; a="336686640"
+X-IronPort-AV: E=Sophos;i="6.00,217,1681196400"; 
+   d="scan'208";a="336686640"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2023 03:07:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10731"; a="882850347"
+X-IronPort-AV: E=Sophos;i="6.00,217,1681196400"; 
+   d="scan'208";a="882850347"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orsmga005.jf.intel.com with ESMTP; 05 Jun 2023 03:07:06 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Mon, 5 Jun 2023 03:07:04 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23 via Frontend Transport; Mon, 5 Jun 2023 03:07:04 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.23; Mon, 5 Jun 2023 03:07:03 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TrwTUfLGJNEQKzvTSv+LAbo5BDv/eHsbuyv6nKVX64SpZ9a6fis1Y9/HoNeol/E7Thognx8PVQ/QlG6taIDCzF8XH1CdMzBMDHdIEDG2MyzhfEMAwm6bVZIiRSsivK4qSRpNAPXnOQz7Sxd5EboDlP+FBvA/DNRzIRLr95+QDuyxPEjttZ01SO6ITZZYpdaMfFQM8dSrrvqfJD+Gpv0iJQ9gtiX35LgDXSoCuodoxYcHZpVhlGCThUVB45JdtmUFdOAsp+K0se0hNCz9Lfj0FAvTnVHpK5w1/zLnhpHp6tVQBvgpRzEfEOuZiDmw2oRxpPvIVPSt4uPRRb4cREMbaw==
+ b=lzwO8sGfsGM8fB20EZDr7fPfiKv7lr/OdRj8x01kGULhKKpOjHdpvqunFJidwUh0/GfDnS1uJEJA0Fek3+G0XIY+yxO+18Cwcjj0N6kh5EgzUiTnowjLWXBz8e2CnHCzqUYV/DYug14N8QUuYqK+ncjxp00xKxVeu/ylQZvfnaGFrRLiL5JotB2zXtRt3lnlrcztg++G6jlI/StWqAkdesHf09erlTiMmJYtGt/EmFyydL411m4EroulqzyvQKDxx7Rnfs3icW3XgAYPf8JhCa+Hw8frBeM9V28vkEkzRWWmZaw05qXTRAClIECpm/UGHzAB7nAr7Y6rVvAmHJvaxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V9u43TFUx+rCyt4zwj8CGK4Hio2R9CL3d6dzWzFRoK4=;
- b=LXtmTg+vhJsYwdi2WQMMxBwzgMrFyKGq+D4IcJMsPQJR9JSLCyi8DUkRt5jU9BMrsFCjyqc3YyHhtnvu0WLRhv+8rf8EdE+AbIIA0q4E6pfkp8QkWSXYdTrlXAHJARukeeqWZP41wCXZy24AlAm9LqIuPOUha9z7td1ebZcLTyJCLZyQKh+24wOW9Xkvivw/ibqo4WSSmh+oo7EaQTwsKEOmVq7pJ8eLvIgjVqMp2mWNFq9mCy0O148F0Dd54PuHdM+ZA1dBHpQEHaBZbn5zxtYLyLgxAfsXZlbnkoK5dn1fkfahmAyjm6Pt/MynhhMfn/855CaEMTrzKCtGDVqSCQ==
+ bh=LJN3D+2r6RqlpR/WTz0+Vs3bAK+Uar7RdBioWmh+U34=;
+ b=VV1dWR3aReW5tK1jG0ncvJn13JXAGX+kk+36t+E2ZlgrlE787608fxudpxzf41L/y4rg8GVEUWRdzcdos68nYOe5xOK1+FFyAjaak7CVHAaF6hrmQnBbjavNEsXV9RpW39akoXAhVCSnNnAC+nmxUt8D8yLwSBU/d6Q8YgVx2pd23/5kmEZLPJZuCUVqu/VL0UqFm1IZ9cfG2l4Fqf9Yy/4NOp4dVuAPcThY5mqbc7uTxj4RI7dj7VyzHlVBUo1rkVdX3A9CTB1CxlkOcvtLhuR8cHaw++xyv0WMwOoybxb+mq4pRgW18o9A9M8Wn2K+yA+Cm9C7E5IUqf32tYAfvw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=topicproducts.com; dmarc=pass action=none header.from=topic.nl;
- dkim=pass header.d=topic.nl; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V9u43TFUx+rCyt4zwj8CGK4Hio2R9CL3d6dzWzFRoK4=;
- b=pbNUGbXbFxwEyKe2CNgP9G2iPebeFZMYD4CtGpox8cN4HHshr40l2hfO5jdpwGKJv9DE3jY7a+rsn8DWQRTveBdBA18FsX30YojaFl5ON5HMGXyfz7+WGxVNj5SYIgFmbscktWNMML3xnFMbLAYJeyoce/mt8LYfyMVLA8856DBmo2xjmJ+BYh+N/oMxSLcISoT37sq2P32pkkxvrozoEGuiyMu/fl0fqVoWRXMHlBQDRwnT0O94hxZsegMQBe93UZYW2XGfKu8STJOlXleE2SsfxyvMvpAJmFfQ4zZSNMCWuCY1jwqJWFuBxLRpA8q9MlH6mgpgNdhY8rJxLXghXw==
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=topic.nl;
-Received: from DB8PR04MB6523.eurprd04.prod.outlook.com (2603:10a6:10:10f::26)
- by AS1PR04MB9683.eurprd04.prod.outlook.com (2603:10a6:20b:473::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Mon, 5 Jun
- 2023 10:01:36 +0000
-Received: from DB8PR04MB6523.eurprd04.prod.outlook.com
- ([fe80::4cd1:3e90:54e5:9696]) by DB8PR04MB6523.eurprd04.prod.outlook.com
- ([fe80::4cd1:3e90:54e5:9696%5]) with mapi id 15.20.6455.030; Mon, 5 Jun 2023
- 10:01:36 +0000
-Message-ID: <ae4e2041-9fd7-30e7-8c0a-22a423c5871e@topic.nl>
-Date:   Mon, 5 Jun 2023 12:01:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From:   Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add nvmem-clock
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ PH7PR11MB7480.namprd11.prod.outlook.com (2603:10b6:510:268::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6455.31; Mon, 5 Jun 2023 10:07:01 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::24bd:974b:5c01:83d6]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::24bd:974b:5c01:83d6%3]) with mapi id 15.20.6455.030; Mon, 5 Jun 2023
+ 10:07:01 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jiri Pirko <jiri@resnulli.us>
+CC:     Vadim Fedorenko <vadfed@meta.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [RFC PATCH v7 0/8] Create common DPLL configuration API
+Thread-Topic: [RFC PATCH v7 0/8] Create common DPLL configuration API
+Thread-Index: AQHZeWdMwpT4Id4KhEupVVmmO03v069eXxSAgA4cjJCAAA5CAIAPrY3A
+Date:   Mon, 5 Jun 2023 10:07:01 +0000
+Message-ID: <DM6PR11MB4657605F659D6E2B9B2C1A219B4DA@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230428002009.2948020-1-vadfed@meta.com>
+ <ZGSp/XRLExRqOKQs@nanopsycho>
+ <DM6PR11MB46572080791FCA02107289549B479@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZHCMYJGMYS5a2+Bf@nanopsycho>
+In-Reply-To: <ZHCMYJGMYS5a2+Bf@nanopsycho>
+Accept-Language: pl-PL, en-US
 Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-CC:     Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.2167d5ad-7e99-4eb9-a313-030fc7a7d546@emailsignatures365.codetwo.com>
- <20230526143807.10164-1-mike.looijmans@topic.nl>
- <c6d886d9-8f74-7af3-5478-030f5d6e4b1c@linaro.org>
-Organization: Topic
-In-Reply-To: <c6d886d9-8f74-7af3-5478-030f5d6e4b1c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|PH7PR11MB7480:EE_
+x-ms-office365-filtering-correlation-id: f1ad7e2c-9f6c-4ba9-a3dc-08db65ac9b0b
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: GNoRvTrCkiZzSx7aoo6bwFQq9BUM5tCAYuRgB4kMURjcdCzUGLm6cvM169fLdYHVpnNvgHl3jXfllniFQoYUegacD77XAOOYB1sd0KNT84CibdngUw5R3rRTrPm2QccY+7Yb2vcSvxypuAAX1ybMRKHyNyY/P2Ha546OcM3pmqFWC/PiPWKJ8I1Ylm7IKu2jjwMI6TBYXWA8VIAOg8shg71S2qWBSaZLi1h6GjU3M+w7e8zL8XEfDMPZDPP49LojsfpMIDCblyKdbWkpD22eBGt2cb2MF7QhVZWLRuiukkRxcUFrhyjbMWkAOXmqpmeXu7M58pIhIpGObSiuSxclYq/shDytuN2DASagTRW/gnRnC6gLzWUq7etoc3HVKAQJEgAjGoNt2DYDRfKtpJ3/43Va3LGRsKaLGmwSbgMoaY6nfgbYmjIGmY10zZ1+ZkziqqpB+VocUkV33OvJR85NBe6eobh/iZI8cEFJIxnVNaCsSEdnU957d4MzCAfOo+yt4o0yqO3oPIBsTOEK4dSNWRku5fUIhoH4JWnkBJBiKSE3j/BjlLoAfHS1r9iVLRL4IcvEcioivIo8EhT395ky6jMjsfpqCH78ib1f3iYbIMvt3VLNz9kGe0V/OXCG6mSujBZ0jiSJt5NoNCthpMTYIg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(346002)(376002)(39860400002)(366004)(396003)(136003)(451199021)(8676002)(8936002)(66446008)(76116006)(66476007)(52536014)(5660300002)(64756008)(66946007)(66556008)(55016003)(7416002)(54906003)(316002)(4326008)(41300700001)(6916009)(186003)(2906002)(478600001)(82960400001)(122000001)(38100700002)(9686003)(26005)(6506007)(86362001)(33656002)(71200400001)(7696005)(38070700005)(83380400001)(21314003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?GEi7q3P/jp7/HE7A4ACk8rySPJoCtzdcQndyJoNvgIfq9kS6WaH9/ArjgWh8?=
+ =?us-ascii?Q?aYV9jlJT95JMzRzQVxdGyZ5UisXzVwT7XIXu42Raa22nNOiTbGNzNDLPfc92?=
+ =?us-ascii?Q?LRtd4KhyELR7sA8KAcJ7OwTk/dmeA/BaUzNknc8qagUrWXGI2DhArbSjTkAV?=
+ =?us-ascii?Q?sPGLNb9vsoxwW3dQCJyxaair5YlqHQcusoiaXaMePMdb+Z/vN6XvOfOTxim2?=
+ =?us-ascii?Q?BEYPx9H4SSedcSn8axSO+sdT1RbFYqg1TrletcvP8AJAWZOn9gGeGFUDaVaE?=
+ =?us-ascii?Q?sVb2baacW/ipLLl5Ac1f+t/2LOeoeBm1tpc4fq5iRBjoeaw5U/+slhbakmTb?=
+ =?us-ascii?Q?JzNpHnHZlWGy/Dv3sB74dUXQHCtkDqTuGcWqLZRZ56YEOeDcpnXw+db17vrV?=
+ =?us-ascii?Q?pKR35S6GqVkf+9TBB7FMO4AAI+5cxWb/+4T0w630U4lfgwELCIeKXfTpYZEh?=
+ =?us-ascii?Q?vkrEUCKbWiSRKRLnCmq0gpCn0CkJgJi8R7T4bw6yZYXyK1CJwCuLCwSYO1xr?=
+ =?us-ascii?Q?qxHejiEKaxbBq9YK2dql7ao+USaLRJ9V4DIcqKInI/2raQqghEtV/lWbGUxx?=
+ =?us-ascii?Q?ToNPWF6WyztnIMbbqk0wR2XF+N1+hRt88gnZxxQdQXIdoqWPf6ATeZeAFoLv?=
+ =?us-ascii?Q?63Mpwi8vxgaOSf2hesEyCo+sxSxXyMAoFNKb+GI3gmDcyo7k0/bvoKiXoH31?=
+ =?us-ascii?Q?6nqHDleArB3DnOTGfkurLXiEOvyFrkW0JMgASpSh3v5qHZ+jcvbGW/K/Ho0H?=
+ =?us-ascii?Q?SQSNxdkFKUgjPzTWFF0BmiDEEnvOISRWNp0UkAbECTDe5YHXNRsp3FY8zCnd?=
+ =?us-ascii?Q?Ac3LfpkNKwzLhuTEIIA4pC/orhjZgsVIa0uLWLeo2T7wvDvxdLjiTzzF9AQz?=
+ =?us-ascii?Q?80WsIh4OsOV22Ls/KcddmOyrlAgUgnGZS+R/fZh7VX/44XFjuHGZk6XqgEMu?=
+ =?us-ascii?Q?PEVjwNzZYESzyE7+2Ja1Np+10/0+ADdI2B8xmpRu5j8OTzfYEVrxhaTEUU4z?=
+ =?us-ascii?Q?x++3ujWSNO4AtnyJoC3NZ5WCPlAM/4iVxDtddBERZmkDaNzxH0ov1H9AsH32?=
+ =?us-ascii?Q?DPsxzDiILJOHmfXIYQCPeYy+PURPyluOI0RbYXg/ltypk4odu3SUSA6SKIR1?=
+ =?us-ascii?Q?x8PAb6M7d2ePA6IyNm9IxIX6d9k6DveUyjIXSSGUatevIgiTy080itwCxwjy?=
+ =?us-ascii?Q?phVJpndlVyIHW9PCW32IG5Po6bN5e2GjrriryzbdpkVEuCQ0NUfEeZJ1nxLY?=
+ =?us-ascii?Q?u9h9ogiC5mGFeOQACm1ixDJKMWCqAE5p2d+WZjSaGpw/7r0/7pCEzMnEFP/l?=
+ =?us-ascii?Q?M9GYuVfc8r7swAmJEajpRIumu4ZF/TTNMTxXsYg9vtA/O+f1oQuLGF6TNXxV?=
+ =?us-ascii?Q?1hakLIU2C6XYPHHz1c97MCz3lH2C/XP8XY1IkoSBrZMkgeRqPlXcolK2zPTO?=
+ =?us-ascii?Q?iplolD9FNZU5pO92FlOsL9Rw3+boguiwtWnm4eqYRRfH0nkuTTrxMgQa0kwl?=
+ =?us-ascii?Q?IDo67CDhM1qVBDLB2flpnnrMx6TR3LUPxWjcLntzWb84ZgP5DCO93Hgo18TF?=
+ =?us-ascii?Q?6fmXQnmFKmF4pbN3shoeFP3S1/05kq21AhyKIkws3XKgfrO7yY2w25rR/L8o?=
+ =?us-ascii?Q?UQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: AM0PR02CA0219.eurprd02.prod.outlook.com
- (2603:10a6:20b:28f::26) To DB8PR04MB6523.eurprd04.prod.outlook.com
- (2603:10a6:10:10f::26)
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB8PR04MB6523:EE_|AS1PR04MB9683:EE_|VE1EUR01FT023:EE_|DBBPR04MB7660:EE_
-X-MS-Office365-Filtering-Correlation-Id: 30ec630e-0f1a-4abc-7b34-08db65abdc12
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: anrrKJCc2URoe/g3BRyIt6qSnW5MzMz4feqPO0nmGFOtZstwPc9oXDw9JLVuTCy/35bxhdaR58pZQaYqcTYOn883OA3sMevoZNrj8+yIB3aa+Oi8JEK8dM0hIdb3IpBB7g33+Z+dziNO1yjUKt62/hQzPh47w+u0oHVoIZ1+46nXnTW479xCgCjYyyTwUtmQjxIWk8+98Hp19DvN7Hi/IZJ6yLlhH3JIV+1fZuz2J4Vbn1lyttDvX69EGbmJem+s8OdD+UainMARjMEz2i5pZnEF9glvs4K4u+96h2dam4oVWur5g5lbfzBsngd5NnbQ3U7p2DnysWM+GEWDdbuQGd8/F8TMZJhFySIVilTtmtEShNMj7/CH204MuTjgz6hRrtt0q0VhddXAgM/Ii/7+RhQnGpAyIy9fAQxlRS6/PYkLXnbVekOJbXGSaMjnZCfxwK9HZdisxquqUdUTin8CCz9Mr7e1LanY9S2AJ8pErYhUXReUKYC00Yw9/XaSygCwqrn/GMa4FKzDWGNWEslmVeei2pKlzCYhyMVYx0yujTQMy6q1Ogv0mQSMisd/Tu9PWMXxmkvaGL4A3L10J4UE5lS9hY7B2V11roF47afgA5hU3z3ETyGvNjAGdQVD87KVhkcnjO5D/GjGDdMv9LF0cquzzAf7QDvFqzYvhItRazU=
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB6523.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(396003)(366004)(346002)(136003)(39840400004)(451199021)(53546011)(6512007)(6506007)(38100700002)(2616005)(41300700001)(38350700002)(31686004)(36916002)(6486002)(52116002)(186003)(26005)(42882007)(83380400001)(83170400001)(478600001)(54906003)(4326008)(66476007)(66556008)(316002)(66946007)(8936002)(8676002)(5660300002)(44832011)(2906002)(31696002)(15974865002)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9683
-X-CodeTwo-MessageID: 0245adc9-b7a5-483c-ace2-196be3da7e17.20230605100139@westeu12-emailsignatures-cloud.codetwo.com
-X-CodeTwoProcessed: true
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR01FT023.eop-EUR01.prod.protection.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 0afd62b1-0ba8-456e-5b6c-08db65abd948
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 69klB3EXCWIf61HqPkCPNdkbaADWlMw3KJnsGM1CfI5JRXyr2mFiHhZyO9meB2rNJkM0CSMHT0qVuPlJkQV7M3AsIG21TVIqa18/JufT7HwFDEKx2IT64fgVU8yoHXDbSsghIyFpfu2Hj+6PliewH7AB+oTSFwYqY3iGRDt7hXZl+B8oLgJwqsAGxCu94EbzpcpIPPTVd7r8pS+m8Zmd7kWBq9nfwHD2+pK2h+J3FCy1hJq8/VgM0/SeCdvliyCFPeuN8EKzd7ebgGS20xC4FKVwVnPb1HvNlxzRYkfK7r71FZma4O+RXAPWFalhm55DeeX3mKjbjPp4nqqqYorRM3WrhPfjpKOPm/Mbd4OIw6jvV0h7IndZylcMbo/pOMygZpLfuPYuFiTejJNgkiXmZOpP1/g9ZrQAFIfxvmRQGxnLBQZrarKMjPaKT3ijwULaAwsROu8L20wY93n9E3fogNC5Amufj/+4GXV0Ku9yAcrKZDmZ9Z9BHzIRRk0t14dKGS56MIfB5hH6oBZl9badZ2N9nC7cnksDOMc/9JyTHqriMTfp2GPLKKZ0ye4jorqZl0flM7CW7jSKPw0CBJ7aFLZ/ULBsh/EVrLl+i+PIN/Nc0pWl9wcDrUhnsasvKP/t9NxpdvY723Nu2wivTA3sdY/vNTh+mg4O1FX9wZ1fa3OjoS9MDB6q6+uWrmORKt3AF+UyHqjoNDFcZkEFh03mFxVmPc30Z+2BsybjDyUAoJTlWsUy+aoTot29o9WP07n3YkOeYpGmdT9nQRxggGFYmQ==
-X-Forefront-Antispam-Report: CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230028)(4636009)(346002)(136003)(376002)(39840400004)(396003)(451199021)(46966006)(36840700001)(47076005)(2616005)(26005)(6512007)(53546011)(6506007)(83380400001)(31686004)(41300700001)(36860700001)(36916002)(6486002)(186003)(42882007)(336012)(478600001)(83170400001)(54906003)(4326008)(82310400005)(40480700001)(7636003)(7596003)(356005)(70206006)(70586007)(316002)(8936002)(8676002)(5660300002)(44832011)(2906002)(31696002)(15974865002)(36756003)(43740500002)(18886075002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: topic.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2023 10:01:40.6725
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1ad7e2c-9f6c-4ba9-a3dc-08db65ac9b0b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Jun 2023 10:07:01.2765
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30ec630e-0f1a-4abc-7b34-08db65abdc12
-X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[13.93.42.39];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-AuthSource: VE1EUR01FT023.eop-EUR01.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7660
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CGw9o/Mi0uIagtoe/ASAitTGRwr5hbcicducfIPH2C8Gq+WXMFa8Mdo7bMQw9JnJsNR+oNOFvyaF7T5LEoTNeTWqUQD2qUQx/SYOFKtrLyw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7480
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31-05-2023 21:27, Krzysztof Kozlowski wrote:
-> On 26/05/2023 16:38, Mike Looijmans wrote:
->> Add bindings for a fixed-rate clock that retrieves its rate from an
->> NVMEM provider. This allows to store clock settings in EEPROM or EFUSE
->> or similar device.
+>From: Jiri Pirko <jiri@resnulli.us>
+>Sent: Friday, May 26, 2023 12:39 PM
+>
+>Fri, May 26, 2023 at 12:14:00PM CEST, arkadiusz.kubalewski@intel.com wrote=
+:
+>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>Sent: Wednesday, May 17, 2023 12:19 PM
+>>>
+>>>Let me summarize the outcome of the discussion between me and Jakub
+>>>regarding attributes, handles and ID lookups in the RFCv7 thread:
+>>>
+>>>--------------------------------------------------------------
+>>>** Needed changes for RFCv8 **
+>>>
+>>>1) No scoped indexes.
+>>>   The indexes passed from driver to dpll core during call of:
+>>>        dpll_device_get() - device_idx
+>>>        dpll_pin_get() - pin_idx
+>>>   should be for INTERNAL kernel use only and NOT EXPOSED over uapi.
+>>>   Therefore following attributes need to be removed:
+>>>   DPLL_A_PIN_IDX
+>>>   DPLL_A_PIN_PARENT_IDX
+>>>
 >>
->> Component shortages lead to boards being shipped with different clock
->> crystals, based on what was available at the time. The clock frequency
->> was written to EEPROM at production time. Systems can adapt to a wide
->> range of input frequencies using the clock framework, but this required
->> us to patch the devicetree at runtime or use some custom driver. This
->> provides a more generic solution.
-> This does not look like real hardware. I mean, the clock does not fetch
-> its rate from nvmem, right? It's the Linux which does it, so basically
-> you described here driver, not hardware.
-Right, this just reads a setting from an NVMEM provider.
-> Extend existing fixed-clock bindings to allow reading frequency via
-> nvmem cells.
-
-I just tried and implemented this, but it does not work. The reason is=20
-that the fixed-clock implementation returns "void" in its=20
-of_fixed_clk_setup() init function. The nvmem provider returns=20
-EPROBE_DEFER because it isn't ready at this early stage, and this error=20
-will not be propagated up because of the "void" signature. Thus, it's=20
-never retried and the clock just disappears.
-
-
-> Best regards,
-> Krzysztof
+>>Seems doable.
+>>So just to be clear, configuring a pin-pair (MUXed pins) will now be done
+>>with DPLL_A_PIN_PARENT nested attribute.
+>>I.e. configuring state of pin on parent:
+>>DPLL_CMD_PIN_SET
+>>	DPLL_A_PIN_ID		(id of pin being configured)
+>>	DPLL_A_PIN_PARENT	(nested)
+>>		DPLL_A_PIN_ID	(id of parent pin)
+>>		DPLL_A_PIN_STATE(expected state)
+>>		...		(other pin-pair attributes to be set)
+>>
+>>Is that ok, or we need separated attribute like DPLL_A_PIN_PARENT_ID??
+>>I think there is no need for separated one, documentation shall just
+>>reflect that.
+>>Also we have nested attribute DPLL_A_DEVICE which is used to show
+>connections
+>>between PIN and multiple dpll devices, to make it consistent I will renam=
+e
+>>it to `DPLL_A_DEVICE_PARENT` and make configuration set cmd for the pin-d=
+pll
+>>pair similar to the above:
+>>DPLL_CMD_PIN_SET
+>>	DPLL_A_PIN_ID		(id of pin being configured)
+>>	DPLL_A_DEVICE_PARENT	(nested)
+>
+>It is a parent of pin, not device. The name is confusing. But see below.
+>
+>
+>>		DPLL_A_ID	(id of parent dpll)
+>>		DPLL_A_PIN_STATE(expected state)
+>>		...		(other pin-dpll attributes to be set)
+>>
+>>Does it make sense?
+>
+>Yeah, good idea. I like this. We will have consistent approach for
+>parent pin and device. To take it even further, we can have one nested
+>attr for parent and decide the parent type according to the id attr
+>given:
+>
+>DPLL_CMD_PIN_SET
+>	DPLL_A_PIN_ID		(id of pin being configured)
+>	DPLL_A_PIN_PARENT	(nested)
+>		DPLL_A_PIN_ID	(id of parent pin)
+>		DPLL_A_PIN_STATE(expected state)
+>		...		(other pin-pair attributes to be set)
+>
+>DPLL_CMD_PIN_SET
+>	DPLL_A_PIN_ID		(id of pin being configured)
+>	DPLL_A_PIN_PARENT	(nested)
+>		DPLL_A_ID	(id of parent dpll)
+>		DPLL_A_PIN_STATE(expected state)
+>		...		(other pin-dpll attributes to be set)
+>
+>
+>Same for PIN_GET
+>
+>Makes sense?
 >
 
---=20
-Mike Looijmans
-System Expert
+Sure, fixed.
 
-TOPIC Embedded Products B.V.
-Materiaalweg 4, 5681 RJ Best
-The Netherlands
+>
+>
+>>
+>>
+>>>2) For device, the handle will be DPLL_A_ID =3D=3D dpll->id.
+>>>   This will be the only handle for device for every
+>>>   device related GET, SET command and every device related notification=
+.
+>>>   Note: this ID is not deterministing and may be different depending on
+>>>   order of device probes etc.
+>>>
+>>
+>>Seems doable.
+>>
+>>>3) For pin, the handle will be DPLL_A_PIN_ID =3D=3D pin->id
+>>>   This will be the only handle for pin for every
+>>>   pin related GET, SET command and every pin related notification.
+>>>   Note: this ID is not deterministing and may be different depending on
+>>>   order of device probes etc.
+>>>
+>>
+>>Seems doable.
+>>
+>>>4) Remove attribute:
+>>>   DPLL_A_PIN_LABEL
+>>>   and replace it with:
+>>>   DPLL_A_PIN_PANEL_LABEL (string)
+>>>   DPLL_A_PIN_XXX (string)
+>>>   where XXX is a label type, like for example:
+>>>     DPLL_A_PIN_BOARD_LABEL
+>>>     DPLL_A_PIN_BOARD_TRACE
+>>>     DPLL_A_PIN_PACKAGE_PIN
+>>>
+>>
+>>Sorry, I don't get this idea, what are those types?
+>>What are they for?
+>
+>The point is to make the driver developer to think before passing
+>randomly constructed label strings. For example, "board_label" would lead
+>the developer to check how the pin is labeled on the board. The
+>"panel_label" indicates this is label on a panel. Also, developer can
+>fill multiple labels for the same pin.
+>
 
-T: +31 (0) 499 33 69 69
-E: mike.looijmans@topic.nl
-W: www.topic.nl
+Ok, makes sense, added as suggested.
 
+Thank you,
+Arkadiusz
 
-
+>
+>
+>>
+>>>5) Make sure you expose following attributes for every device and
+>>>   pin GET/DUMP command reply message:
+>>>   DPLL_A_MODULE_NAME
+>>>   DPLL_A_CLOCK_ID
+>>>
+>>
+>>Seems doable.
+>>
+>>>6) Remove attributes:
+>>>   DPLL_A_DEV_NAME
+>>>   DPLL_A_BUS_NAME
+>>>   as they no longer have any value and do no make sense (even in RFCv7)
+>>>
+>>
+>>Seems doable.
+>>
+>>>
+>>>--------------------------------------------------------------
+>>>** Lookup commands **
+>>>
+>>>Basically these would allow user to query DEVICE_ID and PIN_ID
+>>>according to provided atributes (see examples below).
+>>>
+>>>These would be from my perspective optional for this patchsets.
+>>>I believe we can do it as follow-up if needed. For example for mlx5
+>>>I don't have usecase for it, since I can consistently get PIN_ID
+>>>using RT netlink for given netdev. But I can imagine that for non-SyncE
+>>>dpll driver this would make sense to have.
+>>>
+>>>1) Introduce CMD_GET_ID - query the kernel for a dpll device
+>>>                          specified by given attrs
+>>>   Example:
+>>>   -> DPLL_A_MODULE_NAME
+>>>      DPLL_A_CLOCK_ID
+>>>      DPLL_A_TYPE
+>>>   <- DPLL_A_ID
+>>>   Example:
+>>>   -> DPLL_A_MODULE_NAME
+>>>      DPLL_A_CLOCK_ID
+>>>   <- DPLL_A_ID
+>>>   Example:
+>>>   -> DPLL_A_MODULE_NAME
+>>>   <- -EINVAL (Extack: "multiple devices matched")
+>>>
+>>>   If user passes a subset of attrs which would not result in
+>>>   a single match, kernel returns -EINVAL and proper extack message.
+>>>
+>>
+>>Seems ok.
+>>
+>>>2) Introduce CMD_GET_PIN_ID - query the kernel for a dpll pin
+>>>                              specified by given attrs
+>>>   Example:
+>>>   -> DPLL_A_MODULE_NAME
+>>>      DPLL_A_CLOCK_ID
+>>>      DPLL_A_PIN_TYPE
+>>>      DPLL_A_PIN_PANEL_LABEL
+>>>   <- DPLL_A_PIN_ID
+>>>   Example:
+>>>   -> DPLL_A_MODULE_NAME
+>>>      DPLL_A_CLOCK_ID
+>>>   <- DPLL_A_PIN_ID    (There was only one pin for given module/clock_id=
+)
+>>>   Example:
+>>>   -> DPLL_A_MODULE_NAME
+>>>      DPLL_A_CLOCK_ID
+>>>   <- -EINVAL (Extack: "multiple pins matched")
+>>>
+>>>   If user passes a subset of attrs which would not result in
+>>>   a single match, kernel returns -EINVAL and proper extack message.
+>>
+>>
+>>Seems ok.
+>>
+>>Will try to implement those now.
+>
+>Cool, thx!
+>
+>
+>>
+>>Thank you,
+>>Arkadiusz
