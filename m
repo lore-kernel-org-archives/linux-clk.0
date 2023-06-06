@@ -2,108 +2,192 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB055C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 13:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 830DBC77B7A
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 14:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236184AbjFFNt4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jun 2023 09:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37436 "EHLO
+        id S237487AbjFFODN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jun 2023 10:03:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232836AbjFFNtz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 09:49:55 -0400
+        with ESMTP id S237461AbjFFODD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 10:03:03 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FA310D2;
-        Tue,  6 Jun 2023 06:49:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7413B196;
+        Tue,  6 Jun 2023 07:03:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7269262986;
-        Tue,  6 Jun 2023 13:49:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76479C433EF;
-        Tue,  6 Jun 2023 13:49:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 02D1F616E1;
+        Tue,  6 Jun 2023 14:03:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C84C433EF;
+        Tue,  6 Jun 2023 14:03:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686059387;
-        bh=stRutyLmvZS3ZidmZrx+6DH+SkXbyrihyoYS0xtC69w=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=VVZidBJU0486+do3/FJQ8NyB+Y5KjPf5GBJEiRD52x50qTVkjJfwt6iMDZzCoJ423
-         yIi+j5KfY4eXGj2B+dbwjZMeQ2I6lcdAurKkwM/AIXBOiif8lhMSLORaYgPrswrG16
-         +KbWyEHmSs5cKPpDkSx6c4JiXVnZJE2kFKXanWScOF8H6LsSgASQy3aMVfFFsjIoLW
-         1UAKV326sLzlKtUWHowJDg2r0/ngMDwGGbSIonL4ujVA+7aq6FTiV/m151elYT7PGQ
-         2I5SkmXRDhdQAjrs8b03hBb4tAA1Wk07ae9mhbb1LoL8GPH1swX1Qcx9J8sqGE5vcd
-         NPwxLujMFuxCA==
-From:   Kalle Valo <kvalo@kernel.org>
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
-        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
-        <quic_devipriy@quicinc.com>
-Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for multipd model
-References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
-        <20230521222852.5740-2-quic_mmanikan@quicinc.com>
-        <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
-        <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
-        <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
-        <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
-Date:   Tue, 06 Jun 2023 16:49:40 +0300
-In-Reply-To: <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com> (Manikanta
-        Mylavarapu's message of "Tue, 6 Jun 2023 17:41:00 +0530")
-Message-ID: <87edmoitu3.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        s=k20201202; t=1686060181;
+        bh=92sQlbOKY9LIyGWaHFriwmNnM+2pjstn4I/di/uN298=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oRJu/8w8Wm0pzOl+OasRCkcLo+IOctRM2eC1PltWbmL48B+sYq33TC7hKpXKLqPKF
+         QghQDUacG9jOlgMgaFSj3H29CCsCQNms6vo3prGx8LvIqX2X8bMh2joFmo6zkQmpwO
+         nBbQiiqL8DRtzGxwnQweb7UceEnkFNc1vojV33+lhAXaBqYkoPrBF5w44NfWNnvhaW
+         hJU+wHsYcBLhMDrtNsaYJkyyGUXvFF9Uf9CXfZUgIzJMdufuWcavRJOtVH5aNmzB1f
+         b8iifCYwz0obcwXZn2ebQuylkYWQfBcOgnJ4Mgpyev4bfbBVL0PDlDYdf+O3v6SHHg
+         X8ELB738mcIUQ==
+Date:   Tue, 6 Jun 2023 16:02:58 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH 0/3] clk: sunxi-ng: Optimize rate selection for NKM
+ clocks
+Message-ID: <xcgmqvdoip53yao4sfoznnppauhmsmdablwoewh43zjv3bhidp@d7pxqohxydve>
+References: <20230527132747.83196-1-frank@oltmanns.dev>
+ <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
+ <87mt1jbf18.fsf@oltmanns.dev>
+ <uvjlkaq4drqsndpwwflmbfnxseiftkrhq5qqmpfx5vfmduazed@wcohoxcd23wc>
+ <87edmq9m2m.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oorsjwbcoooqvgbe"
+Content-Disposition: inline
+In-Reply-To: <87edmq9m2m.fsf@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
 
->>>>> +
->>>>> +    properties:
->>>>> +      compatible:
->>>>> +        enum:
->>>>> +          - qcom,ipq5018-wcss-ahb-mpd
->>>>> +          - qcom,ipq9574-wcss-ahb-mpd
->>>>> +          - qcom,ipq5018-wcss-pcie-mpd
->>>>
->>>> Keep rather alphabetical order (so both 5018 together).
->>>>
->>>> I also do not understand these at all. Why adding bus type to
->>>> compatible? This rarely is allowed (unless it is PCIe controller within
->>>> soc).
->>>>
->>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
->>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
->>> radio's properties, i have added bus type to compatible.
->>
->> It's the same device - WCSS - right? We do not create multiple nodes and
->> compatibles for the same devices. Bus suffixes are almost never parts of
->> compatibles.
->
->
-> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
-> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
->
-> So for better clarity i will use attached SOC ID in compatible.
-> Below are the new compatible's.
->
-> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
-> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
-> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
+--oorsjwbcoooqvgbe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What mandates that there's just one QCN6122 device attached to PCI?
-Assuming fixed PCI configurations like that makes me worried.
+On Mon, Jun 05, 2023 at 12:31:41PM +0200, Frank Oltmanns wrote:
+> Hi Maxime,
+>=20
+> On 2023-06-02 at 09:31:59 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > Hi,
+> >
+> > On Thu, Jun 01, 2023 at 07:16:45AM +0200, Frank Oltmanns wrote:
+> >> On 2023-05-31 at 15:48:43 +0200, Maxime Ripard <mripard@kernel.org> wr=
+ote:
+> >> > [[PGP Signed Part:Undecided]]
+> >> > Hi Frank,
+> >> >
+> >> > On Sat, May 27, 2023 at 03:27:44PM +0200, Frank Oltmanns wrote:
+> >> >> I would like to bring your attention to the current process of sett=
+ing
+> >> >> the rate of an NKM clock. As it stands, when setting the rate of an
+> >> >> NKM clock, the rate nearest but less than or equal to the requested
+> >> >> rate is found, instead of the nearest rate.
+> >> >
+> >> > Yeah, it's actually pretty common, see clk_mux_determine_rate_flags()
+> >> > for example. Some devices require that we don't overshoot, while some
+> >> > prefer to have the closest rate.
+> >> >
+> >> > Both are fine, and it's a bit context specific which one we should
+> >> > favour. If we were to do anything, it would be to support both and l=
+et
+> >> > the clock driver select which behaviour it wants.
+> >> >
+> >>
+> >> Ok, understood. Thank you for the explanation! Now, I'm wondering if
+> >> anyone would be using such a flag, if I added it.
+> >
+> > I guess that's another thing :) If no-one is going to use it, why should
+> > we do it in the first place?
+> >
+> > But most likely the display and audio clocks are usually fairly ok with
+> > overshooting a bit, and a closest rate is usually better.
+>=20
+> Ok, I dived a bit deeper into this, but, as far as I can tell, the
+> closest rate is not used anywhere in the sunxi-ng ccu driver. So, when
+> extending, e.g., the NM or NKM clock to support, one must also extend at
+> least the mux clocks, because they expect rates less than the requested
+> rate. That seems to be quite the undertaking for only a small gain in
+> precision.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+mux clocks are using __clk_mux_determine_rate which should have the
+behaviour you want when CLK_MUX_ROUND_CLOSEST is set.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+> >> >> Moreover, ccu_nkm_find_best() is called multiple times (footnote [1=
+])
+> >> >> when setting a rate, each time iterating over all combinations of n,
+> >> >> k, and m.
+> >> >
+> >> > Yeah, that's expected as well.
+> >>
+> >> I'm wondering though, if iterating over all combinations is set in
+> >> stone, or if some kind of optimization would be in order.
+> >
+> > The thing with optimization is that you need to optimize for something.
+> > So you need to show that this code is suboptimal (by whatever metric you
+> > want to optimize for), and that your code is more optimal that it used
+> > to be.
+> >
+> > It means identifying a problem, writing benchmarks, and showing that the
+> > new code performs better there.
+> >
+> > For example, your code might very well be faster, but it will increase
+> > the kernel image (and thus the RAM usage). One is not more optimal than
+> > the other in absolute, they both are, using a different metric.
+>=20
+> Sure, I get that. I'll submit a patchset that adds the functionality to
+> NKM clocks to set the rate of their parents.
+>=20
+> With the new patchset, the time for, e.g. setting DCLK increases from
+> ~0.5 ms to a whopping 30 - 37 ms. Those times were taken
+> unscientifically on my pinephone, i.e. kernel logging and a couple of
+> re-boots. But I think that still might give an idea of why I thought
+> about the need to increase performance.
+>
+> The reason for this massive increase is, that the patch iterates over
+> all combinations of NKM for pll-mipi, and for each combination it
+> iterates over all combinations of NM for pll-video0.
+>=20
+> Nevertheless, following your and Jernej's advice, I'll submit the
+> patchset first and then we can discuss if speed optimizations are needed
+> and what cost is acceptable.
+
+Honestly, for 40ms, it will be a hard sell :)
+
+> >> or that pll-mipi should try to set the *requested* rate instead of the
+> >> previous rate when the pll-video0 changes.
+> >
+> > It's not clear to me what is the distinction you make here between the
+> > requested rate and the previous rate?
+>=20
+> This is quite a de-tour from the original discussion, so I'm sorry for
+> the confusion.
+>=20
+> By requested rate I mean the rate that the user (DCLK) requested. But
+> this is not necessarily the rate that the clock is using in the end,
+> because of its parent's rate.
+>=20
+> So, when the pll-video0 changes rate from 294 MHz to 297MHz (upon
+> plugging in HDMI), pll-mipi does not know any longer what the requested
+> rate (let's say 432MHz) was.
+
+It does, it's struct clk_core's req_rate. It doesn't look like it's
+available to clk_hw users, but given the rest of your explanation, I
+guess you have a compelling use case to make it available.
+
+Maxime
+
+--oorsjwbcoooqvgbe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZH88kgAKCRDj7w1vZxhR
+xYZZAP0SAEPvAUvjDPfVv3zOHOnaNCsV5M4IfwS/1NtJva9K0AD/ZufHZhbfMnIu
+WquTg8eFvgf8+koLgpj/tFUrEbonwQY=
+=7fL/
+-----END PGP SIGNATURE-----
+
+--oorsjwbcoooqvgbe--
