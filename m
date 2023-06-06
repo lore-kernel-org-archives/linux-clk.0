@@ -2,109 +2,161 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 835B7C77B73
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 06:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA33DC7EE24
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 06:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234194AbjFFGJC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jun 2023 02:09:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
+        id S234742AbjFFGOk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jun 2023 02:14:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbjFFGIu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 02:08:50 -0400
-Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D9C83;
-        Mon,  5 Jun 2023 23:08:49 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3D9E75C01FC;
-        Tue,  6 Jun 2023 02:08:49 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Tue, 06 Jun 2023 02:08:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm1; t=
-        1686031729; x=1686118129; bh=jWnd+Tu93Ydyd0XWIfSLCz4ZEAGnqPSE7yv
-        GS7uwiVk=; b=SSoZ+7I0c9Fwv2n5Hn515aFeknC06tGYFxgzpP1yl+fz4c4+cfz
-        685JrWK/U9/LC0FTpCnJg20SeaYXRFSKBIim3AY8EE6zoHfGvAhBnALYYvYRKIq3
-        qbi2MIa4tR7v72JR6JDzblr8WLQvqRqpfhytNZ2YjSY72XguwvR9QR/YlNZye8iH
-        uZF6vvrKihuAuyM37QhIjvY+kHKYctuTI9XSH1VFoPZ6q+BIAVcx7KF0T+71S6zu
-        dZogg9CxBSwUsL9uqpDALybi1q15TZJsyF/DFRQHrtKVEMotcb1EJxJhUiBXphXS
-        ITwi9nnJJDmNg6sigEUd2p5fogCx+JqkjcA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-        1686031729; x=1686118129; bh=jWnd+Tu93Ydyd0XWIfSLCz4ZEAGnqPSE7yv
-        GS7uwiVk=; b=eYsVkHkjsOb7rRAyl98E0Jcwr8/9bmekhSRQ8hv9jldeDtxXBrL
-        mtQ1zNy6Gk6YjffscBlEiUrsHktliRFYzGP+CwvkTsQz7GgA9o1+F+jmiFlfL+kn
-        7cQWGecJkl2Gr7mIn/JF/luqhuhlyZXQ+XRou0etPp3mrcYSDovzShCch8iMwHiE
-        HDz9CzpFqxDlExv++HYgqSiTbJMe3Njhj0S0PIYoXxzyPaIqAhv2SIflF28V4oZj
-        IZ6yhmC3jjbi3tIU2ZkV3zCBaQEB0jYteN5+Q2m3q5YeVmyWO6LQjcdWuW693CKj
-        8BpjJTNpuZ4HkDVxAG0sJAf9cT3YTAXCslg==
-X-ME-Sender: <xms:cM1-ZIIwjYF1VFsJK7COwEnOuf67AdF6Fw4SpR1SWTedqOz6jIYqnw>
-    <xme:cM1-ZIKPgL7wM-O7vXlSfBRo9AThdEPpx7OIB1PjY4KGBP5PmyMwwiJeBbkMp8ntF
-    hxR9WPfAL41op40bj0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedttddguddtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    tehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrf
-    grthhtvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudek
-    tdfgjeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:cM1-ZIs-5JwC2kaEVBxOYGJuU0ODDRl3q7w8BCh3mQ_aVh1UJQD8lg>
-    <xmx:cM1-ZFbvZlSVBfwhmLps7V0XV2lVrMaAAE8G_91IOG1thZ5-tClb0g>
-    <xmx:cM1-ZPbvZt6NWfUJFC9cZBG0Aqn0GJ18m18X8TLAMShrXceHc2TycQ>
-    <xmx:cc1-ZMSRFsAbeEkqS__3eaSeemwET6EzJI8YKz11xBNnI-ai0-fBNg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 38310B60086; Tue,  6 Jun 2023 02:08:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-447-ge2460e13b3-fm-20230525.001-ge2460e13
-Mime-Version: 1.0
-Message-Id: <4f85ea74-5788-471d-bf3f-01402652a6b8@app.fastmail.com>
-In-Reply-To: <c57453ce-341c-ef89-5e71-58ad63466b11@gmail.com>
-References: <20230605040749.67964-1-ychuang570808@gmail.com>
- <9dc45c49-02aa-4e63-a176-97e3536f14f4@app.fastmail.com>
- <c57453ce-341c-ef89-5e71-58ad63466b11@gmail.com>
-Date:   Tue, 06 Jun 2023 08:08:27 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Jacky Huang" <ychuang570808@gmail.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, "Lee Jones" <lee@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Jiri Slaby" <jirislaby@kernel.org>,
-        "Tomer Maimon" <tmaimon77@gmail.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-serial@vger.kernel.org, soc@kernel.org, schung@nuvoton.com,
-        mjchen@nuvoton.com, "Jacky Huang" <ychuang3@nuvoton.com>
-Subject: Re: [PATCH v13 00/10] Introduce Nuvoton ma35d1 SoC
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S232496AbjFFGOj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 02:14:39 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16CA41A7
+        for <linux-clk@vger.kernel.org>; Mon,  5 Jun 2023 23:14:38 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-51491b87565so8572050a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 05 Jun 2023 23:14:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686032076; x=1688624076;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c9/ke8vQiyBtX+dMh7jOybxE1aXL3oACs0/tXuO+L4U=;
+        b=eWY5hKNC6JKDtcg4koedkUquXkdz4Qm7ioMxMxeSjG40XG3NTMTnzK7wOpWQfTHpZM
+         3UipQrboWk2BEtNpxv9nzlw7CkPmQzMREcltPyxNq7b+1A48GKNiLAYrDYMQDD2CxpgU
+         jKFLfBUWdm1nlGtj5XilnON1j3BW3L0Vfde6K1BcsaaJAHUoDPUCrwiygj+BBINUFoQG
+         +mfNC3eVh7aFzeMtwa4CM0CjLBCegI8dvl1QgNKPSF62tBw2cUrpCPzE92UTSO/rWrSD
+         vKVw291npS8n956cbRw5LDbVtiwsemu4h3S1VOup36wy3m1ZJpmQpb1Djcf4XRP2IgbL
+         Tq5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686032076; x=1688624076;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c9/ke8vQiyBtX+dMh7jOybxE1aXL3oACs0/tXuO+L4U=;
+        b=MY3ggBqJ4mlfiV9Z75a+AYMjUc9+choeRtRcJmn5G5m1shHdfEQdfHPkGhMUneUMrN
+         1F1dcfGO3v+bBrs1FZOvgIxyfkBiA0nN572+wUYuEyfzbArkWvRWt0+PSxW8gvsVUEhx
+         s6V+HZeoqKXCTgjki8rJbCZOUdAliNqK6LpaTVb9AXkgxdk5s2ZpY9G+r49WfZcSdUGE
+         o2uOwnXC31GX+BmTYRXv2cLw0oqV/m1mcYnYhqvUoOYIU3eyHnUg7up90tnUV6DiI5co
+         czdrW7gHZfL3noO3S17nsaXx7Wm/mOIceyxEOQBwIRYZFqzLKjb7/r11w+ezYCyHa/nV
+         8NzA==
+X-Gm-Message-State: AC+VfDygMcKfv79ppjAX6pwVWnZPoP78k3iKGjuwISewAsiS0fAakJW/
+        BIVI9QFl5ErDfLyF28+INE32Zw==
+X-Google-Smtp-Source: ACHHUZ64Z9lKKWilVnf6tdOypQFOM3iC4izULYvUu+KGcG0PYJwTnO62ZR0THx9JxKoLkPlyBtVhVA==
+X-Received: by 2002:aa7:d3c3:0:b0:516:4394:244f with SMTP id o3-20020aa7d3c3000000b005164394244fmr954905edr.12.1686032076496;
+        Mon, 05 Jun 2023 23:14:36 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id s25-20020aa7c559000000b005163c39645bsm4672584edr.51.2023.06.05.23.14.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Jun 2023 23:14:36 -0700 (PDT)
+Message-ID: <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+Date:   Tue, 6 Jun 2023 08:14:33 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jassisinghbrar@gmail.com,
+        mathieu.poirier@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
+        kvalo@kernel.org, loic.poulain@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
+        quic_devipriy@quicinc.com
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-2-quic_mmanikan@quicinc.com>
+ <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+ <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 6, 2023, at 02:22, Jacky Huang wrote:
-> On 2023/6/5 =E4=B8=8B=E5=8D=88 08:00, Arnd Bergmann wrote:
->> On Mon, Jun 5, 2023, at 06:07, Jacky Huang wrote:
->
-> I'm glad to see that these patches have finally been accepted.
-> Thank you very much for all the assistance you have provided.
-> Once the device tree is merged, we will start submitting drivers
-> such as pinctrl, gpio, rtc, and so on.
+On 05/06/2023 14:02, Manikanta Mylavarapu wrote:
+>>> +  memory-region:
+>>> +    items:
+>>> +      - description: Q6 pd reserved region
+>>> +
+>>> +  glink-edge:
+>>> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+>>> +    description:
+>>> +      Qualcomm G-Link subnode which represents communication edge, channels
+>>> +      and devices related to the Modem.
+>>> +
+>>> +patternProperties:
+>>> +  "^pd-1|pd-2|pd-3":
+>>> +    type: object
+>>> +    description:
+>>> +      In Multipd model, WCSS pd depends on Q6 pd i.e Q6 pd should be up before
+>>> +      WCSS. It can be achieved by keeping wcss pd node as subnode of Q6
+>>> +      device node.
+>>
+>> That's not enough. Your description does not say what is this, why you
+>> have two protection domains for same compatible. What's more, it a bit
+>> deviates from hardware description.
+>>
+> WCSS means 'wireless connectivity sub system', in simple words it's a
+> wifi radio block.
+> 
+> IPQ5018 SOC has both internal (AHB) wifi radio/WCSS and external (PCIE)
+> wifi radio/WCSS. In Q6, Root protection domain will provide services to
+> both internal (AHB) and external (PCIE) wifi radio's protection domain.
+> So we have two protection domains for IPQ5018, one is for internal(AHB) 
+> and other is for external(PCIE) wifi radio.
 
-I think you can start submitting all the drivers to their
-respective maintainers now, just mention that the SoC support
-is currently in linux-next in case they get confused about the
-dependencies.
+So it is now in email, but not in the code...
+> 
+>>> +
+>>> +    properties:
+>>> +      compatible:
+>>> +        enum:
+>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>
+>> Keep rather alphabetical order (so both 5018 together).
+>>
+>> I also do not understand these at all. Why adding bus type to
+>> compatible? This rarely is allowed (unless it is PCIe controller within
+>> soc).
+>>
+> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE 
+> radio's properties, i have added bus type to compatible.
 
-     Arnd
+It's the same device - WCSS - right? We do not create multiple nodes and
+compatibles for the same devices. Bus suffixes are almost never parts of
+compatibles.
+
+
+>>
+>> Drop.
+>>
+>>> +
+>>> +unevaluatedProperties: false
+>>
+>> This changed... why?
+>>
+>>
+> 'unevaluatedProperties' is similar to 'additionalProperties' except
+> that it recognize properties declared in subschemas as well.
+
+You don't have to explain me what are unevaluatedProperties or
+additionalProperties. Let's assume that I know them. What you should
+explain is why you changed it. Where is the reference to other schema?
+
+
+Best regards,
+Krzysztof
+
