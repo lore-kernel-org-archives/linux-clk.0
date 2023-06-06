@@ -2,114 +2,108 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE0BC7EE29
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 12:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB055C77B7A
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 13:49:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235566AbjFFMRk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jun 2023 08:17:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53282 "EHLO
+        id S236184AbjFFNt4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jun 2023 09:49:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232007AbjFFMRk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 08:17:40 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7721810C6;
-        Tue,  6 Jun 2023 05:17:38 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 356C969x001512;
-        Tue, 6 Jun 2023 12:17:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=a8k/dkT0TMDAnkhyrTRJpIwfMV02l5tv1/fp1KJcMbg=;
- b=ZppjgWJw5LeVYSvMoaK8UDF9PL6CAoh3zl78VRf4fivSobQy3FnsRZdEz7YAiPsgbpDf
- w5TTmr7IT+LxNO0OLI62694ybg5BxVQsh0dbcWEfs2rOPxz/TFFanZjXSu1ip8a0KIaP
- MS2maD6MpMb55JaEPJzQYZryuzT04nk0absenajUQRO1+Ern5s39zXwuKBBGS1/C16hJ
- cIRsyq8VXVwr2UFFVrEflBu5aJdzM28n19WFrTtjBDWtRs8/7Vu7GXm2Kc3i7gtii3AH
- ZidJnt7eJRWWwCs6Mn6vhW1l7Lk2BUklLLVoCY8cAdvrBk+XjcOQ1PXny1e9H/HNXa/6 0w== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r23bmg5k4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Jun 2023 12:17:32 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 356CHV9c030082
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 6 Jun 2023 12:17:31 GMT
-Received: from [10.216.9.253] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 6 Jun 2023
- 05:17:23 -0700
-Message-ID: <0cd9b63b-1cb0-6a35-df43-c4c92f53d5af@quicinc.com>
-Date:   Tue, 6 Jun 2023 17:47:19 +0530
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [PATCH V2 06/13] clk: qcom: ipq5018: remove q6 bring up clocks
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        with ESMTP id S232836AbjFFNtz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 09:49:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7FA310D2;
+        Tue,  6 Jun 2023 06:49:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7269262986;
+        Tue,  6 Jun 2023 13:49:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76479C433EF;
+        Tue,  6 Jun 2023 13:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686059387;
+        bh=stRutyLmvZS3ZidmZrx+6DH+SkXbyrihyoYS0xtC69w=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=VVZidBJU0486+do3/FJQ8NyB+Y5KjPf5GBJEiRD52x50qTVkjJfwt6iMDZzCoJ423
+         yIi+j5KfY4eXGj2B+dbwjZMeQ2I6lcdAurKkwM/AIXBOiif8lhMSLORaYgPrswrG16
+         +KbWyEHmSs5cKPpDkSx6c4JiXVnZJE2kFKXanWScOF8H6LsSgASQy3aMVfFFsjIoLW
+         1UAKV326sLzlKtUWHowJDg2r0/ngMDwGGbSIonL4ujVA+7aq6FTiV/m151elYT7PGQ
+         2I5SkmXRDhdQAjrs8b03hBb4tAA1Wk07ae9mhbb1LoL8GPH1swX1Qcx9J8sqGE5vcd
+         NPwxLujMFuxCA==
+From:   Kalle Valo <kvalo@kernel.org>
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
         <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
-        <kvalo@kernel.org>, <loic.poulain@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
         <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
         <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
         <quic_devipriy@quicinc.com>
+Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for multipd model
 References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
- <20230521222852.5740-7-quic_mmanikan@quicinc.com>
- <46944bf1-3a07-0db7-2702-f6b7d54b611a@linaro.org>
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <46944bf1-3a07-0db7-2702-f6b7d54b611a@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: t0Wld0ntit0c2HiEQ3rWg-f7JLJHx1nO
-X-Proofpoint-ORIG-GUID: t0Wld0ntit0c2HiEQ3rWg-f7JLJHx1nO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-06_08,2023-06-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- mlxscore=0 bulkscore=0 phishscore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=771 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2304280000 definitions=main-2306060103
+        <20230521222852.5740-2-quic_mmanikan@quicinc.com>
+        <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+        <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+        <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+        <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
+Date:   Tue, 06 Jun 2023 16:49:40 +0300
+In-Reply-To: <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com> (Manikanta
+        Mylavarapu's message of "Tue, 6 Jun 2023 17:41:00 +0530")
+Message-ID: <87edmoitu3.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
 
-
-On 5/30/2023 4:33 PM, Krzysztof Kozlowski wrote:
-> On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
->> Since Q6 firmware takes care of it's bring up clocks
->> in multipd model, remove from gcc driver.
+>>>>> +
+>>>>> +    properties:
+>>>>> +      compatible:
+>>>>> +        enum:
+>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>>>
+>>>> Keep rather alphabetical order (so both 5018 together).
+>>>>
+>>>> I also do not understand these at all. Why adding bus type to
+>>>> compatible? This rarely is allowed (unless it is PCIe controller within
+>>>> soc).
+>>>>
+>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
+>>> radio's properties, i have added bus type to compatible.
 >>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>   drivers/clk/qcom/gcc-ipq5018.c | 414 ---------------------------------
->>   1 file changed, 414 deletions(-)
->>
-> 
-> So here is explanation - your patchset is not bisectable.
-> 
-> What's more, I really wonder now why these clocks were added if firmware
-> handles them?
-> 
-> Best regards,
-> Krzysztof
-> 
+>> It's the same device - WCSS - right? We do not create multiple nodes and
+>> compatibles for the same devices. Bus suffixes are almost never parts of
+>> compatibles.
+>
+>
+> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
+> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
+>
+> So for better clarity i will use attached SOC ID in compatible.
+> Below are the new compatible's.
+>
+> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
+> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
+> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
 
-I will drop this patch now.
-It will be taken care in basic IPQ5018 patchset series.
+What mandates that there's just one QCN6122 device attached to PCI?
+Assuming fixed PCI configurations like that makes me worried.
 
-Thanks & Regards,
-Manikanta.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
