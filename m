@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FCCC77B73
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 14:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C20C7EE24
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 14:36:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbjFFObl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jun 2023 10:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36200 "EHLO
+        id S237673AbjFFOgd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jun 2023 10:36:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237750AbjFFObk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 10:31:40 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37CE2E6C
-        for <linux-clk@vger.kernel.org>; Tue,  6 Jun 2023 07:31:36 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-30af159b433so6174319f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 06 Jun 2023 07:31:36 -0700 (PDT)
+        with ESMTP id S237497AbjFFOgd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 10:36:33 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220E410C6
+        for <linux-clk@vger.kernel.org>; Tue,  6 Jun 2023 07:36:28 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f61530506aso62966055e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 06 Jun 2023 07:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686061894; x=1688653894;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686062186; x=1688654186;
         h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
          :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=rk+ZKOcf79K1jM4Aaec5K6JmYfvQYCg54gyGrNQwV0Q=;
-        b=t6olKjf35q9qtf1AH7m3QECNqhjOYcxnWoMYb4IcC9Wdyo7sIwWNntD2yf8fB7hxOH
-         oHwOzk06IfIsDO5Oc8+/xUz/A8KSVImQq+qjQvZLNQy9thRruWZJhAOmCR+ZUqasXfbE
-         0eY5AdDiFRPq21WAusHDlBKr+5jD1EEWFi6jhsUnvV/iDzw5F1NbsUo5b/8F/TCMjsDI
-         BQ2Q9xyqUsh/WlqXVNcAhBS2YNIas+1x1UeFrTiu5Ul6q8GW/ehlAAb2bFwpnXOA18Vv
-         vNrewjfU8Pn0oVtCdrdcClieIYPLII/aKvou/qI2GQyfdyoPl+nH5ivr2RhpYmnjsvM7
-         T+bw==
+        bh=bAwQFxGP8Gu5McMu6H0HUkWlCXCqGtKq3VqK4BfVCTM=;
+        b=qEsDUMgmSopuCY07jQFOAXfSstoSLg3LrcKeyzz9UmMCZRpq0gpGFbhiRjD6yU1lmv
+         vWoA/wXX6tXfBuiePIbwHsfHISFYtL40V33u/DvnRKLMLlxcqLnP0AmgT80bqBefsKF8
+         rJmCzCdi7VFms1+l4sQZGe+LJeMYSuqZimWLvbRvlXPEJNIyEivxegM7tp657mQwyxWv
+         X++FNIjTI8POdnKe9NpUjWP0CPsQjR9S/CuKYQz1N87zqmGWi1Fvzto654CvVWJAPGFo
+         qxEdvI4bj1FNV1Wwtr+FUtpNKRiaO1uITwabz6XiVJmBFL4wz+C1LP+esguRLOlEs0p0
+         SBYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686061894; x=1688653894;
+        d=1e100.net; s=20221208; t=1686062186; x=1688654186;
         h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
          :user-agent:references:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rk+ZKOcf79K1jM4Aaec5K6JmYfvQYCg54gyGrNQwV0Q=;
-        b=YB7AZ312oxKw7+uFDyKxHxVbYQX+28C09Dk/7+gbQaeEmjei6OgUiOXOChNt2ezq9K
-         uSFN26nSrwX4gMLX/CktLwSk90OI/RTxqfwCXLfupXjkUl7igfilW+sIGoTF3ezOrzAe
-         +wHt0p3AYLY2H9St4WjLSn59Pnim4Q9Jtad+SwNOpSL8aLov6fmp+UTvr9FS7eu7hnJY
-         Qz24vMKYqF5jss2hA3lOG3E5HuBeFZ6faXdbt4Digiua46dBzGpSkYHQWVoqGQ7kE3vT
-         gGybbQq62SkfiD3FFiipl/GLOi1yoOaQmTS0VVgY6lkCnk+1NNWOhHlaCCKr8o1CzyDX
-         odfQ==
-X-Gm-Message-State: AC+VfDyvyN+Uw+1a0+t3+jI+sK0NgIP3jl2mO2fVt3tt9M9ZJrWKwDzS
-        USqxCtPnJIKakO+jNFuuICYhXw==
-X-Google-Smtp-Source: ACHHUZ4dkwM+srRtkFvdXO74zCmxj/Pd5bTApCEgxbMqVjNrJ9/9Z5Ml6M4N8R/ZvtWY1ENtB7RSOA==
-X-Received: by 2002:adf:e44e:0:b0:307:8651:258e with SMTP id t14-20020adfe44e000000b003078651258emr2358819wrm.21.1686061894502;
-        Tue, 06 Jun 2023 07:31:34 -0700 (PDT)
+        bh=bAwQFxGP8Gu5McMu6H0HUkWlCXCqGtKq3VqK4BfVCTM=;
+        b=i7Kv6AitcHtcgqMfYQnW2sYU4d3hcbGABXqW6Mi9tuNemZ6HRBf1gbRmPKWCY4tyeH
+         vdNHUwa3ukP1p4V8bWD/QJmTWc+WQovwqfy/Jpmh/dJt+4zC7p87cEDdHYbfXfMv9P9/
+         +CR1lD1UfHU7nmeHN7CadyrlkqfNI/oiSrZxL0XokQnVuqKnmc6Jgjly2O5VGcMyLin0
+         qx1vXfDeAlw5MzNGKBy+intT/2wf3Mx3dZpS6bsRVT6YJA28rYWRt011PQQaHuw5eo/4
+         g3fnnkbanmdP02FIxw2T305UuIrEHhhv+d4QjgDIbDWdOBdNInI3YHWRNzBYqJL35iEV
+         Uo5g==
+X-Gm-Message-State: AC+VfDx4kAe5vHugUahmiQf2qRGKjCJ4Y4WDiOVdL7r2lDW42uBS8Gbo
+        Sjpl73r8Yga6C11iSgNnYoC/7w==
+X-Google-Smtp-Source: ACHHUZ6hA6vqWdbIfbhdsYAFhfn8BzJcsW9j6FErHaaWYROtwSzajLw1uEVHYuLOopv9fQwWaczxOg==
+X-Received: by 2002:a1c:750e:0:b0:3f7:a80a:c676 with SMTP id o14-20020a1c750e000000b003f7a80ac676mr2534192wmc.39.1686062186494;
+        Tue, 06 Jun 2023 07:36:26 -0700 (PDT)
 Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id e10-20020a5d500a000000b0030ae4350212sm12748876wrt.66.2023.06.06.07.31.33
+        by smtp.gmail.com with ESMTPSA id q25-20020a7bce99000000b003eddc6aa5fasm17747558wmj.39.2023.06.06.07.36.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Jun 2023 07:31:34 -0700 (PDT)
+        Tue, 06 Jun 2023 07:36:26 -0700 (PDT)
 References: <20230517070215.28463-1-yu.tu@amlogic.com>
  <20230517070215.28463-4-yu.tu@amlogic.com>
 User-agent: mu4e 1.8.13; emacs 28.2
@@ -66,9 +66,9 @@ To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
 Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
 Subject: Re: [PATCH V9 3/4] clk: meson: S4: add support for Amlogic S4 SoC
  PLL clock driver
-Date:   Tue, 06 Jun 2023 16:02:37 +0200
+Date:   Tue, 06 Jun 2023 16:34:01 +0200
 In-reply-to: <20230517070215.28463-4-yu.tu@amlogic.com>
-Message-ID: <1j5y804q7u.fsf@starbuckisacylon.baylibre.com>
+Message-ID: <1j1qio4pzq.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -109,6 +109,14 @@ On Wed 17 May 2023 at 15:02, Yu Tu <yu.tu@amlogic.com> wrote:
 > +	help
 > +	  Support for the pll clock controller on Amlogic S805X2 and S905Y4 devices,
 > +	  aka s4. Amlogic S805X2 and S905Y4 devices include AQ222 and AQ229.
+
+I'm confused, what are the AQ222 and AQ229 ? are those SoC or boards
+like your reference designs ?
+
+If those are boards, it should not be mentionned here
+
+Also, what about the S905X4 ? is it another SoC family ?
+
 > +	  Say Y if you want the board to work, because plls are the parent of most
 > +	  peripherals.
 >  endmenu
@@ -183,9 +191,6 @@ On Wed 17 May 2023 at 15:02, Yu Tu <yu.tu@amlogic.com> wrote:
 > +		.name = "fixed_pll_dco",
 > +		/*
 > +		 * This clock is a fixed value (4GHz) that is initialized by ROMcode.
-
-Really, isn't it the bl2 doing that ?
-
 > +		 * This clock won't ever change at runtime.
 > +		 * The chip design determines that this clock cannot be changed after
 > +		 * initialization. To prevent system crash caused by changing
@@ -193,14 +198,6 @@ Really, isn't it the bl2 doing that ?
 > +		 * writable in the kernel phase.
 > +		 * So we use ro_ops.
 > +		 */
-
-This explanation is good but we don't need mutliple copy/paste or
-"please refer" for the same thing. That is very verbose (I think I
-already commented on this previously)
-
-Just make one comment block, that clearly explain your intent and that
-it applies to the fixed_pll group
-
 > +		.ops = &meson_clk_pll_ro_ops,
 > +		.parent_data = (const struct clk_parent_data []) {
 > +			{ .fw_name = "xtal", }
@@ -314,15 +311,6 @@ it applies to the fixed_pll group
 > +		/*
 > +		 * For more information, please refer to s4_fixed_pll_dco.
 > +		 */
-
-While div2 and div3 got an explanation from previous SoCs, they others -
-like div4/div7/etc ... - have been able to cope with rw ops so far.
-
-Why is the S4 different for all these clocks ?
-
-Requiring RO ops (or fishy clock flags) is usually a sign that a clock
-is used without an appropriate driver.
-
 > +		.ops = &clk_regmap_gate_ro_ops,
 > +		.parent_hws = (const struct clk_hw *[]) {
 > +			&s4_fclk_div4_div.hw
