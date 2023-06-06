@@ -2,177 +2,207 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5E9C77B73
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 18:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1EBC7EE37
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Jun 2023 20:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233715AbjFFSzX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Jun 2023 14:55:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34700 "EHLO
+        id S234126AbjFFUvv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Jun 2023 16:51:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237163AbjFFSzW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 14:55:22 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889D783;
-        Tue,  6 Jun 2023 11:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686077721; x=1717613721;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=naGwk1NO/SaTFRbJnEkix+ThXsoLCn/dUck1hluV6ro=;
-  b=nklrrwu94D1s0lu5C8JCsGGjIgLVyF/lZMlmwclR2LpualXAtZ5F9yPx
-   Fov5kQ7OpRMNkp3K/s6yaTrleDvmfhQz958B/aY4Modq5J5ZxSy/kEKld
-   OwGhFxVJjiBtOpSmNokDUuhxatRQK8d7tnVT2vqHkjbv1lQntkFL1fmyc
-   tUtnai7it/+8YU/PsJNxFbOYtRWC0LdXMsk7N4wLbDmu8GQ4xyZH9/0+4
-   Hkz3jpQfQU75ZKeMPYl7viUHyhzU3yoUj/s+/uSursEOIUQy01bVXuebu
-   fF+ZdpmHnn6zgC51EkimBA+tmnt1ot9FwQgILX87zb2Ri0emsPocJtPpR
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="360094231"
-X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
-   d="scan'208";a="360094231"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2023 11:55:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10733"; a="883459782"
-X-IronPort-AV: E=Sophos;i="6.00,221,1681196400"; 
-   d="scan'208";a="883459782"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga005.jf.intel.com with ESMTP; 06 Jun 2023 11:55:20 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Tue, 6 Jun 2023 11:55:20 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23 via Frontend Transport; Tue, 6 Jun 2023 11:55:20 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.23; Tue, 6 Jun 2023 11:55:19 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HJTZPXT/MmMk7jbTAFITxtV5JH07KYuDKxooGbDATzTyuRLUUNmGjOSkemC+FivYD6Mm1DJ+wToofR18XGlcTjELfnjQITwR1MnbAs1B7c4myYVUxaGWOmeDFcEdbuB/SwMHhlN8gijd/b96IJhoD8AY9wLteqYXTEZdKw0VKHUb63I3ETNnFQ3cvO3/abZ10mwO6uqjTNo6Ev+31Cnv/fd0wQV6rLqn+uQKXoD5xk9LnL9fSapTprGlhIm9d2S6QUHclnj28VyAYeVhmHBvlz00hmUoXHHaYZX8XBR4AreJdbu4a//nBV+FaCJcsiwy++zhWMWCTH5AJN937HGNBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D1/1q94427uIFOYbv0Ta9BD/lgoE37aICVjGE1mCXBs=;
- b=M8U8mUg2WfDGfJsWSfRKIFj72b4ooLWDD7HnR7J0L8WlwV8CcCmDMysLG6aRdDLpesX3nspGUan9qK0xWchFjcuyph9ensIHJPtYUt5ZeoWyUFYGy3BAxZvRbjVj0NGrdQBPBSO+nZg4FMbL6njaOGy36YK/pbTEpjn3hQKlZHCpBdbLXAZdPI8MHB1Rr/pnwaEslQnAzf6q8Kewk3xwp1rasZNC6FR3m3eNcKvTYQBcVKGZ0To4PdfclriTxhAPSZqYw3gL9YXqkyiFsNBbtgWOn5j1XYtkBNvo1YgE+3B4bFDCEB1ty9bUnuiVyoj0Emfvxv5ApoXXl3Ej+g8fbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- SN7PR11MB6704.namprd11.prod.outlook.com (2603:10b6:806:267::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6455.33; Tue, 6 Jun 2023 18:55:16 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::24bd:974b:5c01:83d6]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::24bd:974b:5c01:83d6%3]) with mapi id 15.20.6455.030; Tue, 6 Jun 2023
- 18:55:16 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadfed@meta.com>
-CC:     Jiri Pirko <jiri@resnulli.us>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [RFC PATCH v7 2/8] dpll: Add DPLL framework base functions
-Thread-Topic: [RFC PATCH v7 2/8] dpll: Add DPLL framework base functions
-Thread-Index: AQHZeWdERHWnlPmo9kOdLErcTLxvj69KAZeAgACZWQCAM7ziIA==
-Date:   Tue, 6 Jun 2023 18:55:16 +0000
-Message-ID: <DM6PR11MB4657A72115D17EB5ED702C999B52A@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230428002009.2948020-1-vadfed@meta.com>
-        <20230428002009.2948020-3-vadfed@meta.com>      <ZFOUmViuAiCaHBfc@nanopsycho>
- <20230504132740.30e19bba@kernel.org>
-In-Reply-To: <20230504132740.30e19bba@kernel.org>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|SN7PR11MB6704:EE_
-x-ms-office365-filtering-correlation-id: 2333c8f8-17b8-4f8b-26aa-08db66bf9147
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: E+c2ysXIZCwwuWBt4A3mSYpNxFlqAfNELMht/VuFgaZA+leKQ3GIAl8hLqOmpGtVthyhYGKOjksArHBRN5+klVrn/ONgmajxhRG3y5nwgQgzqANYG6RTYy5PbtPeyx3NVS8KVOMYd1h+8+mD+Ow2l17aYO1WxVd0EsKm5fEoj1Lgsdaru1amAbnOoeiYa2mtAsku32APFjD+WbE9AyDVhU9IevytWXgh/r8WOWfg9ETOnQdGGPV/bVgksAmteefZ3hCG4X8FUuRIlZL8fnykvzIHs+57sfE91S496Uuckm9I51CHykA3hjGvaPhlBKQom0+0pI8RVIOUEojyeHCD9OA3WHlGqcVHTPL/ohHAQbMnjjeXVgyM8JiXR/88TRhu64zO9DOWFBbvvPI84LXMNTHUZfqqtljGZoIlM6qnw8G0kga3WAC9dejiBdHpJc+n8pCmr4jLqz8c2fgcUN+efnfQR5WKfJ43LxCrSqYFxWR800WLrbdwXfwQcDqpmvxepCz1iKcbuH5U68ZWyy6vZ/6eX5LdJ7nBNjVPOQoLbElRf4cT/pHn/i+USCbYL5HZw1wB4XPH9VRNb2XjS0FPv4DPQU190pHb8m1XlWiRSOGFRJ1XHvgA7qIGAtpXEScp
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(346002)(136003)(376002)(366004)(39860400002)(396003)(451199021)(110136005)(4744005)(2906002)(54906003)(38070700005)(71200400001)(478600001)(33656002)(86362001)(52536014)(38100700002)(7416002)(41300700001)(8936002)(8676002)(5660300002)(82960400001)(55016003)(316002)(66556008)(4326008)(64756008)(122000001)(66476007)(66946007)(76116006)(66446008)(6506007)(9686003)(26005)(186003)(7696005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?yYS143m/4RMWtfqk1lAgOlUUbDFHrwQ55h8p57KgUMC0AUd9ddDsiKpLSVGg?=
- =?us-ascii?Q?nrzYnVfX2JFlEPRtLMrkp5+UOnKRjM7QGDCZl3OagdN9quhfPsjiWidgXWWJ?=
- =?us-ascii?Q?IaUq4bPMyZ3iDAqyrZxLUVbr8y4kP3jdsGyUBvY7j7+iJAfHarMcfQg6bUJ7?=
- =?us-ascii?Q?pXCmzavKi0A0fkGFifgINgW8UHkdESX/OOJyaSVeh2RdR69Y/IZbwbp6sU0u?=
- =?us-ascii?Q?IPbxzKGmBLtOeIKPzCR6MoJrjtJLbI4oYnCzJlHscPujmyUqCFIKRZa+yfJA?=
- =?us-ascii?Q?tGlItx4/HDNOfQDuFEukboq/Jy+Qyzta5O12+jWNepZp0h5/FNEHjLVwj2FY?=
- =?us-ascii?Q?UL0NCWm85iLtAybe1/9s89EniuNehdpD+aUkdH7YGRFBLGHrILZn8QwKOnb+?=
- =?us-ascii?Q?eOseKNJMsQkIxuWrCEpiLYo+2BNXF/TUsmG5Vx+isyVkvVMtpDAOKbRDECMX?=
- =?us-ascii?Q?nAMkyFb2j7tUsUmCe9yosMgYPBbU4ScoSsWxHNAFmn1DhoxqVTDy6rV+QJQS?=
- =?us-ascii?Q?20t3WI/B+gP8y9PwELbab8xSuzgUWOgv/R+euT3TbQgELQp4W3qQ3rAFtWR7?=
- =?us-ascii?Q?00zdlrDo4zSKFWKxtQb6ULdVl1OwerkgBRe9s2u+cfnk42/KNRs6rY+aVQ9e?=
- =?us-ascii?Q?hCZNHnC+/T+889ZLGgi7aT3kxCTyQpnDRo4dnNkmeE+Y92k5eFAasm34f79G?=
- =?us-ascii?Q?lQw5WuMXGM6cqX6nNTabjwTopjIf7hXU5J/7idM5AVoAvGa+Cp0SSAMQjOTx?=
- =?us-ascii?Q?U0btIoQAplJmg1MAIBfvIdS5F1zqtQhvb+InNsWL4V0f4Q2Vy3o5e4P9Ltkk?=
- =?us-ascii?Q?eLVu+dbul6cjfDwrFJsRCmai3t04S6HqMFmp+c+PAS7h6hjkFLQfm7KdskQ7?=
- =?us-ascii?Q?6zfsKXO8ETxRpuHj2Kcyc0Z3SUzZQw4fkwNM4fspBRFRRfSSMd6vK6DG4PQf?=
- =?us-ascii?Q?iuQvao6+dwlmBjFxQcluj56nYcC2e4nDuDWm6DQwQkbUILt0C+gnpcwtT5hS?=
- =?us-ascii?Q?fgRtZcM2CQO6VAYAKCRhZ33zbF56OY3vxwCPD6nAzEnGv+UojvCt4BEcOO5h?=
- =?us-ascii?Q?+g2N/xlD6AwM5mmid2HmlSV3L866r8nvqMDfCEThD1JMoHcZehLsITO479Ys?=
- =?us-ascii?Q?Sa6F1egxbHV5+z2mAQ0STtoy2dh1dPH2j9lttRhuAk1L9t3anRSHdlqdjxEj?=
- =?us-ascii?Q?vSmqAoL4shZbzVebTgURbHoMTQ+w/mc+dCMT+nvjWhdoC4whcyS1LPnVZBXi?=
- =?us-ascii?Q?WdqZvaSOyNK/6a7vgNMWgwovF+vCfzLT6Uv+VLptjPQtpLiEmdpRqlhCJg4M?=
- =?us-ascii?Q?dbVrzKi6dPfx1G5MSePvnQj4cNRLnI/wqJcjVkvY4Xj4Mg0PT57QSGOEYQK+?=
- =?us-ascii?Q?ShQkY89g7W3ew0X4yjIcyM/LHwBJGJyaik5joAQfGQ1TF6nJbNc+IOMAPyDj?=
- =?us-ascii?Q?/BtBR1nO0LTxf7t4l98FzqweeZ1b+Xo234Sexd8X/KUIDWq4SETEXSXm7HFY?=
- =?us-ascii?Q?Sed1pUiNBogrMY3iH5OPNDqbgHx1SYpZhtjMX1zvJMOt5QBbD1B0DOlP2jMG?=
- =?us-ascii?Q?gu/n12qTt4KaKIUZuSC8dw678BSgTL2KhAz7QumLXvmm3a+DuYapV4qPQA4O?=
- =?us-ascii?Q?7w=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S233951AbjFFUvv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Jun 2023 16:51:51 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC8C10DE;
+        Tue,  6 Jun 2023 13:51:47 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QbN1r1d2hz9sSV;
+        Tue,  6 Jun 2023 22:51:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1686084704;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LQ1VExHjUHPg8qjJw8lNmVscRJc2LmnWsKi2h9s6YQY=;
+        b=e6tZNYMkN1hFNmeQpyDcoOkKAXzrGL/e/2fpntfHPxIh4/BLJ0+vAG4w1nlmBtGMHTF4V3
+        yUEk4p2yuyhERLxtOFsrP2777zWy2mKxjoB65tbEMnwO88OAsNrXGfD2EkiV9WPJTlzkyA
+        qQAu7WLfSKdjWqMy3lhw4LF6uXIOG7ZmS0msXixZB/u2JL2wv9bxYCLsMCQdrP23gXet/G
+        g8EnpQ5jFo4UX2P1YMODBatH8yVKUEDVW63KM6QdBFLMNcQfM4XoUnvhnKXrM3TFWrHzBe
+        iTaCGLMFaCxDethm+PrMrko7L5mA/O7Lzc6ejHMT/bHpobM1ARVq023Ii0UbYQ==
+References: <20230527132747.83196-1-frank@oltmanns.dev>
+ <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
+ <87mt1jbf18.fsf@oltmanns.dev>
+ <uvjlkaq4drqsndpwwflmbfnxseiftkrhq5qqmpfx5vfmduazed@wcohoxcd23wc>
+ <87edmq9m2m.fsf@oltmanns.dev>
+ <xcgmqvdoip53yao4sfoznnppauhmsmdablwoewh43zjv3bhidp@d7pxqohxydve>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH 0/3] clk: sunxi-ng: Optimize rate selection for NKM
+ clocks
+Date:   Tue, 06 Jun 2023 22:40:34 +0200
+In-reply-to: <xcgmqvdoip53yao4sfoznnppauhmsmdablwoewh43zjv3bhidp@d7pxqohxydve>
+Message-ID: <87sfb41fhl.fsf@oltmanns.dev>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2333c8f8-17b8-4f8b-26aa-08db66bf9147
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jun 2023 18:55:16.4722
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6xp7ipNv6IlQRhKBwRtnOHyUqsdVJaGzN6Zd6LqrsMH8LvtIB8SkAvCAMg/oKbOn9CemeaJWBd7iLH74j6TQGAlam6RGSS8PRef9TMpUjZ4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6704
-X-OriginatorOrg: intel.com
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4QbN1r1d2hz9sSV
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->From: Jakub Kicinski <kuba@kernel.org>
->Sent: Thursday, May 4, 2023 10:28 PM
->
->On Thu, 4 May 2023 13:18:49 +0200 Jiri Pirko wrote:
->> >diff --git a/include/uapi/linux/dpll.h b/include/uapi/linux/dpll.h
->> >index e188bc189754..75eeaa4396eb 100644
->> >--- a/include/uapi/linux/dpll.h
->> >+++ b/include/uapi/linux/dpll.h
->> >@@ -111,6 +111,8 @@ enum dpll_pin_direction {
->> >
->> > #define DPLL_PIN_FREQUENCY_1_HZ		1
->> > #define DPLL_PIN_FREQUENCY_10_MHZ	10000000
->> >+#define DPLL_PIN_FREQUENCY_10_KHZ	10000
->> >+#define DPLL_PIN_FREQUENCY_77_5_KHZ	77500
+Hi Maxime,
+
+On 2023-06-06 at 16:02:58 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+> [[PGP Signed Part:Undecided]]
+> On Mon, Jun 05, 2023 at 12:31:41PM +0200, Frank Oltmanns wrote:
+>> Hi Maxime,
 >>
->> This should be moved to patch #1.
->> please convert to enum, could be unnamed.
+>> On 2023-06-02 at 09:31:59 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+>> > [[PGP Signed Part:Undecided]]
+>> > Hi,
+>> >
+>> > On Thu, Jun 01, 2023 at 07:16:45AM +0200, Frank Oltmanns wrote:
+>> >> On 2023-05-31 at 15:48:43 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+>> >> > [[PGP Signed Part:Undecided]]
+>> >> > Hi Frank,
+>> >> >
+>> >> > On Sat, May 27, 2023 at 03:27:44PM +0200, Frank Oltmanns wrote:
+>> >> >> I would like to bring your attention to the current process of setting
+>> >> >> the rate of an NKM clock. As it stands, when setting the rate of an
+>> >> >> NKM clock, the rate nearest but less than or equal to the requested
+>> >> >> rate is found, instead of the nearest rate.
+>> >> >
+>> >> > Yeah, it's actually pretty common, see clk_mux_determine_rate_flags()
+>> >> > for example. Some devices require that we don't overshoot, while some
+>> >> > prefer to have the closest rate.
+>> >> >
+>> >> > Both are fine, and it's a bit context specific which one we should
+>> >> > favour. If we were to do anything, it would be to support both and let
+>> >> > the clock driver select which behaviour it wants.
+>> >> >
+>> >>
+>> >> Ok, understood. Thank you for the explanation! Now, I'm wondering if
+>> >> anyone would be using such a flag, if I added it.
+>> >
+>> > I guess that's another thing :) If no-one is going to use it, why should
+>> > we do it in the first place?
+>> >
+>> > But most likely the display and audio clocks are usually fairly ok with
+>> > overshooting a bit, and a closest rate is usually better.
+>>
+>> Ok, I dived a bit deeper into this, but, as far as I can tell, the
+>> closest rate is not used anywhere in the sunxi-ng ccu driver. So, when
+>> extending, e.g., the NM or NKM clock to support, one must also extend at
+>> least the mux clocks, because they expect rates less than the requested
+>> rate. That seems to be quite the undertaking for only a small gain in
+>> precision.
 >
->+1, you can't edit the YNL-generated files at all.
+> mux clocks are using __clk_mux_determine_rate which should have the
+> behaviour you want when CLK_MUX_ROUND_CLOSEST is set.
 
-Fixed.
+https://elixir.bootlin.com/linux/v6.3.6/source/drivers/clk/sunxi-ng/ccu-sun50i-a64.c#L539
+is one example of a mux clock combined with a divider that is a bit more
+complex. I didn't look too deeply, but it seemed to me, that it would
+require two separate flags: One for the mux component and one for the
+div component. Maybe I'm mistaken, but it seems to me that the concept
+of having selected rates always be equal to or less than requested
+rates, seems to be deeply ingrained in the sunxi-ng driver. I'm afraid
+that I might miss some parts, therefore I abandoned that idea for now
+(especially since I have only one board for testing).
 
-Thank you,
-Arkadiusz
+>> >> >> Moreover, ccu_nkm_find_best() is called multiple times (footnote [1])
+>> >> >> when setting a rate, each time iterating over all combinations of n,
+>> >> >> k, and m.
+>> >> >
+>> >> > Yeah, that's expected as well.
+>> >>
+>> >> I'm wondering though, if iterating over all combinations is set in
+>> >> stone, or if some kind of optimization would be in order.
+>> >
+>> > The thing with optimization is that you need to optimize for something.
+>> > So you need to show that this code is suboptimal (by whatever metric you
+>> > want to optimize for), and that your code is more optimal that it used
+>> > to be.
+>> >
+>> > It means identifying a problem, writing benchmarks, and showing that the
+>> > new code performs better there.
+>> >
+>> > For example, your code might very well be faster, but it will increase
+>> > the kernel image (and thus the RAM usage). One is not more optimal than
+>> > the other in absolute, they both are, using a different metric.
+>>
+>> Sure, I get that. I'll submit a patchset that adds the functionality to
+>> NKM clocks to set the rate of their parents.
+>>
+>> With the new patchset, the time for, e.g. setting DCLK increases from
+>> ~0.5 ms to a whopping 30 - 37 ms. Those times were taken
+>> unscientifically on my pinephone, i.e. kernel logging and a couple of
+>> re-boots. But I think that still might give an idea of why I thought
+>> about the need to increase performance.
+>>
+>> The reason for this massive increase is, that the patch iterates over
+>> all combinations of NKM for pll-mipi, and for each combination it
+>> iterates over all combinations of NM for pll-video0.
+>>
+>> Nevertheless, following your and Jernej's advice, I'll submit the
+>> patchset first and then we can discuss if speed optimizations are needed
+>> and what cost is acceptable.
+>
+> Honestly, for 40ms, it will be a hard sell :)
+
+I'm not sure what part you think is the "hard-sell":
+ a. the patch itself because 30 to 40 ms is way too much
+ b. the optimization, because 30 to 40 ms isn't all that much.
+I honestly don't know.
+
+BTW, this is the patchset in case you missed it:
+https://lore.kernel.org/lkml/20230605190745.366882-1-frank@oltmanns.dev/
+
+Note, that I have a patch in the works, which is similar to the one in
+this thread, but for ccu_nm. Doing a binary search for finding the
+parent rate of pll-mipi, i.e., pll-video0, reduces the time from ~30 ms
+to less than 2 ms. If combined with only iterating through meaningful
+nkm combinations for pll-mipi, this should bring the time under 1 ms
+again.
+
+>
+>> >> or that pll-mipi should try to set the *requested* rate instead of the
+>> >> previous rate when the pll-video0 changes.
+>> >
+>> > It's not clear to me what is the distinction you make here between the
+>> > requested rate and the previous rate?
+>>
+>> This is quite a de-tour from the original discussion, so I'm sorry for
+>> the confusion.
+>>
+>> By requested rate I mean the rate that the user (DCLK) requested. But
+>> this is not necessarily the rate that the clock is using in the end,
+>> because of its parent's rate.
+>>
+>> So, when the pll-video0 changes rate from 294 MHz to 297MHz (upon
+>> plugging in HDMI), pll-mipi does not know any longer what the requested
+>> rate (let's say 432MHz) was.
+>
+> It does, it's struct clk_core's req_rate. It doesn't look like it's
+> available to clk_hw users, but given the rest of your explanation, I
+> guess you have a compelling use case to make it available.
+
+Oh, thank you for making me aware of that! I'll surely look into it.
+
+Thanks,
+  Frank
+
+>
+> Maxime
+>
+> [[End of PGP Signed Part]]
