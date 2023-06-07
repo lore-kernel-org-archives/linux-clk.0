@@ -2,107 +2,235 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D34C7EE29
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6D1C77B7A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235419AbjFGLhZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 07:37:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35588 "EHLO
+        id S235326AbjFGLm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 07:42:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235242AbjFGLhY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:37:24 -0400
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C7719BB;
-        Wed,  7 Jun 2023 04:37:23 -0700 (PDT)
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-777a4c8e8f4so203632839f.3;
-        Wed, 07 Jun 2023 04:37:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686137842; x=1688729842;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8tVLF3oo3uKUn6FMXIR+EBqzz0+rlaJwE4+IHvkQcKQ=;
-        b=GE4HQzr+WQ/Ou354srDXnqm8Tl1rbNktwoI9TDdvu51tFcB4CoF8VsGg/IuSLpWeds
-         CqJL3bKWHQBS44DehCMy1xMyuvI1Yd6+MGFPih9Fl0ygzlBezx9CKFoRzuCCKPJKQlDN
-         JZvWWAnuaRH4N9p7yW+dgeh9A0Gkto7pMH/t5xZEzR4vyi9b7VyYHNZAeQ7OjVkc9qYw
-         5Zz+n0n7muaFvrPOUrooZzowPb5Et8O5W/S8E8NzwO1QjSAL+BemlIW+nD8rkHnM2aFz
-         Yzivno0Zfxdmbsu3Y08KZtsYzHNEBENXMNbb9bNo8Fzi9jrquOTKs13l6hvXpneuLvAr
-         /VuQ==
-X-Gm-Message-State: AC+VfDwtlDZRot3r1zqW3fHX+sAcjTdVYqDD89eCuXJ5oVNbtf9Y55FR
-        Svf5cXVMdV+m9nc6I/yYlA==
-X-Google-Smtp-Source: ACHHUZ6P8ByJI192iIT0XJCH5ARhEmICRsd0dY/7p8qVdOEm4v8Q0JbvfTPPwjTUdaXSq+rmyhDQMg==
-X-Received: by 2002:a6b:5917:0:b0:77a:c00c:1166 with SMTP id n23-20020a6b5917000000b0077ac00c1166mr2267103iob.15.1686137842688;
-        Wed, 07 Jun 2023 04:37:22 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id j14-20020a02cb0e000000b0041a84d0c828sm3461406jap.87.2023.06.07.04.37.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 04:37:21 -0700 (PDT)
-Received: (nullmailer pid 2576907 invoked by uid 1000);
-        Wed, 07 Jun 2023 11:37:18 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        with ESMTP id S234932AbjFGLm1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:42:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 781B919BD;
+        Wed,  7 Jun 2023 04:42:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 134B861610;
+        Wed,  7 Jun 2023 11:42:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28AEDC433D2;
+        Wed,  7 Jun 2023 11:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686138144;
+        bh=KLtdS8YfUVeUIHmboqaXGQWETl5UWBvzrYSCepsSYQ0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ODkUrE1ZZL7RktgPYR1RuRY1/mao6dCbR5TofAsFB9BoZzWWgFy/Xfrt/gtW7DNis
+         2hFcKb0vkYD2Ck1VvMfgD8cul59R8upUoQitve+aBxmQ/l8PlVhZPQY+Uoc96REuvb
+         nOI9b/sk+pUDw1i6uTja6dhD2bldpWXla3vspk6ExiThxOcZPo2A/Kci9dYHA2obfq
+         dUmqDk/C3GkMWdsqW/fo1c88tV2+HEvE06oPXSABxvCSeu09fGSdoi3T3f7ZKVSVIc
+         iLkffTa7GAacQIH9QOVHzxWQwHRicKjZIeSYT/V4Cfq6vZ9OH40KK73IFtXIe4nv9l
+         gtxZj9lYxal0Q==
+Date:   Wed, 7 Jun 2023 13:42:21 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+        Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH 0/3] clk: sunxi-ng: Optimize rate selection for NKM
+ clocks
+Message-ID: <jscgfo3ydkjmthlsnkuaxkyztajxekz37wiq7zbdcfoievkbfn@ebr2lm6he6ku>
+References: <20230527132747.83196-1-frank@oltmanns.dev>
+ <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
+ <87mt1jbf18.fsf@oltmanns.dev>
+ <uvjlkaq4drqsndpwwflmbfnxseiftkrhq5qqmpfx5vfmduazed@wcohoxcd23wc>
+ <87edmq9m2m.fsf@oltmanns.dev>
+ <xcgmqvdoip53yao4sfoznnppauhmsmdablwoewh43zjv3bhidp@d7pxqohxydve>
+ <87sfb41fhl.fsf@oltmanns.dev>
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     linux-phy@lists.infradead.org, neil.armstrong@linaro.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org, rafal@milecki.pl,
-        sboyd@kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de,
-        mturquette@baylibre.com, krzysztof.kozlowski+dt@linaro.org,
-        agross@kernel.org, will@kernel.org, nfraprado@collabora.com,
-        linux-clk@vger.kernel.org, andersson@kernel.org,
-        linux-usb@vger.kernel.org, konrad.dybcio@linaro.org,
-        p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, quic_srichara@quicinc.com,
-        conor+dt@kernel.org, broonie@kernel.org, geert+renesas@glider.be,
-        quic_wcheng@quicinc.com, kishon@kernel.org,
-        quic_varada@quicinc.org, catalin.marinas@arm.com, vkoul@kernel.org
-In-Reply-To: <14f60578e2935c0844537eab162af3afa52ffe39.1686126439.git.quic_varada@quicinc.com>
-References: <cover.1686126439.git.quic_varada@quicinc.com>
- <14f60578e2935c0844537eab162af3afa52ffe39.1686126439.git.quic_varada@quicinc.com>
-Message-Id: <168613783895.2576884.16624801522897027540.robh@kernel.org>
-Subject: Re: [PATCH 2/9] dt-bindings: phy: qcom,m31: Document qcom,m31 USB
- phy
-Date:   Wed, 07 Jun 2023 05:37:18 -0600
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jjn4z4f2oj3kdsmu"
+Content-Disposition: inline
+In-Reply-To: <87sfb41fhl.fsf@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Wed, 07 Jun 2023 16:26:06 +0530, Varadarajan Narayanan wrote:
-> Document the M31 USB2 phy present in IPQ5332
-> 
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  .../devicetree/bindings/phy/qcom,m31.yaml          | 69 ++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/qcom,m31.yaml
-> 
+--jjn4z4f2oj3kdsmu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+On Tue, Jun 06, 2023 at 10:40:34PM +0200, Frank Oltmanns wrote:
+> Hi Maxime,
+>=20
+> On 2023-06-06 at 16:02:58 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > On Mon, Jun 05, 2023 at 12:31:41PM +0200, Frank Oltmanns wrote:
+> >> Hi Maxime,
+> >>
+> >> On 2023-06-02 at 09:31:59 +0200, Maxime Ripard <mripard@kernel.org> wr=
+ote:
+> >> > [[PGP Signed Part:Undecided]]
+> >> > Hi,
+> >> >
+> >> > On Thu, Jun 01, 2023 at 07:16:45AM +0200, Frank Oltmanns wrote:
+> >> >> On 2023-05-31 at 15:48:43 +0200, Maxime Ripard <mripard@kernel.org>=
+ wrote:
+> >> >> > [[PGP Signed Part:Undecided]]
+> >> >> > Hi Frank,
+> >> >> >
+> >> >> > On Sat, May 27, 2023 at 03:27:44PM +0200, Frank Oltmanns wrote:
+> >> >> >> I would like to bring your attention to the current process of s=
+etting
+> >> >> >> the rate of an NKM clock. As it stands, when setting the rate of=
+ an
+> >> >> >> NKM clock, the rate nearest but less than or equal to the reques=
+ted
+> >> >> >> rate is found, instead of the nearest rate.
+> >> >> >
+> >> >> > Yeah, it's actually pretty common, see clk_mux_determine_rate_fla=
+gs()
+> >> >> > for example. Some devices require that we don't overshoot, while =
+some
+> >> >> > prefer to have the closest rate.
+> >> >> >
+> >> >> > Both are fine, and it's a bit context specific which one we should
+> >> >> > favour. If we were to do anything, it would be to support both an=
+d let
+> >> >> > the clock driver select which behaviour it wants.
+> >> >> >
+> >> >>
+> >> >> Ok, understood. Thank you for the explanation! Now, I'm wondering if
+> >> >> anyone would be using such a flag, if I added it.
+> >> >
+> >> > I guess that's another thing :) If no-one is going to use it, why sh=
+ould
+> >> > we do it in the first place?
+> >> >
+> >> > But most likely the display and audio clocks are usually fairly ok w=
+ith
+> >> > overshooting a bit, and a closest rate is usually better.
+> >>
+> >> Ok, I dived a bit deeper into this, but, as far as I can tell, the
+> >> closest rate is not used anywhere in the sunxi-ng ccu driver. So, when
+> >> extending, e.g., the NM or NKM clock to support, one must also extend =
+at
+> >> least the mux clocks, because they expect rates less than the requested
+> >> rate. That seems to be quite the undertaking for only a small gain in
+> >> precision.
+> >
+> > mux clocks are using __clk_mux_determine_rate which should have the
+> > behaviour you want when CLK_MUX_ROUND_CLOSEST is set.
+>=20
+> https://elixir.bootlin.com/linux/v6.3.6/source/drivers/clk/sunxi-ng/ccu-s=
+un50i-a64.c#L539
+> is one example of a mux clock combined with a divider that is a bit more
+> complex. I didn't look too deeply, but it seemed to me, that it would
+> require two separate flags: One for the mux component and one for the
+> div component. Maybe I'm mistaken, but it seems to me that the concept
+> of having selected rates always be equal to or less than requested
+> rates, seems to be deeply ingrained in the sunxi-ng driver. I'm afraid
+> that I might miss some parts, therefore I abandoned that idea for now
+> (especially since I have only one board for testing).
 
-yamllint warnings/errors:
+All the implementations (afaik) of the "composite" clocks we have that
+combine a mux and dividers eventually use ccu_mux_helper_determine_rate
+and divider_round_rate_parent. The last one can use
+CLK_DIVIDER_ROUND_CLOSEST, and you covered the first one in your patch.
+Which one did you leave out?
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,m31.example.dtb: hs_m31phy@5b00: status:0: 'ok' is not one of ['okay', 'disabled', 'reserved']
-	From schema: /usr/local/lib/python3.10/dist-packages/dtschema/schemas/dt-core.yaml
+> >> >> >> Moreover, ccu_nkm_find_best() is called multiple times (footnote=
+ [1])
+> >> >> >> when setting a rate, each time iterating over all combinations o=
+f n,
+> >> >> >> k, and m.
+> >> >> >
+> >> >> > Yeah, that's expected as well.
+> >> >>
+> >> >> I'm wondering though, if iterating over all combinations is set in
+> >> >> stone, or if some kind of optimization would be in order.
+> >> >
+> >> > The thing with optimization is that you need to optimize for somethi=
+ng.
+> >> > So you need to show that this code is suboptimal (by whatever metric=
+ you
+> >> > want to optimize for), and that your code is more optimal that it us=
+ed
+> >> > to be.
+> >> >
+> >> > It means identifying a problem, writing benchmarks, and showing that=
+ the
+> >> > new code performs better there.
+> >> >
+> >> > For example, your code might very well be faster, but it will increa=
+se
+> >> > the kernel image (and thus the RAM usage). One is not more optimal t=
+han
+> >> > the other in absolute, they both are, using a different metric.
+> >>
+> >> Sure, I get that. I'll submit a patchset that adds the functionality to
+> >> NKM clocks to set the rate of their parents.
+> >>
+> >> With the new patchset, the time for, e.g. setting DCLK increases from
+> >> ~0.5 ms to a whopping 30 - 37 ms. Those times were taken
+> >> unscientifically on my pinephone, i.e. kernel logging and a couple of
+> >> re-boots. But I think that still might give an idea of why I thought
+> >> about the need to increase performance.
+> >>
+> >> The reason for this massive increase is, that the patch iterates over
+> >> all combinations of NKM for pll-mipi, and for each combination it
+> >> iterates over all combinations of NM for pll-video0.
+> >>
+> >> Nevertheless, following your and Jernej's advice, I'll submit the
+> >> patchset first and then we can discuss if speed optimizations are need=
+ed
+> >> and what cost is acceptable.
+> >
+> > Honestly, for 40ms, it will be a hard sell :)
+>=20
+> I'm not sure what part you think is the "hard-sell":
+>  a. the patch itself because 30 to 40 ms is way too much
+>  b. the optimization, because 30 to 40 ms isn't all that much.
+> I honestly don't know.
+>=20
+> BTW, this is the patchset in case you missed it:
+> https://lore.kernel.org/lkml/20230605190745.366882-1-frank@oltmanns.dev/
+>=20
+> Note, that I have a patch in the works, which is similar to the one in
+> this thread, but for ccu_nm. Doing a binary search for finding the
+> parent rate of pll-mipi, i.e., pll-video0, reduces the time from ~30 ms
+> to less than 2 ms. If combined with only iterating through meaningful
+> nkm combinations for pll-mipi, this should bring the time under 1 ms
+> again.
 
-doc reference errors (make refcheckdocs):
+My point is that:
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/14f60578e2935c0844537eab162af3afa52ffe39.1686126439.git.quic_varada@quicinc.com
+ * it's regression prone, so quite risky
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+ * but if the endgoal is to gain 40ms once, at boot, without any use
+   case to back that up, there's basically no reward.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+a high risk, low reward patch is what's hard to sell.
 
-pip3 install dtschema --upgrade
+Maxime
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+--jjn4z4f2oj3kdsmu
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIBtHQAKCRDj7w1vZxhR
+xcbbAQDi9CqHyZ4Awx2jfBHXAwdVCXicmpGwuE4L9hIFEEdD2AEAshGCprSSUj7e
+GBrw4iJRatq6f1o32cOMY40VD9fBdQ8=
+=9gco
+-----END PGP SIGNATURE-----
+
+--jjn4z4f2oj3kdsmu--
