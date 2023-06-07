@@ -2,235 +2,516 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6D1C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB91C8300C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235326AbjFGLm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 07:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
+        id S240403AbjFGLyd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 07:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234932AbjFGLm1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:42:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 781B919BD;
-        Wed,  7 Jun 2023 04:42:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 134B861610;
-        Wed,  7 Jun 2023 11:42:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28AEDC433D2;
-        Wed,  7 Jun 2023 11:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686138144;
-        bh=KLtdS8YfUVeUIHmboqaXGQWETl5UWBvzrYSCepsSYQ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ODkUrE1ZZL7RktgPYR1RuRY1/mao6dCbR5TofAsFB9BoZzWWgFy/Xfrt/gtW7DNis
-         2hFcKb0vkYD2Ck1VvMfgD8cul59R8upUoQitve+aBxmQ/l8PlVhZPQY+Uoc96REuvb
-         nOI9b/sk+pUDw1i6uTja6dhD2bldpWXla3vspk6ExiThxOcZPo2A/Kci9dYHA2obfq
-         dUmqDk/C3GkMWdsqW/fo1c88tV2+HEvE06oPXSABxvCSeu09fGSdoi3T3f7ZKVSVIc
-         iLkffTa7GAacQIH9QOVHzxWQwHRicKjZIeSYT/V4Cfq6vZ9OH40KK73IFtXIe4nv9l
-         gtxZj9lYxal0Q==
-Date:   Wed, 7 Jun 2023 13:42:21 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Frank Oltmanns <frank@oltmanns.dev>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH 0/3] clk: sunxi-ng: Optimize rate selection for NKM
- clocks
-Message-ID: <jscgfo3ydkjmthlsnkuaxkyztajxekz37wiq7zbdcfoievkbfn@ebr2lm6he6ku>
-References: <20230527132747.83196-1-frank@oltmanns.dev>
- <flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq>
- <87mt1jbf18.fsf@oltmanns.dev>
- <uvjlkaq4drqsndpwwflmbfnxseiftkrhq5qqmpfx5vfmduazed@wcohoxcd23wc>
- <87edmq9m2m.fsf@oltmanns.dev>
- <xcgmqvdoip53yao4sfoznnppauhmsmdablwoewh43zjv3bhidp@d7pxqohxydve>
- <87sfb41fhl.fsf@oltmanns.dev>
+        with ESMTP id S235486AbjFGLyc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:54:32 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F3F1BCB
+        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 04:54:28 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f6148f9679so6710521e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 04:54:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686138866; x=1688730866;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:to
+         :content-language:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Asydfjq2eEpPjZfiuqiYvdF3KnjIA6edxD3BnnQbcZk=;
+        b=bZXmpBWBfzLPQUA3isPl3V0mH5R5g9ZGiQY8ndhVQhFhlov/il+slplRLf7nlWSfaY
+         5DfgOF8p37EddqumMJu14G76mkIdpCp0R9MaAfSKF7fDjrKo7frp/nChERcoMLXY03xQ
+         Dih2F5mE94+ULzJuIH2xIrwR2BThaDg27zWxl0LuDXHmYNFf6Q6ay6opYlY91j//xJ7e
+         qvIpl+6e6jjtCcGf5khLERdziL3H01zM1BLN/IrRN5QPdhXPAiWJghdAx4MCBcjkx4zi
+         0T4jiZGXe+EGbbubXiXjOOUFAbGPoyfUwJZE+xh7hNLnG6hnVK1oIpSfoEaU7heZfCKX
+         hNSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686138866; x=1688730866;
+        h=content-transfer-encoding:in-reply-to:subject:from:references:to
+         :content-language:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Asydfjq2eEpPjZfiuqiYvdF3KnjIA6edxD3BnnQbcZk=;
+        b=S3I1fBepAGr3iuupMHgt10aWQb8kSH9fY/3bS5UsZGZXdyPDR5jpj+UxyA2F7GVvsM
+         6FNXJB0cVjghuffWDgwii+R2PpWQk1VG4Wvf3JnXhlMajff+Ea+1sU/X0mhJLEdz5o0m
+         AuTYJEnGJ5xJvmnsQ4PgT94U8mv3yAqXnnnjxtW0MjXWxs5XJ3s/TCCo8BdP9enzQQHv
+         1KpN0cCD/+FUhZM+VOon7jx0LICZEYna1sOabUUgJH/pLlwGsajxCSVIFun/kgKUbzk5
+         aOIsiMOb6Yw+Ub6mf2/40b8SIIpZnYu6JSTIMeg1L5HJjU+H38up5CG3ws/+WOl5QwlC
+         90JQ==
+X-Gm-Message-State: AC+VfDxBo979K2hQJqxwsruxv7dvo/AQ4gEt9Ay5CUxwus+HdQSRZxVK
+        S3fpE6cqjR1ZFU43+/wYMmBsBA==
+X-Google-Smtp-Source: ACHHUZ6mLA0d3GRI9wFD9pLuo09FV/letvWT+DUmis6LFdbkVK6s5fIbjvjkb8M850Fag7uw4ZtP2Q==
+X-Received: by 2002:ac2:5e8a:0:b0:4f6:1779:b1c1 with SMTP id b10-20020ac25e8a000000b004f61779b1c1mr1829447lfq.48.1686138866482;
+        Wed, 07 Jun 2023 04:54:26 -0700 (PDT)
+Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id p19-20020a19f013000000b004f4589808ddsm1774395lfc.305.2023.06.07.04.54.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jun 2023 04:54:26 -0700 (PDT)
+Message-ID: <416bef68-6df3-d5c4-2aed-ef1ae7c78d7b@linaro.org>
+Date:   Wed, 7 Jun 2023 13:54:23 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jjn4z4f2oj3kdsmu"
-Content-Disposition: inline
-In-Reply-To: <87sfb41fhl.fsf@oltmanns.dev>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Content-Language: en-US
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, vkoul@kernel.org, kishon@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, gregkh@linuxfoundation.org,
+        catalin.marinas@arm.com, will@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, p.zabel@pengutronix.de, arnd@arndb.de,
+        geert+renesas@glider.be, neil.armstrong@linaro.org,
+        nfraprado@collabora.com, broonie@kernel.org, rafal@milecki.pl,
+        quic_srichara@quicinc.com, quic_varada@quicinc.org,
+        quic_wcheng@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <cover.1686126439.git.quic_varada@quicinc.com>
+ <6bb345c6a57ee27516764f36ba7d34fd1a719b87.1686126439.git.quic_varada@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: Re: [PATCH 3/9] phy: qcom-m31: Introduce qcom,m31 USB phy driver
+In-Reply-To: <6bb345c6a57ee27516764f36ba7d34fd1a719b87.1686126439.git.quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---jjn4z4f2oj3kdsmu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 06, 2023 at 10:40:34PM +0200, Frank Oltmanns wrote:
-> Hi Maxime,
->=20
-> On 2023-06-06 at 16:02:58 +0200, Maxime Ripard <mripard@kernel.org> wrote:
-> > [[PGP Signed Part:Undecided]]
-> > On Mon, Jun 05, 2023 at 12:31:41PM +0200, Frank Oltmanns wrote:
-> >> Hi Maxime,
-> >>
-> >> On 2023-06-02 at 09:31:59 +0200, Maxime Ripard <mripard@kernel.org> wr=
-ote:
-> >> > [[PGP Signed Part:Undecided]]
-> >> > Hi,
-> >> >
-> >> > On Thu, Jun 01, 2023 at 07:16:45AM +0200, Frank Oltmanns wrote:
-> >> >> On 2023-05-31 at 15:48:43 +0200, Maxime Ripard <mripard@kernel.org>=
- wrote:
-> >> >> > [[PGP Signed Part:Undecided]]
-> >> >> > Hi Frank,
-> >> >> >
-> >> >> > On Sat, May 27, 2023 at 03:27:44PM +0200, Frank Oltmanns wrote:
-> >> >> >> I would like to bring your attention to the current process of s=
-etting
-> >> >> >> the rate of an NKM clock. As it stands, when setting the rate of=
- an
-> >> >> >> NKM clock, the rate nearest but less than or equal to the reques=
-ted
-> >> >> >> rate is found, instead of the nearest rate.
-> >> >> >
-> >> >> > Yeah, it's actually pretty common, see clk_mux_determine_rate_fla=
-gs()
-> >> >> > for example. Some devices require that we don't overshoot, while =
-some
-> >> >> > prefer to have the closest rate.
-> >> >> >
-> >> >> > Both are fine, and it's a bit context specific which one we should
-> >> >> > favour. If we were to do anything, it would be to support both an=
-d let
-> >> >> > the clock driver select which behaviour it wants.
-> >> >> >
-> >> >>
-> >> >> Ok, understood. Thank you for the explanation! Now, I'm wondering if
-> >> >> anyone would be using such a flag, if I added it.
-> >> >
-> >> > I guess that's another thing :) If no-one is going to use it, why sh=
-ould
-> >> > we do it in the first place?
-> >> >
-> >> > But most likely the display and audio clocks are usually fairly ok w=
-ith
-> >> > overshooting a bit, and a closest rate is usually better.
-> >>
-> >> Ok, I dived a bit deeper into this, but, as far as I can tell, the
-> >> closest rate is not used anywhere in the sunxi-ng ccu driver. So, when
-> >> extending, e.g., the NM or NKM clock to support, one must also extend =
-at
-> >> least the mux clocks, because they expect rates less than the requested
-> >> rate. That seems to be quite the undertaking for only a small gain in
-> >> precision.
-> >
-> > mux clocks are using __clk_mux_determine_rate which should have the
-> > behaviour you want when CLK_MUX_ROUND_CLOSEST is set.
->=20
-> https://elixir.bootlin.com/linux/v6.3.6/source/drivers/clk/sunxi-ng/ccu-s=
-un50i-a64.c#L539
-> is one example of a mux clock combined with a divider that is a bit more
-> complex. I didn't look too deeply, but it seemed to me, that it would
-> require two separate flags: One for the mux component and one for the
-> div component. Maybe I'm mistaken, but it seems to me that the concept
-> of having selected rates always be equal to or less than requested
-> rates, seems to be deeply ingrained in the sunxi-ng driver. I'm afraid
-> that I might miss some parts, therefore I abandoned that idea for now
-> (especially since I have only one board for testing).
+On 7.06.2023 12:56, Varadarajan Narayanan wrote:
+> Add the M31 USB2 phy driver
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-m31.c | 360 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 360 insertions(+)
+>  create mode 100644 drivers/phy/qualcomm/phy-qcom-m31.c
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-m31.c b/drivers/phy/qualcomm/phy-qcom-m31.c
+> new file mode 100644
+> index 0000000..d29a91e
+> --- /dev/null
+> +++ b/drivers/phy/qualcomm/phy-qcom-m31.c
+> @@ -0,0 +1,360 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (c) 2014-2016, 2020, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/err.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/usb/phy.h>
+> +#include <linux/reset.h>
+> +#include <linux/of_device.h>
+Please sort these
 
-All the implementations (afaik) of the "composite" clocks we have that
-combine a mux and dividers eventually use ccu_mux_helper_determine_rate
-and divider_round_rate_parent. The last one can use
-CLK_DIVIDER_ROUND_CLOSEST, and you covered the first one in your patch.
-Which one did you leave out?
+> +
+> +enum clk_reset_action {
+> +	CLK_RESET_DEASSERT	= 0,
+> +	CLK_RESET_ASSERT	= 1
+> +};
+> +
+> +#define USB2PHY_PORT_POWERDOWN		0xA4
+> +#define POWER_UP			BIT(0)
+> +#define POWER_DOWN			0
+> +
+> +#define USB2PHY_PORT_UTMI_CTRL1	0x40
+> +
+> +#define USB2PHY_PORT_UTMI_CTRL2	0x44
+> +#define UTMI_ULPI_SEL			BIT(7)
+> +#define UTMI_TEST_MUX_SEL		BIT(6)
+> +
+> +#define HS_PHY_CTRL_REG			0x10
+> +#define UTMI_OTG_VBUS_VALID             BIT(20)
+> +#define SW_SESSVLD_SEL                  BIT(28)
+> +
+> +#define USB_PHY_CFG0			0x94
+> +#define USB_PHY_UTMI_CTRL5		0x50
+> +#define USB_PHY_FSEL_SEL		0xB8
+> +#define USB_PHY_HS_PHY_CTRL_COMMON0	0x54
+> +#define USB_PHY_REFCLK_CTRL		0xA0
+> +#define USB_PHY_HS_PHY_CTRL2		0x64
+> +#define USB_PHY_UTMI_CTRL0		0x3c
+> +#define USB2PHY_USB_PHY_M31_XCFGI_1	0xBC
+> +#define USB2PHY_USB_PHY_M31_XCFGI_4	0xC8
+> +#define USB2PHY_USB_PHY_M31_XCFGI_5	0xCC
+> +#define USB2PHY_USB_PHY_M31_XCFGI_11	0xE4
+Could you sort them address-wise?
 
-> >> >> >> Moreover, ccu_nkm_find_best() is called multiple times (footnote=
- [1])
-> >> >> >> when setting a rate, each time iterating over all combinations o=
-f n,
-> >> >> >> k, and m.
-> >> >> >
-> >> >> > Yeah, that's expected as well.
-> >> >>
-> >> >> I'm wondering though, if iterating over all combinations is set in
-> >> >> stone, or if some kind of optimization would be in order.
-> >> >
-> >> > The thing with optimization is that you need to optimize for somethi=
-ng.
-> >> > So you need to show that this code is suboptimal (by whatever metric=
- you
-> >> > want to optimize for), and that your code is more optimal that it us=
-ed
-> >> > to be.
-> >> >
-> >> > It means identifying a problem, writing benchmarks, and showing that=
- the
-> >> > new code performs better there.
-> >> >
-> >> > For example, your code might very well be faster, but it will increa=
-se
-> >> > the kernel image (and thus the RAM usage). One is not more optimal t=
-han
-> >> > the other in absolute, they both are, using a different metric.
-> >>
-> >> Sure, I get that. I'll submit a patchset that adds the functionality to
-> >> NKM clocks to set the rate of their parents.
-> >>
-> >> With the new patchset, the time for, e.g. setting DCLK increases from
-> >> ~0.5 ms to a whopping 30 - 37 ms. Those times were taken
-> >> unscientifically on my pinephone, i.e. kernel logging and a couple of
-> >> re-boots. But I think that still might give an idea of why I thought
-> >> about the need to increase performance.
-> >>
-> >> The reason for this massive increase is, that the patch iterates over
-> >> all combinations of NKM for pll-mipi, and for each combination it
-> >> iterates over all combinations of NM for pll-video0.
-> >>
-> >> Nevertheless, following your and Jernej's advice, I'll submit the
-> >> patchset first and then we can discuss if speed optimizations are need=
-ed
-> >> and what cost is acceptable.
-> >
-> > Honestly, for 40ms, it will be a hard sell :)
->=20
-> I'm not sure what part you think is the "hard-sell":
->  a. the patch itself because 30 to 40 ms is way too much
->  b. the optimization, because 30 to 40 ms isn't all that much.
-> I honestly don't know.
->=20
-> BTW, this is the patchset in case you missed it:
-> https://lore.kernel.org/lkml/20230605190745.366882-1-frank@oltmanns.dev/
->=20
-> Note, that I have a patch in the works, which is similar to the one in
-> this thread, but for ccu_nm. Doing a binary search for finding the
-> parent rate of pll-mipi, i.e., pll-video0, reduces the time from ~30 ms
-> to less than 2 ms. If combined with only iterating through meaningful
-> nkm combinations for pll-mipi, this should bring the time under 1 ms
-> again.
+> +
+> +#define USB2_0_TX_ENABLE		BIT(2)
+> +#define HSTX_SLEW_RATE_565PS		3
+> +#define PLL_CHARGING_PUMP_CURRENT_35UA	(3 << 3)
+> +#define ODT_VALUE_38_02_OHM		(3 << 6)
+> +#define ODT_VALUE_45_02_OHM		BIT(2)
+> +#define HSTX_PRE_EMPHASIS_LEVEL_0_55MA	(1)
+Weird mix of values, bits, bitfields.. perhaps BIT(n) and
+GENMASK() (+ FIELD_PREP) would be more suitable?
 
-My point is that:
+> +
+> +#define UTMI_PHY_OVERRIDE_EN		BIT(1)
+> +#define POR_EN				BIT(1)
+Please associate these with their registers, like
 
- * it's regression prone, so quite risky
+#define FOO_REG		0xf00
+ #define POR_EN		BIT(1)
 
- * but if the endgoal is to gain 40ms once, at boot, without any use
-   case to back that up, there's basically no reward.
+> +#define FREQ_SEL			BIT(0)
+> +#define COMMONONN			BIT(7)
+> +#define FSEL				BIT(4)
+> +#define RETENABLEN			BIT(3)
+> +#define USB2_SUSPEND_N_SEL		BIT(3)
+> +#define USB2_SUSPEND_N			BIT(2)
+> +#define USB2_UTMI_CLK_EN		BIT(1)
+> +#define CLKCORE				BIT(1)
+> +#define ATERESET			~BIT(0)
+> +#define FREQ_24MHZ			(5 << 4)
+> +#define XCFG_COARSE_TUNE_NUM		(2 << 0)
+> +#define XCFG_FINE_TUNE_NUM		(1 << 3)
+same comment
 
-a high risk, low reward patch is what's hard to sell.
+> +
+> +static void m31usb_write_readback(void *base, u32 offset,
+> +					const u32 mask, u32 val);
+We don't need this forward-definition, just move the function up.
 
-Maxime
+> +
+> +struct m31usb_phy {
+> +	struct usb_phy		phy;
+> +	void __iomem		*base;
+> +	void __iomem		*qscratch_base;
+> +
+> +	struct reset_control	*phy_reset;
+> +
+> +	bool			cable_connected;
+> +	bool			suspended;
+> +	bool			ulpi_mode;
+> +};
+> +
+> +static void m31usb_reset(struct m31usb_phy *qphy, u32 action)
+> +{
+> +	if (action == CLK_RESET_ASSERT)
+> +		reset_control_assert(qphy->phy_reset);
+> +	else
+> +		reset_control_deassert(qphy->phy_reset);
+> +	wmb(); /* ensure data is written to hw register */
+Please move the comment above the call.
 
---jjn4z4f2oj3kdsmu
-Content-Type: application/pgp-signature; name="signature.asc"
+> +}
+> +
+> +static void m31usb_phy_enable_clock(struct m31usb_phy *qphy)
+> +{
+> +	/* Enable override ctrl */
+> +	writel(UTMI_PHY_OVERRIDE_EN, qphy->base + USB_PHY_CFG0);
+Some of the comments are missing a space before '*/'
 
------BEGIN PGP SIGNATURE-----
+Also, please consider adding some newlines to logically split the
+actions.
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIBtHQAKCRDj7w1vZxhR
-xcbbAQDi9CqHyZ4Awx2jfBHXAwdVCXicmpGwuE4L9hIFEEdD2AEAshGCprSSUj7e
-GBrw4iJRatq6f1o32cOMY40VD9fBdQ8=
-=9gco
------END PGP SIGNATURE-----
+> +	/* Enable POR*/
+> +	writel(POR_EN, qphy->base + USB_PHY_UTMI_CTRL5);
+> +	udelay(15);
+> +	/* Configure frequency select value*/
+> +	writel(FREQ_SEL, qphy->base + USB_PHY_FSEL_SEL);
+> +	/* Configure refclk frequency */
+> +	writel(COMMONONN | FSEL | RETENABLEN,
+> +		qphy->base + USB_PHY_HS_PHY_CTRL_COMMON0);
+> +	/* select refclk source */
+> +	writel(CLKCORE, qphy->base + USB_PHY_REFCLK_CTRL);
+> +	/* select ATERESET*/
+> +	writel(POR_EN & ATERESET, qphy->base + USB_PHY_UTMI_CTRL5);
+> +	writel(USB2_SUSPEND_N_SEL | USB2_SUSPEND_N | USB2_UTMI_CLK_EN,
+> +		qphy->base + USB_PHY_HS_PHY_CTRL2);
+> +	writel(0x0, qphy->base + USB_PHY_UTMI_CTRL5);
+> +	writel(USB2_SUSPEND_N | USB2_UTMI_CLK_EN,
+> +		qphy->base + USB_PHY_HS_PHY_CTRL2);
+> +	/* Disable override ctrl */
+> +	writel(0x0, qphy->base + USB_PHY_CFG0);
+> +}
+> +
+> +static void ipq5332_m31usb_phy_enable_clock(struct m31usb_phy *qphy)
+> +{
+> +	/* Enable override ctrl */
+> +	writel(UTMI_PHY_OVERRIDE_EN, qphy->base + USB_PHY_CFG0);
+> +	/* Enable POR*/
+ditto
 
---jjn4z4f2oj3kdsmu--
+> +	writel(POR_EN, qphy->base + USB_PHY_UTMI_CTRL5);
+> +	udelay(15);
+> +	/* Configure frequency select value*/
+> +	writel(FREQ_SEL, qphy->base + USB_PHY_FSEL_SEL);
+> +	/* Configure refclk frequency */
+> +	writel(COMMONONN | FREQ_24MHZ | RETENABLEN,
+> +		qphy->base + USB_PHY_HS_PHY_CTRL_COMMON0);
+> +	/* select ATERESET*/
+> +	writel(POR_EN & ATERESET, qphy->base + USB_PHY_UTMI_CTRL5);
+> +	writel(USB2_SUSPEND_N_SEL | USB2_SUSPEND_N | USB2_UTMI_CLK_EN,
+> +		qphy->base + USB_PHY_HS_PHY_CTRL2);
+> +	writel(XCFG_COARSE_TUNE_NUM  | XCFG_FINE_TUNE_NUM,
+> +				qphy->base + USB2PHY_USB_PHY_M31_XCFGI_11);
+> +	/* Adjust HSTX slew rate to 565 ps*/
+> +	/* Adjust PLL lock Time counter for release clock to 35uA */
+> +	/* Adjust Manual control ODT value to 38.02 Ohm */
+> +	writel(HSTX_SLEW_RATE_565PS | PLL_CHARGING_PUMP_CURRENT_35UA |
+> +		ODT_VALUE_38_02_OHM, qphy->base + USB2PHY_USB_PHY_M31_XCFGI_4);
+These functions seem very similar, with the main difference being that
+IPQ5332 adds some more writes at the end. Perhaps some commonizing could
+be done?
+
+> +	/*
+> +	 * Enable to always turn on USB 2.0 TX driver
+> +	 * when system is in USB 2.0 HS mode
+> +	 */
+> +	writel(USB2_0_TX_ENABLE, qphy->base + USB2PHY_USB_PHY_M31_XCFGI_1);
+> +	/* Adjust Manual control ODT value to 45.02 Ohm */
+> +	/* Adjust HSTX Pre-emphasis level to 0.55mA */
+> +	writel(ODT_VALUE_45_02_OHM | HSTX_PRE_EMPHASIS_LEVEL_0_55MA,
+> +		qphy->base + USB2PHY_USB_PHY_M31_XCFGI_5);
+> +	udelay(4);
+> +	writel(0x0, qphy->base + USB_PHY_UTMI_CTRL5);
+> +	writel(USB2_SUSPEND_N | USB2_UTMI_CLK_EN,
+> +		qphy->base + USB_PHY_HS_PHY_CTRL2);
+> +}
+> +
+> +static int m31usb_phy_init(struct usb_phy *phy)
+> +{
+> +	struct m31usb_phy *qphy = container_of(phy, struct m31usb_phy, phy);
+> +
+> +	/* Perform phy reset */
+> +	m31usb_reset(qphy, CLK_RESET_ASSERT);
+> +	usleep_range(1, 5);
+https://www.kernel.org/doc/Documentation/timers/timers-howto.txt
+
+this may not work as intended
+
+> +	m31usb_reset(qphy, CLK_RESET_DEASSERT);
+> +
+> +	/* configure for ULPI mode if requested */
+> +	if (qphy->ulpi_mode)
+> +		writel_relaxed(0x0, qphy->base + USB2PHY_PORT_UTMI_CTRL2);
+> +
+> +	/* Enable the PHY */
+> +	writel_relaxed(POWER_UP, qphy->base + USB2PHY_PORT_POWERDOWN);
+> +
+> +	/* Make sure above write completed */
+> +	wmb();
+As you're calling wmb in the reset func, dropping _relaxed from the
+ULPI and PORT_POWERDOWN writes should work the same
+
+> +
+> +	/* Turn on phy ref clock*/
+> +	if (of_device_is_compatible(phy->dev->of_node,
+> +					"qcom,ipq5332-m31-usb-hsphy"))
+> +		ipq5332_m31usb_phy_enable_clock(qphy);
+> +	else
+> +		m31usb_phy_enable_clock(qphy);
+This should be done using OF match data.
+
+> +
+> +	/* Set OTG VBUS Valid from HSPHY to controller */
+> +	m31usb_write_readback(qphy->qscratch_base, HS_PHY_CTRL_REG,
+> +				UTMI_OTG_VBUS_VALID, UTMI_OTG_VBUS_VALID);
+> +	/* Indicate value is driven by UTMI_OTG_VBUS_VALID bit */
+> +	m31usb_write_readback(qphy->qscratch_base, HS_PHY_CTRL_REG,
+> +				SW_SESSVLD_SEL, SW_SESSVLD_SEL);
+> +
+> +	return 0;
+> +}
+> +
+> +static void m31usb_phy_shutdown(struct usb_phy *phy)
+> +{
+> +	struct m31usb_phy *qphy = container_of(phy, struct m31usb_phy, phy);
+> +
+> +	/* Disable the PHY */
+> +	writel_relaxed(POWER_DOWN, qphy->base + USB2PHY_PORT_POWERDOWN);
+> +	/* Make sure above write completed */
+> +	wmb();
+> +}
+> +
+> +static void m31usb_write_readback(void *base, u32 offset,
+> +					const u32 mask, u32 val)
+The indentation here makes `const u32..` misaligned.
+
+> +{
+> +	u32 write_val, tmp = readl_relaxed(base + offset);
+> +
+> +	tmp &= ~mask; /* retain other bits */
+> +	write_val = tmp | val;
+> +
+> +	writel_relaxed(write_val, base + offset);
+> +	/* Make sure above write completed */
+> +	wmb();
+> +
+> +	/* Read back to see if val was written */
+> +	tmp = readl_relaxed(base + offset);
+> +	tmp &= mask; /* clear other bits */
+> +
+> +	if (tmp != val)
+> +		pr_err("%s: write: %x to QSCRATCH: %x FAILED\n",
+> +			__func__, val, offset);
+> +}
+> +
+> +static int m31usb_phy_notify_connect(struct usb_phy *phy,
+> +					enum usb_device_speed speed)
+> +{
+> +	struct m31usb_phy *qphy = container_of(phy, struct m31usb_phy, phy);
+> +
+> +	qphy->cable_connected = true;
+> +
+> +	dev_dbg(phy->dev, " cable_connected=%d\n", qphy->cable_connected);
+spurious space at the beginning of the string
+
+> +
+> +	/* Set OTG VBUS Valid from HSPHY to controller */
+> +	m31usb_write_readback(qphy->qscratch_base, HS_PHY_CTRL_REG,
+> +				UTMI_OTG_VBUS_VALID,
+> +				UTMI_OTG_VBUS_VALID);
+Please align the lines with the previous opening bracket
+
+> +
+> +	/* Indicate value is driven by UTMI_OTG_VBUS_VALID bit */
+> +	m31usb_write_readback(qphy->qscratch_base, HS_PHY_CTRL_REG,
+> +				SW_SESSVLD_SEL, SW_SESSVLD_SEL);
+> +
+> +	dev_dbg(phy->dev, "M31USB2 phy connect notification\n");
+> +	return 0;
+> +}
+> +
+> +static int m31usb_phy_notify_disconnect(struct usb_phy *phy,
+> +					enum usb_device_speed speed)
+> +{
+> +	struct m31usb_phy *qphy = container_of(phy, struct m31usb_phy, phy);
+> +
+> +	qphy->cable_connected = false;
+> +
+> +	dev_dbg(phy->dev, " cable_connected=%d\n", qphy->cable_connected);
+> +
+> +	/* Set OTG VBUS Valid from HSPHY to controller */
+> +	m31usb_write_readback(qphy->qscratch_base, HS_PHY_CTRL_REG,
+> +				UTMI_OTG_VBUS_VALID, 0);
+> +
+> +	/* Indicate value is driven by UTMI_OTG_VBUS_VALID bit */
+> +	m31usb_write_readback(qphy->qscratch_base, HS_PHY_CTRL_REG,
+> +				SW_SESSVLD_SEL, 0);
+> +
+> +	dev_dbg(phy->dev, "M31USB2 phy disconnect notification\n");
+> +	return 0;
+> +}
+> +
+> +static int m31usb_phy_probe(struct platform_device *pdev)
+> +{
+> +	struct m31usb_phy *qphy;
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	int ret;
+> +	const char *phy_type;
+Please sort these in a reverse-Christmas-tree order.
+
+> +
+> +	qphy = devm_kzalloc(dev, sizeof(*qphy), GFP_KERNEL);
+> +	if (!qphy)
+> +		return -ENOMEM;
+> +
+> +	qphy->phy.dev = dev;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> +							"m31usb_phy_base");
+> +	qphy->base = devm_ioremap_resource(dev, res);
+devm_platform_get_and_ioremap_resource?
+
+> +	if (IS_ERR(qphy->base))
+> +		return PTR_ERR(qphy->base);
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> +							"qscratch_base");
+> +	if (res) {
+Do we expect platforms without this register space?
+
+> +		qphy->qscratch_base = devm_ioremap(dev, res->start,
+> +							resource_size(res));
+> +		if (IS_ERR(qphy->qscratch_base)) {
+> +			dev_dbg(dev, "couldn't ioremap qscratch_base\n");
+> +			qphy->qscratch_base = NULL;
+> +		}
+> +	}
+> +
+> +	qphy->phy_reset = devm_reset_control_get(dev, "usb2_phy_reset");
+not _exclusive?
+
+> +	if (IS_ERR(qphy->phy_reset))
+> +		return PTR_ERR(qphy->phy_reset);
+> +
+> +	qphy->ulpi_mode = false;
+> +	ret = of_property_read_string(dev->of_node, "phy_type", &phy_type);
+of_usb_get_phy_mode?
+
+> +
+> +	if (!ret) {
+> +		if (!strcasecmp(phy_type, "ulpi"))
+> +			qphy->ulpi_mode = true;
+> +	} else {
+> +		dev_err(dev, "error reading phy_type property\n");
+> +		return ret;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, qphy);
+> +
+> +	qphy->phy.label			= "qcom-m31usb-phy";
+> +	qphy->phy.init			= m31usb_phy_init;
+> +	qphy->phy.shutdown		= m31usb_phy_shutdown;
+> +	qphy->phy.type			= USB_PHY_TYPE_USB2;
+> +
+> +	if (qphy->qscratch_base) {
+> +		qphy->phy.notify_connect        = m31usb_phy_notify_connect;
+> +		qphy->phy.notify_disconnect     = m31usb_phy_notify_disconnect;
+> +	}
+> +
+> +	ret = usb_add_phy_dev(&qphy->phy);
+> +
+> +	return ret;
+> +}
+> +
+> +static int m31usb_phy_remove(struct platform_device *pdev)
+Please make this return void and pass it to .remove_new
+
+> +{
+> +	struct m31usb_phy *qphy = platform_get_drvdata(pdev);
+> +
+> +	usb_remove_phy(&qphy->phy);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id m31usb_phy_id_table[] = {
+> +	{ .compatible = "qcom,m31-usb-hsphy",},
+> +	{ .compatible = "qcom,ipq5332-m31-usb-hsphy",},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, m31usb_phy_id_table);
+> +
+> +static struct platform_driver m31usb_phy_driver = {
+> +	.probe		= m31usb_phy_probe,
+> +	.remove		= m31usb_phy_remove,
+> +	.driver = {
+> +		.name	= "qcom-m31usb-phy",
+> +		.of_match_table = of_match_ptr(m31usb_phy_id_table),
+of_match_ptr is unnecessary, this driver depends on OF.
+
+Konrad
+> +	},
+> +};
+> +
+> +module_platform_driver(m31usb_phy_driver);
+> +
+> +MODULE_DESCRIPTION("USB2 Qualcomm M31 HSPHY driver");
+> +MODULE_LICENSE("GPL");
