@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC24C83005
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7499C77B7A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240326AbjFGLAn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 07:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37488 "EHLO
+        id S240127AbjFGLBV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 07:01:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240581AbjFGLAU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:00:20 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC112103;
-        Wed,  7 Jun 2023 03:59:06 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 357AV1RF015795;
-        Wed, 7 Jun 2023 10:57:33 GMT
+        with ESMTP id S240172AbjFGLA2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:00:28 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F38F210D;
+        Wed,  7 Jun 2023 03:59:22 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 357ArXTn031039;
+        Wed, 7 Jun 2023 10:57:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=6+Brloyw+/LWMk2UGIbQJRX8f8AAjIfvA4t4+7wtWm8=;
- b=T2UUnjvuBEImEWyu+B47ZByWIWn3/pBSrRrwF57lRPJHh4SpOHnaaiGtwU0bSS1vHD8H
- mOO55n/jJf4BjEZqoRDojXio4NTk9wSuZ4ISv1OgDwDmeTbFHMi8/vAHCwN6BZqjkPTL
- BLuXW6kLAy0rm0Z7aDSlXLo5XVwb+cw57LNKYBng15HX7BZw5rweuoQhGWhxpMhrip8W
- ouMXpX+mHJZbubVfJrFAjNHvRfuDhse+5Pukjl/pDhYDozc5lT48cidnwsEEWqgXEiyg
- LVLIS7pV3ROWIxXSC1z018m0EWvc3cor1MX4eebsUGj+9TSRIqhr96rNpusg+jhCGmPX Tg== 
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a769kyd-1
+ bh=qr5+FSWsWWHqskKMY4ScJQ+mQlC5yQIvjNi+EvMTtIw=;
+ b=ZPMNb+QRuYtZSTRMs0x6OEaFXaW8+JhC8QtUwXw/xx9qX+AaES3shykRgfjqiccecY+u
+ IBOe57JQ+eSLFjsBdxco3rVHdKc2Ts6ii/Sh+gyv4/s9uzvDkdeyhRDncbAqD+BwFe9o
+ KHADkOE5w4D4s8uh+/nfI5a7BJSGV41SAmy0Qak70c2EjAd6tWa8mp7mh1wSto/+ON6w
+ KnAa0KJgUipPDuF3kNdx+NfI+0tPmYeH620HvGJ3rXjWBtsXWivx8Fk2UTzWK2izY6KI
+ iVWEyY3FcwI0J4VZrLZdVgsDGqVJe2hxVC0Y7FfH9HWu/JU6OqiaADVX7vOJCmsyb9q/ 2A== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a9t9m5k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Jun 2023 10:57:32 +0000
+        Wed, 07 Jun 2023 10:57:14 +0000
 Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357AvVcs007553
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357AvDJa009912
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 7 Jun 2023 10:57:31 GMT
+        Wed, 7 Jun 2023 10:57:13 GMT
 Received: from varda-linux.qualcomm.com (10.80.80.8) by
  nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 7 Jun 2023 03:57:22 -0700
+ 15.2.986.42; Wed, 7 Jun 2023 03:57:04 -0700
 From:   Varadarajan Narayanan <quic_varada@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
@@ -55,9 +55,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
         <linux-usb@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
 CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH 7/9] arm64: dts: qcom: ipq5332: Add USB related nodes
-Date:   Wed, 7 Jun 2023 16:26:11 +0530
-Message-ID: <1b48e737aa14f5b5539cbf04d473182121d5b1ad.1686126439.git.quic_varada@quicinc.com>
+Subject: [PATCH 5/9] phy: qcom-m31: Introduce qcom,m31 USB phy
+Date:   Wed, 7 Jun 2023 16:26:09 +0530
+Message-ID: <636308462efb579734de829fb6e9cbda81b982f7.1686126439.git.quic_varada@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1686126439.git.quic_varada@quicinc.com>
 References: <cover.1686126439.git.quic_varada@quicinc.com>
@@ -68,93 +68,46 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wGiNh1LmL-Dy0sEa44e8UYzQmKaTnO7f
-X-Proofpoint-GUID: wGiNh1LmL-Dy0sEa44e8UYzQmKaTnO7f
+X-Proofpoint-ORIG-GUID: FO1Q6SR5J6gtqdRBcK0ggGdpm43f-fbj
+X-Proofpoint-GUID: FO1Q6SR5J6gtqdRBcK0ggGdpm43f-fbj
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-06-07_06,2023-06-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 clxscore=1015
- mlxscore=0 bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=831
- impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2305260000 definitions=main-2306070089
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 impostorscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=695 spamscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306070089
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add USB phy and controller nodes
+Introduce CONFIG_PHY_QCOM_M31_USB for including the M31 phy driver
 
 Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 ---
- arch/arm64/boot/dts/qcom/ipq5332.dtsi | 55 +++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ drivers/phy/qualcomm/Kconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-index c2d6cc65..3183357 100644
---- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-@@ -383,6 +383,61 @@
- 				status = "disabled";
- 			};
- 		};
+diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
+index 67a45d9..8a363dd 100644
+--- a/drivers/phy/qualcomm/Kconfig
++++ b/drivers/phy/qualcomm/Kconfig
+@@ -188,3 +188,14 @@ config PHY_QCOM_IPQ806X_USB
+ 	  This option enables support for the Synopsis PHYs present inside the
+ 	  Qualcomm USB3.0 DWC3 controller on ipq806x SoC. This driver supports
+ 	  both HS and SS PHY controllers.
 +
-+		usb_0_m31phy: hs_m31phy@7b000 {
-+			compatible = "qcom,ipq5332-m31-usb-hsphy";
-+			reg = <0x0007b000 0x12C>,
-+			      <0x08af8800 0x400>;
-+			reg-names = "m31usb_phy_base",
-+				    "qscratch_base";
-+			phy_type= "utmi";
-+
-+			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
-+			reset-names = "usb2_phy_reset";
-+
-+			status = "okay";
-+		};
-+
-+		usb2: usb2@8a00000 {
-+			compatible = "qcom,ipq5332-dwc3", "qcom,dwc3";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			reg = <0x08af8800 0x100>;
-+
-+			clocks = <&gcc GCC_USB0_MASTER_CLK>,
-+				<&gcc GCC_SNOC_USB_CLK>,
-+				<&gcc GCC_USB0_SLEEP_CLK>,
-+				<&gcc GCC_USB0_MOCK_UTMI_CLK>;
-+
-+			clock-names = "core",
-+				"iface",
-+				"sleep",
-+				"mock_utmi";
-+
-+			interrupts-extended = <&intc GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "pwr_event";
-+
-+			resets = <&gcc GCC_USB_BCR>;
-+
-+			qcom,select-utmi-as-pipe-clk;
-+
-+			usb2_0_dwc: usb@8a00000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x08a00000 0xe000>;
-+				clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
-+				clock-names = "ref";
-+				interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
-+				usb-phy = <&usb_0_m31phy>;
-+				tx-fifo-resize;
-+				snps,is-utmi-l1-suspend;
-+				snps,hird-threshold = /bits/ 8 <0x0>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_u3_susphy_quirk;
-+				snps,ref-clock-period-ns = <21>;
-+			};
-+		};
- 	};
- 
- 	timer {
++config PHY_QCOM_M31_USB
++	tristate "Qualcomm M31 HS PHY driver support"
++	depends on (USB || USB_GADGET) && ARCH_QCOM
++	select USB_PHY
++	help
++	  Enable this to support M31 HS PHY transceivers on Qualcomm chips
++	  with DWC3 USB core. It handles PHY initialization, clock
++	  management required after resetting the hardware and power
++	  management. This driver is required even for peripheral only or
++	  host only mode configurations.
 -- 
 2.7.4
 
