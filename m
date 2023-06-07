@@ -2,158 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165D8C87FDD
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 07:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06177C7EE43
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 08:10:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239342AbjFGHgM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 03:36:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33640 "EHLO
+        id S238665AbjFGIKs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 04:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239800AbjFGHfr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 03:35:47 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741EC10D2;
-        Wed,  7 Jun 2023 00:35:35 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4QbfJg6xQMz9smV;
-        Wed,  7 Jun 2023 09:35:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1686123332;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DQz0BkcH35hQLm3KjeljrzdxrPKkYEXuRwVXLyaLMKk=;
-        b=FT70/16Q8OGXxY+Rmc9LSho9yADPBkWrdZWlobH5A8EWzR/fHAWf/xyT1ttJKCEJK76zDB
-        DksuWzc/v9pg2SS6t+PyceoptaofhXe6GZgnZXlQA0SjgtH5OXApqIb11xAtkLgxlRWXW7
-        Jrpveca3LLoorR/iu/haCW4QC+p5DbXsF2xdVy66pAnm3tbfJWI1CZsb7amL6pU7c3u7dA
-        xglQTTVJuKd4YN/BtbmL78XExuW1zftU8ehzVMZ4Q17iacCyoWi/vZ73hV5byZWHrQqYuG
-        2BecKpAr456fhcYqE2jq5zLTOrvgzNs40rG7SjpaJ2+RcKNlg14682ERcdZuHw==
-References: <20230605190745.366882-1-frank@oltmanns.dev>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Roman Beranek <me@crly.cz>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 0/2] clk: sunxi-ng: Consider alternative parent rates
- when determining NKM clock rate
-In-reply-to: <20230605190745.366882-1-frank@oltmanns.dev>
-Date:   Wed, 07 Jun 2023 09:35:20 +0200
-Message-ID: <87legv2093.fsf@oltmanns.dev>
+        with ESMTP id S234278AbjFGIKr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 04:10:47 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5095095;
+        Wed,  7 Jun 2023 01:10:46 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3573hgoH013040;
+        Wed, 7 Jun 2023 08:10:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=zNC49izImKDUwPg+4hUyOkDmU+KHJ1XdXUa8gCnXKX8=;
+ b=fR6PmIelCrJjxOqw26q5umZ0gfPqa19W0Dvc+0TBtPRKn2H2MidblHCV1ALy+t3tLsaw
+ jqEvfLilrQte9w1Ry25t96K8eiNPMBotNIoVniguqCfL5Nm1kdfLaQQIYwFWJhz/GQH5
+ x1CxIFBtna6+EbGc3kDDuNYCeYyG6wU/ch9VhRKdgQAtnuQHXobFrdLoELEuZUIAfsaq
+ XXRRA6sjFFRbvADO0PCSN1XBN1NBS5TYAHTxyUYXBo8ws2wkxGg7TXR4Z/+v1DekzDKO
+ ufwEBvr9EnDGHJ8WNaFuuua60IJnG6+2G5gSKACHoQqeGQaURHm9R1JYwB6LXQetgzc5 Hw== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a7699yv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Jun 2023 08:10:35 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3578AYhs030018
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 7 Jun 2023 08:10:34 GMT
+Received: from [10.216.18.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 7 Jun 2023
+ 01:10:26 -0700
+Message-ID: <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
+Date:   Wed, 7 Jun 2023 13:40:22 +0530
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+To:     Kalle Valo <kvalo@kernel.org>
+CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-2-quic_mmanikan@quicinc.com>
+ <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+ <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+ <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+ <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
+ <87edmoitu3.fsf@kernel.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <87edmoitu3.fsf@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gqe4xl4c4R0xB_rjn82FRVjAJ6tko9eF
+X-Proofpoint-GUID: gqe4xl4c4R0xB_rjn82FRVjAJ6tko9eF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-07_04,2023-06-06_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ mlxscore=0 bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=758
+ impostorscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2305260000 definitions=main-2306070066
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-06-05 at 21:07:43 +0200, Frank Oltmanns <frank@oltmanns.dev> wrote:
-> I would like to share a patchset that enables the NKM clock in pll-video0 to
-> consider alternative parent rates. I have found this feature particularly useful
-> to adjust the pll-video0's clock on Allwinner A64, as it allows me to achieve an
-> optimal rate for driving the board's panel (in my case, the Pinephone).
->
-> To provide some context, the clock structure involved in this process is as follows:
->     clock                       clock type
->     --------------------------------------
->     pll-video0                  ccu_nm
->        pll-mipi                 ccu_nkm
->           tcon0                 ccu_mux
->              tcon-data-clock    sun4i_dclk
->
-> The divider between tcon0 and tcon-data-clock is fixed at 4. Therefore, in order
-> to achieve a rate that closely matches the desired rate of the panel, I need
-> pll-mipi to operate at a specific rate.
->
-> However, I must emphasize that setting the parent's rate for NKM clocks results
-> in a significant increase in the time required to find the optimal rate. For
-> instance, setting DCLK on the pinephone has seen a 60-fold increase in the time
-> taken, from approximately 0.5 ms to around 30 ms. These figures were obtained
-> through informal measurements on my pinephone, involving kernel logging and a
-> few reboots. The worst-case scenario observed was approximately 37 ms, while the
-> majority of cases were just under 30 ms.
->
-> The reason for this considerable increase in time is that the code now iterates
-> over all combinations of NKM for pll-mipi. For each combination, it subsequently
-> iterates over all combinations of NM for pll-video0.
 
-I don't know if this increase is problematic, but if it is, there are
-options to mitigate it:
- a. Binary search for finding parent rate:
-    Precalculate an _ordered_ table of meaningful combinations of NM for
-    pll-video0. That means that combinations that result in the same
-    clock rate shall only be listed once. For example, since both
-      { .n = 8, .m = 1} and  { .n = 16, .m = 2 }
-    are valid values for n and m, only one of them would be allowed
-    because both result in a factor of 8.
 
-    Furthermore, the table should only contain combinations that can
-    result in a valid clock rate. I.e., since the parent is a fixed rate
-    clock at 24 MHz and the ccu_nm's min_rate is 192 MHz, the
-    combination
-      { .n = 1, .m = 1 }
-    should _not_ appear in the table as the resulting rate would be 96
-    MHz.
+On 6/6/2023 7:19 PM, Kalle Valo wrote:
+> Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
+> 
+>>>>>> +
+>>>>>> +    properties:
+>>>>>> +      compatible:
+>>>>>> +        enum:
+>>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>>>>
+>>>>> Keep rather alphabetical order (so both 5018 together).
+>>>>>
+>>>>> I also do not understand these at all. Why adding bus type to
+>>>>> compatible? This rarely is allowed (unless it is PCIe controller within
+>>>>> soc).
+>>>>>
+>>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+>>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
+>>>> radio's properties, i have added bus type to compatible.
+>>>
+>>> It's the same device - WCSS - right? We do not create multiple nodes and
+>>> compatibles for the same devices. Bus suffixes are almost never parts of
+>>> compatibles.
+>>
+>>
+>> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
+>> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
+>>
+>> So for better clarity i will use attached SOC ID in compatible.
+>> Below are the new compatible's.
+>>
+>> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
+>> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
+>> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
+> 
+> What mandates that there's just one QCN6122 device attached to PCI?
+> Assuming fixed PCI configurations like that makes me worried.
+> 
 
-    Utilizing this table, we can then do a binary search in
-    ccu_nm_find_best instead of iterating over all combinations of NM.
+IPQ5018 always has one internal radio, attached pcie radio's depends on 
+no of pcie ports. IPQ5018 has 2 pcie ports, so it supports max two 
+qcn6122 devices. One compatible (qcom,qcn6122-wcss-mpd) itself support's 
+number of pcie devices controlled by QDSP6.
 
- b. rational_best_approximation for finding parent rate:
-    Using the rational best approximation from linux/rational.h for the
-    parent's rate also significantly reduces the time. Instead of
-    iterating over all combinations of NM, the algorithm uses continued
-    fractions to "calculate best rational approximation for a given
-    fraction taking into account restricted register size" (quote from
-    the function's description).
-
-    This reduces the ccu_nm_find_best function to the following two
-    lines:
-       rational_best_approximation(rate, parent, nm->max_n, nm->max_m, &nm->n, &nm->m);
-       return ccu_nm_calc_rate(parent, nm->n, nm->m);
-
-I did a rough implementation of both and found that both approaches
-reduce the time spent to set DCLK to less than 2 ms, i.e., not quite the
-original 0.5 ms, but not as bad as 30 ms.
-
-Option a. either requires addional ROM space if we generate the table
-off-line or some code to generate the table during initialization (which
-of course would also require time to execute, but only once).
-
-Option b. finds the closest approximation, whereas the current
-implementation of ccu_nm_find_rate finds the closest rate that is less
-than the requested rate. This means that option b. requires that all of
-pll-video0's children (and grand-children a.s.o.) support rates higher
-than the requested rate. Currently, the sunxi-ng driver in a lot of
-places only expects rates that are less than the requested rate, so all
-of these would need to be changed.
-
-So, my question: Is spending the 30 ms fine or do I need to optimize for
-speed in order for this patchset to be accepted? Or is 2 ms also too
-much of an increase, in which case I'm out of ideas. :-)
-
-I'm looking forward to receiving your feedback.
-
-Thanks,
-  Frank
-
-> I greatly appreciate your feedback and suggestions for further improving this
-> patchset.
->
-> Thanks,
->   Frank
->
-> Frank Oltmanns (2):
->   clk: sunxi-ng: nkm: consider alternative parent rates when finding
->     rate
->   clk: sunxi-ng: a64: allow pll-mipi to set parent's rate
->
->  drivers/clk/sunxi-ng/ccu-sun50i-a64.c |  3 +-
->  drivers/clk/sunxi-ng/ccu_nkm.c        | 40 +++++++++++++++++++++------
->  2 files changed, 33 insertions(+), 10 deletions(-)
+Thanks & Regards,
+Manikanta.
