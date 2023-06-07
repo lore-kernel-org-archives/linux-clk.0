@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3AFC7EE43
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872B1C87FDD
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232125AbjFGUQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 16:16:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41844 "EHLO
+        id S232096AbjFGURA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 16:17:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjFGUQ5 (ORCPT
+        with ESMTP id S230349AbjFGUQ5 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:16:57 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACDE61BD3;
-        Wed,  7 Jun 2023 13:16:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C681C1FDB;
+        Wed,  7 Jun 2023 13:16:55 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 6A6CD5FD05;
-        Wed,  7 Jun 2023 23:16:50 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id 36D085FD71;
+        Wed,  7 Jun 2023 23:16:54 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1686169010;
-        bh=M/we8RgDjwgR++pTBbcueO2YO/PO3K31bJrDaIQUUdE=;
+        s=mail; t=1686169014;
+        bh=g3y8T0WTlJ3jzmj8lOKHVsw9Ja/UPAZJGv18YRUKJy0=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=C+kUCvyF7gc57sZzG2y48Vr72/2ceS66RatT0BvhZU4hmzAD35j+MeraX6XBUD0Gf
-         FNhuU2RDsciP98n0kMvXG8BNzq+ZcrlZnGvWtvoK1xf2nYdGWGTcQQJJNNgu98NDOU
-         9k5yP3AEg0+vB0BSMk6gkKZb7peorcZ/g+yFfljCcSve5s1wmLlK0RIEBKueW9JAPj
-         7udk1RP0ceU0FUZGWouH2I4TGbss8cqFQSA3nOnqCW4vhBJZ1L0ZCqBE2IfocvBjeZ
-         wly0shj1NQH1yjQXO/OxZ4yX6G8XYEwCjh8YEojqac1/aE923pUePjq15iopLt0NEK
-         i4XPXXtViiiHQ==
+        b=g69kBCUVxKU3MeagzwSZlDYO6xykarWKd7igIzWqgS20j/Bs79FFQ1SVKXIYnI0LH
+         WS2LldPlX7FVQ4rb3Y9f9NYxx5kPFORDK6Wnyit67hiJd6gqpJSLld7O+jH5eN/lyw
+         GPu37RYc/MAE9h7rvCl+0jJIqlhYTdupCDFrgVQF2iPRZajSGiAxqeVVNmD6TY5CfX
+         zfADPI1oM0/QSBhc8GlcjrQytSpuUtyNG5SuvzTsmMATBd1Sj+IrZpo8k34Q1Q9/wU
+         0wLXig6YO2nFXfoJTS7yZZm/F1QZyGy1hLBu95gQo8htt++tYStJxbHILNoZvYGuO2
+         5a1ndu8qzrOMg==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Wed,  7 Jun 2023 23:16:50 +0300 (MSK)
+        Wed,  7 Jun 2023 23:16:54 +0300 (MSK)
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -41,11 +41,14 @@ CC:     <kernel@sberdevices.ru>, <sdfw_system_team@sberdevices.ru>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
+        Martin Kurbanov <mmkurbanov@sberdevices.ru>,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v1 0/6] arm64: dts: meson: a1: introduce several peripheral IPs
-Date:   Wed, 7 Jun 2023 23:16:35 +0300
-Message-ID: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
+Subject: [PATCH v1 4/6] arm64: dts: meson: a1: introduce SPI Flash Controller
+Date:   Wed, 7 Jun 2023 23:16:39 +0300
+Message-ID: <20230607201641.20982-5-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
+References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -63,42 +66,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series introduces device tree declarations for various
-peripheral IPs of the A1 SoC family, including clock controllers, EFUSE,
-USB, SPI Flash Controller, SDIO, and UART_AO:
-    - CLK: A1 SoC has four types on the board, namely PLL, Peripherals,
-      CPU, and Audio, but only Amlogic A1 PLL and Peripherals clock
-      controllers are currently supported.
-    - EFUSE: consists of a 4k bit One Time Programmable (OTP) memory
-      divided into 32 128-bit blocks, and data is accessed using the APB
-      bus through software or the Key-ladder integrated with the EFUSE
-      block.
-    - USB: only one USB 2.0 high-speed port is available in the A1 SoC,
-      supporting both HOST and DEVICE modes for OTG.
-    - SPI Flash Controller: 4-bit QPI/SPI NOR Flash or NAND FLASH
-      controller.
-    - SDIO: for WiFi/IEEE802.11 connection.
-    - UART_AO: for Bluetooth connection.
+From: Martin Kurbanov <mmkurbanov@sberdevices.ru>
 
-Alexey Romanov (1):
-  arm64: dts: meson: a1: enable efuse controller and setup its clk
+This controller can be used for spinand flash connection.
 
-Dmitry Rokosov (2):
-  arm64: dts: meson: a1: introduce PLL and Peripherals clk controllers
-  arm64: dts: meson: a1: support USB controller in OTG mode
+Signed-off-by: Martin Kurbanov <mmkurbanov@sberdevices.ru>
+Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+---
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Jan Dakinevich (1):
-  arm64: dts: meson: a1: add eMMC controller and its pins
-
-Martin Kurbanov (1):
-  arm64: dts: meson: a1: introduce SPI Flash Controller
-
-Oleg Lyovin (1):
-  arm64: dts: meson: a1: introduce UART_AO mux definitions
-
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 164 ++++++++++++++++++++++
- 1 file changed, 164 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+index 63faccfc1134..0efd922ca7e1 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+@@ -199,6 +199,16 @@ gic: interrupt-controller@ff901000 {
+ 			#address-cells = <0>;
+ 		};
+ 
++		spifc: spi@fd000400 {
++			compatible = "amlogic,a1-spifc";
++			reg = <0x0 0xfd000400 0x0 0x290>;
++			clocks = <&clkc_periphs CLKID_SPIFC>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			power-domains = <&pwrc PWRC_SPIFC_ID>;
++			status = "disabled";
++		};
++
+ 		usb: usb@fe004400 {
+ 			status = "disabled";
+ 			compatible = "amlogic,meson-a1-usb-ctrl";
 -- 
 2.36.0
 
