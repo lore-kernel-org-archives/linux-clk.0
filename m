@@ -2,60 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C74C7EE23
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53850C7EE23
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237744AbjFGK6E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 06:58:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37258 "EHLO
+        id S238971AbjFGK6W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 06:58:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240110AbjFGK5b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:57:31 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14B332702
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 03:56:53 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f736e0c9b1so40595125e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 03:56:53 -0700 (PDT)
+        with ESMTP id S239885AbjFGK5h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:57:37 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CEE7270A
+        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 03:56:55 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f73617a292so40779535e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 03:56:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686135393; x=1688727393;
+        d=linaro.org; s=google; t=1686135394; x=1688727394;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BsnmlXWXAcgVHUbjGfQAWDjY409xKyzHLPgBv/T7PpM=;
-        b=Vq8pa4b2T29yceZMdKvfJiUC8Fg+vWuPeJl7uQVmqtmzrO5tIkAoIxqjgq07lsh5mA
-         ROUSF15bBgrhIxy/xDzx/fVi2fmH0f/wii8jt0SiWkURShx8P8VWdxtriWJwefqZ/7u9
-         XlaZuoUDzbvJBHBVF425VYECX9KpAc47hhlyQ3trVPbMHfiaAMfsgJA+X58jr8Dag/ye
-         KtRoqsTql6aWYlK8J5xywTd3IuzntxFB0TA0VbjxA6aszHZkLzTH0I31ZKTEdQ0CL5TU
-         vWuFgh7uSeVpOyft9UfDCTILPKfNOCs6ws0/8Y+SIk7DoG69FLYTXEK/epvRi0ythygJ
-         VSvg==
+        bh=iQnjXf6n+PPSf2TGQIgc/Oatr1C9hNRqkqVyGgL0I84=;
+        b=WJfmJDzTP1/s8YeBsI1ZO6cn+0kZZcZTlHiP4g+Fr6zDi2b2M4C8LLyHYLKvSOx+JS
+         tMIDq0jOUbF5U4PHnQPjLVcIGcoclSB18f5A95dFafu8Efk8curpv41riEISFGiofdt7
+         3Alc71e2Fq+i67JfCAmngArykk4rmiLY6KCp0AweFaaSg5wIAVQZoXsKq7TDA70G5b5K
+         baJCExWizsz8sRAoCigGFyoxUY2JcE2OPpjy6WmWdf2nDNmZvR1/9Y0dYNBKNH+cbegS
+         EJti5oqo/DVhK/+nJh+mungcdQpnCi9hHRKrZqMDbI0ePd5iOQeb2SNa2AN5pV931UpP
+         HniA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686135393; x=1688727393;
+        d=1e100.net; s=20221208; t=1686135394; x=1688727394;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BsnmlXWXAcgVHUbjGfQAWDjY409xKyzHLPgBv/T7PpM=;
-        b=T8QnYEk1FUTfO368xhK65HbSUCFW66xrLlPKYPBrupNYCY3i/EVQbkXw0v9EWx2lut
-         pfct5H7ZP5lME1NkA164Hi19sl+DGSZJ+UQGciIKH9mf2/R0/OhBcHs2XeGjdkR9YdSF
-         ThTAP0IPKuDnAZIUL2R2xZXwm9tg3tnjVMfTkUhyUq0FUBil6sa0d+ZPMlj1ugyj9MB1
-         ElGo5ZUoy063a1BqzUXzT3I6maz/rX0oXZaSiQiywldhffVLt4iVFxlrGj4x0Daj/GVM
-         Xft3kSw8ser2g7r6ed6GPMZiP0+bG44s0blGT7NNB+uDegoO6sFnI3me4TJGm/bwtgyP
-         /WhA==
-X-Gm-Message-State: AC+VfDwjIcTba1StgbhoymtoD1Er7xwfY06I3/AqeXZ3thtGPlhMXQby
-        echaS+K2VXOHsp1P+gcZoQn8Ug==
-X-Google-Smtp-Source: ACHHUZ7jQ7MaLkOmGsRN8HZCYFzMqtUFxGliSBM9KbHB5D4gJ9pX7SlWtYEiEvTbiCB/9UqKI5Ygng==
-X-Received: by 2002:a05:600c:22ca:b0:3f7:34ee:413f with SMTP id 10-20020a05600c22ca00b003f734ee413fmr4351530wmg.5.1686135393010;
-        Wed, 07 Jun 2023 03:56:33 -0700 (PDT)
+        bh=iQnjXf6n+PPSf2TGQIgc/Oatr1C9hNRqkqVyGgL0I84=;
+        b=WKrS9/ZqhY6CMGz2cNNnIxI49dsjvZrQ7ZNktv2Yoo3bFalyiurgQUZ91kgUvn/wl4
+         IyDCHini3/TWjeRNdBkpnknn3/LsdafE62um8LDin1BPlK/uFeHU6dABTUhw8E7mZVuU
+         Wq6d4tpOp2OtgKD8nQoFxqBzpikuhycPq+ehf3XlBFGw3u6WGIeLTzNUTMYc5Sg5c9zX
+         qIOFba0E3AgDJWiCFnbMtW3ncxvB3D7ULwZPmmRrIHAe1N3fryPy8gx8OEeyd/FLWvEl
+         TPhwKd/gIEtZiJPDAgzV0O04LLXfHc0lbH7dX6spB6BmxslEp1vG4I6lf6tDOMrpIvJ8
+         Mgrw==
+X-Gm-Message-State: AC+VfDyu0DKZHG26BSAnKU6X/OalYT1NFswkS0t9/js4yCtTUsbEwKez
+        oBqwtMBM8m6j1Ohx7xjFsI31ug==
+X-Google-Smtp-Source: ACHHUZ5cXwmo/MWfhNmypSHBzjwjn9NyullgQyxGvM4scW2aLrMKTD+jwMVb/dse1YAMp/lapkodtg==
+X-Received: by 2002:a05:600c:da:b0:3f7:f446:927 with SMTP id u26-20020a05600c00da00b003f7f4460927mr537815wmm.37.1686135394708;
+        Wed, 07 Jun 2023 03:56:34 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id i10-20020a05600c290a00b003f60faa4612sm1761879wmd.22.2023.06.07.03.56.32
+        by smtp.gmail.com with ESMTPSA id i10-20020a05600c290a00b003f60faa4612sm1761879wmd.22.2023.06.07.03.56.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 03:56:32 -0700 (PDT)
+        Wed, 07 Jun 2023 03:56:34 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Wed, 07 Jun 2023 12:56:21 +0200
-Subject: [PATCH 10/18] dt-bindings: clk: meson8b-clkc: expose all clock ids
+Date:   Wed, 07 Jun 2023 12:56:23 +0200
+Subject: [PATCH 12/18] dt-bindings: clk: amlogic,a1-pll-clkc: expose all
+ clock ids
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-10-9676afa6b22c@linaro.org>
+Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-12-9676afa6b22c@linaro.org>
 References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
 In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>,
@@ -71,20 +72,20 @@ Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9164;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2423;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=LbkDDdKA0SSEdFWllOS0ngQCe/Pb7VZcTTFr4986Crs=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkgGJSqZwd2YW95P6lPRkUmXxwSDcLY6on3l7Ly1Hw
- VSiVl3GJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIBiUgAKCRB33NvayMhJ0dnZD/
- 9alNmV3TT3r7KFQ2rF/70Qss3SDx6cL2i1vlmIkoL1a9CEZeIWDDYlRFJRCWEK1dr7lVWWZDjgm+b8
- /pSdaavRPtm3VmIl/zFQORwWg062QFSeUgzRRNe6/ohwCz+XoRXETgTN9rCrnEBdyKikvJq6rJxQaO
- CTG9Sajj0faYuWmLUQi/oExUGujTUqM8e75DdlPeCUkoYHWbx4tB9WOQfmbdqs+G+OXQ7fshAv3gO6
- Vam0WIfGXIcC5vOD4SQDKOfBp2ppHnru/N5P5u7F8LVhk8PZIz6W8O29vp+ryRZQhGN75dNCJ+MUL4
- iW020UIaSDLNvhWwIA/aLAaupMmfhZP/WKnGeswmf7SXLcsXdXHppraJyfH/8BhevMji3ZftF0Tz0N
- yoMRXlENBbj8DBRPpYjoBiA6nC0b+tC579tB8iRGqu2asuEfij0xoxQbtr0uFWYyjfiB5OJreOkXaG
- fqsaDbsv5mCxjl2nOV1l25aoSj5qgFHsUzDdSfyNKa5BHCLk6AsOUeen54zjtXPUwV/97q3ZaEjFxT
- gaZcNB7gkNX1wJ66OG/199m4HrBHLB0AMDW3lOcONETSPYAp9hhGMRZpIDK9PtfGOWJ0R2V0VvrzIn
- odJ1sjsjyG6bkWUVTBMendwO5iSfGX2BLeZHSnJa8Exw+i8IFkxzj4Stw6hA==
+ bh=gAuzOf3W8TAOyXHYRakDqce4wcc2Qi6BuxU2eHHrAzM=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkgGJTmt/qkyDAbM3CpeCJiJ/KvV7WI5GoKcib9fF5
+ 1rR1fmSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIBiUwAKCRB33NvayMhJ0d3gD/
+ wMTpGb5jYDYphrziFGF+VTrlmX9gs8hgVj6hhc3B0hCLCfl1ii5VVcR12dHiwOKooraws72ETnC7Cb
+ gUuIF4j688cOQzkGrvvDKup4fDhW9zeon1luucR3iTOPecW99SANg73knW+QYNG+fPxofwXOkU2qBv
+ iTJeauWpv/OQ0N0ik+G8akarLcqaxCfx7pOeL3dxw7FBIQlwVOeoMpeMQ61LCyS+vAMDL5BUk1/V1L
+ UIIp0W/kWeGP9vMD52Cm8wUG5lBCzZzoWB37obmNGa1seebAwhpdR0sqKw7j+Liw0LsUUtnverCiqQ
+ I5Nwojl+X9yF8pW2Nl699DKZa698qwseydNpUxOi3gBwkHvdc6bShEw3Xob+CBgtKWoI2vCTobB2dr
+ dNAF+K7zxb/Tz9OC02CHFTPCOLDJ9UWJ/KrDLv24dQAn+pFuZijXLxiKeujFMQb533oz/K4tWZCuMJ
+ AUZLCFKHsooLRRsGp+hpPXN1VNGO6SQv0SbOaD+hQtasQgmip/FhAxgQMevqjEronv5CoK0+9ewL0U
+ tmgZVE9DKO6QKntdpGl1spuVrUkGvcdRqRRvb16kMkqpBg1ud0t48VVAslIQGgs3iqdtsOtxVfMoJF
+ sGzpAy0yyvqIa7HARcbhZU5Nkwh6W/TCm4+Zq/uGw1EtW09MRbqTkphp8hzQ==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
@@ -98,7 +99,7 @@ to move out of the previous maintenance scheme.
 This refers to a discussion at [1] & [2] with Krzysztof about
 the issue with the current maintenance.
 
-It was decided to move every meson8b-clkc ID to the public clock
+It was decided to move every A1 pll ID to the public clock
 dt-bindings headers to be merged in a single tree so we
 can safely add new clocks without having merge issues.
 
@@ -107,260 +108,51 @@ can safely add new clocks without having merge issues.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/clk/meson/meson8b.h              | 108 -------------------------------
- include/dt-bindings/clock/meson8b-clkc.h |  97 +++++++++++++++++++++++++++
- 2 files changed, 97 insertions(+), 108 deletions(-)
+ drivers/clk/meson/a1-pll.h                      | 15 ---------------
+ include/dt-bindings/clock/amlogic,a1-pll-clkc.h |  5 +++++
+ 2 files changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index f999655d4436..2a9c4fe29ca2 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -77,114 +77,6 @@
- #define HHI_MPLL_CNTL9			0x2A0 /* 0xa8 offset in data sheet */
- #define HHI_MPLL_CNTL10			0x2A4 /* 0xa9 offset in data sheet */
+diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
+index 82570759e6a2..0add1c7ea9f5 100644
+--- a/drivers/clk/meson/a1-pll.h
++++ b/drivers/clk/meson/a1-pll.h
+@@ -28,19 +28,4 @@
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
  
 -/*
-- * CLKID index values
+- * CLKID index values for internal clocks
 - *
 - * These indices are entirely contrived and do not map onto the hardware.
 - * It has now been decided to expose everything by default in the DT header:
-- * include/dt-bindings/clock/gxbb-clkc.h. Only the clocks ids we don't want
+- * include/dt-bindings/clock/a1-pll-clkc.h. Only the clocks ids we don't want
 - * to expose, such as the internal muxes and dividers of composite clocks,
 - * will remain defined here.
 - */
+-#define CLKID_FIXED_PLL_DCO	0
+-#define CLKID_FCLK_DIV2_DIV	2
+-#define CLKID_FCLK_DIV3_DIV	3
+-#define CLKID_FCLK_DIV5_DIV	4
+-#define CLKID_FCLK_DIV7_DIV	5
 -
--#define CLKID_MPLL0_DIV		96
--#define CLKID_MPLL1_DIV		97
--#define CLKID_MPLL2_DIV		98
--#define CLKID_CPU_IN_SEL	99
--#define CLKID_CPU_IN_DIV2	100
--#define CLKID_CPU_IN_DIV3	101
--#define CLKID_CPU_SCALE_DIV	102
--#define CLKID_CPU_SCALE_OUT_SEL	103
--#define CLKID_MPLL_PREDIV	104
--#define CLKID_FCLK_DIV2_DIV	105
--#define CLKID_FCLK_DIV3_DIV	106
--#define CLKID_FCLK_DIV4_DIV	107
--#define CLKID_FCLK_DIV5_DIV	108
--#define CLKID_FCLK_DIV7_DIV	109
--#define CLKID_NAND_SEL		110
--#define CLKID_NAND_DIV		111
--#define CLKID_PLL_FIXED_DCO	113
--#define CLKID_HDMI_PLL_DCO	114
--#define CLKID_PLL_SYS_DCO	115
--#define CLKID_CPU_CLK_DIV2	116
--#define CLKID_CPU_CLK_DIV3	117
--#define CLKID_CPU_CLK_DIV4	118
--#define CLKID_CPU_CLK_DIV5	119
--#define CLKID_CPU_CLK_DIV6	120
--#define CLKID_CPU_CLK_DIV7	121
--#define CLKID_CPU_CLK_DIV8	122
--#define CLKID_APB_SEL		123
--#define CLKID_PERIPH_SEL	125
--#define CLKID_AXI_SEL		127
--#define CLKID_L2_DRAM_SEL	129
--#define CLKID_HDMI_PLL_LVDS_OUT 131
--#define CLKID_VID_PLL_IN_SEL	133
--#define CLKID_VID_PLL_IN_EN	134
--#define CLKID_VID_PLL_PRE_DIV	135
--#define CLKID_VID_PLL_POST_DIV	136
--#define CLKID_VCLK_IN_EN	139
--#define CLKID_VCLK_DIV1		140
--#define CLKID_VCLK_DIV2_DIV	141
--#define CLKID_VCLK_DIV2		142
--#define CLKID_VCLK_DIV4_DIV	143
--#define CLKID_VCLK_DIV4		144
--#define CLKID_VCLK_DIV6_DIV	145
--#define CLKID_VCLK_DIV6		146
--#define CLKID_VCLK_DIV12_DIV	147
--#define CLKID_VCLK_DIV12	148
--#define CLKID_VCLK2_IN_EN	150
--#define CLKID_VCLK2_DIV1	151
--#define CLKID_VCLK2_DIV2_DIV	152
--#define CLKID_VCLK2_DIV2	153
--#define CLKID_VCLK2_DIV4_DIV	154
--#define CLKID_VCLK2_DIV4	155
--#define CLKID_VCLK2_DIV6_DIV	156
--#define CLKID_VCLK2_DIV6	157
--#define CLKID_VCLK2_DIV12_DIV	158
--#define CLKID_VCLK2_DIV12	159
--#define CLKID_CTS_ENCT_SEL	160
--#define CLKID_CTS_ENCP_SEL	162
--#define CLKID_CTS_ENCI_SEL	164
--#define CLKID_HDMI_TX_PIXEL_SEL	166
--#define CLKID_CTS_ENCL_SEL	168
--#define CLKID_CTS_VDAC0_SEL	170
--#define CLKID_HDMI_SYS_SEL	172
--#define CLKID_HDMI_SYS_DIV	173
--#define CLKID_MALI_0_SEL	175
--#define CLKID_MALI_0_DIV	176
--#define CLKID_MALI_0		177
--#define CLKID_MALI_1_SEL	178
--#define CLKID_MALI_1_DIV	179
--#define CLKID_MALI_1		180
--#define CLKID_GP_PLL_DCO	181
--#define CLKID_GP_PLL		182
--#define CLKID_VPU_0_SEL		183
--#define CLKID_VPU_0_DIV		184
--#define CLKID_VPU_0		185
--#define CLKID_VPU_1_SEL		186
--#define CLKID_VPU_1_DIV		187
--#define CLKID_VPU_1		189
--#define CLKID_VDEC_1_SEL	191
--#define CLKID_VDEC_1_1_DIV	192
--#define CLKID_VDEC_1_1		193
--#define CLKID_VDEC_1_2_DIV	194
--#define CLKID_VDEC_1_2		195
--#define CLKID_VDEC_HCODEC_SEL	197
--#define CLKID_VDEC_HCODEC_DIV	198
--#define CLKID_VDEC_2_SEL	200
--#define CLKID_VDEC_2_DIV	201
--#define CLKID_VDEC_HEVC_SEL	203
--#define CLKID_VDEC_HEVC_DIV	204
--#define CLKID_VDEC_HEVC_EN	205
--#define CLKID_CTS_AMCLK_SEL	207
--#define CLKID_CTS_AMCLK_DIV	208
--#define CLKID_CTS_MCLK_I958_SEL	210
--#define CLKID_CTS_MCLK_I958_DIV	211
--#define CLKID_VCLK_EN		214
--#define CLKID_VCLK2_EN		215
--#define CLKID_VID_PLL_LVDS_EN	216
--#define CLKID_HDMI_PLL_DCO_IN   217
--
- /*
-  * include the CLKID and RESETID that have
-  * been made part of the stable DT binding
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index 78aa07fd7cc0..385bf243c56c 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -100,29 +100,126 @@
- #define CLKID_MPLL0		93
- #define CLKID_MPLL1		94
- #define CLKID_MPLL2		95
-+#define CLKID_MPLL0_DIV		96
-+#define CLKID_MPLL1_DIV		97
-+#define CLKID_MPLL2_DIV		98
-+#define CLKID_CPU_IN_SEL	99
-+#define CLKID_CPU_IN_DIV2	100
-+#define CLKID_CPU_IN_DIV3	101
-+#define CLKID_CPU_SCALE_DIV	102
-+#define CLKID_CPU_SCALE_OUT_SEL	103
-+#define CLKID_MPLL_PREDIV	104
-+#define CLKID_FCLK_DIV2_DIV	105
-+#define CLKID_FCLK_DIV3_DIV	106
-+#define CLKID_FCLK_DIV4_DIV	107
-+#define CLKID_FCLK_DIV5_DIV	108
-+#define CLKID_FCLK_DIV7_DIV	109
-+#define CLKID_NAND_SEL		110
-+#define CLKID_NAND_DIV		111
- #define CLKID_NAND_CLK		112
-+#define CLKID_PLL_FIXED_DCO	113
-+#define CLKID_HDMI_PLL_DCO	114
-+#define CLKID_PLL_SYS_DCO	115
-+#define CLKID_CPU_CLK_DIV2	116
-+#define CLKID_CPU_CLK_DIV3	117
-+#define CLKID_CPU_CLK_DIV4	118
-+#define CLKID_CPU_CLK_DIV5	119
-+#define CLKID_CPU_CLK_DIV6	120
-+#define CLKID_CPU_CLK_DIV7	121
-+#define CLKID_CPU_CLK_DIV8	122
-+#define CLKID_APB_SEL		123
- #define CLKID_APB		124
-+#define CLKID_PERIPH_SEL	125
- #define CLKID_PERIPH		126
-+#define CLKID_AXI_SEL		127
- #define CLKID_AXI		128
- #define CLKID_L2_DRAM		130
-+#define CLKID_L2_DRAM_SEL	129
-+#define CLKID_HDMI_PLL_LVDS_OUT 131
- #define CLKID_HDMI_PLL_HDMI_OUT	132
-+#define CLKID_VID_PLL_IN_SEL	133
-+#define CLKID_VID_PLL_IN_EN	134
-+#define CLKID_VID_PLL_PRE_DIV	135
-+#define CLKID_VID_PLL_POST_DIV	136
- #define CLKID_VID_PLL_FINAL_DIV	137
- #define CLKID_VCLK_IN_SEL	138
-+#define CLKID_VCLK_IN_EN	139
-+#define CLKID_VCLK_DIV1		140
-+#define CLKID_VCLK_DIV2_DIV	141
-+#define CLKID_VCLK_DIV2		142
-+#define CLKID_VCLK_DIV4_DIV	143
-+#define CLKID_VCLK_DIV4		144
-+#define CLKID_VCLK_DIV6_DIV	145
-+#define CLKID_VCLK_DIV6		146
-+#define CLKID_VCLK_DIV12_DIV	147
-+#define CLKID_VCLK_DIV12	148
- #define CLKID_VCLK2_IN_SEL	149
-+#define CLKID_VCLK2_IN_EN	150
-+#define CLKID_VCLK2_DIV1	151
-+#define CLKID_VCLK2_DIV2_DIV	152
-+#define CLKID_VCLK2_DIV2	153
-+#define CLKID_VCLK2_DIV4_DIV	154
-+#define CLKID_VCLK2_DIV4	155
-+#define CLKID_VCLK2_DIV6_DIV	156
-+#define CLKID_VCLK2_DIV6	157
-+#define CLKID_VCLK2_DIV12_DIV	158
-+#define CLKID_VCLK2_DIV12	159
-+#define CLKID_CTS_ENCT_SEL	160
- #define CLKID_CTS_ENCT		161
-+#define CLKID_CTS_ENCP_SEL	162
- #define CLKID_CTS_ENCP		163
-+#define CLKID_CTS_ENCI_SEL	164
- #define CLKID_CTS_ENCI		165
-+#define CLKID_HDMI_TX_PIXEL_SEL	166
- #define CLKID_HDMI_TX_PIXEL	167
-+#define CLKID_CTS_ENCL_SEL	168
- #define CLKID_CTS_ENCL		169
-+#define CLKID_CTS_VDAC0_SEL	170
- #define CLKID_CTS_VDAC0		171
-+#define CLKID_HDMI_SYS_SEL	172
-+#define CLKID_HDMI_SYS_DIV	173
- #define CLKID_HDMI_SYS		174
-+#define CLKID_MALI_0_SEL	175
-+#define CLKID_MALI_0_DIV	176
-+#define CLKID_MALI_0		177
-+#define CLKID_MALI_1_SEL	178
-+#define CLKID_MALI_1_DIV	179
-+#define CLKID_MALI_1		180
-+#define CLKID_GP_PLL_DCO	181
-+#define CLKID_GP_PLL		182
-+#define CLKID_VPU_0_SEL		183
-+#define CLKID_VPU_0_DIV		184
-+#define CLKID_VPU_0		185
-+#define CLKID_VPU_1_SEL		186
-+#define CLKID_VPU_1_DIV		187
-+#define CLKID_VPU_1		189
- #define CLKID_VPU		190
-+#define CLKID_VDEC_1_SEL	191
-+#define CLKID_VDEC_1_1_DIV	192
-+#define CLKID_VDEC_1_1		193
-+#define CLKID_VDEC_1_2_DIV	194
-+#define CLKID_VDEC_1_2		195
- #define CLKID_VDEC_1		196
-+#define CLKID_VDEC_HCODEC_SEL	197
-+#define CLKID_VDEC_HCODEC_DIV	198
- #define CLKID_VDEC_HCODEC	199
-+#define CLKID_VDEC_2_SEL	200
-+#define CLKID_VDEC_2_DIV	201
- #define CLKID_VDEC_2		202
-+#define CLKID_VDEC_HEVC_SEL	203
-+#define CLKID_VDEC_HEVC_DIV	204
-+#define CLKID_VDEC_HEVC_EN	205
- #define CLKID_VDEC_HEVC		206
-+#define CLKID_CTS_AMCLK_SEL	207
-+#define CLKID_CTS_AMCLK_DIV	208
- #define CLKID_CTS_AMCLK		209
-+#define CLKID_CTS_MCLK_I958_SEL	210
-+#define CLKID_CTS_MCLK_I958_DIV	211
- #define CLKID_CTS_MCLK_I958	212
- #define CLKID_CTS_I958		213
-+#define CLKID_VCLK_EN		214
-+#define CLKID_VCLK2_EN		215
-+#define CLKID_VID_PLL_LVDS_EN	216
-+#define CLKID_HDMI_PLL_DCO_IN   217
+ #endif /* __A1_PLL_H */
+diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+index 01fb8164ac29..2b660c0f2c9f 100644
+--- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
++++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+@@ -10,7 +10,12 @@
+ #ifndef __A1_PLL_CLKC_H
+ #define __A1_PLL_CLKC_H
  
- #endif /* __MESON8B_CLKC_H */
++#define CLKID_FIXED_PLL_DCO	0
+ #define CLKID_FIXED_PLL		1
++#define CLKID_FCLK_DIV2_DIV	2
++#define CLKID_FCLK_DIV3_DIV	3
++#define CLKID_FCLK_DIV5_DIV	4
++#define CLKID_FCLK_DIV7_DIV	5
+ #define CLKID_FCLK_DIV2		6
+ #define CLKID_FCLK_DIV3		7
+ #define CLKID_FCLK_DIV5		8
 
 -- 
 2.34.1
