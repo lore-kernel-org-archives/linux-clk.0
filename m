@@ -2,35 +2,35 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEFBC7EE43
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C76D6C77B7A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235617AbjFGU5h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 16:57:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58690 "EHLO
+        id S235754AbjFGU6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 16:58:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235527AbjFGU5g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:57:36 -0400
+        with ESMTP id S235693AbjFGU5z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:57:55 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86EB51BEA;
-        Wed,  7 Jun 2023 13:57:31 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D3E2134;
+        Wed,  7 Jun 2023 13:57:41 -0700 (PDT)
 Received: from notapiano.myfiosgateway.com (zone.collabora.co.uk [167.235.23.81])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: nfraprado)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8C01166032D2;
-        Wed,  7 Jun 2023 21:57:26 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 98E276606F0D;
+        Wed,  7 Jun 2023 21:57:37 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1686171449;
-        bh=3Ss4Xbs+eUeVm0wwUGrfx/rLq0kUmO44VcFrpD6blPQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Hjy4ZAVDbkJPCL4X1AXfEB2Qx119GEsaxIbUuBS0OMEF7Rq9rtwOugPt2aFyEie0i
-         fKbdk32a3zQF8wT4eUuV1aZVpksNTJFwhr1BVsRUkaY2VDNb64IagZxnCyfEsm7JSr
-         YlHGXXbaw7WuKIiJcc2wQRA2jBRFc7JifUkg+wBW/1UahWkwhXJKRg21WkAJGR8o1Q
-         hbXEVn06a0H/rFhsnkHyqGx8hSBdVRfnm9TguMpGP5QYPUYqh4VdfIR+/EFNI1YVO7
-         8YON8g1BUz0/1/D/NrO/+3mbbWR8o9CumX2U8FczxHYottf3ww5OiUX7wzyH+udumm
-         lxmDVGfI+tEOQ==
+        s=mail; t=1686171459;
+        bh=IHu+5VHbpn9tYN0aeoiKy2zTGue/frX6mQhuF4Dk/XE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=O52Eho0T3yp7+0mui4z26cOHabKuCSsXrF2DqF5Rb3n1rZ/OJlP0F4Ip8oondaYoB
+         bsAbsRrlpt1YddHdvHdksMQmjr7XfcXKUGtK4pdK3W+3qmNh/NjgKDMjxYq3WRZ5ni
+         F88pQ6/PYBGb/08S+pr4ZinFmBYzZPHTKO1PlerLK6ynyiH0RD5olnAeWrthRovhfx
+         lQqRVsiPQT4kLx/1sbzgOB1enepQ6Ja1/BzC6hGJ261RipK+A8Xi71WsFN07BHQMAI
+         9Rquy2Y0VC1xXkh97Lpw7x31kfXrkCCPOU90qpH7l+Q49yQjORGanfMoDS2ouaIQW6
+         mxI2GpseKK2jA==
 From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
         <nfraprado@collabora.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
@@ -39,25 +39,21 @@ Cc:     kernel@collabora.com,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
         =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
+        <nfraprado@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Miles Chen <miles.chen@mediatek.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 0/5] Enable decoder for mt8183
-Date:   Wed,  7 Jun 2023 16:53:37 -0400
-Message-ID: <20230607205714.510012-1-nfraprado@collabora.com>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 4/5] clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
+Date:   Wed,  7 Jun 2023 16:53:41 -0400
+Message-ID: <20230607205714.510012-5-nfraprado@collabora.com>
 X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230607205714.510012-1-nfraprado@collabora.com>
+References: <20230607205714.510012-1-nfraprado@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -65,46 +61,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add the CLK_VDEC_ACTIVE clock to the vdec clock driver. This clock is
+enabled by the VPU once it starts decoding.
 
-This series enables the hardware decoder present on mt8183. At first
-glance, the only missing piece is the devicetree node for it, however,
-simply adding it as is would cause an address collision between the
-first register iospace and the clock-controller node, so a rework of the
-dt-binding and driver, as well as addition of a clock, were needed
-first.
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-Tested that H264 decoding works with the hardware decoder on
-mt8183-kukui-jacuzzi-juniper-sku16, giving a fluster score of 98/135 on
-the JVT-AVC_V1 test suite. And ensured other SoCs (MT8192 and MT8195)
-still work as usual.
+---
 
 Changes in v2:
-- Merged commit 1 (media: dt-bindings: mediatek,vcodec: Allow single
-  clock for mt8183) into commit 3 (media: dt-bindings: mediatek,vcodec:
-  Remove VDEC_SYS for mt8183)
-- Further constrained properties in dt-binding
-- Added CLK_IGNORE_UNUSED flag to active clock
-- Reformatted reg-names in DT node
+- Added CLK_IGNORE_UNUSED flag
 
-Nícolas F. R. A. Prado (4):
-  media: dt-bindings: mediatek,vcodec: Don't require assigned-clocks
-  media: dt-bindings: mediatek,vcodec: Remove VDEC_SYS for mt8183
-  media: mediatek: vcodec: Read HW active status from clock
-  clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
+ drivers/clk/mediatek/clk-mt8183-vdec.c | 5 +++++
+ include/dt-bindings/clock/mt8183-clk.h | 3 ++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Yunfei Dong (1):
-  arm64: dts: mediatek: mt8183: Add decoder
-
- .../media/mediatek,vcodec-decoder.yaml        | 65 +++++++++++++++----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 30 +++++++++
- drivers/clk/mediatek/clk-mt8183-vdec.c        |  5 ++
- .../mediatek/vcodec/mtk_vcodec_dec_drv.c      | 59 +++++++++++++----
- .../mediatek/vcodec/mtk_vcodec_dec_hw.c       | 20 ++++--
- .../mediatek/vcodec/mtk_vcodec_dec_pm.c       | 12 +++-
- .../platform/mediatek/vcodec/mtk_vcodec_drv.h |  1 +
- include/dt-bindings/clock/mt8183-clk.h        |  3 +-
- 8 files changed, 165 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/clk/mediatek/clk-mt8183-vdec.c b/drivers/clk/mediatek/clk-mt8183-vdec.c
+index 513b7956cbea..03c4f1acfdb8 100644
+--- a/drivers/clk/mediatek/clk-mt8183-vdec.c
++++ b/drivers/clk/mediatek/clk-mt8183-vdec.c
+@@ -27,6 +27,10 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
+ 	GATE_MTK(_id, _name, _parent, &vdec0_cg_regs, _shift,	\
+ 		&mtk_clk_gate_ops_setclr_inv)
+ 
++#define GATE_VDEC0(_id, _name, _parent, _shift)		\
++	GATE_MTK_FLAGS(_id, _name, _parent, &vdec0_cg_regs, _shift,	\
++		&mtk_clk_gate_ops_setclr, CLK_IGNORE_UNUSED)
++
+ #define GATE_VDEC1_I(_id, _name, _parent, _shift)		\
+ 	GATE_MTK(_id, _name, _parent, &vdec1_cg_regs, _shift,	\
+ 		&mtk_clk_gate_ops_setclr_inv)
+@@ -34,6 +38,7 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
+ static const struct mtk_gate vdec_clks[] = {
+ 	/* VDEC0 */
+ 	GATE_VDEC0_I(CLK_VDEC_VDEC, "vdec_vdec", "mm_sel", 0),
++	GATE_VDEC0(CLK_VDEC_ACTIVE, "vdec_active", "mm_sel", 4),
+ 	/* VDEC1 */
+ 	GATE_VDEC1_I(CLK_VDEC_LARB1, "vdec_larb1", "mm_sel", 0),
+ };
+diff --git a/include/dt-bindings/clock/mt8183-clk.h b/include/dt-bindings/clock/mt8183-clk.h
+index a7b470b0ec8a..32dd7d91dbe2 100644
+--- a/include/dt-bindings/clock/mt8183-clk.h
++++ b/include/dt-bindings/clock/mt8183-clk.h
+@@ -357,7 +357,8 @@
+ /* VDEC_GCON */
+ #define CLK_VDEC_VDEC			0
+ #define CLK_VDEC_LARB1			1
+-#define CLK_VDEC_NR_CLK			2
++#define CLK_VDEC_ACTIVE			2
++#define CLK_VDEC_NR_CLK			3
+ 
+ /* VENC_GCON */
+ #define CLK_VENC_LARB			0
 -- 
 2.41.0
 
