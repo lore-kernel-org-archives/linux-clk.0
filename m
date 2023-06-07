@@ -2,132 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C015C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B96C7EE23
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240106AbjFGK6w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 06:58:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37588 "EHLO
+        id S239384AbjFGLAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 07:00:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240140AbjFGK5n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:57:43 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2321FDC
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 03:57:18 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f6e1393f13so58715065e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 03:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686135400; x=1688727400;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Nhh2pD6FUwpfqM+PflikOwAsazbxvES8HqlJahcr2Ms=;
-        b=KFQBr+uH8chocYBPMM7TXYaBgimmZKiLErP8bz4ZHdTtzE9Ru6QWpQATqFwtvuuIHx
-         wuc/N4EKx4N8n/hUx8OX1gb0RSFDQXtMNZZv6dmrEs8ux3fguJQQaCiD6yjSzaTTfpQM
-         0hMCopgN0crLDUV0OaMQUCdXFouGk2gidnGc4K9tpvd4kkY6rf6UMRcf7t8eBOvpR4Zw
-         lCMX07Eq1O0KNj13awuraoSHhWLg9YkFF2oIWpyP27BnFAwRjeX8bMl/y//nI7NoZRb1
-         EXBDA3AWjQCcesL+I7/gP2T8ceFUpoYblNMnPrOdfq6yWuH1Tw4fXVz3ip+qCc2ws3wB
-         8h+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686135400; x=1688727400;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nhh2pD6FUwpfqM+PflikOwAsazbxvES8HqlJahcr2Ms=;
-        b=Y/NVaZTsoSOZ2JW8mUqLOS5Td7IF13vVsGdmPFfmWBR4uaQHV3xijUrjtleUNyaVdJ
-         2GIvqNwRrcg2QFTRzcaxCpFAqMlZX9VSx3Ep3Xpbt9kUar+8qGx+RM14zTPyuoXvpr2S
-         TZPvWUR0gU2d0blnaqeTAcK7B0nvleKbnPWsReEs8ZVOQq+xhvdapCxBlVMedE8nBqXt
-         yFSRxgE+6cMKDvJQZe5g5Sa967yk4oGmOuIr3zVlwtOHU1Kb4cWcjwxXS9Rrdqpc0MaE
-         fgNBoQzeONzipRfXMb06BSFgb7aoGbScstUDXSB8HMn0Ayjvy12iJNjaRs0JPxjzklU5
-         Yn+A==
-X-Gm-Message-State: AC+VfDxUwop2IISPB50Mmf8l+QtJmBqGzlbLoW2wxkmT9yldSmekjFsC
-        FN3+hJl/DIZUvkYKFt0bTQBXKw==
-X-Google-Smtp-Source: ACHHUZ7eRWZds5eKntMyGFzNnviMEO1GIcs4uQ54WBlODcq6ebb2XHG2cqK7AVZN/geoSptZTB4aSg==
-X-Received: by 2002:a05:600c:230f:b0:3f7:e497:aa03 with SMTP id 15-20020a05600c230f00b003f7e497aa03mr3797345wmo.28.1686135400045;
-        Wed, 07 Jun 2023 03:56:40 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id i10-20020a05600c290a00b003f60faa4612sm1761879wmd.22.2023.06.07.03.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 03:56:39 -0700 (PDT)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Wed, 07 Jun 2023 12:56:29 +0200
-Subject: [PATCH 18/18] clk: meson: axg-audio: move bindings include to main
- driver
+        with ESMTP id S240453AbjFGLAH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:00:07 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B9441BF7;
+        Wed,  7 Jun 2023 03:58:44 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3575Li4h019759;
+        Wed, 7 Jun 2023 10:57:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=UM+Hot4o78/iHbAP5+OzXNzvYsZB6jnxy+maXjSOyOg=;
+ b=Tgrmlj3XU7A/VxCSNtvh2bVnJw1CvvBLTh12leoL4olMAvcaECBrbVkzgyWpw6O52Tkj
+ ej2qbNJ2UyH/321JsNNlU426r47cDscqdiaCEtiLX0jY7rNJtCCk3Y1bSszogw1EbeBv
+ rpseyyHfDniv2lkJduMIuMlz19VWBFa1q9zXvTwDWm/fpMEnkeLJFpwxl0Xgd4Lv1ZWZ
+ khY6VKI4DaCOUWM234wVDBM67gDr+v5pRuYkVgk8pd+Ha07Md8RC6Vljc8q0mgsYSgl8
+ a9VNmxXn1yg4vFEp7vJmlcPl5NYWenRLB82mHxmLzgQqW2UucRYdCEaNoanW6nCROFcb 8w== 
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a719mc7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Jun 2023 10:57:05 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357Av5Ak023479
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 7 Jun 2023 10:57:05 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Wed, 7 Jun 2023 03:56:56 -0700
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <arnd@arndb.de>,
+        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <rafal@milecki.pl>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH 4/9] clk: qcom: ipq5332: Fix USB related clock defines
+Date:   Wed, 7 Jun 2023 16:26:08 +0530
+Message-ID: <3840e5b5795ef55ecbf25d0faa8c328f09c6d976.1686126439.git.quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1686126439.git.quic_varada@quicinc.com>
+References: <cover.1686126439.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-18-9676afa6b22c@linaro.org>
-References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
-In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1218;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=BhdgvijRztviwBcQcsc7eiZfm245yvplEhk4v09X2IU=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkgGJV2unWoZQB8Is+DP30A/dALDDHhMCVzVvvcFv2
- PGQ/CBmJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIBiVQAKCRB33NvayMhJ0RnXD/
- 46MvIaTydY+HcVs2xiqs4Lci7YbjtjKxWp8v6nn0Z3ijGgUXQ8PGeTnbM4+Ey5gpcEQIaM62ERTXTR
- QNAIDhivwi4/hD0woT7niaX8MDvjwyIlJzbHYRzWOPbiTqo9Pv+uJb36obn10GwUay8mSXNwGA7mGQ
- +/L1VIDyDuJyZSOZvxasrx3lG56GBlqD1/q0U96w/uzM4EG9OmcFEnVQfuHxZu8gKu7+xq1o3UX2kQ
- AigSh9oAlIhmHs01Pn5Tpxb86w0uiedQ8s8ADhsh0EaZlN+dGhTz1AMYpxmG5ePNn/63LeAmkJbD32
- 15NN24MxJDFTS+mV31gyQaL4+nXC6lvjCCGrRRee8np1Mbg9DUl0++zSUWQn8X7xVpsRB2AEV1C72S
- lHsR5xSUemfAsOgTUcuRLlqXSfJnZ8VcASp8uklS4WfEuKat20B1rxadN5OevgdIbBYg6cu+gWCf3O
- NKELjKEOR+V/ShXD4Vpb3RfcEVsofgT8pnjnn+MrQh+HdNVeCRr/499pqAhH7LYnartj+wskjFdhvm
- USmsp2ei3cpUC7jnKFTgcFOu14M7IfJ8fIASQOtVqrvkS6z/u8+8zlNJA7hCP7FSZs7IgKIdhxFhNg
- AbknKJDrj/4ZgNSn9sLenVJSU6sAe5TtEQCxbhMjbLpz+/PCKzO427aKu/aA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Z2TsTwjIBn2S3qlWPRVHa0LxQyJiosUC
+X-Proofpoint-ORIG-GUID: Z2TsTwjIBn2S3qlWPRVHa0LxQyJiosUC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-07_06,2023-06-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
+ phishscore=0 suspectscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306070089
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now the clock ids are no more defined in private headers,
-cleanup and include the dt-bindings headers from the main
-driver file.
+Fix the USB related clock defines and add details
+referenced by them
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 ---
- drivers/clk/meson/axg-audio.c | 2 ++
- drivers/clk/meson/axg-audio.h | 3 ---
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/gcc-ipq5332.c | 34 +++++++++++++++++++++++-----------
+ 1 file changed, 23 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index ef4e0552f77c..025cb4efce36 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -20,6 +20,8 @@
- #include "clk-phase.h"
- #include "sclk-div.h"
+diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+index a75ab88..2b58558 100644
+--- a/drivers/clk/qcom/gcc-ipq5332.c
++++ b/drivers/clk/qcom/gcc-ipq5332.c
+@@ -351,6 +351,16 @@ static const struct freq_tbl ftbl_gcc_adss_pwm_clk_src[] = {
+ 	{ }
+ };
  
-+#include <dt-bindings/clock/axg-audio-clkc.h>
++static const struct clk_parent_data gcc_usb3phy_0_cc_pipe_clk_xo[] = {
++	{ .fw_name = "usb3phy_0_cc_pipe_clk" },
++	{ .fw_name = "xo" },
++};
 +
- #define AUD_GATE(_name, _reg, _bit, _pname, _iflags) {			\
- 	.data = &(struct clk_regmap_gate_data){				\
- 		.offset = (_reg),					\
-diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
-index faf08748b205..01a3da19933e 100644
---- a/drivers/clk/meson/axg-audio.h
-+++ b/drivers/clk/meson/axg-audio.h
-@@ -65,7 +65,4 @@
- #define AUDIO_CLK81_CTRL	0x030
- #define AUDIO_CLK81_EN		0x034
++static const struct parent_map gcc_usb3phy_0_cc_pipe_clk_xo_map[] = {
++	{ P_USB3PHY_0_PIPE, 0 },
++	{ P_XO, 2 },
++};
++
+ static struct clk_rcg2 gcc_adss_pwm_clk_src = {
+ 	.cmd_rcgr = 0x1c004,
+ 	.mnd_width = 0,
+@@ -1101,16 +1111,18 @@ static struct clk_rcg2 gcc_usb0_mock_utmi_clk_src = {
+ 	},
+ };
  
--/* include the CLKIDs which are part of the DT bindings */
--#include <dt-bindings/clock/axg-audio-clkc.h>
--
- #endif /*__AXG_AUDIO_CLKC_H */
-
+-static struct clk_regmap_phy_mux gcc_usb0_pipe_clk_src = {
++static struct clk_regmap_mux usb0_pipe_clk_src = {
+ 	.reg = 0x2c074,
++	.shift = 8,
++	.width = 2,
++	.parent_map = gcc_usb3phy_0_cc_pipe_clk_xo_map,
+ 	.clkr = {
+-		.hw.init = &(struct clk_init_data) {
+-			.name = "gcc_usb0_pipe_clk_src",
+-			.parent_data = &(const struct clk_parent_data) {
+-				.index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
+-			},
+-			.num_parents = 1,
+-			.ops = &clk_regmap_phy_mux_ops,
++		.hw.init = &(const struct clk_init_data){
++			.name = "usb0phy_0_cc_pipe_clk_src",
++			.parent_data = gcc_usb3phy_0_cc_pipe_clk_xo,
++			.num_parents = 2,
++			.ops = &clk_regmap_mux_closest_ops,
++			.flags = CLK_SET_RATE_PARENT,
+ 		},
+ 	},
+ };
+@@ -3041,8 +3053,8 @@ static struct clk_branch gcc_usb0_pipe_clk = {
+ 		.enable_mask = BIT(0),
+ 		.hw.init = &(const struct clk_init_data) {
+ 			.name = "gcc_usb0_pipe_clk",
+-			.parent_hws = (const struct clk_hw*[]) {
+-				&gcc_usb0_pipe_clk_src.clkr.hw,
++			.parent_names = (const char *[]){
++				"usb0_pipe_clk_src"
+ 			},
+ 			.num_parents = 1,
+ 			.flags = CLK_SET_RATE_PARENT,
+@@ -3580,7 +3592,7 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
+ 	[GCC_PCIE3X2_PIPE_CLK_SRC] = &gcc_pcie3x2_pipe_clk_src.clkr,
+ 	[GCC_PCIE3X1_0_PIPE_CLK_SRC] = &gcc_pcie3x1_0_pipe_clk_src.clkr,
+ 	[GCC_PCIE3X1_1_PIPE_CLK_SRC] = &gcc_pcie3x1_1_pipe_clk_src.clkr,
+-	[GCC_USB0_PIPE_CLK_SRC] = &gcc_usb0_pipe_clk_src.clkr,
++	[GCC_USB0_PIPE_CLK_SRC] = &usb0_pipe_clk_src.clkr,
+ };
+ 
+ static const struct qcom_reset_map gcc_ipq5332_resets[] = {
 -- 
-2.34.1
+2.7.4
 
