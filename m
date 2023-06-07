@@ -2,117 +2,151 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B88C7EE2F
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE1FC77B7A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:21:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240598AbjFGNUD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 09:20:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
+        id S240343AbjFGNVh convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 09:21:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240624AbjFGNTt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:19:49 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C2E199D
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 06:19:47 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-30b023b0068so498805f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 06:19:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686143986; x=1688735986;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mnNtcdYl7FWB9vVI15co5MeYmaXJVC+s1x+N4tvXfWY=;
-        b=W5rWw52uP2J5P8VZi5+rmvcoUJ5m9ynK8S0KkE5V84ZaqoSK2Crc9krqvZby91MWEr
-         ZSA0moTfIV9aUT84Q0uNcuQGp1sXhG6a/TqQsqZMIoI3NHx8VA7PRXhKOwuwj1S6UHJS
-         lbkHivgTqNR4Nw99i/i5xfXB3essZLeGI66BDmEYEeLcgp+SHNXE3JskESna/3alaMtg
-         tlEnbg2UE5abmA93Gc3HB/T4lHsaX/sTUguiZacyEBMY+tjzo0nkZNulBfOs+HSOiKxg
-         ZqRcxaUyax79NGs3ytKIvKNyR45yzQ8BNjnhJ+XRcJe584z8EV7VnTqK398OY2o6+mSC
-         w02w==
+        with ESMTP id S240067AbjFGNVg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:21:36 -0400
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0C691BFE;
+        Wed,  7 Jun 2023 06:21:17 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5659d85876dso78350457b3.2;
+        Wed, 07 Jun 2023 06:21:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686143986; x=1688735986;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mnNtcdYl7FWB9vVI15co5MeYmaXJVC+s1x+N4tvXfWY=;
-        b=g1FxPrQKh9TMyGjKk/dIgq8oQWgKPxkA8m+WSjammNufKwgGfYNW/IUZx5TrZjNJ2H
-         OSQS+dLYQQIx7w1EbnKwBLgIOJDEXS1L9H4/YIMdneHbgh7jbwbMWPq26WkhD6CpAtu+
-         yi0Ya06ydni5dFZtuzZ/cZ5jtaNqRkZA95a6n/yB0KMIazcNn+oSeGezM+g63UunAxAg
-         KPmjS9y0N0CrVVifBf1wdprqawZ0kALHkb6xVHygZ8kr5P1XJ1bSQ+I4kKi6iL5mhvRX
-         cbMBpl5PNn8IpOhvyRk1IxjcvhmlB+Xp+3zE2HHC96uX3hfJVbskaqQBkt7uqWnKDdzq
-         pJbg==
-X-Gm-Message-State: AC+VfDzErhpybYJPOgV8NVRiqa9dDJMdpD33LdLb253856AboyF8eB87
-        TS2+DPYh9Pl/P0Zvdb86ZJ6okg==
-X-Google-Smtp-Source: ACHHUZ7ILsrllirxXgRGCNpr+8QXW/gchSLvNycTUayot7lajmlutG7p1RjL23aGnaOssGNvxAWa7w==
-X-Received: by 2002:adf:fec3:0:b0:30a:e8ac:90c1 with SMTP id q3-20020adffec3000000b0030ae8ac90c1mr10941158wrs.19.1686143986059;
-        Wed, 07 Jun 2023 06:19:46 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id b3-20020a5d4d83000000b0030c4d8930b1sm15457081wru.91.2023.06.07.06.19.45
+        d=1e100.net; s=20221208; t=1686144077; x=1688736077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rA2dk4Z+pOkq/jyOIvAGRXOvNoV7/kLeQDZUQrvL074=;
+        b=Xuc2BluMHxHXQCCBTAwWQ5MsaVCeOWiBHHOYAlU26FZMSqxCMxLmXK0nbRs6fSon98
+         9hZM5OqF2TjIuQOuEoyVKuZwveG/iqK9QLfnIP2nM7sxd97Bxup2x4MugUMVVUYMygcr
+         LYE81/DLewtbBKnNzn8h93Hq9+DRokhScsEaI/s/u2h3w5xgYdqrEoMEoi1gGRKuc/5x
+         ctQHmPNQ6h2KKIjGHzPW+wIDw2Sq1nDSbyhzzO/XSHhnHF1HuHtmlyQ2WU34XWnV+ZCi
+         jsJfvMIY37FFr6/98xKGyYk3SN4uvS6dLh9uzPK0FLmLtW2y6sD1g5jJvZqSSikQIW26
+         7eJA==
+X-Gm-Message-State: AC+VfDySuFGgo5PWbMQlp0U0ARn7Q+glrr1LixYkIZmg4LzcG1IKAEek
+        9I/yv6ZRjaQEF00R4ugqJ6IVNxp04d51yw==
+X-Google-Smtp-Source: ACHHUZ7KTFcUC3FyJndrCGLRaGpbn15xpKBxl+uQ5BssG8+rZBxT/uZ9tke/NsGI02yy5SHACsocHA==
+X-Received: by 2002:a0d:f343:0:b0:556:ceb2:c462 with SMTP id c64-20020a0df343000000b00556ceb2c462mr6457775ywf.2.1686144076634;
+        Wed, 07 Jun 2023 06:21:16 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id k126-20020a816f84000000b00565cf40238csm4720947ywc.110.2023.06.07.06.21.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jun 2023 06:19:45 -0700 (PDT)
-Message-ID: <b01ca147-c2bd-1044-22c5-5b54a0f108c0@linaro.org>
-Date:   Wed, 7 Jun 2023 14:19:44 +0100
+        Wed, 07 Jun 2023 06:21:16 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-bab8f66d3a2so8619116276.3;
+        Wed, 07 Jun 2023 06:21:15 -0700 (PDT)
+X-Received: by 2002:a25:4889:0:b0:bac:748a:5759 with SMTP id
+ v131-20020a254889000000b00bac748a5759mr5257149yba.37.1686144075629; Wed, 07
+ Jun 2023 06:21:15 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 3/6] clk: qcom: Add lpass clock controller driver for
- SC8280XP
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     johan+linaro@kernel.org, agross@kernel.org,
-        konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230525122930.17141-1-srinivas.kandagatla@linaro.org>
- <20230525122930.17141-4-srinivas.kandagatla@linaro.org>
- <098883dd-f517-d541-de00-1a7fc0ada017@linaro.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <098883dd-f517-d541-de00-1a7fc0ada017@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230530112050.5635-1-aford173@gmail.com> <20230530112050.5635-3-aford173@gmail.com>
+In-Reply-To: <20230530112050.5635-3-aford173@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 7 Jun 2023 15:21:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXJaZCSN18aB1yBvhuTk=DQoe4B6aVHgoZvyLsZcRfrDA@mail.gmail.com>
+Message-ID: <CAMuHMdXJaZCSN18aB1yBvhuTk=DQoe4B6aVHgoZvyLsZcRfrDA@mail.gmail.com>
+Subject: Re: [RFC 3/3] arm64: dts: renesas: r8a774a1: Add GPU Node
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+        marek.vasut+renesas@gmail.com, cstevens@beaconembedded.com,
+        aford@beaconembedded.com,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Adam,
 
+On Tue, May 30, 2023 at 1:21 PM Adam Ford <aford173@gmail.com> wrote:
+> With the 3dge and ZG clocks now available, the generic GPU node can
+> be added.  Until proper firmware is made, it is not usable.
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> ---
+> This is based on the assumption that the Rogue 6250 could use
+> generic driver [1] and firmware [2] being implemebted by the Mesa group
+> and others.  In practice, the firmware isn't really compatible since
+> the 6250 in the RZ/G2M appears to be a different variant.
+>
+> [1] - https://gitlab.freedesktop.org/frankbinns/powervr/-/tree/powervr-next
+> [2] - https://gitlab.freedesktop.org/frankbinns/linux-firmware/-/tree/powervr/powervr
 
-On 31/05/2023 21:01, Krzysztof Kozlowski wrote:
-> On 25/05/2023 14:29, Srinivas Kandagatla wrote:
->> Add support for the lpass clock controller found on SC8280XP based devices.
->> This would allow lpass peripheral loader drivers to control the clocks and
->> bring the subsystems out of reset.
->>
->> Currently this patch only supports resets as the Q6DSP is in control of
->> LPASS IP which manages most of the clocks via Q6PRM service on GPR rpmsg
->> channel.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   drivers/clk/qcom/Kconfig            |  8 ++++
->>   drivers/clk/qcom/Makefile           |  1 +
->>   drivers/clk/qcom/lpasscc-sc8280xp.c | 63 +++++++++++++++++++++++++++++
->>   3 files changed, 72 insertions(+)
->>   create mode 100644 drivers/clk/qcom/lpasscc-sc8280xp.c
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 85869e7a9f16..e25993abb519 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -523,6 +523,14 @@ config SC_LPASSCC_7280
->>   	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
->>   	  controller to reset the LPASS subsystem.
->>   
->> +config SC_LPASSCC_8280XP
->> +	tristate "SC8280 Low Power Audio Subsystem (LPASS) Clock Controller"
-> 
-> depends on ARM64 || COMPILE_TEST
+Thanks for your patch!
 
-Thanks, Will do that in v3.
+> --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+> @@ -226,6 +226,27 @@ extalr_clk: extalr {
+>                 clock-frequency = <0>;
+>         };
+>
+> +       gpu_opp_table: opp-table {
+> +               compatible = "operating-points-v2";
+> +
+> +               opp-200000000 {
+> +                       opp-hz = /bits/ 64 <200000000>;
+> +                       opp-microvolt = <830000>;
+> +               };
+> +               opp-300000000 {
+> +                       opp-hz = /bits/ 64 <300000000>;
+> +                       opp-microvolt = <830000>;
+> +               };
+> +               opp-400000000 {
+> +                       opp-hz = /bits/ 64 <400000000>;
+> +                       opp-microvolt = <830000>;
+> +               };
+> +               opp-600000000 {
+> +                       opp-hz = /bits/ 64 <600000000>;
+> +                       opp-microvolt = <830000>;
+> +               };
+> +       };
+> +
+>         /* External PCIe clock - can be overridden by the board */
+>         pcie_bus_clk: pcie_bus {
+>                 compatible = "fixed-clock";
+> @@ -2347,6 +2368,18 @@ gic: interrupt-controller@f1010000 {
+>                         resets = <&cpg 408>;
+>                 };
+>
+> +               gpu@fd000000 {
+> +                       compatible = "img,powervr-series6xt";
+> +                       reg = <0 0xfd000000 0 0x40000>;
+> +                       interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&cpg CPG_MOD 112>, <&cpg CPG_MOD 112>,<&cpg CPG_MOD 112>;
+> +                       clock-names = "core", "mem", "sys";
+> +                       interrupt-names = "gpu";
+> +                       operating-points-v2 = <&gpu_opp_table>;
+> +                       power-domains = <&sysc R8A774A1_PD_3DG_B>;
+> +                       resets = <&cpg 112>;
+> +               };
+> +
+>                 pciec0: pcie@fe000000 {
+>                         compatible = "renesas,pcie-r8a774a1",
+>                                      "renesas,pcie-rcar-gen3";
 
---srini
-> 
-> Best regards,
-> Krzysztof
-> 
+LGTM.  But obviously I cannot take this as-is, as there are no DT bindings
+for this device, and it didn't work for you...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
