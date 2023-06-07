@@ -2,113 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 059DCC7EE23
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69D6C83005
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:50:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235158AbjFGKUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 06:20:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45098 "EHLO
+        id S238573AbjFGKuQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 06:50:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239450AbjFGKUY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:20:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4464E1BDC;
-        Wed,  7 Jun 2023 03:20:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E20E630F2;
-        Wed,  7 Jun 2023 10:20:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF91C433D2;
-        Wed,  7 Jun 2023 10:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686133221;
-        bh=b3vSbHeHOJIjqYkB+PfhGhloojhkLAsRq5fFqo+8tk4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=chpQ8hLtAOxT3tgcGQy8V6VnJUefzDl3+Cl15vWHuIl/k/lfIR9txDlTQCZptx9FF
-         DykUwYpzH7baVwlhBKhtVNPBqjduj/J1R4c6MeT7W4VZBliMzBEDkxvPdoVFGv/kTZ
-         qzXassjfIcYkjIIu0SAOWnNqX1JWq70LF7nGZZkrZC0d8vUcSzq9/SacXMAigfCYdI
-         U6zbiUaZoALeru9LyjvUB+rWYwMoPYKnspqwTDdDlwEULnCQGm3ot2zca1I+EEapc1
-         BK5Myc6lVu67sjaGhd678/7uSnEl3N7EbwO+5aHAoFDZC+ngmmTpNI9Lis4moCcdIg
-         mChuIz5Bv7+QA==
-Date:   Wed, 7 Jun 2023 12:20:17 +0200
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marex@denx.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v3] i2c: Add i2c_get_match_data()
-Message-ID: <ZIBZ4RzFvLN368nQ@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-        Marek Vasut <marex@denx.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-References: <20230606130519.382304-1-biju.das.jz@bp.renesas.com>
- <OS0PR01MB592282658E36A14D0A762BBB8653A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
- <CAMuHMdVXekgea3biJXXNb3fa-8Fe3iUJ=K51jKnu9ew_+Fq69g@mail.gmail.com>
+        with ESMTP id S239993AbjFGKuE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:50:04 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7216B1BD7;
+        Wed,  7 Jun 2023 03:49:42 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35760CcP009996;
+        Wed, 7 Jun 2023 10:49:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=gLmwapybUc0axIZ6lsP2Y4271vrqe3iuO1ZhisTQoxw=;
+ b=G8GwEFMXqbA5jpqWLHnn+yLx8oIabC5OTALS03zfZ4P/gicKyE2y7H/2C4KvEWgJ7FPp
+ 7HpIQvFYjaFzZ4khg64jtardBJ4JPlR6vFAL64sF6KfvVkJ3rO/x5h4hfyA8al12acGc
+ BYWrTfwmLB2EEtfxHeqKxLQ3sxPGiZDCiVi7BUeJ0DTfk23/XiD+2voN76pZGQpsT6uQ
+ TZkZleTZcd3lJl9UkgSq05pWcOG0Pxnz/aS6EICP51tG+NhqlVlTC1AjHGT9I7906Owc
+ D7RzTDm99uGyEYZgKwz1deYgRuGeLmXLMYXMIx8d377rhQRF4qHE7M07cgK1PrIyYMyG 1Q== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a7g1mdu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 07 Jun 2023 10:49:00 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357AmxWr011287
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 7 Jun 2023 10:48:59 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Wed, 7 Jun 2023 03:48:54 -0700
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v12 1/5] dt-bindings: usb: dwc3: Add IPQ9574 compatible
+Date:   Wed, 7 Jun 2023 16:18:39 +0530
+Message-ID: <a724cf5bac184e5fdb9c2f69070915b22057412d.1686045347.git.quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1686045347.git.quic_varada@quicinc.com>
+References: <cover.1686045347.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ArSYnhEy2YRLKnCd"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVXekgea3biJXXNb3fa-8Fe3iUJ=K51jKnu9ew_+Fq69g@mail.gmail.com>
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: n51crI_r_zNjAeRXdCeV4UBAX6eLgBj_
+X-Proofpoint-ORIG-GUID: n51crI_r_zNjAeRXdCeV4UBAX6eLgBj_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-07_06,2023-06-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=867
+ spamscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306070088
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+* Document the IPQ9574 dwc3 compatible.
 
---ArSYnhEy2YRLKnCd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Make power-domains as optional since IPQ9574 doesn't have GDSCs
 
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+---
+ Changes in v9:
+	- Place ipq9574 alongwith similar SoCs instead of new entry
+	- Make power-domains as optional since IPQ9574 doesn't have GDSCs
 
-> > +const void *i2c_get_match_data(const struct i2c_client *client) {
-> > +       struct device_driver *drv =3D client->dev.driver;
-> > +       struct i2c_driver *driver =3D to_i2c_driver(drv);
-> > +       const struct i2c_device_id *match;
-> > +       const void *data;
-> > +
-> > +       data =3D device_get_match_data(&client->dev);
->=20
->     if (data)
->             return data;
+ Changes in v6:
+	- Made power-domains as optional
+	- Resolved all 'make dtbs_check' messages
 
-I like Biju's version a tad more. Except for errors, and especially
-within small functions, I think single exit points are easier to
-understand.
+ Changes in v5:
+	- Restore removed constraints
 
+ Changes in v4:
+	- Update other relevant sections
+	- Remove constraints not applicable to IPQ9574
+---
+ Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---ArSYnhEy2YRLKnCd
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index 4a36e2b..ae24dac 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -17,6 +17,7 @@ properties:
+           - qcom,ipq6018-dwc3
+           - qcom,ipq8064-dwc3
+           - qcom,ipq8074-dwc3
++          - qcom,ipq9574-dwc3
+           - qcom,msm8953-dwc3
+           - qcom,msm8994-dwc3
+           - qcom,msm8996-dwc3
+@@ -134,7 +135,6 @@ required:
+   - "#address-cells"
+   - "#size-cells"
+   - ranges
+-  - power-domains
+   - clocks
+   - clock-names
+   - interrupts
+@@ -178,6 +178,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,ipq9574-dwc3
+               - qcom,msm8953-dwc3
+               - qcom,msm8996-dwc3
+               - qcom,msm8998-dwc3
+-- 
+2.7.4
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmSAWeEACgkQFA3kzBSg
-KbbEPw/5AQWOxmhUDl5BM3hz0sVcfZBH780GCZPXC925lLHUj/gjfgkWYA7Pqv8w
-A5bT/b8Z4Es3vQaKV7gtg+v6dniONQLfqV6icQpliRw22jds3gR6fLr3A59ithSp
-Ga2Q3vvI9wihCXTt7Gwuht9eCABPRcIgFjbwdGjZuqSbB50w3hI0Ew+xeeq37+XK
-duYymbgG6CoIDsK0SLxU7TB2AUGXLWrD8s41bXTAgZdg2ZUkvsbAZ9KzLPgWC4k7
-UibDr831q997s39HIxlUD2eB7FBdOlaXegxf0LaKqIbU0ib3bOLUTiHyfOVA61av
-uIq2ZqpAqV1pLfauSGZ297Ry9N9RZ9w8n9gmDrz+jnS8ZCMdgVSqWzWVCCYAt/sY
-9dTHTyNFEOshPsCEk6vDzz6UTeRBFTvjNd5a5bXOG+ZjvnOYjXbwwq5g7voEti0o
-3bozVaQ0CwJgtb0WWboXMjr56KWBnm3abjYmiUoidwyARETjeI9WjRC1YbyjMV7x
-OOAlVf97oplJZb/F/3k8PVwJcKuF5gFnO2aMJg2+llCqu7lxtPFPFOH9Uiltv5yr
-hyVVvdA4XwF5CRuJV7iZToK8vtQn/elFSPw0uXg0033I1nIWej7WObo/cj3v5XOy
-6GKvNrlFGLNdHM6pXgk/jh9eiVmNSiGhpEXn+ROc6xOtOEEvCQk=
-=TxIj
------END PGP SIGNATURE-----
-
---ArSYnhEy2YRLKnCd--
