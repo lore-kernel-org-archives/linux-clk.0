@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C670C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D851CC7EE2E
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240127AbjFGLTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 07:19:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53802 "EHLO
+        id S240384AbjFGLUP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 07:20:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240245AbjFGLTO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:19:14 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC2C1BF1
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 04:19:13 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2af189d323fso5753761fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 04:19:13 -0700 (PDT)
+        with ESMTP id S240344AbjFGLUN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:20:13 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1607F1993
+        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 04:20:08 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f624daccd1so4599596e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 04:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686136751; x=1688728751;
+        d=linaro.org; s=google; t=1686136806; x=1688728806;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=fjko3QRj+cFplx9h7zbRwTk/CwypS2aJGQpsJdnJBcU=;
-        b=laRSDrsJNF9p2Ofs3Yfy7ka0nQNTWbKYMLIRRWEmQCnnCfuI+YpId+dWWU1TyPxBm5
-         6Cmq3E/iMw+YsFNd5yjGx3NZnByip7EmAV9SHAEjtlw9byALWWELgRy3SYJKPWKGBQoA
-         zd7Wx2S3Juto5ptbe+9OaIjOGSYJwY8qUnXwJ0mqTgROVxtyWUzZ4oFsGJL3roCX2sRO
-         Y9TGulY7Yqn6MCizksVHMlD+JKfiPgjQ1QLNlr3CUB3MxpTlgwcWNJXjkbSqFCSvOL13
-         QV332ueIJ64er8ta6wCXOPEjMGrVvRSizPJPSFBRJIB7bdpzGeMDVnBcH0iZ265hLEcE
-         w+SQ==
+        bh=BTBg9MyG6jhsl+u10WSeM0LsmdB54Dp+FeeVDwf+P1E=;
+        b=GqGvhfCD5CfG/i9PdEtiYtDORlS2hSYj/XdMUA6gwOK8QYt2DOpbQVjlH403owaCe1
+         lt2U1vB/X6Q7w6wsrTq+cvIdnX26i/HZvKpE5YJoX+GTLQcdhI8JXBPwryb7qPQMyEMU
+         XipEAQqFjEkejFo7Nr4oTddfOWdKj0frkMfRavbwap9iA+85xQEXxQjlNigBkP5nr/dP
+         0ywDsqvbzc0MGbhC37pE6yc3JUO0S6eAkpMYkhavE0Vbsz54D8dNOaWTbMlKHV2dLEv/
+         CrZNM3bNoMVLKZSfpx85+uyuxt4osLX51Td9LTfFkLvgjisW/b36SNH7JkiB89JbhNDM
+         IdZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686136751; x=1688728751;
+        d=1e100.net; s=20221208; t=1686136806; x=1688728806;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fjko3QRj+cFplx9h7zbRwTk/CwypS2aJGQpsJdnJBcU=;
-        b=UZ5GSOl9rsYRUqU7iFlNyynsi3Q8z+HDsOaqlDgOmwVe1C4n3dLDpleJNB9eiroFAK
-         ax3LsNENNHCByHsg7m7u3rrT5QbQXnF5QQ/L9NxUuqwIGqEzy0iaHOdKNYWO+faFPFws
-         ojzLOQQIspALcOqzIgTBNRGBtxCPBEwmGzJigVrUkTOPRS4xniUV+MuJX5wlVWPbyiZb
-         R9xNuE4y1/5Hx6pfI1rhHQrlAa/N1vN7pA/UbD8RVpbkQwPt2CvmL/EFO8uX+gPDbK+f
-         2/59HTDSuogJk9DSc1m1skGZBXOXgsQCtmRFQZEfylTqZaB7ZvdctyCBbiyCQK9iakeU
-         dL6A==
-X-Gm-Message-State: AC+VfDwWSzdNgH58Rc7onJJYsXw4VC59GAjJ8jrw5wCT4lJKwuJUDiX/
-        mF4vOg4W8Lshaf94XCoVuWi1Tw==
-X-Google-Smtp-Source: ACHHUZ5rgUIGYC9F4mfa/BwfD2kpufU+Xaf6Czj/chjjh9l/L1hLFCcM7s7tAr6X1R3s3BfQCW9tiA==
-X-Received: by 2002:a05:651c:2050:b0:2b0:2214:f808 with SMTP id t16-20020a05651c205000b002b02214f808mr4542941ljo.16.1686136751092;
-        Wed, 07 Jun 2023 04:19:11 -0700 (PDT)
+        bh=BTBg9MyG6jhsl+u10WSeM0LsmdB54Dp+FeeVDwf+P1E=;
+        b=j6MNIHo/FQ6M6PPfDFvcxKUPLUsk0BX49X0PlNpw24A90A8xMUKn3CoJRoZf/EUFaZ
+         WMm6WMV0J3EFQxB+Y4BsYli//v86uJxDQSTrI+fThNxTCURT8ngz1Skxn6p6gEslDnGo
+         TXZkP4eLfxpviBTQmsYhQvJhAuQqs4yZHF+520zR6KOIyc/re++sVq9dG8HDx5mshz91
+         pw4j/k2rWeKpX6BXkCPvqLCjEjHyTvP8HmaJkrOSrbHw9ZtxzPM10uwehpIWtai6Zq9w
+         CXzTHJB5CBRdagvVtn8Z53C4PzNayBiEGvllgiRX07HjRY+Yyqm3M+f0OiNO/m4v8GLM
+         vyTA==
+X-Gm-Message-State: AC+VfDxSCRu31qqYqkF3KmbU+wIr7Wh5f9zNAlSxi1rKs4MDyg6OIvix
+        tvyqStT07ntQIsus8+vIVLTVlg==
+X-Google-Smtp-Source: ACHHUZ4dGJnb/Q4jQtanIF6np0lUFYJ9Kec/sjx85wUK5bWSOr8484OmnpVW6Ub4tegvaeUknGYZyQ==
+X-Received: by 2002:a2e:320c:0:b0:2b1:e966:b349 with SMTP id y12-20020a2e320c000000b002b1e966b349mr1944701ljy.31.1686136806130;
+        Wed, 07 Jun 2023 04:20:06 -0700 (PDT)
 Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id x13-20020a2e7c0d000000b002ad90c2d0dasm2222771ljc.71.2023.06.07.04.19.10
+        by smtp.gmail.com with ESMTPSA id y19-20020a2e3213000000b002b1e6a78d3esm1096403ljy.82.2023.06.07.04.20.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jun 2023 04:19:10 -0700 (PDT)
-Message-ID: <87810fde-c824-d494-17b3-b6ff34237bea@linaro.org>
-Date:   Wed, 7 Jun 2023 14:19:09 +0300
+        Wed, 07 Jun 2023 04:20:05 -0700 (PDT)
+Message-ID: <f007fbf0-b1a7-cb44-d662-c30bf114365e@linaro.org>
+Date:   Wed, 7 Jun 2023 14:20:04 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH 4/9] clk: qcom: ipq5332: Fix USB related clock defines
+Subject: Re: [PATCH 5/9] phy: qcom-m31: Introduce qcom,m31 USB phy
 Content-Language: en-GB
 To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
@@ -71,9 +71,9 @@ To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org
 References: <cover.1686126439.git.quic_varada@quicinc.com>
- <3840e5b5795ef55ecbf25d0faa8c328f09c6d976.1686126439.git.quic_varada@quicinc.com>
+ <636308462efb579734de829fb6e9cbda81b982f7.1686126439.git.quic_varada@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <3840e5b5795ef55ecbf25d0faa8c328f09c6d976.1686126439.git.quic_varada@quicinc.com>
+In-Reply-To: <636308462efb579734de829fb6e9cbda81b982f7.1686126439.git.quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,95 +81,36 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 07/06/2023 13:56, Varadarajan Narayanan wrote:
-> Fix the USB related clock defines and add details
-> referenced by them
+> Introduce CONFIG_PHY_QCOM_M31_USB for including the M31 phy driver
 > 
 > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+
+Is there any reason to keep Kconfig, Makefile and driver in different 
+commits?
+
 > ---
->   drivers/clk/qcom/gcc-ipq5332.c | 34 +++++++++++++++++++++++-----------
->   1 file changed, 23 insertions(+), 11 deletions(-)
+>   drivers/phy/qualcomm/Kconfig | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
 > 
-> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-> index a75ab88..2b58558 100644
-> --- a/drivers/clk/qcom/gcc-ipq5332.c
-> +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> @@ -351,6 +351,16 @@ static const struct freq_tbl ftbl_gcc_adss_pwm_clk_src[] = {
->   	{ }
->   };
->   
-> +static const struct clk_parent_data gcc_usb3phy_0_cc_pipe_clk_xo[] = {
-> +	{ .fw_name = "usb3phy_0_cc_pipe_clk" },
-> +	{ .fw_name = "xo" },
-
-gcc-ipq5332 uses DT indices, please don't mix that with .fw_name.
-
-> +};
+> diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
+> index 67a45d9..8a363dd 100644
+> --- a/drivers/phy/qualcomm/Kconfig
+> +++ b/drivers/phy/qualcomm/Kconfig
+> @@ -188,3 +188,14 @@ config PHY_QCOM_IPQ806X_USB
+>   	  This option enables support for the Synopsis PHYs present inside the
+>   	  Qualcomm USB3.0 DWC3 controller on ipq806x SoC. This driver supports
+>   	  both HS and SS PHY controllers.
 > +
-> +static const struct parent_map gcc_usb3phy_0_cc_pipe_clk_xo_map[] = {
-> +	{ P_USB3PHY_0_PIPE, 0 },
-> +	{ P_XO, 2 },
-> +};
-> +
->   static struct clk_rcg2 gcc_adss_pwm_clk_src = {
->   	.cmd_rcgr = 0x1c004,
->   	.mnd_width = 0,
-> @@ -1101,16 +1111,18 @@ static struct clk_rcg2 gcc_usb0_mock_utmi_clk_src = {
->   	},
->   };
->   
-> -static struct clk_regmap_phy_mux gcc_usb0_pipe_clk_src = {
-> +static struct clk_regmap_mux usb0_pipe_clk_src = {
->   	.reg = 0x2c074,
-> +	.shift = 8,
-> +	.width = 2,
-> +	.parent_map = gcc_usb3phy_0_cc_pipe_clk_xo_map,
->   	.clkr = {
-> -		.hw.init = &(struct clk_init_data) {
-> -			.name = "gcc_usb0_pipe_clk_src",
-> -			.parent_data = &(const struct clk_parent_data) {
-> -				.index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
-> -			},
-> -			.num_parents = 1,
-> -			.ops = &clk_regmap_phy_mux_ops,
-> +		.hw.init = &(const struct clk_init_data){
-> +			.name = "usb0phy_0_cc_pipe_clk_src",
-> +			.parent_data = gcc_usb3phy_0_cc_pipe_clk_xo,
-> +			.num_parents = 2,
-> +			.ops = &clk_regmap_mux_closest_ops,
-> +			.flags = CLK_SET_RATE_PARENT,
->   		},
-
-Soo... As you are reverting this. Is USB0 PIPE clock required to be 
-parked to the XO? I was going to write 'before turning USB0_GDSC' off, 
-but then I noticed that gcc-ipq5332 doesn't declare GDSCs. Does this 
-platform have GDSCs?
-
->   	},
->   };
-> @@ -3041,8 +3053,8 @@ static struct clk_branch gcc_usb0_pipe_clk = {
->   		.enable_mask = BIT(0),
->   		.hw.init = &(const struct clk_init_data) {
->   			.name = "gcc_usb0_pipe_clk",
-> -			.parent_hws = (const struct clk_hw*[]) {
-> -				&gcc_usb0_pipe_clk_src.clkr.hw,
-> +			.parent_names = (const char *[]){
-> +				"usb0_pipe_clk_src"
-
-complete and definitive NAK. Do not use parent_names, we have just 
-stopped migrating from them.
-
->   			},
->   			.num_parents = 1,
->   			.flags = CLK_SET_RATE_PARENT,
-> @@ -3580,7 +3592,7 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
->   	[GCC_PCIE3X2_PIPE_CLK_SRC] = &gcc_pcie3x2_pipe_clk_src.clkr,
->   	[GCC_PCIE3X1_0_PIPE_CLK_SRC] = &gcc_pcie3x1_0_pipe_clk_src.clkr,
->   	[GCC_PCIE3X1_1_PIPE_CLK_SRC] = &gcc_pcie3x1_1_pipe_clk_src.clkr,
-> -	[GCC_USB0_PIPE_CLK_SRC] = &gcc_usb0_pipe_clk_src.clkr,
-> +	[GCC_USB0_PIPE_CLK_SRC] = &usb0_pipe_clk_src.clkr,
->   };
->   
->   static const struct qcom_reset_map gcc_ipq5332_resets[] = {
+> +config PHY_QCOM_M31_USB
+> +	tristate "Qualcomm M31 HS PHY driver support"
+> +	depends on (USB || USB_GADGET) && ARCH_QCOM
+> +	select USB_PHY
+> +	help
+> +	  Enable this to support M31 HS PHY transceivers on Qualcomm chips
+> +	  with DWC3 USB core. It handles PHY initialization, clock
+> +	  management required after resetting the hardware and power
+> +	  management. This driver is required even for peripheral only or
+> +	  host only mode configurations.
 
 -- 
 With best wishes
