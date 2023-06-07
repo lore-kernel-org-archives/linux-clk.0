@@ -2,149 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C95C87FE4
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D25C77B7A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:38:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232259AbjFGURC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 16:17:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41872 "EHLO
+        id S234233AbjFGUia (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 16:38:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231611AbjFGUQ7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:16:59 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D9871BD3;
-        Wed,  7 Jun 2023 13:16:58 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 3BC105FD73;
-        Wed,  7 Jun 2023 23:16:56 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1686169016;
-        bh=ZYzm10ARzicI/VkalxH9IaqGb8tcNyA0d5VD1WYq+Ig=;
-        h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=tFuV+yAWUo7Q0sYLMKf2M4BuNmvcVlg643acSfnG19o9ztjGz5c14v0md6UFe1hum
-         L5M1cTrJFMmA02ElgVAKzuP1Em/6iGgBbpzRzlWwDeO5UGtddWkkrcQd1DTCLMJpCz
-         zNpERrZdP4tvAosYgpSoCL2LI7p4m3pxq7hfZ5s7YTtKxlRXK5cnTz/6LVLQJ4yyBg
-         4TamtmB64oysLQ02Qu9uFe9+erDwZCkLMYD//roEmxlIBPUFRW1AOZUA2yqSAengyx
-         vP60/8mI6Haow3vDD9UT5F1RtRXPYNsSxVafXtXjVKGKJfbYfBhvXDFJ7A6SAJxChj
-         CpF4yCInn2Qrg==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Wed,  7 Jun 2023 23:16:56 +0300 (MSK)
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <conor+dt@kernel.org>
-CC:     <kernel@sberdevices.ru>, <sdfw_system_team@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Jan Dakinevich <yvdakinevich@sberdevices.ru>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v1 6/6] arm64: dts: meson: a1: add eMMC controller and its pins
-Date:   Wed, 7 Jun 2023 23:16:41 +0300
-Message-ID: <20230607201641.20982-7-ddrokosov@sberdevices.ru>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
-References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
+        with ESMTP id S234250AbjFGUi0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:38:26 -0400
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1951706;
+        Wed,  7 Jun 2023 13:38:06 -0700 (PDT)
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-77ac30e95caso72989339f.2;
+        Wed, 07 Jun 2023 13:38:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686170247; x=1688762247;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+zgUfZbj8UgwFs6zorpXckRZL+p/Z8v5AChyDByc05I=;
+        b=dOKG64yR48vpx9BAa3+Ssnlqgi8R96GRo5f46JFafWEQsAKX25eLZFwX2NvYZQSYHu
+         LAZkoeR+2wyqSPdaODJl8Chk027ob3z4/xT6X9iRdJeSd7z4rNw2heuPwlF8c0mSKFrx
+         5D7O6kKKzzuuvqNYPAI3H9QYru4d4Oku2XAVHlCC1TjRIDlVb2DpH2bDIGc8lhLvmHu6
+         YcmKfCqvpyR380F6xcetaVVZtJq1+h2Z5N1u13parVKmXpeP8PDBXu69K0y0x0Ws5QOP
+         U2e0mA2i4S/Y54MWxq26OfImcx73ZzSiHy+XuZTatHLe+VNjkap3zEcqEq5t4/VAI+KH
+         5wwA==
+X-Gm-Message-State: AC+VfDx+By+NYP6ql/osi86Y2+Q0UFTBtjzKa0uaDicTqMiKZZDNLip4
+        vUOVkX07Bkxd7V+PpDZ3mw==
+X-Google-Smtp-Source: ACHHUZ4Gh0jUQjI7Mx3OVJyPWIKhQiVbqlhuwxeWKu1Od7VcNnyvF5RraLcM3DWUt/PYxm6w3oVW+g==
+X-Received: by 2002:a6b:dd13:0:b0:76c:898c:9b10 with SMTP id f19-20020a6bdd13000000b0076c898c9b10mr8694413ioc.0.1686170246861;
+        Wed, 07 Jun 2023 13:37:26 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id w7-20020a02cf87000000b00420c5d10c38sm611082jar.74.2023.06.07.13.37.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jun 2023 13:37:25 -0700 (PDT)
+Received: (nullmailer pid 3979185 invoked by uid 1000);
+        Wed, 07 Jun 2023 20:37:23 -0000
+Date:   Wed, 7 Jun 2023 14:37:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     khilman@baylibre.com, jian.hu@amlogic.com,
+        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        martin.blumenstingl@googlemail.com, jbrunet@baylibre.com,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        neil.armstrong@linaro.org, kernel@sberdevices.ru,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        rockosov@gmail.com, mturquette@baylibre.com
+Subject: Re: [PATCH v16 5/6] dt-bindings: clock: meson: add A1 Peripherals
+ clock controller bindings
+Message-ID: <168617024273.3979125.14701905013273806999.robh@kernel.org>
+References: <20230523135351.19133-1-ddrokosov@sberdevices.ru>
+ <20230523135351.19133-6-ddrokosov@sberdevices.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH01.sberdevices.ru (172.16.1.4) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/07 16:55:00 #21454472
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230523135351.19133-6-ddrokosov@sberdevices.ru>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jan Dakinevich <yvdakinevich@sberdevices.ru>
 
-The definition is inspired by a similar one for AXG SoC family.
-'sdio_pins' and 'sdio_clk_gate_pins' pinctrls are supposed to be used as
-"default" and "clk-gate" in board-specific device trees.
+On Tue, 23 May 2023 16:53:50 +0300, Dmitry Rokosov wrote:
+> Add documentation and dt bindings for the Amlogic A1 Peripherals clock
+> controller.
+> A1 PLL clock controller has references to A1 Peripherals clock
+> controller objects, so reflect them in the schema.
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> ---
+>  .../clock/amlogic,a1-peripherals-clkc.yaml    |  73 +++++++++++
+>  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   5 +-
+>  .../clock/amlogic,a1-peripherals-clkc.h       | 115 ++++++++++++++++++
+>  3 files changed, 191 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
+> 
 
-'meson-gx' driver during initialization sets clock to safe low-frequency
-value (400kHz). However, both source clocks ("clkin0" and "clkin1") are
-high-frequency by default, and using of eMMC's internal divider is not
-enough to achieve so low values. To provide low-frequency source,
-reparent "sd_emmc_sel2" clock using 'assigned-clocks' property.
-
-Signed-off-by: Jan Dakinevich <yvdakinevich@sberdevices.ru>
-Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 43 +++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index 3eb6aa9c00e0..a25170c61462 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -134,6 +134,32 @@ mux {
- 						bias-pull-down;
- 					};
- 				};
-+
-+				sdio_pins: sdio {
-+					mux-0 {
-+						groups = "sdcard_d0_x",
-+							 "sdcard_d1_x",
-+							 "sdcard_d2_x",
-+							 "sdcard_d3_x",
-+							 "sdcard_cmd_x";
-+						function = "sdcard";
-+						bias-pull-up;
-+					};
-+
-+					mux-1 {
-+						groups = "sdcard_clk_x";
-+						function = "sdcard";
-+						bias-disable;
-+					};
-+				};
-+
-+				sdio_clk_gate_pins: sdio_clk_gate {
-+					mux {
-+						groups = "sdcard_clk_x";
-+						function = "sdcard";
-+						bias-pull-down;
-+					};
-+				};
- 			};
- 
- 			uart_AO: serial@1c00 {
-@@ -200,6 +226,23 @@ usb2_phy1: phy@4000 {
- 				#phy-cells = <0>;
- 				power-domains = <&pwrc PWRC_USB_ID>;
- 			};
-+
-+			sd_emmc: sd@10000 {
-+				compatible = "amlogic,meson-axg-mmc";
-+				reg = <0x0 0x10000 0x0 0x800>;
-+				interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&clkc_periphs CLKID_SD_EMMC_A>,
-+					 <&clkc_periphs CLKID_SD_EMMC>,
-+					 <&clkc_pll CLKID_FCLK_DIV2>;
-+				clock-names = "core",
-+					      "clkin0",
-+					      "clkin1";
-+				assigned-clocks = <&clkc_periphs CLKID_SD_EMMC_SEL2>;
-+				assigned-clock-parents = <&xtal>;
-+				resets = <&reset RESET_SD_EMMC_A>;
-+				power-domains = <&pwrc PWRC_SD_EMMC_ID>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		gic: interrupt-controller@ff901000 {
--- 
-2.36.0
+Reviewed-by: Rob Herring <robh@kernel.org>
 
