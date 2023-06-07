@@ -2,112 +2,176 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B91C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C670C77B7A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 11:19:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239533AbjFGLLz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 07:11:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49856 "EHLO
+        id S240127AbjFGLTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 07:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239312AbjFGLLy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:11:54 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C8BAE79;
-        Wed,  7 Jun 2023 04:11:51 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 357AfiTl028657;
-        Wed, 7 Jun 2023 10:56:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=ppwtIPRiaridEX22kKaoo8ZqQTqMCoFPO7Tl3CkigXA=;
- b=X3Loy+pNjTdqmzkfQvEFc2HEDoTc45M9Wi2jdsSiQTvu1E/NuwvPo+aKdiIZAt1JmIIJ
- t2d3tis7AverFGA8ULtCRiArM68iCZPtE/7P7VUqrJPIODOdZcmIY+aIRs+gJeM3+clE
- dQmdwvfmxVGJ/zgF4rr7B8er+DclOMU5RGkury9BhxZWTCd3bnWSZCQnVBdRIR7EiPs7
- EESw/3SuxvUIFXW23xp0oNbckeT6TJA9p7yJrL188DFd21wNfAYzgbwSdJVm/HNjUpkG
- JHBIEp+KTX5YrNy5ufNIUastztnhzDtOu6uKzyqji+a0RlP6cRXIQfvrGpAYCEgjXccF KQ== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2rbtg0u2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Jun 2023 10:56:30 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357AuTJg025287
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 7 Jun 2023 10:56:29 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 7 Jun 2023 03:56:20 -0700
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <arnd@arndb.de>,
-        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <rafal@milecki.pl>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.org>, <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH 0/9] Enable IPQ5332 USB2
-Date:   Wed, 7 Jun 2023 16:26:04 +0530
-Message-ID: <cover.1686126439.git.quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+        with ESMTP id S240245AbjFGLTO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 07:19:14 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC2C1BF1
+        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 04:19:13 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2af189d323fso5753761fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 04:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686136751; x=1688728751;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fjko3QRj+cFplx9h7zbRwTk/CwypS2aJGQpsJdnJBcU=;
+        b=laRSDrsJNF9p2Ofs3Yfy7ka0nQNTWbKYMLIRRWEmQCnnCfuI+YpId+dWWU1TyPxBm5
+         6Cmq3E/iMw+YsFNd5yjGx3NZnByip7EmAV9SHAEjtlw9byALWWELgRy3SYJKPWKGBQoA
+         zd7Wx2S3Juto5ptbe+9OaIjOGSYJwY8qUnXwJ0mqTgROVxtyWUzZ4oFsGJL3roCX2sRO
+         Y9TGulY7Yqn6MCizksVHMlD+JKfiPgjQ1QLNlr3CUB3MxpTlgwcWNJXjkbSqFCSvOL13
+         QV332ueIJ64er8ta6wCXOPEjMGrVvRSizPJPSFBRJIB7bdpzGeMDVnBcH0iZ265hLEcE
+         w+SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686136751; x=1688728751;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjko3QRj+cFplx9h7zbRwTk/CwypS2aJGQpsJdnJBcU=;
+        b=UZ5GSOl9rsYRUqU7iFlNyynsi3Q8z+HDsOaqlDgOmwVe1C4n3dLDpleJNB9eiroFAK
+         ax3LsNENNHCByHsg7m7u3rrT5QbQXnF5QQ/L9NxUuqwIGqEzy0iaHOdKNYWO+faFPFws
+         ojzLOQQIspALcOqzIgTBNRGBtxCPBEwmGzJigVrUkTOPRS4xniUV+MuJX5wlVWPbyiZb
+         R9xNuE4y1/5Hx6pfI1rhHQrlAa/N1vN7pA/UbD8RVpbkQwPt2CvmL/EFO8uX+gPDbK+f
+         2/59HTDSuogJk9DSc1m1skGZBXOXgsQCtmRFQZEfylTqZaB7ZvdctyCBbiyCQK9iakeU
+         dL6A==
+X-Gm-Message-State: AC+VfDwWSzdNgH58Rc7onJJYsXw4VC59GAjJ8jrw5wCT4lJKwuJUDiX/
+        mF4vOg4W8Lshaf94XCoVuWi1Tw==
+X-Google-Smtp-Source: ACHHUZ5rgUIGYC9F4mfa/BwfD2kpufU+Xaf6Czj/chjjh9l/L1hLFCcM7s7tAr6X1R3s3BfQCW9tiA==
+X-Received: by 2002:a05:651c:2050:b0:2b0:2214:f808 with SMTP id t16-20020a05651c205000b002b02214f808mr4542941ljo.16.1686136751092;
+        Wed, 07 Jun 2023 04:19:11 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id x13-20020a2e7c0d000000b002ad90c2d0dasm2222771ljc.71.2023.06.07.04.19.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jun 2023 04:19:10 -0700 (PDT)
+Message-ID: <87810fde-c824-d494-17b3-b6ff34237bea@linaro.org>
+Date:   Wed, 7 Jun 2023 14:19:09 +0300
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8kHDuKT46JDbNroJKpYJwAP_zCYi0xy3
-X-Proofpoint-ORIG-GUID: 8kHDuKT46JDbNroJKpYJwAP_zCYi0xy3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-07_06,2023-06-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- adultscore=0 mlxlogscore=272 spamscore=0 priorityscore=1501 phishscore=0
- impostorscore=0 mlxscore=0 clxscore=1011 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306070089
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 4/9] clk: qcom: ipq5332: Fix USB related clock defines
+Content-Language: en-GB
+To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org, vkoul@kernel.org,
+        kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, arnd@arndb.de, geert+renesas@glider.be,
+        neil.armstrong@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, rafal@milecki.pl, quic_srichara@quicinc.com,
+        quic_varada@quicinc.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <cover.1686126439.git.quic_varada@quicinc.com>
+ <3840e5b5795ef55ecbf25d0faa8c328f09c6d976.1686126439.git.quic_varada@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <3840e5b5795ef55ecbf25d0faa8c328f09c6d976.1686126439.git.quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series adds the relevant phy and controller
-configurations for enabling USB2 on IPQ5332
+On 07/06/2023 13:56, Varadarajan Narayanan wrote:
+> Fix the USB related clock defines and add details
+> referenced by them
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>   drivers/clk/qcom/gcc-ipq5332.c | 34 +++++++++++++++++++++++-----------
+>   1 file changed, 23 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+> index a75ab88..2b58558 100644
+> --- a/drivers/clk/qcom/gcc-ipq5332.c
+> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+> @@ -351,6 +351,16 @@ static const struct freq_tbl ftbl_gcc_adss_pwm_clk_src[] = {
+>   	{ }
+>   };
+>   
+> +static const struct clk_parent_data gcc_usb3phy_0_cc_pipe_clk_xo[] = {
+> +	{ .fw_name = "usb3phy_0_cc_pipe_clk" },
+> +	{ .fw_name = "xo" },
 
-Depends On: https://lore.kernel.org/linux-arm-msm/cover.1686045347.git.quic_varada@quicinc.com/
+gcc-ipq5332 uses DT indices, please don't mix that with .fw_name.
 
-Varadarajan Narayanan (9):
-  dt-bindings: usb: dwc3: Add IPQ5332 compatible
-  dt-bindings: phy: qcom,m31: Document qcom,m31 USB phy
-  phy: qcom-m31: Introduce qcom,m31 USB phy driver
-  clk: qcom: ipq5332: Fix USB related clock defines
-  phy: qcom-m31: Introduce qcom,m31 USB phy
-  phy: qcom: Add qcom,m31 USB phy driver
-  arm64: dts: qcom: ipq5332: Add USB related nodes
-  arm64: dts: qcom: ipq5332: Enable USB
-  arm64: defconfig: Enable QCOM M31 USB phy driver
+> +};
+> +
+> +static const struct parent_map gcc_usb3phy_0_cc_pipe_clk_xo_map[] = {
+> +	{ P_USB3PHY_0_PIPE, 0 },
+> +	{ P_XO, 2 },
+> +};
+> +
+>   static struct clk_rcg2 gcc_adss_pwm_clk_src = {
+>   	.cmd_rcgr = 0x1c004,
+>   	.mnd_width = 0,
+> @@ -1101,16 +1111,18 @@ static struct clk_rcg2 gcc_usb0_mock_utmi_clk_src = {
+>   	},
+>   };
+>   
+> -static struct clk_regmap_phy_mux gcc_usb0_pipe_clk_src = {
+> +static struct clk_regmap_mux usb0_pipe_clk_src = {
+>   	.reg = 0x2c074,
+> +	.shift = 8,
+> +	.width = 2,
+> +	.parent_map = gcc_usb3phy_0_cc_pipe_clk_xo_map,
+>   	.clkr = {
+> -		.hw.init = &(struct clk_init_data) {
+> -			.name = "gcc_usb0_pipe_clk_src",
+> -			.parent_data = &(const struct clk_parent_data) {
+> -				.index = DT_USB_PCIE_WRAPPER_PIPE_CLK,
+> -			},
+> -			.num_parents = 1,
+> -			.ops = &clk_regmap_phy_mux_ops,
+> +		.hw.init = &(const struct clk_init_data){
+> +			.name = "usb0phy_0_cc_pipe_clk_src",
+> +			.parent_data = gcc_usb3phy_0_cc_pipe_clk_xo,
+> +			.num_parents = 2,
+> +			.ops = &clk_regmap_mux_closest_ops,
+> +			.flags = CLK_SET_RATE_PARENT,
+>   		},
 
- .../devicetree/bindings/phy/qcom,m31.yaml          |  69 ++++
- .../devicetree/bindings/usb/qcom,dwc3.yaml         |   2 +
- arch/arm64/boot/dts/qcom/ipq5332-rdp468.dts        |   8 +
- arch/arm64/boot/dts/qcom/ipq5332.dtsi              |  55 ++++
- arch/arm64/configs/defconfig                       |   1 +
- drivers/clk/qcom/gcc-ipq5332.c                     |  34 +-
- drivers/phy/qualcomm/Kconfig                       |  11 +
- drivers/phy/qualcomm/Makefile                      |   1 +
- drivers/phy/qualcomm/phy-qcom-m31.c                | 360 +++++++++++++++++++++
- 9 files changed, 530 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/qcom,m31.yaml
- create mode 100644 drivers/phy/qualcomm/phy-qcom-m31.c
+Soo... As you are reverting this. Is USB0 PIPE clock required to be 
+parked to the XO? I was going to write 'before turning USB0_GDSC' off, 
+but then I noticed that gcc-ipq5332 doesn't declare GDSCs. Does this 
+platform have GDSCs?
+
+>   	},
+>   };
+> @@ -3041,8 +3053,8 @@ static struct clk_branch gcc_usb0_pipe_clk = {
+>   		.enable_mask = BIT(0),
+>   		.hw.init = &(const struct clk_init_data) {
+>   			.name = "gcc_usb0_pipe_clk",
+> -			.parent_hws = (const struct clk_hw*[]) {
+> -				&gcc_usb0_pipe_clk_src.clkr.hw,
+> +			.parent_names = (const char *[]){
+> +				"usb0_pipe_clk_src"
+
+complete and definitive NAK. Do not use parent_names, we have just 
+stopped migrating from them.
+
+>   			},
+>   			.num_parents = 1,
+>   			.flags = CLK_SET_RATE_PARENT,
+> @@ -3580,7 +3592,7 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
+>   	[GCC_PCIE3X2_PIPE_CLK_SRC] = &gcc_pcie3x2_pipe_clk_src.clkr,
+>   	[GCC_PCIE3X1_0_PIPE_CLK_SRC] = &gcc_pcie3x1_0_pipe_clk_src.clkr,
+>   	[GCC_PCIE3X1_1_PIPE_CLK_SRC] = &gcc_pcie3x1_1_pipe_clk_src.clkr,
+> -	[GCC_USB0_PIPE_CLK_SRC] = &gcc_usb0_pipe_clk_src.clkr,
+> +	[GCC_USB0_PIPE_CLK_SRC] = &usb0_pipe_clk_src.clkr,
+>   };
+>   
+>   static const struct qcom_reset_map gcc_ipq5332_resets[] = {
 
 -- 
-2.7.4
+With best wishes
+Dmitry
 
