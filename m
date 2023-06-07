@@ -2,84 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D25C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BEFBC7EE43
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234233AbjFGUia (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 16:38:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37892 "EHLO
+        id S235617AbjFGU5h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 16:57:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234250AbjFGUi0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:38:26 -0400
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D1951706;
-        Wed,  7 Jun 2023 13:38:06 -0700 (PDT)
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-77ac30e95caso72989339f.2;
-        Wed, 07 Jun 2023 13:38:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686170247; x=1688762247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+zgUfZbj8UgwFs6zorpXckRZL+p/Z8v5AChyDByc05I=;
-        b=dOKG64yR48vpx9BAa3+Ssnlqgi8R96GRo5f46JFafWEQsAKX25eLZFwX2NvYZQSYHu
-         LAZkoeR+2wyqSPdaODJl8Chk027ob3z4/xT6X9iRdJeSd7z4rNw2heuPwlF8c0mSKFrx
-         5D7O6kKKzzuuvqNYPAI3H9QYru4d4Oku2XAVHlCC1TjRIDlVb2DpH2bDIGc8lhLvmHu6
-         YcmKfCqvpyR380F6xcetaVVZtJq1+h2Z5N1u13parVKmXpeP8PDBXu69K0y0x0Ws5QOP
-         U2e0mA2i4S/Y54MWxq26OfImcx73ZzSiHy+XuZTatHLe+VNjkap3zEcqEq5t4/VAI+KH
-         5wwA==
-X-Gm-Message-State: AC+VfDx+By+NYP6ql/osi86Y2+Q0UFTBtjzKa0uaDicTqMiKZZDNLip4
-        vUOVkX07Bkxd7V+PpDZ3mw==
-X-Google-Smtp-Source: ACHHUZ4Gh0jUQjI7Mx3OVJyPWIKhQiVbqlhuwxeWKu1Od7VcNnyvF5RraLcM3DWUt/PYxm6w3oVW+g==
-X-Received: by 2002:a6b:dd13:0:b0:76c:898c:9b10 with SMTP id f19-20020a6bdd13000000b0076c898c9b10mr8694413ioc.0.1686170246861;
-        Wed, 07 Jun 2023 13:37:26 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id w7-20020a02cf87000000b00420c5d10c38sm611082jar.74.2023.06.07.13.37.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 13:37:25 -0700 (PDT)
-Received: (nullmailer pid 3979185 invoked by uid 1000);
-        Wed, 07 Jun 2023 20:37:23 -0000
-Date:   Wed, 7 Jun 2023 14:37:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     khilman@baylibre.com, jian.hu@amlogic.com,
-        krzysztof.kozlowski+dt@linaro.org, sboyd@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        martin.blumenstingl@googlemail.com, jbrunet@baylibre.com,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        neil.armstrong@linaro.org, kernel@sberdevices.ru,
-        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        rockosov@gmail.com, mturquette@baylibre.com
-Subject: Re: [PATCH v16 5/6] dt-bindings: clock: meson: add A1 Peripherals
- clock controller bindings
-Message-ID: <168617024273.3979125.14701905013273806999.robh@kernel.org>
-References: <20230523135351.19133-1-ddrokosov@sberdevices.ru>
- <20230523135351.19133-6-ddrokosov@sberdevices.ru>
+        with ESMTP id S235527AbjFGU5g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:57:36 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86EB51BEA;
+        Wed,  7 Jun 2023 13:57:31 -0700 (PDT)
+Received: from notapiano.myfiosgateway.com (zone.collabora.co.uk [167.235.23.81])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 8C01166032D2;
+        Wed,  7 Jun 2023 21:57:26 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1686171449;
+        bh=3Ss4Xbs+eUeVm0wwUGrfx/rLq0kUmO44VcFrpD6blPQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Hjy4ZAVDbkJPCL4X1AXfEB2Qx119GEsaxIbUuBS0OMEF7Rq9rtwOugPt2aFyEie0i
+         fKbdk32a3zQF8wT4eUuV1aZVpksNTJFwhr1BVsRUkaY2VDNb64IagZxnCyfEsm7JSr
+         YlHGXXbaw7WuKIiJcc2wQRA2jBRFc7JifUkg+wBW/1UahWkwhXJKRg21WkAJGR8o1Q
+         hbXEVn06a0H/rFhsnkHyqGx8hSBdVRfnm9TguMpGP5QYPUYqh4VdfIR+/EFNI1YVO7
+         8YON8g1BUz0/1/D/NrO/+3mbbWR8o9CumX2U8FczxHYottf3ww5OiUX7wzyH+udumm
+         lxmDVGfI+tEOQ==
+From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     kernel@collabora.com,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
+        <nfraprado@collabora.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/5] Enable decoder for mt8183
+Date:   Wed,  7 Jun 2023 16:53:37 -0400
+Message-ID: <20230607205714.510012-1-nfraprado@collabora.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230523135351.19133-6-ddrokosov@sberdevices.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Tue, 23 May 2023 16:53:50 +0300, Dmitry Rokosov wrote:
-> Add documentation and dt bindings for the Amlogic A1 Peripherals clock
-> controller.
-> A1 PLL clock controller has references to A1 Peripherals clock
-> controller objects, so reflect them in the schema.
-> 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> ---
->  .../clock/amlogic,a1-peripherals-clkc.yaml    |  73 +++++++++++
->  .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   5 +-
->  .../clock/amlogic,a1-peripherals-clkc.h       | 115 ++++++++++++++++++
->  3 files changed, 191 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> 
+This series enables the hardware decoder present on mt8183. At first
+glance, the only missing piece is the devicetree node for it, however,
+simply adding it as is would cause an address collision between the
+first register iospace and the clock-controller node, so a rework of the
+dt-binding and driver, as well as addition of a clock, were needed
+first.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Tested that H264 decoding works with the hardware decoder on
+mt8183-kukui-jacuzzi-juniper-sku16, giving a fluster score of 98/135 on
+the JVT-AVC_V1 test suite. And ensured other SoCs (MT8192 and MT8195)
+still work as usual.
+
+Changes in v2:
+- Merged commit 1 (media: dt-bindings: mediatek,vcodec: Allow single
+  clock for mt8183) into commit 3 (media: dt-bindings: mediatek,vcodec:
+  Remove VDEC_SYS for mt8183)
+- Further constrained properties in dt-binding
+- Added CLK_IGNORE_UNUSED flag to active clock
+- Reformatted reg-names in DT node
+
+Nícolas F. R. A. Prado (4):
+  media: dt-bindings: mediatek,vcodec: Don't require assigned-clocks
+  media: dt-bindings: mediatek,vcodec: Remove VDEC_SYS for mt8183
+  media: mediatek: vcodec: Read HW active status from clock
+  clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
+
+Yunfei Dong (1):
+  arm64: dts: mediatek: mt8183: Add decoder
+
+ .../media/mediatek,vcodec-decoder.yaml        | 65 +++++++++++++++----
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 30 +++++++++
+ drivers/clk/mediatek/clk-mt8183-vdec.c        |  5 ++
+ .../mediatek/vcodec/mtk_vcodec_dec_drv.c      | 59 +++++++++++++----
+ .../mediatek/vcodec/mtk_vcodec_dec_hw.c       | 20 ++++--
+ .../mediatek/vcodec/mtk_vcodec_dec_pm.c       | 12 +++-
+ .../platform/mediatek/vcodec/mtk_vcodec_drv.h |  1 +
+ include/dt-bindings/clock/mt8183-clk.h        |  3 +-
+ 8 files changed, 165 insertions(+), 30 deletions(-)
+
+-- 
+2.41.0
 
