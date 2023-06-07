@@ -2,151 +2,172 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE1FC77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA78C7EE29
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240343AbjFGNVh convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 09:21:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48032 "EHLO
+        id S240221AbjFGNbX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 09:31:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240067AbjFGNVg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:21:36 -0400
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0C691BFE;
-        Wed,  7 Jun 2023 06:21:17 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-5659d85876dso78350457b3.2;
-        Wed, 07 Jun 2023 06:21:17 -0700 (PDT)
+        with ESMTP id S240778AbjFGNbW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:31:22 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BB61199D
+        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 06:31:20 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f732d37d7cso45593355e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 06:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686144678; x=1688736678;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1M24Nb0Jfn6VdAiAglm1uA5NvezRPZanQjJa6TxIdW8=;
+        b=MLJdW3MLn6oHWVjQz9AQQUy0BaZUszJRw2G+IehTMMlpDeniUzS9Ep4jdZJ4P1zdzz
+         +WGY8XDipLtFNo7KX7WUQa4yEb1BE7gEELCGoAhEfMCBLvvyZFNaKmnPAMoDNWteWU1S
+         i5+M/70aLYc/N7wc11TCwjSGTezfDMBJRDnocuIyZUo/lCwSTrISy1PbvV9ZED79pR8W
+         D1e2UwxbJ0OANwTbxkNRkBB0BLd2yR2iCjKRv9W2NgNKoDq1sYB3ZbKZQOi/Vs9miagc
+         lMgmlEfBq1+y1jnW1J5bz5e4Tp+mB4gKKRF5lZnbvZK95elgHzDmCjaoVQlRou+l6Dt8
+         f10A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686144077; x=1688736077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rA2dk4Z+pOkq/jyOIvAGRXOvNoV7/kLeQDZUQrvL074=;
-        b=Xuc2BluMHxHXQCCBTAwWQ5MsaVCeOWiBHHOYAlU26FZMSqxCMxLmXK0nbRs6fSon98
-         9hZM5OqF2TjIuQOuEoyVKuZwveG/iqK9QLfnIP2nM7sxd97Bxup2x4MugUMVVUYMygcr
-         LYE81/DLewtbBKnNzn8h93Hq9+DRokhScsEaI/s/u2h3w5xgYdqrEoMEoi1gGRKuc/5x
-         ctQHmPNQ6h2KKIjGHzPW+wIDw2Sq1nDSbyhzzO/XSHhnHF1HuHtmlyQ2WU34XWnV+ZCi
-         jsJfvMIY37FFr6/98xKGyYk3SN4uvS6dLh9uzPK0FLmLtW2y6sD1g5jJvZqSSikQIW26
-         7eJA==
-X-Gm-Message-State: AC+VfDySuFGgo5PWbMQlp0U0ARn7Q+glrr1LixYkIZmg4LzcG1IKAEek
-        9I/yv6ZRjaQEF00R4ugqJ6IVNxp04d51yw==
-X-Google-Smtp-Source: ACHHUZ7KTFcUC3FyJndrCGLRaGpbn15xpKBxl+uQ5BssG8+rZBxT/uZ9tke/NsGI02yy5SHACsocHA==
-X-Received: by 2002:a0d:f343:0:b0:556:ceb2:c462 with SMTP id c64-20020a0df343000000b00556ceb2c462mr6457775ywf.2.1686144076634;
-        Wed, 07 Jun 2023 06:21:16 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id k126-20020a816f84000000b00565cf40238csm4720947ywc.110.2023.06.07.06.21.15
+        d=1e100.net; s=20221208; t=1686144678; x=1688736678;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1M24Nb0Jfn6VdAiAglm1uA5NvezRPZanQjJa6TxIdW8=;
+        b=NTinRejEbmH94c5+R0HWJaS6XHSCgpQYJvk3k3uGtRHEU3xjRL07uJ6/yaGrrAYyhJ
+         dvgA0SUXCAOr+QvyYI/MnhU4hcQJkUeAFwy4+qcR8SwyI2QSGiK7+PerjMYbjpqBjGHk
+         /SnozbzViMVpVig7IawfdzKpveyVxLoDCKqbJqeOybl4ULGcT51rLkf+PG9rfr/vbUBB
+         NazwqqN9ys0wh6AuTEIdcFI4n40UqeyBkIrKU70m4iwKkdwvo0UY0GsE/uWN4Iwz+ME4
+         mh+fUiP1WJqFZDcCt5bRXh3VMvqdXEkfqyI/0QH0epc2Hxg4r0ZhunHJu+a23SvUwYbl
+         pAtQ==
+X-Gm-Message-State: AC+VfDxA4ndSwXjb013pqzLVOih/sMsMfWJoB2QSCrPyMYftha6oPFpb
+        8TMgTVfUOzaqr1v68Voqerqd5w==
+X-Google-Smtp-Source: ACHHUZ6W71GYITYJYfS1W3bqNiXWxZgpM814OxgwDwV+N6HrClGkpDrnH6yMsgi6vHPGK7+lrAiV8A==
+X-Received: by 2002:a1c:7c0d:0:b0:3f4:f7c2:d681 with SMTP id x13-20020a1c7c0d000000b003f4f7c2d681mr7365641wmc.29.1686144678500;
+        Wed, 07 Jun 2023 06:31:18 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id g7-20020a5d5407000000b0030903371ef9sm15475471wrv.22.2023.06.07.06.31.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jun 2023 06:21:16 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-bab8f66d3a2so8619116276.3;
-        Wed, 07 Jun 2023 06:21:15 -0700 (PDT)
-X-Received: by 2002:a25:4889:0:b0:bac:748a:5759 with SMTP id
- v131-20020a254889000000b00bac748a5759mr5257149yba.37.1686144075629; Wed, 07
- Jun 2023 06:21:15 -0700 (PDT)
+        Wed, 07 Jun 2023 06:31:17 -0700 (PDT)
+Message-ID: <fea749a7-ef17-097b-847a-d73f965c841b@linaro.org>
+Date:   Wed, 7 Jun 2023 14:31:16 +0100
 MIME-Version: 1.0
-References: <20230530112050.5635-1-aford173@gmail.com> <20230530112050.5635-3-aford173@gmail.com>
-In-Reply-To: <20230530112050.5635-3-aford173@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 7 Jun 2023 15:21:03 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXJaZCSN18aB1yBvhuTk=DQoe4B6aVHgoZvyLsZcRfrDA@mail.gmail.com>
-Message-ID: <CAMuHMdXJaZCSN18aB1yBvhuTk=DQoe4B6aVHgoZvyLsZcRfrDA@mail.gmail.com>
-Subject: Re: [RFC 3/3] arm64: dts: renesas: r8a774a1: Add GPU Node
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-        marek.vasut+renesas@gmail.com, cstevens@beaconembedded.com,
-        aford@beaconembedded.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 5/6] arm64: dts: qcom: sc8280xp: add resets for
+ soundwire controllers
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     johan+linaro@kernel.org, agross@kernel.org,
+        konrad.dybcio@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230525122930.17141-1-srinivas.kandagatla@linaro.org>
+ <20230525122930.17141-6-srinivas.kandagatla@linaro.org>
+ <542a67da-5870-dda0-3604-9367a438e51b@linaro.org>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <542a67da-5870-dda0-3604-9367a438e51b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Adam,
 
-On Tue, May 30, 2023 at 1:21 PM Adam Ford <aford173@gmail.com> wrote:
-> With the 3dge and ZG clocks now available, the generic GPU node can
-> be added.  Until proper firmware is made, it is not usable.
->
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> This is based on the assumption that the Rogue 6250 could use
-> generic driver [1] and firmware [2] being implemebted by the Mesa group
-> and others.  In practice, the firmware isn't really compatible since
-> the 6250 in the RZ/G2M appears to be a different variant.
->
-> [1] - https://gitlab.freedesktop.org/frankbinns/powervr/-/tree/powervr-next
-> [2] - https://gitlab.freedesktop.org/frankbinns/linux-firmware/-/tree/powervr/powervr
 
-Thanks for your patch!
+On 31/05/2023 21:03, Krzysztof Kozlowski wrote:
+> On 25/05/2023 14:29, Srinivas Kandagatla wrote:
+>> Soundwire controllers on sc8280xp needs an explicit reset, add
+>> support for this.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 23 +++++++++++++++++++++++
+>>   1 file changed, 23 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+>> index 6730349e34f4..39be2e89ce05 100644
+>> --- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+>> @@ -6,6 +6,7 @@
+>>   
+>>   #include <dt-bindings/clock/qcom,dispcc-sc8280xp.h>
+>>   #include <dt-bindings/clock/qcom,gcc-sc8280xp.h>
+>> +#include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
+>>   #include <dt-bindings/clock/qcom,rpmh.h>
+>>   #include <dt-bindings/interconnect/qcom,osm-l3.h>
+>>   #include <dt-bindings/interconnect/qcom,sc8280xp.h>
+>> @@ -2560,6 +2561,8 @@
+>>   			interrupts = <GIC_SPI 155 IRQ_TYPE_LEVEL_HIGH>;
+>>   			clocks = <&rxmacro>;
+>>   			clock-names = "iface";
+>> +			resets = <&lpass_audiocc LPASS_AUDIO_SWR_RX_CGCR>;
+>> +			reset-names = "swr_audio_cgcr";
+>>   			label = "RX";
+>>   
+>>   			qcom,din-ports = <0>;
+>> @@ -2634,6 +2637,8 @@
+>>   			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
+>>   			clocks = <&wsamacro>;
+>>   			clock-names = "iface";
+>> +			resets = <&lpass_audiocc LPASS_AUDIO_SWR_WSA_CGCR>;
+>> +			reset-names = "swr_audio_cgcr";
+>>   			label = "WSA";
+>>   
+>>   			qcom,din-ports = <2>;
+>> @@ -2656,6 +2661,14 @@
+>>   			status = "disabled";
+>>   		};
+>>   
+>> +		lpass_audiocc: clock-controller@32a9000 {
+>> +			compatible = "qcom,sc8280xp-lpassaudiocc";
+>> +			reg = <0 0x032a9000 0 0x1000>;
+>> +			qcom,adsp-pil-mode;
+> 
+> Here and...
+> 
+>> +			#clock-cells = <1>;
+>> +			#reset-cells = <1>;
+>> +		};
+>> +
+>>   		swr2: soundwire-controller@3330000 {
+>>   			compatible = "qcom,soundwire-v1.6.0";
+>>   			reg = <0 0x03330000 0 0x2000>;
+>> @@ -2665,6 +2678,8 @@
+>>   
+>>   			clocks = <&txmacro>;
+>>   			clock-names = "iface";
+>> +			resets = <&lpasscc LPASS_AUDIO_SWR_TX_CGCR>;
+>> +			reset-names = "swr_audio_cgcr";
+>>   			label = "TX";
+>>   			#sound-dai-cells = <1>;
+>>   			#address-cells = <2>;
+>> @@ -2901,6 +2916,14 @@
+>>   			};
+>>   		};
+>>   
+>> +		lpasscc: clock-controller@33e0000 {
+>> +			compatible = "qcom,sc8280xp-lpasscc";
+>> +			reg = <0 0x033e0000 0 0x12000>;
+>> +			qcom,adsp-pil-mode;
+> 
+> ... here - where do you use these properties? Driver ignores them.
+Wil add a check in driver.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-> @@ -226,6 +226,27 @@ extalr_clk: extalr {
->                 clock-frequency = <0>;
->         };
->
-> +       gpu_opp_table: opp-table {
-> +               compatible = "operating-points-v2";
-> +
-> +               opp-200000000 {
-> +                       opp-hz = /bits/ 64 <200000000>;
-> +                       opp-microvolt = <830000>;
-> +               };
-> +               opp-300000000 {
-> +                       opp-hz = /bits/ 64 <300000000>;
-> +                       opp-microvolt = <830000>;
-> +               };
-> +               opp-400000000 {
-> +                       opp-hz = /bits/ 64 <400000000>;
-> +                       opp-microvolt = <830000>;
-> +               };
-> +               opp-600000000 {
-> +                       opp-hz = /bits/ 64 <600000000>;
-> +                       opp-microvolt = <830000>;
-> +               };
-> +       };
-> +
->         /* External PCIe clock - can be overridden by the board */
->         pcie_bus_clk: pcie_bus {
->                 compatible = "fixed-clock";
-> @@ -2347,6 +2368,18 @@ gic: interrupt-controller@f1010000 {
->                         resets = <&cpg 408>;
->                 };
->
-> +               gpu@fd000000 {
-> +                       compatible = "img,powervr-series6xt";
-> +                       reg = <0 0xfd000000 0 0x40000>;
-> +                       interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&cpg CPG_MOD 112>, <&cpg CPG_MOD 112>,<&cpg CPG_MOD 112>;
-> +                       clock-names = "core", "mem", "sys";
-> +                       interrupt-names = "gpu";
-> +                       operating-points-v2 = <&gpu_opp_table>;
-> +                       power-domains = <&sysc R8A774A1_PD_3DG_B>;
-> +                       resets = <&cpg 112>;
-> +               };
-> +
->                 pciec0: pcie@fe000000 {
->                         compatible = "renesas,pcie-r8a774a1",
->                                      "renesas,pcie-rcar-gen3";
+> 
+> AFAIR, these were only for sc7280 where we supported two variants for audio.
+> 
+we can drop this property altogether, But having this flag will make 
+sure that the bindings are in a ready state to accommodate a new variant 
+of sc8280xp with dsp bypass.
 
-LGTM.  But obviously I cannot take this as-is, as there are no DT bindings
-for this device, and it didn't work for you...
+--srini
 
-Gr{oetje,eeting}s,
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Best regards,
+> Krzysztof
+> 
