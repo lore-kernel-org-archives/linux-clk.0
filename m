@@ -2,134 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5028EC77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 733BFC77B7A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:18:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240261AbjFGNPb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 09:15:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43660 "EHLO
+        id S240248AbjFGNSG convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 09:18:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234809AbjFGNPa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:15:30 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B43B3173A
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 06:15:27 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3f7f543fe2fso466965e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 06:15:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686143726; x=1688735726;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=L/XDMIe8IJ1TNLWHUR7TJpPgpdAL0coo33L6HePwpwU=;
-        b=rgkSeyK6REC2K8CC46he6AXgrB7wYAPVS7LghjkP/5NhroHDJsZyo3DB67My1scX/g
-         Lz4nqWPdD633J8XEMNb2H0l9FCmsSE7B/eWs6Z8qtPZfuJmRKCyuITdLl/uJ074oqOp9
-         bDjMCEV8yQof+dBaGzqL71LH1tmm1CjzfI10AQXXVozrA2u39SmUcQn6Uth2sGa4rNS2
-         4+Q20qygv1yQB68EM6RT6arNkr9gmrWABJMOO2+jOUDPHq/lXsTz6PkbbfGU3vzIYMBB
-         n1myet4TbeqTycp4qKR9jipJJ2VgZKYScVMxrcmCfI6gfcPvPnCvSmtJ/cuYxj5Eo60w
-         k8Zg==
+        with ESMTP id S235572AbjFGNSE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:18:04 -0400
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BF7795;
+        Wed,  7 Jun 2023 06:18:03 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-565bdae581eso91258157b3.2;
+        Wed, 07 Jun 2023 06:18:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686143726; x=1688735726;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L/XDMIe8IJ1TNLWHUR7TJpPgpdAL0coo33L6HePwpwU=;
-        b=M5/euVAotqeXTKMVi9oge14QtGROjbP2wfFT1WhGlUk4o0all6v8bzu3RE8sX84JGt
-         LGzY2d5pk5d1kZ52eejY/KF8EOWpdsM+7QTWZJtpkuaFtGrf/YOP0MDxoAd9wuZuk9XU
-         YCX+jP4e9wcR2hekgqHe34RsnJt0zSvbQ6PSYZ4fUTHYm6PnRl7D7hNLQJbDNH6rZ2QZ
-         BYemsO4KvHIfZjHDp/7aIFNKJz6bl94V+2Bo6/CQFA05s/vTmR2kDftk8LAqzjyD+Rxl
-         sXijV4PPOq9+xXlKXarIKmz/kQ8LRwox3WAxLSR071VMI+DJ/mmhpJvk3r+uYLraHbTg
-         473A==
-X-Gm-Message-State: AC+VfDyvFILzXy4Kk8/M9cj36uW6eWIsidqNPAS/INMAd9wpKupBoBSR
-        8v1ARPbvtCp7/S5puUyixBtH8w==
-X-Google-Smtp-Source: ACHHUZ5Jf7LWXz1e+RTA+nHiKsr62YMfGAjPeAgxWlws56ig+Je4GztBeAe/15TZdaZhLTX2F5iAbw==
-X-Received: by 2002:a05:600c:2256:b0:3f4:2255:8608 with SMTP id a22-20020a05600c225600b003f422558608mr4593091wmm.31.1686143726096;
-        Wed, 07 Jun 2023 06:15:26 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id m9-20020a7bcb89000000b003f72468833esm2163856wmi.26.2023.06.07.06.15.24
+        d=1e100.net; s=20221208; t=1686143882; x=1688735882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Es088mB1G74PH8cSnIPoWoMThT+n2oIcmc2G12tfec=;
+        b=RAeb1V/uYUmxpvUlUpCVGBRLpkzxbl/QkmK5cwwYkQgGdAdcdRXzqYyT/F5dXLeAWq
+         B1OZ+3ABeXsAm25Fhduo5OBDC3bNv8wbcz8BeUkqsp5QcyjKMOZ/gM/XeyfZfZG1OzYE
+         Ya9coTNHQBuPDiGt2ScSLFGF1cs3oOFboGQB/9ctbNWJGXfIt3QVAVyHencjNhw5rRIP
+         h8LvRvkvxS51h6+TPvSLhaMqXVeIovPovcva4UTVDzvsAD5eDEmEHbaGkL3pqvXWEOCj
+         rlhRG0eCzG3pSn8CZjhoPvBD9YgEgW+0HHSomPad+i2euFUBdQcrWAAl5SJ/fNWovO/p
+         XYuw==
+X-Gm-Message-State: AC+VfDyFfkAXQx6YciouBXJjMD4rmSc+uEx0rNYirVyTMtHDGWJXkW/h
+        vsuRubZrmDsfUfjmsc603DrhhtVBvujD8g==
+X-Google-Smtp-Source: ACHHUZ5jPGfVqEHJcFDUfjQVqjgDvQjcXOoV55F9Ua0EgXbIyDezvW4ulHXZN8jzsUWf4itsrl4/4A==
+X-Received: by 2002:a0d:d7c9:0:b0:561:d6a2:fdb9 with SMTP id z192-20020a0dd7c9000000b00561d6a2fdb9mr6255238ywd.5.1686143882081;
+        Wed, 07 Jun 2023 06:18:02 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id w14-20020a81a20e000000b0055aad7d3f34sm4664814ywg.142.2023.06.07.06.18.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jun 2023 06:15:25 -0700 (PDT)
-Message-ID: <7ff3ba78-2af3-5226-0289-6aff63f41060@linaro.org>
-Date:   Wed, 7 Jun 2023 14:15:24 +0100
+        Wed, 07 Jun 2023 06:18:01 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-ba829e17aacso9336393276.0;
+        Wed, 07 Jun 2023 06:18:01 -0700 (PDT)
+X-Received: by 2002:a0d:e604:0:b0:568:e7e6:4199 with SMTP id
+ p4-20020a0de604000000b00568e7e64199mr7449722ywe.6.1686143880825; Wed, 07 Jun
+ 2023 06:18:00 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 2/6] dt-bindings: clock: Add YAML schemas for LPASS
- AUDIOCC and reset on SC8280XP
-Content-Language: en-US
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        andersson@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org
-Cc:     johan+linaro@kernel.org, agross@kernel.org,
-        konrad.dybcio@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230525122930.17141-1-srinivas.kandagatla@linaro.org>
- <20230525122930.17141-3-srinivas.kandagatla@linaro.org>
- <ebe8dc00-d937-240f-e9a5-e9049fd278ad@linaro.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <ebe8dc00-d937-240f-e9a5-e9049fd278ad@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20230530112050.5635-1-aford173@gmail.com>
+In-Reply-To: <20230530112050.5635-1-aford173@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 7 Jun 2023 15:17:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV8nWAMzetnSGGQvtvdyaMpMsYf3hg_scUXFFSowvxeLQ@mail.gmail.com>
+Message-ID: <CAMuHMdV8nWAMzetnSGGQvtvdyaMpMsYf3hg_scUXFFSowvxeLQ@mail.gmail.com>
+Subject: Re: [RFC 1/3] clk: renesas: rcar-gen3: Add support for ZG clock
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
+        marek.vasut+renesas@gmail.com, cstevens@beaconembedded.com,
+        aford@beaconembedded.com, Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Adam,
+
+On Tue, May 30, 2023 at 1:21 PM Adam Ford <aford173@gmail.com> wrote:
+> A clock used for the 3D graphics appears to be common
+> among multiple SoC's, so add a generic gen3 clock
+> for clocking the graphics.
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -301,6 +301,39 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+>         return clk;
+>  }
+>
+> +static struct clk * __init cpg_zg_clk_register(const char *name,
+> +                                              const char *parent_name,
+> +                                              void __iomem *reg,
+> +                                              unsigned int div,
+> +                                              unsigned int offset)
+> +{
+> +       struct clk_init_data init;
+
+"= {};", as you do not initialize all fields below.
+
+> +       struct cpg_z_clk *zclk;
+> +       struct clk *clk;
+> +
+> +       zclk = kzalloc(sizeof(*zclk), GFP_KERNEL);
+> +       if (!zclk)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       init.name = name;
+> +       init.ops = &cpg_z_clk_ops;
+> +       init.flags = 0;
+> +       init.parent_names = &parent_name;
+> +       init.num_parents = 1;
+> +
+> +       zclk->reg = reg + CPG_FRQCRB;
+> +       zclk->kick_reg = reg + CPG_FRQCRB;
+> +       zclk->hw.init = &init;
+> +       zclk->mask = GENMASK(offset + 4, offset);
+> +       zclk->fixed_div = div; /* PLLVCO x 1/div1 x 3DGE divider x 1/div2 */
+> +
+> +       clk = clk_register(NULL, &zclk->hw);
+> +       if (IS_ERR(clk))
+> +               kfree(zclk);
+> +
+> +       return clk;
+> +}
+
+This new function is very similar to the existing cpg_z_clk_register().
+The only differences are:
+  - init.flags = 0 vs. CLK_SET_RATE_PARENT, which should not matter
+    much,
+  - register CPG_FRQCRB vs. CPG_FRQCRC.
+
+So I think it would be good to avoid duplication by adding a register
+parameter to cpg_z_clk_register(), to pass the Frequency Control Register
+offset to use.
 
 
-On 31/05/2023 20:59, Krzysztof Kozlowski wrote:
-> On 25/05/2023 14:29, Srinivas Kandagatla wrote:
->> The LPASS (Low Power Audio Subsystem) Audio clock controller provides reset
->> support when it is under the control of Q6DSP.
->>
-> 
-> A nit, subject: drop second/last, redundant "YAML schemas for". The
-> "dt-bindings" prefix is already stating that these are
-> bindings/schemas/YAML/etc.
-> 
-> Same comment for first patch.
-> 
-Thanks, will fix in v3
+> +
+>  static const struct clk_div_table cpg_rpcsrc_div_table[] = {
+>         { 2, 5 }, { 3, 6 }, { 0, 0 },
+>  };
+> @@ -502,6 +535,9 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+>         case CLK_TYPE_GEN3_RPCD2:
+>                 return cpg_rpcd2_clk_register(core->name, base + CPG_RPCCKCR,
+>                                               __clk_get_name(parent));
+> +       case CLK_TYPE_GEN3_ZG:
+> +               return cpg_zg_clk_register(core->name, __clk_get_name(parent),
+> +                                          base, core->div, core->offset);
 
---srini
-> 
->> Add support for those resets and adds IDs for clients to request the reset.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   .../bindings/clock/qcom,sc8280xp-lpasscc.yaml         | 11 +++++++++++
->>   include/dt-bindings/clock/qcom,lpasscc-sc8280xp.h     |  5 +++++
->>   2 files changed, 16 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
->> index 08a9ae60a365..0557e74d3c3b 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
->> @@ -21,6 +21,7 @@ properties:
->>   
->>     compatible:
->>       enum:
->> +      - qcom,sc8280xp-lpassaudiocc
->>         - qcom,sc8280xp-lpasscc
->>   
->>     qcom,adsp-pil-mode:
->> @@ -45,6 +46,16 @@ required:
->>   additionalProperties: false
->>   
->>   examples:
->> +  - |
->> +    #include <dt-bindings/clock/qcom,lpasscc-sc8280xp.h>
->> +    lpass_audiocc: clock-controller@32a9000 {
->> +        compatible = "qcom,sc8280xp-lpassaudiocc";
->> +        reg = <0x032a9000 0x1000>;
->> +        qcom,adsp-pil-mode;
->> +        #reset-cells = <1>;
->> +        #clock-cells = <1>;
->> +    };
-> 
-> No need for new example - it's basically the same.
-> 
-> Best regards,
-> Krzysztof
-> 
+Please insert this right below the CLK_TYPE_GEN3_Z case.
+
+>         default:
+>                 return ERR_PTR(-EINVAL);
+
+The rest LGTM.
+
+(Ideally, we wouldn't need a new clock type, and could just use
+ CLK_TYPE_GEN3_Z.  But then we would need to add a new field to struct
+ cpg_core_clk to store the FRQCR offset, as the .offset field is already
+ in use, which would increase all clock table sizes a lot.  Or we can
+ encode both register and bit offset in .offset...
+ All of this needs a big overhaul for switching to of_clk_add_hw_provider()
+ anyway, so I wouldn't bother for now.)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
