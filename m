@@ -2,63 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648CEC7EE23
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F602C7EE2E
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234563AbjFGK5E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 06:57:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37256 "EHLO
+        id S239632AbjFGK5I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 06:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239993AbjFGK47 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:56:59 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05C4A1FDC
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 03:56:24 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f736e0c9a8so30641025e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 03:56:24 -0700 (PDT)
+        with ESMTP id S240018AbjFGK5A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:57:00 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAE6E2102
+        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 03:56:26 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f7368126a6so31914675e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 03:56:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686135383; x=1688727383;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f2iKHUzCB8EHUg15xjq4OMMdldskToFfPs25o8tYY9w=;
-        b=ymQSvjPpvyT7jG/isiZDKYSjksflsakM1YaZEIQlVBp8tEte6OHoV5wzQSyR40giFJ
-         6owvCmjaV8p4WDxDsicuGv8nEhAhYjhBfz1olOTwHNvr6MxKDCqVpoPbQgduASPfCVx6
-         weZ/oSsGvokYUSqusI/bYDdifZqmtrkNNt5JUvDmSXqWdZsagBRnxoqa8+VphqUB4FIO
-         m5k+tRTCPkKLltUc+swA3zhH8So+5wsxhMfCNYRtX6e6U3TJEqAsRBZS8xmJvW1iSboq
-         BZIg73q8N6lal8smXZyxMs4XJvDRqeIhspY5+zETXpeSZbLBmEXumbde9vkOmUbp8KIZ
-         HTLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686135383; x=1688727383;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1686135385; x=1688727385;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f2iKHUzCB8EHUg15xjq4OMMdldskToFfPs25o8tYY9w=;
-        b=fgw6XmqKcM/YYtw6NvAepBg2iVAUPqmXbgIudn4HTYSGYgOPgv86T1wfRjqAsy2/br
-         aY4w8AwqUbE7YoGGW+6Jhckydgb5BJctpXv7N59uJ3d7froFERlRuENaRboz0vDasthC
-         qlfXRD9BBUdGTyZrk9S1PcwkmZcusxcQ42vVkyosHdG1+HnCaTINvdpsl1/EP56DmG/L
-         gPjT86p6jqOuiaO8qWSCU+iwF/PQhuqZ1L0IR0tm7/1a02guGhj3r6FNX6axuLFLf8yF
-         V3zu6jwxmMG1cfQxnrpqmxOGt73OIUqpotkufMmeh9Bb6zRZCrYsvKpYVPSaLx/w9Au1
-         sR6A==
-X-Gm-Message-State: AC+VfDxQbI16k4fttRDkAL54aqIxBTft7fVyG6JZsEt9syZqEl0aqtqm
-        fUjBfZpZsrRw33jlvsz9IlmMTQ==
-X-Google-Smtp-Source: ACHHUZ6/rVBwSBm+ljhsr4Hys2ZgNVqWoCxvgWyYTTUx6yhM6vnzeAM7hJ7kNTg2bIdzCNA5WPDVyg==
-X-Received: by 2002:a1c:730c:0:b0:3f7:5e3:c1f2 with SMTP id d12-20020a1c730c000000b003f705e3c1f2mr4665801wmb.8.1686135382955;
-        Wed, 07 Jun 2023 03:56:22 -0700 (PDT)
+        bh=9YhkyuhCr2fcUKifDGF/DQw38WaYwj61w7Rb0d767Eg=;
+        b=HRX63JQgd2JNG5097PwllVHWo5IE4UYHQk7AVCFo4O10ShIaoKRsVMpj9szbcoQ3/f
+         E8Ym/plEQac+MKl4HbBMPSEEImCprtHQJJT0DnDmtmNiDCF3WNSvHk99rfXkBcqTLiOy
+         /Uk+yACj4KIGzWJctUs6JAN4bP6dxY8JIggGUYwCTT/Zw13K520/Bl2y8frKyJM2Tqn0
+         kUW7WO/xe3RGrCQnY0bniqz5tvxcOlM0dZLWHjmq3spuc5HPs1WYcOjEpIx1pd+6arLg
+         UcfmpCYpP28hnqk3wZAjjtiNnErgvJRx5rsPjjAZFtscmBTS/YsIKD6Dzg62zRPN5VHl
+         LkFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686135385; x=1688727385;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9YhkyuhCr2fcUKifDGF/DQw38WaYwj61w7Rb0d767Eg=;
+        b=Eb8kgzuDKOnUD/cvldOo+/clod6X/eGUQGGS3f7O5s1S2DLkbtO5yAUvcEyJ1c7SGN
+         9rGkZqLdfHSA1oqsKBsiTYaExgwi8h0D24UAev9zLSKmXJ+sHA6JCF68doAFGNl2CZm9
+         Zu1O4iCTO7PsD+LoVFNGVV5hcGbGffmdIkuEBCDALhsoZC3ZdMoWMMFJc6j+DMENKXBS
+         RYpoSgfHfNf0l0JDwR3UDiiggWEDalu8xqXH3xpW41Vcb9+DRHDkXUqV+eE8FS0pHPUF
+         ZVqhmXm7P5jYHu39D0W/zf7GmBTdIbsShbK3MZP9pJCk9XGfv9yEXjN9BDNL9m1b7VL0
+         MOtg==
+X-Gm-Message-State: AC+VfDwU2H5yzev6kJ9hQN9PEZEaBVZYkI2mucjU+S1SI2J/r5CIyGBt
+        5OxZhvJAVMN+D6R9/z8PyKh53w==
+X-Google-Smtp-Source: ACHHUZ6U1+NVF/vZIM66tcHoguLScPT1/TFSEggInzRxr8yOVNNr87udHiBnisNuKsC7EYOHHErpyw==
+X-Received: by 2002:a7b:c4d5:0:b0:3f6:7af:8fe7 with SMTP id g21-20020a7bc4d5000000b003f607af8fe7mr4045016wmk.10.1686135385146;
+        Wed, 07 Jun 2023 03:56:25 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id i10-20020a05600c290a00b003f60faa4612sm1761879wmd.22.2023.06.07.03.56.22
+        by smtp.gmail.com with ESMTPSA id i10-20020a05600c290a00b003f60faa4612sm1761879wmd.22.2023.06.07.03.56.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 03:56:22 -0700 (PDT)
+        Wed, 07 Jun 2023 03:56:24 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH 00/18] clk: meson: move all private clk IDs to public
- dt-bindings headers
-Date:   Wed, 07 Jun 2023 12:56:11 +0200
-Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
+Date:   Wed, 07 Jun 2023 12:56:13 +0200
+Subject: [PATCH 02/18] clk: meson: migrate meson-aoclk out of
+ hw_onecell_data to drop NR_CLKS
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEtigGQC/x2OywqDMBBFf0Wy7oBaq9JfKS6ScYxD8yIxpSD+e
- 4euLucsDvdUhTJTUc/mVJk+XDgGge7WKNx1sAS8Cqu+7e/t2E5wxMQI2rtoZWsqRybtAd2bV0j
- VOLGebdaHlGDDDscJh2F+zEqaRhcCk3XAXaqhOicyZdr4+z/xWq7rBykCF5CUAAAA
+Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-2-9676afa6b22c@linaro.org>
+References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
+In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -72,95 +72,332 @@ Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4001;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11825;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=uJNGNauTjMkkifelIBeMDs+ah1nOQgnUxgk/5DE80k8=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkgGJNOIxWQSHL0QurCTHu93otFh40QfOFcpZcxiQ2
- nXKYJUmJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIBiTQAKCRB33NvayMhJ0ZG2EA
- CzoAL+jZ+bj25TogujANFIzdIsx4Colo13UTfPLmbq2qTRMMwRvF3v5svBmFoAkG99HVwprsLoOZUi
- zbKzst9h2eR9kYgAHcxTxCE98trRbn6rpmpEHd19ZDls0KNmHcz/fqMI0ZFz6mbAhgi3sBYRJ+73Wj
- NbTT/4U7et0se7GwoF3lu/q+HJNeDcc+bJ5ZBIQZjHE5U1Y/917Lj4PYPJSqGGIwVRdAY7qBC1tK+p
- JH0cQOg6cGUSDC5naqm8NHXmf61TbJJxE7iB8jGCPvcBC3xIhpQyxmC7NYYjH8YIdttHQ/61xsgH8u
- 6EtafiiYX+cJkY8mbE46QAjRsbs7/gse009YuvHB6msIRZntcNsRW+16FmGII4hy7fcInlKrHhJYcK
- 4xeyTKtBu57lCEL2Qx3mdH0Vg/kw4zmgbVGBLx0RqY+LaLkPH/zInXprp7SpHP6gzznrFC/SdLW1Rj
- QkUygqf6gVNOb7pYjCYSKvoGwgDWq6DgJgcnwKCPEiiDZ/49NvSbyzNV3ShqsAn1ZPBPLeh1/hJXUG
- ipp4wrlJVBOZELbH8pN3Po7quSh5N0odzGDbzmFOf0y6WxC9WDtIP7MVpThFNmBDl17Uqpgak+yGaz
- gdaSZMtKIDYWDlqCB1BK0skHlvQTLG6mVSkaydxzyWpVbR9QudnXZoMP2zdg==
+ bh=ZYZo03qA6TCCfGG8iDc0CvE0APVLodiNcINMmhZuIOs=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkgGJOExBoEUZNooX0uUV+ss5+LU5vAnCCrEZ+5ITW
+ 0Z/abE6JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIBiTgAKCRB33NvayMhJ0RbaEA
+ DJDJGZ/APL8uQaGr04b9u1RumIk4Q9UvCKbvCyNGDqLIoz/sxqfm7A9PJbfnHu3h5BYEU5m/rf+PJ1
+ wBLUXEJz5M4rJxjYvRVRvd+AFH/r5Wu0peyWwQJfhA9WToxHv+8SkrULQxvsjizaKBN6o3K5v8YE8u
+ fctRGj54b9IxyN9S0zsGNB0gZGp+ku+3bWr73Lco7D+1oBsR3oTxvhUP4tsfJRn4KH0jWomGvv47eH
+ i8PaNiXEemFxIYZDul3RQa70lwsun4gCtbq63zHaOr79hEtl4Rf65vx4kkh2DtS+UITUu9Wx3tbku4
+ YCjqyiSHbRyIh9A682npsK3lWmYCsr5m+y0xtbfg+K2JpIONMSzJSFTqRxzVtR879KdLXDqw9Lc9Nw
+ tZjYNyUAzY3ccnaPPkZ1GZ+PuKQb/ChLgK/7iHsb8sPB5d4UOdve+ZbEhEHHW0xyfzwwCmkgzjak+s
+ 2IXVu1ZEmuLxIfL0ZlmUopv5S3ZQpgcubdj0K0jzCaxz4H2RtmXv3UwVvYcIeXlCH74/HUSrIEODeR
+ cATQF8ucwt9tp8ub70BgvtQLhcq+c67YJ6oczsBWR6MJ9BWyEsz3EUbnQfrSCaJXM11etyYF0l5+li
+ jp5oD8KwV0eaX6D7bd4aiNXol2FP3Zyfes3ThDqLY4U6LpwJrqI6KvgAA6YQ==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After some complaints in the upstreaming of the A1 clock drivers,
-S4 clock driver and a tentative to use some of the private DSI
-clocks in [1], it has been decided to move out all the "private"
-clk IDs to public dt-bindings headers.
+The way hw_onecell_data is declared:
+  struct clk_hw_onecell_data {
+          unsigned int num;
+          struct clk_hw *hws[];
+  };
 
-For that we must get rid of the "NR_CLKS" define and use
-ARRAY_SIZE() to get the count of hw_clks, then we can move
-the IDs and do some cleanup.
+makes it impossible to have the clk_hw table declared outside while
+using ARRAY_SIZE() to determine ".num" due to ".hws" being a flexible
+array member.
+
+Completely move out of hw_onecell_data and add a custom
+devm_of_clk_add_hw_provider() "get" callback to retrieve the clk_hw
+from the meson_aoclk_data struct to finally get rid on the
+NR_CLKS define.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
-Neil Armstrong (18):
-      clk: meson: migrate meson-eeclk out of hw_onecell_data to drop NR_CLKS
-      clk: meson: migrate meson-aoclk out of hw_onecell_data to drop NR_CLKS
-      clk: meson: migrate a1 clock drivers out of hw_onecell_data to drop NR_CLKS
-      clk: meson: migrate meson8b out of hw_onecell_data to drop NR_CLKS
-      clk: meson: migrate axg-audio out of hw_onecell_data to drop NR_CLKS
-      dt-bindings: clk: gxbb-clkc: expose all clock ids
-      dt-bindings: clk: axg-clkc: expose all clock ids
-      dt-bindings: clk: g12a-clks: expose all clock ids
-      dt-bindings: clk: g12a-aoclkc: expose all clock ids
-      dt-bindings: clk: meson8b-clkc: expose all clock ids
-      dt-bindings: clk: amlogic,a1-peripherals-clkc: expose all clock ids
-      dt-bindings: clk: amlogic,a1-pll-clkc: expose all clock ids
-      dt-bindings: clk: axg-audio-clkc: expose all clock ids
-      clk: meson: aoclk: move bindings include to main driver
-      clk: meson: eeclk: move bindings include to main driver
-      clk: meson: a1: move bindings include to main driver
-      clk: meson: meson8b: move bindings include to main driver
-      clk: meson: axg-audio: move bindings include to main driver
+ drivers/clk/meson/axg-aoclk.c   | 42 +++++++++++++-------------
+ drivers/clk/meson/axg-aoclk.h   |  2 --
+ drivers/clk/meson/g12a-aoclk.c  | 66 ++++++++++++++++++++---------------------
+ drivers/clk/meson/g12a-aoclk.h  |  2 --
+ drivers/clk/meson/gxbb-aoclk.c  |  8 ++---
+ drivers/clk/meson/gxbb-aoclk.h  |  2 --
+ drivers/clk/meson/meson-aoclk.c | 22 ++++++++++----
+ drivers/clk/meson/meson-aoclk.h |  3 +-
+ 8 files changed, 74 insertions(+), 73 deletions(-)
 
- drivers/clk/meson/a1-peripherals.c                 |  345 ++---
- drivers/clk/meson/a1-peripherals.h                 |   67 -
- drivers/clk/meson/a1-pll.c                         |   59 +-
- drivers/clk/meson/a1-pll.h                         |   19 -
- drivers/clk/meson/axg-aoclk.c                      |   46 +-
- drivers/clk/meson/axg-aoclk.h                      |   18 -
- drivers/clk/meson/axg-audio.c                      |  858 +++++------
- drivers/clk/meson/axg-audio.h                      |   75 -
- drivers/clk/meson/axg.c                            |  283 ++--
- drivers/clk/meson/axg.h                            |   63 -
- drivers/clk/meson/g12a-aoclk.c                     |   70 +-
- drivers/clk/meson/g12a-aoclk.h                     |   32 -
- drivers/clk/meson/g12a.c                           | 1483 ++++++++++----------
- drivers/clk/meson/g12a.h                           |  145 --
- drivers/clk/meson/gxbb-aoclk.c                     |   12 +-
- drivers/clk/meson/gxbb-aoclk.h                     |   15 -
- drivers/clk/meson/gxbb.c                           |  844 ++++++-----
- drivers/clk/meson/gxbb.h                           |   81 --
- drivers/clk/meson/meson-aoclk.c                    |   22 +-
- drivers/clk/meson/meson-aoclk.h                    |    3 +-
- drivers/clk/meson/meson-eeclk.c                    |   22 +-
- drivers/clk/meson/meson-eeclk.h                    |    3 +-
- drivers/clk/meson/meson8b.c                        | 1335 +++++++++---------
- drivers/clk/meson/meson8b.h                        |  117 --
- .../clock/amlogic,a1-peripherals-clkc.h            |   53 +
- include/dt-bindings/clock/amlogic,a1-pll-clkc.h    |    5 +
- include/dt-bindings/clock/axg-audio-clkc.h         |   65 +
- include/dt-bindings/clock/axg-clkc.h               |   48 +
- include/dt-bindings/clock/g12a-aoclkc.h            |    7 +
- include/dt-bindings/clock/g12a-clkc.h              |  130 ++
- include/dt-bindings/clock/gxbb-clkc.h              |   65 +
- include/dt-bindings/clock/meson8b-clkc.h           |   97 ++
- 32 files changed, 3205 insertions(+), 3282 deletions(-)
----
-base-commit: 84af914404dbc01f388c440cac72428784b8a161
-change-id: 20230607-topic-amlogic-upstream-clkid-public-migration-fc1c67c44858
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index af6db437bcd8..db5b53146bcc 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -288,27 +288,24 @@ static struct clk_regmap *axg_aoclk_regmap[] = {
+ 	&axg_aoclk_saradc_gate,
+ };
+ 
+-static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
+-	.hws = {
+-		[CLKID_AO_REMOTE]	= &axg_aoclk_remote.hw,
+-		[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master.hw,
+-		[CLKID_AO_I2C_SLAVE]	= &axg_aoclk_i2c_slave.hw,
+-		[CLKID_AO_UART1]	= &axg_aoclk_uart1.hw,
+-		[CLKID_AO_UART2]	= &axg_aoclk_uart2.hw,
+-		[CLKID_AO_IR_BLASTER]	= &axg_aoclk_ir_blaster.hw,
+-		[CLKID_AO_SAR_ADC]	= &axg_aoclk_saradc.hw,
+-		[CLKID_AO_CLK81]	= &axg_aoclk_clk81.hw,
+-		[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux.hw,
+-		[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div.hw,
+-		[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate.hw,
+-		[CLKID_AO_CTS_OSCIN]	= &axg_aoclk_cts_oscin.hw,
+-		[CLKID_AO_32K_PRE]	= &axg_aoclk_32k_pre.hw,
+-		[CLKID_AO_32K_DIV]	= &axg_aoclk_32k_div.hw,
+-		[CLKID_AO_32K_SEL]	= &axg_aoclk_32k_sel.hw,
+-		[CLKID_AO_32K]		= &axg_aoclk_32k.hw,
+-		[CLKID_AO_CTS_RTC_OSCIN] = &axg_aoclk_cts_rtc_oscin.hw,
+-	},
+-	.num = NR_CLKS,
++static struct clk_hw *axg_aoclk_hw_clks[] = {
++	[CLKID_AO_REMOTE]	= &axg_aoclk_remote.hw,
++	[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master.hw,
++	[CLKID_AO_I2C_SLAVE]	= &axg_aoclk_i2c_slave.hw,
++	[CLKID_AO_UART1]	= &axg_aoclk_uart1.hw,
++	[CLKID_AO_UART2]	= &axg_aoclk_uart2.hw,
++	[CLKID_AO_IR_BLASTER]	= &axg_aoclk_ir_blaster.hw,
++	[CLKID_AO_SAR_ADC]	= &axg_aoclk_saradc.hw,
++	[CLKID_AO_CLK81]	= &axg_aoclk_clk81.hw,
++	[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux.hw,
++	[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div.hw,
++	[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate.hw,
++	[CLKID_AO_CTS_OSCIN]	= &axg_aoclk_cts_oscin.hw,
++	[CLKID_AO_32K_PRE]	= &axg_aoclk_32k_pre.hw,
++	[CLKID_AO_32K_DIV]	= &axg_aoclk_32k_div.hw,
++	[CLKID_AO_32K_SEL]	= &axg_aoclk_32k_sel.hw,
++	[CLKID_AO_32K]		= &axg_aoclk_32k.hw,
++	[CLKID_AO_CTS_RTC_OSCIN] = &axg_aoclk_cts_rtc_oscin.hw,
+ };
+ 
+ static const struct meson_aoclk_data axg_aoclkc_data = {
+@@ -317,7 +314,8 @@ static const struct meson_aoclk_data axg_aoclkc_data = {
+ 	.reset		= axg_aoclk_reset,
+ 	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
+ 	.clks		= axg_aoclk_regmap,
+-	.hw_data	= &axg_aoclk_onecell_data,
++	.hw_clks	= axg_aoclk_hw_clks,
++	.hw_clk_num	= ARRAY_SIZE(axg_aoclk_hw_clks),
+ };
+ 
+ static const struct of_device_id axg_aoclkc_match_table[] = {
+diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
+index 3cc27e85170f..fe23dc53aa73 100644
+--- a/drivers/clk/meson/axg-aoclk.h
++++ b/drivers/clk/meson/axg-aoclk.h
+@@ -10,8 +10,6 @@
+ #ifndef __AXG_AOCLKC_H
+ #define __AXG_AOCLKC_H
+ 
+-#define NR_CLKS	17
+-
+ #include <dt-bindings/clock/axg-aoclkc.h>
+ #include <dt-bindings/reset/axg-aoclkc.h>
+ 
+diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
+index b52990e574d2..52501ec709f7 100644
+--- a/drivers/clk/meson/g12a-aoclk.c
++++ b/drivers/clk/meson/g12a-aoclk.c
+@@ -411,39 +411,36 @@ static struct clk_regmap *g12a_aoclk_regmap[] = {
+ 	&g12a_aoclk_saradc_gate,
+ };
+ 
+-static const struct clk_hw_onecell_data g12a_aoclk_onecell_data = {
+-	.hws = {
+-		[CLKID_AO_AHB]		= &g12a_aoclk_ahb.hw,
+-		[CLKID_AO_IR_IN]	= &g12a_aoclk_ir_in.hw,
+-		[CLKID_AO_I2C_M0]	= &g12a_aoclk_i2c_m0.hw,
+-		[CLKID_AO_I2C_S0]	= &g12a_aoclk_i2c_s0.hw,
+-		[CLKID_AO_UART]		= &g12a_aoclk_uart.hw,
+-		[CLKID_AO_PROD_I2C]	= &g12a_aoclk_prod_i2c.hw,
+-		[CLKID_AO_UART2]	= &g12a_aoclk_uart2.hw,
+-		[CLKID_AO_IR_OUT]	= &g12a_aoclk_ir_out.hw,
+-		[CLKID_AO_SAR_ADC]	= &g12a_aoclk_saradc.hw,
+-		[CLKID_AO_MAILBOX]	= &g12a_aoclk_mailbox.hw,
+-		[CLKID_AO_M3]		= &g12a_aoclk_m3.hw,
+-		[CLKID_AO_AHB_SRAM]	= &g12a_aoclk_ahb_sram.hw,
+-		[CLKID_AO_RTI]		= &g12a_aoclk_rti.hw,
+-		[CLKID_AO_M4_FCLK]	= &g12a_aoclk_m4_fclk.hw,
+-		[CLKID_AO_M4_HCLK]	= &g12a_aoclk_m4_hclk.hw,
+-		[CLKID_AO_CLK81]	= &g12a_aoclk_clk81.hw,
+-		[CLKID_AO_SAR_ADC_SEL]	= &g12a_aoclk_saradc_mux.hw,
+-		[CLKID_AO_SAR_ADC_DIV]	= &g12a_aoclk_saradc_div.hw,
+-		[CLKID_AO_SAR_ADC_CLK]	= &g12a_aoclk_saradc_gate.hw,
+-		[CLKID_AO_CTS_OSCIN]	= &g12a_aoclk_cts_oscin.hw,
+-		[CLKID_AO_32K_PRE]	= &g12a_aoclk_32k_by_oscin_pre.hw,
+-		[CLKID_AO_32K_DIV]	= &g12a_aoclk_32k_by_oscin_div.hw,
+-		[CLKID_AO_32K_SEL]	= &g12a_aoclk_32k_by_oscin_sel.hw,
+-		[CLKID_AO_32K]		= &g12a_aoclk_32k_by_oscin.hw,
+-		[CLKID_AO_CEC_PRE]	= &g12a_aoclk_cec_pre.hw,
+-		[CLKID_AO_CEC_DIV]	= &g12a_aoclk_cec_div.hw,
+-		[CLKID_AO_CEC_SEL]	= &g12a_aoclk_cec_sel.hw,
+-		[CLKID_AO_CEC]		= &g12a_aoclk_cec.hw,
+-		[CLKID_AO_CTS_RTC_OSCIN] = &g12a_aoclk_cts_rtc_oscin.hw,
+-	},
+-	.num = NR_CLKS,
++static struct clk_hw *g12a_aoclk_hw_clks[] = {
++	[CLKID_AO_AHB]		= &g12a_aoclk_ahb.hw,
++	[CLKID_AO_IR_IN]	= &g12a_aoclk_ir_in.hw,
++	[CLKID_AO_I2C_M0]	= &g12a_aoclk_i2c_m0.hw,
++	[CLKID_AO_I2C_S0]	= &g12a_aoclk_i2c_s0.hw,
++	[CLKID_AO_UART]		= &g12a_aoclk_uart.hw,
++	[CLKID_AO_PROD_I2C]	= &g12a_aoclk_prod_i2c.hw,
++	[CLKID_AO_UART2]	= &g12a_aoclk_uart2.hw,
++	[CLKID_AO_IR_OUT]	= &g12a_aoclk_ir_out.hw,
++	[CLKID_AO_SAR_ADC]	= &g12a_aoclk_saradc.hw,
++	[CLKID_AO_MAILBOX]	= &g12a_aoclk_mailbox.hw,
++	[CLKID_AO_M3]		= &g12a_aoclk_m3.hw,
++	[CLKID_AO_AHB_SRAM]	= &g12a_aoclk_ahb_sram.hw,
++	[CLKID_AO_RTI]		= &g12a_aoclk_rti.hw,
++	[CLKID_AO_M4_FCLK]	= &g12a_aoclk_m4_fclk.hw,
++	[CLKID_AO_M4_HCLK]	= &g12a_aoclk_m4_hclk.hw,
++	[CLKID_AO_CLK81]	= &g12a_aoclk_clk81.hw,
++	[CLKID_AO_SAR_ADC_SEL]	= &g12a_aoclk_saradc_mux.hw,
++	[CLKID_AO_SAR_ADC_DIV]	= &g12a_aoclk_saradc_div.hw,
++	[CLKID_AO_SAR_ADC_CLK]	= &g12a_aoclk_saradc_gate.hw,
++	[CLKID_AO_CTS_OSCIN]	= &g12a_aoclk_cts_oscin.hw,
++	[CLKID_AO_32K_PRE]	= &g12a_aoclk_32k_by_oscin_pre.hw,
++	[CLKID_AO_32K_DIV]	= &g12a_aoclk_32k_by_oscin_div.hw,
++	[CLKID_AO_32K_SEL]	= &g12a_aoclk_32k_by_oscin_sel.hw,
++	[CLKID_AO_32K]		= &g12a_aoclk_32k_by_oscin.hw,
++	[CLKID_AO_CEC_PRE]	= &g12a_aoclk_cec_pre.hw,
++	[CLKID_AO_CEC_DIV]	= &g12a_aoclk_cec_div.hw,
++	[CLKID_AO_CEC_SEL]	= &g12a_aoclk_cec_sel.hw,
++	[CLKID_AO_CEC]		= &g12a_aoclk_cec.hw,
++	[CLKID_AO_CTS_RTC_OSCIN] = &g12a_aoclk_cts_rtc_oscin.hw,
+ };
+ 
+ static const struct meson_aoclk_data g12a_aoclkc_data = {
+@@ -452,7 +449,8 @@ static const struct meson_aoclk_data g12a_aoclkc_data = {
+ 	.reset		= g12a_aoclk_reset,
+ 	.num_clks	= ARRAY_SIZE(g12a_aoclk_regmap),
+ 	.clks		= g12a_aoclk_regmap,
+-	.hw_data	= &g12a_aoclk_onecell_data,
++	.hw_clks	= g12a_aoclk_hw_clks,
++	.hw_clk_num	= ARRAY_SIZE(g12a_aoclk_hw_clks),
+ };
+ 
+ static const struct of_device_id g12a_aoclkc_match_table[] = {
+diff --git a/drivers/clk/meson/g12a-aoclk.h b/drivers/clk/meson/g12a-aoclk.h
+index a67c8a7cd7c4..077bd25b94a1 100644
+--- a/drivers/clk/meson/g12a-aoclk.h
++++ b/drivers/clk/meson/g12a-aoclk.h
+@@ -24,8 +24,6 @@
+ #define CLKID_AO_CEC_DIV	25
+ #define CLKID_AO_CEC_SEL	26
+ 
+-#define NR_CLKS	29
+-
+ #include <dt-bindings/clock/g12a-aoclkc.h>
+ #include <dt-bindings/reset/g12a-aoclkc.h>
+ 
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index fce95cf89836..b08f60f5a73d 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -252,8 +252,7 @@ static struct clk_regmap *gxbb_aoclk[] = {
+ 	&ao_cts_cec,
+ };
+ 
+-static const struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+-	.hws = {
++static struct clk_hw *gxbb_aoclk_hw_clks[] = {
+ 		[CLKID_AO_REMOTE] = &remote_ao.hw,
+ 		[CLKID_AO_I2C_MASTER] = &i2c_master_ao.hw,
+ 		[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao.hw,
+@@ -268,8 +267,6 @@ static const struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+ 		[CLKID_AO_32K] = &ao_32k.hw,
+ 		[CLKID_AO_CTS_RTC_OSCIN] = &ao_cts_rtc_oscin.hw,
+ 		[CLKID_AO_CLK81] = &ao_clk81.hw,
+-	},
+-	.num = NR_CLKS,
+ };
+ 
+ static const struct meson_aoclk_data gxbb_aoclkc_data = {
+@@ -278,7 +275,8 @@ static const struct meson_aoclk_data gxbb_aoclkc_data = {
+ 	.reset		= gxbb_aoclk_reset,
+ 	.num_clks	= ARRAY_SIZE(gxbb_aoclk),
+ 	.clks		= gxbb_aoclk,
+-	.hw_data	= &gxbb_aoclk_onecell_data,
++	.hw_clks	= gxbb_aoclk_hw_clks,
++	.hw_clk_num	= ARRAY_SIZE(gxbb_aoclk_hw_clks),
+ };
+ 
+ static const struct of_device_id gxbb_aoclkc_match_table[] = {
+diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+index 1db16f9b37d4..94197b957512 100644
+--- a/drivers/clk/meson/gxbb-aoclk.h
++++ b/drivers/clk/meson/gxbb-aoclk.h
+@@ -7,8 +7,6 @@
+ #ifndef __GXBB_AOCLKC_H
+ #define __GXBB_AOCLKC_H
+ 
+-#define NR_CLKS	14
+-
+ #include <dt-bindings/clock/gxbb-aoclkc.h>
+ #include <dt-bindings/reset/gxbb-aoclkc.h>
+ 
+diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+index 434cd8f9de82..3515144aaee5 100644
+--- a/drivers/clk/meson/meson-aoclk.c
++++ b/drivers/clk/meson/meson-aoclk.c
+@@ -33,6 +33,19 @@ static const struct reset_control_ops meson_aoclk_reset_ops = {
+ 	.reset = meson_aoclk_do_reset,
+ };
+ 
++static struct clk_hw *meson_aoclkc_hw_get(struct of_phandle_args *clkspec, void *clk_data)
++{
++	const struct meson_aoclk_data *data = clk_data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= data->hw_clk_num) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return data->hw_clks[idx];
++}
++
+ int meson_aoclkc_probe(struct platform_device *pdev)
+ {
+ 	struct meson_aoclk_reset_controller *rstc;
+@@ -75,19 +88,18 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 		data->clks[clkid]->map = regmap;
+ 
+ 	/* Register all clks */
+-	for (clkid = 0; clkid < data->hw_data->num; clkid++) {
+-		if (!data->hw_data->hws[clkid])
++	for (clkid = 0; clkid < data->hw_clk_num; clkid++) {
++		if (!data->hw_clks[clkid])
+ 			continue;
+ 
+-		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
++		ret = devm_clk_hw_register(dev, data->hw_clks[clkid]);
+ 		if (ret) {
+ 			dev_err(dev, "Clock registration failed\n");
+ 			return ret;
+ 		}
+ 	}
+ 
+-	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+-		(void *) data->hw_data);
++	return devm_of_clk_add_hw_provider(dev, meson_aoclkc_hw_get, data);
+ }
+ EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
+index 605b43855a69..4b7dda9c997d 100644
+--- a/drivers/clk/meson/meson-aoclk.h
++++ b/drivers/clk/meson/meson-aoclk.h
+@@ -24,7 +24,8 @@ struct meson_aoclk_data {
+ 	const unsigned int			*reset;
+ 	const int				num_clks;
+ 	struct clk_regmap			**clks;
+-	const struct clk_hw_onecell_data	*hw_data;
++	struct clk_hw				**hw_clks;
++	unsigned int				hw_clk_num;
+ };
+ 
+ struct meson_aoclk_reset_controller {
 
-Best regards,
 -- 
-Neil Armstrong <neil.armstrong@linaro.org>
+2.34.1
 
