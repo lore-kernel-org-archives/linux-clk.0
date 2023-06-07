@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4545FC7EE23
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8C8C7EE2E
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 10:50:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239766AbjFGKuT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 06:50:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59388 "EHLO
+        id S239836AbjFGKuW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 06:50:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240039AbjFGKuI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:50:08 -0400
+        with ESMTP id S239106AbjFGKuQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 06:50:16 -0400
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAF451BF3;
-        Wed,  7 Jun 2023 03:49:48 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 357AgqKh032380;
-        Wed, 7 Jun 2023 10:49:06 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A501FDA;
+        Wed,  7 Jun 2023 03:49:53 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3575r88w011164;
+        Wed, 7 Jun 2023 10:49:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=9igNQMqScQzwAM38rX+zFe4504VutBol9OU+mBF+LP4=;
- b=GDcoLcIKmaDkxipb05cHFv+h+Ptr3KkhiBEqtXZF+cCiw3AuHFsjGwtpRCqIFb/Ad9h5
- h2IqiJ1OXERvXIeKSWV1VFk2ksYUAVUVZcYz5GDy7Uoc82xXuGn6hVVBhKSBuCPxzkZN
- ZdqzfUD1clnvMxoleSZujWYVCLrRNBU+Yy//2fvcMdn4cGYkeWVObB/Rgw7Dz6Bei9DC
- o9ZB9yqOWqpFXsLua695rfhqZKzxUeiHhJjPCK1Ps1SfwYFABSqBZ80D2MEHHa2jSEnt
- I36JTdOW2URl3ccXBtqpozMV6SpTTmplXd5I5Ykfp+jouD29xyLHkhkRWemlG8zqtGw7 Sg== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2rbtg0c7-1
+ bh=9xYUqSDdaqKyZf2bkU9l323N2VvyCRyqyZVBZ3mBeks=;
+ b=AbeCaNmk2clh7Sa7DsGozlD0a/USTwTBXfHDNGgmhBJG2F/pbxW4DKkCzl4b415GdL4N
+ KDqPdWpJprLf6K9EC+g9fUoAf7hRI4WJYA1M8KOqkkDfGrh/V87D1N7Xfqjkw1k/VGnC
+ MdP6sU470zF1eruPPcaY37t+JJ5V6nYKp2xAaovsqJdKG7AhEkAk8LbQiOqJK1epzK/f
+ nE80iMDaOUwrQwVUWexnOGxshTIftHgNrZp7jE1PUIRiepXv4+MkJdGtAIm7AG4UcCne
+ zMOFXSxctzjKqUmVEqRvR9j1bTiE0oe5EAT82R6IvEqfoZq4PJ39/PjJQsu7ERjF9NqV Iw== 
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2a9t9kmd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 07 Jun 2023 10:49:06 +0000
+        Wed, 07 Jun 2023 10:49:23 +0000
 Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357An5cY028144
+        by NASANPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 357AnMFo024651
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 7 Jun 2023 10:49:05 GMT
+        Wed, 7 Jun 2023 10:49:22 GMT
 Received: from varda-linux.qualcomm.com (10.80.80.8) by
  nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 7 Jun 2023 03:48:59 -0700
+ 15.2.986.42; Wed, 7 Jun 2023 03:49:16 -0700
 From:   Varadarajan Narayanan <quic_varada@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <gregkh@linuxfoundation.org>,
@@ -48,9 +48,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-clk@vger.kernel.org>
 CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH v12 2/5] clk: qcom: gcc-ipq9574: Add USB related clocks
-Date:   Wed, 7 Jun 2023 16:18:40 +0530
-Message-ID: <abdb2d680b63e54824e06ff9af3aad634502d86d.1686045347.git.quic_varada@quicinc.com>
+Subject: [PATCH v12 5/5] arm64: dts: qcom: ipq9574: Enable USB
+Date:   Wed, 7 Jun 2023 16:18:43 +0530
+Message-ID: <d8573819ba32497360d1c520539952d01b9e18f2.1686045347.git.quic_varada@quicinc.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1686045347.git.quic_varada@quicinc.com>
 References: <cover.1686045347.git.quic_varada@quicinc.com>
@@ -61,105 +61,79 @@ X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nasanex01a.na.qualcomm.com (10.52.223.231)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: qglWmPaELl_7VJOq3CACBt69sDP7uzkj
-X-Proofpoint-ORIG-GUID: qglWmPaELl_7VJOq3CACBt69sDP7uzkj
+X-Proofpoint-ORIG-GUID: i0NiyGlRPPbQ8xkm5OEECJ15kRObNNrf
+X-Proofpoint-GUID: i0NiyGlRPPbQ8xkm5OEECJ15kRObNNrf
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
  definitions=2023-06-07_06,2023-06-07_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- adultscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501 phishscore=0
- impostorscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306070088
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 impostorscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=680 spamscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306070088
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the clocks needed for enabling USB in IPQ9574
+Turn on USB related nodes
+Provide vdd info
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 ---
- Changes in v12:
-	- Rebase qcom,ipq9574-gcc.h
+ Changes in v11:
+	- Rename dwc_0 -> usb_0_dwc3
+	- Maintain sorted order for the usb nodes
 
  Changes in v10:
-	- Add 'const' for .hw.init = &(struct clk_init_data)
+	- Provide vdd info
+
+ Changes in v5:
+	- Move "host" mode specification to board dts
+	- Due to dependency with earlier patches board dts
+	  filename changed ipq9574-al02-c7.dts -> ipq9574-rdp433.dts
 
  Changes in v2:
-	- Fixed coding style issues
+	- Fix node placement and coding style
+	- "ok" -> "okay"
 ---
- drivers/clk/qcom/gcc-ipq9574.c               | 37 ++++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,ipq9574-gcc.h |  2 ++
- 2 files changed, 39 insertions(+)
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-index 7b0505f..8e1a3ff 100644
---- a/drivers/clk/qcom/gcc-ipq9574.c
-+++ b/drivers/clk/qcom/gcc-ipq9574.c
-@@ -1969,6 +1969,41 @@ static struct clk_regmap_mux usb0_pipe_clk_src = {
- 	},
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+index 42d45e1..58e937c 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
++++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+@@ -105,6 +105,29 @@
+ 	};
  };
  
-+static struct clk_branch gcc_usb0_pipe_clk = {
-+	.halt_reg = 0x2c054,
-+	.halt_check = BRANCH_HALT_DELAY,
-+	.clkr = {
-+		.enable_reg = 0x2c054,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data){
-+			.name = "gcc_usb0_pipe_clk",
-+			.parent_hws = (const struct clk_hw *[]) {
-+				&usb0_pipe_clk_src.clkr.hw
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
++&usb_0_dwc3 {
++	dr_mode = "host";
 +};
 +
-+static struct clk_branch gcc_usb0_sleep_clk = {
-+	.halt_reg = 0x2c058,
-+	.clkr = {
-+		.enable_reg = 0x2c058,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data){
-+			.name = "gcc_usb0_sleep_clk",
-+			.parent_hws = (const struct clk_hw *[]) {
-+				&gcc_sleep_clk_src.clkr.hw
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
++&usb_0_qmpphy {
++	vdda-pll-supply = <&mp5496_l2>;
++	vdda-phy-supply = <&fixed_0p925>;
++
++	status = "okay";
 +};
 +
- static const struct freq_tbl ftbl_sdcc_apps_clk_src[] = {
- 	F(144000, P_XO, 16, 12, 125),
- 	F(400000, P_XO, 12, 1, 5),
-@@ -3932,6 +3967,8 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
- 	[GCC_USB0_MOCK_UTMI_CLK] = &gcc_usb0_mock_utmi_clk.clkr,
- 	[USB0_PIPE_CLK_SRC] = &usb0_pipe_clk_src.clkr,
- 	[GCC_USB0_PHY_CFG_AHB_CLK] = &gcc_usb0_phy_cfg_ahb_clk.clkr,
-+	[GCC_USB0_PIPE_CLK] = &gcc_usb0_pipe_clk.clkr,
-+	[GCC_USB0_SLEEP_CLK] = &gcc_usb0_sleep_clk.clkr,
- 	[SDCC1_APPS_CLK_SRC] = &sdcc1_apps_clk_src.clkr,
- 	[GCC_SDCC1_APPS_CLK] = &gcc_sdcc1_apps_clk.clkr,
- 	[SDCC1_ICE_CORE_CLK_SRC] = &sdcc1_ice_core_clk_src.clkr,
-diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-index 5a2961b..c7c914c 100644
---- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-+++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-@@ -210,4 +210,6 @@
- #define GCC_SNOC_PCIE1_1LANE_S_CLK			201
- #define GCC_SNOC_PCIE2_2LANE_S_CLK			202
- #define GCC_SNOC_PCIE3_2LANE_S_CLK			203
-+#define GCC_USB0_PIPE_CLK				204
-+#define GCC_USB0_SLEEP_CLK				205
- #endif
++&usb_0_qusbphy {
++	vdd-supply = <&fixed_0p925>;
++	vdda-pll-supply = <&mp5496_l2>;
++	vdda-phy-dpdm-supply = <&fixed_3p3>;
++
++	status = "okay";
++};
++
++&usb3 {
++	status = "okay";
++};
++
+ &xo_board_clk {
+ 	clock-frequency = <24000000>;
+ };
 -- 
 2.7.4
 
