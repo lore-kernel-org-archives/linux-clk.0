@@ -2,85 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986AFC7EE25
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B88C7EE2F
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 13:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240430AbjFGNTF convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 09:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45772 "EHLO
+        id S240598AbjFGNUD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 09:20:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240468AbjFGNTB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:19:01 -0400
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35B91735;
-        Wed,  7 Jun 2023 06:18:59 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-568af2f6454so74619037b3.1;
-        Wed, 07 Jun 2023 06:18:59 -0700 (PDT)
+        with ESMTP id S240624AbjFGNTt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 09:19:49 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C2E199D
+        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 06:19:47 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-30b023b0068so498805f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 06:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686143986; x=1688735986;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mnNtcdYl7FWB9vVI15co5MeYmaXJVC+s1x+N4tvXfWY=;
+        b=W5rWw52uP2J5P8VZi5+rmvcoUJ5m9ynK8S0KkE5V84ZaqoSK2Crc9krqvZby91MWEr
+         ZSA0moTfIV9aUT84Q0uNcuQGp1sXhG6a/TqQsqZMIoI3NHx8VA7PRXhKOwuwj1S6UHJS
+         lbkHivgTqNR4Nw99i/i5xfXB3essZLeGI66BDmEYEeLcgp+SHNXE3JskESna/3alaMtg
+         tlEnbg2UE5abmA93Gc3HB/T4lHsaX/sTUguiZacyEBMY+tjzo0nkZNulBfOs+HSOiKxg
+         ZqRcxaUyax79NGs3ytKIvKNyR45yzQ8BNjnhJ+XRcJe584z8EV7VnTqK398OY2o6+mSC
+         w02w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686143938; x=1688735938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2EhyJ5aZEtTnnCQG4rmoDuT6EFvmS86Dv0UQ+RFBMuE=;
-        b=SAScDh5r0dh8iMwRSagqIRt2ywLqilE0PtCEjgUuuoeq7PGSsWTltSExfyFRpft+o1
-         uNf1Wjai+FyEMShvx691kWuZ6MpktxFlrJV3nEUSPRVrVJedC7m+jVM/nK+eqeKZzEzF
-         a7Pg14VIfvi+SKzAWHpFm8PYlyoYAw/Wr8UvVkafA00pvOnrO2x3Fo+Xkjrve5pO16lO
-         4L60RwTco8trqEE9AKl9/cw1e9954CbMEi/8Q7J0C0H2sxJ7DP3P/AzbQilB1ynb3rnZ
-         l1zsNa/SUV9deCnWHZcy7l/4i8ufBfwU/8Dgo9LcSClZMaKIW7o1VULOaPHNb5L8xQhz
-         Nx4Q==
-X-Gm-Message-State: AC+VfDyow40sHnN8r+ZvIlSC6vuc02OA8F+G2/FGLG9SBNWd7LgPAby/
-        8FloYXw2qqAVGvdFmM9NgJfTopciNxHT+A==
-X-Google-Smtp-Source: ACHHUZ4SW1QtIWNj8cpsnMXrzh/ejwSW8pzEsXCMHAT/lbdOg13aurJzYD782Gnv9wiMTgWj+Ipeog==
-X-Received: by 2002:a0d:cb89:0:b0:55a:985e:8ac9 with SMTP id n131-20020a0dcb89000000b0055a985e8ac9mr6038210ywd.22.1686143937932;
-        Wed, 07 Jun 2023 06:18:57 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id w140-20020a814992000000b0054f8b201c70sm4731924ywa.108.2023.06.07.06.18.56
+        d=1e100.net; s=20221208; t=1686143986; x=1688735986;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mnNtcdYl7FWB9vVI15co5MeYmaXJVC+s1x+N4tvXfWY=;
+        b=g1FxPrQKh9TMyGjKk/dIgq8oQWgKPxkA8m+WSjammNufKwgGfYNW/IUZx5TrZjNJ2H
+         OSQS+dLYQQIx7w1EbnKwBLgIOJDEXS1L9H4/YIMdneHbgh7jbwbMWPq26WkhD6CpAtu+
+         yi0Ya06ydni5dFZtuzZ/cZ5jtaNqRkZA95a6n/yB0KMIazcNn+oSeGezM+g63UunAxAg
+         KPmjS9y0N0CrVVifBf1wdprqawZ0kALHkb6xVHygZ8kr5P1XJ1bSQ+I4kKi6iL5mhvRX
+         cbMBpl5PNn8IpOhvyRk1IxjcvhmlB+Xp+3zE2HHC96uX3hfJVbskaqQBkt7uqWnKDdzq
+         pJbg==
+X-Gm-Message-State: AC+VfDzErhpybYJPOgV8NVRiqa9dDJMdpD33LdLb253856AboyF8eB87
+        TS2+DPYh9Pl/P0Zvdb86ZJ6okg==
+X-Google-Smtp-Source: ACHHUZ7ILsrllirxXgRGCNpr+8QXW/gchSLvNycTUayot7lajmlutG7p1RjL23aGnaOssGNvxAWa7w==
+X-Received: by 2002:adf:fec3:0:b0:30a:e8ac:90c1 with SMTP id q3-20020adffec3000000b0030ae8ac90c1mr10941158wrs.19.1686143986059;
+        Wed, 07 Jun 2023 06:19:46 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id b3-20020a5d4d83000000b0030c4d8930b1sm15457081wru.91.2023.06.07.06.19.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jun 2023 06:18:56 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-ba82059ef0bso7960647276.1;
-        Wed, 07 Jun 2023 06:18:56 -0700 (PDT)
-X-Received: by 2002:a25:baca:0:b0:bb3:8945:d236 with SMTP id
- a10-20020a25baca000000b00bb38945d236mr5397442ybk.53.1686143936338; Wed, 07
- Jun 2023 06:18:56 -0700 (PDT)
+        Wed, 07 Jun 2023 06:19:45 -0700 (PDT)
+Message-ID: <b01ca147-c2bd-1044-22c5-5b54a0f108c0@linaro.org>
+Date:   Wed, 7 Jun 2023 14:19:44 +0100
 MIME-Version: 1.0
-References: <20230530112050.5635-1-aford173@gmail.com> <20230530112050.5635-2-aford173@gmail.com>
-In-Reply-To: <20230530112050.5635-2-aford173@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 7 Jun 2023 15:18:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWVwJVAtcCD019-QxHe9UXf7JKe4T2x2=kvHbPoJ=aDtQ@mail.gmail.com>
-Message-ID: <CAMuHMdWVwJVAtcCD019-QxHe9UXf7JKe4T2x2=kvHbPoJ=aDtQ@mail.gmail.com>
-Subject: Re: [RFC 2/3] clk: renesas: r8a7741a: Add 3dge and ZG support
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, biju.das.jz@bp.renesas.com,
-        marek.vasut+renesas@gmail.com, cstevens@beaconembedded.com,
-        aford@beaconembedded.com, Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 3/6] clk: qcom: Add lpass clock controller driver for
+ SC8280XP
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     johan+linaro@kernel.org, agross@kernel.org,
+        konrad.dybcio@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230525122930.17141-1-srinivas.kandagatla@linaro.org>
+ <20230525122930.17141-4-srinivas.kandagatla@linaro.org>
+ <098883dd-f517-d541-de00-1a7fc0ada017@linaro.org>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <098883dd-f517-d541-de00-1a7fc0ada017@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 30, 2023 at 1:21 PM Adam Ford <aford173@gmail.com> wrote:
-> The 3dge and ZG clocks are necessary to support the 3D graphics.
->
-> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Gr{oetje,eeting}s,
+On 31/05/2023 21:01, Krzysztof Kozlowski wrote:
+> On 25/05/2023 14:29, Srinivas Kandagatla wrote:
+>> Add support for the lpass clock controller found on SC8280XP based devices.
+>> This would allow lpass peripheral loader drivers to control the clocks and
+>> bring the subsystems out of reset.
+>>
+>> Currently this patch only supports resets as the Q6DSP is in control of
+>> LPASS IP which manages most of the clocks via Q6PRM service on GPR rpmsg
+>> channel.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   drivers/clk/qcom/Kconfig            |  8 ++++
+>>   drivers/clk/qcom/Makefile           |  1 +
+>>   drivers/clk/qcom/lpasscc-sc8280xp.c | 63 +++++++++++++++++++++++++++++
+>>   3 files changed, 72 insertions(+)
+>>   create mode 100644 drivers/clk/qcom/lpasscc-sc8280xp.c
+>>
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 85869e7a9f16..e25993abb519 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -523,6 +523,14 @@ config SC_LPASSCC_7280
+>>   	  Say Y if you want to use the LPASS branch clocks of the LPASS clock
+>>   	  controller to reset the LPASS subsystem.
+>>   
+>> +config SC_LPASSCC_8280XP
+>> +	tristate "SC8280 Low Power Audio Subsystem (LPASS) Clock Controller"
+> 
+> depends on ARM64 || COMPILE_TEST
 
-                        Geert
+Thanks, Will do that in v3.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--srini
+> 
+> Best regards,
+> Krzysztof
+> 
