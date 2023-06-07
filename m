@@ -2,132 +2,205 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F80C7EE2E
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 09:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDB6C7EE23
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 09:26:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235502AbjFHJ0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jun 2023 05:26:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33886 "EHLO
+        id S230099AbjFHJ0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jun 2023 05:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbjFHJ0C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 05:26:02 -0400
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2051.outbound.protection.outlook.com [40.107.220.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04CEA269F;
-        Thu,  8 Jun 2023 02:26:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e/A+WbqPGdzpREImrPimSJ7zICeRjb9l/mCtNcBaPiObh+rFZaY0YN/iRWcBjQ9JaH8vT0DLGwCuRnbbx38r6kXWaalLoU2PuirmzpS/KfRr4Ks0XDn4ySqVgtRxAej+ckI/uWswMLJO+8SzDUVTJpNcBsUqpnhuQ/m7dFaujnkIMA0se/VL84KMLuvqQc0lxsebTvdjBaC3aT235xbFifZwGPPywDmD06WQGjWUGSQ+DR6zn3fFvoVgwgc5O5lVG1/uLQaH2O02AvxmuRwq3IMvCMKrAJWwkJvHQHVmMJ4cYF40nwZMXYyicTpHSvJMSq1PVLeZfxcrqN1XY5QhDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sHzxAzRCQSFQ0dXOjKW9lvmszdoPKmb0qStwN/NcAWY=;
- b=iXMKjHQRUsLANvjJPHFDSHljAMs3oi0GVs/atgdfdCPbHMx35rsGbu6KGCvwDmt91zETsgkAI3WtoiX4sLmaL1T7b27xg/x3LogQ/MtDEhu2LumbS3LlATvwyKdNY7nGkWzqz5U88/EbgQ3mTthZiq8LqtKvmgM7ffF93WmyIzk1oudpdg2RvNdJSS14lRjXoQW0OxiCUuWU2kHRATK/JM3cmwQAFdoEaB0ewhwzjKh++qU88qr17xUW1tOVXH431Xs7AJ/2Q5ajk0mO3DQX1pPLAJuefD7N41ZLbp9yEYC4avFD7q94NIOTmytTpJdEbiR4xOHR0/FtIPiNFadtcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sHzxAzRCQSFQ0dXOjKW9lvmszdoPKmb0qStwN/NcAWY=;
- b=Z/HxepdGvZYP8/D21IUD1Yw0comGMqUzARxvcCHS+41MP32E49UVh2yRD/xaSPTdYVZx0lHSdWK11FHT2fM4tXjGb8CEzv72I01ohG3bEezXGPwK5BsNwAcXcMqwL5Yw2cgKCw93u9jjbDWSTd4uh5PdOMgIpVW4G2t20uSqxm0=
-Received: from BN9PR03CA0574.namprd03.prod.outlook.com (2603:10b6:408:10d::9)
- by SA1PR12MB7247.namprd12.prod.outlook.com (2603:10b6:806:2bb::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.33; Thu, 8 Jun
- 2023 09:25:57 +0000
-Received: from BN8NAM11FT035.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:10d:cafe::87) by BN9PR03CA0574.outlook.office365.com
- (2603:10b6:408:10d::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.19 via Frontend
- Transport; Thu, 8 Jun 2023 09:25:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN8NAM11FT035.mail.protection.outlook.com (10.13.177.116) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.6477.24 via Frontend Transport; Thu, 8 Jun 2023 09:25:57 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 8 Jun
- 2023 04:25:51 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Thu, 8 Jun
- 2023 04:25:35 -0500
-Received: from xhdshubhraj40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2375.34 via Frontend
- Transport; Thu, 8 Jun 2023 04:25:32 -0500
-From:   Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-To:     <linux-clk@vger.kernel.org>
-CC:     <git@amd.com>, <devicetree@vger.kernel.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <michal.simek@amd.com>,
-        <mturquette@baylibre.com>
-Subject: [PATCH v3] dt-bindings: clock: versal: Add versal-net compatible string
-Date:   Thu, 8 Jun 2023 14:55:26 +0530
-Message-ID: <20230608092526.6462-1-shubhrajyoti.datta@amd.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S232417AbjFHJ0n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 05:26:43 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9480B2136;
+        Thu,  8 Jun 2023 02:26:39 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4QcJkN0BPlz9spJ;
+        Thu,  8 Jun 2023 11:26:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1686216396;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WC+E0j9/A465/cq9Z16jbdoVUQlkJxw4cJqWxLv9qaU=;
+        b=srYmoYFaSKsuPxwSQYGXBs0NnVGljK5EyHlibUc5HzP0yvyraFE3vC1ry4lczDZ162FR0Y
+        atte+edyYs0HQ293KnBExruvvmHSZEOyDuraw/dk00jAPkV3xv4PBt3GvOBJGW97GPwvp3
+        /4KYmEJramxTGvUcLVRWWibNpUA5xFpNcZ774E8fP5CgLd/3q764hYuQ8+dt9UK9ueFUSL
+        J5vt0RyFK3vcJsFpekzgVjT1ME9nMF+SR+mufsIuByrl0uHcY0Oi5zX9UDXTIRfs8QCVpE
+        oPrTP6mYed+kLQyxIfJkfukufYSFKx0Plh0nGbcZ0UsGgcQ+DDycw69tf1cJEQ==
+References: <20230605190745.366882-1-frank@oltmanns.dev>
+ <20230605190745.366882-2-frank@oltmanns.dev>
+ <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: nkm: consider alternative parent
+ rates when finding rate
+Date:   Wed, 07 Jun 2023 09:39:35 +0200
+In-reply-to: <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
+Message-ID: <875y7y1f0d.fsf@oltmanns.dev>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT035:EE_|SA1PR12MB7247:EE_
-X-MS-Office365-Filtering-Correlation-Id: a24a69ab-11d3-40df-e3dd-08db68025d83
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: TeOAhvpoOfc3w6NI//FMM+nx5tfbEeLDFpQeIKIvpgXgoDliqBysnMdruqGiTJVD1klKixTQ6Pxo7+g2mDonQYkeUKKQD7aM/MCGWel03haeZZEHPlyL+6I8xghqviUi1an8K21xTbDd6qGYSORVVyIQ23B0Oxy2BoFjXBSFLWis7Dbz0zkWIl9Qaq1L2PaxX2kiH8xFPVdj/IR8jSVICKIFmvGF88qRzMwv3J+WpnldSx76zvkQXxLr7wQ0LaKPoV75L3R5Gt1FZ//vo2iCq8/w+Cq8p99+WTU1Q5AYixrYOHaJHVWnlqMA/FnU3PpagJ550nsgZz+G3GtjqPvweopDiGy0k38t9e4HdVVN3ZTiPzRYjJndpj5J6fUy+l6ZEXSODFn+aUGKCfOHrtaZvbKNC1eaDzif554Gbzy0lvEpH2g8MzN6XY+3TnlSCtOFmaZsKGf+UnXKzq/7qS4ZNh8QU2G5x78Gsy/8G2xukuDPpf35zJ7ttof5AxMJx1kMNVcejhpF3DhZuGv21Cc2HvADYbjYx7wITAUOd5/B3qWho0C1sbraZflTWhRh8vyTZnCWOjUDs+xoaTMB6ltE+psh/BcpuOYuVtiRR1suI/xRuowmexvZK9qCwZ7ii2DJCSUk7G0F/hhakbSHBqXdzDb4TfhO+ubrVqHrYyVB+K+Fb3qypwy8y/63xzAjw104IRJHc+BrYjX+vhMghSBu7ufgBFRmf63sx1Pm3WoxFLnH776h3Ap8zP9UeLNXluw622O62tjIQu3a0/s+F7WMzg==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(136003)(396003)(346002)(376002)(451199021)(40470700004)(36840700001)(46966006)(47076005)(2616005)(1076003)(26005)(41300700001)(83380400001)(36860700001)(6666004)(186003)(426003)(336012)(40460700003)(478600001)(54906003)(70586007)(356005)(4326008)(81166007)(82310400005)(70206006)(316002)(82740400003)(40480700001)(8676002)(44832011)(6916009)(5660300002)(4744005)(86362001)(8936002)(2906002)(36756003)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jun 2023 09:25:57.0892
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a24a69ab-11d3-40df-e3dd-08db68025d83
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT035.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7247
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add dt-binding documentation for Versal NET platforms.
+Hi Maxime,
 
-Signed-off-by: Jay Buddhabhatti <jay.buddhabhatti@xilinx.com>
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
----
-Change in v2:
-Add the versal net enum
+On 2023-06-07 at 08:38:39 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+> [[PGP Signed Part:Undecided]]
+> On Mon, Jun 05, 2023 at 09:07:44PM +0200, Frank Oltmanns wrote:
+>> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
+>> parent rate when determining a new rate.
+>>
+>> To find the best match for the requested rate, perform the following
+>> steps for each NKM combination:
+>>  - calculate the optimal parent rate,
+>>  - find the best parent rate that the parent clock actually supports
+>>  - use that parent rate to calculate the effective rate.
+>>
+>> In case the clk does not support setting the parent rate, use the same
+>> algorithm as before.
+>>
+>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu_nkm.c | 40 ++++++++++++++++++++++++++--------
+>>  1 file changed, 31 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+>> index a0978a50edae..c71e237226f2 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+>> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+>> @@ -16,10 +16,10 @@ struct _ccu_nkm {
+>>  	unsigned long	m, min_m, max_m;
+>>  };
+>>
+>> -static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>> -				       struct _ccu_nkm *nkm)
+>> +static unsigned long ccu_nkm_find_best(unsigned long *parent, unsigned long rate,
+>> +				       struct _ccu_nkm *nkm, struct clk_hw *parent_hw)
+>>  {
+>> -	unsigned long best_rate = 0;
+>> +	unsigned long best_rate = 0, best_parent_rate = 0, tmp_parent = *parent;
+>>  	unsigned long best_n = 0, best_k = 0, best_m = 0;
+>>  	unsigned long _n, _k, _m;
+>>
+>> @@ -28,12 +28,29 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>>  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+>>  				unsigned long tmp_rate;
+>>
+>> -				tmp_rate = parent * _n * _k / _m;
+>> +				if (parent_hw) {
+>
+> NKM clocks always have a parent
+>
+> You should test if the CLK_SET_RATE_PARENT flag is set.
 
-Changes in v3:
-Add the compatible for versal net
-the usage will new compatible string followed by old one
+ccu_nkm_find_best is called in the following two situations:
+ a. from ccu_nkm_set_rate when setting the rate
+ b. from ccu_nkm_round_rate when determining the rate
 
- .../devicetree/bindings/clock/xlnx,versal-clk.yaml         | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+In situation a. we never want ccu_nkm_find_best to try different parent
+rates because setting the parent rate is a done deal (at least that's my
+understanding).
 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-index 229af98b1d30..b90aa064a6d3 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-@@ -20,7 +20,12 @@ select: false
- 
- properties:
-   compatible:
--    const: xlnx,versal-clk
-+    oneOf:
-+      - const: xlnx,versal-clk
-+      - items:
-+          - enum:
-+              - xlnx,versal-net-clk
-+          - const: xlnx,versal-clk
- 
-   "#clock-cells":
-     const: 1
--- 
-2.17.1
+In situation b. we only want ccu_nkm_find_best to try different parent
+rates when, as you mentioned, the CLK_SET_RATE_PARENT flag is set.
 
+So, what this patch does, it provides a NULL pointer as parent_hw when
+we don't want ccu_nkm_find_best to try alternative parent rates.
+
+Is it ok if I add a comment to ccu_nkm_find_best that explains the
+function and explicitly also the parameters?
+
+I also thought about using two different functions for the two
+situations. I have no strong opinion which is better.
+
+However, I don't think we should hand over the flags to this function,
+because we'd still only need to provide the parent_hw if we want to find
+the optimal parent rate, so having two parametes for the same purpose
+seems redundant. Unless, there is a rule to not use NULL pointers.
+
+>
+>> +					// We must round up the desired parent rate, because the
+>> +					// rounding down happens when calculating tmp_rate. If we
+>> +					// round down also here, we'd round down twice.
+>> +					unsigned long optimal_parent =
+>> +							(rate * _m + (_n * _k - 1)) / _n / _k;
+>
+> I assume the addition of n * k - 1 is to round up, but I'm not sure we
+> should hack around like that.
+>
+> You should compute the ideal parent rate for a given set of timings, and
+> then just call round_rate on it. If the parent wants to round it one way
+> or another, that's the parent concern.
+
+I admit that the comment explaining this is not doing the complexity of
+this issue any justice. Let me try to explain:
+
+Let's say for our panel the optimal rate for pll-mipi is 449064000. The
+best closest we can get is 449035712 with a parent rate of 217714285
+(n=11, k=3, m=16).
+
+Eventually, ccu_nkm_find_best is going to be called with 449035712 as
+the rate. If we don't round up, like I proposend, but instead calculate:
+  optimal_parent = rate * m / n / k
+(which is, I think, what you you're proposing) leading to an optimal
+parent of 217714284 (!). We can't get 217714284 from the parent (we
+could get 217714285, but we're not asking for that) so the parent rounds
+down.
+
+To make things worse, this story continues for the new "best rate" as
+well.
+
+In the end, ccu_nkm_find_best claims:
+ - the optimal rate for 449064000 is 449035712 (parent=217714285, n=11,
+   k=3, m=16)
+ - but ccu_nkm_find_best would claim that the optimal rate for 449035712
+   is 449018181 (parent=235200000, n=7, k=3, m=11)
+ - and finally, the optimal rate for 449018181 is 449018180
+   (parent=213818181, n=7, k=3, m=10)
+
+This doesn't seem right to me.
+
+But you're also right, in that we can't just always round up. In a
+hypothetical example that we request a parent rate of 450000000. With
+rounding up, we'd get an optimal parent rate of 218181819 for n=11, k=3,
+m=16. And let's now further claim that the parent could provide exactly
+that rate, we'd end up with a rate of 450000001. So, we'd overshoot,
+which (currently) is not acceptable.
+
+Hmm... I currently can't think of a clever way to solve this other than
+this:
+
+    optimal_parent = (rate * _m + (_n * _k - 1)) / _n / _k;
+    tmp_parent = clk_hw_round_rate(parent_hw, optimal_parent);
+    tmp_rate = tmp_parent * _n * _k / _m;
+    if (tmp_rate > rate) {
+        optimal_parent = rate * m / n / k
+        tmp_parent = clk_hw_round_rate(parent_hw, optimal_parent);
+        tmp_rate = tmp_parent * _n * _k / _m;
+    }
+    if (tmp_parent > optimal_parent)
+        continue;
+
+This seems ugly, but at least it should work in all cases. Any opinions?
+
+Cheers,
+  Frank
+
+>
+> Maxime
+>
+> [[End of PGP Signed Part]]
