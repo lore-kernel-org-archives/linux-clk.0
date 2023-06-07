@@ -2,34 +2,34 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C52C7EE25
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86F1C8300C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232067AbjFGUQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 16:16:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41854 "EHLO
+        id S232159AbjFGUQ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 16:16:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229604AbjFGUQ5 (ORCPT
+        with ESMTP id S230071AbjFGUQ5 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:16:57 -0400
 Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D3C1FC8;
-        Wed,  7 Jun 2023 13:16:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACE741BD6;
+        Wed,  7 Jun 2023 13:16:53 -0700 (PDT)
 Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 1B3FA5FD70;
-        Wed,  7 Jun 2023 23:16:53 +0300 (MSK)
+        by mx.sberdevices.ru (Postfix) with ESMTP id 521065FD6E;
+        Wed,  7 Jun 2023 23:16:51 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1686169013;
-        bh=UTZcZ6SqBjR1YEd2msrtjkp6jUwOSc8GxBbCJ0Tz6Xk=;
+        s=mail; t=1686169011;
+        bh=RNbIjESD+IyeiwtGHiouI+gIk7LwD56yfGxWD9gzuYY=;
         h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=f+vaPMXGOJFDqj1KS3+wyVqC1kzG+ieLA8Dm/owf1lIlUeXjJT7/ImErFX/5E4XsQ
-         LfvCGkqX3tgmD7Qp1YUTe8X/+Ie1Y1olNBCheCisMt71yJxI10I+CDkOqhpG20Iwpb
-         ANmZxAaCA8Fxi+nvnSxsSAo+MxzY9k3cJoCSe+CBaZ7nrcNIbKGdQvCC8lxItjSKtF
-         ALQ1iu6+tdAyLmh0pYpx33O+S7bBEy4UEnlw/DOmM5mK6AQoO793+9QUde5FbYL7Cp
-         DTSpgFenmMhjy5PLrE2VUdsJJvKQek+0S3f6f+Qb/6bgvLqihDMUP9QZdpBaUHCiow
-         O/NhnXkdGZLKA==
+        b=ety0yB4LR209Ia4Tpu08KUqoQQDhbQZ+t2TyoGNxGor2mgGlh5hOLVskd/puVaQKA
+         ItakKRYwyFkzq5qGb6H3nTb02RtnQmbRZzRcLmFaSt9hMznVqEz/6LGOBKct7xvofk
+         8/XlN9HqYakI2nqi49c0GsYg8hGwiHU4y0dfxYOsjt1Dl13YZKi9cf5r7dqzrte9XL
+         KSi3VXTGXfG662hLgeYiF8N0u4iIXx7mAdKRe1GGcoxMwaSx3zt+PwKoFd2CUUavar
+         XRsaLv5zTQZaw+O4Q2knvowWPxZ3lgio6xQbC8R8Dpk/vz68+lH4+bWu/Ol3+JWRH+
+         fFQ72fbQsvg1Q==
 Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
         by mx.sberdevices.ru (Postfix) with ESMTP;
-        Wed,  7 Jun 2023 23:16:53 +0300 (MSK)
+        Wed,  7 Jun 2023 23:16:51 +0300 (MSK)
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
 To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
         <mturquette@baylibre.com>, <sboyd@kernel.org>,
@@ -41,11 +41,10 @@ CC:     <kernel@sberdevices.ru>, <sdfw_system_team@sberdevices.ru>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Alexey Romanov <avromanov@sberdevices.ru>,
         Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Subject: [PATCH v1 3/6] arm64: dts: meson: a1: enable efuse controller and setup its clk
-Date:   Wed, 7 Jun 2023 23:16:38 +0300
-Message-ID: <20230607201641.20982-4-ddrokosov@sberdevices.ru>
+Subject: [PATCH v1 1/6] arm64: dts: meson: a1: introduce PLL and Peripherals clk controllers
+Date:   Wed, 7 Jun 2023 23:16:36 +0300
+Message-ID: <20230607201641.20982-2-ddrokosov@sberdevices.ru>
 X-Mailer: git-send-email 2.36.0
 In-Reply-To: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
 References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
@@ -66,37 +65,61 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Alexey Romanov <avromanov@sberdevices.ru>
+This patch adds clkc and clkc_pll dts nodes to A1 SoC main dtsi.
+The first one clk controller is responsible for all SoC peripherals
+clocks excluding audio clocks. The second one clk controller is used by
+A1 SoC PLLs. Actually, there are two different APB heads, so we have two
+different drivers.
 
-EFUSE A1 controller uses CLKID_OTP clock and PWRC_OTP_ID power domain.
-
-Signed-off-by: Alexey Romanov <avromanov@sberdevices.ru>
 Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 ---
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 26 +++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index b2563c7d3842..63faccfc1134 100644
+index eed96f262844..a24228808c9c 100644
 --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
 +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -44,6 +44,16 @@ l2: l2-cache0 {
- 		};
- 	};
+@@ -6,6 +6,8 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/gpio/meson-a1-gpio.h>
++#include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
++#include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
  
-+	efuse: efuse {
-+		compatible = "amlogic,meson-gxbb-efuse";
-+		clocks = <&clkc_periphs CLKID_OTP>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		secure-monitor = <&sm>;
-+		power-domains = <&pwrc PWRC_OTP_ID>;
-+		status = "okay";
-+	};
+ / {
+ 	compatible = "amlogic,a1";
+@@ -126,6 +128,30 @@ uart_AO_B: serial@2000 {
+ 				status = "disabled";
+ 			};
+ 
++			clkc_periphs: clock-controller@800 {
++				compatible = "amlogic,a1-peripherals-clkc";
++				reg = <0 0x800 0 0x104>;
++				#clock-cells = <1>;
++				clocks = <&clkc_pll CLKID_FCLK_DIV2>,
++					 <&clkc_pll CLKID_FCLK_DIV3>,
++					 <&clkc_pll CLKID_FCLK_DIV5>,
++					 <&clkc_pll CLKID_FCLK_DIV7>,
++					 <&clkc_pll CLKID_HIFI_PLL>,
++					 <&xtal>;
++				clock-names = "fclk_div2", "fclk_div3",
++					      "fclk_div5", "fclk_div7",
++					      "hifi_pll", "xtal";
++			};
 +
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
++			clkc_pll: pll-clock-controller@7c80 {
++				compatible = "amlogic,a1-pll-clkc";
++				reg = <0 0x7c80 0 0x18c>;
++				#clock-cells = <1>;
++				clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
++					 <&clkc_periphs CLKID_HIFIPLL_IN>;
++				clock-names = "fixpll_in", "hifipll_in";
++			};
++
+ 			gpio_intc: interrupt-controller@0440 {
+ 				compatible = "amlogic,meson-a1-gpio-intc",
+ 					     "amlogic,meson-gpio-intc";
 -- 
 2.36.0
 
