@@ -2,116 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C76D6C77B7A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 20:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DC8C7EE23
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 22:42:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235754AbjFGU6A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 16:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59202 "EHLO
+        id S231513AbjFGWmA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 18:42:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235693AbjFGU5z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 16:57:55 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23D3E2134;
-        Wed,  7 Jun 2023 13:57:41 -0700 (PDT)
-Received: from notapiano.myfiosgateway.com (zone.collabora.co.uk [167.235.23.81])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: nfraprado)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 98E276606F0D;
-        Wed,  7 Jun 2023 21:57:37 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1686171459;
-        bh=IHu+5VHbpn9tYN0aeoiKy2zTGue/frX6mQhuF4Dk/XE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O52Eho0T3yp7+0mui4z26cOHabKuCSsXrF2DqF5Rb3n1rZ/OJlP0F4Ip8oondaYoB
-         bsAbsRrlpt1YddHdvHdksMQmjr7XfcXKUGtK4pdK3W+3qmNh/NjgKDMjxYq3WRZ5ni
-         F88pQ6/PYBGb/08S+pr4ZinFmBYzZPHTKO1PlerLK6ynyiH0RD5olnAeWrthRovhfx
-         lQqRVsiPQT4kLx/1sbzgOB1enepQ6Ja1/BzC6hGJ261RipK+A8Xi71WsFN07BHQMAI
-         9Rquy2Y0VC1xXkh97Lpw7x31kfXrkCCPOU90qpH7l+Q49yQjORGanfMoDS2ouaIQW6
-         mxI2GpseKK2jA==
-From:   =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        =?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= 
-        <nfraprado@collabora.com>, Chen-Yu Tsai <wenst@chromium.org>,
+        with ESMTP id S230479AbjFGWl7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 18:41:59 -0400
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4087D9E;
+        Wed,  7 Jun 2023 15:41:58 -0700 (PDT)
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-33b4552e55cso134365ab.0;
+        Wed, 07 Jun 2023 15:41:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686177717; x=1688769717;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=niroRP37z6owYjdnCp9NpBqt0WNxQm1WNvpSD/M4+KE=;
+        b=aFkJ34owRqmrbbPebUAK8hM2bpqlGoVDTaYLkedbh9kRWg8+6DpPxM/INIL0BfsXkx
+         5xqXdRoIgS169ENgdmolmT+D8LfL5a7eAkOf9rvNqkMWkuFE+uxzxsyPUZVWENRtLfCu
+         66wWt57xje02wXfHlDOO8YOZAZ6RDz1C4J76xGXhFBeFxjsbAucGrW9WRSvzA2M8v/iK
+         iJMrbBSWAwIL2HZqQKh/kgSWAIuTx2APSQTaHqHgIdOq3JIQ+M5LN1nxl5H7YRySZGxl
+         eeuMiJdhDLJS4IvHAlKJnj08JGUbh/WFMZmCwuyUFvkmckSHUfECHWQ7Tu4XqUiS62x0
+         8rSg==
+X-Gm-Message-State: AC+VfDyU+LGvQETK54aurmmwlirOX2GpUfMMkRTvVQrZjqJIEiHQqd7M
+        Xm0BuOmvpJlb7fBC3Afchg==
+X-Google-Smtp-Source: ACHHUZ5Z3vbKZKsDwdySO5Ibf+7Y8RPug1tGlVrv2kPF8d41NK8OisCqYY08ABKV4orIin0+8AQXOw==
+X-Received: by 2002:a05:6e02:1aab:b0:333:49f9:a5f3 with SMTP id l11-20020a056e021aab00b0033349f9a5f3mr385105ilv.2.1686177717431;
+        Wed, 07 Jun 2023 15:41:57 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id dj6-20020a0566384b8600b004165289bf0csm3751642jab.168.2023.06.07.15.41.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Jun 2023 15:41:56 -0700 (PDT)
+Received: (nullmailer pid 114271 invoked by uid 1000);
+        Wed, 07 Jun 2023 22:41:55 -0000
+Date:   Wed, 7 Jun 2023 16:41:55 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Mike Looijmans <mike.looijmans@topic.nl>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: [PATCH v2 4/5] clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
-Date:   Wed,  7 Jun 2023 16:53:41 -0400
-Message-ID: <20230607205714.510012-5-nfraprado@collabora.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230607205714.510012-1-nfraprado@collabora.com>
-References: <20230607205714.510012-1-nfraprado@collabora.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: fixed-clock: Add nvmem support
+Message-ID: <20230607224155.GA107156-robh@kernel.org>
+References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.2d27bfea-4746-444c-89f4-e5d35cb7de66@emailsignatures365.codetwo.com>
+ <20230605140149.16841-1-mike.looijmans@topic.nl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230605140149.16841-1-mike.looijmans@topic.nl>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the CLK_VDEC_ACTIVE clock to the vdec clock driver. This clock is
-enabled by the VPU once it starts decoding.
+On Mon, Jun 05, 2023 at 04:01:48PM +0200, Mike Looijmans wrote:
+> Add bindings for a fixed-rate clock that retrieves its rate from an
+> NVMEM provider. This allows to store clock settings in EEPROM or EFUSE
+> or similar device.
+> 
+> Component shortages lead to boards being shipped with different clock
+> crystals, based on what was available at the time. The clock frequency
+> was written to EEPROM at production time. Systems can adapt to a wide
+> range of input frequencies using the clock framework, but this required
+> us to patch the devicetree at runtime or use some custom driver. This
+> provides a more generic solution.
+> 
+> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> 
+> ---
+> 
+> Changes in v4:
+> Use proper "if" block and add example dts
+> 
+> Changes in v3:
+> Modify fixed-clock instead of introducing nvmem-clock
+> 
+> Changes in v2:
+> Changed "fixed-clock" into "nvmem-clock" in dts example
+> Add minItems:1 to nvmem-cell-names
+> 
+>  .../bindings/clock/fixed-clock.yaml           | 42 ++++++++++++++++++-
+>  1 file changed, 41 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> index b0a4fb8256e2..71a5791da438 100644
+> --- a/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> @@ -12,7 +12,9 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> -    const: fixed-clock
+> +    enum:
+> +      - fixed-clock
+> +      - fixed-clock-nvmem
+>  
+>    "#clock-cells":
+>      const: 0
+> @@ -26,11 +28,41 @@ properties:
+>    clock-output-names:
+>      maxItems: 1
+>  
+> +  nvmem-cells:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description:
+> +      Reads clock-frequency and/or clock-accuracy from an NVMEM provider in
+> +      binary native integer format. The size of the NVMEM cell can be 1, 2, 4
+> +      or 8 bytes. If the contents of the nvmem are all zeroes or all 0xff, the
+> +      value reverts to the one given in the property.
+> +
+> +  nvmem-cell-names:
+> +    minItems: 1
+> +    items:
+> +      - const: clock-frequency
+> +      - const: clock-accuracy
+> +
+>  required:
+>    - compatible
+>    - "#clock-cells"
+>    - clock-frequency
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: fixed-clock-nvmem
+> +    then:
+> +      required:
+> +        - nvmem-cells
+> +        - nvmem-cell-names
+> +    else:
+> +      properties:
+> +        nvmem-cells: false
+> +        nvmem-cell-names: false
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> @@ -41,4 +73,12 @@ examples:
+>        clock-frequency = <1000000000>;
+>        clock-accuracy = <100>;
+>      };
+> +  - |
+> +    clock {
+> +      compatible = "fixed-clock-nvmem";
+> +      #clock-cells = <0>;
+> +      clock-frequency = <48000000>;
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+If the freq comes from nvmem, why is this needed?
 
----
+I think this should probably be a separate schema file as the only 
+other thing shared is #clock-cells.
 
-Changes in v2:
-- Added CLK_IGNORE_UNUSED flag
-
- drivers/clk/mediatek/clk-mt8183-vdec.c | 5 +++++
- include/dt-bindings/clock/mt8183-clk.h | 3 ++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/mediatek/clk-mt8183-vdec.c b/drivers/clk/mediatek/clk-mt8183-vdec.c
-index 513b7956cbea..03c4f1acfdb8 100644
---- a/drivers/clk/mediatek/clk-mt8183-vdec.c
-+++ b/drivers/clk/mediatek/clk-mt8183-vdec.c
-@@ -27,6 +27,10 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
- 	GATE_MTK(_id, _name, _parent, &vdec0_cg_regs, _shift,	\
- 		&mtk_clk_gate_ops_setclr_inv)
- 
-+#define GATE_VDEC0(_id, _name, _parent, _shift)		\
-+	GATE_MTK_FLAGS(_id, _name, _parent, &vdec0_cg_regs, _shift,	\
-+		&mtk_clk_gate_ops_setclr, CLK_IGNORE_UNUSED)
-+
- #define GATE_VDEC1_I(_id, _name, _parent, _shift)		\
- 	GATE_MTK(_id, _name, _parent, &vdec1_cg_regs, _shift,	\
- 		&mtk_clk_gate_ops_setclr_inv)
-@@ -34,6 +38,7 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
- static const struct mtk_gate vdec_clks[] = {
- 	/* VDEC0 */
- 	GATE_VDEC0_I(CLK_VDEC_VDEC, "vdec_vdec", "mm_sel", 0),
-+	GATE_VDEC0(CLK_VDEC_ACTIVE, "vdec_active", "mm_sel", 4),
- 	/* VDEC1 */
- 	GATE_VDEC1_I(CLK_VDEC_LARB1, "vdec_larb1", "mm_sel", 0),
- };
-diff --git a/include/dt-bindings/clock/mt8183-clk.h b/include/dt-bindings/clock/mt8183-clk.h
-index a7b470b0ec8a..32dd7d91dbe2 100644
---- a/include/dt-bindings/clock/mt8183-clk.h
-+++ b/include/dt-bindings/clock/mt8183-clk.h
-@@ -357,7 +357,8 @@
- /* VDEC_GCON */
- #define CLK_VDEC_VDEC			0
- #define CLK_VDEC_LARB1			1
--#define CLK_VDEC_NR_CLK			2
-+#define CLK_VDEC_ACTIVE			2
-+#define CLK_VDEC_NR_CLK			3
- 
- /* VENC_GCON */
- #define CLK_VENC_LARB			0
--- 
-2.41.0
-
+Rob
