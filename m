@@ -2,148 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836E6C83003
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 08:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1814C7EE2E
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Jun 2023 09:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239463AbjFGI2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Jun 2023 04:28:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37138 "EHLO
+        id S239554AbjFGJ2q convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Jun 2023 05:28:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238403AbjFGI2D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 04:28:03 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B007E60
-        for <linux-clk@vger.kernel.org>; Wed,  7 Jun 2023 01:28:01 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-5169f614977so466986a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 07 Jun 2023 01:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686126479; x=1688718479;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=udzaaw6qDHSkruTSqapZilAwmBDTeRd1WqYkzLxfxKw=;
-        b=mCSLZ0SpTD8dM8IYBeH0NsSoPs/RoeEsK3Gz91De8m0o/bkR9A1JQfbDdPRCwXNkao
-         j/mft2XNI0lezzVQ1Cap/N2JFPUjdDIhTTCvRIKrDzoR2ad3g8QWoD6RNPiPwm01U9p8
-         wiY2wli1m7w3XwWE8qhD6lMF7711UkDsI5Cb/qGK2ngdGOMqY7y7ejLnMacZJ/13YmyE
-         WbO9efLR2U4tFZxeIMadh6qY7gdLmP2+n78s6lXZeBUR7Jz95SQq77xJE5tnVSqnAuJD
-         Y2ZJrNPTob5s5pGAakoVOXqp+EabmPcxfb5CjySIaRtfDqSX0TqngwuP2spaJBVNmvjw
-         2lVQ==
+        with ESMTP id S235626AbjFGJ2p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Jun 2023 05:28:45 -0400
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7261BAA;
+        Wed,  7 Jun 2023 02:28:44 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-566586b180fso79159127b3.0;
+        Wed, 07 Jun 2023 02:28:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686126479; x=1688718479;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=udzaaw6qDHSkruTSqapZilAwmBDTeRd1WqYkzLxfxKw=;
-        b=KzEhSDpKEPBRCQcVyNSIWzarY4+EC2cX7oSchTtPa+8zTqwIVOeAPp7NyvTmQ9csJY
-         swHZZN9kqvIKZKceGLRu2+3MWBYwT84kJVhK892qH72cgX3BJCYK/7r3UC+Hl+YECF64
-         iEaKiMqC6Vmge1B2Rywg61agnUAZ96MrLRXcWQ9s3GolS7T/cQyHuwLm6hK6sUBfzDC9
-         +vixVJNNJEaa/4Zy+pXPl7+ilnXIq9KdW/f4pbV88aJU8mDJ5ot/MqCLhkmyXUv71ZAE
-         nmm/Y4JQALaiYc+4dIcHDCFXxSAJZQXba4CgguZoreShQ13GokxYIXTtpYZWkuwxxM0y
-         haQw==
-X-Gm-Message-State: AC+VfDxW9oLlzcaCVwl1jp5WcZYQFQ/3guM4ronzXAKjyGYl/k7tTuwG
-        Fz3HpRu/308KdbcjXTFTevH1eQ==
-X-Google-Smtp-Source: ACHHUZ551irlhGeCoLFUsmqhKcmyEYKhUagCEadWq9J9KXqoa5i4D87g/vHnCHUNgfj3GYF+SJNTGg==
-X-Received: by 2002:a17:907:7e9c:b0:96f:bcea:df87 with SMTP id qb28-20020a1709077e9c00b0096fbceadf87mr4846126ejc.42.1686126479436;
-        Wed, 07 Jun 2023 01:27:59 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id uz13-20020a170907118d00b009775eb0343bsm5439900ejb.79.2023.06.07.01.27.56
+        d=1e100.net; s=20221208; t=1686130123; x=1688722123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ck5/ccPepbZREHVBb/oJR6FTLZcZFdnZJX2ti6ySmVk=;
+        b=iRP+Ysheytskok3YN4BPgT+WkPKy3CMNAo6VnKr3RY/mqVDr4n7H0MMLcNC+klunAS
+         W5xpzPGLwEIXlwC31i51c4KrxSFTi8xZu+83seQhTH9kEdZsrUZitHn+iqpDHSYCzu9W
+         Wvh016JkL2VUp0ZVypS1yzniIn2E4287gtT11UZJp4KpvBnjL/nISMptx+xahg5hfkt2
+         T7yUYBz0L02aoT6kDUYLx+q4vuFkrB0iUjrgFxMRwOKTh2m+/sW+W0Jj+GyH/wtFeZ+Y
+         YnbUYAEsE73IrXJOSsL+ZXaVlUFQLD8Ci8yel9fXRFUSViN8E7jzh53I7NpIbAczbm6M
+         7xPw==
+X-Gm-Message-State: AC+VfDww7P9qu9/GJBuop1XrPJHNDP21jtGsWa9CaHhtTVVJ4GVvFoqR
+        bRek0va+1c0jX97v6t/uGm078Q9UwF2GWQ==
+X-Google-Smtp-Source: ACHHUZ6C3s7g5P3TQkq/YBtu0w7nje5OQN/Ko04PhOngM/mJ35kYkg8inuhXANBqMFL0t8i67zMD1A==
+X-Received: by 2002:a81:5b87:0:b0:56a:3b3e:bc6 with SMTP id p129-20020a815b87000000b0056a3b3e0bc6mr2920246ywb.14.1686130123328;
+        Wed, 07 Jun 2023 02:28:43 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id m197-20020a0dcace000000b0054fbafcfde9sm4680151ywd.7.2023.06.07.02.28.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Jun 2023 01:27:59 -0700 (PDT)
-Message-ID: <5f9cc367-eaa5-4c19-4e5e-7052b0259ccf@linaro.org>
-Date:   Wed, 7 Jun 2023 10:27:55 +0200
+        Wed, 07 Jun 2023 02:28:42 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-bacfc573647so8097360276.1;
+        Wed, 07 Jun 2023 02:28:42 -0700 (PDT)
+X-Received: by 2002:a25:3305:0:b0:b9a:7cfe:9bed with SMTP id
+ z5-20020a253305000000b00b9a7cfe9bedmr5663044ybz.14.1686130122296; Wed, 07 Jun
+ 2023 02:28:42 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
- multipd model
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        Kalle Valo <kvalo@kernel.org>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jassisinghbrar@gmail.com,
-        mathieu.poirier@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
-        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-clk@vger.kernel.org,
-        quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
-        quic_devipriy@quicinc.com
-References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
- <20230521222852.5740-2-quic_mmanikan@quicinc.com>
- <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
- <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
- <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
- <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
- <87edmoitu3.fsf@kernel.org>
- <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230606130519.382304-1-biju.das.jz@bp.renesas.com> <OS0PR01MB592282658E36A14D0A762BBB8653A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB592282658E36A14D0A762BBB8653A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 7 Jun 2023 11:28:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVXekgea3biJXXNb3fa-8Fe3iUJ=K51jKnu9ew_+Fq69g@mail.gmail.com>
+Message-ID: <CAMuHMdVXekgea3biJXXNb3fa-8Fe3iUJ=K51jKnu9ew_+Fq69g@mail.gmail.com>
+Subject: Re: [PATCH v3] i2c: Add i2c_get_match_data()
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Wolfram Sang <wsa@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>, Marek Vasut <marex@denx.de>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/06/2023 10:10, Manikanta Mylavarapu wrote:
-> 
-> 
-> On 6/6/2023 7:19 PM, Kalle Valo wrote:
->> Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
->>
->>>>>>> +
->>>>>>> +    properties:
->>>>>>> +      compatible:
->>>>>>> +        enum:
->>>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
->>>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
->>>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
->>>>>>
->>>>>> Keep rather alphabetical order (so both 5018 together).
->>>>>>
->>>>>> I also do not understand these at all. Why adding bus type to
->>>>>> compatible? This rarely is allowed (unless it is PCIe controller within
->>>>>> soc).
->>>>>>
->>>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
->>>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
->>>>> radio's properties, i have added bus type to compatible.
->>>>
->>>> It's the same device - WCSS - right? We do not create multiple nodes and
->>>> compatibles for the same devices. Bus suffixes are almost never parts of
->>>> compatibles.
->>>
->>>
->>> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
->>> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
->>>
->>> So for better clarity i will use attached SOC ID in compatible.
->>> Below are the new compatible's.
->>>
->>> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
->>> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
->>> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
->>
->> What mandates that there's just one QCN6122 device attached to PCI?
->> Assuming fixed PCI configurations like that makes me worried.
->>
-> 
-> IPQ5018 always has one internal radio, attached pcie radio's depends on 
-> no of pcie ports. IPQ5018 has 2 pcie ports, so it supports max two 
-> qcn6122 devices. One compatible (qcom,qcn6122-wcss-mpd) itself support's 
-> number of pcie devices controlled by QDSP6.
+Hi Biju,
 
-So this is hot-pluggable (or at least board-pluggable), then should not
-be a part of static DTS.
+On Wed, Jun 7, 2023 at 9:21 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Do we need to enhance the logic to use device_get_match_data
+> to support OF/ACPI/I2C match like below [1].
 
-Some concepts of virtual-processes is anyway far away from hardware
-description, thus does not fit into DTS. Adding now to the equation PCIe
-with variable number of such processes, brings us even further.
+Why not?
 
-This is not a DT property. Remember - DT describes hardware.
+>
+> Or
+>
+> Are we happy with the current one?
 
-Best regards,
-Krzysztof
+I don't mind.
 
+> +const void *i2c_get_match_data(const struct i2c_client *client) {
+> +       struct device_driver *drv = client->dev.driver;
+> +       struct i2c_driver *driver = to_i2c_driver(drv);
+> +       const struct i2c_device_id *match;
+> +       const void *data;
+> +
+> +       data = device_get_match_data(&client->dev);
+
+    if (data)
+            return data;
+
+> +       if (!data) {
+> +               match = i2c_match_id(driver->id_table, client);
+> +               if (!match)
+> +                       return NULL;
+> +
+> +               data = (const void *)match->driver_data;
+> +       }
+> +
+> > +     return data;
+> > +}
+> > +EXPORT_SYMBOL(i2c_get_match_data);
+
+> > From: Biju Das <biju.das.jz@bp.renesas.com>
+
+> > --- a/drivers/i2c/i2c-core-base.c
+> > +++ b/drivers/i2c/i2c-core-base.c
+> > @@ -114,6 +114,27 @@ const struct i2c_device_id *i2c_match_id(const
+> > struct i2c_device_id *id,  }  EXPORT_SYMBOL_GPL(i2c_match_id);
+> >
+> > +const void *i2c_get_match_data(const struct i2c_client *client) {
+> > +     struct device_driver *drv = client->dev.driver;
+> > +     struct i2c_driver *driver = to_i2c_driver(drv);
+> > +     const struct i2c_device_id *match;
+> > +     const void *data;
+> > +
+> > +     if (client->dev.of_node) {
+> > +             data = of_device_get_match_data(&client->dev);
+
+return of_device_get_match_data(&client->dev);
+
+> > +     } else {
+> > +             match = i2c_match_id(driver->id_table, client);
+> > +             if (!match)
+> > +                     return NULL;
+> > +
+> > +             data = (const void *)match->driver_data;
+
+return ...
+
+> > +     }
+> > +
+> > +     return data;
+> > +}
+> > +EXPORT_SYMBOL(i2c_get_match_data);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
