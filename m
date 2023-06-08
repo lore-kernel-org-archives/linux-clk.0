@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D39F1C7EE23
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 10:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554FEC7EE29
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 11:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbjFHKx4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jun 2023 06:53:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58182 "EHLO
+        id S236437AbjFHLJO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jun 2023 07:09:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231368AbjFHKxz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 06:53:55 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DDED2697
-        for <linux-clk@vger.kernel.org>; Thu,  8 Jun 2023 03:53:52 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b1b8593263so3935211fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jun 2023 03:53:52 -0700 (PDT)
+        with ESMTP id S235808AbjFHLJB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 07:09:01 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 931A1421A
+        for <linux-clk@vger.kernel.org>; Thu,  8 Jun 2023 04:06:57 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f6454a21a9so584843e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jun 2023 04:06:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686221630; x=1688813630;
+        d=linaro.org; s=google; t=1686222411; x=1688814411;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXp+tkBu57J5GgSNnzpDh/hINct2oWOVcfdp9BtjDXA=;
-        b=ypj1M1BvEHARN5lmYJLj/weeH5JOKoYgiSFVw+KL/lN65G4oZijdY8tUOWPgdT8Pfp
-         gubvHWeRBWGg8aVRS35mQG5UDu+G2OZ+GrBYfdpc35xOl4IOtAsBNlPiP8f9boQfbulx
-         6YIjzZxUhD7bVdHNHYfvPMx7FjHjcM+ZdkkBIFKHUvgo3PJ+fR4tPtXkFrf4g77STbKj
-         8dfKfCkCE6nw2VM8akkcHdrveCqwxA+O5+K7ai/hBwSFT7Ie0mtsAn1SqCo7Ltz6LgkR
-         y2gsJooGbY3j1ULafdgMh86ETwhNw3j3a8AEC4m4KGT+CsZI+x3dIN2fERqOFZMOSzq9
-         MKgA==
+        bh=+caIrEw0n7E+RHuWHb1TL2Rrvag6tUOBdTOavrLMBK4=;
+        b=iiCqm8fIcYbtR6/eI7I4VNh8+6lwh2wQwbwMCsfbb0NJ172k9z6wLXuzXPgpuSvqlH
+         glJJoaspnDbcsVoph9BTtPMZKXFBEbAeCKhpH8DOjAXgyd7v7sHgeAcdQbsJTLHK4dLX
+         LCjloHXOhH4kY0YmAjjweedqNS3F+JSJ7XUMMqU82wcggkbb9OtXjZjr/D/D9nAjj9GZ
+         39kV30KZ7LS0SaruyzA8VGLYRsj/BXye7OA4ur2UEeVXT7k/jcRsxJ73N4BADiH+MRYA
+         pLOZAXdByHgpISQ86sjAl/CKJ49WWU4e1U+N8huqTZ26C1eqB3z/ZZINDEc+bp24Mjfp
+         Bk3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686221631; x=1688813631;
+        d=1e100.net; s=20221208; t=1686222411; x=1688814411;
         h=content-transfer-encoding:in-reply-to:from:references:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZXp+tkBu57J5GgSNnzpDh/hINct2oWOVcfdp9BtjDXA=;
-        b=TJv8ndCVifeX/nTqbTRq4/7NU3gpd7MroOuxaHMgdgwxqWRU4xAiXaCnLT9nyGiN1h
-         HbvAluo1yo+WuBInxdqPjHVPde7Ks5EC3J2UJ+3g97xFVeYh6FByDTxTi4SgczD5INVo
-         T1c7Ylj2A6WjchHp9pNG3W9bWJ7F4JwXh0MCPcksGd7APoA854wL3+1LIepbGxbkhhaw
-         FGMYb4v3XX/dg6nKkLxcEMY/mFWe1brey77yhVtFNwpYyhnT/HNnlEG+Jpj1C6T0y9wj
-         Bc6w7PyrKEPL5Uyhg/5TkdY62vioMy6tiMoWXTjB50grNmOrBBUBQS9Osr3GvLaM0d8b
-         0Lxg==
-X-Gm-Message-State: AC+VfDxpwL+uCACZoaYkbAkIuwxGkb7hAaaEVLUps0Xe5N2Z5E76ONHX
-        osD4p5bN8XGVi7UxD2uMOuKPDQ==
-X-Google-Smtp-Source: ACHHUZ6FmY7hG9q8DaTErvv5RvZ9OdIMgaQbc29Q2RqQwzRvhwPhjOOVRM2fiQy+ZBbR9MJDQv+Ryw==
-X-Received: by 2002:a2e:7e03:0:b0:2af:1622:a69 with SMTP id z3-20020a2e7e03000000b002af16220a69mr3628770ljc.48.1686221630610;
-        Thu, 08 Jun 2023 03:53:50 -0700 (PDT)
+        bh=+caIrEw0n7E+RHuWHb1TL2Rrvag6tUOBdTOavrLMBK4=;
+        b=F1Yf9PKiX94kHdltBhLYCvlPkJ4Fhx4wTaj2IHhHwTM+zk2NiX//TS8uWTowXi3dqB
+         bE0eQLFrcNFALVnBoYCkD1PY2LLa6JfxqHDsN7dehgQT8CgcqQmdGdKJ7Jmh8/EX1y8Z
+         ayZNKvirZPzU7E8NWqUZrDw69bTdZzVru5y+fnrZIFLrPppyGF9Qwjf5cRhi1VPAVM3R
+         b83nO9iPRla7yn3iHXf22VrGHfFS9qovBpJlXhgSPDImzExI+c7ffW8byvD/Lx4JiRza
+         xwplbLU3FErKxvShu+8jw8xpjpWox2AnDC6hDeo1azhfz5dsruF3aGAe1nXpT7sdVirI
+         ZMGA==
+X-Gm-Message-State: AC+VfDyEk6OP8K9k9b7VESAnTUL+Sz3/kUkshOkNNWiiSVpQN9Kl3b7o
+        dq32lUW2aaZr458T7r2yDuSY7g==
+X-Google-Smtp-Source: ACHHUZ5ILhAtEGWd5FVAaCuMWXlusQ2n+jwbCu1VRWLWyrrXjaIkcb+Br9SQPg5UBNC1aNWJ8hf5dA==
+X-Received: by 2002:ac2:44ae:0:b0:4f2:5c4b:e699 with SMTP id c14-20020ac244ae000000b004f25c4be699mr3077490lfm.24.1686222410690;
+        Thu, 08 Jun 2023 04:06:50 -0700 (PDT)
 Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id m16-20020ac24250000000b004f4cabba7ebsm143723lfl.199.2023.06.08.03.53.49
+        by smtp.gmail.com with ESMTPSA id p16-20020a19f010000000b004f4d5844b48sm145753lfc.279.2023.06.08.04.06.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 Jun 2023 03:53:50 -0700 (PDT)
-Message-ID: <2925b9c3-494b-1401-1e05-3d411cc90f28@linaro.org>
-Date:   Thu, 8 Jun 2023 13:53:49 +0300
+        Thu, 08 Jun 2023 04:06:50 -0700 (PDT)
+Message-ID: <71960b11-5686-9af5-423b-bfdaec56f3f9@linaro.org>
+Date:   Thu, 8 Jun 2023 14:06:49 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH v13 3/5] arm64: dts: qcom: ipq9574: Add USB related nodes
+Subject: Re: [PATCH v14 3/5] arm64: dts: qcom: ipq9574: Add USB related nodes
 Content-Language: en-GB
 To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org,
@@ -64,17 +64,17 @@ To:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-References: <cover.1686215358.git.quic_varada@quicinc.com>
- <2f91eb879daaf9955dc56135d60a4be5e191a44d.1686215358.git.quic_varada@quicinc.com>
+References: <cover.1686217906.git.quic_varada@quicinc.com>
+ <2f91eb879daaf9955dc56135d60a4be5e191a44d.1686217906.git.quic_varada@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <2f91eb879daaf9955dc56135d60a4be5e191a44d.1686215358.git.quic_varada@quicinc.com>
+In-Reply-To: <2f91eb879daaf9955dc56135d60a4be5e191a44d.1686217906.git.quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/06/2023 12:28, Varadarajan Narayanan wrote:
+On 08/06/2023 13:03, Varadarajan Narayanan wrote:
 > Add USB phy and controller related nodes
 > 
 > SS PHY need two supplies and HS PHY needs three supplies. 0.925V
@@ -140,10 +140,6 @@ On 08/06/2023 12:28, Varadarajan Narayanan wrote:
 >   	};
 > +
 > +	regulator_fixed_3p3: s3300 {
-
-Nit: these two regulators are not references from SoC dtsi. So they can 
-be moved to one of the next commits.
-
 > +		compatible = "regulator-fixed";
 > +		regulator-min-microvolt = <3300000>;
 > +		regulator-max-microvolt = <3300000>;
@@ -161,6 +157,14 @@ be moved to one of the next commits.
 > +		regulator-name = "fixed_0p925";
 > +	};
 >   };
+
+Let me repeat from v13, so that it is not lost (please excuse me for the 
+spam):
+
+Nit: these two regulators are not references from SoC dtsi. So they 
+don't have to be a part of this commit and can be moved to one of the 
+next commits (I'd prefer the last one).
+
 >   
 >   &blsp1_uart2 {
 > diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
