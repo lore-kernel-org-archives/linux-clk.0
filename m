@@ -2,105 +2,266 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D91C7EE45
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 07:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D61DC7EE23
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 08:06:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232198AbjFHHn7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jun 2023 03:43:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39982 "EHLO
+        id S233806AbjFHIGq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jun 2023 04:06:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232971AbjFHHnx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 03:43:53 -0400
-Received: from mail-vs1-xe2a.google.com (mail-vs1-xe2a.google.com [IPv6:2607:f8b0:4864:20::e2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B88E11FD6
-        for <linux-clk@vger.kernel.org>; Thu,  8 Jun 2023 00:43:48 -0700 (PDT)
-Received: by mail-vs1-xe2a.google.com with SMTP id ada2fe7eead31-43dc17feb22so60483137.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Jun 2023 00:43:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1686210227; x=1688802227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TJAXrDTd/Nz/J5muH2M5Mg9/zWBy269fM8uuL6rXc60=;
-        b=DNPvf1GpogmxzgQvbWz98Sw8cq32qUMrFI5mTw675XCXzXY808txVThkEsqsrADeel
-         F9nHLSSzDUyCasRGlwJSX1tNIXVd+1YibbRWCEnNHcT1edFxru9LzT0SLrcjT0XqJhgq
-         2uuPMP/rkP/DseGIkYrv0+Ucp9yJhSlN8zNb0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686210227; x=1688802227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TJAXrDTd/Nz/J5muH2M5Mg9/zWBy269fM8uuL6rXc60=;
-        b=ejnTmKOWwmlHMccSb11aCtacjFSO/Sh41zb50yOrxCH+kxjd7H8IjBjd9rmmmV5JA9
-         FzT6Avx9kxOjqfs/9xjH2RnhMOOqS11D/BTXr/PN3E3T5SELrr4+6EO3++345fboyJ3/
-         HUXp5efeJhfXO9yErD6Vxkv1NEoeEtnlioSuljpucYkB98MNx6ckQAWa1PHrPExi9DK3
-         jcOI8i/hL/lH8Pz4VWBbM7iaB6C2ejDieELzRwrD1QMcXaVuwfljzJcbbX7c652Bj3wS
-         DXWWNCjBIG8iWdJmd39hvcivZ/YOTZB1wbSXR3ybdVOmpLH/7pbvSq2JSRkgcd56sJjm
-         ZkeA==
-X-Gm-Message-State: AC+VfDwm3HDqaKDY4ZTmh1W1ZI284qf+I59+p+ugGMXlFm/Pfo4GA23E
-        pvOV1bYfk6xCVOXkKj7xQIO+91WzDMX7qMjncrcI0g==
-X-Google-Smtp-Source: ACHHUZ79ixQwfkYC9Zf7mdwRzABuK9h59tn/Zx8kcIDizpuVdiBvKBT6XWtWmV7VyQiZhvuYHK304MUdsNJzyBFAobA=
-X-Received: by 2002:a05:6102:104:b0:43b:2a58:8eb5 with SMTP id
- z4-20020a056102010400b0043b2a588eb5mr1781203vsq.20.1686210227541; Thu, 08 Jun
- 2023 00:43:47 -0700 (PDT)
+        with ESMTP id S230183AbjFHIGo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 04:06:44 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564991FFE;
+        Thu,  8 Jun 2023 01:06:43 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3585PP0C015193;
+        Thu, 8 Jun 2023 08:06:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=71nsxbiFJ8eEUlSn18lZCw+0lNtNhOWO86PWtsaKTQc=;
+ b=m403HCi5JxuMkYey4T8k3oNXIIKs4j2oLG/12C/Oivq/sv49uxhz8yp6KSp9F/NPxzvr
+ 9N5tcH7n1qkGt3IbPVHbF/UvT/7agMvLNa1rYNzN69N10B1EeH4EfIwFmUirULS9kRbh
+ meFSrUTKC6uDuFCSLJcXESXTMHRROc93+o9OSFZ9m3ViPn47PUYWPdOnT1bjS1lZXbTx
+ m9PGqs5nvmCpZs8gpumiE+GdP0XKV3DP+oTvAs2mugaRqan8KxETqSQ/EVvUQ/yl0tYy
+ hY08K7JpIRpnKA96SP1OLr53yiEI5flpzqKScI2NAHgagQJZp9WUw2r01Oupe3sIRLhO JQ== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r33uygq4y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Jun 2023 08:06:36 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35886Z9G030550
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 8 Jun 2023 08:06:35 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Thu, 8 Jun 2023 01:06:30 -0700
+Date:   Thu, 8 Jun 2023 13:36:26 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v12 3/5] arm64: dts: qcom: ipq9574: Add USB related nodes
+Message-ID: <20230608080625.GA16505@varda-linux.qualcomm.com>
+References: <cover.1686045347.git.quic_varada@quicinc.com>
+ <5a14d113e90c85777d1c01af38a85f40d35519e0.1686045347.git.quic_varada@quicinc.com>
+ <2cd479f4-e7bc-fe0a-02aa-3429712ffbd1@linaro.org>
 MIME-Version: 1.0
-References: <20230607205714.510012-1-nfraprado@collabora.com> <20230607205714.510012-5-nfraprado@collabora.com>
-In-Reply-To: <20230607205714.510012-5-nfraprado@collabora.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Thu, 8 Jun 2023 15:43:36 +0800
-Message-ID: <CAGXv+5EgP+0fTDhdpnYDCVQAWtWqwKp=Xxh-pHc1137wHoywRQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
-To:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>, kernel@collabora.com,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2cd479f4-e7bc-fe0a-02aa-3429712ffbd1@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: rjXwTsOdRss9RLyu7JxjL2Qd-nzOSBHJ
+X-Proofpoint-ORIG-GUID: rjXwTsOdRss9RLyu7JxjL2Qd-nzOSBHJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-08_04,2023-06-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ suspectscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306080068
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 8, 2023 at 4:57=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
-<nfraprado@collabora.com> wrote:
+On Wed, Jun 07, 2023 at 02:07:31PM +0300, Dmitry Baryshkov wrote:
+> On 07/06/2023 13:48, Varadarajan Narayanan wrote:
+> >Add USB phy and controller related nodes
+> >
+> >SS PHY need two supplies and HS PHY needs three supplies. 0.925V
+> >and 3.3V are from fixed regulators and 1.8V is generated from
+> >PMIC's LDO
+> >
+> >Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> >---
+> >  Changes in v12:
+> >	- Rebase
+> >  Changes in v11:
+> >	- Rename dwc_0 -> usb_0_dwc3
+> >  Changes in v10:
+> >	- Fix regulator definitions
+> >  Changes in v8:
+> >	- Change clocks order to match the bindings
+> >  Changes in v7:
+> >	- Change com_aux -> cfg_ahb
+> >  Changes in v6:
+> >	- Introduce fixed regulators for the phy
+> >	- Resolved all 'make dtbs_check' messages
+> >
+> >  Changes in v5:
+> >	- Fix additional comments
+> >	- Edit nodes to match with qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> >	- 'make dtbs_check' giving the following messages since
+> >	  ipq9574 doesn't have power domains. Hope this is ok
+> >
+> >		/local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: phy@7d000: 'power-domains' is a required property
+> >         	From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+> >		/local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: usb@8a00000: 'power-domains' is a required property
+> >         	From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> >
+> >  Changes in v4:
+> >	- Use newer bindings without subnodes
+> >	- Fix coding style issues
+> >
+> >  Changes in v3:
+> >	- Insert the nodes at proper location
+> >
+> >  Changes in v2:
+> >	- Fixed issues flagged by Krzysztof
+> >	- Fix issues reported by make dtbs_check
+> >	- Remove NOC related clocks (to be added with proper
+> >	  interconnect support)
+> >---
+> >  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 104 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 104 insertions(+)
+> >
+> >diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> >index 0baeb10..8f7c59e 100644
+> >--- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> >+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> >@@ -94,6 +94,24 @@
+> >  		};
+> >  	};
+> >+	fixed_3p3: s3300 {
+> >+		compatible = "regulator-fixed";
+> >+		regulator-min-microvolt = <3300000>;
+> >+		regulator-max-microvolt = <3300000>;
+> >+		regulator-boot-on;
+> >+		regulator-always-on;
+> >+		regulator-name = "fixed_3p3";
+> >+	};
+> >+
+> >+	fixed_0p925: s0925 {
+> >+		compatible = "regulator-fixed";
+> >+		regulator-min-microvolt = <925000>;
+> >+		regulator-max-microvolt = <925000>;
+> >+		regulator-boot-on;
+> >+		regulator-always-on;
+> >+		regulator-name = "fixed_0p925";
+> >+	};
+> >+
 >
-> Add the CLK_VDEC_ACTIVE clock to the vdec clock driver. This clock is
-> enabled by the VPU once it starts decoding.
->
-> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
->
-> ---
->
-> Changes in v2:
-> - Added CLK_IGNORE_UNUSED flag
->
->  drivers/clk/mediatek/clk-mt8183-vdec.c | 5 +++++
->  include/dt-bindings/clock/mt8183-clk.h | 3 ++-
->  2 files changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mt8183-vdec.c b/drivers/clk/mediate=
-k/clk-mt8183-vdec.c
-> index 513b7956cbea..03c4f1acfdb8 100644
-> --- a/drivers/clk/mediatek/clk-mt8183-vdec.c
-> +++ b/drivers/clk/mediatek/clk-mt8183-vdec.c
-> @@ -27,6 +27,10 @@ static const struct mtk_gate_regs vdec1_cg_regs =3D {
->         GATE_MTK(_id, _name, _parent, &vdec0_cg_regs, _shift,   \
->                 &mtk_clk_gate_ops_setclr_inv)
->
-> +#define GATE_VDEC0(_id, _name, _parent, _shift)                \
-> +       GATE_MTK_FLAGS(_id, _name, _parent, &vdec0_cg_regs, _shift,     \
-> +               &mtk_clk_gate_ops_setclr, CLK_IGNORE_UNUSED)
+> These regulators are provided by the board, not by the SoC itself. As such
+> they should go to the board DT files. Please excuse me for not noticing this
+> during earlier review stage. I was too concentrated on not making them
+> non-USB-specific.
 
-I think what you want is a read-only gate clock only used for reading back
-the status. The ops would only have .is_enabled.
+Will move it to board dts.
 
-ChenYu
+Thanks
+Varada
+
+> >  	memory@40000000 {
+> >  		device_type = "memory";
+> >  		/* We expect the bootloader to fill in the size */
+> >@@ -465,6 +483,92 @@
+> >  			status = "disabled";
+> >  		};
+> >+		usb_0_qusbphy: phy@7b000 {
+> >+			compatible = "qcom,ipq9574-qusb2-phy";
+> >+			reg = <0x0007b000 0x180>;
+> >+			#phy-cells = <0>;
+> >+
+> >+			clocks = <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
+> >+				 <&xo_board_clk>;
+> >+			clock-names = "cfg_ahb",
+> >+				      "ref";
+> >+
+> >+			resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
+> >+			status = "disabled";
+> >+		};
+> >+
+> >+		usb_0_qmpphy: phy@7d000 {
+> >+			compatible = "qcom,ipq9574-qmp-usb3-phy";
+> >+			reg = <0x0007d000 0xa00>;
+> >+			#phy-cells = <0>;
+> >+
+> >+			clocks = <&gcc GCC_USB0_AUX_CLK>,
+> >+				 <&xo_board_clk>,
+> >+				 <&gcc GCC_USB0_PHY_CFG_AHB_CLK>,
+> >+				 <&gcc GCC_USB0_PIPE_CLK>;
+> >+			clock-names = "aux",
+> >+				      "ref",
+> >+				      "cfg_ahb",
+> >+				      "pipe";
+> >+
+> >+			resets = <&gcc GCC_USB0_PHY_BCR>,
+> >+				 <&gcc GCC_USB3PHY_0_PHY_BCR>;
+> >+			reset-names = "phy",
+> >+				      "phy_phy";
+> >+
+> >+			status = "disabled";
+> >+
+> >+			#clock-cells = <0>;
+> >+			clock-output-names = "usb0_pipe_clk";
+> >+		};
+> >+
+> >+		usb3: usb@8af8800 {
+> >+			compatible = "qcom,ipq9574-dwc3", "qcom,dwc3";
+> >+			reg = <0x08af8800 0x400>;
+> >+			#address-cells = <1>;
+> >+			#size-cells = <1>;
+> >+			ranges;
+> >+
+> >+			clocks = <&gcc GCC_SNOC_USB_CLK>,
+> >+				 <&gcc GCC_USB0_MASTER_CLK>,
+> >+				 <&gcc GCC_ANOC_USB_AXI_CLK>,
+> >+				 <&gcc GCC_USB0_SLEEP_CLK>,
+> >+				 <&gcc GCC_USB0_MOCK_UTMI_CLK>;
+> >+
+> >+			clock-names = "cfg_noc",
+> >+				      "core",
+> >+				      "iface",
+> >+				      "sleep",
+> >+				      "mock_utmi";
+> >+
+> >+			assigned-clocks = <&gcc GCC_USB0_MASTER_CLK>,
+> >+					  <&gcc GCC_USB0_MOCK_UTMI_CLK>;
+> >+			assigned-clock-rates = <200000000>,
+> >+					       <24000000>;
+> >+
+> >+			interrupts-extended = <&intc GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
+> >+			interrupt-names = "pwr_event";
+> >+
+> >+			resets = <&gcc GCC_USB_BCR>;
+> >+			status = "disabled";
+> >+
+> >+			usb_0_dwc3: usb@8a00000 {
+> >+				compatible = "snps,dwc3";
+> >+				reg = <0x8a00000 0xcd00>;
+> >+				clocks = <&gcc GCC_USB0_MOCK_UTMI_CLK>;
+> >+				clock-names = "ref";
+> >+				interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+> >+				phys = <&usb_0_qusbphy>, <&usb_0_qmpphy>;
+> >+				phy-names = "usb2-phy", "usb3-phy";
+> >+				tx-fifo-resize;
+> >+				snps,is-utmi-l1-suspend;
+> >+				snps,hird-threshold = /bits/ 8 <0x0>;
+> >+				snps,dis_u2_susphy_quirk;
+> >+				snps,dis_u3_susphy_quirk;
+> >+				dr_mode = "host";
+> >+			};
+> >+		};
+> >+
+> >  		intc: interrupt-controller@b000000 {
+> >  			compatible = "qcom,msm-qgic2";
+> >  			reg = <0x0b000000 0x1000>,  /* GICD */
+>
+> --
+> With best wishes
+> Dmitry
+>
