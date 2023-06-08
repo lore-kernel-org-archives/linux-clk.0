@@ -2,110 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 858ACC7EE29
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 08:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 458C8C7EE25
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 09:00:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234806AbjFHIx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jun 2023 04:53:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47292 "EHLO
+        id S234806AbjFHI7o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jun 2023 04:59:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234447AbjFHIxy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 04:53:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D71EF2729;
-        Thu,  8 Jun 2023 01:53:52 -0700 (PDT)
-Received: from [IPV6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab] (unknown [IPv6:2001:b07:2ed:14ed:a962:cd4d:a84:1eab])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 9C8D66606F17;
-        Thu,  8 Jun 2023 09:53:50 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1686214431;
-        bh=96X6k5oqBvIX1dBppWoB2S5z/C5qU+MMBXm3vBPWtl0=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=U3ly+JKpH51mwz8/4HmOI/6l6O91KLGeLtbNFx5lDpKMqv7TQ1mITadLrC40Su0BQ
-         QeRZtJIOhqTf/qwTJm/cqhT5+Cs1sp0y/uUMpZqu0LsaPGIDH0oVMkYtrTQ0THqqWS
-         8/31HkQESvhMEK2XMNloIwjBBUbQzCgQa1fvDLhbn32ipbD0dqkUJM6HsEuAteAkib
-         WYfcG5cleEOcK2/o+RH6gjQqsF0Qjo4AfOZPwUgeWGsX/7LccV0RiClCGDyabE/rd2
-         VzzDqxDow1OjcBisJ9WaIL7Pvhpi33MgY5E+SdEhBPyilu9EIz8kimWqBEhVTMnaIg
-         kYcYMRlXm2qDw==
-Message-ID: <38e5ffa2-93bd-ce70-ec00-6d61bad969c7@collabora.com>
-Date:   Thu, 8 Jun 2023 10:53:47 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v2 4/5] clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>,
-        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
-        <nfraprado@collabora.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>, kernel@collabora.com,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        with ESMTP id S234429AbjFHI7n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 04:59:43 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 508C11984
+        for <linux-clk@vger.kernel.org>; Thu,  8 Jun 2023 01:59:41 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f738f579ceso1909005e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 08 Jun 2023 01:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686214780; x=1688806780;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=HtzbVfqW0SjuZKyPfBVRRJzNRxgu1Q7jWMIx+yfKlSY=;
+        b=OwUHzZAfyLsLDi5eRkoShFrB0mdzg2SB/HuM0M9zJVRq1drRtWiHfoQVh7n7y9NpCW
+         YOZTGpPhEoS6adlGyclhA5D9QlDJFO0wUFGVEd/exvjOuXJHjPzLDUGMDqRUTixOR4o2
+         W6Cf3K6MbNOMKJdDEz48SxlnakQFHbbJF/eDuIunt9jAsTNIBResuP3RVw9Qu1oflCUD
+         9d1cHXYHqK2x3oZUtoLqm8ElvlwvvW1D9qnKjprrpvxKerSxrqCbr6QHkYc3IF1cx3cZ
+         sFhxK1Y1nLNGXORpNpG23ZEe3e27apENyuu0cMFc3VJY+7Qq4ezwC+S8eom3sLQR7Chw
+         ZNww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686214780; x=1688806780;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HtzbVfqW0SjuZKyPfBVRRJzNRxgu1Q7jWMIx+yfKlSY=;
+        b=VBUw2Ay0egGVz+FplTQsnArPolJeJZhVqU6/zkbIyACG/m+BnG57d/YvLeGBjH5a0H
+         eCtV0tCmucn6ko2UPz/Xo0W+GqFCDkYErkJt3nwbqIlMXpJI4ChUoqbcubWqEq6Fxhx8
+         JK9/shOb+q9usYLRPWHT93439B6zVBr8RDp7Ky3VjK9DNUumUZXdOLyPo84Wkvkw2sTv
+         1oi4u1Y33rBNmj+PIZ0oZCkjcxfWlzHfl3Wdn1YKGwZ/htHM3gKen5lEpxrGLix7AjVf
+         0n3BJEhrkFSQeYfglMgm/6TdzT1HaEPja9c9DkFdihosEtgynAWIxCDfuaSMGRmWc+9G
+         Frfw==
+X-Gm-Message-State: AC+VfDxzqcUDa4+FZziWO7cVMcN/Ox6W5cekm5CikiEDfunjUGFcW57W
+        oIDtCRJuMh5wcQKIkWC5v6xQzQ==
+X-Google-Smtp-Source: ACHHUZ7AJ6r0vLW9SSK7hlu7p9NSBYgD9rpD8nNz7jKun8PAWYhsC9D2tlLPOuzTNzAhNm/64JH+7w==
+X-Received: by 2002:adf:e6c8:0:b0:30a:e161:86c6 with SMTP id y8-20020adfe6c8000000b0030ae16186c6mr6060111wrm.51.1686214779694;
+        Thu, 08 Jun 2023 01:59:39 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id c1-20020a5d5281000000b0030aded83385sm955693wrv.27.2023.06.08.01.59.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Jun 2023 01:59:39 -0700 (PDT)
+References: <20230517070215.28463-1-yu.tu@amlogic.com>
+ <20230517070215.28463-4-yu.tu@amlogic.com>
+ <1j5y804q7u.fsf@starbuckisacylon.baylibre.com>
+ <73acf297-3f60-1ce1-2f05-af048aa37199@amlogic.com>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yu Tu <yu.tu@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20230607205714.510012-1-nfraprado@collabora.com>
- <20230607205714.510012-5-nfraprado@collabora.com>
- <CAGXv+5EgP+0fTDhdpnYDCVQAWtWqwKp=Xxh-pHc1137wHoywRQ@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5EgP+0fTDhdpnYDCVQAWtWqwKp=Xxh-pHc1137wHoywRQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     kelvin.zhang@amlogic.com, qi.duan@amlogic.com
+Subject: Re: [PATCH V9 3/4] clk: meson: S4: add support for Amlogic S4 SoC
+ PLL clock driver
+Date:   Thu, 08 Jun 2023 10:53:31 +0200
+In-reply-to: <73acf297-3f60-1ce1-2f05-af048aa37199@amlogic.com>
+Message-ID: <1jttvi9vnq.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 08/06/23 09:43, Chen-Yu Tsai ha scritto:
-> On Thu, Jun 8, 2023 at 4:57 AM Nícolas F. R. A. Prado
-> <nfraprado@collabora.com> wrote:
->>
->> Add the CLK_VDEC_ACTIVE clock to the vdec clock driver. This clock is
->> enabled by the VPU once it starts decoding.
->>
->> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->>
->> ---
->>
->> Changes in v2:
->> - Added CLK_IGNORE_UNUSED flag
->>
->>   drivers/clk/mediatek/clk-mt8183-vdec.c | 5 +++++
->>   include/dt-bindings/clock/mt8183-clk.h | 3 ++-
->>   2 files changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-mt8183-vdec.c b/drivers/clk/mediatek/clk-mt8183-vdec.c
->> index 513b7956cbea..03c4f1acfdb8 100644
->> --- a/drivers/clk/mediatek/clk-mt8183-vdec.c
->> +++ b/drivers/clk/mediatek/clk-mt8183-vdec.c
->> @@ -27,6 +27,10 @@ static const struct mtk_gate_regs vdec1_cg_regs = {
->>          GATE_MTK(_id, _name, _parent, &vdec0_cg_regs, _shift,   \
->>                  &mtk_clk_gate_ops_setclr_inv)
->>
->> +#define GATE_VDEC0(_id, _name, _parent, _shift)                \
->> +       GATE_MTK_FLAGS(_id, _name, _parent, &vdec0_cg_regs, _shift,     \
->> +               &mtk_clk_gate_ops_setclr, CLK_IGNORE_UNUSED)
-> 
-> I think what you want is a read-only gate clock only used for reading back
-> the status. The ops would only have .is_enabled.
 
-Technically, you're right... but I would delay the introduction of a RO GATE_MTK
-clock for later, as it's not worth adding that for just one clock driver usage.
+>>> +
+>>> +static struct clk_regmap s4_fclk_div4 = {
+>>> +     .data = &(struct clk_regmap_gate_data){
+>>> +             .offset = ANACTRL_FIXPLL_CTRL1,
+>>> +             .bit_idx = 21,
+>>> +     },
+>>> +     .hw.init = &(struct clk_init_data){
+>>> +             .name = "fclk_div4",
+>>> +             /*
+>>> +              * For more information, please refer to s4_fixed_pll_dco.
+>>> +              */
+>> While div2 and div3 got an explanation from previous SoCs, they others -
+>> like div4/div7/etc ... - have been able to cope with rw ops so far.
+>> Why is the S4 different for all these clocks ?
+>
+> The chip was changed fixed pll for security reasons.
+>
+> Fixed PLL registers are not writable in the kernel phase. Write of fixed
+> PLL-related register will cause the system to crash.
+>
 
-We're checking if the same can be applied to other SoCs as well - if it can,
-then it would make sense to do that (small, yes), work... the point here is to
-enable MT8183 decoders ASAP to enable decoder tests in KernelCI, along with
-all of the other MediaTek Chromebooks.
+That is definitely worth mentionning
 
-Though, if you think that it is a good idea to add a RO gate right now, I don't
-have any strong opinions against that.
+>> Requiring RO ops (or fishy clock flags) is usually a sign that a clock
+>> is used without an appropriate driver.
+>>
 
-Cheers,
-Angelo
+Neil is currently dealing with the dt-bindings, please
+* Adjust your patchset accordingly
+* Wait for his v2 to land, you'll need it.
+
+>>> +             .ops = &clk_regmap_gate_ro_ops,
+>>> +             .parent_hws = (const struct clk_hw *[]) {
+>>> +                     &s4_fclk_div4_div.hw
+>>> +             },
+>>> +             .num_parents = 1,
+>>> +     },
+>>> +};
+>>> +
