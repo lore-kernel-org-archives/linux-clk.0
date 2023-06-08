@@ -2,205 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDB6C7EE23
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 09:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3996C7EE25
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Jun 2023 09:28:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbjFHJ0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jun 2023 05:26:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34254 "EHLO
+        id S235869AbjFHJ2x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jun 2023 05:28:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232417AbjFHJ0n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 05:26:43 -0400
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9480B2136;
-        Thu,  8 Jun 2023 02:26:39 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4QcJkN0BPlz9spJ;
-        Thu,  8 Jun 2023 11:26:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1686216396;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=WC+E0j9/A465/cq9Z16jbdoVUQlkJxw4cJqWxLv9qaU=;
-        b=srYmoYFaSKsuPxwSQYGXBs0NnVGljK5EyHlibUc5HzP0yvyraFE3vC1ry4lczDZ162FR0Y
-        atte+edyYs0HQ293KnBExruvvmHSZEOyDuraw/dk00jAPkV3xv4PBt3GvOBJGW97GPwvp3
-        /4KYmEJramxTGvUcLVRWWibNpUA5xFpNcZ774E8fP5CgLd/3q764hYuQ8+dt9UK9ueFUSL
-        J5vt0RyFK3vcJsFpekzgVjT1ME9nMF+SR+mufsIuByrl0uHcY0Oi5zX9UDXTIRfs8QCVpE
-        oPrTP6mYed+kLQyxIfJkfukufYSFKx0Plh0nGbcZ0UsGgcQ+DDycw69tf1cJEQ==
-References: <20230605190745.366882-1-frank@oltmanns.dev>
- <20230605190745.366882-2-frank@oltmanns.dev>
- <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Roman Beranek <me@crly.cz>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 1/2] clk: sunxi-ng: nkm: consider alternative parent
- rates when finding rate
-Date:   Wed, 07 Jun 2023 09:39:35 +0200
-In-reply-to: <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
-Message-ID: <875y7y1f0d.fsf@oltmanns.dev>
+        with ESMTP id S235857AbjFHJ2v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 05:28:51 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6817213C;
+        Thu,  8 Jun 2023 02:28:45 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3588QUwG024541;
+        Thu, 8 Jun 2023 09:28:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=A93tllnqdpd1P7mdoUsxMlSaMMTdYZnUoeb8k3ffiwU=;
+ b=XhvoWajNJ19DSdCBl6zE1q+5cGnS1/oR8EYG06A5zrCxJ6CBMI4wahKjG2ERzx59oPLA
+ GaZ0FNbY/ArywlTMBlxCPxqDvdZClOGkhSwjS/9PmiEgTWjM6FUhNf1+QE+uCaFZvzZ/
+ XXQGkqCPMLQvrFw3e/g2umvG6TQ8gU7wdDCRlI4YdfxitTXqQVSm148AhAx+dEIW9GZx
+ KazH5f39kK3Y3VHcxfeiyliCkCTbxnUMeKP9bmMHVO6/pPzHsn19m0kDCjKRuO3B+YhS
+ t4zhGnHGH+J3fx7y4PzbG0GoUhyLlMHlgDSi/JKxudT7G+o+D66Fbj62yn6iRO84EL54 eQ== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r2w551nks-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Jun 2023 09:28:40 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3589SdKX023774
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 8 Jun 2023 09:28:39 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Thu, 8 Jun 2023 02:28:34 -0700
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v13 0/5] Enable IPQ9754 USB
+Date:   Thu, 8 Jun 2023 14:57:59 +0530
+Message-ID: <cover.1686215358.git.quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6_2-Lhlshen1k-WMwJ7H1XCZWofrJfpl
+X-Proofpoint-ORIG-GUID: 6_2-Lhlshen1k-WMwJ7H1XCZWofrJfpl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-08_06,2023-06-07_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxscore=0 suspectscore=0 impostorscore=0 clxscore=1015 bulkscore=0
+ mlxlogscore=684 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306080080
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime,
+This patch series adds the relevant phy and controller
+configurations for enabling USB on IPQ9754
 
-On 2023-06-07 at 08:38:39 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
-> [[PGP Signed Part:Undecided]]
-> On Mon, Jun 05, 2023 at 09:07:44PM +0200, Frank Oltmanns wrote:
->> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
->> parent rate when determining a new rate.
->>
->> To find the best match for the requested rate, perform the following
->> steps for each NKM combination:
->>  - calculate the optimal parent rate,
->>  - find the best parent rate that the parent clock actually supports
->>  - use that parent rate to calculate the effective rate.
->>
->> In case the clk does not support setting the parent rate, use the same
->> algorithm as before.
->>
->> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->> ---
->>  drivers/clk/sunxi-ng/ccu_nkm.c | 40 ++++++++++++++++++++++++++--------
->>  1 file changed, 31 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
->> index a0978a50edae..c71e237226f2 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
->> @@ -16,10 +16,10 @@ struct _ccu_nkm {
->>  	unsigned long	m, min_m, max_m;
->>  };
->>
->> -static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
->> -				       struct _ccu_nkm *nkm)
->> +static unsigned long ccu_nkm_find_best(unsigned long *parent, unsigned long rate,
->> +				       struct _ccu_nkm *nkm, struct clk_hw *parent_hw)
->>  {
->> -	unsigned long best_rate = 0;
->> +	unsigned long best_rate = 0, best_parent_rate = 0, tmp_parent = *parent;
->>  	unsigned long best_n = 0, best_k = 0, best_m = 0;
->>  	unsigned long _n, _k, _m;
->>
->> @@ -28,12 +28,29 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
->>  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
->>  				unsigned long tmp_rate;
->>
->> -				tmp_rate = parent * _n * _k / _m;
->> +				if (parent_hw) {
->
-> NKM clocks always have a parent
->
-> You should test if the CLK_SET_RATE_PARENT flag is set.
+Portions of the patchset have been merged. Please see
+	https://lore.kernel.org/lkml/ZGN9gchu7dRb6QwC@matsya/
 
-ccu_nkm_find_best is called in the following two situations:
- a. from ccu_nkm_set_rate when setting the rate
- b. from ccu_nkm_round_rate when determining the rate
+[v13]:
+	- Move fixed regulator definitions from SoC dtsi to board dts
+	- Remove 'dr_mode' from SoC dtsi
+	- Move 'status' property to the end
 
-In situation a. we never want ccu_nkm_find_best to try different parent
-rates because setting the parent rate is a done deal (at least that's my
-understanding).
+[v12]:
+	- In dtsi usb@8a00000 -> usb@8af8800
 
-In situation b. we only want ccu_nkm_find_best to try different parent
-rates when, as you mentioned, the CLK_SET_RATE_PARENT flag is set.
+[v11]:
+	- Rename dwc_0 -> usb_0_dwc3
+	- Minor change in qcom,sc8280xp-qmp-usb3-uni-phy.yaml to factor in
+	  latest updates to the file
 
-So, what this patch does, it provides a NULL pointer as parent_hw when
-we don't want ccu_nkm_find_best to try alternative parent rates.
+[v10]:
+	- Fix regulator definitions
+	- Address couple of other comments
 
-Is it ok if I add a comment to ccu_nkm_find_best that explains the
-function and explicitly also the parameters?
+[v9]:
+	- Update bindings to make power-domains as optional since
+	  IPQ9574 doesn't have GDSCs
 
-I also thought about using two different functions for the two
-situations. I have no strong opinion which is better.
+[v8]:
+	- Update bindings for the clock name change
+[v7]:
+	- com_aux -> cfg_ahb in patch 7
 
-However, I don't think we should hand over the flags to this function,
-because we'd still only need to provide the parent_hw if we want to find
-the optimal parent rate, so having two parametes for the same purpose
-seems redundant. Unless, there is a rule to not use NULL pointers.
+[v6]:
+        - Incorporated review comments
+	- Resolve make dtbs_check messages
+	- Fixed pcs_usb offset
+	- Board dts file name changed
 
->
->> +					// We must round up the desired parent rate, because the
->> +					// rounding down happens when calculating tmp_rate. If we
->> +					// round down also here, we'd round down twice.
->> +					unsigned long optimal_parent =
->> +							(rate * _m + (_n * _k - 1)) / _n / _k;
->
-> I assume the addition of n * k - 1 is to round up, but I'm not sure we
-> should hack around like that.
->
-> You should compute the ideal parent rate for a given set of timings, and
-> then just call round_rate on it. If the parent wants to round it one way
-> or another, that's the parent concern.
+[v5]:
+        - Incorporated review comments
+	- 'make dtbs_check' giving the following messages since
+	  ipq9574 doesn't have power domains. Hope this is ok
 
-I admit that the comment explaining this is not doing the complexity of
-this issue any justice. Let me try to explain:
+		/local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: phy@7d000: 'power-domains' is a required property
+        	From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml
+		/local/mnt/workspace/varada/varda-linux/arch/arm64/boot/dts/qcom/ipq9574-al02-c7.dtb: usb@8a00000: 'power-domains' is a required property
+        	From schema: /local/mnt/workspace/varada/varda-linux/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
 
-Let's say for our panel the optimal rate for pll-mipi is 449064000. The
-best closest we can get is 449035712 with a parent rate of 217714285
-(n=11, k=3, m=16).
+	- Move qmp phy DT node to newer specification
 
-Eventually, ccu_nkm_find_best is going to be called with 449035712 as
-the rate. If we don't round up, like I proposend, but instead calculate:
-  optimal_parent = rate * m / n / k
-(which is, I think, what you you're proposing) leading to an optimal
-parent of 217714284 (!). We can't get 217714284 from the parent (we
-could get 217714285, but we're not asking for that) so the parent rounds
-down.
+[v4]:
+        - Incorporated review comments
+	- Address all 'make dtbs_check' errors
 
-To make things worse, this story continues for the new "best rate" as
-well.
+[v3]:
+        - Incorporated review comments regarding coding style
 
-In the end, ccu_nkm_find_best claims:
- - the optimal rate for 449064000 is 449035712 (parent=217714285, n=11,
-   k=3, m=16)
- - but ccu_nkm_find_best would claim that the optimal rate for 449035712
-   is 449018181 (parent=235200000, n=7, k=3, m=11)
- - and finally, the optimal rate for 449018181 is 449018180
-   (parent=213818181, n=7, k=3, m=10)
+[v2]:
+        - Incorporated review comments regarding coding style,
+          maintaining sorted order of entries and unused phy register
+          offsets
+        - Removed NOC clock entries from DT node (will be implemented
+          later with interconnect support)
+        - Fixed 'make dtbs_check' errors/warnings
 
-This doesn't seem right to me.
+[v1]:
+        https://lore.kernel.org/linux-arm-msm/5dac3aa4-8dc7-f9eb-5cf3-b361efdc9494@linaro.org/T/
 
-But you're also right, in that we can't just always round up. In a
-hypothetical example that we request a parent rate of 450000000. With
-rounding up, we'd get an optimal parent rate of 218181819 for n=11, k=3,
-m=16. And let's now further claim that the parent could provide exactly
-that rate, we'd end up with a rate of 450000001. So, we'd overshoot,
-which (currently) is not acceptable.
+Varadarajan Narayanan (5):
+  dt-bindings: usb: dwc3: Add IPQ9574 compatible
+  clk: qcom: gcc-ipq9574: Add USB related clocks
+  arm64: dts: qcom: ipq9574: Add USB related nodes
+  arm64: dts: qcom: ipq9574: Add LDO regulator node
+  arm64: dts: qcom: ipq9574: Enable USB
 
-Hmm... I currently can't think of a clever way to solve this other than
-this:
+ .../devicetree/bindings/usb/qcom,dwc3.yaml         |  3 +-
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts        | 48 ++++++++++++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              | 85 ++++++++++++++++++++++
+ drivers/clk/qcom/gcc-ipq9574.c                     | 37 ++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h       |  2 +
+ 5 files changed, 174 insertions(+), 1 deletion(-)
 
-    optimal_parent = (rate * _m + (_n * _k - 1)) / _n / _k;
-    tmp_parent = clk_hw_round_rate(parent_hw, optimal_parent);
-    tmp_rate = tmp_parent * _n * _k / _m;
-    if (tmp_rate > rate) {
-        optimal_parent = rate * m / n / k
-        tmp_parent = clk_hw_round_rate(parent_hw, optimal_parent);
-        tmp_rate = tmp_parent * _n * _k / _m;
-    }
-    if (tmp_parent > optimal_parent)
-        continue;
+-- 
+2.7.4
 
-This seems ugly, but at least it should work in all cases. Any opinions?
-
-Cheers,
-  Frank
-
->
-> Maxime
->
-> [[End of PGP Signed Part]]
