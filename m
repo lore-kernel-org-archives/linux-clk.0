@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B951C7EE2E
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 20:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78A4DC7EE25
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 20:20:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232394AbjFIUUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 16:20:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33064 "EHLO
+        id S232465AbjFIUUc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 16:20:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232406AbjFIUTw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 16:19:52 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6917F4217
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 13:19:36 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f62b552751so2733355e87.3
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jun 2023 13:19:36 -0700 (PDT)
+        with ESMTP id S232448AbjFIUTy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 16:19:54 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAB0C4227
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 13:19:37 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4f629ccb8ebso2748023e87.1
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jun 2023 13:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686341974; x=1688933974;
+        d=linaro.org; s=google; t=1686341976; x=1688933976;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yL7LimSkUpmanSTy0wtlUZtM4pffD5CjvvFdcF8Ze7o=;
-        b=iipCaKbJH2wOrgHLIVyPR8llaR08XQVE2crxmS9sQstw0eCj1njBdvrN1dYEyY1iTB
-         Fd+1UjvXBcMqZu8/zCujhue/IGZ05ax403Z+fj0NrpZ10BZL9O9y3auAOUfdhbwgM3Tn
-         WA86EO6a8KwOE5nNV6FJBfq/VBQsMKyggC6xxzCBkdvCUoQSwEHj7Fw7WKip3sqn/zJ9
-         LmgkFX8t9RH8a9aE9CFKBu3ShIWfotW0NvnSYgg6IlzsntJsnr+/VF+ZzFR2eBocG9+T
-         6ghtJu8zMlxhGv9/eZ1ZPQeYuWNXQvB8SHWBpN+WR15XNAD9q+AH4Nq1Cr2/cx45y9rt
-         UbSQ==
+        bh=o0XnmH13ivRPPHGJLER9uxu6PJxvQI4F3jOrAVZw55g=;
+        b=rpiwSdjfQ9BdDP/DX1r4nfr6hYl7BNN/o18V710tW1zfKxDnABH+ogb2L+I7ZrMMmC
+         0oSGKB4qUpQWAXjkc2Hzf62TnRcQiBFgK8w/sjNssbPJsfaTkyFBilAHWZuW6o0bC1pl
+         TAs/myDrtJUMhsGyH0rCdYx8DyTWggg+COUpJ4ghVyuKKEDsXUIi/DSZxY0GracGfWTV
+         cr3bue8ofQ2wo8EfY5rRfIgjP6Y+DvUuTR52ZilctXM534WshJj9H7F1a6seqTkwbCbt
+         gYXgbWnQoiyNwRqbQtLgjn71IbmYGWEhc2HsOl+WT9UmX+w5hjWelYZV0NcQvojxHNov
+         8+3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686341974; x=1688933974;
+        d=1e100.net; s=20221208; t=1686341976; x=1688933976;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yL7LimSkUpmanSTy0wtlUZtM4pffD5CjvvFdcF8Ze7o=;
-        b=VFTIzv8bpJ6JTsIccZOW+xxDi6MkjIU2y+d2vnH6AQf7olYMQKfNHEq5PbPrfSlftO
-         skBlLSBkUCzy9FOcAH7I6I8X6NDsyTH+7FXjJEaZNotEel5wyECrJZlWlQM8yuqiXpd1
-         CTtegWJr5AexxVECxObJChqCbLKWJXWV0OFBL6PGshNfmrhnjv0bewooL6sDNuYRKkLK
-         QIRGN8r6zqzFRRZ8HN9Y5P7ChXBSW4OxgtH18BdkYjFlFbQi9KfBjkv/RwZrP9YzVp+Z
-         7vOdz5vP7UUjHa0HDnQEnOn0t+eo31zKmDgDz1ApeXClsV13rbLbF8b5lN48uD9/cR2G
-         egiQ==
-X-Gm-Message-State: AC+VfDzBdMzo6CSIqmLvneXgAhubwcmu1WF5CYBWflTcqw2hPbemZQPG
-        N9T5eVwg8IUpHid6rlosBhVAfg==
-X-Google-Smtp-Source: ACHHUZ5NrY8HHg7Qc0dNMwxz5LCD9h5M63yhb9lPsfyXahSOzWiIVCEx/CetVavtaygEmKP6vTt26A==
-X-Received: by 2002:a19:e019:0:b0:4f3:ac64:84d9 with SMTP id x25-20020a19e019000000b004f3ac6484d9mr1754478lfg.20.1686341974540;
-        Fri, 09 Jun 2023 13:19:34 -0700 (PDT)
+        bh=o0XnmH13ivRPPHGJLER9uxu6PJxvQI4F3jOrAVZw55g=;
+        b=eqp23mQV6Ogn8SqR0oxZsL3vh55WIfC69uYUpWio2OHenkhOWXhX8lu7EOXWYcvKFS
+         NCghY0CwLAoOHgTUUqA5MI6djl27QBpTyZuNILtLQ53SqpXwLAaGH9lZ1rj28Gw65l4O
+         qrlAsmedxwJMgqH/wqyf0JBmQDUokwnd1jbLQmx/gERzXRW6PqFMY2AmzCKAUVlroez3
+         fwoyZbRXOGMI5L3O6IPNk81hc2LRxicVlmMdIHupxxccQ8C+nAk1k89qUbazYFxoSgyq
+         BGsjPnPnoH+Rnq2rQtYCn64eEauzsRJs4gndgArMS6OcUZMJOm/7Bw8M808iZYiQsxIW
+         AyWQ==
+X-Gm-Message-State: AC+VfDwfVHbbnFaovARk1WjsDOqlvHm/3IKTYDpTOSNW3BKIJNA5Cuqz
+        gByq5spLYQADAis4zq/fqWNnQg==
+X-Google-Smtp-Source: ACHHUZ7szUoaW+1ILi6JXfR9OAr5Hn1gM4PY3x+rNJBlwZIVQWGxDIqCG6MMMNjfWfB5gaSn/KiADQ==
+X-Received: by 2002:a19:6550:0:b0:4f4:b218:e85f with SMTP id c16-20020a196550000000b004f4b218e85fmr1252389lfj.31.1686341975882;
+        Fri, 09 Jun 2023 13:19:35 -0700 (PDT)
 Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id b18-20020ac25632000000b004f628eb7884sm641349lff.232.2023.06.09.13.19.33
+        by smtp.gmail.com with ESMTPSA id b18-20020ac25632000000b004f628eb7884sm641349lff.232.2023.06.09.13.19.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 13:19:34 -0700 (PDT)
+        Fri, 09 Jun 2023 13:19:35 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Fri, 09 Jun 2023 22:19:20 +0200
-Subject: [PATCH v2 15/22] interconnect: qcom: msm8916: Hook up RPM bus clk
+Date:   Fri, 09 Jun 2023 22:19:21 +0200
+Subject: [PATCH v2 16/22] interconnect: qcom: qcm2290: Hook up RPM bus clk
  definitions
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v2-15-e5934b07d813@linaro.org>
+Message-Id: <20230526-topic-smd_icc-v2-16-e5934b07d813@linaro.org>
 References: <20230526-topic-smd_icc-v2-0-e5934b07d813@linaro.org>
 In-Reply-To: <20230526-topic-smd_icc-v2-0-e5934b07d813@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -71,11 +71,11 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686341953; l=1386;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686341953; l=2388;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=xhlOJEBugQss2pTP3O6oyCRi/KrlETAc0nKSQL7JH4I=;
- b=qbtAUIVOZARp02bUCslV8/25C9+BkepF6LM/2e0NztL8bWhPr26/hT7Ovl7Hh9j5aA7VVbfN6
- sYuvR1AOLo5BuxK25YFdrQlkj5YFcoG8+Ae1ne1niJuH76PzakeXYWp
+ bh=tSBMAPt7cmsb0YEEInMBYypPFAnegUdevAoSi5GlaYA=;
+ b=eij1jtJTLGM5s11Ad7Uh848QYLshxEG0qmBuSFdZUmvK1tri9NY7+/4nrvNJzksPHxbzOQpQ+
+ mjrGiBo/IIDBQEmpS2S777zDWxzZMhglGgXNSSwm9N4eswXh82tCq4d
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
@@ -88,36 +88,60 @@ handling mechanism.
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/interconnect/qcom/msm8916.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/interconnect/qcom/qcm2290.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/interconnect/qcom/msm8916.c b/drivers/interconnect/qcom/msm8916.c
-index 196b05879896..be2a190a8b52 100644
---- a/drivers/interconnect/qcom/msm8916.c
-+++ b/drivers/interconnect/qcom/msm8916.c
-@@ -1231,6 +1231,7 @@ static const struct qcom_icc_desc msm8916_snoc = {
- 	.type = QCOM_ICC_NOC,
- 	.nodes = msm8916_snoc_nodes,
- 	.num_nodes = ARRAY_SIZE(msm8916_snoc_nodes),
-+	.bus_clk_desc = &bus_1_clk,
- 	.regmap_cfg = &msm8916_snoc_regmap_config,
- 	.qos_offset = 0x7000,
- };
-@@ -1259,6 +1260,7 @@ static const struct qcom_icc_desc msm8916_bimc = {
+diff --git a/drivers/interconnect/qcom/qcm2290.c b/drivers/interconnect/qcom/qcm2290.c
+index cb636e67a5a4..2c7a76fab83c 100644
+--- a/drivers/interconnect/qcom/qcm2290.c
++++ b/drivers/interconnect/qcom/qcm2290.c
+@@ -1196,6 +1196,7 @@ static const struct qcom_icc_desc qcm2290_bimc = {
  	.type = QCOM_ICC_BIMC,
- 	.nodes = msm8916_bimc_nodes,
- 	.num_nodes = ARRAY_SIZE(msm8916_bimc_nodes),
+ 	.nodes = qcm2290_bimc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcm2290_bimc_nodes),
 +	.bus_clk_desc = &bimc_clk,
- 	.regmap_cfg = &msm8916_bimc_regmap_config,
+ 	.regmap_cfg = &qcm2290_bimc_regmap_config,
+ 	/* M_REG_BASE() in vendor msm_bus_bimc_adhoc driver */
  	.qos_offset = 0x8000,
- };
-@@ -1328,6 +1330,7 @@ static const struct qcom_icc_desc msm8916_pcnoc = {
+@@ -1251,6 +1252,7 @@ static const struct qcom_icc_desc qcm2290_cnoc = {
  	.type = QCOM_ICC_NOC,
- 	.nodes = msm8916_pcnoc_nodes,
- 	.num_nodes = ARRAY_SIZE(msm8916_pcnoc_nodes),
-+	.bus_clk_desc = &bus_0_clk,
- 	.regmap_cfg = &msm8916_pcnoc_regmap_config,
- 	.qos_offset = 0x7000,
+ 	.nodes = qcm2290_cnoc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcm2290_cnoc_nodes),
++	.bus_clk_desc = &bus_1_clk,
+ 	.regmap_cfg = &qcm2290_cnoc_regmap_config,
+ };
+ 
+@@ -1292,6 +1294,7 @@ static const struct qcom_icc_desc qcm2290_snoc = {
+ 	.type = QCOM_ICC_QNOC,
+ 	.nodes = qcm2290_snoc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcm2290_snoc_nodes),
++	.bus_clk_desc = &bus_2_clk,
+ 	.regmap_cfg = &qcm2290_snoc_regmap_config,
+ 	/* Vendor DT node fab-sys_noc property 'qcom,base-offset' */
+ 	.qos_offset = 0x15000,
+@@ -1306,6 +1309,7 @@ static const struct qcom_icc_desc qcm2290_qup_virt = {
+ 	.type = QCOM_ICC_QNOC,
+ 	.nodes = qcm2290_qup_virt_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcm2290_qup_virt_nodes),
++	.bus_clk_desc = &qup_clk,
+ };
+ 
+ static struct qcom_icc_node * const qcm2290_mmnrt_virt_nodes[] = {
+@@ -1319,6 +1323,7 @@ static const struct qcom_icc_desc qcm2290_mmnrt_virt = {
+ 	.type = QCOM_ICC_QNOC,
+ 	.nodes = qcm2290_mmnrt_virt_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcm2290_mmnrt_virt_nodes),
++	.bus_clk_desc = &mmaxi_0_clk,
+ 	.regmap_cfg = &qcm2290_snoc_regmap_config,
+ 	.qos_offset = 0x15000,
+ };
+@@ -1333,6 +1338,7 @@ static const struct qcom_icc_desc qcm2290_mmrt_virt = {
+ 	.type = QCOM_ICC_QNOC,
+ 	.nodes = qcm2290_mmrt_virt_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcm2290_mmrt_virt_nodes),
++	.bus_clk_desc = &mmaxi_1_clk,
+ 	.regmap_cfg = &qcm2290_snoc_regmap_config,
+ 	.qos_offset = 0x15000,
  };
 
 -- 
