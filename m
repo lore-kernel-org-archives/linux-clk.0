@@ -2,141 +2,421 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D85BC83005
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 12:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85766C7EE29
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 12:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238716AbjFIMKi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 08:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55960 "EHLO
+        id S239243AbjFIMVI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 08:21:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239375AbjFIMKe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 08:10:34 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09EBA3AAD;
-        Fri,  9 Jun 2023 05:10:19 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 0A17E5FD8E;
-        Fri,  9 Jun 2023 15:10:17 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1686312617;
-        bh=ub+fulo7iW/neBWoaW5ppJg+bJ5K5cJ0kpCRCQIV+58=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=bGf8obVJxAgMRZCiOz2F+Ze/a7xIAQF3UFRnjwDDzkegdLuRmDj9i7BPiStEukv9v
-         EjmT3/dbeB7NT5Mnic80UM7CzAm//xD8CYGAnkiEgM4KY6knJGytArllmZWuK0Vudt
-         EhMXXd2gV9w+nrKxV9eHQIXHlOmUt4hvlRtHSRvhgDT1dXVRGgxsV0bMgyQDYFzLbZ
-         8f2onmR9vhHxoy1s7K5x2ftHf9UgoaTb97NbhlEDsbQu/WXRBkLl2VmmAe/7xbd5MJ
-         gIfhd9KD7bsWOUklzGCKwnN9t9d0Kiud1J+aqtqJB6h3Frtg66GE+ef3RqiJvoTXYs
-         UYwZPrH4VgJwA==
-Received: from S-MS-EXCH02.sberdevices.ru (S-MS-EXCH02.sberdevices.ru [172.16.1.5])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  9 Jun 2023 15:10:16 +0300 (MSK)
-Date:   Fri, 9 Jun 2023 15:10:16 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-CC:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 12/18] dt-bindings: clk: amlogic,a1-pll-clkc: expose all
- clock ids
-Message-ID: <20230609121016.4njwpst3mu57fehv@CAB-WSD-L081021>
-References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
- <20230607-topic-amlogic-upstream-clkid-public-migration-v1-12-9676afa6b22c@linaro.org>
+        with ESMTP id S239055AbjFIMVB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 08:21:01 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8D61E50;
+        Fri,  9 Jun 2023 05:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686313259; x=1717849259;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rdh8Kl69+xkYuoast0lKfh0GODJsyTNnmG1WAARcz24=;
+  b=huMAND/Cifi00ywqBWKFQ403Asq2GVGsJDxdaZqaELoF5BuykSzTkMaz
+   +Vhobp94YJV4pNoqrzJ8hv9NDUss8BMVoP0Ha6YG7y2aQiJ7+LfszicZC
+   mtk46/ldcsJJNwnbPsk+lnRJNHjOPmF5SkljG8/rSZ3v14i+KNxeVarpH
+   Fg7mTh+EWiS3IkM1cSjbf0U3KHXRw0jWjOB+/eIKRQEMUTUZJ8H0vK7Ot
+   Ti16P1BmwZlfGBFZjTDwjvzR9umkQfxk8Ce2+XRGi+XfmeOc3q4ukEDiG
+   mKhjlDGKIERXGBVdEW8v4iVVFDyFEVXGAU4u33Q4co27Wx7zUZGHj5Ndh
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10735"; a="337219728"
+X-IronPort-AV: E=Sophos;i="6.00,229,1681196400"; 
+   d="scan'208";a="337219728"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2023 05:20:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10735"; a="710348232"
+X-IronPort-AV: E=Sophos;i="6.00,229,1681196400"; 
+   d="scan'208";a="710348232"
+Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
+  by orsmga002.jf.intel.com with ESMTP; 09 Jun 2023 05:20:46 -0700
+From:   Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+To:     kuba@kernel.org, jiri@resnulli.us, arkadiusz.kubalewski@intel.com,
+        vadfed@meta.com, jonathan.lemon@gmail.com, pabeni@redhat.com
+Cc:     corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
+        vadfed@fb.com, jesse.brandeburg@intel.com,
+        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
+        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
+        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
+        michal.michalik@intel.com, gregkh@linuxfoundation.org,
+        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
+        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
+        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
+        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
+        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
+        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
+        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
+        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, linux-clk@vger.kernel.org,
+        vadim.fedorenko@linux.dev
+Subject: [RFC PATCH v8 00/10] Create common DPLL configuration API
+Date:   Fri,  9 Jun 2023 14:18:43 +0200
+Message-Id: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-12-9676afa6b22c@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/09 07:08:00 #21465535
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 12:56:23PM +0200, Neil Armstrong wrote:
-> Due to a policy change in clock ID bindings handling, expose
-> all the "private" clock IDs to the public clock dt-bindings
-> to move out of the previous maintenance scheme.
-> 
-> This refers to a discussion at [1] & [2] with Krzysztof about
-> the issue with the current maintenance.
-> 
-> It was decided to move every A1 pll ID to the public clock
-> dt-bindings headers to be merged in a single tree so we
-> can safely add new clocks without having merge issues.
-> 
-> [1] https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
-> [2] https://lore.kernel.org/all/2fabe721-7434-43e7-bae5-088a42ba128d@app.fastmail.com/
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/clk/meson/a1-pll.h                      | 15 ---------------
->  include/dt-bindings/clock/amlogic,a1-pll-clkc.h |  5 +++++
->  2 files changed, 5 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
-> index 82570759e6a2..0add1c7ea9f5 100644
-> --- a/drivers/clk/meson/a1-pll.h
-> +++ b/drivers/clk/meson/a1-pll.h
-> @@ -28,19 +28,4 @@
->  /* include the CLKIDs that have been made part of the DT binding */
->  #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
->  
-> -/*
-> - * CLKID index values for internal clocks
-> - *
-> - * These indices are entirely contrived and do not map onto the hardware.
-> - * It has now been decided to expose everything by default in the DT header:
-> - * include/dt-bindings/clock/a1-pll-clkc.h. Only the clocks ids we don't want
-> - * to expose, such as the internal muxes and dividers of composite clocks,
-> - * will remain defined here.
-> - */
-> -#define CLKID_FIXED_PLL_DCO	0
-> -#define CLKID_FCLK_DIV2_DIV	2
-> -#define CLKID_FCLK_DIV3_DIV	3
-> -#define CLKID_FCLK_DIV5_DIV	4
-> -#define CLKID_FCLK_DIV7_DIV	5
-> -
->  #endif /* __A1_PLL_H */
-> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> index 01fb8164ac29..2b660c0f2c9f 100644
-> --- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> @@ -10,7 +10,12 @@
->  #ifndef __A1_PLL_CLKC_H
->  #define __A1_PLL_CLKC_H
->  
-> +#define CLKID_FIXED_PLL_DCO	0
->  #define CLKID_FIXED_PLL		1
-> +#define CLKID_FCLK_DIV2_DIV	2
-> +#define CLKID_FCLK_DIV3_DIV	3
-> +#define CLKID_FCLK_DIV5_DIV	4
-> +#define CLKID_FCLK_DIV7_DIV	5
->  #define CLKID_FCLK_DIV2		6
->  #define CLKID_FCLK_DIV3		7
->  #define CLKID_FCLK_DIV5		8
-> 
-> -- 
-> 2.34.1
-> 
+Implement common API for clock/DPLL configuration and status reporting.
+The API utilises netlink interface as transport for commands and event
+notifications. This API aim to extend current pin configuration and
+make it flexible and easy to cover special configurations.
 
-Reviewed-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Netlink interface is based on ynl spec, it allows use of in-kernel
+tools/net/ynl/cli.py application to control the interface with properly
+formated command and json attribute strings. Here are few command
+examples of how it works with `ice` driver on supported NIC:
+
+- dump dpll devices
+$# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+--dump device-get
+[{'clock-id': 282574471561216,
+  'id': 0,
+  'lock-status': 'unlocked',
+  'mode': 'automatic',
+  'module-name': 'ice',
+  'type': 'eec'},
+ {'clock-id': 282574471561216,
+  'id': 1,
+  'lock-status': 'unlocked',
+  'mode': 'automatic',
+  'module-name': 'ice',
+  'type': 'pps'}]
+
+- get single pin info:
+$# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+--do pin-get --json '{"pin-id":2}'
+{'clock-id': 282574471561216,
+ 'module-name': 'ice',
+ 'pin-board-label': 'C827_0-RCLKA',
+ 'pin-dpll-caps': 6,
+ 'pin-frequency': 1953125,
+ 'pin-id': 2,
+ 'pin-parent': [{'id': 0,
+                 'pin-direction': 'input',
+                 'pin-prio': 11,
+                 'pin-state': 'selectable'},
+                {'id': 1,
+                 'pin-direction': 'input',
+                 'pin-prio': 9,
+                 'pin-state': 'selectable'}],
+ 'pin-type': 'mux'}
+
+- set pin's state on dpll:
+$# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+--do pin-set --json '{"pin-id":2, "pin-parent":{"id":1, "pin-state":2}}'
+
+- set pin's prio on dpll:
+$# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+--do pin-set --json '{"pin-id":2, "pin-parent":{"id":1, "pin-prio":4}}'
+
+- set pin's state on parent pin:
+$# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+--do pin-set --json '{"pin-id":13, \
+                      "pin-parent":{"pin-id":2, "pin-state":1}}'
+
+
+v7 -> v8:
+[0/10] Create common DPLL configuration API
+- reorder the patches in patch series
+- split patch "[RFC PATCH v7 2/8] dpll: Add DPLL framework base functions"
+  into 3 smaller patches for easier review:
+  - [03/10] dpll: core: Add DPLL framework base functions
+  - [04/10] dpll: netlink: Add DPLL framework base functions
+  - [05/10] dpll: api header: Add DPLL framework base
+- add cli.py usage examples in commit message
+
+[01/10] dpll: documentation on DPLL subsystem interface
+- fix DPLL_MODE_MANUAL documentation
+- remove DPLL_MODE_NCO
+- remove DPLL_LOCK_STATUS_CALIBRATING
+- add grepability Use full names of commands, attributes and values of
+  dpll subsystem in the documentation
+- align documentation with changes introduced in v8
+- fix typos
+- fix phrases to better show the intentions
+- move dpll.rst to Documentation/driver-api/
+
+[02/10] dpll: spec: Add Netlink spec in YAML
+- remove unspec attribute values
+- add 10 KHZ and 77,5 KHZ frequency defines
+- fix documentation
+- remove assigned values from subset attributes
+- reorder dpll attributes
+- fix `device` nested attribute usage, device get is not used on pin-get
+- temperature with 3 digit float precision
+- remove enum from subset definitions
+- move pin-direction to pin-dpll tuple/subset
+- remove DPLL_MODE_NCO
+- remove DPLL_LOCK_STATUS_CALIBRATING
+- fix naming scheme od notification interface functions
+- separate notifications for pins
+- rename attribute enum name: dplla -> dpll_a
+- rename pin-idx to pin-id
+- remove attributes: pin-parent-idx, device
+- replace bus-name and dev-name attributes with module-name
+- replace pin-label with 3 new attributes: pin-board-label,
+  pin-panel-label, pin-package-label
+- add device-id-get and pin-id-get commands
+- remove rclk-dev-name atribute
+- rename DPLL_PIN_DIRECTION_SOURCE -> DPLL_PIN_DIRECTION_INPUT
+
+[03/10] dpll: core: Add DPLL framework base functions
+[04/10] dpll: netlink: Add DPLL framework base functions
+[05/10] dpll: api header: Add DPLL framework base
+- remove unspec attributes after removing from dpll netlink spec
+- move pin-direction to pin-dpll tuple
+- pass parent_priv on state_on_pin_<get/set>
+- align with new notification definitions from netlink spec
+- use separated notifications for dpll pins and devices
+- format notification messages as corresponding get netlink commands
+- rename pin-idx to pin-id
+- remove attributes pin-parent-idx, device
+- use DPLL_A_PIN_PARENT to hold information on parent pin or dpll device
+- refactor lookup for pins and dplls for dpll subsystem
+- replace bus-name, dev-name with module-name
+- replace pin-label with 3 new attributes: pin-board-label,
+  pin-panel-label, pin-package-label
+- add device-id-get and pin-id-get commands
+- rename dpll_xa_lock to dpll_lock
+- improve doxygen in dpll_core.c
+- remove unused parent and dev fields from dpll_device struct
+- use u32 for pin_idx in dpll_pin_alloc
+- use driver provided pin properties struct
+- verify pin/dpll owner on registering pin
+- remove const arg modifier for helper _priv functions
+- remove function declaration _get_by_name()
+- update SPDX headers
+- parse netlink set attributes with nlattr array
+- remove rclk-dev-name attribute
+- remove device pointer from dpll_pin_register/dpll_device_register
+- remove redundant doxygen from dpll header
+- use module_name() to get name of module
+- add missing/remove outdated kdocs
+- fix call frequency_set only if available
+- fix call direction_set only for pin-dpll tuple
+
+[06/10] netdev: expose DPLL pin handle for netdevice
+- rebased on top of v8 changes
+  - use dpll_msg_add_pin_handle() in dpll_pin_find_from_nlattr()
+    and dpll_msg_add_pin_parents()
+  - fixed handle to use DPLL_A_PIN_ID and removed temporary comments
+- added documentation record for dpll_pin pointer
+- fixed compilation of net/core/dev.c when CONFIG_DPLL is not enabled
+- adjusted patch description a bit
+
+[07/10] ice: add admin commands to access cgu configuration
+- Remove unspec attributes after removing from dpll netlink spec.
+
+[08/10] ice: implement dpll interface to control cgu
+- remove unspec attributes
+- do not store pin flags received in set commands
+- use pin state field to provide pin state to the caller
+- remove include of uapi header
+- remove redundant check against null arguments
+- propagate lock function return value to the caller
+- use switch case instead of if statements
+- fix dev_dbg to dev_err for error cases
+- fix dpll/pin lookup on dpll subsytem callbacks
+- fix extack of dpll subsystem callbacks
+- remove double negation and variable cast
+- simplify ice_dpll_pin_state_set function
+- pass parent_priv on state_on_pin_<get/set>
+- remove parent hw_idx lookup
+- fix use const qualifier for dpll/dpll_pin ops
+- fix IS_ERR macros usage in ice_dpll
+- add notify previous source state change
+- fix mutex locking on releasing pins
+- use '|=' instead of '+=' when modifing capabilities field
+- rename ice_dpll_register_pins function
+- clock_id function to return clock ID on the stack instead of using
+  an output variable
+- DPLL_LOCK_STATUS_CALIBRATING was removed, return:
+  DPLL_LOCK_STATUS_LOCKED - if dpll was locked
+  DPLL_LOCK_STATUS_LOCKED_HO_ACQ - if dpll was locked and holdover is
+  acquired
+- propagate and use dpll_priv to obtain pf pointer in corresponding
+  functions.
+- remove null check for pf pointer
+- adapt to `dpll: core: fix notification scheme`
+- expose pf related pin to corresponding netdevice
+- fix dpll init error path
+- fix dpll pins naming scheme `source` -> `input`
+- replace pin-label with pin-board-label
+- dpll remove parent and dev fields from dpll_device
+- remove device pointer from dpll_pin_register/dpll_device_register
+- rename DPLL_PIN_DIRECTION_SOURCE -> DPLL_PIN_DIRECTION_INPUT
+
+[09/10] ptp_ocp: implement DPLL ops
+- replace pin-label with pin-board-label
+- dpll remove parent and dev fields from dpll_device
+- remove device pointer from dpll_pin_register/dpll_device_register
+- rename DPLL_PIN_DIRECTION_SOURCE -> DPLL_PIN_DIRECTION_INPUT
+
+[10/10] mlx5: Implement SyncE support using DPLL infrastructure
+- rebased on top of v8 changes:
+  - changed notification scheme
+  - no need to fill pin label
+  - implemented locked_ho_acq status
+  - rename DPLL_PIN_DIRECTION_SOURCE -> DPLL_PIN_DIRECTION_INPUT
+  - remove device pointer from dpll_pin_register/dpll_device_register
+- fixed MSEES register writes
+- adjusted pin state and lock state values reported
+- fixed a white space issue
+
+v6 -> v7:
+ * YAML spec:
+   - remove nested 'pin' attribute
+   - clean up definitions on top of the latest changes
+ * pin object:
+   - pin xarray uses id provided by the driver
+   - remove usage of PIN_IDX_INVALID in set function
+   - source_pin_get() returns object instead of idx
+   - fixes in frequency support API
+ * device and pin operations are const now
+ * small fixes in naming in Makefile and in the functions
+ * single mutex for the subsystem to avoid possible ABBA locks
+ * no special *_priv() helpers anymore, private data is passed as void*
+ * no netlink filters by name anymore, only index is supported
+ * update ptp_ocp and ice drivers to follow new API version
+ * add mlx5e driver as a new customer of the subsystem
+v5 -> v6:
+ * rework pin part to better fit shared pins use cases
+ * add YAML spec to easy generate user-space apps
+ * simple implementation in ptp_ocp is back again
+v4 -> v5:
+ * fix code issues found during last reviews:
+   - replace cookie with clock id
+   - follow one naming schema in dpll subsys
+   - move function comments to dpll_core.c, fix exports
+   - remove single-use helper functions
+   - merge device register with alloc
+   - lock and unlock mutex on dpll device release
+   - move dpll_type to uapi header
+   - rename DPLLA_DUMP_FILTER to DPLLA_FILTER
+   - rename dpll_pin_state to dpll_pin_mode
+   - rename DPLL_MODE_FORCED to DPLL_MODE_MANUAL
+   - remove DPLL_CHANGE_PIN_TYPE enum value
+ * rewrite framework once again (Arkadiusz)
+   - add clock class:
+     Provide userspace with clock class value of DPLL with dpll device
+     dump netlink request. Clock class is assigned by driver allocating
+     a dpll device. Clock class values are defined as specified in:
+     ITU-T G.8273.2/Y.1368.2 recommendation.
+   - dpll device naming schema use new pattern:
+     "dpll_%s_%d_%d", where:
+       - %s - dev_name(parent) of parent device,
+       - %d (1) - enum value of dpll type,
+       - %d (2) - device index provided by parent device.
+   - new muxed/shared pin registration:
+     Let the kernel module to register a shared or muxed pin without
+     finding it or its parent. Instead use a parent/shared pin
+     description to find correct pin internally in dpll_core, simplifing
+     a dpll API
+ * Implement complex DPLL design in ice driver (Arkadiusz)
+ * Remove ptp_ocp driver from the series for now
+v3 -> v4:
+ * redesign framework to make pins dynamically allocated (Arkadiusz)
+ * implement shared pins (Arkadiusz)
+v2 -> v3:
+ * implement source select mode (Arkadiusz)
+ * add documentation
+ * implementation improvements (Jakub)
+v1 -> v2:
+ * implement returning supported input/output types
+ * ptp_ocp: follow suggestions from Jonathan
+ * add linux-clk mailing list
+v0 -> v1:
+ * fix code style and errors
+ * add linux-arm mailing list
+
+Arkadiusz Kubalewski (3):
+  dpll: spec: Add Netlink spec in YAML
+  ice: add admin commands to access cgu configuration
+  ice: implement dpll interface to control cgu
+
+Jiri Pirko (2):
+  netdev: expose DPLL pin handle for netdevice
+  mlx5: Implement SyncE support using DPLL infrastructure
+
+Vadim Fedorenko (5):
+  dpll: documentation on DPLL subsystem interface
+  dpll: core: Add DPLL framework base functions
+  dpll: netlink: Add DPLL framework base functions
+  dpll: api header: Add DPLL framework base functions
+  ptp_ocp: implement DPLL ops
+
+ Documentation/driver-api/dpll.rst             |  458 ++++
+ Documentation/driver-api/index.rst            |    1 +
+ Documentation/netlink/specs/dpll.yaml         |  466 ++++
+ MAINTAINERS                                   |    8 +
+ drivers/Kconfig                               |    2 +
+ drivers/Makefile                              |    1 +
+ drivers/dpll/Kconfig                          |    7 +
+ drivers/dpll/Makefile                         |    9 +
+ drivers/dpll/dpll_core.c                      |  953 ++++++++
+ drivers/dpll/dpll_core.h                      |  104 +
+ drivers/dpll/dpll_netlink.c                   | 1195 ++++++++++
+ drivers/dpll/dpll_netlink.h                   |   44 +
+ drivers/dpll/dpll_nl.c                        |  161 ++
+ drivers/dpll/dpll_nl.h                        |   50 +
+ drivers/net/ethernet/intel/Kconfig            |    1 +
+ drivers/net/ethernet/intel/ice/Makefile       |    3 +-
+ drivers/net/ethernet/intel/ice/ice.h          |    5 +
+ .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  240 +-
+ drivers/net/ethernet/intel/ice/ice_common.c   |  467 ++++
+ drivers/net/ethernet/intel/ice/ice_common.h   |   43 +
+ drivers/net/ethernet/intel/ice/ice_dpll.c     | 2015 +++++++++++++++++
+ drivers/net/ethernet/intel/ice/ice_dpll.h     |  102 +
+ drivers/net/ethernet/intel/ice/ice_lib.c      |   17 +-
+ drivers/net/ethernet/intel/ice/ice_main.c     |    7 +
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.c   |  414 ++++
+ drivers/net/ethernet/intel/ice/ice_ptp_hw.h   |  230 ++
+ drivers/net/ethernet/intel/ice/ice_type.h     |    1 +
+ .../net/ethernet/mellanox/mlx5/core/Kconfig   |    8 +
+ .../net/ethernet/mellanox/mlx5/core/Makefile  |    3 +
+ drivers/net/ethernet/mellanox/mlx5/core/dev.c |   17 +
+ .../net/ethernet/mellanox/mlx5/core/dpll.c    |  432 ++++
+ drivers/ptp/Kconfig                           |    1 +
+ drivers/ptp/ptp_ocp.c                         |  329 ++-
+ include/linux/dpll.h                          |  164 ++
+ include/linux/mlx5/driver.h                   |    2 +
+ include/linux/mlx5/mlx5_ifc.h                 |   59 +-
+ include/linux/netdevice.h                     |   10 +
+ include/uapi/linux/dpll.h                     |  184 ++
+ include/uapi/linux/if_link.h                  |    2 +
+ net/core/dev.c                                |   22 +
+ net/core/rtnetlink.c                          |   38 +
+ 41 files changed, 8216 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/driver-api/dpll.rst
+ create mode 100644 Documentation/netlink/specs/dpll.yaml
+ create mode 100644 drivers/dpll/Kconfig
+ create mode 100644 drivers/dpll/Makefile
+ create mode 100644 drivers/dpll/dpll_core.c
+ create mode 100644 drivers/dpll/dpll_core.h
+ create mode 100644 drivers/dpll/dpll_netlink.c
+ create mode 100644 drivers/dpll/dpll_netlink.h
+ create mode 100644 drivers/dpll/dpll_nl.c
+ create mode 100644 drivers/dpll/dpll_nl.h
+ create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.c
+ create mode 100644 drivers/net/ethernet/intel/ice/ice_dpll.h
+ create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/dpll.c
+ create mode 100644 include/linux/dpll.h
+ create mode 100644 include/uapi/linux/dpll.h
 
 -- 
-Thank you,
-Dmitry
+2.37.3
+
