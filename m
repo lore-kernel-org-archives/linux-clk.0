@@ -2,148 +2,248 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFE2C7EE45
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 15:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C96BC7EE45
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 16:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241722AbjFIPfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 11:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
+        id S242175AbjFIQXA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 12:23:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241904AbjFIPfE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 11:35:04 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2131.outbound.protection.outlook.com [40.107.114.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FC7030D8;
-        Fri,  9 Jun 2023 08:35:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XfyRoyYSHY9YXow63PSZPHYL0CZK/YSRO8NuRoALDVmW9nuzdbbatopr92/NsW36nykVYLJk4ZQ/CSyE2jYOzn0zkWvEiOewR5h4754GWgCRJ6EkiRUGyqG6bRJpRqt6n8/TLS/7ti78yzou4lkbEg4Oo6Qj7gaFrZdAwbBxwdb8FquxWuPzedvdWyyrLLaKHZDUYDlyEXVMuMwrV3Ehn+iQvi51Yytn9uinuYZuFbvV6WVk4gycLFSOZKkpLd4xmvzQU91CHp7Q1uZWfMAu4LANvvGCwMQr5xFRi+vjFAseYZ8T3DxyjS408ahAo3IA4Ud3Gr0xBiaRKPcJC6YYJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TKGcvvHo9S1C6c7Q7mfhEspLX53IYGaOmfbdCmLEAtM=;
- b=knSzFZRQLqTje+SIIkO/hFTl1vTh/mhN3nF8BkwnA+FtMh85/rJNv7W8Z176FImmOAlE+oZghTpBBKDnEBH3AkKo4GhNts8PxVgYPenOvq6rvPXnoZdKxy/GTPYMnanaKxJO1MVZEXyh+FZ/1Zl29iMDdtY7QfPWpeEl2L81Fm2KYTXK9zaWTKenLALISAy/NbxNvkBMviVSqPOfFBLiHbd1eCRmMeolz2/z6r0h4ZHMSIYo6oR7vTW9xUaxfEbQS9N3dhGGvALKa607e6yA3QdFPLfAiFF1BYvvcQX1GuP6Qm/A2DzlTXduo8D3b8877GNVLk52nsJEJ9IkFKDGbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TKGcvvHo9S1C6c7Q7mfhEspLX53IYGaOmfbdCmLEAtM=;
- b=ks+FfH91aogv6F8LoNPYCBM3M/FReB+ib2nWydIwPHxuesBcviWAUGdKRrm9V9E/hdV37ZoMsNC+lht6GxWtWdtRN6tmPL3HqNRgknL6rJg4hk3Bq8utjjLSqOdjjHD/qA8SlFjk7HTRDq2Ei3evSN9Yw1HOlnZGCLMh9H4Fd0o=
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
- by OS3PR01MB10185.jpnprd01.prod.outlook.com (2603:1096:604:1e4::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.42; Fri, 9 Jun
- 2023 15:34:59 +0000
-Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::bd0a:a38d:b4d2:5d2]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
- ([fe80::bd0a:a38d:b4d2:5d2%6]) with mapi id 15.20.6455.039; Fri, 9 Jun 2023
- 15:34:59 +0000
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Wolfram Sang <wsa@kernel.org>
-CC:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v4] i2c: Add i2c_get_match_data()
-Thread-Topic: [PATCH v4] i2c: Add i2c_get_match_data()
-Thread-Index: AQHZmWEvpHHyYQXYEUaO2IMvdgA3Qq+CmnKAgAACa2A=
-Date:   Fri, 9 Jun 2023 15:34:59 +0000
-Message-ID: <OS0PR01MB5922056817E134BE28452F008651A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-References: <20230607165738.138357-1-biju.das.jz@bp.renesas.com>
- <ZINEYYxGBSQ0mKyV@shikoro>
-In-Reply-To: <ZINEYYxGBSQ0mKyV@shikoro>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|OS3PR01MB10185:EE_
-x-ms-office365-filtering-correlation-id: 3e6d87c5-8674-41d4-177d-08db68ff159d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: /+bIT0XYn+8xojw5FtvKlH4g7RhGiQi4VpdOZIpc9momsCbQX7PRfEAJ+qiNhBPkcyn0MfJIscgnudaNDLYUQLyHlOfwxnKzrvYU2yAIVV7Q5mGLuSXrglWPzVP8nSiBlW0iKTZObywSR7IEXj8N7zrXWzEyYE1lt1H9jKW9jwN0eRf1rGECRCX4G2S4MRt43CizxRyUftfnsTFb3cWpDZ+s1/xWjEEAx+Ndw66LemxXv2rSEa9CQNEchqkd/mfUNuP0j3XC5u5PjZMfIHcN0rP/CTYtDOg5bnhTdHKXhmRfvEcJ9sz51rmpChoSg0+cHQhEDEHQzBixVM3SS7ymLpYn1gXAgeQiaYHw5JPZLFYh4Hpx2zRyTzZQUeszUYZa0EBxNU24pvRH7il0ko97sJaNZNvlvJAQRCy/ouPvntUGXyVwQAefvQ3DYQSfJ1nYcMbFhb+Cpt6J9SfErYGCMyd5UZfVBFtgiPA9zF91UMU2x9LJzUlcgVgRq2vXYpKN8Fk6Mm1bVl32/YI54Jo54p96GJLgPhpebRFvc4ocKZ7w013J0WfApLBNcndQg6NGtC8BJK8W6XEmJWhS1XgtsBjObz4ynidSDlY4ZHv2EAFcRtyQ6n8JsT01zYmRLEpN
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(346002)(136003)(366004)(396003)(451199021)(7696005)(55016003)(478600001)(76116006)(4326008)(64756008)(66446008)(66476007)(66946007)(66556008)(316002)(6916009)(52536014)(5660300002)(41300700001)(8936002)(8676002)(54906003)(38100700002)(122000001)(71200400001)(33656002)(26005)(2906002)(4744005)(38070700005)(9686003)(6506007)(86362001)(186003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5gG+wrb8VbmkWHSaN7XTf7XWhbNTtDFTKe1rdlwCbpaEJPQ2VZ/7qnvUpaH3?=
- =?us-ascii?Q?467OhrXQeFnDZzC4cpeiOX/bjEIyLsWbbSNd/sX5LA6iu9rMzXvqC3IlqBdC?=
- =?us-ascii?Q?s+dvIzU17XHzEGvDv6s99PGv0/1M/QHkl8xq7LpQHTOpZnyCn+4nqH5JhB91?=
- =?us-ascii?Q?ATyKuVWENbdRcqqBs553xK408piKYlBmQOrl2qKg06QJyEh7KpM/vnFfWA72?=
- =?us-ascii?Q?OKp5+423KoSw4j+ypH/M7YCsFsq+6fYcK1nLlBZplqr44tF1HlIiiNhQQYKY?=
- =?us-ascii?Q?aTZtaMB8bV+JRSp4i34FcPG8kmY1Dfx2rn+ujCTtyrNVRm500bjkAMCsbh4i?=
- =?us-ascii?Q?KjNxdGUnAje3Oike76+ZPvVdfTTug7gCuWBLpBuEmCGdjvrJHgA2pbtUz1Y7?=
- =?us-ascii?Q?I+1yVRfhq/noedgpKOflgyGCLj0N9H5E2Bqy20iuZFuUst9lP62f7cfzcOI9?=
- =?us-ascii?Q?Yz40H8Xz5Oazcz8kcZUsyXSvvkME+BfupcgtGcIvuXGCwmnjbh1d7+6V0fJS?=
- =?us-ascii?Q?uS2YsbZ/hHWRK6S4ggdTbMJeZH6qpsbFJ6mDIqAvjucWlx8QuqZZXGDtfi8x?=
- =?us-ascii?Q?mHMotkban4HbVTOPh5a9xnjS+tGZCSzJgvKgUiyUx+WRth2vkCGy61VFMwuH?=
- =?us-ascii?Q?i9//tLa/MSz/vXDW/jRGSftz3ssCfY3e7Us+CLos1IaZHTuctgcUMJ5EwHmL?=
- =?us-ascii?Q?cQXsI02bbfnycyV777i2IlzE4PuSR25C2JlPH9eAqmdokftnqUn2BMZBVUqw?=
- =?us-ascii?Q?pMt3SbGW3OfR/XA5YexpqHi8nS3xq7xtxMPxJHSJfySsOLK3Iu1/QhBobeub?=
- =?us-ascii?Q?+Mm3tMOAqo50gsNYEGHlNEism8xCDQ2N/o4b7sHq6iumtYbOOFWe9Qa+ioYm?=
- =?us-ascii?Q?zjzfeOEey3duFMakgF8ntDe6HSDuX9CkeSr7S9kuPSg0Gmn6m4wCQpHT1avp?=
- =?us-ascii?Q?DiFOMHBHuIu3350kI/qe3jgkqPZ+M0S1OiG9CHTux9/OYolb605y8D7yEioP?=
- =?us-ascii?Q?rnB30tEX2Y7yfeJcapTUClVbgE46Mq34suFvVH2AJ5rd+EhWkVz6DsX1Oeru?=
- =?us-ascii?Q?sOkVDbP+MG1cldpkuE5Jan0di3Q274Ab52Hk7lBEHG6YAM0rY9x2ao0yLYoO?=
- =?us-ascii?Q?iItACbrokvk4SeRr2H3Ijj0BW3/FG2K/ZA4IajnIP812bIBRaag1sSA4btLg?=
- =?us-ascii?Q?fCEvRkX5sGx1dJWy8dHE6dwmpXIqYmlKkxx6j1l0WUQoSGoPB7W0hgDemNgB?=
- =?us-ascii?Q?wltszzD+1gSF5WvDROXsCUPR0VVHV9OSK8HBm36hQauEC9ZBTBujRGxYVTbi?=
- =?us-ascii?Q?P0FR4jQu4gyQMtrx50815E1ImpfJEh6MWNlY3toj+2e7Be8lNlFT1PYZln29?=
- =?us-ascii?Q?d5zeF8+OBMOZ0j2wEJi+0oB2rw+d6yQ5JIV+JVo7Lnws/OxD47igZAvZ1pGb?=
- =?us-ascii?Q?xUfseHC7QE35/NBbYdv45wZWPQY6Dg5/qEzDLDjPK+vgV8AZM7+4FkfZjqin?=
- =?us-ascii?Q?M5ODWrEIpaJ4tcnPyl6mOiEMOUuwXifVPuEvfrbp8Q7jPj8hTFsGFbYzT+tw?=
- =?us-ascii?Q?B9Scx9HzFFeZA3Yndte1l42ZQD04UEcf9qzk+/VkxY8f+Tf7jTkdjXxe6oJN?=
- =?us-ascii?Q?0A=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S242137AbjFIQW6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 12:22:58 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4013A9E
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 09:22:41 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-bb3a77abd7bso1928941276.0
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jun 2023 09:22:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686327761; x=1688919761;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=mwQzu1mHmg5s3RKGFVLiYioIdNZ9wrhFOjBtuF+UR3o=;
+        b=OeqWZw34Y6D3kTo5yYID2yBZzJAAQtqpAjCwfyz2PBcyKOWEGB/dLXjUD+499rrI0n
+         1J3XHsBf/izlVlQK1sRykEQSKROn6Hl4Xq7+rh5QHQpNSLNnEIsG37BPydK+BpsRhPsR
+         tf6k2z1MQkyTXtU2A8vHyifUVpFv1ssnBx1+CS6lXoi5wSvMUbhhodAWfTqjQGmecKGQ
+         b05Wq1s6maRCr1AuqWMKXOQY23dOW3wv21iL9cWzvhnFhnYqLYK9wkLtOThpaXsKHXad
+         7LG0W3fFsODO6cW+MHJ1MMF3KQ1xuEn7ouIW7S8Pz8Zdx/4rcUAuqb85jmwP8gdGcu3E
+         WBtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686327761; x=1688919761;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mwQzu1mHmg5s3RKGFVLiYioIdNZ9wrhFOjBtuF+UR3o=;
+        b=DrFI31GXhhRflLl2b+LLgv494N4yELAOhcNk2uR11p9YJ4yE1btq6wlJokuUmANVd4
+         R8ZSliAj/xvCzE1KkM6AO9ueUnGYij2E+j/wFnOLJWjYL7ZuepQ8zDFJ8uC1cAnaDLlO
+         e1Kx27TQGpkCVeePZgI968567mxsOaAzoi9QHvPhgQwkUQuoOZXX4r/d8VQZj+LykEhB
+         Q/OWYQYmsOsj6TQFdUNnyqhhQpJKgiN+iec06OWwGuQzhskq7Bdtcjsxed/rhFsJtE4Z
+         s0VRq5MtHz19P0nRstcSEAi/0Y/Kd1FYw5IDz4GUd69cuopxYDG1JxLKc9LSEvUUPQkF
+         VW6A==
+X-Gm-Message-State: AC+VfDyBajQFwNrr0EkH+8eoNWOKGGw9ORDgMyuilye800rOjJb4N/QJ
+        K2Ch/5lT7If/xS5NSsN0r8P84gLIfENFjdP18lvjyA==
+X-Google-Smtp-Source: ACHHUZ7DcgGfw00xFeO5tg+xstcf0mM87ob4gA9UhI4JskArhrXvT7uOKL98JgUrv1OrQJ5y7tNmkHSsuMQI+Z6RFrg=
+X-Received: by 2002:a81:4744:0:b0:565:e48d:32cf with SMTP id
+ u65-20020a814744000000b00565e48d32cfmr1431353ywa.7.1686327760864; Fri, 09 Jun
+ 2023 09:22:40 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e6d87c5-8674-41d4-177d-08db68ff159d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2023 15:34:59.1030
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sMhlfNoywHVPubjVR6qbpfYerYbDYtDnsPfzvsO0f2MHJQEfLfMRQniHObkRw9521i9lqczV1HpaNLhNczRoUC89T/+cCXyRl9kmqjtkBpc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10185
+References: <20230609115058.9059-1-quic_jkona@quicinc.com> <20230609115058.9059-3-quic_jkona@quicinc.com>
+In-Reply-To: <20230609115058.9059-3-quic_jkona@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Fri, 9 Jun 2023 19:22:29 +0300
+Message-ID: <CAA8EJpr-iKMzYP7HVQV8pzXbxzLvBaq38aovJ5Ffny18yXvJZg@mail.gmail.com>
+Subject: Re: [PATCH V4 2/4] clk: qcom: camcc-sm8550: Add camera clock
+ controller driver for SM8550
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Wolfram Sang,
+On Fri, 9 Jun 2023 at 14:52, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>
+> Add support for the camera clock controller for camera clients to be
+> able to request for camcc clocks on SM8550 platform.
+>
+> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+> Changes since V3:
+>  - No changes
+> Changes since V2:
+>  - No changes
+> Changes since V1:
+>  - Sorted the PLL names in proper order
+>  - Updated all PLL configurations to lower case hex
+>  - Reused evo ops instead of adding new ops for ole pll
+>  - Moved few clocks to separate patch to fix patch too long error
+>
+>  drivers/clk/qcom/Kconfig        |    7 +
+>  drivers/clk/qcom/Makefile       |    1 +
+>  drivers/clk/qcom/camcc-sm8550.c | 3405 +++++++++++++++++++++++++++++++
+>  3 files changed, 3413 insertions(+)
+>  create mode 100644 drivers/clk/qcom/camcc-sm8550.c
+>
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 9cd1f05d436b..85efed78dc9a 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -756,6 +756,13 @@ config SM_CAMCC_8450
+>           Support for the camera clock controller on SM8450 devices.
+>           Say Y if you want to support camera devices and camera functionality.
+>
+> +config SM_CAMCC_8550
+> +       tristate "SM8550 Camera Clock Controller"
+> +       select SM_GCC_8550
+> +       help
+> +         Support for the camera clock controller on SM8550 devices.
+> +         Say Y if you want to support camera devices and camera functionality.
+> +
+>  config SM_DISPCC_6115
+>         tristate "SM6115 Display Clock Controller"
+>         depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 75d035150118..97c8cefc2fd0 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -101,6 +101,7 @@ obj-$(CONFIG_SDX_GCC_75) += gcc-sdx75.o
+>  obj-$(CONFIG_SM_CAMCC_6350) += camcc-sm6350.o
+>  obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
+>  obj-$(CONFIG_SM_CAMCC_8450) += camcc-sm8450.o
+> +obj-$(CONFIG_SM_CAMCC_8550) += camcc-sm8550.o
+>  obj-$(CONFIG_SM_DISPCC_6115) += dispcc-sm6115.o
+>  obj-$(CONFIG_SM_DISPCC_6125) += dispcc-sm6125.o
+>  obj-$(CONFIG_SM_DISPCC_6350) += dispcc-sm6350.o
+> diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
+> new file mode 100644
+> index 000000000000..85f0c1e09b2b
+> --- /dev/null
+> +++ b/drivers/clk/qcom/camcc-sm8550.c
+> @@ -0,0 +1,3405 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include <linux/of_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,sm8550-camcc.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "clk-rcg.h"
+> +#include "clk-regmap.h"
+> +#include "common.h"
+> +#include "gdsc.h"
+> +#include "reset.h"
+> +
+> +enum {
+> +       DT_IFACE,
+> +       DT_BI_TCXO,
+> +};
+> +
+> +enum {
+> +       P_BI_TCXO,
+> +       P_CAM_CC_PLL0_OUT_EVEN,
+> +       P_CAM_CC_PLL0_OUT_MAIN,
+> +       P_CAM_CC_PLL0_OUT_ODD,
+> +       P_CAM_CC_PLL1_OUT_EVEN,
+> +       P_CAM_CC_PLL2_OUT_EVEN,
+> +       P_CAM_CC_PLL2_OUT_MAIN,
+> +       P_CAM_CC_PLL3_OUT_EVEN,
+> +       P_CAM_CC_PLL4_OUT_EVEN,
+> +       P_CAM_CC_PLL5_OUT_EVEN,
+> +       P_CAM_CC_PLL6_OUT_EVEN,
+> +       P_CAM_CC_PLL7_OUT_EVEN,
+> +       P_CAM_CC_PLL8_OUT_EVEN,
+> +       P_CAM_CC_PLL9_OUT_EVEN,
+> +       P_CAM_CC_PLL9_OUT_ODD,
+> +       P_CAM_CC_PLL10_OUT_EVEN,
+> +       P_CAM_CC_PLL11_OUT_EVEN,
+> +       P_CAM_CC_PLL12_OUT_EVEN,
+> +};
+> +
+> +static const struct pll_vco lucid_ole_vco[] = {
+> +       { 249600000, 2300000000, 0 },
+> +};
+> +
+> +static const struct pll_vco rivian_ole_vco[] = {
+> +       { 777000000, 1285000000, 0 },
+> +};
+> +
+> +static const struct alpha_pll_config cam_cc_pll0_config = {
+> +       /* .l includes RINGOSC_CAL_L_VAL, CAL_L_VAL, L_VAL fields */
+> +       .l = 0x4444003e,
 
-> Subject: Re: [PATCH v4] i2c: Add i2c_get_match_data()
->=20
-> On Wed, Jun 07, 2023 at 05:57:38PM +0100, Biju Das wrote:
-> > Add i2c_get_match_data() to get match data for I2C, ACPI and DT-based
-> > matching, so that we can optimize the driver code.
-> >
-> > Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> No further comments, yet I like it, so:
->=20
-> Applied to for-next, thanks!
->=20
-> With one minor change, I hope you are okay with it:
->=20
-> > +	struct device_driver *drv =3D client->dev.driver;
-> > +	struct i2c_driver *driver =3D to_i2c_driver(drv);
->=20
-> Variables 'drv' and 'driver' sounds like it could cause confusion later.
-> I merged the two and eliminated 'drv' that way.
+I'd still insist on not touching the config.l field semantics.
 
-Yes, it is much better.
+> +       .alpha = 0x8000,
+> +       .config_ctl_val = 0x20485699,
+> +       .config_ctl_hi_val = 0x00182261,
+> +       .config_ctl_hi1_val = 0x82aa299c,
+> +       .test_ctl_val = 0x00000000,
+> +       .test_ctl_hi_val = 0x00000003,
+> +       .test_ctl_hi1_val = 0x00009000,
+> +       .test_ctl_hi2_val = 0x00000034,
+> +       .user_ctl_val = 0x00008400,
+> +       .user_ctl_hi_val = 0x00000005,
+> +};
+> +
 
-Cheers,
-Biju
+[skipped the rest, LGTM]
 
+> +
+> +static struct platform_driver cam_cc_sm8550_driver = {
+> +       .probe = cam_cc_sm8550_probe,
+> +       .driver = {
+> +               .name = "cam_cc-sm8550",
+> +               .of_match_table = cam_cc_sm8550_match_table,
+> +       },
+> +};
+> +
+> +static int __init cam_cc_sm8550_init(void)
+> +{
+> +       return platform_driver_register(&cam_cc_sm8550_driver);
+> +}
+> +subsys_initcall(cam_cc_sm8550_init);
+
+As it was pointed out, this driver is built as a module by default.
+Please perform the tesing and cleanup before sending the driver and
+use module_platform_driver.
+
+> +
+> +static void __exit cam_cc_sm8550_exit(void)
+> +{
+> +       platform_driver_unregister(&cam_cc_sm8550_driver);
+> +}
+> +module_exit(cam_cc_sm8550_exit);
+> +
+> +MODULE_DESCRIPTION("QTI CAMCC SM8550 Driver");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.40.1
+>
+
+
+-- 
+With best wishes
+Dmitry
