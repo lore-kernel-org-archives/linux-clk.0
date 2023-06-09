@@ -2,213 +2,222 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5B3C7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 12:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99ED4C7EE43
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 12:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237792AbjFIM4K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 08:56:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56774 "EHLO
+        id S238660AbjFIM5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 08:57:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241145AbjFIMz7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 08:55:59 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B95AF359A;
-        Fri,  9 Jun 2023 05:55:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686315345; x=1717851345;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=umpiFHjRSsvdbUFmv/o8QAntSsc4C5n2e0v8vqrxJz4=;
-  b=Whj03zGqv5DoldehSc6RMQer0l4058q7bPN9sOgA/DxIvJMO2Q0YNizf
-   pneP70vMES1TT0WnqbInpBejbABwe76jLyul8ZVlw7JSp7c9ExiC9AeOX
-   F0ane2hjgzMIdBekMXSMN0Pa804inK03r4tz1NnKHYKGSeUFvU/JxWh40
-   x2z4T2Wp8sIzoXS8jgqU6ZjmY8vi6nE+RAB7es5Ur0ThAxR/HuzQ5741Z
-   HBxsLiu23l7kNns6/cfC2XY7xQry9xl4fUDijquigZCo+5ZCJLwE/qZ+7
-   91qyNJxh6jhb3PMPw7AB/eLRuSNYhhXh6OpQt6EHRrSAu+O7AQA0yCAtQ
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10736"; a="357591860"
-X-IronPort-AV: E=Sophos;i="6.00,229,1681196400"; 
-   d="scan'208";a="357591860"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2023 05:54:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10736"; a="660753482"
-X-IronPort-AV: E=Sophos;i="6.00,229,1681196400"; 
-   d="scan'208";a="660753482"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orsmga003.jf.intel.com with ESMTP; 09 Jun 2023 05:54:43 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Fri, 9 Jun 2023 05:54:43 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Fri, 9 Jun 2023 05:54:42 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23 via Frontend Transport; Fri, 9 Jun 2023 05:54:42 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.109)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.23; Fri, 9 Jun 2023 05:54:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=foB8H/oDZl6ZScedkUPyodUv/fFPtDQrUqNPkVp+UZ1HjWkF38zbsWVYYu+nPOsA/8nMHhgLJgJuJbVgicsQOyH4+BVi8vZFMUWrzFajkrcZ1STK8Dp/YloQHZGS7CdxiCntJbiZQrl2SQC+j4fiyA7yAS7kZp0HQ0pBxg/L7XgwsjJALoNE6krdlH0lPU4b10b38lCFm3+NK3+oZ1oNJPHiuTtkIuzxjF6Ulo1B5rogTIENJty28e6F6yTd6za9oSARfRers9BKIFBljNSLHpFQXTk6wIw7/DXhXSTOZ7zD++apq5+AkLz/i1fEROSen+4AfyeH6PYM2DsF6dI9Vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4OmuCtea3uy2o+gSWzQOm8b2iShoxhNlJhrgiIkG/nY=;
- b=PB4AvLJYV0UOMi05lz3B+b3Q28+WOWhM1Svxy78pT6o06YjyoaFMZ4hstFhtV7lia+6fu/oHWOtH7kfDxYM4cv5AixHPYC/aFSza8deDXJw3EVk3XBin0j+QpzOUVTaLS8aGXfJn5Vz+RRMKwvPnx3CxueGIXW7Qq3pWB4d4HtMTl0A+i+ntAgjd6jM2/0KkRjzA2IvRlD7lXtcRDoK/hL3UsDo9KEPkIRXHfsSnuqopqmfwE/UEmu7tfOMojcFaFNwul4fMUl36I8G0iKb12fen4i6H7ZyRhjcVMVp+QalEf+MFwihG/nJwJUfdvEoLf+SdvJqE6c1nYLz/DGX2cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- MN6PR11MB8194.namprd11.prod.outlook.com (2603:10b6:208:477::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Fri, 9 Jun
- 2023 12:54:20 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::24bd:974b:5c01:83d6]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::24bd:974b:5c01:83d6%3]) with mapi id 15.20.6455.030; Fri, 9 Jun 2023
- 12:54:20 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jakub Kicinski <kuba@kernel.org>, Vadim Fedorenko <vadfed@meta.com>
-CC:     Jiri Pirko <jiri@resnulli.us>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
+        with ESMTP id S239410AbjFIM5h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 08:57:37 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B923A3C38;
+        Fri,  9 Jun 2023 05:57:22 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 3E7655FD25;
+        Fri,  9 Jun 2023 15:57:20 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1686315440;
+        bh=TnB5u6f/uM6MvWUYW/RGWtPuYmF/gHDyP+9UKpAc72g=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=Q4omIM8RcQumx0z3D79cnmpb6unnnqT8wsrvS4BIbAzZFhV1F1S3tj91Ixsw4chfe
+         sd70EbA/Qm/0sdu/3gKDYYy/pNWhkydCw188H7CcNQ66RYgywTL0b+V2eofPAVmghj
+         f84ai88ghC3nHr0cO3zDyFba0CHuldJvI7vBD7Qvi9Gfga1wcfFujQKe8xtnoqiZCa
+         12WVm1GpZI+uJqfHM5hXIAVvWC3eukmhQNZBQuJt7VYwjh+EJ7O2EjO6KAospQ/0S0
+         mIMZFz2jJy15p4jIz3YWCmuqsZnsxISUuMPuPqdm3mlZAvVJE1NpPujZwJ59yFWwwG
+         GtfrVwBJ5do6Q==
+Received: from S-MS-EXCH02.sberdevices.ru (S-MS-EXCH02.sberdevices.ru [172.16.1.5])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Fri,  9 Jun 2023 15:57:19 +0300 (MSK)
+Date:   Fri, 9 Jun 2023 15:57:19 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+CC:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        poros <poros@redhat.com>, mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [RFC PATCH v7 2/8] dpll: Add DPLL framework base functions
-Thread-Topic: [RFC PATCH v7 2/8] dpll: Add DPLL framework base functions
-Thread-Index: AQHZeWdERHWnlPmo9kOdLErcTLxvj69KqfKAgDgGFOA=
-Date:   Fri, 9 Jun 2023 12:54:20 +0000
-Message-ID: <DM6PR11MB465741624AC5C49C4CDEB3AF9B51A@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230428002009.2948020-1-vadfed@meta.com>
-        <20230428002009.2948020-3-vadfed@meta.com>
- <20230504142123.5fdb4e96@kernel.org>
-In-Reply-To: <20230504142123.5fdb4e96@kernel.org>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|MN6PR11MB8194:EE_
-x-ms-office365-filtering-correlation-id: 9a5c91ca-6f73-4aa3-566d-08db68e8a4ba
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: er/J8kg/FTAlxBEooTQ2YjM8MNjE1JfxM3mPXpQ6oUgd11gYeDu5kjFPhnZI6aaiQXPOgyE4Fiuhq0poYFynt1M0DAA66zs6jotIFNEl0kgFUJq8QOU8JkH3MMFYDyGgdo3yPIXbn89GtmRb5S6Qujz7fEKASiP45hXjbk2a3fTd3LC8kYwUighO+IhS655eSWLwX8LBZ+IqUt4gzdxQLrILUx6C0NyW/R+PoAqK7pQo2zqJadu/Bmo36EZIdAv31xChUgSLE5YPRO8QL7l0Tw+DRr2TPL9xJeEe3zLLOxp0QE3Dqg3l/MUdzh9EIX2d1N8M9VAAIPZWl2YUx0QmSSTVFGF9iEUt1OevNYJWlp6XSJJWmqvqfe0c3xS5dUpfjHZr/JGxTpkayGDDiUVgbC19NAOx/CAJaS4uNTsgmObh8+3+dLvyy70pHisj0Ld3/C0ddh+DKaw8srDWcZmtrn4P9fqDIe2CO8NEYP8TmVujK5yikGwCt73MMzyE0RQ5mdCmn9byGZnLvH9po6gV1IDvsYOfCa6uQDUH2ajaWVTKJPHqNKp2MVh+t1HkWbG51q1/4EuFMdZztxizE6D6LgkHhF6uNyWnrW/AhzkWd7bbbgYnxHm6PBgYEEUU2fC2
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(346002)(396003)(136003)(376002)(39860400002)(451199021)(86362001)(8676002)(8936002)(110136005)(7696005)(54906003)(478600001)(41300700001)(55016003)(5660300002)(52536014)(316002)(6506007)(66446008)(26005)(4326008)(66476007)(71200400001)(64756008)(66556008)(76116006)(66946007)(9686003)(186003)(83380400001)(7416002)(2906002)(122000001)(82960400001)(38100700002)(33656002)(38070700005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ghx0rAekN+Lg+plg/xI0fbtiHM+7BCjV58LOPsWXuAadYm1nNNEGqs+fiWQz?=
- =?us-ascii?Q?FPkcmOPKc8d2Ss+Vs0/9KgesRJ5Ofpa3ISWC7EkhEjXaYo2UcRyoGrmjGi1d?=
- =?us-ascii?Q?hZ52EeD+3beHW5v/gmN0Q4Vb/qwmv8Gecfq0mGiKsGDgMJH3hG7yw+I8sdk/?=
- =?us-ascii?Q?oLN7/RlAKPtD5ht5DepgnraEngqAtJEhjkih8iPTQ7zRUBXMf3yA/QdgBJMv?=
- =?us-ascii?Q?y/6oTF9T2KlTpuKs/27RWHBCZZWBE2IaA9t0V08I4bDA8ykXzXP+VfTEPUMt?=
- =?us-ascii?Q?1VFTGCnc+5LT20SLK8YUZyQHJPtoKp4q0lSIjH6FEWGvV4cK8yjiW+xfrk5r?=
- =?us-ascii?Q?I8qF9+D6mM2rZwbK17PYE1iWJsgCm3k2E+pWDpxhBv/1kuMwOfusUBB9bf1N?=
- =?us-ascii?Q?kAikmKzffOam2x6dcbQc8zzHAfy3t6Kh9RbFwl/q07HCpOYpHvnPeatxT0Vt?=
- =?us-ascii?Q?Ya/nH/qylvy85o1XZlFU4tExn5ZjRiD+DaKDhJIhiFJrdjOCsXvesSEJCqcm?=
- =?us-ascii?Q?gb+h4YiARw5Ne/xsjWxKGde5PQRNvOMpMfS+83GgoDQAwMaHKkAcHEL5Xkxd?=
- =?us-ascii?Q?L7Sgy6Ee5pWR+61MlHeWbxctx9MAcNJ5F7J4NO3WbMnDqTgccYtCWsj1OtH3?=
- =?us-ascii?Q?pB88W8azlS4YrJMssPvDQQPfbBewVkCBZKWwT3lRKE+E0lC2LDWQgquwj5zm?=
- =?us-ascii?Q?K+yi96hBQyoRtX1ifz3SsBeBRuVN+KYC4we6Rs12ThLCnY+Qsj8xUC6NoE4J?=
- =?us-ascii?Q?tUYhUeo3ie6Yz3OSZJB/3TFcoY92jRsCntewS+kLJJ/ZekJdYAj3XaCHGoaU?=
- =?us-ascii?Q?Qgak8BkLGd8W9vx3ftZzIVtyJJHFAReclXDGC/vHiNKRZKSV8l4FRU7wHVqt?=
- =?us-ascii?Q?NxFDshWoBjAwcrMH9SerMkHU00G71MnfK8wCjUsrg/YP0rLh9wjS3q8xCSO7?=
- =?us-ascii?Q?adQEIwUfrc6u6AZ2UjRTVua0DQEd+59AfqvOA7374RIscctgZy+mxo6qG2Ub?=
- =?us-ascii?Q?1cQKqSlrQmMZtREFZeQJ0em3CQFu+K5O3I0uIUnPGSHr6+i+k9rRMkJTfT8U?=
- =?us-ascii?Q?pRzffgH/6YbRE5V8hmOX6hG0YH66Jf9DogJQVIik2vZI+2yWa6SXC2bbkNtp?=
- =?us-ascii?Q?NrGzgct6awpzwVfaNbpzct1uarooYSrYtdoWyoU57weCbqjRqw1mURhDGcvc?=
- =?us-ascii?Q?ahghFdiC+SZ+6L5uiyYvVmDPAWfiKUCAixa2dPnqcsA++1H0kuvPTtqa1tfj?=
- =?us-ascii?Q?YYHk8AdVmgOOrnG12NpuO1gmBTzO4gs4nnuSu5S82om3aOoiGOdh9xItbiJ6?=
- =?us-ascii?Q?zzaK82brL2z1ZuVzgWxtBPy+CrdADV3dH0nNzOeRxTWqfVxOc/64d6c9OEAE?=
- =?us-ascii?Q?0TBzg3aSgOMK8g/1u7Xw8rpZTk2JUihQ8hFEFhWJZS+m84A6VZq0IXpPUbnJ?=
- =?us-ascii?Q?R9cN0t08mtlt4+AM0BZW5/FVMFuBqPTibYs+UepXNrbxGDgZ+3CTwetdXJiD?=
- =?us-ascii?Q?MwUqkvejcVPrnz4yzKxxIWQTxzpsmAj2T23uas+NZYjnFGGb75ortno/CZq+?=
- =?us-ascii?Q?ir8s6B9/aPscKfFMVmRJzkINqGRz5P5cBicEJx0w1eO5Sj8rJun0wmVFGiBn?=
- =?us-ascii?Q?rQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 03/18] clk: meson: migrate a1 clock drivers out of
+ hw_onecell_data to drop NR_CLKS
+Message-ID: <20230609125719.ji2vvcvwslrzu2oc@CAB-WSD-L081021>
+References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
+ <20230607-topic-amlogic-upstream-clkid-public-migration-v1-3-9676afa6b22c@linaro.org>
+ <1jlegu9l5d.fsf@starbuckisacylon.baylibre.com>
+ <638206ba-e2da-bb8e-a2e4-138af84648b4@linaro.org>
+ <20230609114847.x24by2foebojbchq@CAB-WSD-L081021>
+ <04791890-56f3-e620-1660-e8ed80eb5752@linaro.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a5c91ca-6f73-4aa3-566d-08db68e8a4ba
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2023 12:54:20.8296
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: A41nV1pw3snTm5opuo6/PtAE7g/0QevMW9zGafvE6b2PU2tj45uiruvEFr9lHdAFHGs1EJrkU038eYa9I7m4W5NpTzCiMg7FrKW8XkE9io0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8194
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <04791890-56f3-e620-1660-e8ed80eb5752@linaro.org>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/09 10:36:00 #21466178
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->From: Jakub Kicinski <kuba@kernel.org>
->Sent: Thursday, May 4, 2023 11:21 PM
->
->On Thu, 27 Apr 2023 17:20:03 -0700 Vadim Fedorenko wrote:
->> +/**
->> + * struct dpll_pin - structure for a dpll pin
->> + * @idx:		unique idx given by alloc on global pin's XA
->> + * @dev_driver_id:	id given by dev driver
->> + * @clock_id:		clock_id of creator
->> + * @module:		module of creator
->> + * @dpll_refs:		hold referencees to dplls that pin is registered
->with
->> + * @pin_refs:		hold references to pins that pin is registered with
->> + * @prop:		properties given by registerer
->> + * @rclk_dev_name:	holds name of device when pin can recover clock
->from it
->> + * @refcount:		refcount
->> + **/
->> +struct dpll_pin {
->> +	u32 id;
->> +	u32 pin_idx;
->> +	u64 clock_id;
->> +	struct module *module;
->> +	struct xarray dpll_refs;
->> +	struct xarray parent_refs;
->> +	struct dpll_pin_properties prop;
->> +	char *rclk_dev_name;
->> +	refcount_t refcount;
->> +};
->
->The kdoc for structures is quite out of date, please run
->./scripts/kernel-doc -none $DPLL_FILES
->
+On Fri, Jun 09, 2023 at 02:47:04PM +0200, Neil Armstrong wrote:
+> Hi,
+> 
+> On 09/06/2023 13:48, Dmitry Rokosov wrote:
+> > Hello Neil,
+> > 
+> > On Thu, Jun 08, 2023 at 02:53:50PM +0200, Neil Armstrong wrote:
+> > > On 08/06/2023 14:45, Jerome Brunet wrote:
+> > > > > +struct meson_a1_pll_clks {
+> > > > > +	struct clk_hw **hw_clks;
+> > > > > +	unsigned int hw_clk_num;
+> > > > > +};
+> > > > > +
+> > > > > +static struct meson_a1_pll_clks a1_pll_clks = {
+> > > > > +	.hw_clks = a1_pll_hw_clks,
+> > > > > +	.hw_clk_num = ARRAY_SIZE(a1_pll_hw_clks),
+> > > > > +};
+> > > > > +
+> > > > > +static struct clk_hw *meson_a1_pll_hw_get(struct of_phandle_args *clkspec, void *clk_data)
+> > > > > +{
+> > > > > +	const struct meson_a1_pll_clks *data = clk_data;
+> > > > > +	unsigned int idx = clkspec->args[0];
+> > > > > +
+> > > > > +	if (idx >= data->hw_clk_num) {
+> > > > > +		pr_err("%s: invalid index %u\n", __func__, idx);
+> > > > > +		return ERR_PTR(-EINVAL);
+> > > > > +	}
+> > > > > +
+> > > > > +	return data->hw_clks[idx];
+> > > > > +}
+> > > > 
+> > > > I'd prefer to have a single struct type and and single custom
+> > > > callback for the different SoC please.
+> > > 
+> > > Sure, I've written a common code for that, but I have a hard time finding
+> > > a proper naming for it... so I choosed meson-clkc since it could have
+> > > more common helper code for duplicated code over the clk driver:
+> > > 
+> > > ===================================><============================================================================
+> > > diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> > > index 8ce846fdbe43..9070dcfd9e71 100644
+> > > --- a/drivers/clk/meson/Kconfig
+> > > +++ b/drivers/clk/meson/Kconfig
+> > > @@ -30,6 +30,9 @@ config COMMON_CLK_MESON_VID_PLL_DIV
+> > >   	tristate
+> > >   	select COMMON_CLK_MESON_REGMAP
+> > > 
+> > > +config COMMON_CLK_MESON_CLKC
+> > > +	tristate
+> > > +
+> > >   config COMMON_CLK_MESON_AO_CLKC
+> > >   	tristate
+> > >   	select COMMON_CLK_MESON_REGMAP
+> > > diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> > > index d5288662881d..13c6db466986 100644
+> > > --- a/drivers/clk/meson/Makefile
+> > > +++ b/drivers/clk/meson/Makefile
+> > > @@ -1,6 +1,7 @@
+> > >   # SPDX-License-Identifier: GPL-2.0-only
+> > >   # Amlogic clock drivers
+> > > 
+> > > +obj-$(CONFIG_COMMON_CLK_MESON_CLKC) += meson-clkc.o
+> > >   obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
+> > >   obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
+> > >   obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
+> > > diff --git a/drivers/clk/meson/meson-clkc.c b/drivers/clk/meson/meson-clkc.c
+> > > new file mode 100644
+> > > index 000000000000..fa98b9d09011
+> > > --- /dev/null
+> > > +++ b/drivers/clk/meson/meson-clkc.c
+> > > @@ -0,0 +1,25 @@
+> > > +// SPDX-License-Identifier: GPL-2.0+
+> > > +/*
+> > > + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+> > > + */
+> > > +
+> > > +#include <linux/of_device.h>
+> > > +#include <linux/clk-provider.h>
+> > > +#include <linux/module.h>
+> > > +#include "meson-clkc.h"
+> > > +
+> > > +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
+> > > +{
+> > > +	const struct meson_clk_hw_data *data = clk_hw_data;
+> > > +	unsigned int idx = clkspec->args[0];
+> > > +
+> > > +	if (idx >= data->num) {
+> > > +		pr_err("%s: invalid index %u\n", __func__, idx);
+> > > +		return ERR_PTR(-EINVAL);
+> > > +	}
+> > > +
+> > > +	return data->hws[idx];
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(meson_clk_hw_get);
+> > > +
+> > > +MODULE_LICENSE("GPL v2");
+> > > diff --git a/drivers/clk/meson/meson-clkc.h b/drivers/clk/meson/meson-clkc.h
+> > > new file mode 100644
+> > > index 000000000000..e3bad2aa17eb
+> > > --- /dev/null
+> > > +++ b/drivers/clk/meson/meson-clkc.h
+> > > @@ -0,0 +1,19 @@
+> > > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> > > +/*
+> > > + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+> > > + */
+> > > +
+> > > +#ifndef __MESON_HW_CLKC_H__
+> > > +#define __MESON_HW_CLKC_H__
+> > > +
+> > > +#include <linux/of_device.h>
+> > > +#include <linux/clk-provider.h>
+> > > +
+> > > +struct meson_clk_hw_data {
+> > > +	struct clk_hw	**hws;
+> > > +	unsigned int	num;
+> > > +};
+> > > +
+> > > +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
+> > > +
+> > > +#endif
+> > > ===================================><============================================================================
+> > > 
+> > > If it's ok I'll send a v2 using this.
+> > > 
+> > > Thanks,
+> > > Neil
+> > 
+> > In addition, I propose consolidating the probe() routine of the a1
+> > clocks into a common part, which can be utilized for s4 and other
+> > similar clocks. This solution was presented in the early a1 review
+> > stages of this patch set.
+> > 
+> > https://lore.kernel.org/linux-amlogic/20221201225703.6507-7-ddrokosov@sberdevices.ru/
+> > 
+> > Maybe, it can be generalized for the all meson clock controller drivers.
+> > 
+> 
+> Sure, the goal of that is to get rid of NR_CLKS & private IDS only,
+> then yes afterwards any common clkc function will be welcome !
+> 
+> Neil
+> 
 
-Done.
+Understood, I fully endorse and support this approach!
 
->> +/**
->> + * dpll_device_notify - notify on dpll device change
->> + * @dpll: dpll device pointer
->> + * @attr: changed attribute
->> + *
->> + * Broadcast event to the netlink multicast registered listeners.
->> + *
->> + * Return:
->> + * * 0 - success
->> + * * negative - error
->> + */
->
->Let's move the kdoc to the implementation. I believe that's
->the preferred kernel coding style.
-
-Sure, fixed.
-
+-- 
 Thank you,
-Arkadiusz
+Dmitry
