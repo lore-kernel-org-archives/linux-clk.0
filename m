@@ -2,219 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876A9C7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 15:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFE2C7EE45
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 15:35:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238515AbjFIPcJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 11:32:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60482 "EHLO
+        id S241722AbjFIPfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 11:35:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231916AbjFIPcI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 11:32:08 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F1CA19B
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 08:32:07 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-3f7fc9014fdso14514375e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jun 2023 08:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686324726; x=1688916726;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G1mhn381wGPq9VsfFUBH75JUbhAKYMmZAsIxZ0NhEH8=;
-        b=fPfahtDhAJMzJoNJVTccQv7orfyS/dgzun65AdxRuRSsxcpbEkPL/IjmLNcrvhlODs
-         KV9h/VpBXaPTKq5BYEWG30cPWUto9/0w2ujcb0PPSP5LpHwAhb8WU7RTXiOnZKVKkYAF
-         JTUd/K+GHh+yOrbcEuJDZmgmK7qpYlbjIUSnoNFiGVgsU5UlL4D9zYTsUkKdHY9uyyZm
-         EIG23rSUT2IH1dLUIFQyiwc/zkjbMJyIzLK+T73PUY7rb3ItLp8XWvqa69a50zk4/tXy
-         RBWiSjsbRfLNUCsXXKlXj3f8Dc9FTTkUciCsfwtIOwT8UkSfhWTjz8mZ79XUfFsy6RoZ
-         nkPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686324726; x=1688916726;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G1mhn381wGPq9VsfFUBH75JUbhAKYMmZAsIxZ0NhEH8=;
-        b=eahKcpwb0Xm2hhfmRdpoqf+Kedi3MGrgKja+1yXPY3bJ4LuylcJDqbsu6Z4kxnp91X
-         hb4BkLeXTBNgHI744nkA6fBl27Isu85T+BGNDEJnZCv3l3IXKKc9NghgMRdXCQrd2A41
-         mikn+ZRDpZGeOzyOfu97j2r3XOQH8QvZTEj7ZDK4JXLvdWAwjK1i4a+kEj3Pj7JzKePe
-         IsfrV3jvKUwvQcDIBEaA7t+qjXrYxPc5WohieXt+X8LqGfQ5Rb1PaCUr19NhBmOiSVm4
-         WS/UMEzD8ook+Cu77WxiEdjqPfWHFEvSL+cuBmlRXT4cO1Qy19FhahA2MA9JNON8Pf0e
-         CUFw==
-X-Gm-Message-State: AC+VfDyGliGEoImr3pSee1l0lJTiY+yWiV/dlWymI6lzxlbjsDjjTrM9
-        hbrRpQ7pimZWas25Ffbrv+OSkQ==
-X-Google-Smtp-Source: ACHHUZ7Po/UKSSzifvbKjlrEYfqLwnw9C7rwIkJpErr95fAz+R4+DXk8WHplcmI40TSbk3pmILRgow==
-X-Received: by 2002:a1c:790f:0:b0:3f7:e629:9f3 with SMTP id l15-20020a1c790f000000b003f7e62909f3mr1145744wme.16.1686324725726;
-        Fri, 09 Jun 2023 08:32:05 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:5c40:3a0f:b23:350f? ([2a01:e0a:982:cbb0:5c40:3a0f:b23:350f])
-        by smtp.gmail.com with ESMTPSA id l19-20020a7bc453000000b003f42328b5d9sm2960711wmi.39.2023.06.09.08.32.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jun 2023 08:32:05 -0700 (PDT)
-Message-ID: <c76c6611-9c8c-27e1-3b60-1ec677bd6ad3@linaro.org>
-Date:   Fri, 9 Jun 2023 17:32:04 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 03/18] clk: meson: migrate a1 clock drivers out of
- hw_onecell_data to drop NR_CLKS
-Content-Language: en-US
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S241904AbjFIPfE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 11:35:04 -0400
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2131.outbound.protection.outlook.com [40.107.114.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FC7030D8;
+        Fri,  9 Jun 2023 08:35:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XfyRoyYSHY9YXow63PSZPHYL0CZK/YSRO8NuRoALDVmW9nuzdbbatopr92/NsW36nykVYLJk4ZQ/CSyE2jYOzn0zkWvEiOewR5h4754GWgCRJ6EkiRUGyqG6bRJpRqt6n8/TLS/7ti78yzou4lkbEg4Oo6Qj7gaFrZdAwbBxwdb8FquxWuPzedvdWyyrLLaKHZDUYDlyEXVMuMwrV3Ehn+iQvi51Yytn9uinuYZuFbvV6WVk4gycLFSOZKkpLd4xmvzQU91CHp7Q1uZWfMAu4LANvvGCwMQr5xFRi+vjFAseYZ8T3DxyjS408ahAo3IA4Ud3Gr0xBiaRKPcJC6YYJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TKGcvvHo9S1C6c7Q7mfhEspLX53IYGaOmfbdCmLEAtM=;
+ b=knSzFZRQLqTje+SIIkO/hFTl1vTh/mhN3nF8BkwnA+FtMh85/rJNv7W8Z176FImmOAlE+oZghTpBBKDnEBH3AkKo4GhNts8PxVgYPenOvq6rvPXnoZdKxy/GTPYMnanaKxJO1MVZEXyh+FZ/1Zl29iMDdtY7QfPWpeEl2L81Fm2KYTXK9zaWTKenLALISAy/NbxNvkBMviVSqPOfFBLiHbd1eCRmMeolz2/z6r0h4ZHMSIYo6oR7vTW9xUaxfEbQS9N3dhGGvALKa607e6yA3QdFPLfAiFF1BYvvcQX1GuP6Qm/A2DzlTXduo8D3b8877GNVLk52nsJEJ9IkFKDGbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TKGcvvHo9S1C6c7Q7mfhEspLX53IYGaOmfbdCmLEAtM=;
+ b=ks+FfH91aogv6F8LoNPYCBM3M/FReB+ib2nWydIwPHxuesBcviWAUGdKRrm9V9E/hdV37ZoMsNC+lht6GxWtWdtRN6tmPL3HqNRgknL6rJg4hk3Bq8utjjLSqOdjjHD/qA8SlFjk7HTRDq2Ei3evSN9Yw1HOlnZGCLMh9H4Fd0o=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by OS3PR01MB10185.jpnprd01.prod.outlook.com (2603:1096:604:1e4::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.42; Fri, 9 Jun
+ 2023 15:34:59 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::bd0a:a38d:b4d2:5d2]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::bd0a:a38d:b4d2:5d2%6]) with mapi id 15.20.6455.039; Fri, 9 Jun 2023
+ 15:34:59 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Wolfram Sang <wsa@kernel.org>
+CC:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
- <20230607-topic-amlogic-upstream-clkid-public-migration-v1-3-9676afa6b22c@linaro.org>
- <1jlegu9l5d.fsf@starbuckisacylon.baylibre.com>
- <638206ba-e2da-bb8e-a2e4-138af84648b4@linaro.org>
- <1jwn0c672d.fsf@starbuckisacylon.baylibre.com>
-Organization: Linaro Developer Services
-In-Reply-To: <1jwn0c672d.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v4] i2c: Add i2c_get_match_data()
+Thread-Topic: [PATCH v4] i2c: Add i2c_get_match_data()
+Thread-Index: AQHZmWEvpHHyYQXYEUaO2IMvdgA3Qq+CmnKAgAACa2A=
+Date:   Fri, 9 Jun 2023 15:34:59 +0000
+Message-ID: <OS0PR01MB5922056817E134BE28452F008651A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20230607165738.138357-1-biju.das.jz@bp.renesas.com>
+ <ZINEYYxGBSQ0mKyV@shikoro>
+In-Reply-To: <ZINEYYxGBSQ0mKyV@shikoro>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS0PR01MB5922:EE_|OS3PR01MB10185:EE_
+x-ms-office365-filtering-correlation-id: 3e6d87c5-8674-41d4-177d-08db68ff159d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: /+bIT0XYn+8xojw5FtvKlH4g7RhGiQi4VpdOZIpc9momsCbQX7PRfEAJ+qiNhBPkcyn0MfJIscgnudaNDLYUQLyHlOfwxnKzrvYU2yAIVV7Q5mGLuSXrglWPzVP8nSiBlW0iKTZObywSR7IEXj8N7zrXWzEyYE1lt1H9jKW9jwN0eRf1rGECRCX4G2S4MRt43CizxRyUftfnsTFb3cWpDZ+s1/xWjEEAx+Ndw66LemxXv2rSEa9CQNEchqkd/mfUNuP0j3XC5u5PjZMfIHcN0rP/CTYtDOg5bnhTdHKXhmRfvEcJ9sz51rmpChoSg0+cHQhEDEHQzBixVM3SS7ymLpYn1gXAgeQiaYHw5JPZLFYh4Hpx2zRyTzZQUeszUYZa0EBxNU24pvRH7il0ko97sJaNZNvlvJAQRCy/ouPvntUGXyVwQAefvQ3DYQSfJ1nYcMbFhb+Cpt6J9SfErYGCMyd5UZfVBFtgiPA9zF91UMU2x9LJzUlcgVgRq2vXYpKN8Fk6Mm1bVl32/YI54Jo54p96GJLgPhpebRFvc4ocKZ7w013J0WfApLBNcndQg6NGtC8BJK8W6XEmJWhS1XgtsBjObz4ynidSDlY4ZHv2EAFcRtyQ6n8JsT01zYmRLEpN
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(376002)(39860400002)(346002)(136003)(366004)(396003)(451199021)(7696005)(55016003)(478600001)(76116006)(4326008)(64756008)(66446008)(66476007)(66946007)(66556008)(316002)(6916009)(52536014)(5660300002)(41300700001)(8936002)(8676002)(54906003)(38100700002)(122000001)(71200400001)(33656002)(26005)(2906002)(4744005)(38070700005)(9686003)(6506007)(86362001)(186003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5gG+wrb8VbmkWHSaN7XTf7XWhbNTtDFTKe1rdlwCbpaEJPQ2VZ/7qnvUpaH3?=
+ =?us-ascii?Q?467OhrXQeFnDZzC4cpeiOX/bjEIyLsWbbSNd/sX5LA6iu9rMzXvqC3IlqBdC?=
+ =?us-ascii?Q?s+dvIzU17XHzEGvDv6s99PGv0/1M/QHkl8xq7LpQHTOpZnyCn+4nqH5JhB91?=
+ =?us-ascii?Q?ATyKuVWENbdRcqqBs553xK408piKYlBmQOrl2qKg06QJyEh7KpM/vnFfWA72?=
+ =?us-ascii?Q?OKp5+423KoSw4j+ypH/M7YCsFsq+6fYcK1nLlBZplqr44tF1HlIiiNhQQYKY?=
+ =?us-ascii?Q?aTZtaMB8bV+JRSp4i34FcPG8kmY1Dfx2rn+ujCTtyrNVRm500bjkAMCsbh4i?=
+ =?us-ascii?Q?KjNxdGUnAje3Oike76+ZPvVdfTTug7gCuWBLpBuEmCGdjvrJHgA2pbtUz1Y7?=
+ =?us-ascii?Q?I+1yVRfhq/noedgpKOflgyGCLj0N9H5E2Bqy20iuZFuUst9lP62f7cfzcOI9?=
+ =?us-ascii?Q?Yz40H8Xz5Oazcz8kcZUsyXSvvkME+BfupcgtGcIvuXGCwmnjbh1d7+6V0fJS?=
+ =?us-ascii?Q?uS2YsbZ/hHWRK6S4ggdTbMJeZH6qpsbFJ6mDIqAvjucWlx8QuqZZXGDtfi8x?=
+ =?us-ascii?Q?mHMotkban4HbVTOPh5a9xnjS+tGZCSzJgvKgUiyUx+WRth2vkCGy61VFMwuH?=
+ =?us-ascii?Q?i9//tLa/MSz/vXDW/jRGSftz3ssCfY3e7Us+CLos1IaZHTuctgcUMJ5EwHmL?=
+ =?us-ascii?Q?cQXsI02bbfnycyV777i2IlzE4PuSR25C2JlPH9eAqmdokftnqUn2BMZBVUqw?=
+ =?us-ascii?Q?pMt3SbGW3OfR/XA5YexpqHi8nS3xq7xtxMPxJHSJfySsOLK3Iu1/QhBobeub?=
+ =?us-ascii?Q?+Mm3tMOAqo50gsNYEGHlNEism8xCDQ2N/o4b7sHq6iumtYbOOFWe9Qa+ioYm?=
+ =?us-ascii?Q?zjzfeOEey3duFMakgF8ntDe6HSDuX9CkeSr7S9kuPSg0Gmn6m4wCQpHT1avp?=
+ =?us-ascii?Q?DiFOMHBHuIu3350kI/qe3jgkqPZ+M0S1OiG9CHTux9/OYolb605y8D7yEioP?=
+ =?us-ascii?Q?rnB30tEX2Y7yfeJcapTUClVbgE46Mq34suFvVH2AJ5rd+EhWkVz6DsX1Oeru?=
+ =?us-ascii?Q?sOkVDbP+MG1cldpkuE5Jan0di3Q274Ab52Hk7lBEHG6YAM0rY9x2ao0yLYoO?=
+ =?us-ascii?Q?iItACbrokvk4SeRr2H3Ijj0BW3/FG2K/ZA4IajnIP812bIBRaag1sSA4btLg?=
+ =?us-ascii?Q?fCEvRkX5sGx1dJWy8dHE6dwmpXIqYmlKkxx6j1l0WUQoSGoPB7W0hgDemNgB?=
+ =?us-ascii?Q?wltszzD+1gSF5WvDROXsCUPR0VVHV9OSK8HBm36hQauEC9ZBTBujRGxYVTbi?=
+ =?us-ascii?Q?P0FR4jQu4gyQMtrx50815E1ImpfJEh6MWNlY3toj+2e7Be8lNlFT1PYZln29?=
+ =?us-ascii?Q?d5zeF8+OBMOZ0j2wEJi+0oB2rw+d6yQ5JIV+JVo7Lnws/OxD47igZAvZ1pGb?=
+ =?us-ascii?Q?xUfseHC7QE35/NBbYdv45wZWPQY6Dg5/qEzDLDjPK+vgV8AZM7+4FkfZjqin?=
+ =?us-ascii?Q?M5ODWrEIpaJ4tcnPyl6mOiEMOUuwXifVPuEvfrbp8Q7jPj8hTFsGFbYzT+tw?=
+ =?us-ascii?Q?B9Scx9HzFFeZA3Yndte1l42ZQD04UEcf9qzk+/VkxY8f+Tf7jTkdjXxe6oJN?=
+ =?us-ascii?Q?0A=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e6d87c5-8674-41d4-177d-08db68ff159d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jun 2023 15:34:59.1030
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sMhlfNoywHVPubjVR6qbpfYerYbDYtDnsPfzvsO0f2MHJQEfLfMRQniHObkRw9521i9lqczV1HpaNLhNczRoUC89T/+cCXyRl9kmqjtkBpc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB10185
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/06/2023 16:30, Jerome Brunet wrote:
-> 
-> On Thu 08 Jun 2023 at 14:53, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> 
->> On 08/06/2023 14:45, Jerome Brunet wrote:
->>>>    +struct meson_a1_pll_clks {
->>>> +	struct clk_hw **hw_clks;
->>>> +	unsigned int hw_clk_num;
->>>> +};
->>>> +
->>>> +static struct meson_a1_pll_clks a1_pll_clks = {
->>>> +	.hw_clks = a1_pll_hw_clks,
->>>> +	.hw_clk_num = ARRAY_SIZE(a1_pll_hw_clks),
->>>> +};
->>>> +
->>>> +static struct clk_hw *meson_a1_pll_hw_get(struct of_phandle_args *clkspec, void *clk_data)
->>>> +{
->>>> +	const struct meson_a1_pll_clks *data = clk_data;
->>>> +	unsigned int idx = clkspec->args[0];
->>>> +
->>>> +	if (idx >= data->hw_clk_num) {
->>>> +		pr_err("%s: invalid index %u\n", __func__, idx);
->>>> +		return ERR_PTR(-EINVAL);
->>>> +	}
->>>> +
->>>> +	return data->hw_clks[idx];
->>>> +}
->>> I'd prefer to have a single struct type and and single custom
->>> callback for the different SoC please.
->>
->> Sure, I've written a common code for that, but I have a hard time finding
->> a proper naming for it... so I choosed meson-clkc since it could have
->> more common helper code for duplicated code over the clk driver:
-> 
-> Agreed. meson-clkc-utils maybe ?
+Hi Wolfram Sang,
 
-Ack seems better
+> Subject: Re: [PATCH v4] i2c: Add i2c_get_match_data()
+>=20
+> On Wed, Jun 07, 2023 at 05:57:38PM +0100, Biju Das wrote:
+> > Add i2c_get_match_data() to get match data for I2C, ACPI and DT-based
+> > matching, so that we can optimize the driver code.
+> >
+> > Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+>=20
+> No further comments, yet I like it, so:
+>=20
+> Applied to for-next, thanks!
+>=20
+> With one minor change, I hope you are okay with it:
+>=20
+> > +	struct device_driver *drv =3D client->dev.driver;
+> > +	struct i2c_driver *driver =3D to_i2c_driver(drv);
+>=20
+> Variables 'drv' and 'driver' sounds like it could cause confusion later.
+> I merged the two and eliminated 'drv' that way.
 
-Thanks
-Neil
+Yes, it is much better.
 
-> 
->>
->> ===================================><============================================================================
->> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->> index 8ce846fdbe43..9070dcfd9e71 100644
->> --- a/drivers/clk/meson/Kconfig
->> +++ b/drivers/clk/meson/Kconfig
->> @@ -30,6 +30,9 @@ config COMMON_CLK_MESON_VID_PLL_DIV
->>   	tristate
->>   	select COMMON_CLK_MESON_REGMAP
->>
->> +config COMMON_CLK_MESON_CLKC
->> +	tristate
->> +
->>   config COMMON_CLK_MESON_AO_CLKC
->>   	tristate
->>   	select COMMON_CLK_MESON_REGMAP
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index d5288662881d..13c6db466986 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -1,6 +1,7 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->>   # Amlogic clock drivers
->>
->> +obj-$(CONFIG_COMMON_CLK_MESON_CLKC) += meson-clkc.o
->>   obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
->>   obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
->>   obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
->> diff --git a/drivers/clk/meson/meson-clkc.c b/drivers/clk/meson/meson-clkc.c
->> new file mode 100644
->> index 000000000000..fa98b9d09011
->> --- /dev/null
->> +++ b/drivers/clk/meson/meson-clkc.c
->> @@ -0,0 +1,25 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
->> + */
->> +
->> +#include <linux/of_device.h>
->> +#include <linux/clk-provider.h>
->> +#include <linux/module.h>
->> +#include "meson-clkc.h"
->> +
->> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
->> +{
->> +	const struct meson_clk_hw_data *data = clk_hw_data;
->> +	unsigned int idx = clkspec->args[0];
->> +
->> +	if (idx >= data->num) {
->> +		pr_err("%s: invalid index %u\n", __func__, idx);
->> +		return ERR_PTR(-EINVAL);
->> +	}
->> +
->> +	return data->hws[idx];
->> +}
->> +EXPORT_SYMBOL_GPL(meson_clk_hw_get);
->> +
->> +MODULE_LICENSE("GPL v2");
->> diff --git a/drivers/clk/meson/meson-clkc.h b/drivers/clk/meson/meson-clkc.h
->> new file mode 100644
->> index 000000000000..e3bad2aa17eb
->> --- /dev/null
->> +++ b/drivers/clk/meson/meson-clkc.h
->> @@ -0,0 +1,19 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
->> + */
->> +
->> +#ifndef __MESON_HW_CLKC_H__
->> +#define __MESON_HW_CLKC_H__
->> +
->> +#include <linux/of_device.h>
->> +#include <linux/clk-provider.h>
->> +
->> +struct meson_clk_hw_data {
->> +	struct clk_hw	**hws;
->> +	unsigned int	num;
->> +};
->> +
->> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
->> +
->> +#endif
->> ===================================><============================================================================
->>
->> If it's ok I'll send a v2 using this.
->>
->> Thanks,
->> Neil
-> 
+Cheers,
+Biju
 
