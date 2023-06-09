@@ -2,95 +2,207 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BABC7EE37
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 10:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81CAC7EE29
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 11:48:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241375AbjFIKQG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 06:16:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57762 "EHLO
+        id S229990AbjFILsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 07:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241826AbjFIKPG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 06:15:06 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B063C34
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 03:07:01 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:a1e2:1b31:cba3:390d])
-        by michel.telenet-ops.be with bizsmtp
-        id 6y6z2A00E12zQ4r06y6zT5; Fri, 09 Jun 2023 12:06:59 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1q7Z0u-008L2e-Es;
-        Fri, 09 Jun 2023 12:06:59 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1q7Z1H-00G43g-Fe;
-        Fri, 09 Jun 2023 12:06:59 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v6.5 (take two)
-Date:   Fri,  9 Jun 2023 12:06:58 +0200
-Message-Id: <cover.1686304777.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S231172AbjFILsx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 07:48:53 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D06358B;
+        Fri,  9 Jun 2023 04:48:50 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 981665FD8E;
+        Fri,  9 Jun 2023 14:48:48 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1686311328;
+        bh=i8mNs2rF54Ol0kXxFcSbg3Rj4NqvtmjvBxJgpQRfSPo=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=Q1l9oXPeAJIm6jGSa7PBxKhYShkKytHT8QEWYzUuWbL0hPQZe+Yb2+gd+DWbuRzCi
+         ukswtpwIlfYtlogBMoLh0dN5S6QooTbhfVnq+Pzwx9tB4zaPUWAVrOywWB/7ttvRj3
+         MqhqWtFav0ojgOn7ukSYBc9n82vclzjSgeLEFponi1wdJvw6+Snxi8iqm56F7qQaIq
+         wLyu3Aok17REBop1qvsHizZf5+aFOW4+yRTvLGDQZCrYwk/VI1gvw7/1FNokj15gXq
+         1ZeXEaahADg9F4vRxXpljKbt1QTF4qTG1jVcTWdsMSF3rR0dqpF9WJ8q3Jur6ifVv3
+         2KDO+bqdWIWiA==
+Received: from S-MS-EXCH02.sberdevices.ru (S-MS-EXCH02.sberdevices.ru [172.16.1.5])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Fri,  9 Jun 2023 14:48:48 +0300 (MSK)
+Date:   Fri, 9 Jun 2023 14:48:47 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+CC:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 03/18] clk: meson: migrate a1 clock drivers out of
+ hw_onecell_data to drop NR_CLKS
+Message-ID: <20230609114847.x24by2foebojbchq@CAB-WSD-L081021>
+References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
+ <20230607-topic-amlogic-upstream-clkid-public-migration-v1-3-9676afa6b22c@linaro.org>
+ <1jlegu9l5d.fsf@starbuckisacylon.baylibre.com>
+ <638206ba-e2da-bb8e-a2e4-138af84648b4@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <638206ba-e2da-bb8e-a2e4-138af84648b4@linaro.org>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [172.16.1.6]
+X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/09 07:08:00 #21465535
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Hello Neil,
 
-The following changes since commit d1c20885d3b01e6a62e920af4b227abd294d22f3:
+On Thu, Jun 08, 2023 at 02:53:50PM +0200, Neil Armstrong wrote:
+> On 08/06/2023 14:45, Jerome Brunet wrote:
+> > > +struct meson_a1_pll_clks {
+> > > +	struct clk_hw **hw_clks;
+> > > +	unsigned int hw_clk_num;
+> > > +};
+> > > +
+> > > +static struct meson_a1_pll_clks a1_pll_clks = {
+> > > +	.hw_clks = a1_pll_hw_clks,
+> > > +	.hw_clk_num = ARRAY_SIZE(a1_pll_hw_clks),
+> > > +};
+> > > +
+> > > +static struct clk_hw *meson_a1_pll_hw_get(struct of_phandle_args *clkspec, void *clk_data)
+> > > +{
+> > > +	const struct meson_a1_pll_clks *data = clk_data;
+> > > +	unsigned int idx = clkspec->args[0];
+> > > +
+> > > +	if (idx >= data->hw_clk_num) {
+> > > +		pr_err("%s: invalid index %u\n", __func__, idx);
+> > > +		return ERR_PTR(-EINVAL);
+> > > +	}
+> > > +
+> > > +	return data->hw_clks[idx];
+> > > +}
+> > 
+> > I'd prefer to have a single struct type and and single custom
+> > callback for the different SoC please.
+> 
+> Sure, I've written a common code for that, but I have a hard time finding
+> a proper naming for it... so I choosed meson-clkc since it could have
+> more common helper code for duplicated code over the clk driver:
+> 
+> ===================================><============================================================================
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 8ce846fdbe43..9070dcfd9e71 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -30,6 +30,9 @@ config COMMON_CLK_MESON_VID_PLL_DIV
+>  	tristate
+>  	select COMMON_CLK_MESON_REGMAP
+> 
+> +config COMMON_CLK_MESON_CLKC
+> +	tristate
+> +
+>  config COMMON_CLK_MESON_AO_CLKC
+>  	tristate
+>  	select COMMON_CLK_MESON_REGMAP
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index d5288662881d..13c6db466986 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  # Amlogic clock drivers
+> 
+> +obj-$(CONFIG_COMMON_CLK_MESON_CLKC) += meson-clkc.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
+> diff --git a/drivers/clk/meson/meson-clkc.c b/drivers/clk/meson/meson-clkc.c
+> new file mode 100644
+> index 000000000000..fa98b9d09011
+> --- /dev/null
+> +++ b/drivers/clk/meson/meson-clkc.c
+> @@ -0,0 +1,25 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+> + */
+> +
+> +#include <linux/of_device.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include "meson-clkc.h"
+> +
+> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
+> +{
+> +	const struct meson_clk_hw_data *data = clk_hw_data;
+> +	unsigned int idx = clkspec->args[0];
+> +
+> +	if (idx >= data->num) {
+> +		pr_err("%s: invalid index %u\n", __func__, idx);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return data->hws[idx];
+> +}
+> +EXPORT_SYMBOL_GPL(meson_clk_hw_get);
+> +
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/meson-clkc.h b/drivers/clk/meson/meson-clkc.h
+> new file mode 100644
+> index 000000000000..e3bad2aa17eb
+> --- /dev/null
+> +++ b/drivers/clk/meson/meson-clkc.h
+> @@ -0,0 +1,19 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+> + */
+> +
+> +#ifndef __MESON_HW_CLKC_H__
+> +#define __MESON_HW_CLKC_H__
+> +
+> +#include <linux/of_device.h>
+> +#include <linux/clk-provider.h>
+> +
+> +struct meson_clk_hw_data {
+> +	struct clk_hw	**hws;
+> +	unsigned int	num;
+> +};
+> +
+> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
+> +
+> +#endif
+> ===================================><============================================================================
+> 
+> If it's ok I'll send a v2 using this.
+> 
+> Thanks,
+> Neil
 
-  clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write (2023-05-23 09:06:50 +0200)
+In addition, I propose consolidating the probe() routine of the a1
+clocks into a common part, which can be utilized for s4 and other
+similar clocks. This solution was presented in the early a1 review
+stages of this patch set.
 
-are available in the Git repository at:
+https://lore.kernel.org/linux-amlogic/20221201225703.6507-7-ddrokosov@sberdevices.ru/
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.5-tag2
+Maybe, it can be generalized for the all meson clock controller drivers.
 
-for you to fetch changes up to 7df8eea64a417f1db6777cddc1d7eda3634b7175:
-
-  clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic() (2023-06-05 15:41:43 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v6.5 (take two)
-
-  - Convert the Renesas clock drivers to readl_poll_timeout_atomic().
-
-Note that the conversion to readl_poll_timeout_atomic() depends
-on iopoll improvements, which are thus included through an immutable
-branch in multiple pull requests:
-
-  "[GIT PULL 2/3] Renesas driver updates for v6.5 (take two)" (for soc),
-  "[GIT PULL] clk: renesas: Updates for v6.5 (take two)" (for clk).
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Geert Uytterhoeven (6):
-      iopoll: Call cpu_relax() in busy loops
-      iopoll: Do not use timekeeping in read_poll_timeout_atomic()
-      Merge tag 'iopoll-busy-loop-timeout-tag' into renesas-clk-for-v6.5
-      clk: renesas: cpg-mssr: Convert to readl_poll_timeout_atomic()
-      clk: renesas: mstp: Convert to readl_poll_timeout_atomic()
-      clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic()
-
- drivers/clk/renesas/clk-mstp.c         | 18 +++++++-----------
- drivers/clk/renesas/renesas-cpg-mssr.c | 31 +++++++++++--------------------
- drivers/clk/renesas/rzg2l-cpg.c        | 16 +++++-----------
- include/linux/iopoll.h                 | 24 +++++++++++++++++++-----
- 4 files changed, 42 insertions(+), 47 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+-- 
+Thank you,
+Dmitry
