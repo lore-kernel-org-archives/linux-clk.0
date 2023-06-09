@@ -2,93 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90952C7EE37
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 08:16:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1BABC7EE37
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 10:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240077AbjFIIQK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 04:16:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50070 "EHLO
+        id S241375AbjFIKQG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 06:16:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240079AbjFIIQI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 04:16:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FBE1FEC;
-        Fri,  9 Jun 2023 01:16:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E83561300;
-        Fri,  9 Jun 2023 08:16:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 032BBC433D2;
-        Fri,  9 Jun 2023 08:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686298566;
-        bh=fhq7UqggYiVg/1COUBVntIvsMJLXIEfwBDhAv2lnM2Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=G28YEgrgn2lu1p5R3l5ckjxag/p3SQF3AL/dQ4H0P6yHYvymEjeqjKHwgbwZFshiN
-         +DXRcLNePGWkV2wjJrnBHW0MM2SjvfQviBwCjzKym9TF3W1fFrDGOlsAIZf0oxG0X2
-         JduFSfbl4efpACPpq+1j3w3mxIgKZSwNXjF0npmmIhimGZ0oHhqqgwU0SUIuc6aqUY
-         RpTDqVcnOHAALa+eJ96oS6nDhDofPv2I180Bg2Cgcr3lOvUH2USV88C7EKjrE1mQbF
-         ZxENFHAnMcnAEwFfUFxp90ulbJWi+u/dGJqYWdRIYk8M4PBWi/UKr2msYHnMTexwws
-         EfQr+wvYaOZzQ==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S241826AbjFIKPG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 06:15:06 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B063C34
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 03:07:01 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:a1e2:1b31:cba3:390d])
+        by michel.telenet-ops.be with bizsmtp
+        id 6y6z2A00E12zQ4r06y6zT5; Fri, 09 Jun 2023 12:06:59 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1q7Z0u-008L2e-Es;
+        Fri, 09 Jun 2023 12:06:59 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1q7Z1H-00G43g-Fe;
+        Fri, 09 Jun 2023 12:06:59 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: samsung: add CONFIG_OF dependency
-Date:   Fri,  9 Jun 2023 10:15:49 +0200
-Message-Id: <20230609081559.915867-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.5 (take two)
+Date:   Fri,  9 Jun 2023 12:06:58 +0200
+Message-Id: <cover.1686304777.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+	Hi Mike, Stephen,
 
-When CONFIG_OF is disabled, build testing on x86 runs into a couple of
-objtool warnings from functions that unconditionally call panic() but
-have no __noreturn annotation:
+The following changes since commit d1c20885d3b01e6a62e920af4b227abd294d22f3:
 
-vmlinux.o: warning: objtool: exynos3250_cmu_isp_probe+0x17: samsung_cmu_register_one() is missing a __noreturn annotation
-vmlinux.o: warning: objtool: exynos7885_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
-vmlinux.o: warning: objtool: exynos850_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
-vmlinux.o: warning: objtool: exynosautov9_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
+  clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write (2023-05-23 09:06:50 +0200)
 
-The objtool analysis is correct, and this could be addressed by just
-returning success whenever CONFIG_OF is disabled to let all that code
-be eliminated, but since the driver is no use without CONFIG_OF,
-just add that as a dependency. It will still get compile tested on
-all architectures since CONFIG_OF is enabled in allmodconfig and most
-randconfig builds.
+are available in the Git repository at:
 
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/samsung/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.5-tag2
 
-diff --git a/drivers/clk/samsung/Kconfig b/drivers/clk/samsung/Kconfig
-index c07bb50513bfe..76a494e95027a 100644
---- a/drivers/clk/samsung/Kconfig
-+++ b/drivers/clk/samsung/Kconfig
-@@ -2,6 +2,7 @@
- # Recent Exynos platforms should just select COMMON_CLK_SAMSUNG:
- config COMMON_CLK_SAMSUNG
- 	bool "Samsung Exynos clock controller support" if COMPILE_TEST
-+	depends on OF
- 	select S3C64XX_COMMON_CLK if ARM && ARCH_S3C64XX
- 	select S5PV210_COMMON_CLK if ARM && ARCH_S5PV210
- 	select EXYNOS_3250_COMMON_CLK if ARM && SOC_EXYNOS3250
--- 
-2.39.2
+for you to fetch changes up to 7df8eea64a417f1db6777cddc1d7eda3634b7175:
 
+  clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic() (2023-06-05 15:41:43 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v6.5 (take two)
+
+  - Convert the Renesas clock drivers to readl_poll_timeout_atomic().
+
+Note that the conversion to readl_poll_timeout_atomic() depends
+on iopoll improvements, which are thus included through an immutable
+branch in multiple pull requests:
+
+  "[GIT PULL 2/3] Renesas driver updates for v6.5 (take two)" (for soc),
+  "[GIT PULL] clk: renesas: Updates for v6.5 (take two)" (for clk).
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (6):
+      iopoll: Call cpu_relax() in busy loops
+      iopoll: Do not use timekeeping in read_poll_timeout_atomic()
+      Merge tag 'iopoll-busy-loop-timeout-tag' into renesas-clk-for-v6.5
+      clk: renesas: cpg-mssr: Convert to readl_poll_timeout_atomic()
+      clk: renesas: mstp: Convert to readl_poll_timeout_atomic()
+      clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic()
+
+ drivers/clk/renesas/clk-mstp.c         | 18 +++++++-----------
+ drivers/clk/renesas/renesas-cpg-mssr.c | 31 +++++++++++--------------------
+ drivers/clk/renesas/rzg2l-cpg.c        | 16 +++++-----------
+ include/linux/iopoll.h                 | 24 +++++++++++++++++++-----
+ 4 files changed, 42 insertions(+), 47 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
