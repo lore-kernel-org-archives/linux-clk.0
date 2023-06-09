@@ -2,126 +2,228 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CEAC7EE2E
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 12:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E32AC7EE43
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 12:47:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239298AbjFIMpt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 08:45:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49498 "EHLO
+        id S239421AbjFIMrL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 08:47:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239282AbjFIMps (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 08:45:48 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7C57270F
-        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 05:45:46 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f619c2ba18so2105312e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 09 Jun 2023 05:45:46 -0700 (PDT)
+        with ESMTP id S239211AbjFIMrK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 08:47:10 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8306B198C
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 05:47:07 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f78a32266bso16769935e9.3
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jun 2023 05:47:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686314745; x=1688906745;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mqzhrN9pZnLZEEaMP6DZ4D7gUVGJg2soYgokq2ZQmXY=;
-        b=U2hoJl7bvWeuQNlcYG60WzzxhzukFA4kk8DzerHk+MH/nRm+n0jEtgdGlGBpOdpUrI
-         lIHB8vnpMpRA0d0ysNQnmeAbbniSe3iRIifZ3hfJ+67ouEdq/JWiE6L11EIbrzIM6YMB
-         rzVJH4vGT5UH5eAa8usCcXLTpTNnM5cH3gVYXOgaYERCpWCMlf8hc8B/FCrlTYM2MJgR
-         V13S5gevk4cukMKAMX+SSd0ado0nfDoL4cu0sjE8RbzkkqaNgiekfpnsn0mG1beghC5k
-         vfpO5tF75UyMl/7yOAKc+XVx/KVOvpilygpWHiG4pCJAMdBuOAV8EPikWMNeXKfFNucv
-         5/jw==
+        d=linaro.org; s=google; t=1686314826; x=1688906826;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rOTekZ5T+8f+I9icACI6rQNlKGe8FwQ65t371dbDET4=;
+        b=N/BLDSdzR3Mi95f15LLB94rPtv/IiwH3XNsvqylwQAXuFvQkrx7+ciBBZou9DMMzpf
+         3mOXdEGQR/uth2xonAF4e548O70L4xp1xoyNhJllKYYWNpPGlXaM0fkWGJncEb7Gak2r
+         m+V3asGqBTr8HdARTIFmulyE3JGHleu4Z6YvSMciWoafFfg9yfVr5nMjmKNxTox1guGS
+         d0UaeJx/VpTONDm55AddEBBl+n2GNt47NtloB6xN6+Bir9MOYimtG3oBTNZr/oXgdgGp
+         CIa6tahuviftxnJiaXRCoCF2zjSkoj8ApKqTWGS6Jrd3voiCtCbrcNjfTfTNcY21sgFZ
+         1BSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686314745; x=1688906745;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mqzhrN9pZnLZEEaMP6DZ4D7gUVGJg2soYgokq2ZQmXY=;
-        b=dUTXkPP0DpBuE8jOtsApd/qsJ68cd0dQppvoQYZdAjLL18UiWPbR3Sk/RY3F1TqpnW
-         SHwslYwE/QxqDJBsbf47Mz5hdYe+iyMw/wG4+OTdxpqPipfKChS6sMjMJ6E9rg2ghqkP
-         9cwUvzT2ERwR41CRkNc546Gn/yWzGF6DxYRjaoq+2hCCc/cdJI+nbpDSzH2WApdecRgZ
-         xXNJPc3KDJ0VMelOb26IHeJdInpy+pJtCHAqH+K3r6Q3SeL/JR+Dgp/gaXLjEcZwObxA
-         oq/SfRSq+8hBGuaLLp8luntDyYZ+F7WGo4XQjYfQ7cN4E8ZJr8oCIuPBkyMeHybaXNBr
-         59JQ==
-X-Gm-Message-State: AC+VfDzgz+Ctgi4lAaaet1UmpS9uTp4G1RmVg2TggeqP9Lk0nBuPCAy5
-        uZ9+9M7ZSoLTP/s40OWaXlJC1Q==
-X-Google-Smtp-Source: ACHHUZ73qhFRlQjkdfcodVR00YCWIcOSrAUusZhwn92tcL5LUIQPLXadeg94Aa1h5SWcz2YTOaoXIg==
-X-Received: by 2002:a19:4312:0:b0:4f4:b28f:6b9c with SMTP id q18-20020a194312000000b004f4b28f6b9cmr779377lfa.29.1686314744958;
-        Fri, 09 Jun 2023 05:45:44 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id 7-20020ac24847000000b004f4cabba7desm528961lfy.74.2023.06.09.05.45.43
+        d=1e100.net; s=20221208; t=1686314826; x=1688906826;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rOTekZ5T+8f+I9icACI6rQNlKGe8FwQ65t371dbDET4=;
+        b=QicBG5bxjWGQJKCX44YX8Ue63FSmc0vkBwfoSWco+/WRwDJPng1EcVmiOmqSwDo3vb
+         bLxCsTnyD3yxppUzCggCo7jSRzY8eMzG9+vG5k4c1Xbaa5iKas/uRObFrJeXAD7wkDiD
+         iWI1Z8l5a7hcBLvME0gd8TAHiF30affkEHL8mgwVEDo8+zDrzgwiUxqKE2HqtFonZfyI
+         0OiP6KUU+Lu24SQ1XgkQz69OEXZT4YeBONEgaA5OscUAdU+X1dYv0j+ChxS3hcQC3kGl
+         6eO6SJdnkxBIWLK7FE2tTOqE/E2K2GTUGgLhp6ou9al4ItyeKAWHxAYfNksVpH3Dx4x3
+         B4vA==
+X-Gm-Message-State: AC+VfDyN3IYRoDDuzbvpxpw4PJtwfAJfq4zsQANiNfYjUfjfuazQISWL
+        B+ftdU1fxCwyoeof11m8qMcwiw==
+X-Google-Smtp-Source: ACHHUZ598KxTRlV0xO/wTz4SLv55tV+LKVZzKPfvFsog7VJcxvw6JHHgXGzacLuwgbHHids/gLcMmg==
+X-Received: by 2002:a05:600c:2116:b0:3f6:a44:73bb with SMTP id u22-20020a05600c211600b003f60a4473bbmr1196866wml.8.1686314825864;
+        Fri, 09 Jun 2023 05:47:05 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:5c40:3a0f:b23:350f? ([2a01:e0a:982:cbb0:5c40:3a0f:b23:350f])
+        by smtp.gmail.com with ESMTPSA id t10-20020a1c770a000000b003f8009be6c0sm2628646wmi.3.2023.06.09.05.47.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Jun 2023 05:45:44 -0700 (PDT)
-Message-ID: <e075f78a-5eac-8200-853b-db73c3d5025c@linaro.org>
-Date:   Fri, 9 Jun 2023 14:45:43 +0200
+        Fri, 09 Jun 2023 05:47:05 -0700 (PDT)
+Message-ID: <04791890-56f3-e620-1660-e8ed80eb5752@linaro.org>
+Date:   Fri, 9 Jun 2023 14:47:04 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.2
-Subject: Re: [PATCH V3 4/5] clk: qcom: camcc-sm8550: Add support for qdss,
- sleep and xo clocks
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 03/18] clk: meson: migrate a1 clock drivers out of
+ hw_onecell_data to drop NR_CLKS
 Content-Language: en-US
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230601143430.5595-1-quic_jkona@quicinc.com>
- <20230601143430.5595-5-quic_jkona@quicinc.com>
- <ee48f7fd-35f1-288f-2133-1c473e8804ab@linaro.org>
- <a818de04-ca30-f4fb-4c69-fd172b96f816@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <a818de04-ca30-f4fb-4c69-fd172b96f816@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Conor Dooley <conor+dt@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
+ <20230607-topic-amlogic-upstream-clkid-public-migration-v1-3-9676afa6b22c@linaro.org>
+ <1jlegu9l5d.fsf@starbuckisacylon.baylibre.com>
+ <638206ba-e2da-bb8e-a2e4-138af84648b4@linaro.org>
+ <20230609114847.x24by2foebojbchq@CAB-WSD-L081021>
+Organization: Linaro Developer Services
+In-Reply-To: <20230609114847.x24by2foebojbchq@CAB-WSD-L081021>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
-
-On 9.06.2023 13:50, Jagadeesh Kona wrote:
-> Hi Dmitry,
+On 09/06/2023 13:48, Dmitry Rokosov wrote:
+> Hello Neil,
 > 
-> Thanks for your review!
-I've noticed that many QUIC contributors seem to add this to the beginning
-of their emails.. Top-posting is generally discouraged on LKML
-
-You can find gregkh's reasoning for this e.g. here:
-
-https://lkml.org/lkml/2021/4/21/143
-
-Konrad
-> 
-> On 6/1/2023 8:23 PM, Dmitry Baryshkov wrote:
->> On 01/06/2023 17:34, Jagadeesh Kona wrote:
->>> Add support for camera qdss, sleep and xo clocks.
+> On Thu, Jun 08, 2023 at 02:53:50PM +0200, Neil Armstrong wrote:
+>> On 08/06/2023 14:45, Jerome Brunet wrote:
+>>>> +struct meson_a1_pll_clks {
+>>>> +	struct clk_hw **hw_clks;
+>>>> +	unsigned int hw_clk_num;
+>>>> +};
+>>>> +
+>>>> +static struct meson_a1_pll_clks a1_pll_clks = {
+>>>> +	.hw_clks = a1_pll_hw_clks,
+>>>> +	.hw_clk_num = ARRAY_SIZE(a1_pll_hw_clks),
+>>>> +};
+>>>> +
+>>>> +static struct clk_hw *meson_a1_pll_hw_get(struct of_phandle_args *clkspec, void *clk_data)
+>>>> +{
+>>>> +	const struct meson_a1_pll_clks *data = clk_data;
+>>>> +	unsigned int idx = clkspec->args[0];
+>>>> +
+>>>> +	if (idx >= data->hw_clk_num) {
+>>>> +		pr_err("%s: invalid index %u\n", __func__, idx);
+>>>> +		return ERR_PTR(-EINVAL);
+>>>> +	}
+>>>> +
+>>>> +	return data->hw_clks[idx];
+>>>> +}
 >>>
->>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> I'd prefer to have a single struct type and and single custom
+>>> callback for the different SoC please.
 >>
->> You probably missed the Co-developed-by tag.
+>> Sure, I've written a common code for that, but I have a hard time finding
+>> a proper naming for it... so I choosed meson-clkc since it could have
+>> more common helper code for duplicated code over the clk driver:
 >>
+>> ===================================><============================================================================
+>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>> index 8ce846fdbe43..9070dcfd9e71 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -30,6 +30,9 @@ config COMMON_CLK_MESON_VID_PLL_DIV
+>>   	tristate
+>>   	select COMMON_CLK_MESON_REGMAP
+>>
+>> +config COMMON_CLK_MESON_CLKC
+>> +	tristate
+>> +
+>>   config COMMON_CLK_MESON_AO_CLKC
+>>   	tristate
+>>   	select COMMON_CLK_MESON_REGMAP
+>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>> index d5288662881d..13c6db466986 100644
+>> --- a/drivers/clk/meson/Makefile
+>> +++ b/drivers/clk/meson/Makefile
+>> @@ -1,6 +1,7 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>>   # Amlogic clock drivers
+>>
+>> +obj-$(CONFIG_COMMON_CLK_MESON_CLKC) += meson-clkc.o
+>>   obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
+>>   obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
+>>   obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
+>> diff --git a/drivers/clk/meson/meson-clkc.c b/drivers/clk/meson/meson-clkc.c
+>> new file mode 100644
+>> index 000000000000..fa98b9d09011
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/meson-clkc.c
+>> @@ -0,0 +1,25 @@
+>> +// SPDX-License-Identifier: GPL-2.0+
+>> +/*
+>> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+>> + */
+>> +
+>> +#include <linux/of_device.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/module.h>
+>> +#include "meson-clkc.h"
+>> +
+>> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
+>> +{
+>> +	const struct meson_clk_hw_data *data = clk_hw_data;
+>> +	unsigned int idx = clkspec->args[0];
+>> +
+>> +	if (idx >= data->num) {
+>> +		pr_err("%s: invalid index %u\n", __func__, idx);
+>> +		return ERR_PTR(-EINVAL);
+>> +	}
+>> +
+>> +	return data->hws[idx];
+>> +}
+>> +EXPORT_SYMBOL_GPL(meson_clk_hw_get);
+>> +
+>> +MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/clk/meson/meson-clkc.h b/drivers/clk/meson/meson-clkc.h
+>> new file mode 100644
+>> index 000000000000..e3bad2aa17eb
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/meson-clkc.h
+>> @@ -0,0 +1,19 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+>> + */
+>> +
+>> +#ifndef __MESON_HW_CLKC_H__
+>> +#define __MESON_HW_CLKC_H__
+>> +
+>> +#include <linux/of_device.h>
+>> +#include <linux/clk-provider.h>
+>> +
+>> +struct meson_clk_hw_data {
+>> +	struct clk_hw	**hws;
+>> +	unsigned int	num;
+>> +};
+>> +
+>> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
+>> +
+>> +#endif
+>> ===================================><============================================================================
+>>
+>> If it's ok I'll send a v2 using this.
+>>
+>> Thanks,
+>> Neil
 > 
-> Yes, will add in the next series.
+> In addition, I propose consolidating the probe() routine of the a1
+> clocks into a common part, which can be utilized for s4 and other
+> similar clocks. This solution was presented in the early a1 review
+> stages of this patch set.
 > 
->>> ---
->>> Changes since V2:
->>>   - No changes.
->>> Changes since V1:
->>>   - Newly added.
->>>
->>>   drivers/clk/qcom/camcc-sm8550.c | 180 ++++++++++++++++++++++++++++++++
->>>   1 file changed, 180 insertions(+)
->>
->>
+> https://lore.kernel.org/linux-amlogic/20221201225703.6507-7-ddrokosov@sberdevices.ru/
 > 
-> Thanks & Regards,
-> Jagadeesh
+> Maybe, it can be generalized for the all meson clock controller drivers.
+> 
+
+Sure, the goal of that is to get rid of NR_CLKS & private IDS only,
+then yes afterwards any common clkc function will be welcome !
+
+Neil
+
