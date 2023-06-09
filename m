@@ -2,51 +2,50 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD7BC7EE45
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 18:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D734C7EE37
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 18:15:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231232AbjFISOa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 14:14:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60912 "EHLO
+        id S231390AbjFISPA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 14:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231350AbjFISO3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 14:14:29 -0400
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEB33586;
-        Fri,  9 Jun 2023 11:14:28 -0700 (PDT)
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-33b22221da6so8724675ab.1;
-        Fri, 09 Jun 2023 11:14:28 -0700 (PDT)
+        with ESMTP id S231449AbjFISOy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 14:14:54 -0400
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 700883A85;
+        Fri,  9 Jun 2023 11:14:43 -0700 (PDT)
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-777b1b5ff50so87687939f.3;
+        Fri, 09 Jun 2023 11:14:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686334467; x=1688926467;
+        d=1e100.net; s=20221208; t=1686334482; x=1688926482;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pE6BrZSZEIfHJZnlEnBPUpJidRJVROMBg6S+6nxssKs=;
-        b=NaavfIeun7ZQYhiKE7CJnbTTUp25hokJDnU9YN02pQbxBnF0PCeZTfFveeZH5SszAK
-         Z+BNB0gPub4i+lbXVzwQ9w5+Y/V8GOffiVud413F2jZU9fqWAAJBKa+rCmGIUOCFmU8r
-         kcbIZu8cWiZZ6TRz7BRhS9HRLlsAUbMYx2mA1Ym7xMNJr+UU38iOmHSFNmHZTicZQ7J+
-         KWOunWTQGcAnXckTZ6MQTkxgqORGI+N2PsZme85ciDiYYQc9Bbk1iaXcXFH4P1iQtD1W
-         ixc0XCe9XNdPBMXwHSKRnFzXDgFQNCXrR3dLykRCLoX5E24lhvVHs3z3P0k639/SoCpd
-         WX8Q==
-X-Gm-Message-State: AC+VfDytDToXLrXzRlC+7DdGFSBp6hsJ4UsHZkgKHcO1e4jZUlMryWb6
-        riGLn5Z4Qwi1mczgjOW5qQ==
-X-Google-Smtp-Source: ACHHUZ79dCkknd9S8Dmk8waSkwLRk4KiJg4v0cTkG2Eo4R+dz6RcXvl1Z+9Kd2mqw/rD2ad51NDMAA==
-X-Received: by 2002:a92:cd43:0:b0:33e:6837:c5fe with SMTP id v3-20020a92cd43000000b0033e6837c5femr2257114ilq.9.1686334467190;
-        Fri, 09 Jun 2023 11:14:27 -0700 (PDT)
+        bh=PtmxCGh9l/ae29ZPQBJ2vM6KiVFQXXIcZskQGw0mrU4=;
+        b=MM4wAaKKpGYAmiU7aGpwvbBSsksIsQO7+Q8IVEv/h4cNSbY3/hDBmrkyOqiEbgt2SO
+         iBl2SKKHQfTLXhVTlJVU4YkRAVobexYahXPbYNclHxMPU8dUD00g7NgAkuBbhPcbGXzI
+         ZYF6HNBPoR/nylXv7KI+zOO1yGFMTjNSsid7ovofTLZroxdUfcnZmsfyPVsfLa9Gtp5Z
+         ULShsYWtG8B2YNP43svjSr19f9hRujZaTRwsIM69mS4ajNg8jT3/+P1DqSK6EsafMMqP
+         48ClbitJ/gYOEI+AUulPAtZvaPRc5jI7C0vB4/E+LeHBZPieHTvZMIj9r9hR8/QQn18i
+         DP8A==
+X-Gm-Message-State: AC+VfDxX0BCMArF+oSvfZGZalNnZxPO/8zQWNx9xeUIi8TvtVaoUq3LQ
+        bki4s/86XUkNvNxxy4tNwDoIA0h78g==
+X-Google-Smtp-Source: ACHHUZ6RvrtAt54LttRWOzlIW+s7GqGRsjyJDdSvjjJuJmoFtUQvFOm9Py2c+QqhjPR1kKbASiRQkg==
+X-Received: by 2002:a92:c6d0:0:b0:33b:94d:b60b with SMTP id v16-20020a92c6d0000000b0033b094db60bmr2229408ilm.14.1686334462312;
+        Fri, 09 Jun 2023 11:14:22 -0700 (PDT)
 Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id z9-20020a92cec9000000b0033a6e7ee4e3sm1223860ilq.1.2023.06.09.11.14.25
+        by smtp.gmail.com with ESMTPSA id i18-20020a02b692000000b00418507eef02sm1069799jam.31.2023.06.09.11.14.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 11:14:26 -0700 (PDT)
-Received: (nullmailer pid 1681133 invoked by uid 1000);
+        Fri, 09 Jun 2023 11:14:21 -0700 (PDT)
+Received: (nullmailer pid 1681129 invoked by uid 1000);
         Fri, 09 Jun 2023 18:14:15 -0000
 From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 09 Jun 2023 12:13:47 -0600
-Subject: [PATCH v2 3/4] clk: mvebu: Iterate over possible CPUs instead of
- DT CPU nodes
+Date:   Fri, 09 Jun 2023 12:13:45 -0600
+Subject: [PATCH v2 1/4] MAINTAINERS: Add Marvell mvebu clock drivers
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230327-mvebu-clk-fixes-v2-3-8333729ee45d@kernel.org>
+Message-Id: <20230327-mvebu-clk-fixes-v2-1-8333729ee45d@kernel.org>
 References: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
 In-Reply-To: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
 To:     Andrew Lunn <andrew@lunn.ch>,
@@ -61,63 +60,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Rework iterating over DT CPU nodes to iterate over possible CPUs
-instead. There's no need to walk the DT CPU nodes again. Possible CPUs
-is equal to the number of CPUs defined in the DT. Using the "reg" value
-for an array index is fragile as it assumes "reg" is 0-N which often is
-not the case.
+drivers/clk/mvebu/ is missing a maintainers entry. Add it to the
+existing entry for the Marvell mvebu platforms.
 
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/mvebu/clk-cpu.c | 14 +++-----------
- 1 file changed, 3 insertions(+), 11 deletions(-)
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-index c2af3395cf13..db2b38c21304 100644
---- a/drivers/clk/mvebu/clk-cpu.c
-+++ b/drivers/clk/mvebu/clk-cpu.c
-@@ -168,8 +168,8 @@ static void __init of_cpu_clk_setup(struct device_node *node)
- 	struct cpu_clk *cpuclk;
- 	void __iomem *clock_complex_base = of_iomap(node, 0);
- 	void __iomem *pmu_dfs_base = of_iomap(node, 1);
--	int ncpus = 0;
--	struct device_node *dn;
-+	int ncpus = num_possible_cpus();
-+	int cpu;
- 
- 	if (clock_complex_base == NULL) {
- 		pr_err("%s: clock-complex base register not set\n",
-@@ -181,9 +181,6 @@ static void __init of_cpu_clk_setup(struct device_node *node)
- 		pr_warn("%s: pmu-dfs base register not set, dynamic frequency scaling not available\n",
- 			__func__);
- 
--	for_each_of_cpu_node(dn)
--		ncpus++;
--
- 	cpuclk = kcalloc(ncpus, sizeof(*cpuclk), GFP_KERNEL);
- 	if (WARN_ON(!cpuclk))
- 		goto cpuclk_out;
-@@ -192,19 +189,14 @@ static void __init of_cpu_clk_setup(struct device_node *node)
- 	if (WARN_ON(!clks))
- 		goto clks_out;
- 
--	for_each_of_cpu_node(dn) {
-+	for_each_possible_cpu(cpu) {
- 		struct clk_init_data init;
- 		struct clk *clk;
- 		char *clk_name = kzalloc(5, GFP_KERNEL);
--		int cpu, err;
- 
- 		if (WARN_ON(!clk_name))
- 			goto bail_out;
- 
--		err = of_property_read_u32(dn, "reg", &cpu);
--		if (WARN_ON(err))
--			goto bail_out;
--
- 		sprintf(clk_name, "cpu%d", cpu);
- 
- 		cpuclk[cpu].parent_name = of_clk_get_parent_name(node, 0);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7e0b87d5aa2e..5656a729f2e4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2364,6 +2364,7 @@ F:	arch/arm/configs/mvebu_*_defconfig
+ F:	arch/arm/mach-mvebu/
+ F:	arch/arm64/boot/dts/marvell/armada*
+ F:	arch/arm64/boot/dts/marvell/cn913*
++F:	drivers/clk/mvebu/
+ F:	drivers/cpufreq/armada-37xx-cpufreq.c
+ F:	drivers/cpufreq/armada-8k-cpufreq.c
+ F:	drivers/cpufreq/mvebu-cpufreq.c
 
 -- 
 2.39.2
