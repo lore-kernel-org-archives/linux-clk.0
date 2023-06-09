@@ -2,86 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D734C7EE37
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 18:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2137EC7EE29
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 18:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231390AbjFISPA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 14:15:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33174 "EHLO
+        id S229832AbjFISVo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 14:21:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231449AbjFISOy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 14:14:54 -0400
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 700883A85;
-        Fri,  9 Jun 2023 11:14:43 -0700 (PDT)
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-777b1b5ff50so87687939f.3;
-        Fri, 09 Jun 2023 11:14:43 -0700 (PDT)
+        with ESMTP id S229842AbjFISVn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 14:21:43 -0400
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94FD33590
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 11:21:42 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1b04706c974so10221855ad.2
+        for <linux-clk@vger.kernel.org>; Fri, 09 Jun 2023 11:21:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686334482; x=1688926482;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PtmxCGh9l/ae29ZPQBJ2vM6KiVFQXXIcZskQGw0mrU4=;
-        b=MM4wAaKKpGYAmiU7aGpwvbBSsksIsQO7+Q8IVEv/h4cNSbY3/hDBmrkyOqiEbgt2SO
-         iBl2SKKHQfTLXhVTlJVU4YkRAVobexYahXPbYNclHxMPU8dUD00g7NgAkuBbhPcbGXzI
-         ZYF6HNBPoR/nylXv7KI+zOO1yGFMTjNSsid7ovofTLZroxdUfcnZmsfyPVsfLa9Gtp5Z
-         ULShsYWtG8B2YNP43svjSr19f9hRujZaTRwsIM69mS4ajNg8jT3/+P1DqSK6EsafMMqP
-         48ClbitJ/gYOEI+AUulPAtZvaPRc5jI7C0vB4/E+LeHBZPieHTvZMIj9r9hR8/QQn18i
-         DP8A==
-X-Gm-Message-State: AC+VfDxX0BCMArF+oSvfZGZalNnZxPO/8zQWNx9xeUIi8TvtVaoUq3LQ
-        bki4s/86XUkNvNxxy4tNwDoIA0h78g==
-X-Google-Smtp-Source: ACHHUZ6RvrtAt54LttRWOzlIW+s7GqGRsjyJDdSvjjJuJmoFtUQvFOm9Py2c+QqhjPR1kKbASiRQkg==
-X-Received: by 2002:a92:c6d0:0:b0:33b:94d:b60b with SMTP id v16-20020a92c6d0000000b0033b094db60bmr2229408ilm.14.1686334462312;
-        Fri, 09 Jun 2023 11:14:22 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id i18-20020a02b692000000b00418507eef02sm1069799jam.31.2023.06.09.11.14.20
+        d=1e100.net; s=20221208; t=1686334902; x=1688926902;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n/+y/6j1ALrc42P2Rr76MxD2YIeDBXVc8CafCJ2zOkc=;
+        b=D/yvt9OlmzqET3Spmr+JKu9d4YF0aPm4MDBBot24JYA8wNPa8CK46DOmBuIhHzYvAL
+         aoPQppOAiDdxDxo2cGmiV9NjpDaQwCiHfIaZsRnZ2zqxwWFNQOdE1thVth95pVuYjIzw
+         pDuE3QCQ1MzKshg98M5IfMoYb7G7TKnrUTpf+O6E2QgEMKSgsjd9TXjKa30IQMVPXukX
+         q22yVoAEtIYz2U1WlCl2pVRArdh1Y6gIvYAmAqzbcZdj4z2Nvqenb6OIgLdWxuyj88G0
+         J8/g61cxms5xnWGsDuucuiVfO+hvabMtc2CZ0VFxCrfnaQwaZLRC+MP2NbPT9IJkLPeb
+         5aRw==
+X-Gm-Message-State: AC+VfDyl6KWbbFEOwDQY16XjmF9UYHsQg7EvyZ6+FPlOOL2n/dKJhNKu
+        FKHHcy1a0uPSIBsLQpWyMWZmgQ==
+X-Google-Smtp-Source: ACHHUZ7RUR0qSoKvtN+A82er22MA4OCK6oYpo9NtISCC+Mhu6QhbhjQYpCYoqPSqN3+u4aYXTdNl+w==
+X-Received: by 2002:a17:902:bc85:b0:1b0:772f:e3e3 with SMTP id bb5-20020a170902bc8500b001b0772fe3e3mr2039741plb.52.1686334902093;
+        Fri, 09 Jun 2023 11:21:42 -0700 (PDT)
+Received: from localhost ([75.172.135.98])
+        by smtp.gmail.com with ESMTPSA id b3-20020a170903228300b00199193e5ea1sm3591234plh.61.2023.06.09.11.21.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 11:14:21 -0700 (PDT)
-Received: (nullmailer pid 1681129 invoked by uid 1000);
-        Fri, 09 Jun 2023 18:14:15 -0000
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 09 Jun 2023 12:13:45 -0600
-Subject: [PATCH v2 1/4] MAINTAINERS: Add Marvell mvebu clock drivers
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230327-mvebu-clk-fixes-v2-1-8333729ee45d@kernel.org>
-References: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
-In-Reply-To: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Fri, 09 Jun 2023 11:21:40 -0700 (PDT)
+From:   Kevin Hilman <khilman@kernel.org>
+To:     Markus Schneider-Pargmann <msp@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-X-Mailer: b4 0.13-dev
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Mergnat <amergnat@baylibre.com>
+Subject: Re: [PATCH] clk: mediatek: mt8365: Fix inverted topclk operations
+In-Reply-To: <7hsfbjxcqs.fsf@baylibre.com>
+References: <20230511133226.913600-1-msp@baylibre.com>
+ <20230523114618.laajn2et5nbcxszv@blmsp> <7hsfbjxcqs.fsf@baylibre.com>
+Date:   Fri, 09 Jun 2023 11:21:30 -0700
+Message-ID: <7ha5x8xzrp.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-drivers/clk/mvebu/ is missing a maintainers entry. Add it to the
-existing entry for the Marvell mvebu platforms.
+Kevin Hilman <khilman@kernel.org> writes:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+> Markus Schneider-Pargmann <msp@baylibre.com> writes:
+>
+>> just wanted to ask if I need to do something specific for it to go into
+>> a rc? Sorry if I missed doing something for that, I haven't had to fix
+>> something in an rc that often before.
+>
+> I think the  Fixes tag is enough to indicate that.
+>
+> Steven, is there still time for this fix be queued up for v6.4-rc?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7e0b87d5aa2e..5656a729f2e4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2364,6 +2364,7 @@ F:	arch/arm/configs/mvebu_*_defconfig
- F:	arch/arm/mach-mvebu/
- F:	arch/arm64/boot/dts/marvell/armada*
- F:	arch/arm64/boot/dts/marvell/cn913*
-+F:	drivers/clk/mvebu/
- F:	drivers/cpufreq/armada-37xx-cpufreq.c
- F:	drivers/cpufreq/armada-8k-cpufreq.c
- F:	drivers/cpufreq/mvebu-cpufreq.c
-
--- 
-2.39.2
-
+Steven: gentle reminder ping.
