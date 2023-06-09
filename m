@@ -2,55 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A18C7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 00:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75FFC7EE29
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 00:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235563AbjFIAaw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jun 2023 20:30:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45306 "EHLO
+        id S229784AbjFIA5i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jun 2023 20:57:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbjFIAav (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 20:30:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B2FB1BE8;
-        Thu,  8 Jun 2023 17:30:50 -0700 (PDT)
+        with ESMTP id S230340AbjFIA5g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 20:57:36 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BEC630E4;
+        Thu,  8 Jun 2023 17:57:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 273A365253;
-        Fri,  9 Jun 2023 00:30:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 719E2C433EF;
-        Fri,  9 Jun 2023 00:30:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A5A446527A;
+        Fri,  9 Jun 2023 00:57:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3958C433D2;
+        Fri,  9 Jun 2023 00:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686270649;
-        bh=ZVa287C0oWjuND1JLpn/ix4C5uNAJ2w+6kuC46VG9vE=;
+        s=k20201202; t=1686272252;
+        bh=D8/QLnk62c2JW2uh38eLpF0eqg/3c9Kx621Upma/pvY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=s/g+io50EQvASbCX7TDs+IUF4y6VXjtJHYVn/8aEdDoARJKSHAeCx3K3xmVKS7mcJ
-         GwX3a+feCVTiOWjztM8Z3xA2B3Osv16VE/CJTEr/RxDVB3MFS1lEKMKBb6JRbEKr82
-         E30+ILMtwgnYYmwRCUIOBvirg0tRtRTz8JOYEou4KxwaDI9Epgxd+P7uW2EfBcB0ZI
-         Wqeq/XzFzahMjAeENB4NoivimmUcpWhWGWV1qpbYg/7XkSJ4mGqxyKOnCjPheEC9Im
-         QYZikyivbGxWgz7fj3JktOguTT/fCQZ/bL0ZGhK6Q9tbGMhFbJF8m6vIIvGWehlfQ/
-         ANG5h9qBuajlA==
-Message-ID: <2e4a08941bf46408eaef415a1f0e6c32.sboyd@kernel.org>
+        b=EwpSu2GjUkCjOyTrD1/4cZO15oJEFXjU4GfqgzMp/6oFgm7Cex5Bm+hPwHmtlnfcP
+         IkUuAgbbWaLcw0W7oUD0TpyVZRB+dyQrtEJXGGKgvPM4VTguScxIyHHBKVx1JNtfZj
+         Deo0hpBI5IO6KuZx5SWJjoy1Vn6j43jr88wytqq7C4Z4hZ/J1BhLj7y85JJDKiaJht
+         Z55itUnT3vGkRw6VmW+iWkNct2RLFHRBCh1Toum5KXrA5CZX+NXDyx1oEoJ5RBcJzj
+         Tipp0/mkXWTueZiVp+cFnuLjvh/dSAyBooWyXZ5Qrk94b1EYbscffm0kw1D2/bm4uF
+         1+aIoGiIlqTOg==
+Message-ID: <dd78ea99114f431dfc97ba88de39b509.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230601095512.18029-1-zhangqing@rock-chips.com>
-References: <20230601095512.18029-1-zhangqing@rock-chips.com>
-Subject: Re: [PATCH v1] clk: clk-fractional-divider: Export clk_fractional_divider_general_approximation API
+In-Reply-To: <cover.1685094576.git.geert+renesas@glider.be>
+References: <cover.1685094576.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.5
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        huangtao@rock-chips.com
-To:     heiko@sntech.de, kever.yang@rock-chips.com,
-        mturquette@baylibre.com, zhangqing@rock-chips.com
-Date:   Thu, 08 Jun 2023 17:30:47 -0700
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 08 Jun 2023 17:57:29 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Elaine Zhang (2023-06-01 02:55:12)
-> This is used by the Rockchip clk driver, export it to allow that
-> driver to be compiled as a module.
+Quoting Geert Uytterhoeven (2023-05-26 02:53:19)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit ac9a78681b921877518763ba0e89202254349d=
+1b:
+>=20
+>   Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.5-tag1
+>=20
+> for you to fetch changes up to d1c20885d3b01e6a62e920af4b227abd294d22f3:
+>=20
+>   clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write (2023-05-23 09:=
+06:50 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Sounds fine when CONFIG_COMMON_CLK_ROCKCHIP is tristate.
+Thanks. Pulled into clk-next
