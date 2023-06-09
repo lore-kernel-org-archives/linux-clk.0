@@ -2,65 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5946FC7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 00:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8E4C7EE25
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 00:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237694AbjFIAJl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Jun 2023 20:09:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38586 "EHLO
+        id S229524AbjFIAYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Jun 2023 20:24:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237700AbjFIAJh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 20:09:37 -0400
+        with ESMTP id S237138AbjFIAYw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Jun 2023 20:24:52 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1034A2D68;
-        Thu,  8 Jun 2023 17:09:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8C02D72
+        for <linux-clk@vger.kernel.org>; Thu,  8 Jun 2023 17:24:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95E6E61A9C;
-        Fri,  9 Jun 2023 00:09:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC781C4339B;
-        Fri,  9 Jun 2023 00:09:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EBFFE6518B
+        for <linux-clk@vger.kernel.org>; Fri,  9 Jun 2023 00:24:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A66C433D2;
+        Fri,  9 Jun 2023 00:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686269372;
-        bh=7nzLJMNZ2AgOMNHbQ/B3K+7n/rvw29zxaly+m2sk1ao=;
+        s=k20201202; t=1686270290;
+        bh=NnyktKy8joH18KoWTb5qePeBOJw8lOSTUT43nvNvEko=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=G/4swEJI+GvsbcWwR3rghAwjZJnQE5SwXftzUolUeay/3fCiZuq0/f5tOmFsGh0Hv
-         HdKhyDNq2KZ7ykG2X1mRVUipZPxuGstBDjxCJYtdzZSfSCI1lGyB6yGDPDr2Y7ZuQu
-         kR73l3isWP43M3QTz0SkCf0W72ptQB/jNWonhgJAftnUGyP7TdhxUjRKvJzNtm8vX4
-         biqSbqVJFr1eRdxoJoGVsPYipFA/ZAxJ6KkBZ9KRnezcyg7eGQ0UzctlkQZaDCsIY0
-         QYa0DaDik8AjUKXxJR58fjaF6777XUtIPf+dqADgZ0PSI8YAvVx+326fUx9F7GllMq
-         I6RSu+3s0de6w==
-Message-ID: <4474a06189ec21462e234559af72dc53.sboyd@kernel.org>
+        b=plxsgCOSAidd8eX3aGbnTB6NQA/dzRYO7nthjQnJqUxZe/Kczi0zZ2e+3FU1sz3Lz
+         TWp9liHZ8vVLbPG6JIe0KpDCUtxKxNOQj6OU478a7K8KRGtAMYQhqeff6ar1g/ia6L
+         OJDX4HRU5oD2rwEeQgkbc3OyO5aapUAodWdl+C1uY1JiA1NFSO2FWjTMys2zfKE9yH
+         mIz77/cEs+KnJufKC9FZ20RReHOlWOkzoFJdFZ+SngDbFn8QR4jEEoZnGCrc7T+BkZ
+         TOEG229BIGij/g7t1GRAx9qaUytqCTsq0BuCabN+sILj4Tvt917nZhFmReCh3h6e8j
+         TGVebROHCxCWA==
+Message-ID: <6dba4123f60b14094d585dd011b1ee2d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230514191959.706269-2-marek.vasut+renesas@mailbox.org>
-References: <20230514191959.706269-1-marek.vasut+renesas@mailbox.org> <20230514191959.706269-2-marek.vasut+renesas@mailbox.org>
-Subject: Re: [PATCH v2 2/2] clk: vc7: Use device_get_match_data() instead of of_device_get_match_data()
+In-Reply-To: <20230602221604.155027-3-festevam@gmail.com>
+References: <20230602221604.155027-1-festevam@gmail.com> <20230602221604.155027-3-festevam@gmail.com>
+Subject: Re: [PATCH 3/3] clk: imx: imx6sx: Remove hardcoded LCDIF1 parent
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>, linux-renesas-soc@vger.kernel.org
-To:     Marek Vasut <marek.vasut+renesas@mailbox.org>,
-        linux-clk@vger.kernel.org
-Date:   Thu, 08 Jun 2023 17:09:29 -0700
+Cc:     hs@denx.de, abelvesa@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@denx.de>
+To:     Fabio Estevam <festevam@gmail.com>, shawnguo@kernel.org
+Date:   Thu, 08 Jun 2023 17:24:48 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Vasut (2023-05-14 12:19:59)
-> Use device_get_match_data() which, unlike of_device_get_match_data(),
-> is compatible with other firmware interfaces than just OF.
+Quoting Fabio Estevam (2023-06-02 15:16:04)
+> From: Fabio Estevam <festevam@denx.de>
 >=20
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> It is not a good idea to hardcode the LCDIF1 parent inside the
+> clock driver because some users may want to use a different clock
+> parent for LCDIF1. One of the reasons could be related to EMI tests.
+>=20
+> Remove the harcoded LCDIF1 parent as this is better described via
+> devicetree.
+>=20
+> Signed-off-by: Fabio Estevam <festevam@denx.de>
 > ---
 
-Applied to clk-next
+Do you need to check for the DT property and skip these clk_set_parent()
+calls if they're present? How does this work if the DT isn't updated at
+the same time?
