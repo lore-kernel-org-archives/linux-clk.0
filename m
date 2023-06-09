@@ -2,207 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81CAC7EE29
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 11:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BBAC7EE2E
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 11:49:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbjFILsz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 07:48:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40782 "EHLO
+        id S230379AbjFILti (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 07:49:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231172AbjFILsx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 07:48:53 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D06358B;
-        Fri,  9 Jun 2023 04:48:50 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 981665FD8E;
-        Fri,  9 Jun 2023 14:48:48 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1686311328;
-        bh=i8mNs2rF54Ol0kXxFcSbg3Rj4NqvtmjvBxJgpQRfSPo=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=Q1l9oXPeAJIm6jGSa7PBxKhYShkKytHT8QEWYzUuWbL0hPQZe+Yb2+gd+DWbuRzCi
-         ukswtpwIlfYtlogBMoLh0dN5S6QooTbhfVnq+Pzwx9tB4zaPUWAVrOywWB/7ttvRj3
-         MqhqWtFav0ojgOn7ukSYBc9n82vclzjSgeLEFponi1wdJvw6+Snxi8iqm56F7qQaIq
-         wLyu3Aok17REBop1qvsHizZf5+aFOW4+yRTvLGDQZCrYwk/VI1gvw7/1FNokj15gXq
-         1ZeXEaahADg9F4vRxXpljKbt1QTF4qTG1jVcTWdsMSF3rR0dqpF9WJ8q3Jur6ifVv3
-         2KDO+bqdWIWiA==
-Received: from S-MS-EXCH02.sberdevices.ru (S-MS-EXCH02.sberdevices.ru [172.16.1.5])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri,  9 Jun 2023 14:48:48 +0300 (MSK)
-Date:   Fri, 9 Jun 2023 14:48:47 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-CC:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 03/18] clk: meson: migrate a1 clock drivers out of
- hw_onecell_data to drop NR_CLKS
-Message-ID: <20230609114847.x24by2foebojbchq@CAB-WSD-L081021>
-References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
- <20230607-topic-amlogic-upstream-clkid-public-migration-v1-3-9676afa6b22c@linaro.org>
- <1jlegu9l5d.fsf@starbuckisacylon.baylibre.com>
- <638206ba-e2da-bb8e-a2e4-138af84648b4@linaro.org>
+        with ESMTP id S229703AbjFILth (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 07:49:37 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 190651A2;
+        Fri,  9 Jun 2023 04:49:36 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 359B76Hr007692;
+        Fri, 9 Jun 2023 11:49:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=9iNEzxZcA2n7WfjPAMtIQuGjmo7X+UhXwONmGLbWsWo=;
+ b=htTeTUFkKE04vFXgYrcK23c0FP7bhGOm9a5ZtZZao+aPVbJ492nuHBMSZzP1hCf4/obJ
+ 70RTQ4cBoi1QyO/0C5SdK02xUK++p5WcT3gON9vACBIVk/LxIqWw1zWt7MLoKqiAUrCp
+ BW1bUciH1VKLpstTho0xEYDyVNtdBZFM1/oe40AXtNHWhUNrmzSroTZ5O48brZeBk1HT
+ nPw07obTI4dPG42vqOaDziqB77nvO/eP0HU7FxOuiAezpkiLZhe1xoEUSARtbC04ytV/
+ gxbnuyX9nieFDRMuLMwPzeTa7/5fIcGuVHE6F+45EMJbrFaheTxJQOHSY3yWaI5tZGxU Vw== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r3t70h0en-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Jun 2023 11:49:30 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 359BnTM1002529
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 9 Jun 2023 11:49:29 GMT
+Received: from [10.218.22.90] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 9 Jun 2023
+ 04:49:23 -0700
+Message-ID: <e9781cda-8eb4-99e0-8ed7-09c2534638e0@quicinc.com>
+Date:   Fri, 9 Jun 2023 17:19:19 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <638206ba-e2da-bb8e-a2e4-138af84648b4@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [172.16.1.6]
-X-ClientProxiedBy: S-MS-EXCH02.sberdevices.ru (172.16.1.5) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/09 07:08:00 #21465535
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH V3 2/5] clk: qcom: Remove support to set CAL_L field in
+ lucid evo pll configure
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230601143430.5595-1-quic_jkona@quicinc.com>
+ <20230601143430.5595-3-quic_jkona@quicinc.com>
+ <1d29bc3f-12db-a676-56f8-b8c1a09063dc@linaro.org>
+From:   Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <1d29bc3f-12db-a676-56f8-b8c1a09063dc@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: njf2o6aYKAmo_2LT01s3Nfo0-MesG3mh
+X-Proofpoint-ORIG-GUID: njf2o6aYKAmo_2LT01s3Nfo0-MesG3mh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-09_08,2023-06-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 mlxscore=0 spamscore=0 clxscore=1015 suspectscore=0
+ bulkscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306090100
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Neil,
+Hi Dmitry,
 
-On Thu, Jun 08, 2023 at 02:53:50PM +0200, Neil Armstrong wrote:
-> On 08/06/2023 14:45, Jerome Brunet wrote:
-> > > +struct meson_a1_pll_clks {
-> > > +	struct clk_hw **hw_clks;
-> > > +	unsigned int hw_clk_num;
-> > > +};
-> > > +
-> > > +static struct meson_a1_pll_clks a1_pll_clks = {
-> > > +	.hw_clks = a1_pll_hw_clks,
-> > > +	.hw_clk_num = ARRAY_SIZE(a1_pll_hw_clks),
-> > > +};
-> > > +
-> > > +static struct clk_hw *meson_a1_pll_hw_get(struct of_phandle_args *clkspec, void *clk_data)
-> > > +{
-> > > +	const struct meson_a1_pll_clks *data = clk_data;
-> > > +	unsigned int idx = clkspec->args[0];
-> > > +
-> > > +	if (idx >= data->hw_clk_num) {
-> > > +		pr_err("%s: invalid index %u\n", __func__, idx);
-> > > +		return ERR_PTR(-EINVAL);
-> > > +	}
-> > > +
-> > > +	return data->hw_clks[idx];
-> > > +}
-> > 
-> > I'd prefer to have a single struct type and and single custom
-> > callback for the different SoC please.
-> 
-> Sure, I've written a common code for that, but I have a hard time finding
-> a proper naming for it... so I choosed meson-clkc since it could have
-> more common helper code for duplicated code over the clk driver:
-> 
-> ===================================><============================================================================
-> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> index 8ce846fdbe43..9070dcfd9e71 100644
-> --- a/drivers/clk/meson/Kconfig
-> +++ b/drivers/clk/meson/Kconfig
-> @@ -30,6 +30,9 @@ config COMMON_CLK_MESON_VID_PLL_DIV
->  	tristate
->  	select COMMON_CLK_MESON_REGMAP
-> 
-> +config COMMON_CLK_MESON_CLKC
-> +	tristate
-> +
->  config COMMON_CLK_MESON_AO_CLKC
->  	tristate
->  	select COMMON_CLK_MESON_REGMAP
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index d5288662881d..13c6db466986 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  # Amlogic clock drivers
-> 
-> +obj-$(CONFIG_COMMON_CLK_MESON_CLKC) += meson-clkc.o
->  obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
->  obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
-> diff --git a/drivers/clk/meson/meson-clkc.c b/drivers/clk/meson/meson-clkc.c
-> new file mode 100644
-> index 000000000000..fa98b9d09011
-> --- /dev/null
-> +++ b/drivers/clk/meson/meson-clkc.c
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
-> + */
-> +
-> +#include <linux/of_device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include "meson-clkc.h"
-> +
-> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
-> +{
-> +	const struct meson_clk_hw_data *data = clk_hw_data;
-> +	unsigned int idx = clkspec->args[0];
-> +
-> +	if (idx >= data->num) {
-> +		pr_err("%s: invalid index %u\n", __func__, idx);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	return data->hws[idx];
-> +}
-> +EXPORT_SYMBOL_GPL(meson_clk_hw_get);
-> +
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/clk/meson/meson-clkc.h b/drivers/clk/meson/meson-clkc.h
-> new file mode 100644
-> index 000000000000..e3bad2aa17eb
-> --- /dev/null
-> +++ b/drivers/clk/meson/meson-clkc.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> +/*
-> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
-> + */
-> +
-> +#ifndef __MESON_HW_CLKC_H__
-> +#define __MESON_HW_CLKC_H__
-> +
-> +#include <linux/of_device.h>
-> +#include <linux/clk-provider.h>
-> +
-> +struct meson_clk_hw_data {
-> +	struct clk_hw	**hws;
-> +	unsigned int	num;
-> +};
-> +
-> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
-> +
-> +#endif
-> ===================================><============================================================================
-> 
-> If it's ok I'll send a v2 using this.
-> 
-> Thanks,
-> Neil
+Thanks for your review!
 
-In addition, I propose consolidating the probe() routine of the a1
-clocks into a common part, which can be utilized for s4 and other
-similar clocks. This solution was presented in the early a1 review
-stages of this patch set.
+On 6/1/2023 8:16 PM, Dmitry Baryshkov wrote:
+> On 01/06/2023 17:34, Jagadeesh Kona wrote:
+>> For lucid evo and ole pll's the CAL_L, RINGOSC_CAL_L and L_VAL are
+>> part of the same register, hence update the l configuration value
+>> to include these fields across all the chipsets.
+>>
+>> Since the l configuration value now includes both L and CAL_L fields,
+>> there is no need to explicitly set CAL_L field again in lucid evo pll
+>> configure, Hence remove support to explicity set CAL_L field for evo pll.
+>>
+>> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL 
+>> configuration interfaces")
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> ---
+>> Changes since V2:
+>>   - Squashed update L val and remove explicit cal_l configuration to 
+>> single patch
+>>   - Updated L configuration for gpucc-sm8450 as well which was merged 
+>> recently
+>> Changes since V1:
+>>   - Newly added.
+>>
+>>   drivers/clk/qcom/camcc-sm8450.c  | 24 ++++++++++++++++--------
+>>   drivers/clk/qcom/clk-alpha-pll.c |  6 +-----
+>>   drivers/clk/qcom/dispcc-sm8450.c |  6 ++++--
+>>   drivers/clk/qcom/dispcc-sm8550.c |  6 ++++--
+>>   drivers/clk/qcom/gpucc-sa8775p.c |  6 ++++--
+>>   drivers/clk/qcom/gpucc-sm8450.c  |  6 ++++--
+>>   6 files changed, 33 insertions(+), 21 deletions(-)
+> 
+> I'd say, this is still not a correct solution from my point of view. A 
+> correct solution would be to follow the existing code and use constants 
+> for the constant values (of CAL_L, and RINGOSC_CAL_L).
+> 
 
-https://lore.kernel.org/linux-amlogic/20221201225703.6507-7-ddrokosov@sberdevices.ru/
+Sure, will keep the existing code as is and will remove this patch in 
+the next series.
 
-Maybe, it can be generalized for the all meson clock controller drivers.
+>>
+>> diff --git a/drivers/clk/qcom/camcc-sm8450.c 
+>> b/drivers/clk/qcom/camcc-sm8450.c
+>> index 51338a2884d2..6a5a08f88598 100644
+>> --- a/drivers/clk/qcom/camcc-sm8450.c
+>> +++ b/drivers/clk/qcom/camcc-sm8450.c
+>> @@ -57,7 +57,8 @@ static const struct pll_vco rivian_evo_vco[] = {
+>>   static const struct clk_parent_data pll_parent_data_tcxo = { .index 
+>> = DT_BI_TCXO };
+>>   static const struct alpha_pll_config cam_cc_pll0_config = {
+>> -    .l = 0x3e,
+>> +    /* .l includes CAL_L_VAL, L_VAL fields */
+>> +    .l = 0x0044003e,
+>>       .alpha = 0x8000,
+>>       .config_ctl_val = 0x20485699,
+>>       .config_ctl_hi_val = 0x00182261,
+>> @@ -128,7 +129,8 @@ static struct clk_alpha_pll_postdiv 
+>> cam_cc_pll0_out_odd = {
+>>   };
 
--- 
-Thank you,
-Dmitry
+[skipped]
+
+Thanks & Regards,
+Jagadeesh
