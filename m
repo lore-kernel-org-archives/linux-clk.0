@@ -2,54 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861FEC7EE25
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 18:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C131C7EE25
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 18:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbjFISOT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 14:14:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60842 "EHLO
+        id S229436AbjFISOZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 14:14:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbjFISOT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 14:14:19 -0400
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B903584;
-        Fri,  9 Jun 2023 11:14:18 -0700 (PDT)
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-77a103c5ebbso88544339f.3;
-        Fri, 09 Jun 2023 11:14:18 -0700 (PDT)
+        with ESMTP id S229597AbjFISOW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 14:14:22 -0400
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BEFD3586;
+        Fri,  9 Jun 2023 11:14:20 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-777ac791935so85734839f.2;
+        Fri, 09 Jun 2023 11:14:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686334457; x=1688926457;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=brZOF7nrehUE/8Yor4NXyNlyFxJnESdJnOV2gg85IiQ=;
-        b=gyOqcsla4WwH4NIzipZa3GRqjYfNCMLZjfVWu8jNTqJnAiQufsrMwPMu3kYIyvumx9
-         AQt83FTzFzLbS2rxJhi2qzk7P7ZV3kVCHyBU5pkXU4JLN/wwm+AYWdDUtOzTPzxbGQXp
-         IPdYPqk78nzeRHNcsHB90S67whK96eb7p9bhHGFifaM1c+BtuBMnivGWUrWpEJjJ28B8
-         8i1/Ac5q8lw9maTA3iaPatzA/WhCFppJcIWbSZ6AyyCCvo/4jg7taX6lq94BtCkWkq38
-         h0ewTgNrQ3a2BY9SgDQ8AR81FoZNge2Jk7FQzwxXSiUT07Xxqh3Wks2/ryEmEqMskxnx
-         lXYg==
-X-Gm-Message-State: AC+VfDxZOhzkmvTPS1vs2/Z0KaY0cOqElUwDu3cnDiQBgGI6GV/5h8lq
-        2nVmaYMRQRkpkQ0xuEWQREBKwE4YSg==
-X-Google-Smtp-Source: ACHHUZ6doK9IogLe2mxLOxpEj9piJPyTQY+TK0cR3dRLOragM+7vMmknwhXaY7Q60nMLuD6SaOVr4g==
-X-Received: by 2002:a92:cacd:0:b0:33a:5bb5:f8f6 with SMTP id m13-20020a92cacd000000b0033a5bb5f8f6mr1901668ilq.18.1686334457532;
-        Fri, 09 Jun 2023 11:14:17 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686334460; x=1688926460;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wUoI1otyq64V4OASVoH2qZ32EO4bebljBzF+Ld6+3L8=;
+        b=d/1ff/qxrBfChgRlwPEHKtWAbRXGBRI5VudXfeJGwRscwnN/zGO4P6/v/JRAhMfvk6
+         95JNXWQUreKajR2JugpIl/XhVYKK2W4Oik3blwh5oh9rRLeJ6U9MfUoHQfxOB+InROzP
+         /RvrBFSMhiCyWLbMisJjV9G6uNlWHhiOyQOlXHhWN4piN12yG/Pl+mZ5PBSfnNOC4kmU
+         90lMut8A+4alQc0/m0NiN1/E4g7QjHcMDope+ax5ZSHMA/cLat0o9mi6OISM8e/xKHeC
+         lZVjBe8gYDuPcp/yloLmS0kW8/6Ff71RxmJt6gJnZVvIIlM6P0nMabUt6LCJfehOUI9D
+         x2rg==
+X-Gm-Message-State: AC+VfDwYiWluvl0ZUGlPjbC7xLk7DVVb4b2aGIxxhl+4SaOZnwnMn8Zd
+        HNX5pXfinTaq85zQCjZMiQ==
+X-Google-Smtp-Source: ACHHUZ7avp6M8UuFQ9TiyWiTQa1MXln3O/GpP7V72IkCtX4OMsKNx1Tat1zvWXXVbv5Ss/EtNsYBgQ==
+X-Received: by 2002:a5e:df0b:0:b0:777:b4af:32a3 with SMTP id f11-20020a5edf0b000000b00777b4af32a3mr2346005ioq.14.1686334459878;
+        Fri, 09 Jun 2023 11:14:19 -0700 (PDT)
 Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id a3-20020a92c703000000b0033568b32890sm1235046ilp.24.2023.06.09.11.14.16
+        by smtp.gmail.com with ESMTPSA id l18-20020a02a892000000b0040f9af9237asm1114745jam.41.2023.06.09.11.14.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Jun 2023 11:14:16 -0700 (PDT)
-Received: (nullmailer pid 1681126 invoked by uid 1000);
+        Fri, 09 Jun 2023 11:14:19 -0700 (PDT)
+Received: (nullmailer pid 1681135 invoked by uid 1000);
         Fri, 09 Jun 2023 18:14:15 -0000
 From:   Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 0/4] clk: Fix/cleanup mvebu CPU DT node accesses
-Date:   Fri, 09 Jun 2023 12:13:44 -0600
-Message-Id: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
+Date:   Fri, 09 Jun 2023 12:13:48 -0600
+Subject: [PATCH v2 4/4] clk: mvebu: Use of_address_to_resource()
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANhrg2QC/3WNyw6CMBBFf8V07Zg+EIwr/8OwaGEKDbWYqTQaw
- r87snd5Tu7JXUVGCpjF9bAKwhJymBODPh5EN9o0IISeWWipjTS6gUdBt0AXJ/DhjRl8ZZWpz95
- K1wiunM0IjmzqRu7SEiPLJ+G+ZnNvmceQXzN99teifvb/QVEgoTKXHpXUNfr+NiEljKeZBtFu2
- /YFoQCWg8QAAAA=
+Message-Id: <20230327-mvebu-clk-fixes-v2-4-8333729ee45d@kernel.org>
+References: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
+In-Reply-To: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
 To:     Andrew Lunn <andrew@lunn.ch>,
         Gregory Clement <gregory.clement@bootlin.com>,
         Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
@@ -62,39 +60,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a couple of fixes and clean-ups to use preferred CPU accessors
-rather than directly parsing DT "reg" properties. It's part of a larger 
-effort to remove open coded parsing of "reg". The existing code is 
-fragile depending on the CPU architecture details and is wrong for 
-arm64 (though the dts files are also wrong).
-
-Compile tested only.
+Replace of_get_property() and of_translate_address() calls with a single
+call to of_address_to_resource().
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
-Changes in v2:
-- Add patch 4 previously posted here: 
-  https://lore.kernel.org/all/20230406010738.1269781-1-robh@kernel.org/
-- Rebase on v6.4-rc1
-- Link to v1: https://lore.kernel.org/r/20230327-mvebu-clk-fixes-v1-0-438de1026efd@kernel.org
+ drivers/clk/mvebu/armada_ap_cp_helper.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
----
-Rob Herring (4):
-      MAINTAINERS: Add Marvell mvebu clock drivers
-      clk: mvebu: Use of_get_cpu_hwid() to read CPU ID
-      clk: mvebu: Iterate over possible CPUs instead of DT CPU nodes
-      clk: mvebu: Use of_address_to_resource()
+diff --git a/drivers/clk/mvebu/armada_ap_cp_helper.c b/drivers/clk/mvebu/armada_ap_cp_helper.c
+index 6a930f697ee5..e7005de66327 100644
+--- a/drivers/clk/mvebu/armada_ap_cp_helper.c
++++ b/drivers/clk/mvebu/armada_ap_cp_helper.c
+@@ -16,15 +16,13 @@
+ char *ap_cp_unique_name(struct device *dev, struct device_node *np,
+ 			const char *name)
+ {
+-	const __be32 *reg;
+-	u64 addr;
++	struct resource res;
+ 
+ 	/* Do not create a name if there is no clock */
+ 	if (!name)
+ 		return NULL;
+ 
+-	reg = of_get_property(np, "reg", NULL);
+-	addr = of_translate_address(np, reg);
++	of_address_to_resource(np, 0, &res);
+ 	return devm_kasprintf(dev, GFP_KERNEL, "%llx-%s",
+-			      (unsigned long long)addr, name);
++			      (unsigned long long)res.start, name);
+ }
 
- MAINTAINERS                             |  1 +
- drivers/clk/mvebu/ap-cpu-clk.c          | 16 ++++++++--------
- drivers/clk/mvebu/armada_ap_cp_helper.c |  8 +++-----
- drivers/clk/mvebu/clk-cpu.c             | 14 +++-----------
- 4 files changed, 15 insertions(+), 24 deletions(-)
----
-base-commit: ac9a78681b921877518763ba0e89202254349d1b
-change-id: 20230327-mvebu-clk-fixes-f4a1365fa0b7
-
-Best regards,
 -- 
-Rob Herring <robh@kernel.org>
+2.39.2
 
