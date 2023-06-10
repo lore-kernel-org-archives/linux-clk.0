@@ -2,103 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88AD8C8300C
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Jun 2023 16:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D18B7C7EE29
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Jun 2023 16:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbjFJQgt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Jun 2023 12:36:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46720 "EHLO
+        id S229663AbjFJQiO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Jun 2023 12:38:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229919AbjFJQgr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Jun 2023 12:36:47 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EC4C3A96
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jun 2023 09:36:44 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-977d7bdde43so595751766b.0
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jun 2023 09:36:44 -0700 (PDT)
+        with ESMTP id S229561AbjFJQiO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Jun 2023 12:38:14 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71BE91984
+        for <linux-clk@vger.kernel.org>; Sat, 10 Jun 2023 09:38:12 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-51478f6106cso4924643a12.1
+        for <linux-clk@vger.kernel.org>; Sat, 10 Jun 2023 09:38:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1686415002; x=1689007002;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X8VbRFbQOuqhFAPglq3rUuEFETDHIQvOfBEZigyYE00=;
-        b=fcZwhYQXbZrGUCxD2cxWjeGu7RFEU0ScoH6Fu1j8oZlTPWxdTpxZpMcmjp2EzDf/9d
-         FfZHTb9Jegul55u7V0zCjPzL5GRZCoYWPuup8y0FgDEX/VE4abtLSaelCPLmqGhOFvXf
-         0hiMFMG0SHOUJHmTFAtrpSUozKDhB5uBNbxOAm1l9CSRT6MqowUWZKvUTc/wZ1A942wY
-         p8bL7na2XtF6nwgC4GwchfUxPf/wCWr8c/90iLSEeM82o53tpfNniHl2LweqNqiJTqEo
-         8La/4VPf8P1Wsh/9IK2QftfK8rl0/botcKtufVlRAOULG+cZ15IapPXlNaqykMscXVUg
-         hfOA==
+        d=linaro.org; s=google; t=1686415091; x=1689007091;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hp33yA5HcmdHo6uDlO7P+JfSf1kHY2kxoEjyxwdelr4=;
+        b=qpWBaIqFetal+BReZfUxUTyc6Jao3DQNWqNlxdw8JnRTnxNxho/XZvNQz6kE83BBO0
+         9AESFhLOtsmkcdaO7cEDKhjp9Euc9dxTmfFl+TDXNt28M4cbF48nxbDmz1V1HRp+KoDZ
+         HhU+EAzkqemptHxjze8XJi1TttEK+Gbrn2iRET14U+/o7BYIr/7ycjj4VhaPc63q52ZE
+         NDxzsSxac9XDEoVRh9Rrbd4b+b32RV2vVlFsI0z0+nzoP8+w+cHXQ2vUdz/jK7MO6xmH
+         2aP2X/06q+4APRPW1I4Ghzrjd9gMWPAwT/t410ZJIMRoflwn8M6B8+OQ4auePe3ImtRH
+         +MKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686415002; x=1689007002;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X8VbRFbQOuqhFAPglq3rUuEFETDHIQvOfBEZigyYE00=;
-        b=ZmXFbNymL4mzGKJWwMGfWYkK36jY1whJSHOyAl5R9LocR9qAweHn1h1w9CWBMRk//I
-         3z5sd5s1ESOQS1N/2zdIhuonRi5rDPndmspIhub3/VvYlsF28zM/HpxZpy6EITj/JPS4
-         T9q01PAScuMm+l4BsuV5I9pNHChKa4zoi+sqsTEQpMUCha2mh3k5DvU56Svx2rM3ea4b
-         pP5SiBOvDmVM7a0zVTuVO9E+rq5rqP5aIoPIgDj2BIi9wtfOeV+0jTpq5roYnXusBTac
-         w+cnonUi1Nf3NmIa8HiuibV1PIEDkOfDn93dQvgnCLRYvSKuieV5DRue0n23UamIw9vR
-         HgXA==
-X-Gm-Message-State: AC+VfDyULn5EG3JvFNICECCWSSXNRxg/CzjZK09pbVzoXhpNI84h2cro
-        /Tg79wTFDOUh/egHcGmKiBn+2Q==
-X-Google-Smtp-Source: ACHHUZ4Vwbn5FWH4cTwcJAta6H8LObUb+MmlwTVJNnxgyTP9w4AqfMkvEAq7AY8i3/cgxY1KiIKmkw==
-X-Received: by 2002:a17:906:58c5:b0:974:5e8b:fc28 with SMTP id e5-20020a17090658c500b009745e8bfc28mr5052733ejs.9.1686415002366;
-        Sat, 10 Jun 2023 09:36:42 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id t16-20020a1709064f1000b0096f89fd4bf8sm2728669eju.122.2023.06.10.09.36.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Jun 2023 09:36:41 -0700 (PDT)
-Date:   Sat, 10 Jun 2023 18:36:40 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc:     kuba@kernel.org, vadfed@meta.com, jonathan.lemon@gmail.com,
-        pabeni@redhat.com, corbet@lwn.net, davem@davemloft.net,
-        edumazet@google.com, vadfed@fb.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
-        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
-        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
-        michal.michalik@intel.com, gregkh@linuxfoundation.org,
-        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
-        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
-        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
-        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
-        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
-        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
-        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
-        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org,
-        vadim.fedorenko@linux.dev
-Subject: Re: [RFC PATCH v8 08/10] ice: implement dpll interface to control cgu
-Message-ID: <ZISmmH0jqxZRB4VX@nanopsycho>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
- <20230609121853.3607724-9-arkadiusz.kubalewski@intel.com>
+        d=1e100.net; s=20221208; t=1686415091; x=1689007091;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hp33yA5HcmdHo6uDlO7P+JfSf1kHY2kxoEjyxwdelr4=;
+        b=OXQmCAAkY1w+eA+C1vp6ukhbh2Dc/MvONcHOTeWSsw9s9Bma/XHW0xYQGnx2scZr4q
+         ZKAfCJVaDjR9Ibm0XDDqrS3ZFSONReRgcASY4FXUC7iYyU5f3xEbw+SEgYfQA0b1nAOB
+         LIYwrjMNFeRBZPV37Wurz023exsVWpwqc0Qc4X78H4ibXHUqnPOEhvmyTXdPxsUPeas4
+         uGPdSO+8+4x77gOCpfwTdSeA3Kpd439UT10GXiiRt5uugppuGnWsvK328KBABAeRnPEb
+         aC45eAxodzTF24l6SfgZp5vG6MNSekgBxLyBmRzGq5kPjlpeGGZ7LzkUR/rzW/3WcImK
+         E+VA==
+X-Gm-Message-State: AC+VfDyozg/fF3ZBhYNN31Pq3vhEXQxhWjWxuhedJGIBqx1Aen/sWbaq
+        ZjhTozbBwNqO5NElu43RKlNWTQ==
+X-Google-Smtp-Source: ACHHUZ5WhgtdYTW5eL6c7P8syI3GQHp0HZckc2U6paAq8Szm4VAUQjVE2jDkIGK6LbHNiZyOsXRPdw==
+X-Received: by 2002:a05:6402:690:b0:505:4f7:8a50 with SMTP id f16-20020a056402069000b0050504f78a50mr1600989edy.5.1686415090961;
+        Sat, 10 Jun 2023 09:38:10 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id i9-20020aa7dd09000000b005163054e330sm2968446edv.87.2023.06.10.09.38.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Jun 2023 09:38:10 -0700 (PDT)
+Message-ID: <b18908cd-fe52-8f2d-2882-503460909936@linaro.org>
+Date:   Sat, 10 Jun 2023 18:38:08 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230609121853.3607724-9-arkadiusz.kubalewski@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 06/18] dt-bindings: clk: gxbb-clkc: expose all clock ids
+Content-Language: en-US
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-0-9676afa6b22c@linaro.org>
+ <20230607-topic-amlogic-upstream-clkid-public-migration-v1-6-9676afa6b22c@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v1-6-9676afa6b22c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Jun 09, 2023 at 02:18:51PM CEST, arkadiusz.kubalewski@intel.com wrote:
+On 07/06/2023 12:56, Neil Armstrong wrote:
+> Due to a policy change in clock ID bindings handling, expose
+> all the "private" clock IDs to the public clock dt-bindings
+> to move out of the previous maintenance scheme.
+> 
+> This refers to a discussion at [1] & [2] with Krzysztof about
+> the issue with the current maintenance.
+> 
+> It was decided to move every gxbb-clkc ID to the public clock
+> dt-bindings headers to be merged in a single tree so we
+> can safely add new clocks without having merge issues.
+> 
+> [1] https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
+> [2] https://lore.kernel.org/all/2fabe721-7434-43e7-bae5-088a42ba128d@app.fastmail.com/
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-[...]
 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->+static int ice_dpll_mode_get(const struct dpll_device *dpll, void *priv,
->+			     enum dpll_mode *mode,
->+			     struct netlink_ext_ack *extack)
->+{
->+	*mode = DPLL_MODE_AUTOMATIC;
+Best regards,
+Krzysztof
 
-I don't understand how the automatic mode could work with SyncE. The
-There is one pin exposed for one netdev. The SyncE daemon should select
-exacly one pin. How do you achieve that?
-Is is by setting DPLL_PIN_STATE_SELECTABLE on the pin-netdev you want to
-select and DPLL_PIN_STATE_DISCONNECTED on the rest?
-
-
-[...]
