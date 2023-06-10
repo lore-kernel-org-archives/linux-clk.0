@@ -2,303 +2,155 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C242C7EE29
-	for <linux-clk@archiver.kernel.org>; Sat, 10 Jun 2023 19:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55642C7EE37
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Jun 2023 22:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbjFJTjN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 10 Jun 2023 15:39:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34448 "EHLO
+        id S230432AbjFJWVd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 10 Jun 2023 18:21:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbjFJTjM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Jun 2023 15:39:12 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 143F82720
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jun 2023 12:39:09 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4f658a17aa4so2543169e87.0
-        for <linux-clk@vger.kernel.org>; Sat, 10 Jun 2023 12:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686425947; x=1689017947;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ivj4kBb4wltUdU71XlZeL5JCA/ynomKQYV+kfoyA22E=;
-        b=ADm6//BxGc2oPbeb46UUQ1uLdar7JyMqpHc/2B3Bw/t17DRISNHzvrz4EWHY9IeIHA
-         6z19h2ucXW+vQCBEbev4boY7t5uExRtYfHb0x1I9H/qrOL94UDxdx9ygqO5xw1AmunAZ
-         6OXWlcBb1D+1My7gO+hV4XQWwfWNPGuDe3GydBrukts8gyE144Gx1y+dnQLft4wfIUQ0
-         ZATzvMhbvFq3fc7CplR/Pyi2EeUIYRUSQMr/sCogtPfV89iZPaiLtuEp0lWLARlCd/35
-         uxpIh7CjoZJWIVoY07Nm/Kihn8KwLxIwYlc3cGlHUX+L7tUSsU2FY/DYQX+YQpNaoosn
-         pjhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686425947; x=1689017947;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ivj4kBb4wltUdU71XlZeL5JCA/ynomKQYV+kfoyA22E=;
-        b=hW0nLajK1XVMDfTkMscAfUCJ5Rahm7LCBLxtyG0XVX0mI/tAvMk92cCpZ8X9diCh6s
-         +npde4radJizuWnTCZwXy5CjjTtbUJ+UjHvx1t5lZyZzmfE8gr25KpeNeMpW5zH0EY9C
-         KVYzWUnW7D0+bkEqHlzzvVVXYdbr2GTACRgp0lQwFmwzNazhG4ZpEtkdYplDe+LoJimj
-         zb3t9Ynci05hR5tidQqo0qmJt09lyM+SzXppplomuPWQ1Q2jMi8hiihF9VPhNPrxwAIf
-         43tOvGKVU+OY9WAT2xx8eMlUnnOpnK3yqSCPMB42khGbnUpy+5pDACaG5wTdbUHLl7/Q
-         U3zQ==
-X-Gm-Message-State: AC+VfDyVUzYlES3NSBi7mhYbXgjAEdGaFl0SFUlJnbKx+c7JIdat+ORu
-        smY/DtlmVhklKfFuxuhnV8pWrg==
-X-Google-Smtp-Source: ACHHUZ7iWoFCQ0PazvZ5iVmvaDyIMxpfGSlR+ZTt2vNZuv8PgDkZiEPZQFocIbeyA6R5bUIDdT/TKQ==
-X-Received: by 2002:a05:6512:3289:b0:4f0:1e7d:f897 with SMTP id p9-20020a056512328900b004f01e7df897mr2179520lfe.17.1686425947249;
-        Sat, 10 Jun 2023 12:39:07 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id v20-20020ac25594000000b004f19bfdfef9sm951603lfg.21.2023.06.10.12.39.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Jun 2023 12:39:06 -0700 (PDT)
-Message-ID: <c52f0311-a8a0-79af-2a08-51a8564a8b25@linaro.org>
-Date:   Sat, 10 Jun 2023 21:39:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S229533AbjFJWVc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 10 Jun 2023 18:21:32 -0400
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2052.outbound.protection.outlook.com [40.107.105.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26EB435A9;
+        Sat, 10 Jun 2023 15:21:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CHUPoe26JP4KKeYEAqUju3M8UgysECKZgH2ZJxFktRgNNJyjIsqwgfXUN3hZZNjiSwfDAT/2BLCzGnutexLUeTRZoMut3ubGSEzyuaiG/HrE+1U4nN4rhE4xzpxeHQ9sNd69zoCpwj1y0+WTNNKFJZWrOuNN5V5TXKwCquhiO2Sl6XrCdMfqsNcDbxBELHzETpknLUCINH472EOmEdNPoXMlwp9a2kOZTfuL14qJWZ6d1ZisA6QnAyhuiFy89iZ/3LjMlx3JPpU/59lOerIxtc2QWPEZyCxPw6lqh4sa65kkys6lth1gDXdAoU0PG+MEYHvrhrmfTjltcEws408vRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WKSZO/0Qi5yRSL/CE20ZtCxT6d4ihwnB8xx0vBz0nME=;
+ b=hZ8ySEBba+mM3U/rY2J00mr7RS3eJ/u+LOp9X0lH/c5UFM5mpEPWYSiUm2HtvGyHP2CkWh1Wjt2hUE9C8k/EHPnixMzXzTk50rxbczlABwD+ulucPplMz+sw3XUnC1kt8/3qM6Ddl6TR/1eT/hi7k2ZoqRXU522/jkqA6LoUaep30aqwtBsCnaB2SgfbxEYoVrf+DOWpeh1z0s7iiDCfSl1ecBbGcidbsRgMnTSVZBsNqBmvUzDA6RCeFx3JVRkmwQedGA2WBUX8KMLWdk5OqFnDKpc4T6XskQwZl/2NGT8zZ0QhmUiNLHRv0cMnKfW0xpU4BWOeHuVzToLdr3XbQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WKSZO/0Qi5yRSL/CE20ZtCxT6d4ihwnB8xx0vBz0nME=;
+ b=RoDL4XiIn7u9sWubX5Tv9b9JhwdyzZQ+DjWlylErVP/sZGtZ7S8ZhWWHQY/faLbe5ty01hEvQ3DYMIqfx73FGQJQW74bm1LZVhsognmvJmOM63lguu4qv12bBMm0QL8qm9OvYD+fAQpZyCw0D8eX9/1YAH1vX3LJLqeXYOApBW8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB6452.eurprd04.prod.outlook.com (2603:10a6:208:16d::21)
+ by AS8PR04MB7509.eurprd04.prod.outlook.com (2603:10a6:20b:23e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.29; Sat, 10 Jun
+ 2023 22:21:25 +0000
+Received: from AM0PR04MB6452.eurprd04.prod.outlook.com
+ ([fe80::c40e:d76:fd88:f460]) by AM0PR04MB6452.eurprd04.prod.outlook.com
+ ([fe80::c40e:d76:fd88:f460%4]) with mapi id 15.20.6455.030; Sat, 10 Jun 2023
+ 22:21:24 +0000
+Date:   Sun, 11 Jun 2023 01:21:23 +0300
+From:   Vladimir Oltean <vladimir.oltean@nxp.com>
+To:     Sean Anderson <sean.anderson@seco.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?utf-8?B?RmVybuKUnMOtbmRleg==?= Rojas <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230526-topic-smd_icc-v2-0-e5934b07d813@linaro.org>
- <20230526-topic-smd_icc-v2-4-e5934b07d813@linaro.org>
- <ZIRgGXwKD6mcgTRY@gerhold.net>
- <40f937bb-0d7e-a237-1672-5905983622ce@linaro.org>
- <b7b1d19c-b87d-b3fd-36aa-374065a45ede@linaro.org>
- <ZITOR3Y25Bv4msdm@gerhold.net>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH v2 04/22] clk: qcom: smd-rpm: Export clock scaling
- availability
-In-Reply-To: <ZITOR3Y25Bv4msdm@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
+Message-ID: <20230610222123.mzmfjx7zfw4nh2lo@skbuf>
+References: <20230425195002.fls5cmwolyrslpad@skbuf>
+ <b7779674-c3ac-e0ab-3ca8-db1ec5953a97@seco.com>
+ <20230426105140.t4yqv6irtjcwptm5@skbuf>
+ <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
+ <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
+ <20230429172422.vc35tnwkekfieoru@skbuf>
+ <c81d23b6-ed22-0b37-d71b-ddce9d5d58eb@seco.com>
+ <c2f928d2-25f6-0e31-9ab3-9d585968df1b@seco.com>
+ <20230522150010.q5zndfwcuvrb6pg2@skbuf>
+ <22a28a6f-2c84-a6b1-bb57-a269af34c993@seco.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22a28a6f-2c84-a6b1-bb57-a269af34c993@seco.com>
+X-ClientProxiedBy: FR2P281CA0154.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:98::9) To AM0PR04MB6452.eurprd04.prod.outlook.com
+ (2603:10a6:208:16d::21)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6452:EE_|AS8PR04MB7509:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4dd344d-f310-4ceb-450b-08db6a0106c1
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: cxfts+6W42RNPe6jlSWqAJGTudt6/0I/GD3Hva0Bh/KuSt7l3jvoWPjhsJEEmk7ycggr8QnLPSvtx3dmU5w+oeOnEi6Md+Vut4yizvsWIU3J74CiTCvyk7/zFPc6L1bh7iNZaAMVnHotvsk7vL4NijccXvWRQwHe1VJmvWmD72DrTWEaeBhwGyjMd6fuH6fhc1jBpcmlN4tGAUCNWsmN4DTia68nx3qoWASphEe6X+Z69EL4ksed48tUpzhxHAuxN5/AjifOjVK5v5d1owjH8s8bs6QpcbTqQSvisYIkKIXYEqEndrn/p6g8UY890pjJLQdXU3I+RS9kxm+B3EMf8izRiHrvuwPdUwRJk1WzeiHErhR6/4TJ1yyr3JF8Vz8sxVZmUsM2BsdlRxkt1B1KKxgm+vjmMP05NmoLXYyQhOWmyP8Gb+VLgXj8HhTqxlSCuK8ErKVCeLLKaosalCuvjyDK5Ji4kHeN4Wh50vgktim9UdNOqBN0L5HZzt8vY5fDp82ga26Ni1i4QN2SWKLG+zB7CfPX1alALmTsjhBzjyb5RkSiFA0lderf55Kz2iYZ
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB6452.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(7916004)(376002)(396003)(39860400002)(136003)(366004)(346002)(451199021)(6916009)(4326008)(66946007)(66476007)(66556008)(186003)(478600001)(54906003)(4744005)(2906002)(33716001)(8676002)(316002)(41300700001)(86362001)(6486002)(7416002)(6506007)(1076003)(9686003)(53546011)(44832011)(8936002)(5660300002)(26005)(38100700002)(6512007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1K0qZT4SWw85bGNlvihoVn81pfaLjs3/EsQ91pwf+VwWYnuzKiVw3n/Rgq5c?=
+ =?us-ascii?Q?k1NKttIl0Dw7PUSfEFUiI8s48ekx8dbHzeXmhETf/rM27bt2SenI9Ktzf2Wk?=
+ =?us-ascii?Q?Pcru1IlauYstm66X9vQKY3nppMPznbV7WLBY5N1EqK6MSCDowgbvVt5s5UJk?=
+ =?us-ascii?Q?QpcH9xQlwy7SmklcbT3NsBgk7AATekEOxkNjKWEhFZw3bBi8g713sHadOwYv?=
+ =?us-ascii?Q?2UOin/A6GN6gh00BgB05nxSgB5W7LAwXfnVEqEzUf5XpgQ98EDwIaFD+gnjl?=
+ =?us-ascii?Q?3Ji7xku/KqTt8cOxsLoxdOcRSlOmbM7jZsz6aL4Iw9tT+uhlNEPZulJTJ0po?=
+ =?us-ascii?Q?id0xiSw+UrqI52ut7avrl9ZNpLyxBXdqKFpHcgyg9WJcbO4iXXO4UffwDcUT?=
+ =?us-ascii?Q?vnGL07zb3OsWPmHarCh1Txt5+s2jpZsvAyKkTA8Jdfh3KTsh+jxLI9XY8gTM?=
+ =?us-ascii?Q?fhndONoqkChdUA5+7oDN5SO0mZ+sQdEMBqBV9nemasDfBKkWkDUfAoMncEZ9?=
+ =?us-ascii?Q?6ZIN5zyDcAbtzzS+pOLTXqW3xx/jmVB2owXNjFL6x9hCUf8B8r9PAhYcV3SZ?=
+ =?us-ascii?Q?RZC6+ccAr5Eke+Zik/Bc1pU9x+bE6FnxT4xSL4+qWaXTK/v4TDt7MAQTMvWs?=
+ =?us-ascii?Q?jQPhWJKopZp70Ir+wuQaImOTmz1RbnkBkvPXCTVA4ym32vcsZ+HUP76BcUGm?=
+ =?us-ascii?Q?+2wOBUsPnRhKinqU3bSyFB4uHN0XZqtllAh4tSBl652NxJDqCJ/M13eYVnZN?=
+ =?us-ascii?Q?bvMXVpyP09EQf+f8tezT5/tRN5tT4PUgo6YnGjnJO8MT4l12iA3xbPXPkAUg?=
+ =?us-ascii?Q?1n5LVNuUOD6AYJv5yyVofXwV+VBJOTZWV2t7T03pGg4NZ4j/5tYZBujej6/L?=
+ =?us-ascii?Q?GdqvjEiM2XQLZ6GoJdWjDl8UpPLExkqXgo9Ygr5H0+rUF03TZ3B0Ur8ad0oj?=
+ =?us-ascii?Q?nGyyivymSkhHE9qHGgtAWG/OfBzPb/bBE1xwjndCW50ggE2DTDhZWm5jybpk?=
+ =?us-ascii?Q?UpYBG1JvkIw3ddS1ueA0mzQwUxXs82d+f3dhTzuQ9d7oyYWdsXHPB/nzvW/s?=
+ =?us-ascii?Q?uS1iALC5Ev2M9PR1Up7ylNLwiMsYx90hlI6apY8Gyk3N7rcmBe2GfaVMaIoE?=
+ =?us-ascii?Q?sfCeNyZeFdYbB6zkqElA+HJ8le5gOPUkpUp27mHJPhUPuTWfJ2+KHqCJWZC8?=
+ =?us-ascii?Q?ux4Q3gl+dEsyqKqKo4UHrykjIZ6fNxM8J4FxQ2w1wKHHOpk2EKPiJ0fWJzdU?=
+ =?us-ascii?Q?dT0jdAspd61n5dZ5Ipvi+5HOiW3gI23ZSmUU5Aqx7h8zIJfslGoEjgjiVb7e?=
+ =?us-ascii?Q?oIaHUNJ40EQkI+kOQ0kmXYLRRaMQGSOKKLki3LsFuILRegWfp3tpTjpvYCzA?=
+ =?us-ascii?Q?9QQprOv/92w2SGuBFLyHyEWUtc7F30cgSEyeBWFwGYcK2CSg55IkZyq6mF5S?=
+ =?us-ascii?Q?h9UaAMlpcmnTEeL0gb9d68RBjZKV5mv/Aa7AxanRzFBD+Iid08CyPBhstnbK?=
+ =?us-ascii?Q?CFoXgjZjeIVmCY7/GNYhj+x1mMQ9OyOZM3zZ5ZYUTYF/+j7NFPJ5ja3D2g1K?=
+ =?us-ascii?Q?xyqjwaGnNDUUDVOmICaw1wKE04IkjT0OfV36WmoqDC1XQbQym8XrODoTmvSP?=
+ =?us-ascii?Q?xQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4dd344d-f310-4ceb-450b-08db6a0106c1
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB6452.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2023 22:21:24.7154
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2Y5AMagOdMBQtrKet/e6fYJHrZIedqOJJ2l6rlV1LXHf0PJkNyrFO5YrxTxLcCU/8ixHaqa3tKoqBkzDElQAWg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7509
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Sean,
 
+On Fri, Jun 09, 2023 at 03:19:22PM -0400, Sean Anderson wrote:
+> On 5/22/23 11:00, Vladimir Oltean wrote:
+> > On Mon, May 22, 2023 at 10:42:04AM -0400, Sean Anderson wrote:
+> >> Have you had a chance to review this driver?
+> > 
+> > Partially / too little (and no, I don't have an answer yet). I am
+> > debugging a SERDES protocol change procedure from XFI to SGMII.
+> 
+> I'd just like to reiterate that, like I said in the cover letter, I
+> believe this driver still has value even if it cannot yet perform
+> protocol switching.
+> 
+> Please send me your feedback, and I will try and incorporate it into the
+> next revision. Previously, you said you had major objections to the
+> contents of this series, but you still have not listed them.
 
-On 10.06.2023 21:25, Stephan Gerhold wrote:
-> On Sat, Jun 10, 2023 at 08:53:05PM +0200, Konrad Dybcio wrote:
->> On 10.06.2023 14:15, Konrad Dybcio wrote:
->>> On 10.06.2023 13:35, Stephan Gerhold wrote:
->>>> On Fri, Jun 09, 2023 at 10:19:09PM +0200, Konrad Dybcio wrote:
->>>>> Before we issue a call to RPM through clk_smd_rpm_enable_scaling() the
->>>>> clock rate requests will not be commited in hardware. This poses a
->>>>> race threat since we're accessing the bus clocks directly from within
->>>>> the interconnect framework.
->>>>>
->>>>> Add a marker to indicate that we're good to go with sending new requests
->>>>> and export it so that it can be referenced from icc.
->>>>>
->>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>>> ---
->>>>>  drivers/clk/qcom/clk-smd-rpm.c   | 9 +++++++++
->>>>>  include/linux/soc/qcom/smd-rpm.h | 2 ++
->>>>>  2 files changed, 11 insertions(+)
->>>>>
->>>>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
->>>>> index 937cb1515968..482fe30ee6f0 100644
->>>>> --- a/drivers/clk/qcom/clk-smd-rpm.c
->>>>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
->>>>> @@ -151,6 +151,7 @@
->>>>>  #define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
->>>>>  
->>>>>  static struct qcom_smd_rpm *rpmcc_smd_rpm;
->>>>> +static bool smd_rpm_clk_scaling;
->>>>>  
->>>>>  struct clk_smd_rpm {
->>>>>  	const int rpm_res_type;
->>>>> @@ -385,6 +386,12 @@ static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
->>>>>  	return r->rate;
->>>>>  }
->>>>>  
->>>>> +bool qcom_smd_rpm_scaling_available(void)
->>>>> +{
->>>>> +	return smd_rpm_clk_scaling;
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(qcom_smd_rpm_scaling_available);
->>>>> +
->>>>>  static int clk_smd_rpm_enable_scaling(void)
->>>>>  {
->>>>>  	int ret;
->>>>> @@ -410,6 +417,8 @@ static int clk_smd_rpm_enable_scaling(void)
->>>>>  		return ret;
->>>>>  	}
->>>>>  
->>>>> +	smd_rpm_clk_scaling = true;
->>>>> +
->>>>
->>>> If you move the platform_device_register_data(&rpdev->dev,
->>>> "icc_smd_rpm", ...) from drivers/soc/qcom/smd-rpm.c to here you can
->>>> avoid the race completely and drop this API. I think that would be
->>>> cleaner. And it will likely probe much faster because probe deferral
->>>> is slow. :)
->>> Sounds like an idea.. especially since it's pretty much the only
->>> dependency other than SMDRPM itself!
->> It sounds great, but to not break bisecting one has to:
->>
->> 1. change the registration in soc/smd-rpm to store rpm ptr in driver
->>    data, in addition to parent driver data
->>
->> 2. change icc/smd-rpm to use the device and not parent data
->>
->> 3. add a platform_device_register_data call in clk-smd-rpm that will
->>    always fail because the device is always registered
->>
->> 4. remove the registration from soc/smd-rpm
->>
-> 
-> Logically the icc_smd_rpm device still fits better as child of
-> smd-rpm and not clk-smd-rpm. So I would probably just continue
-> registering it on the parent device from clk-smd-rpm.
-> Then there are no changes necessary in icc_smd_rpm.
-> 
-> You could use this. Both touched files are Bjorn-maintained so should be
-> manageable to have it in one commit. (note: compile-tested only)
-> 
-> Thanks,
-> Stephan
-> 
-> From a2610adb2551b01e76b9de8e4cbcc89853814a8f Mon Sep 17 00:00:00 2001
-> From: Stephan Gerhold <stephan@gerhold.net>
-> Date: Sat, 10 Jun 2023 21:19:48 +0200
-> Subject: [PATCH] soc: qcom: smd-rpm: Move icc_smd_rpm registration to
->  clk-smd-rpm
-> 
-> icc_smd_rpm will do bus clock votes itself rather than taking the
-> unnecessary detour through the clock subsystem. However, it can only
-> do that after the clocks have been handed off and scaling has been
-> enabled in the RPM in clk-smd-rpm.
-> 
-> Move the icc_smd_rpm registration from smd-rpm.c to clk-smd-rpm.c
-> to avoid any possible races. icc_smd_rpm gets the driver data from
-> the smd-rpm device, so still register the platform device on the
-> smd-rpm parent device.
-> 
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> ---
-Generally it looks good.. I'll give it a spin next week. One
-thing below.
-
->  drivers/clk/qcom/clk-smd-rpm.c | 21 +++++++++++++++++++++
->  drivers/soc/qcom/smd-rpm.c     | 23 +----------------------
->  2 files changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index e4de74b68797..91adb16889b3 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -1302,12 +1302,20 @@ static struct clk_hw *qcom_smdrpm_clk_hw_get(struct of_phandle_args *clkspec,
->  	return desc->clks[idx] ? &desc->clks[idx]->hw : ERR_PTR(-ENOENT);
->  }
->  
-> +static void rpm_smd_unregister_icc(void *data)
-> +{
-> +	struct platform_device *icc_pdev = data;
-> +
-> +	platform_device_unregister(icc_pdev);
-> +}
-> +
->  static int rpm_smd_clk_probe(struct platform_device *pdev)
->  {
->  	int ret;
->  	size_t num_clks, i;
->  	struct clk_smd_rpm **rpm_smd_clks;
->  	const struct rpm_smd_clk_desc *desc;
-> +	struct platform_device *icc_pdev;
->  
->  	rpmcc_smd_rpm = dev_get_drvdata(pdev->dev.parent);
->  	if (!rpmcc_smd_rpm) {
-> @@ -1357,6 +1365,19 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err;
->  
-> +	icc_pdev = platform_device_register_data(pdev->dev.parent,
-> +						 "icc_smd_rpm", -1, NULL, 0);
-> +	if (IS_ERR(icc_pdev)) {
-> +		dev_err(&pdev->dev, "Failed to register icc_smd_rpm device: %pE\n",
-> +			icc_pdev);
-> +		/* No need to unregister clocks because of this */
-> +	} else {
-> +		ret = devm_add_action_or_reset(&pdev->dev, rpm_smd_unregister_icc,
-> +					       icc_pdev);
-> +		if (ret)
-> +			goto err;
-> +	}
-> +
->  	return 0;
->  err:
->  	dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
-> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
-> index 0c1aa809cc4e..427dd5392b82 100644
-> --- a/drivers/soc/qcom/smd-rpm.c
-> +++ b/drivers/soc/qcom/smd-rpm.c
-> @@ -19,7 +19,6 @@
->  /**
->   * struct qcom_smd_rpm - state of the rpm device driver
->   * @rpm_channel:	reference to the smd channel
-> - * @icc:		interconnect proxy device
->   * @dev:		rpm device
->   * @ack:		completion for acks
->   * @lock:		mutual exclusion around the send/complete pair
-> @@ -27,7 +26,6 @@
->   */
->  struct qcom_smd_rpm {
->  	struct rpmsg_endpoint *rpm_channel;
-> -	struct platform_device *icc;
->  	struct device *dev;
->  
->  	struct completion ack;
-> @@ -197,7 +195,6 @@ static int qcom_smd_rpm_callback(struct rpmsg_device *rpdev,
->  static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
->  {
->  	struct qcom_smd_rpm *rpm;
-> -	int ret;
->  
->  	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
->  	if (!rpm)
-> @@ -210,24 +207,7 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
->  	rpm->rpm_channel = rpdev->ept;
->  	dev_set_drvdata(&rpdev->dev, rpm);
->  
-> -	rpm->icc = platform_device_register_data(&rpdev->dev, "icc_smd_rpm", -1,
-> -						 NULL, 0);
-> -	if (IS_ERR(rpm->icc))
-> -		return PTR_ERR(rpm->icc);
-> -
-> -	ret = of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
-> -	if (ret)
-> -		platform_device_unregister(rpm->icc);
-> -
-> -	return ret;
-> -}
-> -
-> -static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
-> -{
-> -	struct qcom_smd_rpm *rpm = dev_get_drvdata(&rpdev->dev);
-> -
-> -	platform_device_unregister(rpm->icc);
-> -	of_platform_depopulate(&rpdev->dev);
-> +	return devm_of_platform_populate(&rpdev->dev);
->  }
->  
->  static const struct of_device_id qcom_smd_rpm_of_match[] = {
-> @@ -256,7 +236,6 @@ MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
->  
->  static struct rpmsg_driver qcom_smd_rpm_driver = {
->  	.probe = qcom_smd_rpm_probe,
-> -	.remove = qcom_smd_rpm_remove,
-This reaches over the removal of the icc registration, the depopulate
-call should stay.
-
-Konrad
->  	.callback = qcom_smd_rpm_callback,
->  	.drv  = {
->  		.name  = "qcom_smd_rpm",
+And if SERDES protocol switching was not physically possible, would this
+patch set still have value?
