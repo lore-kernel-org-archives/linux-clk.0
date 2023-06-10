@@ -2,90 +2,199 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA2DC83005
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Jun 2023 23:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA62C7EE29
+	for <linux-clk@archiver.kernel.org>; Sat, 10 Jun 2023 00:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232771AbjFIX2j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Jun 2023 19:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33290 "EHLO
+        id S230332AbjFJAOv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Jun 2023 20:14:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232396AbjFIX1t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 19:27:49 -0400
+        with ESMTP id S230027AbjFJAOt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Jun 2023 20:14:49 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 954DE3ABF;
-        Fri,  9 Jun 2023 16:27:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C2D335BE;
+        Fri,  9 Jun 2023 17:14:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2250565CD2;
-        Fri,  9 Jun 2023 23:27:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ABABC433D2;
-        Fri,  9 Jun 2023 23:27:40 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 157FC6424C;
+        Sat, 10 Jun 2023 00:14:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72B54C433EF;
+        Sat, 10 Jun 2023 00:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686353262;
-        bh=LhcK1dVS/ODURx+/PKNTsLc8985DDWmW1YmahU/XwI8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=oe+mJXeo6zzuE2GSIILaWA014EJ0/y1TG6erjhnN7raTZqCGevhGZBjVONwYd565u
-         LaIlt5Da9w3UC2npEHEhdbpajaiMq/BT7IUZb88vq7nVNODU9P3kfw6KRCJpmCSaqi
-         L8yC0LVf9b10zxZiFcQt0czKjDNS0z43jMTp3npICWRs9hdsh+8maPXv0pJt400qlv
-         dUXvUk/lc4raRvB2SnN6cJ3ifJqFMe3tQATshe4JaxB3EkJFUdoektHcksejFzHiVv
-         zAaDW+7TKjtn0y6kKOSoW8QCABYxGwaeg9DiYAo3JXufGmDfESe2CuglPmIN2KEqrO
-         HoxeBwhXY0BcA==
-Date:   Fri, 9 Jun 2023 16:27:39 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc:     jiri@resnulli.us, vadfed@meta.com, jonathan.lemon@gmail.com,
-        pabeni@redhat.com, corbet@lwn.net, davem@davemloft.net,
-        edumazet@google.com, vadfed@fb.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
-        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
-        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
-        michal.michalik@intel.com, gregkh@linuxfoundation.org,
-        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
-        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
-        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
-        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
-        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
-        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
-        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
-        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org,
-        vadim.fedorenko@linux.dev
-Subject: Re: [RFC PATCH v8 00/10] Create common DPLL configuration API
-Message-ID: <20230609162739.0d94a704@kernel.org>
-In-Reply-To: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+        s=k20201202; t=1686356087;
+        bh=KrcLbB7SmNUxRy8U/TG329U42wcgeQxwfCDRJvUdGZQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=haDeLcPr+E8CC4ALAD5S2uv95JaoCGIqMbin6vpwdRsLnceynLBVRZ4LvvyenTn2u
+         CugzsmgfBi9UmIdWjfINm0TwQVNQrRgr7xaqNflvBYkVl2SaoLpo5/1ZuD49HB5rPS
+         p6VysZs0gT06hXaMDusxt3QSqPBCcZNOmB/hoepYVYvMLqLdmrVUoUdxzcKiE/iMIR
+         E9yC/qGeT2C3iz/j/ESjiQd4HOJgEH6KCf69QBOfFEegYj2NDSBSCKV+0Z03HPqZIY
+         dE2PcT5nhT7Yd9J6dAeso8YRH9+yJiCneH8pKJO8qxbKrvagHIac9Ah9VDJsd7PRrU
+         EaKCaWljvKG3A==
+Date:   Fri, 9 Jun 2023 17:18:15 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Yassine Oudjana <y.oudjana@protonmail.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v6 3/4] clk: qcom: cbf-msm8996: scale CBF clock according
+ to the CPUfreq
+Message-ID: <20230610001815.zgo23zlwo3z6e3y6@ripper>
+References: <20230512001334.2983048-1-dmitry.baryshkov@linaro.org>
+ <20230512001334.2983048-4-dmitry.baryshkov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230512001334.2983048-4-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri,  9 Jun 2023 14:18:43 +0200 Arkadiusz Kubalewski wrote:
-> Implement common API for clock/DPLL configuration and status reporting.
-> The API utilises netlink interface as transport for commands and event
-> notifications. This API aim to extend current pin configuration and
-> make it flexible and easy to cover special configurations.
+On Fri, May 12, 2023 at 03:13:33AM +0300, Dmitry Baryshkov wrote:
+> Turn CBF into the interconnect provider. Scale CBF frequency (bandwidth)
+> according to CPU frequencies.
 > 
-> Netlink interface is based on ynl spec, it allows use of in-kernel
-> tools/net/ynl/cli.py application to control the interface with properly
-> formated command and json attribute strings. Here are few command
-> examples of how it works with `ice` driver on supported NIC:
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Tested-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Now I see why you sent the ynl-gen patch you sent :) It's the
-combination of nest and multi-attr which doesn't populate the right
-policy. Also the enums are not policed right by ynl-gen.
+Georgi,
 
-I pushed two fixes to my local tree:
-https://github.com/kuba-moo/linux/commits/ynl-c
-in case you need them. I'll submit them on Monday.
+Dmitry tells me that you picked up the interconnect patches, I don't see
+an immutable branch in your tree with them, but this patch has a build
+time dependency on them. Could you please pick this through your tree as
+well?
 
-I also tried to run the user space C code gen (for generating C
-API/lib as described in [1]). It seems to work just fine, FWIW, so
-just LMK if C bindings would be useful, I can give more instructions.
+Acked-by: Bjorn Andersson <andersson@kernel.org>
 
-[1] https://docs.kernel.org/next/userspace-api/netlink/intro-specs.html#ynl-lib
+Regards,
+Bjorn
+
+> ---
+>  drivers/clk/qcom/Kconfig        |  1 +
+>  drivers/clk/qcom/clk-cbf-8996.c | 60 ++++++++++++++++++++++++++++++++-
+>  2 files changed, 60 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 12be3e2371b3..85869e7a9f16 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -48,6 +48,7 @@ config QCOM_CLK_APCS_MSM8916
+>  config QCOM_CLK_APCC_MSM8996
+>  	tristate "MSM8996 CPU Clock Controller"
+>  	select QCOM_KRYO_L2_ACCESSORS
+> +	select INTERCONNECT_CLK if INTERCONNECT
+>  	depends on ARM64
+>  	help
+>  	  Support for the CPU clock controller on msm8996 devices.
+> diff --git a/drivers/clk/qcom/clk-cbf-8996.c b/drivers/clk/qcom/clk-cbf-8996.c
+> index cfd567636f4e..1e23b734abb3 100644
+> --- a/drivers/clk/qcom/clk-cbf-8996.c
+> +++ b/drivers/clk/qcom/clk-cbf-8996.c
+> @@ -5,11 +5,15 @@
+>  #include <linux/bitfield.h>
+>  #include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+> +#include <linux/interconnect-clk.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/of.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  
+> +#include <dt-bindings/interconnect/qcom,msm8996-cbf.h>
+> +
+>  #include "clk-alpha-pll.h"
+>  #include "clk-regmap.h"
+>  
+> @@ -223,6 +227,49 @@ static const struct regmap_config cbf_msm8996_regmap_config = {
+>  	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
+>  };
+>  
+> +#ifdef CONFIG_INTERCONNECT
+> +
+> +/* Random ID that doesn't clash with main qnoc and OSM */
+> +#define CBF_MASTER_NODE 2000
+> +
+> +static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev, struct clk_hw *cbf_hw)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct clk *clk = devm_clk_hw_get_clk(dev, cbf_hw, "cbf");
+> +	const struct icc_clk_data data[] = {
+> +		{ .clk = clk, .name = "cbf", },
+> +	};
+> +	struct icc_provider *provider;
+> +
+> +	provider = icc_clk_register(dev, CBF_MASTER_NODE, ARRAY_SIZE(data), data);
+> +	if (IS_ERR(provider))
+> +		return PTR_ERR(provider);
+> +
+> +	platform_set_drvdata(pdev, provider);
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_msm8996_cbf_icc_remove(struct platform_device *pdev)
+> +{
+> +	struct icc_provider *provider = platform_get_drvdata(pdev);
+> +
+> +	icc_clk_unregister(provider);
+> +
+> +	return 0;
+> +}
+> +#define qcom_msm8996_cbf_icc_sync_state icc_sync_state
+> +#else
+> +static int qcom_msm8996_cbf_icc_register(struct platform_device *pdev,  struct clk_hw *cbf_hw)
+> +{
+> +	dev_warn(&pdev->dev, "CONFIG_INTERCONNECT is disabled, CBF clock is fixed\n");
+> +
+> +	return 0;
+> +}
+> +#define qcom_msm8996_cbf_icc_remove(pdev) (0)
+> +#define qcom_msm8996_cbf_icc_sync_state NULL
+> +#endif
+> +
+>  static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
+>  {
+>  	void __iomem *base;
+> @@ -281,7 +328,16 @@ static int qcom_msm8996_cbf_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &cbf_mux.clkr.hw);
+> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &cbf_mux.clkr.hw);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return qcom_msm8996_cbf_icc_register(pdev, &cbf_mux.clkr.hw);
+> +}
+> +
+> +static int qcom_msm8996_cbf_remove(struct platform_device *pdev)
+> +{
+> +	return qcom_msm8996_cbf_icc_remove(pdev);
+>  }
+>  
+>  static const struct of_device_id qcom_msm8996_cbf_match_table[] = {
+> @@ -292,9 +348,11 @@ MODULE_DEVICE_TABLE(of, qcom_msm8996_cbf_match_table);
+>  
+>  static struct platform_driver qcom_msm8996_cbf_driver = {
+>  	.probe = qcom_msm8996_cbf_probe,
+> +	.remove = qcom_msm8996_cbf_remove,
+>  	.driver = {
+>  		.name = "qcom-msm8996-cbf",
+>  		.of_match_table = qcom_msm8996_cbf_match_table,
+> +		.sync_state = qcom_msm8996_cbf_icc_sync_state,
+>  	},
+>  };
+>  
+> -- 
+> 2.39.2
+> 
