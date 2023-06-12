@@ -2,131 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB38C7EE23
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 05:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC56EC7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 07:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232070AbjFLFka (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 01:40:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40536 "EHLO
+        id S233821AbjFLHXk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 03:23:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235688AbjFLFj7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 01:39:59 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5240E1984
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:51 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4f655293a38so4112688e87.0
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686548381; x=1689140381;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w3KfhKRM2Bpo1zmKLCtOCcwF4OmfBaYvC1ZALMgeIRg=;
-        b=blRhZQakA5n+RjIiR5NEcHL6LC6qslAhKpdeuaIHkvHQHfK6rIxzbBvzdRLu0qfWri
-         OlCCQKAaJLC48lhY5LKbcmD3PAcA1Xjs5MFh913/Nu5NUTY7Cd+E7YUnvMzygVxLy3HI
-         lw0tAtNXQiZjlziW5WJZsABt+WJrSAda2DlBPYCe83hZH/amcIdKnPZohdMrwqAVsj2W
-         Ne8OSXV3sOqgtNQ8jkX6/z62UUVucMiNdTvI3NClcd5QPrB0He430+yeLN+fbH007zc0
-         ZdGrQMpb5r8f5re/FK17rhtUBoEQGX/Exa2haOZhXDodwDTGmYpf3dcm+v7hNoB2Cfj9
-         GvRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686548381; x=1689140381;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w3KfhKRM2Bpo1zmKLCtOCcwF4OmfBaYvC1ZALMgeIRg=;
-        b=VbwdqGdvmRaPYuHdvF0RkpSEtN2zYZun1ItSv55sx75DobeO27qKLhYkHaEo10SCga
-         7SBuMZMUZz1PrmU9NP1xLbyaAchuLAVuDeAwPLW+yTdxkf6xhLXNeP8v8X9odBqDe+ut
-         VoOArg65itbtseYb6gQmbAnmKjQlOepJEb8QiO5I3aDYtlDmuse96j/qMfNZPOK7VIr9
-         o2Rm5rhDNRgd2S3kzkQuGB7RS9O4HufY4eO6qVgw0jAD/n4HRCf10uu7SAHjG9ifwFn0
-         xtyuF+21i/f4cm2x4UuLkgIUPyaia74jlUVE3q1oNIOqE/IaYQrF690CUgIdpojBd59o
-         9twg==
-X-Gm-Message-State: AC+VfDwrNUmJJL9vkS+IP9auQ+Lshw+6gm8RNQZObpd0LAth7XJ83V3r
-        g67K87CmsK4R7frDRdnVYvr4/A==
-X-Google-Smtp-Source: ACHHUZ7dBv7Ysw90aWXg/I3haPn5OIJokEnhwINFdBVz7hcuwd+ValiA2gmIiVcr/UwxlLUo1Pj4Zw==
-X-Received: by 2002:a19:5059:0:b0:4e9:59cd:416c with SMTP id z25-20020a195059000000b004e959cd416cmr3083458lfj.0.1686548381226;
-        Sun, 11 Jun 2023 22:39:41 -0700 (PDT)
-Received: from eriador.lan (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id n6-20020a195506000000b004f38260f196sm1324125lfe.218.2023.06.11.22.39.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jun 2023 22:39:40 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 18/18] ARM: dts: qcom: apq8064-ifc6410: constraint cpufreq regulators
-Date:   Mon, 12 Jun 2023 08:39:22 +0300
-Message-Id: <20230612053922.3284394-19-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
-References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S233172AbjFLHXj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 03:23:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13D9E7B;
+        Mon, 12 Jun 2023 00:18:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 712A162002;
+        Mon, 12 Jun 2023 07:02:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A54EC433EF;
+        Mon, 12 Jun 2023 07:02:15 +0000 (UTC)
+Message-ID: <380c6489-7a3c-778b-5b81-6339b6964b90@xs4all.nl>
+Date:   Mon, 12 Jun 2023 09:02:13 +0200
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 0/5] Enable decoder for mt8183
+Content-Language: en-US
+To:     =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     kernel@collabora.com,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20230607205714.510012-1-nfraprado@collabora.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20230607205714.510012-1-nfraprado@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add additional constraints to the CPUfreq-related regulators, it is
-better be safe than sorry there.
+Hi Nicolas,
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm/boot/dts/qcom-apq8064-ifc6410.dts | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+On 07/06/2023 22:53, Nícolas F. R. A. Prado wrote:
+> 
+> This series enables the hardware decoder present on mt8183. At first
+> glance, the only missing piece is the devicetree node for it, however,
+> simply adding it as is would cause an address collision between the
+> first register iospace and the clock-controller node, so a rework of the
+> dt-binding and driver, as well as addition of a clock, were needed
+> first.
+> 
+> Tested that H264 decoding works with the hardware decoder on
+> mt8183-kukui-jacuzzi-juniper-sku16, giving a fluster score of 98/135 on
+> the JVT-AVC_V1 test suite. And ensured other SoCs (MT8192 and MT8195)
+> still work as usual.
+> 
+> Changes in v2:
+> - Merged commit 1 (media: dt-bindings: mediatek,vcodec: Allow single
+>   clock for mt8183) into commit 3 (media: dt-bindings: mediatek,vcodec:
+>   Remove VDEC_SYS for mt8183)
+> - Further constrained properties in dt-binding
+> - Added CLK_IGNORE_UNUSED flag to active clock
+> - Reformatted reg-names in DT node
+> 
+> Nícolas F. R. A. Prado (4):
+>   media: dt-bindings: mediatek,vcodec: Don't require assigned-clocks
+>   media: dt-bindings: mediatek,vcodec: Remove VDEC_SYS for mt8183
+>   media: mediatek: vcodec: Read HW active status from clock
+>   clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
 
-diff --git a/arch/arm/boot/dts/qcom-apq8064-ifc6410.dts b/arch/arm/boot/dts/qcom-apq8064-ifc6410.dts
-index 96307550523a..ad3cd45362df 100644
---- a/arch/arm/boot/dts/qcom-apq8064-ifc6410.dts
-+++ b/arch/arm/boot/dts/qcom-apq8064-ifc6410.dts
-@@ -215,8 +215,8 @@ s1 {
- 		};
- 
- 		s3 {
--			regulator-min-microvolt = <1000000>;
--			regulator-max-microvolt = <1400000>;
-+			regulator-min-microvolt = <950000>;
-+			regulator-max-microvolt = <1150000>;
- 			qcom,switch-mode-frequency = <4800000>;
- 		};
- 
-@@ -262,6 +262,12 @@ l23 {
- 			bias-pull-down;
- 		};
- 
-+		l24 {
-+			regulator-min-microvolt = <1050000>;
-+			regulator-max-microvolt = <1150000>;
-+			bias-pull-down;
-+		};
-+
- 		lvs1 {
- 			bias-pull-down;
- 		};
-@@ -269,6 +275,14 @@ lvs1 {
- 		lvs6 {
- 			bias-pull-down;
- 		};
-+
-+		/* HFPLL regulator */
-+		lvs7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
- 	};
- };
- 
--- 
-2.39.2
+Is the clk patch independent from the others? It's not clear to me.
+
+If the clk patch has to go in together with the media patches, then
+please let me know and post a v3 where the clk patch is also CC-ed to
+the linux-media mailinglist to ensure it ends up in our patchwork system.
+
+And in that case I need a Acked-by from the clk maintainer as well.
+
+If it is independent, then there is no need for a v3 (at least, not
+for this).
+
+Regards,
+
+	Hans
+
+> 
+> Yunfei Dong (1):
+>   arm64: dts: mediatek: mt8183: Add decoder
+> 
+>  .../media/mediatek,vcodec-decoder.yaml        | 65 +++++++++++++++----
+>  arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 30 +++++++++
+>  drivers/clk/mediatek/clk-mt8183-vdec.c        |  5 ++
+>  .../mediatek/vcodec/mtk_vcodec_dec_drv.c      | 59 +++++++++++++----
+>  .../mediatek/vcodec/mtk_vcodec_dec_hw.c       | 20 ++++--
+>  .../mediatek/vcodec/mtk_vcodec_dec_pm.c       | 12 +++-
+>  .../platform/mediatek/vcodec/mtk_vcodec_drv.h |  1 +
+>  include/dt-bindings/clock/mt8183-clk.h        |  3 +-
+>  8 files changed, 165 insertions(+), 30 deletions(-)
+> 
 
