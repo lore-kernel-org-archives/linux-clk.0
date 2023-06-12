@@ -2,60 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C559C7EE43
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA3BC8300C
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232544AbjFLKTG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 06:19:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52938 "EHLO
+        id S232626AbjFLKTI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 06:19:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233148AbjFLKSO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:18:14 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3951229E2
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:59:05 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3f736e0c9a8so30030345e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:59:05 -0700 (PDT)
+        with ESMTP id S232647AbjFLKSH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:18:07 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72DC9229D4
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:59:01 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id 5b1f17b1804b1-3f739ec88b2so29688725e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:59:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686563855; x=1689155855;
+        d=linaro.org; s=google; t=1686563869; x=1689155869;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QBZGnVp949LqmHfp0hbLm9KUytV5xswsvhn4zf+xDwg=;
-        b=G+hv0E9aRmffwN0OQuU5Rq+3v0vUBfiyE2AK4XBCx9aR+rPHals0IPiaSQfST/EXQt
-         d79SF2KwA6GT0EdaGSxFno1TJhm63ZEIlD2D3q6YFBOPt9L/bMDVh/zyo4RfMyk9H6a6
-         3l0zLpfKrlvC9t2ScdmK9pS3p8x27pAOtGDIXnV6zRmMWPdLqE7cIdWzzFdFlr/N3ayf
-         A1tkhyfCVL1DPaFwSnEhncdm9kHRXeSQ2WJITO597/0rnRmm5MUHFU00iAbhbd2y5MrK
-         32MuG8OLzzABGr28oUn3PzYn76lL1u45iTmbxKuR4CWcTITBRoTxz7gAOtaUpj9RLXPF
-         JKLA==
+        bh=iGABTIXJEtrcII94q40tWwhEkxspimjWoq0DU0S3sQs=;
+        b=XOODmW8kd46QALhCoYdKYz0ZKb7h3AW4QLpNC4PvWgdPexSuKGLgDMfq6Uf0DuqcB6
+         XlhqBXdMxtmM8lkda8/RpXydmtwagf1e3bqIwxuH8it8Q7pTPbf8p8KkP889fFFlhyy9
+         V/IvwrNYPyKmQizdw3wvQnbGoTjaKwOCxnVczbDSbsnmAmIgPe0Wq24EHS6+wEbkFKa5
+         Rvzlgq/y+95wkWqDQqkh2r4Ppp2tWF7/kTy4hYETkYsUTxfOXT7vyUtU3JY6/NKdCnxn
+         InA61VnTUYBVSpkptW642pAXhprzAG8YzIZxynEqCngjP/SP+wc2uihoN5EsfhY0uJcR
+         dXBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686563855; x=1689155855;
+        d=1e100.net; s=20221208; t=1686563869; x=1689155869;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QBZGnVp949LqmHfp0hbLm9KUytV5xswsvhn4zf+xDwg=;
-        b=IrG6ODBb6V8nA1p7bvyJQwwZA1oekD2YtDApAgXIQ52v1vDiXxqEbLW6yvcZ+MUDZv
-         mjkIOo9alCi9xeBAvSpDerZohGml53MgwAjBb7fX/z0ZcSP9v9oPVQLTO+EOk05yjyGw
-         9tS6yDQwid+GovwwyiT63wVAhS9wO/u9akmhI769Ch4NANRGaRPECvHtB6TlIoxAVOvd
-         ibnn3AIdBLEWy0a8lh3Cuaui+OyZ5l4hR5QYznpmGtdPGwQWfBjF4PhybOioycCmlGx3
-         yvd2V3zh80J0Vk29qP8AqNZMzk10tnyvhKq/0B5/qR0A6/VuTIvljhAmsjOtzFLvo794
-         poEg==
-X-Gm-Message-State: AC+VfDzGk3fjxfkJcZ8+EARCKNyagFlCbRV9oDbcAdIt0VnMJx1p4CLD
-        IMK8s3dVSaqvdtr40MZPCwxcc6rfI6HX/ZHfOg2Ksw==
-X-Google-Smtp-Source: ACHHUZ5QWKxhjPP1zIAUQOMIEjesvfvlM1EUinWaGlKYFYB2NYNJgSIadGHmGre+EpTQObgoqQC2eg==
-X-Received: by 2002:a7b:ce88:0:b0:3f7:f4bc:ebe7 with SMTP id q8-20020a7bce88000000b003f7f4bcebe7mr5859896wmj.37.1686563855238;
-        Mon, 12 Jun 2023 02:57:35 -0700 (PDT)
+        bh=iGABTIXJEtrcII94q40tWwhEkxspimjWoq0DU0S3sQs=;
+        b=Eol6m8rU3ocAKjeF//PrmoLIcyBLl0yPRRFXHXOT2PY5mvAY3jsh5ETkuYry2zROp8
+         bI5IZ1XVBZeU+LDesZPM/UNwprzvRx9KLcWQnwwpb59tf4IPQdGRAOCWsiXmkxZX7ayx
+         nyf1yoFonugDtwe6CR+Bh0R2/JkhCdx9Qw/v3XDU7Vl0tcn+MvuZZjwLuRaLCIW+8aFX
+         Qe0BAicRPwadTHiC1p9IgWWavBOeuK0ro29SF6EDKTZT9GgJD5b5/HzqHME+lfJnJgEH
+         GDxuuKKe0JE7W/vm9Tq7ybng35iDtIqjZB+VLZ80Fra2mIl4iYoBdojfwkw32KmJcdTy
+         mseQ==
+X-Gm-Message-State: AC+VfDxlgRHGKzJBpXFrwel+1qoL3GqPtBec6/GQLi2i44mHbly+nFMU
+        gvd0D/ijfOeUHUIi4fQJbftlTQ==
+X-Google-Smtp-Source: ACHHUZ4pZ0mAWfvZT49ejf6jbqhwr+jGyAu7ETXbQsaAdq/C6mOxVunIkRCgPgo8t2VOaLdrt7GYTw==
+X-Received: by 2002:a05:600c:ad7:b0:3f7:e6d8:457b with SMTP id c23-20020a05600c0ad700b003f7e6d8457bmr5751929wmr.19.1686563869321;
+        Mon, 12 Jun 2023 02:57:49 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id f25-20020a7bcd19000000b003f7ff520a14sm10829525wmj.22.2023.06.12.02.57.34
+        by smtp.gmail.com with ESMTPSA id f25-20020a7bcd19000000b003f7ff520a14sm10829525wmj.22.2023.06.12.02.57.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 02:57:34 -0700 (PDT)
+        Mon, 12 Jun 2023 02:57:48 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Mon, 12 Jun 2023 11:57:18 +0200
-Subject: [PATCH v2 01/19] clk: meson: introduce meson-clkc-utils
+Date:   Mon, 12 Jun 2023 11:57:32 +0200
+Subject: [PATCH v2 15/19] clk: meson: aoclk: move bindings include to main
+ driver
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-1-38172d17c27a@linaro.org>
+Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-15-38172d17c27a@linaro.org>
 References: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
 In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>,
@@ -71,126 +72,157 @@ Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org,
         Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3180;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4058;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=Sw6cxK6E7HYSGAjhmT4F08djxvQKs7eqg8Xnz1cdvKs=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkhuwFcdZeJ2nIN3mmWrU/JcOcDQTAsQkkpsoXJa0m
- m3SJxZaJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIbsBQAKCRB33NvayMhJ0SXGD/
- 9+VFokX7cu+g4xvYB8YpyF0mHuycbo0o8ZetwVYr5sftMLzMginwtCTlW5pbNw0zV8m7coKw9ErBGq
- yATAGnX2k0GRkvUignjShZh715IQiMJlD7sn/hb/6YVzfc74KgHSVsLGz0di5S8V4YCddBQjt2tm0M
- eYjXRAd3ntra12XPDNcTxilQY4xJCkCA1znc+qenXyoUJT7/hRsr5ZrudrKBcizikhXb6Hr1UVhEGF
- E3F6sLQi/lVwcP8GErVgBBLX69tnxDKK1NMygDyxSBYdt9nHe0wDbsWXvZ9kGffgw1WDxS5recgEhZ
- e6Rzq4OETGKlU7ZKynMl5SDj/F6BUep3Wri20fObgK2B8KtLd3qQ6JUb+ZnEbg1/4LFLrt5OXcnWSk
- hdOBzuY6k8K9GFBGFzPzm1CZ556qy3eCgmBEzJ+woMOLTcAigPX57joN4OLuROKe+EyVNaq7c0j4u2
- ESObGndfiUTX7DoNVy3oFSnxhhH8C6yhpUpjZ+iJqH4pwsPMD40rUQL+7BcPPRAaG5ybH6sXBjW7CC
- Flw9AkH4Zi/+hZ3j3qleE7Ae6JZwVJ8Aapx1ASAWDvxbC6/Pv+2q2z/XJc37drSVwVvOpAd4+nb0JX
- Rsoiog1Y1MweeqnG8YxOJgwBZquVXKCr1hsqdVVOuS/yzq2bsoPPuJzWJroA==
+ bh=bOuyCBL0/AIXLX6hiE6zgLeDwAQJVgePg34gNgzB9JA=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkhuwLupPz9Q3hz6kaxIoBFQCEnvf4lduKXuGyeD33
+ 3BA5LuaJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIbsCwAKCRB33NvayMhJ0SjXD/
+ 9kmLr4iXPfj7lRWIz4mwsE+ANIVosQTKAhRXXbYmgrJ+BRF1RgJPe3oj1hnO1pa38i9wRUKDrhCfyq
+ sWdgdtn6O5PaXx9OiW0b+8tBzaJ5U8VS62/1A9UEP7cvorPIa/pzokswHLZjoHMzxKgFc9/gdZ3Dgj
+ oLCysB01wxopAK5ohMRqOfW1QUP50PsgMWSrsawcUZpnWqHmcyQC8yUAR12/6U5xkL5AQS/KH1RAJR
+ ZPOB9/Lo+memVg7zp5QdzmV1HDLp5Lnp9k/UQOT3MUlI1YmIoUPcilWJeO4/ye9c6JPzzVxRLedxyt
+ p7LjzyHrwsxIbAi6fG0RZLj6TN0FA/9DNcBuMgccJwIwJrgtJTfkAzuR5CYP9QRebSiFmrwwn1rj8b
+ cAoMXJ9TYTTe6ApvLHqHvgvdBYdVOwRpwxgY3YD13ZtIIekJ562OreduBX3JzJ0AJTWMHI/Sss5k5d
+ 0EQl1tBnkXmE5PfahVIsDXJBUoibWqdv1HafMUHJvf8tEE50OgyXX/n8LipSDEh4vR1CuEqEnO4IEY
+ Z7ArwZN95IBdUz4L/XiHfoU2TcWh/+CSW3t6UPRaZ5BbJ8Hb2IzhBzW7Nk4eaBMBQaz/MRepm/ePC0
+ lYaUGxbSGFzpPtVwx7eKvcLnbt/cJNq9xdNDuMRGzkWXy/XDoy2aNUEy3Q5Q==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Let's introduce a new module called meson-clkc-utils that
-will contain shared utility functions for all Amlogic clock
-controller drivers.
-
-The first utility function is a replacement of of_clk_hw_onecell_get
-in order to get rid of the NR_CLKS define in all Amlogic clock
-drivers.
-
-The goal is to move all duplicate probe and init code in this module.
+Now the clock ids are no more defined in private headers,
+cleanup and include the dt-bindings headers from the main
+driver file.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/clk/meson/Kconfig            |  3 +++
- drivers/clk/meson/Makefile           |  1 +
- drivers/clk/meson/meson-clkc-utils.c | 25 +++++++++++++++++++++++++
- drivers/clk/meson/meson-clkc-utils.h | 19 +++++++++++++++++++
- 4 files changed, 48 insertions(+)
+ drivers/clk/meson/axg-aoclk.c  |  4 +++-
+ drivers/clk/meson/axg-aoclk.h  | 16 ----------------
+ drivers/clk/meson/g12a-aoclk.c |  4 +++-
+ drivers/clk/meson/g12a-aoclk.h | 13 -------------
+ drivers/clk/meson/gxbb-aoclk.c |  4 +++-
+ drivers/clk/meson/gxbb-aoclk.h | 13 -------------
+ 6 files changed, 9 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 8ce846fdbe43..d03adad31318 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -30,6 +30,9 @@ config COMMON_CLK_MESON_VID_PLL_DIV
- 	tristate
- 	select COMMON_CLK_MESON_REGMAP
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index 2d1dad8657e0..8f42ae899175 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -14,11 +14,13 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include "meson-aoclk.h"
+-#include "axg-aoclk.h"
  
-+config COMMON_CLK_MESON_CLKC_UTILS
-+	tristate
-+
- config COMMON_CLK_MESON_AO_CLKC
- 	tristate
- 	select COMMON_CLK_MESON_REGMAP
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index d5288662881d..cd961cc4f4db 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- # Amlogic clock drivers
+ #include "clk-regmap.h"
+ #include "clk-dualdiv.h"
  
-+obj-$(CONFIG_COMMON_CLK_MESON_CLKC_UTILS) += meson-clkc-utils.o
- obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
- obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
-diff --git a/drivers/clk/meson/meson-clkc-utils.c b/drivers/clk/meson/meson-clkc-utils.c
-new file mode 100644
-index 000000000000..9a0620bcc161
---- /dev/null
-+++ b/drivers/clk/meson/meson-clkc-utils.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
-+ */
++#include <dt-bindings/clock/axg-aoclkc.h>
++#include <dt-bindings/reset/axg-aoclkc.h>
 +
-+#include <linux/of_device.h>
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include "meson-clkc-utils.h"
+ /*
+  * AO Configuration Clock registers offsets
+  * Register offsets from the data sheet must be multiplied by 4.
+diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
+deleted file mode 100644
+index fe23dc53aa73..000000000000
+--- a/drivers/clk/meson/axg-aoclk.h
++++ /dev/null
+@@ -1,16 +0,0 @@
+-/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+-/*
+- * Copyright (c) 2017 BayLibre, SAS
+- * Author: Neil Armstrong <narmstrong@baylibre.com>
+- *
+- * Copyright (c) 2018 Amlogic, inc.
+- * Author: Qiufang Dai <qiufang.dai@amlogic.com>
+- */
+-
+-#ifndef __AXG_AOCLKC_H
+-#define __AXG_AOCLKC_H
+-
+-#include <dt-bindings/clock/axg-aoclkc.h>
+-#include <dt-bindings/reset/axg-aoclkc.h>
+-
+-#endif /* __AXG_AOCLKC_H */
+diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
+index 9b258c1bc2d1..6213b3e26318 100644
+--- a/drivers/clk/meson/g12a-aoclk.c
++++ b/drivers/clk/meson/g12a-aoclk.c
+@@ -14,11 +14,13 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include "meson-aoclk.h"
+-#include "g12a-aoclk.h"
+ 
+ #include "clk-regmap.h"
+ #include "clk-dualdiv.h"
+ 
++#include <dt-bindings/clock/g12a-aoclkc.h>
++#include <dt-bindings/reset/g12a-aoclkc.h>
 +
-+struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
-+{
-+	const struct meson_clk_hw_data *data = clk_hw_data;
-+	unsigned int idx = clkspec->args[0];
+ /*
+  * AO Configuration Clock registers offsets
+  * Register offsets from the data sheet must be multiplied by 4.
+diff --git a/drivers/clk/meson/g12a-aoclk.h b/drivers/clk/meson/g12a-aoclk.h
+deleted file mode 100644
+index 9d6eeb24ae0c..000000000000
+--- a/drivers/clk/meson/g12a-aoclk.h
++++ /dev/null
+@@ -1,13 +0,0 @@
+-/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+-/*
+- * Copyright (c) 2019 BayLibre, SAS
+- * Author: Neil Armstrong <narmstrong@baylibre.com>
+- */
+-
+-#ifndef __G12A_AOCLKC_H
+-#define __G12A_AOCLKC_H
+-
+-#include <dt-bindings/clock/g12a-aoclkc.h>
+-#include <dt-bindings/reset/g12a-aoclkc.h>
+-
+-#endif /* __G12A_AOCLKC_H */
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index 736c35d126f5..d7f7dc81fa6d 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -7,11 +7,13 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/module.h>
+ #include "meson-aoclk.h"
+-#include "gxbb-aoclk.h"
+ 
+ #include "clk-regmap.h"
+ #include "clk-dualdiv.h"
+ 
++#include <dt-bindings/clock/gxbb-aoclkc.h>
++#include <dt-bindings/reset/gxbb-aoclkc.h>
 +
-+	if (idx >= data->num) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return data->hws[idx];
-+}
-+EXPORT_SYMBOL_GPL(meson_clk_hw_get);
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/meson/meson-clkc-utils.h b/drivers/clk/meson/meson-clkc-utils.h
-new file mode 100644
-index 000000000000..fe6f40728949
---- /dev/null
-+++ b/drivers/clk/meson/meson-clkc-utils.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
-+ */
-+
-+#ifndef __MESON_CLKC_UTILS_H__
-+#define __MESON_CLKC_UTILS_H__
-+
-+#include <linux/of_device.h>
-+#include <linux/clk-provider.h>
-+
-+struct meson_clk_hw_data {
-+	struct clk_hw	**hws;
-+	unsigned int	num;
-+};
-+
-+struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
-+
-+#endif
+ /* AO Configuration Clock registers offsets */
+ #define AO_RTI_PWR_CNTL_REG1	0x0c
+ #define AO_RTI_PWR_CNTL_REG0	0x10
+diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+deleted file mode 100644
+index 94197b957512..000000000000
+--- a/drivers/clk/meson/gxbb-aoclk.h
++++ /dev/null
+@@ -1,13 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0+ */
+-/*
+- * Copyright (c) 2017 BayLibre, SAS
+- * Author: Neil Armstrong <narmstrong@baylibre.com>
+- */
+-
+-#ifndef __GXBB_AOCLKC_H
+-#define __GXBB_AOCLKC_H
+-
+-#include <dt-bindings/clock/gxbb-aoclkc.h>
+-#include <dt-bindings/reset/gxbb-aoclkc.h>
+-
+-#endif /* __GXBB_AOCLKC_H */
 
 -- 
 2.34.1
