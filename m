@@ -2,105 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F03EC88CB4
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 15:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3BAC88CB2
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 15:38:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237377AbjFLPaJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 11:30:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56664 "EHLO
+        id S238226AbjFLPii (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 11:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237032AbjFLPaI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 11:30:08 -0400
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 881001B8;
-        Mon, 12 Jun 2023 08:30:07 -0700 (PDT)
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1b3cc77ccbfso7285315ad.1;
-        Mon, 12 Jun 2023 08:30:07 -0700 (PDT)
+        with ESMTP id S237359AbjFLPig (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 11:38:36 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3472A10C7
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 08:38:35 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b1b92845e1so53381531fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 08:38:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686584313; x=1689176313;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6j+4xQEH1M/R/NQt831AU88wINq39ctKhdxH/376xe8=;
+        b=ZmYcILAuFJRWyFReOLXxXy2Gd7G6ysWJ/yBu6etw7IwytgQPZPqxjDFfvipbfw+GDy
+         S3ZAbO83vbSZqdNeyj8b0ilsycbAjw5UzMCaH5RUruPNO99Tc4dTtd8ZkW3RkiseuqnO
+         HmvxSZd2HyPJW/OGaXCIPagATwdi58gOees4HyLySflAFBV2D7oVRUon9zDHzIMnpgma
+         0TI35pyFvCcD/JIJFye5cTBYyY1VdkhIbf5y2cYvkoi6RDA3Kgtvf0S2+s55PmbDr9jY
+         C36u/NJmUhshqu1ecDnhDa9U9mI5n0NYvtalnjAY2h3EttEZfBRfjXc+bdkYlafP4KQz
+         kG2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686583807; x=1689175807;
+        d=1e100.net; s=20221208; t=1686584313; x=1689176313;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qt1TPwchcj2VuqrNTLbU1dI0zylo16OsUsxj0udlo1g=;
-        b=LACI8dK6zyguXqfSuRhBMgacWIxDFOiIlKuWiEGI9nRXzKUBoYuoY3Qzp5RLzea3vT
-         KngVfSTbq6B3LGU9zJxC0KV/iJNzpxuVMQX2mEcCGXWfZGQpUenoypaD1JY5hWcQZUkA
-         NbgBBQWs/wL36/X5xP1fMsoBbQZ9rxNiv8MXfSNdmhr/5dlx6TLUZXhLFSF/4mZRdRXs
-         leetK5TNVLy2r0Rnfv0qmXSUVzq2C+M0cWxOS7QlDjDsgELMNS0yzsCgF+WW3IREHFAP
-         Z/ncCYv4H/PsoMY1Z2QAK03R4cWDQWPs1K16zmrEmaQhvso8GhxZnIlNEpUBoWQWYrMh
-         rFMg==
-X-Gm-Message-State: AC+VfDwadUGramQnMowR+ym69z8ftHouyy7UT/RVPfv6yW8FJQhsWFUr
-        uMhjES1QZRhfCDxAqoTehME=
-X-Google-Smtp-Source: ACHHUZ56brA+YWWAEz8TU4PAVsV02R+SWgJ96a3WKlbirAIjvLSNbBO5cimblvEo6LG/ezoxWr2djQ==
-X-Received: by 2002:a17:903:2347:b0:1b1:99c9:8ce1 with SMTP id c7-20020a170903234700b001b199c98ce1mr7581876plh.51.1686583806811;
-        Mon, 12 Jun 2023 08:30:06 -0700 (PDT)
-Received: from [192.168.51.14] ([98.51.102.78])
-        by smtp.gmail.com with ESMTPSA id jl1-20020a170903134100b001a245b49731sm6989724plb.128.2023.06.12.08.30.04
+        bh=6j+4xQEH1M/R/NQt831AU88wINq39ctKhdxH/376xe8=;
+        b=BYh3MNAVJcx0WOrmj8gwHGnVCX6Z4zEVB+tK1gnTfY1PgOkZBCF7yhlnOooWkksBoZ
+         eAkO0ArLo00PyAf6FOzCP4Tnl7k8Ypte+QwmwqxGPHk6UM+nhoXc/28fNwKJv0n1qIxL
+         RKWX9RgUbEMIPT68T529ZRfcgHACZpASadrOdwgQUFLQ8y8y3v7RpNoYLd05mUqJyBYw
+         DSWX+jzaaEWYPRwjst7sXltm32CyYwiq7idHzh/FzEczj/qk4OarjpvGEBxxaErS5zXy
+         hHJsPIw68wJzvzZBt/QVuZeDgGI5HCN5Ogv/a/McYqlDwoSwur03TqRmwM1QI1HWT9+D
+         81zw==
+X-Gm-Message-State: AC+VfDybBuJTRoaiYy4dxvfAFN3QSspTwWyngbdDnHQcpBmPgH7ELm3f
+        stWwlveUjoGZ4YyKavzqXwdW7g==
+X-Google-Smtp-Source: ACHHUZ4Teau1vBIt9NE9tpRSAXxSnYawNGGHP0WPg9NHLirIprLF6ye3xlV7W9UxE9+b939q64+g7Q==
+X-Received: by 2002:a05:651c:86:b0:2b2:104d:8f89 with SMTP id 6-20020a05651c008600b002b2104d8f89mr3097381ljq.0.1686584313327;
+        Mon, 12 Jun 2023 08:38:33 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id i5-20020a2e8085000000b002ad994b0b51sm1812951ljg.16.2023.06.12.08.38.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 08:30:06 -0700 (PDT)
-Message-ID: <de920a42-0d72-c5ec-1af9-8bfa4b954cfd@acm.org>
-Date:   Mon, 12 Jun 2023 08:30:03 -0700
+        Mon, 12 Jun 2023 08:38:32 -0700 (PDT)
+Message-ID: <ced1d731-d39f-5192-ca1d-882b7f3fc322@linaro.org>
+Date:   Mon, 12 Jun 2023 18:38:32 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
- interface
-Content-Language: en-US
-To:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        kuba@kernel.org, jiri@resnulli.us, vadfed@meta.com,
-        jonathan.lemon@gmail.com, pabeni@redhat.com
-Cc:     corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
-        vadfed@fb.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
-        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
-        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
-        michal.michalik@intel.com, gregkh@linuxfoundation.org,
-        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
-        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
-        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
-        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
-        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
-        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
-        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
-        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org,
-        vadim.fedorenko@linux.dev
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
- <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
+Subject: Re: [PATCH 15/18] ARM: dts: qcom: apq8064: provide voltage scaling
+ tables
+Content-Language: en-GB
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>
+References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
+ <20230612053922.3284394-16-dmitry.baryshkov@linaro.org>
+ <ZIbez4RA0OoVfHzt@gerhold.net>
+ <8c1085fd-8a73-d192-6624-d4f35728e68a@linaro.org>
+ <ZIck0L-gK_a_jCtc@gerhold.net>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <ZIck0L-gK_a_jCtc@gerhold.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/9/23 05:18, Arkadiusz Kubalewski wrote:
-> diff --git a/Documentation/driver-api/dpll.rst b/Documentation/driver-api/dpll.rst
-> new file mode 100644
-> index 000000000000..8caa4af022ad
-> --- /dev/null
-> +++ b/Documentation/driver-api/dpll.rst
-> @@ -0,0 +1,458 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===============================
-> +The Linux kernel dpll subsystem
-> +===============================
-> +
-> +The main purpose of dpll subsystem is to provide general interface
-> +to configure devices that use any kind of Digital PLL and could use
-> +different sources of signal to synchronize to as well as different
-> +types of outputs.
-> +The main interface is NETLINK_GENERIC based protocol with an event
-> +monitoring multicast group defined.
+On 12/06/2023 16:59, Stephan Gerhold wrote:
+> On Mon, Jun 12, 2023 at 04:33:09PM +0300, Dmitry Baryshkov wrote:
+>> On 12/06/2023 12:01, Stephan Gerhold wrote:
+>>> On Mon, Jun 12, 2023 at 08:39:19AM +0300, Dmitry Baryshkov wrote:
+>>>> APQ8064 has 4 speed bins, each of them having from 4 to 6 categorization
+>>>> kinds. Provide tables necessary to handle voltage scaling on this SoC.
+>>>>
+>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>> ---
+>>>>    arch/arm/boot/dts/qcom-apq8064.dtsi | 1017 +++++++++++++++++++++++++++
+>>>>    1 file changed, 1017 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+>>>> index 4ef13f3d702b..f35853b59544 100644
+>>>> --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
+>>>> +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+>>>> @@ -49,6 +49,9 @@ CPU0: cpu@0 {
+>>>>    			clocks = <&kraitcc KRAIT_CPU_0>;
+>>>>    			clock-names = "cpu";
+>>>>    			clock-latency = <100000>;
+>>>> +			vdd-mem-supply = <&pm8921_l24>;
+>>>> +			vdd-dig-supply = <&pm8921_s3>;
+>>>> +			vdd-core-supply = <&saw0_vreg>;
+>>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>>>    			operating-points-v2 = <&cpu_opp_table>;
+>>>>    			#cooling-cells = <2>;
+>>>> @@ -66,6 +69,9 @@ CPU1: cpu@1 {
+>>>>    			clocks = <&kraitcc KRAIT_CPU_1>;
+>>>>    			clock-names = "cpu";
+>>>>    			clock-latency = <100000>;
+>>>> +			vdd-mem-supply = <&pm8921_l24>;
+>>>> +			vdd-dig-supply = <&pm8921_s3>;
+>>>> +			vdd-core-supply = <&saw1_vreg>;
+>>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>>>    			operating-points-v2 = <&cpu_opp_table>;
+>>>>    			#cooling-cells = <2>;
+>>>> @@ -83,6 +89,9 @@ CPU2: cpu@2 {
+>>>>    			clocks = <&kraitcc KRAIT_CPU_2>;
+>>>>    			clock-names = "cpu";
+>>>>    			clock-latency = <100000>;
+>>>> +			vdd-mem-supply = <&pm8921_l24>;
+>>>> +			vdd-dig-supply = <&pm8921_s3>;
+>>>> +			vdd-core-supply = <&saw2_vreg>;
+>>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>>>    			operating-points-v2 = <&cpu_opp_table>;
+>>>>    			#cooling-cells = <2>;
+>>>> @@ -100,6 +109,9 @@ CPU3: cpu@3 {
+>>>>    			clocks = <&kraitcc KRAIT_CPU_3>;
+>>>>    			clock-names = "cpu";
+>>>>    			clock-latency = <100000>;
+>>>> +			vdd-mem-supply = <&pm8921_l24>;
+>>>> +			vdd-dig-supply = <&pm8921_s3>;
+>>>> +			vdd-core-supply = <&saw3_vreg>;
+>>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>>>    			operating-points-v2 = <&cpu_opp_table>;
+>>>>    			#cooling-cells = <2>;
+>>>> @@ -132,6 +144,81 @@ cpu_opp_table: opp-table-cpu {
+>>>>    		opp-384000000 {
+>>>>    			opp-hz = /bits/ 64 <384000000>;
+>>>>    			opp-peak-kBps = <384000>;
+>>>> +			opp-microvolt-speed0-pvs0 = <1050000 1050000 1150000>,
+>>>> +						    <950000 950000 1150000>,
+>>>> +						    <950000 950000 975000>;
+>>>
 
-A section that explains what "DPLL" stands for is missing. Please add 
-such a section.
+[skipped the OPP voltage vs bw ordering]
 
-Thanks,
+>>
+>>>
+>>> The alternative that I've already argued for on IRC in #linux-msm a
+>>> couple of days ago would be to give the L2 cache (here: "interconnect")
+>>> an own OPP table where it can describe its voltage requirements,
+>>> independent from the CPU. That way the icc_set_bw() would be guaranteed
+>>> to apply the correct voltage before adjusting the L2 cache clock. It
+>>> looks like the "l2_level" voltages for vdd_dig and vdd_mem are not
+>>> speedbin/PVS-specific [2] so this would also significantly reduce the DT
+>>> size, since you wouldn't need to repeat the same vdd_dig/vdd_mem
+>>> voltages for all of them.
+>>
+>> Yes. I fact our discussion triggered me to do this patchset.
+>>
+>> So, another option would be to have something like the following snippet. Do
+>> you know if we are allowed to squish additional data into the L2 cache DT
+>> node?
+>>
+> 
+> I suspect no one has tried this before, so only the DT maintainers could
+> answer this. I would say that it just follows the existing design of
+> clocks/-supply/OPPs on the CPU nodes. vdd-mem-supply isn't a property of
+> the CPU, it's a property of the L2 cache so it actually fits better there. >
+> I think the more controversial questions might be:
+> 
+>    - Is a L2 cache really an "interconnect"? I suppose one could argue it
+>      connects multiple CPU cores to a cluster (similar how a CCI connects
+>      multiple clusters to a system).
 
-Bart.
+Yes. This was my reasoning for CBF clock as well as for this L2 clock. 
+The separate L2 cache device is also an interconnect from my POV. It 
+connects all CPU cores and we have to vote on its frequency.
+
+>    - What would bind to the l2-cache node? A separate driver? Does that
+>      work if it sits below the /cpus node?
+
+In the worst case we'd have to populate that manually. E.g. from the 
+qcom-cpufreq-nvmem.c
+
+-- 
+With best wishes
+Dmitry
 
