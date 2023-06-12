@@ -2,206 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6355DC7EE23
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 03:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630DFC7EE25
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 05:39:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234296AbjFLDO1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 11 Jun 2023 23:14:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49066 "EHLO
+        id S234965AbjFLFj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 01:39:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233567AbjFLDOY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Jun 2023 23:14:24 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2626A10D;
-        Sun, 11 Jun 2023 20:14:19 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 3F27182CA;
-        Mon, 12 Jun 2023 11:14:05 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 12 Jun
- 2023 11:09:06 +0800
-Received: from [192.168.125.128] (113.72.145.34) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 12 Jun
- 2023 11:09:05 +0800
-Message-ID: <b693397d-b8d6-ec79-098a-528919786e49@starfivetech.com>
-Date:   Mon, 12 Jun 2023 11:06:49 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock
- generator
-To:     Conor Dooley <conor.dooley@microchip.com>,
-        Torsten Duwe <duwe@lst.de>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <yanhong.wang@starfivetech.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S232246AbjFLFj0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 01:39:26 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B11FFE57
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:25 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4f640e48bc3so4416508e87.2
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686548364; x=1689140364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EHz2Z30tdvTqewGRLECO+NJy+cg3ayTbdySyYZr/5UI=;
+        b=t5ZwCfhAOWC8wyPB2ZlDMdiTPngHUZ7nZ67kwnm/Dr2UbttazmKj8zlhUsLQR3Nuwj
+         sfgqBP5oTIR9ghn3OnfIeQYlA7lzPDb3uGGdvf4KFY/DKAJFt9d1+ybNNYuMeltV53gp
+         GHykpbnZ3mc6xK/YNr54xghuoB4Y12dK444kxCDtSdO2qTus7IpqbPF3DPTKUUvHxJdh
+         iVhwWNkFOOCtUAMIoFrBeRIXYovBournrXZWLlhdNg+ocGw4uyRRocNNY/X/B4apQ5N0
+         3Pyn4woxc0otUDwXNV6TjAtS19C0NosBSXBykyzUMONyXhvTi8FLYMWbT+8HtmHFCp9Q
+         aFaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686548364; x=1689140364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EHz2Z30tdvTqewGRLECO+NJy+cg3ayTbdySyYZr/5UI=;
+        b=kCgnTWQaGghpOG6H4HWdQtc4ITykFOBvrB4cDd/SP35OolW/p7x49y6bECwns9Q/vE
+         KngyCNzwhFfLo8FZXbOQFGXj52IQQdHrAKSmey7/F1zOCLjZfgj7MSBQlqhSoK0ySsiL
+         gTt7FD8+UZ9nPR9ID7EIGH9lAnhIQgHhdeFx/Nbmg0lLRNoK8VU1Nc05kQWjNH6YBuID
+         1woyKhSkU0AI2LvaEEXnHGhDj9V7CKElsvKs6cmifFdNms9ImEfIqeWGZyNAZoC0spct
+         Rp2m1xxjjvUI43lFCmERRjSAz3c6TUy16AJurSXaBsTcYQKhhd+2yQHgXaXK1KuFYpot
+         WtpQ==
+X-Gm-Message-State: AC+VfDyDMY2fLZQzmygktfF1JCOgcLEXu3HF24jSpjcsVc0FVODs4sy2
+        OS79O5R3qs92mMWkaOYUbBJjMQ==
+X-Google-Smtp-Source: ACHHUZ7TiqLKPzDu6AYEp6emATujNOYmnTZgqrXZO3dHGPkZgxy28WkN209PjWMbBoSf8p81CeYTMA==
+X-Received: by 2002:a19:6418:0:b0:4f3:c7f8:d40c with SMTP id y24-20020a196418000000b004f3c7f8d40cmr3325848lfb.29.1686548363705;
+        Sun, 11 Jun 2023 22:39:23 -0700 (PDT)
+Received: from eriador.lan (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id n6-20020a195506000000b004f38260f196sm1324125lfe.218.2023.06.11.22.39.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Jun 2023 22:39:22 -0700 (PDT)
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Hal Feng" <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <u-boot@lists.denx.de>
-References: <20230512022036.97987-2-xingyu.wu@starfivetech.com>
- <20230519135733.GA10188@lst.de>
- <20230519-smokeless-guileless-2a71cae06509@wendy>
- <df43411e-8982-74f5-6148-e7281c37dada@starfivetech.com>
- <20230523-fondue-monotype-0c751a8f0c13@wendy>
- <20230523131006.46997d84@blackhole.lan>
- <20230523-saturate-axis-f46b78b7b82b@wendy>
- <38a9cb77-18b3-4daa-724b-9f2282f7d948@starfivetech.com>
- <20230524-jittery-sway-41b578b24153@wendy>
- <20230526093432.4682eab8@blackhole.lan>
- <20230526-unwashed-musty-dee883f1d6a7@wendy>
-Content-Language: en-US
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <20230526-unwashed-musty-dee883f1d6a7@wendy>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.145.34]
-X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH 00/18] ARM: qcom: apq8064: support CPU frequency scaling
+Date:   Mon, 12 Jun 2023 08:39:04 +0300
+Message-Id: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
+X-Mailer: git-send-email 2.39.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/5/26 20:23, Conor Dooley wrote:
-> On Fri, May 26, 2023 at 09:34:32AM +0200, Torsten Duwe wrote:
->> On Wed, 24 May 2023 11:19:48 +0100
->> Conor Dooley <conor.dooley@microchip.com> wrote:
->> 
->> > On Wed, May 24, 2023 at 05:00:02PM +0800, Xingyu Wu wrote:
->> > > On 2023/5/23 19:28, Conor Dooley wrote:
->> > > > On Tue, May 23, 2023 at 01:10:06PM +0200, Torsten Duwe wrote:
->> > > >> On Tue, 23 May 2023 09:28:39 +0100
->> > > >> Conor Dooley <conor.dooley@microchip.com> wrote:
->> > > >> 
->> > > >> > On Tue, May 23, 2023 at 10:56:43AM +0800, Xingyu Wu wrote:
->> > > >> > > On 2023/5/19 22:16, Conor Dooley wrote:
->> > > >> > > > On Fri, May 19, 2023 at 03:57:33PM +0200, Torsten Duwe
->> > > >> > > > wrote:
->> > > >> > > >> On Fri, May 12, 2023 at 10:20:30AM +0800, Xingyu Wu wrote:
->> [...]
->> 
->> > > >> > > Because PLL driver is separated from SYSCRG drivers in
->> > > >> > > Linux, the numbering starts from 0. But in Uboot, the PLL
->> > > >> > > driver is included in the SYSCRG driver, and the number
->> > > >> > > follows the SYSCRG.
->> > > >> > 
->> > > >> > Unfortunately, how you choose to construct your drivers has
->> > > >> > nothing to do with this.
->> 
->> Exactly. As I wrote (quote below), the PLLx frequencies are controlled
->> by the I/O block SYS_SYSCON (starting there at offset 0x18), according
->> to the public datasheets. All(?) other clocks are derived from those in
->> the *_CRG units. That *is* the hardware to be described, in *the* (one
->> and only!) DT. U-Boot, and any OS, are free to reorganise their driver
->> framework around that, but the hardware description is quite clear.
-> 
-> The dt-binding that is in this series specifies that the pll clock
-> controller is a child of the syscon:
-> https://lore.kernel.org/linux-riscv/20230512022036.97987-1-xingyu.wu@starfivetech.com/T/#Z2e.:..:20230512022036.97987-6-xingyu.wu::40starfivetech.com:1soc:starfive:starfive::2cjh7110-syscon.yaml
-> 
-> That seems correct to me & U-Boot's devicetree is not compliant.
-> 
->> > > >> > These defines/numbers appear in the dts and are part of the DT
->> > > >> > ABI. The same dts is supposed to work for Linux & U-Boot.
->> > > >> 
->> > > >> The JH7110 has 6 blocks of 64k iomem in that functional area:
->> > > >> {SYS,STG,AON} x {CRG,SYSCON}. None of these has 190 clocks.
->> > > >> The good news: the current DTS, as proposed here and in U-Boot
->> > > >> master, provides nodes for all 6 entities. The bad news is that
->> > > >> the clock assignments to those nodes and their numbering is
->> > > >> messed up.
->> > > >> 
->> > > >> AFAICT PLL{0,1,2} _are_ generated in SYS_SYSCON and thus U-Boot
->> > > >> gets it wrong, in addition to the erroneous DTS.
->> > > > 
->> > > > The numbers are kinda hocus-pocus anyway, they are just made up
->> > > > since the clock numbering usually isn't something with a nice TRM
->> > > > to go and reference (unlike interrupts which usually are
->> > > > documented in that way). It is very helpful to make them aligned
->> > > > some register/bit positions or, but that is not required.
->> > > > IOW U-Boot is not wrong per se to use 190 instead of 0, but it is
->> > > > wrong to have different numbers in both places.
->> 
->> U-Boot reuses the Common Clock Framework from Linux, and I'm not sure
->> whether the clock IDs need to be unique in order for the appropriate
->> clock to be found.
-> 
-> Unique within the clock controller, otherwise it is impossible to tell
-> the difference between <&cctrl 1> and <&cctrl 1> apart! (The same
-> follows even with increased #clock-cells, something must be unique).
-> That's besides the point of this particular issue though.
-> 
->> But that would be the only restriction, if it
->> applies. Even then, each driver could register a clock with its own,
->> arbitrarily chosen base offset with the CCF, so each CRG unit could
->> still have its own clocks enumerated starting with 0 in the DTB.
->> 
->> > > > It sounds like you're saying that (and I have not looked) the
->> > > > U-Boot dts actually has structural difference w.r.t. what
->> > > > provides which clock? If so, that'll need to be fixed
->> > > > independently of the numbering problem.
->> 
->> > > 
->> > > Oh, unfortunately, the 7110 can not support to mix the uboot dtb
->> > > and linux dtb up.
->> > 
->> > What does "cannot support" mean? It's normal and desirable for the
->> 
->> IMHO "desirable" is too weak.
-> 
-> Yeah, agreed. I just don't like being prescriptive about what happens in
-> projects that I do not maintain things for I guess.
-> 
->> > same dtb to be usable for both. The Linux kernel's dt-bindings are
->> > used for multiple projects, not just Linux - it'd be silly for
->> > U-Boot, FreeBSD etc etc to go off and each have their open set of
->> > (incompatible) bindings.
->> > 
->> > > If boot the Linux and should use the linux dtb instead of the uboot
->> > > dtb. Because all clock ids and reset ids in Linux and Uboot are
->> > > different include PLL, and some modules can work in Linux but not
->> > > in uboot.
->> [...]
->> > 
->> > > I suggest to boot Linux with its own linux dtb.
->> 
->> This is a fragile band-aid, to be used only as a last resort. It
->> creates more problems than it solves. Your DTB will then match your
->> kernel, but whether it describes the actual hardware is a game of
->> chance. Doesn't the VisionFive2 have an RPi connector... ?
->> 
->> One of the IMO few valid use cases of adding a DTB to the kernel
->> at boot is OpenWRT, when you build an OS Image for a particular piece
->> of hardware you have at hand.
->> 
->> > I suggest to make sure that you can use the same dtb for both.
->> 
->> Interestingly enough, U-Boot already has the PLL driver in a separate
->> file. I have a half-baked patch here that moves the sys_syscon DT
->> matching into that file...
-> 
-> If you have patches that fix the devicetree & drivers in U-Boot, please
-> post them. I don't really care at all which set of arbitrary numbers are
-> chosen (as long as there is one and one only) but it looks like U-Boot's
-> devicetree has an incorrect description of the clock controllers.
-> 
+Implement CPUFreq support for one of the oldest supported Qualcomm
+platforms, APQ8064. Each core has independent power and frequency
+control. Additionally the L2 cache is scaled to follow the CPU
+frequencies (failure to do so results in strange semi-random crashes).
 
-Hi Conor and Torsten,
-After our internal discussions, it was decided to make the change on Uboot.
-The clock id in Uboot are changed to be same with Linux and the PLL clocks become the child node of SYSCON.
-And we will send this patch on Uboot soon.
+Core voltage is controlled through the SAW2 devices, one for each core.
+The L2 has two regulators, vdd-mem and vdd-dig.
 
-Best Regards,
-Xingyu Wu
+Depenency: [1] for interconnect-clk implementation
+
+https://lore.kernel.org/linux-arm-msm/20230512001334.2983048-3-dmitry.baryshkov@linaro.org/
+
+Dmitry Baryshkov (18):
+  dt-bindings: opp: opp-v2-kryo-cpu: support Qualcomm Krait SoCs
+  dt-bindings: soc: qcom: merge qcom,saw2.txt into qcom,spm.yaml
+  dt-bindings: soc: qcom: qcom,saw2: define optional regulator node
+  dt-bindings: clock: qcom,krait-cc: Krait core clock controller
+  clk: qcom: krait-cc: rewrite driver to use clk_hw instead of clk
+  clk: qcom: krait-cc: export L2 clock as an interconnect
+  soc: qcom: spm: add support for voltage regulator
+  cpufreq: qcom-nvmem: also accept operating-points-v2-krait-cpu
+  cpufreq: qcom-nvmem: Add support for voltage scaling
+  cpufreq: qcom-nvmem: drop pvs_ver for format a fuses
+  cpufreq: qcom-nvmem: provide separate configuration data for apq8064
+  ARM: dts: qcom: apq8064: rename SAW nodes to power-manager
+  ARM: dts: qcom: apq8064: declare SAW2 regulators
+  ARM: dts: qcom: apq8064: add simple CPUFreq support
+  ARM: dts: qcom: apq8064: provide voltage scaling tables
+  ARM: dts: qcom: apq8064: enable passive CPU cooling
+  ARM: dts: qcom: apq8064-asus-nexus7-flo: constraint cpufreq regulators
+  ARM: dts: qcom: apq8064-ifc6410: constraint cpufreq regulators
+
+ .../devicetree/bindings/arm/msm/qcom,saw2.txt |   58 -
+ .../bindings/opp/opp-v2-kryo-cpu.yaml         |   11 +-
+ .../qcom/{qcom,spm.yaml => qcom,saw2.yaml}    |   39 +-
+ .../boot/dts/qcom-apq8064-asus-nexus7-flo.dts |   14 +-
+ arch/arm/boot/dts/qcom-apq8064-ifc6410.dts    |   18 +-
+ arch/arm/boot/dts/qcom-apq8064.dtsi           | 1247 ++++++++++++++++-
+ drivers/clk/qcom/Kconfig                      |    1 +
+ drivers/clk/qcom/krait-cc.c                   |  185 +--
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          |  164 ++-
+ drivers/soc/qcom/spm.c                        |  205 ++-
+ include/dt-bindings/clock/qcom,krait-cc.h     |   20 +
+ include/soc/qcom/spm.h                        |    9 +
+ 12 files changed, 1806 insertions(+), 165 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/msm/qcom,saw2.txt
+ rename Documentation/devicetree/bindings/soc/qcom/{qcom,spm.yaml => qcom,saw2.yaml} (58%)
+ create mode 100644 include/dt-bindings/clock/qcom,krait-cc.h
+
+-- 
+2.39.2
+
