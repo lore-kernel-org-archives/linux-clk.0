@@ -2,150 +2,151 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA80FC7EE23
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D10EC7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:24:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232341AbjFLIGq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 04:06:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42328 "EHLO
+        id S232365AbjFLIYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 04:24:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234127AbjFLIGZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:06:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A02C8115
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686557058;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4o6iBs/cGUwezMGSZngT4KvoAhZmnl7dmMW6aK8mMXs=;
-        b=JEM5WGvO/vYynQ5dl/5eXYin6p0s8pvXlpJ1wtTawTOCg5kZJnwV9rej74B+AsOsyGAwyw
-        YneN86CyjrnKWRYnzkPjRQ/RoJQQWv5VBXWGtEZe/XAR/F+oiW2ku6f/JFZyZVQHUsC6oC
-        ExHH0uiBh343dwYQbnqIA6+9iDS0mbI=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-341-gaMfysVBNBO0Fd9NzPr4dw-1; Mon, 12 Jun 2023 03:25:16 -0400
-X-MC-Unique: gaMfysVBNBO0Fd9NzPr4dw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-74faf5008bbso86265685a.0
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 00:25:16 -0700 (PDT)
+        with ESMTP id S231699AbjFLIX7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:23:59 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2554D114
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:23:49 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f736e0c9b1so42109115e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:23:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686558227; x=1689150227;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3syFK18W0x1MXZeXQYRchVrFaPqAMr+pqA7DuRcsYMA=;
+        b=ylTAA8QlrBqMuraIbm1w7bKvtYTyva4XcKAYVkJWL9v2NSi6BuH0RwJtMXZllapArk
+         C+wTtynfpchd648WB6+TWK7SGU8Vi8o2VJ8rPKTwdwVz/FKg49th3RtCE4YD63n38JUF
+         VbE6Fn4AFfviuqGRWiWcTmlfY3bychJtBtcbWxkgMuYscw5daM8ckZgGC3ub9xcLuqUW
+         WZ4P1CyYMUQI5DTiRoSe5lYPbkR16yW8VI17lbH4s6V/w012JmV2M/1XOxcK5Cqa17QZ
+         rJg3kNeiPf3Ko3hRftQrrS1FwIju8d9sPI0SayMtrcBvXxTaTXvK8Km7MxfHPDIukxmi
+         HR4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686554716; x=1689146716;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4o6iBs/cGUwezMGSZngT4KvoAhZmnl7dmMW6aK8mMXs=;
-        b=l/CTl3k9+5W1bdr9Byi4h7znSUU4ps8wkXcmuaeGaXDzEOpE6yzJgVNmmATFiEbxz8
-         Mt0eP+oP8wl/W+SWV3mgSsuQjKS5HlSBOvp9/IUHOrnBRCpONmfXnSkITtgeJ6F9Ucjr
-         PM2/noAns49znYcp0dmFH7ltJqw2KrTCZjWNXVWRoR34C3L+nXEy0jTKlX6uLqucsr1y
-         MKynBHUfa6CPYWDhgcIJT075Nq103M/Lvh7yowS6cxgqw+O+GzHsiekce4uNfMxT5Wf3
-         3Xs0+pDE357RzDvl+NknI0mm6B8fH5Anpzsd4SuuMkQnMdcNK25h2Fz4yOYjpTaB0TxG
-         6KSA==
-X-Gm-Message-State: AC+VfDwixwzRqHXMbBFFpUusnmSL4I4BKNWtDg+cW4mN7EYH3bUDv+Jm
-        zZJpP5xzHPn7DqzVRGqaPXdHRcoIfwwbDj6hgaytuHUWFmT14AVL0AlzkkqsNu3QaYGiz0zcQ3c
-        zrCfHoK49YsfgyHRjNDNE
-X-Received: by 2002:a05:620a:261b:b0:75d:53ee:ced2 with SMTP id z27-20020a05620a261b00b0075d53eeced2mr9737742qko.3.1686554715871;
-        Mon, 12 Jun 2023 00:25:15 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5VuifOapEch7jQlR/qS70uakqBc0QmL94RvL3OjCGbDQ+rEyQGny14ZUgrn99WU43OqLM/LQ==
-X-Received: by 2002:a05:620a:261b:b0:75d:53ee:ced2 with SMTP id z27-20020a05620a261b00b0075d53eeced2mr9737716qko.3.1686554715595;
-        Mon, 12 Jun 2023 00:25:15 -0700 (PDT)
-Received: from gerbillo.redhat.com (146-241-250-244.dyn.eolo.it. [146.241.250.244])
-        by smtp.gmail.com with ESMTPSA id v11-20020ae9e30b000000b0074fb15e2319sm2685635qkf.122.2023.06.12.00.25.08
+        d=1e100.net; s=20221208; t=1686558227; x=1689150227;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3syFK18W0x1MXZeXQYRchVrFaPqAMr+pqA7DuRcsYMA=;
+        b=kB0GsztZPGe505xL2UpNEbRKwNkZaaGFaSXPccc/8CN2d1JpqEYWM9sEHDMrrL9UD9
+         L1J8Nmj+Al8GtaUwjgPZol5P0ad3+Dy+mR+6h+fWGmQ4w6MY9fwJi+HRDn9GQahRfjNq
+         tGmhxF3bP0dtQzUQ8Gz0tnLLXE4DXVBFlwG/HaeFYBEqBJgjeKH+TJDyEXRPhtupYvjD
+         i+00OO8SoXFidEcrxf5E0rAyCn3ur3cHp0pBimsPRRpq1VPoY1YQxklv6ihn7dCxUvJA
+         Eqjg8oHqXXwDmQcenngw1Rwl0gRxNE3PYWzmUd21DCEeFDEzY/fFVJu5q+NtkCSIwMOk
+         r9+A==
+X-Gm-Message-State: AC+VfDwWeaZOOQsRgiReLhCtMw6NGWNEGgBp8koI49Lo466fFdoZMHpQ
+        BQzHpNwKAKK7rC/tkoHFhq3MaQ==
+X-Google-Smtp-Source: ACHHUZ6Ynod2i9gs6NbQKZFbzx3ODJoQ+VZ1ZQXuEQh4aOJesHajKIm1t1uIdfbd6P2o8CDLR1ZEPw==
+X-Received: by 2002:a5d:522b:0:b0:30f:c1f5:e91e with SMTP id i11-20020a5d522b000000b0030fc1f5e91emr1390141wra.27.1686558227544;
+        Mon, 12 Jun 2023 01:23:47 -0700 (PDT)
+Received: from linaro.org ([86.121.163.20])
+        by smtp.gmail.com with ESMTPSA id v18-20020a5d43d2000000b0030ae93bd196sm11655199wrr.21.2023.06.12.01.23.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 00:25:15 -0700 (PDT)
-Message-ID: <38dad5cb196741e56d018cea155982928694b2cc.camel@redhat.com>
-Subject: Re: [RFC PATCH v8 03/10] dpll: core: Add DPLL framework base
- functions
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Jiri Pirko <jiri@resnulli.us>,
-        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc:     kuba@kernel.org, vadfed@meta.com, jonathan.lemon@gmail.com,
-        corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
-        vadfed@fb.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
-        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
-        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
-        michal.michalik@intel.com, gregkh@linuxfoundation.org,
-        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
-        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
-        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
-        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
-        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
-        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
-        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
-        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org,
-        vadim.fedorenko@linux.dev
-Date:   Mon, 12 Jun 2023 09:25:06 +0200
-In-Reply-To: <ZIWVuPMyKRPv6oyh@nanopsycho>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
-         <20230609121853.3607724-4-arkadiusz.kubalewski@intel.com>
-         <ZIWVuPMyKRPv6oyh@nanopsycho>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+        Mon, 12 Jun 2023 01:23:47 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 11:23:45 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Zhanhao Hu <zero12113@hust.edu.cn>
+Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: imx93: fix memory leak and missing unwind goto
+ in imx93_clocks_probe
+Message-ID: <ZIbWEW7MNCaqXq+k@linaro.org>
+References: <20230601033825.336558-1-zero12113@hust.edu.cn>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230601033825.336558-1-zero12113@hust.edu.cn>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 2023-06-11 at 11:36 +0200, Jiri Pirko wrote:
-> Fri, Jun 09, 2023 at 02:18:46PM CEST, arkadiusz.kubalewski@intel.com wrot=
-e:
-> > From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
->=20
-> [...]
->=20
-> > +int dpll_device_register(struct dpll_device *dpll, enum dpll_type type=
-,
-> > +			 const struct dpll_device_ops *ops, void *priv)
-> > +{
-> > +	struct dpll_device_registration *reg;
-> > +	bool first_registration =3D false;
-> > +
-> > +	if (WARN_ON(!ops))
-> > +		return -EINVAL;
-> > +	if (WARN_ON(type < DPLL_TYPE_PPS || type > DPLL_TYPE_MAX))
-> > +		return -EINVAL;
-> > +
-> > +	mutex_lock(&dpll_lock);
-> > +	reg =3D dpll_device_registration_find(dpll, ops, priv);
-> > +	if (reg) {
-> > +		mutex_unlock(&dpll_lock);
-> > +		return -EEXIST;
-> > +	}
-> > +
-> > +	reg =3D kzalloc(sizeof(*reg), GFP_KERNEL);
-> > +	if (!reg) {
-> > +		mutex_unlock(&dpll_lock);
-> > +		return -EEXIST;
-> > +	}
-> > +	reg->ops =3D ops;
-> > +	reg->priv =3D priv;
-> > +	dpll->type =3D type;
-> > +	first_registration =3D list_empty(&dpll->registration_list);
-> > +	list_add_tail(&reg->list, &dpll->registration_list);
-> > +	if (!first_registration) {
-> > +		mutex_unlock(&dpll_lock);
-> > +		return 0;
-> > +	}
-> > +
-> > +	xa_set_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED);
-> > +	mutex_unlock(&dpll_lock);
-> > +	dpll_device_create_ntf(dpll);
->=20
-> This function is introduced in the next patch. Breaks bissection. Make
-> sure you can compile the code after every patch applied.
+On 23-06-01 03:38:25, Zhanhao Hu wrote:
+> In function probe(), it returns directly without unregistered hws
+> when error occurs.
+> 
+> Fix this by adding 'goto unregister_hws;' on line 295 and
+> line 310.
+> 
+> Use devm_kzalloc() instead of kzalloc() to automatically
+> free the memory using devm_kfree() when error occurs.
+> 
+> Replace of_iomap() with devm_of_iomap() to automatically
+> handle the unused ioremap region and delete 'iounmap(anatop_base);'
+> in unregister_hws.
+> 
+> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
+> Signed-off-by: Zhanhao Hu <zero12113@hust.edu.cn>
 
-WRT, I think the easiest way to solve the above is adding the function
-call in the next patch.
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-Cheers,
-
-Paolo
-
+> ---
+> V1 -> V2 : Rephrase commit message in imperative mood.
+> This issue is found by static analysis and remains untested.
+> ---
+>  drivers/clk/imx/clk-imx93.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+> index 07b4a043e449..b6c7c2725906 100644
+> --- a/drivers/clk/imx/clk-imx93.c
+> +++ b/drivers/clk/imx/clk-imx93.c
+> @@ -264,7 +264,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  	void __iomem *base, *anatop_base;
+>  	int i, ret;
+>  
+> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
+> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+>  					  IMX93_CLK_END), GFP_KERNEL);
+>  	if (!clk_hw_data)
+>  		return -ENOMEM;
+> @@ -288,10 +288,12 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  								    "sys_pll_pfd2", 1, 2);
+>  
+>  	np = of_find_compatible_node(NULL, NULL, "fsl,imx93-anatop");
+> -	anatop_base = of_iomap(np, 0);
+> +	anatop_base = devm_of_iomap(dev, np, 0, NULL);
+>  	of_node_put(np);
+> -	if (WARN_ON(!anatop_base))
+> -		return -ENOMEM;
+> +	if (WARN_ON(IS_ERR(anatop_base))) {
+> +		ret = PTR_ERR(base);
+> +		goto unregister_hws;
+> +	}
+>  
+>  	clks[IMX93_CLK_ARM_PLL] = imx_clk_fracn_gppll_integer("arm_pll", "osc_24m",
+>  							      anatop_base + 0x1000,
+> @@ -304,8 +306,8 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  	np = dev->of_node;
+>  	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (WARN_ON(IS_ERR(base))) {
+> -		iounmap(anatop_base);
+> -		return PTR_ERR(base);
+> +		ret = PTR_ERR(base);
+> +		goto unregister_hws;
+>  	}
+>  
+>  	for (i = 0; i < ARRAY_SIZE(root_array); i++) {
+> @@ -345,7 +347,6 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+>  
+>  unregister_hws:
+>  	imx_unregister_hw_clocks(clks, IMX93_CLK_END);
+> -	iounmap(anatop_base);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.34.1
+> 
