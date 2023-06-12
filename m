@@ -2,91 +2,74 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C98C7EE2E
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 19:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97046C88CB2
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 19:30:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231127AbjFLTWV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 15:22:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50210 "EHLO
+        id S238413AbjFLTaL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 15:30:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbjFLTWU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 15:22:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAF8EB5;
-        Mon, 12 Jun 2023 12:22:19 -0700 (PDT)
+        with ESMTP id S238089AbjFLT3i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 15:29:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA5A31994;
+        Mon, 12 Jun 2023 12:29:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 77E3260FE4;
-        Mon, 12 Jun 2023 19:22:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D019DC433D2;
-        Mon, 12 Jun 2023 19:22:18 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4B3B862DA4;
+        Mon, 12 Jun 2023 19:29:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E53C4339B;
+        Mon, 12 Jun 2023 19:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686597738;
-        bh=i1X/5SIkx3TUQH2BftjUID6RqLc4AaNJ8SVBxImU+qM=;
+        s=k20201202; t=1686598164;
+        bh=pp4IfnUgseYYo5pXvDeULpRr37FELb9R2IMgv7cV/KU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bi2/l7I3uexfPYcwzwPjmP6WlInrVSOIEPErDHEfmau5FFgzTv3XURlQ+XrDoOhqR
-         BNeWLd4rf47bCIVqERocPaVAZtBvSONw8W8uqjG07XKI53IceZJsdRSsTu0kXdVGSf
-         AA6ZqVIB50Pqg5I2rADg/IaqWRza3RPDVSCrqJsUrdiEUg5E6b4i+ArFwKKHbduA8O
-         xbk5glj70s1aLaOgIsgNvtIwR2tw1uS6Udl/nAEQOlH5T/Nl43Vq599cgJqub29A8G
-         Ul8iJDHEk9iUsUj/KuMRa/lT3TlreilB0X96l4Yp5LvIKCZYkA4u1xPPgwwazfR/sq
-         oCXuKjX6fW+Rg==
-Message-ID: <83fa171f45654606c1911d2c0d8b5871.sboyd@kernel.org>
+        b=Tp92YkFg7FoKu2jkhmBLq3jtKoya4QLwB4KhjtVY5MM1aCh/DNZurQqY2Vm77fozi
+         to7vhZs2c/HPYHi3XrsQJzGGYH37wBopcit9RK+FARdUkhZPS1A6/V/BbSk+4tePZo
+         CffxCmR1n5qMr1RLElJH2VxVhfLazK6M/uronApip0HoYDq/TnK5Ggm6NSihoM0JaL
+         Fzfl4XcqMaGscYVBCuplAJT9lm49j4r8ENMa31EsGe60jx7gUg6NkgesfGT1peYjuM
+         a/u2gDhBQRF/fjSSSLnqs4rSUcO9xakzbDowTEnqLT7r9TSoeh75g8/Ebx8oV2Jgma
+         acTVZb0dzgF8g==
+Message-ID: <a9e1fc3eae03aafd93602842abc80c81.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230517-fix-clk-index-v3-1-be4df46065c4@baylibre.com>
-References: <20230517-fix-clk-index-v3-1-be4df46065c4@baylibre.com>
-Subject: Re: [PATCH v3] clk: mediatek: mt8365: Fix index issue
+In-Reply-To: <20230421091649.7sihfhq62p5qstom@pengutronix.de>
+References: <20221219171058.164381-1-m.felsch@pengutronix.de> <7687837da16c41ffca3cda747483f2d1.sboyd@kernel.org> <20230421091649.7sihfhq62p5qstom@pengutronix.de>
+Subject: Re: [PATCH 1/2] clk: imx8mp: fix sai4 clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Conor Dooley <conor.dooley@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Alexandre Mergnat <amergnat@baylibre.com>
-To:     Alexandre Mergnat <amergnat@baylibre.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 12 Jun 2023 12:22:16 -0700
+Cc:     Anson.Huang@nxp.com, abelvesa@kernel.org, festevam@gmail.com,
+        krzysztof.kozlowski+dt@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, shawnguo@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        kernel@pengutronix.de
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Date:   Mon, 12 Jun 2023 12:29:22 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexandre Mergnat (2023-05-26 06:10:43)
-> Before the patch [1], the clock probe was done directly in the
-> clk-mt8365 driver. In this probe function, the array which stores the
-> data clocks is sized using the higher defined numbers (*_NR_CLOCK) in
-> the clock lists [2]. Currently, with the patch [1], the specific
-> clk-mt8365 probe function is replaced by the mtk generic one [3], which
-> size the clock data array by adding all the clock descriptor array size
-> provided by the clk-mt8365 driver.
+Quoting Marco Felsch (2023-04-21 02:16:49)
+> Hi,
 >=20
-> Actually, all clock indexes come from the header file [2], that mean, if
-> there are more clock (then more index) in the header file [2] than the
-> number of clock declared in the clock descriptor arrays (which is the
-> case currently), the clock data array will be undersized and then the
-> generic probe function will overflow when it will try to write in
-> "clk_data[CLK_INDEX]". Actually, instead of crashing at boot, the probe
-> function returns an error in the log which looks like:
-> "of_clk_hw_onecell_get: invalid index 135", then this clock isn't
-> enabled.
+> On 23-01-12, Stephen Boyd wrote:
+> > Quoting Marco Felsch (2022-12-19 09:10:57)
+> > > The reference manual don't mention a SAI4 hardware block. This would =
+be
+> > > clock slice 78 which is skipped (TRM, page 237). Remove any reference=
+ to
+> > > this clock to align the driver with the reality.
+> > >=20
+> > > Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
+> > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > > ---
+> >=20
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
 >=20
-> Solve this issue by adding in the driver the missing clocks declared in
-> the header clock file [2].
+> I noticed that this isn't part of v6.3. @Abel can you add your rb or
+> comments please?
 >=20
-> [1]: Commit ffe91cb28f6a ("clk: mediatek: mt8365: Convert to
->      mtk_clk_simple_{probe,remove}()")
-> [2]: include/dt-bindings/clock/mediatek,mt8365-clk.h
-> [3]: drivers/clk/mediatek/clk-mtk.c
->=20
-> Fixes: ffe91cb28f6a ("clk: mediatek: mt8365: Convert to mtk_clk_simple_{p=
-robe,remove}()")
->=20
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-> ---
 
-Applied to clk-fixes
+Please resend and Cc linux-imx@nxp.com
