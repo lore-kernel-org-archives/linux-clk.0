@@ -2,196 +2,226 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3BAC88CB2
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 15:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E76C88CB2
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 16:02:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238226AbjFLPii (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 11:38:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
+        id S232397AbjFLQCB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 12:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237359AbjFLPig (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 11:38:36 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3472A10C7
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 08:38:35 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b1b92845e1so53381531fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 08:38:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686584313; x=1689176313;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6j+4xQEH1M/R/NQt831AU88wINq39ctKhdxH/376xe8=;
-        b=ZmYcILAuFJRWyFReOLXxXy2Gd7G6ysWJ/yBu6etw7IwytgQPZPqxjDFfvipbfw+GDy
-         S3ZAbO83vbSZqdNeyj8b0ilsycbAjw5UzMCaH5RUruPNO99Tc4dTtd8ZkW3RkiseuqnO
-         HmvxSZd2HyPJW/OGaXCIPagATwdi58gOees4HyLySflAFBV2D7oVRUon9zDHzIMnpgma
-         0TI35pyFvCcD/JIJFye5cTBYyY1VdkhIbf5y2cYvkoi6RDA3Kgtvf0S2+s55PmbDr9jY
-         C36u/NJmUhshqu1ecDnhDa9U9mI5n0NYvtalnjAY2h3EttEZfBRfjXc+bdkYlafP4KQz
-         kG2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686584313; x=1689176313;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6j+4xQEH1M/R/NQt831AU88wINq39ctKhdxH/376xe8=;
-        b=BYh3MNAVJcx0WOrmj8gwHGnVCX6Z4zEVB+tK1gnTfY1PgOkZBCF7yhlnOooWkksBoZ
-         eAkO0ArLo00PyAf6FOzCP4Tnl7k8Ypte+QwmwqxGPHk6UM+nhoXc/28fNwKJv0n1qIxL
-         RKWX9RgUbEMIPT68T529ZRfcgHACZpASadrOdwgQUFLQ8y8y3v7RpNoYLd05mUqJyBYw
-         DSWX+jzaaEWYPRwjst7sXltm32CyYwiq7idHzh/FzEczj/qk4OarjpvGEBxxaErS5zXy
-         hHJsPIw68wJzvzZBt/QVuZeDgGI5HCN5Ogv/a/McYqlDwoSwur03TqRmwM1QI1HWT9+D
-         81zw==
-X-Gm-Message-State: AC+VfDybBuJTRoaiYy4dxvfAFN3QSspTwWyngbdDnHQcpBmPgH7ELm3f
-        stWwlveUjoGZ4YyKavzqXwdW7g==
-X-Google-Smtp-Source: ACHHUZ4Teau1vBIt9NE9tpRSAXxSnYawNGGHP0WPg9NHLirIprLF6ye3xlV7W9UxE9+b939q64+g7Q==
-X-Received: by 2002:a05:651c:86:b0:2b2:104d:8f89 with SMTP id 6-20020a05651c008600b002b2104d8f89mr3097381ljq.0.1686584313327;
-        Mon, 12 Jun 2023 08:38:33 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id i5-20020a2e8085000000b002ad994b0b51sm1812951ljg.16.2023.06.12.08.38.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 08:38:32 -0700 (PDT)
-Message-ID: <ced1d731-d39f-5192-ca1d-882b7f3fc322@linaro.org>
-Date:   Mon, 12 Jun 2023 18:38:32 +0300
+        with ESMTP id S229480AbjFLQCA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 12:02:00 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EB04CA;
+        Mon, 12 Jun 2023 09:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1686585718; x=1718121718;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=jGEJkelPWn7iyywk3kYtutFbRwKrnmdVS+sPeyRKJEk=;
+  b=ggZrmHLIy6QgcXd0+1esjsolfMU8HkNKDnQIycAdm7RrJ8jjRaP6ZTFK
+   r/4i9yCSOZH8ZfhnDqHZgMqw0WdEudL7yiEAGPM+K1MDioDHx4aArEpHf
+   JadSEyzN4zBd1cuNuZuslqiA4TzNh9grIemq9lLhl5l/H7nE4I3XYpwnB
+   Z9PiQKmBnaucOAqRKuYHgVZUnAsdhia/39OrAuHZl7hfk8sC4jlg6vGFP
+   rH7c6G6RAkDOQOHrCc3PEerAvbROrT3h/1C5SLk3IUcmgV7xldyOBCkNe
+   85TINqp21b2eiKWS0QP/owMpDa/jufmvwybhnFner9fgSqs1fxbUY/HWD
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="361449240"
+X-IronPort-AV: E=Sophos;i="6.00,236,1681196400"; 
+   d="scan'208";a="361449240"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2023 09:01:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="958075690"
+X-IronPort-AV: E=Sophos;i="6.00,236,1681196400"; 
+   d="scan'208";a="958075690"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmsmga006.fm.intel.com with ESMTP; 12 Jun 2023 09:01:10 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23; Mon, 12 Jun 2023 09:01:09 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.23 via Frontend Transport; Mon, 12 Jun 2023 09:01:09 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.177)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.23; Mon, 12 Jun 2023 09:01:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DWBgyB6ML8jLxcH69L8GrtzattjvmYOXBUG8/c1U2Hgf3C52xwM6fn/Cuw7FcrxiSzOd2nCPoKIvomiq3fAlyRC27aAFQZ667JyErZSCn24JMCj+znwMvmSaFr0PNx8GIIFnVNp1MnM/F1FFagXmEFhPjNbw8LrT2ObhESy9wq4V6CJVyi0V8W4EK+1vLWyLwd9RttQfdXpOHkhGKzKaitmZG5r+C9uHN16iE+a13UJJo4RkPguQDIVSFT9oUc8KB0+ugRUNSxrkjfIVmlXJyxE8RmhU1kucrPB/lA79y7F6ugtWLEqbr+G/Vonq21D4UFwyq2tsKAxLJ+H+hxAULw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jGEJkelPWn7iyywk3kYtutFbRwKrnmdVS+sPeyRKJEk=;
+ b=ctuzbXMyZVtdjiMjGLfidGy8ltlufwlc/Qx3RA+IQqCZbFz74JAZzt0K/SrZBLpIUZ272cOv70ShmEVQQWf5thHczXFV1F19QzfOuqcblHWmbMM+BV6t8KpgozkySONdIwTNGbDkg8a7a04u0/8Va1T8BnZrET8qtjyFsPqHOrzHAWzao2/ldJme2DmABfeXSD0jLiN9APpHrMIKZXOLMV2g6gSG+4gvmj4one05hWEgAovYbpA4nqwnXvaXI7fCbjXwDesSFCz3JDXwGJkHRBQvsEgip6joEJ3FEWRz7m1PnjhVLaK+PR51fN5V8ldLTxidOrygcISupFYw6co46A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ CO6PR11MB5587.namprd11.prod.outlook.com (2603:10b6:303:139::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.46; Mon, 12 Jun
+ 2023 16:01:04 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::24bd:974b:5c01:83d6]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::24bd:974b:5c01:83d6%3]) with mapi id 15.20.6455.045; Mon, 12 Jun 2023
+ 16:01:04 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Bart Van Assche <bvanassche@acm.org>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: RE: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
+ interface
+Thread-Topic: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
+ interface
+Thread-Index: AQHZmszoYeH83BxaW02EVqODRhjpgq+HT+mAgAAIb3A=
+Date:   Mon, 12 Jun 2023 16:01:04 +0000
+Message-ID: <DM6PR11MB46578CA8A72438F5AD41799D9B54A@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+ <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
+ <de920a42-0d72-c5ec-1af9-8bfa4b954cfd@acm.org>
+In-Reply-To: <de920a42-0d72-c5ec-1af9-8bfa4b954cfd@acm.org>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|CO6PR11MB5587:EE_
+x-ms-office365-filtering-correlation-id: 57200e35-d453-4704-79c5-08db6b5e3a04
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: QWkhAUZvX6230ej4LDuXpr+XmjL/64di+jY4wxmJJKEiSLPmoxs1HZZRcHXq97sapxl2QfJf1nH3DVIQs8aNarxwEHPjrh3JgtGyzMTstWWKwSpa++QgrfAt7vUSHQ3OpVBxVDZ8tD9NpMeuwg4uAJVrTts6uvoFnKEaRv4LXzQyopNTTE/wkfLXYz/qfL8FvRnrQlpW1zVAzqB/sHynhLYq2BXe6Wb7wRrCOdDXtWyOulXLDubHtcpS5dvdKcZk5amIk8epX7Z/PIwkdsW6XZroyg+NZILAo8R0TdsynUWdqta62c4IWph2mUpDddyS8kAnj/WRd/nceZvhM1p+Uke3C1fqxyr/gbGysqbcovrU5vmTToES02yyImRdf9mfRqtmNZzM457XpQkPdikdUaOID+Vbr/UcTQ3OHlRd6OQ//5L9xBCVNeJZTumJkROXQdPEqWcwNK9PPq2Wn5ERIgqajPaxg9qZ+pVAsaHAdprtoc4qnk5ZMyWlwbr2Y0Mtm2Pzur0fH8xZQDORy1Bft76L6YGIhVqVsB1mGQ3uG1SUHxh5IUTKp4g01TDNQfkNR0yW++JwpkB14M6v9km8zGdKxTXmi1O9smnlijBUyoHkzmUIjt4DqP9sQ2TvyxQ0
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(136003)(376002)(396003)(366004)(346002)(39860400002)(451199021)(71200400001)(7696005)(478600001)(33656002)(26005)(9686003)(6506007)(186003)(38100700002)(86362001)(38070700005)(82960400001)(122000001)(55016003)(4326008)(64756008)(66476007)(66556008)(76116006)(66946007)(66446008)(316002)(8936002)(8676002)(7416002)(7406005)(5660300002)(52536014)(41300700001)(4744005)(2906002)(110136005)(54906003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZzVaQ0Voaktsam1HQlpITElFWUVMRkx6YUE2TFZROUxiUHlFMUx1TFRnTzlR?=
+ =?utf-8?B?dFUrZUZKaWZkRDdKcjI1MW9uUUpPNGFYM1RvMmk2MnEyRi9xZktIcVJPUnhR?=
+ =?utf-8?B?SERvUUZFMEtpbnUvNHF0cjY2VjMzTmNySmtlREZpWCtNY3dvYklXYVVla1dv?=
+ =?utf-8?B?U0dKK3ZYckpzc3U1YnZMT3JPdllYVXBLNGNHT1ZDQ0c2UUNvcStrR2w2aWV0?=
+ =?utf-8?B?eDFKdlpIaHdlWW5wZ0tUeFJ0WDJwYnlMTFNOSllvUTJFSTRScis5VEdGYVkw?=
+ =?utf-8?B?OG1EMHAzbll6WEgvOFBwZXk5TWdWaVNkZzdCSVp3ZmRNbmNTdHRWZFdLNGJa?=
+ =?utf-8?B?aGVIL2hnV1JnVmF5THQzNmVuR3h1YnBHSkZSMTBVUjRVeFp5dmdzUEp1Mkh4?=
+ =?utf-8?B?RUJWbDRJVTBrOFl6VmI1bTBHM1NiWG8vL3NzSW5KL2dVVW9sZzBXaTJaNm03?=
+ =?utf-8?B?ZW0xaXd2enhva2dHWnJYTFNhdHE5OXFCdGZVTUxZSzF5RG9pR0xteTJUT0h6?=
+ =?utf-8?B?YzN1OVlBWGlSVlVEMmdrcS9DczI2N1BCODBvdEtVcjNBUWxvbnl4RWZydDkx?=
+ =?utf-8?B?REhBMXJkbkVZRytQVmVEV1lTVEZNUWZFTGF0ZXhMd0t5TEJzb3dWWkJSWWN2?=
+ =?utf-8?B?c1RMY3RjWWxoRHFKRWxWOXR2QlFXV3ZRbndnQ0IvVFVOd1pPOUZLRFlPQUJY?=
+ =?utf-8?B?SlRlVjNESFZoeXJEa1hDejh1dkMvQXMyeWlmMndScmhmbC9JckhrMnBwOUND?=
+ =?utf-8?B?NG1TSk03SVBjMmtIeFpLV3BNUWNhQmNkQ2syZlBLdEozbWhGWmk2TjhLZk0z?=
+ =?utf-8?B?Nmh2MVNWdm5hVFZ6SGlaQmxMQmZMSjRLR3lpaWxMNS9MZzBhb0grVy9BTld0?=
+ =?utf-8?B?Y2s4QitlRFhta2Ywd1cyYldiblAxU240N3JySGtJOU1VVUc4aDErRHFSaURF?=
+ =?utf-8?B?cW8ySkxDb3hvMnNwMmZhYk4rMGVDNVp6RlZnakRWSnVnQmJyaStzSlhRS29w?=
+ =?utf-8?B?S1pYOU1OcmpLS28xOGRrNEg2RFVkQ3orVmo3elJkUHRRTG1iRUl5SURUWi9p?=
+ =?utf-8?B?QXovTTlvVVlQam9oR0JaeC9iNmRHVGhRS05HZzc4TXM3TmlLaW5Kak1JUXBL?=
+ =?utf-8?B?ejJVem1hbWRZTGRHeGY5VkpEWEhTVnNRRWtrYm8rWWRoUzdkamlxdklqbmpL?=
+ =?utf-8?B?eUo3RGg1VXpWZXd4MXo4MGFQa0gvYUtqMzRieFJMcU1wTllFYzNacVQ0bkFO?=
+ =?utf-8?B?aEdtajVKaU5DamcyOEpha0t3c25ubmFVMjRDbVBFTjViM2hheFlDOUNOaWVs?=
+ =?utf-8?B?a2lDY2hyWmJkcjJiOXo2N1drTlVZNG0yRHpMY3BOK3QvZGxqWS9IMFpJK2hE?=
+ =?utf-8?B?cmhOd0xPSkp1Yytva08vcncyaFRXVFE3TVZvUHRKTzl1QXRQUU5qQUFidllz?=
+ =?utf-8?B?c1JhazRoaEdLUHltbXZZbFU0QXhzSVRPYkk1SjFFMmJMZmhQS0pHRVB2b3BH?=
+ =?utf-8?B?MDhUeWdYZ1R0Z3E0dDhVL3RPU3E3SkpnYlZpQ29YTnkvSG1uTjVhUzBnTDVk?=
+ =?utf-8?B?YnVVZVlpd2d6d1FjVzFqbEY2M2l3cjhjKzBST1ZYNmJSTUNCMHkwak5uQzZq?=
+ =?utf-8?B?VHZJbnRhQXo0bzRzU2d6aWVjRm5XMGhhWGhEc1dRbVR3MFo3eDBhMjZ4M3Vr?=
+ =?utf-8?B?bERVUTNMeHROaXFZNTNzZXRtTXhET3dwUitMbnU4eU5NemVjMHc2OXUrU1J1?=
+ =?utf-8?B?NzJybFlHcnYwWnBUQzhJQ3VLVHF0SkxqQm92M2ZENTN2aXVLdDlkV2hhV2Va?=
+ =?utf-8?B?cmkxb2hwSzgzRWlkUVpRbndnYytTUTkyYzhiQ1Y3bDdDb0ZXczlIT3lPWHl2?=
+ =?utf-8?B?TEVKb2l0ODBDb1lLQUY0VE1UT0wzZyt6d0o4czUwK1V4U0NCeTNxeGVuWU0y?=
+ =?utf-8?B?dWZ3RDZVdkJmQStPY2trR0ora2lNNGp3U3RtRThZTmptOExJVUp0ZUNQRUJP?=
+ =?utf-8?B?Y2oxUHRFUGt4TUZWV2g5MkxUUGVwZTdFUjQvSjFOVHU2SGNDS2MyY2s3aVFl?=
+ =?utf-8?B?elRZL0ZDUjRjTnQyczBBcU5BaXFZU0pmNmNlTmNDbXNuVkh4TWNDa0dMTTJO?=
+ =?utf-8?B?SDlpUHJHOUc4d1VWbmExeW9pZ29sZWV2L0Y0bUxEaDd5emZCQzg0TC9KTEU1?=
+ =?utf-8?B?L0E9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 15/18] ARM: dts: qcom: apq8064: provide voltage scaling
- tables
-Content-Language: en-GB
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>
-References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
- <20230612053922.3284394-16-dmitry.baryshkov@linaro.org>
- <ZIbez4RA0OoVfHzt@gerhold.net>
- <8c1085fd-8a73-d192-6624-d4f35728e68a@linaro.org>
- <ZIck0L-gK_a_jCtc@gerhold.net>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <ZIck0L-gK_a_jCtc@gerhold.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57200e35-d453-4704-79c5-08db6b5e3a04
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2023 16:01:04.7093
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qdzcqnKMUQTxlWQcvxNDL05krk4cCaRz+2yrUavG3qd26CveA2XTYD6jjJwwZywyB2MULnJc3dbW0PC9R1uFSHCF+1cZJSETOSeLWzFWeeA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR11MB5587
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/06/2023 16:59, Stephan Gerhold wrote:
-> On Mon, Jun 12, 2023 at 04:33:09PM +0300, Dmitry Baryshkov wrote:
->> On 12/06/2023 12:01, Stephan Gerhold wrote:
->>> On Mon, Jun 12, 2023 at 08:39:19AM +0300, Dmitry Baryshkov wrote:
->>>> APQ8064 has 4 speed bins, each of them having from 4 to 6 categorization
->>>> kinds. Provide tables necessary to handle voltage scaling on this SoC.
->>>>
->>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>> ---
->>>>    arch/arm/boot/dts/qcom-apq8064.dtsi | 1017 +++++++++++++++++++++++++++
->>>>    1 file changed, 1017 insertions(+)
->>>>
->>>> diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
->>>> index 4ef13f3d702b..f35853b59544 100644
->>>> --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
->>>> +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
->>>> @@ -49,6 +49,9 @@ CPU0: cpu@0 {
->>>>    			clocks = <&kraitcc KRAIT_CPU_0>;
->>>>    			clock-names = "cpu";
->>>>    			clock-latency = <100000>;
->>>> +			vdd-mem-supply = <&pm8921_l24>;
->>>> +			vdd-dig-supply = <&pm8921_s3>;
->>>> +			vdd-core-supply = <&saw0_vreg>;
->>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
->>>>    			operating-points-v2 = <&cpu_opp_table>;
->>>>    			#cooling-cells = <2>;
->>>> @@ -66,6 +69,9 @@ CPU1: cpu@1 {
->>>>    			clocks = <&kraitcc KRAIT_CPU_1>;
->>>>    			clock-names = "cpu";
->>>>    			clock-latency = <100000>;
->>>> +			vdd-mem-supply = <&pm8921_l24>;
->>>> +			vdd-dig-supply = <&pm8921_s3>;
->>>> +			vdd-core-supply = <&saw1_vreg>;
->>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
->>>>    			operating-points-v2 = <&cpu_opp_table>;
->>>>    			#cooling-cells = <2>;
->>>> @@ -83,6 +89,9 @@ CPU2: cpu@2 {
->>>>    			clocks = <&kraitcc KRAIT_CPU_2>;
->>>>    			clock-names = "cpu";
->>>>    			clock-latency = <100000>;
->>>> +			vdd-mem-supply = <&pm8921_l24>;
->>>> +			vdd-dig-supply = <&pm8921_s3>;
->>>> +			vdd-core-supply = <&saw2_vreg>;
->>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
->>>>    			operating-points-v2 = <&cpu_opp_table>;
->>>>    			#cooling-cells = <2>;
->>>> @@ -100,6 +109,9 @@ CPU3: cpu@3 {
->>>>    			clocks = <&kraitcc KRAIT_CPU_3>;
->>>>    			clock-names = "cpu";
->>>>    			clock-latency = <100000>;
->>>> +			vdd-mem-supply = <&pm8921_l24>;
->>>> +			vdd-dig-supply = <&pm8921_s3>;
->>>> +			vdd-core-supply = <&saw3_vreg>;
->>>>    			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
->>>>    			operating-points-v2 = <&cpu_opp_table>;
->>>>    			#cooling-cells = <2>;
->>>> @@ -132,6 +144,81 @@ cpu_opp_table: opp-table-cpu {
->>>>    		opp-384000000 {
->>>>    			opp-hz = /bits/ 64 <384000000>;
->>>>    			opp-peak-kBps = <384000>;
->>>> +			opp-microvolt-speed0-pvs0 = <1050000 1050000 1150000>,
->>>> +						    <950000 950000 1150000>,
->>>> +						    <950000 950000 975000>;
->>>
-
-[skipped the OPP voltage vs bw ordering]
-
->>
->>>
->>> The alternative that I've already argued for on IRC in #linux-msm a
->>> couple of days ago would be to give the L2 cache (here: "interconnect")
->>> an own OPP table where it can describe its voltage requirements,
->>> independent from the CPU. That way the icc_set_bw() would be guaranteed
->>> to apply the correct voltage before adjusting the L2 cache clock. It
->>> looks like the "l2_level" voltages for vdd_dig and vdd_mem are not
->>> speedbin/PVS-specific [2] so this would also significantly reduce the DT
->>> size, since you wouldn't need to repeat the same vdd_dig/vdd_mem
->>> voltages for all of them.
->>
->> Yes. I fact our discussion triggered me to do this patchset.
->>
->> So, another option would be to have something like the following snippet. Do
->> you know if we are allowed to squish additional data into the L2 cache DT
->> node?
->>
-> 
-> I suspect no one has tried this before, so only the DT maintainers could
-> answer this. I would say that it just follows the existing design of
-> clocks/-supply/OPPs on the CPU nodes. vdd-mem-supply isn't a property of
-> the CPU, it's a property of the L2 cache so it actually fits better there. >
-> I think the more controversial questions might be:
-> 
->    - Is a L2 cache really an "interconnect"? I suppose one could argue it
->      connects multiple CPU cores to a cluster (similar how a CCI connects
->      multiple clusters to a system).
-
-Yes. This was my reasoning for CBF clock as well as for this L2 clock. 
-The separate L2 cache device is also an interconnect from my POV. It 
-connects all CPU cores and we have to vote on its frequency.
-
->    - What would bind to the l2-cache node? A separate driver? Does that
->      work if it sits below the /cpus node?
-
-In the worst case we'd have to populate that manually. E.g. from the 
-qcom-cpufreq-nvmem.c
-
--- 
-With best wishes
-Dmitry
-
+PkZyb206IEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPg0KPlNlbnQ6IE1vbmRh
+eSwgSnVuZSAxMiwgMjAyMyA1OjMwIFBNDQo+DQo+T24gNi85LzIzIDA1OjE4LCBBcmthZGl1c3og
+S3ViYWxld3NraSB3cm90ZToNCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RyaXZlci1h
+cGkvZHBsbC5yc3QgYi9Eb2N1bWVudGF0aW9uL2RyaXZlci0NCj5hcGkvZHBsbC5yc3QNCj4+IG5l
+dyBmaWxlIG1vZGUgMTAwNjQ0DQo+PiBpbmRleCAwMDAwMDAwMDAwMDAuLjhjYWE0YWYwMjJhZA0K
+Pj4gLS0tIC9kZXYvbnVsbA0KPj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kcml2ZXItYXBpL2RwbGwu
+cnN0DQo+PiBAQCAtMCwwICsxLDQ1OCBAQA0KPj4gKy4uIFNQRFgtTGljZW5zZS1JZGVudGlmaWVy
+OiBHUEwtMi4wDQo+PiArDQo+PiArPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KPj4g
+K1RoZSBMaW51eCBrZXJuZWwgZHBsbCBzdWJzeXN0ZW0NCj4+ICs9PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09DQo+PiArDQo+PiArVGhlIG1haW4gcHVycG9zZSBvZiBkcGxsIHN1YnN5c3Rl
+bSBpcyB0byBwcm92aWRlIGdlbmVyYWwgaW50ZXJmYWNlDQo+PiArdG8gY29uZmlndXJlIGRldmlj
+ZXMgdGhhdCB1c2UgYW55IGtpbmQgb2YgRGlnaXRhbCBQTEwgYW5kIGNvdWxkIHVzZQ0KPj4gK2Rp
+ZmZlcmVudCBzb3VyY2VzIG9mIHNpZ25hbCB0byBzeW5jaHJvbml6ZSB0byBhcyB3ZWxsIGFzIGRp
+ZmZlcmVudA0KPj4gK3R5cGVzIG9mIG91dHB1dHMuDQo+PiArVGhlIG1haW4gaW50ZXJmYWNlIGlz
+IE5FVExJTktfR0VORVJJQyBiYXNlZCBwcm90b2NvbCB3aXRoIGFuIGV2ZW50DQo+PiArbW9uaXRv
+cmluZyBtdWx0aWNhc3QgZ3JvdXAgZGVmaW5lZC4NCj4NCj5BIHNlY3Rpb24gdGhhdCBleHBsYWlu
+cyB3aGF0ICJEUExMIiBzdGFuZHMgZm9yIGlzIG1pc3NpbmcuIFBsZWFzZSBhZGQNCj5zdWNoIGEg
+c2VjdGlvbi4NCj4NCj5UaGFua3MsDQo+DQo+QmFydC4NCj4NCg0KU3VyZSwgd2lsbCBhZGQuDQoN
+ClRoYW5rIHlvdSENCkFya2FkaXVzeg0KDQo=
