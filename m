@@ -2,60 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A45EECA9EBD
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 18:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B438CCA9EC0
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 18:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234549AbjFLSaw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 14:30:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44668 "EHLO
+        id S237588AbjFLSaz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 14:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237654AbjFLSYq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 14:24:46 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFF8E6F
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 11:24:43 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4f004cc54f4so5580554e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 11:24:43 -0700 (PDT)
+        with ESMTP id S237687AbjFLSYs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 14:24:48 -0400
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C661113
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 11:24:46 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4f611ac39c5so5745049e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 11:24:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686594282; x=1689186282;
+        d=linaro.org; s=google; t=1686594285; x=1689186285;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SD+82Kp64qdWpl/p0nHwxIb/l/7wz0DuQnwuSSdR/H4=;
-        b=DLAoC+YI5ihmdO8CNl1QejkU5ba9vdx06Z+NI7L/nO1cVIUcxwExm0xIpmipS22YdC
-         GW4AlOmy/eF5P6nOW/I466ueIgqcQxJl5RDYEXdafLMUX5yUvvSWYK6WVVWF09xDY4j1
-         51JEQkgGY751aEhBDdmqs92WZiP4vBHHbePfmCTHrYzKO7GG6AIlpeCC90hAi5Ria4NP
-         wq9AILrsfen14FoV0pjuxAbG+dMtoSDhp95uIhe4ej+aALqzYIqCERjSOJXpxt9RkXPK
-         izMUxgPCghgJhMKCJ9yluUUzsmLSh4xFevPDe0myB1YI6a8RMKJavfwt8/y/hvovKaeO
-         VMAQ==
+        bh=eCy7STwPQguvSNXF/hCQ4j5BFOyuDUsQ8E/cZCUelP4=;
+        b=G4oYaGxAqeEmVL2CCO3hv38YyrJcIKojCs3Vh+ankfaH8waqiFXAOtsKk9Qn1QXPSk
+         pxBr/2G4q3Wt5UMBSzkCRTagGyg/FSofzHYJP85wasMmMZsz1Vs7Vm2nnaCBjhOsbv5A
+         LIoPw8uOw/AX1VxQ5wtdFQuSIgJ5dscLsWy9kzdqTWAhAGCUSSU1AKmi0ddB+t0wdk8m
+         us4OEwBeD2ze2FHX1zB8S4VeNJ7WDvpMuRlMis9P5DQ4JRJxuxqCj71ZPNnSNiiSuYmA
+         D2yBfXyLM+YAipdUeixMYONA2f0IzYRqNjQ6c9XUPGo21YXtLAY+3oX5vVLI+QAKDGh2
+         uZgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686594282; x=1689186282;
+        d=1e100.net; s=20221208; t=1686594285; x=1689186285;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SD+82Kp64qdWpl/p0nHwxIb/l/7wz0DuQnwuSSdR/H4=;
-        b=RTClgZER9x6CUbJ7jRN/ECTen/qsPOKlrgrUyCcv1DLEB6oztvOGWirqplUs0dCyLz
-         5BrtalslZzHEhdXKZ9awMxJlvc91stH9OzMlg0GfqrZ4un25FKPMDCCoPSMi+cIPItDn
-         Mkgme6yma1SjWdK6eu4PpLkiHRm/une+N9EXUNqtq4oLo7sBHmySUUlt1qPwnHkucaiQ
-         o/s62+oe2oFnPWRifXvZYGJ1o/j6vczNggVeMfOvGDksp8S2IdecVXudTuCE0jaftUJy
-         GDCKStTWFieKN0vmKBfn6eJ50jgJz9nwyuHWoIZX26QG4ILO7JH2FVKYagAB3b58s6De
-         HSlw==
-X-Gm-Message-State: AC+VfDwla83RUDQS9l0svQycR3U/TDkusKyd1T0Um69m5uvAZxuxRHTc
-        vDJxRT6/Q7sCQDJNVgxyvEe1ZQ==
-X-Google-Smtp-Source: ACHHUZ59M0kdWHSJ7Qy0Nr6BEwWK0DdyxH9NFgW2MzdgoRX+27RfEzHBLG0l7TrgZ5h+3PncdmFzVw==
-X-Received: by 2002:a05:6512:459:b0:4f6:2e5f:45cc with SMTP id y25-20020a056512045900b004f62e5f45ccmr4498200lfk.3.1686594282057;
-        Mon, 12 Jun 2023 11:24:42 -0700 (PDT)
+        bh=eCy7STwPQguvSNXF/hCQ4j5BFOyuDUsQ8E/cZCUelP4=;
+        b=bhPB6SXg6T5J91LIrbaxfudTX7W/muDPyu7G2xPHXlHJ4ILnTivl38D3xvLqzDcZTe
+         sJ5C9kh3jZ6EJ3jjy/xpujLhpfM/PF3ICja9LkWjSkwa3ZvY9sUD0g7MgOFoFG8H4qHO
+         A7Qo6wRIKb+/JFwY8w6c1fFDt2CAXJ+6bOYgH5bsCPDg7Gbf2QkMvwfr+T6e3EmXCbBI
+         WmzjXKGJAivmnw685xTtVGobKBTbzIVkjrALaGzycU1jmPCZFeSv5Fg0AnZenKCdW1NT
+         P7sVlsxCeruc5/Eli5prCv351jK3vMAaIgJ1YepF5n7WtAKM7RF1ioEsnY33kHzZi0vl
+         nk+Q==
+X-Gm-Message-State: AC+VfDwPz729cIVuJzI1K6iVWBTQz0zPHWXjLnetxvS5aHTPFsCNeq4U
+        j9tA6XBvg7wSMjtffokqwwg3ow==
+X-Google-Smtp-Source: ACHHUZ58CWP0TUQtOmIAKW02HnTkreLK4yWE3dA8m7XEttkU90zKpYDVPxFVEoeQ7TGKUloBU5imOg==
+X-Received: by 2002:ac2:51bc:0:b0:4f6:1805:6095 with SMTP id f28-20020ac251bc000000b004f618056095mr5139755lfk.8.1686594284758;
+        Mon, 12 Jun 2023 11:24:44 -0700 (PDT)
 Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id v24-20020ac25938000000b004f64073a252sm1502035lfi.96.2023.06.12.11.24.40
+        by smtp.gmail.com with ESMTPSA id v24-20020ac25938000000b004f64073a252sm1502035lfi.96.2023.06.12.11.24.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 11:24:41 -0700 (PDT)
+        Mon, 12 Jun 2023 11:24:44 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 12 Jun 2023 20:24:20 +0200
-Subject: [PATCH v3 03/23] soc: qcom: smd-rpm: Use tabs for defines
+Date:   Mon, 12 Jun 2023 20:24:22 +0200
+Subject: [PATCH v3 05/23] soc: qcom: smd-rpm: Move icc_smd_rpm registration
+ to clk-smd-rpm
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v3-3-5fb7d39b874f@linaro.org>
+Message-Id: <20230526-topic-smd_icc-v3-5-5fb7d39b874f@linaro.org>
 References: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
 In-Reply-To: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -72,41 +73,138 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686594276; l=691;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686594276; l=3906;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=7uAPa6YDjXHLJZjqpcpTS8PIWFtwDRP9qtCSKC7URyY=;
- b=ESZpNbzbQ/xt/c2RmUiCpmrjQGbD9w+h5/bdbMHoNBU0InzGeWvrebWATOnYlgBtX2nGiySlm
- 1vFrFqFhhcGCNGEDWGrdGayN89gbDg6nnUMZG/RFoUgsXDTDqHWaTZN
+ bh=5jxwMVCy7bliJJPeYw9tcAw9XDgLw6G87CnBeb6K5TA=;
+ b=pTSpv7jAl37WWUaTl+0qjbAvU7VYkk18U8q9fyvaSeD8hy51vvTFBgtDYt9kqtn4DFF6U90x4
+ absnOHbqtZ5A2xhhozHZkx9gFRleVQTmtNpXvRSeL5A+xhmew+0lJgn
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use tabs for defines to make things spaced consistently.
+From: Stephan Gerhold <stephan@gerhold.net>
 
+icc_smd_rpm will do bus clock votes itself rather than taking the
+unnecessary detour through the clock subsystem. However, it can only
+do that after the clocks have been handed off and scaling has been
+enabled in the RPM in clk-smd-rpm.
+
+Move the icc_smd_rpm registration from smd-rpm.c to clk-smd-rpm.c
+to avoid any possible races. icc_smd_rpm gets the driver data from
+the smd-rpm device, so still register the platform device on the
+smd-rpm parent device.
+
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+[Konrad: remove unrelated cleanups]
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- include/linux/soc/qcom/smd-rpm.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-smd-rpm.c | 21 +++++++++++++++++++++
+ drivers/soc/qcom/smd-rpm.c     | 17 +----------------
+ 2 files changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index e468f94fa323..99499e4b080e 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -4,8 +4,8 @@
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 937cb1515968..6e7f0438e8b8 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -1289,12 +1289,20 @@ static struct clk_hw *qcom_smdrpm_clk_hw_get(struct of_phandle_args *clkspec,
+ 	return desc->clks[idx] ? &desc->clks[idx]->hw : ERR_PTR(-ENOENT);
+ }
  
- struct qcom_smd_rpm;
++static void rpm_smd_unregister_icc(void *data)
++{
++	struct platform_device *icc_pdev = data;
++
++	platform_device_unregister(icc_pdev);
++}
++
+ static int rpm_smd_clk_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+ 	size_t num_clks, i;
+ 	struct clk_smd_rpm **rpm_smd_clks;
+ 	const struct rpm_smd_clk_desc *desc;
++	struct platform_device *icc_pdev;
  
--#define QCOM_SMD_RPM_ACTIVE_STATE        0
--#define QCOM_SMD_RPM_SLEEP_STATE         1
-+#define QCOM_SMD_RPM_ACTIVE_STATE	0
-+#define QCOM_SMD_RPM_SLEEP_STATE	1
- #define QCOM_SMD_RPM_STATE_NUM		2
+ 	rpmcc_smd_rpm = dev_get_drvdata(pdev->dev.parent);
+ 	if (!rpmcc_smd_rpm) {
+@@ -1344,6 +1352,19 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err;
  
- /*
++	icc_pdev = platform_device_register_data(pdev->dev.parent,
++						 "icc_smd_rpm", -1, NULL, 0);
++	if (IS_ERR(icc_pdev)) {
++		dev_err(&pdev->dev, "Failed to register icc_smd_rpm device: %pE\n",
++			icc_pdev);
++		/* No need to unregister clocks because of this */
++	} else {
++		ret = devm_add_action_or_reset(&pdev->dev, rpm_smd_unregister_icc,
++					       icc_pdev);
++		if (ret)
++			goto err;
++	}
++
+ 	return 0;
+ err:
+ 	dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
+diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
+index 0c1aa809cc4e..577f1f25ab10 100644
+--- a/drivers/soc/qcom/smd-rpm.c
++++ b/drivers/soc/qcom/smd-rpm.c
+@@ -19,7 +19,6 @@
+ /**
+  * struct qcom_smd_rpm - state of the rpm device driver
+  * @rpm_channel:	reference to the smd channel
+- * @icc:		interconnect proxy device
+  * @dev:		rpm device
+  * @ack:		completion for acks
+  * @lock:		mutual exclusion around the send/complete pair
+@@ -27,7 +26,6 @@
+  */
+ struct qcom_smd_rpm {
+ 	struct rpmsg_endpoint *rpm_channel;
+-	struct platform_device *icc;
+ 	struct device *dev;
+ 
+ 	struct completion ack;
+@@ -197,7 +195,6 @@ static int qcom_smd_rpm_callback(struct rpmsg_device *rpdev,
+ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
+ {
+ 	struct qcom_smd_rpm *rpm;
+-	int ret;
+ 
+ 	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
+ 	if (!rpm)
+@@ -210,23 +207,11 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
+ 	rpm->rpm_channel = rpdev->ept;
+ 	dev_set_drvdata(&rpdev->dev, rpm);
+ 
+-	rpm->icc = platform_device_register_data(&rpdev->dev, "icc_smd_rpm", -1,
+-						 NULL, 0);
+-	if (IS_ERR(rpm->icc))
+-		return PTR_ERR(rpm->icc);
+-
+-	ret = of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
+-	if (ret)
+-		platform_device_unregister(rpm->icc);
+-
+-	return ret;
++	return of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
+ }
+ 
+ static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
+ {
+-	struct qcom_smd_rpm *rpm = dev_get_drvdata(&rpdev->dev);
+-
+-	platform_device_unregister(rpm->icc);
+ 	of_platform_depopulate(&rpdev->dev);
+ }
+ 
 
 -- 
 2.41.0
