@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631E2C83005
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 05:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC7EC83005
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 05:40:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235845AbjFLFkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 01:40:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40310 "EHLO
+        id S235941AbjFLFkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 01:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235905AbjFLFjv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 01:39:51 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0F31706
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:39 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4f6255ad8aeso4534849e87.2
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:39 -0700 (PDT)
+        with ESMTP id S235962AbjFLFjy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 01:39:54 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7093B1727
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:44 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f649db9b25so4445518e87.0
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686548377; x=1689140377;
+        d=linaro.org; s=google; t=1686548379; x=1689140379;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2wt0ovU1UM+zA+dgM6wsatyMQXhOAKNo5+GG5VSQHHw=;
-        b=EVq7+quentdGKbnYY/O8EK69vkcDvHM6X100UqLLPilN1h0Is54Tn0S1qjewyewmWY
-         CcQy0k8MenfpDs4A5vxV5UkIU73xoLyRJnReJTxAuyG8TzPiYpGm97NLIOpiRxVWGdVi
-         37cNMEH8dmDQIOJHVCPzxUSqPB/s5kR0VhDc5y5kzeKKlMYa3IN3fV0k76J/Cp9esbzS
-         +QgV8mMz/X4DsHRyJr2RbDI6I/HzYnrssT8kQqaNPDwSpceNClwxdZNr4o2LjOOen0vI
-         GkMM1GmwMf/hzsFZ2ToFmlevF+1Xds9zTcKaWpHNrgF1CoW/mnFNyheDJiAvrvgyT0i4
-         NIhQ==
+        bh=9UX7NK4V+9Hzbg8jKZOwQnFK6tOBZPs2ooDLmGE25jY=;
+        b=AzpjJjf1rRnX9/8zALf3MesyN9OaLzUS92PcVFWMfUfz61cX6SINAyaN4rtAf0Cvp3
+         yJyHbyTKfbyg6l79QWpNVS+eG379IO/ympACeqdSJdwFhPQVHr2H4RZ56dOi4I9iO6dw
+         WuGJV/Y9mOGgmqEeaAr7W0VAqENtiV/KfSD/cgk3OnxkiMOKGBGCjlsQos2JGxLxECB/
+         xNbH0a2IcBH25Byze5J6+IJi02GDsxQQaQ/SdW8iuubwTJxJTMp/L1smdcRqeWB18nU/
+         /ZnnudIsga+wsvHHLPFYCCmBUgH51cVLJJZFZ3htw6zTbzoSnxIKAT5rlmjmKthkD/tA
+         326A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686548377; x=1689140377;
+        d=1e100.net; s=20221208; t=1686548379; x=1689140379;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2wt0ovU1UM+zA+dgM6wsatyMQXhOAKNo5+GG5VSQHHw=;
-        b=fDdeqWaHodtq+E62O9wl52hY8pboWhPsx8VytgNdEbJ67Ju6shBX3XzCVsn8rR5Brh
-         //KxDT0DGSPQZmyEPYnzpt4QTEGOzajSqcuC9Vi7ca6+BjrEkgT4Zmr98gwkyDbpE2mZ
-         SjtDTSCHOhGRDuutS7XkHqvuXjT1xJK8JJcWeWPNQ2zHq0uAfn4W9+dlrJEINa1RvSLf
-         Nmm3WQ2wu3wWBpRSM8pA5ll8WbVX8um+Qfu7oIlKK04AKDB66mUe9D9tfbBPCg1YcS5q
-         93ti2Uhdrq6j89mttRDINKyP/tIF4eTl9ozaTmMGz5I7sO5PnEnS8g45xJebkkbQ3l1Q
-         rE7A==
-X-Gm-Message-State: AC+VfDzJvS+5zs5NkvQmY321L9OxIC/+hEdcRUed5QSpWDIlNGhgOWq4
-        dKeoEw7QcazoP6VZJyZghpL6pw==
-X-Google-Smtp-Source: ACHHUZ4PBTd1f3XY3VTSalfSjrcIfe4nVCYBRPFjlwpVAtsnRsA0U/XqOmpMYza/DdKIVdiCF65YdQ==
-X-Received: by 2002:a05:6512:1cd:b0:4f4:dd51:aec7 with SMTP id f13-20020a05651201cd00b004f4dd51aec7mr2721252lfp.54.1686548377591;
-        Sun, 11 Jun 2023 22:39:37 -0700 (PDT)
+        bh=9UX7NK4V+9Hzbg8jKZOwQnFK6tOBZPs2ooDLmGE25jY=;
+        b=lg1pTe8sq0BdDJ2Zo7L2cgXOC8N46vFnOWR3G2SoTVkCA2D9sONuSgGrHGvj5oy0QA
+         NeRHeMZ3n/un/w1puhET8XkWOVTjcKDKSeGcklVAvYZeAU4rxNfazGRyc6OG+lRPhYWf
+         jckZCHrCdPOqup25Qx4CIoQQedEMzE9Vz9poM8m50wFjOgZR++P6qg1PfAreCUNDfR3u
+         uQgaGE6wSWcCL9Qyk5wW5gBELVmEKuMA7IImxepEK9TeQV8J9hq9mu6uc2VSCuB5HJMG
+         cV6FO23+kURdjW9koeGCDubxz08CiliWnia1Jv77jOf+2G4SvqciMWav1I8C3Hr70e0Q
+         tLbg==
+X-Gm-Message-State: AC+VfDxo6jcc2dQPcOVDQgM6GyEKjL45WqtIYygUgkksI8TTlxpF/fBV
+        G23ZbYXs2mezR/sma83B+vuiqg==
+X-Google-Smtp-Source: ACHHUZ4wzWtxLIONvLUsoHjLluwV+c2yaJibWU04gw+Iy3i1r8PtS/J7Hs69VzzP644zHXsD6fSuag==
+X-Received: by 2002:a19:6d1c:0:b0:4f6:424c:4fa8 with SMTP id i28-20020a196d1c000000b004f6424c4fa8mr2903128lfc.17.1686548379413;
+        Sun, 11 Jun 2023 22:39:39 -0700 (PDT)
 Received: from eriador.lan (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id n6-20020a195506000000b004f38260f196sm1324125lfe.218.2023.06.11.22.39.36
+        by smtp.gmail.com with ESMTPSA id n6-20020a195506000000b004f38260f196sm1324125lfe.218.2023.06.11.22.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jun 2023 22:39:37 -0700 (PDT)
+        Sun, 11 Jun 2023 22:39:38 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -64,9 +64,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 14/18] ARM: dts: qcom: apq8064: add simple CPUFreq support
-Date:   Mon, 12 Jun 2023 08:39:18 +0300
-Message-Id: <20230612053922.3284394-15-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 16/18] ARM: dts: qcom: apq8064: enable passive CPU cooling
+Date:   Mon, 12 Jun 2023 08:39:20 +0300
+Message-Id: <20230612053922.3284394-17-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
 References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
@@ -76,244 +76,82 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Declare CPU frequency-scaling properties. Each CPU has its own clock,
-how all CPUs have the same OPP table. Voltage scaling is not (yet)
-enabled with this patch. It will be enabled later.
+Wire up CPUs and thermal trip points to save the SoC from overheating by
+lowering the CPU frequency.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/boot/dts/qcom-apq8064.dtsi | 169 ++++++++++++++++++++++++++++
- 1 file changed, 169 insertions(+)
+ arch/arm/boot/dts/qcom-apq8064.dtsi | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-index 1eb6d752ebae..4ef13f3d702b 100644
+index f35853b59544..82b381b66cfb 100644
 --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
 +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-@@ -2,6 +2,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/clock/qcom,gcc-msm8960.h>
-+#include <dt-bindings/clock/qcom,krait-cc.h>
- #include <dt-bindings/clock/qcom,lcc-msm8960.h>
- #include <dt-bindings/reset/qcom,gcc-msm8960.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8960.h>
-@@ -45,6 +46,12 @@ CPU0: cpu@0 {
- 			qcom,acc = <&acc0>;
- 			qcom,saw = <&saw0>;
- 			cpu-idle-states = <&CPU_SPC>;
-+			clocks = <&kraitcc KRAIT_CPU_0>;
-+			clock-names = "cpu";
-+			clock-latency = <100000>;
-+			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		CPU1: cpu@1 {
-@@ -56,6 +63,12 @@ CPU1: cpu@1 {
- 			qcom,acc = <&acc1>;
- 			qcom,saw = <&saw1>;
- 			cpu-idle-states = <&CPU_SPC>;
-+			clocks = <&kraitcc KRAIT_CPU_1>;
-+			clock-names = "cpu";
-+			clock-latency = <100000>;
-+			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		CPU2: cpu@2 {
-@@ -67,6 +80,12 @@ CPU2: cpu@2 {
- 			qcom,acc = <&acc2>;
- 			qcom,saw = <&saw2>;
- 			cpu-idle-states = <&CPU_SPC>;
-+			clocks = <&kraitcc KRAIT_CPU_2>;
-+			clock-names = "cpu";
-+			clock-latency = <100000>;
-+			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		CPU3: cpu@3 {
-@@ -78,6 +97,12 @@ CPU3: cpu@3 {
- 			qcom,acc = <&acc3>;
- 			qcom,saw = <&saw3>;
- 			cpu-idle-states = <&CPU_SPC>;
-+			clocks = <&kraitcc KRAIT_CPU_3>;
-+			clock-names = "cpu";
-+			clock-latency = <100000>;
-+			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		L2: l2-cache {
-@@ -97,6 +122,121 @@ CPU_SPC: spc {
- 		};
- 	};
- 
-+        cpu_opp_table: opp-table-cpu {
-+		compatible = "operating-points-v2-krait-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+
-+		/*
-+		 * Voltage thresholds are <target min max>
-+		 */
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-peak-kBps = <384000>;
-+			opp-supported-hw = <0x4007>;
-+			/*
-+			 * higher latency as it requires switching between
-+			 * clock sources
-+			 */
-+			clock-latency-ns = <244144>;
-+		};
-+
-+		opp-486000000 {
-+			opp-hz = /bits/ 64 <486000000>;
-+			opp-peak-kBps = <648000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-594000000 {
-+			opp-hz = /bits/ 64 <594000000>;
-+			opp-peak-kBps = <648000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-702000000 {
-+			opp-hz = /bits/ 64 <702000000>;
-+			opp-peak-kBps = <648000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-810000000 {
-+			opp-hz = /bits/ 64 <810000000>;
-+			opp-peak-kBps = <648000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-918000000 {
-+			opp-hz = /bits/ 64 <918000000>;
-+			opp-peak-kBps = <648000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-1026000000 {
-+			opp-hz = /bits/ 64 <1026000000>;
-+			opp-peak-kBps = <648000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-1134000000 {
-+			opp-hz = /bits/ 64 <1134000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-1242000000 {
-+			opp-hz = /bits/ 64 <1242000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-1350000000 {
-+			opp-hz = /bits/ 64 <1350000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-1458000000 {
-+			opp-hz = /bits/ 64 <1458000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x4007>;
-+		};
-+
-+		opp-1512000000 {
-+			opp-hz = /bits/ 64 <1512000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x4001>;
-+		};
-+
-+		opp-1566000000 {
-+			opp-hz = /bits/ 64 <1566000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x06>;
-+		};
-+
-+		opp-1674000000 {
-+			opp-hz = /bits/ 64 <1674000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x06>;
-+		};
-+
-+		opp-1728000000 {
-+			opp-hz = /bits/ 64 <1728000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x02>;
-+		};
-+
-+		opp-1782000000 {
-+			opp-hz = /bits/ 64 <1782000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x04>;
-+		};
-+
-+		opp-1890000000 {
-+			opp-hz = /bits/ 64 <1890000000>;
-+			opp-peak-kBps = <1134000>;
-+			opp-supported-hw = <0x04>;
-+		};
-+	};
-+
- 	memory@0 {
- 		device_type = "memory";
- 		reg = <0x0 0x0>;
-@@ -213,6 +353,32 @@ sleep_clk: sleep_clk {
- 		};
- 	};
- 
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		clocks = <&gcc PLL9>, /* hfpll0 */
-+			 <&gcc PLL10>, /* hfpll1 */
-+			 <&gcc PLL16>, /* hfpll2 */
-+			 <&gcc PLL17>, /* hfpll3 */
-+			 <&gcc PLL12>, /* hfpll_l2 */
-+			 <&acc0>,
-+			 <&acc1>,
-+			 <&acc2>,
-+			 <&acc3>,
-+			 <&l2cc>;
-+		clock-names = "hfpll0",
-+			      "hfpll1",
-+			      "hfpll2",
-+			      "hfpll3",
-+			      "hfpll_l2",
-+			      "acpu0_aux",
-+			      "acpu1_aux",
-+			      "acpu2_aux",
-+			      "acpu3_aux",
-+			      "acpu_l2_aux";
-+		#clock-cells = <1>;
-+		#interconnect-cells = <1>;
-+	};
-+
- 	sfpb_mutex: hwmutex {
- 		compatible = "qcom,sfpb-mutex";
- 		syscon = <&sfpb_wrapper_mutex 0x604 0x4>;
-@@ -834,6 +1000,9 @@ qfprom: qfprom@700000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-+			speedbin_efuse: speedbin@c0 {
-+				reg = <0x0c0 0x4>;
-+			};
- 			tsens_calib: calib@404 {
- 				reg = <0x404 0x10>;
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/soc/qcom,gsbi.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/thermal/thermal.h>
+ / {
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+@@ -1279,6 +1280,13 @@ cpu_crit0: trip1 {
+ 					type = "critical";
+ 				};
  			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu1-thermal {
+@@ -1300,6 +1308,13 @@ cpu_crit1: trip1 {
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu2-thermal {
+@@ -1321,6 +1336,13 @@ cpu_crit2: trip1 {
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu3-thermal {
+@@ -1342,6 +1364,13 @@ cpu_crit3: trip1 {
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 	};
+ 
 -- 
 2.39.2
 
