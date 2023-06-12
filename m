@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F9BC7EE45
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABA8C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229451AbjFLK2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 06:28:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33992 "EHLO
+        id S232790AbjFLK2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 06:28:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230210AbjFLK2c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:28:32 -0400
+        with ESMTP id S233614AbjFLK2i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:28:38 -0400
 Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBE8E556
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:08:39 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-51480d3e161so6178130a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:08:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F0B76A41
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:08:44 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-516a008e495so8542798a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:08:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686564422; x=1689156422;
+        d=linaro.org; s=google; t=1686564428; x=1689156428;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4NrWkYN+T1PuofiMKnG6dXc8ZUYCBSKcJmUWA7/nNhc=;
-        b=B/uIqxlx2N2brzvwnub3jXK6Ur5ovV5ZNxQz0LK4UIHH9Z1aN/arWkQfpJxRhkvI3N
-         ixFDjKvgSgsrYkeLvv7wQdMYb/RURiMoC9UuxCNNHjlhtSJolAS0tsCGqBwLl41j696b
-         gXM3wanQaHOp7npLsYpPx7SpC7coFSi86TJ9UNRLGr7YckGgRsWF7V8y9/sF4BYmMAYY
-         R0+FGiRsPUYWRSs+3c6N2jey7esVxB/UaxovS3ujkyMGuDMUBpXe3ApOzZY6xk8Jnvbi
-         x3vPPcracvz4WOM4qlZ6LKeO7EtoBOT09pmgQucZyuqnFErhAslTgLNciNinrnIQrwBH
-         l/KA==
+        bh=Zm/yZEFfsgrN185+abC2C0YSLKpqiuRIfmQ9L5HAaqk=;
+        b=nj/rePq7SEddIC3nIl21dn3kadwNuNF8kyoQjKi9ZJDV8nZFxN21e3+if/4NAzFZ8M
+         4tJ4puf2EFOLdkMvR3EYJqufH925Pq7ruLFYP7zE9ihENJIMTzKVwzxyuvltHq0N48Dv
+         sSBJOSQaM+UZKIBGwgeyCSWOwjND+2Gx8oKh9YsiaP6SnU3Ak6zZvgRAmcrpqDrD8f9l
+         33Iz4WdgoGqm2Iw3W7nr8iSSsiEstL3iaQseE4DJI59VOBdE1rq+1FsrfHKq2kbdL6Qz
+         Vfy2idlMSrMz7x+kICcBhBhcCj4Lfa+Ach/DrROAkdHQY3lFo5J1RojoIYJjz669Dyz5
+         Oydg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686564422; x=1689156422;
+        d=1e100.net; s=20221208; t=1686564428; x=1689156428;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4NrWkYN+T1PuofiMKnG6dXc8ZUYCBSKcJmUWA7/nNhc=;
-        b=Qxqyou3x+lt+BOdIAI3GUGLCv6TLD551gz3sj2YSjNlb62PoGnq5vZeEJEWpBpaYKw
-         czpqsty5vxs4u/EOwOVpDYLTEJ3kpRJ3F40Y+IU3M6LwhD+DlHh8Vyh3U/Hd9Mrf20v9
-         MB4SxOiZte89qOFWy0a12YBn7KXIST/FADS9y7V5kjrWdCywCPyWykGhs0tO8oQwuZ3v
-         YM6NawpXXbCA8qjAWL2fPYSNUiDuZopSsukcrA3Wq6HOcAK2TOp+yC1WYNxL9Kn77heP
-         I+E060zziv9QFSpQCndObQErk60nUxFBugLYFzxHCiBiw44k7gxfOUOmt9W57dEfrKkC
-         5dLw==
-X-Gm-Message-State: AC+VfDx/SNZIdieYMeCGejsLDl34SOvjdsAmvhIS2A5MEA26EVTUwX8c
-        sABmGlnZDIEUZo8FKeJTXelArXLtTfyjOXzeRpwo0Q==
-X-Google-Smtp-Source: ACHHUZ6UbFF7XinpTrt0jXBpOVxMXkcAEgZfOmFyUIfEmeQZYaZ2yudSohukq1I9n1QgkdhoX5dpBg==
-X-Received: by 2002:a05:600c:3793:b0:3f7:8fd5:567 with SMTP id o19-20020a05600c379300b003f78fd50567mr7016692wmr.2.1686563864354;
-        Mon, 12 Jun 2023 02:57:44 -0700 (PDT)
+        bh=Zm/yZEFfsgrN185+abC2C0YSLKpqiuRIfmQ9L5HAaqk=;
+        b=QywMavkqhZCFrAL/AMGAflSmA72rYyP5byegPV99S2tGjleJm5niQKuIMmVVqI91st
+         9aNtnzVHipYM+3iyJ3zbRlhDNyhicNMY5gxxehDN8DzfMGY0TdeVB785nKHFnR15rSgV
+         v5kNozITp7Gww9BG8cc1netU1u6zXrdCGcj8WZKKOm6/IixpEhbkbBylPH4InqxXsI9j
+         HfIM6dt9ZiOAf5OiSatQ+FMxYoUkTVQEwmv6qNZEax3YOG3y3kVham8cmQSWP1D1l2lT
+         DGZaWQZG644/k8Y44JYZC3Cg83c2E8zZ6p0QpWEjv9qpVc0wzepZrsg0irn5Bc2/V25j
+         9hIQ==
+X-Gm-Message-State: AC+VfDyIC26CCxrxUDOkFkR27Kstn1b2b2PqDgRq6P87LBqqV2wCwpDJ
+        3tLl2o39Sr9JzeRDfSA0Jw9fGK1mlnXmlvwZ78CyOQ==
+X-Google-Smtp-Source: ACHHUZ6DWu9XtuidEqfovBbluUxPuS/QcHViaieIqnGhyZwygyfQ29CIfCVXXKdf5sxHjKzcAzhQ1g==
+X-Received: by 2002:a05:600c:1c15:b0:3f7:aee8:c23a with SMTP id j21-20020a05600c1c1500b003f7aee8c23amr9255998wms.19.1686563859445;
+        Mon, 12 Jun 2023 02:57:39 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id f25-20020a7bcd19000000b003f7ff520a14sm10829525wmj.22.2023.06.12.02.57.43
+        by smtp.gmail.com with ESMTPSA id f25-20020a7bcd19000000b003f7ff520a14sm10829525wmj.22.2023.06.12.02.57.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 02:57:44 -0700 (PDT)
+        Mon, 12 Jun 2023 02:57:38 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Mon, 12 Jun 2023 11:57:27 +0200
-Subject: [PATCH v2 10/19] dt-bindings: clk: g12a-aoclkc: expose all clock
- ids
+Date:   Mon, 12 Jun 2023 11:57:22 +0200
+Subject: [PATCH v2 05/19] clk: meson: migrate meson8b out of
+ hw_onecell_data to drop NR_CLKS
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-10-38172d17c27a@linaro.org>
+Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-5-38172d17c27a@linaro.org>
 References: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
 In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>,
@@ -70,100 +70,1450 @@ To:     Jerome Brunet <jbrunet@baylibre.com>,
 Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2658;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=70612;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=7gny86gEdGuVv1Xi4BFHu+2b+JlYB0+AahzkDT5GhB8=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkhuwJUlUTItdC3kUPmDRVJZidNU1HOd9NfqDOUhnU
- bzLCyWiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIbsCQAKCRB33NvayMhJ0e6sD/
- 9L2RHqJBZ/WvUasGVtJfG0CFUUkWOgmyPk/3wNkO1BBXEh3pG16D+iz8phOPtBXy4bZeoIy9yrECAg
- bFiUwZljtqSHiC2xuxI6NZZxhWtVL7a2O8REQF/c9l3Uvm6QK7QVKwAaHZ013tWz0vwXGEDwvB5vbg
- 39OL+HRj3gashe6POOxBPzkHvLRVPxYJbn5ki7VXalUGOlilNXSgt96xPL3Cb7UHQGKRd2N8bpqVe0
- YFSsrd3LEVswisxTAIzkIdVYvQNtkPhH6pBRlbbI3RiaJ1N/iLU5UTF5Ryi7bd9sg5o4e4c5CGAjGI
- GnX8os6dWBlsfaZCgR9EMJr6szIRjyPlqvSN8iSeNpYdBhT7kfxhrTnRfiSIHzjVhe1Re94rzi+74H
- hOqm7JplhUOTBlT+0h5EUaUKPo9ywReTbZseoJbZbl/px/he34vURUqtFWHXi7yHVACZ+qk97hIp2n
- Z8+fa1H1gG3oAE5ebW2P19Tx0EbZDmTgT9HARMP2ryNONbEuEEq2WSSWNyZgloju8gzBB/+5TXJrf3
- XWTSI3xP1UjIxWKeBIm41DJ0iiuZl+rHFp95rfv5lEOUkR6xl8f5WbBFR6NU7aJKptewbC5ZD0bndK
- /qbPrEkrVh9LJgadhJxLHK0Fugi2baKtbZXSOL89x7kLcHpcv8G7u22wbJGQ==
+ bh=WexGasK6YSdTZy8nf6zv3tBcBdMonw0tEFsCRkp2Cjk=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkhuwHLMjbipb0Mn152EPq70a5kYVaKDuCgSONFxIp
+ MncwgomJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIbsBwAKCRB33NvayMhJ0TsvD/
+ 4wWFaQbEFTtHCMp/WU+q5IPA4orXAs2Eof5imXkQttm99Zk0K8EJYTHbOkIY7r4RwYh+9gxJ8Qv0IT
+ 2ZRK91J7DyeXKkA9HWYb5c7/FwSs5qZNqLsU772Sh9KYHr+voM7amROA6a61HRu2VAvZxYK7GleVvg
+ xdVGAdzY2Tpd56XqYdJoTgiT7UbbJvxLkPwbcfL0TGZeaAe5CgbGAkZ4Pmsk7TiPauY4K6/jdqLtxr
+ e0vW796L0pUd1wvebWCdrhjXv98qeGYvQoGFjFPvp8hrShei/Rq1m3miunMcmpOnPpFLqCe0uoM73p
+ HtmTMla2MWcqKefIT+bRJ5aw/tcsS9esZJoM/poySTKIXnG8uhzlK8PbdZzMdpBkrlLxbM2oASKJ9x
+ wqN9E5I5xA9PpsENLG1hD2gWr0zGjFRwLVA8+8bb4zK9UAUwRrZpffhYJxJlDavz7burWaTGvc/DcQ
+ 0QJhpH3deVk2Ft7yEZUYSJNBuZ8KHBF+fGkpk5GDq0QMmdYQ2SzYnOe3zGDCA0cY0sOJ53+ubXBlyc
+ iXwuQUJREoS+LtjP+D+vUHbFs91sbdmWsfX79hSaJHMiWxXHGcq1Cmcahyds14JO4Ipw1Cscx7Q/Aq
+ f5pYu88jRU8dnppXzHPQ/q9fW/GnJQpERLIF3PaXm9B/EfsaibBkpc4sQcLA==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Due to a policy change in clock ID bindings handling, expose
-all the "private" clock IDs to the public clock dt-bindings
-to move out of the previous maintenance scheme.
+The way hw_onecell_data is declared:
+struct clk_hw_onecell_data {
+	unsigned int num;
+	struct clk_hw *hws[];
+};
 
-This refers to a discussion at [1] & [2] with Krzysztof about
-the issue with the current maintenance.
+makes it impossible to have the clk_hw table declared outside while
+using ARRAY_SIZE() to determine ".num" due to ".hws" being a flexible
+array member.
 
-It was decided to move every g12a-aoclkc ID to the public clock
-dt-bindings headers to be merged in a single tree so we
-can safely add new clocks without having merge issues.
+Completely move out of hw_onecell_data and add a custom
+devm_of_clk_add_hw_provider() "get" callback to retrieve the clk_hw
+in order to finally get rid on the NR_CLKS define.
 
-[1] https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
-[2] https://lore.kernel.org/all/2fabe721-7434-43e7-bae5-088a42ba128d@app.fastmail.com/
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/clk/meson/g12a-aoclk.h          | 17 -----------------
- include/dt-bindings/clock/g12a-aoclkc.h |  7 +++++++
- 2 files changed, 7 insertions(+), 17 deletions(-)
+ drivers/clk/meson/Kconfig   |    1 +
+ drivers/clk/meson/meson8b.c | 1315 ++++++++++++++++++++++---------------------
+ drivers/clk/meson/meson8b.h |    2 -
+ 3 files changed, 660 insertions(+), 658 deletions(-)
 
-diff --git a/drivers/clk/meson/g12a-aoclk.h b/drivers/clk/meson/g12a-aoclk.h
-index 077bd25b94a1..9d6eeb24ae0c 100644
---- a/drivers/clk/meson/g12a-aoclk.h
-+++ b/drivers/clk/meson/g12a-aoclk.h
-@@ -7,23 +7,6 @@
- #ifndef __G12A_AOCLKC_H
- #define __G12A_AOCLKC_H
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 7ae076cd9645..ea88309c9582 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -53,6 +53,7 @@ config COMMON_CLK_MESON8B
+ 	depends on ARM
+ 	default y
+ 	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+ 	select MFD_SYSCON
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 827e78fb16a8..cea246daea39 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -18,6 +18,7 @@
  
--/*
-- * CLKID index values
-- *
-- * These indices are entirely contrived and do not map onto the hardware.
-- * It has now been decided to expose everything by default in the DT header:
-- * include/dt-bindings/clock/g12a-aoclkc.h. Only the clocks ids we don't want
-- * to expose, such as the internal muxes and dividers of composite clocks,
-- * will remain defined here.
-- */
--#define CLKID_AO_SAR_ADC_DIV	17
--#define CLKID_AO_32K_PRE	20
--#define CLKID_AO_32K_DIV	21
--#define CLKID_AO_32K_SEL	22
--#define CLKID_AO_CEC_PRE	24
--#define CLKID_AO_CEC_DIV	25
--#define CLKID_AO_CEC_SEL	26
+ #include "meson8b.h"
+ #include "clk-regmap.h"
++#include "meson-clkc-utils.h"
+ #include "clk-pll.h"
+ #include "clk-mpll.h"
+ 
+@@ -2772,652 +2773,640 @@ static MESON_GATE(meson8b_ao_ahb_sram, HHI_GCLK_AO, 1);
+ static MESON_GATE(meson8b_ao_ahb_bus, HHI_GCLK_AO, 2);
+ static MESON_GATE(meson8b_ao_iface, HHI_GCLK_AO, 3);
+ 
+-static struct clk_hw_onecell_data meson8_hw_onecell_data = {
+-	.hws = {
+-		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
+-		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
+-		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
+-		[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
+-		[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
+-		[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
+-		[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
+-		[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
+-		[CLKID_CPUCLK] = &meson8b_cpu_clk.hw,
+-		[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
+-		[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
+-		[CLKID_CLK81] = &meson8b_clk81.hw,
+-		[CLKID_DDR]		    = &meson8b_ddr.hw,
+-		[CLKID_DOS]		    = &meson8b_dos.hw,
+-		[CLKID_ISA]		    = &meson8b_isa.hw,
+-		[CLKID_PL301]		    = &meson8b_pl301.hw,
+-		[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
+-		[CLKID_SPICC]		    = &meson8b_spicc.hw,
+-		[CLKID_I2C]		    = &meson8b_i2c.hw,
+-		[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
+-		[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
+-		[CLKID_RNG0]		    = &meson8b_rng0.hw,
+-		[CLKID_UART0]		    = &meson8b_uart0.hw,
+-		[CLKID_SDHC]		    = &meson8b_sdhc.hw,
+-		[CLKID_STREAM]		    = &meson8b_stream.hw,
+-		[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
+-		[CLKID_SDIO]		    = &meson8b_sdio.hw,
+-		[CLKID_ABUF]		    = &meson8b_abuf.hw,
+-		[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
+-		[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
+-		[CLKID_SPI]		    = &meson8b_spi.hw,
+-		[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
+-		[CLKID_ETH]		    = &meson8b_eth.hw,
+-		[CLKID_DEMUX]		    = &meson8b_demux.hw,
+-		[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
+-		[CLKID_IEC958]		    = &meson8b_iec958.hw,
+-		[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
+-		[CLKID_AMCLK]		    = &meson8b_amclk.hw,
+-		[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
+-		[CLKID_MIXER]		    = &meson8b_mixer.hw,
+-		[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
+-		[CLKID_ADC]		    = &meson8b_adc.hw,
+-		[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
+-		[CLKID_AIU]		    = &meson8b_aiu.hw,
+-		[CLKID_UART1]		    = &meson8b_uart1.hw,
+-		[CLKID_G2D]		    = &meson8b_g2d.hw,
+-		[CLKID_USB0]		    = &meson8b_usb0.hw,
+-		[CLKID_USB1]		    = &meson8b_usb1.hw,
+-		[CLKID_RESET]		    = &meson8b_reset.hw,
+-		[CLKID_NAND]		    = &meson8b_nand.hw,
+-		[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
+-		[CLKID_USB]		    = &meson8b_usb.hw,
+-		[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
+-		[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
+-		[CLKID_EFUSE]		    = &meson8b_efuse.hw,
+-		[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
+-		[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
+-		[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
+-		[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
+-		[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
+-		[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
+-		[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
+-		[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
+-		[CLKID_DVIN]		    = &meson8b_dvin.hw,
+-		[CLKID_UART2]		    = &meson8b_uart2.hw,
+-		[CLKID_SANA]		    = &meson8b_sana.hw,
+-		[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
+-		[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
+-		[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
+-		[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
+-		[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
+-		[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
+-		[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
+-		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
+-		[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
+-		[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
+-		[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
+-		[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
+-		[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
+-		[CLKID_RNG1]		    = &meson8b_rng1.hw,
+-		[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
+-		[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
+-		[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
+-		[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
+-		[CLKID_EDP]		    = &meson8b_edp.hw,
+-		[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
+-		[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
+-		[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
+-		[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
+-		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
+-		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
+-		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
+-		[CLKID_MPLL0_DIV]	    = &meson8b_mpll0_div.hw,
+-		[CLKID_MPLL1_DIV]	    = &meson8b_mpll1_div.hw,
+-		[CLKID_MPLL2_DIV]	    = &meson8b_mpll2_div.hw,
+-		[CLKID_CPU_IN_SEL]	    = &meson8b_cpu_in_sel.hw,
+-		[CLKID_CPU_IN_DIV2]	    = &meson8b_cpu_in_div2.hw,
+-		[CLKID_CPU_IN_DIV3]	    = &meson8b_cpu_in_div3.hw,
+-		[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
+-		[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
+-		[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
+-		[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
+-		[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
+-		[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
+-		[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
+-		[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
+-		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
+-		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
+-		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
+-		[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
+-		[CLKID_HDMI_PLL_DCO]	    = &meson8b_hdmi_pll_dco.hw,
+-		[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
+-		[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
+-		[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
+-		[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
+-		[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
+-		[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
+-		[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
+-		[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
+-		[CLKID_APB_SEL]		    = &meson8b_apb_clk_sel.hw,
+-		[CLKID_APB]		    = &meson8b_apb_clk_gate.hw,
+-		[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
+-		[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
+-		[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
+-		[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
+-		[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
+-		[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
+-		[CLKID_HDMI_PLL_LVDS_OUT]   = &meson8b_hdmi_pll_lvds_out.hw,
+-		[CLKID_HDMI_PLL_HDMI_OUT]   = &meson8b_hdmi_pll_hdmi_out.hw,
+-		[CLKID_VID_PLL_IN_SEL]	    = &meson8b_vid_pll_in_sel.hw,
+-		[CLKID_VID_PLL_IN_EN]	    = &meson8b_vid_pll_in_en.hw,
+-		[CLKID_VID_PLL_PRE_DIV]	    = &meson8b_vid_pll_pre_div.hw,
+-		[CLKID_VID_PLL_POST_DIV]    = &meson8b_vid_pll_post_div.hw,
+-		[CLKID_VID_PLL_FINAL_DIV]   = &meson8b_vid_pll_final_div.hw,
+-		[CLKID_VCLK_IN_SEL]	    = &meson8b_vclk_in_sel.hw,
+-		[CLKID_VCLK_IN_EN]	    = &meson8b_vclk_in_en.hw,
+-		[CLKID_VCLK_EN]		    = &meson8b_vclk_en.hw,
+-		[CLKID_VCLK_DIV1]	    = &meson8b_vclk_div1_gate.hw,
+-		[CLKID_VCLK_DIV2_DIV]	    = &meson8b_vclk_div2_div.hw,
+-		[CLKID_VCLK_DIV2]	    = &meson8b_vclk_div2_div_gate.hw,
+-		[CLKID_VCLK_DIV4_DIV]	    = &meson8b_vclk_div4_div.hw,
+-		[CLKID_VCLK_DIV4]	    = &meson8b_vclk_div4_div_gate.hw,
+-		[CLKID_VCLK_DIV6_DIV]	    = &meson8b_vclk_div6_div.hw,
+-		[CLKID_VCLK_DIV6]	    = &meson8b_vclk_div6_div_gate.hw,
+-		[CLKID_VCLK_DIV12_DIV]	    = &meson8b_vclk_div12_div.hw,
+-		[CLKID_VCLK_DIV12]	    = &meson8b_vclk_div12_div_gate.hw,
+-		[CLKID_VCLK2_IN_SEL]	    = &meson8b_vclk2_in_sel.hw,
+-		[CLKID_VCLK2_IN_EN]	    = &meson8b_vclk2_clk_in_en.hw,
+-		[CLKID_VCLK2_EN]	    = &meson8b_vclk2_clk_en.hw,
+-		[CLKID_VCLK2_DIV1]	    = &meson8b_vclk2_div1_gate.hw,
+-		[CLKID_VCLK2_DIV2_DIV]	    = &meson8b_vclk2_div2_div.hw,
+-		[CLKID_VCLK2_DIV2]	    = &meson8b_vclk2_div2_div_gate.hw,
+-		[CLKID_VCLK2_DIV4_DIV]	    = &meson8b_vclk2_div4_div.hw,
+-		[CLKID_VCLK2_DIV4]	    = &meson8b_vclk2_div4_div_gate.hw,
+-		[CLKID_VCLK2_DIV6_DIV]	    = &meson8b_vclk2_div6_div.hw,
+-		[CLKID_VCLK2_DIV6]	    = &meson8b_vclk2_div6_div_gate.hw,
+-		[CLKID_VCLK2_DIV12_DIV]	    = &meson8b_vclk2_div12_div.hw,
+-		[CLKID_VCLK2_DIV12]	    = &meson8b_vclk2_div12_div_gate.hw,
+-		[CLKID_CTS_ENCT_SEL]	    = &meson8b_cts_enct_sel.hw,
+-		[CLKID_CTS_ENCT]	    = &meson8b_cts_enct.hw,
+-		[CLKID_CTS_ENCP_SEL]	    = &meson8b_cts_encp_sel.hw,
+-		[CLKID_CTS_ENCP]	    = &meson8b_cts_encp.hw,
+-		[CLKID_CTS_ENCI_SEL]	    = &meson8b_cts_enci_sel.hw,
+-		[CLKID_CTS_ENCI]	    = &meson8b_cts_enci.hw,
+-		[CLKID_HDMI_TX_PIXEL_SEL]   = &meson8b_hdmi_tx_pixel_sel.hw,
+-		[CLKID_HDMI_TX_PIXEL]	    = &meson8b_hdmi_tx_pixel.hw,
+-		[CLKID_CTS_ENCL_SEL]	    = &meson8b_cts_encl_sel.hw,
+-		[CLKID_CTS_ENCL]	    = &meson8b_cts_encl.hw,
+-		[CLKID_CTS_VDAC0_SEL]	    = &meson8b_cts_vdac0_sel.hw,
+-		[CLKID_CTS_VDAC0]	    = &meson8b_cts_vdac0.hw,
+-		[CLKID_HDMI_SYS_SEL]	    = &meson8b_hdmi_sys_sel.hw,
+-		[CLKID_HDMI_SYS_DIV]	    = &meson8b_hdmi_sys_div.hw,
+-		[CLKID_HDMI_SYS]	    = &meson8b_hdmi_sys.hw,
+-		[CLKID_MALI_0_SEL]	    = &meson8b_mali_0_sel.hw,
+-		[CLKID_MALI_0_DIV]	    = &meson8b_mali_0_div.hw,
+-		[CLKID_MALI]		    = &meson8b_mali_0.hw,
+-		[CLKID_VPU_0_SEL]	    = &meson8b_vpu_0_sel.hw,
+-		[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
+-		[CLKID_VPU]		    = &meson8b_vpu_0.hw,
+-		[CLKID_VDEC_1_SEL]	    = &meson8b_vdec_1_sel.hw,
+-		[CLKID_VDEC_1_1_DIV]	    = &meson8b_vdec_1_1_div.hw,
+-		[CLKID_VDEC_1]	   	    = &meson8b_vdec_1_1.hw,
+-		[CLKID_VDEC_HCODEC_SEL]	    = &meson8b_vdec_hcodec_sel.hw,
+-		[CLKID_VDEC_HCODEC_DIV]	    = &meson8b_vdec_hcodec_div.hw,
+-		[CLKID_VDEC_HCODEC]	    = &meson8b_vdec_hcodec.hw,
+-		[CLKID_VDEC_2_SEL]	    = &meson8b_vdec_2_sel.hw,
+-		[CLKID_VDEC_2_DIV]	    = &meson8b_vdec_2_div.hw,
+-		[CLKID_VDEC_2]	    	    = &meson8b_vdec_2.hw,
+-		[CLKID_VDEC_HEVC_SEL]	    = &meson8b_vdec_hevc_sel.hw,
+-		[CLKID_VDEC_HEVC_DIV]	    = &meson8b_vdec_hevc_div.hw,
+-		[CLKID_VDEC_HEVC_EN]	    = &meson8b_vdec_hevc_en.hw,
+-		[CLKID_VDEC_HEVC]	    = &meson8b_vdec_hevc.hw,
+-		[CLKID_CTS_AMCLK_SEL]	    = &meson8b_cts_amclk_sel.hw,
+-		[CLKID_CTS_AMCLK_DIV]	    = &meson8b_cts_amclk_div.hw,
+-		[CLKID_CTS_AMCLK]	    = &meson8b_cts_amclk.hw,
+-		[CLKID_CTS_MCLK_I958_SEL]   = &meson8b_cts_mclk_i958_sel.hw,
+-		[CLKID_CTS_MCLK_I958_DIV]   = &meson8b_cts_mclk_i958_div.hw,
+-		[CLKID_CTS_MCLK_I958]	    = &meson8b_cts_mclk_i958.hw,
+-		[CLKID_CTS_I958]	    = &meson8b_cts_i958.hw,
+-		[CLKID_VID_PLL_LVDS_EN]	    = &meson8b_vid_pll_lvds_en.hw,
+-		[CLKID_HDMI_PLL_DCO_IN]	    = &hdmi_pll_dco_in.hw,
+-		[CLK_NR_CLKS]		    = NULL,
+-	},
+-	.num = CLK_NR_CLKS,
+-};
 -
- #include <dt-bindings/clock/g12a-aoclkc.h>
- #include <dt-bindings/reset/g12a-aoclkc.h>
+-static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+-	.hws = {
+-		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
+-		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
+-		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
+-		[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
+-		[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
+-		[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
+-		[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
+-		[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
+-		[CLKID_CPUCLK] = &meson8b_cpu_clk.hw,
+-		[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
+-		[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
+-		[CLKID_CLK81] = &meson8b_clk81.hw,
+-		[CLKID_DDR]		    = &meson8b_ddr.hw,
+-		[CLKID_DOS]		    = &meson8b_dos.hw,
+-		[CLKID_ISA]		    = &meson8b_isa.hw,
+-		[CLKID_PL301]		    = &meson8b_pl301.hw,
+-		[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
+-		[CLKID_SPICC]		    = &meson8b_spicc.hw,
+-		[CLKID_I2C]		    = &meson8b_i2c.hw,
+-		[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
+-		[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
+-		[CLKID_RNG0]		    = &meson8b_rng0.hw,
+-		[CLKID_UART0]		    = &meson8b_uart0.hw,
+-		[CLKID_SDHC]		    = &meson8b_sdhc.hw,
+-		[CLKID_STREAM]		    = &meson8b_stream.hw,
+-		[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
+-		[CLKID_SDIO]		    = &meson8b_sdio.hw,
+-		[CLKID_ABUF]		    = &meson8b_abuf.hw,
+-		[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
+-		[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
+-		[CLKID_SPI]		    = &meson8b_spi.hw,
+-		[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
+-		[CLKID_ETH]		    = &meson8b_eth.hw,
+-		[CLKID_DEMUX]		    = &meson8b_demux.hw,
+-		[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
+-		[CLKID_IEC958]		    = &meson8b_iec958.hw,
+-		[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
+-		[CLKID_AMCLK]		    = &meson8b_amclk.hw,
+-		[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
+-		[CLKID_MIXER]		    = &meson8b_mixer.hw,
+-		[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
+-		[CLKID_ADC]		    = &meson8b_adc.hw,
+-		[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
+-		[CLKID_AIU]		    = &meson8b_aiu.hw,
+-		[CLKID_UART1]		    = &meson8b_uart1.hw,
+-		[CLKID_G2D]		    = &meson8b_g2d.hw,
+-		[CLKID_USB0]		    = &meson8b_usb0.hw,
+-		[CLKID_USB1]		    = &meson8b_usb1.hw,
+-		[CLKID_RESET]		    = &meson8b_reset.hw,
+-		[CLKID_NAND]		    = &meson8b_nand.hw,
+-		[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
+-		[CLKID_USB]		    = &meson8b_usb.hw,
+-		[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
+-		[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
+-		[CLKID_EFUSE]		    = &meson8b_efuse.hw,
+-		[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
+-		[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
+-		[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
+-		[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
+-		[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
+-		[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
+-		[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
+-		[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
+-		[CLKID_DVIN]		    = &meson8b_dvin.hw,
+-		[CLKID_UART2]		    = &meson8b_uart2.hw,
+-		[CLKID_SANA]		    = &meson8b_sana.hw,
+-		[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
+-		[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
+-		[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
+-		[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
+-		[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
+-		[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
+-		[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
+-		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
+-		[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
+-		[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
+-		[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
+-		[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
+-		[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
+-		[CLKID_RNG1]		    = &meson8b_rng1.hw,
+-		[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
+-		[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
+-		[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
+-		[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
+-		[CLKID_EDP]		    = &meson8b_edp.hw,
+-		[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
+-		[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
+-		[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
+-		[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
+-		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
+-		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
+-		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
+-		[CLKID_MPLL0_DIV]	    = &meson8b_mpll0_div.hw,
+-		[CLKID_MPLL1_DIV]	    = &meson8b_mpll1_div.hw,
+-		[CLKID_MPLL2_DIV]	    = &meson8b_mpll2_div.hw,
+-		[CLKID_CPU_IN_SEL]	    = &meson8b_cpu_in_sel.hw,
+-		[CLKID_CPU_IN_DIV2]	    = &meson8b_cpu_in_div2.hw,
+-		[CLKID_CPU_IN_DIV3]	    = &meson8b_cpu_in_div3.hw,
+-		[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
+-		[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
+-		[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
+-		[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
+-		[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
+-		[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
+-		[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
+-		[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
+-		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
+-		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
+-		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
+-		[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
+-		[CLKID_HDMI_PLL_DCO]	    = &meson8b_hdmi_pll_dco.hw,
+-		[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
+-		[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
+-		[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
+-		[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
+-		[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
+-		[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
+-		[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
+-		[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
+-		[CLKID_APB_SEL]		    = &meson8b_apb_clk_sel.hw,
+-		[CLKID_APB]		    = &meson8b_apb_clk_gate.hw,
+-		[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
+-		[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
+-		[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
+-		[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
+-		[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
+-		[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
+-		[CLKID_HDMI_PLL_LVDS_OUT]   = &meson8b_hdmi_pll_lvds_out.hw,
+-		[CLKID_HDMI_PLL_HDMI_OUT]   = &meson8b_hdmi_pll_hdmi_out.hw,
+-		[CLKID_VID_PLL_IN_SEL]	    = &meson8b_vid_pll_in_sel.hw,
+-		[CLKID_VID_PLL_IN_EN]	    = &meson8b_vid_pll_in_en.hw,
+-		[CLKID_VID_PLL_PRE_DIV]	    = &meson8b_vid_pll_pre_div.hw,
+-		[CLKID_VID_PLL_POST_DIV]    = &meson8b_vid_pll_post_div.hw,
+-		[CLKID_VID_PLL_FINAL_DIV]   = &meson8b_vid_pll_final_div.hw,
+-		[CLKID_VCLK_IN_SEL]	    = &meson8b_vclk_in_sel.hw,
+-		[CLKID_VCLK_IN_EN]	    = &meson8b_vclk_in_en.hw,
+-		[CLKID_VCLK_EN]		    = &meson8b_vclk_en.hw,
+-		[CLKID_VCLK_DIV1]	    = &meson8b_vclk_div1_gate.hw,
+-		[CLKID_VCLK_DIV2_DIV]	    = &meson8b_vclk_div2_div.hw,
+-		[CLKID_VCLK_DIV2]	    = &meson8b_vclk_div2_div_gate.hw,
+-		[CLKID_VCLK_DIV4_DIV]	    = &meson8b_vclk_div4_div.hw,
+-		[CLKID_VCLK_DIV4]	    = &meson8b_vclk_div4_div_gate.hw,
+-		[CLKID_VCLK_DIV6_DIV]	    = &meson8b_vclk_div6_div.hw,
+-		[CLKID_VCLK_DIV6]	    = &meson8b_vclk_div6_div_gate.hw,
+-		[CLKID_VCLK_DIV12_DIV]	    = &meson8b_vclk_div12_div.hw,
+-		[CLKID_VCLK_DIV12]	    = &meson8b_vclk_div12_div_gate.hw,
+-		[CLKID_VCLK2_IN_SEL]	    = &meson8b_vclk2_in_sel.hw,
+-		[CLKID_VCLK2_IN_EN]	    = &meson8b_vclk2_clk_in_en.hw,
+-		[CLKID_VCLK2_EN]	    = &meson8b_vclk2_clk_en.hw,
+-		[CLKID_VCLK2_DIV1]	    = &meson8b_vclk2_div1_gate.hw,
+-		[CLKID_VCLK2_DIV2_DIV]	    = &meson8b_vclk2_div2_div.hw,
+-		[CLKID_VCLK2_DIV2]	    = &meson8b_vclk2_div2_div_gate.hw,
+-		[CLKID_VCLK2_DIV4_DIV]	    = &meson8b_vclk2_div4_div.hw,
+-		[CLKID_VCLK2_DIV4]	    = &meson8b_vclk2_div4_div_gate.hw,
+-		[CLKID_VCLK2_DIV6_DIV]	    = &meson8b_vclk2_div6_div.hw,
+-		[CLKID_VCLK2_DIV6]	    = &meson8b_vclk2_div6_div_gate.hw,
+-		[CLKID_VCLK2_DIV12_DIV]	    = &meson8b_vclk2_div12_div.hw,
+-		[CLKID_VCLK2_DIV12]	    = &meson8b_vclk2_div12_div_gate.hw,
+-		[CLKID_CTS_ENCT_SEL]	    = &meson8b_cts_enct_sel.hw,
+-		[CLKID_CTS_ENCT]	    = &meson8b_cts_enct.hw,
+-		[CLKID_CTS_ENCP_SEL]	    = &meson8b_cts_encp_sel.hw,
+-		[CLKID_CTS_ENCP]	    = &meson8b_cts_encp.hw,
+-		[CLKID_CTS_ENCI_SEL]	    = &meson8b_cts_enci_sel.hw,
+-		[CLKID_CTS_ENCI]	    = &meson8b_cts_enci.hw,
+-		[CLKID_HDMI_TX_PIXEL_SEL]   = &meson8b_hdmi_tx_pixel_sel.hw,
+-		[CLKID_HDMI_TX_PIXEL]	    = &meson8b_hdmi_tx_pixel.hw,
+-		[CLKID_CTS_ENCL_SEL]	    = &meson8b_cts_encl_sel.hw,
+-		[CLKID_CTS_ENCL]	    = &meson8b_cts_encl.hw,
+-		[CLKID_CTS_VDAC0_SEL]	    = &meson8b_cts_vdac0_sel.hw,
+-		[CLKID_CTS_VDAC0]	    = &meson8b_cts_vdac0.hw,
+-		[CLKID_HDMI_SYS_SEL]	    = &meson8b_hdmi_sys_sel.hw,
+-		[CLKID_HDMI_SYS_DIV]	    = &meson8b_hdmi_sys_div.hw,
+-		[CLKID_HDMI_SYS]	    = &meson8b_hdmi_sys.hw,
+-		[CLKID_MALI_0_SEL]	    = &meson8b_mali_0_sel.hw,
+-		[CLKID_MALI_0_DIV]	    = &meson8b_mali_0_div.hw,
+-		[CLKID_MALI_0]		    = &meson8b_mali_0.hw,
+-		[CLKID_MALI_1_SEL]	    = &meson8b_mali_1_sel.hw,
+-		[CLKID_MALI_1_DIV]	    = &meson8b_mali_1_div.hw,
+-		[CLKID_MALI_1]		    = &meson8b_mali_1.hw,
+-		[CLKID_MALI]		    = &meson8b_mali.hw,
+-		[CLKID_VPU_0_SEL]	    = &meson8b_vpu_0_sel.hw,
+-		[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
+-		[CLKID_VPU_0]		    = &meson8b_vpu_0.hw,
+-		[CLKID_VPU_1_SEL]	    = &meson8b_vpu_1_sel.hw,
+-		[CLKID_VPU_1_DIV]	    = &meson8b_vpu_1_div.hw,
+-		[CLKID_VPU_1]		    = &meson8b_vpu_1.hw,
+-		[CLKID_VPU]		    = &meson8b_vpu.hw,
+-		[CLKID_VDEC_1_SEL]	    = &meson8b_vdec_1_sel.hw,
+-		[CLKID_VDEC_1_1_DIV]	    = &meson8b_vdec_1_1_div.hw,
+-		[CLKID_VDEC_1_1]	    = &meson8b_vdec_1_1.hw,
+-		[CLKID_VDEC_1_2_DIV]	    = &meson8b_vdec_1_2_div.hw,
+-		[CLKID_VDEC_1_2]	    = &meson8b_vdec_1_2.hw,
+-		[CLKID_VDEC_1]	    	    = &meson8b_vdec_1.hw,
+-		[CLKID_VDEC_HCODEC_SEL]	    = &meson8b_vdec_hcodec_sel.hw,
+-		[CLKID_VDEC_HCODEC_DIV]	    = &meson8b_vdec_hcodec_div.hw,
+-		[CLKID_VDEC_HCODEC]	    = &meson8b_vdec_hcodec.hw,
+-		[CLKID_VDEC_2_SEL]	    = &meson8b_vdec_2_sel.hw,
+-		[CLKID_VDEC_2_DIV]	    = &meson8b_vdec_2_div.hw,
+-		[CLKID_VDEC_2]	    	    = &meson8b_vdec_2.hw,
+-		[CLKID_VDEC_HEVC_SEL]	    = &meson8b_vdec_hevc_sel.hw,
+-		[CLKID_VDEC_HEVC_DIV]	    = &meson8b_vdec_hevc_div.hw,
+-		[CLKID_VDEC_HEVC_EN]	    = &meson8b_vdec_hevc_en.hw,
+-		[CLKID_VDEC_HEVC]	    = &meson8b_vdec_hevc.hw,
+-		[CLKID_CTS_AMCLK_SEL]	    = &meson8b_cts_amclk_sel.hw,
+-		[CLKID_CTS_AMCLK_DIV]	    = &meson8b_cts_amclk_div.hw,
+-		[CLKID_CTS_AMCLK]	    = &meson8b_cts_amclk.hw,
+-		[CLKID_CTS_MCLK_I958_SEL]   = &meson8b_cts_mclk_i958_sel.hw,
+-		[CLKID_CTS_MCLK_I958_DIV]   = &meson8b_cts_mclk_i958_div.hw,
+-		[CLKID_CTS_MCLK_I958]	    = &meson8b_cts_mclk_i958.hw,
+-		[CLKID_CTS_I958]	    = &meson8b_cts_i958.hw,
+-		[CLKID_VID_PLL_LVDS_EN]	    = &meson8b_vid_pll_lvds_en.hw,
+-		[CLKID_HDMI_PLL_DCO_IN]	    = &hdmi_pll_dco_in.hw,
+-		[CLK_NR_CLKS]		    = NULL,
+-	},
+-	.num = CLK_NR_CLKS,
+-};
+-
+-static struct clk_hw_onecell_data meson8m2_hw_onecell_data = {
+-	.hws = {
+-		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
+-		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
+-		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
+-		[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
+-		[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
+-		[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
+-		[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
+-		[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
+-		[CLKID_CPUCLK] = &meson8b_cpu_clk.hw,
+-		[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
+-		[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
+-		[CLKID_CLK81] = &meson8b_clk81.hw,
+-		[CLKID_DDR]		    = &meson8b_ddr.hw,
+-		[CLKID_DOS]		    = &meson8b_dos.hw,
+-		[CLKID_ISA]		    = &meson8b_isa.hw,
+-		[CLKID_PL301]		    = &meson8b_pl301.hw,
+-		[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
+-		[CLKID_SPICC]		    = &meson8b_spicc.hw,
+-		[CLKID_I2C]		    = &meson8b_i2c.hw,
+-		[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
+-		[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
+-		[CLKID_RNG0]		    = &meson8b_rng0.hw,
+-		[CLKID_UART0]		    = &meson8b_uart0.hw,
+-		[CLKID_SDHC]		    = &meson8b_sdhc.hw,
+-		[CLKID_STREAM]		    = &meson8b_stream.hw,
+-		[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
+-		[CLKID_SDIO]		    = &meson8b_sdio.hw,
+-		[CLKID_ABUF]		    = &meson8b_abuf.hw,
+-		[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
+-		[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
+-		[CLKID_SPI]		    = &meson8b_spi.hw,
+-		[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
+-		[CLKID_ETH]		    = &meson8b_eth.hw,
+-		[CLKID_DEMUX]		    = &meson8b_demux.hw,
+-		[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
+-		[CLKID_IEC958]		    = &meson8b_iec958.hw,
+-		[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
+-		[CLKID_AMCLK]		    = &meson8b_amclk.hw,
+-		[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
+-		[CLKID_MIXER]		    = &meson8b_mixer.hw,
+-		[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
+-		[CLKID_ADC]		    = &meson8b_adc.hw,
+-		[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
+-		[CLKID_AIU]		    = &meson8b_aiu.hw,
+-		[CLKID_UART1]		    = &meson8b_uart1.hw,
+-		[CLKID_G2D]		    = &meson8b_g2d.hw,
+-		[CLKID_USB0]		    = &meson8b_usb0.hw,
+-		[CLKID_USB1]		    = &meson8b_usb1.hw,
+-		[CLKID_RESET]		    = &meson8b_reset.hw,
+-		[CLKID_NAND]		    = &meson8b_nand.hw,
+-		[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
+-		[CLKID_USB]		    = &meson8b_usb.hw,
+-		[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
+-		[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
+-		[CLKID_EFUSE]		    = &meson8b_efuse.hw,
+-		[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
+-		[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
+-		[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
+-		[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
+-		[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
+-		[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
+-		[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
+-		[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
+-		[CLKID_DVIN]		    = &meson8b_dvin.hw,
+-		[CLKID_UART2]		    = &meson8b_uart2.hw,
+-		[CLKID_SANA]		    = &meson8b_sana.hw,
+-		[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
+-		[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
+-		[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
+-		[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
+-		[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
+-		[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
+-		[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
+-		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
+-		[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
+-		[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
+-		[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
+-		[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
+-		[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
+-		[CLKID_RNG1]		    = &meson8b_rng1.hw,
+-		[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
+-		[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
+-		[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
+-		[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
+-		[CLKID_EDP]		    = &meson8b_edp.hw,
+-		[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
+-		[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
+-		[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
+-		[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
+-		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
+-		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
+-		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
+-		[CLKID_MPLL0_DIV]	    = &meson8b_mpll0_div.hw,
+-		[CLKID_MPLL1_DIV]	    = &meson8b_mpll1_div.hw,
+-		[CLKID_MPLL2_DIV]	    = &meson8b_mpll2_div.hw,
+-		[CLKID_CPU_IN_SEL]	    = &meson8b_cpu_in_sel.hw,
+-		[CLKID_CPU_IN_DIV2]	    = &meson8b_cpu_in_div2.hw,
+-		[CLKID_CPU_IN_DIV3]	    = &meson8b_cpu_in_div3.hw,
+-		[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
+-		[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
+-		[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
+-		[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
+-		[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
+-		[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
+-		[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
+-		[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
+-		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
+-		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
+-		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
+-		[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
+-		[CLKID_HDMI_PLL_DCO]	    = &meson8b_hdmi_pll_dco.hw,
+-		[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
+-		[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
+-		[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
+-		[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
+-		[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
+-		[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
+-		[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
+-		[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
+-		[CLKID_APB_SEL]		    = &meson8b_apb_clk_sel.hw,
+-		[CLKID_APB]		    = &meson8b_apb_clk_gate.hw,
+-		[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
+-		[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
+-		[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
+-		[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
+-		[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
+-		[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
+-		[CLKID_HDMI_PLL_LVDS_OUT]   = &meson8b_hdmi_pll_lvds_out.hw,
+-		[CLKID_HDMI_PLL_HDMI_OUT]   = &meson8b_hdmi_pll_hdmi_out.hw,
+-		[CLKID_VID_PLL_IN_SEL]	    = &meson8b_vid_pll_in_sel.hw,
+-		[CLKID_VID_PLL_IN_EN]	    = &meson8b_vid_pll_in_en.hw,
+-		[CLKID_VID_PLL_PRE_DIV]	    = &meson8b_vid_pll_pre_div.hw,
+-		[CLKID_VID_PLL_POST_DIV]    = &meson8b_vid_pll_post_div.hw,
+-		[CLKID_VID_PLL_FINAL_DIV]   = &meson8b_vid_pll_final_div.hw,
+-		[CLKID_VCLK_IN_SEL]	    = &meson8b_vclk_in_sel.hw,
+-		[CLKID_VCLK_IN_EN]	    = &meson8b_vclk_in_en.hw,
+-		[CLKID_VCLK_EN]		    = &meson8b_vclk_en.hw,
+-		[CLKID_VCLK_DIV1]	    = &meson8b_vclk_div1_gate.hw,
+-		[CLKID_VCLK_DIV2_DIV]	    = &meson8b_vclk_div2_div.hw,
+-		[CLKID_VCLK_DIV2]	    = &meson8b_vclk_div2_div_gate.hw,
+-		[CLKID_VCLK_DIV4_DIV]	    = &meson8b_vclk_div4_div.hw,
+-		[CLKID_VCLK_DIV4]	    = &meson8b_vclk_div4_div_gate.hw,
+-		[CLKID_VCLK_DIV6_DIV]	    = &meson8b_vclk_div6_div.hw,
+-		[CLKID_VCLK_DIV6]	    = &meson8b_vclk_div6_div_gate.hw,
+-		[CLKID_VCLK_DIV12_DIV]	    = &meson8b_vclk_div12_div.hw,
+-		[CLKID_VCLK_DIV12]	    = &meson8b_vclk_div12_div_gate.hw,
+-		[CLKID_VCLK2_IN_SEL]	    = &meson8b_vclk2_in_sel.hw,
+-		[CLKID_VCLK2_IN_EN]	    = &meson8b_vclk2_clk_in_en.hw,
+-		[CLKID_VCLK2_EN]	    = &meson8b_vclk2_clk_en.hw,
+-		[CLKID_VCLK2_DIV1]	    = &meson8b_vclk2_div1_gate.hw,
+-		[CLKID_VCLK2_DIV2_DIV]	    = &meson8b_vclk2_div2_div.hw,
+-		[CLKID_VCLK2_DIV2]	    = &meson8b_vclk2_div2_div_gate.hw,
+-		[CLKID_VCLK2_DIV4_DIV]	    = &meson8b_vclk2_div4_div.hw,
+-		[CLKID_VCLK2_DIV4]	    = &meson8b_vclk2_div4_div_gate.hw,
+-		[CLKID_VCLK2_DIV6_DIV]	    = &meson8b_vclk2_div6_div.hw,
+-		[CLKID_VCLK2_DIV6]	    = &meson8b_vclk2_div6_div_gate.hw,
+-		[CLKID_VCLK2_DIV12_DIV]	    = &meson8b_vclk2_div12_div.hw,
+-		[CLKID_VCLK2_DIV12]	    = &meson8b_vclk2_div12_div_gate.hw,
+-		[CLKID_CTS_ENCT_SEL]	    = &meson8b_cts_enct_sel.hw,
+-		[CLKID_CTS_ENCT]	    = &meson8b_cts_enct.hw,
+-		[CLKID_CTS_ENCP_SEL]	    = &meson8b_cts_encp_sel.hw,
+-		[CLKID_CTS_ENCP]	    = &meson8b_cts_encp.hw,
+-		[CLKID_CTS_ENCI_SEL]	    = &meson8b_cts_enci_sel.hw,
+-		[CLKID_CTS_ENCI]	    = &meson8b_cts_enci.hw,
+-		[CLKID_HDMI_TX_PIXEL_SEL]   = &meson8b_hdmi_tx_pixel_sel.hw,
+-		[CLKID_HDMI_TX_PIXEL]	    = &meson8b_hdmi_tx_pixel.hw,
+-		[CLKID_CTS_ENCL_SEL]	    = &meson8b_cts_encl_sel.hw,
+-		[CLKID_CTS_ENCL]	    = &meson8b_cts_encl.hw,
+-		[CLKID_CTS_VDAC0_SEL]	    = &meson8b_cts_vdac0_sel.hw,
+-		[CLKID_CTS_VDAC0]	    = &meson8b_cts_vdac0.hw,
+-		[CLKID_HDMI_SYS_SEL]	    = &meson8b_hdmi_sys_sel.hw,
+-		[CLKID_HDMI_SYS_DIV]	    = &meson8b_hdmi_sys_div.hw,
+-		[CLKID_HDMI_SYS]	    = &meson8b_hdmi_sys.hw,
+-		[CLKID_MALI_0_SEL]	    = &meson8b_mali_0_sel.hw,
+-		[CLKID_MALI_0_DIV]	    = &meson8b_mali_0_div.hw,
+-		[CLKID_MALI_0]		    = &meson8b_mali_0.hw,
+-		[CLKID_MALI_1_SEL]	    = &meson8b_mali_1_sel.hw,
+-		[CLKID_MALI_1_DIV]	    = &meson8b_mali_1_div.hw,
+-		[CLKID_MALI_1]		    = &meson8b_mali_1.hw,
+-		[CLKID_MALI]		    = &meson8b_mali.hw,
+-		[CLKID_GP_PLL_DCO]	    = &meson8m2_gp_pll_dco.hw,
+-		[CLKID_GP_PLL]		    = &meson8m2_gp_pll.hw,
+-		[CLKID_VPU_0_SEL]	    = &meson8m2_vpu_0_sel.hw,
+-		[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
+-		[CLKID_VPU_0]		    = &meson8b_vpu_0.hw,
+-		[CLKID_VPU_1_SEL]	    = &meson8m2_vpu_1_sel.hw,
+-		[CLKID_VPU_1_DIV]	    = &meson8b_vpu_1_div.hw,
+-		[CLKID_VPU_1]		    = &meson8b_vpu_1.hw,
+-		[CLKID_VPU]		    = &meson8b_vpu.hw,
+-		[CLKID_VDEC_1_SEL]	    = &meson8b_vdec_1_sel.hw,
+-		[CLKID_VDEC_1_1_DIV]	    = &meson8b_vdec_1_1_div.hw,
+-		[CLKID_VDEC_1_1]	    = &meson8b_vdec_1_1.hw,
+-		[CLKID_VDEC_1_2_DIV]	    = &meson8b_vdec_1_2_div.hw,
+-		[CLKID_VDEC_1_2]	    = &meson8b_vdec_1_2.hw,
+-		[CLKID_VDEC_1]	    	    = &meson8b_vdec_1.hw,
+-		[CLKID_VDEC_HCODEC_SEL]	    = &meson8b_vdec_hcodec_sel.hw,
+-		[CLKID_VDEC_HCODEC_DIV]	    = &meson8b_vdec_hcodec_div.hw,
+-		[CLKID_VDEC_HCODEC]	    = &meson8b_vdec_hcodec.hw,
+-		[CLKID_VDEC_2_SEL]	    = &meson8b_vdec_2_sel.hw,
+-		[CLKID_VDEC_2_DIV]	    = &meson8b_vdec_2_div.hw,
+-		[CLKID_VDEC_2]	    	    = &meson8b_vdec_2.hw,
+-		[CLKID_VDEC_HEVC_SEL]	    = &meson8b_vdec_hevc_sel.hw,
+-		[CLKID_VDEC_HEVC_DIV]	    = &meson8b_vdec_hevc_div.hw,
+-		[CLKID_VDEC_HEVC_EN]	    = &meson8b_vdec_hevc_en.hw,
+-		[CLKID_VDEC_HEVC]	    = &meson8b_vdec_hevc.hw,
+-		[CLKID_CTS_AMCLK_SEL]	    = &meson8b_cts_amclk_sel.hw,
+-		[CLKID_CTS_AMCLK_DIV]	    = &meson8b_cts_amclk_div.hw,
+-		[CLKID_CTS_AMCLK]	    = &meson8b_cts_amclk.hw,
+-		[CLKID_CTS_MCLK_I958_SEL]   = &meson8b_cts_mclk_i958_sel.hw,
+-		[CLKID_CTS_MCLK_I958_DIV]   = &meson8b_cts_mclk_i958_div.hw,
+-		[CLKID_CTS_MCLK_I958]	    = &meson8b_cts_mclk_i958.hw,
+-		[CLKID_CTS_I958]	    = &meson8b_cts_i958.hw,
+-		[CLKID_VID_PLL_LVDS_EN]	    = &meson8b_vid_pll_lvds_en.hw,
+-		[CLKID_HDMI_PLL_DCO_IN]	    = &hdmi_pll_dco_in.hw,
+-		[CLK_NR_CLKS]		    = NULL,
+-	},
+-	.num = CLK_NR_CLKS,
++static struct clk_hw *meson8_hw_clks[] = {
++	[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
++	[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
++	[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
++	[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
++	[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
++	[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
++	[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
++	[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
++	[CLKID_CPUCLK] = &meson8b_cpu_clk.hw,
++	[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
++	[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
++	[CLKID_CLK81] = &meson8b_clk81.hw,
++	[CLKID_DDR]		    = &meson8b_ddr.hw,
++	[CLKID_DOS]		    = &meson8b_dos.hw,
++	[CLKID_ISA]		    = &meson8b_isa.hw,
++	[CLKID_PL301]		    = &meson8b_pl301.hw,
++	[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
++	[CLKID_SPICC]		    = &meson8b_spicc.hw,
++	[CLKID_I2C]		    = &meson8b_i2c.hw,
++	[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
++	[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
++	[CLKID_RNG0]		    = &meson8b_rng0.hw,
++	[CLKID_UART0]		    = &meson8b_uart0.hw,
++	[CLKID_SDHC]		    = &meson8b_sdhc.hw,
++	[CLKID_STREAM]		    = &meson8b_stream.hw,
++	[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
++	[CLKID_SDIO]		    = &meson8b_sdio.hw,
++	[CLKID_ABUF]		    = &meson8b_abuf.hw,
++	[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
++	[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
++	[CLKID_SPI]		    = &meson8b_spi.hw,
++	[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
++	[CLKID_ETH]		    = &meson8b_eth.hw,
++	[CLKID_DEMUX]		    = &meson8b_demux.hw,
++	[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
++	[CLKID_IEC958]		    = &meson8b_iec958.hw,
++	[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
++	[CLKID_AMCLK]		    = &meson8b_amclk.hw,
++	[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
++	[CLKID_MIXER]		    = &meson8b_mixer.hw,
++	[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
++	[CLKID_ADC]		    = &meson8b_adc.hw,
++	[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
++	[CLKID_AIU]		    = &meson8b_aiu.hw,
++	[CLKID_UART1]		    = &meson8b_uart1.hw,
++	[CLKID_G2D]		    = &meson8b_g2d.hw,
++	[CLKID_USB0]		    = &meson8b_usb0.hw,
++	[CLKID_USB1]		    = &meson8b_usb1.hw,
++	[CLKID_RESET]		    = &meson8b_reset.hw,
++	[CLKID_NAND]		    = &meson8b_nand.hw,
++	[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
++	[CLKID_USB]		    = &meson8b_usb.hw,
++	[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
++	[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
++	[CLKID_EFUSE]		    = &meson8b_efuse.hw,
++	[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
++	[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
++	[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
++	[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
++	[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
++	[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
++	[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
++	[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
++	[CLKID_DVIN]		    = &meson8b_dvin.hw,
++	[CLKID_UART2]		    = &meson8b_uart2.hw,
++	[CLKID_SANA]		    = &meson8b_sana.hw,
++	[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
++	[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
++	[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
++	[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
++	[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
++	[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
++	[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
++	[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
++	[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
++	[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
++	[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
++	[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
++	[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
++	[CLKID_RNG1]		    = &meson8b_rng1.hw,
++	[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
++	[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
++	[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
++	[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
++	[CLKID_EDP]		    = &meson8b_edp.hw,
++	[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
++	[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
++	[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
++	[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
++	[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
++	[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
++	[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
++	[CLKID_MPLL0_DIV]	    = &meson8b_mpll0_div.hw,
++	[CLKID_MPLL1_DIV]	    = &meson8b_mpll1_div.hw,
++	[CLKID_MPLL2_DIV]	    = &meson8b_mpll2_div.hw,
++	[CLKID_CPU_IN_SEL]	    = &meson8b_cpu_in_sel.hw,
++	[CLKID_CPU_IN_DIV2]	    = &meson8b_cpu_in_div2.hw,
++	[CLKID_CPU_IN_DIV3]	    = &meson8b_cpu_in_div3.hw,
++	[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
++	[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
++	[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
++	[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
++	[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
++	[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
++	[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
++	[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
++	[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
++	[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
++	[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
++	[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
++	[CLKID_HDMI_PLL_DCO]	    = &meson8b_hdmi_pll_dco.hw,
++	[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
++	[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
++	[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
++	[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
++	[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
++	[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
++	[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
++	[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
++	[CLKID_APB_SEL]		    = &meson8b_apb_clk_sel.hw,
++	[CLKID_APB]		    = &meson8b_apb_clk_gate.hw,
++	[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
++	[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
++	[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
++	[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
++	[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
++	[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
++	[CLKID_HDMI_PLL_LVDS_OUT]   = &meson8b_hdmi_pll_lvds_out.hw,
++	[CLKID_HDMI_PLL_HDMI_OUT]   = &meson8b_hdmi_pll_hdmi_out.hw,
++	[CLKID_VID_PLL_IN_SEL]	    = &meson8b_vid_pll_in_sel.hw,
++	[CLKID_VID_PLL_IN_EN]	    = &meson8b_vid_pll_in_en.hw,
++	[CLKID_VID_PLL_PRE_DIV]	    = &meson8b_vid_pll_pre_div.hw,
++	[CLKID_VID_PLL_POST_DIV]    = &meson8b_vid_pll_post_div.hw,
++	[CLKID_VID_PLL_FINAL_DIV]   = &meson8b_vid_pll_final_div.hw,
++	[CLKID_VCLK_IN_SEL]	    = &meson8b_vclk_in_sel.hw,
++	[CLKID_VCLK_IN_EN]	    = &meson8b_vclk_in_en.hw,
++	[CLKID_VCLK_EN]		    = &meson8b_vclk_en.hw,
++	[CLKID_VCLK_DIV1]	    = &meson8b_vclk_div1_gate.hw,
++	[CLKID_VCLK_DIV2_DIV]	    = &meson8b_vclk_div2_div.hw,
++	[CLKID_VCLK_DIV2]	    = &meson8b_vclk_div2_div_gate.hw,
++	[CLKID_VCLK_DIV4_DIV]	    = &meson8b_vclk_div4_div.hw,
++	[CLKID_VCLK_DIV4]	    = &meson8b_vclk_div4_div_gate.hw,
++	[CLKID_VCLK_DIV6_DIV]	    = &meson8b_vclk_div6_div.hw,
++	[CLKID_VCLK_DIV6]	    = &meson8b_vclk_div6_div_gate.hw,
++	[CLKID_VCLK_DIV12_DIV]	    = &meson8b_vclk_div12_div.hw,
++	[CLKID_VCLK_DIV12]	    = &meson8b_vclk_div12_div_gate.hw,
++	[CLKID_VCLK2_IN_SEL]	    = &meson8b_vclk2_in_sel.hw,
++	[CLKID_VCLK2_IN_EN]	    = &meson8b_vclk2_clk_in_en.hw,
++	[CLKID_VCLK2_EN]	    = &meson8b_vclk2_clk_en.hw,
++	[CLKID_VCLK2_DIV1]	    = &meson8b_vclk2_div1_gate.hw,
++	[CLKID_VCLK2_DIV2_DIV]	    = &meson8b_vclk2_div2_div.hw,
++	[CLKID_VCLK2_DIV2]	    = &meson8b_vclk2_div2_div_gate.hw,
++	[CLKID_VCLK2_DIV4_DIV]	    = &meson8b_vclk2_div4_div.hw,
++	[CLKID_VCLK2_DIV4]	    = &meson8b_vclk2_div4_div_gate.hw,
++	[CLKID_VCLK2_DIV6_DIV]	    = &meson8b_vclk2_div6_div.hw,
++	[CLKID_VCLK2_DIV6]	    = &meson8b_vclk2_div6_div_gate.hw,
++	[CLKID_VCLK2_DIV12_DIV]	    = &meson8b_vclk2_div12_div.hw,
++	[CLKID_VCLK2_DIV12]	    = &meson8b_vclk2_div12_div_gate.hw,
++	[CLKID_CTS_ENCT_SEL]	    = &meson8b_cts_enct_sel.hw,
++	[CLKID_CTS_ENCT]	    = &meson8b_cts_enct.hw,
++	[CLKID_CTS_ENCP_SEL]	    = &meson8b_cts_encp_sel.hw,
++	[CLKID_CTS_ENCP]	    = &meson8b_cts_encp.hw,
++	[CLKID_CTS_ENCI_SEL]	    = &meson8b_cts_enci_sel.hw,
++	[CLKID_CTS_ENCI]	    = &meson8b_cts_enci.hw,
++	[CLKID_HDMI_TX_PIXEL_SEL]   = &meson8b_hdmi_tx_pixel_sel.hw,
++	[CLKID_HDMI_TX_PIXEL]	    = &meson8b_hdmi_tx_pixel.hw,
++	[CLKID_CTS_ENCL_SEL]	    = &meson8b_cts_encl_sel.hw,
++	[CLKID_CTS_ENCL]	    = &meson8b_cts_encl.hw,
++	[CLKID_CTS_VDAC0_SEL]	    = &meson8b_cts_vdac0_sel.hw,
++	[CLKID_CTS_VDAC0]	    = &meson8b_cts_vdac0.hw,
++	[CLKID_HDMI_SYS_SEL]	    = &meson8b_hdmi_sys_sel.hw,
++	[CLKID_HDMI_SYS_DIV]	    = &meson8b_hdmi_sys_div.hw,
++	[CLKID_HDMI_SYS]	    = &meson8b_hdmi_sys.hw,
++	[CLKID_MALI_0_SEL]	    = &meson8b_mali_0_sel.hw,
++	[CLKID_MALI_0_DIV]	    = &meson8b_mali_0_div.hw,
++	[CLKID_MALI]		    = &meson8b_mali_0.hw,
++	[CLKID_VPU_0_SEL]	    = &meson8b_vpu_0_sel.hw,
++	[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
++	[CLKID_VPU]		    = &meson8b_vpu_0.hw,
++	[CLKID_VDEC_1_SEL]	    = &meson8b_vdec_1_sel.hw,
++	[CLKID_VDEC_1_1_DIV]	    = &meson8b_vdec_1_1_div.hw,
++	[CLKID_VDEC_1]		    = &meson8b_vdec_1_1.hw,
++	[CLKID_VDEC_HCODEC_SEL]	    = &meson8b_vdec_hcodec_sel.hw,
++	[CLKID_VDEC_HCODEC_DIV]	    = &meson8b_vdec_hcodec_div.hw,
++	[CLKID_VDEC_HCODEC]	    = &meson8b_vdec_hcodec.hw,
++	[CLKID_VDEC_2_SEL]	    = &meson8b_vdec_2_sel.hw,
++	[CLKID_VDEC_2_DIV]	    = &meson8b_vdec_2_div.hw,
++	[CLKID_VDEC_2]		    = &meson8b_vdec_2.hw,
++	[CLKID_VDEC_HEVC_SEL]	    = &meson8b_vdec_hevc_sel.hw,
++	[CLKID_VDEC_HEVC_DIV]	    = &meson8b_vdec_hevc_div.hw,
++	[CLKID_VDEC_HEVC_EN]	    = &meson8b_vdec_hevc_en.hw,
++	[CLKID_VDEC_HEVC]	    = &meson8b_vdec_hevc.hw,
++	[CLKID_CTS_AMCLK_SEL]	    = &meson8b_cts_amclk_sel.hw,
++	[CLKID_CTS_AMCLK_DIV]	    = &meson8b_cts_amclk_div.hw,
++	[CLKID_CTS_AMCLK]	    = &meson8b_cts_amclk.hw,
++	[CLKID_CTS_MCLK_I958_SEL]   = &meson8b_cts_mclk_i958_sel.hw,
++	[CLKID_CTS_MCLK_I958_DIV]   = &meson8b_cts_mclk_i958_div.hw,
++	[CLKID_CTS_MCLK_I958]	    = &meson8b_cts_mclk_i958.hw,
++	[CLKID_CTS_I958]	    = &meson8b_cts_i958.hw,
++	[CLKID_VID_PLL_LVDS_EN]	    = &meson8b_vid_pll_lvds_en.hw,
++	[CLKID_HDMI_PLL_DCO_IN]	    = &hdmi_pll_dco_in.hw,
++};
++
++static struct clk_hw *meson8b_hw_clks[] = {
++	[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
++	[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
++	[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
++	[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
++	[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
++	[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
++	[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
++	[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
++	[CLKID_CPUCLK] = &meson8b_cpu_clk.hw,
++	[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
++	[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
++	[CLKID_CLK81] = &meson8b_clk81.hw,
++	[CLKID_DDR]		    = &meson8b_ddr.hw,
++	[CLKID_DOS]		    = &meson8b_dos.hw,
++	[CLKID_ISA]		    = &meson8b_isa.hw,
++	[CLKID_PL301]		    = &meson8b_pl301.hw,
++	[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
++	[CLKID_SPICC]		    = &meson8b_spicc.hw,
++	[CLKID_I2C]		    = &meson8b_i2c.hw,
++	[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
++	[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
++	[CLKID_RNG0]		    = &meson8b_rng0.hw,
++	[CLKID_UART0]		    = &meson8b_uart0.hw,
++	[CLKID_SDHC]		    = &meson8b_sdhc.hw,
++	[CLKID_STREAM]		    = &meson8b_stream.hw,
++	[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
++	[CLKID_SDIO]		    = &meson8b_sdio.hw,
++	[CLKID_ABUF]		    = &meson8b_abuf.hw,
++	[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
++	[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
++	[CLKID_SPI]		    = &meson8b_spi.hw,
++	[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
++	[CLKID_ETH]		    = &meson8b_eth.hw,
++	[CLKID_DEMUX]		    = &meson8b_demux.hw,
++	[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
++	[CLKID_IEC958]		    = &meson8b_iec958.hw,
++	[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
++	[CLKID_AMCLK]		    = &meson8b_amclk.hw,
++	[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
++	[CLKID_MIXER]		    = &meson8b_mixer.hw,
++	[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
++	[CLKID_ADC]		    = &meson8b_adc.hw,
++	[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
++	[CLKID_AIU]		    = &meson8b_aiu.hw,
++	[CLKID_UART1]		    = &meson8b_uart1.hw,
++	[CLKID_G2D]		    = &meson8b_g2d.hw,
++	[CLKID_USB0]		    = &meson8b_usb0.hw,
++	[CLKID_USB1]		    = &meson8b_usb1.hw,
++	[CLKID_RESET]		    = &meson8b_reset.hw,
++	[CLKID_NAND]		    = &meson8b_nand.hw,
++	[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
++	[CLKID_USB]		    = &meson8b_usb.hw,
++	[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
++	[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
++	[CLKID_EFUSE]		    = &meson8b_efuse.hw,
++	[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
++	[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
++	[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
++	[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
++	[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
++	[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
++	[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
++	[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
++	[CLKID_DVIN]		    = &meson8b_dvin.hw,
++	[CLKID_UART2]		    = &meson8b_uart2.hw,
++	[CLKID_SANA]		    = &meson8b_sana.hw,
++	[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
++	[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
++	[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
++	[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
++	[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
++	[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
++	[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
++	[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
++	[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
++	[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
++	[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
++	[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
++	[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
++	[CLKID_RNG1]		    = &meson8b_rng1.hw,
++	[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
++	[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
++	[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
++	[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
++	[CLKID_EDP]		    = &meson8b_edp.hw,
++	[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
++	[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
++	[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
++	[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
++	[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
++	[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
++	[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
++	[CLKID_MPLL0_DIV]	    = &meson8b_mpll0_div.hw,
++	[CLKID_MPLL1_DIV]	    = &meson8b_mpll1_div.hw,
++	[CLKID_MPLL2_DIV]	    = &meson8b_mpll2_div.hw,
++	[CLKID_CPU_IN_SEL]	    = &meson8b_cpu_in_sel.hw,
++	[CLKID_CPU_IN_DIV2]	    = &meson8b_cpu_in_div2.hw,
++	[CLKID_CPU_IN_DIV3]	    = &meson8b_cpu_in_div3.hw,
++	[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
++	[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
++	[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
++	[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
++	[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
++	[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
++	[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
++	[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
++	[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
++	[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
++	[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
++	[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
++	[CLKID_HDMI_PLL_DCO]	    = &meson8b_hdmi_pll_dco.hw,
++	[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
++	[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
++	[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
++	[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
++	[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
++	[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
++	[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
++	[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
++	[CLKID_APB_SEL]		    = &meson8b_apb_clk_sel.hw,
++	[CLKID_APB]		    = &meson8b_apb_clk_gate.hw,
++	[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
++	[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
++	[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
++	[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
++	[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
++	[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
++	[CLKID_HDMI_PLL_LVDS_OUT]   = &meson8b_hdmi_pll_lvds_out.hw,
++	[CLKID_HDMI_PLL_HDMI_OUT]   = &meson8b_hdmi_pll_hdmi_out.hw,
++	[CLKID_VID_PLL_IN_SEL]	    = &meson8b_vid_pll_in_sel.hw,
++	[CLKID_VID_PLL_IN_EN]	    = &meson8b_vid_pll_in_en.hw,
++	[CLKID_VID_PLL_PRE_DIV]	    = &meson8b_vid_pll_pre_div.hw,
++	[CLKID_VID_PLL_POST_DIV]    = &meson8b_vid_pll_post_div.hw,
++	[CLKID_VID_PLL_FINAL_DIV]   = &meson8b_vid_pll_final_div.hw,
++	[CLKID_VCLK_IN_SEL]	    = &meson8b_vclk_in_sel.hw,
++	[CLKID_VCLK_IN_EN]	    = &meson8b_vclk_in_en.hw,
++	[CLKID_VCLK_EN]		    = &meson8b_vclk_en.hw,
++	[CLKID_VCLK_DIV1]	    = &meson8b_vclk_div1_gate.hw,
++	[CLKID_VCLK_DIV2_DIV]	    = &meson8b_vclk_div2_div.hw,
++	[CLKID_VCLK_DIV2]	    = &meson8b_vclk_div2_div_gate.hw,
++	[CLKID_VCLK_DIV4_DIV]	    = &meson8b_vclk_div4_div.hw,
++	[CLKID_VCLK_DIV4]	    = &meson8b_vclk_div4_div_gate.hw,
++	[CLKID_VCLK_DIV6_DIV]	    = &meson8b_vclk_div6_div.hw,
++	[CLKID_VCLK_DIV6]	    = &meson8b_vclk_div6_div_gate.hw,
++	[CLKID_VCLK_DIV12_DIV]	    = &meson8b_vclk_div12_div.hw,
++	[CLKID_VCLK_DIV12]	    = &meson8b_vclk_div12_div_gate.hw,
++	[CLKID_VCLK2_IN_SEL]	    = &meson8b_vclk2_in_sel.hw,
++	[CLKID_VCLK2_IN_EN]	    = &meson8b_vclk2_clk_in_en.hw,
++	[CLKID_VCLK2_EN]	    = &meson8b_vclk2_clk_en.hw,
++	[CLKID_VCLK2_DIV1]	    = &meson8b_vclk2_div1_gate.hw,
++	[CLKID_VCLK2_DIV2_DIV]	    = &meson8b_vclk2_div2_div.hw,
++	[CLKID_VCLK2_DIV2]	    = &meson8b_vclk2_div2_div_gate.hw,
++	[CLKID_VCLK2_DIV4_DIV]	    = &meson8b_vclk2_div4_div.hw,
++	[CLKID_VCLK2_DIV4]	    = &meson8b_vclk2_div4_div_gate.hw,
++	[CLKID_VCLK2_DIV6_DIV]	    = &meson8b_vclk2_div6_div.hw,
++	[CLKID_VCLK2_DIV6]	    = &meson8b_vclk2_div6_div_gate.hw,
++	[CLKID_VCLK2_DIV12_DIV]	    = &meson8b_vclk2_div12_div.hw,
++	[CLKID_VCLK2_DIV12]	    = &meson8b_vclk2_div12_div_gate.hw,
++	[CLKID_CTS_ENCT_SEL]	    = &meson8b_cts_enct_sel.hw,
++	[CLKID_CTS_ENCT]	    = &meson8b_cts_enct.hw,
++	[CLKID_CTS_ENCP_SEL]	    = &meson8b_cts_encp_sel.hw,
++	[CLKID_CTS_ENCP]	    = &meson8b_cts_encp.hw,
++	[CLKID_CTS_ENCI_SEL]	    = &meson8b_cts_enci_sel.hw,
++	[CLKID_CTS_ENCI]	    = &meson8b_cts_enci.hw,
++	[CLKID_HDMI_TX_PIXEL_SEL]   = &meson8b_hdmi_tx_pixel_sel.hw,
++	[CLKID_HDMI_TX_PIXEL]	    = &meson8b_hdmi_tx_pixel.hw,
++	[CLKID_CTS_ENCL_SEL]	    = &meson8b_cts_encl_sel.hw,
++	[CLKID_CTS_ENCL]	    = &meson8b_cts_encl.hw,
++	[CLKID_CTS_VDAC0_SEL]	    = &meson8b_cts_vdac0_sel.hw,
++	[CLKID_CTS_VDAC0]	    = &meson8b_cts_vdac0.hw,
++	[CLKID_HDMI_SYS_SEL]	    = &meson8b_hdmi_sys_sel.hw,
++	[CLKID_HDMI_SYS_DIV]	    = &meson8b_hdmi_sys_div.hw,
++	[CLKID_HDMI_SYS]	    = &meson8b_hdmi_sys.hw,
++	[CLKID_MALI_0_SEL]	    = &meson8b_mali_0_sel.hw,
++	[CLKID_MALI_0_DIV]	    = &meson8b_mali_0_div.hw,
++	[CLKID_MALI_0]		    = &meson8b_mali_0.hw,
++	[CLKID_MALI_1_SEL]	    = &meson8b_mali_1_sel.hw,
++	[CLKID_MALI_1_DIV]	    = &meson8b_mali_1_div.hw,
++	[CLKID_MALI_1]		    = &meson8b_mali_1.hw,
++	[CLKID_MALI]		    = &meson8b_mali.hw,
++	[CLKID_VPU_0_SEL]	    = &meson8b_vpu_0_sel.hw,
++	[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
++	[CLKID_VPU_0]		    = &meson8b_vpu_0.hw,
++	[CLKID_VPU_1_SEL]	    = &meson8b_vpu_1_sel.hw,
++	[CLKID_VPU_1_DIV]	    = &meson8b_vpu_1_div.hw,
++	[CLKID_VPU_1]		    = &meson8b_vpu_1.hw,
++	[CLKID_VPU]		    = &meson8b_vpu.hw,
++	[CLKID_VDEC_1_SEL]	    = &meson8b_vdec_1_sel.hw,
++	[CLKID_VDEC_1_1_DIV]	    = &meson8b_vdec_1_1_div.hw,
++	[CLKID_VDEC_1_1]	    = &meson8b_vdec_1_1.hw,
++	[CLKID_VDEC_1_2_DIV]	    = &meson8b_vdec_1_2_div.hw,
++	[CLKID_VDEC_1_2]	    = &meson8b_vdec_1_2.hw,
++	[CLKID_VDEC_1]		    = &meson8b_vdec_1.hw,
++	[CLKID_VDEC_HCODEC_SEL]	    = &meson8b_vdec_hcodec_sel.hw,
++	[CLKID_VDEC_HCODEC_DIV]	    = &meson8b_vdec_hcodec_div.hw,
++	[CLKID_VDEC_HCODEC]	    = &meson8b_vdec_hcodec.hw,
++	[CLKID_VDEC_2_SEL]	    = &meson8b_vdec_2_sel.hw,
++	[CLKID_VDEC_2_DIV]	    = &meson8b_vdec_2_div.hw,
++	[CLKID_VDEC_2]		    = &meson8b_vdec_2.hw,
++	[CLKID_VDEC_HEVC_SEL]	    = &meson8b_vdec_hevc_sel.hw,
++	[CLKID_VDEC_HEVC_DIV]	    = &meson8b_vdec_hevc_div.hw,
++	[CLKID_VDEC_HEVC_EN]	    = &meson8b_vdec_hevc_en.hw,
++	[CLKID_VDEC_HEVC]	    = &meson8b_vdec_hevc.hw,
++	[CLKID_CTS_AMCLK_SEL]	    = &meson8b_cts_amclk_sel.hw,
++	[CLKID_CTS_AMCLK_DIV]	    = &meson8b_cts_amclk_div.hw,
++	[CLKID_CTS_AMCLK]	    = &meson8b_cts_amclk.hw,
++	[CLKID_CTS_MCLK_I958_SEL]   = &meson8b_cts_mclk_i958_sel.hw,
++	[CLKID_CTS_MCLK_I958_DIV]   = &meson8b_cts_mclk_i958_div.hw,
++	[CLKID_CTS_MCLK_I958]	    = &meson8b_cts_mclk_i958.hw,
++	[CLKID_CTS_I958]	    = &meson8b_cts_i958.hw,
++	[CLKID_VID_PLL_LVDS_EN]	    = &meson8b_vid_pll_lvds_en.hw,
++	[CLKID_HDMI_PLL_DCO_IN]	    = &hdmi_pll_dco_in.hw,
++};
++
++static struct clk_hw *meson8m2_hw_clks[] = {
++	[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
++	[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
++	[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
++	[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
++	[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
++	[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
++	[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
++	[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
++	[CLKID_CPUCLK] = &meson8b_cpu_clk.hw,
++	[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
++	[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
++	[CLKID_CLK81] = &meson8b_clk81.hw,
++	[CLKID_DDR]		    = &meson8b_ddr.hw,
++	[CLKID_DOS]		    = &meson8b_dos.hw,
++	[CLKID_ISA]		    = &meson8b_isa.hw,
++	[CLKID_PL301]		    = &meson8b_pl301.hw,
++	[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
++	[CLKID_SPICC]		    = &meson8b_spicc.hw,
++	[CLKID_I2C]		    = &meson8b_i2c.hw,
++	[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
++	[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
++	[CLKID_RNG0]		    = &meson8b_rng0.hw,
++	[CLKID_UART0]		    = &meson8b_uart0.hw,
++	[CLKID_SDHC]		    = &meson8b_sdhc.hw,
++	[CLKID_STREAM]		    = &meson8b_stream.hw,
++	[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
++	[CLKID_SDIO]		    = &meson8b_sdio.hw,
++	[CLKID_ABUF]		    = &meson8b_abuf.hw,
++	[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
++	[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
++	[CLKID_SPI]		    = &meson8b_spi.hw,
++	[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
++	[CLKID_ETH]		    = &meson8b_eth.hw,
++	[CLKID_DEMUX]		    = &meson8b_demux.hw,
++	[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
++	[CLKID_IEC958]		    = &meson8b_iec958.hw,
++	[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
++	[CLKID_AMCLK]		    = &meson8b_amclk.hw,
++	[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
++	[CLKID_MIXER]		    = &meson8b_mixer.hw,
++	[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
++	[CLKID_ADC]		    = &meson8b_adc.hw,
++	[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
++	[CLKID_AIU]		    = &meson8b_aiu.hw,
++	[CLKID_UART1]		    = &meson8b_uart1.hw,
++	[CLKID_G2D]		    = &meson8b_g2d.hw,
++	[CLKID_USB0]		    = &meson8b_usb0.hw,
++	[CLKID_USB1]		    = &meson8b_usb1.hw,
++	[CLKID_RESET]		    = &meson8b_reset.hw,
++	[CLKID_NAND]		    = &meson8b_nand.hw,
++	[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
++	[CLKID_USB]		    = &meson8b_usb.hw,
++	[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
++	[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
++	[CLKID_EFUSE]		    = &meson8b_efuse.hw,
++	[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
++	[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
++	[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
++	[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
++	[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
++	[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
++	[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
++	[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
++	[CLKID_DVIN]		    = &meson8b_dvin.hw,
++	[CLKID_UART2]		    = &meson8b_uart2.hw,
++	[CLKID_SANA]		    = &meson8b_sana.hw,
++	[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
++	[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
++	[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
++	[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
++	[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
++	[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
++	[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
++	[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
++	[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
++	[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
++	[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
++	[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
++	[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
++	[CLKID_RNG1]		    = &meson8b_rng1.hw,
++	[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
++	[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
++	[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
++	[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
++	[CLKID_EDP]		    = &meson8b_edp.hw,
++	[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
++	[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
++	[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
++	[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
++	[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
++	[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
++	[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
++	[CLKID_MPLL0_DIV]	    = &meson8b_mpll0_div.hw,
++	[CLKID_MPLL1_DIV]	    = &meson8b_mpll1_div.hw,
++	[CLKID_MPLL2_DIV]	    = &meson8b_mpll2_div.hw,
++	[CLKID_CPU_IN_SEL]	    = &meson8b_cpu_in_sel.hw,
++	[CLKID_CPU_IN_DIV2]	    = &meson8b_cpu_in_div2.hw,
++	[CLKID_CPU_IN_DIV3]	    = &meson8b_cpu_in_div3.hw,
++	[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
++	[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
++	[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
++	[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
++	[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
++	[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
++	[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
++	[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
++	[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
++	[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
++	[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
++	[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
++	[CLKID_HDMI_PLL_DCO]	    = &meson8b_hdmi_pll_dco.hw,
++	[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
++	[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
++	[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
++	[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
++	[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
++	[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
++	[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
++	[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
++	[CLKID_APB_SEL]		    = &meson8b_apb_clk_sel.hw,
++	[CLKID_APB]		    = &meson8b_apb_clk_gate.hw,
++	[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
++	[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
++	[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
++	[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
++	[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
++	[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
++	[CLKID_HDMI_PLL_LVDS_OUT]   = &meson8b_hdmi_pll_lvds_out.hw,
++	[CLKID_HDMI_PLL_HDMI_OUT]   = &meson8b_hdmi_pll_hdmi_out.hw,
++	[CLKID_VID_PLL_IN_SEL]	    = &meson8b_vid_pll_in_sel.hw,
++	[CLKID_VID_PLL_IN_EN]	    = &meson8b_vid_pll_in_en.hw,
++	[CLKID_VID_PLL_PRE_DIV]	    = &meson8b_vid_pll_pre_div.hw,
++	[CLKID_VID_PLL_POST_DIV]    = &meson8b_vid_pll_post_div.hw,
++	[CLKID_VID_PLL_FINAL_DIV]   = &meson8b_vid_pll_final_div.hw,
++	[CLKID_VCLK_IN_SEL]	    = &meson8b_vclk_in_sel.hw,
++	[CLKID_VCLK_IN_EN]	    = &meson8b_vclk_in_en.hw,
++	[CLKID_VCLK_EN]		    = &meson8b_vclk_en.hw,
++	[CLKID_VCLK_DIV1]	    = &meson8b_vclk_div1_gate.hw,
++	[CLKID_VCLK_DIV2_DIV]	    = &meson8b_vclk_div2_div.hw,
++	[CLKID_VCLK_DIV2]	    = &meson8b_vclk_div2_div_gate.hw,
++	[CLKID_VCLK_DIV4_DIV]	    = &meson8b_vclk_div4_div.hw,
++	[CLKID_VCLK_DIV4]	    = &meson8b_vclk_div4_div_gate.hw,
++	[CLKID_VCLK_DIV6_DIV]	    = &meson8b_vclk_div6_div.hw,
++	[CLKID_VCLK_DIV6]	    = &meson8b_vclk_div6_div_gate.hw,
++	[CLKID_VCLK_DIV12_DIV]	    = &meson8b_vclk_div12_div.hw,
++	[CLKID_VCLK_DIV12]	    = &meson8b_vclk_div12_div_gate.hw,
++	[CLKID_VCLK2_IN_SEL]	    = &meson8b_vclk2_in_sel.hw,
++	[CLKID_VCLK2_IN_EN]	    = &meson8b_vclk2_clk_in_en.hw,
++	[CLKID_VCLK2_EN]	    = &meson8b_vclk2_clk_en.hw,
++	[CLKID_VCLK2_DIV1]	    = &meson8b_vclk2_div1_gate.hw,
++	[CLKID_VCLK2_DIV2_DIV]	    = &meson8b_vclk2_div2_div.hw,
++	[CLKID_VCLK2_DIV2]	    = &meson8b_vclk2_div2_div_gate.hw,
++	[CLKID_VCLK2_DIV4_DIV]	    = &meson8b_vclk2_div4_div.hw,
++	[CLKID_VCLK2_DIV4]	    = &meson8b_vclk2_div4_div_gate.hw,
++	[CLKID_VCLK2_DIV6_DIV]	    = &meson8b_vclk2_div6_div.hw,
++	[CLKID_VCLK2_DIV6]	    = &meson8b_vclk2_div6_div_gate.hw,
++	[CLKID_VCLK2_DIV12_DIV]	    = &meson8b_vclk2_div12_div.hw,
++	[CLKID_VCLK2_DIV12]	    = &meson8b_vclk2_div12_div_gate.hw,
++	[CLKID_CTS_ENCT_SEL]	    = &meson8b_cts_enct_sel.hw,
++	[CLKID_CTS_ENCT]	    = &meson8b_cts_enct.hw,
++	[CLKID_CTS_ENCP_SEL]	    = &meson8b_cts_encp_sel.hw,
++	[CLKID_CTS_ENCP]	    = &meson8b_cts_encp.hw,
++	[CLKID_CTS_ENCI_SEL]	    = &meson8b_cts_enci_sel.hw,
++	[CLKID_CTS_ENCI]	    = &meson8b_cts_enci.hw,
++	[CLKID_HDMI_TX_PIXEL_SEL]   = &meson8b_hdmi_tx_pixel_sel.hw,
++	[CLKID_HDMI_TX_PIXEL]	    = &meson8b_hdmi_tx_pixel.hw,
++	[CLKID_CTS_ENCL_SEL]	    = &meson8b_cts_encl_sel.hw,
++	[CLKID_CTS_ENCL]	    = &meson8b_cts_encl.hw,
++	[CLKID_CTS_VDAC0_SEL]	    = &meson8b_cts_vdac0_sel.hw,
++	[CLKID_CTS_VDAC0]	    = &meson8b_cts_vdac0.hw,
++	[CLKID_HDMI_SYS_SEL]	    = &meson8b_hdmi_sys_sel.hw,
++	[CLKID_HDMI_SYS_DIV]	    = &meson8b_hdmi_sys_div.hw,
++	[CLKID_HDMI_SYS]	    = &meson8b_hdmi_sys.hw,
++	[CLKID_MALI_0_SEL]	    = &meson8b_mali_0_sel.hw,
++	[CLKID_MALI_0_DIV]	    = &meson8b_mali_0_div.hw,
++	[CLKID_MALI_0]		    = &meson8b_mali_0.hw,
++	[CLKID_MALI_1_SEL]	    = &meson8b_mali_1_sel.hw,
++	[CLKID_MALI_1_DIV]	    = &meson8b_mali_1_div.hw,
++	[CLKID_MALI_1]		    = &meson8b_mali_1.hw,
++	[CLKID_MALI]		    = &meson8b_mali.hw,
++	[CLKID_GP_PLL_DCO]	    = &meson8m2_gp_pll_dco.hw,
++	[CLKID_GP_PLL]		    = &meson8m2_gp_pll.hw,
++	[CLKID_VPU_0_SEL]	    = &meson8m2_vpu_0_sel.hw,
++	[CLKID_VPU_0_DIV]	    = &meson8b_vpu_0_div.hw,
++	[CLKID_VPU_0]		    = &meson8b_vpu_0.hw,
++	[CLKID_VPU_1_SEL]	    = &meson8m2_vpu_1_sel.hw,
++	[CLKID_VPU_1_DIV]	    = &meson8b_vpu_1_div.hw,
++	[CLKID_VPU_1]		    = &meson8b_vpu_1.hw,
++	[CLKID_VPU]		    = &meson8b_vpu.hw,
++	[CLKID_VDEC_1_SEL]	    = &meson8b_vdec_1_sel.hw,
++	[CLKID_VDEC_1_1_DIV]	    = &meson8b_vdec_1_1_div.hw,
++	[CLKID_VDEC_1_1]	    = &meson8b_vdec_1_1.hw,
++	[CLKID_VDEC_1_2_DIV]	    = &meson8b_vdec_1_2_div.hw,
++	[CLKID_VDEC_1_2]	    = &meson8b_vdec_1_2.hw,
++	[CLKID_VDEC_1]		    = &meson8b_vdec_1.hw,
++	[CLKID_VDEC_HCODEC_SEL]	    = &meson8b_vdec_hcodec_sel.hw,
++	[CLKID_VDEC_HCODEC_DIV]	    = &meson8b_vdec_hcodec_div.hw,
++	[CLKID_VDEC_HCODEC]	    = &meson8b_vdec_hcodec.hw,
++	[CLKID_VDEC_2_SEL]	    = &meson8b_vdec_2_sel.hw,
++	[CLKID_VDEC_2_DIV]	    = &meson8b_vdec_2_div.hw,
++	[CLKID_VDEC_2]		    = &meson8b_vdec_2.hw,
++	[CLKID_VDEC_HEVC_SEL]	    = &meson8b_vdec_hevc_sel.hw,
++	[CLKID_VDEC_HEVC_DIV]	    = &meson8b_vdec_hevc_div.hw,
++	[CLKID_VDEC_HEVC_EN]	    = &meson8b_vdec_hevc_en.hw,
++	[CLKID_VDEC_HEVC]	    = &meson8b_vdec_hevc.hw,
++	[CLKID_CTS_AMCLK_SEL]	    = &meson8b_cts_amclk_sel.hw,
++	[CLKID_CTS_AMCLK_DIV]	    = &meson8b_cts_amclk_div.hw,
++	[CLKID_CTS_AMCLK]	    = &meson8b_cts_amclk.hw,
++	[CLKID_CTS_MCLK_I958_SEL]   = &meson8b_cts_mclk_i958_sel.hw,
++	[CLKID_CTS_MCLK_I958_DIV]   = &meson8b_cts_mclk_i958_div.hw,
++	[CLKID_CTS_MCLK_I958]	    = &meson8b_cts_mclk_i958.hw,
++	[CLKID_CTS_I958]	    = &meson8b_cts_i958.hw,
++	[CLKID_VID_PLL_LVDS_EN]	    = &meson8b_vid_pll_lvds_en.hw,
++	[CLKID_HDMI_PLL_DCO_IN]	    = &hdmi_pll_dco_in.hw,
+ };
  
-diff --git a/include/dt-bindings/clock/g12a-aoclkc.h b/include/dt-bindings/clock/g12a-aoclkc.h
-index e916e49ff288..8fe7712fb12d 100644
---- a/include/dt-bindings/clock/g12a-aoclkc.h
-+++ b/include/dt-bindings/clock/g12a-aoclkc.h
-@@ -26,10 +26,17 @@
- #define CLKID_AO_M4_FCLK	13
- #define CLKID_AO_M4_HCLK	14
- #define CLKID_AO_CLK81		15
-+#define CLKID_AO_SAR_ADC_DIV	17
- #define CLKID_AO_SAR_ADC_SEL	16
- #define CLKID_AO_SAR_ADC_CLK	18
- #define CLKID_AO_CTS_OSCIN	19
-+#define CLKID_AO_32K_PRE	20
-+#define CLKID_AO_32K_DIV	21
-+#define CLKID_AO_32K_SEL	22
- #define CLKID_AO_32K		23
-+#define CLKID_AO_CEC_PRE	24
-+#define CLKID_AO_CEC_DIV	25
-+#define CLKID_AO_CEC_SEL	26
- #define CLKID_AO_CEC		27
- #define CLKID_AO_CTS_RTC_OSCIN	28
+ static struct clk_regmap *const meson8b_clk_regmaps[] = {
+@@ -3788,8 +3777,23 @@ static struct meson8b_nb_data meson8b_cpu_nb_data = {
+ 	.nb.notifier_call = meson8b_cpu_clk_notifier_cb,
+ };
  
++static struct meson_clk_hw_data meson8_clks = {
++	.hws = meson8_hw_clks,
++	.num = ARRAY_SIZE(meson8_hw_clks),
++};
++
++static struct meson_clk_hw_data meson8b_clks = {
++	.hws = meson8b_hw_clks,
++	.num = ARRAY_SIZE(meson8b_hw_clks),
++};
++
++static struct meson_clk_hw_data meson8m2_clks = {
++	.hws = meson8m2_hw_clks,
++	.num = ARRAY_SIZE(meson8m2_hw_clks),
++};
++
+ static void __init meson8b_clkc_init_common(struct device_node *np,
+-			struct clk_hw_onecell_data *clk_hw_onecell_data)
++					    struct meson_clk_hw_data *hw_clks)
+ {
+ 	struct meson8b_clk_reset *rstc;
+ 	struct device_node *parent_np;
+@@ -3830,17 +3834,17 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+ 	 * register all clks and start with the first used ID (which is
+ 	 * CLKID_PLL_FIXED)
+ 	 */
+-	for (i = CLKID_PLL_FIXED; i < CLK_NR_CLKS; i++) {
++	for (i = CLKID_PLL_FIXED; i < hw_clks->num; i++) {
+ 		/* array might be sparse */
+-		if (!clk_hw_onecell_data->hws[i])
++		if (!hw_clks->hws[i])
+ 			continue;
+ 
+-		ret = of_clk_hw_register(np, clk_hw_onecell_data->hws[i]);
++		ret = of_clk_hw_register(np, hw_clks->hws[i]);
+ 		if (ret)
+ 			return;
+ 	}
+ 
+-	meson8b_cpu_nb_data.cpu_clk = clk_hw_onecell_data->hws[CLKID_CPUCLK];
++	meson8b_cpu_nb_data.cpu_clk = hw_clks->hws[CLKID_CPUCLK];
+ 
+ 	/*
+ 	 * FIXME we shouldn't program the muxes in notifier handlers. The
+@@ -3856,25 +3860,24 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+ 		return;
+ 	}
+ 
+-	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
+-				     clk_hw_onecell_data);
++	ret = of_clk_add_hw_provider(np, meson_clk_hw_get, hw_clks);
+ 	if (ret)
+ 		pr_err("%s: failed to register clock provider\n", __func__);
+ }
+ 
+ static void __init meson8_clkc_init(struct device_node *np)
+ {
+-	return meson8b_clkc_init_common(np, &meson8_hw_onecell_data);
++	return meson8b_clkc_init_common(np, &meson8_clks);
+ }
+ 
+ static void __init meson8b_clkc_init(struct device_node *np)
+ {
+-	return meson8b_clkc_init_common(np, &meson8b_hw_onecell_data);
++	return meson8b_clkc_init_common(np, &meson8b_clks);
+ }
+ 
+ static void __init meson8m2_clkc_init(struct device_node *np)
+ {
+-	return meson8b_clkc_init_common(np, &meson8m2_hw_onecell_data);
++	return meson8b_clkc_init_common(np, &meson8m2_clks);
+ }
+ 
+ CLK_OF_DECLARE_DRIVER(meson8_clkc, "amlogic,meson8-clkc",
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index ce62ed47cbfc..f999655d4436 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -185,8 +185,6 @@
+ #define CLKID_VID_PLL_LVDS_EN	216
+ #define CLKID_HDMI_PLL_DCO_IN   217
+ 
+-#define CLK_NR_CLKS		218
+-
+ /*
+  * include the CLKID and RESETID that have
+  * been made part of the stable DT binding
 
 -- 
 2.34.1
