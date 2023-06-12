@@ -2,97 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A23F0C7EE25
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6F9C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:13:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236919AbjFLKEP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 06:04:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38554 "EHLO
+        id S231337AbjFLKNg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 06:13:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236132AbjFLKCX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:02:23 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79B2F19AA
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:46:22 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-51494659d49so7338353a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:46:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686563181; x=1689155181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rnqmA+7ejKEoumRQXbD2dFEOAECIRvpjBrpsIvzDcXE=;
-        b=bOqMAWA6FUl3Hh/1bSBMJUcM9sm069+DjKDb1oLjnPvY5UgqDC1il+j0+f+xDL9AgZ
-         Aa3KEkhRPwnAnoEZqbgeeE2NNX86t3CLIVE0CiRC9idETncR41HJTM4OuTE135G7Dowa
-         X0h157eD9Xxt3VxABSxrtlWe8wvSsk7Aezp53lImnMpy0to9SRH0KxXKZ6YN1sOF6MvG
-         ScopxONIbmAV4eynWU/TrIA/+nQLS4uDqMYHfOqgjHeml45Mw25Jc0EcgxPnCnU2TP5j
-         8aCt3FKRV2E7LLUlhQDWwFVjUrOnOXTeHU3zeeWGbr56bMGPIGVJuLezWpjNwwWbZNbf
-         KnQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686563181; x=1689155181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rnqmA+7ejKEoumRQXbD2dFEOAECIRvpjBrpsIvzDcXE=;
-        b=cZDoPs1ofpRxMNtiXB2n7JAL5O7Tgkr9BBTXVMjuOp6nLNRFvZsmfkKTMjCoE3BCqP
-         XJJd2LR+cLcRMVKbhHqcKpdHIYj/YyNFcEl5XwDZ1eIGi18EGJnbjg6dPsdscbecbhj7
-         1C88rJFCFJo4yMthiME7quo2MmJp34o7xKSQJ7f7mZhOwGOsbrU/+I0vGZ2rFRhecAIo
-         LlW6KzdulgYtA5VzT5Fd0Jzd2GIaK48UhNHTWqTMC9YYJOh3ZiiTvLMBuAe1dWgFzhj2
-         +KqA7wx38WGbrjUArwADQzYw0++zO3IHqYyVIIzsqJFy+1pbwbARkeVOmwY1++Q9LJcM
-         N46w==
-X-Gm-Message-State: AC+VfDwy7dEzqVJh3B/Rciyaa3/+TnTuKvZZcLhofU0+irMk8yzMtHv4
-        ouBGAHFf+LZ2ELxIosisyngxmA==
-X-Google-Smtp-Source: ACHHUZ7gljOgj8UwPzUL30K6OmKyd1MUnGAknF36UNkZCc2YhbA7YGfJVoCe5QV3YNo7/U5O9ILjNg==
-X-Received: by 2002:a17:907:9349:b0:977:eed1:4510 with SMTP id bv9-20020a170907934900b00977eed14510mr9264925ejc.21.1686563180852;
-        Mon, 12 Jun 2023 02:46:20 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id kd14-20020a17090798ce00b00965a0f30fbfsm4968696ejc.186.2023.06.12.02.46.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 02:46:20 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Arnd Bergmann <arnd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: samsung: add CONFIG_OF dependency
-Date:   Mon, 12 Jun 2023 11:46:17 +0200
-Message-Id: <168656316761.117073.3267717876811541520.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230609081559.915867-1-arnd@kernel.org>
-References: <20230609081559.915867-1-arnd@kernel.org>
+        with ESMTP id S232269AbjFLKNS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:13:18 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C16DE10CC;
+        Mon, 12 Jun 2023 02:53:56 -0700 (PDT)
+Received: from [IPV6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2] (unknown [IPv6:2001:b07:2ed:14ed:c5f8:7372:f042:90a2])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5AE1E6605907;
+        Mon, 12 Jun 2023 10:53:54 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1686563635;
+        bh=12+M92ejc+eDkMrCoA63t6hfzspIbG8XPxdjeW+mgqE=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=IEjF90KqrXkK2WXSoPZpydyHRiHNiisuQv0m/SM8Icg68gW/oWxAhG7JpoS2bPH3A
+         ECZs3viXyqx83QNASlzbfaP4XcIDuAPijapONC6WRlhIwLUioYvHXt5AHXZRsqUtpb
+         dHcoHLn1oGJSTJCBqN6IvGwgGRqNY4SijA993M+HuKivXnM5LER+zRSQclNA+zjqcJ
+         si8uTlazy6ukbUAP2RFAmCTMc9PLqXcVXrqRAgkn6uPk6QNskA+Z9PFlao54EZy7rL
+         0zX9P8xaaMNp75bQoZWzzR/vkKe+zFz7je2tA0Kf7Bb37Z92qltgyLsewoTbvQdPWY
+         oKQ1uWqcd2C9A==
+Message-ID: <fda4f196-8466-8290-9072-d80fff367720@collabora.com>
+Date:   Mon, 12 Jun 2023 11:53:51 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v2 0/5] Enable decoder for mt8183
+Content-Language: en-US
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     kernel@collabora.com, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20230607205714.510012-1-nfraprado@collabora.com>
+ <380c6489-7a3c-778b-5b81-6339b6964b90@xs4all.nl>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <380c6489-7a3c-778b-5b81-6339b6964b90@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Fri, 09 Jun 2023 10:15:49 +0200, Arnd Bergmann wrote:
-> When CONFIG_OF is disabled, build testing on x86 runs into a couple of
-> objtool warnings from functions that unconditionally call panic() but
-> have no __noreturn annotation:
+Il 12/06/23 09:02, Hans Verkuil ha scritto:
+> Hi Nicolas,
 > 
-> vmlinux.o: warning: objtool: exynos3250_cmu_isp_probe+0x17: samsung_cmu_register_one() is missing a __noreturn annotation
-> vmlinux.o: warning: objtool: exynos7885_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
-> vmlinux.o: warning: objtool: exynos850_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
-> vmlinux.o: warning: objtool: exynosautov9_cmu_probe+0x16: exynos_arm64_register_cmu() is missing a __noreturn annotation
+> On 07/06/2023 22:53, Nícolas F. R. A. Prado wrote:
+>>
+>> This series enables the hardware decoder present on mt8183. At first
+>> glance, the only missing piece is the devicetree node for it, however,
+>> simply adding it as is would cause an address collision between the
+>> first register iospace and the clock-controller node, so a rework of the
+>> dt-binding and driver, as well as addition of a clock, were needed
+>> first.
+>>
+>> Tested that H264 decoding works with the hardware decoder on
+>> mt8183-kukui-jacuzzi-juniper-sku16, giving a fluster score of 98/135 on
+>> the JVT-AVC_V1 test suite. And ensured other SoCs (MT8192 and MT8195)
+>> still work as usual.
+>>
+>> Changes in v2:
+>> - Merged commit 1 (media: dt-bindings: mediatek,vcodec: Allow single
+>>    clock for mt8183) into commit 3 (media: dt-bindings: mediatek,vcodec:
+>>    Remove VDEC_SYS for mt8183)
+>> - Further constrained properties in dt-binding
+>> - Added CLK_IGNORE_UNUSED flag to active clock
+>> - Reformatted reg-names in DT node
+>>
+>> Nícolas F. R. A. Prado (4):
+>>    media: dt-bindings: mediatek,vcodec: Don't require assigned-clocks
+>>    media: dt-bindings: mediatek,vcodec: Remove VDEC_SYS for mt8183
+>>    media: mediatek: vcodec: Read HW active status from clock
+>>    clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
 > 
-> [...]
+> Is the clk patch independent from the others? It's not clear to me.
+> 
+> If the clk patch has to go in together with the media patches, then
+> please let me know and post a v3 where the clk patch is also CC-ed to
+> the linux-media mailinglist to ensure it ends up in our patchwork system.
+> 
+> And in that case I need a Acked-by from the clk maintainer as well.
+> 
+> If it is independent, then there is no need for a v3 (at least, not
+> for this).
+> 
 
-Applied, thanks!
+The clock patch is not independent, as in the devicetree changes will not
+work without the addition of that clock (and of course even fail building),
+so that series needs a v3.
 
-[1/1] clk: samsung: add CONFIG_OF dependency
-      https://git.kernel.org/krzk/linux/c/2aac2d8b95923203e683c60124877ab434133679
+Nícolas, please go on and send a v3 as requested.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cheers,
+Angelo
+
+> Regards,
+> 
+> 	Hans
+> 
+>>
+>> Yunfei Dong (1):
+>>    arm64: dts: mediatek: mt8183: Add decoder
+>>
+>>   .../media/mediatek,vcodec-decoder.yaml        | 65 +++++++++++++++----
+>>   arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 30 +++++++++
+>>   drivers/clk/mediatek/clk-mt8183-vdec.c        |  5 ++
+>>   .../mediatek/vcodec/mtk_vcodec_dec_drv.c      | 59 +++++++++++++----
+>>   .../mediatek/vcodec/mtk_vcodec_dec_hw.c       | 20 ++++--
+>>   .../mediatek/vcodec/mtk_vcodec_dec_pm.c       | 12 +++-
+>>   .../platform/mediatek/vcodec/mtk_vcodec_drv.h |  1 +
+>>   include/dt-bindings/clock/mt8183-clk.h        |  3 +-
+>>   8 files changed, 165 insertions(+), 30 deletions(-)
+>>
+> 
+> 
+
+
