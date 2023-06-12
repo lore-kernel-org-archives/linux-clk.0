@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F2CC7EE25
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 05:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D054C7EE25
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 05:40:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235780AbjFLFjq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 01:39:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40250 "EHLO
+        id S235615AbjFLFkA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 01:40:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235542AbjFLFjd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 01:39:33 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C92E78
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:31 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4f624daccd1so4261747e87.0
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:31 -0700 (PDT)
+        with ESMTP id S235766AbjFLFjh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 01:39:37 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0DED10DA
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:34 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f6170b1486so4775296e87.0
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 22:39:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686548370; x=1689140370;
+        d=linaro.org; s=google; t=1686548373; x=1689140373;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2TlZyzRwY/o/e9xVkO7KMsj7n4flvbaCYZ7tv2gefqg=;
-        b=H21XnBOKHaVHqsY8z2ryRf0/MFJ1LDTIf0Yrmruye0wvVcQPM8SkLhqbAiChKWF6e0
-         9KcH94jX0zlZXEQTP/uccEF2rvDg2Q7c7jZ1wHJqLE01bsQUFw54t9XjAKajGWjiF9G1
-         r3rK8D96eU+Y04ZOqiOv/66moueROEutCgdV7mlCalvj/kkbjt26yMdJVyf/kzoy/mRX
-         yHh7uXTmjTa8ds7NMLhW4FGyfnWhlWa6r8SbAB0yWPBP2ZNDu3h3PQn2ssvqMNbr3/i0
-         4qk+zFz/WbnOW46g73o00+7gTrx01lLtcCngPSKg3aQc/CIBqstN0uiO1Lfj2GkIfPql
-         5NyQ==
+        bh=hcxDwDZfbo/85khIYBSZuraP26/4wkWE6EMGE9oVioQ=;
+        b=xO8QvMEbbpDd73N5wYMdhNxf48iGu0aWOhr6Al47xOuHsTdWUOla0Qm2Iov3fSJYxK
+         iKPuOLaApFe5S8HaV2vas+g+6hK+fPhANh8DbvbfNp9UbdVIsfRQBjKdyfMdX0kYe9ds
+         lpFMJh3wJ0pFM6P3L5e86Qd1HY/7J+zjchux515AFXZN2NeAruWI1oTRkzIMHBp8abbp
+         PrO4rCqrGorIEjio732nTIIE4MYdfPd1/x/5lT8JXsFDlGismbbWGwXr+g9zD8aAI7T4
+         2bOO5dCr3GCwxitQ87/WP3xlFTIMZseENFY9RKrU+c3LED13UarNTirx1qvvrRnMiYTZ
+         RDyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686548370; x=1689140370;
+        d=1e100.net; s=20221208; t=1686548373; x=1689140373;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2TlZyzRwY/o/e9xVkO7KMsj7n4flvbaCYZ7tv2gefqg=;
-        b=S8YfW3gKZnLTcAHYuOXBMB23dlrKd/ykEV3bDJ/ED/G6OPfi6cKN4R1YPaY88txrjD
-         m0Ztfo3jSoO2VJ8hYcncqxMuKQJj2JW5kP6PtC9lU2OlvaSGQzKwoZO5YtZ9TzfRXVdl
-         TTmBQwghe8ASOtZvCOD3v0CInoLfaVml4ABRpCPrZRyMkcNwWMqj0NQT5diNXx3oSJdo
-         nVroh1e+96ijmScHQAZliUTZFz1I1byb9hFQPqildmDWgJnd3RTP9IBRoIVRbQ0cTLaC
-         t2/pJOkf/+hwe24glFFo22jI7z1S/xh8sIT3BmKVqPav8dm8/TN21WMNs/X3586ZBtd3
-         4huQ==
-X-Gm-Message-State: AC+VfDxz74ODpY672VYwG9ZyFisD62cPtn8Sy0wBWd4YMCmGde4PjabH
-        h0TVHcuQ4iapsG1/za/YvlwkGw==
-X-Google-Smtp-Source: ACHHUZ6Iw2ZktZqzXHMcaz1jO66ChxfM2TSNrLUjN2r41QjXZTdMjJY2VsagodYpSArFVnnc3EoNzw==
-X-Received: by 2002:a05:6512:32ad:b0:4f4:b3a6:4140 with SMTP id q13-20020a05651232ad00b004f4b3a64140mr2202507lfe.42.1686548370162;
-        Sun, 11 Jun 2023 22:39:30 -0700 (PDT)
+        bh=hcxDwDZfbo/85khIYBSZuraP26/4wkWE6EMGE9oVioQ=;
+        b=Vn39goynyqh2cwOZ6P49L0HSNr7My1IGeuOb0L0zDEk39iXKbXDzbqNsiTL2OEvd1l
+         6D4K00ebVs6z35yYTkp967E3Pqy10aOkh6YSegRtKT7fn9vQYvu70AcjB+PzKE9LsHU9
+         42NWopzNx6nCdeqfctcib9U8cHiD/cYvjJfNtQAtU7EL6AiMqZaObuG93yseLcGdugKm
+         uatFP/Akf7IC/hFYkuSB1SjBxx6FJa2DeqyToMbDNK7Q1tKmotrwFuZcT24s/LSmGf2+
+         zxgcYEQp+gflcOQr/L+Mle0xbapuG7vHTsh2sEgOAWPTUM9u5hRSo+6cr0SDyhyHttQw
+         Jdaw==
+X-Gm-Message-State: AC+VfDxw5kNMwr7Y1vCXzOkH9+yKAQgAsJ1SRbZ9NgRwc4LjPqbLifbk
+        eS9waGs+Ymgt4JLdOBMaEMs0kA==
+X-Google-Smtp-Source: ACHHUZ6JnnQBqlWQ8vytyKIbJhtuEgKzCTcCctpgOK6LyFqsrxBZP42pngw+Hq4/WeyQZLSy35XlZA==
+X-Received: by 2002:a19:791d:0:b0:4f3:a9a8:8d84 with SMTP id u29-20020a19791d000000b004f3a9a88d84mr2557182lfc.6.1686548372932;
+        Sun, 11 Jun 2023 22:39:32 -0700 (PDT)
 Received: from eriador.lan (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id n6-20020a195506000000b004f38260f196sm1324125lfe.218.2023.06.11.22.39.29
+        by smtp.gmail.com with ESMTPSA id n6-20020a195506000000b004f38260f196sm1324125lfe.218.2023.06.11.22.39.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Jun 2023 22:39:29 -0700 (PDT)
+        Sun, 11 Jun 2023 22:39:32 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -64,9 +64,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 06/18] clk: qcom: krait-cc: export L2 clock as an interconnect
-Date:   Mon, 12 Jun 2023 08:39:10 +0300
-Message-Id: <20230612053922.3284394-7-dmitry.baryshkov@linaro.org>
+Subject: [PATCH 09/18] cpufreq: qcom-nvmem: Add support for voltage scaling
+Date:   Mon, 12 Jun 2023 08:39:13 +0300
+Message-Id: <20230612053922.3284394-10-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
 References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
@@ -76,163 +76,161 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While scaling the CPU frequency, L2 frequency should also be scaled
-following the CPU frequency. To simplify such scaling, export the L2
-clock as an interconnect, to facilitate aggregating CPU votes and
-selecting the maximum vote.
+If requested by the platform, scale voltages according to data specified
+in the OPP tables.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/Kconfig    |  1 +
- drivers/clk/qcom/krait-cc.c | 75 +++++++++++++++++++++++++++++--------
- 2 files changed, 60 insertions(+), 16 deletions(-)
+ drivers/cpufreq/qcom-cpufreq-nvmem.c | 115 ++++++++++++++++++++++++++-
+ 1 file changed, 114 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 97f23f978343..3d56263ce494 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1065,6 +1065,7 @@ config KRAITCC
- 	tristate "Krait Clock Controller"
- 	depends on ARM
- 	select KRAIT_CLOCKS
-+	select INTERCONNECT_CLK if INTERCONNECT
- 	help
- 	  Support for the Krait CPU clocks on Qualcomm devices.
- 	  Say Y if you want to support CPU frequency scaling.
-diff --git a/drivers/clk/qcom/krait-cc.c b/drivers/clk/qcom/krait-cc.c
-index 2ce38024dc0d..f16321fc6dd7 100644
---- a/drivers/clk/qcom/krait-cc.c
-+++ b/drivers/clk/qcom/krait-cc.c
-@@ -11,19 +11,13 @@
- #include <linux/of_device.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/interconnect-clk.h>
-+#include <linux/interconnect-provider.h>
+diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+index fee9736f7326..18d6e6ed1bd0 100644
+--- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
++++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+@@ -26,6 +26,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_opp.h>
++#include <linux/regulator/consumer.h>
  #include <linux/slab.h>
+ #include <linux/soc/qcom/smem.h>
  
--#include "clk-krait.h"
--
--enum {
--	cpu0_mux = 0,
--	cpu1_mux,
--	cpu2_mux,
--	cpu3_mux,
--	l2_mux,
-+#include <dt-bindings/clock/qcom,krait-cc.h>
+@@ -39,6 +40,7 @@ struct qcom_cpufreq_match_data {
+ 			   char **pvs_name,
+ 			   struct qcom_cpufreq_drv *drv);
+ 	const char **genpd_names;
++	const char * const *regulator_names;
+ };
  
--	clks_max,
--};
-+#include "clk-krait.h"
+ struct qcom_cpufreq_drv {
+@@ -218,6 +220,110 @@ static const struct qcom_cpufreq_match_data match_data_qcs404 = {
+ 	.genpd_names = qcs404_genpd_names,
+ };
  
- static unsigned int sec_mux_map[] = {
- 	2,
-@@ -365,11 +359,54 @@ static int krait_clk_reinit(struct clk_hw *hw, int cpu)
- 	return 0;
- }
- 
-+#ifdef CONFIG_INTERCONNECT
-+
-+/* Random ID that doesn't clash with main qnoc and OSM */
-+#define L2_MASTER_NODE 2000
-+
-+static int krait_cc_icc_register(struct platform_device *pdev, struct clk_hw *l2_hw)
++#define NUM_SUPPLIES 2
++static int qcom_cpufreq_config_regulators(struct device *dev,
++					  struct dev_pm_opp *old_opp,
++					  struct dev_pm_opp *new_opp,
++					  struct regulator **regulators,
++					  unsigned int count)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct clk *clk = devm_clk_hw_get_clk(dev, l2_hw, "l2");
-+	const struct icc_clk_data data[] = {
-+		{ .clk = clk, .name = "l2", },
-+	};
-+	struct icc_provider *provider;
++	struct dev_pm_opp_supply supplies[NUM_SUPPLIES];
++	unsigned long old_freq, freq;
++	unsigned int i;
++	int ret;
 +
-+	provider = icc_clk_register(dev, L2_MASTER_NODE, ARRAY_SIZE(data), data);
-+	if (IS_ERR(provider))
-+		return PTR_ERR(provider);
++	if (WARN_ON_ONCE(count != NUM_SUPPLIES))
++		return -EINVAL;
 +
-+	platform_set_drvdata(pdev, provider);
-+
-+	return 0;
-+}
-+
-+static int krait_cc_icc_remove(struct platform_device *pdev)
-+{
-+	struct icc_provider *provider = platform_get_drvdata(pdev);
-+
-+	icc_clk_unregister(provider);
-+
-+	return 0;
-+}
-+#define krait_cc_icc_sync_state icc_sync_state
-+#else
-+static int krait_cc_icc_register(struct platform_device *pdev,  struct clk_hw *l2_hw)
-+{
-+	dev_warn(&pdev->dev, "CONFIG_INTERCONNECT is disabled, L2 clock is fixed\n");
-+
-+	return 0;
-+}
-+#define krait_cc_icc_remove(pdev) (0)
-+#define krait_cc_icc_sync_state NULL
-+#endif
-+
- static int krait_cc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct of_device_id *id;
--	int cpu;
-+	int cpu, ret;
- 	struct clk_hw *clk;
- 	struct clk_hw_onecell_data *clks;
- 
-@@ -389,11 +426,11 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Krait configurations have at most 4 CPUs and one L2 */
--	clks = devm_kzalloc(dev, struct_size(clks, hws, clks_max), GFP_KERNEL);
-+	clks = devm_kzalloc(dev, struct_size(clks, hws, KRAIT_NUM_CLOCKS), GFP_KERNEL);
- 	if (!clks)
- 		return -ENOMEM;
- 
--	clks->num = clks_max;
-+	clks->num = KRAIT_NUM_CLOCKS;
- 
- 	for_each_possible_cpu(cpu) {
- 		clk = krait_add_clks(dev, cpu, id->data);
-@@ -405,7 +442,7 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	clk = krait_add_clks(dev, -1, id->data);
- 	if (IS_ERR(clk))
- 		return PTR_ERR(clk);
--	clks->hws[l2_mux] = clk;
-+	clks->hws[KRAIT_L2] = clk;
- 
- 	/*
- 	 * Force reinit of HFPLLs and muxes to overwrite any potential
-@@ -418,18 +455,24 @@ static int krait_cc_probe(struct platform_device *pdev)
- 	 * two different rates to force a HFPLL reinit under all
- 	 * circumstances.
- 	 */
--	krait_clk_reinit(clks->hws[l2_mux], -1);
-+	krait_clk_reinit(clks->hws[KRAIT_L2], -1);
- 	for_each_possible_cpu(cpu)
- 		krait_clk_reinit(clks->hws[cpu], cpu);
- 
--	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clks);
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clks);
-+	if (ret)
++	ret = dev_pm_opp_get_supplies(new_opp, supplies);
++	if (WARN_ON(ret))
 +		return ret;
 +
-+	return krait_cc_icc_register(pdev, clks->hws[KRAIT_L2]);
- }
++	old_freq = dev_pm_opp_get_freq(old_opp);
++	freq = dev_pm_opp_get_freq(new_opp);
++
++	WARN_ON(!old_freq || !freq);
++	if (freq > old_freq) {
++		for (i = 0; i < count; i++) {
++			struct regulator *reg = regulators[i];
++			struct dev_pm_opp_supply *supply = &supplies[i];
++
++			dev_dbg(dev, "%s: voltages (mV): %lu %lu %lu\n", __func__,
++				supply->u_volt_min, supply->u_volt, supply->u_volt_max);
++
++			ret = regulator_set_voltage_triplet(reg,
++							    supply->u_volt_min,
++							    supply->u_volt,
++							    supply->u_volt_max);
++			if (ret) {
++				dev_err(dev, "%s: failed to set voltage (%lu %lu %lu mV): %d\n",
++					__func__, supply->u_volt_min, supply->u_volt,
++					supply->u_volt_max, ret);
++				goto restore_backwards;
++			}
++		}
++	} else {
++		for (i = count; i > 0; i--) {
++			struct regulator *reg = regulators[i - 1];
++			struct dev_pm_opp_supply *supply = &supplies[i - 1];
++
++			dev_dbg(dev, "%s: voltages (mV): %lu %lu %lu\n", __func__,
++				supply->u_volt_min, supply->u_volt, supply->u_volt_max);
++
++			ret = regulator_set_voltage_triplet(reg,
++							    supply->u_volt_min,
++							    supply->u_volt,
++							    supply->u_volt_max);
++			if (ret) {
++				dev_err(dev, "%s: failed to set voltage (%lu %lu %lu mV): %d\n",
++					__func__, supply->u_volt_min, supply->u_volt,
++					supply->u_volt_max, ret);
++				goto restore_forward;
++			}
++		}
++	}
++
++	return 0;
++
++restore_backwards:
++
++	dev_pm_opp_get_supplies(old_opp, supplies);
++
++	for (; i > 0; i--) {
++		struct regulator *reg = regulators[i - 1];
++		struct dev_pm_opp_supply *supply = &supplies[i - 1];
++
++		dev_dbg(dev, "%s: voltages (mV): %lu %lu %lu\n", __func__,
++			supply->u_volt_min, supply->u_volt, supply->u_volt_max);
++
++		regulator_set_voltage_triplet(reg,
++					      supply->u_volt_min,
++					      supply->u_volt,
++					      supply->u_volt_max);
++	}
++
++	return ret;
++
++restore_forward:
++
++	dev_pm_opp_get_supplies(old_opp, supplies);
++
++	for ( ; i < count; i++) {
++		struct regulator *reg = regulators[i];
++		struct dev_pm_opp_supply *supply = &supplies[i];
++
++		dev_dbg(dev, "%s: voltages (mV): %lu %lu %lu\n", __func__,
++			supply->u_volt_min, supply->u_volt, supply->u_volt_max);
++
++		regulator_set_voltage_triplet(reg,
++					      supply->u_volt_min,
++					      supply->u_volt,
++					      supply->u_volt_max);
++	}
++
++	return ret;
++}
++
+ static int qcom_cpufreq_probe(struct platform_device *pdev)
+ {
+ 	struct qcom_cpufreq_drv *drv;
+@@ -305,7 +411,14 @@ static int qcom_cpufreq_probe(struct platform_device *pdev)
+ 			config.virt_devs = NULL;
+ 		}
  
- static struct platform_driver krait_cc_driver = {
- 	.probe = krait_cc_probe,
-+	.remove = krait_cc_icc_remove,
- 	.driver = {
- 		.name = "krait-cc",
- 		.of_match_table = krait_cc_match_table,
-+		.sync_state = krait_cc_icc_sync_state,
- 	},
- };
- module_platform_driver(krait_cc_driver);
+-		if (config.supported_hw || config.genpd_names) {
++		if (drv->data->regulator_names) {
++			config.config_regulators = qcom_cpufreq_config_regulators;
++			config.regulator_names = drv->data->regulator_names;
++		}
++
++		if (config.supported_hw ||
++		    config.genpd_names ||
++		    config.regulator_names) {
+ 			drv->opp_tokens[cpu] = dev_pm_opp_set_config(cpu_dev, &config);
+ 			if (drv->opp_tokens[cpu] < 0) {
+ 				ret = drv->opp_tokens[cpu];
 -- 
 2.39.2
 
