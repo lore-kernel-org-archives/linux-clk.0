@@ -2,210 +2,241 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E67C88CB5
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 20:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 589B0C7EE43
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 21:01:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236681AbjFLUul (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 16:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35640 "EHLO
+        id S238771AbjFLVA5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 17:00:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238003AbjFLUsY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 16:48:24 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05hn2205.outbound.protection.outlook.com [52.100.175.205])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ABC919B7;
-        Mon, 12 Jun 2023 13:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7WZU4NJiEeTIJcT5/NpobxXlKuSOf9QTCkRWtL0wIgc=;
- b=Tc48mo7/ZFbGX/eFyHHQzkNSWu0aFCy7Y2o2PnjiJnEIueMvZo81iOXRomAEmsiiic5RUI5ibEWBcBZQ4hvKbSG2QPvsLaiftuQ0Tn8eAca09n+6n8uxc3Tzm3ngErhyX49BC4IzAxeEX31aR9D/kq+09PPNgHl8tJfYiVvxI762MP7BbOKtsbI/c/zaATULeXV2I7nEhdCoTup8PrJ6BnSX2KWnu+i2JkOk7MLGAS7AQiPV4EKhoeQ8QyB+MAWrH8Opx7+OXH/oDO8b+IuOAK0+M5cFNdi4GyqtBQ26qCUKT3J6C3RVJEyxcwe9hvgT+Rjyw85Eq0SqPinjfefU2A==
-Received: from AS9PR05CA0328.eurprd05.prod.outlook.com (2603:10a6:20b:491::33)
- by AM9PR03MB7169.eurprd03.prod.outlook.com (2603:10a6:20b:266::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.44; Mon, 12 Jun
- 2023 20:46:31 +0000
-Received: from AM6EUR05FT025.eop-eur05.prod.protection.outlook.com
- (2603:10a6:20b:491:cafe::3) by AS9PR05CA0328.outlook.office365.com
- (2603:10a6:20b:491::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.34 via Frontend
- Transport; Mon, 12 Jun 2023 20:46:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.160.56.86)
- smtp.mailfrom=seco.com; dkim=pass (signature was verified)
- header.d=seco.com;dmarc=pass action=none header.from=seco.com;
-Received-SPF: Pass (protection.outlook.com: domain of seco.com designates
- 20.160.56.86 as permitted sender) receiver=protection.outlook.com;
- client-ip=20.160.56.86; helo=inpost-eu.tmcas.trendmicro.com; pr=C
-Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.86) by
- AM6EUR05FT025.mail.protection.outlook.com (10.233.240.185) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6500.22 via Frontend Transport; Mon, 12 Jun 2023 20:46:30 +0000
-Received: from outmta (unknown [192.168.82.133])
-        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 58D2220080091;
-        Mon, 12 Jun 2023 20:46:30 +0000 (UTC)
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (unknown [104.47.17.169])
-        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id 017C720080073;
-        Mon, 12 Jun 2023 20:50:17 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fgVQWPC9f8Hn5+iijQit0ZuwcRzeuRXj9cPshQ6T0XY0BPiv0IzLMijap853wq5gc3kcMQ8bbmT1CaU6iUFSYxfK4divPCiss0IHorVKIolUMEdLpNwcVTDacRYOcn9SGiJLuhHULY08tqDJUPgLHIijXXDcE/y3tvxSjakxO7Nbrpwy4kB4NcGPQP5yjEXGwVUeoNhcqCW4XrSSemrk+vs1GQfc0Ude/yAW35gsff85W2y/h01pvU5f7t87jmCTzLJmtLfW/4Z/YbNohFtwPEQHtm4auSktFng5gf+OE3xJoHmAF29LeNHkCo0Xj5SSnFvWu/2S32x8Am8BrhxOxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7WZU4NJiEeTIJcT5/NpobxXlKuSOf9QTCkRWtL0wIgc=;
- b=Ly44mz+slmfVl4f8GA3SP3Wvok7y6b217WJ7TsVXXUG2YKPusCRUHm9JGcnbpBdD74K4M3re8Tuf0T4qGFOS0daZJ6sPbUlPfEde2i0T/HxbC9fqylivt3pEYjIiDVrHts0QEPfbqErD9UFUa3u+WlKeHtJ2Cgu/kr88KxsYAUhyZBYFWja1hNGeAMWAa8xOmdFuAHnl+cS5etiWkRU2iKAOaVMm2ozW6Ly2wMnwazNKaPEQ2ev8M7SJHJxGOwGzgvidg9vA3Pg4eDZimn8Mm1uj4jncLAA9ZxNf0zRoGzCd/Y5xTtjPKbAChsyi/chlDxMNDcYNQV348rDBe7LiEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7WZU4NJiEeTIJcT5/NpobxXlKuSOf9QTCkRWtL0wIgc=;
- b=Tc48mo7/ZFbGX/eFyHHQzkNSWu0aFCy7Y2o2PnjiJnEIueMvZo81iOXRomAEmsiiic5RUI5ibEWBcBZQ4hvKbSG2QPvsLaiftuQ0Tn8eAca09n+6n8uxc3Tzm3ngErhyX49BC4IzAxeEX31aR9D/kq+09PPNgHl8tJfYiVvxI762MP7BbOKtsbI/c/zaATULeXV2I7nEhdCoTup8PrJ6BnSX2KWnu+i2JkOk7MLGAS7AQiPV4EKhoeQ8QyB+MAWrH8Opx7+OXH/oDO8b+IuOAK0+M5cFNdi4GyqtBQ26qCUKT3J6C3RVJEyxcwe9hvgT+Rjyw85Eq0SqPinjfefU2A==
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=seco.com;
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
- by PAXPR03MB7548.eurprd03.prod.outlook.com (2603:10a6:102:1db::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.29; Mon, 12 Jun
- 2023 20:46:22 +0000
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::d632:8122:75f7:7b0e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::d632:8122:75f7:7b0e%3]) with mapi id 15.20.6455.045; Mon, 12 Jun 2023
- 20:46:21 +0000
-Message-ID: <1dd01fe2-08a8-ec2f-1184-a58b2f55ba85@seco.com>
-Date:   Mon, 12 Jun 2023 16:46:16 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
-Content-Language: en-US
-To:     Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?UTF-8?B?RmVybuKUnMOtbmRleiBSb2phcw==?= <noltari@gmail.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        with ESMTP id S235721AbjFLVAo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 17:00:44 -0400
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7945CE;
+        Mon, 12 Jun 2023 13:56:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1686603292; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=J0PpVHEyu9LeGS30BZHfqPq5IA2uWWc23WWK1kUp6o94erL/wSiwnORHoMh88EcXxj
+    SYRSiM3laOylhzAgxn5HZGIpyeaHhlUDsPVTDgWF1OkXyonGbJQxvMMzfy4wS8b2U2Gq
+    kkmV16wKM9kLofuL9fbxV0m7vTZzpiLGvc62oT9I+WroLa5g+EbZCTSorpzmdDHlKxhc
+    wriHHqSi5lpiM/2o3L+Rn5wJKHoURUXgNExDq8vMGsr/6k6h9rchuNX3nHRrmbXM8BHT
+    6oPkNtyIegmL88b3QVnrzvAjnWF6Vxsx48rD676Cm7LF9VUyWOFL8s74hAwMbmUC1ya0
+    nsvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686603292;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=me4jzGqzj11/RcyJdsYdhF7xS2e9mqfjPPXLiPNZyQk=;
+    b=Izue4s4/7Bs3zMt+ZVLnOVweIdJIuWiv44sOZDN8zKbh/1TqqgjBf1Wxdsc+PKzN3I
+    0bHRnPHMCRFymDWYXP3AZ/U/eaaZ5BSaFVdvmQVWOqNIs8SrVuXm2NrS55hRo4QXSFOU
+    pQ0n2qJyPIogqa4WMz5GdYAARURYJYey6CNZAlaODPegctWsJkF2OSuKc73z+OD6CbHT
+    R+bZcNrZk8s4YaYOA0Z8AWgny49fztSUIB8v6XmnTynm7HEw2zu0DroFhAoJd36q7JdA
+    E8q2wz+I3aYiPh9WVpZS/ftoa3BABO/xNthWnK9nIpvopC/xKbYGpIO0yq+na2kGeTMX
+    r8pg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686603292;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=me4jzGqzj11/RcyJdsYdhF7xS2e9mqfjPPXLiPNZyQk=;
+    b=SLfGP8WXW4xyrb55sRmL//BRklhDUyYZGuJLRBCaOA0s9b6U7fqLo4X61ujmoFGjrE
+    KtYHqrJvzfy9XQZ4xsZmSeKkFj0nc0DYIzesrivaMNMlt9On3124wZYTQdqtMGXbsey1
+    QKynGcvVXaIwLA/AsdIUsYlKaWUTfkQ62Ot4jnh4cGz8bCgKluJnn2TXOvsC8xkXLOVk
+    heuyHDRRH5ijPbkQaf4Tp9cW9HkwH4JtpwUsrk1fjEYaH/v3nWbiv5KYZeCt+YaCNk2j
+    QfAn8X6IOvNPwJG2W3ooTlKCajNt3CanommL46eKpW7cTQzGe5KrXAg1hKZJwmCkx0TV
+    qMIA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686603292;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=me4jzGqzj11/RcyJdsYdhF7xS2e9mqfjPPXLiPNZyQk=;
+    b=8FU6gvPTkzPNG4SA848g4wNr50I7hc8MbITHbuRJT/AbcFGfYBpcllUd5wm2pE6EzS
+    I18oxA2xdl5xrc1GVdDA==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8peN1A=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
+    with ESMTPSA id Z82ec2z5CKspVzm
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Mon, 12 Jun 2023 22:54:51 +0200 (CEST)
+Date:   Mon, 12 Jun 2023 22:54:50 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20230426105140.t4yqv6irtjcwptm5@skbuf>
- <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
- <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
- <20230429172422.vc35tnwkekfieoru@skbuf>
- <c81d23b6-ed22-0b37-d71b-ddce9d5d58eb@seco.com>
- <c2f928d2-25f6-0e31-9ab3-9d585968df1b@seco.com>
- <20230522150010.q5zndfwcuvrb6pg2@skbuf>
- <22a28a6f-2c84-a6b1-bb57-a269af34c993@seco.com>
- <20230610222123.mzmfjx7zfw4nh2lo@skbuf>
- <c702e2b6-cb0f-4ac9-86fe-a220284d45aa@seco.com>
- <20230612163353.dwouatvqbuo6h4ea@skbuf>
-From:   Sean Anderson <sean.anderson@seco.com>
-In-Reply-To: <20230612163353.dwouatvqbuo6h4ea@skbuf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR01CA0001.prod.exchangelabs.com (2603:10b6:208:71::14)
- To DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 18/23] interconnect: qcom: icc-rpm: Control bus rpmcc
+ from icc
+Message-ID: <ZIeGGn7emge6Xkb0@gerhold.net>
+References: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
+ <20230526-topic-smd_icc-v3-18-5fb7d39b874f@linaro.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|PAXPR03MB7548:EE_|AM6EUR05FT025:EE_|AM9PR03MB7169:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d57c4d5-9fe1-400d-a7fd-08db6b8619dd
-X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: yG1q7L0l7oznMaSKWRKnF3rtdsluiuP1mylk+HTUGMno0sfPBbTVBKNnYs+EMIbxZLQyQXksyKMkq5XUDpTi1fIn3RshOzNj97iGn9Ev39WyKk6kcg7RFLA4cMGsrdQJJ9hO3UQqaj+WzXPAy6viI5U7YBjxhcGC5QSZggmP14ubZGx3V5ycY9CUYdI+Ub8E4ULP/PNJooZrzxJjeyejEMluFqQc0JyJBDPIWrscv0FYt4+Xz9PbVzTkUMvQI2R7CaZGhQU76ihwXyo8sLa8zpnGP69cRZzdr87xyn2oLIChC/IwirkcKBGVsoKDeqQL+TEfFVyqTAvyy/K695nvXrWaZ0v7p5GNBM8rChF0uSa6ETeQGlZqfKZSXhwsrCnEK64w+0JK3fYwAem8r6newS6CIzB+9O7SK1mu/0Y7lDe25cfDKvn2+2dAn1OnyIbBTfVVml4o7UeMPp4pJ2w/is1GJi0AXy+xuOZJCitZQAdbsHbPsUV4DITUxwF+vQSa481UHorL9nXnmpNtrhDlipbdcJ6U9gRi6gi+OYpwVpyoBT3idyMgYrG0Sa87oeFeWri4fq8sugwN9rOM+mx7eUKfcDZTW/5u4V26yZXCm6lSRIaI2/G5QjJ2JO0mdGA1D5bujJh/tp5qWGEvQRNJnr6sUE5T/kFg8ozctGH9BtPBcB22pqroAasbDDZuqAIV
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(346002)(39850400004)(136003)(376002)(396003)(451199021)(52116002)(6486002)(6666004)(36756003)(83380400001)(2616005)(38350700002)(31696002)(38100700002)(86362001)(6506007)(53546011)(6512007)(26005)(186003)(2906002)(54906003)(66476007)(4326008)(44832011)(316002)(7416002)(6916009)(66556008)(31686004)(41300700001)(5660300002)(478600001)(66946007)(8936002)(8676002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR03MB7548
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM6EUR05FT025.eop-eur05.prod.protection.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 05a29540-3560-4880-6556-08db6b861464
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0Z2XC+ceVo9ELcdMdE2tCD7pTL8elkK28UMCjeLKN0WhRADQouwI13GaebuhbGuBWnMH4dyp/xI3R9X2KZrza74L8CR7lfB81EhdE96eefkWTOimPLX1VnmCwU5skf7PB4JCC7A2f2bLfFDI90E92bBDllFW+8+fxRd4BIWfi1scng5hL2aA7ECr5U7jcUxJWpdBAvcO7LGo9FqNXNybORYeO86yzoyKIE5Vuq+UPjMUVERuguG4YjL6bRu4y31AtkaKXf1XMqCZ0WROecMmn3ZpTWoUtlEd1qjF1TvYb1XzvAwrB5AExZmBf+r4XR+xZs6ZSN+c2nbDZsH/L4Ewvuksa2Ihd646MjKAHlB+q+475zr77L0RTW6S30hdsY3EiK+0/RechjTERJ7JrO2T1Ycm/6I5jUl12Od6+AbiNcWM82xtwMGUkc9JjdH92BI5kSICB+AymgFiHdfJV7VE8Q/jWih28zXmtdv0ODZmNDtFyjI+ye5hRTOw/9HMCBGwtPdRCfEQCA4z7uuhblrXQkyLKEhrUQjYriezjZ8WuWB2jfWC7u2tYxpBWw7oYGy3KqyyoP7z8mKUsQTFY5AdO50EDGGcLED2VoWomhqpN5wdP9orZNRfIQqm4/XSPouKM2+aosfpEGNXg+d2MMVhizVj0/JV57Jb43X9YGZjCZx2GSpuCl6MLLggbQo00dunbVUwycgYJfOUe1XiIq9kgO9dVmELcfmoQuC9+bgNGhc08CWITZwltYf4MubTGxg4tryXL8gNUwDTJzrde51AUY9c4d5wvE78dm49WXS8clz6B2J/x60njljlc7sbiZJ/5AN1sHv/+Y52vx0/aIjuIA==
-X-Forefront-Antispam-Report: CIP:20.160.56.86;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230028)(136003)(346002)(39850400004)(396003)(376002)(5400799015)(451199021)(40470700004)(36840700001)(46966006)(5660300002)(40480700001)(6486002)(54906003)(7636003)(82740400003)(7596003)(356005)(6916009)(41300700001)(8936002)(8676002)(4326008)(70586007)(70206006)(316002)(2616005)(478600001)(186003)(36860700001)(83380400001)(6666004)(6512007)(336012)(6506007)(26005)(53546011)(34070700002)(47076005)(40460700003)(31696002)(86362001)(82310400005)(7416002)(44832011)(2906002)(36756003)(31686004)(43740500002)(12100799033);DIR:OUT;SFP:1501;
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2023 20:46:30.6334
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d57c4d5-9fe1-400d-a7fd-08db6b8619dd
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.86];Helo=[inpost-eu.tmcas.trendmicro.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM6EUR05FT025.eop-eur05.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR03MB7169
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230526-topic-smd_icc-v3-18-5fb7d39b874f@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/12/23 12:33, Vladimir Oltean wrote:
-> On Mon, Jun 12, 2023 at 10:35:21AM -0400, Sean Anderson wrote:
->> > And if SERDES protocol switching was not physically possible, would this
->> > patch set still have value?
-
-More to the point, did you make any progress in this area?
-
->> Yes. To e.g. set up SGMII25 or to fix the clocking situation.
+On Mon, Jun 12, 2023 at 08:24:35PM +0200, Konrad Dybcio wrote:
+> The sole purpose of bus clocks that were previously registered with
+> rpmcc was to convey the aggregated bandwidth to RPM. There's no good
+> reason to keep them outside the interconnect framework, as it only
+> adds to the plentiful complexity.
 > 
-> Let me analyze the reasons one by one.
+> Add the required code to handle these clocks from within SMD RPM ICC.
 > 
-> The clocking situation only exists due to a hope that protocol changing
-> would be possible. If you were sure it wasn't possible, your board would
-> have had refclks set up for protocol 3333 via the supported PLL mapping 2222.
-> In essence, I consider this almost a non-argument, as it fixes a
-> self-inflicted problem.
-
-2222 also does not work, as outlined above.
-
-The clocking is incompatible, and must be fixed by software.
-
-The only thing self-inflicted is NXP's conflicting design.
-
-> Have you actually tested changing individual lanes from SGMII to SGMII 2.5?
-> I know it works on LS1028A, but I don't know if that's also true on LS1046A.
-> Your comments do say "LYNX_PROTO_SGMII25, /* Not tested */".
-
-Not yet. 
-
-This driver would also be a good place to add the KR link training with
-NXP tried to upstream a few years ago.
-
-> Assuming a start from SERDES protocol 3333 with PLL mapping 2222,
-> this protocol change implies powering on PLL 1 (reset state machine
-> wants it to be disabled) and moving those lanes from PLL 2 to PLL 1.
+> RPM-owned bus clocks are no longer considered a thing, but sadly we
+> have to allow for the existence of HLOS-owned bus clocks, as some
+> (mostly older) SoCs (ab)use these for bus scaling (e.g. MSM8998 and
+> &mmcc AHB_CLK_SRC).
 > 
-> At first sight you might appear to have a point related to the fact that
-> PLL register writes are necessary, and thus this whole shebang is necessary.
-> But this can all be done using PBI commands, with the added benefit that
-> U-Boot can also use those SERDES networking ports, and not just Linux.
-> You can use the RCW+PBL specific to your board to inform the SoC that
-> your platform's refclk 1 is 156 MHz (something which the reset state
-> machine seems unable to learn, with protocol 0x3333). You don't have to
-> put that in the device tree. You don't have to push code to any open
-> source project to expose your platform specific details. Then, just like
-> in the case of the Lynx 28G driver on LX2160, the SERDES driver could
-> just treat the PLL configuration as read-only, which would greatly
-> simplify things and eliminate the need for a clk driver.
+> This in turn is trivially solved with a single *clk, which is filled
+> and used iff qp.bus_clk_desc is absent and we have a "bus" clock-names
+> entry in the DT node.
 > 
-> Here is an illustrative example (sorry, I don't have a board with the
-> right refclk on that PLL, to verify all the way):
+> This change should(tm) be fully compatible with all sorts of old
+> Device Trees as far as the interconnect functionality goes (modulo
+> abusing bus clock handles, but that's a mistake in and of itself).
 > 
-> ... snip ...
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-(which of course complicates the process of building the PBIs...)
+Would be nice to add a comment here already that you're breaking
+compatbility with the qcom,icc.h. It's a bit hidden otherwise.
 
-> In short, I believe the reasons you have cited do not justify the
-> complexity of the solution that you propose.
+> ---
+>  drivers/interconnect/qcom/icc-rpm.c | 114 ++++++++++++++++++++----------------
+>  drivers/interconnect/qcom/icc-rpm.h |  13 ++--
+>  drivers/interconnect/qcom/msm8996.c |   1 -
+>  drivers/interconnect/qcom/sdm660.c  |   1 -
+>  4 files changed, 66 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+> index b8ecf9538ab9..5ffcf5ca8914 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.c
+> +++ b/drivers/interconnect/qcom/icc-rpm.c
+> @@ -49,7 +49,7 @@
+>  #define NOC_QOS_MODE_FIXED_VAL		0x0
+>  #define NOC_QOS_MODE_BYPASS_VAL		0x2
+>  
+> -#define ICC_BUS_CLK_MIN_RATE		19200000ULL
+> +#define ICC_BUS_CLK_MIN_RATE		19200ULL /* kHz */
+>  
+>  static int qcom_icc_set_qnoc_qos(struct icc_node *src)
+>  {
+> @@ -338,11 +338,10 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+>  	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
+>  	struct icc_provider *provider;
+>  	u64 sum_bw;
+> -	u64 rate;
+> +	u64 active_rate, sleep_rate;
+>  	u64 agg_avg[QCOM_ICC_NUM_BUCKETS], agg_peak[QCOM_ICC_NUM_BUCKETS];
+>  	u64 max_agg_avg;
+> -	int ret, i;
+> -	int bucket;
+> +	int ret;
+>  
+>  	src_qn = src->data;
+>  	if (dst)
+> @@ -364,49 +363,54 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+>  			return ret;
+>  	}
+>  
+> -	for (i = 0; i < qp->num_bus_clks; i++) {
+> -		/*
+> -		 * Use WAKE bucket for active clock, otherwise, use SLEEP bucket
+> -		 * for other clocks.  If a platform doesn't set interconnect
+> -		 * path tags, by default use sleep bucket for all clocks.
+> -		 *
+> -		 * Note, AMC bucket is not supported yet.
+> -		 */
+> -		if (!strcmp(qp->bus_clks[i].id, "bus_a"))
+> -			bucket = QCOM_ICC_BUCKET_WAKE;
+> -		else
+> -			bucket = QCOM_ICC_BUCKET_SLEEP;
+> -
+> -		rate = icc_units_to_bps(max(agg_avg[bucket], agg_peak[bucket]));
+> -		do_div(rate, src_qn->buswidth);
+> -		rate = min_t(u64, rate, LONG_MAX);
+> -
+> -		/*
+> -		 * Downstream checks whether the requested rate is zero, but it makes little sense
+> -		 * to vote for a value that's below the lower threshold, so let's not do so.
+> -		 */
+> -		if (bucket == QCOM_ICC_BUCKET_WAKE && qp->keep_alive)
+> -			rate = max(ICC_BUS_CLK_MIN_RATE, rate);
+> -
+> -		if (qp->bus_clk_rate[i] == rate)
+> -			continue;
+> -
+> -		ret = clk_set_rate(qp->bus_clks[i].clk, rate);
+> -		if (ret) {
+> -			pr_err("%s clk_set_rate error: %d\n",
+> -			       qp->bus_clks[i].id, ret);
+> +	/* Some providers don't have a bus clock to scale */
+> +	if (!qp->bus_clk_desc && !qp->bus_clk)
+> +		return 0;
+> +
+> +	/* Intentionally keep the rates in kHz as that's what RPM accepts */
+> +	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
+> +			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
+> +	do_div(active_rate, src_qn->buswidth);
+> +
+> +	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
+> +			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
+> +	do_div(sleep_rate, src_qn->buswidth);
+> +
+> +	/*
+> +	 * Downstream checks whether the requested rate is zero, but it makes little sense
+> +	 * to vote for a value that's below the lower threshold, so let's not do so.
+> +	 */
+> +	if (qp->keep_alive)
+> +		active_rate = max(ICC_BUS_CLK_MIN_RATE, active_rate);
+> +
+> +	/* Some providers have a non-RPM-owned bus clock - convert kHz->Hz for the CCF */
+> +	if (qp->bus_clk) {
+> +		active_rate = max_t(u64, active_rate, sleep_rate);
+> +		/* ARM32 caps clk_set_rate arg to u32.. Nothing we can do about that! */
+> +		active_rate = min_t(u64, 1000ULL * active_rate, ULONG_MAX);
+> +		return clk_set_rate(qp->bus_clk, active_rate);
+> +	}
+> +
+> +	/* RPM only accepts <=INT_MAX rates */
+> +	active_rate = min_t(u32, active_rate, INT_MAX);
+> +	sleep_rate = min_t(u32, sleep_rate, INT_MAX);
+> +
+> +	if ((active_rate != qp->bus_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE]) ||
+> +	    (sleep_rate != qp->bus_clk_rate[QCOM_SMD_RPM_SLEEP_STATE])) {
+> +		ret = qcom_icc_rpm_set_bus_rate(qp->bus_clk_desc,
+> +						active_rate,
+> +						sleep_rate);
+> +		if (ret)
+>  			return ret;
 
-The work is done, and it is certainly more flexible than what you
-propose. E.g. imagine a clock which needs to be configured before it has
-the correct frequency. Such a thing is difficult to do in a PBI solution,
-but is trivial in Linux.
+Hm, do we have to set both rates together in all cases? If cpufreq is
+quickly changing frequencies (and therefore active-only ICC bandwidths)
+it should be sufficient to make one call into RPM and leave the sleep
+rate as-is. Especially because you already cache the two rates
+separately.
 
---Sean
+AFAICT downstream updates the contexts completely separately, so I don't
+think it updates both rates at once either. And actually even the old
+code before this patch didn't do that :D
+
+Thanks,
+Stephan
