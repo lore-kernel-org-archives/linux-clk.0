@@ -2,69 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5D9C88CB6
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 14:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901A5C88CB4
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 14:22:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235613AbjFLOAu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 10:00:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46374 "EHLO
+        id S237233AbjFLOWx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 10:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237076AbjFLOAB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 10:00:01 -0400
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5683A10F6;
-        Mon, 12 Jun 2023 06:59:54 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686578391; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=Mlfzmd2FMLldsvA1EwRP6cESOsJLcBT7JxRj91giCTat9/Vb43akk9GlFEykjuA2CU
-    KlmP/neVv0tjBfxMlJh/JuMAJXipVsftO3BMtI8ruxW6AcxPRz6dQBJUpaAY4o+0pbP8
-    rztgN4Eh5AymKBZtn50slxFN7A02veOmJ1QKFd+FANMz9hcVGYiEb8T0N2EqKguLLLbr
-    PXeTLUHEaXZEOIduGEco5ikpmjmluul1bAq1Q75LzoZRnYisAJxXdWBMj0dX6WgkuckX
-    VB6GAsnlE1CcR0rSzmMtjcfxbkFR82Lr3kVqmecm3jMwDG98+AcgESpUWjWN5UhCG3B4
-    TgnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686578391;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=ma+8RmGyl039YHh+kLX83fD91U9pajDEzK6ztviFVqA=;
-    b=XrKhYnirYxLcu1uH6OINJiu+2pV4+Zz/q5RnjBSamlZs8GpNCCoCPwjhARxf1M4CPi
-    4K3yZycNpeaRdDfjzEu47dl4kFG2CR1HsDt0Rnf0iD2FkgyhH+5qYr/nTxHiEs2qE2V0
-    +kjmyNpkyo8cPO+17cnE3G45xs3dpFKA4LeCp6WYt6AIQlihlN30cS44AvBtIoHmM78r
-    pAK88KmPrqAAy9uEGjC4yFLHslDHnosOphD48G5rrF06d+cAkyt3wtLTN156gz0HK99S
-    gI2OVbMcuu6YdEqzkwH8t47wQPEVm69DP2ysluWcb/pC/GhJsnSXBZunv2/Km0zK9P9h
-    FHBg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686578391;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=ma+8RmGyl039YHh+kLX83fD91U9pajDEzK6ztviFVqA=;
-    b=VYsNbyCiSkqAqPmA85Fm96V9cCVASIjkXVqjK+NyvZjZ5ZTBRC0VSQZycIsIVAnVZC
-    mEdaWATOHiDC9AGzcP71c5yXQ6IPZw98BN3aS1WSo0UmIYtkyfLCTOFRwYiH8ZJJnuyb
-    2yJzqYJ7WFQzxPJd4asD0LAQ+0w3Gvs4tk3qyOvgI7A3Jv40LbA9hOFXIE6r0oJQ2ZNL
-    4OEHHO7rSYOsxWPtQjzQJC6QbN6ucDIAYfyua5+LEqFfUy7uRdFx1+dnJuWP3iRPdFzp
-    QmBlR28kdRw0HCABP7ph3bpnoI+ziFkWthRRzixgNDWFvek6RcHoKWfI8ailjrlzrUZU
-    D+Wg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686578391;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=ma+8RmGyl039YHh+kLX83fD91U9pajDEzK6ztviFVqA=;
-    b=d1voIuA7EbU2Zp1su+LmU7Ch2DgDkclFE+V43X4r+hlppKhrl1xg/8nMmWr9kNx7pp
-    xDOW+NXE79VXg7wTO0AQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8peN1A=="
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
-    with ESMTPSA id Z82ec2z5CDxpV99
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Mon, 12 Jun 2023 15:59:51 +0200 (CEST)
-Date:   Mon, 12 Jun 2023 15:59:44 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+        with ESMTP id S237743AbjFLOWg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 10:22:36 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B081BE4
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 07:20:24 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f5f728c4aaso5151125e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 07:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686579604; x=1689171604;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NSvlsm1vEOWf78ZaJaA6a10BH4JNNfXIER+h17rt9CM=;
+        b=JPIwRskU6oZ71zvly+9F3vYs8JoENWrSqHRTTyFm0TLCvlS//DjLmq5PHfnCh09yvM
+         n0B6KUxDZ95gPCPdPl95F4/hdKyLHfEPKd7MVmKs5JU4pFWKkrbsWYJPC7ZtxvCcW8cn
+         ceZtgdLJfT74N38ZAEjuZmJU7dtyciQrZPUDx2NEyOQlkd2VvaqcNtFFaT4FYERV0sL5
+         GDDBQquW14e85U4jlcs763ktIjPlL69Zo838FEiudcnqw6RtEwDSifPsNiX7WQdISYFM
+         oG9sJpl4O69ArtmlZgGSEBfGamrimNnDwxpPkpdp+tVYL0yOVKsCLayY2D+NYfmOVxa0
+         GRNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686579604; x=1689171604;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NSvlsm1vEOWf78ZaJaA6a10BH4JNNfXIER+h17rt9CM=;
+        b=JQmM5zvLExs2zmlOVvHSYQO8Qto9PYzodx0gzw+Aywj56noUGBKCSGSGvwRFIPlEKv
+         OqyoGj4YEDu2yBwXjnQKRpNdTyssv/Ygv0ph9CoBhkxOyPHJeHKC9H7R+gzMhrAJW71g
+         iXMkT4WwUN2wiOnAFuOtIplpc+51dfca0/FrRJtJ+NPhemHJQsrssQoakdx0EVTxwan4
+         lBi+qmL2aTfqcLHRSALtfYCNDENk2C5K8ofQandN3Cf7p9jzfogZD4J2GmT6Q3nqNz2c
+         GnZOj6FOIrH+2MGSfqcAGncgQfRt9KOfAeTl7+aPOSY9u47LGpRDkPL0KKONerHTqo0J
+         IBDA==
+X-Gm-Message-State: AC+VfDx3AgXJm+/aQNmTen6ZM77z4tjQZbMrIqhnAKcF64BuwPStCw6l
+        wcWSAD5TbvDJuBDdLY9PQZUZvw==
+X-Google-Smtp-Source: ACHHUZ4fTsFvE37eGGctgd/kBdjCtwzEKl+BMhrZpZQL+PsW0znUnxYR3vsTgnR+WC43YUkDa5zmhA==
+X-Received: by 2002:a05:6512:2305:b0:4f3:822d:bcf7 with SMTP id o5-20020a056512230500b004f3822dbcf7mr2923641lfu.21.1686579604135;
+        Mon, 12 Jun 2023 07:20:04 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id a11-20020a2e980b000000b002b1c0a663fbsm1785366ljj.77.2023.06.12.07.20.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 07:20:03 -0700 (PDT)
+Message-ID: <99a68056-a4c9-d475-9245-e0802ffe4c89@linaro.org>
+Date:   Mon, 12 Jun 2023 17:20:02 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 00/18] ARM: qcom: apq8064: support CPU frequency scaling
+Content-Language: en-GB
+To:     Christian Marangi <ansuelsmth@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
@@ -77,148 +69,112 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>
-Subject: Re: [PATCH 15/18] ARM: dts: qcom: apq8064: provide voltage scaling
- tables
-Message-ID: <ZIck0L-gK_a_jCtc@gerhold.net>
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
- <20230612053922.3284394-16-dmitry.baryshkov@linaro.org>
- <ZIbez4RA0OoVfHzt@gerhold.net>
- <8c1085fd-8a73-d192-6624-d4f35728e68a@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c1085fd-8a73-d192-6624-d4f35728e68a@linaro.org>
+ <6486dcef.050a0220.4c054.4c59@mx.google.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <6486dcef.050a0220.4c054.4c59@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 04:33:09PM +0300, Dmitry Baryshkov wrote:
-> On 12/06/2023 12:01, Stephan Gerhold wrote:
-> > On Mon, Jun 12, 2023 at 08:39:19AM +0300, Dmitry Baryshkov wrote:
-> > > APQ8064 has 4 speed bins, each of them having from 4 to 6 categorization
-> > > kinds. Provide tables necessary to handle voltage scaling on this SoC.
-> > > 
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >   arch/arm/boot/dts/qcom-apq8064.dtsi | 1017 +++++++++++++++++++++++++++
-> > >   1 file changed, 1017 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-> > > index 4ef13f3d702b..f35853b59544 100644
-> > > --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-> > > +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-> > > @@ -49,6 +49,9 @@ CPU0: cpu@0 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_0>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw0_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -66,6 +69,9 @@ CPU1: cpu@1 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_1>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw1_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -83,6 +89,9 @@ CPU2: cpu@2 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_2>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw2_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -100,6 +109,9 @@ CPU3: cpu@3 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_3>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw3_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -132,6 +144,81 @@ cpu_opp_table: opp-table-cpu {
-> > >   		opp-384000000 {
-> > >   			opp-hz = /bits/ 64 <384000000>;
-> > >   			opp-peak-kBps = <384000>;
-> > > +			opp-microvolt-speed0-pvs0 = <1050000 1050000 1150000>,
-> > > +						    <950000 950000 1150000>,
-> > > +						    <950000 950000 975000>;
-> > 
-> > I think this won't result in the correct switch order without making
-> > some changes to the OPP core. In _set_opp() the OPP core does
-> > 
-> > 	/* Scaling up? Configure required OPPs before frequency */
-> > 	if (!scaling_down) {
-> > 		_set_required_opps();
-> > 		_set_opp_bw();
-> > 		opp_table->config_regulators();
-> > 	}
-> > 
-> > 	opp_table->config_clks();
-> > 
-> > 	/* Scaling down? Configure required OPPs after frequency */
-> > 	if (scaling_down) {
-> > 		opp_table->config_regulators();
-> > 		_set_opp_bw();
-> > 		_set_required_opps();
-> > 	}
-> > 
-> > Since the "bandwidth" for the L2 cache is set before the regulators
-> > there is a short window where the L2 clock is running at a high
-> > frequency with too low voltage, which could potentially cause
-> > instability. On downstream this seems to be done in the proper order [1].
-> > 
-> > I'm not sure if the order in the OPP core is on purpose. If not, you
-> > could propose moving the config_regulators() first (for scaling up)
-> > and last (for scaling down). This would resolve the problem.
+On 11/06/2023 19:27, Christian Marangi wrote:
+> On Mon, Jun 12, 2023 at 08:39:04AM +0300, Dmitry Baryshkov wrote:
+>> Implement CPUFreq support for one of the oldest supported Qualcomm
+>> platforms, APQ8064. Each core has independent power and frequency
+>> control. Additionally the L2 cache is scaled to follow the CPU
+>> frequencies (failure to do so results in strange semi-random crashes).
 > 
-> Nice catch, I missed this ordering point.
+> Hi, can we talk, maybe in private about this interconnect-cpu thing?
+
+Hi, sure. Feel free to ping me on IRC (lumag) or via email. Or we can 
+just continue our discussion here, as it might be interesting to other 
+people too.
+
+> I see you follow the original implementation of the msm_bus where in
+> practice with the use of the kbps the correct clock and voltage was set.
+> (and this was also used to set the fabric clock from nominal to fast)
 > 
-> > 
-> > The alternative that I've already argued for on IRC in #linux-msm a
-> > couple of days ago would be to give the L2 cache (here: "interconnect")
-> > an own OPP table where it can describe its voltage requirements,
-> > independent from the CPU. That way the icc_set_bw() would be guaranteed
-> > to apply the correct voltage before adjusting the L2 cache clock. It
-> > looks like the "l2_level" voltages for vdd_dig and vdd_mem are not
-> > speedbin/PVS-specific [2] so this would also significantly reduce the DT
-> > size, since you wouldn't need to repeat the same vdd_dig/vdd_mem
-> > voltages for all of them.
+> On ipq806x and I assume other SoC there isn't always a 1:1 map of CPU
+> freq and L2 freq. For example on ipq8064 we have max CPU freq of 1.4GHz
+> and L2 freq of 1.2GHz, on ipq8065 we have CPU 1.7GHz and L2 of 1.4GHz.
+
+This is also the case for apq8064. The vendor kernel defines 15 
+frequencies for L2 cache clock, but then for some reasons all PVS tables 
+use just 3 entries from these 15.
+
+> (and even that is curious since I used the debug regs and the cxo
+> crystal to measure the clock by hardware (yes i ported the very ancient
+> clk-debug to modern kernel and it works and discovered all sort of
+> things) the L2 (I assume due to climitation of the hfpll) actually can't
+> never reach that frequency (1.4GHz in reality results to something like
+> 1.2GHz from what I notice a stable clock is there only with frequency of
+> max 1GHz))
+
+I would like to point you to https://github.com/andersson/debugcc/, 
+which is a userspace reimplementation of clk-debug. We'd appreciate your 
+patches there.
+
+> So my idea was to introduce a simple devfreq driver and use the PASSIVE
+> governor where it was added the possibility to link to a CPU frequency
+> and with interpolation select the L2 frequency (and voltage)
+
+I stumbled upon this idea, when I was working on the msm8996 and it's 
+CBF clock (CBF = interconnect between two core clusters). While it 
+should be possible to use DEVFREQ in simple cases (e.g. L2 clock >= 
+max(CPU clock), if possible). However real configurations are slightly 
+harder.
+E.g. for the purpose of this patchset, the relationship for apq8064 is 
+the following (in MHz):
+
+  CPU    L2
+  384    384
+  486    648
+  594    648
+  702    648
+....    ...
+1026    648
+1134   1134
+....   ....
+1512   1134
+....   ....
+
+It should be noted that msm8960 also used just three values for the L2 
+cache frequencies. From what I can see, only msm8x60 made L2 freq 
+tightly follow the CPU frequency.
+
+>  From some old comments in ancient qsdk code it was pointed out that due
+> to a hw limitation the secondary cpu can't stay at a high clock if L2
+> was at the idle clock. (no idea if this is specific to IPQ806x) So this
+> might be a cause of your crash? (I also have random crash with L2
+> scaling and we are planning to just force the L2 at max frequency)
+
+It might be related. It was more or less the same story with msm8996, 
+which was either 'maxcpus=2' or scaling the CBF clock.
+
+> But sorry for all of this (maybe) useless info. I checked the other
+> patch and I didn't understand how the different L2 frequency are
+> declared and even the voltage. Is this something that will come later?
+> I'm very interested in this implementation.
+
+The L2 frequency (<&kraitcc 4>) is converted into bandwidth vote, which 
+then goes into the OPP tables. But please also see the discussion 
+started at the patch 15.
+
 > 
-> Yes. I fact our discussion triggered me to do this patchset.
-> 
-> So, another option would be to have something like the following snippet. Do
-> you know if we are allowed to squish additional data into the L2 cache DT
-> node?
+>>
+>> Core voltage is controlled through the SAW2 devices, one for each core.
+>> The L2 has two regulators, vdd-mem and vdd-dig.
+>>
+>> Depenency: [1] for interconnect-clk implementation
+>>
+>> https://lore.kernel.org/linux-arm-msm/20230512001334.2983048-3-dmitry.baryshkov@linaro.org/
+>>
 > 
 
-I suspect no one has tried this before, so only the DT maintainers could
-answer this. I would say that it just follows the existing design of
-clocks/-supply/OPPs on the CPU nodes. vdd-mem-supply isn't a property of
-the CPU, it's a property of the L2 cache so it actually fits better there.
+-- 
+With best wishes
+Dmitry
 
-I think the more controversial questions might be:
-
-  - Is a L2 cache really an "interconnect"? I suppose one could argue it
-    connects multiple CPU cores to a cluster (similar how a CCI connects
-    multiple clusters to a system).
-
-  - What would bind to the l2-cache node? A separate driver? Does that
-    work if it sits below the /cpus node?
-
-Thanks,
-Stephan
