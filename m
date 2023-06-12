@@ -2,166 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFB3CA9EAB
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 18:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C87C7EE2F
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 19:03:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235111AbjFLSax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 14:30:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44666 "EHLO
+        id S237643AbjFLTDx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 15:03:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237674AbjFLSYq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 14:24:46 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B86F10C2
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 11:24:45 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f62b512fe2so5755137e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 11:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686594283; x=1689186283;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o4TG88G8lz+fAZ9zU8d6rxSrHlYur3wUM1VMDavTyKo=;
-        b=loBipD48bZ404WlmVXrHE9OF0fwywsGH/JnBUa99Fda7L2FYBra2kMzYykhiYL74eh
-         2OAmACB+Nt5QE4OXbVNpeV/2VOwd/Qr3kDkRjwifdpkmSghUHz1Nr5XOzLnOOc/jepf0
-         vOVvn7pU8gqGnlgQWOhm+TVVQBwIc9QHsCwUY8DM+yzPXaeXHQBAaImt5LOMuj+D9KMR
-         mHTLaUjvJv2uf0WTWubjOZ2pO6qGvmxIhit5PQrXJaby5vdElAjAP8snqdn7ai+A+Euu
-         82uuyiUio/p9kjATJ09ue/fKVn6j0s/GeXR75nujCfDAga1QRA639M/Lx47/dMF2KKqq
-         tZiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686594283; x=1689186283;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o4TG88G8lz+fAZ9zU8d6rxSrHlYur3wUM1VMDavTyKo=;
-        b=DiXt39dSLCUqdSkt2VNfY24LY/pbZmFFFK6sAutZdqJMtfp6/4SilENUW6MAcXqMTK
-         gCBc8Rj9+m20J4NjNiHsPMz6UbdYTusL60ueR8FO3GZUIrR9Rrtq3ExiesFeObPWhJob
-         fjj/jZetBEOc4/ES7HxwqKuAwAHJiHO/+TjPc8uD6uSfNnlFMKyAxqXB79lt+3NQmG17
-         QnQnCcemvBw0DS82XdLP2yvbaLrfG1YPkSo+ewY4Nyn/wc+Lc8alb/0JiNnvlJ5b/Vg6
-         ecVNx9uJuh3r8wr73PPjXG2MoSpYO3KeGMRLx1t3gPfGmGtSVvoxl+QwPGTUMbVEkZ46
-         zqoQ==
-X-Gm-Message-State: AC+VfDx4RgY0kj27KlVtrj82gf5StIMORnSXRrv522N5gRWY+dNEZLq2
-        sUNfLqlLIqCgJdmb5Qi0A9ZOsQ==
-X-Google-Smtp-Source: ACHHUZ5/BWwu6sOkYx5RE/rkClGV95eeDtFMUyIDILZdFknNS8QETCM3gAleZueP/DBL7rxmVgR2NQ==
-X-Received: by 2002:a19:914f:0:b0:4f3:a483:557 with SMTP id y15-20020a19914f000000b004f3a4830557mr4254666lfj.5.1686594283376;
-        Mon, 12 Jun 2023 11:24:43 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id v24-20020ac25938000000b004f64073a252sm1502035lfi.96.2023.06.12.11.24.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 11:24:43 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 12 Jun 2023 20:24:21 +0200
-Subject: [PATCH v3 04/23] clk: qcom: smd-rpm: Move some RPM resources to
- the common header
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v3-4-5fb7d39b874f@linaro.org>
-References: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
-In-Reply-To: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S237636AbjFLTDw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 15:03:52 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15ED0B7;
+        Mon, 12 Jun 2023 12:03:49 -0700 (PDT)
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: nfraprado)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 598B16606EAE;
+        Mon, 12 Jun 2023 20:03:43 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1686596627;
+        bh=skSAnaTgSHIV6cwfzXxaMUW4myAnueW+/ns3bFUzy8M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bJf/h/MKb4PKJ/uT4rymeQgnn0AllhVGqODjBRQDpE57+Wxi/lMfC8ncPQ296ZiQn
+         sCiTiqNTX3mlAgBI3bbXccPVVcvUffOrx4pqlPhzh5jIFL2szdnE9tK7ZL3wyTjYyP
+         Ksc7VY7cbgFNvKxGgEavDw0NprkEh5aLbX6v7t00uiOW44RAe8n4ReZQtGnfQBVC/x
+         hmX2luZj3O21yCQki+gw+Ot3iJz9y0K6niH/NPyjLwxxOzL4GpP8171UilbtnsDh12
+         +J4l/Dc4sDW7jGQhSe/7oYvJZwSWb1m/6P7DOo+J06sMZ+KWz26T+k6X5XToMvdDjL
+         LBoNvN30WoGEA==
+Date:   Mon, 12 Jun 2023 15:03:39 -0400
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado 
+        <nfraprado@collabora.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        kernel@collabora.com, Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686594276; l=2437;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=UU7GtjAFC9F3/14Sgtv72aSDwAe2u4JL+0KQToDCmwI=;
- b=iX5fHRl6tir/I7qMgS6vwBY+LdMrYMhq6DtPXkBDkzFQZbIfwPo0YpBIUEuqs0CTpvFej8BXE
- 9XtHBB+AKhkA2PRGTSxGEoUTlRk8Yij5oLMWIEe2hJiV66hloeyZbpg
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 0/5] Enable decoder for mt8183
+Message-ID: <e8ddbc54-b929-4363-9bc7-b0f406062f46@notapiano>
+References: <20230607205714.510012-1-nfraprado@collabora.com>
+ <380c6489-7a3c-778b-5b81-6339b6964b90@xs4all.nl>
+ <fda4f196-8466-8290-9072-d80fff367720@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fda4f196-8466-8290-9072-d80fff367720@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In preparation for handling the bus clocks in the icc driver, carve out
-some defines and a struct definition to the common rpm header.
+On Mon, Jun 12, 2023 at 11:53:51AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 12/06/23 09:02, Hans Verkuil ha scritto:
+> > Hi Nicolas,
+> > 
+> > On 07/06/2023 22:53, Nícolas F. R. A. Prado wrote:
+> > > 
+> > > This series enables the hardware decoder present on mt8183. At first
+> > > glance, the only missing piece is the devicetree node for it, however,
+> > > simply adding it as is would cause an address collision between the
+> > > first register iospace and the clock-controller node, so a rework of the
+> > > dt-binding and driver, as well as addition of a clock, were needed
+> > > first.
+> > > 
+> > > Tested that H264 decoding works with the hardware decoder on
+> > > mt8183-kukui-jacuzzi-juniper-sku16, giving a fluster score of 98/135 on
+> > > the JVT-AVC_V1 test suite. And ensured other SoCs (MT8192 and MT8195)
+> > > still work as usual.
+> > > 
+> > > Changes in v2:
+> > > - Merged commit 1 (media: dt-bindings: mediatek,vcodec: Allow single
+> > >    clock for mt8183) into commit 3 (media: dt-bindings: mediatek,vcodec:
+> > >    Remove VDEC_SYS for mt8183)
+> > > - Further constrained properties in dt-binding
+> > > - Added CLK_IGNORE_UNUSED flag to active clock
+> > > - Reformatted reg-names in DT node
+> > > 
+> > > Nícolas F. R. A. Prado (4):
+> > >    media: dt-bindings: mediatek,vcodec: Don't require assigned-clocks
+> > >    media: dt-bindings: mediatek,vcodec: Remove VDEC_SYS for mt8183
+> > >    media: mediatek: vcodec: Read HW active status from clock
+> > >    clk: mediatek: mt8183: Add CLK_VDEC_ACTIVE to vdec
+> > 
+> > Is the clk patch independent from the others? It's not clear to me.
+> > 
+> > If the clk patch has to go in together with the media patches, then
+> > please let me know and post a v3 where the clk patch is also CC-ed to
+> > the linux-media mailinglist to ensure it ends up in our patchwork system.
+> > 
+> > And in that case I need a Acked-by from the clk maintainer as well.
+> > 
+> > If it is independent, then there is no need for a v3 (at least, not
+> > for this).
+> > 
+> 
+> The clock patch is not independent, as in the devicetree changes will not
+> work without the addition of that clock (and of course even fail building),
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/clk-smd-rpm.c   | 13 -------------
- include/linux/soc/qcom/smd-rpm.h | 15 +++++++++++++++
- 2 files changed, 15 insertions(+), 13 deletions(-)
+Yes, but that means that the devicetree patch is dependent of the clock patch,
+but the clock patch is independent from the media patches, and can therefore be
+applied through the clock tree as usual.
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index e4de74b68797..937cb1515968 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -18,13 +18,6 @@
- 
- #include <dt-bindings/clock/qcom,rpmcc.h>
- 
--#define QCOM_RPM_KEY_SOFTWARE_ENABLE			0x6e657773
--#define QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY	0x62636370
--#define QCOM_RPM_SMD_KEY_RATE				0x007a484b
--#define QCOM_RPM_SMD_KEY_ENABLE				0x62616e45
--#define QCOM_RPM_SMD_KEY_STATE				0x54415453
--#define QCOM_RPM_SCALING_ENABLE_ID			0x2
--
- #define __DEFINE_CLK_SMD_RPM_PREFIX(_prefix, _name, _active,		      \
- 				    type, r_id, key)			      \
- 	static struct clk_smd_rpm clk_smd_rpm_##_prefix##_active;	      \
-@@ -171,12 +164,6 @@ struct clk_smd_rpm {
- 	unsigned long rate;
- };
- 
--struct clk_smd_rpm_req {
--	__le32 key;
--	__le32 nbytes;
--	__le32 value;
--};
--
- struct rpm_smd_clk_desc {
- 	struct clk_smd_rpm **clks;
- 	size_t num_clks;
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index 99499e4b080e..8190878645f9 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -2,6 +2,8 @@
- #ifndef __QCOM_SMD_RPM_H__
- #define __QCOM_SMD_RPM_H__
- 
-+#include <linux/types.h>
-+
- struct qcom_smd_rpm;
- 
- #define QCOM_SMD_RPM_ACTIVE_STATE	0
-@@ -45,6 +47,19 @@ struct qcom_smd_rpm;
- #define QCOM_SMD_RPM_PKA_CLK	0x616b70
- #define QCOM_SMD_RPM_MCFG_CLK	0x6766636d
- 
-+#define QCOM_RPM_KEY_SOFTWARE_ENABLE			0x6e657773
-+#define QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY	0x62636370
-+#define QCOM_RPM_SMD_KEY_RATE				0x007a484b
-+#define QCOM_RPM_SMD_KEY_ENABLE				0x62616e45
-+#define QCOM_RPM_SMD_KEY_STATE				0x54415453
-+#define QCOM_RPM_SCALING_ENABLE_ID			0x2
-+
-+struct clk_smd_rpm_req {
-+	__le32 key;
-+	__le32 nbytes;
-+	__le32 value;
-+};
-+
- int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
- 		       int state,
- 		       u32 resource_type, u32 resource_id,
+So, the media patches (first three) can be merged through the media tree, the
+clock patch (patch 4) through the clock tree independently, and the only
+requirement is that the DT patch (last one) is only applied by Matthias after
+the clock patch is present, to avoid build problems, and also after the media
+patches are present, to avoid dt-binding errors.
 
--- 
-2.41.0
-
+Thanks,
+Nícolas
