@@ -2,147 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED05C77B7A
-	for <linux-clk@archiver.kernel.org>; Sun, 11 Jun 2023 17:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2643C7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 02:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbjFKRC5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 11 Jun 2023 13:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41806 "EHLO
+        id S232979AbjFLCZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 11 Jun 2023 22:25:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229523AbjFKRCz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Jun 2023 13:02:55 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD046E63;
-        Sun, 11 Jun 2023 10:02:54 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id 98e67ed59e1d1-2565a9107d2so2156160a91.0;
-        Sun, 11 Jun 2023 10:02:54 -0700 (PDT)
+        with ESMTP id S231922AbjFLCZv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Jun 2023 22:25:51 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2C4E47
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 19:25:45 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30fb7be435dso661248f8f.1
+        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 19:25:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686502974; x=1689094974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EoCFwrEB0vvlfmLLlOSHa+piSHoEJ5gC+VXcVkiTQ0k=;
-        b=krayJ6uwWRTtbE+7Im6rE8BILvjlU83+RJsF2E+i5TO24DrKvzg4cLPYe6UAVudvJ8
-         Be2XUpr50dZfqxq+LOLvv9voaaTYvIsg6bkamBtggLW6ii/ugONs6LrjqwErtfpqOTZa
-         PiwTlhvtsVOkTwGOF95n9BTuGmVuZ/MJq/BI0R7GDa/sBKqzfdgtfXydrZvP3/bSh3u+
-         0SQ3KVrZjregxi2kG0glbTc0ncBKCVBt96zHMk/rfQELMGG2OuroUJPWcS7u2VpQfCpu
-         rqn2MzxuGIhhukFWNxv8pKJQVHYExePFXwlDLZAHqGcqOa0kTkw7dis8k8fXXqDk+HNd
-         VrMA==
+        d=linaro.org; s=google; t=1686536744; x=1689128744;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7ZKG0ffrkcy1xii/drViWf4QWyfzui60KGk55lhMEuw=;
+        b=AYXs+BNS/C3jqjKVjMdVPoFBYjntnN4UTZ+btsasdNT1GNiuLtA7tJKG3Qcj5UCSOd
+         u6+vaNskESi7SG1rL0LF0yiLoSpTj4VSn0dxFw2VX4ZgJBe8Tx7iTEC0JquXZZesQ9j6
+         nbVkduqTVANFu3t8PHaAN+RUsWnMWEMlzF2OcnY9gW+RXkqOhEFLKqKCwusxFq2UlO6O
+         z5TAc2031fIgsLnPMBbT4V46ODxRXQKYAca1/WEdiTb98qzX3t/mvsuQUCyoIflOBcjS
+         A2hN2RWCAF8xeMExRmeHINcOjVWzGZ4vhTeA9zT6lmB4dS6W8mQE5JUKc7Yny/ZF+n5Y
+         YerQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686502974; x=1689094974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EoCFwrEB0vvlfmLLlOSHa+piSHoEJ5gC+VXcVkiTQ0k=;
-        b=cLxtBtVvbT+KYE7u6g+mKG2Re60ZMiS/vmpxv2falcbPESBqjXXfkwAVM6fq81BNZN
-         GqUT233km3758bdAeGduHwBpdi1aQjNA9Qb7ORN3eK6Ellm0khzlO5KX6OHBdZf+xHbM
-         mk9k1L6PXb7HUd9v2fXUaH80JPdz9ZE/Dgk+UtecgPJmzVCutGZfzFq5kfarHtSJUGQm
-         sOj9CAwJcLxPVyj8MpPEnbAY1fGU+LEmKOqrj+bG08M4Oi1p0JNAWvHMjG+lLZrW3+b6
-         Q27cIbQq2RedKz0vbsRfJ4b5Q2ZqYKnoWfqbDsQUdD+g3P/nGmploh2PUwsjYhTKIZAt
-         dKKA==
-X-Gm-Message-State: AC+VfDwoPaeqrytsT1Qb+ADCsUfrcpnuCysK4vSaj5Fe0YTwnPqa/t/+
-        uRsWlavSNOtwY5zXePUDGHptTCrlft7hDb7X/VI=
-X-Google-Smtp-Source: ACHHUZ7l+4TR3OHAvJEjzr3koYOCUElOXrpQlwUfhbtqoGZqePk86Nn0jhaQ0PWxIazQbuM4n3xcpXjQwvLY4Nidj6c=
-X-Received: by 2002:a17:90a:7565:b0:25b:ba0c:ab7c with SMTP id
- q92-20020a17090a756500b0025bba0cab7cmr3444582pjk.27.1686502974159; Sun, 11
- Jun 2023 10:02:54 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686536744; x=1689128744;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ZKG0ffrkcy1xii/drViWf4QWyfzui60KGk55lhMEuw=;
+        b=GJUA4Wdg4aRuvyWHiRLp71umW+KaXiCGyYs6Dkur4CJPMkKUoOuc4+3JuEahavz1eh
+         2EGZRMUlkwvExMZDNJK+7ogmnD+u+MAL2J3MPDgzlt+OCy9mdOi+RobctLqCVJuqC/By
+         J8hEma8nBfOE0oan1gWynsakU5MTBhbjuVhocmsxbqmmUnjKALY5J3pW3mhVZp+huelp
+         GIBh5wpCo8VvvUry6tvJntIhZ2wQsjqUkKFVBV+jnZgH5RVlwO7qxrew3z1pelExA/6T
+         +GkeEFhKONoWcyhz8VIbcvUMCJXcp9+H2LMQZ6s7ZxgM8QtGISiDyzZS/jUjYInVX+wl
+         tv1A==
+X-Gm-Message-State: AC+VfDwZ+59leb9RBpTcSyZ+7imHysvs+i4KI74uYcbmAx1Pim6lDPnl
+        8DHFBtsyrYVfvHB69QZjswjsaw==
+X-Google-Smtp-Source: ACHHUZ7Mo0TD6O9mkw5mKyecmLn6CRnZGtRiAqjqHg5t5KHVLq7hJN0qZ1A4oqj02qkAEndI2fWRZQ==
+X-Received: by 2002:a05:6000:191:b0:30a:ceb3:26bd with SMTP id p17-20020a056000019100b0030aceb326bdmr2854711wrx.56.1686536744219;
+        Sun, 11 Jun 2023 19:25:44 -0700 (PDT)
+Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
+        by smtp.gmail.com with ESMTPSA id u9-20020a5d4349000000b003079c402762sm10934057wrr.19.2023.06.11.19.25.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Jun 2023 19:25:43 -0700 (PDT)
+Message-ID: <09ccfa54-5ada-8dff-03a2-b2ffb07a58c1@linaro.org>
+Date:   Mon, 12 Jun 2023 03:25:42 +0100
 MIME-Version: 1.0
-References: <20230506195325.876871-1-aford173@gmail.com> <CAOMZO5AwixYybR1am=V4m1AnTkum+0Wn0xegU_y6Po9Y--G0mA@mail.gmail.com>
-In-Reply-To: <CAOMZO5AwixYybR1am=V4m1AnTkum+0Wn0xegU_y6Po9Y--G0mA@mail.gmail.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sun, 11 Jun 2023 12:02:42 -0500
-Message-ID: <CAHCN7xLPKa2hrBMC1kaJkxVL9NC+c1TWgcQHMBPefnvxGPTCwQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.8.0
+Subject: Re: [PATCH V4 0/4] Add camera clock controller support for SM8550
+Content-Language: en-US
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230609115058.9059-1-quic_jkona@quicinc.com>
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20230609115058.9059-1-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 6, 2023 at 1:45=E2=80=AFPM Fabio Estevam <festevam@gmail.com> w=
-rote:
->
-> On Sat, May 6, 2023 at 4:53=E2=80=AFPM Adam Ford <aford173@gmail.com> wro=
-te:
-> >
-> > Currently, certain clocks are derrived as a divider from their
-> > parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
-> > is set, the parent clock is not properly set which can lead
-> > to some relatively inaccurate clock values.
-> >
+On 09/06/2023 12:50, Jagadeesh Kona wrote:
+> Add bindings, driver and devicetree node for camera clock controller on
+> SM8550.
 
-+ Maxime
+This is very confusing.
 
-> > Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
-> > cannot rely on calling a standard determine_rate function,
-> > because the 8m composite clocks have a pre-divider and
-> > post-divider. Because of this, a custom determine_rate
-> > function is necessary to determine the maximum clock
-> > division which is equivalent to pre-divider * the
-> > post-divider.
-> >
-> > With this added, the system can attempt to adjust the parent rate
-> > when the proper flags are set which can lead to a more precise clock
-> > value.
-> >
-> > On the imx8mplus, no clock changes are present.
-> > On the Mini and Nano, this can help achieve more accurate
-> > lcdif clocks. When trying to get a pixel clock of 31.500MHz
-> > on an imx8m Nano, the clocks divided the 594MHz down, but
-> > left the parent rate untouched which caused a calulation error.
-> >
-> > Before:
-> > video_pll              594000000
-> >   video_pll_bypass     594000000
-> >     video_pll_out      594000000
-> >       disp_pixel       31263158
-> >         disp_pixel_clk 31263158
-> >
-> > Variance =3D -236842 Hz
-> >
-> > After this patch:
-> > video_pll               31500000
-> >   video_pll_bypass      31500000
-> >     video_pll_out       31500000
-> >       disp_pixel        31500000
-> >         disp_pixel_clk  31500000
-> >
-> > Variance =3D 0 Hz
-> >
-> > All other clocks rates and parent were the same.
-> > Similar results on imx8mm were found.
-> >
-> > Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support to de=
-termine_rate"")
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
->
+Your cover letter doesn't detail any changes and your individual patches 
+all say "no changes since v3", "no changes since v2"
 
-Peng / Abel,
+If this is a RESEND then mark it as a RESEND.
 
-Any suggestions on how we can move this forward?  Looking at the
-clk-composite-8m driver, imx8m_clk_composite_compute_dividers uses the
-max values which is basically what my patch does.  There was some
-discussion about making determine_rate mandatory for muxes[1] and this
-patch should help with this in addition to making it easier to sync
-more video resolutions on the 8m Mini and Nano.
+Good practice is to for example add a note that says
 
-adam
-[1] - https://www.spinics.net/lists/alsa-devel/msg157914.html
+"I looked at updating the yaml for the camcc but opted to do this in 
+another series" or "opted not to do this at this time" or "it doesn't 
+make sense because of X"
 
+https://lore.kernel.org/linux-arm-msm/546876ba-970d-5cd5-648e-723698ca74fd@linaro.org/
 
-> This works fine on my imx8mm-evk, so:
->
-> Tested-by: Fabio Estevam <festevam@gmail.com>
+Could you perhaps RESEND this V4 with a log that explains what has 
+changed from one version to the next.
+
+If nothing has changed then don't bump the version prefix with RESEND..
+
+Second thought even replying to your cover email with the changelog 
+would do.....
+
+---
+bod
