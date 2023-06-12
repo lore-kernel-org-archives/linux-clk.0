@@ -2,154 +2,229 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C41C7EE43
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE17C83005
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230283AbjFLI2m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 04:28:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35642 "EHLO
+        id S234175AbjFLIxi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 04:53:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232544AbjFLI21 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:28:27 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDB3F10C3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:27:33 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-977e7d6945aso736036966b.2
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686558452; x=1689150452;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I5bIDTjXQH5L90i2XX/gTWlQ9d360txShID6EFAAOrY=;
-        b=DUsTQM0th5Nt72TsPog0YPlk3jJf7qdzxGpDnRsqn00kTMcFqgmfL31vivrO+ze6H1
-         cmbnAw7QNvB1j9nx5dYJL1hqw8FMk3pGTA+gljxF4xgzcnaPbq/I6SWfFociaO5Owt4P
-         nPuQg+Mg0ZRVLnYdy94HiLehqk8ntN1mJ7UW1MWUddSc2WYLYX/N/7gQ4gclTuuXogXO
-         zuQaXbeJsdnVB5MPS6ZPl/t9PngoYCtuT7hqsMM1uUqPDDblnT+8lqdtfUkMEczQQsa7
-         y5ZWUs6MMQHtpziktzvIb6jFGEQfVS8hNenrZCZTjbOjNXepH1T/hsD7cM9U2MKiOtZt
-         5mPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686558452; x=1689150452;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I5bIDTjXQH5L90i2XX/gTWlQ9d360txShID6EFAAOrY=;
-        b=FzYc0EIUbA/cvqfGlbt+B8t34f48Vy2jTNPLmLHwPcTM3RwP/N8653JnjQ7T9RHz42
-         UHhd16Ak+kvCVqDA6AbB4PzzrPJIyFcJ1bKrnIEIy4cB2bJv4sWKEyi6bvprOR751fRs
-         XOgtfkOmM0mDto6Jcd4Z7xAtMy6Bi8GKZppG9z7br9wZslDCIigQD8VrWiCqAHHAxq+M
-         l7B7+NuJqt8K7qdSvDdmefG7c/+0vSJ8Bt/tND3mmI+YOeIjDAduAGw8IxP9fgR9BgLk
-         lfnor05XqVhtqTSEWVhrmC8zsdq7x9bvcrkrb0CvNSayu4U5P3oQJCcpGBF6SwLrm30o
-         i+uQ==
-X-Gm-Message-State: AC+VfDzXMHaCEC1RC/4ZsgtsqV5dF0IDQfnuBTL/IEellQGHsOI0vbx7
-        y8KxN2CKu2WdOKqBB/FVozrz1Q==
-X-Google-Smtp-Source: ACHHUZ780bHh0/qlAhme+NUUhtBLlL2dWKyBMTEzWXXJYLswBXHMMVxwYZNy/VEf+HHZyoSdMvP2OA==
-X-Received: by 2002:a17:906:7303:b0:974:61dc:107c with SMTP id di3-20020a170906730300b0097461dc107cmr9378908ejc.44.1686558452294;
-        Mon, 12 Jun 2023 01:27:32 -0700 (PDT)
-Received: from linaro.org ([86.121.163.20])
-        by smtp.gmail.com with ESMTPSA id f27-20020a170906391b00b0097888b3b5a7sm4850523eje.31.2023.06.12.01.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 01:27:31 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 11:27:30 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Yuxing Liu <lyx2022@hust.edu.cn>
-Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        with ESMTP id S233781AbjFLIxJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:53:09 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18B5D2D4A;
+        Mon, 12 Jun 2023 01:52:25 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Qfln22Rxvz9sd2;
+        Mon, 12 Jun 2023 10:52:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1686559942;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=T2MJ+F0cRREqc9apuK/Y9l5PP1ml/WVEL7uBUhsIOhM=;
+        b=AmtNWOEeOV8ZGTDCiTA9+LwCqvaGtuLcptDiEO4rk8YyGtg4ZXTKSOsAUpCR9qekTdQyek
+        bhcca/VR59O4e96l1MfnZbk6TS9tJiwAbWTRht1KBuqDTPw6Bk7BSCAgCDefpPpe5/MJBj
+        MX5GsA2AwmKTTqi5nKpYm0lnuE6rvJ2IBLof1mGM/y27LJjbkIoLDJjR47YS79A07wkT7U
+        fNCn3EeKZo7qjtwTc/cMMO4U+bPiNSHCJbR4QhCbwLBZmRvAWIfYwSNf1WMRKTGCkHSr1e
+        wM60L/hxSSHXnNNCTp7fcK7DtoEbQlfOURqgG8JZUNRdmhJfDajQFZhVM2NHaA==
+References: <20230611090143.132257-1-frank@oltmanns.dev>
+ <20230611090143.132257-2-frank@oltmanns.dev>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
         Michael Turquette <mturquette@baylibre.com>,
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        hust-os-kernel-patches@googlegroups.com,
-        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: imx: clk-imx8mp: improve error handling in
- imx8mp_clocks_probe()
-Message-ID: <ZIbW8uqb/8X8qY7h@linaro.org>
-References: <20230503070607.2462-1-lyx2022@hust.edu.cn>
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] clk: sunxi-ng: nkm: consider alternative parent
+ rates when finding rate
+In-reply-to: <20230611090143.132257-2-frank@oltmanns.dev>
+Date:   Mon, 12 Jun 2023 10:51:52 +0200
+Message-ID: <87edmh12s7.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230503070607.2462-1-lyx2022@hust.edu.cn>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-05-03 07:06:07, Yuxing Liu wrote:
-> Replace of_iomap() and kzalloc() with devm_of_iomap() and devm_kzalloc()
-> which can automatically release the related memory when the device
-> or driver is removed or unloaded to avoid potential memory leak.
-> 
-> In this case, iounmap(anatop_base) in line 427,433 are removed
-> as manual release is not required.
-> 
-> Besides, referring to clk-imx8mq.c, check the return code of
-> of_clk_add_hw_provider, if it returns negtive, print error info
-> and unregister hws, which makes the program more robust.
-> 
-> Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
-> Signed-off-by: Yuxing Liu <lyx2022@hust.edu.cn>
-> Reviewed-by: Dongliang Mu <dzm91@hust.edu.cn>
+Hi all,
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+I just found in the Allwinner A64 User Manual V1.0, that there are
+additional constraints on the combinations for pll-mipi, that are not
+(and never were) enforced by by ccu_nkm.
 
+On 2023-06-11 at 11:01:42 +0200, Frank Oltmanns <frank@oltmanns.dev> wrote:
+> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
+> parent rate when determining a new rate.
+>
+> To find the best match for the requested rate, perform the following
+> steps for each NKM combination:
+>  - calculate the optimal parent rate,
+>  - find the best parent rate that the parent clock actually supports
+>  - use that parent rate to calculate the effective rate.
+>
+> In case the clk does not support setting the parent rate, use the same
+> algorithm as before.
+>
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
 > ---
-> This issue is found by static analysis and remains untested.
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 24 +++++++++++++-----------
->  1 file changed, 13 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 3253589851ff..de7d2d2176be 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -414,25 +414,22 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np;
->  	void __iomem *anatop_base, *ccm_base;
-> +	int err;
->  
->  	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
-> -	anatop_base = of_iomap(np, 0);
-> +	anatop_base = devm_of_iomap(dev, np, 0, NULL);
->  	of_node_put(np);
-> -	if (WARN_ON(!anatop_base))
-> -		return -ENOMEM;
-> +	if (WARN_ON(IS_ERR(anatop_base)))
-> +		return PTR_ERR(anatop_base);
->  
->  	np = dev->of_node;
->  	ccm_base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (WARN_ON(IS_ERR(ccm_base))) {
-> -		iounmap(anatop_base);
-> +	if (WARN_ON(IS_ERR(ccm_base)))
->  		return PTR_ERR(ccm_base);
-> -	}
->  
-> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
-> -	if (WARN_ON(!clk_hw_data)) {
-> -		iounmap(anatop_base);
-> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
-> +	if (WARN_ON(!clk_hw_data))
->  		return -ENOMEM;
-> -	}
->  
->  	clk_hw_data->num = IMX8MP_CLK_END;
->  	hws = clk_hw_data->hws;
-> @@ -721,7 +718,12 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  
->  	imx_check_clk_hws(hws, IMX8MP_CLK_END);
->  
-> -	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-> +	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to register hws for i.MX8MP\n");
-> +		imx_unregister_hw_clocks(hws, IMX8MP_CLK_END);
-> +		return err;
-> +	}
->  
->  	imx_register_uart_clocks();
->  
-> -- 
-> 2.34.1
-> 
+>  drivers/clk/sunxi-ng/ccu_nkm.c | 66 +++++++++++++++++++++++++++++-----
+>  1 file changed, 58 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> index a0978a50edae..c49d5879fe73 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> @@ -6,6 +6,7 @@
+>
+>  #include <linux/clk-provider.h>
+>  #include <linux/io.h>
+> +#include <linux/math.h>
+>
+>  #include "ccu_gate.h"
+>  #include "ccu_nkm.h"
+> @@ -16,10 +17,49 @@ struct _ccu_nkm {
+>  	unsigned long	m, min_m, max_m;
+>  };
+>
+> -static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+> -				       struct _ccu_nkm *nkm)
+> +static unsigned long optimal_parent_rate(unsigned long rate, unsigned long n,
+> +					 unsigned long k, unsigned long m)
+>  {
+> -	unsigned long best_rate = 0;
+> +	unsigned long _rate, parent;
+> +
+> +	// We must first try to find the desired parent rate that is rounded up, because there are
+> +	// cases where truncating makes us miss the requested rate.
+> +	// E.g. rate=449035712, n=11, k=3, m=16
+> +	// When truncating, we'd get parent=217714284 and calculating the rate from that would give
+> +	// us 449035710. When rounding up, we get parent=217714285 which would give us the requested
+> +	// rate of 449035712.
+> +	parent = DIV_ROUND_UP(rate * m, n * k);
+> +
+> +	// But there are other cases, where rounding up the parent gives us a too high rate.
+> +	// Therefore, we need to check for this case and, if necessary, truncate the parent rate
+> +	// instead of rounding up.
+> +	_rate = parent * n * k / m;
+> +	if (_rate > rate)
+> +		parent = rate * m / (n * k);
+> +	return parent;
+> +}
+> +
+> +/**
+> + * ccu_nkm_find_best - Find the best nkm combination for a given rate
+> + *
+> + * @parent: rate of parent clock. This is used either as an input or out parameter:
+> + *           - In cases where the parent clock can be set, this parameter will be updated to contain
+> + *             the optimal rate for the parent to achieve the best rate for the nkm clock.
+> + *           - In cases where the parent clock can not be set, this parameter must contain the
+> + *             current rate of the parent, which is used to determine the best combination of n, k,
+> + *             and m.
+> + * @rate: requested rate.
+> + * @nkm: Input/output parameter that contains the clocks constraints on the n, k, m combinations and
+> + *       is updated in this function to contain the resulting best n, k, m combination.
+> + * @parent_hw: parent clock. If set, this function assumes that the parent clock can be updated to a
+> + *             rate that would be best to in order to get as close as possible to @rate. This
+> + *             parameter must be set to NULL if this function shall not try to find the optimal
+> + *             parent rate for the requested rate.
+> + */
+> +static unsigned long ccu_nkm_find_best(unsigned long *parent, unsigned long rate,
+> +				       struct _ccu_nkm *nkm, struct clk_hw *parent_hw)
+> +{
+> +	unsigned long best_rate = 0, best_parent_rate = *parent, tmp_parent = *parent;
+>  	unsigned long best_n = 0, best_k = 0, best_m = 0;
+>  	unsigned long _n, _k, _m;
+>
+> @@ -28,12 +68,17 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+
+According to the manual M/N has to be <= 3. Therefore we need a
+different maximum value for the _m-for-loop:
+
+        unsigned long max_m = min(3 * _n, nkm->max_m);
+        for (_m = nkm->min_m; _m <= max_m; _m++) {
+
+I suggest that I add an optional member max_mn_ratio to the structs
+ccu_nkm and _ccu_nkm. Optional meaning: Ignore if 0.
+
+>  				unsigned long tmp_rate;
+>
+> -				tmp_rate = parent * _n * _k / _m;
+> -
+> +				if (parent_hw) {
+> +					tmp_parent = optimal_parent_rate(rate, _n, _k, _m);
+> +					tmp_parent = clk_hw_round_rate(parent_hw, tmp_parent);
+> +				}
+
+Another constraint is PLL-VIDEO0 rate / M >= 24 MHz. Therefore we also
+need:
+        if (tmp_parent < 24000000 * _m)
+                continue;
+
+So, we need another optional member min_m_times_parent or, for
+shortness, maybe min_m_parent. I could use help finding a good name for
+this.
+
+I guess there needs to be a V3 of this patchset. :)
+
+Regards,
+  Frank
+
+> +				tmp_rate = tmp_parent * _n * _k / _m;
+>  				if (tmp_rate > rate)
+>  					continue;
+> +
+>  				if ((rate - tmp_rate) < (rate - best_rate)) {
+>  					best_rate = tmp_rate;
+> +					best_parent_rate = tmp_parent;
+>  					best_n = _n;
+>  					best_k = _k;
+>  					best_m = _m;
+> @@ -46,6 +91,8 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>  	nkm->k = best_k;
+>  	nkm->m = best_m;
+>
+> +	*parent = best_parent_rate;
+> +
+>  	return best_rate;
+>  }
+>
+> @@ -106,7 +153,7 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
+>  }
+>
+>  static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+> -					struct clk_hw *hw,
+> +					struct clk_hw *parent_hw,
+>  					unsigned long *parent_rate,
+>  					unsigned long rate,
+>  					void *data)
+> @@ -124,7 +171,10 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  		rate *= nkm->fixed_post_div;
+>
+> -	rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm);
+> +	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
+> +		rate = ccu_nkm_find_best(parent_rate, rate, &_nkm, NULL);
+> +	else
+> +		rate = ccu_nkm_find_best(parent_rate, rate, &_nkm, parent_hw);
+>
+>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>  		rate /= nkm->fixed_post_div;
+> @@ -159,7 +209,7 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	_nkm.min_m = 1;
+>  	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
+>
+> -	ccu_nkm_find_best(parent_rate, rate, &_nkm);
+> +	ccu_nkm_find_best(&parent_rate, rate, &_nkm, NULL);
+>
+>  	spin_lock_irqsave(nkm->common.lock, flags);
