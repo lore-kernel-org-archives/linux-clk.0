@@ -2,74 +2,73 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5400BC7EE43
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F272C7EE45
 	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 09:49:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231653AbjFLJtT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 05:49:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59428 "EHLO
+        id S229887AbjFLJtS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 05:49:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234308AbjFLJsO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 05:48:14 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5B71AD05
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:34:46 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-5147f5efeb5so7426058a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:34:46 -0700 (PDT)
+        with ESMTP id S231653AbjFLJsH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 05:48:07 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60DD55597
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:34:41 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-977d02931d1so606202266b.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 02:34:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686562396; x=1689154396;
+        d=linaro.org; s=google; t=1686562407; x=1689154407;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uw2vt//oAwfRUDirKEfuFTfUTv7LIcANL47GaMhJ2HY=;
-        b=tvljEK9M9gicBQPrr2CvNMR0e2D10EWl3TIXpZe8jfDI9UB/j1pUJcHMOgNNVrLmnB
-         CroIaJhnNHy9vKCpoAFHXsQrGEf9K2Lx4N0Nfvmlvig51euRaPlEj2yr1FgyXDM0I65P
-         xmBJ0QtcIyx+yxX+Pk0uaDHuQUk2P2u/nwCPJqydxAwRgTzWP8gYMvwEvOZxWnLtJKw+
-         7EEnsDkLGlaRB7lssdiIVnPVXxI30A99q6MhZS9zkovz9EJ9DuE7N6lUfsMwVLjgxH6Q
-         fEX08uTQjGMpURhdBUovE0+AUEYg1i2+70WYWT6RRt0Z9FwkM5o5JX64JstJ82f6Pe1N
-         XGqQ==
+        bh=P7/I1ayBoe2EChOWGV7usCqZR+8SIH1+fvVOuYaCd8o=;
+        b=hQsfbC1hfvX/VkT1eqZm5DfS/WywUBfNcsJPDDu4FvXouSS4uGmSjMvie8Y7o22L8n
+         4PeVe/c0F18vWgnIz3raM4AR0kPeDO2Qbzjnc1UYuuoSoPBynADm400FuJz48W8fVwd2
+         tdA9yjlFwpO4H3g31t64F5OnsJCLzyI2ShbywFIZ6GW4XehMltmLEuPVXgXOEwikgqTz
+         Yi4/9ru4IUNjZxeg/FnBRwIC0dPNc+DMHIcX94ibRBIilBcsF8bfng+S8BTlHWyzd3ld
+         fNsS9lBggk3nKcLokp4hFOQ2JRXiMwhu8JCn4B7AkRJwMH2lmBf5Sex6BnCNmJ1H++Yp
+         y3+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686562396; x=1689154396;
+        d=1e100.net; s=20221208; t=1686562407; x=1689154407;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uw2vt//oAwfRUDirKEfuFTfUTv7LIcANL47GaMhJ2HY=;
-        b=Ol27cSG8gcyl4iTEq6NUp1A+2A2BTb3idjijN0UvrzEvD2hXtKXSeNVmQaA7gfj2/0
-         S44EkQpgZU/UDInri6dZYV0SyYpW4aj8JLFGvPiKncdj4tWMdHALcWsVlElccHNLtQco
-         9U5PZVv8advsxJ3a6y55qpqFVR/flgTP9sbjG+56p94cZ5EkacSqDltBo2NVsbzwLvTn
-         sPYs9SMJFpBVCGzX+ika/jbqCLx6t5tRlodkmEPb8Cs5hsjp/S8hHlclwooSC7dDESsC
-         9jmuFHRiUByKAdUS8oVuS0B7DSmlBZMW2tbmyiv5JeMcfm8StJ2UOl4rYM7UFNACHqYF
-         Ye1Q==
-X-Gm-Message-State: AC+VfDwzygcg8U52yiPyb0azKV0jkVOjAPWiXti0PzqO7RYZUHh2JbVo
-        qhjwaofvWa0mJlTQwSX+PZ/DWQ==
-X-Google-Smtp-Source: ACHHUZ4VY3Aoz4gm30K5nUpn2AqyMQacV3tqPC7J4zZGUar4ttwHkuiDYKSoqdModohkXNgm4rVyxg==
-X-Received: by 2002:a17:907:16ab:b0:94f:1a23:2f1c with SMTP id hc43-20020a17090716ab00b0094f1a232f1cmr11100570ejc.50.1686562395859;
-        Mon, 12 Jun 2023 02:33:15 -0700 (PDT)
+        bh=P7/I1ayBoe2EChOWGV7usCqZR+8SIH1+fvVOuYaCd8o=;
+        b=XwmO4Iznyxyhk1ryRbcrYjFbvsF3kIZbAV5u7eN+fP91VtP74duEwVEDUk7SkJnXRn
+         ewbwFbxVhuIZ+sGpra/lb7v+mBQE8bIX0NCVoQyqI4nsv8M3NKIkbHMzq+m8PVMTmEcw
+         rFW88q//RzqWv00pHDTyPq8dksLUufo5tuC0OJkQnaAGHrRTuhis+NYuVTvVLWBKuaYC
+         To4+TbzEsQqhekd9FS7waoKNgF0Vaevn/RajZpyv8KSgihczl3kH09VOmnDptH+E9jd5
+         GE5L5ulRDrYnurlkgOscjFkbNKJ3wC7bBJBf2B2QDY540XFOhzFtZi/gvtVu5fTYmcxF
+         W5+Q==
+X-Gm-Message-State: AC+VfDx/lPo1paAbg9Z/DAmE3GgMaRY7asHsduOdC1WjFWpntbvBpCVC
+        hjEyOzar3laXfwNDZqFnx3bMhw==
+X-Google-Smtp-Source: ACHHUZ7FiFwL8BPjh91CWEs26xmFRAo3yhdyy99t1MUNpBm1Q2o8g2tcPkZuAmMS/QfaGcOjlVTsVw==
+X-Received: by 2002:a17:907:2688:b0:967:a127:7e79 with SMTP id bn8-20020a170907268800b00967a1277e79mr8819298ejc.28.1686562407624;
+        Mon, 12 Jun 2023 02:33:27 -0700 (PDT)
 Received: from hackbox.lan ([86.121.163.20])
-        by smtp.gmail.com with ESMTPSA id gj13-20020a170906e10d00b00965a56f82absm4908151ejb.212.2023.06.12.02.33.14
+        by smtp.gmail.com with ESMTPSA id gj13-20020a170906e10d00b00965a56f82absm4908151ejb.212.2023.06.12.02.33.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 02:33:15 -0700 (PDT)
+        Mon, 12 Jun 2023 02:33:27 -0700 (PDT)
 From:   Abel Vesa <abel.vesa@linaro.org>
 To:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
-        Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/4] dt-bindings: clock: imx8m: Add missing interrupt property
-Date:   Mon, 12 Jun 2023 12:32:36 +0300
-Message-Id: <168656228138.662397.5023054171384904344.b4-ty@linaro.org>
+        Anson Huang <Anson.Huang@nxp.com>,
+        Hao Luo <m202171776@hust.edu.cn>
+Cc:     hust-os-kernel-patches@googlegroups.com,
+        Dongliang Mu <dzm91@hust.edu.cn>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: clk-imx8mn: fix memory leak in imx8mn_clocks_probe
+Date:   Mon, 12 Jun 2023 12:32:39 +0300
+Message-Id: <168656228139.662397.489177987320185162.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230510065644.1317577-1-alexander.stein@ew.tq-group.com>
-References: <20230510065644.1317577-1-alexander.stein@ew.tq-group.com>
+In-Reply-To: <20230411015107.2645-1-m202171776@hust.edu.cn>
+References: <20230411015107.2645-1-m202171776@hust.edu.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -78,17 +77,20 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Wed, 10 May 2023 08:56:41 +0200, Alexander Stein wrote:
-> All i.MX8M SoC have 2 CCM interrupts, called:
-> * Interrupt Request 1
-> * Interrupt Request 2
+On Tue, 11 Apr 2023 09:51:07 +0800, Hao Luo wrote:
+> Use devm_of_iomap() instead of of_iomap() to automatically handle
+> the unused ioremap region.
 > 
+> If any error occurs, regions allocated by kzalloc() will leak,
+> but using devm_kzalloc() instead will automatically free the memory
+> using devm_kfree().
 > 
+> [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: clock: imx8m: Add missing interrupt property
-      commit: 6e6bb1639136f36c82efda147b63e2a2197fa3f8
+[1/1] clk: imx: clk-imx8mn: fix memory leak in imx8mn_clocks_probe
+      commit: 188d070de9132667956f5aadd98d2bd87d3eac89
 
 Best regards,
 -- 
