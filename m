@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19830C7EE2E
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E7CC7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:28:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234545AbjFLKZe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 06:25:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34546 "EHLO
+        id S234830AbjFLK2q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 06:28:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236877AbjFLKZP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:25:15 -0400
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6DED2F17D
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:04:19 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-4f6195d2b3fso4850727e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:04:19 -0700 (PDT)
+        with ESMTP id S231273AbjFLK23 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:28:29 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE710E545
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:08:33 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-977d02931d1so611296866b.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:08:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686563868; x=1689155868;
+        d=linaro.org; s=google; t=1686564450; x=1689156450;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=I39uT2lPZiNc0FwLn4d+TDJmO4EmqH2LrDi9kfVBS4A=;
-        b=LWXcx7bxMZn9QdWZz9rFYFW+7wmdjBPMRKWrLVTFQyEQOvYDP2mOv9k7rouDSUrAlZ
-         fm39kKmDQQGBlDp/3O9HvBCgykCclOThUayIl53r7/2qlKpiwYbVAxKAqofFKehEvE/p
-         nnOeHOr3Gaqz24EqBVnCZXLgvGWykXA1pAScnpbRaAym1Ng5+Vvi1CZu4rl/xzJAnb0Q
-         vbLd/MidrvcvpxJuh35JWgm7pn6PzYRzwU4eSc3dvXKPPvWwKPkRPhPKWVKe1gp5/PYW
-         2WyvnvM6roF+iQT84USUPp14G25CXDCEe2KMHSpKEZIBicVjOJu4+c0LlDyHdtL7MJZU
-         52Eg==
+        bh=kw/rCadAAXL79CFLRSUQPy8XYxYwff3PlTHUSH33OfY=;
+        b=kLQ2EcUZp5fV1CsFnFWf6569TRVuofEFG2SQlflw0OwIktzP36GVGZeK6efvNMNjoE
+         ZYkkgNisI6PHqPiewuGFgTnuQjTn0dkE2k8YSg5/P86KBG1o/WNsCL61HogRnx1J6NWk
+         NHUUd/RujRtOtcJrodi15pgnoKJITgCluut2UWUCJTTkHcLHkQ3pPwAjaYnLMxDq/jtV
+         JV27hRip5lLkKqzttFYuoiclzVZW+Zc3sguCYXZM2vB/0zczSYl/yUcScGg0V/9VI6nR
+         fZkLO0c0lSDK+syyPykK35tfkyF/mMzg1otiNkOJYPWimUHoSq6MBPLd0+W/hKQzpGPd
+         /JEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686563868; x=1689155868;
+        d=1e100.net; s=20221208; t=1686564450; x=1689156450;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I39uT2lPZiNc0FwLn4d+TDJmO4EmqH2LrDi9kfVBS4A=;
-        b=KZHZkBWTugTw0AZEKzq2F0gy9YRK4NzDLkKC30LtVu3w9w0FI9KUWMD9y1roE2wRcy
-         DFWlNGABEKk1F6mb+P6JyL7nsc3YIxgoTpbe1NRmlMJDr6ncWc0Yh14wUQeSGFE4bZpB
-         yjOYThhUS1btR2FdWPEbM9RDdFXbBKY6XHDtejBDoXi5VEkNVlnQ8fHfhLogJhyUKynl
-         YadF6N8XLUkW4zsa5Jy4y7nbReEes/V4fFqShUmTFr2kcJeFAB/CUPsW96TJ9sEJVyW0
-         yiUeBLf76JKXVvBSuJzB54gWEDtcQEcf/sdXkh5UKGgo3UJ/m6nw/vrMbMdLw1B08vO0
-         XaNA==
-X-Gm-Message-State: AC+VfDz870I3tUzTjjpce0/GmEJ2WTOjKbFPK9MajYDFEGXMfZj/xJLw
-        O4HKxt3eC95XyY/ubE4iONe12A==
-X-Google-Smtp-Source: ACHHUZ5mFXbH+Dti418xRCLwxBwpIU1eXhVSRS31eu3EwUeOTYHHPsN2PB9Ih7HIv/d5+vaej81vLA==
-X-Received: by 2002:a19:655d:0:b0:4f3:5038:5857 with SMTP id c29-20020a19655d000000b004f350385857mr3809299lfj.55.1686563868333;
-        Mon, 12 Jun 2023 02:57:48 -0700 (PDT)
+        bh=kw/rCadAAXL79CFLRSUQPy8XYxYwff3PlTHUSH33OfY=;
+        b=APMgn2Jp+qWTJI8mPJh21kxv2qLeQDDbbxUSykKCW6Y7vBglEoB54mrqSbihOb6BCH
+         T1LWMO8NnQNtdLDQDTnUyI3dwaN26uuEo9ncL7UpQ2dphaFgowos+tDOWP8qLPjFNseF
+         r1/Zjh5u/ZiyG5VSv1ynyD/XYyZYrKA/dnBsErk68Iz1j5hIkvTcaz+ziRt0bsHC6hNM
+         RlXm1PLsKhyTOPtnY5fUKni9/iR/g5aU1kz1LK/5mPd0HXK7GwlovU9NnoU/rLD9POWf
+         yk/rsV1XfCYE3ia8IsvUv4zAeu08DCcT2yVk2cWZfjcB12q4M+QP/dY7Q3QXoqdKzXCj
+         vvew==
+X-Gm-Message-State: AC+VfDxV0ppTtrJUMF4dkui/BDh163zgjjpZ42bs/P8M4Wub6wao0aUC
+        Kh+d1MhlnUd7u/05xxJ2N/DqMU1eE9sH4lXAdINnJg==
+X-Google-Smtp-Source: ACHHUZ7Nj7K48LPwKpVkcBSYiTeTZq3O2zhydrN5rx9W1UNRx3vSxgd19cnaiULzsBS+PbW1vRvnVg==
+X-Received: by 2002:a5d:5486:0:b0:30f:bea9:bf17 with SMTP id h6-20020a5d5486000000b0030fbea9bf17mr2771768wrv.30.1686563857429;
+        Mon, 12 Jun 2023 02:57:37 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id f25-20020a7bcd19000000b003f7ff520a14sm10829525wmj.22.2023.06.12.02.57.47
+        by smtp.gmail.com with ESMTPSA id f25-20020a7bcd19000000b003f7ff520a14sm10829525wmj.22.2023.06.12.02.57.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 02:57:47 -0700 (PDT)
+        Mon, 12 Jun 2023 02:57:37 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Mon, 12 Jun 2023 11:57:31 +0200
-Subject: [PATCH v2 14/19] dt-bindings: clk: axg-audio-clkc: expose all
- clock ids
+Date:   Mon, 12 Jun 2023 11:57:20 +0200
+Subject: [PATCH v2 03/19] clk: meson: migrate meson-aoclk out of
+ hw_onecell_data to drop NR_CLKS
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-14-38172d17c27a@linaro.org>
+Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-3-38172d17c27a@linaro.org>
 References: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
 In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>,
@@ -70,229 +70,339 @@ To:     Jerome Brunet <jbrunet@baylibre.com>,
 Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8034;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11916;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=l+MHnXn2LAzraSLI1gt+tM7d2z6sSQhrtl8Z0ufzVks=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkhuwKiChr0tJkUuXcvZgCubrPLKKmRditFREXdfWb
- JrqnddKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIbsCgAKCRB33NvayMhJ0VY/EA
- Clsi9+y9jqcGZAGuywlUcfoF66/U/CQIu++2TXrcip0WuZRHLX/SiHjeW/3aiyqyzz/SIJvii6fbK8
- oaQAhOBucHHxunsD1Lez011FXjMzpPWfNLSGIdpoQAfugPdI2BQEkYQu1YVN5f7IONzK/YF/awNckT
- dA0fRldJ1BfQGnhgrGbLUokdN6/kAMefokR42o4oJIgPaJEmclqGcswXY8/swvxAFmG3/lS3Z2+2SK
- +58fhj+VYjWd2i/0f/n5jDaOe6PNT35OM0tGCs3j73gvCo9tBjKUZ3TCes7gyYkI6SX6/4SHy1q0DN
- Jwdp5cXx9GbhO5o1Lva9hzy4Q826kriwt1HCr9PV1ocRNlKfCCcvM4W1pvRuwHdOplgHJequNzk08o
- wRAyz67ocTqG9ZtX2DljnF6EiA9KfhDGAsmhthX0FN8k3WBIH91NjDv/Sa9ym1MgD6JlbjNbA1EX8j
- YZvdg2/b+pQDuMdmoePsDrfKIfKYoSMYDpR2gSM8dy6sTr78076P/ziUEOqOEuUvGes68UGtq4Cpc3
- 3+qRgFWvxRLmvXoBbMQBQTIHc6r7zUy0AGis0yd3Wnzuicn6wDZ+Nysu+i52Y7CMvx1vn6Eu0EafBh
- wOw1dz+m8LC0AgMuMBmoCcJgGvNvg+m2Mh34IdMH3ejFsRZFwlWhziufQ+WQ==
+ bh=u0XTmnGJ7kpzwSNhseqUxfIkEBUoq9Fep+pYYL8Z2KA=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkhuwGPiKIs/zwlWbwuXV2xU1Kn8Cc40zOotivYKlK
+ /VSHeJuJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIbsBgAKCRB33NvayMhJ0UgJD/
+ 9nNiaMTkKwHKUWNcnhTdO8LNn4pUIVSgpnEPDjQ4OL0pBG3c8IGaI72Ge8DzgqmgLBUKEMq2g0KsPe
+ lnaQkIvPcPMcKszTEX1cT2fQ40sTSt2lcr2CtAXRpXmEycF+MBg+stk7XXMmpnRlq4jZCME1BUfLfn
+ +PFlBScTNgrsASY2CX4Vi8isbE/bPtb1/kLlswNTK3xH+a+YXmQEh+X+AZLK5PObzGzjE7KSgPaB4k
+ oHTPgIQDwFjRmi6sR37u7ByKBbzQd1k7CI2Ws4G0Ip7ZSoNNWzZUEGkL0sGDTzSVmPdQiQ/XdGV2QH
+ SIfdqQ+8epX0hmp2pysLHKVBNdFBL2ZD04F7/WpYvk2WZhmkXuhpQisImZn1rd3Qo65KvBgZaN4UNO
+ VfgmFJc5n4pwvz7AGE+IV1tQvwmI2wTE4lshN3DqGLVJsr7wmuyVenHLfI5feJ/TYVbWkdvTleni6a
+ qD6/eLL6wW8ht58n+Cx4l/HiWnUv9WdQZLROtUMwKqK0U22lD8xNK0lWSbenHaGlNLO35MLKmTS4f1
+ IkgD641bB3FDFqeAyp2lItKtv6NqxL6fdt8irIY8O/4Zx6Gc/ateEI6zPSaJT+3keCJTkcJg5QIT/y
+ xXO/WyOUtUlHKfnAz9UArE2Lg0wOSyEp97DgLoYWaBQxdyh65+7GLhK3SLYg==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Due to a policy change in clock ID bindings handling, expose
-all the "private" clock IDs to the public clock dt-bindings
-to move out of the previous maintenance scheme.
+The way hw_onecell_data is declared:
+  struct clk_hw_onecell_data {
+          unsigned int num;
+          struct clk_hw *hws[];
+  };
 
-This refers to a discussion at [1] & [2] with Krzysztof about
-the issue with the current maintenance.
+makes it impossible to have the clk_hw table declared outside while
+using ARRAY_SIZE() to determine ".num" due to ".hws" being a flexible
+array member.
 
-It was decided to move every axg-audio-clkc ID to the public clock
-dt-bindings headers to be merged in a single tree so we
-can safely add new clocks without having merge issues.
+Completely move out of hw_onecell_data and add a custom
+devm_of_clk_add_hw_provider() "get" callback to retrieve the clk_hw
+from the meson_aoclk_data struct to finally get rid on the
+NR_CLKS define.
 
-[1] https://lore.kernel.org/all/c088e01c-0714-82be-8347-6140daf56640@linaro.org/
-[2] https://lore.kernel.org/all/2fabe721-7434-43e7-bae5-088a42ba128d@app.fastmail.com/
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/clk/meson/axg-audio.h              | 70 ------------------------------
- include/dt-bindings/clock/axg-audio-clkc.h | 65 +++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+), 70 deletions(-)
+ drivers/clk/meson/Kconfig       |  1 +
+ drivers/clk/meson/axg-aoclk.c   | 44 +++++++++++++-------------
+ drivers/clk/meson/axg-aoclk.h   |  2 --
+ drivers/clk/meson/g12a-aoclk.c  | 68 ++++++++++++++++++++---------------------
+ drivers/clk/meson/g12a-aoclk.h  |  2 --
+ drivers/clk/meson/gxbb-aoclk.c  | 10 +++---
+ drivers/clk/meson/gxbb-aoclk.h  |  2 --
+ drivers/clk/meson/meson-aoclk.c |  9 +++---
+ drivers/clk/meson/meson-aoclk.h |  3 +-
+ 9 files changed, 68 insertions(+), 73 deletions(-)
 
-diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
-index d6ed27c77729..faf08748b205 100644
---- a/drivers/clk/meson/axg-audio.h
-+++ b/drivers/clk/meson/axg-audio.h
-@@ -64,76 +64,6 @@
- #define AUDIO_SM1_SW_RESET1	0x02C
- #define AUDIO_CLK81_CTRL	0x030
- #define AUDIO_CLK81_EN		0x034
--/*
-- * CLKID index values
-- * These indices are entirely contrived and do not map onto the hardware.
-- */
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 5bf901da8a63..caadaf973317 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -36,6 +36,7 @@ config COMMON_CLK_MESON_CLKC_UTILS
+ config COMMON_CLK_MESON_AO_CLKC
+ 	tristate
+ 	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select RESET_CONTROLLER
+ 
+ config COMMON_CLK_MESON_EE_CLKC
+diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
+index af6db437bcd8..2d1dad8657e0 100644
+--- a/drivers/clk/meson/axg-aoclk.c
++++ b/drivers/clk/meson/axg-aoclk.c
+@@ -288,27 +288,24 @@ static struct clk_regmap *axg_aoclk_regmap[] = {
+ 	&axg_aoclk_saradc_gate,
+ };
+ 
+-static const struct clk_hw_onecell_data axg_aoclk_onecell_data = {
+-	.hws = {
+-		[CLKID_AO_REMOTE]	= &axg_aoclk_remote.hw,
+-		[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master.hw,
+-		[CLKID_AO_I2C_SLAVE]	= &axg_aoclk_i2c_slave.hw,
+-		[CLKID_AO_UART1]	= &axg_aoclk_uart1.hw,
+-		[CLKID_AO_UART2]	= &axg_aoclk_uart2.hw,
+-		[CLKID_AO_IR_BLASTER]	= &axg_aoclk_ir_blaster.hw,
+-		[CLKID_AO_SAR_ADC]	= &axg_aoclk_saradc.hw,
+-		[CLKID_AO_CLK81]	= &axg_aoclk_clk81.hw,
+-		[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux.hw,
+-		[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div.hw,
+-		[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate.hw,
+-		[CLKID_AO_CTS_OSCIN]	= &axg_aoclk_cts_oscin.hw,
+-		[CLKID_AO_32K_PRE]	= &axg_aoclk_32k_pre.hw,
+-		[CLKID_AO_32K_DIV]	= &axg_aoclk_32k_div.hw,
+-		[CLKID_AO_32K_SEL]	= &axg_aoclk_32k_sel.hw,
+-		[CLKID_AO_32K]		= &axg_aoclk_32k.hw,
+-		[CLKID_AO_CTS_RTC_OSCIN] = &axg_aoclk_cts_rtc_oscin.hw,
+-	},
+-	.num = NR_CLKS,
++static struct clk_hw *axg_aoclk_hw_clks[] = {
++	[CLKID_AO_REMOTE]	= &axg_aoclk_remote.hw,
++	[CLKID_AO_I2C_MASTER]	= &axg_aoclk_i2c_master.hw,
++	[CLKID_AO_I2C_SLAVE]	= &axg_aoclk_i2c_slave.hw,
++	[CLKID_AO_UART1]	= &axg_aoclk_uart1.hw,
++	[CLKID_AO_UART2]	= &axg_aoclk_uart2.hw,
++	[CLKID_AO_IR_BLASTER]	= &axg_aoclk_ir_blaster.hw,
++	[CLKID_AO_SAR_ADC]	= &axg_aoclk_saradc.hw,
++	[CLKID_AO_CLK81]	= &axg_aoclk_clk81.hw,
++	[CLKID_AO_SAR_ADC_SEL]	= &axg_aoclk_saradc_mux.hw,
++	[CLKID_AO_SAR_ADC_DIV]	= &axg_aoclk_saradc_div.hw,
++	[CLKID_AO_SAR_ADC_CLK]	= &axg_aoclk_saradc_gate.hw,
++	[CLKID_AO_CTS_OSCIN]	= &axg_aoclk_cts_oscin.hw,
++	[CLKID_AO_32K_PRE]	= &axg_aoclk_32k_pre.hw,
++	[CLKID_AO_32K_DIV]	= &axg_aoclk_32k_div.hw,
++	[CLKID_AO_32K_SEL]	= &axg_aoclk_32k_sel.hw,
++	[CLKID_AO_32K]		= &axg_aoclk_32k.hw,
++	[CLKID_AO_CTS_RTC_OSCIN] = &axg_aoclk_cts_rtc_oscin.hw,
+ };
+ 
+ static const struct meson_aoclk_data axg_aoclkc_data = {
+@@ -317,7 +314,10 @@ static const struct meson_aoclk_data axg_aoclkc_data = {
+ 	.reset		= axg_aoclk_reset,
+ 	.num_clks	= ARRAY_SIZE(axg_aoclk_regmap),
+ 	.clks		= axg_aoclk_regmap,
+-	.hw_data	= &axg_aoclk_onecell_data,
++	.hw_clks 	= {
++		.hws	= axg_aoclk_hw_clks,
++		.num	= ARRAY_SIZE(axg_aoclk_hw_clks),
++	},
+ };
+ 
+ static const struct of_device_id axg_aoclkc_match_table[] = {
+diff --git a/drivers/clk/meson/axg-aoclk.h b/drivers/clk/meson/axg-aoclk.h
+index 3cc27e85170f..fe23dc53aa73 100644
+--- a/drivers/clk/meson/axg-aoclk.h
++++ b/drivers/clk/meson/axg-aoclk.h
+@@ -10,8 +10,6 @@
+ #ifndef __AXG_AOCLKC_H
+ #define __AXG_AOCLKC_H
+ 
+-#define NR_CLKS	17
 -
--#define AUD_CLKID_MST_A_MCLK_SEL	59
--#define AUD_CLKID_MST_B_MCLK_SEL	60
--#define AUD_CLKID_MST_C_MCLK_SEL	61
--#define AUD_CLKID_MST_D_MCLK_SEL	62
--#define AUD_CLKID_MST_E_MCLK_SEL	63
--#define AUD_CLKID_MST_F_MCLK_SEL	64
--#define AUD_CLKID_MST_A_MCLK_DIV	65
--#define AUD_CLKID_MST_B_MCLK_DIV	66
--#define AUD_CLKID_MST_C_MCLK_DIV	67
--#define AUD_CLKID_MST_D_MCLK_DIV	68
--#define AUD_CLKID_MST_E_MCLK_DIV	69
--#define AUD_CLKID_MST_F_MCLK_DIV	70
--#define AUD_CLKID_SPDIFOUT_CLK_SEL	71
--#define AUD_CLKID_SPDIFOUT_CLK_DIV	72
--#define AUD_CLKID_SPDIFIN_CLK_SEL	73
--#define AUD_CLKID_SPDIFIN_CLK_DIV	74
--#define AUD_CLKID_PDM_DCLK_SEL		75
--#define AUD_CLKID_PDM_DCLK_DIV		76
--#define AUD_CLKID_PDM_SYSCLK_SEL	77
--#define AUD_CLKID_PDM_SYSCLK_DIV	78
--#define AUD_CLKID_MST_A_SCLK_PRE_EN	92
--#define AUD_CLKID_MST_B_SCLK_PRE_EN	93
--#define AUD_CLKID_MST_C_SCLK_PRE_EN	94
--#define AUD_CLKID_MST_D_SCLK_PRE_EN	95
--#define AUD_CLKID_MST_E_SCLK_PRE_EN	96
--#define AUD_CLKID_MST_F_SCLK_PRE_EN	97
--#define AUD_CLKID_MST_A_SCLK_DIV	98
--#define AUD_CLKID_MST_B_SCLK_DIV	99
--#define AUD_CLKID_MST_C_SCLK_DIV	100
--#define AUD_CLKID_MST_D_SCLK_DIV	101
--#define AUD_CLKID_MST_E_SCLK_DIV	102
--#define AUD_CLKID_MST_F_SCLK_DIV	103
--#define AUD_CLKID_MST_A_SCLK_POST_EN	104
--#define AUD_CLKID_MST_B_SCLK_POST_EN	105
--#define AUD_CLKID_MST_C_SCLK_POST_EN	106
--#define AUD_CLKID_MST_D_SCLK_POST_EN	107
--#define AUD_CLKID_MST_E_SCLK_POST_EN	108
--#define AUD_CLKID_MST_F_SCLK_POST_EN	109
--#define AUD_CLKID_MST_A_LRCLK_DIV	110
--#define AUD_CLKID_MST_B_LRCLK_DIV	111
--#define AUD_CLKID_MST_C_LRCLK_DIV	112
--#define AUD_CLKID_MST_D_LRCLK_DIV	113
--#define AUD_CLKID_MST_E_LRCLK_DIV	114
--#define AUD_CLKID_MST_F_LRCLK_DIV	115
--#define AUD_CLKID_TDMIN_A_SCLK_PRE_EN	137
--#define AUD_CLKID_TDMIN_B_SCLK_PRE_EN	138
--#define AUD_CLKID_TDMIN_C_SCLK_PRE_EN	139
--#define AUD_CLKID_TDMIN_LB_SCLK_PRE_EN	140
--#define AUD_CLKID_TDMOUT_A_SCLK_PRE_EN	141
--#define AUD_CLKID_TDMOUT_B_SCLK_PRE_EN	142
--#define AUD_CLKID_TDMOUT_C_SCLK_PRE_EN	143
--#define AUD_CLKID_TDMIN_A_SCLK_POST_EN	144
--#define AUD_CLKID_TDMIN_B_SCLK_POST_EN	145
--#define AUD_CLKID_TDMIN_C_SCLK_POST_EN	146
--#define AUD_CLKID_TDMIN_LB_SCLK_POST_EN	147
--#define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	148
--#define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	149
--#define AUD_CLKID_TDMOUT_C_SCLK_POST_EN	150
--#define AUD_CLKID_SPDIFOUT_B_CLK_SEL	153
--#define AUD_CLKID_SPDIFOUT_B_CLK_DIV	154
--#define AUD_CLKID_CLK81_EN		173
--#define AUD_CLKID_SYSCLK_A_DIV		174
--#define AUD_CLKID_SYSCLK_B_DIV		175
--#define AUD_CLKID_SYSCLK_A_EN		176
--#define AUD_CLKID_SYSCLK_B_EN		177
+ #include <dt-bindings/clock/axg-aoclkc.h>
+ #include <dt-bindings/reset/axg-aoclkc.h>
  
- /* include the CLKIDs which are part of the DT bindings */
- #include <dt-bindings/clock/axg-audio-clkc.h>
-diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-index f561f5c5ef8f..08c82c22fa5f 100644
---- a/include/dt-bindings/clock/axg-audio-clkc.h
-+++ b/include/dt-bindings/clock/axg-audio-clkc.h
-@@ -37,6 +37,26 @@
- #define AUD_CLKID_SPDIFIN_CLK		56
- #define AUD_CLKID_PDM_DCLK		57
- #define AUD_CLKID_PDM_SYSCLK		58
-+#define AUD_CLKID_MST_A_MCLK_SEL	59
-+#define AUD_CLKID_MST_B_MCLK_SEL	60
-+#define AUD_CLKID_MST_C_MCLK_SEL	61
-+#define AUD_CLKID_MST_D_MCLK_SEL	62
-+#define AUD_CLKID_MST_E_MCLK_SEL	63
-+#define AUD_CLKID_MST_F_MCLK_SEL	64
-+#define AUD_CLKID_MST_A_MCLK_DIV	65
-+#define AUD_CLKID_MST_B_MCLK_DIV	66
-+#define AUD_CLKID_MST_C_MCLK_DIV	67
-+#define AUD_CLKID_MST_D_MCLK_DIV	68
-+#define AUD_CLKID_MST_E_MCLK_DIV	69
-+#define AUD_CLKID_MST_F_MCLK_DIV	70
-+#define AUD_CLKID_SPDIFOUT_CLK_SEL	71
-+#define AUD_CLKID_SPDIFOUT_CLK_DIV	72
-+#define AUD_CLKID_SPDIFIN_CLK_SEL	73
-+#define AUD_CLKID_SPDIFIN_CLK_DIV	74
-+#define AUD_CLKID_PDM_DCLK_SEL		75
-+#define AUD_CLKID_PDM_DCLK_DIV		76
-+#define AUD_CLKID_PDM_SYSCLK_SEL	77
-+#define AUD_CLKID_PDM_SYSCLK_DIV	78
- #define AUD_CLKID_MST_A_SCLK		79
- #define AUD_CLKID_MST_B_SCLK		80
- #define AUD_CLKID_MST_C_SCLK		81
-@@ -49,6 +69,30 @@
- #define AUD_CLKID_MST_D_LRCLK		89
- #define AUD_CLKID_MST_E_LRCLK		90
- #define AUD_CLKID_MST_F_LRCLK		91
-+#define AUD_CLKID_MST_A_SCLK_PRE_EN	92
-+#define AUD_CLKID_MST_B_SCLK_PRE_EN	93
-+#define AUD_CLKID_MST_C_SCLK_PRE_EN	94
-+#define AUD_CLKID_MST_D_SCLK_PRE_EN	95
-+#define AUD_CLKID_MST_E_SCLK_PRE_EN	96
-+#define AUD_CLKID_MST_F_SCLK_PRE_EN	97
-+#define AUD_CLKID_MST_A_SCLK_DIV	98
-+#define AUD_CLKID_MST_B_SCLK_DIV	99
-+#define AUD_CLKID_MST_C_SCLK_DIV	100
-+#define AUD_CLKID_MST_D_SCLK_DIV	101
-+#define AUD_CLKID_MST_E_SCLK_DIV	102
-+#define AUD_CLKID_MST_F_SCLK_DIV	103
-+#define AUD_CLKID_MST_A_SCLK_POST_EN	104
-+#define AUD_CLKID_MST_B_SCLK_POST_EN	105
-+#define AUD_CLKID_MST_C_SCLK_POST_EN	106
-+#define AUD_CLKID_MST_D_SCLK_POST_EN	107
-+#define AUD_CLKID_MST_E_SCLK_POST_EN	108
-+#define AUD_CLKID_MST_F_SCLK_POST_EN	109
-+#define AUD_CLKID_MST_A_LRCLK_DIV	110
-+#define AUD_CLKID_MST_B_LRCLK_DIV	111
-+#define AUD_CLKID_MST_C_LRCLK_DIV	112
-+#define AUD_CLKID_MST_D_LRCLK_DIV	113
-+#define AUD_CLKID_MST_E_LRCLK_DIV	114
-+#define AUD_CLKID_MST_F_LRCLK_DIV	115
- #define AUD_CLKID_TDMIN_A_SCLK_SEL	116
- #define AUD_CLKID_TDMIN_B_SCLK_SEL	117
- #define AUD_CLKID_TDMIN_C_SCLK_SEL	118
-@@ -70,8 +114,24 @@
- #define AUD_CLKID_TDMOUT_A_LRCLK	134
- #define AUD_CLKID_TDMOUT_B_LRCLK	135
- #define AUD_CLKID_TDMOUT_C_LRCLK	136
-+#define AUD_CLKID_TDMIN_A_SCLK_PRE_EN	137
-+#define AUD_CLKID_TDMIN_B_SCLK_PRE_EN	138
-+#define AUD_CLKID_TDMIN_C_SCLK_PRE_EN	139
-+#define AUD_CLKID_TDMIN_LB_SCLK_PRE_EN	140
-+#define AUD_CLKID_TDMOUT_A_SCLK_PRE_EN	141
-+#define AUD_CLKID_TDMOUT_B_SCLK_PRE_EN	142
-+#define AUD_CLKID_TDMOUT_C_SCLK_PRE_EN	143
-+#define AUD_CLKID_TDMIN_A_SCLK_POST_EN	144
-+#define AUD_CLKID_TDMIN_B_SCLK_POST_EN	145
-+#define AUD_CLKID_TDMIN_C_SCLK_POST_EN	146
-+#define AUD_CLKID_TDMIN_LB_SCLK_POST_EN	147
-+#define AUD_CLKID_TDMOUT_A_SCLK_POST_EN	148
-+#define AUD_CLKID_TDMOUT_B_SCLK_POST_EN	149
-+#define AUD_CLKID_TDMOUT_C_SCLK_POST_EN	150
- #define AUD_CLKID_SPDIFOUT_B		151
- #define AUD_CLKID_SPDIFOUT_B_CLK	152
-+#define AUD_CLKID_SPDIFOUT_B_CLK_SEL	153
-+#define AUD_CLKID_SPDIFOUT_B_CLK_DIV	154
- #define AUD_CLKID_TDM_MCLK_PAD0		155
- #define AUD_CLKID_TDM_MCLK_PAD1		156
- #define AUD_CLKID_TDM_LRCLK_PAD0	157
-@@ -90,5 +150,10 @@
- #define AUD_CLKID_FRDDR_D		170
- #define AUD_CLKID_TODDR_D		171
- #define AUD_CLKID_LOOPBACK_B		172
-+#define AUD_CLKID_CLK81_EN		173
-+#define AUD_CLKID_SYSCLK_A_DIV		174
-+#define AUD_CLKID_SYSCLK_B_DIV		175
-+#define AUD_CLKID_SYSCLK_A_EN		176
-+#define AUD_CLKID_SYSCLK_B_EN		177
+diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
+index b52990e574d2..9b258c1bc2d1 100644
+--- a/drivers/clk/meson/g12a-aoclk.c
++++ b/drivers/clk/meson/g12a-aoclk.c
+@@ -411,39 +411,36 @@ static struct clk_regmap *g12a_aoclk_regmap[] = {
+ 	&g12a_aoclk_saradc_gate,
+ };
  
- #endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
+-static const struct clk_hw_onecell_data g12a_aoclk_onecell_data = {
+-	.hws = {
+-		[CLKID_AO_AHB]		= &g12a_aoclk_ahb.hw,
+-		[CLKID_AO_IR_IN]	= &g12a_aoclk_ir_in.hw,
+-		[CLKID_AO_I2C_M0]	= &g12a_aoclk_i2c_m0.hw,
+-		[CLKID_AO_I2C_S0]	= &g12a_aoclk_i2c_s0.hw,
+-		[CLKID_AO_UART]		= &g12a_aoclk_uart.hw,
+-		[CLKID_AO_PROD_I2C]	= &g12a_aoclk_prod_i2c.hw,
+-		[CLKID_AO_UART2]	= &g12a_aoclk_uart2.hw,
+-		[CLKID_AO_IR_OUT]	= &g12a_aoclk_ir_out.hw,
+-		[CLKID_AO_SAR_ADC]	= &g12a_aoclk_saradc.hw,
+-		[CLKID_AO_MAILBOX]	= &g12a_aoclk_mailbox.hw,
+-		[CLKID_AO_M3]		= &g12a_aoclk_m3.hw,
+-		[CLKID_AO_AHB_SRAM]	= &g12a_aoclk_ahb_sram.hw,
+-		[CLKID_AO_RTI]		= &g12a_aoclk_rti.hw,
+-		[CLKID_AO_M4_FCLK]	= &g12a_aoclk_m4_fclk.hw,
+-		[CLKID_AO_M4_HCLK]	= &g12a_aoclk_m4_hclk.hw,
+-		[CLKID_AO_CLK81]	= &g12a_aoclk_clk81.hw,
+-		[CLKID_AO_SAR_ADC_SEL]	= &g12a_aoclk_saradc_mux.hw,
+-		[CLKID_AO_SAR_ADC_DIV]	= &g12a_aoclk_saradc_div.hw,
+-		[CLKID_AO_SAR_ADC_CLK]	= &g12a_aoclk_saradc_gate.hw,
+-		[CLKID_AO_CTS_OSCIN]	= &g12a_aoclk_cts_oscin.hw,
+-		[CLKID_AO_32K_PRE]	= &g12a_aoclk_32k_by_oscin_pre.hw,
+-		[CLKID_AO_32K_DIV]	= &g12a_aoclk_32k_by_oscin_div.hw,
+-		[CLKID_AO_32K_SEL]	= &g12a_aoclk_32k_by_oscin_sel.hw,
+-		[CLKID_AO_32K]		= &g12a_aoclk_32k_by_oscin.hw,
+-		[CLKID_AO_CEC_PRE]	= &g12a_aoclk_cec_pre.hw,
+-		[CLKID_AO_CEC_DIV]	= &g12a_aoclk_cec_div.hw,
+-		[CLKID_AO_CEC_SEL]	= &g12a_aoclk_cec_sel.hw,
+-		[CLKID_AO_CEC]		= &g12a_aoclk_cec.hw,
+-		[CLKID_AO_CTS_RTC_OSCIN] = &g12a_aoclk_cts_rtc_oscin.hw,
+-	},
+-	.num = NR_CLKS,
++static struct clk_hw *g12a_aoclk_hw_clks[] = {
++	[CLKID_AO_AHB]		= &g12a_aoclk_ahb.hw,
++	[CLKID_AO_IR_IN]	= &g12a_aoclk_ir_in.hw,
++	[CLKID_AO_I2C_M0]	= &g12a_aoclk_i2c_m0.hw,
++	[CLKID_AO_I2C_S0]	= &g12a_aoclk_i2c_s0.hw,
++	[CLKID_AO_UART]		= &g12a_aoclk_uart.hw,
++	[CLKID_AO_PROD_I2C]	= &g12a_aoclk_prod_i2c.hw,
++	[CLKID_AO_UART2]	= &g12a_aoclk_uart2.hw,
++	[CLKID_AO_IR_OUT]	= &g12a_aoclk_ir_out.hw,
++	[CLKID_AO_SAR_ADC]	= &g12a_aoclk_saradc.hw,
++	[CLKID_AO_MAILBOX]	= &g12a_aoclk_mailbox.hw,
++	[CLKID_AO_M3]		= &g12a_aoclk_m3.hw,
++	[CLKID_AO_AHB_SRAM]	= &g12a_aoclk_ahb_sram.hw,
++	[CLKID_AO_RTI]		= &g12a_aoclk_rti.hw,
++	[CLKID_AO_M4_FCLK]	= &g12a_aoclk_m4_fclk.hw,
++	[CLKID_AO_M4_HCLK]	= &g12a_aoclk_m4_hclk.hw,
++	[CLKID_AO_CLK81]	= &g12a_aoclk_clk81.hw,
++	[CLKID_AO_SAR_ADC_SEL]	= &g12a_aoclk_saradc_mux.hw,
++	[CLKID_AO_SAR_ADC_DIV]	= &g12a_aoclk_saradc_div.hw,
++	[CLKID_AO_SAR_ADC_CLK]	= &g12a_aoclk_saradc_gate.hw,
++	[CLKID_AO_CTS_OSCIN]	= &g12a_aoclk_cts_oscin.hw,
++	[CLKID_AO_32K_PRE]	= &g12a_aoclk_32k_by_oscin_pre.hw,
++	[CLKID_AO_32K_DIV]	= &g12a_aoclk_32k_by_oscin_div.hw,
++	[CLKID_AO_32K_SEL]	= &g12a_aoclk_32k_by_oscin_sel.hw,
++	[CLKID_AO_32K]		= &g12a_aoclk_32k_by_oscin.hw,
++	[CLKID_AO_CEC_PRE]	= &g12a_aoclk_cec_pre.hw,
++	[CLKID_AO_CEC_DIV]	= &g12a_aoclk_cec_div.hw,
++	[CLKID_AO_CEC_SEL]	= &g12a_aoclk_cec_sel.hw,
++	[CLKID_AO_CEC]		= &g12a_aoclk_cec.hw,
++	[CLKID_AO_CTS_RTC_OSCIN] = &g12a_aoclk_cts_rtc_oscin.hw,
+ };
+ 
+ static const struct meson_aoclk_data g12a_aoclkc_data = {
+@@ -452,7 +449,10 @@ static const struct meson_aoclk_data g12a_aoclkc_data = {
+ 	.reset		= g12a_aoclk_reset,
+ 	.num_clks	= ARRAY_SIZE(g12a_aoclk_regmap),
+ 	.clks		= g12a_aoclk_regmap,
+-	.hw_data	= &g12a_aoclk_onecell_data,
++	.hw_clks 	= {
++		.hws	= g12a_aoclk_hw_clks,
++		.num	= ARRAY_SIZE(g12a_aoclk_hw_clks),
++	},
+ };
+ 
+ static const struct of_device_id g12a_aoclkc_match_table[] = {
+diff --git a/drivers/clk/meson/g12a-aoclk.h b/drivers/clk/meson/g12a-aoclk.h
+index a67c8a7cd7c4..077bd25b94a1 100644
+--- a/drivers/clk/meson/g12a-aoclk.h
++++ b/drivers/clk/meson/g12a-aoclk.h
+@@ -24,8 +24,6 @@
+ #define CLKID_AO_CEC_DIV	25
+ #define CLKID_AO_CEC_SEL	26
+ 
+-#define NR_CLKS	29
+-
+ #include <dt-bindings/clock/g12a-aoclkc.h>
+ #include <dt-bindings/reset/g12a-aoclkc.h>
+ 
+diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
+index fce95cf89836..736c35d126f5 100644
+--- a/drivers/clk/meson/gxbb-aoclk.c
++++ b/drivers/clk/meson/gxbb-aoclk.c
+@@ -252,8 +252,7 @@ static struct clk_regmap *gxbb_aoclk[] = {
+ 	&ao_cts_cec,
+ };
+ 
+-static const struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+-	.hws = {
++static struct clk_hw *gxbb_aoclk_hw_clks[] = {
+ 		[CLKID_AO_REMOTE] = &remote_ao.hw,
+ 		[CLKID_AO_I2C_MASTER] = &i2c_master_ao.hw,
+ 		[CLKID_AO_I2C_SLAVE] = &i2c_slave_ao.hw,
+@@ -268,8 +267,6 @@ static const struct clk_hw_onecell_data gxbb_aoclk_onecell_data = {
+ 		[CLKID_AO_32K] = &ao_32k.hw,
+ 		[CLKID_AO_CTS_RTC_OSCIN] = &ao_cts_rtc_oscin.hw,
+ 		[CLKID_AO_CLK81] = &ao_clk81.hw,
+-	},
+-	.num = NR_CLKS,
+ };
+ 
+ static const struct meson_aoclk_data gxbb_aoclkc_data = {
+@@ -278,7 +275,10 @@ static const struct meson_aoclk_data gxbb_aoclkc_data = {
+ 	.reset		= gxbb_aoclk_reset,
+ 	.num_clks	= ARRAY_SIZE(gxbb_aoclk),
+ 	.clks		= gxbb_aoclk,
+-	.hw_data	= &gxbb_aoclk_onecell_data,
++	.hw_clks 	= {
++		.hws	= gxbb_aoclk_hw_clks,
++		.num	= ARRAY_SIZE(gxbb_aoclk_hw_clks),
++	},
+ };
+ 
+ static const struct of_device_id gxbb_aoclkc_match_table[] = {
+diff --git a/drivers/clk/meson/gxbb-aoclk.h b/drivers/clk/meson/gxbb-aoclk.h
+index 1db16f9b37d4..94197b957512 100644
+--- a/drivers/clk/meson/gxbb-aoclk.h
++++ b/drivers/clk/meson/gxbb-aoclk.h
+@@ -7,8 +7,6 @@
+ #ifndef __GXBB_AOCLKC_H
+ #define __GXBB_AOCLKC_H
+ 
+-#define NR_CLKS	14
+-
+ #include <dt-bindings/clock/gxbb-aoclkc.h>
+ #include <dt-bindings/reset/gxbb-aoclkc.h>
+ 
+diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
+index 434cd8f9de82..e7a72bdd0db0 100644
+--- a/drivers/clk/meson/meson-aoclk.c
++++ b/drivers/clk/meson/meson-aoclk.c
+@@ -75,19 +75,18 @@ int meson_aoclkc_probe(struct platform_device *pdev)
+ 		data->clks[clkid]->map = regmap;
+ 
+ 	/* Register all clks */
+-	for (clkid = 0; clkid < data->hw_data->num; clkid++) {
+-		if (!data->hw_data->hws[clkid])
++	for (clkid = 0; clkid < data->hw_clks.num; clkid++) {
++		if (!data->hw_clks.hws[clkid])
+ 			continue;
+ 
+-		ret = devm_clk_hw_register(dev, data->hw_data->hws[clkid]);
++		ret = devm_clk_hw_register(dev, data->hw_clks.hws[clkid]);
+ 		if (ret) {
+ 			dev_err(dev, "Clock registration failed\n");
+ 			return ret;
+ 		}
+ 	}
+ 
+-	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+-		(void *) data->hw_data);
++	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
+ }
+ EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/meson/meson-aoclk.h b/drivers/clk/meson/meson-aoclk.h
+index 605b43855a69..308be3e4814a 100644
+--- a/drivers/clk/meson/meson-aoclk.h
++++ b/drivers/clk/meson/meson-aoclk.h
+@@ -17,6 +17,7 @@
+ #include <linux/reset-controller.h>
+ 
+ #include "clk-regmap.h"
++#include "meson-clkc-utils.h"
+ 
+ struct meson_aoclk_data {
+ 	const unsigned int			reset_reg;
+@@ -24,7 +25,7 @@ struct meson_aoclk_data {
+ 	const unsigned int			*reset;
+ 	const int				num_clks;
+ 	struct clk_regmap			**clks;
+-	const struct clk_hw_onecell_data	*hw_data;
++	struct meson_clk_hw_data		hw_clks;
+ };
+ 
+ struct meson_aoclk_reset_controller {
 
 -- 
 2.34.1
