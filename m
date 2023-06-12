@@ -2,111 +2,217 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2643C7EE2E
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 02:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F2CC7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 02:54:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232979AbjFLCZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 11 Jun 2023 22:25:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34456 "EHLO
+        id S233849AbjFLCyE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 11 Jun 2023 22:54:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231922AbjFLCZv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Jun 2023 22:25:51 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2C4E47
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 19:25:45 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-30fb7be435dso661248f8f.1
-        for <linux-clk@vger.kernel.org>; Sun, 11 Jun 2023 19:25:45 -0700 (PDT)
+        with ESMTP id S229476AbjFLCyE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 11 Jun 2023 22:54:04 -0400
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11626BF;
+        Sun, 11 Jun 2023 19:54:02 -0700 (PDT)
+Received: by mail-pf1-x430.google.com with SMTP id d2e1a72fcca58-65299178ac5so4270697b3a.1;
+        Sun, 11 Jun 2023 19:54:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686536744; x=1689128744;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZKG0ffrkcy1xii/drViWf4QWyfzui60KGk55lhMEuw=;
-        b=AYXs+BNS/C3jqjKVjMdVPoFBYjntnN4UTZ+btsasdNT1GNiuLtA7tJKG3Qcj5UCSOd
-         u6+vaNskESi7SG1rL0LF0yiLoSpTj4VSn0dxFw2VX4ZgJBe8Tx7iTEC0JquXZZesQ9j6
-         nbVkduqTVANFu3t8PHaAN+RUsWnMWEMlzF2OcnY9gW+RXkqOhEFLKqKCwusxFq2UlO6O
-         z5TAc2031fIgsLnPMBbT4V46ODxRXQKYAca1/WEdiTb98qzX3t/mvsuQUCyoIflOBcjS
-         A2hN2RWCAF8xeMExRmeHINcOjVWzGZ4vhTeA9zT6lmB4dS6W8mQE5JUKc7Yny/ZF+n5Y
-         YerQ==
+        d=gmail.com; s=20221208; t=1686538441; x=1689130441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJ4E1TgPuKj4e6/UbDNdpEAQ2dguYdZ7sp49HDGjVLI=;
+        b=XtbMv+TYZ2FCIG+gAx6eT3GNWYeuNplC2pPNxGhm9EH9ap2kumPpsKtqD1kPX+XAgX
+         4DWnK/wX4PxZNW6Mbi9J26d0wzkkj83dIcOfFTIH/qjHfD1s99JWV7y8PsCwbfeW2Yf9
+         jReHN1bOYow/ky/pr6wcF76qoReaqOfWXJFhodWVcN9XN9TkZ6nN5F/h4evPjVDzoVjU
+         AWoN+SkrGbtWh8uOWS6e2lhQ25VchunRJ6P5ELxJvabIzdRbATRsjh9WhVZyDoddLeX3
+         NHAh3194LeKCNkEtQBNtdenoA4Lf2BGp/LtIyqjf8mA4niY+i7yrx/HS28aojBX0YC1S
+         NHcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686536744; x=1689128744;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZKG0ffrkcy1xii/drViWf4QWyfzui60KGk55lhMEuw=;
-        b=GJUA4Wdg4aRuvyWHiRLp71umW+KaXiCGyYs6Dkur4CJPMkKUoOuc4+3JuEahavz1eh
-         2EGZRMUlkwvExMZDNJK+7ogmnD+u+MAL2J3MPDgzlt+OCy9mdOi+RobctLqCVJuqC/By
-         J8hEma8nBfOE0oan1gWynsakU5MTBhbjuVhocmsxbqmmUnjKALY5J3pW3mhVZp+huelp
-         GIBh5wpCo8VvvUry6tvJntIhZ2wQsjqUkKFVBV+jnZgH5RVlwO7qxrew3z1pelExA/6T
-         +GkeEFhKONoWcyhz8VIbcvUMCJXcp9+H2LMQZ6s7ZxgM8QtGISiDyzZS/jUjYInVX+wl
-         tv1A==
-X-Gm-Message-State: AC+VfDwZ+59leb9RBpTcSyZ+7imHysvs+i4KI74uYcbmAx1Pim6lDPnl
-        8DHFBtsyrYVfvHB69QZjswjsaw==
-X-Google-Smtp-Source: ACHHUZ7Mo0TD6O9mkw5mKyecmLn6CRnZGtRiAqjqHg5t5KHVLq7hJN0qZ1A4oqj02qkAEndI2fWRZQ==
-X-Received: by 2002:a05:6000:191:b0:30a:ceb3:26bd with SMTP id p17-20020a056000019100b0030aceb326bdmr2854711wrx.56.1686536744219;
-        Sun, 11 Jun 2023 19:25:44 -0700 (PDT)
-Received: from [192.168.0.162] (188-141-3-169.dynamic.upc.ie. [188.141.3.169])
-        by smtp.gmail.com with ESMTPSA id u9-20020a5d4349000000b003079c402762sm10934057wrr.19.2023.06.11.19.25.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Jun 2023 19:25:43 -0700 (PDT)
-Message-ID: <09ccfa54-5ada-8dff-03a2-b2ffb07a58c1@linaro.org>
-Date:   Mon, 12 Jun 2023 03:25:42 +0100
+        d=1e100.net; s=20221208; t=1686538441; x=1689130441;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SJ4E1TgPuKj4e6/UbDNdpEAQ2dguYdZ7sp49HDGjVLI=;
+        b=EAoBPJbYNIze1heXXu2B/5vBy1/U3nrW+Y1YccH+HN0Y9gGGVB5K3/A8iIzJjywToz
+         hwz+VmOb8uEUgp6cfsoAgfDppl0f+qnuaKJ5D4KTlgMRptvoeot4kKkMcPgE9MTF1SQp
+         RxYgmr+iMivKqDPaVcTO4joqPnEZw8mAVZ63uyAP/pnqLL4pcDK47Rscc8lf/XAwy8af
+         iQBd1IbNjNaE3wXkUl5jtGPpYJeP8j5B+cJEFgaHoCzESDFCMRujuVbG/rGNwtVJHJwk
+         Rwr6D/bfnMQzgz2ZyCc7Ddk32TNBj9M+C0J/3s9n+6hckLkk2AggxW4ugJGbMdkT3fvE
+         IeLA==
+X-Gm-Message-State: AC+VfDyWi6jpt2he7n5PC/A+JQoethsX23fm7nnpOQQWCUSB1DtLWqey
+        m4FgVGSPw4k5BzgCNWqSeVg=
+X-Google-Smtp-Source: ACHHUZ5Mvcf8OPknIRnZQm3CgeiEWpRcROv0fp6QqNJv5Eu/nEMOEz9silQMOUqDgNY/o+eGRaeiLA==
+X-Received: by 2002:a05:6a20:244d:b0:10c:dd4f:faa9 with SMTP id t13-20020a056a20244d00b0010cdd4ffaa9mr9762483pzc.14.1686538441367;
+        Sun, 11 Jun 2023 19:54:01 -0700 (PDT)
+Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id i21-20020aa78d95000000b0064d34ace753sm5931403pfr.114.2023.06.11.19.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Jun 2023 19:54:00 -0700 (PDT)
+From:   Jacky Huang <ychuang570808@gmail.com>
+To:     robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        lee@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, gregkh@linuxfoundation.org,
+        jirislaby@kernel.org, tmaimon77@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-serial@vger.kernel.org, arnd@arndb.de, soc@kernel.org,
+        schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: [PATCH v14 0/1] Introduce Nuvoton ma35d1 SoC
+Date:   Mon, 12 Jun 2023 02:53:54 +0000
+Message-Id: <20230612025355.547871-1-ychuang570808@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.8.0
-Subject: Re: [PATCH V4 0/4] Add camera clock controller support for SM8550
-Content-Language: en-US
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230609115058.9059-1-quic_jkona@quicinc.com>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20230609115058.9059-1-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/06/2023 12:50, Jagadeesh Kona wrote:
-> Add bindings, driver and devicetree node for camera clock controller on
-> SM8550.
+From: Jacky Huang <ychuang3@nuvoton.com>
 
-This is very confusing.
+This patchset adds initial support for the Nuvoton ma35d1 SoC, including
+initial device tree, clock driver, reset driver, and serial driver.
 
-Your cover letter doesn't detail any changes and your individual patches 
-all say "no changes since v3", "no changes since v2"
+This patchset cover letter is based from the initial support for Nuvoton
+ma35d1 to keep tracking the version history.
 
-If this is a RESEND then mark it as a RESEND.
+This patchset had been applied to Linux kernel 6.4.0-rc6
+and tested on the Nuvoton ma35d1 SOM evaluation board.
 
-Good practice is to for example add a note that says
+(ma35d1 information: https://www.nuvoton.com/products/microprocessors/arm-cortex-a35-mpus/)
+MA35D1 porting on linux-5.10.y can be found at: https://github.com/OpenNuvoton/MPU-Family
 
-"I looked at updating the yaml for the camcc but opted to do this in 
-another series" or "opted not to do this at this time" or "it doesn't 
-make sense because of X"
+v14:
+  - Removed patches PATCH v13 1/10 ~ 9/10 as they were applied
+  - Modify serial driver
+    - Fixed coding style issues
 
-https://lore.kernel.org/linux-arm-msm/546876ba-970d-5cd5-648e-723698ca74fd@linaro.org/
+v13:
+  - Modify serial driver
+    - Added a check for oops_in_progress in ma35d1serial_console_write to
+      determine whether to perform the spin_lock.
+    - Rebased drivers/tty/serial/Kconfig and recreate the patch
+    - Rebased MAINTAINERS and recreate the patch
 
-Could you perhaps RESEND this V4 with a log that explains what has 
-changed from one version to the next.
+v12:
+  - Modify serial driver
+    - Added PORT_MA35 to include/uapi/linux/serial_core.h, and apply to
+      the port->type of ma35d1 serial driver
+    - Added check for the return value of ioremap()
+    - Fixed several coding issues
+  - Rebase MAINTAINERS and recreate the patch
 
-If nothing has changed then don't bump the version prefix with RESEND..
+v11:
+  - Rebase on top of 2023.05.24
+  - Modify serial driver
+    - Fixed several coding style issues
+    - Fixed ma35d1serial_set_mctrl()
+    - Added the 'MA35_' prefix to all register and bit field definitions.
+    - Used 'ttyNVT' instead of 'ttyS'
+  - Modify clock driver
+    - Added 'source nuvoton/Kconfig' to drivers/clk/Kconfig
+    - Fixed several coding issues
+    - Removed unnecessary inline specifier
+  - Modify reset driver
+    - Fixed typo and added comments
+  - Modify ma35d1.dtsi l2-cache node
+    - Added cache-unified and cache-size properties
 
-Second thought even replying to your cover email with the changelog 
-would do.....
+v10:
+  - Change from using ARCH_NUVOTON to using ARCH_MA35. The following patch files
+    have been modified:
+    - patch 1 arch/arm64/Kconfig.platforms
+    - patch 2 arch/arm64/configs/defconfig
+    - patch 7 arch/arm64/boot/dts/nuvoton/Makefile
+    - patch 8 drivers/clk/Makefile
+              drivers/clk/nuvoton/Kconfig
+              drivers/clk/nuvoton/Makefile
+    - patch 9 drivers/reset/Kconfig
+    - patch 10 drivers/tty/serial/Kconfig
 
----
-bod
+v9:
+  - Combine MAINTAINERS patch into patch 5 'dt-bindings: arm: Add initial bindings
+    for Nuvoton platform'
+  - Modify clock driver
+    - Use the helper function for 64-bit division
+    - Fixed minor issues
+  - Modify reset driver
+    - Refine coding style and add required header files
+    - Add spin_lock protection
+  - Add error return handling to the serial driver probe function
+
+v8:
+  - Remove '0005-dt-bindings-mfd-syscon-Add-nuvoton-ma35d1-sys-compat.patch' as it was applied.
+  - Modify MAINTAINERS NUVOTON MA35 and NPCM path settings
+  - Remove 'syscon' from dtsi 'sys' node and modify the corresponding yaml
+  - Modify clock driver
+    - Remove the header file and move definitions into .c files.
+    - Use parent_data instead of parent name.
+  - Modify serial driver
+  - Modify reset driver
+    - Modify reset register/offset lookup table to be indexed by reset id
+    - Combined reset and reboot structure
+
+v7:
+  - Fixed dts system-management node and compatible driver
+  - move 'nuvoton,npcm-gcr.yaml' from 'binding/arm/nuvoton' to 'binding/soc/nuvoton'
+  - In ma35d1.dtsi, create the soc node for ma35d1 SoC
+  - Modify the issues found in serial driver
+  - Modify the issues found in clock driver
+  - Modify the IDs of reset driver to be contiguous numbers and use lookup table
+    to find register offset and bit position.
+  - Modify MAINTAINERS NUVOTON NPCM path as npcm directory name to nuvoton
+
+v6:
+  - Combine nuvoton,ma35d1-clk.yaml and nuvoton,ma35d1-clk.h into one patch
+  - Combine nuvoton,ma35d1-reset.yaml and nuvoton,ma35d1-reset.h into one patch
+  - rename Documentation/devicetree/bindings/arm/npcm directory as nuvoton
+  - Remove patch for adding include/linux/mfd/ma35d1-sys.h as it's not required
+  - Update dtsi & dts files and move board-specific nodes to dts
+  - Modify reset driver
+  - Modify serial driver, fix coding style issues
+  - Modify clock driver, rewrite the PLL calculation functions
+
+v5:
+  - Add ARCH_NUVOTON to arm64 Kconfig
+  - Add ARCH_NUVOTON to defconfig
+  - Add the clock driver
+  - Add the reset driver
+  - Add the serial driver
+  - Add us to the maintainer
+
+v4:
+  - patch 4/5 is a resend
+  - Fixed dt_binding_check errors of nuvoton,ma35d1-clk.yaml
+  - Modify ma35d1.dtsi
+    1. Add a node hxt_24m
+    2. Fixed the base address of gic node
+    3. Add clocks and clock-names to clock node
+  - Fixed borad binding mistakes of nuvoton.yaml
+
+v3:
+  - added patch 4/5 and 5/5
+  - introduce CONFIG_ARCH_NUVOTON option
+  - add initial bindings for Nuvoton Platform boards
+  - fixed coding style problem of nuvoton,ma35d1-clk.h
+  - added CAPLL to clock-controller node
+  - modify the chosen node of ma35d1-evb.dts
+  - modify clock yaml "clk-pll-mode" to "nuvoton,clk-pll-mode"
+
+v2:
+  - fixed dt_binding_check failed of nuvoton,ma35d1-clk.yaml
+
+Jacky Huang (1):
+  tty: serial: Add Nuvoton ma35d1 serial driver support
+
+ drivers/tty/serial/Kconfig         |  18 +
+ drivers/tty/serial/Makefile        |   1 +
+ drivers/tty/serial/ma35d1_serial.c | 817 +++++++++++++++++++++++++++++
+ include/uapi/linux/serial_core.h   |   3 +
+ 4 files changed, 839 insertions(+)
+ create mode 100644 drivers/tty/serial/ma35d1_serial.c
+
+-- 
+2.34.1
+
