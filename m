@@ -2,154 +2,372 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C732C7EE2F
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 16:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 710D6C7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 16:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232111AbjFLQLf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 12:11:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51274 "EHLO
+        id S233283AbjFLQ3w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 12:29:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbjFLQLe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 12:11:34 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11ADB1A5;
-        Mon, 12 Jun 2023 09:11:33 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id 41be03b00d2f7-543ae674f37so2359785a12.1;
-        Mon, 12 Jun 2023 09:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686586292; x=1689178292;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qIiNp/+XnyYlFBhx16pJwnV+pMJsdKM6JDpF0smN2gs=;
-        b=F44Q+3WTqR3Bl1u8BnHfFuJt+/g9Jsl4jsZOGfD1UgeN9naLB1TcSqIyOT9ZUm4lEy
-         V1MFxJk04D7y3h5G+xUO0TV13T6bQE07WcnGtJydU3G36ErmxevlXF7oa1PPiLJ9pSJZ
-         dIwr5wtozJ3mkxO+GY0qPF4bNe+hR4Jql/pw4gnVkIHsS/KfCk2p37yOd7tKoY7rTVoj
-         xaeQbwaOj6KQpeKm3VIQwBL0+paQWbmIADJLL3kBqA+tuK3+ibIJD+WTPz1/Tmv0fIJN
-         d7k8CcwRn5QO8kJEslBrQ24Z0Y1oh1ts2nOFEI23qddUni7p94gNRanxAC5rzxvrMGO1
-         iwVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686586292; x=1689178292;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qIiNp/+XnyYlFBhx16pJwnV+pMJsdKM6JDpF0smN2gs=;
-        b=E/NUGSoFtJk+UOcikGW/rXwHeAgf6TUxGiWIEEelA5CRS1S09fAPOB+Yhl6yCF9q6Q
-         xdE+mDFOpXa04vr7/0OlTNA3j4AHAJsPC25l+9eG0xb3gk55/5I9CdYzOQGYrRsUstTy
-         x4AuIGKWG8es8fDsXDvnl9kJIXdejhjLoYnPGfp6BPAeMbCfp+DxiEiTxfCC4/wNi6RN
-         jHrWRaXw8OF23kaquQEjyAtPuXbxoDLG8dNuCnexR6D7iXBHnO1MfO9MHfEOao77XuxL
-         8M4Ak+eNoKnNidEAiH1KsoUzbXDp2M3grVNHXgTyY1VNhroEXAzl58A1wLTOpn/8j0vk
-         7fKg==
-X-Gm-Message-State: AC+VfDybqOYNFe+onoJLqs/iRityWTNfdBM8ydvrkmLJ5+RBAChzjECZ
-        wYpktuzGJM7eVOoMYJHvDUtmPdlFwlFuep1aVis=
-X-Google-Smtp-Source: ACHHUZ7WLTrxppr7vC0si1shhvGOTg9CsAODLt3Q5C+PKf5QhoiQABoz12Hw5WHk7+8ABCq4Uqy9EyZvuzv1lhcl7BQ=
-X-Received: by 2002:a17:90b:4b91:b0:258:c780:479e with SMTP id
- lr17-20020a17090b4b9100b00258c780479emr8073092pjb.13.1686586292374; Mon, 12
- Jun 2023 09:11:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230506195325.876871-1-aford173@gmail.com> <CAOMZO5AwixYybR1am=V4m1AnTkum+0Wn0xegU_y6Po9Y--G0mA@mail.gmail.com>
- <CAHCN7xLPKa2hrBMC1kaJkxVL9NC+c1TWgcQHMBPefnvxGPTCwQ@mail.gmail.com> <jlcpkn3pewnvdpugwmsrb277u4fzcns5eodnoxhlbkwtaf7pyc@u6vozmm7zl62>
-In-Reply-To: <jlcpkn3pewnvdpugwmsrb277u4fzcns5eodnoxhlbkwtaf7pyc@u6vozmm7zl62>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Mon, 12 Jun 2023 11:11:21 -0500
-Message-ID: <CAHCN7xKuvkBHuDBiprsXg3hX+P6Y+ciKSZMcauU=5Y-REwjE=A@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
+        with ESMTP id S232523AbjFLQ3w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 12:29:52 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45B591AC;
+        Mon, 12 Jun 2023 09:29:48 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Qfxwm2QWLz9sW9;
+        Mon, 12 Jun 2023 18:29:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1686587384;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=k4plmEPtSVMklcGSrwV5HtrBR9/n6elVmklImupI/4w=;
+        b=fVnqqHKuyRfNFWI18AAqJ8Qx70/T4FPGQbCI31Djj8aehq2gmxSo0xa8gaOgjzn0bHYygp
+        2swULNuQecIH1D6pObl7dEpSEsc8My8wlH6nOP454cZ6QUs1PNlp5+pdN72kxoIdT+qeOw
+        19oHKcPLB7D1wjNhrXA0fA9tjzdyJaF097Z4pdYEzsSPmYSrcnEKrsB1fXrgDpal5rn1+k
+        OpYKFgfuXo0wlZxBkZlFCrF+E4KmtaAOBtIWugLpOu5bcCW8GQ6jLQLWfHY4A/rWlBPSSb
+        bP4dh643+vbtDqrTMCpUut3M77Rp6zaDL9Nc8aYny7jYX6r++OIx4YJUaks2xA==
+References: <20230605190745.366882-1-frank@oltmanns.dev>
+ <20230605190745.366882-2-frank@oltmanns.dev>
+ <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
+ <875y7y1f0d.fsf@oltmanns.dev>
+ <sijbhopoxuw5wodyry3smg7tm4wzoc7k6xakt4qdvxqsok32mv@u7rh4dct5ya6>
+From:   Frank Oltmanns <frank@oltmanns.dev>
 To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        aford@beaconembedded.com, Abel Vesa <abelvesa@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: nkm: consider alternative parent
+ rates when finding rate
+In-reply-to: <sijbhopoxuw5wodyry3smg7tm4wzoc7k6xakt4qdvxqsok32mv@u7rh4dct5ya6>
+Date:   Mon, 12 Jun 2023 18:29:36 +0200
+Message-ID: <87a5x41w5r.fsf@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4Qfxwm2QWLz9sW9
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 11:08=E2=80=AFAM Maxime Ripard <maxime@cerno.tech> =
-wrote:
->
-> On Sun, Jun 11, 2023 at 12:02:42PM -0500, Adam Ford wrote:
-> > On Tue, Jun 6, 2023 at 1:45=E2=80=AFPM Fabio Estevam <festevam@gmail.co=
-m> wrote:
-> > >
-> > > On Sat, May 6, 2023 at 4:53=E2=80=AFPM Adam Ford <aford173@gmail.com>=
- wrote:
-> > > >
-> > > > Currently, certain clocks are derrived as a divider from their
-> > > > parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
-> > > > is set, the parent clock is not properly set which can lead
-> > > > to some relatively inaccurate clock values.
-> > > >
-> >
-> > + Maxime
-> >
-> > > > Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
-> > > > cannot rely on calling a standard determine_rate function,
-> > > > because the 8m composite clocks have a pre-divider and
-> > > > post-divider. Because of this, a custom determine_rate
-> > > > function is necessary to determine the maximum clock
-> > > > division which is equivalent to pre-divider * the
-> > > > post-divider.
-> > > >
-> > > > With this added, the system can attempt to adjust the parent rate
-> > > > when the proper flags are set which can lead to a more precise cloc=
-k
-> > > > value.
-> > > >
-> > > > On the imx8mplus, no clock changes are present.
-> > > > On the Mini and Nano, this can help achieve more accurate
-> > > > lcdif clocks. When trying to get a pixel clock of 31.500MHz
-> > > > on an imx8m Nano, the clocks divided the 594MHz down, but
-> > > > left the parent rate untouched which caused a calulation error.
-> > > >
-> > > > Before:
-> > > > video_pll              594000000
-> > > >   video_pll_bypass     594000000
-> > > >     video_pll_out      594000000
-> > > >       disp_pixel       31263158
-> > > >         disp_pixel_clk 31263158
-> > > >
-> > > > Variance =3D -236842 Hz
-> > > >
-> > > > After this patch:
-> > > > video_pll               31500000
-> > > >   video_pll_bypass      31500000
-> > > >     video_pll_out       31500000
-> > > >       disp_pixel        31500000
-> > > >         disp_pixel_clk  31500000
-> > > >
-> > > > Variance =3D 0 Hz
-> > > >
-> > > > All other clocks rates and parent were the same.
-> > > > Similar results on imx8mm were found.
-> > > >
-> > > > Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support t=
-o determine_rate"")
-> > > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > >
-> >
-> > Peng / Abel,
-> >
-> > Any suggestions on how we can move this forward?  Looking at the
-> > clk-composite-8m driver, imx8m_clk_composite_compute_dividers uses the
-> > max values which is basically what my patch does.  There was some
-> > discussion about making determine_rate mandatory for muxes[1] and this
-> > patch should help with this in addition to making it easier to sync
-> > more video resolutions on the 8m Mini and Nano.
->
-> Those patches have been queued by Stephen for 6.6 :)
+Hi Maxime,
 
-One of the patches in the older series was reverted, but this was to
-address the patch that was reverted.
+I'm sorry that the following mail is a bit long. I'm not sure, there is
+some kind of misunderstanding/miscommunication somewhere, I'm just not
+sure, where. :)
 
-adam
+This mail is aiming at finding the exact points where we apparently go
+down different paths.
+
+On 2023-06-12 at 14:19:05 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+> [[PGP Signed Part:Undecided]]
+> On Wed, Jun 07, 2023 at 09:39:35AM +0200, Frank Oltmanns wrote:
+>> Hi Maxime,
+>>
+>> On 2023-06-07 at 08:38:39 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+>> > [[PGP Signed Part:Undecided]]
+>> > On Mon, Jun 05, 2023 at 09:07:44PM +0200, Frank Oltmanns wrote:
+>> >> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
+>> >> parent rate when determining a new rate.
+>> >>
+>> >> To find the best match for the requested rate, perform the following
+>> >> steps for each NKM combination:
+>> >>  - calculate the optimal parent rate,
+>> >>  - find the best parent rate that the parent clock actually supports
+>> >>  - use that parent rate to calculate the effective rate.
+>> >>
+>> >> In case the clk does not support setting the parent rate, use the same
+>> >> algorithm as before.
+>> >>
+>> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>> >> ---
+>> >>  drivers/clk/sunxi-ng/ccu_nkm.c | 40 ++++++++++++++++++++++++++--------
+>> >>  1 file changed, 31 insertions(+), 9 deletions(-)
+>> >>
+>> >> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+>> >> index a0978a50edae..c71e237226f2 100644
+>> >> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+>> >> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+>> >> @@ -16,10 +16,10 @@ struct _ccu_nkm {
+>> >>  	unsigned long	m, min_m, max_m;
+>> >>  };
+>> >>
+>> >> -static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>> >> -				       struct _ccu_nkm *nkm)
+>> >> +static unsigned long ccu_nkm_find_best(unsigned long *parent, unsigned long rate,
+>> >> +				       struct _ccu_nkm *nkm, struct clk_hw *parent_hw)
+>> >>  {
+>> >> -	unsigned long best_rate = 0;
+>> >> +	unsigned long best_rate = 0, best_parent_rate = 0, tmp_parent = *parent;
+>> >>  	unsigned long best_n = 0, best_k = 0, best_m = 0;
+>> >>  	unsigned long _n, _k, _m;
+>> >>
+>> >> @@ -28,12 +28,29 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>> >>  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+>> >>  				unsigned long tmp_rate;
+>> >>
+>> >> -				tmp_rate = parent * _n * _k / _m;
+>> >> +				if (parent_hw) {
+>> >
+>> > NKM clocks always have a parent
+>> >
+>> > You should test if the CLK_SET_RATE_PARENT flag is set.
+>>
+>> ccu_nkm_find_best is called in the following two situations:
+>>  a. from ccu_nkm_set_rate when setting the rate
+>>  b. from ccu_nkm_round_rate when determining the rate
+>>
+>> In situation a. we never want ccu_nkm_find_best to try different parent
+>> rates because setting the parent rate is a done deal (at least that's my
+>> understanding).
+>>
+>> In situation b. we only want ccu_nkm_find_best to try different parent
+>> rates when, as you mentioned, the CLK_SET_RATE_PARENT flag is set.
+>
+> It doesn't really matter though. The output of that function must be
+> stable and must return the same set of factors and parent rate for a
+> given target rate.
+>
+
+I'm not sure if we're talking about the same thing here. Of course the
+set of factors and parent rate for a given target rate will be different
+depending on the fact if we can or cannot adjust the parent rate,
+agreed?
+
+Let me compare my implementation to ccu_mp.
+
+ccu_mp_round_rate either calls the function ccu_mp_find_best or
+ccu_mp_find_best_with_parent_adj, depending on CLK_SET_RATE_PARENT.
+
+I'm basically doing the same thing, but (!) ccu_nkm_find_best and
+ccu_nkm_find_best_with_parent_adj would be almost identical. Therefore,
+I opted to extend ccu_nkm_find_best to also support the parent
+adjustment. If you look at V2 of this patch, you will see that the only
+diffences are an if statement (if (parent_hw)) with two lines of code in
+the if's body and the fact that we need to store the best parent rate.
+
+If you prefer, I can split this into two separate functions like in
+ccu_mp. I think all the confusion is coming from the fact that I didn't.
+So apparently it was not a good idea to keep it as one function.
+
+Should I introduce ccu_nkm_find_best_with_parent_adj instead of using
+ccu_nkm_find_best for both cases?
+
+>
+> So you can call it as many times as you want, it doesn't really matter.
+
+Of course! What did I write that made you think, I thought otherwise?
+
+>
+>> So, what this patch does, it provides a NULL pointer as parent_hw when
+>> we don't want ccu_nkm_find_best to try alternative parent rates.
+>
+> At best, the argument is misleading then. You're not passing a pointer
+> to the parent, you're telling it whether it should look for other
+> parents or not. And it's not a pointer, it's a boolean.
+
+No, I'm using parent_hw and as a pointer a few lines below when calling
+clk_hw_round_rate. So I'd need a boolean AND a pointer. I always need
+the pointer if the boolean is true. I never need the pointer when the
+boolean is false. Therefore, I opted to choose to use the pointer for
+first being a boolean (in the if) and then being a pointer (when calling
+clk_hw_round_rate). This is the (hopefully easier to read) code from V2:
+
+        if (parent_hw) {
+                tmp_parent = optimal_parent_rate(rate, _n, _k, _m);
+                tmp_parent = clk_hw_round_rate(parent_hw, tmp_parent);
+        }
+
+
+>
+>> Is it ok if I add a comment to ccu_nkm_find_best that explains the
+>> function and explicitly also the parameters?
+>
+> Sure
+
+Done in V2.
+
+>
+>> I also thought about using two different functions for the two
+>> situations. I have no strong opinion which is better.
+>>
+>> However, I don't think we should hand over the flags to this function,
+>> because we'd still only need to provide the parent_hw if we want to
+>> find the optimal parent rate, so having two parametes for the same
+>> purpose seems redundant. Unless, there is a rule to not use NULL
+>> pointers.
+>
+> Again, the behaviour must be stable across all calling sites.
+
+No argument here.
+
+>
+>> >
+>> >> +					// We must round up the desired parent rate, because the
+>> >> +					// rounding down happens when calculating tmp_rate. If we
+>> >> +					// round down also here, we'd round down twice.
+>> >> +					unsigned long optimal_parent =
+>> >> +							(rate * _m + (_n * _k - 1)) / _n / _k;
+>> >
+>> > I assume the addition of n * k - 1 is to round up, but I'm not sure we
+>> > should hack around like that.
+>> >
+>> > You should compute the ideal parent rate for a given set of timings, and
+>> > then just call round_rate on it. If the parent wants to round it one way
+>> > or another, that's the parent concern.
+>>
+>> I admit that the comment explaining this is not doing the complexity of
+>> this issue any justice. Let me try to explain:
+>>
+>> Let's say for our panel the optimal rate for pll-mipi is 449064000. The
+>> best closest we can get is 449035712 with a parent rate of 217714285
+>> (n=11, k=3, m=16).
+>>
+>> Eventually, ccu_nkm_find_best is going to be called with 449035712 as
+>> the rate. If we don't round up, like I proposend, but instead calculate:
+>>   optimal_parent = rate * m / n / k
+>> (which is, I think, what you you're proposing) leading to an optimal
+>> parent of 217714284 (!). We can't get 217714284 from the parent (we
+>> could get 217714285, but we're not asking for that) so the parent rounds
+>> down.
+>>
+>> To make things worse, this story continues for the new "best rate" as
+>> well.
+>>
+>> In the end, ccu_nkm_find_best claims:
+>>  - the optimal rate for 449064000 is 449035712 (parent=217714285, n=11,
+>>    k=3, m=16)
+>>  - but ccu_nkm_find_best would claim that the optimal rate for 449035712
+>>    is 449018181 (parent=235200000, n=7, k=3, m=11)
+>>  - and finally, the optimal rate for 449018181 is 449018180
+>>    (parent=213818181, n=7, k=3, m=10)
+>>
+>> This doesn't seem right to me.
+>>
+>> But you're also right, in that we can't just always round up. In a
+>> hypothetical example that we request a parent rate of 450000000. With
+>> rounding up, we'd get an optimal parent rate of 218181819 for n=11, k=3,
+>> m=16. And let's now further claim that the parent could provide exactly
+>> that rate, we'd end up with a rate of 450000001. So, we'd overshoot,
+>> which (currently) is not acceptable.
+>>
+>> Hmm... I currently can't think of a clever way to solve this other than
+>> this:
+>>
+>>     optimal_parent = (rate * _m + (_n * _k - 1)) / _n / _k;
+>>     tmp_parent = clk_hw_round_rate(parent_hw, optimal_parent);
+>>     tmp_rate = tmp_parent * _n * _k / _m;
+>>     if (tmp_rate > rate) {
+>>         optimal_parent = rate * m / n / k
+>>         tmp_parent = clk_hw_round_rate(parent_hw, optimal_parent);
+>>         tmp_rate = tmp_parent * _n * _k / _m;
+>>     }
+>>     if (tmp_parent > optimal_parent)
+>>         continue;
+>>
+>> This seems ugly, but at least it should work in all cases. Any opinions?
+>
+> Again, you shouldn't work around the issue.
+>
+> It's very simple really: you already computed the optimal parent rate,
+
+No. I didn't. My assumption is: If ccu_nkm_find_best is asked for the
+best rate for rate = 449035712, it should try to include 449035712 in
+its candidates, agreed?
+
+Example 1:
+==========
+rate=449035712, n=11, k=3, m=16:
+We should as for a parent rate of 217714285, because:
+217714285 * 11 * 3 / 16 = 449035712
+
+How do we get from 449035712 to 217714285, you ask?
+
+      DIV_ROUND_UP(rate * m, n * k)
+
+Do you agree that we should ask the parent for 217714285 in case we want
+a rate of 449035712 and we're currently evaluating the case n=11, k=3,
+m=16?
+
+We should not ask for a parent rate of 217714284, because:
+217714284 * 11 * 3 / 16 = 449035710
+
+Example 2:
+==========
+rate=500000000, n=11, k=3, m=16:
+Here we should not ask the parent for
+      DIV_ROUND_UP(rate * m, n * k)
+because that would be 242424243.
+
+242424243 * 11 * 3 / 16 = 500000001
+
+We (the NKM clock, not the parent!) would overshoot (please see at the
+end of this mail, why (for now) I don't want to support overshooting in
+the NKM clock).
+
+Instead we should as for a parent rate of 242424242, because:
+242424242 * 11 * 3 / 16 = 499999999
+
+In conclusion, there are cases, where we (the NKM clock) have to ask the
+parent for
+      DIV_ROUND_UP(rate * m, n * k)
+And there are also cases, where we have to ask the parent for
+      rate * m / (n * k)
+
+This is what the code is trying to do. Maybe it's easier to look at V2
+because I extracted the calcultion of the optimal parent rate into a
+separate function hoping that this makes things clearer.
+
+Let me stress this: When calculating the optimal rate for the parent,
+I'm not making any assumptions here about how the PARENT clock rounds.
+In fact, I assume that the parent could be perfect and always provides
+the rate it is asked for. I only take into account how the nkm clock
+rounds.
+
+> you ask the parent to compute whatever is closest to that optimal parent
+> rate.
+>
+> It's the parent responsibility now. It's the parent decision to figure
+> out what "the closest" means, if it can change rate, if it has any range
+> limitation, etc. You can't work around that.
+>
+> What you actually want there is the parent to actually provide the
+> closest rate, even if it means overshooting.
+>
+
+I want to ask the parent for a rate, that would actually result in the
+rate that nkm_find_best was asked for. Are you asking me to instead ask
+the parent for a rate that doesn't fit that criterion?
+
+> That's fine, we have a flag
+> for that: CLK_(MUX|DIVIDER)_ROUND_CLOSEST. We just need to set it on the
+> parent and be done with it.
+
+This is a totally different issue. If you carefully look at ccu_mp, you
+will see that it would ignore cases when its parent had rounded up.
+ccu_nkm is no different. Teaching all of sunxi-ng's clocks to respect
+ROUND_CLOSEST is a totally different beast. For now, sunxi-ng always
+expects rounding down.
+
+I do not like mixing the two into one patchset. I hope that's a fair
+request? I tried to mix it and it was a nightmare! If you want, I can
+try tackling ROUND_CLOSEST afterwards. But I don't think it would help
+with this patchset, because we'd need to support both the ROUND_CLOSEST
+and ~ROUND_CLOSEST case. Covering one case seems already hard enough. :)
+
+Thank you for your patience,
+  Frank
+
 >
 > Maxime
+>
+> [[End of PGP Signed Part]]
