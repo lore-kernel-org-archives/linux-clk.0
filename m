@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860E6C7EE43
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5EEC7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232971AbjFLI0m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 04:26:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35662 "EHLO
+        id S232648AbjFLI1u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 04:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233121AbjFLI0c (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:26:32 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE9110E6
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:25:54 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-510d6b939bfso7283847a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:25:54 -0700 (PDT)
+        with ESMTP id S232414AbjFLI12 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:27:28 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A67771729
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:27:00 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-514859f3ffbso6139076a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:27:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686558353; x=1689150353;
+        d=linaro.org; s=google; t=1686558419; x=1689150419;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FFeo7eqtN3fCmyQTtWielQM7xz42Mq4kjBmnboVmk4Y=;
-        b=YOWZoyzVVDwbAwL7zO9aI6GFmBEBBC9wQoCY2lhIabksMfnsFMDM79fEBVPKV+HsmN
-         KP6jkmqn2OJyj8qtAWTND9JWJ26XTj7+LKkwuYHJyaAOKk8ANE7ngVw9i6g+nJlGk6UA
-         dlrLcSIKGHHPB7s1suaR0ebh0VXSNEKqFrV5TynNYVVa7Gl/hJaAHc0NVXxoi1YIqh2t
-         B0DalHFUVBt7YQy9KFzoPnq+EeeAH17icsztVY30rfSR4USKqvANMY6cU43cUn+/eGTe
-         gpOPASvTRujvdh+yikfdVZ5ugyVGzZD+jfPX+dXV8GBAa/IzPQouSbPsWM0TYB/GhhAS
-         QAmA==
+        bh=OXYyQ7eMPr/A1ABXv1x0uzF5it3j5W9JBR2D4cpSkhk=;
+        b=eeMuiq7gj8yBTgC3mvlafvrCWL7hV0aPsEYA5H1Ca+dd7o+Wq2qxnHdyshjRAgMByG
+         Hm6I2hdvOivMw9gm/jb4K1GDPgSiFvlHQv3LgRehJH6aIETCbbXyuC1gRdMzTy+rEtrZ
+         GSMHLlnFz7kD2bqzQkIUNG0ol8Y2xiF1KmCCK6oi0iI/4TyM3TmnJoNe22QVTUGlNFzk
+         tZt1f+okATr26vClAaEWzK223A/XYDp55KdbUgFzhh0xW592gOi8PQqBjjvxY0+RrbVX
+         3ItgF+z3nE1LjkUpBoem+oBp6gBkNSpLVuzV/dMoq+E7JdQZ7JIBD0WtCSduOk/vBw2g
+         ajmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686558353; x=1689150353;
+        d=1e100.net; s=20221208; t=1686558419; x=1689150419;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FFeo7eqtN3fCmyQTtWielQM7xz42Mq4kjBmnboVmk4Y=;
-        b=U2UhCUYDUv9WGfP5VUTV1VhXmycF0XON5UxE+iVmSOIuWL7ByNmQ/l/trTt33fKJi4
-         vRL31oTZc0KGH6v0OtUM8q49bdNsOpkAk2eQBAtaBJ2y8q2LRhqvR70mPaYuky58jJLr
-         gnQG/jZbmznwJ2c3gvGF4RQz33ZuLHfsWMLEtCFa0Yf44KEJf6/Ge4psatnsH4EPAr+W
-         atVwX/UZO9Tj3hEQ/Y4qj5+N4VFqQjHyele96x1sIpFrCkxPiwZPMLvAtjFHTGDh8PDk
-         FXG1Fh4sG7L8fZbjnvgFey0EYFe99XPPp2HYBEraKqZOxZn89XZ9DsP6sRSc0W4Of1m2
-         2nDg==
-X-Gm-Message-State: AC+VfDw5SlNOTKH+5Yu/LMWZbRz4gWKqiVBgJ0kqnArj5awnOid/hhkW
-        hZ21z+2Xmno4y2Ckv2V5cWUsmQ==
-X-Google-Smtp-Source: ACHHUZ6ruFjU1gbk4CweBHpq54i0ElmXHeNzejKSJqMDXR758cQX1R+eDjjaMHhn/Wrl6GUSQpPhtA==
-X-Received: by 2002:aa7:d49a:0:b0:50b:fd52:2f4b with SMTP id b26-20020aa7d49a000000b0050bfd522f4bmr5469118edr.24.1686558352887;
-        Mon, 12 Jun 2023 01:25:52 -0700 (PDT)
+        bh=OXYyQ7eMPr/A1ABXv1x0uzF5it3j5W9JBR2D4cpSkhk=;
+        b=etp7wieZbJeRNJdveGkJHuYDJRQm75K+ZGv6k0rmNtLyLNbsoJBJ95zJyv75MMYzEd
+         t3oivusv2xImI16nP02EATh0crPLrUd6VyMHl6Hy61n1Sf/1VZeqJIz9LGyO4YNZMDJq
+         C8cZu8vAZARQljElTaVaT7ZNmHctPzM2GyjrI5L9TOIFB0yo3jhz48sgk4weRqFCwbRo
+         A6B58ZJpMAb8gY6wSGPYIy+dIIn9Z7CAMHvrGJ+UzxGbHW8LXUAo4tcHuPZJkJBZRHzX
+         9SnKupczU2H32KI15pGLLfB3+WWlVVOrwbiegSjlQvxc2YVe40nuxbGvfmp/1wubds3w
+         EPVg==
+X-Gm-Message-State: AC+VfDw5FaaOX6oGIT04l5ulSgJzSG7Ye7hCNGG3lN4Ngfi16KDflyUp
+        HdM1xF3QljR8/6tvDj1dk1VbBA==
+X-Google-Smtp-Source: ACHHUZ5ygA38UVYR2nlKcgtKktN3GwGh0BWbxHEjo9p86n6HKnshYRttMLbFHad+wX3SvpODrnNamQ==
+X-Received: by 2002:a17:906:4fcd:b0:967:21:5887 with SMTP id i13-20020a1709064fcd00b0096700215887mr8997927ejw.40.1686558418994;
+        Mon, 12 Jun 2023 01:26:58 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id u11-20020aa7d0cb000000b00514a97b6b80sm4784947edo.78.2023.06.12.01.25.51
+        by smtp.gmail.com with ESMTPSA id y20-20020a170906471400b009663115c8f8sm4864176ejq.152.2023.06.12.01.26.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 01:25:52 -0700 (PDT)
-Message-ID: <ec466019-cdd2-d372-b4df-5edfe530e63d@linaro.org>
-Date:   Mon, 12 Jun 2023 10:25:50 +0200
+        Mon, 12 Jun 2023 01:26:58 -0700 (PDT)
+Message-ID: <f8532cdc-4d95-b8a4-6e26-81ac2c6e29a6@linaro.org>
+Date:   Mon, 12 Jun 2023 10:26:56 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.2
-Subject: Re: [PATCH v3 1/6] dt-bindings: clock: Add LPASSCC and reset
+Subject: Re: [PATCH v3 2/6] dt-bindings: clock: Add LPASS AUDIOCC and reset
  controller for SC8280XP
 Content-Language: en-US
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     johan+linaro@kernel.org, agross@kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230608125315.11454-1-srinivas.kandagatla@linaro.org>
- <20230608125315.11454-2-srinivas.kandagatla@linaro.org>
+ <20230608125315.11454-3-srinivas.kandagatla@linaro.org>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230608125315.11454-2-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20230608125315.11454-3-srinivas.kandagatla@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,7 +76,7 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 08/06/2023 14:53, Srinivas Kandagatla wrote:
-> The LPASS (Low Power Audio Subsystem) clock controller provides reset
+> The LPASS (Low Power Audio Subsystem) Audio clock controller provides reset
 > support when it is under the control of Q6DSP.
 > 
 > Add support for those resets and adds IDs for clients to request the reset.
@@ -84,8 +84,36 @@ On 08/06/2023 14:53, Srinivas Kandagatla wrote:
 > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
+>  .../bindings/clock/qcom,sc8280xp-lpasscc.yaml          | 10 ++++++++++
+>  include/dt-bindings/clock/qcom,sc8280xp-lpasscc.h      |  5 +++++
+>  2 files changed, 15 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+> index 047cae91f443..3326dcd6766c 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc8280xp-lpasscc.yaml
+> @@ -19,6 +19,7 @@ description: |
+>  properties:
+>    compatible:
+>      enum:
+> +      - qcom,sc8280xp-lpassaudiocc
+>        - qcom,sc8280xp-lpasscc
+>  
+>    reg:
+> @@ -39,6 +40,15 @@ required:
+>  additionalProperties: false
+>  
+>  examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,sc8280xp-lpasscc.h>
+> +    lpass_audiocc: clock-controller@32a9000 {
+> +        compatible = "qcom,sc8280xp-lpassaudiocc";
+
+No need for new example - it's the same, just with different compatible.
+With this:
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
 Krzysztof
