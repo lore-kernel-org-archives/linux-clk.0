@@ -2,251 +2,171 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 902E3C88CB4
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 14:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B3DC88CB2
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 14:35:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239103AbjFLO2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 10:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37704 "EHLO
+        id S237596AbjFLOft (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 10:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238886AbjFLO1t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 10:27:49 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B0111FD9;
-        Mon, 12 Jun 2023 07:26:01 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f730c1253fso32875905e9.1;
-        Mon, 12 Jun 2023 07:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686579959; x=1689171959;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RjtSEA7DuOPBkcYthmOn7vURof3lAlYXKY7QmKw3HkY=;
-        b=Cwt8/EH1kDYTNz09VG4PrLvKE4Vjat0/KE85BrlKV5AzkkxI2MrMsU6Ee4FXxw6pkI
-         QehfdZgVRW8OUYq6ch0FzmGsloii12FBSnhvyFUZRZZZOUlZ799TeQPPshjIZgXSgjwb
-         OjMG07aw22Llo//b9xxnFVqiAaLA9acC/obL/Zcay9vJqmM1KqxMRJroFiS5+i+lFHy6
-         2xo+YbRUi8yjOGJAV7BFsFsEj7S7o41FrovPWQlp/8RL7SADp9MHfFzPxSrw5jIVVkbS
-         pw+YorK9pv6oHkr3k3W0SCipwnDrJLyHSz6KjefW/hMgvVSaZgbbGPtcT6E6LYmwriW2
-         0BGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686579959; x=1689171959;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RjtSEA7DuOPBkcYthmOn7vURof3lAlYXKY7QmKw3HkY=;
-        b=Y/70NrmSd9Jwi/ETn4fRIr/3JcV3OIoYylH8lgl8oLNBwqQ6sSTG9dRgWF4vUSFSMW
-         m8dR9QXbQgGoXc3ZwcfnsEC6TJD9zXPApah12lobq7JfILZGC58tSX4sF6GL58U4PPVD
-         Hka8fg7/GaZ1PDTrBQDAGtYwsjiTxABC1ygdM6odCOR0Cg3wLKISCOuH2WavS9sszu3M
-         zWGEMo3A2hbT+Ex2yGGcmfSCMKWO0kMYtj4oHFa2eTVuhtQxcrFitJbPvKp6gsW2006w
-         uw7SXxl2g5bYRpznYbjCquYwk5Az/Dq5Wxh9MKfjt2OAtf8pyS2U26x9KKJJKa6DrSGF
-         CU+A==
-X-Gm-Message-State: AC+VfDyp2TzBIPr7ptCAvFipxkUsGwG166Xdg4wik/n/GkR9CFNaqP7/
-        TQFJrfiPmA5U+DcIUQdl6JU=
-X-Google-Smtp-Source: ACHHUZ7Omyn97pOg8e3cGLPeeyE8qSbQSLg1G/lz5tM5DYso6n8pXS79Aq6p5zBQ9so0adBrOJ4W8Q==
-X-Received: by 2002:adf:e310:0:b0:306:3912:a7f0 with SMTP id b16-20020adfe310000000b003063912a7f0mr4144949wrj.50.1686579958579;
-        Mon, 12 Jun 2023 07:25:58 -0700 (PDT)
-Received: from Ansuel-xps. (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.gmail.com with ESMTPSA id q7-20020adff947000000b0030af72bca98sm12584038wrr.103.2023.06.12.07.25.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 07:25:58 -0700 (PDT)
-Message-ID: <64872af6.df0a0220.53d8a.9284@mx.google.com>
-X-Google-Original-Message-ID: <ZIZHoO0e6gZtRP2B@Ansuel-xps.>
-Date:   Mon, 12 Jun 2023 00:16:00 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S236150AbjFLOfr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 10:35:47 -0400
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03hn2200.outbound.protection.outlook.com [52.100.14.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089BFCC;
+        Mon, 12 Jun 2023 07:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NaJWH/OuZgFe57gG+gllEceWdteSVqu7/EZZlytr+dM=;
+ b=Zuihk2O5kK9sJAvA4ztNdJkjyiIOj4KSszfrgSDz8xUnOTv/HG3r8Vavk8RnPFRHHfK68uWTKcCLrs9mKcG7SCmqn5MDBkAG1BXpHB9VuIETnjKSVHbVB5dTEJyR/W4xr+PbQBM2QIaAKfatUl+ME81x52I1PxfNX57IbvfKXINgDrRhlBu5HMirfkIfzmT9qXgJp761E1aKkcpds1CLBWJ77eE5SE1y1RVKtCQ0ufwSziJZZyX3vJc0OqQgeCxrn49ASK60ZgnJt2yvGzHQSeVB990S6BQhkNOzEEe7s5M1tBVB1zuZVSU4fX/dUuJ8qXX++gF4AYuqFGRCCo0NcQ==
+Received: from AS8P251CA0023.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:2f2::12)
+ by AS8PR03MB8859.eurprd03.prod.outlook.com (2603:10a6:20b:56f::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.39; Mon, 12 Jun
+ 2023 14:35:33 +0000
+Received: from AM6EUR05FT030.eop-eur05.prod.protection.outlook.com
+ (2603:10a6:20b:2f2:cafe::65) by AS8P251CA0023.outlook.office365.com
+ (2603:10a6:20b:2f2::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.33 via Frontend
+ Transport; Mon, 12 Jun 2023 14:35:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.160.56.81)
+ smtp.mailfrom=seco.com; dkim=pass (signature was verified)
+ header.d=seco.com;dmarc=pass action=none header.from=seco.com;
+Received-SPF: Pass (protection.outlook.com: domain of seco.com designates
+ 20.160.56.81 as permitted sender) receiver=protection.outlook.com;
+ client-ip=20.160.56.81; helo=inpost-eu.tmcas.trendmicro.com; pr=C
+Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.81) by
+ AM6EUR05FT030.mail.protection.outlook.com (10.233.240.61) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6477.34 via Frontend Transport; Mon, 12 Jun 2023 14:35:32 +0000
+Received: from outmta (unknown [192.168.82.140])
+        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 7D7B820080092;
+        Mon, 12 Jun 2023 14:35:32 +0000 (UTC)
+Received: from EUR01-VE1-obe.outbound.protection.outlook.com (unknown [104.47.1.53])
+        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id 4049720080073;
+        Mon, 12 Jun 2023 14:39:47 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SY+dA12UjoV7FhimJCktji9WRYXv076MSltAmCwerb5UFrwUfpfzRpbm/Yq5XOCcnW4DyxBRX+3hPZoQFTsJVmqhU3GELYCS1c181A+WgHnSavoWkoLiWLw1gn4hJNDl+T4BSl+H9bwim/9VnPexduLxPvu4q00RzfkmFsejDzASoaG2jzc4WQ8mG94wLowmovsfVU4PByoBGWDKh8bRfs+31H8uk/pxW04w53BnCKRegeTbqzkARj+7huUFs3l5QaHQVAhpHgOF6cnd+MwDlqAksEg82HtfHM5c/acdr2lIML5R0ZTB+FzhJ6utFWtv2DeP70csbrt3vwR+kQZQ/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NaJWH/OuZgFe57gG+gllEceWdteSVqu7/EZZlytr+dM=;
+ b=V58og4uqJuAl4XqGBfX3+vFZik/sPqF8xnzfRbNJ1N8lrUklNV3rWzV4eM9Fm/RiDSm4caBcvNHTEiSVLXMf7iFsYM+cdqcgxQxUAtZC4AiHBkbKEQaALCyicUAK87d80k+T7lvyNziHRVofoe+oFxdMBpdY5w6NdNVy8bREK2mIJg8IE/apV9+GyVVByEAZp/RAKvT+4cY1fR7jnyCDPfybczM3ZXJCwAeK3kn6T4VMMPD27oeIX4tbfnMRtGelfDufiQpDqkWyfQz2rID9t81wBYEiA+o8rJx6CsL3yrFVX0/01Q2sYrqa8O9eIL6vr+n0Zi8MEGZZMiEYHbyFNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
+ dkim=pass header.d=seco.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NaJWH/OuZgFe57gG+gllEceWdteSVqu7/EZZlytr+dM=;
+ b=Zuihk2O5kK9sJAvA4ztNdJkjyiIOj4KSszfrgSDz8xUnOTv/HG3r8Vavk8RnPFRHHfK68uWTKcCLrs9mKcG7SCmqn5MDBkAG1BXpHB9VuIETnjKSVHbVB5dTEJyR/W4xr+PbQBM2QIaAKfatUl+ME81x52I1PxfNX57IbvfKXINgDrRhlBu5HMirfkIfzmT9qXgJp761E1aKkcpds1CLBWJ77eE5SE1y1RVKtCQ0ufwSziJZZyX3vJc0OqQgeCxrn49ASK60ZgnJt2yvGzHQSeVB990S6BQhkNOzEEe7s5M1tBVB1zuZVSU4fX/dUuJ8qXX++gF4AYuqFGRCCo0NcQ==
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=seco.com;
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
+ by AS8PR03MB7860.eurprd03.prod.outlook.com (2603:10a6:20b:343::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.46; Mon, 12 Jun
+ 2023 14:35:28 +0000
+Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::d632:8122:75f7:7b0e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
+ ([fe80::d632:8122:75f7:7b0e%3]) with mapi id 15.20.6455.045; Mon, 12 Jun 2023
+ 14:35:28 +0000
+Message-ID: <c702e2b6-cb0f-4ac9-86fe-a220284d45aa@seco.com>
+Date:   Mon, 12 Jun 2023 10:35:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
+Content-Language: en-US
+To:     Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc:     Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-phy@lists.infradead.org,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Camelia Alexandra Groza <camelia.groza@nxp.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Bagas Sanjaya <bagasdotme@gmail.com>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        =?UTF-8?B?RmVybuKUnMOtbmRleiBSb2phcw==?= <noltari@gmail.com>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 15/18] ARM: dts: qcom: apq8064: provide voltage scaling
- tables
-References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
- <20230612053922.3284394-16-dmitry.baryshkov@linaro.org>
- <ZIbez4RA0OoVfHzt@gerhold.net>
- <8c1085fd-8a73-d192-6624-d4f35728e68a@linaro.org>
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20230425195002.fls5cmwolyrslpad@skbuf>
+ <b7779674-c3ac-e0ab-3ca8-db1ec5953a97@seco.com>
+ <20230426105140.t4yqv6irtjcwptm5@skbuf>
+ <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
+ <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
+ <20230429172422.vc35tnwkekfieoru@skbuf>
+ <c81d23b6-ed22-0b37-d71b-ddce9d5d58eb@seco.com>
+ <c2f928d2-25f6-0e31-9ab3-9d585968df1b@seco.com>
+ <20230522150010.q5zndfwcuvrb6pg2@skbuf>
+ <22a28a6f-2c84-a6b1-bb57-a269af34c993@seco.com>
+ <20230610222123.mzmfjx7zfw4nh2lo@skbuf>
+From:   Sean Anderson <sean.anderson@seco.com>
+In-Reply-To: <20230610222123.mzmfjx7zfw4nh2lo@skbuf>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL0PR02CA0104.namprd02.prod.outlook.com
+ (2603:10b6:208:51::45) To DB9PR03MB8847.eurprd03.prod.outlook.com
+ (2603:10a6:10:3dd::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c1085fd-8a73-d192-6624-d4f35728e68a@linaro.org>
+X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|AS8PR03MB7860:EE_|AM6EUR05FT030:EE_|AS8PR03MB8859:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56fe191f-3c22-4406-034c-08db6b524710
+X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+X-Microsoft-Antispam-Message-Info-Original: 6v7q6MU1Si8e20a55HhlWWCNbyg8aD1ZP7QrRzJ4wcyumEXKhlW/AH6HYWSPQPwc7hiTEopZF7zA8R1hPfGmC6pHyY56BEfWsRuJGLiMBpOe1XefzJHf2FA+x37p3hL2cn4YZupnO7agC38eCKA5ckOsmNtNlkUCQa6VSIc5NhZVUkGALclJRo6KlIQmw1H31ilZdyN1meo7sZXbfq1lYziQ26O6PmmR0iS9CxfZtVymPj8gx4BUtC+nyrSw4FAYFQ9m4UZMKMIEhDFioct4FZMvZrLZoZFFSmyohXZOgkvWRkfZK6fJi3HjnMOPvWvhpedUd71lsf/zx+804KrFjxPz/iiiw+ncbV8hbypo/PK3aCdPVFYda18cA7Ztq4U3xzE43CaxYi36m5ZY8e0O/Ny/k5vtURBfh1zlYRffUSyJ+/Vuk2zJLeSAv00lNc6ExGcJ6q3o12kMEiYSrP58MeFJJikZD1dOJFmOEe9wbkTWbKPzENFVGctZHN6Cv8195f2+8CBFk6aqGi5e82rOdAqqx0ixJ8Fd+JzLOIEAYpcXOiIbrGz+vjVQnkd5xX4xifWChOGiHOpr8Xn1L08sW07piD1RZddhTZ4Ts72nXn0iLZcHWtTsCPOIGMRlAu3fVTnrQE/6R7DEtpHwFWM42tZlZi8AAHbENSOAaUu+fcJkhGjXnT/yqZg1iRWj4Bjy
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(346002)(39850400004)(396003)(136003)(376002)(451199021)(6916009)(4326008)(44832011)(66476007)(66556008)(66946007)(316002)(7416002)(31686004)(41300700001)(186003)(4744005)(2906002)(54906003)(478600001)(8676002)(8936002)(5660300002)(6666004)(52116002)(6486002)(53546011)(6512007)(6506007)(26005)(83380400001)(36756003)(86362001)(2616005)(31696002)(38100700002)(38350700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7860
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM6EUR05FT030.eop-eur05.prod.protection.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: e8ef41fb-616e-421e-3dda-08db6b524421
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4MOQWZ11aCucXZQWKW+6ks4cD8yJv7re6XBboRTMnCN8H5AgLtMX5zWN51uzGHR7BMWdNq7ZpnkbaypH/eLXnExDW1jpm84xCVcutBYw/F7FrEKy7KB8Hr4Uzp8o30QynFHg5LmTvcnuIKMpxk+OfpVnxFscIm9by+6RUek5VCRfu3BWEqrefzzyDVI5DLq0OPZVJttY6caQFm+TDtnpWa1HV4tj86zJ792akUH+X+bnbHadaNANslChH/A+ZBcYWzG6Uu4uZBRg/Z/yGUkhDx/g7IDyQr/bGLbs3AcThm8CrsddbdAq10vAGLWIvzl/54OvdR099w4BWcdiW9GA7/KFbtxexpLaKPtiRLvWiH925jN+DxWWNYukeKQt1Q2R9CPIp2zbj3UBz7Jem+BAygQguuRq8B01uB4e1BVFQevGALYrIAasCs32iNnUmkV0GaD5I1fpC37PlgrO5JiC08ycH69PvX/TOJFxOCEfACCuL1YP4xwwP9ZcB3f4Nm7ZkX8ddW+s9iuuD1f8g/bCnYq0apNQyxMNb/hELv2SKzvMSpg6LU3A9xksJ5hUsBABKkeD0UI9cZ7fB9VSWb5KwpJ0nbj7Wr8HGtY3+vV1ESQOaYBkG/aUU2dBKZMYdnIZZr2en6pK3sYrFnn7jSW2UDdlddM8AFvLN5g87nwjHED3SqzHJtAS0wel+yG5tkonm2sWHZAVbbfH8KgYdsijEj8vpioGf0bykzKgWDFOT667w+5PsOIFhwbHwqWPaEHc+ANsOiyJJ1yLWIQQ3OYysnkMYljEKsVvU2Cv6O+56E5bK7odqKve+e3b37J4JqGBB9G4hQi0m+SSYudVOZG/OA==
+X-Forefront-Antispam-Report: CIP:20.160.56.81;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230028)(39850400004)(376002)(396003)(136003)(346002)(451199021)(5400799015)(36840700001)(40470700004)(46966006)(2906002)(478600001)(4744005)(5660300002)(41300700001)(44832011)(54906003)(316002)(8676002)(8936002)(70586007)(70206006)(4326008)(6486002)(7416002)(6916009)(31686004)(6666004)(2616005)(6506007)(26005)(6512007)(40460700003)(53546011)(36860700001)(40480700001)(82740400003)(186003)(356005)(47076005)(7596003)(83380400001)(34070700002)(36756003)(7636003)(82310400005)(86362001)(31696002)(336012)(43740500002)(12100799033);DIR:OUT;SFP:1501;
+X-OriginatorOrg: seco.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2023 14:35:32.6310
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56fe191f-3c22-4406-034c-08db6b524710
+X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.81];Helo=[inpost-eu.tmcas.trendmicro.com]
+X-MS-Exchange-CrossTenant-AuthSource: AM6EUR05FT030.eop-eur05.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB8859
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 04:33:09PM +0300, Dmitry Baryshkov wrote:
-> On 12/06/2023 12:01, Stephan Gerhold wrote:
-> > On Mon, Jun 12, 2023 at 08:39:19AM +0300, Dmitry Baryshkov wrote:
-> > > APQ8064 has 4 speed bins, each of them having from 4 to 6 categorization
-> > > kinds. Provide tables necessary to handle voltage scaling on this SoC.
-> > > 
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >   arch/arm/boot/dts/qcom-apq8064.dtsi | 1017 +++++++++++++++++++++++++++
-> > >   1 file changed, 1017 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
-> > > index 4ef13f3d702b..f35853b59544 100644
-> > > --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
-> > > +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
-> > > @@ -49,6 +49,9 @@ CPU0: cpu@0 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_0>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw0_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -66,6 +69,9 @@ CPU1: cpu@1 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_1>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw1_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -83,6 +89,9 @@ CPU2: cpu@2 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_2>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw2_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -100,6 +109,9 @@ CPU3: cpu@3 {
-> > >   			clocks = <&kraitcc KRAIT_CPU_3>;
-> > >   			clock-names = "cpu";
-> > >   			clock-latency = <100000>;
-> > > +			vdd-mem-supply = <&pm8921_l24>;
-> > > +			vdd-dig-supply = <&pm8921_s3>;
-> > > +			vdd-core-supply = <&saw3_vreg>;
-> > >   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
-> > >   			operating-points-v2 = <&cpu_opp_table>;
-> > >   			#cooling-cells = <2>;
-> > > @@ -132,6 +144,81 @@ cpu_opp_table: opp-table-cpu {
-> > >   		opp-384000000 {
-> > >   			opp-hz = /bits/ 64 <384000000>;
-> > >   			opp-peak-kBps = <384000>;
-> > > +			opp-microvolt-speed0-pvs0 = <1050000 1050000 1150000>,
-> > > +						    <950000 950000 1150000>,
-> > > +						    <950000 950000 975000>;
-> > 
-> > I think this won't result in the correct switch order without making
-> > some changes to the OPP core. In _set_opp() the OPP core does
-> > 
-> > 	/* Scaling up? Configure required OPPs before frequency */
-> > 	if (!scaling_down) {
-> > 		_set_required_opps();
-> > 		_set_opp_bw();
-> > 		opp_table->config_regulators();
-> > 	}
-> > 
-> > 	opp_table->config_clks();
-> > 
-> > 	/* Scaling down? Configure required OPPs after frequency */
-> > 	if (scaling_down) {
-> > 		opp_table->config_regulators();
-> > 		_set_opp_bw();
-> > 		_set_required_opps();
-> > 	}
-> > 
-> > Since the "bandwidth" for the L2 cache is set before the regulators
-> > there is a short window where the L2 clock is running at a high
-> > frequency with too low voltage, which could potentially cause
-> > instability. On downstream this seems to be done in the proper order [1].
-> > 
-> > I'm not sure if the order in the OPP core is on purpose. If not, you
-> > could propose moving the config_regulators() first (for scaling up)
-> > and last (for scaling down). This would resolve the problem.
+On 6/10/23 18:21, Vladimir Oltean wrote:
+> Hello Sean,
 > 
-> Nice catch, I missed this ordering point.
+> On Fri, Jun 09, 2023 at 03:19:22PM -0400, Sean Anderson wrote:
+>> On 5/22/23 11:00, Vladimir Oltean wrote:
+>> > On Mon, May 22, 2023 at 10:42:04AM -0400, Sean Anderson wrote:
+>> >> Have you had a chance to review this driver?
+>> > 
+>> > Partially / too little (and no, I don't have an answer yet). I am
+>> > debugging a SERDES protocol change procedure from XFI to SGMII.
+>> 
+>> I'd just like to reiterate that, like I said in the cover letter, I
+>> believe this driver still has value even if it cannot yet perform
+>> protocol switching.
+>> 
+>> Please send me your feedback, and I will try and incorporate it into the
+>> next revision. Previously, you said you had major objections to the
+>> contents of this series, but you still have not listed them.
 > 
-> > 
-> > The alternative that I've already argued for on IRC in #linux-msm a
-> > couple of days ago would be to give the L2 cache (here: "interconnect")
-> > an own OPP table where it can describe its voltage requirements,
-> > independent from the CPU. That way the icc_set_bw() would be guaranteed
-> > to apply the correct voltage before adjusting the L2 cache clock. It
-> > looks like the "l2_level" voltages for vdd_dig and vdd_mem are not
-> > speedbin/PVS-specific [2] so this would also significantly reduce the DT
-> > size, since you wouldn't need to repeat the same vdd_dig/vdd_mem
-> > voltages for all of them.
-> 
-> Yes. I fact our discussion triggered me to do this patchset.
-> 
-> So, another option would be to have something like the following snippet. Do
-> you know if we are allowed to squish additional data into the L2 cache DT
-> node?
->
+> And if SERDES protocol switching was not physically possible, would this
+> patch set still have value?
 
-I have a similar implementation with the l2 devfreq driver where I need
-to put a compatible in the l2-cache node. From what I observed, keeping
-the l2-cache node in the cpus node makes the extra compile not work
-(nothing is probed) but moving the l2-cache node in the soc node and
-referencing the phandle makes the compatible correctly works and that
-doesn't seems to cause any problem. IMHO it would be better to have a
-separate opp table for l2, should keep things more organized.
+Yes. To e.g. set up SGMII25 or to fix the clocking situation.
 
-> CPU0: cpu@0 {
->     vdd-core-supply = <&saw0_vreg>;
->     interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
->     operating-points-v2 = <&cpu_opp_table>;
-> };
-> 
-> L2: l2-cache {
->     compatible = "qcom,apq8064-l2-cache", "cache";
-> 
->     clocks = <&kraitcc KRAIT_L2>;
->     vdd-mem-supply = <&pm8921_l24>;
->     vdd-dig-supply = <&pm8921_s3>;
->     operating-points-v2 = <&l2_opp_table>;
-> 
->     l2_opp_table {
->         compatible = "operating-points-v2";
->         opp-384000000 {
->             opp-hz = /bits/ 64 <384000000>;
->             opp-microvolt = <1050000 1050000 1150000>,
->                             <950000 950000 1150000>;
->         };
-> 
->         opp-648000000 {
->             opp-hz = /bits/ 64 <648000000>;
->             opp-microvolt = <1050000 1050000 1150000>,
->                             <1050000 1050000 1150000>;
->         };
-> 
->         opp-1134000000 {
->             opp-hz = /bits/ 64 <1134000000>;
->             opp-microvolt = <1150000 1150000 1150000>,
->                             <1150000 1150000 1150000>;
->         };
->     };
-> };
-> 
-> > 
-> > Thanks,
-> > Stephan
-> > 
-> > [1]: https://git.codelinaro.org/clo/la/kernel/msm/-/blob/LA.AF.1.2.1-08410-8064.0/arch/arm/mach-msm/acpuclock-krait.c#L529-588
-> > [2]: https://git.codelinaro.org/clo/la/kernel/msm/-/blob/LA.AF.1.2.1-08410-8064.0/arch/arm/mach-msm/acpuclock-8064.c#L118-135
-> 
-> -- 
-> With best wishes
-> Dmitry
-> 
-
--- 
-	Ansuel
+--Sean
