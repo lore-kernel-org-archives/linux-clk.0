@@ -2,186 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB9FC7EE2E
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FE6C7EE43
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 10:40:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229576AbjFLKfJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 06:35:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39142 "EHLO
+        id S233371AbjFLKkx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 06:40:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232254AbjFLKel (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:34:41 -0400
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E53E35B8
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:16:52 -0700 (PDT)
-Received: by mail-wr1-x42a.google.com with SMTP id ffacd0b85a97d-30fa23e106bso1731787f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 03:16:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686564937; x=1689156937;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LWikiPW2cUcJbbQrNCBtpcns5WVgI8QQ3+VmuZnpaK4=;
-        b=FAKNCbCYTuLbKvcd1B+c2jfcS5zjz3FEnhsVO4ADpHnbCoO/fdM9w2TlhKDUJAHNEn
-         pBpovDOHNixVANP5tqGXHFIC3yeQIBySpndZFME0DwNJmWqvCZ6M+JL0co4m4DGfWjaU
-         ZT92hh61/bpg/Plxk22K5LG7PQpt6KqFaB4o/B5lfIrpSoAdAjYLybB7u+olfMb+L3Az
-         kg41yRZsj764QaZFgffu0giVmLvnuP6bwlkkOKWGZ47lipT1AcF4bjgWpkjfVQzavFmk
-         uMT4Ie3QmoNuPZDlMCf1Q0td4hGP2vXW4om0rpV0+iVXEN1i3wg8Y/6r2wFi6hmXxg9b
-         nmaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686564937; x=1689156937;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LWikiPW2cUcJbbQrNCBtpcns5WVgI8QQ3+VmuZnpaK4=;
-        b=LYZLVrMLGAvcmsWoFAG0Hcgo8ss+QrOuPz3KWfUim8l44bb4+BfjLd1UQDBSnBdZdv
-         B8Mfp2LZ9SpzUndOR/5Sd6qk7Dl4UcGW3H0ejm0rOnIFfTvZTVhQc4L6IpSfiZcra0cI
-         ouoQ0D93eoGZQ5y2lX0ORS6/NBoajsuEqT4sXKmdsS8tYQhg5HbtYq05OroHQccRgDOO
-         H7iPNSGacbQQ4FZ0nNviNyM0szU8IrzdyOf0yOl4cpSJGTO0MMp/jbzXL0LSTIlMLMUQ
-         jAHH6hVDzWnU7DqvJamUeBNJLhbtLO5POoOYdIWsO0+34qxit0BOutlfWhHXQ3p3JRE+
-         DHEQ==
-X-Gm-Message-State: AC+VfDxBSUsEvLLCiSvf7YWA8cI/xn7MIE7AGAmj4n5Fo2YtlP/HHDVx
-        Ztbwgj6HSoW4O1E0WK99qZbwzf/9snM85sHq19xnOA==
-X-Google-Smtp-Source: ACHHUZ7Ma7sCiGe8HySFslKdv1KtT+4tivJqG8hUQ1GAmKrlvPdIh5E9lsSHkY0m8a/68jOPtdU1Qg==
-X-Received: by 2002:a7b:c846:0:b0:3f5:1241:6cfa with SMTP id c6-20020a7bc846000000b003f512416cfamr5607891wml.37.1686563870505;
-        Mon, 12 Jun 2023 02:57:50 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id f25-20020a7bcd19000000b003f7ff520a14sm10829525wmj.22.2023.06.12.02.57.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 02:57:50 -0700 (PDT)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Mon, 12 Jun 2023 11:57:33 +0200
-Subject: [PATCH v2 16/19] clk: meson: eeclk: move bindings include to main
- driver
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-16-38172d17c27a@linaro.org>
-References: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
-In-Reply-To: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
+        with ESMTP id S235307AbjFLKkf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 06:40:35 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 449EA3589;
+        Mon, 12 Jun 2023 03:24:40 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1686565081; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=jxn8o9EnAZ8Io5P5JZbCzVNuEdgs9765qhTvoxlzmgNG+ZB+a3qH83ZGCHgxa7MRni
+    rd1QmJaPbqRzj1kygjgu3Dv62Rbz6BkTF16CAHAN33mxv4djQT/ZGakT8J3Tfr42zSF7
+    wrQNksBHZIQ+TImWNyl2QlwQ85hcuYWz7uPgGkCQKYs/EMcxXsVHaE77FN825x24qX91
+    msTB+6/vQRlpXNnyi1IGqhbRMTp2tn5fpUZX4kAN6aJmHbIJglL+LhgAmrbzk3Wrm193
+    UwOwIX4RzxtWV6ksMDf3UkDOgwjqUKHpKFhh5h5GgHETsqMPJUgUhkl1ZleNUPAJ+q6A
+    K3bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686565081;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O0ppVuWISUsVQVfyM0fiPG5Ry6Z19qZGKk5vMjERVQ4=;
+    b=eBeRtHe19dIi+u8OLbqyzC4BGmhf2LNtHjNIFtuzf/pmtIrL3aX7jZd/SaTiib3ad7
+    Xnlf+rMJJfS2DCAiyg9+vDehO3e7em+oU+u1fLjTKhX37DJI+3DWPd4XqaMjVA/bL34O
+    GwjK4wcGBoISEDFpPqT7S1oXxjSssEsq/QRfaDoiOMLNrphVUhsq/ptI1671s7cOGZLb
+    YrJUoaQGznOuiCk0B6hkROUyekrPy6gv4eKNRgklrXSvAm+W+OVRYn0qLmd50OR/qjbc
+    mneMSS/Aooqk1AySG5l9v0iI7Cibasx8UIGNQrdFxAzU1li/9qwUOSHh0vts8guocAQo
+    c2/Q==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686565081;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O0ppVuWISUsVQVfyM0fiPG5Ry6Z19qZGKk5vMjERVQ4=;
+    b=o+y0d+46Fm7NRgJv8lcRVeCh801vkUiooz4camOnQCqtQIVU9HwrwZZAJ4fvauxA09
+    KIswFXAB/QxMpcMCnZQ4inl6iBSESc5nWWLBB3GY+CBv5EUdCQdgYZprwaDcTVDK1ja0
+    C9Ij/ZVKvgBc5rsPeh85O7ERfIMJb3QpJyKwfhehW9JKbmlVHRY1u8sfnAMSyc1Oh9YX
+    P2WCRxG7x2LXvxkheJ4X0MXCK8WKqDeAbeu2c21DzIqnULtsMlG2d3grIIZCDU1tRHax
+    Kt2tx12t2yajPy7SbRqY9FEj8Yv79CgX1Qq7rpW48YJMif3KXdetjeMEYn8Oa9AQJRIY
+    qCTw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686565081;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O0ppVuWISUsVQVfyM0fiPG5Ry6Z19qZGKk5vMjERVQ4=;
+    b=6NIVw0t7WSuZnbxpcEe3ebtHr+D9bplt4WaKUYqHwRFv6C42KPR+SEeCmbAhopKuh/
+    aw4SaluFAglLOlRX0pCA==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8peN1A=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
+    with ESMTPSA id Z82ec2z5CAI1U4o
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Mon, 12 Jun 2023 12:18:01 +0200 (CEST)
+Date:   Mon, 12 Jun 2023 12:17:53 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2909;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=Wk7owxOdyJK0QkY8zyxIiRPr+2RNohL4MIdS38lxWuU=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkhuwLCmDkNgP+75AH+w2uzJ8MUa+VSnC3u09pDFh4
- LkrYsa+JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZIbsCwAKCRB33NvayMhJ0f9VD/
- 41zr5oZSpYNIsDz4J2tF4zcenuEd2VZO5TngKZ1T0vgtfNZ9xs3fKw3aUnghqFAtOgWWucvf5E2hf0
- oz3uBGfuZDSYFuerVuEWXisBJjBezRTo4vEO2nc0vTntzxmYixG4/sB3Byd4sg6NvDhqhjcsi4W43a
- P/hKEulaTu9LaFVfgbIjPwuFmzMIzSDX9LTraEUEEwYAf2Y7RgyrPgk0L8s4YNokWYPj4MXhe19AWa
- 2iGORoS7cA7+8fGqIEvXF3ebrPHHrf2IDFJf2JwuQBjs/5vD0+y88UpVfHDaRSFU1au/nLzcdiAimL
- kVqEJBpwFpbb47YQUKM+yLAMoXbgf+eZr3hkC91RYDUhb/gXZRe2SfpoKj7upsJjq+H7WanHriv5vm
- LQJZ1RfSCwMUY5sa2d9RDPmxVM3kQ7jdYejq8HwybB7IFD6VP7WEikhRibCOToPLkfbqKi+emMB7ye
- uzQ2pqTfVo8JV/TUenQ4A0iCO2L5f2+rAStVDSnsnK51gShnQWsMed+rGOTSmUsypKwWvDiAJFfSjX
- sa/dNFLD2+D+KBv8MjQ1WXrWap3AJJP35Ewe6MGmRvM5PfNR+NxW+hTpraSmTvKTVE3Apo+rWKZI/S
- JA788Oewcu64k5FQPByB4rU1yJc4XHyEaE0j17hBxgPqVy2es4QznoZHUFrQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-msm8996: Use read-only RCG ops for
+ RPM bus clocks
+Message-ID: <ZIbw0dEdFNFcC0Hr@gerhold.net>
+References: <20230612-topic-rcg2_ro-v1-0-e7d824aeb628@linaro.org>
+ <20230612-topic-rcg2_ro-v1-2-e7d824aeb628@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230612-topic-rcg2_ro-v1-2-e7d824aeb628@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now the clock ids are no more defined in private headers,
-cleanup and include the dt-bindings headers from the main
-driver file.
+On Mon, Jun 12, 2023 at 11:22:48AM +0200, Konrad Dybcio wrote:
+> The config/periph/system NoC clocks are wholly controlled by the
+> RPM firmware and Linux should never ever alter their configuration.
+> 
+> Switch them over to read-only ops to avoid that.
+> 
+> Fixes: b1e010c0730a ("clk: qcom: Add MSM8996 Global Clock Control (GCC) driver")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8996.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+> index 5e44d1bcca9e..588e3b67657a 100644
+> --- a/drivers/clk/qcom/gcc-msm8996.c
+> +++ b/drivers/clk/qcom/gcc-msm8996.c
+> @@ -264,7 +264,7 @@ static struct clk_rcg2 system_noc_clk_src = {
+>  		.name = "system_noc_clk_src",
+>  		.parent_data = gcc_xo_gpll0_gpll0_early_div,
+>  		.num_parents = ARRAY_SIZE(gcc_xo_gpll0_gpll0_early_div),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_ro_ops,
+>  	},
+>  };
+>  
+> @@ -284,7 +284,7 @@ static struct clk_rcg2 config_noc_clk_src = {
+>  		.name = "config_noc_clk_src",
+>  		.parent_data = gcc_xo_gpll0,
+>  		.num_parents = ARRAY_SIZE(gcc_xo_gpll0),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_ro_ops,
+>  	},
+>  };
+>  
+> @@ -306,7 +306,7 @@ static struct clk_rcg2 periph_noc_clk_src = {
+>  		.name = "periph_noc_clk_src",
+>  		.parent_data = gcc_xo_gpll0,
+>  		.num_parents = ARRAY_SIZE(gcc_xo_gpll0),
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_ro_ops,
+>  	},
+>  };
+>  
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/clk/meson/axg.c  | 2 ++
- drivers/clk/meson/axg.h  | 3 ---
- drivers/clk/meson/g12a.c | 2 ++
- drivers/clk/meson/g12a.h | 3 ---
- drivers/clk/meson/gxbb.c | 2 ++
- drivers/clk/meson/gxbb.h | 3 ---
- 6 files changed, 6 insertions(+), 9 deletions(-)
+If the rcg is read-only then it shouldn't need a .freq_tbl (the
+.recalc_rate() works without it). These clocks have one for some reason.
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 75f0912a9805..f132439a33a4 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -21,6 +21,8 @@
- #include "axg.h"
- #include "meson-eeclk.h"
- 
-+#include <dt-bindings/clock/axg-clkc.h>
-+
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
- static struct clk_regmap axg_fixed_pll_dco = {
-diff --git a/drivers/clk/meson/axg.h b/drivers/clk/meson/axg.h
-index ed157532b4d7..624d8d3ce7c4 100644
---- a/drivers/clk/meson/axg.h
-+++ b/drivers/clk/meson/axg.h
-@@ -102,7 +102,4 @@
- #define HHI_DPLL_TOP_I			0x318
- #define HHI_DPLL_TOP2_I			0x31C
- 
--/* include the CLKIDs that have been made part of the DT binding */
--#include <dt-bindings/clock/axg-clkc.h>
--
- #endif /* __AXG_H */
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index e0e295645c9e..ceabd5f4b2ac 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -25,6 +25,8 @@
- #include "meson-eeclk.h"
- #include "g12a.h"
- 
-+#include <dt-bindings/clock/g12a-clkc.h>
-+
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
- static struct clk_regmap g12a_fixed_pll_dco = {
-diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
-index 8e08af3c1476..f11ee3c59849 100644
---- a/drivers/clk/meson/g12a.h
-+++ b/drivers/clk/meson/g12a.h
-@@ -126,7 +126,4 @@
- #define HHI_SYS1_PLL_CNTL5		0x394
- #define HHI_SYS1_PLL_CNTL6		0x398
- 
--/* include the CLKIDs that have been made part of the DT binding */
--#include <dt-bindings/clock/g12a-clkc.h>
--
- #endif /* __G12A_H */
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 116fcb6ba160..1ee0774a9827 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -17,6 +17,8 @@
- #include "meson-eeclk.h"
- #include "vid-pll-div.h"
- 
-+#include <dt-bindings/clock/gxbb-clkc.h>
-+
- static DEFINE_SPINLOCK(meson_clk_lock);
- 
- static const struct pll_params_table gxbb_gp0_pll_params_table[] = {
-diff --git a/drivers/clk/meson/gxbb.h b/drivers/clk/meson/gxbb.h
-index 798ffb911103..ba5f39a8d746 100644
---- a/drivers/clk/meson/gxbb.h
-+++ b/drivers/clk/meson/gxbb.h
-@@ -112,7 +112,4 @@
- #define HHI_BT656_CLK_CNTL		0x3D4 /* 0xf5 offset in data sheet */
- #define HHI_SAR_CLK_CNTL		0x3D8 /* 0xf6 offset in data sheet */
- 
--/* include the CLKIDs that have been made part of the DT binding */
--#include <dt-bindings/clock/gxbb-clkc.h>
--
- #endif /* __GXBB_H */
+Maybe we should also set .flags = CLK_GET_RATE_NOCACHE to ensure that
+clk_get_rate() doesn't return some stale value? Although I'm not sure if
+it's enough to set it here or if it would need to be set on all child
+clocks as well.
 
--- 
-2.34.1
-
+Thanks,
+Stephan
