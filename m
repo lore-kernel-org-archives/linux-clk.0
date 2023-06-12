@@ -2,320 +2,240 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CAEC7EE2E
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 12:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24172C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 13:33:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235471AbjFLMvW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 08:51:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38762 "EHLO
+        id S235675AbjFLNdP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 09:33:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235513AbjFLMvV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 08:51:21 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8801DE67
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 05:51:17 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f619c2ba18so4763070e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 05:51:17 -0700 (PDT)
+        with ESMTP id S229988AbjFLNdP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 09:33:15 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 390AFE9
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 06:33:13 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4f5f728c4aaso5087582e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 06:33:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686574276; x=1689166276;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zgwZC/fxj61d9KTBgFP5Kn5ATX0ChBWpqER31ij5MWs=;
-        b=iKkMVv1gMGAM4M647rTVushhgFRLCOWK0KKXHS/OiM+lyUNxctDtJcexd397dLnHKq
-         lH94LVZUgAsw3oTpddRbOfgCXmVKW821Ol76UVrhGrzCr07yc6Iyb+ATBN8u9aAMYI/t
-         Mz6hgETo0r2hzAEv0O3zZVTGoTm1zb2mG5itZLlsmQrL/UDhXl5Z31y5FiNveyn6giKN
-         8MwD7Gjhly94rfiOnsn7k8ZQ2jbWByyPdNRCDrik5/3SaKO23SUjxhSGghQCHUFCMIRh
-         03iAhx59I4vV3BUwzJZZx/EX4C0qbkoT9AK80VPsIzZE8TV0JV7bchMWBBUAepsgDqXM
-         XJGA==
+        d=linaro.org; s=google; t=1686576791; x=1689168791;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j0BtWef05P50AZolUyxN0L22aqNjqMA9iLYT2Vrx8+Y=;
+        b=IuDOVYUWJTrtVM24OGVA8/rlFHy+y1Y6hkL5PK0wbxK3vLwgD3SY3BX8HrNBULnbvU
+         gfNdk07aqfXijq5d8ip4FtvWlxoka0locpI4e59IX5WIYNqW2EyxOI87BE7YwVv0wnOk
+         AY8ecLHBiTdSgm7lkJgVnDazQW+6OUzSYqA7Wpag0cRx9OgE0H0u1ziWfkv6FjEPGDqU
+         4Qbw7lXx+PyMevgo/81gjp9TXSYLc3KXDQiOaMd8RY7+ogRxPnKIzedqhbAEf+wWekci
+         Fa/Xh6dFkgng/yZtkfpWCdT2yY12GvQxK2CSmiqg/ZBygxULYpC2BrtukEnZKSDQAp78
+         vizA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686574276; x=1689166276;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1686576791; x=1689168791;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zgwZC/fxj61d9KTBgFP5Kn5ATX0ChBWpqER31ij5MWs=;
-        b=gmWqO8/rci/gmZkx/Ac+NXBmEYqW4ZUpsdJHo4JqcfmU0E0wfV6Vn11lEYprZsrzUc
-         aE4pWlIcuu3cluqwQQ6oFiJyiwIlVKTTihjjIzP5ppP6eANemyR5eZg6Uf9TD0+ZoLyY
-         ym7aV6d4hD5hahHbMRoPI7ZbhBr15PsNZCAAZMt9hfUCkHhIwkbbAQmXC8Y6N/Bo18u+
-         MXJE2CtT0TIFfbFxK/QuTVvlIQJyB0TwiG7O6J0P9/waMemJ4DrfL3QjS49vSEdvjzGg
-         RijAbvAK5V/46a/jKjCTbEpEX0e71Gz3Cf9T5zx/fP+clBXbZDAKoK3VmiqhKWDjtore
-         V8IQ==
-X-Gm-Message-State: AC+VfDxInzAbdu8xRnf6xZLZJHfnKbNY4o+qA79FxDbNl0roYRpwbOXS
-        KtQCnr+CSbiXwNvsh34ZMaFUGQ==
-X-Google-Smtp-Source: ACHHUZ4wtBMALjIQGGhGnVpzvKtRatNMeWKK/mFRat5tb6NMydba02+WNqzcPJHf21TB5rWzKql3xg==
-X-Received: by 2002:ac2:465b:0:b0:4f6:4f9a:706e with SMTP id s27-20020ac2465b000000b004f64f9a706emr4471143lfo.15.1686574275777;
-        Mon, 12 Jun 2023 05:51:15 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id d18-20020ac25452000000b004f4ce1d4df6sm1443390lfn.47.2023.06.12.05.51.14
+        bh=j0BtWef05P50AZolUyxN0L22aqNjqMA9iLYT2Vrx8+Y=;
+        b=NNT07Cn33GU8Wr0DKA3LOU88QSE1kdV9aWzQNEF5CKEa91uzqwHVJWcd3gy3tTqRoA
+         q+nTR/GsYXVkdfzY+CB56Z6MtptSWv1hP5wd5yb4bohdZ3QAs71A14krO5P66YgDTQ4o
+         lrHx5zRmNu8z4/j7L5BpCR7dy2fAnLRW3uT30kSbVxKgGAqmWKs9+84KOywjokSN0pbd
+         7EPFvB10xWR9CI6Ia/Z707Em5HM8oMnllLklDffEJqpomYm6QGen+u31YexCBDUIne7+
+         5UPr3pJ2E/0mKRaVB8L2y6cIIo1vA2ZhYTstaRzvxKkcHKW/lfLyTXAuawX01iQlyNig
+         5d8g==
+X-Gm-Message-State: AC+VfDyu5IbdJ/USEE2279N3p0I/+n14Re4qrZrOzMgHkLwB8kU6Anto
+        nIg12+CE3vYy+1Yd8Oj9l06bfw==
+X-Google-Smtp-Source: ACHHUZ5jg8U5re+laJc3UhaUZ6VSMxMxuIF+CKl/Y9e6iJ4ubnZWGquHHnHTu+8mWEPO+Pk1PZqv3A==
+X-Received: by 2002:a05:6512:1ca:b0:4f4:2717:7e6f with SMTP id f10-20020a05651201ca00b004f427177e6fmr3166286lfp.23.1686576791391;
+        Mon, 12 Jun 2023 06:33:11 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id x3-20020ac259c3000000b004f39bb71ed2sm1440105lfn.138.2023.06.12.06.33.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 05:51:15 -0700 (PDT)
-Message-ID: <b700b444-0b14-7cee-4edc-d2f1183c66bb@linaro.org>
-Date:   Mon, 12 Jun 2023 14:51:14 +0200
+        Mon, 12 Jun 2023 06:33:10 -0700 (PDT)
+Message-ID: <8c1085fd-8a73-d192-6624-d4f35728e68a@linaro.org>
+Date:   Mon, 12 Jun 2023 16:33:09 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Content-Language: en-US
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 15/18] ARM: dts: qcom: apq8064: provide voltage scaling
+ tables
+Content-Language: en-GB
 To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20230526-topic-smd_icc-v2-0-e5934b07d813@linaro.org>
- <20230526-topic-smd_icc-v2-4-e5934b07d813@linaro.org>
- <ZIRgGXwKD6mcgTRY@gerhold.net>
- <40f937bb-0d7e-a237-1672-5905983622ce@linaro.org>
- <b7b1d19c-b87d-b3fd-36aa-374065a45ede@linaro.org>
- <ZITOR3Y25Bv4msdm@gerhold.net>
- <c52f0311-a8a0-79af-2a08-51a8564a8b25@linaro.org>
- <ZIWR7uVHJ-eJWhHw@gerhold.net>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH v2 04/22] clk: qcom: smd-rpm: Export clock scaling
- availability
-In-Reply-To: <ZIWR7uVHJ-eJWhHw@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>
+References: <20230612053922.3284394-1-dmitry.baryshkov@linaro.org>
+ <20230612053922.3284394-16-dmitry.baryshkov@linaro.org>
+ <ZIbez4RA0OoVfHzt@gerhold.net>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <ZIbez4RA0OoVfHzt@gerhold.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11.06.2023 11:20, Stephan Gerhold wrote:
-> On Sat, Jun 10, 2023 at 09:39:00PM +0200, Konrad Dybcio wrote:
->> On 10.06.2023 21:25, Stephan Gerhold wrote:
->>> On Sat, Jun 10, 2023 at 08:53:05PM +0200, Konrad Dybcio wrote:
->>>> On 10.06.2023 14:15, Konrad Dybcio wrote:
->>>>> On 10.06.2023 13:35, Stephan Gerhold wrote:
->>>>>> On Fri, Jun 09, 2023 at 10:19:09PM +0200, Konrad Dybcio wrote:
->>>>>>> Before we issue a call to RPM through clk_smd_rpm_enable_scaling() the
->>>>>>> clock rate requests will not be commited in hardware. This poses a
->>>>>>> race threat since we're accessing the bus clocks directly from within
->>>>>>> the interconnect framework.
->>>>>>>
->>>>>>> Add a marker to indicate that we're good to go with sending new requests
->>>>>>> and export it so that it can be referenced from icc.
->>>>>>>
->>>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>>>>>> ---
->>>>>>>  drivers/clk/qcom/clk-smd-rpm.c   | 9 +++++++++
->>>>>>>  include/linux/soc/qcom/smd-rpm.h | 2 ++
->>>>>>>  2 files changed, 11 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
->>>>>>> index 937cb1515968..482fe30ee6f0 100644
->>>>>>> --- a/drivers/clk/qcom/clk-smd-rpm.c
->>>>>>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
->>>>>>> @@ -151,6 +151,7 @@
->>>>>>>  #define to_clk_smd_rpm(_hw) container_of(_hw, struct clk_smd_rpm, hw)
->>>>>>>  
->>>>>>>  static struct qcom_smd_rpm *rpmcc_smd_rpm;
->>>>>>> +static bool smd_rpm_clk_scaling;
->>>>>>>  
->>>>>>>  struct clk_smd_rpm {
->>>>>>>  	const int rpm_res_type;
->>>>>>> @@ -385,6 +386,12 @@ static unsigned long clk_smd_rpm_recalc_rate(struct clk_hw *hw,
->>>>>>>  	return r->rate;
->>>>>>>  }
->>>>>>>  
->>>>>>> +bool qcom_smd_rpm_scaling_available(void)
->>>>>>> +{
->>>>>>> +	return smd_rpm_clk_scaling;
->>>>>>> +}
->>>>>>> +EXPORT_SYMBOL_GPL(qcom_smd_rpm_scaling_available);
->>>>>>> +
->>>>>>>  static int clk_smd_rpm_enable_scaling(void)
->>>>>>>  {
->>>>>>>  	int ret;
->>>>>>> @@ -410,6 +417,8 @@ static int clk_smd_rpm_enable_scaling(void)
->>>>>>>  		return ret;
->>>>>>>  	}
->>>>>>>  
->>>>>>> +	smd_rpm_clk_scaling = true;
->>>>>>> +
->>>>>>
->>>>>> If you move the platform_device_register_data(&rpdev->dev,
->>>>>> "icc_smd_rpm", ...) from drivers/soc/qcom/smd-rpm.c to here you can
->>>>>> avoid the race completely and drop this API. I think that would be
->>>>>> cleaner. And it will likely probe much faster because probe deferral
->>>>>> is slow. :)
->>>>> Sounds like an idea.. especially since it's pretty much the only
->>>>> dependency other than SMDRPM itself!
->>>> It sounds great, but to not break bisecting one has to:
->>>>
->>>> 1. change the registration in soc/smd-rpm to store rpm ptr in driver
->>>>    data, in addition to parent driver data
->>>>
->>>> 2. change icc/smd-rpm to use the device and not parent data
->>>>
->>>> 3. add a platform_device_register_data call in clk-smd-rpm that will
->>>>    always fail because the device is always registered
->>>>
->>>> 4. remove the registration from soc/smd-rpm
->>>>
->>>
->>> Logically the icc_smd_rpm device still fits better as child of
->>> smd-rpm and not clk-smd-rpm. So I would probably just continue
->>> registering it on the parent device from clk-smd-rpm.
->>> Then there are no changes necessary in icc_smd_rpm.
->>>
->>> You could use this. Both touched files are Bjorn-maintained so should be
->>> manageable to have it in one commit. (note: compile-tested only)
->>>
->>> Thanks,
->>> Stephan
->>>
->>> From a2610adb2551b01e76b9de8e4cbcc89853814a8f Mon Sep 17 00:00:00 2001
->>> From: Stephan Gerhold <stephan@gerhold.net>
->>> Date: Sat, 10 Jun 2023 21:19:48 +0200
->>> Subject: [PATCH] soc: qcom: smd-rpm: Move icc_smd_rpm registration to
->>>  clk-smd-rpm
->>>
->>> icc_smd_rpm will do bus clock votes itself rather than taking the
->>> unnecessary detour through the clock subsystem. However, it can only
->>> do that after the clocks have been handed off and scaling has been
->>> enabled in the RPM in clk-smd-rpm.
->>>
->>> Move the icc_smd_rpm registration from smd-rpm.c to clk-smd-rpm.c
->>> to avoid any possible races. icc_smd_rpm gets the driver data from
->>> the smd-rpm device, so still register the platform device on the
->>> smd-rpm parent device.
->>>
->>> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
->>> ---
->> Generally it looks good.. I'll give it a spin next week. One
->> thing below.
+On 12/06/2023 12:01, Stephan Gerhold wrote:
+> On Mon, Jun 12, 2023 at 08:39:19AM +0300, Dmitry Baryshkov wrote:
+>> APQ8064 has 4 speed bins, each of them having from 4 to 6 categorization
+>> kinds. Provide tables necessary to handle voltage scaling on this SoC.
 >>
->>>  drivers/clk/qcom/clk-smd-rpm.c | 21 +++++++++++++++++++++
->>>  drivers/soc/qcom/smd-rpm.c     | 23 +----------------------
->>>  2 files changed, 22 insertions(+), 22 deletions(-)
->>>
->>> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
->>> index e4de74b68797..91adb16889b3 100644
->>> --- a/drivers/clk/qcom/clk-smd-rpm.c
->>> +++ b/drivers/clk/qcom/clk-smd-rpm.c
->>> @@ -1302,12 +1302,20 @@ static struct clk_hw *qcom_smdrpm_clk_hw_get(struct of_phandle_args *clkspec,
->>>  	return desc->clks[idx] ? &desc->clks[idx]->hw : ERR_PTR(-ENOENT);
->>>  }
->>>  
->>> +static void rpm_smd_unregister_icc(void *data)
->>> +{
->>> +	struct platform_device *icc_pdev = data;
->>> +
->>> +	platform_device_unregister(icc_pdev);
->>> +}
->>> +
->>>  static int rpm_smd_clk_probe(struct platform_device *pdev)
->>>  {
->>>  	int ret;
->>>  	size_t num_clks, i;
->>>  	struct clk_smd_rpm **rpm_smd_clks;
->>>  	const struct rpm_smd_clk_desc *desc;
->>> +	struct platform_device *icc_pdev;
->>>  
->>>  	rpmcc_smd_rpm = dev_get_drvdata(pdev->dev.parent);
->>>  	if (!rpmcc_smd_rpm) {
->>> @@ -1357,6 +1365,19 @@ static int rpm_smd_clk_probe(struct platform_device *pdev)
->>>  	if (ret)
->>>  		goto err;
->>>  
->>> +	icc_pdev = platform_device_register_data(pdev->dev.parent,
->>> +						 "icc_smd_rpm", -1, NULL, 0);
->>> +	if (IS_ERR(icc_pdev)) {
->>> +		dev_err(&pdev->dev, "Failed to register icc_smd_rpm device: %pE\n",
->>> +			icc_pdev);
->>> +		/* No need to unregister clocks because of this */
->>> +	} else {
->>> +		ret = devm_add_action_or_reset(&pdev->dev, rpm_smd_unregister_icc,
->>> +					       icc_pdev);
->>> +		if (ret)
->>> +			goto err;
->>> +	}
->>> +
->>>  	return 0;
->>>  err:
->>>  	dev_err(&pdev->dev, "Error registering SMD clock driver (%d)\n", ret);
->>> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
->>> index 0c1aa809cc4e..427dd5392b82 100644
->>> --- a/drivers/soc/qcom/smd-rpm.c
->>> +++ b/drivers/soc/qcom/smd-rpm.c
->>> @@ -19,7 +19,6 @@
->>>  /**
->>>   * struct qcom_smd_rpm - state of the rpm device driver
->>>   * @rpm_channel:	reference to the smd channel
->>> - * @icc:		interconnect proxy device
->>>   * @dev:		rpm device
->>>   * @ack:		completion for acks
->>>   * @lock:		mutual exclusion around the send/complete pair
->>> @@ -27,7 +26,6 @@
->>>   */
->>>  struct qcom_smd_rpm {
->>>  	struct rpmsg_endpoint *rpm_channel;
->>> -	struct platform_device *icc;
->>>  	struct device *dev;
->>>  
->>>  	struct completion ack;
->>> @@ -197,7 +195,6 @@ static int qcom_smd_rpm_callback(struct rpmsg_device *rpdev,
->>>  static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
->>>  {
->>>  	struct qcom_smd_rpm *rpm;
->>> -	int ret;
->>>  
->>>  	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
->>>  	if (!rpm)
->>> @@ -210,24 +207,7 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
->>>  	rpm->rpm_channel = rpdev->ept;
->>>  	dev_set_drvdata(&rpdev->dev, rpm);
->>>  
->>> -	rpm->icc = platform_device_register_data(&rpdev->dev, "icc_smd_rpm", -1,
->>> -						 NULL, 0);
->>> -	if (IS_ERR(rpm->icc))
->>> -		return PTR_ERR(rpm->icc);
->>> -
->>> -	ret = of_platform_populate(rpdev->dev.of_node, NULL, NULL, &rpdev->dev);
->>> -	if (ret)
->>> -		platform_device_unregister(rpm->icc);
->>> -
->>> -	return ret;
->>> -}
->>> -
->>> -static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
->>> -{
->>> -	struct qcom_smd_rpm *rpm = dev_get_drvdata(&rpdev->dev);
->>> -
->>> -	platform_device_unregister(rpm->icc);
->>> -	of_platform_depopulate(&rpdev->dev);
->>> +	return devm_of_platform_populate(&rpdev->dev);
->>>  }
->>>  
->>>  static const struct of_device_id qcom_smd_rpm_of_match[] = {
->>> @@ -256,7 +236,6 @@ MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
->>>  
->>>  static struct rpmsg_driver qcom_smd_rpm_driver = {
->>>  	.probe = qcom_smd_rpm_probe,
->>> -	.remove = qcom_smd_rpm_remove,
->> This reaches over the removal of the icc registration, the depopulate
->> call should stay.
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   arch/arm/boot/dts/qcom-apq8064.dtsi | 1017 +++++++++++++++++++++++++++
+>>   1 file changed, 1017 insertions(+)
 >>
+>> diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+>> index 4ef13f3d702b..f35853b59544 100644
+>> --- a/arch/arm/boot/dts/qcom-apq8064.dtsi
+>> +++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+>> @@ -49,6 +49,9 @@ CPU0: cpu@0 {
+>>   			clocks = <&kraitcc KRAIT_CPU_0>;
+>>   			clock-names = "cpu";
+>>   			clock-latency = <100000>;
+>> +			vdd-mem-supply = <&pm8921_l24>;
+>> +			vdd-dig-supply = <&pm8921_s3>;
+>> +			vdd-core-supply = <&saw0_vreg>;
+>>   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>   			operating-points-v2 = <&cpu_opp_table>;
+>>   			#cooling-cells = <2>;
+>> @@ -66,6 +69,9 @@ CPU1: cpu@1 {
+>>   			clocks = <&kraitcc KRAIT_CPU_1>;
+>>   			clock-names = "cpu";
+>>   			clock-latency = <100000>;
+>> +			vdd-mem-supply = <&pm8921_l24>;
+>> +			vdd-dig-supply = <&pm8921_s3>;
+>> +			vdd-core-supply = <&saw1_vreg>;
+>>   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>   			operating-points-v2 = <&cpu_opp_table>;
+>>   			#cooling-cells = <2>;
+>> @@ -83,6 +89,9 @@ CPU2: cpu@2 {
+>>   			clocks = <&kraitcc KRAIT_CPU_2>;
+>>   			clock-names = "cpu";
+>>   			clock-latency = <100000>;
+>> +			vdd-mem-supply = <&pm8921_l24>;
+>> +			vdd-dig-supply = <&pm8921_s3>;
+>> +			vdd-core-supply = <&saw2_vreg>;
+>>   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>   			operating-points-v2 = <&cpu_opp_table>;
+>>   			#cooling-cells = <2>;
+>> @@ -100,6 +109,9 @@ CPU3: cpu@3 {
+>>   			clocks = <&kraitcc KRAIT_CPU_3>;
+>>   			clock-names = "cpu";
+>>   			clock-latency = <100000>;
+>> +			vdd-mem-supply = <&pm8921_l24>;
+>> +			vdd-dig-supply = <&pm8921_s3>;
+>> +			vdd-core-supply = <&saw3_vreg>;
+>>   			interconnects = <&kraitcc MASTER_KRAIT_L2 &kraitcc SLAVE_KRAIT_L2>;
+>>   			operating-points-v2 = <&cpu_opp_table>;
+>>   			#cooling-cells = <2>;
+>> @@ -132,6 +144,81 @@ cpu_opp_table: opp-table-cpu {
+>>   		opp-384000000 {
+>>   			opp-hz = /bits/ 64 <384000000>;
+>>   			opp-peak-kBps = <384000>;
+>> +			opp-microvolt-speed0-pvs0 = <1050000 1050000 1150000>,
+>> +						    <950000 950000 1150000>,
+>> +						    <950000 950000 975000>;
 > 
-> I switched the of_platform_populate() to devm_of_platform_populate(),
-> that's why the remove callback is no longer necessary. It's a bit
-> hidden, perhaps it would be enough to add to the commit message:
+> I think this won't result in the correct switch order without making
+> some changes to the OPP core. In _set_opp() the OPP core does
 > 
-> "While at it, switch the remaining of_platform_populate() call to the
->  devm variant and remove the remove callback."
+> 	/* Scaling up? Configure required OPPs before frequency */
+> 	if (!scaling_down) {
+> 		_set_required_opps();
+> 		_set_opp_bw();
+> 		opp_table->config_regulators();
+> 	}
 > 
-> Or maybe it should be split into two patches.
-Gave it a spin, I think it ends up being worse if an IPA rpm clock is
-consumed by one of the icc providers, and that's sadly the case
-for almost all platforms (or supposed to be).. :/ Only qcm2290 doesn't
-seem to care if we poke the network interface units with half the soc
-off :P
+> 	opp_table->config_clks();
+> 
+> 	/* Scaling down? Configure required OPPs after frequency */
+> 	if (scaling_down) {
+> 		opp_table->config_regulators();
+> 		_set_opp_bw();
+> 		_set_required_opps();
+> 	}
+> 
+> Since the "bandwidth" for the L2 cache is set before the regulators
+> there is a short window where the L2 clock is running at a high
+> frequency with too low voltage, which could potentially cause
+> instability. On downstream this seems to be done in the proper order [1].
+> 
+> I'm not sure if the order in the OPP core is on purpose. If not, you
+> could propose moving the config_regulators() first (for scaling up)
+> and last (for scaling down). This would resolve the problem.
 
-Konrad
+Nice catch, I missed this ordering point.
+
+> 
+> The alternative that I've already argued for on IRC in #linux-msm a
+> couple of days ago would be to give the L2 cache (here: "interconnect")
+> an own OPP table where it can describe its voltage requirements,
+> independent from the CPU. That way the icc_set_bw() would be guaranteed
+> to apply the correct voltage before adjusting the L2 cache clock. It
+> looks like the "l2_level" voltages for vdd_dig and vdd_mem are not
+> speedbin/PVS-specific [2] so this would also significantly reduce the DT
+> size, since you wouldn't need to repeat the same vdd_dig/vdd_mem
+> voltages for all of them.
+
+Yes. I fact our discussion triggered me to do this patchset.
+
+So, another option would be to have something like the following 
+snippet. Do you know if we are allowed to squish additional data into 
+the L2 cache DT node?
+
+CPU0: cpu@0 {
+     vdd-core-supply = <&saw0_vreg>;
+     interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
+     operating-points-v2 = <&cpu_opp_table>;
+};
+
+L2: l2-cache {
+     compatible = "qcom,apq8064-l2-cache", "cache";
+
+     clocks = <&kraitcc KRAIT_L2>;
+     vdd-mem-supply = <&pm8921_l24>;
+     vdd-dig-supply = <&pm8921_s3>;
+     operating-points-v2 = <&l2_opp_table>;
+
+     l2_opp_table {
+         compatible = "operating-points-v2";
+         opp-384000000 {
+             opp-hz = /bits/ 64 <384000000>;
+             opp-microvolt = <1050000 1050000 1150000>,
+                             <950000 950000 1150000>;
+         };
+
+         opp-648000000 {
+             opp-hz = /bits/ 64 <648000000>;
+             opp-microvolt = <1050000 1050000 1150000>,
+                             <1050000 1050000 1150000>;
+         };
+
+         opp-1134000000 {
+             opp-hz = /bits/ 64 <1134000000>;
+             opp-microvolt = <1150000 1150000 1150000>,
+                             <1150000 1150000 1150000>;
+         };
+     };
+};
+
 > 
 > Thanks,
 > Stephan
+> 
+> [1]: https://git.codelinaro.org/clo/la/kernel/msm/-/blob/LA.AF.1.2.1-08410-8064.0/arch/arm/mach-msm/acpuclock-krait.c#L529-588
+> [2]: https://git.codelinaro.org/clo/la/kernel/msm/-/blob/LA.AF.1.2.1-08410-8064.0/arch/arm/mach-msm/acpuclock-8064.c#L118-135
+
+-- 
+With best wishes
+Dmitry
+
