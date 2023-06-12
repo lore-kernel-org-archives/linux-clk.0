@@ -2,151 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D10EC7EE2E
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 860E6C7EE43
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232365AbjFLIYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 04:24:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59560 "EHLO
+        id S232971AbjFLI0m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 04:26:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231699AbjFLIX7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:23:59 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2554D114
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:23:49 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id 5b1f17b1804b1-3f736e0c9b1so42109115e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:23:49 -0700 (PDT)
+        with ESMTP id S233121AbjFLI0c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:26:32 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE9110E6
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:25:54 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-510d6b939bfso7283847a12.0
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686558227; x=1689150227;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3syFK18W0x1MXZeXQYRchVrFaPqAMr+pqA7DuRcsYMA=;
-        b=ylTAA8QlrBqMuraIbm1w7bKvtYTyva4XcKAYVkJWL9v2NSi6BuH0RwJtMXZllapArk
-         C+wTtynfpchd648WB6+TWK7SGU8Vi8o2VJ8rPKTwdwVz/FKg49th3RtCE4YD63n38JUF
-         VbE6Fn4AFfviuqGRWiWcTmlfY3bychJtBtcbWxkgMuYscw5daM8ckZgGC3ub9xcLuqUW
-         WZ4P1CyYMUQI5DTiRoSe5lYPbkR16yW8VI17lbH4s6V/w012JmV2M/1XOxcK5Cqa17QZ
-         rJg3kNeiPf3Ko3hRftQrrS1FwIju8d9sPI0SayMtrcBvXxTaTXvK8Km7MxfHPDIukxmi
-         HR4Q==
+        d=linaro.org; s=google; t=1686558353; x=1689150353;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FFeo7eqtN3fCmyQTtWielQM7xz42Mq4kjBmnboVmk4Y=;
+        b=YOWZoyzVVDwbAwL7zO9aI6GFmBEBBC9wQoCY2lhIabksMfnsFMDM79fEBVPKV+HsmN
+         KP6jkmqn2OJyj8qtAWTND9JWJ26XTj7+LKkwuYHJyaAOKk8ANE7ngVw9i6g+nJlGk6UA
+         dlrLcSIKGHHPB7s1suaR0ebh0VXSNEKqFrV5TynNYVVa7Gl/hJaAHc0NVXxoi1YIqh2t
+         B0DalHFUVBt7YQy9KFzoPnq+EeeAH17icsztVY30rfSR4USKqvANMY6cU43cUn+/eGTe
+         gpOPASvTRujvdh+yikfdVZ5ugyVGzZD+jfPX+dXV8GBAa/IzPQouSbPsWM0TYB/GhhAS
+         QAmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686558227; x=1689150227;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3syFK18W0x1MXZeXQYRchVrFaPqAMr+pqA7DuRcsYMA=;
-        b=kB0GsztZPGe505xL2UpNEbRKwNkZaaGFaSXPccc/8CN2d1JpqEYWM9sEHDMrrL9UD9
-         L1J8Nmj+Al8GtaUwjgPZol5P0ad3+Dy+mR+6h+fWGmQ4w6MY9fwJi+HRDn9GQahRfjNq
-         tGmhxF3bP0dtQzUQ8Gz0tnLLXE4DXVBFlwG/HaeFYBEqBJgjeKH+TJDyEXRPhtupYvjD
-         i+00OO8SoXFidEcrxf5E0rAyCn3ur3cHp0pBimsPRRpq1VPoY1YQxklv6ihn7dCxUvJA
-         Eqjg8oHqXXwDmQcenngw1Rwl0gRxNE3PYWzmUd21DCEeFDEzY/fFVJu5q+NtkCSIwMOk
-         r9+A==
-X-Gm-Message-State: AC+VfDwWeaZOOQsRgiReLhCtMw6NGWNEGgBp8koI49Lo466fFdoZMHpQ
-        BQzHpNwKAKK7rC/tkoHFhq3MaQ==
-X-Google-Smtp-Source: ACHHUZ6Ynod2i9gs6NbQKZFbzx3ODJoQ+VZ1ZQXuEQh4aOJesHajKIm1t1uIdfbd6P2o8CDLR1ZEPw==
-X-Received: by 2002:a5d:522b:0:b0:30f:c1f5:e91e with SMTP id i11-20020a5d522b000000b0030fc1f5e91emr1390141wra.27.1686558227544;
-        Mon, 12 Jun 2023 01:23:47 -0700 (PDT)
-Received: from linaro.org ([86.121.163.20])
-        by smtp.gmail.com with ESMTPSA id v18-20020a5d43d2000000b0030ae93bd196sm11655199wrr.21.2023.06.12.01.23.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 01:23:47 -0700 (PDT)
-Date:   Mon, 12 Jun 2023 11:23:45 +0300
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Zhanhao Hu <zero12113@hust.edu.cn>
-Cc:     Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        hust-os-kernel-patches@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: imx93: fix memory leak and missing unwind goto
- in imx93_clocks_probe
-Message-ID: <ZIbWEW7MNCaqXq+k@linaro.org>
-References: <20230601033825.336558-1-zero12113@hust.edu.cn>
+        d=1e100.net; s=20221208; t=1686558353; x=1689150353;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FFeo7eqtN3fCmyQTtWielQM7xz42Mq4kjBmnboVmk4Y=;
+        b=U2UhCUYDUv9WGfP5VUTV1VhXmycF0XON5UxE+iVmSOIuWL7ByNmQ/l/trTt33fKJi4
+         vRL31oTZc0KGH6v0OtUM8q49bdNsOpkAk2eQBAtaBJ2y8q2LRhqvR70mPaYuky58jJLr
+         gnQG/jZbmznwJ2c3gvGF4RQz33ZuLHfsWMLEtCFa0Yf44KEJf6/Ge4psatnsH4EPAr+W
+         atVwX/UZO9Tj3hEQ/Y4qj5+N4VFqQjHyele96x1sIpFrCkxPiwZPMLvAtjFHTGDh8PDk
+         FXG1Fh4sG7L8fZbjnvgFey0EYFe99XPPp2HYBEraKqZOxZn89XZ9DsP6sRSc0W4Of1m2
+         2nDg==
+X-Gm-Message-State: AC+VfDw5SlNOTKH+5Yu/LMWZbRz4gWKqiVBgJ0kqnArj5awnOid/hhkW
+        hZ21z+2Xmno4y2Ckv2V5cWUsmQ==
+X-Google-Smtp-Source: ACHHUZ6ruFjU1gbk4CweBHpq54i0ElmXHeNzejKSJqMDXR758cQX1R+eDjjaMHhn/Wrl6GUSQpPhtA==
+X-Received: by 2002:aa7:d49a:0:b0:50b:fd52:2f4b with SMTP id b26-20020aa7d49a000000b0050bfd522f4bmr5469118edr.24.1686558352887;
+        Mon, 12 Jun 2023 01:25:52 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id u11-20020aa7d0cb000000b00514a97b6b80sm4784947edo.78.2023.06.12.01.25.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Jun 2023 01:25:52 -0700 (PDT)
+Message-ID: <ec466019-cdd2-d372-b4df-5edfe530e63d@linaro.org>
+Date:   Mon, 12 Jun 2023 10:25:50 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230601033825.336558-1-zero12113@hust.edu.cn>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v3 1/6] dt-bindings: clock: Add LPASSCC and reset
+ controller for SC8280XP
+Content-Language: en-US
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org
+Cc:     johan+linaro@kernel.org, agross@kernel.org,
+        konrad.dybcio@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230608125315.11454-1-srinivas.kandagatla@linaro.org>
+ <20230608125315.11454-2-srinivas.kandagatla@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230608125315.11454-2-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-06-01 03:38:25, Zhanhao Hu wrote:
-> In function probe(), it returns directly without unregistered hws
-> when error occurs.
+On 08/06/2023 14:53, Srinivas Kandagatla wrote:
+> The LPASS (Low Power Audio Subsystem) clock controller provides reset
+> support when it is under the control of Q6DSP.
 > 
-> Fix this by adding 'goto unregister_hws;' on line 295 and
-> line 310.
+> Add support for those resets and adds IDs for clients to request the reset.
 > 
-> Use devm_kzalloc() instead of kzalloc() to automatically
-> free the memory using devm_kfree() when error occurs.
-> 
-> Replace of_iomap() with devm_of_iomap() to automatically
-> handle the unused ioremap region and delete 'iounmap(anatop_base);'
-> in unregister_hws.
-> 
-> Fixes: 24defbe194b6 ("clk: imx: add i.MX93 clk")
-> Signed-off-by: Zhanhao Hu <zero12113@hust.edu.cn>
-
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
 > ---
-> V1 -> V2 : Rephrase commit message in imperative mood.
-> This issue is found by static analysis and remains untested.
-> ---
->  drivers/clk/imx/clk-imx93.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index 07b4a043e449..b6c7c2725906 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -264,7 +264,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
->  	void __iomem *base, *anatop_base;
->  	int i, ret;
->  
-> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
->  					  IMX93_CLK_END), GFP_KERNEL);
->  	if (!clk_hw_data)
->  		return -ENOMEM;
-> @@ -288,10 +288,12 @@ static int imx93_clocks_probe(struct platform_device *pdev)
->  								    "sys_pll_pfd2", 1, 2);
->  
->  	np = of_find_compatible_node(NULL, NULL, "fsl,imx93-anatop");
-> -	anatop_base = of_iomap(np, 0);
-> +	anatop_base = devm_of_iomap(dev, np, 0, NULL);
->  	of_node_put(np);
-> -	if (WARN_ON(!anatop_base))
-> -		return -ENOMEM;
-> +	if (WARN_ON(IS_ERR(anatop_base))) {
-> +		ret = PTR_ERR(base);
-> +		goto unregister_hws;
-> +	}
->  
->  	clks[IMX93_CLK_ARM_PLL] = imx_clk_fracn_gppll_integer("arm_pll", "osc_24m",
->  							      anatop_base + 0x1000,
-> @@ -304,8 +306,8 @@ static int imx93_clocks_probe(struct platform_device *pdev)
->  	np = dev->of_node;
->  	base = devm_platform_ioremap_resource(pdev, 0);
->  	if (WARN_ON(IS_ERR(base))) {
-> -		iounmap(anatop_base);
-> -		return PTR_ERR(base);
-> +		ret = PTR_ERR(base);
-> +		goto unregister_hws;
->  	}
->  
->  	for (i = 0; i < ARRAY_SIZE(root_array); i++) {
-> @@ -345,7 +347,6 @@ static int imx93_clocks_probe(struct platform_device *pdev)
->  
->  unregister_hws:
->  	imx_unregister_hw_clocks(clks, IMX93_CLK_END);
-> -	iounmap(anatop_base);
->  
->  	return ret;
->  }
-> -- 
-> 2.34.1
-> 
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
