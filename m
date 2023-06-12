@@ -2,116 +2,179 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF90CC87FDC
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7801C7EE23
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 08:59:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbjFLIzq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 04:55:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52696 "EHLO
+        id S229879AbjFLI7P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 04:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234688AbjFLIys (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:54:48 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE96122;
-        Mon, 12 Jun 2023 01:53:11 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 907F35C00BF;
-        Mon, 12 Jun 2023 04:53:08 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 12 Jun 2023 04:53:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:content-type:content-type:date
-        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to; s=fm2; t=
-        1686559988; x=1686646388; bh=O138OwL0TXhDIA3R83x9D9x7Tx/L+g0kciU
-        XuuE1oMc=; b=n/nDLBnX6mxxmi/bL5blJqyDaOEnXu4C8iVA+hmC2YqiK1Pzhft
-        I2PtIux3urVPzwe2JwVY8hvvBgE3bRRN0Y+CSMokHQXOHr6OoI25CffHqQ/5Ceap
-        sT4cNCn2eW9BDe4xT8FfUNEmVyKwJYKAO9zkofVe2INLrqHCVnXziqpN3lYpDOeI
-        xuYTIcKB57l/wpKMuxB78jS+L2sOoMkPdMo/8CJGFXpzi5ms/400AGSIBxVGBLop
-        z/ZhhCJ7iVcgdm4oRujV3hAT7u/VO4IgIzWMrUmjfTTJSYhxaqowqmHKjAdSr6+n
-        saY3j13ZcLLvXPji5VtXLeabdmLWhRi07EQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:content-type:date:date:feedback-id:feedback-id
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-        1686559988; x=1686646388; bh=O138OwL0TXhDIA3R83x9D9x7Tx/L+g0kciU
-        XuuE1oMc=; b=bq9WNzy8kON88LJVCK3rdB09IXR5dyl7gyGrf+869xdoDURcQCE
-        FueXd3bGpPvZK1cql+y0XRnFBAjcicBN+FaZC8IV2zcOPlWdB2vlUojde6AbMTJd
-        a7kBHLR8fsyhVd/FBoNnghZNEiEYBeeEixG+DwPerDOzQaCbkk7PDPyVmaaED/Fg
-        zPe6ihX6kspcnhQulUDamfxLDqRxBURp83gV2nGTtT05Xkj1sujcWWCPtV6YYYn1
-        bi067qbGaEC8+jD6SWoEYntBFPz5nWP9nJ9Tz4lU/o6L9UO7nL3L0I42Ks1ZjnUy
-        5DKJfIblE1FV+Bb5wR6436RxKJ1vDNHTfDg==
-X-ME-Sender: <xms:89yGZIEkzHMzX590XegUje6E8QSmUINtK5T-2bSwD-VPUwZM7SEzlg>
-    <xme:89yGZBWNmYO7xnZSuHm7TZDCjky7lpsH78qMXIB2OWBOn_QJToaqs2wwQ_ED_9PLu
-    ozGzpXZezZgh8fXgyw>
-X-ME-Received: <xmr:89yGZCJI3jkmBWITOFA6J3dceGjOGUq4ipCgVcq_w5rs7U8-aCXJZ_j7besO53t0rNbPUFeCQMPAbQsXG3vqlw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeduhedgtdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtqhfstddttddvnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepgeehheeljeeftdektedvudejvdekueejkeevueektdeuvedthfeljeff
-    gffhvdeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:89yGZKGurpg_m4UCVIxUnG7h_PccRp5f9Fza6JsyCY_RFcogsdpR7A>
-    <xmx:89yGZOXE9Mns50yrQ22RPCrFvSPohW9NPqlW51z9aM7b9iP_BuVGDw>
-    <xmx:89yGZNMvIIC1Ynt7lIZ8ZRiYNCDP34Il6aoLb7-Ae7miuyxAhMLo9g>
-    <xmx:9NyGZHNa2tjW7YtIT8zu5Vjdc1c__I6l7ZHtxHzYO2UhMinRNwYlUA>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 12 Jun 2023 04:53:07 -0400 (EDT)
-Date:   Mon, 12 Jun 2023 10:53:05 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Frank Oltmanns <frank@oltmanns.dev>
-Cc:     Andre Przywara <andre.przywara@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        with ESMTP id S229446AbjFLI6q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 04:58:46 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7CD198A
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:56:15 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3f736e0c9a8so29452665e9.2
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 01:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686560174; x=1689152174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jVRTwGgKGl4a4Zo7uIaoBDe6/ptNLhX3bptPescW/iw=;
+        b=Q2lf7UGhNRcILWMxAxi9VfBzYBx0QVent5H2kFf4tKSR1oZjlUv9RxfSvXILMurRxm
+         C0lKNutj5Wo1Ep+dsNWlQRekt7eiEJBk5OG3g3GPfOwF0+AjZOJxMzYq+vGzYgc3i4/S
+         TJ3ci0BYKX1hI8Y0nBWXPfS9X7bH3/iSEaunvc3UT2saVLzX3pom4oBySJpTJ+daRtQo
+         VliCUEJGWx4YCGQeURFFL8yQYd2QOmuZjKeU0foL8zkIflnlw46J1TkfNErQMZfAkBXF
+         gRaRP7+aYXgCqLi7Y+Z+VmTe2hrZOZ3MjV3M7wUXI8uuGNaKMMe1QR/BdHJPRpQg1w/d
+         vs6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686560174; x=1689152174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jVRTwGgKGl4a4Zo7uIaoBDe6/ptNLhX3bptPescW/iw=;
+        b=i/ImQQWHVRSDiDMi0jsl0h6y4a/gggiuvndRtp4zBgvZcVyjztLJ5FYSeIhsF6BB2J
+         fgRcX6UAPWmJmdxObc91SQM5LAGbutnjy6oxXbvAq3V9E2v2ol3R0pSE6f1ZcvAwCPUt
+         4WQQS9G1CqHcr01j+NzRZaEQeCmcolDlzHmoJzhsL3/iiRWWUfXLq43R5HkMvDsTyzsw
+         Ykch2oCjX9zYFyLiU/Y27rK+mMkc1e1jlExn1jCIUyCOFFCXs3AB/PFV9zkjumBUlYD3
+         S11Yi2NrniD0wHm5X2vHx+rZJzZfjFZ/GAmmNzY+PWaU2/jEcH2Z3r2wNBYg3fdCK4L7
+         XdOw==
+X-Gm-Message-State: AC+VfDzJ78Om95oO1YF0GdGDTUIyiUq+N34lRVmauEzGJJtphmD+QexQ
+        EfLZ71IIUaCerzNCHyiM8onsNg==
+X-Google-Smtp-Source: ACHHUZ4ZOAtbFn1YEd0HmE3TKRcQ+ih6TCml/KPwQenKsAMM35mpC5GarysaEzLUP6EY1ovje3kW/A==
+X-Received: by 2002:a05:600c:210d:b0:3f5:d313:db5e with SMTP id u13-20020a05600c210d00b003f5d313db5emr5332639wml.15.1686560174144;
+        Mon, 12 Jun 2023 01:56:14 -0700 (PDT)
+Received: from linaro.org ([86.121.163.20])
+        by smtp.gmail.com with ESMTPSA id k20-20020a05600c0b5400b003f4266965fbsm10797472wmr.5.2023.06.12.01.56.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Jun 2023 01:56:13 -0700 (PDT)
+Date:   Mon, 12 Jun 2023 11:56:12 +0300
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Roman Beranek <me@crly.cz>,
-        Samuel Holland <samuel@sholland.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 0/2] clk: sunxi-ng: Consider alternative parent rates
- when determining NKM clock rate
-Message-ID: <pk3som3qkrs66hk3hf6zczmd5hqsrb5u2pkmolngqinjm7b753@27vlqdbxemwa>
-References: <20230605190745.366882-1-frank@oltmanns.dev>
- <87legv2093.fsf@oltmanns.dev>
- <vvmdk3fqtjt3jspxgvlbypdxajchymydshya5b5ivk3wfodwwr@yyi26m6toosh>
- <871qim1eow.fsf@oltmanns.dev>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
+Message-ID: <ZIbdrLyBUwtgY2HE@linaro.org>
+References: <20230506195325.876871-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <871qim1eow.fsf@oltmanns.dev>
+In-Reply-To: <20230506195325.876871-1-aford173@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 08, 2023 at 11:29:05AM +0200, Frank Oltmanns wrote:
-> On 2023-06-07 at 14:27:46 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
-> > [[PGP Signed Part:Undecided]]
-> > On Wed, Jun 07, 2023 at 09:35:20AM +0200, Frank Oltmanns wrote:
-> >> So, my question: Is spending the 30 ms fine or do I need to optimize f=
-or
-> >> speed in order for this patchset to be accepted? Or is 2 ms also too
-> >> much of an increase, in which case I'm out of ideas. :-)
-> >
-> > You keep mentioning it, but it's really not clear to me why you think
-> > that both are intertwined, or depend on one another?
->=20
-> I'm sorry about that. I guess, I got carried away. And furthermore I
-> took your mentioning of all bets being of how often setting rates
-> happens when HDMI comes into play as encouragement to optimize for
-> speed, which it clearly wasn't.
->=20
-> I saw the increase in time as a regression, because it might break
-> boards that I don't have access to. But since you say it's fine, I'll
-> speak no more of it.
+On 23-05-06 14:53:25, Adam Ford wrote:
+> Currently, certain clocks are derrived as a divider from their
+> parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
+> is set, the parent clock is not properly set which can lead
+> to some relatively inaccurate clock values.
+> 
+> Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
+> cannot rely on calling a standard determine_rate function,
+> because the 8m composite clocks have a pre-divider and
+> post-divider. Because of this, a custom determine_rate
+> function is necessary to determine the maximum clock
+> division which is equivalent to pre-divider * the
+> post-divider.
+> 
+> With this added, the system can attempt to adjust the parent rate
+> when the proper flags are set which can lead to a more precise clock
+> value.
+> 
+> On the imx8mplus, no clock changes are present.
+> On the Mini and Nano, this can help achieve more accurate
+> lcdif clocks. When trying to get a pixel clock of 31.500MHz
+> on an imx8m Nano, the clocks divided the 594MHz down, but
+> left the parent rate untouched which caused a calulation error.
+> 
+> Before:
+> video_pll              594000000
+>   video_pll_bypass     594000000
+>     video_pll_out      594000000
+>       disp_pixel       31263158
+>         disp_pixel_clk 31263158
+> 
+> Variance = -236842 Hz
+> 
+> After this patch:
+> video_pll               31500000
+>   video_pll_bypass      31500000
+>     video_pll_out       31500000
+>       disp_pixel        31500000
+>         disp_pixel_clk  31500000
+> 
+> Variance = 0 Hz
+> 
+> All other clocks rates and parent were the same.
+> Similar results on imx8mm were found.
+> 
+> Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support to determine_rate"")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-I'm not really saying it's fine, I guess I'm saying it's fine until
-proven otherwise :)
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
-Maxime
+> ---
+> V2:  Fix build warning found by build bot and fix prediv_value
+>      and div_value because the values stored are the divisor - 1,
+>      so we need to add 1 to the values to be correct.
+> 
+> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+> index cbf0d7955a00..7a6e3ce97133 100644
+> --- a/drivers/clk/imx/clk-composite-8m.c
+> +++ b/drivers/clk/imx/clk-composite-8m.c
+> @@ -119,10 +119,41 @@ static int imx8m_clk_composite_divider_set_rate(struct clk_hw *hw,
+>  	return ret;
+>  }
+>  
+> +static int imx8m_divider_determine_rate(struct clk_hw *hw,
+> +				      struct clk_rate_request *req)
+> +{
+> +	struct clk_divider *divider = to_clk_divider(hw);
+> +	int prediv_value;
+> +	int div_value;
+> +
+> +	/* if read only, just return current value */
+> +	if (divider->flags & CLK_DIVIDER_READ_ONLY) {
+> +		u32 val;
+> +
+> +		val = readl(divider->reg);
+> +		prediv_value = val >> divider->shift;
+> +		prediv_value &= clk_div_mask(divider->width);
+> +		prediv_value++;
+> +
+> +		div_value = val >> PCG_DIV_SHIFT;
+> +		div_value &= clk_div_mask(PCG_DIV_WIDTH);
+> +		div_value++;
+> +
+> +		return divider_ro_determine_rate(hw, req, divider->table,
+> +						 PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
+> +						 divider->flags, prediv_value * div_value);
+> +	}
+> +
+> +	return divider_determine_rate(hw, req, divider->table,
+> +				      PCG_PREDIV_WIDTH + PCG_DIV_WIDTH,
+> +				      divider->flags);
+> +}
+> +
+>  static const struct clk_ops imx8m_clk_composite_divider_ops = {
+>  	.recalc_rate = imx8m_clk_composite_divider_recalc_rate,
+>  	.round_rate = imx8m_clk_composite_divider_round_rate,
+>  	.set_rate = imx8m_clk_composite_divider_set_rate,
+> +	.determine_rate = imx8m_divider_determine_rate,
+>  };
+>  
+>  static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)
+> -- 
+> 2.39.2
+> 
