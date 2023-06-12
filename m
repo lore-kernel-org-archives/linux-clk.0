@@ -2,104 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38101C88CB2
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 17:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F4EC7EE2E
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 18:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233650AbjFLR7R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 13:59:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58924 "EHLO
+        id S236849AbjFLSCa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 14:02:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235816AbjFLR7Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 13:59:16 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A50F0E53
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 10:59:15 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-970028cfb6cso841289166b.1
-        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 10:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686592754; x=1689184754;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/kja3SgwesCI8mivV99SZPOWE2UVpV1r0v4iU8FZZkk=;
-        b=pjXh9aVZiXOJFFCjCmr7A4oawfygz/Bd4NeTlZUT122McbGv90yOB+QM7dRZkDguAv
-         pdaR2/52/J28BpsZXW2d/aXQp5afOWtnMULnJAA0qqQV45bw4S5T/NSxthNA4O9c1zxT
-         kHgVYauEPJLkTmV/A2kDbDwcAU3OMfwAPURH80CfFtpa9U6RhOKqtoZGAD1PiQ60D4fo
-         /iTKt8B1C8srtP/qazc3X1d4osO/IGZgeZZxxS/DqB+lVkwAQga5SwnCSF/v0YiX5xFg
-         kpUk5xOQ43xbHKqQvw8DxLPX0fMXjXqkkxhQ+be5X4o/S2AFpH9/jODYkwcFDQyOPLdG
-         6b5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686592754; x=1689184754;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/kja3SgwesCI8mivV99SZPOWE2UVpV1r0v4iU8FZZkk=;
-        b=MvhLXf75gRJso3z385DZVKmoTaUSlTM0SQHRzUOc8kFwRZMZbI2n9iAtStNDUup9Rr
-         ivkOiWYiMmu2K9HPcBm2iKb1HLr6jsa/JnmMAnHTVggTtVu6AheeKSxGj4jkGKv0+B56
-         8mj5Tm8Jsel2nlhmEwB43i02CAv4KH7K0X9g78/vlqEF7KLV0SZ7AQw3oSjGqGZNm6im
-         XF2TTa4gcOByXRmt9lXPpOPgz5R0s9PIYX/PZKhHGw4nG2Xk3yzW0MsrpPBOnHufip5X
-         /AcbFeia+973IYootdyljKwyyBtVoKTz4Zp+AtvSnHiN4/LFCsZZgobQIPq7cWyzlKmN
-         r2FA==
-X-Gm-Message-State: AC+VfDzUHOpXO/TNDp9MO3ZV2/XFKtxKPK3JFU5yCPMEhMliLyqOjWve
-        u3q0xFdrj06ZzgA5/fLEBbVsEQ==
-X-Google-Smtp-Source: ACHHUZ6oEp6zQOXL+EEOKj1+6lJ1O0RK86/UNGZco7BEnX9YCFuXS+nIiKnIbUHujOwR9mw2Knukxw==
-X-Received: by 2002:a17:907:7202:b0:96f:cb13:8715 with SMTP id dr2-20020a170907720200b0096fcb138715mr10521958ejc.69.1686592754157;
-        Mon, 12 Jun 2023 10:59:14 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id dx22-20020a170906a85600b009745e1065f1sm5396790ejb.206.2023.06.12.10.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jun 2023 10:59:13 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-clk@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [GIT PULL] clk: samsung: drivers for v6.5
-Date:   Mon, 12 Jun 2023 19:59:10 +0200
-Message-Id: <20230612175910.289428-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        with ESMTP id S234484AbjFLSC3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 14:02:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51AA5E67;
+        Mon, 12 Jun 2023 11:02:29 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DAA7060EB3;
+        Mon, 12 Jun 2023 18:02:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31DF8C433EF;
+        Mon, 12 Jun 2023 18:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686592948;
+        bh=NuP4bBA2DOrRVs7g9XinibjRvRr74+5Me2X+UCBBW3g=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=XcOQok7u2o9SUTho/2cZ+WrN+0s6YC2ZTAaX51NB79zF+TVYnRAF0IPzpSMFdU1Ls
+         J+id5RthDg7cOkX/aHCUhISR3uX1hO9+yAgqBfiZlXPquzNEUZYhb8kNBbwQjeOupG
+         VeYQWmG33r/K4oyvPYBpNiUlyVvNmU9cJQLXsakhV/Th1bj/ZGE7ba1cg0Cq4u4rg0
+         Dxo3TW7bOgemUn5tIxAXS47xNZ5u4StJvxoy+DmjJ9lR0hFmh7kjcr5Ki4czhzz8jt
+         5US8zXOU009DfyhOVMHY8cje6E2CV7SKaUePhvM4ei/Yj7j7ftDZrYO/FBsJWl1KvO
+         QlLLITayIyEbg==
+Message-ID: <27f91bd1431650d4ccd56785877dafd2.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1686304777.git.geert+renesas@glider.be>
+References: <cover.1686304777.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.5 (take two)
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 12 Jun 2023 11:02:25 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+Quoting Geert Uytterhoeven (2023-06-09 03:06:58)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit d1c20885d3b01e6a62e920af4b227abd294d22=
+f3:
+>=20
+>   clk: renesas: rzg2l: Fix CPG_SIPLL5_CLK1 register write (2023-05-23 09:=
+06:50 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.5-tag2
+>=20
+> for you to fetch changes up to 7df8eea64a417f1db6777cddc1d7eda3634b7175:
+>=20
+>   clk: renesas: rzg2l: Convert to readl_poll_timeout_atomic() (2023-06-05=
+ 15:41:43 +0200)
+>=20
+> ----------------------------------------------------------------
 
-  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.5
-
-for you to fetch changes up to 2aac2d8b95923203e683c60124877ab434133679:
-
-  clk: samsung: add CONFIG_OF dependency (2023-06-12 11:45:20 +0200)
-
-----------------------------------------------------------------
-Samsung SoC clock drivers changes for 6.5
-
-1. Re-add support for Exynos4212 clock controller because we are
-   re-introducing the SoC in the mainline.
-
-2. Add CONFIG_OF dependency to solve some objtool warnings.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      clk: samsung: add CONFIG_OF dependency
-
-Artur Weber (3):
-      dt-bindings: clock: samsung,exynos: add Exynos4212 clock compatible
-      clk: samsung: Add Exynos4212 compatible to CLKOUT driver
-      clk: samsung: Re-add support for Exynos4212 CPU clock
-
- .../bindings/clock/samsung,exynos-clock.yaml       |  1 +
- drivers/clk/samsung/Kconfig                        |  1 +
- drivers/clk/samsung/clk-exynos-clkout.c            |  3 ++
- drivers/clk/samsung/clk-exynos4.c                  | 44 +++++++++++++++++++---
- 4 files changed, 44 insertions(+), 5 deletions(-)
+Thanks. Pulled into clk-next
