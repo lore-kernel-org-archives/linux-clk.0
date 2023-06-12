@@ -2,171 +2,346 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B3DC88CB2
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 14:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35217C88CB4
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Jun 2023 15:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237596AbjFLOft (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 10:35:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48250 "EHLO
+        id S238722AbjFLPIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 11:08:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236150AbjFLOfr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 10:35:47 -0400
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03hn2200.outbound.protection.outlook.com [52.100.14.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 089BFCC;
-        Mon, 12 Jun 2023 07:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NaJWH/OuZgFe57gG+gllEceWdteSVqu7/EZZlytr+dM=;
- b=Zuihk2O5kK9sJAvA4ztNdJkjyiIOj4KSszfrgSDz8xUnOTv/HG3r8Vavk8RnPFRHHfK68uWTKcCLrs9mKcG7SCmqn5MDBkAG1BXpHB9VuIETnjKSVHbVB5dTEJyR/W4xr+PbQBM2QIaAKfatUl+ME81x52I1PxfNX57IbvfKXINgDrRhlBu5HMirfkIfzmT9qXgJp761E1aKkcpds1CLBWJ77eE5SE1y1RVKtCQ0ufwSziJZZyX3vJc0OqQgeCxrn49ASK60ZgnJt2yvGzHQSeVB990S6BQhkNOzEEe7s5M1tBVB1zuZVSU4fX/dUuJ8qXX++gF4AYuqFGRCCo0NcQ==
-Received: from AS8P251CA0023.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:2f2::12)
- by AS8PR03MB8859.eurprd03.prod.outlook.com (2603:10a6:20b:56f::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.39; Mon, 12 Jun
- 2023 14:35:33 +0000
-Received: from AM6EUR05FT030.eop-eur05.prod.protection.outlook.com
- (2603:10a6:20b:2f2:cafe::65) by AS8P251CA0023.outlook.office365.com
- (2603:10a6:20b:2f2::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6477.33 via Frontend
- Transport; Mon, 12 Jun 2023 14:35:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 20.160.56.81)
- smtp.mailfrom=seco.com; dkim=pass (signature was verified)
- header.d=seco.com;dmarc=pass action=none header.from=seco.com;
-Received-SPF: Pass (protection.outlook.com: domain of seco.com designates
- 20.160.56.81 as permitted sender) receiver=protection.outlook.com;
- client-ip=20.160.56.81; helo=inpost-eu.tmcas.trendmicro.com; pr=C
-Received: from inpost-eu.tmcas.trendmicro.com (20.160.56.81) by
- AM6EUR05FT030.mail.protection.outlook.com (10.233.240.61) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6477.34 via Frontend Transport; Mon, 12 Jun 2023 14:35:32 +0000
-Received: from outmta (unknown [192.168.82.140])
-        by inpost-eu.tmcas.trendmicro.com (Trend Micro CAS) with ESMTP id 7D7B820080092;
-        Mon, 12 Jun 2023 14:35:32 +0000 (UTC)
-Received: from EUR01-VE1-obe.outbound.protection.outlook.com (unknown [104.47.1.53])
-        by repre.tmcas.trendmicro.com (Trend Micro CAS) with ESMTPS id 4049720080073;
-        Mon, 12 Jun 2023 14:39:47 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SY+dA12UjoV7FhimJCktji9WRYXv076MSltAmCwerb5UFrwUfpfzRpbm/Yq5XOCcnW4DyxBRX+3hPZoQFTsJVmqhU3GELYCS1c181A+WgHnSavoWkoLiWLw1gn4hJNDl+T4BSl+H9bwim/9VnPexduLxPvu4q00RzfkmFsejDzASoaG2jzc4WQ8mG94wLowmovsfVU4PByoBGWDKh8bRfs+31H8uk/pxW04w53BnCKRegeTbqzkARj+7huUFs3l5QaHQVAhpHgOF6cnd+MwDlqAksEg82HtfHM5c/acdr2lIML5R0ZTB+FzhJ6utFWtv2DeP70csbrt3vwR+kQZQ/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NaJWH/OuZgFe57gG+gllEceWdteSVqu7/EZZlytr+dM=;
- b=V58og4uqJuAl4XqGBfX3+vFZik/sPqF8xnzfRbNJ1N8lrUklNV3rWzV4eM9Fm/RiDSm4caBcvNHTEiSVLXMf7iFsYM+cdqcgxQxUAtZC4AiHBkbKEQaALCyicUAK87d80k+T7lvyNziHRVofoe+oFxdMBpdY5w6NdNVy8bREK2mIJg8IE/apV9+GyVVByEAZp/RAKvT+4cY1fR7jnyCDPfybczM3ZXJCwAeK3kn6T4VMMPD27oeIX4tbfnMRtGelfDufiQpDqkWyfQz2rID9t81wBYEiA+o8rJx6CsL3yrFVX0/01Q2sYrqa8O9eIL6vr+n0Zi8MEGZZMiEYHbyFNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=seco.com; dmarc=pass action=none header.from=seco.com;
- dkim=pass header.d=seco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seco.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NaJWH/OuZgFe57gG+gllEceWdteSVqu7/EZZlytr+dM=;
- b=Zuihk2O5kK9sJAvA4ztNdJkjyiIOj4KSszfrgSDz8xUnOTv/HG3r8Vavk8RnPFRHHfK68uWTKcCLrs9mKcG7SCmqn5MDBkAG1BXpHB9VuIETnjKSVHbVB5dTEJyR/W4xr+PbQBM2QIaAKfatUl+ME81x52I1PxfNX57IbvfKXINgDrRhlBu5HMirfkIfzmT9qXgJp761E1aKkcpds1CLBWJ77eE5SE1y1RVKtCQ0ufwSziJZZyX3vJc0OqQgeCxrn49ASK60ZgnJt2yvGzHQSeVB990S6BQhkNOzEEe7s5M1tBVB1zuZVSU4fX/dUuJ8qXX++gF4AYuqFGRCCo0NcQ==
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=seco.com;
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com (2603:10a6:10:3dd::13)
- by AS8PR03MB7860.eurprd03.prod.outlook.com (2603:10a6:20b:343::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.46; Mon, 12 Jun
- 2023 14:35:28 +0000
-Received: from DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::d632:8122:75f7:7b0e]) by DB9PR03MB8847.eurprd03.prod.outlook.com
- ([fe80::d632:8122:75f7:7b0e%3]) with mapi id 15.20.6455.045; Mon, 12 Jun 2023
- 14:35:28 +0000
-Message-ID: <c702e2b6-cb0f-4ac9-86fe-a220284d45aa@seco.com>
-Date:   Mon, 12 Jun 2023 10:35:21 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v14 00/15] phy: Add support for Lynx 10G SerDes
-Content-Language: en-US
-To:     Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        linux-phy@lists.infradead.org,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Camelia Alexandra Groza <camelia.groza@nxp.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Bagas Sanjaya <bagasdotme@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        =?UTF-8?B?RmVybuKUnMOtbmRleiBSb2phcw==?= <noltari@gmail.com>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Li Yang <leoyang.li@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20230425195002.fls5cmwolyrslpad@skbuf>
- <b7779674-c3ac-e0ab-3ca8-db1ec5953a97@seco.com>
- <20230426105140.t4yqv6irtjcwptm5@skbuf>
- <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
- <7c7ab84b-3c4a-4e44-b5b5-4acf733a0246@seco.com>
- <20230429172422.vc35tnwkekfieoru@skbuf>
- <c81d23b6-ed22-0b37-d71b-ddce9d5d58eb@seco.com>
- <c2f928d2-25f6-0e31-9ab3-9d585968df1b@seco.com>
- <20230522150010.q5zndfwcuvrb6pg2@skbuf>
- <22a28a6f-2c84-a6b1-bb57-a269af34c993@seco.com>
- <20230610222123.mzmfjx7zfw4nh2lo@skbuf>
-From:   Sean Anderson <sean.anderson@seco.com>
-In-Reply-To: <20230610222123.mzmfjx7zfw4nh2lo@skbuf>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR02CA0104.namprd02.prod.outlook.com
- (2603:10b6:208:51::45) To DB9PR03MB8847.eurprd03.prod.outlook.com
- (2603:10a6:10:3dd::13)
+        with ESMTP id S239134AbjFLPIW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 11:08:22 -0400
+Received: from out-7.mta1.migadu.com (out-7.mta1.migadu.com [95.215.58.7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169FBE57
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 08:08:19 -0700 (PDT)
+Message-ID: <610b2e82-7b84-4ccd-a6da-1f018c7f6568@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1686582045;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TMgykxS1qJzKT5Nx6Zd900nrWZlCFYHsPI+xqXc7IWA=;
+        b=njOM9oT+4yYOCJBc4OCMe8j2y3ysHxLXwLoXtnkk6yE4nrxzcFAOdC/3e9MHU0D7q+fqSR
+        tA5kpR2+OMZAysr8jfQ6UX8PE9fSpWoypBYA/wpYOILuBC4N/1DTXkzKx63dfBNWUy82aG
+        1hOh3Q+m3HiwOc7+lEpB9ij4aIBGGXY=
+Date:   Mon, 12 Jun 2023 16:00:40 +0100
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: DB9PR03MB8847:EE_|AS8PR03MB7860:EE_|AM6EUR05FT030:EE_|AS8PR03MB8859:EE_
-X-MS-Office365-Filtering-Correlation-Id: 56fe191f-3c22-4406-034c-08db6b524710
-X-TrendMicro-CAS-OUT-LOOP-IDENTIFIER: 656f966764b7fb185830381c646b41a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: 6v7q6MU1Si8e20a55HhlWWCNbyg8aD1ZP7QrRzJ4wcyumEXKhlW/AH6HYWSPQPwc7hiTEopZF7zA8R1hPfGmC6pHyY56BEfWsRuJGLiMBpOe1XefzJHf2FA+x37p3hL2cn4YZupnO7agC38eCKA5ckOsmNtNlkUCQa6VSIc5NhZVUkGALclJRo6KlIQmw1H31ilZdyN1meo7sZXbfq1lYziQ26O6PmmR0iS9CxfZtVymPj8gx4BUtC+nyrSw4FAYFQ9m4UZMKMIEhDFioct4FZMvZrLZoZFFSmyohXZOgkvWRkfZK6fJi3HjnMOPvWvhpedUd71lsf/zx+804KrFjxPz/iiiw+ncbV8hbypo/PK3aCdPVFYda18cA7Ztq4U3xzE43CaxYi36m5ZY8e0O/Ny/k5vtURBfh1zlYRffUSyJ+/Vuk2zJLeSAv00lNc6ExGcJ6q3o12kMEiYSrP58MeFJJikZD1dOJFmOEe9wbkTWbKPzENFVGctZHN6Cv8195f2+8CBFk6aqGi5e82rOdAqqx0ixJ8Fd+JzLOIEAYpcXOiIbrGz+vjVQnkd5xX4xifWChOGiHOpr8Xn1L08sW07piD1RZddhTZ4Ts72nXn0iLZcHWtTsCPOIGMRlAu3fVTnrQE/6R7DEtpHwFWM42tZlZi8AAHbENSOAaUu+fcJkhGjXnT/yqZg1iRWj4Bjy
-X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR03MB8847.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(346002)(39850400004)(396003)(136003)(376002)(451199021)(6916009)(4326008)(44832011)(66476007)(66556008)(66946007)(316002)(7416002)(31686004)(41300700001)(186003)(4744005)(2906002)(54906003)(478600001)(8676002)(8936002)(5660300002)(6666004)(52116002)(6486002)(53546011)(6512007)(6506007)(26005)(83380400001)(36756003)(86362001)(2616005)(31696002)(38100700002)(38350700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB7860
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM6EUR05FT030.eop-eur05.prod.protection.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs: e8ef41fb-616e-421e-3dda-08db6b524421
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 4MOQWZ11aCucXZQWKW+6ks4cD8yJv7re6XBboRTMnCN8H5AgLtMX5zWN51uzGHR7BMWdNq7ZpnkbaypH/eLXnExDW1jpm84xCVcutBYw/F7FrEKy7KB8Hr4Uzp8o30QynFHg5LmTvcnuIKMpxk+OfpVnxFscIm9by+6RUek5VCRfu3BWEqrefzzyDVI5DLq0OPZVJttY6caQFm+TDtnpWa1HV4tj86zJ792akUH+X+bnbHadaNANslChH/A+ZBcYWzG6Uu4uZBRg/Z/yGUkhDx/g7IDyQr/bGLbs3AcThm8CrsddbdAq10vAGLWIvzl/54OvdR099w4BWcdiW9GA7/KFbtxexpLaKPtiRLvWiH925jN+DxWWNYukeKQt1Q2R9CPIp2zbj3UBz7Jem+BAygQguuRq8B01uB4e1BVFQevGALYrIAasCs32iNnUmkV0GaD5I1fpC37PlgrO5JiC08ycH69PvX/TOJFxOCEfACCuL1YP4xwwP9ZcB3f4Nm7ZkX8ddW+s9iuuD1f8g/bCnYq0apNQyxMNb/hELv2SKzvMSpg6LU3A9xksJ5hUsBABKkeD0UI9cZ7fB9VSWb5KwpJ0nbj7Wr8HGtY3+vV1ESQOaYBkG/aUU2dBKZMYdnIZZr2en6pK3sYrFnn7jSW2UDdlddM8AFvLN5g87nwjHED3SqzHJtAS0wel+yG5tkonm2sWHZAVbbfH8KgYdsijEj8vpioGf0bykzKgWDFOT667w+5PsOIFhwbHwqWPaEHc+ANsOiyJJ1yLWIQQ3OYysnkMYljEKsVvU2Cv6O+56E5bK7odqKve+e3b37J4JqGBB9G4hQi0m+SSYudVOZG/OA==
-X-Forefront-Antispam-Report: CIP:20.160.56.81;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:inpost-eu.tmcas.trendmicro.com;PTR:inpost-eu.tmcas.trendmicro.com;CAT:NONE;SFS:(13230028)(39850400004)(376002)(396003)(136003)(346002)(451199021)(5400799015)(36840700001)(40470700004)(46966006)(2906002)(478600001)(4744005)(5660300002)(41300700001)(44832011)(54906003)(316002)(8676002)(8936002)(70586007)(70206006)(4326008)(6486002)(7416002)(6916009)(31686004)(6666004)(2616005)(6506007)(26005)(6512007)(40460700003)(53546011)(36860700001)(40480700001)(82740400003)(186003)(356005)(47076005)(7596003)(83380400001)(34070700002)(36756003)(7636003)(82310400005)(86362001)(31696002)(336012)(43740500002)(12100799033);DIR:OUT;SFP:1501;
-X-OriginatorOrg: seco.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2023 14:35:32.6310
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56fe191f-3c22-4406-034c-08db6b524710
-X-MS-Exchange-CrossTenant-Id: bebe97c3-6438-442e-ade3-ff17aa50e733
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bebe97c3-6438-442e-ade3-ff17aa50e733;Ip=[20.160.56.81];Helo=[inpost-eu.tmcas.trendmicro.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM6EUR05FT030.eop-eur05.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB8859
+Subject: Re: [RFC PATCH v8 05/10] dpll: api header: Add DPLL framework base
+ functions
+Content-Language: en-US
+To:     Jiri Pirko <jiri@resnulli.us>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc:     kuba@kernel.org, vadfed@meta.com, jonathan.lemon@gmail.com,
+        pabeni@redhat.com, corbet@lwn.net, davem@davemloft.net,
+        edumazet@google.com, vadfed@fb.com, jesse.brandeburg@intel.com,
+        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
+        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
+        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
+        michal.michalik@intel.com, gregkh@linuxfoundation.org,
+        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
+        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
+        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
+        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
+        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
+        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
+        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
+        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, linux-clk@vger.kernel.org
+References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+ <20230609121853.3607724-6-arkadiusz.kubalewski@intel.com>
+ <ZIQlhyXJAtcp1Fjr@nanopsycho>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <ZIQlhyXJAtcp1Fjr@nanopsycho>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/10/23 18:21, Vladimir Oltean wrote:
-> Hello Sean,
+On 10/06/2023 08:25, Jiri Pirko wrote:
+> Fri, Jun 09, 2023 at 02:18:48PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>> From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>>
+>> DPLL framework is used to represent and configure DPLL devices
+>> in systems. Each device that has DPLL and can configure sources
+>> and outputs can use this framework. Netlink interface is used to
+>> provide configuration data and to receive notification messages
+>> about changes in the configuration or status of DPLL device.
+>> Inputs and outputs of the DPLL device are represented as special
+>> objects which could be dynamically added to and removed from DPLL
+>> device.
+>>
+>> Add kernel api header, make dpll subsystem available to device drivers.
+>>
+>> Add/update makefiles/Kconfig to allow compilation of dpll subsystem.
+>>
+>> Co-developed-by: Milena Olech <milena.olech@intel.com>
+>> Signed-off-by: Milena Olech <milena.olech@intel.com>
+>> Co-developed-by: Michal Michalik <michal.michalik@intel.com>
+>> Signed-off-by: Michal Michalik <michal.michalik@intel.com>
+>> Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>> Co-developed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+>> ---
+>> MAINTAINERS           |   8 +++
+>> drivers/Kconfig       |   2 +
+>> drivers/Makefile      |   1 +
+>> drivers/dpll/Kconfig  |   7 ++
+>> drivers/dpll/Makefile |   9 +++
+>> include/linux/dpll.h  | 144 ++++++++++++++++++++++++++++++++++++++++++
+>> 6 files changed, 171 insertions(+)
+>> create mode 100644 drivers/dpll/Kconfig
+>> create mode 100644 drivers/dpll/Makefile
+>> create mode 100644 include/linux/dpll.h
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 288d9a5edb9d..0e69429ecc55 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -6306,6 +6306,14 @@ F:	Documentation/networking/device_drivers/ethernet/freescale/dpaa2/switch-drive
+>> F:	drivers/net/ethernet/freescale/dpaa2/dpaa2-switch*
+>> F:	drivers/net/ethernet/freescale/dpaa2/dpsw*
+>>
+>> +DPLL CLOCK SUBSYSTEM
+>> +M:	Vadim Fedorenko <vadfed@fb.com>
+>> +L:	netdev@vger.kernel.org
+>> +S:	Maintained
 > 
-> On Fri, Jun 09, 2023 at 03:19:22PM -0400, Sean Anderson wrote:
->> On 5/22/23 11:00, Vladimir Oltean wrote:
->> > On Mon, May 22, 2023 at 10:42:04AM -0400, Sean Anderson wrote:
->> >> Have you had a chance to review this driver?
->> > 
->> > Partially / too little (and no, I don't have an answer yet). I am
->> > debugging a SERDES protocol change procedure from XFI to SGMII.
->> 
->> I'd just like to reiterate that, like I said in the cover letter, I
->> believe this driver still has value even if it cannot yet perform
->> protocol switching.
->> 
->> Please send me your feedback, and I will try and incorporate it into the
->> next revision. Previously, you said you had major objections to the
->> contents of this series, but you still have not listed them.
+> I think status should be rather "Supported":
+> "Supported:   Someone is actually paid to look after this."
 > 
-> And if SERDES protocol switching was not physically possible, would this
-> patch set still have value?
+> Also, I think that it would be good to have Arkadiusz Kubalewski
+> listed here, as he is the one that knows the subsystem by heart.
+> 
+> Also, if you don't mind, I would be happy as a co-maintainer of the
+> subsystem to be listed here, as I helped to shape the code and
+> interfaces and I also know it pretty good.
+> 
 
-Yes. To e.g. set up SGMII25 or to fix the clocking situation.
+Yes, sure, I'll update the list of maintainers to add both yourself and
+Arkadiusz to the list, and of course the status to Supported.
+> 
+> 
+>> +F:	drivers/dpll/*
+>> +F:	include/net/dpll.h
+>> +F:	include/uapi/linux/dpll.h
+>> +
+>> DRBD DRIVER
+>> M:	Philipp Reisner <philipp.reisner@linbit.com>
+>> M:	Lars Ellenberg <lars.ellenberg@linbit.com>
+>> diff --git a/drivers/Kconfig b/drivers/Kconfig
+>> index 514ae6b24cb2..ce5f63918eba 100644
+>> --- a/drivers/Kconfig
+>> +++ b/drivers/Kconfig
+>> @@ -243,4 +243,6 @@ source "drivers/hte/Kconfig"
+>>
+>> source "drivers/cdx/Kconfig"
+>>
+>> +source "drivers/dpll/Kconfig"
+>> +
+>> endmenu
+>> diff --git a/drivers/Makefile b/drivers/Makefile
+>> index 7241d80a7b29..6fea42a6dd05 100644
+>> --- a/drivers/Makefile
+>> +++ b/drivers/Makefile
+>> @@ -195,3 +195,4 @@ obj-$(CONFIG_PECI)		+= peci/
+>> obj-$(CONFIG_HTE)		+= hte/
+>> obj-$(CONFIG_DRM_ACCEL)		+= accel/
+>> obj-$(CONFIG_CDX_BUS)		+= cdx/
+>> +obj-$(CONFIG_DPLL)		+= dpll/
+>> diff --git a/drivers/dpll/Kconfig b/drivers/dpll/Kconfig
+>> new file mode 100644
+>> index 000000000000..a4cae73f20d3
+>> --- /dev/null
+>> +++ b/drivers/dpll/Kconfig
+>> @@ -0,0 +1,7 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+>> +#
+>> +# Generic DPLL drivers configuration
+>> +#
+>> +
+>> +config DPLL
+>> +  bool
+>> diff --git a/drivers/dpll/Makefile b/drivers/dpll/Makefile
+>> new file mode 100644
+>> index 000000000000..2e5b27850110
+>> --- /dev/null
+>> +++ b/drivers/dpll/Makefile
+>> @@ -0,0 +1,9 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +#
+>> +# Makefile for DPLL drivers.
+>> +#
+>> +
+>> +obj-$(CONFIG_DPLL)      += dpll.o
+>> +dpll-y                  += dpll_core.o
+>> +dpll-y                  += dpll_netlink.o
+>> +dpll-y                  += dpll_nl.o
+>> diff --git a/include/linux/dpll.h b/include/linux/dpll.h
+>> new file mode 100644
+>> index 000000000000..a18bcaa13553
+>> --- /dev/null
+>> +++ b/include/linux/dpll.h
+>> @@ -0,0 +1,144 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + *  Copyright (c) 2023 Meta Platforms, Inc. and affiliates
+>> + *  Copyright (c) 2023 Intel and affiliates
+>> + */
+>> +
+>> +#ifndef __DPLL_H__
+>> +#define __DPLL_H__
+>> +
+>> +#include <uapi/linux/dpll.h>
+>> +#include <linux/device.h>
+>> +#include <linux/netlink.h>
+>> +
+>> +struct dpll_device;
+>> +struct dpll_pin;
+>> +
+>> +struct dpll_device_ops {
+>> +	int (*mode_get)(const struct dpll_device *dpll, void *dpll_priv,
+>> +			enum dpll_mode *mode, struct netlink_ext_ack *extack);
+>> +	int (*mode_set)(const struct dpll_device *dpll, void *dpll_priv,
+>> +			const enum dpll_mode mode,
+>> +			struct netlink_ext_ack *extack);
+>> +	bool (*mode_supported)(const struct dpll_device *dpll, void *dpll_priv,
+>> +			       const enum dpll_mode mode,
+>> +			       struct netlink_ext_ack *extack);
+>> +	int (*source_pin_idx_get)(const struct dpll_device *dpll,
+>> +				  void *dpll_priv,
+>> +				  u32 *pin_idx,
+>> +				  struct netlink_ext_ack *extack);
+>> +	int (*lock_status_get)(const struct dpll_device *dpll, void *dpll_priv,
+>> +			       enum dpll_lock_status *status,
+>> +			       struct netlink_ext_ack *extack);
+>> +	int (*temp_get)(const struct dpll_device *dpll, void *dpll_priv,
+>> +			s32 *temp, struct netlink_ext_ack *extack);
+>> +};
+>> +
+>> +struct dpll_pin_ops {
+>> +	int (*frequency_set)(const struct dpll_pin *pin, void *pin_priv,
+>> +			     const struct dpll_device *dpll, void *dpll_priv,
+>> +			     const u64 frequency,
+>> +			     struct netlink_ext_ack *extack);
+>> +	int (*frequency_get)(const struct dpll_pin *pin, void *pin_priv,
+>> +			     const struct dpll_device *dpll, void *dpll_priv,
+>> +			     u64 *frequency, struct netlink_ext_ack *extack);
+>> +	int (*direction_set)(const struct dpll_pin *pin, void *pin_priv,
+>> +			     const struct dpll_device *dpll, void *dpll_priv,
+>> +			     const enum dpll_pin_direction direction,
+>> +			     struct netlink_ext_ack *extack);
+>> +	int (*direction_get)(const struct dpll_pin *pin, void *pin_priv,
+>> +			     const struct dpll_device *dpll, void *dpll_priv,
+>> +			     enum dpll_pin_direction *direction,
+>> +			     struct netlink_ext_ack *extack);
+>> +	int (*state_on_pin_get)(const struct dpll_pin *pin, void *pin_priv,
+>> +				const struct dpll_pin *parent_pin,
+>> +				void *parent_pin_priv,
+>> +				enum dpll_pin_state *state,
+>> +				struct netlink_ext_ack *extack);
+>> +	int (*state_on_dpll_get)(const struct dpll_pin *pin, void *pin_priv,
+>> +				 const struct dpll_device *dpll,
+>> +				 void *dpll_priv, enum dpll_pin_state *state,
+>> +				 struct netlink_ext_ack *extack);
+>> +	int (*state_on_pin_set)(const struct dpll_pin *pin, void *pin_priv,
+>> +				const struct dpll_pin *parent_pin,
+>> +				void *parent_pin_priv,
+>> +				const enum dpll_pin_state state,
+>> +				struct netlink_ext_ack *extack);
+>> +	int (*state_on_dpll_set)(const struct dpll_pin *pin, void *pin_priv,
+>> +				 const struct dpll_device *dpll,
+>> +				 void *dpll_priv,
+>> +				 const enum dpll_pin_state state,
+>> +				 struct netlink_ext_ack *extack);
+>> +	int (*prio_get)(const struct dpll_pin *pin,  void *pin_priv,
+>> +			const struct dpll_device *dpll,  void *dpll_priv,
+>> +			u32 *prio, struct netlink_ext_ack *extack);
+>> +	int (*prio_set)(const struct dpll_pin *pin, void *pin_priv,
+>> +			const struct dpll_device *dpll, void *dpll_priv,
+>> +			const u32 prio, struct netlink_ext_ack *extack);
+>> +};
+>> +
+>> +struct dpll_pin_frequency {
+>> +	u64 min;
+>> +	u64 max;
+>> +};
+>> +
+>> +#define DPLL_PIN_FREQUENCY_RANGE(_min, _max)	\
+>> +	{					\
+>> +		.min = _min,			\
+>> +		.max = _max,			\
+>> +	}
+>> +
+>> +#define DPLL_PIN_FREQUENCY(_val) DPLL_PIN_FREQUENCY_RANGE(_val, _val)
+>> +#define DPLL_PIN_FREQUENCY_1PPS \
+>> +	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_1_HZ)
+>> +#define DPLL_PIN_FREQUENCY_10MHZ \
+>> +	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_10_MHZ)
+>> +#define DPLL_PIN_FREQUENCY_IRIG_B \
+>> +	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_10_KHZ)
+>> +#define DPLL_PIN_FREQUENCY_DCF77 \
+>> +	DPLL_PIN_FREQUENCY(DPLL_PIN_FREQUENCY_77_5_KHZ)
+>> +
+>> +struct dpll_pin_properties {
+>> +	const char *board_label;
+>> +	const char *panel_label;
+>> +	const char *package_label;
+>> +	enum dpll_pin_type type;
+>> +	unsigned long capabilities;
+>> +	u32 freq_supported_num;
+>> +	struct dpll_pin_frequency *freq_supported;
+>> +};
+>> +
+>> +struct dpll_device
+>> +*dpll_device_get(u64 clock_id, u32 dev_driver_id, struct module *module);
+>> +
+>> +void dpll_device_put(struct dpll_device *dpll);
+>> +
+>> +int dpll_device_register(struct dpll_device *dpll, enum dpll_type type,
+>> +			 const struct dpll_device_ops *ops, void *priv);
+>> +
+>> +void dpll_device_unregister(struct dpll_device *dpll,
+>> +			    const struct dpll_device_ops *ops, void *priv);
+>> +
+>> +struct dpll_pin
+>> +*dpll_pin_get(u64 clock_id, u32 dev_driver_id, struct module *module,
+>> +	      const struct dpll_pin_properties *prop);
+>> +
+>> +int dpll_pin_register(struct dpll_device *dpll, struct dpll_pin *pin,
+>> +		      const struct dpll_pin_ops *ops, void *priv);
+>> +
+>> +void dpll_pin_unregister(struct dpll_device *dpll, struct dpll_pin *pin,
+>> +			 const struct dpll_pin_ops *ops, void *priv);
+>> +
+>> +void dpll_pin_put(struct dpll_pin *pin);
+>> +
+>> +int dpll_pin_on_pin_register(struct dpll_pin *parent, struct dpll_pin *pin,
+>> +			     const struct dpll_pin_ops *ops, void *priv);
+>> +
+>> +void dpll_pin_on_pin_unregister(struct dpll_pin *parent, struct dpll_pin *pin,
+>> +				const struct dpll_pin_ops *ops, void *priv);
+>> +
+>> +int dpll_device_change_ntf(struct dpll_device *dpll);
+>> +
+>> +int dpll_pin_change_ntf(struct dpll_pin *pin);
+> 
+> Why exactly did you split this into a separate patch? To me, it does not
+> make any sense. Please squash this header addition to the
+> 
 
---Sean
+Sounds reasonable.
+
+> 
+>> +
+>> +#endif
+>> -- 
+>> 2.37.3
+>>
+
