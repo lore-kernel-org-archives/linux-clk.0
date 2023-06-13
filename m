@@ -2,110 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612E1C7EE2E
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 12:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44142C7EE29
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 13:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238753AbjFMMtA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 08:49:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
+        id S242107AbjFMNQu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 09:16:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235210AbjFMMtA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 08:49:00 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7508DE4;
-        Tue, 13 Jun 2023 05:48:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686660539; x=1718196539;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4DIaRf5rR2wt24OZUbm+fHnDkQb9/kC9L8KgnQRTvrM=;
-  b=CAHyQW2SOPC5tbRuPxtFuURDFCtdYqkg9UawoA+DxB/UF5YofSOAWIVE
-   KlqhER3Dg9QZW8EV2JYEkzygo5Xqte+irRDBFlYQcuDARhIbTj+Wq/kS9
-   5L2va+vIWUD7nrrTeBB53TneqBEq16TL1QKnYS+gYBEH1V2T8iSe1O+Z0
-   0hMeYrqrJKDMWT90dZPg+SAw93JnJdiUjRhzqXz7DZrpMImw9lGoceaK4
-   yZUqJUT16YrtBkfCoPXOgeRCBAHtuVO8eRXhylxUQzpAqyBAy3Bc5iAXb
-   q2yd1C7tJNFZzbvlJZE6GyAmqBgOU4VOx5Jkh1AZBXhNVpUC4oBAy71Pl
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="358316913"
-X-IronPort-AV: E=Sophos;i="6.00,239,1681196400"; 
-   d="scan'208";a="358316913"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2023 05:48:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10739"; a="714785617"
-X-IronPort-AV: E=Sophos;i="6.00,239,1681196400"; 
-   d="scan'208";a="714785617"
-Received: from lkp-server01.sh.intel.com (HELO 211f47bdb1cb) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 13 Jun 2023 05:48:56 -0700
-Received: from kbuild by 211f47bdb1cb with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q93SB-0001M8-1M;
-        Tue, 13 Jun 2023 12:48:55 +0000
-Date:   Tue, 13 Jun 2023 20:48:21 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Frank Oltmanns <frank@oltmanns.dev>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     oe-kbuild-all@lists.linux.dev, Frank Oltmanns <frank@oltmanns.dev>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor
- approximation
-Message-ID: <202306132038.nUB6hmCv-lkp@intel.com>
-References: <20230613083626.227476-3-frank@oltmanns.dev>
+        with ESMTP id S240492AbjFMNQs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 09:16:48 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0BE196
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 06:16:46 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230613131644euoutp0230b2c57ce1edc51b910ef530557d1364~oOla8iazs2925029250euoutp020
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230613131644euoutp0230b2c57ce1edc51b910ef530557d1364~oOla8iazs2925029250euoutp020
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1686662204;
+        bh=tdJ26CzwUNtoD1F5zxf6fVxgrheMECD4aIoiMBnelJM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=u5Gjj5z1GnZv+zBc+EEayj9fISS21pe+g9wqJUlsiOrW5htT3IdJurtQBO/gm0SU/
+         MrNF4CioShxSQqDlyElvBhr3sZOiM4Jd+8xrRcGIgO436BDIXe2qhbKS85TpmgP4+Z
+         pnjd74PnsQDGEVu4Z2FccLV5AcvBNgpXceOuZJBI=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230613131644eucas1p10eabc3b227115c7d80625c2d78b9482b~oOlaxHLos1967419674eucas1p1o;
+        Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 7A.96.42423.C3C68846; Tue, 13
+        Jun 2023 14:16:44 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230613131644eucas1p2b232fef36f6ae621827674c775a6e070~oOlaZeNy80170301703eucas1p2E;
+        Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230613131644eusmtrp2bf8463164bda1557e77a55eee42cf0ca~oOlaY1gWj1442014420eusmtrp2a;
+        Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
+X-AuditID: cbfec7f2-a3bff7000002a5b7-9d-64886c3ce4d2
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 96.BD.14344.B3C68846; Tue, 13
+        Jun 2023 14:16:43 +0100 (BST)
+Received: from AMDC4653.eu.corp.samsungelectronics.net (unknown
+        [106.120.51.32]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20230613131643eusmtip2e64783492535fa8b12338b59a703f93d~oOlZ_lxzT0942009420eusmtip2s;
+        Tue, 13 Jun 2023 13:16:43 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: Fix best_parent_rate after moving code into a separate
+ function
+Date:   Tue, 13 Jun 2023 15:16:31 +0200
+Message-Id: <20230613131631.270192-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230613083626.227476-3-frank@oltmanns.dev>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZduznOV2bnI4UgwNbxS0+9txjtbi8aw6b
+        xdojd9kt2jqXsVpcPOVq8e/aRhYHNo/3N1rZPTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQi
+        fbsErownQNmCnawVp+/8YG9gPMDSxcjJISFgIrH38iq2LkYuDiGBFYwS5998YodwvjBKTLg+
+        iwXC+cwoMfnIfLiWaeuOQrUsZ5S4dqAJqqqVSeLouwawKjYBQ4mut11sILaIQJnErUMXmUFs
+        ZoEsiW0/PgLt4OAQFgiXuHVbECTMIqAq8XD7R1YQm1fATmLvuzZmiGXyEvsPnmWGiAtKnJz5
+        hAVijLxE89bZzCB7JQR6OSTaJ/xihWhwkZj7cjcbhC0s8er4FnYIW0bi/875TBAN7YwSC37f
+        h3ImMEo0PL/FCFFlLXHn3C82kOuYBTQl1u/Shwg7Siy/Oh0sLCHAJ3HjrSDEEXwSk7ZNZ4YI
+        80p0tAlBVKtJzDq+Dm7twQuXoH7xkHh4aydYXEggVuLxh7NMExgVZiF5bRaS12Yh3LCAkXkV
+        o3hqaXFuemqxYV5quV5xYm5xaV66XnJ+7iZGYFo5/e/4px2Mc1991DvEyMTBeIhRgoNZSYT3
+        qUZ7ihBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFebduTyUIC6YklqdmpqQWpRTBZJg5OqQYm82/d
+        /cbiO2LlfnV3uU9+VBuw/Pkpsz9TjgZYpOwNFEitl/GoMueorrhStdYuvWOG1XpLRZMbDons
+        anueJW9/t3q547WS6UaxxQoTl3EtPNI04/ws7WlcSjW2azhv6D62Xn+mjFvIr3C6jtbbkoS3
+        2975CRtt2CFSPWdrsNJXoRWcEd+cJEuW6x9g3hnqwBMwk+eY7t3XeWcisxLe1gVtPSu/Nta4
+        gk0q6ckerZ076pgfbbu6XoD77VKm4pP/3uwLZpme2nb7rf+rCxU9Tq3txS1ZU+cKFF4va+pJ
+        WmDgvO5ohFJqS/HkV1r5Yiu3PTnyyLyxI5Hv9cvw/S2NJz46X/i5MPd8IKN20+a9wTxKLMUZ
+        iYZazEXFiQBqfVvnmgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDLMWRmVeSWpSXmKPExsVy+t/xe7rWOR0pBhN2W1t87LnHanF51xw2
+        i7VH7rJbtHUuY7W4eMrV4t+1jSwObB7vb7Sye2xa1cnm0bdlFaPH501yASxRejZF+aUlqQoZ
+        +cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlPgCYU7GStOH3nB3sD
+        4wGWLkZODgkBE4lp646ydTFycQgJLGWUuPnlJSNEQkbi5LQGVghbWOLPtS6oomYmicMzpoJ1
+        swkYSnS9BUlwcogIVEhcXXoQKM7BwSyQI/HxhCdIWFggVOLV3TlgJSwCqhIPt38Em8krYCex
+        910bM8R8eYn9B88yQ8QFJU7OfAI2nhko3rx1NvMERr5ZSFKzkKQWMDKtYhRJLS3OTc8tNtIr
+        TswtLs1L10vOz93ECAzmbcd+btnBuPLVR71DjEwcjIcYJTiYlUR4n2q0pwjxpiRWVqUW5ccX
+        leakFh9iNAW6byKzlGhyPjCe8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1KzU1MLUotg
+        +pg4OKUamATE7NV5/S/kdIYv5GCrqU95eXyl7InTM/MPPkg+GV7ipfJnzbKvjrrv5xtO3b/0
+        hJPSn+UmrbyPA3mlH7OrWwbyrnp7U4RN0jV6b4vXTrlDPWXqO6qvbj509F9An5OPVJ3YZMPL
+        EvwX52485Hzv1ptH/xwFr14VNb/c8P/zfYkVCzSnrAluC9jF5P96eVDSE5FP2wsfhExNUf4l
+        FRd572PLqbZ5H9lDlz24KfhDXmnitD3LcpLe9TVETV5zJt4+Q+eNZmuD6MZvGdNeLe49kslm
+        E167QeD7gZoKoVfL7hQ/+6q5xrA7ZsLVlZc/PJSUN+LKWHmbq4OzhTm7Pnz6nYjs7g+8/OkL
+        fk7cfP6lobcSS3FGoqEWc1FxIgAbjHQL7wIAAA==
+X-CMS-MailID: 20230613131644eucas1p2b232fef36f6ae621827674c775a6e070
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230613131644eucas1p2b232fef36f6ae621827674c775a6e070
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230613131644eucas1p2b232fef36f6ae621827674c775a6e070
+References: <CGME20230613131644eucas1p2b232fef36f6ae621827674c775a6e070@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Frank,
+best_parent_rate entry is still being used in the code and needs to be
+always updated regardless of the CLK_SET_RATE_NO_REPARENT flag.
 
-kernel test robot noticed the following build errors:
+Fixes: 1b4e99fda73f ("clk: Move no reparent case into a separate function")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/clk.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[auto build test ERROR on v6.4-rc6]
-[also build test ERROR on linus/master]
-[cannot apply to clk/clk-next next-20230613]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Oltmanns/clk-fractional-divider-Improve-approximation-when-zero-based/20230613-163903
-base:   v6.4-rc6
-patch link:    https://lore.kernel.org/r/20230613083626.227476-3-frank%40oltmanns.dev
-patch subject: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor approximation
-config: csky-randconfig-r011-20230612 (https://download.01.org/0day-ci/archive/20230613/202306132038.nUB6hmCv-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        git checkout v6.4-rc6
-        b4 shazam https://lore.kernel.org/r/20230613083626.227476-3-frank@oltmanns.dev
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky SHELL=/bin/bash
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306132038.nUB6hmCv-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "clk_fractional_divider_general_approximation" [drivers/clk/clk_test.ko] undefined!
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ffc9f03840b7..7ac9f7a8cb84 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -629,6 +629,7 @@ clk_core_determine_rate_no_reparent(struct clk_hw *hw,
+ 		best = clk_core_get_rate_nolock(core);
+ 	}
+ 
++	req->best_parent_rate = best;
+ 	req->rate = best;
+ 
+ 	return 0;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
