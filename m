@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1845EB64D0
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 18:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D31EB64D7
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 18:34:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239600AbjFMScY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 14:32:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
+        id S235184AbjFMSee (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 14:34:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232714AbjFMScY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 14:32:24 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11F61BC5
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:32:22 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5183101690cso6482819a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:32:22 -0700 (PDT)
+        with ESMTP id S239334AbjFMSeb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 14:34:31 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E6D1BC9
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:34:29 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-97458c97333so957998066b.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:34:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686681141; x=1689273141;
+        d=linaro.org; s=google; t=1686681268; x=1689273268;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+IwQxZn6vCIOOod2WsqOS2iKK2dM5ILhVhEaw91jN+A=;
-        b=g2x7nF958tTd0yUf6gMMWTZS7MXebEz/qJW0elxmWSc87Fy4YCx1ZGdo+z6qymqABN
-         txZwoSEz2hg7Y0m2797wXOMCphi9mDkHsGIO/DqBcXJmRg1cFzYVm+rqTJ+p7H0nnsew
-         SUB65kKWg4ET7UtQEmFm4fux3OG45w2OJ352q9LwWFJ5WmcaH7RxSFGnko3e1+L3BQ7l
-         JUBMjAhqM2na6yTPxr+juOQz1hqkhuD5a48C6QOMOGSKOP/ssbWx/zHZ5MK2hPnj8hu7
-         8GRHGbjwXjNGRKu817QyRD1kJ3CxbqQM7prUEBvmv/+yTuvL5NgOMYhcgtGCB4kf7MRd
-         0Vog==
+        bh=NtcqOw9tGOLwmlWw5dD/FwSbu+eMTAPAiQdNyorGdKs=;
+        b=TF06f9ZKq7pMgbq7ormbfzR+qN7ngTNxN1iQAXw5U5DuvJrUq1xjjW5xw9Ize6wSp7
+         EYxB2YzFz/QtVppI3GMbtwa4xgZ9sRQc3f4t8YBK/meyV6UR1DiBbMgwpXwOIgNKFs33
+         U87sFC0COYk9vce4kBnTGAGE2hazjZOGeQSpl2b7BLjyXbNQiuFuyb5xpd60z2nQkxnA
+         4ykIXEPRyNRfLYITKW1o/rh6DBnkOaeN2/hn1ZF0+4KTDPZWhyejI8hH3+tu0EYeYbJB
+         EJffQ0cUT8Gpm0QKBn3ydp3Uf+0X+hUyQ9Savf8KEz8OyniD+XdZ/s6VAtYcnNCFkcFq
+         8qsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686681141; x=1689273141;
+        d=1e100.net; s=20221208; t=1686681268; x=1689273268;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+IwQxZn6vCIOOod2WsqOS2iKK2dM5ILhVhEaw91jN+A=;
-        b=KCp7YqVU/+0/LrovIg21MtGE8g1dNBmcfz4MUrVN+tdo5jfC+xYB5lZYeZXDeuyI0v
-         TYnWvrNplpZ+T1ICXXY7WsKUvS0tN2E1x8TgK3pPkjeQZCeunn7AuimP7fI8DJXKFyLf
-         xiianxRx7qefQLW+irMjxkJz+V+HigQ/Avutir9+f40ZADOQDlpBiREVe5nWKabau77w
-         9yciwVpn4AvUcb5PjG9bJgr5gRgve2ipULWIYNcNoqSesmMSbAJgRVE9Do5qRuPM0lZW
-         0n0XK/vI+LWnCkcIA3TrazdWtbm/l5BSWsMX6BcDFCIMfddVZYS1OE5uzWaoeFnh8TFy
-         GPcw==
-X-Gm-Message-State: AC+VfDx55tmKo872wG9xHIKfw+LWhKCsFJ7M7OdAkl1UTaJarwi4Nju7
-        N5IcrEmyVp3KqkoY+EryiX3Q8g==
-X-Google-Smtp-Source: ACHHUZ5vGVgTt9sy0qQTKp7+KaWUCWD8M2YRj/4q3fqu6qZXExsSGxGeMKWet0UvuiJIoHRwNhGNDg==
-X-Received: by 2002:a05:6402:27c9:b0:506:bbf8:5152 with SMTP id c9-20020a05640227c900b00506bbf85152mr9960734ede.9.1686681141344;
-        Tue, 13 Jun 2023 11:32:21 -0700 (PDT)
+        bh=NtcqOw9tGOLwmlWw5dD/FwSbu+eMTAPAiQdNyorGdKs=;
+        b=KRaAtWo8+IdMhDEB2v/yyCyemiYSdh0sbTjNQADzuT9dfjfL4WcmnSVjDTS2/thxo7
+         ZN8ASfpvRXvJLPKYAAzD5asdADlyZxoCum8Gm2SbCy7tZRQ3257wqliqxHUip6iEt6Zr
+         LFu+WYcP9sp7SzrOCjgjJRwqNyN3TdBM614pIjWY4Fax8eexEYCl+p1h8cVwUi8ghY/V
+         RjkIINCkyx3B9ZcHffaHbdyCrTokmZ4udQuSdopBsjbFFJmeHdHRFupCaPkkqekcg5yb
+         uHZ5OVMLLN4LfjBP9gxR85cptwgQs6n5wLAPCy8Q5jRB0sTfb67mapE+B0keBPBmzLcE
+         b8Hw==
+X-Gm-Message-State: AC+VfDwNIADIWNOApFQiHtzv1ieEr/bYoevVOkooeqYqcEyE3bNpHkKE
+        7nKT3sw1WHNlHIVWyXznnGOVtQ==
+X-Google-Smtp-Source: ACHHUZ5h4YyZdlSWo9Eiykl6LWg95TEWZGgJxSeDzTRZm8HcaKkAKbdZzhGVqPwl1h+uQO5nbWUlYg==
+X-Received: by 2002:a17:907:eac:b0:978:8925:7a08 with SMTP id ho44-20020a1709070eac00b0097889257a08mr15533059ejc.72.1686681268157;
+        Tue, 13 Jun 2023 11:34:28 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id d22-20020a50fb16000000b005149c7b1f49sm6647150edq.64.2023.06.13.11.32.19
+        by smtp.gmail.com with ESMTPSA id pv12-20020a170907208c00b0096b4ec45e10sm6946337ejb.139.2023.06.13.11.34.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jun 2023 11:32:20 -0700 (PDT)
-Message-ID: <bdd464a1-2279-9019-a19b-4aab5dd6045c@linaro.org>
-Date:   Tue, 13 Jun 2023 20:32:18 +0200
+        Tue, 13 Jun 2023 11:34:27 -0700 (PDT)
+Message-ID: <75508c4d-d86e-f88f-191f-dd870ebe7bd7@linaro.org>
+Date:   Tue, 13 Jun 2023 20:34:25 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v5 2/7] dt-bindings: soc: starfive: Add StarFive syscon
- module
+Subject: Re: [PATCH v5 3/7] dt-bindings: clock: jh7110-syscrg: Add PLL clock
+ inputs
 Content-Language: en-US
 To:     Xingyu Wu <xingyu.wu@starfivetech.com>,
         linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
@@ -73,9 +73,9 @@ Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
         William Qiu <william.qiu@starfivetech.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
- <20230613125852.211636-3-xingyu.wu@starfivetech.com>
+ <20230613125852.211636-4-xingyu.wu@starfivetech.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230613125852.211636-3-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230613125852.211636-4-xingyu.wu@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -83,92 +83,102 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 13/06/2023 14:58, Xingyu Wu wrote:
-> From: William Qiu <william.qiu@starfivetech.com>
+> Add optional PLL clock inputs from PLL clock generator.
+
+Are you sure that PLLs are optional? Usually they are not...
+
 > 
-> Add documentation to describe StarFive System Controller Registers.
-> 
-> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
 > ---
->  .../soc/starfive/starfive,jh7110-syscon.yaml  | 62 +++++++++++++++++++
->  MAINTAINERS                                   |  7 +++
->  2 files changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>  .../clock/starfive,jh7110-syscrg.yaml         | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-> new file mode 100644
-> index 000000000000..a81190f8a54d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 SoC system controller
-> +
-> +maintainers:
-> +  - William Qiu <william.qiu@starfivetech.com>
-> +
-> +description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +  The StarFive JH7110 SoC system controller provides register information such
-> +  as offset, mask and shift to configure related modules such as MMC and PCIe.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
+> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> index 84373ae31644..5536e5f9e20b 100644
+> --- a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
+> @@ -39,6 +39,33 @@ properties:
+>            - description: External TDM clock
+>            - description: External audio master clock
+>  
 > +      - items:
-> +          - const: starfive,jh7110-sys-syscon
-> +          - const: syscon
-> +          - const: simple-mfd
+> +          - description: Main Oscillator (24 MHz)
+> +          - description: GMAC1 RMII reference or GMAC1 RGMII RX
+> +          - description: External I2S TX bit clock
+> +          - description: External I2S TX left/right channel clock
+> +          - description: External I2S RX bit clock
+> +          - description: External I2S RX left/right channel clock
+> +          - description: External TDM clock
+> +          - description: External audio master clock
+> +          - description: PLL0
+> +          - description: PLL1
+> +          - description: PLL2
+
+Add these three to the existing entry with minItems.
+
+> +
 > +      - items:
+> +          - description: Main Oscillator (24 MHz)
+> +          - description: GMAC1 RMII reference
+> +          - description: GMAC1 RGMII RX
+> +          - description: External I2S TX bit clock
+> +          - description: External I2S TX left/right channel clock
+> +          - description: External I2S RX bit clock
+> +          - description: External I2S RX left/right channel clock
+> +          - description: External TDM clock
+> +          - description: External audio master clock
+> +          - description: PLL0
+> +          - description: PLL1
+> +          - description: PLL2
+
+Add these three to the existing entry with minItems.
+
+
+
+> +
+>    clock-names:
+>      oneOf:
+>        - items:
+> @@ -64,6 +91,35 @@ properties:
+>            - const: tdm_ext
+>            - const: mclk_ext
+>  
+> +      - items:
+> +          - const: osc
 > +          - enum:
-> +              - starfive,jh7110-aon-syscon
-> +              - starfive,jh7110-stg-syscon
-> +          - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-controller:
-> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
-> +    type: object
-> +
-> +  "#power-domain-cells":
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: starfive,jh7110-aon-syscon
-> +    then:
-> +      required:
-> +        - "#power-domain-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    syscon@10240000 {
-> +        compatible = "starfive,jh7110-stg-syscon", "syscon";
-> +        reg = <0x10240000 0x1000>;
+> +              - gmac1_rmii_refin
+> +              - gmac1_rgmii_rxin
+> +          - const: i2stx_bclk_ext
+> +          - const: i2stx_lrck_ext
+> +          - const: i2srx_bclk_ext
+> +          - const: i2srx_lrck_ext
+> +          - const: tdm_ext
+> +          - const: mclk_ext
+> +          - const: pll0_out
+> +          - const: pll1_out
+> +          - const: pll2_out
 
-Extend example - add clock controller, add power-domains to STG (since
-it has them, as you claim in the binding).
+Add these three to the existing entry with minItems.
 
-Make this one example complete.
+
+> +
+> +      - items:
+> +          - const: osc
+> +          - const: gmac1_rmii_refin
+> +          - const: gmac1_rgmii_rxin
+> +          - const: i2stx_bclk_ext
+> +          - const: i2stx_lrck_ext
+> +          - const: i2srx_bclk_ext
+> +          - const: i2srx_lrck_ext
+> +          - const: tdm_ext
+> +          - const: mclk_ext
+> +          - const: pll0_out
+> +          - const: pll1_out
+> +          - const: pll2_out
+
+Add these three to the existing entry with minItems.
+
+
 
 Best regards,
 Krzysztof
