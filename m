@@ -2,193 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD09C88CB2
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 08:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49671C7EE2E
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 08:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239965AbjFMIXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 04:23:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38736 "EHLO
+        id S238168AbjFMI2s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 04:28:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235114AbjFMIXp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 04:23:45 -0400
+        with ESMTP id S241157AbjFMIYt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 04:24:49 -0400
 Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F81AC;
-        Tue, 13 Jun 2023 01:23:44 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 4CC125C00BB;
-        Tue, 13 Jun 2023 04:23:44 -0400 (EDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B24BF130;
+        Tue, 13 Jun 2023 01:24:48 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2859A5C00BB;
+        Tue, 13 Jun 2023 04:24:48 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Tue, 13 Jun 2023 04:23:44 -0400
+  by compute4.internal (MEProxy); Tue, 13 Jun 2023 04:24:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:content-type:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1686644624; x=1686731024; bh=/C
-        dbbkQw2JgvECapcYhzDdCpNmrXlO/cyqRMfqJjWFQ=; b=ns8G9UmRINxWqsG+A/
-        56bLukbhzJVd2XOQEgXFwVwHDUxB7JKJdwTQfUOuEqn+eli2+/dB7r5b4E4WzX/q
-        FfgMIwdcv6QSD57QuQtHnEUmCCo55NTvlfR2r/w/LARkXMybgbOCLUMlOore5wyy
-        LkZgClN/MH3JPc+LS+I0Zh0b/Jt05uqBaNCtCgWnqjXe71Ja0N4P6k10kSbTz6vT
-        BXXrDyCwTTkkjGpFL/btQlJgyF/nDX/nt9x4JKfs9mXvYtdJHTnPRGF03RmnE7wg
-        MsHuMkTgtUCYgkabgpU2h+hlEBTbhQoI9WCORU9d+ytMZt6i3sOwQSEQ6+ejaTdh
-        Yz+g==
+        :subject:subject:to:to; s=fm2; t=1686644688; x=1686731088; bh=oH
+        tuGXfObvG6JqogzKiY0jhHFJOWy6f1SPfbrwqsgYE=; b=i3/Xfi2I8OfeEVE4t2
+        UI9bW7uDI6m48qaypn1OSSEMC4JJQizs2GNu4MP4EpeJ3yLe/IBtPJanKd96N43V
+        yBOn73nJIs5WJpAzec+DO+7MLn0clCEa0zT3fRzb1iTNh7tmizFWsPphk+dAUAOQ
+        qB59r+8RO2H5+qXEgHQwXsmNsRrsboczMCJmEk2GhDkl+887LbD+Xq0sy+9ZYebK
+        cTdKCK5+yHv/Or72q6Gu8Ij2hwkiqrBjf01XC8oUCP7DRRjRCkCkKPQzsEwEsrTa
+        TKl9ajH6stQrxZks1KqLIMRI/Qd6+EszrLhEjN3tghlbwlo6OG2xS2fSHX9S4wSz
+        prfw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:content-type:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1686644624; x=1686731024; bh=/CdbbkQw2JgvE
-        CapcYhzDdCpNmrXlO/cyqRMfqJjWFQ=; b=DVcPvl6v5rSDVR/UPtFzDzPUS9dEH
-        sRp/SqgGyFoTHzrMQNDGoXhKKbKspjaRw8VL+WFDe8TCgqCQFQXsMJKsI5gNMJ7S
-        BFxdu9pfIBD6+y/0LaQPDhG6hWM54QNtU+3BcpUCtlt6S2hDG39afNiCj/X7AEeN
-        lrELR4FYsJPPeSkLnXC2IA54aIEAe8Dib+LOJzJ3x6uY8AMVjYCvqzl/cHHcqkWY
-        hkEIzlsEl6BS874LX8ngrXH3jurQz8sFAYolzqMjH0mT+CCWgsMi9EhuCrPnBsHK
-        8pgdiwX/DrCSY6wAzNWYU7CDEMghWKP9VMJMwt0GMYDvIYvFWaafLC9cA==
-X-ME-Sender: <xms:jyeIZIG22ODEGbZ8iBL8gy4zFIpZPj43NbDMvQsn739oACSm7xvkcw>
-    <xme:jyeIZBW3H9UBjtSVQmWZF7ofP4SfvHbFRebt-gfq9rsTCLmeGUHuy7MNPbNkGXvem
-    nTg-395LRofbvucWsk>
-X-ME-Received: <xmr:jyeIZCIqujFr2N7uWdPLyYE789WGPchGEuCgN0bKJlCSSv0ckP4BacYVZ6EiDUU47cjk8-2ibqpH-fvVk3_g6g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeduiedgudefhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttdejnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepledufeegudehveeljeeigfehtedvffehjedvjeevhfduueevheeuvedv
-    veevueeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:jyeIZKHoWQbrNo3mvxXQ6R5ELOs84cyyxI38pwz3S-sXaxGMQHlCjw>
-    <xmx:jyeIZOV2-MnfdQ0cyvTkvTm-5opKHxGbM-syC2NZ74c6uJSFC7nVJA>
-    <xmx:jyeIZNP5nuswWJUjyqO7Va5pZ282qX02Q3pv7G-mCPXTtk0cBPZ4hQ>
-    <xmx:kCeIZPvTepcw35kkxwFKQCZSav8fUwN_ZSryIhJtxaUoucVyjJxRsQ>
+        :x-sasl-enc; s=fm2; t=1686644688; x=1686731088; bh=oHtuGXfObvG6J
+        qogzKiY0jhHFJOWy6f1SPfbrwqsgYE=; b=Fvuv7iFcfzRoChsypLWevgOwbsjhL
+        uBAGNmFojNMInc//nSd2wOZyKIckVwrVLs2pjfrDje9f2UqFUGMJ951acCZ+bKdZ
+        BwAEgtk3uRoFfSPcd1KZNg9iBS609cULuLAZIuSR5D9qMdzzX5l7FXQMKa2vNpfg
+        RQyJz1Uj2Jx02ESmlXgR/qGBMNa9iwaI2CoDdfimTHN3hBgH7yK5u0uhHRsR5O+H
+        H6NsLv8e2mOQWXeZBpfIgaPbf0oLy1A8SKgwLpRcRiGHopTkQIyHhzF7ES1GfwHQ
+        vYEU6CV0ttXZiPngZz0lMMUbXFoBgTr+NPHIxHmrS/EkjFKRz7pP8H4Ag==
+X-ME-Sender: <xms:zyeIZHjVh6FYAEIgGiHJ4_x3EBnmoTy5Y0PyA0SPEjwPqKk_dYKKJg>
+    <xme:zyeIZEDQNfOCD0l_0qOorQVKPvyaJe0DQSWCP3Dw6NAHMMQ3tCXREpXEey1mfIgr-
+    1C2ovjit9iUzFhl_38>
+X-ME-Received: <xmr:zyeIZHGDY1mZ9pHNSqdUuuyFG2zN5JuUKlhdvKT2b4Yl4f3fReN5atcJ8TlDCRUvmMwmofOQ6GzLyw_kX_fG0g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedujecutefuodetggdotefrodftvfcurf
+    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgigihhmvgcu
+    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
+    hrnheptdfgudekieeguefhleehfedthffggeefgfduueeihfeuueelkeevtedviedtvdei
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:zyeIZETphebno6GKA4cCEzEZo-IQo8ZzJ1HjaU6cG_Poh4xKBxVZpw>
+    <xmx:zyeIZEwui7U6eXASVQxRxa16zZABB4mQsMHlkBszXPWNX8oolWMWlQ>
+    <xmx:zyeIZK6a0W7xhTpIJbjebnOPGgHhtdaavBC2CFQbDPWyjSoOjHAIOQ>
+    <xmx:0CeIZOtnkkcZc9yV37a4UeHmATOPs0y4fM3l1G6oKvrqgwTZ-LsG6w>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Jun 2023 04:23:43 -0400 (EDT)
-Date:   Tue, 13 Jun 2023 10:23:42 +0200
+ 13 Jun 2023 04:24:47 -0400 (EDT)
+Date:   Tue, 13 Jun 2023 10:24:46 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-        aford@beaconembedded.com, Abel Vesa <abelvesa@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
-Message-ID: <7j2zd5aszxenphluy7weslzrjkg7nglymcukxxv2xhbt3z2lql@qifooseclzy6>
-References: <20230506195325.876871-1-aford173@gmail.com>
- <CAOMZO5AwixYybR1am=V4m1AnTkum+0Wn0xegU_y6Po9Y--G0mA@mail.gmail.com>
- <CAHCN7xLPKa2hrBMC1kaJkxVL9NC+c1TWgcQHMBPefnvxGPTCwQ@mail.gmail.com>
- <jlcpkn3pewnvdpugwmsrb277u4fzcns5eodnoxhlbkwtaf7pyc@u6vozmm7zl62>
- <CAHCN7xKuvkBHuDBiprsXg3hX+P6Y+ciKSZMcauU=5Y-REwjE=A@mail.gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] ASoC: tlv320aic32x4: pll: Remove impossible condition in
+ clk_aic32x4_pll_determine_rate()
+Message-ID: <qiagoqg65b2tocnqgpd6svlsv2gthjodwq5yyg6mb3nk23smwx@dhjmsbiagl73>
+References: <20230613011201.1166753-1-sboyd@kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nwyrv6kg3riqg7ne"
+        protocol="application/pgp-signature"; boundary="kkh5a6zwtk6q5tyt"
 Content-Disposition: inline
-In-Reply-To: <CAHCN7xKuvkBHuDBiprsXg3hX+P6Y+ciKSZMcauU=5Y-REwjE=A@mail.gmail.com>
+In-Reply-To: <20230613011201.1166753-1-sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---nwyrv6kg3riqg7ne
-Content-Type: text/plain; charset=utf-8
+--kkh5a6zwtk6q5tyt
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 12, 2023 at 11:11:21AM -0500, Adam Ford wrote:
-> On Mon, Jun 12, 2023 at 11:08=E2=80=AFAM Maxime Ripard <maxime@cerno.tech=
-> wrote:
-> >
-> > On Sun, Jun 11, 2023 at 12:02:42PM -0500, Adam Ford wrote:
-> > > On Tue, Jun 6, 2023 at 1:45=E2=80=AFPM Fabio Estevam <festevam@gmail.=
-com> wrote:
-> > > >
-> > > > On Sat, May 6, 2023 at 4:53=E2=80=AFPM Adam Ford <aford173@gmail.co=
-m> wrote:
-> > > > >
-> > > > > Currently, certain clocks are derrived as a divider from their
-> > > > > parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
-> > > > > is set, the parent clock is not properly set which can lead
-> > > > > to some relatively inaccurate clock values.
-> > > > >
-> > >
-> > > + Maxime
-> > >
-> > > > > Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
-> > > > > cannot rely on calling a standard determine_rate function,
-> > > > > because the 8m composite clocks have a pre-divider and
-> > > > > post-divider. Because of this, a custom determine_rate
-> > > > > function is necessary to determine the maximum clock
-> > > > > division which is equivalent to pre-divider * the
-> > > > > post-divider.
-> > > > >
-> > > > > With this added, the system can attempt to adjust the parent rate
-> > > > > when the proper flags are set which can lead to a more precise cl=
-ock
-> > > > > value.
-> > > > >
-> > > > > On the imx8mplus, no clock changes are present.
-> > > > > On the Mini and Nano, this can help achieve more accurate
-> > > > > lcdif clocks. When trying to get a pixel clock of 31.500MHz
-> > > > > on an imx8m Nano, the clocks divided the 594MHz down, but
-> > > > > left the parent rate untouched which caused a calulation error.
-> > > > >
-> > > > > Before:
-> > > > > video_pll              594000000
-> > > > >   video_pll_bypass     594000000
-> > > > >     video_pll_out      594000000
-> > > > >       disp_pixel       31263158
-> > > > >         disp_pixel_clk 31263158
-> > > > >
-> > > > > Variance =3D -236842 Hz
-> > > > >
-> > > > > After this patch:
-> > > > > video_pll               31500000
-> > > > >   video_pll_bypass      31500000
-> > > > >     video_pll_out       31500000
-> > > > >       disp_pixel        31500000
-> > > > >         disp_pixel_clk  31500000
-> > > > >
-> > > > > Variance =3D 0 Hz
-> > > > >
-> > > > > All other clocks rates and parent were the same.
-> > > > > Similar results on imx8mm were found.
-> > > > >
-> > > > > Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support=
- to determine_rate"")
-> > > > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > > >
-> > >
-> > > Peng / Abel,
-> > >
-> > > Any suggestions on how we can move this forward?  Looking at the
-> > > clk-composite-8m driver, imx8m_clk_composite_compute_dividers uses the
-> > > max values which is basically what my patch does.  There was some
-> > > discussion about making determine_rate mandatory for muxes[1] and this
-> > > patch should help with this in addition to making it easier to sync
-> > > more video resolutions on the 8m Mini and Nano.
-> >
-> > Those patches have been queued by Stephen for 6.6 :)
+On Mon, Jun 12, 2023 at 06:12:00PM -0700, Stephen Boyd wrote:
+> Smatch warns:
 >=20
-> One of the patches in the older series was reverted, but this was to
-> address the patch that was reverted.
+> sound/soc/codecs/tlv320aic32x4-clk.c:219 clk_aic32x4_pll_determine_rate()=
+ warn: unsigned 'rate' is never less than zero.
+>=20
+> Cc: Maxime Ripard <maxime@cerno.tech>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202306101217.08CRVGcK-lkp@i=
+ntel.com/
+> Fixes: 25d43ec352ea ("ASoC: tlv320aic32x4: pll: Switch to determine_rate")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-Was it? I haven't been cc'd and it doesn't seem to be in -next either?
+Thanks for taking care of this
+
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
 Maxime
 
---nwyrv6kg3riqg7ne
+--kkh5a6zwtk6q5tyt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIgnjQAKCRDj7w1vZxhR
-xeECAQCW6BrJCTYOwaTtOLoq9I6KrLKDuhOEnpgjdPNxMnDiMwEAm1AJbnoZRKG+
-3MpnJ+ukedK/884Qm9erqEyS+2oQxAo=
-=HR4v
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIgnzgAKCRDj7w1vZxhR
+xWlHAQDh6MlBFURx5GSBlD+YAUwiOewdZzgg4uV/hhl/zV2pygEAjvl95latE2uM
+E3gmQLfoQxwYRTDXoYD+Deg2DDx02wk=
+=MqzC
 -----END PGP SIGNATURE-----
 
---nwyrv6kg3riqg7ne--
+--kkh5a6zwtk6q5tyt--
