@@ -2,175 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765FDEB64D7
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 22:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 106AEEB64D7
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 23:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232484AbjFMWlJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 18:41:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42464 "EHLO
+        id S231843AbjFMXhy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 19:37:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231742AbjFMWlJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 18:41:09 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B06910F8
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 15:41:07 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f640e48bc3so7575943e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 15:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686696066; x=1689288066;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mM2+93Chwu7bwUwshRRZL1JMaegUn5yKzga2WzqyZzI=;
-        b=rtI5EpOAy3camCvRJE8ovAjNX2hMd20MLGU+rC8tbMqtbmb7qlZ9uunnMKzmAjWzP9
-         n3UzZyEDBBv4lS5vJi2cXN2JDzL4Cb1eh+IJZKn8EWWEEuNiO3a3ywaR6GUTt/Cu3lmY
-         gvlqHFd/RgXYdu0HpQE0KPUYVp7atrtx8VHl/uWSdz9oT8zEH0TnCzwEnU7wIUrHm/77
-         e38RU2H2qPVe41PYtLJ/QMkCzGt8Zuf/wwtCdoATm2IF/1HF3ztDGEoEgY91Xmqk7Plh
-         XeSQ2gjRox/flrYotHz6esVkP4rwgIVCFzKMfmT36NnG/8o2Cr/QtiRzrre+uNk55ykF
-         2xPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686696066; x=1689288066;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mM2+93Chwu7bwUwshRRZL1JMaegUn5yKzga2WzqyZzI=;
-        b=kCBpkDiSNezW1NMKyKfBJWAu84B4/dRoibMH6w7rJ9NmvmRlS8trDNf7VPLd9eM+6G
-         vcYEYUILbGW/yM7loBrua7oZZSEHHKIQuXoBkgjXAyAL8lofwxvqH60vYaUgzAWJ1Clp
-         fsq+9KJCOIl6fjyZCGq8WZYyltNv7NTD9pZnKd7KypPtabCcb9pYXuSHwgCSVHhCcPSn
-         09VI3pQj3f9oi2G8aLM3Y8hHEahjyEhN9nDGjxv35tkoXlSYWvMooX6Dqkdeb+iIlVuB
-         dvAiKPlYjBLalCBFahrj96D9u/7Nz/EnMlKT+1HRh4oGbR4vJTuUNhCq3bNEBBOiMAto
-         Thzg==
-X-Gm-Message-State: AC+VfDyweCBczjjrYcF/VJxXrBEgo1+5wIA35atkLsw21UtU8JBxsyJN
-        Z7+FoI/hXgqGiWCOH/6xUGVk+Q==
-X-Google-Smtp-Source: ACHHUZ43oO1BCBYbrneX5Pa5lN5HOMz0cCRafq3HWi4SGTpLsQJ08prrNngm4wYYitPJEJ+jgI/8Og==
-X-Received: by 2002:a05:6512:539:b0:4f6:1462:9985 with SMTP id o25-20020a056512053900b004f614629985mr6327871lfc.21.1686696065284;
-        Tue, 13 Jun 2023 15:41:05 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id w13-20020a05651204cd00b004eefdd8b37fsm1885609lfq.194.2023.06.13.15.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jun 2023 15:41:04 -0700 (PDT)
-Message-ID: <ad3b3233-b1d6-781e-16e5-9faaaf14fc7a@linaro.org>
-Date:   Wed, 14 Jun 2023 00:41:03 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v4 08/22] interconnect: qcom: smd-rpm: Add rpmcc handling
- skeleton code
-Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
+        with ESMTP id S231341AbjFMXhx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 19:37:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BF731727;
+        Tue, 13 Jun 2023 16:37:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F62A617D6;
+        Tue, 13 Jun 2023 23:37:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39B3C433C8;
+        Tue, 13 Jun 2023 23:37:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686699470;
+        bh=/vTpNtYTVMrmNhEt3E4HPuxmQCh3bGs/cYI8jwBQ0eE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gtMwib4h0SuyJv2eAMAZqUOvdZeeNOiaPtusyCIFcBO2oOS+9NOQ4YcUCI9dM4s9o
+         coVtGDFdIc126eERDssztiF+LQhhYT6EwzZOM8LS4mQAqKcenxV1299RoNcZTd8Opo
+         Hkyke9+tUfHiqUmZ6LvnTiS/5kPLsFAh6JsOMS/KL4Wf/Jlkc9Kncjepjuo0xAHAZg
+         t1i/N8j3yi6qt0KZcNwpY0uVWPTbAI/qQzI3C/uyp4gb/o93Gh7DeLeOgaF8Ae/HdZ
+         b/cNuLqKDuX20Cu/fgLfbwSZVGsNghLNWXR+/Gv2RPK2OXd70HbiuVDOnxL23kpVSa
+         Qj9kL18fv+7PA==
+Date:   Tue, 13 Jun 2023 16:41:13 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230526-topic-smd_icc-v4-0-5ba82b6fbba2@linaro.org>
- <20230526-topic-smd_icc-v4-8-5ba82b6fbba2@linaro.org>
- <ZIjNLJQwYQGj3piA@gerhold.net>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZIjNLJQwYQGj3piA@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v3 08/10] clk: qcom: gcc-mdm9615: drop the cxo clock
+Message-ID: <20230613234113.tnzjgfbyhj5zokgl@ripper>
+References: <20230512211727.3445575-1-dmitry.baryshkov@linaro.org>
+ <20230512211727.3445575-9-dmitry.baryshkov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230512211727.3445575-9-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 13.06.2023 22:10, Stephan Gerhold wrote:
-> On Tue, Jun 13, 2023 at 04:03:08PM +0200, Konrad Dybcio wrote:
->> Introduce qcom_icc_rpm_set_bus_rate() in preparation for handling RPM
->> clock resources within the interconnect framework. This lets us greatly
->> simplify all of the code handling, as setting the rate comes down to:
->>
->> u32 rate_khz = max(clk.sleep_rate, clk.active_rate, clk_a.active_rate)
->> write_to_rpm(clock.description, rate_khz);
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
->>  drivers/interconnect/qcom/icc-rpm.h | 15 +++++++++++++++
->>  drivers/interconnect/qcom/smd-rpm.c | 22 ++++++++++++++++++++++
->>  2 files changed, 37 insertions(+)
->>
->> diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
->> index 9ec90e13bfbd..13ca0818ffbd 100644
->> --- a/drivers/interconnect/qcom/icc-rpm.h
->> +++ b/drivers/interconnect/qcom/icc-rpm.h
->> @@ -22,6 +22,18 @@ enum qcom_icc_type {
->>  	QCOM_ICC_QNOC,
->>  };
->>  
->> +/**
->> + * struct rpm_clk_resource - RPM bus clock resource
->> + * @resource_type: RPM resource type of the clock resource
->> + * @clock_id: index of the clock resource of a specific resource type
->> + * @branch: whether the resource represents a branch clock
->> +*/
->> +struct rpm_clk_resource {
->> +	u32 resource_type;
->> +	u32 clock_id;
->> +	bool branch;
->> +};
->> +
->>  #define NUM_BUS_CLKS	2
->>  
->>  /**
->> @@ -47,6 +59,7 @@ struct qcom_icc_provider {
->>  	unsigned int qos_offset;
->>  	u64 bus_clk_rate[NUM_BUS_CLKS];
->>  	struct clk_bulk_data bus_clks[NUM_BUS_CLKS];
->> +	const struct rpm_clk_resource *bus_clk_desc;
->>  	struct clk_bulk_data *intf_clks;
->>  	bool keep_alive;
->>  	bool is_on;
->> @@ -104,6 +117,7 @@ struct qcom_icc_desc {
->>  	struct qcom_icc_node * const *nodes;
->>  	size_t num_nodes;
->>  	const char * const *bus_clocks;
->> +	const struct rpm_clk_resource *bus_clk_desc;
->>  	const char * const *intf_clocks;
->>  	size_t num_intf_clocks;
->>  	bool keep_alive;
->> @@ -125,5 +139,6 @@ int qnoc_remove(struct platform_device *pdev);
->>  
->>  bool qcom_icc_rpm_smd_available(void);
->>  int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val);
->> +int qcom_icc_rpm_set_bus_rate(const struct rpm_clk_resource *clk, u32 rate, bool set_active);
->>  
->>  #endif
->> diff --git a/drivers/interconnect/qcom/smd-rpm.c b/drivers/interconnect/qcom/smd-rpm.c
->> index b0183262ba66..c5ab00051447 100644
->> --- a/drivers/interconnect/qcom/smd-rpm.c
->> +++ b/drivers/interconnect/qcom/smd-rpm.c
->> @@ -16,6 +16,7 @@
->>  #include "icc-rpm.h"
->>  
->>  #define RPM_KEY_BW		0x00007762
->> +#define QCOM_RPM_SMD_KEY_RATE	0x007a484b
->>  
->>  static struct qcom_smd_rpm *icc_smd_rpm;
->>  
->> @@ -44,6 +45,27 @@ int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val)
->>  }
->>  EXPORT_SYMBOL_GPL(qcom_icc_rpm_smd_send);
->>  
->> +int qcom_icc_rpm_set_bus_rate(const struct rpm_clk_resource *clk, u32 rate, bool set_active)
->> +{
->> +	int state = set_active ? QCOM_SMD_RPM_ACTIVE_STATE : QCOM_SMD_RPM_SLEEP_STATE;
+On Sat, May 13, 2023 at 12:17:25AM +0300, Dmitry Baryshkov wrote:
+> The gcc and lcc devices have been switched to the DT-defined cxo_board
+> clock. Now we can drop the manually defined cxo clock.
 > 
-> Why not just pass in the ctx/state directly as parameter instead of this
-> boolean? That's what the function directly above does.
-Ooohh.. obviously...
 
-Konrad
+Perhaps I'm reading this incorrectly, but don't you introduce that clock
+in DT in the next commit? It would be nice to allow for at least some
+overlap between existing dtb and the new scheme.
+
+Regards,
+Bjorn
+
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-mdm9615.c | 17 -----------------
+>  1 file changed, 17 deletions(-)
 > 
-> Thanks,
-> Stephan
+> diff --git a/drivers/clk/qcom/gcc-mdm9615.c b/drivers/clk/qcom/gcc-mdm9615.c
+> index 458c18b639db..64d4f508e43a 100644
+> --- a/drivers/clk/qcom/gcc-mdm9615.c
+> +++ b/drivers/clk/qcom/gcc-mdm9615.c
+> @@ -26,17 +26,6 @@
+>  #include "clk-branch.h"
+>  #include "reset.h"
+>  
+> -static struct clk_fixed_factor cxo = {
+> -	.mult = 1,
+> -	.div = 1,
+> -	.hw.init = &(struct clk_init_data){
+> -		.name = "cxo",
+> -		.parent_names = (const char *[]){ "cxo_board" },
+> -		.num_parents = 1,
+> -		.ops = &clk_fixed_factor_ops,
+> -	},
+> -};
+> -
+>  enum {
+>  	DT_CXO,
+>  	DT_PLL4,
+> @@ -1623,10 +1612,6 @@ static struct clk_branch ebi2_aon_clk = {
+>  	},
+>  };
+>  
+> -static struct clk_hw *gcc_mdm9615_hws[] = {
+> -	&cxo.hw,
+> -};
+> -
+>  static struct clk_regmap *gcc_mdm9615_clks[] = {
+>  	[PLL0] = &pll0.clkr,
+>  	[PLL0_VOTE] = &pll0_vote,
+> @@ -1736,8 +1721,6 @@ static const struct qcom_cc_desc gcc_mdm9615_desc = {
+>  	.num_clks = ARRAY_SIZE(gcc_mdm9615_clks),
+>  	.resets = gcc_mdm9615_resets,
+>  	.num_resets = ARRAY_SIZE(gcc_mdm9615_resets),
+> -	.clk_hws = gcc_mdm9615_hws,
+> -	.num_clk_hws = ARRAY_SIZE(gcc_mdm9615_hws),
+>  };
+>  
+>  static const struct of_device_id gcc_mdm9615_match_table[] = {
+> -- 
+> 2.39.2
+> 
