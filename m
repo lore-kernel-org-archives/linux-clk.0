@@ -2,128 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44142C7EE29
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 13:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A35ABC04E69
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 13:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242107AbjFMNQu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 09:16:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34042 "EHLO
+        id S242388AbjFMNgT convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 09:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240492AbjFMNQs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 09:16:48 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0BE196
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 06:16:46 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230613131644euoutp0230b2c57ce1edc51b910ef530557d1364~oOla8iazs2925029250euoutp020
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230613131644euoutp0230b2c57ce1edc51b910ef530557d1364~oOla8iazs2925029250euoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1686662204;
-        bh=tdJ26CzwUNtoD1F5zxf6fVxgrheMECD4aIoiMBnelJM=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=u5Gjj5z1GnZv+zBc+EEayj9fISS21pe+g9wqJUlsiOrW5htT3IdJurtQBO/gm0SU/
-         MrNF4CioShxSQqDlyElvBhr3sZOiM4Jd+8xrRcGIgO436BDIXe2qhbKS85TpmgP4+Z
-         pnjd74PnsQDGEVu4Z2FccLV5AcvBNgpXceOuZJBI=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20230613131644eucas1p10eabc3b227115c7d80625c2d78b9482b~oOlaxHLos1967419674eucas1p1o;
-        Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 7A.96.42423.C3C68846; Tue, 13
-        Jun 2023 14:16:44 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20230613131644eucas1p2b232fef36f6ae621827674c775a6e070~oOlaZeNy80170301703eucas1p2E;
-        Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20230613131644eusmtrp2bf8463164bda1557e77a55eee42cf0ca~oOlaY1gWj1442014420eusmtrp2a;
-        Tue, 13 Jun 2023 13:16:44 +0000 (GMT)
-X-AuditID: cbfec7f2-a3bff7000002a5b7-9d-64886c3ce4d2
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 96.BD.14344.B3C68846; Tue, 13
-        Jun 2023 14:16:43 +0100 (BST)
-Received: from AMDC4653.eu.corp.samsungelectronics.net (unknown
-        [106.120.51.32]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20230613131643eusmtip2e64783492535fa8b12338b59a703f93d~oOlZ_lxzT0942009420eusmtip2s;
-        Tue, 13 Jun 2023 13:16:43 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S241006AbjFMNgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 09:36:18 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C1110DF;
+        Tue, 13 Jun 2023 06:36:14 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id ECF627FF9;
+        Tue, 13 Jun 2023 21:36:11 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 13 Jun
+ 2023 20:58:58 +0800
+Received: from localhost.localdomain (113.72.145.34) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 13 Jun
+ 2023 20:58:57 +0800
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: Fix best_parent_rate after moving code into a separate
- function
-Date:   Tue, 13 Jun 2023 15:16:31 +0200
-Message-Id: <20230613131631.270192-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        "William Qiu" <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v5 6/7] riscv: dts: starfive: jh7110: Add syscon nodes
+Date:   Tue, 13 Jun 2023 20:58:51 +0800
+Message-ID: <20230613125852.211636-7-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
+References: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleLIzCtJLcpLzFFi42LZduznOV2bnI4UgwNbxS0+9txjtbi8aw6b
-        xdojd9kt2jqXsVpcPOVq8e/aRhYHNo/3N1rZPTat6mTz6NuyitHj8ya5AJYoLpuU1JzMstQi
-        fbsErownQNmCnawVp+/8YG9gPMDSxcjJISFgIrH38iq2LkYuDiGBFYwS5998YodwvjBKTLg+
-        iwXC+cwoMfnIfLiWaeuOQrUsZ5S4dqAJqqqVSeLouwawKjYBQ4mut11sILaIQJnErUMXmUFs
-        ZoEsiW0/PgLt4OAQFgiXuHVbECTMIqAq8XD7R1YQm1fATmLvuzZmiGXyEvsPnmWGiAtKnJz5
-        hAVijLxE89bZzCB7JQR6OSTaJ/xihWhwkZj7cjcbhC0s8er4FnYIW0bi/875TBAN7YwSC37f
-        h3ImMEo0PL/FCFFlLXHn3C82kOuYBTQl1u/Shwg7Siy/Oh0sLCHAJ3HjrSDEEXwSk7ZNZ4YI
-        80p0tAlBVKtJzDq+Dm7twQuXoH7xkHh4aydYXEggVuLxh7NMExgVZiF5bRaS12Yh3LCAkXkV
-        o3hqaXFuemqxYV5quV5xYm5xaV66XnJ+7iZGYFo5/e/4px2Mc1991DvEyMTBeIhRgoNZSYT3
-        qUZ7ihBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFebduTyUIC6YklqdmpqQWpRTBZJg5OqQYm82/d
-        /cbiO2LlfnV3uU9+VBuw/Pkpsz9TjgZYpOwNFEitl/GoMueorrhStdYuvWOG1XpLRZMbDons
-        anueJW9/t3q547WS6UaxxQoTl3EtPNI04/ws7WlcSjW2azhv6D62Xn+mjFvIr3C6jtbbkoS3
-        2975CRtt2CFSPWdrsNJXoRWcEd+cJEuW6x9g3hnqwBMwk+eY7t3XeWcisxLe1gVtPSu/Nta4
-        gk0q6ckerZ076pgfbbu6XoD77VKm4pP/3uwLZpme2nb7rf+rCxU9Tq3txS1ZU+cKFF4va+pJ
-        WmDgvO5ohFJqS/HkV1r5Yiu3PTnyyLyxI5Hv9cvw/S2NJz46X/i5MPd8IKN20+a9wTxKLMUZ
-        iYZazEXFiQBqfVvnmgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDLMWRmVeSWpSXmKPExsVy+t/xe7rWOR0pBhN2W1t87LnHanF51xw2
-        i7VH7rJbtHUuY7W4eMrV4t+1jSwObB7vb7Sye2xa1cnm0bdlFaPH501yASxRejZF+aUlqQoZ
-        +cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlPgCYU7GStOH3nB3sD
-        4wGWLkZODgkBE4lp646ydTFycQgJLGWUuPnlJSNEQkbi5LQGVghbWOLPtS6oomYmicMzpoJ1
-        swkYSnS9BUlwcogIVEhcXXoQKM7BwSyQI/HxhCdIWFggVOLV3TlgJSwCqhIPt38Em8krYCex
-        910bM8R8eYn9B88yQ8QFJU7OfAI2nhko3rx1NvMERr5ZSFKzkKQWMDKtYhRJLS3OTc8tNtIr
-        TswtLs1L10vOz93ECAzmbcd+btnBuPLVR71DjEwcjIcYJTiYlUR4n2q0pwjxpiRWVqUW5ccX
-        leakFh9iNAW6byKzlGhyPjCe8kriDc0MTA1NzCwNTC3NjJXEeT0LOhKFBNITS1KzU1MLUotg
-        +pg4OKUamATE7NV5/S/kdIYv5GCrqU95eXyl7InTM/MPPkg+GV7ipfJnzbKvjrrv5xtO3b/0
-        hJPSn+UmrbyPA3mlH7OrWwbyrnp7U4RN0jV6b4vXTrlDPWXqO6qvbj509F9An5OPVJ3YZMPL
-        EvwX52485Hzv1ptH/xwFr14VNb/c8P/zfYkVCzSnrAluC9jF5P96eVDSE5FP2wsfhExNUf4l
-        FRd572PLqbZ5H9lDlz24KfhDXmnitD3LcpLe9TVETV5zJt4+Q+eNZmuD6MZvGdNeLe49kslm
-        E167QeD7gZoKoVfL7hQ/+6q5xrA7ZsLVlZc/PJSUN+LKWHmbq4OzhTm7Pnz6nYjs7g+8/OkL
-        fk7cfP6lobcSS3FGoqEWc1FxIgAbjHQL7wIAAA==
-X-CMS-MailID: 20230613131644eucas1p2b232fef36f6ae621827674c775a6e070
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20230613131644eucas1p2b232fef36f6ae621827674c775a6e070
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20230613131644eucas1p2b232fef36f6ae621827674c775a6e070
-References: <CGME20230613131644eucas1p2b232fef36f6ae621827674c775a6e070@eucas1p2.samsung.com>
+Content-Type: text/plain
+X-Originating-IP: [113.72.145.34]
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-best_parent_rate entry is still being used in the code and needs to be
-always updated regardless of the CLK_SET_RATE_NO_REPARENT flag.
+From: William Qiu <william.qiu@starfivetech.com>
 
-Fixes: 1b4e99fda73f ("clk: Move no reparent case into a separate function")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Add stg_syscon/sys_syscon/aon_syscon/PLL nodes for JH7110 Soc.
+
+Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+Signed-off-by: William Qiu <william.qiu@starfivetech.com>
 ---
- drivers/clk/clk.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/riscv/boot/dts/starfive/jh7110.dtsi | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ffc9f03840b7..7ac9f7a8cb84 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -629,6 +629,7 @@ clk_core_determine_rate_no_reparent(struct clk_hw *hw,
- 		best = clk_core_get_rate_nolock(core);
- 	}
+diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+index 4c5fdb905da8..11dd4c9d64b0 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
++++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+@@ -353,6 +353,11 @@ i2c2: i2c@10050000 {
+ 			status = "disabled";
+ 		};
  
-+	req->best_parent_rate = best;
- 	req->rate = best;
++		stg_syscon: syscon@10240000 {
++			compatible = "starfive,jh7110-stg-syscon", "syscon";
++			reg = <0x0 0x10240000 0x0 0x1000>;
++		};
++
+ 		uart3: serial@12000000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x0 0x12000000 0x0 0x10000>;
+@@ -457,6 +462,17 @@ syscrg: clock-controller@13020000 {
+ 			#reset-cells = <1>;
+ 		};
  
- 	return 0;
++		sys_syscon: syscon@13030000 {
++			compatible = "starfive,jh7110-sys-syscon", "syscon", "simple-mfd";
++			reg = <0x0 0x13030000 0x0 0x1000>;
++
++			pllclk: clock-controller {
++				compatible = "starfive,jh7110-pll";
++				clocks = <&osc>;
++				#clock-cells = <1>;
++			};
++		};
++
+ 		sysgpio: pinctrl@13040000 {
+ 			compatible = "starfive,jh7110-sys-pinctrl";
+ 			reg = <0x0 0x13040000 0x0 0x10000>;
+@@ -486,6 +502,12 @@ aoncrg: clock-controller@17000000 {
+ 			#reset-cells = <1>;
+ 		};
+ 
++		aon_syscon: syscon@17010000 {
++			compatible = "starfive,jh7110-aon-syscon", "syscon";
++			reg = <0x0 0x17010000 0x0 0x1000>;
++			#power-domain-cells = <1>;
++		};
++
+ 		aongpio: pinctrl@17020000 {
+ 			compatible = "starfive,jh7110-aon-pinctrl";
+ 			reg = <0x0 0x17020000 0x0 0x10000>;
 -- 
-2.34.1
+2.25.1
 
