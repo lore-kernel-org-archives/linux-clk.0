@@ -2,197 +2,226 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0576C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 12:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E4DC7EE2E
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 12:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240520AbjFMMOe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 08:14:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55492 "EHLO
+        id S241664AbjFMMPR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 08:15:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238913AbjFMMOd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 08:14:33 -0400
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCBFB4;
-        Tue, 13 Jun 2023 05:14:32 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 44512320091E;
-        Tue, 13 Jun 2023 08:14:28 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 13 Jun 2023 08:14:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1686658467; x=1686744867; bh=v4
-        2YMf0yNUZaTnlv4RtlO9P3NL8urmHA6A2lQ634HEU=; b=ad6xbJBv0MwKg4Qrai
-        OF7MgHam88c2EyG/0qJ3ZkSZTSNOuP4aI0NWiEiRFTtNNsrUAPV6ARYbzdWJmjxm
-        1B1XYSs588JdxyPaeZga7o6BOFqNxwFw4nR39S8K/UeWkAw1wT9w+CY/X7L8+Bdw
-        VFhbZwa8QLSEYDNYTQj1Po4iih8iVChK44A+1afLSoREYPxIOo7CU3m7fQRI8h9G
-        6BeHRMtQN5ar7t8wqHNa2guxjy2QvuUHvTs41J39B5GMIQXhQIfrIPLbtptVJ8Ob
-        GoNhawVav/YSN4EjDRkm33erzshI1aINfqRsQ5hPIz68hqc/3IjiQKzZiebDL4f3
-        tW7w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1686658467; x=1686744867; bh=v42YMf0yNUZaT
-        nlv4RtlO9P3NL8urmHA6A2lQ634HEU=; b=R75d6fAJ3amWnEZWUbbL5N5nO2juw
-        yp26Dk2x7MCnT7qpnWHgNF9uYrJupJhwF3vJ8QM8FooM04OvLEx4VAqFl2QtgZyj
-        Mk+dZj0Uq0faw2C7yiIOvW5GMwtXoN/SxLneB8wHVetutRm9fny2xMK1noIhFZVx
-        aoA42D/8KIsDlVvTkcc5zCUqZxMQ1AyqPf3XvkOOhisoQDsZ/n9DiciUdLqpEWHZ
-        fHSOwzxOz9iDz8rNx+nnZdHADh4r87g2yftOR+A7RxtKztMR4uiHmgs5vAiTjK1V
-        uMs8aDRUNfvylWtixusj60qv+7L5zOVGm+n4FqF/jXY/lREVZXDFqvoVg==
-X-ME-Sender: <xms:o12IZGgnXkcnv-V5f36FH1Sos3rj_h6pWIlWq840WXgmcXm5NMD1ng>
-    <xme:o12IZHBTVMbf6yJYiwozzPJmGFUn_XhPJ00oFhJbxPEZoj4XAEO7S963U81pCqpzY
-    gmtRvH9e7xRBdym-Ho>
-X-ME-Received: <xmr:o12IZOF-fjfY47NzEf266iBjOsOhIo-HP9nRVLH4blsv8sGRuZQR0rX6q0E0dEd31xEPu8JEpCmFbKxsupHRhQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedujedggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvdenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeeuveduheeutdekvefgudevjeeufedvvdevhfejgfelgfdtkeevueegteek
-    gfelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:o12IZPSXKaGAXW3w8uI4i1aUsjSZlLjzYU-HYUvomu8zISrdBucwbw>
-    <xmx:o12IZDyvbuZHnFRrGB6zCeCYlvn8y07NGT3HxykA53AdBkDOVeWrkw>
-    <xmx:o12IZN4gx6IbyB8KFMKG2QgO7sMqkc9iWQ7vg0H6j5IaNs8sgf0L_g>
-    <xmx:o12IZKyZOcW2R1_CMZp4_qbsXNyhc5L7vGCoskOgOTwt-l0B3loHEg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Jun 2023 08:14:27 -0400 (EDT)
-Date:   Tue, 13 Jun 2023 14:14:25 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christopher Obbard <chris.obbard@collabora.com>,
-        David Laight <David.Laight@aculab.com>, kernel@collabora.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: composite: Fix handling of high clock rates
-Message-ID: <7s2xdk43a2lhyezgj6bbwxaekbtgym2rin7t432m4pos4j6v74@qaxm3htjak4a>
-References: <20230526171057.66876-1-sebastian.reichel@collabora.com>
- <20230526171057.66876-2-sebastian.reichel@collabora.com>
- <2f3328c4be9db6feef2cc662ede70f92.sboyd@kernel.org>
+        with ESMTP id S236063AbjFMMPQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 08:15:16 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29FBA10C6
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 05:15:14 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230613121512euoutp02fce1109cf8390fcded330c5722e47eb2~oNvsamL7s2354923549euoutp02O
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 12:15:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230613121512euoutp02fce1109cf8390fcded330c5722e47eb2~oNvsamL7s2354923549euoutp02O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1686658512;
+        bh=Y3ZNB5D8AVxoBSWeoCf3C/SoDBpipqf/QKoy2s3BHR8=;
+        h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+        b=B7wm5ixWroIJbQCNrxd0zNLWaJQRaHIc3+ZBnr0HnBmf5xjRwb3zRjIfrXEA0TnEh
+         nCuOkVy0iweygiAziGwSFVNPDBlHqsnwVKxlWcOhcGySQyPH4DdDM8gshANHhj5Uxx
+         rj8lHUmR+ePu8EFB0QAqvMIUUlFqltsCU3rczYOE=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230613121512eucas1p1410760ed404d847dc9574bf9fa90dc24~oNvsG5s8I0929709297eucas1p1C;
+        Tue, 13 Jun 2023 12:15:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 76.4D.37758.0DD58846; Tue, 13
+        Jun 2023 13:15:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271~oNvrmw3Ie0194501945eucas1p2F;
+        Tue, 13 Jun 2023 12:15:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230613121511eusmtrp220be5860b6b8ae4a818b2d62cc3c6736~oNvrl_9MU1045810458eusmtrp2J;
+        Tue, 13 Jun 2023 12:15:11 +0000 (GMT)
+X-AuditID: cbfec7f5-7ffff7000002937e-29-64885dd05d25
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 68.A0.10549.FCD58846; Tue, 13
+        Jun 2023 13:15:11 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230613121510eusmtip1c33b374b07701936d08581bf48011228~oNvqyD9VF2427124271eusmtip1I;
+        Tue, 13 Jun 2023 12:15:10 +0000 (GMT)
+Message-ID: <c031bff5-6219-adf0-6e73-b688b8de205e@samsung.com>
+Date:   Tue, 13 Jun 2023 14:15:10 +0200
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xknyxj2353a63nj6"
-Content-Disposition: inline
-In-Reply-To: <2f3328c4be9db6feef2cc662ede70f92.sboyd@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.11.2
+Subject: Re: [PATCH v4 03/68] clk: Move no reparent case into a separate
+ function
+Content-Language: en-US
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-actions@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+In-Reply-To: <b8d0272d-0193-fe40-3294-9e32a0235323@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAKsWRmVeSWpSXmKPExsWy7djPc7oXYjtSDJbs4rS48vU9m8WqqTtZ
+        LKY9aWKx2PT4GqvFx557rBZdv1YyW3Ru2spoMWHVNxaLrS/fMVkcW32FzaLr2hNWiyn7drFZ
+        dH6ZxWYx48c/RouLp1wt/l3byOIg4PH+Riu7x51z59k8Nq3qZPO4332cyWPzknqPF5tnMnps
+        fLeDyaP/r4HHwX2GHp83yQVwRXHZpKTmZJalFunbJXBlbDgwi7lgv1JF7/lLrA2MO2S7GDk5
+        JARMJKYcv8bcxcjFISSwglFiZ8cKKOcLo8Smvd9YIZzPjBJHjk1hgWn5NXMFO4gtJLCcUWL6
+        En2Ioo+MEl3fDrKCJHgF7CRuHf3ICGKzCKhKNOxuY4SIC0qcnPkEbJCoQKrE7msHwOqFBYIl
+        Lp08AmYzC4hL3HoynwnEZhMwlOh628UGYosIlEr8ezaVBWQZs8BRZomTV24zgyQ4BewlTv/+
+        DNUsL9G8dTbYDxIC+zklPnVMYIY420Vi0f5FUC8IS7w6voUdwpaR+L8TZBtIQzujxILf96Gc
+        CYwSDc9vMUJUWUvcOfcL6A4OoBWaEut36YOYEgKOEtf6+SFMPokbbwUhbuCTmLRtOjNEmFei
+        o00IYoaaxKzj6+C2HrxwiXkCo9IspGCZheT9WUi+mYWwdgEjyypG8dTS4tz01GLjvNRyveLE
+        3OLSvHS95PzcTYzARHj63/GvOxhXvPqod4iRiYPxEKMEB7OSCO9TjfYUId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rzatieThQTSE0tSs1NTC1KLYLJMHJxSDUzNSTyysVb/DqeItFR/16t8aGDd
+        fD0/x8JzclHa9SC/vxuFtqzU/t1m5WbX//FLqwpT+9xX3kYVfFU/LsQH3S54oHl06b8vVslJ
+        EVuDktr7dux+3bly6sWfCpu+T3M7GhYiZvGnOSiv3eL3Gh5OiUXOzCu6Q1hXxU+SO30m8+Gy
+        gzt6en5XzNT53x7/ZHXEDX03y7QpyZGedbV9T8yLrpXN3PtZN/yJ41QhiXU+Vlc0w2f6ZFRw
+        GKrFsE6TKP+yeW6fSqLCTvcnT6QmfDLOa1m7b9qThd3z1qdkStiKTy932X59un7wE0n3vGM5
+        pr9cgvNnr/v70uD+spzE3rVTPeI1n8c6F9XqX0l/Ex54W4mlOCPRUIu5qDgRAI8LSEXzAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrCIsWRmVeSWpSXmKPExsVy+t/xu7rnYztSDJrbVS2ufH3PZrFq6k4W
+        i2lPmlgsNj2+xmrxseceq0XXr5XMFp2btjJaTFj1jcVi68t3TBbHVl9hs+i69oTVYsq+XWwW
+        nV9msVnM+PGP0eLiKVeLf9c2sjgIeLy/0crucefceTaPTas62Tzudx9n8ti8pN7jxeaZjB4b
+        3+1g8uj/a+BxcJ+hx+dNcgFcUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK
+        +nY2Kak5mWWpRfp2CXoZGw7MYi7Yr1TRe/4SawPjDtkuRk4OCQETiV8zV7B3MXJxCAksZZT4
+        1dXIDpGQkTg5rYEVwhaW+HOtiw2i6D2jxNcFO5lBErwCdhK3jn5kBLFZBFQlGna3MULEBSVO
+        znzCAmKLCqRK3F3SzwZiCwsES1w6eQRsKLOAuMStJ/OZQGw2AUOJrrddYDUiAqUSn7fuZAFZ
+        xixwlFni58mFjBCbDzBKnDj/G6yKU8Be4vTvz1CTzCS6tnYxQtjyEs1bZzNPYBSaheSQWUgW
+        zkLSMgtJywJGllWMIqmlxbnpucWGesWJucWleel6yfm5mxiB0b/t2M/NOxjnvfqod4iRiYPx
+        EKMEB7OSCO9TjfYUId6UxMqq1KL8+KLSnNTiQ4ymwNCYyCwlmpwPTD95JfGGZgamhiZmlgam
+        lmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1MW61awrfcYU1eYyjbxbQyZWpClsfH+J1C
+        39nkK64/Uj2iV73xttj/XXNPzvwTINB1eEeI0P6Su7ah1kpqHOqKz1T2bGZbF8snuXPNrtTs
+        7KyWzhOxz3/H3X3BGZcYY1yStD7WP9isfYXzXB/+w/M75Vp7Amey2k54NT2J+9i7yc48Yqfl
+        YrV8mv2unBf35S46eP7ywRI+2bU5biefn2jb/j777/LkJQ4zXHIrJ/AtzFxhPbPhguj2zdPN
+        91xht/GxK2fmytuXudEgYnZpc8eHUzfitrpOyY+Z/TDNJ3XNp4f3Hm+7m7Dyof7JZBsxS3vl
+        unU3wj4tVXle+mO1yTe91a4BH5T/RB2TEmWflztLiaU4I9FQi7moOBEA7ZGLmYcDAAA=
+X-CMS-MailID: 20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+        <20221018-clk-range-checks-fixes-v4-3-971d5077e7d2@cerno.tech>
+        <b8d0272d-0193-fe40-3294-9e32a0235323@samsung.com>
+        <CGME20230613121511eucas1p2595e0de21fadbafc1f6ffdc5636b9271@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 13.06.2023 13:15, Marek Szyprowski wrote:
+> On 05.05.2023 13:25, Maxime Ripard wrote:
+>> From: Stephen Boyd <sboyd@kernel.org>
+>>
+>> We'll need to turn the code in clk_mux_determine_rate_flags() to deal
+>> with CLK_SET_RATE_NO_REPARENT into a helper clock drivers will be able
+>> to use if they don't want to allow reparenting.
+>>
+>> Cc: Abel Vesa <abelvesa@kernel.org>
+>> Cc: Alessandro Zummo <a.zummo@towertech.it>
+>> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>> Cc: "Andreas Färber" <afaerber@suse.de>
+>> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+>> Cc: Chen-Yu Tsai <wens@csie.org>
+>> Cc: Chen-Yu Tsai <wenst@chromium.org>
+>> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+>> Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+>> Cc: Daniel Vetter <daniel@ffwll.ch>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: David Lechner <david@lechnology.com>
+>> Cc: Dinh Nguyen <dinguyen@kernel.org>
+>> Cc: Fabio Estevam <festevam@gmail.com>
+>> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Cc: Jaroslav Kysela <perex@perex.cz>
+>> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+>> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+>> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+>> Cc: Liam Girdwood <lgirdwood@gmail.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+>> Cc: Manivannan Sadhasivam <mani@kernel.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Cc: Markus Schneider-Pargmann <msp@baylibre.com>
+>> Cc: Max Filippov <jcmvbkbc@gmail.com>
+>> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+>> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+>> Cc: Miles Chen <miles.chen@mediatek.com>
+>> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+>> Cc: Orson Zhai <orsonzhai@gmail.com>
+>> Cc: Paul Cercueil <paul@crapouillou.net>
+>> Cc: Peng Fan <peng.fan@nxp.com>
+>> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+>> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+>> Cc: Samuel Holland <samuel@sholland.org>
+>> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+>> Cc: Sekhar Nori <nsekhar@ti.com>
+>> Cc: Shawn Guo <shawnguo@kernel.org>
+>> Cc: Takashi Iwai <tiwai@suse.com>
+>> Cc: Thierry Reding <thierry.reding@gmail.com>
+>> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+>> Cc: Vinod Koul <vkoul@kernel.org>
+>> Cc: dri-devel@lists.freedesktop.org
+>> Cc: linux-actions@lists.infradead.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-mips@vger.kernel.org
+>> Cc: linux-phy@lists.infradead.org
+>> Cc: linux-renesas-soc@vger.kernel.org
+>> Cc: linux-rtc@vger.kernel.org
+>> Cc: linux-stm32@st-md-mailman.stormreply.com
+>> Cc: linux-sunxi@lists.linux.dev
+>> Cc: linux-tegra@vger.kernel.org
+>> Cc: NXP Linux Team <linux-imx@nxp.com>
+>> Cc: patches@opensource.cirrus.com
+>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+>> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+>> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+>> ---
+>
+> This patch landed in today's linux-next as commit 1b4e99fda73f ("clk: 
+> Move no reparent case into a separate function"). Unfortunately it 
+> causes serious regression of some of my test boards. Namely Exynos3250 
+> based boards are so slow after it, that my test scripts fail with a 
+> timeout waiting for them to finish booting. I will try to debug this 
+> later in the evening to check what has happened that some clocks got 
+> very low rate.
+>
+I just got a few spare minutes, so I decided to take a look into this 
+issue. The following change fixed my problem:
 
---xknyxj2353a63nj6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index ffc9f03840b7..7ac9f7a8cb84 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -629,6 +629,7 @@ clk_core_determine_rate_no_reparent(struct clk_hw *hw,
+                 best = clk_core_get_rate_nolock(core);
+         }
 
-On Mon, Jun 12, 2023 at 05:10:35PM -0700, Stephen Boyd wrote:
-> Quoting Sebastian Reichel (2023-05-26 10:10:56)
-> > ULONG_MAX is used by a few drivers to figure out the highest available
-> > clock rate via clk_round_rate(clk, ULONG_MAX). Since abs() takes a
-> > signed value as input, the current logic effectively calculates with
-> > ULONG_MAX =3D -1, which results in the worst parent clock being chosen
-> > instead of the best one.
-> >=20
-> > For example on Rockchip RK3588 the eMMC driver tries to figure out
-> > the highest available clock rate. There are three parent clocks
-> > available resulting in the following rate diffs with the existing
-> > logic:
-> >=20
-> > GPLL:   abs(18446744073709551615 - 1188000000) =3D 1188000001
-> > CPLL:   abs(18446744073709551615 - 1500000000) =3D 1500000001
-> > XIN24M: abs(18446744073709551615 -   24000000) =3D   24000001
->=20
-> I had to read the abs() macro to understand this and also look at the
-> types for 'req->rate' and 'tmp_req.rate' (both are unsigned long) to
-> understand what's going on. I'm not sure I'd say that abs() takes the
-> input as a signed value. Instead, it converts the input to a signed type
-> to figure out if it should negate the value or not. The problem is the
-> subtraction result is larger than can fit in a signed long long on a
-> 64-bit machine, so we can't use the macro at all if the type is unsigned
-> long and the sign bit is set.
->=20
-> >=20
-> > As a result the clock framework will promote a maximum supported
-> > clock rate of 24 MHz, even though 1.5GHz are possible. With the
-> > updated logic any casting between signed and unsigned is avoided
-> > and the numbers look like this instead:
-> >=20
-> > GPLL:   18446744073709551615 - 1188000000 =3D 18446744072521551615
-> > CPLL:   18446744073709551615 - 1500000000 =3D 18446744072209551615
-> > XIN24M: 18446744073709551615 -   24000000 =3D 18446744073685551615
-> >=20
-> > As a result the parent with the highest acceptable rate is chosen
-> > instead of the parent clock with the lowest one.
-> >=20
-> > Cc: stable@vger.kernel.org
-> > Fixes: 49502408007b ("mmc: sdhci-of-dwcmshc: properly determine max clo=
-ck on Rockchip")
-> > Tested-by: Christopher Obbard <chris.obbard@collabora.com>
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > ---
-> >  drivers/clk/clk-composite.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-> > index edfa94641bbf..66759fe28fad 100644
-> > --- a/drivers/clk/clk-composite.c
-> > +++ b/drivers/clk/clk-composite.c
-> > @@ -119,7 +119,10 @@ static int clk_composite_determine_rate(struct clk=
-_hw *hw,
-> >                         if (ret)
-> >                                 continue;
-> > =20
-> > -                       rate_diff =3D abs(req->rate - tmp_req.rate);
-> > +                       if (req->rate >=3D tmp_req.rate)
-> > +                               rate_diff =3D req->rate - tmp_req.rate;
-> > +                       else
-> > +                               rate_diff =3D tmp_req.rate - req->rate;
->=20
-> This problem is widespread
->=20
->  $ git grep abs\(.*- -- drivers/clk/ | wc -l
->  52
->=20
-> so we may have a bigger problem here. Maybe some sort of coccinelle
-> script or smatch checker can be written to look for abs() usage with an
-> unsigned long type or a subtraction expression. This may also be worse
-> after converting drivers to clk_hw_forward_rate_request() and
-> clk_hw_init_rate_request() because those set the rate to ULONG_MAX.
-> +Maxime for that as an FYI.
++       req->best_parent_rate = best;
+         req->rate = best;
 
-We set max_rate to ULONG_MAX in those functions, and I don't think we
-have a lot of driver that will call clk_round_rate on the max rate, so
-we should be somewhat ok?
+         return 0;
 
-> Maybe we need an abs_diff() macro instead, that checks the type and on
-> CONFIG_64BIT uses a conditional like above, but if it is a smaller type
-> then it just uses abs() on the expression because it knows the
-> difference will fit in the signed type conversion. I see that such a
-> macro exists in some drm driver, so maybe it can be promoted to
-> linux/math.h and then every grep hit above can use this macro instead.
-> Care to take that on?
->=20
-> Either way, I've applied this to clk-fixes as it is a regression. I'm
-> just worried that this problem is more extensive.
+best_parent_rate is still being used somewhere in the code and needs to 
+be updated regardless of the CLK_SET_RATE_NO_REPARENT flag.
 
-Yeah, that construct is pretty much everywhere, including in the core :/
+ > ...
 
-Maxime
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
---xknyxj2353a63nj6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIhdoQAKCRDj7w1vZxhR
-xU5bAP9g7Tee5vJITJfE+Ar+pEw/9kcbIf86Je/pPgxBQ9p6QQD/VfCaShlIUjQe
-fGnC8mqsu1vU1OCltzoWRjv51iAQegw=
-=mwAH
------END PGP SIGNATURE-----
-
---xknyxj2353a63nj6--
