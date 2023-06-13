@@ -2,185 +2,213 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B882EB64D9
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 13:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E29A6EB64DA
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 14:03:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240128AbjFMNwb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 09:52:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52344 "EHLO
+        id S239955AbjFMODQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 10:03:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240005AbjFMNw3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 09:52:29 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B74651FF7
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 06:52:00 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f8c5d0b216so7478925e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 06:52:00 -0700 (PDT)
+        with ESMTP id S242476AbjFMODM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 10:03:12 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0BBD11D
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 07:03:09 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2b1b8593263so68036061fa.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 07:03:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1686664317; x=1689256317;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WaeJYs/uG6fynkKfa9zh2deKdFZIe8/Di6A1zgej6LU=;
-        b=Q1TcKKMKKnZe7DzIPaTDFI6gquigAuW8XeW4+klDezAjpwuO6fGCnJ1f7r/u6KZ0ER
-         O9dM1DXba6jhcO9WyqBBbXkOHVH51o+LTctGbKiFGcSH95isneJQPVjB5zHyiodmtN3Q
-         iiKAFQe47MdbZTDN7b34IMWXoX3zXEDuCXxkBRbmTYHrBDa3wPpgoRjui2Igf2KIbXxJ
-         LQWjxywaHFKOJAd0qWNhlGfaGxanYdhKtQUL87ogp+qDZ0PVjsxPh/zmXDXpLVRlr1QP
-         CsMUeQ2Eo5dTH5eOxqCdjEV+d9P6uNSTayFwtj3BByZuvQAvlobd7CngPX5JuQ9zHbHY
-         fMiw==
+        d=linaro.org; s=google; t=1686664988; x=1689256988;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fgkWRSFPd0yuD0FGNaR13nds2yAxVTwu7JL5XkNXpyk=;
+        b=zHRXGuIuBd+yORTqRycH2QnjeEOxY2V7UnUyoRU01wMPDcAx3F1buHnlmfPm0uOy2N
+         6f8vCg/96QYp7+M9m8cVxHbr8m5kkkXMjub5BvRNov0Lg2OL18nUhqtPy9ZoMK3x6l7o
+         9H9NuFEtjDhNUOE7Ly3X64OT+MMlIu9zCOHihcabAfZwYqpEbHOnNiZyxZd92urL3yH0
+         k8SfpVvmrS4tqu2470z1qpe/7zPMZo+eHrUhR9RS2thNnsksRB1AN4dlrjI4nK/SHCPM
+         imGT5XGydOjhpeFjmz4O5l28uyhU637HwYZ1mJDN9YLizOXB9EVhhx3hb7y/0SDDA4lB
+         0GAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686664317; x=1689256317;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WaeJYs/uG6fynkKfa9zh2deKdFZIe8/Di6A1zgej6LU=;
-        b=ZiIa8ZL0XKdkoNFvCsoAvuQDNPNiRBprKgZCb+tO/AamuACpZfk/isxSKr4fj3BYiz
-         QPr4c6n+tUP7rFa7M12aOFHuoy7B7G0h8hgGt4GxMhOmi19KHpUkA6pBifWpM75jl9eT
-         p3jEUd4rm29VhthkJyCfxaoEZfg0zQa08vF4LXIDfh9l37aHvA1IPnNAF03MnzLIgyWm
-         72d+xDC49M7iMr39y/6VrwhLw3NCr98qiS+Kwz/v5Hbr5M0wIM1HGuJTj+mwJ7fEIBaV
-         c2wYSAjQnfJA0zUbMzzwjoOs/Ka7USBVk1X2sDtLD9dPahCuLxFYl6kL7YC5BeRi1Q1S
-         gAkw==
-X-Gm-Message-State: AC+VfDy/+Oi7yjY8Avdt8F/PHcYmo/IdnUfx/Gtc0ZiJY9oMzEJixL6H
-        XV2iDXz0TL3QkrI94hMZiVYAhg==
-X-Google-Smtp-Source: ACHHUZ6tbmwrKTMNvbpuPLgT+1R9lK2K8a7nds1UQDOt+PvY6ORk2+AOkeh44wiUBJm89/taQrjyYQ==
-X-Received: by 2002:adf:f548:0:b0:30e:1103:2e39 with SMTP id j8-20020adff548000000b0030e11032e39mr6622276wrp.58.1686664317375;
-        Tue, 13 Jun 2023 06:51:57 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id n16-20020adfe350000000b0030e5b1fffc3sm15502558wrj.9.2023.06.13.06.51.56
+        d=1e100.net; s=20221208; t=1686664988; x=1689256988;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fgkWRSFPd0yuD0FGNaR13nds2yAxVTwu7JL5XkNXpyk=;
+        b=cDFq6FzCnrnCJnDDlRnr+QTDUhU4yjtzvCo9IYUBdZ4ubTOf1YgrVU6vTOn/J1yZux
+         qCs6ImjEof1Rki/jAZvnKEJcz5AHBzEj0/WBE9FIJW1f3q/LXxXqesstM4gsgM9F6TvZ
+         U/3WBrCXmfX3MA5AIo0de1isWcJLms28kbjHx7h17SXwc1CExyz5ZNHuq2JsCZyc7WOz
+         J8u2b0KlkXpmbPGcVeu0Khb5cDB5Bk56u0dVWa1m9/ATUpkDFHNkk5oREjrj/T32agKi
+         m/IsQKfwsW27aQKmiKcemMA/zwdExuK2zoN4wnBw9byvilgXa5QXnpY+wSw1ZRT9L2/l
+         p14Q==
+X-Gm-Message-State: AC+VfDwi+IeQ4hGixtn3a5h8/c2hd2JcrnUrlMPTgvo8vvi5QsiOLdET
+        JckfSdYze4Sa6Tg1kTCPc7kmRQ==
+X-Google-Smtp-Source: ACHHUZ6zTU5wN3YPGfxLYadXb5CUKxNEAqCy7iL6N7ZCNbxg6Ynd/e9WzAiE+zpbR9yKsCfY2xEUiQ==
+X-Received: by 2002:a2e:6a09:0:b0:2b1:ecac:91d3 with SMTP id f9-20020a2e6a09000000b002b1ecac91d3mr4570823ljc.25.1686664987908;
+        Tue, 13 Jun 2023 07:03:07 -0700 (PDT)
+Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id a18-20020a05651c011200b002b32af2e9c6sm901490ljb.116.2023.06.13.07.03.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jun 2023 06:51:56 -0700 (PDT)
-Date:   Tue, 13 Jun 2023 15:51:55 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Petr Oros <poros@redhat.com>
-Cc:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        kuba@kernel.org, vadfed@meta.com, jonathan.lemon@gmail.com,
-        pabeni@redhat.com, corbet@lwn.net, davem@davemloft.net,
-        edumazet@google.com, vadfed@fb.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
-        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
-        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
-        michal.michalik@intel.com, gregkh@linuxfoundation.org,
-        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
-        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
-        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
-        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
-        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
-        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
-        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
-        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mschmidt@redhat.com,
-        linux-clk@vger.kernel.org, vadim.fedorenko@linux.dev,
-        Jiri Pirko <jiri@nvidia.com>
-Subject: Re: [RFC PATCH v8 06/10] netdev: expose DPLL pin handle for netdevice
-Message-ID: <ZIh0e5b/xp6H85pN@nanopsycho>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
- <20230609121853.3607724-7-arkadiusz.kubalewski@intel.com>
- <343e2638d2e9b3d13216235f85c2d1dae2634881.camel@redhat.com>
+        Tue, 13 Jun 2023 07:03:07 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH v4 00/22] Restructure RPM SMD ICC
+Date:   Tue, 13 Jun 2023 16:03:00 +0200
+Message-Id: <20230526-topic-smd_icc-v4-0-5ba82b6fbba2@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <343e2638d2e9b3d13216235f85c2d1dae2634881.camel@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABR3iGQC/33NywrCMBQE0F+RrI00j7apK/9DRPK4tRdqUpIal
+ NJ/N7oT0eUMnJmFJIgIiew3C4mQMWHwJcjththB+wtQdCUTXnFR1byhc5jQ0nR1Z7SWGsWZ6KT
+ SNThSjNEJqIna26EofxvHUk4Rery/T46nkgdMc4iP92dmr/bXfGa0osz0CpqmEVbCYUSvY9iFe
+ CGvqcz/cl441J2QpmqdYuKLi79cFF73pnWiM6qV/Qdf1/UJcZ4+kj4BAAA=
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686664985; l=6104;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=f4ve/r5dOx6VGwd2ZbygUbCzlofyl0BUKmt3Opqvf44=;
+ b=2ywBgLO92trnU5XePfddi6Ac6Xr37EsS/ZjMv8v03lI4L7b66oU2vmCijK3IQHzZg/qS8W0FR
+ OhBh3P95LsbBkxQ6PcJzeop4KXcVbTyGQbj6skmFziRj8SCwW1ryzLK
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mon, Jun 12, 2023 at 11:17:23AM CEST, poros@redhat.com wrote:
->Arkadiusz Kubalewski píše v Pá 09. 06. 2023 v 14:18 +0200:
->> From: Jiri Pirko <jiri@nvidia.com>
+This series reshuffles things around, moving the management of SMD RPM
+bus clocks to the interconnect framework where they belong. This helps
+us solve a couple of issues:
 
-[...]
+1. We can work towards unused clk cleanup of RPMCC without worrying
+   about it killing some NoC bus, resulting in the SoC dying.
+   Deasserting actually unused RPM clocks (among other things) will
+   let us achieve "true SoC-wide power collapse states", also known as
+   VDD_LOW and VDD_MIN.
 
+2. We no longer have to keep tons of quirky bus clock ifs in the icc
+   driver. You either have a RPM clock and call "rpm set rate" or you
+   have a single non-RPM clock (like AHB_CLK_SRC) or you don't have any.
 
->> +static size_t rtnl_dpll_pin_size(const struct net_device *dev)
->> +{
->> +       size_t size = nla_total_size(0); /* nest IFLA_DPLL_PIN */
->> +
->> +       if (dev->dpll_pin)
->> +               size += dpll_msg_pin_handle_size(dev->dpll_pin);
->
->Hi Arkadiusz,
->
->net_device->dpll_pin is only valid if IS_ENABLED(CONFIG_DPLL)
->But the code in net/core/rtnetlink.c doesn't respect that.
->If CONFIG_DPLL is not set, net/core/rtnetlink.c cannot be compiled.
->
->Regards,
->Petr 
+3. There's less overhead - instead of going through layers and layers of
+   the CCF, ratesetting comes down to calling max() and sending a single
+   RPM message. ICC is very very dynamic so that's a big plus.
 
-You are correct. Here's the squash-patch to fix this. Arkadiusz, could
-you please make the squash? Thanks!
+The clocks still need to be vaguely described in the clk-smd-rpm driver,
+as it gives them an initial kickoff, before actually telling RPM to
+enable DVFS scaling.  After RPM receives that command, all clocks that
+have not been assigned a rate are considered unused and are shut down
+in hardware, leading to the same issue as described in point 1.
 
-diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
-index e6efc17aaf26..00dc96c3ade4 100644
---- a/drivers/dpll/dpll_netlink.c
-+++ b/drivers/dpll/dpll_netlink.c
-@@ -303,12 +303,14 @@ dpll_cmd_pin_fill_details(struct sk_buff *msg, struct dpll_pin *pin,
- 
- size_t dpll_msg_pin_handle_size(struct dpll_pin *pin)
- {
--	return nla_total_size(4); /* DPLL_A_PIN_ID */
-+	return pin ? nla_total_size(4) : 0; /* DPLL_A_PIN_ID */
- }
- EXPORT_SYMBOL_GPL(dpll_msg_pin_handle_size);
- 
- int dpll_msg_add_pin_handle(struct sk_buff *msg, struct dpll_pin *pin)
- {
-+	if (!pin)
-+		return 0;
- 	if (nla_put_u32(msg, DPLL_A_PIN_ID, pin->id))
- 		return -EMSGSIZE;
- 	return 0;
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index b002e3cc9943..82ad12fd4266 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -3967,6 +3967,16 @@ int dev_get_port_parent_id(struct net_device *dev,
- bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b);
- void netdev_dpll_pin_set(struct net_device *dev, struct dpll_pin *dpll_pin);
- void netdev_dpll_pin_clear(struct net_device *dev);
-+
-+static inline struct dpll_pin *netdev_dpll_pin(const struct net_device *dev)
-+{
-+#if IS_ENABLED(CONFIG_DPLL)
-+	return dev->dpll_pin;
-+#else
-+	return NULL;
-+#endif
-+}
-+
- struct sk_buff *validate_xmit_skb_list(struct sk_buff *skb, struct net_device *dev, bool *again);
- struct sk_buff *dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
- 				    struct netdev_queue *txq, int *ret);
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index ebe9ae8608fc..67dd455e15c7 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1056,8 +1056,7 @@ static size_t rtnl_dpll_pin_size(const struct net_device *dev)
- {
- 	size_t size = nla_total_size(0); /* nest IFLA_DPLL_PIN */
- 
--	if (dev->dpll_pin)
--		size += dpll_msg_pin_handle_size(dev->dpll_pin);
-+	size += dpll_msg_pin_handle_size(netdev_dpll_pin(dev));
- 
- 	return size;
- }
-@@ -1790,11 +1789,9 @@ static int rtnl_fill_dpll_pin(struct sk_buff *skb,
- 	if (!dpll_pin_nest)
- 		return -EMSGSIZE;
- 
--	if (dev->dpll_pin) {
--		ret = dpll_msg_add_pin_handle(skb, dev->dpll_pin);
--		if (ret < 0)
--			goto nest_cancel;
--	}
-+	ret = dpll_msg_add_pin_handle(skb, netdev_dpll_pin(dev));
-+	if (ret < 0)
-+		goto nest_cancel;
- 
- 	nla_nest_end(skb, dpll_pin_nest);
- 	return 0;
+We can consider marking them __initconst in the future, but this series
+is very fat even without that..
+
+Apart from that, it squashes a couple of bugs that really need fixing..
+
+--- MERGING STRATEGY ---
+If Stephen and Georgi agree, it would be best to take all of this through
+the qcom tree, as it touches on heavily intertwined components and
+introduces compile-time dependencies between icc and clk drivers.
+
+Tested on SM6375 (OOT), MSM8998 (OOT), MSM8996.
+
+MSM8974 conversion to common code and modernization will be handled separately.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Changes in v4:
+- Only set clk rate on a context if necessary
+- Mention qcom,icc.h is not the correct header in "Control bus rpmcc form icc"
+- Fix the bindings (BIT vs 1<<)
+- Fix one more wrong use of qcom,icc.h in "Fix bucket numer" and uninclude it
+- Drop "Allow negative QoS offset" (will be handled separately)
+- Export icc clocks descriptions to unbreak =m builds
+- Pick up tags
+- Link to v3: https://lore.kernel.org/r/20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org
+
+Changes in v3:
+- Use devm_clk_get_optional and only get() the clock once
+- Drop unnecessary NULL-checks for qp->bus_clk
+- Handle ARM32 CCF limitations, add an explicit comment about them
+- Use Stephan's alternative rpmcc readiness check
+- Fix one more wrong usage of QCOM_ICC_NUM_BUCKETS in icc-rpm.h
+- Introduce new dt-bindings for icc rpm tags
+- Mention the rpm tags situation in the commit message of
+  "Fix bucket number"
+- Pick up tags
+- Link to v2: https://lore.kernel.org/r/20230526-topic-smd_icc-v2-0-e5934b07d813@linaro.org
+
+Changes in v2:
+- Sort entries properly in "Add missing headers in icc-rpm.h"
+- Fix the check for no clocks on a given provider
+- Replace "Divide clk rate by src node bus width" with a proper fix
+- Add "Set correct bandwidth through RPM bw req"
+- Split "Add QCOM_SMD_RPM_STATE_NUM" into 2 logical changes
+- Move "Separate out interconnect bus clocks" a bit later in the series
+- Link to v1: https://lore.kernel.org/r/20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org
+
+---
+Konrad Dybcio (21):
+      dt-bindings: interconnect: Add Qcom RPM ICC bindings
+      soc: qcom: smd-rpm: Add QCOM_SMD_RPM_STATE_NUM
+      soc: qcom: smd-rpm: Use tabs for defines
+      clk: qcom: smd-rpm: Move some RPM resources to the common header
+      interconnect: qcom: icc-rpm: Introduce keep_alive
+      interconnect: qcom: Fold smd-rpm.h into icc-rpm.h
+      interconnect: qcom: smd-rpm: Add rpmcc handling skeleton code
+      interconnect: qcom: Add missing headers in icc-rpm.h
+      interconnect: qcom: Define RPM bus clocks
+      interconnect: qcom: sdm660: Hook up RPM bus clk definitions
+      interconnect: qcom: msm8996: Hook up RPM bus clk definitions
+      interconnect: qcom: qcs404: Hook up RPM bus clk definitions
+      interconnect: qcom: msm8939: Hook up RPM bus clk definitions
+      interconnect: qcom: msm8916: Hook up RPM bus clk definitions
+      interconnect: qcom: qcm2290: Hook up RPM bus clk definitions
+      interconnect: qcom: icc-rpm: Control bus rpmcc from icc
+      clk: qcom: smd-rpm: Separate out interconnect bus clocks
+      interconnect: qcom: icc-rpm: Fix bucket number
+      interconnect: qcom: icc-rpm: Set bandwidth on both contexts
+      interconnect: qcom: icc-rpm: Set correct bandwidth through RPM bw req
+      interconnect: qcom: icc-rpm: Fix bandwidth calculations
+
+Stephan Gerhold (1):
+      soc: qcom: smd-rpm: Move icc_smd_rpm registration to clk-smd-rpm
+
+ drivers/clk/qcom/clk-smd-rpm.c                  | 312 +++++++++++-------------
+ drivers/interconnect/qcom/Makefile              |   2 +-
+ drivers/interconnect/qcom/icc-rpm-clocks.c      |  77 ++++++
+ drivers/interconnect/qcom/icc-rpm.c             | 217 ++++++++--------
+ drivers/interconnect/qcom/icc-rpm.h             |  55 ++++-
+ drivers/interconnect/qcom/msm8916.c             |   4 +-
+ drivers/interconnect/qcom/msm8939.c             |   5 +-
+ drivers/interconnect/qcom/msm8974.c             |   2 +-
+ drivers/interconnect/qcom/msm8996.c             |   9 +-
+ drivers/interconnect/qcom/qcm2290.c             |   7 +-
+ drivers/interconnect/qcom/qcs404.c              |   4 +-
+ drivers/interconnect/qcom/sdm660.c              |   7 +-
+ drivers/interconnect/qcom/smd-rpm.c             |  24 +-
+ drivers/interconnect/qcom/smd-rpm.h             |  15 --
+ drivers/soc/qcom/smd-rpm.c                      |  17 +-
+ include/dt-bindings/interconnect/qcom,rpm-icc.h |  13 +
+ include/linux/soc/qcom/smd-rpm.h                |  20 +-
+ 17 files changed, 453 insertions(+), 337 deletions(-)
+---
+base-commit: 1f6ce8392d6ff486af5ca96df9ded5882c4b6977
+change-id: 20230526-topic-smd_icc-b8213948a5ed
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
