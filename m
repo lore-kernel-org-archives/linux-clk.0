@@ -2,240 +2,305 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3874C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 11:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3B4C7EE29
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 11:25:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239847AbjFMLXa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 07:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57840 "EHLO
+        id S241824AbjFMLZQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 07:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241580AbjFMLXB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 07:23:01 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32ECA109
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 04:22:31 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f62cf9755eso6510448e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 04:22:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686655332; x=1689247332;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KEiBlQtM1KSXPhrQOGJJ3O3U5L5lQAvJZUw1sBa4LaY=;
-        b=Q+ddL3nmDNPdTlA6UknAFxrHXmnW+yYVeECzdf0LBsU328rfuQBMTcGZIWDgCtDryB
-         Fdlfz97nbC0SKldsxcZK168dY6h5h4U0sN/DaOoO1aSPKRfsNCDx5xkt3JCNx8FJOTKl
-         1ly2NkBaSZEa30pZv2CX2uIUHmACtVnW2DQRpk0vZ7BKwRQZWHI8rc1qEjhJubG6YYx7
-         auBpou+K2cucsoLG526aZYLhBbCC/EYkiEPPnGyFBaDAt7Wcegr0+q8urmbhhzJXI68P
-         bg8QzAo2ZwOx4kLtj5qnZyKAwmv1w3s8Vzn0bwVj83j3h+/CaYR/P+X9ubjjIEYfMKlP
-         8WtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686655332; x=1689247332;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KEiBlQtM1KSXPhrQOGJJ3O3U5L5lQAvJZUw1sBa4LaY=;
-        b=XA9RzxIN7cPD0jpb+d76sODmwE/WKCmkd/NEhSXOodSxbpBT8IWevUCTuw4lCs9GYp
-         5fhoCKvwbRQoAAUMqgdZtmQ4OQrOJLVDTPG8bbnToI3k265KI74egiZM7ZfIjR1PUggT
-         gjgq+Pqfell4OTaJo8FmZSjYqq8QYT7Ex6nXu4ubOQfarffPR/zHEn9dqVgTq90ODJFp
-         ymFUtsC5Q9DuCX0n5SCfAqjAFRPg666Z8Y9Odb2mlnHcqJC9U3a9TYJ2FzAnSEkEkIJJ
-         RFVWKm/+eaLOkH92aNfH4NZO6u9v9g+uZi+ltm9e39kWpSGY5OsDBd+78J1Emtt16SRd
-         JwTA==
-X-Gm-Message-State: AC+VfDxKa8tfgU4FhjhV8mSUCcqqAsR6U+MTwzYcSnePcNHsVAiFH5cQ
-        ra60IBPbgUVUzS4RKmDvzjo/Pg==
-X-Google-Smtp-Source: ACHHUZ7ef45PANVRG898Mup8KxCLByZBkt0J36XqbeDblWj/cLUyDMmPpoyrU329EgjQKrYm7x1U1w==
-X-Received: by 2002:a2e:3801:0:b0:2b2:a6:6132 with SMTP id f1-20020a2e3801000000b002b200a66132mr4627803lja.25.1686655332174;
-        Tue, 13 Jun 2023 04:22:12 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id e3-20020a2e8183000000b002adaacdb900sm2113062ljg.42.2023.06.13.04.22.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jun 2023 04:22:11 -0700 (PDT)
-Message-ID: <88ce120e-dc2e-a07f-3c9f-53073e51a1af@linaro.org>
-Date:   Tue, 13 Jun 2023 13:22:09 +0200
+        with ESMTP id S242361AbjFMLY7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 07:24:59 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C8FC113
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 04:24:57 -0700 (PDT)
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20230613111503euoutp0207417f07e8d711c6a7909fedf95af0ca~oM7Lj3Qye2035820358euoutp02k
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:15:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20230613111503euoutp0207417f07e8d711c6a7909fedf95af0ca~oM7Lj3Qye2035820358euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1686654903;
+        bh=8MNqKmFBmNPNbL2L39V5adtMllTU04IWiRfgO6kTSoY=;
+        h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
+        b=Sc1ihiwrLnmDOHfF61n1Plq81xkgGB1Tey91Z4N2taAyN0C4JNy22uM9gd9Q9abQb
+         qOSnHHoexZC+XRwbzlgaPJY4kMe2fpkwx4wdrjZ7HDtjF76nTcSinVnANijNVxjp3w
+         KqMyWLs2h62cjhSLISRZJLFX5i1qKEIXQZGvL83k=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20230613111503eucas1p1cbe1b66e83e237b58f3a087e842dda04~oM7LCGyw-0675806758eucas1p1K;
+        Tue, 13 Jun 2023 11:15:03 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E3.FA.42423.7BF48846; Tue, 13
+        Jun 2023 12:15:03 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20230613111502eucas1p2644889c9de1abfe1a14a3b549772f247~oM7KfHuXo0268402684eucas1p2U;
+        Tue, 13 Jun 2023 11:15:02 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20230613111502eusmtrp25e1c0fdc110dac9f9919c39e919b5ff5~oM7KeP5tX0735307353eusmtrp2L;
+        Tue, 13 Jun 2023 11:15:02 +0000 (GMT)
+X-AuditID: cbfec7f2-a3bff7000002a5b7-a0-64884fb7fd54
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1C.88.14344.6BF48846; Tue, 13
+        Jun 2023 12:15:02 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20230613111501eusmtip1d12c9c1424af1c1780034808e376f4d9~oM7Jqb4px2387323873eusmtip1Y;
+        Tue, 13 Jun 2023 11:15:01 +0000 (GMT)
+Message-ID: <b8d0272d-0193-fe40-3294-9e32a0235323@samsung.com>
+Date:   Tue, 13 Jun 2023 13:15:01 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0)
+        Gecko/20100101 Thunderbird/102.11.2
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v4 03/68] clk: Move no reparent case into a separate
+ function
+To:     Maxime Ripard <maxime@cerno.tech>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
- <20230526-topic-smd_icc-v3-18-5fb7d39b874f@linaro.org>
- <ZIeGGn7emge6Xkb0@gerhold.net>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH v3 18/23] interconnect: qcom: icc-rpm: Control bus rpmcc
- from icc
-In-Reply-To: <ZIeGGn7emge6Xkb0@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-actions@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Language: en-US
+In-Reply-To: <20221018-clk-range-checks-fixes-v4-3-971d5077e7d2@cerno.tech>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPKsWRmVeSWpSXmKPExsWy7djP87rb/TtSDBbN47a48vU9m8WqqTtZ
+        LKY9aWKx2PT4GqvFx557rBZdv1YyW3Ru2spoMWHVNxaLrS/fMVkcW32FzaLr2hNWiyn7drFZ
+        dH6ZxWYx48c/RouLp1wt/l3byOIg4PH+Riu7x51z59k8Nq3qZPO4332cyWPzknqPF5tnMnps
+        fLeDyaP/r4HHwX2GHp83yQVwRXHZpKTmZJalFunbJXBl/JnwjLmgy6hi55MpbA2M7zS7GDk4
+        JARMJJbcUe1i5OQQEljBKLF7m1YXIxeQ/QXI/n2LFcL5zCjR/mMmM0zDqRVREPHljBJ77r1g
+        gXA+MkqsmP2NDWQUr4CdxLunrYwgNouAqsT8r6eh4oISJ2c+YQGxRQVSJXZfO8AKYrMJGEp0
+        ve0CqxEWCJa4dPIIWFxEoFTi37OpYAuYBY4yS5y8cpsZJMEsIC5x68l8JhCbU8BbYufzu4wQ
+        cXmJ5q2zmUEaJAT2c0qsev4VrEhCwEXi3fG9ULawxKvjW9ghbBmJ/ztBBoE0tDNKLPh9H8qZ
+        wCjR8PwWI0SVtcSdc7/YQAHALKApsX6XPkTYUeLEt2XQcOGTuPFWEOIIPolJ26ZDhXklOtqE
+        IKrVJGYdXwe39uCFS8wTGJVmIYXLLCSvzULyziyEvQsYWVYxiqeWFuempxYb5qWW6xUn5haX
+        5qXrJefnbmIEpsHT/45/2sE499VHvUOMTByMhxglOJiVRHifarSnCPGmJFZWpRblxxeV5qQW
+        H2KU5mBREufVtj2ZLCSQnliSmp2aWpBaBJNl4uCUamBSUvC5fNBm6THPE9Wfij5cux31vbCc
+        1+fTh6xfLkWGdfPyv84589HV/0uDnoZwmKk6484L7Efn+3q4ZPixLLr8Nt9Ca7a02NUvvR07
+        rNe9k3qh/ffdQgOxhXd3vq47x8u23GaS04OVOf010ucLpqadeTzvXtgEjWnGM+78Lp6u/2R6
+        0XoHjmuXl1SYJE4t6Sq6+LCfqawwa80StaP8rDVfL5zbU/Powpc175P2X+mZ6POKdcPd2+9W
+        vuqdbNn4zW3fLhFrtjJR5tpPxX8+dbS18Ql9Fvu2/bBjdcuN2f2fM8x8V+Y9jvkXwu4W9fGZ
+        W26mmphmc1v31INprySV3RccOzL7+918Xe4HFXKq+yv6lViKMxINtZiLihMBwRVW/vIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsVy+t/xu7rb/DtSDHZvU7G48vU9m8WqqTtZ
+        LKY9aWKx2PT4GqvFx557rBZdv1YyW3Ru2spoMWHVNxaLrS/fMVkcW32FzaLr2hNWiyn7drFZ
+        dH6ZxWYx48c/RouLp1wt/l3byOIg4PH+Riu7x51z59k8Nq3qZPO4332cyWPzknqPF5tnMnps
+        fLeDyaP/r4HHwX2GHp83yQVwRenZFOWXlqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq
+        6dvZpKTmZJalFunbJehl/JnwjLmgy6hi55MpbA2M7zS7GDk4JARMJE6tiOpi5OIQEljKKNG8
+        fhFTFyMnUFxG4uS0BlYIW1jiz7UuNoii94wSh5p2ghXxCthJvHvayghiswioSsz/epoNIi4o
+        cXLmExYQW1QgVeLukn6wOJuAoUTX2y4wW1ggWOLSySNgC0QESiU+b93JArKAWeAos8TPkwsZ
+        IbZ1M0rMPNwO1sEsIC5x68l8sM2cAt4SO5/fZYSIm0l0be2CsuUlmrfOZp7AKDQLySGzkLTP
+        QtIyC0nLAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIGxv+3Yzy07GFe++qh3iJGJg/EQ
+        owQHs5II71ON9hQh3pTEyqrUovz4otKc1OJDjKbA0JjILCWanA9MPnkl8YZmBqaGJmaWBqaW
+        ZsZK4ryeBR2JQgLpiSWp2ampBalFMH1MHJxSDUwmGsZp9memBT/W5njD0DTV9eDmqEsaB9JV
+        e8TvLzzw0iqrf+XHjR7u977Gmncc3CR2j/W+V+tTn+TOplyjBf8654kf+nK29Z0Kq29Ez9wd
+        JYwCgoy9lzZ3/rMuF3TVjXXb4nBcSHr6zwsvMwU3vnxgzWzzrfHiH74KbQZP+4Mzt5879Ofx
+        mX0n7zZeLv4vxaLC6TjhXPo84ykHCjW8N77u/KEewbzrZFi23NkV798k9y1+MnVz98xNVfJ7
+        PaafV16yw9u1TkDx0P9sTcV1PD4zjafs3sXQU5/o18E1ef4c75PmIqopU0rump1n0Ti2/dX/
+        veJzrKuPrt2y6L6/ufKhmrTEL5Fz4vvusTR1PVijxFKckWioxVxUnAgAahRV9oYDAAA=
+X-CMS-MailID: 20230613111502eucas1p2644889c9de1abfe1a14a3b549772f247
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20230613111502eucas1p2644889c9de1abfe1a14a3b549772f247
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20230613111502eucas1p2644889c9de1abfe1a14a3b549772f247
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+        <20221018-clk-range-checks-fixes-v4-3-971d5077e7d2@cerno.tech>
+        <CGME20230613111502eucas1p2644889c9de1abfe1a14a3b549772f247@eucas1p2.samsung.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 05.05.2023 13:25, Maxime Ripard wrote:
+> From: Stephen Boyd <sboyd@kernel.org>
+>
+> We'll need to turn the code in clk_mux_determine_rate_flags() to deal
+> with CLK_SET_RATE_NO_REPARENT into a helper clock drivers will be able
+> to use if they don't want to allow reparenting.
+>
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: "Andreas Färber" <afaerber@suse.de>
+> Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Cc: Chen-Yu Tsai <wenst@chromium.org>
+> Cc: Chunyan Zhang <zhang.lyra@gmail.com>
+> Cc: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: David Lechner <david@lechnology.com>
+> Cc: Dinh Nguyen <dinguyen@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Markus Schneider-Pargmann <msp@baylibre.com>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Mikko Perttunen <mperttunen@nvidia.com>
+> Cc: Miles Chen <miles.chen@mediatek.com>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Orson Zhai <orsonzhai@gmail.com>
+> Cc: Paul Cercueil <paul@crapouillou.net>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Cc: Samuel Holland <samuel@sholland.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-actions@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mips@vger.kernel.org
+> Cc: linux-phy@lists.infradead.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> Cc: linux-sunxi@lists.linux.dev
+> Cc: linux-tegra@vger.kernel.org
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: patches@opensource.cirrus.com
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+
+This patch landed in today's linux-next as commit 1b4e99fda73f ("clk: 
+Move no reparent case into a separate function"). Unfortunately it 
+causes serious regression of some of my test boards. Namely Exynos3250 
+based boards are so slow after it, that my test scripts fail with a 
+timeout waiting for them to finish booting. I will try to debug this 
+later in the evening to check what has happened that some clocks got 
+very low rate.
 
 
-On 12.06.2023 22:54, Stephan Gerhold wrote:
-> On Mon, Jun 12, 2023 at 08:24:35PM +0200, Konrad Dybcio wrote:
->> The sole purpose of bus clocks that were previously registered with
->> rpmcc was to convey the aggregated bandwidth to RPM. There's no good
->> reason to keep them outside the interconnect framework, as it only
->> adds to the plentiful complexity.
->>
->> Add the required code to handle these clocks from within SMD RPM ICC.
->>
->> RPM-owned bus clocks are no longer considered a thing, but sadly we
->> have to allow for the existence of HLOS-owned bus clocks, as some
->> (mostly older) SoCs (ab)use these for bus scaling (e.g. MSM8998 and
->> &mmcc AHB_CLK_SRC).
->>
->> This in turn is trivially solved with a single *clk, which is filled
->> and used iff qp.bus_clk_desc is absent and we have a "bus" clock-names
->> entry in the DT node.
->>
->> This change should(tm) be fully compatible with all sorts of old
->> Device Trees as far as the interconnect functionality goes (modulo
->> abusing bus clock handles, but that's a mistake in and of itself).
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> Would be nice to add a comment here already that you're breaking
-> compatbility with the qcom,icc.h. It's a bit hidden otherwise.
-Right, wouldn't hurt..
+> drivers/clk/clk.c | 75 
+> +++++++++++++++++++++++++++++++------------------------
+> 1 file changed, 43 insertions(+), 32 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index e495dd7a1eae..f57f821a5e5a 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -594,6 +594,46 @@ clk_core_forward_rate_req(struct clk_core *core,
+> req->max_rate = old_req->max_rate;
+> }
+> +static int
+> +clk_core_determine_rate_no_reparent(struct clk_hw *hw,
+> + struct clk_rate_request *req)
+> +{
+> + struct clk_core *core = hw->core;
+> + struct clk_core *parent = core->parent;
+> + unsigned long best;
+> + int ret;
+> +
+> + if (core->flags & CLK_SET_RATE_PARENT) {
+> + struct clk_rate_request parent_req;
+> +
+> + if (!parent) {
+> + req->rate = 0;
+> + return 0;
+> + }
+> +
+> + clk_core_forward_rate_req(core, req, parent, &parent_req,
+> + req->rate);
+> +
+> + trace_clk_rate_request_start(&parent_req);
+> +
+> + ret = clk_core_round_rate_nolock(parent, &parent_req);
+> + if (ret)
+> + return ret;
+> +
+> + trace_clk_rate_request_done(&parent_req);
+> +
+> + best = parent_req.rate;
+> + } else if (parent) {
+> + best = clk_core_get_rate_nolock(parent);
+> + } else {
+> + best = clk_core_get_rate_nolock(core);
+> + }
+> +
+> + req->rate = best;
+> +
+> + return 0;
+> +}
+> +
+> int clk_mux_determine_rate_flags(struct clk_hw *hw,
+> struct clk_rate_request *req,
+> unsigned long flags)
+> @@ -603,35 +643,8 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+> unsigned long best = 0;
+> /* if NO_REPARENT flag set, pass through to current parent */
+> - if (core->flags & CLK_SET_RATE_NO_REPARENT) {
+> - parent = core->parent;
+> - if (core->flags & CLK_SET_RATE_PARENT) {
+> - struct clk_rate_request parent_req;
+> -
+> - if (!parent) {
+> - req->rate = 0;
+> - return 0;
+> - }
+> -
+> - clk_core_forward_rate_req(core, req, parent, &parent_req, req->rate);
+> -
+> - trace_clk_rate_request_start(&parent_req);
+> -
+> - ret = clk_core_round_rate_nolock(parent, &parent_req);
+> - if (ret)
+> - return ret;
+> -
+> - trace_clk_rate_request_done(&parent_req);
+> -
+> - best = parent_req.rate;
+> - } else if (parent) {
+> - best = clk_core_get_rate_nolock(parent);
+> - } else {
+> - best = clk_core_get_rate_nolock(core);
+> - }
+> -
+> - goto out;
+> - }
+> + if (core->flags & CLK_SET_RATE_NO_REPARENT)
+> + return clk_core_determine_rate_no_reparent(hw, req);
+> /* find the parent that can provide the fastest rate <= rate */
+> num_parents = core->num_parents;
+> @@ -670,9 +683,7 @@ int clk_mux_determine_rate_flags(struct clk_hw *hw,
+> if (!best_parent)
+> return -EINVAL;
+> -out:
+> - if (best_parent)
+> - req->best_parent_hw = best_parent->hw;
+> + req->best_parent_hw = best_parent->hw;
+> req->best_parent_rate = best;
+> req->rate = best;
+>
+Best regards
 
-> 
->> ---
->>  drivers/interconnect/qcom/icc-rpm.c | 114 ++++++++++++++++++++----------------
->>  drivers/interconnect/qcom/icc-rpm.h |  13 ++--
->>  drivers/interconnect/qcom/msm8996.c |   1 -
->>  drivers/interconnect/qcom/sdm660.c  |   1 -
->>  4 files changed, 66 insertions(+), 63 deletions(-)
->>
->> diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
->> index b8ecf9538ab9..5ffcf5ca8914 100644
->> --- a/drivers/interconnect/qcom/icc-rpm.c
->> +++ b/drivers/interconnect/qcom/icc-rpm.c
->> @@ -49,7 +49,7 @@
->>  #define NOC_QOS_MODE_FIXED_VAL		0x0
->>  #define NOC_QOS_MODE_BYPASS_VAL		0x2
->>  
->> -#define ICC_BUS_CLK_MIN_RATE		19200000ULL
->> +#define ICC_BUS_CLK_MIN_RATE		19200ULL /* kHz */
->>  
->>  static int qcom_icc_set_qnoc_qos(struct icc_node *src)
->>  {
->> @@ -338,11 +338,10 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
->>  	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
->>  	struct icc_provider *provider;
->>  	u64 sum_bw;
->> -	u64 rate;
->> +	u64 active_rate, sleep_rate;
->>  	u64 agg_avg[QCOM_ICC_NUM_BUCKETS], agg_peak[QCOM_ICC_NUM_BUCKETS];
->>  	u64 max_agg_avg;
->> -	int ret, i;
->> -	int bucket;
->> +	int ret;
->>  
->>  	src_qn = src->data;
->>  	if (dst)
->> @@ -364,49 +363,54 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
->>  			return ret;
->>  	}
->>  
->> -	for (i = 0; i < qp->num_bus_clks; i++) {
->> -		/*
->> -		 * Use WAKE bucket for active clock, otherwise, use SLEEP bucket
->> -		 * for other clocks.  If a platform doesn't set interconnect
->> -		 * path tags, by default use sleep bucket for all clocks.
->> -		 *
->> -		 * Note, AMC bucket is not supported yet.
->> -		 */
->> -		if (!strcmp(qp->bus_clks[i].id, "bus_a"))
->> -			bucket = QCOM_ICC_BUCKET_WAKE;
->> -		else
->> -			bucket = QCOM_ICC_BUCKET_SLEEP;
->> -
->> -		rate = icc_units_to_bps(max(agg_avg[bucket], agg_peak[bucket]));
->> -		do_div(rate, src_qn->buswidth);
->> -		rate = min_t(u64, rate, LONG_MAX);
->> -
->> -		/*
->> -		 * Downstream checks whether the requested rate is zero, but it makes little sense
->> -		 * to vote for a value that's below the lower threshold, so let's not do so.
->> -		 */
->> -		if (bucket == QCOM_ICC_BUCKET_WAKE && qp->keep_alive)
->> -			rate = max(ICC_BUS_CLK_MIN_RATE, rate);
->> -
->> -		if (qp->bus_clk_rate[i] == rate)
->> -			continue;
->> -
->> -		ret = clk_set_rate(qp->bus_clks[i].clk, rate);
->> -		if (ret) {
->> -			pr_err("%s clk_set_rate error: %d\n",
->> -			       qp->bus_clks[i].id, ret);
->> +	/* Some providers don't have a bus clock to scale */
->> +	if (!qp->bus_clk_desc && !qp->bus_clk)
->> +		return 0;
->> +
->> +	/* Intentionally keep the rates in kHz as that's what RPM accepts */
->> +	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
->> +			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
->> +	do_div(active_rate, src_qn->buswidth);
->> +
->> +	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
->> +			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
->> +	do_div(sleep_rate, src_qn->buswidth);
->> +
->> +	/*
->> +	 * Downstream checks whether the requested rate is zero, but it makes little sense
->> +	 * to vote for a value that's below the lower threshold, so let's not do so.
->> +	 */
->> +	if (qp->keep_alive)
->> +		active_rate = max(ICC_BUS_CLK_MIN_RATE, active_rate);
->> +
->> +	/* Some providers have a non-RPM-owned bus clock - convert kHz->Hz for the CCF */
->> +	if (qp->bus_clk) {
->> +		active_rate = max_t(u64, active_rate, sleep_rate);
->> +		/* ARM32 caps clk_set_rate arg to u32.. Nothing we can do about that! */
->> +		active_rate = min_t(u64, 1000ULL * active_rate, ULONG_MAX);
->> +		return clk_set_rate(qp->bus_clk, active_rate);
->> +	}
->> +
->> +	/* RPM only accepts <=INT_MAX rates */
->> +	active_rate = min_t(u32, active_rate, INT_MAX);
->> +	sleep_rate = min_t(u32, sleep_rate, INT_MAX);
->> +
->> +	if ((active_rate != qp->bus_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE]) ||
->> +	    (sleep_rate != qp->bus_clk_rate[QCOM_SMD_RPM_SLEEP_STATE])) {
->> +		ret = qcom_icc_rpm_set_bus_rate(qp->bus_clk_desc,
->> +						active_rate,
->> +						sleep_rate);
->> +		if (ret)
->>  			return ret;
-> 
-> Hm, do we have to set both rates together in all cases? If cpufreq is
-> quickly changing frequencies (and therefore active-only ICC bandwidths)
-> it should be sufficient to make one call into RPM and leave the sleep
-> rate as-is. Especially because you already cache the two rates
-> separately.
-> 
-> AFAICT downstream updates the contexts completely separately, so I don't
-> think it updates both rates at once either. And actually even the old
-> code before this patch didn't do that :D
-Right, I can trivially solve that by making qcom_icc_rpm_set_bus_rate
-accept an is_active parameter..
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Konrad 
-> 
-> Thanks,
-> Stephan
