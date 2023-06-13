@@ -2,141 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71789C7EE2E
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 09:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A950C88CB6
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 10:01:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239745AbjFMJzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 05:55:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37004 "EHLO
+        id S238663AbjFMKAm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 06:00:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241857AbjFMJzR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 05:55:17 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49BC1AC
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 02:55:15 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-30fc90f359fso923898f8f.3
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 02:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1686650114; x=1689242114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RqNvggRPyNB9Hehd7xfWxJNAOn1bnmQJXJE17DkVdBU=;
-        b=g/gQ2/z9jaLvDVlTUHmih1Mf6W7SQX7wJSQ+I8XBYvpmmlpFWCMKBmAtIqbdA9HJWB
-         iWJ8265l0uWUBs0Kg2xf88IK1ASsgY7HBMkicdvyoLSF2ZFw96kmx8hlZ4inRvc6mfw6
-         usW+eWfcjxc7P7c5wlWofL6a/6amUVvrMqWmVbcEPl/2nvlor4GEZMJYDGvrBQ2ES0Kz
-         MIm+Gt3o5Al8+xgJHIvN+k83T0tslOCriSPQAfvlsubkAEA+EPvZDMa6sTwznVHhsGT7
-         9tQ5f+N1kjiEiCDElzEW318WS8K22rXW/SvG9B0QnKg+Y4mmXmNqLX7TKuwjrx3J05kI
-         izbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686650114; x=1689242114;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RqNvggRPyNB9Hehd7xfWxJNAOn1bnmQJXJE17DkVdBU=;
-        b=K4Cmw1lk2+zDt9HW6YUMap61gCisTVRGDdXLLh2IawR2wY62haQJGdPXKBjMpDlD2f
-         pLWJfktPYeGImym12Mz1D0QZIaX/M2wP+bRTjNKY+8AUeBr1K9KGYva/xk5XoeESLy9J
-         lRBfL2j9MZ+rSHprwQzFodWodNPhvHSpmYx4RxAFSevrtywrxnpczaXoFmXucg0szLXM
-         X+sSYBFcpntzVkAzxND3+mogtGGY9sYVguYK8ls2TaaQgaewYH5GmuyWQX5iyGXTVUo8
-         BKphTq+zU/JlKCnE4yFRTr+UE22N/2CiBkmp3yCWsuXRqBm9adF+8bdh4q/5AXE1/jPU
-         kgZA==
-X-Gm-Message-State: AC+VfDx9IIUdvLjzXTKxD9u240WP6l8c2yp8X/7mKLRgCDj0yX7hxm1D
-        +1bwAxzLUnogbjgOX6ynhyCNLA==
-X-Google-Smtp-Source: ACHHUZ5ZrdfyYh5y1tk49fFKsi3ApIfFMGD+jwFkSrpureaIeIWoGT4Ghm/fdObK/np4YyjXHk7Jyg==
-X-Received: by 2002:adf:e252:0:b0:307:7f38:37f with SMTP id bl18-20020adfe252000000b003077f38037fmr6934139wrb.66.1686650114217;
-        Tue, 13 Jun 2023 02:55:14 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id e4-20020adfdbc4000000b0030ada01ca78sm14844845wrj.10.2023.06.13.02.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jun 2023 02:55:13 -0700 (PDT)
-Date:   Tue, 13 Jun 2023 11:55:11 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        vadfed@meta.com, jonathan.lemon@gmail.com, pabeni@redhat.com,
-        corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
-        vadfed@fb.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
-        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
-        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
-        michal.michalik@intel.com, gregkh@linuxfoundation.org,
-        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
-        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
-        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
-        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
-        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
-        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
-        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
-        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org,
-        vadim.fedorenko@linux.dev
-Subject: Re: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
- interface
-Message-ID: <ZIg8/0UJB9Lbyx2D@nanopsycho>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
- <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
- <20230612154329.7bd2d52f@kernel.org>
+        with ESMTP id S242103AbjFMJ7x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 05:59:53 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57C281701;
+        Tue, 13 Jun 2023 02:59:37 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35D9wFh6003963;
+        Tue, 13 Jun 2023 09:59:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=ufUPbiatUXptd6DIdwAP3dnQZDjpTKViqvSPQwOlxfY=;
+ b=efPv+J726zLy04AjXMbJInbK2jlr+h481+rAIRCXnT975ko1FYgob9TgBE50REP2OYcB
+ XVb9K91zCmjSNnJxU3wcwD5JduzPBPbljTsAYvmjBkzFrVWKRFS/BVV42E4DgbHCrGu6
+ tkY/u6zY7mladxaVBi2clr5K7tf3/pA7oDF3ErpSj/sC7TceLYpOB1uGwgLrzwMg6tPY
+ Igwpxha6QhFuE9VNBxA9id3k401mwmzZfFIWrHOrO8eC1joOWGfXnVePCW9zDebsq9HI
+ O8OFUYZ7k4xfbpXVCMvE10XA1rqHOJRZFGpfrRw57/6wjHU9f+XeELd7ml1k2Ait5xla ZQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r690q1c35-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Jun 2023 09:59:33 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35D9xVdP012700
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Jun 2023 09:59:31 GMT
+Received: from [10.218.22.90] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Tue, 13 Jun
+ 2023 02:59:25 -0700
+Message-ID: <cc4e1339-f1d5-58e5-ba41-7bd5085f3c89@quicinc.com>
+Date:   Tue, 13 Jun 2023 15:29:22 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230612154329.7bd2d52f@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.1
+Subject: Re: [PATCH V4 0/4] Add camera clock controller support for SM8550
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230609115058.9059-1-quic_jkona@quicinc.com>
+ <09ccfa54-5ada-8dff-03a2-b2ffb07a58c1@linaro.org>
+ <feebd8cd-7713-f086-356b-cc2657a9708e@linaro.org>
+From:   Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <feebd8cd-7713-f086-356b-cc2657a9708e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: _ikaCyHA4kUCNX8BpdkQ7iSBoggDETUa
+X-Proofpoint-GUID: _ikaCyHA4kUCNX8BpdkQ7iSBoggDETUa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-13_04,2023-06-12_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 bulkscore=0 adultscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306130087
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tue, Jun 13, 2023 at 12:43:29AM CEST, kuba@kernel.org wrote:
->On Fri,  9 Jun 2023 14:18:44 +0200 Arkadiusz Kubalewski wrote:
->> From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
->> 
->> Add documentation explaining common netlink interface to configure DPLL
->> devices and monitoring events. Common way to implement DPLL device in
->> a driver is also covered.
->
->> +``'pin': [{
->> + {'clock-id': 282574471561216,
->> +  'module-name': 'ice',
->> +  'pin-dpll-caps': 4,
->> +  'pin-id': 13,
->> +  'pin-parent': [{'pin-id': 2, 'pin-state': 'connected'},
->> +                 {'pin-id': 3, 'pin-state': 'disconnected'},
->> +                 {'id': 0, 'pin-direction': 'input'},
->> +                 {'id': 1, 'pin-direction': 'input'}],
->> +  'pin-type': 'synce-eth-port'}
->> +}]``
->
->It seems like pin-parent is overloaded, can we split it into two
->different nests?
-
-Yeah, we had it as two and converged to this one. The thing is, the rest
-of the attrs are the same for both parent pin and parent device. I link
-it this way a bit better. No strong feeling.
 
 
->
->> +SET commands format
->> +===================
->> +
->> +``DPLL_CMD_DEVICE_SET`` - to target a dpll device, the user provides
->> +``DPLL_A_ID``, which is unique identifier of dpll device in the system,
->> +as well as parameter being configured (``DPLL_A_MODE``).
->> +
->> +``DPLL_CMD_PIN_SET`` - to target a pin user has to provide a
->> +``DPLL_A_PIN_ID``, which is unique identifier of a pin in the system.
->> +Also configured pin parameters must be added.
->> +If ``DPLL_A_PIN_DIRECTION`` or ``DPLL_A_PIN_FREQUENCY`` are configured,
->> +this affects all the dpll device they are connected, that is why those
->> +attributes shall not be enclosed in ``DPLL_A_PIN_PARENT``.
->> +Other attributes:
->> +``DPLL_A_PIN_PRIO`` or ``DPLL_A_PIN_STATE`` must be enclosed in
->> +``DPLL_A_PIN_PARENT`` as their configuration relates to only one
->> +parent dpll or parent pin.
->
->Also sounds like setting pin attrs and pin-parent attrs should be
->different commands.
+On 6/13/2023 2:07 PM, Krzysztof Kozlowski wrote:
+> On 12/06/2023 04:25, Bryan O'Donoghue wrote:
+>> On 09/06/2023 12:50, Jagadeesh Kona wrote:
+>>> Add bindings, driver and devicetree node for camera clock controller on
+>>> SM8550.
+>>
+>> This is very confusing.
+>>
+>> Your cover letter doesn't detail any changes and your individual patches
+>> all say "no changes since v3", "no changes since v2"
+>>
+>> If this is a RESEND then mark it as a RESEND.
+> 
+> That's indeed odd. Three versions without changes...
+> 
+> Best regards,
+> Krzysztof
+> 
 
-Could be, but what't the benefit? Also, you are not configuring
-pin-parent. You are configuring pin:pin-parent tuple. Basically the pin
-configuration as a child. So this is mainly config of the pin itsest
-Therefore does not really make sense to me to split to two comments.
+This is not a RESEND, actually there were changes from each version to 
+next version and change details were updated in respective patches. But 
+the patches in which changes were present were dropped in v4 based on 
+review comments. Will take care of updating cover letter as well with 
+changes across versions if we push the next series.
+
+Please find the summary of changes across versions till v4.
+
+Changes in v4:
+  - Dropped the extra patches added in v2, since the review comments on 
+v3 recommended an alternate solution.
+
+Changes in v3:
+  - Squashed 2 extra patches added in v2 into single patch as per review 
+comments
+  - Link to v3: 
+https://patchwork.kernel.org/project/linux-clk/list/?series=753150
+
+Changes in v2:
+  - Took care of review comments from v1
+  - Added 2 extra patches updating L configuration value across chipsets 
+to include CAL_L and RINGOSC_CAL_L fields and removed setting CAL_L 
+field in clk_lucid_evo_pll_configure().
+  - Link to v2: 
+https://patchwork.kernel.org/project/linux-clk/list/?series=751058
+
+v1:
+  - Initial CAMCC changes for SM8550
+  - Link to v1: 
+https://patchwork.kernel.org/project/linux-clk/list/?series=749294
+
+Thanks,
+Jagadeesh
