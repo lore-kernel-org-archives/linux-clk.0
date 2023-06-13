@@ -2,35 +2,62 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBFFC7EE29
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 11:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71439C77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 12:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232194AbjFMLdE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 07:33:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38516 "EHLO
+        id S240199AbjFMMNG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 08:13:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbjFMLdD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 07:33:03 -0400
-X-Greylist: delayed 1241 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 13 Jun 2023 04:32:59 PDT
-Received: from mx.kernkonzept.com (serv1.kernkonzept.com [IPv6:2a01:4f8:1c1c:b490::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA86CA;
-        Tue, 13 Jun 2023 04:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kernkonzept.com; s=mx1; h=In-Reply-To:Content-Type:MIME-Version:References:
-        Message-ID:Subject:Cc:To:From:Date:Content-Transfer-Encoding:Reply-To:
-        Content-ID:Content-Description;
-        bh=tgIF/0cV3jzRQsm+ETxVbgy42xpfIw8aPttpqREa1ws=; b=dg4TNTqc+XsZQGvqQ9sFHH/WUC
-        DftqlpPwSPrwBU5Be7hzDIDWj8uJVxHAKJtwEjeKiw+ln4Yq7+yvUYSszHuxv2Hzrp6R39Gt2kqw1
-        iNfvXU1k1cVyKOCJODoKuKvJPqW/MXdVPp+8x6cPx0EWYdD64RrClPJPWgGISDNrNl/k4JYq/97+x
-        LDzUpq2AoFMVozm/ZA1Mes1sxI7gQCd6dBKjo2ysLDI85Z2vGrVJ/bm1lOe7opzvoDkubvdQxS152
-        o3MuEkiS675Cob7C0sV+wOorSh3RCS83MpupV/JHe6vGiBKIf1b7XAM7bSrB070pTMNynx+MOLXkD
-        XQDHm85Q==;
-Received: from [10.22.3.24] (helo=kernkonzept.com)
-        by mx.kernkonzept.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim 4.94.2)
-        id 1q91vt-000yDF-BI; Tue, 13 Jun 2023 13:11:28 +0200
-Date:   Tue, 13 Jun 2023 13:11:21 +0200
-From:   Stephan Gerhold <stephan.gerhold@kernkonzept.com>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+        with ESMTP id S234563AbjFMMNF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 08:13:05 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4647E7D
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 05:13:01 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f61735676fso6765596e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 05:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686658380; x=1689250380;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6CMlQba2o43/QiP5kbF00C5SMM+pc3bqKwMdZ4o71Wg=;
+        b=jM2BdMoNCbF74BgGgRDVYE6LKUcsY3HAYxwagM7IqNQFDHyA50WMO364I8ZuLvp9v2
+         qGs2ogbEf4zfjDoEPz0k4SbACIKnBKeIiIbl2KvH80pi+vzd5qOkPP5s4xlkhj+omVsY
+         Fda5TdW3CDeMJ1S+ETpk01VHjri3rDZvXPmReSFUWb3CKvBXoQ7CHvP0ADadNSMQvNXq
+         GHb7DJ5uGPve8Yb61BMTRIQgCsLJzAsT7XypLTm7vQOIfHTMUGXr8V4TRJHEUupLOi5z
+         Sy7JgxGVPqzsucyCgYlz42JPFMkpeynHYwsNMvKT/PqSPAfou+yAxlxlLZKOFub+XpaR
+         1eAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686658380; x=1689250380;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6CMlQba2o43/QiP5kbF00C5SMM+pc3bqKwMdZ4o71Wg=;
+        b=DsZdwz6jBPThLB2K50I+OHdlF1gydwT+mTg0xup4Vlw0Wju5dbxTH44K7chOfogCyc
+         bqCH3ver8sSAXm1q32Z0WP5449L7wiQbObtWTmKm6NyOEClBSZKlDHfKsA/vRPoSTZ/7
+         jXTwiem3rbZ7Tc+zKqD56Cft5HCpe7LayB7AB97Buy9GoV0iKO6p5ucqng0k4UehZjJJ
+         kBt8gynhL07ISULozyGGI7Q3RPlbVdfp6qW4bHeoSzIIm3G2S3/HuxfZmUV4P3HkNC7a
+         hM+go7Jlf0LHekFB6v7bR6TTqXXWYxB/FuHjH5oNjBmdpmXXRbMSbHKmf2TT+74m4xX9
+         raQA==
+X-Gm-Message-State: AC+VfDyFkJS4UMQ71lswAJ54QDzN4EU1etAu2s2SzxoEteKvcxRXIdwG
+        0z0ZfciIwFfT4tFLeJS8ws0S9Q==
+X-Google-Smtp-Source: ACHHUZ7v2g+t0UCuMLHeHfZftjO5zEOcIpmanWsJpdQFoH7LGbqE71Kf4m1iAu+cL1lUPxg/TiXWWg==
+X-Received: by 2002:ac2:5b83:0:b0:4f7:5a42:6af with SMTP id o3-20020ac25b83000000b004f75a4206afmr1024268lfn.37.1686658379752;
+        Tue, 13 Jun 2023 05:12:59 -0700 (PDT)
+Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id w28-20020ac2599c000000b004f61a57797fsm1759751lfn.60.2023.06.13.05.12.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Jun 2023 05:12:59 -0700 (PDT)
+Message-ID: <a04f8089-0117-7c22-c6cc-97f5bd42a7d8@linaro.org>
+Date:   Tue, 13 Jun 2023 14:12:57 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v3 07/23] interconnect: qcom: icc-rpm: Allow negative QoS
+ offset
+Content-Language: en-US
+To:     Stephan Gerhold <stephan@gerhold.net>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -45,50 +72,83 @@ Cc:     Andy Gross <agross@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 01/23] dt-bindings: interconnect: Add Qcom RPM ICC
- bindings
-Message-ID: <ZIhO2Tgh5q4heBi6@kernkonzept.com>
 References: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
- <20230526-topic-smd_icc-v3-1-5fb7d39b874f@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230526-topic-smd_icc-v3-1-5fb7d39b874f@linaro.org>
+ <20230526-topic-smd_icc-v3-7-5fb7d39b874f@linaro.org>
+ <ZId_qIAL8dvJOwai@gerhold.net>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <ZId_qIAL8dvJOwai@gerhold.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 12, 2023 at 08:24:18PM +0200, Konrad Dybcio wrote:
-> The SMD RPM interconnect driver requires different icc tags to the
-> RPMh driver. Add bindings to reflect that.
+
+
+On 12.06.2023 22:27, Stephan Gerhold wrote:
+> On Mon, Jun 12, 2023 at 08:24:24PM +0200, Konrad Dybcio wrote:
+>> In some very very very very unfortunate cases, the correct offset of
+>> the QoS registers will be.. negative. One such case is MSM8998, where
+>> The DDR BWMON occupies what-would-be-the-BIMC-base which we usually
+>> take into account with the register calculation, making the actual
+>> BIMC node start at what-would-be-the-BIMC-base+0x300.
+>>
+>> In order to keep the calculation code sane, the simplest - however
+>> ugly it may be - solution is to allow the offset to be negative.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  include/dt-bindings/interconnect/qcom,rpm-icc.h | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> I'm a bit confused why this patch is part of this series. It doesn't
+> seem to be directly related.
 > 
-> diff --git a/include/dt-bindings/interconnect/qcom,rpm-icc.h b/include/dt-bindings/interconnect/qcom,rpm-icc.h
-> new file mode 100644
-> index 000000000000..ef61006c9c58
-> --- /dev/null
-> +++ b/include/dt-bindings/interconnect/qcom,rpm-icc.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) 2023, Linaro Limited
-> + */
-> +
-> +#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_RPM_ICC_H
-> +#define __DT_BINDINGS_INTERCONNECT_QCOM_RPM_ICC_H
-> +
-> +#define RPM_ACTIVE_TAG		BIT(0)
-> +#define RPM_SLEEP_TAG		BIT(1)
+> Can you send it as part of the series that adds the MSM8998 interconnect
+> driver?
+Ack
 
-BIT(n) doesn't work in dt-bindings (syntax error), can you change this
-to (1 << 0) / (1 << 1)?
-
-Thanks!
-
--- 
-Stephan Gerhold
-Kernkonzept GmbH at Dresden, Germany, HRB 31129, CEO Dr.-Ing. Michael Hohmuth
+Konrad
+> 
+> Thanks,
+> Stephan
+> 
+>> ---
+>>  drivers/interconnect/qcom/icc-rpm.h | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
+>> index d2c04c400cad..ba840a436cc0 100644
+>> --- a/drivers/interconnect/qcom/icc-rpm.h
+>> +++ b/drivers/interconnect/qcom/icc-rpm.h
+>> @@ -29,10 +29,10 @@ enum qcom_icc_type {
+>>   * @num_intf_clks: the total number of intf_clks clk_bulk_data entries
+>>   * @type: the ICC provider type
+>>   * @regmap: regmap for QoS registers read/write access
+>> - * @qos_offset: offset to QoS registers
+>>   * @bus_clk_rate: bus clock rate in Hz
+>>   * @bus_clks: the clk_bulk_data table of bus clocks
+>>   * @intf_clks: a clk_bulk_data array of interface clocks
+>> + * @qos_offset: offset to QoS registers
+>>   * @keep_alive: whether to always keep a minimum vote on the bus clocks
+>>   * @is_on: whether the bus is powered on
+>>   */
+>> @@ -42,7 +42,7 @@ struct qcom_icc_provider {
+>>  	int num_intf_clks;
+>>  	enum qcom_icc_type type;
+>>  	struct regmap *regmap;
+>> -	unsigned int qos_offset;
+>> +	int qos_offset;
+>>  	u64 bus_clk_rate[NUM_BUS_CLKS];
+>>  	struct clk_bulk_data bus_clks[NUM_BUS_CLKS];
+>>  	struct clk_bulk_data *intf_clks;
+>> @@ -108,7 +108,7 @@ struct qcom_icc_desc {
+>>  	bool no_clk_scaling;
+>>  	enum qcom_icc_type type;
+>>  	const struct regmap_config *regmap_cfg;
+>> -	unsigned int qos_offset;
+>> +	int qos_offset;
+>>  };
+>>  
+>>  /* Valid for all bus types */
+>>
+>> -- 
+>> 2.41.0
+>>
