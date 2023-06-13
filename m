@@ -2,154 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FDAEB64DA
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 20:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BF8EB64D7
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 22:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232969AbjFMUpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 16:45:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47192 "EHLO
+        id S240060AbjFMW1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 18:27:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240723AbjFMUox (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 16:44:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9B5E53;
-        Tue, 13 Jun 2023 13:44:52 -0700 (PDT)
+        with ESMTP id S238663AbjFMW1b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 18:27:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52671BEE;
+        Tue, 13 Jun 2023 15:27:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1374F617E3;
-        Tue, 13 Jun 2023 20:44:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64003C433C0;
-        Tue, 13 Jun 2023 20:44:51 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ADB6063BAC;
+        Tue, 13 Jun 2023 22:27:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC1BC43395;
+        Tue, 13 Jun 2023 22:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686689091;
-        bh=197GhMaGHAg2n1nbm70axBPdT5BZD1C6NILjDiLPZjI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=U9x36Wd+JZDMSDouThk/NP+nQrM/qtILqn89gaQyKEuQ4epArY8F0zmiUQpOXW/rj
-         s2dCMJ0O9K4UyxqjImAK/N/9wTWPYU/FaweNxg+pYTaC8mHrrYm5EIPhx75n3z0iO2
-         IOBMCybzq99OtMPjVZE93No0zLhdNUYbMNnuYEKMMfCJlk0i+BSVzgiLoSoM+fvXl+
-         3E9ArlAa1zWnTa84kunzuaMR+L9+2rkoo6hOgzThbW7HOvbLh6lzDRAOy5jS1XF+ep
-         Zgg1L75/2Hy3Fn9ZD8t8ivwGz90WsyADUmLaxNWKHDvtR6ziefAZmCxzXrSRFjYipL
-         1K55p38MJiS4g==
-Message-ID: <d47d0ceb834ca56a4733e226e89a4f2b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <e8ee511863ce2aa9b09b7f0c4fa9b6919603c8f0.camel@maquefel.me>
-References: <20230424123522.18302-1-nikita.shubin@maquefel.me> <20230424123522.18302-13-nikita.shubin@maquefel.me> <d15b580f84ac89274cde3785168b0e26.sboyd@kernel.org> <e8ee511863ce2aa9b09b7f0c4fa9b6919603c8f0.camel@maquefel.me>
-Subject: Re: [PATCH 12/43] clk: ep93xx: add DT support for Cirrus EP93xx
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        s=k20201202; t=1686695241;
+        bh=VdufeCuSQJSdTOiWBrNg5LRUBx/O2Cu93VpZLQx+b7g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sE2y6nPsWjUpY4x1v02qP4AlfvTQnXQhRhWz8j+19qVh2A1fHi+VDYhb5aqP0l/mf
+         xn1dv88KQyCwczCDFMoNf3kB4wQPN2gBb5Owp/QtG/R4q9TzSsoWKNeMmP2dCjnLyd
+         7CKr8sDBtvTUE1YYpaKlvkRCTWBRcpIONSH60wCCqbDkkTnN8PZY8+5+/5mDqZL8Cc
+         AGgKhvgtYOa3ZBjLcNqMSBLr8C5cbUdpzZr42eU/IMlhVjIr50u1soshUNgFDjOE4Q
+         4fbmShJJLEIIOoar9E03bCwWvqJqr4TtIy729BhdCyJX/V2CLmNcHDA2/osGgYfk+E
+         wD7dJYj+5Fn7g==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Jeffrey Hugo <quic_jhugo@quicinc.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Nikita Shubin <nikita.shubin@maquefel.me>
-Date:   Tue, 13 Jun 2023 13:44:49 -0700
-User-Agent: alot/0.10
+        Rob Herring <robh+dt@kernel.org>, Luca Weiss <luca@z3ntu.xyz>,
+        Taniya Das <tdas@codeaurora.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/3] Provide parent clocks to msm8226 mmcc
+Date:   Tue, 13 Jun 2023 15:30:18 -0700
+Message-Id: <168669542893.1315701.11495350340759933786.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
+References: <20230509-msm8226-mmcc-parents-v1-0-83a2dfc986ab@z3ntu.xyz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nikita Shubin (2023-05-15 06:31:41)
-> Hello Stephen!
->=20
-> Thank you for your review.
->=20
-> Acknowledged all remarks, however, i didn't fully understood some of
-> the requirements:
+On Tue, 09 May 2023 23:16:34 +0200, Luca Weiss wrote:
+> Replace most usages of &xo_board with the &rpmcc variant, and also
+> provide the necessary parent clocks to the mmcc driver.
+> 
+> 
 
-When the reply is taken out of context it is harder for me to recall
-what we're talking about.
+Applied, thanks!
 
->=20
-> > And maybe this can be registered from wherever the regmap is created?
->=20
-> Are you suggesting that all clock from init, i.e. "pll1", "pll2",
-> "hclk", "fclk", "pclk"
->=20
-> Should be moved to=C2=A0SoC driver instead:
->=20
-> https://lore.kernel.org/all/20230424123522.18302-3-nikita.shubin@maquefel=
-.me/
->=20
-> ?
+[1/3] ARM: dts: qcom: msm8226: Use XO from rpmcc where possible
+      commit: e280427384269fba93c7ec0373afe87bc39d7945
+[3/3] ARM: dts: qcom: msm8226: Provide clocks to mmcc node
+      commit: 3f502e372b4d41db1642c0a1285b2cb52ab5f796
 
-Sure? That looks like a possibility.
-
->=20
-> > Does some interrupt or timer driver use dma? Why are these registered
-> > early?
->=20
-> ep93xx_dma uses subsys_initcall(ep93xx_dma_module_init)
->=20
-> https://elixir.bootlin.com/linux/v6.3.2/source/drivers/dma/ep93xx_dma.c#L=
-1430
->=20
-> I can move clk to using arch_initcall and move all stuff to probe, i
-> think...
-
-Sounds like the answer to my question is no. In which case moving to
-arch_initcall() or probe will work. Please try.
-
->=20
-> > Why is this in arm/ directory? Isn't it a clock controller?
->=20
-> ep93xx clocks, reboot, pinctrl use syscon regmap and some special
-> functions from SoC, i.e. "Syscon Software Lock Register" - so we are
-> able to write to some registers only after writing some magik value
-> there.
->=20
-> So all above use regmap from SoC.
-
-There can be an API in a header located in include/soc/ that implements
-the magik value unlock sequence?
-
->=20
-> Should make a separate clock controller like one i did for pinctrl ?
-> Then it should look like:
->=20
-> syscon@80930000 {
->   compatible =3D "cirrus,ep9301-syscon",
->                "syscon", "simple-mfd";
->   reg =3D <0x80930000 0x1000>;
->   #reset-cells =3D <1>;
->      =20
->   clocks {
->     xtali: oscillator {
->       compatible =3D "fixed-clock";
->       #clock-cells =3D <0>;
->       clock-frequency =3D <14745600>;
->     };
->   };
->      =20
->   clock-controller {
->     #clock-cells =3D <1>;
->     compatible =3D "cirrus,ep9301-clk";
->     clocks =3D <&xtali>;
->   };
-> };
->=20
-> Or even simply:
->=20
-> clocks {
->   xtali: oscillator {
->     compatible =3D "fixed-clock";
->     #clock-cells =3D <0>;
->     clock-frequency =3D <14745600>;
->   };
-> };
->      =20
-> clock-controller {
->   #clock-cells =3D <1>;
->   compatible =3D "cirrus,ep9301-clk";
->   clocks =3D <&xtali>;
-> };
-
-The DT binding shouldn't be making sub-nodes to match driver structure
-of the kernel. Instead, there should be a node for a register range that
-represents a device on the bus. That device may be multipurpose, in
-which case it can probe as a platform driver and that platform driver
-can create some number of auxiliary bus devices for the sub
-functionality of the device. We shouldn't be prescribing Linux software
-constructs onto the DT binding.
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
