@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6D6EB64D9
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 13:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B14D5EB64D8
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 13:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240290AbjFMNoY convert rfc822-to-8bit (ORCPT
+        id S242624AbjFMNoX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 09:44:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47554 "EHLO
+        Tue, 13 Jun 2023 09:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242557AbjFMNoR (ORCPT
+        with ESMTP id S242613AbjFMNoR (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 09:44:17 -0400
 Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791641BC7;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFDAF1BC9;
         Tue, 13 Jun 2023 06:44:05 -0700 (PDT)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id ED47524E21E;
+        by ex01.ufhost.com (Postfix) with ESMTP id E973824E1FE;
         Tue, 13 Jun 2023 21:43:56 +0800 (CST)
 Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 13 Jun
- 2023 20:58:56 +0800
+ 2023 20:58:53 +0800
 Received: from localhost.localdomain (113.72.145.34) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 13 Jun
- 2023 20:58:55 +0800
+ 2023 20:58:52 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -42,12 +42,10 @@ CC:     Paul Walmsley <paul.walmsley@sifive.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         "William Qiu" <william.qiu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v5 3/7] dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
-Date:   Tue, 13 Jun 2023 20:58:48 +0800
-Message-ID: <20230613125852.211636-4-xingyu.wu@starfivetech.com>
+Subject: [PATCH v5 0/7] Add PLL clocks driver and syscon for StarFive JH7110 SoC
+Date:   Tue, 13 Jun 2023 20:58:45 +0800
+Message-ID: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
-References: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [113.72.145.34]
@@ -59,87 +57,89 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add optional PLL clock inputs from PLL clock generator.
+This patch serises are to add PLL clocks driver and providers by writing
+and reading syscon registers for the StarFive JH7110 RISC-V SoC. And add 
+documentation and nodes to describe StarFive System Controller(syscon)
+Registers. This patch serises are based on Linux 6.4-rc1.
 
-Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
----
- .../clock/starfive,jh7110-syscrg.yaml         | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
+PLL are high speed, low jitter frequency synthesizers in JH7110.
+Each PLL clocks work in integer mode or fraction mode by some dividers,
+and the dividers are set in several syscon registers.
+The formula for calculating frequency is: 
+Fvco = Fref * (NI + NF) / M / Q1
 
-diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-index 84373ae31644..5536e5f9e20b 100644
---- a/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-+++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-syscrg.yaml
-@@ -39,6 +39,33 @@ properties:
-           - description: External TDM clock
-           - description: External audio master clock
- 
-+      - items:
-+          - description: Main Oscillator (24 MHz)
-+          - description: GMAC1 RMII reference or GMAC1 RGMII RX
-+          - description: External I2S TX bit clock
-+          - description: External I2S TX left/right channel clock
-+          - description: External I2S RX bit clock
-+          - description: External I2S RX left/right channel clock
-+          - description: External TDM clock
-+          - description: External audio master clock
-+          - description: PLL0
-+          - description: PLL1
-+          - description: PLL2
-+
-+      - items:
-+          - description: Main Oscillator (24 MHz)
-+          - description: GMAC1 RMII reference
-+          - description: GMAC1 RGMII RX
-+          - description: External I2S TX bit clock
-+          - description: External I2S TX left/right channel clock
-+          - description: External I2S RX bit clock
-+          - description: External I2S RX left/right channel clock
-+          - description: External TDM clock
-+          - description: External audio master clock
-+          - description: PLL0
-+          - description: PLL1
-+          - description: PLL2
-+
-   clock-names:
-     oneOf:
-       - items:
-@@ -64,6 +91,35 @@ properties:
-           - const: tdm_ext
-           - const: mclk_ext
- 
-+      - items:
-+          - const: osc
-+          - enum:
-+              - gmac1_rmii_refin
-+              - gmac1_rgmii_rxin
-+          - const: i2stx_bclk_ext
-+          - const: i2stx_lrck_ext
-+          - const: i2srx_bclk_ext
-+          - const: i2srx_lrck_ext
-+          - const: tdm_ext
-+          - const: mclk_ext
-+          - const: pll0_out
-+          - const: pll1_out
-+          - const: pll2_out
-+
-+      - items:
-+          - const: osc
-+          - const: gmac1_rmii_refin
-+          - const: gmac1_rgmii_rxin
-+          - const: i2stx_bclk_ext
-+          - const: i2stx_lrck_ext
-+          - const: i2srx_bclk_ext
-+          - const: i2srx_lrck_ext
-+          - const: tdm_ext
-+          - const: mclk_ext
-+          - const: pll0_out
-+          - const: pll1_out
-+          - const: pll2_out
-+
-   '#clock-cells':
-     const: 1
-     description:
+The first patch adds docunmentation to describe PLL clock bindings,
+and the second patch adds documentation to decribe syscon registers.
+The patch 3 modifies the SYSCRG dibindings and adds PLL clock inputs.
+The patch 4 adds driver to support PLL clocks for JH7110.
+The patch 5 modifies the system clock driver and can select the PLL clock
+source from PLL clocks driver. And the patch 6 adds the 
+stg/sys/aon syscon nodes for JH7110 SoC. The last patch modifies the
+syscrg node in JH7110 dts file.
+
+Changes since v4:
+- Rebased on Linux 6.4-rc6.
+- Patch 2 dropped the example node about sys-syscon.
+- Patch 3 used PLL clocks as one of optional items in SYSCRG bindings.
+- Patch 4 used the patch instead about PLL clocks driver from Emil.
+- Patch 5 retained the fixed factor PLL clocks as the optional source
+  about PLL clocks in SYSCRG clock driver.
+- Patch 6 added the child node clock-controller as the complete
+  sys-syscon node and patch 7 dropped this part.
+
+v4: https://lore.kernel.org/all/20230512022036.97987-1-xingyu.wu@starfivetech.com/
+
+Changes since v3: 
+- Rebased on Linux 6.4-rc1.
+- Dropped the 'power-controller' property and used 'power-domain-cells'
+  instead in syscon binding.
+- Used the data by of_device_id to get the syscon registers'
+  configuration include offset, mask and shift.
+
+v3: https://lore.kernel.org/all/20230414024157.53203-1-xingyu.wu@starfivetech.com/
+
+Changes since v2: 
+- Rebased on latest JH7110 basic clock drivers.
+- Added the complete documentation to describe syscon register.
+- Added syscon node in JH7110 dts file.
+- Modified the clock rate selection to match the closest rate in
+  PLL driver when setting rate.
+
+v2: https://lore.kernel.org/all/20230316030514.137427-1-xingyu.wu@starfivetech.com/
+
+Changes since v1: 
+- Changed PLL clock node to be child of syscon node in dts.
+- Modifed the definitions and names of function in PLL clock driver.
+- Added commit to update syscon and syscrg dt-bindings.
+
+v1: https://lore.kernel.org/all/20230221141147.303642-1-xingyu.wu@starfivetech.com/
+
+William Qiu (2):
+  dt-bindings: soc: starfive: Add StarFive syscon module
+  riscv: dts: starfive: jh7110: Add syscon nodes
+
+Xingyu Wu (5):
+  dt-bindings: clock: Add StarFive JH7110 PLL clock generator
+  dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
+  clk: starfive: Add StarFive JH7110 PLL clock driver
+  clk: starfive: jh7110-sys: Add PLL clocks source from DTS
+  riscv: dts: starfive: jh7110: Add PLL clock source in SYSCRG node
+
+ .../bindings/clock/starfive,jh7110-pll.yaml   |  46 ++
+ .../clock/starfive,jh7110-syscrg.yaml         |  56 ++
+ .../soc/starfive/starfive,jh7110-syscon.yaml  |  62 +++
+ MAINTAINERS                                   |  13 +
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      |  30 +-
+ drivers/clk/starfive/Kconfig                  |   9 +
+ drivers/clk/starfive/Makefile                 |   1 +
+ .../clk/starfive/clk-starfive-jh7110-pll.c    | 507 ++++++++++++++++++
+ .../clk/starfive/clk-starfive-jh7110-sys.c    |  45 +-
+ .../dt-bindings/clock/starfive,jh7110-crg.h   |   6 +
+ 10 files changed, 755 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.c
+
 -- 
 2.25.1
 
