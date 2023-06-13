@@ -2,138 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3491EC7EE43
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 00:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE11C7EE2F
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 00:41:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238432AbjFMAKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 20:10:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51186 "EHLO
+        id S233694AbjFMAlz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 20:41:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237887AbjFMAKj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 20:10:39 -0400
+        with ESMTP id S237433AbjFMAly (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 20:41:54 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A592D171D;
-        Mon, 12 Jun 2023 17:10:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE8A18C;
+        Mon, 12 Jun 2023 17:41:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2B4B662E7C;
-        Tue, 13 Jun 2023 00:10:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E8D3C4339C;
-        Tue, 13 Jun 2023 00:10:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3164763040;
+        Tue, 13 Jun 2023 00:41:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F3DC433EF;
+        Tue, 13 Jun 2023 00:41:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686615037;
-        bh=RkC7m+ef9MDtn7UWLvgRnRzmN0nJLRntkzJFcqy2vXw=;
+        s=k20201202; t=1686616912;
+        bh=IGOhvvrK7l3Oz69XA9xF5ZiPQc6f/G4f6BMPJ4mch2s=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=FHxvRGIAxDoNvq/SN8C376t3jj5M5YeyBEnSBQEIePf8IYJ5O3iPXFYKxeH3zr9uc
-         vTvrrwDc0P5Jpc+b4Xv4zRkSpfTlrT+fbRC3LRXKDJzxsS1YENK+dX5daB77WpijZG
-         FriHbVFFPh2O1BFpdttS4cZaz+rsWidUolh1MUDZs9E9nhZo0EqzeetlNjKFiU7doB
-         giVt0aYz3nY/pMQDBoxDlE6VjeykIwC26tsmtls+VY83CfjXl2YF+lf1z6vJfea96t
-         l4/IAGDiGi1PPK1KMKROVYpk2Ss3p1x72lqDwT6iGL/JlrKRz99ZG4KudliXDOmNJZ
-         WdTQNIRPk+4sg==
-Message-ID: <2f3328c4be9db6feef2cc662ede70f92.sboyd@kernel.org>
+        b=GJudkHabtLu6OFRUL5JzRLU5TWjoivWYWB8ECu77Ar9yWUhnEw2ye1EoNkFVEeicO
+         ecQa7AFs9l/mvV5w8VtQ2RsXmZbbYKyfRgxHxdnISHlWv/AyM+jPrDurIUkAyDbOEy
+         Ltijmd/mpNwWktEjJaYBgQlmc2CXytH0JLhD/ft5m3ggMOUQw3rx1rfa+79KWvzEUi
+         LRwQ6DHdD7/ox6UX4wCR6nYbAEABvoMMoAT1lbFbB5UpWaYdTgtDbI0Sfr/EWgFosZ
+         TPyeOohOtAGFaoVGBtlkdeo45b/jQms2SPVpWKurIOSRtL051kegjtTiGE/jCGdGNz
+         2tiXloXcKZ2aA==
+Message-ID: <5e9e776db6628d02d7081292b81ab102.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230526171057.66876-2-sebastian.reichel@collabora.com>
-References: <20230526171057.66876-1-sebastian.reichel@collabora.com> <20230526171057.66876-2-sebastian.reichel@collabora.com>
-Subject: Re: [PATCH v2 1/2] clk: composite: Fix handling of high clock rates
+In-Reply-To: <20230526171057.66876-3-sebastian.reichel@collabora.com>
+References: <20230526171057.66876-1-sebastian.reichel@collabora.com> <20230526171057.66876-3-sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v2 2/2] clk: divider: Fix divisions
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Christopher Obbard <chris.obbard@collabora.com>,
         David Laight <David.Laight@ACULAB.COM>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kernel@collabora.com, stable@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>
+        kernel@collabora.com
 To:     Michael Turquette <mturquette@baylibre.com>,
         Sebastian Reichel <sebastian.reichel@collabora.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 12 Jun 2023 17:10:35 -0700
+Date:   Mon, 12 Jun 2023 17:41:50 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sebastian Reichel (2023-05-26 10:10:56)
-> ULONG_MAX is used by a few drivers to figure out the highest available
-> clock rate via clk_round_rate(clk, ULONG_MAX). Since abs() takes a
-> signed value as input, the current logic effectively calculates with
-> ULONG_MAX =3D -1, which results in the worst parent clock being chosen
-> instead of the best one.
+Quoting Sebastian Reichel (2023-05-26 10:10:57)
+> The clock framework handles clock rates as "unsigned long", so u32 on
+> 32-bit architectures and u64 on 64-bit architectures.
 >=20
-> For example on Rockchip RK3588 the eMMC driver tries to figure out
-> the highest available clock rate. There are three parent clocks
-> available resulting in the following rate diffs with the existing
-> logic:
->=20
-> GPLL:   abs(18446744073709551615 - 1188000000) =3D 1188000001
-> CPLL:   abs(18446744073709551615 - 1500000000) =3D 1500000001
-> XIN24M: abs(18446744073709551615 -   24000000) =3D   24000001
+> The current code pointlessly casts the dividend to u64 on 32-bit
+> architectures and thus pointlessly reducing the performance.
 
-I had to read the abs() macro to understand this and also look at the
-types for 'req->rate' and 'tmp_req.rate' (both are unsigned long) to
-understand what's going on. I'm not sure I'd say that abs() takes the
-input as a signed value. Instead, it converts the input to a signed type
-to figure out if it should negate the value or not. The problem is the
-subtraction result is larger than can fit in a signed long long on a
-64-bit machine, so we can't use the macro at all if the type is unsigned
-long and the sign bit is set.
+It looks like that was done to make the DIV_ROUND_UP() macro not
+overflow the dividend on 32-bit machines (from 9556f9dad8f5):
+
+  DIV_ROUND_UP(3000000000, 1500000000) =3D (3.0G + 1.5G - 1) / 1.5G
+                                       =3D OVERFLOW / 1.5G
+
+but I agree, the u64 cast is not necessary if DIV_ROUND_UP_ULL() is
+used as that macro casts the dividend to unsigned long long anyway.
 
 >=20
-> As a result the clock framework will promote a maximum supported
-> clock rate of 24 MHz, even though 1.5GHz are possible. With the
-> updated logic any casting between signed and unsigned is avoided
-> and the numbers look like this instead:
+> On the other hand on 64-bit architectures the divisor is masked and only
+> the lower 32-bit are used. Thus requesting a frequency >=3D 4.3GHz results
+> in incorrect values. For example requesting 4300000000 (4.3 GHz) will
+> effectively request ca. 5 MHz.
+
+Nice catch. But I'm concerned that the case above is broken by changing
+to DIV_ROUND_UP(). As this code is generic, I fear we'll have to change
+this code that divides rates to use DIV64_U64_ROUND_UP() because we
+don't know how large the rate is (i.e. it could be larger than 32-bits
+on a 64-bit machine).
+
+> Requesting clk_round_rate(clk, ULONG_MAX)
+> is a bit of a special case, since that still returns correct values as
+> long as the parent clock is below 8.5 GHz.
 >=20
-> GPLL:   18446744073709551615 - 1188000000 =3D 18446744072521551615
-> CPLL:   18446744073709551615 - 1500000000 =3D 18446744072209551615
-> XIN24M: 18446744073709551615 -   24000000 =3D 18446744073685551615
->=20
-> As a result the parent with the highest acceptable rate is chosen
-> instead of the parent clock with the lowest one.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 49502408007b ("mmc: sdhci-of-dwcmshc: properly determine max clock=
- on Rockchip")
-> Tested-by: Christopher Obbard <chris.obbard@collabora.com>
 > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 > ---
->  drivers/clk/clk-composite.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/clk/clk-divider.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >=20
-> diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-> index edfa94641bbf..66759fe28fad 100644
-> --- a/drivers/clk/clk-composite.c
-> +++ b/drivers/clk/clk-composite.c
-> @@ -119,7 +119,10 @@ static int clk_composite_determine_rate(struct clk_h=
-w *hw,
->                         if (ret)
->                                 continue;
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index a2c2b5203b0a..c38e8aa60e54 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -220,7 +220,7 @@ static int _div_round_up(const struct clk_div_table *=
+table,
+>                          unsigned long parent_rate, unsigned long rate,
+>                          unsigned long flags)
+>  {
+> -       int div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> +       int div =3D DIV_ROUND_UP(parent_rate, rate);
 > =20
-> -                       rate_diff =3D abs(req->rate - tmp_req.rate);
-> +                       if (req->rate >=3D tmp_req.rate)
-> +                               rate_diff =3D req->rate - tmp_req.rate;
-> +                       else
-> +                               rate_diff =3D tmp_req.rate - req->rate;
+>         if (flags & CLK_DIVIDER_POWER_OF_TWO)
+>                 div =3D __roundup_pow_of_two(div);
+> @@ -237,7 +237,7 @@ static int _div_round_closest(const struct clk_div_ta=
+ble *table,
+>         int up, down;
+>         unsigned long up_rate, down_rate;
+> =20
+> -       up =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> +       up =3D DIV_ROUND_UP(parent_rate, rate);
+>         down =3D parent_rate / rate;
+> =20
+>         if (flags & CLK_DIVIDER_POWER_OF_TWO) {
+> @@ -473,7 +473,7 @@ int divider_get_val(unsigned long rate, unsigned long=
+ parent_rate,
+>  {
+>         unsigned int div, value;
+> =20
+> -       div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> +       div =3D DIV_ROUND_UP(parent_rate, rate);
+> =20
+>         if (!_is_valid_div(table, div, flags))
+>                 return -EINVAL;
 
-This problem is widespread
-
- $ git grep abs\(.*- -- drivers/clk/ | wc -l
- 52
-
-so we may have a bigger problem here. Maybe some sort of coccinelle
-script or smatch checker can be written to look for abs() usage with an
-unsigned long type or a subtraction expression. This may also be worse
-after converting drivers to clk_hw_forward_rate_request() and
-clk_hw_init_rate_request() because those set the rate to ULONG_MAX.
-+Maxime for that as an FYI.
-
-Maybe we need an abs_diff() macro instead, that checks the type and on
-CONFIG_64BIT uses a conditional like above, but if it is a smaller type
-then it just uses abs() on the expression because it knows the
-difference will fit in the signed type conversion. I see that such a
-macro exists in some drm driver, so maybe it can be promoted to
-linux/math.h and then every grep hit above can use this macro instead.
-Care to take that on?
-
-Either way, I've applied this to clk-fixes as it is a regression. I'm
-just worried that this problem is more extensive.
+This is undoing parts of commit 9556f9dad8f5 ("clk: divider: handle
+integer overflow when dividing large clock rates"). Please pair this
+patch with extensive kunit tests in a new test suite clk-divider_test.c
+file. I don't know if UML supports changing sizeof(long), but that would
+be a cool feature to tease out these sorts of issues. I suppose we'll
+just have to run the kunit tests on various architectures to cover the
+possibilities.
