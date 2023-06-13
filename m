@@ -2,153 +2,197 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71439C77B7A
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 12:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0576C77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 12:14:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240199AbjFMMNG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 08:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54732 "EHLO
+        id S240520AbjFMMOe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 08:14:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234563AbjFMMNF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 08:13:05 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4647E7D
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 05:13:01 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f61735676fso6765596e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 05:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686658380; x=1689250380;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6CMlQba2o43/QiP5kbF00C5SMM+pc3bqKwMdZ4o71Wg=;
-        b=jM2BdMoNCbF74BgGgRDVYE6LKUcsY3HAYxwagM7IqNQFDHyA50WMO364I8ZuLvp9v2
-         qGs2ogbEf4zfjDoEPz0k4SbACIKnBKeIiIbl2KvH80pi+vzd5qOkPP5s4xlkhj+omVsY
-         Fda5TdW3CDeMJ1S+ETpk01VHjri3rDZvXPmReSFUWb3CKvBXoQ7CHvP0ADadNSMQvNXq
-         GHb7DJ5uGPve8Yb61BMTRIQgCsLJzAsT7XypLTm7vQOIfHTMUGXr8V4TRJHEUupLOi5z
-         Sy7JgxGVPqzsucyCgYlz42JPFMkpeynHYwsNMvKT/PqSPAfou+yAxlxlLZKOFub+XpaR
-         1eAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686658380; x=1689250380;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6CMlQba2o43/QiP5kbF00C5SMM+pc3bqKwMdZ4o71Wg=;
-        b=DsZdwz6jBPThLB2K50I+OHdlF1gydwT+mTg0xup4Vlw0Wju5dbxTH44K7chOfogCyc
-         bqCH3ver8sSAXm1q32Z0WP5449L7wiQbObtWTmKm6NyOEClBSZKlDHfKsA/vRPoSTZ/7
-         jXTwiem3rbZ7Tc+zKqD56Cft5HCpe7LayB7AB97Buy9GoV0iKO6p5ucqng0k4UehZjJJ
-         kBt8gynhL07ISULozyGGI7Q3RPlbVdfp6qW4bHeoSzIIm3G2S3/HuxfZmUV4P3HkNC7a
-         hM+go7Jlf0LHekFB6v7bR6TTqXXWYxB/FuHjH5oNjBmdpmXXRbMSbHKmf2TT+74m4xX9
-         raQA==
-X-Gm-Message-State: AC+VfDyFkJS4UMQ71lswAJ54QDzN4EU1etAu2s2SzxoEteKvcxRXIdwG
-        0z0ZfciIwFfT4tFLeJS8ws0S9Q==
-X-Google-Smtp-Source: ACHHUZ7v2g+t0UCuMLHeHfZftjO5zEOcIpmanWsJpdQFoH7LGbqE71Kf4m1iAu+cL1lUPxg/TiXWWg==
-X-Received: by 2002:ac2:5b83:0:b0:4f7:5a42:6af with SMTP id o3-20020ac25b83000000b004f75a4206afmr1024268lfn.37.1686658379752;
-        Tue, 13 Jun 2023 05:12:59 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id w28-20020ac2599c000000b004f61a57797fsm1759751lfn.60.2023.06.13.05.12.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jun 2023 05:12:59 -0700 (PDT)
-Message-ID: <a04f8089-0117-7c22-c6cc-97f5bd42a7d8@linaro.org>
-Date:   Tue, 13 Jun 2023 14:12:57 +0200
+        with ESMTP id S238913AbjFMMOd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 08:14:33 -0400
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCBFB4;
+        Tue, 13 Jun 2023 05:14:32 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 44512320091E;
+        Tue, 13 Jun 2023 08:14:28 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 13 Jun 2023 08:14:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1686658467; x=1686744867; bh=v4
+        2YMf0yNUZaTnlv4RtlO9P3NL8urmHA6A2lQ634HEU=; b=ad6xbJBv0MwKg4Qrai
+        OF7MgHam88c2EyG/0qJ3ZkSZTSNOuP4aI0NWiEiRFTtNNsrUAPV6ARYbzdWJmjxm
+        1B1XYSs588JdxyPaeZga7o6BOFqNxwFw4nR39S8K/UeWkAw1wT9w+CY/X7L8+Bdw
+        VFhbZwa8QLSEYDNYTQj1Po4iih8iVChK44A+1afLSoREYPxIOo7CU3m7fQRI8h9G
+        6BeHRMtQN5ar7t8wqHNa2guxjy2QvuUHvTs41J39B5GMIQXhQIfrIPLbtptVJ8Ob
+        GoNhawVav/YSN4EjDRkm33erzshI1aINfqRsQ5hPIz68hqc/3IjiQKzZiebDL4f3
+        tW7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1686658467; x=1686744867; bh=v42YMf0yNUZaT
+        nlv4RtlO9P3NL8urmHA6A2lQ634HEU=; b=R75d6fAJ3amWnEZWUbbL5N5nO2juw
+        yp26Dk2x7MCnT7qpnWHgNF9uYrJupJhwF3vJ8QM8FooM04OvLEx4VAqFl2QtgZyj
+        Mk+dZj0Uq0faw2C7yiIOvW5GMwtXoN/SxLneB8wHVetutRm9fny2xMK1noIhFZVx
+        aoA42D/8KIsDlVvTkcc5zCUqZxMQ1AyqPf3XvkOOhisoQDsZ/n9DiciUdLqpEWHZ
+        fHSOwzxOz9iDz8rNx+nnZdHADh4r87g2yftOR+A7RxtKztMR4uiHmgs5vAiTjK1V
+        uMs8aDRUNfvylWtixusj60qv+7L5zOVGm+n4FqF/jXY/lREVZXDFqvoVg==
+X-ME-Sender: <xms:o12IZGgnXkcnv-V5f36FH1Sos3rj_h6pWIlWq840WXgmcXm5NMD1ng>
+    <xme:o12IZHBTVMbf6yJYiwozzPJmGFUn_XhPJ00oFhJbxPEZoj4XAEO7S963U81pCqpzY
+    gmtRvH9e7xRBdym-Ho>
+X-ME-Received: <xmr:o12IZOF-fjfY47NzEf266iBjOsOhIo-HP9nRVLH4blsv8sGRuZQR0rX6q0E0dEd31xEPu8JEpCmFbKxsupHRhQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedujedggeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeeuveduheeutdekvefgudevjeeufedvvdevhfejgfelgfdtkeevueegteek
+    gfelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:o12IZPSXKaGAXW3w8uI4i1aUsjSZlLjzYU-HYUvomu8zISrdBucwbw>
+    <xmx:o12IZDyvbuZHnFRrGB6zCeCYlvn8y07NGT3HxykA53AdBkDOVeWrkw>
+    <xmx:o12IZN4gx6IbyB8KFMKG2QgO7sMqkc9iWQ7vg0H6j5IaNs8sgf0L_g>
+    <xmx:o12IZKyZOcW2R1_CMZp4_qbsXNyhc5L7vGCoskOgOTwt-l0B3loHEg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 13 Jun 2023 08:14:27 -0400 (EDT)
+Date:   Tue, 13 Jun 2023 14:14:25 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christopher Obbard <chris.obbard@collabora.com>,
+        David Laight <David.Laight@aculab.com>, kernel@collabora.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: composite: Fix handling of high clock rates
+Message-ID: <7s2xdk43a2lhyezgj6bbwxaekbtgym2rin7t432m4pos4j6v74@qaxm3htjak4a>
+References: <20230526171057.66876-1-sebastian.reichel@collabora.com>
+ <20230526171057.66876-2-sebastian.reichel@collabora.com>
+ <2f3328c4be9db6feef2cc662ede70f92.sboyd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v3 07/23] interconnect: qcom: icc-rpm: Allow negative QoS
- offset
-Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org>
- <20230526-topic-smd_icc-v3-7-5fb7d39b874f@linaro.org>
- <ZId_qIAL8dvJOwai@gerhold.net>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZId_qIAL8dvJOwai@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xknyxj2353a63nj6"
+Content-Disposition: inline
+In-Reply-To: <2f3328c4be9db6feef2cc662ede70f92.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--xknyxj2353a63nj6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12.06.2023 22:27, Stephan Gerhold wrote:
-> On Mon, Jun 12, 2023 at 08:24:24PM +0200, Konrad Dybcio wrote:
->> In some very very very very unfortunate cases, the correct offset of
->> the QoS registers will be.. negative. One such case is MSM8998, where
->> The DDR BWMON occupies what-would-be-the-BIMC-base which we usually
->> take into account with the register calculation, making the actual
->> BIMC node start at what-would-be-the-BIMC-base+0x300.
->>
->> In order to keep the calculation code sane, the simplest - however
->> ugly it may be - solution is to allow the offset to be negative.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> I'm a bit confused why this patch is part of this series. It doesn't
-> seem to be directly related.
-> 
-> Can you send it as part of the series that adds the MSM8998 interconnect
-> driver?
-Ack
+On Mon, Jun 12, 2023 at 05:10:35PM -0700, Stephen Boyd wrote:
+> Quoting Sebastian Reichel (2023-05-26 10:10:56)
+> > ULONG_MAX is used by a few drivers to figure out the highest available
+> > clock rate via clk_round_rate(clk, ULONG_MAX). Since abs() takes a
+> > signed value as input, the current logic effectively calculates with
+> > ULONG_MAX =3D -1, which results in the worst parent clock being chosen
+> > instead of the best one.
+> >=20
+> > For example on Rockchip RK3588 the eMMC driver tries to figure out
+> > the highest available clock rate. There are three parent clocks
+> > available resulting in the following rate diffs with the existing
+> > logic:
+> >=20
+> > GPLL:   abs(18446744073709551615 - 1188000000) =3D 1188000001
+> > CPLL:   abs(18446744073709551615 - 1500000000) =3D 1500000001
+> > XIN24M: abs(18446744073709551615 -   24000000) =3D   24000001
+>=20
+> I had to read the abs() macro to understand this and also look at the
+> types for 'req->rate' and 'tmp_req.rate' (both are unsigned long) to
+> understand what's going on. I'm not sure I'd say that abs() takes the
+> input as a signed value. Instead, it converts the input to a signed type
+> to figure out if it should negate the value or not. The problem is the
+> subtraction result is larger than can fit in a signed long long on a
+> 64-bit machine, so we can't use the macro at all if the type is unsigned
+> long and the sign bit is set.
+>=20
+> >=20
+> > As a result the clock framework will promote a maximum supported
+> > clock rate of 24 MHz, even though 1.5GHz are possible. With the
+> > updated logic any casting between signed and unsigned is avoided
+> > and the numbers look like this instead:
+> >=20
+> > GPLL:   18446744073709551615 - 1188000000 =3D 18446744072521551615
+> > CPLL:   18446744073709551615 - 1500000000 =3D 18446744072209551615
+> > XIN24M: 18446744073709551615 -   24000000 =3D 18446744073685551615
+> >=20
+> > As a result the parent with the highest acceptable rate is chosen
+> > instead of the parent clock with the lowest one.
+> >=20
+> > Cc: stable@vger.kernel.org
+> > Fixes: 49502408007b ("mmc: sdhci-of-dwcmshc: properly determine max clo=
+ck on Rockchip")
+> > Tested-by: Christopher Obbard <chris.obbard@collabora.com>
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > ---
+> >  drivers/clk/clk-composite.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+> > index edfa94641bbf..66759fe28fad 100644
+> > --- a/drivers/clk/clk-composite.c
+> > +++ b/drivers/clk/clk-composite.c
+> > @@ -119,7 +119,10 @@ static int clk_composite_determine_rate(struct clk=
+_hw *hw,
+> >                         if (ret)
+> >                                 continue;
+> > =20
+> > -                       rate_diff =3D abs(req->rate - tmp_req.rate);
+> > +                       if (req->rate >=3D tmp_req.rate)
+> > +                               rate_diff =3D req->rate - tmp_req.rate;
+> > +                       else
+> > +                               rate_diff =3D tmp_req.rate - req->rate;
+>=20
+> This problem is widespread
+>=20
+>  $ git grep abs\(.*- -- drivers/clk/ | wc -l
+>  52
+>=20
+> so we may have a bigger problem here. Maybe some sort of coccinelle
+> script or smatch checker can be written to look for abs() usage with an
+> unsigned long type or a subtraction expression. This may also be worse
+> after converting drivers to clk_hw_forward_rate_request() and
+> clk_hw_init_rate_request() because those set the rate to ULONG_MAX.
+> +Maxime for that as an FYI.
 
-Konrad
-> 
-> Thanks,
-> Stephan
-> 
->> ---
->>  drivers/interconnect/qcom/icc-rpm.h | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
->> index d2c04c400cad..ba840a436cc0 100644
->> --- a/drivers/interconnect/qcom/icc-rpm.h
->> +++ b/drivers/interconnect/qcom/icc-rpm.h
->> @@ -29,10 +29,10 @@ enum qcom_icc_type {
->>   * @num_intf_clks: the total number of intf_clks clk_bulk_data entries
->>   * @type: the ICC provider type
->>   * @regmap: regmap for QoS registers read/write access
->> - * @qos_offset: offset to QoS registers
->>   * @bus_clk_rate: bus clock rate in Hz
->>   * @bus_clks: the clk_bulk_data table of bus clocks
->>   * @intf_clks: a clk_bulk_data array of interface clocks
->> + * @qos_offset: offset to QoS registers
->>   * @keep_alive: whether to always keep a minimum vote on the bus clocks
->>   * @is_on: whether the bus is powered on
->>   */
->> @@ -42,7 +42,7 @@ struct qcom_icc_provider {
->>  	int num_intf_clks;
->>  	enum qcom_icc_type type;
->>  	struct regmap *regmap;
->> -	unsigned int qos_offset;
->> +	int qos_offset;
->>  	u64 bus_clk_rate[NUM_BUS_CLKS];
->>  	struct clk_bulk_data bus_clks[NUM_BUS_CLKS];
->>  	struct clk_bulk_data *intf_clks;
->> @@ -108,7 +108,7 @@ struct qcom_icc_desc {
->>  	bool no_clk_scaling;
->>  	enum qcom_icc_type type;
->>  	const struct regmap_config *regmap_cfg;
->> -	unsigned int qos_offset;
->> +	int qos_offset;
->>  };
->>  
->>  /* Valid for all bus types */
->>
->> -- 
->> 2.41.0
->>
+We set max_rate to ULONG_MAX in those functions, and I don't think we
+have a lot of driver that will call clk_round_rate on the max rate, so
+we should be somewhat ok?
+
+> Maybe we need an abs_diff() macro instead, that checks the type and on
+> CONFIG_64BIT uses a conditional like above, but if it is a smaller type
+> then it just uses abs() on the expression because it knows the
+> difference will fit in the signed type conversion. I see that such a
+> macro exists in some drm driver, so maybe it can be promoted to
+> linux/math.h and then every grep hit above can use this macro instead.
+> Care to take that on?
+>=20
+> Either way, I've applied this to clk-fixes as it is a regression. I'm
+> just worried that this problem is more extensive.
+
+Yeah, that construct is pretty much everywhere, including in the core :/
+
+Maxime
+
+--xknyxj2353a63nj6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIhdoQAKCRDj7w1vZxhR
+xU5bAP9g7Tee5vJITJfE+Ar+pEw/9kcbIf86Je/pPgxBQ9p6QQD/VfCaShlIUjQe
+fGnC8mqsu1vU1OCltzoWRjv51iAQegw=
+=mwAH
+-----END PGP SIGNATURE-----
+
+--xknyxj2353a63nj6--
