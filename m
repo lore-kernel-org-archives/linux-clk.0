@@ -2,132 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE11C7EE2F
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 00:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F10C7EE2E
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 01:06:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233694AbjFMAlz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Jun 2023 20:41:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39702 "EHLO
+        id S234271AbjFMBGb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Jun 2023 21:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237433AbjFMAly (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 20:41:54 -0400
+        with ESMTP id S232574AbjFMBGa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Jun 2023 21:06:30 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BE8A18C;
-        Mon, 12 Jun 2023 17:41:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E38ECD3
+        for <linux-clk@vger.kernel.org>; Mon, 12 Jun 2023 18:06:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3164763040;
-        Tue, 13 Jun 2023 00:41:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F3DC433EF;
-        Tue, 13 Jun 2023 00:41:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7766762C99
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 01:06:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE00C433EF;
+        Tue, 13 Jun 2023 01:06:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686616912;
-        bh=IGOhvvrK7l3Oz69XA9xF5ZiPQc6f/G4f6BMPJ4mch2s=;
+        s=k20201202; t=1686618388;
+        bh=+zttTJLFniMHAb54GyKrL5R5BjLoU/2jNy216kjYbK4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GJudkHabtLu6OFRUL5JzRLU5TWjoivWYWB8ECu77Ar9yWUhnEw2ye1EoNkFVEeicO
-         ecQa7AFs9l/mvV5w8VtQ2RsXmZbbYKyfRgxHxdnISHlWv/AyM+jPrDurIUkAyDbOEy
-         Ltijmd/mpNwWktEjJaYBgQlmc2CXytH0JLhD/ft5m3ggMOUQw3rx1rfa+79KWvzEUi
-         LRwQ6DHdD7/ox6UX4wCR6nYbAEABvoMMoAT1lbFbB5UpWaYdTgtDbI0Sfr/EWgFosZ
-         TPyeOohOtAGFaoVGBtlkdeo45b/jQms2SPVpWKurIOSRtL051kegjtTiGE/jCGdGNz
-         2tiXloXcKZ2aA==
-Message-ID: <5e9e776db6628d02d7081292b81ab102.sboyd@kernel.org>
+        b=Si94vaJe7VQDSSUiRD0BVoL1X4G2hCCtsvpFW4Yf1sEubDi24mmMrl/+U71nD5q0P
+         M/GX7upUFdVph8EQ3oyp1Hiua+0mC1fXLCk/qnrVCa8pmuH6d9MMf47WjqTxoml8T1
+         3fMjREoXSd7XI81xZ86CdtUfF3LuemJbgm4yz5+GXE9H+iv5SUrGXaYlL3YzU+5fu3
+         vkxbnbNavNqjdv2uCxOAYq/NN/4EXwgsEDpRrckphWTKgHAArdhcpUqyMaw1p9TtSw
+         qi434drqtnZbNZrP+MmYD54SIwZ7L/TvbDB3cUZi8j1o0hBL/rt20QcAbDT511zdVO
+         gUy5cAdQGhY0A==
+Message-ID: <6f8ca3a44de72e21b16a85f65b001de4.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230526171057.66876-3-sebastian.reichel@collabora.com>
-References: <20230526171057.66876-1-sebastian.reichel@collabora.com> <20230526171057.66876-3-sebastian.reichel@collabora.com>
-Subject: Re: [PATCH v2 2/2] clk: divider: Fix divisions
+In-Reply-To: <202306101217.08CRVGcK-lkp@intel.com>
+References: <202306101217.08CRVGcK-lkp@intel.com>
+Subject: Re: [clk:clk-determine-rate 66/68] sound/soc/codecs/tlv320aic32x4-clk.c:219 clk_aic32x4_pll_determine_rate() warn: unsigned 'rate' is never less than zero.
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Christopher Obbard <chris.obbard@collabora.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        kernel@collabora.com
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 12 Jun 2023 17:41:50 -0700
+Cc:     oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+To:     Maxime Ripard <maxime@cerno.tech>,
+        kernel test robot <lkp@intel.com>
+Date:   Mon, 12 Jun 2023 18:06:26 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sebastian Reichel (2023-05-26 10:10:57)
-> The clock framework handles clock rates as "unsigned long", so u32 on
-> 32-bit architectures and u64 on 64-bit architectures.
+Quoting kernel test robot (2023-06-09 21:38:56)
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
+-determine-rate
+> head:   326cc42f9fdc3030676e949d5cea3ccc923fd1de
+> commit: 25d43ec352eaefbfaee0912d02b6f10ea606931f [66/68] ASoC: tlv320aic3=
+2x4: pll: Switch to determine_rate
+> config: x86_64-randconfig-m001-20230608 (https://download.01.org/0day-ci/=
+archive/20230610/202306101217.08CRVGcK-lkp@intel.com/config)
+> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 >=20
-> The current code pointlessly casts the dividend to u64 on 32-bit
-> architectures and thus pointlessly reducing the performance.
-
-It looks like that was done to make the DIV_ROUND_UP() macro not
-overflow the dividend on 32-bit machines (from 9556f9dad8f5):
-
-  DIV_ROUND_UP(3000000000, 1500000000) =3D (3.0G + 1.5G - 1) / 1.5G
-                                       =3D OVERFLOW / 1.5G
-
-but I agree, the u64 cast is not necessary if DIV_ROUND_UP_ULL() is
-used as that macro casts the dividend to unsigned long long anyway.
-
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202306101217.08CRVGcK-lkp=
+@intel.com/
 >=20
-> On the other hand on 64-bit architectures the divisor is masked and only
-> the lower 32-bit are used. Thus requesting a frequency >=3D 4.3GHz results
-> in incorrect values. For example requesting 4300000000 (4.3 GHz) will
-> effectively request ca. 5 MHz.
-
-Nice catch. But I'm concerned that the case above is broken by changing
-to DIV_ROUND_UP(). As this code is generic, I fear we'll have to change
-this code that divides rates to use DIV64_U64_ROUND_UP() because we
-don't know how large the rate is (i.e. it could be larger than 32-bits
-on a 64-bit machine).
-
-> Requesting clk_round_rate(clk, ULONG_MAX)
-> is a bit of a special case, since that still returns correct values as
-> long as the parent clock is below 8.5 GHz.
+> smatch warnings:
+> sound/soc/codecs/tlv320aic32x4-clk.c:219 clk_aic32x4_pll_determine_rate()=
+ warn: unsigned 'rate' is never less than zero.
 >=20
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  drivers/clk/clk-divider.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> vim +/rate +219 sound/soc/codecs/tlv320aic32x4-clk.c
 >=20
-> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-> index a2c2b5203b0a..c38e8aa60e54 100644
-> --- a/drivers/clk/clk-divider.c
-> +++ b/drivers/clk/clk-divider.c
-> @@ -220,7 +220,7 @@ static int _div_round_up(const struct clk_div_table *=
-table,
->                          unsigned long parent_rate, unsigned long rate,
->                          unsigned long flags)
->  {
-> -       int div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +       int div =3D DIV_ROUND_UP(parent_rate, rate);
-> =20
->         if (flags & CLK_DIVIDER_POWER_OF_TWO)
->                 div =3D __roundup_pow_of_two(div);
-> @@ -237,7 +237,7 @@ static int _div_round_closest(const struct clk_div_ta=
-ble *table,
->         int up, down;
->         unsigned long up_rate, down_rate;
-> =20
-> -       up =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +       up =3D DIV_ROUND_UP(parent_rate, rate);
->         down =3D parent_rate / rate;
-> =20
->         if (flags & CLK_DIVIDER_POWER_OF_TWO) {
-> @@ -473,7 +473,7 @@ int divider_get_val(unsigned long rate, unsigned long=
- parent_rate,
->  {
->         unsigned int div, value;
-> =20
-> -       div =3D DIV_ROUND_UP_ULL((u64)parent_rate, rate);
-> +       div =3D DIV_ROUND_UP(parent_rate, rate);
-> =20
->         if (!_is_valid_div(table, div, flags))
->                 return -EINVAL;
+>    206 =20
+>    207  static int clk_aic32x4_pll_determine_rate(struct clk_hw *hw,
+>    208                                            struct clk_rate_request=
+ *req)
+>    209  {
+>    210          struct clk_aic32x4_pll_muldiv settings;
+>    211          unsigned long rate;
+>    212          int ret;
+>    213 =20
+>    214          ret =3D clk_aic32x4_pll_calc_muldiv(&settings, req->rate,=
+ req->best_parent_rate);
+>    215          if (ret < 0)
+>    216                  return -EINVAL;
+>    217 =20
+>    218          rate =3D clk_aic32x4_pll_calc_rate(&settings, req->best_p=
+arent_rate);
+>  > 219          if (rate < 0)
+>    220                  return rate;
+>    221 =20
+>    222          req->rate =3D rate;
+>    223          return 0;
+>    224  }
+>    225 =20
 
-This is undoing parts of commit 9556f9dad8f5 ("clk: divider: handle
-integer overflow when dividing large clock rates"). Please pair this
-patch with extensive kunit tests in a new test suite clk-divider_test.c
-file. I don't know if UML supports changing sizeof(long), but that would
-be a cool feature to tease out these sorts of issues. I suppose we'll
-just have to run the kunit tests on various architectures to cover the
-possibilities.
+Should we just apply this patch?
+
+---8<---
+diff --git a/sound/soc/codecs/tlv320aic32x4-clk.c b/sound/soc/codecs/tlv320=
+aic32x4-clk.c
+index a7ec501b4c69..c116e82f712d 100644
+--- a/sound/soc/codecs/tlv320aic32x4-clk.c
++++ b/sound/soc/codecs/tlv320aic32x4-clk.c
+@@ -208,18 +208,14 @@ static int clk_aic32x4_pll_determine_rate(struct clk_=
+hw *hw,
+ 					  struct clk_rate_request *req)
+ {
+ 	struct clk_aic32x4_pll_muldiv settings;
+-	unsigned long rate;
+ 	int ret;
+=20
+ 	ret =3D clk_aic32x4_pll_calc_muldiv(&settings, req->rate, req->best_paren=
+t_rate);
+ 	if (ret < 0)
+ 		return -EINVAL;
+=20
+-	rate =3D clk_aic32x4_pll_calc_rate(&settings, req->best_parent_rate);
+-	if (rate < 0)
+-		return rate;
++	req->rate =3D clk_aic32x4_pll_calc_rate(&settings, req->best_parent_rate);
+=20
+-	req->rate =3D rate;
+ 	return 0;
+ }
