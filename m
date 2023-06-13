@@ -2,53 +2,51 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43519EB64D8
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 23:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 622BBC001DE
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 23:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241528AbjFMXrk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 19:47:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38240 "EHLO
+        id S240923AbjFMXrz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 19:47:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240820AbjFMXrW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 19:47:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27CDD2D45;
+        with ESMTP id S241444AbjFMXrX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 19:47:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D8E11BFD;
         Tue, 13 Jun 2023 16:46:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4C3836353D;
-        Tue, 13 Jun 2023 23:45:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0AB9C433CC;
-        Tue, 13 Jun 2023 23:45:37 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9BFD763C79;
+        Tue, 13 Jun 2023 23:45:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B892C433C0;
+        Tue, 13 Jun 2023 23:45:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686699938;
-        bh=qesurF4toa3MGEAJJCumXKvdmGx/hbsiVL5/FEtac7Q=;
+        s=k20201202; t=1686699945;
+        bh=ZseuDVtPZx7qTmwgoEv1ylF+KAXwdDILoO8Fkiiir48=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CgnBTgOnvG+2gOjPC2oBWX+HjSinI+03orQ5/AifJjsgRC37AvN+dFn4Z56a3xftm
-         I+7yo5rHk6EHZaNagEDXuvrQ0ljCFAFS49o6OIRPMrWxe7X2Q+JthuXOIWgzK92HT0
-         n4CDzckTlJJdCX8NqcnDBIOvMtuaBqYBOAw8W7oqJZUrFEMJme4gbzVx5e+3+ZbMXt
-         Bp7UNGt7frhTWKUKLkcE2j5FtFfos9NunJupr7O16nbX7KWjr+ay7u9N2u6UbMIebS
-         ENFoVf5nSRcjQr5yYN8VzrR4Z6SPYDiWW9EGcz0w509rhW85cCb1uBrQuEGJSPx4dy
-         zqei5LH+Z/5CA==
+        b=hMtMwLBKBd8hCMUxocPlj5dpt08WaA2jkrwhxAr0tT410C2+vhlxgsdsFx/Ypp4RS
+         oKahyaRjKwvvNKRDOGd1ztaH1hXImOuIqbrwzV4xhqqEiPdV8Nn2dWYO/ZKzl1/Nn/
+         TjbFUPi/pDHBG9WpmmXfClJ2NQu9T8lbfz0KrOWIal8qUsnP0YjI+VO3gaZvXRXIhA
+         bdUSCAnAkC2OEAQs/dqduFYV1iyleImjON2cge1KJozjwwhnPAPeta8LrgO58vLJVh
+         KSx3ki1jlY9htvGzTH1Xn1KLoLatb6KV67q9oRC2xKQJaIt7n8NMsxa/vAg+h/Idh/
+         vdet5kNOszh+w==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
         Andy Gross <agross@kernel.org>,
+        Iskren Chernev <me@iskren.info>,
         Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Robert Marko <robimarko@gmail.com>
-Cc:     Mantas Pucka <mantas@8devices.com>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-ipq6018: remove duplicate initializers
-Date:   Tue, 13 Jun 2023 16:48:42 -0700
-Message-Id: <168670013502.1400697.3131204181371880058.b4-ty@kernel.org>
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Update parts of PLL_TEST_CTL(_U) if required
+Date:   Tue, 13 Jun 2023 16:48:48 -0700
+Message-Id: <168670013502.1400697.6968638068672657163.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230601213416.3373599-1-arnd@kernel.org>
-References: <20230601213416.3373599-1-arnd@kernel.org>
+In-Reply-To: <20230601-topic-alpha_ctl-v1-0-b6a932dfcf68@linaro.org>
+References: <20230601-topic-alpha_ctl-v1-0-b6a932dfcf68@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -56,25 +54,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 1 Jun 2023 23:34:12 +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Thu, 01 Jun 2023 11:39:06 +0200, Konrad Dybcio wrote:
+> Some recent-ish clock drivers touching on the "standard" Alpha PLLs
+> have been specifying the values that should be written into the CTL
+> registers as mask-value combos, but that wasn't always reflected
+> properly (or at all). This series tries to fix that without affecitng
+> the drivers that actually provide the full register values.
 > 
-> A recent change added new initializers for .config_ctl_val and
-> .config_ctl_hi_val but left the old values in place:
-> 
-> drivers/clk/qcom/gcc-ipq6018.c:4155:27: error: initialized field overwritten [-Werror=override-init]
->  4155 |         .config_ctl_val = 0x240d4828,
->       |                           ^~~~~~~~~~
-> drivers/clk/qcom/gcc-ipq6018.c:4156:30: error: initialized field overwritten [-Werror=override-init]
->  4156 |         .config_ctl_hi_val = 0x6,
->       |                              ^~~
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-ipq6018: remove duplicate initializers
-      commit: 5ae7899765607e97e5eb34486336898c8d9ec654
+[1/2] clk: qcom: clk-alpha-pll: Add a way to update some bits of test_ctl(_hi)
+      commit: 501624339466a7896bb8a1f048cf8dcfd54b174e
+[2/2] clk: qcom: gcc-sm6115: Add missing PLL config properties
+      commit: e88c533d8a2a0fe84bb54cff1569bd079ad3512c
 
 Best regards,
 -- 
