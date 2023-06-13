@@ -2,134 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5C9EB64D7
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 20:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FDAEB64DA
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 20:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239870AbjFMUjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 16:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44980 "EHLO
+        id S232969AbjFMUpB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 16:45:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233808AbjFMUjK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 16:39:10 -0400
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1B56B8;
-        Tue, 13 Jun 2023 13:39:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1686688747; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=a/JWKGm11zhcb5nFHenvxaldcANs6IvdoFtpe4pmKFyLYgGd0RYN+rgY+mzYdRyeg1
-    w7ZUez9tN9wsqA1ioQJnEqEXV/SCbuMMHzkUHf915Gu745Jf+AgBbXhGNhroz8P8gShV
-    f+uq//dZQWVrESKR7sWM9Q0jyNDv/a8xnXfTCw5ZtZFPueqZvGfYOfel816PAXWQU6xq
-    DK2T/WaPd02Soh40neY2eUyKsRshkEbtjOU6ymDEpvhsmsF52ZAXvEsrLZMNuymi0gDl
-    ouCj8wtndBgFqPJ1G9URE3RrZryXN7lNXJqLwrkf0iCq0LCBoj+2GbMTZZDiHShVj5Db
-    XBnw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686688747;
-    s=strato-dkim-0002; d=strato.com;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=hy7FRYIzYsOPwgbepFyiaiot8JFsm4Zkz9w3L4U2mzo=;
-    b=eMsGoBuCF8z9SlrJnJeWL3Itpb4yPHA2X9mlWHroytHEwKDdSrMY1t77ccVwFGfgdn
-    swIO/FdxghqHmkqWBbg3xvitzShy6SbZKfc7vXrodlEfygFSpYJjzvXpyO655OAGHIcL
-    jJwKC6OJD7JMNyiEMrHMZDDY6Yn/TQy3Hi+ZBU5ZMh89z7SbqDQDs+RTvEV/dhgnlyWy
-    /7IIfTBYVTfRFgmUrhE8gtiPhPXETiR03jhJn+BJ8kQAwfReGyCo7Ze4DOvzkZW4Ee+t
-    8m1D8DNNhEZPxnS29KPL6J/ewugAcYy8BRVWafPdZGJLp1uzJu9YlyewJ/hYHlroYjpd
-    qnDQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686688747;
-    s=strato-dkim-0002; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=hy7FRYIzYsOPwgbepFyiaiot8JFsm4Zkz9w3L4U2mzo=;
-    b=Ap0/aJTUv/o31aFP5t8fPvUo8WKNAxhWIbGPXQa6mc1Ky+f31wzk56ng0QqHGBZACS
-    GNtGDykKRzhafmeuVK5x/43izrpkad1yGGtrFOyqLLCCFfCrqe4w73EJRR9Unc/+kB8/
-    VC8FfOYhsQmfHOqSeveKSoHSBDzRq/GQCR1R4HNq6/Bd6jho1Djt62RefPtnmpX70oeP
-    gQRK02ShWvFbUvpA6Fx4bSMJxeyJu0Z409XHrwGas9v3g5vV3YgiCVcd4dhGUBosBWuC
-    NSWwz2UDqBdG8naOerlSybLdI2PbUzOCbIeU10L76lArvM8nIGPZq+Bpy29CmphNvYs6
-    QJIA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686688747;
-    s=strato-dkim-0003; d=gerhold.net;
-    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
-    From:Subject:Sender;
-    bh=hy7FRYIzYsOPwgbepFyiaiot8JFsm4Zkz9w3L4U2mzo=;
-    b=uhwja9ofWSp2loylTSe1vZmg1mQm+iK/RNjeqEBUCADp1B1JuNTjJmeFLrxuSQ7ZcR
-    CZGXww4Kv0GPZ3QKjHBQ==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA8Z3h"
-Received: from gerhold.net
-    by smtp.strato.de (RZmta 49.5.3 DYNA|AUTH)
-    with ESMTPSA id Z82ec2z5DKd6a9o
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Tue, 13 Jun 2023 22:39:06 +0200 (CEST)
-Date:   Tue, 13 Jun 2023 22:39:05 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 17/22] interconnect: qcom: icc-rpm: Control bus rpmcc
- from icc
-Message-ID: <ZIjT6U24iwkBkqHW@gerhold.net>
-References: <20230526-topic-smd_icc-v4-0-5ba82b6fbba2@linaro.org>
- <20230526-topic-smd_icc-v4-17-5ba82b6fbba2@linaro.org>
- <ZIjTPyOfuVM7S1O1@gerhold.net>
+        with ESMTP id S240723AbjFMUox (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 16:44:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9B5E53;
+        Tue, 13 Jun 2023 13:44:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1374F617E3;
+        Tue, 13 Jun 2023 20:44:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64003C433C0;
+        Tue, 13 Jun 2023 20:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686689091;
+        bh=197GhMaGHAg2n1nbm70axBPdT5BZD1C6NILjDiLPZjI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=U9x36Wd+JZDMSDouThk/NP+nQrM/qtILqn89gaQyKEuQ4epArY8F0zmiUQpOXW/rj
+         s2dCMJ0O9K4UyxqjImAK/N/9wTWPYU/FaweNxg+pYTaC8mHrrYm5EIPhx75n3z0iO2
+         IOBMCybzq99OtMPjVZE93No0zLhdNUYbMNnuYEKMMfCJlk0i+BSVzgiLoSoM+fvXl+
+         3E9ArlAa1zWnTa84kunzuaMR+L9+2rkoo6hOgzThbW7HOvbLh6lzDRAOy5jS1XF+ep
+         Zgg1L75/2Hy3Fn9ZD8t8ivwGz90WsyADUmLaxNWKHDvtR6ziefAZmCxzXrSRFjYipL
+         1K55p38MJiS4g==
+Message-ID: <d47d0ceb834ca56a4733e226e89a4f2b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZIjTPyOfuVM7S1O1@gerhold.net>
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e8ee511863ce2aa9b09b7f0c4fa9b6919603c8f0.camel@maquefel.me>
+References: <20230424123522.18302-1-nikita.shubin@maquefel.me> <20230424123522.18302-13-nikita.shubin@maquefel.me> <d15b580f84ac89274cde3785168b0e26.sboyd@kernel.org> <e8ee511863ce2aa9b09b7f0c4fa9b6919603c8f0.camel@maquefel.me>
+Subject: Re: [PATCH 12/43] clk: ep93xx: add DT support for Cirrus EP93xx
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Nikita Shubin <nikita.shubin@maquefel.me>
+Date:   Tue, 13 Jun 2023 13:44:49 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 10:36:15PM +0200, Stephan Gerhold wrote:
-> Not even compile tested this time!
+Quoting Nikita Shubin (2023-05-15 06:31:41)
+> Hello Stephen!
+>=20
+> Thank you for your review.
+>=20
+> Acknowledged all remarks, however, i didn't fully understood some of
+> the requirements:
 
-Would have probably been worth it, sigh:
+When the reply is taken out of context it is harder for me to recall
+what we're talking about.
 
-> 
-> 	/*
-> 	 * Downstream checks whether the requested rate is zero, but it makes little sense
-> 	 * to vote for a value that's below the lower threshold, so let's not do so.
-> 	 */
-> 	if (qp->keep_alive)
-> 		agg_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE]
-> 			= max(ICC_BUS_CLK_MIN_RATE, agg_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE]);
-> 
-> 	/* Some providers have a non-RPM-owned bus clock - convert kHz->Hz for the CCF */
-> 	if (qp->bus_clk) {
-> 		rate = max_t(u64, agg_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE],
-> 			     agg_clk_rate[QCOM_SMD_RPM_SLEEP_STATE]);
-> 		/* ARM32 caps clk_set_rate arg to u32.. Nothing we can do about that! */
-> 		reate = min_t(u64, 1000ULL * rate, ULONG_MAX);
-> 		return clk_set_rate(qp->bus_clk, rate);
-> 	}
-> 
-> 	for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
-> 		/* RPM only accepts <=INT_MAX rates */
-> 		rate = min_t(u64, active_rate, INT_MAX);
+>=20
+> > And maybe this can be registered from wherever the regmap is created?
+>=20
+> Are you suggesting that all clock from init, i.e. "pll1", "pll2",
+> "hclk", "fclk", "pclk"
+>=20
+> Should be moved to=C2=A0SoC driver instead:
+>=20
+> https://lore.kernel.org/all/20230424123522.18302-3-nikita.shubin@maquefel=
+.me/
+>=20
+> ?
 
-->		rate = min_t(u64, agg_clk_rate[i], INT_MAX);
+Sure? That looks like a possibility.
 
-> 		if (rate == qp->bus_clk_rate[i])
-> 			continue;
-> 
-> 		ret = qcom_icc_rpm_set_bus_rate(qp->bus_clk_desc, rate, i);
-> 		if (ret)
-> 			return ret;
-> 
-> 		/* Cache the rate after we've successfully commited it to RPM */
-> 		qp->bus_clk_rate[i] = rate;
-> 	}
+>=20
+> > Does some interrupt or timer driver use dma? Why are these registered
+> > early?
+>=20
+> ep93xx_dma uses subsys_initcall(ep93xx_dma_module_init)
+>=20
+> https://elixir.bootlin.com/linux/v6.3.2/source/drivers/dma/ep93xx_dma.c#L=
+1430
+>=20
+> I can move clk to using arch_initcall and move all stuff to probe, i
+> think...
+
+Sounds like the answer to my question is no. In which case moving to
+arch_initcall() or probe will work. Please try.
+
+>=20
+> > Why is this in arm/ directory? Isn't it a clock controller?
+>=20
+> ep93xx clocks, reboot, pinctrl use syscon regmap and some special
+> functions from SoC, i.e. "Syscon Software Lock Register" - so we are
+> able to write to some registers only after writing some magik value
+> there.
+>=20
+> So all above use regmap from SoC.
+
+There can be an API in a header located in include/soc/ that implements
+the magik value unlock sequence?
+
+>=20
+> Should make a separate clock controller like one i did for pinctrl ?
+> Then it should look like:
+>=20
+> syscon@80930000 {
+>   compatible =3D "cirrus,ep9301-syscon",
+>                "syscon", "simple-mfd";
+>   reg =3D <0x80930000 0x1000>;
+>   #reset-cells =3D <1>;
+>      =20
+>   clocks {
+>     xtali: oscillator {
+>       compatible =3D "fixed-clock";
+>       #clock-cells =3D <0>;
+>       clock-frequency =3D <14745600>;
+>     };
+>   };
+>      =20
+>   clock-controller {
+>     #clock-cells =3D <1>;
+>     compatible =3D "cirrus,ep9301-clk";
+>     clocks =3D <&xtali>;
+>   };
+> };
+>=20
+> Or even simply:
+>=20
+> clocks {
+>   xtali: oscillator {
+>     compatible =3D "fixed-clock";
+>     #clock-cells =3D <0>;
+>     clock-frequency =3D <14745600>;
+>   };
+> };
+>      =20
+> clock-controller {
+>   #clock-cells =3D <1>;
+>   compatible =3D "cirrus,ep9301-clk";
+>   clocks =3D <&xtali>;
+> };
+
+The DT binding shouldn't be making sub-nodes to match driver structure
+of the kernel. Instead, there should be a node for a register range that
+represents a device on the bus. That device may be multipurpose, in
+which case it can probe as a platform driver and that platform driver
+can create some number of auxiliary bus devices for the sub
+functionality of the device. We shouldn't be prescribing Linux software
+constructs onto the DT binding.
