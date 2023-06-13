@@ -2,55 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DAEEB64D0
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 18:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1845EB64D0
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 18:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239496AbjFMSbe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 14:31:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35236 "EHLO
+        id S239600AbjFMScY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 14:32:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230017AbjFMSbd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 14:31:33 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C721730
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:31:31 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-97458c97333so957569566b.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:31:31 -0700 (PDT)
+        with ESMTP id S232714AbjFMScY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 14:32:24 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11F61BC5
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:32:22 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-5183101690cso6482819a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 11:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686681089; x=1689273089;
+        d=linaro.org; s=google; t=1686681141; x=1689273141;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=H5thdLVYeuJeTUk/dZICHlBR7keQEdx+TmjFnb0n07Q=;
-        b=lWqpp6puRrFsbAwShsKqSraSDgQObj9USYvpffkItesvmaDcgsXF/WGZZ5Y5f921Ff
-         1vHZcEY8552gz4V+6UU3jg6GebW8ykbiW2RwL8pH2ZJQUbkiNMWCBGAJhCCwXCtpj4Mn
-         UHeXizNVq0XyD/uQKq3JcfuEjqiDsSX+pYgCWoEouDox+C7KP1cjEseLgNgULKtWAAAQ
-         qta1fFgpPxUmeLzv8WOaWGA6vxxwrZbM8+JNjwNfYjFbPgVrgdUI+4Xm/bhyl3xszcOe
-         37erSN21JN0piPgVvYcQ62/OfHBGc5JX/OR2qWu+4J4fUZxN6VGAKB2gYIRf6QFaWYjE
-         DrmA==
+        bh=+IwQxZn6vCIOOod2WsqOS2iKK2dM5ILhVhEaw91jN+A=;
+        b=g2x7nF958tTd0yUf6gMMWTZS7MXebEz/qJW0elxmWSc87Fy4YCx1ZGdo+z6qymqABN
+         txZwoSEz2hg7Y0m2797wXOMCphi9mDkHsGIO/DqBcXJmRg1cFzYVm+rqTJ+p7H0nnsew
+         SUB65kKWg4ET7UtQEmFm4fux3OG45w2OJ352q9LwWFJ5WmcaH7RxSFGnko3e1+L3BQ7l
+         JUBMjAhqM2na6yTPxr+juOQz1hqkhuD5a48C6QOMOGSKOP/ssbWx/zHZ5MK2hPnj8hu7
+         8GRHGbjwXjNGRKu817QyRD1kJ3CxbqQM7prUEBvmv/+yTuvL5NgOMYhcgtGCB4kf7MRd
+         0Vog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686681090; x=1689273090;
+        d=1e100.net; s=20221208; t=1686681141; x=1689273141;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H5thdLVYeuJeTUk/dZICHlBR7keQEdx+TmjFnb0n07Q=;
-        b=Dp0ptS/kUbJd+PUKaY8KCO86lc8Ps5ekl8ifwvNBkOHjDI8qjN2M/x8JMOzQNAIxs2
-         gsp2KQH2qbKnq0tRAY1r6mJNee34L86Zg3Fk/OPTv7aImJ5hLXqsBOQHzwo6lwS8CPLg
-         xL3Mknrh9FZOig0s6eJX5D62yUQvKN2zvS0W+7A6utNIH82UYa3PdUtGhIM/+FLHKEFX
-         /bpcJKakIQlrUYlpLU7C/yQWYqRctKcF9Ch/fq5ky/GPQildXkCKxATYb3sf6nx1Mw81
-         bBq/L0YoPkEwB6MDnPpHPRbspJxyU+O+86teg6FvPXsbsWivuTdRu+PTw6ekmY3gXBXQ
-         0nBw==
-X-Gm-Message-State: AC+VfDxsIXi7jgtH5bO6+SvmoeouctjD+V+qyhYdiPNkz5lPlfEPL7x+
-        K8ZJaCmrrHtabEho6L9GlQouow==
-X-Google-Smtp-Source: ACHHUZ7FW4zcNCHYDLc8YmIToBwJQq9MRqn3NydANM5LTgdwq836BPniBmMoR6EXg/p91D8iAKdAqw==
-X-Received: by 2002:a17:907:3fa4:b0:977:da9d:b842 with SMTP id hr36-20020a1709073fa400b00977da9db842mr13680418ejc.74.1686681089686;
-        Tue, 13 Jun 2023 11:31:29 -0700 (PDT)
+        bh=+IwQxZn6vCIOOod2WsqOS2iKK2dM5ILhVhEaw91jN+A=;
+        b=KCp7YqVU/+0/LrovIg21MtGE8g1dNBmcfz4MUrVN+tdo5jfC+xYB5lZYeZXDeuyI0v
+         TYnWvrNplpZ+T1ICXXY7WsKUvS0tN2E1x8TgK3pPkjeQZCeunn7AuimP7fI8DJXKFyLf
+         xiianxRx7qefQLW+irMjxkJz+V+HigQ/Avutir9+f40ZADOQDlpBiREVe5nWKabau77w
+         9yciwVpn4AvUcb5PjG9bJgr5gRgve2ipULWIYNcNoqSesmMSbAJgRVE9Do5qRuPM0lZW
+         0n0XK/vI+LWnCkcIA3TrazdWtbm/l5BSWsMX6BcDFCIMfddVZYS1OE5uzWaoeFnh8TFy
+         GPcw==
+X-Gm-Message-State: AC+VfDx55tmKo872wG9xHIKfw+LWhKCsFJ7M7OdAkl1UTaJarwi4Nju7
+        N5IcrEmyVp3KqkoY+EryiX3Q8g==
+X-Google-Smtp-Source: ACHHUZ5vGVgTt9sy0qQTKp7+KaWUCWD8M2YRj/4q3fqu6qZXExsSGxGeMKWet0UvuiJIoHRwNhGNDg==
+X-Received: by 2002:a05:6402:27c9:b0:506:bbf8:5152 with SMTP id c9-20020a05640227c900b00506bbf85152mr9960734ede.9.1686681141344;
+        Tue, 13 Jun 2023 11:32:21 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id oq19-20020a170906cc9300b00977e0bcff1esm7071095ejb.10.2023.06.13.11.31.27
+        by smtp.gmail.com with ESMTPSA id d22-20020a50fb16000000b005149c7b1f49sm6647150edq.64.2023.06.13.11.32.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Jun 2023 11:31:29 -0700 (PDT)
-Message-ID: <7e2d6bfe-5687-97c5-778b-c02e9c0894af@linaro.org>
-Date:   Tue, 13 Jun 2023 20:31:26 +0200
+        Tue, 13 Jun 2023 11:32:20 -0700 (PDT)
+Message-ID: <bdd464a1-2279-9019-a19b-4aab5dd6045c@linaro.org>
+Date:   Tue, 13 Jun 2023 20:32:18 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
@@ -114,6 +114,9 @@ On 13/06/2023 14:58, Xingyu Wu wrote:
 > +  - William Qiu <william.qiu@starfivetech.com>
 > +
 > +description: |
+
+Do not need '|' unless you need to preserve formatting.
+
 > +  The StarFive JH7110 SoC system controller provides register information such
 > +  as offset, mask and shift to configure related modules such as MMC and PCIe.
 > +
@@ -153,14 +156,19 @@ On 13/06/2023 14:58, Xingyu Wu wrote:
 > +    then:
 > +      required:
 > +        - "#power-domain-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    syscon@10240000 {
+> +        compatible = "starfive,jh7110-stg-syscon", "syscon";
+> +        reg = <0x10240000 0x1000>;
 
-Where did you implement the results of the discussion that only some
-devices can have power and clock controller?
+Extend example - add clock controller, add power-domains to STG (since
+it has them, as you claim in the binding).
 
-According to your code all of above - sys, aon and stg - have clock and
-power controllers. If not, then the code is not correct, so please do
-not respond with what is where (like you did last time) but actually
-implement what you say.
+Make this one example complete.
 
 Best regards,
 Krzysztof
