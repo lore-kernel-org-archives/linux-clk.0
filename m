@@ -2,165 +2,193 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CB1C7EE2E
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 08:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD09C88CB2
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 08:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238626AbjFMIWP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 04:22:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38210 "EHLO
+        id S239965AbjFMIXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 04:23:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241163AbjFMIWK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 04:22:10 -0400
+        with ESMTP id S235114AbjFMIXp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 04:23:45 -0400
 Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CFB3130
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 01:22:05 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id A928E5C01F8;
-        Tue, 13 Jun 2023 04:22:02 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 13 Jun 2023 04:22:02 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4F81AC;
+        Tue, 13 Jun 2023 01:23:44 -0700 (PDT)
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4CC125C00BB;
+        Tue, 13 Jun 2023 04:23:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute1.internal (MEProxy); Tue, 13 Jun 2023 04:23:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:content-type:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1686644522; x=1686730922; bh=XB
-        eckfw5YVdpxfRtdPhBQUf495CoFJyBQJzXNblbmME=; b=VQfDu4ZqKA74zl/Dhk
-        tgG+ibsSfaKpNKOAsV1VNgNevtYJ0ScJqt+nDp700s2oEdLeykSFQDzG1Uae9YB2
-        k03Xh3wqMZG9vPGgs1WfsxXQPY2wGHZ392mDEoopEZceBjWdk1DG5OTKDoQb4k7L
-        L8GCOIPPrcHK+WHtga8Wk0RqnnxbSd3Bvp1zK7T3Os3hUvH2oTLgN5fmutplTTeU
-        sEWHvUmkaLSIugjJT3nljgnVUi7bgU88VoqtQ+yxr2H5GmXOis6QHuN1JV6NJno5
-        NZR2vffhPWz9mGP6YP7fx2gVFdtavQDF7uvj3dVTUJ5cuXjk9Idx7MT1FELZ2lOL
-        VgmQ==
+        :subject:subject:to:to; s=fm2; t=1686644624; x=1686731024; bh=/C
+        dbbkQw2JgvECapcYhzDdCpNmrXlO/cyqRMfqJjWFQ=; b=ns8G9UmRINxWqsG+A/
+        56bLukbhzJVd2XOQEgXFwVwHDUxB7JKJdwTQfUOuEqn+eli2+/dB7r5b4E4WzX/q
+        FfgMIwdcv6QSD57QuQtHnEUmCCo55NTvlfR2r/w/LARkXMybgbOCLUMlOore5wyy
+        LkZgClN/MH3JPc+LS+I0Zh0b/Jt05uqBaNCtCgWnqjXe71Ja0N4P6k10kSbTz6vT
+        BXXrDyCwTTkkjGpFL/btQlJgyF/nDX/nt9x4JKfs9mXvYtdJHTnPRGF03RmnE7wg
+        MsHuMkTgtUCYgkabgpU2h+hlEBTbhQoI9WCORU9d+ytMZt6i3sOwQSEQ6+ejaTdh
+        Yz+g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:content-type:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1686644522; x=1686730922; bh=XBeckfw5YVdpx
-        fRtdPhBQUf495CoFJyBQJzXNblbmME=; b=T+UBdd33a4Ao/4zppWWiBpURMm8bJ
-        NpufC2tqHKgFCr3DuAghVVAfT9OFcEPjnygyUb0C+ahsQXBbnRW3a2lpVl4mWtDp
-        H5dln26YSQQN/ILHhnl6SwpM6oi8jUNughBUG1+dGaNNndH4EdAgsQzhza3TyUpP
-        fMqhU+pbvLObtABCn5wqKGmfW/xj6H0PY10rlt0+YDShPMRhr79qZLY6H4VpzX5g
-        GDbBUaP2gJLb2p0VXpmct26KCu2MLjmP5WDkcqDup0f5Vhyzb/oq4isTITUVxM4V
-        KIJZemJmIKMtfBMH6Lis9YtHpM0xUuNbUo0TYuXtnsUg+Q//nDXtg1jDA==
-X-ME-Sender: <xms:KieIZBt0bZE92no3CyYcHyx3uIT2dLh_LkyS5IKo7YUJvTtS_DrnNw>
-    <xme:KieIZKfNxPw6RzqacSPCHyjxuPDiyJ131K3LFPMixEYvzjhpiSo4mh4P_E76_SquJ
-    hj_y-YmpRT1YFr7asc>
-X-ME-Received: <xmr:KieIZEzy48_3oXUrLtBcc26VJBlBe5J3C3vBpbjPq5LOW5130LIsbHgE5WjxakHLOj60Fm2Q0gX7KmbyuWqz2A>
+        :x-sasl-enc; s=fm2; t=1686644624; x=1686731024; bh=/CdbbkQw2JgvE
+        CapcYhzDdCpNmrXlO/cyqRMfqJjWFQ=; b=DVcPvl6v5rSDVR/UPtFzDzPUS9dEH
+        sRp/SqgGyFoTHzrMQNDGoXhKKbKspjaRw8VL+WFDe8TCgqCQFQXsMJKsI5gNMJ7S
+        BFxdu9pfIBD6+y/0LaQPDhG6hWM54QNtU+3BcpUCtlt6S2hDG39afNiCj/X7AEeN
+        lrELR4FYsJPPeSkLnXC2IA54aIEAe8Dib+LOJzJ3x6uY8AMVjYCvqzl/cHHcqkWY
+        hkEIzlsEl6BS874LX8ngrXH3jurQz8sFAYolzqMjH0mT+CCWgsMi9EhuCrPnBsHK
+        8pgdiwX/DrCSY6wAzNWYU7CDEMghWKP9VMJMwt0GMYDvIYvFWaafLC9cA==
+X-ME-Sender: <xms:jyeIZIG22ODEGbZ8iBL8gy4zFIpZPj43NbDMvQsn739oACSm7xvkcw>
+    <xme:jyeIZBW3H9UBjtSVQmWZF7ofP4SfvHbFRebt-gfq9rsTCLmeGUHuy7MNPbNkGXvem
+    nTg-395LRofbvucWsk>
+X-ME-Received: <xmr:jyeIZCIqujFr2N7uWdPLyYE789WGPchGEuCgN0bKJlCSSv0ckP4BacYVZ6EiDUU47cjk8-2ibqpH-fvVk3_g6g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeduiedgudefhecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgig
+    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttdejnecuhfhrohhmpeforgig
     ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeet
-    kefgleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    grthhtvghrnhepledufeegudehveeljeeigfehtedvffehjedvjeevhfduueevheeuvedv
+    veevueeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
     epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:KieIZIPesdoA4ojzEEq2oDErwmZXpeCwcE3d84CCN-BoekPRV_5Qag>
-    <xmx:KieIZB80reK514uAKAU9v-v3w2mYhZOBOWySffAR38ySqp2cFmi6Zw>
-    <xmx:KieIZIWnDZBfzhXEvStSiW_9ZBp6ofxz7hycdIru4wk1nEucJHKKjw>
-    <xmx:KieIZDkXZ0um_ln-COHjmb-RfvHSP-QvkpCJzugzY9IT8w4BrKaX3g>
+X-ME-Proxy: <xmx:jyeIZKHoWQbrNo3mvxXQ6R5ELOs84cyyxI38pwz3S-sXaxGMQHlCjw>
+    <xmx:jyeIZOV2-MnfdQ0cyvTkvTm-5opKHxGbM-syC2NZ74c6uJSFC7nVJA>
+    <xmx:jyeIZNP5nuswWJUjyqO7Va5pZ282qX02Q3pv7G-mCPXTtk0cBPZ4hQ>
+    <xmx:kCeIZPvTepcw35kkxwFKQCZSav8fUwN_ZSryIhJtxaUoucVyjJxRsQ>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Jun 2023 04:22:02 -0400 (EDT)
-Date:   Tue, 13 Jun 2023 10:21:59 +0200
+ 13 Jun 2023 04:23:43 -0400 (EDT)
+Date:   Tue, 13 Jun 2023 10:23:42 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 07/68] clk: test: Add a determine_rate hook
-Message-ID: <ukjgbguxqxfs6u2igivmxmmidvjvumqfptwvjymk7n6p22isqv@tbubrts5a6wp>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
- <20221018-clk-range-checks-fixes-v4-7-971d5077e7d2@cerno.tech>
- <e8a1f3244395dc707a1d741e2d166a7b.sboyd@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        aford@beaconembedded.com, Abel Vesa <abelvesa@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx: composite-8m: Add imx8m_divider_determine_rate
+Message-ID: <7j2zd5aszxenphluy7weslzrjkg7nglymcukxxv2xhbt3z2lql@qifooseclzy6>
+References: <20230506195325.876871-1-aford173@gmail.com>
+ <CAOMZO5AwixYybR1am=V4m1AnTkum+0Wn0xegU_y6Po9Y--G0mA@mail.gmail.com>
+ <CAHCN7xLPKa2hrBMC1kaJkxVL9NC+c1TWgcQHMBPefnvxGPTCwQ@mail.gmail.com>
+ <jlcpkn3pewnvdpugwmsrb277u4fzcns5eodnoxhlbkwtaf7pyc@u6vozmm7zl62>
+ <CAHCN7xKuvkBHuDBiprsXg3hX+P6Y+ciKSZMcauU=5Y-REwjE=A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y3khdyz7af7h3pfc"
+        protocol="application/pgp-signature"; boundary="nwyrv6kg3riqg7ne"
 Content-Disposition: inline
-In-Reply-To: <e8a1f3244395dc707a1d741e2d166a7b.sboyd@kernel.org>
+In-Reply-To: <CAHCN7xKuvkBHuDBiprsXg3hX+P6Y+ciKSZMcauU=5Y-REwjE=A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---y3khdyz7af7h3pfc
-Content-Type: text/plain; charset=us-ascii
+--nwyrv6kg3riqg7ne
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Thu, Jun 08, 2023 at 06:41:56PM -0700, Stephen Boyd wrote:
-> Quoting Maxime Ripard (2023-05-05 04:25:09)
-> > The single parent clock in our kunit tests implements a mux with a
-> > set_parent hook, but doesn't provide a determine_rate implementation.
-> >=20
-> > This is not entirely unexpected, since its whole purpose it to have a
-> > single parent. When determine_rate is missing, and since
-> > CLK_SET_RATE_PARENT is set for all its instances, the default behaviour
-> > of the framework will be to forward it to the current parent.
-> >=20
-> > This is totally fine as far as the tests are concerned, but we'll start
-> > to mandate a determine_rate implementation when set_parent is set, so
-> > let's fill it with __clk_mux_determine_rate() which will have the same
-> > behavior.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
-> >  drivers/clk/clk_test.c | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
-> >=20
-> > diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> > index b3ed3b0e4c31..a154ec9d0111 100644
-> > --- a/drivers/clk/clk_test.c
-> > +++ b/drivers/clk/clk_test.c
-> > @@ -104,6 +104,23 @@ static const struct clk_ops clk_dummy_minimize_rat=
-e_ops =3D {
-> >  };
-> > =20
-> >  static const struct clk_ops clk_dummy_single_parent_ops =3D {
-> > +       /*
-> > +        * FIXME: Even though we should probably be able to use
+On Mon, Jun 12, 2023 at 11:11:21AM -0500, Adam Ford wrote:
+> On Mon, Jun 12, 2023 at 11:08=E2=80=AFAM Maxime Ripard <maxime@cerno.tech=
+> wrote:
+> >
+> > On Sun, Jun 11, 2023 at 12:02:42PM -0500, Adam Ford wrote:
+> > > On Tue, Jun 6, 2023 at 1:45=E2=80=AFPM Fabio Estevam <festevam@gmail.=
+com> wrote:
+> > > >
+> > > > On Sat, May 6, 2023 at 4:53=E2=80=AFPM Adam Ford <aford173@gmail.co=
+m> wrote:
+> > > > >
+> > > > > Currently, certain clocks are derrived as a divider from their
+> > > > > parent clock.  For some clocks, even when CLK_SET_RATE_PARENT
+> > > > > is set, the parent clock is not properly set which can lead
+> > > > > to some relatively inaccurate clock values.
+> > > > >
+> > >
+> > > + Maxime
+> > >
+> > > > > Unlike imx/clk-composite-93 and imx/clk-divider-gate, it
+> > > > > cannot rely on calling a standard determine_rate function,
+> > > > > because the 8m composite clocks have a pre-divider and
+> > > > > post-divider. Because of this, a custom determine_rate
+> > > > > function is necessary to determine the maximum clock
+> > > > > division which is equivalent to pre-divider * the
+> > > > > post-divider.
+> > > > >
+> > > > > With this added, the system can attempt to adjust the parent rate
+> > > > > when the proper flags are set which can lead to a more precise cl=
+ock
+> > > > > value.
+> > > > >
+> > > > > On the imx8mplus, no clock changes are present.
+> > > > > On the Mini and Nano, this can help achieve more accurate
+> > > > > lcdif clocks. When trying to get a pixel clock of 31.500MHz
+> > > > > on an imx8m Nano, the clocks divided the 594MHz down, but
+> > > > > left the parent rate untouched which caused a calulation error.
+> > > > >
+> > > > > Before:
+> > > > > video_pll              594000000
+> > > > >   video_pll_bypass     594000000
+> > > > >     video_pll_out      594000000
+> > > > >       disp_pixel       31263158
+> > > > >         disp_pixel_clk 31263158
+> > > > >
+> > > > > Variance =3D -236842 Hz
+> > > > >
+> > > > > After this patch:
+> > > > > video_pll               31500000
+> > > > >   video_pll_bypass      31500000
+> > > > >     video_pll_out       31500000
+> > > > >       disp_pixel        31500000
+> > > > >         disp_pixel_clk  31500000
+> > > > >
+> > > > > Variance =3D 0 Hz
+> > > > >
+> > > > > All other clocks rates and parent were the same.
+> > > > > Similar results on imx8mm were found.
+> > > > >
+> > > > > Fixes: 690dccc4a0bf ("Revert "clk: imx: composite-8m: Add support=
+ to determine_rate"")
+> > > > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > > >
+> > >
+> > > Peng / Abel,
+> > >
+> > > Any suggestions on how we can move this forward?  Looking at the
+> > > clk-composite-8m driver, imx8m_clk_composite_compute_dividers uses the
+> > > max values which is basically what my patch does.  There was some
+> > > discussion about making determine_rate mandatory for muxes[1] and this
+> > > patch should help with this in addition to making it easier to sync
+> > > more video resolutions on the 8m Mini and Nano.
+> >
+> > Those patches have been queued by Stephen for 6.6 :)
 >=20
-> Are we ever going to fix this?
+> One of the patches in the older series was reverted, but this was to
+> address the patch that was reverted.
 
-We probably should, but I'm not entirely sure how.
+Was it? I haven't been cc'd and it doesn't seem to be in -next either?
 
-> > +        * __clk_mux_determine_rate() here, if we use it and call
-> > +        * clk_round_rate() or clk_set_rate() with a rate lower than
-> > +        * what all the parents can provide, it will return -EINVAL.
-> > +        *
-> > +        * This is due to the fact that it has the undocumented
-> > +        * behaviour to always pick up the closest rate higher than the
-> > +        * requested rate. If we get something lower, it thus considers
-> > +        * that it's not acceptable and will return an error.
-> > +        *
-> > +        * It's somewhat inconsistent and creates a weird threshold
-> > +        * between rates above the parent rate which would be rounded to
-> > +        * what the parent can provide, but rates below will simply
-> > +        * return an error.
-> > +        */
-
-I guess it's mostly a policy decision: __clk_mux_determine_rate() always
-has been returning rates that are lower or equal to the target rate.
-
-If no parent can provide one, then the obvious solution is to error out,
-which creates the inconsistency mentioned above.
-
-Another solution would be to pick up a parent by default (the current
-one maybe?) but then we could return a rate higher than the target rate
-which breaks what we've been doing so far.
-
-I'm not sure if one is better than the other.
 Maxime
 
---y3khdyz7af7h3pfc
+--nwyrv6kg3riqg7ne
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIgnJwAKCRDj7w1vZxhR
-xZAOAQCScse0Plo3xSkQ0Bgbb8C4QbZAX5dqE2yA2n7/X8ThSQEA7vLaOQqTfkjL
-eP1lsYtetYhxhOtZ/iCgCGNro0Viww8=
-=sNoT
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZIgnjQAKCRDj7w1vZxhR
+xeECAQCW6BrJCTYOwaTtOLoq9I6KrLKDuhOEnpgjdPNxMnDiMwEAm1AJbnoZRKG+
+3MpnJ+ukedK/884Qm9erqEyS+2oQxAo=
+=HR4v
 -----END PGP SIGNATURE-----
 
---y3khdyz7af7h3pfc--
+--nwyrv6kg3riqg7ne--
