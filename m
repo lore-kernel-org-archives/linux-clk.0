@@ -2,75 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4EAC7EE29
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 08:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 349A4C77B7A
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Jun 2023 08:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233874AbjFMIGA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Jun 2023 04:06:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57468 "EHLO
+        id S241190AbjFMIVe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Jun 2023 04:21:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233870AbjFMIF7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 04:05:59 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7329EE
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 01:05:57 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-311-UA6G7ItlP1ewooZVyM1W0A-1; Tue, 13 Jun 2023 09:05:43 +0100
-X-MC-Unique: UA6G7ItlP1ewooZVyM1W0A-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 13 Jun
- 2023 09:05:27 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 13 Jun 2023 09:05:27 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Stephen Boyd' <sboyd@kernel.org>,
+        with ESMTP id S241082AbjFMIVZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Jun 2023 04:21:25 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FA2310FF
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 01:21:18 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-977c72b116fso793541066b.3
+        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 01:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686644476; x=1689236476;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Pvx1ZmU24K4FZvRE8B1LH+FzXYUhn7Zlw9SxVgFETI=;
+        b=WV9KwxgCmwycsJKEZ2A3MVrJnOyEcnrhenIiS1vCorQckKUZbgaHKgCZ7aeeMzogI+
+         wHn1nD6eLRM9UUV/XH2vwtPs0ck9Hq6L0Z6GxZZK9h3eEBG+oUeQdYRO9rgYmvL3QAoU
+         Z2E9ZR65YbMir/v5Tfy8o759WO6XSZMop80+Rr6gOpNLsO1sJ53OhUjZQ4LZmOVRsjXc
+         51/PMpMXfp6UJvH09Glowk7+iFXfbr4obL7nBtrgee4Il6UZGqe4wxLxt2YGma2doHLU
+         8AU7PMahB3SR//5174TShrk9tBKOqjXbxuUW0nFWQAObUIeM21zyUE9mWi+DT5VB0/et
+         G+cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686644476; x=1689236476;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Pvx1ZmU24K4FZvRE8B1LH+FzXYUhn7Zlw9SxVgFETI=;
+        b=JGk5ZA20fc1Ubg1/p4aQte2eXcNwRtVCdVmw2GxI8V7qPCWKX+O2EoBBgaHWjnJ/I0
+         2ONXlaK6tuwY1oAkR9cOTq1qN1B1NGJO9wzItJtk/Knx5WH78QwcKP3f+LOWOSukw+7T
+         q8VinTa4e8hTxWJLNdGUB+yPwfi4ETR7YAPf4CCnEeJ9bcgT7C3hhsY/foz4T4CasvLB
+         GKMivv2B7LBOEvPQTRqyV30oUt3F7Nxh8/aonNySeHjWUHynq1iQOqbcKD43HsbUUDI7
+         BYEuuYScev7AMDwWDnTEhSTcYkO64S7XewxuAtfR5pXBJZ4x0UmMK8AQONXygRD3vYBl
+         56Uw==
+X-Gm-Message-State: AC+VfDwVxzcEW/Fx5qkDP65rT7Tlfue06oe3gxifxbH51B84WzffczBf
+        Zku2Xd2Rv5MpX703h7Xl9tfOhw==
+X-Google-Smtp-Source: ACHHUZ5d/0b4pt5v1YwrkSYa0J18Ko73cwLj+3akehMf5jUxzvy6+qyhbgRNEvBhG9AFf0JQQLHfCw==
+X-Received: by 2002:a17:907:7249:b0:978:6e73:e841 with SMTP id ds9-20020a170907724900b009786e73e841mr9590037ejc.35.1686644476434;
+        Tue, 13 Jun 2023 01:21:16 -0700 (PDT)
+Received: from blmsp ([2001:4090:a245:802c:7f03:2fe0:bd27:d746])
+        by smtp.gmail.com with ESMTPSA id g22-20020a17090613d600b009545230e682sm6329868ejc.91.2023.06.13.01.21.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Jun 2023 01:21:15 -0700 (PDT)
+Date:   Tue, 13 Jun 2023 10:21:15 +0200
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Christopher Obbard <chris.obbard@collabora.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        "kernel@collabora.com" <kernel@collabora.com>
-Subject: RE: [PATCH v2 2/2] clk: divider: Fix divisions
-Thread-Topic: [PATCH v2 2/2] clk: divider: Fix divisions
-Thread-Index: AQHZnY/ao7Gg3fNCxki9HY0rumOgxq+IX4vg
-Date:   Tue, 13 Jun 2023 08:05:27 +0000
-Message-ID: <919a361dd5f54e738d4824f8096d243c@AcuMS.aculab.com>
-References: <20230526171057.66876-1-sebastian.reichel@collabora.com>
- <20230526171057.66876-3-sebastian.reichel@collabora.com>
- <5e9e776db6628d02d7081292b81ab102.sboyd@kernel.org>
-In-Reply-To: <5e9e776db6628d02d7081292b81ab102.sboyd@kernel.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Mergnat <amergnat@baylibre.com>
+Subject: Re: [PATCH] clk: mediatek: mt8365: Fix inverted topclk operations
+Message-ID: <20230613082115.c56ds3btkouetpu6@blmsp>
+References: <20230511133226.913600-1-msp@baylibre.com>
+ <4e4327afb0c71ae299e6aaaa3dffd4f9.sboyd@kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4e4327afb0c71ae299e6aaaa3dffd4f9.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RnJvbTogU3RlcGhlbiBCb3lkDQo+IFNlbnQ6IDEzIEp1bmUgMjAyMyAwMTo0Mg0KPiANCj4gUXVv
-dGluZyBTZWJhc3RpYW4gUmVpY2hlbCAoMjAyMy0wNS0yNiAxMDoxMDo1NykNCj4gPiBUaGUgY2xv
-Y2sgZnJhbWV3b3JrIGhhbmRsZXMgY2xvY2sgcmF0ZXMgYXMgInVuc2lnbmVkIGxvbmciLCBzbyB1
-MzIgb24NCj4gPiAzMi1iaXQgYXJjaGl0ZWN0dXJlcyBhbmQgdTY0IG9uIDY0LWJpdCBhcmNoaXRl
-Y3R1cmVzLg0KPiA+DQo+ID4gVGhlIGN1cnJlbnQgY29kZSBwb2ludGxlc3NseSBjYXN0cyB0aGUg
-ZGl2aWRlbmQgdG8gdTY0IG9uIDMyLWJpdA0KPiA+IGFyY2hpdGVjdHVyZXMgYW5kIHRodXMgcG9p
-bnRsZXNzbHkgcmVkdWNpbmcgdGhlIHBlcmZvcm1hbmNlLg0KPiANCj4gSXQgbG9va3MgbGlrZSB0
-aGF0IHdhcyBkb25lIHRvIG1ha2UgdGhlIERJVl9ST1VORF9VUCgpIG1hY3JvIG5vdA0KPiBvdmVy
-ZmxvdyB0aGUgZGl2aWRlbmQgb24gMzItYml0IG1hY2hpbmVzIChmcm9tIDk1NTZmOWRhZDhmNSk6
-DQo+IA0KPiAgIERJVl9ST1VORF9VUCgzMDAwMDAwMDAwLCAxNTAwMDAwMDAwKSA9ICgzLjBHICsg
-MS41RyAtIDEpIC8gMS41Rw0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICA9IE9WRVJGTE9XIC8gMS41Rw0KDQpNYXliZSBhZGQ6DQojZGVmaW5lIERJVl9ST1VORF9VUF9O
-Wih4LCB5KSAoKCh4KSAtIDEpLyh5KSArIDEpDQp3aGljaCBkb2Vzbid0IG92ZXJmbG93IGJ1dCBy
-ZXF1aXJlcyB4ICE9IDAuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNp
-ZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsN
-ClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+Hi Stephen,
 
+On Mon, Jun 12, 2023 at 06:13:10PM -0700, Stephen Boyd wrote:
+> Quoting Markus Schneider-Pargmann (2023-05-11 06:32:26)
+> > The given operations are inverted for the wrong registers which makes
+> > multiple of the mt8365 hardware units unusable. In my setup at least usb
+> > did not work.
+> > 
+> > Fixed by swapping the operations with the inverted ones.
+> > 
+> > Reported-by: Alexandre Mergnat <amergnat@baylibre.com>
+> 
+> Checkpatch complains now that there isn't a Closes: tag here.
+
+Alexandre reported this internally, so there is nothing I could point to
+for a Closes tag.
+
+> 
+> > Fixes: 905b7430d3cc ("clk: mediatek: mt8365: Convert simple_gate to mtk_gate clocks")
+> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> > ---
+> 
+> Applied to clk-fixes
+
+Thank you.
+
+Best,
+Markus
