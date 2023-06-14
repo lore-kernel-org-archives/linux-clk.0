@@ -2,99 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ABFEB64DB
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E984BEB64DC
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233734AbjFNTVh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 15:21:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47390 "EHLO
+        id S236179AbjFNTYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 15:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjFNTVf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:21:35 -0400
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A0426B7;
-        Wed, 14 Jun 2023 12:21:16 -0700 (PDT)
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-33cb82122c7so29528265ab.1;
-        Wed, 14 Jun 2023 12:21:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686770476; x=1689362476;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sHiFqUH8Ns99cL4Q7Lgq6jxmGIJl/IBWeuGMsrbyXnU=;
-        b=bT5p3MIEHc53heYTrW6QWDnCa9Cf7EIJhU2CgyPBAP0G4M0EkSQxVi3bKErCD1g4cm
-         wV0oG8rlU+2mXrDq0rnZ8Y5YBiFq6pJkfrgJoSuW2oM1PuW1UyRztjqlg5G2UqcqIJAk
-         RHcZBvFOjUaKwiFlwo3aJva9HBsPElWmV//mR+qlnWvnAL3XdlLCi+NDtl99udyccLps
-         hJAy88cQOMozWCqqBJEmAcSqFzll4JR5z0Er43VfQYmg8Yo+7avQtGEPmEy3npUqMfSp
-         sqqNjD+emKSqhG/1zYLswm0aHR9HHgV0LuM0UOW0PXemC1IWtcx/PwujEJ7VJt7xwspp
-         KOXw==
-X-Gm-Message-State: AC+VfDyNPR+wwOL5pHMHIY8INXAhgqn7pJu8ep7mskZjynw3YwMdBUqM
-        XaTuvkXUA79deL1cOeCldg==
-X-Google-Smtp-Source: ACHHUZ4+oCaDJAL2TyNKe9N2ZuahMJpTVt2MjofPkLtQyNt9QOfQlpzr2x39gYaMHbPNmmJx9oNtlQ==
-X-Received: by 2002:a05:6e02:5c7:b0:33f:dfd1:fe49 with SMTP id l7-20020a056e0205c700b0033fdfd1fe49mr10449290ils.6.1686770475971;
-        Wed, 14 Jun 2023 12:21:15 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id i18-20020a02c612000000b004230e6377f3sm190722jan.177.2023.06.14.12.21.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 12:21:15 -0700 (PDT)
-Received: (nullmailer pid 2591199 invoked by uid 1000);
-        Wed, 14 Jun 2023 19:21:12 -0000
-Date:   Wed, 14 Jun 2023 13:21:12 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-mmc@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
-        devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Fabio Estevam <festevam@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-input@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-clk@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        Thomas Gleixner <tglx@linutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH v1 7/7] dt-bindings: input: touchscreen: edt-ft5x06: Add
- 'threshold' property
-Message-ID: <168677047226.2591141.8223363796946763544.robh@kernel.org>
-References: <20230601101451.357662-1-o.rempel@pengutronix.de>
- <20230601101451.357662-8-o.rempel@pengutronix.de>
+        with ESMTP id S233734AbjFNTYK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:24:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0132926BE;
+        Wed, 14 Jun 2023 12:23:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 87DF764562;
+        Wed, 14 Jun 2023 19:23:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFEEC433C0;
+        Wed, 14 Jun 2023 19:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686770631;
+        bh=0BOdsM4cLRHTOlnYaLUt75A1t22AHk/Y2NVxpib67Lk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LzH04GlRF5zrYvxDTyooZehMnYtrAU8HDRBp7XI5z/Qeq+XvIo6isbmB/o2mdj3cn
+         NOZmbRUew3oY12cf3A2CbLChr1QB0EyKUwYE2jDdLhooiznKfJ7najj73QBEOUR6GK
+         EwRPvCT2gzouEFA9yJRyR+A4UvvCJ7RfoYr13yiXPNYP/IipZrJeEa1vvXLUoViu5g
+         d12ifIFaK8ZduX56cHNxvKhRjlpRo0Si4FScRYvU78L4X1qKmQdXlu/ujBvgj+Xxhl
+         JvQZhoDYA3x2vpl2BBkenu/HICpXzVZarXK17+kFqF3nNOBrV2EJSTO1c0x1hyOdHm
+         UGCEiVIaTAy2A==
+Date:   Wed, 14 Jun 2023 12:23:48 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>, "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
+ interface
+Message-ID: <20230614122348.3e9b7e42@kernel.org>
+In-Reply-To: <20230614121514.0d038aa3@kernel.org>
+References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+        <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
+        <20230612154329.7bd2d52f@kernel.org>
+        <ZIg8/0UJB9Lbyx2D@nanopsycho>
+        <20230613093801.735cd341@kernel.org>
+        <ZImH/6GzGdydC3U3@nanopsycho>
+        <DM6PR11MB465799A5A9BB0B8E73A073449B5AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <20230614121514.0d038aa3@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230601101451.357662-8-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Thu, 01 Jun 2023 12:14:51 +0200, Oleksij Rempel wrote:
-> Add a new property 'threshold' to the edt-ft5x06 touchscreen binding.
-> This property allows setting the "click"-threshold in the range from 0
-> to 255. This change addresses the following dtbs_check warning:
->   imx6dl-lanmcu.dtb: touchscreen@38: 'threshold' does not match any of the
->     regexes: 'pinctrl-[0-9]+'
->   From schema:
->     Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml
+On Wed, 14 Jun 2023 12:15:14 -0700 Jakub Kicinski wrote:
+> On Wed, 14 Jun 2023 12:21:29 +0000 Kubalewski, Arkadiusz wrote:
+> > Surely, we can skip this discussion and split the nest attr into something like:
+> > - PIN_A_PIN_PARENT_DEVICE,
+> > - PIN_A_PIN_PARENT_PIN.  
 > 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  .../devicetree/bindings/input/touchscreen/edt-ft5x06.yaml   | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
+> Yup, exactly. Should a fairly change code wise, if I'm looking right.
+                               ^ small
