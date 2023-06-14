@@ -2,114 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E984BEB64DC
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1983AC001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236179AbjFNTYL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 15:24:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50404 "EHLO
+        id S230017AbjFNTj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 15:39:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233734AbjFNTYK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:24:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0132926BE;
-        Wed, 14 Jun 2023 12:23:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 87DF764562;
-        Wed, 14 Jun 2023 19:23:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFEEC433C0;
-        Wed, 14 Jun 2023 19:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686770631;
-        bh=0BOdsM4cLRHTOlnYaLUt75A1t22AHk/Y2NVxpib67Lk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LzH04GlRF5zrYvxDTyooZehMnYtrAU8HDRBp7XI5z/Qeq+XvIo6isbmB/o2mdj3cn
-         NOZmbRUew3oY12cf3A2CbLChr1QB0EyKUwYE2jDdLhooiznKfJ7najj73QBEOUR6GK
-         EwRPvCT2gzouEFA9yJRyR+A4UvvCJ7RfoYr13yiXPNYP/IipZrJeEa1vvXLUoViu5g
-         d12ifIFaK8ZduX56cHNxvKhRjlpRo0Si4FScRYvU78L4X1qKmQdXlu/ujBvgj+Xxhl
-         JvQZhoDYA3x2vpl2BBkenu/HICpXzVZarXK17+kFqF3nNOBrV2EJSTO1c0x1hyOdHm
-         UGCEiVIaTAy2A==
-Date:   Wed, 14 Jun 2023 12:23:48 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jiri Pirko <jiri@resnulli.us>, "vadfed@meta.com" <vadfed@meta.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "vadfed@fb.com" <vadfed@fb.com>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "M, Saeed" <saeedm@nvidia.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "sj@kernel.org" <sj@kernel.org>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jacek.lawrynowicz@linux.intel.com" 
-        <jacek.lawrynowicz@linux.intel.com>,
-        "airlied@redhat.com" <airlied@redhat.com>,
-        "ogabbay@kernel.org" <ogabbay@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux@zary.sk" <linux@zary.sk>,
-        "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "kuniyu@amazon.com" <kuniyu@amazon.com>,
-        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
-        "razor@blackwall.org" <razor@blackwall.org>,
-        "idosch@nvidia.com" <idosch@nvidia.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
-        "phil@nwl.cc" <phil@nwl.cc>,
-        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
- interface
-Message-ID: <20230614122348.3e9b7e42@kernel.org>
-In-Reply-To: <20230614121514.0d038aa3@kernel.org>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
-        <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
-        <20230612154329.7bd2d52f@kernel.org>
-        <ZIg8/0UJB9Lbyx2D@nanopsycho>
-        <20230613093801.735cd341@kernel.org>
-        <ZImH/6GzGdydC3U3@nanopsycho>
-        <DM6PR11MB465799A5A9BB0B8E73A073449B5AA@DM6PR11MB4657.namprd11.prod.outlook.com>
-        <20230614121514.0d038aa3@kernel.org>
+        with ESMTP id S233195AbjFNTjC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:39:02 -0400
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D32FB2700;
+        Wed, 14 Jun 2023 12:38:27 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3411ea250efso872145ab.3;
+        Wed, 14 Jun 2023 12:38:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686771468; x=1689363468;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Js2ECPS3HFYIFQ8yai86PBdkogVWCesLn0GciStXnE0=;
+        b=i65gd/bWQ6X9am8fSA57qKvVKLU2y9YvstO7PGJuoVLUIJEbCuGWYYjUC6ZIFXu2Uf
+         AlevL69HVZ7ijw9ghjsfiMjWidHif4BKl7z0rQm7ndWIapSfJ6mlLojeI/2mbBEMONfq
+         2NmZDLiMk9H4XoDatBriBWw8IcCr2jpydvfRV98grlujicWBcai+E8M654F7iBJFbbgO
+         9mG+9cxjLJ4TeFlAYCWbFHABbVJEq7PaPGRGELnsHL5zF9vdxA+eLP94VimYNgCcZEHJ
+         +R7F2vEoBIYEp/YLxIMj/UJe/fPfCc5hoi3/EuGV9xyCfSXWebLD2X3yv329H4RbrOkA
+         JeTw==
+X-Gm-Message-State: AC+VfDwVCyfjU/MQq29wnOakpxZQaYMZsVlxDP9sCvyRBT0+StX8Nq86
+        YPU9E0+K2mf4Rd1cewwerQ==
+X-Google-Smtp-Source: ACHHUZ5TdW09mEJtcgXSMfkSD1quISRJqJD2aWpt3TlMbRNewMZFdqBFcaVViCVaei7epmCPIU5QGQ==
+X-Received: by 2002:a92:da89:0:b0:340:9b67:ff17 with SMTP id u9-20020a92da89000000b003409b67ff17mr3081405iln.13.1686771468622;
+        Wed, 14 Jun 2023 12:37:48 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id b8-20020a02c988000000b0041f5ff08660sm5168879jap.141.2023.06.14.12.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jun 2023 12:37:47 -0700 (PDT)
+Received: (nullmailer pid 2613672 invoked by uid 1000);
+        Wed, 14 Jun 2023 19:37:44 -0000
+Date:   Wed, 14 Jun 2023 13:37:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc:     tglx@linutronix.de, maz@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        claudiu.beznea@microchip.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        gregkh@linuxfoundation.org, linux@armlinux.org.uk,
+        mturquette@baylibre.com, sboyd@kernel.org, sre@kernel.org,
+        broonie@kernel.org, arnd@arndb.de, gregory.clement@bootlin.com,
+        sudeep.holla@arm.com, balamanikandan.gunasundar@microchip.com,
+        mihai.sain@microchip.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
+        durai.manickamkr@microchip.com, manikandan.m@microchip.com,
+        dharma.b@microchip.com, nayabbasha.sayed@microchip.com,
+        balakrishnan.s@microchip.com
+Subject: Re: [PATCH 01/21] dt-bindings: microchip: atmel,at91rm9200-tcb: add
+ sam9x60 compatible
+Message-ID: <20230614193744.GA2611132-robh@kernel.org>
+References: <20230603200243.243878-1-varshini.rajendran@microchip.com>
+ <20230603200243.243878-2-varshini.rajendran@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230603200243.243878-2-varshini.rajendran@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Jun 2023 12:15:14 -0700 Jakub Kicinski wrote:
-> On Wed, 14 Jun 2023 12:21:29 +0000 Kubalewski, Arkadiusz wrote:
-> > Surely, we can skip this discussion and split the nest attr into something like:
-> > - PIN_A_PIN_PARENT_DEVICE,
-> > - PIN_A_PIN_PARENT_PIN.  
+On Sun, Jun 04, 2023 at 01:32:23AM +0530, Varshini Rajendran wrote:
+> Add sam9x60 compatible string support in the schema file
 > 
-> Yup, exactly. Should a fairly change code wise, if I'm looking right.
-                               ^ small
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> ---
+>  .../devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml  | 1 +
+>  1 file changed, 1 insertion(+)
+
+Acked-by: Rob Herring <robh@kernel.org>
