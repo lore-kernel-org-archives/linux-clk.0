@@ -2,105 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EC9EB64D8
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 14:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B43A1EB64D8
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 14:47:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245166AbjFNOGx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 10:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36634 "EHLO
+        id S244633AbjFNOrY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 10:47:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235420AbjFNOGw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 10:06:52 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70750CD
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 07:06:51 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id ffacd0b85a97d-30fba11b1ceso3995239f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 07:06:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686751610; x=1689343610;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=eATVzpknI9vc12mAnk+3E8tRwnRlRtGyRp8XCmtZkaM=;
-        b=jV+FuvFr57hMTM6OFjSFLXVbjzQAfmXySdUUckZXro/5AOsBR6XEcc8i2kSttpnEJT
-         x53AGbhlgp+es3Jfipn2qsyzL1hkJX6wFEsYVQtObJ4/5i6SqhbWUL+8UA6tNlKRrumv
-         zl7xgnXzMIONm1mNdNnsK/yZSIB20bONCQPJB6/VANLqqPrjSkqQ9Zmql/b7X3U3w+2q
-         hOZ5XxQhFtTwmwLdIJKnhSIKFK4KC/Idu3x8tK3CzSvPSaHAwaLGaLib2AlStBCWWaSF
-         RBEzxVISbq5FUFDjwx7VJiZ+iL5mD9HckqTm+ErLOAEEfLZQPh3msSLthRwcBFOAa54R
-         FDMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686751610; x=1689343610;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eATVzpknI9vc12mAnk+3E8tRwnRlRtGyRp8XCmtZkaM=;
-        b=KrwStw2g0Kx1GIP0Pvu3TSCuO3TSPHoKhsk6q3C4G8nWgN206Xx1lx6lwgsM21Q44K
-         ZAmZGn5jk0kbYv+eEoe4krn8jPnhcuVlWTRDbNcQmAB3g9m29CXrjUnBmdqIs4bhTUfL
-         JIGJvIHxEzqdsXIaFdf30Zg+VXxe/tEta+6VMV2O1KH4NJEzbbVCMQ3iHYBZ6PJyuv4M
-         E6Lbv80LbIRr/mAPzBb8XThC6FxX8DxmucYuQVPn7mRRGYCR7B1ZCrWumF4nxmRCBR2N
-         Eel6TMq89z7lEvLFBaSQ2446v1g5VQMoYz+asbh8BIoyljSem0VEDzdeKbYL8xiFoZLl
-         2dxg==
-X-Gm-Message-State: AC+VfDyKY+i9AYRVCVIzLIO01lbfOaZp34MGXidMtzW2QF70kTAVvMd2
-        l2eihddKgrTAchRWsCdzyXVoLg==
-X-Google-Smtp-Source: ACHHUZ6a4exHUhNfyj26R+XQpCs0IWFQfsm1S2MG5jN8npheMWegY7/+qYhEIR4M6d2x6nbpM3+wkw==
-X-Received: by 2002:a05:6000:1814:b0:310:b979:d00f with SMTP id m20-20020a056000181400b00310b979d00fmr2362939wrh.45.1686751609916;
-        Wed, 14 Jun 2023 07:06:49 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o17-20020adfe811000000b0030fafcbbd33sm12673191wrm.50.2023.06.14.07.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 07:06:49 -0700 (PDT)
-References: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        neil.armstrong@linaro.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, khilman@baylibre.com,
-        martin.blumenstingl@googlemail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] clk: meson: pll: remove unneeded semicolon
-Date:   Wed, 14 Jun 2023 16:05:30 +0200
-In-reply-to: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
-Message-ID: <1jr0qef893.fsf@starbuckisacylon.baylibre.com>
+        with ESMTP id S236347AbjFNOrW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 10:47:22 -0400
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35641FC4;
+        Wed, 14 Jun 2023 07:47:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1686754037; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=PN5G6p9nT1I5K3QU/LnVRpP0YqTm2P7kBudunV8RoCPD553UiQ0PQZLXoCxzwYKDUp
+    R14+IYNnzQhZci3r3bJ/vfULD+b2V7YATO1v8eUz70hly5DJH3Oxs2oACAfdnDDmLIgh
+    vpwT9msnfRIg/xFyvfZ1LJMKeeXcDSGYVFerdQe5BzotyMjcD2Og3Fuj+nGBPxT0Pt3K
+    zs/jmRB5bo9s6HSwLWKsdbvABZbF7hCLKNdi+AIWBfzV//2lTngQE1JclQvVQb5RRWlX
+    K7BtXmk5FnCxEJOdpJcpV+GycSq/LOJMeaF1dIksWRA71lRTeOdZsaR5Sd9+ANJ55z6K
+    gNOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1686754037;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=tvjm14jd1ncXpS8wy9Ap/UHaf91N1jU9h4aEC4kP+J4=;
+    b=Vj7Oh7Mi6yLaatmQWo67Urp/sQ8jWXKpB1ZJCQKBcXvE5ZDtsAGQEJeUIb1ka4vTHi
+    pwYYEVjtun/+QcGCdQ9yGBSfBZHtT+I/0WGO/H3xAGFTAEOzTI0CbVBszjFeY/d9TdXe
+    /XvQOrAEiXYdTOfSV3NJpDIOukArIHXcU8Rf7OGrKyN1YVrbOb2KysBQzT11Yz+BdYBn
+    hiMbe+Bi4LpJvw7Xmk893M9JMJuRQZb07TzT/a2rk2a+WOgXj4GptDNr9s1pUeN5P5LV
+    dn3ft1GNBS9LtKXKwMYXssBzYV+HSt18uoR3FXLH0G71xuvG4BgsMV7ZK9XIJ93WlE/u
+    BA5A==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1686754037;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=tvjm14jd1ncXpS8wy9Ap/UHaf91N1jU9h4aEC4kP+J4=;
+    b=TgZMMO6H5aBIKTvEJM153rnqiIL8f16ImDmI0vyDlwynTHFovpmQx9Yv1pq9mM0Vnx
+    bVfQyIwic6FTXChJHj07Y4aY6FADHRHR7bez0ojx2uGgqNKM4UG3popUqZYguwMlfyrx
+    Plkp12fhZartMu2v6O2PNkI8a6I6tF1Z+Ilpl1JasnwhH0kdWrGulIp9hy2S797iMRtV
+    vuxUos4TbPdwBTLM+WYVHGrBg39WubKrPariwwneJriO3vhySgrpCrzXI+xlWRgVOuWn
+    fa3mg17eYijKqt7W+V6mtpLsXFamk5SwmTkBMovsUc4sQoTDri9FZx5eHsUMna22ls3J
+    RDig==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1686754037;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=tvjm14jd1ncXpS8wy9Ap/UHaf91N1jU9h4aEC4kP+J4=;
+    b=VOuS6XTktD89w6yqG9lJcjgsHlYNQbOVuZ/2iy3LhayOz7yMO0nEL11HyiArIaawGH
+    hMXYT9I7UZXZ/2TVEyBw==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4peA95nh"
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
+    with ESMTPSA id D0d0a8z5EElG0FX
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Wed, 14 Jun 2023 16:47:16 +0200 (CEST)
+Date:   Wed, 14 Jun 2023 16:47:09 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 08/22] interconnect: qcom: smd-rpm: Add rpmcc handling
+ skeleton code
+Message-ID: <ZInS7WZ_-02iZiKp@gerhold.net>
+References: <20230526-topic-smd_icc-v5-0-eeaa09d0082e@linaro.org>
+ <20230526-topic-smd_icc-v5-8-eeaa09d0082e@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230526-topic-smd_icc-v5-8-eeaa09d0082e@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Wed 14 Jun 2023 at 16:48, Jiapeng Chong <jiapeng.chong@linux.alibaba.com> wrote:
-
-> No functional modification involved.
->
-> ./drivers/clk/meson/clk-pll.c:373:2-3: Unneeded semicolon.
->
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=5533
-
-Not sure this tag is relevant
-
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-
-Apart from this
-
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
+On Wed, Jun 14, 2023 at 12:22:19PM +0200, Konrad Dybcio wrote:
+> Introduce qcom_icc_rpm_set_bus_rate() in preparation for handling RPM
+> clock resources within the interconnect framework. This lets us greatly
+> simplify all of the code handling, as setting the rate comes down to:
+> 
+> u32 rate_khz = max(clk.sleep_rate, clk.active_rate, clk_a.active_rate)
+> write_to_rpm(clock.description, rate_khz);
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
->  drivers/clk/meson/clk-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index 56ec2210f1ad..8fef90bf962f 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -370,7 +370,7 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->  		usleep_range(10, 20);
->  		meson_parm_write(clk->map, &pll->current_en, 1);
->  		usleep_range(40, 50);
-> -	};
-> +	}
+>  drivers/interconnect/qcom/icc-rpm.h | 15 +++++++++++++++
+>  drivers/interconnect/qcom/smd-rpm.c | 21 +++++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+> 
+> diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
+> index 9ec90e13bfbd..d857fb1efb75 100644
+> --- a/drivers/interconnect/qcom/icc-rpm.h
+> +++ b/drivers/interconnect/qcom/icc-rpm.h
+> @@ -22,6 +22,18 @@ enum qcom_icc_type {
+>  	QCOM_ICC_QNOC,
+>  };
 >  
->  	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
->  		meson_parm_write(clk->map, &pll->l_detect, 1);
+> +/**
+> + * struct rpm_clk_resource - RPM bus clock resource
+> + * @resource_type: RPM resource type of the clock resource
+> + * @clock_id: index of the clock resource of a specific resource type
+> + * @branch: whether the resource represents a branch clock
+> +*/
+> +struct rpm_clk_resource {
+> +	u32 resource_type;
+> +	u32 clock_id;
+> +	bool branch;
+> +};
+> +
+>  #define NUM_BUS_CLKS	2
+>  
+>  /**
+> @@ -47,6 +59,7 @@ struct qcom_icc_provider {
+>  	unsigned int qos_offset;
+>  	u64 bus_clk_rate[NUM_BUS_CLKS];
+>  	struct clk_bulk_data bus_clks[NUM_BUS_CLKS];
+> +	const struct rpm_clk_resource *bus_clk_desc;
+>  	struct clk_bulk_data *intf_clks;
+>  	bool keep_alive;
+>  	bool is_on;
+> @@ -104,6 +117,7 @@ struct qcom_icc_desc {
+>  	struct qcom_icc_node * const *nodes;
+>  	size_t num_nodes;
+>  	const char * const *bus_clocks;
+> +	const struct rpm_clk_resource *bus_clk_desc;
+>  	const char * const *intf_clocks;
+>  	size_t num_intf_clocks;
+>  	bool keep_alive;
+> @@ -125,5 +139,6 @@ int qnoc_remove(struct platform_device *pdev);
+>  
+>  bool qcom_icc_rpm_smd_available(void);
+>  int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val);
+> +int qcom_icc_rpm_set_bus_rate(const struct rpm_clk_resource *clk, int rsc_type, u32 rate);
+>  
+>  #endif
+> diff --git a/drivers/interconnect/qcom/smd-rpm.c b/drivers/interconnect/qcom/smd-rpm.c
+> index b0183262ba66..b06374340eeb 100644
+> --- a/drivers/interconnect/qcom/smd-rpm.c
+> +++ b/drivers/interconnect/qcom/smd-rpm.c
+> @@ -16,6 +16,7 @@
+>  #include "icc-rpm.h"
+>  
+>  #define RPM_KEY_BW		0x00007762
+> +#define QCOM_RPM_SMD_KEY_RATE	0x007a484b
+>  
+>  static struct qcom_smd_rpm *icc_smd_rpm;
+>  
+> @@ -44,6 +45,26 @@ int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_icc_rpm_smd_send);
+>  
+> +int qcom_icc_rpm_set_bus_rate(const struct rpm_clk_resource *clk, int rsc_type, u32 rate)
+> +{
+> +	struct clk_smd_rpm_req req = {
+> +		.key = cpu_to_le32(QCOM_RPM_SMD_KEY_RATE),
+> +		.nbytes = cpu_to_le32(sizeof(u32)),
+> +	};
+> +
+> +	/* Branch clocks are only on/off */
+> +	if (clk->branch)
+> +		rate = !!rate;
+> +
+> +	req.value = cpu_to_le32(rate);
+> +	return qcom_rpm_smd_write(icc_smd_rpm,
+> +				  rsc_type,
+> +				  clk->resource_type,
 
+Sorry to have more minor comments but as you can see here the resource
+type is taken from the rpm_clk_resource. The parameter that you are
+describing as "rsc_type" is actually the "ctx" in the other function. :')
+
+If you fix this feel free to add my:
+
+Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
+
+Thanks,
+Stephan
