@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DABC8EB64D8
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 13:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981E6EB64D9
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 13:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245121AbjFNNrn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 09:47:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52128 "EHLO
+        id S245149AbjFNNsX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 09:48:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245122AbjFNNrm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 09:47:42 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD0979C;
-        Wed, 14 Jun 2023 06:47:40 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f6170b1486so8222858e87.0;
-        Wed, 14 Jun 2023 06:47:40 -0700 (PDT)
+        with ESMTP id S245150AbjFNNsL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 09:48:11 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA8DE210B;
+        Wed, 14 Jun 2023 06:47:56 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4f62b552751so8633349e87.3;
+        Wed, 14 Jun 2023 06:47:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686750459; x=1689342459;
+        d=gmail.com; s=20221208; t=1686750474; x=1689342474;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0h+z4uDldJRuHAQNBIGKgEmmlz9MuMHPn+kemKGwt4o=;
-        b=NV6U/46wOqvbETuuDc2B5J7cREHQvqtsHn/Gl2LqCiFM3NYlnAwA4rAto71zHzKhu2
-         NiBppu9ths7SHIKxXdFe7rH3DstHLCjSk++pwqMD+97icRlfA4KoctTkHUezEOwbCtNe
-         sIdN6qN9cFqBTgCVuZzfr9SpuZSC6zBpMO6vBf5tsYV4C3NZfdhXkXL3mWdLzequDY/t
-         7lcSntLgJOjG0B/jyXf4C3g1TQGzH45uhB3ALDVjKwGfHF1KgqeD7hrWlSo0jnI89vgq
-         ehihl7cMOelYqBTULhJfD/RuFKupSZEFfs/UtENghCSu+jNJP3NgAaq6OnXxP4cdrUoZ
-         hVoA==
+        bh=v1IkM5PACQr8LE1VV5+hRPuhOTTZL39mlBAwPbgHV4k=;
+        b=Dsd4q/cPWLVpkM6lRBeECkoXfhw5k9SxPt9T776bC9i0Ti68NlAKY3cX9X3iAsavOU
+         u3vK+YobsvXSDDsqI/A+0m2vDjk9iEPUiIbxclQAOx9m46hmFvlB+y8RqTu9+kyQ6N5B
+         29R8CHTgGn4/STOnUZLuvWSyrVnp6m3z7oVbbfdzzRd45BA/d0G513I7GjM4sS6Qutk3
+         b2APW3enGIRFcyIMGIqCnL07DIZxUFF9iMmeiJa3eQXrWN6bM/Ph0tiXxRLpqqR3xMMB
+         hd6n+BLBebe/B1NHOSlOU/ZptSlyDU2u1tX9Ffknm2IpdS9T1K80BfRekHp9mmprIjjH
+         oQvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686750459; x=1689342459;
+        d=1e100.net; s=20221208; t=1686750474; x=1689342474;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0h+z4uDldJRuHAQNBIGKgEmmlz9MuMHPn+kemKGwt4o=;
-        b=apA9zN12W+qTkz09bBWZnpL6vLqAHkdZRixHGPe8BL0nvJrA2vzT5vakP5I/7rIa5Q
-         Vp8IG02YFRp4U3hP2S056Mlw/vG1wVoT7AbPMABy6fVyI+3gvcMCR6cpPd2djw9MTcSd
-         ndnR7qAzB+3RYYEJM73sO5AeJVD6zk4UFe3dzma4kqY+gai/z47PZjohnvNo5Dy0nPNk
-         bIV8J69DoUF3fJ9KsgMzCV9BmCOp/YGsskIVr6d6R8Bpqz3vlA3P4tOKPXgEnB/VCmWo
-         gIl/THmmNN8JvxWGzxN6xL/93N/S/F4BhKOZ4ua5nJ2ie53mdf9yoN3STjfFoAXps8ZI
-         1foA==
-X-Gm-Message-State: AC+VfDwlL6T8JJkP7yRRKINHDLOqgKJ7caPkdZH8WPHuuOta+kz0/7uG
-        ULs0IjAjIYdSHEJMpR+8Dxw=
-X-Google-Smtp-Source: ACHHUZ4AvO7fbBSkugYy6V6uYfcWLiOtnOexV1qOvHCEncWRG5f+43gSvrYfcCb5PD8/UFb07yhsAw==
-X-Received: by 2002:a19:5007:0:b0:4f7:6462:e036 with SMTP id e7-20020a195007000000b004f76462e036mr817204lfb.11.1686750458754;
-        Wed, 14 Jun 2023 06:47:38 -0700 (PDT)
+        bh=v1IkM5PACQr8LE1VV5+hRPuhOTTZL39mlBAwPbgHV4k=;
+        b=jlNslWI2BNi5ScrU8sNAF6HnSpt2b95CPETbvoObk3640vwHdx9IzqiY6RL3t1eYEh
+         ikLcvxRj299h+Z8AgfWKj9E/1uBa24rm4eSnZYjJhaxkuNGvAIDRMa9Z9dvQRiJxRWUY
+         e7lv1nG57YAKKYGfNWXnsSbCNB01etpXvlLHBrACjGu9vGvXpVnn/9mBQ3v0nkXFJ77d
+         hjJaAGKJLXYXwLShXrUYIUqE0CZdEiisrdywOXsf01QY2R4upqiEbj3IHMDGTjyF1g4v
+         GEZJmaPSDsdpnkEFnUfyXfuSnAx6P+6Wd5+cs2FhqOaHxMxrh15xw00+tYJYDVb109mW
+         9dOg==
+X-Gm-Message-State: AC+VfDz1hAPGNP8VDZuLy86NFM2lryN6UhK1LMzT5LIc6FrYfvfyAE2c
+        7iOgjpGF/KMHQocDpANVlrg=
+X-Google-Smtp-Source: ACHHUZ5dWEirg0lfgE55fbcjxiFlnqpGX6SccBNtKvKz6+p2Q+clFyAZTg7X3IBC18XUcu9Iu9PPnQ==
+X-Received: by 2002:a2e:9f0f:0:b0:2b2:1bde:407f with SMTP id u15-20020a2e9f0f000000b002b21bde407fmr6509095ljk.6.1686750474115;
+        Wed, 14 Jun 2023 06:47:54 -0700 (PDT)
 Received: from U19.ag.local (static.187.76.181.135.clients.your-server.de. [135.181.76.187])
-        by smtp.gmail.com with ESMTPSA id w5-20020a05651204c500b004f3787d8006sm2164185lfq.128.2023.06.14.06.47.37
+        by smtp.gmail.com with ESMTPSA id a19-20020a2eb173000000b002ad92dff470sm2583912ljm.134.2023.06.14.06.47.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 06:47:38 -0700 (PDT)
+        Wed, 14 Jun 2023 06:47:53 -0700 (PDT)
 From:   Alibek Omarov <a1ba.omarov@gmail.com>
 To:     linux-rockchip@lists.infradead.org
 Cc:     a1ba.omarov@gmail.com, Michael Turquette <mturquette@baylibre.com>,
@@ -56,9 +56,9 @@ Cc:     a1ba.omarov@gmail.com, Michael Turquette <mturquette@baylibre.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: rk3568: Add PLL rate for 101MHz
-Date:   Wed, 14 Jun 2023 16:47:16 +0300
-Message-Id: <20230614134716.1055862-1-a1ba.omarov@gmail.com>
+Subject: [PATCH] clk: rockchip: rk3568: Fix PLL rate setting for 78.75MHz
+Date:   Wed, 14 Jun 2023 16:47:50 +0300
+Message-Id: <20230614134750.1056293-1-a1ba.omarov@gmail.com>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,26 +66,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds PLL setting for not so common resolution as 1920x720-50.00,
-which can be set using 2500 horizontal signals and 808 vertical.
+PLL rate on RK356x is calculated through the simple formula:
+((24000000 / _refdiv) * _fbdiv) / (_postdiv1 * _postdiv2)
+
+The PLL rate setting for 78.75MHz seems to be copied from 96MHz
+so this patch fixes it and configures it properly.
 
 Signed-off-by: Alibek Omarov <a1ba.omarov@gmail.com>
+Fixes: 842f4cb72639 ("clk: rockchip: Add more PLL rates for rk3568")
 ---
- drivers/clk/rockchip/clk-rk3568.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/rockchip/clk-rk3568.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/rockchip/clk-rk3568.c b/drivers/clk/rockchip/clk-rk3568.c
-index f85902e2590c..5dae960af4ce 100644
+index 5dae960af4ce..48b8d06c305c 100644
 --- a/drivers/clk/rockchip/clk-rk3568.c
 +++ b/drivers/clk/rockchip/clk-rk3568.c
-@@ -79,6 +79,7 @@ static struct rockchip_pll_rate_table rk3568_pll_rates[] = {
- 	RK3036_PLL_RATE(135000000, 2, 45, 4, 1, 1, 0),
- 	RK3036_PLL_RATE(119000000, 3, 119, 4, 2, 1, 0),
- 	RK3036_PLL_RATE(108000000, 2, 45, 5, 1, 1, 0),
-+	RK3036_PLL_RATE(101000000, 1, 101, 6, 4, 1, 0),
+@@ -82,7 +82,7 @@ static struct rockchip_pll_rate_table rk3568_pll_rates[] = {
+ 	RK3036_PLL_RATE(101000000, 1, 101, 6, 4, 1, 0),
  	RK3036_PLL_RATE(100000000, 1, 150, 6, 6, 1, 0),
  	RK3036_PLL_RATE(96000000, 1, 96, 6, 4, 1, 0),
- 	RK3036_PLL_RATE(78750000, 1, 96, 6, 4, 1, 0),
+-	RK3036_PLL_RATE(78750000, 1, 96, 6, 4, 1, 0),
++	RK3036_PLL_RATE(78750000, 4, 315, 6, 4, 1, 0),
+ 	RK3036_PLL_RATE(74250000, 2, 99, 4, 4, 1, 0),
+ 	{ /* sentinel */ },
+ };
 -- 
 2.34.1
 
