@@ -2,32 +2,33 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3051AEB64D9
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 08:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052CDEB64D9
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 08:48:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243660AbjFNIjv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 04:39:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33164 "EHLO
+        id S235409AbjFNIs2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 04:48:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243263AbjFNIju (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 04:39:50 -0400
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C50F1BC3;
-        Wed, 14 Jun 2023 01:39:48 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Vl5rzQc_1686731984;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0Vl5rzQc_1686731984)
+        with ESMTP id S243743AbjFNIsX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 04:48:23 -0400
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B21E41FDA;
+        Wed, 14 Jun 2023 01:48:21 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Vl6-e6E_1686732490;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0Vl6-e6E_1686732490)
           by smtp.aliyun-inc.com;
-          Wed, 14 Jun 2023 16:39:45 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
+          Wed, 14 Jun 2023 16:48:17 +0800
+From:   Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 To:     neil.armstrong@linaro.org
 Cc:     jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
-        khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Yang Li <yang.lee@linux.alibaba.com>,
+        khilman@baylibre.com, martin.blumenstingl@googlemail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
         Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] clk: meson: Remove unneeded semicolon
-Date:   Wed, 14 Jun 2023 16:39:43 +0800
-Message-Id: <20230614083943.85660-1-yang.lee@linux.alibaba.com>
+Subject: [PATCH] clk: meson: pll: remove unneeded semicolon
+Date:   Wed, 14 Jun 2023 16:48:08 +0800
+Message-Id: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
 X-Mailer: git-send-email 2.20.1.7.g153144c
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -35,11 +36,13 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-./drivers/clk/meson/clk-pll.c:373:2-3: Unneeded semicolon
+No functional modification involved.
+
+./drivers/clk/meson/clk-pll.c:373:2-3: Unneeded semicolon.
 
 Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=5531
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=5533
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 ---
  drivers/clk/meson/clk-pll.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
