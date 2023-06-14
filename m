@@ -2,338 +2,177 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1136DC001DE
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 11:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5EEEB64DA
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 11:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243811AbjFNLgQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 07:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49460 "EHLO
+        id S244172AbjFNLny (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 07:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244127AbjFNLgM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 07:36:12 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483161FC4
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:36:02 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f7677a94d1so693340e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:36:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686742560; x=1689334560;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OK0KHsEEJflt/PIWV1+p8wHbMvB3nj/Mo8p4VCQArys=;
-        b=wkPePS6iqDnIoUgLTrHk1JbxyjqKjQE6dTMivQwJ2Uagbn22PSycxc2kHNuw5Wnh0K
-         A872mUKQGzaS1r4627zJ+7zR3Tqlt4hOPeIi8YhTbxI+Sh+38uXCViQFweLYD1aeom12
-         Mo/XWxSavm/n0EyVxaaTQKPA0DX7OIXpyvh1SiZ4QdIDETow9gurc1YqcZhqfNcMfEDI
-         s1zn3JovHSyc6Ciiw8iI44YKEOGd9rSfUmJx2HtBslicjJFTCtxfgjOretdnPK2qhN53
-         dzPVLrC9OEj8iJqDg5cAZpn1nADuta4WpRx0BWDq9wKSWxiNX6OyE64HbJWe/tw6gbgt
-         bkJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686742560; x=1689334560;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OK0KHsEEJflt/PIWV1+p8wHbMvB3nj/Mo8p4VCQArys=;
-        b=jKDUMZlCsXvKFnPuxRexX0qv9/vJC+1mqkoKoFLnxSvt2pYcszHnezghHGapPiKHgl
-         WsQPNbtXq33p/Rc0qlNjXGBDLRfewMqpEuDU2ZJg9f4FPijOI9XGUmsHuFgEQvQ8prb0
-         fkFUTYNKaIj5RRbSVlqt8Qqr41kue+f6t/CCwVb9GFqKAowC5cPs/K3GyFZNZ5Y7EIqy
-         TxfnbSxlpk5fhg92rJjVGq6Bxtew98ztlI4fPVlsIkx4xf5apxEuZrnWitMmEstcMBWO
-         S5zmvlqd35Um7VoL4SseJt1bRKlsRAaYT3oICTJtscqC/FMjcmFv6aNoggHZgHTQh/sD
-         ymyQ==
-X-Gm-Message-State: AC+VfDybs9usjkH0ZUB/4Nq1L2xCOyhluojJBPSMRy9W6MgHPZ3N28rr
-        XOlUa63/NzzcqMQAvPv7kEzPjA==
-X-Google-Smtp-Source: ACHHUZ6Jv2L4/laQwdvAL25VVQQcOYd7w/VONldqarBguPEoXB8kYEYUYufUH8sUlPFOxoJeyAJ+mA==
-X-Received: by 2002:a19:3814:0:b0:4f7:66cc:6c91 with SMTP id f20-20020a193814000000b004f766cc6c91mr725672lfa.51.1686742560614;
-        Wed, 14 Jun 2023 04:36:00 -0700 (PDT)
-Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id x1-20020ac25dc1000000b004f64b8eee61sm2088406lfq.97.2023.06.14.04.35.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 04:36:00 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 14 Jun 2023 13:35:38 +0200
-Subject: [PATCH v2 7/7] arm64: dts: qcom: sm6350: Add DPU1 nodes
+        with ESMTP id S244193AbjFNLnv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 07:43:51 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF641BE9;
+        Wed, 14 Jun 2023 04:43:47 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35E71JWv014819;
+        Wed, 14 Jun 2023 11:43:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=yV71osPptkCiJoMYF+jrbVqBdhkNFdN5n92WzBBjbGk=;
+ b=o6VQiCRmMKaQefDL9YHdfRd429d3e/COJFZ2aE6BjsPmfhy6MT9AXUeIR9MRB8xmXoJQ
+ sef7/Mg3tEqnTdzVu7uTiwjvU5o6sNmqcK6M5krgciRHXqj0rvLzETPQbFRZRepby5d7
+ CPyCv+qW+IHJ0agwt7lGCD+Oiif2CiRFudkoWsOMbrBBjtxpMUzu5pJolCIdoG7o932J
+ KX00EfupeC90QFXWMoOWkIV8KvmeUnwk1uMsLEH2p1RpfjMexpd+QqayqaeIrF+fVe/T
+ au2JGqRvRiBQfczPLrEz4IF/BH8yR9WGBo6sZfGiuMw2vtjSxXn4fR4AF+JYgKXAACFx mA== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r6nqh3810-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 11:43:42 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35EBhfjI031430
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 11:43:41 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 14 Jun
+ 2023 04:43:32 -0700
+Message-ID: <04f5e3cb-d2f5-747c-1fd0-4b61d845e2c5@quicinc.com>
+Date:   Wed, 14 Jun 2023 17:13:27 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kalle Valo <kvalo@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-2-quic_mmanikan@quicinc.com>
+ <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+ <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+ <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+ <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
+ <87edmoitu3.fsf@kernel.org>
+ <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
+ <5f9cc367-eaa5-4c19-4e5e-7052b0259ccf@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <5f9cc367-eaa5-4c19-4e5e-7052b0259ccf@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230315-topic-lagoon_gpu-v2-7-afcdfb18bb13@linaro.org>
-References: <20230315-topic-lagoon_gpu-v2-0-afcdfb18bb13@linaro.org>
-In-Reply-To: <20230315-topic-lagoon_gpu-v2-0-afcdfb18bb13@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@somainline.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Rob Herring <robh@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686742545; l=6597;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=bsnWCyLq477XRxbXa0duMpQVLlZ96KNWwe53+HWkyB8=;
- b=5m91ZIomh7uCzHHK4pGHxRokpxD7jUD6gGr3KVRapmAWyvlSqLoShF+hl2KJrjb+QO+wBNG7V
- 65EWxfz0B2OC0J30+k8Cf1KXcWsgHojKoEZFel1vB4H6/3fwpK8+Sre
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _njWu8l0VgoINk7ifDFZCof0oFFQDArf
+X-Proofpoint-ORIG-GUID: _njWu8l0VgoINk7ifDFZCof0oFFQDArf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-14_07,2023-06-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=711 bulkscore=0
+ suspectscore=0 mlxscore=0 priorityscore=1501 impostorscore=0 spamscore=0
+ phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306140100
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Konrad Dybcio <konrad.dybcio@somainline.org>
 
-Add nodes required to enable MDSS/DPU1 on SM6350. There seem to be no
-additional changes required to support the derivative SoCs, such as
-SM7225.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm6350.dtsi | 218 +++++++++++++++++++++++++++++++++++
- 1 file changed, 218 insertions(+)
+On 6/7/2023 1:57 PM, Krzysztof Kozlowski wrote:
+> On 07/06/2023 10:10, Manikanta Mylavarapu wrote:
+>>
+>>
+>> On 6/6/2023 7:19 PM, Kalle Valo wrote:
+>>> Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
+>>>
+>>>>>>>> +
+>>>>>>>> +    properties:
+>>>>>>>> +      compatible:
+>>>>>>>> +        enum:
+>>>>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>>>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>>>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>>>>>>
+>>>>>>> Keep rather alphabetical order (so both 5018 together).
+>>>>>>>
+>>>>>>> I also do not understand these at all. Why adding bus type to
+>>>>>>> compatible? This rarely is allowed (unless it is PCIe controller within
+>>>>>>> soc).
+>>>>>>>
+>>>>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+>>>>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
+>>>>>> radio's properties, i have added bus type to compatible.
+>>>>>
+>>>>> It's the same device - WCSS - right? We do not create multiple nodes and
+>>>>> compatibles for the same devices. Bus suffixes are almost never parts of
+>>>>> compatibles.
+>>>>
+>>>>
+>>>> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
+>>>> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
+>>>>
+>>>> So for better clarity i will use attached SOC ID in compatible.
+>>>> Below are the new compatible's.
+>>>>
+>>>> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
+>>>> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
+>>>> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
+>>>
+>>> What mandates that there's just one QCN6122 device attached to PCI?
+>>> Assuming fixed PCI configurations like that makes me worried.
+>>>
+>>
+>> IPQ5018 always has one internal radio, attached pcie radio's depends on
+>> no of pcie ports. IPQ5018 has 2 pcie ports, so it supports max two
+>> qcn6122 devices. One compatible (qcom,qcn6122-wcss-mpd) itself support's
+>> number of pcie devices controlled by QDSP6.
+> 
+> So this is hot-pluggable (or at least board-pluggable), then should not
+> be a part of static DTS.
+> 
+> Some concepts of virtual-processes is anyway far away from hardware
+> description, thus does not fit into DTS. Adding now to the equation PCIe
+> with variable number of such processes, brings us even further.
+> 
+> This is not a DT property. Remember - DT describes hardware.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-index cc72c4b4e7c0..7af6278d6b23 100644
---- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-@@ -4,6 +4,7 @@
-  * Copyright (c) 2022, Luca Weiss <luca.weiss@fairphone.com>
-  */
- 
-+#include <dt-bindings/clock/qcom,dispcc-sm6350.h>
- #include <dt-bindings/clock/qcom,gcc-sm6350.h>
- #include <dt-bindings/clock/qcom,gpucc-sm6350.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
-@@ -1869,6 +1870,223 @@ camcc: clock-controller@ad00000 {
- 			#power-domain-cells = <1>;
- 		};
- 
-+		mdss: display-subsystem@ae00000 {
-+			compatible = "qcom,sm6350-mdss";
-+			reg = <0 0x0ae00000 0 0x1000>;
-+			reg-names = "mdss";
-+
-+			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+
-+			clocks = <&gcc GCC_DISP_AHB_CLK>,
-+				 <&gcc GCC_DISP_AXI_CLK>,
-+				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
-+			clock-names = "iface",
-+				      "bus",
-+				      "core";
-+
-+			power-domains = <&dispcc MDSS_GDSC>;
-+			iommus = <&apps_smmu 0x800 0x2>;
-+
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			status = "disabled";
-+
-+			mdss_mdp: display-controller@ae01000 {
-+				compatible = "qcom,sm6350-dpu";
-+				reg = <0 0x0ae01000 0 0x8f000>,
-+				      <0 0x0aeb0000 0 0x2008>;
-+				reg-names = "mdp", "vbif";
-+
-+				interrupt-parent = <&mdss>;
-+				interrupts = <0>;
-+
-+				clocks = <&gcc GCC_DISP_AXI_CLK>,
-+					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&dispcc DISP_CC_MDSS_ROT_CLK>,
-+					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
-+					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
-+					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-+				clock-names = "bus",
-+					      "iface",
-+					      "rot",
-+					      "lut",
-+					      "core",
-+					      "vsync";
-+
-+				assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-+				assigned-clock-rates = <19200000>;
-+
-+				operating-points-v2 = <&mdp_opp_table>;
-+				power-domains = <&rpmhpd SM6350_CX>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						dpu_intf1_out: endpoint {
-+							remote-endpoint = <&mdss_dsi0_in>;
-+						};
-+					};
-+				};
-+
-+				mdp_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					opp-19200000 {
-+						opp-hz = /bits/ 64 <19200000>;
-+						required-opps = <&rpmhpd_opp_min_svs>;
-+					};
-+
-+					opp-200000000 {
-+						opp-hz = /bits/ 64 <200000000>;
-+						required-opps = <&rpmhpd_opp_low_svs>;
-+					};
-+
-+					opp-300000000 {
-+						opp-hz = /bits/ 64 <300000000>;
-+						required-opps = <&rpmhpd_opp_svs>;
-+					};
-+
-+					opp-373333333 {
-+						opp-hz = /bits/ 64 <373333333>;
-+						required-opps = <&rpmhpd_opp_svs_l1>;
-+					};
-+
-+					opp-448000000 {
-+						opp-hz = /bits/ 64 <448000000>;
-+						required-opps = <&rpmhpd_opp_nom>;
-+					};
-+
-+					opp-560000000 {
-+						opp-hz = /bits/ 64 <560000000>;
-+						required-opps = <&rpmhpd_opp_turbo>;
-+					};
-+				};
-+			};
-+
-+			mdss_dsi0: dsi@ae94000 {
-+				compatible = "qcom,sm6350-dsi-ctrl", "qcom,mdss-dsi-ctrl";
-+				reg = <0 0x0ae94000 0 0x400>;
-+				reg-names = "dsi_ctrl";
-+
-+				interrupt-parent = <&mdss>;
-+				interrupts = <4>;
-+
-+				clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
-+					 <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_ESC0_CLK>,
-+					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&gcc GCC_DISP_AXI_CLK>;
-+				clock-names = "byte",
-+					      "byte_intf",
-+					      "pixel",
-+					      "core",
-+					      "iface",
-+					      "bus";
-+
-+				assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
-+						  <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
-+				assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
-+
-+				operating-points-v2 = <&mdss_dsi_opp_table>;
-+				power-domains = <&rpmhpd SM6350_MX>;
-+
-+				phys = <&mdss_dsi0_phy>;
-+				phy-names = "dsi";
-+
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				status = "disabled";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						mdss_dsi0_in: endpoint {
-+							remote-endpoint = <&dpu_intf1_out>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						mdss_dsi0_out: endpoint {
-+						};
-+					};
-+				};
-+
-+				mdss_dsi_opp_table: opp-table {
-+					compatible = "operating-points-v2";
-+
-+					opp-187500000 {
-+						opp-hz = /bits/ 64 <187500000>;
-+						required-opps = <&rpmhpd_opp_low_svs>;
-+					};
-+
-+					opp-300000000 {
-+						opp-hz = /bits/ 64 <300000000>;
-+						required-opps = <&rpmhpd_opp_svs>;
-+					};
-+
-+					opp-358000000 {
-+						opp-hz = /bits/ 64 <358000000>;
-+						required-opps = <&rpmhpd_opp_svs_l1>;
-+					};
-+				};
-+			};
-+
-+			mdss_dsi0_phy: phy@ae94400 {
-+				compatible = "qcom,dsi-phy-10nm";
-+				reg = <0 0x0ae94400 0 0x200>,
-+				      <0 0x0ae94600 0 0x280>,
-+				      <0 0x0ae94a00 0 0x1e0>;
-+				reg-names = "dsi_phy",
-+					    "dsi_phy_lane",
-+					    "dsi_pll";
-+
-+				#clock-cells = <1>;
-+				#phy-cells = <0>;
-+
-+				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+					 <&rpmhcc RPMH_CXO_CLK>;
-+				clock-names = "iface", "ref";
-+
-+				status = "disabled";
-+			};
-+		};
-+
-+		dispcc: clock-controller@af00000 {
-+			compatible = "qcom,sm6350-dispcc";
-+			reg = <0 0x0af00000 0 0x20000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_DISP_GPLL0_CLK>,
-+				 <&mdss_dsi0_phy 0>,
-+				 <&mdss_dsi0_phy 1>,
-+				 <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
-+				 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
-+			clock-names = "bi_tcxo",
-+				      "gcc_disp_gpll0_clk",
-+				      "dsi0_phy_pll_out_byteclk",
-+				      "dsi0_phy_pll_out_dsiclk",
-+				      "dp_phy_pll_link_clk",
-+				      "dp_phy_pll_vco_div_clk";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		pdc: interrupt-controller@b220000 {
- 			compatible = "qcom,sm6350-pdc", "qcom,pdc";
- 			reg = <0 0x0b220000 0 0x30000>, <0 0x17c000f0 0 0x64>;
+In the multipd architecture based Socs, There is one Q6 DSP which runs 
+the OS/kernel and there are one or more instances of WCSS radios
+(It can be either internal or pcie attached).
+These WCSS cores are controlled by the Q6 (Q6 DSP brings wcss radios out 
+of reset/ shuts it down etc). Q6 forms the 'root Protection domain' and 
+the wcss radios are termed as the 'user protection domain'.
+The compatible's that is being added here are to manage the 'root 
+domain' and 'user domain'.
+Not sure if using the words 'pcie'/'ahb' made it confusing.
+So, 'qcom,ipq5018-q6-mpd' and 'qcom,ipq5018-wcss-mpd'.
 
--- 
-2.41.0
+There will be multiple instances of 'qcom,ipq5018-wcss-mpd' in DT based 
+on number of wcss radios connected on that board and only one instance 
+of 'qcom,ipq5018-q6-mpd'.
 
+Is this approach ok ?
+
+Thanks & Regards,
+Manikanta.
