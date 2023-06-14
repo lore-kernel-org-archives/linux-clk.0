@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1735C001DE
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 18:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D18E0EB64DD
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 18:05:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241113AbjFNSFk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 14:05:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38174 "EHLO
+        id S240330AbjFNSFm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 14:05:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241786AbjFNSFQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 14:05:16 -0400
+        with ESMTP id S240613AbjFNSFB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 14:05:01 -0400
 Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048F02689
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 11:05:09 -0700 (PDT)
-Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4f62b512fe2so9449144e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 11:05:08 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724F42684
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 11:04:55 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id 2adb3069b0e04-4f62cf9755eso9015593e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 11:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686765907; x=1689357907;
+        d=linaro.org; s=google; t=1686765893; x=1689357893;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5bcXIhURMNb0zAXxfMHWv0nL5TXiAv91yaE+1dFMG5E=;
-        b=pq6bw0cXSTpklMxV25UMxnMsLsxx5Tc6Eb25fYs9CmWrd2LzuH3L4ZZ25tXXfMT1/4
-         WNNhfNlCuK/D/kdKixzZ67I7IuhdLNqZ9D4+d8r7palyPCiN0jICzuHr84vnyI9hyPxO
-         OmZ91ZiVkIIhbV55nZQsuusIoyOOjwBHtxImi0cXmgPiAGCgPX+0ry0xsPilIY4E+Ujn
-         Yh4pAnuW4m2+pJItNnFDWqytf997MXtz/dVHra2yFqaN5u3jXaIcJvj5yIwdwTJaP9Jt
-         931pdLVcYWp8ISnjcQpuA+wXcyEi1g7Stbpu5nRs9/s7xNw96IYtBr6CvFOfFInPip6p
-         oxwg==
+        bh=KhmMqJgELFXlAh9h3uttQVzjp1sKHmXWUeh3OQH1oaw=;
+        b=Pi+e/0JbEBc6rc9x2oF6ycpVpx+yrCqjvYDiE105zydnRh1JAq00FZBCItzHPjlSLB
+         sl22fSXnSGFb3XoARQeRkxBR9ykrDtwGkMSa5f6yq7c3KIvBWRSZxwD8UTIgEVgZbOeZ
+         CrWuWsxhaMemy+KSBMOlBTaqyN2MBIMUsIYPkSbjz8ggq0+xGXXH8CmgRWshxKdWGvm7
+         ewaF/kKiAgBr/6Gg3RGHXrag2PQN2v2RxdFQUWHuwdAw1NWsr51Vg1FM3c0cRpgZBzjw
+         EpM9lcMpv63/9e0eRShZZJHW0mOv7GgJEVvBcKYun7+A6V9SUsV0lT91tMN8uQjZL1Oo
+         pFnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686765907; x=1689357907;
+        d=1e100.net; s=20221208; t=1686765893; x=1689357893;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5bcXIhURMNb0zAXxfMHWv0nL5TXiAv91yaE+1dFMG5E=;
-        b=fBylC5GUTRr+1Qy0WsqYfTkaoAS8oeUacIHfqCFlucXnCWde7Heq1PJR6urEzkW+2+
-         1zG6i8w4FnAeCLPqFKzbqSVAzqJPUqs7qg8CMkkUX33NrhEXPeiWfTJCt7GZWl35juFA
-         rhAVSBSF9l6eTD9ec24qPGxJHZTdwhFBQIQ2g/TIkiNw8OkTuhL0JMIEaBAFs3k1ru6C
-         R0HHS0c0Tik9/YLrumYmGgucMJldkIEGFTI9bWP2mrbU49KPZn0A6iqFVfRGGWnrEHgG
-         HUwB/A4CJNorlpO7M4y/KMtDWdQxjWQFIVC2Lu3D0hJn2uHbNderHG5beGAH62QqlZRV
-         ZBrw==
-X-Gm-Message-State: AC+VfDxsxJP5SFNLbCTus/Wlae+OMS8vTfN3ut837DkmFlaHt9wzdXZ4
-        bHUhGnQ7U59tEl0pAqN9PBNteQ==
-X-Google-Smtp-Source: ACHHUZ59EqaQR9FEQh7SMWnWu8T8pAgLDrueO2T6NI16i4qWW5o4JwYn3TPNcW7TliHXfCYk/FLYDg==
-X-Received: by 2002:a19:7104:0:b0:4f6:3000:4d5a with SMTP id m4-20020a197104000000b004f630004d5amr7266979lfc.38.1686765907332;
-        Wed, 14 Jun 2023 11:05:07 -0700 (PDT)
+        bh=KhmMqJgELFXlAh9h3uttQVzjp1sKHmXWUeh3OQH1oaw=;
+        b=fZSbRzVXuQG+djD3eO+VMwDNtVMEWbIOWxxnK/AiWIPhVpTzDYvFJMyRNMpBxRoCwe
+         qtVViuvSE9SCfIK2OLCUzsY9EocJpTfS8ChZVzUzvKKyA6C0OJxkAT02yIhNFLxhKYT6
+         OBqNyT0AiT25kyrpcnui0JiZV2nBKh6iMo1p0UC8kfTVmUuqaM8qvdKkxfo/xQ8UFweq
+         l/DDiYT4l4i9V4dumdnzaoz69LghY0PreI2610XgKhSYZ8U1qsn4LumK2stMlYiwT4k6
+         ktB4lMntjF46nHd5ACzKD2Ynww1HS3Fc0weKQq25yLEQTfn0mWv2L8GUNx3VReNyQwB9
+         wOiw==
+X-Gm-Message-State: AC+VfDwtoWCAhB7c7C0V3SWhTx0B+3PSNSJcNRsDWUFj7K+lt402To0M
+        YITBfcSNx/uRBJHXuy2e7AnJ0w==
+X-Google-Smtp-Source: ACHHUZ46Xypjs0BrwGKM4RnH0dBLszdfzW4nO2vBplYiPIlV4EJO7exKV49gq1+V/PzqYAL/O9eAjw==
+X-Received: by 2002:ac2:5b11:0:b0:4f1:30cc:3dae with SMTP id v17-20020ac25b11000000b004f130cc3daemr11180460lfn.10.1686765893783;
+        Wed, 14 Jun 2023 11:04:53 -0700 (PDT)
 Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id l18-20020a19c212000000b004eff1f7f206sm2224053lfc.9.2023.06.14.11.05.05
+        by smtp.gmail.com with ESMTPSA id l18-20020a19c212000000b004eff1f7f206sm2224053lfc.9.2023.06.14.11.04.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 11:05:07 -0700 (PDT)
+        Wed, 14 Jun 2023 11:04:53 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 14 Jun 2023 20:04:41 +0200
-Subject: [PATCH v6 22/22] interconnect: qcom: icc-rpm: Fix bandwidth
- calculations
+Date:   Wed, 14 Jun 2023 20:04:32 +0200
+Subject: [PATCH v6 13/22] interconnect: qcom: qcs404: Hook up RPM bus clk
+ definitions
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v6-22-263283111e66@linaro.org>
+Message-Id: <20230526-topic-smd_icc-v6-13-263283111e66@linaro.org>
 References: <20230526-topic-smd_icc-v6-0-263283111e66@linaro.org>
 In-Reply-To: <20230526-topic-smd_icc-v6-0-263283111e66@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -74,145 +74,56 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686765873; l=5027;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686765872; l=1291;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=tAzLN6zVkcV/6YKzpXaiTCXmJB8hBKbRsR3dIrek/EQ=;
- b=D2ggQXMuXsAaYFYORH7Xn4ImPyMS+lByHb8dqBMR8ngA5C+oEBTIgqB7mUrwAVgCNTKEwy5WK
- u2MZ94OJ/w4DnpOSuSecmyweXzoWS7dkBRw/6ssKhL+fzq1RcAfqkLo
+ bh=lGCEkIFx3Ro52nqp/0xgEzhtJm6XAu+5tICY6AP6scg=;
+ b=GnkaJ6PJfJFJ+U9D7aBXdtV2MToXO8a11ZO+RlxPzks9VSY2QScKNUzv9n8sie0GHv6FifFlM
+ Q3tdS7702caDM+8AU0pN6g5oC4c23C1hZAdvu+mfUf2m7WTu7LjeTqI
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Up until now, we've been aggregating the bandwidth values and only
-dividing them by the bus width of the source node. This was completely
-wrong, as different nodes on a given path may (and usually do) have
-varying bus widths.  That in turn, resulted in the calculated clock rates
-being completely bogus - usually they ended up being much higher, as
-NoC_A<->NoC_B links are very wide.
+Assign the necessary definitions to migrate to the new bus clock
+handling mechanism.
 
-Since we're not using the aggregate bandwidth value for anything other
-than clock rate calculations, remodel qcom_icc_bus_aggregate() to
-calculate the per-context clock rate for a given provider, taking into
-account the bus width of every individual node.
-
-Fixes: 30c8fa3ec61a ("interconnect: qcom: Add MSM8916 interconnect provider driver")
-Reported-by: Stephan Gerhold <stephan@gerhold.net>
-Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/interconnect/qcom/icc-rpm.c | 59 ++++++++++++-------------------------
- 1 file changed, 19 insertions(+), 40 deletions(-)
+ drivers/interconnect/qcom/qcs404.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index 5733261d9407..3209d8de709b 100644
---- a/drivers/interconnect/qcom/icc-rpm.c
-+++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -292,58 +292,44 @@ static int qcom_icc_bw_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
- }
+diff --git a/drivers/interconnect/qcom/qcs404.c b/drivers/interconnect/qcom/qcs404.c
+index 1faec0af74e7..82fe905b74a9 100644
+--- a/drivers/interconnect/qcom/qcs404.c
++++ b/drivers/interconnect/qcom/qcs404.c
+@@ -983,6 +983,7 @@ static struct qcom_icc_node * const qcs404_bimc_nodes[] = {
+ };
  
- /**
-- * qcom_icc_bus_aggregate - aggregate bandwidth by traversing all nodes
-+ * qcom_icc_bus_aggregate - calculate bus clock rates by traversing all nodes
-  * @provider: generic interconnect provider
-- * @agg_avg: an array for aggregated average bandwidth of buckets
-- * @agg_peak: an array for aggregated peak bandwidth of buckets
-- * @max_agg_avg: pointer to max value of aggregated average bandwidth
-+ * @agg_clk_rate: array containing the aggregated clock rates in kHz
-  */
--static void qcom_icc_bus_aggregate(struct icc_provider *provider,
--				   u64 *agg_avg, u64 *agg_peak,
--				   u64 *max_agg_avg)
-+static void qcom_icc_bus_aggregate(struct icc_provider *provider, u64 *agg_clk_rate)
- {
--	struct icc_node *node;
-+	u64 agg_avg_rate, agg_rate;
- 	struct qcom_icc_node *qn;
--	u64 sum_avg[QCOM_SMD_RPM_STATE_NUM];
-+	struct icc_node *node;
- 	int i;
+ static const struct qcom_icc_desc qcs404_bimc = {
++	.bus_clk_desc = &bimc_clk,
+ 	.nodes = qcs404_bimc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcs404_bimc_nodes),
+ };
+@@ -1037,6 +1038,7 @@ static struct qcom_icc_node * const qcs404_pcnoc_nodes[] = {
+ };
  
--	/* Initialise aggregate values */
--	for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
--		agg_avg[i] = 0;
--		agg_peak[i] = 0;
--	}
--
--	*max_agg_avg = 0;
--
- 	/*
--	 * Iterate nodes on the interconnect and aggregate bandwidth
--	 * requests for every bucket.
-+	 * Iterate nodes on the provider, aggregate bandwidth requests for
-+	 * every bucket and convert them into bus clock rates.
- 	 */
- 	list_for_each_entry(node, &provider->nodes, node_list) {
- 		qn = node->data;
- 		for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
- 			if (qn->channels)
--				sum_avg[i] = div_u64(qn->sum_avg[i], qn->channels);
-+				agg_avg_rate = div_u64(qn->sum_avg[i], qn->channels);
- 			else
--				sum_avg[i] = qn->sum_avg[i];
--			agg_avg[i] += sum_avg[i];
--			agg_peak[i] = max_t(u64, agg_peak[i], qn->max_peak[i]);
-+				agg_avg_rate = qn->sum_avg[i];
-+
-+			agg_rate = max_t(u64, agg_avg_rate, qn->max_peak[i]);
-+			do_div(agg_rate, qn->buswidth);
-+
-+			agg_clk_rate[i] = max_t(u64, agg_clk_rate[i], agg_rate);
- 		}
- 	}
--
--	/* Find maximum values across all buckets */
--	for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++)
--		*max_agg_avg = max_t(u64, *max_agg_avg, agg_avg[i]);
- }
+ static const struct qcom_icc_desc qcs404_pcnoc = {
++	.bus_clk_desc = &bus_0_clk,
+ 	.nodes = qcs404_pcnoc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcs404_pcnoc_nodes),
+ };
+@@ -1065,6 +1067,7 @@ static struct qcom_icc_node * const qcs404_snoc_nodes[] = {
+ };
  
- static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- {
--	struct qcom_icc_provider *qp;
- 	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
-+	u64 agg_clk_rate[QCOM_SMD_RPM_STATE_NUM] = { 0 };
- 	struct icc_provider *provider;
-+	struct qcom_icc_provider *qp;
- 	u64 active_rate, sleep_rate;
--	u64 agg_avg[QCOM_SMD_RPM_STATE_NUM], agg_peak[QCOM_SMD_RPM_STATE_NUM];
--	u64 max_agg_avg;
- 	int ret;
- 
- 	src_qn = src->data;
-@@ -352,7 +338,9 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	provider = src->provider;
- 	qp = to_qcom_provider(provider);
- 
--	qcom_icc_bus_aggregate(provider, agg_avg, agg_peak, &max_agg_avg);
-+	qcom_icc_bus_aggregate(provider, agg_clk_rate);
-+	active_rate = agg_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE];
-+	sleep_rate = agg_clk_rate[QCOM_SMD_RPM_SLEEP_STATE];
- 
- 	ret = qcom_icc_rpm_set(src_qn, src_qn->sum_avg);
- 	if (ret)
-@@ -368,15 +356,6 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	if (!qp->bus_clk_desc && !qp->bus_clk)
- 		return 0;
- 
--	/* Intentionally keep the rates in kHz as that's what RPM accepts */
--	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
--			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
--	do_div(active_rate, src_qn->buswidth);
--
--	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
--			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
--	do_div(sleep_rate, src_qn->buswidth);
--
- 	/*
- 	 * Downstream checks whether the requested rate is zero, but it makes little sense
- 	 * to vote for a value that's below the lower threshold, so let's not do so.
+ static const struct qcom_icc_desc qcs404_snoc = {
++	.bus_clk_desc = &bus_1_clk,
+ 	.nodes = qcs404_snoc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcs404_snoc_nodes),
+ };
 
 -- 
 2.41.0
