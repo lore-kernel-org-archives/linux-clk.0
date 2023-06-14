@@ -2,61 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF35EEB64DD
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 11:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59273EB64DB
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 11:35:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243477AbjFNLfy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 07:35:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49350 "EHLO
+        id S234655AbjFNLf6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 07:35:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244049AbjFNLfw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 07:35:52 -0400
+        with ESMTP id S234209AbjFNLfy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 07:35:54 -0400
 Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B7D1BF7
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:35:51 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f64fb05a8aso8396865e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:35:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2209519B5
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:35:53 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f6255ad8aeso8446611e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686742549; x=1689334549;
+        d=linaro.org; s=google; t=1686742551; x=1689334551;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GgG/M1SdADb+CjPujPqNKA6Um2dIkmunogTu3ghoPwU=;
-        b=JPQOJ7GBzRg4+++Tk8jOeJWHuz89DMz5L2yRUw7DboCRZNnZAyh5VyDNqZrhdBUcHa
-         eZJB+ZsUw9/I+JF0ipDZvEF8HDngp76ZiXOJ/VhekYngSPgLWuCp+IebZEJOOMbTGNDe
-         kGFuJB8DjVPD3op5/kSvFi/dVcclVtT9NSGjESElDd/J3BExyM4XWemCtoTUFUPcnMyI
-         lcK0KSufCoH5qGhnKvMEHPji1VIV8hV3a6DnMz2bY1pZG3scaLYqDGkY6QDz1HFjXUHm
-         NnVZPAXVv2u0SOjL7D9OG1YPwT1JC59C/s6dyH0eQeUZgGibA1/7BO/sWH6ZK4gun3M0
-         1mRg==
+        bh=qQ877MkpC4ehMBHierpFme4jBSlXee3tho/1k2lPnrc=;
+        b=uI93E48Udehbrc1xQ5FKCcryJu31IKfTe3ArGksSM8duqIQR2ZrmfLpdNQ+qIFOTz3
+         SncRrViURipzqRAPlpCfr0FC/92IC2vwjuwbLJW0jMVN4xS0uvzRZDdjiw3BWTRuunmD
+         74bsU98nNPnMyWJxVjcoiiUjAVYZX3Fjxw9pD9ouFNVvk7R2iXYvkBYUYUMnXvRsEQNy
+         Z2NMYKU4vWUsz3jOQB6+DLg9JUqt8JaSXmg/MiW7SpM1Eypph8+bYHzYLnjZ0DSE9HqF
+         E/P5NG1+ueIKjdibYHTm68Qn36j/UGY7i0FvcMaKNkYjnpwn9GUr4txXLSnYcnNMGN3e
+         Mv2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686742549; x=1689334549;
+        d=1e100.net; s=20221208; t=1686742551; x=1689334551;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GgG/M1SdADb+CjPujPqNKA6Um2dIkmunogTu3ghoPwU=;
-        b=QkmSyUafP/QTdCFH8SC1UhTiIyBX8zVmgxmtxJg3+JSMHua6TxMaD0U6IS3K8rq0jO
-         sD9TP2wzXhCiHwprkT4qxqUCJzEfb3es6LIG+DMLLxjxFMHPFlpzbHUX3N5n8hRcGQEv
-         pBtq4td0xMBdyo0plLucNsvKE5OANwGjSlkshYskzcd3EI6OU5hmxVGoWg99+dKtJf8U
-         GbBZNr/5eXTrGXejC9RlBxc/5YpW/krRqks0/CKVJR8nOwj/rnnmQFcszdySzGTuP1wC
-         DptNLOWcj0NkcJlbs8ZdcZHppFCFWFN2rXrQa9afsOrKIlKSCdbZwuF7yoOz+NKQK9hD
-         Yp1A==
-X-Gm-Message-State: AC+VfDz5KzPdpCWqHXGhq1lNhbYbVM584ytgrttyZwMp4EWyAi8mG2J0
-        TvfzX+gn8t3fcC84ZOIUj77lQ6BwrK87djLmZ2Q=
-X-Google-Smtp-Source: ACHHUZ4oQaFWwTY451PXFB29BsRrMgGvYB+CIFZrHN9pYl1l7/9xk3nBom7r1SWohRqLqAGvBWx1aw==
-X-Received: by 2002:ac2:5592:0:b0:4f6:1722:d737 with SMTP id v18-20020ac25592000000b004f61722d737mr8441604lfg.9.1686742549348;
-        Wed, 14 Jun 2023 04:35:49 -0700 (PDT)
+        bh=qQ877MkpC4ehMBHierpFme4jBSlXee3tho/1k2lPnrc=;
+        b=lRV0KBc+LD+PGMDyYCd+TyqQhZ5Pr8TjPK8zdFgZyEtLV/A5wRIG9jbtxY4PXfraIH
+         gPeTdtcUIa5A7ikNQcSSivyv9Nrr032M6z/qckl2eC4Jcq5XZpc3DIT6pA38RDgSPzZA
+         +HsX9ShBFTOwXsoivmXCa4GmBWpsE9hrCe3dg9COldQhGXpQuflmBisxqoQvlwakrk8h
+         WJNkNRA4esrlEIbOP4M+dvXWdf0aGd9xi3EWAk8iH+3y999jOhm/pkJoV8c64vxn7F7W
+         eoKfSjPpLXTfHhbU/ewpYJ2zQe5yg8sIUoW/OMPpxdOayk1gPp5KyZHN5vGvefY3dTH5
+         y5Ow==
+X-Gm-Message-State: AC+VfDxUki+GJjjRlJQV99AAhM/QnT/TiUEwHM5v3HFd5PKMYaLesaoo
+        rZQxT+/E7O+rYGwSBafMtZCQfg==
+X-Google-Smtp-Source: ACHHUZ60YXB+ZseJWIdpv6oeU1CgzUgucbhQDO4MpnIaed7403UQGhY/Ck461aIqR+24CTGdjBT+iw==
+X-Received: by 2002:a19:e344:0:b0:4f7:5d2d:337e with SMTP id c4-20020a19e344000000b004f75d2d337emr2291524lfk.15.1686742551189;
+        Wed, 14 Jun 2023 04:35:51 -0700 (PDT)
 Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id x1-20020ac25dc1000000b004f64b8eee61sm2088406lfq.97.2023.06.14.04.35.47
+        by smtp.gmail.com with ESMTPSA id x1-20020ac25dc1000000b004f64b8eee61sm2088406lfq.97.2023.06.14.04.35.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 04:35:49 -0700 (PDT)
+        Wed, 14 Jun 2023 04:35:50 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 14 Jun 2023 13:35:32 +0200
-Subject: [PATCH v2 1/7] clk: qcom: gpucc-sm6350: Introduce index-based clk
- lookup
+Date:   Wed, 14 Jun 2023 13:35:33 +0200
+Subject: [PATCH v2 2/7] clk: qcom: gpucc-sm6350: Fix clock source names
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230315-topic-lagoon_gpu-v2-1-afcdfb18bb13@linaro.org>
+Message-Id: <20230315-topic-lagoon_gpu-v2-2-afcdfb18bb13@linaro.org>
 References: <20230315-topic-lagoon_gpu-v2-0-afcdfb18bb13@linaro.org>
 In-Reply-To: <20230315-topic-lagoon_gpu-v2-0-afcdfb18bb13@linaro.org>
 To:     Bjorn Andersson <andersson@kernel.org>,
@@ -75,86 +74,46 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686742545; l=2501;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686742545; l=1472;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=TaMoHmTX5YmIOUIdAoElMKm2cSA2iQeh1gPxDTztMHU=;
- b=SuDstwjNjC4hB4jFdESHz9+jus8boaBzbYU+NNQHiLZongyDXxnapKuBEHAt5EBMcs95Y2i/H
- TdQqQNj02JUCwkN8winp20RjQqBJuUrth0siHnCXo/wmoKj7gHVe7RQ
+ bh=Um2mvoH0hgq2pxMG9SLY6mhwWzANPWf1u6+3THUrEME=;
+ b=2C90kfo8MN0j6VNDnSDnGoAxAhAtouxdKh8jKaNG5fneNrIb81w/UW4+kwXuSrKmvexCRr9cz
+ 8duNdf3C0VPCiFGebaCghiTiKRhyqiQs/KLXoL4Y3Rso3YuoKiDg1TT
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the nowadays-prefered and marginally faster way of looking up parent
-clocks in the device tree. It also allows for clock-names-independent
-operation, so long as the order (which is enforced by schema) is kept.
+fw_name for GCC inputs didn't match the bindings. Fix it.
 
+Fixes: 013804a727a0 ("clk: qcom: Add GPU clock controller driver for SM6350")
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gpucc-sm6350.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/clk/qcom/gpucc-sm6350.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/qcom/gpucc-sm6350.c b/drivers/clk/qcom/gpucc-sm6350.c
-index ef15185a99c3..a9887d1f0ed7 100644
+index a9887d1f0ed7..0bcbba2a2943 100644
 --- a/drivers/clk/qcom/gpucc-sm6350.c
 +++ b/drivers/clk/qcom/gpucc-sm6350.c
-@@ -24,6 +24,12 @@
- #define CX_GMU_CBCR_WAKE_MASK		0xF
- #define CX_GMU_CBCR_WAKE_SHIFT		8
- 
-+enum {
-+	DT_BI_TCXO,
-+	DT_GPLL0_OUT_MAIN,
-+	DT_GPLL0_OUT_MAIN_DIV,
-+};
-+
- enum {
- 	P_BI_TCXO,
- 	P_GPLL0_OUT_MAIN,
-@@ -61,6 +67,7 @@ static struct clk_alpha_pll gpu_cc_pll0 = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll0",
- 			.parent_data =  &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
- 				.fw_name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
-@@ -104,6 +111,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll1",
- 			.parent_data =  &(const struct clk_parent_data){
-+				.index = DT_BI_TCXO,
- 				.fw_name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
-@@ -121,11 +129,11 @@ static const struct parent_map gpu_cc_parent_map_0[] = {
- };
- 
- static const struct clk_parent_data gpu_cc_parent_data_0[] = {
--	{ .fw_name = "bi_tcxo" },
-+	{ .index = DT_BI_TCXO, .fw_name = "bi_tcxo" },
+@@ -132,8 +132,8 @@ static const struct clk_parent_data gpu_cc_parent_data_0[] = {
+ 	{ .index = DT_BI_TCXO, .fw_name = "bi_tcxo" },
  	{ .hw = &gpu_cc_pll0.clkr.hw },
  	{ .hw = &gpu_cc_pll1.clkr.hw },
--	{ .fw_name = "gcc_gpu_gpll0_clk" },
--	{ .fw_name = "gcc_gpu_gpll0_div_clk" },
-+	{ .index = DT_GPLL0_OUT_MAIN, .fw_name = "gcc_gpu_gpll0_clk" },
-+	{ .index = DT_GPLL0_OUT_MAIN_DIV, .fw_name = "gcc_gpu_gpll0_div_clk" },
+-	{ .index = DT_GPLL0_OUT_MAIN, .fw_name = "gcc_gpu_gpll0_clk" },
+-	{ .index = DT_GPLL0_OUT_MAIN_DIV, .fw_name = "gcc_gpu_gpll0_div_clk" },
++	{ .index = DT_GPLL0_OUT_MAIN, .fw_name = "gcc_gpu_gpll0_clk_src" },
++	{ .index = DT_GPLL0_OUT_MAIN_DIV, .fw_name = "gcc_gpu_gpll0_div_clk_src" },
  };
  
  static const struct parent_map gpu_cc_parent_map_1[] = {
-@@ -138,12 +146,12 @@ static const struct parent_map gpu_cc_parent_map_1[] = {
- };
- 
- static const struct clk_parent_data gpu_cc_parent_data_1[] = {
--	{ .fw_name = "bi_tcxo" },
-+	{ .index = DT_BI_TCXO, .fw_name = "bi_tcxo" },
- 	{ .hw = &crc_div.hw },
+@@ -151,7 +151,7 @@ static const struct clk_parent_data gpu_cc_parent_data_1[] = {
  	{ .hw = &gpu_cc_pll0.clkr.hw },
  	{ .hw = &gpu_cc_pll1.clkr.hw },
  	{ .hw = &gpu_cc_pll1.clkr.hw },
--	{ .fw_name = "gcc_gpu_gpll0_clk" },
-+	{ .index = DT_GPLL0_OUT_MAIN, .fw_name = "gcc_gpu_gpll0_clk" },
+-	{ .index = DT_GPLL0_OUT_MAIN, .fw_name = "gcc_gpu_gpll0_clk" },
++	{ .index = DT_GPLL0_OUT_MAIN, .fw_name = "gcc_gpu_gpll0_clk_src" },
  };
  
  static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] = {
