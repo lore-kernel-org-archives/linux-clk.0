@@ -2,271 +2,215 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 361C2EB64D9
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 12:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389E7EB64DC
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 12:27:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243690AbjFNMZs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 08:25:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59240 "EHLO
+        id S244067AbjFNM1K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 08:27:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244818AbjFNMZQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 08:25:16 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD877109;
-        Wed, 14 Jun 2023 05:25:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686745515; x=1718281515;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=gc95NjL2WLV4eMomtr8XsvP+NfhXwWJPZbI5fjnvaY8=;
-  b=hJhktN5tUD0tYYJjaEpRuMdM6ttvi0qiIJBZV+LaMiK3h3pDrauITtYz
-   z6jNaZs2fviC36UlhDiE76bwW5QoqUNW4v+bmhkTmi65KnEW5vKFh00r8
-   JgrAt8rxGEW8QOsIwzrVsHmku3tJmliBknvLh12gWdwevJYVWWZfYbWyO
-   5u72O9tFIVBNGPysYX8AxxrRikFkp58Nhn74n/G1KQvV0X+yIbAFFkSaD
-   Z9+jyMdL1C4ztctf0aKlttxIiV4xwvl+XVqfjRmg1wsyzYfhX7Z6a8jA0
-   5xKlr/OONOzGuRQ4YvDSMcTD9Gfx4mjoB6db8qsh6GRoAsAxRjEIxXdhA
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="348258442"
-X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
-   d="scan'208";a="348258442"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2023 05:25:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10741"; a="824798315"
-X-IronPort-AV: E=Sophos;i="6.00,242,1681196400"; 
-   d="scan'208";a="824798315"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmsmga002.fm.intel.com with ESMTP; 14 Jun 2023 05:25:11 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 14 Jun 2023 05:25:11 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23; Wed, 14 Jun 2023 05:25:10 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.23 via Frontend Transport; Wed, 14 Jun 2023 05:25:10 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.42) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.23; Wed, 14 Jun 2023 05:25:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PNv0yMmfO/oLJm2iFGyEyM9yJZzHt3Z3kzLOnmFEoUA5HKViGprxbwifxvz/r/U5rnAfTPgwoZ5V/Sm9rnEVExCQeWbu2S03rRxyl/+lfMZpsrkfMB/8DyQXcJ7CePRmzSg33n3sVmPmEE8StVtv1F9wQW7P8E/01mbSmDRyzR/yv4SnR25chOxvMlDwVo/CmwxQPq6KkYFDZ6lXFRyVfaUNnH3cpJqFPy3UrhR+mvktRkLFDvw0hVdikm5D7ZqlzfFZ72NGmWWTOHrd6BThozJSje64vHZWGKz6wi1zlhaiHLC+sGMa+TzRpRv8z6AbEpgp/0zZB6eR0Bo/70nE6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gc95NjL2WLV4eMomtr8XsvP+NfhXwWJPZbI5fjnvaY8=;
- b=STjNPv60UVcx6011EImlKT9W1CJEWKGGtopxvWExzAg49z37SbnYTq8MRb683NpVAEXd/D7cU9cJw92oH3OniAPc5t1pnUyW6T00C78MhI5MnrcSo4KAnqPDCi5ELesird5TUHoVBANLYVDKNYhkWAphiRs3dsT3ZlpFGtmLsHwiGjhsktLqt0fm6a5bqdORhbz+bgUeMfDP0iBvdKhxK5uq7k+7OmfXUeA3fG3I9bHyBRrKDtpATxEN3/rl/1BKQT4J9QwbGtA7iu0c5gpjHphC39JrzAvUGNABG3C4LL7LXkI0CYTbKjV2p+SnMLxYjMM+zxsMBBl6w72ctePGZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
- PH8PR11MB8258.namprd11.prod.outlook.com (2603:10b6:510:1c1::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6455.44; Wed, 14 Jun 2023 12:25:07 +0000
-Received: from DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::24bd:974b:5c01:83d6]) by DM6PR11MB4657.namprd11.prod.outlook.com
- ([fe80::24bd:974b:5c01:83d6%3]) with mapi id 15.20.6455.045; Wed, 14 Jun 2023
- 12:25:07 +0000
-From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-To:     Jiri Pirko <jiri@resnulli.us>, poros <poros@redhat.com>
-CC:     "kuba@kernel.org" <kuba@kernel.org>,
-        "vadfed@meta.com" <vadfed@meta.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "vadfed@fb.com" <vadfed@fb.com>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "M, Saeed" <saeedm@nvidia.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "sj@kernel.org" <sj@kernel.org>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jacek.lawrynowicz@linux.intel.com" 
-        <jacek.lawrynowicz@linux.intel.com>,
-        "airlied@redhat.com" <airlied@redhat.com>,
-        "ogabbay@kernel.org" <ogabbay@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux@zary.sk" <linux@zary.sk>,
-        "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "kuniyu@amazon.com" <kuniyu@amazon.com>,
-        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
-        "razor@blackwall.org" <razor@blackwall.org>,
-        "idosch@nvidia.com" <idosch@nvidia.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
-        "phil@nwl.cc" <phil@nwl.cc>,
-        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
-        Jiri Pirko <jiri@nvidia.com>
-Subject: RE: [RFC PATCH v8 06/10] netdev: expose DPLL pin handle for netdevice
-Thread-Topic: [RFC PATCH v8 06/10] netdev: expose DPLL pin handle for
- netdevice
-Thread-Index: AQHZms0LMEE2eHihEU+gzon4iCudjq+G58qAgAHfCYCAAXnsUA==
-Date:   Wed, 14 Jun 2023 12:25:07 +0000
-Message-ID: <DM6PR11MB4657B7316954968658B40CE39B5AA@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
- <20230609121853.3607724-7-arkadiusz.kubalewski@intel.com>
- <343e2638d2e9b3d13216235f85c2d1dae2634881.camel@redhat.com>
- <ZIh0e5b/xp6H85pN@nanopsycho>
-In-Reply-To: <ZIh0e5b/xp6H85pN@nanopsycho>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|PH8PR11MB8258:EE_
-x-ms-office365-filtering-correlation-id: eb33f761-bc8d-45f1-44c9-08db6cd26381
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 6sCaqX7W7BabgVfoUwXmlWmmMRYLN2NG2so0fmZlBHQ6iDg1dcZLTw+OwqsPd3U0Wp8/Td7JkRYHoD84/s9IGryp1KHXcq2CSWMc6GgrGk7uE0UzdBL6YdVLQhGhRIGTTJ3WxLX6hOByVJzzdZUWB0SzIJZzZAP9ui97rQUQM6mmACRwcXwAC7ULZWTabRh0wPQuvxbifHr4rxbqXiX+4iQ2ZiR0VfsYu0erWoc8B+LGgY0bt6Q+VvKVL9nYXLCnKIzt5ckh745et7WS5G2qcQOPEiq0TC+eZm0p0tN4NJX7IZxlCD2+VPp794+QoP/SlAagYHDDeBL1eTYyB5XXK+dYTpy4EaKVBAjOwXcp1c5CXuutaK320QfraOzJyNpgcLLncxIG4RmSqG0KlqATmoIf+FAyRVPXN/wE+l7OIMDVs2SfpWGkMICjBqSOKU9hqLjZEYSfvp54j37MCWtHQIDpQYJFWMD8qdrRohZeOFI3gO/W5JeC5TOvZtMskiGCYSv3ZS4mn9Nd8kyVeFiccNhEJQGnuBSKHzbnCLfO6MjVIHydkWKmK4sMGXGipp+5qhFDer7fhC06QrDQfyb+5nH7y6dKBIDftDwmEL77C3HNWNHglJuD8mrgG4RuuGjf
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(366004)(136003)(376002)(346002)(39860400002)(396003)(451199021)(66556008)(66446008)(66476007)(66946007)(64756008)(316002)(76116006)(71200400001)(54906003)(4326008)(110136005)(478600001)(33656002)(86362001)(38070700005)(6506007)(9686003)(26005)(83380400001)(186003)(41300700001)(8676002)(8936002)(7416002)(5660300002)(2906002)(52536014)(7406005)(7696005)(55016003)(82960400001)(122000001)(38100700002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bklHWnpycWdIRXBzdUdEb2U1a1R5THpYaDlSb2E2bnRGY25GWnM3N2tzaTdN?=
- =?utf-8?B?ZXVSa05SdlNmSUlHRkJIU0UrRDBBY3VEYXpxcjFXRStsYUp4NHBIbWpacHRR?=
- =?utf-8?B?QU1lSTMrNHlvRDVkZUNvVkpaWGcwcFpaTGpoR3JxMW5WTFBZN0tjSndCRUl6?=
- =?utf-8?B?NVkyMUFqbGYyM0dXSEtPcGRFbUQ3am0vdGMxV2RJbzVDeGlDUkI2RGcvSG1W?=
- =?utf-8?B?VVVCOWVlRFJxelNrUXNoekUwY2pnbWNudEN0eUdsRzdhN0IyLzAzMmprQ3Yv?=
- =?utf-8?B?RHF1QnZUc2xEUjJPU0RRb1lhT3VRUjRpQlFoWjVXVktNUVNkOG93OGxoTE5j?=
- =?utf-8?B?eVNnaWtlWUszbkxzN1orZDUzakdCcXd5VEswNzRzSUdocERveHd1SHNQdm4r?=
- =?utf-8?B?RXFBU2k2ZlVxR2ZSQ2k3VThyNXIwaWVKTm5saW5ZcUR5aitDMlo2bkh3TEdr?=
- =?utf-8?B?aGVzK1VHbTlSRnViUXhDYmFuT1dIY25FZWxPM0NxdTRua2xjT0NxbzV6TjJ5?=
- =?utf-8?B?NEhGdGFuUGdZTndGQ09xamFoWHIvMC9qMm1pc2lWR0F1ZnZ1eTJGdGdKaDhv?=
- =?utf-8?B?V1M0WFlSVFY1U2NsQ1NRYmZOLzlzcVI3bEVCc0ZCQ0NndzNKVW9NQmgvenRy?=
- =?utf-8?B?ejk1aGIraXppdWZWNEVIdVIwTUxOUDQ3R0EweXBUVGdYZmFMLzNjWFFINkVH?=
- =?utf-8?B?bmdmS2xuTDlxYmdQNm5CSlBRcHBITTNuNDdkRHF0eHV4aXMvYk9ST3FuUGxu?=
- =?utf-8?B?MS9tR3FSd0VEMHRhNEN3ZGt6UGpaNWROd1FYQjlCU2p5VUJNNXkyc2c1SHNv?=
- =?utf-8?B?TlNWcUZpUzcwaFBrZitTcFBUU0gwY0ZtWjlVL3MvTVlXSEpSUnJGcGtmRnVi?=
- =?utf-8?B?ZjNLUEZCQXhPdnVzdjA5ZUtTV0JWSi9ieXZHRHBJakVIWFpSSmlsVHJDbmp4?=
- =?utf-8?B?dnBXTS9RdmswU0k5cmJhdjloK0N6KzRadHZHT0FUdDJPVFU2RDg5eDVicDAz?=
- =?utf-8?B?RmQ1dktSS0thMnc1YUZESjN3aEdqbFQxMDl1VUsrc3ZsMm9sQlNzdXZmSGd6?=
- =?utf-8?B?akNzaEtUajhvWlRkb24xbTVIYmhrYUtpaTV6YnoxL2JHcXdHTkd1eDVRbzZB?=
- =?utf-8?B?TUN0T3hKYTZuVVozY3JXeGRBODZPMFpDNmNTL3ZTQ2RqMlp3RW1uamRQenNM?=
- =?utf-8?B?bHUxWXZNOFVtVGl2M3k3YUhHTVNQbS9qcjlUdmovemlmaEhZUHNsRWd1amxN?=
- =?utf-8?B?dzgxRWFGVFBmU1hjdFFvNXRwMUhiU2pNbFhrNmprWGJaSzhLUVk5U1Vjbm45?=
- =?utf-8?B?emJXN1VqQ0hUbkNwYXRVN2swUUJGaEgvTjhKU1U4d1RIOEhrODZheHR3dmR5?=
- =?utf-8?B?REpvRFRLdmI3bzFtNGx2eVJCalI3RDVkYmlSeXUzUk9vV09PSGlTWktWYVdt?=
- =?utf-8?B?S2lkazJ1VnVZNzJXV1lENTFGb2dhR3BOMkJLbWZNSEVlbFgyaEV0WWFpcjdW?=
- =?utf-8?B?c3FWdGZlQVcvNFpQUUZxSW1CTUxYODlrV3ZFL3ZLa3FpbUhia1BNVitydVhZ?=
- =?utf-8?B?SWNRWGx2NWRyR0xZZXdoNUpzZUxoUnRTbTR5L3l5Q2lWY0lHdkRQVGdoT01x?=
- =?utf-8?B?ZnpkVC9HdndMOW00NjRrazNLTThMakJZWUZPUnl2VWxacDE4ZnVYYUJibW1D?=
- =?utf-8?B?WTlZMWFkTVRudzV2b2F6a0ZUVitOSVV5QTV0SHJYTVhBVzhDK0dzRXZnYzNE?=
- =?utf-8?B?bHkxbHUrVXJseXV2ZVhsT1FmenhnWkp1MWJMM2FldUg0QUlTd3NuTlpweE8z?=
- =?utf-8?B?clFMdWRHUEFZYVVCZVg2TlovbmZJbW1yN3QxZTVVNFROaTc0Zm9RY1lsMUdC?=
- =?utf-8?B?dUoybGNTSEpNb1Foa0xHZTVXM2wvaTRnRldHMUF4Z0N2aWdPRU5uZUx4R1RW?=
- =?utf-8?B?NktFSjBreHB6czdZRVhIVlprT2diN3RNUFk4M0hBdWFDVWNMN2tzLysvTEow?=
- =?utf-8?B?a201OExUMUFBZ1Urb0V6L2xlbDJOOERUSElGZFk2VzhUbTIranhxdHZjYnJZ?=
- =?utf-8?B?U3puQ2RhbzZqUmxCc2swd1BtMjJhRG44YUJ0bWdtYkFhZUtzdjJQSkxTSW9U?=
- =?utf-8?B?b2xUMXVNM0xxSHdnTW5RamJ4M1RVZmxOVTRQNE9HMGw1Z3d2SENBQ284RjMz?=
- =?utf-8?B?VFE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        with ESMTP id S243263AbjFNM1J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 08:27:09 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C3D61FCE
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:27:08 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-b9a6eec8611so877509276.0
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686745628; x=1689337628;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5x6fr5aZlli+8WO85UDIDTo8toG3HYLiO6e7zSPWtQ=;
+        b=TwSw2mYy1UhWSZa59w/UT+RjmuJ5V2JXMKBFXyaE14MoUY9/MBG5t6EBp6ereoGpMy
+         /+pjca7tW7curhpkDrra70X/0XBVdKQaYzebnhHUTGAW+uUKfzsMqn5rn5Hf6tCHwNc/
+         ZNc1jMuiR3r2lLecNC4cFkE4GRjNU4z0hW0TjgUyhUS/hIc7tLu2WB79S7MJydb/PZLD
+         on/9GBLMcykD09LU3y+K0gbs0xmHUTdAbyiSf5WPSKXG+SvIilnxJYA5fdNttehNbsQ/
+         DZNcpMtNskwmg56bnRBxZQJKJ5xqPlkbV4w7WXzmKDbAToS0CZjMUI1piOge6x9a6VXW
+         Hdkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686745628; x=1689337628;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j5x6fr5aZlli+8WO85UDIDTo8toG3HYLiO6e7zSPWtQ=;
+        b=QHxXVgwfXRGy6cxPVN1VqYOwne0QW+k8v68XJ7Dm6BNHXu9llXOz4sfbupzHSX/LbO
+         QC0AZFjTkc6MEckl9EXbDLe1HrSYQ/Hj5XNqBYivlXTlWfoNEZlHLzZOe9hfclRjpzgi
+         MUvJ/lpQbHsfUqB8CZvgf7CZtaxSA/5upCbfAoISKdneEJJSWEbdxLvFSwrTDDldCOwJ
+         Ih0dYb8V/kX8hW2UaZ8D0W6WgNNHHfOcQdeNqtLZ7nWY8LnshnVp9wjrBWUl+ameRxq4
+         5lkjty93fYLN7xY1OrSd8BuUI3mw+gWkHwbHlWZ6JKEshrl2shbwqZjEDbjJrHnBc49E
+         f7JA==
+X-Gm-Message-State: AC+VfDwBVZ3W5ZLMNrg6SNN2zoikZYnUdTq2ms+jPWFWT7C45B7IPdLI
+        nKTX4CmkxDypJfyvZOqS3VF4FFEjuGmTl35fpzIXRA==
+X-Google-Smtp-Source: ACHHUZ6Yz+yPX5k278RwB3vcRO1kIw8EQgvzRzZBfwAKXe6a0M2y+j79oylUsXuqJq8MYmGoMr/2m72G97EvieneTXI=
+X-Received: by 2002:a25:7484:0:b0:bb3:9001:e2fe with SMTP id
+ p126-20020a257484000000b00bb39001e2femr2049141ybc.13.1686745627812; Wed, 14
+ Jun 2023 05:27:07 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb33f761-bc8d-45f1-44c9-08db6cd26381
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2023 12:25:07.1265
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8mX1LQDOubCMSRiMLp8u1dZihxeTQGlIF0MfgxLYqsz5gXlyv7/SpfoJ4/PRDb7JQgo7B+LqVpqvawgRBxXg5dbv+PEYB7KlAs5IwWWZVmY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8258
-X-OriginatorOrg: intel.com
+References: <20230525172142.9039-1-quic_jkona@quicinc.com> <20230525172142.9039-4-quic_jkona@quicinc.com>
+ <6e1d098d-03b9-aa63-a0bf-6cf748a0db0d@linaro.org> <7074f718-a3d5-8a03-3830-77a5a0b15500@linaro.org>
+ <df7ab6f7-6c5e-9a7d-8d9b-09ff32da34d6@quicinc.com> <c60bb4d9-1b53-6c60-8b9d-13069bdff882@linaro.org>
+ <1a6d46e4-7ec4-262c-dc3b-fc9c988f979e@quicinc.com> <CAA8EJprx6=QztOHi_18uqcGK9WnhkQJ_WP9TyKrsOT=WgKdRaw@mail.gmail.com>
+ <695d7b39-2759-690d-5ff8-5aff6b37e39c@quicinc.com>
+In-Reply-To: <695d7b39-2759-690d-5ff8-5aff6b37e39c@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 14 Jun 2023 15:26:57 +0300
+Message-ID: <CAA8EJpp5_qG2eMQEoHqzboyi8xEbEmx2e1WsKsVQ3d6no0pp5g@mail.gmail.com>
+Subject: Re: [PATCH V2 3/6] clk: qcom: clk-alpha-pll: Remove explicit CAL_L
+ configuration for EVO PLL
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PkZyb206IEppcmkgUGlya28gPGppcmlAcmVzbnVsbGkudXM+DQo+U2VudDogVHVlc2RheSwgSnVu
-ZSAxMywgMjAyMyAzOjUyIFBNDQo+DQo+TW9uLCBKdW4gMTIsIDIwMjMgYXQgMTE6MTc6MjNBTSBD
-RVNULCBwb3Jvc0ByZWRoYXQuY29tIHdyb3RlOg0KPj5BcmthZGl1c3ogS3ViYWxld3NraSBww63F
-oWUgdiBQw6EgMDkuIDA2LiAyMDIzIHYgMTQ6MTggKzAyMDA6DQo+Pj4gRnJvbTogSmlyaSBQaXJr
-byA8amlyaUBudmlkaWEuY29tPg0KPg0KPlsuLi5dDQo+DQo+DQo+Pj4gK3N0YXRpYyBzaXplX3Qg
-cnRubF9kcGxsX3Bpbl9zaXplKGNvbnN0IHN0cnVjdCBuZXRfZGV2aWNlICpkZXYpDQo+Pj4gK3sN
-Cj4+PiArwqDCoMKgwqDCoMKgwqBzaXplX3Qgc2l6ZSA9IG5sYV90b3RhbF9zaXplKDApOyAvKiBu
-ZXN0IElGTEFfRFBMTF9QSU4gKi8NCj4+PiArDQo+Pj4gK8KgwqDCoMKgwqDCoMKgaWYgKGRldi0+
-ZHBsbF9waW4pDQo+Pj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHNpemUgKz0gZHBs
-bF9tc2dfcGluX2hhbmRsZV9zaXplKGRldi0+ZHBsbF9waW4pOw0KPj4NCj4+SGkgQXJrYWRpdXN6
-LA0KPj4NCj4+bmV0X2RldmljZS0+ZHBsbF9waW4gaXMgb25seSB2YWxpZCBpZiBJU19FTkFCTEVE
-KENPTkZJR19EUExMKQ0KPj5CdXQgdGhlIGNvZGUgaW4gbmV0L2NvcmUvcnRuZXRsaW5rLmMgZG9l
-c24ndCByZXNwZWN0IHRoYXQuDQo+PklmIENPTkZJR19EUExMIGlzIG5vdCBzZXQsIG5ldC9jb3Jl
-L3J0bmV0bGluay5jIGNhbm5vdCBiZSBjb21waWxlZC4NCj4+DQo+PlJlZ2FyZHMsDQo+PlBldHIN
-Cj4NCj5Zb3UgYXJlIGNvcnJlY3QuIEhlcmUncyB0aGUgc3F1YXNoLXBhdGNoIHRvIGZpeCB0aGlz
-LiBBcmthZGl1c3osIGNvdWxkDQo+eW91IHBsZWFzZSBtYWtlIHRoZSBzcXVhc2g/IFRoYW5rcyEN
-Cj4NCg0KU3VyZSB0aGluZywgd2lsbCBkby4NCg0KVGhhbmsgeW91IQ0KQXJrYWRpdXN6DQoNCj5k
-aWZmIC0tZ2l0IGEvZHJpdmVycy9kcGxsL2RwbGxfbmV0bGluay5jIGIvZHJpdmVycy9kcGxsL2Rw
-bGxfbmV0bGluay5jDQo+aW5kZXggZTZlZmMxN2FhZjI2Li4wMGRjOTZjM2FkZTQgMTAwNjQ0DQo+
-LS0tIGEvZHJpdmVycy9kcGxsL2RwbGxfbmV0bGluay5jDQo+KysrIGIvZHJpdmVycy9kcGxsL2Rw
-bGxfbmV0bGluay5jDQo+QEAgLTMwMywxMiArMzAzLDE0IEBAIGRwbGxfY21kX3Bpbl9maWxsX2Rl
-dGFpbHMoc3RydWN0IHNrX2J1ZmYgKm1zZywgc3RydWN0DQo+ZHBsbF9waW4gKnBpbiwNCj4NCj4g
-c2l6ZV90IGRwbGxfbXNnX3Bpbl9oYW5kbGVfc2l6ZShzdHJ1Y3QgZHBsbF9waW4gKnBpbikNCj4g
-ew0KPi0JcmV0dXJuIG5sYV90b3RhbF9zaXplKDQpOyAvKiBEUExMX0FfUElOX0lEICovDQo+Kwly
-ZXR1cm4gcGluID8gbmxhX3RvdGFsX3NpemUoNCkgOiAwOyAvKiBEUExMX0FfUElOX0lEICovDQo+
-IH0NCj4gRVhQT1JUX1NZTUJPTF9HUEwoZHBsbF9tc2dfcGluX2hhbmRsZV9zaXplKTsNCj4NCj4g
-aW50IGRwbGxfbXNnX2FkZF9waW5faGFuZGxlKHN0cnVjdCBza19idWZmICptc2csIHN0cnVjdCBk
-cGxsX3BpbiAqcGluKQ0KPiB7DQo+KwlpZiAoIXBpbikNCj4rCQlyZXR1cm4gMDsNCj4gCWlmIChu
-bGFfcHV0X3UzMihtc2csIERQTExfQV9QSU5fSUQsIHBpbi0+aWQpKQ0KPiAJCXJldHVybiAtRU1T
-R1NJWkU7DQo+IAlyZXR1cm4gMDsNCj5kaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9uZXRkZXZp
-Y2UuaCBiL2luY2x1ZGUvbGludXgvbmV0ZGV2aWNlLmgNCj5pbmRleCBiMDAyZTNjYzk5NDMuLjgy
-YWQxMmZkNDI2NiAxMDA2NDQNCj4tLS0gYS9pbmNsdWRlL2xpbnV4L25ldGRldmljZS5oDQo+Kysr
-IGIvaW5jbHVkZS9saW51eC9uZXRkZXZpY2UuaA0KPkBAIC0zOTY3LDYgKzM5NjcsMTYgQEAgaW50
-IGRldl9nZXRfcG9ydF9wYXJlbnRfaWQoc3RydWN0IG5ldF9kZXZpY2UgKmRldiwNCj4gYm9vbCBu
-ZXRkZXZfcG9ydF9zYW1lX3BhcmVudF9pZChzdHJ1Y3QgbmV0X2RldmljZSAqYSwgc3RydWN0IG5l
-dF9kZXZpY2UNCj4qYik7DQo+IHZvaWQgbmV0ZGV2X2RwbGxfcGluX3NldChzdHJ1Y3QgbmV0X2Rl
-dmljZSAqZGV2LCBzdHJ1Y3QgZHBsbF9waW4NCj4qZHBsbF9waW4pOw0KPiB2b2lkIG5ldGRldl9k
-cGxsX3Bpbl9jbGVhcihzdHJ1Y3QgbmV0X2RldmljZSAqZGV2KTsNCj4rDQo+K3N0YXRpYyBpbmxp
-bmUgc3RydWN0IGRwbGxfcGluICpuZXRkZXZfZHBsbF9waW4oY29uc3Qgc3RydWN0IG5ldF9kZXZp
-Y2UNCj4qZGV2KQ0KPit7DQo+KyNpZiBJU19FTkFCTEVEKENPTkZJR19EUExMKQ0KPisJcmV0dXJu
-IGRldi0+ZHBsbF9waW47DQo+KyNlbHNlDQo+KwlyZXR1cm4gTlVMTDsNCj4rI2VuZGlmDQo+K30N
-Cj4rDQo+IHN0cnVjdCBza19idWZmICp2YWxpZGF0ZV94bWl0X3NrYl9saXN0KHN0cnVjdCBza19i
-dWZmICpza2IsIHN0cnVjdA0KPm5ldF9kZXZpY2UgKmRldiwgYm9vbCAqYWdhaW4pOw0KPiBzdHJ1
-Y3Qgc2tfYnVmZiAqZGV2X2hhcmRfc3RhcnRfeG1pdChzdHJ1Y3Qgc2tfYnVmZiAqc2tiLCBzdHJ1
-Y3QgbmV0X2RldmljZQ0KPipkZXYsDQo+IAkJCQkgICAgc3RydWN0IG5ldGRldl9xdWV1ZSAqdHhx
-LCBpbnQgKnJldCk7DQo+ZGlmZiAtLWdpdCBhL25ldC9jb3JlL3J0bmV0bGluay5jIGIvbmV0L2Nv
-cmUvcnRuZXRsaW5rLmMNCj5pbmRleCBlYmU5YWU4NjA4ZmMuLjY3ZGQ0NTVlMTVjNyAxMDA2NDQN
-Cj4tLS0gYS9uZXQvY29yZS9ydG5ldGxpbmsuYw0KPisrKyBiL25ldC9jb3JlL3J0bmV0bGluay5j
-DQo+QEAgLTEwNTYsOCArMTA1Niw3IEBAIHN0YXRpYyBzaXplX3QgcnRubF9kcGxsX3Bpbl9zaXpl
-KGNvbnN0IHN0cnVjdA0KPm5ldF9kZXZpY2UgKmRldikNCj4gew0KPiAJc2l6ZV90IHNpemUgPSBu
-bGFfdG90YWxfc2l6ZSgwKTsgLyogbmVzdCBJRkxBX0RQTExfUElOICovDQo+DQo+LQlpZiAoZGV2
-LT5kcGxsX3BpbikNCj4tCQlzaXplICs9IGRwbGxfbXNnX3Bpbl9oYW5kbGVfc2l6ZShkZXYtPmRw
-bGxfcGluKTsNCj4rCXNpemUgKz0gZHBsbF9tc2dfcGluX2hhbmRsZV9zaXplKG5ldGRldl9kcGxs
-X3BpbihkZXYpKTsNCj4NCj4gCXJldHVybiBzaXplOw0KPiB9DQo+QEAgLTE3OTAsMTEgKzE3ODks
-OSBAQCBzdGF0aWMgaW50IHJ0bmxfZmlsbF9kcGxsX3BpbihzdHJ1Y3Qgc2tfYnVmZiAqc2tiLA0K
-PiAJaWYgKCFkcGxsX3Bpbl9uZXN0KQ0KPiAJCXJldHVybiAtRU1TR1NJWkU7DQo+DQo+LQlpZiAo
-ZGV2LT5kcGxsX3Bpbikgew0KPi0JCXJldCA9IGRwbGxfbXNnX2FkZF9waW5faGFuZGxlKHNrYiwg
-ZGV2LT5kcGxsX3Bpbik7DQo+LQkJaWYgKHJldCA8IDApDQo+LQkJCWdvdG8gbmVzdF9jYW5jZWw7
-DQo+LQl9DQo+KwlyZXQgPSBkcGxsX21zZ19hZGRfcGluX2hhbmRsZShza2IsIG5ldGRldl9kcGxs
-X3BpbihkZXYpKTsNCj4rCWlmIChyZXQgPCAwKQ0KPisJCWdvdG8gbmVzdF9jYW5jZWw7DQo+DQo+
-IAlubGFfbmVzdF9lbmQoc2tiLCBkcGxsX3Bpbl9uZXN0KTsNCj4gCXJldHVybiAwOw0KDQo=
+On Wed, 14 Jun 2023 at 14:53, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>
+>
+>
+> On 6/9/2023 5:55 PM, Dmitry Baryshkov wrote:
+> > On Fri, 9 Jun 2023 at 14:50, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+> >>
+> >> Hi Dmitry,
+> >>
+> >> Thanks for your review!
+> >>
+> >> On 6/1/2023 8:13 PM, Dmitry Baryshkov wrote:
+> >>> On 01/06/2023 17:33, Jagadeesh Kona wrote:
+> >>>> Hi Dmitry, Konrad,
+> >>>>
+> >>>> On 5/26/2023 9:23 PM, Dmitry Baryshkov wrote:
+> >>>>> On 26/05/2023 12:33, Konrad Dybcio wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 25.05.2023 19:21, Jagadeesh Kona wrote:
+> >>>>>>> In lucid evo pll, the CAL_L field is part of L value register
+> >>>>>>> itself, and
+> >>>>>>> the l value configuration passed from clock controller driver includes
+> >>>>>>> CAL_L and L values as well. Hence remove explicit configuration of
+> >>>>>>> CAL_L
+> >>>>>>> for evo pll.
+> >>>>>>>
+> >>>>>>> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL
+> >>>>>>> configuration interfaces")
+> >>>>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> >>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> >>>>>>> ---
+> >>>>>> Oh that isn't obvious at first sight, nice find!
+> >>>>>>
+> >>>>>> I'd suggest a different solution though:
+> >>>>>>
+> >>>>>> #define LUCID_EVO_PLL_L_LVAL    GENMASK(..
+> >>>>>> #define LUCID_EVO_PLL_L_CAL_L    GENMASK(..
+> >>>>>>
+> >>>>>> lval = FIELD_PREP(LUCID_EVO_PLL_L_LVAL, config->l) |
+> >>>>>>          FIELD_PREP(LUCID_EVO_PLL_L_CAL_L, config->cal_l);
+> >>>>>>
+> >>>>>> This would make the separation between the two parts more explicit
+> >>>>>>
+> >>>>>> however
+> >>>>>>
+> >>>>>> config->l would then represent the L value and not the end value
+> >>>>>> written to the L register
+> >>>>>
+> >>>>> Yes. I think there should be separate config->l and config->cal_l
+> >>>>> values (and probably ringosc_cal_l, basing on the comment in the
+> >>>>> source).
+> >>>>> Thanks for your suggestions. In all recent chipsets, L & CAL_L fields
+> >>>> are encapsulated in the same register, so we feel it is better to
+> >>>> directly pass the combined configuration value in config->l itself and
+> >>>> program it directly into register without any additional handling
+> >>>> required in pll driver code.
+> >>>
+> >>> My feeling is that it is better to split it, since these are the
+> >>> different fields. The value .l = 0x4444003e doesn't mean anything per se.
+> >>>
+> >>> Three values are much more meaningful:
+> >>> .l = 0x3e,
+> >>> .cal_l = 0x44,
+> >>> .ringosc_cal_l = 0x44,
+> >>>
+> >>> Not to mention that this way you don't have to touch pll configuration
+> >>> for the existing Lucid EVO PLL. Not to mention that for the Lucid ole
+> >>> PLLs the cal_l and ringosc_cal_l values seem to be static (0x44), so
+> >>> there is no need to put them to the variable data.
+> >>>
+> >>
+> >> Sure, will keep the existing code as is and will remove this patch in
+> >> the next series.
+> >>
+> >>>>
+> >>>> Also the evo pll code is currently reused for both lucid evo and ole
+> >>>> pll's. Lucid ole PLL has an additional RINGOSC_CAL_L field along with
+> >>>> L, CAL_L fields in the same L register. By passing combined
+> >>>> configuration value in config->l itself, we feel we can avoid all the
+> >>>> additional handling required in PLL code.
+> >>>>
+> >>>>> Just a question: is camcc-sm8550 using the same PLL type or is it
+> >>>>> some kind of subtype of lucid_evo PLL?
+> >>>>>
+> >>>> No, it is not the same lucid evo PLL. It uses lucid ole PLL.
+> >>>
+> >>> Then please don't reuse the clk_lucid_evo_pll_configure() call.
+> >>> You can add a new one, which will handle L/CAL_L/RINGOSC_CAL_L differences.
+> >>>
+> >>
+> >> The only difference between evo and ole pll configure is extra
+> >> RINGOSC_CAL_L programming needed only for ole pll. We can achieve the
+> >> same with clk_lucid_evo_pll_configure() itself by directly including
+> >> RINGOSC_CAL_L field in L configuration for OLE PLL's.
+> >
+> > Please don't, that's all I can say. Those are different fields. By
+> > looking at the config->l one can calculate PLL rate. If you overload
+> > the config->l with CAL_L and RINGOSC_CAL_L, the purpose of this field
+> > is gone.
+> >
+> > As the CAL_L and RINGOSC_CAL_L fields are static, just move them to
+> > the clk_lucid_ole_pll_configure().
+> >
+>
+> We feel it is better to include them in config->l and reuse existing
+> code than adding separate function for lucid ole pll configure. Even the
+> other pll configurations(like .user_ctl_val) contains multiple fields
+> but are passed as a single value from driver.
+
+I suppose it was done this way because these fields are pretty much
+not documented in the openly published data. And sometimes this
+strikes, one can not easily check PLL's configuration. Or tune
+it.There was a discussion whether we should start handling PLL outputs
+properly (in CCF) rather than configuring them in a static way.
+
+Also mentioned registers differ from PLL to PLL. For the RISCOSC_CAL_L
+and CAL_L the value is static, if I'm not mistaken. Having them in the
+configurable field doesn't sound correct.
+
+Last, but not least. We are already handling CAL_L value completely in
+the clock-alpha-pll.c for triton, lucid and lucid evo PLLs. What would
+be the _reason_ to change that?
+
+>
+> We also added a comment in code stating all the fields included in
+> config->l value, so user will be aware while calculating PLL frequency.
+>
+> Thanks,
+> Jagadeesh
+
+
+
+-- 
+With best wishes
+Dmitry
