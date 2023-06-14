@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E85CEB64D9
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 11:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1136DC001DE
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 11:36:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244176AbjFNLgN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 07:36:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49490 "EHLO
+        id S243811AbjFNLgQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 07:36:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244050AbjFNLgA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 07:36:00 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784F21BC3
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:35:58 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f63ea7bfb6so7941201e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:35:58 -0700 (PDT)
+        with ESMTP id S244127AbjFNLgM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 07:36:12 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 483161FC4
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:36:02 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4f7677a94d1so693340e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 04:36:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686742557; x=1689334557;
+        d=linaro.org; s=google; t=1686742560; x=1689334560;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5jaKkGkIsypo/HND0DbQ6vruiMEF8kdTc0ValZyEYo8=;
-        b=iCkpWb6ESeD2lHxHwEtzgffY7572pjXjOE/aA6VVDfXo9MkWkRuwDGXDzfEoHsvHAK
-         vqyMsDGWBLJbMS3Gx/tajd1faVH8MwR3FrAxvcvcVhxMgimslgs09j0zUB0rPUQ1e7j7
-         nc+tQtdGtLIqnimT5KhfwQnSO1dUlFN9azJMovFXBqsrfzVjwx7FktrZSiz4Joi/FQU2
-         pKWEmCQJWTpJH7RxZ3rbvEo7IQqe7uEqHCmEVE0AKWJtASfdXhkBIjh27qvNFTslMqFB
-         h9HSy57dy2rlzOEaTgBa7udscq9IP4crUgiYpeZCF/iYfL/yY1ozCIuikvYRTS1eSXYk
-         PW5Q==
+        bh=OK0KHsEEJflt/PIWV1+p8wHbMvB3nj/Mo8p4VCQArys=;
+        b=wkPePS6iqDnIoUgLTrHk1JbxyjqKjQE6dTMivQwJ2Uagbn22PSycxc2kHNuw5Wnh0K
+         A872mUKQGzaS1r4627zJ+7zR3Tqlt4hOPeIi8YhTbxI+Sh+38uXCViQFweLYD1aeom12
+         Mo/XWxSavm/n0EyVxaaTQKPA0DX7OIXpyvh1SiZ4QdIDETow9gurc1YqcZhqfNcMfEDI
+         s1zn3JovHSyc6Ciiw8iI44YKEOGd9rSfUmJx2HtBslicjJFTCtxfgjOretdnPK2qhN53
+         dzPVLrC9OEj8iJqDg5cAZpn1nADuta4WpRx0BWDq9wKSWxiNX6OyE64HbJWe/tw6gbgt
+         bkJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686742557; x=1689334557;
+        d=1e100.net; s=20221208; t=1686742560; x=1689334560;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5jaKkGkIsypo/HND0DbQ6vruiMEF8kdTc0ValZyEYo8=;
-        b=LxASOK5x+paZyEiQFSJz8iSgIvpvoNmv5SGIB6nzPZ+Td8LOvIeuvA2x0NpizUNr20
-         ujoSOg3bNxhWMPF9p6EuvfKNzp5llIgkwiGZSf2z2+ieSRlmydlZOzoua8JYCyF0MRK3
-         bBpsuHNIMM84AhsiKrRS+R1rKqjpMl4dhyxQ6qBncB3d4oEHdIl7mUXn8iPrsi8zoQZ/
-         KGm8gsgwCW6bE5WGF0UZ+LgH2CLg/55biQ7yO+oibKJNNShgNYqg0b6HW9GCyjhhIwbj
-         QK9TgqYzUyjyHDMA37sMzgtWL4DZoEcgAyRpLtsGHhNQtcHVJpg9s1ZxGE9OrXQjAD8N
-         KMOQ==
-X-Gm-Message-State: AC+VfDzjbhIE7TtLAJtttWlM6Py5xZgPHcNLug6EgTcrJjGoZLNkVpnc
-        fn7u4p1CAkVLYofbCCD6R50tqQ==
-X-Google-Smtp-Source: ACHHUZ6/AtzF7ETM0NRzAi7oezIomSTjXVRgU6gaC6zW8ovyirb/eHe01y/JBm/zmilnHjK3WSNmGA==
-X-Received: by 2002:a19:6747:0:b0:4f3:b520:e0af with SMTP id e7-20020a196747000000b004f3b520e0afmr6845188lfj.13.1686742556849;
-        Wed, 14 Jun 2023 04:35:56 -0700 (PDT)
+        bh=OK0KHsEEJflt/PIWV1+p8wHbMvB3nj/Mo8p4VCQArys=;
+        b=jKDUMZlCsXvKFnPuxRexX0qv9/vJC+1mqkoKoFLnxSvt2pYcszHnezghHGapPiKHgl
+         WsQPNbtXq33p/Rc0qlNjXGBDLRfewMqpEuDU2ZJg9f4FPijOI9XGUmsHuFgEQvQ8prb0
+         fkFUTYNKaIj5RRbSVlqt8Qqr41kue+f6t/CCwVb9GFqKAowC5cPs/K3GyFZNZ5Y7EIqy
+         TxfnbSxlpk5fhg92rJjVGq6Bxtew98ztlI4fPVlsIkx4xf5apxEuZrnWitMmEstcMBWO
+         S5zmvlqd35Um7VoL4SseJt1bRKlsRAaYT3oICTJtscqC/FMjcmFv6aNoggHZgHTQh/sD
+         ymyQ==
+X-Gm-Message-State: AC+VfDybs9usjkH0ZUB/4Nq1L2xCOyhluojJBPSMRy9W6MgHPZ3N28rr
+        XOlUa63/NzzcqMQAvPv7kEzPjA==
+X-Google-Smtp-Source: ACHHUZ6Jv2L4/laQwdvAL25VVQQcOYd7w/VONldqarBguPEoXB8kYEYUYufUH8sUlPFOxoJeyAJ+mA==
+X-Received: by 2002:a19:3814:0:b0:4f7:66cc:6c91 with SMTP id f20-20020a193814000000b004f766cc6c91mr725672lfa.51.1686742560614;
+        Wed, 14 Jun 2023 04:36:00 -0700 (PDT)
 Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id x1-20020ac25dc1000000b004f64b8eee61sm2088406lfq.97.2023.06.14.04.35.55
+        by smtp.gmail.com with ESMTPSA id x1-20020ac25dc1000000b004f64b8eee61sm2088406lfq.97.2023.06.14.04.35.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 04:35:56 -0700 (PDT)
+        Wed, 14 Jun 2023 04:36:00 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 14 Jun 2023 13:35:36 +0200
-Subject: [PATCH v2 5/7] arm64: dts: qcom: sm6350: Add GPU nodes
+Date:   Wed, 14 Jun 2023 13:35:38 +0200
+Subject: [PATCH v2 7/7] arm64: dts: qcom: sm6350: Add DPU1 nodes
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230315-topic-lagoon_gpu-v2-5-afcdfb18bb13@linaro.org>
+Message-Id: <20230315-topic-lagoon_gpu-v2-7-afcdfb18bb13@linaro.org>
 References: <20230315-topic-lagoon_gpu-v2-0-afcdfb18bb13@linaro.org>
 In-Reply-To: <20230315-topic-lagoon_gpu-v2-0-afcdfb18bb13@linaro.org>
 To:     Bjorn Andersson <andersson@kernel.org>,
@@ -72,14 +72,13 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Luca Weiss <luca.weiss@fairphone.com>
+        Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686742545; l=4658;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686742545; l=6597;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=hebgvqDxcP5/jpVdGp5qyd6v0S/XcOR8k6z5qijdwvg=;
- b=Vslq+h8v6Ug4FxssYmahe0vqA8WKjBotTiq84VPW7dcNRIX6r6L/p5w1L/JqBNLQ9ccdcHfHC
- XFE2LLf5NqAB4fOBJiSiZCUrfoBZbcLGpgMireMDLERCvldwhzEOGVF
+ bh=bsnWCyLq477XRxbXa0duMpQVLlZ96KNWwe53+HWkyB8=;
+ b=5m91ZIomh7uCzHHK4pGHxRokpxD7jUD6gGr3KVRapmAWyvlSqLoShF+hl2KJrjb+QO+wBNG7V
+ 65EWxfz0B2OC0J30+k8Cf1KXcWsgHojKoEZFel1vB4H6/3fwpK8+Sre
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
@@ -88,167 +87,252 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Konrad Dybcio <konrad.dybcio@somainline.org>
 
-Add Adreno, GPU SMMU and GMU nodes to hook up everything that
-the A619 needs to function properly.
+Add nodes required to enable MDSS/DPU1 on SM6350. There seem to be no
+additional changes required to support the derivative SoCs, such as
+SM7225.
 
-Co-developed-by: Luca Weiss <luca.weiss@fairphone.com>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@somainline.org>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm6350.dtsi | 139 +++++++++++++++++++++++++++++++++++
- 1 file changed, 139 insertions(+)
+ arch/arm64/boot/dts/qcom/sm6350.dtsi | 218 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 218 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-index c0f34bc1d78c..d928e64e33ae 100644
+index cc72c4b4e7c0..7af6278d6b23 100644
 --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-@@ -1321,6 +1321,145 @@ compute-cb@5 {
- 			};
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2022, Luca Weiss <luca.weiss@fairphone.com>
+  */
+ 
++#include <dt-bindings/clock/qcom,dispcc-sm6350.h>
+ #include <dt-bindings/clock/qcom,gcc-sm6350.h>
+ #include <dt-bindings/clock/qcom,gpucc-sm6350.h>
+ #include <dt-bindings/clock/qcom,rpmh.h>
+@@ -1869,6 +1870,223 @@ camcc: clock-controller@ad00000 {
+ 			#power-domain-cells = <1>;
  		};
  
-+		gpu: gpu@3d00000 {
-+			compatible = "qcom,adreno-619.0", "qcom,adreno";
-+			reg = <0 0x03d00000 0 0x40000>,
-+			      <0 0x03d9e000 0 0x1000>;
-+			reg-names = "kgsl_3d0_reg_memory",
-+				    "cx_mem";
-+			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
++		mdss: display-subsystem@ae00000 {
++			compatible = "qcom,sm6350-mdss";
++			reg = <0 0x0ae00000 0 0x1000>;
++			reg-names = "mdss";
 +
-+			iommus = <&adreno_smmu 0>;
-+			operating-points-v2 = <&gpu_opp_table>;
-+			qcom,gmu = <&gmu>;
-+			nvmem-cells = <&gpu_speed_bin>;
-+			nvmem-cell-names = "speed_bin";
++			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
 +
-+			status = "disabled";
-+
-+			zap-shader {
-+				memory-region = <&pil_gpu_mem>;
-+			};
-+
-+			gpu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-850000000 {
-+					opp-hz = /bits/ 64 <850000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-+					opp-supported-hw = <0x02>;
-+				};
-+
-+				opp-800000000 {
-+					opp-hz = /bits/ 64 <800000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
-+					opp-supported-hw = <0x04>;
-+				};
-+
-+				opp-650000000 {
-+					opp-hz = /bits/ 64 <650000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
-+					opp-supported-hw = <0x08>;
-+				};
-+
-+				opp-565000000 {
-+					opp-hz = /bits/ 64 <565000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
-+					opp-supported-hw = <0x10>;
-+				};
-+
-+				opp-430000000 {
-+					opp-hz = /bits/ 64 <430000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
-+					opp-supported-hw = <0xff>;
-+				};
-+
-+				opp-355000000 {
-+					opp-hz = /bits/ 64 <355000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
-+					opp-supported-hw = <0xff>;
-+				};
-+
-+				opp-253000000 {
-+					opp-hz = /bits/ 64 <253000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
-+					opp-supported-hw = <0xff>;
-+				};
-+			};
-+		};
-+
-+		adreno_smmu: iommu@3d40000 {
-+			compatible = "qcom,sm6350-smmu-v2", "qcom,adreno-smmu", "qcom,smmu-v2";
-+			reg = <0 0x03d40000 0 0x10000>;
-+			#iommu-cells = <1>;
-+			#global-interrupts = <2>;
-+			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 364 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 365 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 366 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 367 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 368 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 369 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			clocks = <&gpucc GPU_CC_AHB_CLK>,
-+				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>;
-+			clock-names = "ahb",
++			clocks = <&gcc GCC_DISP_AHB_CLK>,
++				 <&gcc GCC_DISP_AXI_CLK>,
++				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
++			clock-names = "iface",
 +				      "bus",
-+				      "iface";
++				      "core";
 +
-+			power-domains = <&gpucc GPU_CX_GDSC>;
-+		};
++			power-domains = <&dispcc MDSS_GDSC>;
++			iommus = <&apps_smmu 0x800 0x2>;
 +
-+		gmu: gmu@3d6a000 {
-+			compatible = "qcom,adreno-gmu-619.0", "qcom,adreno-gmu";
-+			reg = <0 0x03d6a000 0 0x31000>,
-+			      <0 0x0b290000 0 0x10000>,
-+			      <0 0x0b490000 0 0x10000>;
-+			reg-names = "gmu",
-+				    "gmu_pdc",
-+				    "gmu_pdc_seq";
-+
-+			interrupts = <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hfi",
-+					  "gmu";
-+
-+			clocks = <&gpucc GPU_CC_AHB_CLK>,
-+				 <&gpucc GPU_CC_CX_GMU_CLK>,
-+				 <&gpucc GPU_CC_CXO_CLK>,
-+				 <&gcc GCC_DDRSS_GPU_AXI_CLK>,
-+				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>;
-+			clock-names = "ahb",
-+				      "gmu",
-+				      "cxo",
-+				      "axi",
-+				      "memnoc";
-+
-+			power-domains = <&gpucc GPU_CX_GDSC>,
-+					<&gpucc GPU_GX_GDSC>;
-+			power-domain-names = "cx",
-+					     "gx";
-+
-+			iommus = <&adreno_smmu 5>;
-+
-+			operating-points-v2 = <&gmu_opp_table>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			ranges;
 +
 +			status = "disabled";
 +
-+			gmu_opp_table: opp-table {
-+				compatible = "operating-points-v2";
++			mdss_mdp: display-controller@ae01000 {
++				compatible = "qcom,sm6350-dpu";
++				reg = <0 0x0ae01000 0 0x8f000>,
++				      <0 0x0aeb0000 0 0x2008>;
++				reg-names = "mdp", "vbif";
 +
-+				opp-200000000 {
-+					opp-hz = /bits/ 64 <200000000>;
-+					opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
++				interrupt-parent = <&mdss>;
++				interrupts = <0>;
++
++				clocks = <&gcc GCC_DISP_AXI_CLK>,
++					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&dispcc DISP_CC_MDSS_ROT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
++					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				clock-names = "bus",
++					      "iface",
++					      "rot",
++					      "lut",
++					      "core",
++					      "vsync";
++
++				assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				assigned-clock-rates = <19200000>;
++
++				operating-points-v2 = <&mdp_opp_table>;
++				power-domains = <&rpmhpd SM6350_CX>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++
++						dpu_intf1_out: endpoint {
++							remote-endpoint = <&mdss_dsi0_in>;
++						};
++					};
 +				};
++
++				mdp_opp_table: opp-table {
++					compatible = "operating-points-v2";
++
++					opp-19200000 {
++						opp-hz = /bits/ 64 <19200000>;
++						required-opps = <&rpmhpd_opp_min_svs>;
++					};
++
++					opp-200000000 {
++						opp-hz = /bits/ 64 <200000000>;
++						required-opps = <&rpmhpd_opp_low_svs>;
++					};
++
++					opp-300000000 {
++						opp-hz = /bits/ 64 <300000000>;
++						required-opps = <&rpmhpd_opp_svs>;
++					};
++
++					opp-373333333 {
++						opp-hz = /bits/ 64 <373333333>;
++						required-opps = <&rpmhpd_opp_svs_l1>;
++					};
++
++					opp-448000000 {
++						opp-hz = /bits/ 64 <448000000>;
++						required-opps = <&rpmhpd_opp_nom>;
++					};
++
++					opp-560000000 {
++						opp-hz = /bits/ 64 <560000000>;
++						required-opps = <&rpmhpd_opp_turbo>;
++					};
++				};
++			};
++
++			mdss_dsi0: dsi@ae94000 {
++				compatible = "qcom,sm6350-dsi-ctrl", "qcom,mdss-dsi-ctrl";
++				reg = <0 0x0ae94000 0 0x400>;
++				reg-names = "dsi_ctrl";
++
++				interrupt-parent = <&mdss>;
++				interrupts = <4>;
++
++				clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
++					 <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
++					 <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
++					 <&dispcc DISP_CC_MDSS_ESC0_CLK>,
++					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&gcc GCC_DISP_AXI_CLK>;
++				clock-names = "byte",
++					      "byte_intf",
++					      "pixel",
++					      "core",
++					      "iface",
++					      "bus";
++
++				assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
++						  <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
++				assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
++
++				operating-points-v2 = <&mdss_dsi_opp_table>;
++				power-domains = <&rpmhpd SM6350_MX>;
++
++				phys = <&mdss_dsi0_phy>;
++				phy-names = "dsi";
++
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				status = "disabled";
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++
++						mdss_dsi0_in: endpoint {
++							remote-endpoint = <&dpu_intf1_out>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++
++						mdss_dsi0_out: endpoint {
++						};
++					};
++				};
++
++				mdss_dsi_opp_table: opp-table {
++					compatible = "operating-points-v2";
++
++					opp-187500000 {
++						opp-hz = /bits/ 64 <187500000>;
++						required-opps = <&rpmhpd_opp_low_svs>;
++					};
++
++					opp-300000000 {
++						opp-hz = /bits/ 64 <300000000>;
++						required-opps = <&rpmhpd_opp_svs>;
++					};
++
++					opp-358000000 {
++						opp-hz = /bits/ 64 <358000000>;
++						required-opps = <&rpmhpd_opp_svs_l1>;
++					};
++				};
++			};
++
++			mdss_dsi0_phy: phy@ae94400 {
++				compatible = "qcom,dsi-phy-10nm";
++				reg = <0 0x0ae94400 0 0x200>,
++				      <0 0x0ae94600 0 0x280>,
++				      <0 0x0ae94a00 0 0x1e0>;
++				reg-names = "dsi_phy",
++					    "dsi_phy_lane",
++					    "dsi_pll";
++
++				#clock-cells = <1>;
++				#phy-cells = <0>;
++
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&rpmhcc RPMH_CXO_CLK>;
++				clock-names = "iface", "ref";
++
++				status = "disabled";
 +			};
 +		};
 +
- 		gpucc: clock-controller@3d90000 {
- 			compatible = "qcom,sm6350-gpucc";
- 			reg = <0 0x03d90000 0 0x9000>;
++		dispcc: clock-controller@af00000 {
++			compatible = "qcom,sm6350-dispcc";
++			reg = <0 0x0af00000 0 0x20000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&gcc GCC_DISP_GPLL0_CLK>,
++				 <&mdss_dsi0_phy 0>,
++				 <&mdss_dsi0_phy 1>,
++				 <&usb_1_qmpphy QMP_USB43DP_DP_LINK_CLK>,
++				 <&usb_1_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
++			clock-names = "bi_tcxo",
++				      "gcc_disp_gpll0_clk",
++				      "dsi0_phy_pll_out_byteclk",
++				      "dsi0_phy_pll_out_dsiclk",
++				      "dp_phy_pll_link_clk",
++				      "dp_phy_pll_vco_div_clk";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++		};
++
+ 		pdc: interrupt-controller@b220000 {
+ 			compatible = "qcom,sm6350-pdc", "qcom,pdc";
+ 			reg = <0 0x0b220000 0 0x30000>, <0 0x17c000f0 0 0x64>;
 
 -- 
 2.41.0
