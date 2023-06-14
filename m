@@ -2,176 +2,249 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23BFEB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 06:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46286EB64D8
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 06:51:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243010AbjFNGFd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 02:05:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33492 "EHLO
+        id S242891AbjFNGvt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 02:51:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243007AbjFNGFc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 02:05:32 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8E51A7
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 23:05:30 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id 3f1490d57ef6-bd0a359ca35so318776276.3
-        for <linux-clk@vger.kernel.org>; Tue, 13 Jun 2023 23:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686722730; x=1689314730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=biVBa4JIgE5FcyEB7bKg/M4CKmzTCYn6UFynk3gp3zI=;
-        b=qUrBHAaVhzLYJ20LYI5W59/UC8DHPTj5IOyoswBfkXdzppEko0ZTASy08tinI3llnx
-         10PvkbQ9n/DhvwqIf4t+NjEP++UFiODZ6NGv2LpMfPsBUpNfNlpMeU50l4dehPEyQowO
-         tOo/jbujpthe+YIkjL6Mlg1Zzv+LCcKEgQMt1r9mBeuXh6Z6ppnKG4NMkWr1sFi2koZx
-         14Epc+q2/RmzOf3hkSBG4CKOrIb/N4UQLsDjdApSZKpNqRutqsZnajdGh8y7+CWoI3Bu
-         YnyeoDsB20aMOCcURiVHDDmBTsE9du0HDb7hwkLur/ChgkloRgIKvJr1S4QWDU91A7rH
-         Cqkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686722730; x=1689314730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=biVBa4JIgE5FcyEB7bKg/M4CKmzTCYn6UFynk3gp3zI=;
-        b=a8PIbay0NrKHGd7kNw2ZL37+l/iPH+IqV1AD3Zro5PGupRpc4eU6y6WPgWHgajNgq8
-         XQAbAoPmOOUG3XMQpN0yxvPdkgEa14tA3pVcfeEbneir2b11ER8eoRk6EkXOygT6emfk
-         m5vj4wTc8CAf2J1RgigO0W/9K+HGhgg9v0Xsz1xoheWg7F9n0QhhS8NbVzR4ul1A+wJ6
-         tWtqWIvXs/Wggw8NDIA1aTJDZG9EPu9riVBCLOnSfITkjxhNlfP8vhBAxCNVYckVrAAZ
-         xsAYs3PvO9QCRoofKJozIcM1FtC/hKiVtrKWqzqtycr2JwONr9E4MHmyS4rZ8qmlUGJx
-         Corw==
-X-Gm-Message-State: AC+VfDz9YkHWx/4yV/2eQ0vTj1nXhBoa4qC5RlWrsOiuGCRtPSEDhdxC
-        HP04Em49tcvL5PE6uaZ+VEKr9g01Y6UxRMGhtLFnFA==
-X-Google-Smtp-Source: ACHHUZ6PdtHPpE8GAEwkxfCWV52YZzhpN0VZf8mm5pPuOZJ0cLCv9hLJBduTOgnwNzhtTpJZAVvXBsw6ioeh0uRMBvg=
-X-Received: by 2002:a25:addc:0:b0:bad:1159:1aea with SMTP id
- d28-20020a25addc000000b00bad11591aeamr1102409ybe.8.1686722729966; Tue, 13 Jun
- 2023 23:05:29 -0700 (PDT)
+        with ESMTP id S234554AbjFNGvr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 02:51:47 -0400
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD1991A3;
+        Tue, 13 Jun 2023 23:51:44 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4Qgx0s0vbgz9sq3;
+        Wed, 14 Jun 2023 08:51:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1686725501;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yeolAlGiaOA7hn27bEnN56iwUdLLCYZptbHjpu/TbIw=;
+        b=CwE7ziezRdBEkmfaCt0EPwQ0fNxLiidofeRpChilr6q9Dq2F0hsva2OUdsv/5WMFdP36VV
+        rGAus/M9/QZ6WENp+VeTM89CquL8FFIMzgsOIDcpG1v36g4uJGIr5BabjV78L+g2W75Jfb
+        NkMivWDQkVrLEohi/DfIhKtegxsM0oRxVPIoKB+aDPxNFKwTo4ZAmgz/NVh3jgM3jYNMT9
+        SGuzK8MqShCicDYUTTj5AFUqXJNzTYZtRPpB7mkosMMT05c3UWWz+4pGNYXdaIDErp46ds
+        HiA/QBkQss876reHmjEd+0pokwBYeKoiydtTSm42RDijGyecrTnBH3Or+hVspA==
+References: <20230613083626.227476-1-frank@oltmanns.dev>
+ <20230613083626.227476-3-frank@oltmanns.dev>
+ <83f9ee3ce26e4d4ba7c395aab316cae6.sboyd@kernel.org>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor
+ approximation
+In-reply-to: <83f9ee3ce26e4d4ba7c395aab316cae6.sboyd@kernel.org>
+Date:   Wed, 14 Jun 2023 08:51:32 +0200
+Message-ID: <87pm5yzgcr.fsf@oltmanns.dev>
 MIME-Version: 1.0
-References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
- <20230507175335.2321503-2-dmitry.baryshkov@linaro.org> <20230509055044.GA4823@thinkpad>
- <CAA8EJpoJr6gK=7fmwmF4+Xi5Ch_-+8L1q1WHkfVOOg+6qj=P3w@mail.gmail.com>
- <20230511081504.GA12021@thinkpad> <d4e8f17b-78a2-b6c6-36e2-ccc526430df1@linaro.org>
-In-Reply-To: <d4e8f17b-78a2-b6c6-36e2-ccc526430df1@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 14 Jun 2023 09:05:18 +0300
-Message-ID: <CAA8EJpp6ekkMWyzri9uSXD4L=w7UcFnRp-3CpJ3h535++uWqwg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 30 May 2023 at 02:47, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On 11/05/2023 11:15, Manivannan Sadhasivam wrote:
-> > On Tue, May 09, 2023 at 02:20:07PM +0300, Dmitry Baryshkov wrote:
-> >> On Tue, 9 May 2023 at 08:50, Manivannan Sadhasivam
-> >> <manivannan.sadhasivam@linaro.org> wrote:
-> >>>
-> >>> On Sun, May 07, 2023 at 08:53:35PM +0300, Dmitry Baryshkov wrote:
-> >>>> Using PWRSTS_RET on msm8974's MDSS_GDSC causes display to stop worki=
-ng.
-> >>>> The gdsc doesn't fully come out of retention mode. Change it's pwrst=
-s
-> >>>> flags to PWRSTS_OFF_ON.
-> >>>>
-> >>>
-> >>> What does "stop working" implies? Does it work during boot and random=
-ly stopped
-> >>> working or it stopped working after resume from suspend?
-> >>
-> >> It stops working during the boot. I observed the MDP not starting up
-> >> properly. Mea culpa, I did not look deep enough into the details, just
-> >> stomped upon this change which fixes the problem for me.
-> >>
-> >
-> > IIUC, GDSC will be transitioned to retention mode only if the parent do=
-main goes
-> > to low power mode. So if the MDSS GDSC goes to retention mode during bo=
-ot, then
-> > it suggests that the parent domain is not voted properly. Unless I misu=
-nderstood
-> > something...
->
-> Not sure, what is the parent domain here. Note, it is a pretty old
-> implementation.
+Hi Stephen,
 
-Colleagues, any further feedback on this? I'd like to note that all
-other platforms use PWRSTS_OFF_ON for the MDSS_GDSC,
-I do not think that msm8974 is particularly different here.
+Thank you for your feedback.
+
+On 2023-06-13 at 12:42:05 -0700, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Frank Oltmanns (2023-06-13 01:36:26)
+>> In light of the recent discovery that the fractional divisor
+>> approximation does not utilize the full available range for clocks that
+>> are flagged CLK_FRAC_DIVIDER_ZERO_BASED, implement tests for the edge
+>> cases of this clock type.
+>>
+>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>> Link: https://lore.kernel.org/lkml/20230529133433.56215-1-frank@oltmanns.dev
+>
+> What is the link for?
+
+The intention was to show why the tests were added ("In light of the
+recent discovery..."). I announced this discovery in the mail I referred
+to. Since that intention didn't come across: Should I drop the link?
 
 >
-> >
-> > Or is the GDSC behavior changes between RPM and RPMh?
-> >
-> > - Mani
-> >
-> >>>
-> >>> Even though reverting to non-retention mode works, I think the issue =
-might be
-> >>> somewhere else. Like the vote might be missing to get the GDSC out of=
- retention
-> >>> mode.
-> >>
-> >> I don't think there is a vote missing. The driver votes on MDSS_GDSC
-> >> before enabling access to any of the registers from the MDSS region.
-> >>
-> >>>
-> >>> - Mani
-> >>>
-> >>>> Fixes: d399723950c4 ("clk: qcom: gdsc: Fix the handling of PWRSTS_RE=
-T support")
-> >>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>> ---
-> >>>>   drivers/clk/qcom/mmcc-msm8974.c | 2 +-
-> >>>>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc=
--msm8974.c
-> >>>> index aa29c79fcd55..277ef0065aae 100644
-> >>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
-> >>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
-> >>>> @@ -2401,7 +2401,7 @@ static struct gdsc mdss_gdsc =3D {
-> >>>>        .pd =3D {
-> >>>>                .name =3D "mdss",
-> >>>>        },
-> >>>> -     .pwrsts =3D PWRSTS_RET_ON,
-> >>>> +     .pwrsts =3D PWRSTS_OFF_ON,
-> >>>>   };
-> >>>>
-> >>>>   static struct gdsc camss_jpeg_gdsc =3D {
-> >>>> --
-> >>>> 2.39.2
-> >>>>
-> >>>
-> >>> --
-> >>> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=
-=A9=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=
-=AE=E0=AF=8D
-> >>
-> >>
-> >>
-> >> --
-> >> With best wishes
-> >> Dmitry
-> >
+>> ---
+>>  drivers/clk/clk_test.c | 69 +++++++++++++++++++++++++++++++++++++++++-
 >
-> --
-> With best wishes
-> Dmitry
+> Please make a new file, drivers/clk/clk-fractional-divider_test.c
+> instead.
 >
+>>  1 file changed, 68 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+>> index f9a5c2964c65..b247ba841cbd 100644
+>> --- a/drivers/clk/clk_test.c
+>> +++ b/drivers/clk/clk_test.c
+>> @@ -8,6 +8,9 @@
+>>  /* Needed for clk_hw_get_clk() */
+>>  #include "clk.h"
+>>
+>> +/* Needed for clk_fractional_divider_general_approximation */
+>> +#include "clk-fractional-divider.h"
+>> +
+>>  #include <kunit/test.h>
+>>
+>>  #define DUMMY_CLOCK_INIT_RATE  (42 * 1000 * 1000)
+>> @@ -2394,6 +2397,69 @@ static struct kunit_suite clk_mux_notifier_test_suite = {
+>>         .test_cases = clk_mux_notifier_test_cases,
+>>  };
+>>
+>> +
+>> +/*
+>> + * Test that clk_fractional_divider_general_approximation will work with the
+>> + * highest available numerator and denominator.
+>> + */
+>> +static void clk_fd_test_round_rate_max_mn(struct kunit *test)
+>> +{
+>> +       struct clk_fractional_divider *fd;
+>> +       struct clk_hw *hw;
+>> +       unsigned long rate, parent_rate, m, n;
+>> +
+>> +       fd = kunit_kzalloc(test, sizeof(*fd), GFP_KERNEL);
+>> +       KUNIT_ASSERT_NOT_NULL(test, fd);
+>> +
+>> +       fd->mwidth = 3;
+>> +       fd->nwidth = 3;
+>> +
+>> +       hw = &fd->hw;
+>> +
+>> +       rate = DUMMY_CLOCK_RATE_1;
+>> +
+>> +       // Highest denominator, no flags
+>
+> Use /* this for comments */
+>
+>> +       parent_rate = 10 * DUMMY_CLOCK_RATE_1;
+>
+> Just write out the actual frequency. Don't use DUMMY_CLOCK_RATE_1 at all
+> in the test.
 
+Sure, will do. The idea was to highlight that we want to have the parent
+running at 10 times the speed, while the divider has a maximum value of
+7 (or 8 if zero based).
 
---=20
-With best wishes
-Dmitry
+>
+>> +       clk_fractional_divider_general_approximation(hw, rate, &parent_rate, &m, &n);
+>> +       KUNIT_EXPECT_EQ(test, m, 1);
+>> +       KUNIT_EXPECT_EQ(test, n, 7);
+>
+> This is a different test case.
+>
+>> +
+>> +       // Highest numerator, no flags
+>> +       parent_rate = DUMMY_CLOCK_RATE_1 / 10;
+>> +       clk_fractional_divider_general_approximation(hw, rate, &parent_rate, &m, &n);
+>> +       KUNIT_EXPECT_EQ(test, m, 7);
+>
+> Is 7 related to mwidth? Maybe this should be clk_div_mask(fd->mwidth)
+> instead of 7.
+
+Yes, 7 is related to mwidth. I thought about this too, but I'm not sure
+that's the best move here. The function under test uses:
+    max_m = GENMASK(fd->mwidth - 1, 0);
+    max_n = GENMASK(fd->nwidth - 1, 0);
+
+I come from a safety-concerned industry and as a general rule we avoid
+using functions from the code under test in our tests. I'm doing this
+here as a hobby, but still I find it to be a good rule that I'd like to
+stick to unless asked otherwise.
+
+If I use the same code to generate the expected values, I'm not really
+testing my change, but only the underlying best_rational_approximation.
+
+Instead, how about I add a comment to the test function that more
+thoroughly explains its intention?
+
+Something along those lines:
+
+    /*
+     * Introduce a parent that runs at 10 times the frequency of the
+     * requested rate.
+     * m and n are 3 bits wide each.
+     * The clock has no flags set, hence the maximum value that fits in
+     * m and n is 7.
+     * Therefore, expect the highest possible divisor.
+     */
+    static void clk_fd_test_round_rate_max_m(struct kunit *test)
+
+    /*
+     * Introduce a parent that runs at 1/10th the frequency of the
+     * requested rate.
+     * m and n are 3 bits wide each.
+     * The clock has no flags set, hence the maximum value that fits in
+     * m and n is 7.
+     * Therefore, expect the highest possible multiplier.
+     */
+    static void clk_fd_test_round_rate_max_n(struct kunit *test)
+
+    /*
+     * Introduce a parent that runs at 10 times the frequency of the
+     * requested rate.
+     * m and n are 3 bits wide each.
+     * The clock is zero based, hence the maximum value that fits in
+     * m and n is 8.
+     * Therefore, expect the highest possible divisor.
+     */
+    static void clk_fd_test_round_rate_max_m_zero_based(struct kunit *test)
+
+    /*
+     * Introduce a parent that runs at 1/10th the frequency of the
+     * requested rate.
+     * m and n are 3 bits wide each.
+     * The clock is zero based, hence the maximum value that fits in
+     * m and n is 8.
+     * Therefore, expect the highest possible multiplier.
+     */
+    static void clk_fd_test_round_rate_max_n_zero_based(struct kunit *test)
+
+Please note that from your original comment, I wasn't sure, if you
+wanted a one time test or someting that could become part of the
+clk-frameworks test suite. Therefore, I sent this test case to test the
+waters and ask for your comments. It's clear to me now that you want it
+to be permanent, so I'll spend some time on it to make it ready for
+inclusion. :)
+
+Is there anything else you'd like me to cover in the tests for the fix?
+
+Thanks,
+  Frank
+
+>
+>> +       KUNIT_EXPECT_EQ(test, n, 1);
+>
+> This is a different test case.
+>
+>> +
+>> +       // Highest denominator, zero based
+>> +       parent_rate = 10 * DUMMY_CLOCK_RATE_1;
+>> +       fd->flags = CLK_FRAC_DIVIDER_ZERO_BASED;
+>> +       clk_fractional_divider_general_approximation(hw, rate, &parent_rate, &m, &n);
+>> +       KUNIT_EXPECT_EQ(test, m, 1);
+>> +       KUNIT_EXPECT_EQ(test, n, 8);
+>
+> This is a different test case.
+>
+>> +
+>> +       // Highest numerator, zero based
+>> +       parent_rate = DUMMY_CLOCK_RATE_1 / 10;
+>> +       clk_fractional_divider_general_approximation(hw, rate, &parent_rate, &m, &n);
+>> +       KUNIT_EXPECT_EQ(test, m, 8);
+>> +       KUNIT_EXPECT_EQ(test, n, 1);
+>
+> This is a different test case. If it has a meaningful name it will be
+> easier to understand as well.
