@@ -2,85 +2,75 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BF3C001DF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B63BDEB64D9
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:44:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235697AbjFNTmi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 15:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33272 "EHLO
+        id S236918AbjFNToB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 15:44:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239454AbjFNTm0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:42:26 -0400
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C77D2;
-        Wed, 14 Jun 2023 12:42:25 -0700 (PDT)
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-777a4926555so1446739f.0;
-        Wed, 14 Jun 2023 12:42:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686771745; x=1689363745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CK1lIeMRpP5NX2IUbidGPA9x3NrhjZEIeLvXrWDUjZM=;
-        b=DtsPxFW43+Tl2Tlyviss72c5Ok3gtaCpwjcDICpKN4QPQOdYj1rqqhcU/+S00RFYZ2
-         2oXfft/Oj5JzpormVmY0LEZGm1WONRWK04isU1oDT5u3RUKzppAC6uqQV6J0a0F+MSRe
-         9xjyd1uHJWm13bqcHxBtj5ORUUEN4ZiFDZRCeKYcinw8KMzbEUhOHhuSfEPmYwN0/b59
-         HDamI2c5d3yj//d/HBUfuDBWZlQ9V4titky8xnHSTVn2gSMf0WvH+ZEUwSODWo3pjzYq
-         R4PAvz6iY6ytec3se5mVySqVDwHkjEFeXvmZ4sE8BFwLrjIwELiCW2ZOJC33UnF0JP26
-         /cYA==
-X-Gm-Message-State: AC+VfDwrROiR3jPhFy80sxTm8C5OAbYOlkhIWXSOCMIltuU+eKPAnm5d
-        vF13SRUjKjkO5QOQ2ahyOw==
-X-Google-Smtp-Source: ACHHUZ521hIVcunxwMoTkCfDDcToYbL+0uuF815H+XwWvyB0+8/6FRb/VUUMTFteDscyxqdDVUq05g==
-X-Received: by 2002:a05:6602:2110:b0:760:effd:c899 with SMTP id x16-20020a056602211000b00760effdc899mr2257746iox.5.1686771744976;
-        Wed, 14 Jun 2023 12:42:24 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id e22-20020a6b7316000000b00777b835f2bdsm5634110ioh.27.2023.06.14.12.42.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 12:42:24 -0700 (PDT)
-Received: (nullmailer pid 2620040 invoked by uid 1000);
-        Wed, 14 Jun 2023 19:42:21 -0000
-Date:   Wed, 14 Jun 2023 13:42:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc:     broonie@kernel.org, alexandre.belloni@bootlin.com,
-        robh+dt@kernel.org, tglx@linutronix.de, devicetree@vger.kernel.org,
-        Hari.PrasathGE@microchip.com, arnd@arndb.de, davem@davemloft.net,
-        gregory.clement@bootlin.com, netdev@vger.kernel.org,
-        edumazet@google.com, linux-arm-kernel@lists.infradead.org,
-        balakrishnan.s@microchip.com, manikandan.m@microchip.com,
-        nayabbasha.sayed@microchip.com, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mturquette@baylibre.com, sre@kernel.org,
-        claudiu.beznea@microchip.com, kuba@kernel.org,
-        linux-usb@vger.kernel.org, cristian.birsan@microchip.com,
-        pabeni@redhat.com, mihai.sain@microchip.com,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        sudeep.holla@arm.com, durai.manickamkr@microchip.com,
-        dharma.b@microchip.com, maz@kernel.org, linux@armlinux.org.uk,
-        conor+dt@kernel.org, balamanikandan.gunasundar@microchip.com,
-        nicolas.ferre@microchip.com, krzysztof.kozlowski+dt@linaro.org
-Subject: Re: [PATCH 20/21] dt-bindings: net: cdns,macb: add documentation for
- sam9x7 ethernet interface
-Message-ID: <168677174053.2619982.8000584271971799835.robh@kernel.org>
-References: <20230603200243.243878-1-varshini.rajendran@microchip.com>
- <20230603200243.243878-21-varshini.rajendran@microchip.com>
+        with ESMTP id S234534AbjFNTn7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:43:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 998CB26B5;
+        Wed, 14 Jun 2023 12:43:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 35CCF62EF0;
+        Wed, 14 Jun 2023 19:43:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F90C433C8;
+        Wed, 14 Jun 2023 19:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686771814;
+        bh=Kt6SJawEmJWtX3OTbjlzR1/a2xexuFr4PgAMHfuqpqc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=WHhPJGi4JCpDvJJVFMj2VPcwyd1dt4StdWOi6o4PJtoNbC2BpPlPK2y3X158vC85D
+         i23nKtAzDelBVt/aLueNY1b/3+Ay2ilRlKZD2dCW92xnFftZnatfROwuM9V+g4TQXX
+         xJqubh6K+F6j89Y9UuAnl2CBKPsYLnMo2IOk9ly/QOw6Hfy57XfiaOekY90XvhcF1z
+         ZJ1hNMNMn9atmTQrdC14xUDP7FxW/UO6cOq3hU9fa5TygZ9Z78GFCV+qnsXFOINW6E
+         KhD7/BWp2Ew7u1TuqNQ5x7HKgxKuB5VIY6Fzryy9+Z3lEtJquqn4vqPEzpS2VmoUyH
+         su/okyOh3be5w==
+Message-ID: <cca711ac7af8208949df09b811a13c81.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230603200243.243878-21-varshini.rajendran@microchip.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230613195443.1555132-1-sboyd@kernel.org>
+References: <20230613195443.1555132-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: sprd: composite: Simplify determine_rate implementation
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        patches@lists.linux.dev,
+        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+        Maxime Ripard <maxime@cerno.tech>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Wed, 14 Jun 2023 12:43:32 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Sun, 04 Jun 2023 01:32:42 +0530, Varshini Rajendran wrote:
-> Add documentation for sam9x7 ethernet interface
-> 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+Quoting Stephen Boyd (2023-06-13 12:54:42)
+> The sprd_div_helper_round_rate() function calls divider_round_rate()
+> which calls divider_round_rate_parent() which calls
+> divider_determine_rate(). This call chain converts back and forth from
+> the rate request structure to make a determine_rate clk_op fit with a
+> round_rate clk_op. Simplify the code here by directly calling
+> divider_determine_rate() instead.
+>=20
+> This fixes a smatch warning where an unsigned long is compared to less
+> than zero, which is impossible. This makes sprd_div_helper_round_rate()
+> unnecessary as well so simply remove it and fold it into the only caller
+> left.
+>=20
+> Reported-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> Closes: https://lore.kernel.org/r/45fdc54e-7ab6-edd6-d55a-473485608473@or=
+acle.com
+> Cc: Maxime Ripard <maxime@cerno.tech>
+> Fixes: 302d2f836d78 ("clk: sprd: composite: Switch to determine_rate")
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  Documentation/devicetree/bindings/net/cdns,macb.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
-
+Applied to clk-next
