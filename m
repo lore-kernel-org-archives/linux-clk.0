@@ -2,215 +2,209 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389E7EB64DC
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 12:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC22EB64D8
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 12:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244067AbjFNM1K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 08:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60660 "EHLO
+        id S244722AbjFNMuB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 08:50:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243263AbjFNM1J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 08:27:09 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C3D61FCE
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:27:08 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-b9a6eec8611so877509276.0
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686745628; x=1689337628;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j5x6fr5aZlli+8WO85UDIDTo8toG3HYLiO6e7zSPWtQ=;
-        b=TwSw2mYy1UhWSZa59w/UT+RjmuJ5V2JXMKBFXyaE14MoUY9/MBG5t6EBp6ereoGpMy
-         /+pjca7tW7curhpkDrra70X/0XBVdKQaYzebnhHUTGAW+uUKfzsMqn5rn5Hf6tCHwNc/
-         ZNc1jMuiR3r2lLecNC4cFkE4GRjNU4z0hW0TjgUyhUS/hIc7tLu2WB79S7MJydb/PZLD
-         on/9GBLMcykD09LU3y+K0gbs0xmHUTdAbyiSf5WPSKXG+SvIilnxJYA5fdNttehNbsQ/
-         DZNcpMtNskwmg56bnRBxZQJKJ5xqPlkbV4w7WXzmKDbAToS0CZjMUI1piOge6x9a6VXW
-         Hdkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686745628; x=1689337628;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j5x6fr5aZlli+8WO85UDIDTo8toG3HYLiO6e7zSPWtQ=;
-        b=QHxXVgwfXRGy6cxPVN1VqYOwne0QW+k8v68XJ7Dm6BNHXu9llXOz4sfbupzHSX/LbO
-         QC0AZFjTkc6MEckl9EXbDLe1HrSYQ/Hj5XNqBYivlXTlWfoNEZlHLzZOe9hfclRjpzgi
-         MUvJ/lpQbHsfUqB8CZvgf7CZtaxSA/5upCbfAoISKdneEJJSWEbdxLvFSwrTDDldCOwJ
-         Ih0dYb8V/kX8hW2UaZ8D0W6WgNNHHfOcQdeNqtLZ7nWY8LnshnVp9wjrBWUl+ameRxq4
-         5lkjty93fYLN7xY1OrSd8BuUI3mw+gWkHwbHlWZ6JKEshrl2shbwqZjEDbjJrHnBc49E
-         f7JA==
-X-Gm-Message-State: AC+VfDwBVZ3W5ZLMNrg6SNN2zoikZYnUdTq2ms+jPWFWT7C45B7IPdLI
-        nKTX4CmkxDypJfyvZOqS3VF4FFEjuGmTl35fpzIXRA==
-X-Google-Smtp-Source: ACHHUZ6Yz+yPX5k278RwB3vcRO1kIw8EQgvzRzZBfwAKXe6a0M2y+j79oylUsXuqJq8MYmGoMr/2m72G97EvieneTXI=
-X-Received: by 2002:a25:7484:0:b0:bb3:9001:e2fe with SMTP id
- p126-20020a257484000000b00bb39001e2femr2049141ybc.13.1686745627812; Wed, 14
- Jun 2023 05:27:07 -0700 (PDT)
+        with ESMTP id S236221AbjFNMuA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 08:50:00 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2872610DA;
+        Wed, 14 Jun 2023 05:49:59 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35EArW1T016790;
+        Wed, 14 Jun 2023 12:49:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=XER8pySDXzhBK61uLHUdK8y5WfDlkC0+ZleyTpc+Bg4=;
+ b=hQuMDxJGrJSm8tQ43RbN3DFz45EG07q+iDhVWWEJdRTkRywTGfLtnAIGiozbaVSkYM8K
+ NCKkrHDyjydnvOatwJlZVUQYOacNCDX3q/9Y+mUhRKN4vPWwhM/GcUmrn33o2vK7tXjb
+ DoJr8A+SZ60nA7v5IAB9HoF/6KH0hqGqTJI6XNwMULXpoP8ca+m7CDRnpBjUQSGigtdU
+ CIoK5xgzebbvQpebgVf3FHliMdV6gX8hcjd/gqm14hAPqWaI70Eopn2SjO+LT3WeFU1i
+ ZKRo2C6s21MDZ7hmR9u4Wb0YsBuGfMfYu/CkvdrQzpvYvrcAWHW29mYhmZ9BskPA4AQy 7g== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r6s3wtsvu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 12:49:42 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35ECnfUi030594
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Jun 2023 12:49:41 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 14 Jun
+ 2023 05:49:32 -0700
+Message-ID: <da987a5e-7f6c-34b4-3ac4-d0eb5e911888@quicinc.com>
+Date:   Wed, 14 Jun 2023 18:19:27 +0530
 MIME-Version: 1.0
-References: <20230525172142.9039-1-quic_jkona@quicinc.com> <20230525172142.9039-4-quic_jkona@quicinc.com>
- <6e1d098d-03b9-aa63-a0bf-6cf748a0db0d@linaro.org> <7074f718-a3d5-8a03-3830-77a5a0b15500@linaro.org>
- <df7ab6f7-6c5e-9a7d-8d9b-09ff32da34d6@quicinc.com> <c60bb4d9-1b53-6c60-8b9d-13069bdff882@linaro.org>
- <1a6d46e4-7ec4-262c-dc3b-fc9c988f979e@quicinc.com> <CAA8EJprx6=QztOHi_18uqcGK9WnhkQJ_WP9TyKrsOT=WgKdRaw@mail.gmail.com>
- <695d7b39-2759-690d-5ff8-5aff6b37e39c@quicinc.com>
-In-Reply-To: <695d7b39-2759-690d-5ff8-5aff6b37e39c@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Wed, 14 Jun 2023 15:26:57 +0300
-Message-ID: <CAA8EJpp5_qG2eMQEoHqzboyi8xEbEmx2e1WsKsVQ3d6no0pp5g@mail.gmail.com>
-Subject: Re: [PATCH V2 3/6] clk: qcom: clk-alpha-pll: Remove explicit CAL_L
- configuration for EVO PLL
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+Content-Language: en-US
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kalle Valo <kvalo@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-2-quic_mmanikan@quicinc.com>
+ <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+ <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+ <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+ <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
+ <87edmoitu3.fsf@kernel.org>
+ <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
+ <5f9cc367-eaa5-4c19-4e5e-7052b0259ccf@linaro.org>
+ <04f5e3cb-d2f5-747c-1fd0-4b61d845e2c5@quicinc.com>
+In-Reply-To: <04f5e3cb-d2f5-747c-1fd0-4b61d845e2c5@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: FhPFExb1TjQwYftxjMgLslDRBsZZjAzC
+X-Proofpoint-GUID: FhPFExb1TjQwYftxjMgLslDRBsZZjAzC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-14_08,2023-06-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 mlxlogscore=744 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 priorityscore=1501 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306140110
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Jun 2023 at 14:53, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->
->
->
-> On 6/9/2023 5:55 PM, Dmitry Baryshkov wrote:
-> > On Fri, 9 Jun 2023 at 14:50, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
-> >>
-> >> Hi Dmitry,
-> >>
-> >> Thanks for your review!
-> >>
-> >> On 6/1/2023 8:13 PM, Dmitry Baryshkov wrote:
-> >>> On 01/06/2023 17:33, Jagadeesh Kona wrote:
-> >>>> Hi Dmitry, Konrad,
-> >>>>
-> >>>> On 5/26/2023 9:23 PM, Dmitry Baryshkov wrote:
-> >>>>> On 26/05/2023 12:33, Konrad Dybcio wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 25.05.2023 19:21, Jagadeesh Kona wrote:
-> >>>>>>> In lucid evo pll, the CAL_L field is part of L value register
-> >>>>>>> itself, and
-> >>>>>>> the l value configuration passed from clock controller driver includes
-> >>>>>>> CAL_L and L values as well. Hence remove explicit configuration of
-> >>>>>>> CAL_L
-> >>>>>>> for evo pll.
-> >>>>>>>
-> >>>>>>> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL
-> >>>>>>> configuration interfaces")
-> >>>>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> >>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> >>>>>>> ---
-> >>>>>> Oh that isn't obvious at first sight, nice find!
-> >>>>>>
-> >>>>>> I'd suggest a different solution though:
-> >>>>>>
-> >>>>>> #define LUCID_EVO_PLL_L_LVAL    GENMASK(..
-> >>>>>> #define LUCID_EVO_PLL_L_CAL_L    GENMASK(..
-> >>>>>>
-> >>>>>> lval = FIELD_PREP(LUCID_EVO_PLL_L_LVAL, config->l) |
-> >>>>>>          FIELD_PREP(LUCID_EVO_PLL_L_CAL_L, config->cal_l);
-> >>>>>>
-> >>>>>> This would make the separation between the two parts more explicit
-> >>>>>>
-> >>>>>> however
-> >>>>>>
-> >>>>>> config->l would then represent the L value and not the end value
-> >>>>>> written to the L register
-> >>>>>
-> >>>>> Yes. I think there should be separate config->l and config->cal_l
-> >>>>> values (and probably ringosc_cal_l, basing on the comment in the
-> >>>>> source).
-> >>>>> Thanks for your suggestions. In all recent chipsets, L & CAL_L fields
-> >>>> are encapsulated in the same register, so we feel it is better to
-> >>>> directly pass the combined configuration value in config->l itself and
-> >>>> program it directly into register without any additional handling
-> >>>> required in pll driver code.
-> >>>
-> >>> My feeling is that it is better to split it, since these are the
-> >>> different fields. The value .l = 0x4444003e doesn't mean anything per se.
-> >>>
-> >>> Three values are much more meaningful:
-> >>> .l = 0x3e,
-> >>> .cal_l = 0x44,
-> >>> .ringosc_cal_l = 0x44,
-> >>>
-> >>> Not to mention that this way you don't have to touch pll configuration
-> >>> for the existing Lucid EVO PLL. Not to mention that for the Lucid ole
-> >>> PLLs the cal_l and ringosc_cal_l values seem to be static (0x44), so
-> >>> there is no need to put them to the variable data.
-> >>>
-> >>
-> >> Sure, will keep the existing code as is and will remove this patch in
-> >> the next series.
-> >>
-> >>>>
-> >>>> Also the evo pll code is currently reused for both lucid evo and ole
-> >>>> pll's. Lucid ole PLL has an additional RINGOSC_CAL_L field along with
-> >>>> L, CAL_L fields in the same L register. By passing combined
-> >>>> configuration value in config->l itself, we feel we can avoid all the
-> >>>> additional handling required in PLL code.
-> >>>>
-> >>>>> Just a question: is camcc-sm8550 using the same PLL type or is it
-> >>>>> some kind of subtype of lucid_evo PLL?
-> >>>>>
-> >>>> No, it is not the same lucid evo PLL. It uses lucid ole PLL.
-> >>>
-> >>> Then please don't reuse the clk_lucid_evo_pll_configure() call.
-> >>> You can add a new one, which will handle L/CAL_L/RINGOSC_CAL_L differences.
-> >>>
-> >>
-> >> The only difference between evo and ole pll configure is extra
-> >> RINGOSC_CAL_L programming needed only for ole pll. We can achieve the
-> >> same with clk_lucid_evo_pll_configure() itself by directly including
-> >> RINGOSC_CAL_L field in L configuration for OLE PLL's.
-> >
-> > Please don't, that's all I can say. Those are different fields. By
-> > looking at the config->l one can calculate PLL rate. If you overload
-> > the config->l with CAL_L and RINGOSC_CAL_L, the purpose of this field
-> > is gone.
-> >
-> > As the CAL_L and RINGOSC_CAL_L fields are static, just move them to
-> > the clk_lucid_ole_pll_configure().
-> >
->
-> We feel it is better to include them in config->l and reuse existing
-> code than adding separate function for lucid ole pll configure. Even the
-> other pll configurations(like .user_ctl_val) contains multiple fields
-> but are passed as a single value from driver.
-
-I suppose it was done this way because these fields are pretty much
-not documented in the openly published data. And sometimes this
-strikes, one can not easily check PLL's configuration. Or tune
-it.There was a discussion whether we should start handling PLL outputs
-properly (in CCF) rather than configuring them in a static way.
-
-Also mentioned registers differ from PLL to PLL. For the RISCOSC_CAL_L
-and CAL_L the value is static, if I'm not mistaken. Having them in the
-configurable field doesn't sound correct.
-
-Last, but not least. We are already handling CAL_L value completely in
-the clock-alpha-pll.c for triton, lucid and lucid evo PLLs. What would
-be the _reason_ to change that?
-
->
-> We also added a comment in code stating all the fields included in
-> config->l value, so user will be aware while calculating PLL frequency.
->
-> Thanks,
-> Jagadeesh
 
 
+On 6/14/2023 5:13 PM, Manikanta Mylavarapu wrote:
+> 
+> 
+> On 6/7/2023 1:57 PM, Krzysztof Kozlowski wrote:
+>> On 07/06/2023 10:10, Manikanta Mylavarapu wrote:
+>>>
+>>>
+>>> On 6/6/2023 7:19 PM, Kalle Valo wrote:
+>>>> Manikanta Mylavarapu <quic_mmanikan@quicinc.com> writes:
+>>>>
+>>>>>>>>> +
+>>>>>>>>> +    properties:
+>>>>>>>>> +      compatible:
+>>>>>>>>> +        enum:
+>>>>>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>>>>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>>>>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>>>>>>>
+>>>>>>>> Keep rather alphabetical order (so both 5018 together).
+>>>>>>>>
+>>>>>>>> I also do not understand these at all. Why adding bus type to
+>>>>>>>> compatible? This rarely is allowed (unless it is PCIe controller 
+>>>>>>>> within
+>>>>>>>> soc).
+>>>>>>>>
+>>>>>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+>>>>>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, 
+>>>>>>> PCIE
+>>>>>>> radio's properties, i have added bus type to compatible.
+>>>>>>
+>>>>>> It's the same device - WCSS - right? We do not create multiple 
+>>>>>> nodes and
+>>>>>> compatibles for the same devices. Bus suffixes are almost never 
+>>>>>> parts of
+>>>>>> compatibles.
+>>>>>
+>>>>>
+>>>>> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
+>>>>> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
+>>>>>
+>>>>> So for better clarity i will use attached SOC ID in compatible.
+>>>>> Below are the new compatible's.
+>>>>>
+>>>>> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
+>>>>> - qcom,ipq9574-wcss-mpd    //IPQ9574 internal radio
+>>>>> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
+>>>>
+>>>> What mandates that there's just one QCN6122 device attached to PCI?
+>>>> Assuming fixed PCI configurations like that makes me worried.
+>>>>
+>>>
+>>> IPQ5018 always has one internal radio, attached pcie radio's depends on
+>>> no of pcie ports. IPQ5018 has 2 pcie ports, so it supports max two
+>>> qcn6122 devices. One compatible (qcom,qcn6122-wcss-mpd) itself support's
+>>> number of pcie devices controlled by QDSP6.
+>>
+>> So this is hot-pluggable (or at least board-pluggable), then should not
+>> be a part of static DTS.
+>>
+>> Some concepts of virtual-processes is anyway far away from hardware
+>> description, thus does not fit into DTS. Adding now to the equation PCIe
+>> with variable number of such processes, brings us even further.
+>>
+>> This is not a DT property. Remember - DT describes hardware.
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> In the multipd architecture based Socs, There is one Q6 DSP which runs 
+> the OS/kernel and there are one or more instances of WCSS radios
+> (It can be either internal or pcie attached).
+> These WCSS cores are controlled by the Q6 (Q6 DSP brings wcss radios out 
+> of reset/ shuts it down etc). Q6 forms the 'root Protection domain' and 
+> the wcss radios are termed as the 'user protection domain'.
+> The compatible's that is being added here are to manage the 'root 
+> domain' and 'user domain'.
+> Not sure if using the words 'pcie'/'ahb' made it confusing.
+> So, 'qcom,ipq5018-q6-mpd' and 'qcom,ipq5018-wcss-mpd'.
+> 
+> There will be multiple instances of 'qcom,ipq5018-wcss-mpd' in DT based 
+> on number of wcss radios connected on that board and only one instance 
+> of 'qcom,ipq5018-q6-mpd'.
+> 
+> Is this approach ok ?
+> 
+> Thanks & Regards,
+> Manikanta.
 
--- 
-With best wishes
-Dmitry
+
+I didn't aligned previous reply properly. Now i corrected it
+and re sending.
+
+In the multipd architecture based Socs, There is one Q6 DSP which
+runs the OS/kernel and there are one or more instances of WCSS radios
+(It can be either internal or pcie attached).
+These WCSS cores are controlled by the Q6 (Q6 DSP brings wcss radios
+out of reset/ shuts it down etc).
+Q6 forms the 'root Protection domain' and the wcss radios are termed
+as the 'user protection domain'. The compatible's that is being
+added here are to manage the 'root domain' and 'user domain'.
+Not sure if using the words 'pcie'/'ahb' made it confusing.
+So, 'qcom,ipq5018-q6-mpd' and 'qcom,ipq5018-wcss-mpd'.
+
+There will be multiple instances of 'qcom,ipq5018-wcss-mpd' in DT
+based on number of wcss radios connected on that board and only
+one instance of 'qcom,ipq5018-q6-mpd'.
+
+Is this approach ok ?
+
+Thanks & Regards,
+Manikanta.
