@@ -2,129 +2,282 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE482EB64D9
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 12:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F5FEB64D9
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 12:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235961AbjFNMLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 08:11:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47052 "EHLO
+        id S236276AbjFNMPI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 08:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233227AbjFNMLa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 08:11:30 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B920D1BFD
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:11:13 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3090d3e9c92so6415597f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:11:13 -0700 (PDT)
+        with ESMTP id S244572AbjFNMOv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 08:14:51 -0400
+Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50F881FFD
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:14:39 -0700 (PDT)
+Received: by mail-yb1-xb2c.google.com with SMTP id 3f1490d57ef6-bc43a73ab22so889098276.0
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:14:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686744672; x=1689336672;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ge+PAUGZKltRvYWfI3TIkZLbX5qEJ8c1zqJq4aE+VKY=;
-        b=i+7KLBzGa6EDe9X035n2t3xZfw18EGKMD5/vy/nOuPzKxCgoKzQjSkfRDOO5yzgEUd
-         wAUHH6aF3JN6vK7piNdhDrHBqLYh63UNIA8hZMTeSWWRhhT2SuR/kI5ux+1IHzY5Pmjg
-         RLt34xNTLynai3g8ISGh6JxzrQ/COf4Y2x5hJILi4VD/LTniJfLSelbBJ+q81UsOEW8/
-         jKJIjSZvGXdY21fLm4rrz6iMkpZSsrEACCfBrOH1P7j/Q/PRXrr6yrYz/00GitgT2hXB
-         Ls304hHCcFCCVYynywTIWKJU24PU75ToZGF0jxknJw2UogjqRRF8yT2CG27SXu0VDZSX
-         /QTQ==
+        d=linaro.org; s=google; t=1686744878; x=1689336878;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4byCaI3hLGi5X054xdozNmq02gRpZ7o7e5d0Whg0jp0=;
+        b=jhhpbZQ1sCqTcMAZj9YEqHDiWteGLGTnSpQzHIV/CotfoIERYaGiOT5/w3Pely4IDG
+         XcPKzi+Me0jR2oLPGsx8BzClEVBbHHRbA73ueCuLIZkdbUL+XjWCWus4QNF2Au1syRTD
+         L1Gzhu2GGcLYZOQW8d/QA+UqQ0PsHMhh/6cV1KC426G6Gj52vGn5Vw+zqnRgMOK/WRQh
+         Uhhhi6hf5H2gyvO0loXfS3i4AzMUZ1Pom6pr+lUkN6TG7dnb9G9yDag0j8toLT2aWGIT
+         oajnBULCGP5RMDQCeBJlTBHkg/0yc419WgUvm3WjL+F+5fK5vSj8zWTJCAVTSIDphNY2
+         9bOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686744672; x=1689336672;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1686744878; x=1689336878;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Ge+PAUGZKltRvYWfI3TIkZLbX5qEJ8c1zqJq4aE+VKY=;
-        b=LvBDvCT4vhDYe++17VYIy+AtRA6ugfzFqWTlMt/AtuiA34Qnz5ZHB5/qhJ56KBVlPA
-         QA6N9zIpDlaGPFh+fx4/e6ICDXgF8QCeBN/vLSKPGlHNRZDiJi/drurgtLIqKk/0C/d7
-         J8MCvUAPwSuEKyDm3H2g4ijVOKYKtxcQ0f6/IotWWww5TAqZoLWBL5QESHt1IsFr7jCb
-         HDqANwUHi/ql9khyD3lqeoE0jilbbSRf+Fq8oNVLv7PdemLoN7mGzHiIIUkbrNTK4axZ
-         Uj6IJjbZg86L67o1F21HER1XmYdAj3jqtqdIhWBUR/h1C9BCeKitCpq0rNFWmLhNW11O
-         4OZw==
-X-Gm-Message-State: AC+VfDyGKv2jfZoCDtVIIXxpPdsHRdQsew/xUtzBWvwRwhlh3lq9m4L5
-        I8vBN2ukDk66pyrKanMBSU8mvSMuJZjE4X9hHsSJeg==
-X-Google-Smtp-Source: ACHHUZ7e3VqGRTMl+9qL5siJ7YTEPgn1IwbO0xBI2LWD4uIG+jKrIrRyMTOdSzx4Hju9i2pepRULYQ==
-X-Received: by 2002:adf:e9cb:0:b0:309:5188:5928 with SMTP id l11-20020adfe9cb000000b0030951885928mr10337077wrn.35.1686744672185;
-        Wed, 14 Jun 2023 05:11:12 -0700 (PDT)
-Received: from hackbox.lan ([188.24.163.226])
-        by smtp.gmail.com with ESMTPSA id k1-20020a5d6e81000000b0030e5ccaec84sm18244057wrz.32.2023.06.14.05.11.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 05:11:11 -0700 (PDT)
-From:   Abel Vesa <abel.vesa@linaro.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.5
-Date:   Wed, 14 Jun 2023 15:10:59 +0300
-Message-Id: <20230614121059.42888-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        bh=4byCaI3hLGi5X054xdozNmq02gRpZ7o7e5d0Whg0jp0=;
+        b=iwnNvVXbDdmFTDwKRKSTia/L98S9C0n6EjPcE0fJwv7l1+OEdhlWSVA9y/uW2fBowX
+         SnW5CDlW/ThbPD6BndhLrnye04WnRDpV0qoTz++jrk14TS/0bob8CbL5x/sjoo8vjZq+
+         hwshvnTykdY39zvWIXiSnDMxDHdFLDkyU1TZS6+sDY/OyYwaokqyoo49nY5MVYiKgn+i
+         E9leNJgfUhE6BFiAizZS2qBUWkj6Nol/uwUYDxKgsX/FbMvx7mpFVg7UYQQ0z0cEIPqK
+         1GZn2avOAL67Wox84TOFRzaDLHKXUcsu98/lpbftBbyQk56qubnjtoMpbgVWFpeyKWod
+         y9AQ==
+X-Gm-Message-State: AC+VfDwHzPKEB2ePuCpMKgD5rv10SDWSTp9aM1PUDwhcOV84kfBmd8OA
+        iYytve9K2oFuzuW6hFMZOVGNGM0Vw/YUoIqMU+dX2Q==
+X-Google-Smtp-Source: ACHHUZ6UKHyZY7NGQrQNB9I+73ebkiptVm7+GCwRYyTiaq5m9BNnvjsfgKgzX9XmpAwQzdvObVt4bNfhSbcV0AqLNh0=
+X-Received: by 2002:a25:341:0:b0:bad:3b62:a822 with SMTP id
+ 62-20020a250341000000b00bad3b62a822mr1878828ybd.16.1686744878136; Wed, 14 Jun
+ 2023 05:14:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230609115058.9059-1-quic_jkona@quicinc.com> <20230609115058.9059-3-quic_jkona@quicinc.com>
+ <CAA8EJpr-iKMzYP7HVQV8pzXbxzLvBaq38aovJ5Ffny18yXvJZg@mail.gmail.com> <6dc9f36a-f003-06eb-744c-0ebe645dfdf0@quicinc.com>
+In-Reply-To: <6dc9f36a-f003-06eb-744c-0ebe645dfdf0@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Wed, 14 Jun 2023 15:14:26 +0300
+Message-ID: <CAA8EJppY1Ff+zLF4PDxxTzpVj25VKCK9z+is_M0VaTi1iahbBw@mail.gmail.com>
+Subject: Re: [PATCH V4 2/4] clk: qcom: camcc-sm8550: Add camera clock
+ controller driver for SM8550
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
+On Wed, 14 Jun 2023 at 14:55, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>
+>
+>
+> On 6/9/2023 9:52 PM, Dmitry Baryshkov wrote:
+> > On Fri, 9 Jun 2023 at 14:52, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+> >>
+> >> Add support for the camera clock controller for camera clients to be
+> >> able to request for camcc clocks on SM8550 platform.
+> >>
+> >> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+> >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> >> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> >> ---
+> >> Changes since V3:
+> >>   - No changes
+> >> Changes since V2:
+> >>   - No changes
+> >> Changes since V1:
+> >>   - Sorted the PLL names in proper order
+> >>   - Updated all PLL configurations to lower case hex
+> >>   - Reused evo ops instead of adding new ops for ole pll
+> >>   - Moved few clocks to separate patch to fix patch too long error
+> >>
+> >>   drivers/clk/qcom/Kconfig        |    7 +
+> >>   drivers/clk/qcom/Makefile       |    1 +
+> >>   drivers/clk/qcom/camcc-sm8550.c | 3405 +++++++++++++++++++++++++++++++
+> >>   3 files changed, 3413 insertions(+)
+> >>   create mode 100644 drivers/clk/qcom/camcc-sm8550.c
+> >>
+> >> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> >> index 9cd1f05d436b..85efed78dc9a 100644
+> >> --- a/drivers/clk/qcom/Kconfig
+> >> +++ b/drivers/clk/qcom/Kconfig
+> >> @@ -756,6 +756,13 @@ config SM_CAMCC_8450
+> >>            Support for the camera clock controller on SM8450 devices.
+> >>            Say Y if you want to support camera devices and camera functionality.
+> >>
+> >> +config SM_CAMCC_8550
+> >> +       tristate "SM8550 Camera Clock Controller"
+> >> +       select SM_GCC_8550
+> >> +       help
+> >> +         Support for the camera clock controller on SM8550 devices.
+> >> +         Say Y if you want to support camera devices and camera functionality.
+> >> +
+> >>   config SM_DISPCC_6115
+> >>          tristate "SM6115 Display Clock Controller"
+> >>          depends on ARM64 || COMPILE_TEST
+> >> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> >> index 75d035150118..97c8cefc2fd0 100644
+> >> --- a/drivers/clk/qcom/Makefile
+> >> +++ b/drivers/clk/qcom/Makefile
+> >> @@ -101,6 +101,7 @@ obj-$(CONFIG_SDX_GCC_75) += gcc-sdx75.o
+> >>   obj-$(CONFIG_SM_CAMCC_6350) += camcc-sm6350.o
+> >>   obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
+> >>   obj-$(CONFIG_SM_CAMCC_8450) += camcc-sm8450.o
+> >> +obj-$(CONFIG_SM_CAMCC_8550) += camcc-sm8550.o
+> >>   obj-$(CONFIG_SM_DISPCC_6115) += dispcc-sm6115.o
+> >>   obj-$(CONFIG_SM_DISPCC_6125) += dispcc-sm6125.o
+> >>   obj-$(CONFIG_SM_DISPCC_6350) += dispcc-sm6350.o
+> >> diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
+> >> new file mode 100644
+> >> index 000000000000..85f0c1e09b2b
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/camcc-sm8550.c
+> >> @@ -0,0 +1,3405 @@
+> >> +// SPDX-License-Identifier: GPL-2.0-only
+> >> +/*
+> >> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+> >> + */
+> >> +
+> >> +#include <linux/clk-provider.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of_device.h>
+> >> +#include <linux/pm_runtime.h>
+> >> +#include <linux/regmap.h>
+> >> +
+> >> +#include <dt-bindings/clock/qcom,sm8550-camcc.h>
+> >> +
+> >> +#include "clk-alpha-pll.h"
+> >> +#include "clk-branch.h"
+> >> +#include "clk-rcg.h"
+> >> +#include "clk-regmap.h"
+> >> +#include "common.h"
+> >> +#include "gdsc.h"
+> >> +#include "reset.h"
+> >> +
+> >> +enum {
+> >> +       DT_IFACE,
+> >> +       DT_BI_TCXO,
+> >> +};
+> >> +
+> >> +enum {
+> >> +       P_BI_TCXO,
+> >> +       P_CAM_CC_PLL0_OUT_EVEN,
+> >> +       P_CAM_CC_PLL0_OUT_MAIN,
+> >> +       P_CAM_CC_PLL0_OUT_ODD,
+> >> +       P_CAM_CC_PLL1_OUT_EVEN,
+> >> +       P_CAM_CC_PLL2_OUT_EVEN,
+> >> +       P_CAM_CC_PLL2_OUT_MAIN,
+> >> +       P_CAM_CC_PLL3_OUT_EVEN,
+> >> +       P_CAM_CC_PLL4_OUT_EVEN,
+> >> +       P_CAM_CC_PLL5_OUT_EVEN,
+> >> +       P_CAM_CC_PLL6_OUT_EVEN,
+> >> +       P_CAM_CC_PLL7_OUT_EVEN,
+> >> +       P_CAM_CC_PLL8_OUT_EVEN,
+> >> +       P_CAM_CC_PLL9_OUT_EVEN,
+> >> +       P_CAM_CC_PLL9_OUT_ODD,
+> >> +       P_CAM_CC_PLL10_OUT_EVEN,
+> >> +       P_CAM_CC_PLL11_OUT_EVEN,
+> >> +       P_CAM_CC_PLL12_OUT_EVEN,
+> >> +};
+> >> +
+> >> +static const struct pll_vco lucid_ole_vco[] = {
+> >> +       { 249600000, 2300000000, 0 },
+> >> +};
+> >> +
+> >> +static const struct pll_vco rivian_ole_vco[] = {
+> >> +       { 777000000, 1285000000, 0 },
+> >> +};
+> >> +
+> >> +static const struct alpha_pll_config cam_cc_pll0_config = {
+> >> +       /* .l includes RINGOSC_CAL_L_VAL, CAL_L_VAL, L_VAL fields */
+> >> +       .l = 0x4444003e,
+> >
+> > I'd still insist on not touching the config.l field semantics.
+> >
+>
+> We feel it is better to update config->l field and reuse existing code
+> than adding separate function for lucid ole pll configure.
 
-  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+As you probably got it, I'm not convinced that it is a better
+approach. You are feeding additional data in a single configuration
+field and passing constant data as variadic one.
 
-are available in the Git repository at:
+>
+> >> +       .alpha = 0x8000,
+> >> +       .config_ctl_val = 0x20485699,
+> >> +       .config_ctl_hi_val = 0x00182261,
+> >> +       .config_ctl_hi1_val = 0x82aa299c,
+> >> +       .test_ctl_val = 0x00000000,
+> >> +       .test_ctl_hi_val = 0x00000003,
+> >> +       .test_ctl_hi1_val = 0x00009000,
+> >> +       .test_ctl_hi2_val = 0x00000034,
+> >> +       .user_ctl_val = 0x00008400,
+> >> +       .user_ctl_hi_val = 0x00000005,
+> >> +};
+> >> +
+> >
+> > [skipped the rest, LGTM]
+> >
+> >> +
+> >> +static struct platform_driver cam_cc_sm8550_driver = {
+> >> +       .probe = cam_cc_sm8550_probe,
+> >> +       .driver = {
+> >> +               .name = "cam_cc-sm8550",
+> >> +               .of_match_table = cam_cc_sm8550_match_table,
+> >> +       },
+> >> +};
+> >> +
+> >> +static int __init cam_cc_sm8550_init(void)
+> >> +{
+> >> +       return platform_driver_register(&cam_cc_sm8550_driver);
+> >> +}
+> >> +subsys_initcall(cam_cc_sm8550_init);
+> >
+> > As it was pointed out, this driver is built as a module by default.
+> > Please perform the tesing and cleanup before sending the driver and
+> > use module_platform_driver.
+> >
+>
+> We want clock drivers to be probed early in the bootup to avoid any
+> probe deferrals of consumer drivers. If there is any scenario where
+> clock drivers are built statically into kernel, then subsys_initcall()
+> will ensure clock drivers are probed earlier. When built as module,
+> subsys_initcall() will fallback to module_init() which is same as
+> module_platform_driver().
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.5
+Consumer driver probe deferrals are nowadays significantly prevented
+by using devlink rather than depending on the initialisation level.
+And I think both GKI and defconfig build camcc as modules.
 
-for you to fetch changes up to 878b02d5f3b56cb090dbe2c70c89273be144087f:
+>
+> Thanks,
+> Jagadeesh
+>
+> >> +
+> >> +static void __exit cam_cc_sm8550_exit(void)
+> >> +{
+> >> +       platform_driver_unregister(&cam_cc_sm8550_driver);
+> >> +}
+> >> +module_exit(cam_cc_sm8550_exit);
+> >> +
+> >> +MODULE_DESCRIPTION("QTI CAMCC SM8550 Driver");
+> >> +MODULE_LICENSE("GPL");
+> >> --
+> >> 2.40.1
+> >>
+> >
+> >
 
-  clk: imx: clk-imx8mp: improve error handling in imx8mp_clocks_probe() (2023-06-12 12:20:02 +0300)
 
-----------------------------------------------------------------
-i.MX clocks changes for 6.5
 
-- Remove CLK_SET_RATE_PARENT flag from LDB clocks on i.MX6SX
-- Keep UART clocks enabled during kernel boot if earlycon is set
-- Drop the imx_unregister_clocks as there are no users for it
-- Switch to _safe iterator on imx_clk_scu_unregister to avoid use after free
-- Add determine_rate op to the imx8m composite clock
-- Use device managed API for iomap and kzalloc for i.MXRT1050,
-  i.MX8MN, i.MX8MP and i.MX93 clock controller drivers
-- Add missing interrupt DT property for the i.MX8M clock controller
-
-----------------------------------------------------------------
-Adam Ford (1):
-      clk: imx: composite-8m: Add imx8m_divider_determine_rate
-
-Alexander Stein (2):
-      clk: imx6ul: retain early UART clocks during kernel init
-      dt-bindings: clock: imx8m: Add missing interrupt property
-
-Dan Carpenter (1):
-      clk: imx: scu: use _safe list iterator to avoid a use after free
-
-Fabio Estevam (1):
-      clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
-
-Hao Luo (1):
-      clk: imx: clk-imx8mn: fix memory leak in imx8mn_clocks_probe
-
-Kai Ma (1):
-      clk: imx: clk-imxrt1050: fix memory leak in imxrt1050_clocks_probe
-
-Peng Fan (1):
-      clk: imx: drop imx_unregister_clocks
-
-Yuxing Liu (1):
-      clk: imx: clk-imx8mp: improve error handling in imx8mp_clocks_probe()
-
-Zhanhao Hu (1):
-      clk: imx93: fix memory leak and missing unwind goto in imx93_clocks_probe
-
- .../devicetree/bindings/clock/imx8m-clock.yaml     |  3 +++
- drivers/clk/imx/clk-composite-8m.c                 | 31 ++++++++++++++++++++++
- drivers/clk/imx/clk-imx6sx.c                       |  8 +++---
- drivers/clk/imx/clk-imx6ul.c                       |  2 ++
- drivers/clk/imx/clk-imx8mn.c                       |  8 +++---
- drivers/clk/imx/clk-imx8mp.c                       | 24 +++++++++--------
- drivers/clk/imx/clk-imx93.c                        | 15 ++++++-----
- drivers/clk/imx/clk-imxrt1050.c                    | 22 ++++++++++-----
- drivers/clk/imx/clk-scu.c                          |  4 +--
- drivers/clk/imx/clk.c                              |  8 ------
- drivers/clk/imx/clk.h                              |  1 -
- 11 files changed, 82 insertions(+), 44 deletions(-)
+-- 
+With best wishes
+Dmitry
