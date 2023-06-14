@@ -2,61 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AA6C0015E
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 10:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D009EB64DC
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 10:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243336AbjFNKWb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 06:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35074 "EHLO
+        id S235063AbjFNKWn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 06:22:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241554AbjFNKW1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 06:22:27 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E9721BC9
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:24 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f624daccd1so7856764e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:24 -0700 (PDT)
+        with ESMTP id S243297AbjFNKW3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 06:22:29 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60E0E1BC6
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:27 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id 38308e7fff4ca-2b1af9ef7a9so6854951fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686738142; x=1689330142;
+        d=linaro.org; s=google; t=1686738145; x=1689330145;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=43WXKM//3PGv9o6RwF8pM2BvmgRQSkW/hfnQEDsAZP4=;
-        b=U8fQiWmr9bxoRWfffAbcaVo2R89LciNBj3wVxa3iiD+ujbrqjLzJQvCXle1rPA/da7
-         0vWRCDgCciZdydIA1Azy6jQZfIdUitToR19SExMljjXGw67M0gLBNjTyJaaqXV1N7Cqs
-         oE9HBSCsdkhIsqZP4k9GztO+NepcSgZsDT4Fn56fKu9HJIhdisGSKS4zvTNQNJKGyLOZ
-         PR8+rmo0AdiuDJVHxnW43+CbZuKT1jDnfp5QrpQ9XC4UONngDUJBhq2CnoJ+lNtlUw1q
-         2TQriGMyCx3aE7F96qEtH1RfbdzX88Uou6hM5k5s1LHrJF7ZkorfJDmrf8Ww1WSr1g0m
-         25oQ==
+        bh=UEM3N0iLIlvYLepw85JsPFibfyRzMkZ98OPjRwmkvbs=;
+        b=UrbFlgODVPmj2NGdwjbJRN5t/sB1AfaciGH68h64gdEejWHI3SD3zK8hGzT1VGsHuc
+         Xx+z+e1I9qjCkj2StftG05xScivv+lWx3n41s9vEVxgE6CNNvtjCnIrT1wUSeE8sZMIy
+         LM9elia3GePns6kaWAfbSjsKhsdmZ+cm+XGmvUSyUB79k1eEtD7iK84Dt1K+JQOc9B87
+         gM6zOHZpYr4qT11kvmm3PpxFgmJL8fZG+vDczAtreBIclrmX49LzF+cqqXYDka1/uwht
+         zZIeb+6ksWaTk5cKtAaTYfMT8ukPLWo2TlI3SuhhL1Sx2LpMao643lmxFz7/Oe7f+f9n
+         neIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686738142; x=1689330142;
+        d=1e100.net; s=20221208; t=1686738145; x=1689330145;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=43WXKM//3PGv9o6RwF8pM2BvmgRQSkW/hfnQEDsAZP4=;
-        b=cY6qMA+0J8jpZlX4fy7i8xsFM5IU7/LFWpWVGTS8aNpUs0A8eegy4A9zhCfqr/st3K
-         aHAfX1bzFimqTYDy9YMp1lnRnlo7/Ee3JIRumAAEpKPnUhgxk8wGd1spyfbOQ72H9cEq
-         C+qvB8da5Hkbx87qZpZtbxUMNUrsnDIC8rg8POewdy70xGRQbEyUedHZ/h1iHySZ/u7t
-         ef7oHMaf4EKPq6hufHw/LOGlLuP8mPAbZuzO4WPydzEFSNBthdLv4GtWma5Dk4M3K0QE
-         K/EHSDnH9oH3xsWalDdvVHaPSil+wfLVQbBvLOdr0933idnVOQS0PvrKzepJ/K2jMcZo
-         FsXg==
-X-Gm-Message-State: AC+VfDzYipW2BGaobYgkBRlzANOT8HL+/awkvr6+zbqNqLOSWUkzK85L
-        Ssih1WFTzmb1fkB5rxQVyzwi7w==
-X-Google-Smtp-Source: ACHHUZ52hNa9pY3ARsvP3IiMeTf5Vwef/LVUBObb3b+Dg6p1+N7pTNKu5uUe1p8MGRv20CtzQgU+vA==
-X-Received: by 2002:a2e:998f:0:b0:2af:19dd:ecda with SMTP id w15-20020a2e998f000000b002af19ddecdamr5822287lji.45.1686738142658;
-        Wed, 14 Jun 2023 03:22:22 -0700 (PDT)
+        bh=UEM3N0iLIlvYLepw85JsPFibfyRzMkZ98OPjRwmkvbs=;
+        b=CEsZmbPa4G35iou+oeQCIdIuoRMtOtqqRgbla/VArVc/+RbYrQrOQIa7nm+zIOAnGJ
+         WhuzMHMQY7D1WWadcpeOqPi/wSvSJki7uiUT7oskaOT5wR/o4SujMK88emNOb9oaKfrV
+         +qEW7fk3W9Lgn/hyFlYSs1u+LhTAit0aIimO5zkHs0Zv6tpfIndk2QB1ZCN2kbtL078L
+         1SM1cBxHQWpKChD9Ijb8akKRCgZVzCwA+K/RZegp09ZVzZ2uWhD8R/29uJGJ/y+nuUFZ
+         Wft2syAaOuuXzCqV0W7Bo2LEINewecNIN+w1jiXB/GgLu5n2qmW8YU3CJCf09MuqqvVM
+         lopw==
+X-Gm-Message-State: AC+VfDx8uKPQ/MI/W4v80OartA6HOG7qTeA0i/79yr5SfJZPAR2cfdZL
+        U8VO3Ieck9PaNT9RrGiKRjyyeQ==
+X-Google-Smtp-Source: ACHHUZ6QIgny4qx99n2wOMJLyHIrxll5PjxQICjC+F7POpODJ+0rfetBkmTUy/GzGbRQRyZ4lnoHNQ==
+X-Received: by 2002:a2e:7208:0:b0:2b1:eb9e:20df with SMTP id n8-20020a2e7208000000b002b1eb9e20dfmr5951905ljc.17.1686738145613;
+        Wed, 14 Jun 2023 03:22:25 -0700 (PDT)
 Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id m2-20020a2eb6c2000000b002b20d8f270asm2520057ljo.74.2023.06.14.03.22.21
+        by smtp.gmail.com with ESMTPSA id m2-20020a2eb6c2000000b002b20d8f270asm2520057ljo.74.2023.06.14.03.22.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 03:22:22 -0700 (PDT)
+        Wed, 14 Jun 2023 03:22:25 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 14 Jun 2023 12:22:15 +0200
-Subject: [PATCH v5 04/22] clk: qcom: smd-rpm: Move some RPM resources to
- the common header
+Date:   Wed, 14 Jun 2023 12:22:17 +0200
+Subject: [PATCH v5 06/22] interconnect: qcom: icc-rpm: Introduce keep_alive
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v5-4-eeaa09d0082e@linaro.org>
+Message-Id: <20230526-topic-smd_icc-v5-6-eeaa09d0082e@linaro.org>
 References: <20230526-topic-smd_icc-v5-0-eeaa09d0082e@linaro.org>
 In-Reply-To: <20230526-topic-smd_icc-v5-0-eeaa09d0082e@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -76,92 +75,109 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686738135; l=2480;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686738135; l=3661;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=htdvXfCYU07v6+YNPv56ef+1cDlrbXu+3LbOKbiWsm8=;
- b=7DZPhtfi+3xUTEhhu1RVqIbrM6ksdtqrUcEvjTisfKACROd9aNUzbsvdFv9HoXuwsQUytfRrK
- puS7GeVEFAPBe0hnYe3QLCyOkk6NRJpVKDLSgpI4wzD57iqDzB75XsW
+ bh=g6kESh9vFn5cUExPwamnhleED6tFd+S7dtFe11cmEVE=;
+ b=+5TX+IWvITvOPt3FKf80PLSfZpyEXg88Ruo8CN8uG442tDQftNEqI6MIJVm4RfvIrr5ZrEjJb
+ Pyy9LVaNOsnCtkERlGg1opf2kH26p6NKEihhv9gZBKtDVHoKjOeOEUI
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In preparation for handling the bus clocks in the icc driver, carve out
-some defines and a struct definition to the common rpm header.
+The downstream kernel employs the concept of "keeping the bus alive"
+by voting for the minimum (XO/19.2MHz) rate at all times on certain
+(well, most) buses. This is a very important thing to have, as if we
+either have a lackluster/wrong DT that doesn't specify a (high enough)
+vote on a certain bus, we may lose access to the entire bus altogether.
+This is very apparent when we only start introducing interconnect
+support on a given platform and haven't yet introduced voting on all
+peripherals.
+
+The same can happen if we only have a single driver casting a vote on
+a certain bus and that driver exits/crashes/suspends.
+
+The keepalive vote is limited to the ACTIVE bucket, as keeping a
+permanent vote on the SLEEP one could prevent the platform from properly
+entering low power mode states.
+
+Introduce the very same concept, with a slight twist: the vendor
+kernel checks whether the rate is zero before setting the minimum
+vote, but that's rather silly, as in doing so we're at the mercy
+of CCF. Instead, explicitly clamp the rates to always be >= 19.2 MHz
+for providers with keep_alive=true.
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/clk-smd-rpm.c   | 13 -------------
- include/linux/soc/qcom/smd-rpm.h | 15 +++++++++++++++
- 2 files changed, 15 insertions(+), 13 deletions(-)
+ drivers/interconnect/qcom/icc-rpm.c | 10 ++++++++++
+ drivers/interconnect/qcom/icc-rpm.h |  3 +++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index e4de74b68797..937cb1515968 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -18,13 +18,6 @@
+diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
+index 6acc7686ed38..863e8ba1daa2 100644
+--- a/drivers/interconnect/qcom/icc-rpm.c
++++ b/drivers/interconnect/qcom/icc-rpm.c
+@@ -50,6 +50,8 @@
+ #define NOC_QOS_MODE_FIXED_VAL		0x0
+ #define NOC_QOS_MODE_BYPASS_VAL		0x2
  
- #include <dt-bindings/clock/qcom,rpmcc.h>
++#define ICC_BUS_CLK_MIN_RATE		19200000ULL
++
+ static int qcom_icc_set_qnoc_qos(struct icc_node *src)
+ {
+ 	struct icc_provider *provider = src->provider;
+@@ -380,6 +382,13 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+ 		do_div(rate, src_qn->buswidth);
+ 		rate = min_t(u64, rate, LONG_MAX);
  
--#define QCOM_RPM_KEY_SOFTWARE_ENABLE			0x6e657773
--#define QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY	0x62636370
--#define QCOM_RPM_SMD_KEY_RATE				0x007a484b
--#define QCOM_RPM_SMD_KEY_ENABLE				0x62616e45
--#define QCOM_RPM_SMD_KEY_STATE				0x54415453
--#define QCOM_RPM_SCALING_ENABLE_ID			0x2
--
- #define __DEFINE_CLK_SMD_RPM_PREFIX(_prefix, _name, _active,		      \
- 				    type, r_id, key)			      \
- 	static struct clk_smd_rpm clk_smd_rpm_##_prefix##_active;	      \
-@@ -171,12 +164,6 @@ struct clk_smd_rpm {
- 	unsigned long rate;
++		/*
++		 * Downstream checks whether the requested rate is zero, but it makes little sense
++		 * to vote for a value that's below the lower threshold, so let's not do so.
++		 */
++		if (bucket == QCOM_ICC_BUCKET_WAKE && qp->keep_alive)
++			rate = max(ICC_BUS_CLK_MIN_RATE, rate);
++
+ 		if (qp->bus_clk_rate[i] == rate)
+ 			continue;
+ 
+@@ -453,6 +462,7 @@ int qnoc_probe(struct platform_device *pdev)
+ 	for (i = 0; i < qp->num_bus_clks; i++)
+ 		qp->bus_clks[i].id = bus_clocks[i];
+ 
++	qp->keep_alive = desc->keep_alive;
+ 	qp->type = desc->type;
+ 	qp->qos_offset = desc->qos_offset;
+ 
+diff --git a/drivers/interconnect/qcom/icc-rpm.h b/drivers/interconnect/qcom/icc-rpm.h
+index ee705edf19dd..d2c04c400cad 100644
+--- a/drivers/interconnect/qcom/icc-rpm.h
++++ b/drivers/interconnect/qcom/icc-rpm.h
+@@ -33,6 +33,7 @@ enum qcom_icc_type {
+  * @bus_clk_rate: bus clock rate in Hz
+  * @bus_clks: the clk_bulk_data table of bus clocks
+  * @intf_clks: a clk_bulk_data array of interface clocks
++ * @keep_alive: whether to always keep a minimum vote on the bus clocks
+  * @is_on: whether the bus is powered on
+  */
+ struct qcom_icc_provider {
+@@ -45,6 +46,7 @@ struct qcom_icc_provider {
+ 	u64 bus_clk_rate[NUM_BUS_CLKS];
+ 	struct clk_bulk_data bus_clks[NUM_BUS_CLKS];
+ 	struct clk_bulk_data *intf_clks;
++	bool keep_alive;
+ 	bool is_on;
  };
  
--struct clk_smd_rpm_req {
--	__le32 key;
--	__le32 nbytes;
--	__le32 value;
--};
--
- struct rpm_smd_clk_desc {
- 	struct clk_smd_rpm **clks;
- 	size_t num_clks;
-diff --git a/include/linux/soc/qcom/smd-rpm.h b/include/linux/soc/qcom/smd-rpm.h
-index 99499e4b080e..8190878645f9 100644
---- a/include/linux/soc/qcom/smd-rpm.h
-+++ b/include/linux/soc/qcom/smd-rpm.h
-@@ -2,6 +2,8 @@
- #ifndef __QCOM_SMD_RPM_H__
- #define __QCOM_SMD_RPM_H__
- 
-+#include <linux/types.h>
-+
- struct qcom_smd_rpm;
- 
- #define QCOM_SMD_RPM_ACTIVE_STATE	0
-@@ -45,6 +47,19 @@ struct qcom_smd_rpm;
- #define QCOM_SMD_RPM_PKA_CLK	0x616b70
- #define QCOM_SMD_RPM_MCFG_CLK	0x6766636d
- 
-+#define QCOM_RPM_KEY_SOFTWARE_ENABLE			0x6e657773
-+#define QCOM_RPM_KEY_PIN_CTRL_CLK_BUFFER_ENABLE_KEY	0x62636370
-+#define QCOM_RPM_SMD_KEY_RATE				0x007a484b
-+#define QCOM_RPM_SMD_KEY_ENABLE				0x62616e45
-+#define QCOM_RPM_SMD_KEY_STATE				0x54415453
-+#define QCOM_RPM_SCALING_ENABLE_ID			0x2
-+
-+struct clk_smd_rpm_req {
-+	__le32 key;
-+	__le32 nbytes;
-+	__le32 value;
-+};
-+
- int qcom_rpm_smd_write(struct qcom_smd_rpm *rpm,
- 		       int state,
- 		       u32 resource_type, u32 resource_id,
+@@ -102,6 +104,7 @@ struct qcom_icc_desc {
+ 	const char * const *bus_clocks;
+ 	const char * const *intf_clocks;
+ 	size_t num_intf_clocks;
++	bool keep_alive;
+ 	bool no_clk_scaling;
+ 	enum qcom_icc_type type;
+ 	const struct regmap_config *regmap_cfg;
 
 -- 
 2.41.0
