@@ -2,122 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 315C0EB64DC
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 11:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE482EB64D9
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 12:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236224AbjFNL55 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 07:57:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37938 "EHLO
+        id S235961AbjFNMLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 08:11:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234906AbjFNL54 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 07:57:56 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF38AA7;
-        Wed, 14 Jun 2023 04:57:55 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35E71JX9014819;
-        Wed, 14 Jun 2023 11:57:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=hS3H+3Aq2/7Xg25+al1ov7djT3yNbMlTalgJCAOotOc=;
- b=jHUn2OQuZPDwO0sqr9hyzNuA/nOakq05WoUkJfPxTUm0fBjGWB+8eHG6sM63M5bJhDo+
- CfUn3ht8KkgJ22ZjvWNzdn1vvlN4q4NuwIpwQ2S/z7hH+4hOxBpmu8zCKU10XBr4nOVJ
- 4WVZQ8idUtkk9scecZ7biB9wdoBp1hl/JDfMmhMp5aBotUfnnZyRYVEYRHV7vDrglvNo
- mG0VMjbaeuBzdktwpnnd5EtaRgjQzHYeXPfmHtp0G8iqMx+G16tdPmMxfbse/06+XppO
- RufUbErV64UDWJvOjbU09Ee6fewNXp6eK4hf/UUPiGWRCjZs2tN9D8IBomHYJGP7tTd9 pQ== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r6nqh38q0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 11:57:52 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35EBvpm5014707
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Jun 2023 11:57:51 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 14 Jun
- 2023 04:57:45 -0700
-Message-ID: <65fd51f1-56d9-7b7b-7757-229cbb65051d@quicinc.com>
-Date:   Wed, 14 Jun 2023 17:27:41 +0530
+        with ESMTP id S233227AbjFNMLa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 08:11:30 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B920D1BFD
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:11:13 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3090d3e9c92so6415597f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 05:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686744672; x=1689336672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ge+PAUGZKltRvYWfI3TIkZLbX5qEJ8c1zqJq4aE+VKY=;
+        b=i+7KLBzGa6EDe9X035n2t3xZfw18EGKMD5/vy/nOuPzKxCgoKzQjSkfRDOO5yzgEUd
+         wAUHH6aF3JN6vK7piNdhDrHBqLYh63UNIA8hZMTeSWWRhhT2SuR/kI5ux+1IHzY5Pmjg
+         RLt34xNTLynai3g8ISGh6JxzrQ/COf4Y2x5hJILi4VD/LTniJfLSelbBJ+q81UsOEW8/
+         jKJIjSZvGXdY21fLm4rrz6iMkpZSsrEACCfBrOH1P7j/Q/PRXrr6yrYz/00GitgT2hXB
+         Ls304hHCcFCCVYynywTIWKJU24PU75ToZGF0jxknJw2UogjqRRF8yT2CG27SXu0VDZSX
+         /QTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686744672; x=1689336672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ge+PAUGZKltRvYWfI3TIkZLbX5qEJ8c1zqJq4aE+VKY=;
+        b=LvBDvCT4vhDYe++17VYIy+AtRA6ugfzFqWTlMt/AtuiA34Qnz5ZHB5/qhJ56KBVlPA
+         QA6N9zIpDlaGPFh+fx4/e6ICDXgF8QCeBN/vLSKPGlHNRZDiJi/drurgtLIqKk/0C/d7
+         J8MCvUAPwSuEKyDm3H2g4ijVOKYKtxcQ0f6/IotWWww5TAqZoLWBL5QESHt1IsFr7jCb
+         HDqANwUHi/ql9khyD3lqeoE0jilbbSRf+Fq8oNVLv7PdemLoN7mGzHiIIUkbrNTK4axZ
+         Uj6IJjbZg86L67o1F21HER1XmYdAj3jqtqdIhWBUR/h1C9BCeKitCpq0rNFWmLhNW11O
+         4OZw==
+X-Gm-Message-State: AC+VfDyGKv2jfZoCDtVIIXxpPdsHRdQsew/xUtzBWvwRwhlh3lq9m4L5
+        I8vBN2ukDk66pyrKanMBSU8mvSMuJZjE4X9hHsSJeg==
+X-Google-Smtp-Source: ACHHUZ7e3VqGRTMl+9qL5siJ7YTEPgn1IwbO0xBI2LWD4uIG+jKrIrRyMTOdSzx4Hju9i2pepRULYQ==
+X-Received: by 2002:adf:e9cb:0:b0:309:5188:5928 with SMTP id l11-20020adfe9cb000000b0030951885928mr10337077wrn.35.1686744672185;
+        Wed, 14 Jun 2023 05:11:12 -0700 (PDT)
+Received: from hackbox.lan ([188.24.163.226])
+        by smtp.gmail.com with ESMTPSA id k1-20020a5d6e81000000b0030e5ccaec84sm18244057wrz.32.2023.06.14.05.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jun 2023 05:11:11 -0700 (PDT)
+From:   Abel Vesa <abel.vesa@linaro.org>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.5
+Date:   Wed, 14 Jun 2023 15:10:59 +0300
+Message-Id: <20230614121059.42888-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH V4 0/4] Add camera clock controller support for SM8550
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230609115058.9059-1-quic_jkona@quicinc.com>
- <88b41c0f-e515-ce94-e4fd-befbeef53781@linaro.org>
-From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <88b41c0f-e515-ce94-e4fd-befbeef53781@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uD70rnrtJ2NoboKK43Y3rEd16aVgRzkH
-X-Proofpoint-ORIG-GUID: uD70rnrtJ2NoboKK43Y3rEd16aVgRzkH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-14_07,2023-06-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
- suspectscore=0 mlxscore=0 priorityscore=1501 impostorscore=0 spamscore=0
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306140102
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
 
+  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
 
-On 6/9/2023 6:24 PM, Konrad Dybcio wrote:
-> 
-> 
-> On 9.06.2023 13:50, Jagadeesh Kona wrote:
->> Add bindings, driver and devicetree node for camera clock controller on
->> SM8550.
->>
->> Jagadeesh Kona (4):
->>    dt-bindings: clock: qcom: Add SM8550 camera clock controller
->>    clk: qcom: camcc-sm8550: Add camera clock controller driver for SM8550
->>    clk: qcom: camcc-sm8550: Add support for qdss, sleep and xo clocks
->>    arm64: dts: qcom: sm8550: Add camera clock controller
-> What's the final verdict on RINGOSC_L etc.?
-> 
-> Konrad
+are available in the Git repository at:
 
-We would like to pass RINGOSC_CAL_L field directly in config->l value 
-itself and reuse existing code rather than adding a separate function 
-for lucid ole pll configure.
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.5
 
-Thanks,
-Jagadeesh
+for you to fetch changes up to 878b02d5f3b56cb090dbe2c70c89273be144087f:
 
->>
->>   .../bindings/clock/qcom,sm8450-camcc.yaml     |    8 +-
->>   arch/arm64/boot/dts/qcom/sm8550.dtsi          |   15 +
->>   drivers/clk/qcom/Kconfig                      |    7 +
->>   drivers/clk/qcom/Makefile                     |    1 +
->>   drivers/clk/qcom/camcc-sm8550.c               | 3585 +++++++++++++++++
->>   include/dt-bindings/clock/qcom,sm8550-camcc.h |  187 +
->>   6 files changed, 3801 insertions(+), 2 deletions(-)
->>   create mode 100644 drivers/clk/qcom/camcc-sm8550.c
->>   create mode 100644 include/dt-bindings/clock/qcom,sm8550-camcc.h
->>
+  clk: imx: clk-imx8mp: improve error handling in imx8mp_clocks_probe() (2023-06-12 12:20:02 +0300)
+
+----------------------------------------------------------------
+i.MX clocks changes for 6.5
+
+- Remove CLK_SET_RATE_PARENT flag from LDB clocks on i.MX6SX
+- Keep UART clocks enabled during kernel boot if earlycon is set
+- Drop the imx_unregister_clocks as there are no users for it
+- Switch to _safe iterator on imx_clk_scu_unregister to avoid use after free
+- Add determine_rate op to the imx8m composite clock
+- Use device managed API for iomap and kzalloc for i.MXRT1050,
+  i.MX8MN, i.MX8MP and i.MX93 clock controller drivers
+- Add missing interrupt DT property for the i.MX8M clock controller
+
+----------------------------------------------------------------
+Adam Ford (1):
+      clk: imx: composite-8m: Add imx8m_divider_determine_rate
+
+Alexander Stein (2):
+      clk: imx6ul: retain early UART clocks during kernel init
+      dt-bindings: clock: imx8m: Add missing interrupt property
+
+Dan Carpenter (1):
+      clk: imx: scu: use _safe list iterator to avoid a use after free
+
+Fabio Estevam (1):
+      clk: imx: imx6sx: Remove CLK_SET_RATE_PARENT from the LDB clocks
+
+Hao Luo (1):
+      clk: imx: clk-imx8mn: fix memory leak in imx8mn_clocks_probe
+
+Kai Ma (1):
+      clk: imx: clk-imxrt1050: fix memory leak in imxrt1050_clocks_probe
+
+Peng Fan (1):
+      clk: imx: drop imx_unregister_clocks
+
+Yuxing Liu (1):
+      clk: imx: clk-imx8mp: improve error handling in imx8mp_clocks_probe()
+
+Zhanhao Hu (1):
+      clk: imx93: fix memory leak and missing unwind goto in imx93_clocks_probe
+
+ .../devicetree/bindings/clock/imx8m-clock.yaml     |  3 +++
+ drivers/clk/imx/clk-composite-8m.c                 | 31 ++++++++++++++++++++++
+ drivers/clk/imx/clk-imx6sx.c                       |  8 +++---
+ drivers/clk/imx/clk-imx6ul.c                       |  2 ++
+ drivers/clk/imx/clk-imx8mn.c                       |  8 +++---
+ drivers/clk/imx/clk-imx8mp.c                       | 24 +++++++++--------
+ drivers/clk/imx/clk-imx93.c                        | 15 ++++++-----
+ drivers/clk/imx/clk-imxrt1050.c                    | 22 ++++++++++-----
+ drivers/clk/imx/clk-scu.c                          |  4 +--
+ drivers/clk/imx/clk.c                              |  8 ------
+ drivers/clk/imx/clk.h                              |  1 -
+ 11 files changed, 82 insertions(+), 44 deletions(-)
