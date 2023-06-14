@@ -2,61 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C61EB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 10:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C21EB64DA
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 10:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243862AbjFNKYD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 06:24:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36164 "EHLO
+        id S243915AbjFNKY1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 06:24:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243554AbjFNKXQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 06:23:16 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A482A26B5
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:48 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b1c30a1653so6773221fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:48 -0700 (PDT)
+        with ESMTP id S243416AbjFNKXS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 06:23:18 -0400
+Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4CB270E
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:51 -0700 (PDT)
+Received: by mail-lj1-x22d.google.com with SMTP id 38308e7fff4ca-2b1fcda0f92so6990591fa.2
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:22:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686738167; x=1689330167;
+        d=linaro.org; s=google; t=1686738169; x=1689330169;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=veLz5A1i1wdbEZwh7DP/XHxTSWS7AwHgX3VHj1ZonVA=;
-        b=Vew4HSMfu+xafJn5obicEMi9i6UqABoLV5C6mkVGKnvOxUphMt2tLluSHJEu+DZOVc
-         5Q96/nK8JAWLEIvdy0qZXiuQMiUfo6KTYKPx7OmVgRUf67O5gVsUqKv0kMydtX4FRiEI
-         ph4jPfcWCw1sY7S1cn3y+HpLUO23cFtp0xM26c5nzE0Yiqez6iKrHIL7JXAjL0VGIDkw
-         Ei7k8OwD3z7fqEPnJ/0rcIq9Ocv1YpKT5o2inBMbcOH96G5DELtE20EGmftCkmUlfutp
-         i6c5F/jRr1oMojvTZ+SnzvpOvhkCWTu/r6tNyISvWVdGAlRIB55HEMQ27aFRNtrlxK3s
-         DfYg==
+        bh=Q5jMi4yB5xRipw+kSFiWjcxeJA+ox3eKVfPbvkx2gqs=;
+        b=aFQmIVXIbZIZkW27XzgM3oK1Cbw9GzcmQqyRJi0MVOlEFIxpQ16p80YaSy/nEI1hqz
+         LGDtSD66pjCZHP7tOQhPzkTyFQbEf6NWSHPKAq1bxci449w5M8gGmwpAl/71SJlCzaOb
+         uxj4HqrPatWLjJTuD/AeP650NqCM40kQM8R0zCKEela+Eg0WkRDS0cWzVvg9mph23Uaj
+         ncsVb+tK/0+prz3H4WhCzQ2cbyTAntEaR+WOkh7OYB8wEVDOYBLWyzOU96eJFozUS7+N
+         eEY9PpY3SpDo/EH3LHEXc7oeWwhkRTb5rjBojQS36bURYnAv6lY3gYX8WdVf0lsoI8EV
+         B7ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686738167; x=1689330167;
+        d=1e100.net; s=20221208; t=1686738169; x=1689330169;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=veLz5A1i1wdbEZwh7DP/XHxTSWS7AwHgX3VHj1ZonVA=;
-        b=Rtzh+18+RSG5ypdsuo7/x5yHZ1xN8+enPCCvYxQ9mzYdqLYoFzaqsJOeu1K6igxRPl
-         EOAM04ypvqEPZYPmBJbiRQsElEgt4doJChhMtXxnWfTeM6t3XDNK/RfU57vNpvvUjAN0
-         0BLqJrRi2LI6YhonF7IDwM56tJREZDweOZ32bJ+fcecSnTcFedF0ImNRiaD3A3g5FOHY
-         97e7SUmUSt+bgi9aZnMhPiairDepDlVEhZvKoJNfR8NQmYwErvqv7ckfa0Dbtj3fDA9u
-         TdGmFePaBQDuRA3NDTXiwHZiYoe8ZKGXtCvpq62dT8iIZmgqVTdZfboBAytspmlC8nG2
-         aZJA==
-X-Gm-Message-State: AC+VfDzmU2yn2Op7DR1aTpy6xBWaufQutsSj4RddeC22h2VPcd8bIw86
-        JyXqe82pUcR8fFyNI9ga1ENd+A==
-X-Google-Smtp-Source: ACHHUZ7AC7zThAXv8R+ZbEGQa7PVc/pWh1q8VxD6HfCrblDsvp9LYYtOVPBsJDfMHjuNf8FI3k0SDw==
-X-Received: by 2002:a2e:9ed4:0:b0:2b3:2f9b:7c99 with SMTP id h20-20020a2e9ed4000000b002b32f9b7c99mr4731903ljk.14.1686738166645;
-        Wed, 14 Jun 2023 03:22:46 -0700 (PDT)
+        bh=Q5jMi4yB5xRipw+kSFiWjcxeJA+ox3eKVfPbvkx2gqs=;
+        b=KClYOvIRWnsTzhBA/E2y8lRnDwd4w9RJmIUOunQyPIbDho61BodWBp6HdDeAQ5dPlC
+         Op2ME67vcyPpTWeZKPGTkdhOK+4YLAg16tex2xyko32vDDOxmpALlJ29uvuE60WlNV1Q
+         QynkuehjNo/65QEX9WLAtBfw9dZD0J6SSTI7JV8MDc5adUS/BYoM0gCNG9buRmm6ZPhj
+         zkS1xcQoHwZyCPK2/D/j/L21/d2FoBeH4q6XcTf06rnPXQb1AtuxYYiMt/6d0ubWOoTX
+         f9VzU8RIckofKj1jsmVkNNPnEBh231gd+X/RzvVJeR90oeZsWlnj1KDc0JGcCvLS3UB4
+         BhkQ==
+X-Gm-Message-State: AC+VfDzR6w8wO5JymEeGAK5wxwrdPindUsEXRh1z9KxyF3g9NQhXJkAm
+        6OHU/9NaTBOHMdfm5wpVVfV78A==
+X-Google-Smtp-Source: ACHHUZ4rNxbYlxD4D1e8ic1iqett9Ik0RtzDT2jOJ15sneHH61t6fU7iZZn4fgy5F401CB1k6c5OzQ==
+X-Received: by 2002:a2e:9891:0:b0:2b3:4cff:60c5 with SMTP id b17-20020a2e9891000000b002b34cff60c5mr462417ljj.2.1686738169630;
+        Wed, 14 Jun 2023 03:22:49 -0700 (PDT)
 Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
-        by smtp.gmail.com with ESMTPSA id m2-20020a2eb6c2000000b002b20d8f270asm2520057ljo.74.2023.06.14.03.22.45
+        by smtp.gmail.com with ESMTPSA id m2-20020a2eb6c2000000b002b20d8f270asm2520057ljo.74.2023.06.14.03.22.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jun 2023 03:22:46 -0700 (PDT)
+        Wed, 14 Jun 2023 03:22:49 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 14 Jun 2023 12:22:31 +0200
-Subject: [PATCH v5 20/22] interconnect: qcom: icc-rpm: Set bandwidth on
- both contexts
+Date:   Wed, 14 Jun 2023 12:22:33 +0200
+Subject: [PATCH v5 22/22] interconnect: qcom: icc-rpm: Fix bandwidth
+ calculations
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v5-20-eeaa09d0082e@linaro.org>
+Message-Id: <20230526-topic-smd_icc-v5-22-eeaa09d0082e@linaro.org>
 References: <20230526-topic-smd_icc-v5-0-eeaa09d0082e@linaro.org>
 In-Reply-To: <20230526-topic-smd_icc-v5-0-eeaa09d0082e@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -76,123 +76,143 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Stephan Gerhold <stephan@gerhold.net>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1686738135; l=3364;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1686738136; l=5027;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=9kP/iaUhZf3U3lfbCEW0MMZ5Yx9Q4Ewh24pZxbnYFCI=;
- b=G3C36fK0PvmUADA2Ioc5+Dn0D5wZvuvVotsaig8AlqwGM/Ls8h7qjoShdfGZCdO7Us9Qq8QjK
- 5ti3o5/Gq16ASrGMj/0vkUPSe5Wt8m/TJFU8qAZGuEvMrc/B7t9ms3g
+ bh=Y6xOksmJ4mLZEd7yKDwUFVfxkWIq2Zds5gCs+rlOv40=;
+ b=NYN1utIToJqOpynv4MfxledDji90pHdIJZVykGWzq3UsyI8id0Rk1b1Hhk1g5KBD53JSF4rr/
+ B71Z7Cup3hBBBdGiwOhmGsuQYnAqLZRH4NQZbsti0DQYTvOZflKu6VX
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Up until now, for some reason we've only been setting bandwidth values
-on the active-only context. That pretty much meant that RPM could lift
-all votes when entering sleep mode. Or never sleep at all.
+Up until now, we've been aggregating the bandwidth values and only
+dividing them by the bus width of the source node. This was completely
+wrong, as different nodes on a given path may (and usually do) have
+varying bus widths.  That in turn, resulted in the calculated clock rates
+being completely bogus - usually they ended up being much higher, as
+NoC_A<->NoC_B links are very wide.
 
-That in turn could potentially break things like USB wakeup, as the
-connection between APSS and SNoC/PNoC would simply be dead.
-
-Set the values appropriately.
+Since we're not using the aggregate bandwidth value for anything other
+than clock rate calculations, remodel qcom_icc_bus_aggregate() to
+calculate the per-context clock rate for a given provider, taking into
+account the bus width of every individual node.
 
 Fixes: 30c8fa3ec61a ("interconnect: qcom: Add MSM8916 interconnect provider driver")
+Reported-by: Stephan Gerhold <stephan@gerhold.net>
 Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/interconnect/qcom/icc-rpm.c | 54 +++++++++++++++++++------------------
- 1 file changed, 28 insertions(+), 26 deletions(-)
+ drivers/interconnect/qcom/icc-rpm.c | 59 ++++++++++++-------------------------
+ 1 file changed, 19 insertions(+), 40 deletions(-)
 
 diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index 47d034284e0d..ac84fe0bc852 100644
+index b7e0dfbdd26d..4ab410e477ce 100644
 --- a/drivers/interconnect/qcom/icc-rpm.c
 +++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -205,34 +205,39 @@ static int qcom_icc_qos_set(struct icc_node *node)
- 	}
+@@ -293,58 +293,44 @@ static int qcom_icc_bw_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
  }
  
--static int qcom_icc_rpm_set(struct qcom_icc_node *qn, u64 sum_bw)
-+static int qcom_icc_rpm_set(struct qcom_icc_node *qn, u64 *bw)
+ /**
+- * qcom_icc_bus_aggregate - aggregate bandwidth by traversing all nodes
++ * qcom_icc_bus_aggregate - calculate bus clock rates by traversing all nodes
+  * @provider: generic interconnect provider
+- * @agg_avg: an array for aggregated average bandwidth of buckets
+- * @agg_peak: an array for aggregated peak bandwidth of buckets
+- * @max_agg_avg: pointer to max value of aggregated average bandwidth
++ * @agg_clk_rate: array containing the aggregated clock rates in kHz
+  */
+-static void qcom_icc_bus_aggregate(struct icc_provider *provider,
+-				   u64 *agg_avg, u64 *agg_peak,
+-				   u64 *max_agg_avg)
++static void qcom_icc_bus_aggregate(struct icc_provider *provider, u64 *agg_clk_rate)
  {
--	int ret = 0;
-+	int ret, rpm_ctx = 0;
-+	u64 bw_bps;
+-	struct icc_node *node;
++	u64 agg_avg_rate, agg_rate;
+ 	struct qcom_icc_node *qn;
+-	u64 sum_avg[QCOM_SMD_RPM_STATE_NUM];
++	struct icc_node *node;
+ 	int i;
  
- 	if (qn->qos.ap_owned)
+-	/* Initialise aggregate values */
+-	for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
+-		agg_avg[i] = 0;
+-		agg_peak[i] = 0;
+-	}
+-
+-	*max_agg_avg = 0;
+-
+ 	/*
+-	 * Iterate nodes on the interconnect and aggregate bandwidth
+-	 * requests for every bucket.
++	 * Iterate nodes on the provider, aggregate bandwidth requests for
++	 * every bucket and convert them into bus clock rates.
+ 	 */
+ 	list_for_each_entry(node, &provider->nodes, node_list) {
+ 		qn = node->data;
+ 		for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
+ 			if (qn->channels)
+-				sum_avg[i] = div_u64(qn->sum_avg[i], qn->channels);
++				agg_avg_rate = div_u64(qn->sum_avg[i], qn->channels);
+ 			else
+-				sum_avg[i] = qn->sum_avg[i];
+-			agg_avg[i] += sum_avg[i];
+-			agg_peak[i] = max_t(u64, agg_peak[i], qn->max_peak[i]);
++				agg_avg_rate = qn->sum_avg[i];
++
++			agg_rate = max_t(u64, agg_avg_rate, qn->max_peak[i]);
++			do_div(agg_rate, qn->buswidth);
++
++			agg_clk_rate[i] = max_t(u64, agg_clk_rate[i], agg_rate);
+ 		}
+ 	}
+-
+-	/* Find maximum values across all buckets */
+-	for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++)
+-		*max_agg_avg = max_t(u64, *max_agg_avg, agg_avg[i]);
+ }
+ 
+ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+ {
+-	struct qcom_icc_provider *qp;
+ 	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
++	u64 agg_clk_rate[QCOM_SMD_RPM_STATE_NUM] = { 0 };
+ 	struct icc_provider *provider;
++	struct qcom_icc_provider *qp;
+ 	u64 active_rate, sleep_rate;
+-	u64 agg_avg[QCOM_SMD_RPM_STATE_NUM], agg_peak[QCOM_SMD_RPM_STATE_NUM];
+-	u64 max_agg_avg;
+ 	int ret;
+ 
+ 	src_qn = src->data;
+@@ -353,7 +339,9 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+ 	provider = src->provider;
+ 	qp = to_qcom_provider(provider);
+ 
+-	qcom_icc_bus_aggregate(provider, agg_avg, agg_peak, &max_agg_avg);
++	qcom_icc_bus_aggregate(provider, agg_clk_rate);
++	active_rate = agg_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE];
++	sleep_rate = agg_clk_rate[QCOM_SMD_RPM_SLEEP_STATE];
+ 
+ 	ret = qcom_icc_rpm_set(src_qn, src_qn->sum_avg);
+ 	if (ret)
+@@ -369,15 +357,6 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
+ 	if (!qp->bus_clk_desc && !qp->bus_clk)
  		return 0;
  
--	if (qn->mas_rpm_id != -1) {
--		ret = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE,
--					    RPM_BUS_MASTER_REQ,
--					    qn->mas_rpm_id,
--					    sum_bw);
--		if (ret) {
--			pr_err("qcom_icc_rpm_smd_send mas %d error %d\n",
--			       qn->mas_rpm_id, ret);
--			return ret;
-+	for (rpm_ctx = 0; rpm_ctx < QCOM_SMD_RPM_STATE_NUM; rpm_ctx++) {
-+		bw_bps = icc_units_to_bps(bw[rpm_ctx]);
-+
-+		if (qn->mas_rpm_id != -1) {
-+			ret = qcom_icc_rpm_smd_send(rpm_ctx,
-+						    RPM_BUS_MASTER_REQ,
-+						    qn->mas_rpm_id,
-+						    bw_bps);
-+			if (ret) {
-+				pr_err("qcom_icc_rpm_smd_send mas %d error %d\n",
-+				qn->mas_rpm_id, ret);
-+				return ret;
-+			}
- 		}
--	}
- 
--	if (qn->slv_rpm_id != -1) {
--		ret = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE,
--					    RPM_BUS_SLAVE_REQ,
--					    qn->slv_rpm_id,
--					    sum_bw);
--		if (ret) {
--			pr_err("qcom_icc_rpm_smd_send slv %d error %d\n",
--			       qn->slv_rpm_id, ret);
--			return ret;
-+		if (qn->slv_rpm_id != -1) {
-+			ret = qcom_icc_rpm_smd_send(rpm_ctx,
-+						    RPM_BUS_SLAVE_REQ,
-+						    qn->slv_rpm_id,
-+						    bw_bps);
-+			if (ret) {
-+				pr_err("qcom_icc_rpm_smd_send slv %d error %d\n",
-+				qn->slv_rpm_id, ret);
-+				return ret;
-+			}
- 		}
- 	}
- 
-@@ -337,7 +342,6 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	struct qcom_icc_provider *qp;
- 	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
- 	struct icc_provider *provider;
--	u64 sum_bw;
- 	u64 active_rate, sleep_rate;
- 	u64 agg_avg[QCOM_SMD_RPM_STATE_NUM], agg_peak[QCOM_SMD_RPM_STATE_NUM];
- 	u64 max_agg_avg;
-@@ -351,14 +355,12 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 
- 	qcom_icc_bus_aggregate(provider, agg_avg, agg_peak, &max_agg_avg);
- 
--	sum_bw = icc_units_to_bps(max_agg_avg);
+-	/* Intentionally keep the rates in kHz as that's what RPM accepts */
+-	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
+-			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
+-	do_div(active_rate, src_qn->buswidth);
 -
--	ret = qcom_icc_rpm_set(src_qn, sum_bw);
-+	ret = qcom_icc_rpm_set(src_qn, agg_avg);
- 	if (ret)
- 		return ret;
- 
- 	if (dst_qn) {
--		ret = qcom_icc_rpm_set(dst_qn, sum_bw);
-+		ret = qcom_icc_rpm_set(dst_qn, agg_avg);
- 		if (ret)
- 			return ret;
- 	}
+-	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
+-			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
+-	do_div(sleep_rate, src_qn->buswidth);
+-
+ 	/*
+ 	 * Downstream checks whether the requested rate is zero, but it makes little sense
+ 	 * to vote for a value that's below the lower threshold, so let's not do so.
 
 -- 
 2.41.0
