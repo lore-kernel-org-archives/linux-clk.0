@@ -2,93 +2,176 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95911EB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 10:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2680EB64DB
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 10:19:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232606AbjFNKRS convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 06:17:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33724 "EHLO
+        id S234748AbjFNKTX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 06:19:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230301AbjFNKRR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 06:17:17 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279E3E4A
-        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:17:16 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-108-hCXQcDGBNYyzCsxMMZVW0g-1; Wed, 14 Jun 2023 11:17:13 +0100
-X-MC-Unique: hCXQcDGBNYyzCsxMMZVW0g-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 14 Jun
- 2023 11:17:10 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 14 Jun 2023 11:17:10 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'GONG, Ruiqi'" <gongruiqi@huaweicloud.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gongruiqi1@huawei.com" <gongruiqi1@huawei.com>
-Subject: RE: [PATCH] clk: renesas: r8a7778: remove checker warnings: x | !y
-Thread-Topic: [PATCH] clk: renesas: r8a7778: remove checker warnings: x | !y
-Thread-Index: AQHZnaHR7xBIFyeGDEu0eJYf3JlEQa+KFZ7w
-Date:   Wed, 14 Jun 2023 10:17:10 +0000
-Message-ID: <ec5ce50bc3e14f62bbf13c00a661e136@AcuMS.aculab.com>
-References: <20230613025403.3338129-1-gongruiqi@huaweicloud.com>
-In-Reply-To: <20230613025403.3338129-1-gongruiqi@huaweicloud.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        with ESMTP id S231408AbjFNKTW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 06:19:22 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55877E5
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:19:21 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f629ccb8ebso8189246e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 14 Jun 2023 03:19:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686737959; x=1689329959;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eQe+NFt7B0UVaI4ziKbiKUwhFEd8qjh4iYjfaMDfcCQ=;
+        b=pK8Vi3ZJtI8VkufPsnXlzADdX5c3p8CSQAVVy6EvWzvPODzGJxLM6n3iZovxdW1G0g
+         L4v6VeVgYaJz++2WxdCrBDGNtnhIL31b0b7xO4l2OZym+Ut2lS5ua//PRpgvn9UhJ2xD
+         zXQrIDO1YIULVpXNYP+aC1UgasSXPDdGBDxQIYd1E9w2LRqccdH4CG1YzjGAXCNM9BLD
+         Rf2B6kD/nn18+JPVxKr0dODjJhMZkFfuHRjA/ezuhBnnlnoOigJHzMTZrb3Si5M+Pgfh
+         gcnWhsdYF/l24B8BTIfJywa8s+fhnniRuOtO3K54o7IQTyYC4eenR3nFsQoFgTqKkiPr
+         yxSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686737959; x=1689329959;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eQe+NFt7B0UVaI4ziKbiKUwhFEd8qjh4iYjfaMDfcCQ=;
+        b=T3dTavU1xGOTSvW9HOQziHkOiQE+sD5sW2ZK9fBYvMJ8CIv6qbEMBOJTrt5G4ynHQS
+         U1srlkOsxLdX2JiGfcC7sddTEVU78ElY0OaYf8I9jCntKRDzmP0OE75SADpF5Fhuo/w3
+         fEHXx41Umdzezr9hjdSYSosa3bobtH0tCkA43xnDCpmGtZ4Ajw3Di0H8A2O4RerOFM8r
+         C8zX5kGGTnNRUfxAwMY6/GJE14NNNL0VE2t6AEkz+7Vxe7lhc9rJ9ui0n7J2dhrGvjpj
+         FMQIi5ST2K3QBJQtEvWj/W+WdID3fCKsSduMY3jBAqfyVOxQ8klBDLR0YazG32s2gTtQ
+         sh6g==
+X-Gm-Message-State: AC+VfDzcfeFPBgCaYbCNGlWhEsTzkf785ZDz+LCVYXoxLussAHik2ylp
+        7PH7qgJgf3Hx+mORTK9NH2geKA==
+X-Google-Smtp-Source: ACHHUZ6Re4blXYdUc+Gk2gxfYU85bxkKdrDnIH1eCo0kfK2tyqfw2qHajIP753VW1YbYr7tHajKQWg==
+X-Received: by 2002:a05:6512:329c:b0:4f6:3c67:ddfc with SMTP id p28-20020a056512329c00b004f63c67ddfcmr7667066lfe.23.1686737959483;
+        Wed, 14 Jun 2023 03:19:19 -0700 (PDT)
+Received: from [192.168.1.101] (abyj190.neoplus.adsl.tpnet.pl. [83.9.29.190])
+        by smtp.gmail.com with ESMTPSA id q29-20020ac2515d000000b004f39868bef1sm2074383lfd.209.2023.06.14.03.19.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Jun 2023 03:19:19 -0700 (PDT)
+Message-ID: <11bfe8ad-8ddd-87b4-3171-94f895af8fa8@linaro.org>
+Date:   Wed, 14 Jun 2023 12:19:17 +0200
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
+ <20230507175335.2321503-2-dmitry.baryshkov@linaro.org>
+ <20230509055044.GA4823@thinkpad>
+ <CAA8EJpoJr6gK=7fmwmF4+Xi5Ch_-+8L1q1WHkfVOOg+6qj=P3w@mail.gmail.com>
+ <20230511081504.GA12021@thinkpad>
+ <d4e8f17b-78a2-b6c6-36e2-ccc526430df1@linaro.org>
+ <CAA8EJpp6ekkMWyzri9uSXD4L=w7UcFnRp-3CpJ3h535++uWqwg@mail.gmail.com>
 Content-Language: en-US
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAA8EJpp6ekkMWyzri9uSXD4L=w7UcFnRp-3CpJ3h535++uWqwg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: GONG, Ruiqi
-> Sent: 13 June 2023 03:54
-> 
-> Eliminate the following Sparse reports when building with C=1:
-> 
-> drivers/clk/renesas/clk-r8a7778.c:85:52: warning: dubious: x | !y
-> drivers/clk/renesas/clk-r8a7778.c:87:50: warning: dubious: x | !y
-> 
-> Signed-off-by: GONG, Ruiqi <gongruiqi@huaweicloud.com>
-> ---
->  drivers/clk/renesas/clk-r8a7778.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/clk-r8a7778.c b/drivers/clk/renesas/clk-r8a7778.c
-> index 797556259370..ad1a50f3b0cd 100644
-> --- a/drivers/clk/renesas/clk-r8a7778.c
-> +++ b/drivers/clk/renesas/clk-r8a7778.c
-> @@ -81,11 +81,11 @@ static void __init r8a7778_cpg_clocks_init(struct device_node *np)
-> 
->  	BUG_ON(!(mode & BIT(19)));
-> 
-> -	cpg_mode_rates = (!!(mode & BIT(18)) << 2) |
-> -			 (!!(mode & BIT(12)) << 1) |
-> -			 (!!(mode & BIT(11)));
 
-Try just adding a << 0 on the last line.
 
-Recent gcc and clang optimise the code to 'shift + and'.
+On 14.06.2023 08:05, Dmitry Baryshkov wrote:
+> On Tue, 30 May 2023 at 02:47, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>> On 11/05/2023 11:15, Manivannan Sadhasivam wrote:
+>>> On Tue, May 09, 2023 at 02:20:07PM +0300, Dmitry Baryshkov wrote:
+>>>> On Tue, 9 May 2023 at 08:50, Manivannan Sadhasivam
+>>>> <manivannan.sadhasivam@linaro.org> wrote:
+>>>>>
+>>>>> On Sun, May 07, 2023 at 08:53:35PM +0300, Dmitry Baryshkov wrote:
+>>>>>> Using PWRSTS_RET on msm8974's MDSS_GDSC causes display to stop working.
+>>>>>> The gdsc doesn't fully come out of retention mode. Change it's pwrsts
+>>>>>> flags to PWRSTS_OFF_ON.
+>>>>>>
+>>>>>
+>>>>> What does "stop working" implies? Does it work during boot and randomly stopped
+>>>>> working or it stopped working after resume from suspend?
+>>>>
+>>>> It stops working during the boot. I observed the MDP not starting up
+>>>> properly. Mea culpa, I did not look deep enough into the details, just
+>>>> stomped upon this change which fixes the problem for me.
+>>>>
+>>>
+>>> IIUC, GDSC will be transitioned to retention mode only if the parent domain goes
+>>> to low power mode. So if the MDSS GDSC goes to retention mode during boot, then
+>>> it suggests that the parent domain is not voted properly. Unless I misunderstood
+>>> something...
+>>
+>> Not sure, what is the parent domain here. Note, it is a pretty old
+>> implementation.
+> 
+> Colleagues, any further feedback on this? I'd like to note that all
+> other platforms use PWRSTS_OFF_ON for the MDSS_GDSC,
+> I do not think that msm8974 is particularly different here.
+I'd say it's ok for now.
 
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Konrad
+> 
+>>
+>>>
+>>> Or is the GDSC behavior changes between RPM and RPMh?
+>>>
+>>> - Mani
+>>>
+>>>>>
+>>>>> Even though reverting to non-retention mode works, I think the issue might be
+>>>>> somewhere else. Like the vote might be missing to get the GDSC out of retention
+>>>>> mode.
+>>>>
+>>>> I don't think there is a vote missing. The driver votes on MDSS_GDSC
+>>>> before enabling access to any of the registers from the MDSS region.
+>>>>
+>>>>>
+>>>>> - Mani
+>>>>>
+>>>>>> Fixes: d399723950c4 ("clk: qcom: gdsc: Fix the handling of PWRSTS_RET support")
+>>>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>> ---
+>>>>>>   drivers/clk/qcom/mmcc-msm8974.c | 2 +-
+>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>> index aa29c79fcd55..277ef0065aae 100644
+>>>>>> --- a/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+>>>>>> @@ -2401,7 +2401,7 @@ static struct gdsc mdss_gdsc = {
+>>>>>>        .pd = {
+>>>>>>                .name = "mdss",
+>>>>>>        },
+>>>>>> -     .pwrsts = PWRSTS_RET_ON,
+>>>>>> +     .pwrsts = PWRSTS_OFF_ON,
+>>>>>>   };
+>>>>>>
+>>>>>>   static struct gdsc camss_jpeg_gdsc = {
+>>>>>> --
+>>>>>> 2.39.2
+>>>>>>
+>>>>>
+>>>>> --
+>>>>> மணிவண்ணன் சதாசிவம்
+>>>>
+>>>>
+>>>>
+>>>> --
+>>>> With best wishes
+>>>> Dmitry
+>>>
+>>
+>> --
+>> With best wishes
+>> Dmitry
+>>
+> 
+> 
