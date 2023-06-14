@@ -2,111 +2,142 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE898EB64D8
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D45EB64DC
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Jun 2023 19:18:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232200AbjFNTPU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 15:15:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44348 "EHLO
+        id S231499AbjFNTSO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 15:18:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbjFNTPT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:15:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F3311BFD;
-        Wed, 14 Jun 2023 12:15:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E748D622DE;
-        Wed, 14 Jun 2023 19:15:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 327FDC433C8;
-        Wed, 14 Jun 2023 19:15:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686770117;
-        bh=B/QCak5damqRnYtxcLem4gFydweK3hvCQNPkyFVYb3E=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZCMGg7yDuczMflZSZIByKF+NfKcP/AwKrFN+hDrzh4+LQopmw7KesK99DteCLMLQI
-         4i6tmyU6x+e0btaeO/bCSJCOv3twasyLsH4lSDjWOlWgKhb4e+7bypcMEv9Diya+uf
-         4PciOWgPE4u+CoPUxmETRRNFhaIfyclD6jrJn/IoN35NJ6tBP8TtFYO0U/pV/Nz2zb
-         ioRaRSxrCnyyya5NCXiaRBo1bUPyHOI2FRZQPQxWoH/h0yJ0L1vvx2/38/oZK9pDMA
-         k4d/QbYL9Qk5oj6VsLg/JUUvElGcbscCwuRTpcBFqybpj01yyCPEcpI04zS8QZN+RC
-         tj55Cs99NYAIg==
-Date:   Wed, 14 Jun 2023 12:15:14 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jiri Pirko <jiri@resnulli.us>, "vadfed@meta.com" <vadfed@meta.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "vadfed@fb.com" <vadfed@fb.com>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "M, Saeed" <saeedm@nvidia.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "sj@kernel.org" <sj@kernel.org>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jacek.lawrynowicz@linux.intel.com" 
-        <jacek.lawrynowicz@linux.intel.com>,
-        "airlied@redhat.com" <airlied@redhat.com>,
-        "ogabbay@kernel.org" <ogabbay@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux@zary.sk" <linux@zary.sk>,
-        "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "kuniyu@amazon.com" <kuniyu@amazon.com>,
-        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
-        "razor@blackwall.org" <razor@blackwall.org>,
-        "idosch@nvidia.com" <idosch@nvidia.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
-        "phil@nwl.cc" <phil@nwl.cc>,
-        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
- interface
-Message-ID: <20230614121514.0d038aa3@kernel.org>
-In-Reply-To: <DM6PR11MB465799A5A9BB0B8E73A073449B5AA@DM6PR11MB4657.namprd11.prod.outlook.com>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
-        <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
-        <20230612154329.7bd2d52f@kernel.org>
-        <ZIg8/0UJB9Lbyx2D@nanopsycho>
-        <20230613093801.735cd341@kernel.org>
-        <ZImH/6GzGdydC3U3@nanopsycho>
-        <DM6PR11MB465799A5A9BB0B8E73A073449B5AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        with ESMTP id S229703AbjFNTSN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 15:18:13 -0400
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F4DF2682;
+        Wed, 14 Jun 2023 12:18:12 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-777a78739ccso387408039f.3;
+        Wed, 14 Jun 2023 12:18:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686770292; x=1689362292;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YBpMMsjcbe1wo6wOZhJlr/oSYFVntydqWqDrNGep1l0=;
+        b=BqhS7xA7T6RbrmqgQMKjBoqmWZ1RQwQxUcJ1HwbrBIQpo7J1Ech+GIvw3+nrmKux5x
+         b2sWZ0FLaTadYyaKIC/J74/XRpuABvGw09cQ5gCzKp1P132FBzjblYON6ZBSa9l4rQNn
+         qCHRO3oe3fjXsYxs7yI6Jtwh7ZxkTsjrbCstJybrhFYYHMNOlinL9VN+iRWJ8kq6HLZ1
+         /Qa3DAhtPWA0pDV7E0LE5Zy6Sy7LcN3oC1U9rCUJwn+Pot7LiF18d4v/RsJ4cODUznkv
+         3g3ZzIHgGA5MuboJ/DhHQRrniU01/bcVmdO9hf5AUcoCwgDc17ccvtzOFr5oA82o8Qu8
+         8w1g==
+X-Gm-Message-State: AC+VfDzlPpeV70SVe2a8G2hR976hUdWxw3Mx7as+UNOaFLR25cHIPJv0
+        Bgw1mSnTZ0GQAExvwttTFQ==
+X-Google-Smtp-Source: ACHHUZ5c57N/o0GzC8aXwuQsvNktRZIXbCA+u83AThjFLnR3buYrBFGMs/uzsSp0OtJJ2l8Rq3rG3w==
+X-Received: by 2002:a05:6602:299a:b0:776:cfd8:b44a with SMTP id o26-20020a056602299a00b00776cfd8b44amr16111912ior.8.1686770291867;
+        Wed, 14 Jun 2023 12:18:11 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id b8-20020a02c988000000b0041f5ff08660sm5160476jap.141.2023.06.14.12.18.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jun 2023 12:18:11 -0700 (PDT)
+Received: (nullmailer pid 2587113 invoked by uid 1000);
+        Wed, 14 Jun 2023 19:18:08 -0000
+Date:   Wed, 14 Jun 2023 13:18:08 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, kernel@pengutronix.de,
+        Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Anson Huang <Anson.Huang@nxp.com>, Marek Vasut <marex@denx.de>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCH v1 6/7] dt-bindings: clock: imx6q: Allow single optional
+ clock and add enet_ref_pad
+Message-ID: <20230614191808.GA2581397-robh@kernel.org>
+References: <20230601101451.357662-1-o.rempel@pengutronix.de>
+ <20230601101451.357662-7-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230601101451.357662-7-o.rempel@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 14 Jun 2023 12:21:29 +0000 Kubalewski, Arkadiusz wrote:
-> Surely, we can skip this discussion and split the nest attr into something like:
-> - PIN_A_PIN_PARENT_DEVICE,
-> - PIN_A_PIN_PARENT_PIN.
+On Thu, Jun 01, 2023 at 12:14:50PM +0200, Oleksij Rempel wrote:
+> All clocks for this driver are optional, so this change allows the
 
-Yup, exactly. Should a fairly change code wise, if I'm looking right.
+It's not about what the driver supports, but the h/w. You are saying 
+this SoC can operate with only 1 of any of the clock inputs?
+
+> 'clocks' and 'clock-names' properties to accept a single clock.
+> Additionally, 'enet_ref_pad' clock is added. This resolves the following
+> dtbs_check warning:
+>   imx6dl-alti6p.dtb: clock-controller@20c4000: clocks: [[24]] is too short
+>   From schema: Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> 
+>   imx6dl-alti6p.dtb: clock-controller@20c4000: clock-names:0: 'osc' was
+>     expected
+>   From schema: Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> 
+>   imx6dl-alti6p.dtb: clock-controller@20c4000: clock-names:
+>     ['enet_ref_pad'] is too short
+>   From schema: Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  .../devicetree/bindings/clock/imx6q-clock.yaml    | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> index bae4fcb3aacc..ed65d19c2e0e 100644
+> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> @@ -28,20 +28,23 @@ properties:
+>      const: 1
+>  
+>    clocks:
+> +    minItems: 1
+>      items:
+>        - description: 24m osc
+>        - description: 32k osc
+>        - description: ckih1 clock input
+>        - description: anaclk1 clock input
+>        - description: anaclk2 clock input
+> +      - description: enet_ref_pad
+>  
+>    clock-names:
+> -    items:
+> -      - const: osc
+> -      - const: ckil
+> -      - const: ckih1
+> -      - const: anaclk1
+> -      - const: anaclk2
+> +    enum:
+> +      - osc
+> +      - ckil
+> +      - ckih1
+> +      - anaclk1
+> +      - anaclk2
+> +      - enet_ref_pad
+>  
+>    fsl,pmic-stby-poweroff:
+>      $ref: /schemas/types.yaml#/definitions/flag
+> -- 
+> 2.39.2
+> 
