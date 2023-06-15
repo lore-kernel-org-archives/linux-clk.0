@@ -2,127 +2,134 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79DB8EB64DB
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 16:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EAAEB64DA
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 16:31:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231233AbjFOQME (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:12:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55400 "EHLO
+        id S231288AbjFOQbR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 12:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229977AbjFOQMD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 12:12:03 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A27219B5;
-        Thu, 15 Jun 2023 09:12:02 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-        by mailout.nyi.internal (Postfix) with ESMTP id 454455C00E0;
-        Thu, 15 Jun 2023 12:11:59 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute6.internal (MEProxy); Thu, 15 Jun 2023 12:11:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm1; t=1686845519; x=1686931919; bh=lH
-        VIyGJZwQS/ccpsXhg4DiZBGnwWrcAVNBqEwRIBymY=; b=qx9b2YnF22o7BTBU6c
-        wPvv52FoKIQi6NZwVUQiXnBjYmPIdS6sUykEGDFA3Z2gZ7YZKqo44XZAmTBqfwQL
-        Op3nd3Nm9Hw45SMphvKjSLFXSD4gMFJbkRH6U3djb0/9YNByRtoMlxFzxDQoEoV5
-        PTMNoCgcpdJpCbmAlA6nTfRBUB0prkTGG1T1TPy37dlARa9bILaO2mgwTMk94/o7
-        m8areMmDxQRhUQH9WIXqnKfLqbEUR7OcQvcLd11I2Rdj5h0afp80iC6eQZnmAu9z
-        F69XMrnr9NiGpMWaaqumUr321hIq1yaQQcOu3R10kzTV34sAwRe0AUkbl3qlApER
-        X8EA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1686845519; x=1686931919; bh=lHVIyGJZwQS/c
-        cpsXhg4DiZBGnwWrcAVNBqEwRIBymY=; b=KwNQpUWnShH4M58lpUU6/3m+GZkTH
-        nlIe1cv/fTjc2oAdYcp8ODnc0Abrq07vQ/3Yu7CFE88TlGFY7+gak50SAM/5Zs6f
-        13aicZmcf/fah/KbUd8uLgaYz1iy8vZAY6Ko8EflGnHxu7bbIt5mf213D8OfWs54
-        CClTnHm5YLJjrUEmHXK/kbyfR7XuxkWrEcG2ugwnUDPXmNdPG7e6zns6Vbv0ogeM
-        QVzHc8pWMCY7FoCxDagWn/jPj9HxRH/InGH6m+ly6yvnLQWNlqpnEyOVOM50Q3Hj
-        DQGDblBFEkLh4OOFA6XE84QZuV75jZc+zvr9YmihYpgz76KUENuAMpWTA==
-X-ME-Sender: <xms:TTiLZJibKNQYeR_IndCVQSaXNK4rEwjSpLSiyGTR-SRtW9G_PmaEeA>
-    <xme:TTiLZODrKlnHdCNH_Qj7ervH9FZEIWa57w-jQISwUrfbYSCcEV9mvsgtNNmZrTE4Y
-    0GpquwDfGXEpfQfTH0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvvddgleegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:TTiLZJEGEjHlTBV_JloqUdTfC34Uo9uvwZ-QvDMULff8IugVXdnBIw>
-    <xmx:TTiLZOR9Iiclb7POQIIYA0OWA7C1rMGKxYKVCCG7YAATMJFjN2VQzA>
-    <xmx:TTiLZGw2PqlP9s94FpC254UO9Vb-YMMm6knqeVTXswTDtZsDdnRjBQ>
-    <xmx:TziLZHoqNn-s_2B_cpw36QAVcMDGTJU73T1qjGgkgc42xHqwL1xaIw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 6F379B60089; Thu, 15 Jun 2023 12:11:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-496-g8c46984af0-fm-20230615.001-g8c46984a
-Mime-Version: 1.0
-Message-Id: <9fecce53-fc7d-4783-9e05-509b1b418589@app.fastmail.com>
-In-Reply-To: <2023061500-tipper-tightwad-8843@gregkh>
-References: <20230612025355.547871-1-ychuang570808@gmail.com>
- <20230612025355.547871-2-ychuang570808@gmail.com>
- <2023061338-lunchbox-snorkel-e6a9@gregkh>
- <f8eb6114-8248-8886-b301-c2886e50e016@gmail.com>
- <2023061356-matchbook-footwear-d142@gregkh>
- <35e768ad-7f15-48a4-9c38-09570026cf71@app.fastmail.com>
- <2023061555-enlighten-worshiper-c92d@gregkh>
- <502240f7-2cac-4fe6-9e27-f9861db3666d@app.fastmail.com>
- <2023061500-tipper-tightwad-8843@gregkh>
-Date:   Thu, 15 Jun 2023 18:11:36 +0200
-From:   "Arnd Bergmann" <arnd@arndb.de>
-To:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc:     "Jacky Huang" <ychuang570808@gmail.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        krzysztof.kozlowski+dt@linaro.org, "Lee Jones" <lee@kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        "Jiri Slaby" <jirislaby@kernel.org>,
-        "Tomer Maimon" <tmaimon77@gmail.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        soc@kernel.org, schung@nuvoton.com, mjchen@nuvoton.com,
-        "Jacky Huang" <ychuang3@nuvoton.com>
-Subject: Re: [PATCH v14 1/1] tty: serial: Add Nuvoton ma35d1 serial driver support
-Content-Type: text/plain
+        with ESMTP id S230452AbjFOQbQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 12:31:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A6AF273E;
+        Thu, 15 Jun 2023 09:31:15 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C9CE760DEC;
+        Thu, 15 Jun 2023 16:31:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CEB9C433C0;
+        Thu, 15 Jun 2023 16:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686846674;
+        bh=Ba6+TbNKPkyuZQ8mwf62Wv9MAIIfwgYKhkFTTivsGpQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=s1YJtKsSZsgntvLLc+qrvnOVQQhDVyH3F6XUy3g5A8+lB7tkTdRFI3SfmMEPNnk2d
+         2q/dbjFtLd1Aw2jP+9DEG5DJr+pqhO9oDZB/uxcF2Ag9SPFFqhMyVQOcLNBowYe5zE
+         otSbSVgQYUBwvuzaplXlDGaeztZq8Uko8zjAPxzcNLaAZap71zfoM3uM+IZH1ZzGpk
+         vPiyDB406693Cd8DuiuW4R/DhvKZALJwoZQCJLhn4SPvDUpPFajLkjjW1WNATWQwYc
+         WuAgp2ARLHo4SUDQG+4m8QjslVw+NgoWgQbe3ToSAEf0a5zxmY9gHkzcOCCx4XjFwy
+         yuZSApgamUczQ==
+Date:   Thu, 15 Jun 2023 09:31:11 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
+ interface
+Message-ID: <20230615093111.0ee762e4@kernel.org>
+In-Reply-To: <ZIrldB4ic3zt9nIk@nanopsycho>
+References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+        <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
+        <20230612154329.7bd2d52f@kernel.org>
+        <ZIg8/0UJB9Lbyx2D@nanopsycho>
+        <20230613093801.735cd341@kernel.org>
+        <ZImH/6GzGdydC3U3@nanopsycho>
+        <DM6PR11MB465799A5A9BB0B8E73A073449B5AA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <20230614121514.0d038aa3@kernel.org>
+        <20230614122348.3e9b7e42@kernel.org>
+        <ZIrldB4ic3zt9nIk@nanopsycho>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 15, 2023, at 17:00, Greg Kroah-Hartman wrote:
-> On Thu, Jun 15, 2023 at 04:01:55PM +0200, Arnd Bergmann wrote:
->> Since the number is exported to userspace in serial_struct,
->> it might be better to pick a new constant such as
->> 
->> #define PORT_SERIAL_GENERIC (-1)
->> 
->> in order to be less ambiguous. It's a signed integer, so -1
->> would work here this would clearly be a special value, or
->> another option might be to use 255 as something that is
->> slightly less special but still recognizable as something
->> that may have a special meaning.
->
-> A new constant would be good, 255 is nice, and then we can move everyone
-> to use it unless they can specifically show a reason why it will not
-> work for them.
->
-> I think originally this was used to do device-specific ioctls, right?
-> That shouldn't be happening anymore, hopefully...
+On Thu, 15 Jun 2023 12:18:28 +0200 Jiri Pirko wrote:
+> Yeah, that is what we had originally. This just pushes out the
+> different attr selection from the nest one level up to the actualy
+> nesting attribute.
 
-The only thing I could find is that you can use TIOCSSERIAL to set
-the type between the supported types within a driver, which changes
-the behavior in some cases, e.g. the exact size and layout of the
-register file or its capabilities.
+Oh no, no extra nesting. Let me try to fake up the output:
 
-We may need a proper audit of TIOCSSERIAL anyway, I suspect there
-are worse things you can do with other settings.
+'pin': [{
+ {'clock-id': 282574471561216,
+  'module-name': 'ice',
+  'pin-dpll-caps': 4,
+  'pin-id': 13,
+  'parent-device': [{'pin-id': 2, 'pin-state': 'connected'},
+                    {'pin-id': 3, 'pin-state': 'disconnected'}],
+  'parent-pin': [{'id': 0, 'pin-direction': 'input'},
+                 {'id': 1, 'pin-direction': 'input'}],
+  'pin-type': 'synce-eth-port'}
+}]
 
-       Arnd
+> One downside of this is you will have 2 arrays of parent objects,
+> one per parent type. Current code neatly groups them into a single array.
+> 
+> I guess this is a matter of personal preference, I'm fine either way.
+
+Yeah, could be.
