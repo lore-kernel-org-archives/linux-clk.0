@@ -2,41 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 315CBEB64DA
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 18:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874AEC001DF
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 18:29:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234225AbjFOS3r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 14:29:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39982 "EHLO
+        id S238918AbjFOS3w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 14:29:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234048AbjFOS3o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 14:29:44 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD79D10F7;
-        Thu, 15 Jun 2023 11:29:43 -0700 (PDT)
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3111cb3dda1so166128f8f.0;
-        Thu, 15 Jun 2023 11:29:43 -0700 (PDT)
+        with ESMTP id S229767AbjFOS3s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 14:29:48 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A9A3199D;
+        Thu, 15 Jun 2023 11:29:47 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-311167ba376so797604f8f.1;
+        Thu, 15 Jun 2023 11:29:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686853782; x=1689445782;
+        d=1e100.net; s=20221208; t=1686853786; x=1689445786;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5lrjdhAQll3ozbKk3iq4lsIPgqd1B5L8UK1g627bZ2E=;
-        b=EoKBbrbEPEkyJ/1brXTdkMWBrkGhHZwCFquTXrkEE97vqzpSFAAHCn2szP3G5DvAz5
-         vw3FF4HHQiOpNxK+xI19j01YS8cDViVtYTir9hRLlNC8PNjUzyI+jUhv9qRhOjjoMTC2
-         6vSS3MzbmC5+rCMx347+TOKWe8kobXR5xrf5KeAILQuAUfkYQSHdvk1ZR2sG9+h7kVX6
-         ssHQ1Y2XFzqGhFPl88v3R90a8SPQxQ1gHUXuarHewG+qu7j2Ffs0BRnkXwiwLomff7Am
-         Tl9CZlL4/yrzWpnVhsSGzoorW2h+fdf/7M7Cumi93bpF1kVSHPcHoXd3dPvYDDAgSuSw
-         IsIg==
-X-Gm-Message-State: AC+VfDxOdElDsREeV/eFT0HRQm2UPScD52HSp5CWGht0LWtkCb0D25va
-        iYwuU0VymbqODtFQHdUlRys=
-X-Google-Smtp-Source: ACHHUZ7r+9ZYNEqFLrWEjTH7jRPfEPnVtyW0dG2pYyt3SbaAiUU94hflUBEFZtkXrTda0ZhMeKhdLQ==
-X-Received: by 2002:a5d:6b8c:0:b0:30a:c35d:25d3 with SMTP id n12-20020a5d6b8c000000b0030ac35d25d3mr14887733wrx.52.1686853782041;
-        Thu, 15 Jun 2023 11:29:42 -0700 (PDT)
+        bh=+CTYF5ruN+Zlst0kqVClfG2q0zNldhioydCFUBAjqvk=;
+        b=S054bT1lrM/PWsRaNvvPbZPVtKFjamZSjJcfWmZ84rdy5x9CazvAlGFjDhxxQkD5Yl
+         qxGHB9nCJKRxxjgNZ/CSIs8x+5oAMVU96kYb2GG0kcCQakFj2Eff1xS/7BQoTOnAJOQg
+         Hs9cTTaZ+oZoXQoPgyA8VhFqG3y3sr5lcjyz9kmwTz9zIZZW37dB9K4hFfW3bKTDZegS
+         UzGqQxxui1Gcp+2tPJhQhJ0TcwUprzuZhLvMTxvx5ZW04ByEPFuwbK2lSl7zxGQuknek
+         h902l07yY7u4wFLJ+yBhVYV+ek7XboQPME1m4QPPZ6gTw9I8Mbfv947+udFmcBGGyLff
+         jvcw==
+X-Gm-Message-State: AC+VfDwzhLbqvtSgdbIjOpvi5Rz7pVzfQYV5/FzKljFqvy8E1UH+le5c
+        hnNOTERBBx+mQQ693y24x2A=
+X-Google-Smtp-Source: ACHHUZ5vOqyhP1OdkXL8MuvOVzixmo0+GdlGzvK4fRijspT6ebuOU5lRkUpf2TtIYL8e5FP59PQNaQ==
+X-Received: by 2002:a5d:6408:0:b0:30f:a938:6d5d with SMTP id z8-20020a5d6408000000b0030fa9386d5dmr10449466wru.56.1686853785730;
+        Thu, 15 Jun 2023 11:29:45 -0700 (PDT)
 Received: from ryzen.lan (cpc87451-finc19-2-0-cust61.4-2.cable.virginm.net. [82.11.51.62])
-        by smtp.gmail.com with ESMTPSA id c3-20020adffb03000000b0030ab5ebefa8sm21525887wrr.46.2023.06.15.11.29.41
+        by smtp.gmail.com with ESMTPSA id c3-20020adffb03000000b0030ab5ebefa8sm21525887wrr.46.2023.06.15.11.29.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 11:29:41 -0700 (PDT)
+        Thu, 15 Jun 2023 11:29:45 -0700 (PDT)
 From:   Lucas Tanure <tanure@linux.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -52,9 +52,9 @@ Cc:     Nick <nick@khadas.com>, Artem <art@khadas.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
         Lucas Tanure <tanure@linux.com>
-Subject: [PATCH 1/6] dt-bindings: arm: amlogic: add Amlogic T7 based Khadas VIM4 bindings
-Date:   Thu, 15 Jun 2023 19:29:33 +0100
-Message-ID: <20230615182938.18487-2-tanure@linux.com>
+Subject: [PATCH 4/6] dt-bindings: serial: amlogic, meson-uart: support T7
+Date:   Thu, 15 Jun 2023 19:29:36 +0100
+Message-ID: <20230615182938.18487-5-tanure@linux.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230615182938.18487-1-tanure@linux.com>
 References: <20230615182938.18487-1-tanure@linux.com>
@@ -64,31 +64,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add bindings for the Khadas Vim4 board.
+Add serial bindings support menson T7 SoC family.
 
 Signed-off-by: Lucas Tanure <tanure@linux.com>
 ---
- Documentation/devicetree/bindings/arm/amlogic.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
-index 274ee0890312..1091abbae6a2 100644
---- a/Documentation/devicetree/bindings/arm/amlogic.yaml
-+++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
-@@ -159,6 +159,13 @@ properties:
-           - const: amlogic,a311d
-           - const: amlogic,g12b
-
-+      - description: Boards with the Amlogic Meson t7 A311D2 SoC
-+        items:
-+          - enum:
-+              - khadas,vim4
-+          - const: amlogic,a311d2
-+          - const: amlogic,t7
-+
-       - description: Boards using the BPI-CM4 module with Amlogic Meson G12B A311D SoC
+diff --git a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
+index 01ec45b3b406..01b01f8840ea 100644
+--- a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
++++ b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
+@@ -46,6 +46,7 @@ properties:
+           - amlogic,meson8b-uart
+           - amlogic,meson-gx-uart
+           - amlogic,meson-s4-uart
++          - amlogic,meson-t7-uart
+       - description: Everything-Else power domain UART controller on G12A SoCs
          items:
-           - enum:
+           - const: amlogic,meson-g12a-uart
 --
 2.41.0
 
