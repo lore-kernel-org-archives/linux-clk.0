@@ -2,43 +2,43 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 713D3EB64DC
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 09:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979AFEB64DB
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 09:36:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245719AbjFOJgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 05:36:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36478 "EHLO
+        id S245741AbjFOJgp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 05:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343797AbjFOJfb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 05:35:31 -0400
+        with ESMTP id S245747AbjFOJgL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 05:36:11 -0400
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6842D6B;
-        Thu, 15 Jun 2023 02:35:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78D9C358C;
+        Thu, 15 Jun 2023 02:35:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1686821703; x=1718357703;
+  t=1686821723; x=1718357723;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=A1dmJ+pItK/gMLz16UT2MdMrZ6M2X5XJ/pGGBcR7j2U=;
-  b=vkAR01MwNc4zAGttBqiOdHa7liVduxB5cQpheJAbQkm57T6mm6XNjgot
-   Q+uELvs/qXmJ+D5jiNH43QraVo71DhdGYHwt57v+dXn1iMsorWMXu/4H+
-   GvOa5y5PhhDYbhENqDE2EkFjueoye/3swKUJO9EtrV78/UsLOkRxvoO0a
-   33oXciWTXYv8fMKBR5pCxA1MSfZgDZlg6j8Ck1rIh3TWr32UwSHditV8u
-   BBCFC3suO0q4nfqX/kaLVK/J93G8Gk0zsgnGMJNm6op/cHDiD3bcq8pIu
-   jDmpcBUTg2MV58+qeTL1IDTJdpMglaKMHMqGOmTJALEq3Soszsnj2zL8n
+  bh=6S7fBvJMryuXc9NJ//LZErtsGf/tBr9F4503HKO5kT0=;
+  b=sKYBEJgu+WGI/0j7DwIp7hORmg3Qzjroe/55YOh0gMWy9p2jujb5UXtt
+   Oip8RomJJwVbZLJEGgFHPDF9g7rcGsCM3U/IfMgdtumNy9Ci6H4rj77eM
+   zg0MIdpglSltMl/L5RtUl02nTZ6TKncbEypG79VmaalwrSZjJu8GCAuZx
+   IPWH1BqQpDXjS0cHa7h0vO7j5Bzl8CeYROm+cSKirRIR0UBT62LmEX4FR
+   rzicYCOhaPaiQqolXreB8vcSKjGjNyGP/w65wn/IJ/oMRvQKpi30MSyEW
+   AIctA7qqpTfF3E6GwEnNEMSU6/5+p2/OiAdmnDUJvVK0HBvC9z8Br1LV+
    w==;
 X-IronPort-AV: E=Sophos;i="6.00,244,1681196400"; 
-   d="scan'208";a="216166862"
+   d="scan'208";a="216166897"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2023 02:34:31 -0700
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2023 02:34:35 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Thu, 15 Jun 2023 02:34:20 -0700
+ 15.1.2507.21; Thu, 15 Jun 2023 02:34:29 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.115.15) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Thu, 15 Jun 2023 02:34:17 -0700
+ 15.1.2507.21 via Frontend Transport; Thu, 15 Jun 2023 02:34:25 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -47,9 +47,9 @@ CC:     <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 07/11] clk: at91: clk-utmi: add support for parent_hw
-Date:   Thu, 15 Jun 2023 12:32:23 +0300
-Message-ID: <20230615093227.576102-8-claudiu.beznea@microchip.com>
+Subject: [PATCH 09/11] clk: at91: sckc: switch to parent_data/parent_hw
+Date:   Thu, 15 Jun 2023 12:32:25 +0300
+Message-ID: <20230615093227.576102-10-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230615093227.576102-1-claudiu.beznea@microchip.com>
 References: <20230615093227.576102-1-claudiu.beznea@microchip.com>
@@ -60,213 +60,230 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for parent_hw in utmi clock drivers.
+Switch slow clock drivers to use parent_data and parent_hw.
 With this parent-child relation is described with pointers rather
-than strings making registration a bit faster.
-
-All the SoC based drivers that rely on clk-utmi were adapted
-to the new API change. The switch itself for SoCs will be done
-in subsequent patches.
+than strings.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/clk/at91/at91sam9g45.c |  2 +-
- drivers/clk/at91/at91sam9rl.c  |  2 +-
- drivers/clk/at91/at91sam9x5.c  |  2 +-
- drivers/clk/at91/clk-utmi.c    | 24 +++++++++++++++++-------
- drivers/clk/at91/dt-compat.c   |  2 +-
- drivers/clk/at91/pmc.h         |  5 +++--
- drivers/clk/at91/sama5d2.c     |  2 +-
- drivers/clk/at91/sama5d3.c     |  2 +-
- drivers/clk/at91/sama5d4.c     |  2 +-
- drivers/clk/at91/sama7g5.c     |  2 +-
- 10 files changed, 28 insertions(+), 17 deletions(-)
+ drivers/clk/at91/sckc.c | 75 ++++++++++++++++++++++++++---------------
+ 1 file changed, 48 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
-index ec2f26c3a80a..f45a7b80f7d8 100644
---- a/drivers/clk/at91/at91sam9g45.c
-+++ b/drivers/clk/at91/at91sam9g45.c
-@@ -145,7 +145,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
- 
- 	at91sam9g45_pmc->chws[PMC_PLLACK] = hw;
- 
--	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
-+	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck", NULL);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
-index 051b2eeb9276..969f809e7d65 100644
---- a/drivers/clk/at91/at91sam9rl.c
-+++ b/drivers/clk/at91/at91sam9rl.c
-@@ -109,7 +109,7 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 
- 	at91sam9rl_pmc->chws[PMC_PLLACK] = hw;
- 
--	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
-+	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck", NULL);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-index e1be2c4c54be..3b801d12fac0 100644
---- a/drivers/clk/at91/at91sam9x5.c
-+++ b/drivers/clk/at91/at91sam9x5.c
-@@ -193,7 +193,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
- 
- 	at91sam9x5_pmc->chws[PMC_PLLACK] = hw;
- 
--	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
-+	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck", NULL);
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-diff --git a/drivers/clk/at91/clk-utmi.c b/drivers/clk/at91/clk-utmi.c
-index a22c10d9a1b9..40c84f5af5e8 100644
---- a/drivers/clk/at91/clk-utmi.c
-+++ b/drivers/clk/at91/clk-utmi.c
-@@ -144,21 +144,30 @@ static struct clk_hw * __init
- at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
- 				struct regmap *regmap_sfr,
- 				const char *name, const char *parent_name,
-+				struct clk_hw *parent_hw,
- 				const struct clk_ops *ops, unsigned long flags)
+diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+index fdc9b669f8a7..fdd963eb9f0f 100644
+--- a/drivers/clk/at91/sckc.c
++++ b/drivers/clk/at91/sckc.c
+@@ -117,17 +117,17 @@ static const struct clk_ops slow_osc_ops = {
+ static struct clk_hw * __init
+ at91_clk_register_slow_osc(void __iomem *sckcr,
+ 			   const char *name,
+-			   const char *parent_name,
++			   const struct clk_parent_data *parent_data,
+ 			   unsigned long startup,
+ 			   bool bypass,
+ 			   const struct clk_slow_bits *bits)
  {
- 	struct clk_utmi *utmi;
+ 	struct clk_slow_osc *osc;
  	struct clk_hw *hw;
 -	struct clk_init_data init;
 +	struct clk_init_data init = {};
  	int ret;
  
-+	if (!(parent_name || parent_hw))
-+		return ERR_PTR(-EINVAL);
-+
- 	utmi = kzalloc(sizeof(*utmi), GFP_KERNEL);
- 	if (!utmi)
- 		return ERR_PTR(-ENOMEM);
+-	if (!sckcr || !name || !parent_name)
++	if (!sckcr || !name || !parent_data)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
+@@ -136,7 +136,7 @@ at91_clk_register_slow_osc(void __iomem *sckcr,
  
  	init.name = name;
- 	init.ops = ops;
--	init.parent_names = parent_name ? &parent_name : NULL;
--	init.num_parents = parent_name ? 1 : 0;
-+	if (parent_hw) {
-+		init.parent_hws = parent_hw ? (const struct clk_hw **)&parent_hw : NULL;
-+		init.num_parents = parent_hw ? 1 : 0;
-+	} else {
-+		init.parent_names = parent_name ? &parent_name : NULL;
-+		init.num_parents = parent_name ? 1 : 0;
-+	}
- 	init.flags = flags;
+ 	init.ops = &slow_osc_ops;
+-	init.parent_names = &parent_name;
++	init.parent_data = parent_data;
+ 	init.num_parents = 1;
+ 	init.flags = CLK_IGNORE_UNUSED;
  
- 	utmi->hw.init = &init;
-@@ -177,10 +186,11 @@ at91_clk_register_utmi_internal(struct regmap *regmap_pmc,
- 
- struct clk_hw * __init
- at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
--		       const char *name, const char *parent_name)
-+		       const char *name, const char *parent_name,
-+		       struct clk_hw *parent_hw)
+@@ -317,16 +317,16 @@ static const struct clk_ops sam9x5_slow_ops = {
+ static struct clk_hw * __init
+ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+ 			      const char *name,
+-			      const char **parent_names,
++			      const struct clk_hw **parent_hws,
+ 			      int num_parents,
+ 			      const struct clk_slow_bits *bits)
  {
- 	return at91_clk_register_utmi_internal(regmap_pmc, regmap_sfr, name,
--			parent_name, &utmi_ops, CLK_SET_RATE_GATE);
-+			parent_name, parent_hw, &utmi_ops, CLK_SET_RATE_GATE);
- }
+ 	struct clk_sam9x5_slow *slowck;
+ 	struct clk_hw *hw;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
  
- static int clk_utmi_sama7g5_prepare(struct clk_hw *hw)
-@@ -279,8 +289,8 @@ static const struct clk_ops sama7g5_utmi_ops = {
+-	if (!sckcr || !name || !parent_names || !num_parents)
++	if (!sckcr || !name || !parent_hws || !num_parents)
+ 		return ERR_PTR(-EINVAL);
  
- struct clk_hw * __init
- at91_clk_sama7g5_register_utmi(struct regmap *regmap_pmc, const char *name,
--			       const char *parent_name)
-+			       const char *parent_name, struct clk_hw *parent_hw)
+ 	slowck = kzalloc(sizeof(*slowck), GFP_KERNEL);
+@@ -335,7 +335,7 @@ at91_clk_register_sam9x5_slow(void __iomem *sckcr,
+ 
+ 	init.name = name;
+ 	init.ops = &sam9x5_slow_ops;
+-	init.parent_names = parent_names;
++	init.parent_hws = parent_hws;
+ 	init.num_parents = num_parents;
+ 	init.flags = 0;
+ 
+@@ -366,18 +366,21 @@ static void __init at91sam9x5_sckc_register(struct device_node *np,
+ 					    unsigned int rc_osc_startup_us,
+ 					    const struct clk_slow_bits *bits)
  {
- 	return at91_clk_register_utmi_internal(regmap_pmc, NULL, name,
--			parent_name, &sama7g5_utmi_ops, 0);
-+			parent_name, parent_hw, &sama7g5_utmi_ops, 0);
- }
-diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
-index e5fcf2e0d235..a32dc2111b90 100644
---- a/drivers/clk/at91/dt-compat.c
-+++ b/drivers/clk/at91/dt-compat.c
-@@ -1055,7 +1055,7 @@ static void __init of_at91sam9x5_clk_utmi_setup(struct device_node *np)
- 			regmap_sfr = NULL;
- 	}
+-	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
+ 	void __iomem *regbase = of_iomap(np, 0);
+ 	struct device_node *child = NULL;
+ 	const char *xtal_name;
+ 	struct clk_hw *slow_rc, *slow_osc, *slowck;
++	static struct clk_parent_data parent_data = {
++		.name = "slow_xtal",
++	};
++	const struct clk_hw *parent_hws[2];
+ 	bool bypass;
+ 	int ret;
  
--	hw = at91_clk_register_utmi(regmap_pmc, regmap_sfr, name, parent_name);
-+	hw = at91_clk_register_utmi(regmap_pmc, regmap_sfr, name, parent_name, NULL);
- 	if (IS_ERR(hw))
+ 	if (!regbase)
  		return;
  
-diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-index 101e005a9550..8e32be004843 100644
---- a/drivers/clk/at91/pmc.h
-+++ b/drivers/clk/at91/pmc.h
-@@ -269,10 +269,11 @@ at91rm9200_clk_register_usb(struct regmap *regmap, const char *name,
+-	slow_rc = at91_clk_register_slow_rc_osc(regbase, parent_names[0],
++	slow_rc = at91_clk_register_slow_rc_osc(regbase, "slow_rc_osc",
+ 						32768, 50000000,
+ 						rc_osc_startup_us, bits);
+ 	if (IS_ERR(slow_rc))
+@@ -401,12 +404,16 @@ static void __init at91sam9x5_sckc_register(struct device_node *np,
+ 	if (!xtal_name)
+ 		goto unregister_slow_rc;
  
- struct clk_hw * __init
- at91_clk_register_utmi(struct regmap *regmap_pmc, struct regmap *regmap_sfr,
--		       const char *name, const char *parent_name);
-+		       const char *name, const char *parent_name,
-+		       struct clk_hw *parent_hw);
+-	slow_osc = at91_clk_register_slow_osc(regbase, parent_names[1],
+-					      xtal_name, 1200000, bypass, bits);
++	parent_data.fw_name = xtal_name;
++
++	slow_osc = at91_clk_register_slow_osc(regbase, "slow_osc",
++					      &parent_data, 1200000, bypass, bits);
+ 	if (IS_ERR(slow_osc))
+ 		goto unregister_slow_rc;
  
- struct clk_hw * __init
- at91_clk_sama7g5_register_utmi(struct regmap *regmap, const char *name,
--			       const char *parent_name);
-+			       const char *parent_name, struct clk_hw *parent_hw);
+-	slowck = at91_clk_register_sam9x5_slow(regbase, "slowck", parent_names,
++	parent_hws[0] = slow_rc;
++	parent_hws[1] = slow_osc;
++	slowck = at91_clk_register_sam9x5_slow(regbase, "slowck", parent_hws,
+ 					       2, bits);
+ 	if (IS_ERR(slowck))
+ 		goto unregister_slow_osc;
+@@ -464,14 +471,17 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
+ 	struct clk_hw_onecell_data *clk_data;
+ 	struct clk_hw *slow_rc, *slow_osc;
+ 	const char *xtal_name;
+-	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
++	const struct clk_hw *parent_hws[2];
++	static struct clk_parent_data parent_data = {
++		.name = "slow_xtal",
++	};
+ 	bool bypass;
+ 	int ret;
  
- #endif /* __PMC_H_ */
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index c5df06190e1c..c16594fce90c 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -249,7 +249,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	if (IS_ERR(regmap_sfr))
- 		regmap_sfr = NULL;
+ 	if (!regbase)
+ 		return;
  
--	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", "mainck");
-+	hw = at91_clk_register_utmi(regmap, regmap_sfr, "utmick", "mainck", NULL);
- 	if (IS_ERR(hw))
- 		goto err_free;
+-	slow_rc = clk_hw_register_fixed_rate_with_accuracy(NULL, parent_names[0],
++	slow_rc = clk_hw_register_fixed_rate_with_accuracy(NULL, "slow_rc_osc",
+ 							   NULL, 0, 32768,
+ 							   93750000);
+ 	if (IS_ERR(slow_rc))
+@@ -481,9 +491,10 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
+ 	if (!xtal_name)
+ 		goto unregister_slow_rc;
  
-diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-index 15fa180a3f58..522ce6031446 100644
---- a/drivers/clk/at91/sama5d3.c
-+++ b/drivers/clk/at91/sama5d3.c
-@@ -172,7 +172,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
++	parent_data.fw_name = xtal_name;
+ 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
+-	slow_osc = at91_clk_register_slow_osc(regbase, parent_names[1],
+-					      xtal_name, 5000000, bypass,
++	slow_osc = at91_clk_register_slow_osc(regbase, "slow_osc",
++					      &parent_data, 5000000, bypass,
+ 					      &at91sam9x60_bits);
+ 	if (IS_ERR(slow_osc))
+ 		goto unregister_slow_rc;
+@@ -494,14 +505,16 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
  
- 	sama5d3_pmc->chws[PMC_PLLACK] = hw;
+ 	/* MD_SLCK and TD_SLCK. */
+ 	clk_data->num = 2;
+-	clk_data->hws[0] = clk_hw_register_fixed_rate(NULL, "md_slck",
+-						      parent_names[0],
+-						      0, 32768);
++	clk_data->hws[0] = clk_hw_register_fixed_rate_parent_hw(NULL, "md_slck",
++								slow_rc,
++								0, 32768);
+ 	if (IS_ERR(clk_data->hws[0]))
+ 		goto clk_data_free;
  
--	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
-+	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck", NULL);
- 	if (IS_ERR(hw))
- 		goto err_free;
++	parent_hws[0] = slow_rc;
++	parent_hws[1] = slow_osc;
+ 	clk_data->hws[1] = at91_clk_register_sam9x5_slow(regbase, "td_slck",
+-							 parent_names, 2,
++							 parent_hws, 2,
+ 							 &at91sam9x60_bits);
+ 	if (IS_ERR(clk_data->hws[1]))
+ 		goto unregister_md_slck;
+@@ -572,30 +585,36 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
+ 	void __iomem *regbase = of_iomap(np, 0);
+ 	struct clk_hw *slow_rc, *slowck;
+ 	struct clk_sama5d4_slow_osc *osc;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	const char *xtal_name;
+-	const char *parent_names[2] = { "slow_rc_osc", "slow_osc" };
++	const struct clk_hw *parent_hws[2];
++	static struct clk_parent_data parent_data = {
++		.name = "slow_xtal",
++	};
+ 	int ret;
  
-diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-index 2440a34d1d67..160c0bddb6a3 100644
---- a/drivers/clk/at91/sama5d4.c
-+++ b/drivers/clk/at91/sama5d4.c
-@@ -187,7 +187,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+ 	if (!regbase)
+ 		return;
  
- 	sama5d4_pmc->chws[PMC_PLLACK] = hw;
+ 	slow_rc = clk_hw_register_fixed_rate_with_accuracy(NULL,
+-							   parent_names[0],
++							   "slow_rc_osc",
+ 							   NULL, 0, 32768,
+ 							   250000000);
+ 	if (IS_ERR(slow_rc))
+ 		return;
  
--	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
-+	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck", NULL);
- 	if (IS_ERR(hw))
- 		goto err_free;
+ 	xtal_name = of_clk_get_parent_name(np, 0);
++	if (!xtal_name)
++		goto unregister_slow_rc;
++	parent_data.fw_name = xtal_name;
  
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-index b606d642a22b..42f2f61cc6d1 100644
---- a/drivers/clk/at91/sama7g5.c
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -1035,7 +1035,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
- 			sama7g5_pmc->chws[sama7g5_mckx[i].eid] = hw;
- 	}
+ 	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
+ 	if (!osc)
+ 		goto unregister_slow_rc;
  
--	hw = at91_clk_sama7g5_register_utmi(regmap, "utmick", "main_xtal");
-+	hw = at91_clk_sama7g5_register_utmi(regmap, "utmick", "main_xtal", NULL);
- 	if (IS_ERR(hw))
- 		goto err_free;
+-	init.name = parent_names[1];
++	init.name = "slow_osc";
+ 	init.ops = &sama5d4_slow_osc_ops;
+-	init.parent_names = &xtal_name;
++	init.parent_data = &parent_data;
+ 	init.num_parents = 1;
+ 	init.flags = CLK_IGNORE_UNUSED;
  
+@@ -608,8 +627,10 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
+ 	if (ret)
+ 		goto free_slow_osc_data;
+ 
++	parent_hws[0] = slow_rc;
++	parent_hws[1] = &osc->hw;
+ 	slowck = at91_clk_register_sam9x5_slow(regbase, "slowck",
+-					       parent_names, 2,
++					       parent_hws, 2,
+ 					       &at91sama5d4_bits);
+ 	if (IS_ERR(slowck))
+ 		goto unregister_slow_osc;
 -- 
 2.34.1
 
