@@ -2,124 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB1BEB64DD
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 04:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06E9EB64D9
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 05:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237894AbjFOEQO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 00:16:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32854 "EHLO
+        id S237966AbjFOFQp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 01:16:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234019AbjFOEQM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 00:16:12 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054AB212A;
-        Wed, 14 Jun 2023 21:16:11 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35F41PAN010558;
-        Thu, 15 Jun 2023 04:15:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=+Z0nhqBAyEln1rQXqXvG8yP5Loe3eBpMLTiQInpJfK4=;
- b=TdOB1emnadtAzeFGv745tQzYSXHWmwMlUu70OIDB9LrZiU/YacCsQseW4h6RbJRpNbFv
- 4VDSCLxDfrC9NxxR+UZQkq6NnFS789cnw6O7q8jyuOdNl3AFYqqV171w1m/HS7McPaIP
- oHwRjLTbxYCcMZsvZrBzyUzbZ13WNOMcwTKBhChYF3zuHtzG2BxLopJPvL7ippxo6+G/
- B3CIFgI+4wsNZ0/UtVgZbPql8s2/o3CHxRfOLFHd6wVB43xqHxwMhrEnIA4i/iwFSxZp
- woA605ZEfA/OC/ip07NS6yEKzvb0LmLzqToFcz81TdFs7pN0uypo+1oSIsDyWyRwCZAC Dw== 
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r7u8c80ja-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Jun 2023 04:15:37 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35F4FaFa017126
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Jun 2023 04:15:36 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 14 Jun 2023 21:15:27 -0700
-Date:   Thu, 15 Jun 2023 09:45:23 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <arnd@arndb.de>,
-        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <rafal@milecki.pl>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.org>, <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 1/9] dt-bindings: usb: dwc3: Add IPQ5332 compatible
-Message-ID: <20230615041522.GA22186@varda-linux.qualcomm.com>
-References: <cover.1686126439.git.quic_varada@quicinc.com>
- <d07f804802f0678746aeba55910a83209ecbe054.1686126439.git.quic_varada@quicinc.com>
- <8fdd584e-988f-8542-f635-c0f6b5e63580@linaro.org>
+        with ESMTP id S229853AbjFOFQo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 01:16:44 -0400
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050:0:465::201])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C5A26A9;
+        Wed, 14 Jun 2023 22:16:40 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4QhVrf6fvfz9snk;
+        Thu, 15 Jun 2023 07:16:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1686806194;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NJ9tbVJW/fCl46tCIc1R0NLFQsIT3IjS2TXsnrWjR/8=;
+        b=ZctlEB0s8TfAASUrOzLthi/QgcNN6X6m3/DePewA4K/qpeiCwxEMurtxd0tSzG7do53CJ+
+        tSFqFpYo9ePxHfU7Cm51Go+RmaSXANonmXNEg5uxozQhc9VAvbVk43CAUNyT453nvDKSZF
+        Qs01o5gzn4NL9jpz0LKKsD98gOXwlhpSD02W2Oh/PhEY/axuCC9C0OPYCgPAIzT668X/im
+        Mc6UUmNJJ7vBT362UAyf+Tq8oxIQCYsxz6IYuP3+3kSiG5GxUyO1Mwb3k78Pp/LOE8MU1x
+        G34KCkEIct7Er1rvGNIOLfA0qjhSNY8AmJ1x7hxBjlho+nR/k21uxRcPolIqkg==
+References: <20230613083626.227476-3-frank@oltmanns.dev>
+ <202306132038.nUB6hmCv-lkp@intel.com> <87edmeqwva.fsf@oltmanns.dev>
+ <aa23f41c0e313e97122ac384d66e2325.sboyd@kernel.org>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        kernel test robot <lkp@intel.com>,
+        oe-kbuild-all@lists.linux.dev, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor
+ approximation
+In-reply-to: <aa23f41c0e313e97122ac384d66e2325.sboyd@kernel.org>
+Date:   Thu, 15 Jun 2023 07:16:17 +0200
+Message-ID: <875y7ps3tq.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <8fdd584e-988f-8542-f635-c0f6b5e63580@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uobfYjFoiKBivPOIJ3P6if7bRUruzbMz
-X-Proofpoint-GUID: uobfYjFoiKBivPOIJ3P6if7bRUruzbMz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
- definitions=2023-06-15_01,2023-06-14_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 suspectscore=0 mlxlogscore=556 malwarescore=0
- phishscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306150035
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 08:33:26PM +0200, Krzysztof Kozlowski wrote:
-> On 07/06/2023 12:56, Varadarajan Narayanan wrote:
-> > Document the IPQ5332 dwc3 compatible
+Hi Stephen,
+
+On 2023-06-14 at 13:02:24 -0700, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Frank Oltmanns (2023-06-14 01:19:37)
+>> Hi,
+>>
+>> On 2023-06-13 at 20:48:21 +0800, kernel test robot <lkp@intel.com> wrote:
+>> > Hi Frank,
+>> >
+>> > kernel test robot noticed the following build errors:
+>> >
+>> > [auto build test ERROR on v6.4-rc6]
+>> > [also build test ERROR on linus/master]
+>> > [cannot apply to clk/clk-next next-20230613]
+>> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> > And when submitting patch, we suggest to use '--base' as documented in
+>> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>> >
+>> > url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Oltmanns/clk-fractional-divider-Improve-approximation-when-zero-based/20230613-163903
+>> > base:   v6.4-rc6
+>> > patch link:    https://lore.kernel.org/r/20230613083626.227476-3-frank%40oltmanns.dev
+>> > patch subject: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor approximation
+>> > config: csky-randconfig-r011-20230612 (https://download.01.org/0day-ci/archive/20230613/202306132038.nUB6hmCv-lkp@intel.com/config)
+>> > compiler: csky-linux-gcc (GCC) 12.3.0
+>> > reproduce (this is a W=1 build):
+>> >         mkdir -p ~/bin
+>> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>> >         chmod +x ~/bin/make.cross
+>> >         git checkout v6.4-rc6
+>> >         b4 shazam https://lore.kernel.org/r/20230613083626.227476-3-frank@oltmanns.dev
+>> >         # save the config file
+>> >         mkdir build_dir && cp config build_dir/.config
+>> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky olddefconfig
+>> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky SHELL=/bin/bash
+>> >
+>> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> > the same patch/commit), kindly add following tags
+>> > | Reported-by: kernel test robot <lkp@intel.com>
+>> > | Closes: https://lore.kernel.org/oe-kbuild-all/202306132038.nUB6hmCv-lkp@intel.com/
+>> >
+>> > All errors (new ones prefixed by >>, old ones prefixed by <<):
+>> >
+>> >>> ERROR: modpost: "clk_fractional_divider_general_approximation" [drivers/clk/clk_test.ko] undefined!
+>>
+>> The issue seems to be that clk_fractional_divider_general_approximation
+>> is not exported as a symbol, while the config builds the clk_test as a
+>> module:
+>> CONFIG_CLK_KUNIT_TEST=m
+>>
+>> If I'm not mistaken, this means that I can't test
+>> clk_fractional_divider_general_approximation directly. Instead I'd have
+>> to test it using clk_fractional_divider_ops.round_rate.
+>>
+>> Can someone more knowlegdable than me please confirm if my understanding
+>> is correct?
 >
-> Full stop.
+> Export the symbol.
 
-Ok.
+Ok. I can do that. Please note that I had already submitted a V3 [1],
+that went the way of using clk_fractional_divider_ops.round_rate. I
+apologize for not waiting for your feedback prior to submission. It
+won't happen again.
 
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> > index ae24dac..9c3d6f4 100644
-> > --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> > +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
-> > @@ -14,6 +14,7 @@ properties:
-> >      items:
-> >        - enum:
-> >            - qcom,ipq4019-dwc3
-> > +          - qcom,ipq5332-dwc3
-> >            - qcom,ipq6018-dwc3
-> >            - qcom,ipq8064-dwc3
-> >            - qcom,ipq8074-dwc3
-> > @@ -246,6 +247,7 @@ allOf:
-> >          compatible:
-> >            contains:
-> >              enum:
-> > +              - qcom,ipq5332-dwc3
-> >                - qcom,msm8994-dwc3
-> >                - qcom,qcs404-dwc3
->
-> What about interrupts?
+I liked the approach of calling clk_fd_round_rate directly via the ops,
+because it might allow me to test the other ops as well using the same
+blueprint. Of course, I will not add test cases, if you don't want it.
+(Calling clk_fd_round_rate also had the side effect of teaching me, that
+fd clocks expect the fraction to be less than or equal to 1.)
 
-Will fix and post next version.
+I don't want to waste your time, but if you could maybe have a chance to
+look at the approach I took in V3 and tell me if you still want me to
+export the symbol instead, that would be really helpful. I'll follow
+your preference.
 
-Thanks
-Varada
+If I don't hear back until the weekend, I will treat your three words
+above as your preference and prepare a V4 that goes back to calling
+clk_fractional_divider_general_approximation directly.
+
+Thank you,
+  Frank
+
+[1]: https://lore.kernel.org/all/20230614185521.477924-3-frank@oltmanns.dev/
