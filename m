@@ -2,66 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43502EB64DB
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A87EB64DB
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 16:51:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236445AbjFOQvA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:51:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49204 "EHLO
+        id S232298AbjFOQvP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 12:51:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235820AbjFOQuu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 12:50:50 -0400
+        with ESMTP id S236797AbjFOQvF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 12:51:05 -0400
 Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0AAF2D45;
-        Thu, 15 Jun 2023 09:50:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DD3C2686;
+        Thu, 15 Jun 2023 09:50:53 -0700 (PDT)
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id B331F5C011A;
-        Thu, 15 Jun 2023 12:50:37 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id 896C55C00DB;
+        Thu, 15 Jun 2023 12:50:52 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 15 Jun 2023 12:50:37 -0400
+  by compute2.internal (MEProxy); Thu, 15 Jun 2023 12:50:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:content-type:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1686847837; x=1686934237; bh=vI
-        /hsoiUvma2GUe2XFIA+w7iata8Xrp62/nT+TjfC1g=; b=501D+/oPYAwT3uVkcX
-        WkZ22rscfGQnEb9BadEIsQbZwxbfzGrxruC6TK8eRql+8GrIU93YruZPdSbB+SyV
-        jLh3k+eMCQ6mZQgubyrKBG+hZGEZzA35qn6FdgiFpZGfgM75EhTOXY1Twz/e69K3
-        25vCmGnjmJSVrNtzHQuHCZ1hLJwtazKZDf9cCK4CZim54PMKWS+T2UPbDLBuYb4l
-        OK/J1OYOG+ZtvaO080RD1ScCbTsafgQ62N3L1IsGAbpkFGCk3P7gvvpQiFFKBO6D
-        JyavBwqB93znXbOM3+KgFRB8clsw3GcRmlW65fLUdzQcoGy4tVYOeS77JA8qYl4c
-        Szfw==
+        :subject:subject:to:to; s=fm2; t=1686847852; x=1686934252; bh=8r
+        cNAyML+y0Rntmc8b1zmnBL+V8Jvai2s3TWDYfgZms=; b=MA8RVSsca6Hy/n1KGS
+        /g9qI/dSMW8fIScGW381S4Fe8EZ58/BZ68Y46GRyD6RU0DdRf1S7iFKQGKUqjYcp
+        FWxlyhvX1nWZOowtdh+0Y8ghBbUDT59/Zc3k0qWF77JYnDChQrDb8q78BALSvqGA
+        rg+NDqf6TjSdVq85rG5OEelmibAhN3S6dTnbPoj21fjRb8U4+t7Il1scWp1tuPj6
+        laBP5zxtUo8wg9eW6NVEYxYCiKPT++wKN6KaIHwDuituWS9r2zkWvUxo1MikgN5q
+        RbMLakb76UzWgFUwNj13m7DjPatfNu9YZHP4YGqpcS3u7omLoOVwa+WDcBH1OSUT
+        0eZQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:content-type:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1686847837; x=1686934237; bh=vI/hsoiUvma2G
-        Ue2XFIA+w7iata8Xrp62/nT+TjfC1g=; b=SWlMtKwCbPZh1rGH88mftqv4A+lVF
-        NVavhAo4ULQuqhBs46Yp9EhGhIuap1tin+pCLlHiJQgcPnQ/YubGnGBL9ogRIprw
-        ZwvlircCWkX2yyETVd8ZAEisQAiSsJtDP6jfORxZNpEOdyuyxGeDspdCi1Q1XUvh
-        2i1F8SpRLebq3ChDwT/zuRTG8vsMHu/Wkt4qImPksDustaClKEOcfSiU+A/fbuWM
-        1Yexpq+2KSiQAEd/pUhpdjfSIkK1TJeb08zYytUirbwy/7G9+8+lbCFPNPcsFN7m
-        9IAevR65wckDEPiT0DNzai9qv05pJQ+rOemYH3H9FmviNe2fEyPqQHmAw==
-X-ME-Sender: <xms:XUGLZMJKQj-A5n59OhC1Vm4bRqg08icJuclqa35RC1ItFV3HryHbyg>
-    <xme:XUGLZMI8Mu1alpdTsMau7UuEMmy5h2FdhBWPMxsa035kothOTgGLIX3jw3WlOmdn1
-    iLX2BrSI1_uuZP9xzc>
-X-ME-Received: <xmr:XUGLZMuCMlcUzb8yHA9--S9qI_tXYRlH5MTqRjwKAuMmwlvQ2WYYtYbJHdpGWfQDsDb_roMbTawatH-VjDUIlw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvvddguddtudcutefuodetggdotefrod
+        :x-sasl-enc; s=fm2; t=1686847852; x=1686934252; bh=8rcNAyML+y0Rn
+        tmc8b1zmnBL+V8Jvai2s3TWDYfgZms=; b=M1oM89fsLYgW+nQs6lO3F3q/70wL8
+        ULxChx1qwV2Vl7N9PE7+/biGp65zOKEFa7W4B0XPoy38ZDkQcXhsUthSBbO1QXns
+        9PWJ8k8jVe09LgY+2VvwDZYNwKo8A010hlo99IcUghjt0I6P+niloWUN5pFRiiHC
+        n0kL9fsAdhvPAeiV8Wo7JeBxyukCvLoeiD6P8mCyHRX4goM2UPJpxVGIGaSISWuq
+        uFG34A4BqIsUsSeJhgFJIQwk1P8nIpfZfUPNH7qukqTf0Lrjcp9tMKBVLO7rccLP
+        lKTcdQTGzRUH/4QSRlEdpcppn6Ge98G/tDxZIdUZvrJmwHllMfCy6BsVQ==
+X-ME-Sender: <xms:bEGLZNEENBP90p5D-Mb-6mfO58hQ4pg9Q3S40Urs2SUYxShO8o3BZQ>
+    <xme:bEGLZCXvG-A7LlTlC0fp8x7d73rvpF7DXeSX6_P7S8hXcex3PVNRmljQCm1digURO
+    H85e22sVxHfzsWQcUg>
+X-ME-Received: <xmr:bEGLZPJoPAg6b_hy4nR154wFAylvYqGV6dds8lKG06oukPcGucu7H2rOtb-RlpZb5VC1B3AUeIOauRBnQkoXWg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvvddguddtvdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
     enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgig
     ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
     grthhtvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeet
-    kefgleefnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomh
+    kefgleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
     epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:XUGLZJZ-C2RU9kbFU4ASeptjcCZHHpsEP5_VrnciMxJNevOO-3PpJA>
-    <xmx:XUGLZDZuK-9BuKu1Zn-BXQWnUOOVyh2K6_rx6BtCEubfE0teogDasg>
-    <xmx:XUGLZFANMckhOCy2-lVRpj791UaNs-nVhEQ56zzC4ZdlPhLPhddusQ>
-    <xmx:XUGLZBO0gyTJxDU-A4XQws8NBft9O8FDxvE-L_RGqsVl4AtNdAQHvA>
+X-ME-Proxy: <xmx:bEGLZDGH_afCQysnN2FiiJYryXHK6j3nWthabepuPMbvxiMVUCHtiA>
+    <xmx:bEGLZDVa2KnKmtRunu2K3uom-gLtHmhv0X1losbspuaUdDySQxm9Wg>
+    <xmx:bEGLZOOi7FFZv5w4-1ztQuOpjEZVA8gxhfXPxHA7gSfhfs51R5OCDA>
+    <xmx:bEGLZPpxfxWeTwTKQhzRdRx1RwzKsFqZ7-1pFRlrC5RR2Q5K4UAvTw>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Jun 2023 12:50:37 -0400 (EDT)
-Date:   Thu, 15 Jun 2023 18:50:35 +0200
+ 15 Jun 2023 12:50:51 -0400 (EDT)
+Date:   Thu, 15 Jun 2023 18:50:50 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Claudiu Beznea <claudiu.beznea@microchip.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
@@ -69,33 +69,29 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         m.grzeschik@pengutronix.de, windhl@126.com,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] clk: at91: clk-utmi: add support for parent_hw
-Message-ID: <r3432f4teontgh5obljdggl4dn5n3fn3bxjntlpzxzjrw7s2zp@6uleyrrdwx7k>
+Subject: Re: [PATCH 09/11] clk: at91: sckc: switch to parent_data/parent_hw
+Message-ID: <7i3czgzxmkrgwjeogijhkb2hf5aenwv3qfjulzu4h3rpeunpod@qtwaavl4eqw4>
 References: <20230615093227.576102-1-claudiu.beznea@microchip.com>
- <20230615093227.576102-8-claudiu.beznea@microchip.com>
+ <20230615093227.576102-10-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="67qssutobxzdeit6"
+        protocol="application/pgp-signature"; boundary="bnlxwil7t5zvhuit"
 Content-Disposition: inline
-In-Reply-To: <20230615093227.576102-8-claudiu.beznea@microchip.com>
+In-Reply-To: <20230615093227.576102-10-claudiu.beznea@microchip.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---67qssutobxzdeit6
+--bnlxwil7t5zvhuit
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 15, 2023 at 12:32:23PM +0300, Claudiu Beznea wrote:
-> Add support for parent_hw in utmi clock drivers.
+On Thu, Jun 15, 2023 at 12:32:25PM +0300, Claudiu Beznea wrote:
+> Switch slow clock drivers to use parent_data and parent_hw.
 > With this parent-child relation is described with pointers rather
-> than strings making registration a bit faster.
->=20
-> All the SoC based drivers that rely on clk-utmi were adapted
-> to the new API change. The switch itself for SoCs will be done
-> in subsequent patches.
+> than strings.
 >=20
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
@@ -103,15 +99,15 @@ Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
 Maxime
 
---67qssutobxzdeit6
+--bnlxwil7t5zvhuit
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZItBWwAKCRDj7w1vZxhR
-xcO3AP9Ngpz6vvvc6cBWVZFmqHd6QGEA3f4N++MeMjbbUkZgqAD/Xb341DBKY8k0
-1DxM5M86J0W4/N8/uwzctcDcdw253wc=
-=/xzB
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZItBagAKCRDj7w1vZxhR
+xdrJAQCE63NMr1hjH5dwhyTQrdYmnpzRFQWvSxDkQSPCYqxQ3wD/TNt9GxJ+YQsG
+12WFOv8G7Fb1QGRCuvaIGRWhaF0HnAg=
+=Y5V1
 -----END PGP SIGNATURE-----
 
---67qssutobxzdeit6--
+--bnlxwil7t5zvhuit--
