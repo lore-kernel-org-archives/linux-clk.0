@@ -2,95 +2,171 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD641EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 10:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B435EEB64D9
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 10:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343756AbjFOKiV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 06:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47966 "EHLO
+        id S245471AbjFOKqL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 06:46:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343544AbjFOKiU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 06:38:20 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F4A6212A
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jun 2023 03:38:19 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-3f7fcdc7f7fso4671035e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Jun 2023 03:38:19 -0700 (PDT)
+        with ESMTP id S245751AbjFOKqJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 06:46:09 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B74F2130;
+        Thu, 15 Jun 2023 03:46:07 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-66615629689so2019241b3a.2;
+        Thu, 15 Jun 2023 03:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686825498; x=1689417498;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2HhDvY5NOJAhj9HpoAeApwW1Xx3nbYDTiIZwJoccQUI=;
-        b=SNg6Oeo5SgROXY7rp+MSqrTKj/Ab2XYTPYa7yeactT2L5VC2QhH1RD7NqyBIEZ6kCf
-         3iT+uwZPq+L3N3ARWPGthtf0dngxReaq4LDrcT3nhbAFF0nWSo1KkCzdAbkHBgxaD/lO
-         itFgK671PZW7Sdh0D9gFnoKDxeII4hQX3zqD2/YWrMB+ODE+/4yg6YxjSUUISuPlxmGd
-         9KCwHfcouBOtRHQJNB7/E01+xlZud4iFDXUar5y+2y9UGq63YRi+I9Ms1fiYuu7TW4SL
-         KhIwx4bM9WeT0YQwpaRgI8xrXJHt+y6WKK7V+0XdDKHrffly+IT/uyOEQw5pySCeGHVV
-         /IVA==
+        d=gmail.com; s=20221208; t=1686825966; x=1689417966;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1ceGenVHiIhT8J4bTA/hroU5FeyMJg9le+aNbGkYaWs=;
+        b=cqkhwrEoP1Xx4HkeZu5R/+cfyAHIBHX6TaK8vAygzYjfEBnkTuPEyjb7EDM2+5xUCT
+         tewXBd4oev5wmuT8BpIT0dibvzMotcXJ3131B8zrQno0tEE/vGwiuLIcI6HPPZMh1f8E
+         KTtKk5yZe6X//wDWP7iOVG9QVMslFP/Yn/GCf5kt6ckER0YQaPn40jem+PupxfpQnk9/
+         T4RkO5Af8COpzQ4O9kqrMaxtTwr3TjBWZl61GSbaqB8dworaBA4xPEAXXzYXPGIsMVC7
+         W91xGTuaoxrWPwMcH4eOYo/DARMWkrOkcBnRkEfc4isFwxEzNOuXwy61yXgND3kppN0C
+         fXAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686825498; x=1689417498;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2HhDvY5NOJAhj9HpoAeApwW1Xx3nbYDTiIZwJoccQUI=;
-        b=GQN+ghAScfVtD7TNtorATO8ykuLcZvGfDk42T5Ot/9U7CvTiBnF2wGkxHMJdE0b7rp
-         uuSGUS7lk0MnsLOvCpMEaAxr0zrzEfzFgJwiktqiiS+9oARtWRUMmP60Jl7+Mkun9k3N
-         B9JOXFuYhwWiSVdvlNoaluK8Iq+1CBJOFFVyYPUcpq6kXRBHchrSvztTKtYmXcpIUvEd
-         A23dyBR61B4xpssYWEG17C9FgvqXlrlOkIlPtQCMUIyXGeAaloGTfMdnZxyXWaIiPSBW
-         Wj4UkoMZR4tRZaw3+SpCOSBRqZTCVxEyDLoEM63MNjjRyZu7fbzUqNx+p1gO5V87hVNy
-         RbLA==
-X-Gm-Message-State: AC+VfDyYUNE6/4icZd0YocsZLhVz56ffI0vTaNkmXZ2efUy/PHjjbVYK
-        V7FMGvEieR/0pAYAJ5QXnKgZ1A==
-X-Google-Smtp-Source: ACHHUZ7aLxl6u8Xy8keJRrva8YV/gEx7RIIAOGjxj2M3OsUhXtIj8GbKGcAVpQ/yJBbdCRNp057N8w==
-X-Received: by 2002:a05:600c:5562:b0:3f7:ba55:d03e with SMTP id ja2-20020a05600c556200b003f7ba55d03emr3885162wmb.6.1686825497863;
-        Thu, 15 Jun 2023 03:38:17 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c12-20020a05600c0acc00b003f195d540d9sm20041465wmr.14.2023.06.15.03.38.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 03:38:17 -0700 (PDT)
-References: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
- <CAFBinCBZFxx55HQM4a99vVwvXFaQThn8_F5B4uNS5x1AYzOupw@mail.gmail.com>
-User-agent: mu4e 1.8.13; emacs 28.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc:     neil.armstrong@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, khilman@baylibre.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] clk: meson: pll: remove unneeded semicolon
-Date:   Thu, 15 Jun 2023 12:36:19 +0200
-In-reply-to: <CAFBinCBZFxx55HQM4a99vVwvXFaQThn8_F5B4uNS5x1AYzOupw@mail.gmail.com>
-Message-ID: <1j7cs52ep4.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20221208; t=1686825966; x=1689417966;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ceGenVHiIhT8J4bTA/hroU5FeyMJg9le+aNbGkYaWs=;
+        b=XOy5gPgS1gYpD01yxXSBvdFPoKpC/qtahXz57hngaXZ6z1tq0onDAvieYPLJQqit3T
+         pEmVmzR0EfCo4yll1fEq6/VE6xiCCeBlf+CyXiwLVqQmJYrC3CM9P29GPNz/a96jTOYM
+         MbvTqFpnYbcb4dHTAnt4f9Y0lQwFt2Icd+zHyjWevRB2pd59w7Jh/FObwZogtCVwrj4O
+         2iHg54bkIg3vnVvDHT1MKs5BpxTqBEVxnVUT1CEikXMFyON5WrAIVHG+EEBvDhVyw1/q
+         HNYV+69PtxuiPz2QDNfNyrVgyKXu1A7zIEXr13lCqiwbgpKzc2scs3bhQGEb1MCUM572
+         SJNQ==
+X-Gm-Message-State: AC+VfDyKIq7gS/DSjEHh0rHxa3aefKpLDGmslJ4H8gddsj4kkxwmFjxJ
+        IW17nviYpUtX+1TNryq23AA=
+X-Google-Smtp-Source: ACHHUZ5KeIs+4puHmWbUL4V38X9p8iuVjK6/GwQTDrX/TdnxlKj0c4p7Y6LS7F2orDmZvyOSppxlKg==
+X-Received: by 2002:a05:6a20:2e13:b0:11e:7273:7edd with SMTP id be19-20020a056a202e1300b0011e72737eddmr693906pzb.23.1686825966256;
+        Thu, 15 Jun 2023 03:46:06 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id p3-20020a62ab03000000b00646e7d2b5a7sm1136778pff.112.2023.06.15.03.46.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Jun 2023 03:46:05 -0700 (PDT)
+Message-ID: <4fd20e8d-49fd-be07-e4e5-0860fdb07125@gmail.com>
+Date:   Thu, 15 Jun 2023 18:46:01 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v14 1/1] tty: serial: Add Nuvoton ma35d1 serial driver
+ support
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, Lee Jones <lee@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        soc@kernel.org, schung@nuvoton.com, mjchen@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+References: <20230612025355.547871-1-ychuang570808@gmail.com>
+ <20230612025355.547871-2-ychuang570808@gmail.com>
+ <2023061338-lunchbox-snorkel-e6a9@gregkh>
+ <f8eb6114-8248-8886-b301-c2886e50e016@gmail.com>
+ <2023061356-matchbook-footwear-d142@gregkh>
+ <35e768ad-7f15-48a4-9c38-09570026cf71@app.fastmail.com>
+ <2023061555-enlighten-worshiper-c92d@gregkh>
+Content-Language: en-US
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <2023061555-enlighten-worshiper-c92d@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Wed 14 Jun 2023 at 22:09, Martin Blumenstingl <martin.blumenstingl@googl=
-email.com> wrote:
 
-> On Wed, Jun 14, 2023 at 10:48=E2=80=AFAM Jiapeng Chong
-> <jiapeng.chong@linux.alibaba.com> wrote:
+On 2023/6/15 下午 06:19, Greg Kroah-Hartman wrote:
+> On Tue, Jun 13, 2023 at 05:44:23PM +0200, Arnd Bergmann wrote:
+>> On Tue, Jun 13, 2023, at 16:49, Greg KH wrote:
+>>> On Tue, Jun 13, 2023 at 06:58:32PM +0800, Jacky Huang wrote:
+>>>> On 2023/6/13 下午 06:28, Greg KH wrote:
+>>>>> On Mon, Jun 12, 2023 at 02:53:55AM +0000, Jacky Huang wrote:
+>>>>>> From: Jacky Huang <ychuang3@nuvoton.com>
+>>>>>>
+>>>>>> This adds UART and console driver for Nuvoton ma35d1 Soc.
+>>>>>> It supports full-duplex communication, FIFO control, and
+>>>>>> hardware flow control.
+>>>>> You get a full 72 columns for your changelog :)
+>>>>>
+>>>>>> --- a/include/uapi/linux/serial_core.h
+>>>>>> +++ b/include/uapi/linux/serial_core.h
+>>>>>> @@ -279,4 +279,7 @@
+>>>>>>    /* Sunplus UART */
+>>>>>>    #define PORT_SUNPLUS	123
+>>>>>> +/* Nuvoton MA35 SoC */
+>>>>>> +#define PORT_MA35	124
+>>>>>> +
+>>>>> Why is this change needed?  What userspace code is going to rely on it?
+>>>>>
+>>>>> thanks,
+>>>>>
+>>>>> greg k-h
+>>>> Because the serial driver requires a port->type, and almost all serial
+>>>> drivers defined their port type here. We follow the practice of most serial
+>>>> drivers here.
+>>>> If we don't do it this way, we would have to directly assign a value to
+>>>> port->type. However, such modifications were questioned in the past,
+>>>> which is why we changed it back to defining the port type in serial_core.h.
+>>> I really really want to get rid of this list, as it's a UAPI that no one
+>>> uses.  So please don't use it, it doesn't help anything, and while the
+>>> serial driver might require it, it doesn't actually do anything with
+>>> that field, right?  So why don't we just set all of the values to the
+>>> same one?
+>> I don't see how Jacky can come up with a patch to do this correctly
+>> without more specific guidance to what exactly you are looking for,
+>> after the last 123 people that added support for a new port got
+>> that merged.
+> I keep complaining about this, when I notice it.  Just use the "default"
+> port type in the serial driver and don't add a new type here and it
+> should just work, right?
+>
+>> I checked debian codesearch and found only three obscure packages that
+>> accidentally include this header instead of including linux/serial.h,
+>> a couple of lists of all kernel headers, and none that include it on
+>> purpose. I agree that this header should really not exist in uapi,
+>> but the question is what exactly to do about it.
 >>
->> No functional modification involved.
+>> Possible changes would be:
 >>
->> ./drivers/clk/meson/clk-pll.c:373:2-3: Unneeded semicolon.
+>> - add a special value PORT_* constant other than PORT_UNKNOWN that
+>>    can be used by serial drivers instead of a unique value, and
+>>    ensure that the serial core can handle drivers using it.
+> Why do we need a special constant?
+>
+>> - move all values used by the 8250 driver from serial_core.h
+>>    to serial.h, as this driver actually uses the constants.
+> Makes sense.
+>
+>> - Move the remaining contents of uapi/linux/serial.h into the
+>>    non-uapi version.
 >>
->> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
->> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D5533
+>> - Change all drivers that only reference a single PORT_*
+>>    value to use the generic one.
+> I think this is the best thing to do.
+>
+> thanks,
+>
+> greg k-h
 
-Removed this bugzilla tag and added a fixes tag:
-Fixes: b6ec400aa153 ("clk: meson: introduce new pll power-on sequence for A=
-1 SoC family")
+I will remove the definition of PORT_MA35 without modifying serial_core.h.
 
->> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+However, we still need to assign a value to port->type. So, can we follow
+the approach used in the LiteUART driver and directly assign port->type = 1?
 
-Applied through the amlogic clock tree.
-Thx
+
+Best regards,
+Jacky Huang
