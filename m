@@ -2,121 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D748EEB64DB
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 11:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D081EB64DB
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 12:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbjFOL3b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 07:29:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48430 "EHLO
+        id S1344678AbjFOMCE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 08:02:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239015AbjFOL3a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 07:29:30 -0400
-Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAAD8268C;
-        Thu, 15 Jun 2023 04:29:29 -0700 (PDT)
-Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3f8c65020dfso19007395e9.2;
-        Thu, 15 Jun 2023 04:29:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686828568; x=1689420568;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLMoHRQkNaVEJbS7Ev0Yvn4A21A5U5fl8EoeJfa1evM=;
-        b=Yv73hjsA1PHoQjwh0SsiNTpMlq5QMrgH+ucTTQ/1umRZrbHvX22JoOHVuTJuNLbrqj
-         T2vWpV4Ql+QoWdNJqa8JK6rG80PvZZr80XIAg49x1i8wIErCOb9tKAN1gn96fHA3vrS2
-         qs8ZHcBbeTX7odc4cMhnK/jf0v0V/I/Ujn2Z7qfVaQxkHo0AxCzkbbfAip4Zs9hyZ7tj
-         7yIpudhrLL3XTK/axjjYFGbIV/XXrcDOo5oUlYEem8Uf+tqzJ5+mpoZ9SaAxh5webClz
-         3rHMw6HUNUNvXDBK8EYkTl9G/axO0ipwCDHwaBfctT7bXOiLCsQHG4lH55qUTqs+xEiK
-         pHIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686828568; x=1689420568;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cLMoHRQkNaVEJbS7Ev0Yvn4A21A5U5fl8EoeJfa1evM=;
-        b=afuvhfh8GvL/qzIa7JFLBOml6YQPKExYYD2wPEeIJA5BPDnoC8O9qLX/0aP2FgC0gu
-         bqRsCgcasSGdnMyTHF8QDOFofZdOK4F2wKYVTfNVHpuW7twPUjSyD1k18mGfncTNRU2E
-         5QPjepYZl61qGPzXBILNsLAHZO7Yul2CWpjn9apWcqZlcogc03GXniQNDTcgGkXF7pTs
-         Nvo2mUYU4nZAZDF/AZ7wdPfGY0jd6abW0g5KLdREJwLG8KmlD8W1/hTEHAg5RXu0Buot
-         BYPplgQy0dJhs8fMbCJMbBP/3GF1dETPuxoMHeVGPsQnA2eJ/ivQTdZHmOpp5fV5+ffb
-         70iA==
-X-Gm-Message-State: AC+VfDwF5q9gUxVvbPyNKdlEv0RUiOVIxKQ5GS+G2fkAXWkQm6YAKdhY
-        PjPmFlufSW7eRuBaG9W1di1f6rNiFjc=
-X-Google-Smtp-Source: ACHHUZ58KwgDXTDG6pMkF9+44DVif+hPHlagF+7zOsU6Ghm0GF/2b1zRlRePitJfpW2ZKw7zaRiwoA==
-X-Received: by 2002:a05:600c:2144:b0:3f7:5e07:ea54 with SMTP id v4-20020a05600c214400b003f75e07ea54mr14233392wml.13.1686828567565;
-        Thu, 15 Jun 2023 04:29:27 -0700 (PDT)
-Received: from Ansuel-xps. (93-34-93-173.ip49.fastwebnet.it. [93.34.93.173])
-        by smtp.gmail.com with ESMTPSA id p17-20020a1c7411000000b003f7e4639aabsm20220093wmc.10.2023.06.15.04.29.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Jun 2023 04:29:26 -0700 (PDT)
-Message-ID: <648af616.1c0a0220.f8289.b7a9@mx.google.com>
-X-Google-Original-Message-ID: <ZIr2FGIXzvMD1PWg@Ansuel-xps.>
-Date:   Thu, 15 Jun 2023 13:29:24 +0200
-From:   Christian Marangi <ansuelsmth@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
- multi ops
-References: <20230427150717.20860-1-ansuelsmth@gmail.com>
- <20230427150717.20860-3-ansuelsmth@gmail.com>
- <82072c2b-8483-6fb6-a9d1-c9882825c9cb@linaro.org>
- <6473e34c.df0a0220.33a79.6c95@mx.google.com>
- <4afbcdd0-a11c-4826-d669-2ffc9488a8b6@linaro.org>
- <64749bf4.5d0a0220.325c0.64b5@mx.google.com>
- <d251be3e02b2fe28357c884e39fe7601.sboyd@kernel.org>
+        with ESMTP id S1344675AbjFOMBr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 08:01:47 -0400
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 082F53C10;
+        Thu, 15 Jun 2023 04:56:50 -0700 (PDT)
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 35FBufmJ086492;
+        Thu, 15 Jun 2023 06:56:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1686830201;
+        bh=W9iiHwjdGP5imfSBo37bnm2qDQ491c1YdJEXZJipicM=;
+        h=From:Date:Subject:References:In-Reply-To:To:CC;
+        b=GW+k0fMhYHeJ6q9PPU5rGDxIZDhEuUWzzl0DPBDBW1VE8ILiVbX1GY4OQilntjACU
+         0U03oULZapFtRnkEH6B7SrO+sgdCLhEVG/NUyYfnQSCmO+2kg0KN1Lrh5PX6pkjeFU
+         qEs8l+/Z3IQD5pPmLKwzg8+kXvqCZMvP+oiaEa3A=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 35FBufKm130043
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 15 Jun 2023 06:56:41 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 15
+ Jun 2023 06:56:41 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 15 Jun 2023 06:56:41 -0500
+Received: from localhost (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 35FBueiY002003;
+        Thu, 15 Jun 2023 06:56:41 -0500
+From:   Jai Luthra <j-luthra@ti.com>
+Date:   Thu, 15 Jun 2023 17:25:35 +0530
+Subject: [PATCH v3 1/2] dt-bindings: clock: Add binding documentation for
+ TI Audio REFCLK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d251be3e02b2fe28357c884e39fe7601.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20230515-refclk-v3-1-37c0b550f406@ti.com>
+References: <20230515-refclk-v3-0-37c0b550f406@ti.com>
+In-Reply-To: <20230515-refclk-v3-0-37c0b550f406@ti.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     Vignesh Raghavendra <vigneshr@ti.com>, Andrew Davis <afd@ti.com>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jai Luthra <j-luthra@ti.com>,
+        Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1529; i=j-luthra@ti.com;
+ h=from:subject:message-id; bh=sQ9ec5YFJ+Y8ENQetUcqU9qt54E7RHL6FfG8IWKEvjo=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBkivx390StvIVTDs3XMMkmqkRhBKVHtbAo/YEYt
+ r7sfHiEX6WJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZIr8dwAKCRBD3pH5JJpx
+ RQRLD/wPZVGXumEedqmhqZDtKFsGoATCbKaMebE+idnLSYKetn8ZAwL0LKabhowjDC5+m4/nvTh
+ sGurUHrhyZdE6S5dVJAe6XbzkAsR0llWpTisyJBOCBx/++Jxa7NtRYINu1os0OvCjHywwcrv6LH
+ DEfJcSWb3i+XmO3+NmcuyTjyrMPcbWex257sP56qFifasjxcsk6uVgit27kOggnIfaOxOPH+5Jf
+ VAbUD6TRy58AN4EvqJMTI39fP0B78lvyooAwmiyllB9BAsw87xtVv56ZGwGkHvjoj6vnCSoRn9o
+ R9X829qDuxCQ4sCasvPtw7V2BO2/gobbMZMoDADPt7+suunneVMl6yPSRwPPf1CSC/nD6JY4slW
+ FCGqRAxh6/DwfJ1CqLlXLxz1hTuSFaJ5RXFHjfyeUjlVjKvAWSxju4cJrOkICooMLDR/L4uuB9R
+ 5i14dK+VUrulWnaJMnUrAjmWiuyxJcY0wDlqdNyIidxnIKno1lc9QgBQK11cCNWsBFfaj/KLyka
+ tkoJlAeDW8IY2fVpifOeTx8HTrkO3gwbFruyaXqSI37kskgnj8YBarzFVYABRoD//zqTkKyNO+1
+ REVPfT8+woc8CTNQjss0Lj/O9208hAQEN2ioWwE4HXO7DPiZHMaOEza/ZB5vnexXXlqyI0FXAHn
+ yxSlY/7IuTwk+iw==
+X-Developer-Key: i=j-luthra@ti.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 05:28:08PM -0700, Stephen Boyd wrote:
-> Quoting Christian Marangi (2023-05-29 05:34:57)
-> > On Mon, May 29, 2023 at 02:12:23PM +0200, Konrad Dybcio wrote:
-> > > On 28.05.2023 14:37, Christian Marangi wrote:
-> > > > On Sat, May 27, 2023 at 06:11:16PM +0200, Konrad Dybcio wrote:
-> > > >> On 27.04.2023 17:07, Christian Marangi wrote:
-> > > >>> +  * Force the first conf if we can't find a correct config.
-> > > >>> +  */
-> > > >>> + if (unlikely(i == f->num_confs))
-> > > >>> +         best_conf = f->confs;
-> > > >> Is that a supported scenario or would it be a device driver / clock
-> > > >> driver error?
-> > > >>
-> > > > 
-> > > > It's to handle case for the 2 continue in the loop and arriving in a
-> > > > situation where best_conf was never set?
-> > > > 
-> > > > Should we return a warning and an ERR_PTR? Idea was to provide a best
-> > > > effort selection.
-> > > Hm.. I'm not sure what's the expected behavior here.. Stephen?
-> > > 
-> > 
-> > I have this implementation rady, if you want I can send this revision
-> > and discuss that in v5 directly. It's WARN and returning -EINVAL.
-> 
-> I'd only have a WARN if you never expect to hit that case. Otherwise, it
-> should return -EINVAL and not warn. At a quick glance it sounds like
-> some sort of rounding policy, so just make sure the
-> round_rate/determine_rate implementation agrees with what set_rate()
-> will do and it should be good.
+Add DT bindings for TI's audio reference clocks (REFCLK) present on AM62
+SoC.
 
-Hi, in theory the WAN path should never happen, as it means no parent
-for the clk are present. So I guess with your logic printing a WARN is
-correct.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Jai Luthra <j-luthra@ti.com>
+---
+ .../bindings/clock/ti,am62-audio-refclk.yaml       | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-About the rounding policy this is more or less problematic, it's a
-CLOSEST policy, so not a CEIL or FLOOR one. The determine_rate apply the
-very same selection logic of set_rate so also that should be good.
-
-I sent v5 some time ago with the concern here addressed so if you have
-time it would be good if you can check that.
+diff --git a/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
+new file mode 100644
+index 000000000000..b2e40bd39a3a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,am62-audio-refclk.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,am62-audio-refclk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI Audio Reference Clock
++
++maintainers:
++  - Jai Luthra <j-luthra@ti.com>
++
++properties:
++  compatible:
++    items:
++      - const: ti,am62-audio-refclk
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 0
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    audio_refclk0: clock@82e0 {
++        compatible = "ti,am62-audio-refclk";
++        reg = <0x82e0 0x4>;
++        clocks = <&k3_clks 157 0>;
++        assigned-clocks = <&k3_clks 157 0>;
++        assigned-clock-parents = <&k3_clks 157 8>;
++        #clock-cells = <0>;
++    };
 
 -- 
-	Ansuel
+2.41.0
+
