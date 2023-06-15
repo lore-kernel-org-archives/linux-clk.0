@@ -2,62 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BC0EB64DB
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 01:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB1BEB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 04:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbjFOB3P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 21:29:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38496 "EHLO
+        id S237894AbjFOEQO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 00:16:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236211AbjFOB3O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 21:29:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 222C326A8;
-        Wed, 14 Jun 2023 18:29:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B28A063081;
-        Thu, 15 Jun 2023 01:29:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B17C433C8;
-        Thu, 15 Jun 2023 01:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686792550;
-        bh=52VHT5u3jfsi5GIq4jRjeOT/n/zezUlxEAea8q8MJ5Y=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Tr5nh7UaGoG7RI5Amvh/Em8Ia1n8zNFP1zJui6kpVAtLpsk6ZKpG0GjuClXm8sBf7
-         hMool+0BHNtOhxCIk6lE2CcX3phRDSReOHBpGQqJXebf8rS27kRtKor/htFzok3hbN
-         3/x1RWpMK5NVXC/jtOfnOewr4bzPU+AfPlzG0W/2B619Z+8dXQCQ6lx7ipgd0g0XIG
-         mlZBTPIueWQhfLmhSE0bdIdEiruRIOh8h/4UtImbPuUH89WN287b7U66NtS2jRAC4O
-         ZsPcTTCUFEsNIPitW2iZ/PPvhiXXA1C027AFEd91UHsbVZZeAdPpsiSyIjaN8yQIQD
-         pB7PjZUc/9BMw==
-Message-ID: <0f041c132a4388cad6ce87a2c0bced08.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S234019AbjFOEQM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 00:16:12 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 054AB212A;
+        Wed, 14 Jun 2023 21:16:11 -0700 (PDT)
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35F41PAN010558;
+        Thu, 15 Jun 2023 04:15:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=+Z0nhqBAyEln1rQXqXvG8yP5Loe3eBpMLTiQInpJfK4=;
+ b=TdOB1emnadtAzeFGv745tQzYSXHWmwMlUu70OIDB9LrZiU/YacCsQseW4h6RbJRpNbFv
+ 4VDSCLxDfrC9NxxR+UZQkq6NnFS789cnw6O7q8jyuOdNl3AFYqqV171w1m/HS7McPaIP
+ oHwRjLTbxYCcMZsvZrBzyUzbZ13WNOMcwTKBhChYF3zuHtzG2BxLopJPvL7ippxo6+G/
+ B3CIFgI+4wsNZ0/UtVgZbPql8s2/o3CHxRfOLFHd6wVB43xqHxwMhrEnIA4i/iwFSxZp
+ woA605ZEfA/OC/ip07NS6yEKzvb0LmLzqToFcz81TdFs7pN0uypo+1oSIsDyWyRwCZAC Dw== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r7u8c80ja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Jun 2023 04:15:37 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35F4FaFa017126
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Jun 2023 04:15:36 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Wed, 14 Jun 2023 21:15:27 -0700
+Date:   Thu, 15 Jun 2023 09:45:23 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <arnd@arndb.de>,
+        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <rafal@milecki.pl>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 1/9] dt-bindings: usb: dwc3: Add IPQ5332 compatible
+Message-ID: <20230615041522.GA22186@varda-linux.qualcomm.com>
+References: <cover.1686126439.git.quic_varada@quicinc.com>
+ <d07f804802f0678746aeba55910a83209ecbe054.1686126439.git.quic_varada@quicinc.com>
+ <8fdd584e-988f-8542-f635-c0f6b5e63580@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230406010738.1269781-1-robh@kernel.org>
-References: <20230406010738.1269781-1-robh@kernel.org>
-Subject: Re: [PATCH] clk: mvebu: Use of_address_to_resource()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Date:   Wed, 14 Jun 2023 18:29:07 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8fdd584e-988f-8542-f635-c0f6b5e63580@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uobfYjFoiKBivPOIJ3P6if7bRUruzbMz
+X-Proofpoint-GUID: uobfYjFoiKBivPOIJ3P6if7bRUruzbMz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-15_01,2023-06-14_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=556 malwarescore=0
+ phishscore=0 bulkscore=0 impostorscore=0 priorityscore=1501 spamscore=0
+ mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306150035
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2023-04-05 18:07:38)
-> Replace of_get_property() and of_translate_address() calls with a single
-> call to of_address_to_resource().
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+On Wed, Jun 07, 2023 at 08:33:26PM +0200, Krzysztof Kozlowski wrote:
+> On 07/06/2023 12:56, Varadarajan Narayanan wrote:
+> > Document the IPQ5332 dwc3 compatible
+>
+> Full stop.
 
-Applied to clk-next
+Ok.
+
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> >  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> > index ae24dac..9c3d6f4 100644
+> > --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> > +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> > @@ -14,6 +14,7 @@ properties:
+> >      items:
+> >        - enum:
+> >            - qcom,ipq4019-dwc3
+> > +          - qcom,ipq5332-dwc3
+> >            - qcom,ipq6018-dwc3
+> >            - qcom,ipq8064-dwc3
+> >            - qcom,ipq8074-dwc3
+> > @@ -246,6 +247,7 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > +              - qcom,ipq5332-dwc3
+> >                - qcom,msm8994-dwc3
+> >                - qcom,qcs404-dwc3
+>
+> What about interrupts?
+
+Will fix and post next version.
+
+Thanks
+Varada
