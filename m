@@ -2,83 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA04EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 00:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0539EB64DC
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 00:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229868AbjFOA2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 20:28:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53520 "EHLO
+        id S237277AbjFOAf4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 20:35:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjFOA2N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 20:28:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 395F3268A;
-        Wed, 14 Jun 2023 17:28:12 -0700 (PDT)
+        with ESMTP id S236821AbjFOAfz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 20:35:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF76269A;
+        Wed, 14 Jun 2023 17:35:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C512463A6C;
-        Thu, 15 Jun 2023 00:28:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DDDC433C8;
-        Thu, 15 Jun 2023 00:28:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 51F516290F;
+        Thu, 15 Jun 2023 00:35:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C5CC433C0;
+        Thu, 15 Jun 2023 00:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686788891;
-        bh=XaltGBrfhglFbHY3ssTTjmpnwDD40AZoGcQsyArt+K0=;
+        s=k20201202; t=1686789353;
+        bh=9VWiK/eOWLvZAKTWuUz2vckGtlkNMVjZPGK1dSYO8TU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=PJqStyRIv9SMNSfgk1rsrgtw6kU92JWbqqwwV4OPd+PIUgkzH9hsoTHjEX0cjvjS6
-         G+nH222bmJChSzvXTdsbNeGzn3iwk/FGMW3W8AerGXXaJ6bHFgQhLVC0BzepKEYb0q
-         E9LDO9mD9Ok47vmkoZV2COvyVahocmXo1akA3PSGh1ZR0MekB2h/fzuxGAJtaDhrMM
-         LeuzRLNDdb1D6tjziJm1WvDKosfL2vQ6fA8RQf3duZgk2yRnw5LxtrhzKjYXxJSjGy
-         q7YSa1qC+kSEDS623HCp4iP+xukbu2iVfIvTNl2LGeyiRCQxgM+Gdm3fTI57QwsBL5
-         ivUzAHyJWn6gA==
-Message-ID: <d251be3e02b2fe28357c884e39fe7601.sboyd@kernel.org>
+        b=a8IV6EKuz5VGKLcVPi7xk9OAzQME4tGt8COClUV4rg+DbzrTFs0Mkj0Xl2IPXXlyf
+         S7QD0PI3B2XXiQLUZJ7/lfUL7EMTb4RWEloimV6gY3LQTz9M9bEvAYsKjHsfLhis/Y
+         tQTDLddJ/QR4VaRhHpD/cqaVj0u5M7D5KtiySuXsas6pKO3I4BxOfv+/6yVtmgJXZB
+         x6iURX+5igJchKjbmqzo+ckn/JkLcscS1gpTF+6dJ2frvtXknzbtCLNbtA/iVOBuzH
+         E3rEkRshvfKd32llpNyB7Ue7KiDUypSS4JTuTLtImqF411nywe6jtFxWUwu2+mnqGQ
+         6fzAImssbH0uw==
+Message-ID: <b07d3bfae4702417010ed5ee14739bb0.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <64749bf4.5d0a0220.325c0.64b5@mx.google.com>
-References: <20230427150717.20860-1-ansuelsmth@gmail.com> <20230427150717.20860-3-ansuelsmth@gmail.com> <82072c2b-8483-6fb6-a9d1-c9882825c9cb@linaro.org> <6473e34c.df0a0220.33a79.6c95@mx.google.com> <4afbcdd0-a11c-4826-d669-2ffc9488a8b6@linaro.org> <64749bf4.5d0a0220.325c0.64b5@mx.google.com>
-Subject: Re: [PATCH v4 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq multi ops
+In-Reply-To: <20230609140751.65129-1-krzysztof.kozlowski@linaro.org>
+References: <20230609140751.65129-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] dt-bindings: clock: drop unneeded quotes and use absolute /schemas path
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Conor Dooley <conor+dt@kernel.org>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Christian Marangi <ansuelsmth@gmail.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Wed, 14 Jun 2023 17:28:08 -0700
+        Paul Cercueil <paul@crapouillou.net>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Date:   Wed, 14 Jun 2023 17:35:51 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Christian Marangi (2023-05-29 05:34:57)
-> On Mon, May 29, 2023 at 02:12:23PM +0200, Konrad Dybcio wrote:
-> > On 28.05.2023 14:37, Christian Marangi wrote:
-> > > On Sat, May 27, 2023 at 06:11:16PM +0200, Konrad Dybcio wrote:
-> > >> On 27.04.2023 17:07, Christian Marangi wrote:
-> > >>> +  * Force the first conf if we can't find a correct config.
-> > >>> +  */
-> > >>> + if (unlikely(i =3D=3D f->num_confs))
-> > >>> +         best_conf =3D f->confs;
-> > >> Is that a supported scenario or would it be a device driver / clock
-> > >> driver error?
-> > >>
-> > >=20
-> > > It's to handle case for the 2 continue in the loop and arriving in a
-> > > situation where best_conf was never set?
-> > >=20
-> > > Should we return a warning and an ERR_PTR? Idea was to provide a best
-> > > effort selection.
-> > Hm.. I'm not sure what's the expected behavior here.. Stephen?
-> >=20
+Quoting Krzysztof Kozlowski (2023-06-09 07:07:51)
+> Cleanup bindings dropping unneeded quotes. Once all these are fixed,
+> checking for this can be enabled in yamllint.  Also absolute path
+> starting with /schemas is preferred.
 >=20
-> I have this implementation rady, if you want I can send this revision
-> and discuss that in v5 directly. It's WARN and returning -EINVAL.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-I'd only have a WARN if you never expect to hit that case. Otherwise, it
-should return -EINVAL and not warn. At a quick glance it sounds like
-some sort of rounding policy, so just make sure the
-round_rate/determine_rate implementation agrees with what set_rate()
-will do and it should be good.
+It's not clear if I should pick this up. Do you want to take it through
+some DT tree?
