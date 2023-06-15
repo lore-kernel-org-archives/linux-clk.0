@@ -2,119 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB2DEB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 23:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EDAEB64DA
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 23:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239312AbjFOXTy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 19:19:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44964 "EHLO
+        id S238456AbjFOXbK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 19:31:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232355AbjFOXTr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 19:19:47 -0400
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AC002949;
-        Thu, 15 Jun 2023 16:19:45 -0700 (PDT)
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 35FNJFm0023895;
-        Thu, 15 Jun 2023 18:19:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1686871155;
-        bh=ron0yTFP9tS1tz+dksMbJ6CQO1+vivWHLKGGTZLpBaM=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=XvLIBwWMRs6qiujxn4WaAVAKKPBa+n0z3IJnnF/d6CZYz8AaSZZlqQFMX+3Q7BH6K
-         M31h9Rr346Hd0TEx+LCf/5tWPx3/Fb3g4bGdCGYHN870wtZc53sXn1UFJleBNYkXdK
-         t7djQmLIInsgxa8LRxpxgTqrmJG0CUMU1yKFIuu0=
-Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 35FNJFAh098307
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Jun 2023 18:19:15 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 15
- Jun 2023 18:19:15 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 15 Jun 2023 18:19:15 -0500
-Received: from [128.247.79.139] (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 35FNJD6B002099;
-        Thu, 15 Jun 2023 18:19:13 -0500
-Message-ID: <8d966915-301e-7728-a8ff-db19cecfa9af@ti.com>
-Date:   Thu, 15 Jun 2023 18:19:13 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
- in titles
-To:     Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S236672AbjFOXbI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 19:31:08 -0400
+Received: from smtp.gentoo.org (mail.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B088B296A;
+        Thu, 15 Jun 2023 16:31:03 -0700 (PDT)
+Date:   Fri, 16 Jun 2023 07:30:51 +0800
+From:   Yixun Lan <dlan@gentoo.org>
+To:     Lucas Tanure <tanure@linux.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        =?UTF-8?Q?Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
-        Marek Vasut <marex@denx.de>,
-        - <devicetree-spec@vger.kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>
-References: <20230615213154.1753313-1-robh@kernel.org>
-Content-Language: en-US
-From:   Suman Anna <s-anna@ti.com>
-In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nick <nick@khadas.com>, Artem <art@khadas.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 5/6] tty: serial: meson: Added T7 SOC compatibility
+Message-ID: <ZIufK7uK0ZrsVTZ3@ofant>
+References: <20230615182938.18487-1-tanure@linux.com>
+ <20230615182938.18487-6-tanure@linux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230615182938.18487-6-tanure@linux.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/15/23 16:31, Rob Herring wrote:
-> The Devicetree bindings document does not have to say in the title that
-> it is a "Devicetree binding", but instead just describe the hardware.
+Hi Lucas:
+
+On 19:29 Thu 15 Jun     , Lucas Tanure wrote:
+> Make UART driver compatible with T7 SOC UART.
 > 
-> Most of these have been fixed already, so fix the handful that snuck in.
-> With this, a meta-schema check can be enabled to catch these
-> automatically.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Lucas Tanure <tanure@linux.com>
 > ---
->  .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
->  Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml    | 2 +-
->  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
->  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
->  .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
+>  drivers/tty/serial/meson_uart.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
+> diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
+> index 2501db5a7aaf..0208f9a6ba7e 100644
+> --- a/drivers/tty/serial/meson_uart.c
+> +++ b/drivers/tty/serial/meson_uart.c
+> @@ -796,6 +796,10 @@ static const struct of_device_id meson_uart_dt_match[] = {
+>  		.compatible = "amlogic,meson-s4-uart",
+>  		.data = (void *)&meson_g12a_uart_data,
+>  	},
+> +	{
+> +		.compatible = "amlogic,meson-t7-uart",
+> +		.data = (void *)&meson_g12a_uart_data,
+I think you are trying to follow previous s4 scheme - to introduce a new
+compatible string, while I think it's not necessary or even wrong, this will just
+make the dt_match_list longer but without obvious benefits..
 
-...
+as Conor already raised this question in previous dt-binding patch[4/6],
+how about just using 'amlogic,meson-g12a-uart' which is the first compatible
+introduced.
 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> index c6d86964b72a..35f0bb38f7b2 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/remoteproc/ti,pru-consumer.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Common TI PRU Consumer Binding
-> +title: TI PRU Consumer Common Properties
->  
->  maintainers:
->    - Suman Anna <s-anna@ti.com>
+if people agree, we could also drop 'amlogic,meson-s4-uart' since it use same
+compatible data as gl12a, anyway it should be separated into another patch..
 
-For PRU Consumer binding,
-Reviewed-by: Suman Anna <s-anna@ti.com>
+> +	},
+>  	{ /* sentinel */ },
 
-regards
-Suman
 
+>  };
+>  MODULE_DEVICE_TABLE(of, meson_uart_dt_match);
+> --
+> 2.41.0
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
