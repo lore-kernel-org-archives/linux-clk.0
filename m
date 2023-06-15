@@ -2,141 +2,277 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C06E9EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 05:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EFBEB64D9
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 05:28:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237966AbjFOFQp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 01:16:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48386 "EHLO
+        id S243203AbjFOF2m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 01:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbjFOFQo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 01:16:44 -0400
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050:0:465::201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C5A26A9;
-        Wed, 14 Jun 2023 22:16:40 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4QhVrf6fvfz9snk;
-        Thu, 15 Jun 2023 07:16:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1686806194;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NJ9tbVJW/fCl46tCIc1R0NLFQsIT3IjS2TXsnrWjR/8=;
-        b=ZctlEB0s8TfAASUrOzLthi/QgcNN6X6m3/DePewA4K/qpeiCwxEMurtxd0tSzG7do53CJ+
-        tSFqFpYo9ePxHfU7Cm51Go+RmaSXANonmXNEg5uxozQhc9VAvbVk43CAUNyT453nvDKSZF
-        Qs01o5gzn4NL9jpz0LKKsD98gOXwlhpSD02W2Oh/PhEY/axuCC9C0OPYCgPAIzT668X/im
-        Mc6UUmNJJ7vBT362UAyf+Tq8oxIQCYsxz6IYuP3+3kSiG5GxUyO1Mwb3k78Pp/LOE8MU1x
-        G34KCkEIct7Er1rvGNIOLfA0qjhSNY8AmJ1x7hxBjlho+nR/k21uxRcPolIqkg==
-References: <20230613083626.227476-3-frank@oltmanns.dev>
- <202306132038.nUB6hmCv-lkp@intel.com> <87edmeqwva.fsf@oltmanns.dev>
- <aa23f41c0e313e97122ac384d66e2325.sboyd@kernel.org>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        kernel test robot <lkp@intel.com>,
-        oe-kbuild-all@lists.linux.dev, "A.s. Dong" <aisheng.dong@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor
- approximation
-In-reply-to: <aa23f41c0e313e97122ac384d66e2325.sboyd@kernel.org>
-Date:   Thu, 15 Jun 2023 07:16:17 +0200
-Message-ID: <875y7ps3tq.fsf@oltmanns.dev>
+        with ESMTP id S242904AbjFOF2l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 01:28:41 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC9326B8;
+        Wed, 14 Jun 2023 22:28:35 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35F5RMsw013905;
+        Thu, 15 Jun 2023 05:28:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=JzYgkcS+xjpO5zjTAPM30RHvptVH8EP1NWTFiI7sVfk=;
+ b=mfs0hXPiSmbJ7E1CROAhuafdu7rIUX5xAzIZlbkKvM4+YmmtQ9YDqMGDMp7jcKeRMAYZ
+ gXcyGleQl0tXoAdHQ8DnkmBzu55LePuoPRM03vrgnXU7Lr/JwhR1+P6NrIVw7bIYWhbq
+ jmwgCSr+/4NGNPRDWJHrD9AhTZxPeDJ9vEXLkWpDorDuTR/amdT5nDf2WTvmpqw98gw8
+ a4NhKgVJrOQzr1pyo50ceBnAgDWl5os8ZGjChSGghsy3JsAOfRDo6sX20qZfA0wYKCqi
+ /iKGEEX89/VOmsqlyhhKa/tuqJskHRflY46iW8zcmgI4xJj28PSJ2uuvMyq+bFbYS2z8 Lw== 
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r7fae9g7d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Jun 2023 05:28:02 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35F5S1YQ013748
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Jun 2023 05:28:01 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Wed, 14 Jun 2023 22:27:51 -0700
+Date:   Thu, 15 Jun 2023 10:57:47 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <p.zabel@pengutronix.de>, <arnd@arndb.de>,
+        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
+        <nfraprado@collabora.com>, <broonie@kernel.org>,
+        <rafal@milecki.pl>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 2/9] dt-bindings: phy: qcom,m31: Document qcom,m31 USB phy
+Message-ID: <20230615052746.GB22186@varda-linux.qualcomm.com>
+References: <cover.1686126439.git.quic_varada@quicinc.com>
+ <14f60578e2935c0844537eab162af3afa52ffe39.1686126439.git.quic_varada@quicinc.com>
+ <98960024-7dbc-91a3-75de-90b529637916@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <98960024-7dbc-91a3-75de-90b529637916@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HQxXuzhjPPT6BMwONL5mJFqqsvTWLvxK
+X-Proofpoint-GUID: HQxXuzhjPPT6BMwONL5mJFqqsvTWLvxK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-15_02,2023-06-14_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306150046
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On 2023-06-14 at 13:02:24 -0700, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Frank Oltmanns (2023-06-14 01:19:37)
->> Hi,
->>
->> On 2023-06-13 at 20:48:21 +0800, kernel test robot <lkp@intel.com> wrote:
->> > Hi Frank,
->> >
->> > kernel test robot noticed the following build errors:
->> >
->> > [auto build test ERROR on v6.4-rc6]
->> > [also build test ERROR on linus/master]
->> > [cannot apply to clk/clk-next next-20230613]
->> > [If your patch is applied to the wrong git tree, kindly drop us a note.
->> > And when submitting patch, we suggest to use '--base' as documented in
->> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
->> >
->> > url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Oltmanns/clk-fractional-divider-Improve-approximation-when-zero-based/20230613-163903
->> > base:   v6.4-rc6
->> > patch link:    https://lore.kernel.org/r/20230613083626.227476-3-frank%40oltmanns.dev
->> > patch subject: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor approximation
->> > config: csky-randconfig-r011-20230612 (https://download.01.org/0day-ci/archive/20230613/202306132038.nUB6hmCv-lkp@intel.com/config)
->> > compiler: csky-linux-gcc (GCC) 12.3.0
->> > reproduce (this is a W=1 build):
->> >         mkdir -p ~/bin
->> >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->> >         chmod +x ~/bin/make.cross
->> >         git checkout v6.4-rc6
->> >         b4 shazam https://lore.kernel.org/r/20230613083626.227476-3-frank@oltmanns.dev
->> >         # save the config file
->> >         mkdir build_dir && cp config build_dir/.config
->> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky olddefconfig
->> >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.3.0 ~/bin/make.cross W=1 O=build_dir ARCH=csky SHELL=/bin/bash
->> >
->> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> > the same patch/commit), kindly add following tags
->> > | Reported-by: kernel test robot <lkp@intel.com>
->> > | Closes: https://lore.kernel.org/oe-kbuild-all/202306132038.nUB6hmCv-lkp@intel.com/
->> >
->> > All errors (new ones prefixed by >>, old ones prefixed by <<):
->> >
->> >>> ERROR: modpost: "clk_fractional_divider_general_approximation" [drivers/clk/clk_test.ko] undefined!
->>
->> The issue seems to be that clk_fractional_divider_general_approximation
->> is not exported as a symbol, while the config builds the clk_test as a
->> module:
->> CONFIG_CLK_KUNIT_TEST=m
->>
->> If I'm not mistaken, this means that I can't test
->> clk_fractional_divider_general_approximation directly. Instead I'd have
->> to test it using clk_fractional_divider_ops.round_rate.
->>
->> Can someone more knowlegdable than me please confirm if my understanding
->> is correct?
+On Wed, Jun 07, 2023 at 08:31:50PM +0200, Krzysztof Kozlowski wrote:
+> On 07/06/2023 12:56, Varadarajan Narayanan wrote:
+> > Document the M31 USB2 phy present in IPQ5332
 >
-> Export the symbol.
+> Full stop.
 
-Ok. I can do that. Please note that I had already submitted a V3 [1],
-that went the way of using clk_fractional_divider_ops.round_rate. I
-apologize for not waiting for your feedback prior to submission. It
-won't happen again.
+Ok.
 
-I liked the approach of calling clk_fd_round_rate directly via the ops,
-because it might allow me to test the other ops as well using the same
-blueprint. Of course, I will not add test cases, if you don't want it.
-(Calling clk_fd_round_rate also had the side effect of teaching me, that
-fd clocks expect the fraction to be less than or equal to 1.)
+> > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> >  .../devicetree/bindings/phy/qcom,m31.yaml          | 69 ++++++++++++++++++++++
+> >  1 file changed, 69 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/qcom,m31.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/phy/qcom,m31.yaml b/Documentation/devicetree/bindings/phy/qcom,m31.yaml
+> > new file mode 100644
+> > index 0000000..8ad4ba4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/phy/qcom,m31.yaml
+> > @@ -0,0 +1,69 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +
+>
+> Drop stray blank lines.
 
-I don't want to waste your time, but if you could maybe have a chance to
-look at the approach I took in V3 and tell me if you still want me to
-export the symbol instead, that would be really helpful. I'll follow
-your preference.
+Ok.
 
-If I don't hear back until the weekend, I will treat your three words
-above as your preference and prepare a V4 that goes back to calling
-clk_fractional_divider_general_approximation directly.
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/phy/qcom,m31.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Qualcomm M31 USB PHY
+>
+> What is M31?
 
-Thank you,
-  Frank
+M31 is an external IP integrated into IPQ5332 SoC.
 
-[1]: https://lore.kernel.org/all/20230614185521.477924-3-frank@oltmanns.dev/
+> > +
+> > +maintainers:
+> > +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> > +  - Varadarajan Narayanan <quic_varada@quicinc.org>
+> > +
+> > +description:
+> > +  This file contains documentation for the USB M31 PHY found in Qualcomm
+>
+> Drop redundant parts ("This file contains documentation for the").
+
+Ok.
+
+> > +  IPQ5018, IPQ5332 SoCs.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+>
+> That's not oneOf.
+
+Ok.
+
+> > +      - items:
+>
+> No items.
+
+Ok.
+
+> > +          - enum:
+> > +              - qcom,m31-usb-hsphy
+>
+> I am confused what's this. If m31 is coming from some IP block provider,
+> then you are using wrong vendor prefix.
+> https://www.m31tech.com/download_file/M31_USB.pdf
+>
+>
+> > +              - qcom,ipq5332-m31-usb-hsphy
+>
+> This confuses me even more. IPQ m31?
+
+Will change this to m31,usb-hsphy and m31,ipq5332-usb-hsphy respectively.
+Will that be acceptable?
+
+> > +
+> > +  reg:
+> > +    description:
+> > +      Offset and length of the M31 PHY register set
+>
+> Drop description, obvious.
+
+Ok.
+
+> > +    maxItems: 2
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: m31usb_phy_base
+> > +      - const: qscratch_base
+>
+> Drop "_base" from both.
+
+Ok. Will drop qscratch_base. This is in the controller space.
+Should not come here.
+
+> > +
+> > +  phy_type:
+> > +    oneOf:
+> > +      - items:
+> > +          - enum:
+> > +              - utmi
+> > +              - ulpi
+>
+> This does not belong to phy, but to USB node.
+
+This is used by the driver to set a bit during phy init. Hence
+have it as a replication of the USB node's entry. If this is not
+permissible, is there some way to get this from the USB node,
+or any other alternative mechanism?
+
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +    description:
+> > +      List of phandles and reset pairs, one for each entry in reset-names.
+>
+> Drop useless description.
+
+Ok.
+
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const:
+> > +          usb2_phy_reset
+>
+> Drop entire reset-names.
+
+Ok.
+
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
+> > +    hs_m31phy_0: hs_m31phy@5b00 {
+>
+> Node names should be generic. See also explanation and list of examples
+> in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+>
+> Also, no underscores in node names.
+
+Will change this as usbphy0:hs_m31phy@7b000
+
+> > +        compatible = "qcom,m31-usb-hsphy";
+> > +        reg = <0x5b000 0x3000>,
+>
+> This is not what your unit address is saying.
+
+Will change to 0x0007b000.
+
+> > +            <0x08af8800 0x400>;
+>
+> Align it.
+
+Will drop this. This is in the controller space.
+
+> > +        reg-names = "m31usb_phy_base",
+> > +                "qscratch_base";
+>
+> Align it.
+
+Ok.
+
+> > +        phy_type = "utmi";
+> > +        resets = <&gcc GCC_QUSB2_0_PHY_BCR>;
+> > +        reset-names = "usb2_phy_reset";
+> > +
+> > +        status = "ok";
+>
+> Drop.
+
+Ok. Hopefully will get an alternative for the phy_type.
+
+Thanks
+Varada
+
+> > +    };
+>
+> Best regards,
+> Krzysztof
+>
