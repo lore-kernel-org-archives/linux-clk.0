@@ -2,93 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB0CEB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 00:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BEEEB64D8
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 01:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236131AbjFOAuD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 20:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59912 "EHLO
+        id S235886AbjFOBGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 21:06:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236439AbjFOAuD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 20:50:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75F111BE3;
-        Wed, 14 Jun 2023 17:50:02 -0700 (PDT)
+        with ESMTP id S229558AbjFOBGo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 21:06:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C8F2697;
+        Wed, 14 Jun 2023 18:06:43 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 123DB63516;
-        Thu, 15 Jun 2023 00:50:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC5FC433C0;
-        Thu, 15 Jun 2023 00:50:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 29FA261CE4;
+        Thu, 15 Jun 2023 01:06:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0BDC433C8;
+        Thu, 15 Jun 2023 01:06:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686790201;
-        bh=OnZsw9VGDNW6KuY0k3YjEaktjmpS1FKjNJp4If98TW8=;
+        s=k20201202; t=1686791202;
+        bh=WVphbQvdDrewsJtwZkZ80s7KmaaKA7azPVcrm38R+bQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UDrmucUciHwXzwjWwArsQuCkffUdTOgVRhSqtnrPIRZvOFFsVLsPsD9QkFw7DKtMJ
-         SH3uIpaDkQpyhWlLAK2RaB675mcPTmkn7dP7O5yn4CTL2J1jhCEyCIu22+AsHw7zio
-         ZrHMm6dAK2VZpbPBgOicl3oWAm0CPkvF/XzCLnLxzdHgJvghqgadwheEgECf5bsasn
-         GgjLXruMqUQ0A19R6kk9ENHc25Ev8pI1dutg4emORyHtAmlOlMRnOkdqKJ2cMVbuoE
-         iCmeE+jJpz2AxkX/1W5EYBZ5y6mVSzLHMCARPpCk4vOE6Etm4+eav2huj9QtbnnmJN
-         RkgFI22hVSnCQ==
-Message-ID: <0764b5fda92acb995ffbd05c4b3d2b2f.sboyd@kernel.org>
+        b=D+fq+e6pBYZwX9xBEzVU81AIi0zmvAbqObVJWbFlBbsNLwSSLgXGjKPvWRaIGIh4V
+         d0YvtcA3sQ55z/Y+MNCWtPhBldCFXi5pKdLWIN32vcnzZmZX0DrgQc9YHXTNJZ9xiA
+         jaB+xINyHEWc+3PFMMCw94nHHl4hPJmXH0OXCYdJPcPok3/J6UqiTInHOqKcci9ckG
+         xO22qGeSDHNohl9HArAsOBy/GsQw/mVtyTivLEcr4eTw3MwjVGOb8qDPiELlYCglNj
+         8FCLsgkvuL/7MObkK7MHiYdiwisCoQfQNqoo9Nw9kidwEkR73lJGh5AQL387sBYitF
+         XPq6smfNmrH3g==
+Message-ID: <52e6278bb43511c5bccad41909c4423b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230526-topic-smd_icc-v6-0-263283111e66@linaro.org>
-References: <20230526-topic-smd_icc-v6-0-263283111e66@linaro.org>
-Subject: Re: [PATCH v6 00/22] Restructure RPM SMD ICC
+In-Reply-To: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+References: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
+Subject: Re: [PATCH v2] dt-bindings: rcc: stm32: Sync with u-boot copy for STM32MP13 SoC
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+Cc:     gabriel.fernandez@st.com, gabriel.fernandez@foss.st.com,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
         Conor Dooley <conor+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 14 Jun 2023 17:49:59 -0700
+Date:   Wed, 14 Jun 2023 18:06:40 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-06-14 11:04:19)
-> This series reshuffles things around, moving the management of SMD RPM
-> bus clocks to the interconnect framework where they belong. This helps
-> us solve a couple of issues:
+Quoting Patrick Delaunay (2023-05-10 09:51:40)
+> Minor cosmetic change, aligned with files in U-Boot:
+> - change obsolete SPDX id : GPL-2.0+ and use the same license
+>   GPL-2.0-only for the 2 files
+> - use correct mail address gabriel.fernandez@foss.st.com
+> - remove extra space
 >=20
-> 1. We can work towards unused clk cleanup of RPMCC without worrying
->    about it killing some NoC bus, resulting in the SoC dying.
->    Deasserting actually unused RPM clocks (among other things) will
->    let us achieve "true SoC-wide power collapse states", also known as
->    VDD_LOW and VDD_MIN.
->=20
-> 2. We no longer have to keep tons of quirky bus clock ifs in the icc
->    driver. You either have a RPM clock and call "rpm set rate" or you
->    have a single non-RPM clock (like AHB_CLK_SRC) or you don't have any.
->=20
-> 3. There's less overhead - instead of going through layers and layers of
->    the CCF, ratesetting comes down to calling max() and sending a single
->    RPM message. ICC is very very dynamic so that's a big plus.
->=20
-> The clocks still need to be vaguely described in the clk-smd-rpm driver,
-> as it gives them an initial kickoff, before actually telling RPM to
-> enable DVFS scaling.  After RPM receives that command, all clocks that
-> have not been assigned a rate are considered unused and are shut down
-> in hardware, leading to the same issue as described in point 1.
+> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> ---
 
-Why can't we move the enable of DVFS scaling call to the interconnect
-driver as well? We want the clk driver to not reference the interconnect
-resources at all.
+Applied to clk-next
