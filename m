@@ -2,69 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC49EEB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 00:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA04EB64D9
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 00:28:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229868AbjFOAXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 20:23:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52124 "EHLO
+        id S229868AbjFOA2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 20:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232081AbjFOAW7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 20:22:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD192683;
-        Wed, 14 Jun 2023 17:22:58 -0700 (PDT)
+        with ESMTP id S229453AbjFOA2N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 20:28:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 395F3268A;
+        Wed, 14 Jun 2023 17:28:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DC4F461177;
-        Thu, 15 Jun 2023 00:22:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7EBC433C8;
-        Thu, 15 Jun 2023 00:22:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C512463A6C;
+        Thu, 15 Jun 2023 00:28:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DDDC433C8;
+        Thu, 15 Jun 2023 00:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686788577;
-        bh=JC6c+WD8LLTd7NEVpZnlLgwkDa+RKjFs3gZCsKb3OYQ=;
+        s=k20201202; t=1686788891;
+        bh=XaltGBrfhglFbHY3ssTTjmpnwDD40AZoGcQsyArt+K0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=laB2QZ0vqyJVwjmYgT52FQQd867SlZRhlOaxgDFx2TbW9r52J1oL13myKbyZOUEem
-         3GKY4EPd6t9kZfxmVXg2sY0YjbepU+wE7/brfqHvrcbN77JBUSsv1GT8L9+ij/iP59
-         lq8ptQaoIKTmvDT7tmhpUYJTWVrvTPxtXZ++BYomD1LIk5uIHZTjVBLxinvYbUEG6p
-         BZAEll8gJpgSRANQfd5RxIgh6q07KJ1ruBZJLy+DUHCg1T4vFt0r0jqzRkGlYzWzyA
-         i+OWLIqvelF7/ROg5rBGECAxjXpDiKQKpffF8pX0HND22/m4Fenc0mIgbwUW6SjRU9
-         cJ+lp66VP8Gcw==
-Message-ID: <b0a8bd528d5fea056e48a1cc9cbf019c.sboyd@kernel.org>
+        b=PJqStyRIv9SMNSfgk1rsrgtw6kU92JWbqqwwV4OPd+PIUgkzH9hsoTHjEX0cjvjS6
+         G+nH222bmJChSzvXTdsbNeGzn3iwk/FGMW3W8AerGXXaJ6bHFgQhLVC0BzepKEYb0q
+         E9LDO9mD9Ok47vmkoZV2COvyVahocmXo1akA3PSGh1ZR0MekB2h/fzuxGAJtaDhrMM
+         LeuzRLNDdb1D6tjziJm1WvDKosfL2vQ6fA8RQf3duZgk2yRnw5LxtrhzKjYXxJSjGy
+         q7YSa1qC+kSEDS623HCp4iP+xukbu2iVfIvTNl2LGeyiRCQxgM+Gdm3fTI57QwsBL5
+         ivUzAHyJWn6gA==
+Message-ID: <d251be3e02b2fe28357c884e39fe7601.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f0e39b5c-4554-41e0-80d9-54ca3fabd060@kili.mountain>
-References: <f0e39b5c-4554-41e0-80d9-54ca3fabd060@kili.mountain>
-Subject: Re: [PATCH] clk: clocking-wizard: Fix Oops in clk_wzrd_register_divider()
+In-Reply-To: <64749bf4.5d0a0220.325c0.64b5@mx.google.com>
+References: <20230427150717.20860-1-ansuelsmth@gmail.com> <20230427150717.20860-3-ansuelsmth@gmail.com> <82072c2b-8483-6fb6-a9d1-c9882825c9cb@linaro.org> <6473e34c.df0a0220.33a79.6c95@mx.google.com> <4afbcdd0-a11c-4826-d669-2ffc9488a8b6@linaro.org> <64749bf4.5d0a0220.325c0.64b5@mx.google.com>
+Subject: Re: [PATCH v4 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq multi ops
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-To:     Dan Carpenter <dan.carpenter@linaro.org>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Date:   Wed, 14 Jun 2023 17:22:55 -0700
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Christian Marangi <ansuelsmth@gmail.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Date:   Wed, 14 Jun 2023 17:28:08 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dan Carpenter (2023-05-11 10:01:20)
-> Smatch detected this potential error pointer dereference
-> clk_wzrd_register_divider().  If devm_clk_hw_register() fails then
-> it sets "hw" to an error pointer and then dereferences it on the
-> next line.  Return the error directly instead.
+Quoting Christian Marangi (2023-05-29 05:34:57)
+> On Mon, May 29, 2023 at 02:12:23PM +0200, Konrad Dybcio wrote:
+> > On 28.05.2023 14:37, Christian Marangi wrote:
+> > > On Sat, May 27, 2023 at 06:11:16PM +0200, Konrad Dybcio wrote:
+> > >> On 27.04.2023 17:07, Christian Marangi wrote:
+> > >>> +  * Force the first conf if we can't find a correct config.
+> > >>> +  */
+> > >>> + if (unlikely(i =3D=3D f->num_confs))
+> > >>> +         best_conf =3D f->confs;
+> > >> Is that a supported scenario or would it be a device driver / clock
+> > >> driver error?
+> > >>
+> > >=20
+> > > It's to handle case for the 2 continue in the loop and arriving in a
+> > > situation where best_conf was never set?
+> > >=20
+> > > Should we return a warning and an ERR_PTR? Idea was to provide a best
+> > > effort selection.
+> > Hm.. I'm not sure what's the expected behavior here.. Stephen?
+> >=20
 >=20
-> Fixes: 5a853722eb32 ("staging: clocking-wizard: Add support for dynamic r=
-econfiguration")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
+> I have this implementation rady, if you want I can send this revision
+> and discuss that in v5 directly. It's WARN and returning -EINVAL.
 
-Applied to clk-next
+I'd only have a WARN if you never expect to hit that case. Otherwise, it
+should return -EINVAL and not warn. At a quick glance it sounds like
+some sort of rounding policy, so just make sure the
+round_rate/determine_rate implementation agrees with what set_rate()
+will do and it should be good.
