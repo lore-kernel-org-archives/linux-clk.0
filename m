@@ -2,71 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BEEEB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 01:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD89EB64D9
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 01:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235886AbjFOBGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 21:06:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34324 "EHLO
+        id S229559AbjFOB0E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 21:26:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbjFOBGo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 21:06:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C8F2697;
-        Wed, 14 Jun 2023 18:06:43 -0700 (PDT)
+        with ESMTP id S229516AbjFOB0D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 21:26:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 640E3211D;
+        Wed, 14 Jun 2023 18:26:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 29FA261CE4;
-        Thu, 15 Jun 2023 01:06:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0BDC433C8;
-        Thu, 15 Jun 2023 01:06:42 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F2BD8621FB;
+        Thu, 15 Jun 2023 01:26:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E54C433C0;
+        Thu, 15 Jun 2023 01:26:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686791202;
-        bh=WVphbQvdDrewsJtwZkZ80s7KmaaKA7azPVcrm38R+bQ=;
+        s=k20201202; t=1686792362;
+        bh=7S7Rzbu6lV/dWzWop2zTJWDhseXeW8iAWppBn9/g84Q=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=D+fq+e6pBYZwX9xBEzVU81AIi0zmvAbqObVJWbFlBbsNLwSSLgXGjKPvWRaIGIh4V
-         d0YvtcA3sQ55z/Y+MNCWtPhBldCFXi5pKdLWIN32vcnzZmZX0DrgQc9YHXTNJZ9xiA
-         jaB+xINyHEWc+3PFMMCw94nHHl4hPJmXH0OXCYdJPcPok3/J6UqiTInHOqKcci9ckG
-         xO22qGeSDHNohl9HArAsOBy/GsQw/mVtyTivLEcr4eTw3MwjVGOb8qDPiELlYCglNj
-         8FCLsgkvuL/7MObkK7MHiYdiwisCoQfQNqoo9Nw9kidwEkR73lJGh5AQL387sBYitF
-         XPq6smfNmrH3g==
-Message-ID: <52e6278bb43511c5bccad41909c4423b.sboyd@kernel.org>
+        b=rCpu35ii9PVSq5ryfHQumrrjxcRWNMQmxNegDCQPRZ72uXt6ADhtqt9RCeBWTNHeg
+         KGdbtDIlQBo24rtU2yhuKe+qzdRa9SxOQQ7BqRomXsQ6aSIIMusfNF2BVosUCvvmlS
+         /6F2NT5X8QBXsjH/zR3ir41UuFwp1wfXEdktxczsK5abQt4TVjpGsaMp5hxm9g/MeJ
+         TIeuUk0QkGm6u8atAEgzmuDxnyXBYjvdRF2XM91VdPgB62y5YGqCv3BNBsoUy2ajOG
+         mc3PZhc4hc3PR+/zX6Ob04mRWeqOvvygkqHp3U2hUtLFFnm8a0KBatB+V46h1+z8E+
+         FkS+j0zqXNZYA==
+Message-ID: <b569aa8e6732f7b0382499d0b9cfa98d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
-References: <20230510184305.v2.1.I417093ddcea282be479f10a37147d1935a9050b7@changeid>
-Subject: Re: [PATCH v2] dt-bindings: rcc: stm32: Sync with u-boot copy for STM32MP13 SoC
+In-Reply-To: <20221209094124.71043-1-yuancan@huawei.com>
+References: <20221209094124.71043-1-yuancan@huawei.com>
+Subject: Re: [PATCH] clk: tegra: tegra124-emc: Fix potential memory leak
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     gabriel.fernandez@st.com, gabriel.fernandez@foss.st.com,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com
-To:     Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 14 Jun 2023 18:06:40 -0700
+Cc:     yuancan@huawei.com
+To:     Yuan Can <yuancan@huawei.com>, jonathanh@nvidia.com,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        mperttunen@nvidia.com, mturquette@baylibre.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com, tomeu.vizoso@collabora.com
+Date:   Wed, 14 Jun 2023 18:26:00 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Patrick Delaunay (2023-05-10 09:51:40)
-> Minor cosmetic change, aligned with files in U-Boot:
-> - change obsolete SPDX id : GPL-2.0+ and use the same license
->   GPL-2.0-only for the 2 files
-> - use correct mail address gabriel.fernandez@foss.st.com
-> - remove extra space
+Quoting Yuan Can (2022-12-09 01:41:24)
+> The tegra and tegra needs to be freed in the error handling path, otherwi=
+se
+> it will be leaked.
 >=20
-> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> Fixes: 2db04f16b589 ("clk: tegra: Add EMC clock driver")
+> Signed-off-by: Yuan Can <yuancan@huawei.com>
 > ---
 
 Applied to clk-next
