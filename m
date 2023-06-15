@@ -2,79 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 837ABEB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 00:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC49EEB64D8
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 00:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231464AbjFOAW1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Jun 2023 20:22:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51786 "EHLO
+        id S229868AbjFOAXB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Jun 2023 20:23:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230108AbjFOAWZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 20:22:25 -0400
+        with ESMTP id S232081AbjFOAW7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Jun 2023 20:22:59 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF22E3;
-        Wed, 14 Jun 2023 17:22:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CD192683;
+        Wed, 14 Jun 2023 17:22:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 58FB56203F;
-        Thu, 15 Jun 2023 00:22:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABF0AC433C8;
-        Thu, 15 Jun 2023 00:22:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC4F461177;
+        Thu, 15 Jun 2023 00:22:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7EBC433C8;
+        Thu, 15 Jun 2023 00:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686788543;
-        bh=pdaOGQKnCwrYyacOrxmVFnlnZMcpLs+PJTif44O1uR0=;
+        s=k20201202; t=1686788577;
+        bh=JC6c+WD8LLTd7NEVpZnlLgwkDa+RKjFs3gZCsKb3OYQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=f0lLNBjNHuUdXomi5Y3CJsmSEoBOOkx/xyi3iWuNN1mKcAjsmpA/0X2PCfGKHofaW
-         SwaDp1NHBvOBFA+dF/7JHsdd93ZLCnYhBdhPITLDmtKm86N6bta0VpyCtmIkIB2bW3
-         1L5TrNX77olRf92ciD3uwJIwqRz/RGvja6j5y10Yb4oAqh/RJESXiCiUfh/o1hO8bt
-         6wN7yqDfuqcOyJKTAV3LF/JDpI7ynqzX/Od3nuAig096IgE5YOfO/rAdByuwtDIoE2
-         FO0WbrVzcKib3hn1stoarPop/B2qHdptSqz9HWEP4YZl8tKv6Jj4sNkf3GBNm+qxQO
-         txpjX4BE1jE2A==
-Message-ID: <8eceb50391ff83f598e16e0cb371fdb0.sboyd@kernel.org>
+        b=laB2QZ0vqyJVwjmYgT52FQQd867SlZRhlOaxgDFx2TbW9r52J1oL13myKbyZOUEem
+         3GKY4EPd6t9kZfxmVXg2sY0YjbepU+wE7/brfqHvrcbN77JBUSsv1GT8L9+ij/iP59
+         lq8ptQaoIKTmvDT7tmhpUYJTWVrvTPxtXZ++BYomD1LIk5uIHZTjVBLxinvYbUEG6p
+         BZAEll8gJpgSRANQfd5RxIgh6q07KJ1ruBZJLy+DUHCg1T4vFt0r0jqzRkGlYzWzyA
+         i+OWLIqvelF7/ROg5rBGECAxjXpDiKQKpffF8pX0HND22/m4Fenc0mIgbwUW6SjRU9
+         cJ+lp66VP8Gcw==
+Message-ID: <b0a8bd528d5fea056e48a1cc9cbf019c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230511105845.299859-1-arnd@kernel.org>
-References: <20230511105845.299859-1-arnd@kernel.org>
-Subject: Re: [PATCH] clk: pxa: fix NULL pointer dereference in pxa3xx_clk_update_accr
+In-Reply-To: <f0e39b5c-4554-41e0-80d9-54ca3fabd060@kili.mountain>
+References: <f0e39b5c-4554-41e0-80d9-54ca3fabd060@kili.mountain>
+Subject: Re: [PATCH] clk: clocking-wizard: Fix Oops in clk_wzrd_register_divider()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, stable@vger.kernel.org,
-        kernel test robot <lkp@intel.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Wed, 14 Jun 2023 17:22:21 -0700
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Date:   Wed, 14 Jun 2023 17:22:55 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Arnd Bergmann (2023-05-11 03:58:33)
-> From: Arnd Bergmann <arnd@arndb.de>
+Quoting Dan Carpenter (2023-05-11 10:01:20)
+> Smatch detected this potential error pointer dereference
+> clk_wzrd_register_divider().  If devm_clk_hw_register() fails then
+> it sets "hw" to an error pointer and then dereferences it on the
+> next line.  Return the error directly instead.
 >=20
-> sparse points out an embarrasing bug in an older patch of mine,
-> which uses the register offset instead of an __iomem pointer:
->=20
-> drivers/clk/pxa/clk-pxa3xx.c:167:9: sparse: sparse: Using plain integer a=
-s NULL pointer
->=20
-> Unlike sparse, gcc and clang ignore this bug and fail to warn
-> because a literal '0' is considered a valid representation of
-> a NULL pointer.
->=20
-> Fixes: 3c816d950a49 ("ARM: pxa: move clk register definitions to driver")
-> Cc: stable@vger.kernel.org
-> Reported-by: kernel test robot <lkp@intel.com>
-> Link: https://lore.kernel.org/oe-kbuild-all/202305111301.RAHohdob-lkp@int=
-el.com/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 5a853722eb32 ("staging: clocking-wizard: Add support for dynamic r=
+econfiguration")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
