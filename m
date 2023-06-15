@@ -2,114 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C372EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 16:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DB8EB64DA
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Jun 2023 17:35:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229734AbjFOQzd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 12:55:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49090 "EHLO
+        id S236420AbjFORfS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 13:35:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238896AbjFOQys (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 12:54:48 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5455430D5;
-        Thu, 15 Jun 2023 09:53:27 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id B59585C00C7;
-        Thu, 15 Jun 2023 12:52:12 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 15 Jun 2023 12:52:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1686847932; x=1686934332; bh=mJ
-        6xkMen+YO+/tCBYQ44GBlPDIDZ0CuOIbvbOv/3WAg=; b=43o1U/eM6WElwxWSA6
-        +3BHxnr5Cq0zwTARkQPygKLU/+Qv9ihgqZMvXF1JL84j7O+vaccr9mIBYtwqyPZR
-        d3aVIPaXYMU2PLBnzyaZrV5MK1jUCkxfQ2mcSuU0Z6iVtChe8w7J06iS2zkqufqT
-        VS8uz2/QBCbn+XUhPHUeCt6DAB5tt63McdTDGK5p2Uee3Gg0fg+ijUJlpWtbYgjh
-        sfpLlls7RcG7K5OUcog4eLr+D4UNpqms3XRAsZC4iQa1zCBlM7zqeMX/E9/YSw1c
-        CwNYyIE1my8jWp//IpiAf4z5QAyt20tFBxtYv5bFfGSCsYhxV2JAOxh2j2uxhPpx
-        8y6Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1686847932; x=1686934332; bh=mJ6xkMen+YO+/
-        tCBYQ44GBlPDIDZ0CuOIbvbOv/3WAg=; b=XNq+8msSpGau4HjnCa8Z/2RWwTn1d
-        06+/bKo4q6Xu5cGv0F//dv6voGvdhnLLqGqVSf1k7lNaJFkkj6FhbPSxyd8HBcKh
-        JakWCM1Sec/r1731/Xr2JOMZbuhxDWr1fgebN+72j98sUU/FzlFSUAPZZb+JDFad
-        JPGi6lwGnYNCPTGQy/Amh9oGFVeMM3SBVl80BYvD4JSQ9IkRmyfE6PiDTq83TmRF
-        HsDjAjrfOci1K1LLcjKlCb86GeusvMsa6onkcbnWobzmn0dirF5w+lzhCTPCdORp
-        XX2BLEDRK4ZCtY2DWZCfHPxtQdYVWRBmiV8a2Qg2dICRzXD7qJEeMbY9w==
-X-ME-Sender: <xms:vEGLZO2HIZEARDhIhbt8PGyyRfu1cchzjF6ZNVOLyg8A2n-OU81XZA>
-    <xme:vEGLZBHq1wcYUJVF9nsNhdcicJ293FcLVDYtUEFwADMOxOxYolsiHcljOjRVOA0EX
-    XAH2O56o5CZnh85n7Q>
-X-ME-Received: <xmr:vEGLZG5HRtAzx8TY48RfUjoyFzOJSq_EJZb7e0EcAE5JNcxyfozSV4GUtr600Njj3HS-1iTAImF5RUIMuUnuJw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgedvvddguddtvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgig
-    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
-    grthhtvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeet
-    kefgleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:vEGLZP2pZFRw1xyoeOdxQxRXTx4VVxxeyxljeesS1tEUX4AnGtw7mg>
-    <xmx:vEGLZBFzFbdycdV0baTfsCGf_KQ9dPRPJ2Zvzqn9y-VeGwF_ZBpgKg>
-    <xmx:vEGLZI_gFYz_2Tmna2z7wE40NuklNhWM8z8KsUcGWboN04lEb5e-rg>
-    <xmx:vEGLZHbn7UPDvOBFMZKtE1stkYGP-LltPNQX9xGXJWSr0ASJ_kuVPg>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Jun 2023 12:52:11 -0400 (EDT)
-Date:   Thu, 15 Jun 2023 18:52:10 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        m.grzeschik@pengutronix.de, windhl@126.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/11] clk: at91: sama7g5: switch to parent_hw and
- parent_data
-Message-ID: <eykl6xmkojjjqju2fxyoadrgj22aadcognmirt2kyhssfyeh5c@glu2eacwkaq4>
-References: <20230615093227.576102-1-claudiu.beznea@microchip.com>
- <20230615093227.576102-11-claudiu.beznea@microchip.com>
+        with ESMTP id S230392AbjFORfR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 13:35:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F1E1FDD;
+        Thu, 15 Jun 2023 10:35:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E037E63974;
+        Thu, 15 Jun 2023 17:35:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F052C433C8;
+        Thu, 15 Jun 2023 17:35:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686850515;
+        bh=MRH2gBGbTm6Nfz0Le3aIme9e/tvq/PhgScHQ4D5E9Z0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Lz+GZOxNuTy/88ASn7yaHQLEjS8IJ8PcCqlKzfQV4y67dWEiq2AbdK2aeuVYURTj7
+         xQmwR0hGKKuTAtjCcbmSQ5C3yjS7Qw8uV7cA1meILJ45yl8TnB4PYghKuuf24p5FNM
+         ex7DTia6S85aEtAOWFqixnYSdG6YuoEySjWN4q1NzGACwP5s2ssAL/AnJF8R+23Clm
+         rpdgJWhq7sqrynlaFkIQCh31olY2CYTAvNnFE7IFlSCw3XVonbTnKfNfRyjsv22thD
+         Yu2AQDJffYWyRkT6nUbZokdMFG/gN5LYgVTnmOB3DYj+ZDi/dsbgVp6WpNaEmqYdTO
+         5SKSVaGapc0lA==
+Message-ID: <f526046568e6bbc8dc567109e6911f65.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="b6ft4lb6p72zt34b"
-Content-Disposition: inline
-In-Reply-To: <20230615093227.576102-11-claudiu.beznea@microchip.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8568eead-90f6-ce15-d483-4d72dbab6294@linaro.org>
+References: <20230526-topic-smd_icc-v6-0-263283111e66@linaro.org> <0764b5fda92acb995ffbd05c4b3d2b2f.sboyd@kernel.org> <8568eead-90f6-ce15-d483-4d72dbab6294@linaro.org>
+Subject: Re: [PATCH v6 00/22] Restructure RPM SMD ICC
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 15 Jun 2023 10:35:12 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---b6ft4lb6p72zt34b
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Jun 15, 2023 at 12:32:26PM +0300, Claudiu Beznea wrote:
-> Switch SAMA7G5 clocks to use parent_hw and parent_data. Having
-> parent_hw instead of parent names improves to clock registration
-> speed and re-parenting. Extra time saved on registration is
-> ~250us when running at 800MHz.
+Quoting Konrad Dybcio (2023-06-15 00:52:07)
+> On 15.06.2023 02:49, Stephen Boyd wrote:
+> > Quoting Konrad Dybcio (2023-06-14 11:04:19)
+> >> This series reshuffles things around, moving the management of SMD RPM
+> >> bus clocks to the interconnect framework where they belong. This helps
+> >> us solve a couple of issues:
+> >>
+> >> 1. We can work towards unused clk cleanup of RPMCC without worrying
+> >>    about it killing some NoC bus, resulting in the SoC dying.
+> >>    Deasserting actually unused RPM clocks (among other things) will
+> >>    let us achieve "true SoC-wide power collapse states", also known as
+> >>    VDD_LOW and VDD_MIN.
+> >>
+> >> 2. We no longer have to keep tons of quirky bus clock ifs in the icc
+> >>    driver. You either have a RPM clock and call "rpm set rate" or you
+> >>    have a single non-RPM clock (like AHB_CLK_SRC) or you don't have an=
+y.
+> >>
+> >> 3. There's less overhead - instead of going through layers and layers =
+of
+> >>    the CCF, ratesetting comes down to calling max() and sending a sing=
+le
+> >>    RPM message. ICC is very very dynamic so that's a big plus.
+> >>
+> >> The clocks still need to be vaguely described in the clk-smd-rpm drive=
+r,
+> >> as it gives them an initial kickoff, before actually telling RPM to
+> >> enable DVFS scaling.  After RPM receives that command, all clocks that
+> >> have not been assigned a rate are considered unused and are shut down
+> >> in hardware, leading to the same issue as described in point 1.
+> >=20
+> > Why can't we move the enable of DVFS scaling call to the interconnect
+> > driver as well? We want the clk driver to not reference the interconnect
+> > resources at all.
+> That would result in no rpmcc ratesetting on platforms without a function=
+al
+> interconnect driver. The DVFS call concerns both bus and !bus clocks.
 >=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+That's the intent. Probe the interconnect driver to get bus clk rate
+setting.
 
-Maxime
-
---b6ft4lb6p72zt34b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZItBugAKCRDj7w1vZxhR
-xZjVAP494WqCQFeGFN522UvNGP38XORsptssqszm5za6qI0kOAD/UrUEZIzOqdTb
-cPhbMuEN5J2PqkVzCDJFy9Fd70g5gA8=
-=v9/e
------END PGP SIGNATURE-----
-
---b6ft4lb6p72zt34b--
+What are the !bus clocks managed by RPM?
