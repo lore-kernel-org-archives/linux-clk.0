@@ -2,43 +2,43 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25835EB64D8
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 19:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BF3EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 19:24:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346241AbjFPTXX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 15:23:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
+        id S1345662AbjFPTYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 15:24:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346251AbjFPTXD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 15:23:03 -0400
+        with ESMTP id S1346251AbjFPTY1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 15:24:27 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0109D46BB;
-        Fri, 16 Jun 2023 12:21:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06E213C38;
+        Fri, 16 Jun 2023 12:22:28 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CE0BE60B66;
-        Fri, 16 Jun 2023 19:21:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29BCEC433C0;
-        Fri, 16 Jun 2023 19:21:04 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED47060E9F;
+        Fri, 16 Jun 2023 19:21:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54189C433C9;
+        Fri, 16 Jun 2023 19:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686943264;
-        bh=jxqqA8hKbX1P+MGFD6r0FL7uvDc4IVAgHOvqUjiaLD4=;
+        s=k20201202; t=1686943287;
+        bh=KNB1fklmcJeWJr9EZzOH1XKReRXdb2jMbZAPeqc4wB4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cmCJnDxvweAkTJuxcJHrETAjNXl0iPu4lQukowFXXRonO4we27DpflLjuC0O7oQd0
-         k3DE+oKEc/ln302jaTTsSQHo20oI3NjhbdrLdcYxQj8I4uLlASaFdrgcajXByKMrKO
-         x1a8O9Sj+QO+bDD9bx8NUiXMC50HkbW1IidRNnlKFBP7+HV2WD3XIEM05FyLnJfsOe
-         o/OjRzdsiNjoSPX2gUpDMqHo1kBSAhPahLFz2LE9Gww4Y0F0Ow6mkR0zG1Ksqul99U
-         VRkaxj6j0japH1Ea7FTS2Ydu/aMaIHHXVj/VrFFah6KuThb1oSxv1E7MpZ3+J3DvWz
-         Kl4BAYOzzI3NA==
-Message-ID: <c38a32fce0d3642b6be85efd46d8c358.sboyd@kernel.org>
+        b=uNVW9km0F4Grt39DBa/dNvvZ5gzp45V1z5yl/Q2Gs3UYsMvNMEod0j0IYmu4h5Ox5
+         IV0KwFZoJgLZtTYRf+uMZje/AgzkAwUAVyjUZPGUQmrzZ7ZIIBLO0qC5JJDTH4ffgU
+         uSLXJyNMbpg63t9dSxKpo3u1d5r/WaAqWZ0M2U1LNJUorpTaRRFA3Il6JVNr+HZO2U
+         BUePMoamTlgydhy/hZLYCbw3ojCuIj7lQgsgWC/NW0yRli1aDWt5o3Qz0EB26PwoWt
+         vgHwFyy+v3jXM2SnGHIvLSENe6sohX2LE9mee3W2+dpix3xlt0jxw/the9/yaYMjBs
+         9ebausqYwtHFQ==
+Message-ID: <dbb4086988fa53686712e0cb06cce75b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230615122051.546985-2-angelogioacchino.delregno@collabora.com>
-References: <20230615122051.546985-1-angelogioacchino.delregno@collabora.com> <20230615122051.546985-2-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 1/3] clk: mediatek: clk-mtk: Grab iomem pointer for divider clocks
+In-Reply-To: <20230615122051.546985-3-angelogioacchino.delregno@collabora.com>
+References: <20230615122051.546985-1-angelogioacchino.delregno@collabora.com> <20230615122051.546985-3-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 2/3] clk: mediatek: clk-mt8173-apmixedsys: Fix return value for of_iomap() error
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
         angelogioacchino.delregno@collabora.com, wenst@chromium.org,
@@ -48,28 +48,19 @@ Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
         linux-mediatek@lists.infradead.org, kernel@collabora.com
 To:     AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-Date:   Fri, 16 Jun 2023 12:21:01 -0700
+Date:   Fri, 16 Jun 2023 12:21:25 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2023-06-15 05:20:49)
-> In the rare case in which one of the clock drivers has divider clocks
-> but not composite clocks, mtk_clk_simple_probe() would not io(re)map,
-> hence passing a NULL pointer to mtk_clk_register_dividers().
+Quoting AngeloGioacchino Del Regno (2023-06-15 05:20:50)
+> The of_iomap() function returns NULL in case of error so usage of
+> PTR_ERR() is wrong!
+> Change that to return -ENOMEM in case of failure.
 >=20
-> To fix this issue, extend the `if` conditional to also check if any
-> divider clocks are present. While at it, also make sure the iomem
-> pointer is NULL if no composite/divider clocks are declared, as we
-> are checking for that when iounmapping it in the error path.
->=20
-> This hasn't been seen on any MediaTek clock driver as the current ones
-> always declare composite clocks along with divider clocks, but this is
-> still an important fix for a future potential KP.
->=20
-> Fixes: 1fe074b1f112 ("clk: mediatek: Add divider clocks to mtk_clk_simple=
-_{probe,remove}()")
+> Fixes: 41138fbf876c ("clk: mediatek: mt8173: Migrate to platform driver a=
+nd common probe")
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
 abora.com>
 > ---
