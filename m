@@ -2,73 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9750DEB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 19:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25835EB64D8
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 19:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjFPTQf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 15:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47792 "EHLO
+        id S1346241AbjFPTXX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 15:23:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbjFPTQe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 15:16:34 -0400
+        with ESMTP id S1346251AbjFPTXD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 15:23:03 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8745B35A7;
-        Fri, 16 Jun 2023 12:16:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0109D46BB;
+        Fri, 16 Jun 2023 12:21:04 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1A6DB632A3;
-        Fri, 16 Jun 2023 19:16:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67232C433C8;
-        Fri, 16 Jun 2023 19:16:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CE0BE60B66;
+        Fri, 16 Jun 2023 19:21:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29BCEC433C0;
+        Fri, 16 Jun 2023 19:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686942991;
-        bh=Tq66GZ+DhfCcoRUc3uEXXVUGnwi3mpxnBzgStUFszQo=;
+        s=k20201202; t=1686943264;
+        bh=jxqqA8hKbX1P+MGFD6r0FL7uvDc4IVAgHOvqUjiaLD4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eLqZROco87/7dR7Srddsokk5uqNIdWIay8Jg+pnG0nbD/q7tt/4us7qcQbLtE17CL
-         KlnlYzjnw0s7vzf07tzRW92KmmKzy87BLOg9tkyd/Ae/zQ0n212J7IF+9qhLyYSGFH
-         IXYn3wwi9+X4aAYdvFs2f2TFNoO36jmCFnbte+rFa1aQakhvKeF4LEjP/FYUORqJiI
-         k6VUKYvukPNKWDJ/9GYVi7BrvQLQ0E+ps0QCFc0MElLTDCW4G6BCIiPGPw6Rp+S6ki
-         bF1yQ7/RBnie1lSvGxMy8C6lk6O/Enk/pb7Nk17zt1PslL+Cadd/33dzTbqpGYY7fP
-         GGkrBt3MneS3Q==
-Message-ID: <7c1dbb26bb7693929bca45a7b28bf9c8.sboyd@kernel.org>
+        b=cmCJnDxvweAkTJuxcJHrETAjNXl0iPu4lQukowFXXRonO4we27DpflLjuC0O7oQd0
+         k3DE+oKEc/ln302jaTTsSQHo20oI3NjhbdrLdcYxQj8I4uLlASaFdrgcajXByKMrKO
+         x1a8O9Sj+QO+bDD9bx8NUiXMC50HkbW1IidRNnlKFBP7+HV2WD3XIEM05FyLnJfsOe
+         o/OjRzdsiNjoSPX2gUpDMqHo1kBSAhPahLFz2LE9Gww4Y0F0Ow6mkR0zG1Ksqul99U
+         VRkaxj6j0japH1Ea7FTS2Ydu/aMaIHHXVj/VrFFah6KuThb1oSxv1E7MpZ3+J3DvWz
+         Kl4BAYOzzI3NA==
+Message-ID: <c38a32fce0d3642b6be85efd46d8c358.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230515-refclk-v3-2-37c0b550f406@ti.com>
-References: <20230515-refclk-v3-0-37c0b550f406@ti.com> <20230515-refclk-v3-2-37c0b550f406@ti.com>
-Subject: Re: [PATCH v3 2/2] clk: keystone: syscon-clk: Add support for audio refclk
+In-Reply-To: <20230615122051.546985-2-angelogioacchino.delregno@collabora.com>
+References: <20230615122051.546985-1-angelogioacchino.delregno@collabora.com> <20230615122051.546985-2-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 1/3] clk: mediatek: clk-mtk: Grab iomem pointer for divider clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>, Andrew Davis <afd@ti.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Jai Luthra <j-luthra@ti.com>
-To:     Conor Dooley <conor+dt@kernel.org>, Jai Luthra <j-luthra@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Date:   Fri, 16 Jun 2023 12:16:29 -0700
+Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
+        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
+        u.kleine-koenig@pengutronix.de, msp@baylibre.com,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Date:   Fri, 16 Jun 2023 12:21:01 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jai Luthra (2023-06-15 04:55:36)
-> TI's AM62 SoC can optionally provide two audio reference clocks
-> (AUDIO_REFCLKx) to external peripherals.
+Quoting AngeloGioacchino Del Regno (2023-06-15 05:20:49)
+> In the rare case in which one of the clock drivers has divider clocks
+> but not composite clocks, mtk_clk_simple_probe() would not io(re)map,
+> hence passing a NULL pointer to mtk_clk_register_dividers().
 >=20
-> By default this reference clock is looped-back inside the SoC to a mux
-> that goes to McASP AHCLK, but can optionally be enabled as an output to
-> peripherals outside the SoC by setting a bit through CTRL_MMR registers.
+> To fix this issue, extend the `if` conditional to also check if any
+> divider clocks are present. While at it, also make sure the iomem
+> pointer is NULL if no composite/divider clocks are declared, as we
+> are checking for that when iounmapping it in the error path.
 >=20
-> This bit only controls the direction of the clock, while the parent
-> is a muxed input from sci-clk [1] which may be a configurable PLL or a
-> master clock from one of the McASP instances.
+> This hasn't been seen on any MediaTek clock driver as the current ones
+> always declare composite clocks along with divider clocks, but this is
+> still an important fix for a future potential KP.
 >=20
-> Link: http://downloads.ti.com/tisci/esd/latest/5_soc_doc/am62x/clocks.htm=
-l#clocks-for-board0-device [1]
-> Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> Fixes: 1fe074b1f112 ("clk: mediatek: Add divider clocks to mtk_clk_simple=
+_{probe,remove}()")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 > ---
 
 Applied to clk-next
