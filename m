@@ -2,96 +2,83 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C27EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 19:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B82EB64DB
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 20:28:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbjFPT4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 15:56:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
+        id S1345503AbjFPU17 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 16:27:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230420AbjFPT4j (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 15:56:39 -0400
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4AE2359D;
-        Fri, 16 Jun 2023 12:56:38 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-77ac2eb07a3so39207639f.2;
-        Fri, 16 Jun 2023 12:56:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686945398; x=1689537398;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qS/HVMvqz+3lSoqw9RtE/dO2ukSdMAzMn+pgkdvUh6w=;
-        b=QEGDNs6bloovdRE9Vnx9fVwOXd/Ih0hFt3VejJyexUtf331RonA4c2IbJsVussc/U+
-         KLm0ALZW4EzC9kSrLNifgNyYhEDi308TQE3runAWS/TwK8njLdE/NDnrtv+7Y1qdU6k2
-         Rk8koAd2t06IdsauXjEG3Nxl9TH41kS7qPdhgKVAaMpIPUfGPZXIrxngfH+mBO9sspMF
-         QHfxR9MhWMv+xhdJVVby9e3DSz1g6fvNo3MStYsdNgTOuIVNuBcZC1sWz1YwqupGY93H
-         R6+cNcurC9yJBicknmdtPibMuy7uJGE5/S+ZMIkf3D8MSYXmENI8UGJ3He24DtEgHGoA
-         wVdA==
-X-Gm-Message-State: AC+VfDyLyl4uXjCRgYb8nmU1N4B25NInStqnOtbZeS8DKbHS+JabOggz
-        +FZCwU2D63A79fXL6SIFxA==
-X-Google-Smtp-Source: ACHHUZ6huIxB7TX+/DLvdKdc8mYNTXyBGF99Ajc4+Uni1wbszykli1jrwEBBrzCBaNSbKvMS1cO2lA==
-X-Received: by 2002:a05:6602:29b1:b0:76c:6674:243b with SMTP id u17-20020a05660229b100b0076c6674243bmr123367ios.15.1686945397889;
-        Fri, 16 Jun 2023 12:56:37 -0700 (PDT)
-Received: from robh_at_kernel.org ([2605:ef80:80c2:7a4a:82c2:d6b3:423e:4a47])
-        by smtp.gmail.com with ESMTPSA id q20-20020a02c8d4000000b0040fa0f43777sm6420098jao.161.2023.06.16.12.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jun 2023 12:56:37 -0700 (PDT)
-Received: (nullmailer pid 934772 invoked by uid 1000);
-        Fri, 16 Jun 2023 19:56:21 -0000
-Date:   Fri, 16 Jun 2023 13:56:21 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     =?iso-8859-1?Q?Fern=E1ndez?= Rojas <noltari@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Marek Vasut <marex@denx.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Suman Anna <s-anna@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
-        devicetree@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        - <devicetree-spec@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
- in titles
-Message-ID: <168694537949.934680.13323062117489358147.robh@kernel.org>
-References: <20230615213154.1753313-1-robh@kernel.org>
+        with ESMTP id S233194AbjFPU1z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 16:27:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52F53AA8;
+        Fri, 16 Jun 2023 13:27:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F1FCF6111F;
+        Fri, 16 Jun 2023 20:27:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5511DC433C8;
+        Fri, 16 Jun 2023 20:27:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686947266;
+        bh=Csz7AYw+SYFqJ0XXgKmMeE5PEklNTVPGlubIPxkjLaw=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=sVoqsOr9cUAjopFEUQzIzHhtJf2t3y7CjDYMD7EVysk1K1iJagDr2jbzP+8aQLc4A
+         vZXX5HqTj85mG7MkGBSzIpSXUar/Mtm7Y8q2Yca8UDGlekSXZtjvibxRo8RSgAovD8
+         kgLtqS6kU0/64qxaXrGoaVelj8ZeH3W6ZOYrnXDqtYybfAPcOK3RHZ7H+6GsZDSAjO
+         jKCM8AxnTT3zAsw7rB//9VQARkYkpLqnwpBIxVpVFdLKURUr6nCEt+2xCDzPjqUyGV
+         7XBdtDxWDJJuk22fx8WwDvptKo9evm0wCAtsR0btB9zTF2Q94N/W01g9X8hk0juO4a
+         jIRB4ch3rx48g==
+Message-ID: <70c39db97475939719720ab1902aa1c1.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <825f06c1-cf87-c0e3-a9fc-f4ec0edaa0f8@linaro.org>
+References: <20230526-topic-smd_icc-v6-0-263283111e66@linaro.org> <20230526-topic-smd_icc-v6-18-263283111e66@linaro.org> <e2afd4bde3e85db358d50553a60a744f.sboyd@kernel.org> <825f06c1-cf87-c0e3-a9fc-f4ec0edaa0f8@linaro.org>
+Subject: Re: [PATCH v6 18/22] clk: qcom: smd-rpm: Separate out interconnect bus clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 16 Jun 2023 13:27:42 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Konrad Dybcio (2023-06-15 00:49:59)
+> On 15.06.2023 02:48, Stephen Boyd wrote:
+> > Quoting Konrad Dybcio (2023-06-14 11:04:37)
+> >> @@ -1332,6 +1275,15 @@ static int rpm_smd_clk_probe(struct platform_de=
+vice *pdev)
+> >>                         goto err;
+> >>         }
+> >> =20
+> >> +       for (i =3D 0; i < desc->num_icc_clks; i++) {
+> >> +               if (!desc->icc_clks[i])
+> >> +                       continue;
+> >> +
+> >> +               ret =3D clk_smd_rpm_handoff(desc->icc_clks[i]);
+> >=20
+> > This API can probably take a const struct clk_smd_rpm pointer as well.
+> It would be great, but ideally we want to set r->enabled in that func
+> for !bus clocks (for unused clk cleanup). I could probably introduce a
+> separate function for the icc clocks that takes const.
+>=20
 
-On Thu, 15 Jun 2023 15:31:54 -0600, Rob Herring wrote:
-> The Devicetree bindings document does not have to say in the title that
-> it is a "Devicetree binding", but instead just describe the hardware.
-> 
-> Most of these have been fixed already, so fix the handful that snuck in.
-> With this, a meta-schema check can be enabled to catch these
-> automatically.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
->  Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml    | 2 +-
->  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
->  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
->  .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
->  5 files changed, 5 insertions(+), 5 deletions(-)
-> 
-
-Applied, thanks!
-
+Sure. Or have this take const and in the clk driver set r->enabled after
+calling it. That's future code though, so just make it take const?
