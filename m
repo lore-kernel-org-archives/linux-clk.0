@@ -2,184 +2,121 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E621EB64D8
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 07:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1183AEB64DA
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 08:43:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244292AbjFPHHs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 03:07:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50710 "EHLO
+        id S1343643AbjFPIn1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 04:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244352AbjFPHHE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 03:07:04 -0400
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B1D12D6D;
-        Fri, 16 Jun 2023 00:06:53 -0700 (PDT)
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-        id 1qA3Xk-0006Nz-00; Fri, 16 Jun 2023 09:06:48 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 2875FC02FD; Fri, 16 Jun 2023 08:47:35 +0200 (CEST)
-Date:   Fri, 16 Jun 2023 08:47:35 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        john@phrozen.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        arinc.unal@arinc9.com
-Subject: Re: [PATCH v3 0/9] mips: ralink: add complete clock and reset driver
- for mtmips SoCs
-Message-ID: <20230616064735.GA6380@alpha.franken.de>
-References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com>
- <CAMhs-H_yn_76RAFNk4ux_-rn9FdKna9Vsu0raFQXfr3ykkRWPw@mail.gmail.com>
- <CAMhs-H_NxauVCL7Sc7SWBk4dTQ8CyqLbPnTZO66VAqycPoOyTw@mail.gmail.com>
- <CAMhs-H8R4oz=Hs8y=3-R15hkySPEO4scookZ_shPzEbQoAyTKA@mail.gmail.com>
+        with ESMTP id S1343578AbjFPInU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 04:43:20 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FA1813E
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jun 2023 01:43:18 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-519f6e1a16cso508727a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jun 2023 01:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686904997; x=1689496997;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ze8cwbEimRlhZaK9EBJVsnPzOeV3nshtg9J9yVTNzbA=;
+        b=0CwPdM23oJvOKoQrf2K1oFtch1GUVvuQqMOPzi5DMDq0TjmyNC8LGVZg6WCwDXV1Vs
+         NYGCTgf0wcd3f2jgapURz07b342frjb+t+j0LfpkA2rqE50GyGKVze91Wk4/mY6fDOlb
+         m+dv9X2ENUCWaTbwtJXXtyFzVTs52sG0Kg0nRkdqeD+LTQSAVHemhVAtdGQScTED246S
+         Hvz+wXORJe7+Lc/uj4YV8LoS9SKCFE4KGTnYl0nB9EwZfT2eDN/Q2dRaqk61HeHPcyW+
+         Hv+78e1DOE69nDXeWq9ZwFkvZpI36XyvNpoodqGxYmoz2DND6kIBR9uSFjHPn2ZKj2iD
+         T+jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686904997; x=1689496997;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ze8cwbEimRlhZaK9EBJVsnPzOeV3nshtg9J9yVTNzbA=;
+        b=Zyipf23Ens5PorhUck145XmSnwc/2YGrDQrom5V8Fm0yDJreflcaqytRZSR7fgMdQu
+         StDDVjV9TE9pbLG1zDVZVH+f3kBvc7z//L/AxkRefoeXyKyYPKhU6ozcJftkveKMa1BT
+         stBOLUrACjcupNcRR8YJQyODFaaHNoifH+9kMtWpvAPa3FiteiS0jlFoxHacfGMzYuWO
+         m5IKOnjieXIlK6Rc99oZcZ71JawTNzf7If+WXoadI74fe1Ylpe0viH3dPL3AGEIRSqCj
+         Kv3WB2wwE26BIIAm6OpUWWl+ZgcGvEYbpDf+2/hgU0EgIuxK4++SdF9u9URWRJHe1/g9
+         Exow==
+X-Gm-Message-State: AC+VfDycGZWG6uw44zMnCcUQDysYvb82Tnxgr+7kgu+2ZM2DtqjyuasC
+        SjvpAL3ciiH+e0PlOLgF18IQ1Q==
+X-Google-Smtp-Source: ACHHUZ7MWFdjFMx/4EedaJmP35jyhkR6ud9o/ugYs5MNHQ34vWYGN4HLEeom/PdQ5fLBLp+o2C6xZg==
+X-Received: by 2002:aa7:d6d3:0:b0:518:79da:911e with SMTP id x19-20020aa7d6d3000000b0051879da911emr665898edr.39.1686904996944;
+        Fri, 16 Jun 2023 01:43:16 -0700 (PDT)
+Received: from blmsp ([2001:4090:a245:802c:7f03:2fe0:bd27:d746])
+        by smtp.gmail.com with ESMTPSA id c13-20020aa7c74d000000b0051823c1a10bsm8004786eds.54.2023.06.16.01.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jun 2023 01:43:16 -0700 (PDT)
+Date:   Fri, 16 Jun 2023 10:43:14 +0200
+From:   Markus Schneider-Pargmann <msp@baylibre.com>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+        wenst@chromium.org, u.kleine-koenig@pengutronix.de,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH 1/3] clk: mediatek: clk-mtk: Grab iomem pointer for
+ divider clocks
+Message-ID: <20230616084314.vfx5gcoxupcq3mgl@blmsp>
+References: <20230615122051.546985-1-angelogioacchino.delregno@collabora.com>
+ <20230615122051.546985-2-angelogioacchino.delregno@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMhs-H8R4oz=Hs8y=3-R15hkySPEO4scookZ_shPzEbQoAyTKA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20230615122051.546985-2-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 16, 2023 at 08:12:00AM +0200, Sergio Paracuellos wrote:
-> On Tue, May 23, 2023 at 11:47 AM Sergio Paracuellos
-> <sergio.paracuellos@gmail.com> wrote:
-> >
-> > On Thu, May 4, 2023 at 4:48 PM Sergio Paracuellos
-> > <sergio.paracuellos@gmail.com> wrote:
-> > >
-> > > On Tue, Apr 18, 2023 at 11:03 AM Sergio Paracuellos
-> > > <sergio.paracuellos@gmail.com> wrote:
-> > > >
-> > > > Hi all!
-> > > >
-> > > > This patchset is a big effort to properly implement a clock and reset
-> > > > driver for old ralink SoCs. This allow to properly define clocks in
-> > > > device tree and avoid to use fixed-clocks directly from 'arch/mips/ralink'
-> > > > architecture directory code.
-> > > >
-> > > > Device tree 'sysc' node will be both clock and reset provider using
-> > > > 'clock-cells' and 'reset-cells' properties.
-> > > >
-> > > > The ralink SoCs we are taking about are RT2880, RT3050, RT3052, RT3350,
-> > > > RT3352, RT3883, RT5350, MT7620, MT7628 and MT7688. Mostly the code in
-> > > > this new driver has been extracted from 'arch/mips/ralink' and cleanly
-> > > > put using kernel clock and reset driver APIs. The clock plans for this
-> > > > SoCs only talks about relation between CPU frequency and BUS frequency.
-> > > > This relation is different depending on the particular SoC. CPU clock is
-> > > > derived from XTAL frequencies.
-> > > >
-> > > >  Depending on the SoC we have the following frequencies:
-> > > >  * RT2880 SoC:
-> > > >      - XTAL: 40 MHz.
-> > > >      - CPU: 250, 266, 280 or 300 MHz.
-> > > >      - BUS: CPU / 2 MHz.
-> > > >   * RT3050, RT3052, RT3350:
-> > > >      - XTAL: 40 MHz.
-> > > >      - CPU: 320 or 384 MHz.
-> > > >      - BUS: CPU / 3 MHz.
-> > > >   * RT3352:
-> > > >      - XTAL: 40 MHz.
-> > > >      - CPU: 384 or 400 MHz.
-> > > >      - BUS: CPU / 3 MHz.
-> > > >      - PERIPH: 40 MHz.
-> > > >   * RT3383:
-> > > >      - XTAL: 40 MHz.
-> > > >      - CPU: 250, 384, 480 or 500 MHz.
-> > > >      - BUS: Depends on RAM Type and CPU:
-> > > >        + RAM DDR2: 125. ELSE 83 MHz.
-> > > >        + RAM DDR2: 128. ELSE 96 MHz.
-> > > >        + RAM DDR2: 160. ELSE 120 MHz.
-> > > >        + RAM DDR2: 166. ELSE 125 MHz.
-> > > >   * RT5350:
-> > > >       - XTAL: 40 MHz.
-> > > >       - CPU: 300, 320 or 360 MHz.
-> > > >       - BUS: CPU / 3, CPU / 4, CPU / 3 MHz.
-> > > >       - PERIPH: 40 MHz.
-> > > >   * MT7628 and MT7688:
-> > > >      - XTAL: 20 MHz or 40 MHz.
-> > > >      - CPU: 575 or 580 MHz.
-> > > >      - BUS: CPU / 3.
-> > > >      - PCMI2S: 480 MHz.
-> > > >      - PERIPH: 40 MHz.
-> > > >   * MT7620:
-> > > >      - XTAL: 20 MHz or 40 MHz.
-> > > >      - PLL: XTAL, 480, 600 MHz.
-> > > >      - CPU: depends on PLL and some mult and dividers.
-> > > >      - BUS: depends on PLL and some mult and dividers.
-> > > >      - PERIPH: 40 or XTAL MHz.
-> > > >
-> > > > MT7620 is a bit more complex deriving CPU clock from a PLL and an bunch of
-> > > > register reads and predividers. To derive CPU and BUS frequencies in the
-> > > > MT7620 SoC 'mt7620_calc_rate()' helper is used.
-> > > > In the case XTAL can have different frequencies and we need a different
-> > > > clock frequency for peripherals 'periph' clock in introduced.
-> > > > The rest of the peripherals present in the SoC just follow their parent
-> > > > frequencies.
-> > > >
-> > > > I am using 'mtmips' inside for ralink clock driver. This is aligned with
-> > > > pinctrl series recently merged through pinctrl git tree [0].
-> > > >
-> > > > I am maintaining ralink as prefix for compatible strings after discussions
-> > > > between Rob and Arinc in v2 of this series [1].
-> > > >
-> > > > Changes have been compile tested for:
-> > > > - RT2880
-> > > > - RT3883
-> > > > - MT7620
-> > > >
-> > > > Changes have been properly tested in RT5350 SoC based board (ALL5003 board)
-> > > > resulting in a working platform.
-> > > >
-> > > > Dts files for these SoCs in-tree except MT7621 are incomplete. We are
-> > > > planning to align with openWRT files at some point and add extra needed
-> > > > changes. Hence I am not touching them at all in these series. If this is
-> > > > a problem, please let me know and I will update them.
-> > > >
-> > > > Talking about merging this series I'd like all of the patches going through
-> > > > the MIPS tree if possible.
-> > > >
-> > > > Thanks in advance for your time.
-> > > >
-> > > > Best regards,
-> > > >     Sergio Paracuellos
-> > > >
-> > > > Changes in v3:
-> > > > - Address Stephen comments in v2:
-> > > >     + Drop unsused include '<linux/clk.h>'.
-> > > >     + Add fixed and factor clocks when it makes sense.
-> > > >     + Make 'mtmips_periph_clk_ops' named variable.
-> > > >     + WARN_ON -> WARN_ON_ONCE.
-> > > >     + Avoid CONFIG_USB dependent code. Introduce new 'mtmips_clk_regs_init'.
-> > > >     + Don't validate the bindings in the driver.
-> > > >     + Make const 'struct clk_init_data' used inside macros.
-> > > >     + do_div -> div_u64.
-> > > >     + Make use of dev_err_probe.
-> > >
-> > > Hi Stephen,
-> > >
-> > > Does anything else need to be addressed to have all of these added?
-> > >
-> > > Philipp, can you please review the reset related code in PATCH 2/9 of
-> > > these series?
-> > >
-> > > Thanks in advance for your time!
-> > >
-> > > Best regards,
-> > >     Sergio Paracuellos
-> >
-> > Gentle ping for this series :-)
+On Thu, Jun 15, 2023 at 02:20:49PM +0200, AngeloGioacchino Del Regno wrote:
+> In the rare case in which one of the clock drivers has divider clocks
+> but not composite clocks, mtk_clk_simple_probe() would not io(re)map,
+> hence passing a NULL pointer to mtk_clk_register_dividers().
 > 
-> Another gentle ping for this series :-)
+> To fix this issue, extend the `if` conditional to also check if any
+> divider clocks are present. While at it, also make sure the iomem
+> pointer is NULL if no composite/divider clocks are declared, as we
+> are checking for that when iounmapping it in the error path.
+> 
+> This hasn't been seen on any MediaTek clock driver as the current ones
+> always declare composite clocks along with divider clocks, but this is
+> still an important fix for a future potential KP.
+> 
+> Fixes: 1fe074b1f112 ("clk: mediatek: Add divider clocks to mtk_clk_simple_{probe,remove}()")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-I'm reday to take it through the MIPS tree, if Stephen acks the
-clk driver changes.
+Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+> ---
+>  drivers/clk/mediatek/clk-mtk.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+> index cf3514c8e97e..b00ef4213335 100644
+> --- a/drivers/clk/mediatek/clk-mtk.c
+> +++ b/drivers/clk/mediatek/clk-mtk.c
+> @@ -469,7 +469,7 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>  	const struct platform_device_id *id;
+>  	const struct mtk_clk_desc *mcd;
+>  	struct clk_hw_onecell_data *clk_data;
+> -	void __iomem *base;
+> +	void __iomem *base = NULL;
+>  	int num_clks, r;
+>  
+>  	mcd = device_get_match_data(&pdev->dev);
+> @@ -483,8 +483,8 @@ static int __mtk_clk_simple_probe(struct platform_device *pdev,
+>  			return -EINVAL;
+>  	}
+>  
+> -	/* Composite clocks needs us to pass iomem pointer */
+> -	if (mcd->composite_clks) {
+> +	/* Composite and divider clocks needs us to pass iomem pointer */
+> +	if (mcd->composite_clks || mcd->divider_clks) {
+>  		if (!mcd->shared_io)
+>  			base = devm_platform_ioremap_resource(pdev, 0);
+>  		else
+> -- 
+> 2.40.1
+> 
