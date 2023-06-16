@@ -2,111 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85414EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 08:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A351EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 10:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230505AbjFPIvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 04:51:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45344 "EHLO
+        id S1345103AbjFPK5s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 06:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244969AbjFPIvJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 04:51:09 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6953E30C3
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jun 2023 01:51:08 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51a324beca6so587574a12.1
-        for <linux-clk@vger.kernel.org>; Fri, 16 Jun 2023 01:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1686905467; x=1689497467;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q+CFo3A2Oynws7qBN6wqUi/Hm2JvW7rwW8Ek/sxYPrA=;
-        b=xp+d4kWfW2lh8gA77lSwp+QpbjTsV6q8Chpk1g+OOPT7jvm9j0hhEn5/zQyN8BMPaH
-         Dx2bQ5+TGTXAw/zpARqubUyMZgBszWnv4veggKJz9RfWh7RkgQP6mfLwdH6jk0w3AnUs
-         3436FebMYZiTWzmtGAk+UCTsjzgMUCfYUGOFCLFRxlL3N8H29vn6lUmJgKmSPpmv1BPI
-         hWpK+rEVGqCDPK70jg7+wtLMSqDFdq9Er+wrcBFQ5wnvM4GvL7g8qp/d7uRM3bBwUv+3
-         5OFS1PCnsw9tf03kxXhrJdcvIPp680F7DvrERMaOiX8RVMKLQxKgSUt/kpOaFHwoObC8
-         TiRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686905467; x=1689497467;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q+CFo3A2Oynws7qBN6wqUi/Hm2JvW7rwW8Ek/sxYPrA=;
-        b=PuD6+lGIf1zFFOin8JAZe9s4SPExZXIPVLRYzCjDU7IFyhy1SlVnMVSK9DSbz7Bz4f
-         x000Qdlxx8Tfwp164yKqn/4skHxcpTPDR+8j/j4kOW4RmV+qcysYYU+Qlp//CfuQ+iCI
-         TW00XSrpbLa+A3FJ4nB9Dnu3d90Gf7CmupZcsUQb/w5LG9Rpx3ojm1fH62YBqquYdAkf
-         dYT9u80B0az3v9d38p34O63ZVlwhpgZlfmE6oULcGZrQ1zqu/rDfzsPrLRPQXhKasff/
-         RdDGwG26QnlWRBYsDV5Gyet8qK3DBKX82PtiIQnLd3L6/4cPgcJiqRYcgTMcJyd2ZC36
-         U56w==
-X-Gm-Message-State: AC+VfDwIh/tBF8zfWhi3xs1I1AYuzL1lXVyzOJwy6t9cVZp/7w/Y6EYN
-        TfA45bnQTFtztCW0843yCv8MSw==
-X-Google-Smtp-Source: ACHHUZ5s6nb5u3oL/lmxvtKXzM48Gt46GFv/+kYzbWM9jRdu4S9zR7XWN3Sq4RQHkGz+l1oAr9mspw==
-X-Received: by 2002:aa7:c314:0:b0:516:3261:17d with SMTP id l20-20020aa7c314000000b005163261017dmr723581edq.20.1686905466853;
-        Fri, 16 Jun 2023 01:51:06 -0700 (PDT)
-Received: from blmsp ([2001:4090:a245:802c:7f03:2fe0:bd27:d746])
-        by smtp.gmail.com with ESMTPSA id h23-20020a50ed97000000b0051a409e752asm5628edr.17.2023.06.16.01.51.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jun 2023 01:51:06 -0700 (PDT)
-Date:   Fri, 16 Jun 2023 10:51:04 +0200
-From:   Markus Schneider-Pargmann <msp@baylibre.com>
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
-        wenst@chromium.org, u.kleine-koenig@pengutronix.de,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH 3/3] clk: mediatek: clk-mt8173-apmixedsys: Fix iomap not
- released issue
-Message-ID: <20230616085104.mjlt63e24ebzslsz@blmsp>
-References: <20230615122051.546985-1-angelogioacchino.delregno@collabora.com>
- <20230615122051.546985-4-angelogioacchino.delregno@collabora.com>
+        with ESMTP id S1345105AbjFPK5d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 06:57:33 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DCE844A5;
+        Fri, 16 Jun 2023 03:50:20 -0700 (PDT)
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35GA09tq024110;
+        Fri, 16 Jun 2023 10:50:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=qcppdkim1;
+ bh=Te0Kw9wIOe/6vQtNTdTyllSGCYHNuLpURpdgV2A+g/s=;
+ b=HgW+e3iCCtg2yHZHPT8FuWhv7CmpzTJWuLKGsZFEA+cqbBSjmZ0bpC9OhR4T/cwIIJ5d
+ 7vdeteNcbmJ3ls0AYElxAWFAIA3KymRZkNugRPu7wTx9ioUuhOb7ybnSJ/CrvSEJHzhL
+ rmnTz1PFTF1JpWYQ6L6RJurPtUZUKuHnljQwBdCIaLx4KNhEUI1KCkJ/Tuua75rqogFP
+ nWhl5/BCLdxddXKJtb4B2gEynCMzBduQQ3UtsxRvcqAyzR0l46v5Lvuu756y/rvVTlF3
+ UBZOGsdVyNp2Uimv5Df7g26hgqhNiBc8+ZB1zFsa/g1l94cUq8XdQ6AcNxsT9FpB2niU ZA== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3r8m1mg9qr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Jun 2023 10:50:17 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35GAoGZJ024205
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 16 Jun 2023 10:50:16 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 16 Jun 2023 03:50:11 -0700
+From:   Imran Shaik <quic_imrashai@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     Melody Olvera <quic_molvera@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: [PATCH 0/2] Update GCC clocks for QDU1000 and QRU1000 SoCs
+Date:   Fri, 16 Jun 2023 16:19:39 +0530
+Message-ID: <20230616104941.921555-1-quic_imrashai@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230615122051.546985-4-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Jo61TPSrC8buXIotPawOicpzOsl8Sf2L
+X-Proofpoint-GUID: Jo61TPSrC8buXIotPawOicpzOsl8Sf2L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-16_07,2023-06-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=760 malwarescore=0 adultscore=0 clxscore=1011
+ suspectscore=0 spamscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306160097
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Angelo,
+Update GCC clocks and add support for GDSCs for QDU1000 and QRU1000 SoCs.
+Also, add support for v2 variant as well.
 
-On Thu, Jun 15, 2023 at 02:20:51PM +0200, AngeloGioacchino Del Regno wrote:
-> In case of error after of_ioremap() the resource must be released:
-> call iounmap() where appropriate to fix that.
-> 
-> Fixes: 41138fbf876c ("clk: mediatek: mt8173: Migrate to platform driver and common probe")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> index ba1386e70a24..1bbb21ab1786 100644
-> --- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> +++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
-> @@ -151,8 +151,10 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
-> -	if (IS_ERR_OR_NULL(clk_data))
-> +	if (IS_ERR_OR_NULL(clk_data)) {
-> +		iounmap(base);
->  		return -ENOMEM;
+Imran Shaik (2):
+  dt-bindings: clock: Update GCC clocks for QDU1000 and QRU1000 SoCs
+  clk: qcom: gcc-qdu1000: Update GCC clocks and add support for GDSCs
 
-More of a nitpick, but I would prefer if you would use the same error
-catching style as the rest of the probe function:
+ .../bindings/clock/qcom,qdu1000-gcc.yaml      |   6 +-
+ drivers/clk/qcom/gcc-qdu1000.c                | 162 ++++++++++++------
+ include/dt-bindings/clock/qcom,qdu1000-gcc.h  |   4 +-
+ 3 files changed, 118 insertions(+), 54 deletions(-)
 
-		if (IS_ERR_OR_NULL(clk_data)) {
-			r = -ENOMEM;
-			goto unmap_io;
-		}
-	...
-	unmap_io:
-		iounmap(base)
-		return r;
+-- 
+2.25.1
 
-
-Best,
-Markus
