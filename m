@@ -2,177 +2,135 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FC0EB64DB
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 11:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558ADEB64DA
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 11:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345661AbjFPLXg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 07:23:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42972 "EHLO
+        id S243664AbjFPLd4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 07:33:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345635AbjFPLXc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 07:23:32 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE5A2130;
-        Fri, 16 Jun 2023 04:23:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686914610; x=1718450610;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mDlHBFyvTQFGzUvmEXVx2wFpXxheBWNoL0HLCWmLp7I=;
-  b=BMXjfbekv3pj9+5F/lGMkvIN7hJRujEracUzosR0YNDzsLZQKC8mP7w2
-   L03GG/Z11Vsi7cKJNndgaB+rInKQHHMA+53pvLlgtl/mkOL+Kwq0Sw4xV
-   04JVfsvbPrZuBHZgDX8qqujsQ5xyMmteJwbKjNtqoNCygz5NxiNh3CBUj
-   0csZS+zKopyaL4BUj3sWVOaItgW2d2ZAh44N4gV2s+69oozK5GVskVrKP
-   cLdPV/VlUVXyyyGquvYYzl/gmvs+gt7RX5gCNeHiMJnCyrg3qbUWT6zWT
-   NUeJC10eCjVFhmx0+Sj6YGtkrrstwer7a0tR/imOaTsGyDFtzMBI8sIvU
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="387899097"
-X-IronPort-AV: E=Sophos;i="6.00,247,1681196400"; 
-   d="scan'208";a="387899097"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2023 04:23:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10742"; a="707064234"
-X-IronPort-AV: E=Sophos;i="6.00,247,1681196400"; 
-   d="scan'208";a="707064234"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 16 Jun 2023 04:23:23 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qA7Y3-0001Aj-1h;
-        Fri, 16 Jun 2023 11:23:23 +0000
-Date:   Fri, 16 Jun 2023 19:23:06 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Lucas Tanure <tanure@linux.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        with ESMTP id S241806AbjFPLdy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 07:33:54 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 088A8295B
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jun 2023 04:33:53 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-514ab6cb529so3609484a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 16 Jun 2023 04:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1686915231; x=1689507231;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vnCBULjwaeoKSSjtKcAIMInnLKiE524xqLou3I4mzIY=;
+        b=BzjzuQgJYIshv6bcYud1qHQiywtb1eZ8d+MShkxuxN3EJDxICt070sEJ0JJL7EEZqt
+         u/pHAQ2DsV8ngkLgbpYKLS/D2PuXq0Wc5uhV4XxQzWecNdsJQmKfFl3h2T/ndhDWq90i
+         SxH3a6OkswRDlbuZ5UKmFpm0bwJWecwrCb3ou+GUVfA5dMQj1tWqNXc2WT/3977ka5+f
+         vI7eGEX97OQRjPg4ZY1XQYpDwSqHcII1L4JzlIoRUyAClKNuZlmWidjutaM1NKaLbHkJ
+         XfqIxSRJiCyCYD49u9Z5cXqTtls+ko5E0de6qSUDctt7lAU9e/8vUL0jx3n6PZvP01N4
+         N81w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686915231; x=1689507231;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnCBULjwaeoKSSjtKcAIMInnLKiE524xqLou3I4mzIY=;
+        b=L/PkBmCLAEK+fEj8FCJXEGi6khBYqLCjAa9vgAIk/dTdtiC9AgRdLJiZ+nwxL6b7bg
+         RlrS237oGm+4Q/WtTPX0JhdtCv73zC0OtBUNoI96Gp3/tPFuB+pI9o9YbNE4/JRZVrOT
+         +Eh5OEisgl6IA6kylzp+qNiv2eKHGTRWQ3K/12R6+ErY5Rsv80/uOYvLhterUAh4MR2Z
+         oSsoGLi9WgsDzYUstjZEZCWUPCel9oOIytpd4axeVgLTrF0w/lujfCI0myAlrz4vSnF/
+         f/4Gk1sfoX6X5OLWkYwbY9p8shDemr7qKfAN1VqzjqUhSg88hpOVwkK6/R5bSdMOAf1s
+         jnpQ==
+X-Gm-Message-State: AC+VfDxypDnxy832Q4Ws9n6PJaU2VGzdig4SNE1KOYISfXC5rOreve4L
+        ge9jV+s+hUzLb7XYmtYLp883s/O9sxCl/VrESwo=
+X-Google-Smtp-Source: ACHHUZ5cEJy8okqiTA6pGSDD4tP30kklvbaWhufgQI9cqL7BYN2Ux0OGcf6oNZHMSOUjHxJKR+CmEw==
+X-Received: by 2002:a05:6402:5216:b0:514:a5cf:745b with SMTP id s22-20020a056402521600b00514a5cf745bmr7337833edd.3.1686915231435;
+        Fri, 16 Jun 2023 04:33:51 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id l14-20020aa7c30e000000b00514b0f6a75esm9684653edq.97.2023.06.16.04.33.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Jun 2023 04:33:50 -0700 (PDT)
+Message-ID: <cee56c57-060a-2fce-a2af-25404b9afe48@linaro.org>
+Date:   Fri, 16 Jun 2023 13:33:48 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Update GCC clocks for QDU1000 and
+ QRU1000 SoCs
+To:     Imran Shaik <quic_imrashai@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     oe-kbuild-all@lists.linux.dev, Nick <nick@khadas.com>,
-        Artem <art@khadas.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-serial@vger.kernel.org, Lucas Tanure <tanure@linux.com>
-Subject: Re: [PATCH 3/6] clk: meson: t7: add peripheral clock controller
-Message-ID: <202306161946.Kk7xeos8-lkp@intel.com>
-References: <20230615182938.18487-4-tanure@linux.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230615182938.18487-4-tanure@linux.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Melody Olvera <quic_molvera@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230616104941.921555-1-quic_imrashai@quicinc.com>
+ <20230616104941.921555-2-quic_imrashai@quicinc.com>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230616104941.921555-2-quic_imrashai@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lucas,
+On 16/06/2023 12:49, Imran Shaik wrote:
+> Update the qcom GCC clock bindings and add v2 compatible string for QDU1000
+> and QRU1000 SoCs.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,qdu1000-gcc.yaml         | 6 +++++-
+>  include/dt-bindings/clock/qcom,qdu1000-gcc.h                | 4 +++-
+>  2 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml
+> index 767a9d03aa32..030953d258c1 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml
+> @@ -8,6 +8,8 @@ title: Qualcomm Global Clock & Reset Controller for QDU1000 and QRU1000
+>  
+>  maintainers:
+>    - Melody Olvera <quic_molvera@quicinc.com>
+> +  - Taniya Das <quic_tdas@quicinc.com>
+> +  - Imran Shaik <quic_imrashai@quicinc.com>
 
-kernel test robot noticed the following build warnings:
+I appreciate adding more maintainers, it is welcomed and needed.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on clk/clk-next tty/tty-testing tty/tty-next tty/tty-linus krzk/for-next krzk-dt/for-next krzk-mem-ctrl/for-next linus/master v6.4-rc6 next-20230616]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+However many of Qualcomm folks, including some of you, did not care
+enough to fix their old/incorrect email in existing entries, thus we
+have hundreds of wrong addresses and email bounces.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lucas-Tanure/dt-bindings-arm-amlogic-add-Amlogic-T7-based-Khadas-VIM4-bindings/20230616-023038
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20230615182938.18487-4-tanure%40linux.com
-patch subject: [PATCH 3/6] clk: meson: t7: add peripheral clock controller
-config: arm64-buildonly-randconfig-r004-20230615 (https://download.01.org/0day-ci/archive/20230616/202306161946.Kk7xeos8-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230616/202306161946.Kk7xeos8-lkp@intel.com/reproduce)
+We already raised this internally and publicly, with just small effect,
+so I am not sure what to do more. For me, allowing to have outdated
+email in maintainers is an easiest proof that maintainer does not care.
+Adding more maintainer entries, while maintainer does not care, would
+not feel right. Maybe let's start with fixing existing entries?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306161946.Kk7xeos8-lkp@intel.com/
+>  
+>  description: |
+>    Qualcomm global clock control module which supports the clocks, resets and
+> @@ -17,7 +19,9 @@ description: |
+>  
+>  properties:
+>    compatible:
+> -    const: qcom,qdu1000-gcc
+> +    enum:
+> +      - qcom,qdu1000-gcc
+> +      - qcom,qdu1000-gcc-v2
 
-All warnings (new ones prefixed by >>):
+It's the same block, isn't it? What is the "v2" exactly?
 
-   drivers/clk/meson/t7.c:7084:51: warning: initialized field overwritten [-Woverride-init]
-    7084 |                 [CLKID_VID_PLL]                 = &t7_vid_pll.hw,
-         |                                                   ^
-   drivers/clk/meson/t7.c:7084:51: note: (near initialization for 't7_hw_onecell_data.hws[93]')
-   drivers/clk/meson/t7.c: In function 'meson_t7_probe':
->> drivers/clk/meson/t7.c:7946:36: warning: variable 'mclk_data' set but not used [-Wunused-but-set-variable]
-    7946 |         struct meson_clk_pll_data *mclk_data;
-         |                                    ^~~~~~~~~
-   drivers/clk/meson/t7.c: At top level:
-   drivers/clk/meson/t7.c:689:37: warning: 't7_a73_dyn_clk_sel' defined but not used [-Wunused-const-variable=]
-     689 | static const struct clk_parent_data t7_a73_dyn_clk_sel[] = {
-         |                                     ^~~~~~~~~~~~~~~~~~
-   drivers/clk/meson/t7.c:93:29: warning: 'meson_pll_clk_no_ops' defined but not used [-Wunused-const-variable=]
-      93 | static const struct clk_ops meson_pll_clk_no_ops = {};
-         |                             ^~~~~~~~~~~~~~~~~~~~
+Best regards,
+Krzysztof
 
-
-vim +/mclk_data +7946 drivers/clk/meson/t7.c
-
-  7939	
-  7940	static int __ref meson_t7_probe(struct platform_device *pdev)
-  7941	{
-  7942		struct device *dev = &pdev->dev;
-  7943		struct regmap *basic_map;
-  7944		struct regmap *pll_map;
-  7945		struct regmap *cpu_clk_map;
-> 7946		struct meson_clk_pll_data *mclk_data;
-  7947		int ret, i;
-  7948	
-  7949		/* Get regmap for different clock area */
-  7950		basic_map = t7_regmap_resource(dev, "basic");
-  7951		if (IS_ERR(basic_map)) {
-  7952			dev_err(dev, "basic clk registers not found\n");
-  7953			return PTR_ERR(basic_map);
-  7954		}
-  7955	
-  7956		pll_map = t7_regmap_resource(dev, "pll");
-  7957		if (IS_ERR(pll_map)) {
-  7958			dev_err(dev, "pll clk registers not found\n");
-  7959			return PTR_ERR(pll_map);
-  7960		}
-  7961	
-  7962		cpu_clk_map = t7_regmap_resource(dev, "cpu_clk");
-  7963		if (IS_ERR(cpu_clk_map)) {
-  7964			dev_err(dev, "cpu clk registers not found\n");
-  7965			return PTR_ERR(cpu_clk_map);
-  7966		}
-  7967	
-  7968		/* Populate regmap for the regmap backed clocks */
-  7969		for (i = 0; i < ARRAY_SIZE(t7_clk_regmaps); i++)
-  7970			t7_clk_regmaps[i]->map = basic_map;
-  7971	
-  7972		for (i = 0; i < ARRAY_SIZE(t7_cpu_clk_regmaps); i++)
-  7973			t7_cpu_clk_regmaps[i]->map = cpu_clk_map;
-  7974	
-  7975		for (i = 0; i < ARRAY_SIZE(t7_pll_clk_regmaps); i++)
-  7976			t7_pll_clk_regmaps[i]->map = pll_map;
-  7977		regmap_write(pll_map, ANACTRL_MPLL_CTRL0, 0x00000543);
-  7978	
-  7979		mclk_data = t7_mclk_pll_dco.data;
-  7980	
-  7981		for (i = 0; i < t7_hw_onecell_data.num; i++) {
-  7982			/* array might be sparse */
-  7983			if (!t7_hw_onecell_data.hws[i])
-  7984				continue;
-  7985	
-  7986			ret = devm_clk_hw_register(dev, t7_hw_onecell_data.hws[i]);
-  7987			if (ret) {
-  7988				dev_err(dev, "Clock registration failed\n");
-  7989				return ret;
-  7990			}
-  7991		}
-  7992		meson_t7_dvfs_setup(pdev);
-  7993	
-  7994	
-  7995		return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &t7_hw_onecell_data);
-  7996	}
-  7997	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
