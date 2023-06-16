@@ -2,65 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701AFEB64DA
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 18:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEBAEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 18:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233004AbjFPSEQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 14:04:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44884 "EHLO
+        id S232422AbjFPSeI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 14:34:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343765AbjFPSEL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 14:04:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 291C72D50;
-        Fri, 16 Jun 2023 11:04:00 -0700 (PDT)
+        with ESMTP id S232025AbjFPSeI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 14:34:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D5671FD5;
+        Fri, 16 Jun 2023 11:34:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9E99B62D96;
-        Fri, 16 Jun 2023 18:03:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0016DC433C8;
-        Fri, 16 Jun 2023 18:03:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DDBF9623D5;
+        Fri, 16 Jun 2023 18:34:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 257A3C433C0;
+        Fri, 16 Jun 2023 18:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686938639;
-        bh=25ClDeAOs/NHa1F0NW/S99YUWXo1FvU6uml1OXE1JNA=;
+        s=k20201202; t=1686940446;
+        bh=UmQb6FNQc3kZycxaRrEf208LD6H0d3VHH/7wjn/eZgs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=s1/ZVkL2f4N7DCQZr2df1+r6sKcvkBBWTCu+5gLn994xQbSqbME84uOobXThkRpCs
-         IctfHOIP5ZBymRYJtdJp+cQZO1Dri800SBYieKC271TiX9LlM2SX+BC61sXcF/X7r4
-         r39ZTJ7tYkEfXrWxRK+caifyhYk6y9OrB4HE72joxKdGOMYmbwFBmmuY+RApnad4+/
-         lDggCxbVtmz97kd2gLWaWjYbGiVYRBugpLVXyfi1/WBjdUZ79oWkcZQRe86azwrHPp
-         YZAxdH4eU6fbPPfHWyuO0Zz6ec0YiFO0wTwlUAMOnpMxrifwQwg0cmc6EK2IHdaA7E
-         19eSLkSp/Iq+g==
-Message-ID: <7ff1662a36922973f0a7e82b28c737e4.sboyd@kernel.org>
+        b=sSoW856XRyhhdpubOu3eCtjd9oQuJCLRRSOTHJ64BN7eYjN110eUBx5J29lBoRd6v
+         VdB7I6tExsuxllymfO3U9Z8/PTbOP34HVvgN5JJqS7sB77KgUrmZfzXWkHA5cLqFXQ
+         63Wl7L4yiHa3u7Hw1du1K5igyEh2uvZXsvhKOfu8a+BTc4OH2cCswgcZZLrP23DH/Y
+         QtZSmuhMbDgzrtCN8u8IIfOh7P1Xbym/QN+md+32n2KnvCbmDZ6wboNmch1SckcLB6
+         fxaHWx+Ns4yZGnRwnVJWmkE4qpjUQLCFpsUMON+lAhPy8/x73cR8gqaMLwnENSAYyw
+         hBL9QTb9Hza+A==
+Message-ID: <6f5220ef3ec3c05f32b5d6085d2e8adf.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230418090312.2818879-2-sergio.paracuellos@gmail.com>
-References: <20230418090312.2818879-1-sergio.paracuellos@gmail.com> <20230418090312.2818879-2-sergio.paracuellos@gmail.com>
-Subject: Re: [PATCH v3 1/9] dt-bindings: clock: add mtmips SoCs system controller
+In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
+References: <20230615213154.1753313-1-robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema" in titles
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
-        john@phrozen.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, mturquette@baylibre.com,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        arinc.unal@arinc9.com
-To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        linux-clk@vger.kernel.org
-Date:   Fri, 16 Jun 2023 11:03:56 -0700
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+To:     - <devicetree-spec@vger.kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        =?utf-8?q?Fern=C3=A1ndez?= Rojas <noltari@gmail.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Marek Vasut <marex@denx.de>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sebastian Reichel <sre@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, Suman Anna <s-anna@ti.com>
+Date:   Fri, 16 Jun 2023 11:34:03 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sergio Paracuellos (2023-04-18 02:03:04)
-> Adds device tree binding documentation for system controller node present
-> in Mediatek MIPS and Ralink SOCs. This node is a clock and reset provider
-> for the rest of the world. This covers RT2880, RT3050, RT3052, RT3350,
-> RT3883, RT5350, MT7620, MT7628 and MT7688 SoCs.
+Quoting Rob Herring (2023-06-15 14:31:54)
+> The Devicetree bindings document does not have to say in the title that
+> it is a "Devicetree binding", but instead just describe the hardware.
 >=20
-> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> Most of these have been fixed already, so fix the handful that snuck in.
+> With this, a meta-schema check can be enabled to catch these
+> automatically.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
