@@ -2,66 +2,96 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0C2EB64DA
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 19:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C27EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 19:56:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbjFPTZ7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 15:25:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55492 "EHLO
+        id S229696AbjFPT4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Jun 2023 15:56:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346295AbjFPTY4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 15:24:56 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 233A6449D;
-        Fri, 16 Jun 2023 12:23:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BA7D661EFA;
-        Fri, 16 Jun 2023 19:21:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC29C433CA;
-        Fri, 16 Jun 2023 19:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686943301;
-        bh=L4njF+AvSfGwSpC5S8bdEJXRtDhN9ofxkN4Ykn9oo1Q=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=N3z0gpe9AP8MGv+Wq25q5CH0qG+PR2ZNZCAUqZ+I2Q+Q+XqKyNnIL+R4E0EiApVeT
-         amBJxxB0JBgi6xUqb8ZeNle+BAu4/8TegliuntSSHjLE3VSAbiLmODnx+W3v5Ck+7i
-         r229GOM8FQ/YZHJBqGH3idkZoAvER629V0FpGTFg0a957q7GIEpMletFYkApvwisF7
-         oiY7LDHeS8EeFDIf4nMItdj0sE72N3hsKJWb60I6NnoZlPX39mJmpRukgHW+Wks1TF
-         K6ju6Exmdz3FQCYxosfZg9JW9KgOdQYA9utQlZN9tWy7hwD16ZOHs6LYoYVJY4mHhK
-         ETet3taf21zaQ==
-Message-ID: <2f59dfceaac859591b4b97b6fe928b62.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S230420AbjFPT4j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 15:56:39 -0400
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4AE2359D;
+        Fri, 16 Jun 2023 12:56:38 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-77ac2eb07a3so39207639f.2;
+        Fri, 16 Jun 2023 12:56:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686945398; x=1689537398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qS/HVMvqz+3lSoqw9RtE/dO2ukSdMAzMn+pgkdvUh6w=;
+        b=QEGDNs6bloovdRE9Vnx9fVwOXd/Ih0hFt3VejJyexUtf331RonA4c2IbJsVussc/U+
+         KLm0ALZW4EzC9kSrLNifgNyYhEDi308TQE3runAWS/TwK8njLdE/NDnrtv+7Y1qdU6k2
+         Rk8koAd2t06IdsauXjEG3Nxl9TH41kS7qPdhgKVAaMpIPUfGPZXIrxngfH+mBO9sspMF
+         QHfxR9MhWMv+xhdJVVby9e3DSz1g6fvNo3MStYsdNgTOuIVNuBcZC1sWz1YwqupGY93H
+         R6+cNcurC9yJBicknmdtPibMuy7uJGE5/S+ZMIkf3D8MSYXmENI8UGJ3He24DtEgHGoA
+         wVdA==
+X-Gm-Message-State: AC+VfDyLyl4uXjCRgYb8nmU1N4B25NInStqnOtbZeS8DKbHS+JabOggz
+        +FZCwU2D63A79fXL6SIFxA==
+X-Google-Smtp-Source: ACHHUZ6huIxB7TX+/DLvdKdc8mYNTXyBGF99Ajc4+Uni1wbszykli1jrwEBBrzCBaNSbKvMS1cO2lA==
+X-Received: by 2002:a05:6602:29b1:b0:76c:6674:243b with SMTP id u17-20020a05660229b100b0076c6674243bmr123367ios.15.1686945397889;
+        Fri, 16 Jun 2023 12:56:37 -0700 (PDT)
+Received: from robh_at_kernel.org ([2605:ef80:80c2:7a4a:82c2:d6b3:423e:4a47])
+        by smtp.gmail.com with ESMTPSA id q20-20020a02c8d4000000b0040fa0f43777sm6420098jao.161.2023.06.16.12.56.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Jun 2023 12:56:37 -0700 (PDT)
+Received: (nullmailer pid 934772 invoked by uid 1000);
+        Fri, 16 Jun 2023 19:56:21 -0000
+Date:   Fri, 16 Jun 2023 13:56:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     =?iso-8859-1?Q?Fern=E1ndez?= Rojas <noltari@gmail.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Marek Vasut <marex@denx.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Suman Anna <s-anna@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+        devicetree@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        - <devicetree-spec@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
+ in titles
+Message-ID: <168694537949.934680.13323062117489358147.robh@kernel.org>
+References: <20230615213154.1753313-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230615122051.546985-4-angelogioacchino.delregno@collabora.com>
-References: <20230615122051.546985-1-angelogioacchino.delregno@collabora.com> <20230615122051.546985-4-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH 3/3] clk: mediatek: clk-mt8173-apmixedsys: Fix iomap not released issue
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
-        angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-        u.kleine-koenig@pengutronix.de, msp@baylibre.com,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-Date:   Fri, 16 Jun 2023 12:21:39 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting AngeloGioacchino Del Regno (2023-06-15 05:20:51)
-> In case of error after of_ioremap() the resource must be released:
-> call iounmap() where appropriate to fix that.
->=20
-> Fixes: 41138fbf876c ("clk: mediatek: mt8173: Migrate to platform driver a=
-nd common probe")
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
 
-Applied to clk-next
+On Thu, 15 Jun 2023 15:31:54 -0600, Rob Herring wrote:
+> The Devicetree bindings document does not have to say in the title that
+> it is a "Devicetree binding", but instead just describe the hardware.
+> 
+> Most of these have been fixed already, so fix the handful that snuck in.
+> With this, a meta-schema check can be enabled to catch these
+> automatically.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
+>  Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml    | 2 +-
+>  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
+>  .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
+> 
+
+Applied, thanks!
+
