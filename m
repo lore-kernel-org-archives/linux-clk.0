@@ -2,434 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A09CEB64D9
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 00:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 443D9EB64D9
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 00:37:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239209AbjFPAB2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Jun 2023 20:01:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37916 "EHLO
+        id S230005AbjFPAhQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Jun 2023 20:37:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231195AbjFPAB1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 20:01:27 -0400
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [IPv6:2001:470:ea4a:1:5054:ff:fec7:86e4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66AAB271F;
-        Thu, 15 Jun 2023 17:01:25 -0700 (PDT)
-Date:   Fri, 16 Jun 2023 08:01:18 +0800
-From:   Yixun Lan <dlan@gentoo.org>
-To:     Lucas Tanure <tanure@linux.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S229509AbjFPAhP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Jun 2023 20:37:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82672962;
+        Thu, 15 Jun 2023 17:37:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BC85611DD;
+        Fri, 16 Jun 2023 00:37:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E836C433C0;
+        Fri, 16 Jun 2023 00:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686875833;
+        bh=J55ESfNtGwwnrR+cNXZIBNS0rU9QKWNkSjf07aIrJEQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iyfDZSJFtZ2hl+gEx08XuqQZYJbKs9nmgyKESWbNzvnUE1dtWMAwRPLIP/D4VMvuO
+         9KxIfRXXj7amb7jFeM7ZDcfzoRxKw7f/TsjJ9bU5l3fLJyoM3SgsCtQnIghCizTVDv
+         ztQB7PTqMLmx1tNFAIVuxOMU6FZbMPpHa8IslPLPIVoc5Tdc0sFhfLcIHgVVBpe01e
+         NA0v1+/orrFhyqNr5ePIaEZyn10l7ml8gMoh/74Fq4sgqd6eALMeFpL0FCnPRkiBbJ
+         Ydvn9Nk0yFeGtMUFlAt71Myl/R/I4Ai4UXTUm8f1yqdjkTGLlaZ545d8PwsgOvm0pe
+         167t8SGNre9rA==
+Received: by mercury (Postfix, from userid 1000)
+        id D47AD1060EDC; Fri, 16 Jun 2023 02:37:10 +0200 (CEST)
+Date:   Fri, 16 Jun 2023 02:37:10 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick <nick@khadas.com>, Artem <art@khadas.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        =?utf-8?Q?Fern=C3=A1ndez?= Rojas <noltari@gmail.com>,
+        Marek Vasut <marex@denx.de>, Suman Anna <s-anna@ti.com>,
+        - <devicetree-spec@vger.kernel.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 6/6] arm64: dts: meson-t7-a311d2-khadas-vim4: add initial
- device-tree
-Message-ID: <ZIumTthAmBLBxpXn@ofant>
-References: <20230615182938.18487-1-tanure@linux.com>
- <20230615182938.18487-7-tanure@linux.com>
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove last usage of "binding" or "schema"
+ in titles
+Message-ID: <20230616003710.arsee2k3732kdhfk@mercury.elektranox.org>
+References: <20230615213154.1753313-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="po5r3akfx43ntm5u"
 Content-Disposition: inline
-In-Reply-To: <20230615182938.18487-7-tanure@linux.com>
+In-Reply-To: <20230615213154.1753313-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lucas:
 
-On 19:29 Thu 15 Jun     , Lucas Tanure wrote:
-> The Khadas VIM4 uses the Amlogic A311D2 SoC, based on the Amlogic T7 SoC
-> family, on a board with the same form factor as the VIM3 models.
-I'd like to see little bit more verbose messages here, like
-which functionality/driver added here - cpu, gic, timer, uart?
+--po5r3akfx43ntm5u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-so, it's capable of booting into a serial console?
+Hi,
 
-> 
-> - 8GB LPDDR4X 2016MHz
-> - 32GB eMMC 5.1 storage
-> - 32MB SPI flash
-> - 10/100/1000 Base-T Ethernet
-> - AP6275S Wireless (802.11 a/b/g/n/ac/ax, BT5.1)
-> - HDMI 2.1 video
-> - HDMI Input
-> - 1x USB 2.0 + 1x USB 3.0 ports
-> - 1x USB-C (power) with USB 2.0 OTG
-> - 3x LED's (1x red, 1x blue, 1x white)
-> - 3x buttons (power, function, reset)
-> - M2 socket with PCIe, USB, ADC & I2C
-> - 40pin GPIO Header
-> - 1x micro SD card slot
-> 
-> Signed-off-by: Lucas Tanure <tanure@linux.com>
+On Thu, Jun 15, 2023 at 03:31:54PM -0600, Rob Herring wrote:
+> The Devicetree bindings document does not have to say in the title that
+> it is a "Devicetree binding", but instead just describe the hardware.
+>=20
+> Most of these have been fixed already, so fix the handful that snuck in.
+> With this, a meta-schema check can be enabled to catch these
+> automatically.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  arch/arm64/boot/dts/amlogic/Makefile          |   1 +
->  .../amlogic/meson-t7-a311d2-khadas-vim4.dts   | 112 ++++++++++
->  arch/arm64/boot/dts/amlogic/meson-t7.dtsi     | 202 ++++++++++++++++++
->  3 files changed, 315 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-t7-a311d2-khadas-vim4.dts
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-t7.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-> index cd1c5b04890a..1c5846bd1ca0 100644
-> --- a/arch/arm64/boot/dts/amlogic/Makefile
-> +++ b/arch/arm64/boot/dts/amlogic/Makefile
-> @@ -74,3 +74,4 @@ dtb-$(CONFIG_ARCH_MESON) += meson-sm1-odroid-hc4.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-sm1-x96-air-gbit.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-sm1-x96-air.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-t7-a311d2-khadas-vim4.dtb
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-t7-a311d2-khadas-vim4.dts b/arch/arm64/boot/dts/amlogic/meson-t7-a311d2-khadas-vim4.dts
-> new file mode 100644
-> index 000000000000..46e175536edf
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-t7-a311d2-khadas-vim4.dts
-> @@ -0,0 +1,112 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2022 Wesion, Inc. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "meson-t7.dtsi"
-> +
-> +/ {
-> +	model = "Khadas VIM4";
-> +
-> +	aliases {
-> +		serial0 = &uart_A;
-> +	};
-> +
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		/* 3 MiB reserved for ARM Trusted Firmware (BL31) */
-> +		secmon_reserved: secmon@5000000 {
-> +			reg = <0x0 0x05000000 0x0 0x300000>;
-> +			no-map;
-> +		};
-> +
-> +		/* 32 MiB reserved for ARM Trusted Firmware (BL32) */
-> +		secmon_reserved_bl32: secmon@5300000 {
-> +			reg = <0x0 0x05300000 0x0 0x2000000>;
-> +			no-map;
-> +		};
-> +	};
-> +
-> +	xtal: xtal-clk {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <24000000>;
-> +		clock-output-names = "xtal";
-> +		#clock-cells = <0>;
-> +	};
-> +
-> +	vddcpu_a: regulator-vddcpu-a {
-> +		/*
-> +		 * MP8756GD Regulator.
-> +		 */
-> +		compatible = "pwm-regulator";
-> +
-> +		regulator-name = "VDDCPU_A";
-> +		regulator-min-microvolt = <689000>;
-> +		regulator-max-microvolt = <1049000>;
-> +
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
-> +	vddcpu_b: regulator-vddcpu-a {
-> +		/*
-> +		 * MP8756GD Regulator.
-> +		 */
-> +		compatible = "pwm-regulator";
-> +
-> +		regulator-name = "VDDCPU_B";
-> +		regulator-min-microvolt = <689000>;
-> +		regulator-max-microvolt = <1049000>;
-> +
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +};
-> +
-> +&clkc{
-> +	clocks = <&xtal>;
-> +	clock-names = "xtal";
-> +	status = "okay";
-> +};
-> +
-> +&uart_A {
-> +	status = "okay";
-> +};
-> +
-> +&cpu0 {
-> +	cpu-supply = <&vddcpu_a>;
-> +};
-> +
-> +&cpu1 {
-> +	cpu-supply = <&vddcpu_a>;
-> +};
-> +
-> +&cpu2 {
-> +	cpu-supply = <&vddcpu_a>;
-> +};
-> +
-> +&cpu3 {
-> +	cpu-supply = <&vddcpu_a>;
-> +};
-> +
-> +&cpu100 {
-> +	cpu-supply = <&vddcpu_b>;
-> +};
-> +
-> +&cpu101 {
-> +	cpu-supply = <&vddcpu_b>;
-> +};
-> +
-> +&cpu102 {
-> +	cpu-supply = <&vddcpu_b>;
-> +};
-> +
-> +&cpu103 {
-> +	cpu-supply = <&vddcpu_b>;
-> +};
-> +
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-t7.dtsi b/arch/arm64/boot/dts/amlogic/meson-t7.dtsi
-> new file mode 100644
-> index 000000000000..453b3d9cb9d8
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-t7.dtsi
-> @@ -0,0 +1,202 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-> + */
-> +
-> +#include <dt-bindings/clock/mesont7-clkc.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +	compatible = "amlogic,t7";
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +
-> +	cpus {
-> +		#address-cells = <0x2>;
-> +		#size-cells = <0x0>;
-> +
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&cpu100>;
-> +				};
-> +				core1 {
-> +					cpu = <&cpu101>;
-> +				};
-> +				core2 {
-> +					cpu = <&cpu102>;
-> +				};
-> +				core3 {
-> +					cpu = <&cpu103>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&cpu0>;
-> +				};
-> +				core1 {
-> +					cpu = <&cpu1>;
-> +				};
-> +				core2 {
-> +					cpu = <&cpu2>;
-> +				};
-> +				core3 {
-> +					cpu = <&cpu3>;
-> +				};
-> +			};
-> +		};
-> +
-> +		cpu100: cpu@100 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x0 0x100>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <632>;
-> +			dynamic-power-coefficient = <110>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu101: cpu@101{
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x0 0x101>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <632>;
-> +			dynamic-power-coefficient = <110>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu102: cpu@102 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x0 0x102>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <632>;
-> +			dynamic-power-coefficient = <110>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu103: cpu@103 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x0 0x103>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <632>;
-> +			dynamic-power-coefficient = <110>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x0 0x0>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <550>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu1: cpu@1 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x0 0x1>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <550>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu2: cpu@2 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x0 0x2>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <550>;
-> +			#cooling-cells = <2>;
-> +		};
-> +
-> +		cpu3: cpu@3 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a73";
-> +			reg = <0x0 0x3>;
-> +			enable-method = "psci";
-> +			capacity-dmips-mhz = <1024>;
-> +			dynamic-power-coefficient = <550>;
-> +			#cooling-cells = <2>;
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 13 0xff08>,
-> +			     <GIC_PPI 14 0xff08>,
-> +			     <GIC_PPI 11 0xff08>,
-> +			     <GIC_PPI 10 0xff08>;
-> +	};
-> +
-> +	gic: interrupt-controller@fff01000 {
-> +		compatible = "arm,cortex-a15-gic", "arm,cortex-a9-gic";
-> +		#interrupt-cells = <3>;
-> +		#address-cells = <0>;
-> +		interrupt-controller;
-> +		reg = <0x0 0xfff01000 0 0x1000>,
-> +		      <0x0 0xfff02000 0 0x0100>;
-> +		interrupts = <GIC_PPI 9 0xf04>;
-> +	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-0.2";
-can you double check if it is actual version 0.2?
-most recent Amlogic SoC should support psci-1.0
+>  .../devicetree/bindings/clock/brcm,bcm63268-timer-clocks.yaml   | 2 +-
+>  Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml    | 2 +-
+>  .../devicetree/bindings/power/reset/restart-handler.yaml        | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 2 +-
+>  .../devicetree/bindings/reserved-memory/framebuffer.yaml        | 2 +-
+>  5 files changed, 5 insertions(+), 5 deletions(-)
 
-> +		method = "smc";
-> +	};
-> +
-> +	sm: secure-monitor {
-> +		compatible = "amlogic,meson-gxbb-sm";
-> +	};
-> +
-> +	soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		apb4: apb4@fe000000 {
-> +			compatible = "simple-bus";
-> +			reg = <0x0 0xfe000000 0x0 0x480000>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
-> +
-> +			clkc: clock-controller {
-> +				compatible = "amlogic,t7-clkc";
-> +				#clock-cells = <1>;
-> +				reg = <0x0 0x0 0x0 0x49c>,
-> +				      <0x0 0x8000 0x0 0x320>,
-> +				      <0x0 0xe040 0x0 0xbc>;
-> +				reg-names = "basic",
-> +					    "pll",
-> +					    "cpu_clk";
-> +			};
-> +
-> +			ao-secure@140 {
-> +				compatible = "amlogic,meson-gx-ao-secure", "syscon";
-> +				reg=<0x0 0x10220 0x0 0x140>;
-> +				amlogic,has-chip-id;
-> +			};
-> +		};
-> +
-> +		uart_A: serial@fe078000 {
-> +			compatible = "amlogic,meson-t7-uart";
-> +			reg = <0x0 0xfe078000 0x0 0x18>;
-> +			interrupts = <0 168 1>;
-> +			status = "disabled";
-> +			clocks = <&xtal>, <&clkc CLKID_UART_A>, <&xtal>;
-> +			clock-names = "xtal", "pclk", "baud";
-> +			fifo-size = < 64 >;
-> +			pinctrl-names = "default";
-> +		};
-I believe there are more uart ports, it's worth the effort to add them all in one run,
-which sounds more consistent to me, anyway you could also choose to add them
-in later patch series, no problem..
+=2E..
 
-> +	};
-> +};
-> +
-> --
-> 2.41.0
-> 
-> 
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> diff --git a/Documentation/devicetree/bindings/power/reset/restart-handle=
+r.yaml b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> index 1f9a2aac53c0..f2ffdd29d52a 100644
+> --- a/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> +++ b/Documentation/devicetree/bindings/power/reset/restart-handler.yaml
+> @@ -4,7 +4,7 @@
+>  $id: http://devicetree.org/schemas/power/reset/restart-handler.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: Restart and shutdown handler generic binding
+> +title: Restart and shutdown handler Common Properties
+> =20
+>  maintainers:
+>    - Sebastian Reichel <sre@kernel.org>
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Acked-by: Sebastian Reichel <sre@kernel.org>
+
+-- Sebastian
+
+--po5r3akfx43ntm5u
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmSLrrAACgkQ2O7X88g7
++ppshA//WlBWN4mcN0Kg9SD3Ko+IPfh7SzWZCTvjwXzfW1GBH5T5FIJDYgGMesO1
+YIq0TI4Afr3wWEQxYbNR4PBDnflE/gtkrK7Pwr59d1ft4yid54na8T0Ax6S8R3Ru
+FTW1dufmjQ7pT0QuqIyOH5GPTt5VPZNOGrh0ph9Un09PO2y3IzJ3BJ4XO8vEB4sc
+cN2UebftqaC6UcsHKl5Ux9BdrS8bI83/e7SbvMwdsaGN6CPrGgyZdmroD5MKRw/4
+SgswJZkElUnUlAisaO9h9ii7WlTlD1L90mr8xrNAfvuMg46HtRWP1z8xEkfsnj+N
+cnwBW+hhCXUq7jEW4Yw9ShgAYvxi74gxKGglnBNCdSjEFxMOQWqCeGlzg1ta+AAm
+bpVzc7M9OG1I/qjUVWlAQm4jgPSo9Vy7M55rwjzkxdXe2UsKeCxxbqx1gZsEgg/C
+e7QHGixSMhh1Q+UagP2UF1M15qdHL+gV2FoAyU9Al4oPIb/+N+tcM1yVbdf2oAJk
+8esyAD88tMZant9M6musxltBcaqS67X8xR7j44nFTnp3sbN5Y8WX9B6IyKOc6p9F
+xhH70cEACDHpbNQBpv70U51dR36gnf4UIFoDKHMqqIUsG0muvKldcu596zu/IR96
+xYrnu+5SUIla3pxG2ZJ5nhmLjoToTOHPSNduRFArX4EYNr+hwaM=
+=bwes
+-----END PGP SIGNATURE-----
+
+--po5r3akfx43ntm5u--
