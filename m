@@ -2,173 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D65EB64D9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 08:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91875EB64D9
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 10:29:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbjFQIsv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 04:48:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39120 "EHLO
+        id S1345801AbjFQK3o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 06:29:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232856AbjFQIsu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 04:48:50 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07D919A3
-        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 01:48:46 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-9829b12b80fso241815066b.2
-        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 01:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1686991725; x=1689583725;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9v9IMhMYANhGUwezLEP1LlL4XT7NdaZ2AILcbGscvfs=;
-        b=f7b42c9PMsOBSkpJ9BbkAwiJsfDUkyVlZ+S2LGTmtnk6tvWWjubyHvGU8ecZu3PFT1
-         ApXo/v+Fl6S3V+ooOvBsn256Cv49dnEKkb072m4AuIavr8BWkheII2u6lx0s3ccSFAma
-         zM5k3myH9oM9k2luWy//WuZQZZ+ai5bpgGC6GYyVwqIXPX8Ypsz6WkCufOVTeFtbq3UI
-         HHLwW8EAk7R/hkqnNgtXIz+vLMqVyTVy9KfjexhVtTG5bDAwh5D1be3NqMRRfFS6JMgJ
-         Ffx5Hyb6uVS4Mzojv2NrMbt83IzXNmdbgXErrtsI7Gd2E3cmaux63uScJlPRY0tLcYVj
-         jUgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686991725; x=1689583725;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9v9IMhMYANhGUwezLEP1LlL4XT7NdaZ2AILcbGscvfs=;
-        b=XwOk3fMaYyH2q+ZSJwTt25134nSg5yMcviGpolcabvZny8kaeg69x/5x+S/IqmThVg
-         UKGV0qGAl+tBwWg/tV5YfuqN9sc+sb+RVes0Pjgk/EzvpZEp/gaxQxm6MX6vs7ImDCA5
-         qjrJEmLegl97fKcUIdMOw5qE86Is747K8VHma2Dm/LW/HMLNkpYv+XPVgBnO66NF+qlF
-         EqQyr+PQTb2NMsYYCByXcw+FR7X2Z0nmzAejNqh9h7PeCtIO76oyjT/UsOndVqKWhGPu
-         QnYDFSWpmrAi9GzdaYKNrQp3J8mrHOFK6r0zZjdHe0iHS3JC+9DWnGhwZvRnZE+knZ9y
-         JVqg==
-X-Gm-Message-State: AC+VfDy4pVRkDC2A187pvVlL9UM3NWm5GNNTqB0eVpASkZAlu58RsJ7Q
-        v4GOIfz0vww4FYxaxEdrCXj85Q==
-X-Google-Smtp-Source: ACHHUZ7Kpo4IrOBQWBZ6pUx87P+qfVIKZIR9we2zLQmk/Rued5SQQmn3eIdab16cMTZ1bsaToXLkLw==
-X-Received: by 2002:a17:906:da87:b0:982:870f:9e8f with SMTP id xh7-20020a170906da8700b00982870f9e8fmr3843576ejb.62.1686991725276;
-        Sat, 17 Jun 2023 01:48:45 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id c21-20020a170906341500b00985bdb7dd5fsm1965918ejb.201.2023.06.17.01.48.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 Jun 2023 01:48:44 -0700 (PDT)
-Message-ID: <aca54f67-cc09-ff4f-93ca-6973d153db2c@linaro.org>
-Date:   Sat, 17 Jun 2023 10:48:41 +0200
+        with ESMTP id S235819AbjFQK3m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 06:29:42 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 314741FFE;
+        Sat, 17 Jun 2023 03:29:40 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Qjshw1bbRz9skk;
+        Sat, 17 Jun 2023 12:29:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1686997776;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=K5wyhgjHKxMK2UvxF9fHePQ3wWFGU8riLfzYADKKQ7w=;
+        b=jVNb4i6S+RfjnA2Ucr3rrz1VKTNbDFjsM2au3KKHy6p1vZyQGFUCDdr0hVxUF5BJGu1/fj
+        FjxseDFXiX1CCx8snkYz3t20VD3RYuit4UnTeiq92Q4RkzXEPh95gku2uWRW0J1Y+s+cm7
+        wbRnCXqrymdIzPGU/AyM6cXi/YITQWhDVmwJwKzbSlhs2f7ALPIp9Wryl3rFDiBDeDnonh
+        yoRNcBFRCGu3bJ2SGp0Bv9nxGUCRRRNPgfJwGRepABfJVYZC0ThxNwcB6zRNLUjnyXeleC
+        S2twfTK902N9R2ok8O8/77wsuyPcP9c3i8HtLwTxkU2MakLAtBjDBgPjle/8og==
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Oltmanns <frank@oltmanns.dev>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v4 0/2] clk: fractional-divider: Improve approximation when zero based and export
+Date:   Sat, 17 Jun 2023 12:29:17 +0200
+Message-ID: <20230617102919.27564-1-frank@oltmanns.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 2/9] dt-bindings: phy: qcom,m31: Document qcom,m31 USB phy
-Content-Language: en-US
-To:     Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        gregkh@linuxfoundation.org, catalin.marinas@arm.com,
-        will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        p.zabel@pengutronix.de, arnd@arndb.de, geert+renesas@glider.be,
-        neil.armstrong@linaro.org, nfraprado@collabora.com,
-        broonie@kernel.org, rafal@milecki.pl, quic_srichara@quicinc.com,
-        quic_varada@quicinc.org, quic_wcheng@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-References: <cover.1686126439.git.quic_varada@quicinc.com>
- <14f60578e2935c0844537eab162af3afa52ffe39.1686126439.git.quic_varada@quicinc.com>
- <98960024-7dbc-91a3-75de-90b529637916@linaro.org>
- <20230615052746.GB22186@varda-linux.qualcomm.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230615052746.GB22186@varda-linux.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4Qjshw1bbRz9skk
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/06/2023 07:27, Varadarajan Narayanan wrote:
->>> +          - enum:
->>> +              - qcom,m31-usb-hsphy
->>
->> I am confused what's this. If m31 is coming from some IP block provider,
->> then you are using wrong vendor prefix.
->> https://www.m31tech.com/download_file/M31_USB.pdf
->>
->>
->>> +              - qcom,ipq5332-m31-usb-hsphy
->>
->> This confuses me even more. IPQ m31?
-> 
-> Will change this to m31,usb-hsphy and m31,ipq5332-usb-hsphy respectively.
-> Will that be acceptable?
+The fractional divider approximation does not utilize the full available
+range for clocks that are flagged CLK_FRAC_DIVIDER_ZERO_BASED. This
+patchset aims to fix that.
 
-m31,ipq5332 seems wrong, as m31 did not create ipq5332. Does the m31
-device have some name/version/model? If it is not really known, then I
-would just propose to go with qcom,ipq5332-usb-hsphy.
+It also adds test cases for the edge cases of fractional divider clocks
+with and without the CLK_FRAC_DIVIDER_ZERO_BASED flag to highlight the
+changes.
 
-Skip generic compatible ("usb-hsphy") entirely.
+Finally, it also exports clk_fractional_divider_general_approximation so
+that the test cases (but also other users like rockchip clk driver) can
+be compiled as a module.
 
-And then we have... existing bindings qcom,usb-hs-phy.yaml. Don't create
-something similar with difference in the hyphen. Just use device
-specific compatible thus device specific filename.
+Unfortunately, I have no boards to test this patch. So all we have are
+the unit tests. It seems the only user of this flag in mainline is
+drivers/clk/imx/clk-composite-7ulp.c, therefore I'm cc-ing
+get_maintainers.pl --git-blame -f drivers/clk/imx/clk-composite-7ulp.c
+in the hopes of a wider audience.
 
-> 
->>> +
->>> +  reg:
->>> +    description:
->>> +      Offset and length of the M31 PHY register set
->>
->> Drop description, obvious.
-> 
-> Ok.
-> 
->>> +    maxItems: 2
->>> +
->>> +  reg-names:
->>> +    items:
->>> +      - const: m31usb_phy_base
->>> +      - const: qscratch_base
->>
->> Drop "_base" from both.
-> 
-> Ok. Will drop qscratch_base. This is in the controller space.
-> Should not come here.
+Thank you for considering this contribution,
+  Frank
 
-Then drop reg-names entirely.
+V3: https://lore.kernel.org/all/20230614185521.477924-1-frank@oltmanns.dev/
+V2: https://lore.kernel.org/lkml/20230613083626.227476-1-frank@oltmanns.dev/
+V1: https://lore.kernel.org/lkml/20230529133433.56215-1-frank@oltmanns.dev/
 
-> 
->>> +
->>> +  phy_type:
->>> +    oneOf:
->>> +      - items:
->>> +          - enum:
->>> +              - utmi
->>> +              - ulpi
->>
->> This does not belong to phy, but to USB node.
-> 
-> This is used by the driver to set a bit during phy init. Hence
-> have it as a replication of the USB node's entry. If this is not
-> permissible, is there some way to get this from the USB node,
-> or any other alternative mechanism?
+Changes in V4 (since V3):
+ - Export clk_fractional_divider_general_approximation so that users
+   (e.g., the testcases) can be compiled as modules.
+ - Change test cases so that they test
+   clk_fractional_divider_general_approximation again (like in V2)
+   instead of clk_fd_round_rate (like in V3), but keeping the structure
+   of V3 with separate file and individual test cases for each edge
+   case.
 
-Shouldn't USB controller choose what type of PHY type it wants?
+Changes in V3 (since V2):
+ - Completely reworked the test cases
+   - Moved tests to separate file as per Stephen's request
+   - Move each edge case into their individual test case as per
+     Stephen's request
+   - Test clk_fd_round_rate instead of
+     clk_fractional_divider_general_approximation as testing the latter
+     broke builds
 
-> 
->>> +
->>> +additionalProperties: false
->>> +
->>> +examples:
->>> +  - |
->>> +    #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
->>> +    hs_m31phy_0: hs_m31phy@5b00 {
->>
->> Node names should be generic. See also explanation and list of examples
->> in DT specification:
->> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
->>
->> Also, no underscores in node names.
-> 
-> Will change this as usbphy0:hs_m31phy@7b000
+Changes in V2 (since V1):
+ - Added test case as requested by Stephen Boyd
+ - Fixed commit message as the Cc: was missing a closing bracket, so that the
+   original mail unfortunately did not go out to A. s. Dong.
 
-This does not solve my comments. I did not write "label" but "node name".
+Frank Oltmanns (2):
+  clk: fractional-divider: Improve approximation when zero based and
+    export
+  clk: fractional-divider: tests: Add test suite for edge cases
 
-Best regards,
-Krzysztof
+ drivers/clk/.kunitconfig                  |   1 +
+ drivers/clk/Kconfig                       |   7 +
+ drivers/clk/Makefile                      |   1 +
+ drivers/clk/clk-fractional-divider.c      |  27 +++-
+ drivers/clk/clk-fractional-divider_test.c | 161 ++++++++++++++++++++++
+ 5 files changed, 190 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/clk-fractional-divider_test.c
+
+-- 
+2.41.0
 
