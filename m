@@ -2,133 +2,133 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D36DCEB64D9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 13:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AA9EB64D9
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 14:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233712AbjFQNc4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 09:32:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39330 "EHLO
+        id S231128AbjFQOnV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 10:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbjFQNcz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 09:32:55 -0400
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [IPv6:2001:67c:2050:0:465::201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B388E19A1;
-        Sat, 17 Jun 2023 06:32:54 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4QjxmL3rQ0z9sks;
-        Sat, 17 Jun 2023 15:32:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1687008770;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AZoI4Bw3sCCyCXPTMLBEPFCqY8Pv58J03l2/6Q77EHA=;
-        b=QZKf+EFTILZO4/YhLIUf7kpElHYaNl+CQynchuZFnmnCaPr44U0e7D9CWo76xCX8YFTRj/
-        86v5AC8NrdL2uTOQYjN+9IeH8wAQ3NvWECUS1kPtHdd7EVio0VClDQd0qcwTpRIr5bGQSa
-        la0RL4TCuclqXrpuQTwuxbU6BfEnLB6AKFdbCKOvfQB9BWFaZTkeulgdm7+IU/sNzI4OqC
-        5/EGA4mVI4GzaBB1/lABi2Ju6ETporuiRiOJ/39n8ZOuRkRTrNtdSpSc005F/aB49eC3W9
-        qalHOdOTV7Q/snc8VP5i4AX+IncTgTvTUpXCMAm7hpsonAvbJ3Ymz3sTfXFvYw==
-References: <20230617102919.27564-3-frank@oltmanns.dev>
- <202306172036.EevtaVp6-lkp@intel.com>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, llvm@lists.linux.dev,
-        oe-kbuild-all@lists.linux.dev, "A.s. Dong" <aisheng.dong@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: Re: [PATCH v4 2/2] clk: fractional-divider: tests: Add test suite
- for edge cases
-In-reply-to: <202306172036.EevtaVp6-lkp@intel.com>
-Date:   Sat, 17 Jun 2023 15:32:31 +0200
-Message-ID: <87legi2p00.fsf@oltmanns.dev>
+        with ESMTP id S229745AbjFQOnR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 10:43:17 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90EC01FCC
+        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 07:43:14 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-983f499fc81so249657166b.3
+        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 07:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687012993; x=1689604993;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DxuDtvFvk+FS5ZxqzBrYoH5vvu57PyuB3yI11PXnNLs=;
+        b=VpOSFnnsSBvFtLWzWW3aQMyBPDA0SUBhi+66vXg5x3bq2P03ywhAUVQenj0fdDww5w
+         UJTLGQFZyh6/nukfAmckKXbdBeCBg4prgEukCncGgX8oA2XV+4sXOVp8TTW5637YSByV
+         hBxi1sdBBlgWxI6W43c8/v9EDsa9YVCHXNXPRGc7X0sOCnvIlvCChKK8KDP9ukJb6ACa
+         7un9ojOPgEyCyD6m7ymwhOETljMYpl0qYo2HgSwD0Q0e0Cf2OrHxj5p6UjPJYFsfW+5K
+         1H2to9WZjXwtiOTkkVwm666j2hSiodWHFrhy0jV/R9LU/LaITa8B91aUsX2YPuqQi5iT
+         tDYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687012993; x=1689604993;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DxuDtvFvk+FS5ZxqzBrYoH5vvu57PyuB3yI11PXnNLs=;
+        b=EQKJQo+nRR+amisn17wIPFgVX4pohdbqSWwsyrlIhNJO1Dr6F2/YludJ73NHHil596
+         0OTBEIrfQuLiKPYz7HltwRY/c1qYnENq7VS5lhSYSRx9mbwqsiTQ5gdBJlV4ujhBCvcr
+         k76jvYxI2WZH0fSqDc8iwtWKdhrWiMiPh0uvTeHfoHjx0GHJQthsVLAxpUfLCRscA6jA
+         S748jyHm/edVJv5RIGqgsj/z2a0bAk3iN6XwWsqt/yxyuw3VZr3ZAoi3SYySEM1P0hml
+         WxEGqrU5MwLafzJqokOVDMPkc7gHeE+kLMe8D91dfZsDZauBgcj6ZEjaQpd9LDFpQ+Q3
+         Qctw==
+X-Gm-Message-State: AC+VfDyLkm+bhsJSzf3k+WiTW29pE7k3nZ0cQHBq54Sx42dAC3i5Sqom
+        pRQ/U2wOfeEZrpg0xYsJqThHXw==
+X-Google-Smtp-Source: ACHHUZ44aQAgx90PnJ1fhu41Pp+l7HVQRihaNMQVx42ZOKPZxYWQZVbgtSl62M7dCXYwOR5WTJmUXQ==
+X-Received: by 2002:a17:906:974c:b0:974:391f:ed7d with SMTP id o12-20020a170906974c00b00974391fed7dmr4985575ejy.49.1687012993034;
+        Sat, 17 Jun 2023 07:43:13 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id m16-20020a170906849000b0098822e05539sm336114ejx.191.2023.06.17.07.43.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Jun 2023 07:43:12 -0700 (PDT)
+Message-ID: <05e3ff33-ad4e-d2fb-dfd5-7b5265881b74@linaro.org>
+Date:   Sat, 17 Jun 2023 16:43:10 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v3 2/9] clk: ralink: add clock and reset driver for MTMIPS
+ SoCs
+Content-Language: en-US
+To:     Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc:     Shiji Yang <yangshiji66@outlook.com>, arinc.unal@arinc9.com,
+        devicetree@vger.kernel.org, john@phrozen.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        matthias.bgg@gmail.com, mturquette@baylibre.com,
+        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
+        tsbogend@alpha.franken.de
+References: <20230617052435.359177-3-sergio.paracuellos@gmail.com>
+ <TYAP286MB0315AB8274CDD341D49809A2BC59A@TYAP286MB0315.JPNP286.PROD.OUTLOOK.COM>
+ <e0f74bdc-3a4b-596a-5ec7-83054377813e@linaro.org>
+ <CAMhs-H9M_c8+AkqUTpYeS2q7_+wBA-jhhiXj-QVXNUDmuERcOA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <CAMhs-H9M_c8+AkqUTpYeS2q7_+wBA-jhhiXj-QVXNUDmuERcOA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 17/06/2023 15:31, Sergio Paracuellos wrote:
+> Hi Krzysztof,
+> 
+> On Sat, Jun 17, 2023 at 3:07 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On 17/06/2023 14:54, Shiji Yang wrote:
+>>>> void __init plat_time_init(void)
+>>>> {
+>>>> +    struct of_phandle_args clkspec;
+>>>>      struct clk *clk;
+>>>> +    int cpu_clk_idx;
+>>>>
+>>>>      ralink_of_remap();
+>>>>
+>>>> -    ralink_clk_init();
+>>>> -    clk = clk_get_sys("cpu", NULL);
+>>>> +    cpu_clk_idx = clk_cpu_index();
+>>>> +    if (cpu_clk_idx == -1)
+>>>> +            panic("unable to get CPU clock index");
+>>>> +
+>>>> +    of_clk_init(NULL);
+>>>> +    clkspec.np = of_find_node_by_name(NULL, "sysc");
+>>>
+>>> The node name should be "syscon" as the example node name in the
+>>> dt-bindings document is "syscon".
+>>
+>> NAK for both.
+>>
+>> Node names must not be an ABI, unless you talk about child of some
+>> device node. I don't think this is the case here. Look by phandle (for a
+>> device context) or by compatible (looks the case here).
+> 
+> We need to get the cpu clock to set the initial cpu clock here. Search
+> by 'sysc' is the only  shared in all the dtsi files since it is the
+> clock provider node. Why is this not correct?
 
-On 2023-06-17 at 20:15:20 +0800, kernel test robot <lkp@intel.com> wrote:
-> Hi Frank,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on clk/clk-next]
-> [also build test WARNING on linus/master v6.4-rc6 next-20230616]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Oltmanns/clk-fractional-divider-Improve-approximation-when-zero-based-and-export/20230617-183118
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> patch link:    https://lore.kernel.org/r/20230617102919.27564-3-frank%40oltmanns.dev
-> patch subject: [PATCH v4 2/2] clk: fractional-divider: tests: Add test suite for edge cases
-> config: hexagon-randconfig-r035-20230617 (https://download.01.org/0day-ci/archive/20230617/202306172036.EevtaVp6-lkp@intel.com/config)
-> compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-> reproduce: (https://download.01.org/0day-ci/archive/20230617/202306172036.EevtaVp6-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202306172036.EevtaVp6-lkp@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->>> drivers/clk/clk-fractional-divider_test.c:26:41: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
->       26 |         unsigned long rate, parent_rate, m, n, max_m, max_n;
->          |                                                ^
->    drivers/clk/clk-fractional-divider_test.c:88:41: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
->       88 |         unsigned long rate, parent_rate, m, n, max_m, max_n;
->          |                                                ^
->    2 warnings generated.
+Because device node name can change anytime and your entire Linux driver
+gets broken. Node name is not an ABI.
 
-Clang compiler warnings are fixed in version 5:
-https://lore.kernel.org/all/20230617131041.18313-1-frank@oltmanns.dev/
+> I don't understand what
+> you mean with look by phandle for a device context. 
 
->
->
-> vim +/max_m +26 drivers/clk/clk-fractional-divider_test.c
->
->     15
->     16	/*
->     17	 * Test the maximum denominator case for fd clock without flags.
->     18	 *
->     19	 * Expect the highest possible denominator to be used in order to get as close as possible to the
->     20	 * requested rate.
->     21	 */
->     22	static void clk_fd_test_approximation_max_denominator(struct kunit *test)
->     23	{
->     24		struct clk_fractional_divider *fd;
->     25		struct clk_hw *hw;
->   > 26		unsigned long rate, parent_rate, m, n, max_m, max_n;
->     27
->     28		fd = kunit_kzalloc(test, sizeof(*fd), GFP_KERNEL);
->     29		KUNIT_ASSERT_NOT_NULL(test, fd);
->     30
->     31		fd->mwidth = 3;
->     32		max_m = 7;
->     33		fd->nwidth = 3;
->     34		max_n = 7;
->     35
->     36		hw = &fd->hw;
->     37
->     38		rate = 240000000;
->     39		parent_rate = (max_n + 1) * rate; /* so that it exceeds the maximum divisor */
->     40
->     41		clk_fractional_divider_general_approximation(hw, rate, &parent_rate, &m, &n);
->     42		KUNIT_EXPECT_EQ(test, parent_rate, (max_n + 1) * rate); /* parent remains unchanged */
->     43		KUNIT_EXPECT_EQ(test, m, 1);
->     44		KUNIT_EXPECT_EQ(test, n, max_n);
->     45	}
->     46
+Your device node should contain phandle to the other node.
+
+> The case of
+> searching for compatible is a mess since as you can see in the
+> bindings there are tons of compatibles to search for, then (this code
+> is common to all ralink platforms).
+
+Compatible is one of the ways using ABI.
+
+Best regards,
+Krzysztof
+
