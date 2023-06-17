@@ -2,141 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62436EB64DA
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 15:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB12EB64D9
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 16:48:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232758AbjFQPh2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 11:37:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36554 "EHLO
+        id S229675AbjFQQsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 12:48:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235902AbjFQPh1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 11:37:27 -0400
-Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CB692113;
-        Sat, 17 Jun 2023 08:37:26 -0700 (PDT)
-Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-55b2fb308bbso931607eaf.1;
-        Sat, 17 Jun 2023 08:37:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687016246; x=1689608246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BpEgbAvd4Rpa2cpb2b0WRy6XUI0q4eSUyrFvXMVL2do=;
-        b=boiIxLq0ZLviOjBySVDMyTsKwtsAOv9+aiF09uJNx2btNybkQhokxSbdCLwHS2Yab4
-         2G8xP9Kav0I2mOAE722v+6rrxnCqeI+9KQOOtvKJG2HAP/REiRHCg+nSSkwme01/ptEC
-         v3s+KP85Mz4EcP8viIB/AEQ9aXprHspyS2pBSF4/7uTjFA3gSAcsgR8OnBvW1wgLqGWQ
-         CJ9ZBVn/2aJMzrPYVBtqQhZ3Q3/Gm4kQZnNdIOtwYaqj18vaO+raphmY6ZwkfKipSxK+
-         9k7iyvrMaS3XcuD6bgGm8OnHuP3UNX2NU2c4r4EGY8AL2TznojXSweAbQj+IEEy3uN1+
-         DwhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687016246; x=1689608246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BpEgbAvd4Rpa2cpb2b0WRy6XUI0q4eSUyrFvXMVL2do=;
-        b=ROLrEIQ4ei/mlbDSpRGpavX2pKsiYb7ic0KI5YgzCAEPmw4sbT78yUq0VyFnx9lDzU
-         c4veIuDDdI0sSDU6u+239mzns44P1Ks5NA3n7juqPwyyf0LsaJ8p4Pd5HvEnBXTF/Sws
-         aMF7OD2NkA2NzW/+tZTTual0q8M1098ewbcZtojYJcSVlZiN7qw1EDB/OQBtbs+7NufA
-         sV/Xbzt17lr0EAS/Mb7PRXGuzijkpYCor3zCUmBY5/jHiAhWCh8eVocOkH7sHmVtRJUm
-         vAql+ltQV+py+OLRE0Yq0CSnHNIeDd6cAsG5aEP/FoUdXAm5f2Puyd4ARSespBg1WFoz
-         pAPw==
-X-Gm-Message-State: AC+VfDypsoaCpblRe0DfwwbB4XxHJEuLYVkVmyO71rmauw6ctQyRVvdZ
-        5uaUnOq4bdQG3kqBBIvQ7jOQsH4rAwyU9PNEiNg=
-X-Google-Smtp-Source: ACHHUZ5Hg4nujb0aOEaoOvIl6Kzj5cmF6w9DyuViIoF+QZBbd31I3dH2InAlhWSjePdQtQXRIhjf4hosor9uu/6jOV0=
-X-Received: by 2002:aca:919:0:b0:39a:bf44:7f40 with SMTP id
- 25-20020aca0919000000b0039abf447f40mr4099020oij.55.1687016245759; Sat, 17 Jun
- 2023 08:37:25 -0700 (PDT)
+        with ESMTP id S229487AbjFQQsL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 12:48:11 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE7DA198C;
+        Sat, 17 Jun 2023 09:48:08 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Qk25c6srzz9sNf;
+        Sat, 17 Jun 2023 18:48:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1687020485;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=oywZapLqwNyrHkbuwEVveNFbHDemaqJwUKPIXYQhvIg=;
+        b=LF3YZg2+edsmb61SmLOGvaNJisClVcQaaOe3GNcmYcrAoTU9J3ldeQNZhINufqXqAx4cRr
+        OEdMmzwMIeYSlvWOelY16SOs8u1IGozEzhemqj5UwrDhU6bQdLbabbvkuO7lOQWYDBErp9
+        jDjk6esNVRCFUWdnvw/Bf+ODrP6cVjz2jZXTvhNl9bl0/eKRzEl0/2mpSCzD66YJ2kUtdS
+        Z5db+8uyLmoIxLTIc+2409SBd08VvhnO/jlBG0LO7DY7b5TNjr9JTBHar8RFm2HKAe9fJ9
+        r7bpWcfg/GHx+Qu03kbK8D9sP8c8VNY+twdR0KZLQT5BqRes0T7bjHy3p1a7+g==
+References: <20230613083626.227476-3-frank@oltmanns.dev>
+ <202306132038.nUB6hmCv-lkp@intel.com> <87edmeqwva.fsf@oltmanns.dev>
+ <aa23f41c0e313e97122ac384d66e2325.sboyd@kernel.org>
+ <875y7ps3tq.fsf@oltmanns.dev>
+ <dab61757f0c33453ad19857350117c62.sboyd@kernel.org>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        kernel test robot <lkp@intel.com>,
+        oe-kbuild-all@lists.linux.dev, "A.s. Dong" <aisheng.dong@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH v2 2/2] clk: tests: Add tests for fractional divisor
+ approximation
+In-reply-to: <dab61757f0c33453ad19857350117c62.sboyd@kernel.org>
+Date:   Sat, 17 Jun 2023 18:47:54 +0200
+Message-ID: <87cz1u2fyd.fsf@oltmanns.dev>
 MIME-Version: 1.0
-References: <20230617052435.359177-3-sergio.paracuellos@gmail.com>
- <TYAP286MB0315AB8274CDD341D49809A2BC59A@TYAP286MB0315.JPNP286.PROD.OUTLOOK.COM>
- <e0f74bdc-3a4b-596a-5ec7-83054377813e@linaro.org> <CAMhs-H9M_c8+AkqUTpYeS2q7_+wBA-jhhiXj-QVXNUDmuERcOA@mail.gmail.com>
- <05e3ff33-ad4e-d2fb-dfd5-7b5265881b74@linaro.org>
-In-Reply-To: <05e3ff33-ad4e-d2fb-dfd5-7b5265881b74@linaro.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Sat, 17 Jun 2023 17:37:14 +0200
-Message-ID: <CAMhs-H-ncXC37SAMkLfrFmpRi0ORkkCV9rQmrtmw_ndOLo+J0Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/9] clk: ralink: add clock and reset driver for MTMIPS SoCs
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Shiji Yang <yangshiji66@outlook.com>, arinc.unal@arinc9.com,
-        devicetree@vger.kernel.org, john@phrozen.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        matthias.bgg@gmail.com, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
-        tsbogend@alpha.franken.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jun 17, 2023 at 4:43=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 17/06/2023 15:31, Sergio Paracuellos wrote:
-> > Hi Krzysztof,
-> >
-> > On Sat, Jun 17, 2023 at 3:07=E2=80=AFPM Krzysztof Kozlowski
-> > <krzysztof.kozlowski@linaro.org> wrote:
-> >>
-> >> On 17/06/2023 14:54, Shiji Yang wrote:
-> >>>> void __init plat_time_init(void)
-> >>>> {
-> >>>> +    struct of_phandle_args clkspec;
-> >>>>      struct clk *clk;
-> >>>> +    int cpu_clk_idx;
-> >>>>
-> >>>>      ralink_of_remap();
-> >>>>
-> >>>> -    ralink_clk_init();
-> >>>> -    clk =3D clk_get_sys("cpu", NULL);
-> >>>> +    cpu_clk_idx =3D clk_cpu_index();
-> >>>> +    if (cpu_clk_idx =3D=3D -1)
-> >>>> +            panic("unable to get CPU clock index");
-> >>>> +
-> >>>> +    of_clk_init(NULL);
-> >>>> +    clkspec.np =3D of_find_node_by_name(NULL, "sysc");
-> >>>
-> >>> The node name should be "syscon" as the example node name in the
-> >>> dt-bindings document is "syscon".
-> >>
-> >> NAK for both.
-> >>
-> >> Node names must not be an ABI, unless you talk about child of some
-> >> device node. I don't think this is the case here. Look by phandle (for=
- a
-> >> device context) or by compatible (looks the case here).
-> >
-> > We need to get the cpu clock to set the initial cpu clock here. Search
-> > by 'sysc' is the only  shared in all the dtsi files since it is the
-> > clock provider node. Why is this not correct?
->
-> Because device node name can change anytime and your entire Linux driver
-> gets broken. Node name is not an ABI.
+Hi Stephen,
 
-Understood.
+On 2023-06-16 at 12:33:51 -0700, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Frank Oltmanns (2023-06-14 22:16:17)
+>> Hi Stephen,
+>>
+>> On 2023-06-14 at 13:02:24 -0700, Stephen Boyd <sboyd@kernel.org> wrote:
+>> > Quoting Frank Oltmanns (2023-06-14 01:19:37)
+>> >> Hi,
+>> >>
+>> >> On 2023-06-13 at 20:48:21 +0800, kernel test robot <lkp@intel.com> wrote:
+>> >> Can someone more knowlegdable than me please confirm if my understanding
+>> >> is correct?
+>> >
+>> > Export the symbol.
+>>
+>> Ok. I can do that. Please note that I had already submitted a V3 [1],
+>> that went the way of using clk_fractional_divider_ops.round_rate. I
+>> apologize for not waiting for your feedback prior to submission. It
+>> won't happen again.
+>>
+>> I liked the approach of calling clk_fd_round_rate directly via the ops,
+>> because it might allow me to test the other ops as well using the same
+>> blueprint. Of course, I will not add test cases, if you don't want it.
+>> (Calling clk_fd_round_rate also had the side effect of teaching me, that
+>> fd clocks expect the fraction to be less than or equal to 1.)
+>>
+>> I don't want to waste your time, but if you could maybe have a chance to
+>> look at the approach I took in V3 and tell me if you still want me to
+>> export the symbol instead, that would be really helpful. I'll follow
+>> your preference.
+>>
+>> If I don't hear back until the weekend, I will treat your three words
+>> above as your preference and prepare a V4 that goes back to calling
+>> clk_fractional_divider_general_approximation directly.
+>>
+>
+> Just call the API directly. That narrows the test to exactly what we
+> want to test. If you export the API it will make the rockchip folks
+> happy too[1]. We of course need to make sure that the registration API
+> works as well and actually uses the widths that are passed in, but it
+> doesn't need to fully exercise the approximation algorithm.
+>
+> [1] https://lore.kernel.org/r/20230601095512.18029-1-zhangqing@rock-chips.com
 
->
-> > I don't understand what
-> > you mean with look by phandle for a device context.
->
-> Your device node should contain phandle to the other node.
->
-> > The case of
-> > searching for compatible is a mess since as you can see in the
-> > bindings there are tons of compatibles to search for, then (this code
-> > is common to all ralink platforms).
->
-> Compatible is one of the ways using ABI.
+I've now submitted V5 [1] of this patchset. Unfortunately, V4 [2] had a
+compiler warning on clang that slipped through the cracks. I'm sorry for
+the noise.
 
-Ok so it is also a broken approach, then.
+In my opinion V5 is ready for review and hopefully addresses all your
+previous concerns.
 
->
-> Best regards,
-> Krzysztof
->
-
-Thanks for clarification.
+Thank you for your patience.
 
 Best regards,
-    Sergio Paracuellos
+  Frank
+
+[1] https://lore.kernel.org/all/20230617131041.18313-1-frank@oltmanns.dev/
+[2] https://lore.kernel.org/all/20230617102919.27564-1-frank@oltmanns.dev/
