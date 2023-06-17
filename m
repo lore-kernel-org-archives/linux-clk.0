@@ -2,96 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EACEB64DA
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 15:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7127EB64DB
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 15:31:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235407AbjFQPDX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 11:03:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58688 "EHLO
+        id S232758AbjFQPb4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 11:31:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235946AbjFQPDW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 11:03:22 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2278910C0;
-        Sat, 17 Jun 2023 08:03:20 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id ca18e2360f4ac-77e2ed26037so12408939f.0;
-        Sat, 17 Jun 2023 08:03:20 -0700 (PDT)
+        with ESMTP id S231618AbjFQPby (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 11:31:54 -0400
+Received: from mail-oo1-xc31.google.com (mail-oo1-xc31.google.com [IPv6:2607:f8b0:4864:20::c31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4A4A173A;
+        Sat, 17 Jun 2023 08:31:53 -0700 (PDT)
+Received: by mail-oo1-xc31.google.com with SMTP id 006d021491bc7-55af55a0fdaso1377113eaf.2;
+        Sat, 17 Jun 2023 08:31:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687014199; x=1689606199;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20221208; t=1687015913; x=1689607913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XPKa6UEi+0nARotVDmRtVIJACJBDdNpI7KC0bMf/rmE=;
-        b=WXFDHqWAuwhgDQdi8HJrdHNwogFYXhR9ZirthfjZxqkt4q7BB7KPCw2uhFYNlzfxvD
-         /yCH4B8dTpXXdu7op4sV8y2lKhaHccrS0O1+LrgpVSuGBu5ApOdcWWSprbx6AiDmEhnj
-         ++tXrn3OzAIkUUrONObavE5RNF5VKDVoBuK5fViZowcP/utYuYwWSW1GswOAm7vkC9vv
-         8FAkTmh2zoSC0fQCpD8cy9VLD23sa+1LjazmglGmiSFDymnBrAtXmaHXbgHUk5vGGTuw
-         lxR1HxvW8vaxtr0zhxTnYnaC5vzhEW/ZQn1YCfun0zphbmntoPxZLW43FqGS8Fclq1/+
-         UVYA==
+        bh=GFRcy9xaOtTkKOFXeluqYOSA9lXpSOxpkjdjDAIDgE4=;
+        b=AT538ixHycIm85RDPffWsO9rvNnXRUxHrFBotGzvrmdnjjH4/kINcPQjgq0EaC+cUE
+         Kx8dxo3LMHYCsnJJptACcSqYm8J/2e/FOiBz98jsfY7qST1bXLFv/WQURbsH20t9a0Le
+         uCJFHY6vAqQIg544kpbaHDJNFi7C9e7DEAVUkRAXp7Okjk/K8nyiQ54J6DABp+sRlBZ9
+         Jh0b+nOzTFX2QAmAYFuowAtiDWPP+XFlgAUGtpnSQucwKWSfFXh/T04Ll5fOfSBXkxQ+
+         71gHj+SvQkV82eyFi5JsZiGwsUmNd1zK0e1Fgiu5bZAkn6/koL81kAmAlWgqJEDC75KI
+         W4og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687014199; x=1689606199;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1687015913; x=1689607913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XPKa6UEi+0nARotVDmRtVIJACJBDdNpI7KC0bMf/rmE=;
-        b=fawyBTf4BGHtinAP3iukjKqCjGaASlhQ5FGVkhwgfcoxnj9LMWRmrVBB3hgZR7YTiq
-         1L65csZveqt7V9UXR5ouU/8+rCtiX51g8SxJCNgBKrZQegPt1DhaO7UUB+8W+1r6D+om
-         mdRP3RfdZWGnrW6GOY9oj75bbesldzDW9LnOFj1hQQdZ8OJ3uBV9JfGO4efUQuudGc4V
-         PBWRXRHZ+okR9AZYBL/GuL77G7LN4qjLvijx+g2HWwUMHJjh+zOHNku5tKgNK+I+1YmK
-         6VTDnzmZtE+9MYuxFkQtSEBiaRpJ8hKky+wbWJumaaOXdpxk3ticrixLLQv+QqnBUM/J
-         r6Ig==
-X-Gm-Message-State: AC+VfDy96AJVXgE4HCk44KFRqTpbxmsNfuOyrp2qc4BfghslUY1N4D1T
-        Mg48BrhSqGO6F6wY+P7cZRwLJwvTSMwAaA==
-X-Google-Smtp-Source: ACHHUZ4s4q1vubd+EHeVD0YyuaLalywYvk2iAigqmfuxwQ3i9pzjI+PQKJO82PBM7DgeJjbJMecyvg==
-X-Received: by 2002:a05:6602:2013:b0:77a:e728:f087 with SMTP id y19-20020a056602201300b0077ae728f087mr2083876iod.21.1687014198914;
-        Sat, 17 Jun 2023 08:03:18 -0700 (PDT)
-Received: from aford-B741.lan ([2601:447:d001:897f:2228:4762:4365:80b2])
-        by smtp.gmail.com with ESMTPSA id q3-20020a6b7103000000b0077e24ace3edsm623679iog.52.2023.06.17.08.03.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Jun 2023 08:03:18 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] clk: renesas: r8a774e1: Add 3dge and ZG support
-Date:   Sat, 17 Jun 2023 10:03:02 -0500
-Message-Id: <20230617150302.38477-4-aford173@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230617150302.38477-1-aford173@gmail.com>
-References: <20230617150302.38477-1-aford173@gmail.com>
+        bh=GFRcy9xaOtTkKOFXeluqYOSA9lXpSOxpkjdjDAIDgE4=;
+        b=hCxfvobIxvOR092r0UUhv2TBMplWCISorA8eu6DCEBRXA8BYeWZ6CEyJyqwg4QvyeL
+         TyfPxdXswn5iiyJ9MoANq+TyIQ1a1N1v1O+TnWRQPiZXaCMwVJn58hSZ8Ls5UngBK0w7
+         h3V0OUsSsSCblLoctHfCeWgYnrjd3m1pasn1esgR3A0ro4X9HnPkBdzZ0GoPk4m29D9z
+         NLKally9tMQd6J40UNnS5WX1LYdZ4mZGENnz03IDlvZA+DEbUoc2vLo4+m1KVE8idnCP
+         71aKCOJ+dHACXF7GtL0gFTEclOrjmp+UqsMlLoFt9ZcDqwshSRprsjRl2mOn8keCl8in
+         n+ew==
+X-Gm-Message-State: AC+VfDzBtKLRIQ8oN7aNRL2lhDbKRcz/mCw0hU5rFZYUV0Az+iLkP0l3
+        Qj3qF+AOAaR6K4kzoe8h96Dqdvd3mVs75pyxKr0=
+X-Google-Smtp-Source: ACHHUZ4IUR51rgg1xp03+pO4cesgi9skb05Qde4K9z5nZ+EveB4NjJamwCKIv9Mom8aYSM1s2T/cx+YTL9VUZHMOfGM=
+X-Received: by 2002:a05:6808:1a1c:b0:39c:6a30:cc7f with SMTP id
+ bk28-20020a0568081a1c00b0039c6a30cc7fmr7329093oib.21.1687015912939; Sat, 17
+ Jun 2023 08:31:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230617052435.359177-3-sergio.paracuellos@gmail.com>
+ <TYAP286MB0315AB8274CDD341D49809A2BC59A@TYAP286MB0315.JPNP286.PROD.OUTLOOK.COM>
+ <CAMhs-H8rt3-ffvjkNSORiNXQUVCUHCc7FNwYN7TOyQ0DxCe2fA@mail.gmail.com> <a61180e8-5732-2208-3a0c-e2b0137f9290@linaro.org>
+In-Reply-To: <a61180e8-5732-2208-3a0c-e2b0137f9290@linaro.org>
+From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date:   Sat, 17 Jun 2023 17:31:41 +0200
+Message-ID: <CAMhs-H_UZowVdVvQ_G_Jm+yLeCELDxjG=FQDQ-OOLt8FHJUZYg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/9] clk: ralink: add clock and reset driver for MTMIPS SoCs
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Shiji Yang <yangshiji66@outlook.com>, arinc.unal@arinc9.com,
+        devicetree@vger.kernel.org, john@phrozen.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        matthias.bgg@gmail.com, mturquette@baylibre.com,
+        p.zabel@pengutronix.de, robh+dt@kernel.org, sboyd@kernel.org,
+        tsbogend@alpha.franken.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The 3dge and ZG clocks are necessary to support the 3D graphics.
+On Sat, Jun 17, 2023 at 4:44=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 17/06/2023 15:26, Sergio Paracuellos wrote:
+> >>> void __init plat_time_init(void)
+> >>> {
+> >>> +      struct of_phandle_args clkspec;
+> >>>       struct clk *clk;
+> >>> +      int cpu_clk_idx;
+> >>>
+> >>>       ralink_of_remap();
+> >>>
+> >>> -      ralink_clk_init();
+> >>> -      clk =3D clk_get_sys("cpu", NULL);
+> >>> +      cpu_clk_idx =3D clk_cpu_index();
+> >>> +      if (cpu_clk_idx =3D=3D -1)
+> >>> +              panic("unable to get CPU clock index");
+> >>> +
+> >>> +      of_clk_init(NULL);
+> >>> +      clkspec.np =3D of_find_node_by_name(NULL, "sysc");
+> >>
+> >> The node name should be "syscon" as the example node name in the
+> >> dt-bindings document is "syscon".
+> >
+> > sysc is label to get this node since it is the one shared by all
+> > different dtsi files.
+>
+> If it is label, why do you use it to get by name? name !=3D label.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Sorry I meant both of them, node name in dtsi file and also label for
+referring to it from other nodes.
 
-diff --git a/drivers/clk/renesas/r8a774b1-cpg-mssr.c b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
-index ab087b02ef90..33d4e5ff9ff6 100644
---- a/drivers/clk/renesas/r8a774b1-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
-@@ -73,6 +73,7 @@ static const struct cpg_core_clk r8a774b1_core_clks[] __initconst = {
- 
- 	/* Core Clock Outputs */
- 	DEF_GEN3_Z("z",         R8A774B1_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
-+	DEF_GEN3_Z("zg",        R8A774B1_CLK_ZG,    CLK_TYPE_GEN3_ZG, CLK_PLL4, 4, 24),
- 	DEF_FIXED("ztr",        R8A774B1_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
- 	DEF_FIXED("ztrd2",      R8A774B1_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
- 	DEF_FIXED("zt",         R8A774B1_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
-@@ -120,6 +121,7 @@ static const struct cpg_core_clk r8a774b1_core_clks[] __initconst = {
- };
- 
- static const struct mssr_mod_clk r8a774b1_mod_clks[] __initconst = {
-+	DEF_MOD("3dge",			 112,	R8A774B1_CLK_ZG),
- 	DEF_MOD("tmu4",			 121,	R8A774B1_CLK_S0D6),
- 	DEF_MOD("tmu3",			 122,	R8A774B1_CLK_S3D2),
- 	DEF_MOD("tmu2",			 123,	R8A774B1_CLK_S3D2),
--- 
-2.39.2
+>
+> Best regards,
+> Krzysztof
+>
 
+Best regards,
+    Sergio Paracuellos
