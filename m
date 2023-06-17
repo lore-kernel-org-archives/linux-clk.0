@@ -2,83 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B82EB64DB
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Jun 2023 20:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFAFEB64DB
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 04:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345503AbjFPU17 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Jun 2023 16:27:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53024 "EHLO
+        id S231928AbjFQEg3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 00:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233194AbjFPU1z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Jun 2023 16:27:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C52F53AA8;
-        Fri, 16 Jun 2023 13:27:47 -0700 (PDT)
+        with ESMTP id S229493AbjFQEg1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 00:36:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6BAD35AD;
+        Fri, 16 Jun 2023 21:36:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F1FCF6111F;
-        Fri, 16 Jun 2023 20:27:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5511DC433C8;
-        Fri, 16 Jun 2023 20:27:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 46D7960BD4;
+        Sat, 17 Jun 2023 04:36:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9B0C433C0;
+        Sat, 17 Jun 2023 04:36:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1686947266;
-        bh=Csz7AYw+SYFqJ0XXgKmMeE5PEklNTVPGlubIPxkjLaw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sVoqsOr9cUAjopFEUQzIzHhtJf2t3y7CjDYMD7EVysk1K1iJagDr2jbzP+8aQLc4A
-         vZXX5HqTj85mG7MkGBSzIpSXUar/Mtm7Y8q2Yca8UDGlekSXZtjvibxRo8RSgAovD8
-         kgLtqS6kU0/64qxaXrGoaVelj8ZeH3W6ZOYrnXDqtYybfAPcOK3RHZ7H+6GsZDSAjO
-         jKCM8AxnTT3zAsw7rB//9VQARkYkpLqnwpBIxVpVFdLKURUr6nCEt+2xCDzPjqUyGV
-         7XBdtDxWDJJuk22fx8WwDvptKo9evm0wCAtsR0btB9zTF2Q94N/W01g9X8hk0juO4a
-         jIRB4ch3rx48g==
-Message-ID: <70c39db97475939719720ab1902aa1c1.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <825f06c1-cf87-c0e3-a9fc-f4ec0edaa0f8@linaro.org>
-References: <20230526-topic-smd_icc-v6-0-263283111e66@linaro.org> <20230526-topic-smd_icc-v6-18-263283111e66@linaro.org> <e2afd4bde3e85db358d50553a60a744f.sboyd@kernel.org> <825f06c1-cf87-c0e3-a9fc-f4ec0edaa0f8@linaro.org>
-Subject: Re: [PATCH v6 18/22] clk: qcom: smd-rpm: Separate out interconnect bus clocks
+        s=k20201202; t=1686976585;
+        bh=OKFlrVcr8JO5imMZjskPBYyT2e9wwxpgnHDmugLd/OM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pG2KDixZAmhTp7k5AHPjC84RnT5jz7KcbQkNullO09O8vZHTe0iMvdgVGvz2Ejy71
+         EqA4Jqz61D9zaKANiTCxXOH0wHzhoEaa8+at3UT0hpo+OG1wszP7BvHG1cF1mQ2Kbd
+         Aup4m/FUOEqxP0brQ1PCkFMZlCuuBrr5bS15Ejde/xsHB9P6rz2mPf0T4um2qko7HI
+         biGZ93xHk76fwS0YdOR6PL3WY2FG3YoOzumC1B1CvmwMFyq24NDMbzbK1EpE4psnQf
+         w5/0834D4gqu0RWI5wDqmJQRrrBqTwp0HyaIze2KSxcN6K41+fFy7n2jdFU0OuxKBz
+         PmJchfFlI+yuw==
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 16 Jun 2023 13:27:42 -0700
-User-Agent: alot/0.10
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.4-rc6
+Date:   Fri, 16 Jun 2023 21:36:23 -0700
+Message-ID: <20230617043624.831750-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.41.0.162.gfafddb0af9-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-06-15 00:49:59)
-> On 15.06.2023 02:48, Stephen Boyd wrote:
-> > Quoting Konrad Dybcio (2023-06-14 11:04:37)
-> >> @@ -1332,6 +1275,15 @@ static int rpm_smd_clk_probe(struct platform_de=
-vice *pdev)
-> >>                         goto err;
-> >>         }
-> >> =20
-> >> +       for (i =3D 0; i < desc->num_icc_clks; i++) {
-> >> +               if (!desc->icc_clks[i])
-> >> +                       continue;
-> >> +
-> >> +               ret =3D clk_smd_rpm_handoff(desc->icc_clks[i]);
-> >=20
-> > This API can probably take a const struct clk_smd_rpm pointer as well.
-> It would be great, but ideally we want to set r->enabled in that func
-> for !bus clocks (for unused clk cleanup). I could probably introduce a
-> separate function for the icc clocks that takes const.
->=20
+The following changes since commit ac9a78681b921877518763ba0e89202254349d1b:
 
-Sure. Or have this take const and in the clk driver set r->enabled after
-calling it. That's future code though, so just make it take const?
+  Linux 6.4-rc1 (2023-05-07 13:34:35 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 23200a4c8ac284f8b4263d7cecaefecaa3ad6732:
+
+  clk: pxa: fix NULL pointer dereference in pxa3xx_clk_update_accr (2023-06-14 17:22:17 -0700)
+
+----------------------------------------------------------------
+A handful of clk driver fixes
+
+ - Fix an OOB issue in the Mediatek mt8365 driver where arrays of clks
+   are mismatched in size
+
+ - Use the proper clk_ops for a few clks in the Mediatek mt8365 driver
+
+ - Stop using abs() in clk_composite_determine_rate() because 64-bit
+   math goes wrong on large unsigned long numbers that are subtracted
+   and passed into abs()
+
+ - Zero initialize a struct clk_init_data in clk-loongson2 to avoid
+   stack junk confusing clk_hw_register()
+
+ - Actually use a pointer to __iomem for writel() in
+   pxa3xx_clk_update_accr() so we don't oops
+
+----------------------------------------------------------------
+Alexandre Mergnat (1):
+      clk: mediatek: mt8365: Fix index issue
+
+Arnd Bergmann (1):
+      clk: pxa: fix NULL pointer dereference in pxa3xx_clk_update_accr
+
+Binbin Zhou (1):
+      clk: clk-loongson2: Zero init clk_init_data
+
+Markus Schneider-Pargmann (1):
+      clk: mediatek: mt8365: Fix inverted topclk operations
+
+Sebastian Reichel (1):
+      clk: composite: Fix handling of high clock rates
+
+ drivers/clk/clk-composite.c       |  5 ++++-
+ drivers/clk/clk-loongson2.c       |  2 +-
+ drivers/clk/mediatek/clk-mt8365.c | 18 +++++++++++++++---
+ drivers/clk/pxa/clk-pxa3xx.c      |  2 +-
+ 4 files changed, 21 insertions(+), 6 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
