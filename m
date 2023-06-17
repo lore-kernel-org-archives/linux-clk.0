@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0FEC001B1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A0CC001DE
 	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 05:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345503AbjFQFZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 01:25:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47974 "EHLO
+        id S233504AbjFQFZF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 01:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233753AbjFQFYt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 01:24:49 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE431FD7;
-        Fri, 16 Jun 2023 22:24:47 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3112902f785so311184f8f.0;
-        Fri, 16 Jun 2023 22:24:47 -0700 (PDT)
+        with ESMTP id S233822AbjFQFYv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 01:24:51 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AF6F1FD7;
+        Fri, 16 Jun 2023 22:24:50 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-3110ab7110aso1203294f8f.3;
+        Fri, 16 Jun 2023 22:24:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686979486; x=1689571486;
+        d=gmail.com; s=20221208; t=1686979488; x=1689571488;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/LE+IJWXi7tfgCTNCrrJQAxQtllNFJS6/BWkoAapNRE=;
-        b=XFQyzWpj7Jlbugq24+BlEyTX3sU+6meUAMaXTxiiic6OI/gvrCm7PfRlay8lZAHNyK
-         KlRYGkSmup7vAAzUJNtqGC2Op6Q5Np5ARxM4sNQ3C7if2WHRa8ZhWJBVFLn2z/lC3KOt
-         d2X8nV4NdY21QezL/bS7pYCm6pzJGR7aTYYgXbdIOLn5bulWzgeLO5PBzU/QxA31JQml
-         p9P+4xCzzcHvU2DMAdE5fCyeRtvhQ0dNHvHu/LOApQFpXx1Mm3U42Uzv3YqIX6aJjL09
-         mQh/n+xvNA7dy6D2TcYqRmf3uQwEDa16m9i5goFH8WKjyJKNjAGx7AK1dBNxiejktLM6
-         saWg==
+        bh=ENURxkCD4SFoaP6aebwo/q0vo0bcMItJOR8Kmmrb9B8=;
+        b=DWVWlsv+DY0BtlXJOK+TO2cyNO9d/eSdrU502cwPY9u4+SJEh1YcURZY5w+ORfUnM1
+         axcCR6YSztlPndCs+v3A6CB8ZN6lrEx8dQ2K9qVIj8x/pCFa5G1YMBqVpXJju8AJY7FH
+         KLXLwlW14Ex3ZDhLQ/Q9cxqaKqy0hCE8lZzlnTEuAxw0QrEQHkCZ4B4kRamZZOVdj5Ww
+         pBVoQMpBk+Vcbu92sxhxzDiya0lC8y81EjfEj9EiLkdjEgT8kp6mwLPk7TeIia9/XzQi
+         RCH9uyNvSLeqPbZrXoq2GKMuJ+i5PSKKKL+Al5EkWZ1vuvfoPJHW5k6Qu/8cvt5XIP8X
+         fIJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686979486; x=1689571486;
+        d=1e100.net; s=20221208; t=1686979488; x=1689571488;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/LE+IJWXi7tfgCTNCrrJQAxQtllNFJS6/BWkoAapNRE=;
-        b=ioZASXWimkJLuly5irgXCUHdWAvbLPWLeLVVi8YLb5JF5qIUhk6dAdFiarR6bMkKxL
-         cm47/V7h6IhBbQZxRQlH8VrbmKXqRuoK4POzGuP4e7HMRQAWH/J+fX++TqgxY4uj8a1I
-         uWJcsXqUuB0kTpxM56BWdDD9p6zP3OrPlqrNO1K4+9MASC6F276OPD36Exz1DAgrZ5iS
-         qRyM5XVeGLs/FsgEZeq0nynQuecmOr1Rj8ExkrWA6PmiQuDZIh42uYivIO6apoghzPBt
-         6Ep4QwybET2GLG2Ffmh0myuULFqL8q5smbCrvFMhAuXJ+HL3CR71JnxX1qWxfWFtnL1L
-         vkjg==
-X-Gm-Message-State: AC+VfDzmg4cojPY+187EXhPj5EIdWdQSprzqJQCdKjPpXJzkNVwlPe3p
-        LRhWDtWOvBqCxucso+/Wu4/Wi2GDKi0=
-X-Google-Smtp-Source: ACHHUZ5UIAnCxqX0syU7RskvhnO1jIY3SVYBfk+cztLymg+nS+XUmII5MULL+fFTid8OHEI3y/WbFQ==
-X-Received: by 2002:adf:e5c7:0:b0:30a:e3bb:ba8b with SMTP id a7-20020adfe5c7000000b0030ae3bbba8bmr8303561wrn.29.1686979486048;
-        Fri, 16 Jun 2023 22:24:46 -0700 (PDT)
+        bh=ENURxkCD4SFoaP6aebwo/q0vo0bcMItJOR8Kmmrb9B8=;
+        b=L9QxUKMYmr9fAdZtKURcQwFpXm6yF1qZMpVRNYnnVcA8ac7gHekW6OShiIuyM+H35X
+         Za34MJgaVJd+HOGW/IrnCZqu5SCf71q2oh3xMu1rPpGRVjy/L8sQKU80a4jycJYFwEny
+         DFtIzsejwqT/Nv9t19d15SxpLx2JhXt25IiiPEHcZqKiUvk0t3iOR7mxovNxeMKjeJm/
+         JfntKN2R1mOvYTRFCy1nHi43ch5gOv2CN3YtivKIvfXgx0f16hoTsY1Q0uVftFwdyeab
+         G7OxiZm3ECsBtD/EuChtcB9o2bcg1ReSniH7GyFM8yoF1CBU0fmDvhIBAVSqg/UF7hHb
+         +5uQ==
+X-Gm-Message-State: AC+VfDwn7xSDDB+OaoojjCu5ksObNlBCIR9+QGqeSVNwDm8qpV2kmKeT
+        JP/f5KjOmPV3Dv8SaA5wssOKkC/0FhI=
+X-Google-Smtp-Source: ACHHUZ58OfhWAnmWtcWCxFG7XWjFe5oWwkaKzBAtkDPOeBDN7eDEEKAo/3ECvi6sd1BPZrPFohl3XA==
+X-Received: by 2002:adf:ec0e:0:b0:309:44ed:ccff with SMTP id x14-20020adfec0e000000b0030944edccffmr3252117wrn.1.1686979488443;
+        Fri, 16 Jun 2023 22:24:48 -0700 (PDT)
 Received: from localhost.localdomain (61.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.61])
-        by smtp.gmail.com with ESMTPSA id a3-20020a056000050300b003068f5cca8csm25198228wrf.94.2023.06.16.22.24.44
+        by smtp.gmail.com with ESMTPSA id a3-20020a056000050300b003068f5cca8csm25198228wrf.94.2023.06.16.22.24.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Jun 2023 22:24:45 -0700 (PDT)
+        Fri, 16 Jun 2023 22:24:47 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
@@ -57,9 +57,9 @@ Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         matthias.bgg@gmail.com, devicetree@vger.kernel.org,
         arinc.unal@arinc9.com
-Subject: [PATCH v4 7/9] mips: ralink: remove reset related code
-Date:   Sat, 17 Jun 2023 07:24:33 +0200
-Message-Id: <20230617052435.359177-8-sergio.paracuellos@gmail.com>
+Subject: [PATCH v4 9/9] MAINTAINERS: add Mediatek MTMIPS Clock maintainer
+Date:   Sat, 17 Jun 2023 07:24:35 +0200
+Message-Id: <20230617052435.359177-10-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230617052435.359177-1-sergio.paracuellos@gmail.com>
 References: <20230617052435.359177-1-sergio.paracuellos@gmail.com>
@@ -69,127 +69,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A proper clock driver for ralink SoCs has been added. This driver is also
-a reset provider for the SoC. Hence there is no need to have reset related
-code in 'arch/mips/ralink' folder anymore. The only code that remains is
-the one related with mips_reboot_setup where a PCI reset is performed.
-We maintain this because I cannot test old ralink board with PCI to be
-sure all works if we remove also this code.
+Adding myself as maintainer for Mediatek MTMIPS clock driver.
 
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- arch/mips/ralink/common.h |  2 --
- arch/mips/ralink/of.c     |  4 ---
- arch/mips/ralink/reset.c  | 61 ---------------------------------------
- 3 files changed, 67 deletions(-)
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/mips/ralink/common.h b/arch/mips/ralink/common.h
-index fcdfc9dc6210..b0d671442966 100644
---- a/arch/mips/ralink/common.h
-+++ b/arch/mips/ralink/common.h
-@@ -23,8 +23,6 @@ extern struct ralink_soc_info soc_info;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8d5bc223f305..581234dfa735 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13137,6 +13137,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/phy/mediatek,mt7621-pci-phy.yaml
+ F:	drivers/phy/ralink/phy-mt7621-pci.c
  
- extern void ralink_of_remap(void);
- 
--extern void ralink_rst_init(void);
--
- extern void __init prom_soc_init(struct ralink_soc_info *soc_info);
- 
- __iomem void *plat_of_remap_node(const char *node);
-diff --git a/arch/mips/ralink/of.c b/arch/mips/ralink/of.c
-index 4d06de77d92a..df29e6c896aa 100644
---- a/arch/mips/ralink/of.c
-+++ b/arch/mips/ralink/of.c
-@@ -81,10 +81,6 @@ static int __init plat_of_setup(void)
- {
- 	__dt_register_buses(soc_info.compatible, "palmbus");
- 
--	/* make sure that the reset controller is setup early */
--	if (ralink_soc != MT762X_SOC_MT7621AT)
--		ralink_rst_init();
--
- 	return 0;
- }
- 
-diff --git a/arch/mips/ralink/reset.c b/arch/mips/ralink/reset.c
-index 274d33078c5e..4875637ef469 100644
---- a/arch/mips/ralink/reset.c
-+++ b/arch/mips/ralink/reset.c
-@@ -10,7 +10,6 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/delay.h>
--#include <linux/reset-controller.h>
- 
- #include <asm/reboot.h>
- 
-@@ -22,66 +21,6 @@
- #define RSTCTL_RESET_PCI	BIT(26)
- #define RSTCTL_RESET_SYSTEM	BIT(0)
- 
--static int ralink_assert_device(struct reset_controller_dev *rcdev,
--				unsigned long id)
--{
--	u32 val;
--
--	if (id == 0)
--		return -1;
--
--	val = rt_sysc_r32(SYSC_REG_RESET_CTRL);
--	val |= BIT(id);
--	rt_sysc_w32(val, SYSC_REG_RESET_CTRL);
--
--	return 0;
--}
--
--static int ralink_deassert_device(struct reset_controller_dev *rcdev,
--				  unsigned long id)
--{
--	u32 val;
--
--	if (id == 0)
--		return -1;
--
--	val = rt_sysc_r32(SYSC_REG_RESET_CTRL);
--	val &= ~BIT(id);
--	rt_sysc_w32(val, SYSC_REG_RESET_CTRL);
--
--	return 0;
--}
--
--static int ralink_reset_device(struct reset_controller_dev *rcdev,
--			       unsigned long id)
--{
--	ralink_assert_device(rcdev, id);
--	return ralink_deassert_device(rcdev, id);
--}
--
--static const struct reset_control_ops reset_ops = {
--	.reset = ralink_reset_device,
--	.assert = ralink_assert_device,
--	.deassert = ralink_deassert_device,
--};
--
--static struct reset_controller_dev reset_dev = {
--	.ops			= &reset_ops,
--	.owner			= THIS_MODULE,
--	.nr_resets		= 32,
--	.of_reset_n_cells	= 1,
--};
--
--void ralink_rst_init(void)
--{
--	reset_dev.of_node = of_find_compatible_node(NULL, NULL,
--						"ralink,rt2880-reset");
--	if (!reset_dev.of_node)
--		pr_err("Failed to find reset controller node");
--	else
--		reset_controller_register(&reset_dev);
--}
--
- static void ralink_restart(char *command)
- {
- 	if (IS_ENABLED(CONFIG_PCI)) {
++MEDIATEK MTMIPS CLOCK DRIVER
++M:	Sergio Paracuellos <sergio.paracuellos@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
++F:	drivers/clk/ralink/clk-mtmips.c
++
+ MEDIATEK NAND CONTROLLER DRIVER
+ L:	linux-mtd@lists.infradead.org
+ S:	Orphan
 -- 
 2.25.1
 
