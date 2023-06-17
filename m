@@ -2,52 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E51EB64D9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 11:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02757EB64D9
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 12:18:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231603AbjFQLzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 07:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44694 "EHLO
+        id S236067AbjFQMSI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 08:18:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231504AbjFQLzi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 07:55:38 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DAF196;
-        Sat, 17 Jun 2023 04:55:37 -0700 (PDT)
+        with ESMTP id S236718AbjFQMSC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 08:18:02 -0400
+Received: from mga18.intel.com (unknown [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96A26296A;
+        Sat, 17 Jun 2023 05:17:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687002937; x=1718538937;
+  t=1687004239; x=1718540239;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=G+HfwYIcm+n32dQlKCCmezW1oWNyiT7XDmX66Zx/zos=;
-  b=FN8Faj1NzxnPiXShCJ4UXCM9Q/iLObRfLWEUQoMQPMuVbWPeK3jMfEww
-   llO2sapz/JKLjYsIRivPHuK5naKeabXw+GkyPE7KYETak0s4ajCJqWlqy
-   djEx2d2ey3GvQFTW7tOQNkuRtXehC7zBX9TR1iePdIrecEiF2s2YYMdCs
-   QHRQ4ffHAazNztwuiZlFpO0IpLFf/7tq3WkAHkzM3kIRfNiQzepxA2zCx
-   rX/fMpsK47K8XRhepPjY4BjQ9vJ7ZzLLDb+GhttEHSxZq9ABx1mqhqH3N
-   5Vd2+JhxJwtssdknSVTS4Y7a7mo4GyVuTz1/xtTJi86EOLh9LN+eV1IxS
+  bh=mQ87SPnE3Di8X8k0ALKsp3NAdHIXJcUi2J4OGCuvT7M=;
+  b=TtZF4nCL03bb8rbZo+hpI3egws7ABZ/if7doogrFS4gy9aD6atxWiqp5
+   WP11BK91BdPC1bj6H0SoIHxU8IDFmmLVS89SAqjxyGmnCPyproxHYA94A
+   Zlt4SOUdKHejYRh1WS0Y0U+bvM9oPg+etw4sfZXUQxHv0H3Lq8XkTlLLe
+   AuwfYRO2YQ2kguJnNToWjf2TOWlu0m9ONmA3ioQv04sXNYEpuEC+ugHtA
+   ZE9LvXCevljKfK3s8xNc3/k1cVxXGZn+xDF3pWKrtOKWeDqlUl+aaM8xD
+   YJ9kEKRAUPtjbWzTZSjiUKpiN1gLkZUhTTT7dvwQpSqTPiVlC44Td74iO
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="358255221"
+X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="344123935"
 X-IronPort-AV: E=Sophos;i="6.00,250,1681196400"; 
-   d="scan'208";a="358255221"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2023 04:55:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="690546088"
+   d="scan'208";a="344123935"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2023 05:15:37 -0700
+X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="746738268"
 X-IronPort-AV: E=Sophos;i="6.00,250,1681196400"; 
-   d="scan'208";a="690546088"
+   d="scan'208";a="746738268"
 Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 17 Jun 2023 04:55:32 -0700
+  by orsmga001.jf.intel.com with ESMTP; 17 Jun 2023 05:15:31 -0700
 Received: from kbuild by 783282924a45 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1qAUWi-0002jQ-0S;
-        Sat, 17 Jun 2023 11:55:32 +0000
-Date:   Sat, 17 Jun 2023 19:54:57 +0800
+        id 1qAUq4-0002jg-1C;
+        Sat, 17 Jun 2023 12:15:32 +0000
+Date:   Sat, 17 Jun 2023 20:15:20 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Frank Oltmanns <frank@oltmanns.dev>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     oe-kbuild-all@lists.linux.dev, Frank Oltmanns <frank@oltmanns.dev>,
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Frank Oltmanns <frank@oltmanns.dev>,
         "A.s. Dong" <aisheng.dong@nxp.com>,
         Abel Vesa <abelvesa@kernel.org>,
         Fabio Estevam <festevam@gmail.com>,
@@ -60,7 +60,7 @@ Cc:     oe-kbuild-all@lists.linux.dev, Frank Oltmanns <frank@oltmanns.dev>,
         Elaine Zhang <zhangqing@rock-chips.com>
 Subject: Re: [PATCH v4 2/2] clk: fractional-divider: tests: Add test suite
  for edge cases
-Message-ID: <202306171912.PqJBpGMg-lkp@intel.com>
+Message-ID: <202306172036.EevtaVp6-lkp@intel.com>
 References: <20230617102919.27564-3-frank@oltmanns.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -84,25 +84,24 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Oltmanns/clk-fracti
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 patch link:    https://lore.kernel.org/r/20230617102919.27564-3-frank%40oltmanns.dev
 patch subject: [PATCH v4 2/2] clk: fractional-divider: tests: Add test suite for edge cases
-config: arm-randconfig-r046-20230617 (https://download.01.org/0day-ci/archive/20230617/202306171912.PqJBpGMg-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 12.3.0
-reproduce: (https://download.01.org/0day-ci/archive/20230617/202306171912.PqJBpGMg-lkp@intel.com/reproduce)
+config: hexagon-randconfig-r035-20230617 (https://download.01.org/0day-ci/archive/20230617/202306172036.EevtaVp6-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
+reproduce: (https://download.01.org/0day-ci/archive/20230617/202306172036.EevtaVp6-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306171912.PqJBpGMg-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306172036.EevtaVp6-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
-   drivers/clk/clk-fractional-divider_test.c: In function 'clk_fd_test_approximation_max_denominator':
->> drivers/clk/clk-fractional-divider_test.c:26:48: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
+>> drivers/clk/clk-fractional-divider_test.c:26:41: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
       26 |         unsigned long rate, parent_rate, m, n, max_m, max_n;
-         |                                                ^~~~~
-   drivers/clk/clk-fractional-divider_test.c: In function 'clk_fd_test_approximation_max_denominator_zero_based':
-   drivers/clk/clk-fractional-divider_test.c:88:48: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
+         |                                                ^
+   drivers/clk/clk-fractional-divider_test.c:88:41: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
       88 |         unsigned long rate, parent_rate, m, n, max_m, max_n;
-         |                                                ^~~~~
+         |                                                ^
+   2 warnings generated.
 
 
 vim +/max_m +26 drivers/clk/clk-fractional-divider_test.c
