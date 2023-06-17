@@ -2,107 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E40EB64D9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 13:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA79EB64DB
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 13:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233872AbjFQNH2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 09:07:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33752 "EHLO
+        id S1345778AbjFQNLE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 09:11:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231965AbjFQNH1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 09:07:27 -0400
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF7A1BF8
-        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 06:07:26 -0700 (PDT)
-Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-978863fb00fso266608066b.3
-        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 06:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687007244; x=1689599244;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yD2mfuV+fqGi2BrJFGebt9olEIT6uNOgf7P1D42KFcQ=;
-        b=MBX1P0855t6gkTdc1NHQ+J/Ew1POQStwXIl0hRyX1DvA4Dv/TlNJl6PJ5GXhk+gZZA
-         2liu38gJYjKlu32bcsa1jlGSE3kQ11LEMjWHhwYvM43V7AAbKwXixu9JoSxd0TiTFdLQ
-         VcTTjzmFK++Xh1V+mEaxuvEF9BeThaYZ2YirEdUKpobdQ6tjVwIIQUxAod1On0+Ynfxk
-         iUUDn1WE1O/ZWXny+Y0K1i2tzE19sCWur8I/4+p0WPAbQQblvADnzPTNJw+58AoNSXCX
-         NykUO1heXFkGdrrmRGqZpmSk7wGMsYBGf2suXjdd2u0DilHeab5dgLK+NvFsQQKsp5LD
-         YE/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687007244; x=1689599244;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yD2mfuV+fqGi2BrJFGebt9olEIT6uNOgf7P1D42KFcQ=;
-        b=QVpuzicBESRNZu0FIFxbDOLFeNNoFq65iZ04N4RLL9SIl6XgRO30hbMJ4AST4D99oo
-         KVcfv3xJILobUvRH97Iuk7dx1hVhfO38PIqIF5tv808kk0/gJcSzUB/4SE/6fHHE7YI1
-         Au60lKZNEcb3HcqRjPBXezcD3MF5gMxgpnqEmrNYD+r3hwGJuar4aHeDHuWVt18wskxG
-         K6FDqvXMucCHB863HNG0ha/klB4W3b+SBDz1YiTnKho807oLGK+QwOiqJAU1xBBzPZUL
-         AxfSEdGjD3OXgsyQXR0BlscHqqXPl4lIxg1JjXqZDju1U/2TkL55RXawDn0pj2oV8MKt
-         eaWQ==
-X-Gm-Message-State: AC+VfDw1ZNqc7c/5x2K8gHz2f72gfsU1nN1Kgs+BcNN88+OJFhq4pvLb
-        iTBADBd5osMVnu6Mdf88yuanUw==
-X-Google-Smtp-Source: ACHHUZ4gYM6ydBQK0EgrOwyfQoTSFwyHgIxaBPQ5wFrrUb/ITf24ayGCnkR+OuBRp2TvkExH1e9E4Q==
-X-Received: by 2002:a17:907:8a08:b0:987:ae30:4b96 with SMTP id sc8-20020a1709078a0800b00987ae304b96mr1706703ejc.12.1687007244300;
-        Sat, 17 Jun 2023 06:07:24 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id t4-20020a170906178400b00982be08a9besm3063447eje.172.2023.06.17.06.07.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 Jun 2023 06:07:23 -0700 (PDT)
-Message-ID: <e0f74bdc-3a4b-596a-5ec7-83054377813e@linaro.org>
-Date:   Sat, 17 Jun 2023 15:07:21 +0200
+        with ESMTP id S234822AbjFQNLD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 09:11:03 -0400
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D228F10C8;
+        Sat, 17 Jun 2023 06:11:01 -0700 (PDT)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4QjxH62X24z9sQ8;
+        Sat, 17 Jun 2023 15:10:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1687007458;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=piM6ASDgch6PVWDiOGs21ydWS2z+iDsSfAmRcYpzIiU=;
+        b=KSPOsr5cxsmsYEao8mRDaSqgRmo3HE5aSDD/ijiaVKToPEMnJUPFKjlvEHLfF5v6ZWxbw5
+        QamkTttPpyTuSmiMzRV+dK03cJGei4NOtQSyonmD+DzLvJaSBDZXGEW7zmujCn8sVaTWx7
+        gtJdJK5rdAzcX4cpP5R9+IpKhdwlwf49QMV3lAjzeMXcMy5fn/Mm5BfAYEe8IWCufgwssS
+        t0zyh4vvIO3WsYnTXm7z9Rr1z4vh7CPBgSEGpr4sT9PWlvuCJ/ILGuL23mLxGwibA3y/ig
+        W34kAsAkHNPHDQEfW6lZeQlEGWekmwBqu2+hV65R1tZeMgVlgtUlrM/MhlZoMQ==
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Oltmanns <frank@oltmanns.dev>,
+        "A . s . Dong" <aisheng.dong@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v5 1/2] clk: fractional-divider: Improve approximation when zero based and export
+Date:   Sat, 17 Jun 2023 15:10:40 +0200
+Message-ID: <20230617131041.18313-2-frank@oltmanns.dev>
+In-Reply-To: <20230617131041.18313-1-frank@oltmanns.dev>
+References: <20230617131041.18313-1-frank@oltmanns.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v3 2/9] clk: ralink: add clock and reset driver for MTMIPS
- SoCs
-To:     Shiji Yang <yangshiji66@outlook.com>, sergio.paracuellos@gmail.com
-Cc:     arinc.unal@arinc9.com, devicetree@vger.kernel.org,
-        john@phrozen.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, matthias.bgg@gmail.com,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, sboyd@kernel.org, tsbogend@alpha.franken.de
-References: <20230617052435.359177-3-sergio.paracuellos@gmail.com>
- <TYAP286MB0315AB8274CDD341D49809A2BC59A@TYAP286MB0315.JPNP286.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <TYAP286MB0315AB8274CDD341D49809A2BC59A@TYAP286MB0315.JPNP286.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4QjxH62X24z9sQ8
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/06/2023 14:54, Shiji Yang wrote:
->> void __init plat_time_init(void)
->> {
->> +	struct of_phandle_args clkspec;
->> 	struct clk *clk;
->> +	int cpu_clk_idx;
->>
->> 	ralink_of_remap();
->>
->> -	ralink_clk_init();
->> -	clk = clk_get_sys("cpu", NULL);
->> +	cpu_clk_idx = clk_cpu_index();
->> +	if (cpu_clk_idx == -1)
->> +		panic("unable to get CPU clock index");
->> +
->> +	of_clk_init(NULL);
->> +	clkspec.np = of_find_node_by_name(NULL, "sysc");
-> 
-> The node name should be "syscon" as the example node name in the
-> dt-bindings document is "syscon".
+Consider the CLK_FRAC_DIVIDER_ZERO_BASED flag when finding the best
+approximation for m and n. By doing so, increase the range of valid
+values for the numerator and denominator by 1.
 
-NAK for both.
+Furthermore, export the approximation function so that users of this
+function can be compiled as modules.
 
-Node names must not be an ABI, unless you talk about child of some
-device node. I don't think this is the case here. Look by phandle (for a
-device context) or by compatible (looks the case here).
+Cc: A.s. Dong <aisheng.dong@nxp.com>
+Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+---
+ drivers/clk/clk-fractional-divider.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/clk-fractional-divider.c b/drivers/clk/clk-fractional-divider.c
+index 479297763e70..5067e067e906 100644
+--- a/drivers/clk/clk-fractional-divider.c
++++ b/drivers/clk/clk-fractional-divider.c
+@@ -123,6 +123,7 @@ void clk_fractional_divider_general_approximation(struct clk_hw *hw,
+ 						  unsigned long *m, unsigned long *n)
+ {
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
++	unsigned long max_m, max_n;
+ 
+ 	/*
+ 	 * Get rate closer to *parent_rate to guarantee there is no overflow
+@@ -138,10 +139,17 @@ void clk_fractional_divider_general_approximation(struct clk_hw *hw,
+ 			rate <<= scale - fd->nwidth;
+ 	}
+ 
+-	rational_best_approximation(rate, *parent_rate,
+-			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+-			m, n);
++	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
++		max_m = 1 << fd->mwidth;
++		max_n = 1 << fd->nwidth;
++	} else {
++		max_m = GENMASK(fd->mwidth - 1, 0);
++		max_n = GENMASK(fd->nwidth - 1, 0);
++	}
++
++	rational_best_approximation(rate, *parent_rate, max_m, max_n, m, n);
+ }
++EXPORT_SYMBOL_GPL(clk_fractional_divider_general_approximation);
+ 
+ static long clk_fd_round_rate(struct clk_hw *hw, unsigned long rate,
+ 			      unsigned long *parent_rate)
+@@ -169,13 +177,18 @@ static int clk_fd_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_fractional_divider *fd = to_clk_fd(hw);
+ 	unsigned long flags = 0;
+-	unsigned long m, n;
++	unsigned long m, n, max_m, max_n;
+ 	u32 mmask, nmask;
+ 	u32 val;
+ 
+-	rational_best_approximation(rate, parent_rate,
+-			GENMASK(fd->mwidth - 1, 0), GENMASK(fd->nwidth - 1, 0),
+-			&m, &n);
++	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
++		max_m = 1 << fd->mwidth;
++		max_n = 1 << fd->nwidth;
++	} else {
++		max_m = GENMASK(fd->mwidth - 1, 0);
++		max_n = GENMASK(fd->nwidth - 1, 0);
++	}
++	rational_best_approximation(rate, parent_rate, max_m, max_n, &m, &n);
+ 
+ 	if (fd->flags & CLK_FRAC_DIVIDER_ZERO_BASED) {
+ 		m--;
+-- 
+2.41.0
 
