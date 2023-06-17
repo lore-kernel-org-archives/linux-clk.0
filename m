@@ -2,165 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A96EB64DC
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 10:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E51EB64D9
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 11:55:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234244AbjFQKiL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 06:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58440 "EHLO
+        id S231603AbjFQLzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 07:55:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346286AbjFQKiG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 06:38:06 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A5532D79
-        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 03:37:21 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-51a3e6a952aso1912802a12.3
-        for <linux-clk@vger.kernel.org>; Sat, 17 Jun 2023 03:37:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1686998172; x=1689590172;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/1x1TufhGga+vhofQhW3+rOkuF8WKt/IeOnnrmJtrog=;
-        b=BSLERsDAgGslIeEyq94ScS8bRLgPPRRRwT8Nf8n+6gest5CBJm7weH95XbHUWqLPrs
-         lMqAZ5YohISaainT6DoT5KRo+06ct7IyRAWJITH8QiX+CKXNRf7RTEbj4ehIcYJxYtHJ
-         S+tMFiI9UWNXT2a5hg0KLa/1NxteLO2ap4RvVkp9qGeFfK5FKir/7euwyrkgLckOtKmi
-         Xn2ZIAD96h2+mraRrWLl1sWZ/1oEO7vpCWKa7qJYU0VpWfYwdunjJkr7fjK6tTnVnk6L
-         LIWC6DFNj4ViFnScRoCYtPIpyJ2HWmk9OlLm6i3tklX7Kcc0HpSuhcjnvvvKwhWWp6Pq
-         o8mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686998172; x=1689590172;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/1x1TufhGga+vhofQhW3+rOkuF8WKt/IeOnnrmJtrog=;
-        b=VVFSSa7IIekccYjk9mrzRTzYpUCZ/UUGiqGodLGLQ155CdaCAvdnZcJn3Ko36Evrgn
-         ybLSVQMEyPTjerLyP/GIts7IAhBgkB5HxXD6m3afQywwgDxo7UUC9Ku2e5azNEy4Vbrw
-         247ED3I7OCqSWzcYTHOfI3HB5O3AszC7AmAMpPpqxW0bA0W41xQZS0mO6exphTLgmJeY
-         L9DB66Dbz3TY0q7LqAqHhHRQ7bySB6H/pU5J3fpV+MHLd8MdTzpQXrFvkLTwtKIy98d3
-         p6aQbjyi0FczsL+z+TWqyfZAYgexUKbJ5UpnbtkBSyQtm2ceChfOWw9Pjt9JAjS6MRo+
-         1Oog==
-X-Gm-Message-State: AC+VfDycyhSllqRpD4xzB7xekFuSz7M4r0AMxeBtGApxbxbmh1VIfvze
-        6tHnkSq5yjqsuLfzoBo+CPwCWw==
-X-Google-Smtp-Source: ACHHUZ7OhqQdwYiCXLWpW4pNAkdtQLu1xzSJt4dCibpw5uqj3GQ/nixFPiQmcTPdSiQpJVj0JEscIg==
-X-Received: by 2002:a17:907:7204:b0:94f:5847:8ac with SMTP id dr4-20020a170907720400b0094f584708acmr4832912ejc.51.1686998172291;
-        Sat, 17 Jun 2023 03:36:12 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id s22-20020a1709064d9600b00982881f1e2dsm4053734eju.84.2023.06.17.03.36.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Jun 2023 03:36:11 -0700 (PDT)
-Date:   Sat, 17 Jun 2023 12:36:09 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        "vadfed@meta.com" <vadfed@meta.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "vadfed@fb.com" <vadfed@fb.com>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "M, Saeed" <saeedm@nvidia.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "sj@kernel.org" <sj@kernel.org>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jacek.lawrynowicz@linux.intel.com" 
-        <jacek.lawrynowicz@linux.intel.com>,
-        "airlied@redhat.com" <airlied@redhat.com>,
-        "ogabbay@kernel.org" <ogabbay@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux@zary.sk" <linux@zary.sk>,
-        "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "kuniyu@amazon.com" <kuniyu@amazon.com>,
-        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
-        "razor@blackwall.org" <razor@blackwall.org>,
-        "idosch@nvidia.com" <idosch@nvidia.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
-        "phil@nwl.cc" <phil@nwl.cc>,
-        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v8 01/10] dpll: documentation on DPLL subsystem
- interface
-Message-ID: <ZI2MmaQ1NAggT+l6@nanopsycho>
-References: <20230609121853.3607724-2-arkadiusz.kubalewski@intel.com>
- <20230612154329.7bd2d52f@kernel.org>
- <ZIg8/0UJB9Lbyx2D@nanopsycho>
- <20230613093801.735cd341@kernel.org>
- <ZImH/6GzGdydC3U3@nanopsycho>
- <DM6PR11MB465799A5A9BB0B8E73A073449B5AA@DM6PR11MB4657.namprd11.prod.outlook.com>
- <20230614121514.0d038aa3@kernel.org>
- <20230614122348.3e9b7e42@kernel.org>
- <ZIrldB4ic3zt9nIk@nanopsycho>
- <20230615093111.0ee762e4@kernel.org>
+        with ESMTP id S231504AbjFQLzi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 07:55:38 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DAF196;
+        Sat, 17 Jun 2023 04:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1687002937; x=1718538937;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=G+HfwYIcm+n32dQlKCCmezW1oWNyiT7XDmX66Zx/zos=;
+  b=FN8Faj1NzxnPiXShCJ4UXCM9Q/iLObRfLWEUQoMQPMuVbWPeK3jMfEww
+   llO2sapz/JKLjYsIRivPHuK5naKeabXw+GkyPE7KYETak0s4ajCJqWlqy
+   djEx2d2ey3GvQFTW7tOQNkuRtXehC7zBX9TR1iePdIrecEiF2s2YYMdCs
+   QHRQ4ffHAazNztwuiZlFpO0IpLFf/7tq3WkAHkzM3kIRfNiQzepxA2zCx
+   rX/fMpsK47K8XRhepPjY4BjQ9vJ7ZzLLDb+GhttEHSxZq9ABx1mqhqH3N
+   5Vd2+JhxJwtssdknSVTS4Y7a7mo4GyVuTz1/xtTJi86EOLh9LN+eV1IxS
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="358255221"
+X-IronPort-AV: E=Sophos;i="6.00,250,1681196400"; 
+   d="scan'208";a="358255221"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2023 04:55:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10743"; a="690546088"
+X-IronPort-AV: E=Sophos;i="6.00,250,1681196400"; 
+   d="scan'208";a="690546088"
+Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 17 Jun 2023 04:55:32 -0700
+Received: from kbuild by 783282924a45 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qAUWi-0002jQ-0S;
+        Sat, 17 Jun 2023 11:55:32 +0000
+Date:   Sat, 17 Jun 2023 19:54:57 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Frank Oltmanns <frank@oltmanns.dev>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     oe-kbuild-all@lists.linux.dev, Frank Oltmanns <frank@oltmanns.dev>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: Re: [PATCH v4 2/2] clk: fractional-divider: tests: Add test suite
+ for edge cases
+Message-ID: <202306171912.PqJBpGMg-lkp@intel.com>
+References: <20230617102919.27564-3-frank@oltmanns.dev>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230615093111.0ee762e4@kernel.org>
+In-Reply-To: <20230617102919.27564-3-frank@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, Jun 15, 2023 at 06:31:11PM CEST, kuba@kernel.org wrote:
->On Thu, 15 Jun 2023 12:18:28 +0200 Jiri Pirko wrote:
->> Yeah, that is what we had originally. This just pushes out the
->> different attr selection from the nest one level up to the actualy
->> nesting attribute.
->
->Oh no, no extra nesting. Let me try to fake up the output:
+Hi Frank,
 
-I wasn't implying any extra nesting.
+kernel test robot noticed the following build warnings:
 
->
->'pin': [{
-> {'clock-id': 282574471561216,
->  'module-name': 'ice',
->  'pin-dpll-caps': 4,
->  'pin-id': 13,
->  'parent-device': [{'pin-id': 2, 'pin-state': 'connected'},
->                    {'pin-id': 3, 'pin-state': 'disconnected'}],
->  'parent-pin': [{'id': 0, 'pin-direction': 'input'},
->                 {'id': 1, 'pin-direction': 'input'}],
->  'pin-type': 'synce-eth-port'}
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.4-rc6 next-20230616]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-You messed up a bit. Should be:
-parent-device : id
-parent-pin : pin-id
+url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Oltmanns/clk-fractional-divider-Improve-approximation-when-zero-based-and-export/20230617-183118
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20230617102919.27564-3-frank%40oltmanns.dev
+patch subject: [PATCH v4 2/2] clk: fractional-divider: tests: Add test suite for edge cases
+config: arm-randconfig-r046-20230617 (https://download.01.org/0day-ci/archive/20230617/202306171912.PqJBpGMg-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20230617/202306171912.PqJBpGMg-lkp@intel.com/reproduce)
 
-That is basically my point. The fact if the parent is either device or
-pin is carried inside the nest by either providing "id" or "pin-id".
-So you add redundant info which could be source of mixups - as you
-already demonstrated :)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202306171912.PqJBpGMg-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/clk/clk-fractional-divider_test.c: In function 'clk_fd_test_approximation_max_denominator':
+>> drivers/clk/clk-fractional-divider_test.c:26:48: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
+      26 |         unsigned long rate, parent_rate, m, n, max_m, max_n;
+         |                                                ^~~~~
+   drivers/clk/clk-fractional-divider_test.c: In function 'clk_fd_test_approximation_max_denominator_zero_based':
+   drivers/clk/clk-fractional-divider_test.c:88:48: warning: variable 'max_m' set but not used [-Wunused-but-set-variable]
+      88 |         unsigned long rate, parent_rate, m, n, max_m, max_n;
+         |                                                ^~~~~
 
 
->}]
->
->> One downside of this is you will have 2 arrays of parent objects,
->> one per parent type. Current code neatly groups them into a single array.
->> 
->> I guess this is a matter of personal preference, I'm fine either way.
->
->Yeah, could be.
+vim +/max_m +26 drivers/clk/clk-fractional-divider_test.c
+
+    15	
+    16	/*
+    17	 * Test the maximum denominator case for fd clock without flags.
+    18	 *
+    19	 * Expect the highest possible denominator to be used in order to get as close as possible to the
+    20	 * requested rate.
+    21	 */
+    22	static void clk_fd_test_approximation_max_denominator(struct kunit *test)
+    23	{
+    24		struct clk_fractional_divider *fd;
+    25		struct clk_hw *hw;
+  > 26		unsigned long rate, parent_rate, m, n, max_m, max_n;
+    27	
+    28		fd = kunit_kzalloc(test, sizeof(*fd), GFP_KERNEL);
+    29		KUNIT_ASSERT_NOT_NULL(test, fd);
+    30	
+    31		fd->mwidth = 3;
+    32		max_m = 7;
+    33		fd->nwidth = 3;
+    34		max_n = 7;
+    35	
+    36		hw = &fd->hw;
+    37	
+    38		rate = 240000000;
+    39		parent_rate = (max_n + 1) * rate; /* so that it exceeds the maximum divisor */
+    40	
+    41		clk_fractional_divider_general_approximation(hw, rate, &parent_rate, &m, &n);
+    42		KUNIT_EXPECT_EQ(test, parent_rate, (max_n + 1) * rate); /* parent remains unchanged */
+    43		KUNIT_EXPECT_EQ(test, m, 1);
+    44		KUNIT_EXPECT_EQ(test, n, max_n);
+    45	}
+    46	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
