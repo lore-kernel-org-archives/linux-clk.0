@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73777EB64D9
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 15:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 540B1EB64DA
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Jun 2023 15:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231892AbjFQPDQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Jun 2023 11:03:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58632 "EHLO
+        id S235504AbjFQPDV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Jun 2023 11:03:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229675AbjFQPDQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 11:03:16 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637FF10C0;
-        Sat, 17 Jun 2023 08:03:15 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id ca18e2360f4ac-77807e43b7cso76908339f.1;
-        Sat, 17 Jun 2023 08:03:15 -0700 (PDT)
+        with ESMTP id S234911AbjFQPDT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Jun 2023 11:03:19 -0400
+Received: from mail-il1-x131.google.com (mail-il1-x131.google.com [IPv6:2607:f8b0:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 511BA10C0;
+        Sat, 17 Jun 2023 08:03:18 -0700 (PDT)
+Received: by mail-il1-x131.google.com with SMTP id e9e14a558f8ab-341cb9528f5so8320235ab.1;
+        Sat, 17 Jun 2023 08:03:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687014194; x=1689606194;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iaDvkdYLQBtU/nADrwFwUGWyyN8uC5RTkbYxexq0IeI=;
-        b=fR1N25DL0u6zn3KOdbj+1ntoMUmc5NpTNMD3NvIMCMTV+vxQJtENhBvXTK26Yr85YO
-         QufWc0djtwWXgdGxbfxBgBHE6jdI1DWP9QanT46IoCfvUEyl0XM9OuCAHVGCQUFKL2L3
-         e0rfwUdlNfrX8Dx2332UwJVJSM2b3hOSmmqcOVF980mCSn1/nAMkdrTSFpwev236YahW
-         d9Ysj1z8rQXi9/4tucroCz28a9Y1dykmTcj84kkHdFL0qQgqz6htDhDKRQJn5/+CGjRP
-         ss6xcu6axQcky6L1B9BHkQLldhV6qrkLMJohgexgs677XN71qTe8v1fPsApn00Pm+GwH
-         Z7Vw==
+        d=gmail.com; s=20221208; t=1687014197; x=1689606197;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tzTPe8onR/N23LI5oBvszIpSUyj+OYOJF/gBItcCYUo=;
+        b=gvv/ozeksl8FCZoAYBt7y5n4+RwRIUn2dEzC/hbOLsJxYZPB95E6Hq++p1sRNf8bpE
+         vouUQFQbhCCLJqVeE4vHfihpKqzAMuv6NaBvciuhhNQ170Y19UULvjouNCgkbfAKsoI4
+         vOBApMH4g//fgBlD1KlvEZZTPA1uZVcepLe4DnwKCAfww3R/3Fx4Mmecrcq91rmYOpVF
+         ec9Ku7DhYEbQ6grnl50uk/xS32S99io5wRZE3Ksm3ifRIGf+MRNm5nSoWKzYit/SfahB
+         o2IGvqs9uLMC1g8BwjJBSngu2GP8X6grCkJQl3Eel6FgniIlPSa+v1zIEfUUhTrUKOLc
+         1XAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687014194; x=1689606194;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iaDvkdYLQBtU/nADrwFwUGWyyN8uC5RTkbYxexq0IeI=;
-        b=OaiGiFlntpYNNytAABlo8H7kpBG6SOXVUMyPRCT3MZHtYUaaQ3Z2JWBjuv5pqoUDCP
-         D6qe5+D2tfDFfzPJObMPXP5LPWmxpvSbSkEqpiIQyWz/pxxpO/XkpIoMTfQ73J/ozT1O
-         fukcjTjr/CE/uMfv4Ft4PGGgNN3uH3uGaghH1X3bWdMoqNozP8K6hPnSdEUuiTV3WrCm
-         ZHDa3wUC2o4Ivy5IzWzVrj5QK++iHO+U+cRiv7gjTodv2IO2FdbFJ/YANZA9UuBJkK2V
-         qv1Uq4GU3wP68Xri+ud3Moe66pfTUuehBBKGgprgqDgT3Q13SUnvbzRG1lt0nlvVZR2c
-         DSHg==
-X-Gm-Message-State: AC+VfDzy7qNq3w1u4FlmZIF8D1RqmvVrX5dAZ3i0Ijryb/3yWarFhKN8
-        iUhYqpvANz1WoLGa7Nd1HsCT29ZlSXKmtg==
-X-Google-Smtp-Source: ACHHUZ6DPe1105ctDF487mWMBeMRSPob9WGtneZTUuEJx8lRtpwU+sAFrq6bvLYvjlnG10uokSEcHA==
-X-Received: by 2002:a5e:da09:0:b0:774:8d99:184c with SMTP id x9-20020a5eda09000000b007748d99184cmr3337001ioj.11.1687014194261;
-        Sat, 17 Jun 2023 08:03:14 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687014197; x=1689606197;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tzTPe8onR/N23LI5oBvszIpSUyj+OYOJF/gBItcCYUo=;
+        b=BsusOa2P29vlH5k6YHEgwm8xEAIr6JcDl3qrtRHoSJlgImnQqQjb2dTjqPBWkNP1Ij
+         XsgkpYc3hPn2EdTdALh4IxDreUvkgfNJe5HJy4QCRPw2Wlqi/3sG+c7kUqEsyvT0nxfz
+         Vi8sXXp7704QMnE+hHqGl+ybCB73iCLO/fD3yaJCZl3R7EeILTtB5+z6MlMRsMc+D15O
+         CdCWwjw+QrO5CPWEv8W+M6fWR5/5z0XsS5KD22foVY67H6NdTfvA/qC2uFTnBsGunCmI
+         h+MtGF8gJCAwN5jbDIB0zh+7kq80J+1bEagkfSslGJa5HLsaLVluL97KKWv3UzMUhm3x
+         JtHA==
+X-Gm-Message-State: AC+VfDw7IqKaGg9AxFNvJINhzSDBQeiwSChj6vj9Cp2+5eWX/y1x+UiS
+        e7YYHb7E2KKeuuHtB3WJusR4YNDyxXUrBw==
+X-Google-Smtp-Source: ACHHUZ6mgJPGV1hXPLvOMfzt+wNibYm9apsNg4jLMNLIw+z2d1dT9e00aTl6z88V3BVBAukYCtDlkQ==
+X-Received: by 2002:a5d:91d6:0:b0:77a:c741:b749 with SMTP id k22-20020a5d91d6000000b0077ac741b749mr2649483ior.1.1687014197206;
+        Sat, 17 Jun 2023 08:03:17 -0700 (PDT)
 Received: from aford-B741.lan ([2601:447:d001:897f:2228:4762:4365:80b2])
-        by smtp.gmail.com with ESMTPSA id q3-20020a6b7103000000b0077e24ace3edsm623679iog.52.2023.06.17.08.03.13
+        by smtp.gmail.com with ESMTPSA id q3-20020a6b7103000000b0077e24ace3edsm623679iog.52.2023.06.17.08.03.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Jun 2023 08:03:13 -0700 (PDT)
+        Sat, 17 Jun 2023 08:03:16 -0700 (PDT)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
@@ -55,112 +56,42 @@ Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] clk: renesas: rcar-gen3: Add support for ZG clock
-Date:   Sat, 17 Jun 2023 10:02:59 -0500
-Message-Id: <20230617150302.38477-1-aford173@gmail.com>
+Subject: [PATCH 3/4] clk: renesas: r8a774e1: Add 3dge and ZG support
+Date:   Sat, 17 Jun 2023 10:03:01 -0500
+Message-Id: <20230617150302.38477-3-aford173@gmail.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230617150302.38477-1-aford173@gmail.com>
+References: <20230617150302.38477-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A clock used for the 3D graphics appears to be common
-among multiple SoC's, so add a generic gen3 clock
-for clocking the graphics.  This is similar to the
-cpg_z_clk, with a different frequency control register
-and different flags.  Instead of duplicating the code,
-make cpg_z_clk_register into a helper function and
-call the help function with the FCR and flags as
-a parameter.
+The 3dge and ZG clocks are necessary to support the 3D graphics.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index b3ef62fa612e..d0129a650941 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -264,11 +264,13 @@ static const struct clk_ops cpg_z_clk_ops = {
- 	.set_rate = cpg_z_clk_set_rate,
+diff --git a/drivers/clk/renesas/r8a774e1-cpg-mssr.c b/drivers/clk/renesas/r8a774e1-cpg-mssr.c
+index a790061db877..13fed5e59068 100644
+--- a/drivers/clk/renesas/r8a774e1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774e1-cpg-mssr.c
+@@ -76,6 +76,7 @@ static const struct cpg_core_clk r8a774e1_core_clks[] __initconst = {
+ 	/* Core Clock Outputs */
+ 	DEF_GEN3_Z("z",		R8A774E1_CLK_Z,     CLK_TYPE_GEN3_Z,  CLK_PLL0, 2, 8),
+ 	DEF_GEN3_Z("z2",	R8A774E1_CLK_Z2,    CLK_TYPE_GEN3_Z,  CLK_PLL2, 2, 0),
++	DEF_GEN3_Z("zg",	R8A774E1_CLK_ZG,    CLK_TYPE_GEN3_ZG, CLK_PLL4, 4, 24),
+ 	DEF_FIXED("ztr",        R8A774E1_CLK_ZTR,   CLK_PLL1_DIV2,  6, 1),
+ 	DEF_FIXED("ztrd2",      R8A774E1_CLK_ZTRD2, CLK_PLL1_DIV2, 12, 1),
+ 	DEF_FIXED("zt",         R8A774E1_CLK_ZT,    CLK_PLL1_DIV2,  4, 1),
+@@ -124,6 +125,7 @@ static const struct cpg_core_clk r8a774e1_core_clks[] __initconst = {
  };
  
--static struct clk * __init cpg_z_clk_register(const char *name,
-+static struct clk * __init __cpg_z_clk_register(const char *name,
- 					      const char *parent_name,
- 					      void __iomem *reg,
- 					      unsigned int div,
--					      unsigned int offset)
-+					      unsigned int offset,
-+					      unsigned int fcr,
-+					      unsigned int flags)
- {
- 	struct clk_init_data init = {};
- 	struct cpg_z_clk *zclk;
-@@ -280,11 +282,11 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- 
- 	init.name = name;
- 	init.ops = &cpg_z_clk_ops;
--	init.flags = CLK_SET_RATE_PARENT;
-+	init.flags = flags;
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
--	zclk->reg = reg + CPG_FRQCRC;
-+	zclk->reg = reg + fcr;
- 	zclk->kick_reg = reg + CPG_FRQCRB;
- 	zclk->hw.init = &init;
- 	zclk->mask = GENMASK(offset + 4, offset);
-@@ -301,6 +303,27 @@ static struct clk * __init cpg_z_clk_register(const char *name,
- 	return clk;
- }
- 
-+static struct clk * __init cpg_z_clk_register(const char *name,
-+					      const char *parent_name,
-+					      void __iomem *reg,
-+					      unsigned int div,
-+					      unsigned int offset)
-+{
-+	return __cpg_z_clk_register(name, parent_name, reg, div, offset,
-+				    CPG_FRQCRC, CLK_SET_RATE_PARENT);
-+}
-+
-+static struct clk * __init cpg_zg_clk_register(const char *name,
-+					       const char *parent_name,
-+					       void __iomem *reg,
-+					       unsigned int div,
-+					       unsigned int offset)
-+{
-+	return __cpg_z_clk_register(name, parent_name, reg, div, offset,
-+				    CPG_FRQCRB, 0);
-+
-+}
-+
- static const struct clk_div_table cpg_rpcsrc_div_table[] = {
- 	{ 2, 5 }, { 3, 6 }, { 0, 0 },
- };
-@@ -438,6 +461,10 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
- 					  base, core->div, core->offset);
- 
-+	case CLK_TYPE_GEN3_ZG:
-+		return cpg_zg_clk_register(core->name, __clk_get_name(parent),
-+					   base, core->div, core->offset);
-+
- 	case CLK_TYPE_GEN3_OSC:
- 		/*
- 		 * Clock combining OSC EXTAL predivider and a fixed divider
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.h b/drivers/clk/renesas/rcar-gen3-cpg.h
-index 9028bf4295ce..bfdc649bdf12 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-@@ -22,6 +22,7 @@ enum rcar_gen3_clk_types {
- 	CLK_TYPE_GEN3_R,
- 	CLK_TYPE_GEN3_MDSEL,	/* Select parent/divider using mode pin */
- 	CLK_TYPE_GEN3_Z,
-+	CLK_TYPE_GEN3_ZG,
- 	CLK_TYPE_GEN3_OSC,	/* OSC EXTAL predivider and fixed divider */
- 	CLK_TYPE_GEN3_RCKSEL,	/* Select parent/divider using RCKCR.CKSEL */
- 	CLK_TYPE_GEN3_RPCSRC,
+ static const struct mssr_mod_clk r8a774e1_mod_clks[] __initconst = {
++	DEF_MOD("3dge",			 112,	R8A774E1_CLK_ZG),
+ 	DEF_MOD("fdp1-1",		 118,	R8A774E1_CLK_S0D1),
+ 	DEF_MOD("fdp1-0",		 119,	R8A774E1_CLK_S0D1),
+ 	DEF_MOD("tmu4",			 121,	R8A774E1_CLK_S0D6),
 -- 
 2.39.2
 
