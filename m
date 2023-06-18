@@ -2,137 +2,158 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B249AEB64D7
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jun 2023 19:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1A1EB64D7
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Jun 2023 23:39:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229519AbjFRTSM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Jun 2023 15:18:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38596 "EHLO
+        id S229575AbjFRXjH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Jun 2023 19:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbjFRTSM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jun 2023 15:18:12 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68078FC;
-        Sun, 18 Jun 2023 12:18:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id ED67E60C91;
-        Sun, 18 Jun 2023 19:18:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF233C433C8;
-        Sun, 18 Jun 2023 19:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687115890;
-        bh=/vS2RnSOJk0DnospOK4BfOYwwbxR6nlM/Q7dvGK/FTQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jZFv52WuCzEwuk4QP8lx6cwSDc7mFFmDfvm5z5jr32GHXC0EnkI1AiW5A67RhchT2
-         bEKKFKdX+wys/vD/MVI9c5CPUHKQSwjFexot7zNQ3aC34wSVbXsUpqU+fNBL1VcQmf
-         +omPHhTF1BQNJfR746/ZpPUX3AtzVRo9hRfnQ0kvJa+NOJyyH8cXS8KNuyG8I6CMQw
-         lOcBuxVGanIn5qh91fR6Issb7i5mRLmOLjQMJW9Lb4BI2OR5aI/nRbwg33zRPDa1g6
-         DepmsnuXaXlAtjh9jTDR9y3ZyzuY9R6eznGecH9j5zFFAC6nUv3x5M+zGNGibaX2xH
-         lgQVFyALfxoYw==
-Date:   Sun, 18 Jun 2023 20:18:04 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Lucas Tanure <tanure@linux.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nick <nick@khadas.com>, Artem <art@khadas.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 4/6] dt-bindings: serial: amlogic, meson-uart: support T7
-Message-ID: <20230618-ammonium-scratch-2990eb8c3ac7@spud>
-References: <20230615182938.18487-1-tanure@linux.com>
- <20230615182938.18487-5-tanure@linux.com>
- <20230615-mushroom-numeric-3a4c03f2204b@spud>
- <CAJX_Q+2ND=GJEEXdLLpEWoecN5gtZm-1i92pAgi+eQocSRUVqw@mail.gmail.com>
+        with ESMTP id S229456AbjFRXjG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jun 2023 19:39:06 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035A018F;
+        Sun, 18 Jun 2023 16:39:03 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f8689fbf59so1258437e87.0;
+        Sun, 18 Jun 2023 16:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687131541; x=1689723541;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4eeAR9R8E9A8Z+bQ+zX5X1J755XJwi+6HLbi8oL22nI=;
+        b=QFB1ckMiJLUDtT0oYq3Jcqd3iPBnFkeLlPVywccCkR67oKxmJ9jBG579cAMN5qnAI1
+         aauCNBmR/7ZrLYfuczuZP/TDX1Qkt69pBwNJIUA6/rOobM6ha/NHvsszJLTWu4jaB6+p
+         7ZpSaA/hd6lNB9ujWQcKVECBBo8rYxc2Qiis+4QWN+b1T3a7ZIxgsM4ckp78JUqANORD
+         RnqhJIg1y7um2BRkaO1DcwHFKgClJz/9Rvmn60kDQEsAwyC9wq288CF+Uj9+Y/J0OZrx
+         ZeFS305qSefjRi7EPU+EEbgVvFEGWVij/G72SwSwnBzmysJfLqMVh+TNb2vwa8yy8M5N
+         A8wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687131541; x=1689723541;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4eeAR9R8E9A8Z+bQ+zX5X1J755XJwi+6HLbi8oL22nI=;
+        b=SGHXbqe/2riwl7kWGr0s6CS76GUKSh4GUeeDaELpwJUNf5Hd/tImBO1jsfnI68A/yy
+         5lefRaTfOHoVKJBGsPsi94Sk19g101moSts7S1xExdEKLYnLO4o6KornIpDid+pzKdPh
+         Y7qBgEv61Wu+wtkOGUVc504nH2Y09pTKVn2i7K/RfI5a3dylA1KhqrS5mYKuKKU1RpbL
+         4h/FsJMNglSwLGc29P3TK2R2MU3lj2U7uwF50A/pCCrH2JVW8JB7Es3xO66XrWaNCMdS
+         zA/pRO6lzQCe4j7ObOz2ZrEW0pzZCiY3W8+EAqGPWt1oYjyoHOGzZ7U0rIrBqsXUqhpX
+         EI4A==
+X-Gm-Message-State: AC+VfDyuNYqm4SG88aFBwZrgwWMTW7BWLXL6fRhXJxa6FiB4vZHGW9Uz
+        xbmJwZ7ZKjgEabFRTodj61kbK08FIng=
+X-Google-Smtp-Source: ACHHUZ76Inx58CustymSURuIxtp4MPSIAxJBVjNFXSgpv2fGM68JwEPT0rQ207uQz5TfPIh+Xei+bQ==
+X-Received: by 2002:a19:4f5a:0:b0:4f4:a656:2466 with SMTP id a26-20020a194f5a000000b004f4a6562466mr2747156lfk.15.1687131540651;
+        Sun, 18 Jun 2023 16:39:00 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-149-7.dynamic.spd-mgts.ru. [109.252.149.7])
+        by smtp.googlemail.com with ESMTPSA id m3-20020ac24283000000b004f76684329esm2112198lfh.234.2023.06.18.16.38.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Jun 2023 16:39:00 -0700 (PDT)
+Message-ID: <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
+Date:   Mon, 19 Jun 2023 02:38:59 +0300
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gLIFy3noUErwq6fk"
-Content-Disposition: inline
-In-Reply-To: <CAJX_Q+2ND=GJEEXdLLpEWoecN5gtZm-1i92pAgi+eQocSRUVqw@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-tegra@vger.kernel.org
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+ <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+Content-Language: en-US
+From:   Dmitry Osipenko <digetx@gmail.com>
+In-Reply-To: <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+05.05.2023 14:26, Maxime Ripard пишет:
+> The Tegra super clocks implements a mux with a set_parent hook, but
+> doesn't provide a determine_rate implementation.
+> 
+> This is a bit odd, since set_parent() is there to, as its name implies,
+> change the parent of a clock. However, the most likely candidate to
+> trigger that parent change is a call to clk_set_rate(), with
+> determine_rate() figuring out which parent is the best suited for a
+> given rate.
+> 
+> The other trigger would be a call to clk_set_parent(), but it's far less
+> used, and it doesn't look like there's any obvious user for that clock.
+> 
+> So, the set_parent hook is effectively unused, possibly because of an
+> oversight. However, it could also be an explicit decision by the
+> original author to avoid any reparenting but through an explicit call to
+> clk_set_parent().
+> 
+> The driver does implement round_rate() though, which means that we can
+> change the rate of the clock, but we will never get to change the
+> parent.
+> 
+> However, It's hard to tell whether it's been done on purpose or not.
+> 
+> Since we'll start mandating a determine_rate() implementation, let's
+> convert the round_rate() implementation to a determine_rate(), which
+> will also make the current behavior explicit. And if it was an
+> oversight, the clock behaviour can be adjusted later on.
+> 
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/tegra/clk-super.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+> index 3f3a7a203c5f..7ec47942720c 100644
+> --- a/drivers/clk/tegra/clk-super.c
+> +++ b/drivers/clk/tegra/clk-super.c
+> @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_super_mux_ops = {
+>  	.restore_context = clk_super_mux_restore_context,
+>  };
+>  
+> -static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
+> -				 unsigned long *parent_rate)
+> +static int clk_super_determine_rate(struct clk_hw *hw,
+> +				    struct clk_rate_request *req)
+>  {
+>  	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
+>  	struct clk_hw *div_hw = &super->frac_div.hw;
+> +	unsigned long rate;
+>  
+>  	__clk_hw_set_clk(div_hw, hw);
+>  
+> -	return super->div_ops->round_rate(div_hw, rate, parent_rate);
+> +	rate = super->div_ops->round_rate(div_hw, req->rate,
+> +					  &req->best_parent_rate);
+> +	if (rate < 0)
+> +		return rate;
+> +
+> +	req->rate = rate;
+> +	return 0;
+>  }
+>  
+>  static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
+> @@ -193,7 +200,7 @@ const struct clk_ops tegra_clk_super_ops = {
+>  	.get_parent = clk_super_get_parent,
+>  	.set_parent = clk_super_set_parent,
+>  	.set_rate = clk_super_set_rate,
+> -	.round_rate = clk_super_round_rate,
+> +	.determine_rate = clk_super_determine_rate,
+>  	.recalc_rate = clk_super_recalc_rate,
+>  	.restore_context = clk_super_restore_context,
+>  };
+> 
 
---gLIFy3noUErwq6fk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tegra30 doesn't boot anymore with this change. Best would be to keep the
+old behaviour for both sclk and periph tegra clocks.
 
-On Sun, Jun 18, 2023 at 06:37:40PM +0100, Lucas Tanure wrote:
-> On Thu, Jun 15, 2023 at 10:25=E2=80=AFPM Conor Dooley <conor@kernel.org> =
-wrote:
-> >
-> > On Thu, Jun 15, 2023 at 07:29:36PM +0100, Lucas Tanure wrote:
-> > > Add serial bindings support menson T7 SoC family.
-> > >
-> > > Signed-off-by: Lucas Tanure <tanure@linux.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml | 1=
- +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/serial/amlogic,meson-u=
-art.yaml b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
-> > > index 01ec45b3b406..01b01f8840ea 100644
-> > > --- a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
-> > > +++ b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
-> > > @@ -46,6 +46,7 @@ properties:
-> > >            - amlogic,meson8b-uart
-> > >            - amlogic,meson-gx-uart
-> > >            - amlogic,meson-s4-uart
-> > > +          - amlogic,meson-t7-uart
-> >
-> > | diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/mes=
-on_uart.c
-> > | index 2501db5a7aaf..0208f9a6ba7e 100644
-> > | --- a/drivers/tty/serial/meson_uart.c
-> > | +++ b/drivers/tty/serial/meson_uart.c
-> > | @@ -796,6 +796,10 @@ static const struct of_device_id meson_uart_dt_m=
-atch[] =3D {
-> > |                 .compatible =3D "amlogic,meson-s4-uart",
-> > |                 .data =3D (void *)&meson_g12a_uart_data,
-> > |         },
-> > | +       {
-> > | +               .compatible =3D "amlogic,meson-t7-uart",
-> > | +               .data =3D (void *)&meson_g12a_uart_data,
-> > | +       },
-> > |         { /* sentinel */ },
-> > |  };
-> > |  MODULE_DEVICE_TABLE(of, meson_uart_dt_match);
-> >
-> > You're adding another element to this enum, but the driver change
-> > implies compatibility with the s4 uart. Should you not set this up with
-> > fallback compatibles?
->=20
-> I will drop this patch and use the s4 and g12a compatible strings.
-
-You still need to add a compatible for the t7, just let it fall back to
-one of the others. Eg:
-compatible =3D "amlogic,meson-t7-uart", "amlogic,meson-s4-uart";
-
-Cheers,
-Conor.
-
---gLIFy3noUErwq6fk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZI9YbAAKCRB4tDGHoIJi
-0pSJAP4pCeRXWnB2Azet+8vaCW46xvhOyL8mjbZXG+XvzEZAEwD/TE2Nc5oOrKfm
-tgEfqnMjGs3egm4P1F5l0K+qluDHmgM=
-=1dUJ
------END PGP SIGNATURE-----
-
---gLIFy3noUErwq6fk--
