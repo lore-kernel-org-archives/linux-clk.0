@@ -2,138 +2,218 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0112EEB64DA
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 16:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3F3EB64D9
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 16:36:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232184AbjFSQN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jun 2023 12:13:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33388 "EHLO
+        id S232032AbjFSQg3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jun 2023 12:36:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232160AbjFSQN1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 12:13:27 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFDA01B6
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jun 2023 09:13:25 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b4826ba943so10611511fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jun 2023 09:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687191204; x=1689783204;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hmgYvNinjU/fT+erZeLft1aKLnZsg+oPmLA3CULSbeM=;
-        b=PTEHzxVjoT1bF8b5NSp4p68xB+MVPrSsJJUY0khQid3MBOQ+0J/+/PjP5ztIJnoEte
-         wnFd+gMhlzHN05KizStYKFgY0/J+neM+FabraUyIE4grK0b2Xy36NcJEcfAiw/eidaTL
-         lBbCMzwMCHodFXALMzlUfFHUad8nkzCyoihpPCx6ZhelQM7cijXatQVr4/BNAib/4/zt
-         EVBHsyAyofZh9OiQNOounIyW6aW5CrPCYY1bdmTzYy2IrpZSC51i0Todnq/bli6Xw9mS
-         6D3ZYv9axSfxuK0o7pZQ2IxZZBVV5cteCUXqmOSQPNYe7B847ZjptQGNcfhNtWYSarSo
-         LpcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687191204; x=1689783204;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hmgYvNinjU/fT+erZeLft1aKLnZsg+oPmLA3CULSbeM=;
-        b=U87z2Ts0ZPVRYsYL+RoDljaAbaPRSHRZg4vrgSfKuT9R8pRg6pocFQXyjUGI5gQqCW
-         z8zr/hR4Ycigsf47uI3I9ZIyk2E+Sfqmy3eqZ+OCkNvFPU9F9MBP32z2VZjisoA5e+D6
-         4B1ogG3u3P+OMqpSbD6Rnc1Qz9hLDPCYKm6KaN0oJ4/pFEOgnfCef/e1tI7MNS7LRoAb
-         1Tv+JOFNueWdmpvoYglUGGWRsa7mD73atFm+DhOVU30HDItqCjltX7GEMjeuZNiB3lu2
-         zV2tbdk+8BN8DTQaq1DmBECTVMJvWas9fPXMqlk6NGjhyp1ULLQFip5xIEQdJsl+Wu0H
-         8kfQ==
-X-Gm-Message-State: AC+VfDxq9mAQeF7nb1VS1EWeqiuQHXpFUSYME6fdGF+Ud5BVPC+gFert
-        71YgVrVe/yCDVMZPeVY44yuXng==
-X-Google-Smtp-Source: ACHHUZ5FVyfJK40+gm5ktlujj/AXdHiYmbvKw0KBnc6dK1hlmNuaf+P6ZagFHzrzYXyq0LyYIyYb4A==
-X-Received: by 2002:a2e:960d:0:b0:2ad:d291:72e1 with SMTP id v13-20020a2e960d000000b002add29172e1mr6611945ljh.18.1687191204336;
-        Mon, 19 Jun 2023 09:13:24 -0700 (PDT)
-Received: from [192.168.1.101] (abyl242.neoplus.adsl.tpnet.pl. [83.9.31.242])
-        by smtp.gmail.com with ESMTPSA id x20-20020a2e7c14000000b002b471efb253sm1011714ljc.46.2023.06.19.09.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jun 2023 09:13:24 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 19 Jun 2023 18:13:18 +0200
-Subject: [PATCH 2/2] clk: qcom: gcc-sc8280xp: Add runtime PM
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230619-topic-sc8280xp-clk-rpm-v1-2-1e5e1064cdb2@linaro.org>
-References: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
-In-Reply-To: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S231550AbjFSQg2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 12:36:28 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC80110E;
+        Mon, 19 Jun 2023 09:36:26 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 972DD5C01F3;
+        Mon, 19 Jun 2023 12:36:24 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 19 Jun 2023 12:36:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1687192584; x=1687278984; bh=Uu
+        hVo65gu7gMZTFNFSuRoYBhg4H4ij8B83s8y9DwSoA=; b=WrzKMLafCtsoOr8TEF
+        alOpm0v0pDpH0tulTE81ND1k9YwYQLkX1AFJE69Mi+IWhrf3mTsL1TUVGJk5kqTs
+        uQEvqkPnV5jt49pCLKr4FVjE1rZNRE8z+OsR0stwftsyxlWJwKSbWoUQQ1jYkojg
+        MKGHNOfLIVVMFnKOh8zGDh5K0J0wpZvifONs2WV3BEuBFZyM/+PHwJMHOTjk+0sy
+        KfxZpBOCcsJcjmobg7zg5X4ED+01zRDeMwqwUx/qMnr2JZ1nUwnVY4W/xejs/oNp
+        0pH/5SDpY+rmPfHPrhiS3312dbuwr+t/Z1ork+eFEhe/OON6t2epLQ677J2KegT1
+        Oo6g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1687192584; x=1687278984; bh=UuhVo65gu7gMZ
+        TFNFSuRoYBhg4H4ij8B83s8y9DwSoA=; b=T16DgW7ruO4dpU16BHZHZeX4JGUL4
+        Vqtcypt4muavFn51JwHBkPO1Sr/sD9MB0vQHGq3p25SeQ76m94qShzoxMI7iai2t
+        GnM9fUJX+068jEPCTUPmaLoGeYA4vsmCmk6KklhpY2roRblaEJWi4ZCqE/3oTi+4
+        h/j+u1kBSzi8NgpAMYkSltLsvbH6cc0MlQ2UT+DMMz0hq2C7yuvOlnT4blZaJnZ9
+        uz5fBdjorRwpYXXCfXp4qBmyNaoZk2GDno+uBuulvBZJ73C7T4nbIMSG86N88ovA
+        ma803FgEqqYcE+ktVjisxWWTPbVdn57eb2ihJEJWC5ZoQW4AtTC0BIdxg==
+X-ME-Sender: <xms:B4SQZH8Y3g9jq5ms1UocppEEYCjYDD7vrRKQB6vzIdOIhD2Y7aNrhw>
+    <xme:B4SQZDuknErB4-eDOjFcMWpc5WHnbkePy1styhEqRXNoLbrgcKtrviyC6UIJEWsP7
+    lYdcqj-8Pc0ndP4K20>
+X-ME-Received: <xmr:B4SQZFBHAwjbGEZchQZ31yfzQCbMYte9jQvuhuLV4hf3QdUN9vEJ5xkaQ084LdUD45PIHYf98BX9tXVPZlc1JQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeefvddguddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttdejnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepledufeegudehveeljeeigfehtedvffehjedvjeevhfduueevheeuvedv
+    veevueeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:B4SQZDepGr4oIZrroO9_plbOyxtGKOmB3QkTWCFoy8wcXZIpnlpRmQ>
+    <xmx:B4SQZMM6WdK4BzdYKklXXTqXx_iVVmRO4CiTqfLiWUq1h5ShaIXLPw>
+    <xmx:B4SQZFnTc4GANHYU2twsTB33xulZ1QtWJPUebEt1CubDfGOL8qwXvw>
+    <xmx:CISQZNED4Gu4sO9FYaiB5H5pCpE7I2_SkCeLzfn5-fWtbaRTFCOmVQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 19 Jun 2023 12:36:22 -0400 (EDT)
+Date:   Mon, 19 Jun 2023 18:36:19 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1687191201; l=1628;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=iLOsinGTJtv8sPDkEM7a2zWDxDnO0K1p+yOFG6UU878=;
- b=7gTXtpfYHcJ+0pwGRH82J2GexETpGG26Gyb/o04zQKY9qD5wnd1s78SdNgclCurw05CB4RlMi
- lEdx/i0XRbsDjfQmEAqtdOzVf3WwIQRHifziP649VUBKp7lkQLL5FK5
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: nkm: consider alternative parent
+ rates when finding rate
+Message-ID: <mdpeq63lziegp2pyp7a5fj6o2psvmm4mgeo354diq2u2j267vd@l63zrttiuvkk>
+References: <20230605190745.366882-1-frank@oltmanns.dev>
+ <20230605190745.366882-2-frank@oltmanns.dev>
+ <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
+ <875y7y1f0d.fsf@oltmanns.dev>
+ <sijbhopoxuw5wodyry3smg7tm4wzoc7k6xakt4qdvxqsok32mv@u7rh4dct5ya6>
+ <87a5x41w5r.fsf@oltmanns.dev>
+ <unoskbtcteluxj7g3xkwc7ngcmglvcbm5ah25m7huhqxwd4dj3@nmfxbedwyu54>
+ <87wn07zmxp.fsf@oltmanns.dev>
+ <wnxjbbjfcnrg7ogwkfwbnldvyqbpt23b6mnrieb2zffooaojts@sudsbfjbjt64>
+ <d40e94c4-9dab-4511-bd48-1d9081f4262a@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="g7ta4xd7nex3465f"
+Content-Disposition: inline
+In-Reply-To: <d40e94c4-9dab-4511-bd48-1d9081f4262a@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The GCC block on SC8280XP is powered by the CX rail. We need to ensure
-that it's enabled to prevent unwanted power collapse.
 
-Enable runtime PM to keep the power flowing only when necessary.
+--g7ta4xd7nex3465f
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/gcc-sc8280xp.c | 18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+On Thu, Jun 15, 2023 at 06:04:53PM +0200, Frank Oltmanns wrote:
+> 15.06.2023 16:47:33 Maxime Ripard <maxime@cerno.tech>:
+> > On Tue, Jun 13, 2023 at 12:17:06PM +0200, Frank Oltmanns wrote:
+> >> Hi Maxime,
+> >>
+> >> I'll now only respond to one aspect of your mail, because it's the
+> >> foundation for the whole behaviour.
+> >>
+> >> On 2023-06-13 at 11:10:08 +0200, Maxime Ripard <maxime@cerno.tech> wro=
+te:
+> >> [...]
+> >>>>>> =E2=80=A6
+> >>>>>
+> >>>>> It doesn't really matter though. The output of that function must be
+> >>>>> stable and must return the same set of factors and parent rate for a
+> >>>>> given target rate.
+> >>>>>
+> >>>>
+> >>>> I'm not sure if we're talking about the same thing here. Of course t=
+he
+> >>>> set of factors and parent rate for a given target rate will be diffe=
+rent
+> >>>> depending on the fact if we can or cannot adjust the parent rate,
+> >>>> agreed?
+> >>>
+> >>> Yes, but here you also have a different behaviour in clk_round_rate()
+> >>> and in clk_set_rate(), which isn't ok.
+> >>>
+> >>> Basically, clk_set_rate() + clk_get_rate() must be equal to
+> >>> clk_round_rate().
+> >>>
+> >>> If you change if you look for parents depending on whether you're bei=
+ng
+> >>> called in clk_round_rate() and clk_set_rate(), then you're breaking t=
+hat
+> >>> expectation.
+> >>>
+> >>>> Let me compare my implementation to ccu_mp.
+> >>>>
+> >>>> ccu_mp_round_rate either calls the function ccu_mp_find_best or
+> >>>> ccu_mp_find_best_with_parent_adj, depending on CLK_SET_RATE_PARENT.
+> >>>
+> >>> Yes, and it's fine: the flag is per-clock, and the output is the same
+> >>> depending on whether we're being called by clk_round_rate() and
+> >>> clk_set_rate().
+> >>>
+> >>
+> >> The output is really not the same.
+> >>
+> >> ccu_mp_set_rate() always calls ccu_mp_find_best(). It never (!) consid=
+ers
+> >> changing the parent, independent of any flags.
+> >>
+> >> ccu_mp_round_rate() is calling ccu_mp_find_best() OR
+> >> ccu_mp_find_best_with_parent_adj() depending on the flag.
+> >>
+> >> If I understand you correctly, you consider that a bug.
+> >
+> > No, sorry, you're right.
+> >
+> > clk_set_rate will call round_rate first, which will (possibly) pick up a
+> > new parent, and by the time set_rate is called our parent will have been
+> > changed already so we will just call find_best again considering only
+> > that parent.
+>=20
+> Ok, no worries. That was my understanding, so your previous statement sha=
+ttered my worldview. ;) That's why I may have seemed a bit alarmed.
+>=20
+> >
+> > The set of factors and dividers should remain the same there, but I
+> > don't think that's a concern.
+>=20
+> Ack. The output is stable when called with the same rate.
+>=20
+> > That leaves us with the rounding stuff, and the overall function
+> > arguments. I like the structure of ccu_mp better, is there a reason to
+> > deviate from it?
+>=20
+> I'm still pondering the rounding stuff. I'm just not sure why you are
+> so relaxed about the fact that when calling round_rate with 449064000
+> we get 449035712, but when we call get round_rate with 449035712 we
+> get 449018181, and when we call round_rate with 449018181, we get
+> 449018180.
 
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index 04a99dbaa57e..b90c71637814 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -9,6 +9,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/of.h>
- #include <linux/regmap.h>
- 
-@@ -7421,9 +7422,19 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	int ret;
- 
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
- 	regmap = qcom_cc_map(pdev, &gcc_sc8280xp_desc);
--	if (IS_ERR(regmap))
-+	if (IS_ERR(regmap)) {
-+		pm_runtime_put(&pdev->dev);
- 		return PTR_ERR(regmap);
-+	}
- 
- 	/*
- 	 * Keep the clocks always-ON
-@@ -7445,7 +7456,10 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	return qcom_cc_really_probe(pdev, &gcc_sc8280xp_desc, regmap);
-+	ret = qcom_cc_really_probe(pdev, &gcc_sc8280xp_desc, regmap);
-+	pm_runtime_put(&pdev->dev);
-+
-+	return ret;
- }
- 
- static const struct of_device_id gcc_sc8280xp_match_table[] = {
+I guess there's a couple of reasons:
 
--- 
-2.41.0
+  - You mentioned that you were going to fix the rate issue later :)
 
+  - At the end of the day, it's not a huge offset and shouldn't cause
+    any big trouble
+
+> But ultimately, you have the final word, of course. But I need some
+> time to be sure, that this does not become a problem in some cases.
+
+Don't get me wrong, it should be fixed (and ideally, we should get some
+unit tests to make sure that it doesn't behave that way). I don't think
+it's urgent though, or that we introduce workarounds in one particular
+clock type.
+
+So we can definitely focus on the parent stuff first, and then get the
+rate stuff figured out.
+
+Maxime
+
+--g7ta4xd7nex3465f
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJCEAwAKCRDj7w1vZxhR
+xTLqAQClbbvPDJ2cdhcYv+Jv7TNenlGRGGQLG7tFj1lyWz4roQEA7AYDdNJQZ9t0
+AlA5tZURWiLpemHC6+21q8YDv3Bp1g8=
+=Zcgb
+-----END PGP SIGNATURE-----
+
+--g7ta4xd7nex3465f--
