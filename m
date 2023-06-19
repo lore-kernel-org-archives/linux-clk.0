@@ -2,171 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B0FEB64D9
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 04:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16F2EB64DB
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 05:28:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229838AbjFSEK2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jun 2023 00:10:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41160 "EHLO
+        id S229896AbjFSF2A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jun 2023 01:28:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbjFSEKC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 00:10:02 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18BEE136;
-        Sun, 18 Jun 2023 21:09:57 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f76a0a19d4so3608809e87.2;
-        Sun, 18 Jun 2023 21:09:57 -0700 (PDT)
+        with ESMTP id S229830AbjFSF17 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 01:27:59 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F87E13D
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jun 2023 22:27:57 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f8c65020dfso32812525e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 18 Jun 2023 22:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687147795; x=1689739795;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VYtDZyF0WoEWQ1plW2ceJSRw4b2t8G0Pprfn6lRFwQY=;
-        b=fMwUIgG9I8eZar1K6k9TKYp6nYtLYLmJrqtDvhVj+jg7gnYtJ3QYDKlkBvckg7gXkd
-         foKwcbTga478MAG9WaunjZYidYNGadZhuU5OF3CEtblRevUtrd0tbPIMsTrIebxOzKMZ
-         0aCpRWTjsW8FRX2c1aZpirVOyeZFz2FdxgWsxWuKIFCO9KsCxYqkLSBIP5ug8dukzodn
-         /SMW9F+PJq5hRMssaaRF/19ELicxlSP2YT0UhhF6xRrjHOWVbI/KUidLRCHr0MATNvuz
-         PFNDNnpesNgCcBji67f/lw1r9G8Okn6pfxO9BgSUXi+pMSJp6e6Fd3xtAx3aoD7KakNo
-         wkSw==
+        d=linaro.org; s=google; t=1687152476; x=1689744476;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DbTMYrjZb0dUIT8WKz7rOIE4M95QEF04XbaC5iuYB9o=;
+        b=DqE+aU0XxNh8r/PMdQMSrwkW/+mv5DmZNhNfwN2KQLU199Pd+KdYN658p1mLW/FdDD
+         6B0lOv9HxzJ1X8G3eVm8ZSP9w5d9RyaFa5AJbqwarDcze2A0/2gFDeSYVt3YVUOstqjt
+         5e8FODVqUDaUHdvsdSeEFwrgdKQrbFvICM23J3xSsc2JUW32vZXprURFOYQ4xqPbmWKl
+         ePTdvjYu8JkFQW/0TebQjlLUJs3uFp1tlVtss9G6kUO1gUlfUCD0BPvSb1TPaelV+8iq
+         u8xqi1CxoMxzhyB8p6zvggrGFamWulLQtIWSXNhdwXHa9YYVvdIaMVLGQQ8OzEur9TWL
+         +JPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687147795; x=1689739795;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VYtDZyF0WoEWQ1plW2ceJSRw4b2t8G0Pprfn6lRFwQY=;
-        b=CL0EEBZs7cgtDwqUEPERnswbxB0LBXHvKOjrRCCaMSSVP5eda2nnqT+Rx2CeOdNgyA
-         ifJtcsGwyYr7Od3QrpjUkhh6yYF67sPh0YHKOJUa/zTk3Oe1IpWyz/9czTCixfNajnBW
-         n3MWYdgZ1geeKgZBLhqGrzK6biIl/o88awptU8ookyHNQzg9BEvdQZUSvrfi44ulO51r
-         bXZm+d6uBQf1haj5Nc6lmRe9NjkAabuNMoDMCqU4aT8mtCR4tXbwWx4DkMzN69Av14eC
-         0h5lUobDv4CSsWJid8s6u4u6PQc2PLm/GOAtnh5BKgxrh/3k7aqDcM0mvvgZGhUOyUQ1
-         SqVg==
-X-Gm-Message-State: AC+VfDw1WZFjfR8yAFwNMonlEM/xtTucJq0Ng396YqrlPkGVpIaNToHL
-        qJxhKTT7VT4c7f+MUSkEUbm3nv4bC8U=
-X-Google-Smtp-Source: ACHHUZ4oGXxUm6faTWmGR4k58VgP8mrIDXFKieK8hPsgHjzCraQ2Dpjef1Bv+KCKIALaUndcpBDYqg==
-X-Received: by 2002:a05:6512:3290:b0:4f7:5f9e:fc59 with SMTP id p16-20020a056512329000b004f75f9efc59mr4235673lfe.39.1687147794901;
-        Sun, 18 Jun 2023 21:09:54 -0700 (PDT)
-Received: from localhost.localdomain (61.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.61])
-        by smtp.gmail.com with ESMTPSA id h14-20020a5d6e0e000000b003078354f774sm30004052wrz.36.2023.06.18.21.09.53
+        d=1e100.net; s=20221208; t=1687152476; x=1689744476;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DbTMYrjZb0dUIT8WKz7rOIE4M95QEF04XbaC5iuYB9o=;
+        b=iT0WQLwXVwZfWG/EoCgSrXbd2OXoYfUuto22Vg3XtVuWcBPM9h8UIfvYoh5U3AHZ3x
+         kKNslDOejizZuemz9V7agcSNXBjDtXpBMIrnCfDxfvgAjFrgVXWcWOovvKAoRAer3ug4
+         URDGnBTLL0dPnjCUu0puoqsMA6AOHn/aHvCLtmyCcuF49NuMpmWAbuCk/22XtLpX8RIh
+         pMCdPjiuCJR8fr9ksg+RYWRxsNP6inKwVtRDuDlK6680GCQ9srzOqkcbn/nyhRqQDC7T
+         xZ68JQhPwphg0cTl4s06Qo2SNnXjs4IOuSp2AiprFAIIJHxHXIClJQIXPOU/qA80WpNH
+         eQpQ==
+X-Gm-Message-State: AC+VfDw8hodCdT24RElTrR0krBZjvG2evqpp7kCauOM3PgkGpQpYhZfh
+        03vfEa3YLn8/iYUnVtabtxGPJw==
+X-Google-Smtp-Source: ACHHUZ4jzPV2CdWRH+iAPoCYciUOA55iJGjFI7ikgf+cK1Z++PK8oGYRkJauvLgXTJcIgQMwBx6iSg==
+X-Received: by 2002:a7b:cb8b:0:b0:3f8:f5d:52ee with SMTP id m11-20020a7bcb8b000000b003f80f5d52eemr6783915wmi.23.1687152476082;
+        Sun, 18 Jun 2023 22:27:56 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id n20-20020a1c7214000000b003f8d85b481esm9451224wmc.21.2023.06.18.22.27.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jun 2023 21:09:54 -0700 (PDT)
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
-        john@phrozen.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        arinc.unal@arinc9.com, yangshiji66@outlook.com
-Subject: [PATCH v5 8/9] mips: ralink: get cpu rate from new driver code
-Date:   Mon, 19 Jun 2023 06:09:40 +0200
-Message-Id: <20230619040941.1340372-9-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230619040941.1340372-1-sergio.paracuellos@gmail.com>
-References: <20230619040941.1340372-1-sergio.paracuellos@gmail.com>
+        Sun, 18 Jun 2023 22:27:54 -0700 (PDT)
+Date:   Mon, 19 Jun 2023 08:27:51 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     Fei Shao <fshao@chromium.org>
+Cc:     Markus Elfring <Markus.Elfring@web.de>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Subject: Re: [PATCH] clk: Fix memory leak in devm_clk_notifier_register()
+Message-ID: <8366a35f-bc2c-4aee-b2bb-5fc9b2a7072b@kadam.mountain>
+References: <20230617160901.1.I2b151cdf7a72d9e3ecc7ab2ff38409ebe6d65d6b@changeid>
+ <71168ceb-8273-4067-d0e0-c6c219d4618e@web.de>
+ <CAC=S1ngN=TFQa0Y4FoSCOTUs8HRi4NEP1OwY8WccUEUMG_UDeQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAC=S1ngN=TFQa0Y4FoSCOTUs8HRi4NEP1OwY8WccUEUMG_UDeQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-At very early stage on boot, there is a need to set 'mips_hpt_frequency'.
-This timer frequency is a half of the CPU frequency. To get clocks properly
-set we need to call to 'of_clk_init()' and properly get cpu clock frequency
-afterwards. Depending on the SoC, CPU clock index and compatible differs, so
-use them to get the proper clock frm the clock provider. Hence, adapt code
-to be aligned with new clock driver.
+On Mon, Jun 19, 2023 at 11:56:56AM +0800, Fei Shao wrote:
+> On Sun, Jun 18, 2023 at 4:06 AM Markus Elfring <Markus.Elfring@web.de> wrote:
+> >
+> > > This fixes the issue.
+> >
+> > Please replace this sentence by an imperative change suggestion.
+> >
+> > See also:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.4-rc6#n94
+> >
+> > Regards,
+> > Markus
+> 
+> Thanks for the feedback. I just sent v2.
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- arch/mips/ralink/clk.c | 61 +++++++++++++++++++++++++++++++++++-------
- 1 file changed, 52 insertions(+), 9 deletions(-)
+Markus is banned from vger lists...  He doesn't have a very accurate
+perspective of what is important and what is not important.
 
-diff --git a/arch/mips/ralink/clk.c b/arch/mips/ralink/clk.c
-index 5b02bb7e0829..9db73fcac522 100644
---- a/arch/mips/ralink/clk.c
-+++ b/arch/mips/ralink/clk.c
-@@ -11,29 +11,72 @@
- #include <linux/clkdev.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <asm/mach-ralink/ralink_regs.h>
- 
- #include <asm/time.h>
- 
- #include "common.h"
- 
--void ralink_clk_add(const char *dev, unsigned long rate)
-+static const char *clk_cpu(int *idx)
- {
--	struct clk *clk = clk_register_fixed_rate(NULL, dev, NULL, 0, rate);
--
--	if (!clk)
--		panic("failed to add clock");
--
--	clkdev_create(clk, NULL, "%s", dev);
-+	switch (ralink_soc) {
-+	case RT2880_SOC:
-+		*idx = 0;
-+		return "ralink,rt2880-sysc";
-+	case RT3883_SOC:
-+		*idx = 0;
-+		return "ralink,rt3883-sysc";
-+	case RT305X_SOC_RT3050:
-+		*idx = 0;
-+		return "ralink,rt3050-sysc";
-+	case RT305X_SOC_RT3052:
-+		*idx = 0;
-+		return "ralink,rt3052-sysc";
-+	case RT305X_SOC_RT3350:
-+		*idx = 1;
-+		return "ralink,rt3350-sysc";
-+	case RT305X_SOC_RT3352:
-+		*idx = 1;
-+		return "ralink,rt3352-sysc";
-+	case RT305X_SOC_RT5350:
-+		*idx = 1;
-+		return "ralink,rt5350-sysc";
-+	case MT762X_SOC_MT7620A:
-+		*idx = 2;
-+		return "ralink,mt7620-sysc";
-+	case MT762X_SOC_MT7620N:
-+		*idx = 2;
-+		return "ralink,mt7620-sysc";
-+	case MT762X_SOC_MT7628AN:
-+		*idx = 1;
-+		return "ralink,mt7628-sysc";
-+	case MT762X_SOC_MT7688:
-+		*idx = 1;
-+		return "ralink,mt7688-sysc";
-+	default:
-+		*idx = -1;
-+		return "invalid";
-+	}
- }
- 
- void __init plat_time_init(void)
- {
-+	struct of_phandle_args clkspec;
-+	const char *compatible;
- 	struct clk *clk;
-+	int cpu_clk_idx;
- 
- 	ralink_of_remap();
- 
--	ralink_clk_init();
--	clk = clk_get_sys("cpu", NULL);
-+	compatible = clk_cpu(&cpu_clk_idx);
-+	if (cpu_clk_idx == -1)
-+		panic("unable to get CPU clock index");
-+
-+	of_clk_init(NULL);
-+	clkspec.np = of_find_compatible_node(NULL, NULL, compatible);
-+	clkspec.args_count = 1;
-+	clkspec.args[0] = cpu_clk_idx;
-+	clk = of_clk_get_from_provider(&clkspec);
- 	if (IS_ERR(clk))
- 		panic("unable to get CPU clock, err=%ld", PTR_ERR(clk));
- 	pr_info("CPU Clock: %ldMHz\n", clk_get_rate(clk) / 1000000);
--- 
-2.25.1
+regards,
+dan carpenter
 
