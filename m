@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E342FC0015E
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 04:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7929EB64D9
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 04:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjFSEJ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jun 2023 00:09:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41058 "EHLO
+        id S229748AbjFSEJ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jun 2023 00:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229618AbjFSEJt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 00:09:49 -0400
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED391BB;
-        Sun, 18 Jun 2023 21:09:47 -0700 (PDT)
-Received: by mail-lf1-x12e.google.com with SMTP id 2adb3069b0e04-4f619c2ba18so3305208e87.1;
-        Sun, 18 Jun 2023 21:09:47 -0700 (PDT)
+        with ESMTP id S229664AbjFSEJw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 00:09:52 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634D9136;
+        Sun, 18 Jun 2023 21:09:51 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-311167ba376so2670551f8f.1;
+        Sun, 18 Jun 2023 21:09:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687147785; x=1689739785;
+        d=gmail.com; s=20221208; t=1687147789; x=1689739789;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cNzgugrOpqNBYn0nRo99f18RXcnY60WHLMUYWf7EZ7o=;
-        b=NKQniwMKc7QNM8bW5IPpEP/tXEX/h+Kx5ZY5fdWbbjuV+5yw0bPQVXClQzUiaI2mEt
-         nHH3zZl5a/uZMxDnXf+49BWn1HUeuVgSyeTsIWFFxRz5UTEmT52E0IuWCbVXyM61nU46
-         0Ys0vfBUWOHyXyFV3D8N3iRBLopChQW4giIgp9b82xWOGqIYbvcexQsL57I8PaF4KKSa
-         cQRc/6ZAwwtYBFFyrIC6wg1herHA22MJ39qxzcTKsBovdUyDehEhM4yvu8uEmeMkN0pU
-         aHNWOYR/oJsspG/nq8aILrBqECNq89ZfmBU2+tIaLcuKzlEa0y8FPHxva9gZAKVHz7gC
-         Z6gQ==
+        bh=lAgPAF+zjeuI/E9IUlDFcsX7pn0c4FT4mD/fF6VQFeU=;
+        b=OVIIKPYiQaiytZtUa283MpE+pRg5xiaaLHSHr6qBsJLkR5ffLPPQoZFP7VN50T8OaI
+         CrQW6dGA4m5vCUbBKjNsa6tUeGqiGWp0rt9wVJmayhXchqmHaQtG8oXdagpmU17g87uz
+         iUZg+2lpxYpJE0DdWUGEb1MsmIpFe7erz47aXOPK/qxybkIom9voaKnanRDe849WOHcF
+         EW+YqC5DZkaDbRVaB1rTaPq0w+yOwEiaXPHek3KdfMxKtTK/kT+u++cK2H7EPJAUkJhD
+         Tk3ki1azxWfic/5T/lYp0o2ID3ijoTphufQPnGRgSTSu6fbE8Imaat/hVKeHzLMxA7hz
+         8Acw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687147785; x=1689739785;
+        d=1e100.net; s=20221208; t=1687147789; x=1689739789;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cNzgugrOpqNBYn0nRo99f18RXcnY60WHLMUYWf7EZ7o=;
-        b=lR+lE04TevzAkm7oil+A1lrDw9aWUKlpKHPPAa1n0xuJLtOgmyl2PsVqRHrYDJTc/V
-         hE23EC2vsWnyVMb4jxLs7Wj9ObVAsxYydpInT+KY2E9N83EBqjC3t79r8fw7rlaRNQta
-         kBBELUhR5aXBM/Nv17HXd/Qi21wlOVdHpL0Pn6he1rzaFCgaez8/TwhMDGkirytOzIpI
-         vZMahbkVo/RPAa6fjEh3FU1GmNMmEfDORWp7JDJaJ/BcbUR2ExNYcaWnmOP2ivoBXx4W
-         S+T4VBhx4/MjMv+36AD/ZCLryQcccEUeKHcZuebI8cvLRDUwBirArTa3YyJ+vnetRyud
-         xLKA==
-X-Gm-Message-State: AC+VfDxDJ/qJqOVRqN7dFhnQGaR5GYppnX1oSc1LlwyNLJ0TZM9xOnD0
-        gwVnxWgx2/Q+1Tb7Jhas86O0bj2eq14=
-X-Google-Smtp-Source: ACHHUZ5/C7GnFTjdJyz8H/UbdtMDmafyslIhPS58jQ+zHgk95atbPKy+sMeK2idg37pyA3lGGKalnw==
-X-Received: by 2002:a19:da0a:0:b0:4f8:71ca:bb0f with SMTP id r10-20020a19da0a000000b004f871cabb0fmr333777lfg.55.1687147785225;
-        Sun, 18 Jun 2023 21:09:45 -0700 (PDT)
+        bh=lAgPAF+zjeuI/E9IUlDFcsX7pn0c4FT4mD/fF6VQFeU=;
+        b=O7hZdTJtfP46xwKcUuFgZ5xdDyhrxj5ZPut78E+feHveL5rpbLV0VzGQcbmj42idZC
+         41OF08pKOKxPZZFjtPi9G8mstD/fH8LcYBjFNWyhk0yUQ4ivzY1zH8VjxkXRRl6YLLvo
+         bXEikJCHmMg4zf4QxS7azu9Ctgs7UlK63NGyjx4wSY7HMBpFcA30wkc/GVpQGbfWtzdL
+         SK93i/0ogSZRjScnFBg3Sq9XqHmgYglhGyip5k5kIQEByUGkd5RY+ECeBNF4drKn9hWz
+         s6W2UkbPLyicNRhNYIGt//AuFR8y2VO5/3QuS+gwuia0m8+yQkmoURsz+Itid+pEqSYp
+         ssHA==
+X-Gm-Message-State: AC+VfDzSyZLbUNRmJ66fqF7JrgItSWSQFnqIiN8eElcqc4JadIqc24BY
+        TxbTcuHZh6ZdAxR3gOgW4ET0v8dLEpQ=
+X-Google-Smtp-Source: ACHHUZ5uEfDkk74rws77rchHCt6frMNg1Ru6CRW127GqS6T+Nb1pLzd7eO+0vU235cxiNhZgbDN8ng==
+X-Received: by 2002:a5d:4608:0:b0:30f:d32f:c42 with SMTP id t8-20020a5d4608000000b0030fd32f0c42mr6154304wrq.70.1687147789549;
+        Sun, 18 Jun 2023 21:09:49 -0700 (PDT)
 Received: from localhost.localdomain (61.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.61])
-        by smtp.gmail.com with ESMTPSA id h14-20020a5d6e0e000000b003078354f774sm30004052wrz.36.2023.06.18.21.09.43
+        by smtp.gmail.com with ESMTPSA id h14-20020a5d6e0e000000b003078354f774sm30004052wrz.36.2023.06.18.21.09.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Jun 2023 21:09:44 -0700 (PDT)
+        Sun, 18 Jun 2023 21:09:49 -0700 (PDT)
 From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
@@ -56,11 +56,10 @@ Cc:     linux-mips@vger.kernel.org, tsbogend@alpha.franken.de,
         p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
         matthias.bgg@gmail.com, devicetree@vger.kernel.org,
-        arinc.unal@arinc9.com, yangshiji66@outlook.com,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 1/9] dt-bindings: clock: add mtmips SoCs system controller
-Date:   Mon, 19 Jun 2023 06:09:33 +0200
-Message-Id: <20230619040941.1340372-2-sergio.paracuellos@gmail.com>
+        arinc.unal@arinc9.com, yangshiji66@outlook.com
+Subject: [PATCH v5 4/9] mips: ralink: rt305x: remove clock related code
+Date:   Mon, 19 Jun 2023 06:09:36 +0200
+Message-Id: <20230619040941.1340372-5-sergio.paracuellos@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230619040941.1340372-1-sergio.paracuellos@gmail.com>
 References: <20230619040941.1340372-1-sergio.paracuellos@gmail.com>
@@ -70,89 +69,149 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Adds device tree binding documentation for system controller node present
-in Mediatek MIPS and Ralink SOCs. This node is a clock and reset provider
-for the rest of the world. This covers RT2880, RT3050, RT3052, RT3350,
-RT3883, RT5350, MT7620, MT7628 and MT7688 SoCs.
+A properly clock driver for ralink SoCs has been added. Hence there is no
+need to have clock related code in 'arch/mips/ralink' folder anymore.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 ---
- .../bindings/clock/mediatek,mtmips-sysc.yaml  | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+ arch/mips/include/asm/mach-ralink/rt305x.h | 21 ------
+ arch/mips/ralink/rt305x.c                  | 78 ----------------------
+ 2 files changed, 99 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
-new file mode 100644
-index 000000000000..ba7ffc5b16a0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/mediatek,mtmips-sysc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MTMIPS SoCs System Controller
-+
-+maintainers:
-+  - Sergio Paracuellos <sergio.paracuellos@gmail.com>
-+
-+description: |
-+  MediaTek MIPS and Ralink SoCs provides a system controller to allow
-+  to access to system control registers. These registers include clock
-+  and reset related ones so this node is both clock and reset provider
-+  for the rest of the world.
-+
-+  These SoCs have an XTAL from where the cpu clock is
-+  provided as well as derived clocks for the bus and the peripherals.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - ralink,mt7620-sysc
-+          - ralink,mt7628-sysc
-+          - ralink,mt7688-sysc
-+          - ralink,rt2880-sysc
-+          - ralink,rt3050-sysc
-+          - ralink,rt3052-sysc
-+          - ralink,rt3352-sysc
-+          - ralink,rt3883-sysc
-+          - ralink,rt5350-sysc
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    description:
-+      The first cell indicates the clock number.
-+    const: 1
-+
-+  '#reset-cells':
-+    description:
-+      The first cell indicates the reset bit within the register.
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - '#reset-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    syscon@0 {
-+      compatible = "ralink,rt5350-sysc", "syscon";
-+      reg = <0x0 0x100>;
-+      #clock-cells = <1>;
-+      #reset-cells = <1>;
-+    };
+diff --git a/arch/mips/include/asm/mach-ralink/rt305x.h b/arch/mips/include/asm/mach-ralink/rt305x.h
+index ef58f7bff957..4fc5c279cd75 100644
+--- a/arch/mips/include/asm/mach-ralink/rt305x.h
++++ b/arch/mips/include/asm/mach-ralink/rt305x.h
+@@ -67,26 +67,9 @@ static inline int soc_is_rt5350(void)
+ #define CHIP_ID_ID_SHIFT		8
+ #define CHIP_ID_REV_MASK		0xff
+ 
+-#define RT305X_SYSCFG_CPUCLK_SHIFT		18
+-#define RT305X_SYSCFG_CPUCLK_MASK		0x1
+-#define RT305X_SYSCFG_CPUCLK_LOW		0x0
+-#define RT305X_SYSCFG_CPUCLK_HIGH		0x1
+-
+ #define RT305X_SYSCFG_SRAM_CS0_MODE_SHIFT	2
+-#define RT305X_SYSCFG_CPUCLK_MASK		0x1
+ #define RT305X_SYSCFG_SRAM_CS0_MODE_WDT		0x1
+ 
+-#define RT3352_SYSCFG0_CPUCLK_SHIFT	8
+-#define RT3352_SYSCFG0_CPUCLK_MASK	0x1
+-#define RT3352_SYSCFG0_CPUCLK_LOW	0x0
+-#define RT3352_SYSCFG0_CPUCLK_HIGH	0x1
+-
+-#define RT5350_SYSCFG0_CPUCLK_SHIFT	8
+-#define RT5350_SYSCFG0_CPUCLK_MASK	0x3
+-#define RT5350_SYSCFG0_CPUCLK_360	0x0
+-#define RT5350_SYSCFG0_CPUCLK_320	0x2
+-#define RT5350_SYSCFG0_CPUCLK_300	0x3
+-
+ #define RT5350_SYSCFG0_DRAM_SIZE_SHIFT  12
+ #define RT5350_SYSCFG0_DRAM_SIZE_MASK   7
+ #define RT5350_SYSCFG0_DRAM_SIZE_2M     0
+@@ -117,13 +100,9 @@ static inline int soc_is_rt5350(void)
+ 
+ #define RT3352_SYSC_REG_SYSCFG0		0x010
+ #define RT3352_SYSC_REG_SYSCFG1         0x014
+-#define RT3352_SYSC_REG_CLKCFG1         0x030
+ #define RT3352_SYSC_REG_RSTCTRL         0x034
+ #define RT3352_SYSC_REG_USB_PS          0x05c
+ 
+-#define RT3352_CLKCFG0_XTAL_SEL		BIT(20)
+-#define RT3352_CLKCFG1_UPHY0_CLK_EN	BIT(18)
+-#define RT3352_CLKCFG1_UPHY1_CLK_EN	BIT(20)
+ #define RT3352_RSTCTRL_UHST		BIT(22)
+ #define RT3352_RSTCTRL_UDEV		BIT(25)
+ #define RT3352_SYSCFG1_USB0_HOST_MODE	BIT(10)
+diff --git a/arch/mips/ralink/rt305x.c b/arch/mips/ralink/rt305x.c
+index d8dcc5cc66cc..9cffe69dd11d 100644
+--- a/arch/mips/ralink/rt305x.c
++++ b/arch/mips/ralink/rt305x.c
+@@ -56,84 +56,6 @@ static unsigned long rt5350_get_mem_size(void)
+ 	return ret;
+ }
+ 
+-void __init ralink_clk_init(void)
+-{
+-	unsigned long cpu_rate, sys_rate, wdt_rate, uart_rate;
+-	unsigned long wmac_rate = 40000000;
+-
+-	u32 t = rt_sysc_r32(SYSC_REG_SYSTEM_CONFIG);
+-
+-	if (soc_is_rt305x() || soc_is_rt3350()) {
+-		t = (t >> RT305X_SYSCFG_CPUCLK_SHIFT) &
+-		     RT305X_SYSCFG_CPUCLK_MASK;
+-		switch (t) {
+-		case RT305X_SYSCFG_CPUCLK_LOW:
+-			cpu_rate = 320000000;
+-			break;
+-		case RT305X_SYSCFG_CPUCLK_HIGH:
+-			cpu_rate = 384000000;
+-			break;
+-		}
+-		sys_rate = uart_rate = wdt_rate = cpu_rate / 3;
+-	} else if (soc_is_rt3352()) {
+-		t = (t >> RT3352_SYSCFG0_CPUCLK_SHIFT) &
+-		     RT3352_SYSCFG0_CPUCLK_MASK;
+-		switch (t) {
+-		case RT3352_SYSCFG0_CPUCLK_LOW:
+-			cpu_rate = 384000000;
+-			break;
+-		case RT3352_SYSCFG0_CPUCLK_HIGH:
+-			cpu_rate = 400000000;
+-			break;
+-		}
+-		sys_rate = wdt_rate = cpu_rate / 3;
+-		uart_rate = 40000000;
+-	} else if (soc_is_rt5350()) {
+-		t = (t >> RT5350_SYSCFG0_CPUCLK_SHIFT) &
+-		     RT5350_SYSCFG0_CPUCLK_MASK;
+-		switch (t) {
+-		case RT5350_SYSCFG0_CPUCLK_360:
+-			cpu_rate = 360000000;
+-			sys_rate = cpu_rate / 3;
+-			break;
+-		case RT5350_SYSCFG0_CPUCLK_320:
+-			cpu_rate = 320000000;
+-			sys_rate = cpu_rate / 4;
+-			break;
+-		case RT5350_SYSCFG0_CPUCLK_300:
+-			cpu_rate = 300000000;
+-			sys_rate = cpu_rate / 3;
+-			break;
+-		default:
+-			BUG();
+-		}
+-		uart_rate = 40000000;
+-		wdt_rate = sys_rate;
+-	} else {
+-		BUG();
+-	}
+-
+-	if (soc_is_rt3352() || soc_is_rt5350()) {
+-		u32 val = rt_sysc_r32(RT3352_SYSC_REG_SYSCFG0);
+-
+-		if (!(val & RT3352_CLKCFG0_XTAL_SEL))
+-			wmac_rate = 20000000;
+-	}
+-
+-	ralink_clk_add("cpu", cpu_rate);
+-	ralink_clk_add("sys", sys_rate);
+-	ralink_clk_add("10000900.i2c", uart_rate);
+-	ralink_clk_add("10000a00.i2s", uart_rate);
+-	ralink_clk_add("10000b00.spi", sys_rate);
+-	ralink_clk_add("10000b40.spi", sys_rate);
+-	ralink_clk_add("10000100.timer", wdt_rate);
+-	ralink_clk_add("10000120.watchdog", wdt_rate);
+-	ralink_clk_add("10000500.uart", uart_rate);
+-	ralink_clk_add("10000c00.uartlite", uart_rate);
+-	ralink_clk_add("10100000.ethernet", sys_rate);
+-	ralink_clk_add("10180000.wmac", wmac_rate);
+-}
+-
+ void __init ralink_of_remap(void)
+ {
+ 	rt_sysc_membase = plat_of_remap_node("ralink,rt3050-sysc");
 -- 
 2.25.1
 
