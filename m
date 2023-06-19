@@ -2,218 +2,168 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB27C001DB
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 13:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB0BEB64D9
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 13:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231935AbjFSNGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jun 2023 09:06:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
+        id S231290AbjFSNVB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jun 2023 09:21:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231796AbjFSNFs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 09:05:48 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FCC19B1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jun 2023 06:05:08 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f762b3227dso4131069e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Jun 2023 06:05:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687179906; x=1689771906;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5bcXIhURMNb0zAXxfMHWv0nL5TXiAv91yaE+1dFMG5E=;
-        b=yLs6U1vH6ZNYrVyHJuTLCL9VSu+l1nMGRoZt/7irYjgs4pGm3FBTFGHaPa/hkBzCYa
-         oqhe8eVUSLdQe/Ieza9Job7gFeHhdFJb9aEDPcsuHNzBwaY9mg3xcRx8lxW3uD3eSNxU
-         Cg5KtjOep3J1h6NuGxLkF6ba/ZiHHHuCWkRMpGCJUfeJJn6ntws4ErWsNyWG6zXzwpm4
-         L54psYe3mvS/4iSt5MwjQnXVVOljkTzTk6I63AgHpWj9BRdKUjBAKOzzJKyTW0uFITMS
-         tIxE62v93VWue2ayP+1OTYvKge/Rz0wsy2sJOMk5I3qjuMYTFrtdCzDqHk/AoUdlsnJA
-         ZXmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687179906; x=1689771906;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5bcXIhURMNb0zAXxfMHWv0nL5TXiAv91yaE+1dFMG5E=;
-        b=cdNimd0KaSLMC/ZXRp9nNwQbLYFtdqfcUu9WczaPpuAVsCHOR5KlrpvwqMFqVBfOwB
-         baFsBeb+4ojn95WO8ad0BRPOYXx/7QrU2vAXh4v3vgG5E8XdBADkqHyEvmsr+w/N4ePY
-         qElGwJTvY7YtdIH2vi1PR7ByCzOb8LLsbrULUtMHTFn+owMj9WrenwO7cz4VMeNh3Nbu
-         Dz1sGhEZQKBAuT56LcAey3sHMUytPZ+6oejX1aQiZSHlqvnAOBShqStdFkGLAfEuonHJ
-         jjjhlwL1pLaJRQv1cUhdjmIdi37qIPZT4nfXQUsjqcAGxbj3tFMvwvE5ULb9nsxnwCdc
-         +zzg==
-X-Gm-Message-State: AC+VfDykKMVSw6cZO0QKCpJIvNQ8iUMKLdg6QAqq5vrZvcVSDtzJQUMl
-        kv4N8Vu37BV7eBbB15ybdT7s0A==
-X-Google-Smtp-Source: ACHHUZ4KjPd4RSujP1eXvOEIwPcLEdi3IrOErlPVqQMD3qL3V8uI3dIZCNSAFvnQcsSdBsgnP/mnyg==
-X-Received: by 2002:a05:6512:31c9:b0:4f8:5e4e:52ad with SMTP id j9-20020a05651231c900b004f85e4e52admr2030562lfe.23.1687179906402;
-        Mon, 19 Jun 2023 06:05:06 -0700 (PDT)
-Received: from [192.168.1.101] (abyl242.neoplus.adsl.tpnet.pl. [83.9.31.242])
-        by smtp.gmail.com with ESMTPSA id q28-20020ac25a1c000000b004f643664882sm4256489lfn.147.2023.06.19.06.05.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jun 2023 06:05:06 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 19 Jun 2023 15:04:47 +0200
-Subject: [PATCH v7 22/22] interconnect: qcom: icc-rpm: Fix bandwidth
- calculations
+        with ESMTP id S231889AbjFSNVA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 09:21:00 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD073E59
+        for <linux-clk@vger.kernel.org>; Mon, 19 Jun 2023 06:20:58 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 33EB25C00C6;
+        Mon, 19 Jun 2023 09:20:58 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 19 Jun 2023 09:20:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1687180858; x=1687267258; bh=Lz
+        vecA/Pgb0RzES+MAbQ66tw0K+dxmbS/SN9PJ2U5F0=; b=pbWMqxdH2kAthljbDu
+        BHDua6P6tmUL0+8Zrh1duTV0DK3K6yyUQ+QNyKcUNoqpO3HfdZF/mwtEoe6/DC/K
+        voNr+XBWm348lTQ11F+ntIs2zPjHEonwJIKluqAvPRT3Ucau3buMpeXfeonJYt1H
+        4za1a9him3JkCgmNw/MId40uR1mKSmP/XUzCGC3CQeKaqCMiAgX0Q3NIg9fzINx2
+        9NUc7iu8nZ2I/GIcuHYZPZS53PQAeBWxVxz6Z5Owp6G4d39+z8PoxOxPNAyDWAbY
+        vSGG5BdlAny7vMs2wY1pqFDoCKjYBY1AqYKW7xu5lK7oNtYuxLNEvKAreWOY83aD
+        +6LQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1687180858; x=1687267258; bh=LzvecA/Pgb0Rz
+        ES+MAbQ66tw0K+dxmbS/SN9PJ2U5F0=; b=Rrt7YLuChqevJ6/eEan8D9HRyHy0G
+        Iy3IM4sVwiFrZJXMgHVyaTjIviB5d2pTwgRIPHCbHn1CH3guj9WWmTD77cemDGJM
+        syjxknJuosAXcEDbH4iXiLtRB+K/Owp8stc/ii3StaPiHhgbGeeNdcA43QoYwOow
+        uvLiTqSmJ+mFzv+PwCf2w71bfw/elrLI1Ss2R2rp/1pjC6m1xEMQQP5Sbzf6BUrN
+        VZuAzw8XtNhaRIVUfEj1J6h/r0xalARkjdYtKNutBALZoQL7CEaaG3kuNSOiHCvD
+        4nlzmbAzQdZdaFJFDweeMc0sj/7a+g8eLQ9cqifEbHnDrzSqmxfqKIJIA==
+X-ME-Sender: <xms:OVaQZEvCSniVVxu8QMD6kTh3wAgrZMfjdY4kTtjVzjskhFhmAE8Y0A>
+    <xme:OVaQZBc4ftFPRdOJSy12Nqc-2dLaZ0mk0S_ReGTKH9U3AAVVQ9astVj8GzRaY7gWU
+    pYMtfkD39uCUXuwi2I>
+X-ME-Received: <xmr:OVaQZPzjtjdiREzXdvmh76i9A3xuDppNDzsDdvyve6yw7S2HPeXQe9pC4jRfboEijwrP50rpEJ_hR2FFKhpHZQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeefvddgiedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeeuveduheeutdekvefgudevjeeufedvvdevhfejgfelgfdtkeevueegteek
+    gfelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:OVaQZHPm5gK_NfHFJW1mePRLwnLqVN9s0-UkNU6rO8D5uYzlYUAwxA>
+    <xmx:OVaQZE81oxfqGZagsJBJbvy1xyTxG5ludgaykP9m_cpMuF3YvotoPA>
+    <xmx:OVaQZPVIHdr7ev9qJmKH-FbKoEYsMmjQoXDgCqrBpnFMRr0vF_1IVA>
+    <xmx:OlaQZCkt2580MEHh_PzFpJ3c6DWWzv5nF2FaOQAvf-eEtQS3tAwyBg>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 19 Jun 2023 09:20:57 -0400 (EDT)
+Date:   Mon, 19 Jun 2023 15:20:55 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 07/68] clk: test: Add a determine_rate hook
+Message-ID: <mlgxmfim3poke2j45vwh2htkn66hrrjd6ozjebtqhbf4wwljwo@hzi4dyplhdqg>
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+ <20221018-clk-range-checks-fixes-v4-7-971d5077e7d2@cerno.tech>
+ <e8a1f3244395dc707a1d741e2d166a7b.sboyd@kernel.org>
+ <ukjgbguxqxfs6u2igivmxmmidvjvumqfptwvjymk7n6p22isqv@tbubrts5a6wp>
+ <e0b1d62767939b22e962648ceab06bed.sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230526-topic-smd_icc-v7-22-09c78c175546@linaro.org>
-References: <20230526-topic-smd_icc-v7-0-09c78c175546@linaro.org>
-In-Reply-To: <20230526-topic-smd_icc-v7-0-09c78c175546@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1687179869; l=5027;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=tAzLN6zVkcV/6YKzpXaiTCXmJB8hBKbRsR3dIrek/EQ=;
- b=NCMJwqTsNmd7gjeCZZUMYUr51ZiZyZNsXzOOjUQdIyTKlKP+JA/c/YiL21ufE55+ZBWj8P9Tu
- /dnoX3XFF2SBjCgZF+s71kA7CQoLO+IWXw5OxxIcakjof7x8haVK7bt
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nnmofhq4b5p33y5o"
+Content-Disposition: inline
+In-Reply-To: <e0b1d62767939b22e962648ceab06bed.sboyd@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Up until now, we've been aggregating the bandwidth values and only
-dividing them by the bus width of the source node. This was completely
-wrong, as different nodes on a given path may (and usually do) have
-varying bus widths.  That in turn, resulted in the calculated clock rates
-being completely bogus - usually they ended up being much higher, as
-NoC_A<->NoC_B links are very wide.
 
-Since we're not using the aggregate bandwidth value for anything other
-than clock rate calculations, remodel qcom_icc_bus_aggregate() to
-calculate the per-context clock rate for a given provider, taking into
-account the bus width of every individual node.
+--nnmofhq4b5p33y5o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 30c8fa3ec61a ("interconnect: qcom: Add MSM8916 interconnect provider driver")
-Reported-by: Stephan Gerhold <stephan@gerhold.net>
-Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/interconnect/qcom/icc-rpm.c | 59 ++++++++++++-------------------------
- 1 file changed, 19 insertions(+), 40 deletions(-)
+Hi Stephen,
 
-diff --git a/drivers/interconnect/qcom/icc-rpm.c b/drivers/interconnect/qcom/icc-rpm.c
-index 5733261d9407..3209d8de709b 100644
---- a/drivers/interconnect/qcom/icc-rpm.c
-+++ b/drivers/interconnect/qcom/icc-rpm.c
-@@ -292,58 +292,44 @@ static int qcom_icc_bw_aggregate(struct icc_node *node, u32 tag, u32 avg_bw,
- }
- 
- /**
-- * qcom_icc_bus_aggregate - aggregate bandwidth by traversing all nodes
-+ * qcom_icc_bus_aggregate - calculate bus clock rates by traversing all nodes
-  * @provider: generic interconnect provider
-- * @agg_avg: an array for aggregated average bandwidth of buckets
-- * @agg_peak: an array for aggregated peak bandwidth of buckets
-- * @max_agg_avg: pointer to max value of aggregated average bandwidth
-+ * @agg_clk_rate: array containing the aggregated clock rates in kHz
-  */
--static void qcom_icc_bus_aggregate(struct icc_provider *provider,
--				   u64 *agg_avg, u64 *agg_peak,
--				   u64 *max_agg_avg)
-+static void qcom_icc_bus_aggregate(struct icc_provider *provider, u64 *agg_clk_rate)
- {
--	struct icc_node *node;
-+	u64 agg_avg_rate, agg_rate;
- 	struct qcom_icc_node *qn;
--	u64 sum_avg[QCOM_SMD_RPM_STATE_NUM];
-+	struct icc_node *node;
- 	int i;
- 
--	/* Initialise aggregate values */
--	for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
--		agg_avg[i] = 0;
--		agg_peak[i] = 0;
--	}
--
--	*max_agg_avg = 0;
--
- 	/*
--	 * Iterate nodes on the interconnect and aggregate bandwidth
--	 * requests for every bucket.
-+	 * Iterate nodes on the provider, aggregate bandwidth requests for
-+	 * every bucket and convert them into bus clock rates.
- 	 */
- 	list_for_each_entry(node, &provider->nodes, node_list) {
- 		qn = node->data;
- 		for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++) {
- 			if (qn->channels)
--				sum_avg[i] = div_u64(qn->sum_avg[i], qn->channels);
-+				agg_avg_rate = div_u64(qn->sum_avg[i], qn->channels);
- 			else
--				sum_avg[i] = qn->sum_avg[i];
--			agg_avg[i] += sum_avg[i];
--			agg_peak[i] = max_t(u64, agg_peak[i], qn->max_peak[i]);
-+				agg_avg_rate = qn->sum_avg[i];
-+
-+			agg_rate = max_t(u64, agg_avg_rate, qn->max_peak[i]);
-+			do_div(agg_rate, qn->buswidth);
-+
-+			agg_clk_rate[i] = max_t(u64, agg_clk_rate[i], agg_rate);
- 		}
- 	}
--
--	/* Find maximum values across all buckets */
--	for (i = 0; i < QCOM_SMD_RPM_STATE_NUM; i++)
--		*max_agg_avg = max_t(u64, *max_agg_avg, agg_avg[i]);
- }
- 
- static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- {
--	struct qcom_icc_provider *qp;
- 	struct qcom_icc_node *src_qn = NULL, *dst_qn = NULL;
-+	u64 agg_clk_rate[QCOM_SMD_RPM_STATE_NUM] = { 0 };
- 	struct icc_provider *provider;
-+	struct qcom_icc_provider *qp;
- 	u64 active_rate, sleep_rate;
--	u64 agg_avg[QCOM_SMD_RPM_STATE_NUM], agg_peak[QCOM_SMD_RPM_STATE_NUM];
--	u64 max_agg_avg;
- 	int ret;
- 
- 	src_qn = src->data;
-@@ -352,7 +338,9 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	provider = src->provider;
- 	qp = to_qcom_provider(provider);
- 
--	qcom_icc_bus_aggregate(provider, agg_avg, agg_peak, &max_agg_avg);
-+	qcom_icc_bus_aggregate(provider, agg_clk_rate);
-+	active_rate = agg_clk_rate[QCOM_SMD_RPM_ACTIVE_STATE];
-+	sleep_rate = agg_clk_rate[QCOM_SMD_RPM_SLEEP_STATE];
- 
- 	ret = qcom_icc_rpm_set(src_qn, src_qn->sum_avg);
- 	if (ret)
-@@ -368,15 +356,6 @@ static int qcom_icc_set(struct icc_node *src, struct icc_node *dst)
- 	if (!qp->bus_clk_desc && !qp->bus_clk)
- 		return 0;
- 
--	/* Intentionally keep the rates in kHz as that's what RPM accepts */
--	active_rate = max(agg_avg[QCOM_SMD_RPM_ACTIVE_STATE],
--			  agg_peak[QCOM_SMD_RPM_ACTIVE_STATE]);
--	do_div(active_rate, src_qn->buswidth);
--
--	sleep_rate = max(agg_avg[QCOM_SMD_RPM_SLEEP_STATE],
--			 agg_peak[QCOM_SMD_RPM_SLEEP_STATE]);
--	do_div(sleep_rate, src_qn->buswidth);
--
- 	/*
- 	 * Downstream checks whether the requested rate is zero, but it makes little sense
- 	 * to vote for a value that's below the lower threshold, so let's not do so.
+On Tue, Jun 13, 2023 at 11:39:58AM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2023-06-13 01:21:59)
+> > On Thu, Jun 08, 2023 at 06:41:56PM -0700, Stephen Boyd wrote:
+> > > Quoting Maxime Ripard (2023-05-05 04:25:09)
+> >=20
+> > > > +        * __clk_mux_determine_rate() here, if we use it and call
+> > > > +        * clk_round_rate() or clk_set_rate() with a rate lower than
+> > > > +        * what all the parents can provide, it will return -EINVAL.
+> > > > +        *
+> > > > +        * This is due to the fact that it has the undocumented
+> > > > +        * behaviour to always pick up the closest rate higher than=
+ the
+> > > > +        * requested rate. If we get something lower, it thus consi=
+ders
+> > > > +        * that it's not acceptable and will return an error.
+> > > > +        *
+> > > > +        * It's somewhat inconsistent and creates a weird threshold
+> > > > +        * between rates above the parent rate which would be round=
+ed to
+> > > > +        * what the parent can provide, but rates below will simply
+> > > > +        * return an error.
+> > > > +        */
+> >=20
+> > I guess it's mostly a policy decision: __clk_mux_determine_rate() always
+> > has been returning rates that are lower or equal to the target rate.
+> >=20
+> > If no parent can provide one, then the obvious solution is to error out,
+> > which creates the inconsistency mentioned above.
+> >=20
+> > Another solution would be to pick up a parent by default (the current
+> > one maybe?) but then we could return a rate higher than the target rate
+> > which breaks what we've been doing so far.
+> >=20
+> > I'm not sure if one is better than the other.
+>=20
+> We should pick a rounding policy that we want for the test. The test
+> shouldn't be checking the rounding policy. It should be checking that
+> the code under test does what is expected when the rounding policy is
+> what we choose.
+>=20
+> If __clk_mux_determine_rate() returns an error when the rate is lower
+> than the parent supports then we should test that as well and make sure
+> it does return an error in this case. We can directly call
+> __clk_mux_determine_rate() after registering the clks so that the
+> function is isolated.
 
--- 
-2.41.0
+I guess my point is that, in general, we don't really expect an error in
+clk_round_rate(). Most clocks will clamp the rates between the minimum
+and maximum allowed and will select the closest parent or dividers to
+match that rate. So we could end up with a rate fairly different from
+the argument, but we'll get a rate.
 
+For muxes using __clk_mux_determine_rate*() without CLK_SET_RATE_PARENT,
+if the rate is too low (or if the range is loo low) and is right below
+what one of the parent can provide, we end up with -EINVAL.
+
+AFAIK, it's pretty much the only situation where that happens. A fixed
+clock will always return its fixed rate for example, even if the rate is
+very different from what we asked for. But for some reason, on some
+muxes, with some rates, boom, EINVAL.
+
+It's very unexpected and inconsistent to me. Hence the FIXME.
+
+Maxime
+
+--nnmofhq4b5p33y5o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJBWNwAKCRDj7w1vZxhR
+xQ2CAQCEMj0ZbZcH6sPerbFk087Wj2KTsjm0RE1lW2K2vZ1TBQEAz//vcb5UhViI
+PhW4SFYcwUYcsY2Y7QO38anw+Y4BUQs=
+=3Mzg
+-----END PGP SIGNATURE-----
+
+--nnmofhq4b5p33y5o--
