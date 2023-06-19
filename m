@@ -2,158 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1A1EB64D7
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Jun 2023 23:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F83EB64D8
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 02:15:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjFRXjH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Jun 2023 19:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54070 "EHLO
+        id S229626AbjFSCPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Jun 2023 22:15:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbjFRXjG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jun 2023 19:39:06 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035A018F;
-        Sun, 18 Jun 2023 16:39:03 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f8689fbf59so1258437e87.0;
-        Sun, 18 Jun 2023 16:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687131541; x=1689723541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4eeAR9R8E9A8Z+bQ+zX5X1J755XJwi+6HLbi8oL22nI=;
-        b=QFB1ckMiJLUDtT0oYq3Jcqd3iPBnFkeLlPVywccCkR67oKxmJ9jBG579cAMN5qnAI1
-         aauCNBmR/7ZrLYfuczuZP/TDX1Qkt69pBwNJIUA6/rOobM6ha/NHvsszJLTWu4jaB6+p
-         7ZpSaA/hd6lNB9ujWQcKVECBBo8rYxc2Qiis+4QWN+b1T3a7ZIxgsM4ckp78JUqANORD
-         RnqhJIg1y7um2BRkaO1DcwHFKgClJz/9Rvmn60kDQEsAwyC9wq288CF+Uj9+Y/J0OZrx
-         ZeFS305qSefjRi7EPU+EEbgVvFEGWVij/G72SwSwnBzmysJfLqMVh+TNb2vwa8yy8M5N
-         A8wA==
+        with ESMTP id S229639AbjFSCPf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Jun 2023 22:15:35 -0400
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144A4E47;
+        Sun, 18 Jun 2023 19:15:34 -0700 (PDT)
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-77e35504c1bso72174939f.1;
+        Sun, 18 Jun 2023 19:15:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687131541; x=1689723541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4eeAR9R8E9A8Z+bQ+zX5X1J755XJwi+6HLbi8oL22nI=;
-        b=SGHXbqe/2riwl7kWGr0s6CS76GUKSh4GUeeDaELpwJUNf5Hd/tImBO1jsfnI68A/yy
-         5lefRaTfOHoVKJBGsPsi94Sk19g101moSts7S1xExdEKLYnLO4o6KornIpDid+pzKdPh
-         Y7qBgEv61Wu+wtkOGUVc504nH2Y09pTKVn2i7K/RfI5a3dylA1KhqrS5mYKuKKU1RpbL
-         4h/FsJMNglSwLGc29P3TK2R2MU3lj2U7uwF50A/pCCrH2JVW8JB7Es3xO66XrWaNCMdS
-         zA/pRO6lzQCe4j7ObOz2ZrEW0pzZCiY3W8+EAqGPWt1oYjyoHOGzZ7U0rIrBqsXUqhpX
-         EI4A==
-X-Gm-Message-State: AC+VfDyuNYqm4SG88aFBwZrgwWMTW7BWLXL6fRhXJxa6FiB4vZHGW9Uz
-        xbmJwZ7ZKjgEabFRTodj61kbK08FIng=
-X-Google-Smtp-Source: ACHHUZ76Inx58CustymSURuIxtp4MPSIAxJBVjNFXSgpv2fGM68JwEPT0rQ207uQz5TfPIh+Xei+bQ==
-X-Received: by 2002:a19:4f5a:0:b0:4f4:a656:2466 with SMTP id a26-20020a194f5a000000b004f4a6562466mr2747156lfk.15.1687131540651;
-        Sun, 18 Jun 2023 16:39:00 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-149-7.dynamic.spd-mgts.ru. [109.252.149.7])
-        by smtp.googlemail.com with ESMTPSA id m3-20020ac24283000000b004f76684329esm2112198lfh.234.2023.06.18.16.38.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Jun 2023 16:39:00 -0700 (PDT)
-Message-ID: <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
-Date:   Mon, 19 Jun 2023 02:38:59 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.2
-Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
- <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
-Content-Language: en-US
-From:   Dmitry Osipenko <digetx@gmail.com>
-In-Reply-To: <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
-Content-Type: text/plain; charset=UTF-8
+        d=1e100.net; s=20221208; t=1687140933; x=1689732933;
+        h=date:subject:message-id:references:in-reply-to:cc:to:from
+         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bBtnlsl4Pv/CEloCUaVVZxW6xo2UFnTXvxqXhklKZoE=;
+        b=F5G9pRqhc5Cjsfg18aNpWbo5KZrFVgZ7ffKzGXaOnp0SFk+QyL1JHtuvbruDBqAG6C
+         WRVjbUkiDcujmaESnfQjI2Ota77+xRuEzc4g3KD7GPVHe4cSdqUWUXfTDuAaGU2kL5NK
+         0Q/c32e7BE9/LVc8JLeHJwocuds2oPgvDj44k3IO1eJPF5WboKkdjHKRQkFSEoX34m17
+         m9RtjajHnoxU5TiMOd/DYlMxq+wyjUFbxbquJ9QJbbcbyjsrLM4x5u/CGG9Mhaa7Peld
+         I4YdH/EFDc1A6FfyB3bdBHZ6fQhv3lNSgoOCVxgX9nHFMHV2WDdggCBVImY14RjAdC0S
+         vdLQ==
+X-Gm-Message-State: AC+VfDz/7J9esFyODZADHYkCNj+axDXNka2z+MrCBcw4vwM+y2ssG9JN
+        yHPSYSxBGWZQxVQ7dh/SOQ==
+X-Google-Smtp-Source: ACHHUZ4vbf5Ns9/6gGG0RTqSrtAFSQNlqmKu62lK5EfG6OfihpRyqotDLGVxGu+nbKPTCZABchn2lw==
+X-Received: by 2002:a5d:8f95:0:b0:766:48cf:6ca9 with SMTP id l21-20020a5d8f95000000b0076648cf6ca9mr8693407iol.12.1687140933249;
+        Sun, 18 Jun 2023 19:15:33 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id k25-20020a02cb59000000b0042675e04900sm290517jap.119.2023.06.18.19.15.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Jun 2023 19:15:32 -0700 (PDT)
+Received: (nullmailer pid 2833 invoked by uid 1000);
+        Mon, 19 Jun 2023 02:15:27 -0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Rob Herring <robh@kernel.org>
+To:     niravkumar.l.rabara@intel.com
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Andrew Lunn <andrew@lunn.ch>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adrian Ng Ho Yin <adrian.ho.yin.ng@intel.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Wen Ping <wen.ping.teh@intel.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Dinh Nguyen <dinguyen@kernel.org>, netdev@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>
+In-Reply-To: <20230618132235.728641-3-niravkumar.l.rabara@intel.com>
+References: <20230618132235.728641-1-niravkumar.l.rabara@intel.com>
+ <20230618132235.728641-3-niravkumar.l.rabara@intel.com>
+Message-Id: <168714092772.2813.6608190334028827343.robh@kernel.org>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add Intel Agilex5 clocks and
+ resets
+Date:   Sun, 18 Jun 2023 20:15:27 -0600
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-05.05.2023 14:26, Maxime Ripard пишет:
-> The Tegra super clocks implements a mux with a set_parent hook, but
-> doesn't provide a determine_rate implementation.
+
+On Sun, 18 Jun 2023 21:22:33 +0800, niravkumar.l.rabara@intel.com wrote:
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 > 
-> This is a bit odd, since set_parent() is there to, as its name implies,
-> change the parent of a clock. However, the most likely candidate to
-> trigger that parent change is a call to clk_set_rate(), with
-> determine_rate() figuring out which parent is the best suited for a
-> given rate.
+> Add clock and reset ID definitions for Intel Agilex5 SoCFPGA
 > 
-> The other trigger would be a call to clk_set_parent(), but it's far less
-> used, and it doesn't look like there's any obvious user for that clock.
-> 
-> So, the set_parent hook is effectively unused, possibly because of an
-> oversight. However, it could also be an explicit decision by the
-> original author to avoid any reparenting but through an explicit call to
-> clk_set_parent().
-> 
-> The driver does implement round_rate() though, which means that we can
-> change the rate of the clock, but we will never get to change the
-> parent.
-> 
-> However, It's hard to tell whether it's been done on purpose or not.
-> 
-> Since we'll start mandating a determine_rate() implementation, let's
-> convert the round_rate() implementation to a determine_rate(), which
-> will also make the current behavior explicit. And if it was an
-> oversight, the clock behaviour can be adjusted later on.
-> 
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: linux-tegra@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> Co-developed-by: Teh Wen Ping <wen.ping.teh@intel.com>
+> Signed-off-by: Teh Wen Ping <wen.ping.teh@intel.com>
+> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 > ---
->  drivers/clk/tegra/clk-super.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-> index 3f3a7a203c5f..7ec47942720c 100644
-> --- a/drivers/clk/tegra/clk-super.c
-> +++ b/drivers/clk/tegra/clk-super.c
-> @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_super_mux_ops = {
->  	.restore_context = clk_super_mux_restore_context,
->  };
->  
-> -static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				 unsigned long *parent_rate)
-> +static int clk_super_determine_rate(struct clk_hw *hw,
-> +				    struct clk_rate_request *req)
->  {
->  	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
->  	struct clk_hw *div_hw = &super->frac_div.hw;
-> +	unsigned long rate;
->  
->  	__clk_hw_set_clk(div_hw, hw);
->  
-> -	return super->div_ops->round_rate(div_hw, rate, parent_rate);
-> +	rate = super->div_ops->round_rate(div_hw, req->rate,
-> +					  &req->best_parent_rate);
-> +	if (rate < 0)
-> +		return rate;
-> +
-> +	req->rate = rate;
-> +	return 0;
->  }
->  
->  static unsigned long clk_super_recalc_rate(struct clk_hw *hw,
-> @@ -193,7 +200,7 @@ const struct clk_ops tegra_clk_super_ops = {
->  	.get_parent = clk_super_get_parent,
->  	.set_parent = clk_super_set_parent,
->  	.set_rate = clk_super_set_rate,
-> -	.round_rate = clk_super_round_rate,
-> +	.determine_rate = clk_super_determine_rate,
->  	.recalc_rate = clk_super_recalc_rate,
->  	.restore_context = clk_super_restore_context,
->  };
+>  .../bindings/clock/intel,agilex5.yaml         |  42 ++++++++
+>  include/dt-bindings/clock/agilex5-clock.h     | 100 ++++++++++++++++++
+>  .../dt-bindings/reset/altr,rst-mgr-agilex5.h  |  79 ++++++++++++++
+>  3 files changed, 221 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex5.yaml
+>  create mode 100644 include/dt-bindings/clock/agilex5-clock.h
+>  create mode 100644 include/dt-bindings/reset/altr,rst-mgr-agilex5.h
 > 
 
-Tegra30 doesn't boot anymore with this change. Best would be to keep the
-old behaviour for both sclk and periph tegra clocks.
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/intel,agilex5.yaml: title: 'Intel SoCFPGA Agilex5 platform clock controller binding' should not be valid under {'pattern': '([Bb]inding| [Ss]chema)'}
+	hint: Everything is a binding/schema, no need to say it. Describe what hardware the binding is for.
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230618132235.728641-3-niravkumar.l.rabara@intel.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
