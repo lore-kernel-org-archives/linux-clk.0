@@ -2,84 +2,119 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35328EB64D9
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 08:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F393AEB64DB
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Jun 2023 08:13:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbjFSIJl convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Jun 2023 04:09:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50370 "EHLO
+        id S229799AbjFSINW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Jun 2023 04:13:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229881AbjFSIJ0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 04:09:26 -0400
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183E51731;
-        Mon, 19 Jun 2023 01:08:58 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-5702415be17so26124857b3.2;
-        Mon, 19 Jun 2023 01:08:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687162108; x=1689754108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NJTqCVXdPadmDoFW6YXRm6Af8uvl9zqFd+RPVsZaxPw=;
-        b=PsUwJmE9HiWO05W04Yar7wba8s0NtPkw4bCYrZoGmCfNXNgkx+3ZIx3nYV5MUH68+5
-         0lAKeKJNJ/B6M6VitZBr1LFmoX29aWPFZPAR19eHO0a7AskEqXHaqD7kYdHhfwKnf95i
-         S3yL6MIymJhZ/+9J41slrm33BJRQwCJyYYnNIdx2J6ewX1QPgZ0zysfShAMUhHwEZyOz
-         XY6zVtieEb0QlCaS+Nw5g3k85BzbLyb0YFZhAdLZMNmI8y/1kaVYg8ZFzi8iQE3m7egW
-         0y/PpTqPRLNZARLJn3OOQLPtVAsUYkwMgwJk4jRqOqemKIMLg9Kcqi/Fqc5WrhF7iXmo
-         sVTw==
-X-Gm-Message-State: AC+VfDw8Uzv0ws2dpvTytDoa9gJcMukh4rn7+GfiU1ZZzy40CRFgtOOj
-        IVQK7/9T8ZYjyq0R1s2HdK46rMNq7vksow==
-X-Google-Smtp-Source: ACHHUZ43ggvQxr0tbtXYZGsG4+XN95dGApJUvd28qPoxdnka/gqqXqxML2b9PR6Bgw1DMoABIKJgRg==
-X-Received: by 2002:a0d:cc02:0:b0:56d:2c60:2f84 with SMTP id o2-20020a0dcc02000000b0056d2c602f84mr6438977ywd.46.1687162107732;
-        Mon, 19 Jun 2023 01:08:27 -0700 (PDT)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
-        by smtp.gmail.com with ESMTPSA id w135-20020a0dd48d000000b00568a207aaedsm1232871ywd.68.2023.06.19.01.08.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Jun 2023 01:08:27 -0700 (PDT)
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-570282233ceso26207067b3.1;
-        Mon, 19 Jun 2023 01:08:27 -0700 (PDT)
-X-Received: by 2002:a25:db54:0:b0:bc7:2e80:b50f with SMTP id
- g81-20020a25db54000000b00bc72e80b50fmr3976835ybf.61.1687162107270; Mon, 19
- Jun 2023 01:08:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230617150302.38477-1-aford173@gmail.com> <20230617150302.38477-4-aford173@gmail.com>
-In-Reply-To: <20230617150302.38477-4-aford173@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 19 Jun 2023 10:08:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVnRaXAdh7aA_-0oLigSn7xPPL61tnsDVxaF0r7-tYXkg@mail.gmail.com>
-Message-ID: <CAMuHMdVnRaXAdh7aA_-0oLigSn7xPPL61tnsDVxaF0r7-tYXkg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: r8a774e1: Add 3dge and ZG support
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        with ESMTP id S229881AbjFSINV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Jun 2023 04:13:21 -0400
+Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD87AF;
+        Mon, 19 Jun 2023 01:13:19 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id D5F135C0091;
+        Mon, 19 Jun 2023 04:13:18 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Mon, 19 Jun 2023 04:13:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1687162398; x=1687248798; bh=ac
+        mQm0nuxCyr0NIKr6vJjBR8GRwKxrYohjffNuU8ThI=; b=jSf0Dn1cNRjWCPqBp/
+        tmQZzNRdUPVbsfRpFhe4brf3D6W8oWhX7R/kba0c2bdIfpHuioIPd+GAaTGuQQMS
+        JejO5C+VGa75RTFv/tGXYBNjhMX9zDV6DWD680ak+HG2ufngtLABDMK8bAP3mmGf
+        iKIiJ1bc+wkBe320cg4NLxrfcUc0rA9mHGm3dSaP64B4lzE11awVDRpfrLOD0OvS
+        BLO6jKPG1lDXy1Re+bQbocQBuvmZGIXnzyAH3peknh3DlaI5lhyCUGQHpFwT0cHR
+        QW+/0joER771++ZsU8/NZK8LXDJC5izVBQqCTsMovWTC2t5TqfS3ZkeUtH1EScdb
+        Opqg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1687162398; x=1687248798; bh=acmQm0nuxCyr0
+        NIKr6vJjBR8GRwKxrYohjffNuU8ThI=; b=FFGWsIVeXBmDhzlMRAfZjj3K2eiwR
+        v0Bd6yvnCFsXK7oYvg118CsfDxw27jjWlwL2aRHzHx6S5VYTWiCK1fBRpbzwjp1t
+        681ZuaiQc1d2lkVP/ZOhlMuO2kkOI0SPJIRM9s+gf7idnKhG++vzwbSj5VLANeLH
+        6JR50eJMDDOdwzyIRsF5f7qLFCuBBL1fmWN5w2BzgSeb2u6LJFAF7Ah6A1LFQJ+d
+        INj+Hv143hG8dlqTXlhlJ4p3n5UhXCQ1feV1kWgrgtsYLxSfKL4czVSfCRCmGuDk
+        U2dJinyRCawabNBZBrg5Rqf4ecqcV+g8mlv6U2aNVUmak3wfG0GdLRAHA==
+X-ME-Sender: <xms:HQ6QZHudSZcr99XCGAwT8aexgY-5xPnlBrnMRPhHxX3M_KLtiUhGPw>
+    <xme:HQ6QZIerLq1unp2hy-1fvpPA3Si46dm91um9J5xJwV9O5OVoWqzV63c-uypohthH1
+    4W0shxPNhSWefEavyc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeefvdcutefuodetggdotefrodftvfcurf
+    hrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeetffen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggv
+X-ME-Proxy: <xmx:Hg6QZKyqztS5u4jssAhWLeO90hrurtwGAZK24v5IXmDaggara6lybg>
+    <xmx:Hg6QZGOfyAy2G09L8c5M7pjUCnGIxCooHD4r4H8-EFH1PHulm6_iyg>
+    <xmx:Hg6QZH-TJrb7_qIrOl-SxEH7hfAU1cMNiShpH_cXFHQ8Df1Hnmvsqg>
+    <xmx:Hg6QZGjya9-5i6kyAcYL4gA-4Ns_yms7_IzDbRXRLzt2KIkoGQ2OZg>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id D61E5B60086; Mon, 19 Jun 2023 04:13:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-496-g8c46984af0-fm-20230615.001-g8c46984a
+Mime-Version: 1.0
+Message-Id: <f3f9bd5c-b4bd-461c-a6e1-b310cdaa0595@app.fastmail.com>
+In-Reply-To: <20230619033041.233921-1-ychuang570808@gmail.com>
+References: <20230619033041.233921-1-ychuang570808@gmail.com>
+Date:   Mon, 19 Jun 2023 10:12:56 +0200
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Jacky Huang" <ychuang570808@gmail.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        krzysztof.kozlowski+dt@linaro.org, "Lee Jones" <lee@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Slaby" <jirislaby@kernel.org>,
+        "Tomer Maimon" <tmaimon77@gmail.com>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        "Will Deacon" <will@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-serial@vger.kernel.org, soc@kernel.org, schung@nuvoton.com,
+        mjchen@nuvoton.com, "Jacky Huang" <ychuang3@nuvoton.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v15 2/2] clk: nuvoton: Add clock driver for ma35d1 clock controller
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jun 17, 2023 at 5:03 PM Adam Ford <aford173@gmail.com> wrote:
-> The 3dge and ZG clocks are necessary to support the 3D graphics.
+On Mon, Jun 19, 2023, at 05:30, Jacky Huang wrote:
+> From: Jacky Huang <ychuang3@nuvoton.com>
 >
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+> The clock controller generates clocks for the whole chip, including
+> system clocks and all peripheral clocks. This driver support ma35d1
+> clock gating, divider, and individual PLL configuration.
+>
+> There are 6 PLLs in ma35d1 SoC:
+>   - CA-PLL for the two Cortex-A35 CPU clock
+>   - SYS-PLL for system bus, which comes from the companion MCU
+>     and cannot be programmed by clock controller.
+>   - DDR-PLL for DDR
+>   - EPLL for GMAC and GFX, Display, and VDEC IPs.
+>   - VPLL for video output pixel clock
+>   - APLL for SDHC, I2S audio, and other IPs.
+> CA-PLL has only one operation mode.
+> DDR-PLL, EPLL, VPLL, and APLL are advanced PLLs which have 3
+> operation modes: integer mode, fraction mode, and spread specturm mode.
+>
+> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.6, with s/e1/b1/ in the one-line summary.
+Hi Jacky,
 
-Gr{oetje,eeting}s,
+Since I have already picked up the previous version of this patch,
+please send a diff against the version I merged please.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+     Arnd
