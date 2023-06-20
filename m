@@ -2,1061 +2,426 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D938FEB64D8
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jun 2023 14:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDA4EB64D7
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Jun 2023 18:51:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232795AbjFTOmy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Jun 2023 10:42:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49742 "EHLO
+        id S229692AbjFTSv6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Jun 2023 14:51:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232856AbjFTOmw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Jun 2023 10:42:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EA3795;
-        Tue, 20 Jun 2023 07:42:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S229482AbjFTSv5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Jun 2023 14:51:57 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050:0:465::202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 323E610FB;
+        Tue, 20 Jun 2023 11:51:50 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 03E08612A3;
-        Tue, 20 Jun 2023 14:42:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 026CEC433C8;
-        Tue, 20 Jun 2023 14:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687272168;
-        bh=d9XhbkKF96ldZ9ach8pwAa8guYHTrILdiXmV56+jwUA=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=OKMk4oSf7cdb9ShuA3Biq9uMMP+qG/gxHGYvOKfPG8tGPXHyqoNvBcW/pY7056XRc
-         R/Marq5I1gLTUKbTFTBvCar0nrpILFwyYO6/pJGGMgG+0jyLI1RKGxFzQVMqUiR6xd
-         1Z8qglUt1iDAzm/tHQnkHovPiKyw+M7C/b00mCEtGrauOZTnz1+CXvr7K0dXNpGE+A
-         yHOkpy7Ecoq+/Bx8RB9/QwIg/NNe2Njim6L0iLQmseGug5CFXuOXFqW3ftMZExIUqI
-         fj/VIdQK2XvgKKLSy5ftPgvc6DfJmslpRt7rkGqsK6FpQ/JA0wsG8DlZuXiaIqGnbG
-         M6vTjnaUjCGUg==
-Message-ID: <42e5a04d-d808-e60f-ee31-01b5cf63b5d4@kernel.org>
-Date:   Tue, 20 Jun 2023 09:42:45 -0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 3/4] clk: socfpga: agilex5: Add clock driver for Agilex5
- platform
-Content-Language: en-US
-To:     niravkumar.l.rabara@intel.com, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>,
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Qlwhz1WbRz9sq3;
+        Tue, 20 Jun 2023 20:51:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1687287107;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Gmtvlt8CaUWNmLspCeUPNIAxC/gKRGbQulSUlu4qCtQ=;
+        b=qbSngYdoAF5fECKs3p6b8U9xEr4TS+tZxln0nkzNXVlZ1HISVPUgyvZFAn/R9GWib7ZFyB
+        fSqBvudjnuUGzDZqWn3MhSlmHxsU/nwjKmVDl+QMaczd0E77gdbu6aBm3udx8NueBFdosZ
+        QrJvlEftZWXTHoGUHbUSkL5E5nlSV3XcbPQCc/3nrU+Fz78ieK0NmUgz+3BWSrVxFab/wl
+        ITCYsXyAimFs/oI9Gl6k2X88s42317cY3rZFUXA2WMYj0D7t8ubLA/1vfmP0/44d13qbO/
+        pJZP5eTDY3RpvosqQ8XidrGVmqaa6sdWHNDVa+UA2adxaE8FrZKggZOfMPk6Rg==
+References: <20230605190745.366882-1-frank@oltmanns.dev>
+ <20230605190745.366882-2-frank@oltmanns.dev>
+ <2bvcukogzhcdbfsrruylgw5fbezaqjpcojqaambfoiv5fc2upy@ffumn5sevbeb>
+ <875y7y1f0d.fsf@oltmanns.dev>
+ <sijbhopoxuw5wodyry3smg7tm4wzoc7k6xakt4qdvxqsok32mv@u7rh4dct5ya6>
+ <87a5x41w5r.fsf@oltmanns.dev>
+ <unoskbtcteluxj7g3xkwc7ngcmglvcbm5ah25m7huhqxwd4dj3@nmfxbedwyu54>
+ <87bkhbhnol.fsf@oltmanns.dev>
+ <yj6ss64s7p2uaslodj5zklrwhegz54bgh4l4wmldv6cccggepz@yombds4hij3c>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Wen Ping <wen.ping.teh@intel.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, netdev@vger.kernel.org,
-        Adrian Ng Ho Yin <adrian.ho.yin.ng@intel.com>
-References: <20230618132235.728641-1-niravkumar.l.rabara@intel.com>
- <20230618132235.728641-4-niravkumar.l.rabara@intel.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20230618132235.728641-4-niravkumar.l.rabara@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 1/2] clk: sunxi-ng: nkm: consider alternative parent
+ rates when finding rate
+In-reply-to: <yj6ss64s7p2uaslodj5zklrwhegz54bgh4l4wmldv6cccggepz@yombds4hij3c>
+Date:   Tue, 20 Jun 2023 20:51:27 +0200
+Message-ID: <87jzvyotlc.fsf@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4Qlwhz1WbRz9sq3
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Maxime,
 
+thank you for your detailed response. I really appreciate it!
 
-On 6/18/23 08:22, niravkumar.l.rabara@intel.com wrote:
-> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> 
-> The clock manager driver for Agilex5 is very similar to the Agilex
+On 2023-06-19 at 20:05:44 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+> [[PGP Signed Part:Undecided]]
+> On Mon, Jun 19, 2023 at 10:16:26AM +0200, Frank Oltmanns wrote:
+>> Hi Maxime,
+>>
+>> the essence of my following ramblings:
+>>  - I do think it is reasonable that nkm is asking its parent for the
+>>    rate that nkm actually needs from said parent to fulfill the request.
+>>  - I don't think nkm should make assumptions about the rounding
+>>    behaviour of the parent.
+>
+> I guess we agree :)
+>
+> And I would go even further and say that we shouldn't make *any*
+> assumption about the behaviour of the parent.
+>
+>> The reason is, that I want to prevent users of ccu_nkm from making
+>> mistakes when defining their clocks (which includes the parent of their
+>> nkm clock).
+>>
+>> Please read below the details on why I think that.
+>>
+>> [...]
+>>
+>> >> No. I didn't. My assumption is: If ccu_nkm_find_best is asked for the
+>> >> best rate for rate = 449035712, it should try to include 449035712 in
+>> >> its candidates, agreed?
+>> >>
+>> >> Example 1:
+>> >> ==========
+>> >> rate=449035712, n=11, k=3, m=16:
+>> >> We should as for a parent rate of 217714285, because:
+>> >> 217714285 * 11 * 3 / 16 = 449035712
+>> >>
+>> >> How do we get from 449035712 to 217714285, you ask?
+>> >>
+>> >>       DIV_ROUND_UP(rate * m, n * k)
+>> >
+>> > Why are we rounding up? I don't think the hardware will round up there.
+>>
+>> Being a "software guy" it is also my understanding that the hardware
+>> does not round up here (or round down for that matter).
+>
+> That's my understanding as well.
+>
+>> But anyway, my concern is the rate's representation *in software*. The
+>> clk drivers are using unsigned long to represent the actual rate. This
+>> is not a lossless representation. In other words, the value (i.e. the
+>> software representation) of that rate is, of course, a "lie". The
+>> hardware clock is running at some rate that is hopefully close to what
+>> we represent in software, but still it's an abstraction.
+>>
+>> For example, the user (e.g. in my example a panel) asks us for a rate
+>> that is represented in softwares as 449035712. Given the values n=11,
+>> k=3, m=16, we can *only* represent this value in software if the parent
+>> gives us a rate that is represented in software as 217714285. Therefore,
+>> I think it is reasonable to ask the parent for that rate (217714285).
+>
+> I somewhat agree, but I still don't think it's worth rounding up.
+>
+> If we don't round up (and assuming the parent itself won't round the
+> clock), we end up with a rate of 449035710 using the dividers you
+> mentioned. It's a .0000005% deviation (I hope I didn't screw up the
+> number of 0s). It's negligible for all practical purposes, and it's not
+> worth making the code inconsistent and eyebrow raising.
+>
+>> >> Do you agree that we should ask the parent for 217714285 in case we want
+>> >> a rate of 449035712 and we're currently evaluating the case n=11, k=3,
+>> >> m=16?
+>> >>
+>> >> We should not ask for a parent rate of 217714284, because:
+>> >> 217714284 * 11 * 3 / 16 = 449035710
+>> >>
+>> >> Example 2:
+>> >> ==========
+>> >> rate=500000000, n=11, k=3, m=16:
+>> >> Here we should not ask the parent for
+>> >>       DIV_ROUND_UP(rate * m, n * k)
+>> >> because that would be 242424243.
+>> >>
+>> >> 242424243 * 11 * 3 / 16 = 500000001
+>> >>
+>> >> We (the NKM clock, not the parent!) would overshoot (please see at the
+>> >> end of this mail, why (for now) I don't want to support overshooting in
+>> >> the NKM clock).
+>> >>
+>> >> Instead we should as for a parent rate of 242424242, because:
+>> >> 242424242 * 11 * 3 / 16 = 499999999
+>> >>
+>> >> In conclusion, there are cases, where we (the NKM clock) have to ask the
+>> >> parent for
+>> >>       DIV_ROUND_UP(rate * m, n * k)
+>> >> And there are also cases, where we have to ask the parent for
+>> >>       rate * m / (n * k)
+>> >
+>> > I mean, I think you're overthinking this.
+>> >
+>> > If you never round up and mimic how the hardware behaves, and test all
+>> > combination, then eventually you'll find the closest rate.
+>> >
+>> > If you don't because the parent doesn't look for the closest rate, then
+>> > the parent should be changed too.
+>> >
+>> > It really is that simple.
+>> >
+>> >> This is what the code is trying to do. Maybe it's easier to look at V2
+>> >> because I extracted the calcultion of the optimal parent rate into a
+>> >> separate function hoping that this makes things clearer.
+>> >>
+>> >> Let me stress this: When calculating the optimal rate for the parent,
+>> >> I'm not making any assumptions here about how the PARENT clock rounds.
+>> >> In fact, I assume that the parent could be perfect and always provides
+>> >> the rate it is asked for. I only take into account how the nkm clock
+>> >> rounds.
+>> >
+>> > At the very least, you assume that the parent rounding can be "wrong"
+>> > and try to work around that.
+>>
+>> No. I'm not assuming anything about the parent. But I *know* that if we
+>> (nkm) want to get a rate that is represented in softwares as 449035712
+>> and given the values n=11, k=3, m=16, we (nkm) must get the rate from
+>> the parent that the parent represents in software as 217714285, because
+>> I know that we (nkm) calculate *our* (nkm) rate using
+>>     parent * n * k / m
+>>
+>> So if (!) we want to give the user the rate that they ask for, why not
+>> ask the parent for the rate that we need (217714285)?
+>>
+>> I admit that I'm making assumptions here. My assumptions are that we
+>>  a. want to at least try to give the user what they asked for
+>>  b. without making assumptions about the parent's behaviour.
+>>
+>> Those assumptions could of course be wrong, but, honestly, I would find
+>> that confusing.
+>
+> I guess my point leans more towards the "social" side than the
+> mathematical one. If I followed you so far, the precision you expect to
+> gain is in the <1Hz range
 
-Then why create a whole new driver? Surely there's alot of re-use you 
-can do?
+Ok, just for the sake of correctness: Actually, I'm concerned with the
+fact what happens, if someone "forgets" or doesn't know they have to set
+the flag and what happens when calling round rate. Because then in the
+end we get 449018180 instead of 449035712. That's more than 1 Hz. But
+anyway, I understand your point that a gain of precision of the
+approximately 0,004% is not worth the additional code. (Actually, I
+don't know how precise the clocks are, but I'd guess it could easily be
+lower than 99,996%.)
 
-> platform. This patch makes the necessary changes for the driver to
-> differentiate between the Agilex and the Agilex5 platforms.
-> 
-> Signed-off-by: Teh Wen Ping <wen.ping.teh@intel.com>
-> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-> ---
->   drivers/clk/socfpga/Kconfig         |   4 +-
->   drivers/clk/socfpga/Makefile        |   2 +-
->   drivers/clk/socfpga/clk-agilex5.c   | 843 ++++++++++++++++++++++++++++
->   drivers/clk/socfpga/clk-pll-s10.c   |  48 ++
->   drivers/clk/socfpga/stratix10-clk.h |   2 +
->   5 files changed, 896 insertions(+), 3 deletions(-)
->   create mode 100644 drivers/clk/socfpga/clk-agilex5.c
-> 
-> diff --git a/drivers/clk/socfpga/Kconfig b/drivers/clk/socfpga/Kconfig
-> index 0cf16b894efb..e82c0cda3245 100644
-> --- a/drivers/clk/socfpga/Kconfig
-> +++ b/drivers/clk/socfpga/Kconfig
-> @@ -4,7 +4,7 @@ config CLK_INTEL_SOCFPGA
->   	default ARCH_INTEL_SOCFPGA
->   	help
->   	  Support for the clock controllers present on Intel SoCFPGA and eASIC
-> -	  devices like Aria, Cyclone, Stratix 10, Agilex and N5X eASIC.
-> +	  devices like Aria, Cyclone, Stratix 10, Agilex, N5X eASIC and Agilex5.
->   
->   if CLK_INTEL_SOCFPGA
->   
-> @@ -13,7 +13,7 @@ config CLK_INTEL_SOCFPGA32
->   	default ARM && ARCH_INTEL_SOCFPGA
->   
->   config CLK_INTEL_SOCFPGA64
-> -	bool "Intel Stratix / Agilex / N5X clock controller support" if COMPILE_TEST && (!ARM64 || !ARCH_INTEL_SOCFPGA)
-> +	bool "Intel Stratix / Agilex / N5X clock / Agilex5 controller support" if COMPILE_TEST && (!ARM64 || !ARCH_INTEL_SOCFPGA)
->   	default ARM64 && ARCH_INTEL_SOCFPGA
->   
->   endif # CLK_INTEL_SOCFPGA
-> diff --git a/drivers/clk/socfpga/Makefile b/drivers/clk/socfpga/Makefile
-> index e8dfce339c91..a1ea2b988eaf 100644
-> --- a/drivers/clk/socfpga/Makefile
-> +++ b/drivers/clk/socfpga/Makefile
-> @@ -3,4 +3,4 @@ obj-$(CONFIG_CLK_INTEL_SOCFPGA32) += clk.o clk-gate.o clk-pll.o clk-periph.o \
->   				     clk-pll-a10.o clk-periph-a10.o clk-gate-a10.o
->   obj-$(CONFIG_CLK_INTEL_SOCFPGA64) += clk-s10.o \
->   				     clk-pll-s10.o clk-periph-s10.o clk-gate-s10.o \
-> -				     clk-agilex.o
-> +				     clk-agilex.o clk-agilex5.o
-> diff --git a/drivers/clk/socfpga/clk-agilex5.c b/drivers/clk/socfpga/clk-agilex5.c
-> new file mode 100644
-> index 000000000000..2d597176a98d
-> --- /dev/null
-> +++ b/drivers/clk/socfpga/clk-agilex5.c
-> @@ -0,0 +1,843 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2022, Intel Corporation
+> (and I've been in sick leave for a while, so
+> sorry if I didn't before).
 
-It's 2023 now!
-> + */
-> +#include <linux/slab.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_address.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <dt-bindings/clock/agilex5-clock.h>
-> +
-> +#include "stratix10-clk.h"
-> +
-> +static const struct clk_parent_data pll_mux[] = {
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data boot_mux[] = {
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core0_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c0",
-> +		.name = "peri_pll_c0",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core1_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c0",
-> +		.name = "peri_pll_c0",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core2_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c0",
-> +		.name = "main_pll_c0",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core3_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c0",
-> +		.name = "main_pll_c0",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data dsu_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c2",
-> +		.name = "main_pll_c2",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c0",
-> +		.name = "peri_pll_c0",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data noc_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c3",
-> +		.name = "main_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c1",
-> +		.name = "peri_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data emaca_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c3",
-> +		.name = "peri_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data emacb_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c3",
-> +		.name = "peri_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data emac_ptp_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c3",
-> +		.name = "peri_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data gpio_db_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c3",
-> +		.name = "main_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c1",
-> +		.name = "peri_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data psi_ref_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c3",
-> +		.name = "peri_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data usb31_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c3",
-> +		.name = "main_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c2",
-> +		.name = "peri_pll_c2",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data s2f_usr0_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c3",
-> +		.name = "peri_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data s2f_usr1_free_mux[] = {
-> +	{
-> +		.fw_name = "main_pll_c1",
-> +		.name = "main_pll_c1",
-> +	},
-> +	{
-> +		.fw_name = "peri_pll_c3",
-> +		.name = "peri_pll_c3",
-> +	},
-> +	{
-> +		.fw_name = "osc1",
-> +		.name = "osc1",
-> +	},
-> +	{
-> +		.fw_name = "cb-intosc-hs-div2-clk",
-> +		.name = "cb-intosc-hs-div2-clk",
-> +	},
-> +	{
-> +		.fw_name = "f2s-free-clk",
-> +		.name = "f2s-free-clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core0_mux[] = {
-> +	{
-> +		.fw_name = "core0_free_clk",
-> +		.name = "core0_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core1_mux[] = {
-> +	{
-> +		.fw_name = "core1_free_clk",
-> +		.name = "core1_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core2_mux[] = {
-> +	{
-> +		.fw_name = "core2_free_clk",
-> +		.name = "core2_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data core3_mux[] = {
-> +	{
-> +		.fw_name = "core3_free_clk",
-> +		.name = "core3_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data dsu_mux[] = {
-> +	{
-> +		.fw_name = "dsu_free_clk",
-> +		.name = "dsu_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data emac_mux[] = {
-> +	{
-> +		.fw_name = "emaca_free_clk",
-> +		.name = "emaca_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "emacb_free_clk",
-> +		.name = "emacb_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data noc_mux[] = {
-> +	{
-> +		.fw_name = "noc_free_clk",
-> +		.name = "noc_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data s2f_user0_mux[] = {
-> +	{
-> +		.fw_name = "s2f_user0_free_clk",
-> +		.name = "s2f_user0_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data s2f_user1_mux[] = {
-> +	{
-> +		.fw_name = "s2f_user1_free_clk",
-> +		.name = "s2f_user1_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data psi_mux[] = {
-> +	{
-> +		.fw_name = "psi_ref_free_clk",
-> +		.name = "psi_ref_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data gpio_db_mux[] = {
-> +	{
-> +		.fw_name = "gpio_db_free_clk",
-> +		.name = "gpio_db_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data emac_ptp_mux[] = {
-> +	{
-> +		.fw_name = "emac_ptp_free_clk",
-> +		.name = "emac_ptp_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +static const struct clk_parent_data usb31_mux[] = {
-> +	{
-> +		.fw_name = "usb31_free_clk",
-> +		.name = "usb31_free_clk",
-> +	},
-> +	{
-> +		.fw_name = "boot_clk",
-> +		.name = "boot_clk",
-> +	},
-> +};
-> +
-> +/*
-> + * TODO - Clocks in AO (always on) controller
+I hope you feel better.
 
-Remove your TODO, so did you do it already?
+> The rate is in the 100MHz range.
+>
+> So the precision gain is pretty much nothing. Sure, it's closer from a
+> mathematical standpoint. But there's zero benefit from it.
+>
+> However, it comes at the cost of a code that is definitely more
+> complicated (or less naive, depending on how you look at it I guess :))
+> and will be harder to figure out for someone that jumps into the driver.
+>
+> So the trade-off doesn't really make fixing it worth it to me.
+>
 
-> + * 2 main PLLs only
-> + */
-> +static const struct stratix10_pll_clock agilex5_pll_clks[] = {
-> +	{ AGILEX5_BOOT_CLK, "boot_clk", boot_mux, ARRAY_SIZE(boot_mux), 0,
-> +	  0x0 },
-> +	{ AGILEX5_MAIN_PLL_CLK, "main_pll", pll_mux, ARRAY_SIZE(pll_mux), 0,
-> +	  0x48 },
-> +	{ AGILEX5_PERIPH_PLL_CLK, "periph_pll", pll_mux, ARRAY_SIZE(pll_mux), 0,
-> +	  0x9C },
-> +};
-> +
-> +static const struct stratix10_perip_c_clock agilex5_main_perip_c_clks[] = {
-> +	{ AGILEX5_MAIN_PLL_C0_CLK, "main_pll_c0", "main_pll", NULL, 1, 0,
-> +	  0x5C },
-> +	{ AGILEX5_MAIN_PLL_C1_CLK, "main_pll_c1", "main_pll", NULL, 1, 0,
-> +	  0x60 },
-> +	{ AGILEX5_MAIN_PLL_C2_CLK, "main_pll_c2", "main_pll", NULL, 1, 0,
-> +	  0x64 },
-> +	{ AGILEX5_MAIN_PLL_C3_CLK, "main_pll_c3", "main_pll", NULL, 1, 0,
-> +	  0x68 },
-> +	{ AGILEX5_PERIPH_PLL_C0_CLK, "peri_pll_c0", "periph_pll", NULL, 1, 0,
-> +	  0xB0 },
-> +	{ AGILEX5_PERIPH_PLL_C1_CLK, "peri_pll_c1", "periph_pll", NULL, 1, 0,
-> +	  0xB4 },
-> +	{ AGILEX5_PERIPH_PLL_C2_CLK, "peri_pll_c2", "periph_pll", NULL, 1, 0,
-> +	  0xB8 },
-> +	{ AGILEX5_PERIPH_PLL_C3_CLK, "peri_pll_c3", "periph_pll", NULL, 1, 0,
-> +	  0xBC },
-> +};
-> +
-> +/* Non-SW clock-gated enabled clocks */
-> +static const struct stratix10_perip_cnt_clock agilex5_main_perip_cnt_clks[] = {
-> +	{ AGILEX5_CORE0_FREE_CLK, "core0_free_clk", NULL, core0_free_mux,
-> +	ARRAY_SIZE(core0_free_mux), 0, 0x0104, 0, 0, 0},
-> +	{ AGILEX5_CORE1_FREE_CLK, "core1_free_clk", NULL, core1_free_mux,
-> +	ARRAY_SIZE(core1_free_mux), 0, 0x0104, 0, 0, 0},
-> +	{ AGILEX5_CORE2_FREE_CLK, "core2_free_clk", NULL, core2_free_mux,
-> +	ARRAY_SIZE(core2_free_mux), 0, 0x010C, 0, 0, 0},
-> +	{ AGILEX5_CORE3_FREE_CLK, "core3_free_clk", NULL, core3_free_mux,
-> +	ARRAY_SIZE(core3_free_mux), 0, 0x0110, 0, 0, 0},
-> +	{ AGILEX5_DSU_FREE_CLK, "dsu_free_clk", NULL, dsu_free_mux,
-> +	ARRAY_SIZE(dsu_free_mux), 0, 0x0100, 0, 0, 0},
-> +	{ AGILEX5_NOC_FREE_CLK, "noc_free_clk", NULL, noc_free_mux,
-> +	  ARRAY_SIZE(noc_free_mux), 0, 0x40, 0, 0, 0 },
-> +	{ AGILEX5_EMAC_A_FREE_CLK, "emaca_free_clk", NULL, emaca_free_mux,
-> +	  ARRAY_SIZE(emaca_free_mux), 0, 0xD4, 0, 0x88, 0 },
-> +	{ AGILEX5_EMAC_B_FREE_CLK, "emacb_free_clk", NULL, emacb_free_mux,
-> +	  ARRAY_SIZE(emacb_free_mux), 0, 0xD8, 0, 0x88, 1 },
-> +	{ AGILEX5_EMAC_PTP_FREE_CLK, "emac_ptp_free_clk", NULL,
-> +	  emac_ptp_free_mux, ARRAY_SIZE(emac_ptp_free_mux), 0, 0xDC, 0, 0x88,
-> +	  2 },
-> +	{ AGILEX5_GPIO_DB_FREE_CLK, "gpio_db_free_clk", NULL, gpio_db_free_mux,
-> +	  ARRAY_SIZE(gpio_db_free_mux), 0, 0xE0, 0, 0x88, 3 },
-> +	{ AGILEX5_S2F_USER0_FREE_CLK, "s2f_user0_free_clk", NULL,
-> +	  s2f_usr0_free_mux, ARRAY_SIZE(s2f_usr0_free_mux), 0, 0xE8, 0, 0x30,
-> +	  2 },
-> +	{ AGILEX5_S2F_USER1_FREE_CLK, "s2f_user1_free_clk", NULL,
-> +	  s2f_usr1_free_mux, ARRAY_SIZE(s2f_usr1_free_mux), 0, 0xEC, 0, 0x88,
-> +	  5 },
-> +	{ AGILEX5_PSI_REF_FREE_CLK, "psi_ref_free_clk", NULL, psi_ref_free_mux,
-> +	  ARRAY_SIZE(psi_ref_free_mux), 0, 0xF0, 0, 0x88, 6 },
-> +	{ AGILEX5_USB31_FREE_CLK, "usb31_free_clk", NULL, usb31_free_mux,
-> +	  ARRAY_SIZE(usb31_free_mux), 0, 0xF8, 0, 0x88, 7},
-> +};
-> +
-> +/* SW Clock gate enabled clocks */
-> +static const struct stratix10_gate_clock agilex5_gate_clks[] = {
-> +	/* Main PLL0 Begin */
-> +	/* MPU clocks */
-> +	{ AGILEX5_CORE0_CLK, "core0_clk", NULL, core0_mux,
-> +	  ARRAY_SIZE(core0_mux), 0, 0x24, 8, 0, 0, 0, 0x30, 5, 0 },
-> +	{ AGILEX5_CORE1_CLK, "core1_clk", NULL, core1_mux,
-> +	  ARRAY_SIZE(core1_mux), 0, 0x24, 9, 0, 0, 0, 0x30, 5, 0 },
-> +	{ AGILEX5_CORE2_CLK, "core2_clk", NULL, core2_mux,
-> +	  ARRAY_SIZE(core2_mux), 0, 0x24, 10, 0, 0, 0, 0x30, 6, 0 },
-> +	{ AGILEX5_CORE3_CLK, "core3_clk", NULL, core3_mux,
-> +	  ARRAY_SIZE(core3_mux), 0, 0x24, 11, 0, 0, 0, 0x30, 7, 0 },
-> +	{ AGILEX5_MPU_CLK, "dsu_clk", NULL, dsu_mux, ARRAY_SIZE(dsu_mux), 0, 0,
-> +	  0, 0, 0, 0, 0x34, 4, 0 },
-> +	{ AGILEX5_MPU_PERIPH_CLK, "mpu_periph_clk", NULL, dsu_mux,
-> +	  ARRAY_SIZE(dsu_mux), 0, 0, 0, 0x44, 20, 2, 0x34, 4, 0 },
-> +	{ AGILEX5_MPU_CCU_CLK, "mpu_ccu_clk", NULL, dsu_mux,
-> +	  ARRAY_SIZE(dsu_mux), 0, 0, 0, 0x44, 18, 2, 0x34, 4, 0 },
-> +
-> +	/* l4 main clk has no divider now */
-> +	{ AGILEX5_L4_MAIN_CLK, "l4_main_clk", NULL, noc_mux,
-> +	  ARRAY_SIZE(noc_mux), 0, 0x24, 1, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_L4_MP_CLK, "l4_mp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
-> +	  0x24, 2, 0x44, 4, 2, 0x30, 1, 0 },
-> +	{ AGILEX5_L4_SYS_FREE_CLK, "l4_sys_free_clk", NULL, noc_mux,
-> +	  ARRAY_SIZE(noc_mux), 0, 0, 0, 0x44, 2, 2, 0x30, 1, 0 },
-> +	{ AGILEX5_L4_SP_CLK, "l4_sp_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux),
-> +	  CLK_IS_CRITICAL, 0x24, 3, 0x44, 6, 2, 0x30, 1, 0 },
-> +
-> +	/* Core sight clocks*/
-> +	{ AGILEX5_CS_AT_CLK, "cs_at_clk", NULL, noc_mux, ARRAY_SIZE(noc_mux), 0,
-> +	  0x24, 4, 0x44, 24, 2, 0x30, 1, 0 },
-> +	{ AGILEX5_CS_TRACE_CLK, "cs_trace_clk", NULL, noc_mux,
-> +	  ARRAY_SIZE(noc_mux), 0, 0x24, 4, 0x44, 26, 2, 0x30, 1, 0 },
-> +	{ AGILEX5_CS_PDBG_CLK, "cs_pdbg_clk", "cs_at_clk", NULL, 1, 0, 0x24, 4,
-> +	  0x44, 28, 1, 0, 0, 0 },
-> +	/* Main PLL0 End */
-> +
-> +	/* Main Peripheral PLL1 Begin */
-> +	{ AGILEX5_EMAC0_CLK, "emac0_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux),
-> +	  0, 0x7C, 0, 0, 0, 0, 0x94, 26, 0 },
-> +	{ AGILEX5_EMAC1_CLK, "emac1_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux),
-> +	  0, 0x7C, 1, 0, 0, 0, 0x94, 27, 0 },
-> +	{ AGILEX5_EMAC2_CLK, "emac2_clk", NULL, emac_mux, ARRAY_SIZE(emac_mux),
-> +	  0, 0x7C, 2, 0, 0, 0, 0x94, 28, 0 },
-> +	{ AGILEX5_EMAC_PTP_CLK, "emac_ptp_clk", NULL, emac_ptp_mux,
-> +	  ARRAY_SIZE(emac_ptp_mux), 0, 0x7C, 3, 0, 0, 0, 0x88, 2, 0 },
-> +	{ AGILEX5_GPIO_DB_CLK, "gpio_db_clk", NULL, gpio_db_mux,
-> +	  ARRAY_SIZE(gpio_db_mux), 0, 0x7C, 4, 0x98, 0, 16, 0x88, 3, 0 },
-> +	  /* Main Peripheral PLL1 End */
-> +
-> +	  /* Peripheral clocks  */
-> +	{ AGILEX5_S2F_USER0_CLK, "s2f_user0_clk", NULL, s2f_user0_mux,
-> +	  ARRAY_SIZE(s2f_user0_mux), 0, 0x24, 6, 0, 0, 0, 0x30, 2, 0 },
-> +	{ AGILEX5_S2F_USER1_CLK, "s2f_user1_clk", NULL, s2f_user1_mux,
-> +	  ARRAY_SIZE(s2f_user1_mux), 0, 0x7C, 6, 0, 0, 0, 0x88, 5, 0 },
-> +	{ AGILEX5_PSI_REF_CLK, "psi_ref_clk", NULL, psi_mux,
-> +	  ARRAY_SIZE(psi_mux), 0, 0x7C, 7, 0, 0, 0, 0x88, 6, 0 },
-> +	{ AGILEX5_USB31_SUSPEND_CLK, "usb31_suspend_clk", NULL, usb31_mux,
-> +	  ARRAY_SIZE(usb31_mux), 0, 0x7C, 25, 0, 0, 0, 0x88, 7, 0 },
-> +	{ AGILEX5_USB31_BUS_CLK_EARLY, "usb31_bus_clk_early", "l4_main_clk",
-> +	  NULL, 1, 0, 0x7C, 25, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_USB2OTG_HCLK, "usb2otg_hclk", "l4_mp_clk", NULL, 1, 0, 0x7C,
-> +	  8, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SPIM_0_CLK, "spim_0_clk", "l4_mp_clk", NULL, 1, 0, 0x7C, 9,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SPIM_1_CLK, "spim_1_clk", "l4_mp_clk", NULL, 1, 0, 0x7C, 11,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SPIS_0_CLK, "spis_0_clk", "l4_sp_clk", NULL, 1, 0, 0x7C, 12,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SPIS_1_CLK, "spis_1_clk", "l4_sp_clk", NULL, 1, 0, 0x7C, 13,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_DMA_CORE_CLK, "dma_core_clk", "l4_mp_clk", NULL, 1, 0, 0x7C,
-> +	  14, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_DMA_HS_CLK, "dma_hs_clk", "l4_mp_clk", NULL, 1, 0, 0x7C, 14,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_I3C_0_CORE_CLK, "i3c_0_core_clk", "l4_mp_clk", NULL, 1, 0,
-> +	  0x7C, 18, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_I3C_1_CORE_CLK, "i3c_1_core_clk", "l4_mp_clk", NULL, 1, 0,
-> +	  0x7C, 19, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_I2C_0_PCLK, "i2c_0_pclk", "l4_sp_clk", NULL, 1, 0, 0x7C, 15,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_I2C_1_PCLK, "i2c_1_pclk", "l4_sp_clk", NULL, 1, 0, 0x7C, 16,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_I2C_EMAC0_PCLK, "i2c_emac0_pclk", "l4_sp_clk", NULL, 1, 0,
-> +	  0x7C, 17, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_I2C_EMAC1_PCLK, "i2c_emac1_pclk", "l4_sp_clk", NULL, 1, 0,
-> +	  0x7C, 22, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_I2C_EMAC2_PCLK, "i2c_emac2_pclk", "l4_sp_clk", NULL, 1, 0,
-> +	  0x7C, 27, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_UART_0_PCLK, "uart_0_pclk", "l4_sp_clk", NULL, 1, 0, 0x7C, 20,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_UART_1_PCLK, "uart_1_pclk", "l4_sp_clk", NULL, 1, 0, 0x7C, 21,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SPTIMER_0_PCLK, "sptimer_0_pclk", "l4_sp_clk", NULL, 1, 0,
-> +	  0x7C, 23, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SPTIMER_1_PCLK, "sptimer_1_pclk", "l4_sp_clk", NULL, 1, 0,
-> +	  0x7C, 24, 0, 0, 0, 0, 0, 0 },
-> +
-> +	/*NAND, SD/MMC and SoftPHY overall clocking*/
-> +	{ AGILEX5_DFI_CLK, "dfi_clk", "l4_mp_clk", NULL, 1, 0, 0, 0, 0x44, 16,
-> +	  2, 0, 0, 0 },
-> +	{ AGILEX5_NAND_NF_CLK, "nand_nf_clk", "dfi_clk", NULL, 1, 0, 0x7C, 10,
-> +	  0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_NAND_BCH_CLK, "nand_bch_clk", "l4_mp_clk", NULL, 1, 0, 0x7C,
-> +	  10, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SDMMC_SDPHY_REG_CLK, "sdmmc_sdphy_reg_clk", "l4_mp_clk", NULL,
-> +	  1, 0, 0x7C, 5, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SDMCLK, "sdmclk", "dfi_clk", NULL, 1, 0, 0x7C, 5, 0, 0, 0, 0,
-> +	  0, 0 },
-> +	{ AGILEX5_SOFTPHY_REG_PCLK, "softphy_reg_pclk", "l4_mp_clk", NULL, 1, 0,
-> +	  0x7C, 26, 0, 0, 0, 0, 0, 0 },
-> +	{ AGILEX5_SOFTPHY_PHY_CLK, "softphy_phy_clk", "l4_mp_clk", NULL, 1, 0,
-> +	  0x7C, 26, 0x44, 16, 2, 0, 0, 0 },
-> +	{ AGILEX5_SOFTPHY_CTRL_CLK, "softphy_ctrl_clk", "dfi_clk", NULL, 1, 0,
-> +	  0x7C, 26, 0, 0, 0, 0, 0, 0 },
-> +};
-> +
+Ok, understood.
 
-As far as I can tell, there are very little differences between this and 
-Agilex! Please reuse!
+>
+>> >> > you ask the parent to compute whatever is closest to that optimal parent
+>> >> > rate.
+>> >> >
+>> >> > It's the parent responsibility now. It's the parent decision to figure
+>> >> > out what "the closest" means, if it can change rate, if it has any range
+>> >> > limitation, etc. You can't work around that.
+>> >> >
+>> >> > What you actually want there is the parent to actually provide the
+>> >> > closest rate, even if it means overshooting.
+>> >> >
+>> >>
+>> >> I want to ask the parent for a rate, that would actually result in the
+>> >> rate that nkm_find_best was asked for. Are you asking me to instead ask
+>> >> the parent for a rate that doesn't fit that criterion?
+>> >
+>> > No. I'm asking to call clk_hw_round_rate(parent_hw, rate * m / (n * k))
+>> > and use whatever value it returned.
+>> >
+>> > If it requires changing the parent clock to improve its round_rate
+>> > behaviour, then do that too.
+>> >
+>>
+>> Hmmm... Okay. So you *are* saying, that I should make changes to the
+>> parent so that we do not need to request the exact rate we want from the
+>> parent. But I really don't understand why.
+>
+> No, sorry. I initially thought that you were working around "divider"
+> rounding issue (as opposed to integer like you mentionned above) with
+> the parent not providing its optimal rate, and you adjusting based on
+> that offset.
+>
+>> As I wrote above, I'm not making any assumptions of how and if the
+>> parent rounds. My code is rounding *prior* to asking the parent. Your
+>> proposal on the other hand *requires* changing the parent to round
+>> closest where mine does not.
+>>
+>> My concern is, that we could then end up with the situation that someone
+>> defines an nkm clock in their SoC which has CLK_SET_RATE_PARENT set, but
+>> does not set the ROUND_CLOSEST flag on the parent, because it's not
+>> immediately apparent why they should do that.
+>
+> It's going to happen, and probably happens at the moment already,
+> because not only the NKM clocks are affected, but virtually all of them,
+> and most don't use ROUND_CLOSEST.
+>
+> And to some extent, it's fine. We would handle it like any other bug: if
+> we ever encounter one, we'll write a fix, backport it to stable and all
+> will be fine.
 
-> +static int
-> +agilex5_clk_register_c_perip(const struct stratix10_perip_c_clock *clks,
-> +			     int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = s10_register_periph(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int
-> +agilex5_clk_register_cnt_perip(const struct stratix10_perip_cnt_clock *clks,
-> +			       int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = s10_register_cnt_periph(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clk_register_gate(const struct stratix10_gate_clock *clks,
-> +				     int nums,
-> +				     struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = agilex_register_gate(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clk_register_pll(const struct stratix10_pll_clock *clks,
-> +				    int nums, struct stratix10_clock_data *data)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	void __iomem *base = data->base;
-> +	int i;
-> +
-> +	for (i = 0; i < nums; i++) {
-> +		hw_clk = agilex5_register_pll(&clks[i], base);
-> +		if (IS_ERR(hw_clk)) {
-> +			pr_err("%s: failed to register clock %s\n", __func__,
-> +			       clks[i].name);
-> +			continue;
-> +		}
-> +		data->clk_data.hws[clks[i].id] = hw_clk;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clkmgr_init(struct platform_device *pdev)
-> +{
-> +	struct device_node *np = pdev->dev.of_node;
-> +	struct device *dev = &pdev->dev;
-> +	struct stratix10_clock_data *clk_data;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	int i, num_clks;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	num_clks = AGILEX5_NUM_CLKS;
-> +
-> +	clk_data = devm_kzalloc(dev,
-> +				struct_size(clk_data, clk_data.hws, num_clks),
-> +				GFP_KERNEL);
-> +	if (!clk_data)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < num_clks; i++)
-> +		clk_data->clk_data.hws[i] = ERR_PTR(-ENOENT);
-> +
-> +	clk_data->base = base;
-> +	clk_data->clk_data.num = num_clks;
-> +
-> +	agilex5_clk_register_pll(agilex5_pll_clks, ARRAY_SIZE(agilex5_pll_clks),
-> +				 clk_data);
-> +
-> +	agilex5_clk_register_c_perip(agilex5_main_perip_c_clks,
-> +				     ARRAY_SIZE(agilex5_main_perip_c_clks),
-> +				     clk_data);
-> +
-> +	agilex5_clk_register_cnt_perip(agilex5_main_perip_cnt_clks,
-> +				       ARRAY_SIZE(agilex5_main_perip_cnt_clks),
-> +				       clk_data);
-> +
-> +	agilex5_clk_register_gate(agilex5_gate_clks,
-> +				  ARRAY_SIZE(agilex5_gate_clks), clk_data);
-> +
-> +	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &clk_data->clk_data);
-> +	return 0;
-> +}
-> +
-> +static int agilex5_clkmgr_probe(struct platform_device *pdev)
-> +{
-> +	int (*probe_func)(struct platform_device *init_func);
-> +
-> +	probe_func = of_device_get_match_data(&pdev->dev);
-> +	if (!probe_func)
-> +		return -ENODEV;
-> +	return probe_func(pdev);
-> +}
-> +
-> +static const struct of_device_id agilex5_clkmgr_match_table[] = {
-> +	{ .compatible = "intel,agilex5-clkmgr", .data = agilex5_clkmgr_init },
-> +	{}
-> +};
-> +
-> +static struct platform_driver agilex5_clkmgr_driver = {
-> +	.probe		= agilex5_clkmgr_probe,
-> +	.driver		= {
-> +		.name	= "agilex5-clkmgr",
-> +		.suppress_bind_attrs = true,
-> +		.of_match_table = agilex5_clkmgr_match_table,
-> +	},
-> +};
-> +
-> +static int __init agilex5_clk_init(void)
-> +{
-> +	return platform_driver_register(&agilex5_clkmgr_driver);
-> +}
-> +core_initcall(agilex5_clk_init);
-> diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-> index 1d82737befd3..e3367d34bc55 100644
-> --- a/drivers/clk/socfpga/clk-pll-s10.c
-> +++ b/drivers/clk/socfpga/clk-pll-s10.c
-> @@ -175,6 +175,14 @@ static const struct clk_ops agilex_clk_pll_ops = {
->   	.prepare = clk_pll_prepare,
->   };
->   
-> +/* TODO need to fix, Agilex5 SM requires change */
-> +static const struct clk_ops agilex5_clk_pll_ops = {
-> +	/* TODO This may require a custom Agilex5 implementation */
-> +	.recalc_rate = agilex_clk_pll_recalc_rate,
-> +	.get_parent = clk_pll_get_parent,
-> +	.prepare = clk_pll_prepare,
-> +};
-> +
->   static const struct clk_ops clk_pll_ops = {
->   	.recalc_rate = clk_pll_recalc_rate,
->   	.get_parent = clk_pll_get_parent,
-> @@ -304,3 +312,43 @@ struct clk_hw *n5x_register_pll(const struct stratix10_pll_clock *clks,
->   	}
->   	return hw_clk;
->   }
-> +
-> +struct clk_hw *agilex5_register_pll(const struct stratix10_pll_clock *clks,
-> +				    void __iomem *reg)
-> +{
-> +	struct clk_hw *hw_clk;
-> +	struct socfpga_pll *pll_clk;
-> +	struct clk_init_data init;
-> +	const char *name = clks->name;
-> +	int ret;
-> +
-> +	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-> +	if (WARN_ON(!pll_clk))
-> +		return NULL;
-> +
-> +	pll_clk->hw.reg = reg + clks->offset;
-> +
-> +	if (streq(name, SOCFPGA_BOOT_CLK))
-> +		init.ops = &clk_boot_ops;
-> +	else
-> +		init.ops = &agilex5_clk_pll_ops;
-> +
-> +	init.name = name;
-> +	init.flags = clks->flags;
-> +
-> +	init.num_parents = clks->num_parents;
-> +	init.parent_names = NULL;
-> +	init.parent_data = clks->parent_data;
-> +	pll_clk->hw.hw.init = &init;
-> +
-> +	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
-> +	hw_clk = &pll_clk->hw.hw;
-> +
-> +	ret = clk_hw_register(NULL, hw_clk);
-> +	if (ret) {
-> +		kfree(pll_clk);
-> +		return ERR_PTR(ret);
-> +	}
-> +	return hw_clk;
-> +}
+Ok, understood.
 
-Both functions are identical to Agilex, so why the need to recreate?
+>
+> You can't figure out all the use-cases we'll require in the future
+> anyway.
 
-> +
-> diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
-> index 75234e0783e1..468e0f0ab4ab 100644
-> --- a/drivers/clk/socfpga/stratix10-clk.h
-> +++ b/drivers/clk/socfpga/stratix10-clk.h
-> @@ -77,6 +77,8 @@ struct clk_hw *agilex_register_pll(const struct stratix10_pll_clock *clks,
->   				void __iomem *reg);
->   struct clk_hw *n5x_register_pll(const struct stratix10_pll_clock *clks,
->   			     void __iomem *reg);
-> +struct clk_hw *agilex5_register_pll(const struct stratix10_pll_clock *clks,
-> +				    void __iomem *reg);
->   struct clk_hw *s10_register_periph(const struct stratix10_perip_c_clock *clks,
->   				void __iomem *reg);
->   struct clk_hw *n5x_register_periph(const struct n5x_perip_c_clock *clks,
+Well, that much is certain. :)
 
-I'd like for you to send this whole patchset for my internal review 
-before you send out a V2!
+>
+>> Let's assume that hypothetical board were the A64, the nkm clock were pll-mipi,
+>> and the parent were pll-video0 and we "forget" to set ROUND_CLOSEST on
+>> pll-video0:
+>>
+>> When pll-mipi nkm clock is asked via determine_rate() for a rate of
+>> 449064000 it would return 449035712 and a parent rate of 217714285
+>> (using n=11, k=3, m=16, but those details aren't returned by
+>> determine_rate()).
+>>
+>> Eventually, determine_rate() will be called again, but this time for a
+>> rate of 449035712. The user already knows that we can provide that,
+>> because we told them (see previous paragraph). But since we're
+>> truncating when calculating the rate that we'd like the parent to
+>> provide, we end up asking the parent for 217714284 when we actually need
+>> it to provide 217714285. So we now *require* the parent to find the
+>> closest and additionally we must *hope* that the parent is incapable of
+>> providing the rate that we asked for.
+>
+> I mean... yeah. It's what abstraction is all about. For all we know, the
+> parent to pll-mipi could be a crystal that can't change its frequency
+> and we should deal with that. Or it could be an ideal clock that always
+> returns the rate you ask for. Or a firmware clock that behaves like an
+> ideal clock but lies about it :)
+>
+> It's that clock responsibility to do its best to provide the rate we ask
+> for.
+>
+> And if we need to make it behave better, then it's fine too. So your
+> example is indeed true, but it's more of a case of "let's send another
+> patch" rather than trying to figure out all possible cases and try to
+> figure things out accordingly. Because you won't be able to figure out
+> all possible cases for the current SoCs and the next ones, and the
+> workloads that people are going to run on those SoCs anyway.
+>
+>> >> If you carefully look at ccu_mp, you will see that it would ignore
+>> >> cases when its parent had rounded up. ccu_nkm is no different.
+>> >> Teaching all of sunxi-ng's clocks to respect ROUND_CLOSEST is a
+>> >> totally different beast. For now, sunxi-ng always expects rounding
+>> >> down.
+>> >
+>> > Then change that?
+>>
+>> You told me that both over- and undershooting are fine when
+>> determining the rate, *but also* "it's a bit context specific which one
+>> we should favour. If we were to do anything, it would be to support both
+>> and let the clock driver select which behaviour it wants." (see
+>> https://lore.kernel.org/all/flngzi4henkzcpzwdexencdkw77h52g3nduup7pwctpwfiuznk@eewnnut5mvsq/)
+>>
+>> So, I can't just change NKM's parent's default behavior (which is an NM
+>> clock in my case), because, if I understand correctly, I would have to
+>> introduce a "ROUND_CLOSEST" flag for NM clocks.
+>
+> Sure
+>
+>> But then I feel like I would have to document somewhere that when
+>> setting CLK_SET_RATE_PARENT for an NKM clock, that the parent clock
+>> needs to ROUND_CLOSEST, in order to avoid drifting away from the
+>> requested rate in the successive calls that are made to
+>> ccu_nkm_determine_rate(), which I tried to explain above and in previous
+>> messages.
+>
+> That's kind of what I meant too. Whether "drifting away" is an issue is
+> context specific too. for some clocks it just doesn't matter. Nobody
+> ever complained that the register clock of the MMC controller was
+> drifting away, because it doesn't affect the system in the slightest.
+>
+> The video clock tree (and possibly others) will be affected though, and
+> we'll indeed need to add that flag. But we're doing it all the time (and
+> sometimes get it wrong) for things like which clocks should be left
+> enabled for example.
+>
+>> Instead we could introduce the following function, like I suggested in
+>> V2 of this patchset. The advantage is that it both *documents* the
+>> dilemma for developers of ccu_nkm and also *avoids* it for users of
+>> ccu_nkm.
+>>
+>> static unsigned long optimal_parent_rate(unsigned long rate, unsigned long n,
+>> 				 unsigned long k, unsigned long m)
+>> {
+>> 	unsigned long _rate, parent;
+>>
+>> 	// We must first try to find the desired parent rate that is rounded up, because there are
+>> 	// cases where truncating makes us miss the requested rate.
+>> 	// E.g. rate=449035712, n=11, k=3, m=16
+>> 	// When truncating, we'd get parent=217714284 and calculating the rate from that would give
+>> 	// us 449035710. When rounding up, we get parent=217714285 which would give us the requested
+>> 	// rate of 449035712.
+>> 	parent = DIV_ROUND_UP(rate * m, n * k);
+>>
+>> 	// But there are other cases, where rounding up the parent gives us a too high rate.
+>> 	// Therefore, we need to check for this case and, if necessary, truncate the parent rate
+>> 	// instead of rounding up.
+>> 	_rate = parent * n * k / m;
+>> 	if (_rate > rate)
+>> 		parent = rate * m / (n * k);
+>> 	return parent;
+>> }
+>>
+>> And then we ask the parent for that optimal parent rate we just
+>> calculated. I feel like that's an easy thing to do.
+>
+> We're back to the trade-off I was mentioning earlier. I'm not against it
+> on principle. However, if it's not absolutely required, then I don't
+> think it's a good idea to merge it.
+>
+> Especially if it's to workaround a parent flag missing. A clock flag
+> patch is easy to read, write, understand, review, merge and maintain.
+> It's basically a nop to merge provided the commit log is decent enough.
+>
+> That function is none of those things.
+>
 
-Dinh
+Ok, thank you for all the explanations! I now feel, we have a common
+understanding and that's great.
+
+I will proceed with preparing a V3 of this patchset, that will also
+introduce CCU_FEATURE_CLOSEST_RATE and an implementation for ccu_nm,
+ccu_nkm and the necessary updates on the (combined) mux clocks and
+divisor clocks. The flag will be used in pll-video0 of the A64 and all
+of its descendents.
+
+That version will also have a separate function
+ccu_nkm_find_best_with_parent_adj, so that it's more similar to the
+implementation of e.g. ccu_mp.
+
+Thanks,
+  Frank
+
+>
+> Maxime
+>
+> [[End of PGP Signed Part]]
