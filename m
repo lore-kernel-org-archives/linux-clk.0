@@ -2,112 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C849CEB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 10:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D48BEB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 10:47:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232410AbjFUKOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Jun 2023 06:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33880 "EHLO
+        id S231883AbjFUKrp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Jun 2023 06:47:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232224AbjFUKNn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 06:13:43 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181AC170C;
-        Wed, 21 Jun 2023 03:13:08 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35L99KPH029693;
-        Wed, 21 Jun 2023 10:12:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=gUmj21gH3bLd729QgzUszORR2zfcQYaMTPFMTdZi6aQ=;
- b=BTlTY3NqB9Z3X3tICIjVVlyJk0Tq8Uv5R/1XvxKpT+Ssv4yUMboTERpl5uoHVs0dgU9I
- qqO3ZSLN6vj/fYopLDTXAsWsN2Y7voKRI8YXfl4zsdxtEP1O+dNmOJHcKe7uDZJwEBV+
- ro1KOkl8deHF5YvtkGKNvC8vCmJJ91HguyJR1Ez3yU15N6r7n/in8S2TbJm9ROQciDbV
- Zhjt+l3G3BmLNQe+IIXRQTI7uyqnr3kJDfcZaX+pHEORgyUHvDwew0ruKmYcx6EMlhl2
- g3Z6WEtvieQadmxyXGXIbyOTtWePXpugfy8jUDMT8gxFzq8JXVRiUw72kIvNo8Ewo8bV ew== 
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rb7suu7px-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Jun 2023 10:12:29 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35LACS89011080
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Jun 2023 10:12:28 GMT
-Received: from varda-linux.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.42; Wed, 21 Jun 2023 03:12:19 -0700
-Date:   Wed, 21 Jun 2023 15:42:15 +0530
-From:   Varadarajan Narayanan <quic_varada@quicinc.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <arnd@arndb.de>,
-        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
-        <nfraprado@collabora.com>, <broonie@kernel.org>,
-        <rafal@milecki.pl>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.org>, <quic_wcheng@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 2/9] dt-bindings: phy: qcom,m31: Document qcom,m31 USB phy
-Message-ID: <20230621101214.GB3533@varda-linux.qualcomm.com>
-References: <cover.1686126439.git.quic_varada@quicinc.com>
- <14f60578e2935c0844537eab162af3afa52ffe39.1686126439.git.quic_varada@quicinc.com>
- <98960024-7dbc-91a3-75de-90b529637916@linaro.org>
- <20230615052746.GB22186@varda-linux.qualcomm.com>
- <aca54f67-cc09-ff4f-93ca-6973d153db2c@linaro.org>
- <20230620093225.GA9966@varda-linux.qualcomm.com>
- <dd78b449-8ff8-108d-cc49-fbddbb660c76@linaro.org>
+        with ESMTP id S232312AbjFUKrV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 06:47:21 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E36BF272E;
+        Wed, 21 Jun 2023 03:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1687344352; x=1718880352;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=P32W9AfKeVxcvQoVXSO2hVKT1bX+1GIInDGt+g7kzUA=;
+  b=Tik79gtRICZJ/e6yWuGptEes4Uf6Ys1haKc4XzL+KzNx62sLPB5mzmaj
+   zWa566YoI71TDWmdh+qJYJADnYDYg1Mh8m4azTwAXnkw6ykQy90nrDeq8
+   oO7KTtxmj/2dF8Y5ov7Yd2u/Ux50qQhYMsvU11pYENdHpuurXHoWIwctz
+   HkJyHrT0LvH8zWqobpaFyLxbl1MYFYiObFEcvCLT1FCF/51z7qDvaDYYU
+   j2QZoAemndju9vMhn8Tdttj+mEPHsscSjPHG/tmsoSdPS5rgcP43NltIT
+   kLgsr92dV6l8yBB/WV6I92zYst2VvOuBgM6e5zhm2sqhXcuORqIEIWbi4
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="359004744"
+X-IronPort-AV: E=Sophos;i="6.00,260,1681196400"; 
+   d="scan'208";a="359004744"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2023 03:45:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="858926048"
+X-IronPort-AV: E=Sophos;i="6.00,260,1681196400"; 
+   d="scan'208";a="858926048"
+Received: from unknown (HELO localhost.localdomain) ([10.226.216.116])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Jun 2023 03:45:48 -0700
+From:   wen.ping.teh@intel.com
+To:     krzysztof.kozlowski@linaro.org
+Cc:     adrian.ho.yin.ng@intel.com, andrew@lunn.ch, conor+dt@kernel.org,
+        devicetree@vger.kernel.org, dinguyen@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        netdev@vger.kernel.org, niravkumar.l.rabara@intel.com,
+        p.zabel@pengutronix.de, richardcochran@gmail.com,
+        robh+dt@kernel.org, sboyd@kernel.org, wen.ping.teh@intel.com
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add Intel Agilex5 clocks and resets
+Date:   Wed, 21 Jun 2023 18:45:25 +0800
+Message-Id: <20230621104525.2522714-1-wen.ping.teh@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <ed6f9ab8-9c4e-ec9f-efb7-81974d75f074@linaro.org>
+References: <ed6f9ab8-9c4e-ec9f-efb7-81974d75f074@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <dd78b449-8ff8-108d-cc49-fbddbb660c76@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Tzr6RSq6epP8dYrnQHwcDmS_aots0hgE
-X-Proofpoint-ORIG-GUID: Tzr6RSq6epP8dYrnQHwcDmS_aots0hgE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-21_07,2023-06-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- mlxlogscore=737 suspectscore=0 spamscore=0 mlxscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2305260000 definitions=main-2306210086
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 21, 2023 at 10:43:38AM +0200, Krzysztof Kozlowski wrote:
-> On 20/06/2023 11:32, Varadarajan Narayanan wrote:
+>From: Krzysztof Kozlowski @ 2023-06-20 11:06 UTC (permalink / raw)
+>>>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: intel,agilex5-clkmgr
+>>>
+>>>
+>>> Why "clkmgr", not "clk"? You did not call it Clock manager anywhere in
+>>> the description or title.
+>>>
+>> 
+>> The register in Agilex5 handling the clock is named clock_mgr.
+>> Previous IntelSocFPGA, Agilex and Stratix10, are also named clkmgr.
 >
-> >
-> >> And then we have... existing bindings qcom,usb-hs-phy.yaml. Don't create
-> >> something similar with difference in the hyphen. Just use device
-> >> specific compatible thus device specific filename.
-> >
-> > qcom,usb-hs-phy.yaml seems to be for ULPI mode phy and the
-> > driver we are introducing is for UTMI. We would have to
-> > modify phy-qcom-usb-hs.c to accomodate M31. Will that be
-> > acceptable to phy-qcom-usb-hs.c owners/maintainers?
+>So use it in description.
+
+Noted. Will update the description in V2.
+
+>>>> +
+>>>> +additionalProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  # Clock controller node:
+>>>> +  - |
+>>>> +    clkmgr: clock-controller@10d10000 {
+>>>> +      compatible = "intel,agilex5-clkmgr";
+>>>> +      reg = <0x10d10000 0x1000>;
+>>>> +      #clock-cells = <1>;
+>>>> +    };
+>>>> +...
+>>>> diff --git a/include/dt-bindings/clock/agilex5-clock.h b/include/dt-bindings/clock/agilex5-clock.h
+>>>> new file mode 100644
+>>>> index 000000000000..4505b352cd83
+>>>> --- /dev/null
+>>>> +++ b/include/dt-bindings/clock/agilex5-clock.h
+>>>
+>>> Filename the same as binding. Missing vendor prefix, entirely different
+>>> device name.
+>>>
+>> 
+>> Will change filename to intel,agilex5-clock.h in V2.
 >
-> We don't talk about drivers here but bindings. Why would you need to
-> modify the driver when introducing new binding for different device?
+>Read the comment - same as binding. You did not call binding that way...
+>unless you rename the binding.
 
-Sorry. I misunderstood your feedback as "use the existing bindings".
+Just to confirm, the binding name you are referring to is "intel,agilex5-clkmgr"?
+I will change the filename to intel,agilex5-clkmgr.h in V2.
 
-Will name the bindings file as qcom,ipq5332-usb-hsphy.yaml and post
-the next version.
+Best Regards,
+Wen Ping
 
-Thanks
-Varada
