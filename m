@@ -2,70 +2,101 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B808EEB64DB
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Jun 2023 20:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF2DEB64DB
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 03:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjFTUA0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Jun 2023 16:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41662 "EHLO
+        id S229814AbjFUDQO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Jun 2023 23:16:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229717AbjFTUAZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Jun 2023 16:00:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46FB11716;
-        Tue, 20 Jun 2023 13:00:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CAC3E6119E;
-        Tue, 20 Jun 2023 20:00:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D35C433C0;
-        Tue, 20 Jun 2023 20:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687291223;
-        bh=8ne3WggJibkcVDXdme/7YxBMV+tnAI6zpdWZ2KkFQB4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nYmNKWvADgzVHi8IV9OxofdL0beaMKMwaYTPpoEmSwlozu7JsFU0P4oKiqHKKPYS6
-         wsosdFw7YDM0UgL9vyKWowssMyOd4waGyCfCzVHqr4NXYS0LpPFNZ+h01JOskEkgvr
-         4Tk612OUZWxFaso9L+bYdonjeHKS8y/gbkeonfRyWyUNsscPvHvYXNd3KImTy3hhnC
-         43bGFwIpx46yYjaUllN3wmgQfOOn/2xYZFoRzKphZzarO//yaVZHEi2Yxr5UfcH8UH
-         4beWODq0QsX0KJTda4FbRTWNZJX4+GBE8bAsXNw/qjgvVQ39henJY6KlL6GRvr5kNM
-         0PPXr5fiYpuvg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/2] clk: qcom: mmcc-msm8974: use clk_rcg2_shared_ops for mdp_clk_src clock
-Date:   Tue, 20 Jun 2023 13:03:36 -0700
-Message-ID: <168729141436.721186.9010041163444104014.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
-References: <20230507175335.2321503-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S229478AbjFUDQN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Jun 2023 23:16:13 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A771717;
+        Tue, 20 Jun 2023 20:16:12 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d9443c01a7336-1b5422163f4so35111445ad.2;
+        Tue, 20 Jun 2023 20:16:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687317372; x=1689909372;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7nB6R0ouDG8zHyz3+Z8AEZ2eoEA3QO4GpFCpSBeZ10g=;
+        b=iCO3ku+Uhm6rlxOnDEhVNOLzuI4wQF4xrBGC+dvhpnMwUtSbewBEWazsqWS4pg3gTb
+         xKWj4eO3LtyZxjaxEOgUrHqu/oS29qzD40oBn9L0Lq2rVZfV/9RUP0u5M2u1xK9AURqb
+         rBdWju/6G9Gpyn5RAJrD1QpIiy7HDpgFx+km7MUgd+2ezcKxGYZV92sVS2IQUGSoXQFT
+         swwWLWVUbQQJEB//eYUPhKozDoqqh5bXbxDjtnnVAg6lfIc553Cy5SBMlMi5wM8JBA1p
+         Cdg+9t3lEe9dkWMDudaDGpCDIE3RJic0DU+tDi/CZ4XBfRZq9R3jePj18RlMrThCng4N
+         MVZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687317372; x=1689909372;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7nB6R0ouDG8zHyz3+Z8AEZ2eoEA3QO4GpFCpSBeZ10g=;
+        b=jSrdyaVyijkN3/6/H4aexM8box2s3SqaQ9pFq9t4t/Y5MH48Som8dDLd5mnfwaw8at
+         8mpsconyzTmHBqpSwHRgcUZo03GZAv+EVElktQN5iACRftqJVBKt3/UKucvMHSX6mdzl
+         RqJOkhf29/RUXP3Xg3MvYWNmBB3fHMV2td5xBKy1LuCIxCkIgrxGItqdn/zstjVsZj46
+         CcBkSbgyh98rgDfT58QDSwjiAF487riyFgrl9Xnzz8J8bPLSh0Q4Ln8wgAGWpSZuKHwS
+         oumeb7kTQfkLYZ9yqh5JwfB5d5atmSxX656vHkr9PJQNPlT60At2B9s/2qfuuob4KeP5
+         X1eg==
+X-Gm-Message-State: AC+VfDzuaWdtBjrGWU4aNfZUhWPH7xKz38B27EVf+yi3RCG9RQqQYOiq
+        +YOknlIbJ/o0LpqyjgH2lu0=
+X-Google-Smtp-Source: ACHHUZ4UcsTpEvDFFd3DyltwlAJiswPaNd58ZXIHCY/uOaxB0kW+EmvrOngR2fOsSwWb49PYi6r/Lg==
+X-Received: by 2002:a17:902:ea0f:b0:1b6:6b03:10cd with SMTP id s15-20020a170902ea0f00b001b66b0310cdmr6482846plg.67.1687317371780;
+        Tue, 20 Jun 2023 20:16:11 -0700 (PDT)
+Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id w13-20020a170902d3cd00b001b01fc7337csm2257747plb.247.2023.06.20.20.16.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Jun 2023 20:16:11 -0700 (PDT)
+From:   Jacky Huang <ychuang570808@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de,
+        gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, soc@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, schung@nuvoton.com,
+        Jacky Huang <ychuang3@nuvoton.com>
+Subject: [PATCH v2 0/2] clk: nuvoton: Use clk_parent_data instead and add a header file
+Date:   Wed, 21 Jun 2023 03:16:03 +0000
+Message-Id: <20230621031605.234149-1-ychuang570808@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Jacky Huang <ychuang3@nuvoton.com>
 
-On Sun, 07 May 2023 20:53:34 +0300, Dmitry Baryshkov wrote:
-> The mdp_clk_src clock should not be turned off. Instead it should be
-> 'parked' to the XO, as most of other mdp_clk_src clocks. Fix that by
-> using the clk_rcg2_shared_ops.
-> 
-> 
+This set of patches addresses some of the issues that were identified in
+the ma35d1 clock driver.
 
-Applied, thanks!
+1. The external functions referenced between the .c files in this driver
+   should not be declared within the .c files themselves. Instead, a shared
+   .h file should be created to reference them.
 
-[2/2] clk: qcom: mmcc-msm8974: fix MDSS_GDSC power flags
-      commit: 4e13c7a55cf752887f2b8d8008711dbbc64ea796
+2. For the declaration of parent clocks, use struct clk_parent_data instead
+   of a string. Due to the change in the passed arguments, replace the usage
+   of devm_clk_hw_register_mux() with clk_hw_register_mux_parent_data() for
+   all cases.
 
-Best regards,
+v2:
+  - In v1, all these modifications were included in a single patch, which is
+    not ideal. In v2, there were no changes made to the patch content itself,
+    but the different modification topics were separated into two individual
+    patches 
+
+
+Jacky Huang (2):
+  clk: nuvoton: Add clk-ma35d1.h for driver extern functions
+  clk: nuvoton: Use clk_parent_data instead of string for parent clock
+
+ drivers/clk/nuvoton/clk-ma35d1-divider.c |   7 +-
+ drivers/clk/nuvoton/clk-ma35d1-pll.c     |   5 +-
+ drivers/clk/nuvoton/clk-ma35d1.c         | 737 +++++++++++++----------
+ drivers/clk/nuvoton/clk-ma35d1.h         |  18 +
+ 4 files changed, 447 insertions(+), 320 deletions(-)
+ create mode 100644 drivers/clk/nuvoton/clk-ma35d1.h
+
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.34.1
+
