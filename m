@@ -2,123 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B22C4EB64DC
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 04:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A882EB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 07:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229876AbjFUEmc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Jun 2023 00:42:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58192 "EHLO
+        id S230496AbjFUHu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Jun 2023 03:50:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjFUEma (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 00:42:30 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CAF71BE3;
-        Tue, 20 Jun 2023 21:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687322524; x=1718858524;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+Oyatk6UJM7WoUbA4Egxw1w1lf2ZrfcTPtl1VcnDick=;
-  b=LzYaxyiWCi9gWah9Oa3T9MyU08DrZQaa1/T72kPAEaKmgFtnRE+nRbz3
-   p6+GvAaH9vAs5xaYheP/ktGt0Yt1P6MlI1ZMWsJjDLhB92HzfEzMD7b3t
-   EQA6DNF1LTPMNttpRe/WYYgsk7mxD4uqz6ZMfkn4OpzK62TM5MHmrPtTk
-   WxCV4kYVgv6xXjhR3yCdgz/HBNgIAi2Io4xWia3CUEYpbB6Am2FtVqdrP
-   b7Fng2xADcWDV3LCzQyAky6rVngp0DerZcOU8jsSVAhQzoRgace1lu37s
-   VK7YLZ+XCUdijpuIxN5VfZ+P2vydxzI9a8tPjlpvf/PT7PmBYdixH3gdd
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="349798498"
-X-IronPort-AV: E=Sophos;i="6.00,259,1681196400"; 
-   d="scan'208";a="349798498"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jun 2023 21:42:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="714304953"
-X-IronPort-AV: E=Sophos;i="6.00,259,1681196400"; 
-   d="scan'208";a="714304953"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 20 Jun 2023 21:41:57 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qBpfI-0006Yp-0P;
-        Wed, 21 Jun 2023 04:41:56 +0000
-Date:   Wed, 21 Jun 2023 12:41:04 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Lucas Tanure <tanure@linux.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        Nick <nick@khadas.com>, Artem <art@khadas.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        Lucas Tanure <tanure@linux.com>
-Subject: Re: [PATCH 3/6] clk: meson: t7: add peripheral clock controller
-Message-ID: <202306211239.HA6GmDhb-lkp@intel.com>
-References: <20230615182938.18487-4-tanure@linux.com>
+        with ESMTP id S230309AbjFUHuZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 03:50:25 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB80C11D;
+        Wed, 21 Jun 2023 00:50:24 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35L7hSs1014726;
+        Wed, 21 Jun 2023 07:50:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=wv5CoZxQoqrZ84iHmXKjcGNtSsQ32uywpidEB510fuY=;
+ b=HD7byKPhrGqThA06eFdC+AlZCcvRaSwroKZwAfQoNHb2wc2NxIUymrBSO8W5RKTW/p/E
+ heg+OOaxK9T3Pnsp2j4tz4s2QXbDozXjZReBhuAjhaQJ3o1nWwLWWLpRXdZ7jwP6OmBs
+ qgi0neXeV7NQcnluHFwVUVz5ZNnKXder5+QCso5w9qY+xgWy6gW3TSBK7LtELuGK1zst
+ 4KJDZQWocD0wvPq/3smgJmhS6gHx7JK0oboIcD9s+6PR4JDBs+vGKKXLA3UhcXklWP22
+ 18YKPC0BOZ22hZco9H7wA7c6Xpc/yfYl6yy+ZbjOfYqw9NbmxIKrdo4z35U5dj3XZwC0 +A== 
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rb8f6jr01-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Jun 2023 07:50:19 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35L7oI54032195
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Jun 2023 07:50:18 GMT
+Received: from varda-linux.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Wed, 21 Jun 2023 00:50:13 -0700
+Date:   Wed, 21 Jun 2023 13:20:07 +0530
+From:   Varadarajan Narayanan <quic_varada@quicinc.com>
+To:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <gregkh@linuxfoundation.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_wcheng@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v15 5/5] arm64: dts: qcom: ipq9574: Enable USB
+Message-ID: <20230621075006.GA3533@varda-linux.qualcomm.com>
+References: <cover.1686289721.git.quic_varada@quicinc.com>
+ <5021dbf3a28ee073795e7580bfa019df465e16ed.1686289721.git.quic_varada@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20230615182938.18487-4-tanure@linux.com>
+In-Reply-To: <5021dbf3a28ee073795e7580bfa019df465e16ed.1686289721.git.quic_varada@quicinc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nKKAnxE7QjMoak78u1hHtkY8aPJTDIwj
+X-Proofpoint-ORIG-GUID: nKKAnxE7QjMoak78u1hHtkY8aPJTDIwj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-21_04,2023-06-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxlogscore=854 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 impostorscore=0 adultscore=0 clxscore=1015 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306210064
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lucas,
+On Fri, Jun 09, 2023 at 11:26:34AM +0530, Varadarajan Narayanan wrote:
+> Add regulator defines
+> Turn on USB related nodes
+> Provide vdd info
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  Changes in v15:
+> 	- Move fixed regulator defines from 'arm64: dts: qcom: ipq9574: Add USB related nodes' to this patch
+> 
+>  Changes in v13:
+> 	- s/fixed_/regulator_fixed_/
+> 
+>  Changes in v11:
+> 	- Rename dwc_0 -> usb_0_dwc3
+> 	- Maintain sorted order for the usb nodes
+> 
+>  Changes in v10:
+> 	- Provide vdd info
+> 
+>  Changes in v5:
+> 	- Move "host" mode specification to board dts
+> 	- Due to dependency with earlier patches board dts
+> 	  filename changed ipq9574-al02-c7.dts -> ipq9574-rdp433.dts
+> 
+>  Changes in v2:
+> 	- Fix node placement and coding style
+> 	- "ok" -> "okay"
+> ---
+>  arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 41 +++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> index 8c2451c..877026c 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
+> @@ -21,6 +21,24 @@
+>  	chosen {
+>  		stdout-path = "serial0:115200n8";
+>  	};
+> +
+> +	regulator_fixed_3p3: s3300 {
+> +		compatible = "regulator-fixed";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		regulator-name = "fixed_3p3";
+> +	};
+> +
+> +	regulator_fixed_0p925: s0925 {
+> +		compatible = "regulator-fixed";
+> +		regulator-min-microvolt = <925000>;
+> +		regulator-max-microvolt = <925000>;
+> +		regulator-boot-on;
+> +		regulator-always-on;
+> +		regulator-name = "fixed_0p925";
+> +	};
+>  };
+>  
+>  &blsp1_uart2 {
+> @@ -105,6 +123,29 @@
+>  	};
+>  };
+>  
+> +&usb_0_dwc3 {
+> +	dr_mode = "host";
+> +};
+> +
+> +&usb_0_qmpphy {
+> +	vdda-pll-supply = <&mp5496_l2>;
+> +	vdda-phy-supply = <&regulator_fixed_0p925>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_0_qusbphy {
+> +	vdd-supply = <&regulator_fixed_0p925>;
+> +	vdda-pll-supply = <&mp5496_l2>;
+> +	vdda-phy-dpdm-supply = <&regulator_fixed_3p3>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb3 {
+> +	status = "okay";
+> +};
+> +
+>  &xo_board_clk {
+>  	clock-frequency = <24000000>;
+>  };
+> -- 
+> 2.7.4
+> 
 
-kernel test robot noticed the following build warnings:
+Bjorn,
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on clk/clk-next tty/tty-testing tty/tty-next tty/tty-linus krzk/for-next krzk-dt/for-next krzk-mem-ctrl/for-next linus/master v6.4-rc7 next-20230620]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Can this be pulled for 6.5?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lucas-Tanure/dt-bindings-arm-amlogic-add-Amlogic-T7-based-Khadas-VIM4-bindings/20230616-023038
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20230615182938.18487-4-tanure%40linux.com
-patch subject: [PATCH 3/6] clk: meson: t7: add peripheral clock controller
-config: arm64-randconfig-r001-20230620 (https://download.01.org/0day-ci/archive/20230621/202306211239.HA6GmDhb-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project.git f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce: (https://download.01.org/0day-ci/archive/20230621/202306211239.HA6GmDhb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306211239.HA6GmDhb-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/clk/meson/t7.c:7084:23: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
-                   [CLKID_VID_PLL]                 = &t7_vid_pll.hw,
-                                                     ^~~~~~~~~~~~~~
-   drivers/clk/meson/t7.c:7082:23: note: previous initialization is here
-                   [CLKID_VID_PLL]                 = &t7_vid_pll_div.hw,
-                                                     ^~~~~~~~~~~~~~~~~~
-   drivers/clk/meson/t7.c:7946:29: warning: variable 'mclk_data' set but not used [-Wunused-but-set-variable]
-           struct meson_clk_pll_data *mclk_data;
-                                      ^
->> drivers/clk/meson/t7.c:93:29: warning: unused variable 'meson_pll_clk_no_ops' [-Wunused-const-variable]
-   static const struct clk_ops meson_pll_clk_no_ops = {};
-                               ^
->> drivers/clk/meson/t7.c:689:37: warning: unused variable 't7_a73_dyn_clk_sel' [-Wunused-const-variable]
-   static const struct clk_parent_data t7_a73_dyn_clk_sel[] = {
-                                       ^
-   4 warnings generated.
-
-
-vim +/meson_pll_clk_no_ops +93 drivers/clk/meson/t7.c
-
-    92	
-  > 93	static const struct clk_ops meson_pll_clk_no_ops = {};
-    94	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks
+Varada
