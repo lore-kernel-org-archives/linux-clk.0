@@ -2,162 +2,198 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 255ECEB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 11:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 611AFEB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 11:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232123AbjFULY1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Jun 2023 07:24:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49044 "EHLO
+        id S229478AbjFULkK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Jun 2023 07:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232729AbjFULYZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 07:24:25 -0400
-Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01on2103.outbound.protection.outlook.com [40.107.13.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C00A3E6C
-        for <linux-clk@vger.kernel.org>; Wed, 21 Jun 2023 04:24:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e1Bj4U5KBVrDMHs5ktwwkGsa7NSIhalZd4eZlwsfa14OnJ2Zj3kyozLzwvSAG+tSmF/ZJH07wngcZoLociSyoc/BVowjFYlioAedvcPQbVENhnJ9j+LVNlLUc0lrzGUGxGtSfzqEYk2uRDE4o5VM+dFyw1+CfbY3mmAxK/9Tpmwxu65zlMPb3xl+2qqnC1GrC1hRLHWOVBiVMmDYYPqMkjNd75KOFq7WSnj76dfJuKM1Z54FJZCEEfXYshO2z1AREZqRpnygzosFmKQppmmi4ZKunkdRggq3bZ3hjGQOZOUtIcWZwtTLRcn/huwPDmcAxOf7D0OKfaVi4t8utAQxmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/f42+rLOYYqXgWth1V1tyHINgMj8ORNHyrYfPejNVgE=;
- b=M5zFxEaji8UDpVeTcJOE/rTSLgGfsrkPc7UAiSMr7neY76tSmjTfvBSIY5UjIReOtKgiJOyuzG0qya6dZM3mrp2VYgyViipr6kMDATldIyJP2jhABnglAlZTWIBV5R4LY3KOQNSvE5FyPXaFon2fnbzvIcJCK/VfQP6U+zSK1gEHKUuzyQyJFteJrYL98sHmCDPt+V7NukdsPSVkPh5krlzmOcoHjYYG9LoT3Hpt82rDJJNCBUK4lKQY6g1uWQd5ovg6is7Ynm4rK7engeIN9+SAQqt/tYUB6Rc9bnwwHd1S0j9OHERbuPqtysK7dkf/4eBvhYH0kREVHiXLKbHTRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/f42+rLOYYqXgWth1V1tyHINgMj8ORNHyrYfPejNVgE=;
- b=GjfrSEMk42JlU7ZJUKYoR4bza6MfPmMeOTJdLKj92LKs4YvMq70/pA5CRAtM1RbX06lfXNM11aoF+CgeCL7dPKV4QXBQlgWS/ZLTG5t6iTDAK+k8jquKNZyi8PUsZGzFepVaG4JOJyh4XN9IGCOst4sqNY4fZ5HZgQowP5Q5zQE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
- by AS4PR10MB5248.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4b7::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6500.37; Wed, 21 Jun
- 2023 11:24:15 +0000
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d66c:ec:aa54:f318]) by DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::d66c:ec:aa54:f318%5]) with mapi id 15.20.6521.023; Wed, 21 Jun 2023
- 11:24:14 +0000
-Message-ID: <ca6b0f0b-3f0d-8e4d-c857-8c6515250782@prevas.dk>
-Date:   Wed, 21 Jun 2023 13:24:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Content-Language: en-US, da
-To:     Abel Vesa <abelvesa@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-From:   Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: bounds of pdiv in clk-pll14xx.c
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MM0P280CA0071.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:8::25) To DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:45a::14)
+        with ESMTP id S229470AbjFULkJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 07:40:09 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76530DC;
+        Wed, 21 Jun 2023 04:40:07 -0700 (PDT)
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35L7kTlC019092;
+        Wed, 21 Jun 2023 11:40:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=078OnJL9eWPbxIL0vwydxfSX62v4i63byCazg/1gUZY=;
+ b=cH8cTCE/TZjpLxN7VquJJsFdADFnmPTlVZ0bRGfbeXTMlBTxnEz5D9FNe3teSMNlfWyf
+ rM+hMoNUoNlAA+y81SLmvXXlwc2m7bsx5EIl0GcT58zRZfsH6NPNhC/krGqJCMeyPArC
+ O/qBsv6DR4zGuav2t3WWSK+FwY1GCrT+rkAjzBlJJPC+CoEGYt/rHb4AwEPZXhryB/k8
+ 3yo7NnuBAHZw7mz2OQBJuQQCh59abzebyMApO+RHhgN7cGohuCFSxpfjHEHT8Uvlgg8g
+ iamQ7UjrcJ0LRu4O1TTkER3gF4iRmgaPuoib6+I4m/OBLoPnF/P2Px5IOBYlkNNzKFFQ OQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rbqjb92qb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Jun 2023 11:40:02 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35LBe0Zc000699
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Jun 2023 11:40:00 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Wed, 21 Jun
+ 2023 04:39:52 -0700
+Message-ID: <59d92b83-f759-50de-9b8b-834c3c0bec5a@quicinc.com>
+Date:   Wed, 21 Jun 2023 17:09:49 +0530
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR10MB7100:EE_|AS4PR10MB5248:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7e0903d-7014-44ee-5840-08db724a0b64
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: EPMOdZGa46hjl3Oj53JI+yMbSbfI/h1QaEZnMnF6bawDKTIHkp2nnK8KVaLHc/bg7Np1ocEtyGVge3FlMtZIAnONntF4BwiYXQCdXUYeeYPlLpBci+I0KynBtfRrghOwiPCOA2MNGOWerASqjrXMZJRH4sJGVsNkaUlaWyg/7xbryFFCbgPEe0rgc+QRjszszRhMxDSUVWc7P+alySbrGun1jEyus29G2L9oXh1i0zaGNPfyh6ZLWfRJ5pGsOg+UUp8FX1afW2Onw4pbF25GfzKRkcwRwhGDGmjGOZfa2WyRHgv6xzHsZDSiZpl1czpsQsZALlaylxYSZexMUzINEDg4MqPzxLddvXNuriV9Lq9IxaczSD21GOI08vAsQpZuriGG4/f1m296MtXqWmOaLg8sD8vlSiyCVWPdvi8OOCCm9avASigqOGLN8gOdPRrp1QYECP9J1XMJTVqNs62UJgWm3VwVGau5OL2sOEoJC7TzMi33odzme45hYPMvWlTBMy29O5ppUj9T/g25pZy+vWAoystDkUFegzL5UGSucplHccMQfuf6LL1QaB8yVR7taycTRVh8n3oZdDjPlTzX4SVr0as+MiiZojIkpcFeJKCo8RVdeERYwfEnEuzAkmrrpyMm20buH8tofJ7xuNSqAMlkJrVOWs7F10omLqBDS37DbpDZPonvjUQePxKxH1rx
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230028)(4636009)(396003)(346002)(366004)(39850400004)(376002)(136003)(451199021)(31686004)(44832011)(38100700002)(6506007)(26005)(6512007)(5660300002)(8676002)(8936002)(8976002)(38350700002)(186003)(316002)(110136005)(478600001)(54906003)(36756003)(66556008)(4326008)(66476007)(66946007)(2906002)(41300700001)(2616005)(6486002)(52116002)(31696002)(86362001)(83380400001)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cURWMkdFTndDTEVhcis0Qkd0L1g3RlRJT1YxeFo4aHdiUExzQ1duaC9XMGd6?=
- =?utf-8?B?bjFnczRScjVCQ3AwdjJUcW5zK0lNRDkvckJXbktPakZKWm5DZkJxNWdZcG5L?=
- =?utf-8?B?bXZlV2lrUEg4VmZCTGxyNFJGMEovQXlQbjZxaG5vNkpyUUUzd1VaVWpTUTdV?=
- =?utf-8?B?bjVzUVAzVWlmZFJ3U3lSNStVeUZyTHkyc1RFOFNxZFMyUWpDNzBBVk9JMU9s?=
- =?utf-8?B?TFh3ZEUzdnlocVFaSUxyVUxpT3pEakpOc3RUSXNnWEFIUTNsSnVwZFl2dmlL?=
- =?utf-8?B?MGN4Zm1GQWdaZTZMa3VUZDA3SFZlbVZaWTZXaHcxcVNlQkpDR0pBZjN1dGh6?=
- =?utf-8?B?b2UvRzRNRzhHbEdMbkUrUjh5SERoSTNhV2JaaTlaZ0JYRzJRcDQxTGVGaGJU?=
- =?utf-8?B?MnlJMTlxN0RKdTVBOWhGUFA5dlZvOWRiRlV0STZqcUxWeDgwZWs3M2UwbjFO?=
- =?utf-8?B?cWZ0Q3hjOFBzdk5YN1ovY2g3NnBTODNrU2NudGl2MEltNjg4UlZkL1RRU1ZR?=
- =?utf-8?B?YzFEQnlXeXVoRy9UYWlPaWdSMS9xSmRQVmx1WkxRa3hERWZOYkF1RjhRMzNT?=
- =?utf-8?B?d2pCTG5GSEZsTzh6N3phSVhYWldjS3BLWUlxUDlieW4rdkpFUis4UmVDVmN5?=
- =?utf-8?B?ME1xRExNV1QxdTZpT09uemdtKzRZeTF5b2ZDQzl3Zzc1aFpvaWpJNGR0Y0Nv?=
- =?utf-8?B?N3hycXlGVGtPTTBBZGIwdDh2bnFXRmpDQU1HSXR0eEdkZ1BwRmRsRFdPR1N1?=
- =?utf-8?B?U1R6MnJ5eW9UQWJtUnFTcjFmZkhBbXRTbFR2KzkyeWs2OVNTNWpaYUdVbysw?=
- =?utf-8?B?dlY2c3lhS1V6N1ZmdU9EcGwwUDAzVmplTGx3dFZBMUV0UE81SHdJd2lPMVJJ?=
- =?utf-8?B?emNMQmpCSStFUkxBc1YwK0RFYm1pRHc3TU5tQzBHd01Xa1gvdWxNRmpnVWFw?=
- =?utf-8?B?amtVbVJDQjZtL3RQM3RGbXRGWHJxTkRmVHdKR1FjRXZuZnIwaGlDOEhRNXpX?=
- =?utf-8?B?T1pDdkdPSERYeTIySWI5Y0lMdXhVMUZya2w2RjFmbTcySDlOblNFdmRQOXZR?=
- =?utf-8?B?ZXlaMjlOekVCdDNaU0NGam00aFJ6VEFKTE5uQVpsNGhCMG1rWm5qOU8raGdC?=
- =?utf-8?B?T2J0WVNOcDNsWHZFdms0NTJVSHkyQm5QVlNKeDV5MHB3VWxkWWJISkRQNWMy?=
- =?utf-8?B?eUlyRzJWSXBRU0kwMVRkL2x3Q2NqV1Z0K09EVWxkdnpENkVobTFrOStmdHov?=
- =?utf-8?B?eExCWW96UnM3VlJocDRudngraVc2SCtQOWY1Nk5nOE54V3FsT2JoYldKRWxF?=
- =?utf-8?B?SkdQZ3EwbFhXbDkyZE1zaHhvb0YyS1NobkRlc3hNYkRISGs4N1h3cjBqdG1D?=
- =?utf-8?B?RVFtNmxaZWc3bmNvY1FkTUF2ZlVEUHNaMHl1OWpva1V5WUtTeFFhbnFEVjd5?=
- =?utf-8?B?NnhKUW9ISlo1dUZabHZVUFNSajlhS3Q1M1VmMzMyajFuekZxbHYxQkFHSTcr?=
- =?utf-8?B?ZUJFVCs2R2UxeWhNUmVEM0lBbkExaDZoZ0RPQWtTTG11UTVqZmwxRzliWDN3?=
- =?utf-8?B?VmhsNmdnc2N0bWxXbGJxR1ZiQXBnU0gyTXhiQmVuMG9KU09YM2o4emwzUlZU?=
- =?utf-8?B?dFMvN2JXVnBOWklRajlpS0JrOGV0Tk1WZmNWMW5YOTRwcVZTODh4RG9BbXhz?=
- =?utf-8?B?Yk9jd085eTd3bm1MNW83Tlc0eC9iOHlGWDY5akFzVEpjWmpVOHZodzlOUzdk?=
- =?utf-8?B?UFRxbnVSQnQ4U1o5b2ZqSmdjK0Q3M1BvQmRsWlNuL0kzck9Ic1p0YTgyK1V4?=
- =?utf-8?B?NFVNWGVhczRFa1k4ZnhhYjVoRU9wdkNpUW8xZnNJTzM4Wk9SNjZvV25DQmdD?=
- =?utf-8?B?Nkc5c2R1U0dTaEh6VWFrcmp5RUtRdUZlSzFoNjRFN2JPaWlvejBBaHM4YmFu?=
- =?utf-8?B?N2g4WG5HM1dCU2ZjYVR2MEh6anMvdGhNdGF1U3hDY2RwRndERHJBcUtkd1I5?=
- =?utf-8?B?RGt3d3ZkYmdqSXVzWmZqZEk4VVYwM0h0blRjTU4rVE91SklkZy9kNjlEbWQw?=
- =?utf-8?B?YllOQ3A2c3dyUkwzRnpOZkkrN3o1UEYxdTdxV1dxR3JPam9jSFZrR0hnZFE4?=
- =?utf-8?B?QUhlZmFxdC9QSVRhd0RsWTZwVDJjZjM5RUpCQm5qejBsVmtEaXBrdWZxM3dB?=
- =?utf-8?B?b1E9PQ==?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7e0903d-7014-44ee-5840-08db724a0b64
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jun 2023 11:24:14.8719
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z41AXnvAXuuG8Xzy3e0TWMxBr1+gHzQrhI0spW7dtC2SYZuktTh/+vVl4NVIcZeNJojva/DrhwdJMx3GNdY7y+7d0y+ICOn9VdAZynXmPQo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB5248
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 01/13] dt-bindings: remoteproc: qcom: Add support for
+ multipd model
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Kalle Valo <kvalo@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-2-quic_mmanikan@quicinc.com>
+ <7940c743-815f-f864-d015-43d7e916ecfa@linaro.org>
+ <a1456f62-d0a7-d5ec-b379-db1b6035c89c@quicinc.com>
+ <d187eafb-4a80-9479-d063-3a01b47d8efa@linaro.org>
+ <feb0d11d-0930-d0b8-ab6e-cf477bbf114b@quicinc.com>
+ <87edmoitu3.fsf@kernel.org>
+ <0555c089-9d0d-7d19-9646-f0f9b8630d12@quicinc.com>
+ <5f9cc367-eaa5-4c19-4e5e-7052b0259ccf@linaro.org>
+ <04f5e3cb-d2f5-747c-1fd0-4b61d845e2c5@quicinc.com>
+ <36900050-2ffd-b5dd-f768-986624a83c70@linaro.org>
+Content-Language: en-US
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <36900050-2ffd-b5dd-f768-986624a83c70@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YT6PFLoYh6swOLeOEz0csnKkTh6Q8MyP
+X-Proofpoint-GUID: YT6PFLoYh6swOLeOEz0csnKkTh6Q8MyP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-21_07,2023-06-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxlogscore=758
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306210097
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I'm a bit confused by the range of pdiv used in
-imx_pll14xx_calc_settings(), introduced in commit b09c68dc57c9 (clk:
-imx: pll14xx: Support dynamic rates).
 
-We have this comment
 
-        /*
-         * Fractional PLL constrains:
-         *
-         * a) 6MHz <= prate <= 25MHz
-         * b) 1 <= p <= 63 (1 <= p <= 4 prate = 24MHz)
-         * c) 64 <= m <= 1023
-         * d) 0 <= s <= 6
-         * e) -32768 <= k <= 32767
+On 6/14/2023 7:29 PM, Krzysztof Kozlowski wrote:
+> On 14/06/2023 13:43, Manikanta Mylavarapu wrote:
+>>>>>>>>>> +    properties:
+>>>>>>>>>> +      compatible:
+>>>>>>>>>> +        enum:
+>>>>>>>>>> +          - qcom,ipq5018-wcss-ahb-mpd
+>>>>>>>>>> +          - qcom,ipq9574-wcss-ahb-mpd
+>>>>>>>>>> +          - qcom,ipq5018-wcss-pcie-mpd
+>>>>>>>>>
+>>>>>>>>> Keep rather alphabetical order (so both 5018 together).
+>>>>>>>>>
+>>>>>>>>> I also do not understand these at all. Why adding bus type to
+>>>>>>>>> compatible? This rarely is allowed (unless it is PCIe controller within
+>>>>>>>>> soc).
+>>>>>>>>>
+>>>>>>>> IPQ5018 SOC has in-built PCIE controller. Here QDSP6 will bring up
+>>>>>>>> external(PCIE) and internal (AHB) wifi radio's. To separate AHB, PCIE
+>>>>>>>> radio's properties, i have added bus type to compatible.
+>>>>>>>
+>>>>>>> It's the same device - WCSS - right? We do not create multiple nodes and
+>>>>>>> compatibles for the same devices. Bus suffixes are almost never parts of
+>>>>>>> compatibles.
+>>>>>>
+>>>>>>
+>>>>>> No it's not the same device. WCSS on inside IPQ5018 and WCSS attached
+>>>>>> via pcie to IPQ5018. Here QDSP6 managing both WCSS's.
+>>>>>>
+>>>>>> So for better clarity i will use attached SOC ID in compatible.
+>>>>>> Below are the new compatible's.
+>>>>>>
+>>>>>> - qcom,ipq5018-wcss-mpd //IPQ5018 internal radio
+>>>>>> - qcom,ipq9574-wcss-mpd	//IPQ9574 internal radio
+>>>>>> - qcom,qcn6122-wcss-mpd //IPQ5018 attached radio
+>>>>>
+>>>>> What mandates that there's just one QCN6122 device attached to PCI?
+>>>>> Assuming fixed PCI configurations like that makes me worried.
+>>>>>
+>>>>
+>>>> IPQ5018 always has one internal radio, attached pcie radio's depends on
+>>>> no of pcie ports. IPQ5018 has 2 pcie ports, so it supports max two
+>>>> qcn6122 devices. One compatible (qcom,qcn6122-wcss-mpd) itself support's
+>>>> number of pcie devices controlled by QDSP6.
+>>>
+>>> So this is hot-pluggable (or at least board-pluggable), then should not
+>>> be a part of static DTS.
+>>>
+>>> Some concepts of virtual-processes is anyway far away from hardware
+>>> description, thus does not fit into DTS. Adding now to the equation PCIe
+>>> with variable number of such processes, brings us even further.
+>>>
+>>> This is not a DT property. Remember - DT describes hardware.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
+>> In the multipd architecture based Socs, There is one Q6 DSP which runs
+>> the OS/kernel and there are one or more instances of WCSS radios
+>> (It can be either internal or pcie attached).
+>> These WCSS cores are controlled by the Q6 (Q6 DSP brings wcss radios out
+>> of reset/ shuts it down etc). Q6 forms the 'root Protection domain' and
+>> the wcss radios are termed as the 'user protection domain'.
+>> The compatible's that is being added here are to manage the 'root
+>> domain' and 'user domain'.
+>> Not sure if using the words 'pcie'/'ahb' made it confusing.
+>> So, 'qcom,ipq5018-q6-mpd' and 'qcom,ipq5018-wcss-mpd'.
+>>
+>> There will be multiple instances of 'qcom,ipq5018-wcss-mpd' in DT based
+>> on number of wcss radios connected on that board and only one instance
+>> of 'qcom,ipq5018-q6-mpd'.
+>>
+> 
+> I don't understand why the user protection domains need a specific
+> compatible. Why do they need compatible at all?
+> 
+> Not mentioning that amount of your domains on Q6 is actually fixed per
+> SoC and probably should not be in DT at all.
+> 
+   root domain is fixed per soc (One Q6 DSP, one per soc)
+   user domain(s) are variable (based on number of wcss radios attached)
 
-and those values match what I can find in the reference manuals for the
-imx8mm, imx8mn and imx8mp SOCs. But the code then only loops over 1 <= p
-<= 7. I also don't really understand what the parenthesis
+   The sequence to initialize, bring up, tear down the Q6 and wcss radios
+   are completely different. So in order to differentiate them, we will
+   need different compatibles. So this is a new rproc driver/architecture
+   which has a parent/child topology (Q6 DSP -> Master/parent controls
+   the WCSS (child)).
 
-   (1 <= p <= 4 prate = 24MHz)
+> Qualcomm puts so many so weird stuff into DT which is not a hardware
+> description. I understand that everything is there a firmware, but then
+> make it discoverable for example...
+> 
 
-is supposed to mean. Is p restricted to <= 4 when the parent rate is
-24MHz? That doesn't seem to make any sense, and in any case the loop
-does go up to p==7.
+    Hmm, in order to init/bring up these domains, clks, resets
+    and some more register access are required. Q6 FW does not have
+    access to all these resources. Also, HLOS rproc driver is needed to
+    listen on all the events related to  these domains just like any
+    other rproc driver.
 
-It also seems that the built-in entries for 393216000 and 361267200 are
-suboptimal. Using m=655, p=5, s=3, k=23593 would give 393216000 exactly,
-and that set would be found by the loop if it wasn't being preceded by
-the table lookup.
-
-Similarly, m=151, p=5, s=1, k=-30933 would be found and results in
-361267199, while an exact match (well, at least within 1Hz) is possible
-with the wider range of p values: m=497, p=33, s=0, k=-16882.
-
-I could understand if the hardware also imposes some limits on e.g. the
-value of intermediate expressions like (m + k/65536)*F_in, but I can't
-find any restrictions beyond those in the above comment (disregarding
-the mysterious parenthetical).
-
-So, what's the reality here?
-
-Rasmus
+Regards,
+Manikanta
