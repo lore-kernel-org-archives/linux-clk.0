@@ -2,112 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D48BEB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 10:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D5CEB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Jun 2023 11:05:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231883AbjFUKrp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Jun 2023 06:47:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55468 "EHLO
+        id S232441AbjFULFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Jun 2023 07:05:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232312AbjFUKrV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 06:47:21 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E36BF272E;
-        Wed, 21 Jun 2023 03:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1687344352; x=1718880352;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=P32W9AfKeVxcvQoVXSO2hVKT1bX+1GIInDGt+g7kzUA=;
-  b=Tik79gtRICZJ/e6yWuGptEes4Uf6Ys1haKc4XzL+KzNx62sLPB5mzmaj
-   zWa566YoI71TDWmdh+qJYJADnYDYg1Mh8m4azTwAXnkw6ykQy90nrDeq8
-   oO7KTtxmj/2dF8Y5ov7Yd2u/Ux50qQhYMsvU11pYENdHpuurXHoWIwctz
-   HkJyHrT0LvH8zWqobpaFyLxbl1MYFYiObFEcvCLT1FCF/51z7qDvaDYYU
-   j2QZoAemndju9vMhn8Tdttj+mEPHsscSjPHG/tmsoSdPS5rgcP43NltIT
-   kLgsr92dV6l8yBB/WV6I92zYst2VvOuBgM6e5zhm2sqhXcuORqIEIWbi4
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="359004744"
-X-IronPort-AV: E=Sophos;i="6.00,260,1681196400"; 
-   d="scan'208";a="359004744"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jun 2023 03:45:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10747"; a="858926048"
-X-IronPort-AV: E=Sophos;i="6.00,260,1681196400"; 
-   d="scan'208";a="858926048"
-Received: from unknown (HELO localhost.localdomain) ([10.226.216.116])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Jun 2023 03:45:48 -0700
-From:   wen.ping.teh@intel.com
-To:     krzysztof.kozlowski@linaro.org
-Cc:     adrian.ho.yin.ng@intel.com, andrew@lunn.ch, conor+dt@kernel.org,
-        devicetree@vger.kernel.org, dinguyen@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        netdev@vger.kernel.org, niravkumar.l.rabara@intel.com,
-        p.zabel@pengutronix.de, richardcochran@gmail.com,
-        robh+dt@kernel.org, sboyd@kernel.org, wen.ping.teh@intel.com
-Subject: Re: [PATCH 2/4] dt-bindings: clock: Add Intel Agilex5 clocks and resets
-Date:   Wed, 21 Jun 2023 18:45:25 +0800
-Message-Id: <20230621104525.2522714-1-wen.ping.teh@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <ed6f9ab8-9c4e-ec9f-efb7-81974d75f074@linaro.org>
-References: <ed6f9ab8-9c4e-ec9f-efb7-81974d75f074@linaro.org>
+        with ESMTP id S232282AbjFULFO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 07:05:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C6FCE41;
+        Wed, 21 Jun 2023 04:05:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B5FF161509;
+        Wed, 21 Jun 2023 11:05:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3185AC433C9;
+        Wed, 21 Jun 2023 11:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687345510;
+        bh=GHgj/yYOkuJYCVK8z0SzrAG70b1uyM3F4e+xXJRSXEo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QPn8zfp681El9SKEFfEnYQ0FZtwI8UfabPdCuKI5efvZ9jEMIR1BiZukoqkEHZ0uY
+         YOsp3CNwoIRiCKHfaS4m1OADTfqCXLtPhh/b8Bki+qw7HSkAEzxF2zuzLsJB1DoHId
+         wq6rvsegVOEJFI9b0mmKQkgK8BGv9mozTOjDe8S8Yfr2mU/dzvcLo2BWkQlQjZVZsM
+         b/cYLQHnuWyYadxipwQ/+Xi+fERgSrrVfajam126UVNmC363zCpcCimlTRyfSzT57l
+         dj0gallYAIeutWfqKjLoSEj/izyDk55Mgkv7Gka3hv3jMuVjZrKjLbt8gIVv6UxjBf
+         zib0PEAweqEYw==
+Date:   Wed, 21 Jun 2023 16:35:06 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Varadarajan Narayanan <quic_varada@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        p.zabel@pengutronix.de, arnd@arndb.de, geert+renesas@glider.be,
+        neil.armstrong@linaro.org, nfraprado@collabora.com,
+        broonie@kernel.org, rafal@milecki.pl, quic_srichara@quicinc.com,
+        quic_varada@quicinc.org, quic_wcheng@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/9] phy: qcom-m31: Introduce qcom,m31 USB phy driver
+Message-ID: <ZJLZYsla/ylQkVUB@matsya>
+References: <cover.1686126439.git.quic_varada@quicinc.com>
+ <6bb345c6a57ee27516764f36ba7d34fd1a719b87.1686126439.git.quic_varada@quicinc.com>
+ <416bef68-6df3-d5c4-2aed-ef1ae7c78d7b@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <416bef68-6df3-d5c4-2aed-ef1ae7c78d7b@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->From: Krzysztof Kozlowski @ 2023-06-20 11:06 UTC (permalink / raw)
->>>
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: intel,agilex5-clkmgr
->>>
->>>
->>> Why "clkmgr", not "clk"? You did not call it Clock manager anywhere in
->>> the description or title.
->>>
->> 
->> The register in Agilex5 handling the clock is named clock_mgr.
->> Previous IntelSocFPGA, Agilex and Stratix10, are also named clkmgr.
->
->So use it in description.
+On 07-06-23, 13:54, Konrad Dybcio wrote:
+> 
+> 
+> On 7.06.2023 12:56, Varadarajan Narayanan wrote:
+> > Add the M31 USB2 phy driver
+> > 
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> >  drivers/phy/qualcomm/phy-qcom-m31.c | 360 ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 360 insertions(+)
+> >  create mode 100644 drivers/phy/qualcomm/phy-qcom-m31.c
+> > 
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-m31.c b/drivers/phy/qualcomm/phy-qcom-m31.c
+> > new file mode 100644
+> > index 0000000..d29a91e
+> > --- /dev/null
+> > +++ b/drivers/phy/qualcomm/phy-qcom-m31.c
+> > @@ -0,0 +1,360 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Copyright (c) 2014-2016, 2020, The Linux Foundation. All rights reserved.
+> > + */
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/err.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/usb/phy.h>
+> > +#include <linux/reset.h>
+> > +#include <linux/of_device.h>
+> Please sort these
+> 
+> > +
+> > +enum clk_reset_action {
+> > +	CLK_RESET_DEASSERT	= 0,
+> > +	CLK_RESET_ASSERT	= 1
+> > +};
+> > +
+> > +#define USB2PHY_PORT_POWERDOWN		0xA4
+> > +#define POWER_UP			BIT(0)
+> > +#define POWER_DOWN			0
+> > +
+> > +#define USB2PHY_PORT_UTMI_CTRL1	0x40
+> > +
+> > +#define USB2PHY_PORT_UTMI_CTRL2	0x44
+> > +#define UTMI_ULPI_SEL			BIT(7)
+> > +#define UTMI_TEST_MUX_SEL		BIT(6)
+> > +
+> > +#define HS_PHY_CTRL_REG			0x10
+> > +#define UTMI_OTG_VBUS_VALID             BIT(20)
+> > +#define SW_SESSVLD_SEL                  BIT(28)
+> > +
+> > +#define USB_PHY_CFG0			0x94
+> > +#define USB_PHY_UTMI_CTRL5		0x50
+> > +#define USB_PHY_FSEL_SEL		0xB8
+> > +#define USB_PHY_HS_PHY_CTRL_COMMON0	0x54
+> > +#define USB_PHY_REFCLK_CTRL		0xA0
+> > +#define USB_PHY_HS_PHY_CTRL2		0x64
+> > +#define USB_PHY_UTMI_CTRL0		0x3c
+> > +#define USB2PHY_USB_PHY_M31_XCFGI_1	0xBC
+> > +#define USB2PHY_USB_PHY_M31_XCFGI_4	0xC8
+> > +#define USB2PHY_USB_PHY_M31_XCFGI_5	0xCC
+> > +#define USB2PHY_USB_PHY_M31_XCFGI_11	0xE4
+> Could you sort them address-wise?
 
-Noted. Will update the description in V2.
+and lower case hex values as well please
 
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  # Clock controller node:
->>>> +  - |
->>>> +    clkmgr: clock-controller@10d10000 {
->>>> +      compatible = "intel,agilex5-clkmgr";
->>>> +      reg = <0x10d10000 0x1000>;
->>>> +      #clock-cells = <1>;
->>>> +    };
->>>> +...
->>>> diff --git a/include/dt-bindings/clock/agilex5-clock.h b/include/dt-bindings/clock/agilex5-clock.h
->>>> new file mode 100644
->>>> index 000000000000..4505b352cd83
->>>> --- /dev/null
->>>> +++ b/include/dt-bindings/clock/agilex5-clock.h
->>>
->>> Filename the same as binding. Missing vendor prefix, entirely different
->>> device name.
->>>
->> 
->> Will change filename to intel,agilex5-clock.h in V2.
->
->Read the comment - same as binding. You did not call binding that way...
->unless you rename the binding.
-
-Just to confirm, the binding name you are referring to is "intel,agilex5-clkmgr"?
-I will change the filename to intel,agilex5-clkmgr.h in V2.
-
-Best Regards,
-Wen Ping
-
+-- 
+~Vinod
