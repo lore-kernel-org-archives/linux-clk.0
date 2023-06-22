@@ -2,108 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6110CEB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 16:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B7AEB64DA
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 19:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230060AbjFVQyg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jun 2023 12:54:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42090 "EHLO
+        id S230260AbjFVTAE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jun 2023 15:00:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231645AbjFVQyB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 12:54:01 -0400
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5C24213B;
-        Thu, 22 Jun 2023 09:53:51 -0700 (PDT)
-Received: by mail-ot1-x330.google.com with SMTP id 46e09a7af769-6b6da72d5e2so596128a34.1;
-        Thu, 22 Jun 2023 09:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687452831; x=1690044831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D8yYMEX/t8Klnote5y9PwMV4v/R5Zq9BMnCmr1KijqA=;
-        b=Pt1nXkO/26/fQa155yjH3pyzn/SzDu3Ys72LfiAAiA8CfR5SeaxYWJASav/l6pUjtS
-         ZUXeytL3yArUtBMuoMxRoCIx+/FL1NrxI2W3mFvKZm2J4MyDyRxqPNZ5CuZcPcc/HEaC
-         ywe/1ATR5kfk9gUWiazxzFWlf6qDUU6T2z+AY/eK0KhEg40G3Ac79NRNwvmbhgKXwxjv
-         vkgCkhwSKVNxTFyd8enD+DvHPdCiIEaFtq1ZyTLZ7sMfN1jruh4TMaq0tSWEqhBKMI/K
-         55objcP8XfnkQJB0xnc+yNYP/bFVnGQUG31lNeHvoB8H8wXdlGfWWnvQ+1P2vV73cHLm
-         N8Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687452831; x=1690044831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D8yYMEX/t8Klnote5y9PwMV4v/R5Zq9BMnCmr1KijqA=;
-        b=A7i7jwARrA+VutdSSQ8jN6ii8/TcVM8SEAx51W6QFN13TCvE5E2lQi7I+k+8HLo5I9
-         JfbvhAppJ4+jX0i1herJIEBELFckG00vduoOKWDqMS4idglhV2PBNj+jVSudWPOaYoWI
-         2aV9s9xPImDAPXdouQAXTWddSl9C95zhsNE2WLAD6W/KSH26Fyr6WETc3rO9MC/7ez0I
-         4r6gGFfPmvHx+mGv3rUdHgpU5qk/MssdbE0eK4KQMEy8p57A3LxDwb1Fe6rPfCZA8jl2
-         TJXBtyZGZDojxdON85AS4DdvsPkKnXoSppQwKRZjFjjalPRqfQ5z6uVmCrsR+VAHUVgR
-         aEkA==
-X-Gm-Message-State: AC+VfDwK94tnpWIJS973khaiVCvRecqvV4R2ZtP1VOq9ZnZIZ4jDyN7Z
-        LJymyl8AaDvG4rWwXSTt+4pBzYJ4Vtnm9agY/DA=
-X-Google-Smtp-Source: ACHHUZ5wJu27nrivTok6qs1B5hPokhBnncL+1s3kNTj874MuSDplDrZIaOADSQJQsgir26+dJQ0jdGdQR5JUGcopGA4=
-X-Received: by 2002:a05:6871:4f18:b0:1a9:8484:40d with SMTP id
- zu24-20020a0568714f1800b001a98484040dmr15092643oab.23.1687452830873; Thu, 22
- Jun 2023 09:53:50 -0700 (PDT)
+        with ESMTP id S231264AbjFVTAA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 15:00:00 -0400
+Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57083186;
+        Thu, 22 Jun 2023 11:59:53 -0700 (PDT)
+Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
+        by mx.sberdevices.ru (Postfix) with ESMTP id 16BC55FD1D;
+        Thu, 22 Jun 2023 21:59:51 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1687460391;
+        bh=mWWI0ZO0ptZ6K1WHLjWbKHpoK8xPQxDS9eQM4yizQ5Q=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+        b=MBpIpQgPlr8UapK8ML0TnxKTp0m1H12OHuGCLIGO7ZnyBDjxCN3+2ro6GfPNp6T/9
+         hPaqLFwxkO8XqsVubZvqmkrzV3ncUpSrW49yEYYg4Mz4D0y2NLiUropv17bz3IcXey
+         l+A5DmhkrozXvrpNFsaz2XRjOmFKk+/jqAkHsI4T6JK9T3HtKWU0bFRx56uK9yzkyq
+         X8a83cU6ZznGtye5QaPdwAMrWNReabDhfi9PRjzyvdztGA+ZC2eWPmwKYRzq9hzzvh
+         qcQTMc2Nv1wfNQsPOmyY0fVUeGaU8yNvPlYT5CHiMhwqfXbKZHoMzq7vaACsTkxPZc
+         E/h2NLTgsjhJw==
+Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+        by mx.sberdevices.ru (Postfix) with ESMTP;
+        Thu, 22 Jun 2023 21:59:50 +0300 (MSK)
+Date:   Thu, 22 Jun 2023 21:59:49 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH] clk: meson: pll: remove unneeded semicolon
+Message-ID: <20230622185949.lctlydjcthya33ga@CAB-WSD-L081021>
+References: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20230622-mips-ralink-clk-wuninitialized-v1-1-ea9041240d10@kernel.org>
-In-Reply-To: <20230622-mips-ralink-clk-wuninitialized-v1-1-ea9041240d10@kernel.org>
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date:   Thu, 22 Jun 2023 18:53:39 +0200
-Message-ID: <CAMhs-H_aKYGrCYemyOoNk+nHzDfmAU+BoV2pA7eauZ+k5PhGEQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: ralink: mtmips: Fix uninitialized use of ret in mtmips_register_{fixed,factor}_clocks()
-To:     Nathan Chancellor <nathan@kernel.org>
-Cc:     tsbogend@alpha.franken.de, sboyd@kernel.org,
-        ndesaulniers@google.com, trix@redhat.com,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        patches@lists.linux.dev, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [100.64.160.123]
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 4
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiPhishing: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/22 14:26:00 #21556046
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 22, 2023 at 5:56=E2=80=AFPM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> Clang warns:
->
->   drivers/clk/ralink/clk-mtmips.c:309:9: error: variable 'ret' is uniniti=
-alized when used here [-Werror,-Wuninitialized]
->     309 |         return ret;
->         |                ^~~
->   drivers/clk/ralink/clk-mtmips.c:285:9: note: initialize the variable 'r=
-et' to silence this warning
->     285 |         int ret, i;
->         |                ^
->         |                 =3D 0
->   drivers/clk/ralink/clk-mtmips.c:359:9: error: variable 'ret' is uniniti=
-alized when used here [-Werror,-Wuninitialized]
->     359 |         return ret;
->         |                ^~~
->   drivers/clk/ralink/clk-mtmips.c:335:9: note: initialize the variable 'r=
-et' to silence this warning
->     335 |         int ret, i;
->         |                ^
->         |                 =3D 0
->   2 errors generated.
->
-> Set ret to the return value of clk_hw_register_fixed_rate() using the
-> PTR_ERR() macro, which ensures ret is not used uninitialized, clearing
-> up the warning.
->
-> Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS =
-SoCs")
-> Closes: https://github.com/ClangBuiltLinux/linux/issues/1879
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Dear Jiapeng,
+
+Thank you for catching this bug! Appreciate it!
+
+On Wed, Jun 14, 2023 at 04:48:08PM +0800, Jiapeng Chong wrote:
+> No functional modification involved.
+> 
+> ./drivers/clk/meson/clk-pll.c:373:2-3: Unneeded semicolon.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=5533
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 > ---
->  drivers/clk/ralink/clk-mtmips.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/clk/meson/clk-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index 56ec2210f1ad..8fef90bf962f 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -370,7 +370,7 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>  		usleep_range(10, 20);
+>  		meson_parm_write(clk->map, &pll->current_en, 1);
+>  		usleep_range(40, 50);
+> -	};
+> +	}
+>  
+>  	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+>  		meson_parm_write(clk->map, &pll->l_detect, 1);
 
-Thanks for the patch, Nathan!!
+Reviewed-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 
-Acked-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> -- 
+> 2.20.1.7.g153144c
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 
-Best regards,
-    Sergio Paracuellos
+-- 
+Thank you,
+Dmitry
