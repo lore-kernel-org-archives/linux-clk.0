@@ -2,198 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5FDEB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 15:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D573EB64DC
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 15:56:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbjFVPTt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jun 2023 11:19:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52862 "EHLO
+        id S229986AbjFVP4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jun 2023 11:56:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232046AbjFVPTr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 11:19:47 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23CB019B7;
-        Thu, 22 Jun 2023 08:19:45 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35ME8hFi004001;
-        Thu, 22 Jun 2023 15:19:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=vYBG66qzmFxp2vLXka/Uf8FXHiZVHAxT1SFVB/3LeFs=;
- b=DItnH4BBWN+4BOe6w4kVwxpRmWnFRpiaeYvVKKGUwQUVQXagat7o9IxH8vth7R8+TAX4
- yhbSDsQnfl0glHpmyMkfDeXnolT4FEza+g0O4ckkTfcmFhyGIcSp9T6vZDXUp9GohzE7
- 9Motdbs9tTcLwmLFvtnIhePMXEogHyTVcqoUXO2Xr0kUVD/fMha7oLUV+2UkiWXD+g7n
- M+nGzdBUyHotlvabeL6h84RGlJjvVBexANQB4VIBIZqix2CsBq967vVD0+AID+Tx4HRy
- l8WPWwF0iNbVeaP6OaN/tuC/VLdFQkVBMJ39HJ1X/+veQp8ONoFnzNcxVzAZ+ttFw5Za Jw== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rc0sk3aqe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jun 2023 15:19:12 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35MFJAb2021948
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jun 2023 15:19:10 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Thu, 22 Jun
- 2023 08:19:09 -0700
-Message-ID: <f2ca0d67-25e7-1313-9cea-fddb1ad28c9b@quicinc.com>
-Date:   Thu, 22 Jun 2023 09:19:08 -0600
+        with ESMTP id S231140AbjFVP4p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 11:56:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47EAA2125;
+        Thu, 22 Jun 2023 08:56:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB17C6189D;
+        Thu, 22 Jun 2023 15:56:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E905C433C0;
+        Thu, 22 Jun 2023 15:56:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687449397;
+        bh=KuNfl/le8W+tk5pj4CEfMdhcf3haC1/lnKFZoEA+xQ8=;
+        h=From:Date:Subject:To:Cc:From;
+        b=DkEDIT4UBYHIa99zqkTxpmTrj4B/F3AK2eaeyiXA4pIt+ZstWnbGy1jV9/rFeJ3Sm
+         OX0+mkZeAyml/vm0tc2UUgIqKzrc7UL9QohZBE/H8xjEZUj0pyCWOoMda1PLv2EhNe
+         qGohq7oWexD1eoMC04cR0aKmyUWxc1LEip0FIAJRNvEzff3cDZRw1L+/+aDpyqbjnp
+         11HDjYwel8qzRaKAqb8mkaouY1PTLcJiobdnhQSwVRzU9FJNrU/7UQJDLuMnZ0SpUD
+         jBFiids4vJJx/WVOFVn9dA9rZQby1ODx+Q2ui3Rzwi8N6EYvaBOyZbG7LXseb9dEOA
+         M9Rn/oS54iUMA==
+From:   Nathan Chancellor <nathan@kernel.org>
+Date:   Thu, 22 Jun 2023 15:56:19 +0000
+Subject: [PATCH] clk: ralink: mtmips: Fix uninitialized use of ret in
+ mtmips_register_{fixed,factor}_clocks()
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 3/9] clk: qcom: gcc-msm8998: Control MMSS and GPUSS GPLL0
- outputs properly
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>
-CC:     Marijn Suijten <marijn.suijten@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Jami Kettunen <jami.kettunen@somainline.org>
-References: <20230622-topic-8998clk-v1-0-5b7a0d6e98b1@linaro.org>
- <20230622-topic-8998clk-v1-3-5b7a0d6e98b1@linaro.org>
- <e880bad8-4fcb-97c1-ec9c-9122e1b550e6@quicinc.com>
- <18f508e7-8a7e-162b-4bed-eaef45147a22@linaro.org>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <18f508e7-8a7e-162b-4bed-eaef45147a22@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Kf6rLUAL6MzwSABUrYtFGgX5TOYn69Ek
-X-Proofpoint-ORIG-GUID: Kf6rLUAL6MzwSABUrYtFGgX5TOYn69Ek
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-22_10,2023-06-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- phishscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
- malwarescore=0 adultscore=0 spamscore=0 clxscore=1011 lowpriorityscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306220129
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20230622-mips-ralink-clk-wuninitialized-v1-1-ea9041240d10@kernel.org>
+X-B4-Tracking: v=1; b=H4sIACJvlGQC/x2NSw6CQBAFr0J6bSfziWi8CnEBTKsvYENm+AXC3
+ Z24rFpUHZQkQhI9ioOiLEgYNIO9FNR+an0LI2QmZ5w3pXP8xZg41j2047bveJ0VignZ7BLYXk0
+ TjPelvd8oR8YoL2z/QfU8zx8nr3sycAAAAA==
+To:     tsbogend@alpha.franken.de
+Cc:     sergio.paracuellos@gmail.com, sboyd@kernel.org, nathan@kernel.org,
+        ndesaulniers@google.com, trix@redhat.com,
+        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+        patches@lists.linux.dev, llvm@lists.linux.dev
+X-Mailer: b4 0.13-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2238; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=KuNfl/le8W+tk5pj4CEfMdhcf3haC1/lnKFZoEA+xQ8=;
+ b=owGbwMvMwCEmm602sfCA1DTG02pJDClT8k3W7xfiYss4OC/2w2LP13xJWld9nMv+hl7qa1gwd
+ d7iC+e7OkpZGMQ4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEDP0YGeb++aLxN1z75LLv
+ u16dZ5P6HXd5qv7OL96FZvv7yh/Oc33M8D/l6z7ZfA6D07JSd048mv3/kHNG2qkad4P3U//pmys
+ vVeADAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/22/2023 9:05 AM, Konrad Dybcio wrote:
-> On 22.06.2023 16:55, Jeffrey Hugo wrote:
->> On 6/22/2023 5:57 AM, Konrad Dybcio wrote:
->>> Up until now, we've been relying on some non-descript hardware magic
->>> to pinkypromise turn the clocks on for us. While new SoCs shine with
->>> that feature, MSM8998 can not always be fully trusted.
->>>
->>> Register the MMSS and GPUSS GPLL0 legs with the CCF to allow for manual
->>> enable voting.
->>>
->>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->>> ---
->>>    drivers/clk/qcom/gcc-msm8998.c | 58 ++++++++++++++++++++++++++++++++++++++++++
->>>    1 file changed, 58 insertions(+)
->>>
->>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
->>> index be024f8093c5..cccb19cae481 100644
->>> --- a/drivers/clk/qcom/gcc-msm8998.c
->>> +++ b/drivers/clk/qcom/gcc-msm8998.c
->>> @@ -25,6 +25,9 @@
->>>    #include "reset.h"
->>>    #include "gdsc.h"
->>>    +#define GCC_MMSS_MISC    0x0902C
->>> +#define GCC_GPU_MISC    0x71028
->>> +
->>>    static struct pll_vco fabia_vco[] = {
->>>        { 250000000, 2000000000, 0 },
->>>        { 125000000, 1000000000, 1 },
->>> @@ -1367,6 +1370,22 @@ static struct clk_branch gcc_boot_rom_ahb_clk = {
->>>        },
->>>    };
->>>    +static struct clk_branch gcc_mmss_gpll0_div_clk = {
->>> +    .halt_check = BRANCH_HALT_DELAY,
->>> +    .clkr = {
->>> +        .enable_reg = 0x5200c,
->>> +        .enable_mask = BIT(0),
->>> +        .hw.init = &(struct clk_init_data){
->>> +            .name = "gcc_mmss_gpll0_div_clk",
->>> +            .parent_hws = (const struct clk_hw *[]) {
->>> +                &gpll0_out_main.clkr.hw,
->>> +            },
->>> +            .num_parents = 1,
->>> +            .ops = &clk_branch2_ops,
->>> +        },
->>> +    },
->>> +};
->>> +
->>>    static struct clk_branch gcc_mmss_gpll0_clk = {
->>>        .halt_check = BRANCH_HALT_DELAY,
->>>        .clkr = {
->>> @@ -1395,6 +1414,38 @@ static struct clk_branch gcc_mss_gpll0_div_clk_src = {
->>>        },
->>>    };
->>>    +static struct clk_branch gcc_gpu_gpll0_div_clk = {
->>> +    .halt_check = BRANCH_HALT_DELAY,
->>> +    .clkr = {
->>> +        .enable_reg = 0x5200c,
->>> +        .enable_mask = BIT(3),
->>> +        .hw.init = &(struct clk_init_data){
->>> +            .name = "gcc_gpu_gpll0_div_clk",
->>> +            .parent_hws = (const struct clk_hw *[]) {
->>> +                &gpll0_out_main.clkr.hw,
->>> +            },
->>> +            .num_parents = 1,
->>> +            .ops = &clk_branch2_ops,
->>> +        },
->>> +    },
->>> +};
->>> +
->>> +static struct clk_branch gcc_gpu_gpll0_clk = {
->>> +    .halt_check = BRANCH_HALT_DELAY,
->>> +    .clkr = {
->>> +        .enable_reg = 0x5200c,
->>> +        .enable_mask = BIT(4),
->>> +        .hw.init = &(struct clk_init_data){
->>> +            .name = "gcc_gpu_gpll0_clk",
->>> +            .parent_hws = (const struct clk_hw *[]) {
->>> +                &gpll0_out_main.clkr.hw,
->>> +            },
->>> +            .num_parents = 1,
->>> +            .ops = &clk_branch2_ops,
->>> +        },
->>> +    },
->>> +};
->>> +
->>>    static struct clk_branch gcc_blsp1_ahb_clk = {
->>>        .halt_reg = 0x17004,
->>>        .halt_check = BRANCH_HALT_VOTED,
->>> @@ -3080,6 +3131,9 @@ static struct clk_regmap *gcc_msm8998_clocks[] = {
->>>        [AGGRE2_SNOC_NORTH_AXI] = &aggre2_snoc_north_axi_clk.clkr,
->>>        [SSC_XO] = &ssc_xo_clk.clkr,
->>>        [SSC_CNOC_AHBS_CLK] = &ssc_cnoc_ahbs_clk.clkr,
->>> +    [GCC_MMSS_GPLL0_DIV_CLK] = &gcc_mmss_gpll0_div_clk.clkr,
->>> +    [GCC_GPU_GPLL0_DIV_CLK] = &gcc_gpu_gpll0_div_clk.clkr,
->>> +    [GCC_GPU_GPLL0_CLK] = &gcc_gpu_gpll0_clk.clkr,
->>>    };
->>>      static struct gdsc *gcc_msm8998_gdscs[] = {
->>> @@ -3235,6 +3289,10 @@ static int gcc_msm8998_probe(struct platform_device *pdev)
->>>        if (ret)
->>>            return ret;
->>>    +    /* Disable the GPLL0 active input to MMSS and GPU via MISC registers */
->>> +    regmap_write(regmap, GCC_MMSS_MISC, 0x10003);
->>> +    regmap_write(regmap, GCC_GPU_MISC, 0x10003);
->>
->> I wonder, does this disrupt a handoff of an active display from the bootloader to Linux?
-> My phone's bootloader doesn't initialize the display, if you (or Angelo
-> or Jami, +CC) could test this, it'd be wonderful.
+Clang warns:
 
-Let me carve out some time to try it on the laptop.
+  drivers/clk/ralink/clk-mtmips.c:309:9: error: variable 'ret' is uninitialized when used here [-Werror,-Wuninitialized]
+    309 |         return ret;
+        |                ^~~
+  drivers/clk/ralink/clk-mtmips.c:285:9: note: initialize the variable 'ret' to silence this warning
+    285 |         int ret, i;
+        |                ^
+        |                 = 0
+  drivers/clk/ralink/clk-mtmips.c:359:9: error: variable 'ret' is uninitialized when used here [-Werror,-Wuninitialized]
+    359 |         return ret;
+        |                ^~~
+  drivers/clk/ralink/clk-mtmips.c:335:9: note: initialize the variable 'ret' to silence this warning
+    335 |         int ret, i;
+        |                ^
+        |                 = 0
+  2 errors generated.
+
+Set ret to the return value of clk_hw_register_fixed_rate() using the
+PTR_ERR() macro, which ensures ret is not used uninitialized, clearing
+up the warning.
+
+Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")
+Closes: https://github.com/ClangBuiltLinux/linux/issues/1879
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ drivers/clk/ralink/clk-mtmips.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/ralink/clk-mtmips.c b/drivers/clk/ralink/clk-mtmips.c
+index 9322c6210a33..1e7991439527 100644
+--- a/drivers/clk/ralink/clk-mtmips.c
++++ b/drivers/clk/ralink/clk-mtmips.c
+@@ -292,6 +292,7 @@ static int mtmips_register_fixed_clocks(struct clk_hw_onecell_data *clk_data,
+ 						      sclk->parent, 0,
+ 						      sclk->rate);
+ 		if (IS_ERR(sclk->hw)) {
++			ret = PTR_ERR(sclk->hw);
+ 			pr_err("Couldn't register fixed clock %d\n", idx);
+ 			goto err_clk_unreg;
+ 		}
+@@ -342,6 +343,7 @@ static int mtmips_register_factor_clocks(struct clk_hw_onecell_data *clk_data,
+ 						  sclk->parent, sclk->flags,
+ 						  sclk->mult, sclk->div);
+ 		if (IS_ERR(sclk->hw)) {
++			ret = PTR_ERR(sclk->hw);
+ 			pr_err("Couldn't register factor clock %d\n", idx);
+ 			goto err_clk_unreg;
+ 		}
+
+---
+base-commit: fd99ac5055d4705e91c73d1adba18bc71c8511a8
+change-id: 20230622-mips-ralink-clk-wuninitialized-150bd0336187
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
