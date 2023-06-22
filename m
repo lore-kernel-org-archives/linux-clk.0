@@ -2,56 +2,56 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87833EB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 07:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F977EB64DA
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 07:10:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229990AbjFVHGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jun 2023 03:06:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33616 "EHLO
+        id S230154AbjFVHKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jun 2023 03:10:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbjFVHGN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 03:06:13 -0400
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E2F51FCE
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:05:59 -0700 (PDT)
-Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f9c0abc8b1so15417005e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:05:59 -0700 (PDT)
+        with ESMTP id S230190AbjFVHKB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 03:10:01 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B07E1BD7
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:09:58 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-31126037f41so6635936f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687417557; x=1690009557;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687417796; x=1690009796;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VIhSOYk52hVuqfcboW85OQLI0NHly7jy25hrkyJ2YAw=;
-        b=WZQ2qdOUncD9AsxUeqky0Sv9plZI/2WtRmFLj/vUPrLspAKtFdJAjDNBfRiM90Wl6l
-         Bu52No9UiIMeNp5vJfqV4tdzKNy4gqSSkZZgdTA2tEhX9UhJ0VFvTD1WUjcyZjBnxsqM
-         CY6kI+W0r2aC0t58Ot4ae4EkJpbEUxEO+qU0IzQugmgTpIX9f4Vdc6bAsBsmzf0/VZPu
-         oMD/OCT9ypK+CBaNDZaMdjjZbvVgK6KKjigdSYdUY6tPiNMyp/u8BcNpj7C6Q76VkPqd
-         cFeXbCEhZGKbNKcefxvBWXoomyu9ZEWY69AGbsxFJ97j4shY74xka5Cdz8D7NjEiYYcZ
-         YJOw==
+        bh=mPyXOzxLtxEjY9cBPcsaRIns0EAEb4Nt/6W8EsU3ga8=;
+        b=3iouDSVugUMNcys+i697SLnTvuKCQCDU18RQuMxLJV54x1bnilfa2bLr1aadMiQh1g
+         UItDYY8rMfETP4FeqIVWSeabeT9AuFOTAO2aUWdKuLg84/CdT7qzIiwweS4Gx3GVX1P8
+         4bBATic4ICWKlQpgqYwOyZIg4yeumq7IFyMtmwFoUFt4NXiXBCo3DNhJZkMc01ZTBRaW
+         ek+bbOOoFMHEBQqk1J0jBtWot+LCXVC45zM6x5Dl0Kk8ybD9Cafa8DoJ6GiSDoMY3ro7
+         6A1iZr2yMlshPSuQUwe9k+ophGjpUKdwBA35Aey0t6Ccp+bFNAOoqgp2gLV3leZxIgP/
+         d1Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687417557; x=1690009557;
+        d=1e100.net; s=20221208; t=1687417796; x=1690009796;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VIhSOYk52hVuqfcboW85OQLI0NHly7jy25hrkyJ2YAw=;
-        b=T6RHkl4/xNC40ixIUck2wjZiZaVK7cNwYwgzBKevf+GBZv1kZfmcg1Um/r1TPb/BtF
-         regnKQbVm7k1ef/gv0o8HTuubROW7X8njHYRMY3A6a8jwSIkwhcdIQ1QTn8Hm1dqU5/j
-         iGIJDn8E2dvqyWM2M9WQojHPoV6j7MBmMLj33nGriKbs369iPNOd9Ajou1s3eAlGLQ6+
-         NXAzFUDXcDdalo59ppnUpZTaQNe6G4+ucFrPlp5ay3HSMeduYqrDGNwl4fWbepEPRa+C
-         XKx6nzi2e4y+dJl5VA6fOSR6ucrjBSO424K7z7zW53b6WpMr4pdVC6M4TDNW5IzKx4J1
-         6bjQ==
-X-Gm-Message-State: AC+VfDzu7VMJ4YDRBLc1m23EcOow6eDL4QE+HrKYadgWCQC/i5OHCbu4
-        JcpjOO1/MTd10Zl6qb+1o6zsFQ==
-X-Google-Smtp-Source: ACHHUZ47nqUaHErWDVz/sLK5UcH8SW19SUG16keT/oe5Rk5/giZmsiFYSgziHOgHrlK6XzxNNrCLiA==
-X-Received: by 2002:a1c:7415:0:b0:3fa:77c8:6724 with SMTP id p21-20020a1c7415000000b003fa77c86724mr51349wmc.10.1687417557595;
-        Thu, 22 Jun 2023 00:05:57 -0700 (PDT)
+        bh=mPyXOzxLtxEjY9cBPcsaRIns0EAEb4Nt/6W8EsU3ga8=;
+        b=kdhCFinUsexqatGKnZqZGug5Kp2ynOra/HKCVjN0pY+oOe5/sQzKTXOnt1Noa4s4NQ
+         5qZnsrEnUVT18LwwLnsYehTbUinQsDa2LY52h4K1Q2yjkdmDUTVk93l97CS+bAFQemBF
+         qRI4pTC8fECqtwqPT4OAmNFRNuhCsJJy3lEQv5ydHrtDWO4toFIM+ceyrBGxbCy4MT3S
+         VJ+iDlMXVSWZAZMzJXmxoTRlzUcvb6RXCVMt9+o7Tpt/n6IQCeTWeRJSKPJ+pbHiFfZP
+         +rNljE1aw3wLJU9LqXJL/a5omAbzgQW/d1rhaAtuRu9aEtOyVrERcGMWjxfkZHcghR7M
+         nvjA==
+X-Gm-Message-State: AC+VfDyEFh61SmljXnuycK0toCWNtrDzR4H92jz65M4g7+XpyRaiTUFS
+        z/bfJxPnH1pUOy0BRt3hpcXQkg==
+X-Google-Smtp-Source: ACHHUZ7BfDfYg8tVKSO/1MGIhgM7knp4bxE9BjLvWPQmvpgYpkpg9XkXMIy4VKk2fcxV+HKp1ykuJA==
+X-Received: by 2002:a5d:468d:0:b0:30a:f2a0:64fa with SMTP id u13-20020a5d468d000000b0030af2a064famr15527240wrq.10.1687417796496;
+        Thu, 22 Jun 2023 00:09:56 -0700 (PDT)
 Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id 17-20020a05600c231100b003f8ec58995fsm6919930wmo.6.2023.06.22.00.05.56
+        by smtp.gmail.com with ESMTPSA id f12-20020a5d58ec000000b00309382eb047sm6207885wrd.112.2023.06.22.00.09.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 00:05:57 -0700 (PDT)
-Date:   Thu, 22 Jun 2023 09:05:56 +0200
+        Thu, 22 Jun 2023 00:09:55 -0700 (PDT)
+Date:   Thu, 22 Jun 2023 09:09:54 +0200
 From:   Jiri Pirko <jiri@resnulli.us>
 To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     "kuba@kernel.org" <kuba@kernel.org>,
+Cc:     Jakub Kicinski <kuba@kernel.org>,
         "vadfed@meta.com" <vadfed@meta.com>,
         "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
         "pabeni@redhat.com" <pabeni@redhat.com>,
@@ -105,56 +105,126 @@ Cc:     "kuba@kernel.org" <kuba@kernel.org>,
         "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
 Subject: Re: [RFC PATCH v8 03/10] dpll: core: Add DPLL framework base
  functions
-Message-ID: <ZJPy1FBvMC4z5SG2@nanopsycho>
+Message-ID: <ZJPzwj1odaC8fFzO@nanopsycho>
 References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
  <20230609121853.3607724-4-arkadiusz.kubalewski@intel.com>
- <ZIS1FX0QAqDSvVUK@nanopsycho>
- <DM6PR11MB46570B50A01D81F54F1068369B5DA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <20230612164515.6eacefb1@kernel.org>
+ <DM6PR11MB4657FED589F5922BBAC5D9059B5DA@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM6PR11MB46570B50A01D81F54F1068369B5DA@DM6PR11MB4657.namprd11.prod.outlook.com>
+In-Reply-To: <DM6PR11MB4657FED589F5922BBAC5D9059B5DA@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Jun 21, 2023 at 08:55:35PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Saturday, June 10, 2023 7:38 PM
+Wed, Jun 21, 2023 at 11:17:26PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jakub Kicinski <kuba@kernel.org>
+>>Sent: Tuesday, June 13, 2023 1:45 AM
 >>
->>Fri, Jun 09, 2023 at 02:18:46PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
->>>
->>>DPLL framework is used to represent and configure DPLL devices
->>>in systems. Each device that has DPLL and can configure inputs
->>>and outputs can use this framework.
->>>
->>>Implement core framework functions for further interactions
->>>with device drivers implementing dpll subsystem, as well as for
->>>interactions of DPLL netlink framework part with the subsystem
->>>itself.
->>>
->>>Co-developed-by: Milena Olech <milena.olech@intel.com>
->>>Signed-off-by: Milena Olech <milena.olech@intel.com>
->>>Co-developed-by: Michal Michalik <michal.michalik@intel.com>
->>>Signed-off-by: Michal Michalik <michal.michalik@intel.com>
->>>Signed-off-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
->>>Co-developed-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->>>Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->>>---
->>> drivers/dpll/dpll_core.c | 953 +++++++++++++++++++++++++++++++++++++++
->>> drivers/dpll/dpll_core.h | 104 +++++
+>>On Fri,  9 Jun 2023 14:18:46 +0200 Arkadiusz Kubalewski wrote:
+>>> +	xa_for_each(xa_pins, i, ref) {
+>>> +		if (ref->pin != pin)
+>>> +			continue;
+>>> +		reg = dpll_pin_registration_find(ref, ops, priv);
+>>> +		if (reg) {
+>>> +			refcount_inc(&ref->refcount);
+>>> +			return 0;
+>>> +		}
+>>> +		ref_exists = true;
+>>> +		break;
+>>> +	}
+>>> +
+>>> +	if (!ref_exists) {
+>>> +		ref = kzalloc(sizeof(*ref), GFP_KERNEL);
+>>> +		if (!ref)
+>>> +			return -ENOMEM;
+>>> +		ref->pin = pin;
+>>> +		INIT_LIST_HEAD(&ref->registration_list);
+>>> +		ret = xa_insert(xa_pins, pin->pin_idx, ref, GFP_KERNEL);
+>>> +		if (ret) {
+>>> +			kfree(ref);
+>>> +			return ret;
+>>> +		}
+>>> +		refcount_set(&ref->refcount, 1);
+>>> +	}
+>>> +
+>>> +	reg = kzalloc(sizeof(*reg), GFP_KERNEL);
 >>
->>Overall, looks very good! I pinpointed couple of nits below, nothing big.
->>General question: Why do you put documentation comment to every static
->>function? Does not make any sense to me. Even for non-exported functions
->>I think it is overkill. Most of them (if not all) give the reader no
->>additional information and only make the code a bit harder to read.
->>Care to drop them?
+>>Why do we have two structures - ref and reg?
 >>
 >
->I forgot to respond here.. I would rather leave it, but if the others think
->the same way, we could remove them.
+>Thank to Jiri and reg struct we solved a pin/dpll association
+>with multiple device drivers..
 
-Could you explain what is the benefit of leaving them? What are they
-good for. From what I see, they are obvious and only add blank LOC.
+Multiple instances of the same driver.
+
+
+>I.e. for pin:
+>
+>struct dpll_pin_registration {
+>	struct list_head list;
+>	const struct dpll_pin_ops *ops;
+>	void *priv;
+>};
+>
+>struct dpll_pin_ref {
+>	union {
+>		struct dpll_device *dpll;
+>		struct dpll_pin *pin;
+>	};
+>	struct list_head registration_list;
+>	refcount_t refcount;
+>};
+>
+>struct dpll_pin {
+>	u32 id;
+>	u32 pin_idx;
+>	u64 clock_id;
+>	struct module *module;
+>	struct xarray dpll_refs;
+>	struct xarray parent_refs;
+>	const struct dpll_pin_properties *prop;
+>	char *rclk_dev_name;
+>	refcount_t refcount;
+>};
+>
+>Basically, a pin or a device can be registered from multiple drivers,
+
+Again, multiple instances of the same driver.
+
+
+>where each driver has own priv and ops.
+
+Each instance/device.
+
+
+>A single dpll_pin has references to dplls or pins (dpll_refs/parent_refs)
+>it is connected with, and thanks to registration list single reference can
+>have multiple drivers being attached with a particular dpll/pin.
+
+Multiple instances/devices.
+
+
+In case of mlx5, the same dpll device and same dpll pin could be shared
+among two PFs but also among multiple VFs and SFs. They all share the
+same clock, same dpll device.
+
+
+>
+>The same scheme is for a dpll_device struct and associated pins.
+>
+>
+>>> +	if (!reg) {
+>>> +		if (!ref_exists)
+>>> +			kfree(ref);
+>>
+>>ref has already been inserted into xa_pins
+>>
+>
+>True, seems like a bug, will fix it.
+>
+>Thank you,
+>Arkadiusz
+>
+>>> +		return -ENOMEM;
