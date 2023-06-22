@@ -2,119 +2,79 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DE5EB64DC
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 01:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8996DEB64D7
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 01:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjFVBq0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Jun 2023 21:46:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54496 "EHLO
+        id S229845AbjFVBzs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Jun 2023 21:55:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbjFVBqZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 21:46:25 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0552193;
-        Wed, 21 Jun 2023 18:46:24 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so4974588a12.1;
-        Wed, 21 Jun 2023 18:46:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687398384; x=1689990384;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zPMiuxbS9NOOQ4+DNE9uNSqWe6GAo5kvJCb8pnY4nuU=;
-        b=eEHocDbH9f9me9XpL+taH/BN1LFFZXMjMTqpcwslaXuz+vCBPROCyNBVK62b4fej4k
-         3Gzm6TyXozGG1jzf/m9r8/IQaQjmMp5DSLthq/69nbB6wgrgg0YDptpZ20SSPmwyWETZ
-         uKGHw1BgT6xsfR07WvbyYmithQtipKUUjF9g+ygIbS67/n9kzCl7BH07s10SVTUJAQy/
-         7bRolrmyPG4r7iw9MVMkPLTLp6IAhGFOriLhEs60A+iR9X3EXSwnc+BoKQSIMUJLsVmr
-         XCqdcAi4co7WohQ0sb0TVYQaR5ZuMEZUTQCoxLdFjWAOuLrfgp/MDTKRyhBPz5YxikGG
-         YEkQ==
+        with ESMTP id S229843AbjFVBzr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 21:55:47 -0400
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D8FD1728;
+        Wed, 21 Jun 2023 18:55:47 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-780c8df59caso23074739f.3;
+        Wed, 21 Jun 2023 18:55:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687398384; x=1689990384;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zPMiuxbS9NOOQ4+DNE9uNSqWe6GAo5kvJCb8pnY4nuU=;
-        b=kCdg4xxgD+ufsp4/+nWyo6g9PGveznb2DEE4rQDhy2DgyZj+89dl79wkcTMj6OG+bt
-         dNrYosjKjoYikQiEIcpKdo/FsN2ZqZQb2zmWXL3lMHP+XdBg9aDVqr/fX7qoduQ5cD8M
-         VMHAqTY00f7uJoTwVouuH4CHQgmx4Dsf8KgQOjwm8T4OVy6LV2yJbRnzzIT3eEXiz5GZ
-         tgrtiWmwpg90DP3kqsHhI2VEvLr12glwxlAMNPymDOCRkFyNoyqSFm4El2yAqmPUWHWQ
-         tJPqKuAoHiQ4hdftc4WQENtBso5mQ05xRqEHXrF6Z/4J+csdFnWiSV+lRy6w76wrK0NR
-         QYBQ==
-X-Gm-Message-State: AC+VfDyW3zGLH1fvxeeM2cZgWueZQ2I+gK485gIjdtZwov9iwOsGpFow
-        tlCgLweFtFl9a70FN12MP3E=
-X-Google-Smtp-Source: ACHHUZ76OXYU9TbS+0Z4NA+bFoq6TTgVUXYsp0Yq8bzgnHbGfhRcLhpb1I/4yXUI6fgY/i7Sgw4XcQ==
-X-Received: by 2002:a05:6a20:3c92:b0:122:60e8:10e1 with SMTP id b18-20020a056a203c9200b0012260e810e1mr8627801pzj.31.1687398384117;
-        Wed, 21 Jun 2023 18:46:24 -0700 (PDT)
-Received: from [192.168.1.101] (1-160-168-200.dynamic-ip.hinet.net. [1.160.168.200])
-        by smtp.gmail.com with ESMTPSA id r22-20020a62e416000000b0063b86aff031sm3461297pfh.108.2023.06.21.18.46.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jun 2023 18:46:23 -0700 (PDT)
-Message-ID: <8d87f85d-f239-bc8b-c48b-143ceac30082@gmail.com>
-Date:   Thu, 22 Jun 2023 09:46:21 +0800
+        d=1e100.net; s=20221208; t=1687398946; x=1689990946;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uj9exNxaidLj6LcNK8tVeAT6pbRlNgwUovbHIdRSfsI=;
+        b=b67BAt1IFfirk+UNsMz0LH9RdcwxUC2ygHXZ1+QPGlDPP7ovGoBTkuXabpxnb4yZgm
+         w/FEzkRGwsN9AWL+cY4544Zx0GVEER1Yb7/BmYlq6TwqqW+S6A/KlEw6euhpEEEQDC4n
+         v38Mz6NrQBHAEUIjcrVAd2a0UShIm45+Gj65aYDSVot1PP/YX2+9lDAuDPheSUDcHM/Y
+         3lIflHkiyY80FeknzLWAR/1trqN7G+vYBA7hv6bMa2bn/FEUkGkhtghDrUKAm4PYfmC4
+         I6dszmbumdOPxiTj3zlwFzCaKHi3QkOSxafTpneerbN3itY0neE5a1gEiT9pJr73ciJI
+         gs4Q==
+X-Gm-Message-State: AC+VfDwN3XH0Zf2afp0CkrAH3dEf6KhxaoUO+/3QtwrHgizQz7KLV/Ws
+        bH3fBictfQtrfL4LE44zAr97b24z6Q==
+X-Google-Smtp-Source: ACHHUZ6w20XPuVngkj/XmETLkcCG1d7IpDJWIw84E9Aa0XnxTP2tqVb6Jf1PhWm4wc06Lutti4v4dw==
+X-Received: by 2002:a92:dcd2:0:b0:342:8d31:73db with SMTP id b18-20020a92dcd2000000b003428d3173dbmr7061039ilr.16.1687398946508;
+        Wed, 21 Jun 2023 18:55:46 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id n14-20020a056e0208ee00b00342612c48f6sm1719040ilt.53.2023.06.21.18.55.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Jun 2023 18:55:45 -0700 (PDT)
+Received: (nullmailer pid 48109 invoked by uid 1000);
+        Thu, 22 Jun 2023 01:55:44 -0000
+Date:   Wed, 21 Jun 2023 19:55:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Subject: Re: [PATCH 2/3] dt-bindings: clock: qcom,gcc-sc8280xp: Add missing
+ GDSCs
+Message-ID: <168739894369.48049.5336113390716480314.robh@kernel.org>
+References: <20230620-topic-sc8280_gccgdsc-v1-0-0fd91a942bda@linaro.org>
+ <20230620-topic-sc8280_gccgdsc-v1-2-0fd91a942bda@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 2/2] clk: nuvoton: Use clk_parent_data instead of
- string for parent clock
-Content-Language: en-US
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, soc@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, schung@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230621031605.234149-1-ychuang570808@gmail.com>
- <20230621031605.234149-3-ychuang570808@gmail.com>
- <2023062103-obtuse-parasitic-e675@gregkh>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <2023062103-obtuse-parasitic-e675@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230620-topic-sc8280_gccgdsc-v1-2-0fd91a942bda@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 2023/6/21 下午 08:51, Greg KH wrote:
-> On Wed, Jun 21, 2023 at 03:16:05AM +0000, Jacky Huang wrote:
->>   
->> -	hws[AXICLK_MUX] = ma35d1_clk_mux(dev, "axiclk_mux", clk_base + REG_CLK_CLKDIV0,
->> -					 26, 1, axiclk_sel_clks,
->> -					 ARRAY_SIZE(axiclk_sel_clks));
->> -	hws[SYSCLK0_MUX] = ma35d1_clk_mux(dev, "sysclk0_mux", clk_base + REG_CLK_CLKSEL0,
->> -					  2, 1, sysclk0_sel_clks,
->> -					  ARRAY_SIZE(sysclk0_sel_clks));
->> -	hws[SYSCLK1_MUX] = ma35d1_clk_mux(dev, "sysclk1_mux", clk_base + REG_CLK_CLKSEL0,
->> -					  4, 1, sysclk1_sel_clks,
->> -					  ARRAY_SIZE(sysclk1_sel_clks));
->> +	hws[AXICLK_MUX] = ma35d1_clk_mux(dev, "axiclk_mux", clk_base + REG_CLK_CLKDIV0, 26, 1,
->> +					 axiclk_sel_clks, ARRAY_SIZE(axiclk_sel_clks));
->> +
->> +	hws[SYSCLK0_MUX] = ma35d1_clk_mux(dev, "sysclk0_mux",
->> +					  clk_base + REG_CLK_CLKSEL0, 2, 1,
->> +					  sysclk0_sel_clks, ARRAY_SIZE(sysclk0_sel_clks));
->> +
->> +	hws[SYSCLK1_MUX] = ma35d1_clk_mux(dev, "sysclk1_mux", clk_base + REG_CLK_CLKSEL0, 4, 1,
->> +					  sysclk1_sel_clks, ARRAY_SIZE(sysclk1_sel_clks));
->> +
-> No need to reformat lines that are not actually changing anything, as
-> this makes the patch harder to review for real changes in it :(
->
-> thanks,
->
-> greg k-h
+On Tue, 20 Jun 2023 20:54:59 +0200, Konrad Dybcio wrote:
+> There are 10 more GDSCs that we've not been caring about, and by extension
+> (and perhaps even more importantly), not putting to sleep. Add them.
+> 
+> Fixes: a66a82f2a55e ("dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  include/dt-bindings/clock/qcom,gcc-sc8280xp.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
 
-
-Dear Greg.
-
-
-Thanks for your advice.
-
-I will modify the patch again to remove these irrelevant parts that have 
-no practical effect.
-
-
-Best Regards,
-
-Jacky Huang
+Acked-by: Rob Herring <robh@kernel.org>
 
