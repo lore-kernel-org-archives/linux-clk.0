@@ -2,107 +2,71 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B7AEB64DA
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 19:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC147C001B0
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 20:34:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbjFVTAE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jun 2023 15:00:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43194 "EHLO
+        id S230355AbjFVUeP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jun 2023 16:34:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231264AbjFVTAA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 15:00:00 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57083186;
-        Thu, 22 Jun 2023 11:59:53 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 16BC55FD1D;
-        Thu, 22 Jun 2023 21:59:51 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1687460391;
-        bh=mWWI0ZO0ptZ6K1WHLjWbKHpoK8xPQxDS9eQM4yizQ5Q=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=MBpIpQgPlr8UapK8ML0TnxKTp0m1H12OHuGCLIGO7ZnyBDjxCN3+2ro6GfPNp6T/9
-         hPaqLFwxkO8XqsVubZvqmkrzV3ncUpSrW49yEYYg4Mz4D0y2NLiUropv17bz3IcXey
-         l+A5DmhkrozXvrpNFsaz2XRjOmFKk+/jqAkHsI4T6JK9T3HtKWU0bFRx56uK9yzkyq
-         X8a83cU6ZznGtye5QaPdwAMrWNReabDhfi9PRjzyvdztGA+ZC2eWPmwKYRzq9hzzvh
-         qcQTMc2Nv1wfNQsPOmyY0fVUeGaU8yNvPlYT5CHiMhwqfXbKZHoMzq7vaACsTkxPZc
-         E/h2NLTgsjhJw==
-Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Thu, 22 Jun 2023 21:59:50 +0300 (MSK)
-Date:   Thu, 22 Jun 2023 21:59:49 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH] clk: meson: pll: remove unneeded semicolon
-Message-ID: <20230622185949.lctlydjcthya33ga@CAB-WSD-L081021>
-References: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
+        with ESMTP id S229961AbjFVUeO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 16:34:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC8FE9;
+        Thu, 22 Jun 2023 13:34:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 96F0E618EC;
+        Thu, 22 Jun 2023 20:34:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 631A9C433CB;
+        Thu, 22 Jun 2023 20:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687466053;
+        bh=/jrzo23xohw0vOq31QrW3E4pCIODhVSB7kAOkjyOfmw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mr59f+XetIsEv2vcmPh6au36GSgtM2a39S4Q6YyBcjAK6WEvfEP254zY4xjt09Bor
+         5NE1BApKq0EoZZYSfjqfI+PDxh/F0qxM2iBmSzVob+cqeTlx64CuvQXkU4Sn4TPQtK
+         b9RlcOqaFChm5+9PT3oHu3xVxudPdmyZ37eHnDbKiVTfBAu7tiVETes5ldRGkqxgIe
+         drVSyECFEMdFuKwNoUcOIQhdbnIAvf00vP4uJamdAw5Z35F/xsd1rfOZEns3Gc/zIW
+         YzOeEKwvJYm/HRqXCo0vVQ8srnqvAs4v6GTBSGZ0oUb5rg2/RyKX2pxqVirPUTy5wr
+         rLZQrun8iACEg==
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] SC8280XP clock runtime pm
+Date:   Thu, 22 Jun 2023 13:38:11 -0700
+Message-ID: <168746628695.107789.3465009246870780002.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
+References: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230614084808.98819-1-jiapeng.chong@linux.alibaba.com>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [100.64.160.123]
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/22 14:26:00 #21556046
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear Jiapeng,
 
-Thank you for catching this bug! Appreciate it!
-
-On Wed, Jun 14, 2023 at 04:48:08PM +0800, Jiapeng Chong wrote:
-> No functional modification involved.
-> 
-> ./drivers/clk/meson/clk-pll.c:373:2-3: Unneeded semicolon.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=5533
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  drivers/clk/meson/clk-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index 56ec2210f1ad..8fef90bf962f 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -370,7 +370,7 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->  		usleep_range(10, 20);
->  		meson_parm_write(clk->map, &pll->current_en, 1);
->  		usleep_range(40, 50);
-> -	};
-> +	}
->  
->  	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
->  		meson_parm_write(clk->map, &pll->l_detect, 1);
-
-Reviewed-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-
-> -- 
-> 2.20.1.7.g153144c
+On Mon, 19 Jun 2023 18:13:16 +0200, Konrad Dybcio wrote:
+> Keeping power domains always enabled hinders power efficiency. Add runtime
+> PM to 8280 clock controllers to prevent that.
 > 
 > 
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 
+Applied, thanks!
+
+[1/2] clk: qcom: gpucc-sc8280xp: Add runtime PM
+      commit: 9bbcb892a7cd06c8156e6de211a8d7d45ee48086
+[2/2] clk: qcom: gcc-sc8280xp: Add runtime PM
+      commit: 2a541abd98370f9931c889c187eef7458720b57b
+
+Best regards,
 -- 
-Thank you,
-Dmitry
+Bjorn Andersson <andersson@kernel.org>
