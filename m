@@ -2,74 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61667EB64D7
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 01:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DE5EB64DC
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 01:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbjFVBme (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Jun 2023 21:42:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52950 "EHLO
+        id S229765AbjFVBq0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Jun 2023 21:46:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjFVBmc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 21:42:32 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1904CEC;
-        Wed, 21 Jun 2023 18:42:31 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id d9443c01a7336-1b512309c86so1043285ad.1;
-        Wed, 21 Jun 2023 18:42:31 -0700 (PDT)
+        with ESMTP id S229535AbjFVBqZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Jun 2023 21:46:25 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0552193;
+        Wed, 21 Jun 2023 18:46:24 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so4974588a12.1;
+        Wed, 21 Jun 2023 18:46:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687398150; x=1689990150;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=gmail.com; s=20221208; t=1687398384; x=1689990384;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XPACPjybs01Q+xtyqR1I7Lb0wmi+vfdHQMuD/c6ZGUE=;
-        b=bngSy2EBWoU3OeFsbDA+eyJ5e2IYxEDNg12uoa7PlUI0k8k6aI5VRD3Pjad75jQBfB
-         N6bZC+GjRkhJs8OllpcuGGEJdPgdg8FHLnVVOAhmoua4nCRnmPBtC67AwLMr80VOwiW3
-         miAqh5Yajefq+VI0WW7l6jpVV3fN3vCn7OPgcq6CiqkwxhoiMygvoOKrHMbnVwhTpIZO
-         Z9KCFWS2oh6ts+4twaRTWE/n9zYvRRmqp4BWQiD+XtQynCaXhcbHtvJEV3fWEBkhM2zb
-         u48adqL89CNvtY5RXq+mADj0zpsWYqgXwvQpVecOOwvw/c5KBfS18FRVmkQhJafCT/dy
-         m8ww==
+        bh=zPMiuxbS9NOOQ4+DNE9uNSqWe6GAo5kvJCb8pnY4nuU=;
+        b=eEHocDbH9f9me9XpL+taH/BN1LFFZXMjMTqpcwslaXuz+vCBPROCyNBVK62b4fej4k
+         3Gzm6TyXozGG1jzf/m9r8/IQaQjmMp5DSLthq/69nbB6wgrgg0YDptpZ20SSPmwyWETZ
+         uKGHw1BgT6xsfR07WvbyYmithQtipKUUjF9g+ygIbS67/n9kzCl7BH07s10SVTUJAQy/
+         7bRolrmyPG4r7iw9MVMkPLTLp6IAhGFOriLhEs60A+iR9X3EXSwnc+BoKQSIMUJLsVmr
+         XCqdcAi4co7WohQ0sb0TVYQaR5ZuMEZUTQCoxLdFjWAOuLrfgp/MDTKRyhBPz5YxikGG
+         YEkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687398150; x=1689990150;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1687398384; x=1689990384;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XPACPjybs01Q+xtyqR1I7Lb0wmi+vfdHQMuD/c6ZGUE=;
-        b=TLKmY4l9j9ZsbWxd817ktbb7dYWA3P+AChDgWuO0yw1qHIaj3CpbHj6tsq3+x6t33C
-         Lc4j2Rf+5lk8WErxMr64BVIcpHD9BqDYyz3rgxpTktb9afF9r/XfrEyzBxz0GSelYVuz
-         Ww54h/g9zfHuzWrIaKkepKSlk+ifEXYSSGSRklqGKqhrn5cRaZoLBbk709AGR3qVDhxN
-         Q9Xv5iNOLY87F5QSbxqZBYGNe9hSEZk3Q0YGv1x68wHzq9dVHv1eXP4mnbfufystJ98O
-         TG1pVmQ0I6plTaFViCXh0aFXi4BEeoqgPvDnNPEIq5V7fZbN6MH1EZ0Q0EnTDZzZIKbc
-         iu5g==
-X-Gm-Message-State: AC+VfDyBANDCc6a/GJbu058Zt2X+WGHxC4oJSfUolO168GhtsLXp31Tf
-        uLeAJJBlkzN11TjEIDr5LOc=
-X-Google-Smtp-Source: ACHHUZ5Ff+IphUW2rYFGb2whpUNS3ECx0FQJgwQ/+Sw++jToh5zX/zQLKACFbnhzounRrYJv0N6QpA==
-X-Received: by 2002:a17:902:bc43:b0:1b6:8233:6f5c with SMTP id t3-20020a170902bc4300b001b682336f5cmr6683859plz.19.1687398150365;
-        Wed, 21 Jun 2023 18:42:30 -0700 (PDT)
+        bh=zPMiuxbS9NOOQ4+DNE9uNSqWe6GAo5kvJCb8pnY4nuU=;
+        b=kCdg4xxgD+ufsp4/+nWyo6g9PGveznb2DEE4rQDhy2DgyZj+89dl79wkcTMj6OG+bt
+         dNrYosjKjoYikQiEIcpKdo/FsN2ZqZQb2zmWXL3lMHP+XdBg9aDVqr/fX7qoduQ5cD8M
+         VMHAqTY00f7uJoTwVouuH4CHQgmx4Dsf8KgQOjwm8T4OVy6LV2yJbRnzzIT3eEXiz5GZ
+         tgrtiWmwpg90DP3kqsHhI2VEvLr12glwxlAMNPymDOCRkFyNoyqSFm4El2yAqmPUWHWQ
+         tJPqKuAoHiQ4hdftc4WQENtBso5mQ05xRqEHXrF6Z/4J+csdFnWiSV+lRy6w76wrK0NR
+         QYBQ==
+X-Gm-Message-State: AC+VfDyW3zGLH1fvxeeM2cZgWueZQ2I+gK485gIjdtZwov9iwOsGpFow
+        tlCgLweFtFl9a70FN12MP3E=
+X-Google-Smtp-Source: ACHHUZ76OXYU9TbS+0Z4NA+bFoq6TTgVUXYsp0Yq8bzgnHbGfhRcLhpb1I/4yXUI6fgY/i7Sgw4XcQ==
+X-Received: by 2002:a05:6a20:3c92:b0:122:60e8:10e1 with SMTP id b18-20020a056a203c9200b0012260e810e1mr8627801pzj.31.1687398384117;
+        Wed, 21 Jun 2023 18:46:24 -0700 (PDT)
 Received: from [192.168.1.101] (1-160-168-200.dynamic-ip.hinet.net. [1.160.168.200])
-        by smtp.gmail.com with ESMTPSA id n10-20020a170902e54a00b001b3d6088993sm4118057plf.24.2023.06.21.18.42.27
+        by smtp.gmail.com with ESMTPSA id r22-20020a62e416000000b0063b86aff031sm3461297pfh.108.2023.06.21.18.46.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Jun 2023 18:42:29 -0700 (PDT)
-Message-ID: <19e93057-46e4-1578-9e3e-138bd09cccfc@gmail.com>
-Date:   Thu, 22 Jun 2023 09:42:27 +0800
+        Wed, 21 Jun 2023 18:46:23 -0700 (PDT)
+Message-ID: <8d87f85d-f239-bc8b-c48b-143ceac30082@gmail.com>
+Date:   Thu, 22 Jun 2023 09:46:21 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 1/2] clk: nuvoton: Add clk-ma35d1.h for driver extern
- functions
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+Subject: Re: [PATCH v2 2/2] clk: nuvoton: Use clk_parent_data instead of
+ string for parent clock
+Content-Language: en-US
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, soc@kernel.org,
         krzysztof.kozlowski+dt@linaro.org, schung@nuvoton.com,
         Jacky Huang <ychuang3@nuvoton.com>
 References: <20230621031605.234149-1-ychuang570808@gmail.com>
- <20230621031605.234149-2-ychuang570808@gmail.com>
- <69c742e5-3270-4b1c-be31-1552d877677e@app.fastmail.com>
-Content-Language: en-US
+ <20230621031605.234149-3-ychuang570808@gmail.com>
+ <2023062103-obtuse-parasitic-e675@gregkh>
 From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <69c742e5-3270-4b1c-be31-1552d877677e@app.fastmail.com>
+In-Reply-To: <2023062103-obtuse-parasitic-e675@gregkh>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -77,60 +75,46 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 2023/6/21 下午 10:22, Arnd Bergmann wrote:
-> On Wed, Jun 21, 2023, at 05:16, Jacky Huang wrote:
->> From: Jacky Huang <ychuang3@nuvoton.com>
->>
->> Moved the declaration of extern functions ma35d1_reg_clk_pll() and
->> ma35d1_reg_adc_clkdiv() from the .c files to the newly created header
->> file clk-ma35d1.h.
->>
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+On 2023/6/21 下午 08:51, Greg KH wrote:
+> On Wed, Jun 21, 2023 at 03:16:05AM +0000, Jacky Huang wrote:
+>>   
+>> -	hws[AXICLK_MUX] = ma35d1_clk_mux(dev, "axiclk_mux", clk_base + REG_CLK_CLKDIV0,
+>> -					 26, 1, axiclk_sel_clks,
+>> -					 ARRAY_SIZE(axiclk_sel_clks));
+>> -	hws[SYSCLK0_MUX] = ma35d1_clk_mux(dev, "sysclk0_mux", clk_base + REG_CLK_CLKSEL0,
+>> -					  2, 1, sysclk0_sel_clks,
+>> -					  ARRAY_SIZE(sysclk0_sel_clks));
+>> -	hws[SYSCLK1_MUX] = ma35d1_clk_mux(dev, "sysclk1_mux", clk_base + REG_CLK_CLKSEL0,
+>> -					  4, 1, sysclk1_sel_clks,
+>> -					  ARRAY_SIZE(sysclk1_sel_clks));
+>> +	hws[AXICLK_MUX] = ma35d1_clk_mux(dev, "axiclk_mux", clk_base + REG_CLK_CLKDIV0, 26, 1,
+>> +					 axiclk_sel_clks, ARRAY_SIZE(axiclk_sel_clks));
+>> +
+>> +	hws[SYSCLK0_MUX] = ma35d1_clk_mux(dev, "sysclk0_mux",
+>> +					  clk_base + REG_CLK_CLKSEL0, 2, 1,
+>> +					  sysclk0_sel_clks, ARRAY_SIZE(sysclk0_sel_clks));
+>> +
+>> +	hws[SYSCLK1_MUX] = ma35d1_clk_mux(dev, "sysclk1_mux", clk_base + REG_CLK_CLKSEL0, 4, 1,
+>> +					  sysclk1_sel_clks, ARRAY_SIZE(sysclk1_sel_clks));
+>> +
+> No need to reformat lines that are not actually changing anything, as
+> this makes the patch harder to review for real changes in it :(
 >
->>   #define PLL_MAX_NUM		5
->> @@ -20,19 +22,19 @@ static DEFINE_SPINLOCK(ma35d1_lock);
->>   #define REG_CLK_PWRCTL		0x00
->>   #define REG_CLK_SYSCLK0		0x04
->>   #define REG_CLK_SYSCLK1		0x08
->> -#define REG_CLK_APBCLK0		0x0C
->> +#define REG_CLK_APBCLK0		0x0c
->>   #define REG_CLK_APBCLK1		0x10
->>   #define REG_CLK_APBCLK2		0x14
->>   #define REG_CLK_CLKSEL0		0x18
->> -#define REG_CLK_CLKSEL1		0x1C
->> +#define REG_CLK_CLKSEL1		0x1c
->>   #define REG_CLK_CLKSEL2		0x20
->>   #define REG_CLK_CLKSEL3		0x24
->>   #define REG_CLK_CLKSEL4		0x28
->> -#define REG_CLK_CLKDIV0		0x2C
->> +#define REG_CLK_CLKDIV0		0x2c
->>   #define REG_CLK_CLKDIV1		0x30
->>   #define REG_CLK_CLKDIV2		0x34
->>   #define REG_CLK_CLKDIV3		0x38
->> -#define REG_CLK_CLKDIV4		0x3C
->> +#define REG_CLK_CLKDIV4		0x3c
->>   #define REG_CLK_CLKOCTL		0x40
->>   #define REG_CLK_STATUS		0x50
->>   #define REG_CLK_PLL0CTL0	0x60
-> This part of the patch does not relate to the decription, it
-> looks like a minor cleanup that should be a separate patch.
+> thanks,
 >
-> The actual change looks good and required, but I can't apply it
-> if it's mixed with unrelated changes like this.
->
->      Arnd
-
-Dear Arnd,
+> greg k-h
 
 
-Thanks for the advice.
+Dear Greg.
 
-I will extract the unrelated parts from this patch and create another 
-patch for them.
+
+Thanks for your advice.
+
+I will modify the patch again to remove these irrelevant parts that have 
+no practical effect.
 
 
 Best Regards,
 
 Jacky Huang
-
 
