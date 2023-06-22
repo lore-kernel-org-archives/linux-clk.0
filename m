@@ -2,229 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F977EB64DA
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 07:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CC9EB64D8
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 07:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbjFVHKC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jun 2023 03:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
+        id S230330AbjFVHzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jun 2023 03:55:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230190AbjFVHKB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 03:10:01 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B07E1BD7
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:09:58 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id ffacd0b85a97d-31126037f41so6635936f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687417796; x=1690009796;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPyXOzxLtxEjY9cBPcsaRIns0EAEb4Nt/6W8EsU3ga8=;
-        b=3iouDSVugUMNcys+i697SLnTvuKCQCDU18RQuMxLJV54x1bnilfa2bLr1aadMiQh1g
-         UItDYY8rMfETP4FeqIVWSeabeT9AuFOTAO2aUWdKuLg84/CdT7qzIiwweS4Gx3GVX1P8
-         4bBATic4ICWKlQpgqYwOyZIg4yeumq7IFyMtmwFoUFt4NXiXBCo3DNhJZkMc01ZTBRaW
-         ek+bbOOoFMHEBQqk1J0jBtWot+LCXVC45zM6x5Dl0Kk8ybD9Cafa8DoJ6GiSDoMY3ro7
-         6A1iZr2yMlshPSuQUwe9k+ophGjpUKdwBA35Aey0t6Ccp+bFNAOoqgp2gLV3leZxIgP/
-         d1Gg==
+        with ESMTP id S230243AbjFVHzt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 03:55:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64809185
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:55:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687420507;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=Eox6kzJ0KXGmAxPu1zCtO8SWj1o8YH/kpH0QF8X1TQs=;
+        b=AvjvZFGq1D7F7kUm268mcKadsIlbaY53/rkh4kIe+5SKdZhN7hAKdvXu2NWUL2Duh/3dCp
+        x5PhTAYrIRGiM5SSFTg3GJC8cHwPbBQnP2gFizLH1+v5pEib3GKTt7gvXk6GOLUMTNq60T
+        /UxeqN4VAShAnvCcGJTjAj0D2aq5f/M=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-247-mGGy-gpYO_e-RpaCqbT17w-1; Thu, 22 Jun 2023 03:55:06 -0400
+X-MC-Unique: mGGy-gpYO_e-RpaCqbT17w-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-31273e0507dso1843811f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:55:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687417796; x=1690009796;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPyXOzxLtxEjY9cBPcsaRIns0EAEb4Nt/6W8EsU3ga8=;
-        b=kdhCFinUsexqatGKnZqZGug5Kp2ynOra/HKCVjN0pY+oOe5/sQzKTXOnt1Noa4s4NQ
-         5qZnsrEnUVT18LwwLnsYehTbUinQsDa2LY52h4K1Q2yjkdmDUTVk93l97CS+bAFQemBF
-         qRI4pTC8fECqtwqPT4OAmNFRNuhCsJJy3lEQv5ydHrtDWO4toFIM+ceyrBGxbCy4MT3S
-         VJ+iDlMXVSWZAZMzJXmxoTRlzUcvb6RXCVMt9+o7Tpt/n6IQCeTWeRJSKPJ+pbHiFfZP
-         +rNljE1aw3wLJU9LqXJL/a5omAbzgQW/d1rhaAtuRu9aEtOyVrERcGMWjxfkZHcghR7M
-         nvjA==
-X-Gm-Message-State: AC+VfDyEFh61SmljXnuycK0toCWNtrDzR4H92jz65M4g7+XpyRaiTUFS
-        z/bfJxPnH1pUOy0BRt3hpcXQkg==
-X-Google-Smtp-Source: ACHHUZ7BfDfYg8tVKSO/1MGIhgM7knp4bxE9BjLvWPQmvpgYpkpg9XkXMIy4VKk2fcxV+HKp1ykuJA==
-X-Received: by 2002:a5d:468d:0:b0:30a:f2a0:64fa with SMTP id u13-20020a5d468d000000b0030af2a064famr15527240wrq.10.1687417796496;
-        Thu, 22 Jun 2023 00:09:56 -0700 (PDT)
-Received: from localhost ([86.61.181.4])
-        by smtp.gmail.com with ESMTPSA id f12-20020a5d58ec000000b00309382eb047sm6207885wrd.112.2023.06.22.00.09.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 00:09:55 -0700 (PDT)
-Date:   Thu, 22 Jun 2023 09:09:54 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     Jakub Kicinski <kuba@kernel.org>,
-        "vadfed@meta.com" <vadfed@meta.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "vadfed@fb.com" <vadfed@fb.com>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "M, Saeed" <saeedm@nvidia.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "sj@kernel.org" <sj@kernel.org>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jacek.lawrynowicz@linux.intel.com" 
-        <jacek.lawrynowicz@linux.intel.com>,
-        "airlied@redhat.com" <airlied@redhat.com>,
-        "ogabbay@kernel.org" <ogabbay@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux@zary.sk" <linux@zary.sk>,
-        "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "kuniyu@amazon.com" <kuniyu@amazon.com>,
-        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
-        "razor@blackwall.org" <razor@blackwall.org>,
-        "idosch@nvidia.com" <idosch@nvidia.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
-        "phil@nwl.cc" <phil@nwl.cc>,
-        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v8 03/10] dpll: core: Add DPLL framework base
- functions
-Message-ID: <ZJPzwj1odaC8fFzO@nanopsycho>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
- <20230609121853.3607724-4-arkadiusz.kubalewski@intel.com>
- <20230612164515.6eacefb1@kernel.org>
- <DM6PR11MB4657FED589F5922BBAC5D9059B5DA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        d=1e100.net; s=20221208; t=1687420505; x=1690012505;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Eox6kzJ0KXGmAxPu1zCtO8SWj1o8YH/kpH0QF8X1TQs=;
+        b=M9DrOwJV0BvVOUCgD+1mqhC/DLJSzgeZLHGJ72SOsx9vykcpVtnCuPY/+P414wH6pG
+         fumBYNTZVuXfUtIN13GdLb4TLzTDfOY/Nl0MJfakMcuwlVbHBHxFE1LeMyhp3BJYzDc8
+         /pu4+ceX1vaV7HJYl1ndzeD36PUVsHVnzf7ft1MN1FiGfF6vYchtF2+YRZphLrKYkIcG
+         gvqYeTmU2zdtkmZet5V/GUdqgsU9tAfxUcTBkxKo+6HPh+A6SpwUU0Y8We/1+Z24UJwo
+         Z0LvWyvWzM1QD8oYUIlkdnPnKPuxFbVrSsdmJSFWB1oIFLUgtJT4wY+yIl/yWBmw3t9L
+         BPRA==
+X-Gm-Message-State: AC+VfDy0KhV+hYkQY59Y/VEQyyU2dJU4lUNndrEQB+xFSbrKbRuZcI5B
+        Sc6xzqQWjPwgBvTjMyNjmCxHdUKo0/wQQjw25onzNuRKJ6yDvP70w7mY6mllct3mp4vyQjdaDFR
+        uUnAYKh9Z1z63gvo/0o5CDRnSx6l13fa7rVjC
+X-Received: by 2002:a5d:590c:0:b0:30a:8995:1dbc with SMTP id v12-20020a5d590c000000b0030a89951dbcmr13481425wrd.26.1687420505048;
+        Thu, 22 Jun 2023 00:55:05 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5XXdP5mBFYeXjHFqCUFXHfOsqZzMCP4KunAaLqWfIWum2C8ZQg8p8aPknYzd7pBcBBJ2gzkZCOOq3kQ/vNoxc=
+X-Received: by 2002:a5d:590c:0:b0:30a:8995:1dbc with SMTP id
+ v12-20020a5d590c000000b0030a89951dbcmr13481390wrd.26.1687420504759; Thu, 22
+ Jun 2023 00:55:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB4657FED589F5922BBAC5D9059B5DA@DM6PR11MB4657.namprd11.prod.outlook.com>
+From:   Vitaly Grinberg <vgrinber@redhat.com>
+Date:   Thu, 22 Jun 2023 10:54:54 +0300
+Message-ID: <CACLnSDiBML3R_K5ncFsuritvid5nGsBLx5pGR2c9pR9L=qhPiQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v8 00/10] Create common DPLL configuration API
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     David Airlie <airlied@redhat.com>, andy.ren@getcruise.com,
+        anthony.l.nguyen@intel.com, arnd@arndb.de, axboe@kernel.dk,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        claudiajkang@gmail.com, corbet@lwn.net, davem@davemloft.net,
+        edumazet@google.com, geert+renesas@glider.be,
+        gregkh@linuxfoundation.org, hkallweit1@gmail.com,
+        idosch@nvidia.com, intel-wired-lan@lists.osuosl.org,
+        jacek.lawrynowicz@linux.intel.com,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        jesse.brandeburg@intel.com, jiri@resnulli.us,
+        jonathan.lemon@gmail.com, kuba@kernel.org, kuniyu@amazon.com,
+        leon@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux@zary.sk, liuhangbin@gmail.com, lucien.xin@gmail.com,
+        masahiroy@kernel.org, michal.michalik@intel.com,
+        milena.olech@intel.com, Michal Schmidt <mschmidt@redhat.com>,
+        Michael Tsirkin <mst@redhat.com>, netdev@vger.kernel.org,
+        nicolas.dichtel@6wind.com, nipun.gupta@amd.com, ogabbay@kernel.org,
+        Paolo Abeni <pabeni@redhat.com>, phil@nwl.cc,
+        Petr Oros <poros@redhat.com>, razor@blackwall.org,
+        ricardo.canuelo@collabora.com, richardcochran@gmail.com,
+        saeedm@nvidia.com, sj@kernel.org, tzimmermann@suse.de,
+        vadfed@fb.com, vadfed@meta.com, vadim.fedorenko@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Jun 21, 2023 at 11:17:26PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jakub Kicinski <kuba@kernel.org>
->>Sent: Tuesday, June 13, 2023 1:45 AM
->>
->>On Fri,  9 Jun 2023 14:18:46 +0200 Arkadiusz Kubalewski wrote:
->>> +	xa_for_each(xa_pins, i, ref) {
->>> +		if (ref->pin != pin)
->>> +			continue;
->>> +		reg = dpll_pin_registration_find(ref, ops, priv);
->>> +		if (reg) {
->>> +			refcount_inc(&ref->refcount);
->>> +			return 0;
->>> +		}
->>> +		ref_exists = true;
->>> +		break;
->>> +	}
->>> +
->>> +	if (!ref_exists) {
->>> +		ref = kzalloc(sizeof(*ref), GFP_KERNEL);
->>> +		if (!ref)
->>> +			return -ENOMEM;
->>> +		ref->pin = pin;
->>> +		INIT_LIST_HEAD(&ref->registration_list);
->>> +		ret = xa_insert(xa_pins, pin->pin_idx, ref, GFP_KERNEL);
->>> +		if (ret) {
->>> +			kfree(ref);
->>> +			return ret;
->>> +		}
->>> +		refcount_set(&ref->refcount, 1);
->>> +	}
->>> +
->>> +	reg = kzalloc(sizeof(*reg), GFP_KERNEL);
->>
->>Why do we have two structures - ref and reg?
->>
->
->Thank to Jiri and reg struct we solved a pin/dpll association
->with multiple device drivers..
+Hi,
+Could it be possible to add PPS DPLL phase offset to the netlink API?
+We are relying on it in the E810-based grandmaster implementation.
+Thanks,
+Vitaly
 
-Multiple instances of the same driver.
-
-
->I.e. for pin:
->
->struct dpll_pin_registration {
->	struct list_head list;
->	const struct dpll_pin_ops *ops;
->	void *priv;
->};
->
->struct dpll_pin_ref {
->	union {
->		struct dpll_device *dpll;
->		struct dpll_pin *pin;
->	};
->	struct list_head registration_list;
->	refcount_t refcount;
->};
->
->struct dpll_pin {
->	u32 id;
->	u32 pin_idx;
->	u64 clock_id;
->	struct module *module;
->	struct xarray dpll_refs;
->	struct xarray parent_refs;
->	const struct dpll_pin_properties *prop;
->	char *rclk_dev_name;
->	refcount_t refcount;
->};
->
->Basically, a pin or a device can be registered from multiple drivers,
-
-Again, multiple instances of the same driver.
-
-
->where each driver has own priv and ops.
-
-Each instance/device.
-
-
->A single dpll_pin has references to dplls or pins (dpll_refs/parent_refs)
->it is connected with, and thanks to registration list single reference can
->have multiple drivers being attached with a particular dpll/pin.
-
-Multiple instances/devices.
-
-
-In case of mlx5, the same dpll device and same dpll pin could be shared
-among two PFs but also among multiple VFs and SFs. They all share the
-same clock, same dpll device.
-
-
->
->The same scheme is for a dpll_device struct and associated pins.
->
->
->>> +	if (!reg) {
->>> +		if (!ref_exists)
->>> +			kfree(ref);
->>
->>ref has already been inserted into xa_pins
->>
->
->True, seems like a bug, will fix it.
->
->Thank you,
->Arkadiusz
->
->>> +		return -ENOMEM;
