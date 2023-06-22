@@ -2,91 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CC9EB64D8
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 07:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C10CEB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 09:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230330AbjFVHzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jun 2023 03:55:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54078 "EHLO
+        id S232287AbjFVJWO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jun 2023 05:22:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230243AbjFVHzt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 03:55:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64809185
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687420507;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=Eox6kzJ0KXGmAxPu1zCtO8SWj1o8YH/kpH0QF8X1TQs=;
-        b=AvjvZFGq1D7F7kUm268mcKadsIlbaY53/rkh4kIe+5SKdZhN7hAKdvXu2NWUL2Duh/3dCp
-        x5PhTAYrIRGiM5SSFTg3GJC8cHwPbBQnP2gFizLH1+v5pEib3GKTt7gvXk6GOLUMTNq60T
-        /UxeqN4VAShAnvCcGJTjAj0D2aq5f/M=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-247-mGGy-gpYO_e-RpaCqbT17w-1; Thu, 22 Jun 2023 03:55:06 -0400
-X-MC-Unique: mGGy-gpYO_e-RpaCqbT17w-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-31273e0507dso1843811f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 00:55:06 -0700 (PDT)
+        with ESMTP id S229762AbjFVJVn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 05:21:43 -0400
+Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99DF765B2
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 02:12:11 -0700 (PDT)
+Received: by mail-vk1-xa2b.google.com with SMTP id 71dfb90a1353d-4715cbe0422so2127358e0c.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 02:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687425130; x=1690017130;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LAUOQODzdCeUTcrDvoPMBORZt9+ufR2Q6MlQ8V9HqcA=;
+        b=mXPKXfCQ5AqfGGN7eLis7zio/LUO4dolZMn9tGoBWo9lQ/0YSYOantIpV+5Aknn1uh
+         3J4AAW5FwrtrCjPqExngKvRZGdsEMMnXiWLjxSlxcZ4Z4hrIKAqnf3JGXGjDgW9P3bL1
+         pFNgcMjEIcXauA2TF31JXquLUpbL+xqhM2fQ9hmTnukCcFG1Mle2eakMHU8X4YmkO6LO
+         bAhMo5m/gWYLFCsmeuIdoTLd4aVKzBQXkX6znVpbHzzsNtQEyUyVQaAV7jfwZ4Hpde4C
+         pcPlmHg9x/K3XVnBI0Byou5ihxHLvg+InoKTxxb2YQ/iI8WDHTP84M7mjcSJauXDobPV
+         PPNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687420505; x=1690012505;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Eox6kzJ0KXGmAxPu1zCtO8SWj1o8YH/kpH0QF8X1TQs=;
-        b=M9DrOwJV0BvVOUCgD+1mqhC/DLJSzgeZLHGJ72SOsx9vykcpVtnCuPY/+P414wH6pG
-         fumBYNTZVuXfUtIN13GdLb4TLzTDfOY/Nl0MJfakMcuwlVbHBHxFE1LeMyhp3BJYzDc8
-         /pu4+ceX1vaV7HJYl1ndzeD36PUVsHVnzf7ft1MN1FiGfF6vYchtF2+YRZphLrKYkIcG
-         gvqYeTmU2zdtkmZet5V/GUdqgsU9tAfxUcTBkxKo+6HPh+A6SpwUU0Y8We/1+Z24UJwo
-         Z0LvWyvWzM1QD8oYUIlkdnPnKPuxFbVrSsdmJSFWB1oIFLUgtJT4wY+yIl/yWBmw3t9L
-         BPRA==
-X-Gm-Message-State: AC+VfDy0KhV+hYkQY59Y/VEQyyU2dJU4lUNndrEQB+xFSbrKbRuZcI5B
-        Sc6xzqQWjPwgBvTjMyNjmCxHdUKo0/wQQjw25onzNuRKJ6yDvP70w7mY6mllct3mp4vyQjdaDFR
-        uUnAYKh9Z1z63gvo/0o5CDRnSx6l13fa7rVjC
-X-Received: by 2002:a5d:590c:0:b0:30a:8995:1dbc with SMTP id v12-20020a5d590c000000b0030a89951dbcmr13481425wrd.26.1687420505048;
-        Thu, 22 Jun 2023 00:55:05 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5XXdP5mBFYeXjHFqCUFXHfOsqZzMCP4KunAaLqWfIWum2C8ZQg8p8aPknYzd7pBcBBJ2gzkZCOOq3kQ/vNoxc=
-X-Received: by 2002:a5d:590c:0:b0:30a:8995:1dbc with SMTP id
- v12-20020a5d590c000000b0030a89951dbcmr13481390wrd.26.1687420504759; Thu, 22
- Jun 2023 00:55:04 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687425130; x=1690017130;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LAUOQODzdCeUTcrDvoPMBORZt9+ufR2Q6MlQ8V9HqcA=;
+        b=SgAbB7oQS85k4R+m0Mvlhob3a1K7hW4llzQLP4v0IMGLSeuQbcj5h3gh4NanESUfHE
+         ccIox/XxzodSn2SCOj6iqvxLmrn2Qhlh1dGWyzUp4fhF4wky+6D01tGmbGvUGDbCgJUl
+         fUH+/LZWcqdaJ49byMr81NBD12Tjqdesf/6uZuIZe/1LVAR9y8OmiH2VW8e+EQsBWl5b
+         DK0hc4ZKyyTm4/smLamlDnbIMVXwBYdCIc2JCcRuddjhR99ghCWrB6sg64sBVKKvebMj
+         m+woZ5UZNt2X9h+nZwpcgGVooUEhB7qMjhdLXa8r462XaZv9CqoSbmCg14lfIpD1C2My
+         +ucQ==
+X-Gm-Message-State: AC+VfDxE2Rf54pG+zS8Nq5+31BiHior9g8C80yJ2ZxkA2Dq2tU/9iSJ9
+        ZDiP80SnupTjvfhhEo23nH+1VeSzclPJ+IVNOw4lXuPd1k8yuV0e
+X-Google-Smtp-Source: ACHHUZ7Jjoae1j3de5QaDkn+NVntLKV6op75KhbpCaUpXW852Raha07Xg8nXWZ9iLhTkIRdAW16BPNsvDSHUyHVrFYM=
+X-Received: by 2002:a1f:4801:0:b0:471:cfa1:5065 with SMTP id
+ v1-20020a1f4801000000b00471cfa15065mr4808788vka.3.1687425130628; Thu, 22 Jun
+ 2023 02:12:10 -0700 (PDT)
 MIME-Version: 1.0
-From:   Vitaly Grinberg <vgrinber@redhat.com>
-Date:   Thu, 22 Jun 2023 10:54:54 +0300
-Message-ID: <CACLnSDiBML3R_K5ncFsuritvid5nGsBLx5pGR2c9pR9L=qhPiQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v8 00/10] Create common DPLL configuration API
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     David Airlie <airlied@redhat.com>, andy.ren@getcruise.com,
-        anthony.l.nguyen@intel.com, arnd@arndb.de, axboe@kernel.dk,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        claudiajkang@gmail.com, corbet@lwn.net, davem@davemloft.net,
-        edumazet@google.com, geert+renesas@glider.be,
-        gregkh@linuxfoundation.org, hkallweit1@gmail.com,
-        idosch@nvidia.com, intel-wired-lan@lists.osuosl.org,
-        jacek.lawrynowicz@linux.intel.com,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        jesse.brandeburg@intel.com, jiri@resnulli.us,
-        jonathan.lemon@gmail.com, kuba@kernel.org, kuniyu@amazon.com,
-        leon@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux@zary.sk, liuhangbin@gmail.com, lucien.xin@gmail.com,
-        masahiroy@kernel.org, michal.michalik@intel.com,
-        milena.olech@intel.com, Michal Schmidt <mschmidt@redhat.com>,
-        Michael Tsirkin <mst@redhat.com>, netdev@vger.kernel.org,
-        nicolas.dichtel@6wind.com, nipun.gupta@amd.com, ogabbay@kernel.org,
-        Paolo Abeni <pabeni@redhat.com>, phil@nwl.cc,
-        Petr Oros <poros@redhat.com>, razor@blackwall.org,
-        ricardo.canuelo@collabora.com, richardcochran@gmail.com,
-        saeedm@nvidia.com, sj@kernel.org, tzimmermann@suse.de,
-        vadfed@fb.com, vadfed@meta.com, vadim.fedorenko@linux.dev
+References: <20230621093245.78130-1-o.rempel@pengutronix.de> <20230621093245.78130-2-o.rempel@pengutronix.de>
+In-Reply-To: <20230621093245.78130-2-o.rempel@pengutronix.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 22 Jun 2023 11:11:33 +0200
+Message-ID: <CAPDyKFqYfuQNCTPiEM56jrzUBe2jevY+MuTOj6K-7OkpO0_daA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] dt-bindings: mmc: fsl-imx-esdhc: Add imx6ul support
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Abel Vesa <abelvesa@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        kernel@pengutronix.de, Peng Fan <peng.fan@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-mmc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-Could it be possible to add PPS DPLL phase offset to the netlink API?
-We are relying on it in the E810-based grandmaster implementation.
-Thanks,
-Vitaly
+On Wed, 21 Jun 2023 at 11:32, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>
+> Add the 'fsl,imx6ul-usdhc' value to the compatible properties list in
+> the fsl-imx-esdhc.yaml file. This is required to match the compatible
+> strings present in the 'mmc@2190000' node of 'imx6ul-prti6g.dtb'. This
+> commit addresses the following dtbs_check warning:
+> imx6ul-prti6g.dtb:0:0: /soc/bus@2100000/mmc@2190000: failed to match any schema with compatible: ['fsl,imx6ul-usdhc', 'fsl,imx6sx-usdhc']
+>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
+Applied for next, thanks!
+
+Kind regards
+Uffe
+
+
+> ---
+>  Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> index fbfd822b92707..82eb7a24c8578 100644
+> --- a/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+> @@ -42,6 +42,7 @@ properties:
+>            - enum:
+>                - fsl,imx6sll-usdhc
+>                - fsl,imx6ull-usdhc
+> +              - fsl,imx6ul-usdhc
+>            - const: fsl,imx6sx-usdhc
+>        - items:
+>            - const: fsl,imx7d-usdhc
+> --
+> 2.39.2
+>
