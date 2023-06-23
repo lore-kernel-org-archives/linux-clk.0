@@ -2,101 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19161EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 18:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 859FFEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 19:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbjFWSAr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 14:00:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35928 "EHLO
+        id S231234AbjFWT7j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 15:59:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232394AbjFWSAm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 14:00:42 -0400
+        with ESMTP id S229620AbjFWT7j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 15:59:39 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F42012972;
-        Fri, 23 Jun 2023 11:00:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8C46E65;
+        Fri, 23 Jun 2023 12:59:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 235CF61AD2;
-        Fri, 23 Jun 2023 18:00:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4349BC433C8;
-        Fri, 23 Jun 2023 18:00:28 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3BAA861B07;
+        Fri, 23 Jun 2023 19:59:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987A7C433CB;
+        Fri, 23 Jun 2023 19:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687543228;
-        bh=Cn2sUYiOjjyWWuJD4BwJSjEx2Ctq4fd78+3P6xW8XM8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=nHYn/PC9TtZ9C7lSJhUamJOXWttB3RwSqhh8z4Mh+sgFx+UXTjhPidBPtn0MVtvXQ
-         UNpn0e1DQdPQFdWJv49LMmSE11QE9qpxzdvNIu+/GNIVoHe/H/dB8utvL37cBKqrqI
-         ctB4drTLKFnbDckzayC6rtSBGQVtmWhYp2NthkC4Ig7Nx1UjNbjXEDtogHRHw+YWXq
-         YseIfF7WFYQn1obODSl0BWVqvjBOAB0xGrj4BnBan/jdhdErW4zDM93J9/uXD9WGwn
-         4eSNZy9nbpnHe8IZECHNz//2Udhw9231AJDd/zVavEpOK+D3SuB2hIOvEzJUKk/1fA
-         7lPK8pvyYVCSA==
-Date:   Fri, 23 Jun 2023 13:00:26 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-        mani@kernel.org, lpieralisi@kernel.org, bhelgaas@google.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 1/4] pcie: qcom: Fix the macro
- PARF_SLV_ADDR_SPACE_SIZE_2_3_3
-Message-ID: <20230623180026.GA181743@bhelgaas>
+        s=k20201202; t=1687550376;
+        bh=x69fHIP2je3gDZwqyjGBKo1jt2snNaQ3tcGdMwx/N+c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=h+bwh8gf8SGSpQNtRQ/ZcPyyRsuy595Iwc7fBtTeSEMBchLYDMvIrMFZLcrWUEHdd
+         NYLwcBOc485+Q6KCuYQbdu1A3/PxPBDtqxJGs8OwbR/QHD7OwJMffJXX3iGH691c5K
+         55rvSD/aqtgFrSzed8Je8MQKUzG2wUq54uz5OgnMUAvMJX/e7vJjdM6cvuE/dIdfo4
+         VGBCUzaQdMlkt7c1mICHSu0yeQlX6rnL6yqiP//qrfKuUWNNko+3NaFYIZ40bYF106
+         xCL02yW/tdi4UUBu4xGZUO/sFDywwgTr838TxBl/5yEXPg/UxeEcvBLBU6t1vOZZba
+         5hij9z6V7kQYQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2b4636bb22eso17615711fa.2;
+        Fri, 23 Jun 2023 12:59:36 -0700 (PDT)
+X-Gm-Message-State: AC+VfDzcY66wGoMBZaPhnY9qv15ATDgIKD1F+xYOzsl0lFOpG6fn0Qij
+        jkG128SfL4arl+/d8nb2CIG2tn9c/uZoMoOT8A==
+X-Google-Smtp-Source: ACHHUZ4YXbnWqXIH9PucV4QWrhD1DoIEcrGRjoJNH9gv7TQjOZQ/B27CwVHmHZUHVvbtfIyJA/J1lD8HhD4jCdIPyfg=
+X-Received: by 2002:a05:651c:105b:b0:2a7:b986:3481 with SMTP id
+ x27-20020a05651c105b00b002a7b9863481mr14772424ljm.41.1687550374565; Fri, 23
+ Jun 2023 12:59:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230623093445.3977772-2-quic_srichara@quicinc.com>
+References: <20230516184626.154892-1-afd@ti.com> <20230516184626.154892-2-afd@ti.com>
+ <20230517075310.iduc2eisw7a5bm45@krzk-bin>
+In-Reply-To: <20230517075310.iduc2eisw7a5bm45@krzk-bin>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 23 Jun 2023 13:59:21 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL7EPkBAigGJ8iR4t532R82N0fFFmb4BVUw84xpb0545w@mail.gmail.com>
+Message-ID: <CAL_JsqL7EPkBAigGJ8iR4t532R82N0fFFmb4BVUw84xpb0545w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: ehrpwm: Remove unneeded syscon compatible
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andrew Davis <afd@ti.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 23, 2023 at 03:04:42PM +0530, Sricharan Ramabadhran wrote:
-> PARF_SLV_ADDR_SPACE_SIZE_2_3_3 macro used for IPQ8074
-> pcie slave addr size was initially set to 0x358, but
-> was wrongly changed to 0x168 as a part of
-> 'PCI: qcom: Sort and group registers and bitfield definitions'
-> Fixing it back to right value here.
+On Wed, May 17, 2023 at 1:53=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On Tue, 16 May 2023 13:46:26 -0500, Andrew Davis wrote:
+> > This node's register space is not accessed by any other node, which
+> > is the traditional use for the "syscon" hint. It looks to have been
+> > added here to make use of a Linux kernel helper syscon_node_to_regmap()=
+.
+> > The Linux driver now uses a more appropriate helper that does not
+> > require the hint, so let's remove it from the binding.
+> >
+> > Signed-off-by: Andrew Davis <afd@ti.com>
+> > ---
+> >  .../devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml     | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> >
+>
+> My bot found errors running 'make DT_CHECKER_FLAGS=3D-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>
+> yamllint warnings/errors:
+>
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/m=
+fd/ti,j721e-system-controller.example.dtb: scm-conf@100000: clock-controlle=
+r@4140:compatible: ['ti,am654-ehrpwm-tbclk', 'syscon'] is too long
+>         From schema: /builds/robherring/dt-review-ci/linux/Documentation/=
+devicetree/bindings/mfd/ti,j721e-system-controller.yaml
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/m=
+fd/ti,j721e-system-controller.example.dtb: clock-controller@4140: compatibl=
+e: ['ti,am654-ehrpwm-tbclk', 'syscon'] is too long
+>         From schema: /builds/robherring/dt-review-ci/linux/Documentation/=
+devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
 
-1) Make your subject line match the history.  For example, you're
-fixing 769e49d87b15 ("PCI: qcom: Sort and group registers ..."), so
-your subject line should start with "PCI: qcom: ...".
+Now failing in linux-next.
 
-2) It doesn't look like 769e49d87b15 changed
-PARF_SLV_ADDR_SPACE_SIZE_2_3_3:
-
-  $ git show 769e49d87b15 | grep PARF_SLV_ADDR_SPACE_SIZE_2_3_3
-  +#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x16C /* Register offset specific to IP ver 2.3.3 */
-  -#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x16C /* Register offset specific to IP rev 2.3.3 */
-
-What am I missing here?  Do you have another out-of-tree patch that
-broke this?
-
-Bjorn
-
-> Without this pcie bring up on IPQ8074 is broken now.
-> 
-> Fixes: 769e49d87b15 ("PCI: qcom: Sort and group registers and bitfield definitions")
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 4ab30892f6ef..59823beed13f 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -43,7 +43,7 @@
->  #define PARF_PHY_REFCLK				0x4c
->  #define PARF_CONFIG_BITS			0x50
->  #define PARF_DBI_BASE_ADDR			0x168
-> -#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x16c /* Register offset specific to IP ver 2.3.3 */
-> +#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x358 /* Register offset specific to IP ver 2.3.3 */
->  #define PARF_MHI_CLOCK_RESET_CTRL		0x174
->  #define PARF_AXI_MSTR_WR_ADDR_HALT		0x178
->  #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
-> -- 
-> 2.34.1
-> 
+Rob
