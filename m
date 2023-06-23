@@ -2,91 +2,92 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43302EB64DD
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 11:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3490CEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 11:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231145AbjFWLXy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 07:23:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57920 "EHLO
+        id S230097AbjFWL4C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 07:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbjFWLXx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 07:23:53 -0400
-Received: from mx.sberdevices.ru (mx.sberdevices.ru [45.89.227.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 262641739;
-        Fri, 23 Jun 2023 04:23:52 -0700 (PDT)
-Received: from s-lin-edge02.sberdevices.ru (localhost [127.0.0.1])
-        by mx.sberdevices.ru (Postfix) with ESMTP id 033445FDBC;
-        Fri, 23 Jun 2023 14:23:50 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1687519430;
-        bh=40WKuG5jN7u47rR1N8bQt7QB0nFmgHe9lhfPp15dYpQ=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-        b=grZYGVHuEo09bhs0QV2CoZlhgAcNo1pykB++zdadokLwQ7AwngjQ9RFJF2JzN5vpJ
-         EhVb10NH41aE0B2sKDKn6gRacu3jqTLmtWAQqrO9n2pP6AmUtzHP8es2tWy7zU8VGQ
-         DE7jvKw19sQ99fz9D6u/enc9YqI3tIHYU9BzlET32ojVhE5XWKsZ0ncPLJW8vD+4sK
-         5VZ9hDFQOc16K+J4qjN9hsCdWrUZOhRU68U8QXsvSWNQbLBzG8TJGWB6UyoHwhwlsB
-         ixIuscjLDVSZ5HDTpnpBHEKndULQfOncjImDvjDGY2tKmjf+3h60lmHmj29FV+8BQq
-         vOlG80yaV1Qww==
-Received: from S-MS-EXCH01.sberdevices.ru (S-MS-EXCH01.sberdevices.ru [172.16.1.4])
-        by mx.sberdevices.ru (Postfix) with ESMTP;
-        Fri, 23 Jun 2023 14:23:49 +0300 (MSK)
-Date:   Fri, 23 Jun 2023 14:23:49 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-        <conor+dt@kernel.org>, <kernel@sberdevices.ru>,
-        <sdfw_system_team@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v1 0/6] arm64: dts: meson: a1: introduce several
- peripheral IPs
-Message-ID: <20230623112349.reyls6um3dccrkl3@CAB-WSD-L081021>
-References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
- <20230623082201.7tfnpjvwi22omleq@CAB-WSD-L081021>
- <dd5d7bc8-5ded-ebfe-48a2-55e330cd7544@linaro.org>
+        with ESMTP id S229449AbjFWL4B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 07:56:01 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 608B991;
+        Fri, 23 Jun 2023 04:56:00 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35NBDZJn025775;
+        Fri, 23 Jun 2023 11:55:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=qcppdkim1;
+ bh=EMYcB5EQMk7xfxoD5jZL7SCS7GloqAQ/+Tu1J86+LpQ=;
+ b=NZy6bGFulUZ12QdAXr4mNWuVBCdZ/ObG+VD/DB+pwH1w5HouEsEsImUfkC8l7oxo7JAg
+ f/JWWKGBKF+Am14b6K5AkFpJVbxaiVx5Nf/K2TauNl7aydUccpO4LWNh55FVsQb0+t4G
+ jU7sdxck4yGaUBWnM2N392kQEXJZ/I7lNQ+az3e3loObzYApjb1FKtKFrXcGtm8iQ4W0
+ LDG924xmxGe9Y+y+4Ftl6Iq3XCkfnonZqwbV+nevxPfzitGmMUto/D0WHxQkQ3Rwb+6t
+ 1RRojD3fiyqd6mxhL58Hh86NgUT5bqfm2gk/2mLLWiMeeU6oKp/feqOA1Ljp1P+YAaO+ Ww== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rc6b2cjc4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jun 2023 11:55:48 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35NBtlb2007364
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jun 2023 11:55:47 GMT
+Received: from anusha-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Fri, 23 Jun 2023 04:55:39 -0700
+From:   Anusha Rao <quic_anusha@quicinc.com>
+To:     <quic_anusha@quicinc.com>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <bhupesh.sharma@linaro.org>, <conor+dt@kernel.org>,
+        <davem@davemloft.net>, <devicetree@vger.kernel.org>,
+        <herbert@gondor.apana.org.au>, <konrad.dybcio@linaro.org>,
+        <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mturquette@baylibre.com>, <p.zabel@pengutronix.de>,
+        <quic_arajkuma@quicinc.com>, <quic_gokulsri@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_poovendh@quicinc.com>,
+        <quic_sjaganat@quicinc.com>, <quic_srichara@quicinc.com>,
+        <robh+dt@kernel.org>, <sboyd@kernel.org>,
+        <thara.gopinath@gmail.com>
+Subject: Re: [PATCH V4 3/4] dt-bindings: qcom-qce: add SoC compatible string for ipq9574
+Date:   Fri, 23 Jun 2023 17:25:25 +0530
+Message-ID: <20230623115525.7300-1-quic_anusha@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230526161129.1454-4-quic_anusha@quicinc.com>
+References: <20230526161129.1454-4-quic_anusha@quicinc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <dd5d7bc8-5ded-ebfe-48a2-55e330cd7544@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [100.64.160.123]
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- S-MS-EXCH01.sberdevices.ru (172.16.1.4)
-X-KSMG-Rule-ID: 4
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2023/06/23 08:45:00 #21561595
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 43NMBdc0BsON7s9os7zyfujjANOw3q6T
+X-Proofpoint-GUID: 43NMBdc0BsON7s9os7zyfujjANOw3q6T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-23_06,2023-06-22_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ malwarescore=0 spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=384 lowpriorityscore=0 impostorscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306230107
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Krzysztof,
+> Document the compatible string for ipq9574.
+>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Bhupesh Sharma <bhupesh.sharma@linaro.org>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> ---
+>  Changes in V4:
+>	- Picked up Reviewed-by tag.
 
-On Fri, Jun 23, 2023 at 10:49:19AM +0200, Krzysztof Kozlowski wrote:
-> On 23/06/2023 10:22, Dmitry Rokosov wrote:
-> > Hello Neil, Krzysztof, Jerome, Martin, Rob and Conor,
-> > 
-> > Would you please review this patch? The latest modifications enable CLK,
-> > EFUSE, USB, SDIO (WiFi), and UART (BT) functionality on A1 boards.
-> > 
-> 
-> It's not a binding...
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Ah, I was thinking that you could also review the changes made to the
-device tree board files. I apologize for any inconvenience caused by
-additional notifications.
-
--- 
-Thank you,
-Dmitry
+A gentle reminder to pick the dt-binding patch.
+As the dts change is picked, this patch is required to resolve dt-bindings check issues.
