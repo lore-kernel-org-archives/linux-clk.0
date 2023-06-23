@@ -2,82 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F93C001B1
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 20:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDBCEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 20:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231866AbjFWUPw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 16:15:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43632 "EHLO
+        id S229617AbjFWUSi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 16:18:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231894AbjFWUPs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 16:15:48 -0400
+        with ESMTP id S229531AbjFWUSh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 16:18:37 -0400
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FA332965;
-        Fri, 23 Jun 2023 13:15:29 -0700 (PDT)
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 35NKFLmQ049624;
-        Fri, 23 Jun 2023 15:15:21 -0500
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6829135;
+        Fri, 23 Jun 2023 13:18:36 -0700 (PDT)
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 35NKITAL050172;
+        Fri, 23 Jun 2023 15:18:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1687551321;
-        bh=modFvE2h1DtwfgwB1z6fh3ME+v61moS7YUn47wZZlUs=;
-        h=From:To:CC:Subject:Date;
-        b=Ox+UfwfBfvz2jcb9S0LtkdlHNiSftanMGWlvkxMcss+U9Olcp07cjjOJJ1SECdK5e
-         QxTZ1+Me/YKlRATKF+frtFR54GrTVsfb5cfbDb7HjNSMARqmlfOY5i0fnbqmr6/695
-         8+tNpazlL4gkJYylZHVJ8G+58GXmwMCeATPWERjE=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 35NKFLiK031898
+        s=ti-com-17Q1; t=1687551509;
+        bh=f7q6qzALH79mV4hDBDS7tVfeINhU4GHFP+Le2xR2a9Y=;
+        h=Date:Subject:To:CC:References:From:In-Reply-To;
+        b=nh7AcErGC4RlFcGD1QYM6BUbZjYlkcokkrVWePZ9lhrvf+ZTWJW17GngHP2PlcwMs
+         h1C6hIn3M39nuC3MZr9guXo6a91q9QKkmr2zy8de2JxbLLLCXHgf9AizKaXfrOUx8l
+         CudxsCOK4zWVr0zyIQi/JkB1HOynTAPiWmjsD+qE=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 35NKITBX129411
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 23 Jun 2023 15:15:21 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 23 Jun 2023 15:18:29 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 23
- Jun 2023 15:15:20 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2023 15:18:29 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 23 Jun 2023 15:15:20 -0500
-Received: from fllv0040.itg.ti.com (ileaxei01-snat.itg.ti.com [10.180.69.5])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 35NKFKrX016024;
-        Fri, 23 Jun 2023 15:15:20 -0500
-From:   Andrew Davis <afd@ti.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH] dt-bindings: mfd: ti,j721e-system-controller: Remove syscon from example
-Date:   Fri, 23 Jun 2023 15:15:19 -0500
-Message-ID: <20230623201519.194269-1-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
+ Frontend Transport; Fri, 23 Jun 2023 15:18:29 -0500
+Received: from [10.250.37.10] (ileaxei01-snat.itg.ti.com [10.180.69.5])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 35NKISns008310;
+        Fri, 23 Jun 2023 15:18:28 -0500
+Message-ID: <602856f1-3c94-554d-58ac-461d10110538@ti.com>
+Date:   Fri, 23 Jun 2023 15:18:28 -0500
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 2/2] dt-bindings: clock: ehrpwm: Remove unneeded syscon
+ compatible
+Content-Language: en-US
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+References: <20230516184626.154892-1-afd@ti.com>
+ <20230516184626.154892-2-afd@ti.com>
+ <20230517075310.iduc2eisw7a5bm45@krzk-bin>
+ <CAL_JsqL7EPkBAigGJ8iR4t532R82N0fFFmb4BVUw84xpb0545w@mail.gmail.com>
+From:   Andrew Davis <afd@ti.com>
+In-Reply-To: <CAL_JsqL7EPkBAigGJ8iR4t532R82N0fFFmb4BVUw84xpb0545w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The binding for ti,am654-ehrpwm-tbclk was updated to remove the syscon
-compatible hint. Remove the same from the example in this binding.
+On 6/23/23 2:59 PM, Rob Herring wrote:
+> On Wed, May 17, 2023 at 1:53 AM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> On Tue, 16 May 2023 13:46:26 -0500, Andrew Davis wrote:
+>>> This node's register space is not accessed by any other node, which
+>>> is the traditional use for the "syscon" hint. It looks to have been
+>>> added here to make use of a Linux kernel helper syscon_node_to_regmap().
+>>> The Linux driver now uses a more appropriate helper that does not
+>>> require the hint, so let's remove it from the binding.
+>>>
+>>> Signed-off-by: Andrew Davis <afd@ti.com>
+>>> ---
+>>>   .../devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml     | 5 ++---
+>>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>>
+>>
+>> My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+>> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>>
+>> yamllint warnings/errors:
+>>
+>> dtschema/dtc warnings/errors:
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.example.dtb: scm-conf@100000: clock-controller@4140:compatible: ['ti,am654-ehrpwm-tbclk', 'syscon'] is too long
+>>          From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml
+>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.example.dtb: clock-controller@4140: compatible: ['ti,am654-ehrpwm-tbclk', 'syscon'] is too long
+>>          From schema: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+> 
+> Now failing in linux-next.
+> 
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- .../devicetree/bindings/mfd/ti,j721e-system-controller.yaml     | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sent fix: https://lore.kernel.org/lkml/20230623201519.194269-1-afd@ti.com/T/#u
 
-diff --git a/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml b/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml
-index 0c98d913747bb..e6289fbe69070 100644
---- a/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml
-+++ b/Documentation/devicetree/bindings/mfd/ti,j721e-system-controller.yaml
-@@ -101,7 +101,7 @@ examples:
-         };
- 
-         clock-controller@4140 {
--            compatible = "ti,am654-ehrpwm-tbclk", "syscon";
-+            compatible = "ti,am654-ehrpwm-tbclk";
-             reg = <0x4140 0x18>;
-             #clock-cells = <1>;
-         };
--- 
-2.39.2
-
+Andrew
