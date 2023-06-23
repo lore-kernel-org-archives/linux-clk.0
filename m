@@ -2,112 +2,182 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826B2EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 07:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBDDEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 07:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230379AbjFWHiZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 03:38:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35374 "EHLO
+        id S230170AbjFWHsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 03:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230009AbjFWHiW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 03:38:22 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C109195
-        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 00:38:21 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f875b267d9so338375e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 00:38:21 -0700 (PDT)
+        with ESMTP id S231383AbjFWHsG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 03:48:06 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4791724
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 00:48:04 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b466073e19so5597661fa.1
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 00:48:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687505900; x=1690097900;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lPeZrSjonFgRIP6YD2MdV9XL0mr217aLyfVUpIZCm64=;
-        b=eEGm4MJYjMs+tbHqNi/MUOzIec3JkynFda76fni2Ix/4xPDt9XjEhsRJvix8GOnUvr
-         9LNRcYBW2sHSVQLpjKhnxvlujDEdakN/qjAK8wXzv9d5ZLihQrmb9Q4KxzFFlwJ/d2sK
-         4kU7OsbCmZtdoN4kPt+C+QPkLLyVnlNb0SSyxnELYzfbsYbDRFl4E1RXZv5WsnlMjiiz
-         6xO4PFf8cl0BnjiZc+wIYPYOxSHWLSx5ya1iNDrdHSoiOkI4B5Kq3ZntLOM2FhoXeney
-         vCvzFQ+TmDaslYaeJcfWYW1957Z43Qo5gsL4gd8wLELPRK+NF5Ywqe02etjyVErt7qCE
-         Gvcw==
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687506482; x=1690098482;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=afzpoupdHBz4t80yeY68UW7BcSr6J0mUzcvK1xv8c1M=;
+        b=y839S9kxd09ThLEfxmxC6oII3nMiQTOEHF9PojI9kiub9AcAU9VwNCWsdUi79zoGrL
+         I53edaB4DcMZQQ0qflpJAUkvrrMC34ACSDUt0ujxI5pBdzcViBCk6n9FKsQqZhEr33/O
+         VvEBWTcxrI6FtHpJuHeokazRCXKF4vksYk5o+OAae6lurukOLI6tXHVLSfb+Q+V7FEV/
+         sf8imt+RlLt6Lat5yCvrtngprbPt26rUBnApAtbvCEbqlIgaWoDJC9mFHQOn0JbF41dG
+         AZbWjTZ98aLp9MgUn+gURDvYq4bO/7X5+p/tQDFnf5y1CNMOL2mMEGQ/vOQjVcpXlF7u
+         UTbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687505900; x=1690097900;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1687506482; x=1690098482;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lPeZrSjonFgRIP6YD2MdV9XL0mr217aLyfVUpIZCm64=;
-        b=aALCl4v8BGijLb/EP4WSII5jbrvvL2dtOJayvodA3YE34WlsNWrWUASEqRV2NrXIv1
-         hx3ICJYIadV2EgK4tsL1VZHAb5bM+KkJg4o2bsJ3E97/SzTVyeU29tstzDDbJdWjvmTC
-         T7dolgF7HFy2KiI1XQRs/6U1v8EcQXvtd94gNc4QmL9k3un5C3CR26/VOLxaCgjbyHc2
-         bUc+BkKgzpsf7P+LQlZ78qy2gb5EbwxpEdnmFV2l5GozF8t6vka8pthA+kkXNyZBGk5F
-         BJrOMMbm9nvkH4HbScOaribHs/rIIzBkcP6dNHEnTxyic789Ot2uyDA5x4r/zKC1ATyI
-         TErA==
-X-Gm-Message-State: AC+VfDwoGChevWn/c3Bw2mI+s5qMIzOMB4mlAHDGH406PnAZF1lr6V5u
-        SyudbXHKWY3xiphpx1+fLT2FIal603YlzUm7M5M=
-X-Google-Smtp-Source: ACHHUZ5zVQ6gJ2w6T6rfLyjx5TSxPeDfI6eTbVVxTAoACOiVQm8TGUtp8heyVMZyht/wBnFYJF7R2g==
-X-Received: by 2002:a19:6d0c:0:b0:4f8:4245:ed57 with SMTP id i12-20020a196d0c000000b004f84245ed57mr13540354lfc.35.1687505899678;
-        Fri, 23 Jun 2023 00:38:19 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id o8-20020a5d4a88000000b003068f5cca8csm8805819wrq.94.2023.06.23.00.38.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jun 2023 00:38:19 -0700 (PDT)
-Message-ID: <6d8590f3-7bfa-36b1-481a-b38a5779eed5@linaro.org>
-Date:   Fri, 23 Jun 2023 09:38:18 +0200
+        bh=afzpoupdHBz4t80yeY68UW7BcSr6J0mUzcvK1xv8c1M=;
+        b=Qh1KJffNvfrKz6lNya1CWAlCp/lDJkJ9vuykHG0TUvn7LFrogv+JYEdvcdOHs8Rb/x
+         UrVH0WiHAbqVD6U+OnrvLV87bWnVX5pGK2lD69xQGmg0TSN5RoOeeYqqD5mvE8vJVrqD
+         WQWiyypL4SHS9xIZXPM+gh93XXiwc2Lm4IEhLBJ4alE0u5rTaCettlpN78gyg/pM/3fn
+         g4jN+NPo9t1xz0rzi4ZlqCtoWNVFKicvybuPAOGaFC5JS3nuusQ9P8jy6nwCEInkwq8P
+         WMLScW4WOdjB/LxlrwVrzGBuXIh5ziJ63ayk8LiBum8M/k6f9fotiQK3rs+BsEMxlUgh
+         XKZg==
+X-Gm-Message-State: AC+VfDzwHvUaZmF0LCweZfABDhCxi7Zr0YG8iRzhQUqa5exVkAbmeN9p
+        kbewHCzPx9QDp4scJLfdZxsnwA==
+X-Google-Smtp-Source: ACHHUZ60rNJlS88ekBpJsTiP/YnYc408Z0GlUIj/k7KV/RQOAUp7f7ExOF4ZyFZ2IcPQ5FADHxaxYg==
+X-Received: by 2002:a2e:9944:0:b0:2b4:6a20:f12b with SMTP id r4-20020a2e9944000000b002b46a20f12bmr13920987ljj.22.1687506482431;
+        Fri, 23 Jun 2023 00:48:02 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id b18-20020aa7cd12000000b0051bf49e258bsm666413edw.22.2023.06.23.00.48.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Jun 2023 00:48:01 -0700 (PDT)
+Date:   Fri, 23 Jun 2023 09:48:00 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     poros <poros@redhat.com>, "kuba@kernel.org" <kuba@kernel.org>,
+        "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v8 04/10] dpll: netlink: Add DPLL framework base
+ functions
+Message-ID: <ZJVOMPQ1RHx5mapG@nanopsycho>
+References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+ <20230609121853.3607724-5-arkadiusz.kubalewski@intel.com>
+ <c7480d0a71fb8d62108624878f549c0d91d4c9e6.camel@redhat.com>
+ <ZJLktA6RJaVo3BdH@nanopsycho>
+ <ZJL2HUkAtHEw5rq+@nanopsycho>
+ <DM6PR11MB46578CD80F96AB11AF2F81F49B23A@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: next: arm: drivers/clk/imx/clk-imx1.c:13:10: fatal error:
- 'soc/imx/timer.h' file not found
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        lkft-triage@lists.linaro.org
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>
-References: <CA+G9fYuvBN7Wb3hvmKemxMw1jTjG3-fgMwiQCWH6=fsTddU+xQ@mail.gmail.com>
- <adf2429f-8d60-4cab-873a-a08530e5ce69@app.fastmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <adf2429f-8d60-4cab-873a-a08530e5ce69@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM6PR11MB46578CD80F96AB11AF2F81F49B23A@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/06/2023 09:22, Arnd Bergmann wrote:
-> On Fri, Jun 23, 2023, at 08:51, Naresh Kamboju wrote:
->> Following build regressions noticed on Linux next-20230623.
+Fri, Jun 23, 2023 at 02:56:24AM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Wednesday, June 21, 2023 3:08 PM
 >>
->> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>Wed, Jun 21, 2023 at 01:53:24PM CEST, jiri@resnulli.us wrote:
+>>>Wed, Jun 21, 2023 at 01:18:59PM CEST, poros@redhat.com wrote:
+>>>>Arkadiusz Kubalewski píše v Pá 09. 06. 2023 v 14:18 +0200:
+>>>>> From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+>>>
+>>>[...]
+>>>
+>>>Could you perhaps cut out the text you don't comment? Saves some time
+>>>finding your reply.
+>>>
+>>>
+>>>>> +static int
+>>>>> +dpll_set_from_nlattr(struct dpll_device *dpll, struct genl_info
+>>>>> *info)
+>>>>> +{
+>>>>> +       const struct dpll_device_ops *ops = dpll_device_ops(dpll);
+>>>>> +       struct nlattr *tb[DPLL_A_MAX + 1];
+>>>>> +       int ret = 0;
+>>>>> +
+>>>>> +       nla_parse(tb, DPLL_A_MAX, genlmsg_data(info->genlhdr),
+>>>>> +                 genlmsg_len(info->genlhdr), NULL, info->extack);
+>>>>> +       if (tb[DPLL_A_MODE]) {
+>>>>Hi,
+>>>>
+>>>>Here should be something like:
+>>>>               if (!ops->mode_set)
+>>>>                       return -EOPNOTSUPP;
+>>>
+>>>Why? All drivers implement that.
+>>>I believe that it's actullaly better that way. For a called setting up
+>>>the same mode it is the dpll in, there should be 0 return by the driver.
+>>>Note that driver holds this value. I'd like to keep this code as it is.
 >>
+>>Actually, you are correct Petr, my mistake. Actually, no driver
+>>implements this. Arkadiusz, could you please remove this op and
+>>possibly any other unused  op? It will be added when needed.
 >>
->> Regressions found on arm:
+>>Thanks!
 >>
->>   - build/clang-16-imx_v4_v5_defconfig
->>   - build/gcc-12-imx_v4_v5_defconfig
->>   - build/gcc-8-multi_v5_defconfig
->>   - build/gcc-8-imx_v4_v5_defconfig
->>   - build/clang-nightly-imx_v4_v5_defconfig
-> 
-> Thanks for the report. I found the missing patch at
-> 
-> https://lore.kernel.org/all/20230328100531.879485-2-u.kleine-koenig@pengutronix.de/
-> 
-> and resubmitted this. It's probably best if Daniel picks
-> it up into the clocksource tree, which accidentally broke the
-> build by picking patch 3 of the series before patch 2.
+>
+>Sorry, didn't have time for such change, added only check as suggested by
+>Petr.
+>If you think this is a big issue, we could change it for next version.
 
-I applied the patch and pushed the linux-next branch. That should be 
-fixed now.
+It's odd to carry on ops which are unused. I would prefer that to be
+removed now and only introduced when they are actually needed.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+>
+>Thank you!
+>Arkadiusz
+>
+>>
+>>>
+>>>[...]
