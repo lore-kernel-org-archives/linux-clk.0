@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C203EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 16:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9367EEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 16:37:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231272AbjFWQfn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 12:35:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45396 "EHLO
+        id S232262AbjFWQhK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 12:37:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjFWQfm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 12:35:42 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 060D02114;
-        Fri, 23 Jun 2023 09:35:40 -0700 (PDT)
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35NDqDxO012744;
-        Fri, 23 Jun 2023 16:35:36 GMT
+        with ESMTP id S231539AbjFWQhI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 12:37:08 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 156EA1A1;
+        Fri, 23 Jun 2023 09:37:06 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35NExmDW007898;
+        Fri, 23 Jun 2023 16:37:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=aINrOk1o5EQ8xcr72RPCjQ4y8cu6TfaGAgkhBaIUCgI=;
- b=WOsRmvtzWItog6yQ+uAjIuiTIwCH2POSjpATXJJ5HD8XKsE0XX3WT7ZxeGRBuZSTVDmm
- q0MoRx63nTMj8OV+u1YbXpHGyqSND2P6rtha5RzfD6HAQD8+PGB8ZGsi6Wvy3bPvq/uh
- C9vDAAu/8Gr9yn3l1nJ/Dfb2jxF6cbXWhAHM8/NR6FEYzoWV82ddG2yiULDa9oQSckHM
- U3spaJ/FyveIalB+7bL998Qi3RsWf7UsPjbTQClSP1sAUFSriLtb0uZeviFkhua3ikZY
- qst5Z1QHgj4DXNneGin1OpdbuFMlcEWcWkA6GeIeV2DYRUWa7k1OR/10ULq/Ozi52IPq bQ== 
+ bh=HI56RhtwnXaAm/6DfveMHPxSqKnbhP8KVTVf6/mKBDA=;
+ b=LqaAli/vXUtfM6Yz/I6QYJ442Zo2bAVl/kxr4A+l8EJb/Tv7mAXp95Nszj5i2Fj6kuOi
+ b/5jrMlSm2TpFXiZkhVzjaVgQ5ziZ39wDzTXXw/IhdMzlxJNEgJXolVqp5AczcB32OI6
+ RRW4ASJIX4bC7NsBxKxzv4z4MuYc2wPorBbvOwnTCLcAsFjLXlojq3eiUXhEEYxlSKB+
+ zaxFlIhOzL6jPY3WmhzynzsKHjSz4/OJdeXE8pqDgpU9Lz+F0oKYjaNg5xBJx1GwDWOm
+ 4yhDXfN9GRrZfGhvZTi98ywJMfGf98kyXshVlFHA2XZgLw9bgC4Vy30+2iXOTaNBgZhq pQ== 
 Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rcj6nc2rc-1
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rcurrj9y7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Jun 2023 16:35:36 +0000
+        Fri, 23 Jun 2023 16:37:01 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35NGZYZQ032677
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35NGb0cc001652
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Jun 2023 16:35:34 GMT
+        Fri, 23 Jun 2023 16:37:00 GMT
 Received: from [10.216.8.45] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 23 Jun
- 2023 09:35:28 -0700
-Message-ID: <dd90ab3c-e1dc-a5cd-47b2-b275b8a9c8d4@quicinc.com>
-Date:   Fri, 23 Jun 2023 22:05:12 +0530
+ 2023 09:36:54 -0700
+Message-ID: <6a464bfc-821f-d892-93d4-d8881f1b4ddc@quicinc.com>
+Date:   Fri, 23 Jun 2023 22:06:49 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH V2 3/6] clk: qcom: clk-alpha-pll: Remove explicit CAL_L
- configuration for EVO PLL
+Subject: Re: [PATCH V4 2/4] clk: qcom: camcc-sm8550: Add camera clock
+ controller driver for SM8550
+Content-Language: en-US
 To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+CC:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -55,186 +56,253 @@ CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
         Imran Shaik <quic_imrashai@quicinc.com>,
         Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230525172142.9039-1-quic_jkona@quicinc.com>
- <20230525172142.9039-4-quic_jkona@quicinc.com>
- <6e1d098d-03b9-aa63-a0bf-6cf748a0db0d@linaro.org>
- <7074f718-a3d5-8a03-3830-77a5a0b15500@linaro.org>
- <df7ab6f7-6c5e-9a7d-8d9b-09ff32da34d6@quicinc.com>
- <c60bb4d9-1b53-6c60-8b9d-13069bdff882@linaro.org>
- <1a6d46e4-7ec4-262c-dc3b-fc9c988f979e@quicinc.com>
- <CAA8EJprx6=QztOHi_18uqcGK9WnhkQJ_WP9TyKrsOT=WgKdRaw@mail.gmail.com>
- <695d7b39-2759-690d-5ff8-5aff6b37e39c@quicinc.com>
- <CAA8EJpp5_qG2eMQEoHqzboyi8xEbEmx2e1WsKsVQ3d6no0pp5g@mail.gmail.com>
-Content-Language: en-US
+References: <20230609115058.9059-1-quic_jkona@quicinc.com>
+ <20230609115058.9059-3-quic_jkona@quicinc.com>
+ <CAA8EJpr-iKMzYP7HVQV8pzXbxzLvBaq38aovJ5Ffny18yXvJZg@mail.gmail.com>
+ <6dc9f36a-f003-06eb-744c-0ebe645dfdf0@quicinc.com>
+ <CAA8EJppY1Ff+zLF4PDxxTzpVj25VKCK9z+is_M0VaTi1iahbBw@mail.gmail.com>
 From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <CAA8EJpp5_qG2eMQEoHqzboyi8xEbEmx2e1WsKsVQ3d6no0pp5g@mail.gmail.com>
+In-Reply-To: <CAA8EJppY1Ff+zLF4PDxxTzpVj25VKCK9z+is_M0VaTi1iahbBw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Or7C90wOQGe709baBv2FbHs_2OAGgNEa
-X-Proofpoint-ORIG-GUID: Or7C90wOQGe709baBv2FbHs_2OAGgNEa
+X-Proofpoint-GUID: fv7ZpConYiBAlTPGxvk7fqT7o4eIZtr2
+X-Proofpoint-ORIG-GUID: fv7ZpConYiBAlTPGxvk7fqT7o4eIZtr2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-06-23_08,2023-06-22_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- clxscore=1015 spamscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306230147
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0 spamscore=0
+ adultscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306230148
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 6/14/2023 5:56 PM, Dmitry Baryshkov wrote:
-> On Wed, 14 Jun 2023 at 14:53, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+On 6/14/2023 5:44 PM, Dmitry Baryshkov wrote:
+> On Wed, 14 Jun 2023 at 14:55, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
 >>
 >>
 >>
->> On 6/9/2023 5:55 PM, Dmitry Baryshkov wrote:
->>> On Fri, 9 Jun 2023 at 14:50, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>> On 6/9/2023 9:52 PM, Dmitry Baryshkov wrote:
+>>> On Fri, 9 Jun 2023 at 14:52, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
 >>>>
->>>> Hi Dmitry,
+>>>> Add support for the camera clock controller for camera clients to be
+>>>> able to request for camcc clocks on SM8550 platform.
 >>>>
->>>> Thanks for your review!
+>>>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>> ---
+>>>> Changes since V3:
+>>>>    - No changes
+>>>> Changes since V2:
+>>>>    - No changes
+>>>> Changes since V1:
+>>>>    - Sorted the PLL names in proper order
+>>>>    - Updated all PLL configurations to lower case hex
+>>>>    - Reused evo ops instead of adding new ops for ole pll
+>>>>    - Moved few clocks to separate patch to fix patch too long error
 >>>>
->>>> On 6/1/2023 8:13 PM, Dmitry Baryshkov wrote:
->>>>> On 01/06/2023 17:33, Jagadeesh Kona wrote:
->>>>>> Hi Dmitry, Konrad,
->>>>>>
->>>>>> On 5/26/2023 9:23 PM, Dmitry Baryshkov wrote:
->>>>>>> On 26/05/2023 12:33, Konrad Dybcio wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 25.05.2023 19:21, Jagadeesh Kona wrote:
->>>>>>>>> In lucid evo pll, the CAL_L field is part of L value register
->>>>>>>>> itself, and
->>>>>>>>> the l value configuration passed from clock controller driver includes
->>>>>>>>> CAL_L and L values as well. Hence remove explicit configuration of
->>>>>>>>> CAL_L
->>>>>>>>> for evo pll.
->>>>>>>>>
->>>>>>>>> Fixes: 260e36606a03 ("clk: qcom: clk-alpha-pll: add Lucid EVO PLL
->>>>>>>>> configuration interfaces")
->>>>>>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>>>>> ---
->>>>>>>> Oh that isn't obvious at first sight, nice find!
->>>>>>>>
->>>>>>>> I'd suggest a different solution though:
->>>>>>>>
->>>>>>>> #define LUCID_EVO_PLL_L_LVAL    GENMASK(..
->>>>>>>> #define LUCID_EVO_PLL_L_CAL_L    GENMASK(..
->>>>>>>>
->>>>>>>> lval = FIELD_PREP(LUCID_EVO_PLL_L_LVAL, config->l) |
->>>>>>>>           FIELD_PREP(LUCID_EVO_PLL_L_CAL_L, config->cal_l);
->>>>>>>>
->>>>>>>> This would make the separation between the two parts more explicit
->>>>>>>>
->>>>>>>> however
->>>>>>>>
->>>>>>>> config->l would then represent the L value and not the end value
->>>>>>>> written to the L register
->>>>>>>
->>>>>>> Yes. I think there should be separate config->l and config->cal_l
->>>>>>> values (and probably ringosc_cal_l, basing on the comment in the
->>>>>>> source).
->>>>>>> Thanks for your suggestions. In all recent chipsets, L & CAL_L fields
->>>>>> are encapsulated in the same register, so we feel it is better to
->>>>>> directly pass the combined configuration value in config->l itself and
->>>>>> program it directly into register without any additional handling
->>>>>> required in pll driver code.
->>>>>
->>>>> My feeling is that it is better to split it, since these are the
->>>>> different fields. The value .l = 0x4444003e doesn't mean anything per se.
->>>>>
->>>>> Three values are much more meaningful:
->>>>> .l = 0x3e,
->>>>> .cal_l = 0x44,
->>>>> .ringosc_cal_l = 0x44,
->>>>>
->>>>> Not to mention that this way you don't have to touch pll configuration
->>>>> for the existing Lucid EVO PLL. Not to mention that for the Lucid ole
->>>>> PLLs the cal_l and ringosc_cal_l values seem to be static (0x44), so
->>>>> there is no need to put them to the variable data.
->>>>>
+>>>>    drivers/clk/qcom/Kconfig        |    7 +
+>>>>    drivers/clk/qcom/Makefile       |    1 +
+>>>>    drivers/clk/qcom/camcc-sm8550.c | 3405 +++++++++++++++++++++++++++++++
+>>>>    3 files changed, 3413 insertions(+)
+>>>>    create mode 100644 drivers/clk/qcom/camcc-sm8550.c
 >>>>
->>>> Sure, will keep the existing code as is and will remove this patch in
->>>> the next series.
+>>>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>>>> index 9cd1f05d436b..85efed78dc9a 100644
+>>>> --- a/drivers/clk/qcom/Kconfig
+>>>> +++ b/drivers/clk/qcom/Kconfig
+>>>> @@ -756,6 +756,13 @@ config SM_CAMCC_8450
+>>>>             Support for the camera clock controller on SM8450 devices.
+>>>>             Say Y if you want to support camera devices and camera functionality.
 >>>>
->>>>>>
->>>>>> Also the evo pll code is currently reused for both lucid evo and ole
->>>>>> pll's. Lucid ole PLL has an additional RINGOSC_CAL_L field along with
->>>>>> L, CAL_L fields in the same L register. By passing combined
->>>>>> configuration value in config->l itself, we feel we can avoid all the
->>>>>> additional handling required in PLL code.
->>>>>>
->>>>>>> Just a question: is camcc-sm8550 using the same PLL type or is it
->>>>>>> some kind of subtype of lucid_evo PLL?
->>>>>>>
->>>>>> No, it is not the same lucid evo PLL. It uses lucid ole PLL.
->>>>>
->>>>> Then please don't reuse the clk_lucid_evo_pll_configure() call.
->>>>> You can add a new one, which will handle L/CAL_L/RINGOSC_CAL_L differences.
->>>>>
->>>>
->>>> The only difference between evo and ole pll configure is extra
->>>> RINGOSC_CAL_L programming needed only for ole pll. We can achieve the
->>>> same with clk_lucid_evo_pll_configure() itself by directly including
->>>> RINGOSC_CAL_L field in L configuration for OLE PLL's.
+>>>> +config SM_CAMCC_8550
+>>>> +       tristate "SM8550 Camera Clock Controller"
+>>>> +       select SM_GCC_8550
+>>>> +       help
+>>>> +         Support for the camera clock controller on SM8550 devices.
+>>>> +         Say Y if you want to support camera devices and camera functionality.
+>>>> +
+>>>>    config SM_DISPCC_6115
+>>>>           tristate "SM6115 Display Clock Controller"
+>>>>           depends on ARM64 || COMPILE_TEST
+>>>> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+>>>> index 75d035150118..97c8cefc2fd0 100644
+>>>> --- a/drivers/clk/qcom/Makefile
+>>>> +++ b/drivers/clk/qcom/Makefile
+>>>> @@ -101,6 +101,7 @@ obj-$(CONFIG_SDX_GCC_75) += gcc-sdx75.o
+>>>>    obj-$(CONFIG_SM_CAMCC_6350) += camcc-sm6350.o
+>>>>    obj-$(CONFIG_SM_CAMCC_8250) += camcc-sm8250.o
+>>>>    obj-$(CONFIG_SM_CAMCC_8450) += camcc-sm8450.o
+>>>> +obj-$(CONFIG_SM_CAMCC_8550) += camcc-sm8550.o
+>>>>    obj-$(CONFIG_SM_DISPCC_6115) += dispcc-sm6115.o
+>>>>    obj-$(CONFIG_SM_DISPCC_6125) += dispcc-sm6125.o
+>>>>    obj-$(CONFIG_SM_DISPCC_6350) += dispcc-sm6350.o
+>>>> diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
+>>>> new file mode 100644
+>>>> index 000000000000..85f0c1e09b2b
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/qcom/camcc-sm8550.c
+>>>> @@ -0,0 +1,3405 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>> +/*
+>>>> + * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +#include <linux/clk-provider.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/of_device.h>
+>>>> +#include <linux/pm_runtime.h>
+>>>> +#include <linux/regmap.h>
+>>>> +
+>>>> +#include <dt-bindings/clock/qcom,sm8550-camcc.h>
+>>>> +
+>>>> +#include "clk-alpha-pll.h"
+>>>> +#include "clk-branch.h"
+>>>> +#include "clk-rcg.h"
+>>>> +#include "clk-regmap.h"
+>>>> +#include "common.h"
+>>>> +#include "gdsc.h"
+>>>> +#include "reset.h"
+>>>> +
+>>>> +enum {
+>>>> +       DT_IFACE,
+>>>> +       DT_BI_TCXO,
+>>>> +};
+>>>> +
+>>>> +enum {
+>>>> +       P_BI_TCXO,
+>>>> +       P_CAM_CC_PLL0_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL0_OUT_MAIN,
+>>>> +       P_CAM_CC_PLL0_OUT_ODD,
+>>>> +       P_CAM_CC_PLL1_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL2_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL2_OUT_MAIN,
+>>>> +       P_CAM_CC_PLL3_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL4_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL5_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL6_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL7_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL8_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL9_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL9_OUT_ODD,
+>>>> +       P_CAM_CC_PLL10_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL11_OUT_EVEN,
+>>>> +       P_CAM_CC_PLL12_OUT_EVEN,
+>>>> +};
+>>>> +
+>>>> +static const struct pll_vco lucid_ole_vco[] = {
+>>>> +       { 249600000, 2300000000, 0 },
+>>>> +};
+>>>> +
+>>>> +static const struct pll_vco rivian_ole_vco[] = {
+>>>> +       { 777000000, 1285000000, 0 },
+>>>> +};
+>>>> +
+>>>> +static const struct alpha_pll_config cam_cc_pll0_config = {
+>>>> +       /* .l includes RINGOSC_CAL_L_VAL, CAL_L_VAL, L_VAL fields */
+>>>> +       .l = 0x4444003e,
 >>>
->>> Please don't, that's all I can say. Those are different fields. By
->>> looking at the config->l one can calculate PLL rate. If you overload
->>> the config->l with CAL_L and RINGOSC_CAL_L, the purpose of this field
->>> is gone.
->>>
->>> As the CAL_L and RINGOSC_CAL_L fields are static, just move them to
->>> the clk_lucid_ole_pll_configure().
+>>> I'd still insist on not touching the config.l field semantics.
 >>>
 >>
->> We feel it is better to include them in config->l and reuse existing
->> code than adding separate function for lucid ole pll configure. Even the
->> other pll configurations(like .user_ctl_val) contains multiple fields
->> but are passed as a single value from driver.
+>> We feel it is better to update config->l field and reuse existing code
+>> than adding separate function for lucid ole pll configure.
 > 
-> I suppose it was done this way because these fields are pretty much
-> not documented in the openly published data. And sometimes this
-> strikes, one can not easily check PLL's configuration. Or tune
-> it.There was a discussion whether we should start handling PLL outputs
-> properly (in CCF) rather than configuring them in a static way.
-> 
-> Also mentioned registers differ from PLL to PLL. For the RISCOSC_CAL_L
-> and CAL_L the value is static, if I'm not mistaken. Having them in the
-> configurable field doesn't sound correct.
-> 
-> Last, but not least. We are already handling CAL_L value completely in
-> the clock-alpha-pll.c for triton, lucid and lucid evo PLLs. What would
-> be the _reason_ to change that?
+> As you probably got it, I'm not convinced that it is a better
+> approach. You are feeding additional data in a single configuration
+> field and passing constant data as variadic one.
 > 
 
-Yes, will follow the approach similar to other existing PLL's and will 
-add a separate function for clk_lucid_ole_pll_configure() in next series.
+Will avoid this approach and will add separate lucid ole pll configure 
+function in next series.
+
+>>
+>>>> +       .alpha = 0x8000,
+>>>> +       .config_ctl_val = 0x20485699,
+>>>> +       .config_ctl_hi_val = 0x00182261,
+>>>> +       .config_ctl_hi1_val = 0x82aa299c,
+>>>> +       .test_ctl_val = 0x00000000,
+>>>> +       .test_ctl_hi_val = 0x00000003,
+>>>> +       .test_ctl_hi1_val = 0x00009000,
+>>>> +       .test_ctl_hi2_val = 0x00000034,
+>>>> +       .user_ctl_val = 0x00008400,
+>>>> +       .user_ctl_hi_val = 0x00000005,
+>>>> +};
+>>>> +
+>>>
+>>> [skipped the rest, LGTM]
+>>>
+>>>> +
+>>>> +static struct platform_driver cam_cc_sm8550_driver = {
+>>>> +       .probe = cam_cc_sm8550_probe,
+>>>> +       .driver = {
+>>>> +               .name = "cam_cc-sm8550",
+>>>> +               .of_match_table = cam_cc_sm8550_match_table,
+>>>> +       },
+>>>> +};
+>>>> +
+>>>> +static int __init cam_cc_sm8550_init(void)
+>>>> +{
+>>>> +       return platform_driver_register(&cam_cc_sm8550_driver);
+>>>> +}
+>>>> +subsys_initcall(cam_cc_sm8550_init);
+>>>
+>>> As it was pointed out, this driver is built as a module by default.
+>>> Please perform the tesing and cleanup before sending the driver and
+>>> use module_platform_driver.
+>>>
+>>
+>> We want clock drivers to be probed early in the bootup to avoid any
+>> probe deferrals of consumer drivers. If there is any scenario where
+>> clock drivers are built statically into kernel, then subsys_initcall()
+>> will ensure clock drivers are probed earlier. When built as module,
+>> subsys_initcall() will fallback to module_init() which is same as
+>> module_platform_driver().
+> 
+> Consumer driver probe deferrals are nowadays significantly prevented
+> by using devlink rather than depending on the initialisation level.
+> And I think both GKI and defconfig build camcc as modules.
+> 
+
+Will use module_platform_driver() in next series.
 
 Thanks,
 Jagadeesh
 
 >>
->> We also added a comment in code stating all the fields included in
->> config->l value, so user will be aware while calculating PLL frequency.
->>
 >> Thanks,
 >> Jagadeesh
+>>
+>>>> +
+>>>> +static void __exit cam_cc_sm8550_exit(void)
+>>>> +{
+>>>> +       platform_driver_unregister(&cam_cc_sm8550_driver);
+>>>> +}
+>>>> +module_exit(cam_cc_sm8550_exit);
+>>>> +
+>>>> +MODULE_DESCRIPTION("QTI CAMCC SM8550 Driver");
+>>>> +MODULE_LICENSE("GPL");
+>>>> --
+>>>> 2.40.1
+>>>>
+>>>
+>>>
 > 
 > 
 > 
