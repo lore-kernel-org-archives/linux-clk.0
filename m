@@ -2,78 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 823A2C04A94
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 20:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A871EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 20:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230506AbjFWUxB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 16:53:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38220 "EHLO
+        id S231947AbjFWUyj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 16:54:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232389AbjFWUwo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 16:52:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E9642949;
-        Fri, 23 Jun 2023 13:50:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0385D61B59;
-        Fri, 23 Jun 2023 20:50:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61111C433A9;
-        Fri, 23 Jun 2023 20:50:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687553429;
-        bh=L+6CxdM/BMnLbI2k1ibKf0RAH8c1L0gztQ5UBezDVR8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HPKXO7wP6NImxUExHPqC/aWnuJX+X+Mcj6fCGvAlfYMxHpu8dwTNuk7aOhHUKJjiz
-         SclNURIG8HmCfGiIQSVYerv30atjW1Jw9zveJFB45uWzbcIufe0qaJ+dpU/obrCe0e
-         DCpUepkEMQLt1xE94HtKGXLX0BsSNldR32ULCVu5+Mig/G5PK459eydA4++uCojxFy
-         K1zIgn8HWwnCQUhFvXS74ngs6PlxJGdVE1BHddLH+dhz59OuM1y2P31/dF056dhlCL
-         H4w0PE+5KY192bKP4uis465fnDb1+akMWHWZfK+DWB/ueaJnSOQVtfOHiDpSlvmVF3
-         oHYlhmlyI+P8Q==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2b45bc83f26so18668131fa.0;
-        Fri, 23 Jun 2023 13:50:29 -0700 (PDT)
-X-Gm-Message-State: AC+VfDyK70fTMbc7keckULTmrZ7YYjVbwh4ZuCdhJo0npr2MuYCm7/M3
-        /Ey2BdK2nkFaXU87hf/nGF0xTYEjPvMhWGbCsw==
-X-Google-Smtp-Source: ACHHUZ7XPdbDSO6fFPttpBHgX0oes55oWKYhlTk4zfNewB0e4KNRkHMN9UPS8Te16b23/SRNpvtL8i7GZAUllnlej10=
-X-Received: by 2002:a2e:9c98:0:b0:2b5:82c9:d85f with SMTP id
- x24-20020a2e9c98000000b002b582c9d85fmr6511427lji.11.1687553427421; Fri, 23
- Jun 2023 13:50:27 -0700 (PDT)
+        with ESMTP id S232779AbjFWUyQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 16:54:16 -0400
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43D926B0;
+        Fri, 23 Jun 2023 13:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1687553578; x=1719089578;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1g44sE6+Od6SMEJPDEyOlmg+p5HZYIyXIwcF8EJ/S8U=;
+  b=A0wc+R7dyyGyZWzXPllhvqTxARy3vyKhTTDlUiQCbmmFcHBrucnX/u8O
+   b3Tgw+m5ZIHQnKBOO5rtppyf9gaIuL2KJzzMWNbgU+olhPcMCn/UnC/K1
+   p913ZSXlSlCU6v5Zta8zQHCnF+HbJz088YJoolBT4zL3zpcXpjLV03q/9
+   WiZXtbUBmkM13fMQUeLrY+S3TMTd8EFhCBWgtWNV3Tj/6b1b7XyyC0Eqt
+   Hs9w9O9j0c6bZBdu0zIwdzsHM5jXJ6u7DzecuWnRSkGATkBS+iBxlquAz
+   ecUqHTKMSCv4ZsZ7kJvC+hL5HU4pbgIdAhmAXOxrSpRq9rGqLfFcciOmT
+   w==;
+X-IronPort-AV: E=Sophos;i="6.01,153,1684825200"; 
+   d="scan'208";a="231891816"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Jun 2023 13:52:57 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.21; Fri, 23 Jun 2023 13:52:56 -0700
+Received: from che-lt-i67070.amer.actel.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.21 via Frontend Transport; Fri, 23 Jun 2023 13:52:29 -0700
+From:   Varshini Rajendran <varshini.rajendran@microchip.com>
+To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <claudiu.beznea@microchip.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <vkoul@kernel.org>, <tglx@linutronix.de>, <maz@kernel.org>,
+        <lee@kernel.org>, <ulf.hansson@linaro.org>,
+        <tudor.ambarus@linaro.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <edumazet@google.com>,
+        <kuba@kernel.org>, <pabeni@redhat.com>, <linus.walleij@linaro.org>,
+        <p.zabel@pengutronix.de>, <olivia@selenic.com>,
+        <a.zummo@towertech.it>, <radu_nicolae.pirea@upb.ro>,
+        <richard.genoud@gmail.com>, <gregkh@linuxfoundation.org>,
+        <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <arnd@arndb.de>,
+        <olof@lixom.net>, <soc@kernel.org>, <linux@armlinux.org.uk>,
+        <sre@kernel.org>, <jerry.ray@microchip.com>,
+        <horatiu.vultur@microchip.com>, <durai.manickamkr@microchip.com>,
+        <varshini.rajendran@microchip.com>, <andrew@lunn.ch>,
+        <alain.volmat@foss.st.com>, <neil.armstrong@linaro.org>,
+        <mihai.sain@microchip.com>, <eugen.hristev@collabora.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <linux-usb@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-pm@vger.kernel.org>
+CC:     <Hari.PrasathGE@microchip.com>, <cristian.birsan@microchip.com>,
+        <balamanikandan.gunasundar@microchip.com>,
+        <manikandan.m@microchip.com>, <dharma.b@microchip.com>,
+        <nayabbasha.sayed@microchip.com>, <balakrishnan.s@microchip.com>
+Subject: [PATCH v2 44/45] dt-bindings: arm: add sam9x75 curiosity board
+Date:   Sat, 24 Jun 2023 02:00:55 +0530
+Message-ID: <20230623203056.689705-45-varshini.rajendran@microchip.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230623203056.689705-1-varshini.rajendran@microchip.com>
+References: <20230623203056.689705-1-varshini.rajendran@microchip.com>
 MIME-Version: 1.0
-References: <20230623201519.194269-1-afd@ti.com>
-In-Reply-To: <20230623201519.194269-1-afd@ti.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 23 Jun 2023 14:23:55 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKWUCJq8b4qfXHCiVmtZG8E8MpcTm54Q19dWr9hw8WM2g@mail.gmail.com>
-Message-ID: <CAL_JsqKWUCJq8b4qfXHCiVmtZG8E8MpcTm54Q19dWr9hw8WM2g@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: mfd: ti,j721e-system-controller: Remove
- syscon from example
-To:     Andrew Davis <afd@ti.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 23, 2023 at 2:15=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
->
-> The binding for ti,am654-ehrpwm-tbclk was updated to remove the syscon
-> compatible hint. Remove the same from the example in this binding.
->
-> Signed-off-by: Andrew Davis <afd@ti.com>
-> ---
->  .../devicetree/bindings/mfd/ti,j721e-system-controller.yaml     | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Add documentation for SAM9X75 Curiosity board.
 
-Thanks for the quick fix.
+Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+---
+ Documentation/devicetree/bindings/arm/atmel-at91.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/Documentation/devicetree/bindings/arm/atmel-at91.yaml b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+index dfb8fd089197..15b11feae46a 100644
+--- a/Documentation/devicetree/bindings/arm/atmel-at91.yaml
++++ b/Documentation/devicetree/bindings/arm/atmel-at91.yaml
+@@ -99,6 +99,12 @@ properties:
+           - const: microchip,sam9x60
+           - const: atmel,at91sam9
+ 
++      - description: Microchip SAM9X7 Evaluation Boards
++        items:
++          - const: microchip,sam9x75-curiosity
++          - const: microchip,sam9x7
++          - const: atmel,at91sam9
++
+       - description: Nattis v2 board with Natte v2 power board
+         items:
+           - const: axentia,nattis-2
+-- 
+2.25.1
 
-Stephen should apply this.
-
-Rob
