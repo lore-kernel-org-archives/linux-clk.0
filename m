@@ -2,92 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C43C001B3
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 14:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 992F0EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 14:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232156AbjFWO2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 10:28:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57670 "EHLO
+        id S232119AbjFWOve (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 10:51:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231243AbjFWO2J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 10:28:09 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9190E2139;
-        Fri, 23 Jun 2023 07:28:07 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35NEQbxr005942;
-        Fri, 23 Jun 2023 14:27:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=TC29x/yrqf12mrPqYDqnBOOE4V3VsGfOSofY8oLcnI4=;
- b=J20+NhySU3v0PP75WTymC2uD3Xhmh7erhLFd6uOzh5tjJ7o+kBC3MEyVL8vb8H6qw+hZ
- gQGAafhVAziG4yPe6hhwDZ+i9QUde8ixe2HGiuQ5zTqG69v6HCJUyF+QTRFF+qxMavXq
- gSXmR6Gqt+ynGav3S7bOu6q7Go50eo3YTsVfwX3bihbPnk0HNI+MfoAjoS+2F3+RFkTC
- mOLdcUhpvxDv7rYPEfAG4Qsw9dOuSf2H3wNZp3h/HmqWLWNCUcUFUHdvCkVmLOl7O7aH
- aGInlu+mduv6FX11q+kMMi+/NTuKAkfWF7sQdAgl7rIj+difD3Y0fFV3UDcVXs7VM7F6 5A== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rcurrhwqk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Jun 2023 14:27:28 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35NERRWJ024051
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Jun 2023 14:27:27 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 23 Jun
- 2023 07:27:26 -0700
-Message-ID: <1645ef35-8cd6-eea5-3fd8-0625a9e21e7c@quicinc.com>
-Date:   Fri, 23 Jun 2023 08:27:25 -0600
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 9/9] arm64: dts: qcom: msm8998: Use the correct GPLL0_DIV
- leg for MMCC
-Content-Language: en-US
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        with ESMTP id S230348AbjFWOvd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 10:51:33 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0855F13E;
+        Fri, 23 Jun 2023 07:51:32 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-311099fac92so865843f8f.0;
+        Fri, 23 Jun 2023 07:51:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687531890; x=1690123890;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4GWPNefMDyAgtV32k/k9l/iTX+NrL3zYtWQJRkI2m1Y=;
+        b=NNl4mtfIF8WBE4F6i7MROzM0ImHtSLxi7Hya+i1wfGV4EBPwpAcr+Hc9dAsuaGj0Z8
+         SVq9Ycnakb9iA8uThDmp8VdMH+afH6fHbMMO3njb8o1xMmpYve7dgNEszctyBPY/uso9
+         d/BTaRY4m2Gw3C4H/dqOV7nO98ViotLIcuvz8AD06vzWSBvrfjzoIIYooHq3dG3F44wF
+         iv+4BTVmeOg9ZGtNoC/NRnYLQ2vXrbLq3bPTEYE6BaiagXr2uUYnvbbjCDdSq/OiyQkS
+         b5mQJDIGNtEzt+RPV8P/0utYygiHV9zYFGNRfTqQ4BNhTg8VRGBTyYkpTGA2ILKG+lw8
+         gyuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687531890; x=1690123890;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4GWPNefMDyAgtV32k/k9l/iTX+NrL3zYtWQJRkI2m1Y=;
+        b=JhhQ1D546rimmtaS++PhUmzvuU2uPnXerK5jbnB7Ks98DcrRvl4QOB0i+8F5xxUT9/
+         fM/9DqOjnRH0rr74YgExjs6jCYVMFczS9RgmD0SqXhevJ/emta3X+pYzQrjs4/EVdHaM
+         mBRcBiwgxZbIpCdHlVFrc2dwCBPozf9U/gaIjw4Cs3Qev1iAvkF8fGl2ZdCO5KpKvIDv
+         XkJ2Nb5wfgIVgvy8xYQPirlU7jqaLIWr9VnTcA0n0rnSLhT2ATpmvBxpJl7Yul/Xj2DO
+         peytAACblpkjZz5xaDtW0XAWPPzEb0J3bLr8YV4aihrdpF4PWlLduT0GqbkydvqIyfE+
+         /GAQ==
+X-Gm-Message-State: AC+VfDwTr1Z4wp7UNtzE1gZT/S/tf5A4MqTYsrVzsGrTKWai41gpRVHq
+        XFT71L0tvtSA1mgbSG+aGsM=
+X-Google-Smtp-Source: ACHHUZ67a7sNPn2DrAUfig8qsrTDuH8nDqZc9PjE2leY+3VaCgEhkT+Wwj14GmCB3eKk5nPlIraXig==
+X-Received: by 2002:a5d:5608:0:b0:30e:3f55:ebc9 with SMTP id l8-20020a5d5608000000b0030e3f55ebc9mr18667510wrv.13.1687531890070;
+        Fri, 23 Jun 2023 07:51:30 -0700 (PDT)
+Received: from orome (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id m18-20020adfdc52000000b003113b3bc9d7sm9657765wrj.32.2023.06.23.07.51.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Jun 2023 07:51:29 -0700 (PDT)
+Date:   Fri, 23 Jun 2023 16:51:27 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>
-CC:     Marijn Suijten <marijn.suijten@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20230622-topic-8998clk-v1-0-5b7a0d6e98b1@linaro.org>
- <20230622-topic-8998clk-v1-9-5b7a0d6e98b1@linaro.org>
-From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20230622-topic-8998clk-v1-9-5b7a0d6e98b1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XHxbzhequdUuYGyi4k7ct57tx2mFKloM
-X-Proofpoint-ORIG-GUID: XHxbzhequdUuYGyi4k7ct57tx2mFKloM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-23_08,2023-06-22_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 malwarescore=0 mlxlogscore=645 suspectscore=0 spamscore=0
- adultscore=0 clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306230130
+        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
+Message-ID: <ZJWxbyCFQVr6K3d3@orome>
+References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
+ <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
+ <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
+ <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
+ <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org>
+ <ZJMYrVl--rCcj1cB@orome>
+ <p2qdhxxadsxakzgr2c5n6vs5tbfnjd22faynsl45jzooh7eejf@b5hzujmccljl>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z74TEtZTFTDhuuuB"
+Content-Disposition: inline
+In-Reply-To: <p2qdhxxadsxakzgr2c5n6vs5tbfnjd22faynsl45jzooh7eejf@b5hzujmccljl>
+User-Agent: Mutt/2.2.10 (2023-03-25)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/22/2023 5:57 AM, Konrad Dybcio wrote:
-> MMCC has its own GPLL0 legs - one for 1-1 and one for div-2 output.
-> We've already been using the correct one in the non-div case, start
-> doing so for the other one as well.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+--z74TEtZTFTDhuuuB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 22, 2023 at 01:24:12PM +0200, Maxime Ripard wrote:
+> Hi,
+>=20
+> On Wed, Jun 21, 2023 at 05:35:09PM +0200, Thierry Reding wrote:
+> > On Tue, Jun 20, 2023 at 12:09:09PM -0700, Stephen Boyd wrote:
+> > > Quoting Maxime Ripard (2023-06-19 00:26:19)
+> > > > On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
+> > > > > 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > > >=20
+> > > > > > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/=
+clk-super.c
+> > > > > > index 3f3a7a203c5f..7ec47942720c 100644
+> > > > > > --- a/drivers/clk/tegra/clk-super.c
+> > > > > > +++ b/drivers/clk/tegra/clk-super.c
+> > > > > > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_sup=
+er_mux_ops =3D {
+> > > > > >     .restore_context =3D clk_super_mux_restore_context,
+> > > > > >  };
+> > > > > > =20
+> > > > > > -static long clk_super_round_rate(struct clk_hw *hw, unsigned l=
+ong rate,
+> > > > > > -                            unsigned long *parent_rate)
+> > > > > > +static int clk_super_determine_rate(struct clk_hw *hw,
+> > > > > > +                               struct clk_rate_request *req)
+> > > > > >  {
+> > > > > >     struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw);
+> > > > > >     struct clk_hw *div_hw =3D &super->frac_div.hw;
+> > > > > > +   unsigned long rate;
+> > > > > > =20
+> > > > > >     __clk_hw_set_clk(div_hw, hw);
+> > > > > > =20
+> > > > > > -   return super->div_ops->round_rate(div_hw, rate, parent_rate=
+);
+> > > > > > +   rate =3D super->div_ops->round_rate(div_hw, req->rate,
+> > > > > > +                                     &req->best_parent_rate);
+> > > > > > +   if (rate < 0)
+> > >=20
+> > > There's the report that this condition is never possible. Maybe the
+> > > previous code was relying on an error value sometimes. Can we add
+> > > determine_rate to the div_ops and simplify this code? I asked on the
+> > > list for that earlier.
+> >=20
+> > I was able to reproduce this on a Tegra30 Beaver, but the problem is
+> > more straightforward than this. The crash I was seeing during boot was
+> > because cclk_super_determine_rate() was still calling the round_rate()
+> > callback from tegra_clk_super_ops, which this patch removed (and added
+> > determine_rate() instead).
+> >=20
+> > The following fixes the problem for me. It's basically converting the
+> > round_rate() call to an equivalent determine_rate() call.
+>=20
+> Thanks for figuring it out :)
+>=20
+> > Dmitry, can you verify that this fixes the issue that you were seeing?
+> >=20
+> > Thierry
+> >=20
+> > --- >8 ---
+> > diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/teg=
+ra/clk-tegra-super-cclk.c
+> > index 68d7bcd5fc8a..8a2bb4ae4fd2 100644
+> > --- a/drivers/clk/tegra/clk-tegra-super-cclk.c
+> > +++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
+> > @@ -86,9 +86,16 @@ static int cclk_super_determine_rate(struct clk_hw *=
+hw,
+> >  	if (rate <=3D pllp_rate) {
+> >  		if (super->flags & TEGRA20_SUPER_CLK)
+> >  			rate =3D pllp_rate;
+> > -		else
+> > -			rate =3D tegra_clk_super_ops.round_rate(hw, rate,
+> > -							      &pllp_rate);
+> > +		else {
+> > +			struct clk_rate_request parent =3D {
+> > +				.rate =3D req->rate,
+> > +				.best_parent_rate =3D pllp_rate,
+> > +			};
+>=20
+> If it works and you submit a patch later, this needs to be changed to
+> clk_hw_init_rate_request()
+
+I've tried this and while it seems to work, this doesn't seem to be
+exactly the same as what the original code does. From what I understand
+the parent clock can be either pll-p or pll-x, but what we want to do in
+this branch is check what a configuration would look like for pll-p as
+the parent. clk_hw_init_rate_request() would initialize the request with
+data for the current parent, even if that's not pll-p, so I'm a bit
+hesitant to go with that instead of manually hard-coding this to pll-p.
+
+Thierry
+
+--z74TEtZTFTDhuuuB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmSVsW0ACgkQ3SOs138+
+s6FdHA//W2/6ccLPcG/8/sUaC/XVmd3gK0LNaPUZlgxMO2TTvmH3racL1A9vjpOw
+M2LIWVvfMeMbGjR7MOxpYRFCiFcao5K59ZEjEh8iIDhq53RmcVnK5V/Za1j178EG
+cuAWQQM249KGDgxBn00h9Z2KmbBr/umv1tYDH+46/l4txMw6Nk/82J6Zspt4xph8
+aTHFC/Q4FaeqONZqLbzz/cgNMz/xqYDvS7CWGWErPJSFn49PRyPrZaqoaDJsUnh5
+gtYwW1jRm33T+k46jazEQeI8IksZ2l7cbilrprviQ8Pn0e6CDSs/Q6Yhf6vAWgF5
+sPZmUC22nbVWkRb5XZJDw6LBpsDyxV4+Eh2euGcliCdzBJgjKtdL3xe4WJNmQTuu
+Wvv64rudJiWGxJpSO5MxHZQovMr0bngxBKuciI5M7j7xSGMAknvUMRwz93WfVqEL
+iFgWxU5/tyNlba0jIyRXUr8wY6Ug327jeiVqghTH5b/u5M0nssNIFOaLtvxUEPQ0
+Gj9vx1zAKA+IS3rys+2q6oqR26hrMis1CB+tx1Gs+uhRZkBxDAps5EbUEwN3iSO5
+H2TgJQctqX3tmrKrY65FPkLe3WtJKZQoLBVGMHJvX7zePxnmBVmiKE3xZMBbhyJZ
+WygGpbbzG2hykH8VW5/ATsZC+6t3+rjUP7rxHBHP4fG8v16b+Pk=
+=zjNc
+-----END PGP SIGNATURE-----
+
+--z74TEtZTFTDhuuuB--
