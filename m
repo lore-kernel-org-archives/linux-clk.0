@@ -2,123 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A97EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 10:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089F8C001DC
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 10:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbjFWKID (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 06:08:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45742 "EHLO
+        id S231617AbjFWKJj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 06:09:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbjFWKHh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 06:07:37 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F182961;
-        Fri, 23 Jun 2023 03:06:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BD152619F3;
-        Fri, 23 Jun 2023 10:05:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0B5C433C8;
-        Fri, 23 Jun 2023 10:05:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687514734;
-        bh=u13o1+rrFLOmxywhCwBs2AYh1dkZZnD42oB3y8jhIpU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fh+7VyxZB1iLWw7j5+UyckQsRocruM9cSwxZG9GvVHMa8SEm06fMMZ4eTxtrpmSXy
-         FmOYLwb7tc+/UkDHE9k/vuXLLiWesRnYqh2Pt5UU1C53VH03UU7i/a+x+j5ZOgCgXf
-         PWCtyZoZwnrn8tcPOHB7bzWadciBfS9s3kSdiakWyt3dX7mgMe40vCjKukoP469Uq7
-         5KK3Cn0zs2Fwkya5+kmy1/cGKnnfMkmIg46+8T3GCAiEtIs6jXgxuog1+thdql0Uwu
-         y/Jm/skSiuPnAKtWOfCXC6BPvU8Rz6faa8a5zRuex5xjVYzra7xshse/l1Q40KNNzr
-         U38C+9AV2c6BQ==
-Date:   Fri, 23 Jun 2023 11:05:30 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
+        with ESMTP id S230044AbjFWKJX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 06:09:23 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1ADEC35AB;
+        Fri, 23 Jun 2023 03:07:56 -0700 (PDT)
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35N8TPLV026918;
+        Fri, 23 Jun 2023 10:07:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=zFqDMo7rpGAKhiEeRRQPX26218zJTZHgRvQDvL6TtYk=;
+ b=oxZre7cmiwcf61z+uEjxcpoYwvOa/fOEqQdjyS09V+BjQ8aJIC4NJZxiYG+Ghy4aHjgp
+ Bw4XHIUbO2K+DowgKssXvpTIUud+F31S6nHReZEnG0WhwtMAF/Jq39LCCH1VZBb8P1Ho
+ buFHDHjB+yLIjhT8G8uvuoFExPv4Wofur62+haCNqmEbxI4bTzmLUUybAajXQDLi4DWP
+ +1y56shWrfYHBbQq0hwNJhzPb1NCxh3MwB9hjiExPXHmVksUXO9ypC2oTl4KoLWEa7mG
+ HCdhmuaL48MS6sZtpRDPdjwWF2rt1/fNG+l8gLz0wwoUkHxyTmXdCkCfJbcI13oO9uzu qg== 
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rc0sk5bkr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jun 2023 10:07:36 +0000
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+        by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35NA7Z12014884
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jun 2023 10:07:35 GMT
+Received: from [10.218.48.111] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 23 Jun
+ 2023 03:07:30 -0700
+Message-ID: <84281f9f-18a3-2cd0-cb48-8cd64ae3391b@quicinc.com>
+Date:   Fri, 23 Jun 2023 15:37:17 +0530
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 0/2] Update GCC clocks for QDU1000 and QRU1000 SoCs
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Bjorn Andersson <quic_bjorande@quicinc.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado 
-        <nfraprado@collabora.com>,
-        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH v2 0/5] spi: Add CSI support for Renesas RZ/V2M
-Message-ID: <ZJVuan8ddJyhU23M@finisterre.sirena.org.uk>
-References: <20230622113341.657842-1-fabrizio.castro.jz@renesas.com>
- <168748034127.332493.277333132642198960.b4-ty@kernel.org>
- <CAMuHMdU53jn5UP-5xB_YLh2T5gPaxL1dxWY5Vr5D8p2mUDnqwA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tNhmPaleGGTul9gb"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU53jn5UP-5xB_YLh2T5gPaxL1dxWY5Vr5D8p2mUDnqwA@mail.gmail.com>
-X-Cookie: Slow day.  Practice crawling.
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC:     Melody Olvera <quic_molvera@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230616104941.921555-1-quic_imrashai@quicinc.com>
+ <c963cc67-5c8d-4503-af0e-082ee0be8688@linaro.org>
+From:   Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <c963cc67-5c8d-4503-af0e-082ee0be8688@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8usBRA1Tp4urOLNEpEm55H2t7K_RWPa-
+X-Proofpoint-ORIG-GUID: 8usBRA1Tp4urOLNEpEm55H2t7K_RWPa-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-23_04,2023-06-22_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ phishscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
+ malwarescore=0 adultscore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306230090
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---tNhmPaleGGTul9gb
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 23, 2023 at 08:49:05AM +0200, Geert Uytterhoeven wrote:
-> On Fri, Jun 23, 2023 at 2:32=E2=80=AFAM Mark Brown <broonie@kernel.org> w=
-rote:
+On 6/16/2023 4:51 PM, Konrad Dybcio wrote:
+> On 16.06.2023 12:49, Imran Shaik wrote:
+>> Update GCC clocks and add support for GDSCs for QDU1000 and QRU1000 SoCs.
+>> Also, add support for v2 variant as well.
+> Does that imply the first submission concerned v1/pre-mass-production chips?
+> 
+> We usually don't support these upstream, as they are rather short-lived and
+> never (officially, anyway) escape Qualcomm internal..
+> 
+> Konrad
 
-> > [1/5] spi: dt-bindings: Add bindings for RZ/V2M CSI
-> >       commit: db63e7ad2895409f78a04f331f781baa7a879dd7
-> > [2/5] clk: renesas: r9a09g011: Add CSI related clocks
-> >       commit: 7c78eb3e5d30eaa217cecaa32711e41cd849d498
-> > [3/5] spi: Add support for Renesas CSI
-> >       commit: dcf92036cb3e1b7bf3472109e4290a0937b270dd
-> > [4/5] arm64: dts: renesas: r9a09g011: Add CSI nodes
-> >       commit: ef643c6b57020ee279d18636d9d967ee048dbffa
-> > [5/5] arm64: defconfig: Enable Renesas RZ/V2M CSI driver
-> >       commit: dfbd12ae0e7c761e07369f5a2d55fe06eb54ad31
->=20
-> I hoped this would have been a bug in b4 thanks, but unfortunately it
-> is not.
->=20
-> Please do not apply unreviewed clock, DTS, and defconfig patches to
-> your tree.  These are intended to go upstream through the renesas-clk
-> and clk, renesas-dt and soc, resp. renesas-defconfig and soc trees.
+Sure, will update the next series to support only the latest hardware 
+version.
 
-Sorry, the series was only partially copied to me so it wasn't very
-visible that there were other patches - I just saw a simple 2 patch
-series in my inbox and it's not terribly visible in the rest of the
-process that there's more patches.
+Thanks,
+Imran
 
---tNhmPaleGGTul9gb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmSVbmkACgkQJNaLcl1U
-h9DFMgf/ehmxBqPaGijsQRJEGrYX5x/j1Agmk7LmRCreemyD/EaJyaB1aT3mdcoC
-7nS4KSunL13OM6AhhupjXibNhajMdQrVutiPRMQWoEOXlfTj8PU8wXCUrvlcIyMx
-DXzKAJR8GrRvHH8QiyoS0rngoyLqNrO+cU09zZeZ1oxo2tVLX5V9BmAzzvbtAOdl
-l5BpijDcQlRMLGVaZJ6NtJE4AcSZUCu3jjk96gqoIRM/GFoh4RfmL7XpqpxB/dBx
-QNXN6bRIpFOfALKmwjkM5YSD4lCVH4rd6NC8Tsu0cLzuw1OWbPUikjsQhUCcofl7
-RM/04tYgoCZb6kamopH8Ak4q8hydrA==
-=/eXQ
------END PGP SIGNATURE-----
-
---tNhmPaleGGTul9gb--
+>>
+>> Imran Shaik (2):
+>>    dt-bindings: clock: Update GCC clocks for QDU1000 and QRU1000 SoCs
+>>    clk: qcom: gcc-qdu1000: Update GCC clocks and add support for GDSCs
+>>
+>>   .../bindings/clock/qcom,qdu1000-gcc.yaml      |   6 +-
+>>   drivers/clk/qcom/gcc-qdu1000.c                | 162 ++++++++++++------
+>>   include/dt-bindings/clock/qcom,qdu1000-gcc.h  |   4 +-
+>>   3 files changed, 118 insertions(+), 54 deletions(-)
+>>
