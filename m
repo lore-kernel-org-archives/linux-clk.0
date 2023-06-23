@@ -2,71 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC147C001B0
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Jun 2023 20:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E0EC001B0
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 00:32:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230355AbjFVUeP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Jun 2023 16:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41658 "EHLO
+        id S230170AbjFWAci (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Jun 2023 20:32:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229961AbjFVUeO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 16:34:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC8FE9;
-        Thu, 22 Jun 2023 13:34:14 -0700 (PDT)
+        with ESMTP id S230083AbjFWAch (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Jun 2023 20:32:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 007B12105;
+        Thu, 22 Jun 2023 17:32:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 96F0E618EC;
-        Thu, 22 Jun 2023 20:34:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 631A9C433CB;
-        Thu, 22 Jun 2023 20:34:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8545661937;
+        Fri, 23 Jun 2023 00:32:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 063D3C433C8;
+        Fri, 23 Jun 2023 00:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687466053;
-        bh=/jrzo23xohw0vOq31QrW3E4pCIODhVSB7kAOkjyOfmw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mr59f+XetIsEv2vcmPh6au36GSgtM2a39S4Q6YyBcjAK6WEvfEP254zY4xjt09Bor
-         5NE1BApKq0EoZZYSfjqfI+PDxh/F0qxM2iBmSzVob+cqeTlx64CuvQXkU4Sn4TPQtK
-         b9RlcOqaFChm5+9PT3oHu3xVxudPdmyZ37eHnDbKiVTfBAu7tiVETes5ldRGkqxgIe
-         drVSyECFEMdFuKwNoUcOIQhdbnIAvf00vP4uJamdAw5Z35F/xsd1rfOZEns3Gc/zIW
-         YzOeEKwvJYm/HRqXCo0vVQ8srnqvAs4v6GTBSGZ0oUb5rg2/RyKX2pxqVirPUTy5wr
-         rLZQrun8iACEg==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
+        s=k20201202; t=1687480350;
+        bh=rGrpoxT2JrB6gIl6SWv/cI8uqEJ1qle+1MaoCZ8MyQo=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=UGKn0LdI9edM5zspg3LLVLtUP1m/qVoh5pTUFvB/oE81127MpoNWZrxWa0pCPa0k0
+         hKSytPl6HEI8MZ6qB4IuDl2ceb0xcsuWIh0ke0w8i/dtLim0LfA0LhLrUoW0bsQxla
+         JHAZ65/A2e4ButgEra8GNOroIdPKf3D9wsVWFaXUgWcsctbDF8GM8ibanQbSkHBde4
+         x31Eycwo8hjk7sLg2RKN5/sdaUaaCxT2ombsC9ibNP7gYG6GBNE7W8SeybUSxpPzgv
+         w+0j/kIioKqo8BC/XwrN9dHNHLfArPH99GRQ7Q3lnphEDjCki61vMt3atxGxfnxMrO
+         iC1ehJNJxh9YQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] SC8280XP clock runtime pm
-Date:   Thu, 22 Jun 2023 13:38:11 -0700
-Message-ID: <168746628695.107789.3465009246870780002.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
-References: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= 
+        <nfraprado@collabora.com>,
+        =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+In-Reply-To: <20230622113341.657842-1-fabrizio.castro.jz@renesas.com>
+References: <20230622113341.657842-1-fabrizio.castro.jz@renesas.com>
+Subject: Re: [PATCH v2 0/5] spi: Add CSI support for Renesas RZ/V2M
+Message-Id: <168748034127.332493.277333132642198960.b4-ty@kernel.org>
+Date:   Fri, 23 Jun 2023 01:32:21 +0100
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-c6835
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Mon, 19 Jun 2023 18:13:16 +0200, Konrad Dybcio wrote:
-> Keeping power domains always enabled hinders power efficiency. Add runtime
-> PM to 8280 clock controllers to prevent that.
+On Thu, 22 Jun 2023 12:33:36 +0100, Fabrizio Castro wrote:
+> This series is to add support for the Clocked Serial Interface (CSI)
+> IP found in the Renesas RZ/V2M SoC.
 > 
+> Thanks,
+> Fab
 > 
+> v2: edited list of include files in drivers/spi/spi-rzv2m-csi.c
+> 
+> [...]
 
-Applied, thanks!
+Applied to
 
-[1/2] clk: qcom: gpucc-sc8280xp: Add runtime PM
-      commit: 9bbcb892a7cd06c8156e6de211a8d7d45ee48086
-[2/2] clk: qcom: gcc-sc8280xp: Add runtime PM
-      commit: 2a541abd98370f9931c889c187eef7458720b57b
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Thanks!
+
+[1/5] spi: dt-bindings: Add bindings for RZ/V2M CSI
+      commit: db63e7ad2895409f78a04f331f781baa7a879dd7
+[2/5] clk: renesas: r9a09g011: Add CSI related clocks
+      commit: 7c78eb3e5d30eaa217cecaa32711e41cd849d498
+[3/5] spi: Add support for Renesas CSI
+      commit: dcf92036cb3e1b7bf3472109e4290a0937b270dd
+[4/5] arm64: dts: renesas: r9a09g011: Add CSI nodes
+      commit: ef643c6b57020ee279d18636d9d967ee048dbffa
+[5/5] arm64: defconfig: Enable Renesas RZ/V2M CSI driver
+      commit: dfbd12ae0e7c761e07369f5a2d55fe06eb54ad31
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
