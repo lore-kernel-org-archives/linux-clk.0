@@ -2,207 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2800EB64DD
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 15:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D657CC001B3
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 15:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231998AbjFWPCt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 11:02:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
+        id S232431AbjFWPIV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 11:08:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231433AbjFWPCs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 11:02:48 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47F8010F6;
-        Fri, 23 Jun 2023 08:02:46 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id EF7E35C00E5;
-        Fri, 23 Jun 2023 11:02:42 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Fri, 23 Jun 2023 11:02:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1687532562; x=1687618962; bh=9H
-        BC451nYmRe1mMwl7YlJpIjFCmK1bCb8pE/bk/d8TA=; b=3C1bcvS7mOwr6y0PfA
-        U5DANpibBdDEqo6HUePEjacFKBr3Hk7dR+ud79/Ai4X6aG9tvyQ8/DVHCoZffWfV
-        43J6Wu6Vz/j1Be2LtTqjTsWjfxD+d4Jyfc/T30awy0He8mKHV6KYJDicY9dzfFsn
-        28Uh/uzAg+uXF3MpuTCwC/f6iiElx7rW3LkzqhL9zIJuPdXVZzniilCo+CyLxb2S
-        I9sP2rx0qMtBfQSZyFuWEiUWpVabqnKfY2/ltXi852T0NZD3D4ewdkXE/mVsk8o+
-        FCMjOmQIp1ebhGMvRWNtSidlcHD5RYtSlm/i4N2GWVI+W7IGetjYxl8xlE4uRGFK
-        NrpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1687532562; x=1687618962; bh=9HBC451nYmRe1
-        mMwl7YlJpIjFCmK1bCb8pE/bk/d8TA=; b=P3HDaludACD9PEwcD16ogmZcGvoia
-        ftNQhlzLXvG/lfQ06A/7U9sykIJz8TIdI6OXbY5Zpz5DA0MFuvyh2agVXZi7Qkrg
-        eg0Qj9t5Fw+ixhVPyrzZC9EPol7SYRfcgRrYU57CSCeO9UDSpv7vwvqEr+NVG0hC
-        2fiza7lXvW5X/vlZjefHZWKew+99vfV/MfOB2bfPEJWDXscvs2cAxSVc9Kkw++PQ
-        S6lgWzs6z74O6L9GZyQzkuhkSOh/XCt6Vkqej3B15SJkMaws73tUD44/XTwonpU1
-        GerZMJCc2RmhwKtMqFjWnewM5wAioh4dLVznfOaoll99F1UTgEJ0AhXyQ==
-X-ME-Sender: <xms:ErSVZKA1E2EERnFzwwDTaoWCn_f25kCQA3b0nG2cei2R6SUCOu9pwQ>
-    <xme:ErSVZEix0Q5PnIojS8FVsxtKevDGXIxcASKFM1vNoJvHlhm8t2Szpm-V0p2k4_CoY
-    PJH5HTzybg6NuvHYWo>
-X-ME-Received: <xmr:ErSVZNmDT4qiIThmdVKm9eQXKioi9gkweEOsrE4pidpyN4cFocKhwACQOg7oKVbEDtQ7m3rczbw0eUV-njP9GQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeeggedgkeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtjeenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeeludefgeduheevleejiefgheetvdffheejvdejvefhudeuveehueevvdev
-    veeuieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:ErSVZIyFP1Mjv60rMsKRfT4wqjg0GWonCK9UO1zbbrxinRwUc6ZB8A>
-    <xmx:ErSVZPRoW0UH-BrrSs9JJykTuOIsdxOa9yEPaMPs4C2NTZoiaJ63lw>
-    <xmx:ErSVZDaEDYKs_MPkCRNPeSoWRHkF0_qZu6kGPKwVcGCYhz-UMhiSFQ>
-    <xmx:ErSVZIQdqq3csLPqVu9XnaG9nOpKDs1FNNARZ3rl1sJiSNVkg15vjQ>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 23 Jun 2023 11:02:41 -0400 (EDT)
-Date:   Fri, 23 Jun 2023 17:02:34 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
+        with ESMTP id S232412AbjFWPIQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 11:08:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 303DD1BFC;
+        Fri, 23 Jun 2023 08:08:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B4C3A61A91;
+        Fri, 23 Jun 2023 15:08:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E3A4C433C0;
+        Fri, 23 Jun 2023 15:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687532891;
+        bh=3aJbXXS1dxHMwN8plKfOpCM0MRNpJNGkqLGy+rJ2hMI=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=g266/4YXW1nG+ZsPTv1VlNoIknk0KWvJqNxf7LSps5gzmHyamx6YZsd39Jiff8hjx
+         2R/eTcdohWwMre7qlditLLLj90Xi8jOpvzM58isG2KPwoOFaFnQ/1O+VDLn1eXGUqT
+         c4aCRU7qSyJnYrr82+Tn6d5FtAJjBFwFhtCTQKNgPugqc+tVICQpMCu6LsT5kWNvLo
+         1SJkAE97fTgfgUinFuv67hMACP1Ry5YW/5AdQbLuQFual+yt5FWBVow7rj9apXm09O
+         cwx4g3A8d1py3P4Mea4/TPAfiC5THfmgMDJGmb+q6XR6F7453CBEeCarJlCb0sAdlI
+         bJ2tAIADPbWyg==
+From:   Mark Brown <broonie@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 65/68] clk: tegra: super: Switch to determine_rate
-Message-ID: <ndbpoa3d53xzfcnpqilipvrt7jggn2ye6hld5idvgl5dty6qax@hh25esensjpy>
-References: <20221018-clk-range-checks-fixes-v4-0-971d5077e7d2@cerno.tech>
- <20221018-clk-range-checks-fixes-v4-65-971d5077e7d2@cerno.tech>
- <700c0c62-defd-01c1-3b1d-8a760dfa194f@gmail.com>
- <rgvgzbebuvehxhjxgalkqswodyt5mvh7vr57synt3gsuadlpj2@j2mlwe2tozeb>
- <ebfdd001b9e83199ec618362b79f689c.sboyd@kernel.org>
- <ZJMYrVl--rCcj1cB@orome>
- <p2qdhxxadsxakzgr2c5n6vs5tbfnjd22faynsl45jzooh7eejf@b5hzujmccljl>
- <ZJWxbyCFQVr6K3d3@orome>
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= 
+        <nfraprado@collabora.com>,
+        =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+In-Reply-To: <20230622113341.657842-1-fabrizio.castro.jz@renesas.com>
+References: <20230622113341.657842-1-fabrizio.castro.jz@renesas.com>
+Subject: Re: (subset) [PATCH v2 0/5] spi: Add CSI support for Renesas
+ RZ/V2M
+Message-Id: <168753288294.678655.6301529278145768890.b4-ty@kernel.org>
+Date:   Fri, 23 Jun 2023 16:08:02 +0100
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kiqchr65ncyvwplr"
-Content-Disposition: inline
-In-Reply-To: <ZJWxbyCFQVr6K3d3@orome>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-c6835
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 22 Jun 2023 12:33:36 +0100, Fabrizio Castro wrote:
+> This series is to add support for the Clocked Serial Interface (CSI)
+> IP found in the Renesas RZ/V2M SoC.
+> 
+> Thanks,
+> Fab
+> 
+> v2: edited list of include files in drivers/spi/spi-rzv2m-csi.c
+> 
+> [...]
 
---kiqchr65ncyvwplr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to
 
-On Fri, Jun 23, 2023 at 04:51:27PM +0200, Thierry Reding wrote:
-> On Thu, Jun 22, 2023 at 01:24:12PM +0200, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Wed, Jun 21, 2023 at 05:35:09PM +0200, Thierry Reding wrote:
-> > > On Tue, Jun 20, 2023 at 12:09:09PM -0700, Stephen Boyd wrote:
-> > > > Quoting Maxime Ripard (2023-06-19 00:26:19)
-> > > > > On Mon, Jun 19, 2023 at 02:38:59AM +0300, Dmitry Osipenko wrote:
-> > > > > > 05.05.2023 14:26, Maxime Ripard =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > > > > >=20
-> > > > > > > diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegr=
-a/clk-super.c
-> > > > > > > index 3f3a7a203c5f..7ec47942720c 100644
-> > > > > > > --- a/drivers/clk/tegra/clk-super.c
-> > > > > > > +++ b/drivers/clk/tegra/clk-super.c
-> > > > > > > @@ -142,15 +142,22 @@ static const struct clk_ops tegra_clk_s=
-uper_mux_ops =3D {
-> > > > > > >     .restore_context =3D clk_super_mux_restore_context,
-> > > > > > >  };
-> > > > > > > =20
-> > > > > > > -static long clk_super_round_rate(struct clk_hw *hw, unsigned=
- long rate,
-> > > > > > > -                            unsigned long *parent_rate)
-> > > > > > > +static int clk_super_determine_rate(struct clk_hw *hw,
-> > > > > > > +                               struct clk_rate_request *req)
-> > > > > > >  {
-> > > > > > >     struct tegra_clk_super_mux *super =3D to_clk_super_mux(hw=
-);
-> > > > > > >     struct clk_hw *div_hw =3D &super->frac_div.hw;
-> > > > > > > +   unsigned long rate;
-> > > > > > > =20
-> > > > > > >     __clk_hw_set_clk(div_hw, hw);
-> > > > > > > =20
-> > > > > > > -   return super->div_ops->round_rate(div_hw, rate, parent_ra=
-te);
-> > > > > > > +   rate =3D super->div_ops->round_rate(div_hw, req->rate,
-> > > > > > > +                                     &req->best_parent_rate);
-> > > > > > > +   if (rate < 0)
-> > > >=20
-> > > > There's the report that this condition is never possible. Maybe the
-> > > > previous code was relying on an error value sometimes. Can we add
-> > > > determine_rate to the div_ops and simplify this code? I asked on the
-> > > > list for that earlier.
-> > >=20
-> > > I was able to reproduce this on a Tegra30 Beaver, but the problem is
-> > > more straightforward than this. The crash I was seeing during boot was
-> > > because cclk_super_determine_rate() was still calling the round_rate()
-> > > callback from tegra_clk_super_ops, which this patch removed (and added
-> > > determine_rate() instead).
-> > >=20
-> > > The following fixes the problem for me. It's basically converting the
-> > > round_rate() call to an equivalent determine_rate() call.
-> >=20
-> > Thanks for figuring it out :)
-> >=20
-> > > Dmitry, can you verify that this fixes the issue that you were seeing?
-> > >=20
-> > > Thierry
-> > >=20
-> > > --- >8 ---
-> > > diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/t=
-egra/clk-tegra-super-cclk.c
-> > > index 68d7bcd5fc8a..8a2bb4ae4fd2 100644
-> > > --- a/drivers/clk/tegra/clk-tegra-super-cclk.c
-> > > +++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
-> > > @@ -86,9 +86,16 @@ static int cclk_super_determine_rate(struct clk_hw=
- *hw,
-> > >  	if (rate <=3D pllp_rate) {
-> > >  		if (super->flags & TEGRA20_SUPER_CLK)
-> > >  			rate =3D pllp_rate;
-> > > -		else
-> > > -			rate =3D tegra_clk_super_ops.round_rate(hw, rate,
-> > > -							      &pllp_rate);
-> > > +		else {
-> > > +			struct clk_rate_request parent =3D {
-> > > +				.rate =3D req->rate,
-> > > +				.best_parent_rate =3D pllp_rate,
-> > > +			};
-> >=20
-> > If it works and you submit a patch later, this needs to be changed to
-> > clk_hw_init_rate_request()
->=20
-> I've tried this and while it seems to work, this doesn't seem to be
-> exactly the same as what the original code does. From what I understand
-> the parent clock can be either pll-p or pll-x, but what we want to do in
-> this branch is check what a configuration would look like for pll-p as
-> the parent. clk_hw_init_rate_request() would initialize the request with
-> data for the current parent, even if that's not pll-p, so I'm a bit
-> hesitant to go with that instead of manually hard-coding this to pll-p.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Ah, yes, sorry.
+Thanks!
 
-Maybe we need some kind of variant to address this then, but for the
-time being you can at least set req->min_rate and req->max_rate using
-clk_hw_get_rate_range.
+[1/5] spi: dt-bindings: Add bindings for RZ/V2M CSI
+      commit: db63e7ad2895409f78a04f331f781baa7a879dd7
+[3/5] spi: Add support for Renesas CSI
+      commit: dcf92036cb3e1b7bf3472109e4290a0937b270dd
 
-Maxime
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
---kiqchr65ncyvwplr
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJW0CgAKCRDj7w1vZxhR
-xck6AP47jjiyIfFjhhpeDI4+/14ZAIO+9jSyjHNkE/ehNkrcLwEA2RCqRJO2QWME
-zvVMKV63J34Zd1ilFsSnX7zvlRWu1w4=
-=Y4Yr
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---kiqchr65ncyvwplr--
+Thanks,
+Mark
+
