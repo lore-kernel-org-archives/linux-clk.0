@@ -2,111 +2,78 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD52C0015E
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 20:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 823A2C04A94
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 20:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232291AbjFWUw6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 16:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36790 "EHLO
+        id S230506AbjFWUxB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 16:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231547AbjFWUwk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 16:52:40 -0400
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 777CD46B9;
-        Fri, 23 Jun 2023 13:50:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1687553454; x=1719089454;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FQaqOrc0da577LMZqP/Fi64MeTY0WzHny0EnnioIJsQ=;
-  b=kCeYn25tXoEN0+0UJA1WPcKQNDXCLQg4CJO3eNxx1qdP7n9T2QbXgnUG
-   Aczs+C4ZdZPBygDqfynpwDCnQjRVEPIW5zIAiPBaVSB71YOwZMvKlmELR
-   8GP0WVn89G7/Nd3sXcV/MxVCx/CfvQ0mJg9F+qisT+vW20ZBa3Tb+LZhl
-   Mxz2LPzWXEIWR+NJAhIA/zFBmRMhmT/ZUW/7o19PQbzmcTdYLBoPYTFsO
-   fe7zrk2LzI8pbAhvsMKYcmpWiDncWxuuhJ4r5o8u+UCl+XkjSIIIfyLNQ
-   6EX4wJg+pyeHSdmRfhFRghfS9dP3gSQSMV0LhrfghPsXvOGQ8b4MWh90P
-   Q==;
-X-IronPort-AV: E=Sophos;i="6.01,153,1684825200"; 
-   d="scan'208";a="231891639"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Jun 2023 13:50:16 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.21; Fri, 23 Jun 2023 13:49:59 -0700
-Received: from che-lt-i67070.amer.actel.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.21 via Frontend Transport; Fri, 23 Jun 2023 13:49:30 -0700
-From:   Varshini Rajendran <varshini.rajendran@microchip.com>
-To:     <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <claudiu.beznea@microchip.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <vkoul@kernel.org>, <tglx@linutronix.de>, <maz@kernel.org>,
-        <lee@kernel.org>, <ulf.hansson@linaro.org>,
-        <tudor.ambarus@linaro.org>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <vigneshr@ti.com>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>, <linus.walleij@linaro.org>,
-        <p.zabel@pengutronix.de>, <olivia@selenic.com>,
-        <a.zummo@towertech.it>, <radu_nicolae.pirea@upb.ro>,
-        <richard.genoud@gmail.com>, <gregkh@linuxfoundation.org>,
-        <lgirdwood@gmail.com>, <broonie@kernel.org>,
-        <wim@linux-watchdog.org>, <linux@roeck-us.net>, <arnd@arndb.de>,
-        <olof@lixom.net>, <soc@kernel.org>, <linux@armlinux.org.uk>,
-        <sre@kernel.org>, <jerry.ray@microchip.com>,
-        <horatiu.vultur@microchip.com>, <durai.manickamkr@microchip.com>,
-        <varshini.rajendran@microchip.com>, <andrew@lunn.ch>,
-        <alain.volmat@foss.st.com>, <neil.armstrong@linaro.org>,
-        <mihai.sain@microchip.com>, <eugen.hristev@collabora.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <linux-usb@vger.kernel.org>,
-        <linux-watchdog@vger.kernel.org>, <linux-pm@vger.kernel.org>
-CC:     <Hari.PrasathGE@microchip.com>, <cristian.birsan@microchip.com>,
-        <balamanikandan.gunasundar@microchip.com>,
-        <manikandan.m@microchip.com>, <dharma.b@microchip.com>,
-        <nayabbasha.sayed@microchip.com>, <balakrishnan.s@microchip.com>
-Subject: [PATCH v2 38/45] power: reset: at91-poweroff: lookup for proper pmc dt node for sam9x7
-Date:   Sat, 24 Jun 2023 02:00:49 +0530
-Message-ID: <20230623203056.689705-39-varshini.rajendran@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230623203056.689705-1-varshini.rajendran@microchip.com>
-References: <20230623203056.689705-1-varshini.rajendran@microchip.com>
+        with ESMTP id S232389AbjFWUwo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 16:52:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E9642949;
+        Fri, 23 Jun 2023 13:50:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0385D61B59;
+        Fri, 23 Jun 2023 20:50:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61111C433A9;
+        Fri, 23 Jun 2023 20:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687553429;
+        bh=L+6CxdM/BMnLbI2k1ibKf0RAH8c1L0gztQ5UBezDVR8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HPKXO7wP6NImxUExHPqC/aWnuJX+X+Mcj6fCGvAlfYMxHpu8dwTNuk7aOhHUKJjiz
+         SclNURIG8HmCfGiIQSVYerv30atjW1Jw9zveJFB45uWzbcIufe0qaJ+dpU/obrCe0e
+         DCpUepkEMQLt1xE94HtKGXLX0BsSNldR32ULCVu5+Mig/G5PK459eydA4++uCojxFy
+         K1zIgn8HWwnCQUhFvXS74ngs6PlxJGdVE1BHddLH+dhz59OuM1y2P31/dF056dhlCL
+         H4w0PE+5KY192bKP4uis465fnDb1+akMWHWZfK+DWB/ueaJnSOQVtfOHiDpSlvmVF3
+         oHYlhmlyI+P8Q==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2b45bc83f26so18668131fa.0;
+        Fri, 23 Jun 2023 13:50:29 -0700 (PDT)
+X-Gm-Message-State: AC+VfDyK70fTMbc7keckULTmrZ7YYjVbwh4ZuCdhJo0npr2MuYCm7/M3
+        /Ey2BdK2nkFaXU87hf/nGF0xTYEjPvMhWGbCsw==
+X-Google-Smtp-Source: ACHHUZ7XPdbDSO6fFPttpBHgX0oes55oWKYhlTk4zfNewB0e4KNRkHMN9UPS8Te16b23/SRNpvtL8i7GZAUllnlej10=
+X-Received: by 2002:a2e:9c98:0:b0:2b5:82c9:d85f with SMTP id
+ x24-20020a2e9c98000000b002b582c9d85fmr6511427lji.11.1687553427421; Fri, 23
+ Jun 2023 13:50:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20230623201519.194269-1-afd@ti.com>
+In-Reply-To: <20230623201519.194269-1-afd@ti.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 23 Jun 2023 14:23:55 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKWUCJq8b4qfXHCiVmtZG8E8MpcTm54Q19dWr9hw8WM2g@mail.gmail.com>
+Message-ID: <CAL_JsqKWUCJq8b4qfXHCiVmtZG8E8MpcTm54Q19dWr9hw8WM2g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mfd: ti,j721e-system-controller: Remove
+ syscon from example
+To:     Andrew Davis <afd@ti.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use sam9x7 pmc's compatible to lookup for in the SHDWC driver.
+On Fri, Jun 23, 2023 at 2:15=E2=80=AFPM Andrew Davis <afd@ti.com> wrote:
+>
+> The binding for ti,am654-ehrpwm-tbclk was updated to remove the syscon
+> compatible hint. Remove the same from the example in this binding.
+>
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
+>  .../devicetree/bindings/mfd/ti,j721e-system-controller.yaml     | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
----
- drivers/power/reset/at91-sama5d2_shdwc.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the quick fix.
 
-diff --git a/drivers/power/reset/at91-sama5d2_shdwc.c b/drivers/power/reset/at91-sama5d2_shdwc.c
-index d8ecffe72f16..d0f29b99f25e 100644
---- a/drivers/power/reset/at91-sama5d2_shdwc.c
-+++ b/drivers/power/reset/at91-sama5d2_shdwc.c
-@@ -326,6 +326,7 @@ static const struct of_device_id at91_pmc_ids[] = {
- 	{ .compatible = "atmel,sama5d2-pmc" },
- 	{ .compatible = "microchip,sam9x60-pmc" },
- 	{ .compatible = "microchip,sama7g5-pmc" },
-+	{ .compatible = "microchip,sam9x7-pmc" },
- 	{ /* Sentinel. */ }
- };
- 
--- 
-2.25.1
+Acked-by: Rob Herring <robh@kernel.org>
 
+Stephen should apply this.
+
+Rob
