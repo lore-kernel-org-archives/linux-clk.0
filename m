@@ -2,120 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0544EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 06:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEFDC0015E
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 06:49:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbjFWGMv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 02:12:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41610 "EHLO
+        id S230165AbjFWGtV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 02:49:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231544AbjFWGMm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 02:12:42 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECED91BC1
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 23:12:38 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3f9bdb01ec0so3837195e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 22 Jun 2023 23:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687500757; x=1690092757;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cH76kt6UTmIx3qjb+jJaF/n8MOD0hF4u7nMAFs65XK0=;
-        b=ablaUhmcEHIJieh3y2uEPumflActhxF3w2uUefbopG41DHD/4IguWMQM6LmV/eJhJt
-         kpI7kJ5qu5GvsxvZSFC1bv08urkcOCWNjpGXKhMXgLLBQbjpZIHbnnDaNjtTfu7HrHqm
-         D+CZvJKvv5wH8Yp01G63XjLTf7zlnBPerepHcijNPVszvDde1LQhbzMrLXjCJpo/RmXF
-         fM0SVswubH6P8O9+WABzmAsRwQmO5592fKrXGcw1DKmZrnUtoslz7swOR3UT0Cg3Z6J0
-         33bOaM6NV7AWp2EcM9SmM8h+gd5GPjLp3Ze0ZXCWJTo2EEnlJILk5ILZMoZbCi8Tgda8
-         PsYQ==
+        with ESMTP id S230117AbjFWGtU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 02:49:20 -0400
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5465010FD;
+        Thu, 22 Jun 2023 23:49:19 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-570282233ceso1859857b3.1;
+        Thu, 22 Jun 2023 23:49:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687500757; x=1690092757;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cH76kt6UTmIx3qjb+jJaF/n8MOD0hF4u7nMAFs65XK0=;
-        b=DO03dFLqVx/zzyfSvtZvtv0u3OStKjxOzW6BRCgdT0V+m5EoNbqPZWjWiTgl7Xh5QD
-         eD6xgq9uwaMMWg5esChddvHJDWXHqAlYgRJC+l5b/BP9/D6qozBJ+NXXpq4GC14ZcGXh
-         aC/EdA7AwQJVj7cWYLVB9uc+2NCfV3sJf7SUwgRUmQj90gGKbrGsY+ANOAKMoNVZhrV+
-         kIrRF4V4YifC98rgpC/+ZXPF7mJynDqRZcutvbokKZzuVtChASPcM+cIk4Ceiph9vrR3
-         ebR1NNYmCEB1nmv9v9Nc2PX7Amw7gl6rqz/SUy+CdNGjAv5Z0lodtbFCqregCnRl59xN
-         fM0w==
-X-Gm-Message-State: AC+VfDwhLVDLmjDByx3Gqo0BJq1GluXw/NfEon4QV7mAfe+tJwkFUU6v
-        DuouKVQpjx+ZvfVTC6F/6vHE3w==
-X-Google-Smtp-Source: ACHHUZ49+GAafnSTu35IsubJ8ajqMPMD2FfaOa0PM7wZ1CfvRVc4avU2TwVtAfElopHYu6azWxfjgA==
-X-Received: by 2002:adf:ffce:0:b0:30a:ec3b:58d8 with SMTP id x14-20020adfffce000000b0030aec3b58d8mr16321353wrs.3.1687500757261;
-        Thu, 22 Jun 2023 23:12:37 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id r7-20020adfce87000000b0030af54c5f33sm8635028wrn.113.2023.06.22.23.12.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jun 2023 23:12:35 -0700 (PDT)
-Date:   Fri, 23 Jun 2023 09:12:30 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <nathan@kernel.org>, tsbogend@alpha.franken.de,
-        sergio.paracuellos@gmail.com, sboyd@kernel.org, trix@redhat.com,
-        linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
-        patches@lists.linux.dev, llvm@lists.linux.dev
-Subject: Re: [PATCH] clk: ralink: mtmips: Fix uninitialized use of ret in
- mtmips_register_{fixed,factor}_clocks()
-Message-ID: <27507a23-c1f4-40b2-a999-d6ebd10269f0@moroto.mountain>
-References: <20230622-mips-ralink-clk-wuninitialized-v1-1-ea9041240d10@kernel.org>
- <CAKwvOd=jaaf7jpjFYe=J0uBiOkGbY3hQ1JsSThp+171cyOsP7Q@mail.gmail.com>
+        d=1e100.net; s=20221208; t=1687502958; x=1690094958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Vw3cY1kzXKgiIBKra8+o5IKtv1gR0wSU11KZNvDzks=;
+        b=DhQDHBst6BkvsN5pgAmIuv8FI5/O+7hYxi/2pu4C0FO5lAp4NtWFw7ZcJpVdgCBar8
+         NlVh3fn1c7J2FapeXQFxcCEF1y2VGuJEI/nq7/GmmhWWC6QtTaepPPhWouWO/uNDJfNa
+         yaeWmfG30gSwIJcGzPWtXCGPC+878SP3ToF/8JsmGZm2no7oKEUwVLrVlAHj3OWCuUke
+         RB0/nX7M5wZsZVnfQuHZAq6hYnPull9dZCVcYS96RDgg1rI0IqkP7FbbKdxqRW5IQmfM
+         m3sRIBRze/3wEqiFg10PivF5z5+od/N61niT9BFQE/iL/zqV3CdiNic1bDa7cpdqAdO/
+         FNJg==
+X-Gm-Message-State: AC+VfDwavan9c5+Po7xoH4VTTzSZ8lZrES+BiMc1xi7JnQ5vR68QXSTO
+        nzp5KmWbT/fgYHu6+ROq4hUaUbVh+DFH+g==
+X-Google-Smtp-Source: ACHHUZ4dO04OPf4XlR8c0SixCFwgK6UfutZ6Ex5ScdwW1oEbnAgOsnND6Rht3PyRQJlM6gIzo1GY/g==
+X-Received: by 2002:a81:6e89:0:b0:568:e6d9:7c1a with SMTP id j131-20020a816e89000000b00568e6d97c1amr19078679ywc.4.1687502958415;
+        Thu, 22 Jun 2023 23:49:18 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id x7-20020a0dee07000000b0056dfbc37d9fsm2307241ywe.50.2023.06.22.23.49.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Jun 2023 23:49:18 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-bd0a359ca35so236630276.3;
+        Thu, 22 Jun 2023 23:49:17 -0700 (PDT)
+X-Received: by 2002:a0d:dbce:0:b0:573:a003:6e0b with SMTP id
+ d197-20020a0ddbce000000b00573a0036e0bmr6663390ywe.26.1687502957717; Thu, 22
+ Jun 2023 23:49:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKwvOd=jaaf7jpjFYe=J0uBiOkGbY3hQ1JsSThp+171cyOsP7Q@mail.gmail.com>
+References: <20230622113341.657842-1-fabrizio.castro.jz@renesas.com> <168748034127.332493.277333132642198960.b4-ty@kernel.org>
+In-Reply-To: <168748034127.332493.277333132642198960.b4-ty@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 23 Jun 2023 08:49:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU53jn5UP-5xB_YLh2T5gPaxL1dxWY5Vr5D8p2mUDnqwA@mail.gmail.com>
+Message-ID: <CAMuHMdU53jn5UP-5xB_YLh2T5gPaxL1dxWY5Vr5D8p2mUDnqwA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] spi: Add CSI support for Renesas RZ/V2M
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Bjorn Andersson <quic_bjorande@quicinc.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= 
+        <nfraprado@collabora.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 22, 2023 at 09:36:53AM -0700, Nick Desaulniers wrote:
-> On Thu, Jun 22, 2023 at 8:56 AM Nathan Chancellor <nathan@kernel.org> wrote:
+Hi Mark,
+
+On Fri, Jun 23, 2023 at 2:32 AM Mark Brown <broonie@kernel.org> wrote:
+> On Thu, 22 Jun 2023 12:33:36 +0100, Fabrizio Castro wrote:
+> > This series is to add support for the Clocked Serial Interface (CSI)
+> > IP found in the Renesas RZ/V2M SoC.
 > >
-> > Clang warns:
+> > Thanks,
+> > Fab
 > >
-> >   drivers/clk/ralink/clk-mtmips.c:309:9: error: variable 'ret' is uninitialized when used here [-Werror,-Wuninitialized]
-> >     309 |         return ret;
-> >         |                ^~~
-> >   drivers/clk/ralink/clk-mtmips.c:285:9: note: initialize the variable 'ret' to silence this warning
-> >     285 |         int ret, i;
-> >         |                ^
-> >         |                 = 0
-> >   drivers/clk/ralink/clk-mtmips.c:359:9: error: variable 'ret' is uninitialized when used here [-Werror,-Wuninitialized]
-> >     359 |         return ret;
-> >         |                ^~~
-> >   drivers/clk/ralink/clk-mtmips.c:335:9: note: initialize the variable 'ret' to silence this warning
-> >     335 |         int ret, i;
-> >         |                ^
-> >         |                 = 0
-> >   2 errors generated.
+> > v2: edited list of include files in drivers/spi/spi-rzv2m-csi.c
 > >
-> > Set ret to the return value of clk_hw_register_fixed_rate() using the
-> > PTR_ERR() macro, which ensures ret is not used uninitialized, clearing
-> > up the warning.
-> >
-> > Fixes: 6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")
-> > Closes: https://github.com/ClangBuiltLinux/linux/issues/1879
-> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> 
-> Thanks for the patch!
-> PTR_ERR returns a long; assigning to an int risks truncation of the
-> error.  The use of PTR_ERR on L1079 has a similar risk...]
-> 
+> > [...]
+>
+> Applied to
+>
+>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+>
+> Thanks!
+>
+> [1/5] spi: dt-bindings: Add bindings for RZ/V2M CSI
+>       commit: db63e7ad2895409f78a04f331f781baa7a879dd7
+> [2/5] clk: renesas: r9a09g011: Add CSI related clocks
+>       commit: 7c78eb3e5d30eaa217cecaa32711e41cd849d498
+> [3/5] spi: Add support for Renesas CSI
+>       commit: dcf92036cb3e1b7bf3472109e4290a0937b270dd
+> [4/5] arm64: dts: renesas: r9a09g011: Add CSI nodes
+>       commit: ef643c6b57020ee279d18636d9d967ee048dbffa
+> [5/5] arm64: defconfig: Enable Renesas RZ/V2M CSI driver
+>       commit: dfbd12ae0e7c761e07369f5a2d55fe06eb54ad31
 
-If PTR_ERR() ever returns anything outside of the (-4095)-(0) range then
-we are already screwed.
+I hoped this would have been a bug in b4 thanks, but unfortunately it
+is not.
 
-I'm 90% sure there is a reason why PTR_ERR() returns long but I can't
-think off the top of my head why that is...  It's been that way since
-before the git era.  I could imagine type promotion bugs involving
-u32 and int if we changed it.
+Please do not apply unreviewed clock, DTS, and defconfig patches to
+your tree.  These are intended to go upstream through the renesas-clk
+and clk, renesas-dt and soc, resp. renesas-defconfig and soc trees.
 
-	ssize_t ret_val = PTR_ERR(x) ?: u32_something;
+Thanks for your understanding!
 
-Or maybe Linus just felt casting a pointer to int was ugly.
+Gr{oetje,eeting}s,
 
-regards,
-dan carpenter
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
