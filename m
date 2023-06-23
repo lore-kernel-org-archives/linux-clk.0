@@ -2,143 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EA2C001DB
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 16:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A411EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Jun 2023 16:40:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231678AbjFWQht (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 12:37:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
+        id S232389AbjFWQkk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 12:40:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231713AbjFWQhp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 12:37:45 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7002957;
-        Fri, 23 Jun 2023 09:37:31 -0700 (PDT)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35NDxif7001099;
-        Fri, 23 Jun 2023 16:37:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=1aXic0PFqKMVm9iJhACJnGTqDrzAcHYchyHjUrBbIyg=;
- b=hRphocc1AQM7S3/M83IlcWyGF5lzMDVle+7Iai4ivYu8BnlkYoOxrDtZ1K06TiJvN6dC
- OahM3gmAokJF9V1mAkh0A3kxeUh/8pvzyZS9NWWGjgZXRvvx6sVpzpg4wSawpkU9Nbmt
- 1Ok/OkhO2KBxDh/AugCdsi6gwlQw4dvPL7ljDSSzeEzI8zaP+Vi3raAGCZkg9KvETiwt
- GimH7otS/GWw4CYWnJlULg18ebd1IsvKSmp00C85YiD3pgoT1aKTqdaWWxnWjsfsjsI4
- F19HpurhFF3a7P6cV+hT3lUxOSpG8p13yrVE8oxr48liI7KlBUJ1mWcG9EPw0JIaE1Cw bg== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rckn2uwn2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Jun 2023 16:37:27 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35NGbQEj014950
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Jun 2023 16:37:26 GMT
-Received: from [10.216.8.45] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Fri, 23 Jun
- 2023 09:37:21 -0700
-Message-ID: <0239d17b-eb8a-8feb-d8a4-a7f82edfa612@quicinc.com>
-Date:   Fri, 23 Jun 2023 22:07:17 +0530
+        with ESMTP id S232167AbjFWQkc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 12:40:32 -0400
+Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86932295A
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 09:40:26 -0700 (PDT)
+Received: by mail-wr1-x429.google.com with SMTP id ffacd0b85a97d-3110ab7110aso916236f8f.3
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 09:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687538425; x=1690130425;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a++H1TBaoMInjxf1VRNayHFgIoMRZUfsbrwobdRMHxM=;
+        b=UWiFZVq9PviMA6JRGjbHqEt+m9IevMv3xp08xFnUHTcxXbIJufUKkHCG+g3uh+Bqep
+         f09l1smOXN9rsdbfj6XW4vFE26shZo/BIsb61P+5bhujL27vIlx/p4VkWSsUZWeYPs8v
+         LQMLUpkfdLNIBN52677r14e/RBOrRq0H2DkcK1s8qtqyczyPJ033/hdjuLEwqw9mHdaX
+         uOjnDidevxLrQiYKTYmwtRREs2pw34BhtewvSNz0G30GHLbO5FjPCi/2OZ2/2uGeIaWv
+         bIZ3/6W+ro7KtdEZZfvqBIaV/woq/vJHc6a0tDHYxD+K6GRFVVepV/bBlnlR4nej/jIH
+         hZlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687538425; x=1690130425;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a++H1TBaoMInjxf1VRNayHFgIoMRZUfsbrwobdRMHxM=;
+        b=kPlPoKebt+2wAjjCh3/tgcMr16qpFbDwRdOVbONZ1S4MQwSVRxi9B+m7nrcozQzvvT
+         prXhoJ+1puzXCxKlrc0lt/hsbbrvpk5baAhDpb2hSrjuod3H3q+TZhYI9aqS595IZ4I0
+         hmHTnNEwslhnOwlPzWJSwL3C3DpNoQydzFYnrpWe/FVXgGwyseFYr2sxqXGZLVa70VQx
+         5D1YMcthmqZu4W9ScaJyakrKXvMhG6ZC/8reWOPzcVO5RTzu4KaFQTwBMRQbpGlFLnMn
+         ZYgRqSddTM+IEChWuKRNReINbVuLn5XgY7DZEQ45JUlIiCJtNFJSsjLKOz3717717vo9
+         abJg==
+X-Gm-Message-State: AC+VfDxVUzCorT68G1cTqL2HbryxdUgvljUfjk9+hSSxcN2Fjk8HxY3Q
+        bbRz3Sn/RIBcFECbiAJYDS8a3w==
+X-Google-Smtp-Source: ACHHUZ4fKA6Pm2fcKNkv0rlEk+sJhe5V3FlXTeOrwsHbnoKloMGvxBbGqNJdKkvKTV5uhcjK5HvYDA==
+X-Received: by 2002:adf:e507:0:b0:30f:bc98:ede1 with SMTP id j7-20020adfe507000000b0030fbc98ede1mr18707632wrm.8.1687538424854;
+        Fri, 23 Jun 2023 09:40:24 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id t16-20020a5d49d0000000b0030aed4223e0sm9881032wrs.105.2023.06.23.09.40.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jun 2023 09:40:24 -0700 (PDT)
+Message-ID: <ea4dd457-eba6-9068-fb4e-c1761ce80343@linaro.org>
+Date:   Fri, 23 Jun 2023 18:40:21 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH V4 0/4] Add camera clock controller support for SM8550
+Subject: Re: [PATCH 1/9] dt-bindings: clk: qcom,gcc-msm8998: Add missing
+ GPU/MMSS GPLL0 legs
 Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230609115058.9059-1-quic_jkona@quicinc.com>
- <88b41c0f-e515-ce94-e4fd-befbeef53781@linaro.org>
- <65fd51f1-56d9-7b7b-7757-229cbb65051d@quicinc.com>
- <CAA8EJpoLWm4=1J2QTfh9N55U-FjuYA7CwJeoG=Zv4mOhC1nytQ@mail.gmail.com>
-From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <CAA8EJpoLWm4=1J2QTfh9N55U-FjuYA7CwJeoG=Zv4mOhC1nytQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230622-topic-8998clk-v1-0-5b7a0d6e98b1@linaro.org>
+ <20230622-topic-8998clk-v1-1-5b7a0d6e98b1@linaro.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230622-topic-8998clk-v1-1-5b7a0d6e98b1@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sUHdBxk3ltN7QTF5u-ZcIPP2xY5vPUyF
-X-Proofpoint-ORIG-GUID: sUHdBxk3ltN7QTF5u-ZcIPP2xY5vPUyF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-23_08,2023-06-22_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=968
- lowpriorityscore=0 malwarescore=0 phishscore=0 impostorscore=0 mlxscore=0
- spamscore=0 bulkscore=0 adultscore=0 suspectscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2306230148
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 22/06/2023 13:57, Konrad Dybcio wrote:
+> GPLL0 has two separate outputs to both GPUSS and MMSS: one that's
+> 2-divided and one that runs at the same rate as the GPLL0 itself.
+> 
+> Add the missing ones to the binding.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 
-On 6/14/2023 5:47 PM, Dmitry Baryshkov wrote:
-> On Wed, 14 Jun 2023 at 14:58, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
->>
->>
->>
->> On 6/9/2023 6:24 PM, Konrad Dybcio wrote:
->>>
->>>
->>> On 9.06.2023 13:50, Jagadeesh Kona wrote:
->>>> Add bindings, driver and devicetree node for camera clock controller on
->>>> SM8550.
->>>>
->>>> Jagadeesh Kona (4):
->>>>     dt-bindings: clock: qcom: Add SM8550 camera clock controller
->>>>     clk: qcom: camcc-sm8550: Add camera clock controller driver for SM8550
->>>>     clk: qcom: camcc-sm8550: Add support for qdss, sleep and xo clocks
->>>>     arm64: dts: qcom: sm8550: Add camera clock controller
->>> What's the final verdict on RINGOSC_L etc.?
->>>
->>> Konrad
->>
->> We would like to pass RINGOSC_CAL_L field directly in config->l value
->> itself and reuse existing code rather than adding a separate function
->> for lucid ole pll configure.
-> 
-> As I wrote in another email, it doesn't sound like a good approach.
-> 
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Will avoid this approach and use separate clk_lucid_ole_pll_configure() 
-to configure lucid ole PLL's in next series.
+Best regards,
+Krzysztof
 
-Thanks,
-Jagadeesh
-
->>
->> Thanks,
->> Jagadeesh
->>
->>>>
->>>>    .../bindings/clock/qcom,sm8450-camcc.yaml     |    8 +-
->>>>    arch/arm64/boot/dts/qcom/sm8550.dtsi          |   15 +
->>>>    drivers/clk/qcom/Kconfig                      |    7 +
->>>>    drivers/clk/qcom/Makefile                     |    1 +
->>>>    drivers/clk/qcom/camcc-sm8550.c               | 3585 +++++++++++++++++
->>>>    include/dt-bindings/clock/qcom,sm8550-camcc.h |  187 +
->>>>    6 files changed, 3801 insertions(+), 2 deletions(-)
->>>>    create mode 100644 drivers/clk/qcom/camcc-sm8550.c
->>>>    create mode 100644 include/dt-bindings/clock/qcom,sm8550-camcc.h
->>>>
-> 
-> 
-> 
