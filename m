@@ -2,121 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EEDEB64DD
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 09:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD08EB64DC
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 09:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233009AbjFXJUE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Jun 2023 05:20:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50498 "EHLO
+        id S232807AbjFXJXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Jun 2023 05:23:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232995AbjFXJUB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 05:20:01 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4C81FCC
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:19:58 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51d7e8dd118so596321a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:19:58 -0700 (PDT)
+        with ESMTP id S232624AbjFXJXn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 05:23:43 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79A881BFA
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:23:40 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-98746d7f35dso197104966b.2
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687598396; x=1690190396;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KfAcGT4J8pUoMJBGxBaLszgHGiS6c9l8JOpUoHeAAOA=;
-        b=yQVzjTKSXVmVV9dLLVhjlfW4hSkCHaHSkFp8XKDuppCzQpGHvyVttjnWT3sZWadL6G
-         Aptg8K8aHU9euO2VsKWw8w5GNb7iZUmQN6s980dsKNw8bDt/Gg0mjyG+1qbTOWHueIrY
-         /Q6bxSUkrx10KI9Bk3ImA6gPyy5RwRLI1IVUQjGo73WdFwY+k9WU2qYNImsGMRH4LVBY
-         NGoLGDAz09o/yosqduTlRt/bCpwDw40AnKJvyTtb5EsV6kYLtwXhkQO6myiWdEiHilCp
-         eezk0kHCVcUBB/e4mc1VfkMXxJnPCuve2SWX/BdtYwhjQIOCgvko85iNcFXLb/8ecU/N
-         rm6g==
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687598619; x=1690190619;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EuyyoXYkLcFUjNW6aU0LWhkMHFG4qPaiZWIPRvxeeTA=;
+        b=g66y85pUmxbEk8gM1Z1/c1SSekEW4T1k4oAFY2odQs17Fe0i5NQtNAg8YfQ0y5PXDO
+         JQ0h5TKyFH8kEJexF4E5uUAYUUTvoLrtDbttalI/TpRRut0MeLBi39qT+qPR9h2crIJ4
+         twd4vI/Sgf2PrnmqyK4K7Wfk3B5izATUbxSr/5XJzNoy2H7OMyCEm4o7a+q8aRj8ALE4
+         dqMLqsB7Vh2D8EfuzTaNFD6MfGlIax3uCuCFL0a+TPqcfaqOdGNmhNNnmzTkV7GZQG27
+         WzW2S7rjCG8vBIjq8J0kwEv7E4teVB6wT4a9BZsQ0gYmst95bLhaIEBSGkJK5s+jxcOj
+         U1Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687598396; x=1690190396;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KfAcGT4J8pUoMJBGxBaLszgHGiS6c9l8JOpUoHeAAOA=;
-        b=grsYXmsNt86QAbv3Y7oPgzcmpXWZScWvTAD5PqqePosfpEFbgR9CmF3b2GCapFMpqy
-         lQX7Sl8abAE+kimIegmLUIFo9gVrDXjfU9JSzBPKy3iNqMSWGsKWGlaTFa5ur5spJtGO
-         qRpLR2bHCV/4L6VPg8Bo1G3SO4PXfrRrZ7AR3mHSYk2+cH4/9+yCesCycWWC1/DYw4ZQ
-         NVf9zowsUVuWWUqrBwBeFQUk4WBAbQugrboYypo7g5tAUdpytGMINnKuHrwfkxChf+xI
-         yEjfgdvcRoP6pLYYpfN5gOqNLWV6U0zVBN9rNk5nrJiJzjSZmqjRQJaGl8nzX+8jrWKs
-         pINw==
-X-Gm-Message-State: AC+VfDz0z9GE65SU7jB8xSZWKcInm1rtqsrSJ3B2JoSexyH7xbjavxqc
-        f2alPn5kb3+cH0Y8W/TfIv2qKA==
-X-Google-Smtp-Source: ACHHUZ5fG8f481PX14S7vktzFZQMA1l6HoKP1yysFPHfBvGgcLJOb2TMBp2polua7/w5jYwHHssrXQ==
-X-Received: by 2002:a17:907:987:b0:987:6372:c31f with SMTP id bf7-20020a170907098700b009876372c31fmr16230436ejc.37.1687598396633;
-        Sat, 24 Jun 2023 02:19:56 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id p13-20020a1709060e8d00b00989065149d0sm663324ejf.86.2023.06.24.02.19.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jun 2023 02:19:55 -0700 (PDT)
-Message-ID: <ca3b6a75-2811-6013-28cc-9f6a7854b469@linaro.org>
-Date:   Sat, 24 Jun 2023 11:19:49 +0200
+        d=1e100.net; s=20221208; t=1687598619; x=1690190619;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EuyyoXYkLcFUjNW6aU0LWhkMHFG4qPaiZWIPRvxeeTA=;
+        b=QAW5nUSIb4VDR9byUwYeYkshAf5gS99KwSYQU1a0VbRZ4qh/UYNHusZGOFvO1OC+6H
+         jCK7dF1j1yvevT0EIhfM2XqSucdJFq1F2dN3Q9OFNx4E+5d1HmYxVUKWc9js1iorzHox
+         TYL4BgfDONLA1CG2ONJzElz/VD3WOjHNURuwJalfExJEvwjMCTqri2CxyMRDN9LIv0cf
+         39vRM4ypKViQoVaEJLXQigL+oEW2/trrQsPUwhrBn7dCBI8xdAVd4TYwU/vAtyo5/vAR
+         yQvuODq8d8x15KAsXLvq9ez9xaDRqbU4fW/cKtPdWpiV8c0BANQN/SHQIUn1DmAm0qMp
+         xJvA==
+X-Gm-Message-State: AC+VfDwxIG2WGnfgWcLh8r70OSYwsrl8InXK8ERUS98LxHt4yqJFRN5o
+        9EwZY6CTEBwjzk9l1DByYCTyYg==
+X-Google-Smtp-Source: ACHHUZ7Hm22TLuZ2uNMqorvhvVqmtSRdvFVMVJyZ7P02nHMQr1v41Obhbu8aAZ5ky21fmiU2Y7E37A==
+X-Received: by 2002:a17:907:2bc8:b0:98d:758:75ed with SMTP id gv8-20020a1709072bc800b0098d075875edmr6033410ejc.75.1687598618680;
+        Sat, 24 Jun 2023 02:23:38 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id q22-20020a17090622d600b009895af2580asm671367eja.36.2023.06.24.02.23.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Jun 2023 02:23:37 -0700 (PDT)
+Date:   Sat, 24 Jun 2023 11:23:36 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        vadfed@meta.com, jonathan.lemon@gmail.com, pabeni@redhat.com,
+        corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
+        vadfed@fb.com, jesse.brandeburg@intel.com,
+        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
+        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
+        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
+        michal.michalik@intel.com, gregkh@linuxfoundation.org,
+        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
+        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
+        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
+        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
+        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
+        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
+        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
+        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, linux-clk@vger.kernel.org,
+        vadim.fedorenko@linux.dev
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+Message-ID: <ZJa2GEr6frhHQrS0@nanopsycho>
+References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
+ <ZJW37ynDxJCwHscN@nanopsycho>
+ <20230623085336.1a486ca3@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 01/45] dt-bindings: microchip: atmel,at91rm9200-tcb:
- add sam9x60, sam9x7 compatible
-Content-Language: en-US
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Varshini Rajendran <varshini.rajendran@microchip.com>,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, claudiu.beznea@microchip.com,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net, vkoul@kernel.org,
-        tglx@linutronix.de, maz@kernel.org, lee@kernel.org,
-        ulf.hansson@linaro.org, tudor.ambarus@linaro.org,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        linus.walleij@linaro.org, p.zabel@pengutronix.de,
-        olivia@selenic.com, a.zummo@towertech.it,
-        radu_nicolae.pirea@upb.ro, richard.genoud@gmail.com,
-        gregkh@linuxfoundation.org, lgirdwood@gmail.com,
-        broonie@kernel.org, wim@linux-watchdog.org, linux@roeck-us.net,
-        arnd@arndb.de, olof@lixom.net, soc@kernel.org,
-        linux@armlinux.org.uk, sre@kernel.org, jerry.ray@microchip.com,
-        horatiu.vultur@microchip.com, durai.manickamkr@microchip.com,
-        andrew@lunn.ch, alain.volmat@foss.st.com,
-        neil.armstrong@linaro.org, mihai.sain@microchip.com,
-        eugen.hristev@collabora.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
-        balamanikandan.gunasundar@microchip.com,
-        manikandan.m@microchip.com, dharma.b@microchip.com,
-        nayabbasha.sayed@microchip.com, balakrishnan.s@microchip.com
-References: <20230623203056.689705-1-varshini.rajendran@microchip.com>
- <20230623203056.689705-2-varshini.rajendran@microchip.com>
- <074048a2-5153-e013-3562-b5cad2ba0954@linaro.org>
-In-Reply-To: <074048a2-5153-e013-3562-b5cad2ba0954@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230623085336.1a486ca3@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/06/2023 09:53, Krzysztof Kozlowski wrote:
-> On 23/06/2023 22:30, Varshini Rajendran wrote:
->> Add sam9x60, sam9x7 compatible string support in the schema file.
->>
->> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
->> ---
->>  .../devicetree/bindings/soc/microchip/atmel,at91rm9200-tcb.yaml | 
-> 
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fri, Jun 23, 2023 at 05:53:36PM CEST, kuba@kernel.org wrote:
+>On Fri, 23 Jun 2023 17:19:11 +0200 Jiri Pirko wrote:
+>> I don't understand. The discussion in the RFCv8 thread is still going
+>> on. The things I mentioned there are ignored. Like for example:
+>> 1) mode_set op removal
+>> 2) odd ice dpll locking scheme (either fix or describe why it is ok -
+>> 				that's the unfinished discussion)
+>> 3) header file bits squash I suggested. Vadim wrote that it sounds
+>>    reasonable, yet nothing changed
+>> 
+>> I thought we are past this. Why I have to point the same issues over and
+>> over?
+>
+>FWIW I'm lost in the previous thread, so for me there's value in
+>refreshing the series.
+>
+>But you're right, at the very least there should be a summary of
+>outstanding issues / open items / ongoing discussions in the cover
+>letter.
 
-Un-acked. Actually NAK.
+Well I would like to conclude discussion in one thread before sending
+the next one. What should I do? Should I start the same discussion
+pointing out the same issues in this thread again? This can't work.
 
-This does not match your DTS. Please test your patches before sending.
+Even concluded items are ignored, like 3)
 
-Best regards,
-Krzysztof
-
+IDK, this is very frustrating for me. I have to double check everything
+just in case it was not ignored. I don't understand this, there is no
+justification.
