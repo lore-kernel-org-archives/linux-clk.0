@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AA3EB64DD
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 01:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625E7EB64DD
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 01:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232095AbjFXBtd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 21:49:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34590 "EHLO
+        id S231896AbjFXBuT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 21:50:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231896AbjFXBtc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 21:49:32 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B902736
-        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:49:29 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4f883420152so1637909e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:49:29 -0700 (PDT)
+        with ESMTP id S230148AbjFXBuR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 21:50:17 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50022733
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:50:15 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f955def3a5so1703027e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687571368; x=1690163368;
+        d=linaro.org; s=google; t=1687571414; x=1690163414;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rfro2Z7t9cpTSkdETXGdcSnHCdkerPzBWRSGF3KNDQQ=;
-        b=E711irWY9xbUdqCcACzkiknYFKiJC21DydvbOwg8e+nNeBP2ptQ+BDe9rifzUC1mEV
-         qpLjB1n9M2vT9pfcd1htykBghjEw/LEVhiLiusXd+NojiMZxcLm8IzBXgOjslL3YIblG
-         7DTzy6hHTy9aJtyOld5JYh5vQ0+ZQ7H/m/uf8B1JjzzDsIGjxGeoJbyt5FWMMhV7D7Fr
-         7IkmYrEvQblTmzGUP6HjyUGNFPHYczoysxzQBqc6dHxssSWeHEbVKKqxCtWxlOiAL7wd
-         9u/2J3Jyc0z+cSKDLESVsHbJEf0g2NGykxC0cNT0vIS2p8jbjvXW3tW/fwDRvZ5Ll4d6
-         6qRA==
+        bh=MNi2d6GmsftsJ+atPufVKVknTeQVWLkwlnja8uNA9c8=;
+        b=m5zubTS7oBIrjbyDTIEZ70Ok3zRH35JGiZlJ+HvMXP4Rf+sYzCxyoiNnFKShU1Zybd
+         MDkEf31vdnyRuh3sTsMoTVjKtOfcVkQQijadv4L+OB8vzhXxaLxK3uW9bfmso/4HxCl3
+         S81Jc0QmDnvLDrsrhySdOLBAgTbBoVdHJgYZwr1Re12BtRutcLicpRi6U5RaWRDGsA6+
+         EKTLuvBI6H/p8lAQtcNdPWzds8VnSUGGoVHeZfEb+xTDJGLbm3GYxj31sKfv5xZl+stb
+         ex2yCYlve/n2ZNjyFrF+FmEyddtiU2s5HL1NFdjV++dartYeFJ7GSEWJvM1qQoUV7WMd
+         +9AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687571368; x=1690163368;
+        d=1e100.net; s=20221208; t=1687571414; x=1690163414;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rfro2Z7t9cpTSkdETXGdcSnHCdkerPzBWRSGF3KNDQQ=;
-        b=W+xHMo4sPYVRQN9QYtMSTVJfseK+st2lZejHLvBHVo2IYK0MGYP2OVm86ZtJ446PPu
-         +iG5uZk9dc37eju70RCOv3jTQTveUm2wrnXa4OAsfm936O+Phf3WON2ywbS9fiaKxXe2
-         OzlusICBuL6TcqpCG7Bch098078fNqv/VILZnHiGOBmN7FW10luz9DtVXZyRJXArnJLi
-         4g+fHkpBgCr94fFQt6kCjzSJRX8lD2dNz4ubdEiyPuAOGUtliFbwnDTvY1zR2taKaRAz
-         qMp/ggJYvkDu7kSqUYNNgr0Ump3AZgg7RAHUmJ6eBonGknixMstifuWM6jUTr2HL23J1
-         X0jw==
-X-Gm-Message-State: AC+VfDyCIKyPlEPR/VE/M/Etn/fWDj/dbK/ii/ZuYfT6uL1mMu41kqrD
-        naczcnO2kegvOHeESYhGXNXW/Q==
-X-Google-Smtp-Source: ACHHUZ7lkBMDt6hQqNSL6eUx+zSLBCaelrzQ4f+uB82xB4QPavcR2tmkz9cOmbgTOgaJew8XT0385w==
-X-Received: by 2002:ac2:5d28:0:b0:4f8:4255:16ca with SMTP id i8-20020ac25d28000000b004f8425516camr13553209lfb.38.1687571368069;
-        Fri, 23 Jun 2023 18:49:28 -0700 (PDT)
+        bh=MNi2d6GmsftsJ+atPufVKVknTeQVWLkwlnja8uNA9c8=;
+        b=Zhfaar1c4c8OVmoGzo1ZtLioGhO5xfqdSH4TAiOyDh5cVoWAVprJlzAbj0GEYK7rt6
+         Ggg7m8cofaaSHBW45e1Y41JxkP/P3huW8/kBlcrB+ZLx8yb7xp85P5/DyaCYinLUt21H
+         krUk8wejQKY8zNFp6E7wy864tYkewkBF6+gHeCQHf40svIdhPUKXyKL7G6+fFokS0Yvn
+         JPgszMv4B8Oh6OrUMsWzcf3v7FbEjvZmiJ6rjQQSz0CB8qHtR6YWqo7/v3NM6Z6EzuHT
+         MlL1EX+h5sMWayo0ezyDPjX07uD2u0qY114cOodUag7zHZhsYCSz3YyQQ71PcSkVmsqe
+         kz8Q==
+X-Gm-Message-State: AC+VfDyZDbCO0ct0Fm/yxo94K6wOuwNQJ2nMJ4PKsdx0lZ4JTm/YprPc
+        CXq0ijNzQ6tJUh4Dr3Voyq/v5Q==
+X-Google-Smtp-Source: ACHHUZ4ST6i4QwIPfFE/arAJEjZ1Unxfc3+rXtHy6iSUDTWDUfFTNvhW18l63q3mvwcSzTNDem0v7w==
+X-Received: by 2002:a05:6512:44c:b0:4f8:7803:5559 with SMTP id y12-20020a056512044c00b004f878035559mr9156150lfk.6.1687571414126;
+        Fri, 23 Jun 2023 18:50:14 -0700 (PDT)
 Received: from [192.168.1.101] (abyk30.neoplus.adsl.tpnet.pl. [83.9.30.30])
-        by smtp.gmail.com with ESMTPSA id w25-20020a19c519000000b004f85885cff1sm94649lfe.134.2023.06.23.18.49.26
+        by smtp.gmail.com with ESMTPSA id z6-20020ac25de6000000b004f86aef886asm100843lfq.54.2023.06.23.18.50.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jun 2023 18:49:27 -0700 (PDT)
-Message-ID: <18d969bb-69b5-0d42-1518-e8a3b92859b7@linaro.org>
-Date:   Sat, 24 Jun 2023 03:49:25 +0200
+        Fri, 23 Jun 2023 18:50:13 -0700 (PDT)
+Message-ID: <8acfeaf2-2181-4ce7-5edb-1f23004dcd3a@linaro.org>
+Date:   Sat, 24 Jun 2023 03:50:11 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 11/15] drm/msm/dsi: Add 14nm phy configuration for SM6125
+Subject: Re: [PATCH 12/15] arm64: dts: qcom: sm6125: Switch fixed xo_board
+ clock to RPM XO clock
 Content-Language: en-US
 To:     Marijn Suijten <marijn.suijten@somainline.org>,
         Andy Gross <agross@kernel.org>,
@@ -81,9 +82,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
 References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <20230624-sm6125-dpu-v1-11-1d5a638cebf2@somainline.org>
+ <20230624-sm6125-dpu-v1-12-1d5a638cebf2@somainline.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230624-sm6125-dpu-v1-11-1d5a638cebf2@somainline.org>
+In-Reply-To: <20230624-sm6125-dpu-v1-12-1d5a638cebf2@somainline.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -91,73 +92,56 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 24.06.2023 02:41, Marijn Suijten wrote:
-> SM6125 features only a single PHY (despite a secondary PHY PLL source
-> being available to the disp_cc_mdss_pclk0_clk_src clock), and downstream
-> sources for this "trinket" SoC do not define the typical "vcca"
-> regulator to be available nor used.
+> We have a working RPM XO clock; no other driver except rpmcc should be
+> parenting directly to the fixed-factor xo_board clock nor should it be
+> reachable by that global name.  Remove the name to that effect, so that
+> every clock relation is explicitly defined in DTS.
 > 
 > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 > ---
-The introduced ops are identical to 2290, modulo regulator..
-
-But the regulator is absent on both (VDD_MX powers it instead), so
-feel free to clean that up and reuse it ;)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c      |  2 ++
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h      |  1 +
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 15 +++++++++++++++
->  3 files changed, 18 insertions(+)
+>  arch/arm64/boot/dts/qcom/sm6125.dtsi | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> index 9d5795c58a98..8688ed502dcf 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> @@ -559,6 +559,8 @@ static const struct of_device_id dsi_phy_dt_match[] = {
->  	  .data = &dsi_phy_14nm_2290_cfgs },
->  	{ .compatible = "qcom,dsi-phy-14nm-660",
->  	  .data = &dsi_phy_14nm_660_cfgs },
-> +	{ .compatible = "qcom,dsi-phy-14nm-6125",
-> +	  .data = &dsi_phy_14nm_6125_cfgs },
->  	{ .compatible = "qcom,dsi-phy-14nm-8953",
->  	  .data = &dsi_phy_14nm_8953_cfgs },
->  #endif
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> index 8b640d174785..ebf915f5e6c6 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
-> @@ -52,6 +52,7 @@ extern const struct msm_dsi_phy_cfg dsi_phy_20nm_cfgs;
->  extern const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs;
->  extern const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs;
->  extern const struct msm_dsi_phy_cfg dsi_phy_14nm_2290_cfgs;
-> +extern const struct msm_dsi_phy_cfg dsi_phy_14nm_6125_cfgs;
->  extern const struct msm_dsi_phy_cfg dsi_phy_14nm_8953_cfgs;
->  extern const struct msm_dsi_phy_cfg dsi_phy_10nm_cfgs;
->  extern const struct msm_dsi_phy_cfg dsi_phy_10nm_8998_cfgs;
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-> index 3ce45b023e63..5d43c9ec69ae 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
-> @@ -1068,6 +1068,21 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs = {
->  	.num_dsi_phy = 2,
->  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> index 722dde560bec..edb03508dba3 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> @@ -22,7 +22,6 @@ xo_board: xo-board {
+>  			compatible = "fixed-clock";
+>  			#clock-cells = <0>;
+>  			clock-frequency = <19200000>;
+> -			clock-output-names = "xo_board";
+>  		};
 >  
-> +const struct msm_dsi_phy_cfg dsi_phy_14nm_6125_cfgs = {
-> +	.has_phy_lane = true,
-> +	.ops = {
-> +		.enable = dsi_14nm_phy_enable,
-> +		.disable = dsi_14nm_phy_disable,
-> +		.pll_init = dsi_pll_14nm_init,
-> +		.save_pll_state = dsi_14nm_pll_save_state,
-> +		.restore_pll_state = dsi_14nm_pll_restore_state,
-> +	},
-> +	.min_pll_rate = VCO_MIN_RATE,
-> +	.max_pll_rate = VCO_MAX_RATE,
-> +	.io_start = { 0x5e94400 },
-> +	.num_dsi_phy = 1,
-> +};
-> +
->  const struct msm_dsi_phy_cfg dsi_phy_14nm_8953_cfgs = {
->  	.has_phy_lane = true,
->  	.regulator_data = dsi_phy_14nm_17mA_regulators,
+>  		sleep_clk: sleep-clk {
+> @@ -306,6 +305,8 @@ rpm_requests: rpm-requests {
+>  			rpmcc: clock-controller {
+>  				compatible = "qcom,rpmcc-sm6125", "qcom,rpmcc";
+>  				#clock-cells = <1>;
+> +				clocks = <&xo_board>;
+> +				clock-names = "xo";
+>  			};
+>  
+>  			rpmpd: power-controller {
+> @@ -713,7 +714,7 @@ sdhc_1: mmc@4744000 {
+>  
+>  			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+>  				 <&gcc GCC_SDCC1_APPS_CLK>,
+> -				 <&xo_board>;
+> +				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
+>  			clock-names = "iface", "core", "xo";
+>  			iommus = <&apps_smmu 0x160 0x0>;
+>  
+> @@ -740,7 +741,7 @@ sdhc_2: mmc@4784000 {
+>  
+>  			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
+>  				 <&gcc GCC_SDCC2_APPS_CLK>,
+> -				 <&xo_board>;
+> +				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
+>  			clock-names = "iface", "core", "xo";
+>  			iommus = <&apps_smmu 0x180 0x0>;
+>  
 > 
