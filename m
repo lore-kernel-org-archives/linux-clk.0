@@ -2,35 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B79CBC001DD
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 00:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95E2EB64DD
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 01:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbjFXAtM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 20:49:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48942 "EHLO
+        id S229678AbjFXBm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 21:42:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232380AbjFXAs6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 20:48:58 -0400
-X-Greylist: delayed 464 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 23 Jun 2023 17:48:49 PDT
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C3B1BF2
-        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 17:48:49 -0700 (PDT)
-Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 6288F3F7EB;
-        Sat, 24 Jun 2023 02:41:09 +0200 (CEST)
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Sat, 24 Jun 2023 02:41:05 +0200
-Subject: [PATCH 07/15] dt-bindings: display/msm: Add SM6125 MDSS
+        with ESMTP id S231858AbjFXBm4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 21:42:56 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71F702950
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:42:51 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f865f0e16cso1729758e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:42:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687570969; x=1690162969;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ABZIpr9ZPthPG5kXqvTW8Rk5Ou0ROoLl20Thcdzgw/c=;
+        b=mfNh86M9tQZaO3Vz9auPoZGQgiWExLFjqQ/WsoQHTSh1AQLad+HsUIkiZuVboMwwG5
+         CdSu7uJ/8dCsECdjtNblkQNPZbb687SykeJeV1mAzkm9RymqjpgN13ag5p/PwzU7+Qqq
+         ITKCMnDMj7dQfWpdANu6zwIPxWjNq+TolwbMC4wwYQZVCJW6Swk55GJLurh3mCBbMVrM
+         dXLqZtHyn0pi86fvqsphzeOOc7xJbjsP7IGdUWIB9h8Wg48gY3XCNvN6EF2+0Xlse/5u
+         o41/+ldUgtopN+9VIbFxZsM3JyT0Hp/QPLycFAznItkyF48RvF0/ivxhdFqo8LV2pETP
+         PGhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687570969; x=1690162969;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ABZIpr9ZPthPG5kXqvTW8Rk5Ou0ROoLl20Thcdzgw/c=;
+        b=UYF9mPZsyP5EdS4cHFS0BFtg1TChut2XXDx/4HL+foo1pPi0gmeTPowYSVNRwfYfzs
+         aZhYN8A1iOd0h5ATiD267qrxXvxdhrVL0f5L13/yo9Qq/dCTln6Jjuu8SlJMY99BB21d
+         Y9F6E5dS4Bn1SzzV78mIUS9b49SonaBKrMSRtgZkIz1DzwMfQrTLjSqN7WZK9X88h9YO
+         pwjtuIjKl9faq7cdx+NxT/OE1RigXM/HIOC1uaNWPKRvrVfNoDrD5zy2TLWB+++GXDm8
+         0grvvdRTxfQR/uWHR6+6JK/+hES25ZhVS++LorYvRrdnJchakZ8kzLpbaiVlfqxzOQL4
+         nzTg==
+X-Gm-Message-State: AC+VfDwko/tVI3jy5q6vZVzFz7m2xk9GwUxpOmaRnz2LIMVbOaJnkz5W
+        DiUcUxEehmbLS+40iUdtK7OiGQ==
+X-Google-Smtp-Source: ACHHUZ6XXA3DQLeAWzirtjDtvmXD+F18W7u2zYLlyKgJF3mFy/ep6QDlKt+rpO04JFu+dKDnag1Gaw==
+X-Received: by 2002:a19:670f:0:b0:4f8:7528:50b5 with SMTP id b15-20020a19670f000000b004f8752850b5mr9893706lfc.14.1687570968988;
+        Fri, 23 Jun 2023 18:42:48 -0700 (PDT)
+Received: from [192.168.1.101] (abyk30.neoplus.adsl.tpnet.pl. [83.9.30.30])
+        by smtp.gmail.com with ESMTPSA id c26-20020ac2531a000000b004f13ca69dc8sm98316lfh.72.2023.06.23.18.42.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Jun 2023 18:42:48 -0700 (PDT)
+Message-ID: <035ffdd2-27e3-99bc-f8a4-41e66685db09@linaro.org>
+Date:   Sat, 24 Jun 2023 03:42:46 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230624-sm6125-dpu-v1-7-1d5a638cebf2@somainline.org>
-References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
-In-Reply-To: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
-To:     Andy Gross <agross@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 00/15] drm/msm: Add SM6125 MDSS/DPU hardware and enable
+ Sony Xperia 10 II panel
+Content-Language: en-US
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -46,240 +74,81 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Martin Botka <martin.botka@somainline.org>,
         Jami Kettunen <jami.kettunen@somainline.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-X-Mailer: b4 0.12.2
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
+References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the SM6125 MDSS.
+On 24.06.2023 02:40, Marijn Suijten wrote:
+> Bring up the SM6125 DPU now that all preliminary series (such as INTF
+> TE) have been merged (for me to test the hardware properly)
+We should not repeat the same mistake in the future.. Finding a
+balance between releasing early and releasing what we can declare
+working and tested code is hard, but we waaaaaaaay overstayed on
+this one..
 
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
----
- .../bindings/display/msm/qcom,sm6125-mdss.yaml     | 206 +++++++++++++++++++++
- 1 file changed, 206 insertions(+)
+Konrad
+, and most
+> other conflicting work (barring ongoing catalog *improvements*) has made
+> its way in as well or is still being discussed.
 
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6125-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6125-mdss.yaml
-new file mode 100644
-index 000000000000..e4db05c4a464
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6125-mdss.yaml
-@@ -0,0 +1,206 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/msm/qcom,sm6125-mdss.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm SM6125 Display MDSS
-+
-+maintainers:
-+  - Marijn Suijten <marijn.suijten@somainline.org>
-+
-+description:
-+  SM6125 MSM Mobile Display Subsystem (MDSS), which encapsulates sub-blocks
-+  like DPU display controller, DSI and DP interfaces etc.
-+
-+$ref: /schemas/display/msm/mdss-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: qcom,sm6125-mdss
-+
-+  clocks:
-+    items:
-+      - description: Display AHB clock from gcc
-+      - description: Display AHB clock
-+      - description: Display core clock
-+
-+  clock-names:
-+    items:
-+      - const: iface
-+      - const: ahb
-+      - const: core
-+
-+  iommus:
-+    maxItems: 1
-+
-+  interconnects:
-+    maxItems: 2
-+
-+  interconnect-names:
-+    maxItems: 2
-+
-+patternProperties:
-+  "^display-controller@[0-9a-f]+$":
-+    type: object
-+    properties:
-+      compatible:
-+        const: qcom,sm6125-dpu
-+
-+  "^dsi@[0-9a-f]+$":
-+    type: object
-+    properties:
-+      compatible:
-+        items:
-+          - const: qcom,sm6125-dsi-ctrl
-+          - const: qcom,mdss-dsi-ctrl
-+
-+  "^phy@[0-9a-f]+$":
-+    type: object
-+    properties:
-+      compatible:
-+        const: qcom,dsi-phy-14nm-6125
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,dispcc-sm6125.h>
-+    #include <dt-bindings/clock/qcom,gcc-sm6125.h>
-+    #include <dt-bindings/clock/qcom,rpmcc.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+
-+    display-subsystem@5e00000 {
-+        compatible = "qcom,sm6125-mdss";
-+        reg = <0x05e00000 0x1000>;
-+        reg-names = "mdss";
-+
-+        power-domains = <&dispcc MDSS_GDSC>;
-+
-+        clocks = <&gcc GCC_DISP_AHB_CLK>,
-+                 <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+                 <&dispcc DISP_CC_MDSS_MDP_CLK>;
-+        clock-names = "iface", "ahb", "core";
-+
-+        interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+
-+        iommus = <&apps_smmu 0x400 0x0>;
-+
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges;
-+
-+        display-controller@5e01000 {
-+            compatible = "qcom,sm6125-dpu";
-+            reg = <0x05e01000 0x83208>,
-+                  <0x05eb0000 0x2008>;
-+            reg-names = "mdp", "vbif";
-+
-+            clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
-+                     <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+                     <&dispcc DISP_CC_MDSS_ROT_CLK>,
-+                     <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
-+                     <&dispcc DISP_CC_MDSS_MDP_CLK>,
-+                     <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-+            clock-names = "bus",
-+                          "iface",
-+                          "rot",
-+                          "lut",
-+                          "core",
-+                          "vsync";
-+            assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-+            assigned-clock-rates = <19200000>;
-+
-+            operating-points-v2 = <&mdp_opp_table>;
-+            power-domains = <&rpmpd SM6125_VDDCX>;
-+
-+            interrupt-parent = <&mdss>;
-+            interrupts = <0>;
-+
-+            ports {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                port@0 {
-+                    reg = <0>;
-+                    dpu_intf1_out: endpoint {
-+                        remote-endpoint = <&mdss_dsi0_in>;
-+                    };
-+                };
-+            };
-+        };
-+
-+        dsi@5e94000 {
-+            compatible = "qcom,sm6125-dsi-ctrl", "qcom,mdss-dsi-ctrl";
-+            reg = <0x05e94000 0x400>;
-+            reg-names = "dsi_ctrl";
-+
-+            interrupt-parent = <&mdss>;
-+            interrupts = <4>;
-+
-+            clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
-+                     <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
-+                     <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
-+                     <&dispcc DISP_CC_MDSS_ESC0_CLK>,
-+                     <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+                     <&gcc GCC_DISP_HF_AXI_CLK>;
-+            clock-names = "byte",
-+                          "byte_intf",
-+                          "pixel",
-+                          "core",
-+                          "iface",
-+                          "bus";
-+
-+            assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
-+                              <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
-+            assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
-+
-+            operating-points-v2 = <&dsi_opp_table>;
-+            power-domains = <&rpmpd SM6125_VDDMX>;
-+
-+            phys = <&mdss_dsi0_phy>;
-+            phy-names = "dsi";
-+
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            ports {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                port@0 {
-+                    reg = <0>;
-+                    mdss_dsi0_in: endpoint {
-+                        remote-endpoint = <&dpu_intf1_out>;
-+                    };
-+                };
-+
-+                port@1 {
-+                    reg = <1>;
-+                    mdss_dsi0_out: endpoint {
-+                    };
-+                };
-+            };
-+        };
-+
-+        phy@5e94400 {
-+            compatible = "qcom,dsi-phy-14nm-6125";
-+            reg = <0x05e94400 0x100>,
-+                  <0x05e94500 0x300>,
-+                  <0x05e94800 0x188>;
-+            reg-names = "dsi_phy",
-+                        "dsi_phy_lane",
-+                        "dsi_pll";
-+
-+            #clock-cells = <1>;
-+            #phy-cells = <0>;
-+
-+            clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-+                     <&rpmcc RPM_SMD_XO_CLK_SRC>;
-+            clock-names = "iface", "ref";
-+        };
-+    };
-+...
-
--- 
-2.41.0
-
+> 
+> The second part of the series complements that by immediately utilizing
+> this hardware in DT, and even enabling the MDSS/DSI nodes complete with
+> a 6.0" 1080x2520 panel for Sony's Seine PDX201 (Xperia 10 II).
+> 
+> The last patch ("sm6125-seine: Configure MDSS, DSI and panel") depends
+> on (an impending v2 of) my Sony panel collection series [1].
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/20230521-drm-panels-sony-v1-0-541c341d6bee@somainline.org/
+> 
+> ---
+> Marijn Suijten (15):
+>       arm64: dts: qcom: sm6125: Sort spmi_bus node numerically by reg
+>       dt-bindings: clock: qcom,dispcc-sm6125: Remove unused GCC_DISP_AHB_CLK
+>       dt-bindings: clock: qcom,dispcc-sm6125: Require GCC PLL0 DIV clock
+>       dt-bindings: clock: qcom,dispcc-sm6125: Allow power-domains property
+>       dt-bindings: display/msm: dsi-controller-main: Document SM6125
+>       dt-bindings: display/msm: sc7180-dpu: Describe SM6125
+>       dt-bindings: display/msm: Add SM6125 MDSS
+>       drm/msm/dpu: Add SM6125 support
+>       drm/msm/mdss: Add SM6125 support
+>       dt-bindings: msm: dsi-phy-14nm: Document SM6125 variant
+>       drm/msm/dsi: Add 14nm phy configuration for SM6125
+>       arm64: dts: qcom: sm6125: Switch fixed xo_board clock to RPM XO clock
+>       arm64: dts: qcom: sm6125: Add dispcc node
+>       arm64: dts: qcom: sm6125: Add display hardware nodes
+>       arm64: dts: qcom: sm6125-seine: Configure MDSS, DSI and panel
+> 
+>  .../bindings/clock/qcom,dispcc-sm6125.yaml         |  17 +-
+>  .../bindings/display/msm/dsi-controller-main.yaml  |   2 +
+>  .../bindings/display/msm/dsi-phy-14nm.yaml         |   1 +
+>  .../bindings/display/msm/qcom,sc7180-dpu.yaml      |   1 +
+>  .../bindings/display/msm/qcom,sm6125-mdss.yaml     | 206 +++++++++++++++++
+>  .../dts/qcom/sm6125-sony-xperia-seine-pdx201.dts   |  59 +++++
+>  arch/arm64/boot/dts/qcom/sm6125.dtsi               | 244 +++++++++++++++++++--
+>  .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h | 173 +++++++++++++++
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   6 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |   2 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h              |   1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c         |  15 ++
+>  drivers/gpu/drm/msm/msm_mdss.c                     |   8 +
+>  15 files changed, 712 insertions(+), 25 deletions(-)
+> ---
+> base-commit: 8d2be868b42c08290509c60515865f4de24ea704
+> change-id: 20230624-sm6125-dpu-aedc9637ee7b
+> 
+> Best regards,
