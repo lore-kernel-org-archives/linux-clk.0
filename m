@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625E7EB64DD
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 01:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A22EB64D7
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 01:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231896AbjFXBuT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Jun 2023 21:50:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35020 "EHLO
+        id S231445AbjFXBxL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Jun 2023 21:53:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230148AbjFXBuR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 21:50:17 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C50022733
-        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:50:15 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f955def3a5so1703027e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:50:15 -0700 (PDT)
+        with ESMTP id S229786AbjFXBxK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Jun 2023 21:53:10 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 264302941
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:53:08 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4f86e6e4038so1632471e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 23 Jun 2023 18:53:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687571414; x=1690163414;
+        d=linaro.org; s=google; t=1687571586; x=1690163586;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MNi2d6GmsftsJ+atPufVKVknTeQVWLkwlnja8uNA9c8=;
-        b=m5zubTS7oBIrjbyDTIEZ70Ok3zRH35JGiZlJ+HvMXP4Rf+sYzCxyoiNnFKShU1Zybd
-         MDkEf31vdnyRuh3sTsMoTVjKtOfcVkQQijadv4L+OB8vzhXxaLxK3uW9bfmso/4HxCl3
-         S81Jc0QmDnvLDrsrhySdOLBAgTbBoVdHJgYZwr1Re12BtRutcLicpRi6U5RaWRDGsA6+
-         EKTLuvBI6H/p8lAQtcNdPWzds8VnSUGGoVHeZfEb+xTDJGLbm3GYxj31sKfv5xZl+stb
-         ex2yCYlve/n2ZNjyFrF+FmEyddtiU2s5HL1NFdjV++dartYeFJ7GSEWJvM1qQoUV7WMd
-         +9AQ==
+        bh=xNrGZecLKe91T/RJadHDeBwRyXg51e++/hjjgaZ5Zfo=;
+        b=fd2xR/W9T3VNdMGl2gDzFiJvpXAZKGwDScUe9qk28QUYT5uPn+DR6U3858yc+v8zsL
+         lEJU+cSGuI3Ijm2JKHXTQ9EmcEVoiMwwPAc1VP1XB9j0knwLfBI+PgBYqdw7S9XIlfAL
+         eVqXcrxzzeYSVZ1Yzsn7ZgUDtshcO02Ido4mlJGmVBBIO+A1+jHwNWFon6h3VOYqTMz3
+         XGUIWBHc+Xg0zoADXhnSMWiMcjTyv093GYwBI2V8/4XhfesVkLy0mEBfof8XM+04eRtt
+         KFDqQsmoe/+FtKNvAGR+06TddSqfymXySspmZJbZ8SC8J1/Vqg/L/kFi6CA5FPGRroGl
+         a27g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687571414; x=1690163414;
+        d=1e100.net; s=20221208; t=1687571586; x=1690163586;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MNi2d6GmsftsJ+atPufVKVknTeQVWLkwlnja8uNA9c8=;
-        b=Zhfaar1c4c8OVmoGzo1ZtLioGhO5xfqdSH4TAiOyDh5cVoWAVprJlzAbj0GEYK7rt6
-         Ggg7m8cofaaSHBW45e1Y41JxkP/P3huW8/kBlcrB+ZLx8yb7xp85P5/DyaCYinLUt21H
-         krUk8wejQKY8zNFp6E7wy864tYkewkBF6+gHeCQHf40svIdhPUKXyKL7G6+fFokS0Yvn
-         JPgszMv4B8Oh6OrUMsWzcf3v7FbEjvZmiJ6rjQQSz0CB8qHtR6YWqo7/v3NM6Z6EzuHT
-         MlL1EX+h5sMWayo0ezyDPjX07uD2u0qY114cOodUag7zHZhsYCSz3YyQQ71PcSkVmsqe
-         kz8Q==
-X-Gm-Message-State: AC+VfDyZDbCO0ct0Fm/yxo94K6wOuwNQJ2nMJ4PKsdx0lZ4JTm/YprPc
-        CXq0ijNzQ6tJUh4Dr3Voyq/v5Q==
-X-Google-Smtp-Source: ACHHUZ4ST6i4QwIPfFE/arAJEjZ1Unxfc3+rXtHy6iSUDTWDUfFTNvhW18l63q3mvwcSzTNDem0v7w==
-X-Received: by 2002:a05:6512:44c:b0:4f8:7803:5559 with SMTP id y12-20020a056512044c00b004f878035559mr9156150lfk.6.1687571414126;
-        Fri, 23 Jun 2023 18:50:14 -0700 (PDT)
+        bh=xNrGZecLKe91T/RJadHDeBwRyXg51e++/hjjgaZ5Zfo=;
+        b=c16Uw3Wc20HjZ2G2Xk7Qpc0kZdqYbBw25/LFCxaTEhnWEZZ5j0oREC0Gr5lqAqvdFM
+         pEaVokaC5Y65zIXmDYJpz6PnMARRvWKm4s54mnJtGeP7gRyPbkiVXWjrePL07RzukCOY
+         DSFcUxoiCNwuAfnBJvbdomRqTZUHkzoUVmUPnre/8csX3BkuoWbooLb/i1ddIxXDX4vP
+         LtjVxiz2sbUd6Gjeq1RxdU/JysZleNXk0piNZOkdxjYw107gcFrMJvQkSypTBduJn+LJ
+         U4xtMP/Xm7K+SSpk1Ah94jGl5wnOSDe9wEllRutp5x+8kcKGS3Dkn/4tI3NByhBhaLp1
+         HTyg==
+X-Gm-Message-State: AC+VfDwTc9r/dhUWK3wwgWAajwmfRKYFABN4lpwlOtpLEdBM2lte1zN5
+        SAVL0FQ4eH5hsAGhXmcB7MilOg==
+X-Google-Smtp-Source: ACHHUZ4NbvdAMNbfgXRrkwClNB4QE38qmcc1+X8dG5c7wHh6GLwbGWLie6OsLeycuVureCf+/9Mf+w==
+X-Received: by 2002:a05:6512:6d6:b0:4f6:e06:50bb with SMTP id u22-20020a05651206d600b004f60e0650bbmr11455242lff.30.1687571586381;
+        Fri, 23 Jun 2023 18:53:06 -0700 (PDT)
 Received: from [192.168.1.101] (abyk30.neoplus.adsl.tpnet.pl. [83.9.30.30])
-        by smtp.gmail.com with ESMTPSA id z6-20020ac25de6000000b004f86aef886asm100843lfq.54.2023.06.23.18.50.12
+        by smtp.gmail.com with ESMTPSA id c6-20020ac244a6000000b004f85df6e650sm90971lfm.276.2023.06.23.18.53.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Jun 2023 18:50:13 -0700 (PDT)
-Message-ID: <8acfeaf2-2181-4ce7-5edb-1f23004dcd3a@linaro.org>
-Date:   Sat, 24 Jun 2023 03:50:11 +0200
+        Fri, 23 Jun 2023 18:53:05 -0700 (PDT)
+Message-ID: <f061e2ee-7e9f-474e-c86e-24fa1d4bd10b@linaro.org>
+Date:   Sat, 24 Jun 2023 03:53:03 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 12/15] arm64: dts: qcom: sm6125: Switch fixed xo_board
- clock to RPM XO clock
+Subject: Re: [PATCH 13/15] arm64: dts: qcom: sm6125: Add dispcc node
 Content-Language: en-US
 To:     Marijn Suijten <marijn.suijten@somainline.org>,
         Andy Gross <agross@kernel.org>,
@@ -82,9 +81,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
 References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <20230624-sm6125-dpu-v1-12-1d5a638cebf2@somainline.org>
+ <20230624-sm6125-dpu-v1-13-1d5a638cebf2@somainline.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230624-sm6125-dpu-v1-12-1d5a638cebf2@somainline.org>
+In-Reply-To: <20230624-sm6125-dpu-v1-13-1d5a638cebf2@somainline.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -92,56 +91,58 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 24.06.2023 02:41, Marijn Suijten wrote:
-> We have a working RPM XO clock; no other driver except rpmcc should be
-> parenting directly to the fixed-factor xo_board clock nor should it be
-> reachable by that global name.  Remove the name to that effect, so that
-> every clock relation is explicitly defined in DTS.
+> Enable and configure the dispcc node on SM6125 for consumption by MDSS
+> later on.
 > 
 > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 > ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
->  arch/arm64/boot/dts/qcom/sm6125.dtsi | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>  arch/arm64/boot/dts/qcom/sm6125.dtsi | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> index 722dde560bec..edb03508dba3 100644
+> index edb03508dba3..7d78b4e48ebe 100644
 > --- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
 > +++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> @@ -22,7 +22,6 @@ xo_board: xo-board {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
->  			clock-frequency = <19200000>;
-> -			clock-output-names = "xo_board";
+> @@ -3,6 +3,7 @@
+>   * Copyright (c) 2021, Martin Botka <martin.botka@somainline.org>
+>   */
+>  
+> +#include <dt-bindings/clock/qcom,dispcc-sm6125.h>
+>  #include <dt-bindings/clock/qcom,gcc-sm6125.h>
+>  #include <dt-bindings/clock/qcom,rpmcc.h>
+>  #include <dt-bindings/dma/qcom-gpi.h>
+> @@ -1203,6 +1204,28 @@ sram@4690000 {
+>  			reg = <0x04690000 0x10000>;
 >  		};
 >  
->  		sleep_clk: sleep-clk {
-> @@ -306,6 +305,8 @@ rpm_requests: rpm-requests {
->  			rpmcc: clock-controller {
->  				compatible = "qcom,rpmcc-sm6125", "qcom,rpmcc";
->  				#clock-cells = <1>;
-> +				clocks = <&xo_board>;
-> +				clock-names = "xo";
->  			};
->  
->  			rpmpd: power-controller {
-> @@ -713,7 +714,7 @@ sdhc_1: mmc@4744000 {
->  
->  			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
->  				 <&gcc GCC_SDCC1_APPS_CLK>,
-> -				 <&xo_board>;
-> +				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
->  			clock-names = "iface", "core", "xo";
->  			iommus = <&apps_smmu 0x160 0x0>;
->  
-> @@ -740,7 +741,7 @@ sdhc_2: mmc@4784000 {
->  
->  			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
->  				 <&gcc GCC_SDCC2_APPS_CLK>,
-> -				 <&xo_board>;
-> +				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
->  			clock-names = "iface", "core", "xo";
->  			iommus = <&apps_smmu 0x180 0x0>;
->  
+> +		dispcc: clock-controller@5f00000 {
+> +			compatible = "qcom,sm6125-dispcc";
+> +			reg = <0x05f00000 0x20000>;
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> +				 <0>,
+are you..
+
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <0>,
+> +				 <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>;
+> +			clock-names = "bi_tcxo",
+> +				      "gcc_disp_gpll0_div_clk_src",
+..sure?
+
+Konrad
+> +				      "dsi0_phy_pll_out_byteclk",
+> +				      "dsi0_phy_pll_out_dsiclk",
+> +				      "dsi1_phy_pll_out_dsiclk",
+> +				      "dp_phy_pll_link_clk",
+> +				      "dp_phy_pll_vco_div_clk";
+> +			power-domains = <&rpmpd SM6125_VDDCX>;
+> +			#clock-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+>  		apps_smmu: iommu@c600000 {
+>  			compatible = "qcom,sm6125-smmu-500", "qcom,smmu-500", "arm,mmu-500";
+>  			reg = <0x0c600000 0x80000>;
 > 
