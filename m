@@ -2,120 +2,383 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D784DC001B0
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 09:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6732EB64DD
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 12:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232908AbjFXJdO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Jun 2023 05:33:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57040 "EHLO
+        id S233002AbjFXMUB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Jun 2023 08:20:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232440AbjFXJdN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 05:33:13 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDD4B170B
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:33:11 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51d7d0dbec8so551037a12.2
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:33:11 -0700 (PDT)
+        with ESMTP id S233038AbjFXMUA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 08:20:00 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 534042133
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 05:19:57 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4f86fbe5e4fso1967221e87.2
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 05:19:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687599190; x=1690191190;
+        d=linaro.org; s=google; t=1687609195; x=1690201195;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tj3h2F7PrfXgiEVSgcmcva0dTAsO+LbFtvUy3HlpOUM=;
-        b=ic86rBDVlYcttew4/vob85e87FNpbbw8JM1F4OZp5nVBORwXNv4q2cTt9SNVFlD9m1
-         dFi33g/gLFSWKIokJ9yYgX/tAQvFqVzaGb+REdj5S1pJg8PrdKReA0WIdwbevE9qKL9X
-         jTb64bNYUQw0MrC41EE0O0A9p8khOb4xXzpmJeG9HS6yk9KoACeNybd0UTWCAMTDIW+h
-         KDdKphFAbVxcyXlCNtts7L78DEmH/dMSIUyCQVoipTLDJWOgGB1FLejiUR8b146FM1N8
-         zQFTl5lZGymUQd3VgWk49FEUwvT7wCpqn0SQ1lMbET9C6orZAQ1dEMjK8+eDWqCcdBdD
-         dvuQ==
+        bh=yo5jLs27Bb3Y0WpD2kVSihPKuWv56q6pEJ3J3nRrfl4=;
+        b=bBA/dwwRFeuVHWRBrZv+q8+Pz/9XENm7myWD6lrUK38qFvsTgd+LL2ckdTuwOWv5Jw
+         +Wbr2fZs+6I8Uv8g90G/cjf9cgY2oxcC4RH3ikk8EPdg2kxIk2iZMNYz4JXBQIIk9PZG
+         hYoV9SvqACjbi2ZvXjlGjjVIOc5rgVWFlOYOqHPSgy5eU7yBAm5wKMh3mS7yEncHGIMu
+         jjJs7LRTVHq/H22YlZNQRnm+WRegbbeJ+HtboyujQlMCypkN39RlP2ZV6RCLOcHWXNxh
+         mokidukQ7q1vmWDRBqKGt0LCJzaJoQragkRbNFyL0IUn3sTic+2EFMIBuPMEWX0BTZKG
+         Ka6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687599190; x=1690191190;
+        d=1e100.net; s=20221208; t=1687609195; x=1690201195;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tj3h2F7PrfXgiEVSgcmcva0dTAsO+LbFtvUy3HlpOUM=;
-        b=U7CBnPas6jGC1neN+xMtEybn3UrgXWzgd/qmyB2MpMMPOi1AyGmcNEKX07D2mvaGmJ
-         2naQm0v9h2qO5T0bcQj42N5jeiYzj7JK0Q8Csw06LoWZvy12ZwT3JtNG7k4/MiUtBVZ9
-         CqGilu8ZFVVxrSd2WtmD5rBsjIvapv2ypjhlNIwDMr5y6KE5gaR3LDkw6hTdU21Xw/Rv
-         1Psn16Sw2EodTuBtvDnzvWG0QykS8NEMuGoOvB96Mjkhl8sFu3rnte61f0JFYLGuew3C
-         g/fweNpe8kCJ7dEL1q6QEmOMGA2YGRY888uJFeDOJT9EHYcS+6baQ1SXOp2hAw2a+M09
-         UHFw==
-X-Gm-Message-State: AC+VfDyZNLxaRLW7nc0QDO8uFX98Cet4VNfcLoFPlZayXTvcRDVYJIdC
-        Dfp2UcAG/zJSK8rFIpvdYOsWWg==
-X-Google-Smtp-Source: ACHHUZ6bs/BxTDqMq4cvMfLXihVSFIJDim3qioOSXkCmAssN1V1E4/ail2H+MUzzE3JuAdSuXV/mmA==
-X-Received: by 2002:aa7:d411:0:b0:51b:ece3:70d6 with SMTP id z17-20020aa7d411000000b0051bece370d6mr4079434edq.26.1687599190265;
-        Sat, 24 Jun 2023 02:33:10 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id b10-20020aa7c90a000000b0051bed090703sm481937edt.12.2023.06.24.02.33.07
+        bh=yo5jLs27Bb3Y0WpD2kVSihPKuWv56q6pEJ3J3nRrfl4=;
+        b=BEO2jP4revFnanjKZ2PW+KE21FhwSSju5CqF5Qu8WHVR6l52XAIdL+qvSfOx0GmPbj
+         bqaFSqI12kDuuEVLfVFh0A5hd6MFT+w3AcSuNNIFH32MZDdiihlCS8bJ9zKRth5NFHXx
+         0M4UAVzj0wydqDmzg2o5zltClv9a3F9+tUc8Gv5Bxp7xemhMrpYve039IMUy0vBXcIyR
+         OZpaIQ6SNt7DiOEoyHLbwhEzl6AmWjpgsX7N/0RwvENptS7i8P2VWneNFo58A6BQrE1n
+         hSAQoC0VWh5B+dnKlG2XsPi97pRjlR4L1A+gKopFMZj0AIQ4LtoQgny732fbhIKDwlaE
+         eXYg==
+X-Gm-Message-State: AC+VfDzspJPj0szdkOn5T3u7nHqbXFcdXWVHLay2BKimj0wV6O0BIgP1
+        ZVBIguJaqHa+n6ZoO95ptrkESQ==
+X-Google-Smtp-Source: ACHHUZ62rcxA1M3Lq/7vsziq8B2mV6GSeLlw3qy08Pm0fUwdUI9zmmBh2QsLTq2EItwXtwkP7npHHg==
+X-Received: by 2002:a19:5e0b:0:b0:4f8:72fd:ed95 with SMTP id s11-20020a195e0b000000b004f872fded95mr9695553lfb.22.1687609195477;
+        Sat, 24 Jun 2023 05:19:55 -0700 (PDT)
+Received: from [192.168.1.101] (abyk197.neoplus.adsl.tpnet.pl. [83.9.30.197])
+        by smtp.gmail.com with ESMTPSA id a6-20020a19f806000000b004f8653b60e3sm259929lff.97.2023.06.24.05.19.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jun 2023 02:33:09 -0700 (PDT)
-Message-ID: <00cd9016-4b2d-b8b9-45da-49d1f82148a2@linaro.org>
-Date:   Sat, 24 Jun 2023 11:33:06 +0200
+        Sat, 24 Jun 2023 05:19:55 -0700 (PDT)
+Message-ID: <11b3058c-2261-95a4-2347-b0a33fdeb1e3@linaro.org>
+Date:   Sat, 24 Jun 2023 14:19:53 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 10/15] dt-bindings: msm: dsi-phy-14nm: Document SM6125
- variant
+Subject: Re: [PATCH V5 4/5] clk: qcom: camcc-sm8550: Add support for qdss,
+ sleep and xo clocks
 Content-Language: en-US
-To:     Marijn Suijten <marijn.suijten@somainline.org>,
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
         Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <20230624-sm6125-dpu-v1-10-1d5a638cebf2@somainline.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230624-sm6125-dpu-v1-10-1d5a638cebf2@somainline.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230623164619.11464-1-quic_jkona@quicinc.com>
+ <20230623164619.11464-5-quic_jkona@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230623164619.11464-5-quic_jkona@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/06/2023 02:41, Marijn Suijten wrote:
-> Document availability of the 14nm DSI PHY on SM6125.
+On 23.06.2023 18:46, Jagadeesh Kona wrote:
+> Add support for camera qdss, sleep and xo clocks.
 > 
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Changes since v4:
+>  - No changes.
+> Changes since v3:
+>  - No changes.
+> Changes since v2:
+>  - No changes.
+> Changes since v1:
+>  - Newly added.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-> index a43e11d3b00d..60b590f21138 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-> @@ -18,6 +18,7 @@ properties:
->        - qcom,dsi-phy-14nm
->        - qcom,dsi-phy-14nm-2290
->        - qcom,dsi-phy-14nm-660
-> +      - qcom,dsi-phy-14nm-6125
+>  drivers/clk/qcom/camcc-sm8550.c | 180 ++++++++++++++++++++++++++++++++
+>  1 file changed, 180 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
+> index 075bea32087c..7b4882444d58 100644
+> --- a/drivers/clk/qcom/camcc-sm8550.c
+> +++ b/drivers/clk/qcom/camcc-sm8550.c
+> @@ -22,6 +22,8 @@
+>  enum {
+>  	DT_IFACE,
+>  	DT_BI_TCXO,
+> +	DT_BI_TCXO_AO,
+> +	DT_SLEEP_CLK,
+>  };
+>  
+>  enum {
+> @@ -43,6 +45,7 @@ enum {
+>  	P_CAM_CC_PLL10_OUT_EVEN,
+>  	P_CAM_CC_PLL11_OUT_EVEN,
+>  	P_CAM_CC_PLL12_OUT_EVEN,
+> +	P_SLEEP_CLK,
+>  };
+>  
+>  static const struct pll_vco lucid_ole_vco[] = {
+> @@ -881,6 +884,22 @@ static const struct clk_parent_data cam_cc_parent_data_11[] = {
+>  	{ .hw = &cam_cc_pll7_out_even.clkr.hw },
+>  };
+>  
+> +static const struct parent_map cam_cc_parent_map_12[] = {
+> +	{ P_SLEEP_CLK, 0 },
+> +};
+> +
+> +static const struct clk_parent_data cam_cc_parent_data_12[] = {
+> +	{ .index = DT_SLEEP_CLK },
+> +};
+> +
+> +static const struct parent_map cam_cc_parent_map_13[] = {
+> +	{ P_BI_TCXO, 0 },
+> +};
+> +
+> +static const struct clk_parent_data cam_cc_parent_data_13_ao[] = {
+> +	{ .index = DT_BI_TCXO_AO },
+> +};
+> +
+>  static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
+>  	F(19200000, P_BI_TCXO, 1, 0, 0),
+>  	F(200000000, P_CAM_CC_PLL8_OUT_EVEN, 1, 0, 0),
+> @@ -1565,6 +1584,29 @@ static struct clk_rcg2 cam_cc_mclk7_clk_src = {
+>  	},
+>  };
+>  
+> +static const struct freq_tbl ftbl_cam_cc_qdss_debug_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+> +	F(75000000, P_CAM_CC_PLL0_OUT_EVEN, 8, 0, 0),
+> +	F(150000000, P_CAM_CC_PLL0_OUT_EVEN, 4, 0, 0),
+> +	F(300000000, P_CAM_CC_PLL0_OUT_MAIN, 4, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_qdss_debug_clk_src = {
+> +	.cmd_rcgr = 0x13f24,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = cam_cc_parent_map_0,
+> +	.freq_tbl = ftbl_cam_cc_qdss_debug_clk_src,
+> +	.clkr.hw.init = &(const struct clk_init_data) {
+> +		.name = "cam_cc_qdss_debug_clk_src",
+> +		.parent_data = cam_cc_parent_data_0,
+> +		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_shared_ops,
+> +	},
+> +};
+> +
+>  static const struct freq_tbl ftbl_cam_cc_sfe_0_clk_src[] = {
+>  	F(466000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+>  	F(594000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+> @@ -1611,6 +1653,26 @@ static struct clk_rcg2 cam_cc_sfe_1_clk_src = {
+>  	},
+>  };
+>  
+> +static const struct freq_tbl ftbl_cam_cc_sleep_clk_src[] = {
+> +	F(32000, P_SLEEP_CLK, 1, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_sleep_clk_src = {
+> +	.cmd_rcgr = 0x141a0,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = cam_cc_parent_map_12,
+> +	.freq_tbl = ftbl_cam_cc_sleep_clk_src,
+> +	.clkr.hw.init = &(const struct clk_init_data) {
+> +		.name = "cam_cc_sleep_clk_src",
+> +		.parent_data = cam_cc_parent_data_12,
+> +		.num_parents = ARRAY_SIZE(cam_cc_parent_data_12),
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_shared_ops,
+> +	},
+> +};
+> +
+>  static const struct freq_tbl ftbl_cam_cc_slow_ahb_clk_src[] = {
+>  	F(19200000, P_BI_TCXO, 1, 0, 0),
+>  	F(80000000, P_CAM_CC_PLL0_OUT_EVEN, 7.5, 0, 0),
+> @@ -1632,6 +1694,26 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
+>  	},
+>  };
+>  
+> +static const struct freq_tbl ftbl_cam_cc_xo_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+You're overloading P_BI_TCXO with a different parent clock (XO_A).
 
-If there is going to be next version:
-Should be rather ordered alphanumeric, so before 660.
+The rest lgtm
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+Konrad
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 cam_cc_xo_clk_src = {
+> +	.cmd_rcgr = 0x14070,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = cam_cc_parent_map_13,
+> +	.freq_tbl = ftbl_cam_cc_xo_clk_src,
+> +	.clkr.hw.init = &(const struct clk_init_data) {
+> +		.name = "cam_cc_xo_clk_src",
+> +		.parent_data = cam_cc_parent_data_13_ao,
+> +		.num_parents = ARRAY_SIZE(cam_cc_parent_data_13_ao),
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_shared_ops,
+> +	},
+> +};
+> +
+>  static struct clk_branch cam_cc_bps_ahb_clk = {
+>  	.halt_reg = 0x10274,
+>  	.halt_check = BRANCH_HALT,
+> @@ -1704,6 +1786,42 @@ static struct clk_branch cam_cc_camnoc_axi_clk = {
+>  	},
+>  };
+>  
+> +static struct clk_branch cam_cc_camnoc_dcd_xo_clk = {
+> +	.halt_reg = 0x13f18,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x13f18,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_camnoc_dcd_xo_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_xo_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch cam_cc_camnoc_xo_clk = {
+> +	.halt_reg = 0x13f1c,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x13f1c,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_camnoc_xo_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_xo_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct clk_branch cam_cc_cci_0_clk = {
+>  	.halt_reg = 0x13a2c,
+>  	.halt_check = BRANCH_HALT,
+> @@ -2370,6 +2488,24 @@ static struct clk_branch cam_cc_drv_ahb_clk = {
+>  	},
+>  };
+>  
+> +static struct clk_branch cam_cc_drv_xo_clk = {
+> +	.halt_reg = 0x142d4,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x142d4,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_drv_xo_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_xo_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct clk_branch cam_cc_icp_ahb_clk = {
+>  	.halt_reg = 0x138fc,
+>  	.halt_check = BRANCH_HALT,
+> @@ -2910,6 +3046,42 @@ static struct clk_branch cam_cc_mclk7_clk = {
+>  	},
+>  };
+>  
+> +static struct clk_branch cam_cc_qdss_debug_clk = {
+> +	.halt_reg = 0x14050,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x14050,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_qdss_debug_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_qdss_debug_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+> +static struct clk_branch cam_cc_qdss_debug_xo_clk = {
+> +	.halt_reg = 0x14054,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x14054,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "cam_cc_qdss_debug_xo_clk",
+> +			.parent_hws = (const struct clk_hw*[]) {
+> +				&cam_cc_xo_clk_src.clkr.hw,
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct clk_branch cam_cc_sbi_clk = {
+>  	.halt_reg = 0x10540,
+>  	.halt_check = BRANCH_HALT,
+> @@ -3133,6 +3305,8 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+>  	[CAM_CC_BPS_FAST_AHB_CLK] = &cam_cc_bps_fast_ahb_clk.clkr,
+>  	[CAM_CC_CAMNOC_AXI_CLK] = &cam_cc_camnoc_axi_clk.clkr,
+>  	[CAM_CC_CAMNOC_AXI_CLK_SRC] = &cam_cc_camnoc_axi_clk_src.clkr,
+> +	[CAM_CC_CAMNOC_DCD_XO_CLK] = &cam_cc_camnoc_dcd_xo_clk.clkr,
+> +	[CAM_CC_CAMNOC_XO_CLK] = &cam_cc_camnoc_xo_clk.clkr,
+>  	[CAM_CC_CCI_0_CLK] = &cam_cc_cci_0_clk.clkr,
+>  	[CAM_CC_CCI_0_CLK_SRC] = &cam_cc_cci_0_clk_src.clkr,
+>  	[CAM_CC_CCI_1_CLK] = &cam_cc_cci_1_clk.clkr,
+> @@ -3184,6 +3358,7 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+>  	[CAM_CC_CSIPHY6_CLK] = &cam_cc_csiphy6_clk.clkr,
+>  	[CAM_CC_CSIPHY7_CLK] = &cam_cc_csiphy7_clk.clkr,
+>  	[CAM_CC_DRV_AHB_CLK] = &cam_cc_drv_ahb_clk.clkr,
+> +	[CAM_CC_DRV_XO_CLK] = &cam_cc_drv_xo_clk.clkr,
+>  	[CAM_CC_FAST_AHB_CLK_SRC] = &cam_cc_fast_ahb_clk_src.clkr,
+>  	[CAM_CC_ICP_AHB_CLK] = &cam_cc_icp_ahb_clk.clkr,
+>  	[CAM_CC_ICP_CLK] = &cam_cc_icp_clk.clkr,
+> @@ -3260,6 +3435,9 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+>  	[CAM_CC_PLL11_OUT_EVEN] = &cam_cc_pll11_out_even.clkr,
+>  	[CAM_CC_PLL12] = &cam_cc_pll12.clkr,
+>  	[CAM_CC_PLL12_OUT_EVEN] = &cam_cc_pll12_out_even.clkr,
+> +	[CAM_CC_QDSS_DEBUG_CLK] = &cam_cc_qdss_debug_clk.clkr,
+> +	[CAM_CC_QDSS_DEBUG_CLK_SRC] = &cam_cc_qdss_debug_clk_src.clkr,
+> +	[CAM_CC_QDSS_DEBUG_XO_CLK] = &cam_cc_qdss_debug_xo_clk.clkr,
+>  	[CAM_CC_SBI_CLK] = &cam_cc_sbi_clk.clkr,
+>  	[CAM_CC_SBI_FAST_AHB_CLK] = &cam_cc_sbi_fast_ahb_clk.clkr,
+>  	[CAM_CC_SFE_0_CLK] = &cam_cc_sfe_0_clk.clkr,
+> @@ -3268,7 +3446,9 @@ static struct clk_regmap *cam_cc_sm8550_clocks[] = {
+>  	[CAM_CC_SFE_1_CLK] = &cam_cc_sfe_1_clk.clkr,
+>  	[CAM_CC_SFE_1_CLK_SRC] = &cam_cc_sfe_1_clk_src.clkr,
+>  	[CAM_CC_SFE_1_FAST_AHB_CLK] = &cam_cc_sfe_1_fast_ahb_clk.clkr,
+> +	[CAM_CC_SLEEP_CLK_SRC] = &cam_cc_sleep_clk_src.clkr,
+>  	[CAM_CC_SLOW_AHB_CLK_SRC] = &cam_cc_slow_ahb_clk_src.clkr,
+> +	[CAM_CC_XO_CLK_SRC] = &cam_cc_xo_clk_src.clkr,
+>  };
+>  
+>  static struct gdsc *cam_cc_sm8550_gdscs[] = {
