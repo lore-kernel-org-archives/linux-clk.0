@@ -2,88 +2,176 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19063EB64DA
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 06:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27B0BEB64DC
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 07:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbjFXGeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Jun 2023 02:34:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36340 "EHLO
+        id S231175AbjFXHCF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Jun 2023 03:02:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjFXGeS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 02:34:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 444FC2136;
-        Fri, 23 Jun 2023 23:34:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D482060ABA;
-        Sat, 24 Jun 2023 06:34:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E33C433C0;
-        Sat, 24 Jun 2023 06:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687588456;
-        bh=hkHTxFvEO+MyLUGuPjA18Dxz9O52pK222StWI/ypeW0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iT2Qeuvzn29kj/TwQDmO5lbTeWJ6qdLqQ/gA2XcFWNqwdcObW4XQQP3hpHaTkpVMW
-         sNWJLJAVjBiC9ZQOacg2ni3iIKWVAzLb2vptflufZ/DCFXvB2WE3aQY/Dd8KLbFU+c
-         z6Jx3B1jvQOzOdxCIq/kcrMgaivmb+5PTJVx1AjEgy/4QgSWYqRZ1YLQC2/bAfMfhi
-         72jndihbTgO46fYhdNnrooQ5sWXsuWIAOCZXDmG9daJBwEUY8nUAiIeCzNdd29nTg7
-         VpPwF4pipLTFwuxcNm6XB01IvDrs0Rt3KQbNZRyuK4ztbtmR/S5PD94pKykDtqZYLT
-         FCpZhGTEzqYhA==
-Date:   Sat, 24 Jun 2023 12:04:01 +0530
-From:   Manivannan Sadhasivam <mani@kernel.org>
-To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-        lpieralisi@kernel.org, bhelgaas@google.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 0/4]  IPQ8074 pcie/wcss fixes
-Message-ID: <20230624063401.GG5611@thinkpad>
-References: <20230623093445.3977772-1-quic_srichara@quicinc.com>
+        with ESMTP id S230358AbjFXHCB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 03:02:01 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11F52718
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 00:01:57 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-51d810010deso90280a12.0
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 00:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687590116; x=1690182116;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rstg4NpttCkFKjk4xPOPy5qzsYOhiiNR5cuB32vmPTU=;
+        b=xCetTBRI+jYa1hkw8BFGBLtJgUWF0KulNspNAD2p6n2aAKdWT3J+pzJk4UFWiurGQ1
+         XvDFEQcrKWqde35nugJ3hu3vRP/S5lPM9fs23Jav2N/fsF9Ji4AVxmEb1SwfY4kpQAsR
+         8UcNVk1xTl/iMcwh0lqjT/IxnZB/2/fL/6kTrYcJE9xi8uhd+z4ijDwUXW6IVyf+1zeJ
+         ZCFD4kBl6ofbubatr5AdgaURaA8eJR6AjiefEpHnMT6HASIpA5C4j2DcRS7TtJRzFnkJ
+         3nArBiKbR7RRS5Kk2RFYbWOaihX62SJjf9ZLZOvkIOPuSgwzVeYhsUNV744EXvYWW9X9
+         OfLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687590116; x=1690182116;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rstg4NpttCkFKjk4xPOPy5qzsYOhiiNR5cuB32vmPTU=;
+        b=ZnPq2UGuwAW72uWar7v9RmzKxRkPMB6+h9Fkw/CiGErOemdRp8y3iRLDiRzj0hFdJJ
+         uVSihpuO8hQo4fDBEyqN8o54p0bC1P/Ax217H8teQxvan0TTatFUVf7TvUhNY+IFojO6
+         sfm9Hjr1Zawx5zkUTunmHguQXzqPf+wwFNW1L0uXqTTHLw4xaGlYMoR+8/da0v2bEZk1
+         lV261B2q/ovuwfoMflXSMoJHnGZ4ZFHHtqVubpZGAGxBqnz5XbXMuEmYFh38R9T7/Dik
+         0acvJ5q3q5SmZx5eh/+Qm4ZYJz4n46Lm0TRYUnhA9E/KuI4L43gFXMyhimwpkc3yTX+G
+         sdKw==
+X-Gm-Message-State: AC+VfDytdGcQiIenaRnnhYJhURg+liZRCZMHGVFF+NbiFvVM9jpnSYQO
+        XgaQspseqOMqDgQmxNV1v9Ihww==
+X-Google-Smtp-Source: ACHHUZ5QlyQLJpJ+SDCgTV0vCOMYhcaQ7VpHCOj3aJd7W47UVPI8CTRjhYnV64/SRx8cnsrpCDrIVg==
+X-Received: by 2002:a17:907:9812:b0:98d:10d:a51c with SMTP id ji18-20020a170907981200b0098d010da51cmr6420472ejc.75.1687590116254;
+        Sat, 24 Jun 2023 00:01:56 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id o18-20020a170906289200b00982b204678fsm537134ejd.207.2023.06.24.00.01.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Jun 2023 00:01:55 -0700 (PDT)
+Message-ID: <8d21467a-83a4-8478-dbf5-edd77461e6dc@linaro.org>
+Date:   Sat, 24 Jun 2023 09:01:52 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20230623093445.3977772-1-quic_srichara@quicinc.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH V2 13/13] arm64: dtsi: qcom: ipq9574: Add nodes to bring
+ up multipd
+Content-Language: en-US
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, jassisinghbrar@gmail.com,
+        mathieu.poirier@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
+        kvalo@kernel.org, loic.poulain@linaro.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
+        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
+        quic_devipriy@quicinc.com
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-14-quic_mmanikan@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230521222852.5740-14-quic_mmanikan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 23, 2023 at 03:04:41PM +0530, Sricharan Ramabadhran wrote:
-> These are required to have pcie/wcss working on IPQ8074 based
-> boards. Pcie was broken recently, first patch fixes that and
-> next 2 are for adding WCSS reset and 1 for adding reserved region
-> for NSS.
+On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
+> Enable nodes required for multipd remoteproc bring up.
 > 
-> Will be following this up with few more dts updates and pcie
-> fixes.
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
+> Changes in V2:
+> 	- Corrected syntax like alignmnet and kept nodes in sorted order.
+> 	- Added 'firmware-name' property.
 > 
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 118 ++++++++++++++++++++++++++
+>  1 file changed, 118 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 0e04549c69a5..ff0da53ba05f 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -160,6 +160,11 @@
+>  			no-map;
+>  		};
+> 
+> +		q6_region: wcnss@4ab00000 {
+> +			reg = <0x0 0x4ab00000 0x0 0x2b00000>;
+> +			no-map;
+> +		};
+> +
+>  		smem@4aa00000 {
+>  			compatible = "qcom,smem";
+>  			reg = <0x0 0x4aa00000 0x0 0x00100000>;
+> @@ -697,6 +702,95 @@
+>  			};
+>  		};
+> 
+> +		q6v5_wcss: remoteproc@cd00000 {
+> +			compatible = "qcom,ipq9574-q6-mpd";
+> +			reg = <0x0cd00000 0x4040>;
+> +			firmware-name = "IPQ9574/q6_fw.mdt",
+> +					"IPQ9574/m3_fw.mdt";
 
-Since there is no direct relation between pcie and clk patches, these should've
-been submitted separately.
+Here and...
 
-- Mani
+> +			interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
+> +					      <&wcss_smp2p_in 0 0>,
+> +					      <&wcss_smp2p_in 1 0>,
+> +					      <&wcss_smp2p_in 2 0>,
+> +					      <&wcss_smp2p_in 3 0>;
+> +			interrupt-names = "wdog",
+> +					  "fatal",
+> +					  "ready",
+> +					  "handover",
+> +					  "stop-ack";
+> +
+> +			qcom,smem-states = <&wcss_smp2p_out 0>,
+> +					   <&wcss_smp2p_out 1>;
+> +			qcom,smem-state-names = "shutdown",
+> +						"stop";
+> +			memory-region = <&q6_region>;
+> +
+> +			glink-edge {
+> +				interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
+> +				label = "rtr";
+> +				qcom,remote-pid = <1>;
+> +				mboxes = <&apcs_glb 8>;
+> +			};
+> +
+> +			pd-1 {
+> +				compatible = "qcom,ipq9574-wcss-ahb-mpd";
+> +				firmware-name = "IPQ9574/q6_fw.mdt";
 
-> Sricharan Ramabadhran (4):
->   pcie: qcom: Fix the macro PARF_SLV_ADDR_SPACE_SIZE_2_3_3
->   dt-bindings: clock: qcom: Add reset for WCSSAON
->   clk: qcom: Add WCSSAON reset
->   dts: Reserve memory region for NSS and TZ
-> 
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi        | 7 ++++++-
->  drivers/clk/qcom/gcc-ipq8074.c               | 1 +
->  drivers/pci/controller/dwc/pcie-qcom.c       | 2 +-
->  include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
->  4 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+... here - why do you have firmware in both places?
 
--- 
-மணிவண்ணன் சதாசிவம்
+> +				interrupts-extended = <&wcss_smp2p_in 8 0>,
+> +						      <&wcss_smp2p_in 9 0>,
+> +						      <&wcss_smp2p_in 12 0>,
+> +						      <&wcss_smp2p_in 11 0>;
+> +				interrupt-names = "fatal",
+> +						  "ready",
+> +						  "spawn-ack",
+> +						  "stop-ack";
+> +				qcom,smem-states = <&wcss_smp2p_out 8>,
+> +						   <&wcss_smp2p_out 9>,
+> +						   <&wcss_smp2p_out 10>;
+> +				qcom,smem-state-names = "shutdown",
+> +							"stop",
+> +							"spawn";
+> +			};
+> +
+> +			pd-2 {
+> +				compatible = "qcom,ipq5018-wcss-pcie-mpd";
+
+This compatible is confusing for this device.
+
+Best regards,
+Krzysztof
+
