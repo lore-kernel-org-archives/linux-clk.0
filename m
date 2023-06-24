@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D10C001B1
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 07:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE0BEB64DC
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 07:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232085AbjFXHy1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Jun 2023 03:54:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48674 "EHLO
+        id S231917AbjFXHzJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Jun 2023 03:55:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232222AbjFXHyU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 03:54:20 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B91A2D76
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 00:54:08 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9891c73e0fbso265357066b.1
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 00:54:08 -0700 (PDT)
+        with ESMTP id S232223AbjFXHzD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 03:55:03 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96125295E
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 00:54:58 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-51be881b425so1505133a12.1
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 00:54:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687593246; x=1690185246;
+        d=linaro.org; s=google; t=1687593297; x=1690185297;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ItoFIh/55aB/e70WP466UAh+90Zeto+YBld1GOUDlc=;
-        b=DjI6EnIt0I30aO4+HTDU2Bee7J4vBxnKRd9UupAVeWwpXVR+/r44DC0Asz08Bbuogp
-         A3Aatz82DO8yHVMwWhn1gZCqEe6a2rWXkuiA6GfBUfoZTs2e6cwPHLJ+YuaeHPEUIAQJ
-         DJhwVAmDzSax0DlG6oJFsEy6UVQ/dIS8cQ+3QCTL9/CI0CL0ZoRWS02I2uBuEAJJk09M
-         Og5/SFPOzVmyQO9aVPrw3zuNNqm8+pzstsdw5EMvXLcY8o+3wfyYcS7e8fj+IvyDLk8l
-         BV2H6dDfJXmnGhqVtns8T1Mm5OFcAqbapX7uBCu2Qe31+yaUBaZBymo/wMUBAVDBKbPz
-         XF9w==
+        bh=soj7fUfKLSUMfNJRhcGNetkgOh1MYDCQh05RlBdkeN4=;
+        b=eD/q9ISsMCL47wOXs6De7fuRpet/07x40xn71+pyopNmpfC/leMOmohtiJNK9d+/0e
+         ILxksxb1fX6rwaa0PNl4dIKNWKQ0JE0p+6mC8Npy2RJ92zmvNc++lXF1Evombv7lLOhq
+         j0dEkeCidthf58IY6B/xewKh7UeXN34mH4Tn/G+1iZuhgJY19SkmNAEXnRUl+6Hr2Pkf
+         cSz2zRZiOrOsv0eavcQnSNRSp9hvrs6WsSE1JlocSaWw+8h6/lYnvjc7aqnaDQHYXfi2
+         MGVSEIum3iSzoq+S0mokQ5a3djEQN7ISokIkliin4UzR1LuGSZT4+Gyjp384W6jbO4Hx
+         53EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687593246; x=1690185246;
+        d=1e100.net; s=20221208; t=1687593297; x=1690185297;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ItoFIh/55aB/e70WP466UAh+90Zeto+YBld1GOUDlc=;
-        b=HWOYzYh7ccqX459gHDgrZbpKG18wvRoI+FjX3koCsZuMHjRxd5kuMajcHuc+4lhGE2
-         TdoI+T8rK6ny4jnyr1ogZo6xbckptP3Rvj1dcCojt77HVWJP9I9CBiplurCs2T7OTIhc
-         stqS5HBGXUQfwl4VUkoj6WonbRFZ6UdpiB9fcIO9+/9/OVaSe+sfnGnupOLFiBvUeIfK
-         d3LBYxQ6AVtJLkJNaDLD52IgkD000OiFvXDm0UQdfFpl1neTZiaJ9Xjw7+D+ZJsUpC9u
-         X/umSVLWYz9FuVR4Gmn5dLHqTMYk1IR2HHonrWFSGN8tXgJgJfkkWPR6sUTUXh/tFB74
-         2mkw==
-X-Gm-Message-State: AC+VfDyCZLP3tUHDQ/J2mViQVGlyn9ZEeUS2f0PuUC7ASwxJxEIIgLEU
-        2TXgemvANrQWoeyNekvszFSHkQ==
-X-Google-Smtp-Source: ACHHUZ49jFwiXxqnSCSn4kNoVnnSW/YdtiArnK3FxalPv2kaFMQNSvBgECWFO9OcGbSuOPMw0UOLPA==
-X-Received: by 2002:a17:906:58d2:b0:988:77f0:b671 with SMTP id e18-20020a17090658d200b0098877f0b671mr14792178ejs.38.1687593246753;
-        Sat, 24 Jun 2023 00:54:06 -0700 (PDT)
+        bh=soj7fUfKLSUMfNJRhcGNetkgOh1MYDCQh05RlBdkeN4=;
+        b=M6W/DqsRrn0fUggRI/9ppqTZ6kga4XNSx3hBlWlMoLXiyoy9rrRpX+p6uxOmqTfQJE
+         6S2mtwmOFsw+fMGgupSOsTm8BL9iQfOqfYeTMrEjANXyWXlL4OeG20i5tBMxKenoU4F7
+         KoElf98ZLV5hYsjF7y56FLjhlTvA8gA0f6KrX2Qy0u1kNdzaAzxjJvuRLQinkVtYwHL5
+         8Re4C/Eh3Qp89gUtTvjF3mQlJ+7pXKSSWAFJcETM85JTgk6bsZWOdSADaXZrYG97e+cF
+         nIQXtURfIsU/YAwzCm6c9Hj8Xqh7xk6/hGn0e76vo9bfg/QnP+7aMTDHk+0ocXfmc78J
+         60Rg==
+X-Gm-Message-State: AC+VfDyXm/9DK2T7D4wUXXrOQhDsw2CLmr4gvATy06mbWmGOs+TyO11n
+        4EQG17jToB0U5ejEG3f8jU8d+g==
+X-Google-Smtp-Source: ACHHUZ5vmH/wKISmL4HMBTOHg32GmJjKiHm7OZvesTfDEOfAm6Koe4Xv//vNxQvMZ5IiPxQ9Ro3PoQ==
+X-Received: by 2002:a17:907:320e:b0:96f:912e:5ec4 with SMTP id xg14-20020a170907320e00b0096f912e5ec4mr19710575ejb.16.1687593296802;
+        Sat, 24 Jun 2023 00:54:56 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id u12-20020a170906068c00b0098856d1470csm592132ejb.75.2023.06.24.00.54.01
+        by smtp.gmail.com with ESMTPSA id o6-20020aa7d3c6000000b0051a5177adeasm400813edr.21.2023.06.24.00.54.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 24 Jun 2023 00:54:06 -0700 (PDT)
-Message-ID: <4f1015bb-50d3-84c9-ca32-564a0fe204e1@linaro.org>
-Date:   Sat, 24 Jun 2023 09:54:00 +0200
+        Sat, 24 Jun 2023 00:54:56 -0700 (PDT)
+Message-ID: <428a655e-8664-0e68-7eda-8edd47a4eee7@linaro.org>
+Date:   Sat, 24 Jun 2023 09:54:50 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 03/45] dt-bindings: usb: generic-ehci: Document
- clock-names property
+Subject: Re: [PATCH v2 04/45] dt-bindings: net: cdns,macb: add documentation
+ for sam9x7 ethernet interface
 Content-Language: en-US
 To:     Varshini Rajendran <varshini.rajendran@microchip.com>,
         robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
@@ -92,9 +92,9 @@ Cc:     Hari.PrasathGE@microchip.com, cristian.birsan@microchip.com,
         manikandan.m@microchip.com, dharma.b@microchip.com,
         nayabbasha.sayed@microchip.com, balakrishnan.s@microchip.com
 References: <20230623203056.689705-1-varshini.rajendran@microchip.com>
- <20230623203056.689705-4-varshini.rajendran@microchip.com>
+ <20230623203056.689705-5-varshini.rajendran@microchip.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230623203056.689705-4-varshini.rajendran@microchip.com>
+In-Reply-To: <20230623203056.689705-5-varshini.rajendran@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -102,23 +102,13 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 23/06/2023 22:30, Varshini Rajendran wrote:
-> Document the property clock-names in the schema.
-> 
-> It fixes the dtbs_check warning,
-> 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+> Add documentation for sam9x7 ethernet interface.
 > 
 > Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 > ---
->  Documentation/devicetree/bindings/usb/generic-ehci.yaml | 4 ++++
+>  Documentation/devicetree/bindings/net/cdns,macb.yaml | 1 +
 
-This is a friendly reminder during the review process.
-
-It seems my previous comments were not fully addressed. Maybe my
-feedback got lost between the quotes, maybe you just forgot to apply it.
-Please go back to the previous discussion and either implement all
-requested changes or keep discussing them.
-
-Thank you.
+So you ignored the comments and tags everywhere?
 
 Best regards,
 Krzysztof
