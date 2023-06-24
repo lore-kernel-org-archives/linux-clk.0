@@ -2,115 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD08EB64DC
-	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 09:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DC5EB64DA
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Jun 2023 09:31:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232807AbjFXJXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 24 Jun 2023 05:23:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51808 "EHLO
+        id S232903AbjFXJbZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Jun 2023 05:31:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232624AbjFXJXn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 05:23:43 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79A881BFA
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:23:40 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-98746d7f35dso197104966b.2
-        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:23:40 -0700 (PDT)
+        with ESMTP id S232748AbjFXJbY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Jun 2023 05:31:24 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E77170B
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:31:23 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-987341238aeso167454166b.3
+        for <linux-clk@vger.kernel.org>; Sat, 24 Jun 2023 02:31:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687598619; x=1690190619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EuyyoXYkLcFUjNW6aU0LWhkMHFG4qPaiZWIPRvxeeTA=;
-        b=g66y85pUmxbEk8gM1Z1/c1SSekEW4T1k4oAFY2odQs17Fe0i5NQtNAg8YfQ0y5PXDO
-         JQ0h5TKyFH8kEJexF4E5uUAYUUTvoLrtDbttalI/TpRRut0MeLBi39qT+qPR9h2crIJ4
-         twd4vI/Sgf2PrnmqyK4K7Wfk3B5izATUbxSr/5XJzNoy2H7OMyCEm4o7a+q8aRj8ALE4
-         dqMLqsB7Vh2D8EfuzTaNFD6MfGlIax3uCuCFL0a+TPqcfaqOdGNmhNNnmzTkV7GZQG27
-         WzW2S7rjCG8vBIjq8J0kwEv7E4teVB6wT4a9BZsQ0gYmst95bLhaIEBSGkJK5s+jxcOj
-         U1Zw==
+        d=linaro.org; s=google; t=1687599081; x=1690191081;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uwFIAccLIYNITGdMmhfyslt2bwDng0x/ZpNayYHghu8=;
+        b=gc9/259HB7eikMHCQoNfzHBy/dycbEU/NjOFFnU8PbxsvPGyfNqoAKoAttafP2LK3K
+         o8T887iu1nUWr8WHUlorPc2GkgFZqr90iFjwHQhPBsi2sF1sSxGB52kj4CmKlPDCq8BM
+         9LbSM1ZwP1UK8Rl3mgeAq+IsMhGGArCApiHtotYKsX4U4up0ZEe9AnGqGORSAJmafl5M
+         bpyubo+oVuadRCq3PFmiBKS/XJP3UBqd8FG+l06PHSS6AjgDQvzgQ7NXRzAqxLt8Hqy8
+         JzWDz4sBifpXB99IaCL4BLgAR8765gFH3HZmDw32SGCMnXXJ3TcvvNyXRHLH6L50/stk
+         fFTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687598619; x=1690190619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EuyyoXYkLcFUjNW6aU0LWhkMHFG4qPaiZWIPRvxeeTA=;
-        b=QAW5nUSIb4VDR9byUwYeYkshAf5gS99KwSYQU1a0VbRZ4qh/UYNHusZGOFvO1OC+6H
-         jCK7dF1j1yvevT0EIhfM2XqSucdJFq1F2dN3Q9OFNx4E+5d1HmYxVUKWc9js1iorzHox
-         TYL4BgfDONLA1CG2ONJzElz/VD3WOjHNURuwJalfExJEvwjMCTqri2CxyMRDN9LIv0cf
-         39vRM4ypKViQoVaEJLXQigL+oEW2/trrQsPUwhrBn7dCBI8xdAVd4TYwU/vAtyo5/vAR
-         yQvuODq8d8x15KAsXLvq9ez9xaDRqbU4fW/cKtPdWpiV8c0BANQN/SHQIUn1DmAm0qMp
-         xJvA==
-X-Gm-Message-State: AC+VfDwxIG2WGnfgWcLh8r70OSYwsrl8InXK8ERUS98LxHt4yqJFRN5o
-        9EwZY6CTEBwjzk9l1DByYCTyYg==
-X-Google-Smtp-Source: ACHHUZ7Hm22TLuZ2uNMqorvhvVqmtSRdvFVMVJyZ7P02nHMQr1v41Obhbu8aAZ5ky21fmiU2Y7E37A==
-X-Received: by 2002:a17:907:2bc8:b0:98d:758:75ed with SMTP id gv8-20020a1709072bc800b0098d075875edmr6033410ejc.75.1687598618680;
-        Sat, 24 Jun 2023 02:23:38 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id q22-20020a17090622d600b009895af2580asm671367eja.36.2023.06.24.02.23.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Jun 2023 02:23:37 -0700 (PDT)
-Date:   Sat, 24 Jun 2023 11:23:36 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-        vadfed@meta.com, jonathan.lemon@gmail.com, pabeni@redhat.com,
-        corbet@lwn.net, davem@davemloft.net, edumazet@google.com,
-        vadfed@fb.com, jesse.brandeburg@intel.com,
-        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
-        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
-        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
-        michal.michalik@intel.com, gregkh@linuxfoundation.org,
-        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
-        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
-        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
-        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
-        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
-        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
-        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
-        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
-        mschmidt@redhat.com, linux-clk@vger.kernel.org,
-        vadim.fedorenko@linux.dev
-Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
-Message-ID: <ZJa2GEr6frhHQrS0@nanopsycho>
-References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
- <ZJW37ynDxJCwHscN@nanopsycho>
- <20230623085336.1a486ca3@kernel.org>
+        d=1e100.net; s=20221208; t=1687599081; x=1690191081;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uwFIAccLIYNITGdMmhfyslt2bwDng0x/ZpNayYHghu8=;
+        b=TjaOntvyHR7M5+cQfi3jocJmEpvLqsE+K23BPIBEEk2Nzky0BCbn8h/GvlbitvzNIO
+         3ZiaPyKI+hnMzL7slSuRMvro9zAkh+NN4IDfxkY/SnRIy3y96Ps27ZNjDL7J6syOOGUV
+         PwBi/6kZ2hMSp0OXmeYqp4ux3GO+lLas1PCzbdL278A+YqMgGzwazjEGt2aYqFnsLRGQ
+         FW4d/ZQAopwix9p5I7HozegvGOIfc1kxMpF/6PFLVF0wqlo3gIR5msGm/fmg1hEDHQNY
+         qhjSq07YR1t8t5ZL4daoM5Pp8R2X8YDlmsprdTg3lHYyb+tHuMRxw/rtq8CU1AMCiATa
+         RXXA==
+X-Gm-Message-State: AC+VfDwV9qIxXoZD2/og2Q5Buaooosk6HPcwZSkEtvCqHr7OTt1z4//4
+        Lma79vH3BF4B3Or38/kwD/4g0g==
+X-Google-Smtp-Source: ACHHUZ7LC+7hcCDvBte5xgktiTToiRBYnv91b8Sj+cbLeoDMK97jXgfSs6kpS0Rkuj/xi6REicP9TQ==
+X-Received: by 2002:a17:907:5c2:b0:974:55a2:cb0b with SMTP id wg2-20020a17090705c200b0097455a2cb0bmr21160376ejb.55.1687599081475;
+        Sat, 24 Jun 2023 02:31:21 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id p26-20020a170906229a00b00986bf50fe7asm699359eja.60.2023.06.24.02.31.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Jun 2023 02:31:20 -0700 (PDT)
+Message-ID: <0747247e-22ac-f798-6d95-9cd14fb24cb1@linaro.org>
+Date:   Sat, 24 Jun 2023 11:31:17 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230623085336.1a486ca3@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 07/15] dt-bindings: display/msm: Add SM6125 MDSS
+Content-Language: en-US
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
+References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
+ <20230624-sm6125-dpu-v1-7-1d5a638cebf2@somainline.org>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230624-sm6125-dpu-v1-7-1d5a638cebf2@somainline.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Jun 23, 2023 at 05:53:36PM CEST, kuba@kernel.org wrote:
->On Fri, 23 Jun 2023 17:19:11 +0200 Jiri Pirko wrote:
->> I don't understand. The discussion in the RFCv8 thread is still going
->> on. The things I mentioned there are ignored. Like for example:
->> 1) mode_set op removal
->> 2) odd ice dpll locking scheme (either fix or describe why it is ok -
->> 				that's the unfinished discussion)
->> 3) header file bits squash I suggested. Vadim wrote that it sounds
->>    reasonable, yet nothing changed
->> 
->> I thought we are past this. Why I have to point the same issues over and
->> over?
->
->FWIW I'm lost in the previous thread, so for me there's value in
->refreshing the series.
->
->But you're right, at the very least there should be a summary of
->outstanding issues / open items / ongoing discussions in the cover
->letter.
+On 24/06/2023 02:41, Marijn Suijten wrote:
+> Document the SM6125 MDSS.
+> 
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> ---
 
-Well I would like to conclude discussion in one thread before sending
-the next one. What should I do? Should I start the same discussion
-pointing out the same issues in this thread again? This can't work.
 
-Even concluded items are ignored, like 3)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-IDK, this is very frustrating for me. I have to double check everything
-just in case it was not ignored. I don't understand this, there is no
-justification.
+Best regards,
+Krzysztof
+
