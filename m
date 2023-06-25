@@ -2,57 +2,57 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3288EEB64DC
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 21:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F451EB64DC
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 21:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229532AbjFYVDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Jun 2023 17:03:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
+        id S229454AbjFYVIG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Jun 2023 17:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbjFYVDf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 17:03:35 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65600D1;
-        Sun, 25 Jun 2023 14:03:34 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id a640c23a62f3a-98de21518fbso206202166b.0;
-        Sun, 25 Jun 2023 14:03:34 -0700 (PDT)
+        with ESMTP id S229447AbjFYVIF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 17:08:05 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1301110A;
+        Sun, 25 Jun 2023 14:08:04 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id 4fb4d7f45d1cf-51d93425853so1095366a12.1;
+        Sun, 25 Jun 2023 14:08:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1687727013; x=1690319013;
+        d=googlemail.com; s=20221208; t=1687727282; x=1690319282;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x1qUTVRqtuFOc3JgBHsj7jo773emKPd31TbXJig8SrE=;
-        b=enNyxZrird41eKiFx69ef5eIqFRoukLWnR0269/bqLsyjnLcwGCwX8wy5cSdUpFoja
-         ai9j5Keis1OLCIRhST1zZKzlHQuNR/cyQrFgPjdl6fKuwkNnW6/gxYBm1AvFovRI7FCS
-         Tw2mrjI2hYZty6Uo2KVgZBAX0Xyt2jze+uvw92T/w6rZzro9m8i3OpPM0Fcfqgl+raYL
-         xJ/SYJiK4XSmI/l5iOJjnHh1g8vPosyoyZty0tMYEvMeLo89oTyI8L8zFPiNUBF20G3+
-         2nVvo0OwcjfRqRg1psQ9+jMST8WAWQGh4tTwINm/3DpwTublP68zgOPS4SslPwosWa6m
-         Vbag==
+        bh=eXLV4vlHgRblurGbsUNfZOWxcEKocikl7BI0LorFN2o=;
+        b=C8SC2P9rHj755edoOtxc5j8w+LrILXSDmfvyygE2DPkqJuul2pP+IygQxoj+bvueOM
+         +3vzJX074rgvz9lVM9ELJeAZ6Y9W+sNyQ92RLROKLG2JCXbVTtECrfdLMJyQwKitLzRb
+         TUtABquz5c93Ofk1shnxd6Qwhy7ngTfpNgtQ/vEaKWM13gVCciui+UOHXekpaLp1m5NU
+         p2RDitu/9ST1A+zV966fPPDfjeBqH+yMV/nCI3PQTkuvR1zF/ktyLTmStiJaFsaVLIoy
+         VeF+QEMLkhY1YZF5ILar3vk+hgHpe4nAJVIVKzoEU+q4EbTdX0NnwODMh8BLA95w97sf
+         EjhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687727013; x=1690319013;
+        d=1e100.net; s=20221208; t=1687727282; x=1690319282;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x1qUTVRqtuFOc3JgBHsj7jo773emKPd31TbXJig8SrE=;
-        b=lEKk2we526g5puBGRNAGCjva5qFlUG1ABi4SDPUB6SlZY3c87Ot6Xlq0CSB6UWZg9O
-         lNjvyFCd928pRrcDk732rY3q4e8Rt/Tfe5xBm+5ehQ7nT4jVp1+r4nxbbbENSK/+gF14
-         i/LiDLKrXbddsK7tzC6TLppHsLQLsQE/w5LFuz228NoCwnBQ8dd/Bu7P82jeTC7nk3kB
-         Xgk5VMr9toj6wzhLVIEwxy4bBILChlE53x8R/+rzgOXGdidAx9WDXP5L9V9/CYWdF9eP
-         CKLzNeDQpUV7usPegahl9xRMTgIAgPSqtfj1QS8/9U+GDlpZf0btLniK4nz96dHFTfE5
-         qbiQ==
-X-Gm-Message-State: AC+VfDy3aORhyzKdZhry9qXFvrpjK9qtRax7mC+QKi4LxjtY0W4uT85o
-        ORcgpcNznL6ScSD3l1Vu82XQtQh6hBIts6QmB5I=
-X-Google-Smtp-Source: ACHHUZ5alJ2fuFFkTHozOioXL0nwU19Y1j3nLviNjxIaxbzwKLlUz+UVYHCa9X08SsIVGK1SgSlwsJ1tVn0bCXuWrr8=
-X-Received: by 2002:a17:907:9623:b0:988:6bd2:b0ab with SMTP id
- gb35-20020a170907962300b009886bd2b0abmr21427420ejc.6.1687727012508; Sun, 25
- Jun 2023 14:03:32 -0700 (PDT)
+        bh=eXLV4vlHgRblurGbsUNfZOWxcEKocikl7BI0LorFN2o=;
+        b=LTVj1MIE/hR7LE75A0BcjViRjqZ82p/I7Qke+bnAiGxgJzT+bB6Awo4E9YDituuVkd
+         qsZfdgdpMTEottlmHS70sp39KuN8IhkTW49z6eb1+akDQxR+bMJha3Wofb/lneloc+Ai
+         j48iJhq4d18KFMs11Rh71zwUemPn8eiJyF3jhIZsSdzEqUz7B5lsHrDzfeWh/hDDo27e
+         2TPcpQaHtfg1SHOPANkuJOQRnaJZAQ2bjwmpOYBG/W5ijziC+rgv+2J0YemQsxvPJ+PW
+         zB/iCMTm7SIO70NhosXT9wybee0yrTJyWcqTFV+sNTMHYxm9SyHrwBnoR+hPowweEfPq
+         GAIA==
+X-Gm-Message-State: AC+VfDwz7ifNffQIO8FBDJBWGHGAmPfwfZ4SFCnrHZm/kcOaCUy7jUAZ
+        yEZkm3pGf8jlIVjfqk0eGL3kDIp1oeE515nzIow=
+X-Google-Smtp-Source: ACHHUZ66yMbvwXQLq2TOx+PDvqUL8KVT85zj9wD4oVpTV44CE9hREhfhvnG3dbD1Lti1brA8yVk9QqOQlZiEYKgsnEs=
+X-Received: by 2002:a05:6402:12c6:b0:51d:8ab1:5df4 with SMTP id
+ k6-20020a05640212c600b0051d8ab15df4mr2105710edx.21.1687727282228; Sun, 25 Jun
+ 2023 14:08:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230607201641.20982-1-ddrokosov@sberdevices.ru> <20230607201641.20982-5-ddrokosov@sberdevices.ru>
-In-Reply-To: <20230607201641.20982-5-ddrokosov@sberdevices.ru>
+References: <20230607201641.20982-1-ddrokosov@sberdevices.ru> <20230607201641.20982-6-ddrokosov@sberdevices.ru>
+In-Reply-To: <20230607201641.20982-6-ddrokosov@sberdevices.ru>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 25 Jun 2023 23:03:21 +0200
-Message-ID: <CAFBinCAGLerkDrz98WbpyVAV3jukkPXqDGSV0vOWY0jNiKaJvQ@mail.gmail.com>
-Subject: Re: [PATCH v1 4/6] arm64: dts: meson: a1: introduce SPI Flash Controller
+Date:   Sun, 25 Jun 2023 23:07:51 +0200
+Message-ID: <CAFBinCD-5RD_iszZZRg58XqTHDEHnipJkf2aAex8MdUyh=bVCw@mail.gmail.com>
+Subject: Re: [PATCH v1 5/6] arm64: dts: meson: a1: introduce UART_AO mux definitions
 To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
 Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -62,7 +62,7 @@ Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Martin Kurbanov <mmkurbanov@sberdevices.ru>
+        Oleg Lyovin <ovlevin@sberdevices.ru>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -72,24 +72,52 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Wed, Jun 7, 2023 at 10:16=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
 es.ru> wrote:
 >
-> From: Martin Kurbanov <mmkurbanov@sberdevices.ru>
+> From: Oleg Lyovin <ovlevin@sberdevices.ru>
 >
-> This controller can be used for spinand flash connection.
+> The Amlogic A1 has a UART_AO port, which can be used, for example, for
+> BT HCI H4 connection.
 >
-> Signed-off-by: Martin Kurbanov <mmkurbanov@sberdevices.ru>
+> This patch adds mux definitions for it.
+In the past we've only taken the pinctrl definitions if we have a
+board that uses them.
+Neil, do we still have the same policy in place? If so this patch
+should be sent with the series that adds support for your A1 board.
+
+> Signed-off-by: Oleg Lyovin <ovlevin@sberdevices.ru>
 > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 >
 > diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/=
 dts/amlogic/meson-a1.dtsi
-> index 63faccfc1134..0efd922ca7e1 100644
+> index 0efd922ca7e1..3eb6aa9c00e0 100644
 > --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
 > +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> @@ -199,6 +199,16 @@ gic: interrupt-controller@ff901000 {
->                         #address-cells =3D <0>;
->                 };
+> @@ -118,6 +118,22 @@ gpio: bank@400 {
+>                                         gpio-ranges =3D <&periphs_pinctrl=
+ 0 0 62>;
+>                                 };
 >
-> +               spifc: spi@fd000400 {
-please also sort this numerically, so it should appear before &apb
+> +                               uart_a_pins: uart_a {
+Only our newer .dtsi (e.g. meson-g12-common.dtsi) are following the
+pattern where node names should use dashes instead of underscores.
+So please use: uart_a_pins: uart-a { ...
+
+[...]
+> +                               uart_a_cts_rts_pins: uart_a_cts_rts {
+similar to the comment from above:
+uart_a_cts_rts_pins: uart-a-cts-rts { ...
+
+> +                                       mux {
+> +                                               groups =3D "uart_a_cts",
+> +                                                        "uart_a_rts";
+> +                                               function =3D "uart_a";
+> +                                               bias-pull-down;
+Out of curiosity: is this pull down needed on all boards or just specific o=
+nes?
+It seems like all other SoCs use bias-disable for the RTS/CTS pins.
+
+
+Best regards,
+Martin
