@@ -2,51 +2,51 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18179C04A94
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 20:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DBAC0015E
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 20:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230445AbjFYU0R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Jun 2023 16:26:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60800 "EHLO
+        id S230389AbjFYU0U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Jun 2023 16:26:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230399AbjFYU0Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 16:26:16 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2129910C1
+        with ESMTP id S230435AbjFYU0R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 16:26:17 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0599910C2
         for <linux-clk@vger.kernel.org>; Sun, 25 Jun 2023 13:26:08 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fb7589b187so206817e87.1
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b46d270ea1so36348051fa.1
         for <linux-clk@vger.kernel.org>; Sun, 25 Jun 2023 13:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687724766; x=1690316766;
+        d=linaro.org; s=google; t=1687724767; x=1690316767;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P/gIGR5p88bRbqFIR3bdructdjZtrGeYMyqpAN9LK2o=;
-        b=Hr4NYCYDh9Ejr8ZwKjAjGQdntwzW7Z5jEqehZ8+GoP0hJ1WR/H99CzIIfQzFh5EE1X
-         pi7LGA9BnB2BcYfD8Tk+Kj52cXQqJ+6JlFP3zxnM9CnAx6igkE3g8PXzAWMSwVoWj/Rm
-         PaYCHDMPuCFd+GVjtYN6cf0c/VFdlZ5MyFk6Kkm1JN99xUJ9soQ58ERxgQ2gcQIMcnay
-         Bgfy88Udq/dO6VvhH8adShO/pURPQEzMjkZkxzkAPaMh7Jil2Xjbn9WovrNhtrW1Hftm
-         3MrYozMF/eugpFeRQmjqAWtWq5XWiKwjx6rcdl2QoychMzqm3VNTUSRciA1rcEJahJ9O
-         ibeA==
+        bh=77d+d36KDkZJ6tRGLwEY2Ux3Xp+jyLxcEE3RlyjNnBw=;
+        b=MJGUwU4csWft8gwY9EJC4GHGrYyX/vKLSqxL3D927k67Pwk3efZvimrtJgIoXQYd8M
+         vBtGc6DejbION5Nl/fKaRox3bZ+Hop0MolxyeyerNtTS5aEGwh9VSklf9uvl1QV4exQn
+         Q2W3i0EfINlMMMNrUJ5HMtfg+/Zossia5RowRM+Zrl/S/jCmVQIuLgjLmr6Bn4c+yo6Q
+         bk0yoOTZtOyfzK8MDnARqlNdZHrO+UJukQbrIRneJ26h2tyY50L2/l4tVNGmV/5cjfc+
+         D1lQDtHRMTKh5/X/OB6OBYKxyy5J0hyw1n3LD2PC3Z8IAYaQDj5pUJoBQIdEA7nsjMa6
+         It3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687724766; x=1690316766;
+        d=1e100.net; s=20221208; t=1687724767; x=1690316767;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P/gIGR5p88bRbqFIR3bdructdjZtrGeYMyqpAN9LK2o=;
-        b=c1gHWOMxGWZwj+R/q71tVjwEYaPZWqdS/GVuTBPuOG9qauRosRHMw0s3G/Qa/KGxRR
-         pigqNNfQHUMCMBZ/2XMpVTBpuGS9BIEp9RbkrC/9zBeABQq4md7+fhbXY/BAvLefJtyr
-         k84Aw7GmrNhvJIxpydnR654/CDF6GpLO+yFl3XAr2j7tC/C8XEJAaOSzvHIj15J2GrkU
-         KtDlN/cUZqYx/vEVpgSQv7mmnbzWTwpMk8//5tps0QGllEGIywOQ7F3GvSJmtHX1or8t
-         fwIBrVdYDiIozqbD34GsSW20PsiznjGF3c7LIFLXjJz5NoAgppThtXtJiUAz7hycxp/1
-         IrKw==
-X-Gm-Message-State: AC+VfDx8sTepJdzF+hP3WZ7K3MvGl2Oqw5T4usbtIr5NjAo/THD8HSXx
-        AhoYE3iY498mUl2oBvND7u8U9Q==
-X-Google-Smtp-Source: ACHHUZ5jvaHJPeX1ZeYJTC+I5cSM+HJV3traT6tMQJ6ckNnZHG9OislZcpY+YLOCRm63ccgatJi0yw==
-X-Received: by 2002:a19:ca5d:0:b0:4f8:5ade:44b5 with SMTP id h29-20020a19ca5d000000b004f85ade44b5mr13231254lfj.53.1687724766408;
-        Sun, 25 Jun 2023 13:26:06 -0700 (PDT)
+        bh=77d+d36KDkZJ6tRGLwEY2Ux3Xp+jyLxcEE3RlyjNnBw=;
+        b=i+dqCdJkEDnx/Oytbn9DgoCZ7LpU1StYxVEZ85RO9I6klnXT7g81Se8EpvLwk673kG
+         v94dR/H9dQj8SqguiEuViPwOTY2kDJATT9rshiFFUpG/PDPTw5aTnqRblm4spHC0VjCU
+         pn2yxT+aLW7EHIIrvb7Pg0pNbyd5aqTJmIbTakkknB38FKyhJ8S3xIwt7WCQ/hQrXrgM
+         1koLsCyYOsmu0rHlLMY0TNhgnUjmfCfgY9Kz51p7tf67MxI4bIjeViJj4c8UHG/ivhS8
+         EaPqU8xVwAYNPYU7DWeUpwo7pXS/yvW5P+ZeRMrCakSjnH1sY2nR3Wi2uB6AN0GL9LJ9
+         Ie9g==
+X-Gm-Message-State: AC+VfDz+bwBQsqthHZCbenOkS4DSjM37WFCMEncwVrRwiz4vYWWE6Ed0
+        hY7opC3mikXg+cdM8BaWe6JJtAnZYo1BoxSNv/0=
+X-Google-Smtp-Source: ACHHUZ6UOX37vIQM2BQ6tIOcTtFsFUySwM68LzB8NeMFXoHNq8Fk5PRtssY25xmAChM3kT5Sdujpfg==
+X-Received: by 2002:a2e:740e:0:b0:2b5:86e4:558e with SMTP id p14-20020a2e740e000000b002b586e4558emr8355931ljc.38.1687724767234;
+        Sun, 25 Jun 2023 13:26:07 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id m21-20020a195215000000b004f8427f8716sm787537lfb.262.2023.06.25.13.26.05
+        by smtp.gmail.com with ESMTPSA id m21-20020a195215000000b004f8427f8716sm787537lfb.262.2023.06.25.13.26.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 25 Jun 2023 13:26:06 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v2 19/26] ARM: dts: qcom: apq8064: enable passive CPU cooling
-Date:   Sun, 25 Jun 2023 23:25:40 +0300
-Message-Id: <20230625202547.174647-20-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 20/26] ARM: dts: qcom: apq8064-asus-nexus7-flo: constraint cpufreq regulators
+Date:   Sun, 25 Jun 2023 23:25:41 +0300
+Message-Id: <20230625202547.174647-21-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
 References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
@@ -78,82 +78,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wire up CPUs and thermal trip points to save the SoC from overheating by
-lowering the CPU frequency.
+Add additional constraints to the CPUfreq-related regulators, it is
+better be safe than sorry there.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 29 ++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ .../boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-index b97d88517805..f38e3394b422 100644
---- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-@@ -11,6 +11,7 @@
- #include <dt-bindings/soc/qcom,krait-l2-cache.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/thermal/thermal.h>
- / {
- 	#address-cells = <1>;
- 	#size-cells = <1>;
-@@ -701,6 +702,13 @@ cpu_crit0: trip1 {
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
+diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
+index c57c27cd8a20..9f5d72727356 100644
+--- a/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
++++ b/arch/arm/boot/dts/qcom/qcom-apq8064-asus-nexus7-flo.dts
+@@ -218,9 +218,9 @@ s1 {
+ 			bias-pull-down;
  		};
  
- 		cpu1-thermal {
-@@ -722,6 +730,13 @@ cpu_crit1: trip1 {
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
+-		/* msm otg HSUSB_VDDCX */
++		/* msm otg HSUSB_VDDCX and VDD_DIG */
+ 		s3 {
+-			regulator-min-microvolt = <500000>;
++			regulator-min-microvolt = <950000>;
+ 			regulator-max-microvolt = <1150000>;
+ 			qcom,switch-mode-frequency = <4800000>;
+ 		};
+@@ -301,6 +301,12 @@ l23 {
+ 			bias-pull-down;
  		};
  
- 		cpu2-thermal {
-@@ -743,6 +758,13 @@ cpu_crit2: trip1 {
- 					type = "critical";
- 				};
- 			};
++		/* VDD_MEM */
++		l24 {
++			regulator-min-microvolt = <1050000>;
++			regulator-max-microvolt = <1150000>;
++		};
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu3-thermal {
-@@ -764,6 +786,13 @@ cpu_crit3: trip1 {
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
+ 		/*
+ 		 * tabla2x-slim-CDC_VDDA_A_1P2V
+ 		 * tabla2x-slim-VDDD_CDC_D
+@@ -329,8 +335,12 @@ lvs6 {
+ 		/*
+ 		 * mipi_dsi.1-dsi1_vddio
+ 		 * pil_riva-pll_vdd
++		 * HFPLL regulator
+ 		 */
+ 		lvs7 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-boot-on;
+ 			bias-pull-down;
  		};
  	};
- 
 -- 
 2.39.2
 
