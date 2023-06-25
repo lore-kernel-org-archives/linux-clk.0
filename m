@@ -2,120 +2,163 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA487EB64DC
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 07:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B397EB64DC
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 10:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231502AbjFYHwd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Jun 2023 03:52:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50218 "EHLO
+        id S231640AbjFYKqK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Jun 2023 06:46:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230254AbjFYHwc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 03:52:32 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16B6C134
-        for <linux-clk@vger.kernel.org>; Sun, 25 Jun 2023 00:52:28 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qDKXm-0001ks-US; Sun, 25 Jun 2023 09:52:22 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qDKXk-009uRf-LQ; Sun, 25 Jun 2023 09:52:20 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qDKXj-00HC8v-KC; Sun, 25 Jun 2023 09:52:19 +0200
-Date:   Sun, 25 Jun 2023 09:52:19 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Peng Fan <peng.fan@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
+        with ESMTP id S230465AbjFYKqJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 06:46:09 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050:0:465::202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA837E4F;
+        Sun, 25 Jun 2023 03:46:07 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4QpnhB0JYyz9sSq;
+        Sun, 25 Jun 2023 12:46:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1687689962;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kKhuHPV17HEOsXIDx1u91H9Dzw6TJlM2wdyZXCpCSZY=;
+        b=JmpgZsrs8UUApbtKkjpXh+6ZRD/xTLPepvCw/G80dGvy1g6L7LKrt/qeZPmWTwbkA8SinH
+        OJw6LvcPMoZ37Op7Wz4Yp7TvFTI0imO2cV5UaZgcPKpC/jS8Re7k8UJy7xxYq8k7fxNIjg
+        UBxdsHP/tnC+qTxp4e6t4eAYFgLrzPR71kIQByKOqMQ/DezQ52oCDT1+77WGuFba33kEas
+        b1xjWviSxxnmLYkgpk+O1vVMHjva/WTdj3gCDR6Itm99I5+VAnvahqW4mXUwf2bJVJrGp+
+        D4sAmMLMtYLU6R0Uztd6PjcN2DyiWLNOsW+E79fSfchfLzXMWq6IhfAHHqspsQ==
+References: <20230611090143.132257-1-frank@oltmanns.dev>
+ <20230611090143.132257-2-frank@oltmanns.dev> <87edmh12s7.fsf@oltmanns.dev>
+ <sfni3vehkhotsqrrirklhzrxzkcxzkq6nbtqokeab5if3jgm53@frh7z3iowsfe>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Linux Kernel Functional Testing <lkft@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Abel Vesa <abelvesa@kernel.org>
-Subject: Re: [PATCH] clk: imx: Drop inclusion of unused header
- <soc/imx/timer.h>
-Message-ID: <20230625075219.diqv7x5xfybm4gdx@pengutronix.de>
-References: <20230623071948.3254789-1-arnd@kernel.org>
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] clk: sunxi-ng: nkm: consider alternative parent
+ rates when finding rate
+In-reply-to: <sfni3vehkhotsqrrirklhzrxzkcxzkq6nbtqokeab5if3jgm53@frh7z3iowsfe>
+Date:   Sun, 25 Jun 2023 12:45:45 +0200
+Message-ID: <878rc7stuu.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jm3pyctboqwgb3qh"
-Content-Disposition: inline
-In-Reply-To: <20230623071948.3254789-1-arnd@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain
+X-Rspamd-Queue-Id: 4QpnhB0JYyz9sSq
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Maxime,
 
---jm3pyctboqwgb3qh
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2023-06-12 at 14:31:21 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+> [[PGP Signed Part:Undecided]]
+> On Mon, Jun 12, 2023 at 10:51:52AM +0200, Frank Oltmanns wrote:
+>> > @@ -28,12 +68,17 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
+>> >  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
+>>
+>> According to the manual M/N has to be <= 3. Therefore we need a
+>> different maximum value for the _m-for-loop:
+>>
+>>         unsigned long max_m = min(3 * _n, nkm->max_m);
+>>         for (_m = nkm->min_m; _m <= max_m; _m++) {
+>>
+>> I suggest that I add an optional member max_mn_ratio to the structs
+>> ccu_nkm and _ccu_nkm. Optional meaning: Ignore if 0.
+>
+> Which workload is affected by this restriction?
+>
 
-On Fri, Jun 23, 2023 at 09:19:19AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> After removing this header in the clocksource tree, the clk drivers no
-> longer build:
->=20
-> drivers/clk/imx/clk-imx1.c:13:10: fatal error: 'soc/imx/timer.h' file not=
- found
-> drivers/clk/imx/clk-imx27.c:11:10: fatal error: 'soc/imx/timer.h' file no=
-t found
->=20
-> This patch was originally posted as part of a three-patch series, but only
-> patches 1 and 3 got applied.
->=20
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> Fixes: 9e9d7570485d7 ("clocksource/drivers/imx-gpt: Fold <soc/imx/timer.h=
-> into its only user")
-> Link: https://lore.kernel.org/all/20230328100531.879485-2-u.kleine-koenig=
-@pengutronix.de/
-> Signed-off-by: "Uwe Kleine-K=F6nig" <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Firstly, the restriction increases the minimum rate that pll-mipi of the
+A64 SoC can use. The rate off pll-mipi is
+        pll-video0 * K * N / M
 
-A bit strange that this patch has author=3DArnd but still my S-o-b. Either
-it's "my" patch (then I'd like to have author=3DUwe), or it's Arnd's then
-I'm not in the submission path and my S-o-b is misleading.
+The Allwinner's user manual ([1], p.94) states that the maximum ratio of
+M/N (note how numerator and denominator changed) is 3. So, looking back
+to the original formula, the N / M part can be at most 1/3. That
+effectively limits the minimum rate that pll-mipi can provide to
+        min(pll-video0) * 2 * 1 / 3
 
-The commit log of this patch is better as it mentions the fact that only
-a part of my series was applied and that the 0day bot was in the loop.
-So I suggest to make my Signed-off-by line a Co-developed-by one (and
-drop the quotes around my name).
+The minimum rate of pll-video0 is 192 MHz, i.e., the minimum rate for
+pll-mipi becomes 128 MHz. Without the restriction, the minimum rate
+currently is 24 MHz. It is my (albeit limited) understanding, that is no
+real limitation because no panel would request such low rates. I should
+also mention that Allwinner states in the user manual ([1], p. 94) that
+the rate must be in the 500 MHz - 1.4 GHz range.
 
-Best regards
-Uwe
+Secondly, it decreases the number of options for M for all N <= 6.
+Therefore it reduces the number of meaningful NKM combinations from 275
+(without the restriction) to 238. (With meaningful combinations, I mean
+the combinations that result in a different rate for pll-mipi, e.g.,
+K=2, M=1, N=2 is the same as K=4, M=1, N=1). The consequence is that the
+precision of pll-mipi is slightly reduced. Note, however, that this loss
+of precision is more than offset by the option that pll-mipi can now
+"freely" choose its parent rate.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+In conclusion, I don't see any real world limitation that this
+restriction introduces.
 
---jm3pyctboqwgb3qh
-Content-Type: application/pgp-signature; name="signature.asc"
+>> >  				unsigned long tmp_rate;
+>> >
+>> > -				tmp_rate = parent * _n * _k / _m;
+>> > -
+>> > +				if (parent_hw) {
+>> > +					tmp_parent = optimal_parent_rate(rate, _n, _k, _m);
+>> > +					tmp_parent = clk_hw_round_rate(parent_hw, tmp_parent);
+>> > +				}
+>>
+>> Another constraint is PLL-VIDEO0 rate / M >= 24 MHz. Therefore we also need:
+>>         if (tmp_parent < 24000000 * _m)
+>>                 continue;
+>>
+>> So, we need another optional member min_m_times_parent or, for
+>> shortness, maybe min_m_parent. I could use help finding a good name for
+>> this.
+>
+> Again, if it's not causing any harm I'd rather keep the code as simple
+> and maintainable as possible.
 
------BEGIN PGP SIGNATURE-----
+Unfortunately, in Allwinner's User Manual, I could not find any
+consequences of driving the SoC outside its specifications. Maybe
+someone with more experience in that area could weigh in here.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSX8jIACgkQj4D7WH0S
-/k6dewf/cyT48mYpfnPadV+O7veMhjKxQG0hBvDHGhrN3bG9Jqzg9IQAhCNRyjAT
-vPVpMrzejYb334Kx9dYwXW3qDirgUkbTZeQ/gPSjlFaUMkqYUvHVaBQhTOC6+uw6
-2yL4RgWUrCdX2kRmeyhJrLusVRzbc8h4wFtk20pALZqi7TydL1Gpulu93ANWcyYH
-j1FYeTbWZ9vU36LZ9Lz1Q2dSgPDxYYxTOdMVcQ8KfiCuw5rkpopPXITWqR5iR6vV
-povyr5Bf907pQDPQNYDisxll5NQkt2dru0HJEKYw7Z6P11bsP+v2zBtVapKHjf+E
-QzKmpNGZwo+PGdcGsrNi11dWnKbC9A==
-=bqIj
------END PGP SIGNATURE-----
+I want to highlight, though, that currently (i.e., without this patch
+series), the rate of pll-video0 is not set by the kernel. So in most
+installations, it probably runs at 294 (u-boot) or 297 MHz (default
+rate). That allows for M to be smaller than or equal to 12. But with
+this patch series, we set pll-video0 to any rate that pll-mipi requests.
+Where previously, people could have hand-crafted rates that were within
+the SoC's specification - based on a well-known pll-video0 rate - this
+no longer applies.
 
---jm3pyctboqwgb3qh--
+Therefore, I think we should be careful not to request rates from the
+parent that drives pll-mipi outside its specification. What do you think
+about implementing the min_m_parent functionality in a separate patch?
+That would probably facilitate the assessment of the patch from a
+simplicity and maintenance perspective. If we agree on a way forward, I
+can still squash it with other patches in a later version of this patch
+series. But if you are not convinced, I can simply drop it at any point
+- including now ;).
+
+In short, I don't know if violating the restriction causes any harm in a
+real-world application. However, Allwinner may have reasons for listing
+such limitations, even if they don't tell us the details. Those are my
+two cents.
+
+Thanks for your feedback,
+  Frank
+
+[1] https://github.com/OLIMEX/OLINUXINO/blob/027087da32d69651a58a4e6193bedadef9c036ec/DOCUMENTS/A64-PDFs/Allwinner%20A64%20User%20Manual%20v1.0.pdf
+
+>
+> Maxime
+>
+> [[End of PGP Signed Part]]
