@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18668C04FE2
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 20:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76001C001DD
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 20:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230157AbjFYU0B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Jun 2023 16:26:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
+        id S230159AbjFYU0C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Jun 2023 16:26:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230159AbjFYUZ6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 16:25:58 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B8CBE48
-        for <linux-clk@vger.kernel.org>; Sun, 25 Jun 2023 13:25:55 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4f86fbe5e4fso2965802e87.2
-        for <linux-clk@vger.kernel.org>; Sun, 25 Jun 2023 13:25:55 -0700 (PDT)
+        with ESMTP id S230175AbjFYUZ7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 16:25:59 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FCBEE64
+        for <linux-clk@vger.kernel.org>; Sun, 25 Jun 2023 13:25:56 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4f8775126d3so3176368e87.1
+        for <linux-clk@vger.kernel.org>; Sun, 25 Jun 2023 13:25:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687724753; x=1690316753;
+        d=linaro.org; s=google; t=1687724754; x=1690316754;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P6IQl2jydqEVzMHgyvXGKi5dP1nmhqYFToeW0usGn04=;
-        b=cCnMP6hgg80Wv1iohEYrspwKCL/eAfWkw4IHVVj4IbDRWAwtE4drLYNKdJyMNqtKen
-         C90le5J112H8WfyG7Ej5c6n5+SaVfltC3Kn0heIh5PNwI/NAcr0Qnhwh2xSnshbpjz4A
-         pChJxPAKHNiFs/DX48jFnLQhpHDjtZTrIDVvRGVPnk+ZFekdo9op3Ec19OYXJ+MQCl3h
-         3LnQ78ymAU9vRQxfId8yeg/eQtVMYT1QKiyxjNppSxceADNil98RxR9GkOPDH20g1lmk
-         IAutLklX6PPG012cyZERYCQTb2CZg0q+5eHfxZFgKRbjaoepVtc/pSfDL3cFhtaD9n6D
-         /naQ==
+        bh=39CekJt2bg+dTnou8ZXeVeRak2YiAVNMpxW8X6GTBtU=;
+        b=pZePDbwLmTp5CLqETeMXeQZ8LeNEEJAsCxNROc/8NWe5DHz5jrO7Z92KfK//jBW3a/
+         TjgDvOCcJhph+mMXV0l/PBl9bFZey+1nUlCQCQT92KAOvsabPfWkqO3hi6E4/+fhBVM0
+         5M4TJC4hcA3Kr0TWaTWicZ6Tt5KCsJin005WvtdqLkGk6hctZRG0nuyJBiLKHy4E2M0A
+         lxx61jJ7guior9/wseqgDaVHmmG00Ynx+qNT3BBAOg0ONKAhKVIOmS3dzgQF8tb6KjAB
+         JP2Ey1OKM0hqzBeDKG5RU8hmaBCbE5TCwvsOAhrE0mlyItf6fBSpd+lC+G9wCjWPwmdP
+         Wk+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687724753; x=1690316753;
+        d=1e100.net; s=20221208; t=1687724754; x=1690316754;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P6IQl2jydqEVzMHgyvXGKi5dP1nmhqYFToeW0usGn04=;
-        b=StyRxcxmQQHEINaxn9VASdY8Yo/IGAbRbHrQkmWfu6GiDrUPlWMtJ3hYRgxB7m5Owi
-         SwRyrZQ06bY/ulmZ1l95DLoyooOhkPIWFCzp0VwbFw3eOo+YOFUXLjiwmZ2ME72xuqjl
-         MIH7WD95LEBkZmb1TPUjMWvK7Nw6ADi63jK4iu64kSdAPV1pUBoKJ5WsBMDmH2lBDRxS
-         t0kkpmHgrPrSfxmlfdOsY8hbL70C2aK9eQqVt39Art35R0nghIaqV6b/ZJv3luej5t7R
-         M7vrLZgjvXhgE4LkooQeYb9Hy3B974Uw4rQr1QICjXFbu3CIgpqvkrIqUVj4HDaYdF2T
-         QPFQ==
-X-Gm-Message-State: AC+VfDzVFnjF5B+sigZLkz6zxquBr4cpNEx0S5G7Fn46bS0JqVvyVqUy
-        uYV/HBhg8nEzdZ0tZ69iEYC/Ng==
-X-Google-Smtp-Source: ACHHUZ7sdpONkCT0uFv1glG3RaUylMcRYeZ1VbX8RY+p/4zKS2XBEMJP4IeGiit/8MnyK9a4R4EpxQ==
-X-Received: by 2002:ac2:4db7:0:b0:4f8:5f19:4b49 with SMTP id h23-20020ac24db7000000b004f85f194b49mr13400874lfe.64.1687724753721;
-        Sun, 25 Jun 2023 13:25:53 -0700 (PDT)
+        bh=39CekJt2bg+dTnou8ZXeVeRak2YiAVNMpxW8X6GTBtU=;
+        b=Gp5V9l5iub5/LTc3ggFXHW1/Ny6fF9b3Q5VU+dvOJw8dMBLMGD+f/ic8pfdolOFl82
+         Zfsv1rGYstVP5sG19iFrBz43S/FeItouqCjkRss0DRkMOP3RN10ca1GIOc58YLat5Vci
+         G0k+WgPqrAsFZ3yTcCVNUwnl159Po3A2uOPn/ude2UDXHMgC7BikhWRS8BFEI48bz6zp
+         EOtgp1s+QjsOc5/IKJbjQOe9jFhbt6Z/uSZYaTCO9eBIZ4U59OPiE3sR8ChpdY1l/onM
+         Cm5rJGizReEfiy9qrtXPFNSC6Bp4Bn7zZWaGF3Nbe3nADhCF14BdyPgPGJZ1vTtKRwcz
+         N8Cw==
+X-Gm-Message-State: AC+VfDyh6KBNFol89p1ohYCuCer7tz7jEDRPjUyQdfi0Gf2p2r6euCkN
+        RvoeGgmcBTD9euCh3fWP5SaIng==
+X-Google-Smtp-Source: ACHHUZ4eAaXE156DRPniC1J54MyG1vDnEpIan5OGQXdQv/iBAIM+CPW+jig6lpFAADo8yZAUq0tkeQ==
+X-Received: by 2002:a05:6512:3c88:b0:4f9:6a7b:b8de with SMTP id h8-20020a0565123c8800b004f96a7bb8demr6876714lfv.3.1687724754516;
+        Sun, 25 Jun 2023 13:25:54 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id m21-20020a195215000000b004f8427f8716sm787537lfb.262.2023.06.25.13.25.52
+        by smtp.gmail.com with ESMTPSA id m21-20020a195215000000b004f8427f8716sm787537lfb.262.2023.06.25.13.25.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Jun 2023 13:25:53 -0700 (PDT)
+        Sun, 25 Jun 2023 13:25:54 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v2 05/26] dt-bindings: cache: describe L2 cache on Qualcomm Krait platforms
-Date:   Sun, 25 Jun 2023 23:25:26 +0300
-Message-Id: <20230625202547.174647-6-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 06/26] interconnect: icc-clk: add support for scaling using OPP
+Date:   Sun, 25 Jun 2023 23:25:27 +0300
+Message-Id: <20230625202547.174647-7-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
 References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
@@ -78,117 +78,84 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The L2 cache device on Qualcomm Krait platforms controls the supplying
-voltages and the cache frequency. Add corresponding bindings for this
-device.
+Sometimes it might be required to scale the clock using the OPP
+framework (e.g. to scale regulators following the required clock rate).
+Extend the interconnec-clk framework to handle OPP case in addition to
+scaling the clock.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/cache/qcom,krait-l2-cache.yaml   | 75 +++++++++++++++++++
- include/dt-bindings/soc/qcom,krait-l2-cache.h | 12 +++
- 2 files changed, 87 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
- create mode 100644 include/dt-bindings/soc/qcom,krait-l2-cache.h
+ drivers/interconnect/icc-clk.c   | 13 +++++++++++--
+ include/linux/interconnect-clk.h |  1 +
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml b/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
-new file mode 100644
-index 000000000000..1dcf8165135b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/cache/qcom,krait-l2-cache.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
+index 4d43ebff4257..c7962acdcee7 100644
+--- a/drivers/interconnect/icc-clk.c
++++ b/drivers/interconnect/icc-clk.c
+@@ -7,10 +7,13 @@
+ #include <linux/device.h>
+ #include <linux/interconnect-clk.h>
+ #include <linux/interconnect-provider.h>
++#include <linux/pm_opp.h>
+ 
+ struct icc_clk_node {
++	struct device *dev;
+ 	struct clk *clk;
+ 	bool enabled;
++	bool opp;
+ };
+ 
+ struct icc_clk_provider {
+@@ -25,12 +28,16 @@ struct icc_clk_provider {
+ static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
+ {
+ 	struct icc_clk_node *qn = src->data;
++	unsigned long rate = icc_units_to_bps(src->peak_bw);
+ 	int ret;
+ 
+ 	if (!qn || !qn->clk)
+ 		return 0;
+ 
+-	if (!src->peak_bw) {
++	if (qn->opp)
++		return dev_pm_opp_set_rate(qn->dev, rate);
 +
-+title: Qualcomm Krait L2 Cache
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+
-+description:
-+  L2 cache on Qualcomm Krait platforms is shared between all CPU cores. L2
-+  cache frequency and voltages should be scaled according to the needs of the
-+  cores.
-+
-+allOf:
-+  - $ref: ../cache-controller.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: qcom,krait-l2-cache
-+      - const: cache
-+
-+  clocks:
-+    maxItems: 1
-+
-+  '#interconnect-cells':
-+    const: 1
-+
-+  vdd-mem-supply:
-+    description: suppling regulator for the memory cells of the cache
-+
-+  vdd-dig-supply:
-+    description: suppling regulator for the digital logic of the cache
-+
-+  operating-points-v2: true
-+  opp-table-l2: true
-+
-+required:
-+  - compatible
-+  - cache-level
-+  - cache-unified
-+  - clocks
-+  - '#interconnect-cells'
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/soc/qcom,krait-l2-cache.h>
-+
-+    l2-cache {
-+        compatible = "qcom,krait-l2-cache", "cache";
-+        cache-level = <2>;
-+        cache-unified;
-+        vdd-mem-supply = <&pm8921_l24>;
-+        vdd-dig-supply = <&pm8921_s3>;
-+        clocks = <&kraitcc 4>;
-+        #interconnect-cells = <1>;
-+        operating-points-v2 = <&l2_opp_table>;
-+
-+        l2_opp_table: opp-table-l2 {
-+            compatible = "operating-points-v2";
-+
-+            opp-384000000 {
-+                opp-hz = /bits/ 64 <384000000>;
-+                opp-microvolt = <1050000 1050000 1150000>,
-+                                <950000 950000 1150000>;
-+            };
-+        };
-+    };
-+...
-+
-diff --git a/include/dt-bindings/soc/qcom,krait-l2-cache.h b/include/dt-bindings/soc/qcom,krait-l2-cache.h
-new file mode 100644
-index 000000000000..c9a38d368111
---- /dev/null
-+++ b/include/dt-bindings/soc/qcom,krait-l2-cache.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (C) 2023 Linaro Ltd. All rights reserved.
-+ */
-+
-+#ifndef __DT_BINDINGS_SOC_QCOM_KRAIT_L2_CACHE_H
-+#define __DT_BINDINGS_SOC_QCOM_KRAIT_L2_CACHE_H
-+
-+#define MASTER_KRAIT_L2		0
-+#define SLAVE_KRAIT_L2		1
-+
-+#endif
++	if (!rate) {
+ 		if (qn->enabled)
+ 			clk_disable_unprepare(qn->clk);
+ 		qn->enabled = false;
+@@ -45,7 +52,7 @@ static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
+ 		qn->enabled = true;
+ 	}
+ 
+-	return clk_set_rate(qn->clk, icc_units_to_bps(src->peak_bw));
++	return clk_set_rate(qn->clk, rate);
+ }
+ 
+ static int icc_clk_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
+@@ -106,7 +113,9 @@ struct icc_provider *icc_clk_register(struct device *dev,
+ 	icc_provider_init(provider);
+ 
+ 	for (i = 0, j = 0; i < num_clocks; i++) {
++		qp->clocks[i].dev = dev;
+ 		qp->clocks[i].clk = data[i].clk;
++		qp->clocks[i].opp = data[i].opp;
+ 
+ 		node = icc_node_create(first_id + j);
+ 		if (IS_ERR(node)) {
+diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
+index 0cd80112bea5..c695e5099901 100644
+--- a/include/linux/interconnect-clk.h
++++ b/include/linux/interconnect-clk.h
+@@ -11,6 +11,7 @@ struct device;
+ struct icc_clk_data {
+ 	struct clk *clk;
+ 	const char *name;
++	bool opp;
+ };
+ 
+ struct icc_provider *icc_clk_register(struct device *dev,
 -- 
 2.39.2
 
