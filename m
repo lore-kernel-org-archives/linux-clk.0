@@ -2,58 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BD1EB64DC
-	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 20:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A26EB64DC
+	for <linux-clk@archiver.kernel.org>; Sun, 25 Jun 2023 21:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229660AbjFYUuy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 25 Jun 2023 16:50:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38930 "EHLO
+        id S229660AbjFYVAV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 25 Jun 2023 17:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbjFYUuu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 16:50:50 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79664113;
-        Sun, 25 Jun 2023 13:50:49 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-9891c73e0fbso479217066b.1;
-        Sun, 25 Jun 2023 13:50:49 -0700 (PDT)
+        with ESMTP id S229510AbjFYVAU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 25 Jun 2023 17:00:20 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF70126;
+        Sun, 25 Jun 2023 14:00:19 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9786fc23505so200885466b.2;
+        Sun, 25 Jun 2023 14:00:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20221208; t=1687726248; x=1690318248;
+        d=googlemail.com; s=20221208; t=1687726817; x=1690318817;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8SBQPc5uKJ8Qyprt0o5l8sXwt+At2XiILmQ1q2dIyts=;
-        b=IMHhFsNgqUYKxdAxM3w5x16VUYRZJY+CnJT4V8GrDkTDJgYGlo1vqjbpePbKzzeNIi
-         m0f/QTK+YGxFNpYDGn1lZ0FvwsPfoHxx6/SoZD9SBGW/utFo44kRa+8DnvC1xZZb83qx
-         BpDE8v+GmkrkCb9I8vKIBh1JQlxWzOeHnGR07f7Wemj1HPLt9VeD8eoAdbR1wjmqT1mA
-         9jjRAC15ucjcowUYck2JYACkuTqKpL5A0cY54bXV2y9Qhfa98vr0Tey39amH8csORJiG
-         c+/9OG7MI3Iodd1IesGWwcyDpGnrhxb1T3fK2bIutDk5FQE2MqDF1X/G4wUP8x2l4HwH
-         /e8Q==
+        bh=4mJUkbQQcqyDE53aw5MOHAc9VhtcEJr6twJXYLB90jk=;
+        b=A7qCeuCgKbtFEgGis1t2x/ErDOE+chG5xjp1mHsbD8UxcMKWjdXBegYJqsorobez3i
+         A+P8dZby0eKzlFX25d47RbP/qssp4hyO+4oNOV/c4McI9RAgIvEe0hUWXba/q2dIhN5G
+         6yxnSANBsC8Qva4NZLVyvvnsk+Ks5/50zA6nQSYOJkr/++RHIUi7Tha0uWQ7kSar1xwG
+         hoqNMpYpQsH7rGKwcXtRqnxWTvTCdWYkM/y6r8WSVAjNMk4Q6pblTz9SrJ1RqwEJ7SWV
+         9iJp6Zu+ZvUGorur+Hxo1mDm190O7XE1bPza8P27zKW5NWUIaz6jkLgxJS4c1LuNR7fG
+         8vaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687726248; x=1690318248;
+        d=1e100.net; s=20221208; t=1687726817; x=1690318817;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8SBQPc5uKJ8Qyprt0o5l8sXwt+At2XiILmQ1q2dIyts=;
-        b=Bd8KDX6bWmmYrXKUi9HopsAKBukggS2Cw8Doxpl41WZTbTydCjs2Jo0D64FiGBE6DP
-         6QmK5sgoxP9mCzb3nDPjKJxKPYUOcMJOGm5jjCVXZnXIhvc8pONbGO/446VlAaYnFlMC
-         +hL2Hf8MQ6XvQoBF99U/05sfizaaZf54Upnm/eIqBNuuf74BwFu40y62dAllLamqL4zA
-         d9VTnXBhZ2nCbGuGFIxkzK3UgjbQ/LHpDb4mxlJlFHWsa0YrFUMDApibSpTf4DKY8eos
-         DnrNEjLvjkXXvADD2a7TDDIL5UBPX/uIeCi8s9sp8Dx+oHT2KVaZef6FJLn+WhgcvWQ5
-         EgAg==
-X-Gm-Message-State: AC+VfDzjfbJ3ckhCMMMLoVHkaDV0wuk1wHQE75shhVPWepV7PgByW7Rx
-        ZJEOwTgcrSKq9HfKlK4/GKN/y0Mjzg4IwEOM9eQ=
-X-Google-Smtp-Source: ACHHUZ5jvDY83UJJ6wMhDoedkzSmA5NrWCT3rmPXFwLwZ1tUb+Ma86JQVdZo6A7aCeavA1CesRuQbbrPqMvnulJlmzI=
-X-Received: by 2002:a17:906:794a:b0:98d:4ae:8db9 with SMTP id
- l10-20020a170906794a00b0098d04ae8db9mr9551240ejo.19.1687726247842; Sun, 25
- Jun 2023 13:50:47 -0700 (PDT)
+        bh=4mJUkbQQcqyDE53aw5MOHAc9VhtcEJr6twJXYLB90jk=;
+        b=TAb2DkGkEERQOaBCtcg6AcTQ6fQ1mDOaOK8I8EREqglCHHaG9LOxQummwCpYnIvaQF
+         3GMmBZsQ5Ny4ZoRRST2P7Zwnr6sceV7hVBAwZoLYnbLopd8JHGZwTMYC26nmgrqC8PCD
+         uzdMQ7dqaS9CUYd6u/PKqe3S5Nt9fwcrRBzG06Oo4nkEmVp5AMsRb2dKR4WcmMusJ6K8
+         iyEBs1RqaFg8mFXOqjNJOJBBqNEk7LNSAH+xkSsdCkux5WtiiSkVrfgVbBv1btNvElYf
+         UKg7r/hJtwobws46pODbTxrLzRp5UMmFTkKzyW+Z2p/Mxyykiojmj+KXAP9OIlxVCCiY
+         U1FQ==
+X-Gm-Message-State: AC+VfDzLB5Vy7FkEoeVeBS/qrq5vUrZGnOMTq7ge7Amu3p3R6PoqAbnR
+        69cle4fXahc0nRBlf44fK8/C1u4nQ6gDppFWh2Q=
+X-Google-Smtp-Source: ACHHUZ5yBmQinkSkuUlSQyLq8I7zzsqf8l+oBnyvl4CQafqwz9rPZS23Crq7w+vxpQEf+q2F4xwNtxGw+RdXfwGDVss=
+X-Received: by 2002:a17:907:a06f:b0:98f:5640:16a with SMTP id
+ ia15-20020a170907a06f00b0098f5640016amr1168601ejc.53.1687726817451; Sun, 25
+ Jun 2023 14:00:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230607201641.20982-1-ddrokosov@sberdevices.ru> <20230607201641.20982-4-ddrokosov@sberdevices.ru>
-In-Reply-To: <20230607201641.20982-4-ddrokosov@sberdevices.ru>
+References: <20230607201641.20982-1-ddrokosov@sberdevices.ru> <20230607201641.20982-2-ddrokosov@sberdevices.ru>
+In-Reply-To: <20230607201641.20982-2-ddrokosov@sberdevices.ru>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 25 Jun 2023 22:50:37 +0200
-Message-ID: <CAFBinCC0F4gaW1eFkJvf=oSkmAMmjbJ-ZFbVhpnrcGZPOX2sYg@mail.gmail.com>
-Subject: Re: [PATCH v1 3/6] arm64: dts: meson: a1: enable efuse controller and
- setup its clk
+Date:   Sun, 25 Jun 2023 23:00:06 +0200
+Message-ID: <CAFBinCAO14zcgY66UyJO9UxuCWf1N-Lsx=iYNTJL=cwXoJv__Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] arm64: dts: meson: a1: introduce PLL and
+ Peripherals clk controllers
 To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
 Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -62,8 +62,7 @@ Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
         sdfw_system_team@sberdevices.ru, rockosov@gmail.com,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Alexey Romanov <avromanov@sberdevices.ru>
+        linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -72,14 +71,60 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Wed, Jun 7, 2023 at 10:16=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
 es.ru> wrote:
+>
+> This patch adds clkc and clkc_pll dts nodes to A1 SoC main dtsi.
+> The first one clk controller is responsible for all SoC peripherals
+> clocks excluding audio clocks. The second one clk controller is used by
+> A1 SoC PLLs. Actually, there are two different APB heads, so we have two
+> different drivers.
+>
+> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+> ---
+>  arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 26 +++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/=
+dts/amlogic/meson-a1.dtsi
+> index eed96f262844..a24228808c9c 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> @@ -6,6 +6,8 @@
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/gpio/meson-a1-gpio.h>
+> +#include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
+> +#include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
+>
+>  / {
+>         compatible =3D "amlogic,a1";
+> @@ -126,6 +128,30 @@ uart_AO_B: serial@2000 {
+>                                 status =3D "disabled";
+>                         };
+>
+> +                       clkc_periphs: clock-controller@800 {
+please keep the entries sorted - so &clkc_periphs should come after
+&periphs_pinctrl
+
+> +                               compatible =3D "amlogic,a1-peripherals-cl=
+kc";
+> +                               reg =3D <0 0x800 0 0x104>;
+> +                               #clock-cells =3D <1>;
+> +                               clocks =3D <&clkc_pll CLKID_FCLK_DIV2>,
+> +                                        <&clkc_pll CLKID_FCLK_DIV3>,
+> +                                        <&clkc_pll CLKID_FCLK_DIV5>,
+> +                                        <&clkc_pll CLKID_FCLK_DIV7>,
+> +                                        <&clkc_pll CLKID_HIFI_PLL>,
+> +                                        <&xtal>;
+> +                               clock-names =3D "fclk_div2", "fclk_div3",
+> +                                             "fclk_div5", "fclk_div7",
+> +                                             "hifi_pll", "xtal";
+> +                       };
 [...]
-> +       efuse: efuse {
-> +               compatible =3D "amlogic,meson-gxbb-efuse";
-> +               clocks =3D <&clkc_periphs CLKID_OTP>;
-> +               #address-cells =3D <1>;
-> +               #size-cells =3D <1>;
-> +               secure-monitor =3D <&sm>;
-> +               power-domains =3D <&pwrc PWRC_OTP_ID>;
-> +               status =3D "okay";
-If eFuse is always enabled then we can just drop status =3D "okay" as
-that's the default.
+
+>                         gpio_intc: interrupt-controller@0440 {
+note to self: at some point we'll have to re-order &gpio_intc, but
+that's out of scope for this patch
+
+
+Best regards,
+Martin
