@@ -2,71 +2,367 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D835CEB64D7
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 19:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE849EB64D9
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 19:49:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbjFZTRU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 15:17:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40204 "EHLO
+        id S230082AbjFZTte (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 15:49:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229516AbjFZTRU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 15:17:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9863C126;
-        Mon, 26 Jun 2023 12:17:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2950460EF2;
-        Mon, 26 Jun 2023 19:17:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE7AEC433C8;
-        Mon, 26 Jun 2023 19:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687807038;
-        bh=/jrzo23xohw0vOq31QrW3E4pCIODhVSB7kAOkjyOfmw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tgYemC9vJpQtwzSkNiMYd1fQnLJYFRgfYHT1JoYvmIOlnRgfxmnejM3wKibq6jA4K
-         XaAsnrn5qipc39ocMUjOFjqjTH0HQJiUezkwFVWwdFUQjKPXXPNkeWATV1r/YZpEnJ
-         u+UA2Ylt3m8rOzNbdnHuF8WVAyvCx/roe8q2ig2qZ9/fhTDzAmdN7VVbGhK78Aj7DE
-         Z6bnw/lrHfXzH5847YnktNdwLBt3zN0Axio0br1MvHXrdpxmLvTFITXhrDCcqJ+Knm
-         CfoNxkKkfejSIItGmM/PqEVLbr6lQs3WeFXEhWAAWLdRVvZaatndOKjDE1ZiDe+a23
-         yfNt6S+qSvLkQ==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] SC8280XP clock runtime pm
-Date:   Mon, 26 Jun 2023 12:21:11 -0700
-Message-ID: <168780207957.2579463.15875454816209034971.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
-References: <20230619-topic-sc8280xp-clk-rpm-v1-0-1e5e1064cdb2@linaro.org>
+        with ESMTP id S230058AbjFZTtc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 15:49:32 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E01170F
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 12:49:27 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b69e6d324aso25516651fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 12:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687808966; x=1690400966;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OxcFta/DvWzstkO+bX4qUH4lC0yv3Ria011e70aTaPY=;
+        b=VGk9wU8nDHqjWkK/NdSbFWeLsMj50IODxJ6it8eJKkV8hss+eNB9ncica1jzjoWryD
+         y0SrkYwScg5lYpXQCDd564OI5tx5QuEpWN+7G0J+5N5zwH6sMnPB15trrEarPkMQxrmf
+         q4gPDmTB/GReOXIQDXzNMjvOgpEdogaL6snVxWGvimD0qoeDjrLaVgTl5GBlHh6QinG7
+         NsbQaQsUKaQkaVkK4g1d+oY0p4/K6DvDEjyrlr08GdKWPQSWlaUb08F90DdNQK7kbvEv
+         nvTUDGtxV+gqurfUn4cNEfVtgq4Z4T1ZEQVx6Y1MwQ1zR2KQHFdGnzmSwsMb3Pb3xFC6
+         jlGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687808966; x=1690400966;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxcFta/DvWzstkO+bX4qUH4lC0yv3Ria011e70aTaPY=;
+        b=ER+7pOwLY+YyWNUb/C0dl5ezB1b2jB52m0/7H8NEV6eSZQTxp+LiPl33yiCuVd1fLI
+         6rN5TuD+QPg6eOAKqKvyVr6oXMEuA8hRWnWSupaiPoruyYTM3Nhmk8YeH1bHQfnby3wD
+         NUEya26Q1aPNVU8M1bLASaviVuJpQDEX0EuSNXvyrFUcn7quhnO8VX70W/iy4Skw8pAa
+         KM431y/nqrDZorM63ZEppwqq5gv2mneOqVuOXHDY4q5wUMdHsdyjFSp9xh31ARzscORZ
+         4uUVHHbEKvovcGf77w/npw8mf/zJo4GdDRmkjZi+onWDXzxW99/HldoM+j6MHo01m/Sz
+         pFhQ==
+X-Gm-Message-State: AC+VfDw6qPr6pDr06+KKr/b71XnMe6aed/Rz+CXRTPuh/X9RHOflU6gn
+        yYdNQMi/fmMhqEA3bhIqKhHwFg==
+X-Google-Smtp-Source: ACHHUZ4LONBxVN5MzN6lLLzQRC0oTvIPh5M17c1CoI2M6sPGOaC6gnYiJceTcCJQxHNm9gIeWirung==
+X-Received: by 2002:a2e:9c8f:0:b0:2b6:9c24:77a with SMTP id x15-20020a2e9c8f000000b002b69c24077amr2654459lji.46.1687808965834;
+        Mon, 26 Jun 2023 12:49:25 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id m10-20020a2e910a000000b002b32600ab9fsm1356340ljg.60.2023.06.26.12.49.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Jun 2023 12:49:25 -0700 (PDT)
+Message-ID: <2232c6e7-cbca-30c1-9ec5-1cea7f759daf@linaro.org>
+Date:   Mon, 26 Jun 2023 22:49:24 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 17/26] ARM: dts: qcom: apq8064: add simple CPUFreq
+ support
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
+ <20230625202547.174647-18-dmitry.baryshkov@linaro.org>
+ <0f139da8-ae01-fc28-d14c-0ea207cf760e@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <0f139da8-ae01-fc28-d14c-0ea207cf760e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 26/06/2023 19:40, Konrad Dybcio wrote:
+> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
+>> Declare CPU frequency-scaling properties. Each CPU has its own clock,
+>> how
+> however?
 
-On Mon, 19 Jun 2023 18:13:16 +0200, Konrad Dybcio wrote:
-> Keeping power domains always enabled hinders power efficiency. Add runtime
-> PM to 8280 clock controllers to prevent that.
+yes
+
+> 
+>> all CPUs have the same OPP table. Voltage scaling is not (yet)
+>> enabled with this patch. It will be enabled later.
+> Risky business.
+
+But it works :D
+
+> 
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>>   arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 170 +++++++++++++++++++++++
+>>   1 file changed, 170 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+>> index ac07170c702f..e4d2fd48d843 100644
+>> --- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+>> +++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+>> @@ -2,11 +2,13 @@
+>>   /dts-v1/;
+>>   
+>>   #include <dt-bindings/clock/qcom,gcc-msm8960.h>
+>> +#include <dt-bindings/clock/qcom,krait-cc.h>
+>>   #include <dt-bindings/clock/qcom,lcc-msm8960.h>
+>>   #include <dt-bindings/reset/qcom,gcc-msm8960.h>
+>>   #include <dt-bindings/clock/qcom,mmcc-msm8960.h>
+>>   #include <dt-bindings/clock/qcom,rpmcc.h>
+>>   #include <dt-bindings/soc/qcom,gsbi.h>
+>> +#include <dt-bindings/soc/qcom,krait-l2-cache.h>
+>>   #include <dt-bindings/interrupt-controller/irq.h>
+>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>   / {
+>> @@ -45,6 +47,12 @@ CPU0: cpu@0 {
+>>   			qcom,acc = <&acc0>;
+>>   			qcom,saw = <&saw0>;
+>>   			cpu-idle-states = <&CPU_SPC>;
+>> +			clocks = <&kraitcc KRAIT_CPU_0>;
+>> +			clock-names = "cpu";
+>> +			clock-latency = <100000>;
+>> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
+>> +			operating-points-v2 = <&cpu_opp_table>;
+>> +			#cooling-cells = <2>;
+>>   		};
+>>   
+>>   		CPU1: cpu@1 {
+>> @@ -56,6 +64,12 @@ CPU1: cpu@1 {
+>>   			qcom,acc = <&acc1>;
+>>   			qcom,saw = <&saw1>;
+>>   			cpu-idle-states = <&CPU_SPC>;
+>> +			clocks = <&kraitcc KRAIT_CPU_1>;
+>> +			clock-names = "cpu";
+>> +			clock-latency = <100000>;
+>> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
+>> +			operating-points-v2 = <&cpu_opp_table>;
+>> +			#cooling-cells = <2>;
+>>   		};
+>>   
+>>   		CPU2: cpu@2 {
+>> @@ -67,6 +81,12 @@ CPU2: cpu@2 {
+>>   			qcom,acc = <&acc2>;
+>>   			qcom,saw = <&saw2>;
+>>   			cpu-idle-states = <&CPU_SPC>;
+>> +			clocks = <&kraitcc KRAIT_CPU_2>;
+>> +			clock-names = "cpu";
+>> +			clock-latency = <100000>;
+>> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
+>> +			operating-points-v2 = <&cpu_opp_table>;
+>> +			#cooling-cells = <2>;
+>>   		};
+>>   
+>>   		CPU3: cpu@3 {
+>> @@ -78,6 +98,12 @@ CPU3: cpu@3 {
+>>   			qcom,acc = <&acc3>;
+>>   			qcom,saw = <&saw3>;
+>>   			cpu-idle-states = <&CPU_SPC>;
+>> +			clocks = <&kraitcc KRAIT_CPU_3>;
+>> +			clock-names = "cpu";
+>> +			clock-latency = <100000>;
+>> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
+>> +			operating-points-v2 = <&cpu_opp_table>;
+>> +			#cooling-cells = <2>;
+>>   		};
+>>   
+>>   		L2: l2-cache {
+>> @@ -196,6 +222,121 @@ CPU_SPC: spc {
+>>   		};
+>>   	};
+>>   
+>> +        cpu_opp_table: opp-table-cpu {
+>> +		compatible = "operating-points-v2-krait-cpu";
+>> +		nvmem-cells = <&speedbin_efuse>;
+>> +
+>> +		/*
+>> +		 * Voltage thresholds are <target min max>
+>> +		 */
+> What voltage thresholds?
+
+Ack, should be moved to the next patch.
+
+> 
+>> +		opp-384000000 {
+>> +			opp-hz = /bits/ 64 <384000000>;
+>> +			opp-peak-kBps = <384000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +			/*
+>> +			 * higher latency as it requires switching between
+>> +			 * clock sources
+>> +			 */
+>> +			clock-latency-ns = <244144>;
+>> +		};
+>> +
+>> +		opp-486000000 {
+>> +			opp-hz = /bits/ 64 <486000000>;
+>> +			opp-peak-kBps = <648000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-594000000 {
+>> +			opp-hz = /bits/ 64 <594000000>;
+>> +			opp-peak-kBps = <648000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-702000000 {
+>> +			opp-hz = /bits/ 64 <702000000>;
+>> +			opp-peak-kBps = <648000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-810000000 {
+>> +			opp-hz = /bits/ 64 <810000000>;
+>> +			opp-peak-kBps = <648000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-918000000 {
+>> +			opp-hz = /bits/ 64 <918000000>;
+>> +			opp-peak-kBps = <648000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-1026000000 {
+>> +			opp-hz = /bits/ 64 <1026000000>;
+>> +			opp-peak-kBps = <648000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-1134000000 {
+>> +			opp-hz = /bits/ 64 <1134000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-1242000000 {
+>> +			opp-hz = /bits/ 64 <1242000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-1350000000 {
+>> +			opp-hz = /bits/ 64 <1350000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-1458000000 {
+>> +			opp-hz = /bits/ 64 <1458000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x4007>;
+>> +		};
+>> +
+>> +		opp-1512000000 {
+>> +			opp-hz = /bits/ 64 <1512000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x4001>;
+>> +		};
+>> +
+>> +		opp-1566000000 {
+>> +			opp-hz = /bits/ 64 <1566000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x06>;
+>> +		};
+>> +
+>> +		opp-1674000000 {
+>> +			opp-hz = /bits/ 64 <1674000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x06>;
+>> +		};
+>> +
+>> +		opp-1728000000 {
+>> +			opp-hz = /bits/ 64 <1728000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x02>;
+>> +		};
+>> +
+>> +		opp-1782000000 {
+>> +			opp-hz = /bits/ 64 <1782000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x04>;
+>> +		};
+>> +
+>> +		opp-1890000000 {
+>> +			opp-hz = /bits/ 64 <1890000000>;
+>> +			opp-peak-kBps = <1134000>;
+>> +			opp-supported-hw = <0x04>;
+>> +		};
+>> +	};
+>> +
+>>   	memory@0 {
+>>   		device_type = "memory";
+>>   		reg = <0x0 0x0>;
+>> @@ -312,6 +453,32 @@ sleep_clk: sleep_clk {
+>>   		};
+>>   	};
+>>   
+>> +	kraitcc: clock-controller {
+>> +		compatible = "qcom,krait-cc-v1";
+> Are we sure we don't wanna rework this compatible? Check the comment in
+> drivers/clk/qcom/krait-cc.c : krait_add_sec_mux()
+
+I remember that comment. I'd rather not introduce another compat string 
+for such old hw. Would there be any direct benefits?
+
 > 
 > 
+>> +		clocks = <&gcc PLL9>, /* hfpll0 */
+>> +			 <&gcc PLL10>, /* hfpll1 */
+>> +			 <&gcc PLL16>, /* hfpll2 */
+>> +			 <&gcc PLL17>, /* hfpll3 */
+>> +			 <&gcc PLL12>, /* hfpll_l2 */
+>> +			 <&acc0>,
+>> +			 <&acc1>,
+>> +			 <&acc2>,
+>> +			 <&acc3>,
+>> +			 <&l2cc>;
+>> +		clock-names = "hfpll0",
+>> +			      "hfpll1",
+>> +			      "hfpll2",
+>> +			      "hfpll3",
+>> +			      "hfpll_l2",
+>> +			      "acpu0_aux",
+>> +			      "acpu1_aux",
+>> +			      "acpu2_aux",
+>> +			      "acpu3_aux",
+>> +			      "acpu_l2_aux";
+>> +		#clock-cells = <1>;
+>> +		#interconnect-cells = <1>;
+>> +	};
+>> +
+>>   	sfpb_mutex: hwmutex {
+>>   		compatible = "qcom,sfpb-mutex";
+>>   		syscon = <&sfpb_wrapper_mutex 0x604 0x4>;
+>> @@ -933,6 +1100,9 @@ qfprom: qfprom@700000 {
+>>   			#address-cells = <1>;
+>>   			#size-cells = <1>;
+>>   			ranges;
+>> +			speedbin_efuse: speedbin@c0 {
+>> +				reg = <0x0c0 0x4>;
+>> +			};
+> Newline between properties and subnodes & between individual subnodes,
+> please
 
-Applied, thanks!
+ack.
 
-[1/2] clk: qcom: gpucc-sc8280xp: Add runtime PM
-      commit: 9bbcb892a7cd06c8156e6de211a8d7d45ee48086
-[2/2] clk: qcom: gcc-sc8280xp: Add runtime PM
-      commit: 2a541abd98370f9931c889c187eef7458720b57b
+> 
+> Konrad
+>>   			tsens_calib: calib@404 {
+>>   				reg = <0x404 0x10>;
+>>   			};
 
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+With best wishes
+Dmitry
+
