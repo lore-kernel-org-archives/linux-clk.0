@@ -2,25 +2,25 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 059B1EB64D7
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 14:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020B5EB64D7
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 14:26:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231620AbjFZOYZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 10:24:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40688 "EHLO
+        id S230175AbjFZO0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 10:26:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231218AbjFZOYF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 10:24:05 -0400
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED8C1198A
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 07:23:27 -0700 (PDT)
+        with ESMTP id S229886AbjFZO0d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 10:26:33 -0400
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43DB810E2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 07:26:29 -0700 (PDT)
 Received: from SoMainline.org (82-72-63-87.cable.dynamic.v4.ziggo.nl [82.72.63.87])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id A80873F7B3;
-        Mon, 26 Jun 2023 16:17:44 +0200 (CEST)
-Date:   Mon, 26 Jun 2023 16:17:42 +0200
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id DDFC63F494;
+        Mon, 26 Jun 2023 16:26:25 +0200 (CEST)
+Date:   Mon, 26 Jun 2023 16:26:24 +0200
 From:   Marijn Suijten <marijn.suijten@somainline.org>
 To:     Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -46,70 +46,108 @@ Cc:     Andy Gross <agross@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-Subject: Re: [PATCH 00/15] drm/msm: Add SM6125 MDSS/DPU hardware and enable
- Sony Xperia 10 II panel
-Message-ID: <jllpsyveqvxco3ihclqypwnfhac2g3gdm6ukd3x3fjsr6z54xy@2xwh5fixpprh>
+Subject: Re: [PATCH 03/15] dt-bindings: clock: qcom,dispcc-sm6125: Require
+ GCC PLL0 DIV clock
+Message-ID: <dp2ucgmql2jff52nbxti2hwjchtgjkbrwcgpx3p7ruodz7adnj@635pcqr6fv4x>
 References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <035ffdd2-27e3-99bc-f8a4-41e66685db09@linaro.org>
- <i5xxzhfhlwzoxlnezzgg42hzwzwfcgxv5gopqhb6vd3udz252b@wpznuvoleeta>
- <701916b3-388e-8216-f7ae-1837d5895d87@linaro.org>
+ <20230624-sm6125-dpu-v1-3-1d5a638cebf2@somainline.org>
+ <c9681bce-efa8-9b79-4bf6-837dd6a2dc12@linaro.org>
+ <edrftxqhywiaxvbonyh25cmubrg77y4dryqoy7id4ndan2lfa7@rhvcoavtg5vl>
+ <f62d750e-da73-fece-c3de-0dac1fbb9827@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <701916b3-388e-8216-f7ae-1837d5895d87@linaro.org>
+In-Reply-To: <f62d750e-da73-fece-c3de-0dac1fbb9827@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-06-26 11:41:39, Konrad Dybcio wrote:
-> On 25.06.2023 21:18, Marijn Suijten wrote:
-> > On 2023-06-24 03:42:46, Konrad Dybcio wrote:
-> >> On 24.06.2023 02:40, Marijn Suijten wrote:
-> >>> Bring up the SM6125 DPU now that all preliminary series (such as INTF
-> >>> TE) have been merged (for me to test the hardware properly)
-> >> We should not repeat the same mistake in the future.. Finding a
-> >> balance between releasing early and releasing what we can declare
-> >> working and tested code is hard, but we waaaaaaaay overstayed on
-> >> this one..
+On 2023-06-26 11:43:39, Konrad Dybcio wrote:
+> On 25.06.2023 21:48, Marijn Suijten wrote:
+> > On 2023-06-24 03:45:02, Konrad Dybcio wrote:
+> >> On 24.06.2023 02:41, Marijn Suijten wrote:
+> >>> The "gcc_disp_gpll0_div_clk_src" clock is consumed by the driver, will
+> >>> be passed from DT, and should be required by the bindings.
+> >>>
+> >>> Fixes: 8397c9c0c26b ("dt-bindings: clock: add QCOM SM6125 display clock bindings")
+> >>> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> >>> ---
+> >> Ideally, you'd stick it at the bottom of the list, as the items: order
+> >> is part of the ABI
 > > 
-> > I don't understand what you mean by "mistake" at all.  Yes the DPU
-> > catalog portion of this series sat in my local branch for a very long
-> > time.  Yes it had to be rebased on top of conflicts many many times.
+> > This isn't an ABI break, as this driver nor its bindings require/declare
+> > a fixed order: they declare a relation between clocks and clock-names.
+> Bindings describe the ABI, drivers implement compliant code flow.
+
+That is how bindings are supposed to be...  However typically the driver
+is written/ported first and then the bindings are simply created to
+reflect this, and sometimes (as is the case with this patch)
+incorrectly.
+
+That, together with a lack of DTS and known-working device with it
+(which is why I'm submitting driver+bindings+dts in one series now!)
+makes us shoot ourselves in the foot by locking everyone into an ABI
+that makes no sense.
+
+> > This orders the GCC clock just like other dispccs.  And the previous
+> > patch dropped the unused cfg_ahb_clk from the bindings, so all bets are
+> > off anyway.
+> Thinking about it again, the binding has not been consumed by any upstream
+> DT to date, so it should (tm) be fine to let it slide..
+
+Exactly, I hope/doubt anyone was already using these incomplete
+bindings.  And again: the ABI here is the name->phandle mapping, the
+order Does Not Matterâ„¢.  So I hope we can let it slide (otherwise the
+previous patch shouldd have been NAK'ed as well??)
+
+(Unless you are SM6115 which uses index-based mapping and does not
+ define clock-names at all)
+
+- Marijn
+
+> Konrad
 > > 
-> > However, that time has also been used to fix and extend DPU where
-> > necessary, instead of submitting a half-broken or half-incomplete
-> > catalog entry...
+> > - Marijn
 > > 
-> > Re "we overstayed": you could have asked to clean up and send my patch,
-> > so I don't take this as a mistake on my part as you are completely aware
-> > of my time schedule ;)
-> I didn't mean to pick on you. I just wanted to emphasize that a more
-> upstream-forward approach would have saved us quite some time on the
-> rebasing and cleaning-up front.
-
-That is how it comes across ;) - our dream is all about upstream-first
-but as you know this becomes a mess really quickly when things are
-blocked on dependencies and you're working on 5 different features and
-testing across ±8 different Sony platforms on ±14 different devices at
-once... all in a limited portion of free time.
-
-Fwiw cleaning-up would have had to happen either way, and would have
-taken the same amount of time regardless of whether this series is
-submitted now or two months ago.
-
+> >>
 > >> Konrad
-> >> , and most
-> > 
-> > Also here, don't forget to re-quote my message if you break half-way in
-> > the line.
-> Ugh. All the time I've been doing this I thought thunderfox was smart
-> enough to do it for me. Apparently not and you're the 1st one to point
-> that out.
-
-You're welcome!
-(Though I thought it should be visible in Thunderburd, unless you're not
- in plaintext mode?  Does it still show the "this is quoted" line in
- front of the broken sentence?)
-
- - Marijn
+> >>>  Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml | 4 ++++
+> >>>  1 file changed, 4 insertions(+)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
+> >>> index 2acf487d8a2f..11ec154503a3 100644
+> >>> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
+> >>> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
+> >>> @@ -23,6 +23,7 @@ properties:
+> >>>    clocks:
+> >>>      items:
+> >>>        - description: Board XO source
+> >>> +      - description: GPLL0 div source from GCC
+> >>>        - description: Byte clock from DSI PHY0
+> >>>        - description: Pixel clock from DSI PHY0
+> >>>        - description: Pixel clock from DSI PHY1
+> >>> @@ -32,6 +33,7 @@ properties:
+> >>>    clock-names:
+> >>>      items:
+> >>>        - const: bi_tcxo
+> >>> +      - const: gcc_disp_gpll0_div_clk_src
+> >>>        - const: dsi0_phy_pll_out_byteclk
+> >>>        - const: dsi0_phy_pll_out_dsiclk
+> >>>        - const: dsi1_phy_pll_out_dsiclk
+> >>> @@ -65,12 +67,14 @@ examples:
+> >>>        compatible = "qcom,sm6125-dispcc";
+> >>>        reg = <0x5f00000 0x20000>;
+> >>>        clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> >>> +               <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
+> >>>                 <&dsi0_phy 0>,
+> >>>                 <&dsi0_phy 1>,
+> >>>                 <&dsi1_phy 1>,
+> >>>                 <&dp_phy 0>,
+> >>>                 <&dp_phy 1>;
+> >>>        clock-names = "bi_tcxo",
+> >>> +                    "gcc_disp_gpll0_div_clk_src",
+> >>>                      "dsi0_phy_pll_out_byteclk",
+> >>>                      "dsi0_phy_pll_out_dsiclk",
+> >>>                      "dsi1_phy_pll_out_dsiclk",
+> >>>
