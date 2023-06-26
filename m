@@ -2,367 +2,135 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE849EB64D9
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 19:49:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D826EB64D7
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 20:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230082AbjFZTte (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 15:49:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48112 "EHLO
+        id S229631AbjFZU2z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 16:28:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230058AbjFZTtc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 15:49:32 -0400
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E01170F
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 12:49:27 -0700 (PDT)
-Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b69e6d324aso25516651fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 12:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687808966; x=1690400966;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OxcFta/DvWzstkO+bX4qUH4lC0yv3Ria011e70aTaPY=;
-        b=VGk9wU8nDHqjWkK/NdSbFWeLsMj50IODxJ6it8eJKkV8hss+eNB9ncica1jzjoWryD
-         y0SrkYwScg5lYpXQCDd564OI5tx5QuEpWN+7G0J+5N5zwH6sMnPB15trrEarPkMQxrmf
-         q4gPDmTB/GReOXIQDXzNMjvOgpEdogaL6snVxWGvimD0qoeDjrLaVgTl5GBlHh6QinG7
-         NsbQaQsUKaQkaVkK4g1d+oY0p4/K6DvDEjyrlr08GdKWPQSWlaUb08F90DdNQK7kbvEv
-         nvTUDGtxV+gqurfUn4cNEfVtgq4Z4T1ZEQVx6Y1MwQ1zR2KQHFdGnzmSwsMb3Pb3xFC6
-         jlGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687808966; x=1690400966;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxcFta/DvWzstkO+bX4qUH4lC0yv3Ria011e70aTaPY=;
-        b=ER+7pOwLY+YyWNUb/C0dl5ezB1b2jB52m0/7H8NEV6eSZQTxp+LiPl33yiCuVd1fLI
-         6rN5TuD+QPg6eOAKqKvyVr6oXMEuA8hRWnWSupaiPoruyYTM3Nhmk8YeH1bHQfnby3wD
-         NUEya26Q1aPNVU8M1bLASaviVuJpQDEX0EuSNXvyrFUcn7quhnO8VX70W/iy4Skw8pAa
-         KM431y/nqrDZorM63ZEppwqq5gv2mneOqVuOXHDY4q5wUMdHsdyjFSp9xh31ARzscORZ
-         4uUVHHbEKvovcGf77w/npw8mf/zJo4GdDRmkjZi+onWDXzxW99/HldoM+j6MHo01m/Sz
-         pFhQ==
-X-Gm-Message-State: AC+VfDw6qPr6pDr06+KKr/b71XnMe6aed/Rz+CXRTPuh/X9RHOflU6gn
-        yYdNQMi/fmMhqEA3bhIqKhHwFg==
-X-Google-Smtp-Source: ACHHUZ4LONBxVN5MzN6lLLzQRC0oTvIPh5M17c1CoI2M6sPGOaC6gnYiJceTcCJQxHNm9gIeWirung==
-X-Received: by 2002:a2e:9c8f:0:b0:2b6:9c24:77a with SMTP id x15-20020a2e9c8f000000b002b69c24077amr2654459lji.46.1687808965834;
-        Mon, 26 Jun 2023 12:49:25 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id m10-20020a2e910a000000b002b32600ab9fsm1356340ljg.60.2023.06.26.12.49.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jun 2023 12:49:25 -0700 (PDT)
-Message-ID: <2232c6e7-cbca-30c1-9ec5-1cea7f759daf@linaro.org>
-Date:   Mon, 26 Jun 2023 22:49:24 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 17/26] ARM: dts: qcom: apq8064: add simple CPUFreq
- support
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        with ESMTP id S229628AbjFZU2y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 16:28:54 -0400
+Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [5.144.164.164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F12281A2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 13:28:47 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 63F771F48A;
+        Mon, 26 Jun 2023 22:28:43 +0200 (CEST)
+Date:   Mon, 26 Jun 2023 22:28:41 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
- <20230625202547.174647-18-dmitry.baryshkov@linaro.org>
- <0f139da8-ae01-fc28-d14c-0ea207cf760e@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <0f139da8-ae01-fc28-d14c-0ea207cf760e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
+Subject: Re: [PATCH 06/15] dt-bindings: display/msm: sc7180-dpu: Describe
+ SM6125
+Message-ID: <26pqxmuuyznb4qbi4wkiexr5excxenfmiuojrqgrz5k5t5palm@ttlk6m2zuokm>
+References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
+ <20230624-sm6125-dpu-v1-6-1d5a638cebf2@somainline.org>
+ <6bbf239f-d530-2f1e-ff52-361f7c9cc951@linaro.org>
+ <75d64lixeawfoqbrctm4thzh73cxkvnlmnh5xgbpf277pmh3gz@zthnqvvuxmeq>
+ <a6f3906a-98a7-de7a-3e26-4b8c45fe93f7@linaro.org>
+ <w3bbdq72thnerbyglb4dyshzg4vu5go2wpsciprk27vah6w2ms@yc4eqclct24a>
+ <3daf9990-79da-9adf-af6a-d9007c186557@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3daf9990-79da-9adf-af6a-d9007c186557@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/06/2023 19:40, Konrad Dybcio wrote:
-> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
->> Declare CPU frequency-scaling properties. Each CPU has its own clock,
->> how
-> however?
+On 2023-06-26 20:57:51, Konrad Dybcio wrote:
+> On 26.06.2023 19:54, Marijn Suijten wrote:
+> > On 2023-06-26 18:16:58, Krzysztof Kozlowski wrote:
+> >> On 25/06/2023 21:52, Marijn Suijten wrote:
+> >>> On 2023-06-24 11:12:52, Krzysztof Kozlowski wrote:
+> >>>> On 24/06/2023 02:41, Marijn Suijten wrote:
+> >>>>> SM6125 is identical to SM6375 except that while downstream also defines
+> >>>>> a throttle clock, its presence results in timeouts whereas SM6375
+> >>>>> requires it to not observe any timeouts.
+> >>>>
+> >>>> Then it should not be allowed, so you need either "else:" block or
+> >>>> another "if: properties: compatible:" to disallow it. Because in current
+> >>>> patch it would be allowed.
+> >>>
+> >>> That means this binding is wrong/incomplete for all other SoCs then.
+> >>> clock(-name)s has 6 items, and sets `minItems: 6`.  Only for sm6375-dpu
+> > 
+> > Of course meant to say that clock(-name)s has **7** items, not 6.
+> > 
+> >>> does it set `minItems: 7`, but an else case is missing.
+> >>
+> >> Ask the author why it is done like this.
+> > 
+> > Konrad, can you clarify why other 
 
-yes
+(Looks like I forgot to complete this sentence before sending,
+apologies)
 
-> 
->> all CPUs have the same OPP table. Voltage scaling is not (yet)
->> enabled with this patch. It will be enabled later.
-> Risky business.
+> 6375 needs the throttle clk and the clock(-names) are strongly ordered
+> so having minItems: 6 discards the last entry
 
-But it works :D
+The question is whether or not we should have maxItems: 6 to disallow
+the clock from being passed: right now it is optional and either is
+allowed for any !6375 SoC.
 
-> 
->>
->> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->>   arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 170 +++++++++++++++++++++++
->>   1 file changed, 170 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
->> index ac07170c702f..e4d2fd48d843 100644
->> --- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
->> +++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
->> @@ -2,11 +2,13 @@
->>   /dts-v1/;
->>   
->>   #include <dt-bindings/clock/qcom,gcc-msm8960.h>
->> +#include <dt-bindings/clock/qcom,krait-cc.h>
->>   #include <dt-bindings/clock/qcom,lcc-msm8960.h>
->>   #include <dt-bindings/reset/qcom,gcc-msm8960.h>
->>   #include <dt-bindings/clock/qcom,mmcc-msm8960.h>
->>   #include <dt-bindings/clock/qcom,rpmcc.h>
->>   #include <dt-bindings/soc/qcom,gsbi.h>
->> +#include <dt-bindings/soc/qcom,krait-l2-cache.h>
->>   #include <dt-bindings/interrupt-controller/irq.h>
->>   #include <dt-bindings/interrupt-controller/arm-gic.h>
->>   / {
->> @@ -45,6 +47,12 @@ CPU0: cpu@0 {
->>   			qcom,acc = <&acc0>;
->>   			qcom,saw = <&saw0>;
->>   			cpu-idle-states = <&CPU_SPC>;
->> +			clocks = <&kraitcc KRAIT_CPU_0>;
->> +			clock-names = "cpu";
->> +			clock-latency = <100000>;
->> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
->> +			operating-points-v2 = <&cpu_opp_table>;
->> +			#cooling-cells = <2>;
->>   		};
->>   
->>   		CPU1: cpu@1 {
->> @@ -56,6 +64,12 @@ CPU1: cpu@1 {
->>   			qcom,acc = <&acc1>;
->>   			qcom,saw = <&saw1>;
->>   			cpu-idle-states = <&CPU_SPC>;
->> +			clocks = <&kraitcc KRAIT_CPU_1>;
->> +			clock-names = "cpu";
->> +			clock-latency = <100000>;
->> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
->> +			operating-points-v2 = <&cpu_opp_table>;
->> +			#cooling-cells = <2>;
->>   		};
->>   
->>   		CPU2: cpu@2 {
->> @@ -67,6 +81,12 @@ CPU2: cpu@2 {
->>   			qcom,acc = <&acc2>;
->>   			qcom,saw = <&saw2>;
->>   			cpu-idle-states = <&CPU_SPC>;
->> +			clocks = <&kraitcc KRAIT_CPU_2>;
->> +			clock-names = "cpu";
->> +			clock-latency = <100000>;
->> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
->> +			operating-points-v2 = <&cpu_opp_table>;
->> +			#cooling-cells = <2>;
->>   		};
->>   
->>   		CPU3: cpu@3 {
->> @@ -78,6 +98,12 @@ CPU3: cpu@3 {
->>   			qcom,acc = <&acc3>;
->>   			qcom,saw = <&saw3>;
->>   			cpu-idle-states = <&CPU_SPC>;
->> +			clocks = <&kraitcc KRAIT_CPU_3>;
->> +			clock-names = "cpu";
->> +			clock-latency = <100000>;
->> +			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
->> +			operating-points-v2 = <&cpu_opp_table>;
->> +			#cooling-cells = <2>;
->>   		};
->>   
->>   		L2: l2-cache {
->> @@ -196,6 +222,121 @@ CPU_SPC: spc {
->>   		};
->>   	};
->>   
->> +        cpu_opp_table: opp-table-cpu {
->> +		compatible = "operating-points-v2-krait-cpu";
->> +		nvmem-cells = <&speedbin_efuse>;
->> +
->> +		/*
->> +		 * Voltage thresholds are <target min max>
->> +		 */
-> What voltage thresholds?
-
-Ack, should be moved to the next patch.
-
-> 
->> +		opp-384000000 {
->> +			opp-hz = /bits/ 64 <384000000>;
->> +			opp-peak-kBps = <384000>;
->> +			opp-supported-hw = <0x4007>;
->> +			/*
->> +			 * higher latency as it requires switching between
->> +			 * clock sources
->> +			 */
->> +			clock-latency-ns = <244144>;
->> +		};
->> +
->> +		opp-486000000 {
->> +			opp-hz = /bits/ 64 <486000000>;
->> +			opp-peak-kBps = <648000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-594000000 {
->> +			opp-hz = /bits/ 64 <594000000>;
->> +			opp-peak-kBps = <648000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-702000000 {
->> +			opp-hz = /bits/ 64 <702000000>;
->> +			opp-peak-kBps = <648000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-810000000 {
->> +			opp-hz = /bits/ 64 <810000000>;
->> +			opp-peak-kBps = <648000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-918000000 {
->> +			opp-hz = /bits/ 64 <918000000>;
->> +			opp-peak-kBps = <648000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-1026000000 {
->> +			opp-hz = /bits/ 64 <1026000000>;
->> +			opp-peak-kBps = <648000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-1134000000 {
->> +			opp-hz = /bits/ 64 <1134000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-1242000000 {
->> +			opp-hz = /bits/ 64 <1242000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-1350000000 {
->> +			opp-hz = /bits/ 64 <1350000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-1458000000 {
->> +			opp-hz = /bits/ 64 <1458000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x4007>;
->> +		};
->> +
->> +		opp-1512000000 {
->> +			opp-hz = /bits/ 64 <1512000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x4001>;
->> +		};
->> +
->> +		opp-1566000000 {
->> +			opp-hz = /bits/ 64 <1566000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x06>;
->> +		};
->> +
->> +		opp-1674000000 {
->> +			opp-hz = /bits/ 64 <1674000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x06>;
->> +		};
->> +
->> +		opp-1728000000 {
->> +			opp-hz = /bits/ 64 <1728000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x02>;
->> +		};
->> +
->> +		opp-1782000000 {
->> +			opp-hz = /bits/ 64 <1782000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x04>;
->> +		};
->> +
->> +		opp-1890000000 {
->> +			opp-hz = /bits/ 64 <1890000000>;
->> +			opp-peak-kBps = <1134000>;
->> +			opp-supported-hw = <0x04>;
->> +		};
->> +	};
->> +
->>   	memory@0 {
->>   		device_type = "memory";
->>   		reg = <0x0 0x0>;
->> @@ -312,6 +453,32 @@ sleep_clk: sleep_clk {
->>   		};
->>   	};
->>   
->> +	kraitcc: clock-controller {
->> +		compatible = "qcom,krait-cc-v1";
-> Are we sure we don't wanna rework this compatible? Check the comment in
-> drivers/clk/qcom/krait-cc.c : krait_add_sec_mux()
-
-I remember that comment. I'd rather not introduce another compat string 
-for such old hw. Would there be any direct benefits?
-
-> 
-> 
->> +		clocks = <&gcc PLL9>, /* hfpll0 */
->> +			 <&gcc PLL10>, /* hfpll1 */
->> +			 <&gcc PLL16>, /* hfpll2 */
->> +			 <&gcc PLL17>, /* hfpll3 */
->> +			 <&gcc PLL12>, /* hfpll_l2 */
->> +			 <&acc0>,
->> +			 <&acc1>,
->> +			 <&acc2>,
->> +			 <&acc3>,
->> +			 <&l2cc>;
->> +		clock-names = "hfpll0",
->> +			      "hfpll1",
->> +			      "hfpll2",
->> +			      "hfpll3",
->> +			      "hfpll_l2",
->> +			      "acpu0_aux",
->> +			      "acpu1_aux",
->> +			      "acpu2_aux",
->> +			      "acpu3_aux",
->> +			      "acpu_l2_aux";
->> +		#clock-cells = <1>;
->> +		#interconnect-cells = <1>;
->> +	};
->> +
->>   	sfpb_mutex: hwmutex {
->>   		compatible = "qcom,sfpb-mutex";
->>   		syscon = <&sfpb_wrapper_mutex 0x604 0x4>;
->> @@ -933,6 +1100,9 @@ qfprom: qfprom@700000 {
->>   			#address-cells = <1>;
->>   			#size-cells = <1>;
->>   			ranges;
->> +			speedbin_efuse: speedbin@c0 {
->> +				reg = <0x0c0 0x4>;
->> +			};
-> Newline between properties and subnodes & between individual subnodes,
-> please
-
-ack.
+- Marijn
 
 > 
 > Konrad
->>   			tsens_calib: calib@404 {
->>   				reg = <0x404 0x10>;
->>   			};
-
--- 
-With best wishes
-Dmitry
-
+> > 
+> >>> Shall I send a Fixes: ed41005f5b7c ("dt-bindings: display/msm:
+> >>> sc7180-dpu: Describe SM6350 and SM6375") for that, and should maxItems:
+> >>> 6 be the default under clock(-name)s or in an else:?
+> >>
+> >> There is no bug to fix. Or at least it is not yet known. Whether other
+> >> devices should be constrained as well - sure, sounds reasonable, but I
+> >> did not check the code exactly.
+> > 
+> > I don't know either, but we need this information to decide whether to
+> > use `maxItems: 6`:
+> > 
+> > 1. Directly on the property;
+> > 2. In an `else:` case on the current `if: sm6375-dpu` (should have the
+> >    same effect as 1., afaik);
+> > 3. In a second `if:` case that lists all SoCS explicitly.
+> > 
+> > Since we don't have this information, I think option 3. is the right way
+> > to go, setting `maxItems: 6` for qcom,sm6125-dpu.
+> > 
+> > However, it is not yet understood why downstream is able to use the
+> > throttle clock without repercussions.
+> > 
+> >> We talk here about this patch.
+> > 
+> > We used this patch to discover that other SoCs are similarly
+> > unconstrained.  But if you don't want me to look into it, by all means!
+> > Saves me a lot of time.  So I will go with option 3.
+> > 
+> > - Marijn
