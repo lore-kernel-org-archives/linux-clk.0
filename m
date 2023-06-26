@@ -2,237 +2,184 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 468A4EB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 13:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3EFEB64DA
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 13:44:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbjFZNkQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 09:40:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44354 "EHLO
+        id S229768AbjFZNoo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 09:44:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjFZNkP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 09:40:15 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC91E73
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:40:13 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b6994a8ce3so21084161fa.1
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:40:13 -0700 (PDT)
+        with ESMTP id S229570AbjFZNon (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 09:44:43 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65257E72
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:44:42 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4f8689fbf59so5411071e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687786811; x=1690378811;
+        d=linaro.org; s=google; t=1687787080; x=1690379080;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=U+K1LE6a71OUxy1lnMPjS5x63BvYzJvSeQH+FZKCcBY=;
-        b=xhlw8S0GONyFFlNeCtkqFbwW0A7VzYNldDOiZA8kYoNHO1DsDJyn7FvUe/HOfpp2kp
-         JYNNQdwPyySon1gP9j43h7VIhcLGYVO5XzE+wI5+Xa/45OP3sK4epLE+/PwdygKrpAV/
-         1hbeDydQxo8z86578bCPt6W2cfz1rzTxkPeJezYEf6eNhUhL/MCe3WmbFtBUoEPECulB
-         +yVSDwUua1ZYUmD8gGo0lON2pJmZAp4rGo6+Ez2DcCiUEjfyF6pEJr8J8Z+22R/1V/2D
-         1dhAZ6WJAQ5eVAqQ8p+BFgbtxGXW6qBWrH4mtzxd+N/26DT1xyp55DvO83VP9Hh4n+Z9
-         fbQQ==
+        bh=Z182+Q4uKJie6Rxr4pwKFm/7JzYn7OU/lRN6E75YsLU=;
+        b=eXQV8HOG8X7LkEP0FGaLvSgKFbx5frQztyredVZnH3azpB0e/MWxX/OvIesjczaWTD
+         sbyN1HTNgbA98LWHmikLcIJuJ88TSUAAGZns00Lo4oboSKnvQQoFooYapW04pDeIipeB
+         xl8pyVivBRsCC1akqSDBp76Ut37ukgIFoDPVWTe8WSQuf6VGvXZNyraZGv5uodCCnahk
+         C9Lb/dkyYimWqVtCR3aKir/5u/0FJQkKygo9pXK4/CrE3jLXKfXPsP6oK9UuqfLGzzgJ
+         Em2yzd089u1gW8F1VvTEH1xwgUJI7nf4nlFAIAHqzjkvbGoqu8dmpR9y8H7jKRzVcpwI
+         aWDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687786811; x=1690378811;
+        d=1e100.net; s=20221208; t=1687787080; x=1690379080;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U+K1LE6a71OUxy1lnMPjS5x63BvYzJvSeQH+FZKCcBY=;
-        b=XiQewanOsxHz0SrikEcZs+MNjJT6DdB2aMFuHPSfY7WDG/7UIMHvUsHIekqgOrNfZ0
-         JQPzF4DNXHqCXTBBkjrscgbuj40XLmstQclK1EKXKV9gFlTR2+4YrOkcPqt0yjGvs6RS
-         YbfQF7a6zCQwIabeqFWx3/0J9aRGvWQR0tivyVepKMiDPWb2uZfUSkKeojhY/8qKubkc
-         tNcga36zH8fGn/FkrrTnT1+IODAHIfLLyJZxgec4uOwHXZ9pyLc5Hq3WGIpTvZ64Bzsk
-         5APxxMAl77LBZ5v7q2d8OFMeATQHZ3VwwCmTXXlgxmqpSy7JUQ1k5B5CcbeOICXM8o6Z
-         zMvA==
-X-Gm-Message-State: AC+VfDwlw8+3f7RycqHr9UB2wWwO7IsEQL9LBAAHu7DoPFgVu2vCK3q4
-        2pqjEx0Wl403AyxuJScaWcZVaQ==
-X-Google-Smtp-Source: ACHHUZ4wQ8F2j65lhRkRoyTm43QeDBy6DJVkkjt5tgezsscF8KCcEMIKwqytmpwZZHBhU4ag6BEhKw==
-X-Received: by 2002:a19:f243:0:b0:4f5:e688:25c3 with SMTP id d3-20020a19f243000000b004f5e68825c3mr14312575lfk.44.1687786811124;
-        Mon, 26 Jun 2023 06:40:11 -0700 (PDT)
+        bh=Z182+Q4uKJie6Rxr4pwKFm/7JzYn7OU/lRN6E75YsLU=;
+        b=BS8A6WWibN0Aon2jl0lVUmZ1iDWKbFZAzMx501gIBskNffVt+AG1vXRh7oiNOwH06e
+         fw4YDJHkR4PQCgEexCe37SA51AIn+LkFzYvnBau7riqvtVRnmNUI5WJUYSnKsSZK+QbG
+         82MQpuRMDBPMjIMqkFz/o5jFSo8wXov9EiVYGP0goXcEOCYbCzx3Du/1cy6hOFGb3HV6
+         rxHFCkuH58xY8N9DpufSNSpw7YTrMe0sUGjfpQROIkSSg6LCbKt8wFst11YK+DhUPR2D
+         DKA3ZtayxYZpEZ0eM2DQRJOvijDSB/wiUSKXpsfra7SL0k5QBgyw7HZDWNQMTlOGEIV8
+         B9qA==
+X-Gm-Message-State: AC+VfDzZn8S0x48pSeqmSXbIiSE4QER3Ag6E44PnB96eCeeSJM1vOzWW
+        yGT4vhru10RGqxgbEYQP7SXTq+GSw7xf0OxPipQ=
+X-Google-Smtp-Source: ACHHUZ4tMRepmhfl1tjS3N4io66eAdL2IcMharuAdzXvUqx4OEu4BAmMjhy8W1VXaGhJtB56aq84oA==
+X-Received: by 2002:a05:6512:33c7:b0:4f8:4b19:9533 with SMTP id d7-20020a05651233c700b004f84b199533mr9837735lfg.19.1687787080554;
+        Mon, 26 Jun 2023 06:44:40 -0700 (PDT)
 Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id d13-20020ac241cd000000b004db1a7e6decsm1109225lfi.205.2023.06.26.06.40.09
+        by smtp.gmail.com with ESMTPSA id d30-20020ac25ede000000b004f252003071sm1126500lfq.37.2023.06.26.06.44.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jun 2023 06:40:10 -0700 (PDT)
-Message-ID: <a10cdae8-3f18-7ffc-8db7-ab21b47b91ca@linaro.org>
-Date:   Mon, 26 Jun 2023 16:40:09 +0300
+        Mon, 26 Jun 2023 06:44:39 -0700 (PDT)
+Message-ID: <d9e4fd75-310a-7fe8-879e-651011873199@linaro.org>
+Date:   Mon, 26 Jun 2023 16:44:39 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-Subject: Re: [PATCH V5 4/5] clk: qcom: camcc-sm8550: Add support for qdss,
- sleep and xo clocks
+Subject: Re: [PATCH v2 06/26] interconnect: icc-clk: add support for scaling
+ using OPP
 Content-Language: en-GB
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230623164619.11464-1-quic_jkona@quicinc.com>
- <20230623164619.11464-5-quic_jkona@quicinc.com>
- <11b3058c-2261-95a4-2347-b0a33fdeb1e3@linaro.org>
- <99aebcb3-89d4-993b-5bc1-abc475b94843@quicinc.com>
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
+ <20230625202547.174647-7-dmitry.baryshkov@linaro.org>
+ <b5ff346b-cbde-68fe-a08a-3b3331439309@linaro.org>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <99aebcb3-89d4-993b-5bc1-abc475b94843@quicinc.com>
+In-Reply-To: <b5ff346b-cbde-68fe-a08a-3b3331439309@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/06/2023 14:59, Jagadeesh Kona wrote:
+On 26/06/2023 14:28, Konrad Dybcio wrote:
+> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
+>> Sometimes it might be required to scale the clock using the OPP
+>> framework (e.g. to scale regulators following the required clock rate).
+>> Extend the interconnec
+> 't'
 > 
-> 
-> On 6/24/2023 5:49 PM, Konrad Dybcio wrote:
->> On 23.06.2023 18:46, Jagadeesh Kona wrote:
->>> Add support for camera qdss, sleep and xo clocks.
->>>
->>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
->>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>> ---
->>> Changes since v4:
->>>   - No changes.
->>> Changes since v3:
->>>   - No changes.
->>> Changes since v2:
->>>   - No changes.
->>> Changes since v1:
->>>   - Newly added.
->>>
->>>   drivers/clk/qcom/camcc-sm8550.c | 180 ++++++++++++++++++++++++++++++++
->>>   1 file changed, 180 insertions(+)
->>>
->>> diff --git a/drivers/clk/qcom/camcc-sm8550.c 
->>> b/drivers/clk/qcom/camcc-sm8550.c
->>> index 075bea32087c..7b4882444d58 100644
->>> --- a/drivers/clk/qcom/camcc-sm8550.c
->>> +++ b/drivers/clk/qcom/camcc-sm8550.c
->>> @@ -22,6 +22,8 @@
->>>   enum {
->>>       DT_IFACE,
->>>       DT_BI_TCXO,
->>> +    DT_BI_TCXO_AO,
->>> +    DT_SLEEP_CLK,
->>>   };
->>>   enum {
->>> @@ -43,6 +45,7 @@ enum {
->>>       P_CAM_CC_PLL10_OUT_EVEN,
->>>       P_CAM_CC_PLL11_OUT_EVEN,
->>>       P_CAM_CC_PLL12_OUT_EVEN,
->>> +    P_SLEEP_CLK,
->>>   };
->>>   static const struct pll_vco lucid_ole_vco[] = {
->>> @@ -881,6 +884,22 @@ static const struct clk_parent_data 
->>> cam_cc_parent_data_11[] = {
->>>       { .hw = &cam_cc_pll7_out_even.clkr.hw },
->>>   };
->>> +static const struct parent_map cam_cc_parent_map_12[] = {
->>> +    { P_SLEEP_CLK, 0 },
->>> +};
->>> +
->>> +static const struct clk_parent_data cam_cc_parent_data_12[] = {
->>> +    { .index = DT_SLEEP_CLK },
->>> +};
->>> +
->>> +static const struct parent_map cam_cc_parent_map_13[] = {
->>> +    { P_BI_TCXO, 0 },
->>> +};
->>> +
->>> +static const struct clk_parent_data cam_cc_parent_data_13_ao[] = {
->>> +    { .index = DT_BI_TCXO_AO },
->>> +};
->>> +
->>>   static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
->>>       F(19200000, P_BI_TCXO, 1, 0, 0),
->>>       F(200000000, P_CAM_CC_PLL8_OUT_EVEN, 1, 0, 0),
->>> @@ -1565,6 +1584,29 @@ static struct clk_rcg2 cam_cc_mclk7_clk_src = {
->>>       },
->>>   };
->>> +static const struct freq_tbl ftbl_cam_cc_qdss_debug_clk_src[] = {
->>> +    F(19200000, P_BI_TCXO, 1, 0, 0),
->>> +    F(75000000, P_CAM_CC_PLL0_OUT_EVEN, 8, 0, 0),
->>> +    F(150000000, P_CAM_CC_PLL0_OUT_EVEN, 4, 0, 0),
->>> +    F(300000000, P_CAM_CC_PLL0_OUT_MAIN, 4, 0, 0),
->>> +    { }
->>> +};
->>> +
->>> +static struct clk_rcg2 cam_cc_qdss_debug_clk_src = {
->>> +    .cmd_rcgr = 0x13f24,
->>> +    .mnd_width = 0,
->>> +    .hid_width = 5,
->>> +    .parent_map = cam_cc_parent_map_0,
->>> +    .freq_tbl = ftbl_cam_cc_qdss_debug_clk_src,
->>> +    .clkr.hw.init = &(const struct clk_init_data) {
->>> +        .name = "cam_cc_qdss_debug_clk_src",
->>> +        .parent_data = cam_cc_parent_data_0,
->>> +        .num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->>> +        .flags = CLK_SET_RATE_PARENT,
->>> +        .ops = &clk_rcg2_shared_ops,
->>> +    },
->>> +};
->>> +
->>>   static const struct freq_tbl ftbl_cam_cc_sfe_0_clk_src[] = {
->>>       F(466000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
->>>       F(594000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
->>> @@ -1611,6 +1653,26 @@ static struct clk_rcg2 cam_cc_sfe_1_clk_src = {
->>>       },
->>>   };
->>> +static const struct freq_tbl ftbl_cam_cc_sleep_clk_src[] = {
->>> +    F(32000, P_SLEEP_CLK, 1, 0, 0),
->>> +    { }
->>> +};
->>> +
->>> +static struct clk_rcg2 cam_cc_sleep_clk_src = {
->>> +    .cmd_rcgr = 0x141a0,
->>> +    .mnd_width = 0,
->>> +    .hid_width = 5,
->>> +    .parent_map = cam_cc_parent_map_12,
->>> +    .freq_tbl = ftbl_cam_cc_sleep_clk_src,
->>> +    .clkr.hw.init = &(const struct clk_init_data) {
->>> +        .name = "cam_cc_sleep_clk_src",
->>> +        .parent_data = cam_cc_parent_data_12,
->>> +        .num_parents = ARRAY_SIZE(cam_cc_parent_data_12),
->>> +        .flags = CLK_SET_RATE_PARENT,
->>> +        .ops = &clk_rcg2_shared_ops,
->>> +    },
->>> +};
->>> +
->>>   static const struct freq_tbl ftbl_cam_cc_slow_ahb_clk_src[] = {
->>>       F(19200000, P_BI_TCXO, 1, 0, 0),
->>>       F(80000000, P_CAM_CC_PLL0_OUT_EVEN, 7.5, 0, 0),
->>> @@ -1632,6 +1694,26 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src 
->>> = {
->>>       },
->>>   };
->>> +static const struct freq_tbl ftbl_cam_cc_xo_clk_src[] = {
->>> +    F(19200000, P_BI_TCXO, 1, 0, 0),
->> You're overloading P_BI_TCXO with a different parent clock (XO_A).
+>> -clk framework to handle OPP case in addition to
+>> scaling the clock.
 >>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+> I think we should check for OPP at the icc-clk registration time,
+> instead of passing it as a parameter, e.g.:
 > 
-> This RCG just requires active only voting, hence using XO_A as its parent.
+> qn.opp = IS_ERR(dev_pm_opp_get_opp_count)
 > 
-> Both XO and XO_A are same clock in HW (BI_TCXO), hence we can reuse 
-> P_BI_TCXO in frequency table for XO_A parent as well.
+> Not sure if there's a more idiomatic way.
 
-Please don't do such things, it complicates understanding the driver. 
-The reviewer could have thought that here the driver was really 
-referencing to the BI_TCXO rather than BI_TCXO_AO.
+No. icc-clk is not limited to a single clock->icc conversion. So it is 
+possible to create several interconnect links, only one of which should 
+be the OPP-based one.
 
 > 
-> Thanks,
-> Jagadeesh
-> 
->> The rest lgtm
+> Konrad
+>>   drivers/interconnect/icc-clk.c   | 13 +++++++++++--
+>>   include/linux/interconnect-clk.h |  1 +
+>>   2 files changed, 12 insertions(+), 2 deletions(-)
 >>
->> Konrad
-
-[skipped the rest]
+>> diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
+>> index 4d43ebff4257..c7962acdcee7 100644
+>> --- a/drivers/interconnect/icc-clk.c
+>> +++ b/drivers/interconnect/icc-clk.c
+>> @@ -7,10 +7,13 @@
+>>   #include <linux/device.h>
+>>   #include <linux/interconnect-clk.h>
+>>   #include <linux/interconnect-provider.h>
+>> +#include <linux/pm_opp.h>
+>>   
+>>   struct icc_clk_node {
+>> +	struct device *dev;
+>>   	struct clk *clk;
+>>   	bool enabled;
+>> +	bool opp;
+>>   };
+>>   
+>>   struct icc_clk_provider {
+>> @@ -25,12 +28,16 @@ struct icc_clk_provider {
+>>   static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
+>>   {
+>>   	struct icc_clk_node *qn = src->data;
+>> +	unsigned long rate = icc_units_to_bps(src->peak_bw);
+>>   	int ret;
+>>   
+>>   	if (!qn || !qn->clk)
+>>   		return 0;
+>>   
+>> -	if (!src->peak_bw) {
+>> +	if (qn->opp)
+>> +		return dev_pm_opp_set_rate(qn->dev, rate);
+>> +
+>> +	if (!rate) {
+>>   		if (qn->enabled)
+>>   			clk_disable_unprepare(qn->clk);
+>>   		qn->enabled = false;
+>> @@ -45,7 +52,7 @@ static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
+>>   		qn->enabled = true;
+>>   	}
+>>   
+>> -	return clk_set_rate(qn->clk, icc_units_to_bps(src->peak_bw));
+>> +	return clk_set_rate(qn->clk, rate);
+>>   }
+>>   
+>>   static int icc_clk_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
+>> @@ -106,7 +113,9 @@ struct icc_provider *icc_clk_register(struct device *dev,
+>>   	icc_provider_init(provider);
+>>   
+>>   	for (i = 0, j = 0; i < num_clocks; i++) {
+>> +		qp->clocks[i].dev = dev;
+>>   		qp->clocks[i].clk = data[i].clk;
+>> +		qp->clocks[i].opp = data[i].opp;
+>>   
+>>   		node = icc_node_create(first_id + j);
+>>   		if (IS_ERR(node)) {
+>> diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
+>> index 0cd80112bea5..c695e5099901 100644
+>> --- a/include/linux/interconnect-clk.h
+>> +++ b/include/linux/interconnect-clk.h
+>> @@ -11,6 +11,7 @@ struct device;
+>>   struct icc_clk_data {
+>>   	struct clk *clk;
+>>   	const char *name;
+>> +	bool opp;
+>>   };
+>>   
+>>   struct icc_provider *icc_clk_register(struct device *dev,
 
 -- 
 With best wishes
