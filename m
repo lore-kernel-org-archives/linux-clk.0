@@ -2,152 +2,215 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 020B5EB64D7
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 14:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BBDEB64D7
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 15:47:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230175AbjFZO0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 10:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45082 "EHLO
+        id S230504AbjFZPr3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 11:47:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbjFZO0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 10:26:33 -0400
-Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43DB810E2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 07:26:29 -0700 (PDT)
-Received: from SoMainline.org (82-72-63-87.cable.dynamic.v4.ziggo.nl [82.72.63.87])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id DDFC63F494;
-        Mon, 26 Jun 2023 16:26:25 +0200 (CEST)
-Date:   Mon, 26 Jun 2023 16:26:24 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S229704AbjFZPr2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 11:47:28 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39791AB;
+        Mon, 26 Jun 2023 08:47:27 -0700 (PDT)
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35QFBvAh020572;
+        Mon, 26 Jun 2023 15:46:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=SoQTNj83C7VuNv1nJV6jGQflCqRMpGE8o+3UN91EGUw=;
+ b=N8uP4F+pnAofVywLPS8BWyWRnVEc8mzPgcIijZ1oPbRdKS8OWOfDUzH9iAKNxsBsB5r9
+ +vRV2P8EZrEWrW1qxV3zlGYNHbEHGJzB8Hl8/JvLs8Dktdqku+95sp9kgRg7ryKs6VMt
+ VGq2I4tOvtZ8q2q488TlAJG9PbjNXYb4Hqtw4QpuY3L7izxuK9SmiZAKirFKjQZ2rMco
+ A0+iDvUf42dIYODqhsM1i4Y6Y6qWOTARMidSFL5t+6dvJHDs37P0jAkYYxPqzG6Z0CSW
+ FZuf2NCY/DxG/8IWYuTaJBqTcVC0x/pLaxAry4tGSfmrFOBZbpiEDvqZF3nqyDKXxCzY nQ== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rfarq8er9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Jun 2023 15:46:45 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35QFkiaS013954
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Jun 2023 15:46:44 GMT
+Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.42; Mon, 26 Jun
+ 2023 08:46:42 -0700
+Message-ID: <537ffe05-1759-bf37-3a0c-a29ccd2e9d6d@quicinc.com>
+Date:   Mon, 26 Jun 2023 09:46:42 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH 3/9] clk: qcom: gcc-msm8998: Control MMSS and GPUSS GPLL0
+ outputs properly
+Content-Language: en-US
+From:   Jeffrey Hugo <quic_jhugo@quicinc.com>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        ~postmarketos/upstreaming@lists.sr.ht,
+        Taniya Das <tdas@codeaurora.org>
+CC:     Marijn Suijten <marijn.suijten@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-Subject: Re: [PATCH 03/15] dt-bindings: clock: qcom,dispcc-sm6125: Require
- GCC PLL0 DIV clock
-Message-ID: <dp2ucgmql2jff52nbxti2hwjchtgjkbrwcgpx3p7ruodz7adnj@635pcqr6fv4x>
-References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <20230624-sm6125-dpu-v1-3-1d5a638cebf2@somainline.org>
- <c9681bce-efa8-9b79-4bf6-837dd6a2dc12@linaro.org>
- <edrftxqhywiaxvbonyh25cmubrg77y4dryqoy7id4ndan2lfa7@rhvcoavtg5vl>
- <f62d750e-da73-fece-c3de-0dac1fbb9827@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Jami Kettunen <jami.kettunen@somainline.org>
+References: <20230622-topic-8998clk-v1-0-5b7a0d6e98b1@linaro.org>
+ <20230622-topic-8998clk-v1-3-5b7a0d6e98b1@linaro.org>
+ <e880bad8-4fcb-97c1-ec9c-9122e1b550e6@quicinc.com>
+ <18f508e7-8a7e-162b-4bed-eaef45147a22@linaro.org>
+ <f2ca0d67-25e7-1313-9cea-fddb1ad28c9b@quicinc.com>
+In-Reply-To: <f2ca0d67-25e7-1313-9cea-fddb1ad28c9b@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f62d750e-da73-fece-c3de-0dac1fbb9827@linaro.org>
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0ygC3cSHz_1LfR-5gX1Txb1bEc4uyoHx
+X-Proofpoint-GUID: 0ygC3cSHz_1LfR-5gX1Txb1bEc4uyoHx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-26_13,2023-06-26_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
+ clxscore=1015 spamscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306260143
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-06-26 11:43:39, Konrad Dybcio wrote:
-> On 25.06.2023 21:48, Marijn Suijten wrote:
-> > On 2023-06-24 03:45:02, Konrad Dybcio wrote:
-> >> On 24.06.2023 02:41, Marijn Suijten wrote:
-> >>> The "gcc_disp_gpll0_div_clk_src" clock is consumed by the driver, will
-> >>> be passed from DT, and should be required by the bindings.
-> >>>
-> >>> Fixes: 8397c9c0c26b ("dt-bindings: clock: add QCOM SM6125 display clock bindings")
-> >>> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> >>> ---
-> >> Ideally, you'd stick it at the bottom of the list, as the items: order
-> >> is part of the ABI
-> > 
-> > This isn't an ABI break, as this driver nor its bindings require/declare
-> > a fixed order: they declare a relation between clocks and clock-names.
-> Bindings describe the ABI, drivers implement compliant code flow.
+On 6/22/2023 9:19 AM, Jeffrey Hugo wrote:
+> On 6/22/2023 9:05 AM, Konrad Dybcio wrote:
+>> On 22.06.2023 16:55, Jeffrey Hugo wrote:
+>>> On 6/22/2023 5:57 AM, Konrad Dybcio wrote:
+>>>> Up until now, we've been relying on some non-descript hardware magic
+>>>> to pinkypromise turn the clocks on for us. While new SoCs shine with
+>>>> that feature, MSM8998 can not always be fully trusted.
+>>>>
+>>>> Register the MMSS and GPUSS GPLL0 legs with the CCF to allow for manual
+>>>> enable voting.
+>>>>
+>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>> ---
+>>>>    drivers/clk/qcom/gcc-msm8998.c | 58 
+>>>> ++++++++++++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 58 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/gcc-msm8998.c 
+>>>> b/drivers/clk/qcom/gcc-msm8998.c
+>>>> index be024f8093c5..cccb19cae481 100644
+>>>> --- a/drivers/clk/qcom/gcc-msm8998.c
+>>>> +++ b/drivers/clk/qcom/gcc-msm8998.c
+>>>> @@ -25,6 +25,9 @@
+>>>>    #include "reset.h"
+>>>>    #include "gdsc.h"
+>>>>    +#define GCC_MMSS_MISC    0x0902C
+>>>> +#define GCC_GPU_MISC    0x71028
+>>>> +
+>>>>    static struct pll_vco fabia_vco[] = {
+>>>>        { 250000000, 2000000000, 0 },
+>>>>        { 125000000, 1000000000, 1 },
+>>>> @@ -1367,6 +1370,22 @@ static struct clk_branch gcc_boot_rom_ahb_clk 
+>>>> = {
+>>>>        },
+>>>>    };
+>>>>    +static struct clk_branch gcc_mmss_gpll0_div_clk = {
+>>>> +    .halt_check = BRANCH_HALT_DELAY,
+>>>> +    .clkr = {
+>>>> +        .enable_reg = 0x5200c,
+>>>> +        .enable_mask = BIT(0),
+>>>> +        .hw.init = &(struct clk_init_data){
+>>>> +            .name = "gcc_mmss_gpll0_div_clk",
+>>>> +            .parent_hws = (const struct clk_hw *[]) {
+>>>> +                &gpll0_out_main.clkr.hw,
+>>>> +            },
+>>>> +            .num_parents = 1,
+>>>> +            .ops = &clk_branch2_ops,
+>>>> +        },
+>>>> +    },
+>>>> +};
+>>>> +
+>>>>    static struct clk_branch gcc_mmss_gpll0_clk = {
+>>>>        .halt_check = BRANCH_HALT_DELAY,
+>>>>        .clkr = {
+>>>> @@ -1395,6 +1414,38 @@ static struct clk_branch 
+>>>> gcc_mss_gpll0_div_clk_src = {
+>>>>        },
+>>>>    };
+>>>>    +static struct clk_branch gcc_gpu_gpll0_div_clk = {
+>>>> +    .halt_check = BRANCH_HALT_DELAY,
+>>>> +    .clkr = {
+>>>> +        .enable_reg = 0x5200c,
+>>>> +        .enable_mask = BIT(3),
+>>>> +        .hw.init = &(struct clk_init_data){
+>>>> +            .name = "gcc_gpu_gpll0_div_clk",
+>>>> +            .parent_hws = (const struct clk_hw *[]) {
+>>>> +                &gpll0_out_main.clkr.hw,
+>>>> +            },
+>>>> +            .num_parents = 1,
+>>>> +            .ops = &clk_branch2_ops,
+>>>> +        },
+>>>> +    },
+>>>> +};
+>>>> +
+>>>> +static struct clk_branch gcc_gpu_gpll0_clk = {
+>>>> +    .halt_check = BRANCH_HALT_DELAY,
+>>>> +    .clkr = {
+>>>> +        .enable_reg = 0x5200c,
+>>>> +        .enable_mask = BIT(4),
+>>>> +        .hw.init = &(struct clk_init_data){
+>>>> +            .name = "gcc_gpu_gpll0_clk",
+>>>> +            .parent_hws = (const struct clk_hw *[]) {
+>>>> +                &gpll0_out_main.clkr.hw,
+>>>> +            },
+>>>> +            .num_parents = 1,
+>>>> +            .ops = &clk_branch2_ops,
+>>>> +        },
+>>>> +    },
+>>>> +};
+>>>> +
+>>>>    static struct clk_branch gcc_blsp1_ahb_clk = {
+>>>>        .halt_reg = 0x17004,
+>>>>        .halt_check = BRANCH_HALT_VOTED,
+>>>> @@ -3080,6 +3131,9 @@ static struct clk_regmap *gcc_msm8998_clocks[] 
+>>>> = {
+>>>>        [AGGRE2_SNOC_NORTH_AXI] = &aggre2_snoc_north_axi_clk.clkr,
+>>>>        [SSC_XO] = &ssc_xo_clk.clkr,
+>>>>        [SSC_CNOC_AHBS_CLK] = &ssc_cnoc_ahbs_clk.clkr,
+>>>> +    [GCC_MMSS_GPLL0_DIV_CLK] = &gcc_mmss_gpll0_div_clk.clkr,
+>>>> +    [GCC_GPU_GPLL0_DIV_CLK] = &gcc_gpu_gpll0_div_clk.clkr,
+>>>> +    [GCC_GPU_GPLL0_CLK] = &gcc_gpu_gpll0_clk.clkr,
+>>>>    };
+>>>>      static struct gdsc *gcc_msm8998_gdscs[] = {
+>>>> @@ -3235,6 +3289,10 @@ static int gcc_msm8998_probe(struct 
+>>>> platform_device *pdev)
+>>>>        if (ret)
+>>>>            return ret;
+>>>>    +    /* Disable the GPLL0 active input to MMSS and GPU via MISC 
+>>>> registers */
+>>>> +    regmap_write(regmap, GCC_MMSS_MISC, 0x10003);
+>>>> +    regmap_write(regmap, GCC_GPU_MISC, 0x10003);
+>>>
+>>> I wonder, does this disrupt a handoff of an active display from the 
+>>> bootloader to Linux?
+>> My phone's bootloader doesn't initialize the display, if you (or Angelo
+>> or Jami, +CC) could test this, it'd be wonderful.
+> 
+> Let me carve out some time to try it on the laptop.
 
-That is how bindings are supposed to be...  However typically the driver
-is written/ported first and then the bindings are simply created to
-reflect this, and sometimes (as is the case with this patch)
-incorrectly.
+Tested on the Lenovo Miix 630, and observed no issues.
 
-That, together with a lack of DTS and known-working device with it
-(which is why I'm submitting driver+bindings+dts in one series now!)
-makes us shoot ourselves in the foot by locking everyone into an ABI
-that makes no sense.
+Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
 
-> > This orders the GCC clock just like other dispccs.  And the previous
-> > patch dropped the unused cfg_ahb_clk from the bindings, so all bets are
-> > off anyway.
-> Thinking about it again, the binding has not been consumed by any upstream
-> DT to date, so it should (tm) be fine to let it slide..
-
-Exactly, I hope/doubt anyone was already using these incomplete
-bindings.  And again: the ABI here is the name->phandle mapping, the
-order Does Not Matter™.  So I hope we can let it slide (otherwise the
-previous patch shouldd have been NAK'ed as well??)
-
-(Unless you are SM6115 which uses index-based mapping and does not
- define clock-names at all)
-
-- Marijn
-
-> Konrad
-> > 
-> > - Marijn
-> > 
-> >>
-> >> Konrad
-> >>>  Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml | 4 ++++
-> >>>  1 file changed, 4 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
-> >>> index 2acf487d8a2f..11ec154503a3 100644
-> >>> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
-> >>> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
-> >>> @@ -23,6 +23,7 @@ properties:
-> >>>    clocks:
-> >>>      items:
-> >>>        - description: Board XO source
-> >>> +      - description: GPLL0 div source from GCC
-> >>>        - description: Byte clock from DSI PHY0
-> >>>        - description: Pixel clock from DSI PHY0
-> >>>        - description: Pixel clock from DSI PHY1
-> >>> @@ -32,6 +33,7 @@ properties:
-> >>>    clock-names:
-> >>>      items:
-> >>>        - const: bi_tcxo
-> >>> +      - const: gcc_disp_gpll0_div_clk_src
-> >>>        - const: dsi0_phy_pll_out_byteclk
-> >>>        - const: dsi0_phy_pll_out_dsiclk
-> >>>        - const: dsi1_phy_pll_out_dsiclk
-> >>> @@ -65,12 +67,14 @@ examples:
-> >>>        compatible = "qcom,sm6125-dispcc";
-> >>>        reg = <0x5f00000 0x20000>;
-> >>>        clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> >>> +               <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
-> >>>                 <&dsi0_phy 0>,
-> >>>                 <&dsi0_phy 1>,
-> >>>                 <&dsi1_phy 1>,
-> >>>                 <&dp_phy 0>,
-> >>>                 <&dp_phy 1>;
-> >>>        clock-names = "bi_tcxo",
-> >>> +                    "gcc_disp_gpll0_div_clk_src",
-> >>>                      "dsi0_phy_pll_out_byteclk",
-> >>>                      "dsi0_phy_pll_out_dsiclk",
-> >>>                      "dsi1_phy_pll_out_dsiclk",
-> >>>
+For patches 3-6 inclusive
+Tested-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
