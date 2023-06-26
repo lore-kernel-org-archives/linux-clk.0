@@ -2,60 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F8EC001B0
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 17:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B99C001DD
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 17:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229922AbjFZRsR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 13:48:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45232 "EHLO
+        id S229698AbjFZRsS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 13:48:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229825AbjFZRsQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 13:48:16 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2641A1B0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:15 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b466744368so53953361fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:15 -0700 (PDT)
+        with ESMTP id S229720AbjFZRsR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 13:48:17 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73A51134
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:16 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b69ed7d050so24161741fa.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687801693; x=1690393693;
+        d=linaro.org; s=google; t=1687801695; x=1690393695;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kuDHCgM7g2J3zSNzGr58n9ZI5DTdi0x0RzFvs9UVe3A=;
-        b=ZByvhThQPzMUBz2+gD+q9KkkN1z9fOwKnYL2U0mqM4J0JCqxc+Jbs6clrszaYtcePu
-         +mnIK0Lw+gu4wwLQj1nYCS5UbodzXCiZA3WffFI1PC8y/UKxayY+7e9b0gPzE/fCnhnW
-         /DAQ2u28NSXtO1araR7ZUnxeVLqeJ67vfdz3sMxozZogpGZTZcaC0E8KiuzhNh5Mk4JV
-         B3FabxzgenZ2Pkz5QVqW3YwxPAx2cQWH7eCb4xrPX5AW+DkQ1t8vJAJOwmqnXaGgIKfW
-         PfW3e/JPptQULKFBDAI0eyymMgRWByOU+MVhDLr9Ld17yE9wyPAhma2kV75tSxifNQmv
-         9qmA==
+        bh=ey3TT56D7TOnshO37QOzn3UmtILaaCUtqSKom6l4lsA=;
+        b=B93lQQ8IoXJoEM4PnWk5hWVQDy4mNLRqWdWWx9yHPUKtrTGm9nAlO242l3U1sjJLD5
+         e1IcQg3Tug9U45m8oQaO1blCm0I1vd3t8HYJEgL49sNoQSsfDPmF8Jt+CHuE2E7E7TaO
+         VC3DDiil7zfubhMCNVhYUz2XFjZYFNTSqkGr+VNA03QNMtiJQ5Zgp5t4Hi+J9gtCgqIX
+         NP49PiuaPEqYPbjx39+jbWKnDscBYaeHrhjOG9qB8pKYqsNyZAUGO4eA1LsYVvtqLIii
+         beQuxdWXrv60O57ZfxKO8NxJ8xWeJBV81AMFmm+FnbUWH2XlaIEJBnAe1LZwAGcSCNeJ
+         VHhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687801693; x=1690393693;
+        d=1e100.net; s=20221208; t=1687801695; x=1690393695;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kuDHCgM7g2J3zSNzGr58n9ZI5DTdi0x0RzFvs9UVe3A=;
-        b=Ip25n3/MX+sPyjUUw4m1hXJzFpB3uayVEQsYHfB0W3nlb0TnOipHEZqxbV/vfn3glK
-         H3bye0T4UnZE4xp4BzFu1Pf6zRE6METwF9dV0RH1Kfr0Ak169QZo52hUDpS7Eo+CqnrB
-         4EQ8tXQxtXxPRvx/zj75MOSS9bX7NNfnYLRKMxoXFuQY8PHMh15I/A0GQyPGFD2KMshs
-         Z5sJB68cS3nP+DdQJUbElmAjHflXP1SFBawcg0mQhXlzr5KLybUk9TFvnqPpiXv+RCWW
-         6weu7djXyb1gW1MPaC1ur6Q+XP9nRNC9DgXGVgWb10I6WrAzwu29dIpqJUNi6S47cL4v
-         oGQQ==
-X-Gm-Message-State: AC+VfDy0vBBYrY0Qqvsw7if3q9Xr8h5EXbpklRaM790H4l592t/qZ1DB
-        31XA+qqCSKsjsHAxvAfz9ZbhPw==
-X-Google-Smtp-Source: ACHHUZ4g4j4G20eh+MmlOVjf1xLiy+VMmqyS7SLUCqgvImpVLY/AreHq/rYOMMsnevAHHZQCbs4zIA==
-X-Received: by 2002:a2e:9c82:0:b0:2b4:6678:da57 with SMTP id x2-20020a2e9c82000000b002b46678da57mr16573606lji.6.1687801693411;
-        Mon, 26 Jun 2023 10:48:13 -0700 (PDT)
+        bh=ey3TT56D7TOnshO37QOzn3UmtILaaCUtqSKom6l4lsA=;
+        b=JhEMESElfhze8IDl+txgfoj+dMU8ILbjr+4GObkxZKvJepFp4rmrfHEFkFMp3+vWdq
+         vdnmW7mH+W3/Y0S+WEboQQg51+EMgyoHqGdhKwBffYg1rwXctKq3ej6MN/64JB30wWn6
+         s0rq9xaXj3XtKllzKvU32dUF7w33FgfZqcJAOsS0ej3Y2GU84aoXBRAeEAFubpbcEbNS
+         fse3eYv3mYfpImAzN9RDDqvlHPPMYhPekWMlJmbsq92ZivKZhCzleAvJX5gEEq/1qnXX
+         BxiqSdyvpnqkbBM7s6HHWPABVrMdMFy5CRl42GUPFoq263qC/mFN10wGZkIQu7j4rpXj
+         jvlA==
+X-Gm-Message-State: AC+VfDyhz6N6lKA5GZ+bBXg45pqQY6bOGShOYYl9vYhJkr7ojnfPjJQP
+        zIBls2hPCxd1Hogsu4/L1cgGkQ==
+X-Google-Smtp-Source: ACHHUZ4bMLzp4bRrhmxTVvdWyMw7HhO2pCXzIjTkIsBKAE8BlrnT3bYRdlnWGPR6t39ep8mR0WAb5w==
+X-Received: by 2002:a2e:9943:0:b0:2b6:9909:79bd with SMTP id r3-20020a2e9943000000b002b6990979bdmr3030141ljj.24.1687801694764;
+        Mon, 26 Jun 2023 10:48:14 -0700 (PDT)
 Received: from [192.168.1.101] (abyk179.neoplus.adsl.tpnet.pl. [83.9.30.179])
-        by smtp.gmail.com with ESMTPSA id h19-20020a2eb0f3000000b002b470afec39sm1337076ljl.48.2023.06.26.10.48.12
+        by smtp.gmail.com with ESMTPSA id h19-20020a2eb0f3000000b002b470afec39sm1337076ljl.48.2023.06.26.10.48.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 10:48:13 -0700 (PDT)
+        Mon, 26 Jun 2023 10:48:14 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 26 Jun 2023 19:48:06 +0200
-Subject: [PATCH v2 1/3] clk: qcom: gcc-sc8280xp: Add missing GDSC flags
+Date:   Mon, 26 Jun 2023 19:48:07 +0200
+Subject: [PATCH v2 2/3] dt-bindings: clock: qcom,gcc-sc8280xp: Add missing
+ GDSCs
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230620-topic-sc8280_gccgdsc-v2-1-562c1428c10d@linaro.org>
+Message-Id: <20230620-topic-sc8280_gccgdsc-v2-2-562c1428c10d@linaro.org>
 References: <20230620-topic-sc8280_gccgdsc-v2-0-562c1428c10d@linaro.org>
 In-Reply-To: <20230620-topic-sc8280_gccgdsc-v2-0-562c1428c10d@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -70,151 +71,50 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1687801690; l=3705;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1687801690; l=1262;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=x2HNhRh3bUP7Bf6Yrnh3hjgn57WeQdMIkIFsaKOztGg=;
- b=J3I05++nImYR2qKxElBiEEQ2a6bdfGYoD27OnkneELgmvNl/nL6kp94PK3mc6rUNC1FPvMVXG
- dfbMZSVd/yMCzi0rSictoJBocMvTEiTEU5nnBRPKfWsmKRZ3m68lSLF
+ bh=vvmSSYXwEUfFE3PIiMEYxzSbvpVMApP//l/3QIj4wbc=;
+ b=4DN2KtHgln3hQJ0K1JgGA5RIYmkHUKVab/GsMopeQ9XynPGFWrx1gF9Ic85IN6FJCejTCfOzt
+ yiT/vjDyafaB/4qbVJ6IR/F8K3oNRw/Bjv/Vqpqn+mzsZJVk6IShMEg
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All of the 8280's GCC GDSCs can and should use the retain registers so
-as not to lose their state when entering lower power modes.
+There are 10 more GDSCs that we've not been caring about, and by extension
+(and perhaps even more importantly), not putting to sleep. Add them.
 
-Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
+Fixes: a66a82f2a55e ("dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings")
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/gcc-sc8280xp.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ include/dt-bindings/clock/qcom,gcc-sc8280xp.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index b90c71637814..64bea886322d 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -6761,7 +6761,7 @@ static struct gdsc pcie_0_tunnel_gdsc = {
- 		.name = "pcie_0_tunnel_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE,
- };
+diff --git a/include/dt-bindings/clock/qcom,gcc-sc8280xp.h b/include/dt-bindings/clock/qcom,gcc-sc8280xp.h
+index 721105ea4fad..845491591784 100644
+--- a/include/dt-bindings/clock/qcom,gcc-sc8280xp.h
++++ b/include/dt-bindings/clock/qcom,gcc-sc8280xp.h
+@@ -494,5 +494,15 @@
+ #define USB30_SEC_GDSC					11
+ #define EMAC_0_GDSC					12
+ #define EMAC_1_GDSC					13
++#define USB4_1_GDSC					14
++#define USB4_GDSC					15
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC		16
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC		17
++#define HLOS1_VOTE_MMNOC_MMU_TBU_SF0_GDSC		18
++#define HLOS1_VOTE_MMNOC_MMU_TBU_SF1_GDSC		19
++#define HLOS1_VOTE_TURING_MMU_TBU0_GDSC			20
++#define HLOS1_VOTE_TURING_MMU_TBU1_GDSC			21
++#define HLOS1_VOTE_TURING_MMU_TBU2_GDSC			22
++#define HLOS1_VOTE_TURING_MMU_TBU3_GDSC			23
  
- static struct gdsc pcie_1_tunnel_gdsc = {
-@@ -6772,7 +6772,7 @@ static struct gdsc pcie_1_tunnel_gdsc = {
- 		.name = "pcie_1_tunnel_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE,
- };
- 
- /*
-@@ -6787,7 +6787,7 @@ static struct gdsc pcie_2a_gdsc = {
- 		.name = "pcie_2a_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | ALWAYS_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
- };
- 
- static struct gdsc pcie_2b_gdsc = {
-@@ -6798,7 +6798,7 @@ static struct gdsc pcie_2b_gdsc = {
- 		.name = "pcie_2b_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | ALWAYS_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
- };
- 
- static struct gdsc pcie_3a_gdsc = {
-@@ -6809,7 +6809,7 @@ static struct gdsc pcie_3a_gdsc = {
- 		.name = "pcie_3a_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | ALWAYS_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
- };
- 
- static struct gdsc pcie_3b_gdsc = {
-@@ -6820,7 +6820,7 @@ static struct gdsc pcie_3b_gdsc = {
- 		.name = "pcie_3b_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | ALWAYS_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
- };
- 
- static struct gdsc pcie_4_gdsc = {
-@@ -6831,7 +6831,7 @@ static struct gdsc pcie_4_gdsc = {
- 		.name = "pcie_4_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | ALWAYS_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
- };
- 
- static struct gdsc ufs_card_gdsc = {
-@@ -6840,6 +6840,7 @@ static struct gdsc ufs_card_gdsc = {
- 		.name = "ufs_card_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc ufs_phy_gdsc = {
-@@ -6848,6 +6849,7 @@ static struct gdsc ufs_phy_gdsc = {
- 		.name = "ufs_phy_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc usb30_mp_gdsc = {
-@@ -6856,6 +6858,7 @@ static struct gdsc usb30_mp_gdsc = {
- 		.name = "usb30_mp_gdsc",
- 	},
- 	.pwrsts = PWRSTS_RET_ON,
-+	.flags = RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc usb30_prim_gdsc = {
-@@ -6864,6 +6867,7 @@ static struct gdsc usb30_prim_gdsc = {
- 		.name = "usb30_prim_gdsc",
- 	},
- 	.pwrsts = PWRSTS_RET_ON,
-+	.flags = RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc usb30_sec_gdsc = {
-@@ -6872,6 +6876,7 @@ static struct gdsc usb30_sec_gdsc = {
- 		.name = "usb30_sec_gdsc",
- 	},
- 	.pwrsts = PWRSTS_RET_ON,
-+	.flags = RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc emac_0_gdsc = {
-@@ -6880,6 +6885,7 @@ static struct gdsc emac_0_gdsc = {
- 		.name = "emac_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc emac_1_gdsc = {
-@@ -6888,6 +6894,7 @@ static struct gdsc emac_1_gdsc = {
- 		.name = "emac_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = RETAIN_FF_ENABLE,
- };
- 
- static struct clk_regmap *gcc_sc8280xp_clocks[] = {
+ #endif
 
 -- 
 2.41.0
