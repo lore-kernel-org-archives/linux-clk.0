@@ -2,176 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A6FDEB64D7
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 16:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9EAEB64D7
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 16:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbjFZQrU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 12:47:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39880 "EHLO
+        id S230023AbjFZQuW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 12:50:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230440AbjFZQrP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 12:47:15 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CAB0196
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 09:47:14 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4f9fdb0ef35so2740805e87.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 09:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687798032; x=1690390032;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GJHRCqbPQl3JXucRV3xxhvcZkkYuFqIldcmWxCebc90=;
-        b=MoJKCGuIm1R9wp/YsJ8kR6VDcvEsqk91+YIBYg6vwBD56U6MmXtWdprFSqSmAXQqB9
-         FX/FvU/DFBxvl8//Ar+p934THx2BPt/grS+J5ZZbINCSWweJfRhR1Hq6LinfcY2alkFs
-         rLRJLEtyVmV1RE2lNYbc4tU0qBjLEriPle4vuDC8TZSHqcskQEM1kyh/10h5AYjci3uy
-         1DP2yxZiuBNJyDaaOt2eIn81pGX6uFCcOrhXK29MVIvOSYesCQ0LUP+royE6VRoUKZJi
-         jYEfe/LogE8LAoJmKEWfdj/jX6FGvwzI2+kvM4cmJn2tJgZnGKVz4OK+Qe+jTPwMeyQc
-         dxBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687798032; x=1690390032;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GJHRCqbPQl3JXucRV3xxhvcZkkYuFqIldcmWxCebc90=;
-        b=BWBPfhab0VyTusL/Br2NphoujLqM34bDpgFS8FculRRF+x14bONdmh3auxK3LKigrv
-         MjN6g+vn4Hk41pQa8xM41PHP7AV9lXuCCm7NseN8hSyKU0hM8GydjZcDDHY8SdKkC9RM
-         uCg8suZ46AiImyDOA0kbqJGWGUFl0U2QhQ3GWszS3NVBB3vd93nzlN8DKZ7iIMjUF2v2
-         eTOp06mtRem/gkTeiXl0UFOXTZRJeGr+VOMsxI8pYB4aUB4cVBDR1WIP1Wn5SJ3L2RtP
-         UXSDNOFTSP/wLhsY58as647kX1L5wZNeVV83cUUlIku9xY0Mx78dAJzgfL4J85LHmZTN
-         izyQ==
-X-Gm-Message-State: AC+VfDw2r7zX9mxTss82YK3XNw7poh3xuCqJtkbBB87+NQ/AH+6FoMHP
-        h4gX4VNjGZvyt0HtEuq8p4VLuA==
-X-Google-Smtp-Source: ACHHUZ57sFI0hqUuY6mKNExqPzLRhumqKwnyqMeR14dftScyrbGTcK3poygc/sfyxNkxDOhzLApa/A==
-X-Received: by 2002:a05:6512:3d16:b0:4f8:7325:bcd4 with SMTP id d22-20020a0565123d1600b004f87325bcd4mr3493071lfv.0.1687798032700;
-        Mon, 26 Jun 2023 09:47:12 -0700 (PDT)
-Received: from [192.168.1.101] (abyk179.neoplus.adsl.tpnet.pl. [83.9.30.179])
-        by smtp.gmail.com with ESMTPSA id t24-20020ac243b8000000b004f625831d85sm1177503lfl.126.2023.06.26.09.47.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jun 2023 09:47:12 -0700 (PDT)
-Message-ID: <4eaecc96-2d54-f6f2-8034-0c83ea1d1504@linaro.org>
-Date:   Mon, 26 Jun 2023 18:47:10 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 06/26] interconnect: icc-clk: add support for scaling
- using OPP
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        with ESMTP id S230174AbjFZQuN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 12:50:13 -0400
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9084E1B1;
+        Mon, 26 Jun 2023 09:50:12 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 4ED453200996;
+        Mon, 26 Jun 2023 12:50:11 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 26 Jun 2023 12:50:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1687798210; x=1687884610; bh=uc
+        Py9Z08T7ijcFZZufeshPLjrL+BVwngvheYN8Oakzw=; b=j/20MptmplyKB34SVX
+        tBO+SdHi4itCwDViM8PRk3dHwkW8JA21kelZfFa4ySd7DZ7lsv2eSZKpHb9yBcEp
+        sDAjk2JGHYZkX2e/yx4qdo0OR2grE2nMV1v0DoZ+0CgdjKDQGaEuAikOqVc3rOvo
+        4V96P9vwMz58CbjQg9KG533ojaEryTe8YG1w1oQHLOCDO1Hs21tzDoNdZVewMPhE
+        1hVdT5oQAJi9Z81vAXFZLkuUoLTzXaWntyOr3DzsP8aUUNMLrBFnRAgmzJZgnmGj
+        Qxp8zoPnPm3Ey5wFRCfOeQvhCucEZgZzEJH7pgVsVISdFz2xh49KMu7gKemOmeSa
+        eMkw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1687798210; x=1687884610; bh=ucPy9Z08T7ijc
+        FZZufeshPLjrL+BVwngvheYN8Oakzw=; b=ZgJRcCHRtbA7V3wVIHwQY4Q6cFsjk
+        WJA1FXLQyqu/GUQSg4iE9CAKfBFj/APedV20hlytPR+nhLC2GyCwR+wyR0f+qxsW
+        Cz0PdGdTEOs/UTwKMinbRlD0INDUrjXjtZ3h3bueGxqpAcYtY52Ts3UZrn3M6U8M
+        7Ys1VY/G4CGZTdkaJ+77PBqMClyaMmZHt4v+ptvfpY6LYgUQYmiAyL4TXisvo2KS
+        quotaEKEkYchNe3wTxBDhYXGyjNkD0uw7WssOHRZYGJHRFSJV17qCUSrJzBV0a0e
+        1myUVT1/djdZ0g78KXk97l3AT1ZlnjabvvLpBedztt1d5QgVaQtUiaf4A==
+X-ME-Sender: <xms:wcGZZGiaH_sYIpFHhad3zdvFPMgaqUenKTC3hkEkCYjdAs4Yvejm9A>
+    <xme:wcGZZHBKBCHlGLFOEcsijygBzA9migzvIR0Z1vAAJau5zY9Q0yJmmU5tY4GhmAdiV
+    r8sykaE11x6Uu4B2YQ>
+X-ME-Received: <xmr:wcGZZOGpVKD9G6eQyLfWfMZ3--U0oAn_P95Kn9NYWXaPtYOogLl2UcPX2xrUruaVALkA1lfk2M8NSAOda4XlZg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrgeehfedguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgig
+    ihhmvgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrf
+    grthhtvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeet
+    kefgleefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:wcGZZPTm-1IICZVMuQcstfeM8RBOzm86Fn6MEnMUeGVtC1cYpFTGnA>
+    <xmx:wcGZZDxS9GMKZT1lZY2ZcQKDMlJc4MUSh2xZEzMl6z9_16tg7X11gg>
+    <xmx:wcGZZN6HH2m4iec7IO1Jq4C442VXqLdF14FMcGG68xcLCjK_7QiweA>
+    <xmx:wsGZZIrrQ52uUPAptBCy3rKYHhQqXwQXyYn-SOK9fHYKb5AgVYnefQ>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 26 Jun 2023 12:50:09 -0400 (EDT)
+Date:   Mon, 26 Jun 2023 18:50:00 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     Andre Przywara <andre.przywara@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
- <20230625202547.174647-7-dmitry.baryshkov@linaro.org>
- <b5ff346b-cbde-68fe-a08a-3b3331439309@linaro.org>
- <d9e4fd75-310a-7fe8-879e-651011873199@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <d9e4fd75-310a-7fe8-879e-651011873199@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Roman Beranek <me@crly.cz>,
+        Samuel Holland <samuel@sholland.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 1/2] clk: sunxi-ng: nkm: consider alternative parent
+ rates when finding rate
+Message-ID: <lagot6cwcgdmdel7ce73tbmiyfalrlt56l4rx2fi3ibpso37zi@y7rkhou4tclm>
+References: <20230611090143.132257-1-frank@oltmanns.dev>
+ <20230611090143.132257-2-frank@oltmanns.dev>
+ <87edmh12s7.fsf@oltmanns.dev>
+ <sfni3vehkhotsqrrirklhzrxzkcxzkq6nbtqokeab5if3jgm53@frh7z3iowsfe>
+ <878rc7stuu.fsf@oltmanns.dev>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="u5p73wr2fp7f5ue6"
+Content-Disposition: inline
+In-Reply-To: <878rc7stuu.fsf@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26.06.2023 15:44, Dmitry Baryshkov wrote:
-> On 26/06/2023 14:28, Konrad Dybcio wrote:
->> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
->>> Sometimes it might be required to scale the clock using the OPP
->>> framework (e.g. to scale regulators following the required clock rate).
->>> Extend the interconnec
->> 't'
->>
->>> -clk framework to handle OPP case in addition to
->>> scaling the clock.
->>>
->>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> ---
->> I think we should check for OPP at the icc-clk registration time,
->> instead of passing it as a parameter, e.g.:
->>
->> qn.opp = IS_ERR(dev_pm_opp_get_opp_count)
->>
->> Not sure if there's a more idiomatic way.
-> 
-> No. icc-clk is not limited to a single clock->icc conversion. So it is possible to create several interconnect links, only one of which should be the OPP-based one.
-Ugh. Right.
 
-Konrad
-> 
->>
->> Konrad
->>>   drivers/interconnect/icc-clk.c   | 13 +++++++++++--
->>>   include/linux/interconnect-clk.h |  1 +
->>>   2 files changed, 12 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/interconnect/icc-clk.c b/drivers/interconnect/icc-clk.c
->>> index 4d43ebff4257..c7962acdcee7 100644
->>> --- a/drivers/interconnect/icc-clk.c
->>> +++ b/drivers/interconnect/icc-clk.c
->>> @@ -7,10 +7,13 @@
->>>   #include <linux/device.h>
->>>   #include <linux/interconnect-clk.h>
->>>   #include <linux/interconnect-provider.h>
->>> +#include <linux/pm_opp.h>
->>>     struct icc_clk_node {
->>> +    struct device *dev;
->>>       struct clk *clk;
->>>       bool enabled;
->>> +    bool opp;
->>>   };
->>>     struct icc_clk_provider {
->>> @@ -25,12 +28,16 @@ struct icc_clk_provider {
->>>   static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
->>>   {
->>>       struct icc_clk_node *qn = src->data;
->>> +    unsigned long rate = icc_units_to_bps(src->peak_bw);
->>>       int ret;
->>>         if (!qn || !qn->clk)
->>>           return 0;
->>>   -    if (!src->peak_bw) {
->>> +    if (qn->opp)
->>> +        return dev_pm_opp_set_rate(qn->dev, rate);
->>> +
->>> +    if (!rate) {
->>>           if (qn->enabled)
->>>               clk_disable_unprepare(qn->clk);
->>>           qn->enabled = false;
->>> @@ -45,7 +52,7 @@ static int icc_clk_set(struct icc_node *src, struct icc_node *dst)
->>>           qn->enabled = true;
->>>       }
->>>   -    return clk_set_rate(qn->clk, icc_units_to_bps(src->peak_bw));
->>> +    return clk_set_rate(qn->clk, rate);
->>>   }
->>>     static int icc_clk_get_bw(struct icc_node *node, u32 *avg, u32 *peak)
->>> @@ -106,7 +113,9 @@ struct icc_provider *icc_clk_register(struct device *dev,
->>>       icc_provider_init(provider);
->>>         for (i = 0, j = 0; i < num_clocks; i++) {
->>> +        qp->clocks[i].dev = dev;
->>>           qp->clocks[i].clk = data[i].clk;
->>> +        qp->clocks[i].opp = data[i].opp;
->>>             node = icc_node_create(first_id + j);
->>>           if (IS_ERR(node)) {
->>> diff --git a/include/linux/interconnect-clk.h b/include/linux/interconnect-clk.h
->>> index 0cd80112bea5..c695e5099901 100644
->>> --- a/include/linux/interconnect-clk.h
->>> +++ b/include/linux/interconnect-clk.h
->>> @@ -11,6 +11,7 @@ struct device;
->>>   struct icc_clk_data {
->>>       struct clk *clk;
->>>       const char *name;
->>> +    bool opp;
->>>   };
->>>     struct icc_provider *icc_clk_register(struct device *dev,
-> 
+--u5p73wr2fp7f5ue6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Jun 25, 2023 at 12:45:45PM +0200, Frank Oltmanns wrote:
+> Hi Maxime,
+>=20
+> On 2023-06-12 at 14:31:21 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > On Mon, Jun 12, 2023 at 10:51:52AM +0200, Frank Oltmanns wrote:
+> >> > @@ -28,12 +68,17 @@ static unsigned long ccu_nkm_find_best(unsigned =
+long parent, unsigned long rate,
+> >> >  			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++) {
+> >>
+> >> According to the manual M/N has to be <=3D 3. Therefore we need a
+> >> different maximum value for the _m-for-loop:
+> >>
+> >>         unsigned long max_m =3D min(3 * _n, nkm->max_m);
+> >>         for (_m =3D nkm->min_m; _m <=3D max_m; _m++) {
+> >>
+> >> I suggest that I add an optional member max_mn_ratio to the structs
+> >> ccu_nkm and _ccu_nkm. Optional meaning: Ignore if 0.
+> >
+> > Which workload is affected by this restriction?
+> >
+>=20
+> Firstly, the restriction increases the minimum rate that pll-mipi of the
+> A64 SoC can use. The rate off pll-mipi is
+>         pll-video0 * K * N / M
+>=20
+> The Allwinner's user manual ([1], p.94) states that the maximum ratio of
+> M/N (note how numerator and denominator changed) is 3. So, looking back
+> to the original formula, the N / M part can be at most 1/3. That
+> effectively limits the minimum rate that pll-mipi can provide to
+>         min(pll-video0) * 2 * 1 / 3
+>=20
+> The minimum rate of pll-video0 is 192 MHz, i.e., the minimum rate for
+> pll-mipi becomes 128 MHz. Without the restriction, the minimum rate
+> currently is 24 MHz. It is my (albeit limited) understanding, that is no
+> real limitation because no panel would request such low rates. I should
+> also mention that Allwinner states in the user manual ([1], p. 94) that
+> the rate must be in the 500 MHz - 1.4 GHz range.
+>=20
+> Secondly, it decreases the number of options for M for all N <=3D 6.
+> Therefore it reduces the number of meaningful NKM combinations from 275
+> (without the restriction) to 238. (With meaningful combinations, I mean
+> the combinations that result in a different rate for pll-mipi, e.g.,
+> K=3D2, M=3D1, N=3D2 is the same as K=3D4, M=3D1, N=3D1). The consequence =
+is that the
+> precision of pll-mipi is slightly reduced. Note, however, that this loss
+> of precision is more than offset by the option that pll-mipi can now
+> "freely" choose its parent rate.
+>=20
+> In conclusion, I don't see any real world limitation that this
+> restriction introduces.
+
+If we want to go that way, I'd rather use a function that validates
+whether or not the current set of parameter is valid.
+
+That way, we can express pretty much any constraints without
+special-casing the main structure too much.
+
+Maxime
+
+--u5p73wr2fp7f5ue6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJnBuAAKCRDj7w1vZxhR
+xb80AQCpuUfjRsZDj4oX2zh/hfNYEzytGHWy4prrDYI0zK6udgD/eFjJYhGo55Cz
+pUxEKq7T3qrcxW6icqzfjmw8A+IR4gY=
+=ApE4
+-----END PGP SIGNATURE-----
+
+--u5p73wr2fp7f5ue6--
