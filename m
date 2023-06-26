@@ -2,147 +2,149 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33F5EB64DA
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 13:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275CAEB64DA
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 13:36:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbjFZNen (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 09:34:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
+        id S229795AbjFZNgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 09:36:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbjFZNen (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 09:34:43 -0400
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D3CE60
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:34:41 -0700 (PDT)
-Received: by mail-wm1-x332.google.com with SMTP id 5b1f17b1804b1-3fa74d06d72so33240205e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:34:41 -0700 (PDT)
+        with ESMTP id S229689AbjFZNgR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 09:36:17 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90E05E73
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:36:15 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fb7acaa7a5so750171e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 06:36:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687786480; x=1690378480;
-        h=content-transfer-encoding:in-reply-to:subject:organization
-         :references:cc:to:content-language:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XTy4+4mz1Xv+hO2QkRYCxGcmjBnoyskfZ70PBhrVWPg=;
-        b=X9FyjOr+9j9nF8uQ6LF0ueEWWm8rvM0Uxko0LNrCZEAVSngWkps7zOAhDW3QqNlzQK
-         tTlB97Xgffkm/MyQaHC3bM06xbeHGPCkfWQ4g5afHa0z7C0zWmD6iavKdq29BrlHROCZ
-         gwzrC7UzHVdHoYUeCC1b+7KK4pFllrOx5dh2EIWxgp/h2VtKqy4ItNB0q+6ER+iN8MJR
-         e4q9d1wuwCJod7asqts7SiN6CcJ27NPNiVwGEDjlqmmPDOcLh7bWF2VSUiJLpkyfc6Cd
-         UfOO4LTaBW1OO7peVsa4Rqc6lsTG+97uLymaa0/pBqhy7K9aDrNdRzGJU+dxCBnR8qht
-         9vOg==
+        d=linaro.org; s=google; t=1687786574; x=1690378574;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CUaOVbGrLmUdKtbdRSelS8yeyVs/S2d4eFpINDGmx+s=;
+        b=VPdYu1/kNJQEDNNFz/pDyAWlF+Hr7rG/NFFgvctw1MMosXDz3aYEunah1cgAGYpS2o
+         B5IDZ8/1WfrRmAfmXzrhnZuHOnwUyzKpenc6/S+u+H7Lvor8KbFZB1hfqYlF0xkA8OQ+
+         QHf4luiEKgP3L5ZZ8h4PfynG30jXovv3483jWuENaTNJrzbjiKLdzQKCSFGG/w4kH4v0
+         Y4ezLsQc1g5R5ZKg6mv6rHeH5p7f3So2PKOiF121+9CmTYVUBivuyqqObnWgk2Ask6fj
+         Gq2RQM4MAILH676BIPG2POZwC8E4jfMG431pf8UMtmHRdzD3BthdGn2d4dw+UnWp5N4d
+         jvsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687786480; x=1690378480;
-        h=content-transfer-encoding:in-reply-to:subject:organization
-         :references:cc:to:content-language:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XTy4+4mz1Xv+hO2QkRYCxGcmjBnoyskfZ70PBhrVWPg=;
-        b=ite6aNUut5V1Po2K16z2aNgWR1t1X1FCjMVQkZ2Ddo7ds0xuv9j2C4VTuGAnUlNM5T
-         DVo3TtFrlsgxtUoLWDxJH/tlOvp/P+UwJyvwN5fZBclVqQhMcalQmYjfX/OvLtCGTmgG
-         nUZaSIhrSAdDygKSEWVQzsC9gFRXezyB36sTYtcG30WapTFpxS/2jpSYwdoNeQwav8+1
-         xI8GTpa1Hwou1X7KvhQDBSwH/G0Oz2AXaOsnTL91XB3g/n9JI5MOC0SS/OG39kxkRdI+
-         G1Mtyk+igYHa3yy1IryUjFgixn0LknDDWNlyZgRBc8KzGk69KK++NPMV6KkzlPY+xd1u
-         Fjcw==
-X-Gm-Message-State: AC+VfDy5KJanMc6H8Y2GSZmtEnQC//Q/KS73F9g0hUTrJfDqY4ZDHXWK
-        V7XQRXc6mqP3yRCaBXcuHQ9gOA==
-X-Google-Smtp-Source: ACHHUZ5xQtzeHOpw0ffYUZA/AnEmNgE4fRcdnyVlDsZmROa6fECRMPsqisOS2KcQnrRsrkW/fVqKig==
-X-Received: by 2002:a05:600c:24d:b0:3f9:c77c:a5f with SMTP id 13-20020a05600c024d00b003f9c77c0a5fmr10102981wmj.13.1687786480242;
-        Mon, 26 Jun 2023 06:34:40 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b25a:b26e:71f3:870c? ([2a01:e0a:982:cbb0:b25a:b26e:71f3:870c])
-        by smtp.gmail.com with ESMTPSA id m21-20020a7bca55000000b003f4248dcfcbsm10667039wml.30.2023.06.26.06.34.39
+        d=1e100.net; s=20221208; t=1687786574; x=1690378574;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CUaOVbGrLmUdKtbdRSelS8yeyVs/S2d4eFpINDGmx+s=;
+        b=de7er/cYLWCOJE75JfaU7E9F/UFu6cepZQCo+sTLWhSHkRqqCRD0ZvkFzs8RgsxSkH
+         imv46hZC3eRCAmmkkjA/o7eURQ0hG7KeH6YqYsUcXaihpRMNm7kuVY26OSRCC/sZsDtY
+         ZqDO81zwGGIt4kYDn7ASUkkL3lV7ZUUStw3pXLOLo6nTgi7HoY2eVryGdkMgOyfCombp
+         ZkZjk1Gp93pw9sTXc2R6VcccHJZMs7J4gVdarxPVMGb4klnG+IgpS0YgkRkWS7W5NCJp
+         OdfZW9jEbbf1V5nSEBBgbcADI0icOUf8VjKhvITpFl3hqUDKNhcgl7wY1W7uxJXrmO0E
+         X62g==
+X-Gm-Message-State: AC+VfDyIn/a12xsqfSV2LQRNzx00hMKeyEHByCJPpURKTN6H+lzd6NzR
+        SCMAn0oNl+T92ABcxyxGI/GGPw==
+X-Google-Smtp-Source: ACHHUZ6+l1Qzmq7jLH9MIL0J4iG3m5HOKc0Yu2i2BkiHU3OsTZNqfFo17ZAAHXXbDuZnwOPaVZNzSw==
+X-Received: by 2002:a19:434a:0:b0:4f8:6e1d:cf98 with SMTP id m10-20020a19434a000000b004f86e1dcf98mr12315894lfj.66.1687786573678;
+        Mon, 26 Jun 2023 06:36:13 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id u26-20020ac2519a000000b004f4b42e2d7dsm1109822lfi.230.2023.06.26.06.36.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jun 2023 06:34:39 -0700 (PDT)
-Message-ID: <c41d2d9f-7ddd-160d-d455-ba4fece7ff93@linaro.org>
-Date:   Mon, 26 Jun 2023 15:34:38 +0200
+        Mon, 26 Jun 2023 06:36:13 -0700 (PDT)
+Message-ID: <ad2244a3-20b6-e126-c427-d535382d7d79@linaro.org>
+Date:   Mon, 26 Jun 2023 16:36:12 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-From:   neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Content-Language: en-US
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Dmitry Rokosov <ddrokosov@sberdevices.ru>
-Cc:     jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        khilman@baylibre.com, conor+dt@kernel.org, kernel@sberdevices.ru,
-        sdfw_system_team@sberdevices.ru, rockosov@gmail.com,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Oleg Lyovin <ovlevin@sberdevices.ru>
-References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
- <20230607201641.20982-6-ddrokosov@sberdevices.ru>
- <CAFBinCD-5RD_iszZZRg58XqTHDEHnipJkf2aAex8MdUyh=bVCw@mail.gmail.com>
-Organization: Linaro Developer Services
-Subject: Re: [PATCH v1 5/6] arm64: dts: meson: a1: introduce UART_AO mux
- definitions
-In-Reply-To: <CAFBinCD-5RD_iszZZRg58XqTHDEHnipJkf2aAex8MdUyh=bVCw@mail.gmail.com>
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 09/26] cpufreq: qcom-nvmem: create L2 cache device
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
+ <20230625202547.174647-10-dmitry.baryshkov@linaro.org>
+ <a15a2564-3b48-4592-1e40-2187ee89af1c@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <a15a2564-3b48-4592-1e40-2187ee89af1c@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On 25/06/2023 23:07, Martin Blumenstingl wrote:
-> On Wed, Jun 7, 2023 at 10:16 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+On 26/06/2023 14:50, Konrad Dybcio wrote:
+> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
+>> Scaling the frequencies on some of Qualcomm Krait platforms (e.g.
+>> APQ8064) also requires scaling of the L2 cache frequency. As the
+>> l2-cache device node is places under /cpus/ path, it is not created by
+>> default by the OF code. Create corresponding device here.
 >>
->> From: Oleg Lyovin <ovlevin@sberdevices.ru>
->>
->> The Amlogic A1 has a UART_AO port, which can be used, for example, for
->> BT HCI H4 connection.
->>
->> This patch adds mux definitions for it.
-> In the past we've only taken the pinctrl definitions if we have a
-> board that uses them.
-> Neil, do we still have the same policy in place? If so this patch
-> should be sent with the series that adds support for your A1 board.
-
-Yes and no, if the work is done I'll take it, but yeah since upstream linux
-hates dead code, let's only define what's necessary.
-
-> 
->> Signed-off-by: Oleg Lyovin <ovlevin@sberdevices.ru>
->> Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >> ---
->>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
+> I think a generic solution (i.e. for each cpu node call
+> of_platform_populate in drivers/of/platform.c :
+> of_platform_default_populate_init) could be beneficial
+
+Yep. I thought about it, but I saw no direct benefit for it. Note, that 
+we do not instantiate cpu devices directly. But, maybe something like 
+/devices/system/cache/foo would make sense.
+
+> 
+> Konrad
+>>   drivers/cpufreq/qcom-cpufreq-nvmem.c | 20 ++++++++++++++++++++
+>>   1 file changed, 20 insertions(+)
 >>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
->> index 0efd922ca7e1..3eb6aa9c00e0 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
->> @@ -118,6 +118,22 @@ gpio: bank@400 {
->>                                          gpio-ranges = <&periphs_pinctrl 0 0 62>;
->>                                  };
->>
->> +                               uart_a_pins: uart_a {
-> Only our newer .dtsi (e.g. meson-g12-common.dtsi) are following the
-> pattern where node names should use dashes instead of underscores.
-> So please use: uart_a_pins: uart-a { ...
+>> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>> index a88b6fe5db50..ab78ef1531d0 100644
+>> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+>> @@ -380,6 +380,7 @@ static int __init qcom_cpufreq_init(void)
+>>   {
+>>   	struct device_node *np = of_find_node_by_path("/");
+>>   	const struct of_device_id *match;
+>> +	unsigned int cpu;
+>>   	int ret;
+>>   
+>>   	if (!np)
+>> @@ -390,6 +391,25 @@ static int __init qcom_cpufreq_init(void)
+>>   	if (!match)
+>>   		return -ENODEV;
+>>   
+>> +	for_each_possible_cpu(cpu) {
+>> +		struct device *dev = get_cpu_device(cpu);
+>> +		struct device_node *cache;
+>> +		struct platform_device *pdev;
+>> +
+>> +		cache = of_find_next_cache_node(dev->of_node);
+>> +		if (!cache)
+>> +			continue;
+>> +
+>> +		if (of_device_is_compatible(cache, "qcom,krait-l2-cache")) {
+>> +			pdev = of_platform_device_create(cache, NULL, NULL);
+>> +			if (IS_ERR(pdev))
+>> +				pr_err("%s: %pe, failed to create L2 cache node\n", __func__, pdev);
+>> +			/* the error is not fatal */
+>> +		}
+>> +
+>> +		of_node_put(cache);
+>> +	}
+>> +
+>>   	ret = platform_driver_register(&qcom_cpufreq_driver);
+>>   	if (unlikely(ret < 0))
+>>   		return ret;
 
-The new scheme which should be use should be:
-
-uart_a_pins: uart-a-pins-state {
-
-but it wasn't enforced in the pinctrl yaml pushed by heiner, but for sure
-no underscores in the node name.
-
-> 
-> [...]
->> +                               uart_a_cts_rts_pins: uart_a_cts_rts {
-> similar to the comment from above:
-> uart_a_cts_rts_pins: uart-a-cts-rts { ...
-> 
->> +                                       mux {
->> +                                               groups = "uart_a_cts",
->> +                                                        "uart_a_rts";
->> +                                               function = "uart_a";
->> +                                               bias-pull-down;
-> Out of curiosity: is this pull down needed on all boards or just specific ones?
-> It seems like all other SoCs use bias-disable for the RTS/CTS pins.
-> 
-> 
-> Best regards,
-> Martin
+-- 
+With best wishes
+Dmitry
 
