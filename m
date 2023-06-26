@@ -2,61 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B99C001DD
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 17:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDF03EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Jun 2023 17:48:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbjFZRsS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Jun 2023 13:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45264 "EHLO
+        id S230212AbjFZRs0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Jun 2023 13:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229720AbjFZRsR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 13:48:17 -0400
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73A51134
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:16 -0700 (PDT)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b69ed7d050so24161741fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:16 -0700 (PDT)
+        with ESMTP id S230013AbjFZRsT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Jun 2023 13:48:19 -0400
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC55AE54
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:17 -0700 (PDT)
+Received: by mail-lj1-x22c.google.com with SMTP id 38308e7fff4ca-2b699a2fe86so29908371fa.3
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 10:48:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687801695; x=1690393695;
+        d=linaro.org; s=google; t=1687801696; x=1690393696;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ey3TT56D7TOnshO37QOzn3UmtILaaCUtqSKom6l4lsA=;
-        b=B93lQQ8IoXJoEM4PnWk5hWVQDy4mNLRqWdWWx9yHPUKtrTGm9nAlO242l3U1sjJLD5
-         e1IcQg3Tug9U45m8oQaO1blCm0I1vd3t8HYJEgL49sNoQSsfDPmF8Jt+CHuE2E7E7TaO
-         VC3DDiil7zfubhMCNVhYUz2XFjZYFNTSqkGr+VNA03QNMtiJQ5Zgp5t4Hi+J9gtCgqIX
-         NP49PiuaPEqYPbjx39+jbWKnDscBYaeHrhjOG9qB8pKYqsNyZAUGO4eA1LsYVvtqLIii
-         beQuxdWXrv60O57ZfxKO8NxJ8xWeJBV81AMFmm+FnbUWH2XlaIEJBnAe1LZwAGcSCNeJ
-         VHhg==
+        bh=9ozZihpk+zCuXAax8t9ijrVeClYXscNoFUb4sh4dJQI=;
+        b=e4+lrIGImvU0yfP9MGBfO3v8xyA7xeB6Nh4o2n4jXOayxrBW4Chm2qmXCA863fFIwj
+         dPjLDDZeEs0X66rREp6UZ7LjncDq01kjP+cHIa29iZUl7d9+mtOpYpqcs0hEaNdKiuWn
+         ZMepW6leuLQxfHi2dqqJfm9cWXJkHcw5ri4w6uqw2F1GhISpD15EkrSvGtWkPewVum7o
+         GnUCqOFkJDHQDWr5VyjPxnMWrUHbEncgbRWq8wEHA+Vg5U5earYI6XdynR79euzvng0o
+         0+tN9Yh9V2hbPJDugSW+BTtLoWOPI9VdOrMRv+XTFi0WuvpwvV4gncEF8FpklSXBHENn
+         /8Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687801695; x=1690393695;
+        d=1e100.net; s=20221208; t=1687801696; x=1690393696;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ey3TT56D7TOnshO37QOzn3UmtILaaCUtqSKom6l4lsA=;
-        b=JhEMESElfhze8IDl+txgfoj+dMU8ILbjr+4GObkxZKvJepFp4rmrfHEFkFMp3+vWdq
-         vdnmW7mH+W3/Y0S+WEboQQg51+EMgyoHqGdhKwBffYg1rwXctKq3ej6MN/64JB30wWn6
-         s0rq9xaXj3XtKllzKvU32dUF7w33FgfZqcJAOsS0ej3Y2GU84aoXBRAeEAFubpbcEbNS
-         fse3eYv3mYfpImAzN9RDDqvlHPPMYhPekWMlJmbsq92ZivKZhCzleAvJX5gEEq/1qnXX
-         BxiqSdyvpnqkbBM7s6HHWPABVrMdMFy5CRl42GUPFoq263qC/mFN10wGZkIQu7j4rpXj
-         jvlA==
-X-Gm-Message-State: AC+VfDyhz6N6lKA5GZ+bBXg45pqQY6bOGShOYYl9vYhJkr7ojnfPjJQP
-        zIBls2hPCxd1Hogsu4/L1cgGkQ==
-X-Google-Smtp-Source: ACHHUZ4bMLzp4bRrhmxTVvdWyMw7HhO2pCXzIjTkIsBKAE8BlrnT3bYRdlnWGPR6t39ep8mR0WAb5w==
-X-Received: by 2002:a2e:9943:0:b0:2b6:9909:79bd with SMTP id r3-20020a2e9943000000b002b6990979bdmr3030141ljj.24.1687801694764;
-        Mon, 26 Jun 2023 10:48:14 -0700 (PDT)
+        bh=9ozZihpk+zCuXAax8t9ijrVeClYXscNoFUb4sh4dJQI=;
+        b=VhzVr64+sFqnqQEHzBzTRvzHpZ39BRP+M+Ryv7WJafl01SWQE6yl+9s9Au/3Se/Tkn
+         aoQK+wALTxw1c5ucjtsj8TPcHERn4PJSWiXPlaYw2X0KOtk6JYeI9+wPovaxcz1mhv5o
+         82LTlhQvlysIerTX9/rghW55XdmIkMG+qK1Bz3KPWdacPBLZAPLMqj0yzIWDn/gSdW6r
+         1wS8Io8GhxsNYsmkR3P6XH8m1fy9+uu+T9OKGEwN4wpeVn8KTtQfICSVlnKGXeMm3Qwy
+         ibo+W1XMc9o4Yk2yfpwbloMX+6td60DEpYglgB8r35nbmx15O6SthNdrq3nv+a3yo55T
+         a8DQ==
+X-Gm-Message-State: AC+VfDycEmwF9r/rVuzvxYJI1b5JoN8sNb2hf4/XAC47LSXm4ziLFu7N
+        EEbDvwfKqy8euqeg0UFm+kWW4Q==
+X-Google-Smtp-Source: ACHHUZ6S8J8fzaMR18pW1rAE3fwO9I9xrfhqG9WtR0NaMH2hAILGxCOco9DJYNPOaGXFehdGurENRg==
+X-Received: by 2002:a2e:9b92:0:b0:2b6:a630:1e5 with SMTP id z18-20020a2e9b92000000b002b6a63001e5mr1390092lji.33.1687801696089;
+        Mon, 26 Jun 2023 10:48:16 -0700 (PDT)
 Received: from [192.168.1.101] (abyk179.neoplus.adsl.tpnet.pl. [83.9.30.179])
-        by smtp.gmail.com with ESMTPSA id h19-20020a2eb0f3000000b002b470afec39sm1337076ljl.48.2023.06.26.10.48.13
+        by smtp.gmail.com with ESMTPSA id h19-20020a2eb0f3000000b002b470afec39sm1337076ljl.48.2023.06.26.10.48.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jun 2023 10:48:14 -0700 (PDT)
+        Mon, 26 Jun 2023 10:48:15 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 26 Jun 2023 19:48:07 +0200
-Subject: [PATCH v2 2/3] dt-bindings: clock: qcom,gcc-sc8280xp: Add missing
- GDSCs
+Date:   Mon, 26 Jun 2023 19:48:08 +0200
+Subject: [PATCH v2 3/3] clk: qcom: gcc-sc8280xp: Add missing GDSCs
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230620-topic-sc8280_gccgdsc-v2-2-562c1428c10d@linaro.org>
+Message-Id: <20230620-topic-sc8280_gccgdsc-v2-3-562c1428c10d@linaro.org>
 References: <20230620-topic-sc8280_gccgdsc-v2-0-562c1428c10d@linaro.org>
 In-Reply-To: <20230620-topic-sc8280_gccgdsc-v2-0-562c1428c10d@linaro.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -71,14 +70,13 @@ Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh@kernel.org>
+        Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1687801690; l=1262;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1687801690; l=3766;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=vvmSSYXwEUfFE3PIiMEYxzSbvpVMApP//l/3QIj4wbc=;
- b=4DN2KtHgln3hQJ0K1JgGA5RIYmkHUKVab/GsMopeQ9XynPGFWrx1gF9Ic85IN6FJCejTCfOzt
- yiT/vjDyafaB/4qbVJ6IR/F8K3oNRw/Bjv/Vqpqn+mzsZJVk6IShMEg
+ bh=KBCoXqGrET/VRuyiadWO8HjNd0FflYcieUwZmA1RfEY=;
+ b=NNoELtqGoccdLG9HQX+0lw9gdq1DAZqQK6wVmNLsZM545j+Y6PArTxXVp4pduNN+5RVEoWlwI
+ fCBryvUhyh2DN41CjmK72YzX71NU7b0cLb8W7vp8mXy2Ww8wYY8Wn0b
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
@@ -88,33 +86,130 @@ X-Mailing-List: linux-clk@vger.kernel.org
 There are 10 more GDSCs that we've not been caring about, and by extension
 (and perhaps even more importantly), not putting to sleep. Add them.
 
-Fixes: a66a82f2a55e ("dt-bindings: clock: Add Qualcomm SC8280XP GCC bindings")
-Acked-by: Rob Herring <robh@kernel.org>
+Fixes: d65d005f9a6c ("clk: qcom: add sc8280xp GCC driver")
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- include/dt-bindings/clock/qcom,gcc-sc8280xp.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/clk/qcom/gcc-sc8280xp.c | 100 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 100 insertions(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-sc8280xp.h b/include/dt-bindings/clock/qcom,gcc-sc8280xp.h
-index 721105ea4fad..845491591784 100644
---- a/include/dt-bindings/clock/qcom,gcc-sc8280xp.h
-+++ b/include/dt-bindings/clock/qcom,gcc-sc8280xp.h
-@@ -494,5 +494,15 @@
- #define USB30_SEC_GDSC					11
- #define EMAC_0_GDSC					12
- #define EMAC_1_GDSC					13
-+#define USB4_1_GDSC					14
-+#define USB4_GDSC					15
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC		16
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC		17
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_SF0_GDSC		18
-+#define HLOS1_VOTE_MMNOC_MMU_TBU_SF1_GDSC		19
-+#define HLOS1_VOTE_TURING_MMU_TBU0_GDSC			20
-+#define HLOS1_VOTE_TURING_MMU_TBU1_GDSC			21
-+#define HLOS1_VOTE_TURING_MMU_TBU2_GDSC			22
-+#define HLOS1_VOTE_TURING_MMU_TBU3_GDSC			23
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index 64bea886322d..3e1a62fa3a07 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -6897,6 +6897,96 @@ static struct gdsc emac_1_gdsc = {
+ 	.flags = RETAIN_FF_ENABLE,
+ };
  
- #endif
++static struct gdsc usb4_1_gdsc = {
++	.gdscr = 0xb8004,
++	.pd = {
++		.name = "usb4_1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = RETAIN_FF_ENABLE,
++};
++
++static struct gdsc usb4_gdsc = {
++	.gdscr = 0x2a004,
++	.pd = {
++		.name = "usb4_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = RETAIN_FF_ENABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
++	.gdscr = 0x7d050,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
++	.gdscr = 0x7d058,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc = {
++	.gdscr = 0x7d054,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc = {
++	.gdscr = 0x7d06c,
++	.pd = {
++		.name = "hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_turing_mmu_tbu0_gdsc = {
++	.gdscr = 0x7d05c,
++	.pd = {
++		.name = "hlos1_vote_turing_mmu_tbu0_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_turing_mmu_tbu1_gdsc = {
++	.gdscr = 0x7d060,
++	.pd = {
++		.name = "hlos1_vote_turing_mmu_tbu1_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_turing_mmu_tbu2_gdsc = {
++	.gdscr = 0x7d0a0,
++	.pd = {
++		.name = "hlos1_vote_turing_mmu_tbu2_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
++static struct gdsc hlos1_vote_turing_mmu_tbu3_gdsc = {
++	.gdscr = 0x7d0a4,
++	.pd = {
++		.name = "hlos1_vote_turing_mmu_tbu3_gdsc",
++	},
++	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
++};
++
+ static struct clk_regmap *gcc_sc8280xp_clocks[] = {
+ 	[GCC_AGGRE_NOC_PCIE0_TUNNEL_AXI_CLK] = &gcc_aggre_noc_pcie0_tunnel_axi_clk.clkr,
+ 	[GCC_AGGRE_NOC_PCIE1_TUNNEL_AXI_CLK] = &gcc_aggre_noc_pcie1_tunnel_axi_clk.clkr,
+@@ -7377,6 +7467,16 @@ static struct gdsc *gcc_sc8280xp_gdscs[] = {
+ 	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
+ 	[EMAC_0_GDSC] = &emac_0_gdsc,
+ 	[EMAC_1_GDSC] = &emac_1_gdsc,
++	[USB4_1_GDSC] = &usb4_1_gdsc,
++	[USB4_GDSC] = &usb4_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_SF0_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf0_gdsc,
++	[HLOS1_VOTE_MMNOC_MMU_TBU_SF1_GDSC] = &hlos1_vote_mmnoc_mmu_tbu_sf1_gdsc,
++	[HLOS1_VOTE_TURING_MMU_TBU0_GDSC] = &hlos1_vote_turing_mmu_tbu0_gdsc,
++	[HLOS1_VOTE_TURING_MMU_TBU1_GDSC] = &hlos1_vote_turing_mmu_tbu1_gdsc,
++	[HLOS1_VOTE_TURING_MMU_TBU2_GDSC] = &hlos1_vote_turing_mmu_tbu2_gdsc,
++	[HLOS1_VOTE_TURING_MMU_TBU3_GDSC] = &hlos1_vote_turing_mmu_tbu3_gdsc,
+ };
+ 
+ static const struct clk_rcg_dfs_data gcc_dfs_clocks[] = {
 
 -- 
 2.41.0
