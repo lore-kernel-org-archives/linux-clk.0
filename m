@@ -2,116 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09524C0015E
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 09:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ADBC0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 10:22:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbjF0JLj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 05:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35674 "EHLO
+        id S231656AbjF0KWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 06:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232035AbjF0JL1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 05:11:27 -0400
-Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [5.144.164.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC83B1BCF;
-        Tue, 27 Jun 2023 02:11:05 -0700 (PDT)
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id CBBC83F39B;
-        Tue, 27 Jun 2023 11:11:02 +0200 (CEST)
-Date:   Tue, 27 Jun 2023 11:11:01 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        Lux Aliaga <they@mint.lgbt>
-Subject: Re: [PATCH 03/15] dt-bindings: clock: qcom,dispcc-sm6125: Require
- GCC PLL0 DIV clock
-Message-ID: <3iyd2ptxdpnrzfh6qkzjnn2uvxftnjfoiinra5ji6skf53gkop@etttvi3a2lle>
-References: <6311f26f-79ee-c471-649f-5e0b4629cfcc@linaro.org>
- <uuy5prkjhhs66te7h6z3pu4lzj2cfbiqk6ftjijwoeqpw573av@ogs6cboanvzc>
- <ziykmixskqkgheigefvyo4q3katbc4uix6jtcg7mncs25z4tj5@5gykrfgns4bm>
- <16731023-7dc7-d43d-1b16-fda44c0948ed@linaro.org>
- <yofju7jp7vmv33x7dzvzoelpumfsz3fjqy2ozakfphsuysunon@pglt2wzlsjex>
- <683a6f7e-bf1a-aff2-070b-472fb14e0353@linaro.org>
- <3nnk4xvmpnum2q6g6c6crjlqq3ra7j2z5zis53xcqbvevymuhz@mkffvs45n6ut>
- <145ab255-b3f8-1c6c-824d-5f1b40568d30@linaro.org>
- <makhh4ebdmoa5f6r4mbx4g2v2cpcsi74wqf3622dxuli4w7tb6@els2rvqcnvgz>
- <e1c53cd8-9875-08dc-5662-58f868c40628@kernel.org>
+        with ESMTP id S230507AbjF0KVc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 06:21:32 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C9A3C07
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 03:18:22 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id ffacd0b85a97d-313f61890fbso1563038f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 03:18:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687861101; x=1690453101;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gT7GboGGDk7AitS54Ow1poGL7UR1gfZLBCd0QKdV4C0=;
+        b=C5OXmNsX0m80OIL6Emr3JWyhtE0S88G7Rwlsr6ZmfJU130SsETmmm6+Ce6D9TL1Gz8
+         nDoBo+bvQGs6hMHJoPMI3jmFchyOb5ggBoDyzMzwB3l/DFkSZVi8LIqb99E7t0K7IiWh
+         6uNrq1/A/CUTpd7fCD/3Kvpfd0Cqs2VWR6zUajX6+4UiDtM84yFga/qi2QD5GNSb6yZI
+         OZEY8BdqDtB3AjzNVqO9QSby+3KFiKFHnFMY7wdtW4B+V54Gbbk1wPnSRIlNU68+niLX
+         rkP/hxL4xyd7j1h27zQw0raPbp3oAHhgriG7W5v5BHo71+8tBHHQ0UEwjElbpVakhs8m
+         XyAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687861101; x=1690453101;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gT7GboGGDk7AitS54Ow1poGL7UR1gfZLBCd0QKdV4C0=;
+        b=dEGEDmLGD2lFcV9y816rke9nU8I+8fbfiOXJ/9PMqfTyjD5XMJeKLghM4MCJSKrX43
+         eZcCvmT6R1GpftedC2c+FqFMoyrayamyBU89V713xvMrEkLOa6dTyuMVEYjn3zCB38EC
+         c8G5SvvFCfiGKW3kTBwAEpOvAEZ3hWzNEKUTZEI444GNAAg+Ypve1QyLYh3QANU7MMHy
+         Fu8JyHhsczd6sBc4HB5itQtNDnJ+HxRml6Gih6D+M8i2V+A5i5xLjxD204zC8djdEOkh
+         uFTtYfkKH5zToYgfkncS/aCaA6+rKYxc44RAAjdvfSnyhhRpDlrQ+TrRDBZloqzkylIO
+         oTzg==
+X-Gm-Message-State: AC+VfDxzxNUm9fPE333+Yg74FsJONztloLt4deo7pIG08bjdS84V5oYf
+        VasLw5ueTxqFS0GoQ2qQBPlnaQ==
+X-Google-Smtp-Source: ACHHUZ6IABQj80YZlbwlRcPCQeFmBfCPH/Nv02/YbE4SHjy4A9ioFacLP6XEwynurT1i4MOWCkpn+w==
+X-Received: by 2002:a5d:5009:0:b0:313:e146:1816 with SMTP id e9-20020a5d5009000000b00313e1461816mr7669279wrt.24.1687861101257;
+        Tue, 27 Jun 2023 03:18:21 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id cx16-20020a056000093000b00301a351a8d6sm10065190wrb.84.2023.06.27.03.18.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jun 2023 03:18:20 -0700 (PDT)
+Date:   Tue, 27 Jun 2023 12:18:19 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
+Cc:     kuba@kernel.org, vadfed@meta.com, jonathan.lemon@gmail.com,
+        pabeni@redhat.com, corbet@lwn.net, davem@davemloft.net,
+        edumazet@google.com, vadfed@fb.com, jesse.brandeburg@intel.com,
+        anthony.l.nguyen@intel.com, saeedm@nvidia.com, leon@kernel.org,
+        richardcochran@gmail.com, sj@kernel.org, javierm@redhat.com,
+        ricardo.canuelo@collabora.com, mst@redhat.com, tzimmermann@suse.de,
+        michal.michalik@intel.com, gregkh@linuxfoundation.org,
+        jacek.lawrynowicz@linux.intel.com, airlied@redhat.com,
+        ogabbay@kernel.org, arnd@arndb.de, nipun.gupta@amd.com,
+        axboe@kernel.dk, linux@zary.sk, masahiroy@kernel.org,
+        benjamin.tissoires@redhat.com, geert+renesas@glider.be,
+        milena.olech@intel.com, kuniyu@amazon.com, liuhangbin@gmail.com,
+        hkallweit1@gmail.com, andy.ren@getcruise.com, razor@blackwall.org,
+        idosch@nvidia.com, lucien.xin@gmail.com, nicolas.dichtel@6wind.com,
+        phil@nwl.cc, claudiajkang@gmail.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-rdma@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, linux-clk@vger.kernel.org,
+        vadim.fedorenko@linux.dev
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+Message-ID: <ZJq3a6rl6dnPMV17@nanopsycho>
+References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e1c53cd8-9875-08dc-5662-58f868c40628@kernel.org>
+In-Reply-To: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-06-27 11:07:22, Krzysztof Kozlowski wrote:
-> On 27/06/2023 11:02, Marijn Suijten wrote:
-> >>>>> So deleting a new item at the end does not matter.  But what if I respin
-> >>>>> this patch to add the new clock _at the end_, which will then be at the
-> >>>>> same index as the previous GCC_DISP_AHB_CLK?
-> >>>>
-> >>>> I think you know the answer, right? What do you want to prove? That two
-> >>>> independent changes can have together negative effect? We know this.
-> >>>
-> >>> The question is whether this is allowed?
-> >>
-> >> That would be an ABI break and I already explained if it is or is not
-> >> allowed.
-> > 
-> > How should we solve it then, if we cannot remove GCC_DISP_AHB_CLK in one
-> > patch and add GCC_DISP_GPLL0_DIV_CLK_SRC **at the end** in the next
-> > patch?  Keep an empty spot at the original index of GCC_DISP_AHB_CLK?
-> 
-> I don't know if you are trolling me or really asking question, so just
-> in case it is the latter:
+Fri, Jun 23, 2023 at 02:38:10PM CEST, arkadiusz.kubalewski@intel.com wrote:
 
-Apologies if it comes across that way, but I am genuinely
-misunderstanding what is and is not allowed as part of this ABI...
+>v8 -> v9:
 
-> "No one is locked into the ABI. SoC maintainer decides on this. "
+Could you please address all the unresolved issues from v8 and send v10?
+I'm not reviewing this one.
 
-Especially if it is up to the SoC mantainer.
-
-> Also:
-> https://lore.kernel.org/linux-arm-msm/20230608152759.GA2721945-robh@kernel.org/
-> 
-> https://lore.kernel.org/linux-arm-msm/CAL_JsqKOq+PdjUPVYqdC7QcjGxp-KbAG_O9e+zrfY7k-wRr1QQ@mail.gmail.com/
-> 
-> https://lore.kernel.org/linux-arm-msm/20220602143245.GA2256965-robh@kernel.org/
-> 
-> https://lore.kernel.org/linux-arm-msm/20220601202452.GA365963-robh@kernel.org/
-> 
-> Any many more.
-
-In that sense the question above is not for you, but for the SoC
-maintainer?  Whom, I hope, will say that we can be lenient in changing
-the ABI for a platform that is only slowly being brought up by a bunch
-of community developers and unlikely to be touched by anyone else.
-
-Thanks for helping out so far!
-
-- Marijn
+Thanks!
