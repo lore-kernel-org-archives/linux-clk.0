@@ -2,96 +2,169 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F36EB64D9
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 14:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00A9C0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 14:12:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230041AbjF0OBu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 10:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50718 "EHLO
+        id S231438AbjF0OMa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 10:12:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbjF0OBt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 10:01:49 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B58DA1718;
-        Tue, 27 Jun 2023 07:01:48 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-313e34ab99fso3775259f8f.1;
-        Tue, 27 Jun 2023 07:01:48 -0700 (PDT)
+        with ESMTP id S229789AbjF0OML (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 10:12:11 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BFD82D6D
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 07:11:47 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-c01e1c0402cso3137024276.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 07:11:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687874507; x=1690466507;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zslKG4Gk1yPo9JIikeXogtJtSLjxkyiGcUPYRj5BTfw=;
-        b=rz40dLBeIyXIxQR9OjydRBjFPSIrm8NsTyXSUaNc2WqObEgL9sgbVKGBFZ8D0CBuS1
-         RRIjbhMHUHc1FeFMNd3V8vIKQEsMn11zkGzS17SexLp+6vggrOnUxkMRGMAVISM/3+bN
-         JxOM7SN/n8VzoVZSa/PFdXDYf5AllrRjoUNN7XsG4EVJ8gTkB3fHx2CEjKCzXDjpDLYs
-         xnefsaBrS58olv7UMlX5BhzRRnXTzpsUnbeWn/Qh9n8vTvol+TahrvNaLP6c1LxQHB48
-         vBgPqHEEg2lgNHTi8reWG4hGRvJC9Lwz7ZETwPJPnvtYXHb5+MTfwRBd0zqg0pKP8BTo
-         aXdw==
+        d=linaro.org; s=google; t=1687875106; x=1690467106;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WXrJhVf+jnZIfJ+cq7/++Rt0kUOtjIR654ZWVYK8IXA=;
+        b=muMy6ccIPvOVieHq3jydY3E+pk7Ux7eU+8fTqZc64cbKAXPQn9G7P9CLs49Km6ZNLH
+         +og5pE5dYoTSo4Nv0G9IuKJxLxYT/3kR4daUo9KSmpcrqnCZEpirJpdO4bhhDz4viIeW
+         a6kr2p8yLGcr0LFje5IlBM9yAMKXINXjr7d7oJSW0RhWpDH/i1wAz39HiojB0lh54hqM
+         uHL0HHBzjWTYe36pue47SQ7vwC/ejhmkYHexaE/mv9RDPVPfX9EgSFWDPArb1eCM/71O
+         NQXSsv28l7DJwmFDtp1RLWlnXdeIAbU66JY4JQdEp6MqgMz+lplOX7EUq0EXcUzAln0e
+         L1LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687874507; x=1690466507;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20221208; t=1687875106; x=1690467106;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zslKG4Gk1yPo9JIikeXogtJtSLjxkyiGcUPYRj5BTfw=;
-        b=BQr35zMrExNrfPXeZqujJhJZtZQon8YDOFD/Gd099oZfCPvxm38J8yrCQ2vOi2tW/7
-         D1IHo4gvROmf43v0stRScoquFCw0heEd+fe2L4dlUGLNbfZD9mDhvMiq+v0k8auf5NRo
-         lDQTXjNm1jK2MT6ssNgxmmM6t4Sj4iy35fvRx+ThSQZ3mAKydxC+VHH6jO21gAS1tlXa
-         fRwVuQdXXOqZ1QQhciCjnvaHDiXsf7YPu6WLWnO4ZDfbMpKNYkch9pe8M4A9h0qnFEja
-         nhf29BFiQxgaXmLQ4Am7pP/0K0ib4X2VLtpSwpA1Jcv5YukdINTlK+5QdgAlAFQSL4SH
-         AbOg==
-X-Gm-Message-State: AC+VfDxyJfNHqB7hCivOFa9HRZywx28KJdCGJp9V9clcSK+osRlwCeVW
-        z7xGTbBlEVhd/k+RKxUH7gk=
-X-Google-Smtp-Source: ACHHUZ7UQAUjF7ILXHovRzkVTKMyTkmk0UxBvDmZXSNKj1sJhniuMIVpC8dYcEz3H7MffUKlhcX+qA==
-X-Received: by 2002:a5d:4fd2:0:b0:313:f0e3:2fdc with SMTP id h18-20020a5d4fd2000000b00313f0e32fdcmr4803225wrw.2.1687874506931;
-        Tue, 27 Jun 2023 07:01:46 -0700 (PDT)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id h10-20020a5d504a000000b00313e8dc7facsm8734663wrt.116.2023.06.27.07.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 07:01:46 -0700 (PDT)
-From:   Colin Ian King <colin.i.king@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: lmk04832: clkout: make read-only const arrays static
-Date:   Tue, 27 Jun 2023 15:01:45 +0100
-Message-Id: <20230627140145.729609-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        bh=WXrJhVf+jnZIfJ+cq7/++Rt0kUOtjIR654ZWVYK8IXA=;
+        b=XbctTjBifzGiUTlNDspgvFVQYjZ65USUe4br5inCRQSX7DlL6OiLLVQHVXYPT/xwpK
+         17DZuEIszvyKhHCm06NOLLVpwH9BZ2bX0rhbTR8kmG2o5hWDkeCixERUkY6WgLp4wPYi
+         JRYCc7WoW+SMmZ9YnLGd/PfahPLZQpmyksR39fRtSLYjpUurin2OYR9KNsvsR0ZL7dxf
+         blCLRP70ha72G5anVal0IbbYXi6MILhWlxa+l4tVfJZs2naBIMB1lOqD7ndqKJC5haK9
+         /8W6JR+Ngci8vTItKH6pO1G8pnLSQ2Z+KHVo4LPvBjU9AyfnIigKWIi18bZtc+E6vb8T
+         YRzg==
+X-Gm-Message-State: AC+VfDzrgudje+NSICRMPzblAcVxlIpvcCGQVqp84BghqYtl7y3mcT3x
+        BWoIwurVrK5YOHNy2Sv/gNqXbeZY2PGePFspXvc5vQ==
+X-Google-Smtp-Source: ACHHUZ70lgoIJLXZa0oFwfw4edZsuXErq+66PpsBrsvx2dF/b15nid3DcEG0tPlISlTBDYPEdt1KKo8KpAHjIj4O1Dw=
+X-Received: by 2002:a25:3d81:0:b0:c1c:9285:64c2 with SMTP id
+ k123-20020a253d81000000b00c1c928564c2mr4483834yba.50.1687875106693; Tue, 27
+ Jun 2023 07:11:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
+ <20230625202547.174647-18-dmitry.baryshkov@linaro.org> <0f139da8-ae01-fc28-d14c-0ea207cf760e@linaro.org>
+ <2232c6e7-cbca-30c1-9ec5-1cea7f759daf@linaro.org> <8217b8db-cd27-185d-c6b5-e32009202c21@linaro.org>
+In-Reply-To: <8217b8db-cd27-185d-c6b5-e32009202c21@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date:   Tue, 27 Jun 2023 17:11:35 +0300
+Message-ID: <CAA8EJpq8J4fQoqrt3Jdf3C_mGUQdqaNbybdPD-zhEYxmB7DTcg@mail.gmail.com>
+Subject: Re: [PATCH v2 17/26] ARM: dts: qcom: apq8064: add simple CPUFreq support
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Don't populate the arrays on the stack, instead make them static.
+On Tue, 27 Jun 2023 at 15:13, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> On 26.06.2023 21:49, Dmitry Baryshkov wrote:
+> > On 26/06/2023 19:40, Konrad Dybcio wrote:
+> >> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
+> >>> Declare CPU frequency-scaling properties. Each CPU has its own clock,
+> >>> how
+> >> however?
+> >
+> > yes
+> >
+> >>
+> >>> all CPUs have the same OPP table. Voltage scaling is not (yet)
+> >>> enabled with this patch. It will be enabled later.
+> >> Risky business.
+> >
+> > But it works :D
+> On your machine ;)
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/clk/clk-lmk04832.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On two nexus-7 and one ifc6410.
 
-diff --git a/drivers/clk/clk-lmk04832.c b/drivers/clk/clk-lmk04832.c
-index e22ac93e0c2f..21b425d8a1b7 100644
---- a/drivers/clk/clk-lmk04832.c
-+++ b/drivers/clk/clk-lmk04832.c
-@@ -369,7 +369,7 @@ static unsigned long lmk04832_vco_recalc_rate(struct clk_hw *hw,
- 					      unsigned long prate)
- {
- 	struct lmk04832 *lmk = container_of(hw, struct lmk04832, vco);
--	const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
-+	static const unsigned int pll2_p[] = {8, 2, 2, 3, 4, 5, 6, 7};
- 	unsigned int pll2_n, p, pll2_r;
- 	unsigned int pll2_misc;
- 	unsigned long vco_rate;
-@@ -631,7 +631,7 @@ static int lmk04832_register_vco(struct lmk04832 *lmk)
- 
- static int lmk04832_clkout_set_ddly(struct lmk04832 *lmk, int id)
- {
--	const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
-+	static const int dclk_div_adj[] = {0, 0, -2, -2, 0, 3, -1, 0};
- 	unsigned int sclkx_y_ddly = 10;
- 	unsigned int dclkx_y_ddly;
- 	unsigned int dclkx_y_div;
+>
+> [...]
+>
+> >>>   +    kraitcc: clock-controller {
+> >>> +        compatible = "qcom,krait-cc-v1";
+> >> Are we sure we don't wanna rework this compatible? Check the comment in
+> >> drivers/clk/qcom/krait-cc.c : krait_add_sec_mux()
+> >
+> > I remember that comment. I'd rather not introduce another compat string for such old hw. Would there be any direct benefits?
+> >
+> I'd say that the one we have here never made much sense.. Perhaps (since
+> nobody used it for 10 years) it would make sense to remodel it..
+
+Well we have the bindings for this driver. And also it was used by the
+OpenWRT people, IIRC.
+Thus I don't feel comfortable with throwing out old compat strings.
+
+>
+> Konrad
+> >>
+> >>
+> >>> +        clocks = <&gcc PLL9>, /* hfpll0 */
+> >>> +             <&gcc PLL10>, /* hfpll1 */
+> >>> +             <&gcc PLL16>, /* hfpll2 */
+> >>> +             <&gcc PLL17>, /* hfpll3 */
+> >>> +             <&gcc PLL12>, /* hfpll_l2 */
+> >>> +             <&acc0>,
+> >>> +             <&acc1>,
+> >>> +             <&acc2>,
+> >>> +             <&acc3>,
+> >>> +             <&l2cc>;
+> >>> +        clock-names = "hfpll0",
+> >>> +                  "hfpll1",
+> >>> +                  "hfpll2",
+> >>> +                  "hfpll3",
+> >>> +                  "hfpll_l2",
+> >>> +                  "acpu0_aux",
+> >>> +                  "acpu1_aux",
+> >>> +                  "acpu2_aux",
+> >>> +                  "acpu3_aux",
+> >>> +                  "acpu_l2_aux";
+> >>> +        #clock-cells = <1>;
+> >>> +        #interconnect-cells = <1>;
+> >>> +    };
+> >>> +
+> >>>       sfpb_mutex: hwmutex {
+> >>>           compatible = "qcom,sfpb-mutex";
+> >>>           syscon = <&sfpb_wrapper_mutex 0x604 0x4>;
+> >>> @@ -933,6 +1100,9 @@ qfprom: qfprom@700000 {
+> >>>               #address-cells = <1>;
+> >>>               #size-cells = <1>;
+> >>>               ranges;
+> >>> +            speedbin_efuse: speedbin@c0 {
+> >>> +                reg = <0x0c0 0x4>;
+> >>> +            };
+> >> Newline between properties and subnodes & between individual subnodes,
+> >> please
+> >
+> > ack.
+> >
+> >>
+> >> Konrad
+> >>>               tsens_calib: calib@404 {
+> >>>                   reg = <0x404 0x10>;
+> >>>               };
+> >
+
+
+
 -- 
-2.39.2
-
+With best wishes
+Dmitry
