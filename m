@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D061EB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34652C001DD
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbjF0UPC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 16:15:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35982 "EHLO
+        id S231219AbjF0UPF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 16:15:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231204AbjF0UOj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 16:14:39 -0400
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5CD2706
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 13:14:38 -0700 (PDT)
+        with ESMTP id S231329AbjF0UOv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 16:14:51 -0400
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD8722D60;
+        Tue, 27 Jun 2023 13:14:42 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 183E03F6B1;
-        Tue, 27 Jun 2023 22:14:36 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 011443F770;
+        Tue, 27 Jun 2023 22:14:39 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Tue, 27 Jun 2023 22:14:26 +0200
-Subject: [PATCH v2 11/15] drm/msm/dsi: Reuse QCM2290 14nm DSI PHY
- configuration for SM6125
+Date:   Tue, 27 Jun 2023 22:14:29 +0200
+Subject: [PATCH v2 14/15] arm64: dts: qcom: sm6125: Add display hardware
+ nodes
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230627-sm6125-dpu-v2-11-03e430a2078c@somainline.org>
+Message-Id: <20230627-sm6125-dpu-v2-14-03e430a2078c@somainline.org>
 References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
 In-Reply-To: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -62,30 +62,221 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SM6125 features only a single PHY (despite a secondary PHY PLL source
-being available to the disp_cc_mdss_pclk0_clk_src clock), and downstream
-sources for this "trinket" SoC do not define the typical "vcca"
-regulator to be available nor used.  This, including the register offset
-is identical to QCM2290, whose config struct can trivially be reused.
+Add the DT nodes that describe the MDSS hardware on SM6125, containing
+one MDP (display controller) together with a single DSI and DSI PHY.  No
+DisplayPort support is added for now.
 
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- drivers/gpu/drm/msm/dsi/phy/dsi_phy.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/qcom/sm6125.dtsi | 191 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 189 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-index 9d5795c58a98..05621e5e7d63 100644
---- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-+++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-@@ -561,6 +561,8 @@ static const struct of_device_id dsi_phy_dt_match[] = {
- 	  .data = &dsi_phy_14nm_660_cfgs },
- 	{ .compatible = "qcom,dsi-phy-14nm-8953",
- 	  .data = &dsi_phy_14nm_8953_cfgs },
-+	{ .compatible = "qcom,sm6125-dsi-phy-14nm",
-+	  .data = &dsi_phy_14nm_2290_cfgs },
- #endif
- #ifdef CONFIG_DRM_MSM_DSI_10NM_PHY
- 	{ .compatible = "qcom,dsi-phy-10nm",
+diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+index a5cc0d43d2d9..b21fa1256f95 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+@@ -1204,12 +1204,199 @@ sram@4690000 {
+ 			reg = <0x04690000 0x10000>;
+ 		};
+ 
++		mdss: display-subsystem@5e00000 {
++			compatible = "qcom,sm6125-mdss";
++			reg = <0x05e00000 0x1000>;
++			reg-names = "mdss";
++
++			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
++
++			clocks = <&gcc GCC_DISP_AHB_CLK>,
++				 <&dispcc DISP_CC_MDSS_AHB_CLK>,
++				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
++			clock-names = "iface",
++				      "ahb",
++				      "core";
++
++			power-domains = <&dispcc MDSS_GDSC>;
++
++			iommus = <&apps_smmu 0x400 0x0>;
++
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			status = "disabled";
++
++			mdss_mdp: display-controller@5e01000 {
++				compatible = "qcom,sm6125-dpu";
++				reg = <0x05e01000 0x83208>,
++				      <0x05eb0000 0x2008>;
++				reg-names = "mdp", "vbif";
++
++				interrupt-parent = <&mdss>;
++				interrupts = <0>;
++
++				clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
++					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&dispcc DISP_CC_MDSS_ROT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
++					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
++					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				clock-names = "bus",
++					      "iface",
++					      "rot",
++					      "lut",
++					      "core",
++					      "vsync";
++				assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
++				assigned-clock-rates = <19200000>;
++
++				operating-points-v2 = <&mdp_opp_table>;
++				power-domains = <&rpmpd SM6125_VDDCX>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						dpu_intf1_out: endpoint {
++							remote-endpoint = <&mdss_dsi0_in>;
++						};
++					};
++				};
++
++				mdp_opp_table: opp-table {
++					compatible = "operating-points-v2";
++
++					opp-192000000 {
++						opp-hz = /bits/ 64 <192000000>;
++						required-opps = <&rpmpd_opp_low_svs>;
++					};
++
++					opp-256000000 {
++						opp-hz = /bits/ 64 <256000000>;
++						required-opps = <&rpmpd_opp_svs>;
++					};
++
++					opp-307200000 {
++						opp-hz = /bits/ 64 <307200000>;
++						required-opps = <&rpmpd_opp_svs_plus>;
++					};
++
++					opp-384000000 {
++						opp-hz = /bits/ 64 <384000000>;
++						required-opps = <&rpmpd_opp_nom>;
++					};
++
++					opp-400000000 {
++						opp-hz = /bits/ 64 <400000000>;
++						required-opps = <&rpmpd_opp_turbo>;
++					};
++				};
++			};
++
++			mdss_dsi0: dsi@5e94000 {
++				compatible = "qcom,sm6125-dsi-ctrl", "qcom,mdss-dsi-ctrl";
++				reg = <0x05e94000 0x400>;
++				reg-names = "dsi_ctrl";
++
++				interrupt-parent = <&mdss>;
++				interrupts = <4>;
++
++				clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
++					 <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
++					 <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
++					 <&dispcc DISP_CC_MDSS_ESC0_CLK>,
++					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&gcc GCC_DISP_HF_AXI_CLK>;
++				clock-names = "byte",
++					      "byte_intf",
++					      "pixel",
++					      "core",
++					      "iface",
++					      "bus";
++				assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
++						  <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
++				assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
++
++				operating-points-v2 = <&dsi_opp_table>;
++				power-domains = <&rpmpd SM6125_VDDCX>;
++
++				phys = <&mdss_dsi0_phy>;
++				phy-names = "dsi";
++
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				status = "disabled";
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++						mdss_dsi0_in: endpoint {
++							remote-endpoint = <&dpu_intf1_out>;
++						};
++					};
++
++					port@1 {
++						reg = <1>;
++						mdss_dsi0_out: endpoint {
++						};
++					};
++				};
++
++				dsi_opp_table: opp-table {
++					compatible = "operating-points-v2";
++
++					opp-164000000 {
++						opp-hz = /bits/ 64 <164000000>;
++						required-opps = <&rpmpd_opp_low_svs>;
++					};
++
++					opp-187500000 {
++						opp-hz = /bits/ 64 <187500000>;
++						required-opps = <&rpmpd_opp_svs>;
++					};
++				};
++			};
++
++			mdss_dsi0_phy: phy@5e94400 {
++				compatible = "qcom,sm6125-dsi-phy-14nm";
++				reg = <0x05e94400 0x100>,
++				      <0x05e94500 0x300>,
++				      <0x05e94800 0x188>;
++				reg-names = "dsi_phy",
++					    "dsi_phy_lane",
++					    "dsi_pll";
++
++				#clock-cells = <1>;
++				#phy-cells = <0>;
++
++				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
++					 <&rpmcc RPM_SMD_XO_CLK_SRC>;
++				clock-names = "iface",
++					      "ref";
++
++				required-opps = <&rpmpd_opp_svs>;
++				power-domains = <&rpmpd SM6125_VDDMX>;
++
++				status = "disabled";
++			};
++		};
++
+ 		dispcc: clock-controller@5f00000 {
+ 			compatible = "qcom,sm6125-dispcc";
+ 			reg = <0x05f00000 0x20000>;
+ 			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+-				 <0>,
+-				 <0>,
++				 <&mdss_dsi0_phy 0>,
++				 <&mdss_dsi0_phy 1>,
+ 				 <0>,
+ 				 <0>,
+ 				 <0>,
 
 -- 
 2.41.0
