@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E45E2C001DD
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB63C00528
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230516AbjF0UOi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 16:14:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35860 "EHLO
+        id S231207AbjF0UOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 16:14:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231131AbjF0UOe (ORCPT
+        with ESMTP id S230462AbjF0UOe (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 16:14:34 -0400
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A63282706
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 13:14:30 -0700 (PDT)
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9117A26BC;
+        Tue, 27 Jun 2023 13:14:25 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id E5A803F751;
-        Tue, 27 Jun 2023 22:14:27 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 83E893F715;
+        Tue, 27 Jun 2023 22:14:22 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Tue, 27 Jun 2023 22:14:20 +0200
-Subject: [PATCH v2 05/15] dt-bindings: display/msm: dsi-controller-main:
- Document SM6125
+Date:   Tue, 27 Jun 2023 22:14:16 +0200
+Subject: [PATCH v2 01/15] drm/msm/dsi: Drop unused regulators from QCM2290
+ 14nm DSI PHY config
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230627-sm6125-dpu-v2-5-03e430a2078c@somainline.org>
+Message-Id: <20230627-sm6125-dpu-v2-1-03e430a2078c@somainline.org>
 References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
 In-Reply-To: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -56,41 +56,35 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
 X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document general compatibility of the DSI controller on SM6125.
+The regulator setup was likely copied from other SoCs by mistake.  Just
+like SM6125 the DSI PHY on this platform is not getting power from a
+regulator but from the MX power domain.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fixes: 572e9fd6d14a ("drm/msm/dsi: Add phy configuration for QCM2290")
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-index 01848bdd5873..23926c39407e 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-@@ -27,6 +27,7 @@ properties:
-               - qcom,sdm660-dsi-ctrl
-               - qcom,sdm845-dsi-ctrl
-               - qcom,sm6115-dsi-ctrl
-+              - qcom,sm6125-dsi-ctrl
-               - qcom,sm6350-dsi-ctrl
-               - qcom,sm6375-dsi-ctrl
-               - qcom,sm8150-dsi-ctrl
-@@ -301,6 +302,7 @@ allOf:
-           contains:
-             enum:
-               - qcom,msm8998-dsi-ctrl
-+              - qcom,sm6125-dsi-ctrl
-               - qcom,sm6350-dsi-ctrl
-     then:
-       properties:
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+index 3ce45b023e63..31deda1c664a 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+@@ -1087,8 +1087,6 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_8953_cfgs = {
+ 
+ const struct msm_dsi_phy_cfg dsi_phy_14nm_2290_cfgs = {
+ 	.has_phy_lane = true,
+-	.regulator_data = dsi_phy_14nm_17mA_regulators,
+-	.num_regulators = ARRAY_SIZE(dsi_phy_14nm_17mA_regulators),
+ 	.ops = {
+ 		.enable = dsi_14nm_phy_enable,
+ 		.disable = dsi_14nm_phy_disable,
 
 -- 
 2.41.0
