@@ -2,62 +2,27 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6100EB64DD
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 06:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1271AC001B0
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 06:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjF0GZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 02:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34072 "EHLO
+        id S230138AbjF0Gzc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 02:55:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230226AbjF0GYs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 02:24:48 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0F0D1BEC
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 23:24:45 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-3fa9850bfebso16407135e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 23:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687847084; x=1690439084;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C98sJ4ODjsZ+PIPWAYUbo/b94g4oGT8VWWd+gYZdC8Y=;
-        b=uv3jvPbk6CbFCNFmndl4tn3daErP8c9c+QwKX1LiovcdtenXucdTjrfhHEwnPFk843
-         dweIw/aef9loL0yiVDr0Vf7L/7Bfg1dKHeWQt8/xdo+fgvBpiekVo4CWxJYbeHkLZ4jT
-         NLEOr0TsDrmJHcERtGoeICW2oyedjRQFfES5Q4+QD08PCzrfHUjE5PQB4OwmrjKkfqL5
-         XjPVw9WjVfgsypASqiH88mQG2CQgXBBynh7WWyRujqsUMeYLMSeqDiP86a96/V0yKSsz
-         PSiVVnd9ZBRQsl14hAOhOw7kg7a5DcewJW3X2ofiGv/cpFQ1gM2eScgFsMxDKENvUOAM
-         +vYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687847084; x=1690439084;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C98sJ4ODjsZ+PIPWAYUbo/b94g4oGT8VWWd+gYZdC8Y=;
-        b=LWO6Zl5lKVCPfEyVTm6L5ayz8JIltNQJy7vLBViJ6i8mSK/QcQe/pm9bUFaEkSQfxJ
-         LM6KnUxU6Myp7KNh5lz2GijCKEgvIzQBAIfvcNckZCYUnGkhgl8QPApiM0nW+buWgn/N
-         S/SQdAVg5A4L4rM70Mak6qzxDrlvC3Iix6CILYUnk2wnyLo87dnMmMVHaQlfwWG+sl4k
-         MYmspTTdCzFEg18IOlh9G8dTSG4SDidpM1MePldo70wTPzbBKMvqw9jhUMvT2y3FeTU9
-         GtybXhoyOEEqS3tgIZaTH780XedkCOFz2S8AaRj05NYKQ6XbXw+cENW5jmSR4ol8a0Xa
-         JSzg==
-X-Gm-Message-State: AC+VfDznEs7+FGsDOxALngmLxvykVq8ziJVn4myufioRkkv5v1z5xuXZ
-        AfytkJuZkRD4X6m0RWIeFN+NDQ==
-X-Google-Smtp-Source: ACHHUZ5m0+fZBZC74PuVSF50TNZrU4lB5BVimIJf0UB/moRgkUGOinN/zs+UsF+XR3uW/d//lA5nWA==
-X-Received: by 2002:a05:600c:213:b0:3f6:91c:4e86 with SMTP id 19-20020a05600c021300b003f6091c4e86mr21721010wmi.3.1687847084390;
-        Mon, 26 Jun 2023 23:24:44 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id t25-20020a1c7719000000b003fba80535a5sm226240wmi.24.2023.06.26.23.24.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jun 2023 23:24:43 -0700 (PDT)
-Message-ID: <16731023-7dc7-d43d-1b16-fda44c0948ed@linaro.org>
-Date:   Tue, 27 Jun 2023 08:24:41 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 03/15] dt-bindings: clock: qcom,dispcc-sm6125: Require GCC
- PLL0 DIV clock
-Content-Language: en-US
-To:     Marijn Suijten <marijn.suijten@somainline.org>
+        with ESMTP id S231246AbjF0GzH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 02:55:07 -0400
+Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [IPv6:2001:4b7a:2000:18::164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DACFD1715
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 23:54:51 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 6B0611FA7F;
+        Tue, 27 Jun 2023 08:54:47 +0200 (CEST)
+Date:   Tue, 27 Jun 2023 08:54:45 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -82,8 +47,10 @@ Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <20230624-sm6125-dpu-v1-3-1d5a638cebf2@somainline.org>
+Subject: Re: [PATCH 03/15] dt-bindings: clock: qcom,dispcc-sm6125: Require
+ GCC PLL0 DIV clock
+Message-ID: <yofju7jp7vmv33x7dzvzoelpumfsz3fjqy2ozakfphsuysunon@pglt2wzlsjex>
+References: <20230624-sm6125-dpu-v1-3-1d5a638cebf2@somainline.org>
  <c9681bce-efa8-9b79-4bf6-837dd6a2dc12@linaro.org>
  <55b0ca89-8f2e-5383-59d4-6809e813abf8@linaro.org>
  <vnp263d43flny2ibt3n7fbloyi26enqrejnobogplfu5fcj6l3@s7zkxrsi2rde>
@@ -92,29 +59,33 @@ References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
  <6311f26f-79ee-c471-649f-5e0b4629cfcc@linaro.org>
  <uuy5prkjhhs66te7h6z3pu4lzj2cfbiqk6ftjijwoeqpw573av@ogs6cboanvzc>
  <ziykmixskqkgheigefvyo4q3katbc4uix6jtcg7mncs25z4tj5@5gykrfgns4bm>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <ziykmixskqkgheigefvyo4q3katbc4uix6jtcg7mncs25z4tj5@5gykrfgns4bm>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <16731023-7dc7-d43d-1b16-fda44c0948ed@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16731023-7dc7-d43d-1b16-fda44c0948ed@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/06/2023 20:53, Marijn Suijten wrote:
-> On 2023-06-26 20:51:38, Marijn Suijten wrote:
-> <snip>
->>> Not really, binding also defines the list of clocks - their order and
->>> specific entries. This changes.
->>
->> And so it does in "dt-bindings: clock: qcom,dispcc-sm6125: Remove unused
->> GCC_DISP_AHB_CLK"?
+On 2023-06-27 08:24:41, Krzysztof Kozlowski wrote:
+> On 26/06/2023 20:53, Marijn Suijten wrote:
+> > On 2023-06-26 20:51:38, Marijn Suijten wrote:
+> > <snip>
+> >>> Not really, binding also defines the list of clocks - their order and
+> >>> specific entries. This changes.
+> >>
+> >> And so it does in "dt-bindings: clock: qcom,dispcc-sm6125: Remove unused
+> >> GCC_DISP_AHB_CLK"?
+> > 
+> > Never mind: it is the last item so the order of the other items doesn't
+> > change.  The total number of items decreases though, which sounds like
+> > an ABI-break too?
 > 
-> Never mind: it is the last item so the order of the other items doesn't
-> change.  The total number of items decreases though, which sounds like
-> an ABI-break too?
+> How does it break? Old DTS works exactly the same, doesn't it?
 
-How does it break? Old DTS works exactly the same, doesn't it?
+So deleting a new item at the end does not matter.  But what if I respin
+this patch to add the new clock _at the end_, which will then be at the
+same index as the previous GCC_DISP_AHB_CLK?
 
-Best regards,
-Krzysztof
-
+- Marijn
