@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A79C001B3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D691EC001DD
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231321AbjF0Uq2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 16:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51202 "EHLO
+        id S229877AbjF0UsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 16:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjF0Uq1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 16:46:27 -0400
+        with ESMTP id S230445AbjF0UsG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 16:48:06 -0400
 Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40E5519A9
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 13:46:25 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4fb863edcb6so1777287e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 13:46:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B480E19A9
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 13:48:03 -0700 (PDT)
+Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4f954d78bf8so7243421e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 13:48:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687898783; x=1690490783;
+        d=linaro.org; s=google; t=1687898882; x=1690490882;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7OJ43xoUAaQ7/BbXqVAEGUSQDP14HiDVf0qfii8I1YQ=;
-        b=WeHGCh41l5qr7LA+qBes0VVFE2IEvDQx0TD2zppJTkpigfMtHqJ5DjO4nunlnyYAgN
-         e7vknMZlOTubu/M7Blxui2QEPnnQsGe/6jOwFGV2AysHqLnjlOabVKf2agqR6i3HAjwk
-         qkK6vwq79TQ2JClNzXotgp2cV3TVry7fgaXCm+nawyWONuTgmX5+lXG3Yo4Bf9jCbJlW
-         1h5afWMCvkfs07bZ/x4BuK04FTjOv+3h90pdNFyn7jeQMSdrc1HtujiIJWP8lDALyAjC
-         1xcynJDR8n3tasM+7zBtMZu4d7pnUGoi69i2N8y9u9eTGkucjIVz+vqfFM7Kyuq18eM0
-         FU1A==
+        bh=OA45c/xaQm/8v0q3zdahN+3s7QemecX5vnNWDdTNmVE=;
+        b=NrbYawTk+IbOjd0e+vE5nKImpTCP4PP0QeUjM/wDAxIZrtTMptQ38+OBbpg/ybppN2
+         MOCUyAGEVFZYCWstAu7xPjpl4i3qPgOj8AdKVxRMAb8qY9M3tNRY4QPnd+9r7N5EGxrF
+         ymLbqtUzDNz8K3PzP7L2pkb8/hhHtSKG/VA2N3W+g1xBuuOk1Wa1xXcKYS3M5SYr6ahm
+         UBKuwoRY+9LY+AHU2ZvrNsUQ2pj4Q/eBo7e2wHi28eVg1L4FxPQG/2aoN09GkMOG28zJ
+         O1rYX29H+o1vDa3zgYC/fjEv4OtW5yt+uQGzH1Gs035ZfnG/f+oeEvwBU9YdTyQC20Ys
+         j1xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687898783; x=1690490783;
+        d=1e100.net; s=20221208; t=1687898882; x=1690490882;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7OJ43xoUAaQ7/BbXqVAEGUSQDP14HiDVf0qfii8I1YQ=;
-        b=UhAkQNo0H5VMXVExfRyxZFfDE5XioKCIVpsOH3Z+d/zw2DAe5zo+h6TqziU1jAhOwd
-         VHfw+vZNf2VZsXdsh5hDcQPRDmV36ZSN0lUVjBEcclx50WUVo5o3MpGyFHHGLtYJ+yB+
-         v3SrhTG50WcmTQ55nTMQXU8TdccpNjWdCJRwStIPeodlP5sRJDMZhhzK7ZU2pAPe03NP
-         3Y+KuZsUsKNIxqleJyIL2q2qnDSIGkEDbywXIWB77D4whoRoz7HC/FhuJ9y1PN9/XKAq
-         8MFDu5TdqeD7Y9RMqC7GYIlA+3wmjKxp4S416yWD+O75JF84I44dPHMSXihuK6stR+3v
-         gFFg==
-X-Gm-Message-State: AC+VfDxaL3MohHo/LDyPHEMZqiXrDPRE4WNJ1BKX/Qz8Du6pckaJ066T
-        OgSEEA81GypvvtzO/ocRqgk3Lg==
-X-Google-Smtp-Source: ACHHUZ5emIXmf1rO07fQAxgUi9BjGsQQr+Z1m68cQ3h8Fv+spImuqKnVYk5Ko6yRkLs2vijoGtJRQQ==
-X-Received: by 2002:a19:2d5b:0:b0:4f8:5e49:c613 with SMTP id t27-20020a192d5b000000b004f85e49c613mr17229826lft.43.1687898783459;
-        Tue, 27 Jun 2023 13:46:23 -0700 (PDT)
+        bh=OA45c/xaQm/8v0q3zdahN+3s7QemecX5vnNWDdTNmVE=;
+        b=VdFfwlzFs1zY15rad1CVMqUAEcB1vn+jJx/Mj+YCwFuouKC/Gga3INRCwC66FoSOMK
+         cnO7vP6RgtyuNdrpWLbi2AkmBnnsE9rr6Hlk+m6TrH06gpObdpjbZk3pQf1LiqZbNkCK
+         CjpZhPYjP0Alr+MA1sJvwexH90NIo0pfQt9H5xZgJc5asXfvjQvv9gO7vbCgXYb9WdX1
+         OMYJHjHbHIkBjsRbuki7yATGGn1nZmPYXGFkzjwcx1sB6bcO4RjZTlBfus/+tbhI/Q97
+         ZS9Ay/Gt3thDXvlrDw7+xheLFkUWyAjZzl9p6qmBZ6oj/uXCyiDojZhyxeEqHGfXqe7K
+         RVHQ==
+X-Gm-Message-State: AC+VfDyrjHuc/SoULsho1m1q5G5VF8fPeC8Fzqvd31mxV7dfEMfpB+vJ
+        +YjW5gEX/GM34ogogkXyiHSZJA==
+X-Google-Smtp-Source: ACHHUZ4x7OiookqL76PJ6QmT4hwDZzTCsj7kQ+WEHW63ZHmS7rrxNDUaxZu2JkPT4WtiQW7E3HQAoA==
+X-Received: by 2002:a05:6512:10cf:b0:4f9:657d:e4bd with SMTP id k15-20020a05651210cf00b004f9657de4bdmr11208436lfg.24.1687898881728;
+        Tue, 27 Jun 2023 13:48:01 -0700 (PDT)
 Received: from [192.168.1.101] (abxj103.neoplus.adsl.tpnet.pl. [83.9.3.103])
-        by smtp.gmail.com with ESMTPSA id eo7-20020a056512480700b004f86c43d615sm1670680lfb.295.2023.06.27.13.46.21
+        by smtp.gmail.com with ESMTPSA id q18-20020a19a412000000b004f3b319ed4bsm1647406lfc.120.2023.06.27.13.47.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 13:46:23 -0700 (PDT)
-Message-ID: <d205b3f1-ae6d-9162-8baa-875f6c44f6be@linaro.org>
-Date:   Tue, 27 Jun 2023 22:46:21 +0200
+        Tue, 27 Jun 2023 13:48:01 -0700 (PDT)
+Message-ID: <3cc619fc-4d48-919c-7e17-4b11a4e4dcd5@linaro.org>
+Date:   Tue, 27 Jun 2023 22:47:59 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 11/15] drm/msm/dsi: Reuse QCM2290 14nm DSI PHY
- configuration for SM6125
+Subject: Re: [PATCH v2 14/15] arm64: dts: qcom: sm6125: Add display hardware
+ nodes
 Content-Language: en-US
 To:     Marijn Suijten <marijn.suijten@somainline.org>,
         Andy Gross <agross@kernel.org>,
@@ -84,9 +84,9 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
 References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
- <20230627-sm6125-dpu-v2-11-03e430a2078c@somainline.org>
+ <20230627-sm6125-dpu-v2-14-03e430a2078c@somainline.org>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230627-sm6125-dpu-v2-11-03e430a2078c@somainline.org>
+In-Reply-To: <20230627-sm6125-dpu-v2-14-03e430a2078c@somainline.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -94,31 +94,222 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 27.06.2023 22:14, Marijn Suijten wrote:
-> SM6125 features only a single PHY (despite a secondary PHY PLL source
-> being available to the disp_cc_mdss_pclk0_clk_src clock), and downstream
-> sources for this "trinket" SoC do not define the typical "vcca"
-> regulator to be available nor used.  This, including the register offset
-> is identical to QCM2290, whose config struct can trivially be reused.
+> Add the DT nodes that describe the MDSS hardware on SM6125, containing
+> one MDP (display controller) together with a single DSI and DSI PHY.  No
+> DisplayPort support is added for now.
 > 
 > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 > ---
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
->  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm64/boot/dts/qcom/sm6125.dtsi | 191 ++++++++++++++++++++++++++++++++++-
+>  1 file changed, 189 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> index 9d5795c58a98..05621e5e7d63 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
-> @@ -561,6 +561,8 @@ static const struct of_device_id dsi_phy_dt_match[] = {
->  	  .data = &dsi_phy_14nm_660_cfgs },
->  	{ .compatible = "qcom,dsi-phy-14nm-8953",
->  	  .data = &dsi_phy_14nm_8953_cfgs },
-> +	{ .compatible = "qcom,sm6125-dsi-phy-14nm",
-> +	  .data = &dsi_phy_14nm_2290_cfgs },
->  #endif
->  #ifdef CONFIG_DRM_MSM_DSI_10NM_PHY
->  	{ .compatible = "qcom,dsi-phy-10nm",
+> diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> index a5cc0d43d2d9..b21fa1256f95 100644
+> --- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> @@ -1204,12 +1204,199 @@ sram@4690000 {
+>  			reg = <0x04690000 0x10000>;
+>  		};
+>  
+> +		mdss: display-subsystem@5e00000 {
+> +			compatible = "qcom,sm6125-mdss";
+> +			reg = <0x05e00000 0x1000>;
+> +			reg-names = "mdss";
+> +
+> +			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +
+> +			clocks = <&gcc GCC_DISP_AHB_CLK>,
+> +				 <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +				 <&dispcc DISP_CC_MDSS_MDP_CLK>;
+> +			clock-names = "iface",
+> +				      "ahb",
+> +				      "core";
+> +
+> +			power-domains = <&dispcc MDSS_GDSC>;
+> +
+> +			iommus = <&apps_smmu 0x400 0x0>;
+> +
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			status = "disabled";
+> +
+> +			mdss_mdp: display-controller@5e01000 {
+> +				compatible = "qcom,sm6125-dpu";
+> +				reg = <0x05e01000 0x83208>,
+> +				      <0x05eb0000 0x2008>;
+> +				reg-names = "mdp", "vbif";
+> +
+> +				interrupt-parent = <&mdss>;
+> +				interrupts = <0>;
+> +
+> +				clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_ROT_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
+> +				clock-names = "bus",
+> +					      "iface",
+> +					      "rot",
+> +					      "lut",
+> +					      "core",
+> +					      "vsync";
+> +				assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
+> +				assigned-clock-rates = <19200000>;
+> +
+> +				operating-points-v2 = <&mdp_opp_table>;
+> +				power-domains = <&rpmpd SM6125_VDDCX>;
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +						dpu_intf1_out: endpoint {
+> +							remote-endpoint = <&mdss_dsi0_in>;
+> +						};
+> +					};
+> +				};
+> +
+> +				mdp_opp_table: opp-table {
+> +					compatible = "operating-points-v2";
+> +
+> +					opp-192000000 {
+> +						opp-hz = /bits/ 64 <192000000>;
+> +						required-opps = <&rpmpd_opp_low_svs>;
+> +					};
+> +
+> +					opp-256000000 {
+> +						opp-hz = /bits/ 64 <256000000>;
+> +						required-opps = <&rpmpd_opp_svs>;
+> +					};
+> +
+> +					opp-307200000 {
+> +						opp-hz = /bits/ 64 <307200000>;
+> +						required-opps = <&rpmpd_opp_svs_plus>;
+> +					};
+> +
+> +					opp-384000000 {
+> +						opp-hz = /bits/ 64 <384000000>;
+> +						required-opps = <&rpmpd_opp_nom>;
+> +					};
+> +
+> +					opp-400000000 {
+> +						opp-hz = /bits/ 64 <400000000>;
+> +						required-opps = <&rpmpd_opp_turbo>;
+> +					};
+> +				};
+> +			};
+> +
+> +			mdss_dsi0: dsi@5e94000 {
+> +				compatible = "qcom,sm6125-dsi-ctrl", "qcom,mdss-dsi-ctrl";
+> +				reg = <0x05e94000 0x400>;
+> +				reg-names = "dsi_ctrl";
+> +
+> +				interrupt-parent = <&mdss>;
+> +				interrupts = <4>;
+> +
+> +				clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_ESC0_CLK>,
+> +					 <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +					 <&gcc GCC_DISP_HF_AXI_CLK>;
+> +				clock-names = "byte",
+> +					      "byte_intf",
+> +					      "pixel",
+> +					      "core",
+> +					      "iface",
+> +					      "bus";
+> +				assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
+> +						  <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
+> +				assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
+> +
+> +				operating-points-v2 = <&dsi_opp_table>;
+> +				power-domains = <&rpmpd SM6125_VDDCX>;
+> +
+> +				phys = <&mdss_dsi0_phy>;
+> +				phy-names = "dsi";
+> +
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				status = "disabled";
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +						mdss_dsi0_in: endpoint {
+> +							remote-endpoint = <&dpu_intf1_out>;
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +						mdss_dsi0_out: endpoint {
+> +						};
+> +					};
+> +				};
+> +
+> +				dsi_opp_table: opp-table {
+> +					compatible = "operating-points-v2";
+> +
+> +					opp-164000000 {
+> +						opp-hz = /bits/ 64 <164000000>;
+> +						required-opps = <&rpmpd_opp_low_svs>;
+> +					};
+> +
+> +					opp-187500000 {
+> +						opp-hz = /bits/ 64 <187500000>;
+> +						required-opps = <&rpmpd_opp_svs>;
+> +					};
+> +				};
+> +			};
+> +
+> +			mdss_dsi0_phy: phy@5e94400 {
+> +				compatible = "qcom,sm6125-dsi-phy-14nm";
+> +				reg = <0x05e94400 0x100>,
+> +				      <0x05e94500 0x300>,
+> +				      <0x05e94800 0x188>;
+> +				reg-names = "dsi_phy",
+> +					    "dsi_phy_lane",
+> +					    "dsi_pll";
+> +
+> +				#clock-cells = <1>;
+> +				#phy-cells = <0>;
+> +
+> +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +					 <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> +				clock-names = "iface",
+> +					      "ref";
+> +
+> +				required-opps = <&rpmpd_opp_svs>;
+> +				power-domains = <&rpmpd SM6125_VDDMX>;
+> +
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+>  		dispcc: clock-controller@5f00000 {
+>  			compatible = "qcom,sm6125-dispcc";
+>  			reg = <0x05f00000 0x20000>;
+>  			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> -				 <0>,
+> -				 <0>,
+> +				 <&mdss_dsi0_phy 0>,
+> +				 <&mdss_dsi0_phy 1>,
+>  				 <0>,
+>  				 <0>,
+>  				 <0>,
 > 
