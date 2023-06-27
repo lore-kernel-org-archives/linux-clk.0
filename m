@@ -2,182 +2,471 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B680EB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 16:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC3EEB64D9
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 17:32:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232333AbjF0QfW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 12:35:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52468 "EHLO
+        id S230346AbjF0Rcd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 13:32:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232155AbjF0Qem (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 12:34:42 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FEB30F1
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 09:34:22 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id 38308e7fff4ca-2b6a675743dso30243981fa.2
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 09:34:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687883655; x=1690475655;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ff9pjKl2q4eHTKuAX2lYIQZCeKYxi6bK6im7HAgmKWY=;
-        b=NclSazdNKNrmEAtS2NuCIf0AxXRmHZlJJF0xMew+V+MXMUDYIaIwyaignBS/QZ7KmW
-         MF8ayCpieSfYysc8aHOOVyrYS4sNAJVstkrsWA1Fyd7umsLpm+6t6L80jtxMnl4cSqU5
-         RFbT3p9tNIqJroB45JaN6KGiFNve/bHP0c+KGagi5KzLUYvGbxQMXGC4iyOfmNveGcaa
-         /2zzSxpkN3UyWFaNTSD4kyoateTAoUDhjbHWytizGoN/ozU9RI8vYI1+9gEkMTgOJQfl
-         AKNsbz/hCHGf+0lhhHf3t5h8o9b8CuI4xu13brI1eA1V3Nb2B6MKp8YWvXP9MRvyo/AN
-         HAvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687883655; x=1690475655;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ff9pjKl2q4eHTKuAX2lYIQZCeKYxi6bK6im7HAgmKWY=;
-        b=LkIGOEiaGFxmw8oyHNerXyglzZtgb1WgEyLPB44w1cJjeqcgCTx1oRMPKinrjubIb3
-         BLW5QJhZ7nBeWe5fDOLwotxhIVzyL7VRUvUM7O/UdZaqB/NknhsNwrBqzb2MIjWmDFc+
-         fdYjXhqqO6+iE8uR6PpdlQ2a9VehJz0gCMvszvmpTgMW0tMxGZJXvYjmAw36CLU1iuP2
-         YzAvyTS3CP1wSqi5j1hLYuQpu0tWcuUVoZ8vcgL/QsfGFcAc9MWBG2SbmE1HTJMtcoUn
-         LzY57Qokmxms3tAo5PMpPGXPFm3gaNFcDqTO2+q9V8aa4AiKV+/P1HWWU5A1JRu6NHYl
-         SBZg==
-X-Gm-Message-State: AC+VfDzhbKOd3TvynJk1IX87kACyEeW9/WkuHn7MrgX9XOvLiZrU4Id3
-        WZodFJ2y2Fy8jqF7D8Ik9d4bQw==
-X-Google-Smtp-Source: ACHHUZ7LVhAwSbtCo/gLWLb/gfGIhWH6n3nwZUR7RuQ1M9SqpG1hNGXy+SIpdfY7Leaozk3IkKOVrQ==
-X-Received: by 2002:a2e:848a:0:b0:2b4:6c76:332f with SMTP id b10-20020a2e848a000000b002b46c76332fmr22560841ljh.9.1687883655046;
-        Tue, 27 Jun 2023 09:34:15 -0700 (PDT)
-Received: from [192.168.1.101] (abxj103.neoplus.adsl.tpnet.pl. [83.9.3.103])
-        by smtp.gmail.com with ESMTPSA id z20-20020a2e8e94000000b002af8aaebce4sm1801500ljk.8.2023.06.27.09.34.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 09:34:14 -0700 (PDT)
-Message-ID: <443b84f3-7e9d-301b-c9c0-44b9360563f7@linaro.org>
-Date:   Tue, 27 Jun 2023 18:34:13 +0200
+        with ESMTP id S230040AbjF0Rcb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 13:32:31 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C68268C;
+        Tue, 27 Jun 2023 10:32:29 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35RF10sI015289;
+        Tue, 27 Jun 2023 17:32:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=UiViJumGApJFh81PcIIDOOz8kBzQJ9Evdvrpr9fbFFU=;
+ b=Ee8xyHoulhPpV0EIld8yJjD8JE6ffUvcWqabs7kCDgxvIAB4UDlY8C/pZHYayZXs7Tuu
+ y1OLFS4+dfyJ7NsEveM3W1pT/WCeQAHaWD750INbTR3nI/egz/LGC0d0jVP8zPtLQqbu
+ rXiP9fkU0ppv87yh2K/Z9lsXuB95zsB41Q/o2fS77g4Qj3Mf0I+AzKQAEBn+CDdJRnsH
+ 3cFCnTyRAYrkOD7XRhnoc8sXT60OvvZtISYvLuz30o1vdQYzMSfs7T8M/PzFy3rpAWdU
+ CGLOp2pdVwbNruQswwczSUL6Oio+y5zHz9IneWhN5y/DjjN1eefPRttj767/qoFSgdqL xw== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rg21t8dvx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Jun 2023 17:32:24 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35RHWNbf018968
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Jun 2023 17:32:23 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.42; Tue, 27 Jun 2023 10:32:20 -0700
+From:   Taniya Das <quic_tdas@quicinc.com>
+To:     <quic_tdas@quicinc.com>
+CC:     <agross@kernel.org>, <bjorn.andersson@linaro.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mturquette@baylibre.com>, <robh+dt@kernel.org>, <sboyd@kernel.org>
+Subject: [PATCH] dt-bindings: clock: qcom: Update my email address
+Date:   Tue, 27 Jun 2023 23:01:23 +0530
+Message-ID: <20230627173123.9221-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 17/26] ARM: dts: qcom: apq8064: add simple CPUFreq
- support
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
- <20230625202547.174647-18-dmitry.baryshkov@linaro.org>
- <0f139da8-ae01-fc28-d14c-0ea207cf760e@linaro.org>
- <2232c6e7-cbca-30c1-9ec5-1cea7f759daf@linaro.org>
- <8217b8db-cd27-185d-c6b5-e32009202c21@linaro.org>
- <CAA8EJpq8J4fQoqrt3Jdf3C_mGUQdqaNbybdPD-zhEYxmB7DTcg@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CAA8EJpq8J4fQoqrt3Jdf3C_mGUQdqaNbybdPD-zhEYxmB7DTcg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Z14I358E1hc0BZ_DsvXhY6B3pahRFt5v
+X-Proofpoint-GUID: Z14I358E1hc0BZ_DsvXhY6B3pahRFt5v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-27_11,2023-06-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=962 phishscore=0
+ adultscore=0 suspectscore=0 clxscore=1011 priorityscore=1501 mlxscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306270158
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27.06.2023 16:11, Dmitry Baryshkov wrote:
-> On Tue, 27 Jun 2023 at 15:13, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->> On 26.06.2023 21:49, Dmitry Baryshkov wrote:
->>> On 26/06/2023 19:40, Konrad Dybcio wrote:
->>>> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
->>>>> Declare CPU frequency-scaling properties. Each CPU has its own clock,
->>>>> how
->>>> however?
->>>
->>> yes
->>>
->>>>
->>>>> all CPUs have the same OPP table. Voltage scaling is not (yet)
->>>>> enabled with this patch. It will be enabled later.
->>>> Risky business.
->>>
->>> But it works :D
->> On your machine ;)
-> 
-> On two nexus-7 and one ifc6410.
-> 
->>
->> [...]
->>
->>>>>   +    kraitcc: clock-controller {
->>>>> +        compatible = "qcom,krait-cc-v1";
->>>> Are we sure we don't wanna rework this compatible? Check the comment in
->>>> drivers/clk/qcom/krait-cc.c : krait_add_sec_mux()
->>>
->>> I remember that comment. I'd rather not introduce another compat string for such old hw. Would there be any direct benefits?
->>>
->> I'd say that the one we have here never made much sense.. Perhaps (since
->> nobody used it for 10 years) it would make sense to remodel it..
-> 
-> Well we have the bindings for this driver. And also it was used by the
-> OpenWRT people, IIRC.
-> Thus I don't feel comfortable with throwing out old compat strings.
-Oh, OK
+Update my email address from the defunct codeaurora.org domain to the
+current quicinc.com domain.
 
-Konrad
-> 
->>
->> Konrad
->>>>
->>>>
->>>>> +        clocks = <&gcc PLL9>, /* hfpll0 */
->>>>> +             <&gcc PLL10>, /* hfpll1 */
->>>>> +             <&gcc PLL16>, /* hfpll2 */
->>>>> +             <&gcc PLL17>, /* hfpll3 */
->>>>> +             <&gcc PLL12>, /* hfpll_l2 */
->>>>> +             <&acc0>,
->>>>> +             <&acc1>,
->>>>> +             <&acc2>,
->>>>> +             <&acc3>,
->>>>> +             <&l2cc>;
->>>>> +        clock-names = "hfpll0",
->>>>> +                  "hfpll1",
->>>>> +                  "hfpll2",
->>>>> +                  "hfpll3",
->>>>> +                  "hfpll_l2",
->>>>> +                  "acpu0_aux",
->>>>> +                  "acpu1_aux",
->>>>> +                  "acpu2_aux",
->>>>> +                  "acpu3_aux",
->>>>> +                  "acpu_l2_aux";
->>>>> +        #clock-cells = <1>;
->>>>> +        #interconnect-cells = <1>;
->>>>> +    };
->>>>> +
->>>>>       sfpb_mutex: hwmutex {
->>>>>           compatible = "qcom,sfpb-mutex";
->>>>>           syscon = <&sfpb_wrapper_mutex 0x604 0x4>;
->>>>> @@ -933,6 +1100,9 @@ qfprom: qfprom@700000 {
->>>>>               #address-cells = <1>;
->>>>>               #size-cells = <1>;
->>>>>               ranges;
->>>>> +            speedbin_efuse: speedbin@c0 {
->>>>> +                reg = <0x0c0 0x4>;
->>>>> +            };
->>>> Newline between properties and subnodes & between individual subnodes,
->>>> please
->>>
->>> ack.
->>>
->>>>
->>>> Konrad
->>>>>               tsens_calib: calib@404 {
->>>>>                   reg = <0x404 0x10>;
->>>>>               };
->>>
-> 
-> 
-> 
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+ Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml   | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml   | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml   | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml   | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml   | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml   | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml     | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gcc.yaml           | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,gpucc.yaml         | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,mmcc.yaml          | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml        | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml  | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml | 2 +-
+ .../devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml      | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml    | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml  | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml | 2 +-
+ .../devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml          | 2 +-
+ .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml      | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml | 2 +-
+ Documentation/devicetree/bindings/clock/qcom,videocc.yaml       | 2 +-
+ 28 files changed, 28 insertions(+), 28 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+index 09cd7a786871..19211176ee0b 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on APQ8064/MSM8960
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
+index 6ebaef2288fa..fb3957d485f9 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq4019.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on IPQ4019
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+   - Robert Marko <robert.markoo@sartura.hr>
+
+ description: |
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+index deef398a9872..52e7831a8d6d 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on IPQ8074
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+index d2186e25f55f..62d6f1fe1228 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8976.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on MSM8976
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
+index f77036ace31b..97523cc1ecfb 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on MSM8996
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module which provides the clocks, resets and
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
+index 3c9729050d6f..58f7fb22c5c4 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on MSM8998
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+index ae01e7749534..f65fdd72f4d8 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-other.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
+index b2256f81b265..7bc6c57e4d11 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on QCS404
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
+index 06dce0c6b7d0..24c7aa215cbb 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on SC7180
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
+index 947b47168cec..26150d5ca659 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7280.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Global Clock & Reset Controller on SC7280
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+index 68e1b7822fe0..0595da0e8a42 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sdm845.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on SDM670 and SDM845
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
+index 3ea0ff37a4cb..58ccb7df847c 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on SM8150
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+index b752542ee20c..27e60e50e791 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller on SM8250
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm global clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+index 7129fbcf2b6c..788825105f24 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Global Clock & Reset Controller Common Properties
+
+ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Common bindings for Qualcomm global clock control module providing the
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+index 1e3dc9deded9..e0af5f014d09 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Graphics Clock & Reset Controller
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm graphics clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index acf0c923c24f..d2ae73be64ed 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -8,7 +8,7 @@ title: Qualcomm Multimedia Clock & Reset Controller
+
+ maintainers:
+   - Jeffrey Hugo <quic_jhugo@quicinc.com>
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm multimedia clock control module provides the clocks, resets and
+diff --git a/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
+index 2d8897991663..7b271ae210a3 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Graphics Clock & Reset Controller on MSM8998
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm graphics clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index d5a250b7c2af..26ce005dcadf 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Technologies, Inc. RPMh Clocks
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Resource Power Manager Hardened (RPMh) manages shared resources on
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
+index 098c8acf4bad..2dfc2a4f1918 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-camcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Camera Clock & Reset Controller on SC7180
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm camera clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
+index 95ad16d0abc3..1c9ce300a435 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Display Clock & Reset Controller on SC7180
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm display clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
+index f297694ef8b8..fdfb389083c1 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm LPASS Core Clock Controller on SC7180
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm LPASS core clock control module provides the clocks and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
+index 1e856a8a996e..873a2f918bac 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Modem Clock Controller on SC7180
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm modem clock control module provides the clocks on SC7180.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
+index b60adbad4590..01feef1cab0a 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-camcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Camera Clock & Reset Controller on SC7280
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm camera clock control module provides the clocks, resets and
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
+index cfe6594a0a6b..c42b0ef61385 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-dispcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Display Clock & Reset Controller on SC7280
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm display clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+index 97c6bd96e0cb..f44c5c130d2d 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm LPASS Core Clock Controller on SC7280
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm LPASS core clock control module provides the clocks and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+index 447cdc447a0c..deee5423d66e 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm LPASS Core & Audio Clock Controller on SC7280
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm LPASS core and audio clock control module provides the clocks and
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+index 76b53ce64e40..719844d7ea11 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Display Clock & Reset Controller on SDM845
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm display clock control module provides the clocks, resets and power
+diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+index 2b07146161b4..2dfea9558733 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Qualcomm Video Clock & Reset Controller
+
+ maintainers:
+-  - Taniya Das <tdas@codeaurora.org>
++  - Taniya Das <quic_tdas@quicinc.com>
+
+ description: |
+   Qualcomm video clock control module provides the clocks, resets and power
+--
+2.17.1
+
