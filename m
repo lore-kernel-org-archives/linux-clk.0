@@ -2,120 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFF2EB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 05:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563BEEB64D9
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 05:50:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbjF0FnL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 01:43:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49772 "EHLO
+        id S229681AbjF0FuZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 01:50:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbjF0FnJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 01:43:09 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C455610FE;
-        Mon, 26 Jun 2023 22:43:08 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id d75a77b69052e-4008b90d2f9so36485371cf.2;
-        Mon, 26 Jun 2023 22:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687844588; x=1690436588;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DKo4W7yeVNu1/C75Wi6h0MFNDHB4xFJdmLBXdnRsVKo=;
-        b=RyRXq14W4/8lRHOCke/kDWvwcUpR/VkJS8e5oOB4Gl5EswXMKT93tcDlED1l+RLIGc
-         ZI+ogkEOu33E2WrqVUrBYGo3s1HHjWNEkrhG4aprg1gPhHgSK/uggsYFZCiqWn0vdvIC
-         bbCOuGS4VVDwLDexyZO2Jddxwh3u5eB04ixQqkSiOlUyS3FE/ws0OQX9QMH9hMznYcSD
-         n+muYefqFKOTgGuTZmVpfVgC6/1XIiaAtUh4bcRy3VXYD00LSAQDXwlheSDYN6CADP2F
-         eYnjpom+0IbA9ruXfgfMgcTtrVKSOfciyEJqy2apGSjPYkfxh5YeEDIuzRdxdmhhb0L/
-         frig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687844588; x=1690436588;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DKo4W7yeVNu1/C75Wi6h0MFNDHB4xFJdmLBXdnRsVKo=;
-        b=HFUQqlawlODkKQnUSHx0VrkNV8IsvfC0EK1HboSvOLGLv6sNI74tiy9eqn8vGys8uo
-         WKoE3jFwCGWlBE86eUaN/0wKrAWhFwut93NQa4m5hXvWAEv9G00JkJX19SlzqhfyiRiu
-         6t/CZY3SDkQ0yY0QUvn2eSoDjfvWfpyyvyAfOxlQIcHIWAkMGZQJe2w8i+TMfYx//AIe
-         857bS16cdReWhYdEiuAbsKVuhe8TbRhwZDQvSrj8HNmAVvAAke7CZhhqQBMdg5deuDiF
-         hma6avYLIRrGm5veXBUrDkyLxIcHAKKWq4ZygDniCWqa0ZQv4Y0LBRqBWJjU1NVopUQk
-         dcfg==
-X-Gm-Message-State: AC+VfDyXyMUSKQtsCaF50zqZRKe08ME8kztFh4jDvICy/SMM3LQqZdJP
-        YbcuYhjuxvTUg6dzE6Ds8MM=
-X-Google-Smtp-Source: ACHHUZ5avhtwTCxoBLwAvnHkv2/ud6DupY9bk0Y8ddk25e+Brsx8E//Abj/lVUnxyL/g2ex0hIiGcg==
-X-Received: by 2002:a05:622a:4cc:b0:3fd:e9cc:79d1 with SMTP id q12-20020a05622a04cc00b003fde9cc79d1mr29922201qtx.56.1687844587776;
-        Mon, 26 Jun 2023 22:43:07 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id j3-20020a635943000000b00553b546a638sm4932709pgm.67.2023.06.26.22.43.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Jun 2023 22:43:07 -0700 (PDT)
-Message-ID: <32ae28ae-ef53-092e-6fb4-5f95fc306dde@gmail.com>
-Date:   Tue, 27 Jun 2023 13:43:03 +0800
+        with ESMTP id S229562AbjF0FuY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 01:50:24 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515E519A2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Jun 2023 22:50:23 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qE1ak-0006z0-7r; Tue, 27 Jun 2023 07:50:18 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qE1ai-00ANCf-8q; Tue, 27 Jun 2023 07:50:16 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qE1ah-0009ps-Ed; Tue, 27 Jun 2023 07:50:15 +0200
+Date:   Tue, 27 Jun 2023 07:50:15 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Peng Fan <peng.fan@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Linux Kernel Functional Testing <lkft@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Abel Vesa <abelvesa@kernel.org>
+Subject: Re: [PATCH] clk: imx: Drop inclusion of unused header
+ <soc/imx/timer.h>
+Message-ID: <20230627055015.z37tqywbwykb6erp@pengutronix.de>
+References: <20230623071948.3254789-1-arnd@kernel.org>
+ <3a843f15dda68375870c622869836e5c.sboyd@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v3 3/3] clk: nuvoton: Use clk_parent_data instead of
- string for parent clock
-To:     Stephen Boyd <sboyd@kernel.org>, arnd@arndb.de,
-        gregkh@linuxfoundation.org, mturquette@baylibre.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, soc@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, schung@nuvoton.com,
-        Jacky Huang <ychuang3@nuvoton.com>
-References: <20230622141343.13595-1-ychuang570808@gmail.com>
- <20230622141343.13595-4-ychuang570808@gmail.com>
- <be147a766979642ac518710e6ff99a11.sboyd@kernel.org>
-Content-Language: en-US
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <be147a766979642ac518710e6ff99a11.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oawwlp5mnvgmgmlb"
+Content-Disposition: inline
+In-Reply-To: <3a843f15dda68375870c622869836e5c.sboyd@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--oawwlp5mnvgmgmlb
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2023/6/27 上午 12:09, Stephen Boyd wrote:
-> Quoting Jacky Huang (2023-06-22 07:13:43)
->> From: Jacky Huang <ychuang3@nuvoton.com>
->>
->> For the declaration of parent clocks, use struct clk_parent_data instead
->> of a string. Due to the change in the passed arguments, replace the usage
->> of devm_clk_hw_register_mux() with clk_hw_register_mux_parent_data() for
->> all cases.
->>
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
->> ---
->>   drivers/clk/nuvoton/clk-ma35d1.c | 306 ++++++++++++++++++++++---------
->>   1 file changed, 219 insertions(+), 87 deletions(-)
->>
->> diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
->> index 733750dda0f4..f1fe7edd21b5 100644
->> --- a/drivers/clk/nuvoton/clk-ma35d1.c
->> +++ b/drivers/clk/nuvoton/clk-ma35d1.c
->> @@ -63,167 +63,298 @@ static DEFINE_SPINLOCK(ma35d1_lock);
->>   #define PLL_MODE_SS             2
->>   
->>   static const struct clk_parent_data ca35clk_sel_clks[] = {
->> -       { .index = 0 },  /* HXT */
->> -       { .index = 1 },  /* CAPLL */
->> -       { .index = 2 }   /* DDRPLL */
->> +       { .fw_name = "hxt", },
->> +       { .fw_name = "capll", },
->> +       { .fw_name = "ddrpll", },
-> Is there any reason why this changed from numbers to strings? It is
-> faster to directly index vs. access the clock-names property. The
-> preference is to use the index field and only use fw_name if we're
-> migrating legacy clk drivers to use DT based lookups.
+Hello,
 
-This is simply because I think strings are more readable than numbers.
-Since using an index is the preferred method, I will change all occurrences
-of ".fw_name" to ".index" and add comments to describe it.
-As this patch was applied, I will create another patch relative to this one.
+On Mon, Jun 26, 2023 at 04:44:00PM -0700, Stephen Boyd wrote:
+> Quoting Arnd Bergmann (2023-06-23 00:19:19)
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >=20
+> > After removing this header in the clocksource tree, the clk drivers no
+> > longer build:
+> >=20
+> > drivers/clk/imx/clk-imx1.c:13:10: fatal error: 'soc/imx/timer.h' file n=
+ot found
+> > drivers/clk/imx/clk-imx27.c:11:10: fatal error: 'soc/imx/timer.h' file =
+not found
+> >=20
+> > This patch was originally posted as part of a three-patch series, but o=
+nly
+> > patches 1 and 3 got applied.
+> >=20
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > Fixes: 9e9d7570485d7 ("clocksource/drivers/imx-gpt: Fold <soc/imx/timer=
+=2Eh> into its only user")
+> > Link: https://lore.kernel.org/all/20230328100531.879485-2-u.kleine-koen=
+ig@pengutronix.de/
+> > Signed-off-by: "Uwe Kleine-K=F6nig" <u.kleine-koenig@pengutronix.de>
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > ---
+>=20
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
+Just for the record, the original patch is already in
 
-Best Regards,
-Jacky Huang
+	https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
 
+as 011da162da2f915989a571b557867f7eea699000.
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--oawwlp5mnvgmgmlb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmSaeJYACgkQj4D7WH0S
+/k7xbQf/W45axEIXoDFnjWO3e7TYO/k6XChVN0LePYVfneRIcr3+XqjHIuBz3Nrg
+cAyTBo4276hr8In3dFw3rORyd4ZGFyo5N5kG50JnQFQ7zEy1VH+iOyW+2v3F6xtQ
+0SMiZt1SW3bkmG5InhlYdL3O02iLYDaqcPiwS7HVad2w2KlzGrc8UeVXXi3l/Ujo
+pGPu+0buShD7rFzWI7eIzAbLtvzWF1DhyrkEQLmnNyi61VSrBR832bvKTd7n4qeG
+f5QH9vrC60PIm1yHxrGa1XchSWwalPQBR35WgBBIHLnaCvPzXN1smi7tHRUAXTIs
+C/tl4fuDODyO54lkzPL8cu0hQlP1eg==
+=cYCp
+-----END PGP SIGNATURE-----
+
+--oawwlp5mnvgmgmlb--
