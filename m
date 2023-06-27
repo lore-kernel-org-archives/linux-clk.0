@@ -2,32 +2,31 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D72DC001E0
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3076C0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 20:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231267AbjF0UPR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 16:15:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36024 "EHLO
+        id S231519AbjF0UPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 16:15:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231372AbjF0UOw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 16:14:52 -0400
-Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [5.144.164.166])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3532D6D;
-        Tue, 27 Jun 2023 13:14:43 -0700 (PDT)
+        with ESMTP id S231267AbjF0UOq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 16:14:46 -0400
+Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [5.144.164.168])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A6C2700
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 13:14:41 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 5BF813F788;
-        Tue, 27 Jun 2023 22:14:41 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id A7DB33F751;
+        Tue, 27 Jun 2023 22:14:38 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Tue, 27 Jun 2023 22:14:30 +0200
-Subject: [PATCH v2 15/15] arm64: dts: qcom: sm6125-seine: Configure MDSS,
- DSI and panel
+Date:   Tue, 27 Jun 2023 22:14:28 +0200
+Subject: [PATCH v2 13/15] arm64: dts: qcom: sm6125: Add dispcc node
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230627-sm6125-dpu-v2-15-03e430a2078c@somainline.org>
+Message-Id: <20230627-sm6125-dpu-v2-13-03e430a2078c@somainline.org>
 References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
 In-Reply-To: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -62,91 +61,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enable MDSS and DSI, and configure the Samsung SOFEF01-M ams597ut01
-6.0" 1080x2520 panel.
+Enable and configure the dispcc node on SM6125 for consumption by MDSS
+later on.
 
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- .../dts/qcom/sm6125-sony-xperia-seine-pdx201.dts   | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ arch/arm64/boot/dts/qcom/sm6125.dtsi | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts b/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
-index 9f8a9ef398a2..08d96d05da2e 100644
---- a/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
-+++ b/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
-@@ -179,6 +179,43 @@ &i2c3 {
- 	/* Cirrus Logic CS35L41 boosted audio amplifier @ 40 */
- };
+diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+index edb03508dba3..a5cc0d43d2d9 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2021, Martin Botka <martin.botka@somainline.org>
+  */
  
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dsi0 {
-+	vdda-supply = <&pm6125_l18>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "samsung,sofef01-m-ams597ut01";
-+		reg = <0>;
-+
-+		reset-gpios = <&tlmm 90 GPIO_ACTIVE_LOW>;
-+
-+		vddio-supply = <&pm6125_l12>;
-+
-+		pinctrl-0 = <&mdss_dsi_active &mdss_te_active_sleep>;
-+		pinctrl-1 = <&mdss_dsi_sleep &mdss_te_active_sleep>;
-+		pinctrl-names = "default", "sleep";
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&mdss_dsi0_out>;
-+			};
++#include <dt-bindings/clock/qcom,dispcc-sm6125.h>
+ #include <dt-bindings/clock/qcom,gcc-sm6125.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/dma/qcom-gpi.h>
+@@ -1203,6 +1204,30 @@ sram@4690000 {
+ 			reg = <0x04690000 0x10000>;
+ 		};
+ 
++		dispcc: clock-controller@5f00000 {
++			compatible = "qcom,sm6125-dispcc";
++			reg = <0x05f00000 0x20000>;
++			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <&gcc GCC_DISP_AHB_CLK>,
++				 <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>;
++			clock-names = "bi_tcxo",
++				      "dsi0_phy_pll_out_byteclk",
++				      "dsi0_phy_pll_out_dsiclk",
++				      "dsi1_phy_pll_out_dsiclk",
++				      "dp_phy_pll_link_clk",
++				      "dp_phy_pll_vco_div_clk",
++				      "cfg_ahb_clk",
++				      "gcc_disp_gpll0_div_clk_src";
++			power-domains = <&rpmpd SM6125_VDDCX>;
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
 +		};
-+	};
-+};
 +
-+&mdss_dsi0_out {
-+	remote-endpoint = <&panel_in>;
-+	data-lanes = <0 1 2 3>;
-+};
-+
-+&mdss_dsi0_phy {
-+	status = "okay";
-+};
-+
- &pm6125_adc {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&camera_flash_therm &emmc_ufs_therm &rf_pa1_therm>;
-@@ -469,6 +506,28 @@ vol_down_n: vol-down-n-state {
- 		drive-strength = <2>;
- 		bias-disable;
- 	};
-+
-+	mdss_te_active_sleep: mdss-te-active-sleep-state {
-+		pins = "gpio89";
-+		function = "mdp_vsync";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
-+	mdss_dsi_active: mdss-dsi-active-state {
-+		pins = "gpio90";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-disable;
-+	};
-+
-+	mdss_dsi_sleep: mdss-dsi-sleep-state {
-+		pins = "gpio90";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
- };
- 
- &usb3 {
+ 		apps_smmu: iommu@c600000 {
+ 			compatible = "qcom,sm6125-smmu-500", "qcom,smmu-500", "arm,mmu-500";
+ 			reg = <0x0c600000 0x80000>;
 
 -- 
 2.41.0
