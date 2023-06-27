@@ -2,61 +2,28 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27054EB64DD
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 08:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 597B5EB64DD
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Jun 2023 09:02:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230030AbjF0ItN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Jun 2023 04:49:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49764 "EHLO
+        id S230413AbjF0JCk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Jun 2023 05:02:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231469AbjF0ItM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 04:49:12 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55865132
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 01:49:10 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4f4b2bc1565so5860342e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 01:49:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1687855748; x=1690447748;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TomAZ7O1EcBP8WsIDD1uG9Qcrmlg/XdNsRiguOyzx/0=;
-        b=RN9aLjViLhcUH7KdpEXWJIAnR1KYFcbSesBCdFKTJhwVucsZLjDKnrhZjy/zoNoikP
-         ZyjER8DVaECxXuqaOsf+/BAdzpowTouasRQCLrMrMn6jfQe4A0oeU1FGKN+oGbahWaQa
-         Cki7OuUbEM4mJScX9zc/TCTrJqDpPaA0AU1u3yl/jmwzOLQfNQm+oKWIT4z5OF6PVs4M
-         /ED2ykvHh4Z4alap67p2FI/AfvJvJeobLVb+XzBZTb+iz1/zW5qlJRm3huUcg+k8/Kyo
-         JKORQVbwQmknHFwpef92HI2XluXPrcIKuBxe5/KO5z0x6cGyONu1pEUOz4I5onG0hHUP
-         /lPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687855748; x=1690447748;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TomAZ7O1EcBP8WsIDD1uG9Qcrmlg/XdNsRiguOyzx/0=;
-        b=GnASraxW0+KmZ7EOMe0QYK/+Q6fKDgJM4tRXVwzlGrAaCfJgl8rDz2lwj2+QQbSWCr
-         +0t+9Bmu5cs1/3eim61BfB6q5X6Mu4xGq0tdxUi3I9W2Cmi0WWojbGchBzxTHTEC8ncy
-         ZFxmxxAKJKyow0fBaACPo764OBwsRUiG1yzeh8XEWwwEfxrk6QAv/2tHhZwcBZI2RgMu
-         wG78W9Prmlvt81mlZ6hGYdeyx/6f8PDbRfNf7138OPJwKKW3y4Ccye1OjmxBdQ118nj9
-         /75QMzSLItO77LFWLr1XEaqyVpJLcbdrtpvtpKMV4tzJ3ZOUeLnZ1vBPCHCnW2QSD2Y3
-         pFZw==
-X-Gm-Message-State: AC+VfDwzAitt+asQFAW5zssbZJoTcMO6+uylFyb3KdeRsyInYQjItXAe
-        JX3aHwF/FyVr4mghaXvnF8rp0A==
-X-Google-Smtp-Source: ACHHUZ7IDr8oibNYTHFk7o1dd1/ahrycgoOYSLclnkdUlcbGQzlTG4kCoZs3kPIK9DLExdcuVbuhJg==
-X-Received: by 2002:a19:e044:0:b0:4f8:7754:62e1 with SMTP id g4-20020a19e044000000b004f8775462e1mr13177206lfj.40.1687855748412;
-        Tue, 27 Jun 2023 01:49:08 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id r1-20020a19ac41000000b004f82c820245sm1419563lfc.107.2023.06.27.01.49.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Jun 2023 01:49:07 -0700 (PDT)
-Message-ID: <9ba8e5c9-642d-a09d-7e82-adba8e5497aa@linaro.org>
-Date:   Tue, 27 Jun 2023 11:49:07 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 09/15] drm/msm/mdss: Add SM6125 support
-Content-Language: en-GB
-To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        with ESMTP id S230169AbjF0JCj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Jun 2023 05:02:39 -0400
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [5.144.164.166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4390910CC
+        for <linux-clk@vger.kernel.org>; Tue, 27 Jun 2023 02:02:36 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id C0A7A3F792;
+        Tue, 27 Jun 2023 11:02:28 +0200 (CEST)
+Date:   Tue, 27 Jun 2023 11:02:27 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -66,13 +33,13 @@ To:     Marijn Suijten <marijn.suijten@somainline.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Clark <robdclark@gmail.com>,
         Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Martin Botka <martin.botka@somainline.org>,
         Jami Kettunen <jami.kettunen@somainline.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
@@ -80,63 +47,61 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <20230624-sm6125-dpu-v1-9-1d5a638cebf2@somainline.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230624-sm6125-dpu-v1-9-1d5a638cebf2@somainline.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 03/15] dt-bindings: clock: qcom,dispcc-sm6125: Require
+ GCC PLL0 DIV clock
+Message-ID: <makhh4ebdmoa5f6r4mbx4g2v2cpcsi74wqf3622dxuli4w7tb6@els2rvqcnvgz>
+References: <52c57cab-10cf-2e7e-2c1d-fa6506786d45@linaro.org>
+ <jmtjuya4c423rmdlo4ubvvqndbxvgapal5otjqnejdpdd25izp@kewbjmqdu2xs>
+ <6311f26f-79ee-c471-649f-5e0b4629cfcc@linaro.org>
+ <uuy5prkjhhs66te7h6z3pu4lzj2cfbiqk6ftjijwoeqpw573av@ogs6cboanvzc>
+ <ziykmixskqkgheigefvyo4q3katbc4uix6jtcg7mncs25z4tj5@5gykrfgns4bm>
+ <16731023-7dc7-d43d-1b16-fda44c0948ed@linaro.org>
+ <yofju7jp7vmv33x7dzvzoelpumfsz3fjqy2ozakfphsuysunon@pglt2wzlsjex>
+ <683a6f7e-bf1a-aff2-070b-472fb14e0353@linaro.org>
+ <3nnk4xvmpnum2q6g6c6crjlqq3ra7j2z5zis53xcqbvevymuhz@mkffvs45n6ut>
+ <145ab255-b3f8-1c6c-824d-5f1b40568d30@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <145ab255-b3f8-1c6c-824d-5f1b40568d30@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/06/2023 03:41, Marijn Suijten wrote:
-> SM6125's UBWC hardware decoder is version 3.0, and supports decoding
-> UBWC 1.0.
-
-I think it's UBWC encoder version, see 
-https://git.codelinaro.org/clo/la/platform/vendor/opensource/display-drivers/-/blob/display-kernel.lnx.5.15.1.r17-rel/msm/sde/sde_hw_top.c?ref_type=heads#L357
-
-This is a part of 
-https://patchwork.freedesktop.org/patch/538279/?series=118074&rev=1
-
-(no, you don't have to rebase on that patchset, it is not reviewed yet).
-
+On 2023-06-27 10:21:12, Krzysztof Kozlowski wrote:
+> On 27/06/2023 09:49, Marijn Suijten wrote:
+> > On 2023-06-27 09:29:53, Krzysztof Kozlowski wrote:
+> >> On 27/06/2023 08:54, Marijn Suijten wrote:
+> >>> On 2023-06-27 08:24:41, Krzysztof Kozlowski wrote:
+> >>>> On 26/06/2023 20:53, Marijn Suijten wrote:
+> >>>>> On 2023-06-26 20:51:38, Marijn Suijten wrote:
+> >>>>> <snip>
+> >>>>>>> Not really, binding also defines the list of clocks - their order and
+> >>>>>>> specific entries. This changes.
+> >>>>>>
+> >>>>>> And so it does in "dt-bindings: clock: qcom,dispcc-sm6125: Remove unused
+> >>>>>> GCC_DISP_AHB_CLK"?
+> >>>>>
+> >>>>> Never mind: it is the last item so the order of the other items doesn't
+> >>>>> change.  The total number of items decreases though, which sounds like
+> >>>>> an ABI-break too?
+> >>>>
+> >>>> How does it break? Old DTS works exactly the same, doesn't it?
+> >>>
+> >>> So deleting a new item at the end does not matter.  But what if I respin
+> >>> this patch to add the new clock _at the end_, which will then be at the
+> >>> same index as the previous GCC_DISP_AHB_CLK?
+> >>
+> >> I think you know the answer, right? What do you want to prove? That two
+> >> independent changes can have together negative effect? We know this.
+> > 
+> > The question is whether this is allowed?
 > 
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> ---
->   drivers/gpu/drm/msm/msm_mdss.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-> index 05648c910c68..bf68bae23264 100644
-> --- a/drivers/gpu/drm/msm/msm_mdss.c
-> +++ b/drivers/gpu/drm/msm/msm_mdss.c
-> @@ -559,6 +559,13 @@ static const struct msm_mdss_data sm6115_data = {
->   	.ubwc_static = 0x11f,
->   };
->   
-> +static const struct msm_mdss_data sm6125_data = {
-> +	.ubwc_version = UBWC_1_0,
-> +	.ubwc_dec_version = UBWC_3_0,
-> +	.ubwc_swizzle = 1,
-> +	.highest_bank_bit = 1,
-> +};
-> +
->   static const struct msm_mdss_data sm8250_data = {
->   	.ubwc_version = UBWC_4_0,
->   	.ubwc_dec_version = UBWC_4_0,
-> @@ -579,6 +586,7 @@ static const struct of_device_id mdss_dt_match[] = {
->   	{ .compatible = "qcom,sc8180x-mdss", .data = &sc8180x_data },
->   	{ .compatible = "qcom,sc8280xp-mdss", .data = &sc8280xp_data },
->   	{ .compatible = "qcom,sm6115-mdss", .data = &sm6115_data },
-> +	{ .compatible = "qcom,sm6125-mdss", .data = &sm6125_data },
->   	{ .compatible = "qcom,sm6350-mdss", .data = &sm6350_data },
->   	{ .compatible = "qcom,sm6375-mdss", .data = &sm6350_data },
->   	{ .compatible = "qcom,sm8150-mdss", .data = &sm8150_data },
-> 
+> That would be an ABI break and I already explained if it is or is not
+> allowed.
 
--- 
-With best wishes
-Dmitry
+How should we solve it then, if we cannot remove GCC_DISP_AHB_CLK in one
+patch and add GCC_DISP_GPLL0_DIV_CLK_SRC **at the end** in the next
+patch?  Keep an empty spot at the original index of GCC_DISP_AHB_CLK?
 
+- Marijn
