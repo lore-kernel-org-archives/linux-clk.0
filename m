@@ -2,62 +2,63 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFB5EB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 14:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C750EB64DC
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 14:28:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230363AbjF1OXs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 10:23:48 -0400
-Received: from mx2.sberdevices.ru ([45.89.224.132]:54653 "EHLO
+        id S229982AbjF1O2U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 10:28:20 -0400
+Received: from mx2.sberdevices.ru ([45.89.224.132]:25117 "EHLO
         mx1.sberdevices.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231236AbjF1OXX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 10:23:23 -0400
+        with ESMTP id S229487AbjF1O2S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 10:28:18 -0400
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id 7F15112001B;
-        Wed, 28 Jun 2023 17:23:06 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7F15112001B
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 8EB3A12001A;
+        Wed, 28 Jun 2023 17:28:01 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8EB3A12001A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1687962186;
-        bh=Tv9CtTxw2JKJilL1q5p5p8VeT0w+UW8IFg0I9fdWF8M=;
+        s=mail; t=1687962481;
+        bh=vHb1I+eeL4dIRqb6WnplQbJGzMM2hmPjqcCXHrotSL0=;
         h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-        b=LVWbl87nYqaExJtjTCAaPNVQyp5eo3g1SzIU6ihFZn0+cWiEWSFm/SfiB79VCv0kB
-         58HxGcNPjq6KC7ElUcj2wEzrIU2Xw+TtlK47TsDafoKlWvq4A/YLiWUDV56QSrQvjx
-         MgwEddYDQO6K+Qu/crzXR+ZeZuzje2KCguxuSRYkSJilQLljUboOSraUnYrPirOagi
-         JGZ8Eebw0sXD8ONc+2YCVslgzm9Y769MZD2s1lCqRkrPqWAadEB/x1M2JjVSTuLRLt
-         cyCozAbGUPj24Y895BwyAsRa0GlsPg3t/goT3ehTj7AmzplMobvub5tK2JTxZMxsfH
-         +G0Iwxs8H0Baw==
+        b=X/CQhSzZLbvh8bKAIbnoL0Jfp+x2KCoQ1aGYHm6EcuwgBQgBOJgX5U6fUGKqwQsq3
+         ZdXzx0oQFniBSGdBLEThM74VD0xytBszrSIDOgSrsiK8v4dmV+9BbFyb3WEKUY3Iw9
+         ykeTLXI+SZdg0k6+ZTh6430l0UIueDHTC+NvD7wK7cyuwBoeu/k3TkTG/UjwZz8kqO
+         OknfRu/c1GnEdvDc9Dmlk818TCkTFEHsaYesHTvGVtHRPwbVkYEy86/QDhpTJP0rmg
+         bTJfia6aNn+gGweP5zhdf2+q5Gs/bjKfqR9b20sTy7+JYr2kA+IxluDpIMT4zY0n+U
+         gJhHacMQXJuvw==
 Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Wed, 28 Jun 2023 17:23:05 +0300 (MSK)
+        Wed, 28 Jun 2023 17:28:00 +0300 (MSK)
 Received: from localhost (100.64.160.123) by p-i-exch-sc-m01.sberdevices.ru
  (172.16.192.107) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 28 Jun
- 2023 17:22:07 +0300
-Date:   Wed, 28 Jun 2023 17:23:05 +0300
+ 2023 17:27:02 +0300
+Date:   Wed, 28 Jun 2023 17:28:00 +0300
 From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <khilman@baylibre.com>, <conor+dt@kernel.org>,
-        <kernel@sberdevices.ru>, <sdfw_system_team@sberdevices.ru>,
-        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+To:     <neil.armstrong@linaro.org>
+CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <jbrunet@baylibre.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+        <conor+dt@kernel.org>, <kernel@sberdevices.ru>,
+        <sdfw_system_team@sberdevices.ru>, <rockosov@gmail.com>,
+        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        Martin Kurbanov <mmkurbanov@sberdevices.ru>
-Subject: Re: [PATCH v1 4/6] arm64: dts: meson: a1: introduce SPI Flash
- Controller
-Message-ID: <20230628142305.74fkh6ektxhww3v7@CAB-WSD-L081021>
+        Jan Dakinevich <yvdakinevich@sberdevices.ru>
+Subject: Re: [PATCH v1 6/6] arm64: dts: meson: a1: add eMMC controller and
+ its pins
+Message-ID: <20230628142800.thhexjvk7ekhdb3m@CAB-WSD-L081021>
 References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
- <20230607201641.20982-5-ddrokosov@sberdevices.ru>
- <CAFBinCAGLerkDrz98WbpyVAV3jukkPXqDGSV0vOWY0jNiKaJvQ@mail.gmail.com>
+ <20230607201641.20982-7-ddrokosov@sberdevices.ru>
+ <CAFBinCC_g6FhzR=PNDsYwT4OZb4uAXAWYGKSe7vSX7_pWM8pNA@mail.gmail.com>
+ <41e6d93a-8899-e792-0859-d26360ef5dab@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCAGLerkDrz98WbpyVAV3jukkPXqDGSV0vOWY0jNiKaJvQ@mail.gmail.com>
+In-Reply-To: <41e6d93a-8899-e792-0859-d26360ef5dab@linaro.org>
 User-Agent: NeoMutt/20220415
 X-Originating-IP: [100.64.160.123]
 X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
@@ -82,32 +83,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Jun 25, 2023 at 11:03:21PM +0200, Martin Blumenstingl wrote:
-> On Wed, Jun 7, 2023 at 10:16 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> >
-> > From: Martin Kurbanov <mmkurbanov@sberdevices.ru>
-> >
-> > This controller can be used for spinand flash connection.
-> >
-> > Signed-off-by: Martin Kurbanov <mmkurbanov@sberdevices.ru>
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> > ---
-> >  arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> > index 63faccfc1134..0efd922ca7e1 100644
-> > --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> > +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> > @@ -199,6 +199,16 @@ gic: interrupt-controller@ff901000 {
-> >                         #address-cells = <0>;
-> >                 };
-> >
-> > +               spifc: spi@fd000400 {
-> please also sort this numerically, so it should appear before &apb
+Hello Neil,
 
-Sure, not a problem. If things have base addresses, all of them ought to
-be sorted numerically.
+Thank you for the review!
+
+On Mon, Jun 26, 2023 at 03:36:23PM +0200, neil.armstrong@linaro.org wrote:
+> Hi,
+> 
+> On 25/06/2023 23:11, Martin Blumenstingl wrote:
+> > On Wed, Jun 7, 2023 at 10:16 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
+> > > 
+> > > From: Jan Dakinevich <yvdakinevich@sberdevices.ru>
+> > > 
+> > > The definition is inspired by a similar one for AXG SoC family.
+> > > 'sdio_pins' and 'sdio_clk_gate_pins' pinctrls are supposed to be used as
+> > > "default" and "clk-gate" in board-specific device trees.
+> > Let's wait for Neil's response on the other patch for the question
+> > about pin mux settings
+> > 
+> > > 'meson-gx' driver during initialization sets clock to safe low-frequency
+> > > value (400kHz). However, both source clocks ("clkin0" and "clkin1") are
+> > > high-frequency by default, and using of eMMC's internal divider is not
+> > > enough to achieve so low values. To provide low-frequency source,
+> > > reparent "sd_emmc_sel2" clock using 'assigned-clocks' property.
+> > Even if the pinctrl part should be postponed then I think it's worth
+> > adding &sd_emmc
+> 
+> Yeah it's weird to add HW definition and to not enable them,
+> so please enable them in the board if you add them in the DTSI.
+
+Unfortunately, I'm unable to provide our internal board DTS. However, I
+have an AD401 reference board on hand, so it's possible to test
+everything there. I'll include these changes in the next version.
 
 -- 
 Thank you,
