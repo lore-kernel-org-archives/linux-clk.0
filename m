@@ -2,91 +2,244 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B81C3DA40
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 16:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B79EB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 17:34:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbjF1Q4z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 12:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41678 "EHLO
+        id S231351AbjF1ReQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 13:34:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231140AbjF1Q4y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 12:56:54 -0400
+        with ESMTP id S231481AbjF1ReL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 13:34:11 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC5413D;
-        Wed, 28 Jun 2023 09:56:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 374762102;
+        Wed, 28 Jun 2023 10:34:10 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A7C96613CA;
-        Wed, 28 Jun 2023 16:56:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C74C433C8;
-        Wed, 28 Jun 2023 16:56:50 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AD1B461440;
+        Wed, 28 Jun 2023 17:34:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C965AC433C8;
+        Wed, 28 Jun 2023 17:34:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687971412;
-        bh=qgf5FOtoDVpdjZsOaE1RhcDabfgWbVLagbas/qMccuU=;
+        s=k20201202; t=1687973649;
+        bh=eQUSJ/UXw38WGA2n3EfRxEikZsIX5IenbbmsGSo1lQ8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wvf/gUcRm2eG63dyGycFEhQe/F5vVj7bZqE7SW1PoIjqhVHZL1CXinj5z0e6Geqi7
-         MaMaIazTZEs7RVaLbWjuM7pHRIL8c+kalRFZyv2/7UZhxWu9GJ9HhnStsUVgeTfEfk
-         GT9Ncp8l+Y5GbMNyoyc1Pyapie3xqSeI6UO5D7Y9F/V8qBYrnnFQCiPiNqM12mAQuL
-         FTv9Aqt3lOPPfGntOyQzJdw/JYMB4vt+vl2XZgz3434JlqpEV0kccMehqU8bo1vXy/
-         uIuhMzh8uJeM86R68/Xaf6KTtBdjCZVWRsTklP6dq4P9bkveLrT5VbWKfrG5vqb/cY
-         xcp+iItp4wv7w==
-Date:   Wed, 28 Jun 2023 17:56:47 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     kernel test robot <lkp@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [linux-next:master 11663/12731] ERROR: modpost:
- "clk_unregister_fixed_rate" [drivers/regulator/raa215300.ko] undefined!
-Message-ID: <d9bdf8ba-ccdc-4203-a0ee-0559448fb865@sirena.org.uk>
-References: <202306282012.sPQAuAN7-lkp@intel.com>
- <OS0PR01MB5922893DE97EAAD6BAA142558624A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        b=noXT1R3GKk3Jb9Gw5xjR3GpKL3bo+mbyIHCFpq+y1u+gZj0HJJ0eJ/1bQ3Wmad95y
+         4G3MeZHex8pxEL+9c1iZL1SwFIHnAPllP577+nXiPRn/+Od7mAxiu5t5InRTmF4XAj
+         8TX3zZBTZZEonD87BKoBdUaY1QYEVrvI3CErSL9Kk6b0v/NjDFzXuGQh0biCPr6x0l
+         mfhoIxpp7D30HQFKpffAo5eRYV9LoNSZfi8rDNdeI3GLHiLGuQx9A0b3JXbNKsoskR
+         4d0OvqDspl5NWfw6y+XWDb211neWEdPyiswiZws6/2GgLo4tlgO8szncmha1k+XJwC
+         ESMlIW8u9yWMQ==
+Date:   Wed, 28 Jun 2023 18:34:03 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] dt-bindings: soc: starfive: Add StarFive syscon
+ module
+Message-ID: <20230628-affix-maverick-84a08905f05b@spud>
+References: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
+ <20230613125852.211636-3-xingyu.wu@starfivetech.com>
+ <7e2d6bfe-5687-97c5-778b-c02e9c0894af@linaro.org>
+ <a83c98ae-2f6c-00c4-5d05-fc304718e05a@starfivetech.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="s9CvWt+5KXhPjnzp"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OWsCuXQtkR2oS87D"
 Content-Disposition: inline
-In-Reply-To: <OS0PR01MB5922893DE97EAAD6BAA142558624A@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-X-Cookie: HELLO, everybody, I'm a HUMAN!!
+In-Reply-To: <a83c98ae-2f6c-00c4-5d05-fc304718e05a@starfivetech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---s9CvWt+5KXhPjnzp
+--OWsCuXQtkR2oS87D
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 28, 2023 at 03:47:19PM +0000, Biju Das wrote:
-> Hi All,
+On Wed, Jun 28, 2023 at 02:44:10PM +0800, Xingyu Wu wrote:
+> On 2023/6/14 2:31, Krzysztof Kozlowski wrote:
+> > On 13/06/2023 14:58, Xingyu Wu wrote:
+> >> From: William Qiu <william.qiu@starfivetech.com>
+> >>=20
+> >> Add documentation to describe StarFive System Controller Registers.
+> >>=20
+> >> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> >> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> >> ---
+> >>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 62 +++++++++++++++++++
+> >>  MAINTAINERS                                   |  7 +++
+> >>  2 files changed, 69 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/soc/starfive/sta=
+rfive,jh7110-syscon.yaml
+> >>=20
+> >> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,j=
+h7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive=
+,jh7110-syscon.yaml
+> >> new file mode 100644
+> >> index 000000000000..a81190f8a54d
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-s=
+yscon.yaml
+> >> @@ -0,0 +1,62 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-sysco=
+n.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: StarFive JH7110 SoC system controller
+> >> +
+> >> +maintainers:
+> >> +  - William Qiu <william.qiu@starfivetech.com>
+> >> +
+> >> +description: |
+> >> +  The StarFive JH7110 SoC system controller provides register informa=
+tion such
+> >> +  as offset, mask and shift to configure related modules such as MMC =
+and PCIe.
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    oneOf:
+> >> +      - items:
+> >> +          - const: starfive,jh7110-sys-syscon
+> >> +          - const: syscon
+> >> +          - const: simple-mfd
+> >> +      - items:
+> >> +          - enum:
+> >> +              - starfive,jh7110-aon-syscon
+> >> +              - starfive,jh7110-stg-syscon
+> >> +          - const: syscon
+> >> +
+> >> +  reg:
+> >> +    maxItems: 1
+> >> +
+> >> +  clock-controller:
+> >> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+> >> +    type: object
+> >> +
+> >> +  "#power-domain-cells":
+> >> +    const: 1
+> >> +
+> >> +required:
+> >> +  - compatible
+> >> +  - reg
+> >> +
+> >> +allOf:
+> >> +  - if:
+> >> +      properties:
+> >> +        compatible:
+> >> +          contains:
+> >> +            const: starfive,jh7110-aon-syscon
+> >> +    then:
+> >> +      required:
+> >> +        - "#power-domain-cells"
+> >=20
+> > Where did you implement the results of the discussion that only some
+> > devices can have power and clock controller?
+> >=20
+> > According to your code all of above - sys, aon and stg - have clock and
+> > power controllers. If not, then the code is not correct, so please do
+> > not respond with what is where (like you did last time) but actually
+> > implement what you say.
+> >=20
 >=20
-> I have come up with two solutions for fixing this issue.
+> Hi Krzysztof, I need to modify the code to implement it.
+> If I drop the 'clock-controller' and '"#power-domain-cells"' in properite=
+s, and change to this:
 >=20
-> Please suggest which solution, I should submit.
->=20
-> First solution allows to build the driver for m68k architecture,
-> whereas the second solution skips it.
+> --- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-sysc=
+on.yaml
+> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-sysc=
+on.yaml
+> @@ -29,28 +29,33 @@ properties:
+>    reg:
+>      maxItems: 1
+> =20
+> -  clock-controller:
+> -    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+> -    type: object
+> -
+> -  "#power-domain-cells":
+> -    const: 1
+> -
+>  required:
+>    - compatible
+>    - reg
+> =20
+>  allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: starfive,jh7110-sys-syscon
+> +    then:
+> +      properties:
+> +        clock-controller:
+> +          $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+> +          type: object
 
-Either is fine for me.
+Why do this?
+Why not define the property has you have been doing, but only allow it
+on the syscons that support it?
+See the section starting at L205 of example-schema.yaml.
 
---s9CvWt+5KXhPjnzp
+> +
+>    - if:
+>        properties:
+>          compatible:
+>            contains:
+>              const: starfive,jh7110-aon-syscon
+>      then:
+> -      required:
+> -        - "#power-domain-cells"
+> +      properties:
+> +        "#power-domain-cells":
+> +          const: 1
+> =20
+
+> -additionalProperties: false
+> +additionalProperties: true
+
+Why do you need this?
+Allowing "additionalProperties: true" sounds like you've got some prblem
+that you are trying to hide...
+
+> Would it be better to show that sys-syscon only has clock-controller and =
+aon-syscon is power controller?
+
+You should only permit the properties where they are valid, yes.
+
+Cheers,
+Conor.
+
+
+--OWsCuXQtkR2oS87D
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmScZk4ACgkQJNaLcl1U
-h9BQLwf+OpR5EwMwSQHwK+whmfuKLIAYFE94wBFef0ddW26MYs08e2Voc1FxaCz2
-MZ6OHxtyjOChKtV4uP7/aVwPtYKWjwLtgn5zJjLIPdh8suf7HueQ8w0aWgGwKUmt
-mwUmHHy3icu/riazu/RmtSCmcKqqTQ89xKfpRdkttPrOYm6pptFRejN/JWGg5dKo
-tutEzSvhcZVU5NzfCFM6euaOHgpMUHUnnZ4Fv6ZQ3FQAM2eLz5zQmyqI+iws8hQF
-BKp+deT/bJ/dxRv27Dx0Kl7w+86OnTJe2dIxuvrjYLjbYO8xmQj666rCleZ04m7u
-DFMg+vGCv/gVU9JnKNYRgfzYblICqA==
-=vZEN
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZJxvCwAKCRB4tDGHoIJi
+0tjQAP9pADun+GqeVqOgv5jm6U4HG5PohwpeIYYvSjn0hhv2RwD/f1ncpULXC5ZJ
+fMsTacgJ5ATCXknFjmdw+LoxZKge5Qg=
+=b8dO
 -----END PGP SIGNATURE-----
 
---s9CvWt+5KXhPjnzp--
+--OWsCuXQtkR2oS87D--
