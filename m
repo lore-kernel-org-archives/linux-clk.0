@@ -2,244 +2,143 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B79EB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 17:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46236EB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 18:33:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231351AbjF1ReQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 13:34:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
+        id S230496AbjF1Sdn convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 14:33:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231481AbjF1ReL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 13:34:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 374762102;
-        Wed, 28 Jun 2023 10:34:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AD1B461440;
-        Wed, 28 Jun 2023 17:34:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C965AC433C8;
-        Wed, 28 Jun 2023 17:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687973649;
-        bh=eQUSJ/UXw38WGA2n3EfRxEikZsIX5IenbbmsGSo1lQ8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=noXT1R3GKk3Jb9Gw5xjR3GpKL3bo+mbyIHCFpq+y1u+gZj0HJJ0eJ/1bQ3Wmad95y
-         4G3MeZHex8pxEL+9c1iZL1SwFIHnAPllP577+nXiPRn/+Od7mAxiu5t5InRTmF4XAj
-         8TX3zZBTZZEonD87BKoBdUaY1QYEVrvI3CErSL9Kk6b0v/NjDFzXuGQh0biCPr6x0l
-         mfhoIxpp7D30HQFKpffAo5eRYV9LoNSZfi8rDNdeI3GLHiLGuQx9A0b3JXbNKsoskR
-         4d0OvqDspl5NWfw6y+XWDb211neWEdPyiswiZws6/2GgLo4tlgO8szncmha1k+XJwC
-         ESMlIW8u9yWMQ==
-Date:   Wed, 28 Jun 2023 18:34:03 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        with ESMTP id S232062AbjF1Sdj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 14:33:39 -0400
+X-Greylist: delayed 26739 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 28 Jun 2023 11:33:37 PDT
+Received: from unicorn.mansr.com (unicorn.mansr.com [IPv6:2001:8b0:ca0d:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81C1E1FCC;
+        Wed, 28 Jun 2023 11:33:37 -0700 (PDT)
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+        by unicorn.mansr.com (Postfix) with ESMTPS id 2509F15360;
+        Wed, 28 Jun 2023 19:33:35 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+        id 17DD3219FD1; Wed, 28 Jun 2023 19:33:35 +0100 (BST)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        linux-sunxi@lists.linux.dev,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v5 2/7] dt-bindings: soc: starfive: Add StarFive syscon
- module
-Message-ID: <20230628-affix-maverick-84a08905f05b@spud>
-References: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
- <20230613125852.211636-3-xingyu.wu@starfivetech.com>
- <7e2d6bfe-5687-97c5-778b-c02e9c0894af@linaro.org>
- <a83c98ae-2f6c-00c4-5d05-fc304718e05a@starfivetech.com>
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: Convert early providers to
+ platform drivers
+References: <20211119033338.25486-1-samuel@sholland.org>
+        <20211119033338.25486-4-samuel@sholland.org>
+        <yw1xedly2z3m.fsf@mansr.com>
+        <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
+        <yw1xa5wj3kvn.fsf@mansr.com>
+        <un3xm7ybsm54qf56ojhrtr6kehlmhdoavzcaqr2jfbcyg2kr6u@rdlq7nelycs2>
+Date:   Wed, 28 Jun 2023 19:33:35 +0100
+In-Reply-To: <un3xm7ybsm54qf56ojhrtr6kehlmhdoavzcaqr2jfbcyg2kr6u@rdlq7nelycs2>
+        (Maxime Ripard's message of "Wed, 28 Jun 2023 13:41:30 +0200")
+Message-ID: <yw1x352b308w.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OWsCuXQtkR2oS87D"
-Content-Disposition: inline
-In-Reply-To: <a83c98ae-2f6c-00c4-5d05-fc304718e05a@starfivetech.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Maxime Ripard <mripard@kernel.org> writes:
 
---OWsCuXQtkR2oS87D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Wed, Jun 28, 2023 at 12:07:56PM +0100, Måns Rullgård wrote:
+>> Maxime Ripard <mripard@kernel.org> writes:
+>> 
+>> > On Mon, Jun 26, 2023 at 01:21:33PM +0100, Måns Rullgård wrote:
+>> >> Samuel Holland <samuel@sholland.org> writes:
+>> >> 
+>> >> > The PRCM CCU drivers depend on clocks provided by other CCU drivers. For
+>> >> > example, the sun8i-r-ccu driver uses the "pll-periph" clock provided by
+>> >> > the SoC's main CCU.
+>> >> >
+>> >> > However, sun8i-r-ccu is an early OF clock provider, and many of the
+>> >> > main CCUs (e.g. sun50i-a64-ccu) use platform drivers. This means that
+>> >> > the consumer clocks will be orphaned until the supplier driver is bound.
+>> >> > This can be avoided by converting the remaining CCUs to use platform
+>> >> > drivers. Then fw_devlink will ensure the drivers are bound in the
+>> >> > optimal order.
+>> >> >
+>> >> > The sun5i CCU is the only one which actually needs to be an early clock
+>> >> > provider, because it provides the clock for the system timer. That one
+>> >> > is left alone.
+>> >> >
+>> >> > Signed-off-by: Samuel Holland <samuel@sholland.org>
+>> >> > ---
+>> >> >
+>> >> > (no changes since v1)
+>> >> >
+>> >> >  drivers/clk/sunxi-ng/Kconfig             | 20 ++++----
+>> >> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 58 +++++++++++++--------
+>> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 56 ++++++++++++--------
+>> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 33 ++++++++----
+>> >> >  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 40 +++++++++++----
+>> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 35 +++++++++----
+>> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 40 +++++++++++----
+>> >> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 62 ++++++++++++++--------
+>> >> >  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 65 ++++++++++++++----------
+>> >> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 57 +++++++++++++--------
+>> >> >  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 38 ++++++++++----
+>> >> >  11 files changed, 332 insertions(+), 172 deletions(-)
+>> >> 
+>> >> This broke the hstimer clocksource on A20 since it requires a clock
+>> >> provided by the sun4i ccu driver.
+>> >
+>> > The A10 is probably broken by this, but the A20 should be able to use
+>> > the arch timers just like all the other Cortex-A7-based SoCs.
+>> >
+>> > Do you have a dmesg log that could help debug why it's not working?
+>> 
+>> The A20 works as such since, as you say, it has other clocksources.
+>> However, the hstimer has become unusable.  If anyone was using, for
+>> whatever reason, it won't be working for them now.
+>> 
+>> Before this change, the kernel log used include this line:
+>> 
+>> clocksource: hstimer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 6370868154 ns
+>> 
+>> Now there is only a cryptic "Can't get timer clock" in its place.
+>> 
+>> As it is now, the hstimer driver is nothing but a waste of space.
+>> I figure it ought to be fixed one way or another.
+>
+> Yeah, definitely.
+>
+> IIRC, the situation is:
+>
+>  - A10 has just the "regular", old, timer
+>  - A10s/A13/GR8 has the A10 timer + hstimer
+>  - A20 has the A13 timers + arch timers
+>
+> We also default to the hstimer only for the A10s/A13 which aren't
+> affected by this patch series afaics.
+>
+> We also enable the HS timer for the A31, but just like the A20 it
+> doesn't use it by default, so it's probably been broken there too.
+>
+> I guess one way to fix it would be to switch the HS timer driver to a
+> lower priority than the A10 timer, so we pick that up by default instead
+> for the A10s/A13, and then convert the HS timer driver to a proper
+> platform_device driver that will be able to get its clock.
+>
+> The downside is that the A13 will lose some precision over its default
+> timer, but I don't think it's a big deal.
 
-On Wed, Jun 28, 2023 at 02:44:10PM +0800, Xingyu Wu wrote:
-> On 2023/6/14 2:31, Krzysztof Kozlowski wrote:
-> > On 13/06/2023 14:58, Xingyu Wu wrote:
-> >> From: William Qiu <william.qiu@starfivetech.com>
-> >>=20
-> >> Add documentation to describe StarFive System Controller Registers.
-> >>=20
-> >> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> >> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-> >> ---
-> >>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 62 +++++++++++++++++++
-> >>  MAINTAINERS                                   |  7 +++
-> >>  2 files changed, 69 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/soc/starfive/sta=
-rfive,jh7110-syscon.yaml
-> >>=20
-> >> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,j=
-h7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive=
-,jh7110-syscon.yaml
-> >> new file mode 100644
-> >> index 000000000000..a81190f8a54d
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-s=
-yscon.yaml
-> >> @@ -0,0 +1,62 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-sysco=
-n.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: StarFive JH7110 SoC system controller
-> >> +
-> >> +maintainers:
-> >> +  - William Qiu <william.qiu@starfivetech.com>
-> >> +
-> >> +description: |
-> >> +  The StarFive JH7110 SoC system controller provides register informa=
-tion such
-> >> +  as offset, mask and shift to configure related modules such as MMC =
-and PCIe.
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    oneOf:
-> >> +      - items:
-> >> +          - const: starfive,jh7110-sys-syscon
-> >> +          - const: syscon
-> >> +          - const: simple-mfd
-> >> +      - items:
-> >> +          - enum:
-> >> +              - starfive,jh7110-aon-syscon
-> >> +              - starfive,jh7110-stg-syscon
-> >> +          - const: syscon
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  clock-controller:
-> >> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
-> >> +    type: object
-> >> +
-> >> +  "#power-domain-cells":
-> >> +    const: 1
-> >> +
-> >> +required:
-> >> +  - compatible
-> >> +  - reg
-> >> +
-> >> +allOf:
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            const: starfive,jh7110-aon-syscon
-> >> +    then:
-> >> +      required:
-> >> +        - "#power-domain-cells"
-> >=20
-> > Where did you implement the results of the discussion that only some
-> > devices can have power and clock controller?
-> >=20
-> > According to your code all of above - sys, aon and stg - have clock and
-> > power controllers. If not, then the code is not correct, so please do
-> > not respond with what is where (like you did last time) but actually
-> > implement what you say.
-> >=20
->=20
-> Hi Krzysztof, I need to modify the code to implement it.
-> If I drop the 'clock-controller' and '"#power-domain-cells"' in properite=
-s, and change to this:
->=20
-> --- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-sysc=
-on.yaml
-> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-sysc=
-on.yaml
-> @@ -29,28 +29,33 @@ properties:
->    reg:
->      maxItems: 1
-> =20
-> -  clock-controller:
-> -    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
-> -    type: object
-> -
-> -  "#power-domain-cells":
-> -    const: 1
-> -
->  required:
->    - compatible
->    - reg
-> =20
->  allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: starfive,jh7110-sys-syscon
-> +    then:
-> +      properties:
-> +        clock-controller:
-> +          $ref: /schemas/clock/starfive,jh7110-pll.yaml#
-> +          type: object
+The options I see are converting the hstimer to a platform device or
+reverting the change to the sun4i ccu driver.
 
-Why do this?
-Why not define the property has you have been doing, but only allow it
-on the syscons that support it?
-See the section starting at L205 of example-schema.yaml.
+I don't personally have much of an opinion on this since my systems
+aren't affected.  The only reason I looked at it was that I noticed
+a new error message in the kernel logs.
 
-> +
->    - if:
->        properties:
->          compatible:
->            contains:
->              const: starfive,jh7110-aon-syscon
->      then:
-> -      required:
-> -        - "#power-domain-cells"
-> +      properties:
-> +        "#power-domain-cells":
-> +          const: 1
-> =20
-
-> -additionalProperties: false
-> +additionalProperties: true
-
-Why do you need this?
-Allowing "additionalProperties: true" sounds like you've got some prblem
-that you are trying to hide...
-
-> Would it be better to show that sys-syscon only has clock-controller and =
-aon-syscon is power controller?
-
-You should only permit the properties where they are valid, yes.
-
-Cheers,
-Conor.
-
-
---OWsCuXQtkR2oS87D
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZJxvCwAKCRB4tDGHoIJi
-0tjQAP9pADun+GqeVqOgv5jm6U4HG5PohwpeIYYvSjn0hhv2RwD/f1ncpULXC5ZJ
-fMsTacgJ5ATCXknFjmdw+LoxZKge5Qg=
-=b8dO
------END PGP SIGNATURE-----
-
---OWsCuXQtkR2oS87D--
+-- 
+Måns Rullgård
