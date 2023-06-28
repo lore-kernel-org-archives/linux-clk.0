@@ -2,31 +2,55 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D8DEB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 11:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82014EB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 11:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231424AbjF1LL3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 07:11:29 -0400
-Received: from out-49.mta0.migadu.com ([91.218.175.49]:16134 "EHLO
-        out-49.mta0.migadu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231163AbjF1LL2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 07:11:28 -0400
-Message-ID: <2e9ce197-2732-d061-b11d-4f4513af6abc@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1687950686;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=L1I/ER/w6jNuNeN1IzKuVARZ7DzIC62fE15mQqKlcKA=;
-        b=Rdepi0ljPQ2cZvn1YYGKUl4KHpRN6kkf2yTS5VgyROLqP19w683nmg9jAPJUuhyTK9RD+n
-        FSSEs43rfghN6NEQu0DbynAEjUXM97SW+nvtSu/fbL7My/4ovr5DZ3UhNU+6rL+OkX6hIT
-        Qa7packtPMeaAcIYXpWRq1A4sWVQwyc=
-Date:   Wed, 28 Jun 2023 12:11:19 +0100
-MIME-Version: 1.0
-Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        Jiri Pirko <jiri@resnulli.us>
+        id S230119AbjF1LQT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 07:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34276 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229951AbjF1LPs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 07:15:48 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B344B2943
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 04:15:45 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3f90b8ace97so74394385e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 04:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687950944; x=1690542944;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vYX8/ePECLgfWoMNpv2uZz3s+XofYXzTKNlcug8MZ0c=;
+        b=fqqAWDgaS+bOqIJSzLWZRezOltTA++pw4kHhHgds2mzu/vkKTntgTtpCB6A6nB4cX6
+         hpWgvj+S5sTJWYH0Kr+F1cT48fn2V/s+cwGaHSC58PY3OGaapWhbc+j1oQ6r2ZK9+pDU
+         L44UyEgV5MeVhwUmZF/skaDGm5Bnn4ierQ3cDH9PGgKgd7ZzXFpkdqK1cvdP/P/UGO23
+         7skNSyQMTluY4nBiLnhNfXUahZMNEBjKCRxR6um4/8HNQIF399N5KWDlvMMABmjfmhMD
+         snPh3SdISJZmZJLu9mq2okO59gqWj1+uL+N5T2cryvuANcfRdh2roIRSES3h8TprrkEd
+         /9tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687950944; x=1690542944;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vYX8/ePECLgfWoMNpv2uZz3s+XofYXzTKNlcug8MZ0c=;
+        b=S0i4qrfctlEIyt1r2Q8fqIdEi/imryfOzeLIOEb0h5/EfVt5+wXb4PWs6FGAQoQyTa
+         aJnfmQ+TGG7/rc2y346UB85WPTT5NGsm9OZKv/zyH+yNL+MVJGrcai/QxDCNravc9/lE
+         N00ySAMbYkid9NHLdtrtKSmdy3vKrFi5T22332cSN7zJNWJwpqnVinbKQqAyxJ6qT8se
+         Jl9EWw/QTmDXFpdZrJuwDuCt51dN3rcxqy8kxyRgYyfQ49f2vcWLUTB5z0kyWfiT8RJg
+         2Uz4LojalgyCuKJxXJ6wQqqfbRQKFz1vJgo/eauylT5whdeFrqfta2VBKioMsEeS3Bp8
+         sVCQ==
+X-Gm-Message-State: AC+VfDyvihF27siIHtT0YNJGPbug9ddhvJ4mxC+VFxPTxYK1kNuAx0z3
+        ytqJsmIISEY/9l3/RVaFcAkqEw==
+X-Google-Smtp-Source: ACHHUZ45owiPf7elrn+8tOw5ryHFm6Cke05JKdz0dMQUlVmsn5e6N8Sh+GX5X2BWx3ut2u/1kvQkxQ==
+X-Received: by 2002:adf:f70c:0:b0:313:f07a:af3e with SMTP id r12-20020adff70c000000b00313f07aaf3emr7222410wrp.46.1687950943971;
+        Wed, 28 Jun 2023 04:15:43 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id g9-20020a5d5549000000b00307acec258esm13205270wrw.3.2023.06.28.04.15.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jun 2023 04:15:43 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 13:15:41 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
 Cc:     "kuba@kernel.org" <kuba@kernel.org>,
         "vadfed@meta.com" <vadfed@meta.com>,
         "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
@@ -77,68 +101,55 @@ Cc:     "kuba@kernel.org" <kuba@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
         mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+Message-ID: <ZJwWXZmZe4lQ04iK@nanopsycho>
 References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
  <ZJq3a6rl6dnPMV17@nanopsycho>
  <DM6PR11MB4657084DDD7554663F86C1C19B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
- <DM6PR11MB4657A1ACB586AD9B45C7996E9B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <DM6PR11MB4657A1ACB586AD9B45C7996E9B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB4657084DDD7554663F86C1C19B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/06/2023 10:27, Kubalewski, Arkadiusz wrote:
->> From: Kubalewski, Arkadiusz
->> Sent: Wednesday, June 28, 2023 11:15 AM
+Wed, Jun 28, 2023 at 11:15:11AM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Tuesday, June 27, 2023 12:18 PM
 >>
->>> From: Jiri Pirko <jiri@resnulli.us>
->>> Sent: Tuesday, June 27, 2023 12:18 PM
->>>
->>> Fri, Jun 23, 2023 at 02:38:10PM CEST, arkadiusz.kubalewski@intel.com
->> wrote:
->>>
->>>> v8 -> v9:
->>>
->>> Could you please address all the unresolved issues from v8 and send v10?
->>> I'm not reviewing this one.
->>>
->>> Thanks!
+>>Fri, Jun 23, 2023 at 02:38:10PM CEST, arkadiusz.kubalewski@intel.com wrote:
 >>
->> Sure, will do, but first missing to-do/discuss list:
->> 1) remove mode_set as not used by any driver
->> 2) remove "no-added-value" static functions descriptions in
->>    dpll_core/dpll_netlink
->> 3) merge patches [ 03/10, 04/10, 05/10 ] into patches that are compiling
->>    after each patch apply
->> 4) remove function return values descriptions/lists
->> 5) Fix patch [05/10]:
->>    - status Supported
->>    - additional maintainers
->>    - remove callback:
->>      int (*source_pin_idx_get)(...) from `struct dpll_device_ops`
->> 6) Fix patch [08/10]: rethink ice mutex locking scheme
->> 7) Fix patch [09/10]: multiple comments on
->> https://lore.kernel.org/netdev/ZIQu+%2Fo4J0ZBspVg@nanopsycho/#t
->> 8) add PPS DPLL phase offset to the netlink get-device API
+>>>v8 -> v9:
 >>
->> Thank you!
->> Arkadiusz
-> 
-> If someone has any objections please state them now, I will work on
-> all above except 5) and 7).
-> Vadim, could you take care of those 2 points?
-> 
-Yeah, sure, I'll update 5 and 7.
-I'm not sure about 8) - do we really need this info, I believe every 
-supported DPLL device exports PTP device as well. But I'm Ok to add this 
-feature too.
+>>Could you please address all the unresolved issues from v8 and send v10?
+>>I'm not reviewing this one.
+>>
+>>Thanks!
+>
+>Sure, will do, but first missing to-do/discuss list:
+>1) remove mode_set as not used by any driver
+>2) remove "no-added-value" static functions descriptions in
+>   dpll_core/dpll_netlink
+>3) merge patches [ 03/10, 04/10, 05/10 ] into patches that are compiling
+>   after each patch apply
+>4) remove function return values descriptions/lists
+>5) Fix patch [05/10]:
+>   - status Supported
+>   - additional maintainers
+>   - remove callback:
+>     int (*source_pin_idx_get)(...) from `struct dpll_device_ops`
+>6) Fix patch [08/10]: rethink ice mutex locking scheme
+>7) Fix patch [09/10]: multiple comments on
+>https://lore.kernel.org/netdev/ZIQu+%2Fo4J0ZBspVg@nanopsycho/#t
+>8) add PPS DPLL phase offset to the netlink get-device API
+>
 
-> Thank you!
-> Arkadiusz
+You are missing removal of pin->prop.package_label = dev_name(dev); in
+ice.
 
+
+>Thank you!
+>Arkadiusz
