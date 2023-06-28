@@ -2,144 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0BEEB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 20:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DD9EB64DC
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 20:52:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230188AbjF1U2Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 16:28:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35732 "EHLO
+        id S231439AbjF1Uv7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 16:51:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbjF1U2Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 16:28:24 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD221A2;
-        Wed, 28 Jun 2023 13:28:22 -0700 (PDT)
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35SJgoqi001742;
-        Wed, 28 Jun 2023 20:28:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=TjnP3jpnMUMxwLyS7IxgsYElJNAIPiqDmCAH8VXYyFA=;
- b=UKMMRXcY45XfWbInEoUFJare+tR1zUyb5rkNHyG93pDNh4ooT3qLSMAB71TqAhEuGGrz
- gT5lDrCC/FlP2cD2cOQFnpoHJenExeucodKMrOJYZg0grRAHkNBDjcl5p2nACgmfXdE5
- 45qmbdRoaRw+bY9OyTK7CT7JkKrdONVEEfYEM+sD+WIifCPUuQ8t8kEC7AVfTgNPB9iF
- 8lXLVOczE5QtymLJvOMxJ65xoVR4CRfJKgszo+uGwlmdS+rsEccfVDQV220RdaXCiXJ8
- HzgC8wRcncGveFh0B9VuB+VlGLl3pmY2jQWx9hZuw0ZMGe+G8RQWNUmJSlrmCZRFKVj1 Hw== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rgnxr8ua7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 20:28:00 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35SKRxXx031657
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jun 2023 20:27:59 GMT
-Received: from [10.134.70.142] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.7; Wed, 28 Jun
- 2023 13:27:56 -0700
-Message-ID: <1cb2b1d0-86d4-3f8f-d4cc-73d29c454619@quicinc.com>
-Date:   Wed, 28 Jun 2023 13:27:55 -0700
+        with ESMTP id S231609AbjF1Uv5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 16:51:57 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0DDE194;
+        Wed, 28 Jun 2023 13:51:56 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-98377c5d53eso29990766b.0;
+        Wed, 28 Jun 2023 13:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20221208; t=1687985515; x=1690577515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H09su0JFKNP1Fr2cMqvDj35F61R1G5GRKDatbkayncI=;
+        b=HhKl0a8N+ZKyZOg/yyWu2wih6yNx8S4yuWQkB7m/pi8Ms3UVGXqwsDDq/4qptTm4XC
+         0Gt3AhtG2RA86n76l7v7J+F2Mzif/vKYYlQS6xNQl2VX2Uyq8JK1MtzB97bXsy7nRH0/
+         4WVbQ4GN90ugYr/aWRQEyaugh/RBNdkGj5dvj/zrDTr5La8pf1mWzUyH5MbvcrNXMjGY
+         xPbk019pAtqGRKJ0H7SGKlPeXDYyt58gVsXvmNqMRyK1OP6DeUULsKKb/9A/a5nb8ovK
+         +ANHBtNdS4FRxFomULwxZKkHyeNXhE/S+SvQAcISQs036hJGYhQwy5d7zz2wGWKWDswx
+         Dk0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687985515; x=1690577515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H09su0JFKNP1Fr2cMqvDj35F61R1G5GRKDatbkayncI=;
+        b=FWjJLpd/Sj0apHjCY1KEr92uH4HaAtcIIW7Ifi/Oz8RGNw4ihe7vENobxnBRlDwsW8
+         u7RHtQjGw4y8XcPWAIu9v1+rI2VXLC/t5TYO5NZZfUJ79CMwVvd9zRECDxl5PU3CLSDt
+         pdM8kSEy57PnL1hN0MU8rSsTZM23UZZJqgSrVddpSoZBPlpRTcEnubO4zd5VJqzCeK0L
+         bQw0kE0kjh2pNFaHajZlthKrcrL/VhbeSm8b+pTd4pDIF77GLedMoXXUu5EeZ5MLUp6o
+         oS3nxG3J/I0rGZRUAd4Sqx19QQbJ3M7MQnmX3pJbaJ9zwtvOnSOaLb9gN9zYFXcX7kv8
+         85DQ==
+X-Gm-Message-State: AC+VfDzapoZAp1sai3g9dqcJQpQwNEy2dlia2GR6BWOzwgKoI+2ZaXuh
+        vDeraoc7ICjcDJqpdZq2P5y8vNGJGYZM3SEI0OxnFPfo
+X-Google-Smtp-Source: ACHHUZ6ZHBQJxCh+FwiIqR9kqXjpG7Tcm/91+2ol36od0qJFABIuiBJMSCabSpWrShyknE0rzh7IBfR2eiQrWsFTbLE=
+X-Received: by 2002:a17:906:d542:b0:977:95f4:5cca with SMTP id
+ cr2-20020a170906d54200b0097795f45ccamr29993727ejc.54.1687985514876; Wed, 28
+ Jun 2023 13:51:54 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [Freedreno] [PATCH 06/15] dt-bindings: display/msm: sc7180-dpu:
- Describe SM6125
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        "Bjorn Andersson" <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-CC:     <devicetree@vger.kernel.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Lux Aliaga" <they@mint.lgbt>,
-        Martin Botka <martin.botka@somainline.org>,
-        <~postmarketos/upstreaming@lists.sr.ht>,
-        <freedreno@lists.freedesktop.org>, <linux-clk@vger.kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-References: <20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org>
- <20230624-sm6125-dpu-v1-6-1d5a638cebf2@somainline.org>
- <631728c5-9e4f-fa5d-e954-d4ba35f6fd19@linaro.org>
-From:   Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <631728c5-9e4f-fa5d-e954-d4ba35f6fd19@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fPaDk9QNB_nXzD0ZMgDpFTVb88rTyAjC
-X-Proofpoint-GUID: fPaDk9QNB_nXzD0ZMgDpFTVb88rTyAjC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-28_14,2023-06-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1011 impostorscore=0 mlxscore=0 spamscore=0 adultscore=0
- bulkscore=0 suspectscore=0 phishscore=0 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306280180
+References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
+ <20230607201641.20982-2-ddrokosov@sberdevices.ru> <CAFBinCAO14zcgY66UyJO9UxuCWf1N-Lsx=iYNTJL=cwXoJv__Q@mail.gmail.com>
+ <20230628141839.ea7qzotr5un6f2ij@CAB-WSD-L081021>
+In-Reply-To: <20230628141839.ea7qzotr5un6f2ij@CAB-WSD-L081021>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Wed, 28 Jun 2023 22:51:43 +0200
+Message-ID: <CAFBinCBzmYQu-+1A8MxZ+r551Jeym29fg9ErZJkftTEdL2b=-A@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] arm64: dts: meson: a1: introduce PLL and
+ Peripherals clk controllers
+To:     Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Cc:     neil.armstrong@linaro.org, jbrunet@baylibre.com,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+        conor+dt@kernel.org, kernel@sberdevices.ru,
+        sdfw_system_team@sberdevices.ru, rockosov@gmail.com,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 6/26/2023 7:04 AM, Dmitry Baryshkov wrote:
-> On 24/06/2023 03:41, Marijn Suijten wrote:
->> SM6125 is identical to SM6375 except that while downstream also defines
->> a throttle clock, its presence results in timeouts whereas SM6375
->> requires it to not observe any timeouts.
-> 
-> I see that the vendor DTS still references this clock.
-> 
-> Abhinav, Tanya, do possibly know what can be wrong here?
-> 
-
- From display side, we just enable it without any specific vote. Seeing 
-timeouts without it makes sense but not with it.
-
-I dont have experience with this family of chipsets and this clock is 
-specific to this family of chipsets.
-
-Will reach out to folks who might have a better idea about this clock 
-and update with possible suggestions.
-
-Unless ... tanya has more suggestions.
-
->>
->> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
->> ---
->>   Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml | 
->> 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git 
->> a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml 
->> b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
->> index 630b11480496..6d2ba9a1cca1 100644
->> --- a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
->> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
->> @@ -15,6 +15,7 @@ properties:
->>     compatible:
->>       enum:
->>         - qcom,sc7180-dpu
->> +      - qcom,sm6125-dpu
->>         - qcom,sm6350-dpu
->>         - qcom,sm6375-dpu
->>
-> 
+On Wed, Jun 28, 2023 at 4:18=E2=80=AFPM Dmitry Rokosov <ddrokosov@sberdevic=
+es.ru> wrote:
+[...]
+> >
+> > >                         gpio_intc: interrupt-controller@0440 {
+> > note to self: at some point we'll have to re-order &gpio_intc, but
+> > that's out of scope for this patch
+>
+> I have noticed that the 'meson-a1.dtsi' file contains unsorted items. As
+> part of the current patch series, I can re-order them to improve the dt
+> structure.
+That would be awesome!
