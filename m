@@ -2,162 +2,323 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F361EB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 14:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF7AEB64DC
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 15:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbjF1Ovz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 10:51:55 -0400
-Received: from mx2.sberdevices.ru ([45.89.224.132]:53767 "EHLO
-        mx1.sberdevices.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231977AbjF1Ov3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 10:51:29 -0400
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-        by mx1.sberdevices.ru (Postfix) with ESMTP id BA890120019;
-        Wed, 28 Jun 2023 17:51:11 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BA890120019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
-        s=mail; t=1687963871;
-        bh=ijsYqbMrBgDeL0im1rxl0SGUF7eOfc45yINo+UI8MC4=;
-        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-        b=Oe+k4MbnYaiC6F6uZRqqnKz+SRkhwtkRZ3YJ/ekh/TdOjH2aH3gBkDFjr1gETBnGC
-         fCP14LYp/96JhA6mgW2C3tbIQfEmtOgfa5a3azAY6seTm/rG8Asro4GxFlax56ZZnk
-         YM/aLipf/rrquca2rutqkoZrK3dys3RcUu8/9bCnXaOS9naoAIEEjY6SnwzsyBZAG+
-         VTZlh3nhsq4yEKTrCRd4gW/q6O9VMSdBnZpzRbdY7vnP0ZXePcK0NoPvNUGDGn+JSg
-         OkJ4LMJQEOm0l4RDlrE/0I/3JVL1RRhfqi2qE2Hb20LPitRPzGtjkK4JbUDuCk65Xk
-         RHrHyYNtEPnew==
-Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.sberdevices.ru (Postfix) with ESMTPS;
-        Wed, 28 Jun 2023 17:51:10 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m01.sberdevices.ru
- (172.16.192.107) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 28 Jun
- 2023 17:50:12 +0300
-Date:   Wed, 28 Jun 2023 17:51:10 +0300
-From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
-To:     <neil.armstrong@linaro.org>
-CC:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <jbrunet@baylibre.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-        <conor+dt@kernel.org>, <kernel@sberdevices.ru>,
-        <sdfw_system_team@sberdevices.ru>, <rockosov@gmail.com>,
-        <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Oleg Lyovin <ovlevin@sberdevices.ru>
-Subject: Re: [PATCH v1 5/6] arm64: dts: meson: a1: introduce UART_AO mux
- definitions
-Message-ID: <20230628145110.a7igezu7ts2aymkd@CAB-WSD-L081021>
-References: <20230607201641.20982-1-ddrokosov@sberdevices.ru>
- <20230607201641.20982-6-ddrokosov@sberdevices.ru>
- <CAFBinCD-5RD_iszZZRg58XqTHDEHnipJkf2aAex8MdUyh=bVCw@mail.gmail.com>
- <c41d2d9f-7ddd-160d-d455-ba4fece7ff93@linaro.org>
+        id S231555AbjF1Pa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 11:30:58 -0400
+Received: from mail-io1-f48.google.com ([209.85.166.48]:46531 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232012AbjF1Pa5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 11:30:57 -0400
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-78363cc070aso1223539f.1;
+        Wed, 28 Jun 2023 08:30:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687966256; x=1690558256;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0niG6qG4DqT/r1g966+PJqlCiFTcEvd91aBP54ZlXY8=;
+        b=b4LnUw2LaBWDCgY3OpBlU1MYfpSC0vinpvaVA+GrzGWqB8gRLL6OtQAHAGGNpOiZvQ
+         DAZ95rDOtNy1fzQsvfOUMERqz8xdMmeCoel5KKbDqRqzyQcVcPie8TdAZy1nWXpDDeTk
+         9sZp5ycs53blQ1zEy8BPwjnkXG0cecSNc5dRhUudzpjkDmP0Web02jb+t76T+j8v7oJh
+         KrXOEEZBO7JYKXeSAa1qVOdlwsaSKruE1ErAXjtj9Iob0rBYKhwczEDRy3gtkPrKvWHT
+         PmaZuYQJq0E3mEd8oC4BZPMJ7VBuYyQU2OfZ8RWGpe0y4NkIpWbJXIv5hO86HMGaQmJ/
+         KZfw==
+X-Gm-Message-State: AC+VfDww2pAx+pMTpeHalosLe4GdHjbaFx0agNrdt+4c0IFJOHmQ0QOr
+        FblSpALWOBgxasNcPF7x5w==
+X-Google-Smtp-Source: ACHHUZ6LB+/gdmYyZRvgWzuIiTCMmzPhOqUZFcSycE37KQbVQhh90RKEhAkscudg8T/mbyxLPZic4g==
+X-Received: by 2002:a6b:7218:0:b0:777:a970:b382 with SMTP id n24-20020a6b7218000000b00777a970b382mr39010929ioc.18.1687966256004;
+        Wed, 28 Jun 2023 08:30:56 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id dp1-20020a0566381c8100b0042afa9b038csm220072jab.49.2023.06.28.08.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jun 2023 08:30:55 -0700 (PDT)
+Received: (nullmailer pid 514857 invoked by uid 1000);
+        Wed, 28 Jun 2023 15:30:51 -0000
+Date:   Wed, 28 Jun 2023 09:30:51 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Marijn Suijten <marijn.suijten@somainline.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 07/15] dt-bindings: display/msm: Add SM6125 MDSS
+Message-ID: <20230628153051.GA507988-robh@kernel.org>
+References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
+ <20230627-sm6125-dpu-v2-7-03e430a2078c@somainline.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c41d2d9f-7ddd-160d-d455-ba4fece7ff93@linaro.org>
-User-Agent: NeoMutt/20220415
-X-Originating-IP: [100.64.160.123]
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 178314 [Jun 28 2023]
-X-KSMG-AntiSpam-Version: 5.9.59.0
-X-KSMG-AntiSpam-Envelope-From: DDRokosov@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 517 517 b0056c19d8e10afbb16cb7aad7258dedb0179a79, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/06/28 08:00:00 #21591748
-X-KSMG-AntiVirus-Status: Clean, skipped
+In-Reply-To: <20230627-sm6125-dpu-v2-7-03e430a2078c@somainline.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Neil, Martin,
+On Tue, Jun 27, 2023 at 10:14:22PM +0200, Marijn Suijten wrote:
+> Document the SM6125 MDSS.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> ---
+>  .../bindings/display/msm/qcom,sm6125-mdss.yaml     | 217 +++++++++++++++++++++
+>  1 file changed, 217 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6125-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6125-mdss.yaml
+> new file mode 100644
+> index 000000000000..2525482424cb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6125-mdss.yaml
+> @@ -0,0 +1,217 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/msm/qcom,sm6125-mdss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SM6125 Display MDSS
+> +
+> +maintainers:
+> +  - Marijn Suijten <marijn.suijten@somainline.org>
+> +
+> +description:
+> +  SM6125 MSM Mobile Display Subsystem (MDSS), which encapsulates sub-blocks
+> +  like DPU display controller, DSI and DP interfaces etc.
+> +
+> +$ref: /schemas/display/msm/mdss-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm6125-mdss
+> +
+> +  clocks:
+> +    items:
+> +      - description: Display AHB clock from gcc
+> +      - description: Display AHB clock
+> +      - description: Display core clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: iface
+> +      - const: ahb
+> +      - const: core
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    maxItems: 2
+> +
+> +  interconnect-names:
+> +    maxItems: 2
+> +
+> +patternProperties:
+> +  "^display-controller@[0-9a-f]+$":
+> +    type: object
+> +    properties:
+> +      compatible:
+> +        const: qcom,sm6125-dpu
+> +
+> +  "^dsi@[0-9a-f]+$":
+> +    type: object
+> +    properties:
+> +      compatible:
+> +        items:
+> +          - const: qcom,sm6125-dsi-ctrl
+> +          - const: qcom,mdss-dsi-ctrl
+> +
+> +  "^phy@[0-9a-f]+$":
+> +    type: object
+> +    properties:
+> +      compatible:
+> +        const: qcom,sm6125-dsi-phy-14nm
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,dispcc-sm6125.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sm6125.h>
+> +    #include <dt-bindings/clock/qcom,rpmcc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +
+> +    display-subsystem@5e00000 {
+> +        compatible = "qcom,sm6125-mdss";
+> +        reg = <0x05e00000 0x1000>;
+> +        reg-names = "mdss";
+> +
+> +        interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-controller;
+> +        #interrupt-cells = <1>;
+> +
+> +        clocks = <&gcc GCC_DISP_AHB_CLK>,
+> +                 <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +                 <&dispcc DISP_CC_MDSS_MDP_CLK>;
+> +        clock-names = "iface",
+> +                      "ahb",
+> +                      "core";
+> +
+> +        power-domains = <&dispcc MDSS_GDSC>;
+> +
+> +        iommus = <&apps_smmu 0x400 0x0>;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges;
+> +
+> +        status = "disabled";
 
-On Mon, Jun 26, 2023 at 03:34:38PM +0200, neil.armstrong@linaro.org wrote:
-> Hi,
-> 
-> On 25/06/2023 23:07, Martin Blumenstingl wrote:
-> > On Wed, Jun 7, 2023 at 10:16 PM Dmitry Rokosov <ddrokosov@sberdevices.ru> wrote:
-> > > 
-> > > From: Oleg Lyovin <ovlevin@sberdevices.ru>
-> > > 
-> > > The Amlogic A1 has a UART_AO port, which can be used, for example, for
-> > > BT HCI H4 connection.
-> > > 
-> > > This patch adds mux definitions for it.
-> > In the past we've only taken the pinctrl definitions if we have a
-> > board that uses them.
-> > Neil, do we still have the same policy in place? If so this patch
-> > should be sent with the series that adds support for your A1 board.
-> 
-> Yes and no, if the work is done I'll take it, but yeah since upstream linux
-> hates dead code, let's only define what's necessary.
-> 
+Examples should not be disabled. Drop.
 
-I'll prepare the patches for ad401 reference board, and share the in the
-next patch series version.
+> +
+> +        display-controller@5e01000 {
+> +            compatible = "qcom,sm6125-dpu";
+> +            reg = <0x05e01000 0x83208>,
+> +                  <0x05eb0000 0x2008>;
+> +            reg-names = "mdp", "vbif";
+> +
+> +            interrupt-parent = <&mdss>;
+> +            interrupts = <0>;
+> +
+> +            clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_ROT_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_MDP_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
+> +            clock-names = "bus",
+> +                          "iface",
+> +                          "rot",
+> +                          "lut",
+> +                          "core",
+> +                          "vsync";
+> +            assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
+> +            assigned-clock-rates = <19200000>;
+> +
+> +            operating-points-v2 = <&mdp_opp_table>;
+> +            power-domains = <&rpmpd SM6125_VDDCX>;
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                port@0 {
+> +                    reg = <0>;
+> +                    dpu_intf1_out: endpoint {
+> +                        remote-endpoint = <&mdss_dsi0_in>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +
+> +        dsi@5e94000 {
+> +            compatible = "qcom,sm6125-dsi-ctrl", "qcom,mdss-dsi-ctrl";
+> +            reg = <0x05e94000 0x400>;
+> +            reg-names = "dsi_ctrl";
+> +
+> +            interrupt-parent = <&mdss>;
+> +            interrupts = <4>;
+> +
+> +            clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_PCLK0_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_ESC0_CLK>,
+> +                     <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +                     <&gcc GCC_DISP_HF_AXI_CLK>;
+> +            clock-names = "byte",
+> +                          "byte_intf",
+> +                          "pixel",
+> +                          "core",
+> +                          "iface",
+> +                          "bus";
+> +            assigned-clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
+> +                      <&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>;
+> +            assigned-clock-parents = <&mdss_dsi0_phy 0>, <&mdss_dsi0_phy 1>;
+> +
+> +            operating-points-v2 = <&dsi_opp_table>;
+> +            power-domains = <&rpmpd SM6125_VDDCX>;
+> +
+> +            phys = <&mdss_dsi0_phy>;
+> +            phy-names = "dsi";
+> +
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            status = "disabled";
 
-> > 
-> > > Signed-off-by: Oleg Lyovin <ovlevin@sberdevices.ru>
-> > > Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
-> > > ---
-> > >   arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 16 ++++++++++++++++
-> > >   1 file changed, 16 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> > > index 0efd922ca7e1..3eb6aa9c00e0 100644
-> > > --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> > > +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> > > @@ -118,6 +118,22 @@ gpio: bank@400 {
-> > >                                          gpio-ranges = <&periphs_pinctrl 0 0 62>;
-> > >                                  };
-> > > 
-> > > +                               uart_a_pins: uart_a {
-> > Only our newer .dtsi (e.g. meson-g12-common.dtsi) are following the
-> > pattern where node names should use dashes instead of underscores.
-> > So please use: uart_a_pins: uart-a { ...
-> 
-> The new scheme which should be use should be:
-> 
-> uart_a_pins: uart-a-pins-state {
-> 
-> but it wasn't enforced in the pinctrl yaml pushed by heiner, but for sure
-> no underscores in the node name.
-> 
+Ditto.
 
-Okay, got it
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                port@0 {
+> +                    reg = <0>;
+> +                    mdss_dsi0_in: endpoint {
+> +                        remote-endpoint = <&dpu_intf1_out>;
+> +                    };
+> +                };
+> +
+> +                port@1 {
+> +                    reg = <1>;
+> +                    mdss_dsi0_out: endpoint {
+> +                    };
+> +                };
+> +            };
+> +        };
+> +
+> +        phy@5e94400 {
+> +            compatible = "qcom,sm6125-dsi-phy-14nm";
+> +            reg = <0x05e94400 0x100>,
+> +                  <0x05e94500 0x300>,
+> +                  <0x05e94800 0x188>;
+> +            reg-names = "dsi_phy",
+> +                        "dsi_phy_lane",
+> +                        "dsi_pll";
+> +
+> +            #clock-cells = <1>;
+> +            #phy-cells = <0>;
+> +
+> +            clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
+> +                     <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> +            clock-names = "iface",
+> +                          "ref";
+> +
+> +            required-opps = <&rpmpd_opp_svs>;
+> +            power-domains = <&rpmpd SM6125_VDDMX>;
+> +
+> +            status = "disabled";
 
-> > 
-> > [...]
-> > > +                               uart_a_cts_rts_pins: uart_a_cts_rts {
-> > similar to the comment from above:
-> > uart_a_cts_rts_pins: uart-a-cts-rts { ...
-> > 
-> > > +                                       mux {
-> > > +                                               groups = "uart_a_cts",
-> > > +                                                        "uart_a_rts";
-> > > +                                               function = "uart_a";
-> > > +                                               bias-pull-down;
-> > Out of curiosity: is this pull down needed on all boards or just specific ones?
-> > It seems like all other SoCs use bias-disable for the RTS/CTS pins.
-> > 
-> > 
-> > Best regards,
-> > Martin
+Ditto
+
+> +        };
+> +    };
+> +...
 > 
-
--- 
-Thank you,
-Dmitry
+> -- 
+> 2.41.0
+> 
