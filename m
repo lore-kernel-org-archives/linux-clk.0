@@ -2,105 +2,172 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5144AEB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 11:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8A7EB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 11:08:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231304AbjF1LIG convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 07:08:06 -0400
-Received: from unicorn.mansr.com ([81.2.72.234]:36706 "EHLO unicorn.mansr.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231314AbjF1LIE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 28 Jun 2023 07:08:04 -0400
-Received: from raven.mansr.com (raven.mansr.com [81.2.72.235])
-        by unicorn.mansr.com (Postfix) with ESMTPS id 0B96E15360;
-        Wed, 28 Jun 2023 12:07:57 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-        id 81069219FD1; Wed, 28 Jun 2023 12:07:56 +0100 (BST)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-sunxi@lists.linux.dev,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: Convert early providers to
- platform drivers
-References: <20211119033338.25486-1-samuel@sholland.org>
-        <20211119033338.25486-4-samuel@sholland.org>
-        <yw1xedly2z3m.fsf@mansr.com>
-        <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
-Date:   Wed, 28 Jun 2023 12:07:56 +0100
-In-Reply-To: <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
-        (Maxime Ripard's message of "Wed, 28 Jun 2023 09:44:18 +0200")
-Message-ID: <yw1xa5wj3kvn.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        id S231588AbjF1LI0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 07:08:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33400 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231520AbjF1LIP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 07:08:15 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 826D01FF0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 04:08:13 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4fb7dc16ff0so3581625e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 04:08:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687950492; x=1690542492;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/3YaZvbpJE8KoJXh11DvcBsWD9TPOvwIkWVnCG4LCf0=;
+        b=ch7fQbLermAchx7Mi8EyjaqLGBoKnbc7EL5EXpbysoCxwRsN0w9bX8xKUkRY1C+i3i
+         97UhHB3jjLd+/oSv0pRiqXo+iWiyUZhshDFYFdnoGXuUMowtnt0yQoqoTeiQh2jh0dB1
+         ybx6IrqGG5q15bVjHlffYUFiGYwpfmD3YCXtm+SaofSTyckDJ3foj52IuoysjKIifHKt
+         aqMQLLLAKS2cxRLIKtkE9Amn9RCaA5KcfgRu/oxzku8US1fNfEe3ibjxjmI5ubC2hgec
+         CdTTwL/auaovmcKtGIkffybMaMi4g8ctsXDMQj6cfZTAabbfrk2BONmsTbVkAoe0l+cM
+         tsZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687950492; x=1690542492;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/3YaZvbpJE8KoJXh11DvcBsWD9TPOvwIkWVnCG4LCf0=;
+        b=MZb/iTZc0e8+VjQ+AYGjJgMYyLrds6oxj0IP4DytGpL8WL2y3epG2NGRk3UMCi1Hxr
+         GR5DFikwQJHyPr1ZNVvJxpjRQCqmuUHOBpDv4EvmVVtrWyqNsQ7V3FmNcm7dKP23G7aD
+         tcIzGnjiVtFCBYTZe9xRUnx+6f1+vMY8jfc4ikYqjPp1+trtgudliwK/ic0bdP57glFz
+         mw4ohvbl0LQn5Q/KhR8wgG/ltV9+owP7gHXWnyAq6ZT2zC2y2aR5JQyFcQSEPIpu40Gx
+         2GhUMt1gX/yupwr/bqYRv+35jmLSlEhM5opS/7Z5ynSwHY9DBtGBHSz9Ux0cJTIX4o1X
+         l1QA==
+X-Gm-Message-State: AC+VfDx9c/hNXOuEFqzVa88fZgySQhQnp7aPvw5g8SfflBTBHrnSndF4
+        ImEw7Tsjc9aLSaCNVX8RTJwHFQ==
+X-Google-Smtp-Source: ACHHUZ4Ilxa5z63KMu1RIRHU6/OOp4kqAz1DkwDgWU487TutTN22a2ZOf5gbU7ZHmIylRj5pOe9J/g==
+X-Received: by 2002:a19:6713:0:b0:4f9:5933:8eea with SMTP id b19-20020a196713000000b004f959338eeamr11411822lfc.3.1687950491725;
+        Wed, 28 Jun 2023 04:08:11 -0700 (PDT)
+Received: from [192.168.1.101] (abyj233.neoplus.adsl.tpnet.pl. [83.9.29.233])
+        by smtp.gmail.com with ESMTPSA id t3-20020a19ad03000000b004fa52552c82sm1733406lfc.155.2023.06.28.04.08.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jun 2023 04:08:11 -0700 (PDT)
+Message-ID: <82ed84aa-6335-c0fd-9c3e-1a6ef6924336@linaro.org>
+Date:   Wed, 28 Jun 2023 13:08:09 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH V2 4/5] clk: qcom: gcc-qdu1000: Add support for GDSCs
+Content-Language: en-US
+To:     Imran Shaik <quic_imrashai@quicinc.com>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Taniya Das <quic_tdas@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230628092837.3090801-1-quic_imrashai@quicinc.com>
+ <20230628092837.3090801-5-quic_imrashai@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230628092837.3090801-5-quic_imrashai@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Maxime Ripard <mripard@kernel.org> writes:
+On 28.06.2023 11:28, Imran Shaik wrote:
+> Add the GDSCs support for QDU1000 and QRU1000 SoCs.
+> 
+> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-> On Mon, Jun 26, 2023 at 01:21:33PM +0100, Måns Rullgård wrote:
->> Samuel Holland <samuel@sholland.org> writes:
->> 
->> > The PRCM CCU drivers depend on clocks provided by other CCU drivers. For
->> > example, the sun8i-r-ccu driver uses the "pll-periph" clock provided by
->> > the SoC's main CCU.
->> >
->> > However, sun8i-r-ccu is an early OF clock provider, and many of the
->> > main CCUs (e.g. sun50i-a64-ccu) use platform drivers. This means that
->> > the consumer clocks will be orphaned until the supplier driver is bound.
->> > This can be avoided by converting the remaining CCUs to use platform
->> > drivers. Then fw_devlink will ensure the drivers are bound in the
->> > optimal order.
->> >
->> > The sun5i CCU is the only one which actually needs to be an early clock
->> > provider, because it provides the clock for the system timer. That one
->> > is left alone.
->> >
->> > Signed-off-by: Samuel Holland <samuel@sholland.org>
->> > ---
->> >
->> > (no changes since v1)
->> >
->> >  drivers/clk/sunxi-ng/Kconfig             | 20 ++++----
->> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 58 +++++++++++++--------
->> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 56 ++++++++++++--------
->> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 33 ++++++++----
->> >  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 40 +++++++++++----
->> >  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 35 +++++++++----
->> >  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 40 +++++++++++----
->> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 62 ++++++++++++++--------
->> >  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 65 ++++++++++++++----------
->> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 57 +++++++++++++--------
->> >  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 38 ++++++++++----
->> >  11 files changed, 332 insertions(+), 172 deletions(-)
->> 
->> This broke the hstimer clocksource on A20 since it requires a clock
->> provided by the sun4i ccu driver.
->
-> The A10 is probably broken by this, but the A20 should be able to use
-> the arch timers just like all the other Cortex-A7-based SoCs.
->
-> Do you have a dmesg log that could help debug why it's not working?
-
-The A20 works as such since, as you say, it has other clocksources.
-However, the hstimer has become unusable.  If anyone was using, for
-whatever reason, it won't be working for them now.
-
-Before this change, the kernel log used include this line:
-
-clocksource: hstimer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 6370868154 ns
-
-Now there is only a cryptic "Can't get timer clock" in its place.
-
-As it is now, the hstimer driver is nothing but a waste of space.
-I figure it ought to be fixed one way or another.
-
--- 
-Måns Rullgård
+Konrad
+> Changes since v1:
+>  - Newly added
+> 
+>  drivers/clk/qcom/gcc-qdu1000.c | 42 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-qdu1000.c b/drivers/clk/qcom/gcc-qdu1000.c
+> index 991fb2bc97e9..718c34dca6e8 100644
+> --- a/drivers/clk/qcom/gcc-qdu1000.c
+> +++ b/drivers/clk/qcom/gcc-qdu1000.c
+> @@ -17,6 +17,7 @@
+>  #include "clk-regmap-divider.h"
+>  #include "clk-regmap-mux.h"
+>  #include "clk-regmap-phy-mux.h"
+> +#include "gdsc.h"
+>  #include "reset.h"
+>  
+>  enum {
+> @@ -2409,6 +2410,39 @@ static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
+>  	},
+>  };
+>  
+> +static struct gdsc pcie_0_gdsc = {
+> +	.gdscr = 0x9d004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.pd = {
+> +		.name = "gcc_pcie_0_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +};
+> +
+> +static struct gdsc pcie_0_phy_gdsc = {
+> +	.gdscr = 0x7c004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0x2,
+> +	.pd = {
+> +		.name = "gcc_pcie_0_phy_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +};
+> +
+> +static struct gdsc usb30_prim_gdsc = {
+> +	.gdscr = 0x49004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.pd = {
+> +		.name = "gcc_usb30_prim_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +};
+> +
+>  static struct clk_regmap *gcc_qdu1000_clocks[] = {
+>  	[GCC_AGGRE_NOC_ECPRI_DMA_CLK] = &gcc_aggre_noc_ecpri_dma_clk.clkr,
+>  	[GCC_AGGRE_NOC_ECPRI_DMA_CLK_SRC] = &gcc_aggre_noc_ecpri_dma_clk_src.clkr,
+> @@ -2545,6 +2579,12 @@ static struct clk_regmap *gcc_qdu1000_clocks[] = {
+>  	[GCC_DDRSS_ECPRI_GSI_CLK] = &gcc_ddrss_ecpri_gsi_clk.clkr,
+>  };
+>  
+> +static struct gdsc *gcc_qdu1000_gdscs[] = {
+> +	[PCIE_0_GDSC] = &pcie_0_gdsc,
+> +	[PCIE_0_PHY_GDSC] = &pcie_0_phy_gdsc,
+> +	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
+> +};
+> +
+>  static const struct qcom_reset_map gcc_qdu1000_resets[] = {
+>  	[GCC_ECPRI_CC_BCR] = { 0x3e000 },
+>  	[GCC_ECPRI_SS_BCR] = { 0x3a000 },
+> @@ -2606,6 +2646,8 @@ static const struct qcom_cc_desc gcc_qdu1000_desc = {
+>  	.num_clks = ARRAY_SIZE(gcc_qdu1000_clocks),
+>  	.resets = gcc_qdu1000_resets,
+>  	.num_resets = ARRAY_SIZE(gcc_qdu1000_resets),
+> +	.gdscs = gcc_qdu1000_gdscs,
+> +	.num_gdscs = ARRAY_SIZE(gcc_qdu1000_gdscs),
+>  };
+>  
+>  static const struct of_device_id gcc_qdu1000_match_table[] = {
