@@ -2,132 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7443C0015E
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 10:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B07EB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 11:04:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230249AbjF1KUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 06:20:35 -0400
-Received: from mail-il1-f170.google.com ([209.85.166.170]:44532 "EHLO
-        mail-il1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231540AbjF1KSd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 06:18:33 -0400
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-345c487807bso3814385ab.1;
-        Wed, 28 Jun 2023 03:18:32 -0700 (PDT)
+        id S231314AbjF1LEE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 07:04:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33048 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230422AbjF1LEC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 07:04:02 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7987E1FCD
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 04:04:00 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fb761efa7aso4900998e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 04:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1687950239; x=1690542239;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HUPPFuBKO9vOMiVIKyk5q3cgcsex7PRLitfEapTCn3s=;
+        b=qRfuMhHC8fRCoxwPNp2sg/o0Sazzv2owsgL38PlJwbt8aLKgJ/l1yx0fyKUoDaZEbs
+         B1IdL+VADzIqoPb1Ru6ius1faeg/kf20+tvk9Vw+wIfelhcUSylY55BiXCWpUtQe5xqG
+         yo9EY4L/eeZ2EjL1JdkiWhW38pFuC2XpSmQppHcjvLu80eFcVy9CXKV6sPnyWTmBqckS
+         ZlF1ptQ96ZkLPXmrfNQY1nHmcidQyYVER/l5lJYXqgsi9M0oR3kA9rnMfeSGsuBXakxA
+         1eKVqjQHIxV4QDR0WKQ1swDXAgHKchIuoaOfB3FnIS/CZrsR8Ufi/8Jlr+D16zm8wB/l
+         8FWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687947512; x=1690539512;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jkZY5XWnI6WOwfagmaCwCAQfGioFt+uVaBoTTNmJFWA=;
-        b=i0Yug6i/hnUkJLaytp8u2FDJgOYkaSXTPo1o5ZZTFCONNo204GWdO0NQHNz7gkBR4z
-         XK+/8bDLgSn6j65B7xKgeOWrkIhXB4Yp66oZ3ijT/gNs7q3WI/mJKtymbzqc0GGC8akN
-         Yrz5zfdTj16W9ncWQvZrWw2Ssd9eeYwiCbKD0aDi40SHsKZqWjQVy7Ii7hdGuX4Oh5B+
-         ZbacGohjatdfka6suJzBVoUrTG+zflFf5E0bA0saZLDLMZtrJz5ljRnOoskU3lP2ophH
-         WEbdc9DgKvKpiSx61hGGO2Z0IehThIP7Nl2x/4DB6945ojDOlhOtUWMwDXhfzUcJtGeN
-         3NQA==
-X-Gm-Message-State: AC+VfDzVTO/dzgD5n6NvBbC2S949aB5nhbqiAkhsfV0NtvYDB1xEY3S6
-        wdzOskjVZvy9+Qalh93xndKVXmwF1w==
-X-Google-Smtp-Source: ACHHUZ4F1SZzbggWtZ3M7Dd8uYudBHLwcuRpSuiAOEntbx7YA5l4kCgwSe8zR4CL2ou+ywBadXOIEQ==
-X-Received: by 2002:a92:cac8:0:b0:345:bfdb:3548 with SMTP id m8-20020a92cac8000000b00345bfdb3548mr4273966ilq.2.1687947512250;
-        Wed, 28 Jun 2023 03:18:32 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id q9-20020a92c009000000b0034267d3fcc5sm3324584ild.55.2023.06.28.03.18.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 03:18:31 -0700 (PDT)
-Received: (nullmailer pid 47051 invoked by uid 1000);
-        Wed, 28 Jun 2023 10:18:26 -0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        d=1e100.net; s=20221208; t=1687950239; x=1690542239;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HUPPFuBKO9vOMiVIKyk5q3cgcsex7PRLitfEapTCn3s=;
+        b=AIJ3HcdrUJkqnpG/lJOdTel/FUAiTDMW3MfUjTp6F+avfHqiNvvjcvwaCUCHtw2ydR
+         9n/EXwAQC4AMU9A/+s+UfqZQiwhGfTEtQ1HUayy8+m74H6ucV8nTRbpyVso/rRf/xp3Z
+         to9IeVw2XU8GBTscLsqQ8xuw8FSwo24WRoTEb9+sdyjwdcpWQRA6ONlFkPW8myOXCCt4
+         1jWLtY5CisBFfGLDhiNpiK8N2hFH1j1QEkZm1QkeGPTOu7+vB97sFfU+W1fZO3nggzi1
+         sIzriBMrQ7RgTlaEYz/Sw8ZjYF3nw01ZKMAhyDV58se2UHUsZ5Eoj7GKG++sfIl1wt27
+         +0Cg==
+X-Gm-Message-State: AC+VfDxFOwHOPy4zJdqUswGMPo+iZm2v/IEbXAHFidOnEDh+WvM90y07
+        g4b7DRi3OUpLuaRtjb2syJanpw==
+X-Google-Smtp-Source: ACHHUZ64p6k1SQQCvQdz7hoW0BKm17SZqA5+P6NHHMQi/RxZCb5JCn9fnfZNSubNiaDqY0x4f0xurQ==
+X-Received: by 2002:a05:6512:2315:b0:4f9:6a74:d149 with SMTP id o21-20020a056512231500b004f96a74d149mr12309413lfu.15.1687950238618;
+        Wed, 28 Jun 2023 04:03:58 -0700 (PDT)
+Received: from [192.168.1.101] (abyj233.neoplus.adsl.tpnet.pl. [83.9.29.233])
+        by smtp.gmail.com with ESMTPSA id l5-20020a19c205000000b004f871c71827sm212702lfc.139.2023.06.28.04.03.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Jun 2023 04:03:58 -0700 (PDT)
+Message-ID: <26be53d7-bcbd-618a-0d8a-f1c826dfd426@linaro.org>
+Date:   Wed, 28 Jun 2023 13:03:56 +0200
 MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Imran Shaik <quic_imrashai@quicinc.com>
-Cc:     Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        devicetree@vger.kernel.org,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH V2 2/5] clk: qcom: gcc-qdu1000: Fix
+ gcc_pcie_0_pipe_clk_src clock handling
+Content-Language: en-US
+To:     Imran Shaik <quic_imrashai@quicinc.com>,
         Andy Gross <agross@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org
-In-Reply-To: <20230628092837.3090801-2-quic_imrashai@quicinc.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Taniya Das <quic_tdas@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
 References: <20230628092837.3090801-1-quic_imrashai@quicinc.com>
- <20230628092837.3090801-2-quic_imrashai@quicinc.com>
-Message-Id: <168794750675.47016.17958709493582414189.robh@kernel.org>
-Subject: Re: [PATCH V2 1/5] dt-bindings: clock: Update GCC clocks for
- QDU1000 and QRU1000 SoCs
-Date:   Wed, 28 Jun 2023 04:18:26 -0600
+ <20230628092837.3090801-3-quic_imrashai@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230628092837.3090801-3-quic_imrashai@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Wed, 28 Jun 2023 14:58:33 +0530, Imran Shaik wrote:
-> Update the qcom GCC clock bindings for QDU1000 and QRU1000 SoCs.
+On 28.06.2023 11:28, Imran Shaik wrote:
+> Fix the gcc_pcie_0_pipe_clk_src clock handling for QDU1000 and
+> QRU1000 SoCs.
 > 
+> Fixes: 1c9efb0bc040 ("clk: qcom: Add QDU1000 and QRU1000 GCC support")
 > Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
-> Chanes since v1:
->  - Removed the v2 variant compatible string changes
->  - Updated the maintainers list
+> ---You could have explained that clk_regmap_phy_mux_ops doesn't implement
+any parent-related ops and switches parents implicitly in .enable/disable
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+> Changes since v1:
+>  - Newly added
 > 
->  Documentation/devicetree/bindings/clock/qcom,qdu1000-gcc.yaml | 3 ++-
->  include/dt-bindings/clock/qcom,qdu1000-gcc.h                  | 4 +++-
->  2 files changed, 5 insertions(+), 2 deletions(-)
+>  drivers/clk/qcom/gcc-qdu1000.c | 23 ++++++-----------------
+>  1 file changed, 6 insertions(+), 17 deletions(-)
 > 
-
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/arm/hisilicon/controller/cpuctrl.example.dtb: /example-0/cpuctrl@a22000/clock@0: failed to match any schema with compatible: ['hisilicon,hix5hd2-clock']
-Documentation/devicetree/bindings/arm/hisilicon/controller/sysctrl.example.dtb: /example-0/system-controller@802000/clock@0: failed to match any schema with compatible: ['hisilicon,hi3620-clock']
-Documentation/devicetree/bindings/arm/hisilicon/controller/hi3798cv200-perictrl.example.dtb: /example-0/peripheral-controller@8a20000/phy@850: failed to match any schema with compatible: ['hisilicon,hi3798cv200-combphy']
-Documentation/devicetree/bindings/net/qca,ar71xx.example.dtb: /example-0/ethernet@1a000000/mdio/switch@10: failed to match any schema with compatible: ['qca,ar9331-switch']
-Documentation/devicetree/bindings/net/marvell,mvusb.example.dtb: /example-0/usb/mdio@1/switch@0: failed to match any schema with compatible: ['marvell,mv88e6190']
-Documentation/devicetree/bindings/media/rockchip-isp1.example.dtb: /example-0/parent/i2c/camera@36: failed to match any schema with compatible: ['ovti,ov5695']
-Documentation/devicetree/bindings/thermal/imx-thermal.example.dtb: /example-0/anatop@20c8000: failed to match any schema with compatible: ['fsl,imx6q-anatop', 'syscon', 'simple-mfd']
-Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.example.dtb: /example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']
-Documentation/devicetree/bindings/memory-controllers/ingenic,nemc.example.dtb: /example-0/memory-controller@13410000/ethernet@6: failed to match any schema with compatible: ['davicom,dm9000']
-Documentation/devicetree/bindings/leds/common.example.dtb: /example-2/i2c/led-controller@30: failed to match any schema with compatible: ['panasonic,an30259a']
-Documentation/devicetree/bindings/clock/milbeaut-clock.example.dtb: /example-2/serial@1e700010: failed to match any schema with compatible: ['socionext,milbeaut-usio-uart']
-Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.example.dtb: /example-1/syscon@20e00000: failed to match any schema with compatible: ['sprd,sc9863a-glbregs', 'syscon', 'simple-mfd']
-Documentation/devicetree/bindings/sound/audio-graph-card2.example.dtb: /example-0/cpu: failed to match any schema with compatible: ['cpu-driver']
-Documentation/devicetree/bindings/sound/audio-graph-card2.example.dtb: /example-0/codec: failed to match any schema with compatible: ['codec-driver']
-Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.example.dtb: /example-0/iomcu@ffd7e000: failed to match any schema with compatible: ['hisilicon,hi3660-iomcu', 'syscon']
-Documentation/devicetree/bindings/i2c/qcom,i2c-cci.example.dtb: /example-0/cci@ac4a000/i2c-bus@1/camera@60: failed to match any schema with compatible: ['ovti,ov7251']
-Documentation/devicetree/bindings/input/mediatek,pmic-keys.example.dtb: /example-0/pmic: failed to match any schema with compatible: ['mediatek,mt6397']
-Documentation/devicetree/bindings/input/sprd,sc27xx-vibrator.example.dtb: /example-0/pmic@0: failed to match any schema with compatible: ['sprd,sc2731']
-Documentation/devicetree/bindings/dma/dma-router.example.dtb: /example-0/dma-router@4a002b78: failed to match any schema with compatible: ['ti,dra7-dma-crossbar']
-Documentation/devicetree/bindings/dma/dma-controller.example.dtb: /example-0/dma-controller@48000000: failed to match any schema with compatible: ['ti,omap-sdma']
-Documentation/devicetree/bindings/iio/adc/ti,palmas-gpadc.example.dtb: /example-0/pmic: failed to match any schema with compatible: ['ti,twl6035-pmic', 'ti,palmas-pmic']
-Documentation/devicetree/bindings/iio/adc/ti,palmas-gpadc.example.dtb: /example-0/pmic: failed to match any schema with compatible: ['ti,twl6035-pmic', 'ti,palmas-pmic']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230628092837.3090801-2-quic_imrashai@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> diff --git a/drivers/clk/qcom/gcc-qdu1000.c b/drivers/clk/qcom/gcc-qdu1000.c
+> index 5051769ad90c..c00d26a3e6df 100644
+> --- a/drivers/clk/qcom/gcc-qdu1000.c
+> +++ b/drivers/clk/qcom/gcc-qdu1000.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (c) 2022, Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> @@ -370,16 +370,6 @@ static const struct clk_parent_data gcc_parent_data_6[] = {
+>  	{ .index = DT_TCXO_IDX },
+>  };
+>  
+> -static const struct parent_map gcc_parent_map_7[] = {
+> -	{ P_PCIE_0_PIPE_CLK, 0 },
+> -	{ P_BI_TCXO, 2 },
+> -};
+> -
+> -static const struct clk_parent_data gcc_parent_data_7[] = {
+> -	{ .index = DT_PCIE_0_PIPE_CLK_IDX },
+> -	{ .index = DT_TCXO_IDX },
+> -};
+> -
+>  static const struct parent_map gcc_parent_map_8[] = {
+>  	{ P_BI_TCXO, 0 },
+>  	{ P_GCC_GPLL0_OUT_MAIN, 1 },
+> @@ -439,16 +429,15 @@ static struct clk_regmap_mux gcc_pcie_0_phy_aux_clk_src = {
+>  	},
+>  };
+>  
+> -static struct clk_regmap_mux gcc_pcie_0_pipe_clk_src = {
+> +static struct clk_regmap_phy_mux gcc_pcie_0_pipe_clk_src = {
+>  	.reg = 0x9d064,
+> -	.shift = 0,
+> -	.width = 2,
+> -	.parent_map = gcc_parent_map_7,
+>  	.clkr = {
+>  		.hw.init = &(const struct clk_init_data) {
+>  			.name = "gcc_pcie_0_pipe_clk_src",
+> -			.parent_data = gcc_parent_data_7,
+> -			.num_parents = ARRAY_SIZE(gcc_parent_data_7),
+> +			.parent_data = &(const struct clk_parent_data){
+> +				.index = DT_PCIE_0_PIPE_CLK_IDX,
+> +			},
+> +			.num_parents = 1,
+>  			.ops = &clk_regmap_phy_mux_ops,
+>  		},
+>  	},
