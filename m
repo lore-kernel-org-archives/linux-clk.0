@@ -2,168 +2,173 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D514EB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 11:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6672DEB64DD
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 13:10:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbjF1Llg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 07:41:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36142 "EHLO
+        id S231376AbjF1NKA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 09:10:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbjF1Llg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 07:41:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9352D63;
-        Wed, 28 Jun 2023 04:41:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 93919612B9;
-        Wed, 28 Jun 2023 11:41:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C800C433C8;
-        Wed, 28 Jun 2023 11:41:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687952494;
-        bh=OyoCDf1tAD/QNiqSsyVhKq60iGJ68c6n5MAKq0cjA40=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=caa9YoCv1OL30PzlUz+wP8BD+McvM7Eg6WqaG8NlKUHEP1BhJaNXRebcl5OsDqG1L
-         plXGg8rMFBfEfWj8rL1MopnUA9hw5PXaa+5K/31Q2W6wFZiU3vwCc8fnOrq1hfeSxW
-         V64kutLb4R3DRpeIFxiLnYJdPXGdM+JVLUbhpKZkRkwm135nxHDIyksF7rVcD9kGsB
-         9DITw2GkLpnS/iMvnTqRIFbGN5r1sefU71bN/GBrQHW++86xa5gxEwGAQsKXGOLrqO
-         xLcYxvHxYRZxyOIFywgap0JGqS6SVTXAhzROx6VSKaYuPymVij9HY4WoRQ13lR8mR2
-         Q5O+Xxl0brsrw==
-Date:   Wed, 28 Jun 2023 13:41:30 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     =?utf-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
-Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-sunxi@lists.linux.dev,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: Convert early providers to
- platform drivers
-Message-ID: <un3xm7ybsm54qf56ojhrtr6kehlmhdoavzcaqr2jfbcyg2kr6u@rdlq7nelycs2>
-References: <20211119033338.25486-1-samuel@sholland.org>
- <20211119033338.25486-4-samuel@sholland.org>
- <yw1xedly2z3m.fsf@mansr.com>
- <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
- <yw1xa5wj3kvn.fsf@mansr.com>
+        with ESMTP id S231543AbjF1NJ4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 09:09:56 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C4D212E
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 06:09:54 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-51d9865b848so4091068a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 06:09:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1687957793; x=1690549793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k76YrPTzyyjATZAkPWsngOApRdksnz4938tVnCuwxy0=;
+        b=ScgYnUQe6P6kGA/N6ZPo3yO417tWRwpx3GvemyrdtyZVRiMKBb3mX7VI2GC9diLcMu
+         CBglKEUKyw7sx2XjP/XbJOD3iNnN+N9GWxQ1mlTSXafAi8ZUGZ1eDbHmnkr5clkYOrjz
+         8GDQoZ2Tp1PraxZ/pmeSyq/QVCRc/QRFE5TFbBS9xF88g2abpug24dt9lgXFX5GM+yij
+         RiioISv2/N2ZwCj6vMlrza/ubjNUMvoHHzw+bfeT37sBUEtzdgN4KJIymYZ3Ku4VDzhk
+         Mj4zVAxzoFL1AljyNcajNKEfjlIxauzw/vVgq7tTHszhYZyGB1ntaUvlngn31dONZgTd
+         zmEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687957793; x=1690549793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k76YrPTzyyjATZAkPWsngOApRdksnz4938tVnCuwxy0=;
+        b=NZE15PPuVBK9TppyRj1IoN6Um4zGD7McpIeQQb07cCph+1ApnCZ2rAMnZWHHdsLZ+J
+         djExBkHbYgN6dPX1ji1FpdN0CRIRIZ+c+GFlbp5Xi985cbt+DLfdzFMo1w9C3PaA4qiy
+         k/49be46cEI80GSTTLXbJ/tvawzOdbuCuhz6QR4GAah8HtAtTorXlASvE1TX69oVT5t3
+         xkDTU7CoRnHIDzswQmt5jO+qBbozfIEILBTUV4HSfNxrY7jstM0Z6592ullA/8doIDvm
+         fiUelQmmL+T/XGmnx95xCKL7FrgMxBxAQfPWTAd/sKFkPteRf2t2XduGynhnUH80oSTD
+         hxVQ==
+X-Gm-Message-State: AC+VfDzmyT5grHCOJrj14RCrtA6HoMEtAKCjYx00CQeBcxSPrT/J9PZb
+        P/lnG3Xq1wvWwV7ljgFY3uG3Tg==
+X-Google-Smtp-Source: ACHHUZ4FQ7JmqxI+YoYuBXCwpW4UP8TYDQSff2DdAMDuypxC1caOuVE2XCGI/Z0rJ4e0navjgsMuwg==
+X-Received: by 2002:a05:6402:1496:b0:51d:91ef:c836 with SMTP id e22-20020a056402149600b0051d91efc836mr6548808edv.32.1687957792701;
+        Wed, 28 Jun 2023 06:09:52 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id s19-20020a056402165300b0051d9df5dd2fsm2609023edx.72.2023.06.28.06.09.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jun 2023 06:09:51 -0700 (PDT)
+Date:   Wed, 28 Jun 2023 15:09:50 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+Message-ID: <ZJwxHucKMwCQMMVM@nanopsycho>
+References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
+ <ZJq3a6rl6dnPMV17@nanopsycho>
+ <DM6PR11MB4657084DDD7554663F86C1C19B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <DM6PR11MB4657A1ACB586AD9B45C7996E9B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <2e9ce197-2732-d061-b11d-4f4513af6abc@linux.dev>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mf236bogpjscjsps"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <yw1xa5wj3kvn.fsf@mansr.com>
+In-Reply-To: <2e9ce197-2732-d061-b11d-4f4513af6abc@linux.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Wed, Jun 28, 2023 at 01:11:19PM CEST, vadim.fedorenko@linux.dev wrote:
+>On 28/06/2023 10:27, Kubalewski, Arkadiusz wrote:
+>> > From: Kubalewski, Arkadiusz
+>> > Sent: Wednesday, June 28, 2023 11:15 AM
+>> > 
+>> > > From: Jiri Pirko <jiri@resnulli.us>
+>> > > Sent: Tuesday, June 27, 2023 12:18 PM
+>> > > 
+>> > > Fri, Jun 23, 2023 at 02:38:10PM CEST, arkadiusz.kubalewski@intel.com
+>> > wrote:
+>> > > 
+>> > > > v8 -> v9:
+>> > > 
+>> > > Could you please address all the unresolved issues from v8 and send v10?
+>> > > I'm not reviewing this one.
+>> > > 
+>> > > Thanks!
+>> > 
+>> > Sure, will do, but first missing to-do/discuss list:
+>> > 1) remove mode_set as not used by any driver
+>> > 2) remove "no-added-value" static functions descriptions in
+>> >    dpll_core/dpll_netlink
+>> > 3) merge patches [ 03/10, 04/10, 05/10 ] into patches that are compiling
+>> >    after each patch apply
+>> > 4) remove function return values descriptions/lists
+>> > 5) Fix patch [05/10]:
+>> >    - status Supported
+>> >    - additional maintainers
+>> >    - remove callback:
+>> >      int (*source_pin_idx_get)(...) from `struct dpll_device_ops`
+>> > 6) Fix patch [08/10]: rethink ice mutex locking scheme
+>> > 7) Fix patch [09/10]: multiple comments on
+>> > https://lore.kernel.org/netdev/ZIQu+%2Fo4J0ZBspVg@nanopsycho/#t
+>> > 8) add PPS DPLL phase offset to the netlink get-device API
+>> > 
+>> > Thank you!
+>> > Arkadiusz
+>> 
+>> If someone has any objections please state them now, I will work on
+>> all above except 5) and 7).
+>> Vadim, could you take care of those 2 points?
+>> 
+>Yeah, sure, I'll update 5 and 7.
+>I'm not sure about 8) - do we really need this info, I believe every
+>supported DPLL device exports PTP device as well. But I'm Ok to add this
+>feature too.
 
---mf236bogpjscjsps
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Could you add the notification work while you are at it? I don't want
+that to be forgotten. Thanks!
 
-On Wed, Jun 28, 2023 at 12:07:56PM +0100, M=E5ns Rullg=E5rd wrote:
-> Maxime Ripard <mripard@kernel.org> writes:
->=20
-> > On Mon, Jun 26, 2023 at 01:21:33PM +0100, M=E5ns Rullg=E5rd wrote:
-> >> Samuel Holland <samuel@sholland.org> writes:
-> >>=20
-> >> > The PRCM CCU drivers depend on clocks provided by other CCU drivers.=
- For
-> >> > example, the sun8i-r-ccu driver uses the "pll-periph" clock provided=
- by
-> >> > the SoC's main CCU.
-> >> >
-> >> > However, sun8i-r-ccu is an early OF clock provider, and many of the
-> >> > main CCUs (e.g. sun50i-a64-ccu) use platform drivers. This means that
-> >> > the consumer clocks will be orphaned until the supplier driver is bo=
-und.
-> >> > This can be avoided by converting the remaining CCUs to use platform
-> >> > drivers. Then fw_devlink will ensure the drivers are bound in the
-> >> > optimal order.
-> >> >
-> >> > The sun5i CCU is the only one which actually needs to be an early cl=
-ock
-> >> > provider, because it provides the clock for the system timer. That o=
-ne
-> >> > is left alone.
-> >> >
-> >> > Signed-off-by: Samuel Holland <samuel@sholland.org>
-> >> > ---
-> >> >
-> >> > (no changes since v1)
-> >> >
-> >> >  drivers/clk/sunxi-ng/Kconfig             | 20 ++++----
-> >> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 58 +++++++++++++--------
-> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 56 ++++++++++++--------
-> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 33 ++++++++----
-> >> >  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 40 +++++++++++----
-> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 35 +++++++++----
-> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 40 +++++++++++----
-> >> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 62 ++++++++++++++--------
-> >> >  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 65 ++++++++++++++-------=
----
-> >> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 57 +++++++++++++--------
-> >> >  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 38 ++++++++++----
-> >> >  11 files changed, 332 insertions(+), 172 deletions(-)
-> >>=20
-> >> This broke the hstimer clocksource on A20 since it requires a clock
-> >> provided by the sun4i ccu driver.
-> >
-> > The A10 is probably broken by this, but the A20 should be able to use
-> > the arch timers just like all the other Cortex-A7-based SoCs.
-> >
-> > Do you have a dmesg log that could help debug why it's not working?
->=20
-> The A20 works as such since, as you say, it has other clocksources.
-> However, the hstimer has become unusable.  If anyone was using, for
-> whatever reason, it won't be working for them now.
->=20
-> Before this change, the kernel log used include this line:
->=20
-> clocksource: hstimer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_n=
-s: 6370868154 ns
->=20
-> Now there is only a cryptic "Can't get timer clock" in its place.
->=20
-> As it is now, the hstimer driver is nothing but a waste of space.
-> I figure it ought to be fixed one way or another.
-
-Yeah, definitely.
-
-IIRC, the situation is:
-
- - A10 has just the "regular", old, timer
- - A10s/A13/GR8 has the A10 timer + hstimer
- - A20 has the A13 timers + arch timers
-
-We also default to the hstimer only for the A10s/A13 which aren't
-affected by this patch series afaics.
-
-We also enable the HS timer for the A31, but just like the A20 it
-doesn't use it by default, so it's probably been broken there too.
-
-I guess one way to fix it would be to switch the HS timer driver to a
-lower priority than the A10 timer, so we pick that up by default instead
-for the A10s/A13, and then convert the HS timer driver to a proper
-platform_device driver that will be able to get its clock.
-
-The downside is that the A13 will lose some precision over its default
-timer, but I don't think it's a big deal.
-
-Maxime
-
---mf236bogpjscjsps
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJwcagAKCRDj7w1vZxhR
-xe08AP4ohM6byryVMfvTgitb1BFSBhJ6x+I71Oex+5G7vPvqAAEAglGVPkTLpB/P
-1ZNfSD09bTdBia8t2ImilUQ19q5PoA4=
-=atgh
------END PGP SIGNATURE-----
-
---mf236bogpjscjsps--
+>
+>> Thank you!
+>> Arkadiusz
+>
