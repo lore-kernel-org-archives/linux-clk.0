@@ -2,118 +2,195 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A702EEB64D7
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 08:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B01BEB64D7
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Jun 2023 09:04:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232792AbjF1ICh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Jun 2023 04:02:37 -0400
-Received: from dfw.source.kernel.org ([139.178.84.217]:44636 "EHLO
-        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbjF1H7v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Jun 2023 03:59:51 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 80F8B61331;
-        Wed, 28 Jun 2023 07:44:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F264C433C8;
-        Wed, 28 Jun 2023 07:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687938262;
-        bh=ePwte3hrhMRziyfeeDbbH3c5avzzRC0gIsBYcHlC9js=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qjMlEnesyK9P+AFJZDUq00Qv7DFOoMq6ry7r+9WCXSqcUqAptsBa2G+J6AXCIKA9W
-         8D+GnaHBh+6RIKisxsCWnGAmEk5BO78SXlHoGzHSSvQeLc49aTCMvjJthF2dVIAoRw
-         9gnQ6Tt3MjkldESuFSecBALzpffGtoe1QomDSuZK33ACMt2eZWflhvrlT3z6I3g7Yi
-         g5c88ledeW63xvTC2vAkYgaKWR7l5zeMaGDDAu4emO99xAbO7/fzY/tB5p5vOh1rf5
-         NmoqrrRp7zVourImRSsBDs1SwOjEz0Xf1NCRCQYSpX7H3KyzEaA+beATg/HNpzmZEx
-         d32LGGb8NJLSQ==
-Date:   Wed, 28 Jun 2023 09:44:18 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     =?utf-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
-Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-sunxi@lists.linux.dev,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: Convert early providers to
- platform drivers
-Message-ID: <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
-References: <20211119033338.25486-1-samuel@sholland.org>
- <20211119033338.25486-4-samuel@sholland.org>
- <yw1xedly2z3m.fsf@mansr.com>
+        id S233514AbjF1JEA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Jun 2023 05:04:00 -0400
+Received: from ex01.ufhost.com ([61.152.239.75]:50168 "EHLO ex01.ufhost.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233153AbjF1IXE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 28 Jun 2023 04:23:04 -0400
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id A98C324E22D;
+        Wed, 28 Jun 2023 14:47:10 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 28 Jun
+ 2023 14:47:10 +0800
+Received: from [192.168.125.128] (183.27.97.206) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Wed, 28 Jun
+ 2023 14:47:09 +0800
+Message-ID: <a83c98ae-2f6c-00c4-5d05-fc304718e05a@starfivetech.com>
+Date:   Wed, 28 Jun 2023 14:44:10 +0800
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oyafrdifo4lqltls"
-Content-Disposition: inline
-In-Reply-To: <yw1xedly2z3m.fsf@mansr.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v5 2/7] dt-bindings: soc: starfive: Add StarFive syscon
+ module
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
+ <20230613125852.211636-3-xingyu.wu@starfivetech.com>
+ <7e2d6bfe-5687-97c5-778b-c02e9c0894af@linaro.org>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <7e2d6bfe-5687-97c5-778b-c02e9c0894af@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.206]
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2023/6/14 2:31, Krzysztof Kozlowski wrote:
+> On 13/06/2023 14:58, Xingyu Wu wrote:
+>> From: William Qiu <william.qiu@starfivetech.com>
+>> 
+>> Add documentation to describe StarFive System Controller Registers.
+>> 
+>> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+>> ---
+>>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 62 +++++++++++++++++++
+>>  MAINTAINERS                                   |  7 +++
+>>  2 files changed, 69 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> 
+>> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> new file mode 100644
+>> index 000000000000..a81190f8a54d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> @@ -0,0 +1,62 @@
+>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: StarFive JH7110 SoC system controller
+>> +
+>> +maintainers:
+>> +  - William Qiu <william.qiu@starfivetech.com>
+>> +
+>> +description: |
+>> +  The StarFive JH7110 SoC system controller provides register information such
+>> +  as offset, mask and shift to configure related modules such as MMC and PCIe.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - const: starfive,jh7110-sys-syscon
+>> +          - const: syscon
+>> +          - const: simple-mfd
+>> +      - items:
+>> +          - enum:
+>> +              - starfive,jh7110-aon-syscon
+>> +              - starfive,jh7110-stg-syscon
+>> +          - const: syscon
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clock-controller:
+>> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+>> +    type: object
+>> +
+>> +  "#power-domain-cells":
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: starfive,jh7110-aon-syscon
+>> +    then:
+>> +      required:
+>> +        - "#power-domain-cells"
+> 
+> Where did you implement the results of the discussion that only some
+> devices can have power and clock controller?
+> 
+> According to your code all of above - sys, aon and stg - have clock and
+> power controllers. If not, then the code is not correct, so please do
+> not respond with what is where (like you did last time) but actually
+> implement what you say.
+> 
 
---oyafrdifo4lqltls
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Krzysztof, I need to modify the code to implement it.
+If I drop the 'clock-controller' and '"#power-domain-cells"' in properites, and change to this:
 
-On Mon, Jun 26, 2023 at 01:21:33PM +0100, M=E5ns Rullg=E5rd wrote:
-> Samuel Holland <samuel@sholland.org> writes:
->=20
-> > The PRCM CCU drivers depend on clocks provided by other CCU drivers. For
-> > example, the sun8i-r-ccu driver uses the "pll-periph" clock provided by
-> > the SoC's main CCU.
-> >
-> > However, sun8i-r-ccu is an early OF clock provider, and many of the
-> > main CCUs (e.g. sun50i-a64-ccu) use platform drivers. This means that
-> > the consumer clocks will be orphaned until the supplier driver is bound.
-> > This can be avoided by converting the remaining CCUs to use platform
-> > drivers. Then fw_devlink will ensure the drivers are bound in the
-> > optimal order.
-> >
-> > The sun5i CCU is the only one which actually needs to be an early clock
-> > provider, because it provides the clock for the system timer. That one
-> > is left alone.
-> >
-> > Signed-off-by: Samuel Holland <samuel@sholland.org>
-> > ---
-> >
-> > (no changes since v1)
-> >
-> >  drivers/clk/sunxi-ng/Kconfig             | 20 ++++----
-> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 58 +++++++++++++--------
-> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 56 ++++++++++++--------
-> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 33 ++++++++----
-> >  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 40 +++++++++++----
-> >  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 35 +++++++++----
-> >  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 40 +++++++++++----
-> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 62 ++++++++++++++--------
-> >  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 65 ++++++++++++++----------
-> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 57 +++++++++++++--------
-> >  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 38 ++++++++++----
-> >  11 files changed, 332 insertions(+), 172 deletions(-)
->=20
-> This broke the hstimer clocksource on A20 since it requires a clock
-> provided by the sun4i ccu driver.
+--- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+@@ -29,28 +29,33 @@ properties:
+   reg:
+     maxItems: 1
+ 
+-  clock-controller:
+-    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+-    type: object
+-
+-  "#power-domain-cells":
+-    const: 1
+-
+ required:
+   - compatible
+   - reg
+ 
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: starfive,jh7110-sys-syscon
++    then:
++      properties:
++        clock-controller:
++          $ref: /schemas/clock/starfive,jh7110-pll.yaml#
++          type: object
++
+   - if:
+       properties:
+         compatible:
+           contains:
+             const: starfive,jh7110-aon-syscon
+     then:
+-      required:
+-        - "#power-domain-cells"
++      properties:
++        "#power-domain-cells":
++          const: 1
+ 
+-additionalProperties: false
++additionalProperties: true
 
-The A10 is probably broken by this, but the A20 should be able to use
-the arch timers just like all the other Cortex-A7-based SoCs.
 
-Do you have a dmesg log that could help debug why it's not working?
+Would it be better to show that sys-syscon only has clock-controller and aon-syscon is power controller?
 
-Maxime
+Best regards,
+Xingyu Wu
 
---oyafrdifo4lqltls
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJvk0gAKCRDj7w1vZxhR
-xUNZAQCPJxji/u47iktYmhrmFscqGGbXgQkRSC/fP3nBs/RnnwEAqbOxrzh8lF3J
-naqyI7DLolA/9Bf37opYB4Lh1y4PIQw=
-=juQ0
------END PGP SIGNATURE-----
-
---oyafrdifo4lqltls--
