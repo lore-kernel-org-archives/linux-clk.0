@@ -2,118 +2,111 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A99D5EB64DC
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 10:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A96EB64DC
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 10:50:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232372AbjF2KGg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jun 2023 06:06:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46952 "EHLO
+        id S231989AbjF2KuS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jun 2023 06:50:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229978AbjF2KEe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 06:04:34 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13C473AA4
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 03:03:25 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id ffacd0b85a97d-313df030ccaso523834f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 03:03:25 -0700 (PDT)
+        with ESMTP id S231821AbjF2KuP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 06:50:15 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D301FC1
+        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 03:50:13 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fb7acaa7a5so799140e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 03:50:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1688033003; x=1690625003;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uaMGImYnQKnsq7fsnwOVnpPcILnExtFuFwZ75WjZ+G8=;
-        b=h+09ytWCV2amGFMopbaZtCXUJjJKz8DhAHtUefOVoKcGXTUaJcbmQzfziST1ySjwBs
-         fwMco4LDFc2kq+ha49mXvjonPLONQbpv3VPtykCjLfssrCYQ4DbEi8P9yVzhmqZZxDA2
-         qj4cQioeKR7RYGJx9ZwrtCpAPmq53BjVkt2tRarlOIUDH2Y1XbUgv9Mip5o2n88kjgEO
-         Yu2e+7sJ/cxB/dBNmExZIehrl8FIx27R5lVO+qDZPbkA110hpbVEiZxm1g5PFoROd4mJ
-         ucY4MkjHjiL+Wj2Ebd7rUzW+0Lq+eIYa+3auIEWrvhpKVopwKTYj+znGGMkMIrcfAWpM
-         3/Vw==
+        d=linaro.org; s=google; t=1688035812; x=1690627812;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AlWKrukg5MkoBr6pmLqgyqkqs3HWwrV9mYN/fyCAiOY=;
+        b=WBlfWCh+qhrVWdYpLZ45TxWD+z+z59deD4crcXaYxzldSoovleEsfQTWo8vQ+fEygu
+         MknhUiiWRRkpolb/Yzvak/bdgHVGSmM0dLxUIA2eOCuaESZqD5gNPn2ZvQSM2AqHCiU1
+         Skv5s73xK4dr6rLkqrmN/8w+WBBn4Ysp5Qks3qGcBN91lBrOEguZRKWyaI8BaZigtVqU
+         HssxCXJRtl+KcFwdptvdA+hw6O2mhRpQuHTgd2ns1JpN54rm+n7Rbl/IUMfqls/YdAht
+         0XOzm0qMxB3367Uzv2CJnsMthpbxHJ8/NM+m+GZic3sFYgsgJx49jR6H5RlZMSpHsGpa
+         Zssw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688033003; x=1690625003;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20221208; t=1688035812; x=1690627812;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uaMGImYnQKnsq7fsnwOVnpPcILnExtFuFwZ75WjZ+G8=;
-        b=itxk0F1gHECheIx9qHGzfrV89qn+76t8E9ikT5QyXU0IUpW3KWIfmRHS9cQdDhOTks
-         gBhzDY1MXJ4R3afk1ZfU4ViMij13H4mAqn/ILz5yfR/1iFTdSFn61sZ7GyqqfTdGZflS
-         9z2nE9hDptoGMJXIiOjsFC2iTnOKKsllv1FYuUiy9QgAJYkseeygYvE9mYOGi/kyJZ6E
-         kKIUFdFcW0Y1P9T8aA9QYfzobqtUSLW8VWAkNUVdnUn5i49zUUBX9iHQS0WuUuwzQc9k
-         SMvhbw/QaHAnZr5ZcQzvhQbyp9IyvKQkmNmCySrgB9oENWnWLFRRpcacf9p+z6GbAc2t
-         vrkw==
-X-Gm-Message-State: AC+VfDxDQYOBZXVrR+zsyMqpnGB6zsrgdDb0Fcz6DZPfBjBHaKOh/gPd
-        PrFuIEkDuNi0+FwPhfhL08AhHQ==
-X-Google-Smtp-Source: ACHHUZ4gGOlHZ3B9k0qBbIR5qB2LqkDmU6fIVVUkapqWekDMKRTnDoYalnmqNRmJCQ+KcYBUnFu3kw==
-X-Received: by 2002:a05:6000:42:b0:313:e2c4:7bc2 with SMTP id k2-20020a056000004200b00313e2c47bc2mr14036940wrx.53.1688033003304;
-        Thu, 29 Jun 2023 03:03:23 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id l6-20020adff486000000b00313fd294d6csm7414075wro.7.2023.06.29.03.03.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jun 2023 03:03:22 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 12:03:21 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Vitaly Grinberg <vgrinber@redhat.com>
-Cc:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
-        David Airlie <airlied@redhat.com>, andy.ren@getcruise.com,
-        anthony.l.nguyen@intel.com, arnd@arndb.de, axboe@kernel.dk,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        claudiajkang@gmail.com, corbet@lwn.net, davem@davemloft.net,
-        edumazet@google.com, geert+renesas@glider.be,
-        gregkh@linuxfoundation.org, hkallweit1@gmail.com,
-        idosch@nvidia.com, intel-wired-lan@lists.osuosl.org,
-        jacek.lawrynowicz@linux.intel.com,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        jesse.brandeburg@intel.com, jonathan.lemon@gmail.com,
-        kuba@kernel.org, kuniyu@amazon.com, leon@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux@zary.sk, liuhangbin@gmail.com,
-        lucien.xin@gmail.com, masahiroy@kernel.org,
-        michal.michalik@intel.com, milena.olech@intel.com,
-        Michal Schmidt <mschmidt@redhat.com>,
-        Michael Tsirkin <mst@redhat.com>, netdev@vger.kernel.org,
-        nicolas.dichtel@6wind.com, nipun.gupta@amd.com, ogabbay@kernel.org,
-        Paolo Abeni <pabeni@redhat.com>, phil@nwl.cc,
-        Petr Oros <poros@redhat.com>, razor@blackwall.org,
-        ricardo.canuelo@collabora.com, richardcochran@gmail.com,
-        saeedm@nvidia.com, sj@kernel.org, tzimmermann@suse.de,
-        vadfed@fb.com, vadfed@meta.com, vadim.fedorenko@linux.dev
-Subject: Re: [RFC PATCH v8 00/10] Create common DPLL configuration API
-Message-ID: <ZJ1W6Trfar7xxkJ2@nanopsycho>
-References: <CACLnSDhkUA=19905RKk=f1WBkd3jTEDcvytJCgavi90FroXb5w@mail.gmail.com>
- <ZJ0/StDYFANB1COA@nanopsycho>
- <CACLnSDgudK155J8myg99Q+sr18sUy5nJOQsBWtgsFBPGRVhDCQ@mail.gmail.com>
+        bh=AlWKrukg5MkoBr6pmLqgyqkqs3HWwrV9mYN/fyCAiOY=;
+        b=D9zDgcVqVpXbnZvGZRSjSUdX2MmoCl+LYghG59G4qinJCCnbkdfEkOXTqhWFWDCyc4
+         91vRDMmzkZPKjEOii21u8J+ug/rnxEYm5rkhQAMFGjGgmO3jDdbDfF+M+UKUvldeEmnt
+         hd0+oPQ2GZKdiJt257oEIKVvnZxde6QcDtXDn224qQb+IqYxrLHpE94WdwVNF2qrR4St
+         dZ4WAeaovl27c3K7rrJRaGFacAOG6dakn5SIXq+NGdjz2l5p9+MZRwQfjAbOTvwPt0j+
+         i3yf9UuYzzgfHRZiZvYy8Ygpo3FjmrK3upUn9+U5ExDYPFtQqov3KeS0mgxCKu2QLHw/
+         ZI3A==
+X-Gm-Message-State: AC+VfDw05TjeOKifH3UioF1y4AoNZjPzLLo9gwc6n/S87vBGX8vSGvGx
+        /98DMxSEnw6Qvf+hfWGvoUhMcA==
+X-Google-Smtp-Source: ACHHUZ4MUaOhGLj+rMVCwGhuYzQmktcGM6s56V38iEDGRih5bps9QVtmpsk9PuqcaKJZSP1bMwcr+Q==
+X-Received: by 2002:a19:5f44:0:b0:4f6:2317:f387 with SMTP id a4-20020a195f44000000b004f62317f387mr20026659lfj.35.1688035812045;
+        Thu, 29 Jun 2023 03:50:12 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id b12-20020a056512024c00b004f87571a5c8sm2264826lfo.48.2023.06.29.03.50.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Jun 2023 03:50:11 -0700 (PDT)
+Message-ID: <bf82cadd-025d-58b9-15b0-5fd4d7a5603e@linaro.org>
+Date:   Thu, 29 Jun 2023 13:50:10 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACLnSDgudK155J8myg99Q+sr18sUy5nJOQsBWtgsFBPGRVhDCQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 01/15] drm/msm/dsi: Drop unused regulators from QCM2290
+ 14nm DSI PHY config
+Content-Language: en-GB
+To:     Marijn Suijten <marijn.suijten@somainline.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
+References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
+ <20230627-sm6125-dpu-v2-1-03e430a2078c@somainline.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230627-sm6125-dpu-v2-1-03e430a2078c@somainline.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thu, Jun 29, 2023 at 10:26:28AM CEST, vgrinber@redhat.com wrote:
->Hi Jiri,
->We are pushing for it to be implemented in Intel Ice driver.
+On 27/06/2023 23:14, Marijn Suijten wrote:
+> The regulator setup was likely copied from other SoCs by mistake.  Just
+> like SM6125 the DSI PHY on this platform is not getting power from a
+> regulator but from the MX power domain.
+> 
+> Fixes: 572e9fd6d14a ("drm/msm/dsi: Add phy configuration for QCM2290")
+> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> ---
+>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 2 --
+>   1 file changed, 2 deletions(-)
 
-It does not have to be part of the initial submission. It can be
-extended later on. Also, not possible to define the UAPI without actual
-driver implementation.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
+-- 
+With best wishes
+Dmitry
 
->Thanks,
->Vitaly
->
->On Thu, Jun 29, 2023 at 11:22 AM Jiri Pirko <jiri@resnulli.us> wrote:
->>
->> Thu, Jun 22, 2023 at 09:44:19AM CEST, vgrinber@redhat.com wrote:
->> >Hi,
->> >Could it be possible to add PPS DPLL phase offset to the netlink API? We
->> >are relying on it in the E810-based grandmaster implementation.
->>
->> In which driver you need to implement this?
->>
->>
->> >Thanks,
->> >Vitaly
->>
->
