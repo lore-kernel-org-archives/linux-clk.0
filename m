@@ -2,63 +2,28 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4237EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 10:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B353EC001B3
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 12:09:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232003AbjF2K50 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jun 2023 06:57:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60850 "EHLO
+        id S230401AbjF2MJ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jun 2023 08:09:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232091AbjF2K4z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 06:56:55 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8611C10CF
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 03:56:54 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fb9ae4cef6so784505e87.3
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 03:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688036213; x=1690628213;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XudBHNh6EIvicDJvP3l5PakLMCO2XVjkw1Un1jKRhd0=;
-        b=uu7ZjOBoQU8Zuc6xF9IASCisl5i3RJN+o5oEwL0m8WNpxK4h7tBhSvxhOCqQRrjq87
-         Hkg7yfdzH0v8pIDmxRQAGR0u2DHKqAjQaV2OCkDaYZObNHJXM4/nLOXobEn13seseI6X
-         T/XY7LDx1LM++ixk5soYZgowssC0pWDGzuVTcdV5WnF/uIYj0WWxjOZn2qju8TU2Emgw
-         10SG3XblmYyhBTrBCl95QTy0tnbNfHFsKBYPqn6sxYmBUku97ztxomjEPhya+HRs9NYt
-         gEodLw7pzi0dZm1rldmPfx3Obbtqx7P3KOpXnk3n28Rucp/+1cm01JhaxQmMww0TL7bL
-         sAgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688036213; x=1690628213;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XudBHNh6EIvicDJvP3l5PakLMCO2XVjkw1Un1jKRhd0=;
-        b=gjUoPbv7HI9A3o+4b4/w9kOGFJ2NTV1qA7YHP2+DMcCpqfCnUoZ0AypC8gVy28ftbs
-         gsHirOOQmr0WzcY6+F2dHqJlBuENKjB5W05L98yfn1ajD2UUOGIhzGRv74sRHAMHusO0
-         kUDMB58OLs16IckTs+s1DbJDSVOwYSdvwEIgETIhL58+gtXkgh6pvYSJzeF+8lhJULTT
-         GKym+idIZF85Dne6PNFeQvQixP9rkTmxtyKD/DW/0uRk5d8ZoFAyMVUW6/VWFec2vr4d
-         YFbZUPy9du14i3PRJL4EXsGeXPpBVGGS8aeUEp6OD6PuagOrz50BYWSiQe8EtqxDv7Hp
-         fwLA==
-X-Gm-Message-State: AC+VfDy1XoRcExuEH8I+VT4Lw6kDTadkqCCjvYbP9zZV3iul+s3niXjP
-        F7dla7oLqfR3E4zZTiwMieV1wA==
-X-Google-Smtp-Source: ACHHUZ67QQf0NeeCiPkk8c2GdI8jXCRn30dGTaBROv29CmYfqAcSa310+UuNTx97NP8aEBPeMY55Vg==
-X-Received: by 2002:a19:4f04:0:b0:4f8:56c8:e6b4 with SMTP id d4-20020a194f04000000b004f856c8e6b4mr22003723lfb.47.1688036212712;
-        Thu, 29 Jun 2023 03:56:52 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id u27-20020ac248bb000000b004f861e64f24sm2276659lfg.113.2023.06.29.03.56.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jun 2023 03:56:52 -0700 (PDT)
-Message-ID: <9ea758a7-236a-6367-1832-fb65cb2ec75b@linaro.org>
-Date:   Thu, 29 Jun 2023 13:56:51 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 14/15] arm64: dts: qcom: sm6125: Add display hardware
- nodes
-Content-Language: en-GB
-To:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S230222AbjF2MJz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 08:09:55 -0400
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2803FBC;
+        Thu, 29 Jun 2023 05:09:52 -0700 (PDT)
+Received: from SoMainline.org (82-72-63-87.cable.dynamic.v4.ziggo.nl [82.72.63.87])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 472443F384;
+        Thu, 29 Jun 2023 14:09:47 +0200 (CEST)
+Date:   Thu, 29 Jun 2023 14:09:45 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -71,8 +36,8 @@ To:     Marijn Suijten <marijn.suijten@somainline.org>,
         Daniel Vetter <daniel@ffwll.ch>,
         Krishna Manikandan <quic_mkrishn@quicinc.com>,
         Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
@@ -83,38 +48,52 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
+Subject: Re: [PATCH v2 12/15] arm64: dts: qcom: sm6125: Switch fixed xo_board
+ clock to RPM XO clock
+Message-ID: <st3nrb54zxa5xp7qqkdyygf7t6ucgzl3xc5w6d426xy6udj4fx@puakunoaoj2l>
 References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
- <20230627-sm6125-dpu-v2-14-03e430a2078c@somainline.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230627-sm6125-dpu-v2-14-03e430a2078c@somainline.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+ <20230627-sm6125-dpu-v2-12-03e430a2078c@somainline.org>
+ <84eb1d40-436b-a5b4-a4e3-75a511ad5a90@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84eb1d40-436b-a5b4-a4e3-75a511ad5a90@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27/06/2023 23:14, Marijn Suijten wrote:
-> Add the DT nodes that describe the MDSS hardware on SM6125, containing
-> one MDP (display controller) together with a single DSI and DSI PHY.  No
-> DisplayPort support is added for now.
+On 2023-06-29 13:55:28, Dmitry Baryshkov wrote:
+> On 27/06/2023 23:14, Marijn Suijten wrote:
+> > We have a working RPM XO clock; no other driver except rpmcc should be
+> > parenting directly to the fixed-factor xo_board clock nor should it be
+> > reachable by that global name.  Remove the name to that effect, so that
+> > every clock relation is explicitly defined in DTS.
+> > 
+> > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > ---
+> >   arch/arm64/boot/dts/qcom/sm6125.dtsi | 7 ++++---
+> >   1 file changed, 4 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> > index 722dde560bec..edb03508dba3 100644
+> > --- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+> > @@ -22,7 +22,6 @@ xo_board: xo-board {
+> >   			compatible = "fixed-clock";
+> >   			#clock-cells = <0>;
+> >   			clock-frequency = <19200000>;
+> > -			clock-output-names = "xo_board";
 > 
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> ---
->   arch/arm64/boot/dts/qcom/sm6125.dtsi | 191 ++++++++++++++++++++++++++++++++++-
->   1 file changed, 189 insertions(+), 2 deletions(-)
+> Why? I'd say, leave it.
+
+The exact reason is explained in the commit message.
+
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> index a5cc0d43d2d9..b21fa1256f95 100644
-> --- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> @@ -1204,12 +1204,199 @@ sram@4690000 {
->   			reg = <0x04690000 0x10000>;
->   		};
->   
+> With that fixed:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hence I don't think it makes sense to "fix" this.
 
--- 
-With best wishes
-Dmitry
+- Marijn
 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
