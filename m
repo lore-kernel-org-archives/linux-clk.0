@@ -2,164 +2,290 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C3A5EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 06:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8193EEB64DC
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 06:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231208AbjF2GOd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jun 2023 02:14:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38098 "EHLO
+        id S231146AbjF2GqK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jun 2023 02:46:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230447AbjF2GOb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 02:14:31 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF2F268F
-        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 23:14:29 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-31114b46d62so342825f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 28 Jun 2023 23:14:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1688019267; x=1690611267;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BxPmChzKXR1dj/ko+9tzcHvICaNxDCij9PscVU1CwGY=;
-        b=g4spu/YTypGbdobXCPpsNMEE7fZgSTh6dwO8ck/RlyJzKG32ec8qbcH4voInoYNI6o
-         nG6/zJ1n82WItH1lu3qQCRFI8uw3L8ph8dhnODO74Jobt9mAAC6aVPmcAOEeHa3CijaY
-         GQ0EQQTgLWtAzMyQV8sZkz9pP1Q5sB+jGzX0IRtVzmIH7vRZDqd7kAqk/QYf3QTa8aEJ
-         QSuo/h0rl0fcrDEeomgjT4HhlbHIS1Bzm651nwZXtQyAM08WdVMOLO0uppwo8McOoT1j
-         8CGh366oXSh0q2wYy6HTFoOLtXKgeVtSm3qpnqhqbheagjwO+/UJVS4tnevaSr7XLabv
-         Rrig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688019267; x=1690611267;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BxPmChzKXR1dj/ko+9tzcHvICaNxDCij9PscVU1CwGY=;
-        b=P05FwPP/gJ4JIPmvvuRD1d1OTfQ1g6VWrc5/IM/LX7e5uovfcvwmLtXevrL3u8SVgU
-         Oi9XBNubFoIGW3/+mZ2vjBqZJB669YeD9ZfLBNsMW+PAV8XZezebjcDkOlx6BN7VWwIo
-         +/XbWJqYWwyQlZmhsHKT5XxJEfkOeInPfFFu5DigyVrZPaiaRqrCRgyvvG17r8pqyyfT
-         HMt6KeDuDyjktMUmfNGeY2m0iaBfib9qIuYElC2reAgxGVv9plQPPl0KGwfp+aBKev2I
-         zf76bPqWzYtw7t2NFzFdWSKJ40zp7oOqHPAoE2OG0IGbYeNC0G8HC6COgVa6PYVxGffg
-         LL3w==
-X-Gm-Message-State: AC+VfDyGU80ZtjOszI2nvsrhNqcnCneQpdhleD/dRk16lqiN6IMZ/HoO
-        k+QH6X8+QDvxU7sr0Mf+UEWy0Q==
-X-Google-Smtp-Source: ACHHUZ7KKCQek3b9yJkpoCmAdgzst9lXvnl9IF1wrn2teksRP3fkGVdr25X0T5kABFTNqxM9KgVooQ==
-X-Received: by 2002:a05:6000:181:b0:30f:d218:584a with SMTP id p1-20020a056000018100b0030fd218584amr32939868wrx.23.1688019267545;
-        Wed, 28 Jun 2023 23:14:27 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id b7-20020a5d45c7000000b003141a3c4353sm460558wrs.30.2023.06.28.23.14.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Jun 2023 23:14:26 -0700 (PDT)
-Date:   Thu, 29 Jun 2023 08:14:25 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     "kuba@kernel.org" <kuba@kernel.org>,
-        "vadfed@meta.com" <vadfed@meta.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "vadfed@fb.com" <vadfed@fb.com>,
-        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
-        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
-        "M, Saeed" <saeedm@nvidia.com>,
-        "leon@kernel.org" <leon@kernel.org>,
-        "richardcochran@gmail.com" <richardcochran@gmail.com>,
-        "sj@kernel.org" <sj@kernel.org>,
-        "javierm@redhat.com" <javierm@redhat.com>,
-        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "tzimmermann@suse.de" <tzimmermann@suse.de>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "jacek.lawrynowicz@linux.intel.com" 
-        <jacek.lawrynowicz@linux.intel.com>,
-        "airlied@redhat.com" <airlied@redhat.com>,
-        "ogabbay@kernel.org" <ogabbay@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "linux@zary.sk" <linux@zary.sk>,
-        "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "kuniyu@amazon.com" <kuniyu@amazon.com>,
-        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
-        "razor@blackwall.org" <razor@blackwall.org>,
-        "idosch@nvidia.com" <idosch@nvidia.com>,
-        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
-        "phil@nwl.cc" <phil@nwl.cc>,
-        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH v8 08/10] ice: implement dpll interface to control cgu
-Message-ID: <ZJ0hQRcm6S05r8VE@nanopsycho>
-References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
- <20230609121853.3607724-9-arkadiusz.kubalewski@intel.com>
- <ZISmmH0jqxZRB4VX@nanopsycho>
- <DM6PR11MB4657161D2871747A7B404EDD9B5FA@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZJLtR0c+tvCbUgri@nanopsycho>
+        with ESMTP id S232306AbjF2Gpu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 02:45:50 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A10187;
+        Wed, 28 Jun 2023 23:45:44 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 2682F817A;
+        Thu, 29 Jun 2023 14:45:41 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 29 Jun
+ 2023 14:45:41 +0800
+Received: from [192.168.125.128] (183.27.97.206) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 29 Jun
+ 2023 14:45:40 +0800
+Message-ID: <2270fd7f-1751-066a-0da5-e35cdd59fd2f@starfivetech.com>
+Date:   Thu, 29 Jun 2023 14:42:39 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZJLtR0c+tvCbUgri@nanopsycho>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v5 2/7] dt-bindings: soc: starfive: Add StarFive syscon
+ module
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230613125852.211636-1-xingyu.wu@starfivetech.com>
+ <20230613125852.211636-3-xingyu.wu@starfivetech.com>
+ <7e2d6bfe-5687-97c5-778b-c02e9c0894af@linaro.org>
+ <a83c98ae-2f6c-00c4-5d05-fc304718e05a@starfivetech.com>
+ <20230628-affix-maverick-84a08905f05b@spud>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <20230628-affix-maverick-84a08905f05b@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.97.206]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wed, Jun 21, 2023 at 02:29:59PM CEST, jiri@resnulli.us wrote:
->Mon, Jun 19, 2023 at 10:34:12PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>From: Jiri Pirko <jiri@resnulli.us>
->>>Sent: Saturday, June 10, 2023 6:37 PM
->>>
->>>Fri, Jun 09, 2023 at 02:18:51PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>
->>>[...]
->>>
->>>
->>>>+static int ice_dpll_mode_get(const struct dpll_device *dpll, void *priv,
->>>>+			     enum dpll_mode *mode,
->>>>+			     struct netlink_ext_ack *extack)
->>>>+{
->>>>+	*mode = DPLL_MODE_AUTOMATIC;
->>>
->>>I don't understand how the automatic mode could work with SyncE. The
->>>There is one pin exposed for one netdev. The SyncE daemon should select
->>>exacly one pin. How do you achieve that?
->>>Is is by setting DPLL_PIN_STATE_SELECTABLE on the pin-netdev you want to
->>>select and DPLL_PIN_STATE_DISCONNECTED on the rest?
->>>
->>>
->>>[...]
->>
->>AUTOMATIC mode autoselects highest priority valid signal.
->>As you have pointed out, for SyncE selection, the user must be able to manually
->>select a pin state to enable recovery of signal from particular port.
->>
->>In "ice" case there are 2 pins for network PHY clock signal recovery, and both
->>are parent pins (MUX-type). There are also 4 pins assigned to netdevs (one per
->>port). Thus passing a signal from PHY to the pin is done through the MUX-pin,
->>by selecting proper state on pin-parent pair (where parent pins is highest prio
->>pin on dpll).
->
->Could you show me some examples please?
+On 2023/6/29 1:34, Conor Dooley wrote:
+> On Wed, Jun 28, 2023 at 02:44:10PM +0800, Xingyu Wu wrote:
+>> On 2023/6/14 2:31, Krzysztof Kozlowski wrote:
+>> > On 13/06/2023 14:58, Xingyu Wu wrote:
+>> >> From: William Qiu <william.qiu@starfivetech.com>
+>> >> 
+>> >> Add documentation to describe StarFive System Controller Registers.
+>> >> 
+>> >> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> >> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+>> >> ---
+>> >>  .../soc/starfive/starfive,jh7110-syscon.yaml  | 62 +++++++++++++++++++
+>> >>  MAINTAINERS                                   |  7 +++
+>> >>  2 files changed, 69 insertions(+)
+>> >>  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> >> 
+>> >> diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> >> new file mode 100644
+>> >> index 000000000000..a81190f8a54d
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> >> @@ -0,0 +1,62 @@
+>> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>> >> +%YAML 1.2
+>> >> +---
+>> >> +$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.yaml#
+>> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> >> +
+>> >> +title: StarFive JH7110 SoC system controller
+>> >> +
+>> >> +maintainers:
+>> >> +  - William Qiu <william.qiu@starfivetech.com>
+>> >> +
+>> >> +description: |
+>> >> +  The StarFive JH7110 SoC system controller provides register information such
+>> >> +  as offset, mask and shift to configure related modules such as MMC and PCIe.
+>> >> +
+>> >> +properties:
+>> >> +  compatible:
+>> >> +    oneOf:
+>> >> +      - items:
+>> >> +          - const: starfive,jh7110-sys-syscon
+>> >> +          - const: syscon
+>> >> +          - const: simple-mfd
+>> >> +      - items:
+>> >> +          - enum:
+>> >> +              - starfive,jh7110-aon-syscon
+>> >> +              - starfive,jh7110-stg-syscon
+>> >> +          - const: syscon
+>> >> +
+>> >> +  reg:
+>> >> +    maxItems: 1
+>> >> +
+>> >> +  clock-controller:
+>> >> +    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+>> >> +    type: object
+>> >> +
+>> >> +  "#power-domain-cells":
+>> >> +    const: 1
+>> >> +
+>> >> +required:
+>> >> +  - compatible
+>> >> +  - reg
+>> >> +
+>> >> +allOf:
+>> >> +  - if:
+>> >> +      properties:
+>> >> +        compatible:
+>> >> +          contains:
+>> >> +            const: starfive,jh7110-aon-syscon
+>> >> +    then:
+>> >> +      required:
+>> >> +        - "#power-domain-cells"
+>> > 
+>> > Where did you implement the results of the discussion that only some
+>> > devices can have power and clock controller?
+>> > 
+>> > According to your code all of above - sys, aon and stg - have clock and
+>> > power controllers. If not, then the code is not correct, so please do
+>> > not respond with what is where (like you did last time) but actually
+>> > implement what you say.
+>> > 
+>> 
+>> Hi Krzysztof, I need to modify the code to implement it.
+>> If I drop the 'clock-controller' and '"#power-domain-cells"' in properites, and change to this:
+>> 
+>> --- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+>> @@ -29,28 +29,33 @@ properties:
+>>    reg:
+>>      maxItems: 1
+>>  
+>> -  clock-controller:
+>> -    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+>> -    type: object
+>> -
+>> -  "#power-domain-cells":
+>> -    const: 1
+>> -
+>>  required:
+>>    - compatible
+>>    - reg
+>>  
+>>  allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: starfive,jh7110-sys-syscon
+>> +    then:
+>> +      properties:
+>> +        clock-controller:
+>> +          $ref: /schemas/clock/starfive,jh7110-pll.yaml#
+>> +          type: object
+> 
+> Why do this?
+> Why not define the property has you have been doing, but only allow it
+> on the syscons that support it?
+> See the section starting at L205 of example-schema.yaml.
+> 
+>> +
+>>    - if:
+>>        properties:
+>>          compatible:
+>>            contains:
+>>              const: starfive,jh7110-aon-syscon
+>>      then:
+>> -      required:
+>> -        - "#power-domain-cells"
+>> +      properties:
+>> +        "#power-domain-cells":
+>> +          const: 1
+>>  
+> 
+>> -additionalProperties: false
+>> +additionalProperties: true
+> 
+> Why do you need this?
+> Allowing "additionalProperties: true" sounds like you've got some prblem
+> that you are trying to hide...
+> 
+>> Would it be better to show that sys-syscon only has clock-controller and aon-syscon is power controller?
+> 
+> You should only permit the properties where they are valid, yes.
+> 
 
-Arkadiusz, could you please reply to this?
-Thanks!
+Yeah, following your advice, I modified the codes and there are two options:
 
->
->
->>
->>Thank you!
->>Arkadiusz
+--- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+@@ -41,6 +41,16 @@ required:
+   - reg
+ 
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: starfive,jh7110-sys-syscon
++    then:
++      required:
++        - clock-controller
++      properties:
++        "#power-domain-cells": false
+   - if:
+       properties:
+         compatible:
+           contains:
+             const: starfive,jh7110-aon-syscon
+     then:
+       required:
+         - "#power-domain-cells"
++      properties:
++        clock-controller: false
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: starfive,jh7110-stg-syscon
++    then:
++      properties:
++        clock-controller: false
++        "#power-domain-cells": false
+ 
+ additionalProperties: false
+
+Or :
+
+--- a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+@@ -41,6 +41,17 @@ required:
+   - reg
+ 
+ allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: starfive,jh7110-sys-syscon
++    then:
++      required:
++        - clock-controller
++    else:
++      properties:
++        clock-controller: false
+   - if:
+       properties:
+         compatible:
+           contains:
+             const: starfive,jh7110-aon-syscon
+     then:
+       required:
+         - "#power-domain-cells"
++    else:
++      properties:
++        "#power-domain-cells": false
+ 
+ additionalProperties: false
+
+Which one is better? Thanks.
+
+Best regards,
+Xingyu Wu
