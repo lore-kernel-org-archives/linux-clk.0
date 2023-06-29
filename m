@@ -2,135 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54653C0015E
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 12:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB3EB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 14:48:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232105AbjF2M1W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jun 2023 08:27:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55410 "EHLO
+        id S232103AbjF2OsH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jun 2023 10:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232329AbjF2M06 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 08:26:58 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D492359A
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 05:26:45 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id 46e09a7af769-6b87d505e28so528291a34.2
-        for <linux-clk@vger.kernel.org>; Thu, 29 Jun 2023 05:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688041604; x=1690633604;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NIk8wJfpH3/FAkecZSGRLuKhBChqs6CWPQ8UTS6BFyg=;
-        b=eR/kPUuAd3/af7k4Nbz4TVTCdX1xjvfgAzUSaztt8l1P+l5BEnIae3/gvu6h42hE9G
-         /Rs6xuuqPGj78oHLv5cIKvQARlFXqgJwJM5S5bOcoJQfSaUkWsfoHJIYZveMMkzDzWnm
-         VJgk/NyNwVcs5RHGSeI7AjySTjefoggCBomRpr3ldjA8sVbPV5XkELdSZwL/SyNY6c5w
-         6ipHpivvrUEDvJIUhAPNOGe+ZvWVf6sYKZGCAhGT5uFL+BQTGKt4OZlV0U5rrbcAlDTM
-         nv8YkIs7PJpCXyqGsH2qJsGh7itojyBM88kqCe4nyFOShcmW/UhHIJQhh48mqPpMHOEN
-         UpUQ==
+        with ESMTP id S231766AbjF2OsG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 10:48:06 -0400
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DD8F1FC1;
+        Thu, 29 Jun 2023 07:48:05 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-78363328c04so33499339f.0;
+        Thu, 29 Jun 2023 07:48:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688041604; x=1690633604;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NIk8wJfpH3/FAkecZSGRLuKhBChqs6CWPQ8UTS6BFyg=;
-        b=Nw8NiqvR4G1y2HtHeZYjrA+64BOhZKKW8zXUW6r0J3jaCxzDGWx3Xm15BGM4KEKs0a
-         efVGZMQLUQWLEF/uWdtklnQWSUkubH8UWQS6CcyIixO+NPrVBVdE/bsodn7BaxjTFz+t
-         t69NB6i0iVyWVvzdohBYF2UkCSCiVDgxb9hT3LaUjQ7lgdU8sA2DSlxwNQvP2SSOhHp+
-         4NIlIffjbeJlqIq4TLLVWMBGtEOXE5VdMWTv5SwvmrL5671s3f7/G7E+tkc7rzs922wk
-         T/W20Z/kvcqM5DcfUiEiZJNyq6OXpFPJta6AuZtqMazTQn6FaKHbEcm0vPpnSNZXGNiP
-         uqqA==
-X-Gm-Message-State: AC+VfDzKag6JgwpqNh5wds/m4GUSPYc/pq+lpsMpRpFyday/fnOSXrzP
-        fSSwtscHvBRtGw5A+2UHYct1jy8aSHBjXdmW3POMKg==
-X-Google-Smtp-Source: ACHHUZ7elJFZUK/QSAojN3eXj6aPyhL1NPR9xEeFzIAo7HV9CqflV2dOYJOUp8Wkhr8zxc0HCzV1+n6otclDt9K3gI0=
-X-Received: by 2002:a05:6359:601:b0:134:d0d0:c5f1 with SMTP id
- eh1-20020a056359060100b00134d0d0c5f1mr6107800rwb.19.1688041604413; Thu, 29
- Jun 2023 05:26:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
- <20230627-sm6125-dpu-v2-12-03e430a2078c@somainline.org> <84eb1d40-436b-a5b4-a4e3-75a511ad5a90@linaro.org>
- <st3nrb54zxa5xp7qqkdyygf7t6ucgzl3xc5w6d426xy6udj4fx@puakunoaoj2l>
-In-Reply-To: <st3nrb54zxa5xp7qqkdyygf7t6ucgzl3xc5w6d426xy6udj4fx@puakunoaoj2l>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date:   Thu, 29 Jun 2023 15:26:33 +0300
-Message-ID: <CAA8EJpqHh4ZWZxuRMLN2z8BZYFqzoWxZV=oW1ANzEJy4i-PWNw@mail.gmail.com>
-Subject: Re: [PATCH v2 12/15] arm64: dts: qcom: sm6125: Switch fixed xo_board
- clock to RPM XO clock
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        d=1e100.net; s=20221208; t=1688050084; x=1690642084;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uilq6z/8qDMrMwwK/ThP4YRy5D7LVd88uC6Jk/hXOB0=;
+        b=Dae4MVNbjKDJ2ZbZzGH/TgQM9eIuK8bnVBtWNA/DzXLlgLECwRskyNM1yCrwer0eOH
+         MCEKCJUTojf+TDyspB7Ygi5/OvBnXcSahb8soMTH1bV+uMPymOunSkIoZiaAHRxJ9ffi
+         lQuR6OKey6p8KlWt+q6t50rS1TiaUQVFwfLh6webvk+q4F8mau1WUCD1wA4gTN7LyrLy
+         rW8FeArd45DIg7tI3zQtlWPX9/jQg+qvQoB9bOVqAdHXtytSi4+/z5DgwcS89TZrPTmK
+         mH0vReeaqdCVApjZ3XxpHFqhwQXz8NaqF7O/pppWbXoiIyYB6Ik/VUKsWYmCGinya+9m
+         VP0g==
+X-Gm-Message-State: AC+VfDzj7WSSl8l5pobJcdCAu+fHmLMvk7NWgIRhzg6KRcBccaEiX6Ka
+        e6cQLpDgQVmcD8nR6cVb7A==
+X-Google-Smtp-Source: ACHHUZ5ZVvbmn50/zDnLJaH0yQC1yqsQQY1KVrAIBDo0Kk8dgB7tB6uNKpFuUkQokEuPl8zkbvpgBg==
+X-Received: by 2002:a6b:dd09:0:b0:783:5452:e343 with SMTP id f9-20020a6bdd09000000b007835452e343mr11464812ioc.14.1688050084530;
+        Thu, 29 Jun 2023 07:48:04 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id h23-20020a5e8417000000b00783634b9eafsm2541364ioj.50.2023.06.29.07.48.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jun 2023 07:48:03 -0700 (PDT)
+Received: (nullmailer pid 2947111 invoked by uid 1000);
+        Thu, 29 Jun 2023 14:48:01 -0000
+Date:   Thu, 29 Jun 2023 08:48:01 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     devicetree@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        linux-pm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Andy Gross <agross@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <andersson@kernel.org>,
+        Nishanth Menon <nm@ti.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH v2 01/26] dt-bindings: opp: opp-v2-kryo-cpu: support
+ Qualcomm Krait SoCs
+Message-ID: <168805008087.2947031.13766833790422511577.robh@kernel.org>
+References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
+ <20230625202547.174647-2-dmitry.baryshkov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230625202547.174647-2-dmitry.baryshkov@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 29 Jun 2023 at 15:09, Marijn Suijten
-<marijn.suijten@somainline.org> wrote:
->
-> On 2023-06-29 13:55:28, Dmitry Baryshkov wrote:
-> > On 27/06/2023 23:14, Marijn Suijten wrote:
-> > > We have a working RPM XO clock; no other driver except rpmcc should be
-> > > parenting directly to the fixed-factor xo_board clock nor should it be
-> > > reachable by that global name.  Remove the name to that effect, so that
-> > > every clock relation is explicitly defined in DTS.
-> > >
-> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/sm6125.dtsi | 7 ++++---
-> > >   1 file changed, 4 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> > > index 722dde560bec..edb03508dba3 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> > > @@ -22,7 +22,6 @@ xo_board: xo-board {
-> > >                     compatible = "fixed-clock";
-> > >                     #clock-cells = <0>;
-> > >                     clock-frequency = <19200000>;
-> > > -                   clock-output-names = "xo_board";
-> >
-> > Why? I'd say, leave it.
->
-> The exact reason is explained in the commit message.
 
-Usually we do no not kill the xo_board name for the sake of anybody
-still looking for the old name. Weak argument, I know.
+On Sun, 25 Jun 2023 23:25:22 +0300, Dmitry Baryshkov wrote:
+> Exted the opp-v2-kryo-cpu.yaml to support defining OPP tables for the
+> previous generation of Qualcomm CPUs, 32-bit Krait-based platforms.
+> 
+> It makes no sense to use 'operating-points-v2-kryo-cpu' compatibility
+> node for the Krait cores. Add support for the Krait-specific
+> 'operating-points-v2-krait-cpu' compatibility string and the relevant
+> opp-microvolt subclasses properties.
+> 
+> The listed opp-supported-hw values are applicable only to msm8996 /
+> msm8996pro platforms. Remove the enum as other platforms will use other
+> bit values. It makes little sense to list all possible values for all
+> the platforms here.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../devicetree/bindings/opp/opp-v2-kryo-cpu.yaml     | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
 
->
-> >
-> > With that fixed:
->
-> Hence I don't think it makes sense to "fix" this.
->
-> - Marijn
->
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Acked-by: Rob Herring <robh@kernel.org>
 
-
-
--- 
-With best wishes
-Dmitry
