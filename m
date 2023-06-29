@@ -2,98 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205CCEB64D9
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 16:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2342EB64D9
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Jun 2023 17:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232410AbjF2QMm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Jun 2023 12:12:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37912 "EHLO
+        id S229520AbjF2Rez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Jun 2023 13:34:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232296AbjF2QMg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 12:12:36 -0400
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C40DF10E5;
-        Thu, 29 Jun 2023 09:12:35 -0700 (PDT)
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7836164a08aso36498839f.1;
-        Thu, 29 Jun 2023 09:12:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688055155; x=1690647155;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I3cbrEba2zKCc7+NLRK37Om5CmAjDmmF+NMGLR2TXNw=;
-        b=gbC2SH9FC+4L6slEkdxO7KzGlldgyQFsjHcc6umJg3lviQzSMIgR9ZBDwIHYQXqgcv
-         u5SgCTtPjnuLHH2Vbjp1Qu+a6M/1neFWcDwOGM65j+s8oglY5IsNGmGjNB7tdM+nTQ5k
-         xCcrB4L/AMHi3jVLyMHT0VvWMwX/DRw0boSH/Z3v+oQ1+Fnv1b+4sXp8XLhHCl32Aefi
-         yBnihCvYXumXHnHitKks9MdMGk7moh+p3xDUymt9RV1z3l+bQDVt9vXdiApoOyfe2O6u
-         2X8gpwQyCXI2n1WAinoYXHgoLnrG8MrgpmR42+B8rDBPmvpGmcTsse++8jKA0z0VuNQb
-         KR2A==
-X-Gm-Message-State: AC+VfDzKBUQXNthokP6A+rPoK1XGpmbh3SwwPRJu6F/DkJUeRXzF2EkX
-        1GIF4I5/PgXuX9al20uq89RmmH3Q/Q==
-X-Google-Smtp-Source: ACHHUZ705vS8Dn9vGnSlG3J2dxDiTeOe9Cq3FIEpSpo5xeOKdlFlvpHugksZ11fmTkDJxH+5o0uW8Q==
-X-Received: by 2002:a5e:a51a:0:b0:783:62af:fbdf with SMTP id 26-20020a5ea51a000000b0078362affbdfmr11390301iog.14.1688055155018;
-        Thu, 29 Jun 2023 09:12:35 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id a21-20020a5d89d5000000b00784315b7f86sm1856336iot.24.2023.06.29.09.12.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jun 2023 09:12:34 -0700 (PDT)
-Received: (nullmailer pid 3128049 invoked by uid 1000);
-        Thu, 29 Jun 2023 16:12:31 -0000
-Date:   Thu, 29 Jun 2023 10:12:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     Konrad Dybcio <konrad.dybcio@somainline.org>,
+        with ESMTP id S232796AbjF2Reb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 29 Jun 2023 13:34:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 552DE35B6;
+        Thu, 29 Jun 2023 10:34:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 32ACD615C7;
+        Thu, 29 Jun 2023 17:34:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8ADB9C433C0;
+        Thu, 29 Jun 2023 17:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688060066;
+        bh=rNGQL6pxR9k9DExiyIujUSlC5Llfm3DUHgdvZVuKaLc=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=EgrsKVaVCLp/yj7jEgsf0JNuWvqM3eL4qQa7+xag6axYVCNg8q7PYefwwiWB/PIW2
+         iBxi8ihDSZxtojIqEDaPmqxxs7X7unLoDFWRE19o2Lpm9MiqW0TrffYl7m+zgGVpQw
+         nQ1m+SQaJ3apV6Zl0s9SKbzLh/Wn3IWRce6Qo6+gWjXrmM8MG/kGpdHyYkn+M6AQbo
+         MOJpw9kBi3Xu3NhzsHOPFsZclFsqaLYvHP62gQfwPZqF00bemAFhYwtHgVzQb5TVUj
+         PX4Gbv2/dIdxtq7NeLcpiZk7eOVPwoAXAW+59HP+/2MBsJRzlyd4W75xtsdHEx+F4s
+         Ww4JNN1P/pP/Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 77F5BC43158;
+        Thu, 29 Jun 2023 17:34:26 +0000 (UTC)
+Subject: Re: [GIT PULL] clk changes for the merge window
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230627051123.391865-1-sboyd@kernel.org>
+References: <20230627051123.391865-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230627051123.391865-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: b9a40506a2cb626da3f21c6d494a76879e3141d7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ff7ddcf0db48a7d9ae536eb0875428117be1d1f1
+Message-Id: <168806006648.7356.16385516546498929578.pr-tracker-bot@kernel.org>
+Date:   Thu, 29 Jun 2023 17:34:26 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        Rob Clark <robdclark@gmail.com>, Lux Aliaga <they@mint.lgbt>,
-        Sean Paul <sean@poorly.run>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>
-Subject: Re: [PATCH v2 06/15] dt-bindings: display/msm: sc7180-dpu: Describe
- SM6125
-Message-ID: <168805515067.3127989.380988000500770065.robh@kernel.org>
-References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
- <20230627-sm6125-dpu-v2-6-03e430a2078c@somainline.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230627-sm6125-dpu-v2-6-03e430a2078c@somainline.org>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The pull request you sent on Mon, 26 Jun 2023 22:11:23 -0700:
 
-On Tue, 27 Jun 2023 22:14:21 +0200, Marijn Suijten wrote:
-> SM6125 is identical to SM6375 except that while downstream also defines
-> a throttle clock, its presence results in timeouts whereas SM6375
-> requires it to not observe any timeouts.  This is represented by
-> reducing the clock array length to 6 so that it cannot be passed.  Note
-> that any SoC other than SM6375 (currently SC7180 and SM6350) are
-> unconstrained and could either pass or leave out this "throttle" clock.
-> 
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> ---
->  .../devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml   | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ff7ddcf0db48a7d9ae536eb0875428117be1d1f1
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
