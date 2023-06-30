@@ -2,141 +2,245 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1DAEB64DA
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 21:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EDAEB64DA
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 23:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232246AbjF3VvI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jun 2023 17:51:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42722 "EHLO
+        id S231523AbjF3XWb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jun 2023 19:22:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbjF3VvG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 17:51:06 -0400
-X-Greylist: delayed 450 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 30 Jun 2023 14:51:04 PDT
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E16702D60
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 14:51:04 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id FLtpqjTftwzPwFLtpqurzA; Fri, 30 Jun 2023 23:43:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1688161413;
-        bh=AIucvni9X/ZbEloP+tU3J5b8QfRRMxTW27SNEEcKab8=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=jb1S7dQ0KQp/kcSXL2IY7HuSg/W5x6NcXA3+rk4QiLIGyxBfHZDWWF20bFuPcstgR
-         xb8T3dj+/w4A9seuio9yXc/YXZALFWbCdYYyeSdj36ah7m9LUYOPrO/ndKNccYjdgP
-         onACMsHuYfMw0NXmHYzWDgzBdlNO3ZbxmaIQ96F07qHtxeB9igQQIK3MR1xkxyS1aD
-         J198Jyal7LwIYrKlXk77vGnNO6FsT4kvCmq4eDwz2uMKbKb3xbJhto2ELsM92qYwg2
-         OPNVlx2Ud2YHUk3z9CalxUEbLfxDmjfYxLUw3LSuLmow3BIj3RvV+36a0vpCetOUzV
-         mRUtq/mguCa0A==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 30 Jun 2023 23:43:33 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <09e96a5a-2e02-e832-8fdd-48e9d5e5c3a7@wanadoo.fr>
-Date:   Fri, 30 Jun 2023 23:43:29 +0200
+        with ESMTP id S232511AbjF3XWQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 19:22:16 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A38849C7
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 16:21:29 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b6c3921c8bso39784761fa.3
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 16:21:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688167270; x=1690759270;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JP9h1rS2E5zsXkgZB46K1q99NJea9LBJTLy1ke4IjZc=;
+        b=wpI1xR5ZSnTdrYLlCcyiJlkZAKkFt/ubC3aVLLfsmfIuZciKT2vmnnHAk3lzHyns0J
+         F34c1QCD1dz6LSf88nO2fz4MJC5xxe9XmjSAPMZ1ZC0EH6NhJAOVIZuDxyD2BuSi1bKS
+         ub4YMufjNhvaJsWAfrB80VgX0mQhaGyA6jr7IVc0sJvj5Hy51/jpuB3W2bFaL1u6j2Zt
+         MtiJvniHwWUtr7u/wPGl+qS9rnj+c14E8AX2YIgj/KCBpifSptpFU5Sgy8et+HdLV9wB
+         EH68AMG8DBlhDCU/qtIBMbV5drasRU8ILU9Xjo7BmNQwDcxraFklg6h6sNtfRDiPxMSv
+         Ihrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688167270; x=1690759270;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JP9h1rS2E5zsXkgZB46K1q99NJea9LBJTLy1ke4IjZc=;
+        b=GL+FQZLEgjZs+Om0/zuxCxDg05Npmngz3TdOuG4Ye2Y5guYvFqVet9zcFrUZGZOqKL
+         DvJk1ND9nF0nTn5WKmDSvISAaUE2df0G00YDhTsuC0cqbmvZbB4qyQrLkofiCSzgiIQd
+         njY0kkXxHkJSpaq7+H6RWVmE5v3dtZZ64mCYAwJwW6iPyGmXQmy3FdwPRQhzAUZkDYf1
+         7EFLKoeuIQxgsKjqoYxPFE2SQ5JIeBEUU6W0BmcCatFUtBfONnMYqlzAkjP4RVjlGhZG
+         Seyf68w7AidgeBPU+5mEmW4/54/yg9IXJBuonljS4QgdHH2aqf3QGYRBo4leyqgojVun
+         mL4g==
+X-Gm-Message-State: ABy/qLbvLxjNLR88J7ywhUlDyYtM0rjwpq/X5xnBhlal1C1uYLwgxjhV
+        UXWP7KuqU4G1cPt+z91KSR0IJw==
+X-Google-Smtp-Source: APBJJlF1yY21wcdEDtPDbJt3hFKGXm/xt/2uqknhN64+s2wv1sz+diPMOV9CZs8CQfXbD4Ly/BKUjA==
+X-Received: by 2002:a05:651c:155:b0:2b6:9cec:8bfb with SMTP id c21-20020a05651c015500b002b69cec8bfbmr2545994ljd.16.1688167270172;
+        Fri, 30 Jun 2023 16:21:10 -0700 (PDT)
+Received: from [192.168.1.101] (abxi253.neoplus.adsl.tpnet.pl. [83.9.2.253])
+        by smtp.gmail.com with ESMTPSA id k16-20020a2e8890000000b002b6bd43793dsm1538052lji.124.2023.06.30.16.21.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Jun 2023 16:21:09 -0700 (PDT)
+Message-ID: <35b32667-fa29-3e00-1cad-e12a3eb7f362@linaro.org>
+Date:   Sat, 1 Jul 2023 01:21:07 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 3/4] clk: mvebu: Iterate over possible CPUs instead of
- DT CPU nodes
-Content-Language: fr
-To:     Rob Herring <robh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Thunderbird/102.12.0
+Subject: Re: [PATCH V5 4/5] clk: qcom: camcc-sm8550: Add support for qdss,
+ sleep and xo clocks
+Content-Language: en-US
+To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Walter Harms <wharms@bfs.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-References: <20230327-mvebu-clk-fixes-v2-0-8333729ee45d@kernel.org>
- <20230327-mvebu-clk-fixes-v2-3-8333729ee45d@kernel.org>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230327-mvebu-clk-fixes-v2-3-8333729ee45d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20230623164619.11464-1-quic_jkona@quicinc.com>
+ <20230623164619.11464-5-quic_jkona@quicinc.com>
+ <11b3058c-2261-95a4-2347-b0a33fdeb1e3@linaro.org>
+ <99aebcb3-89d4-993b-5bc1-abc475b94843@quicinc.com>
+ <a10cdae8-3f18-7ffc-8db7-ab21b47b91ca@linaro.org>
+ <a04dd502-bd0f-e5c2-c935-16d221fb86cc@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <a04dd502-bd0f-e5c2-c935-16d221fb86cc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le 09/06/2023 à 20:13, Rob Herring a écrit :
-> Rework iterating over DT CPU nodes to iterate over possible CPUs
-> instead. There's no need to walk the DT CPU nodes again. Possible CPUs
-> is equal to the number of CPUs defined in the DT. Using the "reg" value
-> for an array index is fragile as it assumes "reg" is 0-N which often is
-> not the case.
-
-Hi,
-
-just for the records, this also fixes 2 bugs that were reported as patch 
-1 and 2 at [1].
-
-Nice :)
-
-
-Part of patch 1 could still have some interest in order to remove the 
-hard-coded 5 in the kzalloc().
-Patch 3 and 4 are mostly useless.
-
-Feel free to check/apply them if it makes sense to you.
-
-Personaly, I won't bother resending them, unless explicitly requested.
-
-
-CJ
-
-[1]: 
-https://lore.kernel.org/all/cover.1619157996.git.christophe.jaillet@wanadoo.fr/
-
+On 30.06.2023 09:14, Jagadeesh Kona wrote:
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->   drivers/clk/mvebu/clk-cpu.c | 14 +++-----------
->   1 file changed, 3 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/clk/mvebu/clk-cpu.c b/drivers/clk/mvebu/clk-cpu.c
-> index c2af3395cf13..db2b38c21304 100644
-> --- a/drivers/clk/mvebu/clk-cpu.c
-> +++ b/drivers/clk/mvebu/clk-cpu.c
-> @@ -168,8 +168,8 @@ static void __init of_cpu_clk_setup(struct device_node *node)
->   	struct cpu_clk *cpuclk;
->   	void __iomem *clock_complex_base = of_iomap(node, 0);
->   	void __iomem *pmu_dfs_base = of_iomap(node, 1);
-> -	int ncpus = 0;
-> -	struct device_node *dn;
-> +	int ncpus = num_possible_cpus();
-> +	int cpu;
->   
->   	if (clock_complex_base == NULL) {
->   		pr_err("%s: clock-complex base register not set\n",
-> @@ -181,9 +181,6 @@ static void __init of_cpu_clk_setup(struct device_node *node)
->   		pr_warn("%s: pmu-dfs base register not set, dynamic frequency scaling not available\n",
->   			__func__);
->   
-> -	for_each_of_cpu_node(dn)
-> -		ncpus++;
-> -
->   	cpuclk = kcalloc(ncpus, sizeof(*cpuclk), GFP_KERNEL);
->   	if (WARN_ON(!cpuclk))
->   		goto cpuclk_out;
-> @@ -192,19 +189,14 @@ static void __init of_cpu_clk_setup(struct device_node *node)
->   	if (WARN_ON(!clks))
->   		goto clks_out;
->   
-> -	for_each_of_cpu_node(dn) {
-> +	for_each_possible_cpu(cpu) {
->   		struct clk_init_data init;
->   		struct clk *clk;
->   		char *clk_name = kzalloc(5, GFP_KERNEL);
-> -		int cpu, err;
->   
->   		if (WARN_ON(!clk_name))
->   			goto bail_out;
->   
-> -		err = of_property_read_u32(dn, "reg", &cpu);
-> -		if (WARN_ON(err))
-> -			goto bail_out;
-> -
->   		sprintf(clk_name, "cpu%d", cpu);
->   
->   		cpuclk[cpu].parent_name = of_clk_get_parent_name(node, 0);
+> On 6/26/2023 7:10 PM, Dmitry Baryshkov wrote:
+>> On 26/06/2023 14:59, Jagadeesh Kona wrote:
+>>>
+>>>
+>>> On 6/24/2023 5:49 PM, Konrad Dybcio wrote:
+>>>> On 23.06.2023 18:46, Jagadeesh Kona wrote:
+>>>>> Add support for camera qdss, sleep and xo clocks.
+>>>>>
+>>>>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+>>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>>> ---
+>>>>> Changes since v4:
+>>>>>   - No changes.
+>>>>> Changes since v3:
+>>>>>   - No changes.
+>>>>> Changes since v2:
+>>>>>   - No changes.
+>>>>> Changes since v1:
+>>>>>   - Newly added.
+>>>>>
+>>>>>   drivers/clk/qcom/camcc-sm8550.c | 180 ++++++++++++++++++++++++++++++++
+>>>>>   1 file changed, 180 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/clk/qcom/camcc-sm8550.c b/drivers/clk/qcom/camcc-sm8550.c
+>>>>> index 075bea32087c..7b4882444d58 100644
+>>>>> --- a/drivers/clk/qcom/camcc-sm8550.c
+>>>>> +++ b/drivers/clk/qcom/camcc-sm8550.c
+>>>>> @@ -22,6 +22,8 @@
+>>>>>   enum {
+>>>>>       DT_IFACE,
+>>>>>       DT_BI_TCXO,
+>>>>> +    DT_BI_TCXO_AO,
+>>>>> +    DT_SLEEP_CLK,
+>>>>>   };
+>>>>>   enum {
+>>>>> @@ -43,6 +45,7 @@ enum {
+>>>>>       P_CAM_CC_PLL10_OUT_EVEN,
+>>>>>       P_CAM_CC_PLL11_OUT_EVEN,
+>>>>>       P_CAM_CC_PLL12_OUT_EVEN,
+>>>>> +    P_SLEEP_CLK,
+>>>>>   };
+>>>>>   static const struct pll_vco lucid_ole_vco[] = {
+>>>>> @@ -881,6 +884,22 @@ static const struct clk_parent_data cam_cc_parent_data_11[] = {
+>>>>>       { .hw = &cam_cc_pll7_out_even.clkr.hw },
+>>>>>   };
+>>>>> +static const struct parent_map cam_cc_parent_map_12[] = {
+>>>>> +    { P_SLEEP_CLK, 0 },
+>>>>> +};
+>>>>> +
+>>>>> +static const struct clk_parent_data cam_cc_parent_data_12[] = {
+>>>>> +    { .index = DT_SLEEP_CLK },
+>>>>> +};
+>>>>> +
+>>>>> +static const struct parent_map cam_cc_parent_map_13[] = {
+>>>>> +    { P_BI_TCXO, 0 },
+>>>>> +};
+>>>>> +
+>>>>> +static const struct clk_parent_data cam_cc_parent_data_13_ao[] = {
+>>>>> +    { .index = DT_BI_TCXO_AO },
+>>>>> +};
+>>>>> +
+>>>>>   static const struct freq_tbl ftbl_cam_cc_bps_clk_src[] = {
+>>>>>       F(19200000, P_BI_TCXO, 1, 0, 0),
+>>>>>       F(200000000, P_CAM_CC_PLL8_OUT_EVEN, 1, 0, 0),
+>>>>> @@ -1565,6 +1584,29 @@ static struct clk_rcg2 cam_cc_mclk7_clk_src = {
+>>>>>       },
+>>>>>   };
+>>>>> +static const struct freq_tbl ftbl_cam_cc_qdss_debug_clk_src[] = {
+>>>>> +    F(19200000, P_BI_TCXO, 1, 0, 0),
+>>>>> +    F(75000000, P_CAM_CC_PLL0_OUT_EVEN, 8, 0, 0),
+>>>>> +    F(150000000, P_CAM_CC_PLL0_OUT_EVEN, 4, 0, 0),
+>>>>> +    F(300000000, P_CAM_CC_PLL0_OUT_MAIN, 4, 0, 0),
+>>>>> +    { }
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_rcg2 cam_cc_qdss_debug_clk_src = {
+>>>>> +    .cmd_rcgr = 0x13f24,
+>>>>> +    .mnd_width = 0,
+>>>>> +    .hid_width = 5,
+>>>>> +    .parent_map = cam_cc_parent_map_0,
+>>>>> +    .freq_tbl = ftbl_cam_cc_qdss_debug_clk_src,
+>>>>> +    .clkr.hw.init = &(const struct clk_init_data) {
+>>>>> +        .name = "cam_cc_qdss_debug_clk_src",
+>>>>> +        .parent_data = cam_cc_parent_data_0,
+>>>>> +        .num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+>>>>> +        .flags = CLK_SET_RATE_PARENT,
+>>>>> +        .ops = &clk_rcg2_shared_ops,
+>>>>> +    },
+>>>>> +};
+>>>>> +
+>>>>>   static const struct freq_tbl ftbl_cam_cc_sfe_0_clk_src[] = {
+>>>>>       F(466000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+>>>>>       F(594000000, P_CAM_CC_PLL6_OUT_EVEN, 1, 0, 0),
+>>>>> @@ -1611,6 +1653,26 @@ static struct clk_rcg2 cam_cc_sfe_1_clk_src = {
+>>>>>       },
+>>>>>   };
+>>>>> +static const struct freq_tbl ftbl_cam_cc_sleep_clk_src[] = {
+>>>>> +    F(32000, P_SLEEP_CLK, 1, 0, 0),
+>>>>> +    { }
+>>>>> +};
+>>>>> +
+>>>>> +static struct clk_rcg2 cam_cc_sleep_clk_src = {
+>>>>> +    .cmd_rcgr = 0x141a0,
+>>>>> +    .mnd_width = 0,
+>>>>> +    .hid_width = 5,
+>>>>> +    .parent_map = cam_cc_parent_map_12,
+>>>>> +    .freq_tbl = ftbl_cam_cc_sleep_clk_src,
+>>>>> +    .clkr.hw.init = &(const struct clk_init_data) {
+>>>>> +        .name = "cam_cc_sleep_clk_src",
+>>>>> +        .parent_data = cam_cc_parent_data_12,
+>>>>> +        .num_parents = ARRAY_SIZE(cam_cc_parent_data_12),
+>>>>> +        .flags = CLK_SET_RATE_PARENT,
+>>>>> +        .ops = &clk_rcg2_shared_ops,
+>>>>> +    },
+>>>>> +};
+>>>>> +
+>>>>>   static const struct freq_tbl ftbl_cam_cc_slow_ahb_clk_src[] = {
+>>>>>       F(19200000, P_BI_TCXO, 1, 0, 0),
+>>>>>       F(80000000, P_CAM_CC_PLL0_OUT_EVEN, 7.5, 0, 0),
+>>>>> @@ -1632,6 +1694,26 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
+>>>>>       },
+>>>>>   };
+>>>>> +static const struct freq_tbl ftbl_cam_cc_xo_clk_src[] = {
+>>>>> +    F(19200000, P_BI_TCXO, 1, 0, 0),
+>>>> You're overloading P_BI_TCXO with a different parent clock (XO_A).
+>>>>
+>>>
+>>> This RCG just requires active only voting, hence using XO_A as its parent.
+>>>
+>>> Both XO and XO_A are same clock in HW (BI_TCXO), hence we can reuse P_BI_TCXO in frequency table for XO_A parent as well.
+>>
+>> Please don't do such things, it complicates understanding the driver. The reviewer could have thought that here the driver was really referencing to the BI_TCXO rather than BI_TCXO_AO.
+>>
 > 
+> The enum in parent list indicates the actual HW clock, and since XO and XO_A are the same HW clock, parent enum needs to be a single one. Only parent_data needs to be updated with AO as we have been doing for all targets.
+I see your point, however to Linux, XO and XO_A are two separate clocks
+within the CCF.
 
+Konrad
+> 
+> Thanks,
+> Jagadeesh
+> 
+>>>
+>>> Thanks,
+>>> Jagadeesh
+>>>
+>>>> The rest lgtm
+>>>>
+>>>> Konrad
+>>
+>> [skipped the rest]
+>>
