@@ -2,154 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38097EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 17:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F3AEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 17:48:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232388AbjF3REu convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jun 2023 13:04:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55570 "EHLO
+        id S232808AbjF3Rst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jun 2023 13:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232800AbjF3REc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 13:04:32 -0400
-Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4930244AC;
-        Fri, 30 Jun 2023 10:03:50 -0700 (PDT)
-Received: from raven.mansr.com (raven.mansr.com [81.2.72.235])
-        by unicorn.mansr.com (Postfix) with ESMTPS id E44D915360;
-        Fri, 30 Jun 2023 18:03:48 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-        id BFA04219FD1; Fri, 30 Jun 2023 18:03:48 +0100 (BST)
-From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        linux-sunxi@lists.linux.dev,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: Convert early providers to
- platform drivers
-References: <20211119033338.25486-1-samuel@sholland.org>
-        <20211119033338.25486-4-samuel@sholland.org>
-        <yw1xedly2z3m.fsf@mansr.com>
-        <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
-        <yw1xa5wj3kvn.fsf@mansr.com>
-        <un3xm7ybsm54qf56ojhrtr6kehlmhdoavzcaqr2jfbcyg2kr6u@rdlq7nelycs2>
-        <yw1x352b308w.fsf@mansr.com>
-        <z2656f5zlmntm3zf5ds72vtbd6cyw3mffj7vmeygpscjcnodw6@cwb65fhurfaa>
-Date:   Fri, 30 Jun 2023 18:03:48 +0100
-In-Reply-To: <z2656f5zlmntm3zf5ds72vtbd6cyw3mffj7vmeygpscjcnodw6@cwb65fhurfaa>
-        (Maxime Ripard's message of "Fri, 30 Jun 2023 16:17:32 +0200")
-Message-ID: <yw1xwmzkzxu3.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+        with ESMTP id S232387AbjF3Rsr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 13:48:47 -0400
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5209F2D4A;
+        Fri, 30 Jun 2023 10:48:46 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10757"; a="352275048"
+X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
+   d="scan'208";a="352275048"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2023 10:48:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10757"; a="787792137"
+X-IronPort-AV: E=Sophos;i="6.01,171,1684825200"; 
+   d="scan'208";a="787792137"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jun 2023 10:48:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andy@kernel.org>)
+        id 1qFIET-001AaS-1x;
+        Fri, 30 Jun 2023 20:48:33 +0300
+Date:   Fri, 30 Jun 2023 20:48:33 +0300
+From:   Andy Shevchenko <andy@kernel.org>
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Sebastian Reichel <sre@kernel.org>,
+        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
+        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Golle <daniel@makrotopia.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v2 00/15] ARM: oxnas support removal
+Message-ID: <ZJ8VcZq2s5XrxJge@smile.fi.intel.com>
+References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Maxime Ripard <mripard@kernel.org> writes:
+On Fri, Jun 30, 2023 at 06:58:25PM +0200, Neil Armstrong wrote:
+> With [1] removing MPCore SMP support, this makes the OX820 barely usable,
+> associated with a clear lack of maintainance, development and migration to
+> dt-schema it's clear that Linux support for OX810 and OX820 should be removed.
+> 
+> In addition, the OX810 hasn't been booted for years and isn't even present
+> in an ARM config file.
+> 
+> For the OX820, lack of USB and SATA support makes the platform not usable
+> in the current Linux support and relies on off-tree drivers hacked from the
+> vendor (defunct for years) sources.
+> 
+> The last users are in the OpenWRT distribution, and today's removal means
+> support will still be in stable 6.1 LTS kernel until end of 2026.
+> 
+> If someone wants to take over the development even with lack of SMP, I'll
+> be happy to hand off maintainance.
+> 
+> It has been a fun time adding support for this architecture, but it's time
+> to get over!
+> 
+> Now arch/arm parts are removed, now it's time to remove the remaining stuff.
 
-> On Wed, Jun 28, 2023 at 07:33:35PM +0100, Måns Rullgård wrote:
->> Maxime Ripard <mripard@kernel.org> writes:
->> 
->> > On Wed, Jun 28, 2023 at 12:07:56PM +0100, Måns Rullgård wrote:
->> >> Maxime Ripard <mripard@kernel.org> writes:
->> >> 
->> >> > On Mon, Jun 26, 2023 at 01:21:33PM +0100, Måns Rullgård wrote:
->> >> >> Samuel Holland <samuel@sholland.org> writes:
->> >> >> 
->> >> >> > The PRCM CCU drivers depend on clocks provided by other CCU drivers. For
->> >> >> > example, the sun8i-r-ccu driver uses the "pll-periph" clock provided by
->> >> >> > the SoC's main CCU.
->> >> >> >
->> >> >> > However, sun8i-r-ccu is an early OF clock provider, and many of the
->> >> >> > main CCUs (e.g. sun50i-a64-ccu) use platform drivers. This means that
->> >> >> > the consumer clocks will be orphaned until the supplier driver is bound.
->> >> >> > This can be avoided by converting the remaining CCUs to use platform
->> >> >> > drivers. Then fw_devlink will ensure the drivers are bound in the
->> >> >> > optimal order.
->> >> >> >
->> >> >> > The sun5i CCU is the only one which actually needs to be an early clock
->> >> >> > provider, because it provides the clock for the system timer. That one
->> >> >> > is left alone.
->> >> >> >
->> >> >> > Signed-off-by: Samuel Holland <samuel@sholland.org>
->> >> >> > ---
->> >> >> >
->> >> >> > (no changes since v1)
->> >> >> >
->> >> >> >  drivers/clk/sunxi-ng/Kconfig             | 20 ++++----
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 58 +++++++++++++--------
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 56 ++++++++++++--------
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 33 ++++++++----
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 40 +++++++++++----
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 35 +++++++++----
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 40 +++++++++++----
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 62 ++++++++++++++--------
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 65 ++++++++++++++----------
->> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 57 +++++++++++++--------
->> >> >> >  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 38 ++++++++++----
->> >> >> >  11 files changed, 332 insertions(+), 172 deletions(-)
->> >> >> 
->> >> >> This broke the hstimer clocksource on A20 since it requires a clock
->> >> >> provided by the sun4i ccu driver.
->> >> >
->> >> > The A10 is probably broken by this, but the A20 should be able to use
->> >> > the arch timers just like all the other Cortex-A7-based SoCs.
->> >> >
->> >> > Do you have a dmesg log that could help debug why it's not working?
->> >> 
->> >> The A20 works as such since, as you say, it has other clocksources.
->> >> However, the hstimer has become unusable.  If anyone was using, for
->> >> whatever reason, it won't be working for them now.
->> >> 
->> >> Before this change, the kernel log used include this line:
->> >> 
->> >> clocksource: hstimer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 6370868154 ns
->> >> 
->> >> Now there is only a cryptic "Can't get timer clock" in its place.
->> >> 
->> >> As it is now, the hstimer driver is nothing but a waste of space.
->> >> I figure it ought to be fixed one way or another.
->> >
->> > Yeah, definitely.
->> >
->> > IIRC, the situation is:
->> >
->> >  - A10 has just the "regular", old, timer
->> >  - A10s/A13/GR8 has the A10 timer + hstimer
->> >  - A20 has the A13 timers + arch timers
->> >
->> > We also default to the hstimer only for the A10s/A13 which aren't
->> > affected by this patch series afaics.
->> >
->> > We also enable the HS timer for the A31, but just like the A20 it
->> > doesn't use it by default, so it's probably been broken there too.
->> >
->> > I guess one way to fix it would be to switch the HS timer driver to a
->> > lower priority than the A10 timer, so we pick that up by default instead
->> > for the A10s/A13, and then convert the HS timer driver to a proper
->> > platform_device driver that will be able to get its clock.
->> >
->> > The downside is that the A13 will lose some precision over its default
->> > timer, but I don't think it's a big deal.
->> 
->> The options I see are converting the hstimer to a platform device or
->> reverting the change to the sun4i ccu driver.
->> 
->> I don't personally have much of an opinion on this since my systems
->> aren't affected.  The only reason I looked at it was that I noticed
->> a new error message in the kernel logs.
->
-> Thanks for the report then. I'm not really working on that anymore, so I
-> won't submit a fix for this either.
+For all non-DT patches
+Acked-by: Andy Shevchenko <andy@kernel.org>
 
-I can have a go at converting it to a platform device if you think
-that's the right approach.  I don't have anything other than A20 to
-test it on, though.
+I always like negative statistics of a magnitude order!
 
 -- 
-Måns Rullgård
+With Best Regards,
+Andy Shevchenko
+
+
