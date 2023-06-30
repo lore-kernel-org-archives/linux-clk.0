@@ -2,78 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66FFEB64DA
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 04:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB31EB64DA
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 05:22:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230229AbjF3E7R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jun 2023 00:59:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60110 "EHLO
+        id S231768AbjF3FWg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jun 2023 01:22:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjF3E7Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 00:59:16 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B27A02690;
-        Thu, 29 Jun 2023 21:59:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E05461666;
-        Fri, 30 Jun 2023 04:59:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EDE8C433C8;
-        Fri, 30 Jun 2023 04:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688101154;
-        bh=IRu+s9y5tQnnGs3BI/S3nX9u7ytGDqeWVgNkOE0A/R4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Kt+0guXFY/Z1tubjCZDWZPs3l46Q9HLo/o0UQUuEGTnHtjsuX1mg8CGRa8S9XoMiK
-         qYUW8mZ+HycMLFMKnNilSxleZmCLdsxB04WnOsiKniretDJmkZWlUbux48FNmdob4u
-         mgQPFilHmg6uywxrUWC7mbZ7Wl3maPm3+XNkLmEs90mms1P0oNDyZjInd0za2vHkVq
-         mgralHU7nWABOvJTb7xig9DNzJxvGopaYEnNEyvbjxDFsYzCWKZ8Vn7LWX1pWAj5+T
-         HKS0YAOpqHp9FeQoiiuQdI6c1qTe5Lu/9rlAQoTMXo19xO3HLUZu156GMGvvG2+0GD
-         Xb8rW1BrtuBKQ==
-Message-ID: <270d732ee61a47d3e731646bd9a6e8c2.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S229720AbjF3FWf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 01:22:35 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A06D2D69;
+        Thu, 29 Jun 2023 22:22:34 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35U4XWVx017861;
+        Fri, 30 Jun 2023 05:22:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=gKsS/01MXpL4I+QnaLU3C0pJ34xWCicExHRxGvK3uU8=;
+ b=cAqLqMl9Y7PN9Hi0in9e1CTqweO1B3PtUtl9VGECSS/HumOPpop/JT6XaZtFwGyFM+1d
+ MNbadG9JkZc6itr7lph24qhw4N8g9K4tQ822nN2yA+8dUt67AW5pLNg0QeYlcRFGLwpQ
+ 6/7YV616iF7pivqsdd3e+IhL0J3LgABC8ojoreN+0fAbchOks3QUKPryeeAIbMlbhJWX
+ UnBJ4O/xbFNGvkNzQHa+c6kPmq7WiGsyPDLgHDbwQwmudY17Wrtbpky1oIt1DjHUYJQ2
+ DbJX8G3Wn2vVu1tlZoQC6MHyV95F7etJWGRCXXUYWUOz1A4S/vUqd2knvm08rHeyzM4k bQ== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rgy1tjxn4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Jun 2023 05:22:25 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35U5MOmf004591
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Jun 2023 05:22:24 GMT
+Received: from [10.216.50.172] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.7; Thu, 29 Jun
+ 2023 22:22:19 -0700
+Message-ID: <c226d063-a8e9-d9b8-e070-bc15f7c7ec47@quicinc.com>
+Date:   Fri, 30 Jun 2023 10:52:13 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230526-topic-smd_icc-v7-18-09c78c175546@linaro.org>
-References: <20230526-topic-smd_icc-v7-0-09c78c175546@linaro.org> <20230526-topic-smd_icc-v7-18-09c78c175546@linaro.org>
-Subject: Re: [PATCH v7 18/22] clk: qcom: smd-rpm: Separate out interconnect bus clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 29 Jun 2023 21:59:12 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 1/4] pcie: qcom: Fix the macro
+ PARF_SLV_ADDR_SPACE_SIZE_2_3_3
+Content-Language: en-US
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <sboyd@kernel.org>, <mturquette@baylibre.com>, <mani@kernel.org>,
+        <lpieralisi@kernel.org>, <bhelgaas@google.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>
+References: <20230623180026.GA181743@bhelgaas>
+From:   Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <20230623180026.GA181743@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: RZxAVXWhfyM6WiiZ-h3zv8OhuurrW3Ej
+X-Proofpoint-GUID: RZxAVXWhfyM6WiiZ-h3zv8OhuurrW3Ej
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-30_02,2023-06-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ impostorscore=0 mlxlogscore=877 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 clxscore=1011 adultscore=0 priorityscore=1501
+ bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306300046
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2023-06-19 06:04:43)
-> The interconnect bus clocks are now handled within the ICC framework.
-> They still however need to get a kickstart *before* we call
-> clk_smd_rpm_enable_scaling(), or RPM will assume that they should all
-> be running at 0 kHz and the system will inevitably die.
->=20
-> Separate them out to ensure such a kickstart can still take place.
->=20
-> As a happy accident, the file got smaller:
->=20
-> Total: Before=3D41951, After=3D41555, chg -0.94%
->=20
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
+Hi Bjorn,
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+On 6/23/2023 11:30 PM, Bjorn Helgaas wrote:
+> On Fri, Jun 23, 2023 at 03:04:42PM +0530, Sricharan Ramabadhran wrote:
+>> PARF_SLV_ADDR_SPACE_SIZE_2_3_3 macro used for IPQ8074
+>> pcie slave addr size was initially set to 0x358, but
+>> was wrongly changed to 0x168 as a part of
+>> 'PCI: qcom: Sort and group registers and bitfield definitions'
+>> Fixing it back to right value here.
+> 
+> 1) Make your subject line match the history.  For example, you're
+> fixing 769e49d87b15 ("PCI: qcom: Sort and group registers ..."), so
+> your subject line should start with "PCI: qcom: ...".
+> 
+
+  ok, will fix.
+
+> 2) It doesn't look like 769e49d87b15 changed
+> PARF_SLV_ADDR_SPACE_SIZE_2_3_3:
+> 
+>    $ git show 769e49d87b15 | grep PARF_SLV_ADDR_SPACE_SIZE_2_3_3
+>    +#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x16C /* Register offset specific to IP ver 2.3.3 */
+>    -#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x16C /* Register offset specific to IP rev 2.3.3 */
+> 
+> What am I missing here?  Do you have another out-of-tree patch that
+> broke this?
+
+  39171b33f652 ("PCI: qcom: Remove PCIE20_ prefix from
+                register definitions") broke it. Will change and post .
+
+Regards,
+  Sricharan
