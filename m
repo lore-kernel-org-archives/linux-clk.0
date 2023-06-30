@@ -2,134 +2,198 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D79EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 06:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517E7EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 07:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231593AbjF3G4F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jun 2023 02:56:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41578 "EHLO
+        id S231956AbjF3HLn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jun 2023 03:11:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbjF3G4E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 02:56:04 -0400
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2065.outbound.protection.outlook.com [40.107.21.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5195E2D4A;
-        Thu, 29 Jun 2023 23:56:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dkywAwivI50CI4WIGNEriqpGogysvXyFU4ZnO9pEyokC+Khb8Gsg/P5vW+FdUkZgZhSiiWcF/mXyaW9gD1es4L/6ZXXu/wHCcEkJTR/zgIJmvNOpMj3Mfa5B7e4euN4fo9IiHXvREd0FiKAODC/gwhieEw61pIruniaMYQ3ucq2MUqbJksrGaIXwn2FzyklAvmtCBLajYUOGP/0F+AXAN4rqaKhjVK6N2z1ULQs1+Aax9rHdw1q1n554d6ovQvVVAgSub5T0ZoNNOAyDlskwATzOXlgL06YDrj9Msht7hB6q0eSl9+vxIIuNlfTtJod/27KCBkozFzgW25rto1T75Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=axHy3gkBS2ODk75Vn+73CjWznSMpAMfBBmFs5ofcOQA=;
- b=b8jGNolrk15wwTHWaUYYzT0aRVZXem1zNNzNsK0UZA5ytE2w8K5pQdX8cLf0WX6fqyMngIdtB7cD1k14G6+fiE8HNXomzXO85FyC6KANutO+dW8FsBsBs6q5rqXBjGij3r+Jzkj7NBMRNxreygSO4fR7tAD/7821VutcNhatm1Eb1WWire/Qm5xVp9+do9Nt0Ut9+n78cv0uPvRnoke2NZvy8MQfN5zCrNBlMWQjGmYJCkq6gbYjcZtGx9cL14wBXFG/LDksEEE1RkifLj5myOOFZDN7vhNoRg1Dz8hzkdEUzvdihpSDXEPkSNoW1BL/uDUpx1mir3ShiN85fmiVBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=axHy3gkBS2ODk75Vn+73CjWznSMpAMfBBmFs5ofcOQA=;
- b=DB79DY1nXnG3QBN0F83G7uT3qmZlRFr+mmH/Da3R4P5YnVq3wkUoiMAAMkhExDSbDsq7fpW2mWB0tIiobsm3NI9UAJ7IUbTlLrYGaIEe6OG9mZ/G0MmpcRwcAf8lE5glbMI6dLqXpRxW+Me8lRIj21IwF7Z+KXwIEV3Sd+wcuZ4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by AS8PR04MB9510.eurprd04.prod.outlook.com (2603:10a6:20b:44a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.19; Fri, 30 Jun
- 2023 06:56:00 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::efff:43d6:6f46:eea]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::efff:43d6:6f46:eea%7]) with mapi id 15.20.6521.026; Fri, 30 Jun 2023
- 06:56:00 +0000
-Message-ID: <e81f1e3e-2988-4986-dc94-18776cc46628@oss.nxp.com>
-Date:   Fri, 30 Jun 2023 14:55:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH 3/3] clk: imx: Add 519.75MHz frequency support for imx9
- pll
-To:     Jacky Bai <ping.bai@nxp.com>, abelvesa@kernel.org,
-        peng.fan@nxp.com, sboyd@kernel.org, shawnguo@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20230628061724.2056520-1-ping.bai@nxp.com>
- <20230628061724.2056520-3-ping.bai@nxp.com>
-From:   Peng Fan <peng.fan@oss.nxp.com>
-In-Reply-To: <20230628061724.2056520-3-ping.bai@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0006.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::11) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+        with ESMTP id S230426AbjF3HLm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 03:11:42 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF6E7199;
+        Fri, 30 Jun 2023 00:11:37 -0700 (PDT)
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35U5QCT6014244;
+        Fri, 30 Jun 2023 07:11:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : from : to : cc : references : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=BFrv4h8arCmopr0GT3R+CcIJImDld/jIwh7rwC4ymxw=;
+ b=lvLF6wj0ZXHO/InrTg76+zgs+3yQySN5tSVbhzoO5RpLq5O3MizpeGmjgnpzOpG0tSWy
+ VjaYNG3P7Jo19G26VQXuh8VC4Vhd4PeFjZJhUKIhHes8WvCSrLwz6ZfaAWrvdU5aRD+z
+ LnNRptFnIgpMK9OFuIxDRoK2fb+EoSNzIufs7xEC+EMRAhhg+wezCvaJh/gjC/qHeBfx
+ I5AvaOSZ3RLokNWyxmQCPDIAFnQ7HCSH7xgPQVQ5qZ5y25QqKB6qhXOxBduZeOEQQewh
+ ouCFR26fiwOSmBWWw8Vs7bS7itQ0pcgi1dQhyB2U8tSPi80Tn3ZixaPvFuJL/oVrELhZ vA== 
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rhgpgs17p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Jun 2023 07:11:31 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 35U7BUMI000776
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Jun 2023 07:11:30 GMT
+Received: from [10.216.51.197] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.7; Fri, 30 Jun
+ 2023 00:11:22 -0700
+Message-ID: <98706ea2-b722-e956-b204-08791977307b@quicinc.com>
+Date:   Fri, 30 Jun 2023 12:41:18 +0530
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AS8PR04MB9510:EE_
-X-MS-Office365-Filtering-Correlation-Id: d77b1840-b27a-4a72-69ae-08db79370fcd
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: g8Zu8Zp0Ybe3XIhu+r8VzOItIpGUD0olWX7+if113dXUHDnl3xaodFlRo7ABfSxhi6m7AcoNjaTAcrYKH/KCYXe+Sqhl1bX3+wI1RqE+vMvXYp8x/Vz9JUM0ByV7Eza+bpjBMRtPth83jnJDKB32nLZCnTyH3yHE2TTq1Y3Lz4xRXLvLeIi57+7jtWIQmWEWYmdZUqWB97eTG/Ph/xsEjlufKYfDXy+mMAlh5HicE0ArTzvCC3xwrlO2l0A9yUxuqHadeaxlvE2D0OAsONCkWcbPW5PfvHjbzKvhINmM0Z1HlzfqpcZHJhNs1kGJnx1gPW9l88JqdNq98Ki8u/h5Ha/jS9zH1dvvS+LrHDdoZbGv9vuHKvsK1Ctbu6BImxIfKCYrh4BGq8sZRhtsYC1g2o2MT6tvUfM/8K4urfXD8pwoQEVDqQM38tQzXGZUjdNcZYjGut6qdZQwwkX2I6yyzNkuoF3bWhrYMg3BlRAvnbUmYrY4XImZU+1UqAArrQaxQzkGq4iKCpvQXzVJT0l0N9VvetpJyFYDYZ+VHpQur3mRJIKa0W9CVhr3g8KG/0Ij7pydcEyiV2jGLA3AF70wisJYJG3b+B1HR9bXSznYdQYQUxHenOGScNqjFgSR8VuRe6UPm37RhKjL9pXK2dz2og==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(346002)(136003)(376002)(396003)(366004)(451199021)(31686004)(6666004)(8676002)(8936002)(5660300002)(478600001)(6486002)(66946007)(66476007)(66556008)(4326008)(316002)(6512007)(41300700001)(38100700002)(186003)(44832011)(2616005)(6506007)(26005)(31696002)(86362001)(83380400001)(53546011)(558084003)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TjJiY2JlK3JrdGE1UWZ6UzU2VGMxOWlBc2NrTXhPZ2lsYkdJUXFVMWsxdG8r?=
- =?utf-8?B?R242bG13UWs5UGEzUFR4YlZETFhNaGNDV0NkcDg5cHJ1MG1kN1dwU3lja0w0?=
- =?utf-8?B?M2dIak1FZGpSTU00SHg3ZWxxcS91cWUyeGRuWjE4dmsvV2ZVUkxQcGt2eFZ0?=
- =?utf-8?B?Q2RZSjBjWHMzNHZrS2FJZWlqSTRrZ0Q5RVpLVGs1M3ZlQTAxUE1HNk9IVFQx?=
- =?utf-8?B?OUhMSFMvcHM1ZytFZFY2RHRJUWs4L1F1MGNoMTF2RFFkWnV0UlRROURNdDh3?=
- =?utf-8?B?aTdzWUJ2M2VPL2k3aXd2S0JVQm5uckVVYnZvdXJwSm9HYUU4aHV6aUwyNlR3?=
- =?utf-8?B?RlN4dDhIdGZhMDVDekF2Tm5XaitrUVRoU3Q2bDM1YXhNRUJMT0lOdUZxdE9x?=
- =?utf-8?B?THg1d1VXUDkwYUNzM1E2bm9FUSs5YkdyOGxIZmVIZVZvcEdvTkFEOHU3S2NG?=
- =?utf-8?B?bWEvY2xWR3B2UVZNMi9NSEJGcHVUV3ZjdWExV241WDZCUVQvZ1J6Qmw4VVlD?=
- =?utf-8?B?Y0s3S0Q2VS9oM0RVRTkyUGtsV1dCcFQ0OVdWaWYwM0F2bWR5UWY3MEw4WE5p?=
- =?utf-8?B?QTEwK2I3NURnSHd2K2ZvYlR0RWZ6NlhJOWc3UGt5OUVhTkJLSUpkbzRrNFNS?=
- =?utf-8?B?bTRnZ2huM3psck43K2VtUTQzTWpySVVoaS9DR1I5Q1VJY3FiZitXaVNrQTU3?=
- =?utf-8?B?MkFDNWJiUGxramloOEpzVmNGN1puQy9jcXB6eUplNzFvTjY4WHRTSFVKbnFM?=
- =?utf-8?B?dGE3MEJyenFOU2tsZ1lvcWxBWXg4S0ZKTStNNHd6WXdhTTlTZ1BVaklPei82?=
- =?utf-8?B?dE5USjdRbjhBVHdUb2JSQUU1eVY4dkRlS2IrKzJDbGtzaTNWdUdYWUlCMDNX?=
- =?utf-8?B?Mm16S2kzVmxFeFVHajhhN3hJVUk3S3JVeVRHckNCci9jT21icGNmQ2FDMWkv?=
- =?utf-8?B?aktkTDB0VlBxR1lHd05aQ0NNeXZwZmpkUDBtSm5QSStKeWptMEUxN1ZXUzBn?=
- =?utf-8?B?QVFXRzFaL0dIMmpBeEVmTEprcnpuc01vQVdWQlZ5c29xZGpmU0RhMmFkOTcw?=
- =?utf-8?B?aHV5NlBBWFpLdHhZa3JDbGNCdCthRkwwQUNyQ0hHVm9VTS9rWTFWTFlZa1Fn?=
- =?utf-8?B?VW1wbGtoVmdzRFJpVXpuejVYYUdjbzlCdHpSTWRGejFpeURVOUZvODMzT1RP?=
- =?utf-8?B?ejRrM2lRVE9DWmY3OGhFVXdySFluMzVnWFhHQXd0d2JXSXRKd2FhdkVDR29J?=
- =?utf-8?B?cy8vNjNGdFZuMmdUay91NlpZL2VUUTRNRzFieE5HN2FMcmcwVWVvU1h2Nnls?=
- =?utf-8?B?VmI4aFFjeFpFd2N0OEZHdnprSWtObUYzS0t3ZFpacURRZXNIdFh0WTJ3SXM3?=
- =?utf-8?B?Qk1xNFV6dHMydjJ0YmEwcnl1cHNURnJBTlhXd0pXeFRvSmx6Z2IvWUowTmlG?=
- =?utf-8?B?ZUVLS2k5TGlpbTlmQlhXWWVhOW5hdHhKbW8yRnQyQTNPTmZsNXBjVXNOOGxi?=
- =?utf-8?B?a255MmlJWW0rckJjRkxwbjBLWWFRellRVDcxd2dwSVp1Y3diaVhZQXYwRDFV?=
- =?utf-8?B?TWtJWmhERnIrZS9iZU5sUGlyMkNxeGVUcFR6TU9sVGdCWkVDQWk3S0pOTjBt?=
- =?utf-8?B?aEw5Q3c2K2ZEZEtaOGNJSmJ3cHZud3pFQmxETDU3bWxlTVVGSmZuTkFoMWFQ?=
- =?utf-8?B?UGRpaXA0cUREYm9rUHFxaForc1U0UkpSNVpqZ3lSWHE3Mnh3Vm9xU0kxY2c3?=
- =?utf-8?B?Y1ltOEE2a2hGU2NvNSt3eVpxYXN1blVRWE1NWFJpdU1aVjcrUUNlc0FyQzNQ?=
- =?utf-8?B?VUlmQm85MCtKVlNUZW54NitsNWZmdzZwK1pPc1V4cExMa1hPQ1cvZ215ZEww?=
- =?utf-8?B?T3BsVU5tYWQzZlF6MHg2dnNYaWQwY0xrc2lwUndRaVpuREhQYzJ4K3FYWHFX?=
- =?utf-8?B?ZGo5czJTU2ZvWlN3UHJUdUQ5alFjUlB0c3ZFUU9nYmp5UnBVSC90QXcwblBB?=
- =?utf-8?B?aENxbC90a1MwNlpGV09wNVZUK2ZMY3hpdmRaZjFhNTVDemRZZ0xlbmR2VE11?=
- =?utf-8?B?UUVFbDBLdWdtWFg0MmNsRHBlcm1RWElZemgwSDZlT3hydTQ4bEUyck0wNUkv?=
- =?utf-8?Q?EL2sz2/3D2Zsxc2VEvQp/ZJ8H?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d77b1840-b27a-4a72-69ae-08db79370fcd
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2023 06:56:00.3124
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4R8rBA9ekLQFvmQIW5+0c7iR8mFbMjrCzFroeOPXXc0JD7WHQtgsrZan5Hc3aE36Nu6LWPNaU4b/WB+PYUVUPg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9510
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [PATCH V2 13/13] arm64: dtsi: qcom: ipq9574: Add nodes to bring
+ up multipd
+Content-Language: en-US
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <jassisinghbrar@gmail.com>, <mathieu.poirier@linaro.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <quic_eberman@quicinc.com>, <quic_mojha@quicinc.com>,
+        <kvalo@kernel.org>, <loic.poulain@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
+        <quic_poovendh@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_devipriy@quicinc.com>
+References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
+ <20230521222852.5740-14-quic_mmanikan@quicinc.com>
+ <8d21467a-83a4-8478-dbf5-edd77461e6dc@linaro.org>
+ <15bdbd23-9066-ee20-1e29-1d086340c133@quicinc.com>
+In-Reply-To: <15bdbd23-9066-ee20-1e29-1d086340c133@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pi6zt2qimRPkeghAyfoGOw672OQCrVir
+X-Proofpoint-ORIG-GUID: pi6zt2qimRPkeghAyfoGOw672OQCrVir
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-06-30_03,2023-06-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 mlxlogscore=817 adultscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
+ definitions=main-2306300060
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 6/28/2023 2:17 PM, Jacky Bai wrote:
-> For video pll, it may need 519.75MHz clock frequency for
-> the LVDS display usage. So add 519.75MHz frequency config
-> support for video pll.
+On 6/27/2023 1:14 PM, Manikanta Mylavarapu wrote:
 > 
-> Signed-off-by: Jacky Bai<ping.bai@nxp.com>
+> 
+> On 6/24/2023 12:31 PM, Krzysztof Kozlowski wrote:
+>> On 22/05/2023 00:28, Manikanta Mylavarapu wrote:
+>>> Enable nodes required for multipd remoteproc bring up.
+>>>
+>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>> ---
+>>> Changes in V2:
+>>>     - Corrected syntax like alignmnet and kept nodes in sorted order.
+>>>     - Added 'firmware-name' property.
+>>>
+>>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 118 ++++++++++++++++++++++++++
+>>>   1 file changed, 118 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi 
+>>> b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>> index 0e04549c69a5..ff0da53ba05f 100644
+>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>>> @@ -160,6 +160,11 @@
+>>>               no-map;
+>>>           };
+>>>
+>>> +        q6_region: wcnss@4ab00000 {
+>>> +            reg = <0x0 0x4ab00000 0x0 0x2b00000>;
+>>> +            no-map;
+>>> +        };
+>>> +
+>>>           smem@4aa00000 {
+>>>               compatible = "qcom,smem";
+>>>               reg = <0x0 0x4aa00000 0x0 0x00100000>;
+>>> @@ -697,6 +702,95 @@
+>>>               };
+>>>           };
+>>>
+>>> +        q6v5_wcss: remoteproc@cd00000 {
+>>> +            compatible = "qcom,ipq9574-q6-mpd";
+>>> +            reg = <0x0cd00000 0x4040>;
+>>> +            firmware-name = "IPQ9574/q6_fw.mdt",
+>>> +                    "IPQ9574/m3_fw.mdt";
+>>
+>> Here and...
+>>
+>>> +            interrupts-extended = <&intc GIC_SPI 325 
+>>> IRQ_TYPE_EDGE_RISING>,
+>>> +                          <&wcss_smp2p_in 0 0>,
+>>> +                          <&wcss_smp2p_in 1 0>,
+>>> +                          <&wcss_smp2p_in 2 0>,
+>>> +                          <&wcss_smp2p_in 3 0>;
+>>> +            interrupt-names = "wdog",
+>>> +                      "fatal",
+>>> +                      "ready",
+>>> +                      "handover",
+>>> +                      "stop-ack";
+>>> +
+>>> +            qcom,smem-states = <&wcss_smp2p_out 0>,
+>>> +                       <&wcss_smp2p_out 1>;
+>>> +            qcom,smem-state-names = "shutdown",
+>>> +                        "stop";
+>>> +            memory-region = <&q6_region>;
+>>> +
+>>> +            glink-edge {
+>>> +                interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
+>>> +                label = "rtr";
+>>> +                qcom,remote-pid = <1>;
+>>> +                mboxes = <&apcs_glb 8>;
+>>> +            };
+>>> +
+>>> +            pd-1 {
+>>> +                compatible = "qcom,ipq9574-wcss-ahb-mpd";
+>>> +                firmware-name = "IPQ9574/q6_fw.mdt";
+>>
+>> ... here - why do you have firmware in both places?
+>>
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+	In multipd model, Q6 & WCSS uses different firmware.
+	I will correct the firmware-name. Thanks for catching.
+
+>>> +                interrupts-extended = <&wcss_smp2p_in 8 0>,
+>>> +                              <&wcss_smp2p_in 9 0>,
+>>> +                              <&wcss_smp2p_in 12 0>,
+>>> +                              <&wcss_smp2p_in 11 0>;
+>>> +                interrupt-names = "fatal",
+>>> +                          "ready",
+>>> +                          "spawn-ack",
+>>> +                          "stop-ack";
+>>> +                qcom,smem-states = <&wcss_smp2p_out 8>,
+>>> +                           <&wcss_smp2p_out 9>,
+>>> +                           <&wcss_smp2p_out 10>;
+>>> +                qcom,smem-state-names = "shutdown",
+>>> +                            "stop",
+>>> +                            "spawn";
+>>> +            };
+>>> +
+>>> +            pd-2 {
+>>> +                compatible = "qcom,ipq5018-wcss-pcie-mpd";
+>>
+>> This compatible is confusing for this device.
+>>
+	I will clean up all SOC specific compatibles and have
+	only device specific compatibles for Q6 & WCSS radio's
+	as i mentioned on other thread.
+
+Thanks & Regards,
+Manikanta.
