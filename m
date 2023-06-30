@@ -2,148 +2,154 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5911EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 17:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38097EB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 17:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232735AbjF3RBO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jun 2023 13:01:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54912 "EHLO
+        id S232388AbjF3REu convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jun 2023 13:04:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232888AbjF3RAi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 13:00:38 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1837349D1
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 09:59:21 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id ffacd0b85a97d-313e23d0a28so2500020f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 09:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688144341; x=1690736341;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Eyaf/JArFBnOJmUxcF7DoGLYY7fHW+Lur/i45+1eYA=;
-        b=cRsI+Jc0zlEoiUnzMwgGVMTkMYll1xolMO9sNUYMp0FooJsUY4ea3qKTvrBPV3W1xS
-         PdZIteGitEx9EYSLfRJOYktkFaGNgrjM1fFkOgOEvg9QpZfmPTHRP0w9/N2IQbu4+vs0
-         nb54cBQE/s37T2C5zG7nCIR1V1emFvCiO2dgZn0Pz5F2ONkZj2tZtARRUTJGEin0ve2S
-         TMKzcm5hDnbkJdr2TIU0CbpiH29R/WxZLmENSPUSj9byP3++sCzxuhKXEZ1zIb6Wn2I2
-         cYCa21dnclLHYM4KbKNbtJpA/o/MUiaWI16RbEycKNxYjhX7e3isSa7OfeVEqG9msFcB
-         UCYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688144341; x=1690736341;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Eyaf/JArFBnOJmUxcF7DoGLYY7fHW+Lur/i45+1eYA=;
-        b=UWEMAdwa6ZHxyb5DqFUzNSKsF3jPcuH3WB8nOV5yPql9FcwHNN8dcdxXn55hkpMe7F
-         k5wUv2eyzmcNnLt03JUdvrnSruLcA+Doj2Yv54j6aI1nbfyK9kvIkqdsloP05YrSmr4T
-         H8m9gCQ5+1i4fljXLvZYml3I+OKmNZIu/Ov4qx6iljtLZjowZ16A2F0OzgFQ1E2DzpGW
-         V+M9s5ew8hF5q83l2G8M1PMSZgKczVcuiTDBn8T/iywgasTcHDXr4PluiCXxWFJoaVk8
-         daeO5zTP5JCoBAdGqRorlWJkRljR9P/G7HUjadDHTUUHY5ENwGd8ors9B4RjDpSDeAhF
-         rnqQ==
-X-Gm-Message-State: ABy/qLYRnZUpNAuf3KTdqz17UQUdBK4r5+0Ul3UdxBv9KZ6rVEGo2yWK
-        +gCNu28dvm5Y+gujzJOgP+1hlQ==
-X-Google-Smtp-Source: APBJJlHFfj2oZl0xVr1nB2zXh05figvBAqXp7tIH/wIQJvw0txyZj53M9A0+P0VhEGIP+1a6UuKwCw==
-X-Received: by 2002:a5d:49d1:0:b0:314:172b:a75a with SMTP id t17-20020a5d49d1000000b00314172ba75amr3025280wrs.26.1688144340838;
-        Fri, 30 Jun 2023 09:59:00 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id u14-20020adfdb8e000000b003112ab916cdsm18913772wri.73.2023.06.30.09.58.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 09:59:00 -0700 (PDT)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 30 Jun 2023 18:58:40 +0200
-Subject: [PATCH v2 15/15] MAINTAINERS: remove OXNAS entry
+        with ESMTP id S232800AbjF3REc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 13:04:32 -0400
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4930244AC;
+        Fri, 30 Jun 2023 10:03:50 -0700 (PDT)
+Received: from raven.mansr.com (raven.mansr.com [81.2.72.235])
+        by unicorn.mansr.com (Postfix) with ESMTPS id E44D915360;
+        Fri, 30 Jun 2023 18:03:48 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+        id BFA04219FD1; Fri, 30 Jun 2023 18:03:48 +0100 (BST)
+From:   =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        linux-sunxi@lists.linux.dev,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: Convert early providers to
+ platform drivers
+References: <20211119033338.25486-1-samuel@sholland.org>
+        <20211119033338.25486-4-samuel@sholland.org>
+        <yw1xedly2z3m.fsf@mansr.com>
+        <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
+        <yw1xa5wj3kvn.fsf@mansr.com>
+        <un3xm7ybsm54qf56ojhrtr6kehlmhdoavzcaqr2jfbcyg2kr6u@rdlq7nelycs2>
+        <yw1x352b308w.fsf@mansr.com>
+        <z2656f5zlmntm3zf5ds72vtbd6cyw3mffj7vmeygpscjcnodw6@cwb65fhurfaa>
+Date:   Fri, 30 Jun 2023 18:03:48 +0100
+In-Reply-To: <z2656f5zlmntm3zf5ds72vtbd6cyw3mffj7vmeygpscjcnodw6@cwb65fhurfaa>
+        (Maxime Ripard's message of "Fri, 30 Jun 2023 16:17:32 +0200")
+Message-ID: <yw1xwmzkzxu3.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230630-topic-oxnas-upstream-remove-v2-15-fb6ab3dea87c@linaro.org>
-References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
-In-Reply-To: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Golle <daniel@makrotopia.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1154;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=/Lhm4rki32xogr5e1680FrjcVLCt+j7sMVgTOqF2+4g=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBknwm6aoHZMmN8vUbEzTBcIOV7ONJvx2yeNn0kZRnx
- LgLt0iSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZJ8JugAKCRB33NvayMhJ0aMOD/
- 4o1u07bP99PyNkyrdoo5HuA/tEA4HRTOWRFwUBK2Fr4hLcuccLKZbqEoot/K06rPOpWlmBA0xJibYq
- 9sx1cEJc+h2Z6AM6bLv21ZYqK5qXiv45NFZpA+avGwHQ3eQR49KMC8+J9Fb92MOTESddkVzr1uu4WE
- e9aJ1LI/ccd/i2cJ1q6JYWT4B5L5cIQbiI/ZtSRz8pqJ4w6w0RKypV0T7VJm80k0Jv8SmEp0Dlp+vG
- 2WQAMcwB/wTd8fh2LKmHED0shMiW2MEQuAkLKiPoDPvybnsLhvaPHGkWmSMXRhTZl6DoGzOsvrTeGt
- aTFim1T/5SP8kSCH5IyYKe7HfsE8Yt9gBcyRyqu0NC2ehuN5DgDWJ25XQwf3CLLfN8xEj42a7f9Exr
- zWAe21b8vupE/IPlBZdtLAl4pizrS9O5UPCdYcEh7XVCBa8AMrQci3cdYVfnZjmMz9oQqhg9nYhA0V
- JGXiIp5zNtWsKoFqxPzpq30E48YAl7SC9jsUWLsXeqRm5FyrRsX8HmFPcHSNlOHUHID+XL5ltvxMy9
- 5gbGOWZlwiRjX+X7+KZrzjzudA7BX8jOe+INgytdS3AgKSHSOiXc8Sx/ja2xf/Z/Hwp1CQeFZO2eQN
- 2DfMAaMQrsOrzJs9Ps4BqxlAh6NcIKGU989Dmfjl521a7QN3/cdOvxA/sGbw==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Due to lack of maintenance and stall of development for a few years now,
-and since no new features will ever be added upstream, remove MAINTAINERS
-entry for OXNAS files.
+Maxime Ripard <mripard@kernel.org> writes:
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Daniel Golle <daniel@makrotopia.org>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- MAINTAINERS | 10 ----------
- 1 file changed, 10 deletions(-)
+> On Wed, Jun 28, 2023 at 07:33:35PM +0100, Måns Rullgård wrote:
+>> Maxime Ripard <mripard@kernel.org> writes:
+>> 
+>> > On Wed, Jun 28, 2023 at 12:07:56PM +0100, Måns Rullgård wrote:
+>> >> Maxime Ripard <mripard@kernel.org> writes:
+>> >> 
+>> >> > On Mon, Jun 26, 2023 at 01:21:33PM +0100, Måns Rullgård wrote:
+>> >> >> Samuel Holland <samuel@sholland.org> writes:
+>> >> >> 
+>> >> >> > The PRCM CCU drivers depend on clocks provided by other CCU drivers. For
+>> >> >> > example, the sun8i-r-ccu driver uses the "pll-periph" clock provided by
+>> >> >> > the SoC's main CCU.
+>> >> >> >
+>> >> >> > However, sun8i-r-ccu is an early OF clock provider, and many of the
+>> >> >> > main CCUs (e.g. sun50i-a64-ccu) use platform drivers. This means that
+>> >> >> > the consumer clocks will be orphaned until the supplier driver is bound.
+>> >> >> > This can be avoided by converting the remaining CCUs to use platform
+>> >> >> > drivers. Then fw_devlink will ensure the drivers are bound in the
+>> >> >> > optimal order.
+>> >> >> >
+>> >> >> > The sun5i CCU is the only one which actually needs to be an early clock
+>> >> >> > provider, because it provides the clock for the system timer. That one
+>> >> >> > is left alone.
+>> >> >> >
+>> >> >> > Signed-off-by: Samuel Holland <samuel@sholland.org>
+>> >> >> > ---
+>> >> >> >
+>> >> >> > (no changes since v1)
+>> >> >> >
+>> >> >> >  drivers/clk/sunxi-ng/Kconfig             | 20 ++++----
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 58 +++++++++++++--------
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 56 ++++++++++++--------
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 33 ++++++++----
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 40 +++++++++++----
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 35 +++++++++----
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 40 +++++++++++----
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 62 ++++++++++++++--------
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 65 ++++++++++++++----------
+>> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 57 +++++++++++++--------
+>> >> >> >  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 38 ++++++++++----
+>> >> >> >  11 files changed, 332 insertions(+), 172 deletions(-)
+>> >> >> 
+>> >> >> This broke the hstimer clocksource on A20 since it requires a clock
+>> >> >> provided by the sun4i ccu driver.
+>> >> >
+>> >> > The A10 is probably broken by this, but the A20 should be able to use
+>> >> > the arch timers just like all the other Cortex-A7-based SoCs.
+>> >> >
+>> >> > Do you have a dmesg log that could help debug why it's not working?
+>> >> 
+>> >> The A20 works as such since, as you say, it has other clocksources.
+>> >> However, the hstimer has become unusable.  If anyone was using, for
+>> >> whatever reason, it won't be working for them now.
+>> >> 
+>> >> Before this change, the kernel log used include this line:
+>> >> 
+>> >> clocksource: hstimer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 6370868154 ns
+>> >> 
+>> >> Now there is only a cryptic "Can't get timer clock" in its place.
+>> >> 
+>> >> As it is now, the hstimer driver is nothing but a waste of space.
+>> >> I figure it ought to be fixed one way or another.
+>> >
+>> > Yeah, definitely.
+>> >
+>> > IIRC, the situation is:
+>> >
+>> >  - A10 has just the "regular", old, timer
+>> >  - A10s/A13/GR8 has the A10 timer + hstimer
+>> >  - A20 has the A13 timers + arch timers
+>> >
+>> > We also default to the hstimer only for the A10s/A13 which aren't
+>> > affected by this patch series afaics.
+>> >
+>> > We also enable the HS timer for the A31, but just like the A20 it
+>> > doesn't use it by default, so it's probably been broken there too.
+>> >
+>> > I guess one way to fix it would be to switch the HS timer driver to a
+>> > lower priority than the A10 timer, so we pick that up by default instead
+>> > for the A10s/A13, and then convert the HS timer driver to a proper
+>> > platform_device driver that will be able to get its clock.
+>> >
+>> > The downside is that the A13 will lose some precision over its default
+>> > timer, but I don't think it's a big deal.
+>> 
+>> The options I see are converting the hstimer to a platform device or
+>> reverting the change to the sun4i ccu driver.
+>> 
+>> I don't personally have much of an opinion on this since my systems
+>> aren't affected.  The only reason I looked at it was that I noticed
+>> a new error message in the kernel logs.
+>
+> Thanks for the report then. I'm not really working on that anymore, so I
+> won't submit a fix for this either.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4545d4287305..cfe1bc884005 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2565,16 +2565,6 @@ S:	Maintained
- W:	http://www.digriz.org.uk/ts78xx/kernel
- F:	arch/arm/mach-orion5x/ts78xx-*
- 
--ARM/OXNAS platform support
--M:	Neil Armstrong <neil.armstrong@linaro.org>
--L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--L:	linux-oxnas@groups.io (moderated for non-subscribers)
--S:	Maintained
--F:	arch/arm/boot/dts/ox8*.dts*
--F:	arch/arm/mach-oxnas/
--F:	drivers/power/reset/oxnas-restart.c
--N:	oxnas
--
- ARM/QUALCOMM CHROMEBOOK SUPPORT
- R:	cros-qcom-dts-watchers@chromium.org
- F:	arch/arm64/boot/dts/qcom/sc7180*
+I can have a go at converting it to a platform device if you think
+that's the right approach.  I don't have anything other than A20 to
+test it on, though.
 
 -- 
-2.34.1
-
+Måns Rullgård
