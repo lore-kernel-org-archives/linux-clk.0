@@ -2,113 +2,190 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF117EB64D7
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 13:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E6BEB64D7
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 14:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231361AbjF3NH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jun 2023 09:07:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
+        id S232176AbjF3ORm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jun 2023 10:17:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231176AbjF3NHz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 09:07:55 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F29CD35B0;
-        Fri, 30 Jun 2023 06:07:53 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-3fb4146e8deso22967525e9.0;
-        Fri, 30 Jun 2023 06:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688130472; x=1690722472;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xzl3+jTL6C0kGnIPlN/x9+QiqT/1hwIAKox8W+NdYCs=;
-        b=LZ7UtkcOH1znq7tb1qjYGXepM3YrlocEENIucCxfPJSc1dUBTM35cd85KN53qyzi7u
-         0IVkUSRYPSoTpGkY6tccFylCJSP5a2+CSFpMNXHzR9XfcqSBRM/zR5Iy6OPkE6y87O6A
-         tWSk6Z4qhOL5Tn+c77IEMAXWUYoqvhsRTded0ACNY9tEOMw/ARPFqPGOJgWH9Swev6Oe
-         eEKcOedDGlbaIiilgPQZUzR8Qv6jyYquCVpAUgScORon1pnSkMvR2EUD70Xblr7Vn99O
-         VWvdcSJnGVtXcr3LkQT/ZPOJDql1/OadBfQNq/74d393DkGlEGZZEpxSO7onYqYZLUZd
-         V0cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688130472; x=1690722472;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xzl3+jTL6C0kGnIPlN/x9+QiqT/1hwIAKox8W+NdYCs=;
-        b=I2JB2lFwgv84aU/kJkhCgnj8QNqyU0yQ0kj6/ISkGGLQuDY5F8i512SKkXGvqzcH5j
-         CJ0uBaEzH00FcGYcuuqBPdEm7SOWfOk4XRqEKlq0rS5aOZJNDaoZrloq2DJ/z7qCjvwo
-         Ue7LB712X1rLq2KyPquYutw6y76QTvDegzopa/jU34LqwMSo+5nDOYPlF1FSHfXOdPrK
-         60exhMUvzRutc4EZYrdEo67RnX97CuWsb1ysxyxiv0o0EC5iEnaUgnbyigQWa2lHEc6A
-         Q9N9k8LaDtld9nuOjRQDP/xAx3GMLjCRDUgaGFA7fUSbSgMoLgm8IZq8zYmPhpJBG37/
-         kR9w==
-X-Gm-Message-State: AC+VfDyObYYqXWoMGVroNytIuTQYcibBQmYmvi9VF5M79o4jRP2Qtw8y
-        rfDaKMJQjTwUBl1BI++/Puk=
-X-Google-Smtp-Source: ACHHUZ5A+y/dozE/QyDUV6BQnLTm5asf6ABe+WnOmV3Ko4scQ3w0qClnajWzf1VQ7dM1Sf5uole5ZA==
-X-Received: by 2002:a1c:7914:0:b0:3fa:984d:7e94 with SMTP id l20-20020a1c7914000000b003fa984d7e94mr2511802wme.18.1688130471990;
-        Fri, 30 Jun 2023 06:07:51 -0700 (PDT)
-Received: from localhost (p200300e41f305300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f30:5300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id w10-20020adfcd0a000000b003141f96ed36sm2037085wrm.0.2023.06.30.06.07.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 06:07:51 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] clk: tegra: Avoid calling an uninitialized function
-Date:   Fri, 30 Jun 2023 15:07:48 +0200
-Message-ID: <20230630130748.840729-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.41.0
+        with ESMTP id S229578AbjF3ORi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 10:17:38 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808502D78;
+        Fri, 30 Jun 2023 07:17:37 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D3356174C;
+        Fri, 30 Jun 2023 14:17:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2887C433C0;
+        Fri, 30 Jun 2023 14:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688134656;
+        bh=soXGvTfhgDlUsMWqNjynUD6up10929KRevfZr4lUDbs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nsJ/Nvw9GWI8C9CIvS3VvBxTnOWyBLYpNYGr7pv8h4bdF98Jx9fS/P8cIlWKJe6jR
+         94m2UfF0hhvZSzYdomELHKyNVUdMNKij/MkQoq2yzQBmFBia5eUGljEKtGWYR7mk/5
+         yow8GVSI3j0sqUrmjZtc15quYc98HGtP0/rGX49BMe82R7rVPe18rnyTrH19y7WyI0
+         wWGgxRAvqk41hvx6c0izf6qfwfzsOh52tIpCpDjB+yVBdZWhWv9Kz1wDqb5HkkCEhK
+         /pp3etxuYQ5jJeDkknhqs3xDmE4d4uNrcavR7KanrgnNplykm/AyjSXVaREMnNIfc2
+         814/Okp7VZOWA==
+Date:   Fri, 30 Jun 2023 16:17:32 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     =?utf-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
+Cc:     Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        linux-sunxi@lists.linux.dev,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] clk: sunxi-ng: Convert early providers to
+ platform drivers
+Message-ID: <z2656f5zlmntm3zf5ds72vtbd6cyw3mffj7vmeygpscjcnodw6@cwb65fhurfaa>
+References: <20211119033338.25486-1-samuel@sholland.org>
+ <20211119033338.25486-4-samuel@sholland.org>
+ <yw1xedly2z3m.fsf@mansr.com>
+ <maqh4yir66agto4lyulvrqrim7qnixwd246jusvvhsjlhhrmmw@gjbubqc2cv4o>
+ <yw1xa5wj3kvn.fsf@mansr.com>
+ <un3xm7ybsm54qf56ojhrtr6kehlmhdoavzcaqr2jfbcyg2kr6u@rdlq7nelycs2>
+ <yw1x352b308w.fsf@mansr.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6btcpzr3xezdr3iq"
+Content-Disposition: inline
+In-Reply-To: <yw1x352b308w.fsf@mansr.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-Commit 493ffb046cf5 ("clk: tegra: super: Switch to determine_rate")
-replaced clk_super_round_rate() by clk_super_determine_rate(), but
-didn't update one callsite that was explicitly calling the old
-tegra_clk_super_ops.round_rate() function, which was now NULL. This
-resulted in a crash on Tegra30 systems during early boot.
+--6btcpzr3xezdr3iq
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Switch this callsite over to the clk_super_determine_rate() equivalent
-to avoid the crash.
-
-Fixes: 493ffb046cf5 ("clk: tegra: super: Switch to determine_rate")
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+On Wed, Jun 28, 2023 at 07:33:35PM +0100, M=E5ns Rullg=E5rd wrote:
+> Maxime Ripard <mripard@kernel.org> writes:
+>=20
+> > On Wed, Jun 28, 2023 at 12:07:56PM +0100, M=E5ns Rullg=E5rd wrote:
+> >> Maxime Ripard <mripard@kernel.org> writes:
+> >>=20
+> >> > On Mon, Jun 26, 2023 at 01:21:33PM +0100, M=E5ns Rullg=E5rd wrote:
+> >> >> Samuel Holland <samuel@sholland.org> writes:
+> >> >>=20
+> >> >> > The PRCM CCU drivers depend on clocks provided by other CCU drive=
+rs. For
+> >> >> > example, the sun8i-r-ccu driver uses the "pll-periph" clock provi=
+ded by
+> >> >> > the SoC's main CCU.
+> >> >> >
+> >> >> > However, sun8i-r-ccu is an early OF clock provider, and many of t=
+he
+> >> >> > main CCUs (e.g. sun50i-a64-ccu) use platform drivers. This means =
+that
+> >> >> > the consumer clocks will be orphaned until the supplier driver is=
+ bound.
+> >> >> > This can be avoided by converting the remaining CCUs to use platf=
+orm
+> >> >> > drivers. Then fw_devlink will ensure the drivers are bound in the
+> >> >> > optimal order.
+> >> >> >
+> >> >> > The sun5i CCU is the only one which actually needs to be an early=
+ clock
+> >> >> > provider, because it provides the clock for the system timer. Tha=
+t one
+> >> >> > is left alone.
+> >> >> >
+> >> >> > Signed-off-by: Samuel Holland <samuel@sholland.org>
+> >> >> > ---
+> >> >> >
+> >> >> > (no changes since v1)
+> >> >> >
+> >> >> >  drivers/clk/sunxi-ng/Kconfig             | 20 ++++----
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 58 +++++++++++++-----=
 ---
- drivers/clk/tegra/clk-tegra-super-cclk.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 56 ++++++++++++------=
+--
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 33 ++++++++----
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 40 +++++++++++----
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 35 +++++++++----
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 40 +++++++++++----
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 62 ++++++++++++++----=
+----
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 65 ++++++++++++++----=
+------
+> >> >> >  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 57 +++++++++++++-----=
+---
+> >> >> >  drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 38 ++++++++++----
+> >> >> >  11 files changed, 332 insertions(+), 172 deletions(-)
+> >> >>=20
+> >> >> This broke the hstimer clocksource on A20 since it requires a clock
+> >> >> provided by the sun4i ccu driver.
+> >> >
+> >> > The A10 is probably broken by this, but the A20 should be able to use
+> >> > the arch timers just like all the other Cortex-A7-based SoCs.
+> >> >
+> >> > Do you have a dmesg log that could help debug why it's not working?
+> >>=20
+> >> The A20 works as such since, as you say, it has other clocksources.
+> >> However, the hstimer has become unusable.  If anyone was using, for
+> >> whatever reason, it won't be working for them now.
+> >>=20
+> >> Before this change, the kernel log used include this line:
+> >>=20
+> >> clocksource: hstimer: mask: 0xffffffff max_cycles: 0xffffffff, max_idl=
+e_ns: 6370868154 ns
+> >>=20
+> >> Now there is only a cryptic "Can't get timer clock" in its place.
+> >>=20
+> >> As it is now, the hstimer driver is nothing but a waste of space.
+> >> I figure it ought to be fixed one way or another.
+> >
+> > Yeah, definitely.
+> >
+> > IIRC, the situation is:
+> >
+> >  - A10 has just the "regular", old, timer
+> >  - A10s/A13/GR8 has the A10 timer + hstimer
+> >  - A20 has the A13 timers + arch timers
+> >
+> > We also default to the hstimer only for the A10s/A13 which aren't
+> > affected by this patch series afaics.
+> >
+> > We also enable the HS timer for the A31, but just like the A20 it
+> > doesn't use it by default, so it's probably been broken there too.
+> >
+> > I guess one way to fix it would be to switch the HS timer driver to a
+> > lower priority than the A10 timer, so we pick that up by default instead
+> > for the A10s/A13, and then convert the HS timer driver to a proper
+> > platform_device driver that will be able to get its clock.
+> >
+> > The downside is that the A13 will lose some precision over its default
+> > timer, but I don't think it's a big deal.
+>=20
+> The options I see are converting the hstimer to a platform device or
+> reverting the change to the sun4i ccu driver.
+>=20
+> I don't personally have much of an opinion on this since my systems
+> aren't affected.  The only reason I looked at it was that I noticed
+> a new error message in the kernel logs.
 
-diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
-index 68d7bcd5fc8a..3b22a4d0dffc 100644
---- a/drivers/clk/tegra/clk-tegra-super-cclk.c
-+++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
-@@ -86,9 +86,18 @@ static int cclk_super_determine_rate(struct clk_hw *hw,
- 	if (rate <= pllp_rate) {
- 		if (super->flags & TEGRA20_SUPER_CLK)
- 			rate = pllp_rate;
--		else
--			rate = tegra_clk_super_ops.round_rate(hw, rate,
--							      &pllp_rate);
-+		else {
-+			struct clk_rate_request parent = {
-+				.rate = req->rate,
-+				.best_parent_rate = pllp_rate,
-+			};
-+
-+			clk_hw_get_rate_range(hw, &parent.min_rate,
-+					      &parent.max_rate);
-+			tegra_clk_super_ops.determine_rate(hw, &parent);
-+			pllp_rate = parent.best_parent_rate;
-+			rate = parent.rate;
-+		}
- 
- 		req->best_parent_rate = pllp_rate;
- 		req->best_parent_hw = pllp_hw;
--- 
-2.41.0
+Thanks for the report then. I'm not really working on that anymore, so I
+won't submit a fix for this either.
 
+Maxime
+
+--6btcpzr3xezdr3iq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZJ7j/AAKCRDj7w1vZxhR
+xU/MAP4nBZQyAlUVBuR6U+ZxpV7DXvxxPIMUKO59y81FQV5CfgEA13jfp1KMflbh
+r354osmGcBVwT6TLOpA25y1M//vJQwg=
+=V4XC
+-----END PGP SIGNATURE-----
+
+--6btcpzr3xezdr3iq--
