@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C59AC001DD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02243EB64D7
 	for <linux-clk@archiver.kernel.org>; Fri, 30 Jun 2023 16:58:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232599AbjF3Q6p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Jun 2023 12:58:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54226 "EHLO
+        id S232523AbjF3Q6x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Jun 2023 12:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232594AbjF3Q6m (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 12:58:42 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBBFC3AAF
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 09:58:40 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbc77e76abso9586685e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 09:58:40 -0700 (PDT)
+        with ESMTP id S232468AbjF3Q6s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Jun 2023 12:58:48 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105943C23
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 09:58:46 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3fa8cd4a113so22096325e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 30 Jun 2023 09:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688144319; x=1690736319;
+        d=linaro.org; s=google; t=1688144324; x=1690736324;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=j5VfCDku7PhFUhxNZL9RrxiZVdAXUGwMdzc9iuToxvY=;
-        b=fUKK6eN/ScDGy7o4nq6+yIdxkSMayAvigomaImI/5ndSFAERxgZD44tOEhSRiWAj0x
-         /I55SERez8tq5p33w6NSE0ZDrvBOrsucEjr9zIk/zm6A4tW8EBOzf7sFREGJeLPN8R2V
-         W0IO5zzcF/n+oXs3V0GlEIvEZ5qLcteJM6/Q0x6MU13+VTFsaJeibgV0p0xyJFwYBLX3
-         7qSM74Pnh0MwuDXM1ouLk9p+Yc8ZTC68/KU2LceIZ+dybuzDkPdAzQEABlXdeEyid3UU
-         gPW4+noy/ovR20GuN+4fPKHh9gamCrjUfJOibKmkF7jyJUW5yUGRovS262POuNg6XktU
-         XpMA==
+        bh=zLX6nBNdDJugrDB/bEpPIyh5Bk3WxOcHqPGVxflanv0=;
+        b=ZJshyi0t1+m1fWRh4RSn3mPfNlTGCmx81L3tZMHnGArfYhg6HHrT7fkJsgxItykzsw
+         tjQpqSqwOJ7fG4jhR3xEDtR4/04cGDKawNeKlBGM8PfKXCY8v46mMglqxTDP9a3pgS3/
+         xXE2UFjOCN44q1fmfEp/5pr8VwMLXKFABzvY4bwZH/HXY8xqlaSfidyKSinUJiaKaAcM
+         0+rz7NTjRUfFvLMI9Z1ecvRAMiClwEBO/jT1sjfWEQDbZl8nMGEWLjaCaRmiYJzK6zE5
+         yxI6eBZk13vTDUTke52+3CnwwvE0TB/kX5pt44x9k4bL0erd+p8et1wcGaDpKnP+GEJq
+         Qzeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688144319; x=1690736319;
+        d=1e100.net; s=20221208; t=1688144324; x=1690736324;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j5VfCDku7PhFUhxNZL9RrxiZVdAXUGwMdzc9iuToxvY=;
-        b=I2jwVJ/BL5F2eUiNqlAvoo9a0WRwGlRtruE081d7WMW4wOGquJM/shNoAwNH5i7Jc/
-         7YJwZziKBaJFIzpgsVHeu0rdr3uv1yXvi8WnLHj35qBOlxbAMrCgpSW+vUe5EomZlLND
-         7xMOesOcB0QKiO3+S5bite6iluYN28/bhhUFpqIBR7V3GSO4GukgjLm7/eIefGHyeyDB
-         nIITVLyZj3ejhC2sMof7Tb/xXf4+5ySPLJRshy/ELqsEUJ9ltI2SfANShmXuZoihZUhw
-         mWQZAA+eUj23aUJjneW2wwNXgW32pcLi0qXXAqIJtN1qsDSb6P5A7gS9qh8/EeOCRyAn
-         /eHQ==
-X-Gm-Message-State: AC+VfDwQl1TyKgiB1+bw2/mnz4KYLo0m+xyPoAxXM8PV5/Q3RLzogXez
-        GPuwgznQIAFGvaFqEhrIKlApKg==
-X-Google-Smtp-Source: ACHHUZ4jfOLP9DSUM8iQinRS8Vum9XKSxSLXf+7HjFdIRyfIkOHCYGoWFaqy2VXVGNXPMBo+xTlFUg==
-X-Received: by 2002:a1c:4b16:0:b0:3fb:be7c:d58a with SMTP id y22-20020a1c4b16000000b003fbbe7cd58amr2269200wma.26.1688144319230;
-        Fri, 30 Jun 2023 09:58:39 -0700 (PDT)
+        bh=zLX6nBNdDJugrDB/bEpPIyh5Bk3WxOcHqPGVxflanv0=;
+        b=lSSsbAIPeKso21yEGFDMb30bA6bZlJ88mZ9jGIiOVx4DuBmOmdjjFwIrVrOf/caRBp
+         aNEVIFdr4hB48jA18+x1eRCR+0c7uw0IY5CZswpPigzsaV3UjOcHFxRgZNGiD1PbV07R
+         ys4V5V5mFh4VesNYJtsZEBJ/P/25bG8cK8jNjjx9jmLe0oLiVcVN2LT/j9tdB2mOYPZD
+         jXoZ0C30orVvRUYR69ddSprNeBdnS+QmKc/yLZF+0ulukzZXgqskD+YJ6oBstx+AaogZ
+         2XRY5vEF6gdRoUQ/r+FLgdAaROrtpZ5YS7WbbREsT0R8+L701wFZUETZFXEw5n91fiGi
+         T2mw==
+X-Gm-Message-State: AC+VfDy8CbQ9gyVjzlyPsLOCGU/LtziKJNSLOWYQmoYjA7WbJ3N98lJM
+        aT/q2z1keVcWy7gPClqanrILHA==
+X-Google-Smtp-Source: ACHHUZ7sLazNkS5hMB5t8MZsO4t0md2cj2Mnsc0FoY8HRuFayoCgx/4smWdsoKAUnjWfPgjREkHWvg==
+X-Received: by 2002:a05:600c:2219:b0:3fb:c217:7243 with SMTP id z25-20020a05600c221900b003fbc2177243mr2743100wml.18.1688144324582;
+        Fri, 30 Jun 2023 09:58:44 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id u14-20020adfdb8e000000b003112ab916cdsm18913772wri.73.2023.06.30.09.58.37
+        by smtp.gmail.com with ESMTPSA id u14-20020adfdb8e000000b003112ab916cdsm18913772wri.73.2023.06.30.09.58.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Jun 2023 09:58:38 -0700 (PDT)
+        Fri, 30 Jun 2023 09:58:43 -0700 (PDT)
 From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Fri, 30 Jun 2023 18:58:27 +0200
-Subject: [PATCH v2 02/15] dt-bindings: clk: oxnas: remove obsolete bindings
+Date:   Fri, 30 Jun 2023 18:58:30 +0200
+Subject: [PATCH v2 05/15] nand: oxnas_nand: remove obsolete raw nand driver
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230630-topic-oxnas-upstream-remove-v2-2-fb6ab3dea87c@linaro.org>
+Message-Id: <20230630-topic-oxnas-upstream-remove-v2-5-fb6ab3dea87c@linaro.org>
 References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
 In-Reply-To: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -87,24 +87,23 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-oxnas@groups.io,
         Neil Armstrong <neil.armstrong@linaro.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>,
         Daniel Golle <daniel@makrotopia.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1711;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7464;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=bzno7XM9r0SNC/gStJcrLz6bOxC+B4tnBfXrQVc4AKA=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBknwm08GTlhXUvs7ni+2UnaR66va/P33VZvppd02s3
- XjaYa9iJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZJ8JtAAKCRB33NvayMhJ0fEwD/
- 0c8c0kdMcu9cAO6MW+kau0NON/fYuaafAI++DNEg4rOBcbZZ9RNE9EqK8ZG+ERzfrEi1n/fLjJS0x5
- E6k5Fj2Q+rGH7PAw1HeAmuECHlLgX2IMHWVF4EDSLWIlzZPUS8XFNz5vIMGCCMLv7Y311cVfmzrTtr
- IEwejNA/OmS0grIUXEClx8Sp1TinImZI9jHZh3AijGq8XiEW2E0rFGHrATPJHuA9Nx1BwEtrKMecSk
- wFtJCh+PCDWqm1SNjVQcYLbX3RPFRz0aXKKjET4NB7kZvPtD7T5mNh6cjK1k/keUTjEVplgtjJwA/d
- HZOrPOQNr1jKROsXy72AQ3XUs4WnPy8g31SX1EQNlXBl9j40MaU14ZEHPTtS5C/iIJrqxM4KNKGFWY
- 5pBAzHw/vaYt7C5NcrI4LGTpWgGwFPrvhahxuXCgAPHeEaHOAxcdYt3wjfm3obKlDO4bVWFYmnwGYb
- TFSxRTatfNcT/7G8e/fPR2InfUfImg9Q08gRNTvR0ls0t3P49CYiS1VwFL4cV9dT4CnQvNEWkmLNjf
- l/K7qlaz1AtLH22wg9bT79EL/ud1qabQeYwF5uFQHItpwMH3bgcoREdJeHPSLbdL4ZTJOzKFoSGJz0
- ir6/tIunoN+bjEYP4Voc/7R8Pq+IIgVJ/8ED+SCvmiwkzoJFptWW6NxwIHRg==
+ bh=7dsGUntkBvgK9uJ6n7pA2u8tn+a0H9twzokCuaVvts0=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBknwm1Oj0vMGvH0O5R6AWEiekxCYAhBP79UYq8vavO
+ 6hSf6XGJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZJ8JtQAKCRB33NvayMhJ0YtrEA
+ DELLHsyVja0JZ9+9NAqqxKxiIFJ+WvtNaveSgdefeOSaEFmDD5DqUs/U/ZvYSBhKv6nbnlPKBR412z
+ jsRR6sX7nzNSYPdX+ckwEWSX1Q2pGOFUqrHEQuOiuvLGBlC/AlfJIyCmRIujDiU7GeI8o8mALeSpdJ
+ dEGJlcO9eg2h1D7FC+CcTxOZPgBSaWal5tjwV24BjAiBnl0neqRE/TrVz7dpr62TQf662kibEmDhzI
+ pQM7M6JLpCn7skYtYXyVkOm0r1HhTZHQrlYBro0LmVEjjyFjZzPQ+4CuQpa3liMeSq+ehFsEr+ldxE
+ oWhGqQLNsa3QRWznq/Lq0UFwqscynT5CYWtQS72EyEZsG9Z/y1lhBK2hJs7cPP+ubGz3hHCkGJpdHO
+ VD5Y7ivWGN1fQRqV/YGohAQKJjbvo4XYWNqlfBXmBErGB6nkLkPDLoPllO8fEF8azo/lDIoWCJk1lk
+ vUGqCC6Z7gTT1l8XFTIg3mCV2WzAHQS2DyLa2Mg4SkOzvvHsR/Sf0Q14D1+m4A6RlUDQ9AVOsBWI1r
+ rfGfajgw3ca5+I0PAO9REG9MjoosN1yQlLQPEo+73hQ1dXFxQi66lExAkqV0OO1JYQcZpbkIjmyEQ6
+ oX0CJ/WRIoGnA56cF1huCNfoc2uc2ilsIlFtxqBbzuhFUWMBI7ibq7A6YFkA==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 Precedence: bulk
@@ -112,52 +111,264 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Due to lack of maintenance and stall of development for a few years now,
-and since no new features will ever be added upstream, remove the
-OX810 and OX820 clock bindings.
+and since no new features will ever be added upstream, remove support
+for OX810 and OX820 nand.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Acked-by: Arnd Bergmann <arnd@arndb.de>
 Acked-by: Daniel Golle <daniel@makrotopia.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- .../devicetree/bindings/clock/oxnas,stdclk.txt     | 28 ----------------------
- 1 file changed, 28 deletions(-)
+ drivers/mtd/nand/raw/Kconfig      |   7 --
+ drivers/mtd/nand/raw/Makefile     |   1 -
+ drivers/mtd/nand/raw/oxnas_nand.c | 209 --------------------------------------
+ 3 files changed, 217 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt b/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
+diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+index b523354dfb00..5b871e2f5c5e 100644
+--- a/drivers/mtd/nand/raw/Kconfig
++++ b/drivers/mtd/nand/raw/Kconfig
+@@ -204,13 +204,6 @@ config MTD_NAND_BCM47XXNFLASH
+ 	  registered by bcma as platform devices. This enables driver for
+ 	  NAND flash memories. For now only BCM4706 is supported.
+ 
+-config MTD_NAND_OXNAS
+-	tristate "Oxford Semiconductor NAND controller"
+-	depends on ARCH_OXNAS || COMPILE_TEST
+-	depends on HAS_IOMEM
+-	help
+-	  This enables the NAND flash controller on Oxford Semiconductor SoCs.
+-
+ config MTD_NAND_MPC5121_NFC
+ 	tristate "MPC5121 NAND controller"
+ 	depends on PPC_MPC512x
+diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
+index d93e861d8ba7..25120a4afada 100644
+--- a/drivers/mtd/nand/raw/Makefile
++++ b/drivers/mtd/nand/raw/Makefile
+@@ -26,7 +26,6 @@ obj-$(CONFIG_MTD_NAND_MARVELL)		+= marvell_nand.o
+ obj-$(CONFIG_MTD_NAND_PLATFORM)		+= plat_nand.o
+ obj-$(CONFIG_MTD_NAND_PASEMI)		+= pasemi_nand.o
+ obj-$(CONFIG_MTD_NAND_ORION)		+= orion_nand.o
+-obj-$(CONFIG_MTD_NAND_OXNAS)		+= oxnas_nand.o
+ obj-$(CONFIG_MTD_NAND_FSL_ELBC)		+= fsl_elbc_nand.o
+ obj-$(CONFIG_MTD_NAND_FSL_IFC)		+= fsl_ifc_nand.o
+ obj-$(CONFIG_MTD_NAND_FSL_UPM)		+= fsl_upm.o
+diff --git a/drivers/mtd/nand/raw/oxnas_nand.c b/drivers/mtd/nand/raw/oxnas_nand.c
 deleted file mode 100644
-index b652f3fb7796..000000000000
---- a/Documentation/devicetree/bindings/clock/oxnas,stdclk.txt
+index e3c9807df1cd..000000000000
+--- a/drivers/mtd/nand/raw/oxnas_nand.c
 +++ /dev/null
-@@ -1,28 +0,0 @@
--Oxford Semiconductor OXNAS SoC Family Standard Clocks
--================================================
+@@ -1,209 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Oxford Semiconductor OXNAS NAND driver
 -
--Please also refer to clock-bindings.txt in this directory for common clock
--bindings usage.
+- * Copyright (C) 2016 Neil Armstrong <narmstrong@baylibre.com>
+- * Heavily based on plat_nand.c :
+- * Author: Vitaly Wool <vitalywool@gmail.com>
+- * Copyright (C) 2013 Ma Haijun <mahaijuns@gmail.com>
+- * Copyright (C) 2012 John Crispin <blogic@openwrt.org>
+- */
 -
--Required properties:
--- compatible: For OX810SE, should be "oxsemi,ox810se-stdclk"
--	      For OX820, should be "oxsemi,ox820-stdclk"
--- #clock-cells: 1, see below
+-#include <linux/err.h>
+-#include <linux/io.h>
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/slab.h>
+-#include <linux/clk.h>
+-#include <linux/reset.h>
+-#include <linux/mtd/mtd.h>
+-#include <linux/mtd/rawnand.h>
+-#include <linux/mtd/partitions.h>
+-#include <linux/of.h>
 -
--Parent node should have the following properties :
--- compatible: For OX810SE, should be
--		"oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd"
--	      For OX820, should be
--		"oxsemi,ox820-sys-ctrl", "syscon", "simple-mfd"
+-/* Nand commands */
+-#define OXNAS_NAND_CMD_ALE		BIT(18)
+-#define OXNAS_NAND_CMD_CLE		BIT(19)
 -
--example:
+-#define OXNAS_NAND_MAX_CHIPS	1
 -
--sys: sys-ctrl@000000 {
--	compatible = "oxsemi,ox810se-sys-ctrl", "syscon", "simple-mfd";
--	reg = <0x000000 0x100000>;
--
--	stdclk: stdclk {
--		compatible = "oxsemi,ox810se-stdclk";
--		#clock-cells = <1>;
--	};
+-struct oxnas_nand_ctrl {
+-	struct nand_controller base;
+-	void __iomem *io_base;
+-	struct clk *clk;
+-	struct nand_chip *chips[OXNAS_NAND_MAX_CHIPS];
+-	unsigned int nchips;
 -};
+-
+-static uint8_t oxnas_nand_read_byte(struct nand_chip *chip)
+-{
+-	struct oxnas_nand_ctrl *oxnas = nand_get_controller_data(chip);
+-
+-	return readb(oxnas->io_base);
+-}
+-
+-static void oxnas_nand_read_buf(struct nand_chip *chip, u8 *buf, int len)
+-{
+-	struct oxnas_nand_ctrl *oxnas = nand_get_controller_data(chip);
+-
+-	ioread8_rep(oxnas->io_base, buf, len);
+-}
+-
+-static void oxnas_nand_write_buf(struct nand_chip *chip, const u8 *buf,
+-				 int len)
+-{
+-	struct oxnas_nand_ctrl *oxnas = nand_get_controller_data(chip);
+-
+-	iowrite8_rep(oxnas->io_base, buf, len);
+-}
+-
+-/* Single CS command control */
+-static void oxnas_nand_cmd_ctrl(struct nand_chip *chip, int cmd,
+-				unsigned int ctrl)
+-{
+-	struct oxnas_nand_ctrl *oxnas = nand_get_controller_data(chip);
+-
+-	if (ctrl & NAND_CLE)
+-		writeb(cmd, oxnas->io_base + OXNAS_NAND_CMD_CLE);
+-	else if (ctrl & NAND_ALE)
+-		writeb(cmd, oxnas->io_base + OXNAS_NAND_CMD_ALE);
+-}
+-
+-/*
+- * Probe for the NAND device.
+- */
+-static int oxnas_nand_probe(struct platform_device *pdev)
+-{
+-	struct device_node *np = pdev->dev.of_node;
+-	struct device_node *nand_np;
+-	struct oxnas_nand_ctrl *oxnas;
+-	struct nand_chip *chip;
+-	struct mtd_info *mtd;
+-	int count = 0;
+-	int err = 0;
+-	int i;
+-
+-	/* Allocate memory for the device structure (and zero it) */
+-	oxnas = devm_kzalloc(&pdev->dev, sizeof(*oxnas),
+-			     GFP_KERNEL);
+-	if (!oxnas)
+-		return -ENOMEM;
+-
+-	nand_controller_init(&oxnas->base);
+-
+-	oxnas->io_base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(oxnas->io_base))
+-		return PTR_ERR(oxnas->io_base);
+-
+-	oxnas->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(oxnas->clk))
+-		oxnas->clk = NULL;
+-
+-	/* Only a single chip node is supported */
+-	count = of_get_child_count(np);
+-	if (count > 1)
+-		return -EINVAL;
+-
+-	err = clk_prepare_enable(oxnas->clk);
+-	if (err)
+-		return err;
+-
+-	device_reset_optional(&pdev->dev);
+-
+-	for_each_child_of_node(np, nand_np) {
+-		chip = devm_kzalloc(&pdev->dev, sizeof(struct nand_chip),
+-				    GFP_KERNEL);
+-		if (!chip) {
+-			err = -ENOMEM;
+-			goto err_release_child;
+-		}
+-
+-		chip->controller = &oxnas->base;
+-
+-		nand_set_flash_node(chip, nand_np);
+-		nand_set_controller_data(chip, oxnas);
+-
+-		mtd = nand_to_mtd(chip);
+-		mtd->dev.parent = &pdev->dev;
+-		mtd->priv = chip;
+-
+-		chip->legacy.cmd_ctrl = oxnas_nand_cmd_ctrl;
+-		chip->legacy.read_buf = oxnas_nand_read_buf;
+-		chip->legacy.read_byte = oxnas_nand_read_byte;
+-		chip->legacy.write_buf = oxnas_nand_write_buf;
+-		chip->legacy.chip_delay = 30;
+-
+-		/* Scan to find existence of the device */
+-		err = nand_scan(chip, 1);
+-		if (err)
+-			goto err_release_child;
+-
+-		err = mtd_device_register(mtd, NULL, 0);
+-		if (err)
+-			goto err_cleanup_nand;
+-
+-		oxnas->chips[oxnas->nchips++] = chip;
+-	}
+-
+-	/* Exit if no chips found */
+-	if (!oxnas->nchips) {
+-		err = -ENODEV;
+-		goto err_clk_unprepare;
+-	}
+-
+-	platform_set_drvdata(pdev, oxnas);
+-
+-	return 0;
+-
+-err_cleanup_nand:
+-	nand_cleanup(chip);
+-err_release_child:
+-	of_node_put(nand_np);
+-
+-	for (i = 0; i < oxnas->nchips; i++) {
+-		chip = oxnas->chips[i];
+-		WARN_ON(mtd_device_unregister(nand_to_mtd(chip)));
+-		nand_cleanup(chip);
+-	}
+-
+-err_clk_unprepare:
+-	clk_disable_unprepare(oxnas->clk);
+-	return err;
+-}
+-
+-static void oxnas_nand_remove(struct platform_device *pdev)
+-{
+-	struct oxnas_nand_ctrl *oxnas = platform_get_drvdata(pdev);
+-	struct nand_chip *chip;
+-	int i;
+-
+-	for (i = 0; i < oxnas->nchips; i++) {
+-		chip = oxnas->chips[i];
+-		WARN_ON(mtd_device_unregister(nand_to_mtd(chip)));
+-		nand_cleanup(chip);
+-	}
+-
+-	clk_disable_unprepare(oxnas->clk);
+-}
+-
+-static const struct of_device_id oxnas_nand_match[] = {
+-	{ .compatible = "oxsemi,ox820-nand" },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, oxnas_nand_match);
+-
+-static struct platform_driver oxnas_nand_driver = {
+-	.probe	= oxnas_nand_probe,
+-	.remove_new = oxnas_nand_remove,
+-	.driver	= {
+-		.name		= "oxnas_nand",
+-		.of_match_table = oxnas_nand_match,
+-	},
+-};
+-
+-module_platform_driver(oxnas_nand_driver);
+-
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+-MODULE_DESCRIPTION("Oxnas NAND driver");
+-MODULE_ALIAS("platform:oxnas_nand");
 
 -- 
 2.34.1
