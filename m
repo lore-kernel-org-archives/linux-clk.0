@@ -2,97 +2,107 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACF6EB64DC
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Jul 2023 14:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0F5EB64DD
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Jul 2023 15:45:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229559AbjGAOmF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Jul 2023 10:42:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38548 "EHLO
+        id S229772AbjGAPpH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Jul 2023 11:45:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjGAOmF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Jul 2023 10:42:05 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F2F535B3
-        for <linux-clk@vger.kernel.org>; Sat,  1 Jul 2023 07:42:04 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f122ff663eso4729297e87.2
-        for <linux-clk@vger.kernel.org>; Sat, 01 Jul 2023 07:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688222522; x=1690814522;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BXnw/FEpPPpZ+WG4ZVob38IzcodUEaUVz8j/V8IP3fU=;
-        b=EFLeI3PJZGpGQqlzawDupl04jL4AqEfMYNSBPa9G6ZoTmxnVbQFf5bhfUYdwdYSB45
-         OZIjbKBhe9focaUCsALj7DjgvvLrBPbsV2IJV6nOaqO6riOEd2TVktjYb/P0arrBmgUb
-         KpnsGzupfQaUcgD9TGykQUrwZ/XvcXun/7GMn2IBCbZOHAHgJyvLdCqm4q//eFtlgJMe
-         PqRvP//yXPHazOav8hFEUSUdGFMd4IHLjHpAYMX7bHh4YRT6KymSCnoXXHYOqAoc4NQP
-         1BgawP0FLeWVjogQje8c/+ueSQF10FXyWSHMkW3ssrcvT3M/s1t+/JuZOX/21KI7dZZb
-         gYzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688222522; x=1690814522;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BXnw/FEpPPpZ+WG4ZVob38IzcodUEaUVz8j/V8IP3fU=;
-        b=f2nPKeslqAoQ5PiF4D76xaRMvgX0PqLERLscznahWRNdyxK6eHrkugC5cM3lfvUuam
-         UFw2DnPQRa/EX5+ot553vThxGWG/QivjOrtU+iP1B4EoQ26bCG6Bm19KxyoWyx6SOyIn
-         AiegL+ZpGDmPCIlAjXLQSt2ZeDwQpooofdDximMMPt6Zx3Sl5Cw9QxoH7BpgxNnqkOnF
-         736SOoZdyARRQwaRT74RSCw6mSKt12LyT2EY1ANozky36YNd0IGu3h04YglKYXqW/5So
-         Nkq14tayMpPiuI8cuAGgbeYljJ2WgZ6AU5agBwjqk6Ycd00oAjTkpQvk437HUu8h4egu
-         woVA==
-X-Gm-Message-State: ABy/qLbus9LoyZulcAJ73V3S1APxIrdyF1afgbAidK0pl9LR1f/q8BVr
-        jx1VPsHvTypIP98t6USfuyIVqw==
-X-Google-Smtp-Source: APBJJlFgxcpnuG9pkZhBLIAnPiRu5vZzw3WH4/SWTKfNj2SJgXp0DmGQyw1cH/Pa56vLVz7wyMBM2Q==
-X-Received: by 2002:a05:6512:15a8:b0:4fb:7933:dd4f with SMTP id bp40-20020a05651215a800b004fb7933dd4fmr5371505lfb.56.1688222521704;
-        Sat, 01 Jul 2023 07:42:01 -0700 (PDT)
-Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
-        by smtp.gmail.com with ESMTPSA id 20-20020ac24834000000b004f60f2979e6sm3413409lft.83.2023.07.01.07.42.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Jul 2023 07:42:01 -0700 (PDT)
-Message-ID: <cd7b98b9-7a32-72f5-3997-6c332c295067@linaro.org>
-Date:   Sat, 1 Jul 2023 16:41:59 +0200
+        with ESMTP id S229688AbjGAPpG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Jul 2023 11:45:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A892707;
+        Sat,  1 Jul 2023 08:45:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 16DC060B06;
+        Sat,  1 Jul 2023 15:45:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5DCC5C433C9;
+        Sat,  1 Jul 2023 15:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688226304;
+        bh=ra42rcphL7tKW7I45Ex8nV8bC3r82UuPkw0dfoyiW7w=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=mmGzBb8jTH4fWOy+MNZiXnhPYutdgMzfYBZLCgmZ/ahpceab/0Cqy3s+SSNxK5QVE
+         U4tAJr2SSY0YOAocXGfYFWzSKL8xOCHEyEv+8sIIWM8j5zNAm9bQd8Q9JjvzXUKWFW
+         vFQF6ixBc15d41oYC12IADIsWOFfZVKUp+MFdCSiYP0fkZ3UNedNctHuEjVsjO5cp7
+         oygFROQHAp1ArGWdQYnV/5rQ/CVmBE/tuW8Eny1KTa/b5C1/+SDBPghstrwU2hYk/j
+         RrHrXE6tg7B504hYC5s4HPy5hb7cUcdWkr4tJAoVPmcxXdEDpYmbNGnkCWF5gyXkxI
+         C2t0aIRX2B43g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3EEDEC6445B;
+        Sat,  1 Jul 2023 15:45:04 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] clk: qcom: gcc-sm7150: Add CLK_OPS_PARENT_ENABLE to sdcc2
- rcg
-Content-Language: en-US
-To:     Danila Tikhonov <danila@jiaxyga.com>, agross@kernel.org,
-        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        davidwronek@gmail.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230630191944.20282-1-danila@jiaxyga.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230630191944.20282-1-danila@jiaxyga.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v6 00/11] Add STG/ISP/VOUT clock and reset drivers for
+ StarFive JH7110
+From:   patchwork-bot+linux-riscv@kernel.org
+Message-Id: <168822630425.22742.10407688185048619244.git-patchwork-notify@kernel.org>
+Date:   Sat, 01 Jul 2023 15:45:04 +0000
+References: <20230518101234.143748-1-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230518101234.143748-1-xingyu.wu@starfivetech.com>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, p.zabel@pengutronix.de,
+        conor@kernel.org, kernel@esmil.dk, robh+dt@kernel.org,
+        paul.walmsley@sifive.com, palmer@dabbelt.com,
+        aou@eecs.berkeley.edu, hal.feng@starfivetech.com,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30.06.2023 21:19, Danila Tikhonov wrote:
-> Set .flags = CLK_OPS_PARENT_ENABLE to fix "gcc_sdcc2_apps_clk_src: rcg
-> didn't update its configuration" error.
-> 
-> Fixes: a808d58ddf29 ("clk: qcom: Add Global Clock Controller (GCC) driver for SM7150")
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Hello:
 
-Konrad
->  drivers/clk/qcom/gcc-sm7150.c | 1 +
->  1 file changed, 1 insertion(+)
+This series was applied to riscv/linux.git (fixes)
+by Conor Dooley <conor.dooley@microchip.com>:
+
+On Thu, 18 May 2023 18:12:23 +0800 you wrote:
+> This patch serises are base on the basic JH7110 SYSCRG/AONCRG
+> drivers and add new partial clock drivers and reset supports
+> about System-Top-Group(STG), Image-Signal-Process(ISP)
+> and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC. These
+> clocks and resets could be used by DMA, VIN and Display modules.
 > 
-> diff --git a/drivers/clk/qcom/gcc-sm7150.c b/drivers/clk/qcom/gcc-sm7150.c
-> index 6b628178f62c..6da87f0436d0 100644
-> --- a/drivers/clk/qcom/gcc-sm7150.c
-> +++ b/drivers/clk/qcom/gcc-sm7150.c
-> @@ -739,6 +739,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
->  		.parent_data = gcc_parent_data_6,
->  		.num_parents = ARRAY_SIZE(gcc_parent_data_6),
->  		.ops = &clk_rcg2_floor_ops,
-> +		.flags = CLK_OPS_PARENT_ENABLE,
->  	},
->  };
->  
+> Patches 1 and 2 are about the System-Top-Group clock and reset
+> generator(STGCRG) part. The first patch adds docunmentation to
+> describe STG bindings, and the second patch adds clock driver to
+> support STG clocks and resets as auxiliary device for JH7110.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v6,01/11] dt-bindings: clock: Add StarFive JH7110 System-Top-Group clock and reset generator
+    (no matching commit)
+  - [v6,02/11] clk: starfive: Add StarFive JH7110 System-Top-Group clock driver
+    (no matching commit)
+  - [v6,03/11] dt-bindings: clock: Add StarFive JH7110 Image-Signal-Process clock and reset generator
+    (no matching commit)
+  - [v6,04/11] clk: starfive: Add StarFive JH7110 Image-Signal-Process clock driver
+    (no matching commit)
+  - [v6,05/11] dt-bindings: clock: Add StarFive JH7110 Video-Output clock and reset generator
+    (no matching commit)
+  - [v6,06/11] clk: starfive: Add StarFive JH7110 Video-Output clock driver
+    (no matching commit)
+  - [v6,07/11] MAINTAINERS: Update maintainer of JH71x0 clock drivers
+    (no matching commit)
+  - [v6,08/11] reset: starfive: jh7110: Add StarFive STG/ISP/VOUT resets support
+    (no matching commit)
+  - [v6,09/11] riscv: dts: starfive: jh7110: add pmu controller node
+    https://git.kernel.org/riscv/c/6a887bcc4138
+  - [v6,10/11] riscv: dts: starfive: jh7110: Add DVP and HDMI TX pixel external clocks
+    (no matching commit)
+  - [v6,11/11] riscv: dts: starfive: jh7110: Add STGCRG/ISPCRG/VOUTCRG nodes
+    (no matching commit)
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
