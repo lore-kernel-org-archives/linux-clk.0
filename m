@@ -2,136 +2,97 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3ACEB64DD
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Jul 2023 10:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACF6EB64DC
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Jul 2023 14:42:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbjGAK4B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Jul 2023 06:56:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57946 "EHLO
+        id S229559AbjGAOmF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Jul 2023 10:42:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbjGAK4A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Jul 2023 06:56:00 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF7C3C00
-        for <linux-clk@vger.kernel.org>; Sat,  1 Jul 2023 03:55:58 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4fb96e2b573so4664327e87.3
-        for <linux-clk@vger.kernel.org>; Sat, 01 Jul 2023 03:55:58 -0700 (PDT)
+        with ESMTP id S229609AbjGAOmF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Jul 2023 10:42:05 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F2F535B3
+        for <linux-clk@vger.kernel.org>; Sat,  1 Jul 2023 07:42:04 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4f122ff663eso4729297e87.2
+        for <linux-clk@vger.kernel.org>; Sat, 01 Jul 2023 07:42:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688208957; x=1690800957;
+        d=linaro.org; s=google; t=1688222522; x=1690814522;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=f7+jU9LpPJg9EehaJpVm5VjMnguXv1PuXkPwCYOUgQk=;
-        b=RMTftJM7u4c/lcq5Kiu4tD9+Gc5eKlF5ZVUEIxbkTRVUlBEGNjIC2YzrY63xeeG5ir
-         c/4p1/+rCZwYTgVlHjp0gjLOGU02trzuPm9VtR3ATEDFotvwDNo5TuPllR870o55st/t
-         X0K/f6785V14Ov949qwF3hsQM0vYQU6nU+EcP9N0+CiYebm4vN4SGkFgvoGp5p3OWBjF
-         feC16pM3L6rzOMaX0+jegJ4ljEv4DTJzjQtNGJxoEHk3i0QWYtZOyFyb/XP1OAr/Leuj
-         0up12xQ/G7GTGxyZ4lrWiD4W02khPCXHKTAqDQV9I3CfsfsR2puTLyCZU9kAps3OuCdV
-         3YVg==
+        bh=BXnw/FEpPPpZ+WG4ZVob38IzcodUEaUVz8j/V8IP3fU=;
+        b=EFLeI3PJZGpGQqlzawDupl04jL4AqEfMYNSBPa9G6ZoTmxnVbQFf5bhfUYdwdYSB45
+         OZIjbKBhe9focaUCsALj7DjgvvLrBPbsV2IJV6nOaqO6riOEd2TVktjYb/P0arrBmgUb
+         KpnsGzupfQaUcgD9TGykQUrwZ/XvcXun/7GMn2IBCbZOHAHgJyvLdCqm4q//eFtlgJMe
+         PqRvP//yXPHazOav8hFEUSUdGFMd4IHLjHpAYMX7bHh4YRT6KymSCnoXXHYOqAoc4NQP
+         1BgawP0FLeWVjogQje8c/+ueSQF10FXyWSHMkW3ssrcvT3M/s1t+/JuZOX/21KI7dZZb
+         gYzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688208957; x=1690800957;
+        d=1e100.net; s=20221208; t=1688222522; x=1690814522;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f7+jU9LpPJg9EehaJpVm5VjMnguXv1PuXkPwCYOUgQk=;
-        b=kiM9xRAt/r/rG2QCcXnW1UFv4U01KMYXrOB4ICkZEb4+mL7/pR6TA56LYQhwjQG2hl
-         nfOI79JkhAYP8z0OhMSx+/T7IxcNOhdah1/1ZVZKuiEc4qC9VRr6G0lqX2wQ+fa8Pw3R
-         6Jmh6gEx6lI71y8QodBXWKIOCzH3PqJh+mZBAljGXLFCvoM9D9EzFZZi5pereM58qHcA
-         oyo04mCrwvAkR1Sj6/+WvNkl7yKD4je/3vOEimvb0PqtWSHjzpuVVaQx64V4v0EyIg+w
-         ZZVsCeZ7KTnW4xX7e7gFQtTPFhmNXrhTVPRb6qCCxv8X+CScxnx3pUiyHJBE3rf5M4Mp
-         9TVw==
-X-Gm-Message-State: ABy/qLaYaLi+bYhoHTStfkm7sdoDaSA9OO9Wcfyim8HDXWg1aWW/DK5K
-        t9ccuwzSdVIkoSM59Mdvoe08Zw==
-X-Google-Smtp-Source: APBJJlGjWzze0Nw3aT298AyAOE/oLbH2N8dBcxHY1zC+9qyeCKLoYE8E6UHWwwJNQ4NwqUkLM8d6tw==
-X-Received: by 2002:ac2:4bca:0:b0:4f9:ec5e:d624 with SMTP id o10-20020ac24bca000000b004f9ec5ed624mr3905398lfq.38.1688208956879;
-        Sat, 01 Jul 2023 03:55:56 -0700 (PDT)
-Received: from [192.168.10.214] ([217.169.179.6])
-        by smtp.gmail.com with ESMTPSA id o7-20020aa7dd47000000b0051bf57aa0c6sm7800333edw.87.2023.07.01.03.55.55
+        bh=BXnw/FEpPPpZ+WG4ZVob38IzcodUEaUVz8j/V8IP3fU=;
+        b=f2nPKeslqAoQ5PiF4D76xaRMvgX0PqLERLscznahWRNdyxK6eHrkugC5cM3lfvUuam
+         UFw2DnPQRa/EX5+ot553vThxGWG/QivjOrtU+iP1B4EoQ26bCG6Bm19KxyoWyx6SOyIn
+         AiegL+ZpGDmPCIlAjXLQSt2ZeDwQpooofdDximMMPt6Zx3Sl5Cw9QxoH7BpgxNnqkOnF
+         736SOoZdyARRQwaRT74RSCw6mSKt12LyT2EY1ANozky36YNd0IGu3h04YglKYXqW/5So
+         Nkq14tayMpPiuI8cuAGgbeYljJ2WgZ6AU5agBwjqk6Ycd00oAjTkpQvk437HUu8h4egu
+         woVA==
+X-Gm-Message-State: ABy/qLbus9LoyZulcAJ73V3S1APxIrdyF1afgbAidK0pl9LR1f/q8BVr
+        jx1VPsHvTypIP98t6USfuyIVqw==
+X-Google-Smtp-Source: APBJJlFgxcpnuG9pkZhBLIAnPiRu5vZzw3WH4/SWTKfNj2SJgXp0DmGQyw1cH/Pa56vLVz7wyMBM2Q==
+X-Received: by 2002:a05:6512:15a8:b0:4fb:7933:dd4f with SMTP id bp40-20020a05651215a800b004fb7933dd4fmr5371505lfb.56.1688222521704;
+        Sat, 01 Jul 2023 07:42:01 -0700 (PDT)
+Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
+        by smtp.gmail.com with ESMTPSA id 20-20020ac24834000000b004f60f2979e6sm3413409lft.83.2023.07.01.07.42.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Jul 2023 03:55:56 -0700 (PDT)
-Message-ID: <bc56e3be-7d0b-5420-978e-125d66ae8f72@linaro.org>
-Date:   Sat, 1 Jul 2023 12:55:55 +0200
+        Sat, 01 Jul 2023 07:42:01 -0700 (PDT)
+Message-ID: <cd7b98b9-7a32-72f5-3997-6c332c295067@linaro.org>
+Date:   Sat, 1 Jul 2023 16:41:59 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH V2 10/13] remoteproc: qcom: Add Hexagon based multipd
- rproc driver
+Subject: Re: [PATCH] clk: qcom: gcc-sm7150: Add CLK_OPS_PARENT_ENABLE to sdcc2
+ rcg
 Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, jassisinghbrar@gmail.com,
-        mathieu.poirier@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org, quic_eberman@quicinc.com, quic_mojha@quicinc.com,
-        kvalo@kernel.org, loic.poulain@linaro.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
-        quic_poovendh@quicinc.com, quic_varada@quicinc.com,
-        quic_devipriy@quicinc.com
-References: <20230521222852.5740-1-quic_mmanikan@quicinc.com>
- <20230521222852.5740-11-quic_mmanikan@quicinc.com>
- <2061a641-4b97-1aa6-27cd-99f01a785033@linaro.org>
- <54f06704-a849-7049-5956-31cb4765a1eb@quicinc.com>
- <8cf34ab3-fa8b-90f4-215e-bbfb0c41fade@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <8cf34ab3-fa8b-90f4-215e-bbfb0c41fade@quicinc.com>
+To:     Danila Tikhonov <danila@jiaxyga.com>, agross@kernel.org,
+        andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        davidwronek@gmail.com
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230630191944.20282-1-danila@jiaxyga.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230630191944.20282-1-danila@jiaxyga.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/06/2023 12:29, Manikanta Mylavarapu wrote:
+On 30.06.2023 21:19, Danila Tikhonov wrote:
+> Set .flags = CLK_OPS_PARENT_ENABLE to fix "gcc_sdcc2_apps_clk_src: rcg
+> didn't update its configuration" error.
 > 
+> Fixes: a808d58ddf29 ("clk: qcom: Add Global Clock Controller (GCC) driver for SM7150")
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+>  drivers/clk/qcom/gcc-sm7150.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> On 6/27/2023 6:09 PM, Manikanta Mylavarapu wrote:
->>
->>
-
-Do you see the lines above? You quote my reply and claim it is you who
-wrote it.
-
-Please fix your mailer, it's making discussions unnecessary difficult.
-
-
->>>> +      Say y here to support the Qualcomm Secure Peripheral Image Loader
->>>> +      for the Hexagon based MultiPD model remote processors on e.g. 
->>>> IPQ5018.
->>>> +      This is trustZone wireless subsystem.
->>>> +
->>>
->>> ...
->>>
-> 	I didn't understand. Can you please elaborate your comment?
-
-https://en.wikipedia.org/wiki/Ellipsis
-
-> 
->>>> +    int (*powerup_scm)(u32 peripheral);
->>>> +    int (*powerdown_scm)(u32 peripheral);
->>>> +};
->>>> +
->>>> +/**
->>>> + * qcom_get_pd_asid() - get the pd asid number from DT node
->>>
->>>  From node name? NAK. It does not work like that. Node names can change
->>> and you did not define this number as part of ABI.
->>>
->>> Probably you wanted unit address.
->>>
-> 
-> 	Yeah i got your point. Each of the WCSS PD's are internally
-> 	represented in Q6 with their corresponding "spawn" bit numbers.
-> 	I will use same and remove the "PD-" hardcodings.
-> 
-> 	Is this fine ?
-
-I don't get what you are going to use, so post a patch. Talk is cheap.
-
-
-Best regards,
-Krzysztof
-
+> diff --git a/drivers/clk/qcom/gcc-sm7150.c b/drivers/clk/qcom/gcc-sm7150.c
+> index 6b628178f62c..6da87f0436d0 100644
+> --- a/drivers/clk/qcom/gcc-sm7150.c
+> +++ b/drivers/clk/qcom/gcc-sm7150.c
+> @@ -739,6 +739,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+>  		.parent_data = gcc_parent_data_6,
+>  		.num_parents = ARRAY_SIZE(gcc_parent_data_6),
+>  		.ops = &clk_rcg2_floor_ops,
+> +		.flags = CLK_OPS_PARENT_ENABLE,
+>  	},
+>  };
+>  
