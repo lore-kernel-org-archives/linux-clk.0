@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AA1C18E72
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 17:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C50EC25B5B
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 17:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230083AbjGBRnb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jul 2023 13:43:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41194 "EHLO
+        id S230244AbjGBRnc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jul 2023 13:43:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230098AbjGBRnH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 13:43:07 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40806E5C
-        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 10:43:05 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id 38308e7fff4ca-2b6a6f224a1so58780341fa.1
-        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 10:43:05 -0700 (PDT)
+        with ESMTP id S230110AbjGBRnI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 13:43:08 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D4B5E6C
+        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 10:43:07 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b5e7dba43cso57631251fa.1
+        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 10:43:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688319783; x=1690911783;
+        d=linaro.org; s=google; t=1688319785; x=1690911785;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HSVXLsNAShBJHVR9vMtlXCAILUdGmBkWDTfqBXPK0KY=;
-        b=ZmcJGF6jZZmFSCd8ycbmcaHOGMQyab9woSgJuP6kPofFGLkUbCpH2iJL4ZnOluRXOT
-         yRG0PX1JwRwroLdh943/EkXEnCdJ6Oj7l3MMIorqIw52bx6A8uDuX8Pr9AyMQGRXas6F
-         5yvbfYBACeY/JLtRMpckROrDBO2ZihYecW75gRb1B86ELPptNzjNH06fmaFFL7XgAklO
-         Xdn8i/UjPaJjt7mYPOrlz6f8swIk1kMZxglJkhvPPqOSXwindOCtTsGKmX/vIJNuCwsU
-         uAeCdW+oDMRSP47mM7fBHrJQ6QFrrAImB/qgqAuHA//xt/Rcxu1vd0xvOOV7/aV8cS9M
-         4o0Q==
+        bh=Spy/Rz/cAzxXKn/s1kOsEtZbTl790jBubt05JLTnLbc=;
+        b=xKVARl3+UEavVSKgEWAuZsemmhzlBXiFkYs+0+a2XvrnOYn+6kKi3bSiCv5xIQw1tH
+         4Rde/UGHJm+jLcm3GeOjdUs+4MGDzdDhAT7ftX17teNQ9upYzmBFMgaUq42DAPMgFd6H
+         uyms78+EI6eoPcCzjmRyIII9hr/uvxaqwNPJDpIZ2FrRxJzL6kOIEQ/30Gs1J/dPVse8
+         Woa/SGMa2A+7MFpeEaulOkFYgkdrm5TrJiKmLsEWZwXipJqZC192llmi6jTsje8z/kwm
+         gaIeEPTEBbn2BLwWoviRnJA7Dj5PD0gbg0adsKj9mwqeJBQMjnCPWx+6cwiTAECEOpN1
+         UjPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688319783; x=1690911783;
+        d=1e100.net; s=20221208; t=1688319785; x=1690911785;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HSVXLsNAShBJHVR9vMtlXCAILUdGmBkWDTfqBXPK0KY=;
-        b=Kbh40P0cKRzxlaaoFfZCuBGMoTRM2Wiw9KSv/VR8SInKARD1yE/sXj456RDXRceJJi
-         7fs6JIkA/9bXAA1v5AWnxq9uzh2XUBMTK44WlNor+3IYOti7/MILulPXzrzIsf7XLQdp
-         bapuL5ZBeDpYDgPcTJz90GcYAMaCtQ8gagMXL5f3u/wgZ4oohDtfHVs2+BOwvUbHGD98
-         Z6ub1Cfm6hLO5QmtV2vGGCUoTNjeEOPNaxu72X8SqPSaNijfDrTJ698GyX1nbwg0khCO
-         qDGk+DA34eRKsvhMwpYQ8M2C5Xf7tekTspbWwPZtyuCKtiDnHn9+0L7zAYWBKsQKHS7w
-         oaKg==
-X-Gm-Message-State: ABy/qLaX9FnaP4lTUn18vasR7NdOdO3daQxe7Q6iusjb58hzr1PYISqJ
-        3xmYm1oD6X0rH2xBREajmeIjbw==
-X-Google-Smtp-Source: APBJJlGfQ5YkJLM5BRaVIDUTJf0Ihg0ey3efv6IrZlrqxbR3TVF8Kn/hf/0Ururks7UbAt0Uq3H7PQ==
-X-Received: by 2002:a2e:8182:0:b0:2b6:cfec:69f7 with SMTP id e2-20020a2e8182000000b002b6cfec69f7mr4573764ljg.1.1688319783483;
-        Sun, 02 Jul 2023 10:43:03 -0700 (PDT)
+        bh=Spy/Rz/cAzxXKn/s1kOsEtZbTl790jBubt05JLTnLbc=;
+        b=UZbz70SjrK6OOExnKLp9Fc2QPnF8ATHe0fUUAuVs8WhlSL2iUL3EwuIQEw/TQDLG1v
+         occY6bBN6R7lkyZohQNq/Cm+6mq3lHByCmFnqWxYzmhZ2iSs0kdAsyU2GmW1aZ0YY+73
+         jX53p+cEW94woF+ybjVSbcehYg/u7WUbuNu7ZeGAcfuN7ge20xsQDYKuOQF4m0bwd3gR
+         92bJXPzR7qi1v91+jk2LSK91Bta8ovqrKMbOoVXv2GeGzs62aVCvYtRyzOFJO9tgdO6N
+         Tk/j7/GrCwBUBQDKkXbHf2rNiHfjrJqdOps9IfSU+qLVJVDLr/a+F99u0Rk7mBXXsLZs
+         0s2A==
+X-Gm-Message-State: ABy/qLZ0o0oAfpVzosFdHSml2M0K8/XNFVWinD3ZpgYHReD6dJBWrDxY
+        nrFzt67dU7VAkRpgocEJhvapiQ==
+X-Google-Smtp-Source: APBJJlG6YkIBJol9D4H5EYF2JEsDZOPDID8nIXGAv1Q5LpjlHVZZ9535mZzz5sKuyxPv/7oF6o4Yig==
+X-Received: by 2002:a2e:8757:0:b0:2b6:cd71:6235 with SMTP id q23-20020a2e8757000000b002b6cd716235mr5413316ljj.42.1688319785438;
+        Sun, 02 Jul 2023 10:43:05 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id v23-20020a2e9917000000b002b6daa3fa2csm1372550lji.69.2023.07.02.10.43.02
+        by smtp.gmail.com with ESMTPSA id v23-20020a2e9917000000b002b6daa3fa2csm1372550lji.69.2023.07.02.10.43.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jul 2023 10:43:03 -0700 (PDT)
+        Sun, 02 Jul 2023 10:43:04 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v3 17/28] ARM: dts: qcom: apq8064-sony-xperia-lagan-yuga: constraint cpufreq regulators
-Date:   Sun,  2 Jul 2023 20:42:35 +0300
-Message-Id: <20230702174246.121656-18-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 19/28] ARM: dts: qcom: apq8064: declare SAW2 regulators
+Date:   Sun,  2 Jul 2023 20:42:37 +0300
+Message-Id: <20230702174246.121656-20-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
 References: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
@@ -78,48 +78,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add additional constraints to the CPUfreq-related regulators, it is
-better be safe than sorry there.
+The SAW2 (SPM and AVS Wrapper) among other things is yet another way to
+handle CPU-related PMIC regulators. Provide a way to control voltage of
+these regulators.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../boot/dts/qcom/qcom-apq8064-sony-xperia-lagan-yuga.dts | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064-sony-xperia-lagan-yuga.dts b/arch/arm/boot/dts/qcom/qcom-apq8064-sony-xperia-lagan-yuga.dts
-index 6988bd212924..26f1e81e2bf5 100644
---- a/arch/arm/boot/dts/qcom/qcom-apq8064-sony-xperia-lagan-yuga.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-apq8064-sony-xperia-lagan-yuga.dts
-@@ -130,7 +130,7 @@ pm8921_s2: s2 {
+diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+index 5a85359d61e5..ab4b8f8270bb 100644
+--- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
+@@ -408,25 +408,41 @@ acc3: clock-controller@20b8000 {
+ 		saw0: power-manager@2089000 {
+ 			compatible = "qcom,apq8064-saw2-v1.1-cpu", "qcom,saw2";
+ 			reg = <0x02089000 0x1000>, <0x02009000 0x1000>;
+-			regulator;
++
++			saw0_vreg: regulator {
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1300000>;
++			};
  		};
  
- 		pm8921_s3: s3 {
--			regulator-min-microvolt = <500000>;
-+			regulator-min-microvolt = <950000>;
- 			regulator-max-microvolt = <1150000>;
- 			qcom,switch-mode-frequency = <4800000>;
- 			bias-pull-down;
-@@ -281,7 +281,7 @@ pm8921_l23: l23 {
+ 		saw1: power-manager@2099000 {
+ 			compatible = "qcom,apq8064-saw2-v1.1-cpu", "qcom,saw2";
+ 			reg = <0x02099000 0x1000>, <0x02009000 0x1000>;
+-			regulator;
++
++			saw1_vreg: regulator {
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1300000>;
++			};
  		};
  
- 		pm8921_l24: l24 {
--			regulator-min-microvolt = <750000>;
-+			regulator-min-microvolt = <1050000>;
- 			regulator-max-microvolt = <1150000>;
- 			bias-pull-down;
- 		};
-@@ -335,7 +335,11 @@ pm8921_lvs6: lvs6 {
- 			bias-pull-down;
- 		};
- 
-+		/* HFPLL regulator */
- 		pm8921_lvs7: lvs7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-boot-on;
- 			bias-pull-down;
+ 		saw2: power-manager@20a9000 {
+ 			compatible = "qcom,apq8064-saw2-v1.1-cpu", "qcom,saw2";
+ 			reg = <0x020a9000 0x1000>, <0x02009000 0x1000>;
+-			regulator;
++
++			saw2_vreg: regulator {
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1300000>;
++			};
  		};
  
+ 		saw3: power-manager@20b9000 {
+ 			compatible = "qcom,apq8064-saw2-v1.1-cpu", "qcom,saw2";
+ 			reg = <0x020b9000 0x1000>, <0x02009000 0x1000>;
+-			regulator;
++
++			saw3_vreg: regulator {
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1300000>;
++			};
+ 		};
+ 
+ 		sps_sic_non_secure: sps-sic-non-secure@12100000 {
 -- 
 2.39.2
 
