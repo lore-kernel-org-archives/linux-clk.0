@@ -2,277 +2,248 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 586A2C0015E
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 17:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D7BEB64DA
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 17:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjGBRvE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jul 2023 13:51:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43636 "EHLO
+        id S229679AbjGBRzy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jul 2023 13:55:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbjGBRvD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 13:51:03 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 953E610C6
-        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 10:50:55 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2b699a2fe86so60110371fa.3
-        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 10:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688320253; x=1690912253;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z9c4FVrk3TOMJ6j16d6O+t5YuZj+ItNzqA8EFXL3KU4=;
-        b=uh/4XzzKE/5XsID7kTOyWIoP8u1qc25TdfJ1rK4qsszQRHy+DxrxsmDfwLOMErmjRq
-         gSySLRp5OWRprSPjR2f/oO9pfbobBmSSksyxsbTSKinSzaBG+CA0kYFd+qQ1KXO5Sovk
-         Ek6IG0MTF2MfrkwYfClkyJ1Ckeqn4dz+pdPY+6ZWGazEqXzO800gV4H/uvrGV3IDHzQL
-         LdwTHpkvWqtrq+Jk/8lojU1fy0Rlo5LIFUuY+T6aOHK96/0ya++94GHZn1niyW5uW+WP
-         LMHs5+ROzW4Ifd1D67DNFm1nIne2QutqYqAE8Jx0/er7pXwyWNrxyfDgdk2ZEa4d8g1l
-         exyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688320253; x=1690912253;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z9c4FVrk3TOMJ6j16d6O+t5YuZj+ItNzqA8EFXL3KU4=;
-        b=ZFLlDQjHsNHw9ZVDY/haRxCeB35TRACNX72LcYMZLIwZla7xyFS3oAvhqgOVpeDVTn
-         QUUkh0/TkOB2hSdqeUsNrGlOIeqARt8EzaKsCQuuSc0cgI0ris+NiB0tuLDZDD0mJJJP
-         IeYkHn93+VYVXf6hbt0y69u3pQSglEipTtB/wlBIYgf9WN/IiUfV+pOnhdANa96MVtUu
-         PlOjO3dVGDlBX5WspQAdccsYmjW79X/WiPWa4BSgPtnj3CDr11m27TnK4tWAkSxw6Rkr
-         ZX6AJFNsjhFDthU84P5AHoapEy42hktoo9iwEaLlOSvX/5phpIbmBG6Lc2BVCFndWzJt
-         0bMg==
-X-Gm-Message-State: ABy/qLZ24X50ufG2Uw0MfrJo0tLEIjM2Ril0sGEplQ9v5ySZi0Mb3Bw2
-        C59+Avi2vVyC2oLkgc3PEEXRrA==
-X-Google-Smtp-Source: APBJJlEKHOsXd+51Th8sPvpetw4Vg+Hi18xf34lCm3nDuN/IKTHt3zqx6wMRvqWjRFR/i+EAMcowTA==
-X-Received: by 2002:a05:6512:33c9:b0:4fb:5dd5:715c with SMTP id d9-20020a05651233c900b004fb5dd5715cmr7025921lfg.4.1688320252843;
-        Sun, 02 Jul 2023 10:50:52 -0700 (PDT)
-Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id d1-20020ac24c81000000b004fb759964a9sm3354130lfl.168.2023.07.02.10.50.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jul 2023 10:50:52 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [RFC PATCH 8/8] ARM: dts: qcom: apq8064: add simple CPUFreq support
-Date:   Sun,  2 Jul 2023 20:50:45 +0300
-Message-Id: <20230702175045.122041-9-dmitry.baryshkov@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230702175045.122041-1-dmitry.baryshkov@linaro.org>
-References: <20230702175045.122041-1-dmitry.baryshkov@linaro.org>
+        with ESMTP id S229862AbjGBRzx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 13:55:53 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D17DE67;
+        Sun,  2 Jul 2023 10:55:46 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4QvGtm1xHLz9sbW;
+        Sun,  2 Jul 2023 19:55:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1688320544;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=j8zz4KA5SELSjikiaFA0s5ffeNsoFIxXaP7N7linXrM=;
+        b=j0G6ksnUYRGGBW2kOZsQKK4CH37QWDGKiTf6h2pVUkTiapmDOfIq1cWRFERLGg7UHCaMpH
+        wLBKccWUsCfbMZwGk/2zYQhNTGLdwLypM206dlcYxasAX8qBjIBj12v9D3hTpdwiqoKown
+        7xMWdv5gjwpHXFNPTKofWMfojrNKfukgeiHUKmTYrELJR3ZHh5ln0HRCsGqfS9UnzSEeRo
+        TK4514DZm+YkLItbgKE642EZUCJPS7DbgUFe3rQ+hRz5+cxcSQqt2kGIHeH9/dGUaKK9Ua
+        Qop23j5XzkCp6iF4JCkc4BH1qbqTxnurOhyPOgXIMs4vvqyO0vnr5fUY4W4Evw==
+From:   Frank Oltmanns <frank@oltmanns.dev>
+Subject: [PATCH v3 0/8] clk: sunxi-ng: Consider alternative parent rates
+ when determining NKM clock rate
+Date:   Sun, 02 Jul 2023 19:55:19 +0200
+Message-Id: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAe6oWQC/43OSw6CMBSF4a2Qjr2kDynBkfswhFS4lUYo5LYhG
+ sLeLYx05vAfnC9nZQHJYWCXbGWEiwtu8inUKWNtb/wDwXWpmeRScS01zMMAo5tdEzA2ZCI2syH
+ 0EZTSyra806gtS/OZ0LrXQd/q1JamEWJPaL5AIXjFxVnlQklZlCDAkvHP6zTE0Xgf8g6XHetdi
+ BO9j5uL3Mk/Hi0SOOhSVRXei0p38pett237ABsC4FYAAQAA
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Roman Beranek <me@crly.cz>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Frank Oltmanns <frank@oltmanns.dev>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8468; i=frank@oltmanns.dev;
+ h=from:subject:message-id; bh=1+0JmHxvMgAWx7Y8SneN1X+BTy6q7aqf1B6RjY+gAGI=;
+ b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBkoboaDI1obfpjIfryp3nBP1MWIDxE14N4dp6Mb
+ ohlgSuPmtWJAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZKG6GgAKCRCaaaIIlErT
+ x7HYDACFV5zX/eTF0lj/9vqYDkcs90uZTWXxTTknaTR2IG6jgqsvweX+ahw4tBV8YdPNPzm/AIK
+ IdPbdqplyVL7ufeqxriBtjo3oqeP0Pf9nTpwzL5R7PBpqfgABxSdwctPoQ8ruouhjJNYiiqKTns
+ BE4jnkBmf3V/GNN5rJE5jAL6FaCjekZ7XGw2Qb9LkDTY4VgpuO93G/JCxze8elsfcQfcRoGFp/E
+ INfuC1qx0GWYIqr0bgqG4JZPB75irf36gB+e6nSV3Et1fXGnVpCrPNjH3fD/1B6MC2rnjIwUf3C
+ huXR0KCFHzvf8mmfgt/aIkjEmEsZ6jO6LI5M+QNqN5Sb6F9mB4OH6fjBW3SyaYAbyb/ixfNch+q
+ Ioysx0GO87PZIwOqGMQaJ6EzTaxUvjGy21zEb3fPf3O/T/NiZxd2AW5yILPT+IP9ZsymkAflUI/
+ psc9DvM0k1fvcd2zhQ8HQey4NY3mMa/DrCdN456kogcBR+vFoDL8M/Xhr7f4iXQ8vGxDM=
+X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
+ fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Declare CPU frequency-scaling properties. Each CPU has its own clock,
-how all CPUs have the same OPP table. Voltage scaling is not (yet)
-enabled with this patch. It will be enabled later.
+This patchset enables NKM clocks to consider alternative parent rates
+and utilize this new feature to adjust the pll-video0 clock on Allwinner
+A64 (PATCH 1 and 2).
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Furthermore, with this patchset pll-video0 considers rates that are
+higher than the requested rate when finding the closest rate. In
+consequence, higher rates are also considered by pll-video0's
+descandents (PATCH 3 et. seq.).
+
+This allows us to achieve an optimal rate for driving the board's panel.
+
+To provide some context, the clock structure involved in this process is
+as follows:
+    clock                       clock type
+    --------------------------------------
+    pll-video0                  ccu_nm
+       pll-mipi                 ccu_nkm
+          tcon0                 ccu_mux
+             tcon-data-clock    sun4i_dclk
+
+The divider between tcon0 and tcon-data-clock is fixed at 4. Therefore,
+in order to achieve a rate that closely matches the desired rate of the
+panel, pll-mipi needs to operate at a specific rate.
+
+Tests
+=====
+So far, this has been successfully tested on the A64-based Pinephone
+using three different panel rates:
+
+ 1. A panel rate that can be matched exactly by pll-video0.
+ 2. A panel rate that requires pll-video0 to undershoot to get the
+    closest rate.
+ 3. A panel rate that requires pll-video0 to overshoot to get the
+    closest rate.
+
+Test records:
+
+Re 1:
+-----
+Panel requests tcon-data-clock of 103500000 Hz, i.e., pll-mipi needs to
+run at 414000000 Hz. This results in the following clock rates:
+   clock                            rate
+----------------------------------------
+    pll-video0                 207000000
+       hdmi-phy-clk             51750000
+       hdmi                    207000000
+       tcon1                   207000000
+       pll-mipi                414000000
+          tcon0                414000000
+             tcon-data-clock   103500000
+
+The results of the find_best calls:
+[   12.345862] ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+[   12.346111] ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+[   12.346291] ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+[   12.346471] ccu_nkm_find_best_with_parent_adj: rate=414000000, best_rate=414000000, best_parent_rate=207000000, n=1, k=2, m=1
+[   12.346867] ccu_nkm_find_best: rate=414000000, best_rate=414000000, parent_rate=207000000, n=1, k=2, m=1
+
+Re 2:
+-----
+Panel requests tcon-data-clock of 103650000 Hz, i.e., pll-mipi needs to
+run at 414600000 Hz. This results in the following clock rates:
+   clock                            rate
+----------------------------------------
+    pll-video0                 282666666
+       hdmi-phy-clk             70666666
+       hdmi                    282666666
+       tcon1                   282666666
+       pll-mipi                414577776
+          tcon0                414577776
+             tcon-data-clock   103644444
+
+The results of the find_best calls:
+[   13.638954] ccu_nkm_find_best_with_parent_adj: rate=414600000, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+[   13.639212] ccu_nkm_find_best_with_parent_adj: rate=414600000, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+[   13.639395] ccu_nkm_find_best_with_parent_adj: rate=414577776, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+[   13.639577] ccu_nkm_find_best_with_parent_adj: rate=414577776, best_rate=414577776, best_parent_rate=282666666, n=11, k=2, m=15
+[   13.639913] ccu_nkm_find_best: rate=414577776, best_rate=414577776, parent_rate=282666666, n=11, k=2, m=15
+
+Here, we consistently ask the pll-video0 for a rate that it can't
+provide exactly:
+ - rate=414600000: We ask the parent for 282681818 (rate * m / (n * k)),
+   it returns 282666666. Here the parent undershoots.
+ - rate=414577776: We ask the parent for 282666665 (rate * m / (n * k)),
+   it returns 282666666. Here the parent overshoots.
+
+So, in both cases it rounds to the nearest rate (first down, then up),
+which is the intended behaviour.
+
+Re 3:
+-----
+Panel requests tcon-data-clock of 112266000 Hz, i.e., pll-mipi needs to
+run at 449064000 Hz. This results in the following clock rates:
+   clock                            rate
+----------------------------------------
+    pll-video0                 207272727
+       hdmi-phy-clk             51818181
+       hdmi                    207272727
+       tcon1                   207272727
+       pll-mipi                449090908
+          tcon0                449090908
+             tcon-data-clock   112272727
+
+The results of the find_best calls:
+[   13.871022] ccu_nkm_find_best_with_parent_adj: rate=449064000, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+[   13.871277] ccu_nkm_find_best_with_parent_adj: rate=449064000, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+[   13.871461] ccu_nkm_find_best_with_parent_adj: rate=449090908, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+[   13.871646] ccu_nkm_find_best_with_parent_adj: rate=449090908, best_rate=449090908, best_parent_rate=207272727, n=13, k=2, m=12
+[   13.872050] ccu_nkm_find_best: rate=449090908, best_rate=449090908, parent_rate=207272727, n=13, k=2, m=12
+
+Here, we consistently ask the pll-video0 for a rate that it can't
+provide exactly:
+ - rate=449064000: We ask the parent for 207260307 (rate * m / (n * k)),
+   it returns 207272727.
+ - rate=449090908: We ask the parent for 207272726 (rate * m / (n * k)),
+   it returns 207272727.
+
+So, in both cases, it rounds up to the nearest rate, which is the
+intended behavior.
+
+Changes in v3:
+ - Use dedicated function for finding the best rate in cases where an
+   nkm clock supports setting its parent's rate, streamlining it with
+   the structure that is used in other sunxi-ng ccus such as ccu_mp
+   (PATCH 1).
+ - Therefore, remove the now obsolete comments that were introduced in
+   v2 (PATCH 1).
+ - Remove the dedicated function for calculating the optimal parent rate
+   for nkm clocks that was introduced in v2. Instead use a simple
+   calculation and require the parent clock to select the closest rate to
+   achieve optimal results (PATCH 1).
+ - Therefore, add support to set the closest rate for nm clocks (because
+   pll-mipi's parent pll-video0 is an nm clock) and all clock types that
+   are descendants of a64's pll-video0, i.e., nkm, mux, and div (PATCH 3
+   et. seq.).
+ - Link to v2: https://lore.kernel.org/all/20230611090143.132257-1-frank@oltmanns.dev/
+
+Changes in V2:
+ - Move optimal parent rate calculation to dedicated function
+ - Choose a parent rate that does not to overshoot requested rate
+ - Add comments to ccu_nkm_find_best
+ - Make sure that best_parent_rate stays at original parent rate in the unlikely
+   case that all combinations overshoot.
+
+Link to V1:
+https://lore.kernel.org/lkml/20230605190745.366882-1-frank@oltmanns.dev/
+
 ---
- arch/arm/boot/dts/qcom/qcom-msm8960.dtsi | 147 +++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
+Frank Oltmanns (8):
+      clk: sunxi-ng: nkm: consider alternative parent rates when determining rate
+      clk: sunxi-ng: a64: allow pll-mipi to set parent's rate
+      clk: sunxi-ng: Add feature to find closest rate
+      clk: sunxi-ng: nm: Support finding closest rate
+      clk: sunxi-ng: nkm: Support finding closest rate
+      clk: sunxi-ng: mux: Support finding closest rate
+      clk: sunxi-ng: div: Support finding closest rate
+      clk: sunxi-ng: a64: select closest rate for pll-video0
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-index 48b3962dd4fb..995ea32f8d66 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8960.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/qcom,lcc-msm8960.h>
- #include <dt-bindings/mfd/qcom-rpm.h>
- #include <dt-bindings/soc/qcom,gsbi.h>
-+#include <dt-bindings/soc/qcom,krait-l2-cache.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -29,6 +30,13 @@ cpu@0 {
- 			next-level-cache = <&L2>;
- 			qcom,acc = <&acc0>;
- 			qcom,saw = <&saw0>;
-+			clocks = <&kraitcc KRAIT_CPU_0>;
-+			clock-names = "cpu";
-+			clock-latency = <100000>;
-+			vdd-core-supply = <&saw0_vreg>;
-+			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		cpu@1 {
-@@ -39,6 +47,13 @@ cpu@1 {
- 			next-level-cache = <&L2>;
- 			qcom,acc = <&acc1>;
- 			qcom,saw = <&saw1>;
-+			clocks = <&kraitcc KRAIT_CPU_0>;
-+			clock-names = "cpu";
-+			clock-latency = <100000>;
-+			vdd-core-supply = <&saw1_vreg>;
-+			interconnects = <&L2 MASTER_KRAIT_L2 &L2 SLAVE_KRAIT_L2>;
-+			operating-points-v2 = <&cpu_opp_table>;
-+			#cooling-cells = <2>;
- 		};
- 
- 		L2: l2-cache {
-@@ -169,6 +184,127 @@ opp-1350000000 {
- 		};
- 	};
- 
-+	cpu_opp_table: opp-table-cpu {
-+		compatible = "operating-points-v2-krait-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+
-+		/*
-+		 * Voltage thresholds are <target min max>
-+		 */
-+		opp-384000000 {
-+			opp-hz = /bits/ 64 <384000000>;
-+			opp-peak-kBps = <384000>;
-+			opp-microvolt-speed0-pvs0 = <950000 950000 950000>;
-+			opp-microvolt-speed0-pvs1 = <925000 900000 950000>;
-+			opp-microvolt-speed0-pvs3 = <875000 850000 900000>;
-+			opp-supported-hw = <0x1>;
-+			/*
-+			 * higher latency as it requires switching between
-+			 * clock sources
-+			 */
-+			clock-latency-ns = <244144>;
-+		};
-+
-+		opp-486000000 {
-+			opp-hz = /bits/ 64 <486000000>;
-+			opp-peak-kBps = <702000>;
-+			opp-microvolt-speed0-pvs0 = <975000 975000 975000>;
-+			opp-microvolt-speed0-pvs1 = <950000 925000 975000>;
-+			opp-microvolt-speed0-pvs3 = <900000 875000 925000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-594000000 {
-+			opp-hz = /bits/ 64 <594000000>;
-+			opp-peak-kBps = <702000>;
-+			opp-microvolt-speed0-pvs0 = <1000000 1000000 1000000>;
-+			opp-microvolt-speed0-pvs1 = <975000 950000 1000000>;
-+			opp-microvolt-speed0-pvs3 = <925000 900000 950000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-702000000 {
-+			opp-hz = /bits/ 64 <702000000>;
-+			opp-peak-kBps = <702000>;
-+			opp-microvolt-speed0-pvs0 = <1025000 1025000 1025000>;
-+			opp-microvolt-speed0-pvs1 = <1000000 975000 1025000>;
-+			opp-microvolt-speed0-pvs3 = <950000 925000 975000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-810000000 {
-+			opp-hz = /bits/ 64 <810000000>;
-+			opp-peak-kBps = <702000>;
-+			opp-microvolt-speed0-pvs0 = <1075000 1075000 1075000>;
-+			opp-microvolt-speed0-pvs1 = <1050000 1025000 1075000>;
-+			opp-microvolt-speed0-pvs3 = <1000000 975000 1025000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-918000000 {
-+			opp-hz = /bits/ 64 <918000000>;
-+			opp-peak-kBps = <702000>;
-+			opp-microvolt-speed0-pvs0 = <1100000 1100000 1100000>;
-+			opp-microvolt-speed0-pvs1 = <1075000 1050000 1100000>;
-+			opp-microvolt-speed0-pvs3 = <1025000 1000000 1050000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-1026000000 {
-+			opp-hz = /bits/ 64 <1026000000>;
-+			opp-peak-kBps = <702000>;
-+			opp-microvolt-speed0-pvs0 = <1125000 1125000 1125000>;
-+			opp-microvolt-speed0-pvs1 = <1100000 1075000 1125000>;
-+			opp-microvolt-speed0-pvs3 = <1050000 1025000 1075000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-1134000000 {
-+			opp-hz = /bits/ 64 <1134000000>;
-+			opp-peak-kBps = <1350000>;
-+			opp-microvolt-speed0-pvs0 = <1175000 1175000 1175000>;
-+			opp-microvolt-speed0-pvs1 = <1150000 1125000 1175000>;
-+			opp-microvolt-speed0-pvs3 = <1100000 1075000 1125000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-1242000000 {
-+			opp-hz = /bits/ 64 <1242000000>;
-+			opp-peak-kBps = <1350000>;
-+			opp-microvolt-speed0-pvs0 = <1200000 1200000 1200000>;
-+			opp-microvolt-speed0-pvs1 = <1175000 1150000 1200000>;
-+			opp-microvolt-speed0-pvs3 = <1125000 1100000 1150000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-1350000000 {
-+			opp-hz = /bits/ 64 <1350000000>;
-+			opp-peak-kBps = <1350000>;
-+			opp-microvolt-speed0-pvs0 = <1225000 1225000 1225000>;
-+			opp-microvolt-speed0-pvs1 = <1200000 1175000 1225000>;
-+			opp-microvolt-speed0-pvs3 = <1150000 1125000 1175000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-1458000000 {
-+			opp-hz = /bits/ 64 <1458000000>;
-+			opp-peak-kBps = <1350000>;
-+			opp-microvolt-speed0-pvs0 = <1237500 1237500 1237500>;
-+			opp-microvolt-speed0-pvs1 = <1212500 1187500 1237500>;
-+			opp-microvolt-speed0-pvs3 = <1162500 1137500 1187500>;
-+			opp-supported-hw = <0x1>;
-+		};
-+
-+		opp-1512000000 {
-+			opp-hz = /bits/ 64 <1512000000>;
-+			opp-peak-kBps = <1350000>;
-+			opp-microvolt-speed0-pvs0 = <1250000 1250000 1250000>;
-+			opp-microvolt-speed0-pvs1 = <1225000 1200000 1250000>;
-+			opp-microvolt-speed0-pvs3 = <1175000 1150000 1200000>;
-+			opp-supported-hw = <0x1>;
-+		};
-+	};
-+
- 	memory {
- 		device_type = "memory";
- 		reg = <0x0 0x0>;
-@@ -266,6 +402,17 @@ msmgpio: pinctrl@800000 {
- 			reg = <0x800000 0x4000>;
- 		};
- 
-+		qfprom: qfprom@700000 {
-+			compatible = "qcom,msm8960-qfprom", "qcom,qfprom";
-+			reg = <0x00700000 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			speedbin_efuse: speedbin@c0 {
-+				reg = <0x0c0 0x4>;
-+			};
-+		};
-+
- 		gcc: clock-controller@900000 {
- 			compatible = "qcom,gcc-msm8960";
- 			#clock-cells = <1>;
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 25 ++++++-----
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c   |  3 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c  |  6 ++-
+ drivers/clk/sunxi-ng/ccu_common.h     |  1 +
+ drivers/clk/sunxi-ng/ccu_div.h        | 30 +++++++++++++
+ drivers/clk/sunxi-ng/ccu_mux.c        | 36 +++++++++++++---
+ drivers/clk/sunxi-ng/ccu_mux.h        | 17 ++++++++
+ drivers/clk/sunxi-ng/ccu_nkm.c        | 80 ++++++++++++++++++++++++++++++++---
+ drivers/clk/sunxi-ng/ccu_nm.c         | 23 +++++++++-
+ drivers/clk/sunxi-ng/ccu_nm.h         |  6 ++-
+ 10 files changed, 198 insertions(+), 29 deletions(-)
+---
+base-commit: 6995e2de6891c724bfeb2db33d7b87775f913ad1
+change-id: 20230626-pll-mipi_set_rate_parent-3363fc0d6e6f
+
+Best regards,
 -- 
-2.39.2
+Frank Oltmanns <frank@oltmanns.dev>
 
