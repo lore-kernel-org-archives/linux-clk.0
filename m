@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B63C25B78
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 17:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B00FC25B7E
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 17:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230109AbjGBRnf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jul 2023 13:43:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41238 "EHLO
+        id S230154AbjGBRni (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jul 2023 13:43:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230126AbjGBRnJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 13:43:09 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F18E3183
-        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 10:43:07 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b6a0e36d42so44609601fa.0
-        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 10:43:07 -0700 (PDT)
+        with ESMTP id S230149AbjGBRnM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 13:43:12 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6A30E59
+        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 10:43:10 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b6985de215so58133221fa.2
+        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 10:43:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688319786; x=1690911786;
+        d=linaro.org; s=google; t=1688319789; x=1690911789;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PiQD8NPXoK/nu21wRjz7swL+/90HK35SEq9eEZ5XXuE=;
-        b=szb37ojCIrWyIbH7RQecSCJP/XyeHyNqmmaBh9onDYcDKLD+FIPvzBnDlqIGY+WFcw
-         QSD33xfVIt+XDzwzzbL+FjtjY4tFTUbGMGhLhC2jGAk9pRDEDs5N2y8VIYFEMCvarAJm
-         os4V8LiXrKwQddITdbdGB9vAqS5ygbeMTnnjgrWVmuTTjYdLn+FqO0dgWAC+10UiH3G8
-         cos0esosbF4r75PFBny36CIY2jBj8EGcfi/C9kEcQCD6RPt9v+915NdZ2Ets+OhY6lCb
-         773d9W5fipsjUR+o4HJ4WfKgXcr5rqPuWDKDjIY3vU57uNwXjiS0W1qBs58+XuljIjTy
-         ldeQ==
+        bh=RXNVV7/JT60lwXwIFOgnJdtoSqHgaAkhji7YcNwL/qM=;
+        b=dtFUT7aT7PLUXxySw4GRrBK63XpaF4HcxIdN0P8fm7ptw8XZMQmIzs9WAYVpXacVNx
+         VMC4FyT4iJU3qKc6IG6s3SmjPmR0G40l1BHINTcBTncKNeeS8nSYUpD+FG5lamf3t2/a
+         BdzFyxK2r/LAoJuaOMbDn/Md2f+epdaDDR5KMrj00HRwfzfBlARRISWdYJoxbyOWkKG7
+         4rYYjnm0sdZwyfdBCQxcyjjZZObMrLDNxK6kt1O9Raf5O9Y6sGavbb0SY0KPQgrA1vCN
+         RfVPPr7V6G2bce0mVp3zpS0hXvg2Uo0aSwWoVm/6DS/edpLRdLRTXWKgY92zrOm3JDM/
+         Nn5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688319786; x=1690911786;
+        d=1e100.net; s=20221208; t=1688319789; x=1690911789;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PiQD8NPXoK/nu21wRjz7swL+/90HK35SEq9eEZ5XXuE=;
-        b=f8gBOMSXh9eXPjodJD41/90nt5nj+ugsikOk1QSBp6q5oGkLqy6opCjtiKmvaKw/4x
-         KjClKVzumY1kB1wNHNCiKaI0kUrucWHWjYThNTCJS2jorQlcMox9aWZ70zDkvW1nlLpr
-         Aa2g9OpZsM3sA2AD+vzlG4yIOsUcKIo4fdViqZkmH+mRqVaCZxjl2Z1x5GYltZ1eJEQE
-         MaKhnyOANTAmqcR3UCYv00nqKXgs0wMaQoL1bnPM9QYUN5ZKwjKqKxatSkyPHomTKFo4
-         JG6KYq9gIcXA/pQIZqgpGzbbDo7vSOoobsGPiQUoC/VtcdIPquTCzIMY1e9lwLCFw2Ry
-         eMsQ==
-X-Gm-Message-State: ABy/qLaGli6VXffxXyhc7atxshcLx4Y1Ktu88xYwJCNwsEjf8FompR51
-        nhPxtE+SH+jZ6hhcI3cESviVsg==
-X-Google-Smtp-Source: APBJJlEHhMCDwDgf/6aVjCgaLcezDzbyqLrvjHOiuS5k6VoPxU2fW7+YSfalxB9Qt1FFfIok6q1SPw==
-X-Received: by 2002:a2e:8697:0:b0:2b6:bd20:c4be with SMTP id l23-20020a2e8697000000b002b6bd20c4bemr2409804lji.20.1688319786343;
-        Sun, 02 Jul 2023 10:43:06 -0700 (PDT)
+        bh=RXNVV7/JT60lwXwIFOgnJdtoSqHgaAkhji7YcNwL/qM=;
+        b=F/gbReMgtteZyzORrL/I09X+dwj+9z28cIVAsm7iCgf5t+UYidqK2MI4a+CEkdjFY4
+         hl+20h8N6jslOvLNnXQu/LES2m5IfbBhDwz0JdWtWJrMQQhrwz5OdCKxKOhRGnX8lEgh
+         /d+Fbx+IUDHV3C9h1WaKP7TtlbjlNPM1W6LfCirytKFGxJs66c2uldVl5n6xjcGcVWs5
+         Bz7tHzbaW9xqGZNJUrZVixuJc1bf181fqGESRaMTq7Gi7n+nz8pBv1o4QeuFEhNcNItw
+         exA7vGlsF7DRaOiNHvEajo8bGHntBj9934/2U0bpYgl7PV0vEwj3sh/EI6SohKhz3GN0
+         3lng==
+X-Gm-Message-State: ABy/qLbzcDAM8hrU1WZqsbn80rEamNVeCE6vYXDum66w1YBYufRi1Ng0
+        K95IPuMm2F+nMfDbuxryExXRUA==
+X-Google-Smtp-Source: APBJJlGrzedUqU7L8aOB4HUnA9YJyn/PbaYcqp9zcVhUMx6Z5A+9kIDNaqP9I2ld0JkJb0+a1ZuP9g==
+X-Received: by 2002:a2e:9014:0:b0:2b6:d9ad:aec9 with SMTP id h20-20020a2e9014000000b002b6d9adaec9mr2633501ljg.35.1688319789168;
+        Sun, 02 Jul 2023 10:43:09 -0700 (PDT)
 Received: from umbar.unikie.fi ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id v23-20020a2e9917000000b002b6daa3fa2csm1372550lji.69.2023.07.02.10.43.05
+        by smtp.gmail.com with ESMTPSA id v23-20020a2e9917000000b002b6daa3fa2csm1372550lji.69.2023.07.02.10.43.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Jul 2023 10:43:05 -0700 (PDT)
+        Sun, 02 Jul 2023 10:43:08 -0700 (PDT)
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
         Christian Marangi <ansuelsmth@gmail.com>,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH v3 20/28] ARM: dts: qcom: apq8064: add Krait clock controller
-Date:   Sun,  2 Jul 2023 20:42:38 +0300
-Message-Id: <20230702174246.121656-21-dmitry.baryshkov@linaro.org>
+Subject: [PATCH v3 23/28] ARM: dts: qcom: apq8064: enable passive CPU cooling
+Date:   Sun,  2 Jul 2023 20:42:41 +0300
+Message-Id: <20230702174246.121656-24-dmitry.baryshkov@linaro.org>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
 References: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
@@ -78,51 +78,83 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device node for the clock controller for the CPU cores and L2
-clocks. It will be further used by the L2 and by the CPUfreq nodes.
+Wire up CPUs and thermal trip points to save the SoC from overheating by
+lowering the CPU frequency.
 
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 26 ++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm/boot/dts/qcom/qcom-apq8064.dtsi | 29 ++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-index ab4b8f8270bb..c212215800d0 100644
+index 5c9daa997e72..cc23adc13444 100644
 --- a/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
 +++ b/arch/arm/boot/dts/qcom/qcom-apq8064.dtsi
-@@ -213,6 +213,32 @@ sleep_clk: sleep_clk {
+@@ -11,6 +11,7 @@
+ #include <dt-bindings/soc/qcom,krait-l2-cache.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/thermal/thermal.h>
+ / {
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
+@@ -699,6 +700,13 @@ cpu_crit0: trip1 {
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu1-thermal {
+@@ -720,6 +728,13 @@ cpu_crit1: trip1 {
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu2-thermal {
+@@ -741,6 +756,13 @@ cpu_crit2: trip1 {
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu3-thermal {
+@@ -762,6 +784,13 @@ cpu_crit3: trip1 {
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
++				};
++			};
  		};
  	};
  
-+	kraitcc: clock-controller {
-+		compatible = "qcom,krait-cc-v1";
-+		clocks = <&gcc PLL9>, /* hfpll0 */
-+			 <&gcc PLL10>, /* hfpll1 */
-+			 <&gcc PLL16>, /* hfpll2 */
-+			 <&gcc PLL17>, /* hfpll3 */
-+			 <&gcc PLL12>, /* hfpll_l2 */
-+			 <&acc0>,
-+			 <&acc1>,
-+			 <&acc2>,
-+			 <&acc3>,
-+			 <&l2cc>;
-+		clock-names = "hfpll0",
-+			      "hfpll1",
-+			      "hfpll2",
-+			      "hfpll3",
-+			      "hfpll_l2",
-+			      "acpu0_aux",
-+			      "acpu1_aux",
-+			      "acpu2_aux",
-+			      "acpu3_aux",
-+			      "acpu_l2_aux";
-+		#clock-cells = <1>;
-+		#interconnect-cells = <1>;
-+	};
-+
- 	sfpb_mutex: hwmutex {
- 		compatible = "qcom,sfpb-mutex";
- 		syscon = <&sfpb_wrapper_mutex 0x604 0x4>;
 -- 
 2.39.2
 
