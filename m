@@ -2,88 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AECEB64DA
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 10:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D5AEB64DA
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 17:37:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229738AbjGBKoT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jul 2023 06:44:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52490 "EHLO
+        id S229897AbjGBRh5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jul 2023 13:37:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjGBKoS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 06:44:18 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5D1E54
-        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 03:44:17 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51a52a7d859so6103707a12.0
-        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 03:44:17 -0700 (PDT)
+        with ESMTP id S229894AbjGBRh4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 13:37:56 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E18A1E75
+        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 10:37:49 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b69ea3b29fso57480431fa.3
+        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 10:37:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688294655; x=1690886655;
+        d=linaro.org; s=google; t=1688319468; x=1690911468;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kr463YdK4TueQEsVEF6h6lfHtlC9u7gWIjzonOPSpWY=;
-        b=lAmo/htwhnr3meiTy6buZajTjmyBMZGOcsAN7c1z+G9I8Zp2AsDtuXny9NQlz4uL8C
-         00Xqe+4m3aYUamayF/Zhdhu1Nq12H9R1/PBmdmPO/vXYGTg7FAl0/S1zFiuMw1jm91kb
-         cJks7JHr9QsFUpahsfuSPDY2JlhHcWnrA2AYzGmJA6dnLsSl+1KZ4UHOU/LGZzji3kzx
-         EaU5u18quTmRGKWto4Q8jVPBNQdsw0mN3sZrfNKBihzNzI1kenLTEoryrOO3LOKeXSCE
-         kZtHwrozSUM3U1I+vDCbpDQd8Fq6MtUEXf6wsZ/aYFXzfTmP2kKPYtsv8/pAE5Z0U3DY
-         mSCQ==
+        bh=P832M/MKIVcAnwYyLxfAF/7C9YRHmHPww8zmwWUQWmk=;
+        b=vjJydNpz7ul+/DI+LRuBT2DH+JHWkQxZHY1MPIEtQBBDUgXqyEVw5JEdy7gncByPno
+         OuHVi8UbZvwHrGt0eOIFeAbi2d//tvfjgBKsgAqkpYc6k41NB+OLWr7/2Sjnk233/mh9
+         98ZoB8wa3CdDy6uane0iEd46vk+qTbHfQ31qMgpoRKTaJ+WDGL6zCNJhTIrRwfY35/N9
+         l3BA1pbVTbbGlKTrfzE2a9uOVYK2GePu6U9xzXGgwzVdQCcOfJvrnrBiXCYmU79TJQ/r
+         7xVGCkEJhqBQjfi9O8pEp/aJm3FC/pF7TSsYAPvMClUQV7eU3KmGv21OTPyTgQDWW6xW
+         1yUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688294655; x=1690886655;
+        d=1e100.net; s=20221208; t=1688319468; x=1690911468;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kr463YdK4TueQEsVEF6h6lfHtlC9u7gWIjzonOPSpWY=;
-        b=gWTZIXUVCNauW/CQ3Z9uHZ8AeEdHil9Qg9cA05t8xM6RPE+HZNXJVgGldHsqVMNHPi
-         obmCMbbkhNZqjkqOfegvFxo/k/zn+vrrIXfdK3d8H/J/BKy/KGsbCi7byHCnGD135ZgJ
-         8Ooc3/hJfA/K0sdgRBkr/LLdJtBp3xAOdEJurM9nfXBNXWyVS+414QprWMD9ziyd3eaL
-         ls0Q7ASo9Vl3V4W3jWP8bCbswWelP0DuBHIHEyas1tFQPKAbCX2k2zaJuwSwAkAkLZfk
-         LPvt6dGntSy2JccF87noGN0EROvTUSx1DFDRR6567SGfDIVSUplEKjRm5tCS3fUgqDLL
-         7Bpw==
-X-Gm-Message-State: AC+VfDxgDykqXgGbY5Oi2QqBHl+j9+y3wn3eVfNCcFPsVZHdNKjc/4A9
-        NtTloAi3fkHCrAXMSyCkfDAdmw==
-X-Google-Smtp-Source: ACHHUZ5YtWdGr8CtiyE5+4zncb/6RbLT+pffZLWaUK/5zaKkRbOmvN3mhkPyS7MUdOe3iXe1x2Q0HA==
-X-Received: by 2002:a17:906:6a0f:b0:991:d414:d889 with SMTP id qw15-20020a1709066a0f00b00991d414d889mr11713340ejc.15.1688294655476;
-        Sun, 02 Jul 2023 03:44:15 -0700 (PDT)
-Received: from [192.168.10.214] ([217.169.179.6])
-        by smtp.gmail.com with ESMTPSA id c15-20020a170906528f00b0098866a94f14sm10405513ejm.125.2023.07.02.03.44.14
+        bh=P832M/MKIVcAnwYyLxfAF/7C9YRHmHPww8zmwWUQWmk=;
+        b=JbQlfMd2QeTkU6t/S/DLpkfcGBrUSQZ0zx6ItUyzshx66B+yQALw9bxP1a/rlrDsr3
+         IMZDVBi8RWIXLLtMOdfxcqZFN2elCFdv7zR40osGD9axPM9YNEnXjuw1kFx7VAnSsBIy
+         Ld9AO+Uh4QmtsaPeASstB18ZfeBA+2vz/ZIoy0Xgo7EHL9V0ietWHdNyn5iDYheHTQNi
+         3LJt/KfZeT5E3A7NCq4aVBB6qRQwMF0okTNxkk2eyuusNY0s/RID0TAwDY1qWSKfzRXu
+         JCx9T5Yr1vPNGEkYxgGVy4/5vpQRdY9BLLfRKc8lmQJGv7THzyt6a2K4qyFELyEq4wd2
+         yOug==
+X-Gm-Message-State: ABy/qLaTxV93qODyIuuhIU6ZJ4mA3Pewk4sQ1xosDeDXlIbqlYYWi2jk
+        JX/ER3ncsvmakiutfm6mVfpNMg==
+X-Google-Smtp-Source: APBJJlEBSvJdaoM+ESXqdWJdJ0GTZzt/18Fz2+w8eXAbm3VbXWt12w08jZ45D0SgsQd2fDoLDDjljg==
+X-Received: by 2002:a2e:8095:0:b0:2b6:a344:29cf with SMTP id i21-20020a2e8095000000b002b6a34429cfmr4928765ljg.17.1688319468009;
+        Sun, 02 Jul 2023 10:37:48 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id a16-20020a05651c011000b002b31ec01c97sm3754351ljb.15.2023.07.02.10.37.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Jul 2023 03:44:15 -0700 (PDT)
-Message-ID: <5d13ddb3-e81e-2ce6-a4f6-90e2210b8def@linaro.org>
-Date:   Sun, 2 Jul 2023 12:44:14 +0200
+        Sun, 02 Jul 2023 10:37:47 -0700 (PDT)
+Message-ID: <c71797a8-27e1-40fb-2487-7ce68470da2a@linaro.org>
+Date:   Sun, 2 Jul 2023 20:37:46 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 1/3] dt-bindings: clock: imx93: Add PDM IPG clk
-Content-Language: en-US
-To:     Jacky Bai <ping.bai@nxp.com>, abelvesa@kernel.org,
-        peng.fan@nxp.com, sboyd@kernel.org, shawnguo@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-References: <20230628061724.2056520-1-ping.bai@nxp.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230628061724.2056520-1-ping.bai@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2 09/26] cpufreq: qcom-nvmem: create L2 cache device
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230625202547.174647-1-dmitry.baryshkov@linaro.org>
+ <20230625202547.174647-10-dmitry.baryshkov@linaro.org>
+ <a15a2564-3b48-4592-1e40-2187ee89af1c@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <a15a2564-3b48-4592-1e40-2187ee89af1c@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/06/2023 08:17, Jacky Bai wrote:
-> From: Chancel Liu <chancel.liu@nxp.com>
-> 
-> Add PDM IPG clk.
-> 
-> Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> ---
->  include/dt-bindings/clock/imx93-clock.h | 3 ++-
+On 26/06/2023 14:50, Konrad Dybcio wrote:
+> On 25.06.2023 22:25, Dmitry Baryshkov wrote:
+>> Scaling the frequencies on some of Qualcomm Krait platforms (e.g.
+>> APQ8064) also requires scaling of the L2 cache frequency. As the
+>> l2-cache device node is places under /cpus/ path, it is not created by
+>> default by the OF code. Create corresponding device here.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+> I think a generic solution (i.e. for each cpu node call
+> of_platform_populate in drivers/of/platform.c :
+> of_platform_default_populate_init) could be beneficial
 
+After giving it a lot of thought, I'm not brave enough to register all 
+CPU-like devices (especially since some of them are registered by other 
+means). So let's keep it this way, unless we see a bigger demand of 
+populating cache devices.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
 
