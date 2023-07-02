@@ -2,163 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC57DEB64DA
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 20:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DE4EB64DA
+	for <linux-clk@archiver.kernel.org>; Sun,  2 Jul 2023 20:10:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbjGBUJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 2 Jul 2023 16:09:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
+        id S233020AbjGBUKg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 2 Jul 2023 16:10:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231996AbjGBUI6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 16:08:58 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D601FCD;
-        Sun,  2 Jul 2023 13:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1688328439; x=1719864439;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KomjQBb5bvym6eCrKFp6yiJMpgWdmolf6Tuzqi2QmWI=;
-  b=KxWoj2iaxu4pjfVV+ZJ2w0dVli/8keY7rglHlOCbNFARikE6i/+s+MB3
-   bpu4HUXHehF9wJj78zNAPq4vDPg03TeEt7hfNrjfU0aBPJm29fZnsArIp
-   9ORFB3NWpbo04qYsx+PuyORMS4tc9Njl5UJ62APKkaECTr6trneTreaEE
-   rYJb6nG78LF+gf5OkLTJ8H90zL99g3mH9eiZOXSIW7xQkztSd7eevhdI6
-   P2Xkd1Uc5S5RWi31M/wwvo0DolFVkTfy8OZFu1beZ8coqmF8cBaHkYd0J
-   x8N8ifUYHXR60wWQNVkX4DRRqKRWG+XKvlRWrXo7+IHSOK08S9kvPr0OI
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10759"; a="449115564"
-X-IronPort-AV: E=Sophos;i="6.01,176,1684825200"; 
-   d="scan'208";a="449115564"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2023 13:06:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10759"; a="842447071"
-X-IronPort-AV: E=Sophos;i="6.01,176,1684825200"; 
-   d="scan'208";a="842447071"
-Received: from lkp-server01.sh.intel.com (HELO 783282924a45) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 02 Jul 2023 13:06:47 -0700
-Received: from kbuild by 783282924a45 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qG3LK-000GrJ-2i;
-        Sun, 02 Jul 2023 20:06:46 +0000
-Date:   Mon, 3 Jul 2023 04:06:28 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Frank Oltmanns <frank@oltmanns.dev>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Roman Beranek <me@crly.cz>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-        Frank Oltmanns <frank@oltmanns.dev>
-Subject: Re: [PATCH v3 5/8] clk: sunxi-ng: nkm: Support finding closest rate
-Message-ID: <202307030302.s1bheEun-lkp@intel.com>
-References: <20230702-pll-mipi_set_rate_parent-v3-5-46dcb8aa9cbc@oltmanns.dev>
+        with ESMTP id S229947AbjGBUKZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 2 Jul 2023 16:10:25 -0400
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56F93270D
+        for <linux-clk@vger.kernel.org>; Sun,  2 Jul 2023 13:09:08 -0700 (PDT)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-3fbd33a57b6so19880835e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 02 Jul 2023 13:09:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688328543; x=1690920543;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rl1D9Tli2+5e4JWCWhtCcIZOANcTNquvS3B+7/6vmto=;
+        b=kYYhsCh2Xn3MLk4kU8bihp5TFLHOxXvG37G0DsaQXr11ONFrTscA3Wk2LiUaisFBIl
+         tSFOdMLJTKUe4Ih5mNiHjuH+kw/Oi5uypitfyxrcuxssX3vZdwvasOAGHV5fjYs6vFJz
+         Yorw2zN4HgjAIa6ek2QgOkaxfk6jCGiWfGI7Te7f6hdUE6Jc9tb25XWDOdomJMuA/KGx
+         EObVTfbotcd2R3o7KkS0ipeva4+NmqAfqqzgTHJiQac38aXnwwCFz67njb1S0vuDLPq6
+         X23jy3V/FqZ6FEmNswyfqSvy2RgzR58RW4n3lB8Mufa+BBgS3NetgRAVs6e9Y2uXHRF+
+         vZ2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688328543; x=1690920543;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rl1D9Tli2+5e4JWCWhtCcIZOANcTNquvS3B+7/6vmto=;
+        b=lMCQ0jpswiVJbJU9/QhxIA5R/y50E4ZhXL6lQv2LoXkjX3KU3qk4Z5KbyC2+Y6JYfe
+         W9oAu8B+DbsSI93GDkvl5osGyVBGyanSvSiRG1TTxqTi4el3O2mlpuSg9YekxxIfXkQ8
+         KYkrNCJfShHDQNwqGJjGRuU85YwrLRHs4yR9wI6oTE0pi3RG6Q7f6ROwpYuliZG22NqN
+         AnpVAhhqeDba9A4KWT+oUy79v/z8qi946MidH03+HgpQDtssPpqNfxliCsLNLu8sK8w9
+         s14PgEuG4IJvaP9FZSY7W7eThKjif4jxuIuK/osQ7C+P7M0Sh/wY4rh+E7x5mSesnmiA
+         JBRQ==
+X-Gm-Message-State: ABy/qLZYuQ5bZqj4V0cYEzaEiP9IOcfTqRv0+xmIr1Y2wHsG2r4uGLeq
+        FgaShAWer1tLl1iOoASa4PWbDg==
+X-Google-Smtp-Source: APBJJlHaLLoauk7y8K93DDwKYDQR8bJko6UKf7p/ZIcWG5ZaKsx/h2EKtLSvdenDitunbOnIbQL8lg==
+X-Received: by 2002:a5d:4fcb:0:b0:314:2132:a277 with SMTP id h11-20020a5d4fcb000000b003142132a277mr7534882wrw.9.1688328543197;
+        Sun, 02 Jul 2023 13:09:03 -0700 (PDT)
+Received: from [192.168.10.214] ([217.169.179.6])
+        by smtp.gmail.com with ESMTPSA id s19-20020a056402165300b0051d9df5dd2fsm7315420edx.72.2023.07.02.13.09.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Jul 2023 13:09:02 -0700 (PDT)
+Message-ID: <77a34cf2-4e7f-e196-b289-d7da5f8d27dd@linaro.org>
+Date:   Sun, 2 Jul 2023 22:09:01 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230702-pll-mipi_set_rate_parent-v3-5-46dcb8aa9cbc@oltmanns.dev>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v3 05/28] dt-bindings: cache: describe L2 cache on
+ Qualcomm Krait platforms
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
+ <20230702174246.121656-6-dmitry.baryshkov@linaro.org>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230702174246.121656-6-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Frank,
+On 02/07/2023 19:42, Dmitry Baryshkov wrote:
+> The L2 cache device on Qualcomm Krait platforms controls the supplying
+> voltages and the cache frequency. Add corresponding bindings for this
+> device.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../bindings/cache/qcom,krait-l2-cache.yaml   | 75 +++++++++++++++++++
+>  include/dt-bindings/soc/qcom,krait-l2-cache.h | 12 +++
+>  2 files changed, 87 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
+>  create mode 100644 include/dt-bindings/soc/qcom,krait-l2-cache.h
+> 
+> diff --git a/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml b/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
+> new file mode 100644
+> index 000000000000..1dcf8165135b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cache/qcom,krait-l2-cache.yaml
+> @@ -0,0 +1,75 @@
+> +# SPDX-License-Identifier: (GPL-2.0-or-later OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/cache/qcom,krait-l2-cache.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Krait L2 Cache
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +
+> +description:
+> +  L2 cache on Qualcomm Krait platforms is shared between all CPU cores. L2
+> +  cache frequency and voltages should be scaled according to the needs of the
+> +  cores.
+> +
+> +allOf:
+> +  - $ref: ../cache-controller.yaml#
 
-kernel test robot noticed the following build warnings:
+This does not look like correct path. git grep also will suggest that...
 
-[auto build test WARNING on 6995e2de6891c724bfeb2db33d7b87775f913ad1]
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: qcom,krait-l2-cache
+> +      - const: cache
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  '#interconnect-cells':
+> +    const: 1
+> +
+> +  vdd-mem-supply:
+> +    description: suppling regulator for the memory cells of the cache
+> +
+> +  vdd-dig-supply:
+> +    description: suppling regulator for the digital logic of the cache
+> +
+> +  operating-points-v2: true
+> +  opp-table-l2: true
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Frank-Oltmanns/clk-sunxi-ng-nkm-consider-alternative-parent-rates-when-determining-rate/20230703-015726
-base:   6995e2de6891c724bfeb2db33d7b87775f913ad1
-patch link:    https://lore.kernel.org/r/20230702-pll-mipi_set_rate_parent-v3-5-46dcb8aa9cbc%40oltmanns.dev
-patch subject: [PATCH v3 5/8] clk: sunxi-ng: nkm: Support finding closest rate
-config: riscv-rv32_defconfig (https://download.01.org/0day-ci/archive/20230703/202307030302.s1bheEun-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20230703/202307030302.s1bheEun-lkp@intel.com/reproduce)
+opp-table:
+  type: object
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307030302.s1bheEun-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/sunxi-ng/ccu_nkm.c:46:24: warning: variable 'tmp_diff' is uninitialized when used here [-Wuninitialized]
-      46 |                                         tmp_diff = rate - tmp_diff;
-         |                                                           ^~~~~~~~
-   drivers/clk/sunxi-ng/ccu_nkm.c:33:27: note: initialize the variable 'tmp_diff' to silence this warning
-      33 |                                 unsigned long tmp_diff;
-         |                                                       ^
-         |                                                        = 0
-   drivers/clk/sunxi-ng/ccu_nkm.c:93:24: warning: variable 'tmp_diff' is uninitialized when used here [-Wuninitialized]
-      93 |                                         tmp_diff = rate - tmp_diff;
-         |                                                           ^~~~~~~~
-   drivers/clk/sunxi-ng/ccu_nkm.c:82:27: note: initialize the variable 'tmp_diff' to silence this warning
-      82 |                                 unsigned long tmp_diff;
-         |                                                       ^
-         |                                                        = 0
-   2 warnings generated.
+Missing cache-level (const).
 
 
-vim +/tmp_diff +46 drivers/clk/sunxi-ng/ccu_nkm.c
+Best regards,
+Krzysztof
 
-    19	
-    20	static unsigned long ccu_nkm_find_best_with_parent_adj(unsigned long *parent, unsigned long rate,
-    21							       struct _ccu_nkm *nkm, struct clk_hw *phw,
-    22							       unsigned long features)
-    23	{
-    24		unsigned long best_rate = 0, best_parent_rate = 0, tmp_parent = *parent;
-    25		unsigned long best_diff = ULONG_MAX;
-    26		unsigned long best_n = 0, best_k = 0, best_m = 0;
-    27		unsigned long _n, _k, _m;
-    28	
-    29		for (_k = nkm->min_k; _k <= nkm->max_k; _k++) {
-    30			for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
-    31				for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
-    32					unsigned long tmp_rate;
-    33					unsigned long tmp_diff;
-    34	
-    35					tmp_parent = clk_hw_round_rate(phw, rate * _m / (_n * _k));
-    36	
-    37					tmp_rate = tmp_parent * _n * _k / _m;
-    38	
-    39					if (features & CCU_FEATURE_CLOSEST_RATE) {
-    40						tmp_diff = rate > tmp_rate ?
-    41							   rate - tmp_rate :
-    42							   tmp_rate - rate;
-    43					} else {
-    44						if (tmp_rate > rate)
-    45							continue;
-  > 46						tmp_diff = rate - tmp_diff;
-    47					}
-    48	
-    49					if (tmp_diff < best_diff) {
-    50						best_rate = tmp_rate;
-    51						best_parent_rate = tmp_parent;
-    52						best_diff = tmp_diff;
-    53						best_n = _n;
-    54						best_k = _k;
-    55						best_m = _m;
-    56					}
-    57				}
-    58			}
-    59		}
-    60	
-    61		nkm->n = best_n;
-    62		nkm->k = best_k;
-    63		nkm->m = best_m;
-    64	
-    65		*parent = best_parent_rate;
-    66	
-    67		return best_rate;
-    68	}
-    69	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
