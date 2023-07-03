@@ -2,66 +2,67 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 816BFEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 07:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61207EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 07:51:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbjGCHuO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 03:50:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
+        id S230088AbjGCHv0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 03:51:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229581AbjGCHuN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 03:50:13 -0400
+        with ESMTP id S229581AbjGCHv0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 03:51:26 -0400
 Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF3BC2;
-        Mon,  3 Jul 2023 00:50:11 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1541C5C0190;
-        Mon,  3 Jul 2023 03:50:08 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 03 Jul 2023 03:50:08 -0400
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D7A4C1;
+        Mon,  3 Jul 2023 00:51:25 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 889F85C0162;
+        Mon,  3 Jul 2023 03:51:24 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 03 Jul 2023 03:51:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
         :cc:content-type:content-type:date:date:from:from:in-reply-to
         :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1688370608; x=1688457008; bh=fO
-        iPJH964JbMWdWtw/Lr9kGAyKHEcXeffDI0IDClADA=; b=5O0eNBSbTrxUjX2Ym5
-        2u/+TXoHE2iMdhZX+ASAVWARZj5IBBR4e6LlS2VMSj4qq7G0KRAVlcyChqscWeL1
-        7Gv2OxxhpEH0zRSYCNekH8XrQAzQmKaRH/PQBy1CKNGj6HeRBDyjSVFTnsMIvYLU
-        0MC7mkInIfkH8N6GeKImgYTaFwxgkoQ6OvjNTOV8cbFfdTDDF25pexDPe9S05WB/
-        xwAv8l7IsHSl9XgwawXulUOhD3Q5rCVT9foeNLtv38pZ3TsnbF+QvBds/y3mkhuN
-        eRXJmdZONUuVVEp20TGJo9TIcJpY0GVvwrnwZMVIsfqPuzjLGBEi0I9HxKnX6cAq
-        ThnA==
+        :subject:subject:to:to; s=fm2; t=1688370684; x=1688457084; bh=a0
+        67LZeVQMZ0ZGZuHnF8xunPWCpSqz/3yx++wdTK+PY=; b=5NHvHuLq0dgHv63G5Q
+        xjzRYMt7Fz+fd81h/Fp/o+E6EKXn+zjbYSxLdZJEY15Oim+yaMEdkT3E4vC+WAv9
+        S4PvQ+qNyBZj1Rpq1R8/ejs3ZfCoBSQLqWPNlseoKC2ud84pI8wBJx3T4DrLamvx
+        kTaoIfeGXit3N60tQP/z0Gri2Na8dNFNXQLWPAxnIdpEWZYbVMLwWBZUIz6IO3nW
+        vCsiyJEP6BR6JS4NorHOSDKewU+KKyvfPZkeGo5btzhV//JGw8f8mAP+XnZBYPhI
+        xHe4S3HkuefmJN8IWcVrOMWswG06ca57vXS0H5EE2A8UkksWc7Vt3prF4hk2tegT
+        fw9w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:cc:content-type:content-type:date:date
         :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
         :message-id:mime-version:references:reply-to:sender:subject
         :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1688370608; x=1688457008; bh=fOiPJH964JbMW
-        dWtw/Lr9kGAyKHEcXeffDI0IDClADA=; b=k5ZNUpnkNASHl1XDqlS0QZv9vvXJr
-        7Z1rRQXtqwyocnI/q3J8KaodIeVfDQjC/s5MP9qN0KyFq1nPd+Ss4yDaoPJiwEKH
-        1cuIF4YnOqEiZla8KBt/Gb/C+OL4pvDt5lQExuAhenB7s5DwJUVkPpZ6j8+xy4U7
-        CyY8wp6M9c4itQxebu/5/KM0IKcPxEGeoJzAhgmluzrwXGgRd75TM/lbEJClXxd6
-        13YOFWcM4GzADROWDLJJDij32zSyQdwm2ToZkzo5+CtL8aj1Ed+K8ldiheZ/cuEz
-        jsHuqFO7RXFsSuYpXjzhGZtnZaiP07bODiTKe4yOuMbPj8TyzRbWonzkQ==
-X-ME-Sender: <xms:r32iZKOsudebHk-m8NJf4QR533FMlUe21lZ5MiBfdvnM_OX5GtNrOQ>
-    <xme:r32iZI8PY3MIUAVeP7Qyxttf3KBeZwA_OPL2txhHJ0Tx7L7SzAEO-o20E_Dzan87J
-    ILfhjudCg-7O2Nkz7E>
-X-ME-Received: <xmr:r32iZBRyXHLZcWAeFO7kNBdBOagQkz5OchkrXdSC_a-kdaoe_pjj08B8F82TTO_0MyMxcOUsXj4lmS4wt_I9fA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddugdduvddvucetufdoteggodetrfdotf
+        :x-sasl-enc; s=fm2; t=1688370684; x=1688457084; bh=a067LZeVQMZ0Z
+        GZuHnF8xunPWCpSqz/3yx++wdTK+PY=; b=RwR4v3kX1fVK6CV8QYHrqz1fcdteT
+        Jp/SeajvzwpZvwM5HBwo/8AMyHe5w++KVtikm7R+XGValtuENeo8QlYUplOCEyGT
+        d0Sl9I9b1w+mzbzmIEFtMnpcPmbPQGpEPxhfeM9/pDeEe2COQ5fx/G4OMuZC6tqI
+        vOB7Zq4uBkaJF5/ZuNaf2x9NOhCxuzfj7SweN3llxxpTZ8QCAgoiUi8bwfcPmi6x
+        1in6lFf/hIiWMCCUl9ggzfVb9XfywMtrYsxENqfiMBm2q+ea6LnvjP5wNgWhI6sP
+        s0kB6TNOgkXnmRk/J6KAdPkilZy66xDpcKPOeWOUVo1mggfAVaMG/LBEQ==
+X-ME-Sender: <xms:_H2iZKvVyQDzfy-hM4B6v7j2GKx7MjEutKoh_qH8eKpY9oI-spnMeg>
+    <xme:_H2iZPe3gTeK-fgu9sEQfD6HoZcAKM8Kuj4pB7M2BhUyM-ocbnsrX36v7PtsbJQaq
+    cfKmN4CB-AeBCdenoc>
+X-ME-Received: <xmr:_H2iZFyWl-4PzIDpaDmCoxpUmLI7NgxKcWJ6_5-8-RYxuVaVyZNa4hX4kTSq99yrRrfIxEhTvHoxpszZLL0voQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddugdduvdefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvfevuffkfhggtggujgesghdtsfertddtvdenucfhrhhomhepofgrgihi
     mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
-    htthgvrhhnpeeuveduheeutdekvefgudevjeeufedvvdevhfejgfelgfdtkeevueegteek
-    gfelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:r32iZKv2LYdeX2BOhDNDOxeQlQx4T_t4kpqIU5rBUub3vzhGvx9iTQ>
-    <xmx:r32iZCdtF8aSx9QlwgnqDj7gTzHoTGaVkUvHPrwFVBCdLDhJWkKDJA>
-    <xmx:r32iZO0f5VZe50vN6Rq0IcMhTYV9Dzymww-DtIb2BLHtplYkLkogYA>
-    <xmx:sH2iZDWX3yDYWX15_5Qrq96uLHK6r_AHEMR63PLG-Ti0vIgl3jF43Q>
+    htthgvrhhnpedtgfdukeeigeeuhfelheeftdfhgfegfefgudeuiefhueeuleekveetvdei
+    tddvieenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggt
+    hh
+X-ME-Proxy: <xmx:_H2iZFMZVXHpea2NUZwbbgo8x0ZKaEfkm6-7wm_rtM5jlOVYnv753g>
+    <xmx:_H2iZK8exEQ5gUPSQmPL2Lr-zzvd4uCzKQbFUS9OakzvEptTyzBLiA>
+    <xmx:_H2iZNXmTAdFPRs8Rv5Qp5QXhhwkHyZlK60qGGRz4Q20dPtUh0ni3Q>
+    <xmx:_H2iZL26uxViSrdJkOHGYdnMlVW43x_tp98-B8CpuVe8MKgGf6dAkg>
 Feedback-ID: i8771445c:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Jul 2023 03:50:06 -0400 (EDT)
-Date:   Mon, 3 Jul 2023 09:50:05 +0200
+ 3 Jul 2023 03:51:23 -0400 (EDT)
+Date:   Mon, 3 Jul 2023 09:51:22 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Frank Oltmanns <frank@oltmanns.dev>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -72,60 +73,59 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] clk: sunxi-ng: a64: select closest rate for
- pll-video0
-Message-ID: <lfcpuv5euy5w6e7jzn6fm2qusjj52w2hhn5sosqvoz54zc56py@5wh2eea3rrs3>
+Subject: Re: [PATCH v3 0/8] clk: sunxi-ng: Consider alternative parent rates
+ when determining NKM clock rate
+Message-ID: <tz2mcnyn32kedmkme2abaohhlveu37rohghddgg5njzw3534jq@qg3pevlpy4si>
 References: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
- <20230702-pll-mipi_set_rate_parent-v3-8-46dcb8aa9cbc@oltmanns.dev>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="scpwnkcrk67jfkfn"
+        protocol="application/pgp-signature"; boundary="3lrrl2y36lc5sskn"
 Content-Disposition: inline
-In-Reply-To: <20230702-pll-mipi_set_rate_parent-v3-8-46dcb8aa9cbc@oltmanns.dev>
+In-Reply-To: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---scpwnkcrk67jfkfn
+--3lrrl2y36lc5sskn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sun, Jul 02, 2023 at 07:55:27PM +0200, Frank Oltmanns wrote:
-> @@ -541,7 +542,7 @@ static const char * const tcon1_parents[] = { "pll-video0", "pll-video1" };
->  static const u8 tcon1_table[] = { 0, 2, };
->  static struct ccu_div tcon1_clk = {
->  	.enable		= BIT(31),
-> -	.div		= _SUNXI_CCU_DIV(0, 4),
-> +	.div		= _SUNXI_CCU_DIV_FLAGS(0, 4, CLK_DIVIDER_ROUND_CLOSEST),
->  	.mux		= _SUNXI_CCU_MUX_TABLE(24, 2, tcon1_table),
->  	.common		= {
->  		.reg		= 0x11c,
-> @@ -549,6 +550,7 @@ static struct ccu_div tcon1_clk = {
->  						      tcon1_parents,
->  						      &ccu_div_ops,
->  						      CLK_SET_RATE_PARENT),
-> +		.features	= CCU_FEATURE_CLOSEST_RATE,
->  	},
->  };
+Hi,
 
-I'm not super comfortable with having to set it twice for dividers (or
-composite clocks). Could we set CLK_DIVIDER_ROUND_CLOSEST automatically
-if CCU_FEATURE_CLOSEST_RATE is set?
+On Sun, Jul 02, 2023 at 07:55:19PM +0200, Frank Oltmanns wrote:
+> Changes in v3:
+>  - Use dedicated function for finding the best rate in cases where an
+>    nkm clock supports setting its parent's rate, streamlining it with
+>    the structure that is used in other sunxi-ng ccus such as ccu_mp
+>    (PATCH 1).
+>  - Therefore, remove the now obsolete comments that were introduced in
+>    v2 (PATCH 1).
+>  - Remove the dedicated function for calculating the optimal parent rate
+>    for nkm clocks that was introduced in v2. Instead use a simple
+>    calculation and require the parent clock to select the closest rate to
+>    achieve optimal results (PATCH 1).
+>  - Therefore, add support to set the closest rate for nm clocks (because
+>    pll-mipi's parent pll-video0 is an nm clock) and all clock types that
+>    are descendants of a64's pll-video0, i.e., nkm, mux, and div (PATCH 3
+>    et. seq.).
+>  - Link to v2: https://lore.kernel.org/all/20230611090143.132257-1-frank@oltmanns.dev/
 
-I'm guessing we would need it for muxes as well?
+Thanks so much for that new version. I know it's been a long discussion,
+but it definitely moves in the right direction and we're fairly close to
+a final version now.
 
 Maxime
 
---scpwnkcrk67jfkfn
+--3lrrl2y36lc5sskn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZKJ9rQAKCRDj7w1vZxhR
-xfKdAQDoedHfL48OImEDGH6Me5/cxerV8zCFt0MPDatzDChGWAEAs70t/UrLzho6
-FXnXOCNE5lVTqlIl/hE5si3bdNAfXwU=
-=lwbj
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZKJ9+gAKCRDj7w1vZxhR
+xSpUAQCzJTw/bSuVBopvVdY76PIZRdtNoVFQA435YDTBIoKiZAEApHbj+QVUdSkK
+bLpQ/UPDveZ4umuDTdkAThnns04rdQk=
+=bWgY
 -----END PGP SIGNATURE-----
 
---scpwnkcrk67jfkfn--
+--3lrrl2y36lc5sskn--
