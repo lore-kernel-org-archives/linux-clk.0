@@ -2,123 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716E0C001B0
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 18:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B5FC30654
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 20:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231199AbjGCSUv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 14:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42846 "EHLO
+        id S230397AbjGCUEQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 16:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231305AbjGCSUg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 14:20:36 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D09F710D9
-        for <linux-clk@vger.kernel.org>; Mon,  3 Jul 2023 11:20:22 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2b69f216c73so70243591fa.3
-        for <linux-clk@vger.kernel.org>; Mon, 03 Jul 2023 11:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688408421; x=1691000421;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bMGOdp2WrmK72JlLnA4GZHmaTpxK++joMT5QYp1sllQ=;
-        b=lhTdDtnHM8h9ePa+Murs4OHPWVomZDeXPgOpnX3OehH26YGjrpqtm70lui0AjPvQtG
-         jaYtgTl041ICwg0AI4Wu/6jmusMI2Acl+N7AmDGsFWGtT6866CWdY9kiiszXiQ16XoFs
-         A9Zwi3qrscx/QnLuDmfkzMKizuAqL6rk2AEMpLN5mHtsCFBTZgXwn4nB87wANtHhph1C
-         l7rty66I47+ALpGD0xCaWOQTSslViZZL5N2vJizbzhkoKG/lHLx6vaQJ0VTebvOFmOcS
-         LgOawt1ww1e0qSzzYnBdCVMLj+ZkF2SfC34Lw2HJJ4ZnNaZjhR/zsnn7qh5S1pPQbFPi
-         da4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688408421; x=1691000421;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bMGOdp2WrmK72JlLnA4GZHmaTpxK++joMT5QYp1sllQ=;
-        b=FFLLT8YdoKVoodrY/idW3t2tsal+jT9Ic1wh13O2HOB17Mc/m+E4V7S1D85YaUy7rv
-         dIyjGeiJzeHaVG3hiwUziEveB+raUJR+jMWobXQGIZ8P4XCRuvahfMeMVLtkQCCgOmZl
-         2e9dX08+nA4qT5puTwyXbWBfovN9SS7yJb80LtzlvQgEHSyre5XlR1RKbga/ZXzf0cly
-         6MiQAHGw4QTIv0Tg+kq0Vkt86N7050CvmmleECNHZNvMc5w8FDqux5ioW0CRs38HRuaH
-         eBC5/Dltb0nipW/ioYlmgm5L+FR/6+UtBwm8xfiSPy3p58GAE4nl+aOMvcMaihTkSACm
-         fQpw==
-X-Gm-Message-State: ABy/qLasDkhvUfqI5ba/P0jF+c2+O3dMogkzGFjMYTg7Z/lJntJa67eY
-        NKV2Bqw3saxnlEaUzB5PKqQw+A==
-X-Google-Smtp-Source: APBJJlE8ny5kSPTUjmQmeDKziqPR0/TUc/91ONsaWaWWKJ4df8Y71rdn6WYsPZtmTayEdfW6z7X7Fw==
-X-Received: by 2002:a2e:850b:0:b0:2b6:ba00:f733 with SMTP id j11-20020a2e850b000000b002b6ba00f733mr8333259lji.18.1688408420733;
-        Mon, 03 Jul 2023 11:20:20 -0700 (PDT)
-Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
-        by smtp.gmail.com with ESMTPSA id s9-20020a2e9c09000000b002b6995f38a2sm4946224lji.100.2023.07.03.11.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jul 2023 11:20:20 -0700 (PDT)
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 03 Jul 2023 20:20:12 +0200
-Subject: [PATCH v2 8/8] arm64: dts: qcom: msm8998: Use the correct
- GPLL0_DIV leg for MMCC
+        with ESMTP id S229698AbjGCUEP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 16:04:15 -0400
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE32DE47;
+        Mon,  3 Jul 2023 13:04:13 -0700 (PDT)
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 72F97120029;
+        Mon,  3 Jul 2023 23:04:12 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 72F97120029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1688414652;
+        bh=3glFyjcepOK8/Kxd5LbRvbqIMFcThbI+slfTdN39SXQ=;
+        h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+        b=WjMN6ZhzyZADuzwnFwMQ3gUPW2zr7aMn5XdG790qvsjykfMk5YSLaehgLDmfmroLQ
+         pUIV8KPbgJYcmvuXXXBLEsot0h7mr0rjc87cMhlyPYZZKln2gbvxie1oWDiLgL6MeZ
+         1i4gzY9FTHTd+impmjhyACUY2p67fekGBp8+bnVfPxoF2U6YLQK0F9gK9TWoRC8Ur+
+         sc9DrgR5qFEdzPBR1SkC0KODwWIU/WjSjmZLxA32+0cHNteYLymxa08/tmVHRt1wxY
+         gbucrOtXG3RhW7mV+AiQglXYWhARQlEkr/ZUiALCbw9upJs9UXj9bFkokJmxdcjqtO
+         Vry38FB6holOg==
+Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1.sberdevices.ru (Postfix) with ESMTPS;
+        Mon,  3 Jul 2023 23:04:12 +0300 (MSK)
+Received: from localhost.localdomain (100.64.160.123) by
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Mon, 3 Jul 2023 23:04:08 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <khilman@baylibre.com>, <martin.blumenstingl@googlemail.com>
+CC:     <jian.hu@amlogic.com>, <kernel@sberdevices.ru>,
+        <rockosov@gmail.com>, <linux-amlogic@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+        Jan Dakinevich <yvdakinevich@sberdevices.ru>
+Subject: [PATCH v1] clk: meson: change usleep_range() to udelay() for atomic context
+Date:   Mon, 3 Jul 2023 23:04:04 +0300
+Message-ID: <20230703200404.20361-1-ddrokosov@sberdevices.ru>
+X-Mailer: git-send-email 2.36.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230622-topic-8998clk-v2-8-6222fbc2916b@linaro.org>
-References: <20230622-topic-8998clk-v2-0-6222fbc2916b@linaro.org>
-In-Reply-To: <20230622-topic-8998clk-v2-0-6222fbc2916b@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeffrey Hugo <quic_jhugo@quicinc.com>,
-        Taniya Das <tdas@codeaurora.org>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1688408407; l=1108;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=rcLA8twyqUlcJD4D43vneN0vw2noKKbjZxFdyfHDJZM=;
- b=J9qF1k7V2CcK1QdJjF8lyl9xKqY04T25afPjuYYxmly9bH9mpvemJtiRXtaKrrEaWRVNontZE
- 8X79xc6aeF3D7pgVQuJGJEZIkWOOAAtyaan6pgi66L4r5buBBT1lL5i
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [100.64.160.123]
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 178409 [Jul 03 2023]
+X-KSMG-AntiSpam-Version: 5.9.59.0
+X-KSMG-AntiSpam-Envelope-From: DDRokosov@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 517 517 b0056c19d8e10afbb16cb7aad7258dedb0179a79, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;p-i-exch-sc-m01.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/07/03 16:02:00 #21557037
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-MMCC has its own GPLL0 legs - one for 1-1 and one for div-2 output.
-We've already been using the correct one in the non-div case, start
-doing so for the other one as well.
+The function meson_clk_pll_enable() can be invoked under the enable_lock
+spinlock from the clk core logic (please refer to
+drivers/clk/clk.c:clk_core_enable_lock()), which risks a kernel panic
+during the usleep_range() call:
 
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+   BUG: scheduling while atomic: kworker/u4:2/36/0x00000002
+   Modules linked in: g_ffs usb_f_fs libcomposite
+   CPU: 1 PID: 36 Comm: kworker/u4:2 Not tainted 6.4.0-rc5 #273
+   Workqueue: events_unbound async_run_entry_fn
+   Call trace:
+    dump_backtrace+0x9c/0x128
+    show_stack+0x20/0x38
+    dump_stack_lvl+0x48/0x60
+    dump_stack+0x18/0x28
+    __schedule_bug+0x58/0x78
+    __schedule+0x828/0xa88
+    schedule+0x64/0xd8
+    schedule_hrtimeout_range_clock+0xd0/0x208
+    schedule_hrtimeout_range+0x1c/0x30
+    usleep_range_state+0x6c/0xa8
+    meson_clk_pll_enable+0x1f4/0x310
+    clk_core_enable+0x78/0x200
+    clk_core_enable+0x58/0x200
+    clk_core_enable+0x58/0x200
+    clk_core_enable+0x58/0x200
+    clk_enable+0x34/0x60
+
+Considering that this code is expected to be used in an atomic context,
+it is required to use the udelay() function instead of usleep_range()
+for the atomic context safety.
+
+Fixes: b6ec400aa153 ("clk: meson: introduce new pll power-on sequence for A1 SoC family")
+Reported-by: Jan Dakinevich <yvdakinevich@sberdevices.ru>
+Signed-off-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
+Signed-off-by: Jan Dakinevich <yvdakinevich@sberdevices.ru>
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/meson/clk-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 74bd05579796..c4faba092368 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -2718,7 +2718,8 @@ mmcc: clock-controller@c8c0000 {
- 				      "dsi1byte",
- 				      "hdmipll",
- 				      "dplink",
--				      "dpvco";
-+				      "dpvco",
-+				      "gpll0_div";
- 			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
- 				 <&gcc GCC_MMSS_GPLL0_CLK>,
- 				 <0>,
-@@ -2727,7 +2728,8 @@ mmcc: clock-controller@c8c0000 {
- 				 <0>,
- 				 <0>,
- 				 <0>,
--				 <0>;
-+				 <0>,
-+				 <&gcc GCC_MMSS_GPLL0_DIV_CLK>;
- 		};
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 56ec2210f1ad..eef6f37c8d8d 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -367,9 +367,9 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+ 	 * 3. enable the lock detect module
+ 	 */
+ 	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+-		usleep_range(10, 20);
++		udelay(10);
+ 		meson_parm_write(clk->map, &pll->current_en, 1);
+-		usleep_range(40, 50);
++		udelay(40);
+ 	};
  
- 		mmss_smmu: iommu@cd00000 {
-
+ 	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
 -- 
-2.41.0
+2.36.0
 
