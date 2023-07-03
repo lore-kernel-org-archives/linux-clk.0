@@ -2,194 +2,126 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA4AC30654
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 18:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E94C3063F
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 18:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230357AbjGCSJa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 14:09:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35866 "EHLO
+        id S230258AbjGCSUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 14:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbjGCSJP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 14:09:15 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 781B7E7D
-        for <linux-clk@vger.kernel.org>; Mon,  3 Jul 2023 11:09:09 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b69a48368fso73266791fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 03 Jul 2023 11:09:09 -0700 (PDT)
+        with ESMTP id S229976AbjGCSUN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 14:20:13 -0400
+Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3D2E5F
+        for <linux-clk@vger.kernel.org>; Mon,  3 Jul 2023 11:20:11 -0700 (PDT)
+Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b5c2433134so59915471fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 03 Jul 2023 11:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688407748; x=1690999748;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zqW9M2dFn1ZjAqPjCzlM+kpDwzNfPSt+HCWXrNSekXU=;
-        b=f8+qdZv0RtZ+fDx65C1Deda3yavnCaD9cBWp/8GLIU1CiuD5969J2pG0Nd3lU+OrBp
-         NPpZ19Eahtb+Uek8MmRJ5F0VsMeWn/k06DsfHhrCO/C2nltweMGIaEbCgBaefipSDrB4
-         FhJ7l69oKwnoSANlw48PPXzde+Hpvw2XAlhepZr7nyFS/vMNrsjIRk9kpxGC7oHp6WEy
-         t3PHzXkECnMzECGk0tTUgNo2y1v4OEzEK413cLj+8Ze4aApb4mVo1N5Nw9mstsAg39bF
-         L0jPHujFXzp215wclWaHt6v7wIwh1PgqK8eeAC/66+ov/Wgekj/BWJanBQb9HqUkQb2A
-         8cuA==
+        d=linaro.org; s=google; t=1688408409; x=1691000409;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3709e8fFO7E8llHUHqUI0y08/wPoh5pT/hkxw+53yrA=;
+        b=xlbJbUEX5Yd1k6PCD+ZYtC53K72Yd0PHdVCAy7vEuq16XkVIL+lMFsFw1n3acu0oFf
+         QphUw8hLNrjcSvp2kR/WRKI+Sef2rfV8uiwOhQU3wzzxED5dwcKZN2IPmJTKHzYV0W8g
+         XHaOPq4MvvRet0J9Bf+zA/UFQeKCqPCR2yW9BXduaILBZzKM1KalFbfxmnKzeGFk+2wl
+         1QpUAfJKXc6SOUKEaceuiswtw6j6fxph55L30BEj9VWgWEdYqtMOCY3ZeSTvVz4hrfyx
+         qbK2+7tNF68yqWQsme5hygBypd0PFZX+tcIMKdpQM9w/ktCgn8qJYnnktuz+VeBuv9i+
+         c94w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688407748; x=1690999748;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zqW9M2dFn1ZjAqPjCzlM+kpDwzNfPSt+HCWXrNSekXU=;
-        b=WAf83CDySs1Nq3mrlIozyMYQzZQwe87rhcqk2sQmBFWWoDjQZBca8sKtO4245lgMY5
-         MPbjdDXVtMMenvqp6Ts+KxJRM/yyS42hA6Bp7IcyUBbo1nBGd2Hruj4kxJfvbaaOThD7
-         wgell4l5arK+DfXJe0jlrz26rWPdCPp4AAdfi+QdPvgMJWsFejF27eqZapv1idjuy9e3
-         DN2WCNJQJN1djGMrroVuG6pzjenpIuZ4GpigrVLIMeyLwLolCkC8vq8RMU2wKiCiDJCC
-         NVI13msGQ9OBM+o7SwPMCHSoy5W7rIc/mJYsnIFtWKADUM6DSlYJY6SPteoXHf9iTMVk
-         luJQ==
-X-Gm-Message-State: ABy/qLaOPxKBQeFqAOZW0N3EPpRVwzJ5LdWkpcBM16UYW6OI7uC0eZuH
-        dZlu3NJZ9jLfLwDymCHz1PsfQw==
-X-Google-Smtp-Source: APBJJlGu7JnhD5pgBRBgwJ8KhvEWkjVOGYWIScNa1OUFPNnLltk5NIocRFmliWckiDTbSZSYq386mQ==
-X-Received: by 2002:a2e:9610:0:b0:2b6:d8ea:6650 with SMTP id v16-20020a2e9610000000b002b6d8ea6650mr5018708ljh.27.1688407747826;
-        Mon, 03 Jul 2023 11:09:07 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688408409; x=1691000409;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3709e8fFO7E8llHUHqUI0y08/wPoh5pT/hkxw+53yrA=;
+        b=A4OjvTd9qXO942j2nUn7wF/M1sh7z/dBW9VQiyPQwqW0HtTDgqCjR03oV6JC3y71ah
+         XKPd3I8Nu+txd2yRn1rpq6we42j2xFip0ntF6VV/cMaPsJq5SwD5rn4lBANVvAlNhwDu
+         Gst2NUkGvFd1GniWIx6V4pcThZzYXGmn02EwTFDudbQ30z2uCUZXAmERMs2wmsvF4YBE
+         ak2SCpVMgrgaySVFc8xsmbaGhbcuCtuiB4MU2NgNHaB73N7A4csOVT1jF+3z6+s0iJC1
+         B09W9cyR77kPDijNeQpkg0W+jGlwjJPiJ39YO9TRQcx97vA1X9UCr/0ntTO9mjAQK3a/
+         QfAA==
+X-Gm-Message-State: ABy/qLZrS3zvcgsQYVtKXVURf//7lAUty2YY5HPmcmMium8AMxKWdmjB
+        4fiHO/ZqgcUSPZZXWNWXOR4asQ==
+X-Google-Smtp-Source: APBJJlGlQkOPQixu2L4tRQl8VLKaygBQZqyviz+FiZtst2YTgudx5n1zzFiZEjQMQEy/J956gCnpNA==
+X-Received: by 2002:a2e:800b:0:b0:2b6:cbdb:790c with SMTP id j11-20020a2e800b000000b002b6cbdb790cmr3658759ljg.1.1688408409514;
+        Mon, 03 Jul 2023 11:20:09 -0700 (PDT)
 Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
-        by smtp.gmail.com with ESMTPSA id l17-20020a2ea311000000b002b690038aecsm5241157lje.112.2023.07.03.11.09.06
+        by smtp.gmail.com with ESMTPSA id s9-20020a2e9c09000000b002b6995f38a2sm4946224lji.100.2023.07.03.11.20.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jul 2023 11:09:07 -0700 (PDT)
+        Mon, 03 Jul 2023 11:20:09 -0700 (PDT)
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Date:   Mon, 03 Jul 2023 20:09:02 +0200
-Subject: [PATCH 2/2] clk: qcom: videocc-sm8350: Add SC8280XP support
+Subject: [PATCH v2 0/8] MSM8998 clk cleanups and fixups
+Date:   Mon, 03 Jul 2023 20:20:04 +0200
+Message-Id: <20230622-topic-8998clk-v2-0-6222fbc2916b@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230703-topic-8280_videocc-v1-2-8959d4d0a93e@linaro.org>
-References: <20230703-topic-8280_videocc-v1-0-8959d4d0a93e@linaro.org>
-In-Reply-To: <20230703-topic-8280_videocc-v1-0-8959d4d0a93e@linaro.org>
-To:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+X-B4-Tracking: v=1; b=H4sIAFQRo2QC/3WNwQ6DIBAFf8Vw7jaArUJP/Y/GA+CqmxIwYE0b4
+ 7+Xeu9xJnlvNpYxEWZ2qzaWcKVMMRSQp4q5yYQRgfrCTHJZ80ZKWOJMDpTWyvknXGrRatUMNee
+ KlY01GcEmE9xUVuHlfZFzwoHeR+TRFZ4oLzF9juYqfvbf/SqAw9W2hvcNamXF3VMwKZ5jGlm37
+ /sXqei9+8AAAAA=
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+        Jeffrey Hugo <quic_jhugo@quicinc.com>,
+        Taniya Das <tdas@codeaurora.org>
 Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Rob Herring <robh@kernel.org>
 X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1688407743; l=3909;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1688408407; l=1720;
  i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=TLaUxadYZTWfsq27UTIEE557pAqOizJ94PYvKkKz/Tk=;
- b=WpQTvAiTPbU+d9NEGQZPzx8s4qYWxW1WwgqfxJ9tIftvA1VT6QJgEH0gYt2MB4hn72/Nvc1bj
- bURoR3tW8r9CUuamy7C14ia9csa/uKVnHEXN2LNkOUG7dKYqK7YHADM
+ bh=phlPM9Cc876D80OS9Sc/anPCogRjxlTnuuGA5rJzqPI=;
+ b=7dmYnDCVVvlGri8VIWKTTOkbE9P5gWVFlLT8wuUmBrmzdbLf5oD70Fg+iauFZMgQz+tdBHbiu
+ RIbMXQauebHDezcAG0E87N7GJs3nlC2z11esmEwvb5TPh9dEDmMlAAx
 X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
  pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SC8280XP, being a partial derivative of SM8350, shares almost the exact
-same videocc block. Extend the 8350 driver to support the bigger brother.
+The MSM8998 clock controller drivers have some rough edges around whether
+and how Linux should touch them, which this series tries to sand down
+a bit.
 
-The only notable changes are higher possible frequencies on some clocks
-and some switcheroo within the XO/sleep registers (probably due to some
-different board crystal configuration).
+MSM8998 maple seems not to explode, please give it a spin on your boards.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- drivers/clk/qcom/videocc-sm8350.c | 42 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 41 insertions(+), 1 deletion(-)
+Changes in v2:
+- Pick up tags (thanks a lot Jeffrey for testing)
+- Drop patch "Don't poke at some BIMC GPU clocks"
+- Link to v1: https://lore.kernel.org/r/20230622-topic-8998clk-v1-0-5b7a0d6e98b1@linaro.org
 
-diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc-sm8350.c
-index b148877fc73d..581ad4440615 100644
---- a/drivers/clk/qcom/videocc-sm8350.c
-+++ b/drivers/clk/qcom/videocc-sm8350.c
-@@ -41,6 +41,10 @@ static const struct pll_vco lucid_5lpe_vco[] = {
- 	{ 249600000, 1750000000, 0 },
- };
- 
-+static const struct pll_vco lucid_5lpe_vco_8280[] = {
-+	{ 249600000, 1800000000, 0 },
-+};
-+
- static const struct alpha_pll_config video_pll0_config = {
- 	.l = 0x25,
- 	.alpha = 0x8000,
-@@ -159,6 +163,16 @@ static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
- 	{ }
- };
- 
-+static const struct freq_tbl ftbl_video_cc_mvs0_clk_src_8280[] = {
-+	F(720000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1014000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1098000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1332000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1599000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	F(1680000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
- static struct clk_rcg2 video_cc_mvs0_clk_src = {
- 	.cmd_rcgr = 0xb94,
- 	.mnd_width = 0,
-@@ -181,6 +195,15 @@ static const struct freq_tbl ftbl_video_cc_mvs1_clk_src[] = {
- 	{ }
- };
- 
-+static const struct freq_tbl ftbl_video_cc_mvs1_clk_src_8280[] = {
-+	F(840000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1098000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1332000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1600000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	F(1800000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-+	{ }
-+};
-+
- static struct clk_rcg2 video_cc_mvs1_clk_src = {
- 	.cmd_rcgr = 0xbb4,
- 	.mnd_width = 0,
-@@ -499,6 +522,7 @@ static struct qcom_cc_desc video_cc_sm8350_desc = {
- 
- static int video_cc_sm8350_probe(struct platform_device *pdev)
- {
-+	u32 video_cc_xo_clk_cbcr = 0xeec;
- 	struct regmap *regmap;
- 	int ret;
- 
-@@ -510,6 +534,21 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sc8280xp-videocc")) {
-+		video_cc_sleep_clk_src.cmd_rcgr = 0xf38;
-+		video_cc_sleep_clk.halt_reg = 0xf58;
-+		video_cc_sleep_clk.clkr.enable_reg = 0xf58;
-+		video_cc_xo_clk_src.cmd_rcgr = 0xf14;
-+		video_cc_xo_clk_cbcr = 0xf34;
-+
-+		video_pll0.vco_table = video_pll1.vco_table = lucid_5lpe_vco_8280;
-+		/* No change, but assign it for completeness */
-+		video_pll0.num_vco = video_pll1.num_vco = ARRAY_SIZE(lucid_5lpe_vco_8280);
-+
-+		video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_8280;
-+		video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_8280;
-+	}
-+
- 	regmap = qcom_cc_map(pdev, &video_cc_sm8350_desc);
- 	if (IS_ERR(regmap)) {
- 		pm_runtime_put(&pdev->dev);
-@@ -525,7 +564,7 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
- 	 *      video_cc_xo_clk
- 	 */
- 	regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
--	regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
-+	regmap_update_bits(regmap, video_cc_xo_clk_cbcr, BIT(0), BIT(0));
- 
- 	ret = qcom_cc_really_probe(pdev, &video_cc_sm8350_desc, regmap);
- 	pm_runtime_put(&pdev->dev);
-@@ -534,6 +573,7 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id video_cc_sm8350_match_table[] = {
-+	{ .compatible = "qcom,sc8280xp-videocc" },
- 	{ .compatible = "qcom,sm8350-videocc" },
- 	{ }
- };
+---
+Konrad Dybcio (8):
+      dt-bindings: clk: qcom,gcc-msm8998: Add missing GPU/MMSS GPLL0 legs
+      dt-bindings: clock: qcom,mmcc: Add GPLL0_DIV for MSM8998
+      clk: qcom: gcc-msm8998: Control MMSS and GPUSS GPLL0 outputs properly
+      clk: qcom: mmcc-msm8998: Properly consume GPLL0 inputs
+      clk: qcom: gpucc-msm8998: Use the correct GPLL0 leg with old DTs
+      clk: qcom: gcc-msm8998: Don't check halt bit on some branch clks
+      arm64: dts: qcom: msm8998: Use the correct GPLL0 leg for GPUCC
+      arm64: dts: qcom: msm8998: Use the correct GPLL0_DIV leg for MMCC
 
+ .../devicetree/bindings/clock/qcom,mmcc.yaml       |  2 +
+ arch/arm64/boot/dts/qcom/msm8998.dtsi              |  8 ++-
+ drivers/clk/qcom/gcc-msm8998.c                     | 64 +++++++++++++++++++++-
+ drivers/clk/qcom/gpucc-msm8998.c                   |  2 +-
+ drivers/clk/qcom/mmcc-msm8998.c                    | 35 +++---------
+ include/dt-bindings/clock/qcom,gcc-msm8998.h       |  3 +
+ 6 files changed, 80 insertions(+), 34 deletions(-)
+---
+base-commit: 296d53d8f84ce50ffaee7d575487058c8d437335
+change-id: 20230622-topic-8998clk-4317986f3008
+
+Best regards,
 -- 
-2.41.0
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
