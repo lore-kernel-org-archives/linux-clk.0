@@ -2,67 +2,40 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA7BEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 08:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4968EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 08:47:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbjGCIfe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 04:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37104 "EHLO
+        id S229484AbjGCIrG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 04:47:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230113AbjGCIfH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 04:35:07 -0400
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 965D8E43;
-        Mon,  3 Jul 2023 01:35:06 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailout.nyi.internal (Postfix) with ESMTP id BD6425C02D7;
-        Mon,  3 Jul 2023 04:35:05 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 03 Jul 2023 04:35:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-type:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1688373305; x=1688459705; bh=xU
-        mciYr10XqrxcawzB9I1x9ubgQnQxfIYfaGPiRwOUI=; b=LkDPMnu3aFxXfoHi4k
-        vc2UzWdqzzpmnHoIXKflpyPhYqnkOFAsPhanrPwEas7O+zgMRZgdsbABn1Hsq+gZ
-        ABIZvMqXV2Km1m4fSnNZDmIAzp5v2JCGmZBjgepFc/4w2K/gxORO2XVuSBIBl//Y
-        21kLNLbbrzRcUia5kW5njfKVp+5o4czrqlYafUqCzXgivT3SknAyAHG1N8SYVl/7
-        gbUZTrTmJMuwjfjPtjWVMqU/xiAKvAgeaWFl0kUNpRMYvz9onMqSYTP1QFGTfh4T
-        djOIY5BQkhr6BCNG+zCjyFCVcvDxQ3jVF9STS2dAovATvvsE/zen9N78GE09gsdr
-        O5aA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:content-type:date:date
-        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm2; t=1688373305; x=1688459705; bh=xUmciYr10Xqrx
-        cawzB9I1x9ubgQnQxfIYfaGPiRwOUI=; b=QHumdifPVafKqnqHRzmWV6ZFWK1wM
-        R6KhA1xPmZEflMDmU5hPndLTeFgVRpg0ZhGKMj9wZxu31Du+HC/DpcXSk389psy7
-        cKo5J0JxHTWnuZIrm/PMDZKB+EEvq7ByyXH6mIjrWleAIDNucRed0A7vq7Q1EheS
-        uRmXTMNn0Vxtt/LXF3hv98OpkUWV/VjC4MksNjKJTKDXLs5nkQP7YsmghMia4uDT
-        xn5iPavlXEmFlJolwu1eF85PVFFNNyRjhwmPqUSlHV4NaJo3+ChPWP53TQNvV8nv
-        +J1XN/T53kHSJdXcNDyDkJv6B9b5vukotBB8LTWFC6b3JEiSRKmDpXqwQ==
-X-ME-Sender: <xms:OYiiZDi1zNCtwzIqJV2iMbz4lqLSpdSbxP75Ab3CZsHhlmPZD2h3sg>
-    <xme:OYiiZACVj7kYdqA9RTjGowDYpwKZhUpZ_Pq4MBFCXkE8r6nzBtUCDaYoe3E-Mg5Ku
-    u3PMksxdFTEcuY0G8E>
-X-ME-Received: <xmr:OYiiZDHJYFUI7NPuL6meOPuTGOdlMPK01jxUYx0R9R2FO0DcBtadfRl3t4O-Q2H2p6oeAz9UvljjouksuoZwEg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddvgddtgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffvfevuffkhfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhephffhhedtkedtjeeuleethfejledtffffjeehffduhfdvhffhledukeekgffh
-    hfefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
-    grgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:OYiiZAQcB4vBF2dHJUjB3f6HYzu8p9YVrx12zj97KH4_FZFhqJVtjg>
-    <xmx:OYiiZAxKJh2lPg7YpUZMPfOFCu_I7-eZPtXnjd0-tQjrpXZQfo4DCA>
-    <xmx:OYiiZG7ryvswF_KZSiWB47GkgzjqwpE0hUGRGmVQMeh5x9r5yMJyYA>
-    <xmx:OYiiZFp3I1FycdmqP7Nzd3MfHwEY-cdhpQFeDzPY1p2r9wpS8OXOyw>
-Feedback-ID: i8771445c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Jul 2023 04:35:04 -0400 (EDT)
-Date:   Mon, 3 Jul 2023 09:25:59 +0200
-To:     Frank Oltmanns <frank@oltmanns.dev>
+        with ESMTP id S229481AbjGCIrF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 04:47:05 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0EC994;
+        Mon,  3 Jul 2023 01:47:03 -0700 (PDT)
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Qvfg767Fkz9sbm;
+        Mon,  3 Jul 2023 10:46:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1688374019;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8BKKT7/XaaDmbTWLQ1aTXQDnLvAVecmDZeZnywT7gPU=;
+        b=kHy4OJOQ66RBinHFDj8nXIIHaDi5vVeZAd9R9bcJadNs4YA1aDz5ycOOdVdVtqi7ehAWlp
+        U58riEooNdxWfPLJfosCmR3jSsr8ZPbQPIbUu/BY3BlAH6dr32jrxBTqa6mS9gpLLF0cTH
+        YAXLOxm+AESkFvXHc67yDa3LrkIesdAviPdZ7gsVArEf4+JGJmZkSmjkfbXArnwq2hZPis
+        wfBIM8hcYByG1MF11gcvR0fI6/pewd7rK/knYwBOTvAL8ibVtmrGDc0JTCkvMh+TlMsTV/
+        0jh1ZfPFN7ibAWjpp+14fSolban+2TPQ3bedoK1bzF1z8KXx/ywclXX+1cxduw==
+References: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
+ <20230702-pll-mipi_set_rate_parent-v3-4-46dcb8aa9cbc@oltmanns.dev>
+ <i3vd7aetybulocuxzs3qnymc2o375bc6bbihnvzqbwt2kf6d5l@cohvb7vxl6q2>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
@@ -71,155 +44,234 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] clk: sunxi-ng: nkm: Support finding closest rate
-Message-ID: <zvxviyera3zxe2ro5ej52vz2o2vrinu6zo7osddojbys4tuqhd@3f2okcbpf5jr>
-From:   Maxime Ripard <maxime@cerno.tech>
-References: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
- <20230702-pll-mipi_set_rate_parent-v3-5-46dcb8aa9cbc@oltmanns.dev>
- <87wmzhsbu0.fsf@oltmanns.dev>
+Subject: Re: [PATCH v3 4/8] clk: sunxi-ng: nm: Support finding closest rate
+In-reply-to: <i3vd7aetybulocuxzs3qnymc2o375bc6bbihnvzqbwt2kf6d5l@cohvb7vxl6q2>
+Date:   Mon, 03 Jul 2023 10:46:55 +0200
+Message-ID: <87o7kts7pc.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vstofkqfz34ty6ly"
-Content-Disposition: inline
-In-Reply-To: <87wmzhsbu0.fsf@oltmanns.dev>
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---vstofkqfz34ty6ly
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2023-07-03 at 09:24:53 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+> [[PGP Signed Part:Undecided]]
+> Hi,
+>
+> On Sun, Jul 02, 2023 at 07:55:23PM +0200, Frank Oltmanns wrote:
+>> Incorporate a new function, ccu_nm_find_best_closest, that selects the
+>> closest possible rate instead of the closest rate that is less than the
+>> requested rate. Utilizing rational_best_approximation has the additional
+>> effect of boosting performance in clock rate selection.
+>>
+>> In cases where the CCU_FEATURE_CLOSEST_RATE flag is set, use
+>> ccu_nm_find_best_closest instead of the original ccu_nm_find_best
+>> function.
+>>
+>> Extend the macro SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX to allow
+>> selecting additional features and update all usages of the macro with no
+>> additional flags set.
+>>
+>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>> ---
+>>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c |  6 ++++--
+>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c   |  3 ++-
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r40.c  |  6 ++++--
+>>  drivers/clk/sunxi-ng/ccu_nm.c         | 23 +++++++++++++++++++++--
+>>  drivers/clk/sunxi-ng/ccu_nm.h         |  6 ++++--
+>>  5 files changed, 35 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> index a139a5c438d4..ebfab1fdbb96 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+>> @@ -80,7 +80,8 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk, "pll-video0",
+>>  						297000000,	/* frac rate 1 */
+>>  						BIT(31),	/* gate */
+>>  						BIT(28),	/* lock */
+>> -						CLK_SET_RATE_UNGATE);
+>> +						CLK_SET_RATE_UNGATE,
+>> +						0);		/* features */
+>>
+>>  static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+>>  					"osc24M", 0x018,
+>> @@ -143,7 +144,8 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video1_clk, "pll-video1",
+>>  						297000000,	/* frac rate 1 */
+>>  						BIT(31),	/* gate */
+>>  						BIT(28),	/* lock */
+>> -						CLK_SET_RATE_UNGATE);
+>> +						CLK_SET_RATE_UNGATE,
+>> +						0);		/* features */
+>>
+>>  static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
+>>  					"osc24M", 0x038,
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> index bfebe8dbbe65..1e2669648a24 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
+>> @@ -76,7 +76,8 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video_clk, "pll-video",
+>>  						297000000, /* frac rate 1 */
+>>  						BIT(31),   /* gate */
+>>  						BIT(28),   /* lock */
+>> -						CLK_SET_RATE_UNGATE);
+>> +						CLK_SET_RATE_UNGATE,
+>> +						0);        /* features */
+>>
+>>  static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+>>  					"osc24M", 0x0018,
+>> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>> index 31eca0d3bc1e..63907b86ce06 100644
+>> --- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+>> @@ -82,7 +82,8 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video0_clk, "pll-video0",
+>>  						297000000,  /* frac rate 1 */
+>>  						BIT(31),    /* gate */
+>>  						BIT(28),    /* lock */
+>> -						CLK_SET_RATE_UNGATE);
+>> +						CLK_SET_RATE_UNGATE,
+>> +						0);         /* features */
+>>
+>>  /* TODO: The result of N/M is required to be in [8, 25] range. */
+>>  static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_ve_clk, "pll-ve",
+>> @@ -169,7 +170,8 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX(pll_video1_clk, "pll-video1",
+>>  						297000000,  /* frac rate 1 */
+>>  						BIT(31),    /* gate */
+>>  						BIT(28),    /* lock */
+>> -						CLK_SET_RATE_UNGATE);
+>> +						CLK_SET_RATE_UNGATE,
+>> +						0);         /* features */
+>>
+>>  static struct ccu_nkm pll_sata_clk = {
+>>  	.enable		= BIT(31),
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+>> index c1fd11542c45..97d8d9e3255c 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nm.c
+>> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+>> @@ -6,6 +6,7 @@
+>>
+>>  #include <linux/clk-provider.h>
+>>  #include <linux/io.h>
+>> +#include <linux/rational.h>
+>>
+>>  #include "ccu_frac.h"
+>>  #include "ccu_gate.h"
+>> @@ -56,6 +57,18 @@ static unsigned long ccu_nm_find_best(unsigned long parent, unsigned long rate,
+>>  	return best_rate;
+>>  }
+>>
+>> +static unsigned long ccu_nm_find_best_closest(unsigned long parent, unsigned long rate,
+>> +				      struct _ccu_nm *nm)
+>> +{
+>> +	unsigned long best_rate = 0;
+>> +
+>> +	rational_best_approximation(rate, parent, nm->max_n, nm->max_m, &nm->n, &nm->m);
+>> +
+>> +	best_rate = ccu_nm_calc_rate(parent, nm->n, nm->m);
+>> +
+>> +	return best_rate;
+>> +}
+>> +
+>>  static void ccu_nm_disable(struct clk_hw *hw)
+>>  {
+>>  	struct ccu_nm *nm = hw_to_ccu_nm(hw);
+>> @@ -159,7 +172,10 @@ static long ccu_nm_round_rate(struct clk_hw *hw, unsigned long rate,
+>>  	_nm.min_m = 1;
+>>  	_nm.max_m = nm->m.max ?: 1 << nm->m.width;
+>>
+>> -	rate = ccu_nm_find_best(*parent_rate, rate, &_nm);
+>> +	if (nm->common.features & CCU_FEATURE_CLOSEST_RATE)
+>> +		rate = ccu_nm_find_best_closest(*parent_rate, rate, &_nm);
+>> +	else
+>> +		rate = ccu_nm_find_best(*parent_rate, rate, &_nm);
+>
+> So this ends up creating a completely different path and algo for the
+> "closest" case, and I'm not super comfortable with that.
 
-On Mon, Jul 03, 2023 at 09:17:43AM +0200, Frank Oltmanns wrote:
->=20
-> On 2023-07-02 at 19:55:24 +0200, Frank Oltmanns <frank@oltmanns.dev> wrot=
-e:
-> > When finding the best rate for a NKM clock, consider rates that are
-> > higher than the requested rate, if the CCU_FEATURE_CLOSEST_RATE flag is
-> > set.
-> >
-> > Accommodate ccu_mux_helper_determine_rate to this change.
-> >
-> > Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_mux.c | 23 +++++++++++++++-----
-> >  drivers/clk/sunxi-ng/ccu_nkm.c | 48 +++++++++++++++++++++++++++++++---=
---------
-> >  2 files changed, 54 insertions(+), 17 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_=
-mux.c
-> > index 1d557e323169..8594d6a4addd 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> > @@ -113,7 +113,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common=
- *common,
-> >  	}
-> >
-> >  	for (i =3D 0; i < clk_hw_get_num_parents(hw); i++) {
-> > -		unsigned long tmp_rate, parent_rate;
-> > +		unsigned long tmp_rate, parent_rate, best_diff =3D ULONG_MAX;
-> >  		struct clk_hw *parent;
-> >
-> >  		parent =3D clk_hw_get_parent_by_index(hw, i);
-> > @@ -139,10 +139,23 @@ int ccu_mux_helper_determine_rate(struct ccu_comm=
-on *common,
-> >  			goto out;
-> >  		}
-> >
-> > -		if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
-> > -			best_rate =3D tmp_rate;
-> > -			best_parent_rate =3D parent_rate;
-> > -			best_parent =3D parent;
-> > +		if (common->features & CCU_FEATURE_CLOSEST_RATE) {
-> > +			unsigned long tmp_diff =3D req->rate > tmp_rate ?
-> > +						 req->rate - tmp_rate :
-> > +						 tmp_rate - req->rate;
-> > +
-> > +			if (tmp_diff < best_diff) {
-> > +				best_rate =3D tmp_rate;
-> > +				best_parent_rate =3D parent_rate;
-> > +				best_parent =3D parent;
-> > +				best_diff =3D tmp_diff;
-> > +			}
-> > +		} else {
-> > +			if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
-> > +				best_rate =3D tmp_rate;
-> > +				best_parent_rate =3D parent_rate;
-> > +				best_parent =3D parent;
-> > +			}
-> >  		}
-> >  	}
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_=
-nkm.c
-> > index d83843e69c25..36d9e987e4d8 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> > @@ -18,9 +18,11 @@ struct _ccu_nkm {
-> >  };
-> >
-> >  static unsigned long ccu_nkm_find_best_with_parent_adj(unsigned long *=
-parent, unsigned long rate,
-> > -						       struct _ccu_nkm *nkm, struct clk_hw *phw)
-> > +						       struct _ccu_nkm *nkm, struct clk_hw *phw,
-> > +						       unsigned long features)
-> >  {
-> > -	unsigned long best_rate =3D 0, best_parent_rate =3D *parent, tmp_pare=
-nt =3D *parent;
-> > +	unsigned long best_rate =3D 0, best_parent_rate =3D 0, tmp_parent =3D=
- *parent;
-> > +	unsigned long best_diff =3D ULONG_MAX;
-> >  	unsigned long best_n =3D 0, best_k =3D 0, best_m =3D 0;
-> >  	unsigned long _n, _k, _m;
-> >
-> > @@ -28,16 +30,26 @@ static unsigned long ccu_nkm_find_best_with_parent_=
-adj(unsigned long *parent, un
-> >  		for (_n =3D nkm->min_n; _n <=3D nkm->max_n; _n++) {
-> >  			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++) {
-> >  				unsigned long tmp_rate;
-> > +				unsigned long tmp_diff;
-> >
-> >  				tmp_parent =3D clk_hw_round_rate(phw, rate * _m / (_n * _k));
-> >
-> >  				tmp_rate =3D tmp_parent * _n * _k / _m;
-> > -				if (tmp_rate > rate)
-> > -					continue;
-> >
-> > -				if ((rate - tmp_rate) < (rate - best_rate)) {
-> > +				if (features & CCU_FEATURE_CLOSEST_RATE) {
-> > +					tmp_diff =3D rate > tmp_rate ?
-> > +						   rate - tmp_rate :
-> > +						   tmp_rate - rate;
-> > +				} else {
-> > +					if (tmp_rate > rate)
-> > +						continue;
-> > +					tmp_diff =3D rate - tmp_diff;
->=20
-> Sorry, this should of course be tmp_diff =3D rate - tmp_rate. I'll fix
-> that in v4. Also I'll do tests on my phone where
-> CCU_FEATURE_CLOSEST_RATE is not set (i.e., without PATCH 8), so see if
-> it replicates the old behaviour. I'll also look into adding kunit tests,
-> so that this doesn't happen again. I'm not sure if this is feasible, but
-> I'll ask here for advise, if/when I encounter obstacles.
+What I like about this (and why I proposed it), is that we can use the
+same functionality that is proven to work well in other clocks. So, this
+would bring us closer to other (not sunxi-ng) clocks, many of which are
+using the clk-fractional-divider directly. We can't do that in
+sunxi-ng, because we still need to control when overshooting is fine and
+when it is not fine. Other frameworks don't make that distinction.
 
-While this would obviously be great, I don't think we have the
-infrastructure just yet to allow to easily add kunit tests for entire
-clocks.
+I thougth about if it was possible to scrap most of ccu_nm and replace
+it with clk-fractional-divider, but due to this limitation I did not see
+a good way forward there. I see the following options:
+ a. Add a flag to clk-fractional-divider to support clocks that must not
+    overshoot. --> I don't think, I want to do that.
+ b. Analyze if it's it's really a requirement for ccu_nm to support
+    clocks that don't overshoot. --> I don't know who could / would take
+    up such a task, given that the current structure is proven to work.
+ c. Add a new clock ccu_fd that uses clk-fractional-divider internally
+    and must only be used by clock's that allow overshooting - such as
+    A64's pll-video0. --> This could work as a migration path for
+    scenario b as well. But it's even more complex than what I'm
+    proposing in this patch, so I'm not sure how much you'd like that.
 
-Maxime
+Anyway, all of this seems rather involved and therefore, for this
+patchset it makes sense to follow your proposal below.
 
---vstofkqfz34ty6ly
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> I think you can simplify this a bit by creating a comparison function
+> that will take two rates and a set of flags and will behave differently
+> depending on whether CCU_FEATURE_CLOSEST_RATE is set, like
+> mux_is_better_rate is doing for example.
+>
+> You'll also avoid code duplication that way that can be shown a bit in
+> you subsequent patches.
 
------BEGIN PGP SIGNATURE-----
+I'll look into that.
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZKJ4BwAKCRDj7w1vZxhR
-xT/EAQCAf+wzsG4PBtQDf9TUqpzI61mOL0/7PFIInvCwhd3hjAD/apsd946lQXsb
-lqSSwED7GsHO1pZfkFY7qO5BQ8IyXQk=
-=vCWb
------END PGP SIGNATURE-----
+>
+>>
+>>  	if (nm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+>>  		rate /= nm->fixed_post_div;
+>> @@ -210,7 +226,10 @@ static int ccu_nm_set_rate(struct clk_hw *hw, unsigned long rate,
+>>  					   &_nm.m, &_nm.n);
+>>  	} else {
+>>  		ccu_sdm_helper_disable(&nm->common, &nm->sdm);
+>> -		ccu_nm_find_best(parent_rate, rate, &_nm);
+>> +		if (nm->common.features & CCU_FEATURE_CLOSEST_RATE)
+>> +			ccu_nm_find_best_closest(parent_rate, rate, &_nm);
+>> +		else
+>> +			ccu_nm_find_best(parent_rate, rate, &_nm);
+>>  	}
+>>
+>>  	spin_lock_irqsave(nm->common.lock, flags);
+>> diff --git a/drivers/clk/sunxi-ng/ccu_nm.h b/drivers/clk/sunxi-ng/ccu_nm.h
+>> index 2904e67f05a8..a3825c4e8d42 100644
+>> --- a/drivers/clk/sunxi-ng/ccu_nm.h
+>> +++ b/drivers/clk/sunxi-ng/ccu_nm.h
+>> @@ -116,7 +116,8 @@ struct ccu_nm {
+>>  						 _frac_en, _frac_sel,	\
+>>  						 _frac_rate_0,		\
+>>  						 _frac_rate_1,		\
+>> -						 _gate, _lock, _flags)	\
+>> +						 _gate, _lock, _flags,	\
+>> +						 _features)		\
+>>  	struct ccu_nm _struct = {					\
+>>  		.enable		= _gate,				\
+>>  		.lock		= _lock,				\
+>> @@ -129,7 +130,8 @@ struct ccu_nm {
+>>  		.max_rate	= _max_rate,				\
+>>  		.common		= {					\
+>>  			.reg		= _reg,				\
+>> -			.features	= CCU_FEATURE_FRACTIONAL,	\
+>> +			.features	= CCU_FEATURE_FRACTIONAL |	\
+>> +					  _features,	\
+>
+> It's a bit odd to me that some features are set by the macro function,
+> and some are passed as an argument. I'm fine with either but we
+> shouldn't allow both.
+>
+> It looks like (for NM clocks at least) we would only need the round
+> closest flag for pll-video0, so we could maybe just add a new variant of
+> the macro which will also reduce the changes in that patch.
 
---vstofkqfz34ty6ly--
+Ok. I'll address that in v4.
+
+>
+> Maxime
+>
+> [[End of PGP Signed Part]]
