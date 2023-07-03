@@ -2,133 +2,248 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E651C001B0
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 11:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5E5EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 11:36:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231202AbjGCLa7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 07:30:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        id S229644AbjGCLgn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 07:36:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231231AbjGCLax (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 07:30:53 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 026E4E64
-        for <linux-clk@vger.kernel.org>; Mon,  3 Jul 2023 04:30:42 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4fafe87c6fbso6627466e87.3
-        for <linux-clk@vger.kernel.org>; Mon, 03 Jul 2023 04:30:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688383840; x=1690975840;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aqx9N5F2XlYeaK5a2sti8IvxHiDVBIFy2LMVY7f65VE=;
-        b=GS3gFbODsNgZwPupk/SLMdjt6yjQFdJxOz8Wn2ag33RAxoIsZXuD5tZTcNad9PoR8o
-         bz+ckFx+H8cUWNOae8/maImTeUKp4sI7trnGesuXJX7R8ag3eXeOo0+WyJLc7E7zJcK5
-         n5x5ABBt8AwuUSZJUIqJP6vhkiwt5aVFRK7zvPO4JNylvEGN1jMz69hbSHql9KlwhvcF
-         SJ5UdMDtQZLZON2x8qn8CXeexfJPtAj4VNbBHQ3lJQhVJufnHLbLK3e9BjVjCIQGI0pB
-         pH8Gojyt3/5HwKLtWY45bgw6daVdLinieCbmijtX6Rze2R7+ktPgV5A1rIR56NK7uIoi
-         G9qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688383840; x=1690975840;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aqx9N5F2XlYeaK5a2sti8IvxHiDVBIFy2LMVY7f65VE=;
-        b=lgUSV+ofbhUUuV4Pr4HJiio3CVHJMa9OCuk0WDl2pK6Gy5l5mK9BSkZykpSt8veUpM
-         2P5dTm+hbYLfZ16nSdW6mKsYHRcWZGYQtLCW2PE8MwSbWnfhga0DjaKwYD2nt+0CZQ5B
-         Dj1ZwZTX0RxuniNLi058pMkVw3hpG0wb8DqZLepgtAtVeES05ezwq+oBsuIX7AJBT8Eo
-         AoUJ1L7gSznQ/ababbm0YQHE4v4ld5OD0xxlXEJqi1Yo+jddtbLl+4DkH9HcqGQa+WEf
-         USwOFjIFRLwCDYO5IbyZxAzA5ImxkrydRx43JXQR1INIz3vRgpsPOy7hPGYo9kLxjH3R
-         577g==
-X-Gm-Message-State: ABy/qLZy/G57DwQgqFKw5HaVzNS601+XOP13h7huKBM7B5Bm625r+lUe
-        LU25K6d0/1XqQS/I43HXH7HBRg==
-X-Google-Smtp-Source: APBJJlENN4uukIE9GG5iHfqtC3rHnshXkPEaKmjkg8AHkEvMY8oBuKDf8pFZVXicAbtVNorkKMi+Og==
-X-Received: by 2002:a05:6512:39c9:b0:4fb:93db:fff3 with SMTP id k9-20020a05651239c900b004fb93dbfff3mr7616076lfu.16.1688383840244;
-        Mon, 03 Jul 2023 04:30:40 -0700 (PDT)
-Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
-        by smtp.gmail.com with ESMTPSA id w14-20020ac2442e000000b004fbab5283ecsm1493879lfl.126.2023.07.03.04.30.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jul 2023 04:30:39 -0700 (PDT)
-Message-ID: <b7b92190-4c64-7784-22d2-bb4a472386e4@linaro.org>
-Date:   Mon, 3 Jul 2023 13:30:38 +0200
+        with ESMTP id S229585AbjGCLgm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 07:36:42 -0400
+Received: from out2-smtp.messagingengine.com (out2-smtp.messagingengine.com [66.111.4.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E520E3;
+        Mon,  3 Jul 2023 04:36:41 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 573C55C00C9;
+        Mon,  3 Jul 2023 07:36:40 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 03 Jul 2023 07:36:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1688384200; x=1688470600; bh=gC
+        PCTITGz5GM2YGJzWq430teYe6K7ggXS69sZLriT6Y=; b=UD5WEj07kq+jJdbb6u
+        4ITYqBYoYS8WRtPU/6GItkw2B7D1ABgPVbUVvgslxk2DKU4Ne73D3G66PamakVC6
+        qqrMTDJp6u3xW0tQ42AlOBQ6gXWqTcrkEqkfWpZLlPWiKS2KiY+4vI3mwwii9YO/
+        j6IhpFpoVpBn39oEhfV2uofHTYGzKNxfBGmAVQ/k/q6D7xWBETzEdkQkMMpVoX13
+        iocG4gXHhQLuvSVCh4kpfej5ndxILrJnMe3k3sLYsjojo5XSydRWMK5Nwwb4YbCv
+        rQmnrtIDFcRYSPxsE8yKvs5ho8RMBiXfwTNMZdJKQ3dYEHctXzWiEKLUm4XgIm+K
+        8iPg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1688384200; x=1688470600; bh=gCPCTITGz5GM2
+        YGJzWq430teYe6K7ggXS69sZLriT6Y=; b=WpGmTmfzj6tBKM0iXGSIEI67DZwMz
+        o2pmh3gyl/ZNo/J/NfDuYErUSojQyvqeu3qGpCyqhtPCohDEN6DeoMLuZxhcvjmv
+        I950bgMd2zigOa2dShioQv2eSJPhm77a2NFQgsKozan0dHMB+QHD8j22ANTe6nBm
+        lwXDXnMAh4VreIR224yUFtlkDfcnr9SeVPecGPtkm8aBInu9zaLFoGiiasaaapj/
+        HbhYqYvmgIh1QqdJcG1x6TLrT25fJx2bbqbk9tk4iTLYKvWgvzpz2p0Iw+jouRZw
+        2ONSomKDzSjOT7N+TTMCBvqNQdXVx4uEThm/iQr0q4twZetZaVYNInm0w==
+X-ME-Sender: <xms:xrKiZJ3EWOj888g59jDs_bDGiezsC68ab1WcaoBpd5CL7dUCWTzjKA>
+    <xme:xrKiZAHhIl1LyBu9yyVCio50FO-Mk2E0UXtmg7jKGOkcxt9tHaxLj2cTXoyivOX3K
+    xTfef3yNvDY3NUA0Mc>
+X-ME-Received: <xmr:xrKiZJ4LTUBlsE92sz9gQ-TgfMTeqZ9oVMAmZ3eGp1eGIIctqK76-rid3t3O5LyDGVEgj1Z-9ceC-G-lVx8usQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedviedruddvgdegudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehgtdfsredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepueevudehuedtkeevgfduveejueefvddvvefhjefglefgtdekveeugeetkefg
+    leefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmh
+    grgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:x7KiZG1SyZfK1-t6hFDGatW3cMTFtw_cCHf79rk1FJ26QvHHxpb7Uw>
+    <xmx:x7KiZMHKhT84G0bWe3uRZDSiDaedmnmti36uepaBXwQ_1f5fIkamgA>
+    <xmx:x7KiZH9W8wg_33ql68uK3dAadZfZr3MY7RMiGkAozIiIpP5JxrZdww>
+    <xmx:yLKiZE-PaPyVUGmKPVkBFgZacxUN2cEzjCkGJZG6tSKZSD5FBpIa-w>
+Feedback-ID: i8771445c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Jul 2023 07:36:38 -0400 (EDT)
+Date:   Mon, 3 Jul 2023 13:36:36 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] clk: sunxi-ng: nkm: Support finding closest rate
+Message-ID: <3ikbk67av3j2drphpwncbvfzbd6jw4ytcdri2sn3tmnsny4r5h@db3uxmavz6n2>
+References: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
+ <20230702-pll-mipi_set_rate_parent-v3-5-46dcb8aa9cbc@oltmanns.dev>
+ <87wmzhsbu0.fsf@oltmanns.dev>
+ <zvxviyera3zxe2ro5ej52vz2o2vrinu6zo7osddojbys4tuqhd@3f2okcbpf5jr>
+ <87jzvhs740.fsf@oltmanns.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v3 22/28] ARM: dts: qcom: apq8064: add simple CPUFreq
- support
-Content-Language: en-US
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Ilia Lin <ilia.lin@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Georgi Djakov <djakov@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Christian Marangi <ansuelsmth@gmail.com>,
-        Stephan Gerhold <stephan@gerhold.net>
-References: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
- <20230702174246.121656-23-dmitry.baryshkov@linaro.org>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230702174246.121656-23-dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gegykcvgx7vzvvkm"
+Content-Disposition: inline
+In-Reply-To: <87jzvhs740.fsf@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2.07.2023 19:42, Dmitry Baryshkov wrote:
-> Declare CPU frequency-scaling properties. Each CPU has its own clock,
-> how all CPUs have the same OPP table. Voltage scaling is not (yet)
-> enabled with this patch. It will be enabled later.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-[...]
 
->  
-> +        cpu_opp_table: opp-table-cpu {
-> +		compatible = "operating-points-v2-krait-cpu";
-> +		nvmem-cells = <&speedbin_efuse>;
-> +
-> +		/*
-> +		 * Voltage thresholds are <target min max>
-> +		 */
-/* Voltage thresholds are <target min max> */
+--gegykcvgx7vzvvkm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +		opp-384000000 {
-> +			opp-hz = /bits/ 64 <384000000>;
-> +			opp-peak-kBps = <384000>;
-> +			opp-microvolt-speed0-pvs0 = <950000 950000 975000>;
-> +			opp-microvolt-speed0-pvs1 = <925000 900000 950000>;
-> +			opp-microvolt-speed0-pvs3 = <875000 850000 900000>;
->
-[...]
+On Mon, Jul 03, 2023 at 10:59:43AM +0200, Frank Oltmanns wrote:
+>=20
+> On 2023-07-03 at 09:25:59 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > On Mon, Jul 03, 2023 at 09:17:43AM +0200, Frank Oltmanns wrote:
+> >>
+> >> On 2023-07-02 at 19:55:24 +0200, Frank Oltmanns <frank@oltmanns.dev> w=
+rote:
+> >> > When finding the best rate for a NKM clock, consider rates that are
+> >> > higher than the requested rate, if the CCU_FEATURE_CLOSEST_RATE flag=
+ is
+> >> > set.
+> >> >
+> >> > Accommodate ccu_mux_helper_determine_rate to this change.
+> >> >
+> >> > Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >> > ---
+> >> >  drivers/clk/sunxi-ng/ccu_mux.c | 23 +++++++++++++++-----
+> >> >  drivers/clk/sunxi-ng/ccu_nkm.c | 48 +++++++++++++++++++++++++++++++=
+-----------
+> >> >  2 files changed, 54 insertions(+), 17 deletions(-)
+> >> >
+> >> > diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/c=
+cu_mux.c
+> >> > index 1d557e323169..8594d6a4addd 100644
+> >> > --- a/drivers/clk/sunxi-ng/ccu_mux.c
+> >> > +++ b/drivers/clk/sunxi-ng/ccu_mux.c
+> >> > @@ -113,7 +113,7 @@ int ccu_mux_helper_determine_rate(struct ccu_com=
+mon *common,
+> >> >  	}
+> >> >
+> >> >  	for (i =3D 0; i < clk_hw_get_num_parents(hw); i++) {
+> >> > -		unsigned long tmp_rate, parent_rate;
+> >> > +		unsigned long tmp_rate, parent_rate, best_diff =3D ULONG_MAX;
+> >> >  		struct clk_hw *parent;
+> >> >
+> >> >  		parent =3D clk_hw_get_parent_by_index(hw, i);
+> >> > @@ -139,10 +139,23 @@ int ccu_mux_helper_determine_rate(struct ccu_c=
+ommon *common,
+> >> >  			goto out;
+> >> >  		}
+> >> >
+> >> > -		if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
+> >> > -			best_rate =3D tmp_rate;
+> >> > -			best_parent_rate =3D parent_rate;
+> >> > -			best_parent =3D parent;
+> >> > +		if (common->features & CCU_FEATURE_CLOSEST_RATE) {
+> >> > +			unsigned long tmp_diff =3D req->rate > tmp_rate ?
+> >> > +						 req->rate - tmp_rate :
+> >> > +						 tmp_rate - req->rate;
+> >> > +
+> >> > +			if (tmp_diff < best_diff) {
+> >> > +				best_rate =3D tmp_rate;
+> >> > +				best_parent_rate =3D parent_rate;
+> >> > +				best_parent =3D parent;
+> >> > +				best_diff =3D tmp_diff;
+> >> > +			}
+> >> > +		} else {
+> >> > +			if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
+> >> > +				best_rate =3D tmp_rate;
+> >> > +				best_parent_rate =3D parent_rate;
+> >> > +				best_parent =3D parent;
+> >> > +			}
+> >> >  		}
+> >> >  	}
+> >> >
+> >> > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/c=
+cu_nkm.c
+> >> > index d83843e69c25..36d9e987e4d8 100644
+> >> > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> > @@ -18,9 +18,11 @@ struct _ccu_nkm {
+> >> >  };
+> >> >
+> >> >  static unsigned long ccu_nkm_find_best_with_parent_adj(unsigned lon=
+g *parent, unsigned long rate,
+> >> > -						       struct _ccu_nkm *nkm, struct clk_hw *phw)
+> >> > +						       struct _ccu_nkm *nkm, struct clk_hw *phw,
+> >> > +						       unsigned long features)
+> >> >  {
+> >> > -	unsigned long best_rate =3D 0, best_parent_rate =3D *parent, tmp_p=
+arent =3D *parent;
+> >> > +	unsigned long best_rate =3D 0, best_parent_rate =3D 0, tmp_parent =
+=3D *parent;
+> >> > +	unsigned long best_diff =3D ULONG_MAX;
+> >> >  	unsigned long best_n =3D 0, best_k =3D 0, best_m =3D 0;
+> >> >  	unsigned long _n, _k, _m;
+> >> >
+> >> > @@ -28,16 +30,26 @@ static unsigned long ccu_nkm_find_best_with_pare=
+nt_adj(unsigned long *parent, un
+> >> >  		for (_n =3D nkm->min_n; _n <=3D nkm->max_n; _n++) {
+> >> >  			for (_m =3D nkm->min_m; _m <=3D nkm->max_m; _m++) {
+> >> >  				unsigned long tmp_rate;
+> >> > +				unsigned long tmp_diff;
+> >> >
+> >> >  				tmp_parent =3D clk_hw_round_rate(phw, rate * _m / (_n * _k));
+> >> >
+> >> >  				tmp_rate =3D tmp_parent * _n * _k / _m;
+> >> > -				if (tmp_rate > rate)
+> >> > -					continue;
+> >> >
+> >> > -				if ((rate - tmp_rate) < (rate - best_rate)) {
+> >> > +				if (features & CCU_FEATURE_CLOSEST_RATE) {
+> >> > +					tmp_diff =3D rate > tmp_rate ?
+> >> > +						   rate - tmp_rate :
+> >> > +						   tmp_rate - rate;
+> >> > +				} else {
+> >> > +					if (tmp_rate > rate)
+> >> > +						continue;
+> >> > +					tmp_diff =3D rate - tmp_diff;
+> >>
+> >> Sorry, this should of course be tmp_diff =3D rate - tmp_rate. I'll fix
+> >> that in v4. Also I'll do tests on my phone where
+> >> CCU_FEATURE_CLOSEST_RATE is not set (i.e., without PATCH 8), so see if
+> >> it replicates the old behaviour. I'll also look into adding kunit test=
+s,
+> >> so that this doesn't happen again. I'm not sure if this is feasible, b=
+ut
+> >> I'll ask here for advise, if/when I encounter obstacles.
+> >
+> > While this would obviously be great, I don't think we have the
+> > infrastructure just yet to allow to easily add kunit tests for entire
+> > clocks.
+>=20
+> I think, clk_test.c provides a good blueprint. I tried to do that for
+> clk-fractional-divider [1], but Stephen wanted to go a different route,
+> so I dropped it. You could look at clk_fd_test_init() in [1]. A similar
+> approach might work for the sunxi-ng clocks. I don't see any real
+> blockers, but maybe that's me being naive.
 
-> +
->  	memory@0 {
->  		device_type = "memory";
->  		reg = <0x0 0x0>;
-> @@ -834,6 +1313,9 @@ qfprom: qfprom@700000 {
->  			#address-cells = <1>;
->  			#size-cells = <1>;
->  			ranges;
-> +			speedbin_efuse: speedbin@c0 {
-> +				reg = <0x0c0 0x4>;
-no bits=<>?
+The main issue will be probing and mocking. Those clocks are meant to be
+probed through the device tree and expect to have underlying registers
+accessible.
 
-> +			};
-Newline between properties & subnodes and between each subnode, please
+We would need some way to mock / prevent any register access, while
+still registering a clock with its device tree node, parent, etc. for
+the tests to be meaningful. And that's not going to be an easy thing to
+do :)
 
-lgtm otherwise, although I'm not checking these magic volt values
+Maxime
 
-Konrad
->  			tsens_calib: calib@404 {
->  				reg = <0x404 0x10>;
->  			};
+--gegykcvgx7vzvvkm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZKKyxAAKCRDj7w1vZxhR
+xV/lAQDhvphlvWpOwfrzo0B9hdjf3WpLvcLri3WR/earG6778QD+MDIjfM9bpfqo
+pt2yxU9b6TJVfjAZY2uEWLuuBiW9TwA=
+=lP/K
+-----END PGP SIGNATURE-----
+
+--gegykcvgx7vzvvkm--
