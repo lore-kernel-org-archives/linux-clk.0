@@ -2,209 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75977EB64DC
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 08:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA81EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 08:07:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230011AbjGCIDD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 04:03:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47328 "EHLO
+        id S231450AbjGCIG6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 04:06:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231126AbjGCICn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 04:02:43 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9E8B1994;
-        Mon,  3 Jul 2023 01:02:20 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+        with ESMTP id S231352AbjGCIGs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 04:06:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95381E72;
+        Mon,  3 Jul 2023 01:06:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4QvdgX1rWXz9smc;
-        Mon,  3 Jul 2023 10:02:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1688371336;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=eJqGcK86nu+Tj/k/Nnx0V17iyu2NlxwPh1TXpPUIkuI=;
-        b=TiBzr8CjGgz8pvWu3Eh6dO/ajYlZTZAIzZ7DqPZog9OojLFxJDXquWD2onATkCrhscI3ds
-        aofx4mW9TDYwXadTnlfnA4+SoqztiVWUWEym7hE8ugNzBSOcMIzPHDWWmMtia6TtILYQ3P
-        GgeTlk1PEbdLqx62ajGk4PbEo+BCcqljdxgVdmyN6xRta5WEDIdws2ukTOcfzGRE0fqUr7
-        fGd7DmJzUq5h8KhOr6ndmKqXEfgjBW677pAHmsv8aBzvYfDRUqiQ/o8UtK8Iejk43JHuzW
-        BAJXL6RNPoClDboSCysw7FeCdjO2K4ZzUOfeoGG5fFAThb3y9a/EKdTbJq2j0A==
-References: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
- <20230702-pll-mipi_set_rate_parent-v3-1-46dcb8aa9cbc@oltmanns.dev>
- <uxa7smoywmh75pzmpipdqbctbza6gjlqke3v7j4ijpfc3k4jul@dcxwsiajoomb>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Maxime Ripard <maxime@cerno.tech>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 553C060CF9;
+        Mon,  3 Jul 2023 08:05:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19BAC433C8;
+        Mon,  3 Jul 2023 08:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688371554;
+        bh=H5Ol2bCcQqFdyg09aatCLPI6rS9AzzMNSSBC2BX7O1I=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oIOJhIeWjUIxznyHbsEeDY5V8fSvW8F5I5Zbpq9mqcP+T9XMyqXGDJ6dnFtL+EpBE
+         np9qw2ScLgM6bAjcqjJXKWwDm0NcSYh6kAwd3tjWQzihkTEC8PCC/wlM34zRiZ76fR
+         IH1IfE8iJIfMYy63dWPg67elzEENbAfi73ipG9gU6GCYimHHRZ5bMbi3NScPVLVY5w
+         cE2xhZG5eHjXKDxqe0iqx9hbVE1hByEZZAycdUD0Qwj32j6GACr3Opb5Kq0i1SMaUR
+         nFuHse6zHojgdslFv3lrJ3tW767gbbXbcE1hXPdxFSbAuQg+xkjaqn/ISyMbad0I9F
+         zPicWmzxLkokg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+        by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.95)
+        (envelope-from <maz@kernel.org>)
+        id 1qGEZD-00A68h-Sj;
+        Mon, 03 Jul 2023 09:05:52 +0100
+Date:   Mon, 03 Jul 2023 09:05:52 +0100
+Message-ID: <875y71zafz.wl-maz@kernel.org>
+From:   Marc Zyngier <maz@kernel.org>
+To:     Neil Armstrong <neil.armstrong@linaro.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] clk: sunxi-ng: nkm: consider alternative parent
- rates when determining rate
-In-reply-to: <uxa7smoywmh75pzmpipdqbctbza6gjlqke3v7j4ijpfc3k4jul@dcxwsiajoomb>
-Date:   Mon, 03 Jul 2023 10:02:12 +0200
-Message-ID: <87sfa5s9rv.fsf@oltmanns.dev>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Andy Shevchenko <andy@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Golle <daniel@makrotopia.org>
+Subject: Re: [PATCH v2 13/15] irqchip: irq-versatile-fpga: remove obsolete oxnas compatible
+In-Reply-To: <20230630-topic-oxnas-upstream-remove-v2-13-fb6ab3dea87c@linaro.org>
+References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
+        <20230630-topic-oxnas-upstream-remove-v2-13-fb6ab3dea87c@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: neil.armstrong@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com, peppe.cavallaro@st.com, alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com, linus.walleij@linaro.org, brgl@bgdev.pl, andy@kernel.org, sre@kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-oxnas@groups.io, krzysztof.kozlowski@linaro.org, arnd@arndb.de, daniel@makrotopia.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, 30 Jun 2023 17:58:38 +0100,
+Neil Armstrong <neil.armstrong@linaro.org> wrote:
+> 
+> Due to lack of maintenance and stall of development for a few years now,
+> and since no new features will ever be added upstream, remove support
+> for OX810 and OX820 IRQ controller.
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Daniel Golle <daniel@makrotopia.org>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/irqchip/irq-versatile-fpga.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+> index ba543ed9c154..5018a06060e6 100644
+> --- a/drivers/irqchip/irq-versatile-fpga.c
+> +++ b/drivers/irqchip/irq-versatile-fpga.c
+> @@ -242,5 +242,4 @@ static int __init fpga_irq_of_init(struct device_node *node,
+>  }
+>  IRQCHIP_DECLARE(arm_fpga, "arm,versatile-fpga-irq", fpga_irq_of_init);
+>  IRQCHIP_DECLARE(arm_fpga_sic, "arm,versatile-sic", fpga_irq_of_init);
+> -IRQCHIP_DECLARE(ox810se_rps, "oxsemi,ox810se-rps-irq", fpga_irq_of_init);
+>  #endif
 
-On 2023-07-03 at 08:47:43 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
-> [[PGP Signed Part:Undecided]]
-> Hi,
->
-> On Sun, Jul 02, 2023 at 07:55:20PM +0200, Frank Oltmanns wrote:
->> In case the CLK_SET_RATE_PARENT flag is set, consider using a different
->> parent rate when determining a new rate.
->>
->> To find the best match for the requested rate, perform the following
->> steps for each NKM combination:
->>  - calculate the optimal parent rate,
->>  - find the best parent rate that the parent clock actually supports
->>  - use that parent rate to calculate the effective rate.
->>
->> In case the clk does not support setting the parent rate, use the same
->> algorithm as before.
->>
->> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->> ---
->>  drivers/clk/sunxi-ng/ccu_nkm.c | 48 +++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 45 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
->> index a0978a50edae..d83843e69c25 100644
->> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
->> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
->> @@ -6,6 +6,7 @@
->>
->>  #include <linux/clk-provider.h>
->>  #include <linux/io.h>
->> +#include <linux/math.h>
->>
->>  #include "ccu_gate.h"
->>  #include "ccu_nkm.h"
->> @@ -16,6 +17,44 @@ struct _ccu_nkm {
->>  	unsigned long	m, min_m, max_m;
->>  };
->>
->> +static unsigned long ccu_nkm_find_best_with_parent_adj(unsigned long *parent, unsigned long rate,
->> +						       struct _ccu_nkm *nkm, struct clk_hw *phw)
->
-> The usual order in that driver (and Linux in general) would make the
-> clk_hw and nkm structure pointers first, and then the parent rate and
-> rate.
+Acked-by: Marc Zyngier <maz@kernel.org>
 
-I'll address that in v4.
-
->
-> But something looks off to me: ccu_nkm_find_best_with_parent_adj takes a
-> pointer to the parent rate which makes sense since we're going to modify
-> it.
->
->> +{
->> +	unsigned long best_rate = 0, best_parent_rate = *parent, tmp_parent = *parent;
->> +	unsigned long best_n = 0, best_k = 0, best_m = 0;
->> +	unsigned long _n, _k, _m;
->> +
->> +	for (_k = nkm->min_k; _k <= nkm->max_k; _k++) {
->> +		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
->> +			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
->> +				unsigned long tmp_rate;
->> +
->> +				tmp_parent = clk_hw_round_rate(phw, rate * _m / (_n * _k));
->> +
->> +				tmp_rate = tmp_parent * _n * _k / _m;
->> +				if (tmp_rate > rate)
->> +					continue;
->> +
->> +				if ((rate - tmp_rate) < (rate - best_rate)) {
->> +					best_rate = tmp_rate;
->> +					best_parent_rate = tmp_parent;
->> +					best_n = _n;
->> +					best_k = _k;
->> +					best_m = _m;
->> +				}
->> +			}
->> +		}
->> +	}
->> +
->> +	nkm->n = best_n;
->> +	nkm->k = best_k;
->> +	nkm->m = best_m;
->> +
->> +	*parent = best_parent_rate;
->> +
->> +	return best_rate;
->> +}
->> +
->>  static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
->>  				       struct _ccu_nkm *nkm)
->
-> You haven't modified ccu_nkm_find_best though, and it still takes the
-> parent rate value.
->
->>  {
->> @@ -106,7 +145,7 @@ static unsigned long ccu_nkm_recalc_rate(struct clk_hw *hw,
->>  }
->>
->>  static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->> -					struct clk_hw *hw,
->> +					struct clk_hw *parent_hw,
->
-> (This should be another patch)
-
-Ok, will do in v4.
-
->
->>  					unsigned long *parent_rate,
->>  					unsigned long rate,
->>  					void *data)
->> @@ -124,7 +163,10 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->>  		rate *= nkm->fixed_post_div;
->>
->> -	rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm);
->
-> parent_rate is a pointer, we were dereferencing it to pass its value to
-> ccu_nkm_find_best. All good so far.
->
->> +	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
->> +		rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm);
->
-> Still passing by value
->
->> +	else
->> +		rate = ccu_nkm_find_best_with_parent_adj(parent_rate, rate, &_nkm, parent_hw);
->
-> And passing the pointer there since it takes a pointer. Still good.
->
->>
->>  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->>  		rate /= nkm->fixed_post_div;
->> @@ -159,7 +201,7 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
->>  	_nkm.min_m = 1;
->>  	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
->>
->> -	ccu_nkm_find_best(parent_rate, rate, &_nkm);
->> +	ccu_nkm_find_best(&parent_rate, rate, &_nkm);
->
-> But here, we're passing a pointer to parent_rate to ccu_nkm_find_best,
-> while it's still supposed to take it by value?
-
-Ugh. Yeah, sorry. I had that error in V2 but squashed the correction
-into patch 5 instead of patch 1. I'll fix that in v4.
+Feel free to route this via the SoC tree as part of the removal
+series.
 
 Thanks,
-  Frank
 
->
-> Maxime
->
-> [[End of PGP Signed Part]]
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
