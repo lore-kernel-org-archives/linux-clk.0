@@ -2,38 +2,38 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2639FC001B0
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 09:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D558EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 09:29:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230101AbjGCJSM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 05:18:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59946 "EHLO
+        id S229549AbjGCJ3R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 05:29:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230112AbjGCJSI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 05:18:08 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52DB4E67;
-        Mon,  3 Jul 2023 02:17:51 -0700 (PDT)
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+        with ESMTP id S230206AbjGCJ3Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 05:29:16 -0400
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050:0:465::102])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD5F218D;
+        Mon,  3 Jul 2023 02:29:13 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4QvgLZ490vz9sqJ;
-        Mon,  3 Jul 2023 11:17:42 +0200 (CEST)
+        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Qvgbp2SrFz9snc;
+        Mon,  3 Jul 2023 11:29:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1688375862;
+        s=MBO0001; t=1688376550;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=wzL5L1lBY5rqvf78gNGZQXkCiKNDPWm58F8aOJ0dj7I=;
-        b=G0ywYUvJ5zFc39jBJU87AUoesBe8B95rVsm9BKiVgv+kPdQO/Ep9vKlEOKYnlQnH/UYifx
-        twGWoW8qkjEYbiQEg1riRhCP85B/BW/XuyAlMMf9nLprqZD+B+hxCRnNcJgfP6bCi/Ev50
-        iShVRoQxQZ3LF0Jnxl277TobXcWIOhyLhL7dJ3F60jENETfxIkaNLnN7vVtjkLpEAEloCs
-        nchnT5/G3+XyrSTUGFsDx6nSbcArbr06pX1eLKJliPorsBMKYlmujMFi8o7mihP2rv8wob
-        tIEiq6uZyKMbAjZujN4L0h6iDcWRlLTIb7ak1O3cwHiHCnQ4DZdKLfAAt2A4bQ==
+        bh=zBBsuTVav6vfnGbrZf+Lz4bRJkmuMheylCTqMuDos48=;
+        b=SE+0JRdHcYANbRAfup4b7XMw745p4opXWmIMTCefwWUXzM/Gu7Q5gvZbRjq2mHSr/1+/uC
+        JEsbcAbcDcTTnSuIh2uxqJ87CS3uj2ybDl47j0yhFYBdhH6DiL5Lkz+xcfiKKGZE2HVO1H
+        y8590C3vyeYHHMeCqdzptH3wSgPrHHaGX/xnYFlp+rH2BfXw72uA67MFmDIrlJq2tlALF1
+        0rorKXrMMH8n4hc22DkhOi7McBvtqzegVR7HOBg1oJV451l//enKeEcgXkP+NHBhVDp8lF
+        vNruh85DGZ86zRaZngdXio2TMbdh8minYAYdTIOn9p4L+UMu1XIS49Pf2guwHA==
 References: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
- <20230702-pll-mipi_set_rate_parent-v3-6-46dcb8aa9cbc@oltmanns.dev>
- <b7gnap57aajkbhbbcbgallvqjdc7nzppjjwnancgmm5ibmhdaq@cftau72qyjdu>
+ <20230702-pll-mipi_set_rate_parent-v3-8-46dcb8aa9cbc@oltmanns.dev>
+ <lfcpuv5euy5w6e7jzn6fm2qusjj52w2hhn5sosqvoz54zc56py@5wh2eea3rrs3>
 From:   Frank Oltmanns <frank@oltmanns.dev>
 To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -44,10 +44,11 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/8] clk: sunxi-ng: mux: Support finding closest rate
-In-reply-to: <b7gnap57aajkbhbbcbgallvqjdc7nzppjjwnancgmm5ibmhdaq@cftau72qyjdu>
-Date:   Mon, 03 Jul 2023 11:17:24 +0200
-Message-ID: <87fs65s6aj.fsf@oltmanns.dev>
+Subject: Re: [PATCH v3 8/8] clk: sunxi-ng: a64: select closest rate for
+ pll-video0
+In-reply-to: <lfcpuv5euy5w6e7jzn6fm2qusjj52w2hhn5sosqvoz54zc56py@5wh2eea3rrs3>
+Date:   Mon, 03 Jul 2023 11:28:59 +0200
+Message-ID: <878rbxs5r8.fsf@oltmanns.dev>
 MIME-Version: 1.0
 Content-Type: text/plain
 Precedence: bulk
@@ -55,98 +56,41 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 2023-07-03 at 09:38:48 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
+On 2023-07-03 at 09:50:05 +0200, Maxime Ripard <maxime@cerno.tech> wrote:
 > [[PGP Signed Part:Undecided]]
-> On Sun, Jul 02, 2023 at 07:55:25PM +0200, Frank Oltmanns wrote:
->> When finding the best rate for a mux clock, consider rates that are
->> higher than the requested rate by introducing a new clk_ops structure
->> that uses the existing __clk_mux_determine_rate_closest function.
->> Furthermore introduce an initialization macro that uses this new
->> structure.
->>
->> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->> ---
->>  drivers/clk/sunxi-ng/ccu_mux.c | 13 +++++++++++++
->>  drivers/clk/sunxi-ng/ccu_mux.h | 17 +++++++++++++++++
->>  2 files changed, 30 insertions(+)
->>
->> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
->> index 8594d6a4addd..49a592bdeacf 100644
->> --- a/drivers/clk/sunxi-ng/ccu_mux.c
->> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
->> @@ -264,6 +264,19 @@ static unsigned long ccu_mux_recalc_rate(struct clk_hw *hw,
->>  					   parent_rate);
->>  }
->>
->> +const struct clk_ops ccu_mux_closest_ops = {
->> +	.disable	= ccu_mux_disable,
->> +	.enable		= ccu_mux_enable,
->> +	.is_enabled	= ccu_mux_is_enabled,
->> +
->> +	.get_parent	= ccu_mux_get_parent,
->> +	.set_parent	= ccu_mux_set_parent,
->> +
->> +	.determine_rate	= __clk_mux_determine_rate_closest,
->> +	.recalc_rate	= ccu_mux_recalc_rate,
->> +};
->> +EXPORT_SYMBOL_NS_GPL(ccu_mux_closest_ops, SUNXI_CCU);
->> +
->
-> This is also a bit inconsistent with the other clocks: most (all?) of
-> them will simply handle this through a flag, but this one requires a new
-> set of clk_ops as well?
->
-> I think we should create our own wrapper here around
-> __clk_mux_determine_rate and either call
-> __clk_mux_determine_rate_closest or __clk_mux_determine_rate depending
-> on the state of the flags, or call __clk_mux_determine_rate_flags with
-> the proper flags set for our clock.
->
-> The former is probably slightly simpler.
-
-Ok, I will address that in v4.
-
->
->>  const struct clk_ops ccu_mux_ops = {
->>  	.disable	= ccu_mux_disable,
->>  	.enable		= ccu_mux_enable,
->> diff --git a/drivers/clk/sunxi-ng/ccu_mux.h b/drivers/clk/sunxi-ng/ccu_mux.h
->> index 2c1811a445b0..c4ee14e43719 100644
->> --- a/drivers/clk/sunxi-ng/ccu_mux.h
->> +++ b/drivers/clk/sunxi-ng/ccu_mux.h
->> @@ -46,6 +46,22 @@ struct ccu_mux {
->>  	struct ccu_common	common;
+> On Sun, Jul 02, 2023 at 07:55:27PM +0200, Frank Oltmanns wrote:
+>> @@ -541,7 +542,7 @@ static const char * const tcon1_parents[] = { "pll-video0", "pll-video1" };
+>>  static const u8 tcon1_table[] = { 0, 2, };
+>>  static struct ccu_div tcon1_clk = {
+>>  	.enable		= BIT(31),
+>> -	.div		= _SUNXI_CCU_DIV(0, 4),
+>> +	.div		= _SUNXI_CCU_DIV_FLAGS(0, 4, CLK_DIVIDER_ROUND_CLOSEST),
+>>  	.mux		= _SUNXI_CCU_MUX_TABLE(24, 2, tcon1_table),
+>>  	.common		= {
+>>  		.reg		= 0x11c,
+>> @@ -549,6 +550,7 @@ static struct ccu_div tcon1_clk = {
+>>  						      tcon1_parents,
+>>  						      &ccu_div_ops,
+>>  						      CLK_SET_RATE_PARENT),
+>> +		.features	= CCU_FEATURE_CLOSEST_RATE,
+>>  	},
 >>  };
->>
->> +#define SUNXI_CCU_MUX_TABLE_WITH_GATE_CLOSEST(_struct, _name, _parents, _table,	\
->> +				     _reg, _shift, _width, _gate,	\
->> +				     _flags)				\
->> +	struct ccu_mux _struct = {					\
->> +		.enable	= _gate,					\
->> +		.mux	= _SUNXI_CCU_MUX_TABLE(_shift, _width, _table),	\
->> +		.common	= {						\
->> +			.reg		= _reg,				\
->> +			.hw.init	= CLK_HW_INIT_PARENTS(_name,	\
->> +							      _parents, \
->> +							      &ccu_mux_closest_ops, \
->> +							      _flags),	\
->> +			.features	= CCU_FEATURE_CLOSEST_RATE,	\
->> +		}							\
->> +	}
->> +
 >
-> I'm fine with that one, but like we discussed on the NM (I think?) patch
-> already, this creates some clocks and macros that will use the feature
-> as a flag, and some will encode it into their name.
+> I'm not super comfortable with having to set it twice for dividers (or
+> composite clocks). Could we set CLK_DIVIDER_ROUND_CLOSEST automatically
+> if CCU_FEATURE_CLOSEST_RATE is set?
+
+You're of course right. If I'm not mistaken, I can use
+SUNXI_CCU_M_WITH_MUX_TABLE_GATE_CLOSEST that I introduced in div patch
+(PATCH 7). Otherwise I'll create a similar macro for use with tcon1.
+
 >
-> Given that we need it here too, I'm really inclined to prefer what you
-> did there, and thus create a new macro for pll-video0 instead of
-> modifying the existing one.
+> I'm guessing we would need it for muxes as well?
+>
 
-Ok. Just to be clear: What I did in this patch is fine and I should use
-the same approach for NM. Did I get that right?
+Yes, it's already in the mux and div patches.
 
-Thanks,
+Best regards,
   Frank
 
 >
