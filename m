@@ -2,230 +2,131 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F45DEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 07:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCB1EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Jul 2023 07:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230025AbjGCHSK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 03:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56132 "EHLO
+        id S230330AbjGCHYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Jul 2023 03:24:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230011AbjGCHSJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 03:18:09 -0400
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [IPv6:2001:67c:2050:0:465::102])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AD53D1;
-        Mon,  3 Jul 2023 00:18:08 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4QvchX60f1z9sjF;
-        Mon,  3 Jul 2023 09:18:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1688368684;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=s49PEfI7MhDVEMN05ePg89l0ItdtrliBG6hMnAeGVV8=;
-        b=Fxgi1Y96IJVqi26F2MmaPhR7m4XncGfSOyIShKc8dtDXTEB7MCr5qbBxGBllJl2GFtajQi
-        1e4ympDSfBNTJIGaL4nT4Gjn8Z2k4BxaHwyzP+AyDDpnuou65Gbyq5peRYuW5xIkRcUe1X
-        A+jwnDsgLLC2AfBmlUno0Fblv7nYZzM08nJ5jqNZLjsUI1Q+Ae3hk2B/l5WkbLWMvLzQGb
-        Z2+pcB3l4d0Yuq+yI7uaMWGi7KE4NJGP9xNiQROTiduJnPBNLQ/XEtKdvQXjyE0nQK5GCL
-        3TEdxiOPyMgG7XptsOapCCu2oByc8gh+pXSw7P+mNeN3WYxnZYf0zIfj6LdAOA==
-References: <20230702-pll-mipi_set_rate_parent-v3-0-46dcb8aa9cbc@oltmanns.dev>
- <20230702-pll-mipi_set_rate_parent-v3-5-46dcb8aa9cbc@oltmanns.dev>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Frank Oltmanns <frank@oltmanns.dev>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Andre Przywara <andre.przywara@arm.com>,
-        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] clk: sunxi-ng: nkm: Support finding closest rate
-In-reply-to: <20230702-pll-mipi_set_rate_parent-v3-5-46dcb8aa9cbc@oltmanns.dev>
-Date:   Mon, 03 Jul 2023 09:17:43 +0200
-Message-ID: <87wmzhsbu0.fsf@oltmanns.dev>
+        with ESMTP id S229814AbjGCHYg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 03:24:36 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7582FE5F
+        for <linux-clk@vger.kernel.org>; Mon,  3 Jul 2023 00:24:30 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id ffacd0b85a97d-314313f127fso1555782f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Jul 2023 00:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688369068; x=1690961068;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KgMnJ8CKfBislhp1HG0z8FmS5BLcV5+cmaj4jvnhxWQ=;
+        b=lKrkHVcsQngHENPpMshxYINgAv/o3G4zjF9clGaCwoFrRmttkUWr4CBrogdvxNzMS3
+         VBP86BoCy3AKClMFDF9HKPnJtmGpdmiipRLgTXgdGNS4e85wXCTHXgQTmURXCy5fNf5m
+         LxexEPRA7cwPlrcsXz+F1rXEQI1sP8laktduTFkvWEbrgg/jMuTHCuPebIqG1ozPUTdZ
+         IUYsdmpolDS8JvoAktsNi9dCycog7boyCBWaDP3PYwLu4lolTKdY5ehvy7aTMVfkLHfK
+         R07BeDK6M+Dv1Kr+KwncWpguMs+6Gv792dGNu4Jf1DKoHce2DPoWYH74hji1yCmqMA4W
+         sEMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688369068; x=1690961068;
+        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
+         :content-language:subject:reply-to:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KgMnJ8CKfBislhp1HG0z8FmS5BLcV5+cmaj4jvnhxWQ=;
+        b=d11fRb+LrKNFTFucdZ8qOin89RDQC/MTmVIKOWcQThjGqSfX6YLz0xVG0wWBlLnccW
+         MxDwBBPtdX+gWxCmvI6x9zAdN7EWvHe66pASwYJKhNQTAv5/p5TxT0FRsiXZfwoGgeh2
+         K3+ZuOqWbIzIsktMBX2VWiic1owblD33Q3YsRQ5EbxlqvTMNrSWbrJk3ieeqTsF7xa+w
+         GGui6cc6JBKMwhW64H+3iPcg0zzeCavkOAzUlMlSyHcYMvRIG5zDrPxJ3iUqLoI1pOnF
+         K5oC8Jg0UWGQwRfBnjHt6M0gGXq8Do5Cd8zhz4/j7doCIW4ahlTtKgMPc/Zuy0Mek0qy
+         bLmQ==
+X-Gm-Message-State: ABy/qLZgS4WkoYwBs3D8xMl1lZN6ES8Dzm1jxTj8C4b+QQ52lAfaZY3x
+        AHmHwgxbWH+TvU9YezTrlzeLrg==
+X-Google-Smtp-Source: APBJJlErVoF0iApuPq86HVOvO0iLKPOR8uT2faeOcndYld3NEwBM2GZKbdz/+srhnFDYERI4fgA7tQ==
+X-Received: by 2002:a5d:6349:0:b0:313:e48a:d173 with SMTP id b9-20020a5d6349000000b00313e48ad173mr6657516wrw.68.1688369068512;
+        Mon, 03 Jul 2023 00:24:28 -0700 (PDT)
+Received: from [192.168.7.21] (679773502.box.freepro.com. [212.114.21.58])
+        by smtp.gmail.com with ESMTPSA id u11-20020adfdd4b000000b003143765e207sm1899030wrm.49.2023.07.03.00.24.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jul 2023 00:24:27 -0700 (PDT)
+Message-ID: <65d78d07-be4f-8ea0-b322-353b5c23fcb0@linaro.org>
+Date:   Mon, 3 Jul 2023 09:24:23 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 4QvchX60f1z9sjF
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+From:   Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v6 5/9] drm/meson: gate px_clk when setting rate
+Content-Language: en-US
+To:     George Stark <gnstark@sberdevices.ru>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Nicolas Belin <nbelin@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org
+References: <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v6-0-fd2ac9845472@linaro.org>
+ <20230512-amlogic-v6-4-upstream-dsi-ccf-vim3-v6-5-fd2ac9845472@linaro.org>
+ <c487ed03-0ab2-74fb-91bc-4a773bfdfc5b@sberdevices.ru>
+Organization: Linaro Developer Services
+In-Reply-To: <c487ed03-0ab2-74fb-91bc-4a773bfdfc5b@sberdevices.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 30/06/2023 20:10, George Stark wrote:
+> Hello Neil
+> 
+> On 6/30/23 19:29, Neil Armstrong wrote:
+>> Disable the px_clk when setting the rate to recover a fully
+>> configured and correctly reset VCLK clock tree after the rate
+>> is set.
+>>
+>> Fixes: 77d9e1e6b846 ("drm/meson: add support for MIPI-DSI transceiver")
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/gpu/drm/meson/meson_dw_mipi_dsi.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c b/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
+>> index 57447abf1a29..dc63d2d813a9 100644
+>> --- a/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
+>> +++ b/drivers/gpu/drm/meson/meson_dw_mipi_dsi.c
+>> @@ -94,6 +94,7 @@ static int dw_mipi_dsi_phy_init(void *priv_data)
+>>           return ret;
+>>       }
+>> +    clk_disable_unprepare(mipi_dsi->px_clk);
+>>       ret = clk_set_rate(mipi_dsi->px_clk, mipi_dsi->mode->clock * 1000);
+>>       if (ret) {
+>> @@ -102,6 +103,12 @@ static int dw_mipi_dsi_phy_init(void *priv_data)
+>>           return ret;
+>>       }
+>> +    clk_prepare_enable(mipi_dsi->px_clk);
+> probably should be:
+> ret = clk_prepare_enable(mipi_dsi->px_clk);
 
-On 2023-07-02 at 19:55:24 +0200, Frank Oltmanns <frank@oltmanns.dev> wrote:
-> When finding the best rate for a NKM clock, consider rates that are
-> higher than the requested rate, if the CCU_FEATURE_CLOSEST_RATE flag is
-> set.
->
-> Accommodate ccu_mux_helper_determine_rate to this change.
->
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> ---
->  drivers/clk/sunxi-ng/ccu_mux.c | 23 +++++++++++++++-----
->  drivers/clk/sunxi-ng/ccu_nkm.c | 48 +++++++++++++++++++++++++++++++-----------
->  2 files changed, 54 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_mux.c
-> index 1d557e323169..8594d6a4addd 100644
-> --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> @@ -113,7 +113,7 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
->  	}
->
->  	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
-> -		unsigned long tmp_rate, parent_rate;
-> +		unsigned long tmp_rate, parent_rate, best_diff = ULONG_MAX;
->  		struct clk_hw *parent;
->
->  		parent = clk_hw_get_parent_by_index(hw, i);
-> @@ -139,10 +139,23 @@ int ccu_mux_helper_determine_rate(struct ccu_common *common,
->  			goto out;
->  		}
->
-> -		if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
-> -			best_rate = tmp_rate;
-> -			best_parent_rate = parent_rate;
-> -			best_parent = parent;
-> +		if (common->features & CCU_FEATURE_CLOSEST_RATE) {
-> +			unsigned long tmp_diff = req->rate > tmp_rate ?
-> +						 req->rate - tmp_rate :
-> +						 tmp_rate - req->rate;
-> +
-> +			if (tmp_diff < best_diff) {
-> +				best_rate = tmp_rate;
-> +				best_parent_rate = parent_rate;
-> +				best_parent = parent;
-> +				best_diff = tmp_diff;
-> +			}
-> +		} else {
-> +			if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
-> +				best_rate = tmp_rate;
-> +				best_parent_rate = parent_rate;
-> +				best_parent = parent;
-> +			}
->  		}
->  	}
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> index d83843e69c25..36d9e987e4d8 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -18,9 +18,11 @@ struct _ccu_nkm {
->  };
->
->  static unsigned long ccu_nkm_find_best_with_parent_adj(unsigned long *parent, unsigned long rate,
-> -						       struct _ccu_nkm *nkm, struct clk_hw *phw)
-> +						       struct _ccu_nkm *nkm, struct clk_hw *phw,
-> +						       unsigned long features)
->  {
-> -	unsigned long best_rate = 0, best_parent_rate = *parent, tmp_parent = *parent;
-> +	unsigned long best_rate = 0, best_parent_rate = 0, tmp_parent = *parent;
-> +	unsigned long best_diff = ULONG_MAX;
->  	unsigned long best_n = 0, best_k = 0, best_m = 0;
->  	unsigned long _n, _k, _m;
->
-> @@ -28,16 +30,26 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(unsigned long *parent, un
->  		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
->  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
->  				unsigned long tmp_rate;
-> +				unsigned long tmp_diff;
->
->  				tmp_parent = clk_hw_round_rate(phw, rate * _m / (_n * _k));
->
->  				tmp_rate = tmp_parent * _n * _k / _m;
-> -				if (tmp_rate > rate)
-> -					continue;
->
-> -				if ((rate - tmp_rate) < (rate - best_rate)) {
-> +				if (features & CCU_FEATURE_CLOSEST_RATE) {
-> +					tmp_diff = rate > tmp_rate ?
-> +						   rate - tmp_rate :
-> +						   tmp_rate - rate;
-> +				} else {
-> +					if (tmp_rate > rate)
-> +						continue;
-> +					tmp_diff = rate - tmp_diff;
+Indeed, thx for noticing :-)
 
-Sorry, this should of course be tmp_diff = rate - tmp_rate. I'll fix
-that in v4. Also I'll do tests on my phone where
-CCU_FEATURE_CLOSEST_RATE is not set (i.e., without PATCH 8), so see if
-it replicates the old behaviour. I'll also look into adding kunit tests,
-so that this doesn't happen again. I'm not sure if this is feasible, but
-I'll ask here for advise, if/when I encounter obstacles.
+>> +    if (ret) {
+>> +        dev_err(mipi_dsi->dev, "Failed to enable DSI Pixel clock (ret %d)\n", ret);
+>> +        return ret;
+>> +    }
+>> +
+>>       switch (mipi_dsi->dsi_device->format) {
+>>       case MIPI_DSI_FMT_RGB888:
+>>           dpi_data_format = DPI_COLOR_24BIT;
+>>
 
-Best regards,
-  Frank
-
-> +				}
-> +
-> +				if (tmp_diff < best_diff) {
->  					best_rate = tmp_rate;
->  					best_parent_rate = tmp_parent;
-> +					best_diff = tmp_diff;
->  					best_n = _n;
->  					best_k = _k;
->  					best_m = _m;
-> @@ -56,9 +68,10 @@ static unsigned long ccu_nkm_find_best_with_parent_adj(unsigned long *parent, un
->  }
->
->  static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
-> -				       struct _ccu_nkm *nkm)
-> +				       struct _ccu_nkm *nkm, unsigned long features)
->  {
->  	unsigned long best_rate = 0;
-> +	unsigned long best_diff = ULONG_MAX;
->  	unsigned long best_n = 0, best_k = 0, best_m = 0;
->  	unsigned long _n, _k, _m;
->
-> @@ -66,13 +79,23 @@ static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned long rate,
->  		for (_n = nkm->min_n; _n <= nkm->max_n; _n++) {
->  			for (_m = nkm->min_m; _m <= nkm->max_m; _m++) {
->  				unsigned long tmp_rate;
-> +				unsigned long tmp_diff;
->
->  				tmp_rate = parent * _n * _k / _m;
->
-> -				if (tmp_rate > rate)
-> -					continue;
-> -				if ((rate - tmp_rate) < (rate - best_rate)) {
-> +				if (features & CCU_FEATURE_CLOSEST_RATE) {
-> +					tmp_diff = rate > tmp_rate ?
-> +						   rate - tmp_rate :
-> +						   tmp_rate - rate;
-> +				} else {
-> +					if (tmp_rate > rate)
-> +						continue;
-> +					tmp_diff = rate - tmp_diff;
-> +				}
-> +
-> +				if (tmp_diff < best_diff) {
->  					best_rate = tmp_rate;
-> +					best_diff = tmp_diff;
->  					best_n = _n;
->  					best_k = _k;
->  					best_m = _m;
-> @@ -164,9 +187,10 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
->  		rate *= nkm->fixed_post_div;
->
->  	if (!clk_hw_can_set_rate_parent(&nkm->common.hw))
-> -		rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm);
-> +		rate = ccu_nkm_find_best(*parent_rate, rate, &_nkm, nkm->common.features);
->  	else
-> -		rate = ccu_nkm_find_best_with_parent_adj(parent_rate, rate, &_nkm, parent_hw);
-> +		rate = ccu_nkm_find_best_with_parent_adj(parent_rate, rate, &_nkm, parent_hw,
-> +							 nkm->common.features);
->
->  	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
->  		rate /= nkm->fixed_post_div;
-> @@ -201,7 +225,7 @@ static int ccu_nkm_set_rate(struct clk_hw *hw, unsigned long rate,
->  	_nkm.min_m = 1;
->  	_nkm.max_m = nkm->m.max ?: 1 << nkm->m.width;
->
-> -	ccu_nkm_find_best(&parent_rate, rate, &_nkm);
-> +	ccu_nkm_find_best(parent_rate, rate, &_nkm, nkm->common.features);
->
->  	spin_lock_irqsave(nkm->common.lock, flags);
