@@ -2,118 +2,132 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3752BEB64DA
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 03:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 471FEEB64D9
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 06:19:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230252AbjGDDwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 23:52:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48142 "EHLO
+        id S229844AbjGDGS7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jul 2023 02:18:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbjGDDwW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 23:52:22 -0400
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D552BD;
-        Mon,  3 Jul 2023 20:52:21 -0700 (PDT)
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-345ff33d286so15440665ab.3;
-        Mon, 03 Jul 2023 20:52:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688442740; x=1691034740;
-        h=date:subject:message-id:references:in-reply-to:cc:to:from
-         :mime-version:content-transfer-encoding:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IXXXDTVnhiGaQdLwuFieMKLCVwc40SyI0FbqGubyrKA=;
-        b=P4U9AhC17qVshjHyRoYrH8n0zwKPuvTdBgU2kj3GOAdVBFp09svLrkL5rUlF+3XyJ1
-         zvSdW5/M8HqbHKqmfg1eFTVwrVVdfYrvOKNyckrBDV4rNFCChRTtblVSBNeVTOG6H6xA
-         CkA6I7T6fCrbyMo/ZmQx1QMj6f6/DdumEQrCQnDtZHusZDNgvC51VHbsFjWYJlqfAoF7
-         O0RrySgBfvkyiUuxBzoo/dDNpI9/3LcWl6s7ZzvJiyVOqURyOXELnykKtVijrHCvWAza
-         H3idOox9Yo398niPT+GSCYHUkEUcvUbhLUGCugTcaIs0blbTYT1nR2fEQEJsS1ZIfyUN
-         otGw==
-X-Gm-Message-State: ABy/qLbc24L/buUrcv5WzUag3yqN2AyQXHoIIxdrUYbQEqyP8uzdz+eC
-        i9Xff6337pOZoEJ+OhA9C2hn2meQGw==
-X-Google-Smtp-Source: APBJJlFisZIe/mCHVFeOU6gtwM361wCFX79fK+RHHjG0iFC8fAd+9ogQkO+uKBCPLpsfr4mdrftZCQ==
-X-Received: by 2002:a92:d4c7:0:b0:345:a201:82c0 with SMTP id o7-20020a92d4c7000000b00345a20182c0mr10514925ilm.32.1688442740419;
-        Mon, 03 Jul 2023 20:52:20 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id t14-20020a92c0ce000000b00345950d7e94sm6626965ilf.20.2023.07.03.20.52.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Jul 2023 20:52:19 -0700 (PDT)
-Received: (nullmailer pid 800694 invoked by uid 1000);
-        Tue, 04 Jul 2023 03:52:16 -0000
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-From:   Rob Herring <robh@kernel.org>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Conor Dooley <conor@kernel.org>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <20230704020239.288500-3-xingyu.wu@starfivetech.com>
-References: <20230704020239.288500-1-xingyu.wu@starfivetech.com>
- <20230704020239.288500-3-xingyu.wu@starfivetech.com>
-Message-Id: <168844273679.800666.7152631195397313900.robh@kernel.org>
-Subject: Re: [PATCH v6 2/7] dt-bindings: soc: starfive: Add StarFive syscon
- module
-Date:   Mon, 03 Jul 2023 21:52:16 -0600
+        with ESMTP id S229708AbjGDGS7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 02:18:59 -0400
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA69BB;
+        Mon,  3 Jul 2023 23:18:57 -0700 (PDT)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 512032004AB;
+        Tue,  4 Jul 2023 08:12:49 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 189C22004BB;
+        Tue,  4 Jul 2023 08:12:49 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 375381802202;
+        Tue,  4 Jul 2023 14:12:47 +0800 (+08)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: clock: imx8-acm: Add audio clock mux support
+Date:   Tue,  4 Jul 2023 13:39:33 +0800
+Message-Id: <1688449175-1677-2-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1688449175-1677-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1688449175-1677-1-git-send-email-shengjiu.wang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add the clock dt-binding file for audio clock mux. which
+is the IP for i.MX8QM, i.MX8QXP, i.MX8DXL.
 
-On Tue, 04 Jul 2023 10:02:34 +0800, Xingyu Wu wrote:
-> From: William Qiu <william.qiu@starfivetech.com>
-> 
-> Add documentation to describe StarFive System Controller Registers.
-> 
-> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-> ---
->  .../soc/starfive/starfive,jh7110-syscon.yaml  | 93 +++++++++++++++++++
->  MAINTAINERS                                   |  7 ++
->  2 files changed, 100 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-> 
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ .../devicetree/bindings/clock/imx8-acm.yaml   | 71 +++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8-acm.yaml
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.example.dtb: syscon@13030000: reg: [[0, 318963712], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.example.dtb: syscon@13030000: reg: [[0, 318963712], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.example.dtb: syscon@17010000: reg: [[0, 385941504], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.example.dtb: syscon@17010000: reg: [[0, 385941504], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20230704020239.288500-3-xingyu.wu@starfivetech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/Documentation/devicetree/bindings/clock/imx8-acm.yaml b/Documentation/devicetree/bindings/clock/imx8-acm.yaml
+new file mode 100644
+index 000000000000..820c06b81aa6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx8-acm.yaml
+@@ -0,0 +1,71 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/imx8-acm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP i.MX8 Audio Clock Mux Binding
++
++maintainers:
++  - Shengjiu Wang <shengjiu.wang@nxp.com>
++
++description: |
++  NXP i.MX8 Audio Clock Mux is dedicated clock muxing IP
++  used to control Audio related clock on the SoC.
++
++properties:
++  compatible:
++    enum:
++      - nxp,imx8qm-acm
++      - nxp,imx8qxp-acm
++      - nxp,imx8dxl-acm
++
++  reg:
++    maxItems: 1
++
++  power-domains:
++    minItems: 13
++    maxItems: 21
++
++  '#clock-cells':
++    const: 1
++    description:
++      The clock consumer should specify the desired clock by having the clock
++      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8-clock.h
++      for the full list of i.MX8 ACM clock IDs.
++
++required:
++  - compatible
++  - reg
++  - power-domains
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  # Clock Control Module node:
++  - |
++    #include <dt-bindings/firmware/imx/rsrc.h>
++
++    acm@59e00000 {
++        compatible = "nxp,imx8qxp-acm";
++        reg = <0x59e00000 0x1D0000>;
++        #clock-cells = <1>;
++        power-domains = <&pd IMX_SC_R_AUDIO_CLK_0>,
++                        <&pd IMX_SC_R_AUDIO_CLK_1>,
++                        <&pd IMX_SC_R_MCLK_OUT_0>,
++                        <&pd IMX_SC_R_MCLK_OUT_1>,
++                        <&pd IMX_SC_R_AUDIO_PLL_0>,
++                        <&pd IMX_SC_R_AUDIO_PLL_1>,
++                        <&pd IMX_SC_R_ASRC_0>,
++                        <&pd IMX_SC_R_ASRC_1>,
++                        <&pd IMX_SC_R_ESAI_0>,
++                        <&pd IMX_SC_R_SAI_0>,
++                        <&pd IMX_SC_R_SAI_1>,
++                        <&pd IMX_SC_R_SAI_2>,
++                        <&pd IMX_SC_R_SAI_3>,
++                        <&pd IMX_SC_R_SAI_4>,
++                        <&pd IMX_SC_R_SAI_5>,
++                        <&pd IMX_SC_R_SPDIF_0>,
++                        <&pd IMX_SC_R_MQS_0>;
++    };
+-- 
+2.34.1
 
