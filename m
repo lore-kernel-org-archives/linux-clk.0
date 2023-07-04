@@ -2,28 +2,27 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE2BC0015E
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 06:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49ADAEB64DA
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 06:21:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230214AbjGDGTA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jul 2023 02:19:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49008 "EHLO
+        id S230260AbjGDGVs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jul 2023 02:21:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbjGDGS7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 02:18:59 -0400
-X-Greylist: delayed 368 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 03 Jul 2023 23:18:57 PDT
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64DBAB2;
-        Mon,  3 Jul 2023 23:18:57 -0700 (PDT)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E492E2004B7;
-        Tue,  4 Jul 2023 08:12:47 +0200 (CEST)
+        with ESMTP id S230216AbjGDGVr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 02:21:47 -0400
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B564BBB;
+        Mon,  3 Jul 2023 23:21:46 -0700 (PDT)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B3FA91A04CC;
+        Tue,  4 Jul 2023 08:12:50 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ABBF52004AB;
-        Tue,  4 Jul 2023 08:12:47 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 79F6D1A04C7;
+        Tue,  4 Jul 2023 08:12:50 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C1D001800319;
-        Tue,  4 Jul 2023 14:12:45 +0800 (+08)
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 94BB91820F59;
+        Tue,  4 Jul 2023 14:12:48 +0800 (+08)
 From:   Shengjiu Wang <shengjiu.wang@nxp.com>
 To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
         sboyd@kernel.org, robh+dt@kernel.org,
@@ -32,32 +31,62 @@ To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
         festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] clk: imx: add audio clock mux driver
-Date:   Tue,  4 Jul 2023 13:39:32 +0800
-Message-Id: <1688449175-1677-1-git-send-email-shengjiu.wang@nxp.com>
+Subject: [PATCH 2/3] clk: imx8: Add audio clock mux related clock
+Date:   Tue,  4 Jul 2023 13:39:34 +0800
+Message-Id: <1688449175-1677-3-git-send-email-shengjiu.wang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1688449175-1677-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1688449175-1677-1-git-send-email-shengjiu.wang@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Audio Clock Mux (ACM) is a collection of control registers
-and multiplexers that are used to route the audio source clocks
-to the audio peripherals on i.MX8QXP, i.MX8QM, i.MX8DXL
+Audio Clock Mux is the IP for i.MX8QXP, i.MX8QM, and
+i.MX8XL platform, Add the clockid for them.
 
-Shengjiu Wang (3):
-  dt-bindings: clock: imx8-acm: Add audio clock mux support
-  clk: imx8: Add audio clock mux related clock
-  clk: imx: imx8: add audio clock mux driver
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ include/dt-bindings/clock/imx8-clock.h | 28 ++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
- .../devicetree/bindings/clock/imx8-acm.yaml   |  71 +++
- drivers/clk/imx/Makefile                      |   2 +-
- drivers/clk/imx/clk-imx8-acm.c                | 477 ++++++++++++++++++
- include/dt-bindings/clock/imx8-clock.h        |  28 +
- 4 files changed, 577 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8-acm.yaml
- create mode 100644 drivers/clk/imx/clk-imx8-acm.c
-
+diff --git a/include/dt-bindings/clock/imx8-clock.h b/include/dt-bindings/clock/imx8-clock.h
+index 2e60ce4d2622..2242ff54fc5e 100644
+--- a/include/dt-bindings/clock/imx8-clock.h
++++ b/include/dt-bindings/clock/imx8-clock.h
+@@ -164,4 +164,32 @@
+ 
+ #define IMX_ADMA_LPCG_CLK_END				45
+ 
++#define IMX_ADMA_ACM_AUD_CLK0_SEL			0
++#define IMX_ADMA_ACM_AUD_CLK1_SEL			1
++#define IMX_ADMA_ACM_MCLKOUT0_SEL			2
++#define IMX_ADMA_ACM_MCLKOUT1_SEL			3
++#define IMX_ADMA_ACM_ESAI0_MCLK_SEL			4
++#define IMX_ADMA_ACM_ESAI1_MCLK_SEL			5
++#define IMX_ADMA_ACM_GPT0_MUX_CLK_SEL			6
++#define IMX_ADMA_ACM_GPT1_MUX_CLK_SEL			7
++#define IMX_ADMA_ACM_GPT2_MUX_CLK_SEL			8
++#define IMX_ADMA_ACM_GPT3_MUX_CLK_SEL			9
++#define IMX_ADMA_ACM_GPT4_MUX_CLK_SEL			10
++#define IMX_ADMA_ACM_GPT5_MUX_CLK_SEL			11
++#define IMX_ADMA_ACM_SAI0_MCLK_SEL			12
++#define IMX_ADMA_ACM_SAI1_MCLK_SEL			13
++#define IMX_ADMA_ACM_SAI2_MCLK_SEL			14
++#define IMX_ADMA_ACM_SAI3_MCLK_SEL			15
++#define IMX_ADMA_ACM_SAI4_MCLK_SEL			16
++#define IMX_ADMA_ACM_SAI5_MCLK_SEL			17
++#define IMX_ADMA_ACM_SAI6_MCLK_SEL			18
++#define IMX_ADMA_ACM_SAI7_MCLK_SEL			19
++#define IMX_ADMA_ACM_SPDIF0_TX_CLK_SEL			20
++#define IMX_ADMA_ACM_SPDIF1_TX_CLK_SEL			21
++#define IMX_ADMA_ACM_MQS_TX_CLK_SEL			22
++#define IMX_ADMA_ACM_ASRC0_MUX_CLK_SEL			23
++#define IMX_ADMA_ACM_ASRC1_MUX_CLK_SEL			24
++
++#define IMX_ADMA_ACM_CLK_END				25
++
+ #endif /* __DT_BINDINGS_CLOCK_IMX_H */
 -- 
 2.34.1
 
