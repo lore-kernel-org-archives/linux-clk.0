@@ -2,135 +2,204 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA390EB64DA
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 08:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 985B9EB64DD
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 11:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231748AbjGDIcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jul 2023 04:32:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50288 "EHLO
+        id S231293AbjGDL4M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jul 2023 07:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbjGDIbf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 04:31:35 -0400
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C3FDC;
-        Tue,  4 Jul 2023 01:31:31 -0700 (PDT)
-X-GND-Sasl: miquel.raynal@bootlin.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1688459489;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=C/2nxspQ98fwNJAu0SjHz3G4mz9iwCTkXgxHl1xUEiQ=;
-        b=l7RebWX60EbI/s4YPsMUh6Ly4U5Tigled8rWGTkd2NfIhz5Smw5HXzAVucxqs8LK4H3BJS
-        7hj2xaPPyqT0qySLVr0wgcerksXJLZuBMcrmjp+Df/17szZzo/x0sEfv6c42QHaYlhR62w
-        nV0QPdDsJZ7IwJu2RHHX5mc85kislZlYZKl3nV4rEHljBvnK4lgGhX1g8YE0earPmi5/cH
-        +xO3wUf5ilERm8EIrj81OVSbuq6MT2KXap0C+AfbQNKnyB5p1z8swNoSDXR/9/gekBwpJH
-        kzjZMaN/ShOEzVuRKDThZ8+yzkSt5rRzbt5LDU/iWzgA0hqm20gPkJGj5AKZ9g==
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-X-GND-Sasl: miquel.raynal@bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1682C60013;
-        Tue,  4 Jul 2023 08:30:27 +0000 (UTC)
-Date:   Tue, 4 Jul 2023 10:30:26 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S230262AbjGDL4M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 07:56:12 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBEC6E73
+        for <linux-clk@vger.kernel.org>; Tue,  4 Jul 2023 04:56:09 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b6f9edac8dso6374261fa.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Jul 2023 04:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688471768; x=1691063768;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0uWXTtzRor2oUBjLKY36+LrPcrmYgFnt2f4Nhe+LjrM=;
+        b=q7aZvds8czfjlapaHMKIwdPQCwgFWt1IKtjiUHAQPoEjrGHy+mK1M/cJw/cffU0Ex/
+         51J6HJx6cJ6xHxLcXgP4CEfDjmP3DANYxa+CzP1Zb1W3OuA9jgZeOZiVfy1BC4mvsTEs
+         fP0q0VwS+0tKoLbpv8nSSpG1NqhDBnUQxke7uL13g5hg6PTLeeV/TeSezakNs81C/qS8
+         9RQCAwiEsWUwVX2O3EOCXFYfxFnrzRCs/X9Fkb51c/M5OtXEJfDJDHNWMrUEFd771CGX
+         9MJ7CcWyA9A67FuJ5FnAlAoqY9KC8JtcjLvMLUEq+rNwvYFYFZCE55nOZUod6tRWZkzC
+         jHMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688471768; x=1691063768;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0uWXTtzRor2oUBjLKY36+LrPcrmYgFnt2f4Nhe+LjrM=;
+        b=SoEE+cnJiu3wpe3GeUaDTpx4jRPmVM7YUbMmvU6ErA/eDrkq8q2ONo/lIEEBdaQgT1
+         ShZxHA0gePNg5m5aQFDRedmaBj6kO2gtNpO6gkkJXw7UEFueQfWibQDIuEGPMO8v1HpN
+         GtmmMaafsa+ALLdXnSYUqzfAqshwPHyOWR4h3PfFOll9fIpCUV6EluZyMtQm+7eMDUHJ
+         uL7rgGL85TddU0DQCjQ5/nPJKsnzeSR4hGU+RZoIam6dm0U9u4+grwPH7pVAXPq/XpKP
+         zOmKkc/79X5tcjeHOMVQjFMV5LoXdK+h9gGWs0ozHjMuTAWi5kaeVF4p6ZIFxDwg7h/T
+         4RWQ==
+X-Gm-Message-State: ABy/qLZ2BlhfrwoFnv9EA5M6To54nf3M8r/OVRsRkK9laa+X9wOBtV0R
+        Kk5cUcVxTovQpYz6a9x3sl1Shw==
+X-Google-Smtp-Source: APBJJlGw8dBuq5cZbx3NDZwnsFkt0mCIHTN1XIVUiZPCMEUC2O08bCKCyfsRQziZZTLyrzxRi7IvbA==
+X-Received: by 2002:a2e:87cb:0:b0:2b6:e7b7:74b3 with SMTP id v11-20020a2e87cb000000b002b6e7b774b3mr4344677ljj.27.1688471767931;
+        Tue, 04 Jul 2023 04:56:07 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id f6-20020a2e3806000000b00295a96a0f6csm5568146lja.102.2023.07.04.04.56.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Jul 2023 04:56:07 -0700 (PDT)
+Message-ID: <801e16d1-7c41-dd80-3ed5-7e3e1b578d06@linaro.org>
+Date:   Tue, 4 Jul 2023 14:56:06 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 2/2] clk: qcom: videocc-sm8350: Add SC8280XP support
+Content-Language: en-GB
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH v2 06/15] dt-bindings: mtd: oxnas-nand: remove obsolete
- bindings
-Message-ID: <20230704103026.6db56915@xps-13>
-In-Reply-To: <20230630-topic-oxnas-upstream-remove-v2-6-fb6ab3dea87c@linaro.org>
-References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
-        <20230630-topic-oxnas-upstream-remove-v2-6-fb6ab3dea87c@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230703-topic-8280_videocc-v1-0-8959d4d0a93e@linaro.org>
+ <20230703-topic-8280_videocc-v1-2-8959d4d0a93e@linaro.org>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230703-topic-8280_videocc-v1-2-8959d4d0a93e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Neil,
+On 03/07/2023 21:09, Konrad Dybcio wrote:
+> SC8280XP, being a partial derivative of SM8350, shares almost the exact
+> same videocc block. Extend the 8350 driver to support the bigger brother.
+> 
+> The only notable changes are higher possible frequencies on some clocks
+> and some switcheroo within the XO/sleep registers (probably due to some
+> different board crystal configuration).
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-neil.armstrong@linaro.org wrote on Fri, 30 Jun 2023 18:58:31 +0200:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-> Due to lack of maintenance and stall of development for a few years now,
-> and since no new features will ever be added upstream, remove the
-> for OX810 and OX820 nand bindings.
->=20
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Daniel Golle <daniel@makrotopia.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+Minor nits below
 
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>   drivers/clk/qcom/videocc-sm8350.c | 42 ++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 41 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc-sm8350.c
+> index b148877fc73d..581ad4440615 100644
+> --- a/drivers/clk/qcom/videocc-sm8350.c
+> +++ b/drivers/clk/qcom/videocc-sm8350.c
+> @@ -41,6 +41,10 @@ static const struct pll_vco lucid_5lpe_vco[] = {
+>   	{ 249600000, 1750000000, 0 },
+>   };
+>   
+> +static const struct pll_vco lucid_5lpe_vco_8280[] = {
 
-I assume these two mtd related patches will be picked-up through the
-soc tree as well, if that's not the case just ping me and I'll take
-them.
+Nit: _sc8280xp?
 
-Thanks,
-Miqu=C3=A8l
+> +	{ 249600000, 1800000000, 0 },
+> +};
+> +
+>   static const struct alpha_pll_config video_pll0_config = {
+>   	.l = 0x25,
+>   	.alpha = 0x8000,
+> @@ -159,6 +163,16 @@ static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
+>   	{ }
+>   };
+>   
+> +static const struct freq_tbl ftbl_video_cc_mvs0_clk_src_8280[] = {
+
+And same here
+
+> +	F(720000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
+> +	F(1014000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
+> +	F(1098000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
+> +	F(1332000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
+> +	F(1599000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
+> +	F(1680000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
+> +	{ }
+> +};
+> +
+>   static struct clk_rcg2 video_cc_mvs0_clk_src = {
+>   	.cmd_rcgr = 0xb94,
+>   	.mnd_width = 0,
+> @@ -181,6 +195,15 @@ static const struct freq_tbl ftbl_video_cc_mvs1_clk_src[] = {
+>   	{ }
+>   };
+>   
+> +static const struct freq_tbl ftbl_video_cc_mvs1_clk_src_8280[] = {
+> +	F(840000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
+> +	F(1098000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
+> +	F(1332000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
+> +	F(1600000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
+> +	F(1800000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
+> +	{ }
+> +};
+> +
+>   static struct clk_rcg2 video_cc_mvs1_clk_src = {
+>   	.cmd_rcgr = 0xbb4,
+>   	.mnd_width = 0,
+> @@ -499,6 +522,7 @@ static struct qcom_cc_desc video_cc_sm8350_desc = {
+>   
+>   static int video_cc_sm8350_probe(struct platform_device *pdev)
+>   {
+> +	u32 video_cc_xo_clk_cbcr = 0xeec;
+>   	struct regmap *regmap;
+>   	int ret;
+>   
+> @@ -510,6 +534,21 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		return ret;
+>   
+> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sc8280xp-videocc")) {
+> +		video_cc_sleep_clk_src.cmd_rcgr = 0xf38;
+> +		video_cc_sleep_clk.halt_reg = 0xf58;
+> +		video_cc_sleep_clk.clkr.enable_reg = 0xf58;
+> +		video_cc_xo_clk_src.cmd_rcgr = 0xf14;
+> +		video_cc_xo_clk_cbcr = 0xf34;
+> +
+> +		video_pll0.vco_table = video_pll1.vco_table = lucid_5lpe_vco_8280;
+> +		/* No change, but assign it for completeness */
+> +		video_pll0.num_vco = video_pll1.num_vco = ARRAY_SIZE(lucid_5lpe_vco_8280);
+> +
+> +		video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_8280;
+> +		video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_8280;
+> +	}
+> +
+>   	regmap = qcom_cc_map(pdev, &video_cc_sm8350_desc);
+>   	if (IS_ERR(regmap)) {
+>   		pm_runtime_put(&pdev->dev);
+> @@ -525,7 +564,7 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
+>   	 *      video_cc_xo_clk
+>   	 */
+>   	regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
+> -	regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, video_cc_xo_clk_cbcr, BIT(0), BIT(0));
+>   
+>   	ret = qcom_cc_really_probe(pdev, &video_cc_sm8350_desc, regmap);
+>   	pm_runtime_put(&pdev->dev);
+> @@ -534,6 +573,7 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
+>   }
+>   
+>   static const struct of_device_id video_cc_sm8350_match_table[] = {
+> +	{ .compatible = "qcom,sc8280xp-videocc" },
+>   	{ .compatible = "qcom,sm8350-videocc" },
+>   	{ }
+>   };
+> 
+
+-- 
+With best wishes
+Dmitry
+
