@@ -2,136 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5688EB64D9
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 12:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459D2EB64D9
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 13:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230238AbjGDMud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jul 2023 08:50:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54168 "EHLO
+        id S229662AbjGDNEg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jul 2023 09:04:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbjGDMua (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 08:50:30 -0400
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 056EDB1
-        for <linux-clk@vger.kernel.org>; Tue,  4 Jul 2023 05:50:25 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3112f5ab0b1so6200978f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 04 Jul 2023 05:50:24 -0700 (PDT)
+        with ESMTP id S231340AbjGDNET (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 09:04:19 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64E32199A
+        for <linux-clk@vger.kernel.org>; Tue,  4 Jul 2023 06:03:51 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fba8f2197bso5615218e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Jul 2023 06:03:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688475023; x=1691067023;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=khN7qL20jiNV+2YUoL2VVrDQ7HuxSVd+7myuCssgPgE=;
-        b=lhpZ5J9XdadmPSr1QR/AG8UcCx6nsBh7S96ptZWO01NVbdAD32ga6ND/rHGK/0nLeG
-         OcILfAAZH2QGjuXC0E1sxnz8ySI0riahZV4a/8Vh0qOFuPLDeYuLhNivNpQ42YBQZpR1
-         n52OFNS0gHnHJ4ORnADm7dkH4XGhkKGL6bdV3HcGb/JLkgwlITETOv6im3jy+/aeghKo
-         SoRqplSJRCRJRm91vnJY56FDVLzwhoIazir8wpfpbMjF7lfBWguiZ9/WFTsJGIwwwgsO
-         /SRYchDhQsYGOB5Pi+dm1/EQ35yHwT5u3gaFUFxuzSwiOobh/h9Vc1OIagL99AHBAmRV
-         s8SA==
+        d=linaro.org; s=google; t=1688475829; x=1691067829;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mqNFEYbfaetiBaaCCq5dlakPJ6xMPu9fuyjq6ckqKKI=;
+        b=hcWyPQJ0Scl6T5c9hS3B0rqtUiBam2Y7usGDUzf4ClQ4w6B/M+6MqkIWISX7OogugX
+         G/jc/k7X1HV72yHe3qM7MadmKRrQIQ6X7EPqmoqY7PW//UZV83JLqUt00rrL4fP6NL0E
+         KpSjPiPapK9MPceps9hH8zF9TOLKHA4NpGcSh8brnm2EGpb0vQCpWKPX9uJkoDv3mbrc
+         Rn3AGofTA5NuZttoAuClwy4n/zypIcNZ6w1UWVnk9k4mTPFiF4B786MIdRNqFJ83zQLn
+         FSaMKddJc52zTuArIa0cKKQcVfqjTmUdJPpk4642oUtjY4vnuqH5MHUiRAHc77vohDOG
+         hWkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688475023; x=1691067023;
-        h=content-transfer-encoding:in-reply-to:organization:references:cc:to
-         :content-language:subject:reply-to:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=khN7qL20jiNV+2YUoL2VVrDQ7HuxSVd+7myuCssgPgE=;
-        b=ImbbtXSMmhVJlbnIeTzB1hRhQUwTnHK6L48DuVdmcKxwnp5JATv+xUT3cxuaLIRW4u
-         ANlJoTjyEv2TFOhW39oAp2AJwhZM+QvE3XRvuyHOVIDvyeTG3n3psvPDW6WgnTSBpXiV
-         EpbAg23OcW6wGnybGHrKwG0Um7ak5nSe/ghYanelvSCKMbokYgGXU45ScwSzkpwq07T/
-         3yhWKbsMj3Rx+q212ohoEtBlHpBPZIeoepUdsFTt/zfCzAbu/zdQt1ti1xMY/eGvjskU
-         IQHE5lKWYto6X3fsZeWBoKgNOTJYLDYej0sjPlQUywEHPV/PuIjLnQL3nGOwa0xrpKmV
-         TBpQ==
-X-Gm-Message-State: ABy/qLacMatnYFvnsEMOKab3+w0krZ2qxK+ovZNfk0oAgyL5m08IH+oq
-        hpqJMwYt20/V9VGO5i1uxjEYPw==
-X-Google-Smtp-Source: APBJJlGYnTg9Odl6AdblWp67O67QkMbjypzSdthrdvhcA+ODLfuCZz/bh+UKd6Sl1gTFpqUPb6nUyw==
-X-Received: by 2002:a5d:4203:0:b0:313:f395:f5a3 with SMTP id n3-20020a5d4203000000b00313f395f5a3mr9492911wrq.38.1688475023459;
-        Tue, 04 Jul 2023 05:50:23 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:106:cd85:84ae:7b? ([2a01:e0a:982:cbb0:106:cd85:84ae:7b])
-        by smtp.gmail.com with ESMTPSA id g5-20020adff405000000b003143cb109d5sm2634842wro.14.2023.07.04.05.50.21
+        d=1e100.net; s=20221208; t=1688475829; x=1691067829;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mqNFEYbfaetiBaaCCq5dlakPJ6xMPu9fuyjq6ckqKKI=;
+        b=G5Z3TQTkJCZ7xrCc4W/2xfNreWzdAQosNOBX4ChQInX88EmyxjoyXz84112WF21xIZ
+         c4+ukSStNnwrs+o7ILYDWuyHmes+C9zjz+ncxBEDpYcSmmDApcwKw/tt3VMHAWrinwff
+         LtwO0wq3bLzq8cXwr0/P0F0h0+hfvaCZN4xd0lGjGp4Mb5hb+RAYl0hmeciP6JV0e/re
+         v2RuE5JzMTQRxlmLPjokgm5tpNDM9vkP75FHJ7BNOwIjDcc9aVq8IJqBjtSAsdFC+d8+
+         DlSWLaaXfgoKX0LoZjW/IMK/zAeRvx8SwXw9lpVptcLnjQKzemAyGD0fqNzx0A9ABlGK
+         74Vw==
+X-Gm-Message-State: ABy/qLYSs+34R3Q/P/wEC6MGW62lZxoMhhFiq06dyQhMY6JSsvwqsemZ
+        ZaqrsFDzKirbRxJOYmt/wyuXJw==
+X-Google-Smtp-Source: APBJJlGmV/GZ2Ck0zw2BnJTKC08EED8fq31PqMjpTN0JsiZC+ceHVBFuI3LhL1kcgRR62d6BniwVlQ==
+X-Received: by 2002:a05:6512:3b8b:b0:4fb:774f:9a84 with SMTP id g11-20020a0565123b8b00b004fb774f9a84mr10863098lfv.13.1688475828935;
+        Tue, 04 Jul 2023 06:03:48 -0700 (PDT)
+Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
+        by smtp.gmail.com with ESMTPSA id j12-20020a19f50c000000b004fbbd81856asm341134lfb.143.2023.07.04.06.03.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jul 2023 05:50:23 -0700 (PDT)
-Message-ID: <12266deb-4602-c557-fd80-689765fbf302@linaro.org>
-Date:   Tue, 4 Jul 2023 14:50:20 +0200
+        Tue, 04 Jul 2023 06:03:48 -0700 (PDT)
+Message-ID: <971262d5-98b3-c48e-89fd-ce107275008a@linaro.org>
+Date:   Tue, 4 Jul 2023 15:03:46 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 06/15] dt-bindings: mtd: oxnas-nand: remove obsolete
- bindings
+Subject: Re: [RFC PATCH 4/8] ARM: dts: qcom: msm8960-cdp: constraint cpufreq
+ regulators
 Content-Language: en-US
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Golle <daniel@makrotopia.org>
-References: <20230630-topic-oxnas-upstream-remove-v2-0-fb6ab3dea87c@linaro.org>
- <20230630-topic-oxnas-upstream-remove-v2-6-fb6ab3dea87c@linaro.org>
- <20230704103026.6db56915@xps-13>
-Organization: Linaro Developer Services
-In-Reply-To: <20230704103026.6db56915@xps-13>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230702175045.122041-1-dmitry.baryshkov@linaro.org>
+ <20230702175045.122041-5-dmitry.baryshkov@linaro.org>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230702175045.122041-5-dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Miquel,
-
-On 04/07/2023 10:30, Miquel Raynal wrote:
-> Hi Neil,
+On 2.07.2023 19:50, Dmitry Baryshkov wrote:
+> Add additional constraints to the CPUfreq-related regulators, it is
+> better be safe than sorry there.
 > 
-> neil.armstrong@linaro.org wrote on Fri, 30 Jun 2023 18:58:31 +0200:
-> 
->> Due to lack of maintenance and stall of development for a few years now,
->> and since no new features will ever be added upstream, remove the
->> for OX810 and OX820 nand bindings.
->>
->> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Acked-by: Linus Walleij <linus.walleij@linaro.org>
->> Acked-by: Arnd Bergmann <arnd@arndb.de>
->> Acked-by: Daniel Golle <daniel@makrotopia.org>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> 
-> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> 
-> I assume these two mtd related patches will be picked-up through the
-> soc tree as well, if that's not the case just ping me and I'll take
-> them.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+I'm squinting quite hard at
 
-As of today, there's no strong plan, so maintainers can pick their patches
-and I'll probably funnel the remaining ones via a final SoC PR.
+https://github.com/LineageOS/sony-kernel-msm8960/blob/jb-dev/arch/arm/mach-msm/acpuclock-8960.c
 
-Thanks,
-Neil
+but I can't figure out where these min values came from
 
+Konrad
+>  arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Thanks,
-> Miquèl
-
+> diff --git a/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts b/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts
+> index 414881d34c60..cba0d1e460a1 100644
+> --- a/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts
+> +++ b/arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts
+> @@ -131,7 +131,7 @@ pm8921_s2: s2 {
+>  		};
+>  
+>  		pm8921_s3: s3 {
+> -			regulator-min-microvolt = <500000>;
+> +			regulator-min-microvolt = <950000>;
+>  			regulator-max-microvolt = <1150000>;
+>  			qcom,switch-mode-frequency = <4800000>;
+>  			bias-pull-down;
+> @@ -287,7 +287,7 @@ pm8921_l23: l23 {
+>  		};
+>  
+>  		pm8921_l24: l24 {
+> -			regulator-min-microvolt = <750000>;
+> +			regulator-min-microvolt = <1050000>;
+>  			regulator-max-microvolt = <1150000>;
+>  			bias-pull-down;
+>  		};
