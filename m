@@ -2,30 +2,30 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BA1EB64DD
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 02:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186D4EB64DC
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 02:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229897AbjGDCCq convert rfc822-to-8bit (ORCPT
+        id S231344AbjGDCCz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Jul 2023 22:02:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52192 "EHLO
+        Mon, 3 Jul 2023 22:02:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbjGDCCq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 22:02:46 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95AB0E64;
-        Mon,  3 Jul 2023 19:02:44 -0700 (PDT)
+        with ESMTP id S229896AbjGDCCx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Jul 2023 22:02:53 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81B4AE72;
+        Mon,  3 Jul 2023 19:02:48 -0700 (PDT)
 Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 5591024E26B;
-        Tue,  4 Jul 2023 10:02:43 +0800 (CST)
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 7C93480B6;
+        Tue,  4 Jul 2023 10:02:41 +0800 (CST)
 Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
  (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 4 Jul
- 2023 10:02:43 +0800
+ 2023 10:02:41 +0800
 Received: from localhost.localdomain (113.72.144.31) by EXMBX061.cuchost.com
  (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 4 Jul
- 2023 10:02:42 +0800
+ 2023 10:02:40 +0800
 From:   Xingyu Wu <xingyu.wu@starfivetech.com>
 To:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
         "Michael Turquette" <mturquette@baylibre.com>,
@@ -42,12 +42,10 @@ CC:     Paul Walmsley <paul.walmsley@sifive.com>,
         Xingyu Wu <xingyu.wu@starfivetech.com>,
         "William Qiu" <william.qiu@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v6 2/7] dt-bindings: soc: starfive: Add StarFive syscon module
-Date:   Tue, 4 Jul 2023 10:02:34 +0800
-Message-ID: <20230704020239.288500-3-xingyu.wu@starfivetech.com>
+Subject: [PATCH v6 0/7] Add PLL clocks driver and syscon for StarFive JH7110 SoC
+Date:   Tue, 4 Jul 2023 10:02:32 +0800
+Message-ID: <20230704020239.288500-1-xingyu.wu@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230704020239.288500-1-xingyu.wu@starfivetech.com>
-References: <20230704020239.288500-1-xingyu.wu@starfivetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [113.72.144.31]
@@ -59,143 +57,98 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: William Qiu <william.qiu@starfivetech.com>
+This patch serises are to add PLL clocks driver and providers by writing
+and reading syscon registers for the StarFive JH7110 RISC-V SoC. And add 
+documentation and nodes to describe StarFive System Controller(syscon)
+Registers. This patch serises are based on Linux 6.4.
 
-Add documentation to describe StarFive System Controller Registers.
+PLLs are high speed, low jitter frequency synthesizers in JH7110.
+Each PLL clock works in integer mode or fraction mode by some dividers,
+and the dividers are set in several syscon registers.
+The formula for calculating frequency is: 
+Fvco = Fref * (NI + NF) / M / Q1
 
-Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-Signed-off-by: William Qiu <william.qiu@starfivetech.com>
----
- .../soc/starfive/starfive,jh7110-syscon.yaml  | 93 +++++++++++++++++++
- MAINTAINERS                                   |  7 ++
- 2 files changed, 100 insertions(+)
+The first patch adds docunmentation to describe PLL clock bindings,
+and the second patch adds documentation to decribe syscon registers.
+The patch 3 modifies the SYSCRG dibindings and adds PLL clock inputs.
+The patch 4 adds driver to support PLL clocks for JH7110.
+The patch 5 modifies the system clock driver and can select the PLL clock
+source from PLL clocks driver. And the patch 6 adds the 
+stg/sys/aon syscon nodes for JH7110 SoC. The last patch modifies the 
+syscrg node in JH7110 dts file.
+
+Changes since v5: 
+- Rebased on Linux 6.4.
+- Patch 1 fixed some grammatical mistake.
+- Patch 2 added the selection about properties from different syscon
+  modules and madethe example completed.
+- Patch 3 dropped the 'optional' PLL clocks.
+
+v5: https://lore.kernel.org/all/20230613125852.211636-1-xingyu.wu@starfivetech.com/
+
+Changes since v4: 
+- Rebased on Linux 6.4-rc6.
+- Patch 2 dropped the example node about sys-syscon.
+- Patch 3 used PLL clocks as one of optional items in SYSCRG bindings.
+- Patch 4 used the patch instead about PLL clocks driver from Emil.
+- Patch 5 retained the fixed factor PLL clocks as the optional source
+  about PLL clocks in SYSCRG clock driver.
+- Patch 6 added the child node clock-controller as the complete
+  sys-syscon node and patch 7 dropped this part.
+
+v4: https://lore.kernel.org/all/20230512022036.97987-1-xingyu.wu@starfivetech.com/
+
+Changes since v3: 
+- Rebased on Linux 6.4-rc1.
+- Dropped the 'power-controller' property and used 'power-domain-cells'
+  instead in syscon binding.
+- Used the data by of_device_id to get the syscon registers'
+  configuration include offset, mask and shift.
+
+v3: https://lore.kernel.org/all/20230414024157.53203-1-xingyu.wu@starfivetech.com/
+
+Changes since v2: 
+- Rebased on latest JH7110 basic clock drivers.
+- Added the complete documentation to describe syscon register.
+- Added syscon node in JH7110 dts file.
+- Modified the clock rate selection to match the closest rate in
+  PLL driver when setting rate.
+
+v2: https://lore.kernel.org/all/20230316030514.137427-1-xingyu.wu@starfivetech.com/
+
+Changes since v1:
+- Changed PLL clock node to be child of syscon node in dts.
+- Modifed the definitions and names of function in PLL clock driver.
+- Added commit to update syscon and syscrg dt-bindings.
+
+v1: https://lore.kernel.org/all/20230221141147.303642-1-xingyu.wu@starfivetech.com/
+
+William Qiu (2):
+  dt-bindings: soc: starfive: Add StarFive syscon module
+  riscv: dts: starfive: jh7110: Add syscon nodes
+
+Xingyu Wu (5):
+  dt-bindings: clock: Add StarFive JH7110 PLL clock generator
+  dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
+  clk: starfive: Add StarFive JH7110 PLL clock driver
+  clk: starfive: jh7110-sys: Add PLL clocks source from DTS
+  riscv: dts: starfive: jh7110: Add PLL clocks source in SYSCRG node
+
+ .../bindings/clock/starfive,jh7110-pll.yaml   |  46 ++
+ .../clock/starfive,jh7110-syscrg.yaml         |  18 +-
+ .../soc/starfive/starfive,jh7110-syscon.yaml  |  93 ++++
+ MAINTAINERS                                   |  13 +
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      |  30 +-
+ drivers/clk/starfive/Kconfig                  |   9 +
+ drivers/clk/starfive/Makefile                 |   1 +
+ .../clk/starfive/clk-starfive-jh7110-pll.c    | 507 ++++++++++++++++++
+ .../clk/starfive/clk-starfive-jh7110-sys.c    |  45 +-
+ .../dt-bindings/clock/starfive,jh7110-crg.h   |   6 +
+ 10 files changed, 746 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.c
 
-diff --git a/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-new file mode 100644
-index 000000000000..b30383eab32c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-@@ -0,0 +1,93 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/starfive/starfive,jh7110-syscon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: StarFive JH7110 SoC system controller
-+
-+maintainers:
-+  - William Qiu <william.qiu@starfivetech.com>
-+
-+description:
-+  The StarFive JH7110 SoC system controller provides register information such
-+  as offset, mask and shift to configure related modules such as MMC and PCIe.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: starfive,jh7110-sys-syscon
-+          - const: syscon
-+          - const: simple-mfd
-+      - items:
-+          - enum:
-+              - starfive,jh7110-aon-syscon
-+              - starfive,jh7110-stg-syscon
-+          - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  clock-controller:
-+    $ref: /schemas/clock/starfive,jh7110-pll.yaml#
-+    type: object
-+
-+  "#power-domain-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: starfive,jh7110-sys-syscon
-+    then:
-+      required:
-+        - clock-controller
-+    else:
-+      properties:
-+        clock-controller: false
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: starfive,jh7110-aon-syscon
-+    then:
-+      required:
-+        - "#power-domain-cells"
-+    else:
-+      properties:
-+        "#power-domain-cells": false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    syscon@10240000 {
-+        compatible = "starfive,jh7110-stg-syscon", "syscon";
-+        reg = <0x10240000 0x1000>;
-+    };
-+
-+    syscon@13030000 {
-+        compatible = "starfive,jh7110-sys-syscon", "syscon", "simple-mfd";
-+        reg = <0x0 0x13030000 0x0 0x1000>;
-+
-+        clock-controller {
-+            compatible = "starfive,jh7110-pll";
-+            clocks = <&osc>;
-+            #clock-cells = <1>;
-+        };
-+    };
-+
-+    syscon@17010000 {
-+        compatible = "starfive,jh7110-aon-syscon", "syscon";
-+        reg = <0x0 0x17010000 0x0 0x1000>;
-+        #power-domain-cells = <1>;
-+    };
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 35e19594640d..58ba04bd0bc8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20127,6 +20127,12 @@ S:	Supported
- F:	Documentation/devicetree/bindings/mmc/starfive*
- F:	drivers/mmc/host/dw_mmc-starfive.c
- 
-+STARFIVE JH7110 SYSCON
-+M:	William Qiu <william.qiu@starfivetech.com>
-+M:	Xingyu Wu <xingyu.wu@starfivetech.com>
-+S:	Supported
-+F:	Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
-+
- STARFIVE JH71X0 CLOCK DRIVERS
- M:	Emil Renner Berthing <kernel@esmil.dk>
- M:	Hal Feng <hal.feng@starfivetech.com>
-@@ -20164,6 +20170,7 @@ STARFIVE SOC DRIVERS
- M:	Conor Dooley <conor@kernel.org>
- S:	Maintained
- T:	git https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/
-+F:	Documentation/devicetree/bindings/soc/starfive/
- F:	drivers/soc/starfive/
- 
- STARFIVE TRNG DRIVER
 -- 
 2.25.1
 
