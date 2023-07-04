@@ -2,204 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 985B9EB64DD
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 11:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA03EB64DA
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 12:33:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbjGDL4M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jul 2023 07:56:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51532 "EHLO
+        id S231494AbjGDMdU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jul 2023 08:33:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230262AbjGDL4M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 07:56:12 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBEC6E73
-        for <linux-clk@vger.kernel.org>; Tue,  4 Jul 2023 04:56:09 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b6f9edac8dso6374261fa.3
-        for <linux-clk@vger.kernel.org>; Tue, 04 Jul 2023 04:56:09 -0700 (PDT)
+        with ESMTP id S231916AbjGDMdK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 08:33:10 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B98E610C1
+        for <linux-clk@vger.kernel.org>; Tue,  4 Jul 2023 05:33:08 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id 2adb3069b0e04-4fbbfaacfc1so346704e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 04 Jul 2023 05:33:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688471768; x=1691063768;
+        d=linaro.org; s=google; t=1688473987; x=1691065987;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0uWXTtzRor2oUBjLKY36+LrPcrmYgFnt2f4Nhe+LjrM=;
-        b=q7aZvds8czfjlapaHMKIwdPQCwgFWt1IKtjiUHAQPoEjrGHy+mK1M/cJw/cffU0Ex/
-         51J6HJx6cJ6xHxLcXgP4CEfDjmP3DANYxa+CzP1Zb1W3OuA9jgZeOZiVfy1BC4mvsTEs
-         fP0q0VwS+0tKoLbpv8nSSpG1NqhDBnUQxke7uL13g5hg6PTLeeV/TeSezakNs81C/qS8
-         9RQCAwiEsWUwVX2O3EOCXFYfxFnrzRCs/X9Fkb51c/M5OtXEJfDJDHNWMrUEFd771CGX
-         9MJ7CcWyA9A67FuJ5FnAlAoqY9KC8JtcjLvMLUEq+rNwvYFYFZCE55nOZUod6tRWZkzC
-         jHMQ==
+        bh=JzgQQIKNDoBtiJAoujjApNzPmxlwUw+BR/55LC+iVio=;
+        b=CfEh/KBX/LDElugpqwu2sDiT5kzXeo1eUeTMkkVqIJI2SqJcdnjVe2vPA2dqVHS1To
+         /DvB2YRM9V3P7Wch1cEt6adXxVs7BbjGuxZ/Vhq0SLNNWwyq4OPGy+biCdIp3o2brOyo
+         +875WKhU9m/NCiMugZ8F4R84ttG3MSGh4kOeMs+jZRbLoGVYQUh10a/jZqZ4jvHnT92f
+         XaKepWIKwo/gHccmOsMfF2VjUwXlbOtmaelEDM7XXjHvrcvLki6YRaV4K1EGdAg69d9V
+         PdlIrairKLZ2UQLKC1Ir5xWwHix969JD4ISXs3esm7Co8feRDKjFLuBsq1cPMfpDdeQ5
+         G0Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688471768; x=1691063768;
+        d=1e100.net; s=20221208; t=1688473987; x=1691065987;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0uWXTtzRor2oUBjLKY36+LrPcrmYgFnt2f4Nhe+LjrM=;
-        b=SoEE+cnJiu3wpe3GeUaDTpx4jRPmVM7YUbMmvU6ErA/eDrkq8q2ONo/lIEEBdaQgT1
-         ShZxHA0gePNg5m5aQFDRedmaBj6kO2gtNpO6gkkJXw7UEFueQfWibQDIuEGPMO8v1HpN
-         GtmmMaafsa+ALLdXnSYUqzfAqshwPHyOWR4h3PfFOll9fIpCUV6EluZyMtQm+7eMDUHJ
-         uL7rgGL85TddU0DQCjQ5/nPJKsnzeSR4hGU+RZoIam6dm0U9u4+grwPH7pVAXPq/XpKP
-         zOmKkc/79X5tcjeHOMVQjFMV5LoXdK+h9gGWs0ozHjMuTAWi5kaeVF4p6ZIFxDwg7h/T
-         4RWQ==
-X-Gm-Message-State: ABy/qLZ2BlhfrwoFnv9EA5M6To54nf3M8r/OVRsRkK9laa+X9wOBtV0R
-        Kk5cUcVxTovQpYz6a9x3sl1Shw==
-X-Google-Smtp-Source: APBJJlGw8dBuq5cZbx3NDZwnsFkt0mCIHTN1XIVUiZPCMEUC2O08bCKCyfsRQziZZTLyrzxRi7IvbA==
-X-Received: by 2002:a2e:87cb:0:b0:2b6:e7b7:74b3 with SMTP id v11-20020a2e87cb000000b002b6e7b774b3mr4344677ljj.27.1688471767931;
-        Tue, 04 Jul 2023 04:56:07 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id f6-20020a2e3806000000b00295a96a0f6csm5568146lja.102.2023.07.04.04.56.07
+        bh=JzgQQIKNDoBtiJAoujjApNzPmxlwUw+BR/55LC+iVio=;
+        b=lrXxjYm/D68N6W/rrv+EN+2b8dopYsTbKDcwvNoQloB5R2h2jX6/ai1C3CFxBZrVfZ
+         /3WGMXXwwVlyo3cgszOOJvBRLsUSzT38x14Pe+DuDWNZw9rfwMJO5VpRFZbWFlrEX5qu
+         gAUiqy5MYGhMvRUMcsgmjDIoxZ7NAHTsmHnhwc7Z+KL5DrXNKbGVFO/aZuxeekqJQ2Dr
+         eZO/Q0ZkigY3k5JZk9SHOGN1eP6b+EQuyAJiKiNEVInyfsm+Nku921Mn6kOvhrwSWwX2
+         U7zNzKiBLr+fzUKkcH+Nk5NnHPwzYBd8FN7abiJyp1aQIW44bZagkIdrBwENWI23TvHf
+         UhqQ==
+X-Gm-Message-State: ABy/qLb89m6pDWFYfEej0ksq2tYeZky5Wur2tSTGrm6zPAlYGuTc82E+
+        9Hpt+Ksa+s2HdtdNJaSeQUqPak6yzGk1/p9cWHNdCQ==
+X-Google-Smtp-Source: APBJJlES1dFuMDEMs90e8mGzZJHQmmY+3FjM1O68m2ZDGiywI0ysXyovZjddRxhtodG9hlyCBhFx7Q==
+X-Received: by 2002:ac2:4ec5:0:b0:4fb:7de4:c837 with SMTP id p5-20020ac24ec5000000b004fb7de4c837mr8424423lfr.68.1688473987006;
+        Tue, 04 Jul 2023 05:33:07 -0700 (PDT)
+Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
+        by smtp.gmail.com with ESMTPSA id r4-20020a19ac44000000b004fba5c20ab1sm2527946lfc.167.2023.07.04.05.33.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jul 2023 04:56:07 -0700 (PDT)
-Message-ID: <801e16d1-7c41-dd80-3ed5-7e3e1b578d06@linaro.org>
-Date:   Tue, 4 Jul 2023 14:56:06 +0300
+        Tue, 04 Jul 2023 05:33:06 -0700 (PDT)
+Message-ID: <05666bf0-07f8-1e3a-22bf-fc779e2b7367@linaro.org>
+Date:   Tue, 4 Jul 2023 14:33:04 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 2/2] clk: qcom: videocc-sm8350: Add SC8280XP support
-Content-Language: en-GB
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230703-topic-8280_videocc-v1-0-8959d4d0a93e@linaro.org>
- <20230703-topic-8280_videocc-v1-2-8959d4d0a93e@linaro.org>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230703-topic-8280_videocc-v1-2-8959d4d0a93e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH V2] PCI: qcom: Use PARF_SLV_ADDR_SPACE_SIZE for ops_2_3_3
+Content-Language: en-US
+To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, mani@kernel.org,
+        lpieralisi@kernel.org, bhelgaas@google.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Cc:     stable@vger.kernel.org
+References: <20230703175757.2425540-1-quic_srichara@quicinc.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20230703175757.2425540-1-quic_srichara@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/07/2023 21:09, Konrad Dybcio wrote:
-> SC8280XP, being a partial derivative of SM8350, shares almost the exact
-> same videocc block. Extend the 8350 driver to support the bigger brother.
+On 3.07.2023 19:57, Sricharan Ramabadhran wrote:
+> PARF_SLV_ADDR_SPACE_SIZE_2_3_3 macro is used for IPQ8074
+> 2_3_3 post_init ops. pcie slave addr size was initially set
+> to 0x358, but was wrongly changed to 0x168 as a part of
+> "PCI: qcom: Remove PCIE20_ prefix from register definitions"
+> Fixing it, by using the right macro PARF_SLV_ADDR_SPACE_SIZE
+> and removing the unused PARF_SLV_ADDR_SPACE_SIZE_2_3_3.
 > 
-> The only notable changes are higher possible frequencies on some clocks
-> and some switcheroo within the XO/sleep registers (probably due to some
-> different board crystal configuration).
+> Without this pcie bring up on IPQ8074 is broken now.
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Minor nits below
-
+> Fixes: 39171b33f652 ("PCI: qcom: Remove PCIE20_ prefix from register definitions")
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 > ---
->   drivers/clk/qcom/videocc-sm8350.c | 42 ++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 41 insertions(+), 1 deletion(-)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
+>  [V2] Fixed the 'fixes tag' correctly, subject, right macro usage
 > 
-> diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc-sm8350.c
-> index b148877fc73d..581ad4440615 100644
-> --- a/drivers/clk/qcom/videocc-sm8350.c
-> +++ b/drivers/clk/qcom/videocc-sm8350.c
-> @@ -41,6 +41,10 @@ static const struct pll_vco lucid_5lpe_vco[] = {
->   	{ 249600000, 1750000000, 0 },
->   };
->   
-> +static const struct pll_vco lucid_5lpe_vco_8280[] = {
-
-Nit: _sc8280xp?
-
-> +	{ 249600000, 1800000000, 0 },
-> +};
-> +
->   static const struct alpha_pll_config video_pll0_config = {
->   	.l = 0x25,
->   	.alpha = 0x8000,
-> @@ -159,6 +163,16 @@ static const struct freq_tbl ftbl_video_cc_mvs0_clk_src[] = {
->   	{ }
->   };
->   
-> +static const struct freq_tbl ftbl_video_cc_mvs0_clk_src_8280[] = {
-
-And same here
-
-> +	F(720000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-> +	F(1014000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-> +	F(1098000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-> +	F(1332000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-> +	F(1599000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-> +	F(1680000000, P_VIDEO_PLL0_OUT_MAIN, 1, 0, 0),
-> +	{ }
-> +};
-> +
->   static struct clk_rcg2 video_cc_mvs0_clk_src = {
->   	.cmd_rcgr = 0xb94,
->   	.mnd_width = 0,
-> @@ -181,6 +195,15 @@ static const struct freq_tbl ftbl_video_cc_mvs1_clk_src[] = {
->   	{ }
->   };
->   
-> +static const struct freq_tbl ftbl_video_cc_mvs1_clk_src_8280[] = {
-> +	F(840000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-> +	F(1098000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-> +	F(1332000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-> +	F(1600000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-> +	F(1800000000, P_VIDEO_PLL1_OUT_MAIN, 1, 0, 0),
-> +	{ }
-> +};
-> +
->   static struct clk_rcg2 video_cc_mvs1_clk_src = {
->   	.cmd_rcgr = 0xbb4,
->   	.mnd_width = 0,
-> @@ -499,6 +522,7 @@ static struct qcom_cc_desc video_cc_sm8350_desc = {
->   
->   static int video_cc_sm8350_probe(struct platform_device *pdev)
->   {
-> +	u32 video_cc_xo_clk_cbcr = 0xeec;
->   	struct regmap *regmap;
->   	int ret;
->   
-> @@ -510,6 +534,21 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
->   	if (ret)
->   		return ret;
->   
-> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sc8280xp-videocc")) {
-> +		video_cc_sleep_clk_src.cmd_rcgr = 0xf38;
-> +		video_cc_sleep_clk.halt_reg = 0xf58;
-> +		video_cc_sleep_clk.clkr.enable_reg = 0xf58;
-> +		video_cc_xo_clk_src.cmd_rcgr = 0xf14;
-> +		video_cc_xo_clk_cbcr = 0xf34;
-> +
-> +		video_pll0.vco_table = video_pll1.vco_table = lucid_5lpe_vco_8280;
-> +		/* No change, but assign it for completeness */
-> +		video_pll0.num_vco = video_pll1.num_vco = ARRAY_SIZE(lucid_5lpe_vco_8280);
-> +
-> +		video_cc_mvs0_clk_src.freq_tbl = ftbl_video_cc_mvs0_clk_src_8280;
-> +		video_cc_mvs1_clk_src.freq_tbl = ftbl_video_cc_mvs1_clk_src_8280;
-> +	}
-> +
->   	regmap = qcom_cc_map(pdev, &video_cc_sm8350_desc);
->   	if (IS_ERR(regmap)) {
->   		pm_runtime_put(&pdev->dev);
-> @@ -525,7 +564,7 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
->   	 *      video_cc_xo_clk
->   	 */
->   	regmap_update_bits(regmap, 0xe58, BIT(0), BIT(0));
-> -	regmap_update_bits(regmap, 0xeec, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, video_cc_xo_clk_cbcr, BIT(0), BIT(0));
->   
->   	ret = qcom_cc_really_probe(pdev, &video_cc_sm8350_desc, regmap);
->   	pm_runtime_put(&pdev->dev);
-> @@ -534,6 +573,7 @@ static int video_cc_sm8350_probe(struct platform_device *pdev)
->   }
->   
->   static const struct of_device_id video_cc_sm8350_match_table[] = {
-> +	{ .compatible = "qcom,sc8280xp-videocc" },
->   	{ .compatible = "qcom,sm8350-videocc" },
->   	{ }
->   };
+>  drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-
--- 
-With best wishes
-Dmitry
-
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 4ab30892f6ef..1689d072fe86 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -43,7 +43,6 @@
+>  #define PARF_PHY_REFCLK				0x4c
+>  #define PARF_CONFIG_BITS			0x50
+>  #define PARF_DBI_BASE_ADDR			0x168
+> -#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x16c /* Register offset specific to IP ver 2.3.3 */
+>  #define PARF_MHI_CLOCK_RESET_CTRL		0x174
+>  #define PARF_AXI_MSTR_WR_ADDR_HALT		0x178
+>  #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+> @@ -811,7 +810,7 @@ static int qcom_pcie_post_init_2_3_3(struct qcom_pcie *pcie)
+>  	u32 val;
+>  
+>  	writel(SLV_ADDR_SPACE_SZ,
+> -		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_2_3_3);
+> +		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+>  
+>  	val = readl(pcie->parf + PARF_PHY_CTRL);
+>  	val &= ~PHY_TEST_PWR_DOWN;
