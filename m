@@ -2,132 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99B2BEB64D9
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Jul 2023 22:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E44EB64DD
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 02:23:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbjGDW3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Jul 2023 18:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43204 "EHLO
+        id S229772AbjGECXr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Jul 2023 22:23:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229603AbjGDW3Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 18:29:24 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A33510DA;
-        Tue,  4 Jul 2023 15:29:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D973613EA;
-        Tue,  4 Jul 2023 22:29:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D3F8C433C7;
-        Tue,  4 Jul 2023 22:29:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688509760;
-        bh=57MH61s73VNxciqBMQn+M7UhO6ugmNcBRA165CCsfzE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TaIiPRGkudpAzaPzGTlHWdc8tgQu4vsgNOvM2PlTufQe/mQQsiwP19Okf5++zEVp/
-         DHzBA/kZz2TDw5fbGo+kpFiroO9DCMdWLg1TlPD4G/v5RmC9D8Z/ONccUd1WmPRDjh
-         i8iuK1MHg171DSTCxJeeUNus/I3WvGGaBZgrE1/mNGUy/fbXA2CaZLuTWcUL+qUwLs
-         Oge47qag2/dtqlbOhYPOGs+mNbNyI5E2V8v5T+2VnVv7810N8lf+PWbqVzKSgveryg
-         IPVzqmZvISD4NEwa/dCAD+05GWUhyfMEXISsW2oEC/y/QAD6k72hVO8OejIeQSxKjR
-         lYeNcfHHbBYtA==
-Date:   Tue, 4 Jul 2023 23:29:15 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [RESEND PATCH v6 0/7] Add PLL clocks driver and syscon for
- StarFive JH7110 SoC
-Message-ID: <20230704-driven-desecrate-75075ebc11a3@spud>
-References: <20230704064610.292603-1-xingyu.wu@starfivetech.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hVeR+Tbp7CCet06V"
-Content-Disposition: inline
-In-Reply-To: <20230704064610.292603-1-xingyu.wu@starfivetech.com>
+        with ESMTP id S229469AbjGECXq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Jul 2023 22:23:46 -0400
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C27F110E2;
+        Tue,  4 Jul 2023 19:23:44 -0700 (PDT)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0D5DD1A09D7;
+        Wed,  5 Jul 2023 04:23:43 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C7B081A09D6;
+        Wed,  5 Jul 2023 04:23:42 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3F9821820F59;
+        Wed,  5 Jul 2023 10:23:41 +0800 (+08)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] clk: imx: add audio clock mux driver
+Date:   Wed,  5 Jul 2023 09:50:36 +0800
+Message-Id: <1688521839-3036-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The Audio Clock Mux (ACM) is a collection of control registers
+and multiplexers that are used to route the audio source clocks
+to the audio peripherals on i.MX8QXP, i.MX8QM, i.MX8DXL
 
---hVeR+Tbp7CCet06V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Shengjiu Wang (3):
+  dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
+  clk: imx8: Add audio clock mux related clock
+  clk: imx: imx8: add audio clock mux driver
 
-Emil,
+changes in v2:
+- update yaml file according to review comments
 
-On Tue, Jul 04, 2023 at 02:46:03PM +0800, Xingyu Wu wrote:
-> [Resending because it has a error about examples in syscon bingdings
-> and has to be fixed.]
->=20
-> This patch serises are to add PLL clocks driver and providers by writing
-> and reading syscon registers for the StarFive JH7110 RISC-V SoC. And add=
-=20
-> documentation and nodes to describe StarFive System Controller(syscon)
-> Registers. This patch serises are based on Linux 6.4.
 
-Could you take a look at this series when you get a chance, please?
-Would be good to finally get it merged since the syscon bits are a dep
-for a few other things :)
+ .../bindings/clock/fsl,imx8-acm.yaml          | 159 ++++++
+ drivers/clk/imx/Makefile                      |   2 +-
+ drivers/clk/imx/clk-imx8-acm.c                | 477 ++++++++++++++++++
+ include/dt-bindings/clock/imx8-clock.h        |  28 +
+ 4 files changed, 665 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+ create mode 100644 drivers/clk/imx/clk-imx8-acm.c
 
-Thanks!
+-- 
+2.34.1
 
-Conor.
-
-> William Qiu (2):
->   dt-bindings: soc: starfive: Add StarFive syscon module
->   riscv: dts: starfive: jh7110: Add syscon nodes
->=20
-> Xingyu Wu (5):
->   dt-bindings: clock: Add StarFive JH7110 PLL clock generator
->   dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
->   clk: starfive: Add StarFive JH7110 PLL clock driver
->   clk: starfive: jh7110-sys: Add PLL clocks source from DTS
->   riscv: dts: starfive: jh7110: Add PLL clocks source in SYSCRG node
->=20
->  .../bindings/clock/starfive,jh7110-pll.yaml   |  46 ++
->  .../clock/starfive,jh7110-syscrg.yaml         |  18 +-
->  .../soc/starfive/starfive,jh7110-syscon.yaml  |  93 ++++
->  MAINTAINERS                                   |  13 +
->  arch/riscv/boot/dts/starfive/jh7110.dtsi      |  30 +-
->  drivers/clk/starfive/Kconfig                  |   9 +
->  drivers/clk/starfive/Makefile                 |   1 +
->  .../clk/starfive/clk-starfive-jh7110-pll.c    | 507 ++++++++++++++++++
->  .../clk/starfive/clk-starfive-jh7110-sys.c    |  45 +-
->  .../dt-bindings/clock/starfive,jh7110-crg.h   |   6 +
->  10 files changed, 746 insertions(+), 22 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh71=
-10-pll.yaml
->  create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfi=
-ve,jh7110-syscon.yaml
->  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.c
->=20
-> --=20
-> 2.25.1
->=20
-
---hVeR+Tbp7CCet06V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZKSdOwAKCRB4tDGHoIJi
-0hnvAQCLkhD5vFq12iIYCmHzR7wCU9c4M1WnBflj69YY4Nt1wQEAhZrKHy+edzwF
-uV8cREqaiwoc8aI9tSrOSrGWgreEbwM=
-=wTVc
------END PGP SIGNATURE-----
-
---hVeR+Tbp7CCet06V--
