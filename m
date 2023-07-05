@@ -2,98 +2,91 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFF4EB64DD
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 07:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D60EB64DA
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 07:57:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231958AbjGEH3h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jul 2023 03:29:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49022 "EHLO
+        id S231867AbjGEH5M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jul 2023 03:57:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230383AbjGEH3e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 03:29:34 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B941197
-        for <linux-clk@vger.kernel.org>; Wed,  5 Jul 2023 00:29:33 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id 4fb4d7f45d1cf-51d95aed33aso6159596a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 05 Jul 2023 00:29:33 -0700 (PDT)
+        with ESMTP id S230195AbjGEH5L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 03:57:11 -0400
+Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF8E12A;
+        Wed,  5 Jul 2023 00:57:10 -0700 (PDT)
+Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1b38121a011so3113146fac.2;
+        Wed, 05 Jul 2023 00:57:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688542172; x=1691134172;
+        d=gmail.com; s=20221208; t=1688543830; x=1691135830;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=04KsCEQq3BTQ3Hv4slClhCupTLs++iE2IM0zdOeIRKk=;
-        b=O7Q13QLtFiYubIqbr4dB4gWPNSwaF+mr4Cumj7k5dEPGuWLea/jl1B653FTWrAImMI
-         2xnjRF4alacRxam3juvdPamAy/dVG4pEugr4Q1G3xJe4UUm2tHdaH8TQ3SRiX1UD4u7E
-         9WQFZ3LtJjUo+k+93qgYCjQ8iUBct7fH3SDrHOdmNvmym/D5Hjh1EYkj3vSXMRlyi2GN
-         maEw9cPy4pEGSOHj7lBFJ5maICU9aUgwJWDZzh53BR/RSNzgyG2TAHESLVYQBFvdVsKK
-         HB3TPZLaIyvtwpwoRLdU3z0QO38fXG2pz2ujhNwfjUE5hyrnTg2j+VLl9SQQ7SPvmuq/
-         bGVQ==
+        bh=kKdzw+K/A/r9LcvonH1dvGk7XAlJzh4TTvoKnY9NDXU=;
+        b=dITzMJf6lDrTGdRmmA7rnTZU8eiovhV9iQcs99L6BtK1MnpQcnQacLMsHmYEDogA12
+         MA85jYSyxuIkVbSIrFEpJWQzG+r+Z9k6cpdVu0FelgQ1rwWfNAdZ8zAjFSlbMULeii7T
+         gesXmYXK+3Use3fV2Gy9oG7O/tR8HXenOSh2d4A02CnBSAQlLexRQ3SHag49XUg/keVN
+         BGmr8xagV3TrEJjO1Cf7/TIEKaJpjhpTtjDTVxjQYEf+cQEtNCP1/EMX4ijlEupXfSCH
+         EtPDdSLx608R5RtKa2k4W1aTl+OZWUjI90Lm6vKb6aPaTAm98NbrIZK/6xB2EbWoiks5
+         Ladg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688542172; x=1691134172;
+        d=1e100.net; s=20221208; t=1688543830; x=1691135830;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=04KsCEQq3BTQ3Hv4slClhCupTLs++iE2IM0zdOeIRKk=;
-        b=jtdB03cFkajPjE//+BJmAXfparcqQ6X4gDMYmTvOB+vISQ4HnhnPTj5GcJAH9JFFyD
-         ZiYLpZUHavGAgc7lQUf/w1roNGXMoAu0Zri4zuX/ynn2dwY4mol1jttRMhooP2ZaI2On
-         AuZgQHypfkFs3gKilJBfjeAFyvlAES4gRRekJVw2cGXcKECwXsStTLqZX6Fd+Uu5OHHs
-         0nFsog8R3n4PaCDiT1JrgyQnbqfWJSQ2L6W5+cDWwG1G4ilYTYEnCFhFn71Ywd4e7E6C
-         myMFunbSVIBaaKxPmjeHmS/EOGyGM0bgz2KYN967GViz07/2a3qE8izE0yo64m3ZQffG
-         v3dA==
-X-Gm-Message-State: ABy/qLbpvC4Z/3jKfhW6IWnASLhHJorxJAmu7Lm4cqcdYOhFRE6tO+6Q
-        /P2XcQ4XLmf+rzxU43kh/uFiNA==
-X-Google-Smtp-Source: APBJJlEt1mvtnReMBJcVFDryVN+XiJidc1ci2kcvMPZAKlMO7aNOrbX9FbwTnLjhGYQCJzEdo/yRiA==
-X-Received: by 2002:a05:6402:b16:b0:51e:2664:e6e7 with SMTP id bm22-20020a0564020b1600b0051e2664e6e7mr900391edb.38.1688542172081;
-        Wed, 05 Jul 2023 00:29:32 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id g19-20020a50ee13000000b0051df5bd1cd8sm6189542eds.65.2023.07.05.00.29.29
+        bh=kKdzw+K/A/r9LcvonH1dvGk7XAlJzh4TTvoKnY9NDXU=;
+        b=cc2jfKJ1ZJbmaNl7iJrb4YptfsJ3paC4tinw0uytTvWGJPmiYqsvUIXjVe+Fi8VNZS
+         kuAp4aLu9P8MC7y4UkrqyfCPcRiEuGdopnG39C5TwlJo6tRfs9YY8UHIZaAGCYoIXxAL
+         Xb+WktPjEFekQ6/OETHYmku/4esgm0QlvOQfTnMFCNvEXZXO0GpM232KfwbxnZ//gYWI
+         x3jlWKYsCAKYzZLSvDZw6ioHwuWkIhJePB7BFNkNEIllm/Eg1bsnApdmbTWhXaKTihEW
+         bIElSr/bEigy3X3pi0WWjADnHLUZzXmECRx9I3bONhTx6kQ800qEB3fIyDrFn3YDTDOT
+         pRYw==
+X-Gm-Message-State: AC+VfDzizbRqQMDjYaFN2AWu9RK1MAiQcOLJ3fBgM4gVndeSL4r8OO32
+        SLEOd6voQyQOtbFPGE0xlKo=
+X-Google-Smtp-Source: APBJJlHEKd1Am/TM0U9CDA/HAJQ5YMq4hv4OX/k9EOjGuZLR0KmzKsJb94/SLqtMIDIg5W4Zl/UjOA==
+X-Received: by 2002:a05:6870:be88:b0:177:ad57:cb36 with SMTP id nx8-20020a056870be8800b00177ad57cb36mr15890868oab.27.1688543829650;
+        Wed, 05 Jul 2023 00:57:09 -0700 (PDT)
+Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id 22-20020a17090a035600b00262eccfa29fsm866445pjf.33.2023.07.05.00.57.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 00:29:31 -0700 (PDT)
-Message-ID: <4fa4e983-03af-7222-3ffc-96ebe703a4f8@linaro.org>
-Date:   Wed, 5 Jul 2023 09:29:28 +0200
+        Wed, 05 Jul 2023 00:57:09 -0700 (PDT)
+Message-ID: <e7be7df4-0c3c-6695-675d-f386a85c5f2d@gmail.com>
+Date:   Wed, 5 Jul 2023 15:57:05 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: fsl,imx8-acm: Add audio clock
- mux support
+Subject: Re: [PATCH 12/13] clk: nuvoton: Convert to
+ devm_platform_ioremap_resource()
 Content-Language: en-US
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
-        peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1688521839-3036-1-git-send-email-shengjiu.wang@nxp.com>
- <1688521839-3036-2-git-send-email-shengjiu.wang@nxp.com>
- <41ee8c5c-7a6f-04b2-9853-67fb6bdb67b3@linaro.org>
- <CAA+D8ANEsQzXEDjz3+SgKbCWz+cqUHbtLVD6fkd2spbNb5uvgw@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <CAA+D8ANEsQzXEDjz3+SgKbCWz+cqUHbtLVD6fkd2spbNb5uvgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To:     Yangtao Li <frank.li@vivo.com>,
+        Shan-Chun Hung <schung@nuvoton.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230705065313.67043-1-frank.li@vivo.com>
+ <20230705065313.67043-12-frank.li@vivo.com>
+From:   Jacky Huang <ychuang570808@gmail.com>
+In-Reply-To: <20230705065313.67043-12-frank.li@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/07/2023 08:45, Shengjiu Wang wrote:
->> Drop description, it's redundant. I did not ask to add it.
->>
->> Anyway, my comment is unanswered. Don't ignore the emails you receive.
->>
-> Can someone provide rationale for this?
->>
-> 
-> The Audio clock mux is binded with all the audio IP and audio clocks in the
-> subsystem
-> so need to list the power domain of related clocks and IPs. Each clock and
-> IPs has
-> a power domain, so there are so many power domains.
 
-OK, Reference Manual does not mention them but I see your SCU PD driver
-actually registers such power domains.
 
-Best regards,
-Krzysztof
+On 2023/7/5 下午 02:53, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
+>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>   drivers/clk/nuvoton/clk-ma35d1.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+>
+
+Acked-by: Jacky Huang <ychuang3@nuvoton.com>
+
+Best Regards,
+Jacky Huang
 
