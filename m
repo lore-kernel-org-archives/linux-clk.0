@@ -2,91 +2,114 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D60EB64DA
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 07:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41720EB64DA
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 08:45:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231867AbjGEH5M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jul 2023 03:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33280 "EHLO
+        id S231802AbjGEIpK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jul 2023 04:45:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbjGEH5L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 03:57:11 -0400
-Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF8E12A;
-        Wed,  5 Jul 2023 00:57:10 -0700 (PDT)
-Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-1b38121a011so3113146fac.2;
-        Wed, 05 Jul 2023 00:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688543830; x=1691135830;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kKdzw+K/A/r9LcvonH1dvGk7XAlJzh4TTvoKnY9NDXU=;
-        b=dITzMJf6lDrTGdRmmA7rnTZU8eiovhV9iQcs99L6BtK1MnpQcnQacLMsHmYEDogA12
-         MA85jYSyxuIkVbSIrFEpJWQzG+r+Z9k6cpdVu0FelgQ1rwWfNAdZ8zAjFSlbMULeii7T
-         gesXmYXK+3Use3fV2Gy9oG7O/tR8HXenOSh2d4A02CnBSAQlLexRQ3SHag49XUg/keVN
-         BGmr8xagV3TrEJjO1Cf7/TIEKaJpjhpTtjDTVxjQYEf+cQEtNCP1/EMX4ijlEupXfSCH
-         EtPDdSLx608R5RtKa2k4W1aTl+OZWUjI90Lm6vKb6aPaTAm98NbrIZK/6xB2EbWoiks5
-         Ladg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688543830; x=1691135830;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKdzw+K/A/r9LcvonH1dvGk7XAlJzh4TTvoKnY9NDXU=;
-        b=cc2jfKJ1ZJbmaNl7iJrb4YptfsJ3paC4tinw0uytTvWGJPmiYqsvUIXjVe+Fi8VNZS
-         kuAp4aLu9P8MC7y4UkrqyfCPcRiEuGdopnG39C5TwlJo6tRfs9YY8UHIZaAGCYoIXxAL
-         Xb+WktPjEFekQ6/OETHYmku/4esgm0QlvOQfTnMFCNvEXZXO0GpM232KfwbxnZ//gYWI
-         x3jlWKYsCAKYzZLSvDZw6ioHwuWkIhJePB7BFNkNEIllm/Eg1bsnApdmbTWhXaKTihEW
-         bIElSr/bEigy3X3pi0WWjADnHLUZzXmECRx9I3bONhTx6kQ800qEB3fIyDrFn3YDTDOT
-         pRYw==
-X-Gm-Message-State: AC+VfDzizbRqQMDjYaFN2AWu9RK1MAiQcOLJ3fBgM4gVndeSL4r8OO32
-        SLEOd6voQyQOtbFPGE0xlKo=
-X-Google-Smtp-Source: APBJJlHEKd1Am/TM0U9CDA/HAJQ5YMq4hv4OX/k9EOjGuZLR0KmzKsJb94/SLqtMIDIg5W4Zl/UjOA==
-X-Received: by 2002:a05:6870:be88:b0:177:ad57:cb36 with SMTP id nx8-20020a056870be8800b00177ad57cb36mr15890868oab.27.1688543829650;
-        Wed, 05 Jul 2023 00:57:09 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id 22-20020a17090a035600b00262eccfa29fsm866445pjf.33.2023.07.05.00.57.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 00:57:09 -0700 (PDT)
-Message-ID: <e7be7df4-0c3c-6695-675d-f386a85c5f2d@gmail.com>
-Date:   Wed, 5 Jul 2023 15:57:05 +0800
+        with ESMTP id S231754AbjGEIpJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 04:45:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE9D19B;
+        Wed,  5 Jul 2023 01:45:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9DBEE61493;
+        Wed,  5 Jul 2023 08:45:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC539C433C8;
+        Wed,  5 Jul 2023 08:45:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1688546708;
+        bh=3I2hTeaGJBO9WRbnJZs9CjQRSwxF5Et8HWH3vhQF2R4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IyyzxTzpjRQ99S07jHM4YvYSM5O+NPQ8VPIwVeygMXzycK5oiHL7YKk34upTe6Qp3
+         w7O1x2tV6MWOkBUPupVX3UnZE2RtQXJzOn0KIOHay8chlXi/CGNP6p9DDj/9bftVUi
+         Bvm1dyMGpYbuR8K+eG9AM4XIeyKvmrEIn75F7GbtBrjwMr7zhdZo3w7ZpZT8m7S+4b
+         V2MALGMozJ/oxnScVZ1+9xn+rJ7La5PHV2KvilxBMw7MpB8QPBUT54/P0DamN15RSr
+         ptstEREff74SXUzlPlEM0Gp8AFrn82riVzUenSCEODNStMv9PWzwrj60I6fvlyoQ/J
+         ttoJ0PewpXP/g==
+Date:   Wed, 5 Jul 2023 14:14:54 +0530
+From:   Manivannan Sadhasivam <mani@kernel.org>
+To:     Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc:     agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+        lpieralisi@kernel.org, bhelgaas@google.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pci@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH V2] PCI: qcom: Use PARF_SLV_ADDR_SPACE_SIZE for ops_2_3_3
+Message-ID: <20230705084454.GE11854@thinkpad>
+References: <20230703175757.2425540-1-quic_srichara@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 12/13] clk: nuvoton: Convert to
- devm_platform_ioremap_resource()
-Content-Language: en-US
-To:     Yangtao Li <frank.li@vivo.com>,
-        Shan-Chun Hung <schung@nuvoton.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230705065313.67043-1-frank.li@vivo.com>
- <20230705065313.67043-12-frank.li@vivo.com>
-From:   Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <20230705065313.67043-12-frank.li@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230703175757.2425540-1-quic_srichara@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Jul 03, 2023 at 11:27:57PM +0530, Sricharan Ramabadhran wrote:
+> PARF_SLV_ADDR_SPACE_SIZE_2_3_3 macro is used for IPQ8074
+> 2_3_3 post_init ops. pcie slave addr size was initially set
 
+PCIe
 
-On 2023/7/5 下午 02:53, Yangtao Li wrote:
-> Use devm_platform_ioremap_resource() to simplify code.
->
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> to 0x358, but was wrongly changed to 0x168 as a part of
+
+commit 39171b33f652 ("PCI: qcom: Remove PCIE20_ prefix from register definitions")
+
+> "PCI: qcom: Remove PCIE20_ prefix from register definitions"
+> Fixing it, by using the right macro PARF_SLV_ADDR_SPACE_SIZE
+> and removing the unused PARF_SLV_ADDR_SPACE_SIZE_2_3_3.
+> 
+
+Commit message should be imperative.
+
+> Without this pcie bring up on IPQ8074 is broken now.
+> 
+> Fixes: 39171b33f652 ("PCI: qcom: Remove PCIE20_ prefix from register definitions")
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 > ---
->   drivers/clk/nuvoton/clk-ma35d1.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
->
+>  [V2] Fixed the 'fixes tag' correctly, subject, right macro usage
+> 
+>  drivers/pci/controller/dwc/pcie-qcom.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 4ab30892f6ef..1689d072fe86 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -43,7 +43,6 @@
+>  #define PARF_PHY_REFCLK				0x4c
+>  #define PARF_CONFIG_BITS			0x50
+>  #define PARF_DBI_BASE_ADDR			0x168
+> -#define PARF_SLV_ADDR_SPACE_SIZE_2_3_3		0x16c /* Register offset specific to IP ver 2.3.3 */
+>  #define PARF_MHI_CLOCK_RESET_CTRL		0x174
+>  #define PARF_AXI_MSTR_WR_ADDR_HALT		0x178
+>  #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+> @@ -811,7 +810,7 @@ static int qcom_pcie_post_init_2_3_3(struct qcom_pcie *pcie)
+>  	u32 val;
+>  
+>  	writel(SLV_ADDR_SPACE_SZ,
+> -		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_2_3_3);
+> +		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
 
-Acked-by: Jacky Huang <ychuang3@nuvoton.com>
+This could be wrapped in the above line itself.
 
-Best Regards,
-Jacky Huang
+- Mani
 
+>  
+>  	val = readl(pcie->parf + PARF_PHY_CTRL);
+>  	val &= ~PHY_TEST_PWR_DOWN;
+> -- 
+> 2.34.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
