@@ -2,274 +2,173 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B555FEB64DA
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 11:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C13C5C001DB
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 13:41:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbjGELmR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jul 2023 07:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46302 "EHLO
+        id S232117AbjGENlT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jul 2023 09:41:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbjGELmF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 07:42:05 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C311732
-        for <linux-clk@vger.kernel.org>; Wed,  5 Jul 2023 04:42:03 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fb7dc16ff0so10245330e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 05 Jul 2023 04:42:03 -0700 (PDT)
+        with ESMTP id S230466AbjGENlT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 09:41:19 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D5439F;
+        Wed,  5 Jul 2023 06:41:18 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5703d12ab9aso82123897b3.2;
+        Wed, 05 Jul 2023 06:41:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688557321; x=1691149321;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ztBlDQIHDZqo7V/c8oOFDJdI7xBDmCnELF9YeTbIz60=;
-        b=Q8tXp0mhYJzKf5i1KzTXxvIFYOyLggu5Fu4qg2b33Mimz5fUhOkQ7l6dvMoMDLrn4x
-         mEfiOAI5Hnt0u2KQ2TJFFII2NLMDZp4Ph3qUq6ixyhZ4d17WAwOniuHAEF16AbG9eF7z
-         WkMXWhI68Lt87wd5/MYHFN7S4oltrqjUeKGQvBsfTXdFMh2hMYktd5xqpmYiQTdAvpnn
-         K0R5a8UVR39qGemYegwzZitbIDMAl+75kn6CKzZlUMzL5n5sbhTRHcex2/E661vaIP3i
-         UlfcC9++L16sPmU6PTCYIHau8VHj5FarUEu2CcaiScbOgYbBsKFEIUqF0uaSP3qcglYr
-         1+Hw==
+        d=gmail.com; s=20221208; t=1688564477; x=1691156477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uLq8DTcDk4CKexj0TWcSdnBEWdMB2TY0/NlFdshVB0U=;
+        b=OFrHjgg7tLcB2HzfJaZMfT12TH3YQEf3I1Ry0sn5/D/IzPfGhP2E9ECVQo/6sta5kq
+         zyYDiCaO+ekwhHUDuVIV2OFijUPuOb1T5SoJYo/DJFjKM7fV6s+9X5FxJPxT4UMHB79q
+         w7T7QUqAsi8ynbGD37jDGYATjFg6XKyUFKHIJHQNwDDbCLnGPKNdibld/vbCI+FG/npy
+         mTERib+mBqgY6xyOZnyuqOr7UfBlORxCa/OPZwQJm+b39O7KRwp00vaSdBjnpeJtSCIr
+         JOF+/6YpZsTPt/hsRKKpEXhLsESacSS94t7HJQojchblg0Fz3LqoOFSyDo24xq914QnA
+         h3/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688557321; x=1691149321;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1688564477; x=1691156477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ztBlDQIHDZqo7V/c8oOFDJdI7xBDmCnELF9YeTbIz60=;
-        b=GfmSqb4xfUy7YOql220R0vUTw7ZjcYvS+Uq9iFlYB6QHxpAumNCTaGrhjisdS0J8Dg
-         4ckZeVBhVugdCTx8Ku5MaCXrIdoHVS5q/7e9Aw6f3Wv+I9aJnqXm4XzzSW720bf9wmDw
-         2DVEvkNY9mnTsevIVdQzjl9FGl/MM0jBaYBRfLkdznLBDkwCNzgYhvd+qEh1YNrjdypf
-         /bOW2WXKdNxqJ2geTTtX3/NrDDlzaZtJStQmSfvHMueNafKdddSqyAb7NVUDgkw3/XkA
-         RdB3zbMXDbBVAhYzc0bNn7OyQHYZlaW+PlCO6nyEFkP9MAhad/1wrfut7Pvwfy/7JrO6
-         8PEg==
-X-Gm-Message-State: ABy/qLZ5Q1Pn/uxGgxtKxCixwZOF3kd6xVOjyKGoY90SUWXnwd5XHFdc
-        jQyNhD4mxE+CXm6nk4vhTLxhow==
-X-Google-Smtp-Source: APBJJlFfHWocgLHVuVZbV3+nPaMumekJ4wwZv2jTSVYFQ2xEyMcAxxdjissZ09VM/5ZLW2XbfWQlbg==
-X-Received: by 2002:ac2:4f14:0:b0:4f8:442c:de25 with SMTP id k20-20020ac24f14000000b004f8442cde25mr13134816lfr.5.1688557321290;
-        Wed, 05 Jul 2023 04:42:01 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 8-20020a05600c028800b003fb416d732csm1916808wmk.6.2023.07.05.04.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 04:42:00 -0700 (PDT)
-From:   Neil Armstrong <neil.armstrong@linaro.org>
-Date:   Wed, 05 Jul 2023 13:41:53 +0200
-Subject: [PATCH v2 3/3] dt-bindings: soc: amlogic: document System Control
- registers
+        bh=uLq8DTcDk4CKexj0TWcSdnBEWdMB2TY0/NlFdshVB0U=;
+        b=U4yQfbDFxrgLZMfkEMyT7+z3u+e5+IlwcJ6WxiJxPr4034Lu5jLeXonIcYE47UBn2a
+         5orG1ROyF+vSeBJ0R25cLnbr6KnGTjii1m8cfOaw6yt/nIkPkalTvPszxLSpoW5ItP41
+         o8PAtH6sHCp7qQdU6/P3MbXuMKmL2T12iAbQhEJ2s1i7YhJ3drL5XCIxbBTY3z/i4i7G
+         22DDibAaCkXW52Wv1FzlDKcM2tZub2lBYkC0T5CuUaxYsfnB57br3K7d3VFm9ynRzE0L
+         JdWUUFG23LLL+HxWL+ClFDhFQo9tUiV24SNCKK2u4zJmaNOEa7D98Kah1RET6+Gu8g8D
+         rZDQ==
+X-Gm-Message-State: ABy/qLZYqseNKCRmpdbjKHyQlZfQKXkG49+GxITt8wem3qHpO8M8pHAi
+        hKmw9EDiJvyllDlPpNqhygPM24yTJ5rmZkJN9CHlvQmGeo4hK8rlCcY=
+X-Google-Smtp-Source: APBJJlFnAaqBZr9QUj1wiHcfBt+OU6EzMUbau6TvRYcksbylTyeyO/L1BOWmPBoAH5ANWWOliZe5g1A7JaejZ9+8F44=
+X-Received: by 2002:a25:ad06:0:b0:bc6:91e5:7b4e with SMTP id
+ y6-20020a25ad06000000b00bc691e57b4emr15559089ybi.13.1688564477164; Wed, 05
+ Jul 2023 06:41:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230705-b4-amlogic-bindings-convert-take2-v2-3-22be915ddc3b@linaro.org>
-References: <20230705-b4-amlogic-bindings-convert-take2-v2-0-22be915ddc3b@linaro.org>
-In-Reply-To: <20230705-b4-amlogic-bindings-convert-take2-v2-0-22be915ddc3b@linaro.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+References: <20230704163848.169853-2-davidwronek@gmail.com>
+ <20230704163848.169853-6-davidwronek@gmail.com> <9f06d400-be7b-6806-b055-8cc7f11db6ca@quicinc.com>
+In-Reply-To: <9f06d400-be7b-6806-b055-8cc7f11db6ca@quicinc.com>
+From:   ungeskriptet <davidwronek@gmail.com>
+Date:   Wed, 5 Jul 2023 15:41:06 +0200
+Message-ID: <CAEoe_eW-0V6uSVhJGaxJc7V=qujkkpn=chBNc5kjpP9XViFPOg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] clk: qcom: gcc-sc7180: Fix up gcc_sdcc2_apps_clk_src
+To:     Taniya Das <quic_tdas@quicinc.com>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5263;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=lo56oO+Etmog3EY8Ab68Gwiv0DuAkQD0UTqVY8iJak8=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBkpVcEzTgg38yYhlrcvBrJImMVYRN+3f/3J0kcgWuW
- ZPWGsaSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZKVXBAAKCRB33NvayMhJ0btUD/
- oDjPeA6DC4ldn8SQo55OJ4RbzqijHA8iJBqsNsf5BF/6fExPobnO3MpbGmbMnhygBi7vQkMqT+ORZ4
- 9FNXdys90CyDsjHIOSpqciM7zmQCgt3TnStENGygchJZQpanFGQBIL2SVVcCxC5ebbccP7P11vq5NK
- 6WC9jxQY7b579pwBUAdObAML7Y6dP0aC3yhlYmdTcEs6mkacmK4iZuGgXfm/IC62pztQSS6upoC/rn
- CJP+xqlF7pfIX4g/FbUuiKHgKmZLGwFq/bUCCMbJLJ3/e6xQXzg9tHk+i+1RKTSfHqonIgZjnPreYV
- +GJzrmBvQek8LE/gcQT3amCl/zgUMCBrvMyb68pfiSEsyeDhT/Sgr8psL5aOxLZ7EkzDVA60iyAt+n
- IMW4W2tnyqpWEZ2PItTRV9U/Hs2Q6tWSv/jg5LC+y4jIR0AhHE57ItVcI3zuK7FdEnfTnLhaC8AH/d
- Ou95md7fxstFAkksCXlXfJ2/jY9lMGchie+ZFZT/voRrQXEI4XUom9vbGDPlwWiLtdGWRcUeKPJUuv
- NWNk70fqkeZ8ekbziosrAn8PeRNRwVXlJ/ylbOEWXdh8KU9O53+8H/vVPWJT1PhoF24EaAoQWAd5Bx
- cwtktKCJBJCnHHZKkcBcfwqjYdvnwZRZ3oeLlOBh5si/5ULMxDbQflgIq0iA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+        linux-clk@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, map220v <map220v300@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the System Control registers regions found on all Amlogic
-SoC families and it's clock, power, pinctrl and phy subnodes.
+On Wed, Jul 5, 2023 at 6:27=E2=80=AFAM Taniya Das <quic_tdas@quicinc.com> w=
+rote:
+>
+>
+>
+> On 7/4/2023 10:01 PM, David Wronek wrote:
+> > From: map220v <map220v300@gmail.com>
+> >
+> > Add the PARENT_ENABLE flag to prevent the clock from getting stuck at
+> > boot.
+> >
+> > Fixes: 17269568f726 ("clk: qcom: Add Global Clock controller (GCC) driv=
+er for SC7180")
+> > Signed-off-by: map220v <map220v300@gmail.com>
+> > Signed-off-by: David Wronek <davidwronek@gmail.com>
+> > ---
+> >   drivers/clk/qcom/gcc-sc7180.c | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc718=
+0.c
+> > index cef3c77564cf..49f36e1df4fa 100644
+> > --- a/drivers/clk/qcom/gcc-sc7180.c
+> > +++ b/drivers/clk/qcom/gcc-sc7180.c
+> > @@ -651,6 +651,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src =3D {
+> >               .name =3D "gcc_sdcc2_apps_clk_src",
+> >               .parent_data =3D gcc_parent_data_5,
+> >               .num_parents =3D ARRAY_SIZE(gcc_parent_data_5),
+> > +             .flags =3D CLK_OPS_PARENT_ENABLE,
+>
+> Could you please share what Stuck warnings are you observing?
+>
+> >               .ops =3D &clk_rcg2_floor_ops,
+> >       },
+> >   };
+>
+> --
+> Thanks & Regards,
+> Taniya Das.
 
-The regions has various independent registers tied to other
-hardware devices, thus the syscon compatible.
+Without this patch I get the following warning:
+[    0.316057] gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
+[    0.316081] WARNING: CPU: 4 PID: 75 at
+drivers/clk/qcom/clk-rcg2.c:133 update_config+0xcc/0xdc
+[    0.316226] Modules linked in:
+[    0.316265] CPU: 4 PID: 75 Comm: kworker/u16:2 Not tainted
+6.4.0-next-20230704-sm7125 #51
+[    0.316337] Hardware name: Xiaomi Redmi Note 9 Pro (Global) (DT)
+[    0.316394] Workqueue: events_unbound async_run_entry_fn
+[    0.316453] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[    0.316517] pc : update_config+0xcc/0xdc
+[    0.316560] lr : update_config+0xcc/0xdc
+[    0.316602] sp : ffff80008088b8e0
+[    0.316636] x29: ffff80008088b8e0 x28: 0000000000000000 x27: ffffa9c34c5=
+71d00
+[    0.316708] x26: ffffa9c34c333db0 x25: ffff60d440b5ec10 x24: ffff8000808=
+8bb18
+[    0.316778] x23: ffff60d441704900 x22: 0000000005f5e100 x21: ffffa9c34c5=
+dc548
+[    0.316849] x20: ffffa9c34cc739b8 x19: 0000000000000000 x18: fffffffffff=
+e5f18
+[    0.316918] x17: 0000000000000014 x16: 0000000000000020 x15: 00000000000=
+00048
+[    0.316988] x14: fffffffffffe5f60 x13: ffffa9c34cb5e928 x12: 00000000000=
+003f9
+[    0.317058] x11: 0000000000000153 x10: ffffa9c34cbb88f0 x9 : ffffa9c34cb=
+5e928
+[    0.317128] x8 : 00000000ffffefff x7 : ffffa9c34cbb6928 x6 : 00000000000=
+00153
+[    0.317197] x5 : 0000000000000000 x4 : 40000000fffff153 x3 : 00000000000=
+00000
+[    0.317266] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff60d4402=
+84880
+[    0.317336] Call trace:
+[    0.317365]  update_config+0xcc/0xdc
+[    0.317407]  clk_rcg2_configure+0xb0/0xb8
+[    0.317451]  clk_rcg2_set_floor_rate_and_parent+0x2c/0x44
+[    0.317506]  clk_change_rate+0x7c/0x294
+[    0.317551]  clk_core_set_rate_nolock+0x168/0x274
+[    0.317601]  clk_set_rate+0x38/0x14c
+[    0.317641]  _opp_config_clk_single+0x30/0xa8
+[    0.317687]  _set_opp+0x258/0x468
+[    0.317726]  dev_pm_opp_set_rate+0x180/0x268
+[    0.317770]  sdhci_msm_probe+0x360/0xb4c
+[    0.317815]  platform_probe+0x68/0xc4
+[    0.317859]  really_probe+0x148/0x2b0
+[    0.317900]  __driver_probe_device+0x78/0x12c
+[    0.317947]  driver_probe_device+0x3c/0x15c
+[    0.317994]  __device_attach_driver+0xb8/0x134
+[    0.318040]  bus_for_each_drv+0x84/0xe0
+[    0.318082]  __device_attach_async_helper+0xac/0xd0
+[    0.318132]  async_run_entry_fn+0x34/0xe0
+[    0.318177]  process_one_work+0x1c0/0x334
+[    0.318221]  worker_thread+0x68/0x428
+[    0.318260]  kthread+0x110/0x114
+[    0.318300]  ret_from_fork+0x10/0x20
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml  | 160 +++++++++++++++++++++
- 1 file changed, 160 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-new file mode 100644
-index 000000000000..16977e4e4357
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml
-@@ -0,0 +1,160 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Amlogic Meson System Control registers
-+
-+maintainers:
-+  - Neil Armstrong <neil.armstrong@linaro.org>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - amlogic,meson-gx-hhi-sysctrl
-+          - amlogic,meson-gx-ao-sysctrl
-+          - amlogic,meson-axg-hhi-sysctrl
-+          - amlogic,meson-axg-ao-sysctrl
-+      - const: simple-mfd
-+      - const: syscon
-+
-+  reg:
-+    maxItems: 1
-+
-+  clock-controller:
-+    type: object
-+
-+  power-controller:
-+    $ref: /schemas/power/amlogic,meson-ee-pwrc.yaml
-+
-+  pinctrl:
-+    type: object
-+
-+  phy:
-+    type: object
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - amlogic,meson-gx-hhi-sysctrl
-+            - amlogic,meson-axg-hhi-sysctrl
-+    then:
-+      properties:
-+        clock-controller:
-+          $ref: /schemas/clock/amlogic,gxbb-clkc.yaml#
-+
-+      required:
-+        - power-controller
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - amlogic,meson-gx-ao-sysctrl
-+            - amlogic,meson-axg-ao-sysctrl
-+    then:
-+      properties:
-+        clock-controller:
-+          $ref: /schemas/clock/amlogic,gxbb-aoclkc.yaml#
-+
-+        power-controller: false
-+        phy: false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - amlogic,meson-gx-hhi-sysctrl
-+    then:
-+      properties:
-+        phy: false
-+
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - amlogic,meson-axg-hhi-sysctrl
-+    then:
-+      properties:
-+        phy:
-+          oneOf:
-+            - $ref: /schemas/phy/amlogic,g12a-mipi-dphy-analog.yaml
-+            - $ref: /schemas/phy/amlogic,meson-axg-mipi-pcie-analog.yaml
-+
-+required:
-+  - compatible
-+  - reg
-+  - clock-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus@c883c000 {
-+        compatible = "simple-bus";
-+        reg = <0xc883c000 0x2000>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges = <0x0 0xc883c000 0x2000>;
-+
-+        sysctrl: system-controller@0 {
-+            compatible = "amlogic,meson-gx-hhi-sysctrl", "simple-mfd", "syscon";
-+            reg = <0 0x400>;
-+
-+            clock-controller {
-+                compatible = "amlogic,gxbb-clkc";
-+                #clock-cells = <1>;
-+                clocks = <&xtal>;
-+                clock-names = "xtal";
-+            };
-+
-+            power-controller {
-+                compatible = "amlogic,meson-gxbb-pwrc";
-+                #power-domain-cells = <1>;
-+                amlogic,ao-sysctrl = <&sysctrl_AO>;
-+
-+                resets = <&reset_viu>,
-+                         <&reset_venc>,
-+                         <&reset_vcbus>,
-+                         <&reset_bt656>,
-+                         <&reset_dvin>,
-+                         <&reset_rdma>,
-+                         <&reset_venci>,
-+                         <&reset_vencp>,
-+                         <&reset_vdac>,
-+                         <&reset_vdi6>,
-+                         <&reset_vencl>,
-+                         <&reset_vid_lock>;
-+                reset-names = "viu", "venc", "vcbus", "bt656", "dvin",
-+                              "rdma", "venci", "vencp", "vdac", "vdi6",
-+                              "vencl", "vid_lock";
-+                clocks = <&clk_vpu>, <&clk_vapb>;
-+                clock-names = "vpu", "vapb";
-+            };
-+        };
-+    };
-+
-+    bus@c8100000 {
-+        compatible = "simple-bus";
-+        reg = <0xc8100000 0x100000>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        ranges = <0x0 0xc8100000 0x100000>;
-+
-+        sysctrl_AO: system-controller@0 {
-+            compatible = "amlogic,meson-gx-ao-sysctrl", "simple-mfd", "syscon";
-+            reg = <0 0x100>;
-+
-+            clock-controller {
-+                compatible = "amlogic,meson-gxbb-aoclkc", "amlogic,meson-gx-aoclkc";
-+                #clock-cells = <1>;
-+                #reset-cells = <1>;
-+                clocks = <&xtal>, <&clk81>;
-+                clock-names = "xtal", "mpeg-clk";
-+            };
-+        };
-+    };
-
--- 
-2.34.1
-
+Sincerely,
+David
