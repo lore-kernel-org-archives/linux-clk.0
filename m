@@ -2,59 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA4BC001B0
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 09:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F809EB64DA
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 09:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231905AbjGEJqT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jul 2023 05:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57436 "EHLO
+        id S231923AbjGEJrK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jul 2023 05:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231852AbjGEJqS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 05:46:18 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06D381719
-        for <linux-clk@vger.kernel.org>; Wed,  5 Jul 2023 02:46:17 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51dec0b6fecso6319763a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 05 Jul 2023 02:46:16 -0700 (PDT)
+        with ESMTP id S231688AbjGEJrK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 05:47:10 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2E501710
+        for <linux-clk@vger.kernel.org>; Wed,  5 Jul 2023 02:47:08 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9936b3d0286so348882466b.0
+        for <linux-clk@vger.kernel.org>; Wed, 05 Jul 2023 02:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688550375; x=1691142375;
+        d=linaro.org; s=google; t=1688550427; x=1691142427;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=UqspCPIm0Y18aFwSapitTrRXi64FYkjHzT9nhwi04EI=;
-        b=oomo6HIYcSDBWklrchZkpjYQjHdYru4rIzVzjRZpcroT7q0LdEDUOTPGf7qpd616rl
-         uGip2h/R5t02DbSBZnWyMy3yf3GeB1/dXPHAeQKjmGL97tC0kXXl+c7NBSwZApQkNOxP
-         vTqlQS8Ak3gb3+hYoZXcX9ZMQUlyIKenP9wBSL1crCXH3aQnlsXn7y6or0x0zAz6g37x
-         FuJQS2CberJN7AbkFvtoOYBtH8k/cNALUYKhNU21n+Sq/SigLzqKRtz8kHh8ZBwRlIZT
-         ovxUX5pivs7QfqdQruuaq9dLRFNrudLOQDVZokHAXM1441CVAg1qnJuKOnglSb8E4rm5
-         /RuQ==
+        bh=+qZvOCuKtFzTR7vPGrjwngsBt7RydTrhfcDYMvZhiw8=;
+        b=eUSy8p0Mg7RhNCBHhmCblXUAWtklwGxj/93vKnJv3r8/jA/k+PrRQHB/n5Y9+pqFWG
+         QJ5L36IOr4Edpr+OshV1EEofpxOb9XUsm3e0NTFo00j5lzn/2h3MfPHVpMm6sMQ4s0VO
+         6AChbtHcRFLsO08XLTrYDi1ehCZ0HIXucxe6e4fgREiTEN4JwKZXB8xPpMFc+5QdG2M/
+         QpINCWSYcL8KnluLbVuIcGECtF/ipK2oQi4HvVAAJG+1ChtRUx4QmSuI/NhADZf53xsV
+         PYssiwMzpH93sPPS6BUHOmj8ntbrsTTUNDtD1VQXKAzY/+EMq7vNNcs2Y7fxqmk4Fdtm
+         iW/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688550375; x=1691142375;
+        d=1e100.net; s=20221208; t=1688550427; x=1691142427;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqspCPIm0Y18aFwSapitTrRXi64FYkjHzT9nhwi04EI=;
-        b=O8KOUakcTGLNGUqTAk6wArnemsdilWmYYlRIH6zuttBGVl10WN7K54rTm/vxKh7nh5
-         pH3T55Pr/5dcRuoIvTGB2IFB3dFclYW3H8uZ0OUte1ezjA9RrRyhqc5xIGljuVe1BJAv
-         yccPxMRVoCdq9rZX5X2oY0vJ/Hg5Cai0oKsi9JZ2IIwFWuX5BucUlwkVLYIciUIct3C6
-         0HEIO7mKzN5J2hTNksHuIPT68pGpYndsDHdhIprqeCYxeVD7cKxcP5naezs51mqQ8aBh
-         5n5cH2OQW3eetCkbzGfqdTOHdyxm6ozk7vN/PcWttLAE522dg7MX45gS+UDw5TcibX9S
-         HCpw==
-X-Gm-Message-State: ABy/qLZ7EMkZYPzjSyRIB3oVLD+V3d1U7QUQJm8g1OctcKbT+Q7d6y3E
-        U50HLqz/p4db++4r0Oozb0Vgaw==
-X-Google-Smtp-Source: APBJJlEYHN6qlzkEw4ZEb4bn+/uINB7RAw2r3lLywW+D2hUJwfqAZy9/WrjiW/HdP3YgzdPpE/+D3A==
-X-Received: by 2002:a17:906:8699:b0:94e:e30e:7245 with SMTP id g25-20020a170906869900b0094ee30e7245mr11398445ejx.8.1688550375465;
-        Wed, 05 Jul 2023 02:46:15 -0700 (PDT)
+        bh=+qZvOCuKtFzTR7vPGrjwngsBt7RydTrhfcDYMvZhiw8=;
+        b=kcvTnTB8scvlzYzTzJ5xDN36F8WMCYdWtA2AtBhaTKt6wgLTEnnR/DAcNcZj/SudPL
+         eGfbCO4cqcVtryFvBy6YrC6jUdwNGOYhjyvUbWqNR7sk0kr/7cqLrf7xOP0aEt4sx9pU
+         /N4igWn7QPLb6gCIO/B3T98p/F4iMx4J9TKz8tDYztkxc8AV1G/5+kMdy5ZOPdSwelET
+         eQHVKIbnA17d91eJo2bAkUBT6/heFxSfVBf71OUaP34XvHKlJWZH36hDT0UU4y5ezent
+         05cy9hcoTJZ/m85BVqOtQDC37GMNrDNRHtKmjyHP5WwkA5OwBaiuErgxVKa7Gcn7eXfM
+         ffBQ==
+X-Gm-Message-State: ABy/qLYnFswrHy1zVX8P8D/RF2mmJns9Wq3h09T4XpXn3A05PyaZCqc8
+        SzjXmhPhO5VeG+crRL1lmwAIcw==
+X-Google-Smtp-Source: ACHHUZ7mGwZf3R998XeLI1YA51tEUsLMBv+Cw6Q6BC5GAYD2s2ZUyWeqERykOe3eIHcokghQRKsdvw==
+X-Received: by 2002:a17:907:9859:b0:991:e3c4:c129 with SMTP id jj25-20020a170907985900b00991e3c4c129mr11397957ejc.69.1688550427056;
+        Wed, 05 Jul 2023 02:47:07 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id bu24-20020a170906a15800b00991faf3810esm11333132ejb.146.2023.07.05.02.46.11
+        by smtp.gmail.com with ESMTPSA id mh9-20020a170906eb8900b00993a37aebc5sm502987ejb.50.2023.07.05.02.47.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jul 2023 02:46:14 -0700 (PDT)
-Message-ID: <a0bd842d-b6d0-e126-7b05-e488357330ab@linaro.org>
-Date:   Wed, 5 Jul 2023 11:46:10 +0200
+        Wed, 05 Jul 2023 02:47:06 -0700 (PDT)
+Message-ID: <fe205e01-c065-adbe-33bf-b2acb1058c27@linaro.org>
+Date:   Wed, 5 Jul 2023 11:47:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 1/7] dt-bindings: arm: qcom,ids: Add SoC ID for SM7125
+Subject: Re: [PATCH 2/7] dt-bindings: arm: qcom: Document SM7125 and
+ xiaomi,joyeuse board
 Content-Language: en-US
 To:     David Wronek <davidwronek@gmail.com>,
         Andy Gross <agross@kernel.org>,
@@ -68,12 +69,11 @@ To:     David Wronek <davidwronek@gmail.com>,
         Taniya Das <tdas@codeaurora.org>
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        map220v <map220v300@gmail.com>
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
 References: <20230704163848.169853-2-davidwronek@gmail.com>
- <20230704163848.169853-3-davidwronek@gmail.com>
+ <20230704163848.169853-4-davidwronek@gmail.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230704163848.169853-3-davidwronek@gmail.com>
+In-Reply-To: <20230704163848.169853-4-davidwronek@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -81,18 +81,27 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 04/07/2023 18:31, David Wronek wrote:
-> From: map220v <map220v300@gmail.com>
+> Document the xiaomi,joyeuse board based on the Qualcomm SM7125 SoC.
 > 
-> Add the SoC ID for Qualcomm SM7125.
-> 
-> Signed-off-by: map220v <map220v300@gmail.com>
+> Signed-off-by: David Wronek <davidwronek@gmail.com>
 
-We accept known identities, but this looks like a nickname/pseudonym.
-Are you sure you got such SoB from map220v?
 
-None of the commits here:
-https://github.com/map220v/sm7125-mainline/commits/a72q-6.0
-have signed-off-by. Did you add it by yourself?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+---
+
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you do not know the process, here is a short
+explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tools like b4 can help
+here. However, there's no need to repost patches *only* to add the tags.
+The upstream maintainer will do that for acks received on the version
+they apply.
+
+https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
 
 Best regards,
 Krzysztof
