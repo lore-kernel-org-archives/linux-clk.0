@@ -2,60 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0330C0015E
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 06:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8B2EB64DD
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 06:25:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbjGEGZM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jul 2023 02:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41746 "EHLO
+        id S231614AbjGEGZs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jul 2023 02:25:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231428AbjGEGZL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 02:25:11 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB4E610F2
-        for <linux-clk@vger.kernel.org>; Tue,  4 Jul 2023 23:25:09 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51d9128494cso6007546a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 04 Jul 2023 23:25:09 -0700 (PDT)
+        with ESMTP id S230020AbjGEGZr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 02:25:47 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D0210CF
+        for <linux-clk@vger.kernel.org>; Tue,  4 Jul 2023 23:25:46 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-51d885b0256so8016702a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 04 Jul 2023 23:25:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688538308; x=1691130308;
+        d=linaro.org; s=google; t=1688538345; x=1691130345;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jbQGMdTbw1VFlYXzanej6yIJ3DkaHASr0zbCi4VfePk=;
-        b=RtRwkjoh3Oi/VjkysiTdKtQf1CPqQVzAsfW1WngfNj9JnIjopxiExTvvGQJZU1TlRz
-         zMv1YhNtcf504bANLr048uaOYpbi3CyKBxnyUnQWya1empjt6bmB/8CSuJXLT6zQ6a8N
-         kVfzJZkHMwtykRdKj2T0XjtwqxU+ASlthp6tciOCr1EizXeeyAYWHyMYCIvibaWJh8T8
-         kvH8YIJIQ3asLIm+2TughU33Tw+3lsLYGedtLuClvGWX6XlvN57pZ/MeZsSy8u1uZlMj
-         TkLrLl8U6JfO0/urPWAAogXvoLlasLqu07BR74Hxz040SUq6RVwsbqvSX5fKHSvrUFa/
-         GhdA==
+        bh=F8JPvTbXio/4o2dizd1zh30lCTah/Aako9+AdwCfXso=;
+        b=grPAVe3iZANMCwV2H3vIahp6W4st50YgfOXHsQVgkiFsDNu8h0iv40AWyqdHXNEiQN
+         VZuNFoQ4uHRDiLkfBu13pV5zYVq1FOMQfh99ZU8q9iSNUKJLKNkJ4ahwBybN7lfis1Lt
+         /55FAQJHauoZ2Yrv1wtNM0wTepgsrNkuPGUtRxN+JCA54H8+mQEWJjhSF5kdT/ywXjy8
+         9aAquzDtJ2vhly83FGIA1j13sRX1lT+jig28c/xwDx1/URIZzYRchPtL+wU1eMWoHuWM
+         dBoKg5Ydm5YwKDdBsn2GHjkHwzbSZ536vvQp0wgD3+bu45MlGLYEjnFG3NS1MIAUIOSC
+         Jpjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688538308; x=1691130308;
+        d=1e100.net; s=20221208; t=1688538345; x=1691130345;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jbQGMdTbw1VFlYXzanej6yIJ3DkaHASr0zbCi4VfePk=;
-        b=KJSpImJca1lfRRLFHYvMe1AZjn1AnZHuBwy0hfz/Ym7A7w+p7hytzlItaBjsNhvICj
-         kCM6GD302/RphSe70BBzFdWXjIhKP9HC6GKIN8Q8K3u4muiQidAxGvXx2+ubbeW42Tt2
-         qLQh3tjz7esnIOi7Ds/tDnS8kA6B8CkHgtxcS6D4am86spL0ms4v3uXxn71Dn1g400cF
-         Qpp9Ml7w9ylljv9nKpIlLN2gAEO+p7P5waPehbOP5qteAxH7u6x13Xe/VuGK+1vy3ODz
-         g2qEq+xmpDsBCFEqQE1EPGYRPdXkSod458Ovqw0rI5TuyPQ+PWNRY1k1wYLLrCzqWiYk
-         XFKw==
-X-Gm-Message-State: ABy/qLadnpOI3X6Px4uBaW/hHrIF/1JLS0mVeYH9LYO9oBdIFjI8E9HL
-        TU5UROABnT5K2DEF8NLMlKFWFg==
-X-Google-Smtp-Source: APBJJlGDxvPTXXGTs9bR/9zAtcZojo1qjKRRrWQq2zyrzSFX8MC31jDSmw09BaJoLYajnWN/R9spmg==
-X-Received: by 2002:aa7:c650:0:b0:51e:f1b:ae1a with SMTP id z16-20020aa7c650000000b0051e0f1bae1amr6226660edr.32.1688538308373;
-        Tue, 04 Jul 2023 23:25:08 -0700 (PDT)
+        bh=F8JPvTbXio/4o2dizd1zh30lCTah/Aako9+AdwCfXso=;
+        b=Vd5Ssnr3DEzTg0M5iYniRp/GFcF+u1rfftB9556svnBwcqBShydRazJLs/SA3gxB/l
+         L5LwsyooMRaJstkLvXQEqk44NZtMZr9b1ftBXpOnZU8I5btfFSQxiOBE10e8U8XFmpTw
+         LFddlSXIZmJZTqIttGmHTAHVgslTvTT95gVcb25Z5Mx9hBg7kDt9IyCqNOoJ4Zl4oijU
+         4AyiifZlZA+AgC2xheuOeeDsTkv0G8sC0XbKXEuWaoYGzTOfImSmSKj9Xore4IgIifJF
+         h82b8WyFa0H1UNCO746qm8z5Xoco3XGb8SVcmXLdlmh/8N9QefrcYVeegc5IkNC6qCF3
+         6RPA==
+X-Gm-Message-State: ABy/qLakKGD/h1YYrSXubolZidpe/3IQi6vwB+QRxMSqtz13OtMjj2jN
+        2UVI3V1bFEb/Y616fmfvJgAntA==
+X-Google-Smtp-Source: APBJJlEgEMF9emHGgsHWWQE4/hHEfhifZft4ABIYj7Ght6PTnOoS762iWwOGS1gxr/VjTKbZk0Ciwg==
+X-Received: by 2002:a05:6402:3456:b0:51a:50f2:4e7a with SMTP id l22-20020a056402345600b0051a50f24e7amr10660268edc.13.1688538345105;
+        Tue, 04 Jul 2023 23:25:45 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.26])
-        by smtp.gmail.com with ESMTPSA id r26-20020aa7d15a000000b0051df54c6a27sm6246687edo.56.2023.07.04.23.25.06
+        by smtp.gmail.com with ESMTPSA id m5-20020aa7d345000000b0051495ce23absm12641162edr.10.2023.07.04.23.25.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jul 2023 23:25:07 -0700 (PDT)
-Message-ID: <41ee8c5c-7a6f-04b2-9853-67fb6bdb67b3@linaro.org>
-Date:   Wed, 5 Jul 2023 08:25:05 +0200
+        Tue, 04 Jul 2023 23:25:44 -0700 (PDT)
+Message-ID: <02bc22e9-393a-6695-f8b0-09e3fe0ff6e9@linaro.org>
+Date:   Wed, 5 Jul 2023 08:25:42 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: fsl,imx8-acm: Add audio clock
- mux support
+Subject: Re: [PATCH v2 2/3] clk: imx8: Add audio clock mux related clock
 Content-Language: en-US
 To:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
         peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
@@ -66,9 +65,9 @@ To:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <1688521839-3036-1-git-send-email-shengjiu.wang@nxp.com>
- <1688521839-3036-2-git-send-email-shengjiu.wang@nxp.com>
+ <1688521839-3036-3-git-send-email-shengjiu.wang@nxp.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <1688521839-3036-2-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1688521839-3036-3-git-send-email-shengjiu.wang@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -76,61 +75,19 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 05/07/2023 03:50, Shengjiu Wang wrote:
-> Add the clock dt-binding file for audio clock mux. which
-> is the IP for i.MX8QM, i.MX8QXP, i.MX8DXL.
+> Audio Clock Mux is the IP for i.MX8QXP, i.MX8QM, and
+> i.MX8XL platform, Add the clockid for them.
 > 
 > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 > ---
->  .../bindings/clock/fsl,imx8-acm.yaml          | 159 ++++++++++++++++++
->  1 file changed, 159 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
-> new file mode 100644
-> index 000000000000..b79dd080c008
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+>  include/dt-bindings/clock/imx8-clock.h | 28 ++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 
-nxp, because that's what you used in compatibles.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching.
 
-I don't see detailed changelog. What changed here?
-
-> @@ -0,0 +1,159 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/fsl,imx8-acm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX8 Audio Clock Mux
-> +
-> +maintainers:
-> +  - Shengjiu Wang <shengjiu.wang@nxp.com>
-> +
-> +description: |
-> +  NXP i.MX8 Audio Clock Mux is dedicated clock muxing IP
-> +  used to control Audio related clock on the SoC.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nxp,imx8qm-acm
-> +      - nxp,imx8qxp-acm
-> +      - nxp,imx8dxl-acm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    description:
-> +      List of phandle and PM domain specifier as documented in
-> +      Documentation/devicetree/bindings/power/power_domain.txt
-
-Drop description, it's redundant. I did not ask to add it.
-
-Anyway, my comment is unanswered. Don't ignore the emails you receive.
-
-Can someone provide rationale for this?
+These are bindings!
 
 Best regards,
 Krzysztof
