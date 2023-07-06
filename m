@@ -2,82 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F290EB64DD
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Jul 2023 19:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6ECEB64DA
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 02:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233058AbjGET6W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Jul 2023 15:58:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60912 "EHLO
+        id S232571AbjGFCEU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Jul 2023 22:04:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232606AbjGET6V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 15:58:21 -0400
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0D8A9;
-        Wed,  5 Jul 2023 12:58:20 -0700 (PDT)
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7835ae70e46so270722839f.3;
-        Wed, 05 Jul 2023 12:58:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688587100; x=1691179100;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dWR4rzgRzJqw8ZsrwBvfIC+5CsnJGVSJ/W7SY72QRJs=;
-        b=hKxVGnUs5H7+PpYhId1qJotfxQmjlc2HJ+pPzcXW7mh9mkUzGyRmH0bRAocCDuntdv
-         53CFYdBJhFe0SiS83rheYX2oeW48GFa+T1CIk435ox/zyKs1k9I/1A6fKza4bsRAa/I5
-         1UBHD8WeuAhrXippI+31xZaUbm6wNPyIzF0oeOO5QZK55qNT8sqo7UNJfaGrQiaKdin9
-         T55q7GyLKKpHznVB2EI3C7Cw/nAM+c5kq17txN7Oawo4pqs8rEJXZbxEOt3Fkeh4pUkN
-         cCjVxXndqZ5mKLNP4lqthH4yOlk94MQAHQ2efydwt/7krpsTjYwA4cMf2wof97voN05L
-         +9Sg==
-X-Gm-Message-State: ABy/qLZ56KbQPA2PZQ+HuK0s+SCK5a2Yv50L8uX4qDyG48MZi2y8GKDs
-        N9v5pwie4Z53iXQETLS/Iw==
-X-Google-Smtp-Source: APBJJlH+GhulCs77gC1uUiQFuq4jo9mjgirVmZ0inqvPVdAxFQcR+RjE/nzGuZy9qJVIo8aNC6PGXg==
-X-Received: by 2002:a92:4a0f:0:b0:345:6ce1:d24e with SMTP id m15-20020a924a0f000000b003456ce1d24emr124971ilf.22.1688587100082;
-        Wed, 05 Jul 2023 12:58:20 -0700 (PDT)
-Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id k16-20020a02c650000000b0042b3bb542aesm2613192jan.168.2023.07.05.12.58.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Jul 2023 12:58:19 -0700 (PDT)
-Received: (nullmailer pid 1739539 invoked by uid 1000);
-        Wed, 05 Jul 2023 19:58:16 -0000
-Date:   Wed, 5 Jul 2023 13:58:16 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <neil.armstrong@linaro.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: soc: amlogic: document System
- Control registers
-Message-ID: <168858709644.1739479.11332380287477883638.robh@kernel.org>
-References: <20230705-b4-amlogic-bindings-convert-take2-v2-0-22be915ddc3b@linaro.org>
- <20230705-b4-amlogic-bindings-convert-take2-v2-3-22be915ddc3b@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230705-b4-amlogic-bindings-convert-take2-v2-3-22be915ddc3b@linaro.org>
+        with ESMTP id S232489AbjGFCET (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Jul 2023 22:04:19 -0400
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5ADD19A9;
+        Wed,  5 Jul 2023 19:04:17 -0700 (PDT)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4AD671A0695;
+        Thu,  6 Jul 2023 04:04:16 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 12D8D1A0654;
+        Thu,  6 Jul 2023 04:04:16 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 19FA81800319;
+        Thu,  6 Jul 2023 10:04:14 +0800 (+08)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] clk: imx: add audio clock mux driver
+Date:   Thu,  6 Jul 2023 09:31:15 +0800
+Message-Id: <1688607078-4183-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The Audio Clock Mux (ACM) is a collection of control registers
+and multiplexers that are used to route the audio source clocks
+to the audio peripherals on i.MX8QXP, i.MX8QM, i.MX8DXL
 
-On Wed, 05 Jul 2023 13:41:53 +0200, Neil Armstrong wrote:
-> Document the System Control registers regions found on all Amlogic
-> SoC families and it's clock, power, pinctrl and phy subnodes.
-> 
-> The regions has various independent registers tied to other
-> hardware devices, thus the syscon compatible.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml  | 160 +++++++++++++++++++++
->  1 file changed, 160 insertions(+)
-> 
+Shengjiu Wang (3):
+  dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
+  dt-bindings: clock: imx8-clock: Add audio clock mux related clock
+  clk: imx: imx8: add audio clock mux driver
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+ .../bindings/clock/fsl,imx8-acm.yaml          | 156 ++++++
+ drivers/clk/imx/Makefile                      |   2 +-
+ drivers/clk/imx/clk-imx8-acm.c                | 477 ++++++++++++++++++
+ include/dt-bindings/clock/imx8-clock.h        |  28 +
+ 4 files changed, 662 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+ create mode 100644 drivers/clk/imx/clk-imx8-acm.c
+
+-- 
+2.34.1
 
