@@ -2,151 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7D9EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 11:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA83EEB64DC
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 12:44:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231929AbjGFLAO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jul 2023 07:00:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
+        id S229892AbjGFMod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jul 2023 08:44:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231202AbjGFLAG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 07:00:06 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F7EE70
-        for <linux-clk@vger.kernel.org>; Thu,  6 Jul 2023 04:00:03 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fb7373dd35so2183384e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Jul 2023 04:00:03 -0700 (PDT)
+        with ESMTP id S229793AbjGFMo0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 08:44:26 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C2C326BE;
+        Thu,  6 Jul 2023 05:43:54 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-99384a80af7so75643066b.2;
+        Thu, 06 Jul 2023 05:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688641201; x=1691233201;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RIw6Fh9Mzt0uuZnHYmQ6kni+b2Er6GLAtWhId9yQcDE=;
-        b=WKVo/plSKMi13tRj/JX9hrD0Ny1/RzNyA9DJEu7sJqN92ZK/+XXOVe3Y2N/sf09N76
-         /lbFYd/kfRn/rDvlUrNaE2cROLYFpmiStxAx8jy4w/V8OhJzMuTGCpPOH+mRP+0pGOvT
-         HOAfJwfBITqVe/BwmL7KhRaty++mQQLZnP9sEsBCBxhXbaSryovAJ5L+KntqVC0iuexR
-         GKbAqP/vBASQTxjbL4KoeQAkrpoiksVWDEqr3HClCGSR45sq4/5uEdTbU8BFGfzlPdkW
-         OYIaug2eQKkPCSApWswUJ6vK6bu0/OpZH4BhkEMZriJxkyQPj1Oi6Nv/EsZI8PSEhfU8
-         8V0g==
+        d=gmail.com; s=20221208; t=1688647430; x=1691239430;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VYDnnG7pWiRMK+bq/FaL1Nx3W8B4x4Bv4nmC1xi18oc=;
+        b=WU3DExWNLUqZYnkc9V3f7/rFyIuLhFJTUI6iVkpSJtiPCDIRilY9gAoaxfXuj7YxdB
+         PMId4qdyX4Fg7rD4WPczrjDXryD8vtXhLafBvdpjzZYVgmZ4Oho0TZk1fLXfyD8OqONc
+         FU5MAmCTEtctoM57qKdk6n6Rl4eYJoJhY+S0kJ0jGaqfdcirBLh/h8RoHeOW3dlM0jeM
+         i2Z7f3gfPD4aqsXssb1HTeBha6FXNUaG3xtfl0qzTU1dAVssTZo+UEy0Te/+Yydb/P/P
+         KsLOyADoajSgQ2d84xOOSJKR2OiLBHMUJObkRqVEZE8/P8hi64iwghK4gLmoUKtCXhkp
+         0qWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688641201; x=1691233201;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RIw6Fh9Mzt0uuZnHYmQ6kni+b2Er6GLAtWhId9yQcDE=;
-        b=hpzwOAjV996yf1RUc6BURcxBsNzsvYH2ZZ7xS8YTtAqzWcIH9kaqNN68qFeFGSurIB
-         14u/O5WHpA78I5PDo14JtxaGXbA62IYb3s0/cu003bgvyffr5WoP6qeUTCL5vS9tszXb
-         Ue3nAzhxyRjoS2Z8VoBRnQ/GqKjRv9wtzmzl8nJNatsOCi7V330Q8tv6q6J8/upEubNp
-         vyapsbybX4hTj9BO9DYu+InaQsbixjENPVGSvVbSr0OQkXXRH30kev1tDETM0+hpGhWC
-         Wd+GSZses6Jlu2msm8/K+fyvW/dYUBsufRdIMIYntXs2oMY0uBGPZfl5u/TKoDmzX7UG
-         72dQ==
-X-Gm-Message-State: ABy/qLZjRMYe4NJoi/YFlBPRgApUlymnfkG/N7yQ/f5XYkkIOaoEPskJ
-        oK3zCK2BlhAInPKOAuemK+HEKQ==
-X-Google-Smtp-Source: APBJJlEeR6VMWmejmvNVUZu+unOnt/o8L01nB45AxLDcceq0HjTX1E1PmEtdRuS8Nyp0f4jOGiHjvg==
-X-Received: by 2002:a05:6512:10c3:b0:4f8:6253:540 with SMTP id k3-20020a05651210c300b004f862530540mr705957lfg.19.1688641201536;
-        Thu, 06 Jul 2023 04:00:01 -0700 (PDT)
-Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
-        by smtp.gmail.com with ESMTPSA id v12-20020ac2560c000000b004fb64600e5dsm201639lfd.219.2023.07.06.04.00.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jul 2023 04:00:01 -0700 (PDT)
-Message-ID: <7d335f1d-ef2c-ffe6-e364-c3dc47479929@linaro.org>
-Date:   Thu, 6 Jul 2023 12:59:59 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Content-Language: en-US
-To:     Imran Shaik <quic_imrashai@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        d=1e100.net; s=20221208; t=1688647430; x=1691239430;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VYDnnG7pWiRMK+bq/FaL1Nx3W8B4x4Bv4nmC1xi18oc=;
+        b=NFAYHXgeOoWZutxY/FiAWNTGRK0E5oLRMylD0yH/X6+QT5HB/jr/B9SaZK5jvS2H91
+         MnxrgHhZXzNZPezpB0TLT3SrT7ftLyePdRBPjP99rOJQbzzGZkoqHUqGnTfX6f8eMAgE
+         rqFikvRoOI/iOZMCxmImxpuGRHgqaBj8uZZZ2Zzn7s96jNiMTY31s2zeMyCMzexKj7KG
+         tHdMLYuAR5o0xktMPfz9BmXCXn85GNnw8O6TMz+7GhMTSD4PvXuhqg9pMvJxAsP3x7JZ
+         3X5ZZ5h7V+esQqoNYA++3ADEJj1O61te0geFbwLc+im8aCzxaZC2pD8ou6MjQ34sFHEU
+         cBIg==
+X-Gm-Message-State: ABy/qLa8bxvw9wTQuww8OLa55zjRRtjzFUoK5+cJz0zC4nbJNaC8kqM8
+        sOdXF4oN4lHh/h0M1FTyPlw=
+X-Google-Smtp-Source: APBJJlFJLMBcouDHV83V7fJLXsWaO6PWP1fxv417ufkbm6zxVAmoGb3QorUlneH/dqmW1wEzU5sI/A==
+X-Received: by 2002:a17:906:6543:b0:993:a396:ac64 with SMTP id u3-20020a170906654300b00993a396ac64mr1218886ejn.38.1688647430394;
+        Thu, 06 Jul 2023 05:43:50 -0700 (PDT)
+Received: from david-ryuzu.fritz.box (ipbcc3a9b0.dynamic.kabel-deutschland.de. [188.195.169.176])
+        by smtp.googlemail.com with ESMTPSA id w14-20020a170906b18e00b00992ca779f42sm775915ejy.97.2023.07.06.05.43.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jul 2023 05:43:49 -0700 (PDT)
+From:   David Wronek <davidwronek@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Taniya Das <quic_tdas@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230628092837.3090801-1-quic_imrashai@quicinc.com>
- <20230628092837.3090801-4-quic_imrashai@quicinc.com>
- <afde2981-3801-a93e-3cf2-2ab5d24ee3e1@linaro.org>
- <05f3459f-a2cd-3e4d-bbc6-f0109dbae778@quicinc.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH V2 3/5] clk: qcom: gcc-qdu1000: Update GCC clocks as per
- the latest hw version
-In-Reply-To: <05f3459f-a2cd-3e4d-bbc6-f0109dbae778@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        David Wronek <davidwronek@gmail.com>
+Subject: [PATCH v2 0/7] Add initial support for SM7125 and Xiaomi SM7125 platform
+Date:   Thu,  6 Jul 2023 14:40:19 +0200
+Message-ID: <20230706124339.134272-1-davidwronek@gmail.com>
+X-Mailer: git-send-email 2.41.0
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6.07.2023 12:51, Imran Shaik wrote:
-> 
-> 
-> On 6/28/2023 4:36 PM, Konrad Dybcio wrote:
->> On 28.06.2023 11:28, Imran Shaik wrote:
->>> Add support for gcc_ddrss_ecpri_gsi_clk and update the GCC clkref clocks
->>> as per the latest hardware version of QDU1000 and QRU100 SoCs.
->>>
->>> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
->>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
->>> ---
-[...]
+This series introduces support for the Qualcomm SM7125 SoC and the
+Xiaomi SM7125 platform.
 
->>>           .enable_reg = 0x9c004,
->>>           .enable_mask = BIT(0),
->>>           .hw.init = &(const struct clk_init_data) {
->>>               .name = "gcc_pcie_0_clkref_en",
->>> -            .ops = &clk_branch_ops,
->>> +            .ops = &clk_branch2_ops,
->> This sounds like a separate fix, clk_branch_ops seems to only concern
->> 10+yo chips.
->>
->> Konrad
-> 
-> Sure, will split this patch and push the next series.
-One more nit, I noticed that a lot of QUIC folks respond to the comments
-to their revision-N and send revision-(N+1) like 5 seconds later..
+Signed-off-by: David Wronek <davidwronek@gmail.com>
+---
+Changes in v2:
+- Allow qcom,board-id and qcom,msm-id properties
+- Use QCOM_SCM_VMID_MSS_MSA definition
+- Change initial regulator modes from LPM to HPM
+- Move status to the bottom of nodes
+- Fix up PM6150 interrupts
+- Move clk patch to beginning of series
+- Fix up copyright
+- Take ownership of all commits with permission
+- Link to v1: https://lore.kernel.org/all/20230704163848.169853-2-davidwronek@gmail.com/
 
-This maybe does not concern this message, as all you did is said "ok willfix",
-but if you have some sort of a company-wide "upstream best practices" board,
-you may add something like "wait a bit to let others respond to your email"
+---
+David Wronek (7):
+  clk: qcom: gcc-sc7180: Fix up gcc_sdcc2_apps_clk_src
+  dt-bindings: arm: qcom,ids: Add SoC ID for SM7125
+  dt-bindings: arm: qcom: Document SM7125 and xiaomi,joyeuse board
+  soc: qcom: socinfo: Add SoC ID for SM7125
+  arm64: dts: qcom: pm6150: Add resin and rtc nodes
+  arm64: dts: qcom: Add SM7125 device tree
+  arm64: dts: qcom: Add support for the Xiaomi SM7125 platform
 
-Konrad
+ .../devicetree/bindings/arm/qcom.yaml         |   7 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ arch/arm64/boot/dts/qcom/pm6150.dtsi          |  15 +
+ .../boot/dts/qcom/sm7125-xiaomi-joyeuse.dts   |  16 +
+ .../boot/dts/qcom/sm7125-xiaomi-miatoll.dtsi  | 419 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm7125.dtsi          |  16 +
+ drivers/clk/qcom/gcc-sc7180.c                 |   1 +
+ drivers/soc/qcom/socinfo.c                    |   1 +
+ include/dt-bindings/arm/qcom,ids.h            |   1 +
+ 9 files changed, 477 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sm7125-xiaomi-miatoll.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/sm7125.dtsi
 
-> 
-> Thanks,
-> Imran
-> 
->>>           },
->>>       },
->>>   };
->>> @@ -2274,14 +2293,13 @@ static struct clk_branch gcc_tsc_etu_clk = {
->>>     static struct clk_branch gcc_usb2_clkref_en = {
->>>       .halt_reg = 0x9c008,
->>> -    .halt_bit = 31,
->>> -    .halt_check = BRANCH_HALT_ENABLE,
->>> +    .halt_check = BRANCH_HALT,
->>>       .clkr = {
->>>           .enable_reg = 0x9c008,
->>>           .enable_mask = BIT(0),
->>>           .hw.init = &(const struct clk_init_data) {
->>>               .name = "gcc_usb2_clkref_en",
->>> -            .ops = &clk_branch_ops,
->>> +            .ops = &clk_branch2_ops,
->>>           },
->>>       },
->>>   };
->>> @@ -2523,6 +2541,8 @@ static struct clk_regmap *gcc_qdu1000_clocks[] = {
->>>       [GCC_AGGRE_NOC_ECPRI_GSI_CLK] = &gcc_aggre_noc_ecpri_gsi_clk.clkr,
->>>       [GCC_PCIE_0_PHY_AUX_CLK_SRC] = &gcc_pcie_0_phy_aux_clk_src.clkr,
->>>       [GCC_PCIE_0_PIPE_CLK_SRC] = &gcc_pcie_0_pipe_clk_src.clkr,
->>> +    [GCC_GPLL1_OUT_EVEN] = &gcc_gpll1_out_even.clkr,
->>> +    [GCC_DDRSS_ECPRI_GSI_CLK] = &gcc_ddrss_ecpri_gsi_clk.clkr,
->>>   };
->>>     static const struct qcom_reset_map gcc_qdu1000_resets[] = {
+-- 
+2.41.0
+
