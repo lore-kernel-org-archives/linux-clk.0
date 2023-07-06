@@ -2,125 +2,80 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B05EB64D9
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 15:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11728EB64D9
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 19:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232783AbjGFPgs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jul 2023 11:36:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40692 "EHLO
+        id S232439AbjGFTW2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jul 2023 15:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232229AbjGFPgs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 11:36:48 -0400
-Received: from mail-yw1-x112e.google.com (mail-yw1-x112e.google.com [IPv6:2607:f8b0:4864:20::112e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC317AA;
-        Thu,  6 Jul 2023 08:36:46 -0700 (PDT)
-Received: by mail-yw1-x112e.google.com with SMTP id 00721157ae682-579de633419so11323627b3.3;
-        Thu, 06 Jul 2023 08:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688657806; x=1691249806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OD1pT2LGhjLDtjR1TYr+/gV9UU0KDGw+1r6piH1rLt4=;
-        b=sRDHFcfIk5uvmBBUIU8pj2FTtO1yZffAaaLgGQiSmJ1Ka9ycBQNSQksE7Shwk7Dn4m
-         OhhMBQo8hrE+MM1hhy6/ioKyIkv0kjDjCxqenBCKCwNu9gFuYRTavVw9EfjawYBNbk2x
-         kg8kQcRC09au8nf/mbuwPJP8kjttWphv5yRr6LeoD+/3t39JY9dkVh39oc450Tz/XsWM
-         1OuZVfYXXbdIccqfKuHNt/IUkTG8LmgnIJJmvB5gzP+Zb4efa7EyblHRiXQi5AdgWquW
-         zpxEZst5r0/xTPJgZ7MsbNLqxamCrWBifWejdWepItwwiS0lnsKe+7QwoWxE3lWQIEFj
-         C/dg==
+        with ESMTP id S229802AbjGFTW0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 15:22:26 -0400
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C4861BD3;
+        Thu,  6 Jul 2023 12:22:26 -0700 (PDT)
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3457157a164so3948525ab.1;
+        Thu, 06 Jul 2023 12:22:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688657806; x=1691249806;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OD1pT2LGhjLDtjR1TYr+/gV9UU0KDGw+1r6piH1rLt4=;
-        b=WkDCSjf2LZVxbpkNaGXVKi+uqLQT+OnH0ZYMmM6vkT4zh09aUkpypY3AchxTtwvG+u
-         3/9PTlBjLCYOFdUY/A9t5aRtS+k5OERQlPWRhVntwRFeM89ar0Iw3VublurV1JuOoP4f
-         Nw8bqYdvt+QEcCzjTzJGksNFOqeaRI4NdG3mqVMp6MYtDqtDD/jSkGFlZQZ54YYSfiMB
-         x44BDI9RTDBY23TK5AIZhPJdH9XPe8okM6yZ+pWMA8Cj4DZuqAUlzWy5kiZc6mp4ELfq
-         iSft3oEp6xJZtIUfXRod0P5NcUAn75isxekJxVjLSajPoF4lBmaPZKjtvOpOM8Ssez8m
-         jNEg==
-X-Gm-Message-State: ABy/qLbnB5eFSHj40FXC8nMZ4qqA7pd/YsFKtopyO81Rg0kTz+AMIFbg
-        fUlHp1S0NgA5SHf7MFQ6nUfU1JQ8pG2GJLPW70c=
-X-Google-Smtp-Source: APBJJlHvkEtjlriVCUDGdbO0DZvjhc6QLEJUwDcVH9ySARGsNXDg8RwUaQouFdZRI0SujDbXeWC3+WZyWSL4w/toEgA=
-X-Received: by 2002:a25:1306:0:b0:c61:488c:464 with SMTP id
- 6-20020a251306000000b00c61488c0464mr1752174ybt.27.1688657805956; Thu, 06 Jul
- 2023 08:36:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230706124339.134272-1-davidwronek@gmail.com>
- <20230706124339.134272-7-davidwronek@gmail.com> <021ad5b4-772d-f2f6-f9ec-bca06db04dd8@linaro.org>
-In-Reply-To: <021ad5b4-772d-f2f6-f9ec-bca06db04dd8@linaro.org>
-From:   David Wronek <davidwronek@gmail.com>
-Date:   Thu, 6 Jul 2023 17:36:35 +0200
-Message-ID: <CAEoe_eVAeNZVUHgpj64Redx5vg7wfzU4wjgH33TZ7ieoDifH-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: Add SM7125 device tree
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        d=1e100.net; s=20221208; t=1688671345; x=1691263345;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b1vhHxHDYnQQYlAo2yiSpaZvyCaq/6aSS1boX6Qwnys=;
+        b=Q6/bSlyzmfAhRvaTafeHRhNs0B5FqmqUzAKPwCA135TLSems2u3Zjq9JOGXPpn+6Bq
+         sqiXcXldDiGtlawrZ+LPJlBfXmS8sfbL0CgMvNWTFLY3/FDTKeDuRY4jtkLw+Q9lAVEB
+         hBx4z49iEGywkcYnQch1D4wVxn8uoCBmYnmMQYpSQum82DKs2EGQzVzFGIR6drUTUUHU
+         +IkmgrP+Qnd73vv5mHmQE6VIqX+cBNYlZNfX2/y+GHrArWRLXvRfzI9pAAvTrvzBZ4ml
+         Qgha3/ifpTpsgBH+ecTKQd6nEygdCILfTepJXWpCAW/4hpVDktvN0/+RoXAHSilIfovc
+         gDcA==
+X-Gm-Message-State: ABy/qLZaiVsms9Gk3vgzGqW/WDEYayAH7ja6tdepl+V+XhTrHC9f7sYZ
+        2qkMZSCXydHvMP4jm00rnA==
+X-Google-Smtp-Source: APBJJlFWoym+oBQ2Q3VJdb2mYORaZVCrsen7ZoIQ1ReqH1GTrhFEq86fUM15IHFSUMYuwKf5lH1o8w==
+X-Received: by 2002:a05:6602:274e:b0:783:58a3:ce2a with SMTP id b14-20020a056602274e00b0078358a3ce2amr3175614ioe.12.1688671345303;
+        Thu, 06 Jul 2023 12:22:25 -0700 (PDT)
+Received: from robh_at_kernel.org ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id f12-20020a056638118c00b0041f4ce6e9cdsm714157jas.65.2023.07.06.12.22.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Jul 2023 12:22:24 -0700 (PDT)
+Received: (nullmailer pid 182715 invoked by uid 1000);
+        Thu, 06 Jul 2023 19:22:23 -0000
+Date:   Thu, 6 Jul 2023 13:22:23 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Neil Armstrong <neil.armstrong@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: clock: amlogic: convert
+ amlogic,gxbb-aoclkc.txt to dt-schema
+Message-ID: <168867134189.182630.15973523447108474911.robh@kernel.org>
+References: <20230706-b4-amlogic-bindings-convert-take2-v3-0-f63de6f12dcc@linaro.org>
+ <20230706-b4-amlogic-bindings-convert-take2-v3-2-f63de6f12dcc@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230706-b4-amlogic-bindings-convert-take2-v3-2-f63de6f12dcc@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 6, 2023 at 5:25=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro.=
-org> wrote:
-> On 6.07.2023 14:40, David Wronek wrote:
-> > The Snapdragon 720G (sm7125) is software-wise very similar to the
-> > Snapdragon 7c with minor differences in clock speeds and as added here,
-> > it uses the Kryo 465 instead of Kryo 468.
-> >
-> > Signed-off-by: David Wronek <davidwronek@gmail.com>
-> > ---
-> Can you please paste the output of `dmesg | grep "secondary processor"`?
->
-> That would let us determine the unique identifier of the cores.
->
-> Konrad
-I get this output with the command:
-[    0.005884] CPU1: Booted secondary processor 0x0000000100 [0x51df805e]
-[    0.007191] CPU2: Booted secondary processor 0x0000000200 [0x51df805e]
-[    0.008559] CPU3: Booted secondary processor 0x0000000300 [0x51df805e]
-[    0.010046] CPU4: Booted secondary processor 0x0000000400 [0x51df805e]
-[    0.011639] CPU5: Booted secondary processor 0x0000000500 [0x51df805e]
-[    0.014424] CPU6: Booted secondary processor 0x0000000600 [0x51ff804f]
-[    0.016421] CPU7: Booted secondary processor 0x0000000700 [0x51ff804f]
 
-Sincerely,
-David
-> >  arch/arm64/boot/dts/qcom/sm7125.dtsi | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/sm7125.dtsi
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sm7125.dtsi b/arch/arm64/boot/dts=
-/qcom/sm7125.dtsi
-> > new file mode 100644
-> > index 000000000000..12dd72859a43
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/sm7125.dtsi
-> > @@ -0,0 +1,16 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> > + */
-> > +
-> > +#include "sc7180.dtsi"
-> > +
-> > +/* SM7125 uses Kryo 465 instead of Kryo 468 */
-> > +&CPU0 { compatible =3D "qcom,kryo465"; };
-> > +&CPU1 { compatible =3D "qcom,kryo465"; };
-> > +&CPU2 { compatible =3D "qcom,kryo465"; };
-> > +&CPU3 { compatible =3D "qcom,kryo465"; };
-> > +&CPU4 { compatible =3D "qcom,kryo465"; };
-> > +&CPU5 { compatible =3D "qcom,kryo465"; };
-> > +&CPU6 { compatible =3D "qcom,kryo465"; };
-> > +&CPU7 { compatible =3D "qcom,kryo465"; };
+On Thu, 06 Jul 2023 16:52:33 +0200, Neil Armstrong wrote:
+> Convert the Amlogic Always-On Clock Controller bindings to dt-schema.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../bindings/clock/amlogic,gxbb-aoclkc.txt         | 64 ----------------
+>  .../bindings/clock/amlogic,gxbb-aoclkc.yaml        | 85 ++++++++++++++++++++++
+>  2 files changed, 85 insertions(+), 64 deletions(-)
+> 
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
