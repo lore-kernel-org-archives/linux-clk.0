@@ -2,102 +2,109 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8437EEB64D9
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 13:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 329A9EB64D9
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 13:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232366AbjGFNiE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jul 2023 09:38:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52432 "EHLO
+        id S232626AbjGFNxB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jul 2023 09:53:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232619AbjGFNiC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 09:38:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62262E3;
-        Thu,  6 Jul 2023 06:38:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C365E61961;
-        Thu,  6 Jul 2023 13:38:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27443C433C7;
-        Thu,  6 Jul 2023 13:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688650680;
-        bh=LC3t7eT1Kvk5CLFjOHmNaPdZRgDkQ/pwMLYX9fmEvyI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m9AJe3Fje3vk5hPEAky5FaD8Wfetl4SvFs7kTTo1uO0juzIHJJmOkiNWXhCuMPeZ3
-         2P5W+ppmfj7/ExrSLUWV3WKPWuoFUUR+nLG+BcPm7TVfqAIdw8M9auZ5KNovm1dlLj
-         cBFa07Hpq0l+xzfCMz+D1ZXdiYFab6Fck1fuxNzkDBOawUgMbwhG8ynqGwJ7yxLX9I
-         ONpCJ4mMAqMzH76Yk7D2tGMCqxI9N+vnF6wB7gnyeblyvviAV90BstCrpAawHDTebI
-         OS2JWzidvuHCf67XvQsdwDZRycM6Gs2yUpalKQV6PWdgL11CLECTeLvxnsh/aa/ZOL
-         WgEBWGqOGysSA==
-Received: from johan by xi.lan with local (Exim 4.96)
-        (envelope-from <johan@kernel.org>)
-        id 1qHPBe-0002ed-37;
-        Thu, 06 Jul 2023 15:38:23 +0200
-Date:   Thu, 6 Jul 2023 15:38:22 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        konrad.dybcio@linaro.org, johan+linaro@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "clk: gcc-sc8280xp: keep PCIe power-domains
- always-on"
-Message-ID: <ZKbDztmNp-KMXTDu@hovoldconsulting.com>
-References: <20230706124700.12447-1-manivannan.sadhasivam@linaro.org>
+        with ESMTP id S231731AbjGFNxA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 09:53:00 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC551BD2
+        for <linux-clk@vger.kernel.org>; Thu,  6 Jul 2023 06:52:58 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-51e35791a83so382678a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 06 Jul 2023 06:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1688651577; x=1691243577;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G2aY8/ODKYxuQww964KApt9B1s+b1RjRKlIHq5b6P14=;
+        b=HlHWNvKe9S1hXdtUq9sG570m+8DSKhWaWFFMQd6ngbrKx4Ztc9H+g/6ghVL48s15Ub
+         9rOnDTD3Wg+Rdj/xf+Av/0+ejOm1LbM7WBlFrsijfzhMehEFi9WXtot5n6Misdf+fEwX
+         rmtC2PO+toZppZGrmmSmbm2jVwPHNfQHoRyPTeQF9++EypPolKDIerENc/X/F+DLN8ZQ
+         rLfs6c0jYCjM/acKmjCs5J2BxMix16KEKIoKWwrIqUzQHtMEV4csqffLL4UAYLx6IN8I
+         qczoiSReoINavIIOWq39VlhYEQQg5L3mMl7iUZuFklaTgEsSW788j7PUxNQfr0Mnt3ty
+         SukA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688651577; x=1691243577;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G2aY8/ODKYxuQww964KApt9B1s+b1RjRKlIHq5b6P14=;
+        b=CYmpOkWRahQFNIiu85AgMuivz/4b2/LHUMykMJWyBKLw43UBBjZfboetyYNbsULUZj
+         HSD53Fc2bH+BIGX3bDv808L0F6Lx0NywvoOpj28720eLYhdkWeMDzobDL0HmRV3W6nEu
+         pCc2w16nmmMsJKGXz1lxVNfOS7pdq/W3RDjeWJ/Fu5zJvbmlVg5DqTlxMWr47P3XwXxm
+         RqC1cR4YN5+4W0U63CsXn3A8MU+5GTdD+hkBg2tsoCb7xaL9NHsPF9VP1u1MGOtXn4D4
+         q6c0SWuKcy1I/H9D7bw4EFXYpMXzbOInIBdiZCzCOiTWW9Cfl82SXAQKic6ULh/WHK6/
+         OIpA==
+X-Gm-Message-State: ABy/qLanhkUym3RfKzeCSeznOz0LZZwhONVFVmwz1f4ZhhbRMQTpBKeD
+        0IvttbEQszCAe/8jxzzGYx/QwQ==
+X-Google-Smtp-Source: APBJJlEf9BuSgjYlpRlywafdr9RzQJ+ILglympsMXKXs0nAv/M0nxoUo88BprqsG2MIjPGkCgg5jXw==
+X-Received: by 2002:a05:6402:8d0:b0:51e:f23:5555 with SMTP id d16-20020a05640208d000b0051e0f235555mr1601647edz.33.1688651577464;
+        Thu, 06 Jul 2023 06:52:57 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.26])
+        by smtp.gmail.com with ESMTPSA id l14-20020a056402344e00b0051e22660835sm814279edc.46.2023.07.06.06.52.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jul 2023 06:52:57 -0700 (PDT)
+Message-ID: <40834eb6-2e94-d2e3-e442-d91b757be928@linaro.org>
+Date:   Thu, 6 Jul 2023 15:52:55 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230706124700.12447-1-manivannan.sadhasivam@linaro.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: fsl,imx8-acm: Add audio clock
+ mux support
+Content-Language: en-US
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+        peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1688607078-4183-1-git-send-email-shengjiu.wang@nxp.com>
+ <1688607078-4183-2-git-send-email-shengjiu.wang@nxp.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1688607078-4183-2-git-send-email-shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 06, 2023 at 06:17:00PM +0530, Manivannan Sadhasivam wrote:
-> This reverts commit 12d2a4769380f0dc9ba6f827839869db2b81ef00.
-
-Please update the commit summary and remove or rephrase the above as
-direct reverts are typically used for patches that were broken or causes
-trouble (e.g rephrase as "allow pcie gdsdc to be disabled" or similar).
-
-The patch in question was correct at the time even if it may no longer
-be required, but see below.
-
-> With the minimal system suspend support in place for the PCIe driver that
-> keeps the interconnect path active, the ALWAYS_ON flags can now be dropped.
+On 06/07/2023 03:31, Shengjiu Wang wrote:
+> Add the clock dt-binding file for audio clock mux. which
+> is the IP for i.MX8QM, i.MX8QXP, i.MX8DXL.
 > 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> The Audio clock mux is binded with all the audio IP and audio clocks
+> in the subsystem, so need to list the power domain of related clocks
+> and IPs. Each clock and IP has a power domain, so there are so many
+> power domains.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 > ---
->  drivers/clk/qcom/gcc-sc8280xp.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-> index 04a99dbaa57e..07eb6110442c 100644
-> --- a/drivers/clk/qcom/gcc-sc8280xp.c
-> +++ b/drivers/clk/qcom/gcc-sc8280xp.c
-> @@ -6774,10 +6774,6 @@ static struct gdsc pcie_1_tunnel_gdsc = {
->  	.flags = VOTABLE,
->  };
->  
-> -/*
-> - * The Qualcomm PCIe driver does not yet implement suspend so to keep the
-> - * PCIe power domains always-on for now.
-> - */
->  static struct gdsc pcie_2a_gdsc = {
->  	.gdscr = 0x9d004,
->  	.collapse_ctrl = 0x52128,
-> @@ -6786,7 +6782,7 @@ static struct gdsc pcie_2a_gdsc = {
->  		.name = "pcie_2a_gdsc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> -	.flags = VOTABLE | ALWAYS_ON,
-> +	.flags = VOTABLE,
->  };
 
-Are you sure this is correct? Won't the controller state be lost if the
-GDSC is powered off during suspend? Shouldn't this be PWRSTS_RET_ON at
-least?
 
-Johan
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+---
+
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you do not know the process, here is a short
+explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tools like b4 can help
+here. However, there's no need to repost patches *only* to add the tags.
+The upstream maintainer will do that for acks received on the version
+they apply.
+
+https://elixir.bootlin.com/linux/v5.17/source/Documentation/process/submitting-patches.rst#L540
+
+Best regards,
+Krzysztof
+
