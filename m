@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B4FEB64DC
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 12:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5A6EB64DC
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Jul 2023 12:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232117AbjGFMog (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Jul 2023 08:44:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46678 "EHLO
+        id S232202AbjGFMoh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Jul 2023 08:44:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjGFMoc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 08:44:32 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA761BD6;
-        Thu,  6 Jul 2023 05:44:00 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-99384a80af7so75649166b.2;
-        Thu, 06 Jul 2023 05:43:59 -0700 (PDT)
+        with ESMTP id S232006AbjGFMof (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Jul 2023 08:44:35 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40531BF0;
+        Thu,  6 Jul 2023 05:44:02 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51dec0b6fecso947657a12.1;
+        Thu, 06 Jul 2023 05:44:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688647434; x=1691239434;
+        d=gmail.com; s=20221208; t=1688647436; x=1691239436;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R8V9jbWrkBD6li8Ss0Ga4cRkbrGO/YOXZLHgGgY4Tpc=;
-        b=MSfOoGUYb7hZtYlE44RKP1Ocb19TzdfgNykh+t35lAvd+VtyjkGdaemYADJ3FoXZCM
-         etVzR0O0KEOJo7mrfSyG9mMFyBUybkaQdarVd+hv5+2w6XGXVtxDGpz+SQpxZwW3NVHH
-         5KbJgEbg4oPt6DU49lteLc7PJ80ucVIExyFCLD5FAvoPwVQapWriEN6J5uuS2mgzBImP
-         7D6n68qeF7igNP1cd65979TZMSUw3ga1WtOlwj1STjPsK4OZVFebcRXQ/jKs29KZmEox
-         5tDjUT29AQCAEn0unug7p2Jfcheh+xfK/ijsMxI6vSPLmcZPmzICmvyP7p6N7unZHcLA
-         bbAw==
+        bh=7TE1n+MGQuKs3FdA5Q59+sPT4axcOEYjNeOfcfoQUrI=;
+        b=ToqjMYUcVhSZGh/fmk+F2ssrFSqxuIIt4Zn3zOICqukfLcAUDWS5bIly0svw61bGDJ
+         eHkGzLzbhbPw1jIXNcaHxNIozx60JzblQzlX7Gw3JrbflF8eLzV6JcZAAxnoivRuFlly
+         YAdJoX2ONIh1UWqCk0K3MZB/gC9o0kdiMoaxdFuCzxTwB3W1tGILdsXnLP+uaDBxR0Po
+         iKwSI57EUwmro56XsYEM9Y2dBSXHOpEOMIdQMqjWtuTRKUMF8VWJF+At68Gg9Y3Qlb9L
+         agBDXYL8ShSvGfPWVzaCdAw1ekek1XSju/5w0DUbJXYmSw8c2aWyFuuDf4ZFCMIT+r/u
+         6/+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688647434; x=1691239434;
+        d=1e100.net; s=20221208; t=1688647436; x=1691239436;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R8V9jbWrkBD6li8Ss0Ga4cRkbrGO/YOXZLHgGgY4Tpc=;
-        b=IzYH5KMzlHbUzxXiDnA8T752ef+xowv+07SicxX7KzJaLokSAKmaBcbb2jRHzUSPS9
-         BZgTk/oN6ASGLrDZgYTDGqrKi8U9bod9zif9JyRDMXWsO/xBvHyS6SZRHHe6REm41Gf4
-         EOmDIq9+7peh8R9gIgFwTfdx+teSJj9xJCiRorQl969diGuMe+0MtYLFvEg/p6hODEYR
-         jHmfTNkyEAEjF6cbWvfvTU/gg6sF02gcph6PZtXOmivGRgF8jBsgt9gbQu4QBfj0+qqx
-         v0W10wCNoUWrc4UtJD/KS5bxL5FIKHtqeWZuy1BVkvk1AcAUjGdN+srAMqY7N3KfvD/Z
-         iIDA==
-X-Gm-Message-State: ABy/qLZzrr8LqTbAltxCI9iXQh182tTM9XftgVZb+C5wclxSDRtMtXIh
-        N1UuOTylOUhmepM94TzZ1jg=
-X-Google-Smtp-Source: APBJJlHauMP8NsjtzwndN9TJ8WC9k+JmQq4SW+wpJwc0UrWU/EnTICNk2gbbzdJgSH/BexjNZSiQzw==
-X-Received: by 2002:a17:906:4ad2:b0:988:a986:b11c with SMTP id u18-20020a1709064ad200b00988a986b11cmr1174341ejt.29.1688647434272;
-        Thu, 06 Jul 2023 05:43:54 -0700 (PDT)
+        bh=7TE1n+MGQuKs3FdA5Q59+sPT4axcOEYjNeOfcfoQUrI=;
+        b=kCtH1S9OwAzDT9zUeyebymPbYd1kG9Z8UBzk+dIusP3fB4kgcCzEkbxVzRagwKDp/w
+         VxWCs7VOCQOZhyg/0BE3Eb+45Ahd7vK4JjdiZWmfJ5pf46pV66dy6eRkhUryG497uPW3
+         Ny1gzKqgT407Ru6i54bL2vdpYS9tIo8d1T6T1parRIH2RPN5Q68KHe1v/jo/Rl9plVri
+         qUqN66wo76y6/+4HZjjqDyLwVfEou8Wr1xqSWn02hA4Zeu1p5TMKFTIZhzeRYr/byi7X
+         TdDHtkqLjs1Gf6Bp1WDz7eQRBSrhrrqsmMrncj9/0+NA6cNHJ/q44CbVzVkzPYqbqs+k
+         dEhg==
+X-Gm-Message-State: ABy/qLaXDsM8QPcuus3X0uIK4XG45bTSp3dZbC1JnFBIckNGFHEOBtRV
+        slHyDdp7Fg5EkZHbwbW1JHE=
+X-Google-Smtp-Source: APBJJlF3CKrgK8GgYjAumb5530dT9DHmA0U/+EP0j94TuIMcSTorWhd8GKDSQ1uY0sFFSi6Lx6nxHA==
+X-Received: by 2002:a17:906:2201:b0:973:e79c:3da8 with SMTP id s1-20020a170906220100b00973e79c3da8mr1305851ejs.17.1688647436195;
+        Thu, 06 Jul 2023 05:43:56 -0700 (PDT)
 Received: from david-ryuzu.fritz.box (ipbcc3a9b0.dynamic.kabel-deutschland.de. [188.195.169.176])
-        by smtp.googlemail.com with ESMTPSA id w14-20020a170906b18e00b00992ca779f42sm775915ejy.97.2023.07.06.05.43.52
+        by smtp.googlemail.com with ESMTPSA id w14-20020a170906b18e00b00992ca779f42sm775915ejy.97.2023.07.06.05.43.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jul 2023 05:43:53 -0700 (PDT)
+        Thu, 06 Jul 2023 05:43:55 -0700 (PDT)
 From:   David Wronek <davidwronek@gmail.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -62,11 +62,10 @@ To:     Andy Gross <agross@kernel.org>,
 Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        David Wronek <davidwronek@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 3/7] dt-bindings: arm: qcom: Document SM7125 and xiaomi,joyeuse board
-Date:   Thu,  6 Jul 2023 14:40:22 +0200
-Message-ID: <20230706124339.134272-4-davidwronek@gmail.com>
+        David Wronek <davidwronek@gmail.com>
+Subject: [PATCH v2 5/7] arm64: dts: qcom: pm6150: Add resin and rtc nodes
+Date:   Thu,  6 Jul 2023 14:40:24 +0200
+Message-ID: <20230706124339.134272-6-davidwronek@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230706124339.134272-1-davidwronek@gmail.com>
 References: <20230706124339.134272-1-davidwronek@gmail.com>
@@ -76,46 +75,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the xiaomi,joyeuse board based on the Qualcomm SM7125 SoC.
+Add support for the RTC which is the same as on other PMICs and add the
+resin child node to the PM6150 PON device and disable it by default.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: David Wronek <davidwronek@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/qcom/pm6150.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 450f616774e0..a403c433e9b5 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -77,6 +77,7 @@ description: |
-         sm6125
-         sm6350
-         sm6375
-+        sm7125
-         sm7225
-         sm8150
-         sm8250
-@@ -929,6 +930,11 @@ properties:
-               - sony,pdx225
-           - const: qcom,sm6375
- 
-+      - items:
-+          - enum:
-+              - xiaomi,joyeuse
-+          - const: qcom,sm7125
+diff --git a/arch/arm64/boot/dts/qcom/pm6150.dtsi b/arch/arm64/boot/dts/qcom/pm6150.dtsi
+index 2e6afa296141..43c50f890e8b 100644
+--- a/arch/arm64/boot/dts/qcom/pm6150.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm6150.dtsi
+@@ -53,6 +53,14 @@ pm6150_pwrkey: pwrkey {
+ 				bias-pull-up;
+ 				linux,code = <KEY_POWER>;
+ 			};
 +
-       - items:
-           - enum:
-               - fairphone,fp4
-@@ -1072,6 +1078,7 @@ allOf:
-               - qcom,sm6115
-               - qcom,sm6125
-               - qcom,sm6350
-+              - qcom,sm7125
-               - qcom,sm7225
-               - qcom,sm8150
-               - qcom,sm8250
++			pm6150_resin: resin {
++				compatible = "qcom,pm8941-resin";
++				interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
++				debounce = <15625>;
++				bias-pull-up;
++				status = "disabled";
++			};
+ 		};
+ 
+ 		pm6150_temp: temp-alarm@2400 {
+@@ -88,6 +96,13 @@ pm6150_adc_tm: adc-tm@3500 {
+ 			status = "disabled";
+ 		};
+ 
++		rtc@6000 {
++			compatible = "qcom,pm8941-rtc";
++			reg = <0x6000>, <0x6100>;
++			reg-names = "rtc", "alarm";
++			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
++		};
++
+ 		pm6150_gpios: gpio@c000 {
+ 			compatible = "qcom,pm6150-gpio", "qcom,spmi-gpio";
+ 			reg = <0xc000>;
 -- 
 2.41.0
 
