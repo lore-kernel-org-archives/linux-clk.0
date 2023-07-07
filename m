@@ -2,141 +2,76 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB22EB64DA
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 04:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5BAEB64DA
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 07:44:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231421AbjGGEAl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 00:00:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
+        id S232513AbjGGHon (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jul 2023 03:44:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232073AbjGGEA0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 00:00:26 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEB211FF0;
-        Thu,  6 Jul 2023 21:00:20 -0700 (PDT)
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36740Dh4027216;
-        Fri, 7 Jul 2023 04:00:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=zcN+ITect7zb7NZtlf2sSA/apoTxRshctxneuDN2SYs=;
- b=cf4VsvusGWZgk0KEFCSw7vEgnZ0gU7qIXCmC2vZ2B0BzWckNX9UQsEMVtzkjfdzweZgf
- R6l6mMMRs0b58BSe85WrUdm1UBNm4o6ExVKGKnnJfRX7vITWT5r1IGEkJXgIvE7xp3gH
- xpNd3inR16ctuV/974TnucMchL5KJ9ZYN6HhAMoRJATP4beGFgg7jC/k108wpXxqc0pw
- o7LzHfO31PeU5pi6IORR8tHJeGbRdg2YYasrzBZ+XwSAfr6QWi/HFig+/4miSOUj8I9P
- RCg/v5WXJqwk7a6LX+JiutaArdweKa1nUjzR1Hls8wYDXkq5nj/8rB9JmbkhoWVUyRYj +g== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rnvyvhp1w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 07 Jul 2023 04:00:13 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3673xGPT007971
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Jul 2023 03:59:16 GMT
-Received: from hu-jkona-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 6 Jul 2023 20:59:10 -0700
-From:   Jagadeesh Kona <quic_jkona@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Subject: [PATCH V6 5/5] arm64: dts: qcom: sm8550: Add camera clock controller
-Date:   Fri, 7 Jul 2023 09:27:44 +0530
-Message-ID: <20230707035744.22245-6-quic_jkona@quicinc.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230707035744.22245-1-quic_jkona@quicinc.com>
-References: <20230707035744.22245-1-quic_jkona@quicinc.com>
+        with ESMTP id S232495AbjGGHoi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 03:44:38 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3641FCE;
+        Fri,  7 Jul 2023 00:44:36 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id A0940819B;
+        Fri,  7 Jul 2023 15:44:28 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 7 Jul
+ 2023 15:44:28 +0800
+Received: from [192.168.125.128] (113.72.145.114) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 7 Jul
+ 2023 15:44:27 +0800
+Message-ID: <0b6bd526-1b66-1091-8e9a-cae71d998021@starfivetech.com>
+Date:   Fri, 7 Jul 2023 15:41:20 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: In7_oezgxu7vBEKvT_jPk_K29bFYuAxw
-X-Proofpoint-ORIG-GUID: In7_oezgxu7vBEKvT_jPk_K29bFYuAxw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-06_17,2023-07-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0 bulkscore=0
- spamscore=0 priorityscore=1501 malwarescore=0 phishscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2307070036
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [RESEND PATCH v6 0/7] Add PLL clocks driver and syscon for
+ StarFive JH7110 SoC
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Conor Dooley" <conor@kernel.org>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230704064610.292603-1-xingyu.wu@starfivetech.com>
+ <913206a5-3ce2-3ce1-774e-3a4a9030b0e2@linaro.org>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <913206a5-3ce2-3ce1-774e-3a4a9030b0e2@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.145.114]
+X-ClientProxiedBy: EXCAS066.cuchost.com (172.16.6.26) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device node for camera clock controller on Qualcomm
-SM8550 platform.
+On 2023/7/5 14:27, Krzysztof Kozlowski wrote:
+> On 04/07/2023 08:46, Xingyu Wu wrote:
+>> [Resending because it has a error about examples in syscon bingdings
+>> and has to be fixed.]
+> 
+> Resending means you sent the same version. If you did not change
+> anything, then it will fail, right? If you changed something, it is new
+> version.
+> 
 
-Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-Changes since v5:
- - No changes
-Changes since v4:
- - No changes
-Changes since v3:
- - No changes
-Changes since v2:
- - No changes
-Changes since v1:
- - Padded non-zero address part to 8 hex digits
+Okay, I will fix it in new version of these patches. I sorry to make these noise.
 
- arch/arm64/boot/dts/qcom/sm8550.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 41d60af93692..2df05c48f215 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,sm8450-videocc.h>
-+#include <dt-bindings/clock/qcom,sm8550-camcc.h>
- #include <dt-bindings/clock/qcom,sm8550-gcc.h>
- #include <dt-bindings/clock/qcom,sm8550-gpucc.h>
- #include <dt-bindings/clock/qcom,sm8550-tcsr.h>
-@@ -2419,6 +2420,20 @@ videocc: clock-controller@aaf0000 {
- 			#power-domain-cells = <1>;
- 		};
- 
-+		camcc: clock-controller@ade0000 {
-+			compatible = "qcom,sm8550-camcc";
-+			reg = <0 0x0ade0000 0 0x20000>;
-+			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
-+				 <&bi_tcxo_div2>,
-+				 <&bi_tcxo_ao_div2>,
-+				 <&sleep_clk>;
-+			power-domains = <&rpmhpd SM8550_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		mdss: display-subsystem@ae00000 {
- 			compatible = "qcom,sm8550-mdss";
- 			reg = <0 0x0ae00000 0 0x1000>;
--- 
-2.40.1
-
+Best regards,
+Xingyu Wu
