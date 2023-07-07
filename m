@@ -2,105 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98634EB64D9
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 13:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3205FEB64DA
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 14:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231492AbjGGNfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 09:35:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
+        id S232783AbjGGOBz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jul 2023 10:01:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbjGGNfD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 09:35:03 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CBA1997;
-        Fri,  7 Jul 2023 06:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1688736902; x=1720272902;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zJMl5SY47pBGwDkNPoefM/yltDD51XulbBFX8TC/LJw=;
-  b=eBKWUR8M7QtCPfaV6QDgLWHBV0LHoCg60a/iH8/dD9No0pgAC7IRdCgN
-   j0+rURr7Nhg7iVB1jTQUAxpNrppN9VlFRZE/KzDRJ9wbPwj906UnmFTqO
-   TJg7czj3KAX18MBam2/kqSu1LV5Pr+LHf9tRsw3IyJA810tsHqsSlYFSI
-   75HJZb6yxHb34qBJ8ahFownJDUUQsEmpQHkeECVX+rPmIhfCxxvf5WO5/
-   yktIl7r26VQaOd1qOn7poKiMjzHzr1p6g5bgVbIrxWWZZEcIBcCHHPzA8
-   0WQrZoCSgQYodJq6uuf4G2C8jDwxiCUtgG6UBbEc0lR77JnCS9IxVZowG
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10764"; a="366471756"
-X-IronPort-AV: E=Sophos;i="6.01,187,1684825200"; 
-   d="scan'208";a="366471756"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2023 06:33:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10764"; a="966656794"
-X-IronPort-AV: E=Sophos;i="6.01,187,1684825200"; 
-   d="scan'208";a="966656794"
-Received: from lkp-server01.sh.intel.com (HELO c544d7fc5005) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 07 Jul 2023 06:33:00 -0700
-Received: from kbuild by c544d7fc5005 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qHlZz-000212-2G;
-        Fri, 07 Jul 2023 13:32:59 +0000
-Date:   Fri, 7 Jul 2023 21:32:28 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
-        peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        shengjiu.wang@gmail.com
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] clk: imx: imx8: add audio clock mux driver
-Message-ID: <202307072131.S4pYlrxM-lkp@intel.com>
-References: <1688449175-1677-4-git-send-email-shengjiu.wang@nxp.com>
+        with ESMTP id S232408AbjGGOBj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 10:01:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 242A12123
+        for <linux-clk@vger.kernel.org>; Fri,  7 Jul 2023 07:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688738454;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Xp6rJXv98R80P+/7EHwV7cdYFXbRakzdmgAQwoPVD+8=;
+        b=OqMTevG80D+E+VVV6I2FliznM62+zqWxYFdTqHugIFGfATODjIVNLOaVTf8r1Rv3mxdYOx
+        gHr4Wq1cOjD9m5sbv7hxzQRdzUA7KK/Ir6LeihlOE+YeuU6cIqNXJmMNOmxpOtwwLijzlO
+        +CKyiPzGjCjdwOPD05Z/UTH80YEy5uQ=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-357-nvdKaUNuNZK_NsivSrgL-g-1; Fri, 07 Jul 2023 10:00:52 -0400
+X-MC-Unique: nvdKaUNuNZK_NsivSrgL-g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D30CF1C060CC;
+        Fri,  7 Jul 2023 14:00:50 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-39.pek2.redhat.com [10.72.12.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D64122166B25;
+        Fri,  7 Jul 2023 14:00:38 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        schnelle@linux.ibm.com, vkoul@kernel.org, eli.billauer@gmail.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, derek.kiernan@amd.com,
+        dragan.cvetic@amd.com, linux@dominikbrodowski.net,
+        Jonathan.Cameron@huawei.com, linus.walleij@linaro.org,
+        tsbogend@alpha.franken.de, joyce.ooi@intel.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, tglx@linutronix.de, maz@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        frowand.list@gmail.com, Baoquan He <bhe@redhat.com>,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org
+Subject: [PATCH 7/8] clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
+Date:   Fri,  7 Jul 2023 21:58:51 +0800
+Message-Id: <20230707135852.24292-8-bhe@redhat.com>
+In-Reply-To: <20230707135852.24292-1-bhe@redhat.com>
+References: <20230707135852.24292-1-bhe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1688449175-1677-4-git-send-email-shengjiu.wang@nxp.com>
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Shengjiu,
+On s390 systems (aka mainframes), it has classic channel devices for
+networking and permanent storage that are currently even more common
+than PCI devices. Hence it could have a fully functional s390 kernel
+with CONFIG_PCI=n, then the relevant iomem mapping functions
+[including ioremap(), devm_ioremap(), etc.] are not available.
 
-kernel test robot noticed the following build errors:
+Here let COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM so that it won't
+be built to cause below compiling error if PCI is unset:
 
-[auto build test ERROR on abelvesa/clk/imx]
-[also build test ERROR on linus/master v6.4 next-20230707]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+------
+ld: drivers/clk/clk-fixed-mmio.o: in function `fixed_mmio_clk_setup':
+clk-fixed-mmio.c:(.text+0x5e): undefined reference to `of_iomap'
+ld: clk-fixed-mmio.c:(.text+0xba): undefined reference to `iounmap'
+------
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Shengjiu-Wang/dt-bindings-clock-imx8-acm-Add-audio-clock-mux-support/20230704-141425
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git clk/imx
-patch link:    https://lore.kernel.org/r/1688449175-1677-4-git-send-email-shengjiu.wang%40nxp.com
-patch subject: [PATCH 3/3] clk: imx: imx8: add audio clock mux driver
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20230707/202307072131.S4pYlrxM-lkp@intel.com/config)
-compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
-reproduce: (https://download.01.org/0day-ci/archive/20230707/202307072131.S4pYlrxM-lkp@intel.com/reproduce)
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202306211329.ticOJCSv-lkp@intel.com/
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+---
+ drivers/clk/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202307072131.S4pYlrxM-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: duplicate symbol: init_module
-   >>> defined at clk-imx8qxp.c
-   >>>            drivers/clk/imx/clk-imx8qxp.o:(init_module)
-   >>> defined at clk-imx8-acm.c
-   >>>            drivers/clk/imx/clk-imx8-acm.o:(.init.text+0x4)
---
->> ld.lld: error: duplicate symbol: cleanup_module
-   >>> defined at clk-imx8qxp.c
-   >>>            drivers/clk/imx/clk-imx8qxp.o:(cleanup_module)
-   >>> defined at clk-imx8-acm.c
-   >>>            drivers/clk/imx/clk-imx8-acm.o:(.exit.text+0x4)
-
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 93f38a8178ba..6b3b424addab 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -444,6 +444,7 @@ config COMMON_CLK_BD718XX
+ config COMMON_CLK_FIXED_MMIO
+ 	bool "Clock driver for Memory Mapped Fixed values"
+ 	depends on COMMON_CLK && OF
++	depends on HAS_IOMEM
+ 	help
+ 	  Support for Memory Mapped IO Fixed clocks
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
