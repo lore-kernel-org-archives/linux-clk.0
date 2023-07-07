@@ -2,138 +2,182 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D3AC001DC
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 12:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5723EB64D9
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 13:03:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231845AbjGGMbH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 08:31:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59812 "EHLO
+        id S230503AbjGGNDe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jul 2023 09:03:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232159AbjGGMbD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 08:31:03 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22902680
-        for <linux-clk@vger.kernel.org>; Fri,  7 Jul 2023 05:30:55 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b6f9edac8dso27348921fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 07 Jul 2023 05:30:55 -0700 (PDT)
+        with ESMTP id S229872AbjGGNDd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 09:03:33 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5DCAE6E;
+        Fri,  7 Jul 2023 06:03:31 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f122ff663eso2995370e87.2;
+        Fri, 07 Jul 2023 06:03:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688733054; x=1691325054;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iGvyCAsX8L6WnC8v9SRyT2lXuT9dJtv6Ob7UfVhRf9g=;
-        b=u7ln/9RrvRdtuIdt+mrgHIC4WouXbUjvvcIVfUQeCc9olrHTNL+Xsz/i6tHmVIFHov
-         BT/41CpZZMgWHCcDQQw5z+/9MP7kVM0Op4jNJXt1x0b2k3IDHC+2Y069a/yUZ3q5mmB4
-         14yJrVWZI2i0ymEfyZAe9EfFHKdM6vyxeyAvT/fZFjGyEhjY1anAHfwkflU8qiYZAUFS
-         9b38yUCTryN1/fjlrmgEGzpp91TJS/uGRN0dpd1FKmY9k8L8sKKMNogghvqmKVdocCHY
-         LVLvvpnEhxLZFV6VadxC2JiCNHTjGS/MmLvaQfRwt1yBPMy+M4BSBEjxfw7RumA/1IsH
-         OsgQ==
+        d=gmail.com; s=20221208; t=1688735010; x=1691327010;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZNacMOqwrhoL0QSaaiHdPXWMGR4rvtaSe1YyMK5/gt0=;
+        b=eR+s2fW2xs3EO4TlaA1eYSdVmAulIqsy36Tr2su/5sjz0E5/bfDpIzuvkHK4lNo0XV
+         ZWEFPpoGI9IX4/cqCBnuXKcdudiDSjwIEDW6i2SEyeuGZkIZnu97uYi8G8XN4LrCFehp
+         JoBxCmT136XBTThmhHl692EUeWFpbvVqzS7/lzx9N01af/29sevplxnndMm08/zvur/W
+         /hSVFzlb9uxJf0IH8dZ09FWZzhueFA6g0NCmdpsfo7qx332iksCUEa3F69J0AwZnSE2U
+         IYu75OU8icCnsZzFWQIAA0K57PdhME6M4c7qay1UM+z2AN8O+hg6xhlXisSHU21Fmxqg
+         xxtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688733054; x=1691325054;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iGvyCAsX8L6WnC8v9SRyT2lXuT9dJtv6Ob7UfVhRf9g=;
-        b=kf2V23aeUWt4biSknRRiLgo5WkFt3rVVSGeQfvmBPlR6xCnQ+UeTphurj6WW9xUyV/
-         5tRlSwFxaTQeiZ3QCHOIteyA3fHZOOG77PnKwOcXv/r7bSswPol1A8/ksBqILoXbWj+Y
-         yWc7XppT0fSdd+T1v4YmNiBdL7AJ3+p4VK2bozLY3uvl3KeQr/eU35VZegl7j1WcKMm2
-         mCFZZ1gtNB+Gz54ZlGDCrE+WGPh/I8PnH5N8eM0wRLPdSXxW09xHc9WuryYxBSFVjbsI
-         ipXpv3OUQp/tugR/551f1tVNxY1TO2pLN0I32wRB0b24RHb0j7u+/+kRXRoqpWxJA3uQ
-         yEDg==
-X-Gm-Message-State: ABy/qLaQb1wjbrCAScoQO0TbTU0h3xkYaS7EKkLlAToDCDO9M48B8sFX
-        p1LlDbmtrtA5p2CiFmkBvuoMmQ==
-X-Google-Smtp-Source: APBJJlFVEtG496EnoT85BigKA2kUu5jfUK+oufO+W1N79iqyCJ+ptwY0uD9THh4p7PbnlmkyehJ19Q==
-X-Received: by 2002:a2e:9596:0:b0:2b6:d4f7:b7fa with SMTP id w22-20020a2e9596000000b002b6d4f7b7famr3220754ljh.5.1688733053913;
-        Fri, 07 Jul 2023 05:30:53 -0700 (PDT)
-Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
-        by smtp.gmail.com with ESMTPSA id m18-20020a2eb6d2000000b002b6e00a3e19sm751496ljo.132.2023.07.07.05.30.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jul 2023 05:30:53 -0700 (PDT)
-Message-ID: <95ac3e2d-69c6-e795-af68-924000eb318e@linaro.org>
-Date:   Fri, 7 Jul 2023 14:30:52 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: Add SM7125 device tree
-Content-Language: en-US
-To:     David Wronek <davidwronek@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
+        d=1e100.net; s=20221208; t=1688735010; x=1691327010;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZNacMOqwrhoL0QSaaiHdPXWMGR4rvtaSe1YyMK5/gt0=;
+        b=Kcfw2ZCC28NwUkj4HGsjtA0MuykzCRksJPzX8hXrKxZrqTFC4cfaGnFxVuBAK1fa2j
+         vXMGi8YVNwhvDi8FCTcEq0oGMm/prz4xVmnc7t6jE5TsELCvQy8bObxmMYC3WMk6bXTF
+         aM44sKkOL5TC1rF502b1Voc+appxP23i49QYH5EB4w4df0tSEaEcwJdR9k9R1Z9lExyK
+         TXD8sr32+O3hZ1snKn1MdPmQMyGNnelJYel2iDBSh0HX23X8VfjFYOwh+vixS/JZ9N3m
+         /ZR6KgY2+BWNVRX6c8k77epk6bSi64XUSWGW7DHmoyYWEFoi9w477ApLvEbGNG67j7Sk
+         U4/Q==
+X-Gm-Message-State: ABy/qLZz8e/+XNJ48foIHQFHHGPWBxPvqnAS6M8doTLrAbw/WAWm0G6n
+        a7t+qSFRrYyLVxl0p6lkQX7ztPDa5LM=
+X-Google-Smtp-Source: APBJJlG0erWh4WOpt6vWO8lqZlYD8q2047PFQ9rlt2+E2nswRsagjKyLwqtF07VPmkXEtQdlAuWJ2Q==
+X-Received: by 2002:a05:6512:39ca:b0:4f9:58bd:9e5a with SMTP id k10-20020a05651239ca00b004f958bd9e5amr4677188lfu.27.1688735009648;
+        Fri, 07 Jul 2023 06:03:29 -0700 (PDT)
+Received: from localhost.lan (031011218106.poznan.vectranet.pl. [31.11.218.106])
+        by smtp.gmail.com with ESMTPSA id d5-20020ac24c85000000b004fa35167729sm673090lfl.159.2023.07.07.06.03.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Jul 2023 06:03:29 -0700 (PDT)
+From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-References: <20230706124339.134272-1-davidwronek@gmail.com>
- <20230706124339.134272-7-davidwronek@gmail.com>
- <021ad5b4-772d-f2f6-f9ec-bca06db04dd8@linaro.org>
- <CAEoe_eVAeNZVUHgpj64Redx5vg7wfzU4wjgH33TZ7ieoDifH-Q@mail.gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <CAEoe_eVAeNZVUHgpj64Redx5vg7wfzU4wjgH33TZ7ieoDifH-Q@mail.gmail.com>
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: [PATCH] dt-bindings: clock: convert BCM53573 ILP clock to the json-schema
+Date:   Fri,  7 Jul 2023 15:03:22 +0200
+Message-Id: <20230707130322.9375-1-zajec5@gmail.com>
+X-Mailer: git-send-email 2.35.3
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6.07.2023 17:36, David Wronek wrote:
-> On Thu, Jul 6, 2023 at 5:25 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->> On 6.07.2023 14:40, David Wronek wrote:
->>> The Snapdragon 720G (sm7125) is software-wise very similar to the
->>> Snapdragon 7c with minor differences in clock speeds and as added here,
->>> it uses the Kryo 465 instead of Kryo 468.
->>>
->>> Signed-off-by: David Wronek <davidwronek@gmail.com>
->>> ---
->> Can you please paste the output of `dmesg | grep "secondary processor"`?
->>
->> That would let us determine the unique identifier of the cores.
->>
->> Konrad
-> I get this output with the command:
-> [    0.005884] CPU1: Booted secondary processor 0x0000000100 [0x51df805e]
-> [    0.007191] CPU2: Booted secondary processor 0x0000000200 [0x51df805e]
-> [    0.008559] CPU3: Booted secondary processor 0x0000000300 [0x51df805e]
-> [    0.010046] CPU4: Booted secondary processor 0x0000000400 [0x51df805e]
-> [    0.011639] CPU5: Booted secondary processor 0x0000000500 [0x51df805e]
-> [    0.014424] CPU6: Booted secondary processor 0x0000000600 [0x51ff804f]
-> [    0.016421] CPU7: Booted secondary processor 0x0000000700 [0x51ff804f]
-Hm okay so they are indeed Qualcomm-branded cores.. Sometimes they use the
-ARM ones and still call it Kryo 
+From: Rafał Miłecki <rafal@milecki.pl>
 
-btw the implementer id of 0x51 is the ascii code of 'Q', nice quirk
+This helps validating DTS files.
 
-Konrad
-> 
-> Sincerely,
-> David
->>>  arch/arm64/boot/dts/qcom/sm7125.dtsi | 16 ++++++++++++++++
->>>  1 file changed, 16 insertions(+)
->>>  create mode 100644 arch/arm64/boot/dts/qcom/sm7125.dtsi
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm7125.dtsi b/arch/arm64/boot/dts/qcom/sm7125.dtsi
->>> new file mode 100644
->>> index 000000000000..12dd72859a43
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/qcom/sm7125.dtsi
->>> @@ -0,0 +1,16 @@
->>> +// SPDX-License-Identifier: GPL-2.0
->>> +/*
->>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
->>> + */
->>> +
->>> +#include "sc7180.dtsi"
->>> +
->>> +/* SM7125 uses Kryo 465 instead of Kryo 468 */
->>> +&CPU0 { compatible = "qcom,kryo465"; };
->>> +&CPU1 { compatible = "qcom,kryo465"; };
->>> +&CPU2 { compatible = "qcom,kryo465"; };
->>> +&CPU3 { compatible = "qcom,kryo465"; };
->>> +&CPU4 { compatible = "qcom,kryo465"; };
->>> +&CPU5 { compatible = "qcom,kryo465"; };
->>> +&CPU6 { compatible = "qcom,kryo465"; };
->>> +&CPU7 { compatible = "qcom,kryo465"; };
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+---
+ .../bindings/clock/brcm,bcm53573-ilp.txt      | 36 -------------
+ .../bindings/clock/brcm,bcm53573-ilp.yaml     | 51 +++++++++++++++++++
+ 2 files changed, 51 insertions(+), 36 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+deleted file mode 100644
+index 2ebb107331dd..000000000000
+--- a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-Broadcom BCM53573 ILP clock
+-===========================
+-
+-This binding uses the common clock binding:
+-    Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-This binding is used for ILP clock (sometimes referred as "slow clock")
+-on Broadcom BCM53573 devices using Cortex-A7 CPU.
+-
+-ILP's rate has to be calculated on runtime and it depends on ALP clock
+-which has to be referenced.
+-
+-This clock is part of PMU (Power Management Unit), a Broadcom's device
+-handing power-related aspects. Its node must be sub-node of the PMU
+-device.
+-
+-Required properties:
+-- compatible: "brcm,bcm53573-ilp"
+-- clocks: has to reference an ALP clock
+-- #clock-cells: should be <0>
+-- clock-output-names: from common clock bindings, should contain clock
+-		      name
+-
+-Example:
+-
+-pmu@18012000 {
+-	compatible = "simple-mfd", "syscon";
+-	reg = <0x18012000 0x00001000>;
+-
+-	ilp {
+-		compatible = "brcm,bcm53573-ilp";
+-		clocks = <&alp>;
+-		#clock-cells = <0>;
+-		clock-output-names = "ilp";
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
+new file mode 100644
+index 000000000000..648f68a53119
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/brcm,bcm53573-ilp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom BCM53573 ILP clock
++
++maintainers:
++  - Rafał Miłecki <rafal@milecki.pl>
++
++description: |
++  This binding is used for ILP clock (sometimes referred as "slow clock")
++  on Broadcom BCM53573 devices using Cortex-A7 CPU.
++
++  ILP's rate has to be calculated on runtime and it depends on ALP clock
++  which has to be referenced.
++
++  This clock is part of PMU (Power Management Unit), a Broadcom's device
++  handing power-related aspects. Its node must be sub-node of the PMU
++  device.
++
++properties:
++  compatible:
++    const: brcm,bcm53573-ilp
++
++  clocks:
++    description: ALP clock
++    maxItems: 1
++
++  "#clock-cells":
++    const: 0
++
++  clock-output-names:
++    const: ilp
++
++required:
++  - clocks
++  - "#clock-cells"
++  - clock-output-names
++
++additionalProperties: false
++
++examples:
++  - |
++    ilp {
++      compatible = "brcm,bcm53573-ilp";
++      clocks = <&alp>;
++      #clock-cells = <0>;
++      clock-output-names = "ilp";
++    };
+-- 
+2.35.3
+
