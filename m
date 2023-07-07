@@ -2,112 +2,138 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3194C001B0
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 11:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D3AC001DC
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 12:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232457AbjGGLGU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 07:06:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33200 "EHLO
+        id S231845AbjGGMbH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jul 2023 08:31:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232732AbjGGLGO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 07:06:14 -0400
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5550212B
-        for <linux-clk@vger.kernel.org>; Fri,  7 Jul 2023 04:05:49 -0700 (PDT)
-Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fb77f21c63so2674452e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 07 Jul 2023 04:05:49 -0700 (PDT)
+        with ESMTP id S232159AbjGGMbD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 08:31:03 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C22902680
+        for <linux-clk@vger.kernel.org>; Fri,  7 Jul 2023 05:30:55 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b6f9edac8dso27348921fa.3
+        for <linux-clk@vger.kernel.org>; Fri, 07 Jul 2023 05:30:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688727946; x=1691319946;
+        d=linaro.org; s=google; t=1688733054; x=1691325054;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HX+g9C+7SiwpjIZlaW3PbaAICmuhwXUy2tZj1GLg4K0=;
-        b=ifOvRemRzEymPd+hhQQLbwBMM7cEXYOiqBJSZ1ezN5yvrF0odjajrBnTNhtjIcSZno
-         IV+xihvhbKeoF2gf4X1qxdeawyIr2qlLwuLk5rkKVuwdLsAJks3QpBJHW+xBZ1EHol+6
-         TKVtBnJxp7TPww1abS/lE4RN9lHvPbNK+f53CFFOc2hWLyNvb3+bSPWS6EWZ398MMP1Y
-         bPpcM2BuzWtOEmxgx1d2A/VxrVq7yaxVdXyswyknFtH1S37p8Ys5+P2lRx+vo94wrIS4
-         cI76fc4RK72FkpPsPFqDNE7UyxfKAwYaWpf6lKCJVPB+VPPK4h3fiq7Y808pI9GUkswN
-         drsg==
+        bh=iGvyCAsX8L6WnC8v9SRyT2lXuT9dJtv6Ob7UfVhRf9g=;
+        b=u7ln/9RrvRdtuIdt+mrgHIC4WouXbUjvvcIVfUQeCc9olrHTNL+Xsz/i6tHmVIFHov
+         BT/41CpZZMgWHCcDQQw5z+/9MP7kVM0Op4jNJXt1x0b2k3IDHC+2Y069a/yUZ3q5mmB4
+         14yJrVWZI2i0ymEfyZAe9EfFHKdM6vyxeyAvT/fZFjGyEhjY1anAHfwkflU8qiYZAUFS
+         9b38yUCTryN1/fjlrmgEGzpp91TJS/uGRN0dpd1FKmY9k8L8sKKMNogghvqmKVdocCHY
+         LVLvvpnEhxLZFV6VadxC2JiCNHTjGS/MmLvaQfRwt1yBPMy+M4BSBEjxfw7RumA/1IsH
+         OsgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688727946; x=1691319946;
+        d=1e100.net; s=20221208; t=1688733054; x=1691325054;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HX+g9C+7SiwpjIZlaW3PbaAICmuhwXUy2tZj1GLg4K0=;
-        b=FguuhaMskJlvI2z/WlbXwb3SezHHnij0Q+jQKMHCT24Lru5zE1HtE2q878Xgjhkwbm
-         fuiyDYpXkW3BXQnlDvPZWW8wfrmmh7itO4l+hqHgj+fVy+iRN2URscQDfVU40nlB6j6n
-         hy8T6ZViGWOyGkz3w86x5lyn4WGsHGG8XCYGm6b9zgG7RaBqZFTDbb6lfwts5lOzg1aS
-         oCflkUx+xhUNoRZZiW65PbCpNblf0RtQwUifrcZHd2Hkkn6tCMvegUS6k0pji18rWW76
-         tTv+XjGW/yyU4/UWELyB0Cpzg2tK59cRemyDGHNj+W1ypsTLAWlP9yZ+gICDLq6XcvvE
-         BWmw==
-X-Gm-Message-State: ABy/qLbFCd1x3m2mEInDHtrSzCMgPiGdih5UvhSnJdnok6mnq5vHWliN
-        af8FRe20Mm1A+1dBU9RrRnD/3A==
-X-Google-Smtp-Source: APBJJlH0zOSHJ5KDhE1ZV1WRuaWEnNU3PfjMWvCDxdd7D93eWjaSw1bf53q5yzQx48S3/72RxLZ8lA==
-X-Received: by 2002:a05:6512:344f:b0:4fb:92a9:cbe8 with SMTP id j15-20020a056512344f00b004fb92a9cbe8mr3415752lfr.18.1688727946582;
-        Fri, 07 Jul 2023 04:05:46 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id ep13-20020a056512484d00b004fba808ab76sm633569lfb.181.2023.07.07.04.05.45
+        bh=iGvyCAsX8L6WnC8v9SRyT2lXuT9dJtv6Ob7UfVhRf9g=;
+        b=kf2V23aeUWt4biSknRRiLgo5WkFt3rVVSGeQfvmBPlR6xCnQ+UeTphurj6WW9xUyV/
+         5tRlSwFxaTQeiZ3QCHOIteyA3fHZOOG77PnKwOcXv/r7bSswPol1A8/ksBqILoXbWj+Y
+         yWc7XppT0fSdd+T1v4YmNiBdL7AJ3+p4VK2bozLY3uvl3KeQr/eU35VZegl7j1WcKMm2
+         mCFZZ1gtNB+Gz54ZlGDCrE+WGPh/I8PnH5N8eM0wRLPdSXxW09xHc9WuryYxBSFVjbsI
+         ipXpv3OUQp/tugR/551f1tVNxY1TO2pLN0I32wRB0b24RHb0j7u+/+kRXRoqpWxJA3uQ
+         yEDg==
+X-Gm-Message-State: ABy/qLaQb1wjbrCAScoQO0TbTU0h3xkYaS7EKkLlAToDCDO9M48B8sFX
+        p1LlDbmtrtA5p2CiFmkBvuoMmQ==
+X-Google-Smtp-Source: APBJJlFVEtG496EnoT85BigKA2kUu5jfUK+oufO+W1N79iqyCJ+ptwY0uD9THh4p7PbnlmkyehJ19Q==
+X-Received: by 2002:a2e:9596:0:b0:2b6:d4f7:b7fa with SMTP id w22-20020a2e9596000000b002b6d4f7b7famr3220754ljh.5.1688733053913;
+        Fri, 07 Jul 2023 05:30:53 -0700 (PDT)
+Received: from [192.168.1.101] (abyj26.neoplus.adsl.tpnet.pl. [83.9.29.26])
+        by smtp.gmail.com with ESMTPSA id m18-20020a2eb6d2000000b002b6e00a3e19sm751496ljo.132.2023.07.07.05.30.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Jul 2023 04:05:46 -0700 (PDT)
-Message-ID: <ec42cc84-9050-be6f-080a-36a0d0b27583@linaro.org>
-Date:   Fri, 7 Jul 2023 14:05:45 +0300
+        Fri, 07 Jul 2023 05:30:53 -0700 (PDT)
+Message-ID: <95ac3e2d-69c6-e795-af68-924000eb318e@linaro.org>
+Date:   Fri, 7 Jul 2023 14:30:52 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH V6 4/5] clk: qcom: camcc-sm8550: Add support for qdss,
- sleep and xo clocks
-Content-Language: en-GB
-To:     Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Andy Gross <agross@kernel.org>,
+Subject: Re: [PATCH v2 6/7] arm64: dts: qcom: Add SM7125 device tree
+Content-Language: en-US
+To:     David Wronek <davidwronek@gmail.com>
+Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230707035744.22245-1-quic_jkona@quicinc.com>
- <20230707035744.22245-5-quic_jkona@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230707035744.22245-5-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+References: <20230706124339.134272-1-davidwronek@gmail.com>
+ <20230706124339.134272-7-davidwronek@gmail.com>
+ <021ad5b4-772d-f2f6-f9ec-bca06db04dd8@linaro.org>
+ <CAEoe_eVAeNZVUHgpj64Redx5vg7wfzU4wjgH33TZ7ieoDifH-Q@mail.gmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAEoe_eVAeNZVUHgpj64Redx5vg7wfzU4wjgH33TZ7ieoDifH-Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/07/2023 06:57, Jagadeesh Kona wrote:
-> Add support for camera qdss, sleep and xo clocks.
+On 6.07.2023 17:36, David Wronek wrote:
+> On Thu, Jul 6, 2023 at 5:25 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>> On 6.07.2023 14:40, David Wronek wrote:
+>>> The Snapdragon 720G (sm7125) is software-wise very similar to the
+>>> Snapdragon 7c with minor differences in clock speeds and as added here,
+>>> it uses the Kryo 465 instead of Kryo 468.
+>>>
+>>> Signed-off-by: David Wronek <davidwronek@gmail.com>
+>>> ---
+>> Can you please paste the output of `dmesg | grep "secondary processor"`?
+>>
+>> That would let us determine the unique identifier of the cores.
+>>
+>> Konrad
+> I get this output with the command:
+> [    0.005884] CPU1: Booted secondary processor 0x0000000100 [0x51df805e]
+> [    0.007191] CPU2: Booted secondary processor 0x0000000200 [0x51df805e]
+> [    0.008559] CPU3: Booted secondary processor 0x0000000300 [0x51df805e]
+> [    0.010046] CPU4: Booted secondary processor 0x0000000400 [0x51df805e]
+> [    0.011639] CPU5: Booted secondary processor 0x0000000500 [0x51df805e]
+> [    0.014424] CPU6: Booted secondary processor 0x0000000600 [0x51ff804f]
+> [    0.016421] CPU7: Booted secondary processor 0x0000000700 [0x51ff804f]
+Hm okay so they are indeed Qualcomm-branded cores.. Sometimes they use the
+ARM ones and still call it Kryo 
+
+btw the implementer id of 0x51 is the ascii code of 'Q', nice quirk
+
+Konrad
 > 
-> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
-> Changes since v5:
->   - Updated parent map and frequency table of cam_cc_xo_clk_src to use
->     active only source P_BI_TCXO_AO instead of P_BI_TCXO
-> Changes since v4:
->   - No changes.
-> Changes since v3:
->   - No changes.
-> Changes since v2:
->   - No changes.
-> Changes since v1:
->   - Newly added.
-> 
->   drivers/clk/qcom/camcc-sm8550.c | 181 ++++++++++++++++++++++++++++++++
->   1 file changed, 181 insertions(+)
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
--- 
-With best wishes
-Dmitry
-
+> Sincerely,
+> David
+>>>  arch/arm64/boot/dts/qcom/sm7125.dtsi | 16 ++++++++++++++++
+>>>  1 file changed, 16 insertions(+)
+>>>  create mode 100644 arch/arm64/boot/dts/qcom/sm7125.dtsi
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/sm7125.dtsi b/arch/arm64/boot/dts/qcom/sm7125.dtsi
+>>> new file mode 100644
+>>> index 000000000000..12dd72859a43
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/qcom/sm7125.dtsi
+>>> @@ -0,0 +1,16 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>>> + */
+>>> +
+>>> +#include "sc7180.dtsi"
+>>> +
+>>> +/* SM7125 uses Kryo 465 instead of Kryo 468 */
+>>> +&CPU0 { compatible = "qcom,kryo465"; };
+>>> +&CPU1 { compatible = "qcom,kryo465"; };
+>>> +&CPU2 { compatible = "qcom,kryo465"; };
+>>> +&CPU3 { compatible = "qcom,kryo465"; };
+>>> +&CPU4 { compatible = "qcom,kryo465"; };
+>>> +&CPU5 { compatible = "qcom,kryo465"; };
+>>> +&CPU6 { compatible = "qcom,kryo465"; };
+>>> +&CPU7 { compatible = "qcom,kryo465"; };
