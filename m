@@ -2,139 +2,188 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A00E9C001B0
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 21:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6269EB64D9
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 22:28:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232079AbjGGVHh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 17:07:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58926 "EHLO
+        id S230289AbjGGW2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jul 2023 18:28:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229573AbjGGVHd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 17:07:33 -0400
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DECBB2701;
-        Fri,  7 Jul 2023 14:07:15 -0700 (PDT)
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7869bcee569so86365439f.0;
-        Fri, 07 Jul 2023 14:07:15 -0700 (PDT)
+        with ESMTP id S229552AbjGGW2D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 18:28:03 -0400
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6ED2125;
+        Fri,  7 Jul 2023 15:28:01 -0700 (PDT)
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3456fda4ed1so9799615ab.0;
+        Fri, 07 Jul 2023 15:28:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688764035; x=1691356035;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w5ZfCjJKzY2MaRBcREgAL2YyH2jMaEbxPu3Qk3ZLyVc=;
-        b=EFwgBUqQM7RBuMaXTfRgmh/vGuKHwkGtb1KebsTftRFyCfXd9i06zzEwHtEF55T4bL
-         Il7nN2Woe1421sG0bppQusf2m4Va5/JESAWJn1ioy02TXdzQF3oXeHsmneqH/qZiW3gy
-         7fU/zaGLyfyhSrwUhIQzaKmHZIj+tk74EOCOFQy5Id/4HOF3jxYI+Z1EfwY2w4knn/4i
-         mQDrMWQhjWEo/f5d497m4of1dJgCfHsVlYLaTfII6EwEeNM5rz8IUc2+4uzeFbcDnLHD
-         Vi79yJsMCXkVtuAe2c4trnspST2IuvQFqQxoJQTwUfjEgNerdWi918vGN3JjbffFfK1U
-         vbvQ==
-X-Gm-Message-State: ABy/qLaNgDy4DK1eIY/FO7I/0sM5mDhooQBvu3PJF2Wt4b/UlOueEI47
-        tJeOGqZvfbX7BeJuwmU0LUtsy6vzUA==
-X-Google-Smtp-Source: APBJJlF50Cr959QZ4ozRIJVi+JUKZGlsU73N95mY4+UI42bbpOzuIeWVBuq8MTn014rQxidfp6PYaQ==
-X-Received: by 2002:a5d:9451:0:b0:783:72b9:ed67 with SMTP id x17-20020a5d9451000000b0078372b9ed67mr6278929ior.10.1688764034964;
-        Fri, 07 Jul 2023 14:07:14 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1688768881; x=1691360881;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=56EyUDBChnxdpTRKBdVO1sD+qiaQ0xjE0Q15UIHjxIs=;
+        b=Dbz9zRwDSsaOxnx+7qubb1di/gbhm5okPgK20EXCdwB4RAbwNOy2E01N96n4xhHA4k
+         uiT4IxJUqASxkhUN408v3PbJwjtIzvoH+FnzEFP2IoVGQerlyoA87hpxEJvABf1bFdig
+         JQDL2wC1gs+svY+qSA2AU3ApZIg6A++bMEmYhA4SuK9JgSwkxpNgMmIWgCRyklCownWc
+         3u4Ewyf28ncu0LE336IUPpm8ztZcNTdT4bhaQ6Za6L0wOm0tuaReQ3T41Kbe5u5IG+Cz
+         mCooPbswhI5+sZVNCOOHEb0gDyCYJPcBErtL4YGp1Bk7iGIArl/QPp0ffu8x3TH9pv2a
+         jWGg==
+X-Gm-Message-State: ABy/qLbj7KtgzUbbCVRZHtrN68MtNyAaDDxYej7JhbRYtdmYUYpHfo3O
+        WWQG7wqOgic0+5yFVg3FOrZZs2EVaQ==
+X-Google-Smtp-Source: APBJJlHtm1LZWONsuEnFS1vDREZaeD3Yc+orTzrojiYVEdy1ehcSWL8ksd8C5wr+Py66mMapMCJOZA==
+X-Received: by 2002:a92:c803:0:b0:345:cc4d:bb7b with SMTP id v3-20020a92c803000000b00345cc4dbb7bmr6335723iln.6.1688768880773;
+        Fri, 07 Jul 2023 15:28:00 -0700 (PDT)
 Received: from robh_at_kernel.org ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id w24-20020a6bf018000000b0076c7a2f0f41sm1571577ioc.46.2023.07.07.14.07.13
+        by smtp.gmail.com with ESMTPSA id e17-20020a92d751000000b00345d6e8ded4sm1589854ilq.25.2023.07.07.15.27.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 14:07:14 -0700 (PDT)
-Received: (nullmailer pid 869315 invoked by uid 1000);
-        Fri, 07 Jul 2023 21:07:12 -0000
+        Fri, 07 Jul 2023 15:27:59 -0700 (PDT)
+Received: (nullmailer pid 1083394 invoked by uid 1000);
+        Fri, 07 Jul 2023 22:27:58 -0000
+Date:   Fri, 7 Jul 2023 16:27:58 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Wei Xu <xuwei5@hisilicon.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: hisilicon,cpuctrl: Merge "hisilicon,hix5hd2-clock" into parent binding
-Date:   Fri,  7 Jul 2023 15:07:00 -0600
-Message-Id: <20230707210700.869060-1-robh@kernel.org>
-X-Mailer: git-send-email 2.40.1
+To:     =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>
+Subject: Re: [PATCH] dt-bindings: clock: convert BCM53573 ILP clock to the
+ json-schema
+Message-ID: <20230707222758.GA1079635-robh@kernel.org>
+References: <20230707130322.9375-1-zajec5@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230707130322.9375-1-zajec5@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The "hisilicon,hix5hd2-clock" is simple enough to just add it into its
-parent node binding, "hisilicon,cpuctrl".
+On Fri, Jul 07, 2023 at 03:03:22PM +0200, Rafał Miłecki wrote:
+> From: Rafał Miłecki <rafal@milecki.pl>
+> 
+> This helps validating DTS files.
+> 
+> Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+> ---
+>  .../bindings/clock/brcm,bcm53573-ilp.txt      | 36 -------------
+>  .../bindings/clock/brcm,bcm53573-ilp.yaml     | 51 +++++++++++++++++++
+>  2 files changed, 51 insertions(+), 36 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+> deleted file mode 100644
+> index 2ebb107331dd..000000000000
+> --- a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
+> +++ /dev/null
+> @@ -1,36 +0,0 @@
+> -Broadcom BCM53573 ILP clock
+> -===========================
+> -
+> -This binding uses the common clock binding:
+> -    Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -
+> -This binding is used for ILP clock (sometimes referred as "slow clock")
+> -on Broadcom BCM53573 devices using Cortex-A7 CPU.
+> -
+> -ILP's rate has to be calculated on runtime and it depends on ALP clock
+> -which has to be referenced.
+> -
+> -This clock is part of PMU (Power Management Unit), a Broadcom's device
+> -handing power-related aspects. Its node must be sub-node of the PMU
+> -device.
+> -
+> -Required properties:
+> -- compatible: "brcm,bcm53573-ilp"
+> -- clocks: has to reference an ALP clock
+> -- #clock-cells: should be <0>
+> -- clock-output-names: from common clock bindings, should contain clock
+> -		      name
+> -
+> -Example:
+> -
+> -pmu@18012000 {
+> -	compatible = "simple-mfd", "syscon";
 
-This fixes a warning that "hisilicon,hix5hd2-clock" is missing a schema.
+Really, the binding for this block needs to be converted or added first. 
+That means adding a specific compatible for the "pmu".
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../arm/hisilicon/controller/cpuctrl.yaml     | 20 +++++++++++++
- .../bindings/clock/hix5hd2-clock.txt          | 30 -------------------
- 2 files changed, 20 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/hix5hd2-clock.txt
+> -	reg = <0x18012000 0x00001000>;
+> -
+> -	ilp {
+> -		compatible = "brcm,bcm53573-ilp";
+> -		clocks = <&alp>;
+> -		#clock-cells = <0>;
+> -		clock-output-names = "ilp";
 
-diff --git a/Documentation/devicetree/bindings/arm/hisilicon/controller/cpuctrl.yaml b/Documentation/devicetree/bindings/arm/hisilicon/controller/cpuctrl.yaml
-index 528dad4cde3c..4fc208d3995e 100644
---- a/Documentation/devicetree/bindings/arm/hisilicon/controller/cpuctrl.yaml
-+++ b/Documentation/devicetree/bindings/arm/hisilicon/controller/cpuctrl.yaml
-@@ -29,6 +29,26 @@ properties:
- 
-   ranges: true
- 
-+patternProperties:
-+  "^clock@[0-9a-f]+$":
-+    type: object
-+    additionalProperties: false
-+
-+    properties:
-+      compatible:
-+        const: hisilicon,hix5hd2-clock
-+
-+      reg:
-+        maxItems: 1
-+
-+      "#clock-cells":
-+        const: 1
-+
-+    required:
-+      - compatible
-+      - reg
-+      - "#clock-cells"
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/clock/hix5hd2-clock.txt b/Documentation/devicetree/bindings/clock/hix5hd2-clock.txt
-deleted file mode 100644
-index 4733e58e491b..000000000000
---- a/Documentation/devicetree/bindings/clock/hix5hd2-clock.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--* Hisilicon Hix5hd2 Clock Controller
--
--The hix5hd2 clock controller generates and supplies clock to various
--controllers within the hix5hd2 SoC.
--
--Required Properties:
--
--- compatible: should be "hisilicon,hix5hd2-clock"
--- reg: Address and length of the register set
--- #clock-cells: Should be <1>
--
--Each clock is assigned an identifier and client nodes use this identifier
--to specify the clock which they consume.
--
--All these identifier could be found in <dt-bindings/clock/hix5hd2-clock.h>.
--
--Examples:
--	clock: clock@f8a22000 {
--		compatible = "hisilicon,hix5hd2-clock";
--		reg = <0xf8a22000 0x1000>;
--		#clock-cells = <1>;
--	};
--
--	uart0: uart@f8b00000 {
--		compatible = "arm,pl011", "arm,primecell";
--		reg = <0xf8b00000 0x1000>;
--		interrupts = <0 49 4>;
--		clocks = <&clock HIX5HD2_FIXED_83M>;
--		clock-names = "apb_pclk";
--	};
--- 
-2.40.1
+And this binding is simple enough it could be part of the parent 
+binding, but either way is fine.
 
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
+> new file mode 100644
+> index 000000000000..648f68a53119
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/brcm,bcm53573-ilp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM53573 ILP clock
+> +
+> +maintainers:
+> +  - Rafał Miłecki <rafal@milecki.pl>
+> +
+> +description: |
+> +  This binding is used for ILP clock (sometimes referred as "slow clock")
+> +  on Broadcom BCM53573 devices using Cortex-A7 CPU.
+> +
+> +  ILP's rate has to be calculated on runtime and it depends on ALP clock
+> +  which has to be referenced.
+> +
+> +  This clock is part of PMU (Power Management Unit), a Broadcom's device
+> +  handing power-related aspects. Its node must be sub-node of the PMU
+> +  device.
+> +
+> +properties:
+> +  compatible:
+> +    const: brcm,bcm53573-ilp
+> +
+> +  clocks:
+> +    description: ALP clock
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clock-output-names:
+> +    const: ilp
+> +
+> +required:
+> +  - clocks
+> +  - "#clock-cells"
+> +  - clock-output-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    ilp {
+
+clock-controller {
+
+> +      compatible = "brcm,bcm53573-ilp";
+> +      clocks = <&alp>;
+> +      #clock-cells = <0>;
+> +      clock-output-names = "ilp";
+> +    };
+> -- 
+> 2.35.3
+> 
