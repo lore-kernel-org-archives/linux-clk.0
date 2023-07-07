@@ -2,182 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5723EB64D9
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 13:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98634EB64D9
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 13:35:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbjGGNDe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 09:03:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41500 "EHLO
+        id S231492AbjGGNfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jul 2023 09:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229872AbjGGNDd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 09:03:33 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5DCAE6E;
-        Fri,  7 Jul 2023 06:03:31 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f122ff663eso2995370e87.2;
-        Fri, 07 Jul 2023 06:03:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688735010; x=1691327010;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNacMOqwrhoL0QSaaiHdPXWMGR4rvtaSe1YyMK5/gt0=;
-        b=eR+s2fW2xs3EO4TlaA1eYSdVmAulIqsy36Tr2su/5sjz0E5/bfDpIzuvkHK4lNo0XV
-         ZWEFPpoGI9IX4/cqCBnuXKcdudiDSjwIEDW6i2SEyeuGZkIZnu97uYi8G8XN4LrCFehp
-         JoBxCmT136XBTThmhHl692EUeWFpbvVqzS7/lzx9N01af/29sevplxnndMm08/zvur/W
-         /hSVFzlb9uxJf0IH8dZ09FWZzhueFA6g0NCmdpsfo7qx332iksCUEa3F69J0AwZnSE2U
-         IYu75OU8icCnsZzFWQIAA0K57PdhME6M4c7qay1UM+z2AN8O+hg6xhlXisSHU21Fmxqg
-         xxtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688735010; x=1691327010;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZNacMOqwrhoL0QSaaiHdPXWMGR4rvtaSe1YyMK5/gt0=;
-        b=Kcfw2ZCC28NwUkj4HGsjtA0MuykzCRksJPzX8hXrKxZrqTFC4cfaGnFxVuBAK1fa2j
-         vXMGi8YVNwhvDi8FCTcEq0oGMm/prz4xVmnc7t6jE5TsELCvQy8bObxmMYC3WMk6bXTF
-         aM44sKkOL5TC1rF502b1Voc+appxP23i49QYH5EB4w4df0tSEaEcwJdR9k9R1Z9lExyK
-         TXD8sr32+O3hZ1snKn1MdPmQMyGNnelJYel2iDBSh0HX23X8VfjFYOwh+vixS/JZ9N3m
-         /ZR6KgY2+BWNVRX6c8k77epk6bSi64XUSWGW7DHmoyYWEFoi9w477ApLvEbGNG67j7Sk
-         U4/Q==
-X-Gm-Message-State: ABy/qLZz8e/+XNJ48foIHQFHHGPWBxPvqnAS6M8doTLrAbw/WAWm0G6n
-        a7t+qSFRrYyLVxl0p6lkQX7ztPDa5LM=
-X-Google-Smtp-Source: APBJJlG0erWh4WOpt6vWO8lqZlYD8q2047PFQ9rlt2+E2nswRsagjKyLwqtF07VPmkXEtQdlAuWJ2Q==
-X-Received: by 2002:a05:6512:39ca:b0:4f9:58bd:9e5a with SMTP id k10-20020a05651239ca00b004f958bd9e5amr4677188lfu.27.1688735009648;
-        Fri, 07 Jul 2023 06:03:29 -0700 (PDT)
-Received: from localhost.lan (031011218106.poznan.vectranet.pl. [31.11.218.106])
-        by smtp.gmail.com with ESMTPSA id d5-20020ac24c85000000b004fa35167729sm673090lfl.159.2023.07.07.06.03.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 06:03:29 -0700 (PDT)
-From:   =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Subject: [PATCH] dt-bindings: clock: convert BCM53573 ILP clock to the json-schema
-Date:   Fri,  7 Jul 2023 15:03:22 +0200
-Message-Id: <20230707130322.9375-1-zajec5@gmail.com>
-X-Mailer: git-send-email 2.35.3
+        with ESMTP id S229460AbjGGNfD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 09:35:03 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38CBA1997;
+        Fri,  7 Jul 2023 06:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1688736902; x=1720272902;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zJMl5SY47pBGwDkNPoefM/yltDD51XulbBFX8TC/LJw=;
+  b=eBKWUR8M7QtCPfaV6QDgLWHBV0LHoCg60a/iH8/dD9No0pgAC7IRdCgN
+   j0+rURr7Nhg7iVB1jTQUAxpNrppN9VlFRZE/KzDRJ9wbPwj906UnmFTqO
+   TJg7czj3KAX18MBam2/kqSu1LV5Pr+LHf9tRsw3IyJA810tsHqsSlYFSI
+   75HJZb6yxHb34qBJ8ahFownJDUUQsEmpQHkeECVX+rPmIhfCxxvf5WO5/
+   yktIl7r26VQaOd1qOn7poKiMjzHzr1p6g5bgVbIrxWWZZEcIBcCHHPzA8
+   0WQrZoCSgQYodJq6uuf4G2C8jDwxiCUtgG6UBbEc0lR77JnCS9IxVZowG
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10764"; a="366471756"
+X-IronPort-AV: E=Sophos;i="6.01,187,1684825200"; 
+   d="scan'208";a="366471756"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jul 2023 06:33:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10764"; a="966656794"
+X-IronPort-AV: E=Sophos;i="6.01,187,1684825200"; 
+   d="scan'208";a="966656794"
+Received: from lkp-server01.sh.intel.com (HELO c544d7fc5005) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Jul 2023 06:33:00 -0700
+Received: from kbuild by c544d7fc5005 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qHlZz-000212-2G;
+        Fri, 07 Jul 2023 13:32:59 +0000
+Date:   Fri, 7 Jul 2023 21:32:28 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+        peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@gmail.com
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] clk: imx: imx8: add audio clock mux driver
+Message-ID: <202307072131.S4pYlrxM-lkp@intel.com>
+References: <1688449175-1677-4-git-send-email-shengjiu.wang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1688449175-1677-4-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rafał Miłecki <rafal@milecki.pl>
+Hi Shengjiu,
 
-This helps validating DTS files.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
----
- .../bindings/clock/brcm,bcm53573-ilp.txt      | 36 -------------
- .../bindings/clock/brcm,bcm53573-ilp.yaml     | 51 +++++++++++++++++++
- 2 files changed, 51 insertions(+), 36 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
+[auto build test ERROR on abelvesa/clk/imx]
+[also build test ERROR on linus/master v6.4 next-20230707]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
-deleted file mode 100644
-index 2ebb107331dd..000000000000
---- a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.txt
-+++ /dev/null
-@@ -1,36 +0,0 @@
--Broadcom BCM53573 ILP clock
--===========================
--
--This binding uses the common clock binding:
--    Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--This binding is used for ILP clock (sometimes referred as "slow clock")
--on Broadcom BCM53573 devices using Cortex-A7 CPU.
--
--ILP's rate has to be calculated on runtime and it depends on ALP clock
--which has to be referenced.
--
--This clock is part of PMU (Power Management Unit), a Broadcom's device
--handing power-related aspects. Its node must be sub-node of the PMU
--device.
--
--Required properties:
--- compatible: "brcm,bcm53573-ilp"
--- clocks: has to reference an ALP clock
--- #clock-cells: should be <0>
--- clock-output-names: from common clock bindings, should contain clock
--		      name
--
--Example:
--
--pmu@18012000 {
--	compatible = "simple-mfd", "syscon";
--	reg = <0x18012000 0x00001000>;
--
--	ilp {
--		compatible = "brcm,bcm53573-ilp";
--		clocks = <&alp>;
--		#clock-cells = <0>;
--		clock-output-names = "ilp";
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
-new file mode 100644
-index 000000000000..648f68a53119
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm53573-ilp.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/brcm,bcm53573-ilp.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM53573 ILP clock
-+
-+maintainers:
-+  - Rafał Miłecki <rafal@milecki.pl>
-+
-+description: |
-+  This binding is used for ILP clock (sometimes referred as "slow clock")
-+  on Broadcom BCM53573 devices using Cortex-A7 CPU.
-+
-+  ILP's rate has to be calculated on runtime and it depends on ALP clock
-+  which has to be referenced.
-+
-+  This clock is part of PMU (Power Management Unit), a Broadcom's device
-+  handing power-related aspects. Its node must be sub-node of the PMU
-+  device.
-+
-+properties:
-+  compatible:
-+    const: brcm,bcm53573-ilp
-+
-+  clocks:
-+    description: ALP clock
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clock-output-names:
-+    const: ilp
-+
-+required:
-+  - clocks
-+  - "#clock-cells"
-+  - clock-output-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    ilp {
-+      compatible = "brcm,bcm53573-ilp";
-+      clocks = <&alp>;
-+      #clock-cells = <0>;
-+      clock-output-names = "ilp";
-+    };
+url:    https://github.com/intel-lab-lkp/linux/commits/Shengjiu-Wang/dt-bindings-clock-imx8-acm-Add-audio-clock-mux-support/20230704-141425
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git clk/imx
+patch link:    https://lore.kernel.org/r/1688449175-1677-4-git-send-email-shengjiu.wang%40nxp.com
+patch subject: [PATCH 3/3] clk: imx: imx8: add audio clock mux driver
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20230707/202307072131.S4pYlrxM-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
+reproduce: (https://download.01.org/0day-ci/archive/20230707/202307072131.S4pYlrxM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202307072131.S4pYlrxM-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: duplicate symbol: init_module
+   >>> defined at clk-imx8qxp.c
+   >>>            drivers/clk/imx/clk-imx8qxp.o:(init_module)
+   >>> defined at clk-imx8-acm.c
+   >>>            drivers/clk/imx/clk-imx8-acm.o:(.init.text+0x4)
+--
+>> ld.lld: error: duplicate symbol: cleanup_module
+   >>> defined at clk-imx8qxp.c
+   >>>            drivers/clk/imx/clk-imx8qxp.o:(cleanup_module)
+   >>> defined at clk-imx8-acm.c
+   >>>            drivers/clk/imx/clk-imx8-acm.o:(.exit.text+0x4)
+
 -- 
-2.35.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
