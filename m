@@ -2,152 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5B8C001B0
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 07:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BF1EB64D9
+	for <linux-clk@archiver.kernel.org>; Fri,  7 Jul 2023 09:34:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232506AbjGGH7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 03:59:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44394 "EHLO
+        id S232258AbjGGJeY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 7 Jul 2023 05:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbjGGH7k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 03:59:40 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC69E70
-        for <linux-clk@vger.kernel.org>; Fri,  7 Jul 2023 00:59:38 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id d9443c01a7336-1b89cfb4571so10542665ad.3
-        for <linux-clk@vger.kernel.org>; Fri, 07 Jul 2023 00:59:38 -0700 (PDT)
+        with ESMTP id S231925AbjGGJeW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 05:34:22 -0400
+Received: from mail-yb1-xb33.google.com (mail-yb1-xb33.google.com [IPv6:2607:f8b0:4864:20::b33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AF6C2105
+        for <linux-clk@vger.kernel.org>; Fri,  7 Jul 2023 02:34:21 -0700 (PDT)
+Received: by mail-yb1-xb33.google.com with SMTP id 3f1490d57ef6-bb3a77abd7bso1815527276.0
+        for <linux-clk@vger.kernel.org>; Fri, 07 Jul 2023 02:34:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1688716778; x=1691308778;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cyFcCo0AIyHrkKebNzzbMpmXnBhNWrpNFTAuGFxeZk=;
-        b=pBFTiIaUtf/RWLtnlfEgMlrQg7hqonr8cLMJRuDq3pxQxH3t3R+zQNtyYxq5ADvQla
-         /s15FnswtpohBS7cH1uXyX0C5SRMGyTcIdOgao1saYFa+eW1yA5ic+IteYoHu7JYFh0S
-         WDNeHuwFpYYLiRWeQrKqgzJX8GlaNtvA2kYaWcRuNHt0NesSZ0Ytap5EZZUp3786K2kz
-         GuOY2bX6MvUeto3IX1P8UjiXaY3LuvjSCrRRwjQgxJgepjqctPlFtpJxcs2DcSHCLpdY
-         FBiTb6n83l1I58hEzGSTmxA+Wl8gtu2orKBf7i4cfQu7vfOCMgYeoDC54w7j1kW9EEPh
-         lwlQ==
+        d=linaro.org; s=google; t=1688722460; x=1691314460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=saX3pFAboAcYrHkIs/SI1SEfN7MogeSF5MWoGtRMhFk=;
+        b=tKBHmQhdEqHIX9BwfY1SbILP0xtBAtAEBgnp60bPOiB0PARs0VGJapZZObxOAYPzob
+         8S9c8CGrMLscX7N0s5/idB3/STrzWHy9oaVEktZFa0VRFGEuSDCXnQFMv0L13N4CBMxk
+         p8pRTN2CHhIY56dyDbRLRTwGKtyeg7vcpr1Nd/vZfqQG4Aox5ANsXd53QryhJTlN+dRN
+         xUbMEwRwinN4LxNfqAChlUJCweJmoeYFKT3v42My7/WMj2b7vvRciEuEUvn5IJrK2dWj
+         hDUR3WHh01MVsTWtJqseun93zMx2WNmzS2h3kPeFm7zzQXvQznWld4vxbjD2vSpmZS6n
+         zB3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688716778; x=1691308778;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1cyFcCo0AIyHrkKebNzzbMpmXnBhNWrpNFTAuGFxeZk=;
-        b=PT0zVLjRez+9LsDC40+3VYfYikxuxh8VwKMriwOzhLWlivU1VOhOC7SfPRA6FUg+Hl
-         IhiPXY05JksU3WoccobD15JQOJ4y7fxj32PlFmu6VM6AruSI09aWYOwnmBLG9kDiWomg
-         SQu5rxpUmhDCcACCgl/dS47sCmMNQSXI4xu/fwAzh+gKboz3xRCa09amvTWGO9b4RkQs
-         UnuBC16mzoopNCkFMaCNt+3YmF6QLAOeeW8CEZEp9Ig80ERdN6Z5BOwHNT1eAlpmvikt
-         LWcaPAjT+4xrCerZgoiGGB6SqqDTySj8RBkiy9s6bROf7AoLyVKtTti4+uMUyIRm+63o
-         wm9g==
-X-Gm-Message-State: ABy/qLbnhQ/c6shZN2mDXJjMmnOhXEvjhVVYrdqMbpnyMdu8YLAL+/Ad
-        XZxSXlxvJl+pGarvdnyL+kzr
-X-Google-Smtp-Source: APBJJlFLh04FpGQHsgqPpET6FSYphccKa+HKAmDFVCxp9XZGJEK9WPDG8svSExGUGYH8Q22HnEzFpQ==
-X-Received: by 2002:a17:902:e5cf:b0:1b8:aee8:a21c with SMTP id u15-20020a170902e5cf00b001b8aee8a21cmr5299245plf.31.1688716778006;
-        Fri, 07 Jul 2023 00:59:38 -0700 (PDT)
-Received: from localhost.localdomain ([117.216.120.82])
-        by smtp.gmail.com with ESMTPSA id e15-20020a17090301cf00b001b8c3c7b102sm2585255plh.127.2023.07.07.00.59.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 00:59:37 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org
-Cc:     konrad.dybcio@linaro.org, johan+linaro@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3] clk: qcom: gcc-sc8280xp: Allow PCIe GDSCs to enter retention state
-Date:   Fri,  7 Jul 2023 13:29:26 +0530
-Message-Id: <20230707075926.11726-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20221208; t=1688722460; x=1691314460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=saX3pFAboAcYrHkIs/SI1SEfN7MogeSF5MWoGtRMhFk=;
+        b=BaIz+ZtmUduv5607A3wGkoh0exJ6SAtGqPnhilngR2TC6/Z/h8/2/LafaF7F3C4nbX
+         Hixohsz1TkrDk7wik5EEyuJdZL3g16ydmQ7p+1YCr2kCt6AZ+jUjFz5i1U6qDMNbxxVk
+         20GmLd7BByXHYJXV/sB5nis8KXN2hxLnSiKTD77Un+d6e/fgItxrQr4lCxBXdd5EQ40g
+         nQkWowF4xCQCxaHqCfoBqmYjgW9ZdWnn7BFqfdPo3GsIRufaAxCFpNUvyO9iHcDesLMT
+         9vsQENLPxA7mg0XpKy1smcca89gGEBNq85r/Mz2HwfczGMY6lTIqsnmOrU9izrF4L3XF
+         ioXA==
+X-Gm-Message-State: ABy/qLYgyJd5uh8cCS/Jtu0uoT7OChpYkI1/OQzJ1AJpDvFInbhd3UVP
+        71Dfvtq+IhE3h9sthEA4H/x3L/9wtsfNR9Njju/3MA==
+X-Google-Smtp-Source: APBJJlHjQReiyHI7JmsXYBFcwy7JZZqVtQoKWdLHJhl96Gf33wc5bk2N9yTDiaKvkgT1IOsbohnign+l1TnLkzIZ4Kw=
+X-Received: by 2002:a25:8f89:0:b0:c5e:cb99:6346 with SMTP id
+ u9-20020a258f89000000b00c5ecb996346mr3668707ybl.14.1688722460628; Fri, 07 Jul
+ 2023 02:34:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230702174246.121656-1-dmitry.baryshkov@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 7 Jul 2023 11:34:09 +0200
+Message-ID: <CACRpkdY0WKDAx1XP6fq2WZeoK6kH+t_weYJPJm1aMnMKb7ZayQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/28] ARM: qcom: apq8064: support CPU frequency scaling
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Ilia Lin <ilia.lin@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Stephan Gerhold <stephan@gerhold.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With the minimal system suspend support in place for the PCIe driver that
-keeps the interconnect path voted, the ALWAYS_ON flag can now be dropped.
+On Sun, Jul 2, 2023 at 7:43=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
 
-Also, the pwrsts PWRSTS_RET_ON flag should be used to allow the GDSCs to
-enter the retention state when the parent domain get's turned off during
-system suspend.
+> Implement CPUFreq support for one of the oldest supported Qualcomm
+> platforms, APQ8064. Each core has independent power and frequency
+> control. Additionally the L2 cache is scaled to follow the CPU
+> frequencies (failure to do so results in strange semi-random crashes).
+>
+> Core voltage is controlled through the SAW2 devices, one for each core.
+> The L2 has two regulators, vdd-mem and vdd-dig.
+>
+> Dependencies: [1].
+>
+> [1] https://lore.kernel.org/linux-arm-msm/20230702134320.98831-1-dmitry.b=
+aryshkov@linaro.org/
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
+Just because it looks so cool, I applied this patches and the prerequisite
+to master and booted the result on the APQ8060 DragonBoard, and
+it still works.
+Tested-by: Linus Walleij <linus.walleij@linaro.org>
+(Mostly for the DTS refactoring, which is what affects APQ8060)
 
-This patch depends on: https://lore.kernel.org/linux-arm-msm/20230620-topic-sc8280_gccgdsc-v2-0-562c1428c10d@linaro.org/
+I guess the APQ8064 cpufreq and APQ8060 isn't actually far
+apart, so it should be possible to fix APQ8060 as well, but we
+can take that another day. I always wanted to fix the SAW2
+regulators.
 
-Changes in v3:
-
-* Fixed the erroneous PWRSTS_RET_ON assignment
-* Rebased on top of Konrad's series
-
-Changes in v2:
-
-* Changed the patch from simple revert to changing the ALWAYS_ON flag to
-  PWRSTS_RET_ON.
-
- drivers/clk/qcom/gcc-sc8280xp.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index 57bbd609151c..39c46b7ee09a 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -6785,8 +6785,8 @@ static struct gdsc pcie_2a_gdsc = {
- 	.pd = {
- 		.name = "pcie_2a_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
-+	.pwrsts = PWRSTS_RET_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc pcie_2b_gdsc = {
-@@ -6796,8 +6796,8 @@ static struct gdsc pcie_2b_gdsc = {
- 	.pd = {
- 		.name = "pcie_2b_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
-+	.pwrsts = PWRSTS_RET_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc pcie_3a_gdsc = {
-@@ -6807,8 +6807,8 @@ static struct gdsc pcie_3a_gdsc = {
- 	.pd = {
- 		.name = "pcie_3a_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
-+	.pwrsts = PWRSTS_RET_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc pcie_3b_gdsc = {
-@@ -6818,8 +6818,8 @@ static struct gdsc pcie_3b_gdsc = {
- 	.pd = {
- 		.name = "pcie_3b_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
-+	.pwrsts = PWRSTS_RET_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc pcie_4_gdsc = {
-@@ -6829,8 +6829,8 @@ static struct gdsc pcie_4_gdsc = {
- 	.pd = {
- 		.name = "pcie_4_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE | RETAIN_FF_ENABLE | ALWAYS_ON,
-+	.pwrsts = PWRSTS_RET_ON,
-+	.flags = VOTABLE | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc ufs_card_gdsc = {
--- 
-2.25.1
-
+Yours,
+Linus Walleij
