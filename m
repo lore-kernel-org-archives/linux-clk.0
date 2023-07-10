@@ -2,102 +2,128 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 351DEEB64D9
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Jul 2023 00:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 247FEEB64DC
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jul 2023 01:24:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232782AbjGHAG3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Jul 2023 20:06:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49802 "EHLO
+        id S229954AbjGJBYJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Jul 2023 21:24:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232454AbjGHAG2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 7 Jul 2023 20:06:28 -0400
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7532123;
-        Fri,  7 Jul 2023 17:06:27 -0700 (PDT)
-Received: by mail-ot1-x32a.google.com with SMTP id 46e09a7af769-6b74e2d8c98so2257875a34.2;
-        Fri, 07 Jul 2023 17:06:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1688774786; x=1691366786;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uxQ9ORFt2KalpWVPLln/XeJlZQtOLOl2gBwuEluzJqk=;
-        b=ih/x/XN1N1IP8D9qyTD4drevI8/8TWIA770S5KgG7qcDE+qdzprHBGX1oqGrMEt8ZE
-         JSzTfGSyBRGn/OstUnawSgSa1XXD72WLa+Dl9Sga4r+/JatWMLX8SXMm3kCyU7Gw+SGw
-         owjWuWQFTxD8MpGyTsq0eQAgCXIqQyaes6pnO+bfKVCGci+i6xgyKrTivQVrNNepFXFZ
-         UwfvnbYB+CkbjCrKUG73gZ0DiRxGen+8CRlj7E9wL8ivurWIq8Ku6yhfYPlA1aLABlRE
-         ZeaO3iAdnRFmUbCQk9CMSNK86ZtoCRdeHAv1ST2Xu2croQBTb1cROTaJBEVTaYVHuwBy
-         L7kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688774786; x=1691366786;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uxQ9ORFt2KalpWVPLln/XeJlZQtOLOl2gBwuEluzJqk=;
-        b=F0UOQUctJ3cZcNVluwYrcYGRmxwEG9OK79h4sS2g/NaXN/61S9t+b9difaS2UBa6ri
-         K8PsNr2dl+RpIHVaPVjUTAPMTKS7pq5ocZvXruMqo1RdP+i2y64vku86e04hWpVni4vq
-         MKEKELF6w/jkB7S6u7hnVo/mYFMZdUy2+/ZSfVdoSVC+92LXY2oVrIzedEVHiurFEJE/
-         jYqTz+Wr8dMBDCvlvI82C6JpenNZKBE63hlzhChX8VlBDWW8mQQMl7oyzBYaLg3k7Lxr
-         PBxZ00V8tA+/xavkXRx8UEzT2c4zbQoemBoWH6MwPTPvHyZN/w1f1VZoVqRdOlkxuDM6
-         8DdQ==
-X-Gm-Message-State: ABy/qLbbaGXsVPWgz8b1MQJXcsQBDDplS/tfrei6CQGuBr2VaB7jbBGW
-        d9uz2P8HWDxCGo3Y1H1SKewu1cUjRL4=
-X-Google-Smtp-Source: APBJJlH+LJYi6W8fj+k19PKYvMadG7yFuvSejenF+WQtpYGeIrYZwfvXgtsbMl+ZRQ2wzQ5k5TzNUQ==
-X-Received: by 2002:a05:6870:a68f:b0:1b3:e896:9bfa with SMTP id i15-20020a056870a68f00b001b3e8969bfamr8470718oam.25.1688774786484;
-        Fri, 07 Jul 2023 17:06:26 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:38de:2bd4:8f55:60cd])
-        by smtp.gmail.com with ESMTPSA id q3-20020a170902dac300b001b66a71a4a0sm3805403plx.32.2023.07.07.17.06.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 17:06:26 -0700 (PDT)
-Date:   Fri, 7 Jul 2023 17:06:22 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Abel Vesa <abelvesa@kernel.org>,
+        with ESMTP id S229500AbjGJBYI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Jul 2023 21:24:08 -0400
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2076.outbound.protection.outlook.com [40.107.22.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFED4DF;
+        Sun,  9 Jul 2023 18:24:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EhYRhdtf7n+6DaBG/vuJPY99KOEc8pq8bfLsu6WsW3Q/DnzQhbe2Da42GNZyMhV0G3VWgh89j9EIqvP05NF7r5/u/khBIKPgMtGM0YaPZciu1xXPsMp5XV17+BO0/tDNgMT3vIKyQGjsqB8ji1VI6Q96byHDH6o+LGo34+qrt+CMtVRklTHMNAInAY4QMi+y6mO4B9bMVJ9V74jbHSp94P7HraRvUkP8m0iJwlal/l6jGKBWHDjLb4RO2TrZllGWi7vK1tGZVmQfutFzEqMlUeEeETzJ8u+h2BtnEBT6rkvx2flaU3fND4ZNbfX+t1mIVAVHr2WgbZ+dqyRQ5LGUYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3IyuNs5iwUHOKth50MHKwY6Cp2UGxOfdmA1p7Fq/z/Q=;
+ b=Tna0bPv9pdhp7THvIV6p6xDaZz+tVe50NCfOetCUS3x3arEBGAZy3+NaPfd3wxCDfSGviO/KSCaDsO2vEXNXLtHo+3g1LbNnFL9+BZ2nRS6V3Hbd8FSMXOewHpYcf4TYj+NmhFj/xAcKQB/UhccNEhwW4F8tWtBdUEWPnlbqLIA11k2ZIffKz9DjKCblNgBnoqnxJ7J9D++2OlYlIsVoqltClRtY1mKvpbMnweewNn5kXdq+y8QrHt8G+sP8/KNBkr+gbH4Iwu/lhpSL/vRGTWp/oH4VQKXmBo67ipHucBrSFqa/B1A0qCzFDCSDTF1VrBPwRHXLi/B6lUObz/hAOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3IyuNs5iwUHOKth50MHKwY6Cp2UGxOfdmA1p7Fq/z/Q=;
+ b=QkXYxFgoZCiI+wH3ZijrXZ32uqee8TtnMTIamAIO7gbJP9dp4MTInwF3owYmkgkWzNdhIfx8cok3wf7jutfM3KRaM5IufRbcV9UUDUqpqX/lYT7/jXVOseOSZuntdlK2zrQsXaWoFKV/ttgFrtBySHVw6+QMgDhaITotaTdPpZo=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by DBBPR04MB7707.eurprd04.prod.outlook.com (2603:10a6:10:1f4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6565.17; Mon, 10 Jul
+ 2023 01:24:05 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5c40:ed07:b875:18c0]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::5c40:ed07:b875:18c0%3]) with mapi id 15.20.6565.026; Mon, 10 Jul 2023
+ 01:24:04 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Abel Vesa <abelvesa@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh@kernel.org>, kernel@pengutronix.de,
-        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-        Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] dt-bindings: input: touchscreen: edt-ft5x06: Add
- 'threshold' property
-Message-ID: <ZKiofhzbBD2hIzmv@google.com>
-References: <20230621093245.78130-1-o.rempel@pengutronix.de>
- <20230621093245.78130-6-o.rempel@pengutronix.de>
+        dl-linux-imx <linux-imx@nxp.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] clk: imx: clk-gpr-mux: Simplify .determine_rate()
+Thread-Topic: [PATCH] clk: imx: clk-gpr-mux: Simplify .determine_rate()
+Thread-Index: AQHZsQ4ER45aLU0AXUWJc+qBXt4fV6+yOCmQ
+Date:   Mon, 10 Jul 2023 01:24:04 +0000
+Message-ID: <DU0PR04MB9417C52E8E1B15E194BEE74F8830A@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <ac8bd50c41b84f244bb0ec94e8aed25c513c9037.1688760152.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <ac8bd50c41b84f244bb0ec94e8aed25c513c9037.1688760152.git.christophe.jaillet@wanadoo.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|DBBPR04MB7707:EE_
+x-ms-office365-filtering-correlation-id: 55c510d7-a78f-40f0-a299-08db80e459b9
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 517ImrTMaloSUX4QUYqOFnGGBx8tqXmsNTO/CceZVDOvbkZfQsrFEPoDygmjujs4cqA0bEecPXZnB3MgG5T2ymjczA2Ld13gsJmfQwEG7Ku2SNECfXWblNXxCK2mgBeHIa0oKfklLtyQnggt0Y+0f+SpmXipiRlYHJYx5M25h2KInuobLxDZvzPtBAfMCextL13esP7hraH3dQsSTUCh3Hlcd9Tld+kmsmb3mb1spKdbNGgL9PPu/fSnUJc/CAoXUHe74NCbDLoRItDJhxQ/lOD8pGrf9gSSq3GkzjEwqfe86Pbp3VozWibl5OH3P/QHze4/kt1qZPVegv9lLrNKU2wflnFKPAMaPbxhbmuIHF9DVxqP1QvU3xTGrWzj4bmLxdxwNP4/ITgmNJrdL+PQw3253lweNbCWptn4FPyHz6oETcKL2i3EL7rCZqyV059zP3xs52umnhvCTeVNuxjuVOvKsPg8W/cg/jnvDAXkUM/Sdi1hHntGMqU1TBjNxMUG4lHeEp7hRKDqcdSvx+QmPJ0xRjMqtNLNdv+RN/Am+9AXQNUQF1b2eMYnVxRQAfcowy893+zE1qiCzfzpW4hlKf5wPwDcn+0ErJ1WuK46vUTijYx79uuw9fAzSb+m3AzakhfZJt8UhmUH2idiqxcTXg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(39860400002)(396003)(366004)(376002)(136003)(346002)(451199021)(66476007)(26005)(478600001)(6506007)(9686003)(86362001)(71200400001)(186003)(110136005)(316002)(54906003)(38100700002)(6636002)(7696005)(66446008)(76116006)(122000001)(64756008)(66946007)(66556008)(4326008)(52536014)(5660300002)(7416002)(8936002)(8676002)(44832011)(38070700005)(41300700001)(2906002)(55016003)(558084003)(33656002)(142923001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?XAcH36gVwbf0/P72otWK+ywUwUROdzflL0r7zd8cufUWQ3i4syT7qS9PtUac?=
+ =?us-ascii?Q?RmSfNChlW6M4mLrnnX6S40vSA9k6P9338VxM2QaaEXY4ryzrh8XPi7D/VuPD?=
+ =?us-ascii?Q?exHGrpu1FcqoQavztNr6gesMk+uLK+5YxEwn34G501p1WuhmqXJuXCx+tNO2?=
+ =?us-ascii?Q?wlUxyBVcWvECbQuPb/Ihw8AifZWTy/7hyKPY8YKaw1f5FxvHW3VUDkHcetBf?=
+ =?us-ascii?Q?8edrzx5KT8M1bOyAXmaujcU9VBEQXS0qPcsMGv1TAPR6Mk8D5/Jd0cmPT5wC?=
+ =?us-ascii?Q?k4kd0+jShfrhZ/VsY+PoRvuUNjAIwymK2BdiGkzvRAjgHl7vqvxFfvQFOt2x?=
+ =?us-ascii?Q?7rhd8KKbX+xxu3dwY1YfI5GXnWDOctOCRNPz15rdgFpwhvf44f+aAM+49B5S?=
+ =?us-ascii?Q?sVmvL8XhWetD1EAh/zV3btAYU+DgdP8N4/tRFaanohZV8cWkfI9pxVSSwKSk?=
+ =?us-ascii?Q?T0EAmdLqrLF5WTv+eJkSYritTme3D5p6JNqCBZYgaf2QZ/0FgJdR9fKkhzAu?=
+ =?us-ascii?Q?JtfxMt5RgZqWCz9Oyiz+xiXTbcWGRM+GCbw3ivi6sbrozzWnvOPaNGBCVN7o?=
+ =?us-ascii?Q?VhYBUqsv2dfQ0cb+N79YNQATU4dZYjtnMPy26ZqeVzwBVxBdd8l8z4lHg/TT?=
+ =?us-ascii?Q?thoM52uIsYAoab9zfh9YKmCiMVdndt8TSLT3dAAjE1sKbTurUZqOUw8v0aJJ?=
+ =?us-ascii?Q?ojDbyZD1bO8JMPUn29vEvrbpPU4lA/oNANZeo2u3PZTH2I008PgyfrNtyin4?=
+ =?us-ascii?Q?YFMVEOgxj4bxndF+n8zdicx0d9yMH6J6Bi4mHlEYWjbjHHezepgnrOh+XiMU?=
+ =?us-ascii?Q?Plipd32BSv62xOhLkBeson+UbFOOFAqhjjQC0l1/DLk6BZ+4oFs7dVZQpOv8?=
+ =?us-ascii?Q?Kjpgp4khcZxhWE6LrWaiPzX/+fyibfUjwU+4K0XT3bN22XfQHxG8JHF9obXF?=
+ =?us-ascii?Q?IutNwyMbgTGMdFOhUm2EDVjiDln2Msa+oU7MRe8X50vijfhSMNtjIbAuuMAG?=
+ =?us-ascii?Q?KXYBUmtwosO9eBRFuFDHvW4mt4SsJbhmAl/sKMsVwqcVL62m0PNaufQD1crC?=
+ =?us-ascii?Q?lLVgIuH0sYfzfAL4+oAzjX53pY/gZUwRitmdRt1bNUTQ4sUaWxXCJTKz9+qU?=
+ =?us-ascii?Q?gJyA6qeYxtCZKN85xjt3P9suaUhvtO/Z5OV7qdvE6QyBsmHgXyrXXLz9UMFg?=
+ =?us-ascii?Q?dcRI/Xkh/bvh4wZsktgA1STsC3BE92T1HbxKaqlYJu8J9vYBWcVHyRZdScpC?=
+ =?us-ascii?Q?neXyfA5cZLJxAwwM4RCkNnE9B58cFxMohySai3Jq7z3y4NC6MfKHce6T1SZE?=
+ =?us-ascii?Q?JusZH4GWGVojmSM2NhsdMXXwxHLPw/lsLXC38Yvpc8kNkJTXp1wmm31l8kMF?=
+ =?us-ascii?Q?4Rb9RP289uOJgfy8aC9e16/fVGZcnudTMPIMnFM8oQaD9umWd57mHCooMv3k?=
+ =?us-ascii?Q?0mp/KYaAF1NLxdUoPaVd74w8/xiZpD3c7xiT8IPTDHj+X0+Z3UaPytD9eUWj?=
+ =?us-ascii?Q?/vzHqqXA6+DQZmqz35Z58ddmhpoJpZhARF1BdcVY9T3sF4xTDZBpmtDnWMd+?=
+ =?us-ascii?Q?XQ5X5RcAFiUgGjyuBtg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230621093245.78130-6-o.rempel@pengutronix.de>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55c510d7-a78f-40f0-a299-08db80e459b9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2023 01:24:04.8744
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v+TNy6pZiY45q5+aGW9GxwPvw73j4YEfDPAjHmlPyukmwGDlDf5oKgiaynx4uoAO5NmaEZFb7WRWjL9JVj8uYQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7707
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 21, 2023 at 11:32:45AM +0200, Oleksij Rempel wrote:
-> Add a new property 'threshold' to the edt-ft5x06 touchscreen binding.
-> This property allows setting the "click"-threshold in the range from 0
-> to 255. This change addresses the following dtbs_check warning:
-> imx6dl-lanmcu.dtb: touchscreen@38: 'threshold' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Subject: [PATCH] clk: imx: clk-gpr-mux: Simplify .determine_rate()
+>=20
+> imx_clk_gpr_mux_determine_rate() is the same as
+> __clk_mux_determine_rate(), so use the latter to save some LoC.
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied, thank you.
-
--- 
-Dmitry
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
