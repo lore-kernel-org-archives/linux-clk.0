@@ -2,115 +2,211 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B24EB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jul 2023 06:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706B8C001B0
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jul 2023 08:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbjGJGxL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jul 2023 02:53:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52554 "EHLO
+        id S232861AbjGJIY1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jul 2023 04:24:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbjGJGxK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2023 02:53:10 -0400
-X-Greylist: delayed 599 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 09 Jul 2023 23:53:09 PDT
-Received: from box.trvn.ru (box.trvn.ru [194.87.146.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0D23B8;
-        Sun,  9 Jul 2023 23:53:08 -0700 (PDT)
-Received: from authenticated-user (box.trvn.ru [194.87.146.52])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by box.trvn.ru (Postfix) with ESMTPSA id 0BBDC400F4;
-        Mon, 10 Jul 2023 11:34:05 +0500 (+05)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=trvn.ru; s=mail;
-        t=1688970846; bh=DND5rpm/wmgsLveMaPobuACP8Vr/HQmeyKyeNsCd8+o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VatCx4zNsH8XVhtDNxxMbWubQSaBJWHv2qOvFQJfQjjrrc3MiDS/75JNYt2c/uQhW
-         FUYY5uJ5wlFRyEE7nF1sA/j7HnSqWPm5MMOVYXydradsjlibExvSNRV/SI20ifKLH/
-         DQJteOgLnHvSyWw6LLYJ9oIvKwRNlkFHdz0aRv+FIuIFsBq7/Q/TS7Upn2Uaqz2+Bq
-         zkD7Lu/LMJOT33H6ev6pRbawd3rV+/nQKyCQVlV2Kimam72MCdEbuTm+EzFWJzE36r
-         LKio3U6j2EfMhcnWp/eCEG1bsoUZKATUp0nQUFr5OHtNG6FfOqZcllcfOrsrtbe333
-         KpyTN0MGCxVQA==
+        with ESMTP id S233015AbjGJIYI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2023 04:24:08 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA995E75
+        for <linux-clk@vger.kernel.org>; Mon, 10 Jul 2023 01:23:57 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-992ace062f3so548624466b.2
+        for <linux-clk@vger.kernel.org>; Mon, 10 Jul 2023 01:23:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1688977436; x=1691569436;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVVTTcakGIJzotpbfodORieW7nDILC8yQwEKuMOUYLA=;
+        b=v8PbxExQdeZ1rHkHw7LZ/7j9U0WaA1dkJRr1esV51tDnEYnz1yXdBnwheipucQw7iU
+         Dwny0J0H5BLnpfGCG5wzHd2FnzlN2eKCW8gMzeSEoxaUGxTKsnw6EvOsEUU4TK67JfFM
+         Fphyzekktczmyd9ASIWTNFAeo2y/sK6qzV5gvKJEWK5UQrHLGo1bEQy410Gg0pjYZAno
+         l+f8A80ndIBgzckm1LdIX5bAeQYPaJaXuB13ipB3GplwZOJY/GVnmBg1MPjebry6Ueg9
+         L5E9ztuma8giElufrDqCE9zHYDHjDcl1vKgQ9QXsO3zircBl8jFsHwzGNf5dL/40PtRb
+         4zSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688977436; x=1691569436;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lVVTTcakGIJzotpbfodORieW7nDILC8yQwEKuMOUYLA=;
+        b=Q/Qb2VPaidHJ8J5GfhJg/EBbV9RNQHKKLhheMLz5GAKKMIeTz40Ga05E5YNv6A96/n
+         hIsF/N84D+XwgukAid8P5H+omWWo+Eg2Zd+K8PTbD0BbhY5dMyq9G9thvKQykoxh0dHD
+         af8qj2kg6WGo4bfE0Xghx1CxfKzqw2z3t8R3m6CGnjLayv8cdbItj3fReR+MKXGQUiz7
+         y6ZaTytjKz8kpgUBPCMZk+QTKlpf/MdWbaMm/9l6hp0e+SY47ZispaiytxYwzPxxMVFy
+         Fox6brT4azn4VQ9ACazb3KbEbqiwlqcN/aU/zwNQfWJLU0jMSHKuCARFTtNDi5dcmJMP
+         Wozg==
+X-Gm-Message-State: ABy/qLZVTFudk2e0IOQC5OaKIi4qKyKPxMQ6/TdOBme9D5r5TsLZsXxb
+        CWIK4tj61DnbScYFPkFCF6oB0g==
+X-Google-Smtp-Source: APBJJlF/N78SzaPnYo5KIYgXXWBnknej6T2zV2RqWE8pAe5WopCVgqY0xM4CSFkpZNpYhf0+V/cUNg==
+X-Received: by 2002:a17:906:101e:b0:993:fba5:cdf3 with SMTP id 30-20020a170906101e00b00993fba5cdf3mr5110018ejm.6.1688977436009;
+        Mon, 10 Jul 2023 01:23:56 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id u2-20020a1709063b8200b0098e42bef732sm5733689ejf.183.2023.07.10.01.23.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Jul 2023 01:23:55 -0700 (PDT)
+Date:   Mon, 10 Jul 2023 10:23:53 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     "kuba@kernel.org" <kuba@kernel.org>,
+        "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v8 08/10] ice: implement dpll interface to control cgu
+Message-ID: <ZKvAGSwbJWEQmESs@nanopsycho>
+References: <20230609121853.3607724-1-arkadiusz.kubalewski@intel.com>
+ <20230609121853.3607724-9-arkadiusz.kubalewski@intel.com>
+ <ZISmmH0jqxZRB4VX@nanopsycho>
+ <DM6PR11MB4657161D2871747A7B404EDD9B5FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZJLtR0c+tvCbUgri@nanopsycho>
+ <ZJ0hQRcm6S05r8VE@nanopsycho>
+ <DM6PR11MB465726733894C7E64AD3367E9B29A@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Date:   Mon, 10 Jul 2023 11:34:04 +0500
-From:   Nikita Travkin <nikita@trvn.ru>
-To:     David Wronek <davidwronek@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        cros-qcom-dts-watchers@chromium.org
-Subject: Re: [PATCH v2 5/7] arm64: dts: qcom: pm6150: Add resin and rtc nodes
-In-Reply-To: <20230706124339.134272-6-davidwronek@gmail.com>
-References: <20230706124339.134272-1-davidwronek@gmail.com>
- <20230706124339.134272-6-davidwronek@gmail.com>
-Message-ID: <c4fa68f151b043bc60848f621b9aea66@trvn.ru>
-X-Sender: nikita@trvn.ru
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB465726733894C7E64AD3367E9B29A@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-David Wronek писал(а) 06.07.2023 17:40:
-> Add support for the RTC which is the same as on other PMICs and add the
-> resin child node to the PM6150 PON device and disable it by default.
-> 
-> Signed-off-by: David Wronek <davidwronek@gmail.com>
+Mon, Jul 03, 2023 at 02:37:18PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Thursday, June 29, 2023 8:14 AM
+>>
+>>Wed, Jun 21, 2023 at 02:29:59PM CEST, jiri@resnulli.us wrote:
+>>>Mon, Jun 19, 2023 at 10:34:12PM CEST, arkadiusz.kubalewski@intel.com
+>>wrote:
+>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>Sent: Saturday, June 10, 2023 6:37 PM
+>>>>>
+>>>>>Fri, Jun 09, 2023 at 02:18:51PM CEST, arkadiusz.kubalewski@intel.com
+>>>>>wrote:
+>>>>>
+>>>>>[...]
+>>>>>
+>>>>>
+>>>>>>+static int ice_dpll_mode_get(const struct dpll_device *dpll, void *priv,
+>>>>>>+			     enum dpll_mode *mode,
+>>>>>>+			     struct netlink_ext_ack *extack)
+>>>>>>+{
+>>>>>>+	*mode = DPLL_MODE_AUTOMATIC;
+>>>>>
+>>>>>I don't understand how the automatic mode could work with SyncE. The
+>>>>>There is one pin exposed for one netdev. The SyncE daemon should select
+>>>>>exacly one pin. How do you achieve that?
+>>>>>Is is by setting DPLL_PIN_STATE_SELECTABLE on the pin-netdev you want to
+>>>>>select and DPLL_PIN_STATE_DISCONNECTED on the rest?
+>>>>>
+>>>>>
+>>>>>[...]
+>>>>
+>>>>AUTOMATIC mode autoselects highest priority valid signal.
+>>>>As you have pointed out, for SyncE selection, the user must be able to
+>>>>manually
+>>>>select a pin state to enable recovery of signal from particular port.
+>>>>
+>>>>In "ice" case there are 2 pins for network PHY clock signal recovery, and
+>>>>both
+>>>>are parent pins (MUX-type). There are also 4 pins assigned to netdevs
+>>>>(one per
+>>>>port). Thus passing a signal from PHY to the pin is done through the MUX-
+>>>>pin,
+>>>>by selecting proper state on pin-parent pair (where parent pins is highest
+>>>>prio
+>>>>pin on dpll).
+>>>
+>>>Could you show me some examples please?
+>>
+>>Arkadiusz, could you please reply to this?
+>>Thanks!
+>>
+>
+>Sure, sorry for the delays, let's try that.
+>
+>'ice' use case:
+>Enabling a PHY clock recovery for DPLL_MODE_AUTOMATIC dpll (ID#0) with PHY
+>recovered clock signals (PIN_ID#13) being muxed using MUX-type pin (PIN_ID#2)
+>
+>1. Set MUX-type pin to state selectable and highest priority on a dpll device
+>(or make sure it is already configured):
+>CMD_PIN_SET:
+>	PIN_ID			2
+>	PIN_PARENT_DEVICE	(nest)
+>		ID		0
+>		PIN_STATE	SELECTABLE
+>		PIN_PRIO	0
+>(assume all the other pins have prio >=1)
+>
+>2. Set connected state on a pin-parent_pin tuple where parent is a pin from #1
+>CMD_PIN_SET:
+>	PIN_ID			13
+>	PIN_PARENT_PIN		(nest)
+>		PIN_ID		2
+>		PIN_STATE	CONNECTED
 
-Actually... (+CC CROS watchers) Doug, this would enable a somewhat
-dubious RTC for trogdor devices. On qcom firmware the rtc is
-forever write-protected but you run TF-A so maybe it's more
-cooperative and you can add "allow-set-time" prop for trogdor, in
-case qtiseclib doesn't mess with it? Or, alternatively, disable this
-rtc for trogdor completely so it doesn't cause trouble?
+How does this look from the perspective of a SyncE flow. Let's say you
+have eth0 and eth1, both is connected with a DPLL pin. Could you show
+how you select eth0 and then eth1?
 
-In any case, on the WoA firmware and with userspace offset handling,
-this works beautifully, so:
 
-Tested-by: Nikita Travkin <nikita@trvn.ru> # sc7180, Aspire 1
 
-Thanks!
-> ---
->  arch/arm64/boot/dts/qcom/pm6150.dtsi | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/pm6150.dtsi b/arch/arm64/boot/dts/qcom/pm6150.dtsi
-> index 2e6afa296141..43c50f890e8b 100644
-> --- a/arch/arm64/boot/dts/qcom/pm6150.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pm6150.dtsi
-> @@ -53,6 +53,14 @@ pm6150_pwrkey: pwrkey {
->  				bias-pull-up;
->  				linux,code = <KEY_POWER>;
->  			};
-> +
-> +			pm6150_resin: resin {
-> +				compatible = "qcom,pm8941-resin";
-> +				interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
-> +				debounce = <15625>;
-> +				bias-pull-up;
-> +				status = "disabled";
-> +			};
->  		};
->  
->  		pm6150_temp: temp-alarm@2400 {
-> @@ -88,6 +96,13 @@ pm6150_adc_tm: adc-tm@3500 {
->  			status = "disabled";
->  		};
->  
-> +		rtc@6000 {
-> +			compatible = "qcom,pm8941-rtc";
-> +			reg = <0x6000>, <0x6100>;
-> +			reg-names = "rtc", "alarm";
-> +			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
-> +		};
-> +
->  		pm6150_gpios: gpio@c000 {
->  			compatible = "qcom,pm6150-gpio", "qcom,spmi-gpio";
->  			reg = <0xc000>;
+>
+>Thank you!
+>Arkadiusz
+>
+>>>
+>>>
+>>>>
+>>>>Thank you!
+>>>>Arkadiusz
