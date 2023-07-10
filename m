@@ -2,458 +2,216 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EABEB64DA
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jul 2023 09:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3610BEB64D9
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Jul 2023 09:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232621AbjGJJeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jul 2023 05:34:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
+        id S230078AbjGJJv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jul 2023 05:51:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232199AbjGJJd7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2023 05:33:59 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F76110D3;
-        Mon, 10 Jul 2023 02:32:30 -0700 (PDT)
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36A8e92o005226;
-        Mon, 10 Jul 2023 09:32:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=16ATSE0CtOFh/8jVPBIuN4he3PgzMAsFGOsa7cmjT4s=;
- b=KSzAimm9fYvukMPecgMqnkPFezO7oE4vvZlwHQbyTNiQkaP3/7LIa7ngRxNyYv7QBX/+
- 0aTeNSp9cIh+bDb/TIdtqjr9YJutPNShb1wnoy1I05ZfcIbJ6L06L47DbCLIKJ5Ch3hB
- KxEKcGBOrJS691VYmoHGwQfe5lnwIeTBVKoaXf/Yoo9grvspshJehKUvLRtdTpKdSSOg
- Sbugaya5jVsX0AOvVHep+tXOLHxqXLqignd8mYSx39SaEEFdiSaA12ZR1EXN/cXVWXbU
- 4jPUVjAqDl6DXu/7s5NXlf+VYvuGTUL+PL+79xpiZXfe7kcVbYhy0mFsafKUw8qhQVOZ ng== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rpwgm38nb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Jul 2023 09:32:25 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36A9WOv4019457
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Jul 2023 09:32:24 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+        with ESMTP id S233142AbjGJJuY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2023 05:50:24 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1E8C10CA;
+        Mon, 10 Jul 2023 02:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1688982355; x=1720518355;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=d7exP4plSIxF5xH78Efzg3zwyfsggIgaiFqM7HOOUxc=;
+  b=fbdV+zhfXF3nQ4p5r4f1UefLBKZJWyyNRNs/OdgE+WKwGFLqRglWid/y
+   OalPugNy2P0/pZNzRUFA5unlu6wl7o++odWI9zgkSyftqnoFeZtjxsEfj
+   aaStX+kA5BQdkmi0QSaGK4vZDeWEJPORb7WmtfQjq7cBdAcknlZvOD3Vv
+   JkoJye0U5xBSVpLLnp8pbzLV/drSRLtcr8KC5Ojrp15Z9IkjPLf8c/dYk
+   wwuMJhzrHfIKez+NazVqxO6oUxALCVl1lj32kd3kEaMXIpkgcRjf9YhHV
+   ge/NwBPxXAtme5MuiSxrgmk8xZhRMYV41T1zzBRny4ul9q3uUUFSUSZ59
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10766"; a="427994079"
+X-IronPort-AV: E=Sophos;i="6.01,194,1684825200"; 
+   d="scan'208";a="427994079"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2023 02:45:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10766"; a="670886326"
+X-IronPort-AV: E=Sophos;i="6.01,194,1684825200"; 
+   d="scan'208";a="670886326"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orsmga003.jf.intel.com with ESMTP; 10 Jul 2023 02:45:54 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Mon, 10 Jul 2023 02:45:54 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27; Mon, 10 Jul 2023 02:45:53 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.27 via Frontend Transport; Mon, 10 Jul 2023 02:45:53 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.108)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Mon, 10 Jul 2023 02:32:19 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>,
-        <quic_saahtoma@quicinc.com>
-Subject: [PATCH] clk: qcom: clk-alpha-pll: Use determine_rate instead of round_rate
-Date:   Mon, 10 Jul 2023 15:02:06 +0530
-Message-ID: <20230710093206.18894-1-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+ 15.1.2507.27; Mon, 10 Jul 2023 02:45:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hdlwYf/Eai3PL2hJSwVq4P1iiLeEAvA50tMHJTOQf+HmOU0YOyORkDH+u0Lg6T+7S8m9lTUmOaYcu53kVVxOBLNbYf5+aNNKR7nax1jOpdvC14hNOIHgwrR3jiAeW3Lqzj82hfnBi9MK970BoDR9MLE8xHAiQwJP8juYt8o6yyO/ZVd1o2REDhy47KS160/1KRHaVJdwRNgqUe7NP+87LOPFSv8wWFc0H2VtBSxYK1tj3A7KX7Rn6DYUTI20UeDL7+DFtlETm+s0TgUV/uAvISA+ZtoRxWomTSBmT1vRbUVnHzNk63legb9zOV1DPmuitOgzMO1zi9Yxz/kV5vpZWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8QzlNQM7etd2Vc4zuNBZetsVI5/8fGZG2jbTmNkIu/U=;
+ b=b/3WqiBztK0ZnAT/AMwrLxoDSvnfAOGCJtUESiRzyC4eQ+cc0wH/vdJ25ylt72ZuIE29WFykYRliXavIJ7KFUYKUbKbVgYOMMD06hiaAOduaixwhIFapMEyHdBhv9HWpBjMrvzfZutLYgYvfQPUqSxQsZQZ7kOSd2KVNB9mgCWdLjgPZ8tLPukooSb1U9TQ1XeC5k7B8kAT6uJf6jOa95GQuysIKTIXq6lCC8KYGfiN/9iFrK73j/IAhGkV05taqmGilmC+YIKVna5zbyf24Lps/jv5qbZzyEQ7lPu+4MSnvRq185Y7NTMlXCleGFC4HiK3g7lOUnNRaGnA2DjYQ/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ DM4PR11MB5325.namprd11.prod.outlook.com (2603:10b6:5:390::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6565.30; Mon, 10 Jul 2023 09:45:46 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::24bd:974b:5c01:83d6]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::24bd:974b:5c01:83d6%3]) with mapi id 15.20.6565.028; Mon, 10 Jul 2023
+ 09:45:46 +0000
+From:   "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+CC:     "jiri@resnulli.us" <jiri@resnulli.us>,
+        "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+        Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: RE: [RFC PATCH v9 01/10] dpll: documentation on DPLL subsystem
+ interface
+Thread-Topic: [RFC PATCH v9 01/10] dpll: documentation on DPLL subsystem
+ interface
+Thread-Index: AQHZpc/1HqWZmXZSIkW1j8k3PlGshq+gvrKAgBIcCpA=
+Date:   Mon, 10 Jul 2023 09:45:45 +0000
+Message-ID: <DM6PR11MB4657FEDD367D6E9A9E0D3A209B30A@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
+        <20230623123820.42850-2-arkadiusz.kubalewski@intel.com>
+ <20230628141153.15709d97@kernel.org>
+In-Reply-To: <20230628141153.15709d97@kernel.org>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|DM4PR11MB5325:EE_
+x-ms-office365-filtering-correlation-id: 4cbf8185-f044-4651-4323-08db812a6f5a
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: K71Uyy6qrJlKqdwUMmegyMz45iVMPCB2ABwy3l2G/hu4fvQHOoymSyWBA0d9QcavQy+jh2GJIbk4KaXiFXe4g2sTRkXHhuuTvMoQW85AEy9XoEjxlrzPMGgCgYcmurKS/ZqA+ed8IJcugn+9FRpQauLwhUUtj3+FIFXut5jH/iwEGgWwbGUEhBKOYI7Tp7GaHXPJ6lCphcg6rG3kNEMyYkPgta2KGK7urH/T8A1lDR7uuek2UatYu2vUid00Tp4vXXQ7DbvoBD2jRtCs7SqjxsgW4qN8slKutB86veYq9P+6t2/wDC55WKRTW/pnslzer+eHXzlZ/IJisQacK2Ve6MRlBNH8kljgJNLj8+i2v7VoC7qJ68kDVek5/HV4XHOr+Sfyk7xzx0tcDjVEbL/fWVN5k4hXaypiVL/58tMKoqbDrgHy/3lIGgBIpEajKLppnOjaa6qY3DULXJSITtSrcgPbKqQDmQkze+QJDcaKkZ+bgIouf9R0ypu3SOXQ46MxyZhHbEIJmB6s0QGsxiIbyLyQ5NcgwpX8BMaa/CSdTY/5xnC+1gDZmjEROC4cjY49M0qLi7p0H9xlM5aNWLgZj+4QsLlS9XeQoJkNjI8y/KbbXV+/2dsEup/3i3eVHt0D
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(39860400002)(376002)(136003)(346002)(396003)(366004)(451199021)(186003)(9686003)(26005)(6506007)(83380400001)(41300700001)(4744005)(4326008)(64756008)(66446008)(66476007)(2906002)(66556008)(52536014)(316002)(7416002)(5660300002)(7406005)(8936002)(8676002)(6916009)(478600001)(66946007)(7696005)(76116006)(71200400001)(54906003)(55016003)(33656002)(122000001)(82960400001)(38070700005)(38100700002)(86362001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?sPILxzvz1I1aS9pj43WQ6OpB5vdpUjvIzbivY639JtBwrTH1PuY8uu1J6mX5?=
+ =?us-ascii?Q?f+jSaFbik4pRe8QmHPRSdzsHdGB+tSceQeuMXxGR57zOJPT+rtB0IRQX1mYx?=
+ =?us-ascii?Q?IAGTbsmU3M82R+vO+p9vFtJk0gf8Z2hrAaWBJq1SL+owPCc+q5wxfUFGVFv1?=
+ =?us-ascii?Q?+WhVQE6ZmE9zg8oeZIt0+H3/lQEAD7oSd/a8D1sByIjkWxfgm3YbJDaa9bRs?=
+ =?us-ascii?Q?aCmbS8XS4kxOPjpSa9C0I3g62+cpgLToXkqm3X/0L8kmpoYlLElP9tWVIB3F?=
+ =?us-ascii?Q?aZB2QkR8xL9JXK/+evY374V9hLjl6hT+ai1pJnfORr6omaRGBQZiIjUkvEpo?=
+ =?us-ascii?Q?nIXAANd9Vin3ucSNz9wO7IhUOxI3WofYJqM0/oBn7EZH/+85G0aZOMRQfCUc?=
+ =?us-ascii?Q?h/lZHX5s4hBplbmhraLvhGzjUfSvkv3Ta4UljxCL4wTQ/nivdg1hDLlbSjFE?=
+ =?us-ascii?Q?0q5xq9x2psQpbhh/t2WnfdmmiRwXvudu6HAesaEHFJ+5n4j2d4tQ2IO3JeAG?=
+ =?us-ascii?Q?I22IkHDwkUwz/O0dOakMQ1hzXqcnBKK08sBypc26lOiV8d2Kfh6w7OvdXNZZ?=
+ =?us-ascii?Q?K0d//8wf3xrWD3D4cGilvxuICRwrQa5vF8pZ9kgbWRumRvJSdnA9T8xafY9g?=
+ =?us-ascii?Q?LDKgSgkVl7B9L8PkpkG3QU6MZy8CLmAWNKpTSDYb7iq7RBnnM7i8WQKRBjx2?=
+ =?us-ascii?Q?ZOSR1zdr9sKpkzld3Rke7Qbx4juh2gL+f3UjwUa8Xd8SMKk3XIMP6dgpq0q8?=
+ =?us-ascii?Q?KulIn2tDVPJedoYgLQZL06oRHbjYZufZ7gGyrmqEMj6uinJgeBU0uOmyTzHC?=
+ =?us-ascii?Q?zsOVJbKglWhu4mIn+4gBO+fLPyGg+tQRHNePKckJSskMmto6hGfvk9oZtfO8?=
+ =?us-ascii?Q?V+qLlWs0n1e6HQNWPiXrXo1hs2TO00LZSKw9QTefCNRIujQRgHsyjn4mzW8O?=
+ =?us-ascii?Q?cSjVz+UJj3s1PCmX9rYNjUJFxdoLTSIBv9t84/syUs9tNB62UCjK5WeF85B/?=
+ =?us-ascii?Q?LhEX4mBbIOgWSo9rn/VPRhmL8Oe1ZhXZ7y39f6g3jTOuZmmHoJ4TIxUP89+c?=
+ =?us-ascii?Q?iIFlB+cubICAUu3GTRo93sSIfyUvq9lkgF4Lklbc/sYq7PJ4Ppad+fe/FFLi?=
+ =?us-ascii?Q?cdlz4Y2e92cYzB7MXV0zIMlPN+9E7TvIBvNsPwgJ2SEr91yrkVz7rPoEaPKq?=
+ =?us-ascii?Q?o/96yoQ3yCmKlFNrko15jWNOLJeu5K8dremEHJnoTbtv4EXLZk+AWqdw9qSk?=
+ =?us-ascii?Q?rYNqe6kxglfWjzrclPHrg+6aGbN9mJrZxBLUgil/MoswfCtw3X4XaqhsDx2I?=
+ =?us-ascii?Q?h9CPAk3vQIDq7JL0k643wmeh59J3lXjY4hNPoOXSnuaLqrKWURHBL8b4S7hL?=
+ =?us-ascii?Q?cb5EX+Zi3gpECNIxFWrOvnmIRdv1Qxa4jX0jnnuMt44gx9cbcl7W2EDIeivK?=
+ =?us-ascii?Q?YVo+zA/LjItoDA15mSRdiqY9uk9a0XDl5hRwUifZimZ3T5UQw9R/t1t0Fykn?=
+ =?us-ascii?Q?hW5JE+6lMofIhD0C1nWOsTJXkoITlDMkGzJNfsDmnRjRhSwAyvV0YQcozfq4?=
+ =?us-ascii?Q?9HZA23sgeWm5rUcgZqAD69Fuy1jpXDjVrCDtCIKNqtDmTkTTiub84BnR5grU?=
+ =?us-ascii?Q?3w=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: j5arkFWOqtWuhqFNVF84zutg5zDlv7vl
-X-Proofpoint-ORIG-GUID: j5arkFWOqtWuhqFNVF84zutg5zDlv7vl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-10_05,2023-07-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=914 mlxscore=0
- phishscore=0 adultscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2307100086
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cbf8185-f044-4651-4323-08db812a6f5a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2023 09:45:45.9630
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FkOiiQcixzjzFIGen4Equ4WAy+nUhiXiQy0Bx4OFjlNjt9r0zDYgx37nBlb/dr17ZoyaOKfI78WdL/uZRSzdmHGaq5QJi5dza9oxolOdyhI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5325
+X-OriginatorOrg: intel.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The round_rate() API returns a long value as the errors are reported using
-negative error codes. This leads to long overflow when the clock rate
-exceeds 2GHz.As the clock controller treats the clock rate above signed
-long max as an error, use determine_rate in place of round_rate as the
-determine_rate API does not possess such limitations.
+>From: Jakub Kicinski <kuba@kernel.org>
+>Sent: Wednesday, June 28, 2023 11:12 PM
+>
+>On Fri, 23 Jun 2023 14:38:11 +0200 Arkadiusz Kubalewski wrote:
+>> +    'pin-parent': [{'pin-id': 2, 'pin-state': 'connected'},
+>> +                   {'pin-id': 3, 'pin-state': 'disconnected'},
+>> +                   {'id': 0, 'pin-direction': 'input'},
+>> +                   {'id': 1, 'pin-direction': 'input'}],
+>
+>This bit of documentation is out of date now, right?
 
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- drivers/clk/qcom/clk-alpha-pll.c | 128 +++++++++++++++++--------------
- 1 file changed, 71 insertions(+), 57 deletions(-)
+True, fixed for v10.
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index e4ef645f65d1..4d9085f83d6b 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -744,22 +744,24 @@ static int clk_alpha_pll_hwfsm_set_rate(struct clk_hw *hw, unsigned long rate,
- 					clk_alpha_pll_hwfsm_is_enabled);
- }
- 
--static long clk_alpha_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--				     unsigned long *prate)
-+static int clk_alpha_pll_determine_rate(struct clk_hw *hw,
-+					struct clk_rate_request *req)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, alpha_width = pll_alpha_width(pll);
- 	u64 a;
- 	unsigned long min_freq, max_freq;
- 
--	rate = alpha_pll_round_rate(rate, *prate, &l, &a, alpha_width);
--	if (!pll->vco_table || alpha_pll_find_vco(pll, rate))
--		return rate;
-+	req->rate = alpha_pll_round_rate(req->rate, req->best_parent_rate,
-+					 &l, &a, alpha_width);
-+	if (!pll->vco_table || alpha_pll_find_vco(pll, req->rate))
-+		return 0;
- 
- 	min_freq = pll->vco_table[0].min_freq;
- 	max_freq = pll->vco_table[pll->num_vco - 1].max_freq;
- 
--	return clamp(rate, min_freq, max_freq);
-+	req->rate = clamp(req->rate, min_freq, max_freq);
-+	return 0;
- }
- 
- static unsigned long
-@@ -906,12 +908,15 @@ static int alpha_pll_huayra_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
--static long alpha_pll_huayra_round_rate(struct clk_hw *hw, unsigned long rate,
--					unsigned long *prate)
-+static int alpha_pll_huayra_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
- {
- 	u32 l, a;
- 
--	return alpha_huayra_pll_round_rate(rate, *prate, &l, &a);
-+	req->rate = alpha_huayra_pll_round_rate(req->rate,
-+						req->best_parent_rate,
-+						&l, &a);
-+	return 0;
- }
- 
- static int trion_pll_is_enabled(struct clk_alpha_pll *pll,
-@@ -1030,7 +1035,7 @@ const struct clk_ops clk_alpha_pll_ops = {
- 	.disable = clk_alpha_pll_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
- 	.recalc_rate = clk_alpha_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = clk_alpha_pll_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_ops);
-@@ -1040,7 +1045,7 @@ const struct clk_ops clk_alpha_pll_huayra_ops = {
- 	.disable = clk_alpha_pll_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
- 	.recalc_rate = alpha_pll_huayra_recalc_rate,
--	.round_rate = alpha_pll_huayra_round_rate,
-+	.determine_rate = alpha_pll_huayra_determine_rate,
- 	.set_rate = alpha_pll_huayra_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_huayra_ops);
-@@ -1050,7 +1055,7 @@ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
- 	.disable = clk_alpha_pll_hwfsm_disable,
- 	.is_enabled = clk_alpha_pll_hwfsm_is_enabled,
- 	.recalc_rate = clk_alpha_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = clk_alpha_pll_hwfsm_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
-@@ -1060,7 +1065,7 @@ const struct clk_ops clk_alpha_pll_fixed_trion_ops = {
- 	.disable = clk_trion_pll_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_trion_ops);
- 
-@@ -1094,25 +1099,25 @@ static const struct clk_div_table clk_alpha_2bit_div_table[] = {
- 	{ }
- };
- 
--static long
--clk_alpha_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *prate)
-+static int clk_alpha_pll_postdiv_determine_rate(struct clk_hw *hw,
-+						struct clk_rate_request *req)
- {
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 	const struct clk_div_table *table;
-+	unsigned long rate = req->rate;
- 
- 	if (pll->width == 2)
- 		table = clk_alpha_2bit_div_table;
- 	else
- 		table = clk_alpha_div_table;
- 
--	return divider_round_rate(hw, rate, prate, table,
--				  pll->width, CLK_DIVIDER_POWER_OF_TWO);
-+	req->rate = divider_round_rate(hw, rate, &req->best_parent_rate, table,
-+				       pll->width, CLK_DIVIDER_POWER_OF_TWO);
-+	return 0;
- }
- 
--static long
--clk_alpha_pll_postdiv_round_ro_rate(struct clk_hw *hw, unsigned long rate,
--				    unsigned long *prate)
-+static int clk_alpha_pll_postdiv_determine_ro_rate(struct clk_hw *hw,
-+						   struct clk_rate_request *req)
- {
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 	u32 ctl, div;
-@@ -1124,9 +1129,11 @@ clk_alpha_pll_postdiv_round_ro_rate(struct clk_hw *hw, unsigned long rate,
- 	div = 1 << fls(ctl);
- 
- 	if (clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)
--		*prate = clk_hw_round_rate(clk_hw_get_parent(hw), div * rate);
-+		req->best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-+							  div * req->rate);
-+	req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
- 
--	return DIV_ROUND_UP_ULL((u64)*prate, div);
-+	return 0;
- }
- 
- static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -1145,13 +1152,13 @@ static int clk_alpha_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- const struct clk_ops clk_alpha_pll_postdiv_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_recalc_rate,
--	.round_rate = clk_alpha_pll_postdiv_round_rate,
-+	.determine_rate = clk_alpha_pll_postdiv_determine_rate,
- 	.set_rate = clk_alpha_pll_postdiv_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ops);
- 
- const struct clk_ops clk_alpha_pll_postdiv_ro_ops = {
--	.round_rate = clk_alpha_pll_postdiv_round_ro_rate,
-+	.determine_rate = clk_alpha_pll_postdiv_determine_ro_rate,
- 	.recalc_rate = clk_alpha_pll_postdiv_recalc_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_ro_ops);
-@@ -1393,7 +1400,7 @@ const struct clk_ops clk_alpha_pll_fabia_ops = {
- 	.is_enabled = clk_alpha_pll_is_enabled,
- 	.set_rate = alpha_pll_fabia_set_rate,
- 	.recalc_rate = alpha_pll_fabia_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_fabia_ops);
- 
-@@ -1402,7 +1409,7 @@ const struct clk_ops clk_alpha_pll_fixed_fabia_ops = {
- 	.disable = alpha_pll_fabia_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
- 	.recalc_rate = alpha_pll_fabia_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_fabia_ops);
- 
-@@ -1452,14 +1459,16 @@ clk_trion_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	return (parent_rate / div);
- }
- 
--static long
--clk_trion_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *prate)
-+static int
-+clk_trion_pll_postdiv_determine_rate(struct clk_hw *hw,
-+				     struct clk_rate_request *req)
- {
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 
--	return divider_round_rate(hw, rate, prate, pll->post_div_table,
--				  pll->width, CLK_DIVIDER_ROUND_CLOSEST);
-+	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
-+				       pll->post_div_table, pll->width,
-+				       CLK_DIVIDER_ROUND_CLOSEST);
-+	return 0;
- };
- 
- static int
-@@ -1485,18 +1494,21 @@ clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- const struct clk_ops clk_alpha_pll_postdiv_trion_ops = {
- 	.recalc_rate = clk_trion_pll_postdiv_recalc_rate,
--	.round_rate = clk_trion_pll_postdiv_round_rate,
-+	.determine_rate = clk_trion_pll_postdiv_determine_rate,
- 	.set_rate = clk_trion_pll_postdiv_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_trion_ops);
- 
--static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
--				unsigned long rate, unsigned long *prate)
-+static int
-+clk_alpha_pll_postdiv_fabia_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
- {
- 	struct clk_alpha_pll_postdiv *pll = to_clk_alpha_pll_postdiv(hw);
- 
--	return divider_round_rate(hw, rate, prate, pll->post_div_table,
--				pll->width, CLK_DIVIDER_ROUND_CLOSEST);
-+	req->rate = divider_round_rate(hw, req->rate, &req->best_parent_rate,
-+				       pll->post_div_table, pll->width,
-+					CLK_DIVIDER_ROUND_CLOSEST);
-+	return 0;
- }
- 
- static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
-@@ -1531,7 +1543,7 @@ static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
- 
- const struct clk_ops clk_alpha_pll_postdiv_fabia_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
--	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
-+	.determine_rate = clk_alpha_pll_postdiv_fabia_determine_rate,
- 	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
-@@ -1683,7 +1695,7 @@ const struct clk_ops clk_alpha_pll_trion_ops = {
- 	.disable = clk_trion_pll_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = alpha_pll_trion_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_trion_ops);
-@@ -1694,14 +1706,14 @@ const struct clk_ops clk_alpha_pll_lucid_ops = {
- 	.disable = clk_trion_pll_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = alpha_pll_trion_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_ops);
- 
- const struct clk_ops clk_alpha_pll_postdiv_lucid_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
--	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
-+	.determine_rate = clk_alpha_pll_postdiv_fabia_determine_rate,
- 	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_ops);
-@@ -1753,7 +1765,7 @@ const struct clk_ops clk_alpha_pll_agera_ops = {
- 	.disable = clk_alpha_pll_disable,
- 	.is_enabled = clk_alpha_pll_is_enabled,
- 	.recalc_rate = alpha_pll_fabia_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = clk_alpha_pll_agera_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_agera_ops);
-@@ -1918,7 +1930,7 @@ const struct clk_ops clk_alpha_pll_lucid_5lpe_ops = {
- 	.disable = alpha_pll_lucid_5lpe_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = alpha_pll_lucid_5lpe_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_5lpe_ops);
-@@ -1928,13 +1940,13 @@ const struct clk_ops clk_alpha_pll_fixed_lucid_5lpe_ops = {
- 	.disable = alpha_pll_lucid_5lpe_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_lucid_5lpe_ops);
- 
- const struct clk_ops clk_alpha_pll_postdiv_lucid_5lpe_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
--	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
-+	.determine_rate = clk_alpha_pll_postdiv_fabia_determine_rate,
- 	.set_rate = clk_lucid_5lpe_pll_postdiv_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_5lpe_ops);
-@@ -2087,7 +2099,7 @@ const struct clk_ops clk_alpha_pll_zonda_ops = {
- 	.disable = clk_zonda_pll_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = clk_zonda_pll_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_zonda_ops);
-@@ -2277,13 +2289,13 @@ const struct clk_ops clk_alpha_pll_fixed_lucid_evo_ops = {
- 	.disable = alpha_pll_lucid_evo_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = alpha_pll_lucid_evo_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_lucid_evo_ops);
- 
- const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
--	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
-+	.determine_rate = clk_alpha_pll_postdiv_fabia_determine_rate,
- 	.set_rate = clk_lucid_evo_pll_postdiv_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_evo_ops);
-@@ -2294,7 +2306,7 @@ const struct clk_ops clk_alpha_pll_lucid_evo_ops = {
- 	.disable = alpha_pll_lucid_evo_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = alpha_pll_lucid_evo_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = alpha_pll_lucid_5lpe_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_evo_ops);
-@@ -2305,7 +2317,7 @@ const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops = {
- 	.disable = alpha_pll_reset_lucid_evo_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = alpha_pll_lucid_evo_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
-+	.determine_rate = clk_alpha_pll_determine_rate,
- 	.set_rate = alpha_pll_lucid_5lpe_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_reset_lucid_evo_ops);
-@@ -2341,22 +2353,24 @@ static unsigned long clk_rivian_evo_pll_recalc_rate(struct clk_hw *hw,
- 	return parent_rate * l;
- }
- 
--static long clk_rivian_evo_pll_round_rate(struct clk_hw *hw, unsigned long rate,
--					  unsigned long *prate)
-+static int clk_rivian_evo_pll_determine_rate(struct clk_hw *hw,
-+					     struct clk_rate_request *req)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	unsigned long min_freq, max_freq;
- 	u32 l;
- 	u64 a;
- 
--	rate = alpha_pll_round_rate(rate, *prate, &l, &a, 0);
--	if (!pll->vco_table || alpha_pll_find_vco(pll, rate))
--		return rate;
-+	req->rate = alpha_pll_round_rate(req->rate, req->best_parent_rate,
-+					 &l, &a, 0);
-+	if (!pll->vco_table || alpha_pll_find_vco(pll, req->rate))
-+		return 0;
- 
- 	min_freq = pll->vco_table[0].min_freq;
- 	max_freq = pll->vco_table[pll->num_vco - 1].max_freq;
- 
--	return clamp(rate, min_freq, max_freq);
-+	req->rate = clamp(req->rate, min_freq, max_freq);
-+	return 0;
- }
- 
- const struct clk_ops clk_alpha_pll_rivian_evo_ops = {
-@@ -2364,7 +2378,7 @@ const struct clk_ops clk_alpha_pll_rivian_evo_ops = {
- 	.disable = alpha_pll_lucid_5lpe_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_rivian_evo_pll_recalc_rate,
--	.round_rate = clk_rivian_evo_pll_round_rate,
-+	.determine_rate = clk_rivian_evo_pll_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_rivian_evo_ops);
- 
--- 
-2.17.1
-
+Thank you!
+Arkadiusz
