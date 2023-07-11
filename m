@@ -2,285 +2,270 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABDCEB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 10:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C78B0EB64DD
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 11:52:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbjGKKu5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jul 2023 06:50:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34472 "EHLO
+        id S230329AbjGKLw4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jul 2023 07:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231312AbjGKKut (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 06:50:49 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19BA010F6
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:50:45 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id 2adb3069b0e04-4fbf09a9139so33460e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:50:45 -0700 (PDT)
+        with ESMTP id S231509AbjGKLwy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 07:52:54 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BF310DD
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 04:52:47 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51e590a8ab5so2738993a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 04:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689072643; x=1691664643;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bsGi/AQ335IJGc0/2vjFnmujn9OC9GFlHTvDDV21i/A=;
-        b=f7135Ulf7UCPzIlDgN8JSjgnk07yDLhUb2aPUrU1eDBE0N0EcRLNRFMZBBXLp5Ccip
-         bL67M06ldcD1RLf7M2jrS8WszIOqJbnXpGz9xpPY+T+pyTi1rCmL4yQS4ps36Xn6zfJu
-         sWOugdafZ4eqTVEn9FuMecWADk0o2FA/Qh0+DTtDiDGVEaCkTKMj3NFWa3q9kIwDYsfa
-         mFSh1RfVgY/dYGdZ7uvgwxolsNzcCAqgboq4vY0KyC/SxF5iCCo7ZDSN3A4LF4b7laHA
-         KT4xXDjYyGp7wJHtGqGE1W+SQOlvY8+kT1NGRpolGFZCrg1o3qN6IFvfb8EmzStLHZ7x
-         rIKA==
+        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1689076366; x=1691668366;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMmzAbnQPb+hff08oGBX7AMmQrEjQkPWbeWYbWnEb2s=;
+        b=R6I4rQhZNuJhcRNVBlXhhbzoUBbtJugUPtDeDqspmlhc0LV6PhoXCtdxQT2Fj0bM/Z
+         D3kIChr40ply4orCGt+9ajW59qGsXI0q8dwmTjUCDnDH0ulp9uyX3O+SsEKbO2t7vinl
+         8gTJudbGuaMlUr/F2U1aCITw8lqIDA7UGsx63ZT1ftAReQn3Gp7VbkcsmETP/cRAyQai
+         lkIOqNqDJFzyv3RRj/Q+MFuMldUziVBZazHL8K6x6ggiatiMyxzswv65kZTUd+/j30i/
+         ceCU0hZSdHB7C1BCm/DJGmgVIEJr/TryA/39HtCJ72a1xnXsajO8AG8nwixG6ViSclLN
+         u3GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689072643; x=1691664643;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bsGi/AQ335IJGc0/2vjFnmujn9OC9GFlHTvDDV21i/A=;
-        b=G8eLQIAR/M5R2dGSs+SivzxFrBx6qAd+v1gztKsplzxBleWs4JSqfOclwC/+AdDpnG
-         bEH2iOPD8XeAA4pp+qblLvg1RvXLDTFzrpuWnr9wVqXKo1869m1TGMIvc9HEWKiXvWlP
-         fOxQzLruGI6Wu5Hd8qfLYmnnhtpWzTQARSf0DjkeM4dhUCypnYAyweIQQv5/YBIYHjck
-         RdZCpuyYi029N1RCi0xNPHlExwThQ5lqVbK7lewBd4XTaw80SMFUp7+Tpo9K1xtYrbl2
-         31Yh8x0oA+os6a6qoADkLa/uPZ7OR/IH9wNUxdYbYV4Gb0nacw+ZDoKWu7+zvOx0dGey
-         6eLw==
-X-Gm-Message-State: ABy/qLaJX0Fjub024aGllsbcDUNsHOmyjkomUS5UHs9ntqwE5d0TyEUW
-        aQBpDq4BYzGJguWVGhHNInrBSw==
-X-Google-Smtp-Source: APBJJlEptb+2D+nj3iuROjTRLvM3l5qghg6uMyWCLwNxDusZhnMczLeb8VnyZfZojAIEfAgXqwB6Yg==
-X-Received: by 2002:a05:6512:534:b0:4fb:242:6e05 with SMTP id o20-20020a056512053400b004fb02426e05mr12578120lfc.3.1689072643173;
-        Tue, 11 Jul 2023 03:50:43 -0700 (PDT)
-Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id r6-20020ac25a46000000b004fbae25fcc4sm268584lfn.61.2023.07.11.03.50.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jul 2023 03:50:42 -0700 (PDT)
-Message-ID: <31075ecb-7e3c-302f-a668-b872017e19b3@linaro.org>
-Date:   Tue, 11 Jul 2023 13:50:42 +0300
+        d=1e100.net; s=20221208; t=1689076366; x=1691668366;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VMmzAbnQPb+hff08oGBX7AMmQrEjQkPWbeWYbWnEb2s=;
+        b=T7iHEfYffKN/CQm0csnyDoaHqI2G+5KIfqKJohz7/JdF/s299Ia/3vh7JbCySi6Dtw
+         6aV8Pkn+/UDli//bJO+6yJ/CSYWzMcBMsNtoWcM0h/vYneEpr4PWRBGIPZ4zYxPoCQCj
+         pdE7rZ35lBw+L5G+yUkhAg8ELaNal/mgMAZOCNfQoikXoGWnbbGVuKIoEv8LWU57Rd7C
+         1a6wxUOX+5Os0nuQNzqUx37UVDcB6Qxo7DjYCLOei0sccfIYKgDmHXJ8y7naZ3GeLXu8
+         RiEHkqCzPpLNGQczyGDWsmb1BpWZcUWMMEDXPd/aVPRWDBJ7PW+04x4ncX0SCsNkDm3A
+         VRtw==
+X-Gm-Message-State: ABy/qLZkj+Jf01BYGTTCWk368JI8XaB2hFihk+ANISUDeWDO6/SOOIYL
+        fWh8cRNmgYW4Lu8fhQG/rdALVw==
+X-Google-Smtp-Source: APBJJlFxRCgoFvFTryd/EnnLREOPOgp5+SxcfOYu5/wDWMNeLe4NvM0dWgV+6D/1iKEYw/AVIF+zFw==
+X-Received: by 2002:a05:6402:506:b0:51e:26c8:25f7 with SMTP id m6-20020a056402050600b0051e26c825f7mr14275781edv.42.1689076365929;
+        Tue, 11 Jul 2023 04:52:45 -0700 (PDT)
+Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
+        by smtp.gmail.com with ESMTPSA id u8-20020aa7d888000000b0051e0f21c43fsm1148663edq.31.2023.07.11.04.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jul 2023 04:52:45 -0700 (PDT)
+Date:   Tue, 11 Jul 2023 13:52:43 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     "kuba@kernel.org" <kuba@kernel.org>,
+        "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+Message-ID: <ZK1CizcqjqO1L/RQ@nanopsycho>
+References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
+ <ZJq3a6rl6dnPMV17@nanopsycho>
+ <DM6PR11MB4657084DDD7554663F86C1C19B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZJwWXZmZe4lQ04iK@nanopsycho>
+ <DM6PR11MB4657751607C36FC711271D639B30A@DM6PR11MB4657.namprd11.prod.outlook.com>
+ <ZKv1FRTXWLnLGRRS@nanopsycho>
+ <DM6PR11MB46575D14FFE115546FDC9DEB9B31A@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 4/6] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-Content-Language: en-GB
-To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
-        andersson@kernel.org, konrad.dybcio@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de,
-        richardcochran@gmail.com, arnd@arndb.de, geert+renesas@glider.be,
-        neil.armstrong@linaro.org, nfraprado@collabora.com,
-        rafal@milecki.pl, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        netdev@vger.kernel.org
-Cc:     quic_saahtoma@quicinc.com
-References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
- <20230711093529.18355-5-quic_devipriy@quicinc.com>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230711093529.18355-5-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM6PR11MB46575D14FFE115546FDC9DEB9B31A@DM6PR11MB4657.namprd11.prod.outlook.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/07/2023 12:35, Devi Priya wrote:
-> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
-> devices.
-> 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> ---
->   drivers/clk/qcom/Kconfig         |    6 +
->   drivers/clk/qcom/Makefile        |    1 +
->   drivers/clk/qcom/nsscc-ipq9574.c | 3080 ++++++++++++++++++++++++++++++
->   3 files changed, 3087 insertions(+)
->   create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 263e55d75e3f..5556063d204f 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -195,6 +195,12 @@ config IPQ_GCC_9574
->   	  i2c, USB, SD/eMMC, etc. Select this for the root clock
->   	  of ipq9574.
->   
-> +config IPQ_NSSCC_9574
-> +	tristate "IPQ9574 NSS Clock Controller"
-> +	depends on IPQ_GCC_9574
-> +	help
-> +	  Support for NSS clock controller on ipq9574 devices.
-> +
->   config MSM_GCC_8660
->   	tristate "MSM8660 Global Clock Controller"
->   	depends on ARM || COMPILE_TEST
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index e6e294274c35..8ba882186bff 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -29,6 +29,7 @@ obj-$(CONFIG_IPQ_GCC_6018) += gcc-ipq6018.o
->   obj-$(CONFIG_IPQ_GCC_806X) += gcc-ipq806x.o
->   obj-$(CONFIG_IPQ_GCC_8074) += gcc-ipq8074.o
->   obj-$(CONFIG_IPQ_GCC_9574) += gcc-ipq9574.o
-> +obj-$(CONFIG_IPQ_NSSCC_9574)	+= nsscc-ipq9574.o
->   obj-$(CONFIG_IPQ_LCC_806X) += lcc-ipq806x.o
->   obj-$(CONFIG_MDM_GCC_9607) += gcc-mdm9607.o
->   obj-$(CONFIG_MDM_GCC_9615) += gcc-mdm9615.o
-> diff --git a/drivers/clk/qcom/nsscc-ipq9574.c b/drivers/clk/qcom/nsscc-ipq9574.c
-> new file mode 100644
-> index 000000000000..b6bed0d24059
-> --- /dev/null
-> +++ b/drivers/clk/qcom/nsscc-ipq9574.c
-> @@ -0,0 +1,3080 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
-> +#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
-> +
-> +#include "clk-alpha-pll.h"
-> +#include "clk-branch.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-regmap.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
-> +#include "common.h"
-> +#include "reset.h"
-> +
-> +/* Need to match the order of clocks in DT binding */
-> +enum {
-> +	DT_BIAS_PLL_CC_CLK,
-> +	DT_BIAS_PLL_NSS_NOC_CLK,
-> +	DT_BIAS_PLL_UBI_NC_CLK,
-> +	DT_GCC_GPLL0_OUT_AUX,
-> +	DT_UNIPHY0_GCC_RX_CLK,
-> +	DT_UNIPHY0_GCC_TX_CLK,
-> +	DT_UNIPHY1_GCC_RX_CLK,
-> +	DT_UNIPHY1_GCC_TX_CLK,
-> +	DT_UNIPHY2_GCC_RX_CLK,
-> +	DT_UNIPHY2_GCC_TX_CLK,
-> +	DT_XO,
-> +};
-> +
-> +enum {
-> +	P_BIAS_PLL_CC_CLK,
-> +	P_BIAS_PLL_NSS_NOC_CLK,
-> +	P_BIAS_PLL_UBI_NC_CLK,
-> +	P_GCC_GPLL0_OUT_AUX,
-> +	P_UBI32_PLL_OUT_MAIN,
-> +	P_UNIPHY0_GCC_RX_CLK,
-> +	P_UNIPHY0_GCC_TX_CLK,
-> +	P_UNIPHY1_GCC_RX_CLK,
-> +	P_UNIPHY1_GCC_TX_CLK,
-> +	P_UNIPHY2_GCC_RX_CLK,
-> +	P_UNIPHY2_GCC_TX_CLK,
-> +	P_XO,
-> +};
-> +
-> +static const struct alpha_pll_config ubi32_pll_config = {
-> +	.l = 0x3e,
-> +	.alpha = 0x6666,
-> +	.config_ctl_val = 0x200d4aa8,
-> +	.config_ctl_hi_val = 0x3c,
-> +	.main_output_mask = BIT(0),
-> +	.aux_output_mask = BIT(1),
-> +	.pre_div_val = 0x0,
-> +	.pre_div_mask = BIT(12),
-> +	.post_div_val = 0x0,
-> +	.post_div_mask = GENMASK(9, 8),
-> +	.alpha_en_mask = BIT(24),
-> +	.test_ctl_val = 0x1c0000c0,
-> +	.test_ctl_hi_val = 0x4000,
-> +};
-> +
-> +static struct clk_alpha_pll ubi32_pll_main = {
-> +	.offset = 0x28000,
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
-> +	.flags = SUPPORTS_DYNAMIC_UPDATE,
-> +	.clkr = {
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "ubi32_pll_main",
-> +			.parent_data = &(const struct clk_parent_data) {
-> +				.index = DT_XO,
-> +			},
-> +			.num_parents = 1,
-> +			.ops = &clk_alpha_pll_huayra_ops,
-> +		},
-> +	},
-> +};
-> +
-> +static struct clk_alpha_pll_postdiv ubi32_pll = {
-> +	.offset = 0x28000,
-> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
-> +	.width = 2,
-> +	.clkr.hw.init = &(const struct clk_init_data) {
-> +		.name = "ubi32_pll",
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&ubi32_pll_main.clkr.hw
-> +		},
-> +		.num_parents = 1,
-> +		.ops = &clk_alpha_pll_postdiv_ro_ops,
-> +		.flags = CLK_SET_RATE_PARENT,
-> +	},
-> +};
-> +
+Tue, Jul 11, 2023 at 12:34:11PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>From: Jiri Pirko <jiri@resnulli.us>
+>>Sent: Monday, July 10, 2023 2:10 PM
+>>
+>>Mon, Jul 10, 2023 at 12:07:30PM CEST, arkadiusz.kubalewski@intel.com wrote:
+>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>Sent: Wednesday, June 28, 2023 1:16 PM
+>>>>Wed, Jun 28, 2023 at 11:15:11AM CEST, arkadiusz.kubalewski@intel.com
+>>wrote:
+>>>>>>From: Jiri Pirko <jiri@resnulli.us>
+>>>>>>Sent: Tuesday, June 27, 2023 12:18 PM
+>>>>>>
+>>>>>>Fri, Jun 23, 2023 at 02:38:10PM CEST, arkadiusz.kubalewski@intel.com
+>>>>>>wrote:
+>>>>>>
+>>>>>>>v8 -> v9:
+>>>>>>
+>>>>>>Could you please address all the unresolved issues from v8 and send v10?
+>>>>>>I'm not reviewing this one.
+>>>>>>
+>>>>>>Thanks!
+>>>>>
+>>>>>Sure, will do, but first missing to-do/discuss list:
+>>>>>1) remove mode_set as not used by any driver
+>>>
+>>>I have implemented in ice (also added back the DPLL_MODE_FREERUN).
+>>
+>>Uh :/ Why exactly is it needed in this initial submission?
+>>
+>
+>Without mode-set there is no need for device-set at all, right?
+>So it is better to implement at least one set command, so we don't
+>need remove device-set command entirely.
 
-[skipped the rest, LGTM]
+The enum cmd valu could stay as a placeholder, the rest can go.
 
-  +
-> +static int nss_cc_ipq9574_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	struct qcom_cc_desc nsscc_ipq9574_desc = nss_cc_ipq9574_desc;
-> +
-> +	regmap = qcom_cc_map(pdev, &nsscc_ipq9574_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	/* SW Workaround for UBI Huayra PLL */
-> +	regmap_update_bits(regmap, 0x2800C, BIT(26), BIT(26));
 
-Can we directly set the correct value via ubi32_pll_config.test_ctl_val ?
+>
+>>
+>>>
+>>>>>2) remove "no-added-value" static functions descriptions in
+>>>>>   dpll_core/dpll_netlink
+>>>
+>>>Removed.
+>>>
+>>>>>3) merge patches [ 03/10, 04/10, 05/10 ] into patches that are compiling
+>>>>>   after each patch apply
+>>>
+>>>Hope Vadim will decide on this, the thing is merging in two patches
+>>>doesn't make much sense as there won't be any linking until both patches
+>>>are there, so most sense it would be if 3 are merged into one, but
+>>>then we will be back to one big blob patch issue.
+>>>
+>>>>>4) remove function return values descriptions/lists
+>>>
+>>>Fixed.
+>>>
+>>>>>5) Fix patch [05/10]:
+>>>>>   - status Supported
+>>>>>   - additional maintainers
+>>>>>   - remove callback:
+>>>>>     int (*source_pin_idx_get)(...) from `struct dpll_device_ops`
+>>>>>6) Fix patch [08/10]: rethink ice mutex locking scheme
+>>>
+>>>Fixed.
+>>>
+>>>>>7) Fix patch [09/10]: multiple comments on
+>>>>>https://lore.kernel.org/netdev/ZIQu+%2Fo4J0ZBspVg@nanopsycho/#t
+>>>>>8) add PPS DPLL phase offset to the netlink get-device API
+>>>>>
+>>>
+>>>Added few things on this matter
+>>>- 1 dpll level attribute:
+>>>  - phase-shift - measuring the phase difference between dpll input
+>>>    and it's output
+>>>- 1 dpll-pin tuple level attribute:
+>>>  - pin-phase-adjust - set/get phase adjust of a pin on a dpll
+>>>- 2 pin level attributes:
+>>>  - pin-phase-adjust-min - provide user with min value that can be set
+>>>  - pin-phase-adjust-max - provide user with max value that can be set
+>>>- a constant:
+>>>  - DPLL_PHASE_SHIFT_DIVIDER similar to DPLL_TEMP_DIVIDER for producing
+>>>    fraction value of measured DPLL_A_PHASE_SHIFT
+>>
+>>Again, why do we need this in this initial submission? Why it can't be a
+>>follow-up patchset to extend this? This way we never converge :/
+>>Please focus on what we have now and bring it in. Let the extensions to
+>>be addressed later on, please.
+>>
+>
+>Well AFAIK, RHEL is doing some monitoring software, so the end-users need this.
 
-> +
-> +	clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_config);
-> +
-> +	return qcom_cc_really_probe(pdev, &nsscc_ipq9574_desc, regmap);
-> +}
-> +
-> +static struct platform_driver nss_cc_ipq9574_driver = {
-> +	.probe = nss_cc_ipq9574_probe,
-> +	.driver = {
-> +		.name = "qcom,nsscc-ipq9574",
-> +		.of_match_table = nss_cc_ipq9574_match_table,
-> +	},
-> +};
-> +
-> +static int __init nss_cc_ipq9574_init(void)
-> +{
-> +	return platform_driver_register(&nss_cc_ipq9574_driver);
-> +}
-> +subsys_initcall(nss_cc_ipq9574_init);
-> +
-> +static void __exit nss_cc_ipq9574_exit(void)
-> +{
-> +	platform_driver_unregister(&nss_cc_ipq9574_driver);
-> +}
-> +module_exit(nss_cc_ipq9574_exit);
+They need it for the initial submission? Why? Why can't they wait 1 week
+for follow-up patchset?
 
-module_platform_driver ?
 
-> +
-> +MODULE_DESCRIPTION("QTI NSS_CC IPQ9574 Driver");
-> +MODULE_LICENSE("GPL");
+>
+>>
+>>
+>>>- implemented in dpll netlink and in ice
+>>>
+>>>>
+>>>>You are missing removal of pin->prop.package_label = dev_name(dev); in
+>>>>ice.
+>>>>
+>>>
+>>>I didn't touch it, as we still need to discuss it, Jakub didn't respond
+>>>on v8 thread.
+>>>I don't see why we shall not name it the way. This is most meaningful
+>>>label for those pins for the user right now.
+>>
+>>This is not meaningful, at all. dev_name() changes upon which pci slot
+>>you plug the card into. package_label should be an actual label on a
+>>silicon package. Why you think this two are related in aby way, makes me
+>>really wonder. Could you elaborate the meaningfulness of this?
+>>
+>
+>Without this, from end-user perspective, it would be very confusing.
+>As in ice without any label there would 4 pins which differs only with id.
 
--- 
-With best wishes
-Dmitry
+There you go, it does not have any label, yet you are trying hard to
+make up some. Does not make sense.
 
+
+>What names would you suggest?
+
+That is the point I made previously. For synce usecase, the label does
+not make sense. There should be no label. You reference the pin by ID
+from netdev, that is enough.
+
+I think better to add the check to pin-register so future synce pin
+users don't have similar weird ideas. Could you please add this check?
+
+Thanks!
+
+
+
+>
+>Thank you!
+>Arkadiusz
+>
+>>
+>>>
+>>>Thank you!
+>>>Arkadiusz
+>>>
+>>>>
+>>>>>Thank you!
+>>>>>Arkadiusz
