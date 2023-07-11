@@ -2,60 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA5CEB64DD
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 09:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BC9EB64DD
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 10:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232079AbjGKJ7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jul 2023 05:59:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44160 "EHLO
+        id S229583AbjGKKZS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jul 2023 06:25:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232148AbjGKJ7H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 05:59:07 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8A71736
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 02:57:38 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-991f956fb5aso634882666b.0
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 02:57:38 -0700 (PDT)
+        with ESMTP id S230053AbjGKKZS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 06:25:18 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B84371A2
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:25:15 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-4fba8f2197bso8891180e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:25:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689069456; x=1691661456;
+        d=linaro.org; s=google; t=1689071114; x=1691663114;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pWka34Gw82nr/cFSWzXWk0N4X377rpeIdKu/sRdqI3w=;
-        b=E1S24mQwOCmHBBy4DRz23P23yqDhq4uQrWy8X+IpX1HgWvgkeoZGsrBB2i8xYNJHHM
-         xlurGXGi5+SjP8v3G/hEvZe0C+M+f66ThjHsH4P+pX9c/3M8Fci/ZNBvMek7IyA4HTOJ
-         MPMOXUu1nCzSWFL+cFpgZFhVMg5sftDhY0mCg11oRSjMlEK4wlQlhOuHPb19J12NtjU5
-         1kVvl4of2Hl53/F0KLI/r7bxd+x3RAmU3+D3Adf/AvZZxcXSaFO1plhemYa++54LP1bY
-         XjL25qbN6DhcAUZ0tjQ4rFYbrxcgRjqztmb0BYCyRB/+W7zvT4v7c25HXZYcgzLcsrTL
-         Sp+w==
+        bh=Ap+Qilr7pP6gSy0LE7uHCYSIgV8Afel7/d4HNsbNnYA=;
+        b=cyT5Q24B7H+TmYoe63NuWLwe9D8Jphm2YMzl7JBVssHGjd5OBuhpsFDV4P/x0RhbnZ
+         LQKV6hr6BmO7AgYGVd57DoA78/w1Skx9mQy7+a7zJHWqOaf/XoZlfPEST/KONoOe9mvb
+         bA9p6S4hf7t6g4iOFM54uiH67rhW9UURxQODfSrcNeg2vW7qsT1/bd1y3O4R6Zk9dz72
+         enquOMRIwVgJqvReaf8myDsm0DGCh/48dQVLRBoXLjdDD5qsWTa3jptaY0pkt6rfNV5f
+         IgCZ25TW9B8cgOxzAWeaDAFaDXM9h0ri1C0LaquBR7whsiXtlnvpKYuZ2hkXT6SYMncF
+         lJHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689069456; x=1691661456;
+        d=1e100.net; s=20221208; t=1689071114; x=1691663114;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pWka34Gw82nr/cFSWzXWk0N4X377rpeIdKu/sRdqI3w=;
-        b=eedYTc1eBhArMxwOJDq064cU3nsg/9mhUohgoY4eQyqpbnye2BLm0ZFT7g+p/VOipT
-         Fqf558rdT+AZcPYYgQGmzgZuujOHyPMIJ5Dr2EsVT3x31IOkVZVv6F/kJhbezYEibWIg
-         eGuIA3L+uNUIGlhCThAyzaUsYsQgcfalvrADP4xDQHldE+3fLs9fkKDh6pCpTXmUrzzD
-         q2pN1b66LpQ+qh5z2AiBTjFHCGcynIwWzFCPcVcpsBWgffYWDO3UIoZ8M0D8ElI/kn62
-         3BYLn3i92jkJ2sslMXsfjTV+W3AR3fzUTXeq66Sjc5IuharQA7c/83j0Hqbqn4oFsTrC
-         dYIw==
-X-Gm-Message-State: ABy/qLbX+VdGotKs9OgtvT/jaQiA0Mdt/LhOzSwhMlNXBI/N/ZqA3dgo
-        CQ+vQxDq1k8IW0jqCFp2rqHhjw==
-X-Google-Smtp-Source: APBJJlGrct9CF3NdgozgtT88PsYl+iuo0rr8yPDlmRTaY5g+azPTKOqK7kxmUAT7dEu+Y7gYM6DatA==
-X-Received: by 2002:a17:907:12ce:b0:983:cb6c:8aa3 with SMTP id vp14-20020a17090712ce00b00983cb6c8aa3mr13056484ejb.59.1689069456550;
-        Tue, 11 Jul 2023 02:57:36 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id s10-20020a170906354a00b00982be08a9besm926457eja.172.2023.07.11.02.57.34
+        bh=Ap+Qilr7pP6gSy0LE7uHCYSIgV8Afel7/d4HNsbNnYA=;
+        b=lTc5QXeoqdzXnyhA6a8h2nHQzagwtjMpTDKrX9KEHxjPcaUJ7tGIqAzuIIgeo6s7T6
+         /tKxUseJmYT22Gl/EJQjvji2P6ZcAm0OT8WUR77E23GNNFcxXgfhEjLOq5Ij7K+LuVnr
+         +3w8mWESPNq5JfOGQFTd3yg0GgMs8ZeDD8UPtmk/9sCBXwlVjegyvsRKAblQvdZdF8P2
+         2g0upLUcmpyyaV8Xj6qDlJMn0G/B6TyqX+hv78aPcRslw6+2+e9TqN9c8vMDNNm/eXIQ
+         6k4t6DBlQxbIvRQSe7Y3o9Q1JD2KNidyPSjt5HzdpWcg0lKtBzR+27zJlDrCKjKTuFBz
+         hANA==
+X-Gm-Message-State: ABy/qLaeruL9xEcvoC6cKQ7/dXbaKDSthFLsiisDBGG0uzUGFKklyVau
+        MWgLr1MQ1kN4MjpoSa9ubvTyDg==
+X-Google-Smtp-Source: APBJJlEI1MBBNehgLKJV8ioSBy96KjyisYgRyyr0tV5x8hA/Ydijb7i3TewFQrl8uZrL2w9Z81nWdw==
+X-Received: by 2002:a05:6512:5d7:b0:4f9:5a87:1028 with SMTP id o23-20020a05651205d700b004f95a871028mr11004577lfo.30.1689071113857;
+        Tue, 11 Jul 2023 03:25:13 -0700 (PDT)
+Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
+        by smtp.gmail.com with ESMTPSA id w28-20020ac2599c000000b004fb759964a9sm258645lfn.168.2023.07.11.03.25.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jul 2023 02:57:36 -0700 (PDT)
-Message-ID: <05554015-6b08-c194-9d27-af5539e3ce46@linaro.org>
-Date:   Tue, 11 Jul 2023 11:57:34 +0200
+        Tue, 11 Jul 2023 03:25:13 -0700 (PDT)
+Message-ID: <8433cbfa-52c5-90c5-1e4c-0b13236d2153@linaro.org>
+Date:   Tue, 11 Jul 2023 13:25:12 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: ipq9574: Add support for nsscc node
-Content-Language: en-US
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 2/6] clk: qcom: gcc-ipq9574: Mark nssnoc clocks as
+ critical
+Content-Language: en-GB
 To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -69,82 +70,64 @@ To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         netdev@vger.kernel.org
 Cc:     quic_saahtoma@quicinc.com
 References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
- <20230711093529.18355-6-quic_devipriy@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230711093529.18355-6-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+ <20230711093529.18355-3-quic_devipriy@quicinc.com>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+In-Reply-To: <20230711093529.18355-3-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/07/2023 11:35, Devi Priya wrote:
-> Add a node for the nss clock controller found on ipq9574 based devices.
+On 11/07/2023 12:35, Devi Priya wrote:
+> Mark nssnoc clocks as critical as they are to be turned on to access
+> nss port tx/rx clocks.
+
+Can you please clarify, if these are turned off, one can not access 
+nsscc clocks? Then the nsscc should be the consumer of these clocks 
+(instead of declaring them as critical). May be using pm_clk for nsscc 
+will work. If not, you'll have to do that manually from 
+runtime_suspend/runtime_resume callbacks.
+
 > 
 > Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 > ---
->  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 44 +++++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+>   drivers/clk/qcom/gcc-ipq9574.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> index f120c7c52351..257ce4a5bfd5 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-> @@ -10,6 +10,8 @@
->  #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
-> +#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
-> +#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
->  
->  / {
->  	interrupt-parent = <&intc>;
-> @@ -17,6 +19,30 @@
->  	#size-cells = <2>;
->  
->  	clocks {
-> +		bias_pll_cc_clk: bias-pll-cc-clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <1200000000>;
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		bias_pll_nss_noc_clk: bias-pll-nss-noc-clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <461500000>;
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <353000000>;
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		gcc_gpll0_out_aux: gcc-gpll0-out-aux {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <800000000>;
-> +			#clock-cells = <0>;
-> +		};
+> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+> index 6914f962c893..b68addc6f687 100644
+> --- a/drivers/clk/qcom/gcc-ipq9574.c
+> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+> @@ -2166,7 +2166,7 @@ static struct clk_branch gcc_nssnoc_nsscc_clk = {
+>   				&pcnoc_bfdcd_clk_src.clkr.hw
+>   			},
+>   			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>   			.ops = &clk_branch2_ops,
+>   		},
+>   	},
+> @@ -2565,7 +2565,7 @@ static struct clk_branch gcc_nssnoc_snoc_clk = {
+>   				&system_noc_bfdcd_clk_src.clkr.hw
+>   			},
+>   			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>   			.ops = &clk_branch2_ops,
+>   		},
+>   	},
+> @@ -2582,7 +2582,7 @@ static struct clk_branch gcc_nssnoc_snoc_1_clk = {
+>   				&system_noc_bfdcd_clk_src.clkr.hw
+>   			},
+>   			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> +			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>   			.ops = &clk_branch2_ops,
+>   		},
+>   	},
 
-Isn't this GCC clock?
-
-> +
->  		sleep_clk: sleep-clk {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
-> @@ -620,6 +646,24 @@
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		nsscc: nsscc@39b00000 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
 
