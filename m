@@ -2,60 +2,60 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE726C001B0
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 10:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA64CEB64DD
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 10:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229548AbjGKKrC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jul 2023 06:47:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60526 "EHLO
+        id S231228AbjGKKs7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jul 2023 06:48:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230100AbjGKKrB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 06:47:01 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 634B8E75
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:46:59 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4fba86f069bso8815811e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:46:59 -0700 (PDT)
+        with ESMTP id S231186AbjGKKs6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 06:48:58 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B63C3E7E
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:48:56 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id 2adb3069b0e04-4fb761efa7aso8565491e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 03:48:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689072417; x=1691664417;
+        d=linaro.org; s=google; t=1689072535; x=1691664535;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1G2QCPO5qYJSFYYMmReBO6Vbw5wgGsf85elL+w0M7HA=;
-        b=ZdwnaGV99mbFcQ2MmcdZ8aPTzU/rWHB6kmIpJH6y3ydgQ0I1i1mYo6uRVBcJiC23aB
-         RoH4MHqOzn0F/3a5x/39IsHlI2kmsixfzBIJlWdZR8HM0jUNa8zNYGSmcJagAxKPYAXF
-         2aTyxTPaXPPhmU1tHAsFMDrzH7j3oXZYs2KXM0ZceO78B3Y9hGAcQEhvW0vbZVoVa4Nu
-         rLFQgf/cLPk9BUzFgVPdXQIrV1erREr32nyUvu/8cwPFD7TG2BJLo1cEe6kdUM/Ii+wb
-         niW56vrmySHbRKIzBvB0MPWD3a3IbpMkUAHN+j4gPij7BuwShaLiGb+5loVnF4+p8Gwd
-         7WWw==
+        bh=k3hVozTzTK3YpKr6keu2WXQ1FFPISWGGNo2UDTZRi9Q=;
+        b=nU/C676GyY21hAj+KRX6jRPDoXxBLxRpQ5tiHgw/ZMtBl1OUkqwjasHhY6RDZsyNVU
+         4GGS4GTyrQTnU41lUp8zeu51RqkNmwwfawQanRriSSMpKrj1OBR1wz242jRO4aitsGxm
+         //q83alAYwGQk7ekHZ9mvV7cYdsgwz7yUDg6jFW3ipXf/PZvu6CmDDbDWFiPM87pd0aH
+         7vaQgg6rdWHH/klRgqVJX/bDS8XioTllvSejePpOsUADiYqtqkiD/wibaFzHSOYExBhM
+         R5UOyVWk5IMkCml0yhWUgy5Uwro76it/Ax9LXJ8Ha40dqTjJYHwKRUckQmGb25/kn/xJ
+         5uxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689072417; x=1691664417;
+        d=1e100.net; s=20221208; t=1689072535; x=1691664535;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1G2QCPO5qYJSFYYMmReBO6Vbw5wgGsf85elL+w0M7HA=;
-        b=BuhvkoNaGtX7/IRtUsFuWv6bWPoF/ETR+rbCAwt+IE1bHWwNDfl0+2Qf7NcBi+qlEi
-         3kw4rFOulb43xFsKdRXjgUqPdKy04gnweAlt3NYIZOYVqnEqiVq1Mj4VCoZP7zqV5ClA
-         Jjj+1k/HEAirPFKgy79I2UkzHZdck4suCf3nKHuVKqmLeMSGUKpGBm4xv3buMte3CkYM
-         s1n848PLd3+G1ve44gaZ3Lg7cujmyz6+0ffzWU/dC5UJxeeoiV5iOHDTTqMbn6R5aaDF
-         krVoWsQZm+8qmLX6JC5xCgZPN6crc6Fb6WpkHqeDsbCAhyX10Gtoriq6MPCy3Q/0FS85
-         4UHw==
-X-Gm-Message-State: ABy/qLZLS1BYGu4ZFCY1M0/cQbra9LkOETqtF3q4SGEo6KNDgdGAQhy/
-        F2XbLmvAp6TNH0qOTdlPa8QL2Q==
-X-Google-Smtp-Source: APBJJlGGtOSmaBuFLF6puXF4cKfrRVCjXBB9xwyZodKGt6AJk2t1G49mfDFJEjOY4VLOAen1V5DhFw==
-X-Received: by 2002:a19:7714:0:b0:4fb:8953:bb8 with SMTP id s20-20020a197714000000b004fb89530bb8mr11290246lfc.50.1689072417450;
-        Tue, 11 Jul 2023 03:46:57 -0700 (PDT)
+        bh=k3hVozTzTK3YpKr6keu2WXQ1FFPISWGGNo2UDTZRi9Q=;
+        b=XJ3K7opvlWhY4irjAsPizYDBQEw0XVO8CMh7TI5tRXxrc24Usw8dczCkith4s3S/X/
+         am/oFcN107SlgHTr9uuPGKDo6EEZ2FnuyZ6c+jHIBFk65MwAnN0CpsedqIjlHJ+VYmMK
+         /NcZNThu8BN6ShiROXdzP1L5bYUlMkB1kfNPtWckGQRVclwkYZJC8PBsJuTJSq2B/pTs
+         fAj2y7d0z8wW2t8OEMGxBYQ259yuY5Jkq7vtSeOaHhqlZ5z+rreAgHbIHGXydHqjkclc
+         1Thg7MQXI1ZclfAK+6ExscHwXU9Gjs8/3c+oL9Zi+gr4utkYne/wGMOLvO65GVvn6I6p
+         NRxg==
+X-Gm-Message-State: ABy/qLbhuE7MgaUaCiVqJ80+N6mOyUIi1Ow7SF2UVU9Ty+8yJU9oi2h5
+        XvXtpM0lZkqHo8qv0QX7gf2YTg==
+X-Google-Smtp-Source: APBJJlHyMlnWO4airaDPNcfvE8dSS4VL8N9jsft2L9pAPDgY0hTH+0GFSvSQwhNkgEST/eS/lAkWyA==
+X-Received: by 2002:a05:6512:3da1:b0:4f8:7781:9870 with SMTP id k33-20020a0565123da100b004f877819870mr14270790lfv.60.1689072534973;
+        Tue, 11 Jul 2023 03:48:54 -0700 (PDT)
 Received: from ?IPV6:2001:14ba:a0db:1f00::8a5? (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id e12-20020ac2546c000000b004fb96e2b3f3sm268066lfn.165.2023.07.11.03.46.56
+        by smtp.gmail.com with ESMTPSA id u12-20020a056512040c00b004fb57f28773sm264107lfk.285.2023.07.11.03.48.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jul 2023 03:46:56 -0700 (PDT)
-Message-ID: <49e24e0c-978b-6249-1ecc-bd485f5f90de@linaro.org>
-Date:   Tue, 11 Jul 2023 13:46:56 +0300
+        Tue, 11 Jul 2023 03:48:54 -0700 (PDT)
+Message-ID: <f234891f-c508-20de-6d6b-c7b37f6adb2b@linaro.org>
+Date:   Tue, 11 Jul 2023 13:48:53 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.12.0
-Subject: Re: [PATCH 1/6] clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL
- support for ipq9574
+Subject: Re: [PATCH 6/6] arm64: defconfig: Build NSS Clock Controller driver
+ for IPQ9574
 Content-Language: en-GB
 To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         andersson@kernel.org, konrad.dybcio@linaro.org,
@@ -70,9 +70,9 @@ To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
         netdev@vger.kernel.org
 Cc:     quic_saahtoma@quicinc.com
 References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
- <20230711093529.18355-2-quic_devipriy@quicinc.com>
+ <20230711093529.18355-7-quic_devipriy@quicinc.com>
 From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-In-Reply-To: <20230711093529.18355-2-quic_devipriy@quicinc.com>
+In-Reply-To: <20230711093529.18355-7-quic_devipriy@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -80,17 +80,30 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 11/07/2023 12:35, Devi Priya wrote:
-> Add support for NSS Huayra alpha pll found on ipq9574 SoCs.
-> Programming sequence is the same as that of Huayra type Alpha PLL,
-> so we can re-use the same.
+> Build Qualcomm IPQ9574 NSSCC driver.
 > 
 > Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 > ---
->   drivers/clk/qcom/clk-alpha-pll.c | 12 ++++++++++++
->   drivers/clk/qcom/clk-alpha-pll.h |  1 +
->   2 files changed, 13 insertions(+)
+>   arch/arm64/configs/defconfig | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 9ce0f1554f4d..d10083da2401 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -1180,6 +1180,7 @@ CONFIG_IPQ_GCC_5332=y
+>   CONFIG_IPQ_GCC_6018=y
+>   CONFIG_IPQ_GCC_8074=y
+>   CONFIG_IPQ_GCC_9574=y
+> +CONFIG_IPQ_NSSCC_9574=y
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Can it work if it is built as a module? This defconfig is used on all 
+variety of platforms, including even non-Qualcomm ones. We are trying to 
+limit the built-in drivers list to the crucial-only ones.
+
+>   CONFIG_MSM_GCC_8916=y
+>   CONFIG_MSM_GCC_8994=y
+>   CONFIG_MSM_MMCC_8994=m
 
 -- 
 With best wishes
