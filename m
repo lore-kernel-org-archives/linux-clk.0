@@ -2,119 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C932EB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 18:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A28FEB64DD
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 20:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231790AbjGKS2A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jul 2023 14:28:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38132 "EHLO
+        id S231223AbjGKUOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jul 2023 16:14:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232228AbjGKS1U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 14:27:20 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C0E1170F;
-        Tue, 11 Jul 2023 11:27:16 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-3128fcd58f3so6606989f8f.1;
-        Tue, 11 Jul 2023 11:27:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689100034; x=1691692034;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hKWUjHYl3foUxpIk1+qyClaunh32Kc8gPI+5NOFPgGs=;
-        b=M+q2D1BlRVUEVYbiFkbHFOCQCg6FTNIZE8+pqseAtFSK5xy/HDIa9hNaBOsJZqL3Xm
-         F0Vhyn84rlKzLWKnT4xmWUyQsKu+gCzI5kMMwAQQnFFuOjifHHaf+F9yijlfC51TuKoF
-         9NAWm+Ezb4kfKouVrILRTHJZXAHiX9xuwISzC4kTZvFnhx+in+uDJagzgw+PrnUDEL9p
-         cnV0VB40ArsUij1d0eVkemA6fTav9rw4om0lSiMvoU0SSkvCtv/IGnYKcfjixH1S+eTB
-         480EtI1dy/c2gSHKK50JHMyLmVtj75q2DxgaN3MjKwKiWr+XunGZmeft21hHExY2NSYs
-         FKUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689100034; x=1691692034;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hKWUjHYl3foUxpIk1+qyClaunh32Kc8gPI+5NOFPgGs=;
-        b=dQGM5AOiDyQVZoyZ6Nr0tZ2Ye0AAYAUWB6mqxtatIYYxVWu9t3fDoh6bJnx6g5z4Ih
-         tOXGSJIGH8KpzH9wPZdtiFHr6IqU/QM9ydkVRJvw0oYY91lhcErvzGFHAq9RyIF1Tn+V
-         yJOUJmy/hlfBfavWo7qjOoCWgMM5EoORwOARiSjo8l3keqJ7qRTGgWMzvvBPCPPB0pub
-         Slx2CEKnlE68sFqIN6j//i20I2wuG30fx1UaK2za/soZPwgqXcAiswbLr18jJZhhcJVW
-         uPOSnBU+pfi5Wuz6p4d9nf4n54OS4afYDjLkAIvg80tSyQCi1bUXEQdOYUjTnJ+y9NZK
-         oLLQ==
-X-Gm-Message-State: ABy/qLZw/R4gXZpzoR0Lg8gYiRNw7sJgdmg+0LFcOhc8HPA3dtf5aLr6
-        HjhO3g1h/l+HfDd/9fgEQlk=
-X-Google-Smtp-Source: APBJJlFqEqFYCh6MT3tFL7RHAl/UWYoVkTrcP/XYR3mXD+4NTRd8J+1DC16+7HEtxpG2Uu2/QL3Oew==
-X-Received: by 2002:adf:fcca:0:b0:315:9de4:92f0 with SMTP id f10-20020adffcca000000b003159de492f0mr5931362wrs.5.1689100034540;
-        Tue, 11 Jul 2023 11:27:14 -0700 (PDT)
-Received: from jernej-laptop.localnet (82-149-1-233.dynamic.telemach.net. [82.149.1.233])
-        by smtp.gmail.com with ESMTPSA id k2-20020a5d5182000000b003143aa0ca8asm2929620wrv.13.2023.07.11.11.27.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 11:27:14 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Yangtao Li <frank.li@vivo.com>
-Cc:     Yangtao Li <frank.li@vivo.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/13] clk: sunxi: sun9i-mmc: Use
- devm_platform_get_and_ioremap_resource()
-Date:   Tue, 11 Jul 2023 20:27:13 +0200
-Message-ID: <9132614.CDJkKcVGEf@jernej-laptop>
-In-Reply-To: <20230705065313.67043-1-frank.li@vivo.com>
-References: <20230705065313.67043-1-frank.li@vivo.com>
+        with ESMTP id S230018AbjGKUOs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 16:14:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28865188;
+        Tue, 11 Jul 2023 13:14:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9A9F1615F4;
+        Tue, 11 Jul 2023 20:14:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79250C433C9;
+        Tue, 11 Jul 2023 20:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689106486;
+        bh=QQ99VSEJ6m4sXmbmothGlilr6UcEysLFPY7XMiYqWYE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=F31+5G5q1kfmzpJ15gBHIwtHxL9nwCFFLcEOKirbusA2Twqp9jcnzJRCtb14dlq94
+         PjV0eAAjnd7Cd9joG25dBCL1xkx1chsR2rvqFGyerUkjJOXzEyr0nmjXAV93oeYoHr
+         m29+ZJu0dCzQLyaD+3cJI3ZPQ+s1BCFfnRyEIvacR8gaO/H4QBppX/wxTIlxkx38V8
+         7HPEQ/ThdwClPfg+enYIkIq7DobUatOn0MLuTyhWiICws1x6v/0LET2YeIEmf+qq8U
+         pRmOm3JmcsrKQ+leYH5bieK1ykedF2/GHCsOf/3Q+EawbagWjlfefvtjzi+sYdYbtY
+         jpvvU8v026JvA==
+Date:   Tue, 11 Jul 2023 13:14:43 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>, "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+Message-ID: <20230711131443.2a4af476@kernel.org>
+In-Reply-To: <DM6PR11MB4657067EE043F4DBB9D8B03B9B31A@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
+        <ZJq3a6rl6dnPMV17@nanopsycho>
+        <DM6PR11MB4657084DDD7554663F86C1C19B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZJwWXZmZe4lQ04iK@nanopsycho>
+        <DM6PR11MB4657751607C36FC711271D639B30A@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZKv1FRTXWLnLGRRS@nanopsycho>
+        <DM6PR11MB46575D14FFE115546FDC9DEB9B31A@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZK1CizcqjqO1L/RQ@nanopsycho>
+        <DM6PR11MB4657067EE043F4DBB9D8B03B9B31A@DM6PR11MB4657.namprd11.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sreda, 05. julij 2023 ob 08:53:01 CEST je Yangtao Li napisal(a):
-> Convert platform_get_resource(), devm_ioremap_resource() to a single
-> call to devm_platform_get_and_ioremap_resource(), as this is exactly
-> what this function does.
+On Tue, 11 Jul 2023 17:17:51 +0000 Kubalewski, Arkadiusz wrote:
+> >I think better to add the check to pin-register so future synce pin
+> >users don't have similar weird ideas. Could you please add this check?
 > 
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Don't think it is way to go, and I don't think there is anything good
+> with preventing device drivers from labeling their pins the way they want.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Best regards,
-Jernej
-
-> ---
->  drivers/clk/sunxi/clk-sun9i-mmc.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c
-> b/drivers/clk/sunxi/clk-sun9i-mmc.c index 636bcf2439ef..0862b02b1ed4 100644
-> --- a/drivers/clk/sunxi/clk-sun9i-mmc.c
-> +++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
-> @@ -108,15 +108,13 @@ static int sun9i_a80_mmc_config_clk_probe(struct
-> platform_device *pdev)
-> 
->  	spin_lock_init(&data->lock);
-> 
-> -	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	if (!r)
-> -		return -EINVAL;
-> -	/* one clock/reset pair per word */
-> -	count = DIV_ROUND_UP((resource_size(r)), SUN9I_MMC_WIDTH);
-> -	data->membase = devm_ioremap_resource(&pdev->dev, r);
-> +	data->membase = devm_platform_get_and_ioremap_resource(pdev, 0, 
-&r);
->  	if (IS_ERR(data->membase))
->  		return PTR_ERR(data->membase);
-> 
-> +	/* one clock/reset pair per word */
-> +	count = DIV_ROUND_UP((resource_size(r)), SUN9I_MMC_WIDTH);
-> +
->  	clk_data = &data->clk_data;
->  	clk_data->clk_num = count;
->  	clk_data->clks = devm_kcalloc(&pdev->dev, count, sizeof(struct clk 
-*),
-
-
-
-
+We had a long argument about how label should have a clearly defined
+meaning. We're not going to rehash it on every revision. What did 
+I miss :|
