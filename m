@@ -2,124 +2,86 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 147E1C001E0
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 14:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F85EB64DC
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 15:09:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232873AbjGKOXr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jul 2023 10:23:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59970 "EHLO
+        id S229591AbjGKPIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jul 2023 11:08:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233574AbjGKOWf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 10:22:35 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BA182686
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 07:22:13 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id 38308e7fff4ca-2b6a084a34cso88282901fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 07:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689085321; x=1691677321;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9SGKxGE8WoMQ/68eSd1pAXEY4H4AMGjzzA6a9FWvKkU=;
-        b=zOwfN48ZszaDqyrw2SvBlJDdymz0lrnHO5hyporS0BJrFVxWXGuqgfZKR8KtZ784sx
-         pWiEwrxiZxO3yUMwRMc96fJ7MSPr5VbDoCLoIbXd8bbk48883lW2zEz64te28HVAUDOd
-         ua3XZnqJfgQbrkG8eZMZSnrJEyf9vd7B5U7eCvdX+79mHDGZiXm5sqTXJ+gE4RV3PYRk
-         IrRD9/spbkmL4Kr1K6b2/93SA0+u1VltcAwOMz/Rmxc/Lpy10ahiNul7BtcQaRdahyhS
-         GfT1sPrAZlFUx8lcSP/ZuF6Bwpl3UCbcJv7g4Gz7F6JIxr4mpmBxwKgopb8WupvmCmAO
-         00BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689085321; x=1691677321;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9SGKxGE8WoMQ/68eSd1pAXEY4H4AMGjzzA6a9FWvKkU=;
-        b=OpEQbNrxduhQVUG+mGr5r7B1KS2yPmug8oiESoD1h48W+Nf2CfYbbh7Et5MRX09GmK
-         XlVXzkZWZmLJGOWtev5yWkrT4JaHLPd4xr56xMWyc6ecQOeZGApwVDmzJXNQpnB6Tsty
-         6q4RwGgQO6ZWlK3qVdK/GFrlOwTx7Bud4GRMfeOkgRNtdDPgoarwgZI23xgvEpx2o0JF
-         IUAi8SRi/VKDgXWwbu+U7VaiVIPmnDPQAXgYICYmy9Rg7WecKDknFMm9zZy1/5wbRBv4
-         iYWBUK4mv4Mv1DEsTrjhsM09CrJ2ByB8j40YHfWLcYg5n/YvtBjiKjDPjZnQ9XqQVkzp
-         8LSg==
-X-Gm-Message-State: ABy/qLYdp3JBY+5QtJIU3D3cOpdg444ocrmmbX3ZlqbWwTASVrV5QaZB
-        cL0vIfJyTo2DANklKI168QRZhw==
-X-Google-Smtp-Source: APBJJlGdbHN2h/WcztcPqGYEJLrNzJoDpArY7mIaFd7Rx6uq2AyPkHJ16rmqd2gp/s+w3xy8Qprs0A==
-X-Received: by 2002:a2e:9b15:0:b0:2b1:a89a:5f2b with SMTP id u21-20020a2e9b15000000b002b1a89a5f2bmr13320793lji.2.1689085321165;
-        Tue, 11 Jul 2023 07:22:01 -0700 (PDT)
-Received: from eriador.lan (dzdqv0yyyyyyyyyyybcwt-3.rev.dnainternet.fi. [2001:14ba:a0db:1f00::8a5])
-        by smtp.gmail.com with ESMTPSA id v9-20020a2e87c9000000b002b6b4424a28sm487934ljj.13.2023.07.11.07.22.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jul 2023 07:22:00 -0700 (PDT)
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        with ESMTP id S229928AbjGKPI2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 11:08:28 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5215A10A
+        for <linux-clk@vger.kernel.org>; Tue, 11 Jul 2023 08:08:25 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:2b42:575f:41f:104f])
+        by baptiste.telenet-ops.be with bizsmtp
+        id Kr8E2A00Z4w94eT01r8FTj; Tue, 11 Jul 2023 17:08:23 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qJEyG-00199o-07;
+        Tue, 11 Jul 2023 17:08:14 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1qJEyM-00EwhP-PX;
+        Tue, 11 Jul 2023 17:08:14 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Zhanhao Hu <zero12113@hust.edu.cn>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Peng Fan <peng.fan@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2 00/15] drm/msm: Add SM6125 MDSS/DPU hardware and enable Sony Xperia 10 II panel
-Date:   Tue, 11 Jul 2023 17:21:50 +0300
-Message-Id: <168908465043.1869384.3228866712722407267.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
-References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: imx93: Propagate correct error in imx93_clocks_probe()
+Date:   Tue, 11 Jul 2023 17:08:12 +0200
+Message-Id: <20230711150812.3562221-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+smatch reports:
 
-On Tue, 27 Jun 2023 22:14:15 +0200, Marijn Suijten wrote:
-> Bring up the SM6125 DPU now that all preliminary series (such as INTF
-> TE) have been merged (for me to test the hardware properly), and most
-> other conflicting work (barring ongoing catalog *improvements*) has made
-> its way in as well or is still being discussed.
-> 
-> The second part of the series complements that by immediately utilizing
-> this hardware in DT, and even enabling the MDSS/DSI nodes complete with
-> a 6.0" 1080x2520 panel for Sony's Seine PDX201 (Xperia 10 II).
-> 
-> [...]
+    drivers/clk/imx/clk-imx93.c:294 imx93_clocks_probe() error: uninitialized symbol 'base'.
 
-Applied, thanks!
+Indeed, in case of an error, the wrong (yet uninitialized) variable is
+converted to an error code and returned.
+Fix this by propagating the error code in the correct variable.
 
-[05/15] dt-bindings: display/msm: dsi-controller-main: Document SM6125
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/4d125651038a
-[06/15] dt-bindings: display/msm: sc7180-dpu: Describe SM6125
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/6321c42645b2
-[07/15] dt-bindings: display/msm: Add SM6125 MDSS
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/a628b5b16872
-[08/15] drm/msm/dpu: Add SM6125 support
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/01077e7c890f
-[09/15] drm/msm/mdss: Add SM6125 support
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/c6da55b771de
-[10/15] dt-bindings: msm: dsi-phy-14nm: Document SM6125 variant
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/d44ddd646858
-[11/15] drm/msm/dsi: Reuse QCM2290 14nm DSI PHY configuration for SM6125
-        https://gitlab.freedesktop.org/lumag/msm/-/commit/ac2f330f92f2
+Fixes: e02ba11b45764705 ("clk: imx93: fix memory leak and missing unwind goto in imx93_clocks_probe")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/9c2acd81-3ad8-485d-819e-9e4201277831@kadam.mountain
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/all/202306161533.4YDmL22b-lkp@intel.com/
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/imx/clk-imx93.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
+diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
+index b6c7c2725906c574..44f435103c65a8ee 100644
+--- a/drivers/clk/imx/clk-imx93.c
++++ b/drivers/clk/imx/clk-imx93.c
+@@ -291,7 +291,7 @@ static int imx93_clocks_probe(struct platform_device *pdev)
+ 	anatop_base = devm_of_iomap(dev, np, 0, NULL);
+ 	of_node_put(np);
+ 	if (WARN_ON(IS_ERR(anatop_base))) {
+-		ret = PTR_ERR(base);
++		ret = PTR_ERR(anatop_base);
+ 		goto unregister_hws;
+ 	}
+ 
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.34.1
+
