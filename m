@@ -2,83 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8815EEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Jul 2023 12:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2227BEB64D9
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 02:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231924AbjGJMrm convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Jul 2023 08:47:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
+        id S231305AbjGKCID (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Jul 2023 22:08:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229668AbjGJMrl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2023 08:47:41 -0400
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C705A7;
-        Mon, 10 Jul 2023 05:47:41 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-579ef51428eso57428297b3.2;
-        Mon, 10 Jul 2023 05:47:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688993260; x=1691585260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aSqp8QS3Eas+YBinZHpl7xLqipq/Ys4jkKB7+on99uc=;
-        b=fxM/j3YItc11qUJ7maKZuEaELNkTsnoHa4Kx1sQ9A4RZxw7eMvQ63UOdKY/jaSo2wd
-         pwmaP5OnX/imw+tea+6YLCd+2fWW+ZXWMieaCufykgXd/dZKWqC3YQhx670itBsWItz7
-         1iTxAgeFn5uMIIlyjBvKH204VHTynBocGntkzO/plgzYTHz6B1E3410HIyjrkYPGZWGv
-         oJCywH/rUdlkDsT3udfFZrSKiHZyfxn+tkU6i0nrxkWkPlfAwn8MzolUAu8PNiNaNx78
-         v4VHhxMDS+w7sOq13DQd6eG/juF6uSy4V6mZzetJLXfDY+ozuGfyACn6lTCL/yS1pzAw
-         c9Xw==
-X-Gm-Message-State: ABy/qLaAwpPgPFjrZKW3P0wz/oOwF840u26TmmImJ9Ji8RkoOPpTeSIl
-        A4/xXlikWrj1XDLo7h/bVaJlK1Ho1/jxYg==
-X-Google-Smtp-Source: APBJJlHDGRj66C6PwIDG66DppX4uHDDOki7uehMoF5Nz2C/ZkP8ilWkPSH14uymypmT/VgUcB1RiEA==
-X-Received: by 2002:a0d:d9c9:0:b0:56f:eaef:9d40 with SMTP id b192-20020a0dd9c9000000b0056feaef9d40mr13320419ywe.46.1688993260092;
-        Mon, 10 Jul 2023 05:47:40 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id u63-20020a816042000000b0054c0f3fd3ddsm3072618ywb.30.2023.07.10.05.47.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jul 2023 05:47:39 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-579ef51428eso57427907b3.2;
-        Mon, 10 Jul 2023 05:47:39 -0700 (PDT)
-X-Received: by 2002:a5b:98e:0:b0:c49:95fd:6361 with SMTP id
- c14-20020a5b098e000000b00c4995fd6361mr12951040ybq.0.1688993259725; Mon, 10
- Jul 2023 05:47:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <fed02e0325275df84e2d76f8c481e40e7023cbd9.1688760372.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <fed02e0325275df84e2d76f8c481e40e7023cbd9.1688760372.git.christophe.jaillet@wanadoo.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 10 Jul 2023 14:47:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXO-f6KP1WCwwyy6Jy5eZpZ4LfFEV6y14dyrVYRp5QRMg@mail.gmail.com>
-Message-ID: <CAMuHMdXO-f6KP1WCwwyy6Jy5eZpZ4LfFEV6y14dyrVYRp5QRMg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rzg2l: Simplify .determine_rate()
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        with ESMTP id S231208AbjGKCIB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Jul 2023 22:08:01 -0400
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70661E1;
+        Mon, 10 Jul 2023 19:07:59 -0700 (PDT)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 119621A04FF;
+        Tue, 11 Jul 2023 04:07:58 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CDFB11A051C;
+        Tue, 11 Jul 2023 04:07:57 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E260E1802183;
+        Tue, 11 Jul 2023 10:07:55 +0800 (+08)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] clk: imx: add audio clock mux driver
+Date:   Tue, 11 Jul 2023 09:34:43 +0800
+Message-Id: <1689039286-9706-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 7, 2023 at 10:06 PM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> rzg2l_cpg_sd_clk_mux_determine_rate() is the same as
-> __clk_mux_determine_rate_closest(), so use the latter to save some LoC.
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+The Audio Clock Mux (ACM) is a collection of control registers
+and multiplexers that are used to route the audio source clocks
+to the audio peripherals on i.MX8QXP, i.MX8QM, i.MX8DXL
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v6.6.
+Shengjiu Wang (3):
+  dt-bindings: clock: fsl,imx8-acm: Add audio clock mux support
+  dt-bindings: clock: imx8-clock: Add audio clock mux related clock
+  clk: imx: imx8: add audio clock mux driver
 
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../bindings/clock/fsl,imx8-acm.yaml          | 156 ++++++
+ drivers/clk/imx/Makefile                      |   3 +-
+ drivers/clk/imx/clk-imx8-acm.c                | 477 ++++++++++++++++++
+ include/dt-bindings/clock/imx8-clock.h        |  28 +
+ 4 files changed, 663 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+ create mode 100644 drivers/clk/imx/clk-imx8-acm.c
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
