@@ -2,42 +2,42 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CF8C001B0
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 09:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89F8C001DF
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Jul 2023 09:37:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231479AbjGKJgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Jul 2023 05:36:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56586 "EHLO
+        id S229987AbjGKJhT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Jul 2023 05:37:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231154AbjGKJgb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 05:36:31 -0400
+        with ESMTP id S229963AbjGKJhK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Jul 2023 05:37:10 -0400
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8EFA188;
-        Tue, 11 Jul 2023 02:36:30 -0700 (PDT)
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36B9Gxjo012837;
-        Tue, 11 Jul 2023 09:36:04 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F6B819B2;
+        Tue, 11 Jul 2023 02:36:49 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36B6UfZT020716;
+        Tue, 11 Jul 2023 09:36:25 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=qcppdkim1;
- bh=wsfzRGIvllbrS3o5hLKv94JhyJHDL8oIKIMu5HWr49M=;
- b=jRtO691SWErPcW70MYA4o/dv4oqQJpA0k6O/Owg3ZfVJhTtOp06TyKNoaP68jIo8+Wdj
- HdxZxLt4Sd8+eocNeZlV84N6KiNB36NFSHIToPyVIYnMo5cNksWK/AYNna+EJLV+ktnS
- WP+BvVF0T6P8Cefd996pGZZ6OxIX9Ot0tHUxpCvSe+xUvt8knPbZ2gCYu3pXq7MLIrMj
- BbUpKkH9GgW4Uv0TXnF/wG2fCa48AWo/KBUHTWRDq7AMccXZQ/U7qnlewy+GYKfFb+uq
- gXSCRR5wVJuaBgtOp3vZgryxWMbYeSKGeRXlWXLVAQjZCl2PFj6Dt/s2RrKIWaz26bQt 3A== 
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rs279ra9g-1
+ bh=S4ApH6HgkIEC2TgJVd0arO8BvIuqGhWOUZOQNe1iTFM=;
+ b=EPD9Z5A+26X3fhApA37MJnYUZM2GluW+1M66NVQ/v+vLwoZIuZUq3LAMWbqu4ajQRY4I
+ O1fehN3nrwfAHBnlxxxcJCo1XwLt9nYJ81RUfKxw2c1ZEr+sUaZqObmZRuDYnS5A660w
+ NznQzWQc5w6H+vkwiJtCHeG2Q3ro7+5jJB0JbXb92g9ZoxOGi5j/18+F9SFhEhUjDI/5
+ 5f/mW90In3s3Mbdfwl31tkSm0kxvyquP42WzfjbnKrTaDReEK7QgAQdwIxXxx86Ko9Rc
+ sB0FdnK/yyZM7qf0WrucHwZ/NiBk2rxM9Iaw1eYB2okOpIQSmtj80gQ1Exxb4CqniEsZ 7w== 
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rs1e40ddb-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Jul 2023 09:36:04 +0000
+        Tue, 11 Jul 2023 09:36:25 +0000
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36B9a3jw018190
+        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36B9aOFY006073
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 Jul 2023 09:36:03 GMT
+        Tue, 11 Jul 2023 09:36:24 GMT
 Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Tue, 11 Jul 2023 02:35:56 -0700
+ 15.2.1118.30; Tue, 11 Jul 2023 02:36:17 -0700
 From:   Devi Priya <quic_devipriy@quicinc.com>
 To:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
@@ -52,9 +52,9 @@ To:     <agross@kernel.org>, <andersson@kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
 CC:     <quic_saahtoma@quicinc.com>
-Subject: [PATCH 2/6] clk: qcom: gcc-ipq9574: Mark nssnoc clocks as critical
-Date:   Tue, 11 Jul 2023 15:05:25 +0530
-Message-ID: <20230711093529.18355-3-quic_devipriy@quicinc.com>
+Subject: [PATCH 5/6] arm64: dts: qcom: ipq9574: Add support for nsscc node
+Date:   Tue, 11 Jul 2023 15:05:28 +0530
+Message-ID: <20230711093529.18355-6-quic_devipriy@quicinc.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230711093529.18355-1-quic_devipriy@quicinc.com>
 References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
@@ -65,59 +65,96 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YUWulA3_J1bGLN2g6PfmK13BcPf3P75n
-X-Proofpoint-GUID: YUWulA3_J1bGLN2g6PfmK13BcPf3P75n
+X-Proofpoint-GUID: KzX8Xmc643P3PVOS5AYAIdZN6GPTNLQk
+X-Proofpoint-ORIG-GUID: KzX8Xmc643P3PVOS5AYAIdZN6GPTNLQk
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-11_04,2023-07-06_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- bulkscore=0 priorityscore=1501 adultscore=0 clxscore=1015 mlxlogscore=794
- malwarescore=0 phishscore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2307110085
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ mlxlogscore=999 mlxscore=0 spamscore=0 lowpriorityscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2307110085
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Mark nssnoc clocks as critical as they are to be turned on to access
-nss port tx/rx clocks.
+Add a node for the nss clock controller found on ipq9574 based devices.
 
 Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 ---
- drivers/clk/qcom/gcc-ipq9574.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi | 44 +++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-index 6914f962c893..b68addc6f687 100644
---- a/drivers/clk/qcom/gcc-ipq9574.c
-+++ b/drivers/clk/qcom/gcc-ipq9574.c
-@@ -2166,7 +2166,7 @@ static struct clk_branch gcc_nssnoc_nsscc_clk = {
- 				&pcnoc_bfdcd_clk_src.clkr.hw
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2565,7 +2565,7 @@ static struct clk_branch gcc_nssnoc_snoc_clk = {
- 				&system_noc_bfdcd_clk_src.clkr.hw
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2582,7 +2582,7 @@ static struct clk_branch gcc_nssnoc_snoc_1_clk = {
- 				&system_noc_bfdcd_clk_src.clkr.hw
- 			},
- 			.num_parents = 1,
--			.flags = CLK_SET_RATE_PARENT,
-+			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+index f120c7c52351..257ce4a5bfd5 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+@@ -10,6 +10,8 @@
+ #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/reset/qcom,ipq9574-gcc.h>
++#include <dt-bindings/clock/qcom,ipq9574-nsscc.h>
++#include <dt-bindings/reset/qcom,ipq9574-nsscc.h>
+ 
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -17,6 +19,30 @@
+ 	#size-cells = <2>;
+ 
+ 	clocks {
++		bias_pll_cc_clk: bias-pll-cc-clk {
++			compatible = "fixed-clock";
++			clock-frequency = <1200000000>;
++			#clock-cells = <0>;
++		};
++
++		bias_pll_nss_noc_clk: bias-pll-nss-noc-clk {
++			compatible = "fixed-clock";
++			clock-frequency = <461500000>;
++			#clock-cells = <0>;
++		};
++
++		bias_pll_ubi_nc_clk: bias-pll-ubi-nc-clk {
++			compatible = "fixed-clock";
++			clock-frequency = <353000000>;
++			#clock-cells = <0>;
++		};
++
++		gcc_gpll0_out_aux: gcc-gpll0-out-aux {
++			compatible = "fixed-clock";
++			clock-frequency = <800000000>;
++			#clock-cells = <0>;
++		};
++
+ 		sleep_clk: sleep-clk {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+@@ -620,6 +646,24 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		nsscc: nsscc@39b00000 {
++			compatible = "qcom,ipq9574-nsscc";
++			reg = <0x39b00000 0x80000>;
++			clocks = <&bias_pll_cc_clk>,
++				 <&bias_pll_nss_noc_clk>,
++				 <&bias_pll_ubi_nc_clk>,
++				 <&gcc_gpll0_out_aux>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <0>,
++				 <&xo_board_clk>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
+ 	};
+ 
+ 	thermal-zones {
 -- 
 2.17.1
 
