@@ -2,92 +2,140 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB2EEB64D9
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jul 2023 14:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FBDEB64DA
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jul 2023 16:09:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbjGLOah (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jul 2023 10:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33960 "EHLO
+        id S232278AbjGLQJf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jul 2023 12:09:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232932AbjGLOaa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 10:30:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68313213C
-        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 07:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689172166;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=SmfB+i5ITyD8VcQT6H0n4jQbBtZaHz3osNrT9kioxiQ=;
-        b=Bar3sXD3aLbhQtdKqgnNFIHRH0zAF53UoTAXHJXNgLXFe0qBC4gdAEwbEkTS8k8DO/dhmW
-        a1aY3K6IMaVg2JvrE/RP2GTIKVYyYP2sTMZEYAYLWQFluPR9oNxHqZSraliyJyYS4FBujc
-        bg4gUSMEuUdn8PDV1Zr45fwXMWhU4sg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-370-EbmGOEriPKSXs9Ntum-HrA-1; Wed, 12 Jul 2023 10:29:24 -0400
-X-MC-Unique: EbmGOEriPKSXs9Ntum-HrA-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-315af0252c2so358680f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 07:29:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689172163; x=1691764163;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SmfB+i5ITyD8VcQT6H0n4jQbBtZaHz3osNrT9kioxiQ=;
-        b=S1yL1VIJoY7q25+ImngqGlZmskCBlv2ZWm5tpDxXzmHj0jvlIoird/9c/10VjXesW5
-         CSgKSDrxghqcN8vVUyKb/xgxZ2nI5Ez37d7hYSmVgLUVsNtb12L+wdvgG4sGZ1JEySjY
-         7/Ew4wFfI61NfWWMyiOF1rclMhywH0AdwtgzHGzEPOSRHSbFtP86VaFqqWs2argJUBgl
-         g73R4gITRxgXQd0Dpzk6sdNYy3EMBrQce+nEEeVy8tGTGOLy2ARV3GICO+kCEfwSxy5Z
-         zMAAuf3RT8sPKBKLk6FdINwaoCz2h/ueKMOtInyV8Ifqah1XlG9bpncVo7gZ8avJvhM1
-         xS6w==
-X-Gm-Message-State: ABy/qLb3P2NxFdRzpTHaxUolu8Wllx3/P1+rLR3ThxAPxZ4ph6FtyViW
-        PcEWlIFXnvf0RY+w4JE2Ecl+S3baudQACgcG8aENDqHQ8YZ7GvnZySriGJQJb90bWU99vwb309s
-        Wlp4N0HFnUGZ23NTHh8LgQllNcuQog5X1hLOc
-X-Received: by 2002:adf:ec8e:0:b0:314:1ebc:6e19 with SMTP id z14-20020adfec8e000000b003141ebc6e19mr17387183wrn.64.1689172163285;
-        Wed, 12 Jul 2023 07:29:23 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGrLy4XTfg4SYrDedL3LjN5ZHr+LA3Ut1XmsVNXLi1zBJheiu9Ajx5OzglpHTo4/1SshVrdO+NlkBUDSAisljg=
-X-Received: by 2002:adf:ec8e:0:b0:314:1ebc:6e19 with SMTP id
- z14-20020adfec8e000000b003141ebc6e19mr17387145wrn.64.1689172162850; Wed, 12
- Jul 2023 07:29:22 -0700 (PDT)
+        with ESMTP id S231558AbjGLQJZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 12:09:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115FE134;
+        Wed, 12 Jul 2023 09:09:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A2F7D61828;
+        Wed, 12 Jul 2023 16:09:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFC31C433C7;
+        Wed, 12 Jul 2023 16:09:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689178164;
+        bh=pqoyJFSea9dYoiGMmVTXAZYeslRJ01DFgztLa+1r6uQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BYwvzwmVoK4zO33qkodjGeDcHExTd2f2cckvHPQJp4lZkntvj76fCveDvwcbUKc1/
+         w5l9o0Vz27YQ/fo8W7jySKoLDXOMFFgFZ5h8cMNx0Vubyup3QMCoL3KTle9xXnVGdg
+         Hq0N8AyeUi/lB0o5BLNTgFujbN3ZCsmba3VAQUWlzAqC4PpLktPyR7SvWDJVwo+XLq
+         ygW9fIAXdNLsKdzqTBd/YLifVKTMYbD/J4ybDxrZIYXlbF9f8xDs4Cg3CI7eurf8vQ
+         ZgpG59EGzbn80ZvFRnJCNqYZad4L5OcCyk6ok0f36pRV9niwLO93K6m96J5elWdVQq
+         UlVXVWohAbuaw==
+Date:   Wed, 12 Jul 2023 17:09:18 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Xingyu Wu <xingyu.wu@starfivetech.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [RESEND PATCH v6 0/7] Add PLL clocks driver and syscon for
+ StarFive JH7110 SoC
+Message-ID: <20230712-footage-smokiness-8f3d224073ce@spud>
+References: <20230704064610.292603-1-xingyu.wu@starfivetech.com>
+ <20230704-driven-desecrate-75075ebc11a3@spud>
 MIME-Version: 1.0
-From:   Vitaly Grinberg <vgrinber@redhat.com>
-Date:   Wed, 12 Jul 2023 17:29:12 +0300
-Message-ID: <CACLnSDhA1io1tU0rVvuz6KYx3-c_4zEniLEs3KFUqsvLWATYWw@mail.gmail.com>
-Subject: Re: [RFC PATCH v9 08/10] ice: implement dpll interface to control cgu
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     David Airlie <airlied@redhat.com>, andy.ren@getcruise.com,
-        anthony.l.nguyen@intel.com, arnd@arndb.de, axboe@kernel.dk,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        claudiajkang@gmail.com, corbet@lwn.net, davem@davemloft.net,
-        edumazet@google.com, geert+renesas@glider.be,
-        gregkh@linuxfoundation.org, hkallweit1@gmail.com,
-        idosch@nvidia.com, intel-wired-lan@lists.osuosl.org,
-        jacek.lawrynowicz@linux.intel.com,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        jesse.brandeburg@intel.com, Jiri Pirko <jiri@resnulli.us>,
-        jonathan.lemon@gmail.com, kuba@kernel.org, kuniyu@amazon.com,
-        leon@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux@zary.sk, liuhangbin@gmail.com, lucien.xin@gmail.com,
-        masahiroy@kernel.org, michal.michalik@intel.com,
-        milena.olech@intel.com, Michal Schmidt <mschmidt@redhat.com>,
-        Michael Tsirkin <mst@redhat.com>, netdev@vger.kernel.org,
-        nicolas.dichtel@6wind.com, nipun.gupta@amd.com, ogabbay@kernel.org,
-        Paolo Abeni <pabeni@redhat.com>, phil@nwl.cc,
-        Petr Oros <poros@redhat.com>, razor@blackwall.org,
-        ricardo.canuelo@collabora.com, richardcochran@gmail.com,
-        saeedm@nvidia.com, sj@kernel.org, tzimmermann@suse.de,
-        vadfed@fb.com, vadfed@meta.com, vadim.fedorenko@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ONIhm+iBQBpVs2F5"
+Content-Disposition: inline
+In-Reply-To: <20230704-driven-desecrate-75075ebc11a3@spud>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-I'd like to clarify about the DPLL phase offset requirement. We can
-live without it during the initial submission. The addition of phase
-offset can be an increment to patch v10.
-Thanks,
-Vitaly
 
+--ONIhm+iBQBpVs2F5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Stephen,
+
+On Tue, Jul 04, 2023 at 11:29:15PM +0100, Conor Dooley wrote:
+> On Tue, Jul 04, 2023 at 02:46:03PM +0800, Xingyu Wu wrote:
+> > [Resending because it has a error about examples in syscon bingdings
+> > and has to be fixed.]
+> >=20
+> > This patch serises are to add PLL clocks driver and providers by writing
+> > and reading syscon registers for the StarFive JH7110 RISC-V SoC. And ad=
+d=20
+> > documentation and nodes to describe StarFive System Controller(syscon)
+> > Registers. This patch serises are based on Linux 6.4.
+>=20
+> Could you take a look at this series when you get a chance, please?
+> Would be good to finally get it merged since the syscon bits are a dep
+> for a few other things :)
+
+When Emil has had a chance to look at this, my plan was to send you a PR
+for the bindings & clock bits, like I did for the last round of StarFive
+changes. Would that be okay with you?
+
+Thanks,
+Conor.
+
+> > William Qiu (2):
+> >   dt-bindings: soc: starfive: Add StarFive syscon module
+> >   riscv: dts: starfive: jh7110: Add syscon nodes
+> >=20
+> > Xingyu Wu (5):
+> >   dt-bindings: clock: Add StarFive JH7110 PLL clock generator
+> >   dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
+> >   clk: starfive: Add StarFive JH7110 PLL clock driver
+> >   clk: starfive: jh7110-sys: Add PLL clocks source from DTS
+> >   riscv: dts: starfive: jh7110: Add PLL clocks source in SYSCRG node
+> >=20
+> >  .../bindings/clock/starfive,jh7110-pll.yaml   |  46 ++
+> >  .../clock/starfive,jh7110-syscrg.yaml         |  18 +-
+> >  .../soc/starfive/starfive,jh7110-syscon.yaml  |  93 ++++
+> >  MAINTAINERS                                   |  13 +
+> >  arch/riscv/boot/dts/starfive/jh7110.dtsi      |  30 +-
+> >  drivers/clk/starfive/Kconfig                  |   9 +
+> >  drivers/clk/starfive/Makefile                 |   1 +
+> >  .../clk/starfive/clk-starfive-jh7110-pll.c    | 507 ++++++++++++++++++
+> >  .../clk/starfive/clk-starfive-jh7110-sys.c    |  45 +-
+> >  .../dt-bindings/clock/starfive,jh7110-crg.h   |   6 +
+> >  10 files changed, 746 insertions(+), 22 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh=
+7110-pll.yaml
+> >  create mode 100644 Documentation/devicetree/bindings/soc/starfive/star=
+five,jh7110-syscon.yaml
+> >  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.c
+> >=20
+> > --=20
+> > 2.25.1
+> >=20
+
+
+
+--ONIhm+iBQBpVs2F5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZK7QLgAKCRB4tDGHoIJi
+0gmyAP9FrTz4QgVF0rHn9VPS4zyrnwkwh/i4NsTcANNBws7PgwD+OjKReHA9p0VA
+SHvBgCynEq9+47lPl+pclaCFSv+nLgY=
+=53hT
+-----END PGP SIGNATURE-----
+
+--ONIhm+iBQBpVs2F5--
