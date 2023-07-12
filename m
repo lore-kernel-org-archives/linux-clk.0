@@ -2,224 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B005FEB64DD
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jul 2023 16:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8967EC0015E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jul 2023 16:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233342AbjGLQum (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jul 2023 12:50:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
+        id S231948AbjGLQyc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jul 2023 12:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232457AbjGLQul (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 12:50:41 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD32F1BF3
-        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 09:50:38 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d9443c01a7336-1b890e2b9b7so37909965ad.3
-        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 09:50:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20221208.gappssmtp.com; s=20221208; t=1689180638; x=1691772638;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0CLMJN6SQopTIwnwmNS9impJEqYpU9dNFLx7FPHnABU=;
-        b=bOcj+LHGhLyyUjEQGsegCMcc4y7a3vOuavoOpSsV1ipFW54sopcCNkNbeOqzsUqaCB
-         NvStfWPha3Bk4NdmVpTk/uRYKDGndKWXIt5c/lsfM6B/CAn1s1W1r8kQRMV79pJtW5kt
-         fosTbocS/O+ZNYBWfTo5QRU8dsbVTGRDC+ddu2jgSt82HPCHGv+8jJJY/mxjwlmhJDmb
-         VBwq7QMAdGCnHYqm3JQP4xxez8vCGhcvD0TCWuHZEmsPqUU5+IBCA6mh09WoNrBPYpdF
-         O16DF0Iceyj1U1LiwM8N2IO8dKGlk31MUJdvDkjvC8kq+hiiPaGcRIh3i/KJE2N5GoLq
-         L49w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689180638; x=1691772638;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0CLMJN6SQopTIwnwmNS9impJEqYpU9dNFLx7FPHnABU=;
-        b=Ub+OYCECNQLRsFN/HA7nxs68F93e/GHGhWDs9e7iQmKK56+ap2fSE4ZjcftQD+aZX0
-         Gy9i8cxSn6cbZIqoCdyGJcEQh1o15rvKc/QzyrmxKnpuMt7HtgWTkbUAZxNujsqs/56p
-         qqFne+wNOIFguoJx7qPCdSOhuEG2oOOJpV11H8rNezC/YgzISwqgcI0L1y9U6nmkhuW+
-         4RX4aOEnykx1dqO0eK1D3LtvEg9jU4xn8apURuvijinnTTJ1LCLU7NiIuEvyt4gN1F13
-         0uQoUO3KK69JjxpnTKjuGI7BbuW2AeTnS/s3otINkW7dSnsABgDisHLKhcUGpRV3sC09
-         77Gw==
-X-Gm-Message-State: ABy/qLZYgne0CVYfQsv/eDK2ayeSNoFPpwU1M++j+GKky20oRYw5CYfe
-        kNHJaWjgKCfKgDFZZR50b4OepA==
-X-Google-Smtp-Source: APBJJlHzshkB9/uo3WnGkgqVS9hVIpmiLA+SHbio5fXcwwotBH3KMQX2SI5UvVzgmJo4v+1Mv7LVWQ==
-X-Received: by 2002:a17:902:ce8b:b0:1b9:e591:db38 with SMTP id f11-20020a170902ce8b00b001b9e591db38mr7319689plg.8.1689180637681;
-        Wed, 12 Jul 2023 09:50:37 -0700 (PDT)
-Received: from localhost ([50.38.6.230])
-        by smtp.gmail.com with ESMTPSA id d2-20020a170902728200b001b7e63cfa19sm1795849pll.234.2023.07.12.09.50.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 09:50:37 -0700 (PDT)
-Date:   Wed, 12 Jul 2023 09:50:37 -0700 (PDT)
-X-Google-Original-Date: Wed, 12 Jul 2023 09:49:48 PDT (-0700)
-Subject:     Re: [PATCH v7 0/9] Add STG/ISP/VOUT clock and reset drivers for StarFive JH7110
-In-Reply-To: <20230712092007.31013-1-xingyu.wu@starfivetech.com>
-CC:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        Conor Dooley <conor@kernel.org>, kernel@esmil.dk,
-        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, hal.feng@starfivetech.com,
-        xingyu.wu@starfivetech.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     xingyu.wu@starfivetech.com
-Message-ID: <mhng-d3795910-5414-4555-bf3d-75ebe769ed2b@palmer-ri-x1c9a>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S231655AbjGLQyb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 12:54:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7AD312E;
+        Wed, 12 Jul 2023 09:54:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6B02F616F1;
+        Wed, 12 Jul 2023 16:54:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43BF2C433C7;
+        Wed, 12 Jul 2023 16:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689180864;
+        bh=GUKIjZVgdEMfP7TDM1aNuHteDasdN91zxotPStZohNU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=oAbNSVNXNIHr6DtuTw/oe0aFSsEtMyVVSR4TG6U7T5lLWYPueKmSeg4WlMWtBySra
+         IlvvKmKpHIpVXeXMLRsPzCgrj4ePLxEznwuYSoG71a9NbS9p7CbfoFooV+jlDLFCBo
+         0qJ44bbNZDYeJTtRA0EXhMU0zLv6vvqpxkw/TvH606c1ylZZcFlK35RupigexhX/Ch
+         FmfvjTF6JvoucrTi1TDNzw0DzsXobsfGPq6iHnEDwTDhWBa+BKtSI+iB01eAGwudH4
+         +IxLG/oc4nCJg7xMhoa5NGrame6QczA00+OGkxe5MEBNuQeZCCjE/ztY4AjtMQurmv
+         8MFbVIxKStt2Q==
+Date:   Wed, 12 Jul 2023 09:54:22 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+Cc:     Jiri Pirko <jiri@resnulli.us>, "vadfed@meta.com" <vadfed@meta.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "vadfed@fb.com" <vadfed@fb.com>,
+        "Brandeburg, Jesse" <jesse.brandeburg@intel.com>,
+        "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+        "M, Saeed" <saeedm@nvidia.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "sj@kernel.org" <sj@kernel.org>,
+        "javierm@redhat.com" <javierm@redhat.com>,
+        "ricardo.canuelo@collabora.com" <ricardo.canuelo@collabora.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "tzimmermann@suse.de" <tzimmermann@suse.de>,
+        "Michalik, Michal" <michal.michalik@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "jacek.lawrynowicz@linux.intel.com" 
+        <jacek.lawrynowicz@linux.intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "ogabbay@kernel.org" <ogabbay@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "nipun.gupta@amd.com" <nipun.gupta@amd.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "linux@zary.sk" <linux@zary.sk>,
+        "masahiroy@kernel.org" <masahiroy@kernel.org>,
+        "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "Olech, Milena" <milena.olech@intel.com>,
+        "kuniyu@amazon.com" <kuniyu@amazon.com>,
+        "liuhangbin@gmail.com" <liuhangbin@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "andy.ren@getcruise.com" <andy.ren@getcruise.com>,
+        "razor@blackwall.org" <razor@blackwall.org>,
+        "idosch@nvidia.com" <idosch@nvidia.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
+        "nicolas.dichtel@6wind.com" <nicolas.dichtel@6wind.com>,
+        "phil@nwl.cc" <phil@nwl.cc>,
+        "claudiajkang@gmail.com" <claudiajkang@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
+        mschmidt <mschmidt@redhat.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+Message-ID: <20230712095422.00acaeaa@kernel.org>
+In-Reply-To: <DM6PR11MB465701C009D1DC2972F900F29B36A@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20230623123820.42850-1-arkadiusz.kubalewski@intel.com>
+        <ZJq3a6rl6dnPMV17@nanopsycho>
+        <DM6PR11MB4657084DDD7554663F86C1C19B24A@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZJwWXZmZe4lQ04iK@nanopsycho>
+        <DM6PR11MB4657751607C36FC711271D639B30A@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZKv1FRTXWLnLGRRS@nanopsycho>
+        <DM6PR11MB46575D14FFE115546FDC9DEB9B31A@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <ZK1CizcqjqO1L/RQ@nanopsycho>
+        <DM6PR11MB4657067EE043F4DBB9D8B03B9B31A@DM6PR11MB4657.namprd11.prod.outlook.com>
+        <20230711131443.2a4af476@kernel.org>
+        <DM6PR11MB465701C009D1DC2972F900F29B36A@DM6PR11MB4657.namprd11.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 12 Jul 2023 02:19:58 PDT (-0700), xingyu.wu@starfivetech.com wrote:
-> This patch serises are base on the basic JH7110 SYSCRG/AONCRG
-> drivers and add new partial clock drivers and reset supports
-> about System-Top-Group(STG), Image-Signal-Process(ISP)
-> and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC. These
-> clocks and resets could be used by DMA, VIN and Display modules.
->
-> Patches 1 and 2 are about the System-Top-Group clock and reset
-> generator(STGCRG) part. The first patch adds docunmentation to
-> describe STG bindings, and the second patch adds clock driver to
-> support STG clocks and resets as auxiliary device for JH7110.
->
-> Patches 3 and 4 are about the Image-Signal-Process clock and reset
-> gennerator(ISPCRG) part. The first patch adds docunmentation to
-> describe ISP bindings, and the second patch adds clock driver to
-> support ISP clocks and resets as auxiliary device for JH7110.
-> And ISP clocks should power on and enable the SYSCRG clocks first
-> before registering.
->
-> Patches 5 and 6 are about the Video-Output clock and reset
-> generator(VOUTCRG) part. The first patch adds docunmentation to
-> describe VOUT bindings, and the second patch adds clock driver to
-> support VOUT clocks and resets as auxiliary device for JH7110.
-> And VOUT clocks also should power on and enable the SYSCRG clocks
-> first before registering.
->
-> Patch 7 adds struct members to support STG/ISP/VOUT resets.
-> Patch 8 adds external clocks which ISP and VOUT clock driver need.
-> Patch 9 adds device node about STGCRG, ISPCRG and VOUTCRG to JH7110 dts.
->
-> Changes since v6:
-> - Rebased on the Linux 6.5-rc1.
-> - Dropped the unnecessary selections in the Kconfig.
-> - Dropped the patches about the PMU node and MAINTIANERS.
-> - Add the reviews.
->
-> v6: https://lore.kernel.org/all/20230518101234.143748-1-xingyu.wu@starfivetech.com/
->
-> Changes since v5:
-> - Rebased on the Linux 6.4-rc2.
-> - Modified the reset name about VOUTCRG to fix the error with
->   CONFIG_FORTIFY_SOURCE=y
-> - Added the patch about pmu node.
->
-> v5: https://lore.kernel.org/all/20230424135409.6648-1-xingyu.wu@starfivetech.com/
->
-> Changes since v4:
-> - Rebased on the lastest patches about fixing the basic clock and reset drivers.
-> - Dropped the 'dev_set_drvdata()' in STG clock driver.
-> - Modified the data with 'dev_set_drvdata()' in ISP/VOUT clock driver
->   and move the struct about the data to JH7110 header file, which both
->   ISP and VOUT clock drivers will use.
->
-> v4: https://lore.kernel.org/all/20230411135558.44282-1-xingyu.wu@starfivetech.com/
->
-> Changes since v3:
-> - Rebased on the lastest JH71X0 clock and reset driver of patchset[1]
->   and modified the parameters of the register reset functions.
-> - The patch 1 combined three commits on STG/ISP/VOUT resets into one.
->   And Changed the auxiliary_device_id name from
->   "clk_starfive_jh71x0.reset-*" to "clk_starfive_jh7110_sys.rst-*".
-> - Added a maintainer in STARFIVE JH71X0 CLOCK DRIVERS.
->
-> v3: https://lore.kernel.org/all/20230314124404.117592-1-xingyu.wu@starfivetech.com/
->
-> Changes since v2:
-> Patch 1:
-> - Dropped the modification of maintainers.
-> - Modified clock and reset names in the dt-bindings header files.
-> Patch 3:
-> - Added 'Emil Renner Berthing' as the author.
-> - Used 'default m' in Kconfig file.
-> - Changed the flags of 'CLK_IGNORE_UNUSED' to 0 or 'CLK_IS_CRITICAL'.
-> Patch 4:
-> - Dropped the 'reset-names' property.
-> - Shortened the clock and reset names in the dt-bindings header files.
-> Pacth 6:
-> - Used 'default m' in Kconfig file.
-> - Changed the flags of 'CLK_IGNORE_UNUSED' to 0.
-> - Set reset_control struct to a local variable because it just is used
->   one time in probe.
-> Pacth 7:
-> - Dropped the 'reset-names' property.
-> Patch 9:
-> - Used 'default m' in Kconfig file.
-> - Set reset_control struct to a local variable because it just is used
->   one time in probe.
-> Patch 10:
-> - Changed the order of externel clock in alphanumerical order.
-> Patch 11:
-> - Dropped the 'reset-names' property in ispcrg and voutcrg node.
->
-> v2: https://lore.kernel.org/all/20230221083323.302471-1-xingyu.wu@starfivetech.com/
->
-> Changes since v1:
-> - Modified the binding and dropped the indentation.
-> - Removed the useless header files in the drivers.
-> - Used an array lookup instead of a pile of conditions about parent
->   clocks' name.
-> - Added clocks operation on driver remove.
->
-> v1: https://lore.kernel.org/all/20230120024445.244345-1-xingyu.wu@starfivetech.com/
->
-> Emil Renner Berthing (1):
->   clk: starfive: Add StarFive JH7110 System-Top-Group clock driver
->
-> Xingyu Wu (8):
->   dt-bindings: clock: Add StarFive JH7110 System-Top-Group clock and
->     reset generator
->   dt-bindings: clock: Add StarFive JH7110 Image-Signal-Process clock and
->     reset generator
->   clk: starfive: Add StarFive JH7110 Image-Signal-Process clock driver
->   dt-bindings: clock: Add StarFive JH7110 Video-Output clock and reset
->     generator
->   clk: starfive: Add StarFive JH7110 Video-Output clock driver
->   reset: starfive: jh7110: Add StarFive STG/ISP/VOUT resets support
->   riscv: dts: starfive: jh7110: Add DVP and HDMI TX pixel external
->     clocks
->   riscv: dts: starfive: jh7110: Add STGCRG/ISPCRG/VOUTCRG nodes
->
->  .../clock/starfive,jh7110-ispcrg.yaml         |  87 +++++++
->  .../clock/starfive,jh7110-stgcrg.yaml         |  82 ++++++
->  .../clock/starfive,jh7110-voutcrg.yaml        |  90 +++++++
->  .../jh7110-starfive-visionfive-2.dtsi         |   8 +
->  arch/riscv/boot/dts/starfive/jh7110.dtsi      |  67 +++++
->  drivers/clk/starfive/Kconfig                  |  24 ++
->  drivers/clk/starfive/Makefile                 |   3 +
->  .../clk/starfive/clk-starfive-jh7110-isp.c    | 232 +++++++++++++++++
->  .../clk/starfive/clk-starfive-jh7110-stg.c    | 173 +++++++++++++
->  .../clk/starfive/clk-starfive-jh7110-vout.c   | 239 ++++++++++++++++++
->  drivers/clk/starfive/clk-starfive-jh7110.h    |   6 +
->  .../reset/starfive/reset-starfive-jh7110.c    |  30 +++
->  .../dt-bindings/clock/starfive,jh7110-crg.h   |  74 ++++++
->  .../dt-bindings/reset/starfive,jh7110-crg.h   |  60 +++++
->  14 files changed, 1175 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
->  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-isp.c
->  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-stg.c
->  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-vout.c
+On Wed, 12 Jul 2023 09:19:53 +0000 Kubalewski, Arkadiusz wrote:
+> >> Don't think it is way to go, and I don't think there is anything good
+> >> with preventing device drivers from labeling their pins the way they
+> >> want.  
+> >
+> >We had a long argument about how label should have a clearly defined
+> >meaning. We're not going to rehash it on every revision. What did I miss :|  
+> 
+> Well, as I understand we are discussing if dpll subsystem shall prevent
+> labeling the SyncE type pins. I have labeled them in ice explicitly with
+> the name of a pci device they belong to.
+> 
+> You haven't miss much, mostly the problem is described in this thread.
 
-Happy to take it through the RISC-V tree if folks want, but IMO it's 
-probably better aimed at the clock/reset folks.  Either way I'd want to 
-give them a chance to ack/review it, so I'm going to drop it from my 
-list.
+Please read this thread:
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-
-in case anyone's looking for it, though.
-
-Thanks!
+https://lore.kernel.org/all/20230503191643.12a6e559@kernel.org/
