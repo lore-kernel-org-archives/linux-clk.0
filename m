@@ -2,102 +2,189 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E92EB64D9
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jul 2023 11:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5964EB64D9
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Jul 2023 12:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233467AbjGLLzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jul 2023 07:55:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43144 "EHLO
+        id S231592AbjGLMFX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jul 2023 08:05:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233391AbjGLLyw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 07:54:52 -0400
-Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CB7C26BA
-        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 04:54:01 -0700 (PDT)
-Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-1b3fb484eedso1339777fac.0
-        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 04:54:01 -0700 (PDT)
+        with ESMTP id S231571AbjGLMFS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 08:05:18 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF7B3E42
+        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 05:05:16 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fc03aa6e04so48672585e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 05:05:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689162795; x=1689767595;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LhxNJrO+C7dqS4hZc7jEcBrR+kGnCAyE3Qa2KVh3AZ4=;
-        b=MEWsxjPVUjHs7u8eIqXBpNBo+voE7Cg2M9UnfHOFGBZAAQVty1EliINRWIm112NiPZ
-         0Go01D4Sj2qQQrXl0taNzVr3rMCF+ab89PYwsb6AqMaNe35yL45wjTkiK84z+TTK4qeD
-         mu5+21i3cieKs3D6UdJSY9aC5uryHqpVnytr2MIfCPud5kKbCyfKrDQeLpHRhKR+EGMA
-         7TGgik7CYa8szdZoFe7EIMNPPoXrNl50Jx5Tm05CiJxUC6XKKbYT+kcQ43eTU5ieUdhD
-         BvI1BXgvYnXAfeeL7uFry3Nbfx+EwVYXPQkMrzR44vUFhLDLxEOtJWQGGmQeoPPfi9ZS
-         1lBg==
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1689163515; x=1691755515;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=gmxZeEshRvqM/BRR9ZXtUjCKxif2agi1dlESa2lsMoU=;
+        b=QzS2HCB0DYgtvqqOIbnCP2zRcRrP2JmzRZYa7Jqwvq2ugL+0C9wegPY9how926nslD
+         bLemtZE9wSrUh5EvjA35wCl03UpS0+pS8Ld9fBiyqGK4hFqfvgwCwDocDFrpBzwCah2i
+         S7nQL+n7S1Ho/Z/ozpT05ZPBlde7SWIdDqTZ3SVi5tRxiAqwJGdcqkxHTJNPGI/HVzW4
+         HPM79C3A2u7aVi7iNlpRXcM9drr3kKTIozROuVmp4QgiP6O1lw18RyPCJpK0bPGFXd/i
+         S+i/Jlf4UGzUWriqTlu/0/J5MwiN677MxXVP0PBiQuqelaqTY42psKsSo8GoxFxvxPka
+         Q4ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689162795; x=1689767595;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LhxNJrO+C7dqS4hZc7jEcBrR+kGnCAyE3Qa2KVh3AZ4=;
-        b=YXou8R0yu3liyplBoNxlZ1bN06w7vQrCW5qPa10we3eEuD2D3V4oSpZPD1cWWgLs7M
-         oocANUNfMgQIWGCWrV+q1LBDsDwt+HFAYYpAs5A3GH92EvS5K/UVjcvoPdmDytcOHi9U
-         bItGQE0nqQezY3rv41elfi5j3DQAPZSrDhlv1M42tlKTb6lSDjcjFz9yp6bJTdT8wc8d
-         6nfaIgcyvCQMcF+jrHUIkhFBYpRVkCe3UGH3iVN8y0c3dh2l+JRW2mURdmexywzPq7yX
-         rIH6jsJQJ39orn9fHR57B8QrpEjyUruCK2zVN2CrblGuexnc2fk3hORvD7Hacauy5HC9
-         aQWg==
-X-Gm-Message-State: ABy/qLZ7z+ogdXpQY/ZA4WULuy3kJDf680M8HKcrOdm65cZUtQxHYMv7
-        Dmv1vNuaj1Reb1FbNImbSW4=
-X-Google-Smtp-Source: APBJJlGJQIZJA8B4pZuHg+Po2JXZJdxDBXRVpNdstY/fkoPZ0lKrgEbZe/bsK98g7aIBDzU+s98CqA==
-X-Received: by 2002:a05:6870:548d:b0:1b7:5f4b:c686 with SMTP id f13-20020a056870548d00b001b75f4bc686mr3464617oan.2.1689162795154;
-        Wed, 12 Jul 2023 04:53:15 -0700 (PDT)
-Received: from fabio-Precision-3551.. ([2804:14c:485:4b61:ce5f:dbc6:1eb6:2900])
-        by smtp.gmail.com with ESMTPSA id zh27-20020a0568716b9b00b001a663e49523sm1905890oab.36.2023.07.12.04.53.12
+        d=1e100.net; s=20221208; t=1689163515; x=1691755515;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gmxZeEshRvqM/BRR9ZXtUjCKxif2agi1dlESa2lsMoU=;
+        b=iLbXrO++G17xCcuTmZZSzKCmcMLyLb9j5KskaouAnQK4YCMiUwkXmB7giXAgOTlLNs
+         +BwnyCQVjwM0RAlLO4bLdqOv4QhsW1dtzlwQR6y8BsE4nEOPi0R578zszYVlMgXjRr+9
+         TV1fmDGkg/lUqQFsKFkIRV/fn6PfQnIoM5ISgBq4XHQjhzpvrN6AcZ96dW13og03YM8o
+         7v/LTEtVajhsScPo+Cj48cuHzwKQRedCHViMgRpnjpAsD/tBZinIgXqQbnX/KcLS2Vum
+         eJz1vINYcuGOW8A9Hc/2a/azHX7F41vIiLMuyfP6hM8MMgg9JyogotvbYJcIq3ekPrJY
+         jwNw==
+X-Gm-Message-State: ABy/qLaaUMWwjGsoqj8YqlXksQxwM/EbZQNh6xn0pIL248kG4iFUo3Al
+        0yxWreIfjoFo7oYk2oLGQ1wpRm96J8GN9KuX2w8=
+X-Google-Smtp-Source: APBJJlEW07G2Z9vncF20Zns7VmBUWwFGEgahYbX5gKUkcou8mv0OBM7lDswlVa796IQGkz2649ACDQ==
+X-Received: by 2002:a05:600c:2116:b0:3fc:71:fe50 with SMTP id u22-20020a05600c211600b003fc0071fe50mr12927500wml.24.1689163515243;
+        Wed, 12 Jul 2023 05:05:15 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb0:33d7:37a9:5cb2:4942])
+        by smtp.gmail.com with ESMTPSA id hn32-20020a05600ca3a000b003fbdd5d0758sm4933880wmb.22.2023.07.12.05.05.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jul 2023 04:53:14 -0700 (PDT)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     shawnguo@kernel.org
-Cc:     hs@denx.de, linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
-        abelvesa@kernel.org, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@denx.de>
-Subject: [PATCH v3 3/3] clk: imx: imx6sx: Remove hardcoded LCDIF1 parent
-Date:   Wed, 12 Jul 2023 08:53:01 -0300
-Message-Id: <20230712115301.690714-3-festevam@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230712115301.690714-1-festevam@gmail.com>
-References: <20230712115301.690714-1-festevam@gmail.com>
+        Wed, 12 Jul 2023 05:05:14 -0700 (PDT)
+References: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-0-38172d17c27a@linaro.org>
+ <20230607-topic-amlogic-upstream-clkid-public-migration-v2-1-38172d17c27a@linaro.org>
+User-agent: mu4e 1.8.13; emacs 28.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <neil.armstrong@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 01/19] clk: meson: introduce meson-clkc-utils
+Date:   Wed, 12 Jul 2023 14:03:19 +0200
+In-reply-to: <20230607-topic-amlogic-upstream-clkid-public-migration-v2-1-38172d17c27a@linaro.org>
+Message-ID: <1ja5w1xrly.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Fabio Estevam <festevam@denx.de>
 
-It is not a good idea to hardcode the LCDIF1 parent inside the
-clock driver because some users may want to use a different clock
-parent for LCDIF1. One of the reasons could be related to EMI tests.
+On Mon 12 Jun 2023 at 11:57, Neil Armstrong <neil.armstrong@linaro.org> wrote:
 
-Remove the harcoded LCDIF1 parent as this is better described via
-devicetree.
+> Let's introduce a new module called meson-clkc-utils that
+> will contain shared utility functions for all Amlogic clock
+> controller drivers.
+>
+> The first utility function is a replacement of of_clk_hw_onecell_get
+> in order to get rid of the NR_CLKS define in all Amlogic clock
+> drivers.
+>
+> The goal is to move all duplicate probe and init code in this module.
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-Signed-off-by: Fabio Estevam <festevam@denx.de>
----
-Changes since v2:
-- Rebased against 6.5-rc1.
+Hi Neil,
 
- drivers/clk/imx/clk-imx6sx.c | 4 ----
- 1 file changed, 4 deletions(-)
+checkpatch complains about the MODULE_LICENSE()
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 3f1502933e59..b110258b9036 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -498,10 +498,6 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	clk_set_parent(hws[IMX6SX_CLK_EIM_SLOW_SEL]->clk, hws[IMX6SX_CLK_PLL2_PFD2]->clk);
- 	clk_set_rate(hws[IMX6SX_CLK_EIM_SLOW]->clk, 132000000);
- 
--	/* set parent clock for LCDIF1 pixel clock */
--	clk_set_parent(hws[IMX6SX_CLK_LCDIF1_PRE_SEL]->clk, hws[IMX6SX_CLK_PLL5_VIDEO_DIV]->clk);
--	clk_set_parent(hws[IMX6SX_CLK_LCDIF1_SEL]->clk, hws[IMX6SX_CLK_LCDIF1_PODF]->clk);
--
- 	/* Set the parent clks of PCIe lvds1 and pcie_axi to be pcie ref, axi */
- 	if (clk_set_parent(hws[IMX6SX_CLK_LVDS1_SEL]->clk, hws[IMX6SX_CLK_PCIE_REF_125M]->clk))
- 		pr_err("Failed to set pcie bus parent clk.\n");
--- 
-2.34.1
+WARNING: Prefer "GPL" over "GPL v2" - see commit bf7fbeeae6db ("module: Cure the MODULE_LICENSE "GPL" vs. "GPL v2" bogosity")
+#185: FILE: drivers/clk/meson/meson-clkc-utils.c:25:
++MODULE_LICENSE("GPL v2");
+
+I don't mind fixing this up while applying if it is Ok with you.
+
+> ---
+>  drivers/clk/meson/Kconfig            |  3 +++
+>  drivers/clk/meson/Makefile           |  1 +
+>  drivers/clk/meson/meson-clkc-utils.c | 25 +++++++++++++++++++++++++
+>  drivers/clk/meson/meson-clkc-utils.h | 19 +++++++++++++++++++
+>  4 files changed, 48 insertions(+)
+>
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index 8ce846fdbe43..d03adad31318 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -30,6 +30,9 @@ config COMMON_CLK_MESON_VID_PLL_DIV
+>  	tristate
+>  	select COMMON_CLK_MESON_REGMAP
+>  
+> +config COMMON_CLK_MESON_CLKC_UTILS
+> +	tristate
+> +
+>  config COMMON_CLK_MESON_AO_CLKC
+>  	tristate
+>  	select COMMON_CLK_MESON_REGMAP
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index d5288662881d..cd961cc4f4db 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  # Amlogic clock drivers
+>  
+> +obj-$(CONFIG_COMMON_CLK_MESON_CLKC_UTILS) += meson-clkc-utils.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
+>  obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
+> diff --git a/drivers/clk/meson/meson-clkc-utils.c b/drivers/clk/meson/meson-clkc-utils.c
+> new file mode 100644
+> index 000000000000..9a0620bcc161
+> --- /dev/null
+> +++ b/drivers/clk/meson/meson-clkc-utils.c
+> @@ -0,0 +1,25 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+> + */
+> +
+> +#include <linux/of_device.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/module.h>
+> +#include "meson-clkc-utils.h"
+> +
+> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data)
+> +{
+> +	const struct meson_clk_hw_data *data = clk_hw_data;
+> +	unsigned int idx = clkspec->args[0];
+> +
+> +	if (idx >= data->num) {
+> +		pr_err("%s: invalid index %u\n", __func__, idx);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return data->hws[idx];
+> +}
+> +EXPORT_SYMBOL_GPL(meson_clk_hw_get);
+> +
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/clk/meson/meson-clkc-utils.h b/drivers/clk/meson/meson-clkc-utils.h
+> new file mode 100644
+> index 000000000000..fe6f40728949
+> --- /dev/null
+> +++ b/drivers/clk/meson/meson-clkc-utils.h
+> @@ -0,0 +1,19 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2023 Neil Armstrong <neil.armstrong@linaro.org>
+> + */
+> +
+> +#ifndef __MESON_CLKC_UTILS_H__
+> +#define __MESON_CLKC_UTILS_H__
+> +
+> +#include <linux/of_device.h>
+> +#include <linux/clk-provider.h>
+> +
+> +struct meson_clk_hw_data {
+> +	struct clk_hw	**hws;
+> +	unsigned int	num;
+> +};
+> +
+> +struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_data);
+> +
+> +#endif
 
