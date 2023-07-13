@@ -2,167 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241F4C0015E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 19:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3714C0015E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 19:46:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231996AbjGMTiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 15:38:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
+        id S232115AbjGMTqX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 15:46:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231909AbjGMTiR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 15:38:17 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A64269D;
-        Thu, 13 Jul 2023 12:38:16 -0700 (PDT)
-Received: from mercury (unknown [185.254.75.28])
+        with ESMTP id S230142AbjGMTqX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 15:46:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435FA269D;
+        Thu, 13 Jul 2023 12:46:22 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: sre)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 40D93660704B;
-        Thu, 13 Jul 2023 20:38:15 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689277095;
-        bh=LCTHlbt9t3lIo/yJabi6ZxoDAc2P6YaDBhZi4GtjP58=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C697F61B44;
+        Thu, 13 Jul 2023 19:46:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49D17C433C7;
+        Thu, 13 Jul 2023 19:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689277581;
+        bh=AGrJTyF1kQCmjhSQd29qxN+hkwd04kIQUDVunqRAgNU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VgICHNlTWBb3DvnETMeo90SwdkRHWdjCiK+w2oRIUIUu1mkG75UswADjjq/uJirWt
-         Bl6uIZl1DuZxUjQgfedKFdzU/httYdFOS69tf3NddCHkJApfDQhHeBpth1jgqs6jAw
-         fXrNzaS97mzBwPb13lzZJhtSW2SAM5hjEg4spPk2DJUkiYe+QRkmBOFrNCsdvbuPRF
-         2nS0aG55sqgFk2lOlLhqcpDj5NmJ3/8ik5GhiB6BPXeiVXFmyD77Jr5wUat0jjNRwl
-         l7WFAGZgI6XG1BQXbOa3i93rzS6Ea3Cfi+azHQiVQk6CoU6XpJgu6v1pjflT58ytCq
-         icQ/UGivvUIKQ==
-Received: by mercury (Postfix, from userid 1000)
-        id 745D01062E2E; Thu, 13 Jul 2023 21:38:12 +0200 (CEST)
-Date:   Thu, 13 Jul 2023 21:38:12 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Jagan Teki <jagan@edgeble.ai>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org,
-        Peter Geis <pgwipeout@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
+        b=OUb+x1Htqgdv9RFiQ/Ndl3aK9jclOdtAP/pomFM90Jgj77KpThOU6Lxr/+QilisyN
+         bXBtvp1S6DrDX/igCXgsyY4Bkw/qK3c9k/tHIZnwI891cYsEc+WRUyeG3ipoNGb59N
+         IHrLNgqNooqTHZSwHxbVYbI6GO/wZg/rbx5xRWcTtMKLwy5FhT5zze6VTK5to3Nctl
+         axXvEzuzBrR7S2aZikScrZ1hd9ijpJ+892FhgS5XyUO6islmNH179PU5qQXHPtM9mr
+         oQTE8v0UESWmYR6qNSV+uaIh6xpTpENac8yHgmxWG6FDXJmG8O0zR+DzUSmMQlGrvk
+         519OZ5ylSuvxQ==
+Date:   Thu, 13 Jul 2023 20:46:16 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Vincent Legoll <vincent.legoll@gmail.com>
-Subject: Re: [PATCHv2 1/2] clk: rockchip: rk3588: make gate linked clocks
- ignore unused
-Message-ID: <20230713193812.px7q4sdfdppuywsg@mercury.elektranox.org>
-References: <20230403193250.108693-1-sebastian.reichel@collabora.com>
- <20230403193250.108693-2-sebastian.reichel@collabora.com>
- <CA+VMnFz4USPcXmQMyUB9n5EVmvQrJARDvnpO7iBrXZ8q2xcyAA@mail.gmail.com>
+        Stephen Boyd <sboyd@kernel.org>, Wei Xu <xuwei5@hisilicon.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: arm: hisilicon,cpuctrl: Merge
+ "hisilicon,hix5hd2-clock" into parent binding
+Message-ID: <20230713-encounter-earmuff-ca0edd40e57b@spud>
+References: <20230707210700.869060-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ckdtegxpm7vrxvpt"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="adCi25htn3vGAWbH"
 Content-Disposition: inline
-In-Reply-To: <CA+VMnFz4USPcXmQMyUB9n5EVmvQrJARDvnpO7iBrXZ8q2xcyAA@mail.gmail.com>
+In-Reply-To: <20230707210700.869060-1-robh@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ckdtegxpm7vrxvpt
+--adCi25htn3vGAWbH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello Jagan,
+On Fri, Jul 07, 2023 at 03:07:00PM -0600, Rob Herring wrote:
+> -Each clock is assigned an identifier and client nodes use this identifier
+> -to specify the clock which they consume.
 
-On Thu, Jul 13, 2023 at 08:25:03PM +0530, Jagan Teki wrote:
-> On Tue, 4 Apr 2023 at 01:03, Sebastian Reichel
-> <sebastian.reichel@collabora.com> wrote:
-> [...]
-> > + * Recent Rockchip SoCs have a new hardware block called Native Interf=
-ace
-> > + * Unit (NIU), which gates clocks to devices behind them. These effect=
-ively
-> > + * need two parent clocks.
-> > + *
-> > + * Downstream enables the linked clock via runtime PM whenever the gat=
-e is
-> > + * enabled. This implementation uses separate clock nodes for each of =
-the
-> > + * linked gate clocks, which leaks parts of the clock tree into DT.
-> > + *
-> > + * The GATE_LINK macro instead takes the second parent via 'linkname',=
- but
-> > + * ignores the information. Once the clock framework is ready to handl=
-e it, the
-> > + * information should be passed on here. But since these clocks are re=
-quired to
-> > + * access multiple relevant IP blocks, such as PCIe or USB, we mark al=
-l linked
-> > + * clocks critical until a better solution is available. This will was=
-te some
-> > + * power, but avoids leaking implementation details into DT or hanging=
- the
-> > + * system.
-> >   */
->=20
-> Does it mean the clk-link topology in the downstream kernel can be
-> reused the same as normal clock notation?
+> -All these identifier could be found in <dt-bindings/clock/hix5hd2-clock.h>.
 
-Yes.
+Might've been nice to preserve the reference to the header containing
+the defines?
 
-> For example, I'm trying to add HCLK_VO1 directly to VO1 syscon instead
-> of routing to pclk_vo1_grf(done downstream)
->       vo1_grf: syscon@fd5a8000 {
->                compatible =3D "rockchip,rk3588-vo-grf", "syscon";
->                reg =3D <0x0 0xfd5a8000 0x0 0x100>;
->              clocks =3D <&cru HCLK_VO1>;
+Either way, this seems to have sat for a bit so,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-You need PCLK_VO1 (which is currently not exposed; I somehow missed
-it).
+Cheers,
+Conor.
 
->       };
->=20
-> This seems breaking syscon for vo1_grf and observed a bus error
-> while accessing regmap.=20
-
-I investigated the issue you are seeing some weeks ago when my
-co-workers started to work on HDMI RX and TX. You are probably
-just missing this patch:
-
-https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/comm=
-it/ecc6415344957fa88356cec10f8b75a9da603a7b
-
-> I remember in one of the RKDC discussion that the double parenting
-> of these clocks is mandatory while accessing associated IP blocks.
-
-Yes, it is necessary.
-
-> Any thoughts?
-
-The upstream workaround/hack is to have the second parent always
-enabled. This obviously wastes power, but means that the hardware
-description in the DT is correct. Once the clock framework supports
-two parents the kernel can be updated without touching the DT,
-which is considered ABI.
-
-Greetings,
-
--- Sebastian
-
---ckdtegxpm7vrxvpt
+--adCi25htn3vGAWbH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmSwUpcACgkQ2O7X88g7
-+prvUBAAmj/+1Y2EoNVM52dwbYtpsK+nyCPxZN7qF818FlAZMAPLUPGLEhy5h+oT
-9yP7Tj2QaoM1WIRajoE/q3UshWnjsZWLRdDqeZsAcsaUfl24MrvzhiYdm/hce0jT
-7pL5gW8LJ6apq194xsC64AcF7AOHRBqduoHmlSmBg8Jz3t+O530MGtMCxLf7wCJl
-teEmkynSKx/BMYOORifhfoaoNtV5LgvDYjaBSrJ6IpZmCeMuKwmL4TR4xoUVFBaR
-IVu8nsnFn3bRhZ85T9R3NgfriPj2BLLbIsDe+qD8blzCETH9vAhAWDpKzBFnJ0NZ
-w8XcusaDX1vFOnzjaat/7OKxkguApB8eh/WLAZ1aXDZ0OwpntP3yMduoY5fmixKZ
-OrHS2H6wAELKuNO3UOkLfGqEE60+z2A3HEqZA5ltZWud6+oPtRENVmYSjDzNaEjl
-lRb/PFMYU6MVFiVtfxqgwKXMLqqIL/Pk3wfgY32FYvTrWkNiCSh0+AFBx8iVzCFI
-kTfPuC5o+k+FN7wxqvLYfpgI6poZYs1CSFMLOzpof3/79aJN/NaFbTGW8bngnFIQ
-CL2ycYNleFr91CYk83fQ7jbkR0VUd774yCH7FO8ytZjxl5uvecMEwBG3GAn+pZh7
-Ns4kvC9k2SepoVw/FUj5ywI+DeizHMAkeR1Hjs5KP4A0nFESZqY=
-=ytIK
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZLBUiAAKCRB4tDGHoIJi
+0quRAQDmc+bJ5QjRN9aDgaZD7JitN5GsZ1G7TexzypuR9ELl/wD+In6o2DXNID7x
+VIoDxySl+hzN+FrFvzXAHfutd9X6kAI=
+=DQuz
 -----END PGP SIGNATURE-----
 
---ckdtegxpm7vrxvpt--
+--adCi25htn3vGAWbH--
