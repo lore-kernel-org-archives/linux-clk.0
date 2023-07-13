@@ -2,160 +2,202 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F12C0015E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 14:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459B2C001DE
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 17:38:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229611AbjGMOzV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 10:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59956 "EHLO
+        id S232523AbjGMRiJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 13:38:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbjGMOzU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 10:55:20 -0400
-Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E09A270A
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 07:55:15 -0700 (PDT)
-Received: by mail-yb1-xb2a.google.com with SMTP id 3f1490d57ef6-c2cf29195f8so769553276.1
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 07:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=edgeble-ai.20221208.gappssmtp.com; s=20221208; t=1689260114; x=1691852114;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yxJReeu3wFsDEIoI+Y5EvxsHxuUj1xvYudc1q2Ogc0w=;
-        b=ond3ynwi15WishNDTT+qMQTWpC87sA93J5YINYb/UQxMxZtD2l81f0u58lE6VXbpVk
-         m2eTgHMocycV9opUSB5jzMXo+QW9SIxbmRfv10fDXTK8UDHm+sskKWUAfchlIaw4ZYiZ
-         0+f7et0pRsFrjwhnRPex2rRL6iL6jfER52dp3tUGBJBYUoYrqYSq4j+SaQQgN0gUzSMJ
-         p0u3HaguYLLz+bv2OZZ2NiBHKAjs6dHJ/X8v7bwJFIBwQbrewTqiEegnqlPaWnASV/Kt
-         zASovpdUT8U93pGjLTEtpB10OsfBHfnxvuG2RF35LhZmgSrefjNNE0gH/J/BZd5QKk9D
-         Wb+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689260114; x=1691852114;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yxJReeu3wFsDEIoI+Y5EvxsHxuUj1xvYudc1q2Ogc0w=;
-        b=OKZg+ZoxaQKbjICgtJhqC3HGOUOkHWG4irGJaDL8+FQGlT9NDShuwItqjwUBDol9Ck
-         WE2bNv/Yy4ww29oZR7pW/1qdJFSKnARxnwO2z5bOwCKvt1WEkgBRiQy3M+IkIZ+smSJt
-         zJe72eNJdYI3LsEKS9uSCbCwgEmUTfHEYOqIRYhiz3u8063ippQD5Zs1y9U9kA9mXjIz
-         g/jnHufiBs1ggcfnBPTn1fkXKnC6y7Z9j2zDx4WSCu+mOy1gDZ1Wy4xwWn+XwcDboKzj
-         opp6wI3aMnHns+YiUP9VXd6zmd6Yau8chfoaiQX80n9lAnGOXZLZZxIIW/Z4ngX4gZia
-         O92Q==
-X-Gm-Message-State: ABy/qLYVOo7OlxC/tGqOT3/Ee42mcXvrq8juq8w+EEusACQvIFuo9bZ1
-        mqHS2ilsvuxezHc4yI8xdsHm6E1AvYjYEqTO3UtdSw==
-X-Google-Smtp-Source: APBJJlG0ILTrJectunWl7ebCGzJocWBo/HnGO1eQZkCt18ndRK/0e8H6CL/4bTNR20NvglKrx3f/qqOh55pLa3q9E78=
-X-Received: by 2002:a25:c0c8:0:b0:c4f:43d7:7daf with SMTP id
- c191-20020a25c0c8000000b00c4f43d77dafmr1442561ybf.1.1689260114481; Thu, 13
- Jul 2023 07:55:14 -0700 (PDT)
+        with ESMTP id S233638AbjGMRiH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 13:38:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECF782702;
+        Thu, 13 Jul 2023 10:38:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8BA7A61B0F;
+        Thu, 13 Jul 2023 17:38:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E3AC433C7;
+        Thu, 13 Jul 2023 17:38:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689269885;
+        bh=cPHXnkrWCGZfLGF4pteF6cvNZy/RFWB1yAQYsM3jZXU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Zvzuze6KmY+7yXkLyxwoXJlboJ7ayq8+PQ1FcMUdGQJZIyTU31+dQTcieundP5pGQ
+         A508b+6ovFLERHWgMnRbqgsfKccMJyWs0vW8I1LlcMwHX7x/8dx/I2J19quHlVNaBv
+         eiugCCbbukh9MZjQ2S9KCWte5omqGJ2rdAAIHrG2LcdhjqFinL5bBLdhV2BwmolqRf
+         OMl+0416Bzy162zJzPH4YvnFCjSTEKVpzdEGKMr/1h5GHdUTlQ3Qtamzsz4qao+BUM
+         pe5PO6SoIFtI77I/fuWrofA3IRXs7yFMd3WZtZDBpKTftPk3lBVlksUiM5lI546dov
+         RtsGtqGWM/jQw==
+Message-ID: <de875511-7356-32cd-514a-ac532d75a8fd@kernel.org>
+Date:   Thu, 13 Jul 2023 20:37:57 +0300
 MIME-Version: 1.0
-References: <20230403193250.108693-1-sebastian.reichel@collabora.com> <20230403193250.108693-2-sebastian.reichel@collabora.com>
-In-Reply-To: <20230403193250.108693-2-sebastian.reichel@collabora.com>
-From:   Jagan Teki <jagan@edgeble.ai>
-Date:   Thu, 13 Jul 2023 20:25:03 +0530
-Message-ID: <CA+VMnFz4USPcXmQMyUB9n5EVmvQrJARDvnpO7iBrXZ8q2xcyAA@mail.gmail.com>
-Subject: Re: [PATCHv2 1/2] clk: rockchip: rk3588: make gate linked clocks
- ignore unused
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org,
-        Peter Geis <pgwipeout@gmail.com>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Finley Xiao <finley.xiao@rock-chips.com>,
+Subject: Re: [PATCH v7 00/22] Restructure RPM SMD ICC
+Content-Language: en-US
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Vincent Legoll <vincent.legoll@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+References: <20230526-topic-smd_icc-v7-0-09c78c175546@linaro.org>
+From:   Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20230526-topic-smd_icc-v7-0-09c78c175546@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sebastian,
-
-On Tue, 4 Apr 2023 at 01:03, Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> RK3588 has a couple of hardware blocks called Native Interface Unit
-> (NIU) that gate the clocks to devices behind them. Effectively this
-> means that some clocks require two parent clocks being enabled.
-> Downstream implemented this by using a separate clock driver
-> ("clk-link") for them, which enables the second clock using PM
-> framework.
->
-> In the upstream kernel we are currently missing support for the second
-> parent. The information about it is in the GATE_LINK() macro as
-> linkname, but that is not used. Thus the second parent clock is not
-> properly enabled. So far this did not really matter, since these clocks
-> are mostly required for the more advanced IP blocks, that are not yet
-> supported upstream. As this is about to change we need a fix. There
-> are three options available:
->
-> 1. Properly implement support for having two parent clocks in the
->    clock framework.
-> 2. Mark the affected clocks CLK_IGNORE_UNUSED, so that they are not
->    disabled. This wastes some power, but keeps the hack contained
->    within the clock driver. Going from this to the first solution
->    is easy once that has been implemented.
-> 3. Enabling the extra clock in the consumer driver. This leaks some
->    implementation details into DT.
->
-> This patch implements the second option as an intermediate solution
-> until the first one is available. I used an alias for CLK_IS_CRITICAL,
-> so that it's easy to see which clocks are not really critical once
-> the clock framework supports a better way to implement this.
->
-> Tested-by: Vincent Legoll <vincent.legoll@gmail.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+On 19.06.23 16:04, Konrad Dybcio wrote:
+> This series reshuffles things around, moving the management of SMD RPM
+> bus clocks to the interconnect framework where they belong. This helps
+> us solve a couple of issues:
+> 
+> 1. We can work towards unused clk cleanup of RPMCC without worrying
+>     about it killing some NoC bus, resulting in the SoC dying.
+>     Deasserting actually unused RPM clocks (among other things) will
+>     let us achieve "true SoC-wide power collapse states", also known as
+>     VDD_LOW and VDD_MIN.
+> 
+> 2. We no longer have to keep tons of quirky bus clock ifs in the icc
+>     driver. You either have a RPM clock and call "rpm set rate" or you
+>     have a single non-RPM clock (like AHB_CLK_SRC) or you don't have any.
+> 
+> 3. There's less overhead - instead of going through layers and layers of
+>     the CCF, ratesetting comes down to calling max() and sending a single
+>     RPM message. ICC is very very dynamic so that's a big plus.
+> 
+> The clocks still need to be vaguely described in the clk-smd-rpm driver,
+> as it gives them an initial kickoff, before actually telling RPM to
+> enable DVFS scaling.  After RPM receives that command, all clocks that
+> have not been assigned a rate are considered unused and are shut down
+> in hardware, leading to the same issue as described in point 1.
+> 
+> We can consider marking them __initconst in the future, but this series
+> is very fat even without that..
+> 
+> Apart from that, it squashes a couple of bugs that really need fixing..
+> 
+> --- MERGING STRATEGY ---
+> If Stephen and Georgi agree, it would be best to take all of this through
+> the qcom tree, as it touches on heavily intertwined components and
+> introduces compile-time dependencies between icc and clk drivers.
+> 
+> Tested on SM6375 (OOT), MSM8998 (OOT), MSM8996.
+> 
+> MSM8974 conversion to common code and modernization will be handled separately.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > ---
->  drivers/clk/rockchip/clk-rk3588.c | 42 +++++++++++++++++++------------
->  1 file changed, 26 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-> index b7ce3fbd6fa6..6994165e0395 100644
-> --- a/drivers/clk/rockchip/clk-rk3588.c
-> +++ b/drivers/clk/rockchip/clk-rk3588.c
-> @@ -13,15 +13,25 @@
->  #include "clk.h"
->
->  /*
-> - * GATE with additional linked clock. Downstream enables the linked clock
-> - * (via runtime PM) whenever the gate is enabled. The downstream implementation
-> - * does this via separate clock nodes for each of the linked gate clocks,
-> - * which leaks parts of the clock tree into DT. It is unclear why this is
-> - * actually needed and things work without it for simple use cases. Thus
-> - * the linked clock is ignored for now.
-> + * Recent Rockchip SoCs have a new hardware block called Native Interface
-> + * Unit (NIU), which gates clocks to devices behind them. These effectively
-> + * need two parent clocks.
-> + *
-> + * Downstream enables the linked clock via runtime PM whenever the gate is
-> + * enabled. This implementation uses separate clock nodes for each of the
-> + * linked gate clocks, which leaks parts of the clock tree into DT.
-> + *
-> + * The GATE_LINK macro instead takes the second parent via 'linkname', but
-> + * ignores the information. Once the clock framework is ready to handle it, the
-> + * information should be passed on here. But since these clocks are required to
-> + * access multiple relevant IP blocks, such as PCIe or USB, we mark all linked
-> + * clocks critical until a better solution is available. This will waste some
-> + * power, but avoids leaking implementation details into DT or hanging the
-> + * system.
->   */
+> Changes in v7:
+> - Rebase on next-20230619
+> - Throw some consts at "Separate out interconnect bus clocks"
+> - Link to v6: https://lore.kernel.org/r/20230526-topic-smd_icc-v6-0-263283111e66@linaro.org
+> 
+> Changes in v6:
+> - Fix argument naming in "Add rpmcc handling skeleton code"
+> - Fix missing clk.h and reorder patch "Add missing headers in icc-rpm.h",
+>    drop Dmitry's rb
+> - Pick up tags
+> - Link to v5: https://lore.kernel.org/r/20230526-topic-smd_icc-v5-0-eeaa09d0082e@linaro.org
+> 
+> Changes in v5:
+> - Pass RPM context id to qcom_icc_rpm_set_bus_rate()
+> - Fix min_t call cutting off bits 32-63 in set() path
+> - Pick up tags
+> - Link to v4: https://lore.kernel.org/r/20230526-topic-smd_icc-v4-0-5ba82b6fbba2@linaro.org
+> 
+> Changes in v4:
+> - Only set clk rate on a context if necessary
+> - Mention qcom,icc.h is not the correct header in "Control bus rpmcc form icc"
+> - Fix the bindings (BIT vs 1<<)
+> - Fix one more wrong use of qcom,icc.h in "Fix bucket numer" and uninclude it
+> - Drop "Allow negative QoS offset" (will be handled separately)
+> - Export icc clocks descriptions to unbreak =m builds
+> - Pick up tags
+> - Link to v3: https://lore.kernel.org/r/20230526-topic-smd_icc-v3-0-5fb7d39b874f@linaro.org
+> 
+> Changes in v3:
+> - Use devm_clk_get_optional and only get() the clock once
+> - Drop unnecessary NULL-checks for qp->bus_clk
+> - Handle ARM32 CCF limitations, add an explicit comment about them
+> - Use Stephan's alternative rpmcc readiness check
+> - Fix one more wrong usage of QCOM_ICC_NUM_BUCKETS in icc-rpm.h
+> - Introduce new dt-bindings for icc rpm tags
+> - Mention the rpm tags situation in the commit message of
+>    "Fix bucket number"
+> - Pick up tags
+> - Link to v2: https://lore.kernel.org/r/20230526-topic-smd_icc-v2-0-e5934b07d813@linaro.org
+> 
+> Changes in v2:
+> - Sort entries properly in "Add missing headers in icc-rpm.h"
+> - Fix the check for no clocks on a given provider
+> - Replace "Divide clk rate by src node bus width" with a proper fix
+> - Add "Set correct bandwidth through RPM bw req"
+> - Split "Add QCOM_SMD_RPM_STATE_NUM" into 2 logical changes
+> - Move "Separate out interconnect bus clocks" a bit later in the series
+> - Link to v1: https://lore.kernel.org/r/20230526-topic-smd_icc-v1-0-1bf8e6663c4e@linaro.org
+> 
+> ---
+> Konrad Dybcio (21):
+>        dt-bindings: interconnect: Add Qcom RPM ICC bindings
+>        soc: qcom: smd-rpm: Add QCOM_SMD_RPM_STATE_NUM
+>        soc: qcom: smd-rpm: Use tabs for defines
+>        clk: qcom: smd-rpm: Move some RPM resources to the common header
+>        interconnect: qcom: icc-rpm: Introduce keep_alive
+>        interconnect: qcom: Add missing headers in icc-rpm.h
+>        interconnect: qcom: Fold smd-rpm.h into icc-rpm.h
+>        interconnect: qcom: smd-rpm: Add rpmcc handling skeleton code
+>        interconnect: qcom: Define RPM bus clocks
+>        interconnect: qcom: sdm660: Hook up RPM bus clk definitions
+>        interconnect: qcom: msm8996: Hook up RPM bus clk definitions
+>        interconnect: qcom: qcs404: Hook up RPM bus clk definitions
+>        interconnect: qcom: msm8939: Hook up RPM bus clk definitions
+>        interconnect: qcom: msm8916: Hook up RPM bus clk definitions
+>        interconnect: qcom: qcm2290: Hook up RPM bus clk definitions
+>        interconnect: qcom: icc-rpm: Control bus rpmcc from icc
+>        clk: qcom: smd-rpm: Separate out interconnect bus clocks
+>        interconnect: qcom: icc-rpm: Fix bucket number
+>        interconnect: qcom: icc-rpm: Set bandwidth on both contexts
+>        interconnect: qcom: icc-rpm: Set correct bandwidth through RPM bw req
+>        interconnect: qcom: icc-rpm: Fix bandwidth calculations
+> 
+> Stephan Gerhold (1):
+>        soc: qcom: smd-rpm: Move icc_smd_rpm registration to clk-smd-rpm
+> 
+>   drivers/clk/qcom/clk-smd-rpm.c                  | 314 +++++++++++-------------
+>   drivers/interconnect/qcom/Makefile              |   2 +-
+>   drivers/interconnect/qcom/icc-rpm-clocks.c      |  77 ++++++
+>   drivers/interconnect/qcom/icc-rpm.c             | 220 +++++++++--------
+>   drivers/interconnect/qcom/icc-rpm.h             |  56 ++++-
+>   drivers/interconnect/qcom/msm8916.c             |   5 +-
+>   drivers/interconnect/qcom/msm8939.c             |   6 +-
+>   drivers/interconnect/qcom/msm8974.c             |   2 +-
+>   drivers/interconnect/qcom/msm8996.c             |  10 +-
+>   drivers/interconnect/qcom/qcm2290.c             |   8 +-
+>   drivers/interconnect/qcom/qcs404.c              |   5 +-
+>   drivers/interconnect/qcom/sdm660.c              |   8 +-
+>   drivers/interconnect/qcom/smd-rpm.c             |  23 +-
+>   drivers/interconnect/qcom/smd-rpm.h             |  15 --
+>   drivers/soc/qcom/smd-rpm.c                      |  17 +-
+>   include/dt-bindings/interconnect/qcom,rpm-icc.h |  13 +
+>   include/linux/soc/qcom/smd-rpm.h                |  20 +-
+>   17 files changed, 456 insertions(+), 345 deletions(-)
 
-Does it mean the clk-link topology in the downstream kernel can be
-reused the same as normal clock notation?
+Thank you, Konrad!
 
-For example, I'm trying to add HCLK_VO1 directly to VO1 syscon instead
-of routing to pclk_vo1_grf(done downstream)
-      vo1_grf: syscon@fd5a8000 {
-               compatible = "rockchip,rk3588-vo-grf", "syscon";
-               reg = <0x0 0xfd5a8000 0x0 0x100>;
-             clocks = <&cru HCLK_VO1>;
-      };
-
-This seems breaking syscon for vo1_grf and observed a bus error while
-accessing regmap. I remember in one of the RKDC discussion that the
-double parenting of these clocks is mandatory while accessing
-associated IP blocks. Any thoughts?
-
-Thanks,
-Jagan.
+Acked-by: Georgi Djakov <djakov@kernel.org>
