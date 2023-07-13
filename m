@@ -2,113 +2,377 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4174C0015E
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Jul 2023 21:28:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C42EB64DA
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 02:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230229AbjGLV22 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jul 2023 17:28:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49234 "EHLO
+        id S233192AbjGMCPa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Jul 2023 22:15:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbjGLV21 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 17:28:27 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50366CF;
-        Wed, 12 Jul 2023 14:28:26 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36CHgItg032565;
-        Wed, 12 Jul 2023 21:28:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=pFnVUYqDut2tT+LTzWe2AAcZdkToKwokw2/YqTsEkRE=;
- b=aWqWbbwDHCPurRn2KCT/yZB1h2sAFXHfjlf0S3S0yMnfQ6WdqDt0Vq28ZZbGm5ZJmHNi
- qOsGOhV1fZI6lhW1NDiPlLLJMmANKNc1Y9YVTxaXtM8EP8IcYgQtjbisluHdLz6AsOY5
- +VJLylQrZ8Ar4jmi4O5Yg4Kpqj/iynPyb+BBMlxN7A47aBXDThEC4J+9AfbsY28LNPoK
- OJC6MzwF5wsJwiIlby/zAzQ4wIfeiwc9cJBhmxEQ72K2xmHRvR2esUjDaCdtxzZGYs1y
- PRHezMlr9A0/SD9HJK3NHGFwP7Ho87wHcfNmFKF0gfCceU/aLB/YN0E0R8c1T8wJXI2m xg== 
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rsf51jmp1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 12 Jul 2023 21:28:05 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36CLS2NG003675
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 12 Jul 2023 21:28:02 GMT
-Received: from [10.134.70.142] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 12 Jul
- 2023 14:28:01 -0700
-Message-ID: <16659770-a839-ebfe-22d1-9a941ba07583@quicinc.com>
-Date:   Wed, 12 Jul 2023 14:28:00 -0700
+        with ESMTP id S232557AbjGMCP3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 22:15:29 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5D412D;
+        Wed, 12 Jul 2023 19:15:24 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id 4A46124E27E;
+        Thu, 13 Jul 2023 10:15:22 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Jul
+ 2023 10:15:22 +0800
+Received: from [192.168.125.128] (183.27.98.46) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Jul
+ 2023 10:15:21 +0800
+Message-ID: <c202bc09-1255-9032-2eee-d0459014bebf@starfivetech.com>
+Date:   Thu, 13 Jul 2023 10:12:08 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2 01/15] drm/msm/dsi: Drop unused regulators from QCM2290
- 14nm DSI PHY config
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v7 4/9] clk: starfive: Add StarFive JH7110
+ Image-Signal-Process clock driver
 Content-Language: en-US
-To:     Marijn Suijten <marijn.suijten@somainline.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        "Konrad Dybcio" <konrad.dybcio@somainline.org>
-CC:     <~postmarketos/upstreaming@lists.sr.ht>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        "Jami Kettunen" <jami.kettunen@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, "Lux Aliaga" <they@mint.lgbt>
-References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
- <20230627-sm6125-dpu-v2-1-03e430a2078c@somainline.org>
-From:   Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20230627-sm6125-dpu-v2-1-03e430a2078c@somainline.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230712092007.31013-1-xingyu.wu@starfivetech.com>
+ <20230712092007.31013-5-xingyu.wu@starfivetech.com>
+ <CAJM55Z8uv35BSH-RFg6bv8HO-uX0G774wgH+bqEoJBui=QTGkA@mail.gmail.com>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <CAJM55Z8uv35BSH-RFg6bv8HO-uX0G774wgH+bqEoJBui=QTGkA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6YY-ieJCYwmXQO1wH3VhSQ2y26Y9X-PW
-X-Proofpoint-GUID: 6YY-ieJCYwmXQO1wH3VhSQ2y26Y9X-PW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-12_15,2023-07-11_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- bulkscore=0 lowpriorityscore=0 clxscore=1011 phishscore=0 malwarescore=0
- mlxlogscore=977 impostorscore=0 spamscore=0 suspectscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2305260000
- definitions=main-2307120189
+X-Originating-IP: [183.27.98.46]
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 6/27/2023 1:14 PM, Marijn Suijten wrote:
-> The regulator setup was likely copied from other SoCs by mistake.  Just
-> like SM6125 the DSI PHY on this platform is not getting power from a
-> regulator but from the MX power domain.
+On 2023/7/13 1:59, Emil Renner Berthing wrote:
+> On Wed, 12 Jul 2023 at 11:22, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
+>>
+>> Add driver for the StarFive JH7110 Image-Signal-Process clock controller.
+>> And these clock controllers should power on and enable the clocks from
+>> SYSCRG first before registering.
+>>
+>> Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> ---
+>>  drivers/clk/starfive/Kconfig                  |   8 +
+>>  drivers/clk/starfive/Makefile                 |   1 +
+>>  .../clk/starfive/clk-starfive-jh7110-isp.c    | 232 ++++++++++++++++++
+>>  drivers/clk/starfive/clk-starfive-jh7110.h    |   6 +
+>>  4 files changed, 247 insertions(+)
+>>  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-isp.c
+>>
+>> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+>> index eb1023b5e95a..13b4d08cbcd2 100644
+>> --- a/drivers/clk/starfive/Kconfig
+>> +++ b/drivers/clk/starfive/Kconfig
+>> @@ -47,3 +47,11 @@ config CLK_STARFIVE_JH7110_STG
+>>         help
+>>           Say yes here to support the System-Top-Group clock controller
+>>           on the StarFive JH7110 SoC.
+>> +
+>> +config CLK_STARFIVE_JH7110_ISP
+>> +       tristate "StarFive JH7110 Image-Signal-Process clock support"
+>> +       depends on CLK_STARFIVE_JH7110_SYS && JH71XX_PMU
+>> +       default m if ARCH_STARFIVE
+>> +       help
+>> +         Say yes here to support the Image-Signal-Process clock controller
+>> +         on the StarFive JH7110 SoC.
+>> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
+>> index b81e97ee2659..76fb9f8d628b 100644
+>> --- a/drivers/clk/starfive/Makefile
+>> +++ b/drivers/clk/starfive/Makefile
+>> @@ -7,3 +7,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO) += clk-starfive-jh7100-audio.o
+>>  obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)  += clk-starfive-jh7110-sys.o
+>>  obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)  += clk-starfive-jh7110-aon.o
+>>  obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)  += clk-starfive-jh7110-stg.o
+>> +obj-$(CONFIG_CLK_STARFIVE_JH7110_ISP)  += clk-starfive-jh7110-isp.o
+>> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-isp.c b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
+>> new file mode 100644
+>> index 000000000000..7e51447060fe
+>> --- /dev/null
+>> +++ b/drivers/clk/starfive/clk-starfive-jh7110-isp.c
+>> @@ -0,0 +1,232 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * StarFive JH7110 Image-Signal-Process Clock Driver
+>> + *
+>> + * Copyright (C) 2022-2023 StarFive Technology Co., Ltd.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/io.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/reset.h>
+>> +
+>> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
+>> +
+>> +#include "clk-starfive-jh7110.h"
+>> +
+>> +/* external clocks */
+>> +#define JH7110_ISPCLK_ISP_TOP_CORE             (JH7110_ISPCLK_END + 0)
+>> +#define JH7110_ISPCLK_ISP_TOP_AXI              (JH7110_ISPCLK_END + 1)
+>> +#define JH7110_ISPCLK_NOC_BUS_ISP_AXI          (JH7110_ISPCLK_END + 2)
+>> +#define JH7110_ISPCLK_DVP_CLK                  (JH7110_ISPCLK_END + 3)
+>> +#define JH7110_ISPCLK_EXT_END                  (JH7110_ISPCLK_END + 4)
+>> +
+>> +static struct clk_bulk_data jh7110_isp_top_clks[] = {
+>> +       { .id = "isp_top_core" },
+>> +       { .id = "isp_top_axi" }
+>> +};
+>> +
+>> +static const struct jh71x0_clk_data jh7110_ispclk_data[] = {
+>> +       /* syscon */
+>> +       JH71X0__DIV(JH7110_ISPCLK_DOM4_APB_FUNC, "dom4_apb_func", 15,
+>> +                   JH7110_ISPCLK_ISP_TOP_AXI),
+>> +       JH71X0__DIV(JH7110_ISPCLK_MIPI_RX0_PXL, "mipi_rx0_pxl", 8,
+>> +                   JH7110_ISPCLK_ISP_TOP_CORE),
+>> +       JH71X0__INV(JH7110_ISPCLK_DVP_INV, "dvp_inv", JH7110_ISPCLK_DVP_CLK),
+>> +       /* vin */
+>> +       JH71X0__DIV(JH7110_ISPCLK_M31DPHY_CFG_IN, "m31dphy_cfg_in", 16,
+>> +                   JH7110_ISPCLK_ISP_TOP_CORE),
+>> +       JH71X0__DIV(JH7110_ISPCLK_M31DPHY_REF_IN, "m31dphy_ref_in", 16,
+>> +                   JH7110_ISPCLK_ISP_TOP_CORE),
+>> +       JH71X0__DIV(JH7110_ISPCLK_M31DPHY_TX_ESC_LAN0, "m31dphy_tx_esc_lan0", 60,
+>> +                   JH7110_ISPCLK_ISP_TOP_CORE),
+>> +       JH71X0_GATE(JH7110_ISPCLK_VIN_APB, "vin_apb", 0,
+>> +                   JH7110_ISPCLK_DOM4_APB_FUNC),
+>> +       JH71X0__DIV(JH7110_ISPCLK_VIN_SYS, "vin_sys", 8, JH7110_ISPCLK_ISP_TOP_CORE),
+>> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_IF0, "vin_pixel_if0", 0,
+>> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
+>> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_IF1, "vin_pixel_if1", 0,
+>> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
+>> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_IF2, "vin_pixel_if2", 0,
+>> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
+>> +       JH71X0_GATE(JH7110_ISPCLK_VIN_PIXEL_IF3, "vin_pixel_if3", 0,
+>> +                   JH7110_ISPCLK_MIPI_RX0_PXL),
+>> +       JH71X0__MUX(JH7110_ISPCLK_VIN_P_AXI_WR, "vin_p_axi_wr", 2,
+>> +                   JH7110_ISPCLK_MIPI_RX0_PXL,
+>> +                   JH7110_ISPCLK_DVP_INV),
+>> +       /* ispv2_top_wrapper */
+>> +       JH71X0_GMUX(JH7110_ISPCLK_ISPV2_TOP_WRAPPER_C, "ispv2_top_wrapper_c", 0, 2,
+>> +                   JH7110_ISPCLK_MIPI_RX0_PXL,
+>> +                   JH7110_ISPCLK_DVP_INV),
+>> +};
+>> +
+>> +static inline int jh7110_isp_top_rst_init(struct jh71x0_clk_priv *priv)
+>> +{
+>> +       struct reset_control *top_rsts;
+>> +
+>> +       /* The resets should be shared and other ISP modules will use its. */
+>> +       top_rsts = devm_reset_control_array_get_shared(priv->dev);
+>> +       if (IS_ERR(top_rsts))
+>> +               return dev_err_probe(priv->dev, PTR_ERR(top_rsts),
+>> +                                    "failed to get top resets\n");
+>> +
+>> +       return reset_control_deassert(top_rsts);
+>> +}
+>> +
+>> +static struct clk_hw *jh7110_ispclk_get(struct of_phandle_args *clkspec, void *data)
+>> +{
+>> +       struct jh71x0_clk_priv *priv = data;
+>> +       unsigned int idx = clkspec->args[0];
+>> +
+>> +       if (idx < JH7110_ISPCLK_END)
+>> +               return &priv->reg[idx].hw;
+>> +
+>> +       return ERR_PTR(-EINVAL);
+>> +}
+>> +
+>> +#ifdef CONFIG_PM
+>> +static int jh7110_ispcrg_suspend(struct device *dev)
+>> +{
+>> +       struct top_sysclk *top = dev_get_drvdata(dev);
+>> +
+>> +       clk_bulk_disable_unprepare(top->top_clks_num, top->top_clks);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int jh7110_ispcrg_resume(struct device *dev)
+>> +{
+>> +       struct top_sysclk *top = dev_get_drvdata(dev);
+>> +
+>> +       return clk_bulk_prepare_enable(top->top_clks_num, top->top_clks);
+>> +}
+>> +#endif
+>> +
+>> +static const struct dev_pm_ops jh7110_ispcrg_pm_ops = {
+>> +       SET_RUNTIME_PM_OPS(jh7110_ispcrg_suspend, jh7110_ispcrg_resume, NULL)
+>> +};
+>> +
+>> +static int jh7110_ispcrg_probe(struct platform_device *pdev)
+>> +{
+>> +       struct jh71x0_clk_priv *priv;
+>> +       struct top_sysclk *top;
+>> +       unsigned int idx;
+>> +       int ret;
+>> +
+>> +       priv = devm_kzalloc(&pdev->dev,
+>> +                           struct_size(priv, reg, JH7110_ISPCLK_END),
+>> +                           GFP_KERNEL);
+>> +       if (!priv)
+>> +               return -ENOMEM;
+>> +
+>> +       top = devm_kzalloc(&pdev->dev, sizeof(*top), GFP_KERNEL);
+>> +       if (!top)
+>> +               return -ENOMEM;
+>> +
+>> +       spin_lock_init(&priv->rmw_lock);
+>> +       priv->dev = &pdev->dev;
+>> +       priv->base = devm_platform_ioremap_resource(pdev, 0);
+>> +       if (IS_ERR(priv->base))
+>> +               return PTR_ERR(priv->base);
+>> +
+>> +       top->top_clks = jh7110_isp_top_clks;
+>> +       top->top_clks_num = ARRAY_SIZE(jh7110_isp_top_clks);
+>> +       ret = devm_clk_bulk_get(priv->dev, top->top_clks_num, top->top_clks);
+>> +       if (ret)
+>> +               return dev_err_probe(priv->dev, ret, "failed to get main clocks\n");
+>> +       dev_set_drvdata(priv->dev, top);
+>> +
+>> +       /* enable power domain and clocks */
+>> +       pm_runtime_enable(priv->dev);
+>> +       ret = pm_runtime_get_sync(priv->dev);
+>> +       if (ret < 0)
+>> +               return dev_err_probe(priv->dev, ret, "failed to turn on power\n");
+>> +
+>> +       ret = jh7110_isp_top_rst_init(priv);
+>> +       if (ret)
+>> +               goto err_exit;
+>> +
+>> +       for (idx = 0; idx < JH7110_ISPCLK_END; idx++) {
+>> +               u32 max = jh7110_ispclk_data[idx].max;
+>> +               struct clk_parent_data parents[4] = {};
+>> +               struct clk_init_data init = {
+>> +                       .name = jh7110_ispclk_data[idx].name,
+>> +                       .ops = starfive_jh71x0_clk_ops(max),
+>> +                       .parent_data = parents,
+>> +                       .num_parents =
+>> +                               ((max & JH71X0_CLK_MUX_MASK) >> JH71X0_CLK_MUX_SHIFT) + 1,
+>> +                       .flags = jh7110_ispclk_data[idx].flags,
+>> +               };
+>> +               struct jh71x0_clk *clk = &priv->reg[idx];
+>> +               unsigned int i;
+>> +               const char *fw_name[JH7110_ISPCLK_EXT_END - JH7110_ISPCLK_END] = {
+>> +                       "isp_top_core",
+>> +                       "isp_top_axi",
+>> +                       "noc_bus_isp_axi",
+>> +                       "dvp_clk"
+>> +               };
+>> +
+>> +               for (i = 0; i < init.num_parents; i++) {
+>> +                       unsigned int pidx = jh7110_ispclk_data[idx].parents[i];
+>> +
+>> +                       if (pidx < JH7110_ISPCLK_END)
+>> +                               parents[i].hw = &priv->reg[pidx].hw;
+>> +                       else
+>> +                               parents[i].fw_name = fw_name[pidx - JH7110_ISPCLK_END];
+>> +               }
+>> +
+>> +               clk->hw.init = &init;
+>> +               clk->idx = idx;
+>> +               clk->max_div = max & JH71X0_CLK_DIV_MASK;
+>> +
+>> +               ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
+>> +               if (ret)
+>> +                       goto err_exit;
+>> +       }
+>> +
+>> +       ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_ispclk_get, priv);
+>> +       if (ret)
+>> +               goto err_exit;
+>> +
+>> +       ret = jh7110_reset_controller_register(priv, "rst-isp", 3);
+>> +       if (ret)
+>> +               goto err_exit;
+>> +
+>> +       return 0;
+>> +
+>> +err_exit:
+>> +       pm_runtime_put_sync(priv->dev);
+>> +       pm_runtime_disable(priv->dev);
+>> +       return ret;
+>> +}
+>> +
+>> +static int jh7110_ispcrg_remove(struct platform_device *pdev)
+>> +{
+>> +       pm_runtime_put_sync(&pdev->dev);
+>> +       pm_runtime_disable(&pdev->dev);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct of_device_id jh7110_ispcrg_match[] = {
+>> +       { .compatible = "starfive,jh7110-ispcrg" },
+>> +       { /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, jh7110_ispcrg_match);
+>> +
+>> +static struct platform_driver jh7110_ispcrg_driver = {
+>> +       .probe = jh7110_ispcrg_probe,
+>> +       .remove = jh7110_ispcrg_remove,
+>> +       .driver = {
+>> +               .name = "clk-starfive-jh7110-isp",
+>> +               .of_match_table = jh7110_ispcrg_match,
+>> +               .pm = &jh7110_ispcrg_pm_ops,
+>> +       },
+>> +};
+>> +module_platform_driver(jh7110_ispcrg_driver);
+>> +
+>> +MODULE_AUTHOR("Xingyu Wu <xingyu.wu@starfivetech.com>");
+>> +MODULE_DESCRIPTION("StarFive JH7110 Image-Signal-Process clock driver");
+>> +MODULE_LICENSE("GPL");
+>> diff --git a/drivers/clk/starfive/clk-starfive-jh7110.h b/drivers/clk/starfive/clk-starfive-jh7110.h
+>> index f29682b8d400..5425fd89394a 100644
+>> --- a/drivers/clk/starfive/clk-starfive-jh7110.h
+>> +++ b/drivers/clk/starfive/clk-starfive-jh7110.h
+>> @@ -4,6 +4,12 @@
+>>
+>>  #include "clk-starfive-jh71x0.h"
+>>
+>> +/* top clocks of ISP/VOUT domain from SYSCRG */
+>> +struct top_sysclk {
+>> +       struct clk_bulk_data *top_clks;
+>> +       int top_clks_num;
+>> +};
+>> +
 > 
-> Fixes: 572e9fd6d14a ("drm/msm/dsi: Add phy configuration for QCM2290")
-> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> ---
->   drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 2 --
->   1 file changed, 2 deletions(-)
+> When reviewing this I was very confused what data the vout and isp
+> clocks need to share. But as far as I can tell they don't actually
+> share any data, it's just that they both need a struct like this. I
+> guess that's ok to put here, but it should really be prefixed with
+> jh7110_ like the function below. Eg. struct jh7110_top_clks { .. }
+> 
+> With that fixed:
+> Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 > 
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Will fix. Thanks.
+
+Best regards,
+Xingyu Wu
+
+>>  int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+>>                                      const char *adev_name,
+>>                                      u32 adev_id);
+
