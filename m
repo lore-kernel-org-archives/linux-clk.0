@@ -2,85 +2,150 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACDAEB64DA
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 03:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47332EB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 05:32:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233705AbjGMDqZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Jul 2023 23:46:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50988 "EHLO
+        id S233766AbjGMFcJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 01:32:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233188AbjGMDqX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Jul 2023 23:46:23 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BE011FEE;
-        Wed, 12 Jul 2023 20:46:22 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 49AC680BE;
-        Thu, 13 Jul 2023 11:46:15 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Jul
- 2023 11:46:15 +0800
-Received: from [192.168.125.128] (183.27.98.46) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Jul
- 2023 11:46:14 +0800
-Message-ID: <a6bdf17f-dd05-0237-92f4-7fc5115e4bef@starfivetech.com>
-Date:   Thu, 13 Jul 2023 11:43:02 +0800
+        with ESMTP id S232495AbjGMFcI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 01:32:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 568DC119;
+        Wed, 12 Jul 2023 22:32:07 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E21E661A15;
+        Thu, 13 Jul 2023 05:32:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E74AC433C8;
+        Thu, 13 Jul 2023 05:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689226326;
+        bh=fVVjgsYE+Qoi+R94FE6e7lA0UTa62pQgQ545OxhcM9g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IZVgs6buiRTDdalbv2ZlrRBzrZfqoUiABFLs6WO1uVDx7yut6id1QniuBP9TE75Dr
+         Pbv8EDd9iWXYV6T82XvUowSPK+vsALcfjN8dfgcVMnS0v/KZ/L5jW2ZWMxoqDunz6P
+         pwC5sFon/w+70nR9PFTtkqhFzhjgAOGytaeDZLWJbpwXdElbWea4yRom6ReQ0Fwf6i
+         0x8X4ZmeDoC654H5/Ie7a0h4yTjizDyuJ9c4d8Ew8H5bbt5pHFS3aK/Ve6/2DtCArY
+         39ipOuLlQVqXDYClQhx67gLANhsT0mzDrMwGc08DqeVrDVYw3z9KqPg5GLZpGvNKV0
+         H4S9YFrSwOFGg==
+Date:   Thu, 13 Jul 2023 06:32:01 +0100
+From:   Simon Horman <horms@kernel.org>
+To:     Christian Marangi <ansuelsmth@gmail.com>
+Cc:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
+ multi ops
+Message-ID: <ZK+MUW55tWhOX1/i@kernel.org>
+References: <20230531222654.25475-1-ansuelsmth@gmail.com>
+ <20230531222654.25475-3-ansuelsmth@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH v7 0/9] Add STG/ISP/VOUT clock and reset drivers for
- StarFive JH7110
-Content-Language: en-US
-To:     Conor Dooley <conor@kernel.org>,
-        Palmer Dabbelt <palmer@dabbelt.com>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <p.zabel@pengutronix.de>, <kernel@esmil.dk>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        <aou@eecs.berkeley.edu>, <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230712092007.31013-1-xingyu.wu@starfivetech.com>
- <mhng-d3795910-5414-4555-bf3d-75ebe769ed2b@palmer-ri-x1c9a>
- <20230712-unsold-impound-02608d701dfb@spud>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <20230712-unsold-impound-02608d701dfb@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.98.46]
-X-ClientProxiedBy: EXCAS063.cuchost.com (172.16.6.23) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230531222654.25475-3-ansuelsmth@gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/7/13 1:01, Conor Dooley wrote:
-> On Wed, Jul 12, 2023 at 09:50:37AM -0700, Palmer Dabbelt wrote:
->> On Wed, 12 Jul 2023 02:19:58 PDT (-0700), xingyu.wu@starfivetech.com wrote:
->> > This patch serises are base on the basic JH7110 SYSCRG/AONCRG
->> > drivers and add new partial clock drivers and reset supports
->> > about System-Top-Group(STG), Image-Signal-Process(ISP)
->> > and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC. These
->> > clocks and resets could be used by DMA, VIN and Display modules.
+On Thu, Jun 01, 2023 at 12:26:53AM +0200, Christian Marangi wrote:
+> Some RCG frequency can be reached by multiple configuration.
 > 
->> Happy to take it through the RISC-V tree if folks want, but IMO it's
->> probably better aimed at the clock/reset folks.  Either way I'd want to give
->> them a chance to ack/review it, so I'm going to drop it from my list.
->> 
->> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+> Add clk_rcg2_fm_ops ops to support these special RCG configurations.
 > 
-> I had a look through it & I am generally happy with it - everything has
-> either an R-b from DT folk or Hal on the drivers.
-> I was going to propose the same thing as the PLL patchset - if Emil is
-> happy with it, then I intend sending Stephen a PR for the drivers &
-> bindings.
+> These alternative ops will select the frequency using a CEIL policy.
 > 
+> When the correct frequency is found, the correct config is selected by
+> calculating the final rate (by checking the defined parent and values
+> in the config that is being checked) and deciding based on the one that
+> is less different than the requested one.
+> 
+> These check are skipped if there is just on config for the requested
+> freq.
+> 
+> qcom_find_freq_multi is added to search the freq with the new struct
+> freq_multi_tbl.
+> __clk_rcg2_select_conf is used to select the correct conf by simulating
+> the final clock.
+> If a conf can't be found due to parent not reachable, a WARN is printed
+> and -EINVAL is returned.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-Thanks, I will send a new version soon with some modification from Emil's comments.
+...
 
-Best regards,
-Xingyu Wu
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 76551534f10d..9a139fc8bbfa 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -266,6 +266,112 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+>  	return 0;
+>  }
+>  
+> +static const struct freq_conf *
+> +__clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
+> +		       unsigned long req_rate)
+> +{
+> +	unsigned long rate_diff, best_rate_diff = ULONG_MAX;
+> +	const struct freq_conf *conf, *best_conf;
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	const char *name = clk_hw_get_name(hw);
+> +	unsigned long parent_rate, rate;
+> +	struct clk_hw *p;
+> +	int index, i;
+> +
+> +	/* Exit early if only one config is defined */
+> +	if (f->num_confs == 1)
+> +		return f->confs;
+> +
+> +	/* Search in each provided config the one that is near the wanted rate */
+> +	for (i = 0, conf = f->confs; i < f->num_confs; i++, conf++) {
+> +		index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
+> +		if (index < 0)
+> +			continue;
+> +
+> +		p = clk_hw_get_parent_by_index(hw, index);
+> +		if (!p)
+> +			continue;
+> +
+> +		parent_rate =  clk_hw_get_rate(p);
+> +		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
+> +
+> +		if (rate == req_rate) {
+> +			best_conf = conf;
+> +			break;
+> +		}
+> +
+> +		rate_diff = abs(req_rate - rate);
+> +		if (rate_diff < best_rate_diff) {
+> +			best_rate_diff = rate_diff;
+> +			best_conf = conf;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Very unlikely. Warn if we couldn't find a correct config
+> +	 * due to parent not present.
+> +	 */
+> +	if (unlikely(i == f->num_confs)) {
+> +		WARN(1, "%s: can't find a configuration for rate %lu.",
+> +		     name, req_rate);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	return best_conf;
 
+Hi Christian,
+
+It's unclear to me if this can actually occur,
+but Sparse warns that best_conf may be uninitialised here.
+
+> +}
+
+...
