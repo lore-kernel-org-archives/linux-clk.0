@@ -2,92 +2,306 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CF8C001B0
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 08:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62451EB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 09:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233717AbjGMICg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 04:02:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43724 "EHLO
+        id S232052AbjGMJ5s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 05:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232547AbjGMICM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 04:02:12 -0400
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9933C30;
-        Thu, 13 Jul 2023 01:00:37 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 47F8AC000C;
-        Thu, 13 Jul 2023 07:59:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1689235151;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0r7ogdmgCqQZyvfvesUVl72YF6nI4bT74X6FmO2pwNE=;
-        b=Tt6DqdaTIvYJ03V43HEvPKPDFqzSMtWdMKUop9m5dy5BbdUosmCowZL7y+hm+tjpr6UA4F
-        RSF6yw6aIowvCkb8PvT/ALygCJ3NxMH3pgtXwh/RAQ2Swq2lApbErshp8KEP9iHGXOmH7Q
-        G/ZQ1/Y105arzbg/4xwndgPZ4HKmuEfoxp565iGu9EamAwMe5pFmvfoPiqcVS30msNY/hv
-        li8GDHBRySKlEgbuz1c5g/UlXdZbC4BaSvhfE1BOuc7mJzKiiXNJAYzGjsX53i/Vj5yyF7
-        TMtcUyZz8uJ9mW63iWmmzkX1oDqfn92lioTTvV9yjWo10SqjdPJzXtzQI7tojg==
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Neil Armstrong <neil.armstrong@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-oxnas@groups.io,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH v2 06/15] dt-bindings: mtd: oxnas-nand: remove obsolete bindings
-Date:   Thu, 13 Jul 2023 09:59:05 +0200
-Message-Id: <20230713075905.486684-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To:  <20230630-topic-oxnas-upstream-remove-v2-6-fb6ab3dea87c@linaro.org>
-References: 
+        with ESMTP id S229890AbjGMJ5r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 05:57:47 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B0C11D;
+        Thu, 13 Jul 2023 02:57:45 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id 875E182CA;
+        Thu, 13 Jul 2023 17:57:43 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Jul
+ 2023 17:57:43 +0800
+Received: from [192.168.125.128] (183.27.98.46) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 13 Jul
+ 2023 17:57:42 +0800
+Message-ID: <66ec4805-a0bf-0590-55ef-39f8f974023d@starfivetech.com>
+Date:   Thu, 13 Jul 2023 17:54:30 +0800
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'b7c9b576b5f61fe4b8705bf419a1fb09541e4be8'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v7 2/9] clk: starfive: Add StarFive JH7110
+ System-Top-Group clock driver
+Content-Language: en-US
+To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Conor Dooley <conor@kernel.org>,
+        "Emil Renner Berthing" <kernel@esmil.dk>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230712092007.31013-1-xingyu.wu@starfivetech.com>
+ <20230712092007.31013-3-xingyu.wu@starfivetech.com>
+ <CAJM55Z-FsYSo1mnN_++RE_Ksu58q5LbNYuXNF8tA84ixg=h5Ag@mail.gmail.com>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <CAJM55Z-FsYSo1mnN_++RE_Ksu58q5LbNYuXNF8tA84ixg=h5Ag@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [183.27.98.46]
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2023-06-30 at 16:58:31 UTC, Neil Armstrong wrote:
-> Due to lack of maintenance and stall of development for a few years now,
-> and since no new features will ever be added upstream, remove the
-> for OX810 and OX820 nand bindings.
+On 2023/7/13 1:50, Emil Renner Berthing wrote:
+> On Wed, 12 Jul 2023 at 11:22, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
+>>
+>> From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+>>
+>> Add driver for the StarFive JH7110 System-Top-Group clock controller.
+>>
+>> Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
 > 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Daniel Golle <daniel@makrotopia.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next, thanks.
+Hi Emil,
 
-Miquel
+Thanks. I already added you as the commit author of this patch, so I will not
+add the Reviewed-by tag for you.
+
+Best regards,
+Xingyu Wu
+
+> 
+>> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+>> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+>> ---
+>>  drivers/clk/starfive/Kconfig                  |   8 +
+>>  drivers/clk/starfive/Makefile                 |   1 +
+>>  .../clk/starfive/clk-starfive-jh7110-stg.c    | 173 ++++++++++++++++++
+>>  3 files changed, 182 insertions(+)
+>>  create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-stg.c
+>>
+>> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+>> index 5d2333106f13..eb1023b5e95a 100644
+>> --- a/drivers/clk/starfive/Kconfig
+>> +++ b/drivers/clk/starfive/Kconfig
+>> @@ -39,3 +39,11 @@ config CLK_STARFIVE_JH7110_AON
+>>         help
+>>           Say yes here to support the always-on clock controller on the
+>>           StarFive JH7110 SoC.
+>> +
+>> +config CLK_STARFIVE_JH7110_STG
+>> +       tristate "StarFive JH7110 System-Top-Group clock support"
+>> +       depends on CLK_STARFIVE_JH7110_SYS
+>> +       default m if ARCH_STARFIVE
+>> +       help
+>> +         Say yes here to support the System-Top-Group clock controller
+>> +         on the StarFive JH7110 SoC.
+>> diff --git a/drivers/clk/starfive/Makefile b/drivers/clk/starfive/Makefile
+>> index f3df7d957b1e..b81e97ee2659 100644
+>> --- a/drivers/clk/starfive/Makefile
+>> +++ b/drivers/clk/starfive/Makefile
+>> @@ -6,3 +6,4 @@ obj-$(CONFIG_CLK_STARFIVE_JH7100_AUDIO) += clk-starfive-jh7100-audio.o
+>>
+>>  obj-$(CONFIG_CLK_STARFIVE_JH7110_SYS)  += clk-starfive-jh7110-sys.o
+>>  obj-$(CONFIG_CLK_STARFIVE_JH7110_AON)  += clk-starfive-jh7110-aon.o
+>> +obj-$(CONFIG_CLK_STARFIVE_JH7110_STG)  += clk-starfive-jh7110-stg.o
+>> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-stg.c b/drivers/clk/starfive/clk-starfive-jh7110-stg.c
+>> new file mode 100644
+>> index 000000000000..dafcb7190592
+>> --- /dev/null
+>> +++ b/drivers/clk/starfive/clk-starfive-jh7110-stg.c
+>> @@ -0,0 +1,173 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * StarFive JH7110 System-Top-Group Clock Driver
+>> + *
+>> + * Copyright (C) 2022 Emil Renner Berthing <kernel@esmil.dk>
+>> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/io.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include <dt-bindings/clock/starfive,jh7110-crg.h>
+>> +
+>> +#include "clk-starfive-jh7110.h"
+>> +
+>> +/* external clocks */
+>> +#define JH7110_STGCLK_OSC                      (JH7110_STGCLK_END + 0)
+>> +#define JH7110_STGCLK_HIFI4_CORE               (JH7110_STGCLK_END + 1)
+>> +#define JH7110_STGCLK_STG_AXIAHB               (JH7110_STGCLK_END + 2)
+>> +#define JH7110_STGCLK_USB_125M                 (JH7110_STGCLK_END + 3)
+>> +#define JH7110_STGCLK_CPU_BUS                  (JH7110_STGCLK_END + 4)
+>> +#define JH7110_STGCLK_HIFI4_AXI                        (JH7110_STGCLK_END + 5)
+>> +#define JH7110_STGCLK_NOCSTG_BUS               (JH7110_STGCLK_END + 6)
+>> +#define JH7110_STGCLK_APB_BUS                  (JH7110_STGCLK_END + 7)
+>> +#define JH7110_STGCLK_EXT_END                  (JH7110_STGCLK_END + 8)
+>> +
+>> +static const struct jh71x0_clk_data jh7110_stgclk_data[] = {
+>> +       /* hifi4 */
+>> +       JH71X0_GATE(JH7110_STGCLK_HIFI4_CLK_CORE, "hifi4_clk_core", 0,
+>> +                   JH7110_STGCLK_HIFI4_CORE),
+>> +       /* usb */
+>> +       JH71X0_GATE(JH7110_STGCLK_USB0_APB, "usb0_apb", 0, JH7110_STGCLK_APB_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_USB0_UTMI_APB, "usb0_utmi_apb", 0, JH7110_STGCLK_APB_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_USB0_AXI, "usb0_axi", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GDIV(JH7110_STGCLK_USB0_LPM, "usb0_lpm", 0, 2, JH7110_STGCLK_OSC),
+>> +       JH71X0_GDIV(JH7110_STGCLK_USB0_STB, "usb0_stb", 0, 4, JH7110_STGCLK_OSC),
+>> +       JH71X0_GATE(JH7110_STGCLK_USB0_APP_125, "usb0_app_125", 0, JH7110_STGCLK_USB_125M),
+>> +       JH71X0__DIV(JH7110_STGCLK_USB0_REFCLK, "usb0_refclk", 2, JH7110_STGCLK_OSC),
+>> +       /* pci-e */
+>> +       JH71X0_GATE(JH7110_STGCLK_PCIE0_AXI_MST0, "pcie0_axi_mst0", 0,
+>> +                   JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_PCIE0_APB, "pcie0_apb", 0, JH7110_STGCLK_APB_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_PCIE0_TL, "pcie0_tl", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_PCIE1_AXI_MST0, "pcie1_axi_mst0", 0,
+>> +                   JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_PCIE1_APB, "pcie1_apb", 0, JH7110_STGCLK_APB_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_PCIE1_TL, "pcie1_tl", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_PCIE_SLV_MAIN, "pcie_slv_main", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_STG_AXIAHB),
+>> +       /* security */
+>> +       JH71X0_GATE(JH7110_STGCLK_SEC_AHB, "sec_ahb", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_SEC_MISC_AHB, "sec_misc_ahb", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       /* stg mtrx */
+>> +       JH71X0_GATE(JH7110_STGCLK_GRP0_MAIN, "mtrx_grp0_main", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_CPU_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_GRP0_BUS, "mtrx_grp0_bus", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_NOCSTG_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_GRP0_STG, "mtrx_grp0_stg", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_GRP1_MAIN, "mtrx_grp1_main", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_CPU_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_GRP1_BUS, "mtrx_grp1_bus", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_NOCSTG_BUS),
+>> +       JH71X0_GATE(JH7110_STGCLK_GRP1_STG, "mtrx_grp1_stg", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_GRP1_HIFI, "mtrx_grp1_hifi", CLK_IS_CRITICAL,
+>> +                   JH7110_STGCLK_HIFI4_AXI),
+>> +       /* e24_rvpi */
+>> +       JH71X0_GDIV(JH7110_STGCLK_E2_RTC, "e2_rtc", 0, 24, JH7110_STGCLK_OSC),
+>> +       JH71X0_GATE(JH7110_STGCLK_E2_CORE, "e2_core", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_E2_DBG, "e2_dbg", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       /* dw_sgdma1p */
+>> +       JH71X0_GATE(JH7110_STGCLK_DMA1P_AXI, "dma1p_axi", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +       JH71X0_GATE(JH7110_STGCLK_DMA1P_AHB, "dma1p_ahb", 0, JH7110_STGCLK_STG_AXIAHB),
+>> +};
+>> +
+>> +static struct clk_hw *jh7110_stgclk_get(struct of_phandle_args *clkspec, void *data)
+>> +{
+>> +       struct jh71x0_clk_priv *priv = data;
+>> +       unsigned int idx = clkspec->args[0];
+>> +
+>> +       if (idx < JH7110_STGCLK_END)
+>> +               return &priv->reg[idx].hw;
+>> +
+>> +       return ERR_PTR(-EINVAL);
+>> +}
+>> +
+>> +static int jh7110_stgcrg_probe(struct platform_device *pdev)
+>> +{
+>> +       struct jh71x0_clk_priv *priv;
+>> +       unsigned int idx;
+>> +       int ret;
+>> +
+>> +       priv = devm_kzalloc(&pdev->dev, struct_size(priv, reg, JH7110_STGCLK_END),
+>> +                           GFP_KERNEL);
+>> +       if (!priv)
+>> +               return -ENOMEM;
+>> +
+>> +       spin_lock_init(&priv->rmw_lock);
+>> +       priv->dev = &pdev->dev;
+>> +       priv->base = devm_platform_ioremap_resource(pdev, 0);
+>> +       if (IS_ERR(priv->base))
+>> +               return PTR_ERR(priv->base);
+>> +
+>> +       for (idx = 0; idx < JH7110_STGCLK_END; idx++) {
+>> +               u32 max = jh7110_stgclk_data[idx].max;
+>> +               struct clk_parent_data parents[4] = {};
+>> +               struct clk_init_data init = {
+>> +                       .name = jh7110_stgclk_data[idx].name,
+>> +                       .ops = starfive_jh71x0_clk_ops(max),
+>> +                       .parent_data = parents,
+>> +                       .num_parents =
+>> +                               ((max & JH71X0_CLK_MUX_MASK) >> JH71X0_CLK_MUX_SHIFT) + 1,
+>> +                       .flags = jh7110_stgclk_data[idx].flags,
+>> +               };
+>> +               struct jh71x0_clk *clk = &priv->reg[idx];
+>> +               const char *fw_name[JH7110_STGCLK_EXT_END - JH7110_STGCLK_END] = {
+>> +                       "osc",
+>> +                       "hifi4_core",
+>> +                       "stg_axiahb",
+>> +                       "usb_125m",
+>> +                       "cpu_bus",
+>> +                       "hifi4_axi",
+>> +                       "nocstg_bus",
+>> +                       "apb_bus"
+>> +               };
+>> +               unsigned int i;
+>> +
+>> +               for (i = 0; i < init.num_parents; i++) {
+>> +                       unsigned int pidx = jh7110_stgclk_data[idx].parents[i];
+>> +
+>> +                       if (pidx < JH7110_STGCLK_END)
+>> +                               parents[i].hw = &priv->reg[pidx].hw;
+>> +                       else if (pidx < JH7110_STGCLK_EXT_END)
+>> +                               parents[i].fw_name = fw_name[pidx - JH7110_STGCLK_END];
+>> +               }
+>> +
+>> +               clk->hw.init = &init;
+>> +               clk->idx = idx;
+>> +               clk->max_div = max & JH71X0_CLK_DIV_MASK;
+>> +
+>> +               ret = devm_clk_hw_register(&pdev->dev, &clk->hw);
+>> +               if (ret)
+>> +                       return ret;
+>> +       }
+>> +
+>> +       ret = devm_of_clk_add_hw_provider(&pdev->dev, jh7110_stgclk_get, priv);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return jh7110_reset_controller_register(priv, "rst-stg", 2);
+>> +}
+>> +
+>> +static const struct of_device_id jh7110_stgcrg_match[] = {
+>> +       { .compatible = "starfive,jh7110-stgcrg" },
+>> +       { /* sentinel */ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, jh7110_stgcrg_match);
+>> +
+>> +static struct platform_driver jh7110_stgcrg_driver = {
+>> +       .probe = jh7110_stgcrg_probe,
+>> +       .driver = {
+>> +               .name = "clk-starfive-jh7110-stg",
+>> +               .of_match_table = jh7110_stgcrg_match,
+>> +       },
+>> +};
+>> +module_platform_driver(jh7110_stgcrg_driver);
+>> +
+>> +MODULE_AUTHOR("Xingyu Wu <xingyu.wu@starfivetech.com>");
+>> +MODULE_AUTHOR("Emil Renner Berthing <kernel@esmil.dk>");
+>> +MODULE_DESCRIPTION("StarFive JH7110 System-Top-Group clock driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 2.25.1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
