@@ -2,150 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47332EB64DD
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 05:32:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4E2EB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 05:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233766AbjGMFcJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 01:32:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57734 "EHLO
+        id S233995AbjGMFfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 01:35:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232495AbjGMFcI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 01:32:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 568DC119;
-        Wed, 12 Jul 2023 22:32:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E21E661A15;
-        Thu, 13 Jul 2023 05:32:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E74AC433C8;
-        Thu, 13 Jul 2023 05:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689226326;
-        bh=fVVjgsYE+Qoi+R94FE6e7lA0UTa62pQgQ545OxhcM9g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IZVgs6buiRTDdalbv2ZlrRBzrZfqoUiABFLs6WO1uVDx7yut6id1QniuBP9TE75Dr
-         Pbv8EDd9iWXYV6T82XvUowSPK+vsALcfjN8dfgcVMnS0v/KZ/L5jW2ZWMxoqDunz6P
-         pwC5sFon/w+70nR9PFTtkqhFzhjgAOGytaeDZLWJbpwXdElbWea4yRom6ReQ0Fwf6i
-         0x8X4ZmeDoC654H5/Ie7a0h4yTjizDyuJ9c4d8Ew8H5bbt5pHFS3aK/Ve6/2DtCArY
-         39ipOuLlQVqXDYClQhx67gLANhsT0mzDrMwGc08DqeVrDVYw3z9KqPg5GLZpGvNKV0
-         H4S9YFrSwOFGg==
-Date:   Thu, 13 Jul 2023 06:32:01 +0100
-From:   Simon Horman <horms@kernel.org>
-To:     Christian Marangi <ansuelsmth@gmail.com>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] clk: qcom: clk-rcg2: add support for rcg2 freq
- multi ops
-Message-ID: <ZK+MUW55tWhOX1/i@kernel.org>
-References: <20230531222654.25475-1-ansuelsmth@gmail.com>
- <20230531222654.25475-3-ansuelsmth@gmail.com>
+        with ESMTP id S233951AbjGMFfA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 01:35:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29AB21989
+        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 22:34:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689226453;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=SmfB+i5ITyD8VcQT6H0n4jQbBtZaHz3osNrT9kioxiQ=;
+        b=NqdSY9QUqllBHTpPVoWI3R2S5L8Go75LijLMG8At1Ttr4M1bqFIPZnW+Bv+4dndT4DFynH
+        cWLhSvcbJMqJbOrX0EVRk+ws1JDHFKQNMEQ8hIbhldrsSQ78WKlLW6r8vCS7m35sky4sXH
+        8e43CBxa6HpJDr/6x7QvyyjZjB2ID6s=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-158-WEsn5qyBPSCBqP7nSW_WaQ-1; Thu, 13 Jul 2023 01:34:12 -0400
+X-MC-Unique: WEsn5qyBPSCBqP7nSW_WaQ-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-315926005c9so267956f8f.0
+        for <linux-clk@vger.kernel.org>; Wed, 12 Jul 2023 22:34:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689226451; x=1691818451;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SmfB+i5ITyD8VcQT6H0n4jQbBtZaHz3osNrT9kioxiQ=;
+        b=DevGezd2Eu8PCJWy1FXtuXqqxwJEyBTuSamPHOo/LLaXHflGovRt7kYG7ubuuje6ff
+         +yKUQ8ArGmRVPa4iIMieJm+nJ4UisgP8EJb2S1/+yOAB+JXJau4aVgfURaJBUMSfZQ+W
+         BYYhBtO73bMi080LJZ/6NzEbScu+yOBGuD5C2AbcsXY3lURWV93cKM9LCoQIsqBbYFMA
+         aR+/QF62C6kdJHaJyHT00vlEpELXqdzkx44KOI72al+WtnYEK0c5GqVvU4b+gQNGvF09
+         1F0bnGxcFAlsw6AeWZns6K+KFLeZAwlWi3NsAE10zcywjMmgw2ScBsm9EpQoDDHlYjZo
+         ughw==
+X-Gm-Message-State: ABy/qLb0ZJyXk5knjUvi0dmFF2AxTv41SdFc10I+57SYkt+K7+Yb3icu
+        Arz5c7JqxB4BpePSfiVPNid23XYu9gHaJ9Ahdj7ZqaYeK+2rNm+0AsQNUdUUH189gnF11ez7R9W
+        N4FqqNQVD/VzvtoAbnLN0WQBAuNOzcdDy2nPV
+X-Received: by 2002:a05:6000:92:b0:314:35c2:c4aa with SMTP id m18-20020a056000009200b0031435c2c4aamr467034wrx.8.1689226450854;
+        Wed, 12 Jul 2023 22:34:10 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGOJnBSbefoa2jYNguz42ZsRuZYJIodpjHhXJuzkLT9wNSNcgOUvRAkGCM4TmbRTEw+GkFxz47vkJZ0YZi65gI=
+X-Received: by 2002:a05:6000:92:b0:314:35c2:c4aa with SMTP id
+ m18-20020a056000009200b0031435c2c4aamr466974wrx.8.1689226450472; Wed, 12 Jul
+ 2023 22:34:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230531222654.25475-3-ansuelsmth@gmail.com>
+From:   Vitaly Grinberg <vgrinber@redhat.com>
+Date:   Thu, 13 Jul 2023 08:33:59 +0300
+Message-ID: <CACLnSDiMD+BH_BBHQUAhSvfqe6jhnm4MOB2N_hog4VMhvdTYVg@mail.gmail.com>
+Subject: Re: [RFC PATCH v9 00/10] Create common DPLL configuration API
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     David Airlie <airlied@redhat.com>, andy.ren@getcruise.com,
+        anthony.l.nguyen@intel.com,
+        "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>,
+        arnd@arndb.de, axboe@kernel.dk,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        claudiajkang@gmail.com, corbet@lwn.net, davem@davemloft.net,
+        edumazet@google.com, geert+renesas@glider.be,
+        gregkh@linuxfoundation.org, hkallweit1@gmail.com,
+        idosch@nvidia.com, intel-wired-lan@lists.osuosl.org,
+        jacek.lawrynowicz@linux.intel.com,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        jesse.brandeburg@intel.com, jonathan.lemon@gmail.com,
+        kuba@kernel.org, kuniyu@amazon.com, leon@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux@zary.sk, liuhangbin@gmail.com,
+        lucien.xin@gmail.com, masahiroy@kernel.org,
+        michal.michalik@intel.com, milena.olech@intel.com,
+        Michal Schmidt <mschmidt@redhat.com>,
+        Michael Tsirkin <mst@redhat.com>, netdev@vger.kernel.org,
+        nicolas.dichtel@6wind.com, nipun.gupta@amd.com, ogabbay@kernel.org,
+        Paolo Abeni <pabeni@redhat.com>, phil@nwl.cc,
+        Petr Oros <poros@redhat.com>, razor@blackwall.org,
+        ricardo.canuelo@collabora.com, richardcochran@gmail.com,
+        saeedm@nvidia.com, sj@kernel.org, tzimmermann@suse.de,
+        vadfed@fb.com, vadfed@meta.com, vadim.fedorenko@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 01, 2023 at 12:26:53AM +0200, Christian Marangi wrote:
-> Some RCG frequency can be reached by multiple configuration.
-> 
-> Add clk_rcg2_fm_ops ops to support these special RCG configurations.
-> 
-> These alternative ops will select the frequency using a CEIL policy.
-> 
-> When the correct frequency is found, the correct config is selected by
-> calculating the final rate (by checking the defined parent and values
-> in the config that is being checked) and deciding based on the one that
-> is less different than the requested one.
-> 
-> These check are skipped if there is just on config for the requested
-> freq.
-> 
-> qcom_find_freq_multi is added to search the freq with the new struct
-> freq_multi_tbl.
-> __clk_rcg2_select_conf is used to select the correct conf by simulating
-> the final clock.
-> If a conf can't be found due to parent not reachable, a WARN is printed
-> and -EINVAL is returned.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Hi,
+I'd like to clarify about the DPLL phase offset requirement. We can
+live without it during the initial submission. The addition of phase
+offset can be an increment to patch v10.
+Thanks,
+Vitaly
 
-...
-
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index 76551534f10d..9a139fc8bbfa 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -266,6 +266,112 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
->  	return 0;
->  }
->  
-> +static const struct freq_conf *
-> +__clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
-> +		       unsigned long req_rate)
-> +{
-> +	unsigned long rate_diff, best_rate_diff = ULONG_MAX;
-> +	const struct freq_conf *conf, *best_conf;
-> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> +	const char *name = clk_hw_get_name(hw);
-> +	unsigned long parent_rate, rate;
-> +	struct clk_hw *p;
-> +	int index, i;
-> +
-> +	/* Exit early if only one config is defined */
-> +	if (f->num_confs == 1)
-> +		return f->confs;
-> +
-> +	/* Search in each provided config the one that is near the wanted rate */
-> +	for (i = 0, conf = f->confs; i < f->num_confs; i++, conf++) {
-> +		index = qcom_find_src_index(hw, rcg->parent_map, conf->src);
-> +		if (index < 0)
-> +			continue;
-> +
-> +		p = clk_hw_get_parent_by_index(hw, index);
-> +		if (!p)
-> +			continue;
-> +
-> +		parent_rate =  clk_hw_get_rate(p);
-> +		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
-> +
-> +		if (rate == req_rate) {
-> +			best_conf = conf;
-> +			break;
-> +		}
-> +
-> +		rate_diff = abs(req_rate - rate);
-> +		if (rate_diff < best_rate_diff) {
-> +			best_rate_diff = rate_diff;
-> +			best_conf = conf;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Very unlikely. Warn if we couldn't find a correct config
-> +	 * due to parent not present.
-> +	 */
-> +	if (unlikely(i == f->num_confs)) {
-> +		WARN(1, "%s: can't find a configuration for rate %lu.",
-> +		     name, req_rate);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	return best_conf;
-
-Hi Christian,
-
-It's unclear to me if this can actually occur,
-but Sparse warns that best_conf may be uninitialised here.
-
-> +}
-
-...
