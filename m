@@ -2,123 +2,160 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1995C0015E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 13:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F12C0015E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 14:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235312AbjGMN0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 09:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59748 "EHLO
+        id S229611AbjGMOzV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 10:55:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234973AbjGMN0V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 09:26:21 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B509358C
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:25:51 -0700 (PDT)
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 003DE3F71A
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 13:25:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689254704;
-        bh=njPCzRp+gLgGXnuaFscEFk6TNloreb9Z1F7nmpn2GCo=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=g6HWNWPSWnqnwi6oIbL3RJgmEIS/5aD5U7e+1hYvyZGjsIj5qS3zsg/JWIWNRy6Zl
-         CTs8Ds4c7Dy1MF3Gv9Kdx2B9hq4zxaFd7W1bQboK+Wb1GNFafjj4HIgq5mvm8ahhNi
-         ITqNll5sQDTyDHp7L6kzCk2OhySntpI3BySO8fxGIxQtryJtYAG7qeddWs8T5vDbxx
-         oRH1PBz9oL7N+/nGQSBo+6ig9TpCbdN2RvPVab1/iSc5ixjmPIt1GsObrRxGauXFMq
-         RHsnmeJwVnsK3UnlwralpBGwJhr9CtAHvslfRhWWaRQAfaeqU2oNveIdLyfDXoTKef
-         K89AwWxAE72dA==
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-40327302341so6682661cf.3
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:25:03 -0700 (PDT)
+        with ESMTP id S229689AbjGMOzU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 10:55:20 -0400
+Received: from mail-yb1-xb2a.google.com (mail-yb1-xb2a.google.com [IPv6:2607:f8b0:4864:20::b2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E09A270A
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 07:55:15 -0700 (PDT)
+Received: by mail-yb1-xb2a.google.com with SMTP id 3f1490d57ef6-c2cf29195f8so769553276.1
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 07:55:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=edgeble-ai.20221208.gappssmtp.com; s=20221208; t=1689260114; x=1691852114;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yxJReeu3wFsDEIoI+Y5EvxsHxuUj1xvYudc1q2Ogc0w=;
+        b=ond3ynwi15WishNDTT+qMQTWpC87sA93J5YINYb/UQxMxZtD2l81f0u58lE6VXbpVk
+         m2eTgHMocycV9opUSB5jzMXo+QW9SIxbmRfv10fDXTK8UDHm+sskKWUAfchlIaw4ZYiZ
+         0+f7et0pRsFrjwhnRPex2rRL6iL6jfER52dp3tUGBJBYUoYrqYSq4j+SaQQgN0gUzSMJ
+         p0u3HaguYLLz+bv2OZZ2NiBHKAjs6dHJ/X8v7bwJFIBwQbrewTqiEegnqlPaWnASV/Kt
+         zASovpdUT8U93pGjLTEtpB10OsfBHfnxvuG2RF35LhZmgSrefjNNE0gH/J/BZd5QKk9D
+         Wb+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689254702; x=1691846702;
+        d=1e100.net; s=20221208; t=1689260114; x=1691852114;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=njPCzRp+gLgGXnuaFscEFk6TNloreb9Z1F7nmpn2GCo=;
-        b=QLYHLS5SUru0ArkIoMprCB/y0+TCb7mnfSTUFGs1YqZAxhVyibSqjpJWFgV4zWVgB4
-         wsr6OOzEEprmK8sb4bi6alVzYH75wzvLa9ol7fDk38AeFHy4hVKP5lZe88Xlk4T2hu9H
-         buyRrbPzPMkEnJ08c8hQoFnEEih7mz/A9fwPzwFog+SRj+OTJi8jS0yx3ihjujz9d3te
-         V4ZiuoXA6mLhI/Li97bDkcKp6RVA3MfN5/lRhRUpaOo5gSSiwUeKcgU2eemoNSpeJXIz
-         mFgPvlYQWgEdQN29NXb5PTVUPLZFYg6iGDR79+aNGnf1PR/P2uoOM9w7sN1olEUuZPOO
-         2pYw==
-X-Gm-Message-State: ABy/qLaLzLg4oMSuMvcSnXfHyknkCpL7VVawapAgZIDbbq6Q4tVuu9TN
-        H8yUIgE861EnEVTOEtzoYStUnLBhJ6VUtDMyFEy1s0AqnzYRy75gE8DYdwuR53ia1jLtElM3KNt
-        76XIY17iIrPMiwRP6j8eZN9CaO6NOOovWjZgo40NsJBlOgOMhld2z1w==
-X-Received: by 2002:a05:622a:14d4:b0:3f6:aff0:6dec with SMTP id u20-20020a05622a14d400b003f6aff06decmr1750881qtx.32.1689254702771;
-        Thu, 13 Jul 2023 06:25:02 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEWYwWyI37hBY/T3E7FV4GEsBkoCOExBvaA0XLzyYLy56YtYThzvj/ApC8dphahHLu8bbys9suJD14jU2FGI2M=
-X-Received: by 2002:a05:622a:14d4:b0:3f6:aff0:6dec with SMTP id
- u20-20020a05622a14d400b003f6aff06decmr1750857qtx.32.1689254702551; Thu, 13
- Jul 2023 06:25:02 -0700 (PDT)
+        bh=yxJReeu3wFsDEIoI+Y5EvxsHxuUj1xvYudc1q2Ogc0w=;
+        b=OKZg+ZoxaQKbjICgtJhqC3HGOUOkHWG4irGJaDL8+FQGlT9NDShuwItqjwUBDol9Ck
+         WE2bNv/Yy4ww29oZR7pW/1qdJFSKnARxnwO2z5bOwCKvt1WEkgBRiQy3M+IkIZ+smSJt
+         zJe72eNJdYI3LsEKS9uSCbCwgEmUTfHEYOqIRYhiz3u8063ippQD5Zs1y9U9kA9mXjIz
+         g/jnHufiBs1ggcfnBPTn1fkXKnC6y7Z9j2zDx4WSCu+mOy1gDZ1Wy4xwWn+XwcDboKzj
+         opp6wI3aMnHns+YiUP9VXd6zmd6Yau8chfoaiQX80n9lAnGOXZLZZxIIW/Z4ngX4gZia
+         O92Q==
+X-Gm-Message-State: ABy/qLYVOo7OlxC/tGqOT3/Ee42mcXvrq8juq8w+EEusACQvIFuo9bZ1
+        mqHS2ilsvuxezHc4yI8xdsHm6E1AvYjYEqTO3UtdSw==
+X-Google-Smtp-Source: APBJJlG0ILTrJectunWl7ebCGzJocWBo/HnGO1eQZkCt18ndRK/0e8H6CL/4bTNR20NvglKrx3f/qqOh55pLa3q9E78=
+X-Received: by 2002:a25:c0c8:0:b0:c4f:43d7:7daf with SMTP id
+ c191-20020a25c0c8000000b00c4f43d77dafmr1442561ybf.1.1689260114481; Thu, 13
+ Jul 2023 07:55:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230704064610.292603-1-xingyu.wu@starfivetech.com> <20230704064610.292603-8-xingyu.wu@starfivetech.com>
-In-Reply-To: <20230704064610.292603-8-xingyu.wu@starfivetech.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Thu, 13 Jul 2023 15:24:46 +0200
-Message-ID: <CAJM55Z989XRDuzff14pFa+AFnL6xBsswONFfdFxKbwGy55TwoA@mail.gmail.com>
-Subject: Re: [RESEND PATCH v6 7/7] riscv: dts: starfive: jh7110: Add PLL
- clocks source in SYSCRG node
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+References: <20230403193250.108693-1-sebastian.reichel@collabora.com> <20230403193250.108693-2-sebastian.reichel@collabora.com>
+In-Reply-To: <20230403193250.108693-2-sebastian.reichel@collabora.com>
+From:   Jagan Teki <jagan@edgeble.ai>
+Date:   Thu, 13 Jul 2023 20:25:03 +0530
+Message-ID: <CA+VMnFz4USPcXmQMyUB9n5EVmvQrJARDvnpO7iBrXZ8q2xcyAA@mail.gmail.com>
+Subject: Re: [PATCHv2 1/2] clk: rockchip: rk3588: make gate linked clocks
+ ignore unused
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org,
+        Peter Geis <pgwipeout@gmail.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Vincent Legoll <vincent.legoll@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 4 Jul 2023 at 08:49, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
+Hi Sebastian,
+
+On Tue, 4 Apr 2023 at 01:03, Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
 >
-> Add PLL clocks input from PLL clocks driver in SYSCRG node.
+> RK3588 has a couple of hardware blocks called Native Interface Unit
+> (NIU) that gate the clocks to devices behind them. Effectively this
+> means that some clocks require two parent clocks being enabled.
+> Downstream implemented this by using a separate clock driver
+> ("clk-link") for them, which enables the second clock using PM
+> framework.
 >
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> In the upstream kernel we are currently missing support for the second
+> parent. The information about it is in the GATE_LINK() macro as
+> linkname, but that is not used. Thus the second parent clock is not
+> properly enabled. So far this did not really matter, since these clocks
+> are mostly required for the more advanced IP blocks, that are not yet
+> supported upstream. As this is about to change we need a fix. There
+> are three options available:
+>
+> 1. Properly implement support for having two parent clocks in the
+>    clock framework.
+> 2. Mark the affected clocks CLK_IGNORE_UNUSED, so that they are not
+>    disabled. This wastes some power, but keeps the hack contained
+>    within the clock driver. Going from this to the first solution
+>    is easy once that has been implemented.
+> 3. Enabling the extra clock in the consumer driver. This leaks some
+>    implementation details into DT.
+>
+> This patch implements the second option as an intermediate solution
+> until the first one is available. I used an alias for CLK_IS_CRITICAL,
+> so that it's easy to see which clocks are not really critical once
+> the clock framework supports a better way to implement this.
+>
+> Tested-by: Vincent Legoll <vincent.legoll@gmail.com>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 > ---
->  arch/riscv/boot/dts/starfive/jh7110.dtsi | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+>  drivers/clk/rockchip/clk-rk3588.c | 42 +++++++++++++++++++------------
+>  1 file changed, 26 insertions(+), 16 deletions(-)
 >
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> index 11dd4c9d64b0..cdfd036a0e6c 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> @@ -452,12 +452,16 @@ syscrg: clock-controller@13020000 {
->                                  <&gmac1_rgmii_rxin>,
->                                  <&i2stx_bclk_ext>, <&i2stx_lrck_ext>,
->                                  <&i2srx_bclk_ext>, <&i2srx_lrck_ext>,
-> -                                <&tdm_ext>, <&mclk_ext>;
-> +                                <&tdm_ext>, <&mclk_ext>,
-> +                                <&pllclk JH7110_CLK_PLL0_OUT>,
-> +                                <&pllclk JH7110_CLK_PLL1_OUT>,
-> +                                <&pllclk JH7110_CLK_PLL2_OUT>;
-
-Once these are updated to <&pll ?> or <&pllclk JH7110_PLLCLK_PLL?_OUT>
-if you still want to keep the defines:
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-
->                         clock-names = "osc", "gmac1_rmii_refin",
->                                       "gmac1_rgmii_rxin",
->                                       "i2stx_bclk_ext", "i2stx_lrck_ext",
->                                       "i2srx_bclk_ext", "i2srx_lrck_ext",
-> -                                     "tdm_ext", "mclk_ext";
-> +                                     "tdm_ext", "mclk_ext",
-> +                                     "pll0_out", "pll1_out", "pll2_out";
->                         #clock-cells = <1>;
->                         #reset-cells = <1>;
->                 };
-> --
-> 2.25.1
+> diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
+> index b7ce3fbd6fa6..6994165e0395 100644
+> --- a/drivers/clk/rockchip/clk-rk3588.c
+> +++ b/drivers/clk/rockchip/clk-rk3588.c
+> @@ -13,15 +13,25 @@
+>  #include "clk.h"
 >
+>  /*
+> - * GATE with additional linked clock. Downstream enables the linked clock
+> - * (via runtime PM) whenever the gate is enabled. The downstream implementation
+> - * does this via separate clock nodes for each of the linked gate clocks,
+> - * which leaks parts of the clock tree into DT. It is unclear why this is
+> - * actually needed and things work without it for simple use cases. Thus
+> - * the linked clock is ignored for now.
+> + * Recent Rockchip SoCs have a new hardware block called Native Interface
+> + * Unit (NIU), which gates clocks to devices behind them. These effectively
+> + * need two parent clocks.
+> + *
+> + * Downstream enables the linked clock via runtime PM whenever the gate is
+> + * enabled. This implementation uses separate clock nodes for each of the
+> + * linked gate clocks, which leaks parts of the clock tree into DT.
+> + *
+> + * The GATE_LINK macro instead takes the second parent via 'linkname', but
+> + * ignores the information. Once the clock framework is ready to handle it, the
+> + * information should be passed on here. But since these clocks are required to
+> + * access multiple relevant IP blocks, such as PCIe or USB, we mark all linked
+> + * clocks critical until a better solution is available. This will waste some
+> + * power, but avoids leaking implementation details into DT or hanging the
+> + * system.
+>   */
+
+Does it mean the clk-link topology in the downstream kernel can be
+reused the same as normal clock notation?
+
+For example, I'm trying to add HCLK_VO1 directly to VO1 syscon instead
+of routing to pclk_vo1_grf(done downstream)
+      vo1_grf: syscon@fd5a8000 {
+               compatible = "rockchip,rk3588-vo-grf", "syscon";
+               reg = <0x0 0xfd5a8000 0x0 0x100>;
+             clocks = <&cru HCLK_VO1>;
+      };
+
+This seems breaking syscon for vo1_grf and observed a bus error while
+accessing regmap. I remember in one of the RKDC discussion that the
+double parenting of these clocks is mandatory while accessing
+associated IP blocks. Any thoughts?
+
+Thanks,
+Jagan.
