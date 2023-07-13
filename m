@@ -2,66 +2,65 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9CBC001DD
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 13:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E425C0015E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 13:24:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234291AbjGMNP6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 09:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
+        id S235298AbjGMNYG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 09:24:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234736AbjGMNP4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 09:15:56 -0400
+        with ESMTP id S235522AbjGMNXc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 09:23:32 -0400
 Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0357A1BF4
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:15:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E2F73A97
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:22:35 -0700 (PDT)
 Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A24023F723
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 13:15:53 +0000 (UTC)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AC7EB3F724
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 13:21:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689254153;
-        bh=lzWjLkz9jgGntegWn0jvL4sjWw5FNz46EKQK53j0qbY=;
+        s=20210705; t=1689254513;
+        bh=enRX6hWC2iaemXY8CE1QlIdDJtfFUqCURuPciqCUAP8=;
         h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
          To:Cc:Content-Type;
-        b=Iskykbz9ZoawihOPvOXrL6ML443FAhmoR2pyp49kVcBkkBYNMDH7BKRa2dQl2YQ5f
-         rFNhqHzLl989jXvw1PEQ9hv2c8bIvRC8VtqSZm5r99c5TwaA+oCdSFXMoWkApp09Cg
-         KxzwcF3ITxNW/JJl04GC8Bt8Hb+CBTj30ZVsEW91UMBb/1Jxp1gTBDxHR6VgfacjYd
-         y7ClRb6nmXTCAvueD7xcryxZXQlv9++NrI5Xx44r+U2TK8CIFw8Wu4VHe/UV/6V65/
-         hizl6gjMQnSazqQ83vI45cVKZS8K1vct7WBtcltE163ImU4Gqh/jDnQ3ZSTdodhvyO
-         tcZQgQul14erg==
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-403ba1eebedso9524321cf.1
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:15:53 -0700 (PDT)
+        b=OEdLtaipPM/O8RTKSA6hczGsYGn2uGcOlBbTh3YnTMz1K6ST9o8osbhp2RK34DWVh
+         B2dO8ugmnymelt35VxGqhF1oDAH6I8B6CBxMQ+gJocSpWzjlZ3yqD0H1K9qHHFa9JN
+         EcLURzQqnTuCrUGQkGKc+eZngOfOtKOEu2vRv0con1J0uwQyetwVkua/RbfDJgmhvs
+         GnIRfIJN9h2STUK6PxKtCGCi5NwJP5NQb1SxbAa1GJPNupBODlj/ZUFxnOYaMguK+J
+         yik698ySad+GwL0+UiOsYXoJHS4j980Wf+iz86/im5VizLFCDFH84ceBa9RGXMhh2p
+         3Tq8rsnQSKsrA==
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-403a5b83c9aso9497861cf.3
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:21:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689254149; x=1691846149;
+        d=1e100.net; s=20221208; t=1689254512; x=1691846512;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lzWjLkz9jgGntegWn0jvL4sjWw5FNz46EKQK53j0qbY=;
-        b=Dz1THA82LubduhPLu3Ub7P43BJERQaTJu/KNFDlm+66gW9L6SM4YV0fyTBvMI6HBJO
-         dKVYZyMv0GGD+70lJqR2HoODt4W5h7g8KLAGOlwteHOH+RltSFSV1f29B6v8+iPmU6L7
-         gnc8dbZ4mdZ9wBxIapmiREEphR5XSzIGdYSY+3btGpJV498wajxaa1JLUu6LYteOPWDs
-         RIo/5XX5zhmWkRiQJv6Pa2+MxgO0kvBl7kJEgTZRlpfc0mGXqPaj1bZe7sXMVZ8zRw/7
-         kzesoX/UIBOydVinrgJfMnsCfgjcvI2ISovvvsmMdwUuaP+sgb57FUudPKV8gTYzpD1R
-         gObw==
-X-Gm-Message-State: ABy/qLYkJZBzsYe+kmf8K/8wjdLioVkw91DtLswpTL55Q9QKYqsfEaap
-        HbsjnEFloELS4WqcYlFBbQTwG6wQTAIsITjMFicsQpgxcVx8GOsWU3NhzKGL1N+jelBA1LbTJlG
-        5RJgGfjwd66z7imL2KhJl6dAZwXZNp7yMGwTnum5pOgYEk1v/Oc4mog==
-X-Received: by 2002:ac8:5dcf:0:b0:400:9a75:d868 with SMTP id e15-20020ac85dcf000000b004009a75d868mr1784481qtx.53.1689254149351;
-        Thu, 13 Jul 2023 06:15:49 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFREZAUVHrD2WAPAOepNdisRg4PmYWg2KJmdiHvZLy8utdjhf7asfxlbZZKZpSBDSxQLR979i/SsgKi5ZyG1lw=
-X-Received: by 2002:ac8:5dcf:0:b0:400:9a75:d868 with SMTP id
- e15-20020ac85dcf000000b004009a75d868mr1784462qtx.53.1689254149008; Thu, 13
- Jul 2023 06:15:49 -0700 (PDT)
+        bh=enRX6hWC2iaemXY8CE1QlIdDJtfFUqCURuPciqCUAP8=;
+        b=B5n9Go+5z4klz3VOoob+gAfWTmoeAByhi/YRNi9yjrm3gMoQoOECk/r41k6QtY5IZo
+         6FBf3VevxjZF/aysX/gYhY0S0p3IEcrEFQBZqQtfuK7uvfDWJyM+69u2MHy9Mtc7pXwy
+         wdabXezoVHpVO2GdegB6QYFjjAMUqqRLRUSwPcStbB5cwC9yHqZEltyEpuvN8Laj9D8v
+         25vryXaNEXxyYaoUkARBTlmaJspV4ZWjo7e6uhb47geK4gX19YM23yDcKAuV7i3yJtWf
+         Pt3kH1KIKslZRAi+1JyAiEBhg/WEl3/w5mYflMHW+yYL1l3FOoWtOQ2abFKM/n5FuL8I
+         SFJA==
+X-Gm-Message-State: ABy/qLZgnu4LNVwJryHie8QjEauWxGkNkLETpMVT+A62dJlSvXIABnVp
+        LeKzudBs9IkfIWl4wiIPZU5asQuj81H29ZL4rRMpjHP9Pnq7fzCnt8tgGalmrNIJ8u9RaFEP1y4
+        xnr7N5iDZObG9lrD+ryLJd3fSygE+z38sxSLqeOPHZ7Rta0hI9QVrofloU5UCtA==
+X-Received: by 2002:a05:622a:104a:b0:3ec:490b:ce6e with SMTP id f10-20020a05622a104a00b003ec490bce6emr2001174qte.48.1689254511999;
+        Thu, 13 Jul 2023 06:21:51 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFJMIRJnzg3ozLNbx0GZublHY6dW4PSuFNYeS/2iDDTUQp4OX+srNMRFZPrJS2XCDeDowhX2Cfv7yQDvY2KNO0=
+X-Received: by 2002:a05:622a:104a:b0:3ec:490b:ce6e with SMTP id
+ f10-20020a05622a104a00b003ec490bce6emr2001156qte.48.1689254511797; Thu, 13
+ Jul 2023 06:21:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230704064610.292603-1-xingyu.wu@starfivetech.com> <20230704064610.292603-6-xingyu.wu@starfivetech.com>
-In-Reply-To: <20230704064610.292603-6-xingyu.wu@starfivetech.com>
+References: <20230704064610.292603-1-xingyu.wu@starfivetech.com> <20230704064610.292603-7-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230704064610.292603-7-xingyu.wu@starfivetech.com>
 From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Thu, 13 Jul 2023 15:15:32 +0200
-Message-ID: <CAJM55Z-OSmQCV6mO+SD4R2eU5gfx9TArSqDy+d-M2aer6bKL_A@mail.gmail.com>
-Subject: Re: [RESEND PATCH v6 5/7] clk: starfive: jh7110-sys: Add PLL clocks
- source from DTS
+Date:   Thu, 13 Jul 2023 15:21:35 +0200
+Message-ID: <CAJM55Z8VequKy59P5zKrVOr7WPRbUqq4CUHrk8aDO+3qpkzm2Q@mail.gmail.com>
+Subject: Re: [RESEND PATCH v6 6/7] riscv: dts: starfive: jh7110: Add syscon nodes
 To:     Xingyu Wu <xingyu.wu@starfivetech.com>
 Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
@@ -83,137 +82,73 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Tue, 4 Jul 2023 at 08:49, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
 >
-> Modify PLL clocks source to be got from DTS or
-> the fixed factor clocks.
+> From: William Qiu <william.qiu@starfivetech.com>
 >
+> Add stg_syscon/sys_syscon/aon_syscon/PLL nodes for JH7110 SoC.
+>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
 > ---
->  drivers/clk/starfive/Kconfig                  |  1 +
->  .../clk/starfive/clk-starfive-jh7110-sys.c    | 45 +++++++++++--------
->  2 files changed, 28 insertions(+), 18 deletions(-)
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 >
-> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-> index 5195f7be5213..978b78ec08b1 100644
-> --- a/drivers/clk/starfive/Kconfig
-> +++ b/drivers/clk/starfive/Kconfig
-> @@ -35,6 +35,7 @@ config CLK_STARFIVE_JH7110_SYS
->         select AUXILIARY_BUS
->         select CLK_STARFIVE_JH71X0
->         select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
-> +       select CLK_STARFIVE_JH7110_PLL
->         default ARCH_STARFIVE
->         help
->           Say yes here to support the system clock controller on the
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> index e6031345ef05..d56f48013388 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> @@ -7,6 +7,7 @@
->   */
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> index 4c5fdb905da8..11dd4c9d64b0 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
+> @@ -353,6 +353,11 @@ i2c2: i2c@10050000 {
+>                         status = "disabled";
+>                 };
 >
->  #include <linux/auxiliary_bus.h>
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/init.h>
->  #include <linux/io.h>
-> @@ -386,6 +387,7 @@ EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
+> +               stg_syscon: syscon@10240000 {
+> +                       compatible = "starfive,jh7110-stg-syscon", "syscon";
+> +                       reg = <0x0 0x10240000 0x0 0x1000>;
+> +               };
+> +
+>                 uart3: serial@12000000 {
+>                         compatible = "snps,dw-apb-uart";
+>                         reg = <0x0 0x12000000 0x0 0x10000>;
+> @@ -457,6 +462,17 @@ syscrg: clock-controller@13020000 {
+>                         #reset-cells = <1>;
+>                 };
 >
->  static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->  {
-> +       bool use_fixed_pll = true;      /* PLL clocks use fixed factor clocks or PLL driver */
+> +               sys_syscon: syscon@13030000 {
+> +                       compatible = "starfive,jh7110-sys-syscon", "syscon", "simple-mfd";
+> +                       reg = <0x0 0x13030000 0x0 0x1000>;
+> +
+> +                       pllclk: clock-controller {
 
-nit: reverse christmas tree ordering, eg. move this below priv
+Maybe call the handle "pll", so the references can be just <&pll 0>,
+<&pll 1> and <&pll 2> if you choose to drop the JH7110_PLLCLK_PLL?_OUT
+defines.
 
->         struct jh71x0_clk_priv *priv;
->         unsigned int idx;
->         int ret;
-> @@ -402,28 +404,29 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->         if (IS_ERR(priv->base))
->                 return PTR_ERR(priv->base);
+In any case:
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
+> +                               compatible = "starfive,jh7110-pll";
+> +                               clocks = <&osc>;
+> +                               #clock-cells = <1>;
+> +                       };
+> +               };
+> +
+>                 sysgpio: pinctrl@13040000 {
+>                         compatible = "starfive,jh7110-sys-pinctrl";
+>                         reg = <0x0 0x13040000 0x0 0x10000>;
+> @@ -486,6 +502,12 @@ aoncrg: clock-controller@17000000 {
+>                         #reset-cells = <1>;
+>                 };
 >
-> -       /*
-> -        * These PLL clocks are not actually fixed factor clocks and can be
-> -        * controlled by the syscon registers of JH7110. They will be dropped
-> -        * and registered in the PLL clock driver instead.
-> -        */
-> +       if (!IS_ERR(devm_clk_get(priv->dev, "pll0_out")))
-> +               use_fixed_pll = false;  /* can get pll clocks from PLL driver */
-
-The devm_clk_get() variant will allocate memory for a callback to call
-clk_put() when the driver is unloaded, but proper references
-associated with the consumers of the pll0_out clock are already taken
-below. So unless we find a better way to detect if the pll references
-are specified in the device tree or not, maybe something like this
-instead:
-
-priv->pll[0] = clk_get(priv->dev, "pll0_out);
-if (IS_ERR(priv->pll[0])) {
-  /* 24MHZ -> 1000.0MHz */
-  priv->pll[0] = ...
-  ...
-
-} else {
-  clk_put(priv->pll[0]);
-  priv->pll[0] = NULL;
-}
-
-> +       /* Use fixed factor clocks if can not get the PLL clocks from DTS */
-> +       if (use_fixed_pll) {
->         /* 24MHz -> 1000.0MHz */
-
-These comments are not indented with the code, which just looks weird.
-
-> -       priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
-> -                                                        "osc", 0, 125, 3);
-> -       if (IS_ERR(priv->pll[0]))
-> -               return PTR_ERR(priv->pll[0]);
-> +               priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
-> +                                                                "osc", 0, 125, 3);
-> +               if (IS_ERR(priv->pll[0]))
-> +                       return PTR_ERR(priv->pll[0]);
->
->         /* 24MHz -> 1066.0MHz */
-> -       priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
-> -                                                        "osc", 0, 533, 12);
-> -       if (IS_ERR(priv->pll[1]))
-> -               return PTR_ERR(priv->pll[1]);
-> +               priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
-> +                                                                "osc", 0, 533, 12);
-> +               if (IS_ERR(priv->pll[1]))
-> +                       return PTR_ERR(priv->pll[1]);
->
->         /* 24MHz -> 1188.0MHz */
-> -       priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
-> -                                                        "osc", 0, 99, 2);
-> -       if (IS_ERR(priv->pll[2]))
-> -               return PTR_ERR(priv->pll[2]);
-> +               priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
-> +                                                                "osc", 0, 99, 2);
-> +               if (IS_ERR(priv->pll[2]))
-> +                       return PTR_ERR(priv->pll[2]);
-> +       }
->
->         for (idx = 0; idx < JH7110_SYSCLK_END; idx++) {
->                 u32 max = jh7110_sysclk_data[idx].max;
-> @@ -462,8 +465,14 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->                                 parents[i].fw_name = "tdm_ext";
->                         else if (pidx == JH7110_SYSCLK_MCLK_EXT)
->                                 parents[i].fw_name = "mclk_ext";
-> -                       else
-> +                       else if (use_fixed_pll)
-
-else if (priv->pll[0])
-
->                                 parents[i].hw = priv->pll[pidx - JH7110_SYSCLK_PLL0_OUT];
-> +                       else if (pidx == JH7110_SYSCLK_PLL0_OUT)
-> +                               parents[i].fw_name = "pll0_out";
-> +                       else if (pidx == JH7110_SYSCLK_PLL1_OUT)
-> +                               parents[i].fw_name = "pll1_out";
-> +                       else if (pidx == JH7110_SYSCLK_PLL2_OUT)
-> +                               parents[i].fw_name = "pll2_out";
->                 }
->
->                 clk->hw.init = &init;
+> +               aon_syscon: syscon@17010000 {
+> +                       compatible = "starfive,jh7110-aon-syscon", "syscon";
+> +                       reg = <0x0 0x17010000 0x0 0x1000>;
+> +                       #power-domain-cells = <1>;
+> +               };
+> +
+>                 aongpio: pinctrl@17020000 {
+>                         compatible = "starfive,jh7110-aon-pinctrl";
+>                         reg = <0x0 0x17020000 0x0 0x10000>;
 > --
 > 2.25.1
 >
