@@ -2,153 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E425C0015E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 13:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA645EB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 13:24:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235298AbjGMNYG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 09:24:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57242 "EHLO
+        id S235255AbjGMNYS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 09:24:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235522AbjGMNXc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 09:23:32 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E2F73A97
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:22:35 -0700 (PDT)
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id AC7EB3F724
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 13:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689254513;
-        bh=enRX6hWC2iaemXY8CE1QlIdDJtfFUqCURuPciqCUAP8=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=OEdLtaipPM/O8RTKSA6hczGsYGn2uGcOlBbTh3YnTMz1K6ST9o8osbhp2RK34DWVh
-         B2dO8ugmnymelt35VxGqhF1oDAH6I8B6CBxMQ+gJocSpWzjlZ3yqD0H1K9qHHFa9JN
-         EcLURzQqnTuCrUGQkGKc+eZngOfOtKOEu2vRv0con1J0uwQyetwVkua/RbfDJgmhvs
-         GnIRfIJN9h2STUK6PxKtCGCi5NwJP5NQb1SxbAa1GJPNupBODlj/ZUFxnOYaMguK+J
-         yik698ySad+GwL0+UiOsYXoJHS4j980Wf+iz86/im5VizLFCDFH84ceBa9RGXMhh2p
-         3Tq8rsnQSKsrA==
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-403a5b83c9aso9497861cf.3
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:21:53 -0700 (PDT)
+        with ESMTP id S235261AbjGMNXx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 09:23:53 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AE6A273F
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:22:50 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b69e6d324aso10699671fa.0
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 06:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1689254563; x=1691846563;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dXWviMRLD7YocUFq1hAwJTX8QyWW8iQWGTv5QqtyLjk=;
+        b=McxC7at3hk1pweV1zh33Jfqa/21F0tDnkTwZMMTwXWTU1ixyOxDbDD2wOcvvyq7q2d
+         rX/1t2VLAdaVSy4GzHUcK9YnqgraYwtY+DWa857WOxv8UOC88QZ31m0fuxbUc8/eWE22
+         jxez+//fWGwCCLrHHQ6WSHtgZTUFmgmDPtbDWcgmEkJPoE03zrt1CneXzSWMXoux6PIB
+         jkdtzhTZaTrqVYYeiqJgbU7SZVq8IzFIH6XNh4GmLyqVTT8WMZ6pOkG9HfVwVwSVOHRS
+         0hU6GCD9vtwOymJdp3/PgHZaSeRS9DCP+M+y46dT+/dwxRyVa15fBq7BLTrr3YvlEstf
+         Zvqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689254512; x=1691846512;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=enRX6hWC2iaemXY8CE1QlIdDJtfFUqCURuPciqCUAP8=;
-        b=B5n9Go+5z4klz3VOoob+gAfWTmoeAByhi/YRNi9yjrm3gMoQoOECk/r41k6QtY5IZo
-         6FBf3VevxjZF/aysX/gYhY0S0p3IEcrEFQBZqQtfuK7uvfDWJyM+69u2MHy9Mtc7pXwy
-         wdabXezoVHpVO2GdegB6QYFjjAMUqqRLRUSwPcStbB5cwC9yHqZEltyEpuvN8Laj9D8v
-         25vryXaNEXxyYaoUkARBTlmaJspV4ZWjo7e6uhb47geK4gX19YM23yDcKAuV7i3yJtWf
-         Pt3kH1KIKslZRAi+1JyAiEBhg/WEl3/w5mYflMHW+yYL1l3FOoWtOQ2abFKM/n5FuL8I
-         SFJA==
-X-Gm-Message-State: ABy/qLZgnu4LNVwJryHie8QjEauWxGkNkLETpMVT+A62dJlSvXIABnVp
-        LeKzudBs9IkfIWl4wiIPZU5asQuj81H29ZL4rRMpjHP9Pnq7fzCnt8tgGalmrNIJ8u9RaFEP1y4
-        xnr7N5iDZObG9lrD+ryLJd3fSygE+z38sxSLqeOPHZ7Rta0hI9QVrofloU5UCtA==
-X-Received: by 2002:a05:622a:104a:b0:3ec:490b:ce6e with SMTP id f10-20020a05622a104a00b003ec490bce6emr2001174qte.48.1689254511999;
-        Thu, 13 Jul 2023 06:21:51 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFJMIRJnzg3ozLNbx0GZublHY6dW4PSuFNYeS/2iDDTUQp4OX+srNMRFZPrJS2XCDeDowhX2Cfv7yQDvY2KNO0=
-X-Received: by 2002:a05:622a:104a:b0:3ec:490b:ce6e with SMTP id
- f10-20020a05622a104a00b003ec490bce6emr2001156qte.48.1689254511797; Thu, 13
- Jul 2023 06:21:51 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689254563; x=1691846563;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dXWviMRLD7YocUFq1hAwJTX8QyWW8iQWGTv5QqtyLjk=;
+        b=KeIipSkvxPrT2mj4cWp5QYIYUeUd4F/dS9rmWQazVQC6CrwAbJ1NirR/gV3s/EK/3t
+         NijeeAwAx1cWPqrX9CdvuGxEbZJrCeTinfjSSPo2foGlQ5mjbFgudO1KmS9hNZlhC+Z0
+         HwBPfJ+yHc7OnJwd7d07AyuVRLzWEAZwMhQDUxi7FaAy2eGZYz0dBVHYCgx2pV+NrhQL
+         jWz4/uwZXHA4QDBvmpAWZA6irJayPSKKNqDzWpuO9RbZOpsC9wKGPCHssJ21IneUScCw
+         DT3+4fG5h51Si1949helk8xV5yf+BMg2Y41JmvCuvmwBYJevfol8kgaKf/Y3dsQ8KLIn
+         g5pg==
+X-Gm-Message-State: ABy/qLaWPK9E/aJF+aK4581OyFQcvU5W3mTaqC6EE2940XOWcSH487dF
+        YybMleqm8gKFPR/XHxTihz1elA==
+X-Google-Smtp-Source: APBJJlFenJyAGZmX8lEaZL7qfj96wtFrIKUun/k3YYqQR79WUOoM+Tr06gqwq0Dkn2qCu7f7U7uISA==
+X-Received: by 2002:a2e:95ca:0:b0:2b6:ed80:15d1 with SMTP id y10-20020a2e95ca000000b002b6ed8015d1mr1287788ljh.24.1689254562815;
+        Thu, 13 Jul 2023 06:22:42 -0700 (PDT)
+Received: from [192.168.1.172] ([93.5.22.158])
+        by smtp.gmail.com with ESMTPSA id qo11-20020a170907212b00b00992b0745548sm3943114ejb.152.2023.07.13.06.22.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jul 2023 06:22:42 -0700 (PDT)
+Message-ID: <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
+Date:   Thu, 13 Jul 2023 15:22:41 +0200
 MIME-Version: 1.0
-References: <20230704064610.292603-1-xingyu.wu@starfivetech.com> <20230704064610.292603-7-xingyu.wu@starfivetech.com>
-In-Reply-To: <20230704064610.292603-7-xingyu.wu@starfivetech.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Thu, 13 Jul 2023 15:21:35 +0200
-Message-ID: <CAJM55Z8VequKy59P5zKrVOr7WPRbUqq4CUHrk8aDO+3qpkzm2Q@mail.gmail.com>
-Subject: Re: [RESEND PATCH v6 6/7] riscv: dts: starfive: jh7110: Add syscon nodes
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
+ top_dp/edp muxes
+Content-Language: en-US
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>, sboyd@kernel.org
+Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
+        wenst@chromium.org, msp@baylibre.com, yangyingliang@huawei.com,
+        u.kleine-koenig@pengutronix.de, miles.chen@mediatek.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
+ <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+In-Reply-To: <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 4 Jul 2023 at 08:49, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
->
-> From: William Qiu <william.qiu@starfivetech.com>
->
-> Add stg_syscon/sys_syscon/aon_syscon/PLL nodes for JH7110 SoC.
->
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Co-developed-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+
+
+On 13/07/2023 09:21, AngeloGioacchino Del Regno wrote:
+> The top_dp and top_edp muxes can be both parented to either TVDPLL1
+> or TVDPLL2, two identically specced PLLs for the specific purpose of
+> giving out pixel clock: this becomes a problem when the MediaTek
+> DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
+> 
+> In the usecase of two simultaneous outputs (using two controllers),
+> it was seen that one of the displays would sometimes display garbled
+> output (if any at all) and this was because:
+>   - top_edp was set to TVDPLL1, outputting X GHz
+>   - top_dp was set to TVDPLL2, outputting Y GHz
+>     - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
+>       - top_dp is switched to TVDPLL1
+>       - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
+>       - eDP display is garbled
+> 
+> To solve this issue, remove all TVDPLL1 parents from `top_dp` and
+> all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
+> clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
+> able to use the right bit index for the new parents list.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  arch/riscv/boot/dts/starfive/jh7110.dtsi | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110.dtsi b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> index 4c5fdb905da8..11dd4c9d64b0 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110.dtsi
-> @@ -353,6 +353,11 @@ i2c2: i2c@10050000 {
->                         status = "disabled";
->                 };
->
-> +               stg_syscon: syscon@10240000 {
-> +                       compatible = "starfive,jh7110-stg-syscon", "syscon";
-> +                       reg = <0x0 0x10240000 0x0 0x1000>;
-> +               };
+>   drivers/clk/mediatek/clk-mt8195-topckgen.c | 22 ++++++++++++++--------
+>   1 file changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+> index 81daa24cadde..abb3721f6e1b 100644
+> --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
+> +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+> @@ -417,15 +417,21 @@ static const char * const pwrmcu_parents[] = {
+>   
+>   static const char * const dp_parents[] = {
+>   	"clk26m",
+> -	"tvdpll1_d2",
+>   	"tvdpll2_d2",
+> -	"tvdpll1_d4",
+>   	"tvdpll2_d4",
+> -	"tvdpll1_d8",
+>   	"tvdpll2_d8",
+> -	"tvdpll1_d16",
+>   	"tvdpll2_d16"
+>   };
+> +static const u8 dp_parents_idx[] = { 0, 2, 4, 6, 8 };
 > +
->                 uart3: serial@12000000 {
->                         compatible = "snps,dw-apb-uart";
->                         reg = <0x0 0x12000000 0x0 0x10000>;
-> @@ -457,6 +462,17 @@ syscrg: clock-controller@13020000 {
->                         #reset-cells = <1>;
->                 };
->
-> +               sys_syscon: syscon@13030000 {
-> +                       compatible = "starfive,jh7110-sys-syscon", "syscon", "simple-mfd";
-> +                       reg = <0x0 0x13030000 0x0 0x1000>;
-> +
-> +                       pllclk: clock-controller {
+> +static const char * const edp_parents[] = {
+> +	"clk26m",
+> +	"tvdpll1_d2",
+> +	"tvdpll1_d4",
+> +	"tvdpll1_d8",
+> +	"tvdpll1_d16"
+> +};
+> +static const u8 edp_parents_idx[] = { 0, 1, 3, 5, 7 };
 
-Maybe call the handle "pll", so the references can be just <&pll 0>,
-<&pll 1> and <&pll 2> if you choose to drop the JH7110_PLLCLK_PLL?_OUT
-defines.
+AFAII your solution is to force a specific TVDPLLX for each display, and 
+it isn't dynamic.
 
-In any case:
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Do you think it's possible to do that using the DTS ? I'm asking 
+because, IMHO, this kind of setup is more friendly/readable/flexible in 
+the DTS than hardcoded into the driver.
 
-> +                               compatible = "starfive,jh7110-pll";
-> +                               clocks = <&osc>;
-> +                               #clock-cells = <1>;
-> +                       };
-> +               };
-> +
->                 sysgpio: pinctrl@13040000 {
->                         compatible = "starfive,jh7110-sys-pinctrl";
->                         reg = <0x0 0x13040000 0x0 0x10000>;
-> @@ -486,6 +502,12 @@ aoncrg: clock-controller@17000000 {
->                         #reset-cells = <1>;
->                 };
->
-> +               aon_syscon: syscon@17010000 {
-> +                       compatible = "starfive,jh7110-aon-syscon", "syscon";
-> +                       reg = <0x0 0x17010000 0x0 0x1000>;
-> +                       #power-domain-cells = <1>;
-> +               };
-> +
->                 aongpio: pinctrl@17020000 {
->                         compatible = "starfive,jh7110-aon-pinctrl";
->                         reg = <0x0 0x17020000 0x0 0x10000>;
-> --
-> 2.25.1
->
+>   
+>   static const char * const disp_pwm_parents[] = {
+>   	"clk26m",
+> @@ -957,11 +963,11 @@ static const struct mtk_mux top_mtk_muxes[] = {
+>   	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_PWRMCU, "top_pwrmcu",
+>   		pwrmcu_parents, 0x08C, 0x090, 0x094, 16, 3, 23, 0x08, 6,
+>   		CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+> -	MUX_GATE_CLR_SET_UPD(CLK_TOP_DP, "top_dp",
+> -		dp_parents, 0x08C, 0x090, 0x094, 24, 4, 31, 0x08, 7),
+> +	MUX_GATE_CLR_SET_UPD_INDEXED(CLK_TOP_DP, "top_dp",
+> +		dp_parents, dp_parents_idx, 0x08C, 0x090, 0x094, 24, 4, 31, 0x08, 7),
+>   	/* CLK_CFG_10 */
+> -	MUX_GATE_CLR_SET_UPD(CLK_TOP_EDP, "top_edp",
+> -		dp_parents, 0x098, 0x09C, 0x0A0, 0, 4, 7, 0x08, 8),
+> +	MUX_GATE_CLR_SET_UPD_INDEXED(CLK_TOP_EDP, "top_edp",
+> +		edp_parents, edp_parents_idx, 0x098, 0x09C, 0x0A0, 0, 4, 7, 0x08, 8),
+>   	MUX_GATE_CLR_SET_UPD(CLK_TOP_DPI, "top_dpi",
+>   		dp_parents, 0x098, 0x09C, 0x0A0, 8, 4, 15, 0x08, 9),
+>   	MUX_GATE_CLR_SET_UPD(CLK_TOP_DISP_PWM0, "top_disp_pwm0",
+
+-- 
+Regards,
+Alexandre
