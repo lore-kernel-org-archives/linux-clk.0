@@ -2,102 +2,167 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565B2C0015E
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 17:54:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 241F4C0015E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Jul 2023 19:38:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229764AbjGMRyl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Jul 2023 13:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34120 "EHLO
+        id S231996AbjGMTiS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Jul 2023 15:38:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229715AbjGMRyk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 13:54:40 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5CE8271F
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 10:54:39 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1qK0WT-0001Vv-2Q; Thu, 13 Jul 2023 19:54:37 +0200
-Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1qK0WR-0007ex-CU; Thu, 13 Jul 2023 19:54:35 +0200
-Date:   Thu, 13 Jul 2023 19:54:35 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        adrian.alonso@nxp.com
-Cc:     Abel Vesa <abelvesa@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: Re: bounds of pdiv in clk-pll14xx.c
-Message-ID: <20230713175435.z66efhro7mvnk5gg@pengutronix.de>
-References: <ca6b0f0b-3f0d-8e4d-c857-8c6515250782@prevas.dk>
+        with ESMTP id S231909AbjGMTiR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Jul 2023 15:38:17 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A64269D;
+        Thu, 13 Jul 2023 12:38:16 -0700 (PDT)
+Received: from mercury (unknown [185.254.75.28])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 40D93660704B;
+        Thu, 13 Jul 2023 20:38:15 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1689277095;
+        bh=LCTHlbt9t3lIo/yJabi6ZxoDAc2P6YaDBhZi4GtjP58=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VgICHNlTWBb3DvnETMeo90SwdkRHWdjCiK+w2oRIUIUu1mkG75UswADjjq/uJirWt
+         Bl6uIZl1DuZxUjQgfedKFdzU/httYdFOS69tf3NddCHkJApfDQhHeBpth1jgqs6jAw
+         fXrNzaS97mzBwPb13lzZJhtSW2SAM5hjEg4spPk2DJUkiYe+QRkmBOFrNCsdvbuPRF
+         2nS0aG55sqgFk2lOlLhqcpDj5NmJ3/8ik5GhiB6BPXeiVXFmyD77Jr5wUat0jjNRwl
+         l7WFAGZgI6XG1BQXbOa3i93rzS6Ea3Cfi+azHQiVQk6CoU6XpJgu6v1pjflT58ytCq
+         icQ/UGivvUIKQ==
+Received: by mercury (Postfix, from userid 1000)
+        id 745D01062E2E; Thu, 13 Jul 2023 21:38:12 +0200 (CEST)
+Date:   Thu, 13 Jul 2023 21:38:12 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Jagan Teki <jagan@edgeble.ai>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org,
+        Peter Geis <pgwipeout@gmail.com>,
+        Elaine Zhang <zhangqing@rock-chips.com>,
+        Finley Xiao <finley.xiao@rock-chips.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Vincent Legoll <vincent.legoll@gmail.com>
+Subject: Re: [PATCHv2 1/2] clk: rockchip: rk3588: make gate linked clocks
+ ignore unused
+Message-ID: <20230713193812.px7q4sdfdppuywsg@mercury.elektranox.org>
+References: <20230403193250.108693-1-sebastian.reichel@collabora.com>
+ <20230403193250.108693-2-sebastian.reichel@collabora.com>
+ <CA+VMnFz4USPcXmQMyUB9n5EVmvQrJARDvnpO7iBrXZ8q2xcyAA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ckdtegxpm7vrxvpt"
 Content-Disposition: inline
-In-Reply-To: <ca6b0f0b-3f0d-8e4d-c857-8c6515250782@prevas.dk>
-User-Agent: NeoMutt/20180716
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <CA+VMnFz4USPcXmQMyUB9n5EVmvQrJARDvnpO7iBrXZ8q2xcyAA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-+To Adrian since Sascha mentioned him in his commit.
+--ckdtegxpm7vrxvpt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 23-06-21, Rasmus Villemoes wrote:
-> I'm a bit confused by the range of pdiv used in
-> imx_pll14xx_calc_settings(), introduced in commit b09c68dc57c9 (clk:
-> imx: pll14xx: Support dynamic rates).
-> 
-> We have this comment
-> 
->         /*
->          * Fractional PLL constrains:
->          *
->          * a) 6MHz <= prate <= 25MHz
->          * b) 1 <= p <= 63 (1 <= p <= 4 prate = 24MHz)
->          * c) 64 <= m <= 1023
->          * d) 0 <= s <= 6
->          * e) -32768 <= k <= 32767
-> 
-> and those values match what I can find in the reference manuals for the
-> imx8mm, imx8mn and imx8mp SOCs. But the code then only loops over 1 <= p
-> <= 7. I also don't really understand what the parenthesis
-> 
->    (1 <= p <= 4 prate = 24MHz)
-> 
-> is supposed to mean. Is p restricted to <= 4 when the parent rate is
-> 24MHz? That doesn't seem to make any sense, and in any case the loop
-> does go up to p==7.
+Hello Jagan,
 
-I have the exact same question since the '1 <= 7' restriction stops me
-from getting the most precise video-pll frequency. If I set the
-restiction according the reference manual I get an exact match.
+On Thu, Jul 13, 2023 at 08:25:03PM +0530, Jagan Teki wrote:
+> On Tue, 4 Apr 2023 at 01:03, Sebastian Reichel
+> <sebastian.reichel@collabora.com> wrote:
+> [...]
+> > + * Recent Rockchip SoCs have a new hardware block called Native Interf=
+ace
+> > + * Unit (NIU), which gates clocks to devices behind them. These effect=
+ively
+> > + * need two parent clocks.
+> > + *
+> > + * Downstream enables the linked clock via runtime PM whenever the gat=
+e is
+> > + * enabled. This implementation uses separate clock nodes for each of =
+the
+> > + * linked gate clocks, which leaks parts of the clock tree into DT.
+> > + *
+> > + * The GATE_LINK macro instead takes the second parent via 'linkname',=
+ but
+> > + * ignores the information. Once the clock framework is ready to handl=
+e it, the
+> > + * information should be passed on here. But since these clocks are re=
+quired to
+> > + * access multiple relevant IP blocks, such as PCIe or USB, we mark al=
+l linked
+> > + * clocks critical until a better solution is available. This will was=
+te some
+> > + * power, but avoids leaking implementation details into DT or hanging=
+ the
+> > + * system.
+> >   */
+>=20
+> Does it mean the clk-link topology in the downstream kernel can be
+> reused the same as normal clock notation?
 
-With the following diff I be able to get an exact match:
+Yes.
 
-8<---------------------------------------------------------------
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 7150c59bbfc95..d1d0d25fea2ce 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -186,7 +186,7 @@ static void imx_pll14xx_calc_settings(struct clk_pll14xx *pll, unsigned long rat
- 	}
- 
- 	/* Finally calculate best values */
--	for (pdiv = 1; pdiv <= 7; pdiv++) {
-+	for (pdiv = 1; pdiv <= 63; pdiv++) {
- 		for (sdiv = 0; sdiv <= 6; sdiv++) {
- 			/* calc mdiv = round(rate * pdiv * 2^sdiv) / prate) */
- 			mdiv = DIV_ROUND_CLOSEST(rate * (pdiv << sdiv), prate);
-8<---------------------------------------------------------------
+> For example, I'm trying to add HCLK_VO1 directly to VO1 syscon instead
+> of routing to pclk_vo1_grf(done downstream)
+>       vo1_grf: syscon@fd5a8000 {
+>                compatible =3D "rockchip,rk3588-vo-grf", "syscon";
+>                reg =3D <0x0 0xfd5a8000 0x0 0x100>;
+>              clocks =3D <&cru HCLK_VO1>;
 
-Regards,
-  Marco
+You need PCLK_VO1 (which is currently not exposed; I somehow missed
+it).
+
+>       };
+>=20
+> This seems breaking syscon for vo1_grf and observed a bus error
+> while accessing regmap.=20
+
+I investigated the issue you are seeing some weeks ago when my
+co-workers started to work on HDMI RX and TX. You are probably
+just missing this patch:
+
+https://gitlab.collabora.com/hardware-enablement/rockchip-3588/linux/-/comm=
+it/ecc6415344957fa88356cec10f8b75a9da603a7b
+
+> I remember in one of the RKDC discussion that the double parenting
+> of these clocks is mandatory while accessing associated IP blocks.
+
+Yes, it is necessary.
+
+> Any thoughts?
+
+The upstream workaround/hack is to have the second parent always
+enabled. This obviously wastes power, but means that the hardware
+description in the DT is correct. Once the clock framework supports
+two parents the kernel can be updated without touching the DT,
+which is considered ABI.
+
+Greetings,
+
+-- Sebastian
+
+--ckdtegxpm7vrxvpt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmSwUpcACgkQ2O7X88g7
++prvUBAAmj/+1Y2EoNVM52dwbYtpsK+nyCPxZN7qF818FlAZMAPLUPGLEhy5h+oT
+9yP7Tj2QaoM1WIRajoE/q3UshWnjsZWLRdDqeZsAcsaUfl24MrvzhiYdm/hce0jT
+7pL5gW8LJ6apq194xsC64AcF7AOHRBqduoHmlSmBg8Jz3t+O530MGtMCxLf7wCJl
+teEmkynSKx/BMYOORifhfoaoNtV5LgvDYjaBSrJ6IpZmCeMuKwmL4TR4xoUVFBaR
+IVu8nsnFn3bRhZ85T9R3NgfriPj2BLLbIsDe+qD8blzCETH9vAhAWDpKzBFnJ0NZ
+w8XcusaDX1vFOnzjaat/7OKxkguApB8eh/WLAZ1aXDZ0OwpntP3yMduoY5fmixKZ
+OrHS2H6wAELKuNO3UOkLfGqEE60+z2A3HEqZA5ltZWud6+oPtRENVmYSjDzNaEjl
+lRb/PFMYU6MVFiVtfxqgwKXMLqqIL/Pk3wfgY32FYvTrWkNiCSh0+AFBx8iVzCFI
+kTfPuC5o+k+FN7wxqvLYfpgI6poZYs1CSFMLOzpof3/79aJN/NaFbTGW8bngnFIQ
+CL2ycYNleFr91CYk83fQ7jbkR0VUd774yCH7FO8ytZjxl5uvecMEwBG3GAn+pZh7
+Ns4kvC9k2SepoVw/FUj5ywI+DeizHMAkeR1Hjs5KP4A0nFESZqY=
+=ytIK
+-----END PGP SIGNATURE-----
+
+--ckdtegxpm7vrxvpt--
