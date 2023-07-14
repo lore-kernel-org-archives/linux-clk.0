@@ -2,172 +2,115 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B80EB64DA
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 06:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB27EB64DC
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 07:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234501AbjGNG1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jul 2023 02:27:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54742 "EHLO
+        id S234921AbjGNHJZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jul 2023 03:09:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234660AbjGNG1r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 02:27:47 -0400
-Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E92C110FA;
-        Thu, 13 Jul 2023 23:27:44 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by ex01.ufhost.com (Postfix) with ESMTP id 1A84324E2E3;
-        Fri, 14 Jul 2023 14:27:42 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Jul
- 2023 14:27:42 +0800
-Received: from [192.168.125.128] (183.27.98.46) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 14 Jul
- 2023 14:27:40 +0800
-Message-ID: <1b55f255-a9b2-1f0a-9b8b-11c787e76a75@starfivetech.com>
-Date:   Fri, 14 Jul 2023 14:24:28 +0800
+        with ESMTP id S234787AbjGNHJX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 03:09:23 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB93011D
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jul 2023 00:09:21 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1qKCvU-0004lk-QT; Fri, 14 Jul 2023 09:09:16 +0200
+Received: from mfe by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1qKCvU-0002DO-3M; Fri, 14 Jul 2023 09:09:16 +0200
+Date:   Fri, 14 Jul 2023 09:09:16 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Adrian Alonso <adrian.alonso@nxp.com>
+Cc:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        "bli@bang-olufsen.dk" <bli@bang-olufsen.dk>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>
+Subject: Re: [EXT] Re: bounds of pdiv in clk-pll14xx.c
+Message-ID: <20230714070916.yybwlxpwiqdwjcw2@pengutronix.de>
+References: <ca6b0f0b-3f0d-8e4d-c857-8c6515250782@prevas.dk>
+ <20230713175435.z66efhro7mvnk5gg@pengutronix.de>
+ <DB9PR04MB828202F64FB4F4724B23564FFC37A@DB9PR04MB8282.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [RESEND PATCH v6 1/7] dt-bindings: clock: Add StarFive JH7110 PLL
- clock generator
-Content-Language: en-US
-To:     Emil Renner Berthing <emil.renner.berthing@canonical.com>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        "Hal Feng" <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230704064610.292603-1-xingyu.wu@starfivetech.com>
- <20230704064610.292603-2-xingyu.wu@starfivetech.com>
- <CAJM55Z8vj6KvpKZxRVh0+G_LCXrpnXzOR+oBad-igkHVTD_J=Q@mail.gmail.com>
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <CAJM55Z8vj6KvpKZxRVh0+G_LCXrpnXzOR+oBad-igkHVTD_J=Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [183.27.98.46]
-X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9PR04MB828202F64FB4F4724B23564FFC37A@DB9PR04MB8282.eurprd04.prod.outlook.com>
+User-Agent: NeoMutt/20180716
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/7/13 20:26, Emil Renner Berthing wrote:
-> On Tue, 4 Jul 2023 at 08:49, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
->>
->> Add bindings for the PLL clock generator on the JH7110 RISC-V SoC.
->>
->> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
->> ---
->>  .../bindings/clock/starfive,jh7110-pll.yaml   | 46 +++++++++++++++++++
->>  .../dt-bindings/clock/starfive,jh7110-crg.h   |  6 +++
->>  2 files changed, 52 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
->> new file mode 100644
->> index 000000000000..beb78add5a8d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
->> @@ -0,0 +1,46 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-pll.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: StarFive JH7110 PLL Clock Generator
->> +
->> +description:
->> +  These PLLs are high speed, low jitter frequency synthesizers in JH7110.
+Hi Adrian,
+
+thanks for the fast reply :)
+
+On 23-07-13, Adrian Alonso wrote:
+> Hi,
 > 
-> ..synthesizers in the JH7110.
-
-Will fix.
-
+> +Bligaard
 > 
->> +  Each PLL works in integer mode or fraction mode, with configuration
->> +  registers in the sys syscon. So the PLLs node should be a child of
->> +  SYS-SYSCON node.
->> +  The formula for calculating frequency is
->> +  Fvco = Fref * (NI + NF) / M / Q1
->> +
->> +maintainers:
->> +  - Xingyu Wu <xingyu.wu@starfivetech.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: starfive,jh7110-pll
->> +
->> +  clocks:
->> +    maxItems: 1
->> +    description: Main Oscillator (24 MHz)
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +    description:
->> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
->> +
->> +required:
->> +  - compatible
->> +  - clocks
->> +  - '#clock-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    clock-controller {
->> +      compatible = "starfive,jh7110-pll";
->> +      clocks = <&osc>;
->> +      #clock-cells = <1>;
->> +    };
->> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
->> index 06257bfd9ac1..086a6ddcf380 100644
->> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
->> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
->> @@ -6,6 +6,12 @@
->>  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
->>  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
->>
->> +/* PLL clocks */
->> +#define JH7110_CLK_PLL0_OUT                    0
->> +#define JH7110_CLK_PLL1_OUT                    1
->> +#define JH7110_CLK_PLL2_OUT                    2
->> +#define JH7110_PLLCLK_END                      3
+> FRef for Audio/Video PLLs are usually 24Mhz/25Mhz;
+
+All PLLs are sourced by the external 24MHz osc if I understood the
+i.MX8M{N,M,P} reference manuals correctly.
+
+> But most common use case for dynamic reconf is for Audio PLL
+> Where prate = 2 4Mhz (FRef) could derive 44.1khz/44khz sample rates
+
+Video-plls are very device/use-case specific too.
+
+> b) 1 <= p <= 63; (1 <= p <= 4 if prate = 24MHz);
 > 
-> It would be nice if these names followed the same pattern as the
-> clocks below. Eg. something like JH7110_PLLCLK_PLL?_OUT and
-> JH7110_PLLCLK_END.
+> Found out this old commit log:
 > 
-> But maybe these defines are not even needed, since you just do <&pll
-> 0>, <&pll 1> and it's obvious what that means.
-
-I prefer to keep these names because they are used in the PLL driver
-and are more easy to understand than numbers.
-I will use the JH7110_PLLCLK_PLL?_OUT to follow the same pattern
-in next version.
-
-Best regards,
-Xingyu Wu
-
+> clk: imx: dynamic audio pll rate settings
 > 
->>  /* SYSCRG clocks */
->>  #define JH7110_SYSCLK_CPU_ROOT                 0
->>  #define JH7110_SYSCLK_CPU_CORE                 1
->> --
->> 2.25.1
->>
+> Add support for dynamic audio pll rate settings
+> Calculate optimal dividers close to required user freq request
+> Fractional PLL constrains:
+>  a). 6MHz <= Fref <= 25MHz;
+>  b). 1 <= p <= 63; if Fref is external cristal Fref = 24Mhz
+>      1 <= p <= 4;
 
+Where is this restriction of 1 <= p <= 4 (fref = 24MHz) mentioned? I
+wasn't able to find that limitation within the reference-manual nor the
+datasheet.
+
+>  c). 64 <= m <= 1023;
+>  d). 0 <= s <= 6;
+>  e). -32768 <= k <= 32767;
+> 
+> Usage example:
+> ------------------------------------------------------------
+> cat /sys/devices/platform/30030000.sai/pll1
+> 722534400
+> echo 589824000 > /sys/devices/platform/30030000.sai/pll1
+> ------------------------------------------------------------
+> 
+> clk_int_pll1443x_recalc_rate: 589823982:393:1:4:14155
+> mdiv = 393; pdiv = 1; sdiv = 4; kdiv = 14155;
+> Audio PLL rate = 589823982 Hz
+> 
+> cat /sys/kernel/debug/clk/clk_summary
+> ------------------------------------------------------------
+>  audio_pll2_ref_sel  0            0    24000000 0 0
+>   audio_pll2         0            0   589823982 0 0
+>    audio_pll2_bypass 0            0   589823982 0 0
+>     audio_pll2_out   0            0   589823982 0 0
+
+With the reference manual mentioned: 1 <= p <= 63 restriction you may
+find the exact clock rate of: 589824000. So question is why do we have
+this limitation?
+
+Regards,
+  Marco
