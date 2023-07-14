@@ -2,241 +2,156 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18691C001DD
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 09:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE5DEB64DA
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 13:39:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235607AbjGNJg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jul 2023 05:36:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60552 "EHLO
+        id S235217AbjGNNjZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jul 2023 09:39:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235660AbjGNJgj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 05:36:39 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAD493AA0
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jul 2023 02:36:34 -0700 (PDT)
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id F20F23F738
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jul 2023 09:36:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689327392;
-        bh=+yiF1ij/z+iWY/wZthjD0aPjMSoVu9B46XxEpPJ5vvs=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=tul1H40eiEJ5ir5lmiOokb3byqiymVG0q9qLOQk8TBjB6xInwuQq2zmA5VcbrEbhj
-         DbPpOQuT7+qKLvjHUVpKtYOapdt301/JbyOHVkhXMIycxeYRawRiY8ykK3K13M2H4D
-         qs2HviBjQskEuP0au8NEpqg+YOqJ2QYNUCVn/BSExnH9R5TGOxulvM7qPAIgPi+I0a
-         d6YpapkSA9rDzVBkEp/5qralzZgNuIBVFiUjGR+gjVUbIq0Nao+ge/1d77mXJEheld
-         JbI5x82yyqX3JjQyr5Y3BV8MllZJ8CT/xrQXCO5xjU/Az3lPQtDM3WE0c57m9ta4Eg
-         w8mh7zxqCaE0g==
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-403c7ffd25eso19775031cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jul 2023 02:36:31 -0700 (PDT)
+        with ESMTP id S235219AbjGNNjY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 09:39:24 -0400
+Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D122D64
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jul 2023 06:39:23 -0700 (PDT)
+Received: by mail-io1-xd34.google.com with SMTP id ca18e2360f4ac-785cbc5bfd2so75686539f.2
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jul 2023 06:39:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689341963; x=1691933963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jDIgu8AsPlCorihSRjbKNtab0Dj5E7qlVeeiy7clo3I=;
+        b=X0/TbDoyWQGvDmCsBTo5QnYj1cDtVLQZVsAdmFY5jeF0+O5fNL7BG6CU2mbyfKaWLl
+         V2mb+MCz6LtUT1onUsGe1Jl84o4WlT/leVroI5JE/5TQOsrwlVYRDlSpTrZYcDb9zBnb
+         6DrJf9nifcXKhHDRFaHVriXakgS4+6+bAB1JS3RTqcxR/RhbowWoXunKj8ociYL+qCNV
+         AOY3pPeqe91QMJXc189uAg8v9HFuod2AciH3umlOqCv3e3sQfFtcowHOjzAh1rVKnVIv
+         /PVOeBWL/4AezXhkOxpOyMVd8s99F893YhabICcPF/jwywBdeuCjbIeI+tBB2pTdRar0
+         9z4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689327386; x=1691919386;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+yiF1ij/z+iWY/wZthjD0aPjMSoVu9B46XxEpPJ5vvs=;
-        b=la3Q7AxCMFYGlLsrGyAiOMmWbKL/pgcuKkjbMBMQXvCYk7MqioFUWnkWk3s3m32Efw
-         ZoHcKB9ryZ4tRuvcMH9rCVTuU8bI/uZZcDoNUacQ2PHMEfCj+5c/vlSgBDtCFf4GeHT8
-         pXMjyay2IqMUFP1oU60lwy0VL11Bv1pB0250DEAH4BizbUy/gAiyp1rP9HH4sUfBkVoR
-         oZDiuJCrpY5AGVKWyDfbbPJXQa3eA5ma+iMESpvdf0AE2UySRbsaPYPv8v2bxhQIUVBl
-         HC6EhM+RFT/YE5pB8poawTpnPCUVEOqL8h7TO7IEagdyoto7qG17Z7vAt60FnivdUVG+
-         Dtsw==
-X-Gm-Message-State: ABy/qLbh3fhO8tgzBFJJ3ouMdm3/E8hGIhta4elY0fcaxk49mJc1VJC7
-        9PMTDpA38pyqLn2YMR9GPNs48AbOnZzgltVjj04dsFAsqTZ+mg8kOLx+bJtXaAhEc2XYFf4lLns
-        F5GY8PBW0mXurIGaE2BGc3xA1YyAqE9Ovpwm63hiSA8rHnQMf0HObMQ==
-X-Received: by 2002:a05:622a:181:b0:403:ac95:c6a9 with SMTP id s1-20020a05622a018100b00403ac95c6a9mr5242752qtw.30.1689327386206;
-        Fri, 14 Jul 2023 02:36:26 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlGxE6bkszZ+7BBq2hyHda3ibW1kqoUiril9bmmHYh1J06irx78LOa5uu+I/iZMoL2sy2f6nXwFaMqHTE34JLQw=
-X-Received: by 2002:a05:622a:181:b0:403:ac95:c6a9 with SMTP id
- s1-20020a05622a018100b00403ac95c6a9mr5242716qtw.30.1689327385565; Fri, 14 Jul
- 2023 02:36:25 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689341963; x=1691933963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jDIgu8AsPlCorihSRjbKNtab0Dj5E7qlVeeiy7clo3I=;
+        b=JzXPQ8/UJ9NVawEO4Bb5QJ1gD9obqs8s3jLaEaUzLmCVfHWVMYkgCavTbQ+kD5k5xs
+         z3KpS/5iZ8Lz+wNJ+MzoKGd6mduYMq7WeLT2bPwmrLd97w5eJqOUpjtCVohuw/StblFR
+         oQcJeei8OnLJjOLDRh9398H0jr+W/tqPRaGeZCedVp8azlE1vMlcBSJp9KijQGipMXK9
+         Fm2DmMXSuGjzcI9a97doRibLEhE030vM9mLPR6YZZ9H7KEDEtIlmXF80akklrja5AkGj
+         ccrB6vNeIY5q6uqDbre/K9SA2WPQJjDHBMaHV0kAgDCGgb744LEsMRRU+73ORb5dYiBv
+         flkQ==
+X-Gm-Message-State: ABy/qLbxn7hkR+G4o9HTmISEWMfJsgb0lB6JV3GaiZbrMM0piNsY0jY3
+        o4TJLAABNk90OpQL/6LIjwX7oPOmz1U8J60D06BVlavJ
+X-Google-Smtp-Source: APBJJlHpK+dzquqfJJt2U+ACWYd/aGDuqIM4yd4tcbGExHBm5l/uC5MVg0cKfDTL3GL9mYvU00o47s9IbNLxVZE2BUE=
+X-Received: by 2002:a92:c9d1:0:b0:346:6274:5d70 with SMTP id
+ k17-20020a92c9d1000000b0034662745d70mr4690134ilq.26.1689341962903; Fri, 14
+ Jul 2023 06:39:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230704064610.292603-1-xingyu.wu@starfivetech.com>
- <20230704064610.292603-6-xingyu.wu@starfivetech.com> <CAJM55Z-OSmQCV6mO+SD4R2eU5gfx9TArSqDy+d-M2aer6bKL_A@mail.gmail.com>
- <9a2f0aa0-ad7e-c12d-245d-5f80928705d6@starfivetech.com>
-In-Reply-To: <9a2f0aa0-ad7e-c12d-245d-5f80928705d6@starfivetech.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Fri, 14 Jul 2023 11:36:09 +0200
-Message-ID: <CAJM55Z8rXOyT4Q-JbzZof5050qGqohDTRCj7RDavuzi1Zb6wMQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v6 5/7] clk: starfive: jh7110-sys: Add PLL clocks
- source from DTS
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <ca6b0f0b-3f0d-8e4d-c857-8c6515250782@prevas.dk>
+ <20230713175435.z66efhro7mvnk5gg@pengutronix.de> <DB9PR04MB828202F64FB4F4724B23564FFC37A@DB9PR04MB8282.eurprd04.prod.outlook.com>
+ <20230714070916.yybwlxpwiqdwjcw2@pengutronix.de>
+In-Reply-To: <20230714070916.yybwlxpwiqdwjcw2@pengutronix.de>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Fri, 14 Jul 2023 08:39:11 -0500
+Message-ID: <CAHCN7x+fs7k0y8Sps+0N7NUPVto8UhZD9E8DbVEuDRPv6bdDMg@mail.gmail.com>
+Subject: Re: [EXT] Re: bounds of pdiv in clk-pll14xx.c
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     Adrian Alonso <adrian.alonso@nxp.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        "bli@bang-olufsen.dk" <bli@bang-olufsen.dk>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Abel Vesa <abelvesa@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 14 Jul 2023 at 10:05, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
+On Fri, Jul 14, 2023 at 2:22=E2=80=AFAM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
 >
-> On 2023/7/13 21:15, Emil Renner Berthing wrote:
-> > On Tue, 4 Jul 2023 at 08:49, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
-> >>
-> >> Modify PLL clocks source to be got from DTS or
-> >> the fixed factor clocks.
-> >>
-> >> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> >> ---
-> >>  drivers/clk/starfive/Kconfig                  |  1 +
-> >>  .../clk/starfive/clk-starfive-jh7110-sys.c    | 45 +++++++++++--------
-> >>  2 files changed, 28 insertions(+), 18 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-> >> index 5195f7be5213..978b78ec08b1 100644
-> >> --- a/drivers/clk/starfive/Kconfig
-> >> +++ b/drivers/clk/starfive/Kconfig
-> >> @@ -35,6 +35,7 @@ config CLK_STARFIVE_JH7110_SYS
-> >>         select AUXILIARY_BUS
-> >>         select CLK_STARFIVE_JH71X0
-> >>         select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
-> >> +       select CLK_STARFIVE_JH7110_PLL
-> >>         default ARCH_STARFIVE
-> >>         help
-> >>           Say yes here to support the system clock controller on the
-> >> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> >> index e6031345ef05..d56f48013388 100644
-> >> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> >> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> >> @@ -7,6 +7,7 @@
-> >>   */
-> >>
-> >>  #include <linux/auxiliary_bus.h>
-> >> +#include <linux/clk.h>
-> >>  #include <linux/clk-provider.h>
-> >>  #include <linux/init.h>
-> >>  #include <linux/io.h>
-> >> @@ -386,6 +387,7 @@ EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
-> >>
-> >>  static int __init jh7110_syscrg_probe(struct platform_device *pdev)
-> >>  {
-> >> +       bool use_fixed_pll = true;      /* PLL clocks use fixed factor clocks or PLL driver */
-> >
-> > nit: reverse christmas tree ordering, eg. move this below priv
-> >
-> >>         struct jh71x0_clk_priv *priv;
-> >>         unsigned int idx;
-> >>         int ret;
-> >> @@ -402,28 +404,29 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
-> >>         if (IS_ERR(priv->base))
-> >>                 return PTR_ERR(priv->base);
-> >>
-> >> -       /*
-> >> -        * These PLL clocks are not actually fixed factor clocks and can be
-> >> -        * controlled by the syscon registers of JH7110. They will be dropped
-> >> -        * and registered in the PLL clock driver instead.
-> >> -        */
-> >> +       if (!IS_ERR(devm_clk_get(priv->dev, "pll0_out")))
-> >> +               use_fixed_pll = false;  /* can get pll clocks from PLL driver */
-> >
-> > The devm_clk_get() variant will allocate memory for a callback to call
-> > clk_put() when the driver is unloaded, but proper references
-> > associated with the consumers of the pll0_out clock are already taken
-> > below. So unless we find a better way to detect if the pll references
-> > are specified in the device tree or not, maybe something like this
-> > instead:
-> >
+> Hi Adrian,
 >
-> Thanks. It looks more reasonable. I will follow it in next version.
+> thanks for the fast reply :)
 >
-> > priv->pll[0] = clk_get(priv->dev, "pll0_out);
+> On 23-07-13, Adrian Alonso wrote:
+> > Hi,
+> >
+> > +Bligaard
+> >
+> > FRef for Audio/Video PLLs are usually 24Mhz/25Mhz;
 >
-> The priv->pll[] are clk_hw* struct no clk* struct and this could be failed
-> when building. So maybe use a temporary clk* struct.
+> All PLLs are sourced by the external 24MHz osc if I understood the
+> i.MX8M{N,M,P} reference manuals correctly.
+>
+> > But most common use case for dynamic reconf is for Audio PLL
+> > Where prate =3D 2 4Mhz (FRef) could derive 44.1khz/44khz sample rates
+>
+> Video-plls are very device/use-case specific too.
 
-Ah yes, you're right. You'll need a local struct clk *clk for that then.
+I have spent a bunch of time trying to troubleshoot video stuff, and
+some video_pll clocks are challenging to achieve, and I was trying to
+figure out how to improve this driver.
 
-> > if (IS_ERR(priv->pll[0])) {
-> >   /* 24MHZ -> 1000.0MHz */
-> >   priv->pll[0] = ...
-> >   ...
-> >
-> > } else {
-> >   clk_put(priv->pll[0]);
-> >   priv->pll[0] = NULL;
 >
+> > b) 1 <=3D p <=3D 63; (1 <=3D p <=3D 4 if prate =3D 24MHz);
 > >
-> >> +       /* Use fixed factor clocks if can not get the PLL clocks from DTS */
-> >> +       if (use_fixed_pll) {
-> >>         /* 24MHz -> 1000.0MHz */
+> > Found out this old commit log:
 > >
-> > These comments are not indented with the code, which just looks weird.
->
-> Will fix.
->
+> > clk: imx: dynamic audio pll rate settings
 > >
-> >> -       priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
-> >> -                                                        "osc", 0, 125, 3);
-> >> -       if (IS_ERR(priv->pll[0]))
-> >> -               return PTR_ERR(priv->pll[0]);
-> >> +               priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
-> >> +                                                                "osc", 0, 125, 3);
-> >> +               if (IS_ERR(priv->pll[0]))
-> >> +                       return PTR_ERR(priv->pll[0]);
-> >>
-> >>         /* 24MHz -> 1066.0MHz */
-> >> -       priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
-> >> -                                                        "osc", 0, 533, 12);
-> >> -       if (IS_ERR(priv->pll[1]))
-> >> -               return PTR_ERR(priv->pll[1]);
-> >> +               priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
-> >> +                                                                "osc", 0, 533, 12);
-> >> +               if (IS_ERR(priv->pll[1]))
-> >> +                       return PTR_ERR(priv->pll[1]);
-> >>
-> >>         /* 24MHz -> 1188.0MHz */
-> >> -       priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
-> >> -                                                        "osc", 0, 99, 2);
-> >> -       if (IS_ERR(priv->pll[2]))
-> >> -               return PTR_ERR(priv->pll[2]);
-> >> +               priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
-> >> +                                                                "osc", 0, 99, 2);
-> >> +               if (IS_ERR(priv->pll[2]))
-> >> +                       return PTR_ERR(priv->pll[2]);
-> >> +       }
-> >>
-> >>         for (idx = 0; idx < JH7110_SYSCLK_END; idx++) {
-> >>                 u32 max = jh7110_sysclk_data[idx].max;
-> >> @@ -462,8 +465,14 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
-> >>                                 parents[i].fw_name = "tdm_ext";
-> >>                         else if (pidx == JH7110_SYSCLK_MCLK_EXT)
-> >>                                 parents[i].fw_name = "mclk_ext";
-> >> -                       else
-> >> +                       else if (use_fixed_pll)
+> > Add support for dynamic audio pll rate settings
+> > Calculate optimal dividers close to required user freq request
+> > Fractional PLL constrains:
+> >  a). 6MHz <=3D Fref <=3D 25MHz;
+> >  b). 1 <=3D p <=3D 63; if Fref is external cristal Fref =3D 24Mhz
+> >      1 <=3D p <=3D 4;
+>
+> Where is this restriction of 1 <=3D p <=3D 4 (fref =3D 24MHz) mentioned? =
+I
+> wasn't able to find that limitation within the reference-manual nor the
+> datasheet.
+
+I looked too, and I couldn't find it either.
+
+>
+> >  c). 64 <=3D m <=3D 1023;
+> >  d). 0 <=3D s <=3D 6;
+> >  e). -32768 <=3D k <=3D 32767;
 > >
-> > else if (priv->pll[0])
->
-> Will change.
->
+> > Usage example:
+> > ------------------------------------------------------------
+> > cat /sys/devices/platform/30030000.sai/pll1
+> > 722534400
+> > echo 589824000 > /sys/devices/platform/30030000.sai/pll1
+> > ------------------------------------------------------------
 > >
-> >>                                 parents[i].hw = priv->pll[pidx - JH7110_SYSCLK_PLL0_OUT];
-> >> +                       else if (pidx == JH7110_SYSCLK_PLL0_OUT)
-> >> +                               parents[i].fw_name = "pll0_out";
-> >> +                       else if (pidx == JH7110_SYSCLK_PLL1_OUT)
-> >> +                               parents[i].fw_name = "pll1_out";
-> >> +                       else if (pidx == JH7110_SYSCLK_PLL2_OUT)
-> >> +                               parents[i].fw_name = "pll2_out";
-> >>                 }
-> >>
-> >>                 clk->hw.init = &init;
-> >> --
-> >> 2.25.1
-> >>
+> > clk_int_pll1443x_recalc_rate: 589823982:393:1:4:14155
+> > mdiv =3D 393; pdiv =3D 1; sdiv =3D 4; kdiv =3D 14155;
+> > Audio PLL rate =3D 589823982 Hz
+> >
+> > cat /sys/kernel/debug/clk/clk_summary
+> > ------------------------------------------------------------
+> >  audio_pll2_ref_sel  0            0    24000000 0 0
+> >   audio_pll2         0            0   589823982 0 0
+> >    audio_pll2_bypass 0            0   589823982 0 0
+> >     audio_pll2_out   0            0   589823982 0 0
 >
-> Best regards,
-> Xingyu Wu
+> With the reference manual mentioned: 1 <=3D p <=3D 63 restriction you may
+> find the exact clock rate of: 589824000. So question is why do we have
+> this limitation?
+
+When you do this, what values of mpsk do you get (or at least what value of=
+ p)?
+
+I am going to re-test some of the video_pll stuff with p between 1 and
+63 instead of 1 to 4 as well.  I am hoping it will solve some LCDIF
+issues.
+
+adam
+>
+> Regards,
+>   Marco
