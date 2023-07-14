@@ -2,157 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA16EB64DA
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 09:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C77AEB64DA
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 09:35:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229492AbjGNJVs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jul 2023 05:21:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49282 "EHLO
+        id S235335AbjGNJf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jul 2023 05:35:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234317AbjGNJVs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 05:21:48 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FCD4211C;
-        Fri, 14 Jul 2023 02:21:47 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4E7606600357;
-        Fri, 14 Jul 2023 10:21:44 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689326505;
-        bh=aQFzKq+ca3eHMYbMfFhasP40m7wIjw2gYDIjXkZhC3k=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=IRnpytYs7MityuQa2jBNUVOSa7U26dQHWq4XXuTfoiphZAAL+SS9DbCRYwhG3ALbn
-         8hU+02LtxjPHKtoDWKJ7r2pGGZYRyLqadZunMcIx3X7YqjiA3Ki9428ORvkgQlT/Zf
-         J6474xGUuDQ9PmlD+m0VpuU4fbllIEFNMs/p5VS1GyGmq4hXpXggL7dZIx3XE8mQDP
-         CZOmaY1yuSPQY8CInVSBjEEW7T0iI/f2lZS1fcX1MY1ftDHCpHoUXzL1XJpaJSLFfD
-         +uPrTENumZZ2ZiQJnQ1z026pP1H4aXiJkBVTSy+rCjWNtB5g/usENkkvlQNPW8nYak
-         C4FUn2IPogrsA==
-Message-ID: <0dc87b13-77f7-ff1e-f621-43e692b4b8ff@collabora.com>
-Date:   Fri, 14 Jul 2023 11:21:41 +0200
+        with ESMTP id S235459AbjGNJfS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 05:35:18 -0400
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E03AB3AB5;
+        Fri, 14 Jul 2023 02:34:58 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2b703c900e3so25433421fa.1;
+        Fri, 14 Jul 2023 02:34:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689327268; x=1691919268;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=319xj+Bvw/t8XftWtBPIDtvZAknBgoYfRmK9iRu0nCQ=;
+        b=FmJNLsSxnyQGa2hlWCZvrYEg9Iz2Jku3fWJ9dOKYwugzlR1FqCv5g7MI7xjm7YRlYG
+         x9ssnFZg+/mMBsFIUUfRlpwQnvmSGfmXWDtd47k3CopnLGIUjEQ/fGqf69KmfwoaC4Qq
+         U59lPozyz2z3ruWIizP6nClpDH9aBaaerVIaVCPpoT7VOVohTpgPV+YbMVsEkW020lpE
+         TGZcQY5IjBUVaLWbSlMmRIUE+Y1V7PtHzkDWYYpFgTZ77DZKi234M0FmZNjY29dGKk/3
+         JJcUkxJOwB/osz72LBFhvDPhJTnBTvIpLBSKREei6hA8tH8oT9mMYzjrxc/43hDNHYLg
+         J/4g==
+X-Gm-Message-State: ABy/qLbMugWazh1+1b3qPie5L7JOv1K2VM5RozB48zSInKwAePkTt/a+
+        QenAjhLULcnPKuagN6cPlIYj6jWBP6/M3KOgKRxicmOX
+X-Google-Smtp-Source: APBJJlFwb+212L3SRkqSxOzBhBHdFw9JLFCb0RgcKAtKkzmn+t2CMOvyxqsGYYdgBti+gf8e1ghfWoUTZP/J1eq5uaQ=
+X-Received: by 2002:a2e:7a0e:0:b0:2b6:fa92:479e with SMTP id
+ v14-20020a2e7a0e000000b002b6fa92479emr3580876ljc.42.1689327267603; Fri, 14
+ Jul 2023 02:34:27 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
- top_dp/edp muxes
-To:     Alexandre Mergnat <amergnat@baylibre.com>, sboyd@kernel.org
-Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
-        wenst@chromium.org, msp@baylibre.com, yangyingliang@huawei.com,
-        u.kleine-koenig@pengutronix.de, miles.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
- <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
- <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
-Content-Language: en-US
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Fri, 14 Jul 2023 11:34:14 +0200
+Message-ID: <CANBLGcz+9V9mWQM6Xt9_F_1q3GhCS0zNisrtYPa=SwNT+tGEyQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: starfive: Simplify .determine_rate()
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Hal Feng <hal.feng@starfivetech.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 13/07/23 15:22, Alexandre Mergnat ha scritto:
-> 
-> 
-> On 13/07/2023 09:21, AngeloGioacchino Del Regno wrote:
->> The top_dp and top_edp muxes can be both parented to either TVDPLL1
->> or TVDPLL2, two identically specced PLLs for the specific purpose of
->> giving out pixel clock: this becomes a problem when the MediaTek
->> DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
->>
->> In the usecase of two simultaneous outputs (using two controllers),
->> it was seen that one of the displays would sometimes display garbled
->> output (if any at all) and this was because:
->>   - top_edp was set to TVDPLL1, outputting X GHz
->>   - top_dp was set to TVDPLL2, outputting Y GHz
->>     - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
->>       - top_dp is switched to TVDPLL1
->>       - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
->>       - eDP display is garbled
->>
->> To solve this issue, remove all TVDPLL1 parents from `top_dp` and
->> all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
->> clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
->> able to use the right bit index for the new parents list.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/clk/mediatek/clk-mt8195-topckgen.c | 22 ++++++++++++++--------
->>   1 file changed, 14 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c 
->> b/drivers/clk/mediatek/clk-mt8195-topckgen.c
->> index 81daa24cadde..abb3721f6e1b 100644
->> --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
->> +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
->> @@ -417,15 +417,21 @@ static const char * const pwrmcu_parents[] = {
->>   static const char * const dp_parents[] = {
->>       "clk26m",
->> -    "tvdpll1_d2",
->>       "tvdpll2_d2",
->> -    "tvdpll1_d4",
->>       "tvdpll2_d4",
->> -    "tvdpll1_d8",
->>       "tvdpll2_d8",
->> -    "tvdpll1_d16",
->>       "tvdpll2_d16"
->>   };
->> +static const u8 dp_parents_idx[] = { 0, 2, 4, 6, 8 };
->> +
->> +static const char * const edp_parents[] = {
->> +    "clk26m",
->> +    "tvdpll1_d2",
->> +    "tvdpll1_d4",
->> +    "tvdpll1_d8",
->> +    "tvdpll1_d16"
->> +};
->> +static const u8 edp_parents_idx[] = { 0, 1, 3, 5, 7 };
-> 
-> AFAII your solution is to force a specific TVDPLLX for each display, and it isn't 
-> dynamic.
-> 
-> Do you think it's possible to do that using the DTS ? I'm asking because, IMHO, 
-> this kind of setup is more friendly/readable/flexible in the DTS than hardcoded 
-> into the driver.
-> 
+On Fri, 7 Jul 2023 at 22:02, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> jh71x0_clk_mux_determine_rate() is the same as __clk_mux_determine_rate(),
+> so use the latter to save some LoC.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-No, there's no way. In DT you can assign one specific parent to a specific clock,
-but we need to dynamically switch between the TVDPLL dividers with clk_set_rate()
-calls.
+Thanks!
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 
-Besides, can you please explain why you're worried about having TVDPLL1 on DP
-instead of eDP and vice-versa?
-The two PLLs are powered from the same power domain and are identical in spec,
-so one or the other doesn't make any difference... you could use TVDPLL2 while
-TVDPLL1 is OFF and vice-versa too.
-
-Cheers,
-Angelo
-
->>   static const char * const disp_pwm_parents[] = {
->>       "clk26m",
->> @@ -957,11 +963,11 @@ static const struct mtk_mux top_mtk_muxes[] = {
->>       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_PWRMCU, "top_pwrmcu",
->>           pwrmcu_parents, 0x08C, 0x090, 0x094, 16, 3, 23, 0x08, 6,
->>           CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
->> -    MUX_GATE_CLR_SET_UPD(CLK_TOP_DP, "top_dp",
->> -        dp_parents, 0x08C, 0x090, 0x094, 24, 4, 31, 0x08, 7),
->> +    MUX_GATE_CLR_SET_UPD_INDEXED(CLK_TOP_DP, "top_dp",
->> +        dp_parents, dp_parents_idx, 0x08C, 0x090, 0x094, 24, 4, 31, 0x08, 7),
->>       /* CLK_CFG_10 */
->> -    MUX_GATE_CLR_SET_UPD(CLK_TOP_EDP, "top_edp",
->> -        dp_parents, 0x098, 0x09C, 0x0A0, 0, 4, 7, 0x08, 8),
->> +    MUX_GATE_CLR_SET_UPD_INDEXED(CLK_TOP_EDP, "top_edp",
->> +        edp_parents, edp_parents_idx, 0x098, 0x09C, 0x0A0, 0, 4, 7, 0x08, 8),
->>       MUX_GATE_CLR_SET_UPD(CLK_TOP_DPI, "top_dpi",
->>           dp_parents, 0x098, 0x09C, 0x0A0, 8, 4, 15, 0x08, 9),
->>       MUX_GATE_CLR_SET_UPD(CLK_TOP_DISP_PWM0, "top_disp_pwm0",
-> 
-
+> ---
+>  drivers/clk/starfive/clk-starfive-jh71x0.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.c b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> index b372083d11c3..aebc99264a0b 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh71x0.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh71x0.c
+> @@ -174,12 +174,6 @@ static int jh71x0_clk_set_parent(struct clk_hw *hw, u8 index)
+>         return 0;
+>  }
+>
+> -static int jh71x0_clk_mux_determine_rate(struct clk_hw *hw,
+> -                                        struct clk_rate_request *req)
+> -{
+> -       return clk_mux_determine_rate_flags(hw, req, 0);
+> -}
+> -
+>  static int jh71x0_clk_get_phase(struct clk_hw *hw)
+>  {
+>         struct jh71x0_clk *clk = jh71x0_clk_from(hw);
+> @@ -261,7 +255,7 @@ static const struct clk_ops jh71x0_clk_gdiv_ops = {
+>  };
+>
+>  static const struct clk_ops jh71x0_clk_mux_ops = {
+> -       .determine_rate = jh71x0_clk_mux_determine_rate,
+> +       .determine_rate = __clk_mux_determine_rate,
+>         .set_parent = jh71x0_clk_set_parent,
+>         .get_parent = jh71x0_clk_get_parent,
+>         .debug_init = jh71x0_clk_debug_init,
+> @@ -271,7 +265,7 @@ static const struct clk_ops jh71x0_clk_gmux_ops = {
+>         .enable = jh71x0_clk_enable,
+>         .disable = jh71x0_clk_disable,
+>         .is_enabled = jh71x0_clk_is_enabled,
+> -       .determine_rate = jh71x0_clk_mux_determine_rate,
+> +       .determine_rate = __clk_mux_determine_rate,
+>         .set_parent = jh71x0_clk_set_parent,
+>         .get_parent = jh71x0_clk_get_parent,
+>         .debug_init = jh71x0_clk_debug_init,
+> --
+> 2.34.1
+>
