@@ -2,174 +2,106 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD12DEB64DA
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 04:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F405EB64DC
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Jul 2023 05:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234625AbjGNETP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Jul 2023 00:19:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34602 "EHLO
+        id S234538AbjGNFCc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Jul 2023 01:02:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233638AbjGNETO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 00:19:14 -0400
-Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04EB12698
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 21:19:13 -0700 (PDT)
-Received: by mail-vk1-xa2b.google.com with SMTP id 71dfb90a1353d-48147a5f0c0so414269e0c.3
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 21:19:12 -0700 (PDT)
+        with ESMTP id S234425AbjGNFCb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Jul 2023 01:02:31 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C58E2D66
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 22:02:29 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbea14700bso13650115e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jul 2023 22:02:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1689308352; x=1691900352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tJ25wMfM7kSzvTpXtpsgLxWUjdQihI5rOBPsjaMGVAo=;
-        b=VWDDDPziqbsgTDMNy7zZmb86l38MhITudT4cM4e/pk1R5tTaVbJ7SRftIJBTiTKnLE
-         hAJr+PC2+Cgo9c9NFnBydJLfeEDX3tIo/F8OHlWUnYrdH0hB4A5e4/IlSMIsOM2cy1h8
-         6UqNOkaZG3cUSiU7I6riqPP49XUbPxoejek2E=
+        d=linaro.org; s=google; t=1689310948; x=1691902948;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rf5b8Tn7imiJAgp4f2GnrUX+ZsHyR0cjspo9UaU3mm0=;
+        b=vn74eK0wTQrm0bnz5we6gJrxJYUWJC/mkcsdNfYD6rmqFLZUcT/0VlTUEaEIZoaFhy
+         E+xWactO0Sw8wuU6tIEgnv1YZz7bP0glPtgo0SAQE7So2hKyahpBDPFgrNZZVh5iPL9X
+         adIC+mAQmgFHN31lQFvE5z0QNSOc3vX3LHcb3DPxzx9LAFwImiDsBeqT/buK/0p4GqXH
+         PJTH3TktTvDRRn2oq8mgRs2Yi9YjbXVNdF3cMwuNqu4BLXl1boeTghoftdAzYDKgJz/g
+         JEf9u0S/p/Tw+5ljrrVRwfiuwvPAwc3cSLZZ/C7LGF2ZhOSn87Z/Ar1u56lQBanWhcxD
+         OSAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689308352; x=1691900352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tJ25wMfM7kSzvTpXtpsgLxWUjdQihI5rOBPsjaMGVAo=;
-        b=VDZK8le9dPeJUS+F4mGdh2SvVE0AK540CdmEZsfTux1x/MqGCYSuHm7d2QLYzOTiqn
-         AqSEUN1opBifpFv6MNBjMO7uzgxXUuuy+0U38GJ0AUJ/hz03gZgpH+5T5b/lf37U+xrM
-         yD7M5zcLj4OG4AhoXjyUTWt3M5XJ6basHYgmYlJGexqHSy+uZ97RA8WF/5ok7zj9oAtq
-         SHCVhhY7abLh797VmU9PwVyKXJkB/10tJB0ebielGvpg0BCKNsskmARwtOGpoNqu6k/8
-         btbETzKG7DGOhI0Rsb6juanQPhIVf4YQe7xOduq8umZEjhVGkKaRdgrYgx6ofz3ykDMr
-         zCUQ==
-X-Gm-Message-State: ABy/qLZxwOdpaWH7FNE9nfLUtzqMglp7IMthB5Srk+4co2B0F00/doS8
-        H6qc1QVm74ckJd5AJfChFEadpB3JGz3Jk3f4RRKQJg==
-X-Google-Smtp-Source: APBJJlEzmNK7jvt1ONHasiafzxX7B304oncYEYsEDIFGu363Kn4Q4BRNgW0aGtp4K7TFa8nhJnTX03CsOGRtGuS3/8w=
-X-Received: by 2002:a67:fe17:0:b0:443:5b1f:12e4 with SMTP id
- l23-20020a67fe17000000b004435b1f12e4mr1511250vsr.9.1689308352063; Thu, 13 Jul
- 2023 21:19:12 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689310948; x=1691902948;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rf5b8Tn7imiJAgp4f2GnrUX+ZsHyR0cjspo9UaU3mm0=;
+        b=kUam5NWvTZmZNqJoa9nL94QE/u2NmqP4807F9ewKsEEVx7v4niJQOxWaSGl3HGJZk/
+         jLa5sQL8xDifP4JDT2QlTImBnDlQ1OrF+pT8KSzxnhTlYQx8QG8+IiMKyEl2gdNGo0Hg
+         KM6u/Y4uzU6g/P+ZwxzSPdgdOWQRO4vhevVmAQLfpnGM9Doj3CpT5XqzDshpAeJzJx/a
+         hPYtKOLHEwFcbvIAY1DwUxjfCzakQXULIRX17MSJ/DzRqt/Eu3irKF05Pxb7z63ER5v6
+         KUTRlQ9pQ6mBdqv8MSlqK7hlju+54uRYgASS88y1WMDRHUV4S4tjwwrTIEwulUJ036qB
+         0kMw==
+X-Gm-Message-State: ABy/qLYXfzdnoWle3GhuII/k9OMPkWIuLwznefYYdyQSt4Xsi0Y4vwTx
+        s5wNXaLBHGMsXdDbm45jlaDrXw==
+X-Google-Smtp-Source: APBJJlE7MWlijdk9HFLnOuXlNpCUrmW1MbQ7xwX+Wx1gDld9/egD9byTvG9qACKRUnAyZxRd0RN52g==
+X-Received: by 2002:adf:f1ca:0:b0:314:5f6f:68ce with SMTP id z10-20020adff1ca000000b003145f6f68cemr3050264wro.66.1689310948133;
+        Thu, 13 Jul 2023 22:02:28 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id o14-20020a5d684e000000b003145559a691sm9710883wrw.41.2023.07.13.22.02.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Jul 2023 22:02:27 -0700 (PDT)
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: samsung: Un-support cpuidle and clock drivers
+Date:   Fri, 14 Jul 2023 07:02:23 +0200
+Message-Id: <20230714050223.8327-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
- <20230713072138.84117-3-angelogioacchino.delregno@collabora.com> <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
-In-Reply-To: <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
-From:   Chen-Yu Tsai <wenst@chromium.org>
-Date:   Fri, 14 Jul 2023 12:19:00 +0800
-Message-ID: <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
- top_dp/edp muxes
-To:     Alexandre Mergnat <amergnat@baylibre.com>
-Cc:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, sboyd@kernel.org,
-        mturquette@baylibre.com, matthias.bgg@gmail.com, msp@baylibre.com,
-        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com,
-        mripard@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 13, 2023 at 9:22=E2=80=AFPM Alexandre Mergnat <amergnat@baylibr=
-e.com> wrote:
-> On 13/07/2023 09:21, AngeloGioacchino Del Regno wrote:
-> > The top_dp and top_edp muxes can be both parented to either TVDPLL1
-> > or TVDPLL2, two identically specced PLLs for the specific purpose of
-> > giving out pixel clock: this becomes a problem when the MediaTek
-> > DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
-> >
-> > In the usecase of two simultaneous outputs (using two controllers),
-> > it was seen that one of the displays would sometimes display garbled
-> > output (if any at all) and this was because:
-> >   - top_edp was set to TVDPLL1, outputting X GHz
-> >   - top_dp was set to TVDPLL2, outputting Y GHz
-> >     - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
-> >       - top_dp is switched to TVDPLL1
-> >       - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
-> >       - eDP display is garbled
-> >
-> > To solve this issue, remove all TVDPLL1 parents from `top_dp` and
-> > all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
-> > clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
-> > able to use the right bit index for the new parents list.
-> >
-> > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@co=
-llabora.com>
-> > ---
-> >   drivers/clk/mediatek/clk-mt8195-topckgen.c | 22 ++++++++++++++-------=
--
-> >   1 file changed, 14 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/m=
-ediatek/clk-mt8195-topckgen.c
-> > index 81daa24cadde..abb3721f6e1b 100644
-> > --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
-> > +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-> > @@ -417,15 +417,21 @@ static const char * const pwrmcu_parents[] =3D {
-> >
-> >   static const char * const dp_parents[] =3D {
-> >       "clk26m",
-> > -     "tvdpll1_d2",
-> >       "tvdpll2_d2",
-> > -     "tvdpll1_d4",
-> >       "tvdpll2_d4",
-> > -     "tvdpll1_d8",
-> >       "tvdpll2_d8",
-> > -     "tvdpll1_d16",
-> >       "tvdpll2_d16"
-> >   };
-> > +static const u8 dp_parents_idx[] =3D { 0, 2, 4, 6, 8 };
-> > +
-> > +static const char * const edp_parents[] =3D {
-> > +     "clk26m",
-> > +     "tvdpll1_d2",
-> > +     "tvdpll1_d4",
-> > +     "tvdpll1_d8",
-> > +     "tvdpll1_d16"
-> > +};
-> > +static const u8 edp_parents_idx[] =3D { 0, 1, 3, 5, 7 };
->
-> AFAII your solution is to force a specific TVDPLLX for each display, and
-> it isn't dynamic.
->
-> Do you think it's possible to do that using the DTS ? I'm asking
-> because, IMHO, this kind of setup is more friendly/readable/flexible in
-> the DTS than hardcoded into the driver.
+Since few years no one is really paid to support drivers for Samsung
+Exynos SoC CPU idle and clock controllers.  Correct the status to keep
+them as maintained.
 
-(CC-ing Maxime, who has some experience in the matter.)
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-assigned-parents doesn't prevent your system from reparenting the clocks
-back to a conflicting configuration.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0b8cd03f5e52..f646ba70a01b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5367,7 +5367,7 @@ M:	Kukjin Kim <kgene@kernel.org>
+ R:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ L:	linux-pm@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+-S:	Supported
++S:	Maintained
+ F:	arch/arm/mach-exynos/pm.c
+ F:	drivers/cpuidle/cpuidle-exynos.c
+ F:	include/linux/platform_data/cpuidle-exynos.h
+@@ -18881,7 +18881,7 @@ M:	Tomasz Figa <tomasz.figa@gmail.com>
+ M:	Chanwoo Choi <cw00.choi@samsung.com>
+ R:	Alim Akhtar <alim.akhtar@samsung.com>
+ L:	linux-samsung-soc@vger.kernel.org
+-S:	Supported
++S:	Maintained
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
+ F:	Documentation/devicetree/bindings/clock/samsung,*.yaml
+-- 
+2.34.1
 
-AFAIK the recommended way to deal with this is to use
-clk_set_rate_exclusive() and co. in whatever consumer driver that needs
-exclusive control on the clock rate. However I'm not sure if that works
-for parents. It should, given the original use case was for the sunxi
-platforms, which like the MediaTek platform here has 2 PLLs for video
-related consumers, but I couldn't find code verifying it.
-
-
-ChenYu
-
-> >
-> >   static const char * const disp_pwm_parents[] =3D {
-> >       "clk26m",
-> > @@ -957,11 +963,11 @@ static const struct mtk_mux top_mtk_muxes[] =3D {
-> >       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_PWRMCU, "top_pwrmcu",
-> >               pwrmcu_parents, 0x08C, 0x090, 0x094, 16, 3, 23, 0x08, 6,
-> >               CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
-> > -     MUX_GATE_CLR_SET_UPD(CLK_TOP_DP, "top_dp",
-> > -             dp_parents, 0x08C, 0x090, 0x094, 24, 4, 31, 0x08, 7),
-> > +     MUX_GATE_CLR_SET_UPD_INDEXED(CLK_TOP_DP, "top_dp",
-> > +             dp_parents, dp_parents_idx, 0x08C, 0x090, 0x094, 24, 4, 3=
-1, 0x08, 7),
-> >       /* CLK_CFG_10 */
-> > -     MUX_GATE_CLR_SET_UPD(CLK_TOP_EDP, "top_edp",
-> > -             dp_parents, 0x098, 0x09C, 0x0A0, 0, 4, 7, 0x08, 8),
-> > +     MUX_GATE_CLR_SET_UPD_INDEXED(CLK_TOP_EDP, "top_edp",
-> > +             edp_parents, edp_parents_idx, 0x098, 0x09C, 0x0A0, 0, 4, =
-7, 0x08, 8),
-> >       MUX_GATE_CLR_SET_UPD(CLK_TOP_DPI, "top_dpi",
-> >               dp_parents, 0x098, 0x09C, 0x0A0, 8, 4, 15, 0x08, 9),
-> >       MUX_GATE_CLR_SET_UPD(CLK_TOP_DISP_PWM0, "top_disp_pwm0",
->
-> --
-> Regards,
-> Alexandre
