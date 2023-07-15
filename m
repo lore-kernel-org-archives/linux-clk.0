@@ -2,142 +2,224 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C740C001B0
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Jul 2023 13:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF513C001B0
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Jul 2023 14:10:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbjGONUM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 15 Jul 2023 09:20:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59460 "EHLO
+        id S230108AbjGOOKQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 15 Jul 2023 10:10:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjGONUL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Jul 2023 09:20:11 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BEB02D75
-        for <linux-clk@vger.kernel.org>; Sat, 15 Jul 2023 06:20:09 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4fb761efa7aso4744338e87.0
-        for <linux-clk@vger.kernel.org>; Sat, 15 Jul 2023 06:20:09 -0700 (PDT)
+        with ESMTP id S229994AbjGOOKP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Jul 2023 10:10:15 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DE521986
+        for <linux-clk@vger.kernel.org>; Sat, 15 Jul 2023 07:10:13 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id 38308e7fff4ca-2b702319893so44030611fa.3
+        for <linux-clk@vger.kernel.org>; Sat, 15 Jul 2023 07:10:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689427208; x=1692019208;
+        d=linaro.org; s=google; t=1689430211; x=1692022211;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LQhW1Szg22yqLkreXfyXXQvcUFN3IT4if2hwRUU8Cro=;
-        b=NvdsTgoHDj9lXC27YxlV+qyjrrqmsN3ASm9uJKOxzM8fGqcHBtp+G/5vHiFoHiEV7f
-         5nY6ReNSZy3379lMIBDJpnCI9E4+PvF2BupzxYxetcrQfuema/wf9bKmF3+ULS7+xIEQ
-         1aMK5F8dsXlXOypgqjDm+0pv/V7XluGjHQQHkYuRXCWLRbajn7z6lNE4fCFnI4Uy3G7P
-         AOS43d7wD/gvc+088w4tENBN4oSbZFyAnKBBv3aW75IEaXwXihLXKcFhfm4Rab1fPdly
-         18tuV1PCJrJl/9AizCtwi/4R0ajHTkcB0gK6OlySUFutT6nR9G+KWAct9tsWPbT9Q9QN
-         XGHQ==
+        bh=4/HgrrJLRtL0tsKuEEIQX/EB6sVcuOV+jDM348VHvvo=;
+        b=uLHg07ks8ri6zX2K6z4bJBgrPhsb8W2TnnbTH+mlzGJUQvBKFbi3f5JjjVWkAatB7N
+         4xLhLVgjz0ZSpuLEQ9ipOdhI5nI4qTJf9tkZY0T7ngZMlH36382DYNElgHRNeNiDdJeh
+         YOzbPe5pVEZQb6LVG1OKtkd5Sj2M7+pddIBBgnWkVkTnJZjbwxej018ASPhT7PQRPGz2
+         jLMA4wOMzEDDE6wbzMtFeEF35yLka82fhnVmmQo07g2ZydjNTr7EECYmjkFSy4FnZxzt
+         zg4FZlm4SyEel64azdjepD9C/Wi5DF0Dl3QX+NcgsBvF7oiqrCXOEjq7UEPv/E5Tta89
+         /RYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689427208; x=1692019208;
+        d=1e100.net; s=20221208; t=1689430211; x=1692022211;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LQhW1Szg22yqLkreXfyXXQvcUFN3IT4if2hwRUU8Cro=;
-        b=GSUHZsYxGYQ3Itv3fnqCzZ6u5MVTLfuSWev0qL4WYFkRWZkgg77IJda5OM1LVyMbYR
-         p7JCC74fAOAQNUjr3xI0TzFJlOVQm93eLtyYaI6n3C0P9GHWiMsn4Xkcah+bs0xQI+sZ
-         O5r7f2e90TY/XiupM6djNNWAuxior3D/pKTQSHjSw368s5/NjJ0dQIctcpUbUDFNzXGX
-         DfYi53ck0Gy4VLG3VZbujhJRS1Fu1SYT29TUyr47xYB0FtUaEi1eWoGNRtYXMk4GrqPU
-         Geh1cRJKMpWp08UGMARuf+6DECrmV3UV3USyAEf2VtkZYTv4qiI5LzDvG9mUBaHjRGpt
-         j96A==
-X-Gm-Message-State: ABy/qLahWwJl+s4ioxp8/d3pez3C1suEMdqzDRVv833E9NkTX9P5MvQE
-        W76cL5z342Wbkeoj0Y9U0Tp46w==
-X-Google-Smtp-Source: APBJJlES0cvWT/cjYNdwu6j4QPnvmRbj3dgKlgYXs0/CAx0JRyeNJftRz20dfFsV4Lm2Iqeydw5o0Q==
-X-Received: by 2002:a19:6459:0:b0:4fb:9105:58b0 with SMTP id b25-20020a196459000000b004fb910558b0mr4853169lfj.20.1689427207697;
-        Sat, 15 Jul 2023 06:20:07 -0700 (PDT)
+        bh=4/HgrrJLRtL0tsKuEEIQX/EB6sVcuOV+jDM348VHvvo=;
+        b=eIQXIEFvkzcS7GXC2N0A2VtO5sh6VV78ZGb0myBzhSrTwYJccayx7Hnwl4N5iLe3bA
+         WzNxrQ2UOUHttT4hjHUZaqGMJCK9tMgVRjOqyISi4hb/go5qRkevGQ7fU56jOLYauPSy
+         3CiXaQCwW8VU/UfnB1ZBtcuz0gUcEe8JHB1pmG9QHRc57o3IuRDu3lwGfBfOBvJfhHBt
+         UBTdCFwJqnovmBJCzYmdQee79E63KyI4p4Q4LTX27w4TQRgZTQLhR7hg9i1dcy1z81OC
+         nuW1cvqO3o6dE6u37ktFGeLvlNNd6/B/9eaQyAXdaRF9PBC+BgDMK5OA3VngHYf285GH
+         IgFg==
+X-Gm-Message-State: ABy/qLaUfAjthoJoMjmOkNGGdxtrWjggsJ8ibSgeSrNbBPNvLdweDJXV
+        APepWQzj9p+rF2KOCDMjjr9uQA==
+X-Google-Smtp-Source: APBJJlEMFD+ccsnkWg4VBRDUKkSs7u8L7ZD48yDlojb/6aXDzaXQiB3/wIJNYlFnS8WT1nQsBs0h2Q==
+X-Received: by 2002:a2e:9d12:0:b0:2b9:318e:1423 with SMTP id t18-20020a2e9d12000000b002b9318e1423mr862143lji.12.1689430211525;
+        Sat, 15 Jul 2023 07:10:11 -0700 (PDT)
 Received: from [192.168.1.101] (abxi167.neoplus.adsl.tpnet.pl. [83.9.2.167])
-        by smtp.gmail.com with ESMTPSA id n6-20020a195506000000b004fd36c89c3csm437698lfe.43.2023.07.15.06.20.06
+        by smtp.gmail.com with ESMTPSA id l8-20020a2e8688000000b002b6d3261571sm2507223lji.99.2023.07.15.07.10.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Jul 2023 06:20:07 -0700 (PDT)
-Message-ID: <a2d362d0-3a58-0835-5106-fb60f0c3e4d0@linaro.org>
-Date:   Sat, 15 Jul 2023 15:20:05 +0200
+        Sat, 15 Jul 2023 07:10:11 -0700 (PDT)
+Message-ID: <b8b2db1b-dbfc-591e-f074-1366e5ac576a@linaro.org>
+Date:   Sat, 15 Jul 2023 16:10:09 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH V3 4/6] clk: qcom: gcc-qdu1000: Update GCC clocks as per
- the latest hw version
+Subject: Re: [PATCH 1/2] clk: qcom: ipq5332: drop the mem noc clocks
 Content-Language: en-US
-To:     Imran Shaik <quic_imrashai@quicinc.com>,
+To:     Kathiravan T <quic_kathirav@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20230706105045.633076-1-quic_imrashai@quicinc.com>
- <20230706105045.633076-5-quic_imrashai@quicinc.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_anusha@quicinc.com, quic_saahtoma@quicinc.com
+References: <20230710102807.1189942-1-quic_kathirav@quicinc.com>
+ <20230710102807.1189942-2-quic_kathirav@quicinc.com>
 From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230706105045.633076-5-quic_imrashai@quicinc.com>
+In-Reply-To: <20230710102807.1189942-2-quic_kathirav@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6.07.2023 12:50, Imran Shaik wrote:
-> Update the GCC clocks as per the latest hw version of QDU1000 and
-> QRU100 SoCs.
+On 10.07.2023 12:28, Kathiravan T wrote:
+> Due to the recent design changes, all the mem noc clocks will be
+> configured by the bootloaders and it will be access protected by the TZ
+> firmware. So drop these clocks from the GCC driver.
 > 
-> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
 > ---
-> Changes since v2:
->  - Split the patch as per the review comments
->  - Newly added
+Are there any IPQ5332s outside Qualcomm labs that will presumably
+never get that TZ update?
+
+Konrad
+>  drivers/clk/qcom/gcc-ipq5332.c | 95 ----------------------------------
+>  1 file changed, 95 deletions(-)
 > 
->  drivers/clk/qcom/gcc-qdu1000.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-qdu1000.c b/drivers/clk/qcom/gcc-qdu1000.c
-> index 8df7b7983968..991fb2bc97e9 100644
-> --- a/drivers/clk/qcom/gcc-qdu1000.c
-> +++ b/drivers/clk/qcom/gcc-qdu1000.c
-> @@ -1131,6 +1131,26 @@ static struct clk_branch gcc_ddrss_ecpri_dma_clk = {
+> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+> index a75ab88ed14c..939925baa9eb 100644
+> --- a/drivers/clk/qcom/gcc-ipq5332.c
+> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+> @@ -1635,42 +1635,6 @@ static struct clk_branch gcc_mdio_slave_ahb_clk = {
 >  	},
 >  };
 >  
-> +static struct clk_branch gcc_ddrss_ecpri_gsi_clk = {
-> +	.halt_reg = 0x54298,
-> +	.halt_check = BRANCH_HALT_VOTED,
-> +	.hwcg_reg = 0x54298,
-> +	.hwcg_bit = 1,
-> +	.clkr = {
-> +		.enable_reg = 0x54298,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(const struct clk_init_data) {
-> +			.name = "gcc_ddrss_ecpri_gsi_clk",
-> +			.parent_hws = (const struct clk_hw*[]) {
-> +				&gcc_aggre_noc_ecpri_gsi_clk_src.clkr.hw,
-> +			},
-> +			.num_parents = 1,
-> +			.flags = CLK_SET_RATE_PARENT,
-> +			.ops = &clk_branch2_aon_ops,
-> +		},
-> +	},
-> +};
-> +
->  static struct clk_branch gcc_ecpri_ahb_clk = {
->  	.halt_reg = 0x3a008,
+> -static struct clk_branch gcc_mem_noc_q6_axi_clk = {
+> -	.halt_reg = 0x19010,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0x19010,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(const struct clk_init_data) {
+> -			.name = "gcc_mem_noc_q6_axi_clk",
+> -			.parent_hws = (const struct clk_hw*[]) {
+> -				&gcc_q6_axim_clk_src.clkr.hw,
+> -			},
+> -			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+> -static struct clk_branch gcc_mem_noc_ts_clk = {
+> -	.halt_reg = 0x19028,
+> -	.halt_check = BRANCH_HALT_VOTED,
+> -	.clkr = {
+> -		.enable_reg = 0x19028,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(const struct clk_init_data) {
+> -			.name = "gcc_mem_noc_ts_clk",
+> -			.parent_hws = (const struct clk_hw*[]) {
+> -				&gcc_qdss_tsctr_div8_clk_src.hw,
+> -			},
+> -			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+>  static struct clk_branch gcc_nss_ts_clk = {
+>  	.halt_reg = 0x17018,
 >  	.halt_check = BRANCH_HALT_VOTED,
-> @@ -2521,6 +2541,8 @@ static struct clk_regmap *gcc_qdu1000_clocks[] = {
->  	[GCC_AGGRE_NOC_ECPRI_GSI_CLK] = &gcc_aggre_noc_ecpri_gsi_clk.clkr,
->  	[GCC_PCIE_0_PHY_AUX_CLK_SRC] = &gcc_pcie_0_phy_aux_clk_src.clkr,
->  	[GCC_PCIE_0_PIPE_CLK_SRC] = &gcc_pcie_0_pipe_clk_src.clkr,
-> +	[GCC_GPLL1_OUT_EVEN] = &gcc_gpll1_out_even.clkr,
-Looks like you split it too much.. this clock is not being defined in this patch.
-
-Konrad
-> +	[GCC_DDRSS_ECPRI_GSI_CLK] = &gcc_ddrss_ecpri_gsi_clk.clkr,
+> @@ -3339,42 +3303,6 @@ static struct clk_branch gcc_nssnoc_pcnoc_1_clk = {
+>  	},
 >  };
 >  
->  static const struct qcom_reset_map gcc_qdu1000_resets[] = {
+> -static struct clk_branch gcc_mem_noc_ahb_clk = {
+> -	.halt_reg = 0x1900c,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0x1900c,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(const struct clk_init_data) {
+> -			.name = "gcc_mem_noc_ahb_clk",
+> -			.parent_hws = (const struct clk_hw*[]) {
+> -				&gcc_pcnoc_bfdcd_clk_src.clkr.hw,
+> -			},
+> -			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+> -static struct clk_branch gcc_mem_noc_apss_axi_clk = {
+> -	.halt_reg = 0x1901c,
+> -	.halt_check = BRANCH_HALT_VOTED,
+> -	.clkr = {
+> -		.enable_reg = 0xb004,
+> -		.enable_mask = BIT(6),
+> -		.hw.init = &(const struct clk_init_data) {
+> -			.name = "gcc_mem_noc_apss_axi_clk",
+> -			.parent_hws = (const struct clk_hw*[]) {
+> -				&gcc_apss_axi_clk_src.clkr.hw,
+> -			},
+> -			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+>  static struct clk_regmap_div gcc_snoc_qosgen_extref_div_clk_src = {
+>  	.reg = 0x2e010,
+>  	.shift = 0,
+> @@ -3390,24 +3318,6 @@ static struct clk_regmap_div gcc_snoc_qosgen_extref_div_clk_src = {
+>  	},
+>  };
+>  
+> -static struct clk_branch gcc_mem_noc_qosgen_extref_clk = {
+> -	.halt_reg = 0x19024,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0x19024,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(const struct clk_init_data) {
+> -			.name = "gcc_mem_noc_qosgen_extref_clk",
+> -			.parent_hws = (const struct clk_hw*[]) {
+> -				&gcc_snoc_qosgen_extref_div_clk_src.clkr.hw,
+> -			},
+> -			.num_parents = 1,
+> -			.flags = CLK_SET_RATE_PARENT,
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+>  static struct clk_regmap *gcc_ipq5332_clocks[] = {
+>  	[GPLL0_MAIN] = &gpll0_main.clkr,
+>  	[GPLL0] = &gpll0.clkr,
+> @@ -3451,8 +3361,6 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
+>  	[GCC_LPASS_SWAY_CLK_SRC] = &gcc_lpass_sway_clk_src.clkr,
+>  	[GCC_MDIO_AHB_CLK] = &gcc_mdio_ahb_clk.clkr,
+>  	[GCC_MDIO_SLAVE_AHB_CLK] = &gcc_mdio_slave_ahb_clk.clkr,
+> -	[GCC_MEM_NOC_Q6_AXI_CLK] = &gcc_mem_noc_q6_axi_clk.clkr,
+> -	[GCC_MEM_NOC_TS_CLK] = &gcc_mem_noc_ts_clk.clkr,
+>  	[GCC_NSS_TS_CLK] = &gcc_nss_ts_clk.clkr,
+>  	[GCC_NSS_TS_CLK_SRC] = &gcc_nss_ts_clk_src.clkr,
+>  	[GCC_NSSCC_CLK] = &gcc_nsscc_clk.clkr,
+> @@ -3573,10 +3481,7 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
+>  	[GCC_XO_DIV4_CLK] = &gcc_xo_div4_clk.clkr,
+>  	[GCC_IM_SLEEP_CLK] = &gcc_im_sleep_clk.clkr,
+>  	[GCC_NSSNOC_PCNOC_1_CLK] = &gcc_nssnoc_pcnoc_1_clk.clkr,
+> -	[GCC_MEM_NOC_AHB_CLK] = &gcc_mem_noc_ahb_clk.clkr,
+> -	[GCC_MEM_NOC_APSS_AXI_CLK] = &gcc_mem_noc_apss_axi_clk.clkr,
+>  	[GCC_SNOC_QOSGEN_EXTREF_DIV_CLK_SRC] = &gcc_snoc_qosgen_extref_div_clk_src.clkr,
+> -	[GCC_MEM_NOC_QOSGEN_EXTREF_CLK] = &gcc_mem_noc_qosgen_extref_clk.clkr,
+>  	[GCC_PCIE3X2_PIPE_CLK_SRC] = &gcc_pcie3x2_pipe_clk_src.clkr,
+>  	[GCC_PCIE3X1_0_PIPE_CLK_SRC] = &gcc_pcie3x1_0_pipe_clk_src.clkr,
+>  	[GCC_PCIE3X1_1_PIPE_CLK_SRC] = &gcc_pcie3x1_1_pipe_clk_src.clkr,
