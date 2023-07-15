@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D59C04FDF
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Jul 2023 09:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C18EB64DC
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Jul 2023 09:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231134AbjGOJUp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S231143AbjGOJUp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Sat, 15 Jul 2023 05:20:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50516 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230321AbjGOJU2 (ORCPT
+        with ESMTP id S230387AbjGOJU2 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Jul 2023 05:20:28 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DAE33C04;
-        Sat, 15 Jul 2023 02:20:06 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-3fbca8935bfso24938235e9.3;
-        Sat, 15 Jul 2023 02:20:06 -0700 (PDT)
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C4233AB5;
+        Sat, 15 Jul 2023 02:20:03 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id 5b1f17b1804b1-3fbf1b82de7so16536985e9.1;
+        Sat, 15 Jul 2023 02:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689412805; x=1692004805;
+        d=gmail.com; s=20221208; t=1689412802; x=1692004802;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BTMQVQh48oncaObvCwMPfvKa0bWzXZnBK799pHg2Dv0=;
-        b=OFu9BuALKJBZ4n3EogoL7nsJNvnyesWVGC/L6lnk9wsFPZKW8sL2ag8AMcIyg1sUiK
-         +oW0aLrFNsQWBJfLLo4A5yY4keb6z6S9nESDOfzP3q0hFRs1VHYrkXaF3ieDIaVYotYY
-         JJMdP4Nn+bNc4JkwzDpE8smQ7Ek/+91skCYH6Yfm7fRQGiTbcn4PcTp6BWX1WsBHDlPo
-         xH6Os0z6Yetw9jMgyC3GesSh8cZ31eO9/E/gN6T1CxLm6sNkbFXZF4m9H7rM6jWu8hBK
-         X92G4vDun8SgBNnOZQ9j2FIoqxcgZ9Bm1gr33cyTZBHOnHCmgiRj7mVLv7nLxqh/IfPm
-         zilg==
+        bh=Y6EAhfoDoZ7HkHH1SwMxSyZ3vEbeVt8JnBzyWyltbvA=;
+        b=WEzB1yK4ONu6RzeZXEjanCIg7xapsQp268NSP8ws/7ExCA+IXBkTY5LKcDcin/8Zjh
+         uUgXinV4xkQVibnipIeG2rV3T0RFK/S5FbOEMNlKTlbQsfXocy7jfph6OtzGEjVm5nMg
+         gQq/Tax55XKivN+A3zwygNsiQUB0/hfo0J7XnJP2+kGMs8v96JPZ0U7W5OWgeojOnKBo
+         uM0AosEbxcUmamtsL/Hwrj3yBVCQsD2rsjOFjOd0ESi0FsB2GNIEhjnIlzBhbkyhb0dj
+         WfBx+/7lcvmBtCw4Q0M/7QG0mb9GnnfOPMoamswGt3GHfxO49xjcvpp7OpQBUL+sY+xA
+         rG6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689412805; x=1692004805;
+        d=1e100.net; s=20221208; t=1689412802; x=1692004802;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BTMQVQh48oncaObvCwMPfvKa0bWzXZnBK799pHg2Dv0=;
-        b=Xh0hxEJzfCPJNz+KbPmQW4NZ3m1SPfpk8hTDTxKuaOigjUjCncfTQmHFZOx8zsL2f5
-         gomwztQFfev92Cla8SBs1ShHAn8UrrfOVT/fKsZ51ECptgHSrIVuUFB8IqLE2legno3d
-         vdxVAR0WqqqEwFP+cbCLZRVgHi1B3o3fBdx04SFjEUE6rqLiAHlN7rRwCg1koUhsnH15
-         2UVi5XnlTdNlnmiUWNT2s/u9OeywqINgNtaVJaQG8O6xJ1lGkNUMEA1N61gSfGfCOhKL
-         ogsmrIlboBD3wc54WrYf5cvzw3bJMBTdj5eT3p4ztV9ey0qQlJZMYukUQmdY3eQDlV/z
-         Vw5Q==
-X-Gm-Message-State: ABy/qLaxcKzm0tZMmAQtnFRqDU/rbevi6jXLK6MaZPpe6O3A/uzzVxKA
-        cNUdqRC9l72Gb52Lds3scZ4=
-X-Google-Smtp-Source: APBJJlGe5WNlzAnZQnjWkBYvOFkemYCghTl7dvPK7vHmlZd5JnAx/H1GUb56PQkGy7CW4yfbMSjROA==
-X-Received: by 2002:a05:600c:247:b0:3fb:b6fa:9871 with SMTP id 7-20020a05600c024700b003fbb6fa9871mr5184620wmj.14.1689412804527;
-        Sat, 15 Jul 2023 02:20:04 -0700 (PDT)
+        bh=Y6EAhfoDoZ7HkHH1SwMxSyZ3vEbeVt8JnBzyWyltbvA=;
+        b=HkPQQeZdyHRPFLbMzyiVi4gXO1yknlsXoshQ9qPrXaBbzw16qzuUP/BLA3aJNOKKiv
+         Rw97E23q7qI0+nzqSUZrPGQAtD5zD85Fn9jNDTBAssJ5Hj5M0G5GfwPtFPid2IxgYEv0
+         O0EG31349lW9cJxDmUcNRV8V7BLNwYBE9gexbLnbJHK5sX16DbtS6Ew2wtvT3B6uBCp6
+         9+JQrXOYeAcbmgNKiI/FQGZF0rOtcIcjhbTn3dLvy5joXgrnFtyY8R5gr6KYCLfI6Tqk
+         8HUNZ6YM5mJdcFCq1CBHsC7hZnjOlgNinToQ8TUF5+PAAEvhWRIfWI5Hh4uQlx81GkN2
+         Tq0w==
+X-Gm-Message-State: ABy/qLaKz4PI4vZPsTbPO3QNQt44ooRw/IJ4xYnre3C9+u/Q9fWKudxD
+        yUryvS7274MNOfT783WdO+M=
+X-Google-Smtp-Source: APBJJlGnM4FGqE3vWblVF678YNav3ff/lOOtXfCjSo53HpGrfUUKjr14ILxN6OSeJpdwuQTHQedSpw==
+X-Received: by 2002:a1c:6a0d:0:b0:3f6:d90:3db with SMTP id f13-20020a1c6a0d000000b003f60d9003dbmr4211358wmc.3.1689412801449;
+        Sat, 15 Jul 2023 02:20:01 -0700 (PDT)
 Received: from david-ryuzu.fritz.box ([188.195.202.152])
-        by smtp.googlemail.com with ESMTPSA id f22-20020a7bc8d6000000b003fbb5142c4bsm3238133wml.18.2023.07.15.02.20.03
+        by smtp.googlemail.com with ESMTPSA id f22-20020a7bc8d6000000b003fbb5142c4bsm3238133wml.18.2023.07.15.02.20.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 15 Jul 2023 02:20:04 -0700 (PDT)
+        Sat, 15 Jul 2023 02:20:01 -0700 (PDT)
 From:   David Wronek <davidwronek@gmail.com>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
@@ -63,11 +63,10 @@ Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         cros-qcom-dts-watchers@chromium.org,
-        David Wronek <davidwronek@gmail.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 4/7] soc: qcom: socinfo: Add SoC ID for SM7125
-Date:   Sat, 15 Jul 2023 11:16:10 +0200
-Message-ID: <20230715091932.161507-5-davidwronek@gmail.com>
+        David Wronek <davidwronek@gmail.com>
+Subject: [PATCH v3 1/7] clk: qcom: gcc-sc7180: Fix up gcc_sdcc2_apps_clk_src
+Date:   Sat, 15 Jul 2023 11:16:07 +0200
+Message-ID: <20230715091932.161507-2-davidwronek@gmail.com>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230715091932.161507-1-davidwronek@gmail.com>
 References: <20230715091932.161507-1-davidwronek@gmail.com>
@@ -77,26 +76,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the SoC ID entry for Qualcomm SM7125.
+Set .flags = CLK_OPS_PARENT_ENABLE to fix "gcc_sdcc2_apps_clk_src: rcg
+didn't update its configuration" error.
 
+Fixes: 17269568f726 ("clk: qcom: Add Global Clock controller (GCC) driver for SC7180")
 Signed-off-by: David Wronek <davidwronek@gmail.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/soc/qcom/socinfo.c | 1 +
+ drivers/clk/qcom/gcc-sc7180.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index 4d49945b3a35..785b88e2da54 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -371,6 +371,7 @@ static const struct soc_id soc_id[] = {
- 	{ qcom_board_id(SDA429W) },
- 	{ qcom_board_id(SM8350) },
- 	{ qcom_board_id(QCM2290) },
-+	{ qcom_board_id(SM7125) },
- 	{ qcom_board_id(SM6115) },
- 	{ qcom_board_id(IPQ5010) },
- 	{ qcom_board_id(IPQ5018) },
+diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+index cef3c77564cf..49f36e1df4fa 100644
+--- a/drivers/clk/qcom/gcc-sc7180.c
++++ b/drivers/clk/qcom/gcc-sc7180.c
+@@ -651,6 +651,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.name = "gcc_sdcc2_apps_clk_src",
+ 		.parent_data = gcc_parent_data_5,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_5),
++		.flags = CLK_OPS_PARENT_ENABLE,
+ 		.ops = &clk_rcg2_floor_ops,
+ 	},
+ };
 -- 
 2.41.0
 
