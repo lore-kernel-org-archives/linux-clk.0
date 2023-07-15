@@ -2,572 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA7DC0015E
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Jul 2023 14:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC414C001B0
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Jul 2023 15:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbjGOOrG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 15 Jul 2023 10:47:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51728 "EHLO
+        id S229584AbjGOPRi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 15 Jul 2023 11:17:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229639AbjGOOrG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Jul 2023 10:47:06 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FF2330D8
-        for <linux-clk@vger.kernel.org>; Sat, 15 Jul 2023 07:47:03 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id 2adb3069b0e04-4f9fdb0ef35so4933862e87.0
-        for <linux-clk@vger.kernel.org>; Sat, 15 Jul 2023 07:47:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689432421; x=1692024421;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DBiIV5yRUSXK9/Tmtk0eZ67pfuNRd1c36IPnTYs0nMA=;
-        b=m8/NYRie8ClFzKyPjTV0lRQt+LWRKRGK/cNPGHVb8ICf+ip4BAQX/t1MbLDu8MxXTG
-         4M3XQConV8VTJ5/S9E7mAqmgM+CC6h/ZDD30ulabJBcqFbanUq8SMaAW+yxauN0V3T5P
-         kqqtRNk2G1aaguUAVdDXc7sWyIMMbt8eslrVEe5jiHm7yPlxE+FBpAO8fVyjbuhG5AMT
-         QO+/xLuFY071wGQTbaciM84qVldWT7p0/owLgvCeLk01YAcXnBb6CAbzQhoCJh+tqG+D
-         iUjWJthHOjySo2ICRmHG4VqK0s1IwDg/OYR4CogGJ56HcNLmE8H7b/GsEVj4hQipv9XH
-         4tEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689432421; x=1692024421;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DBiIV5yRUSXK9/Tmtk0eZ67pfuNRd1c36IPnTYs0nMA=;
-        b=eKCUF8oUc9V6exfnTe/FoEo6Vy9oTT+9OXa0xf283In28goKAEBV1z6SXY4HglFtev
-         B5w7+LIbQeCW04gvwu9vgs0X2ujKTBgt0wQdbTPTvonj63wOyxKPbFrGL3pwkA/VzWKa
-         6fvNwruOIHYz88npepDH4arrYEtt+Ogec9UjIJTDAZd3+1KbXd1y8oz28AbqLCmKJ3QD
-         qoIwpR7WBPft58ICa8aVekOsOZisW53YJWCDshm+pjPSLFyY2Ns8ECBqtYnbQWD58N3M
-         a8TpRnGfRsF3PKCGYyhM7jvgeH9Xb14wImJqi+UDRTH5EWO9G5qIQ3j8vHOH1DhxvrKR
-         wlSQ==
-X-Gm-Message-State: ABy/qLYAt8hjTNyESLq/fd8ilZ3ffYS4QH/7MoKZG5A6tHmOBRj9EUNX
-        hBVGP7rLXjEdy6BIFHU4UhWHGQ==
-X-Google-Smtp-Source: APBJJlH7OMe/at3HJZJnf0XHj10h/fsfknH04pC8Qv69Dbu3SxAoytbjm1BILa8D3pdM+pggLqC13g==
-X-Received: by 2002:a05:6512:1320:b0:4fb:8ff3:1f72 with SMTP id x32-20020a056512132000b004fb8ff31f72mr5614119lfu.1.1689432421611;
-        Sat, 15 Jul 2023 07:47:01 -0700 (PDT)
-Received: from [192.168.1.101] (abxi167.neoplus.adsl.tpnet.pl. [83.9.2.167])
-        by smtp.gmail.com with ESMTPSA id x15-20020ac25dcf000000b004f866200361sm1906525lfq.164.2023.07.15.07.47.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Jul 2023 07:47:01 -0700 (PDT)
-Message-ID: <e601ade8-efc0-898b-79de-c2927765bf72@linaro.org>
-Date:   Sat, 15 Jul 2023 16:46:59 +0200
+        with ESMTP id S229494AbjGOPRh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Jul 2023 11:17:37 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FD172D7B;
+        Sat, 15 Jul 2023 08:17:36 -0700 (PDT)
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36FEpcVw010251;
+        Sat, 15 Jul 2023 15:17:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=pI3A5ie5nsmRsQRouwoNLfld9D1VUu37GlPSLQyEGuQ=;
+ b=WXbyuU9etsYl2ZUK/dlGxR7l3/JN4HsojE8RgA91aWg/czLsSfC/t/2qPN1b5bFxlgDv
+ 5a82F2nXwrDgr1r57mahncM+ixs++jWCUK0OtlwNo39t7OzvSVnwyDWcYQoB6BKXjXsg
+ s6N1vgsBDZPlbLcaHCbIN6+/28cEWEj3tmq7slGNonWKvhv6DOGNVmi3q0B1Kq/wQPkq
+ HGQR/6gYryIVSsDYl0Jy+W07sf5RFsEumzar3ipmna0C+rk9hWUO3gcBCutvcjmKaaLh
+ Y1O9msKzC4Hf/O9AFzQ6dQ4m9acjbju1nfaB7WbEi8gnMxh4m0KCP2W6bg0Zxi53RbfX OQ== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3run0erg5u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 15 Jul 2023 15:17:32 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36FFHWD2025751
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 15 Jul 2023 15:17:32 GMT
+Received: from [10.216.17.249] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Sat, 15 Jul
+ 2023 08:17:27 -0700
+Message-ID: <9b8c6235-838f-1264-865f-7a03889abc2f@quicinc.com>
+Date:   Sat, 15 Jul 2023 20:47:18 +0530
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: Add support for the Xiaomi
- SM7125 platform
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.0
+Subject: Re: [PATCH 1/2] clk: qcom: ipq5332: drop the mem noc clocks
 Content-Language: en-US
-To:     David Wronek <davidwronek@gmail.com>,
-        Andy Gross <agross@kernel.org>,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>,
         Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        cros-qcom-dts-watchers@chromium.org
-References: <20230715091932.161507-1-davidwronek@gmail.com>
- <20230715091932.161507-8-davidwronek@gmail.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20230715091932.161507-8-davidwronek@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_anusha@quicinc.com>, <quic_saahtoma@quicinc.com>
+References: <20230710102807.1189942-1-quic_kathirav@quicinc.com>
+ <20230710102807.1189942-2-quic_kathirav@quicinc.com>
+ <b8b2db1b-dbfc-591e-f074-1366e5ac576a@linaro.org>
+From:   Kathiravan T <quic_kathirav@quicinc.com>
+In-Reply-To: <b8b2db1b-dbfc-591e-f074-1366e5ac576a@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CFfI2QgrRk7aZ3pNaD7LVpj-SVuy-XZE
+X-Proofpoint-ORIG-GUID: CFfI2QgrRk7aZ3pNaD7LVpj-SVuy-XZE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-15_08,2023-07-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 impostorscore=0 adultscore=0 spamscore=0
+ bulkscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=563
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307150144
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15.07.2023 11:16, David Wronek wrote:
-> There are 6 Xiaomi smartphones with the SM7125 SoC:
-> 
-> - POCO M2 Pro (gram)
-> - Redmi Note 9S (curtana)
-> - Redmi Note 9 Pro (Global, joyeuse)
-> - Redmi Note 9 Pro (India, curtana)
-> - Redmi Note 9 Pro Max (excalibur)
-> - Redmi Note 10 Lite (curtana)
-> 
-> These devices share a common board design (a.k.a miatoll) with only a
-> few differences. Add support for the common board, as well as support
-> for the global Redmi Note 9 Pro.
-> 
-> Signed-off-by: David Wronek <davidwronek@gmail.com>
-> ---
-The copyright headers seem weird, but other than that:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+On 7/15/2023 7:40 PM, Konrad Dybcio wrote:
+> On 10.07.2023 12:28, Kathiravan T wrote:
+>> Due to the recent design changes, all the mem noc clocks will be
+>> configured by the bootloaders and it will be access protected by the TZ
+>> firmware. So drop these clocks from the GCC driver.
+>>
+>> Signed-off-by: Kathiravan T <quic_kathirav@quicinc.com>
+>> ---
+> Are there any IPQ5332s outside Qualcomm labs that will presumably
+> never get that TZ update?
+>
+> Konrad
 
-Konrad
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../boot/dts/qcom/sm7125-xiaomi-joyeuse.dts   |  16 +
->  .../boot/dts/qcom/sm7125-xiaomi-miatoll.dtsi  | 423 ++++++++++++++++++
->  3 files changed, 440 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sm7125-xiaomi-miatoll.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 337abc4ceb17..7ef9e7d43904 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -192,6 +192,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm6125-sony-xperia-seine-pdx201.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm6125-xiaomi-laurel-sprout.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm6350-sony-xperia-lena-pdx213.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm6375-sony-xperia-murray-pdx225.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= sm7125-xiaomi-joyeuse.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm7225-fairphone-fp4.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-hdk.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-microsoft-surface-duo.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse.dts b/arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse.dts
-> new file mode 100644
-> index 000000000000..2b3d1ed1bcae
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sm7125-xiaomi-joyeuse.dts
-> @@ -0,0 +1,16 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "sm7125-xiaomi-miatoll.dtsi"
-> +
-> +/ {
-> +	model = "Xiaomi Redmi Note 9 Pro (Global)";
-> +	compatible = "xiaomi,joyeuse", "qcom,sm7125";
-> +
-> +	/* required for bootloader to select correct board */
-> +	qcom,board-id = <0x50022 1>;
-> +};
-> diff --git a/arch/arm64/boot/dts/qcom/sm7125-xiaomi-miatoll.dtsi b/arch/arm64/boot/dts/qcom/sm7125-xiaomi-miatoll.dtsi
-> new file mode 100644
-> index 000000000000..80073140e475
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/sm7125-xiaomi-miatoll.dtsi
-> @@ -0,0 +1,423 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/arm/qcom,ids.h>
-> +#include <dt-bindings/firmware/qcom,scm.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> +#include "sm7125.dtsi"
-> +#include "pm6150.dtsi"
-> +#include "pm6150l.dtsi"
-> +
-> +/delete-node/ &ipa_fw_mem;
-> +/delete-node/ &rmtfs_mem;
-> +
-> +/ {
-> +	chassis-type = "handset";
-> +
-> +	qcom,msm-id = <QCOM_ID_SM7125 0>;
-> +
-> +	chosen {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		framebuffer@9c000000 {
-> +			compatible = "simple-framebuffer";
-> +			reg = <0x0 0x9c000000 0x0 (1080 * 2400 * 4)>;
-> +			width = <1080>;
-> +			height = <2400>;
-> +			stride = <(1080 * 4)>;
-> +			format = "a8r8g8b8";
-> +			clocks = <&gcc GCC_DISP_HF_AXI_CLK>;
-> +		};
-> +	};
-> +
-> +	gpio_keys: gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		key-vol-down {
-> +			label = "Volume Up";
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			gpios = <&pm6150l_gpios 2 GPIO_ACTIVE_LOW>;
-> +			debounce-interval = <15>;
-> +			linux,can-disable;
-> +			wakeup-source;
-> +		};
-> +	};
-> +
-> +	reserved-memory {
-> +		mpss_mem: memory@86000000 {
-> +			reg = <0x0 0x86000000 0x0 0x8400000>;
-> +			no-map;
-> +		};
-> +
-> +		venus_mem: memory@8ee00000 {
-> +			reg = <0x0 0x8ee00000 0x0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		cdsp_mem: memory@8f300000 {
-> +			reg = <0x0 0x8f300000 0x0 0x1e00000>;
-> +			no-map;
-> +		};
-> +
-> +		adsp_mem: memory@91100000 {
-> +			reg = <0x0 0x91100000 0x0 0x2800000>;
-> +			no-map;
-> +		};
-> +
-> +		wlan_mem: memory@93900000 {
-> +			reg = <0x0 0x93900000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_fw_mem: memory@93b00000 {
-> +			reg = <0x0 0x93b00000 0x0 0x10000>;
-> +			no-map;
-> +		};
-> +
-> +		gpu_mem: memory@93b15000 {
-> +			reg = <0x0 0x93b15000 0x0 0x2000>;
-> +			no-map;
-> +		};
-> +
-> +		cont_splash_mem: memory@9c000000 {
-> +			reg = <0x0 0x9c000000 0x0 (1080 * 2400 * 4)>;
-> +			no-map;
-> +		};
-> +
-> +		pstore_mem: ramoops@9d800000 {
-> +			compatible = "ramoops";
-> +			reg = <0x0 0x9d800000 0x0 0x400000>;
-> +			record-size = <0x80000>;
-> +			pmsg-size = <0x200000>;
-> +			console-size = <0x100000>;
-> +		};
-> +
-> +		rmtfs_mem: memory@fa601000 {
-> +			compatible = "qcom,rmtfs-mem";
-> +			reg = <0x0 0xfa601000 0x0 0x200000>;
-> +			no-map;
-> +
-> +			qcom,client-id = <1>;
-> +			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
-> +		};
-> +	};
-> +};
-> +
-> +&apps_rsc {
-> +	regulators-0 {
-> +		compatible = "qcom,pm6150-rpmh-regulators";
-> +		qcom,pmic-id = "a";
-> +
-> +		vreg_s1a_1p1: smps1 {
-> +			regulator-min-microvolt = <1128000>;
-> +			regulator-max-microvolt = <1128000>;
-> +		};
-> +
-> +		vreg_s4a_1p0: smps4 {
-> +			regulator-min-microvolt = <824000>;
-> +			regulator-max-microvolt = <1120000>;
-> +		};
-> +
-> +		vreg_s5a_2p0: smps5 {
-> +			regulator-min-microvolt = <1744000>;
-> +			regulator-max-microvolt = <2040000>;
-> +		};
-> +
-> +		vreg_l1a_1p2: ldo1 {
-> +			regulator-min-microvolt = <1178000>;
-> +			regulator-max-microvolt = <1256000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2a_1p0: ldo2 {
-> +			regulator-min-microvolt = <944000>;
-> +			regulator-max-microvolt = <1056000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l3a_1p0: ldo3 {
-> +			regulator-min-microvolt = <968000>;
-> +			regulator-max-microvolt = <1064000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l4a_0p88: ldo4 {
-> +			regulator-min-microvolt = <824000>;
-> +			regulator-max-microvolt = <928000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l5a_2p7: ldo5 {
-> +			regulator-min-microvolt = <2496000>;
-> +			regulator-max-microvolt = <3000000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l6a_0p6: ldo6 {
-> +			regulator-min-microvolt = <568000>;
-> +			regulator-max-microvolt = <648000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l9a_0p664: ldo9 {
-> +			regulator-min-microvolt = <488000>;
-> +			regulator-max-microvolt = <800000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l10a_1p8: ldo10 {
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1832000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l11a_1p8: ldo11 {
-> +			regulator-min-microvolt = <1696000>;
-> +			regulator-max-microvolt = <1904000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l12a_1p8: ldo12 {
-> +			regulator-min-microvolt = <1696000>;
-> +			regulator-max-microvolt = <1952000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l13a_1p8: ldo13 {
-> +			regulator-min-microvolt = <1696000>;
-> +			regulator-max-microvolt = <1904000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l14a_1p8: ldo14 {
-> +			regulator-min-microvolt = <1728000>;
-> +			regulator-max-microvolt = <1832000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l15a_1p8: ldo15 {
-> +			regulator-min-microvolt = <1696000>;
-> +			regulator-max-microvolt = <1904000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l16a_2p7: ldo16 {
-> +			regulator-min-microvolt = <2496000>;
-> +			regulator-max-microvolt = <3304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l17a_3p1: ldo17 {
-> +			regulator-min-microvolt = <2920000>;
-> +			regulator-max-microvolt = <3232000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l18a_3p0: ldo18 {
-> +			regulator-min-microvolt = <1696000>;
-> +			regulator-max-microvolt = <1904000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l19a_3p0: ldo19 {
-> +			regulator-min-microvolt = <2696000>;
-> +			regulator-max-microvolt = <3304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +	};
-> +
-> +	regulators-1 {
-> +		compatible = "qcom,pm6150l-rpmh-regulators";
-> +		qcom,pmic-id = "c";
-> +
-> +		vreg_s8c_1p3: smps8 {
-> +			regulator-min-microvolt = <1120000>;
-> +			regulator-max-microvolt = <1408000>;
-> +		};
-> +
-> +		vreg_l1c_1p8: ldo1 {
-> +			regulator-min-microvolt = <1616000>;
-> +			regulator-max-microvolt = <1984000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l2c_1p3: ldo2 {
-> +			regulator-min-microvolt = <1168000>;
-> +			regulator-max-microvolt = <1304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l3c_1p23: ldo3 {
-> +			regulator-min-microvolt = <1144000>;
-> +			regulator-max-microvolt = <1304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l4c_1p8: ldo4 {
-> +			regulator-min-microvolt = <1648000>;
-> +			regulator-max-microvolt = <3304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l5c_1p8: ldo5 {
-> +			regulator-min-microvolt = <1648000>;
-> +			regulator-max-microvolt = <3304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l6c_3p0: ldo6 {
-> +			regulator-min-microvolt = <1648000>;
-> +			regulator-max-microvolt = <3304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l7c_3p0: ldo7 {
-> +			regulator-min-microvolt = <3000000>;
-> +			regulator-max-microvolt = <3312000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l8c_1p8: ldo8 {
-> +			regulator-min-microvolt = <1800000>;
-> +			regulator-max-microvolt = <1904000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l9c_2p9: ldo9 {
-> +			regulator-min-microvolt = <2952000>;
-> +			regulator-max-microvolt = <3304000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l10c_3p3: ldo10 {
-> +			regulator-min-microvolt = <3000000>;
-> +			regulator-max-microvolt = <3400000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_l11c_3p3: ldo11 {
-> +			regulator-min-microvolt = <3000000>;
-> +			regulator-max-microvolt = <3400000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-> +		};
-> +
-> +		vreg_bob: bob {
-> +			regulator-min-microvolt = <3008000>;
-> +			regulator-max-microvolt = <3960000>;
-> +			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-> +		};
-> +	};
-> +};
-> +
-> +&dispcc {
-> +	/* HACK: disable until a panel driver is ready to retain simplefb */
-> +	status = "disabled";
-> +};
-> +
-> +&pm6150_resin {
-> +	linux,code = <KEY_VOLUMEDOWN>;
-> +	status = "okay";
-> +};
-> +
-> +&pm6150_rtc {
-> +	status = "okay";
-> +};
-> +
-> +&sdhc_2 {
-> +	cd-gpios = <&tlmm 69 GPIO_ACTIVE_HIGH>;
-> +	pinctrl-names = "default","sleep";
-> +	pinctrl-0 = <&sdc2_on>;
-> +	pinctrl-1 = <&sdc2_off>;
-> +	vmmc-supply = <&vreg_l9c_2p9>;
-> +	vqmmc-supply = <&vreg_l6c_3p0>;
-> +	status = "okay";
-> +};
-> +
-> +&tlmm {
-> +	gpio-reserved-ranges = <0 4>, <34 4>, <59 4>;
-> +
-> +	sdc2_on: sdc2-on-state {
-> +		clk-pins {
-> +			pins = "sdc2_clk";
-> +			bias-disable;
-> +			drive-strength = <16>;
-> +		};
-> +
-> +		cmd-pins {
-> +			pins = "sdc2_cmd";
-> +			bias-pull-up;
-> +			drive-strength = <10>;
-> +		};
-> +
-> +		data-pins {
-> +			pins = "sdc2_data";
-> +			bias-pull-up;
-> +			drive-strength = <10>;
-> +		};
-> +
-> +		sd-cd-pins {
-> +			pins = "gpio69";
-> +			function = "gpio";
-> +			bias-pull-up;
-> +			drive-strength = <2>;
-> +		};
-> +	};
-> +
-> +	sdc2_off: sdc2-off-state {
-> +		clk-pins {
-> +			pins = "sdc2_clk";
-> +			bias-disable;
-> +			drive-strength = <2>;
-> +		};
-> +
-> +		cmd-pins {
-> +			pins = "sdc2_cmd";
-> +			bias-pull-up;
-> +			drive-strength = <2>;
-> +		};
-> +
-> +		data-pins {
-> +			pins = "sdc2_data";
-> +			bias-pull-up;
-> +			drive-strength = <2>;
-> +		};
-> +
-> +		sd-cd-pins {
-> +			pins = "gpio69";
-> +			function = "gpio";
-> +			bias-pull-up;
-> +			drive-strength = <2>;
-> +		};
-> +	};
-> +};
-> +
-> +&usb_1 {
-> +	qcom,select-utmi-as-pipe-clk;
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_dwc3 {
-> +	dr_mode = "peripheral";
-> +	maximum-speed = "high-speed";
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_hsphy {
-> +	vdd-supply = <&vreg_l4a_0p88>;
-> +	vdda-phy-dpdm-supply = <&vreg_l17a_3p1>;
-> +	vdda-pll-supply = <&vreg_l11a_1p8>;
-> +	status = "okay";
-> +};
-> +
-> +&usb_1_qmpphy {
-> +	vdda-phy-supply = <&vreg_l4a_0p88>;
-> +	vdda-pll-supply = <&vreg_l3c_1p23>;
-> +	status = "okay";
-> +};
+No, this TZ update will shipped as part of the next releases.
+
+Thanks, Kathiravan T.
+
+
