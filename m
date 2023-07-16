@@ -2,64 +2,27 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF1AC001DE
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Jul 2023 17:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFC3C001E0
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Jul 2023 22:10:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbjGPRez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Jul 2023 13:34:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60826 "EHLO
+        id S229954AbjGPWKY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Jul 2023 18:10:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbjGPRey (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jul 2023 13:34:54 -0400
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BB0E64
-        for <linux-clk@vger.kernel.org>; Sun, 16 Jul 2023 10:34:51 -0700 (PDT)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51fdf291330so5326682a12.2
-        for <linux-clk@vger.kernel.org>; Sun, 16 Jul 2023 10:34:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689528890; x=1692120890;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xVdQ1h98jD+pCjkWbpSagAlQ5FpMDDjZxvtMGyDKuQ4=;
-        b=RbnLycU+GM9MvipDlE8PVYpOGXFqUD1TENGGIHGORHvLxabAbSr4SauiPoD+CLVPMQ
-         TkjN3zfv0eIyeBZt8zRha6j88zEzLOj1Du4anZgav+2w20Ymv02/947G5VJo356VqzpO
-         FDfZS1aqt3Nm8qdOnS17NQs6mDJoRoDgviKcDg1kV7p+PbDXKnviXlBr7Q5+P0Whlpep
-         jOnfX84fe5zVwq5QjnUM9u2hxYokfaN43/ckoos47o7wfyaT3sx4l0svc8F6IBzsonf2
-         UGLsBYbv+yMXzKS4nTpUxb1ifvxjfcISVASj3dBKY3iN4A1pdPQ++42L1vO1E2n5iXfG
-         BoCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689528890; x=1692120890;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xVdQ1h98jD+pCjkWbpSagAlQ5FpMDDjZxvtMGyDKuQ4=;
-        b=W9GX1D9DnHlrqvRwSHVIU4Z00FQfWN+ke0OnVVqPBRCCsvINkHI+tFiy1yGz0qR97J
-         4rMzgJZKhnVlNjDOcXWYOZKwC4QfrJxP3XrFo70WKfxwXKXBy3VTiTafCAILu75q2qHu
-         XCF7/drrGWRAaAUXaHqrecrUGo7M3AFef07DXbS1Trd6/QpLhHwGEwnk1zLgGJRh8ekJ
-         JWD6WsLjvOLJEJQlMLHe5g3YFq7mrNshoZNPL69Dz1bFi4bLWti9jqoHsTtCKvCYy2m+
-         y4kOsv13iA/4tu6hzvpea6xNNfOUQVrDbW6T0uPiOgAhlO7NCeCX85nL5+tTLIO34wot
-         bAvg==
-X-Gm-Message-State: ABy/qLbIn4qV6MVnap5gZpGoyljUwgHvn4GOkKWbYR0CWBgjqPFhRsuP
-        srh74kpWz+PxqkorD/zsgZi7TQ==
-X-Google-Smtp-Source: APBJJlEgpjm22DguPByGciLFZxBAv4qA3ycUjxHTB47bRiBgUDCW+gMnZGdBGQYd2CV00lRnqKx5Xg==
-X-Received: by 2002:a05:6402:b1a:b0:51b:fa0a:dc37 with SMTP id bm26-20020a0564020b1a00b0051bfa0adc37mr10620081edb.10.1689528889834;
-        Sun, 16 Jul 2023 10:34:49 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id n1-20020a056402514100b0051e2cde9e3esm8766083edd.75.2023.07.16.10.34.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Jul 2023 10:34:49 -0700 (PDT)
-Message-ID: <6363b737-d849-83f2-8811-cb497f0222b0@linaro.org>
-Date:   Sun, 16 Jul 2023 19:34:43 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] clk: Explicitly include correct DT includes
-Content-Language: en-US
-To:     Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        with ESMTP id S229613AbjGPWKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Jul 2023 18:10:21 -0400
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3FD310FA;
+        Sun, 16 Jul 2023 15:10:03 -0700 (PDT)
+Received: from i53875a6a.versanet.de ([83.135.90.106] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <heiko@sntech.de>)
+        id 1qL9uD-0000aN-Ki; Mon, 17 Jul 2023 00:07:53 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
         Manivannan Sadhasivam <mani@kernel.org>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
         Florian Fainelli <florian.fainelli@broadcom.com>,
@@ -95,7 +58,7 @@ To:     Rob Herring <robh@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konrad.dybcio@linaro.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -113,14 +76,15 @@ To:     Rob Herring <robh@kernel.org>,
         Chen-Yu Tsai <wens@csie.org>,
         Jernej Skrabec <jernej.skrabec@gmail.com>,
         Samuel Holland <samuel@sholland.org>,
-        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+        Emilio =?ISO-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
-        Michal Simek <michal.simek@amd.com>
+        Michal Simek <michal.simek@amd.com>,
+        Rob Herring <robh@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -132,16 +96,19 @@ Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-rockchip@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
         linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-References: <20230714174342.4052882-1-robh@kernel.org>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] clk: Explicitly include correct DT includes
+Date:   Mon, 17 Jul 2023 00:07:49 +0200
+Message-ID: <7247786.Sb9uPGUboI@phil>
 In-Reply-To: <20230714174342.4052882-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20230714174342.4052882-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/07/2023 19:43, Rob Herring wrote:
+Am Freitag, 14. Juli 2023, 19:43:29 CEST schrieb Rob Herring:
 > The DT of_device.h and of_platform.h date back to the separate
 > of_platform_bus_type before it as merged into the regular platform bus.
 > As part of that merge prepping Arm DT support 13 years ago, they
@@ -152,10 +119,10 @@ On 14/07/2023 19:43, Rob Herring wrote:
 > explicitly include the correct includes.
 > 
 > Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> # samsung
+>  drivers/clk/rockchip/clk-rk3568.c                | 2 +-
+>  drivers/clk/rockchip/clk-rv1126.c                | 2 +-
 
-Best regards,
-Krzysztof
+Acked-by: Heiko Stuebner <heiko@sntech.de> #rockchip
+
 
