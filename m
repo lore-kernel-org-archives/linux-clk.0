@@ -2,137 +2,195 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F269BEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 08:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E71EC001DE
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 09:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbjGQIZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 04:25:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44366 "EHLO
+        id S230004AbjGQJNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 05:13:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbjGQIZK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 04:25:10 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93562F1;
-        Mon, 17 Jul 2023 01:25:07 -0700 (PDT)
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        with ESMTP id S229470AbjGQJNe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 05:13:34 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A037D10E6;
+        Mon, 17 Jul 2023 02:13:31 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4R4FWM4k6Yz9sZP;
-        Mon, 17 Jul 2023 10:25:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-        s=MBO0001; t=1689582303;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=NK8nuXSKhaOPtyMYcKeXahGMtHToDdOeNI9Wj3uVVcw=;
-        b=rus4/utspm2OnlDb+/3oYddZciCq3vxoIrTcIvbmxAo+7pzxmAe+Gtp69wt2G1r7L3u0ab
-        KzJj1HYPlyPsYIxStHsnN0yivi0s9A0yQAVt4JmvOCju+VNulGQjBXyd2QvY1192FJRcPv
-        Spi4Sp5gd/R1Vh3LdOpH2vXtg00ivnkfoc3pIAPB8o8ivXRdC695ie5TLJ9M3C6zoSgB3L
-        YihggnvsZxSaZlHrFLTTItoi4k5dtGd4flGV4NXbY/3dEVajWZh19Ppmth5fMXffXWqC2L
-        fo936h6GsIuiQsv0OeAKrkUf4ObZ9GAIp7VPgIJiDpUoPivzJs32a+vbje1q2A==
-References: <20230617131041.18313-1-frank@oltmanns.dev>
-From:   Frank Oltmanns <frank@oltmanns.dev>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     "A.s. Dong" <aisheng.dong@nxp.com>,
-        Abel Vesa <abelvesa@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: Re: [PATCH v5 0/2] clk: fractional-divider: Improve approximation
- when zero based and export
-In-reply-to: <20230617131041.18313-1-frank@oltmanns.dev>
-Date:   Mon, 17 Jul 2023 10:24:49 +0200
-Message-ID: <874jm3lzce.fsf@oltmanns.dev>
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7C7B26606FFD;
+        Mon, 17 Jul 2023 10:13:29 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1689585210;
+        bh=926grwUJ7cEyAPTuBLNU497k27cCDDdqb47XxD+gUx8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=cGU8fwJt4v4yBeAbgj1I6KoKhkiOMZotzTLgvzk+gdPhJrMejV4DK43mSzY9jwFXC
+         ot3cD1Va7wQqmqcJGPM9hi1LO4WUZgUsniL0Umug3WEglN5KEGHmyr4iUlJQQCTVfu
+         Q3DA5rTXAWt61JXJr+BSEprwxJHY6RiSyS8LANppSw6a7J6/2NHskoA1v7R1H7IUqT
+         VkII/B3TzPV1yxh33BFMTIQV9IefVI747e12aIzvGDsmzMznzCZn15WWBlPRyRhcXM
+         nrmbTLHxfEw/dNJxXlEyN4nygHi/CE5BTw1bhqFgyImbibSfClqBtO2g5xcO4SCNce
+         hR369Dy+rJynQ==
+Message-ID: <25724ee3-858a-01eb-352b-3edbfad31c8e@collabora.com>
+Date:   Mon, 17 Jul 2023 11:13:26 +0200
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
+ top_dp/edp muxes
+Content-Language: en-US
+To:     Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wenst@chromium.org>
+Cc:     Alexandre Mergnat <amergnat@baylibre.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, matthias.bgg@gmail.com, msp@baylibre.com,
+        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
+ <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
+ <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
+ <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
+ <jv6daj2w3pwjtde3m3m26yg4wyxbbio4zqra5yqc4gb32ri5ub@noinbbkjovwm>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <jv6daj2w3pwjtde3m3m26yg4wyxbbio4zqra5yqc4gb32ri5ub@noinbbkjovwm>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Il 17/07/23 09:48, Maxime Ripard ha scritto:
+> Hi,
+> 
+> On Fri, Jul 14, 2023 at 12:19:00PM +0800, Chen-Yu Tsai wrote:
+>> On Thu, Jul 13, 2023 at 9:22 PM Alexandre Mergnat <amergnat@baylibre.com> wrote:
+>>> On 13/07/2023 09:21, AngeloGioacchino Del Regno wrote:
+>>>> The top_dp and top_edp muxes can be both parented to either TVDPLL1
+>>>> or TVDPLL2, two identically specced PLLs for the specific purpose of
+>>>> giving out pixel clock: this becomes a problem when the MediaTek
+>>>> DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
+>>>>
+>>>> In the usecase of two simultaneous outputs (using two controllers),
+>>>> it was seen that one of the displays would sometimes display garbled
+>>>> output (if any at all) and this was because:
+>>>>    - top_edp was set to TVDPLL1, outputting X GHz
+>>>>    - top_dp was set to TVDPLL2, outputting Y GHz
+>>>>      - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
+>>>>        - top_dp is switched to TVDPLL1
+>>>>        - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
+>>>>        - eDP display is garbled
+>>>>
+>>>> To solve this issue, remove all TVDPLL1 parents from `top_dp` and
+>>>> all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
+>>>> clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
+>>>> able to use the right bit index for the new parents list.
+>>>>
+>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>>>> ---
+>>>>    drivers/clk/mediatek/clk-mt8195-topckgen.c | 22 ++++++++++++++--------
+>>>>    1 file changed, 14 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+>>>> index 81daa24cadde..abb3721f6e1b 100644
+>>>> --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
+>>>> +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
+>>>> @@ -417,15 +417,21 @@ static const char * const pwrmcu_parents[] = {
+>>>>
+>>>>    static const char * const dp_parents[] = {
+>>>>        "clk26m",
+>>>> -     "tvdpll1_d2",
+>>>>        "tvdpll2_d2",
+>>>> -     "tvdpll1_d4",
+>>>>        "tvdpll2_d4",
+>>>> -     "tvdpll1_d8",
+>>>>        "tvdpll2_d8",
+>>>> -     "tvdpll1_d16",
+>>>>        "tvdpll2_d16"
+>>>>    };
+>>>> +static const u8 dp_parents_idx[] = { 0, 2, 4, 6, 8 };
+>>>> +
+>>>> +static const char * const edp_parents[] = {
+>>>> +     "clk26m",
+>>>> +     "tvdpll1_d2",
+>>>> +     "tvdpll1_d4",
+>>>> +     "tvdpll1_d8",
+>>>> +     "tvdpll1_d16"
+>>>> +};
+>>>> +static const u8 edp_parents_idx[] = { 0, 1, 3, 5, 7 };
+>>>
+>>> AFAII your solution is to force a specific TVDPLLX for each display, and
+>>> it isn't dynamic.
+>>>
+>>> Do you think it's possible to do that using the DTS ? I'm asking
+>>> because, IMHO, this kind of setup is more friendly/readable/flexible in
+>>> the DTS than hardcoded into the driver.
+>>
+>> (CC-ing Maxime, who has some experience in the matter.)
+> 
+> It's not clear to me what the context is, but I'll try my best :)
+> 
 
-On 2023-06-17 at 15:10:39 +0200, Frank Oltmanns <frank@oltmanns.dev> wrote:
-> The fractional divider approximation does not utilize the full available
-> range for clocks that are flagged CLK_FRAC_DIVIDER_ZERO_BASED. This
-> patchset aims to fix that.
->
-> It also adds test cases for the edge cases of fractional divider clocks
-> with and without the CLK_FRAC_DIVIDER_ZERO_BASED flag to highlight the
-> changes.
->
-> Finally, it also exports clk_fractional_divider_general_approximation so
-> that the test cases (but also other users like rockchip clk driver) can
-> be compiled as a module.
->
-> Unfortunately, I have no boards to test this patch. So all we have are
-> the unit tests. It seems the only user of this flag in mainline is
-> drivers/clk/imx/clk-composite-7ulp.c, therefore I'm cc-ing
-> get_maintainers.pl --git-blame -f drivers/clk/imx/clk-composite-7ulp.c
-> in the hopes of a wider audience.
+I'll try to explain briefly.
 
-Are there remarks or questions on this patchset? Anything that needs to
-be improved?
+On *some* MediaTek platforms, there are two *identical* PLLs for HDMI/(e)DP,
+which are internal to the SoC; clocks for HDMI/eDP/DP controller*s* can be
+parented either PLL (as you see from this commit).
 
-Thanks,
-  Frank
+The PLL's rate can be changed in runtime and you want to use PLL dividers to
+get the final pixel clock (that's to obviously reduce the PLL jitter).
 
->
-> Thank you for considering this contribution,
->   Frank
->
-> P.S.: V4 was short-lived, because it triggered a compiler warning on
-> clang. I'm sorry for the noise. -- Frank
->
-> V4: https://lore.kernel.org/all/20230617102919.27564-1-frank@oltmanns.dev/
-> V3: https://lore.kernel.org/all/20230614185521.477924-1-frank@oltmanns.dev/
-> V2: https://lore.kernel.org/lkml/20230613083626.227476-1-frank@oltmanns.dev/
-> V1: https://lore.kernel.org/lkml/20230529133433.56215-1-frank@oltmanns.dev/
->
-> Changes in V5 (since V4):
->  - Fix compiler warnings on clang by removing superfluous variable max_m
->    in the test cases for the maximum denominator (n) and max_n in the
->    test cases for max numerator (m).
->    Thank you, Intel, for your kernel test robot!
->
-> Changes in V4 (since V3):
->  - Export clk_fractional_divider_general_approximation so that users
->    (e.g., the testcases) can be compiled as modules.
->  - Change test cases so that they test
->    clk_fractional_divider_general_approximation again (like in V2)
->    instead of clk_fd_round_rate (like in V3), but keeping the structure
->    of V3 with separate file and individual test cases for each edge
->    case.
->
-> Changes in V3 (since V2):
->  - Completely reworked the test cases
->    - Moved tests to separate file as per Stephen's request
->    - Move each edge case into their individual test case as per
->      Stephen's request
->    - Test clk_fd_round_rate instead of
->      clk_fractional_divider_general_approximation as testing the latter
->      broke builds
->
-> Changes in V2 (since V1):
->  - Added test case as requested by Stephen Boyd
->  - Fixed commit message as the Cc: was missing a closing bracket, so that the
->    original mail unfortunately did not go out to A. s. Dong.
->
-> Frank Oltmanns (2):
->   clk: fractional-divider: Improve approximation when zero based and
->     export
->   clk: fractional-divider: tests: Add test suite for edge cases
->
->  drivers/clk/.kunitconfig                  |   1 +
->  drivers/clk/Kconfig                       |   7 +
->  drivers/clk/Makefile                      |   1 +
->  drivers/clk/clk-fractional-divider.c      |  27 +++-
->  drivers/clk/clk-fractional-divider_test.c | 157 ++++++++++++++++++++++
->  5 files changed, 186 insertions(+), 7 deletions(-)
->  create mode 100644 drivers/clk/clk-fractional-divider_test.c
+>> assigned-parents doesn't prevent your system from reparenting the clocks
+>> back to a conflicting configuration.
+> 
+> Yep, it's very much a one-off thing. There's no guarantee at the moment,
+> and semantics-wise we could change the whole thing at probe time and it
+> would be fine.
+> 
+
+Would be fine... but more complicated I think?
+
+>> AFAIK the recommended way to deal with this is to use
+>> clk_set_rate_exclusive() and co. in whatever consumer driver that
+>> needs exclusive control on the clock rate.
+> 
+> I guess it works, but it looks to me like the issue here is that the
+> provider should disable it entirely? My expectation for
+> clk_set_rate_exclusive() is that one user needs to lock the clock rate
+> to operate properly.
+> 
+> If the provider expectation is that the rate or parent should never
+> changed, then that needs to be dealt with at the provider level, ie
+> through the clk_ops.
+> 
+>> However I'm not sure if that works for parents. It should, given the
+>> original use case was for the sunxi platforms, which like the MediaTek
+>> platform here has 2 PLLs for video related consumers, but I couldn't
+>> find code verifying it.
+> 
+> If you want to prevent clocks from ever being reparented, you can use
+> the new clk_hw_determine_rate_no_reparent() determine_rate
+> implementation.
+> 
+
+We want the clocks to be reparented, as we need them to switch parents as
+explained before... that's more or less how the tree looks:
+
+TVDPLL(x) -> PLL Divider (fixed) -> MUX -> Gate -> Controller
+
+Besides, I think that forcing *one* parent to the dp/edp mux would produce a
+loss of the flexibility that the clock framework provides.
+
+I again want to emphasize on the fact that TVDPLL1 and TVDPLL2 are *identical*
+in specs, and on that there will never be a MT8195 SoC that has only one of
+the two PLLs, for obvious reasons...
+
+P.S.: If you need more context, I'll be glad to answer to any other question!
+
+Cheers,
+Angelo
+
+> Maxime
+
+
