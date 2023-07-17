@@ -2,37 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0476C001B0
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 14:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FFAC001B0
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 14:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229967AbjGQOKQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 10:10:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38846 "EHLO
+        id S232007AbjGQOMg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 10:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230326AbjGQOKP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 10:10:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FBBE4;
-        Mon, 17 Jul 2023 07:10:13 -0700 (PDT)
+        with ESMTP id S231924AbjGQOMf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 10:12:35 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87619F5;
+        Mon, 17 Jul 2023 07:12:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 69A3061083;
-        Mon, 17 Jul 2023 14:10:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9A8C433C7;
-        Mon, 17 Jul 2023 14:10:12 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 25D936109A;
+        Mon, 17 Jul 2023 14:12:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AFEC433CB;
+        Mon, 17 Jul 2023 14:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689603012;
-        bh=4U92qRAElWb46SuTSbxB4W1rQOPWs4rZsSOf0z5EGRU=;
+        s=k20201202; t=1689603153;
+        bh=qfhbbwJv5aDzSLrzg8XRkxXRcjef0UeV+hzSGXZzqxA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qbGxkt+UVBtXxbaulXc5B1qXahhNhWIlyQ08rWUY19gfDVxpuy9NczSGMEMpLUjNK
-         3gKqVS0aunWM5jBnIFLOx82oAQP55XJEgZ1NyfV2Dfp78ZuNZ/NqQYPMo0ADX6UUZ2
-         0hd50R4WT4CzdQRgrNyfb/16x1iGJWlM5I1OGvOHW51fElzDTbK1KAK+880VUYG0h/
-         /rvuIRQlysOecM68gEZgEUa1VpigpM6buj2LmHTi1ptbI4MMUJlL2u1tg/orXK/rdz
-         xHTOYqdWYXtzc8slajBrF4ak8n4PHe5738XHQI0/+rV/hDbnlYKUNjnDp+lrmygTyn
-         GUHj7H+9dVY7g==
-Date:   Mon, 17 Jul 2023 16:10:10 +0200
+        b=mRhnMJOYfAFW+tpb90d2IMVUZ5kDsagtVxdUvHTg9he9RReFa0TQFixCb+XySbG+1
+         nW/H3p8C/eKLN/0Q3EpLrN2WF3pQ695s/U9PudEaEUdxkop2jcI4yo2ddYCxUG9gcz
+         JfpI3WlkgsdgwYd88nqN/hP0yWO8zB4op6na34xzUKSX9rPKLN60LXJGnQWH9RyCJD
+         pzsr067QfW0v510F3seZG+WaPaMZRxRUs4gLfHh0sMf8DPU/b9oGhrqd3DYfdVQ38U
+         7ntnBGmbvmlVUIOrBrwp1rmFbBoan0DhmmwdO55w8yYD8mB0S4qm4dnieXwc95nSE/
+         qLueazg23c+Ew==
+Date:   Mon, 17 Jul 2023 16:12:30 +0200
 From:   Maxime Ripard <mripard@kernel.org>
 To:     Frank Oltmanns <frank@oltmanns.dev>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -43,76 +43,76 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 03/11] clk: sunxi-ng: nkm: Improve determine rate when
- setting parent
-Message-ID: <be4m7h45d2mjp7q32ovtg3pj7e3ut7clmclnlbwftohpnvl4yy@msdzcqqoinwi>
+Subject: Re: [PATCH v4 07/11] clk: sunxi-ng: nm: Support finding closest rate
+Message-ID: <htxtcpqimrloxvebm5iadqzybj3rt5c532smtm62kxeuaejaqw@syknyzrhgf7f>
 References: <20230717-pll-mipi_set_rate_parent-v4-0-04acf1d39765@oltmanns.dev>
- <20230717-pll-mipi_set_rate_parent-v4-3-04acf1d39765@oltmanns.dev>
+ <20230717-pll-mipi_set_rate_parent-v4-7-04acf1d39765@oltmanns.dev>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="unxqocoapvnvkbic"
+        protocol="application/pgp-signature"; boundary="t24u7yc3dj2s45pr"
 Content-Disposition: inline
-In-Reply-To: <20230717-pll-mipi_set_rate_parent-v4-3-04acf1d39765@oltmanns.dev>
+In-Reply-To: <20230717-pll-mipi_set_rate_parent-v4-7-04acf1d39765@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---unxqocoapvnvkbic
+--t24u7yc3dj2s45pr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Mon, Jul 17, 2023 at 03:34:27PM +0200, Frank Oltmanns wrote:
-> Make the SET_PARENT_RATE flag independent of the parents round_rate or
-> determine_rate implementation.
+On Mon, Jul 17, 2023 at 03:34:31PM +0200, Frank Oltmanns wrote:
+> Use the helper function ccu_is_better_rate() to determine the rate that
+> is closest to the requested rate, thereby supporting rates that are
+> higher than the requested rate if the clock uses the
+> CCU_FEATURE_CLOSEST_RATE.
 >=20
-> Currently, the algorithm for ccu_nkm_find_best_with_parent_adj simply
-> calculates the optimal parent rate as
->     (1) parent =3D rate * m / (n * k)
+> Add the macro SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST which
+> sets CCU_FEATURE_CLOSEST_RATE.
 >=20
-> Due to integer division (1) might return a parent rate that is too low.
-> So using this value for asking the parent for a rate it supports via
-> clk_hw_round_rate causes problems on
->  a) parents that only support finding rates that are lower than the
->     requested rate - which is the default for sunxi-ng ccu's.
->  b) parents that incidentally also support the truncated rate.
->=20
-> In those cases ccu_nkm_determine_rate might return A' when A is
-> requested and A'' when rate A' is requested.
->=20
-> Prevent this by trying to find a parent rate so that
->     (2) _rate =3D parent * n * k / m
-> matches the requested rate exactly, if possible.
->=20
-> Background:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> determine_rate may be called multiple times by the clk framework when
-> setting a clock's rate. But the clk framework expects that the values
-> determine_rate returns (i.e. the rate and parent_rate) are consistent
-> with previous calls.
->=20
-> Specifically, clock's have to ensure that if determine_rate is called
-> with requested rate A and the best rate it can find is A', it must also
-> return A' when called with requested rate A'.
+> To avoid code duplication, add the macros
+> SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_FEAT that allows selecting
+> arbitrary features and use it in the original
+> SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX as well as the newly introduced
+> SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK_MIN_MAX_CLOSEST macros.
 >=20
 > Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> ---
+>  drivers/clk/sunxi-ng/ccu_nm.c | 11 ++++------
+>  drivers/clk/sunxi-ng/ccu_nm.h | 48 +++++++++++++++++++++++++++++++++++++=
++++---
+>  2 files changed, 49 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/clk/sunxi-ng/ccu_nm.c b/drivers/clk/sunxi-ng/ccu_nm.c
+> index c1fd11542c45..35d00783d748 100644
+> --- a/drivers/clk/sunxi-ng/ccu_nm.c
+> +++ b/drivers/clk/sunxi-ng/ccu_nm.c
+> @@ -28,7 +28,7 @@ static unsigned long ccu_nm_calc_rate(unsigned long par=
+ent,
+>  }
+> =20
+>  static unsigned long ccu_nm_find_best(unsigned long parent, unsigned lon=
+g rate,
+> -				      struct _ccu_nm *nm)
+> +				      struct _ccu_nm *nm, struct ccu_common *common)
 
-As stated in my earlier mail, I still disagree with that patch.
+The common pointer must be the first argument.
+
+Once fixed,
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
 Maxime
 
---unxqocoapvnvkbic
+--t24u7yc3dj2s45pr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZLVLwgAKCRDj7w1vZxhR
-xT2CAQCu5UgvRKlm9DcPqWI4459I3lzWce3sXAKd5IC/SEl3OgD/U+Bi14JO9N0j
-HHS37rbZ25r4rTFuW1k9JkQ4VPvbAQY=
-=Uldq
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZLVMTgAKCRDj7w1vZxhR
+xTTeAP4knutmR1GxPcDRsDiuskf3/7DgS1IxkgPc6Q8ZlWOs6wD+Kyh9V78+vpqR
+NkvgKKgQRVvoWmJwYa+z0lVEc//OyAU=
+=lLGg
 -----END PGP SIGNATURE-----
 
---unxqocoapvnvkbic--
+--t24u7yc3dj2s45pr--
