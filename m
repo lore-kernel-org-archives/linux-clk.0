@@ -2,182 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE78AEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 07:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF964C001DE
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 07:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230186AbjGQHsx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 03:48:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50562 "EHLO
+        id S231145AbjGQHvi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 03:51:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjGQHsx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 03:48:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA5F210D5;
-        Mon, 17 Jul 2023 00:48:49 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 780E560F9B;
-        Mon, 17 Jul 2023 07:48:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D184C433C9;
-        Mon, 17 Jul 2023 07:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689580128;
-        bh=m+bGBZrS1lDGOHNa7b+hG+gRi77nkTrb6lLGgxVmoYg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Cc71VvLupE2MVR5St9xy0kvM9+8+V8AqYxNp7WXqP7VEykPEE9WBRCdQRwK+H5lzk
-         A8JIKg87oWLk3jM3o3u3+Hjy/cVoZIQ14yqXg0LCQgMkK25VCZMT5wlGGpgxmP69mT
-         8YStn41+v1A1sn/uCJqIXtJ5MCwOFPq+58Qif9US7C7O9okAn0HiAqcFL0e6JVmmkw
-         C/QxZ5SwA93y+vBvj8QnNXCMHJv7aVpTNzGynBanFSdJjao1pqRrytwBnEzqAJfQzt
-         hQeo5JWAvwdGAVzxOQzwTQgpQpDF4Ory/aHLbu7ZsL7GArKX/zI1XhtkGs0gK/sy8u
-         reo5WJbeXlU5w==
-Date:   Mon, 17 Jul 2023 09:48:46 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Alexandre Mergnat <amergnat@baylibre.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, sboyd@kernel.org,
-        mturquette@baylibre.com, matthias.bgg@gmail.com, msp@baylibre.com,
-        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
- top_dp/edp muxes
-Message-ID: <jv6daj2w3pwjtde3m3m26yg4wyxbbio4zqra5yqc4gb32ri5ub@noinbbkjovwm>
-References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
- <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
- <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
- <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
+        with ESMTP id S231134AbjGQHvc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 03:51:32 -0400
+Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC67E56;
+        Mon, 17 Jul 2023 00:51:31 -0700 (PDT)
+Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-77ac14ff51bso165687739f.3;
+        Mon, 17 Jul 2023 00:51:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689580290; x=1692172290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OEYm+uCdh21vtzPh6yGEiTfgPybVQ4Gws/BVR8lDFGw=;
+        b=B21eWkwiYUZWk4RMZN/v+9xtSs7+KMzCpts43evWoxRAjosFAIN+pujjG5PzeA56Uf
+         C4Y3LEaRtMYbpy2BuIv+1Rt3cV1t29jSOBYtDtXjeSRmioCCgopyOPIDr88KIMQ5IPWA
+         KfmQFUDxA/vgDKTg0ZTvN2vouCPn5Kg30xx5EZVVaqDJpIO84mnBEv4ZjAC2UvSHm56c
+         eZupT4tRnaIScSh+I+GhEFWG8xZnmPukOS8jtySCcfOLyU04P8oqUZedNuFRmc2kMq4s
+         jPFCsVM79MIFOVHltW0uTHm8xa1U03hlnDhRjwwZZLxpnjCErYmdECUKjEySiJnPC1ox
+         0GLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689580290; x=1692172290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OEYm+uCdh21vtzPh6yGEiTfgPybVQ4Gws/BVR8lDFGw=;
+        b=EheNRjHbslYnXr5ekjWX9ZdE8nMilVXIqx981gWV9k8m/6aupCbwgjYs2L85xQxALT
+         50t3rPqifZA9ssP8MWrRFV6p3TOxsfGqE+mHrNzxyK5Mes+Srf7TbwEbuk0a1TR8C8VE
+         k36vx4AbiZYTsDT5B9jHktEracdxofCxC+MMTkQlvJzDBOSs9LA0sGjgi4+hbINbKgZq
+         oe5Wdy9qg2UOhI+mx1h6qUWOZBPcOYoQtXodZyx7Gd+6DKFpyOqQS/eODPaRgD9sVHQP
+         JVIVEU/nFHrE+7CfDTHYW7qcBhYkIhBw1J9iGVoAogin129q8lthrtDzb3S4dO9Zi6RP
+         K16g==
+X-Gm-Message-State: ABy/qLZsw75xGGaHKZq4fzPVgNUyh4c97c4hvCbwW0ZPAoD9URGolc7z
+        kLwfIC6TLrhLcrGynFQkRe5Z9x63QsPKnA==
+X-Google-Smtp-Source: APBJJlF6edBFS25YEdOmcG6Z4yN+UiocZ4M+lYK/exstURX/nmfgEEVrv4X8zaSepmPkAlAJr/qqGA==
+X-Received: by 2002:a6b:d616:0:b0:783:3957:9b46 with SMTP id w22-20020a6bd616000000b0078339579b46mr9066359ioa.13.1689580290418;
+        Mon, 17 Jul 2023 00:51:30 -0700 (PDT)
+Received: from localhost.localdomain (211-20-114-70.hinet-ip.hinet.net. [211.20.114.70])
+        by smtp.gmail.com with ESMTPSA id a13-20020a6b660d000000b00786fe5039b8sm4635283ioc.46.2023.07.17.00.51.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jul 2023 00:51:30 -0700 (PDT)
+From:   Dylan Hung <kobedylan@gmail.com>
+X-Google-Original-From: Dylan Hung <dylan_hung@aspeedtech.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     BMC-SW@aspeedtech.com, Dylan Hung <dylan_hung@aspeedtech.com>
+Subject: [PATCH v2 RESEND] dt-bindings: clock: ast2600: Add I3C and MAC reset definitions
+Date:   Mon, 17 Jul 2023 15:51:23 +0800
+Message-Id: <20230717075123.1597977-1-dylan_hung@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pnm62w2pu2hihd2p"
-Content-Disposition: inline
-In-Reply-To: <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add reset definitions of AST2600 I3C and MAC controllers.
 
---pnm62w2pu2hihd2p
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Jul 14, 2023 at 12:19:00PM +0800, Chen-Yu Tsai wrote:
-> On Thu, Jul 13, 2023 at 9:22=E2=80=AFPM Alexandre Mergnat <amergnat@bayli=
-bre.com> wrote:
-> > On 13/07/2023 09:21, AngeloGioacchino Del Regno wrote:
-> > > The top_dp and top_edp muxes can be both parented to either TVDPLL1
-> > > or TVDPLL2, two identically specced PLLs for the specific purpose of
-> > > giving out pixel clock: this becomes a problem when the MediaTek
-> > > DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
-> > >
-> > > In the usecase of two simultaneous outputs (using two controllers),
-> > > it was seen that one of the displays would sometimes display garbled
-> > > output (if any at all) and this was because:
-> > >   - top_edp was set to TVDPLL1, outputting X GHz
-> > >   - top_dp was set to TVDPLL2, outputting Y GHz
-> > >     - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
-> > >       - top_dp is switched to TVDPLL1
-> > >       - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
-> > >       - eDP display is garbled
-> > >
-> > > To solve this issue, remove all TVDPLL1 parents from `top_dp` and
-> > > all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
-> > > clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
-> > > able to use the right bit index for the new parents list.
-> > >
-> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@=
-collabora.com>
-> > > ---
-> > >   drivers/clk/mediatek/clk-mt8195-topckgen.c | 22 ++++++++++++++-----=
+Signed-off-by: Dylan Hung <dylan_hung@aspeedtech.com>
 ---
-> > >   1 file changed, 14 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk=
-/mediatek/clk-mt8195-topckgen.c
-> > > index 81daa24cadde..abb3721f6e1b 100644
-> > > --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
-> > > +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
-> > > @@ -417,15 +417,21 @@ static const char * const pwrmcu_parents[] =3D {
-> > >
-> > >   static const char * const dp_parents[] =3D {
-> > >       "clk26m",
-> > > -     "tvdpll1_d2",
-> > >       "tvdpll2_d2",
-> > > -     "tvdpll1_d4",
-> > >       "tvdpll2_d4",
-> > > -     "tvdpll1_d8",
-> > >       "tvdpll2_d8",
-> > > -     "tvdpll1_d16",
-> > >       "tvdpll2_d16"
-> > >   };
-> > > +static const u8 dp_parents_idx[] =3D { 0, 2, 4, 6, 8 };
-> > > +
-> > > +static const char * const edp_parents[] =3D {
-> > > +     "clk26m",
-> > > +     "tvdpll1_d2",
-> > > +     "tvdpll1_d4",
-> > > +     "tvdpll1_d8",
-> > > +     "tvdpll1_d16"
-> > > +};
-> > > +static const u8 edp_parents_idx[] =3D { 0, 1, 3, 5, 7 };
-> >
-> > AFAII your solution is to force a specific TVDPLLX for each display, and
-> > it isn't dynamic.
-> >
-> > Do you think it's possible to do that using the DTS ? I'm asking
-> > because, IMHO, this kind of setup is more friendly/readable/flexible in
-> > the DTS than hardcoded into the driver.
->=20
-> (CC-ing Maxime, who has some experience in the matter.)
 
-It's not clear to me what the context is, but I'll try my best :)
+Resend v2 patch through my gmail account as the aspeedtech.com domain is blocked by gmail.com
 
-> assigned-parents doesn't prevent your system from reparenting the clocks
-> back to a conflicting configuration.
+ include/dt-bindings/clock/ast2600-clock.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Yep, it's very much a one-off thing. There's no guarantee at the moment,
-and semantics-wise we could change the whole thing at probe time and it
-would be fine.
+diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
+index e149eee61588..712782177c90 100644
+--- a/include/dt-bindings/clock/ast2600-clock.h
++++ b/include/dt-bindings/clock/ast2600-clock.h
+@@ -90,7 +90,19 @@
+ /* Only list resets here that are not part of a clock gate + reset pair */
+ #define ASPEED_RESET_ADC		55
+ #define ASPEED_RESET_JTAG_MASTER2	54
++
++#define ASPEED_RESET_MAC4		53
++#define ASPEED_RESET_MAC3		52
++
++#define ASPEED_RESET_I3C5		45
++#define ASPEED_RESET_I3C4		44
++#define ASPEED_RESET_I3C3		43
++#define ASPEED_RESET_I3C2		42
++#define ASPEED_RESET_I3C1		41
++#define ASPEED_RESET_I3C0		40
++#define ASPEED_RESET_I3C		39
+ #define ASPEED_RESET_I3C_DMA		39
++
+ #define ASPEED_RESET_PWM		37
+ #define ASPEED_RESET_PECI		36
+ #define ASPEED_RESET_MII		35
+-- 
+2.25.1
 
-> AFAIK the recommended way to deal with this is to use
-> clk_set_rate_exclusive() and co. in whatever consumer driver that
-> needs exclusive control on the clock rate.
-
-I guess it works, but it looks to me like the issue here is that the
-provider should disable it entirely? My expectation for
-clk_set_rate_exclusive() is that one user needs to lock the clock rate
-to operate properly.
-
-If the provider expectation is that the rate or parent should never
-changed, then that needs to be dealt with at the provider level, ie
-through the clk_ops.
-
-> However I'm not sure if that works for parents. It should, given the
-> original use case was for the sunxi platforms, which like the MediaTek
-> platform here has 2 PLLs for video related consumers, but I couldn't
-> find code verifying it.
-
-If you want to prevent clocks from ever being reparented, you can use
-the new clk_hw_determine_rate_no_reparent() determine_rate
-implementation.
-
-Maxime
-
---pnm62w2pu2hihd2p
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZLTyVAAKCRDj7w1vZxhR
-xXw4AP0Ty/OWNJLgn+fLyMmNGKPM9qnI7RTYAK+pr90b8DkpXAEAktwYMnIZi2Tb
-QCzSP3n9UARQeQqEP4FOhX7MS7S1TA0=
-=WUaC
------END PGP SIGNATURE-----
-
---pnm62w2pu2hihd2p--
