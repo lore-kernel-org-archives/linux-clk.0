@@ -2,114 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0081FEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 08:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F269BEB64DC
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 08:25:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbjGQIAn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 04:00:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57914 "EHLO
+        id S229652AbjGQIZL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 04:25:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbjGQIAm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 04:00:42 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5006EC7
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 01:00:40 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id 4fb4d7f45d1cf-51e5e4c6026so5911083a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 01:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689580839; x=1692172839;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=THHFMED/jbOMH1YRv1UObCpRHTU3JeymiO4m4VH30UI=;
-        b=JVkc2lCRmJaOr1H3tOGjczXY4e7+wGGkwH424uoSMLfFGyuQwfYbf4VVztm+wtgQM0
-         k1KtafwTOYyffgHZqwXgnXqmN/FS/nZoRG/s35hkxZhxG7kmcdaFzKRh8AaFyR/a1NuR
-         k2F86TuPe/XBLIQCP4C9q5pNTZwGAbUXCxhp6qGgLgk6As+S4h0Dnn7Yj6/b7fKzZqFU
-         X/6GxUUmkSa2tiVLlllntz4up8imTnP0JF2PT+gSW8419n/qIEoMN19TOD7ycyJPtznc
-         BePOJ2L+o8VSMPAG/YkbLjdpoHKFvNwtllz8JMTEjJ+pLam/MhEs4jW2d+NcahMHyYMn
-         1efA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689580839; x=1692172839;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=THHFMED/jbOMH1YRv1UObCpRHTU3JeymiO4m4VH30UI=;
-        b=DljmRnd66C8QFZV/7ohJ0YBJEY11wEWX7FcyfkuW4n/mQ5aSO03cFmjSPoxWHtpuiS
-         DFbFR37QVAK7Vc1kp79y1ePaGv4arhISjnnqy29Er48ARoYm/n1awZ27BFCjEgX5NxZq
-         y5IH1UzCt+55qbwKCKPXuFOtgtmzeC9J6FH1rBFAUR5IjaqgAILCxlAypxEx6S4uuueJ
-         2TQiHCxk4tWn4MjN56Me+FkAke/JZs0413KkxfPa8F1rdRgaKfgH/R2IaW21F1JojuJZ
-         9tQFx7+yaQbcjgcC5cBxr+gDEZP3ypmx/eZnoJ8SpaS/YC7BFBpVhVKPkCSPJ5/Z2Dwo
-         jxEA==
-X-Gm-Message-State: ABy/qLbdhTH0JDhu5YW8RWeu8ac4OntrtktqCmriBZUAuFOeZ0VwdmkV
-        PopAVGEBtk7J+gHTwXEZJ2T1tg==
-X-Google-Smtp-Source: APBJJlE6vsMf+xJHq0O08ELQG4D+gllwRFuPlzUBGX6jzdz35fNbMZ5xU3jC0NMYESeFySVfqn8/vw==
-X-Received: by 2002:a17:907:8a11:b0:993:e691:6dd5 with SMTP id sc17-20020a1709078a1100b00993e6916dd5mr12922667ejc.7.1689580838733;
-        Mon, 17 Jul 2023 01:00:38 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id j8-20020a1709064b4800b009929c09abdfsm8914264ejv.70.2023.07.17.01.00.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jul 2023 01:00:38 -0700 (PDT)
-Message-ID: <6dbf7628-da4e-6be6-27ed-b0bafa15d8bb@linaro.org>
-Date:   Mon, 17 Jul 2023 10:00:36 +0200
+        with ESMTP id S229449AbjGQIZK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 04:25:10 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93562F1;
+        Mon, 17 Jul 2023 01:25:07 -0700 (PDT)
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4R4FWM4k6Yz9sZP;
+        Mon, 17 Jul 2023 10:25:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+        s=MBO0001; t=1689582303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NK8nuXSKhaOPtyMYcKeXahGMtHToDdOeNI9Wj3uVVcw=;
+        b=rus4/utspm2OnlDb+/3oYddZciCq3vxoIrTcIvbmxAo+7pzxmAe+Gtp69wt2G1r7L3u0ab
+        KzJj1HYPlyPsYIxStHsnN0yivi0s9A0yQAVt4JmvOCju+VNulGQjBXyd2QvY1192FJRcPv
+        Spi4Sp5gd/R1Vh3LdOpH2vXtg00ivnkfoc3pIAPB8o8ivXRdC695ie5TLJ9M3C6zoSgB3L
+        YihggnvsZxSaZlHrFLTTItoi4k5dtGd4flGV4NXbY/3dEVajWZh19Ppmth5fMXffXWqC2L
+        fo936h6GsIuiQsv0OeAKrkUf4ObZ9GAIp7VPgIJiDpUoPivzJs32a+vbje1q2A==
+References: <20230617131041.18313-1-frank@oltmanns.dev>
+From:   Frank Oltmanns <frank@oltmanns.dev>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        Abel Vesa <abelvesa@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: Re: [PATCH v5 0/2] clk: fractional-divider: Improve approximation
+ when zero based and export
+In-reply-to: <20230617131041.18313-1-frank@oltmanns.dev>
+Date:   Mon, 17 Jul 2023 10:24:49 +0200
+Message-ID: <874jm3lzce.fsf@oltmanns.dev>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 RESEND] dt-bindings: clock: ast2600: Add I3C and MAC
- reset definitions
-Content-Language: en-US
-To:     Dylan Hung <kobedylan@gmail.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     BMC-SW@aspeedtech.com, Dylan Hung <dylan_hung@aspeedtech.com>
-References: <20230717075123.1597977-1-dylan_hung@aspeedtech.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230717075123.1597977-1-dylan_hung@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17/07/2023 09:51, Dylan Hung wrote:
-> Add reset definitions of AST2600 I3C and MAC controllers.
-> 
-> Signed-off-by: Dylan Hung <dylan_hung@aspeedtech.com>
-> ---
-> 
-> Resend v2 patch through my gmail account as the aspeedtech.com domain is blocked by gmail.com
+Hi,
 
-Where is the changelog?
+On 2023-06-17 at 15:10:39 +0200, Frank Oltmanns <frank@oltmanns.dev> wrote:
+> The fractional divider approximation does not utilize the full available
+> range for clocks that are flagged CLK_FRAC_DIVIDER_ZERO_BASED. This
+> patchset aims to fix that.
+>
+> It also adds test cases for the edge cases of fractional divider clocks
+> with and without the CLK_FRAC_DIVIDER_ZERO_BASED flag to highlight the
+> changes.
+>
+> Finally, it also exports clk_fractional_divider_general_approximation so
+> that the test cases (but also other users like rockchip clk driver) can
+> be compiled as a module.
+>
+> Unfortunately, I have no boards to test this patch. So all we have are
+> the unit tests. It seems the only user of this flag in mainline is
+> drivers/clk/imx/clk-composite-7ulp.c, therefore I'm cc-ing
+> get_maintainers.pl --git-blame -f drivers/clk/imx/clk-composite-7ulp.c
+> in the hopes of a wider audience.
 
-> 
->  include/dt-bindings/clock/ast2600-clock.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-> index e149eee61588..712782177c90 100644
-> --- a/include/dt-bindings/clock/ast2600-clock.h
-> +++ b/include/dt-bindings/clock/ast2600-clock.h
-> @@ -90,7 +90,19 @@
->  /* Only list resets here that are not part of a clock gate + reset pair */
->  #define ASPEED_RESET_ADC		55
->  #define ASPEED_RESET_JTAG_MASTER2	54
-> +
-> +#define ASPEED_RESET_MAC4		53
-> +#define ASPEED_RESET_MAC3		52
-> +
-> +#define ASPEED_RESET_I3C5		45
-> +#define ASPEED_RESET_I3C4		44
-> +#define ASPEED_RESET_I3C3		43
-> +#define ASPEED_RESET_I3C2		42
-> +#define ASPEED_RESET_I3C1		41
-> +#define ASPEED_RESET_I3C0		40
-> +#define ASPEED_RESET_I3C		39
->  #define ASPEED_RESET_I3C_DMA		39
+Are there remarks or questions on this patchset? Anything that needs to
+be improved?
 
-Why adding duplicate ID? Your commit msg or a comment here should
-explain this.
+Thanks,
+  Frank
 
-Best regards,
-Krzysztof
-
+>
+> Thank you for considering this contribution,
+>   Frank
+>
+> P.S.: V4 was short-lived, because it triggered a compiler warning on
+> clang. I'm sorry for the noise. -- Frank
+>
+> V4: https://lore.kernel.org/all/20230617102919.27564-1-frank@oltmanns.dev/
+> V3: https://lore.kernel.org/all/20230614185521.477924-1-frank@oltmanns.dev/
+> V2: https://lore.kernel.org/lkml/20230613083626.227476-1-frank@oltmanns.dev/
+> V1: https://lore.kernel.org/lkml/20230529133433.56215-1-frank@oltmanns.dev/
+>
+> Changes in V5 (since V4):
+>  - Fix compiler warnings on clang by removing superfluous variable max_m
+>    in the test cases for the maximum denominator (n) and max_n in the
+>    test cases for max numerator (m).
+>    Thank you, Intel, for your kernel test robot!
+>
+> Changes in V4 (since V3):
+>  - Export clk_fractional_divider_general_approximation so that users
+>    (e.g., the testcases) can be compiled as modules.
+>  - Change test cases so that they test
+>    clk_fractional_divider_general_approximation again (like in V2)
+>    instead of clk_fd_round_rate (like in V3), but keeping the structure
+>    of V3 with separate file and individual test cases for each edge
+>    case.
+>
+> Changes in V3 (since V2):
+>  - Completely reworked the test cases
+>    - Moved tests to separate file as per Stephen's request
+>    - Move each edge case into their individual test case as per
+>      Stephen's request
+>    - Test clk_fd_round_rate instead of
+>      clk_fractional_divider_general_approximation as testing the latter
+>      broke builds
+>
+> Changes in V2 (since V1):
+>  - Added test case as requested by Stephen Boyd
+>  - Fixed commit message as the Cc: was missing a closing bracket, so that the
+>    original mail unfortunately did not go out to A. s. Dong.
+>
+> Frank Oltmanns (2):
+>   clk: fractional-divider: Improve approximation when zero based and
+>     export
+>   clk: fractional-divider: tests: Add test suite for edge cases
+>
+>  drivers/clk/.kunitconfig                  |   1 +
+>  drivers/clk/Kconfig                       |   7 +
+>  drivers/clk/Makefile                      |   1 +
+>  drivers/clk/clk-fractional-divider.c      |  27 +++-
+>  drivers/clk/clk-fractional-divider_test.c | 157 ++++++++++++++++++++++
+>  5 files changed, 186 insertions(+), 7 deletions(-)
+>  create mode 100644 drivers/clk/clk-fractional-divider_test.c
