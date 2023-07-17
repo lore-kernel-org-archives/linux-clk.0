@@ -2,105 +2,122 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF369C001DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 19:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98CEEB64DC
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 21:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbjGQTtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 15:49:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43698 "EHLO
+        id S230265AbjGQVEA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 17:04:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229759AbjGQTts (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 15:49:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C490A134
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 12:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689623342;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=m2rRzgR2bCR4WLQV/L/SdDZ43J6JQqvM6vx+FxfFLaM=;
-        b=diDjfU9CXSvx68l1dL+Fe4xHM4vKyehxrva9ZOOKczT95qdCM+cieE20qgKDUcFc21pNQb
-        NFaRRdms++L41gLVBd0c5DlNW0pR/Xb4Ioi3m9OiBt/UM9AI8CzpHagtk/aseAXtr+6B//
-        Z3npEIFd0FKJ0pcVo0qGM8WztJGRpIs=
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com
- [209.85.217.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-315-4SO-voxZOYyJPphuvJUl4g-1; Mon, 17 Jul 2023 15:48:58 -0400
-X-MC-Unique: 4SO-voxZOYyJPphuvJUl4g-1
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-440cb3204feso674407137.1
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 12:48:58 -0700 (PDT)
+        with ESMTP id S230225AbjGQVD7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 17:03:59 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78DC0118
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 14:03:58 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id d2e1a72fcca58-668711086f4so3017955b3a.1
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 14:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1689627838; x=1692219838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o1J3PrW+KELul59iWMsbn0NuwlLctvPQuEIvtb6UgWY=;
+        b=Ku8I0funEqrw0TX6rYaGXYYIHrttNyMTFVvrgZZGUya0wgLsLsxRwq4M1BtrN7gi6j
+         PCbSF9+xrLXT26UHSIGTbFUp2b1xnr4ITMhmHMJVPsQOblGAQLmEmKV2mdsWTorMTljb
+         JmsVEGyxnFlw4/sOEAReNkqylFfUlMcYHnHgi/7e4ELG/3iJrZ2+KTCIVkNy6+f56CkI
+         xx603jKovuSBX1guw5etp3sUmolhDDjr/apHn5nHypc+NOj+g2iuKidRWC+hxQdjdG5P
+         0EzE2Qih3mmpiiLY3oho1QgNIPLTv4n6B5DKMqNi3hLG/W9LFX2K835TLTMHoTXkMWLk
+         oJFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689623338; x=1692215338;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m2rRzgR2bCR4WLQV/L/SdDZ43J6JQqvM6vx+FxfFLaM=;
-        b=j05UxmCUEzyjmx9LlQb+JVm3KHcgMT6zZQnMRx94PEpkSaRyLF1ufxIc4rXFsbMSpW
-         Ya6sUfDcTsImeaSMvUb15kCj5C9MOwzJT06VFCx/L59AfnB5nsmg+RWSLmyRy7cUXRha
-         DUvLs0aaLIRzPI6vIVe+2dKsTPWL5CF/9tlFlNFdoaQErQXii5eiwfyToxuIHLIs6b80
-         5luSn9cZDi++WLyLgpi1CYbT+wCGN44ksPj/d6q6xUx8+/DYmcGjHvFiOi7lRyZdXl/O
-         B+RZez704o+ogamzj5kHElG6LqAdnBFFiJZAD0u0OKGlEuID4yAoGsbTUNiT7BcsiP+V
-         3qEw==
-X-Gm-Message-State: ABy/qLbfZJt3gJmKZoQceNHSdS76MMKqYdr/MhXFgDQp4lAQSpQfzQ9Z
-        WGPAsF1soydk5jQE5Wi6nCtDiWRb1ewowGkyB/HjfSJ4RCn71hbzQNhJDDU44NOJhHys+cYO6yS
-        geaodmS9Xyll9ksVGJ6vd
-X-Received: by 2002:a67:e3a3:0:b0:443:5ec3:55da with SMTP id j3-20020a67e3a3000000b004435ec355damr5207084vsm.15.1689623338328;
-        Mon, 17 Jul 2023 12:48:58 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEmuKfhqUNybdA9S/7JJsY6kGCiUUlRIJFJBn/SN8CN1hqWuSmyjKp1TapgDjsKCWociDChlg==
-X-Received: by 2002:a67:e3a3:0:b0:443:5ec3:55da with SMTP id j3-20020a67e3a3000000b004435ec355damr5207071vsm.15.1689623338093;
-        Mon, 17 Jul 2023 12:48:58 -0700 (PDT)
-Received: from fedora ([2600:1700:1ff0:d0e0::17])
-        by smtp.gmail.com with ESMTPSA id g15-20020a0caacf000000b006263c531f61sm154184qvb.24.2023.07.17.12.48.57
+        d=1e100.net; s=20221208; t=1689627838; x=1692219838;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o1J3PrW+KELul59iWMsbn0NuwlLctvPQuEIvtb6UgWY=;
+        b=ip3BQjSNWDJfuzGoy8HCKZvvLM7bOFSHN6bjeE9bM1R23ysaObd8+N5rF0czD750ST
+         /omcFp+fgATXzflxjRSPAgNxp2estTcPTQWS6YOMjp9OIXs5UiliWnjYQ/cq349PK2Dk
+         ax5k3n4Fp5imLJdqqMXy4GcGeGA7FwginRKu2vhGfmWsEgYTImur5b2V9UbvHTocRonK
+         +1+GOrf3bjbkcOSXg1YCe03RMSvEOJWlZZBQiCjbQNtnE1hmqRUsYGA4WmSH25IBbbC/
+         0NN/RUof8Da/ucsBRnjLvjAka2YyexxPD2li+W+Gt2yfGL0j5aKdjeE4iWLuEGhjg3BG
+         paQQ==
+X-Gm-Message-State: ABy/qLZ6PmqRyNzla2wI7I1ARlOeLJhSZFxMxuHnta3Gxo5XSf2Iqbm8
+        WGBM1mGjLzfvfdoadoNryANW8MzDZt9uzZLZWBG2VA==
+X-Google-Smtp-Source: APBJJlGOS37CqLaBewrjCl5Z0maH1pn80HSmDOUF0nWeAle4VJHXL5qIG15IsIleFsgn4g9p6Ja4Vg==
+X-Received: by 2002:a05:6a20:8425:b0:12b:40d3:aeb1 with SMTP id c37-20020a056a20842500b0012b40d3aeb1mr16273429pzd.25.1689627837974;
+        Mon, 17 Jul 2023 14:03:57 -0700 (PDT)
+Received: from sw06.internal.sifive.com ([64.62.193.194])
+        by smtp.gmail.com with ESMTPSA id j24-20020aa78d18000000b006732786b5f1sm191915pfe.213.2023.07.17.14.03.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 12:48:57 -0700 (PDT)
-Date:   Mon, 17 Jul 2023 14:48:55 -0500
-From:   Andrew Halaney <ahalaney@redhat.com>
-To:     Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [RESEND] clk: qcom: rcg: Update rcg configuration before
- enabling it
-Message-ID: <e2xxoobnbtepdsplh2wv6l7k7snncbwssp43pttii4xnjj6egy@r24o4s6klhs7>
-References: <20230712014812.3337992-1-quic_skakitap@quicinc.com>
+        Mon, 17 Jul 2023 14:03:57 -0700 (PDT)
+From:   Samuel Holland <samuel.holland@sifive.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Samuel Holland <samuel.holland@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: analogbits: Allow building the library as a module
+Date:   Mon, 17 Jul 2023 14:03:55 -0700
+Message-Id: <20230717210356.2794736-1-samuel.holland@sifive.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230712014812.3337992-1-quic_skakitap@quicinc.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 12, 2023 at 07:18:12AM +0530, Satya Priya Kakitapalli wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
-> 
-> If rcg is in disabled state when clk_rcg2_shared_set_rate is called, the
-> new configuration is written to the configuration register but it won't be
-> effective in h/w yet because update bit won't be set if rcg is in disabled
-> state. Since the new configuration is not yet updated in h/w, dirty bit of
-> configuration register will be set in such case. Clear the dirty bit and
-> update the rcg to proper new configuration by setting the update bit before
-> enabling the rcg.
-> 
+This library is only used by the SiFive PRCI driver. When that driver is
+built as a module, it makes sense to build this library as a module too.
 
-If I understand correctly you're saying that without this patch:
+Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+---
 
-    devm_clk_get();
-    clk_set_rate(rate);
-    clk_prepare_enable();
+ drivers/clk/analogbits/Kconfig          | 2 +-
+ drivers/clk/analogbits/wrpll-cln28hpc.c | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-would look like it worked (i.e. clk_get_rate() would return rate), but
-in reality the clock is running at whatever the "default" rate is.
-
-That sounds like it could use a Fixes: tag if so!
-
-Thanks,
-Andrew
+diff --git a/drivers/clk/analogbits/Kconfig b/drivers/clk/analogbits/Kconfig
+index 1e291b185438..7d73db0fcd49 100644
+--- a/drivers/clk/analogbits/Kconfig
++++ b/drivers/clk/analogbits/Kconfig
+@@ -1,3 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config CLK_ANALOGBITS_WRPLL_CLN28HPC
+-	bool
++	tristate
+diff --git a/drivers/clk/analogbits/wrpll-cln28hpc.c b/drivers/clk/analogbits/wrpll-cln28hpc.c
+index 09ca82356399..760b51031795 100644
+--- a/drivers/clk/analogbits/wrpll-cln28hpc.c
++++ b/drivers/clk/analogbits/wrpll-cln28hpc.c
+@@ -28,6 +28,7 @@
+ #include <linux/math64.h>
+ #include <linux/math.h>
+ #include <linux/minmax.h>
++#include <linux/module.h>
+ 
+ #include <linux/clk/analogbits-wrpll-cln28hpc.h>
+ 
+@@ -312,6 +313,7 @@ int wrpll_configure_for_rate(struct wrpll_cfg *c, u32 target_rate,
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL_GPL(wrpll_configure_for_rate);
+ 
+ /**
+  * wrpll_calc_output_rate() - calculate the PLL's target output rate
+@@ -349,6 +351,7 @@ unsigned long wrpll_calc_output_rate(const struct wrpll_cfg *c,
+ 
+ 	return n;
+ }
++EXPORT_SYMBOL_GPL(wrpll_calc_output_rate);
+ 
+ /**
+  * wrpll_calc_max_lock_us() - return the time for the PLL to lock
+@@ -366,3 +369,6 @@ unsigned int wrpll_calc_max_lock_us(const struct wrpll_cfg *c)
+ {
+ 	return MAX_LOCK_US;
+ }
++EXPORT_SYMBOL_GPL(wrpll_calc_max_lock_us);
++
++MODULE_LICENSE("GPL");
+-- 
+2.40.1
 
