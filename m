@@ -2,219 +2,159 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1A2EB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 14:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9544AC001DC
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 15:19:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229956AbjGQOaz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 10:30:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52882 "EHLO
+        id S231352AbjGQPTP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 11:19:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbjGQOay (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 10:30:54 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BDFFE4F;
-        Mon, 17 Jul 2023 07:30:53 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 20DFC66020AE;
-        Mon, 17 Jul 2023 15:30:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689604251;
-        bh=JZ9CqbZe62FM8un3k54BF5lgTvBzK8Bjpc1+KbmZsgQ=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=PEO+xjEj4b6bNuktP1A7EAt68PSO8uqRhM9P528Ijn4bYzt+lhKv+aXxX1TSphMyG
-         v1YezT2c1wQXELGEZeZGt5/QwKb7GnlM31K+se6IdJZ9H2fh26GVJPUG/6ef12es8P
-         +zyr7/xHhx2zgnVyP2rwFZuP0cGcpVxgtAoXzJebrOz6PDFtrId3xd75cBJzpJY/JH
-         sUImzhdJNWPpWGhktrPNZPaM5BkOkRnOU2dGq4LJod56u39aIOpZ0skmpri2HAQCt5
-         9Hb73sU7zYoY1NMxrOvIl+laug25d5fU3o35RZUjoThkxN3UvDpRqLapqVVKtDGCoc
-         d9vZwsgxe6npA==
-Message-ID: <24d17b07-1e8d-05f6-46b7-9da1ff1bed7a@collabora.com>
-Date:   Mon, 17 Jul 2023 16:30:48 +0200
+        with ESMTP id S231239AbjGQPTP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 11:19:15 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0274FBD
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 08:19:13 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id 2adb3069b0e04-4fbb281eec6so7264379e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 08:19:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689607151; x=1692199151;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XihfBswXwLBU5koXjyBjWrHqV9uRQHPvDY83RX4DoHY=;
+        b=HgNoiuLE84+GinSTqbSdq28VHVz0aj7SX6ISwPKtGCSkCip9kyr3GLq47604WWBAv8
+         cNth2aLEE5jHLMYMV9DucKYHFknTUPUFDrXd64Npsa52KDpwN77j05PkXk/T9P5lLsIQ
+         bVDGqjz7SKEoIaySrn7MYjjTqUssxxHVxC+8/J4Bf/rolR3PgcU8jpXloeGAskzYHxMn
+         yF4bV9Zu1buy2f1RB0ZXG0IM3B5MESdV94Nk1dOek5LWTS0L+qFw8ciFm317216dnrSc
+         m23LVoaYkzs8YewhZOLyCVXNphTcRm4UZIdanL12aAFScNlx/sJqflOG2G7cR2VAgc7+
+         PJQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689607151; x=1692199151;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XihfBswXwLBU5koXjyBjWrHqV9uRQHPvDY83RX4DoHY=;
+        b=fZNrfP6xP/oH771KvWOpvwJl4JslYmJrMZ7Ac2SwwyML8T4D1K7DtC9jAhF33WhvQ2
+         sYk0ARHYsu+sPvsH/OYcYObUwD5T2d0F6dkZA+Gp0EhuTfMkxUN6cG8/fCjOyYlgNat0
+         nZDLXyYF0nbnBsILlxqALLrG+yN32xKnhfXNm56a5TPxmNoyRJjZsQ949rpQSvR5irlS
+         LCdLyLzOwII5iuCw7A3E5kP+raqoKXcm7Hij1XU+Sg9sVPw1PTYyPgteEjKylse+YtnJ
+         QGELZ5mG51/GrMyFaLZRFoE8nu+QDLBEVLW2v93v84Lq3ZYYtdLNGWTV7MlYPvju1vP0
+         Geyg==
+X-Gm-Message-State: ABy/qLa6BjtMFuc+PKiB/xKf2HfDKNs8TRl6oM9mUqa5S+VyWUBfDIYq
+        foiJZB67YrdPiA51MEg+5UVJWX3mGjdzMPwzxqpnnQ==
+X-Google-Smtp-Source: APBJJlGOtnAOhdCE+iX25a9G72ozcufRcXwg/cOq3fBHzPN/qevvbquyt3zQLNUEg3DI0tdXZVYL+g==
+X-Received: by 2002:a05:6512:446:b0:4fb:8eec:ce49 with SMTP id y6-20020a056512044600b004fb8eecce49mr7627389lfk.31.1689607150886;
+        Mon, 17 Jul 2023 08:19:10 -0700 (PDT)
+Received: from [192.168.1.101] (abyj181.neoplus.adsl.tpnet.pl. [83.9.29.181])
+        by smtp.gmail.com with ESMTPSA id z7-20020ac24187000000b004f26d63f823sm2873949lfh.237.2023.07.17.08.19.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Jul 2023 08:19:10 -0700 (PDT)
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 00/15] Unregister critical branch clocks + some RPM
+Date:   Mon, 17 Jul 2023 17:19:07 +0200
+Message-Id: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
- top_dp/edp muxes
-Content-Language: en-US
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Chen-Yu Tsai <wenst@chromium.org>,
-        Alexandre Mergnat <amergnat@baylibre.com>, sboyd@kernel.org,
-        mturquette@baylibre.com, matthias.bgg@gmail.com, msp@baylibre.com,
-        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
-        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
- <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
- <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
- <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
- <jv6daj2w3pwjtde3m3m26yg4wyxbbio4zqra5yqc4gb32ri5ub@noinbbkjovwm>
- <25724ee3-858a-01eb-352b-3edbfad31c8e@collabora.com>
- <jxgy2pvns4ri2aj5nmdhb4zbluseuzdejbplh2avwz63df2cfx@grrrdm6ujzi4>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <jxgy2pvns4ri2aj5nmdhb4zbluseuzdejbplh2avwz63df2cfx@grrrdm6ujzi4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOtbtWQC/y2NUQqDMBBEryL73YBRMLRXKUXWda0LYROSKgXx7
+ l2kn2+YN3NA5SJc4dEcUHiXKkkN/K0BWlHf7GQ2hq7t+jb44D4pC7mpoNI6YtKRIqNu2Q33MJD
+ vFw6ewPQJK/97NqBbjBbmwot8r7/n6zx/sjvjSX8AAAA=
+To:     Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc:     Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1689607149; l=3625;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=Jh2Pm4OQu9lmpeh/JOIF5+88JeDKQ7w+nRxBV+Y9MgU=;
+ b=EUeSFSHJFb7La6v+Ca119npp+SUq3EkB5fdllnWXDXVE84/pdVUYqkAtAJPs91wk9a2lCVttW
+ /FXQrp+aI4MCK6d/8HsIQGDXlXxfZPcjrC4XZmcYea7s4EPgg4Dpm8I
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 17/07/23 13:24, Maxime Ripard ha scritto:
-> On Mon, Jul 17, 2023 at 11:13:26AM +0200, AngeloGioacchino Del Regno wrote:
->> Il 17/07/23 09:48, Maxime Ripard ha scritto:
->>> Hi,
->>>
->>> On Fri, Jul 14, 2023 at 12:19:00PM +0800, Chen-Yu Tsai wrote:
->>>> On Thu, Jul 13, 2023 at 9:22 PM Alexandre Mergnat <amergnat@baylibre.com> wrote:
->>>>> On 13/07/2023 09:21, AngeloGioacchino Del Regno wrote:
->>>>>> The top_dp and top_edp muxes can be both parented to either TVDPLL1
->>>>>> or TVDPLL2, two identically specced PLLs for the specific purpose of
->>>>>> giving out pixel clock: this becomes a problem when the MediaTek
->>>>>> DisplayPort Interface (DPI) driver tries to set the pixel clock rate.
->>>>>>
->>>>>> In the usecase of two simultaneous outputs (using two controllers),
->>>>>> it was seen that one of the displays would sometimes display garbled
->>>>>> output (if any at all) and this was because:
->>>>>>     - top_edp was set to TVDPLL1, outputting X GHz
->>>>>>     - top_dp was set to TVDPLL2, outputting Y GHz
->>>>>>       - mtk_dpi calls clk_set_rate(top_edp, Z GHz)
->>>>>>         - top_dp is switched to TVDPLL1
->>>>>>         - TVDPLL1 changes its rate, top_edp outputs the wrong rate.
->>>>>>         - eDP display is garbled
->>>>>>
->>>>>> To solve this issue, remove all TVDPLL1 parents from `top_dp` and
->>>>>> all TVDPLL2 parents from `top_edp`, plus, necessarily switch both
->>>>>> clocks to use the new MUX_GATE_CLR_SET_UPD_INDEXED() macro to be
->>>>>> able to use the right bit index for the new parents list.
->>>>>>
->>>>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>>>> ---
->>>>>>     drivers/clk/mediatek/clk-mt8195-topckgen.c | 22 ++++++++++++++--------
->>>>>>     1 file changed, 14 insertions(+), 8 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/clk/mediatek/clk-mt8195-topckgen.c b/drivers/clk/mediatek/clk-mt8195-topckgen.c
->>>>>> index 81daa24cadde..abb3721f6e1b 100644
->>>>>> --- a/drivers/clk/mediatek/clk-mt8195-topckgen.c
->>>>>> +++ b/drivers/clk/mediatek/clk-mt8195-topckgen.c
->>>>>> @@ -417,15 +417,21 @@ static const char * const pwrmcu_parents[] = {
->>>>>>
->>>>>>     static const char * const dp_parents[] = {
->>>>>>         "clk26m",
->>>>>> -     "tvdpll1_d2",
->>>>>>         "tvdpll2_d2",
->>>>>> -     "tvdpll1_d4",
->>>>>>         "tvdpll2_d4",
->>>>>> -     "tvdpll1_d8",
->>>>>>         "tvdpll2_d8",
->>>>>> -     "tvdpll1_d16",
->>>>>>         "tvdpll2_d16"
->>>>>>     };
->>>>>> +static const u8 dp_parents_idx[] = { 0, 2, 4, 6, 8 };
->>>>>> +
->>>>>> +static const char * const edp_parents[] = {
->>>>>> +     "clk26m",
->>>>>> +     "tvdpll1_d2",
->>>>>> +     "tvdpll1_d4",
->>>>>> +     "tvdpll1_d8",
->>>>>> +     "tvdpll1_d16"
->>>>>> +};
->>>>>> +static const u8 edp_parents_idx[] = { 0, 1, 3, 5, 7 };
->>>>>
->>>>> AFAII your solution is to force a specific TVDPLLX for each display, and
->>>>> it isn't dynamic.
->>>>>
->>>>> Do you think it's possible to do that using the DTS ? I'm asking
->>>>> because, IMHO, this kind of setup is more friendly/readable/flexible in
->>>>> the DTS than hardcoded into the driver.
->>>>
->>>> (CC-ing Maxime, who has some experience in the matter.)
->>>
->>> It's not clear to me what the context is, but I'll try my best :)
->>>
->>
->> I'll try to explain briefly.
->>
->> On *some* MediaTek platforms, there are two *identical* PLLs for HDMI/(e)DP,
->> which are internal to the SoC; clocks for HDMI/eDP/DP controller*s* can be
->> parented either PLL (as you see from this commit)
-> 
-> So the HDMI controller can be parented either to the first or second PLL
-> (and same thing for the (e)DP controllers)?
-> 
+On Qualcomm SoCs, certain branch clocks either need to be always-on, or
+should be if you're interested in touching some part of the hardware.
 
-We're talking about DP/eDP specifically here, but yeah, you got it! :-)
+Using CLK_IS_CRITICAL for this purpose sounds like a genius idea,
+however that messes with the runtime pm handling - if a clock is
+marked as such, the clock controller device will never enter the
+"suspended" state, leaving the associated resources online, which in
+turn breaks SoC-wide suspend.
 
->> The PLL's rate can be changed in runtime and you want to use PLL dividers to
->> get the final pixel clock (that's to obviously reduce the PLL jitter).
->>
->>>> assigned-parents doesn't prevent your system from reparenting the clocks
->>>> back to a conflicting configuration.
->>>
->>> Yep, it's very much a one-off thing. There's no guarantee at the moment,
->>> and semantics-wise we could change the whole thing at probe time and it
->>> would be fine.
->>>
->>
->> Would be fine... but more complicated I think?
-> 
-> My point wasn't that you should do it, but that you can't rely on the
-> parent or rate sticking around.
-> 
+This series aims to solve that on a couple SoCs that I could test the
+changes on and it sprinkles some runtime pm enablement atop these drivers.
 
-Cool, I'm happy that we think alike. That's also my point...
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Konrad Dybcio (15):
+      clk: qcom: branch: Add a helper for setting the enable bit
+      clk: qcom: Use qcom_branch_set_clk_en()
+      clk: qcom: gcc-sm6375: Unregister critical clocks
+      clk: qcom: gcc-sm6375: Add runtime PM
+      clk: qcom: gpucc-sm6375: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Unregister critical clocks
+      clk: qcom: gpucc-sm6115: Add runtime PM
+      clk: qcom: gcc-sm6115: Unregister critical clocks
+      clk: qcom: gcc-sm6115: Add runtime PM
+      clk: qcom: gcc-qcm2290: Unregister critical clocks
+      clk: qcom: gcc-qcm2290: Add runtime PM
+      arm64: dts: qcom: sm6375: Add VDD_CX to GCC
+      arm64: dts: qcom: qcm2290: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GCC
+      arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CCC
 
->>>> AFAIK the recommended way to deal with this is to use
->>>> clk_set_rate_exclusive() and co. in whatever consumer driver that
->>>> needs exclusive control on the clock rate.
->>>
->>> I guess it works, but it looks to me like the issue here is that the
->>> provider should disable it entirely? My expectation for
->>> clk_set_rate_exclusive() is that one user needs to lock the clock rate
->>> to operate properly.
->>>
->>> If the provider expectation is that the rate or parent should never
->>> changed, then that needs to be dealt with at the provider level, ie
->>> through the clk_ops.
->>>
->>>> However I'm not sure if that works for parents. It should, given the
->>>> original use case was for the sunxi platforms, which like the MediaTek
->>>> platform here has 2 PLLs for video related consumers, but I couldn't
->>>> find code verifying it.
->>>
->>> If you want to prevent clocks from ever being reparented, you can use
->>> the new clk_hw_determine_rate_no_reparent() determine_rate
->>> implementation.
->>>
->>
->> We want the clocks to be reparented, as we need them to switch parents as
->> explained before... that's more or less how the tree looks:
->>
->> TVDPLL(x) -> PLL Divider (fixed) -> MUX -> Gate -> Controller
->>
->> Besides, I think that forcing *one* parent to the dp/edp mux would produce a
->> loss of the flexibility that the clock framework provides.
->>
->> I again want to emphasize on the fact that TVDPLL1 and TVDPLL2 are *identical*
->> in specs, and on that there will never be a MT8195 SoC that has only one of
->> the two PLLs, for obvious reasons...
->>
->> P.S.: If you need more context, I'll be glad to answer to any other question!
-> 
-> Then I have no idea what the question is :)
-> 
-> What are you trying to achieve / fix, and how can I help you ? :)
-> 
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi |   1 +
+ arch/arm64/boot/dts/qcom/sm6115.dtsi  |   3 +
+ arch/arm64/boot/dts/qcom/sm6375.dtsi  |   1 +
+ drivers/clk/qcom/clk-branch.h         |   7 ++
+ drivers/clk/qcom/dispcc-qcm2290.c     |   2 +-
+ drivers/clk/qcom/dispcc-sc7280.c      |   2 +-
+ drivers/clk/qcom/dispcc-sc8280xp.c    |   2 +-
+ drivers/clk/qcom/dispcc-sm6115.c      |   2 +-
+ drivers/clk/qcom/dispcc-sm8250.c      |   2 +-
+ drivers/clk/qcom/dispcc-sm8450.c      |   2 +-
+ drivers/clk/qcom/dispcc-sm8550.c      |   2 +-
+ drivers/clk/qcom/gcc-qcm2290.c        | 136 ++++++++---------------------
+ drivers/clk/qcom/gcc-sa8775p.c        |  18 ++--
+ drivers/clk/qcom/gcc-sc7180.c         |  16 ++--
+ drivers/clk/qcom/gcc-sc7280.c         |  14 +--
+ drivers/clk/qcom/gcc-sc8180x.c        |  20 ++---
+ drivers/clk/qcom/gcc-sc8280xp.c       |  18 ++--
+ drivers/clk/qcom/gcc-sdx55.c          |   2 +-
+ drivers/clk/qcom/gcc-sdx65.c          |   2 +-
+ drivers/clk/qcom/gcc-sdx75.c          |   4 +-
+ drivers/clk/qcom/gcc-sm6115.c         | 155 ++++++++--------------------------
+ drivers/clk/qcom/gcc-sm6375.c         |  34 +++++---
+ drivers/clk/qcom/gcc-sm7150.c         |  16 ++--
+ drivers/clk/qcom/gcc-sm8250.c         |  12 +--
+ drivers/clk/qcom/gcc-sm8350.c         |  14 +--
+ drivers/clk/qcom/gcc-sm8450.c         |  14 +--
+ drivers/clk/qcom/gcc-sm8550.c         |  14 +--
+ drivers/clk/qcom/gpucc-sc7280.c       |   4 +-
+ drivers/clk/qcom/gpucc-sc8280xp.c     |   4 +-
+ drivers/clk/qcom/gpucc-sm6115.c       |  57 ++++++-------
+ drivers/clk/qcom/gpucc-sm6375.c       |  38 ++-------
+ drivers/clk/qcom/gpucc-sm8550.c       |   4 +-
+ drivers/clk/qcom/lpasscorecc-sc7180.c |   2 +-
+ drivers/clk/qcom/videocc-sm8250.c     |   4 +-
+ drivers/clk/qcom/videocc-sm8350.c     |   4 +-
+ drivers/clk/qcom/videocc-sm8450.c     |   6 +-
+ drivers/clk/qcom/videocc-sm8550.c     |   6 +-
+ 37 files changed, 245 insertions(+), 399 deletions(-)
+---
+base-commit: 2205be537aeb1ca2ace998e2fefaa2be04e393e4
+change-id: 20230717-topic-branch_aon_cleanup-6976c13fe71c
 
-Chen-Yu, Alexandre had/have questions about if there was any other solution instead
-of using the solution of *this* commit, so, if there's any other better solution
-than the one that I've sent as this commit.
-
-I'm the one saying that this commit is the best solution :-P
-
-Cheers,
-Angelo
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
 
