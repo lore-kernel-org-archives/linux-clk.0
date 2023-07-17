@@ -2,116 +2,116 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259ACEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 18:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794A7C001B0
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 18:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbjGQSPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 14:15:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46686 "EHLO
+        id S229652AbjGQSnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 14:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231567AbjGQSPk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 14:15:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2A4E19AD;
-        Mon, 17 Jul 2023 11:15:14 -0700 (PDT)
+        with ESMTP id S230206AbjGQSm4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 14:42:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A0399;
+        Mon, 17 Jul 2023 11:42:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E80AD611E0;
-        Mon, 17 Jul 2023 18:14:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F0EC433C8;
-        Mon, 17 Jul 2023 18:14:19 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CA958611F3;
+        Mon, 17 Jul 2023 18:42:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED3AC433C8;
+        Mon, 17 Jul 2023 18:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689617662;
-        bh=OqEJx2JXRNQi7GTOKz0fdomqryGSX0xf5Jw92YAE3rk=;
+        s=k20201202; t=1689619375;
+        bh=uRn0kuwqYbZ6OTzDmQhgfhwn6ZJ4biCov+g6zanF68o=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AhIlQxIn/csuKBLwhCGfjg2VH7okyoik7gdBg6Qz9PqregdMX+gjgXK7hnFvIpxOJ
-         z+68z1h+/90ajCET+LDDRIL5nJMtqgLEegWWEaaLzqtOlrdLfgru/NsXRUM6jHxbqu
-         yZJjSVXpwo6G2SeJN4VxLC9/jFOYIAlhCCBZYxb8W6Va5BpKiN0TCK52zI4RydtSYN
-         m2uh+rAMcbcdKlanv1tCQQrPglUgyoRCC9dlzW71htcprkTw8qwjn9z2iLdbr3H9hS
-         ae8v5xMmH3avB4/3N6w81nF2rKDmKWLGG5xnWs7CtsdV7AGJxn5cM+XMLukkGTFRNe
-         v3Pu/qCRt1ybw==
-Date:   Mon, 17 Jul 2023 19:14:16 +0100
+        b=KXAy43LVtPnYp13ZnDTjnJe+cGwkxaFpFhYZfZRC2nzKYXPl2KAUtW77E3KuUAdPk
+         QLdoUAgBC0qmWrmGxommYRxaHSd/GK6He//vefvCCcDmepdyZekx85POQUFSjkzMUs
+         uJsQC6kqynGoQVIOFRr5I3tT1XRg+1WYMWrYaaeAWsvlNcLx0qA60JYzorKTKje/BL
+         4sqHcy+7VuZsbKOaA/e91vpg8K5ZtGx1FX5tPMF7WAYQcZ2i8zozVvmBc0Fx9ZiFbb
+         Wv/IRAJv7/rUAIlPMHycR2h0xW+eU5ohAu/qDgC+0D2P3TKM4nP7jtAhQRstEBfZiC
+         Zf706cKt9FqSA==
+Date:   Mon, 17 Jul 2023 19:42:50 +0100
 From:   Conor Dooley <conor@kernel.org>
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] Add PLL clocks driver and syscon for StarFive
- JH7110 SoC
-Message-ID: <20230717-easel-pessimist-5b7c4e5bed0a@spud>
-References: <20230717023040.78860-1-xingyu.wu@starfivetech.com>
+To:     Dylan Hung <dylan_hung@aspeedtech.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2] dt-bindings: clock: ast2600: Add I3C and MAC reset
+ definitions
+Message-ID: <20230717-euphemism-tiptoeing-87fdeff2f5f1@spud>
+References: <20230717065858.1596404-1-dylan_hung@aspeedtech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vpxOvJLAUWdBcn/b"
+        protocol="application/pgp-signature"; boundary="BMW1/yk8++vhoImP"
 Content-Disposition: inline
-In-Reply-To: <20230717023040.78860-1-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230717065858.1596404-1-dylan_hung@aspeedtech.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---vpxOvJLAUWdBcn/b
+--BMW1/yk8++vhoImP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hey Xingyu,
-
-On Mon, Jul 17, 2023 at 10:30:33AM +0800, Xingyu Wu wrote:
-> This patch serises are to add PLL clocks driver and providers by writing
-> and reading syscon registers for the StarFive JH7110 RISC-V SoC. And add=
-=20
-> documentation and nodes to describe StarFive System Controller(syscon)
-> Registers. This patch serises are based on Linux 6.4.
+On Mon, Jul 17, 2023 at 02:58:58PM +0800, Dylan Hung wrote:
+> Add reset definitions of AST2600 I3C and MAC controllers.
 >=20
-> PLLs are high speed, low jitter frequency synthesizers in JH7110.
-> Each PLL clock works in integer mode or fraction mode by some dividers,
-> and the dividers are set in several syscon registers.
-> The formula for calculating frequency is:=20
-> Fvco =3D Fref * (NI + NF) / M / Q1
->=20
-> The first patch adds docunmentation to describe PLL clock bindings,
-> and the second patch adds documentation to decribe syscon registers.
-> The patch 3 modifies the SYSCRG bindings and adds PLL clock inputs.
-> The patch 4 adds driver to support PLL clocks for JH7110.
-> The patch 5 modifies the system clock driver and can select the PLL clock
-> source from PLL clocks driver. And the patch 6 adds the=20
-> stg/sys/aon syscon nodes for JH7110 SoC. The last patch modifies the=20
-> syscrg node in JH7110 dts file.
+> Signed-off-by: Dylan Hung <dylan_hung@aspeedtech.com>
+> ---
+>  include/dt-bindings/clock/ast2600-clock.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
-Just FYI, I have picked up the binding & clock portions of this series
-and your other one adding the stg syscon. I've pushed them out here for
-the test robots to have a look:
-https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=3Dcl=
-k-starfive
-
-If that passes, my plan is to send Stephen a PR for the lot, later this
-week.
+What changed compared to v1?
+Are there any users of the additional resets (eg, in a dts somewhere)?
 
 Thanks,
 Conor.
 
---vpxOvJLAUWdBcn/b
+>=20
+> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindi=
+ngs/clock/ast2600-clock.h
+> index e149eee61588..712782177c90 100644
+> --- a/include/dt-bindings/clock/ast2600-clock.h
+> +++ b/include/dt-bindings/clock/ast2600-clock.h
+> @@ -90,7 +90,19 @@
+>  /* Only list resets here that are not part of a clock gate + reset pair =
+*/
+>  #define ASPEED_RESET_ADC		55
+>  #define ASPEED_RESET_JTAG_MASTER2	54
+> +
+> +#define ASPEED_RESET_MAC4		53
+> +#define ASPEED_RESET_MAC3		52
+> +
+> +#define ASPEED_RESET_I3C5		45
+> +#define ASPEED_RESET_I3C4		44
+> +#define ASPEED_RESET_I3C3		43
+> +#define ASPEED_RESET_I3C2		42
+> +#define ASPEED_RESET_I3C1		41
+> +#define ASPEED_RESET_I3C0		40
+> +#define ASPEED_RESET_I3C		39
+>  #define ASPEED_RESET_I3C_DMA		39
+> +
+>  #define ASPEED_RESET_PWM		37
+>  #define ASPEED_RESET_PECI		36
+>  #define ASPEED_RESET_MII		35
+> --=20
+> 2.25.1
+>=20
+
+--BMW1/yk8++vhoImP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZLWE+AAKCRB4tDGHoIJi
-0ur7AP4ndXL/qJjXJfNtVyd+3rK8jlf/5ysC8FoHGmNOM6U7AAD/avzW3cVV9fHK
-stAX7pFN96sp2rQoJQtgrXNJ9rxKrwI=
-=8WbH
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZLWLqgAKCRB4tDGHoIJi
+0i8OAQDraTQRKI7Em5D9cWQAEsknsQRxXbG5WEe8SkR6AqcEBwEA93XaSc4+ifkv
+Hobytq9jZUJ+VFOmUeGzeLKR/Obasw4=
+=6O+C
 -----END PGP SIGNATURE-----
 
---vpxOvJLAUWdBcn/b--
+--BMW1/yk8++vhoImP--
