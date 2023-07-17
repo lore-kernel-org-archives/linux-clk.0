@@ -2,51 +2,52 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2417C0015E
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 06:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16238C001B0
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 06:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230424AbjGQGLs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 02:11:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51872 "EHLO
+        id S229665AbjGQGhR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 02:37:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjGQGLq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 02:11:46 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1791A2;
-        Sun, 16 Jul 2023 23:11:45 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36H5q85a022843;
-        Mon, 17 Jul 2023 06:11:12 GMT
+        with ESMTP id S229528AbjGQGhP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 02:37:15 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D8593;
+        Sun, 16 Jul 2023 23:37:14 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36H5pcVl028723;
+        Mon, 17 Jul 2023 06:36:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
  mime-version : subject : to : cc : references : from : in-reply-to :
  content-type : content-transfer-encoding; s=qcppdkim1;
- bh=QAX9M/71yumqClxYIhzg8mRJCRKATa2Q0XV9RfYS86o=;
- b=klO7d7aYVqSaBOYqPZdQ6k+MY9YXtSIn5NzuxPyFjx4pSMN5gMZ5ONlSZ0cF0ta3Smn1
- xk+6Wgsqy/1G2ZR7PdM8UB2RzX/6E8iysjXdbe0zcT81bPBzYI2pxG3CHdpmWyq2GTcO
- B7cqGbEMJXzkLOW87GEhyM+ZWW0sxzWEI+xndu+9r9j+UItTYXuPewhyUJRWTJ/OVd8/
- UmXoDyFQ+N4JhHzd7aa7gpI9i3Dv9LlxB9ovtb3urJCVSDlYGWlrdS698AKqLMVibnLs
- pNqbScnvSpnKDn9YCJxcefwyVBLSWN57FskmaOkxQH1rhZ5rBUClzr+JGtgNn8XS0HVO Zw== 
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3run1jjj05-1
+ bh=DgQvj7P9SKd+4vVK23Z5kicrESGlyfKetsdyqYrWP4Y=;
+ b=b8rr18dkArFi7/ETMxqT7NPoGdT+zplC+bCgdTHt6cDy0drRRFo2WQkwZqng6CtUYYM0
+ w3T8EFpMbiiISJUecaqAlBYNbKuuyL7upDDI/RHlkEXUYzD0SDwrLRpLpYRgbZHG5h4N
+ pJ9M8exepJKDuwTikXOemA1z+VnxvUL1UYCO+U3Lt5hns91TKMxCFuhyZY5vpYccfy06
+ Kk8UAUvqd+SW1n+9BY3toWTA+z7adw6vhprGHrido+hEPcQ6m69vH9NHjz7kZrSY82z4
+ leEcaMjHjXj0+wDg2TmRRAsbL+hgbG8fzKJrGXLONMpGARYKJfo3dyN0QlrujAX76eNc 8w== 
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3run0cak6r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Jul 2023 06:11:12 +0000
+        Mon, 17 Jul 2023 06:36:45 +0000
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-        by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36H6BADH014572
+        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36H6ahvk004461
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Jul 2023 06:11:10 GMT
+        Mon, 17 Jul 2023 06:36:43 GMT
 Received: from [10.216.50.105] (10.80.80.8) by nalasex01b.na.qualcomm.com
  (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Sun, 16 Jul
- 2023 23:11:03 -0700
-Message-ID: <d05dc42c-1d22-6d95-0b59-501c085945e8@quicinc.com>
-Date:   Mon, 17 Jul 2023 11:40:55 +0530
+ 2023 23:36:36 -0700
+Message-ID: <52156f94-5bb0-93af-52ed-7cbb14492393@quicinc.com>
+Date:   Mon, 17 Jul 2023 12:06:32 +0530
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 3/6] dt-bindings: clock: Add ipq9574 NSSCC clock and reset
- definitions
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
+Subject: Re: [PATCH 4/6] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+Content-Language: en-US
+To:     Simon Horman <simon.horman@corigine.com>
+CC:     <agross@kernel.org>, <andersson@kernel.org>,
         <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <robh+dt@kernel.org>,
         <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
@@ -57,86 +58,74 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         <rafal@milecki.pl>, <linux-arm-msm@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
-CC:     <quic_saahtoma@quicinc.com>
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <quic_saahtoma@quicinc.com>
 References: <20230711093529.18355-1-quic_devipriy@quicinc.com>
- <20230711093529.18355-4-quic_devipriy@quicinc.com>
- <5f16f5c0-c63e-9e16-b55d-ac90977bc863@linaro.org>
-Content-Language: en-US
+ <20230711093529.18355-5-quic_devipriy@quicinc.com>
+ <ZK+NnWadQcmUDp0A@corigine.com>
 From:   Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <5f16f5c0-c63e-9e16-b55d-ac90977bc863@linaro.org>
+In-Reply-To: <ZK+NnWadQcmUDp0A@corigine.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: icqKtH9C1UZNOkdmo7tbgXEfsf8ovgrH
-X-Proofpoint-GUID: icqKtH9C1UZNOkdmo7tbgXEfsf8ovgrH
+X-Proofpoint-GUID: kQYvtwfe5s0BgfS4IKtY760RPTpIrRUJ
+X-Proofpoint-ORIG-GUID: kQYvtwfe5s0BgfS4IKtY760RPTpIrRUJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-17_05,2023-07-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- bulkscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0 spamscore=0
- phishscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307170055
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=909 spamscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307170059
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
 
-On 7/11/2023 3:24 PM, Krzysztof Kozlowski wrote:
-> On 11/07/2023 11:35, Devi Priya wrote:
->> Add NSSCC clock and reset definitions for ipq9574.
+On 7/13/2023 11:07 AM, Simon Horman wrote:
+> On Tue, Jul 11, 2023 at 03:05:27PM +0530, Devi Priya wrote:
+>> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
+>> devices.
 >>
 >> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> ---
->>   .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  76 +++++++++
->>   .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
->>   .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
->>   3 files changed, 362 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->>   create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->>   create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->> new file mode 100644
->> index 000000000000..1e8754760785
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->> @@ -0,0 +1,76 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-nsscc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Networking Sub System Clock & Reset Controller on IPQ9574
->> +
->> +maintainers:
->> +  - Bjorn Andersson <andersson@kernel.org>
->> +  - Anusha Rao <quic_anusha@quicinc.com>
->> +
->> +description: |
->> +  Qualcomm networking sub system clock control module provides the clocks,
->> +  resets and power domains on IPQ9574
->> +
->> +  See also::
->> +    include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->> +    include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->> +
 > 
-> Reference gcc.yaml and drop all duplicated properties.
+> ...
+> 
+>> +static const struct qcom_reset_map nss_cc_ipq9574_resets[] = {
+>> +	[NSS_CC_CE_BCR] = { 0x28400, 0 },
+>> +	[NSS_CC_CLC_BCR] = { 0x28600, 0 },
+>> +	[NSS_CC_EIP197_BCR] = { 0x16004, 0 },
+>> +	[NSS_CC_HAQ_BCR] = { 0x28300, 0 },
+>> +	[NSS_CC_IMEM_BCR] = { 0xe004, 0 },
+>> +	[NSS_CC_MAC_BCR] = { 0x28100, 0 },
+>> +	[NSS_CC_PPE_BCR] = { 0x28200, 0 },
+>> +	[NSS_CC_UBI_BCR] = { 0x28700, 0 },
+>> +	[NSS_CC_UNIPHY_BCR] = { 0x28900, 0 },
+>> +	[UBI3_CLKRST_CLAMP_ENABLE] = { 0x28A04, 9 },
+>> +	[UBI3_CORE_CLAMP_ENABLE] = { 0x28A04, 8 },
+>> +	[UBI2_CLKRST_CLAMP_ENABLE] = { 0x28A04, 7 },
+>> +	[UBI2_CORE_CLAMP_ENABLE] = { 0x28A04, 6 },
+>> +	[UBI1_CLKRST_CLAMP_ENABLE] = { 0x28A04, 5 },
+>> +	[UBI1_CORE_CLAMP_ENABLE] = { 0x28A04, 4 },
+>> +	[UBI0_CLKRST_CLAMP_ENABLE] = { 0x28A04, 3 },
+>> +	[UBI0_CORE_CLAMP_ENABLE] = { 0x28A04, 2 },
+>> +	[NSSNOC_NSS_CSR_ARES] = { 0x28A04, 1 },
+>> +	[NSS_CSR_ARES]  { 0x28A04, 0 },
+> 
+> Hi Devi,
+> 
+> There appears to be an '=' missing in the line above.
 
-Sure, okay
+Hi Simon,
+Thanks for catching it! will update it in V2.
 
-Thanks,
+Regards,
 Devi Priya
 > 
-> 
-> Best regards,
-> Krzysztof
-> 
+> ...
