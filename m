@@ -2,132 +2,120 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD892C04A6A
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 12:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F60C0015E
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 12:57:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230512AbjGQM0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 08:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
+        id S230383AbjGQM5L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 08:57:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230311AbjGQM0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 08:26:33 -0400
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824BDB9;
-        Mon, 17 Jul 2023 05:26:30 -0700 (PDT)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BE0D32000C;
-        Mon, 17 Jul 2023 12:26:15 +0000 (UTC)
+        with ESMTP id S231193AbjGQM5F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 08:57:05 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F38D1985;
+        Mon, 17 Jul 2023 05:56:31 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7819024000C;
+        Mon, 17 Jul 2023 12:56:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1689596788;
+        t=1689598586;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=xfIQQUGuk2YngWOS8fdrYDdOu8Z6QhNBtgynXxqIkxI=;
-        b=pu6DLejjSYrxTONDk5/XdeXoNmahir1eSWyr0IAyC5+CzV+z7kVIv0SIU1WMmF5on1CgqD
-        KQMv7HISFwBD83UgHXeIYvA6rMs4zilESREno4fIl9tHoG5j8KuMGef30GXaJomEjoNSXB
-        b27ZnZ9I2DkJ16lt7XoMqFe9mN2ip4prfSVsj2SpNBgHGroLTT9anwzmDU7ZmjHgcKavfM
-        YT6a5qXXuO8iNNI928PNokmiYbnOK1bsbfPyiXo6MfvnS5M/07LrFJlHjhELObDmMRCvQo
-        UvLPoo3HQls1bUDPug12g+YVs2SccW7y5VCvmnwJJIZUaBWuD6j/7/vLgvzENw==
-Date:   Mon, 17 Jul 2023 14:26:14 +0200
+        bh=PnbG2kna/5QHT9EZoNLKAsarfs/yBYCw+wIH6z79yFg=;
+        b=L3ynjZzdDrKioO7hJOL+RAxumAMQrd9Qkr6ob1LF2HeIoCuFwpRb7O1zlHkHb5n8/3TLRh
+        br4PQlx/DdcCn7fS8gdNR7NPsD4zbBdebrMkuskiiyIJS58fbDJQfaDUl7tcnDidCHeym7
+        2za91K0g8bAC0sJ4xb6mL41/uTPEYvm+RfVVj2mQAXrNFiE2GTrc8Zwwpya7z/F8UNff7B
+        Ulkvv+2ogRhACcaXBfLKWTd5AbeDIAjGgirFkTGOF3PorGnz0tyvq/fQ2wlDzk0960doBG
+        jnlf6utD8cNLFCGYyLfq7M2vyyG+UUSQeWl7SW0rSD918cKMmesEkH5vElAVHw==
+Date:   Mon, 17 Jul 2023 14:56:23 +0200
 From:   Luca Ceresoli <luca.ceresoli@bootlin.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Andreas =?UTF-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Alex Helms <alexander.helms.jy@renesas.com>,
-        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Emilio =?UTF-8?Q?L=C3=B3pez?= <emilio@elopez.com.ar>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michal Simek <michal.simek@amd.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-oxnas@groups.io,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] clk: Explicitly include correct DT includes
-Message-ID: <20230717142614.78db5c4e@booty>
-In-Reply-To: <20230714174342.4052882-1-robh@kernel.org>
-References: <20230714174342.4052882-1-robh@kernel.org>
+        Marek Vasut <marex@denx.de>,
+        Alexander Helms <alexander.helms.jy@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 1/2] clk: vc5: Use i2c_get_match_data() instead of
+ device_get_match_data()
+Message-ID: <20230717145623.473cffca@booty>
+In-Reply-To: <TYCPR01MB5933389C26B1C2FD6F35D97C863BA@TYCPR01MB5933.jpnprd01.prod.outlook.com>
+References: <20230716154442.93908-1-biju.das.jz@bp.renesas.com>
+        <20230716154442.93908-2-biju.das.jz@bp.renesas.com>
+        <CAMuHMdUjF-_pX53xaEXJVP1Yvz-o=0bdHLx7ekqbqrGX7ygCLA@mail.gmail.com>
+        <TYCPR01MB5933389C26B1C2FD6F35D97C863BA@TYCPR01MB5933.jpnprd01.prod.outlook.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-GND-Sasl: luca.ceresoli@bootlin.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 14 Jul 2023 11:43:29 -0600
-Rob Herring <robh@kernel.org> wrote:
+Hello Biju,
 
->  drivers/clk/clk-versaclock5.c                    | 1 -
+On Mon, 17 Jul 2023 07:46:34 +0000
+Biju Das <biju.das.jz@bp.renesas.com> wrote:
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> # versaclock5
+> Hi Geert,
+>=20
+> Thanks for the review.
+>=20
+> > Subject: Re: [PATCH 1/2] clk: vc5: Use i2c_get_match_data() instead of
+> > device_get_match_data()
+> >=20
+> > Hi Biju,
+> >=20
+> > On Sun, Jul 16, 2023 at 5:44=E2=80=AFPM Biju Das <biju.das.jz@bp.renesa=
+s.com>
+> > wrote: =20
+> > > The device_get_match_data(), is to get match data for firmware
+> > > interfaces such as just OF/ACPI. This driver has I2C matching table as
+> > > well. Use
+> > > i2c_get_match_data() to get match data for I2C, ACPI and DT-based
+> > > matching.
 
--- 
+Good point, thanks!
+
+> > > --- a/drivers/clk/clk-versaclock5.c
+> > > +++ b/drivers/clk/clk-versaclock5.c
+> > > @@ -956,7 +956,9 @@ static int vc5_probe(struct i2c_client *client)
+> > >
+> > >         i2c_set_clientdata(client, vc5);
+> > >         vc5->client =3D client;
+> > > -       vc5->chip_info =3D device_get_match_data(&client->dev);
+> > > +       vc5->chip_info =3D i2c_get_match_data(client);
+> > > +       if (!vc5->chip_info)
+> > > +               return -ENODEV; =20
+> >=20
+> > Can this actually happen? All tables have data pointers. =20
+>=20
+> It is not needed. I just want to avoid people sending
+> patches as this function can return NULL, so add a check.
+>=20
+> Please let me know, whether I should remove this?
+> I am happy to send V2 taking out this check.
+
+I cannot foresee any sensible future use case for adding an entry
+without a data pointer as the whole driver is now heavily based on this
+data to handle so many variants. Also, the error checking did not exist
+before and the i2c match table is not introducing anything new in terms
+of .driver_data values.
+
+Thus I vote for not adding any error checking here.
+
+Otherwise looks good.
+
+Luca
+
+--=20
 Luca Ceresoli, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
