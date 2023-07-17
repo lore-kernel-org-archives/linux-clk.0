@@ -2,72 +2,105 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE738EB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 06:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2311C0015E
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 07:35:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbjGQG7K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 02:59:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50644 "EHLO
+        id S230408AbjGQHfx convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 03:35:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbjGQG7J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 02:59:09 -0400
-Received: from mail.aspeedtech.com (mail.aspeedtech.com [211.20.114.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 289B910D7;
-        Sun, 16 Jul 2023 23:59:01 -0700 (PDT)
-Received: from TWMBX02.aspeed.com (192.168.0.24) by TWMBX03.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Mon, 17 Jul
- 2023 14:59:01 +0800
-Received: from localhost.localdomain (192.168.10.10) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 17 Jul 2023 14:59:01 +0800
-From:   Dylan Hung <dylan_hung@aspeedtech.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <BMC-SW@aspeedtech.com>
-Subject: [PATCH v2] dt-bindings: clock: ast2600: Add I3C and MAC reset definitions
-Date:   Mon, 17 Jul 2023 14:58:58 +0800
-Message-ID: <20230717065858.1596404-1-dylan_hung@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S230405AbjGQHfw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 03:35:52 -0400
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C85A1A4;
+        Mon, 17 Jul 2023 00:35:50 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-ca3cc52ee62so4303646276.0;
+        Mon, 17 Jul 2023 00:35:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689579349; x=1692171349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xKg2+DpzfdKibka0U2j+DwGVxIJpjVR8W+iKIhuVWts=;
+        b=DKaD0TGYz7vFwfXvgE+s4H9xgQ0iSgAhcejeI1CEWtYumBUS6GGwsqz3m8kwNa1/Hy
+         SMD90V/HH9UdSxKkgy3Rw0TN/ZIlzvaG0O+ipgc4pEJ0UD7a92MZTMyWX69VU8AqAVTA
+         /8peUfrbnqrNXOw5ysVKmoQB/cngizmcqtZgEVV/oRYi8yQfk82Z56BIgA2Lj5TX6RpU
+         iEhwwsaob3MZt+UMG55pXPZ/6uNH8mO7wC2G+tnECpSUNhsZPBJcrRAvFi7YH5YvhYDp
+         r60fm+piiEHx42HBhkn974Pgu+x2ZD3O10CQp5ZpzkK2yq83AIVQveSDtlHc7zphX9QY
+         U/Og==
+X-Gm-Message-State: ABy/qLZHa14OJduGISenlJmkQuupuTGECS6qLp+SEYVeoP90buoJ7VgE
+        v5brCWP/oDiHjH7odfICI25DHZkiKGDLeA==
+X-Google-Smtp-Source: APBJJlF0J6c06diE6/Y8g6b4nqsgS8Bk+X33rGs9i7qGRibo4gC9cwIFAEkcakRxUDQBycZbyBERvA==
+X-Received: by 2002:a81:6704:0:b0:56c:fd03:dba with SMTP id b4-20020a816704000000b0056cfd030dbamr11166823ywc.35.1689579348681;
+        Mon, 17 Jul 2023 00:35:48 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id d140-20020a814f92000000b00577466cc1f8sm3648745ywb.108.2023.07.17.00.35.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jul 2023 00:35:48 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-cab61f812efso4302113276.1;
+        Mon, 17 Jul 2023 00:35:48 -0700 (PDT)
+X-Received: by 2002:a5b:40d:0:b0:c49:5b11:8906 with SMTP id
+ m13-20020a5b040d000000b00c495b118906mr9594892ybp.61.1689579347794; Mon, 17
+ Jul 2023 00:35:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+References: <20230716154442.93908-1-biju.das.jz@bp.renesas.com> <20230716154442.93908-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20230716154442.93908-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 17 Jul 2023 09:35:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUjF-_pX53xaEXJVP1Yvz-o=0bdHLx7ekqbqrGX7ygCLA@mail.gmail.com>
+Message-ID: <CAMuHMdUjF-_pX53xaEXJVP1Yvz-o=0bdHLx7ekqbqrGX7ygCLA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: vc5: Use i2c_get_match_data() instead of device_get_match_data()
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marex@denx.de>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add reset definitions of AST2600 I3C and MAC controllers.
+Hi Biju,
 
-Signed-off-by: Dylan Hung <dylan_hung@aspeedtech.com>
----
- include/dt-bindings/clock/ast2600-clock.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Sun, Jul 16, 2023 at 5:44 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The device_get_match_data(), is to get match data for firmware interfaces
+> such as just OF/ACPI. This driver has I2C matching table as well. Use
+> i2c_get_match_data() to get match data for I2C, ACPI and DT-based
+> matching.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-index e149eee61588..712782177c90 100644
---- a/include/dt-bindings/clock/ast2600-clock.h
-+++ b/include/dt-bindings/clock/ast2600-clock.h
-@@ -90,7 +90,19 @@
- /* Only list resets here that are not part of a clock gate + reset pair */
- #define ASPEED_RESET_ADC		55
- #define ASPEED_RESET_JTAG_MASTER2	54
-+
-+#define ASPEED_RESET_MAC4		53
-+#define ASPEED_RESET_MAC3		52
-+
-+#define ASPEED_RESET_I3C5		45
-+#define ASPEED_RESET_I3C4		44
-+#define ASPEED_RESET_I3C3		43
-+#define ASPEED_RESET_I3C2		42
-+#define ASPEED_RESET_I3C1		41
-+#define ASPEED_RESET_I3C0		40
-+#define ASPEED_RESET_I3C		39
- #define ASPEED_RESET_I3C_DMA		39
-+
- #define ASPEED_RESET_PWM		37
- #define ASPEED_RESET_PECI		36
- #define ASPEED_RESET_MII		35
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -956,7 +956,9 @@ static int vc5_probe(struct i2c_client *client)
+>
+>         i2c_set_clientdata(client, vc5);
+>         vc5->client = client;
+> -       vc5->chip_info = device_get_match_data(&client->dev);
+> +       vc5->chip_info = i2c_get_match_data(client);
+> +       if (!vc5->chip_info)
+> +               return -ENODEV;
+
+Can this actually happen? All tables have data pointers.
+
+>         vc5->pin_xin = devm_clk_get(&client->dev, "xin");
+>         if (PTR_ERR(vc5->pin_xin) == -EPROBE_DEFER)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
