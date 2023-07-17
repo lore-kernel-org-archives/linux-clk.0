@@ -2,61 +2,69 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A014FEB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 16:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517FEEB64DC
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 16:26:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232109AbjGQQRg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 12:17:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34174 "EHLO
+        id S229973AbjGQQ0l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 12:26:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231912AbjGQQRc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 12:17:32 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A55701B6
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 09:17:30 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id 2adb3069b0e04-4f4b2bc1565so7575331e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 09:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689610649; x=1692202649;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wFU7cGHqkgdoz5m1pcWonKfTA7YVWiUsUb8DHWNDWZo=;
-        b=Ue8V4tGQtKpifE7o2VP6/mxilgC9IC6PJfEUEtx4+Yn07bFFKjke6rujiY9eE3uiGo
-         g2hZ51BDQp4wjOPrES7H7ksMBCNZmIPwIpsj+T50iBtwLGrG1GvOxnc1xtHfJxme2apc
-         IGpscy050FTQ9g9gegZOKjguesgUJRQnm/UJcTHp5tHPITrInaSBPSdcYl22f3avm7IP
-         ZZJ74KqgGMmX2uPvU7wqg0RhrkS2DbG7wq0HXySTyTcqE303x0PxPSAeBqZVYrHFl3Mt
-         AxJjKjy8aT+sqXoH8jtL31/M10j2B397IRxgkufG3uiDqBYLPv8LgOSnqoT4wjItV6ES
-         zALw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689610649; x=1692202649;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wFU7cGHqkgdoz5m1pcWonKfTA7YVWiUsUb8DHWNDWZo=;
-        b=XnqKXQheAXh5hTpIHXfOon+35FmgqKcyC/Ep2gz0VVRRX55q5nfFqP9o0DCXDgBHzS
-         VF/qWEZyXiVcAZXg/UAdl49I/56SkPDE6gG2TWVWEYCwvwijUJPy5OCMjeUrREDDqSQ8
-         kYQYVClVvXGYMPbOxaoQmn7wHavAjVPUofMYtrnDfA452J06TEtGEcg2hueihDGQqCFy
-         9inbXZmTwyQ4eBz8zSrPcaUeY0oZ73Qg/Ed16CLuK23M3+rfM2JpOkiWP4y7alySrmPw
-         7fNPMtpasF1erlWK/WV8kRCHQz/obMDq7tkxHUZXMMDxTad2N0etEslMWtqHq/nyINjf
-         dk2g==
-X-Gm-Message-State: ABy/qLYCgvQjFUNXrv7EirDgEzkfZLHx/T+czGE5k3MMHIVO9Ad30xJc
-        ZaoQ2Prg90BCU7xVjhXYk6+bng==
-X-Google-Smtp-Source: APBJJlEbAXcK8MurlSKXwypJdOuzDF1QvrmB7+3M0ZnSTuG4089PJ6Afzrlqtg2dB1Sx5AqXkrCD5g==
-X-Received: by 2002:a05:6512:208d:b0:4f9:5933:8ee8 with SMTP id t13-20020a056512208d00b004f959338ee8mr7984978lfr.32.1689610648829;
-        Mon, 17 Jul 2023 09:17:28 -0700 (PDT)
-Received: from [192.168.1.101] (abyj181.neoplus.adsl.tpnet.pl. [83.9.29.181])
-        by smtp.gmail.com with ESMTPSA id i24-20020ac25238000000b004fbb610c354sm2909393lfl.0.2023.07.17.09.17.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Jul 2023 09:17:28 -0700 (PDT)
-Message-ID: <58549eff-8b64-fc63-5b14-82dc85fccc98@linaro.org>
-Date:   Mon, 17 Jul 2023 18:17:26 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 05/15] clk: qcom: gpucc-sm6375: Unregister critical clocks
-Content-Language: en-US
-To:     Stephan Gerhold <stephan@gerhold.net>
+        with ESMTP id S229555AbjGQQ0k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 12:26:40 -0400
+Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [81.169.146.169])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C240A130;
+        Mon, 17 Jul 2023 09:26:38 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1689611196; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=QVbDOm9T1/eZemCIbbN7zfSwXDhyCIb+MjF5Ms25zOROvdiX7NvPBzjiTmzD8SUpye
+    oV0EiUUOFCmkHekwCU8cX6whNANex5c/RC9llizXcyz2LMs2v9LBvbRk89BSB8+ErBtZ
+    OmnSR2MKmGEKK7vL/dh2gmEiUkQ+erOkWcnHc0zwONLggNkvk+MV7oGRdO+3izFnNI9P
+    gxD+3iG3wzZ/dzVGW1yqkBFNoSGknJdF+7AIHte/qD7C6yWOlGzYfOcsJwBjuPNTP/no
+    Z/nbQsEktQ6K3c2rsWaFCKtUdDY2T4qX1ocvlUcJeHwjWhmo3g9sJLyPmUIbnma5WgXe
+    8JlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1689611196;
+    s=strato-dkim-0002; d=strato.com;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O98qDLMJ/G7bcyZeLAHWml5uk/qDNSzk4LE86nK2TL0=;
+    b=Vu5LVbW8zhKROfWRga4j6zDjwLuGfUBDuU0Q1K8RNXklI5ZXz33/womuZ/mLbNOYf+
+    EZlVQhH6vYqEinI9e9S30tQUzH9f5RL+fWeuX2ewwfwFh2Ewlfe52FYL1jRUiaKj198X
+    gQ5gDBHmFP/2LyryIFSgkbFeVXLaux2h9OT1dTGK3/LWUsWnML75vLYc8TexQcfx1S5c
+    zfZD3IMZwSiMFQ2cg91wC52s7gWi7C6rIdo5xUpMoUZKhIfBzwZdO0GqNIpO/7CDSrXg
+    IgEZI9IPfa/V4Wv1RKtHLqJsXyIYmEPu/b5jYfH5k+pRf1qHrv6iY5wQM3UTXltE5q2X
+    zR3w==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1689611196;
+    s=strato-dkim-0002; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O98qDLMJ/G7bcyZeLAHWml5uk/qDNSzk4LE86nK2TL0=;
+    b=kEGro6C7Ic8Yyfxb0cLrAEc28tLl02bxJoK0XE0dQtU63QqW06L6f1aX05NRqn43MM
+    loyh5uXE+9vNd1rlS4pcA1Vl7tr7UAmDYjk5IlNGm3McfaDciXxi3g7oocOG/VBF46oU
+    D6hYIB/XhMygHdLJXbDe+KV3QZzhyQASswCrpgExXEc6gqSJDUAhgf/cHGP4iHR1rd68
+    V68HMOkK+vTYg2HaaHbFjFQXjbIk9PSK7toTPo9nmEtHFEDAW4RYnanmnRCWTUuc+p3G
+    wcS/eNzYXQ6A4PrD/esp8wyrK630hpOPPccEGqZHGVO85qzLBxeRDpPp8DsJFZyr2Qx2
+    gvkg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1689611196;
+    s=strato-dkim-0003; d=gerhold.net;
+    h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=O98qDLMJ/G7bcyZeLAHWml5uk/qDNSzk4LE86nK2TL0=;
+    b=VLxMrAb3DfRFu3tYoygzsdQrZKvmMwtG0ROeSnJ5PD3TUbECIfFgPEmwdBFd0or3jD
+    WvbVsJeha/z5/x56fmCA==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u261EJF5OxJD4paA8Z2L1A=="
+Received: from gerhold.net
+    by smtp.strato.de (RZmta 49.6.0 DYNA|AUTH)
+    with ESMTPSA id D0d0a8z6HGQaZCI
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+    Mon, 17 Jul 2023 18:26:36 +0200 (CEST)
+Date:   Mon, 17 Jul 2023 18:26:35 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc:     Bjorn Andersson <andersson@kernel.org>,
         Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -67,35 +75,37 @@ Cc:     Bjorn Andersson <andersson@kernel.org>,
         Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 04/15] clk: qcom: gcc-sm6375: Add runtime PM
+Message-ID: <ZLVru50N2ukdXnsW@gerhold.net>
 References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
- <20230717-topic-branch_aon_cleanup-v1-5-27784d27a4f4@linaro.org>
- <ZLVpH16co7wXWInI@gerhold.net>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZLVpH16co7wXWInI@gerhold.net>
-Content-Type: text/plain; charset=UTF-8
+ <20230717-topic-branch_aon_cleanup-v1-4-27784d27a4f4@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230717-topic-branch_aon_cleanup-v1-4-27784d27a4f4@linaro.org>
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17.07.2023 18:15, Stephan Gerhold wrote:
-> On Mon, Jul 17, 2023 at 05:19:12PM +0200, Konrad Dybcio wrote:
->> Some clocks need to be always-on, but we don't really do anything
->> with them, other than calling enable() once and telling Linux they're
->> enabled.
->>
->> Unregister them to save a couple of bytes and, perhaps more
->> importantly, allow for runtime suspend of the clock controller device,
->> as CLK_IS_CRITICAL prevents the latter.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
-
-> You seem to revert PATCH 03/15 here.
+On Mon, Jul 17, 2023 at 05:19:11PM +0200, Konrad Dybcio wrote:
+> The GCC block on SM6375 is powered by the VDD_CX rail. We need to ensure
+> that it's enabled to prevent unwanted power collapse.
 > 
-Argh, I had an iffy conflict resolution that I thought I had gotten
-rid of.. but looks like in the end my brain farted anyway..
+> Enable runtime PM to keep the power flowing only when necessary.
+> 
 
-Thanks for spotting that!
+Are you sure this is necessary? If VDD_CX was really possible to fully
+"power collapse" then I would expect that you lose all register
+settings. This is not something we want or can even handle for GCC.
+You would need to restore all frequency settings, branch bits etc etc.
 
-Konrad
+Otherwise it's a retention state, but these are covered by the
+corners/levels, not the enable/disable state.
+
+I think most of these power domains are effectively always-on. The
+important part is voting for minimal corners/levels so they can go to
+minimal retention state with vlow/vmin.
+
+Thanks,
+Stephan
