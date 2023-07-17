@@ -2,103 +2,141 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF964C001DE
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 07:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F9BC0015E
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 07:51:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231145AbjGQHvi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 03:51:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53022 "EHLO
+        id S231160AbjGQHvy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 03:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231134AbjGQHvc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 03:51:32 -0400
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BC67E56;
-        Mon, 17 Jul 2023 00:51:31 -0700 (PDT)
-Received: by mail-io1-xd2f.google.com with SMTP id ca18e2360f4ac-77ac14ff51bso165687739f.3;
-        Mon, 17 Jul 2023 00:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689580290; x=1692172290;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OEYm+uCdh21vtzPh6yGEiTfgPybVQ4Gws/BVR8lDFGw=;
-        b=B21eWkwiYUZWk4RMZN/v+9xtSs7+KMzCpts43evWoxRAjosFAIN+pujjG5PzeA56Uf
-         C4Y3LEaRtMYbpy2BuIv+1Rt3cV1t29jSOBYtDtXjeSRmioCCgopyOPIDr88KIMQ5IPWA
-         KfmQFUDxA/vgDKTg0ZTvN2vouCPn5Kg30xx5EZVVaqDJpIO84mnBEv4ZjAC2UvSHm56c
-         eZupT4tRnaIScSh+I+GhEFWG8xZnmPukOS8jtySCcfOLyU04P8oqUZedNuFRmc2kMq4s
-         jPFCsVM79MIFOVHltW0uTHm8xa1U03hlnDhRjwwZZLxpnjCErYmdECUKjEySiJnPC1ox
-         0GLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689580290; x=1692172290;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OEYm+uCdh21vtzPh6yGEiTfgPybVQ4Gws/BVR8lDFGw=;
-        b=EheNRjHbslYnXr5ekjWX9ZdE8nMilVXIqx981gWV9k8m/6aupCbwgjYs2L85xQxALT
-         50t3rPqifZA9ssP8MWrRFV6p3TOxsfGqE+mHrNzxyK5Mes+Srf7TbwEbuk0a1TR8C8VE
-         k36vx4AbiZYTsDT5B9jHktEracdxofCxC+MMTkQlvJzDBOSs9LA0sGjgi4+hbINbKgZq
-         oe5Wdy9qg2UOhI+mx1h6qUWOZBPcOYoQtXodZyx7Gd+6DKFpyOqQS/eODPaRgD9sVHQP
-         JVIVEU/nFHrE+7CfDTHYW7qcBhYkIhBw1J9iGVoAogin129q8lthrtDzb3S4dO9Zi6RP
-         K16g==
-X-Gm-Message-State: ABy/qLZsw75xGGaHKZq4fzPVgNUyh4c97c4hvCbwW0ZPAoD9URGolc7z
-        kLwfIC6TLrhLcrGynFQkRe5Z9x63QsPKnA==
-X-Google-Smtp-Source: APBJJlF6edBFS25YEdOmcG6Z4yN+UiocZ4M+lYK/exstURX/nmfgEEVrv4X8zaSepmPkAlAJr/qqGA==
-X-Received: by 2002:a6b:d616:0:b0:783:3957:9b46 with SMTP id w22-20020a6bd616000000b0078339579b46mr9066359ioa.13.1689580290418;
-        Mon, 17 Jul 2023 00:51:30 -0700 (PDT)
-Received: from localhost.localdomain (211-20-114-70.hinet-ip.hinet.net. [211.20.114.70])
-        by smtp.gmail.com with ESMTPSA id a13-20020a6b660d000000b00786fe5039b8sm4635283ioc.46.2023.07.17.00.51.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 00:51:30 -0700 (PDT)
-From:   Dylan Hung <kobedylan@gmail.com>
-X-Google-Original-From: Dylan Hung <dylan_hung@aspeedtech.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     BMC-SW@aspeedtech.com, Dylan Hung <dylan_hung@aspeedtech.com>
-Subject: [PATCH v2 RESEND] dt-bindings: clock: ast2600: Add I3C and MAC reset definitions
-Date:   Mon, 17 Jul 2023 15:51:23 +0800
-Message-Id: <20230717075123.1597977-1-dylan_hung@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
+        with ESMTP id S231133AbjGQHvv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 03:51:51 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FDD7170D;
+        Mon, 17 Jul 2023 00:51:47 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 7C3486607008;
+        Mon, 17 Jul 2023 08:51:41 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1689580305;
+        bh=RUiiRCfy3iVrquDdB1nCxa7+nhTsVZi2TwPLLRWk7+k=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=Xkh/XfVOuPmhakdB5TixNssNK07j1XQnplGs/FJW5j5/zYKBx4oS7N5YsmbfftJJq
+         5t85PTycD+cAMaLv4m0zExzB237qkYooGrp6it7EOjrgx1hGoXuJBZLHFQJSsbr2um
+         HfP7PnDPSbB7LcUxYt7ckbG29biHfO2YJ38FjGU9p0g3QW6igojF6w+oz0/zExKbqD
+         6eShHnawsHU5eH523alqjBNH+UewhtrkghtxR7SjACeQsg05gnet0AWCcDfx3WbIGa
+         J2bCuIYnMk5n+OxcAEW8UsDTk9JUhba/ItvrqtOg2iqazy9jbECmXn39Jk5+HUz1Qo
+         3qS9Lo4HR6IZw==
+Message-ID: <4aaef7c6-7b1d-d707-d38a-71f36f7d4aec@collabora.com>
+Date:   Mon, 17 Jul 2023 09:51:39 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] clk: Explicitly include correct DT includes
+Content-Language: en-US
+To:     Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        =?UTF-8?Q?Emilio_L=c3=b3pez?= <emilio@elopez.com.ar>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Michal Simek <michal.simek@amd.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-actions@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-oxnas@groups.io,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+References: <20230714174342.4052882-1-robh@kernel.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20230714174342.4052882-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add reset definitions of AST2600 I3C and MAC controllers.
+Il 14/07/23 19:43, Rob Herring ha scritto:
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Dylan Hung <dylan_hung@aspeedtech.com>
----
+For MediaTek clocks
 
-Resend v2 patch through my gmail account as the aspeedtech.com domain is blocked by gmail.com
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
- include/dt-bindings/clock/ast2600-clock.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-index e149eee61588..712782177c90 100644
---- a/include/dt-bindings/clock/ast2600-clock.h
-+++ b/include/dt-bindings/clock/ast2600-clock.h
-@@ -90,7 +90,19 @@
- /* Only list resets here that are not part of a clock gate + reset pair */
- #define ASPEED_RESET_ADC		55
- #define ASPEED_RESET_JTAG_MASTER2	54
-+
-+#define ASPEED_RESET_MAC4		53
-+#define ASPEED_RESET_MAC3		52
-+
-+#define ASPEED_RESET_I3C5		45
-+#define ASPEED_RESET_I3C4		44
-+#define ASPEED_RESET_I3C3		43
-+#define ASPEED_RESET_I3C2		42
-+#define ASPEED_RESET_I3C1		41
-+#define ASPEED_RESET_I3C0		40
-+#define ASPEED_RESET_I3C		39
- #define ASPEED_RESET_I3C_DMA		39
-+
- #define ASPEED_RESET_PWM		37
- #define ASPEED_RESET_PECI		36
- #define ASPEED_RESET_MII		35
--- 
-2.25.1
 
