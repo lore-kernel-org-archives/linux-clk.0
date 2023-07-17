@@ -2,121 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 953FCC0015E
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 21:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3205EB64DC
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 21:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230527AbjGQVEB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 17:04:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47812 "EHLO
+        id S229630AbjGQVXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 17:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230225AbjGQVEA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 17:04:00 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1D3B118
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 14:03:59 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-66f5faba829so3611521b3a.3
-        for <linux-clk@vger.kernel.org>; Mon, 17 Jul 2023 14:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1689627839; x=1692219839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IIZEzHVxC1Fx70Cdkz+V0OVQ6Dog78uDmiwE1vZt2q4=;
-        b=BPsBDwWrNKB91DqaWrNhpO/v4ykSqWSBCirIAnuxFvOs77l0rqsU8+TqkOv28d6dXr
-         WmYVAVFOM9vjv+UHSWcME4r1ezRlHwg5UqohAqTvLNhkEnaX5Hcz/xICNS3d7dBZx2Iv
-         GvTFOn4TF4Fw47/Bm6YeEH648hSZrlKW22TNiQ9ZRZR+GIbPaytAhRE0ZhEGwAnWSUOu
-         yZ2+3zkaTUHT/MggTaWj1HOAknAkIdJCOfkXNZXkxX6lAcMXp3eJYHfdKdUaRY4p8sqg
-         3GBwAf99mw6qFjNqVtSdyTeC8uhdwG9Wb9KnEINmXUoKYaNFsm+NslcdAJtzegeo08S9
-         tp2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689627839; x=1692219839;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IIZEzHVxC1Fx70Cdkz+V0OVQ6Dog78uDmiwE1vZt2q4=;
-        b=RJFM0uH+Jdi85s/Y4tXatK4AnSqoJcFjXuWfFqNqmC+5d8eJCWRxt1V2L5FKFZTBJ2
-         f19vYHf2LOHC34uEuypcGKZ1NHNeNUJbgGQskCJnfpp0Gnm64OmB74NapbW9ZpMwZyG8
-         EQ+l2yvjwlhbynETKxvKAm3GjVTwd0un7fpA9EUfFCAy1pKaUlraWklBgQOil8w/McIf
-         pG0qXAfCPzI8KLZVEWUjYncLOI7URmwvRgoAvBVtBmZSpHG8k7tKQm14nkgrk7XRWnp5
-         +rJ0SzyAmXq1qKNemW7LKQTWeOBJV+sqWiKYfkzHMFOujzuzP52nBWElellqG+rcZPWf
-         l/hw==
-X-Gm-Message-State: ABy/qLaVT+4o5YsKmA7HDj7BvXtxfWx6swj7/uyc4QPLo7Fp7/a45Y5w
-        5yLObmuUgla1nSl65MoI+mIoaw==
-X-Google-Smtp-Source: APBJJlGh2y7l4Mcb4h+KipYMEFcoZHbETqHgVjohsP4Fa5WcrLA/yfUSBTw5rEOHn+qg1Eica/L75Q==
-X-Received: by 2002:a05:6a00:ad1:b0:67d:22a6:2f54 with SMTP id c17-20020a056a000ad100b0067d22a62f54mr790132pfl.31.1689627839264;
-        Mon, 17 Jul 2023 14:03:59 -0700 (PDT)
-Received: from sw06.internal.sifive.com ([64.62.193.194])
-        by smtp.gmail.com with ESMTPSA id j24-20020aa78d18000000b006732786b5f1sm191915pfe.213.2023.07.17.14.03.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Jul 2023 14:03:58 -0700 (PDT)
-From:   Samuel Holland <samuel.holland@sifive.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Samuel Holland <samuel.holland@sifive.com>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Subject: [PATCH 2/2] clk: sifive: Allow building the driver as a module
-Date:   Mon, 17 Jul 2023 14:03:56 -0700
-Message-Id: <20230717210356.2794736-2-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230717210356.2794736-1-samuel.holland@sifive.com>
-References: <20230717210356.2794736-1-samuel.holland@sifive.com>
+        with ESMTP id S229609AbjGQVXS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 17:23:18 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07698E7;
+        Mon, 17 Jul 2023 14:23:16 -0700 (PDT)
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36HKi7gZ005639;
+        Mon, 17 Jul 2023 21:23:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
+ cc : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=qcppdkim1; bh=cytvABo84vy7mFR/hVdvACmKWzXDqxPDfu+u5PnjsJo=;
+ b=FHxJcVEgoY7dV1lsYEY0EjdxUUqKcZF+3cpWoPMYUgnLIENvJh32oWx/FFqIVdHGxL5g
+ 2SOS7HuKU+sXy5RG9dl2wZ6gNwJyO4UB98EweFM/2Dk/ThIT/5uKu7ec4mZTrFTpbzky
+ WK4MvZtuaIbcmZyyr2O3yGs/A/uGMpIHcQDawszI6OtohwdtxQhhEEjJeyt5POzWgknc
+ LzP5rwuR5CZK90xlDIn4lrTlS7LnngULIZ0Qv2923DLfrBXznyN//N72vgAnFSjEzAL4
+ OJ9rUb2l+bstblTrTpfmNkjXFXP4whDQWU5+t8mDbxDeSDoUObIpDrxpARMm/ai/1QLI vA== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3run0avkey-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jul 2023 21:23:11 +0000
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36HLNADK003222
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 17 Jul 2023 21:23:10 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Mon, 17 Jul 2023 14:23:10 -0700
+Date:   Mon, 17 Jul 2023 14:23:09 -0700
+From:   Bjorn Andersson <quic_bjorande@quicinc.com>
+To:     Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [RESEND] clk: qcom: rcg: Update rcg configuration before
+ enabling it
+Message-ID: <20230717212309.GA4176673@hu-bjorande-lv.qualcomm.com>
+References: <20230712014812.3337992-1-quic_skakitap@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20230712014812.3337992-1-quic_skakitap@quicinc.com>
+X-Originating-IP: [10.49.16.6]
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: vptW1ctTBT4fQwY_XCWZZB6spRdZSs8r
+X-Proofpoint-ORIG-GUID: vptW1ctTBT4fQwY_XCWZZB6spRdZSs8r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-17_15,2023-07-13_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ mlxlogscore=852 bulkscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307170193
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This can reduce the kernel image size in multiplatform configurations.
+On Wed, Jul 12, 2023 at 07:18:12AM +0530, Satya Priya Kakitapalli wrote:
+> From: Taniya Das <quic_tdas@quicinc.com>
+> 
+> If rcg is in disabled state when clk_rcg2_shared_set_rate is called, the
+> new configuration is written to the configuration register but it won't be
+> effective in h/w yet because update bit won't be set if rcg is in disabled
+> state.
 
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+Does this take commit '703db1f5da1e ("clk: qcom: rcg2: Cache CFG
+register updates for parked RCGs")', which was merged in v5.19, into
+consideration?
 
- drivers/clk/sifive/Kconfig       | 2 +-
- drivers/clk/sifive/sifive-prci.c | 8 +++-----
- 2 files changed, 4 insertions(+), 6 deletions(-)
+> Since the new configuration is not yet updated in h/w, dirty bit of
+> configuration register will be set in such case. Clear the dirty bit and
+> update the rcg to proper new configuration by setting the update bit before
+> enabling the rcg.
+> 
 
-diff --git a/drivers/clk/sifive/Kconfig b/drivers/clk/sifive/Kconfig
-index 2322f634a910..49597d95602e 100644
---- a/drivers/clk/sifive/Kconfig
-+++ b/drivers/clk/sifive/Kconfig
-@@ -10,7 +10,7 @@ menuconfig CLK_SIFIVE
- if CLK_SIFIVE
- 
- config CLK_SIFIVE_PRCI
--	bool "PRCI driver for SiFive SoCs"
-+	tristate "PRCI driver for SiFive SoCs"
- 	default ARCH_SIFIVE
- 	select RESET_CONTROLLER
- 	select RESET_SIMPLE
-diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
-index e317f3454e93..8c67d1a7c8df 100644
---- a/drivers/clk/sifive/sifive-prci.c
-+++ b/drivers/clk/sifive/sifive-prci.c
-@@ -7,6 +7,7 @@
- #include <linux/clkdev.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include "sifive-prci.h"
- #include "fu540-prci.h"
-@@ -618,9 +619,6 @@ static struct platform_driver sifive_prci_driver = {
- 	},
- 	.probe = sifive_prci_probe,
- };
-+module_platform_driver(sifive_prci_driver);
- 
--static int __init sifive_prci_init(void)
--{
--	return platform_driver_register(&sifive_prci_driver);
--}
--core_initcall(sifive_prci_init);
-+MODULE_LICENSE("GPL");
--- 
-2.40.1
+For a shared rcg2, which was updated while disabled, updates will be
+carried in the "parked_cfg" variable and the RCG_CFG will be stale so
+invoking update_config() should lead to exactly the problem you describe
+fixing here.
 
+Perhaps I'm missing something here, can you please confirm that this has
+been validated on a recent upstream kernel?
+
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+> Resending this patch as there is no review for 2 months.
+> 
+
+Thanks for bumping the discussion.
+
+Regards,
+Bjorn
