@@ -2,91 +2,84 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A2DC0015E
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E23EB64DA
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:29:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232572AbjGRN2R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 09:28:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33256 "EHLO
+        id S232181AbjGRN3s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 09:29:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232731AbjGRN2G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:28:06 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72F38115
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 06:28:04 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 2adb3069b0e04-4fb73ba3b5dso9515765e87.1
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 06:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689686883; x=1692278883;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/cPoQz/+AJmmXvopS13cNP0md/5wRUpdbCUDGjAItOE=;
-        b=u3KTX1uPpSlenGPojDWpwjBRENVe3ebfrHEAtV978LLahCTBOKNzIKch/wSrqgZm2T
-         7sqo+IyAxRFrDVCVql28g8LtpQ3anmUyZlRqk7peYyXw/diQPlk8v5F39WDaZWMPx8dT
-         3GF+OMfY9h3SxQzNB5kvxka1l0m7jSDxn3yLiw6LDjYMbq2kpMHDB9RyPmhcrKPTqYA8
-         a1Z//rc5Rh2e4tQueLy/n3IkgHb7qjFZTTI9W5U9qcHIlUWF5G1xpVabqGCMeYdLF2qn
-         ccyxh1jkVjOUinSn1/DwWrwPNoCbd56Bmdy5b7Wfjamb5eBmbsX4ATz7rXl87eI9pfqv
-         Da2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689686883; x=1692278883;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/cPoQz/+AJmmXvopS13cNP0md/5wRUpdbCUDGjAItOE=;
-        b=XfHXed1pL1dcWtZiOWHGWbKkE98QfVNHD07UDr6busJLIzqvVIiHM/FE/03wqjMARB
-         Z/inF35aqYXSpddSm961a9Rdk5R4fURgfNB3QMLfL4OCoMaWurJq8+y1CXrhf727DWPi
-         CG3Rd/wjK9X8OxMUzhcysw4P7Ebiw1O3tmvCPCuq5VSjE90Rq4ibkB2cxTap+5Od03eN
-         s/T8A7pmdgZATK1u8jmkeUeev9Qvlt74iEZKPG81EEjtHFgiypiN75a4RFb3USJiIOw7
-         0nCIbc2icAy0gmxeC8MlUFugRyi9W06eeHkKGa4dRrPoTeyZj8A5/Dxfou4bT5pM/GJJ
-         KMyA==
-X-Gm-Message-State: ABy/qLYkoDtJrvV+5LJTZDdho6Hic0uGpLls3hYR0jri0T3JVX3vO3ny
-        nVQ9ILB7qFD+7t9VN7Dzoor5NR12TPGIJM1OTBQDDQ==
-X-Google-Smtp-Source: APBJJlF6gSmhVuaH+cb0HdVej13Y4Y62gQ8P/A53TezUTkEdLrmPvAQdfqGB3qC2Ju1kkhVCEIJuvg==
-X-Received: by 2002:a05:6512:546:b0:4fa:abe7:7c80 with SMTP id h6-20020a056512054600b004faabe77c80mr8843097lfl.39.1689686882751;
-        Tue, 18 Jul 2023 06:28:02 -0700 (PDT)
-Received: from [192.168.1.101] (abyj181.neoplus.adsl.tpnet.pl. [83.9.29.181])
-        by smtp.gmail.com with ESMTPSA id 22-20020ac24856000000b004fbb3e91a3fsm438316lfy.114.2023.07.18.06.28.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jul 2023 06:28:02 -0700 (PDT)
-Message-ID: <febaa3cd-f8c3-c35e-2f1d-403c80c132b8@linaro.org>
-Date:   Tue, 18 Jul 2023 15:28:00 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 07/15] clk: qcom: gpucc-sm6115: Add runtime PM
-Content-Language: en-US
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
+        with ESMTP id S232628AbjGRN3r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:29:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48779189;
+        Tue, 18 Jul 2023 06:29:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D7D036158F;
+        Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4FEC433C8;
+        Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689686984;
+        bh=UhYK2NmyGcq3Gi92tNijrKmmDY7odeQbLB9eFdMrpNo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UiEFcgKHWAxDBQ9vb6/SNTH3OtrOooOapbiRN0NzM6y2VQoY7Htqe6LiKFK3QzuJO
+         ywWOXTLd0aQSAd65yX7ZK7Bzu8iLYDwzv0f5sxN4/UT5HgoAI8arRQhDXba29iXIOK
+         Ny47setCHD89uUvideW7zx2VZZqznbpnsvGZPCSTf5ZdWYtYLOtYPR368xVqHY1l4s
+         TGNYXD5Nc/jM5CbadVLagDe9WcULHsb5cUQNIiIM+OToIiHzup2Fvy/41+s8f9nfsa
+         DvcaSPqh7uaZFT6nlezFN7Ga/thMQRAv9SXaq7p43H5sOFd0PPFjr1+sWz9sHt7gdB
+         iKEmGLEcEEBBQ==
+Received: from johan by xi.lan with local (Exim 4.96)
+        (envelope-from <johan+linaro@kernel.org>)
+        id 1qLkm1-0005bw-22;
+        Tue, 18 Jul 2023 15:29:53 +0200
+From:   Johan Hovold <johan+linaro@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
- <20230717-topic-branch_aon_cleanup-v1-7-27784d27a4f4@linaro.org>
- <ZLaSpFFBzP_Yz5yY@hovoldconsulting.com>
-From:   Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <ZLaSpFFBzP_Yz5yY@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 0/8] clk: qcom: fix runtime PM bugs
+Date:   Tue, 18 Jul 2023 15:28:54 +0200
+Message-ID: <20230718132902.21430-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.41.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18.07.2023 15:24, Johan Hovold wrote:
-> On Mon, Jul 17, 2023 at 05:19:14PM +0200, Konrad Dybcio wrote:
->> The GPU_CC block on SM6115 is powered by the VDD_CX rail. We need to
->> ensure that it's enabled to prevent unwanted power collapse.
-> 
-> This bit is not correct, the power domain would not have been disabled
-> until you enable runtime PM as part of this very patch.
-Right, this was a bit of a thought-jump. The part that ensures there's
-any vote at all is actually the DT commit adding a reference to the
-genpd.
+This series fixes a number of runtime PM related bugs found through
+inspection.
 
-Konrad
+Johan
+
+
+Johan Hovold (8):
+  clk: qcom: camcc-sc7180: fix async resume during probe
+  clk: qcom: dispcc-sm8450: fix runtime PM imbalance on probe errors
+  clk: qcom: dispcc-sm8550: fix runtime PM imbalance on probe errors
+  clk: qcom: gcc-sc8280xp: fix runtime PM imbalance on probe errors
+  clk: qcom: lpasscc-sc7280: fix missing resume during probe
+  clk: qcom: q6sstop-qcs404: fix missing resume during probe
+  clk: qcom: mss-sc7180: fix missing resume during probe
+  clk: qcom: turingcc-qcs404: fix missing resume during probe
+
+ drivers/clk/qcom/camcc-sc7180.c    |  2 +-
+ drivers/clk/qcom/dispcc-sm8450.c   | 13 +++++++++++--
+ drivers/clk/qcom/dispcc-sm8550.c   | 13 +++++++++++--
+ drivers/clk/qcom/gcc-sc8280xp.c    | 14 +++++++++++---
+ drivers/clk/qcom/lpasscc-sc7280.c  | 16 ++++++++++++----
+ drivers/clk/qcom/mss-sc7180.c      | 13 ++++++++++++-
+ drivers/clk/qcom/q6sstop-qcs404.c  | 15 +++++++++++++--
+ drivers/clk/qcom/turingcc-qcs404.c | 13 ++++++++++++-
+ 8 files changed, 83 insertions(+), 16 deletions(-)
+
+-- 
+2.41.0
+
