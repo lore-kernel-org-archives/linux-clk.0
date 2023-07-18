@@ -2,219 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B17AEB64DA
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 08:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 460FCEB64DC
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 09:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231953AbjGRIko (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 04:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58286 "EHLO
+        id S232131AbjGRJDu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 05:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229847AbjGRIkn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 04:40:43 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E84B10F9
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 01:40:34 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9926623e367so769939066b.0
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 01:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689669633; x=1692261633;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CWZTBAgn0sS+qEaFaptfqAKbYTBQ+DgmJZTWl6nef1U=;
-        b=QqWpVaddIE2t/8XVvP/3VyDPBoo7sCh27hFVqsmka9a0CENOreiYjqjZCZNzPpfvnj
-         0NNNTHQhoKUp9jKGf27C40p4Ghh8X7VIGh3E/Q08cf4x6K+eKZf+l2NtQByWx9FL3uCW
-         0WsAAj2DfzrXGe+05VsD+njMxyaiVuu9cOrLjdRqdyD6k+DndbTUrqn8alMk8LKJ866Y
-         1G+hqsJrukJB7GYbafnMMS7qSnYXHXPD+yGdrjLpl/xjqIeuQW1WkDUcDLFx8f2TQBti
-         DObTe3wiffKTw2x/I8NG/rERN0faQEBCXoA/L4iFyAZHoWRaLepOhThwcrcF3r8nTOoG
-         fnog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689669633; x=1692261633;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWZTBAgn0sS+qEaFaptfqAKbYTBQ+DgmJZTWl6nef1U=;
-        b=FR9SMe+Q/meNRuHH2ZF01wAH0rPtO9Xrr0HCBee0mzgsIncWA1HQCJ/qDeIQ90XqxO
-         Fc+ZlIyG2WIJMugPqU3koTkwq/SR51EebeccMYGcQ4IxwlJTrT1TnWixJfgvNmyzo67q
-         OlKBxiao6dWOqHvTMnYib8sA1IiJbMMNec3VCoIacZdDKYFR57AKe1iAsRZn0vQXJaZC
-         poHqfmB16DPqtZvJPb9fF4ugfrN2zl0vl5M/gAzTgta8KRs8qGZeWKaTks4Q/X8Eq2Ma
-         P8Iz7BuAPg9XsJ0EJ1XRfU6fX5skovpwsgFClAWrBnKPWCio5n0r7Le9L3KAixWn4bMJ
-         X4rg==
-X-Gm-Message-State: ABy/qLbRTjl+qPPe/xK+IlMcT/TuPA34qOuFEeFntRf42peg2vZ6DSOm
-        1MTXZDfjjHtlLeFySxd58Ie/lg==
-X-Google-Smtp-Source: APBJJlGXvZzY/4ZnkMYEMZVjqUOmFmubBz1PHzs4Mn4Z4u51BwEhq7i+2TcH00XbtVWsX2YKrYCOfg==
-X-Received: by 2002:a17:906:6b97:b0:98e:26ae:9b01 with SMTP id l23-20020a1709066b9700b0098e26ae9b01mr12759543ejr.65.1689669633012;
-        Tue, 18 Jul 2023 01:40:33 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id lc11-20020a170906dfeb00b00992ae4cf3c1sm697275ejc.186.2023.07.18.01.40.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jul 2023 01:40:32 -0700 (PDT)
-Message-ID: <28bfbafb-88c3-7284-6933-052caf734681@linaro.org>
-Date:   Tue, 18 Jul 2023 10:40:30 +0200
+        with ESMTP id S231756AbjGRJDt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 05:03:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A8F710F3;
+        Tue, 18 Jul 2023 02:03:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 93A0E614CA;
+        Tue, 18 Jul 2023 09:03:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA2BC433C8;
+        Tue, 18 Jul 2023 09:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689671022;
+        bh=iREKtWN/FRyhTvfIY1nRyQHq4+FT6qr2YnQIfvxYGzY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MN+Eh6lEZv3uMv67b2/iRGRCGQnvO3nfiQSWlIOfbXSvm6H7ghUVPCq3q4b/8HHOS
+         0TmCSQSbPR19uPdVpQexpSf0ZSQHWsC3wpwJz7CDi+OlUBP/YMJVDT+ZxxNZu+0u7F
+         xyR6XBlL3aIefseI6ilceCOzq2ztNXZNuIsrSj0T5qCTIj6kicF6gRyXtak4GpT5WQ
+         NkK7aDQyYa5B8lr+N0QNWBDMNAjKX8Pa7XsP5Ygrt6WlWiDnuAf5lFMGwipK0oks8j
+         faE8DDNGp1zuvsKHh+cQX4NVvyMAq0c6PCt6+gzGd9I4U7h507hsEfBjNvd/akLb+6
+         QEoyFutBzhPOA==
+Date:   Tue, 18 Jul 2023 11:03:39 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>,
+        Alexandre Mergnat <amergnat@baylibre.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, matthias.bgg@gmail.com, msp@baylibre.com,
+        yangyingliang@huawei.com, u.kleine-koenig@pengutronix.de,
+        miles.chen@mediatek.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH 2/2] clk: mediatek: mt8195-topckgen: Refactor parents for
+ top_dp/edp muxes
+Message-ID: <hd2ydj33vp3dsri4czx6frxxvir6vxnovc27n6rrgs4qqbtrjz@whhyt2iinq5k>
+References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
+ <20230713072138.84117-3-angelogioacchino.delregno@collabora.com>
+ <9a0817c2-4101-5c21-977d-77ac0d83a067@baylibre.com>
+ <CAGXv+5E7YYdkG7GtxG90KzdAG8Kke+74Amtbw4mmyVNZgDZHRA@mail.gmail.com>
+ <jv6daj2w3pwjtde3m3m26yg4wyxbbio4zqra5yqc4gb32ri5ub@noinbbkjovwm>
+ <25724ee3-858a-01eb-352b-3edbfad31c8e@collabora.com>
+ <jxgy2pvns4ri2aj5nmdhb4zbluseuzdejbplh2avwz63df2cfx@grrrdm6ujzi4>
+ <24d17b07-1e8d-05f6-46b7-9da1ff1bed7a@collabora.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] dt-bindings: clock: versal: Convert the
- xlnx,zynqmp-clk.txt to yaml
-Content-Language: en-US
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-        devicetree@vger.kernel.org
-Cc:     git@amd.com, linux-clk@vger.kernel.org, michal.simek@amd.com,
-        conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com
-References: <20230718061035.9341-1-shubhrajyoti.datta@amd.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230718061035.9341-1-shubhrajyoti.datta@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tkgkm5f75v43u7ai"
+Content-Disposition: inline
+In-Reply-To: <24d17b07-1e8d-05f6-46b7-9da1ff1bed7a@collabora.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/07/2023 08:10, Shubhrajyoti Datta wrote:
-> Convert the xlnx,zynqmp-clk.txt to yaml.
-> versal-clk.yaml already exists that's why zynqmp is converted and
-> merged.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
-> ---
-> Please let me know if the mergeing of the versal and zynqmp is fine 
-> or if a seperate yaml is preferred.
-> 
-> Rebased on [1] to avoid merge conflict.
-> 
-> [1] https://lore.kernel.org/all/20230620110137.5701-1-shubhrajyoti.datta@amd.com/
-> 
->  .../bindings/clock/xlnx,versal-clk.yaml       | 73 +++++++++++++++++--
->  .../bindings/clock/xlnx,zynqmp-clk.txt        | 63 ----------------
->  2 files changed, 65 insertions(+), 71 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> index e9cf747bf89b..1b69e2590478 100644
-> --- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> @@ -20,6 +20,7 @@ properties:
->    compatible:
->      oneOf:
->        - const: xlnx,versal-clk
-> +      - const: xlnx,zynqmp-clk
 
-These two are enum.
+--tkgkm5f75v43u7ai
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->        - items:
->            - enum:
->                - xlnx,versal-net-clk
-> @@ -31,16 +32,9 @@ properties:
->    clocks:
->      description: List of clock specifiers which are external input
->        clocks to the given clock controller.
-> -    items:
-> -      - description: reference clock
-> -      - description: alternate reference clock
-> -      - description: alternate reference clock for programmable logic
+On Mon, Jul 17, 2023 at 04:30:48PM +0200, AngeloGioacchino Del Regno wrote:
+> > > > > AFAIK the recommended way to deal with this is to use
+> > > > > clk_set_rate_exclusive() and co. in whatever consumer driver that
+> > > > > needs exclusive control on the clock rate.
+> > > >=20
+> > > > I guess it works, but it looks to me like the issue here is that the
+> > > > provider should disable it entirely? My expectation for
+> > > > clk_set_rate_exclusive() is that one user needs to lock the clock r=
+ate
+> > > > to operate properly.
+> > > >=20
+> > > > If the provider expectation is that the rate or parent should never
+> > > > changed, then that needs to be dealt with at the provider level, ie
+> > > > through the clk_ops.
+> > > >=20
+> > > > > However I'm not sure if that works for parents. It should, given =
+the
+> > > > > original use case was for the sunxi platforms, which like the Med=
+iaTek
+> > > > > platform here has 2 PLLs for video related consumers, but I could=
+n't
+> > > > > find code verifying it.
+> > > >=20
+> > > > If you want to prevent clocks from ever being reparented, you can u=
+se
+> > > > the new clk_hw_determine_rate_no_reparent() determine_rate
+> > > > implementation.
+> > > >=20
+> > >=20
+> > > We want the clocks to be reparented, as we need them to switch parent=
+s as
+> > > explained before... that's more or less how the tree looks:
+> > >=20
+> > > TVDPLL(x) -> PLL Divider (fixed) -> MUX -> Gate -> Controller
+> > >=20
+> > > Besides, I think that forcing *one* parent to the dp/edp mux would pr=
+oduce a
+> > > loss of the flexibility that the clock framework provides.
+> > >=20
+> > > I again want to emphasize on the fact that TVDPLL1 and TVDPLL2 are *i=
+dentical*
+> > > in specs, and on that there will never be a MT8195 SoC that has only =
+one of
+> > > the two PLLs, for obvious reasons...
+> > >=20
+> > > P.S.: If you need more context, I'll be glad to answer to any other q=
+uestion!
+> >=20
+> > Then I have no idea what the question is :)
+> >=20
+> > What are you trying to achieve / fix, and how can I help you ? :)
+>
+> Chen-Yu, Alexandre had/have questions about if there was any other soluti=
+on instead
+> of using the solution of *this* commit, so, if there's any other better s=
+olution
+> than the one that I've sent as this commit.
+>=20
+> I'm the one saying that this commit is the best solution :-P
 
-Missing constraints.
+I went back to the original patch, and my understanding is that, when
+running two output in parallel, the modeset of one can affect the second
+one, and that's bad, right?
 
->  
->    clock-names:
-> -    items:
-> -      - const: ref
-> -      - const: alt_ref
-> -      - const: pl_alt_ref
-> +    minItems: 3
+If so, then you usually have multiple ways to fix this:
 
-This cannot be min. You wanted maxItems.
+ - This patch
+ - Using clk_set_rate_exclusive like Chen-Yu suggested
+ - Using a notifier to react to a rate change and adjust
 
->  
->  required:
->    - compatible
-> @@ -50,6 +44,60 @@ required:
->  
->  additionalProperties: false
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - xlnx,versal-clk
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: reference clock
-> +            - description: alternate reference clock
-> +            - description: alternate reference clock for programmable logic
-> +
-> +        clock-names:
-> +          items:
-> +            - const: ref
-> +            - const: alt_ref
-> +            - const: pl_alt_ref
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - xlnx,zynqmp-clk
-> +
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 5
-> +          items:
-> +            - description: PS reference clock
-> +            - description: reference clock for video system
-> +            - description: alternative PS reference clock
-> +            - description: auxiliary reference clock
-> +            - description: transceiver reference clock
-> +            - description: (E)MIO clock source  (Optional clock)
+I'm not aware of any "official" guidelines at the clock framework level
+regarding which to pick and all are fine.
 
-So you have 5-6 items.
+My opinion though would be to use clk_set_rate_exclusive(), for multiple
+reasons.
 
-> +
-> +        clock-names:
-> +          minItems: 5
-> +          items:
-> +            - const: pss_ref_clk
-> +            - const: video_clk
-> +            - const: pss_alt_ref_clk
-> +            - const: aux_ref_clk
-> +            - const: gt_crx_ref_clk
-> +            - const: mio_clk_50_or_51
-> +            - pattern: "^mio_clk[00-77]+.*$"
-> +            - pattern: "gem[0-3]+_emio_clk.*$"
-> +            - pattern: "swdt[0-1]+_ext_clk.*$"
+The first one is that it models correctly what you consumer expects:
+that the rate is left untouched. This can happen in virtually any
+situation where you have one clock in the same subtree changing rate,
+while the patch above will only fix that particular interference.
 
-But here more. It's a mess.
+The second one is that, especially with DP, you only have a handful of
+rates you'll need to reach. 148MHz, 297MHz, 594MHz, and possibly a bunch
+of others for eDP panels. It's thus likely to have both controllers
+having the same frequency requirement, and thus it makes it possible to
+run from only one PLL and shut the other down.
 
-> +
->  examples:
->    - |
->      firmware {
-> @@ -64,4 +112,13 @@ examples:
->          };
->        };
->      };
-> +
-> +    clock-controller1{
+This patch will introduce orphan clocks issues that are always a bit
+bothersome. A notifier would be troublesome to use and will probably
+introduce glitches plus some weird interaction with scrambling if you
+ever support it.
 
-clock-controller
+So, yeah, using clk_set_rate_exclusive() seems like the best option to me :)
 
+Maxime
 
-> +        #clock-cells = <1>;
-> +        compatible = "xlnx,zynqmp-clk";
-> +        clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>,
-> +                 <&aux_ref_clk>, <&gt_crx_ref_clk>;
-> +        clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk",
-> +                      "aux_ref_clk", "gt_crx_ref_clk";
-> +    };
+--tkgkm5f75v43u7ai
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZLZVawAKCRDj7w1vZxhR
+xXe2APsHH4CM60HIBZOpTkLdn0OFP63ah5e365xRn+SOxzSqFQEA3f7mN2WJ8Phu
+2S2ZjuQ2DHgx/txS945DQOZlGRNrWA0=
+=4oSs
+-----END PGP SIGNATURE-----
 
+--tkgkm5f75v43u7ai--
