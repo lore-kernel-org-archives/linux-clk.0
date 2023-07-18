@@ -2,39 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F71EB64DD
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93096C04E69
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:30:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232787AbjGRNaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 09:30:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34256 "EHLO
+        id S232754AbjGRNaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 09:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232738AbjGRN3z (ORCPT
+        with ESMTP id S232753AbjGRN3z (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:29:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D317126;
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C227124;
         Tue, 18 Jul 2023 06:29:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6CA156159B;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5BDAC6158D;
         Tue, 18 Jul 2023 13:29:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 973BBC611A4;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ACDCC433BA;
         Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1689686984;
-        bh=JucSCYtIeP5pXopgua1lk2Xc676zWfRI0jmWjsoIoAA=;
+        bh=YujBf+tSBimSZNEfZhDQx4wRVWWIF1I4fAuUh7MYhGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IPt1QeLuHYln0zGpgeG6CKT9HWvuhbmHwGTpIXkbmij14VLQi1bThBx7Nxu9eUJ/m
-         mpJINpbRgLUzsCnYs0bKDViLnSDhHGidlDtm0L0A6qaJ5j2eQIw9jy/i6wvUrCpoCE
-         mfa59OWFZSxu2Rvv8urGx73xU+GNT1Y/O0LkIhRKbQrp5NfmmToXfRu4WWpiTEQJNr
-         Cu/kQXq9n9lyf5eHWp+lTLigA4QfxD56UUeD2J26IFADSUZc+ON5uo0C4v6AzBVuqi
-         8L6AD2i3TY9oZWoECc2lyVLnQyQoMHdP+fvwaXFhv6eWcfT2I8Fd7kRmEhxopTz9jQ
-         s171x5qIZUNyg==
+        b=YmIIeasD+VaC2Xfn+NQv1hEgjLN+EocrpSUkbost1LU6y29N7ZAZig7/5AukCFMkA
+         RXcIis9R8tIbzePesSTgpwH039Mk7WAoW7hL7ZWg/N26/tDkP/oIQMHHQ4I88Zje21
+         NrkuxsG8wplGmK06mjd1s0+C3WyrkEiQOVE9iFWcGABjL8Kao/mxfczHs562zcPc0v
+         WH8kXwXFEBisOl//Rch6Ht83H9lIRJdmd8c3soTyHRJPOzheqPtIRl0+9EAqXnAxui
+         kH1qbwb5SeWqxGTG+MJCzUQQYfjFDHowtyPaOJ5f7621J23QjI9GuWsKlRy3Vb2uMg
+         1DcMSarGXWHgw==
 Received: from johan by xi.lan with local (Exim 4.96)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1qLkm2-0005cH-1A;
+        id 1qLkm2-0005c5-06;
         Tue, 18 Jul 2023 15:29:54 +0200
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Bjorn Andersson <andersson@kernel.org>
@@ -43,10 +43,10 @@ Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH 8/8] clk: qcom: turingcc-qcs404: fix missing resume during probe
-Date:   Tue, 18 Jul 2023 15:29:02 +0200
-Message-ID: <20230718132902.21430-9-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 4/8] clk: qcom: gcc-sc8280xp: fix runtime PM imbalance on probe errors
+Date:   Tue, 18 Jul 2023 15:28:58 +0200
+Message-ID: <20230718132902.21430-5-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230718132902.21430-1-johan+linaro@kernel.org>
 References: <20230718132902.21430-1-johan+linaro@kernel.org>
@@ -56,46 +56,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Drivers that enable runtime PM must make sure that the controller is
-runtime resumed before accessing its registers to prevent the power
-domain from being disabled.
+Make sure to decrement the runtime PM usage count before returning in
+case RCG dynamic frequency switch initialisation fails.
 
-Fixes: 892df0191b29 ("clk: qcom: Add QCS404 TuringCC")
-Cc: stable@vger.kernel.org      # 5.2
-Cc: Bjorn Andersson <andersson@kernel.org>
+Fixes: 2a541abd9837 ("clk: qcom: gcc-sc8280xp: Add runtime PM")
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/clk/qcom/turingcc-qcs404.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/gcc-sc8280xp.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
-index 43184459228f..2cd288d6c3e4 100644
---- a/drivers/clk/qcom/turingcc-qcs404.c
-+++ b/drivers/clk/qcom/turingcc-qcs404.c
-@@ -125,11 +125,22 @@ static int turingcc_probe(struct platform_device *pdev)
- 		return ret;
+diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
+index 1fb6ffac730c..ac6f8c0c1ccb 100644
+--- a/drivers/clk/qcom/gcc-sc8280xp.c
++++ b/drivers/clk/qcom/gcc-sc8280xp.c
+@@ -7539,8 +7539,8 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_sc8280xp_desc);
+ 	if (IS_ERR(regmap)) {
+-		pm_runtime_put(&pdev->dev);
+-		return PTR_ERR(regmap);
++		ret = PTR_ERR(regmap);
++		goto err_put_rpm;
  	}
  
-+	ret = pm_runtime_resume_and_get(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
- 	ret = qcom_cc_probe(pdev, &turingcc_desc);
- 	if (ret < 0)
+ 	/*
+@@ -7561,11 +7561,19 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
+ 
+ 	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
+ 	if (ret)
 -		return ret;
 +		goto err_put_rpm;
-+
-+	pm_runtime_put(&pdev->dev);
  
- 	return 0;
+ 	ret = qcom_cc_really_probe(pdev, &gcc_sc8280xp_desc, regmap);
++	if (ret)
++		goto err_put_rpm;
++
+ 	pm_runtime_put(&pdev->dev);
+ 
++	return 0;
 +
 +err_put_rpm:
 +	pm_runtime_put_sync(&pdev->dev);
 +
-+	return ret;
+ 	return ret;
  }
  
- static const struct dev_pm_ops turingcc_pm_ops = {
 -- 
 2.41.0
 
