@@ -2,40 +2,40 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C57C04FE0
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD06EB64DC
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232729AbjGRN3u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 09:29:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34122 "EHLO
+        id S232767AbjGRN34 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 09:29:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232638AbjGRN3s (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:29:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF7E1A2;
-        Tue, 18 Jul 2023 06:29:45 -0700 (PDT)
+        with ESMTP id S232743AbjGRN3y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:29:54 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61B6211B;
+        Tue, 18 Jul 2023 06:29:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D0C5B61585;
-        Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F01CC433CA;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5B71761587;
+        Tue, 18 Jul 2023 13:29:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6512BC433BF;
         Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1689686984;
-        bh=rTV/bK0bQBuIPkpnsjy5F2DIV6tuENtBUl6x1oqCHu8=;
+        bh=AMYMGf2yRrBIwpwEoaP+5FFAHqopIdp6a4vZOTfLp5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nmMvzP14UYokUr3JipIPArmssFV0djWEqrE+wmnfNzJrHUJEgb4HblTfpCuDHIqOF
-         6uV79daQlmFNWI6T1fblY2C5QiPPa0vOMPG7x9KiV4z6xHRrGW42M8BctPEfzJuNwD
-         Xp6U4Y7uF5u+OdsLp+sh03i0MdLSrtLESC0gWhShfpSLvBStlptF42oAKkbWr/zxDC
-         GgSXjevnj4oBJNdyyfAWJYQaaosHj12W12/rbx3xdfVKYyj4zanWuKbmnW+SkDdZ02
-         03VnDgh6VsjLyXUI+KjdYcgji4BqkH+8nwHcroD53EwaP0hqXgSE3jfZ3QxFjHb5Yi
-         sUcB53jGDucMA==
+        b=Ex9idKA8p5sN2VEyTfwNb61UYDj5uVpAcQdb5smc0jpORoL4EMU14KRkF5SAkOcpX
+         G6C10iuoIbnQ4FECss5qDWmdsPQ7qXWEmoR03qF6q/GqGuVy7RBujAyd2FhX7+VFlj
+         /U/miA14VIfLyY/jsMwzdVVmNcYSHCUOByy7EqKDG9Fz4N2D82Lajxbqsj1dyYU+9i
+         ElMcUbcJ6BzpBINyqGXHWb7/RbUTu/fLHJ/c8u/qd5Z6sG6kQGy00mzdNJkDYS7hPv
+         7GSpqNt+4KsQ3PKNbaQ4gZqzx79l96f+D3i4bQ1Kf6JYBC16a5VAttZbPN6NTupcr+
+         vwja/NYeC0HfQ==
 Received: from johan by xi.lan with local (Exim 4.96)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1qLkm1-0005c0-2l;
-        Tue, 18 Jul 2023 15:29:53 +0200
+        id 1qLkm2-0005cB-0a;
+        Tue, 18 Jul 2023 15:29:54 +0200
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Bjorn Andersson <andersson@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
@@ -43,11 +43,10 @@ Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH 2/8] clk: qcom: dispcc-sm8450: fix runtime PM imbalance on probe errors
-Date:   Tue, 18 Jul 2023 15:28:56 +0200
-Message-ID: <20230718132902.21430-3-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH 6/8] clk: qcom: q6sstop-qcs404: fix missing resume during probe
+Date:   Tue, 18 Jul 2023 15:29:00 +0200
+Message-ID: <20230718132902.21430-7-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230718132902.21430-1-johan+linaro@kernel.org>
 References: <20230718132902.21430-1-johan+linaro@kernel.org>
@@ -57,51 +56,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make sure to decrement the runtime PM usage count before returning in
-case regmap initialisation fails.
+Drivers that enable runtime PM must make sure that the controller is
+runtime resumed before accessing its registers to prevent the power
+domain from being disabled.
 
-Fixes: 16fb89f92ec4 ("clk: qcom: Add support for Display Clock Controller on SM8450")
-Cc: stable@vger.kernel.org      # 6.1
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Fixes: 6cdef2738db0 ("clk: qcom: Add Q6SSTOP clock controller for QCS404")
+Cc: stable@vger.kernel.org      # 5.5
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/clk/qcom/dispcc-sm8450.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/q6sstop-qcs404.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/dispcc-sm8450.c b/drivers/clk/qcom/dispcc-sm8450.c
-index adbfd30bfc96..84db4ff5485a 100644
---- a/drivers/clk/qcom/dispcc-sm8450.c
-+++ b/drivers/clk/qcom/dispcc-sm8450.c
-@@ -1776,8 +1776,10 @@ static int disp_cc_sm8450_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
+index 780074e05841..26e2d63614ac 100644
+--- a/drivers/clk/qcom/q6sstop-qcs404.c
++++ b/drivers/clk/qcom/q6sstop-qcs404.c
+@@ -174,21 +174,32 @@ static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
  		return ret;
+ 	}
  
- 	regmap = qcom_cc_map(pdev, &disp_cc_sm8450_desc);
--	if (IS_ERR(regmap))
--		return PTR_ERR(regmap);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		goto err_put_rpm;
-+	}
- 
- 	clk_lucid_evo_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
- 	clk_lucid_evo_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_config);
-@@ -1792,9 +1794,16 @@ static int disp_cc_sm8450_probe(struct platform_device *pdev)
- 	regmap_update_bits(regmap, 0xe05c, BIT(0), BIT(0));
- 
- 	ret = qcom_cc_really_probe(pdev, &disp_cc_sm8450_desc, regmap);
++	ret = pm_runtime_resume_and_get(&pdev->dev);
 +	if (ret)
++		return ret;
++
+ 	q6sstop_regmap_config.name = "q6sstop_tcsr";
+ 	desc = &tcsr_qcs404_desc;
+ 
+ 	ret = qcom_cc_probe_by_index(pdev, 1, desc);
+ 	if (ret)
+-		return ret;
 +		goto err_put_rpm;
  
- 	pm_runtime_put(&pdev->dev);
+ 	q6sstop_regmap_config.name = "q6sstop_cc";
+ 	desc = &q6sstop_qcs404_desc;
  
-+	return 0;
+ 	ret = qcom_cc_probe_by_index(pdev, 0, desc);
+ 	if (ret)
+-		return ret;
++		goto err_put_rpm;
++
++	pm_runtime_put(&pdev->dev);
+ 
+ 	return 0;
 +
 +err_put_rpm:
 +	pm_runtime_put_sync(&pdev->dev);
 +
- 	return ret;
++	return ret;
  }
  
+ static const struct dev_pm_ops q6sstopcc_pm_ops = {
 -- 
 2.41.0
 
