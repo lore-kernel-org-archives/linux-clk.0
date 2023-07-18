@@ -2,103 +2,95 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 902A7EB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 16:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9EAEB64DC
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 19:07:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231313AbjGRQUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 12:20:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38504 "EHLO
+        id S229802AbjGRTHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 15:07:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229524AbjGRQUb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 12:20:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB73E0;
-        Tue, 18 Jul 2023 09:20:29 -0700 (PDT)
+        with ESMTP id S229504AbjGRTHO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 15:07:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F13F0;
+        Tue, 18 Jul 2023 12:07:13 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2CAFB615E4;
-        Tue, 18 Jul 2023 16:20:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43C6C433C8;
-        Tue, 18 Jul 2023 16:20:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C8C7C616C6;
+        Tue, 18 Jul 2023 19:07:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924F8C433C8;
+        Tue, 18 Jul 2023 19:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689697228;
-        bh=c2kq9yglTyBKkN+7oETy1EDzjSuSLPZJWdny+o8VQ/o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XOPUAa+eM/tTEsH8tdvIg98C482Th52LWsYb76BnmMIgZuSXapxbuprHsiEa/rryS
-         AhwTyreo6R6Xk556bDH47DjRdm8aj1UQ0D+hbnC+klT5lbWSIbXnUADzWuFKpf57LE
-         xvd1P1URcwAHdRt6A58V4LgmREB0wM98hjoGwpayBqihkWyjMtxjEPW70DypGJ1tmZ
-         qAGDkbOl1kbTx5hqWp0y1a26P09uBi5b4o8VdqYb5jb8JTz0tjeXrXbFsC7lyzYRQC
-         7C9LubKovEEw5jM96iJrP9Jg+IW0su5Uoj4vhppFVhdYJyoBe2mTEwOTYCAj5NB6am
-         0Z+rN207FLhvQ==
-Date:   Tue, 18 Jul 2023 09:23:52 -0700
+        s=k20201202; t=1689707232;
+        bh=yRaOQYTa1Amdd2MVTupX3C9Di+NVA1VQM28fL5G7oYk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=E3qvXYinwNYlyZLCvM+ApMbhj7aWV5wLjkFIrpzxyszxUsepdaRRs1zEaQfjkqwgG
+         Js8153/OwE4SyKMlJ3mIN9/DYAoRUQhz2Z3PyKITdjYoL/j1YphC4Ok37o5yS5f9Qv
+         R0zW7LBAyT6JFxGyb0tH3X3A1P4v/Jc5ijx9dSmT+T07iADmWl0Jxf9UUPmUEGksGi
+         /OGidkmUsgDgFJLdNLK7jRrQAC5w499GG7Lpv3MNlW9QVeWNsYw3hxpky99RUpZE1K
+         Q5EmrfwJN28aiqTjm5kXEX2iS931ql4jBinmn9db4XIv22phDBj/IfaLW7v2T4FquY
+         s9SJZb7Oow/0g==
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Johan Hovold <johan@kernel.org>, Andy Gross <agross@kernel.org>,
+To:     Johan Hovold <johan+linaro@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 03/15] clk: qcom: gcc-sm6375: Unregister critical clocks
-Message-ID: <ybugl2m7o5cnzj4lv5ksit2rip6yvths5ieo3xlw6cycto2zax@2jimga475z2t>
-References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
- <20230717-topic-branch_aon_cleanup-v1-3-27784d27a4f4@linaro.org>
- <ZLaRtrH85v4kpSvb@hovoldconsulting.com>
- <33a26241-026a-9466-5dd6-e3202b29f57c@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] clk: qcom: fix runtime PM bugs
+Date:   Tue, 18 Jul 2023 12:10:35 -0700
+Message-ID: <168970743315.3401131.3621273125910411303.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230718132902.21430-1-johan+linaro@kernel.org>
+References: <20230718132902.21430-1-johan+linaro@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <33a26241-026a-9466-5dd6-e3202b29f57c@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 03:26:51PM +0200, Konrad Dybcio wrote:
-> On 18.07.2023 15:20, Johan Hovold wrote:
-> > On Mon, Jul 17, 2023 at 05:19:10PM +0200, Konrad Dybcio wrote:
-> >> Some clocks need to be always-on, but we don't really do anything
-> >> with them, other than calling enable() once and telling Linux they're
-> >> enabled.
-> >>
-> >> Unregister them to save a couple of bytes and, perhaps more
-> >> importantly, allow for runtime suspend of the clock controller device,
-> >> as CLK_IS_CRITICAL prevents the latter.
-> > 
-> > But this doesn't sound right. How can you disable a controller which
-> > still has clocks enabled?
-> > 
-> > Shouldn't instead these clocks be modelled properly so that they are
-> > only enabled when actually needed?
-> Hm.. We do have clk_branch2_aon_ops, but something still needs to
-> toggle these clocks.
+
+On Tue, 18 Jul 2023 15:28:54 +0200, Johan Hovold wrote:
+> This series fixes a number of runtime PM related bugs found through
+> inspection.
 > 
-
-Before we started replacing these clocks with static votes, I handled
-exactly this problem in the turingcc-qcs404 driver by registering the
-ahb clock with a pm_clk_add(). The clock framework will then
-automagically keep the clock enabled around operations, but it will also
-keep the runtime state active as long as the clock is prepared.
-
-As mentioned in an earlier reply today, there's no similarity to this in
-the reset or gdsc code, so we'd need to add that in order to rely on
-such mechanism.
-
-> I *think* we could leave a permanent vote in probe() without breaking
-> runtime pm! I'll give it a spin bit later..
+> Johan
 > 
+> 
+> Johan Hovold (8):
+>   clk: qcom: camcc-sc7180: fix async resume during probe
+>   clk: qcom: dispcc-sm8450: fix runtime PM imbalance on probe errors
+>   clk: qcom: dispcc-sm8550: fix runtime PM imbalance on probe errors
+>   clk: qcom: gcc-sc8280xp: fix runtime PM imbalance on probe errors
+>   clk: qcom: lpasscc-sc7280: fix missing resume during probe
+>   clk: qcom: q6sstop-qcs404: fix missing resume during probe
+>   clk: qcom: mss-sc7180: fix missing resume during probe
+>   clk: qcom: turingcc-qcs404: fix missing resume during probe
+> 
+> [...]
 
-Modelling the AHB clock in DT and putting a devm_clk_get_enabled() would
-properly connect the two, and thereby handle probe order between the two
-clock controllers.
+Applied, thanks!
 
-But it would prevent the power-domain of the parent provider to ever
-suspending. Using pm_clk_add() this would at least depend on client
-votes.
+[1/8] clk: qcom: camcc-sc7180: fix async resume during probe
+      commit: c948ff727e25297f3a703eb5349dd66aabf004e4
+[2/8] clk: qcom: dispcc-sm8450: fix runtime PM imbalance on probe errors
+      commit: b0f3d01bda6c3f6f811e70f76d2040ae81f64565
+[3/8] clk: qcom: dispcc-sm8550: fix runtime PM imbalance on probe errors
+      commit: acaf1b3296a504d4a61b685f78baae771421608d
+[4/8] clk: qcom: gcc-sc8280xp: fix runtime PM imbalance on probe errors
+      commit: 10192ab375c39c58d39cba028d9685cefe1ca3c2
+[5/8] clk: qcom: lpasscc-sc7280: fix missing resume during probe
+      commit: 66af5339d4f8e20c6d89a490570bd94d40f1a7f6
+[6/8] clk: qcom: q6sstop-qcs404: fix missing resume during probe
+      commit: 97112c83f4671a4a722f99a53be4e91fac4091bc
+[7/8] clk: qcom: mss-sc7180: fix missing resume during probe
+      commit: e2349da0fa7ca822cda72f427345b95795358fe7
+[8/8] clk: qcom: turingcc-qcs404: fix missing resume during probe
+      commit: a9f71a033587c9074059132d34c74eabbe95ef26
 
-Regards,
-Bjorn
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
