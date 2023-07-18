@@ -2,130 +2,87 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C55EB64DA
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 15:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF59DEB64DA
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 15:39:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232869AbjGRPCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 11:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43662 "EHLO
+        id S233709AbjGRPju (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 11:39:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232827AbjGRPCu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 11:02:50 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D44ED171A;
-        Tue, 18 Jul 2023 08:02:48 -0700 (PDT)
+        with ESMTP id S233346AbjGRPjr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 11:39:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE20E52;
+        Tue, 18 Jul 2023 08:39:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7318261627;
-        Tue, 18 Jul 2023 15:02:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D706BC433C7;
-        Tue, 18 Jul 2023 15:02:46 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 72DDE6164D;
+        Tue, 18 Jul 2023 15:39:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D56C433C8;
+        Tue, 18 Jul 2023 15:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689692567;
-        bh=sy7DCojCRG8d7aqK80NuXkkijlk7Z0axQrX85V5IRrg=;
+        s=k20201202; t=1689694785;
+        bh=niFUIW8RgEpvAiA6LUCdCCanWa0dt1Z+kgLKjKniI74=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jnSKhCaobgOyjj4OaIVde77zX9hr/BJiYdfIQd3KHcHYfRZY/b4Kn//JZry0UGtaU
-         o8vdAOJBpAGQ4xEhieCd+t+yfrjgSIt71X5oAM2v/wu7sEaX9myytOKHGJguXzLMwZ
-         OhYkTbnj6BhHwXoicueU/T1WQgGb5L2PKGY6A7xIqLOsQ6gHEgsA6FPGW+hD8LT7lP
-         cIcZ8XqIVwHDv7dJTSnm3ihjAHZMBaXMQ3fXIe3nZX7wAwzb8MeL9IPhdYCXDW9q7f
-         kYkB0CHyyDajGAfR+omS7E6B3IZUafuxwy7uSmRHLeP6xRFSHvOHJGc6KjjCvvPNDy
-         XBBubkYth0XUg==
-Date:   Tue, 18 Jul 2023 08:06:11 -0700
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        b=F8nqHHPzXSuaiu4yqCxVn6565ivWW36QEwkPKlE4Yfn7Y2zDQ08Tlk+6MG1k25YCY
+         jLImfir4nCohVHrD01iUvnCVkW6XrTh7ApdvGcmOZzH1/a6N9TU6KW4VO31yHNNgAx
+         Nc+TfTJgONI8Wz6uq4mJhfIDRv0VFizJRGOIkIfr2d41zu7uR3l1gwowN6C+EDZnPw
+         YaUYTMALn2uo46LI0tUUaKDB7oehgXlsLawg6to9S1yQNiDnO+LBdxcioakgMUYd0l
+         yWYJAvJinQjqIwDxupQRzyocLyfylbXKpCaPxQ+ZcaxQ6zyUSlhdlGvhWoaE/EgVvA
+         QL3pz4SaW4esg==
+Received: from johan by xi.lan with local (Exim 4.96)
+        (envelope-from <johan@kernel.org>)
+        id 1qLmnr-0006Bq-1J;
+        Tue, 18 Jul 2023 17:39:55 +0200
+Date:   Tue, 18 Jul 2023 17:39:55 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Johan Hovold <johan+linaro@kernel.org>,
         Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 15/15] arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CCC
-Message-ID: <yk4xiydi47e7dn3zhasmnhgjc3l23napvznioshm2xx7uf5ziw@b7htk7ixes5b>
-References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
- <20230717-topic-branch_aon_cleanup-v1-15-27784d27a4f4@linaro.org>
- <ZLVsN40kYsvQm1z6@gerhold.net>
- <a193a4dd-0a0a-0d36-6d83-0424cd1dce80@linaro.org>
- <ZLVyvHnKPdOfqAck@gerhold.net>
- <8c5dc146-c305-bef9-0d97-76a91345ed1a@linaro.org>
- <zha5rmva3zhvvknnmeso6errwhkdjomk6r5d72an7moimdvymq@skow5jqtps5g>
- <18e192cb-eafe-3aa9-6602-b1a9dbe020d5@linaro.org>
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH 5/8] clk: qcom: lpasscc-sc7280: fix missing resume during
+ probe
+Message-ID: <ZLaySwCQsgQCSRIW@hovoldconsulting.com>
+References: <20230718132902.21430-1-johan+linaro@kernel.org>
+ <20230718132902.21430-6-johan+linaro@kernel.org>
+ <xbek6yuldy7ck3zlux76hosn4iqt52ocydovuol7geiwapslrd@j7uyxhrkiyaw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <18e192cb-eafe-3aa9-6602-b1a9dbe020d5@linaro.org>
+In-Reply-To: <xbek6yuldy7ck3zlux76hosn4iqt52ocydovuol7geiwapslrd@j7uyxhrkiyaw>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 02:21:31PM +0200, Konrad Dybcio wrote:
-> On 18.07.2023 06:25, Bjorn Andersson wrote:
-> > On Mon, Jul 17, 2023 at 07:11:33PM +0200, Konrad Dybcio wrote:
-> >> On 17.07.2023 18:56, Stephan Gerhold wrote:
-> >>> On Mon, Jul 17, 2023 at 06:50:18PM +0200, Konrad Dybcio wrote:
-> >>>> On 17.07.2023 18:28, Stephan Gerhold wrote:
-> >>>>> On Mon, Jul 17, 2023 at 05:19:22PM +0200, Konrad Dybcio wrote:
-> >>>>>> The GPU_CC block is powered by VDD_CX. Describe that.
-> >>>>>>
-> >>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>>>>> ---
-> >>>>>>  arch/arm64/boot/dts/qcom/sm6115.dtsi | 2 ++
-> >>>>>>  1 file changed, 2 insertions(+)
-> >>>>>>
-> >>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-> >>>>>> index 29b5b388cd94..bfaaa1801a4d 100644
-> >>>>>> --- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
-> >>>>>> +++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-> >>>>>> @@ -1430,6 +1430,8 @@ gpucc: clock-controller@5990000 {
-> >>>>>>  			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> >>>>>>  				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-> >>>>>>  				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-> >>>>>> +			power-domains = <&rpmpd SM6115_VDDCX>;
-> >>>>>> +			required-opps = <&rpmpd_opp_low_svs>;
-> >>>>>
-> >>>>> Where is this required-opp coming from? The clocks in gpucc seem to have
-> >>>>> different voltage requirements depending on the rates, but we usually
-> >>>>> handle that in the OPP tables of the consumer.
-> >>>> The only lower levels defined for this SoC are VDD_MIN and VDD_RET,
-> >>>> but quite obviously the GPU won't work then
-> >>>>
-> >>>
-> >>> The levels needed for the GPU clocks to run should be in the GPU OPP
-> >>> table though, just like e.g. sdhc2_opp_table for the SDCC clocks.
-> >>>
-> >>> I still don't really understand why this is specified here. :)
-> >> The GPU_CC block needs this rail to be at a certain power level for
-> >> register access. This describes that requirement.
-> >>
+On Tue, Jul 18, 2023 at 07:58:41AM -0700, Bjorn Andersson wrote:
+> On Tue, Jul 18, 2023 at 03:28:59PM +0200, Johan Hovold wrote:
+> > Drivers that enable runtime PM must make sure that the controller is
+> > runtime resumed before accessing its registers to prevent the power
+> > domain from being disabled.
 > > 
-> > And that is not the lowest level reported by command db?
-> > Please describe this part in the commit message as well.
-> command-what? ;)
 > 
-
-Apparently doesn't matter that I read that line multiple times, my brain
-really wanted a 'h' in there.
-
-> RPM exports VDD_NONE (off), VDD_MIN (the lowest state before collapse)
-> and then low_svs is usually the lowest "actually on" state for all
-> consumers.
+> NB: the clock framework will runtime resume the controller surrounding
+> operations, even so during probe. But this is not done for resets and
+> gdscs - and in some clock drivers we poke registers directly from
+> probe...
 > 
+> The one time this really matters is where we associate the ahb clock
+> with the runtime state, e.g. in qcs404 turingcc. On most other platforms
+> we just mark these clocks always-on in gcc...
 
-In rpmhpd I changed it such that the minimal enabled state would be
-!disabled (so that the automatic enablement during probe would be
-sufficient to access registers), but talking to Ulf this is
-provider-specific.
+Right, I started looking at this with respect to the PM domain, but
+my initial commit message only mentioned the need to make sure the
+controller is resumed, which would have covered such interface clocks as
+well. 
 
-So unless you can figure out a acceptable lowest non-disabled state this
-is what has to be done...
+And while ending up with a concurrent request to disable the PM domain
+is not that likely, there is currently nothing preventing it so it still
+needs to be fixed.
 
-
-PS. My ask for mentioning this in the commit message still stands.
-
-Regards,
-Bjorn
+Johan
