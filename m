@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF040EB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 21:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4D0C0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 21:25:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231538AbjGRVZ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 17:25:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43286 "EHLO
+        id S231178AbjGRVZa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 17:25:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231426AbjGRVZK (ORCPT
+        with ESMTP id S231488AbjGRVZK (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 17:25:10 -0400
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86B65198D;
-        Tue, 18 Jul 2023 14:24:55 -0700 (PDT)
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A041BC9;
+        Tue, 18 Jul 2023 14:24:58 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 4385F3F6D6;
-        Tue, 18 Jul 2023 23:24:52 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id EBC3A3F5C7;
+        Tue, 18 Jul 2023 23:24:54 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Tue, 18 Jul 2023 23:24:46 +0200
-Subject: [PATCH v3 10/15] dt-bindings: msm: dsi-phy-14nm: Document SM6125
- variant
+Date:   Tue, 18 Jul 2023 23:24:48 +0200
+Subject: [PATCH v3 12/15] arm64: dts: qcom: sm6125: Switch fixed xo_board
+ clock to RPM XO clock
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230718-sm6125-dpu-v3-10-6c5a56e99820@somainline.org>
+Message-Id: <20230718-sm6125-dpu-v3-12-6c5a56e99820@somainline.org>
 References: <20230718-sm6125-dpu-v3-0-6c5a56e99820@somainline.org>
 In-Reply-To: <20230718-sm6125-dpu-v3-0-6c5a56e99820@somainline.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -56,55 +56,62 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
 X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document availability of the 14nm DSI PHY on SM6125.  Note that this
-compatible uses the SoC-suffix variant, intead of postfixing an
-arbitrary number without the sm/sdm portion.  The PHY is not powered by
-a vcca regulator like on most SoCs, but by the MX power domain that is
-provided via the power-domains property and a single corresponding
-required-opps.
+We have a working RPM XO clock; no other driver except rpmcc should be
+parenting directly to the fixed-factor xo_board clock nor should it be
+reachable by that global name.  Remove the name to that effect, so that
+every clock relation is explicitly defined in DTS.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- .../devicetree/bindings/display/msm/dsi-phy-14nm.yaml         | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/boot/dts/qcom/sm6125.dtsi | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-index a43e11d3b00d..2361da5f6736 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
-@@ -19,6 +19,7 @@ properties:
-       - qcom,dsi-phy-14nm-2290
-       - qcom,dsi-phy-14nm-660
-       - qcom,dsi-phy-14nm-8953
-+      - qcom,sm6125-dsi-phy-14nm
+diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+index cfd0901d4555..90e242ad7943 100644
+--- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
+@@ -23,7 +23,6 @@ xo_board: xo-board {
+ 			compatible = "fixed-clock";
+ 			#clock-cells = <0>;
+ 			clock-frequency = <19200000>;
+-			clock-output-names = "xo_board";
+ 		};
  
-   reg:
-     items:
-@@ -35,6 +36,16 @@ properties:
-   vcca-supply:
-     description: Phandle to vcca regulator device node.
+ 		sleep_clk: sleep-clk {
+@@ -199,6 +198,8 @@ rpm_requests: rpm-requests {
+ 				rpmcc: clock-controller {
+ 					compatible = "qcom,rpmcc-sm6125", "qcom,rpmcc";
+ 					#clock-cells = <1>;
++					clocks = <&xo_board>;
++					clock-names = "xo";
+ 				};
  
-+  power-domains:
-+    description:
-+      A phandle and PM domain specifier for an optional power domain.
-+    maxItems: 1
-+
-+  required-opps:
-+    description:
-+      A phandle to an OPP node describing the power domain's performance point.
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
+ 				rpmpd: power-controller {
+@@ -718,7 +719,7 @@ sdhc_1: mmc@4744000 {
+ 
+ 			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+ 				 <&gcc GCC_SDCC1_APPS_CLK>,
+-				 <&xo_board>;
++				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
+ 			clock-names = "iface", "core", "xo";
+ 			iommus = <&apps_smmu 0x160 0x0>;
+ 
+@@ -745,7 +746,7 @@ sdhc_2: mmc@4784000 {
+ 
+ 			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
+ 				 <&gcc GCC_SDCC2_APPS_CLK>,
+-				 <&xo_board>;
++				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
+ 			clock-names = "iface", "core", "xo";
+ 			iommus = <&apps_smmu 0x180 0x0>;
+ 
 
 -- 
 2.41.0
