@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E683C001DE
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 21:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9196EC001DE
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 21:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230097AbjGRVYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 17:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42614 "EHLO
+        id S231428AbjGRVY4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 17:24:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230318AbjGRVYu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 17:24:50 -0400
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [5.144.164.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C7E1995;
-        Tue, 18 Jul 2023 14:24:46 -0700 (PDT)
+        with ESMTP id S231373AbjGRVYw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 17:24:52 -0400
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [5.144.164.166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A79219AF
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 14:24:48 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 851613F6D4;
-        Tue, 18 Jul 2023 23:24:43 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id DD9C93F6D6;
+        Tue, 18 Jul 2023 23:24:44 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Tue, 18 Jul 2023 23:24:40 +0200
-Subject: [PATCH v3 04/15] dt-bindings: clock: qcom,dispcc-sm6125: Allow
- power-domains property
+Date:   Tue, 18 Jul 2023 23:24:41 +0200
+Subject: [PATCH v3 05/15] dt-bindings: display/msm: dsi-controller-main:
+ Document SM6125
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230718-sm6125-dpu-v3-4-6c5a56e99820@somainline.org>
+Message-Id: <20230718-sm6125-dpu-v3-5-6c5a56e99820@somainline.org>
 References: <20230718-sm6125-dpu-v3-0-6c5a56e99820@somainline.org>
 In-Reply-To: <20230718-sm6125-dpu-v3-0-6c5a56e99820@somainline.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -63,59 +63,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On SM6125 the dispcc block is gated behind VDDCX: allow this domain to
-be configured.
+Document general compatibility of the DSI controller on SM6125.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- .../devicetree/bindings/clock/qcom,dispcc-sm6125.yaml    | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
-index 8fd29915bf2c..0a3ef7fd03fa 100644
---- a/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,dispcc-sm6125.yaml
-@@ -48,6 +48,16 @@ properties:
-   '#power-domain-cells':
-     const: 1
- 
-+  power-domains:
-+    description:
-+      A phandle and PM domain specifier for the CX power domain.
-+    maxItems: 1
-+
-+  required-opps:
-+    description:
-+      A phandle to an OPP node describing the power domain's performance point.
-+    maxItems: 1
-+
-   reg:
-     maxItems: 1
- 
-@@ -65,9 +75,11 @@ examples:
-   - |
-     #include <dt-bindings/clock/qcom,rpmcc.h>
-     #include <dt-bindings/clock/qcom,gcc-sm6125.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-     clock-controller@5f00000 {
-       compatible = "qcom,sm6125-dispcc";
-       reg = <0x5f00000 0x20000>;
-+
-       clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-                <&dsi0_phy 0>,
-                <&dsi0_phy 1>,
-@@ -84,6 +96,10 @@ examples:
-                     "dp_phy_pll_vco_div_clk",
-                     "cfg_ahb_clk",
-                     "gcc_disp_gpll0_div_clk_src";
-+
-+      required-opps = <&rpmhpd_opp_ret>;
-+      power-domains = <&rpmpd SM6125_VDDCX>;
-+
-       #clock-cells = <1>;
-       #power-domain-cells = <1>;
-     };
+diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+index 76270992305a..b8d1f2b7d541 100644
+--- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
+@@ -27,6 +27,7 @@ properties:
+               - qcom,sdm660-dsi-ctrl
+               - qcom,sdm845-dsi-ctrl
+               - qcom,sm6115-dsi-ctrl
++              - qcom,sm6125-dsi-ctrl
+               - qcom,sm6350-dsi-ctrl
+               - qcom,sm6375-dsi-ctrl
+               - qcom,sm8150-dsi-ctrl
+@@ -305,6 +306,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,msm8998-dsi-ctrl
++              - qcom,sm6125-dsi-ctrl
+               - qcom,sm6350-dsi-ctrl
+     then:
+       properties:
 
 -- 
 2.41.0
