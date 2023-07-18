@@ -2,95 +2,124 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9EAEB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 19:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DF9C0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 21:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbjGRTHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 15:07:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48466 "EHLO
+        id S231176AbjGRVAV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 17:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbjGRTHO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 15:07:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F13F0;
-        Tue, 18 Jul 2023 12:07:13 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S230442AbjGRVAU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 17:00:20 -0400
+Received: from relay05.th.seeweb.it (relay05.th.seeweb.it [IPv6:2001:4b7a:2000:18::166])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E0A5EC
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 14:00:17 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C8C7C616C6;
-        Tue, 18 Jul 2023 19:07:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924F8C433C8;
-        Tue, 18 Jul 2023 19:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689707232;
-        bh=yRaOQYTa1Amdd2MVTupX3C9Di+NVA1VQM28fL5G7oYk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E3qvXYinwNYlyZLCvM+ApMbhj7aWV5wLjkFIrpzxyszxUsepdaRRs1zEaQfjkqwgG
-         Js8153/OwE4SyKMlJ3mIN9/DYAoRUQhz2Z3PyKITdjYoL/j1YphC4Ok37o5yS5f9Qv
-         R0zW7LBAyT6JFxGyb0tH3X3A1P4v/Jc5ijx9dSmT+T07iADmWl0Jxf9UUPmUEGksGi
-         /OGidkmUsgDgFJLdNLK7jRrQAC5w499GG7Lpv3MNlW9QVeWNsYw3hxpky99RUpZE1K
-         Q5EmrfwJN28aiqTjm5kXEX2iS931ql4jBinmn9db4XIv22phDBj/IfaLW7v2T4FquY
-         s9SJZb7Oow/0g==
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Johan Hovold <johan+linaro@kernel.org>
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id B80FB3F78F;
+        Tue, 18 Jul 2023 23:00:12 +0200 (CEST)
+Date:   Tue, 18 Jul 2023 23:00:10 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] clk: qcom: fix runtime PM bugs
-Date:   Tue, 18 Jul 2023 12:10:35 -0700
-Message-ID: <168970743315.3401131.3621273125910411303.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230718132902.21430-1-johan+linaro@kernel.org>
-References: <20230718132902.21430-1-johan+linaro@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 10/15] dt-bindings: msm: dsi-phy-14nm: Document SM6125
+ variant
+Message-ID: <yzz4dddlh2no3lmuxrkuxhsuaf3brruo635pgfpnaxwffmnl6j@uk3jxtoarg7w>
+References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
+ <20230627-sm6125-dpu-v2-10-03e430a2078c@somainline.org>
+ <285facd1-bf20-aff2-b680-f796e8830038@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <285facd1-bf20-aff2-b680-f796e8830038@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On Tue, 18 Jul 2023 15:28:54 +0200, Johan Hovold wrote:
-> This series fixes a number of runtime PM related bugs found through
-> inspection.
+On 2023-06-29 13:54:13, Dmitry Baryshkov wrote:
+> On 27/06/2023 23:14, Marijn Suijten wrote:
+> > Document availability of the 14nm DSI PHY on SM6125.  Note that this
+> > compatible uses the SoC-suffix variant, intead of postfixing an
+> > arbitrary number without the sm/sdm portion.  The PHY is not powered by
+> > a vcca regulator like on most SoCs, but by the MX power domain that is
+> > provided via the power-domains property and a single corresponding
+> > required-opps.
+> > 
+> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > ---
+> >   .../devicetree/bindings/display/msm/dsi-phy-14nm.yaml         | 11 +++++++++++
+> >   1 file changed, 11 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
+> > index a43e11d3b00d..183a26f8a6dc 100644
+> > --- a/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
+> > +++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-14nm.yaml
+> > @@ -19,6 +19,7 @@ properties:
+> >         - qcom,dsi-phy-14nm-2290
+> >         - qcom,dsi-phy-14nm-660
+> >         - qcom,dsi-phy-14nm-8953
+> > +      - qcom,sm6125-dsi-phy-14nm
+> >   
+> >     reg:
+> >       items:
+> > @@ -35,6 +36,16 @@ properties:
+> >     vcca-supply:
+> >       description: Phandle to vcca regulator device node.
+> >   
+> > +  power-domains:
+> > +    description:
+> > +      A phandle and PM domain specifier for an optional power domain.
+> > +    maxItems: 1
+> > +
+> > +  required-opps:
+> > +    description:
+> > +      A phandle to an OPP node describing an optional performance point.
 > 
-> Johan
-> 
-> 
-> Johan Hovold (8):
->   clk: qcom: camcc-sc7180: fix async resume during probe
->   clk: qcom: dispcc-sm8450: fix runtime PM imbalance on probe errors
->   clk: qcom: dispcc-sm8550: fix runtime PM imbalance on probe errors
->   clk: qcom: gcc-sc8280xp: fix runtime PM imbalance on probe errors
->   clk: qcom: lpasscc-sc7280: fix missing resume during probe
->   clk: qcom: q6sstop-qcs404: fix missing resume during probe
->   clk: qcom: mss-sc7180: fix missing resume during probe
->   clk: qcom: turingcc-qcs404: fix missing resume during probe
-> 
-> [...]
+> I'd rephrase this to be something more exact, like 'desribing power 
+> domain's performance point'.
 
-Applied, thanks!
+Sure.  I'll leave out the word "optional", that becomes obvious from
+maxItems:1 without minItems, together with referencing a PM which itself
+is already optional.
 
-[1/8] clk: qcom: camcc-sc7180: fix async resume during probe
-      commit: c948ff727e25297f3a703eb5349dd66aabf004e4
-[2/8] clk: qcom: dispcc-sm8450: fix runtime PM imbalance on probe errors
-      commit: b0f3d01bda6c3f6f811e70f76d2040ae81f64565
-[3/8] clk: qcom: dispcc-sm8550: fix runtime PM imbalance on probe errors
-      commit: acaf1b3296a504d4a61b685f78baae771421608d
-[4/8] clk: qcom: gcc-sc8280xp: fix runtime PM imbalance on probe errors
-      commit: 10192ab375c39c58d39cba028d9685cefe1ca3c2
-[5/8] clk: qcom: lpasscc-sc7280: fix missing resume during probe
-      commit: 66af5339d4f8e20c6d89a490570bd94d40f1a7f6
-[6/8] clk: qcom: q6sstop-qcs404: fix missing resume during probe
-      commit: 97112c83f4671a4a722f99a53be4e91fac4091bc
-[7/8] clk: qcom: mss-sc7180: fix missing resume during probe
-      commit: e2349da0fa7ca822cda72f427345b95795358fe7
-[8/8] clk: qcom: turingcc-qcs404: fix missing resume during probe
-      commit: a9f71a033587c9074059132d34c74eabbe95ef26
+- Marijn
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+> > +    maxItems: 1
+> > +
+> >   required:
+> >     - compatible
+> >     - reg
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
+> 
