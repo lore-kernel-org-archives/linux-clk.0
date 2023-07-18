@@ -2,105 +2,100 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F35EB64DA
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 04:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 769E2EB64DA
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 05:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230167AbjGREWK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 00:22:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52366 "EHLO
+        id S229480AbjGRFvl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 01:51:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229804AbjGREWK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 00:22:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF0D81B5;
-        Mon, 17 Jul 2023 21:22:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7159F61375;
-        Tue, 18 Jul 2023 04:22:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEEDDC433C7;
-        Tue, 18 Jul 2023 04:22:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689654127;
-        bh=DH3pvRF8EX3slaZ3uZwiwp2DM3ieEzqPgVab6Ze81ME=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j2CBYhXj3IVTEKGJ6q4hMRkvcKdg9DabM29jVtDeUkhbDUXHHkQE9R4Kx86/FqgVK
-         uvMycjb/4BYM+mAX2t9doAFtfV+IJFl/fKK/VZi04cMWLODrQt5ZVWNJqaKpZLqSQf
-         4Z0kxr3IKyykQFxbismwByYDYTvod+KDrMk9qJCz7sy4IZ5jy6WdTyIUlSKV+SDajr
-         MlYI7fhenuI11CjYMSOrVJHKviKvGtSlSf1xeawpSKAEujA5D0zy2zlMOzrmGrldPZ
-         ieaj6G2mpgxQBsPvUhv0/Occ6jrKd2g0oDjp4nf6jKTRAQ857NMgiqMzkirlJjsHyp
-         N2GdHL4wwKjPg==
-Date:   Mon, 17 Jul 2023 21:25:31 -0700
-From:   Bjorn Andersson <andersson@kernel.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 15/15] arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CCC
-Message-ID: <zha5rmva3zhvvknnmeso6errwhkdjomk6r5d72an7moimdvymq@skow5jqtps5g>
-References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
- <20230717-topic-branch_aon_cleanup-v1-15-27784d27a4f4@linaro.org>
- <ZLVsN40kYsvQm1z6@gerhold.net>
- <a193a4dd-0a0a-0d36-6d83-0424cd1dce80@linaro.org>
- <ZLVyvHnKPdOfqAck@gerhold.net>
- <8c5dc146-c305-bef9-0d97-76a91345ed1a@linaro.org>
+        with ESMTP id S229458AbjGRFvk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 01:51:40 -0400
+Received: from ex01.ufhost.com (ex01.ufhost.com [61.152.239.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89341E55;
+        Mon, 17 Jul 2023 22:51:37 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by ex01.ufhost.com (Postfix) with ESMTP id F3C1324E280;
+        Tue, 18 Jul 2023 13:51:26 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Jul
+ 2023 13:51:27 +0800
+Received: from [192.168.125.128] (113.72.147.86) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Tue, 18 Jul
+ 2023 13:51:25 +0800
+Message-ID: <4e4dea7f-639b-71aa-5a47-95ce14d7f1ed@starfivetech.com>
+Date:   Tue, 18 Jul 2023 13:48:09 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c5dc146-c305-bef9-0d97-76a91345ed1a@linaro.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH v7 0/7] Add PLL clocks driver and syscon for StarFive
+ JH7110 SoC
+Content-Language: en-US
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        William Qiu <william.qiu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20230717023040.78860-1-xingyu.wu@starfivetech.com>
+ <20230717-easel-pessimist-5b7c4e5bed0a@spud>
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <20230717-easel-pessimist-5b7c4e5bed0a@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [113.72.147.86]
+X-ClientProxiedBy: EXCAS062.cuchost.com (172.16.6.22) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 17, 2023 at 07:11:33PM +0200, Konrad Dybcio wrote:
-> On 17.07.2023 18:56, Stephan Gerhold wrote:
-> > On Mon, Jul 17, 2023 at 06:50:18PM +0200, Konrad Dybcio wrote:
-> >> On 17.07.2023 18:28, Stephan Gerhold wrote:
-> >>> On Mon, Jul 17, 2023 at 05:19:22PM +0200, Konrad Dybcio wrote:
-> >>>> The GPU_CC block is powered by VDD_CX. Describe that.
-> >>>>
-> >>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>>> ---
-> >>>>  arch/arm64/boot/dts/qcom/sm6115.dtsi | 2 ++
-> >>>>  1 file changed, 2 insertions(+)
-> >>>>
-> >>>> diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-> >>>> index 29b5b388cd94..bfaaa1801a4d 100644
-> >>>> --- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
-> >>>> +++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-> >>>> @@ -1430,6 +1430,8 @@ gpucc: clock-controller@5990000 {
-> >>>>  			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> >>>>  				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-> >>>>  				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-> >>>> +			power-domains = <&rpmpd SM6115_VDDCX>;
-> >>>> +			required-opps = <&rpmpd_opp_low_svs>;
-> >>>
-> >>> Where is this required-opp coming from? The clocks in gpucc seem to have
-> >>> different voltage requirements depending on the rates, but we usually
-> >>> handle that in the OPP tables of the consumer.
-> >> The only lower levels defined for this SoC are VDD_MIN and VDD_RET,
-> >> but quite obviously the GPU won't work then
-> >>
-> > 
-> > The levels needed for the GPU clocks to run should be in the GPU OPP
-> > table though, just like e.g. sdhc2_opp_table for the SDCC clocks.
-> > 
-> > I still don't really understand why this is specified here. :)
-> The GPU_CC block needs this rail to be at a certain power level for
-> register access. This describes that requirement.
+On 2023/7/18 2:14, Conor Dooley wrote:
+> Hey Xingyu,
+> 
+> On Mon, Jul 17, 2023 at 10:30:33AM +0800, Xingyu Wu wrote:
+>> This patch serises are to add PLL clocks driver and providers by writing
+>> and reading syscon registers for the StarFive JH7110 RISC-V SoC. And add 
+>> documentation and nodes to describe StarFive System Controller(syscon)
+>> Registers. This patch serises are based on Linux 6.4.
+>> 
+>> PLLs are high speed, low jitter frequency synthesizers in JH7110.
+>> Each PLL clock works in integer mode or fraction mode by some dividers,
+>> and the dividers are set in several syscon registers.
+>> The formula for calculating frequency is: 
+>> Fvco = Fref * (NI + NF) / M / Q1
+>> 
+>> The first patch adds docunmentation to describe PLL clock bindings,
+>> and the second patch adds documentation to decribe syscon registers.
+>> The patch 3 modifies the SYSCRG bindings and adds PLL clock inputs.
+>> The patch 4 adds driver to support PLL clocks for JH7110.
+>> The patch 5 modifies the system clock driver and can select the PLL clock
+>> source from PLL clocks driver. And the patch 6 adds the 
+>> stg/sys/aon syscon nodes for JH7110 SoC. The last patch modifies the 
+>> syscrg node in JH7110 dts file.
+> 
+> Just FYI, I have picked up the binding & clock portions of this series
+> and your other one adding the stg syscon. I've pushed them out here for
+> the test robots to have a look:
+> https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/log/?h=clk-starfive
+> 
+> If that passes, my plan is to send Stephen a PR for the lot, later this
+> week.
 > 
 
-And that is not the lowest level reported by command db?
-Please describe this part in the commit message as well.
+Great. Thank you for everything.
 
-Thanks,
-Bjorn
+Best regards,
+Xingyu Wu
+
