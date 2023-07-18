@@ -2,130 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47595EB64DA
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 14:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C55EB64DA
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 15:02:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232413AbjGROzV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 10:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39428 "EHLO
+        id S232869AbjGRPCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 11:02:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232225AbjGROzU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 10:55:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B39E0;
-        Tue, 18 Jul 2023 07:55:18 -0700 (PDT)
+        with ESMTP id S232827AbjGRPCu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 11:02:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D44ED171A;
+        Tue, 18 Jul 2023 08:02:48 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 701E16160E;
-        Tue, 18 Jul 2023 14:55:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27BA7C433C7;
-        Tue, 18 Jul 2023 14:55:17 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7318261627;
+        Tue, 18 Jul 2023 15:02:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D706BC433C7;
+        Tue, 18 Jul 2023 15:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689692117;
-        bh=min4l/bR2fEVj3vzFg5K0E/Z3Mb/vK8ghVM0zgoNXe0=;
+        s=k20201202; t=1689692567;
+        bh=sy7DCojCRG8d7aqK80NuXkkijlk7Z0axQrX85V5IRrg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Sj745agqf7fyXuF0t2aNdV9a39HVkdXPFE510iWq6ryKyoLCBuLwAvigXQ5J23FgA
-         i510E6TmRWATLgfKQ0QSXrmAWlRl8C3U6mlpsva6nALUH+Iue9+a5fxpj+xmZddTgH
-         B6nLwl4CwzMtXLplboRNjxlI7cClbW6wY0WnEtXeV1IBErksi9gBtFCSwzlR2o4/us
-         YMosMVZTS6NOB0O28g8fl3pZtFNKKeLkuo6TORAHAoqIHdG1dzjWD3HfuV2EGLaLPo
-         G2gHyH8JzzzuVR9PxiFYrUWNzXxoCgs5koa5XMLdN6XuhlNT9//8231Bsjh5ijitlW
-         7eVKh8i+cEZxw==
-Date:   Tue, 18 Jul 2023 07:58:41 -0700
+        b=jnSKhCaobgOyjj4OaIVde77zX9hr/BJiYdfIQd3KHcHYfRZY/b4Kn//JZry0UGtaU
+         o8vdAOJBpAGQ4xEhieCd+t+yfrjgSIt71X5oAM2v/wu7sEaX9myytOKHGJguXzLMwZ
+         OhYkTbnj6BhHwXoicueU/T1WQgGb5L2PKGY6A7xIqLOsQ6gHEgsA6FPGW+hD8LT7lP
+         cIcZ8XqIVwHDv7dJTSnm3ihjAHZMBaXMQ3fXIe3nZX7wAwzb8MeL9IPhdYCXDW9q7f
+         kYkB0CHyyDajGAfR+omS7E6B3IZUafuxwy7uSmRHLeP6xRFSHvOHJGc6KjjCvvPNDy
+         XBBubkYth0XUg==
+Date:   Tue, 18 Jul 2023 08:06:11 -0700
 From:   Bjorn Andersson <andersson@kernel.org>
-To:     Johan Hovold <johan+linaro@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [PATCH 5/8] clk: qcom: lpasscc-sc7280: fix missing resume during
- probe
-Message-ID: <xbek6yuldy7ck3zlux76hosn4iqt52ocydovuol7geiwapslrd@j7uyxhrkiyaw>
-References: <20230718132902.21430-1-johan+linaro@kernel.org>
- <20230718132902.21430-6-johan+linaro@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 15/15] arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CCC
+Message-ID: <yk4xiydi47e7dn3zhasmnhgjc3l23napvznioshm2xx7uf5ziw@b7htk7ixes5b>
+References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v1-15-27784d27a4f4@linaro.org>
+ <ZLVsN40kYsvQm1z6@gerhold.net>
+ <a193a4dd-0a0a-0d36-6d83-0424cd1dce80@linaro.org>
+ <ZLVyvHnKPdOfqAck@gerhold.net>
+ <8c5dc146-c305-bef9-0d97-76a91345ed1a@linaro.org>
+ <zha5rmva3zhvvknnmeso6errwhkdjomk6r5d72an7moimdvymq@skow5jqtps5g>
+ <18e192cb-eafe-3aa9-6602-b1a9dbe020d5@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230718132902.21430-6-johan+linaro@kernel.org>
+In-Reply-To: <18e192cb-eafe-3aa9-6602-b1a9dbe020d5@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 03:28:59PM +0200, Johan Hovold wrote:
-> Drivers that enable runtime PM must make sure that the controller is
-> runtime resumed before accessing its registers to prevent the power
-> domain from being disabled.
+On Tue, Jul 18, 2023 at 02:21:31PM +0200, Konrad Dybcio wrote:
+> On 18.07.2023 06:25, Bjorn Andersson wrote:
+> > On Mon, Jul 17, 2023 at 07:11:33PM +0200, Konrad Dybcio wrote:
+> >> On 17.07.2023 18:56, Stephan Gerhold wrote:
+> >>> On Mon, Jul 17, 2023 at 06:50:18PM +0200, Konrad Dybcio wrote:
+> >>>> On 17.07.2023 18:28, Stephan Gerhold wrote:
+> >>>>> On Mon, Jul 17, 2023 at 05:19:22PM +0200, Konrad Dybcio wrote:
+> >>>>>> The GPU_CC block is powered by VDD_CX. Describe that.
+> >>>>>>
+> >>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> >>>>>> ---
+> >>>>>>  arch/arm64/boot/dts/qcom/sm6115.dtsi | 2 ++
+> >>>>>>  1 file changed, 2 insertions(+)
+> >>>>>>
+> >>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
+> >>>>>> index 29b5b388cd94..bfaaa1801a4d 100644
+> >>>>>> --- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
+> >>>>>> +++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
+> >>>>>> @@ -1430,6 +1430,8 @@ gpucc: clock-controller@5990000 {
+> >>>>>>  			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> >>>>>>  				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
+> >>>>>>  				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
+> >>>>>> +			power-domains = <&rpmpd SM6115_VDDCX>;
+> >>>>>> +			required-opps = <&rpmpd_opp_low_svs>;
+> >>>>>
+> >>>>> Where is this required-opp coming from? The clocks in gpucc seem to have
+> >>>>> different voltage requirements depending on the rates, but we usually
+> >>>>> handle that in the OPP tables of the consumer.
+> >>>> The only lower levels defined for this SoC are VDD_MIN and VDD_RET,
+> >>>> but quite obviously the GPU won't work then
+> >>>>
+> >>>
+> >>> The levels needed for the GPU clocks to run should be in the GPU OPP
+> >>> table though, just like e.g. sdhc2_opp_table for the SDCC clocks.
+> >>>
+> >>> I still don't really understand why this is specified here. :)
+> >> The GPU_CC block needs this rail to be at a certain power level for
+> >> register access. This describes that requirement.
+> >>
+> > 
+> > And that is not the lowest level reported by command db?
+> > Please describe this part in the commit message as well.
+> command-what? ;)
 > 
 
-NB: the clock framework will runtime resume the controller surrounding
-operations, even so during probe. But this is not done for resets and
-gdscs - and in some clock drivers we poke registers directly from
-probe...
+Apparently doesn't matter that I read that line multiple times, my brain
+really wanted a 'h' in there.
 
-The one time this really matters is where we associate the ahb clock
-with the runtime state, e.g. in qcs404 turingcc. On most other platforms
-we just mark these clocks always-on in gcc...
+> RPM exports VDD_NONE (off), VDD_MIN (the lowest state before collapse)
+> and then low_svs is usually the lowest "actually on" state for all
+> consumers.
+> 
+
+In rpmhpd I changed it such that the minimal enabled state would be
+!disabled (so that the automatic enablement during probe would be
+sufficient to access registers), but talking to Ulf this is
+provider-specific.
+
+So unless you can figure out a acceptable lowest non-disabled state this
+is what has to be done...
+
+
+PS. My ask for mentioning this in the commit message still stands.
 
 Regards,
 Bjorn
-
-> Fixes: 4ab43d171181 ("clk: qcom: Add lpass clock controller driver for SC7280")
-> Cc: stable@vger.kernel.org      # 5.16
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/clk/qcom/lpasscc-sc7280.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/lpasscc-sc7280.c b/drivers/clk/qcom/lpasscc-sc7280.c
-> index 0df2b29e95e3..e6b815aec46a 100644
-> --- a/drivers/clk/qcom/lpasscc-sc7280.c
-> +++ b/drivers/clk/qcom/lpasscc-sc7280.c
-> @@ -118,9 +118,13 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
->  	ret = pm_clk_add(&pdev->dev, "iface");
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "failed to acquire iface clock\n");
-> -		goto destroy_pm_clk;
-> +		goto err_destroy_pm_clk;
->  	}
->  
-> +	ret = pm_runtime_resume_and_get(&pdev->dev);
-> +	if (ret)
-> +		goto err_destroy_pm_clk;
-> +
->  	if (!of_property_read_bool(pdev->dev.of_node, "qcom,adsp-pil-mode")) {
->  		lpass_regmap_config.name = "qdsp6ss";
->  		lpass_regmap_config.max_register = 0x3f;
-> @@ -128,7 +132,7 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
->  
->  		ret = qcom_cc_probe_by_index(pdev, 0, desc);
->  		if (ret)
-> -			goto destroy_pm_clk;
-> +			goto err_put_rpm;
->  	}
->  
->  	lpass_regmap_config.name = "top_cc";
-> @@ -137,11 +141,15 @@ static int lpass_cc_sc7280_probe(struct platform_device *pdev)
->  
->  	ret = qcom_cc_probe_by_index(pdev, 1, desc);
->  	if (ret)
-> -		goto destroy_pm_clk;
-> +		goto err_put_rpm;
-> +
-> +	pm_runtime_put(&pdev->dev);
->  
->  	return 0;
->  
-> -destroy_pm_clk:
-> +err_put_rpm:
-> +	pm_runtime_put_sync(&pdev->dev);
-> +err_destroy_pm_clk:
->  	pm_clk_destroy(&pdev->dev);
->  
->  	return ret;
-> -- 
-> 2.41.0
-> 
