@@ -2,111 +2,219 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D64EB64DA
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 08:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B17AEB64DA
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 08:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231860AbjGRIhv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 04:37:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55414 "EHLO
+        id S231953AbjGRIko (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 04:40:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229670AbjGRIhu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 04:37:50 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E49115
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 01:37:48 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-314319c0d3eso5520289f8f.0
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 01:37:48 -0700 (PDT)
+        with ESMTP id S229847AbjGRIkn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 04:40:43 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E84B10F9
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 01:40:34 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9926623e367so769939066b.0
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 01:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20221208.gappssmtp.com; s=20221208; t=1689669467; x=1692261467;
+        d=linaro.org; s=google; t=1689669633; x=1692261633;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oqJ9u4SGNXyNg5ofFpDQaS2ayWAUml8z0VaX7hI3krE=;
-        b=OtQl27dbnrPDI7c6OCZexeFM1iYA9d10Zwj0fJcjU/xtspNfbU+DGUpo46ndDA1aIM
-         gZg/OCmSHMHuQuMmvVeoXewgFNsxM0pIz6YgPuvE2vjcY+02CxfSY1UL4s58Ck/orQ1o
-         rYFArvC3gq1tjaq/Ls0ZSpzgjHsBPeY3D5vbiHVrl2WILTRaSuFa8nM1XkvE1CtETZM9
-         XWwbJsgMx7HE8f/oE1sWY419GaCKdr+lXUbKY+6EoISl4wlhMQT/T5YzFDmRxzggXRnj
-         qhUkGGoMXPPBH5sSG3KZe0+qk5qr1Ys7Z9El9iEcXhdSc1GBSVBQVKEGBQdURjhdcgg/
-         5zVg==
+        bh=CWZTBAgn0sS+qEaFaptfqAKbYTBQ+DgmJZTWl6nef1U=;
+        b=QqWpVaddIE2t/8XVvP/3VyDPBoo7sCh27hFVqsmka9a0CENOreiYjqjZCZNzPpfvnj
+         0NNNTHQhoKUp9jKGf27C40p4Ghh8X7VIGh3E/Q08cf4x6K+eKZf+l2NtQByWx9FL3uCW
+         0WsAAj2DfzrXGe+05VsD+njMxyaiVuu9cOrLjdRqdyD6k+DndbTUrqn8alMk8LKJ866Y
+         1G+hqsJrukJB7GYbafnMMS7qSnYXHXPD+yGdrjLpl/xjqIeuQW1WkDUcDLFx8f2TQBti
+         DObTe3wiffKTw2x/I8NG/rERN0faQEBCXoA/L4iFyAZHoWRaLepOhThwcrcF3r8nTOoG
+         fnog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689669467; x=1692261467;
+        d=1e100.net; s=20221208; t=1689669633; x=1692261633;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oqJ9u4SGNXyNg5ofFpDQaS2ayWAUml8z0VaX7hI3krE=;
-        b=FjN12s2V7R820VSZjricRDketShzfP9hBa+wDilm2NQCYEmzc624d/aBWzSk90SdmN
-         35653FoCnIIxiezTS52PdG8KzwA40a+ZPJDJns+xp05yBc8tTshbt6vMjLh9TpOtLOMg
-         BqCIov60hm+k5rzgsf7fcFyfQo7w6IDd7MPrBcIdCLjqnNoASQQpqsP2WaGSgX70cMO6
-         4dF17bIPxuy4MpH7U6n/SGRe5JQJVURTkVA14IX8d4h34bcisREWJtc1QiD2az/rN6aP
-         pQOcjHBG1UyKFyqwrmJb5SiskEp48xuTijfRhk7MjtO7STWJbShS2FdQQDcR+5dhSWQN
-         eHuA==
-X-Gm-Message-State: ABy/qLZsrjVqdYHK4fII8o17dCdNTpYzSvdYZZyE9B7E3bd9HGx8qtAG
-        hvezbMFKG1q4gQRkO+kusLmepw==
-X-Google-Smtp-Source: APBJJlFK/PMnPBKxy9LlIGsKQCxu9WTEnU0WFv4qPQ2XmQ7jxfyYmlP+rhkxlTGNQbZ/CrvEDeEwUA==
-X-Received: by 2002:a5d:49d0:0:b0:314:1e47:8bc2 with SMTP id t16-20020a5d49d0000000b003141e478bc2mr13465958wrs.0.1689669467371;
-        Tue, 18 Jul 2023 01:37:47 -0700 (PDT)
-Received: from [10.101.1.6] (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id n18-20020adffe12000000b003143be36d99sm1696453wrr.58.2023.07.18.01.37.46
+        bh=CWZTBAgn0sS+qEaFaptfqAKbYTBQ+DgmJZTWl6nef1U=;
+        b=FR9SMe+Q/meNRuHH2ZF01wAH0rPtO9Xrr0HCBee0mzgsIncWA1HQCJ/qDeIQ90XqxO
+         Fc+ZlIyG2WIJMugPqU3koTkwq/SR51EebeccMYGcQ4IxwlJTrT1TnWixJfgvNmyzo67q
+         OlKBxiao6dWOqHvTMnYib8sA1IiJbMMNec3VCoIacZdDKYFR57AKe1iAsRZn0vQXJaZC
+         poHqfmB16DPqtZvJPb9fF4ugfrN2zl0vl5M/gAzTgta8KRs8qGZeWKaTks4Q/X8Eq2Ma
+         P8Iz7BuAPg9XsJ0EJ1XRfU6fX5skovpwsgFClAWrBnKPWCio5n0r7Le9L3KAixWn4bMJ
+         X4rg==
+X-Gm-Message-State: ABy/qLbRTjl+qPPe/xK+IlMcT/TuPA34qOuFEeFntRf42peg2vZ6DSOm
+        1MTXZDfjjHtlLeFySxd58Ie/lg==
+X-Google-Smtp-Source: APBJJlGXvZzY/4ZnkMYEMZVjqUOmFmubBz1PHzs4Mn4Z4u51BwEhq7i+2TcH00XbtVWsX2YKrYCOfg==
+X-Received: by 2002:a17:906:6b97:b0:98e:26ae:9b01 with SMTP id l23-20020a1709066b9700b0098e26ae9b01mr12759543ejr.65.1689669633012;
+        Tue, 18 Jul 2023 01:40:33 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id lc11-20020a170906dfeb00b00992ae4cf3c1sm697275ejc.186.2023.07.18.01.40.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jul 2023 01:37:46 -0700 (PDT)
-Message-ID: <cf31ccd0-f11a-49f6-4e55-457fa78c8b86@baylibre.com>
-Date:   Tue, 18 Jul 2023 10:37:45 +0200
+        Tue, 18 Jul 2023 01:40:32 -0700 (PDT)
+Message-ID: <28bfbafb-88c3-7284-6933-052caf734681@linaro.org>
+Date:   Tue, 18 Jul 2023 10:40:30 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 1/2] clk: mediatek: clk-mux: Support custom parent indices
- for muxes
+Subject: Re: [PATCH] dt-bindings: clock: versal: Convert the
+ xlnx,zynqmp-clk.txt to yaml
 Content-Language: en-US
-To:     AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>, sboyd@kernel.org
-Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
-        wenst@chromium.org, msp@baylibre.com, yangyingliang@huawei.com,
-        u.kleine-koenig@pengutronix.de, miles.chen@mediatek.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20230713072138.84117-1-angelogioacchino.delregno@collabora.com>
- <20230713072138.84117-2-angelogioacchino.delregno@collabora.com>
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20230713072138.84117-2-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+        devicetree@vger.kernel.org
+Cc:     git@amd.com, linux-clk@vger.kernel.org, michal.simek@amd.com,
+        conor+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        robh+dt@kernel.org, sboyd@kernel.org, mturquette@baylibre.com
+References: <20230718061035.9341-1-shubhrajyoti.datta@amd.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230718061035.9341-1-shubhrajyoti.datta@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 18/07/2023 08:10, Shubhrajyoti Datta wrote:
+> Convert the xlnx,zynqmp-clk.txt to yaml.
+> versal-clk.yaml already exists that's why zynqmp is converted and
+> merged.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+> ---
+> Please let me know if the mergeing of the versal and zynqmp is fine 
+> or if a seperate yaml is preferred.
+> 
+> Rebased on [1] to avoid merge conflict.
+> 
+> [1] https://lore.kernel.org/all/20230620110137.5701-1-shubhrajyoti.datta@amd.com/
+> 
+>  .../bindings/clock/xlnx,versal-clk.yaml       | 73 +++++++++++++++++--
+>  .../bindings/clock/xlnx,zynqmp-clk.txt        | 63 ----------------
+>  2 files changed, 65 insertions(+), 71 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/xlnx,zynqmp-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> index e9cf747bf89b..1b69e2590478 100644
+> --- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> @@ -20,6 +20,7 @@ properties:
+>    compatible:
+>      oneOf:
+>        - const: xlnx,versal-clk
+> +      - const: xlnx,zynqmp-clk
+
+These two are enum.
+
+>        - items:
+>            - enum:
+>                - xlnx,versal-net-clk
+> @@ -31,16 +32,9 @@ properties:
+>    clocks:
+>      description: List of clock specifiers which are external input
+>        clocks to the given clock controller.
+> -    items:
+> -      - description: reference clock
+> -      - description: alternate reference clock
+> -      - description: alternate reference clock for programmable logic
+
+Missing constraints.
+
+>  
+>    clock-names:
+> -    items:
+> -      - const: ref
+> -      - const: alt_ref
+> -      - const: pl_alt_ref
+> +    minItems: 3
+
+This cannot be min. You wanted maxItems.
+
+>  
+>  required:
+>    - compatible
+> @@ -50,6 +44,60 @@ required:
+>  
+>  additionalProperties: false
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - xlnx,versal-clk
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: reference clock
+> +            - description: alternate reference clock
+> +            - description: alternate reference clock for programmable logic
+> +
+> +        clock-names:
+> +          items:
+> +            - const: ref
+> +            - const: alt_ref
+> +            - const: pl_alt_ref
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - xlnx,zynqmp-clk
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 5
+> +          items:
+> +            - description: PS reference clock
+> +            - description: reference clock for video system
+> +            - description: alternative PS reference clock
+> +            - description: auxiliary reference clock
+> +            - description: transceiver reference clock
+> +            - description: (E)MIO clock source  (Optional clock)
+
+So you have 5-6 items.
+
+> +
+> +        clock-names:
+> +          minItems: 5
+> +          items:
+> +            - const: pss_ref_clk
+> +            - const: video_clk
+> +            - const: pss_alt_ref_clk
+> +            - const: aux_ref_clk
+> +            - const: gt_crx_ref_clk
+> +            - const: mio_clk_50_or_51
+> +            - pattern: "^mio_clk[00-77]+.*$"
+> +            - pattern: "gem[0-3]+_emio_clk.*$"
+> +            - pattern: "swdt[0-1]+_ext_clk.*$"
+
+But here more. It's a mess.
+
+> +
+>  examples:
+>    - |
+>      firmware {
+> @@ -64,4 +112,13 @@ examples:
+>          };
+>        };
+>      };
+> +
+> +    clock-controller1{
+
+clock-controller
 
 
-On 13/07/2023 09:21, AngeloGioacchino Del Regno wrote:
-> Add support for customized parent indices for MediaTek muxes: this is
-> necessary for the case in which we want to exclude some clocks from
-> a mux's parent clocks list, where the exclusions are not from the
-> very bottom of the list but either in the middle or the beginning.
-> 
-> Example:
-> - MUX1 (all parents)
->    - parent1; idx=0
->    - parent2; idx=1
->    - parent3; idx=2
-> 
-> - MUX1 (wanted parents)
->    - parent1; idx=0
->    - parent3; idx=2
-> 
-> To achieve that add a `parent_index` array pointer to struct mtk_mux,
-> then in .set_parent(), .get_parent() callbacks check if this array
-> was populated and eventually get the index from that.
-> 
-> Also, to avoid updating all clock drivers for all SoCs, rename the
-> "main" macro to __GATE_CLR_SET_UPD_FLAGS (so, `__` was added) and
-> add the new member to it; furthermore, GATE_CLK_SET_UPD_FLAGS has
-> been reintroduced as being fully compatible with the older version.
-> 
-> The new parent_index can be specified with the new `_INDEXED`
-> variants of the MUX_GATE_CLR_SET_UPD_xxxx macros.
+> +        #clock-cells = <1>;
+> +        compatible = "xlnx,zynqmp-clk";
+> +        clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>,
+> +                 <&aux_ref_clk>, <&gt_crx_ref_clk>;
+> +        clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk",
+> +                      "aux_ref_clk", "gt_crx_ref_clk";
+> +    };
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
 
--- 
-Regards,
-Alexandre
+Best regards,
+Krzysztof
+
