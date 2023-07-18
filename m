@@ -2,29 +2,37 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5630DEB64DC
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 21:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EC7EB64DD
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 21:24:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbjGRVEo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 17:04:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59406 "EHLO
+        id S231147AbjGRVYn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 17:24:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbjGRVEn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 17:04:43 -0400
-Received: from relay08.th.seeweb.it (relay08.th.seeweb.it [5.144.164.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3E75198C
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 14:04:34 -0700 (PDT)
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+        with ESMTP id S229805AbjGRVYn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 17:24:43 -0400
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [IPv6:2001:4b7a:2000:18::167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C59EC
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 14:24:41 -0700 (PDT)
+Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 5B9953F434;
-        Tue, 18 Jul 2023 23:04:32 +0200 (CEST)
-Date:   Tue, 18 Jul 2023 23:04:31 +0200
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 1B03F3F5C7;
+        Tue, 18 Jul 2023 23:24:38 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+Subject: [PATCH v3 00/15] drm/msm: Add SM6125 MDSS/DPU hardware and enable
+ Sony Xperia 10 II panel
+Date:   Tue, 18 Jul 2023 23:24:36 +0200
+Message-Id: <20230718-sm6125-dpu-v3-0-6c5a56e99820@somainline.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABQDt2QC/23NSw6CMBgE4KuYrq3pA1p05T2Miz5+oAm0pJVGQ
+ 7i7hZVGlzPJN7OgBNFBQpfDgiJkl1zwJfDjAZle+Q6wsyUjRhgnglU4jYKyGttpxgqsOQsuAaR
+ GBWiVAOuovOkL8fMwlHKK0Lrn/nC7l9y79AjxtR9murV/tzPFBFNbK8EbA7pl1xRG5fzgPJxC7
+ NC2ldmnl1+eFU84VJwoRmRjfvy6rm+B3UzY/gAAAA==
+To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <andersson@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -33,109 +41,126 @@ Cc:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Clark <robdclark@gmail.com>,
         Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
         Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
+        Konrad Dybcio <konrad.dybcio@somainline.org>
+Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
         Martin Botka <martin.botka@somainline.org>,
         Jami Kettunen <jami.kettunen@somainline.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-Subject: Re: [PATCH v2 12/15] arm64: dts: qcom: sm6125: Switch fixed xo_board
- clock to RPM XO clock
-Message-ID: <zytqzpzkuaqpzyylgyj6jjhbisq674an5s5z522e4hvbbny6ip@2ct5u23kpj46>
-References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
- <20230627-sm6125-dpu-v2-12-03e430a2078c@somainline.org>
- <84eb1d40-436b-a5b4-a4e3-75a511ad5a90@linaro.org>
- <st3nrb54zxa5xp7qqkdyygf7t6ucgzl3xc5w6d426xy6udj4fx@puakunoaoj2l>
- <CAA8EJpqHh4ZWZxuRMLN2z8BZYFqzoWxZV=oW1ANzEJy4i-PWNw@mail.gmail.com>
- <ba1a6af3-b522-09da-ae81-88f75eae7a47@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba1a6af3-b522-09da-ae81-88f75eae7a47@linaro.org>
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-06-29 21:14:47, Konrad Dybcio wrote:
-> On 29.06.2023 14:26, Dmitry Baryshkov wrote:
-> > On Thu, 29 Jun 2023 at 15:09, Marijn Suijten
-> > <marijn.suijten@somainline.org> wrote:
-> >>
-> >> On 2023-06-29 13:55:28, Dmitry Baryshkov wrote:
-> >>> On 27/06/2023 23:14, Marijn Suijten wrote:
-> >>>> We have a working RPM XO clock; no other driver except rpmcc should be
-> >>>> parenting directly to the fixed-factor xo_board clock nor should it be
-> >>>> reachable by that global name.  Remove the name to that effect, so that
-> >>>> every clock relation is explicitly defined in DTS.
-> >>>>
-> >>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> >>>> Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
-> >>>> ---
-> >>>>   arch/arm64/boot/dts/qcom/sm6125.dtsi | 7 ++++---
-> >>>>   1 file changed, 4 insertions(+), 3 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> >>>> index 722dde560bec..edb03508dba3 100644
-> >>>> --- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> >>>> +++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-> >>>> @@ -22,7 +22,6 @@ xo_board: xo-board {
-> >>>>                     compatible = "fixed-clock";
-> >>>>                     #clock-cells = <0>;
-> >>>>                     clock-frequency = <19200000>;
-> >>>> -                   clock-output-names = "xo_board";
-> >>>
-> >>> Why? I'd say, leave it.
-> >>
-> >> The exact reason is explained in the commit message.
-> > 
-> > Usually we do no not kill the xo_board name for the sake of anybody
-> > still looking for the old name. Weak argument, I know.
-> The only users are (rg -l '"xo_board"' drivers):
-> 
-> drivers/clk/qcom/mmcc-msm8974.c
-> drivers/clk/qcom/a53-pll.c
-> drivers/clk/qcom/gcc-msm8974.c
-> drivers/clk/qcom/clk-smd-rpm.c
-> drivers/clk/qcom/mmcc-msm8996.c
-> drivers/clk/qcom/gcc-msm8916.c
-> drivers/clk/qcom/gcc-apq8084.c
-> drivers/clk/qcom/gcc-msm8996.c
-> drivers/clk/qcom/mmcc-apq8084.c
-> drivers/clk/qcom/clk-rpmh.c
-> drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c
-> 
-> This platform only binds clk-smd-rpm, but patch 11 provides a
-> direct reference in the DT.
+Bring up the SM6125 DPU now that all preliminary series (such as INTF
+TE) have been merged (for me to test the hardware properly), and most
+other conflicting work (barring ongoing catalog *improvements*) has made
+its way in as well or is still being discussed.
 
-And following a quick check, those occurrences all have
-.fw_name="xo",.name="xo_board", allowing the clock to be provided via
-DT.  For sm6125, I'd like it to be required like that: all dt-bindings
-require an "xo" board where relevant, after all.
+The second part of the series complements that by immediately utilizing
+this hardware in DT, and even enabling the MDSS/DSI nodes complete with
+a 6.0" 1080x2520 panel for Sony's Seine PDX201 (Xperia 10 II).
 
-- Marijn
+The last patch ("sm6125-seine: Configure MDSS, DSI and panel") depends
+on (an impending v2 of) my Sony panel collection series [1].
 
-> 
-> Konrad
-> 
-> > 
-> >>
-> >>>
-> >>> With that fixed:
-> >>
-> >> Hence I don't think it makes sense to "fix" this.
-> >>
-> >> - Marijn
-> >>
-> >>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > 
-> > 
-> > 
+[1]: https://lore.kernel.org/linux-arm-msm/20230521-drm-panels-sony-v1-0-541c341d6bee@somainline.org/
+
+---
+Changes in v3:
+- Drop status="disabled" from MDSS dt-bindings example;
+- Use "nom" instead of "svs" OPP for dsi-phy PD, matching downstream;
+- Add "retention" OPP to dispcc PD;
+- Reword dsi-phy required-opps documentation;
+- Rebased on latest -next and fixed conflicts in DT and DPU catalog;
+- Link to v2: https://lore.kernel.org/r/20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org
+
+Changes in v2:
+- Moved dispcc DT clock reordering to the right patch (--fixup on the
+  wrong hash) (Dmitry, Konrad multiple times);
+- Drop removal of GCC_DISP_AHB_CLK in dispcc bindings.  While it is
+  unused in the current driver, it is likely used to ensure a guaranteed
+  probe order between GCC and DISPCC downstream, as well as currently
+  relying on the fact that GCC_DISP_AHB_CLK is CLK_IS_CRITICAL and never
+  turned off (Bjorn);
+- Add GCC_DISP_GPLL0_DIV_CLK_SRC at the end of the dispcc clock list to
+  maintain some form of ABI stability (Krzysztof);
+- Use SoC-prefix format for 14nm DSI PHY qcom,sm6125-dsi-phy-14nm
+  compatible (Dmitry, Krzysztof);
+- Add patch to drop unused regulators from QCM2290 14nm DSI PHY (Konrad,
+  Dmitry);
+- Reuse QCM2290 14nm DSI PHY config struct for SM6125 compatible
+  (Konrad);
+- s/sde/mdss in pdx201.dts pinctrl node names and labels (Konrad);
+- Use MX power domain in DSI PHY with SVS OPP (Dmitry);
+- Use CX power domain with (already-existing) OPP table in DSI CTRL
+  (Konrad, Dmitry);
+- Rebased on top of DPU catalog rework [1] by inlining macro
+  invocations, and validated by diffing stripped dpu_hw_catalog.o that
+  there are no unexpected changes;
+- Unset min_llcc_ib because this platform has no LLCC (Konrad);
+- Fix UBWC comment to mention "encoding" version (Dmitry);
+- Reordered DT nodes to follow Konrad's requested sorting;
+- Add power-domains and required-opps properties to dsi-phy-14nm.yaml;
+- Link to v1: https://lore.kernel.org/r/20230624-sm6125-dpu-v1-0-1d5a638cebf2@somainline.org
+
+The discussions and this list ran quite long, apologies if I missed or
+mis-resolved anything in advance!
+
+[1]: https://lore.kernel.org/linux-arm-msm/20230619212519.875673-1-dmitry.baryshkov@linaro.org/
+
+---
+Marijn Suijten (15):
+      drm/msm/dsi: Drop unused regulators from QCM2290 14nm DSI PHY config
+      arm64: dts: qcom: sm6125: Sort spmi_bus node numerically by reg
+      dt-bindings: clock: qcom,dispcc-sm6125: Require GCC PLL0 DIV clock
+      dt-bindings: clock: qcom,dispcc-sm6125: Allow power-domains property
+      dt-bindings: display/msm: dsi-controller-main: Document SM6125
+      dt-bindings: display/msm: sc7180-dpu: Describe SM6125
+      dt-bindings: display/msm: Add SM6125 MDSS
+      drm/msm/dpu: Add SM6125 support
+      drm/msm/mdss: Add SM6125 support
+      dt-bindings: msm: dsi-phy-14nm: Document SM6125 variant
+      drm/msm/dsi: Reuse QCM2290 14nm DSI PHY configuration for SM6125
+      arm64: dts: qcom: sm6125: Switch fixed xo_board clock to RPM XO clock
+      arm64: dts: qcom: sm6125: Add dispcc node
+      arm64: dts: qcom: sm6125: Add display hardware nodes
+      arm64: dts: qcom: sm6125-seine: Configure MDSS, DSI and panel
+
+ .../bindings/clock/qcom,dispcc-sm6125.yaml         |  24 +-
+ .../bindings/display/msm/dsi-controller-main.yaml  |   2 +
+ .../bindings/display/msm/dsi-phy-14nm.yaml         |  11 +
+ .../bindings/display/msm/qcom,sc7180-dpu.yaml      |  14 ++
+ .../bindings/display/msm/qcom,sm6125-mdss.yaml     | 211 +++++++++++++++++
+ .../dts/qcom/sm6125-sony-xperia-seine-pdx201.dts   |  59 +++++
+ arch/arm64/boot/dts/qcom/sm6125.dtsi               | 255 +++++++++++++++++++--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h | 236 +++++++++++++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   7 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c              |   2 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c         |   2 -
+ drivers/gpu/drm/msm/msm_mdss.c                     |   8 +
+ 14 files changed, 810 insertions(+), 23 deletions(-)
+---
+base-commit: 535ce75f2d80a47ce5407681014cd5a976646e38
+change-id: 20230624-sm6125-dpu-aedc9637ee7b
+
+Best regards,
+-- 
+Marijn Suijten <marijn.suijten@somainline.org>
+
