@@ -2,112 +2,117 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3205EB64DC
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Jul 2023 21:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630B7C001E0
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 00:21:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229630AbjGQVXS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Jul 2023 17:23:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54448 "EHLO
+        id S229780AbjGRAVt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Jul 2023 20:21:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229609AbjGQVXS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 17:23:18 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07698E7;
-        Mon, 17 Jul 2023 14:23:16 -0700 (PDT)
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36HKi7gZ005639;
-        Mon, 17 Jul 2023 21:23:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=date : from : to :
- cc : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=qcppdkim1; bh=cytvABo84vy7mFR/hVdvACmKWzXDqxPDfu+u5PnjsJo=;
- b=FHxJcVEgoY7dV1lsYEY0EjdxUUqKcZF+3cpWoPMYUgnLIENvJh32oWx/FFqIVdHGxL5g
- 2SOS7HuKU+sXy5RG9dl2wZ6gNwJyO4UB98EweFM/2Dk/ThIT/5uKu7ec4mZTrFTpbzky
- WK4MvZtuaIbcmZyyr2O3yGs/A/uGMpIHcQDawszI6OtohwdtxQhhEEjJeyt5POzWgknc
- LzP5rwuR5CZK90xlDIn4lrTlS7LnngULIZ0Qv2923DLfrBXznyN//N72vgAnFSjEzAL4
- OJ9rUb2l+bstblTrTpfmNkjXFXP4whDQWU5+t8mDbxDeSDoUObIpDrxpARMm/ai/1QLI vA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3run0avkey-1
+        with ESMTP id S229525AbjGRAVs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Jul 2023 20:21:48 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6830C188;
+        Mon, 17 Jul 2023 17:21:47 -0700 (PDT)
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36I0IH2X004331;
+        Tue, 18 Jul 2023 00:21:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=5LYMsdxq2ACqd3ECX/fCECW/MTx8NzJMwAESEVb+ZgA=;
+ b=V6nYqV8of5IvXPPX7613Vy9GFtKMCshL9FUfWxcAScAfVzvWNoJib+LmjmAPmYWh8NbX
+ FAAF2Scyacml2ylDjF7FmfZkCPpDJxI+3up9ddNkaaU7FQNcmw5UKBdxNt7tdydDTbpj
+ gSIqBpiSnXhkaZbCdaDI/N1geLwfPqIEoaJgIMEmglQOlE680NmYjD2VBd6CpRSGXBJz
+ e/lziakCWq7Rixoo9H4vhl0f1W/jJV7AvJTw/jsHUFRkkPDe15hmEF85Dp7GAZyxBENv
+ cxbZ1YwaJiZljJB+W2q15PleQjj+4/3vojxRijwGX0qtZo14n0+mD4wl+W8QkwpJ6Fj3 4Q== 
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rw3yv1nn5-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Jul 2023 21:23:11 +0000
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36HLNADK003222
+        Tue, 18 Jul 2023 00:21:22 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36I0LMRp029347
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 17 Jul 2023 21:23:10 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+        Tue, 18 Jul 2023 00:21:22 GMT
+Received: from abhinavk-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Mon, 17 Jul 2023 14:23:10 -0700
-Date:   Mon, 17 Jul 2023 14:23:09 -0700
-From:   Bjorn Andersson <quic_bjorande@quicinc.com>
-To:     Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-CC:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+ 15.2.1118.30; Mon, 17 Jul 2023 17:21:21 -0700
+From:   Abhinav Kumar <quic_abhinavk@quicinc.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        "Konrad Dybcio" <konrad.dybcio@somainline.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>
+CC:     Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        <~postmarketos/upstreaming@lists.sr.ht>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        "Jami Kettunen" <jami.kettunen@somainline.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [RESEND] clk: qcom: rcg: Update rcg configuration before
- enabling it
-Message-ID: <20230717212309.GA4176673@hu-bjorande-lv.qualcomm.com>
-References: <20230712014812.3337992-1-quic_skakitap@quicinc.com>
+        "Krzysztof Kozlowski" <krzk@kernel.org>,
+        <linux-clk@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, "Lux Aliaga" <they@mint.lgbt>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: (subset) [PATCH v2 00/15] drm/msm: Add SM6125 MDSS/DPU hardware and enable Sony Xperia 10 II panel
+Date:   Mon, 17 Jul 2023 17:21:04 -0700
+Message-ID: <168963956983.20544.464055078610137556.b4-ty@quicinc.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
+References: <20230627-sm6125-dpu-v2-0-03e430a2078c@somainline.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20230712014812.3337992-1-quic_skakitap@quicinc.com>
-X-Originating-IP: [10.49.16.6]
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vptW1ctTBT4fQwY_XCWZZB6spRdZSs8r
-X-Proofpoint-ORIG-GUID: vptW1ctTBT4fQwY_XCWZZB6spRdZSs8r
+X-Proofpoint-ORIG-GUID: Yp8dlRB86l0Ni4E0xtXrUTl8VzeaELx3
+X-Proofpoint-GUID: Yp8dlRB86l0Ni4E0xtXrUTl8VzeaELx3
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
  definitions=2023-07-17_15,2023-07-13_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- mlxlogscore=852 bulkscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1011 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307170193
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ spamscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ bulkscore=0 phishscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=753
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2306200000
+ definitions=main-2307180001
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 12, 2023 at 07:18:12AM +0530, Satya Priya Kakitapalli wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
+
+On Tue, 27 Jun 2023 22:14:15 +0200, Marijn Suijten wrote:
+> Bring up the SM6125 DPU now that all preliminary series (such as INTF
+> TE) have been merged (for me to test the hardware properly), and most
+> other conflicting work (barring ongoing catalog *improvements*) has made
+> its way in as well or is still being discussed.
 > 
-> If rcg is in disabled state when clk_rcg2_shared_set_rate is called, the
-> new configuration is written to the configuration register but it won't be
-> effective in h/w yet because update bit won't be set if rcg is in disabled
-> state.
-
-Does this take commit '703db1f5da1e ("clk: qcom: rcg2: Cache CFG
-register updates for parked RCGs")', which was merged in v5.19, into
-consideration?
-
-> Since the new configuration is not yet updated in h/w, dirty bit of
-> configuration register will be set in such case. Clear the dirty bit and
-> update the rcg to proper new configuration by setting the update bit before
-> enabling the rcg.
+> The second part of the series complements that by immediately utilizing
+> this hardware in DT, and even enabling the MDSS/DSI nodes complete with
+> a 6.0" 1080x2520 panel for Sony's Seine PDX201 (Xperia 10 II).
 > 
+> [...]
 
-For a shared rcg2, which was updated while disabled, updates will be
-carried in the "parked_cfg" variable and the RCG_CFG will be stale so
-invoking update_config() should lead to exactly the problem you describe
-fixing here.
+Applied, thanks!
 
-Perhaps I'm missing something here, can you please confirm that this has
-been validated on a recent upstream kernel?
+[01/15] drm/msm/dsi: Drop unused regulators from QCM2290 14nm DSI PHY config
+        https://gitlab.freedesktop.org/drm/msm/-/commit/97368254a08e
 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
-> Resending this patch as there is no review for 2 months.
-> 
-
-Thanks for bumping the discussion.
-
-Regards,
-Bjorn
+Best regards,
+-- 
+Abhinav Kumar <quic_abhinavk@quicinc.com>
