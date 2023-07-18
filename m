@@ -2,106 +2,152 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93096C04E69
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D65FC0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232754AbjGRNaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 09:30:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34254 "EHLO
+        id S232828AbjGRNg7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 09:36:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232753AbjGRN3z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:29:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C227124;
-        Tue, 18 Jul 2023 06:29:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5BDAC6158D;
-        Tue, 18 Jul 2023 13:29:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ACDCC433BA;
-        Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689686984;
-        bh=YujBf+tSBimSZNEfZhDQx4wRVWWIF1I4fAuUh7MYhGU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YmIIeasD+VaC2Xfn+NQv1hEgjLN+EocrpSUkbost1LU6y29N7ZAZig7/5AukCFMkA
-         RXcIis9R8tIbzePesSTgpwH039Mk7WAoW7hL7ZWg/N26/tDkP/oIQMHHQ4I88Zje21
-         NrkuxsG8wplGmK06mjd1s0+C3WyrkEiQOVE9iFWcGABjL8Kao/mxfczHs562zcPc0v
-         WH8kXwXFEBisOl//Rch6Ht83H9lIRJdmd8c3soTyHRJPOzheqPtIRl0+9EAqXnAxui
-         kH1qbwb5SeWqxGTG+MJCzUQQYfjFDHowtyPaOJ5f7621J23QjI9GuWsKlRy3Vb2uMg
-         1DcMSarGXWHgw==
-Received: from johan by xi.lan with local (Exim 4.96)
-        (envelope-from <johan+linaro@kernel.org>)
-        id 1qLkm2-0005c5-06;
-        Tue, 18 Jul 2023 15:29:54 +0200
-From:   Johan Hovold <johan+linaro@kernel.org>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 4/8] clk: qcom: gcc-sc8280xp: fix runtime PM imbalance on probe errors
-Date:   Tue, 18 Jul 2023 15:28:58 +0200
-Message-ID: <20230718132902.21430-5-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230718132902.21430-1-johan+linaro@kernel.org>
-References: <20230718132902.21430-1-johan+linaro@kernel.org>
+        with ESMTP id S232631AbjGRNgv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:36:51 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6F6F1702
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 06:36:39 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id 38308e7fff4ca-2b701e41cd3so88383351fa.3
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jul 2023 06:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689687398; x=1692279398;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hp7UgnldNcHA7FZx3WIx9aOagNjv/KtuNEbWyENtJnA=;
+        b=oGFGd0FP042iyZd37c7nyenPiJFz/AO4vwIGmPPiBLZ1+VUXrw/l4TlTmHUn9dn36i
+         JsHuBXdt+NLWsVYWFCmcRuv50+1m9NNcVdmrGuly+uR1T8kb3wo5MBbvAi+l6c6ayI2E
+         F8oBKCAjQwz4H/Nzs4tqRQNMvlTVxzFmFOxtYzVYVrraof3khRBj91sFyvyj8iDXTR/U
+         PdDi2rrciwUTgm/fipsXPOEyelj5fijEswO55KMYmIVC2yQzOk7J6dL+R/aSP4mdCngI
+         69rEkwQoBWmbi7KZuDule39Lnnz+uKmwME3zcxwK21INsGeG9AJvuWvjYZuN/hrKqNcd
+         YAVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689687398; x=1692279398;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hp7UgnldNcHA7FZx3WIx9aOagNjv/KtuNEbWyENtJnA=;
+        b=QjAYhPU8Q8RQaqaAcDaroxt3dOcPqseSfwvckTxggqqdTMzdyeU6i71ILXhqNw9hrN
+         9aTMfiIfoMKeS336JEKdHziDLFzZJqdzhJ363xwZv36QWYMTvHY+INK6QWI73PSQx2X9
+         HGi4fr+qicdSlGwgOmUFVK8Tkzp6ZHBDI/0RoUXqyR3Tnr52sY6VIzqwuG4QWixlNxMq
+         3nivQavBRgZshMvGKEeVxN06e5ucWrM7cH1GaRsePf2AnXKNEQoMR2X8vnBgQRcl6CRM
+         MUK09y0UjoLKH0c+x3Z1zDwhWIkiw0XijH0BZg08GGoxyogaLwGntIsrTEx36lbsCP4E
+         nZbg==
+X-Gm-Message-State: ABy/qLZFm7XcrMpVGSydvPyGg31um/roqvb56d/9k1fSMHDVQTZr63l4
+        N3oXxREQd7iPE8oZiIysxJLZuA==
+X-Google-Smtp-Source: APBJJlEgu9uSDaqhIXSpJjdBCEk3Mz4dqmv970bnu18XX0t6LiabJ0R4/28cYLVkOSADKddST27Gtw==
+X-Received: by 2002:a05:6512:5c1:b0:4f8:83f:babe with SMTP id o1-20020a05651205c100b004f8083fbabemr9554309lfo.62.1689687397885;
+        Tue, 18 Jul 2023 06:36:37 -0700 (PDT)
+Received: from [192.168.1.101] (abyj181.neoplus.adsl.tpnet.pl. [83.9.29.181])
+        by smtp.gmail.com with ESMTPSA id p11-20020ac246cb000000b004faa82946d8sm444846lfo.178.2023.07.18.06.36.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Jul 2023 06:36:37 -0700 (PDT)
+Message-ID: <8c342c2b-db37-1360-c716-0e4cdf3809a7@linaro.org>
+Date:   Tue, 18 Jul 2023 15:36:35 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 15/15] arm64: dts: qcom: sm6115: Add VDD_CX to GPU_CCC
+Content-Language: en-US
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v1-15-27784d27a4f4@linaro.org>
+ <ZLVsN40kYsvQm1z6@gerhold.net>
+ <a193a4dd-0a0a-0d36-6d83-0424cd1dce80@linaro.org>
+ <ZLVyvHnKPdOfqAck@gerhold.net>
+ <8c5dc146-c305-bef9-0d97-76a91345ed1a@linaro.org>
+ <ZLV5CirE8CZfCjkX@gerhold.net>
+ <9b28a17a-fe9c-3ff0-fa1d-320e75e174d0@linaro.org>
+ <ZLZ94Qc6x1HyjJPQ@gerhold.net>
+ <d087d0df-0bf6-c93a-7999-f9385ebb7a38@linaro.org>
+ <CAA8EJppFaYPm33Z-_a+AgKYcWsaPE_y=B+agYVQ8z0ncfrvUAw@mail.gmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <CAA8EJppFaYPm33Z-_a+AgKYcWsaPE_y=B+agYVQ8z0ncfrvUAw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make sure to decrement the runtime PM usage count before returning in
-case RCG dynamic frequency switch initialisation fails.
+On 18.07.2023 15:08, Dmitry Baryshkov wrote:
+> On Tue, 18 Jul 2023 at 15:48, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> On 18.07.2023 13:56, Stephan Gerhold wrote:
+>>> On Mon, Jul 17, 2023 at 09:18:21PM +0200, Konrad Dybcio wrote:
+>>>> On 17.07.2023 19:23, Stephan Gerhold wrote:
+>>>>> On Mon, Jul 17, 2023 at 07:11:33PM +0200, Konrad Dybcio wrote:
+>>>>>> On 17.07.2023 18:56, Stephan Gerhold wrote:
+>>>>>>> On Mon, Jul 17, 2023 at 06:50:18PM +0200, Konrad Dybcio wrote:
+>>>>>>>> On 17.07.2023 18:28, Stephan Gerhold wrote:
+>>>>>>>>> On Mon, Jul 17, 2023 at 05:19:22PM +0200, Konrad Dybcio wrote:
+>>>>>>>>>> The GPU_CC block is powered by VDD_CX. Describe that.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>>>>>>>> ---
+>>>>>>>>>>  arch/arm64/boot/dts/qcom/sm6115.dtsi | 2 ++
+>>>>>>>>>>  1 file changed, 2 insertions(+)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
+>>>>>>>>>> index 29b5b388cd94..bfaaa1801a4d 100644
+>>>>>>>>>> --- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
+>>>>>>>>>> +++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
+>>>>>>>>>> @@ -1430,6 +1430,8 @@ gpucc: clock-controller@5990000 {
+>>>>>>>>>>                        clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+>>>>>>>>>>                                 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
+>>>>>>>>>>                                 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
+>>>>>>>>>> +                      power-domains = <&rpmpd SM6115_VDDCX>;
+>>>>>>>>>> +                      required-opps = <&rpmpd_opp_low_svs>;
+>>>>>>>>>
+>>>>>>>>> Where is this required-opp coming from? The clocks in gpucc seem to have
+>>>>>>>>> different voltage requirements depending on the rates, but we usually
+>>>>>>>>> handle that in the OPP tables of the consumer.
+>>>>>>>> The only lower levels defined for this SoC are VDD_MIN and VDD_RET,
+>>>>>>>> but quite obviously the GPU won't work then
+>>>>>>>>
+>>>>>>>
+>>>>>>> The levels needed for the GPU clocks to run should be in the GPU OPP
+>>>>>>> table though, just like e.g. sdhc2_opp_table for the SDCC clocks.
+>>>>>>>
+>>>>>>> I still don't really understand why this is specified here. :)
+>>>>>> The GPU_CC block needs this rail to be at a certain power level for
+>>>>>> register access. This describes that requirement.
+>>>>>>
+>>>>>
+>>>>> Can you show where this is defined downstream? On a quick look I didn't
+>>>>> see something like that anywhere. Or is this from some secret
+>>>>> documentation?
+>>>> As far as downstream goes, you can notice that no branch's or RCG's
+>>>> vdd tables ever define a level lower than the one I mentioned.
+>>>>
+>>>
+>>> As far as I can tell the vdd tables are only used when the clock is
+>>> actually enabled though, not for writing to registers while they are
+>>> disabled.
+>> Maybe, but you can also notice that even XO rates require at least
+>> SVS_LOW to function.
+> 
+> But the vdd tables are related to clock rates, which, in the upstream
+> design, should be voted by the consumers, not by the clock driver.
+Not all of the clocks are associated with OPP tables upstream, and it
+would be nice if the clock controller block had power flowing to it
+in case one wanted to access a different clock.
 
-Fixes: 2a541abd9837 ("clk: qcom: gcc-sc8280xp: Add runtime PM")
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- drivers/clk/qcom/gcc-sc8280xp.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-sc8280xp.c b/drivers/clk/qcom/gcc-sc8280xp.c
-index 1fb6ffac730c..ac6f8c0c1ccb 100644
---- a/drivers/clk/qcom/gcc-sc8280xp.c
-+++ b/drivers/clk/qcom/gcc-sc8280xp.c
-@@ -7539,8 +7539,8 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
- 
- 	regmap = qcom_cc_map(pdev, &gcc_sc8280xp_desc);
- 	if (IS_ERR(regmap)) {
--		pm_runtime_put(&pdev->dev);
--		return PTR_ERR(regmap);
-+		ret = PTR_ERR(regmap);
-+		goto err_put_rpm;
- 	}
- 
- 	/*
-@@ -7561,11 +7561,19 @@ static int gcc_sc8280xp_probe(struct platform_device *pdev)
- 
- 	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks, ARRAY_SIZE(gcc_dfs_clocks));
- 	if (ret)
--		return ret;
-+		goto err_put_rpm;
- 
- 	ret = qcom_cc_really_probe(pdev, &gcc_sc8280xp_desc, regmap);
-+	if (ret)
-+		goto err_put_rpm;
-+
- 	pm_runtime_put(&pdev->dev);
- 
-+	return 0;
-+
-+err_put_rpm:
-+	pm_runtime_put_sync(&pdev->dev);
-+
- 	return ret;
- }
- 
--- 
-2.41.0
-
+Konrad
