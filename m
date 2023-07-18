@@ -2,87 +2,103 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF59DEB64DA
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 15:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 902A7EB64DC
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 16:20:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233709AbjGRPju (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Jul 2023 11:39:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39526 "EHLO
+        id S231313AbjGRQUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Jul 2023 12:20:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233346AbjGRPjr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 11:39:47 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDE20E52;
-        Tue, 18 Jul 2023 08:39:46 -0700 (PDT)
+        with ESMTP id S229524AbjGRQUb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 12:20:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB73E0;
+        Tue, 18 Jul 2023 09:20:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 72DDE6164D;
-        Tue, 18 Jul 2023 15:39:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D56C433C8;
-        Tue, 18 Jul 2023 15:39:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2CAFB615E4;
+        Tue, 18 Jul 2023 16:20:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A43C6C433C8;
+        Tue, 18 Jul 2023 16:20:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689694785;
-        bh=niFUIW8RgEpvAiA6LUCdCCanWa0dt1Z+kgLKjKniI74=;
+        s=k20201202; t=1689697228;
+        bh=c2kq9yglTyBKkN+7oETy1EDzjSuSLPZJWdny+o8VQ/o=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F8nqHHPzXSuaiu4yqCxVn6565ivWW36QEwkPKlE4Yfn7Y2zDQ08Tlk+6MG1k25YCY
-         jLImfir4nCohVHrD01iUvnCVkW6XrTh7ApdvGcmOZzH1/a6N9TU6KW4VO31yHNNgAx
-         Nc+TfTJgONI8Wz6uq4mJhfIDRv0VFizJRGOIkIfr2d41zu7uR3l1gwowN6C+EDZnPw
-         YaUYTMALn2uo46LI0tUUaKDB7oehgXlsLawg6to9S1yQNiDnO+LBdxcioakgMUYd0l
-         yWYJAvJinQjqIwDxupQRzyocLyfylbXKpCaPxQ+ZcaxQ6zyUSlhdlGvhWoaE/EgVvA
-         QL3pz4SaW4esg==
-Received: from johan by xi.lan with local (Exim 4.96)
-        (envelope-from <johan@kernel.org>)
-        id 1qLmnr-0006Bq-1J;
-        Tue, 18 Jul 2023 17:39:55 +0200
-Date:   Tue, 18 Jul 2023 17:39:55 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Bjorn Andersson <andersson@kernel.org>
-Cc:     Johan Hovold <johan+linaro@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        b=XOPUAa+eM/tTEsH8tdvIg98C482Th52LWsYb76BnmMIgZuSXapxbuprHsiEa/rryS
+         AhwTyreo6R6Xk556bDH47DjRdm8aj1UQ0D+hbnC+klT5lbWSIbXnUADzWuFKpf57LE
+         xvd1P1URcwAHdRt6A58V4LgmREB0wM98hjoGwpayBqihkWyjMtxjEPW70DypGJ1tmZ
+         qAGDkbOl1kbTx5hqWp0y1a26P09uBi5b4o8VdqYb5jb8JTz0tjeXrXbFsC7lyzYRQC
+         7C9LubKovEEw5jM96iJrP9Jg+IW0su5Uoj4vhppFVhdYJyoBe2mTEwOTYCAj5NB6am
+         0Z+rN207FLhvQ==
+Date:   Tue, 18 Jul 2023 09:23:52 -0700
+From:   Bjorn Andersson <andersson@kernel.org>
+To:     Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc:     Johan Hovold <johan@kernel.org>, Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [PATCH 5/8] clk: qcom: lpasscc-sc7280: fix missing resume during
- probe
-Message-ID: <ZLaySwCQsgQCSRIW@hovoldconsulting.com>
-References: <20230718132902.21430-1-johan+linaro@kernel.org>
- <20230718132902.21430-6-johan+linaro@kernel.org>
- <xbek6yuldy7ck3zlux76hosn4iqt52ocydovuol7geiwapslrd@j7uyxhrkiyaw>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 03/15] clk: qcom: gcc-sm6375: Unregister critical clocks
+Message-ID: <ybugl2m7o5cnzj4lv5ksit2rip6yvths5ieo3xlw6cycto2zax@2jimga475z2t>
+References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v1-3-27784d27a4f4@linaro.org>
+ <ZLaRtrH85v4kpSvb@hovoldconsulting.com>
+ <33a26241-026a-9466-5dd6-e3202b29f57c@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xbek6yuldy7ck3zlux76hosn4iqt52ocydovuol7geiwapslrd@j7uyxhrkiyaw>
+In-Reply-To: <33a26241-026a-9466-5dd6-e3202b29f57c@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 18, 2023 at 07:58:41AM -0700, Bjorn Andersson wrote:
-> On Tue, Jul 18, 2023 at 03:28:59PM +0200, Johan Hovold wrote:
-> > Drivers that enable runtime PM must make sure that the controller is
-> > runtime resumed before accessing its registers to prevent the power
-> > domain from being disabled.
+On Tue, Jul 18, 2023 at 03:26:51PM +0200, Konrad Dybcio wrote:
+> On 18.07.2023 15:20, Johan Hovold wrote:
+> > On Mon, Jul 17, 2023 at 05:19:10PM +0200, Konrad Dybcio wrote:
+> >> Some clocks need to be always-on, but we don't really do anything
+> >> with them, other than calling enable() once and telling Linux they're
+> >> enabled.
+> >>
+> >> Unregister them to save a couple of bytes and, perhaps more
+> >> importantly, allow for runtime suspend of the clock controller device,
+> >> as CLK_IS_CRITICAL prevents the latter.
 > > 
+> > But this doesn't sound right. How can you disable a controller which
+> > still has clocks enabled?
+> > 
+> > Shouldn't instead these clocks be modelled properly so that they are
+> > only enabled when actually needed?
+> Hm.. We do have clk_branch2_aon_ops, but something still needs to
+> toggle these clocks.
 > 
-> NB: the clock framework will runtime resume the controller surrounding
-> operations, even so during probe. But this is not done for resets and
-> gdscs - and in some clock drivers we poke registers directly from
-> probe...
+
+Before we started replacing these clocks with static votes, I handled
+exactly this problem in the turingcc-qcs404 driver by registering the
+ahb clock with a pm_clk_add(). The clock framework will then
+automagically keep the clock enabled around operations, but it will also
+keep the runtime state active as long as the clock is prepared.
+
+As mentioned in an earlier reply today, there's no similarity to this in
+the reset or gdsc code, so we'd need to add that in order to rely on
+such mechanism.
+
+> I *think* we could leave a permanent vote in probe() without breaking
+> runtime pm! I'll give it a spin bit later..
 > 
-> The one time this really matters is where we associate the ahb clock
-> with the runtime state, e.g. in qcs404 turingcc. On most other platforms
-> we just mark these clocks always-on in gcc...
 
-Right, I started looking at this with respect to the PM domain, but
-my initial commit message only mentioned the need to make sure the
-controller is resumed, which would have covered such interface clocks as
-well. 
+Modelling the AHB clock in DT and putting a devm_clk_get_enabled() would
+properly connect the two, and thereby handle probe order between the two
+clock controllers.
 
-And while ending up with a concurrent request to disable the PM domain
-is not that likely, there is currently nothing preventing it so it still
-needs to be fixed.
+But it would prevent the power-domain of the parent provider to ever
+suspending. Using pm_clk_add() this would at least depend on client
+votes.
 
-Johan
+Regards,
+Bjorn
