@@ -2,39 +2,39 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 515EFC00528
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DD9EB64DC
 	for <linux-clk@archiver.kernel.org>; Tue, 18 Jul 2023 13:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232702AbjGRN3t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S232656AbjGRN3t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 18 Jul 2023 09:29:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34092 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232636AbjGRN3r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:29:47 -0400
+        with ESMTP id S230170AbjGRN3s (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Jul 2023 09:29:48 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4034712F;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7397718B;
         Tue, 18 Jul 2023 06:29:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C0B7561584;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DB5EE61590;
         Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2959DC433C7;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32200C433C9;
         Tue, 18 Jul 2023 13:29:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1689686984;
-        bh=ybftpD7g3WllyIW9pg3KLmPM1vfHLNTqTCAzw/a2IB4=;
+        bh=N3aIV0HWnuZiVpn6L5619rqDbPKqzDyiTGe7jMrlJmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rDNNDLtfsjpkODkDMAy7Aw2aCb/OduEEX8D/AotWmoOwmXpci++Rg7kWJsOAVSFld
-         h/pGOhveTb22/3EsQvE8mGrZPLZJpFg3uvLxKxUD79TU8TtChN1kS40G/DVBXYBU4Q
-         3QQSq+E44QErxYPu9Z/fHZTAaW9xl5LCJdyCxui4TOIlLOqdMWuA9qPKzYbxgTarPp
-         wT3+KtaRVb8mOmI/iTNi6BvEBQHlf9pU6lZZQt1u7r6IGzvDNo8GgCqDPePFpEJ5HG
-         8ofugJ/lF3UTzis/Ruf5MaY176tzDH5Oke24hBukLEJ1wJ63FauHo2E+rO+LUPZax2
-         c9qcS0tP8EI3w==
+        b=eb67WvZVbUDKKXvNg8xrcPA1bvauGIrL1qVV2wxncF79Tb8COtj2LDoqR7L9tjFY6
+         ox4hP48+hR4SyzWRk7MjqsvsmWX8aPBshAsa7540VaDowt9BzUht8qIrKESuFNFbgH
+         ODv2xiya1OBwOPkzId5Mfm2/gFa4jP7CaOIekCtPisbCNwotScXhg+Znf+ktPANDZs
+         /msa63RSXPcU6n21urC30BizHBDpPdJJAjfemLK3u5/Yzuiohp4YKe/9ikpuM0Ga11
+         d+gzVR1+M0DCe26yooKPt1LP//yVYrjQYVodi0oJstv5ni21JrXcMKHM+RbjQCSTQn
+         42Dae3aGtZAAQ==
 Received: from johan by xi.lan with local (Exim 4.96)
         (envelope-from <johan+linaro@kernel.org>)
-        id 1qLkm1-0005c2-33;
+        id 1qLkm1-0005by-2T;
         Tue, 18 Jul 2023 15:29:53 +0200
 From:   Johan Hovold <johan+linaro@kernel.org>
 To:     Bjorn Andersson <andersson@kernel.org>
@@ -43,11 +43,10 @@ Cc:     Andy Gross <agross@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Subject: [PATCH 3/8] clk: qcom: dispcc-sm8550: fix runtime PM imbalance on probe errors
-Date:   Tue, 18 Jul 2023 15:28:57 +0200
-Message-ID: <20230718132902.21430-4-johan+linaro@kernel.org>
+        Johan Hovold <johan+linaro@kernel.org>, stable@vger.kernel.org
+Subject: [PATCH 1/8] clk: qcom: camcc-sc7180: fix async resume during probe
+Date:   Tue, 18 Jul 2023 15:28:55 +0200
+Message-ID: <20230718132902.21430-2-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.41.0
 In-Reply-To: <20230718132902.21430-1-johan+linaro@kernel.org>
 References: <20230718132902.21430-1-johan+linaro@kernel.org>
@@ -57,50 +56,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make sure to decrement the runtime PM usage count before returning in
-case regmap initialisation fails.
+To make sure that the controller is runtime resumed and its power domain
+is enabled before accessing its registers during probe, the synchronous
+runtime PM interface must be used.
 
-Fixes: 90114ca11476 ("clk: qcom: add SM8550 DISPCC driver")
-Cc: stable@vger.kernel.org      # 6.3
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
+Fixes: 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops instead of clk ones")
+Cc: stable@vger.kernel.org      # 5.11
+Cc: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- drivers/clk/qcom/dispcc-sm8550.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/camcc-sc7180.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-index 1e5a11081860..b2fae9001ff2 100644
---- a/drivers/clk/qcom/dispcc-sm8550.c
-+++ b/drivers/clk/qcom/dispcc-sm8550.c
-@@ -1761,8 +1761,10 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/qcom/camcc-sc7180.c b/drivers/clk/qcom/camcc-sc7180.c
+index 8a4ba7a19ed1..6f56bdbf0204 100644
+--- a/drivers/clk/qcom/camcc-sc7180.c
++++ b/drivers/clk/qcom/camcc-sc7180.c
+@@ -1664,7 +1664,7 @@ static int cam_cc_sc7180_probe(struct platform_device *pdev)
  		return ret;
+ 	}
  
- 	regmap = qcom_cc_map(pdev, &disp_cc_sm8550_desc);
--	if (IS_ERR(regmap))
--		return PTR_ERR(regmap);
-+	if (IS_ERR(regmap)) {
-+		ret = PTR_ERR(regmap);
-+		goto err_put_rpm;
-+	}
- 
- 	clk_lucid_evo_pll_configure(&disp_cc_pll0, regmap, &disp_cc_pll0_config);
- 	clk_lucid_evo_pll_configure(&disp_cc_pll1, regmap, &disp_cc_pll1_config);
-@@ -1777,9 +1779,16 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
- 	regmap_update_bits(regmap, 0xe054, BIT(0), BIT(0));
- 
- 	ret = qcom_cc_really_probe(pdev, &disp_cc_sm8550_desc, regmap);
-+	if (ret)
-+		goto err_put_rpm;
- 
- 	pm_runtime_put(&pdev->dev);
- 
-+	return 0;
-+
-+err_put_rpm:
-+	pm_runtime_put_sync(&pdev->dev);
-+
- 	return ret;
- }
+-	ret = pm_runtime_get(&pdev->dev);
++	ret = pm_runtime_resume_and_get(&pdev->dev);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.41.0
