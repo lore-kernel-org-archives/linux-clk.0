@@ -2,161 +2,178 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9CCC001B0
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 17:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FC6C001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 18:39:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbjGSRiC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 13:38:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60352 "EHLO
+        id S230027AbjGSSjj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 14:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229610AbjGSRiB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 13:38:01 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7058218D
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 10:38:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        with ESMTP id S229497AbjGSSji (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 14:39:38 -0400
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C1C6C6;
+        Wed, 19 Jul 2023 11:39:35 -0700 (PDT)
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+        by mx1.sberdevices.ru (Postfix) with ESMTP id 660A412007A;
+        Wed, 19 Jul 2023 21:39:33 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 660A412007A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sberdevices.ru;
+        s=mail; t=1689791973;
+        bh=sc+94aLvgVUxBUEzSPbWOsr9WhtmbJCsOLteFFzOoLU=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+        b=ftS9UdnFVupfX9JxONl46s/RGEHl80jPk77NDDqzvRlD1qSq1jhJ6yXhfHaSPewnr
+         LEQ6tu0ClcfcCUU9btQ8pcnKoaAO2EJBXjugGbhFMHWzBlTJxypP0F3af+WF7YnUcT
+         qwRJV+UdIg9Tq/ng5S2MnxsHFZSDjXsqkqprkZ/FAn6+PAzMRaUZQlMaszmoB8jzPf
+         AAU7c/jMuvSi1AM8yvRzt0m4L7ILTyWgBLaRMTnYKOJhuMJljph7thz7MAefNZECdm
+         ASZdS2Hm97OvI4aj7PSdUXrCYM7KLsHLwhBPeZ4VRaDC7sbNbBsJ+UEFUFLlGc1JiM
+         1mc7vWHZzj6DA==
+Received: from p-i-exch-sc-m01.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DC94617D2
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 17:38:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0371C433C8;
-        Wed, 19 Jul 2023 17:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689788279;
-        bh=j8fNe4V6ZoYqVeurCp5XYHQ1q1HBhfOcJ3wv4cQjznI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=XXXIZzTnsOmNAZoY6u1uQNaEkzsZ7kWfKmmPwfb/6VUSvOvnHbwQLgeyum96k+FH6
-         DuqpxWo9ozapRiaI3O672LBXfrM9E/HuQBWB9foXmw0NuHmKUFW99d+qtJV75JvRBz
-         FoxupFrqguSin+YMWEaU2AJPug7nuHyVDg0OGQsunfeLaDogSWLNIq7pP+4JspYCDo
-         Mh96AQgspxG1Wqm2WBSLAK9lxWheTgXa6KfBuLQndPqM3VxGuMFa7ol2u/wkU7DW5u
-         k6zFL3dIzSirihoLS3hB7PRWWJiuXn5xCvN0JC6RmYD2nL1mij3l43r3Ky8CI7qP6O
-         MiB9lbZHbAcNQ==
-Date:   Wed, 19 Jul 2023 18:37:55 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     sboyd@kernel.org
-Cc:     conor@kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk@vger.kernel.org, emil.renner.berthing@canonical.com,
-        xingyu.wu@starfivetech.com, walker.chen@starfivetech.com,
-        hal.feng@starfivetech.com
-Subject: [GIT PULL] StarFive clock driver additions for v6.6
-Message-ID: <20230719-trough-frisk-40b92acb485a@spud>
+        by mx1.sberdevices.ru (Postfix) with ESMTPS;
+        Wed, 19 Jul 2023 21:39:33 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m01.sberdevices.ru
+ (172.16.192.107) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 19 Jul
+ 2023 21:39:33 +0300
+Date:   Wed, 19 Jul 2023 21:39:27 +0300
+From:   Dmitry Rokosov <ddrokosov@sberdevices.ru>
+To:     Rob Herring <robh@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Alex Helms <alexander.helms.jy@renesas.com>,
+        Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        <soc@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Michal Simek <michal.simek@amd.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-actions@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-oxnas@groups.io>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-riscv@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: Explicitly include correct DT includes
+Message-ID: <20230719183927.c4ykdjw3iekmugzy@CAB-WSD-L081021>
+References: <20230714174342.4052882-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qsMV8CFYKUIPWrxp"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <20230714174342.4052882-1-robh@kernel.org>
+User-Agent: NeoMutt/20220415
+X-Originating-IP: [100.64.160.123]
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 178730 [Jul 19 2023]
+X-KSMG-AntiSpam-Version: 5.9.59.0
+X-KSMG-AntiSpam-Envelope-From: DDRokosov@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 524 524 9753033d6953787301affc41bead8ed49c47b39d, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;p-i-exch-sc-m01.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2, FromAlignment: s, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2023/07/19 15:29:00 #21641898
+X-KSMG-AntiVirus-Status: Clean, skipped
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Jul 14, 2023 at 11:43:29AM -0600, Rob Herring wrote:
+> The DT of_device.h and of_platform.h date back to the separate
+> of_platform_bus_type before it as merged into the regular platform bus.
+> As part of that merge prepping Arm DT support 13 years ago, they
+> "temporarily" include each other. They also include platform_device.h
+> and of.h. As a result, there's a pretty much random mix of those include
+> files used throughout the tree. In order to detangle these headers and
+> replace the implicit includes with struct declarations, users need to
+> explicitly include the correct includes.
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
---qsMV8CFYKUIPWrxp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[...]
 
-Hey Stephen,
+For
 
-Please pull some clock driver additions for StarFive. I've had these
-commits, other than a rebase to pick up R-b tags from Emil, out for LKP
-to have a look at for a few days and they've gotten a clean bill of
-health. Some of the dt-binding stuff "only" has a review from me, but
-since I am a dt-binding maintainer that's fine, although maybe not
-common knowledge yet.
+>  drivers/clk/meson/a1-peripherals.c               | 2 +-
+>  drivers/clk/meson/a1-pll.c                       | 2 +-
 
-I've also gone and re-arranged the patches in this PR relative to their
-mailing list postings, so that the dt-binding patches can be used as a
-base for adding the clock controller nodes & dependant peripherals to
-the jh7110's dts.
+Reviewed-by: Dmitry Rokosov <ddrokosov@sberdevices.ru>
 
-I'm hoping that next time around, someone from StarFive can send you the
-PR, maybe Walker, Hal or Xingyu are interested in that.
+[...]
 
-Thanks,
-Conor.
-
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
-
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/ tags/clk-starfive-for-6.6
-
-for you to fetch changes up to dae5448a327edef952faaf31bb3aedb0597ba62a:
-
-  clk: starfive: Add StarFive JH7110 Video-Output clock driver (2023-07-19 18:08:05 +0100)
-
-----------------------------------------------------------------
-StarFive Clock Drivers for V6.6
-
-Add support for the System-Top-Group, Image-Signal-Process, Video-Output
-and PLL clocks on the JH7110 SoC. These drivers come with their
-associate dt-bindings & the obligatory headers containing defines of
-clock indices.
-
-To maintain backwards compatibility, the PLL driver will fall back to
-using the fixed factor clocks that were merged for v6.4. The binding has
-been updated to only permit sourcing the PLL clocks from the PLL's clock
-controller.
-
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-
-----------------------------------------------------------------
-Emil Renner Berthing (1):
-      clk: starfive: Add StarFive JH7110 System-Top-Group clock driver
-
-William Qiu (1):
-      dt-bindings: soc: starfive: Add StarFive syscon module
-
-Xingyu Wu (9):
-      dt-bindings: clock: Add StarFive JH7110 PLL clock generator
-      dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
-      dt-bindings: clock: Add StarFive JH7110 System-Top-Group clock and reset generator
-      dt-bindings: clock: Add StarFive JH7110 Image-Signal-Process clock and reset generator
-      dt-bindings: clock: Add StarFive JH7110 Video-Output clock and reset generator
-      clk: starfive: Add StarFive JH7110 PLL clock driver
-      clk: starfive: jh7110-sys: Add PLL clocks source from DTS
-      clk: starfive: Add StarFive JH7110 Image-Signal-Process clock driver
-      clk: starfive: Add StarFive JH7110 Video-Output clock driver
-
- .../bindings/clock/starfive,jh7110-ispcrg.yaml     |  87 ++++
- .../bindings/clock/starfive,jh7110-pll.yaml        |  46 ++
- .../bindings/clock/starfive,jh7110-stgcrg.yaml     |  82 ++++
- .../bindings/clock/starfive,jh7110-syscrg.yaml     |  18 +-
- .../bindings/clock/starfive,jh7110-voutcrg.yaml    |  90 ++++
- .../soc/starfive/starfive,jh7110-syscon.yaml       |  93 ++++
- MAINTAINERS                                        |  13 +
- drivers/clk/starfive/Kconfig                       |  33 ++
- drivers/clk/starfive/Makefile                      |   4 +
- drivers/clk/starfive/clk-starfive-jh7110-isp.c     | 232 ++++++++++
- drivers/clk/starfive/clk-starfive-jh7110-pll.c     | 507 +++++++++++++++++++++
- drivers/clk/starfive/clk-starfive-jh7110-stg.c     | 173 +++++++
- drivers/clk/starfive/clk-starfive-jh7110-sys.c     |  62 ++-
- drivers/clk/starfive/clk-starfive-jh7110-vout.c    | 239 ++++++++++
- drivers/clk/starfive/clk-starfive-jh7110.h         |   6 +
- include/dt-bindings/clock/starfive,jh7110-crg.h    |  80 ++++
- include/dt-bindings/reset/starfive,jh7110-crg.h    |  60 +++
- 17 files changed, 1803 insertions(+), 22 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
- create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
- create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-isp.c
- create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.c
- create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-stg.c
- create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-vout.c
-
-
---qsMV8CFYKUIPWrxp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZLgfcwAKCRB4tDGHoIJi
-0lmJAP9HWeKpdCSL67AwIjv55KgNNNrkUnKLYPLUvt5I9PVBiQD8CZL7F7liwV2T
-wp5fHXjNITJ5rh7sCYQ5V3PfHNRqEwI=
-=SUmS
------END PGP SIGNATURE-----
-
---qsMV8CFYKUIPWrxp--
+-- 
+Thank you,
+Dmitry
