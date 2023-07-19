@@ -2,213 +2,161 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5714C001E0
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 15:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9CCC001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 17:38:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231366AbjGSPub (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 11:50:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
+        id S229622AbjGSRiC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 13:38:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230383AbjGSPu3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 11:50:29 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95DCA172D
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 08:50:15 -0700 (PDT)
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+        with ESMTP id S229610AbjGSRiB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 13:38:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7058218D
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 10:38:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id ED5603F213
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 15:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689781812;
-        bh=lBkd8y3XOzT/fx92qUyW7CMl9N9JYFVT6xHfK84rRBs=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=Q9xjtbQ15Ybw7rewOfYq54BVdFXC0YvVzNRg0I4S3e12lTY/pVDdR9KFVlHCe4/Z7
-         nKIP9psEQoY6TugsP4MJZbj4ZcnJpktsMO5373Eit/K4f6oLM+wx8NqaK/95SSdjDg
-         u5e7QuQfKW6QIaGC9Q8Bxhbj/bGf4+ia6ZCCDBmhbsJjOCuLme/XkXet/ce38ZbnkM
-         XyEKqrENuPVFPihRYCFQ30RmTIiIsElMiYMF35Ss7DvsiT4Nq9N4Yo+WL8csDt5TYg
-         1DQi3O/Bk7vRkYhfYwH8i502gCfI9UHvQK/YbC2jEkwxv8S3q7lWKJPMFioef0Bpgl
-         KKL1yHOmgrDZg==
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-3f9e556c7d8so8020721cf.0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 08:50:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689781811; x=1690386611;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lBkd8y3XOzT/fx92qUyW7CMl9N9JYFVT6xHfK84rRBs=;
-        b=ifAWgLEwl3E2vAgjD5NTDLJBoJWC8LXphzhKuPLIdgY7d4W8Ho6fexhDTp44MZ2Ot1
-         X308ytJdbchUD/wHQOdM9LgxfdyqkFAFRzQXR4rhAS/87jR9h1+U3YF3ArnxH/U42Lxg
-         EORQ664T8W7pTR7Ek+rhZyu7kejRyu//4bzsx+fvBaxlaWuGmzFrnSA0TOaKWMCuE91d
-         D4Dnx9x8SJdDFPaQNKJthHWMk0592+KdIuBG9nk+XnJ3gN6vYhAiDqGj70vQRnF59I0s
-         pyTD39a6tSuzHkNSxibnLGFj6MPuXps8+Rf76iu0sa6abYGOYb/cP+lYVG7U3V7yU9MA
-         T0Pw==
-X-Gm-Message-State: ABy/qLbZYKTQCC+ivwOzV/EHCeoEyZP3qwD2dIfNYYKGRauycxMt4o1U
-        niEv8b6UEK0AcRLf0FYUhn5hLJntLkwiEPQAxxJ3P2qUGQLdRPZh57JbuD8WCwPxblcVp/fG8Zg
-        CQnGgPGYTUFN5Vh7JygWKuQSNHNpDpq0cs3CkqFhff8R40SCgGDszaA==
-X-Received: by 2002:a05:622a:1009:b0:402:d15e:2984 with SMTP id d9-20020a05622a100900b00402d15e2984mr2944881qte.32.1689781810933;
-        Wed, 19 Jul 2023 08:50:10 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlFLsdryo3l3HfOhrzOljHukZzudv9rHzS/TP/ey37QvguSJT9mRI3G5taBWNolBsF75e8Yi/YTmAsaRVIRiakk=
-X-Received: by 2002:a05:622a:1009:b0:402:d15e:2984 with SMTP id
- d9-20020a05622a100900b00402d15e2984mr2944851qte.32.1689781810663; Wed, 19 Jul
- 2023 08:50:10 -0700 (PDT)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DC94617D2
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 17:38:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0371C433C8;
+        Wed, 19 Jul 2023 17:37:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689788279;
+        bh=j8fNe4V6ZoYqVeurCp5XYHQ1q1HBhfOcJ3wv4cQjznI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=XXXIZzTnsOmNAZoY6u1uQNaEkzsZ7kWfKmmPwfb/6VUSvOvnHbwQLgeyum96k+FH6
+         DuqpxWo9ozapRiaI3O672LBXfrM9E/HuQBWB9foXmw0NuHmKUFW99d+qtJV75JvRBz
+         FoxupFrqguSin+YMWEaU2AJPug7nuHyVDg0OGQsunfeLaDogSWLNIq7pP+4JspYCDo
+         Mh96AQgspxG1Wqm2WBSLAK9lxWheTgXa6KfBuLQndPqM3VxGuMFa7ol2u/wkU7DW5u
+         k6zFL3dIzSirihoLS3hB7PRWWJiuXn5xCvN0JC6RmYD2nL1mij3l43r3Ky8CI7qP6O
+         MiB9lbZHbAcNQ==
+Date:   Wed, 19 Jul 2023 18:37:55 +0100
+From:   Conor Dooley <conor@kernel.org>
+To:     sboyd@kernel.org
+Cc:     conor@kernel.org, linux-riscv@lists.infradead.org,
+        linux-clk@vger.kernel.org, emil.renner.berthing@canonical.com,
+        xingyu.wu@starfivetech.com, walker.chen@starfivetech.com,
+        hal.feng@starfivetech.com
+Subject: [GIT PULL] StarFive clock driver additions for v6.6
+Message-ID: <20230719-trough-frisk-40b92acb485a@spud>
 MIME-Version: 1.0
-References: <20230717023040.78860-1-xingyu.wu@starfivetech.com> <20230717023040.78860-6-xingyu.wu@starfivetech.com>
-In-Reply-To: <20230717023040.78860-6-xingyu.wu@starfivetech.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Wed, 19 Jul 2023 17:49:54 +0200
-Message-ID: <CAJM55Z_cX09WQdxB+aNBXo+WVjoJYT5vQz5sbrNBmLikDiNJrQ@mail.gmail.com>
-Subject: Re: [PATCH v7 5/7] clk: starfive: jh7110-sys: Add PLL clocks source
- from DTS
-To:     Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Conor Dooley <conor@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        William Qiu <william.qiu@starfivetech.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qsMV8CFYKUIPWrxp"
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Jul 2023 at 04:30, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
->
-> Modify PLL clocks source to be got from DTS or
-> the fixed factor clocks.
->
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> ---
->  drivers/clk/starfive/Kconfig                  |  1 +
->  .../clk/starfive/clk-starfive-jh7110-sys.c    | 66 ++++++++++++-------
->  2 files changed, 45 insertions(+), 22 deletions(-)
->
-> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
-> index 5195f7be5213..978b78ec08b1 100644
-> --- a/drivers/clk/starfive/Kconfig
-> +++ b/drivers/clk/starfive/Kconfig
-> @@ -35,6 +35,7 @@ config CLK_STARFIVE_JH7110_SYS
->         select AUXILIARY_BUS
->         select CLK_STARFIVE_JH71X0
->         select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
-> +       select CLK_STARFIVE_JH7110_PLL
->         default ARCH_STARFIVE
->         help
->           Say yes here to support the system clock controller on the
-> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> index e6031345ef05..3884eff9fe93 100644
-> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> @@ -7,6 +7,7 @@
->   */
->
->  #include <linux/auxiliary_bus.h>
-> +#include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/init.h>
->  #include <linux/io.h>
-> @@ -389,6 +390,7 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->         struct jh71x0_clk_priv *priv;
->         unsigned int idx;
->         int ret;
-> +       struct clk *pllclk;
->
->         priv = devm_kzalloc(&pdev->dev,
->                             struct_size(priv, reg, JH7110_SYSCLK_END),
-> @@ -402,28 +404,42 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->         if (IS_ERR(priv->base))
->                 return PTR_ERR(priv->base);
->
-> -       /*
-> -        * These PLL clocks are not actually fixed factor clocks and can be
-> -        * controlled by the syscon registers of JH7110. They will be dropped
-> -        * and registered in the PLL clock driver instead.
-> -        */
-> -       /* 24MHz -> 1000.0MHz */
-> -       priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
-> -                                                        "osc", 0, 125, 3);
-> -       if (IS_ERR(priv->pll[0]))
-> -               return PTR_ERR(priv->pll[0]);
-> -
-> -       /* 24MHz -> 1066.0MHz */
-> -       priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
-> -                                                        "osc", 0, 533, 12);
-> -       if (IS_ERR(priv->pll[1]))
-> -               return PTR_ERR(priv->pll[1]);
-> -
-> -       /* 24MHz -> 1188.0MHz */
-> -       priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
-> -                                                        "osc", 0, 99, 2);
-> -       if (IS_ERR(priv->pll[2]))
-> -               return PTR_ERR(priv->pll[2]);
-> +       /* Use fixed factor clocks if can not get the PLL clocks from DTS */
-> +       pllclk = clk_get(priv->dev, "pll0_out");
-> +       if (IS_ERR(pllclk)) {
-> +               /* 24MHz -> 1000.0MHz */
-> +               priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
-> +                                                                "osc", 0, 125, 3);
-> +               if (IS_ERR(priv->pll[0]))
-> +                       return PTR_ERR(priv->pll[0]);
-> +       } else {
-> +               clk_put(pllclk);
-> +               priv->pll[0] = NULL;
 
-Not really important enough for a respin, but setting these to NULL is
-not needed as devm_kzalloc() already zeroes the memory allocated.
+--qsMV8CFYKUIPWrxp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In any case:
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Hey Stephen,
 
-> +       }
-> +
-> +       pllclk = clk_get(priv->dev, "pll1_out");
-> +       if (IS_ERR(pllclk)) {
-> +               /* 24MHz -> 1066.0MHz */
-> +               priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
-> +                                                                "osc", 0, 533, 12);
-> +               if (IS_ERR(priv->pll[1]))
-> +                       return PTR_ERR(priv->pll[1]);
-> +       } else {
-> +               clk_put(pllclk);
-> +               priv->pll[1] = NULL;
-> +       }
-> +
-> +       pllclk = clk_get(priv->dev, "pll2_out");
-> +       if (IS_ERR(pllclk)) {
-> +               /* 24MHz -> 1188.0MHz */
-> +               priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
-> +                                                                "osc", 0, 99, 2);
-> +               if (IS_ERR(priv->pll[2]))
-> +                       return PTR_ERR(priv->pll[2]);
-> +       } else {
-> +               clk_put(pllclk);
-> +               priv->pll[2] = NULL;
-> +       }
->
->         for (idx = 0; idx < JH7110_SYSCLK_END; idx++) {
->                 u32 max = jh7110_sysclk_data[idx].max;
-> @@ -462,6 +478,12 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
->                                 parents[i].fw_name = "tdm_ext";
->                         else if (pidx == JH7110_SYSCLK_MCLK_EXT)
->                                 parents[i].fw_name = "mclk_ext";
-> +                       else if (pidx == JH7110_SYSCLK_PLL0_OUT && !priv->pll[0])
-> +                               parents[i].fw_name = "pll0_out";
-> +                       else if (pidx == JH7110_SYSCLK_PLL1_OUT && !priv->pll[1])
-> +                               parents[i].fw_name = "pll1_out";
-> +                       else if (pidx == JH7110_SYSCLK_PLL2_OUT && !priv->pll[2])
-> +                               parents[i].fw_name = "pll2_out";
->                         else
->                                 parents[i].hw = priv->pll[pidx - JH7110_SYSCLK_PLL0_OUT];
->                 }
-> --
-> 2.25.1
->
+Please pull some clock driver additions for StarFive. I've had these
+commits, other than a rebase to pick up R-b tags from Emil, out for LKP
+to have a look at for a few days and they've gotten a clean bill of
+health. Some of the dt-binding stuff "only" has a review from me, but
+since I am a dt-binding maintainer that's fine, although maybe not
+common knowledge yet.
+
+I've also gone and re-arranged the patches in this PR relative to their
+mailing list postings, so that the dt-binding patches can be used as a
+base for adding the clock controller nodes & dependant peripherals to
+the jh7110's dts.
+
+I'm hoping that next time around, someone from StarFive can send you the
+PR, maybe Walker, Hal or Xingyu are interested in that.
+
+Thanks,
+Conor.
+
+The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+
+  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/ tags/clk-starfive-for-6.6
+
+for you to fetch changes up to dae5448a327edef952faaf31bb3aedb0597ba62a:
+
+  clk: starfive: Add StarFive JH7110 Video-Output clock driver (2023-07-19 18:08:05 +0100)
+
+----------------------------------------------------------------
+StarFive Clock Drivers for V6.6
+
+Add support for the System-Top-Group, Image-Signal-Process, Video-Output
+and PLL clocks on the JH7110 SoC. These drivers come with their
+associate dt-bindings & the obligatory headers containing defines of
+clock indices.
+
+To maintain backwards compatibility, the PLL driver will fall back to
+using the fixed factor clocks that were merged for v6.4. The binding has
+been updated to only permit sourcing the PLL clocks from the PLL's clock
+controller.
+
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+
+----------------------------------------------------------------
+Emil Renner Berthing (1):
+      clk: starfive: Add StarFive JH7110 System-Top-Group clock driver
+
+William Qiu (1):
+      dt-bindings: soc: starfive: Add StarFive syscon module
+
+Xingyu Wu (9):
+      dt-bindings: clock: Add StarFive JH7110 PLL clock generator
+      dt-bindings: clock: jh7110-syscrg: Add PLL clock inputs
+      dt-bindings: clock: Add StarFive JH7110 System-Top-Group clock and reset generator
+      dt-bindings: clock: Add StarFive JH7110 Image-Signal-Process clock and reset generator
+      dt-bindings: clock: Add StarFive JH7110 Video-Output clock and reset generator
+      clk: starfive: Add StarFive JH7110 PLL clock driver
+      clk: starfive: jh7110-sys: Add PLL clocks source from DTS
+      clk: starfive: Add StarFive JH7110 Image-Signal-Process clock driver
+      clk: starfive: Add StarFive JH7110 Video-Output clock driver
+
+ .../bindings/clock/starfive,jh7110-ispcrg.yaml     |  87 ++++
+ .../bindings/clock/starfive,jh7110-pll.yaml        |  46 ++
+ .../bindings/clock/starfive,jh7110-stgcrg.yaml     |  82 ++++
+ .../bindings/clock/starfive,jh7110-syscrg.yaml     |  18 +-
+ .../bindings/clock/starfive,jh7110-voutcrg.yaml    |  90 ++++
+ .../soc/starfive/starfive,jh7110-syscon.yaml       |  93 ++++
+ MAINTAINERS                                        |  13 +
+ drivers/clk/starfive/Kconfig                       |  33 ++
+ drivers/clk/starfive/Makefile                      |   4 +
+ drivers/clk/starfive/clk-starfive-jh7110-isp.c     | 232 ++++++++++
+ drivers/clk/starfive/clk-starfive-jh7110-pll.c     | 507 +++++++++++++++++++++
+ drivers/clk/starfive/clk-starfive-jh7110-stg.c     | 173 +++++++
+ drivers/clk/starfive/clk-starfive-jh7110-sys.c     |  62 ++-
+ drivers/clk/starfive/clk-starfive-jh7110-vout.c    | 239 ++++++++++
+ drivers/clk/starfive/clk-starfive-jh7110.h         |   6 +
+ include/dt-bindings/clock/starfive,jh7110-crg.h    |  80 ++++
+ include/dt-bindings/reset/starfive,jh7110-crg.h    |  60 +++
+ 17 files changed, 1803 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-ispcrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-stgcrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-voutcrg.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/starfive/starfive,jh7110-syscon.yaml
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-isp.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-pll.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-stg.c
+ create mode 100644 drivers/clk/starfive/clk-starfive-jh7110-vout.c
+
+
+--qsMV8CFYKUIPWrxp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZLgfcwAKCRB4tDGHoIJi
+0lmJAP9HWeKpdCSL67AwIjv55KgNNNrkUnKLYPLUvt5I9PVBiQD8CZL7F7liwV2T
+wp5fHXjNITJ5rh7sCYQ5V3PfHNRqEwI=
+=SUmS
+-----END PGP SIGNATURE-----
+
+--qsMV8CFYKUIPWrxp--
