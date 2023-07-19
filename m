@@ -2,59 +2,59 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1923C0015E
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 07:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC82C0015E
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 07:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbjGSHOK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 03:14:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48324 "EHLO
+        id S229786AbjGSHPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 03:15:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229758AbjGSHOH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 03:14:07 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 548FA1BF0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:14:06 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-992acf67388so803651066b.1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:14:06 -0700 (PDT)
+        with ESMTP id S229761AbjGSHPe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 03:15:34 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A98D0E47
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:15:26 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-51e2a6a3768so9268181a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:15:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689750845; x=1692342845;
+        d=linaro.org; s=google; t=1689750925; x=1692342925;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GSuzImj8Lb6e1WbRzxnhMveJALtbCQgV6WqSEQlBvUc=;
-        b=i9XvFD9FoG1guW6kBV01ylznweERqqkNDGmEaH+pLF3Fi9mP3yc9wFhik2dyWNDpkn
-         neaBKR3WA49JKbl7cnvTJMnlMP7VWe5JZ+YCBehZcrXnstTYUR1LDiIauBmnVD98d/M2
-         eLCH8mIZcvZRbk41G7j4uBIh8GpQojw42JUJ6g0Mu5bqwxfh0CA98SLdrHWx4Z6Ui+N6
-         N2FM3tt3t7FQw84cMXa0zkuLslMmMYASnbe5o2GzraHYJIxJx9XYaT4gB5G2y0qyCqkc
-         9pSN0ewi6lB7lENkjkTGaPRaPfV3uh28NlG3Ldq0W5M0oUxACZJPIZYNgA9d52uYb3hk
-         U3wA==
+        bh=MSD4oXj3W1W0X/B1/8C0SFn8Fii6AalniSnEduWk8+g=;
+        b=yIkfceGwlwS3yN9Ff2oFuf5xonxPLex7zBXLi1+VIz58aPaajU1E6YKGU3Xkwu38v3
+         7kQhAdbvS7CIRtco4PZ6Ks7svZ4Bcb5swf6+eQd0WNB4L1lhPruoVFSXsYf3IdCG6RQS
+         aiOKexeiYQSw9yZcqW9VzRS4k6EIAycSv4vPkr+XBVqbb+wdbZ661f2gUi3VYye5H1Jp
+         4Uz0pJzX3r5VL5gePO1OnzQ6wYgEPZjp6/TUdd+JKh6F9ntM9ftFkgiyYGsWdx+RirZ1
+         bydlFnSHJmWy23p1EV/SvOZoT7SqQGnvqyG95wRwl6Q6oeZN4bx7k7ajXPb2rHFMmxEK
+         iKPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689750845; x=1692342845;
+        d=1e100.net; s=20221208; t=1689750925; x=1692342925;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GSuzImj8Lb6e1WbRzxnhMveJALtbCQgV6WqSEQlBvUc=;
-        b=A7miRgTdR702Gh1Djtq9wdK+kaPUcHs7ik2utDUBETHIcp1pe+m4XGR1lY8WuQqhDA
-         m+FGaf3MV0WONgbXgvzteylMfQe8W/Jzhp32uTH3c7NmgYwFA2+LFyficOCrfnZcrteA
-         v39n4IcP0Tc16NQdbn7IKTKYYHA0a+kxjyrIHZ6MPz1L9mv9NwmkwbnuHLxkUEm8IQqd
-         XMYVEY4xMf4OgG7phMYB7ZnNZMhxsgTwdGv6vHkNpcluT4rLAjObGfPF5tBu+6rsBQjT
-         RMYTbXIPGKWik0OjqhYXP7DsSGr1MsaDtMZAeUl/prG46XuyHz5tyKk6UjWfc1jcQ7/D
-         AcyQ==
-X-Gm-Message-State: ABy/qLaZgFo4OwaxlX4wT41JoouiAfwtflgBDMXJM5HSmWG62RqBMQaW
-        Y8UgSM9FfD3APTLybDViSKZIUw==
-X-Google-Smtp-Source: APBJJlE4Sxt9jUIzu7cgE+5AockVrEmUMad2CT7N9xqyjXG/icbCxz2K8Ype+QUrEHJMuw1mAQh1Ig==
-X-Received: by 2002:a17:906:73d2:b0:982:8c28:c50d with SMTP id n18-20020a17090673d200b009828c28c50dmr1784098ejl.58.1689750844498;
-        Wed, 19 Jul 2023 00:14:04 -0700 (PDT)
+        bh=MSD4oXj3W1W0X/B1/8C0SFn8Fii6AalniSnEduWk8+g=;
+        b=Tk4PuNrQHZ5XC+bJpOcWmAWBs45/Ai0xc5RxXDIvC+ikKMXuwwt9Y9DiMlg0Jj4Efl
+         XyoQZ+BGHtx2vwY+7jKrkBdQncOw3QKLA0z9pGocT2a+lk42iXaOUeY963jPs9DGk36U
+         PZ/AoQFJ3cZiqZvZKhof2Zur8guBCYlzRvvJ3wXRHAdtWzwSkYzb1iIIsHT1+u4oMUkA
+         E5MeNjDbdNsF05MsFB/F6yTzdiHyLWf9s/RR30QWb7XPAeRgIr/pQYtXX8crGIYw6vzF
+         iUdJzzfjCesOd79LyYGBd1ZlWWSZRCIyzox7eo2Qm8FyH+u/M/4DwCJnCdS03rqVJzP+
+         /Ltg==
+X-Gm-Message-State: ABy/qLaJAWaAWqqMBQtf9sB3I6vy8Ai/L1LEY+mGcikaBNQHIm6RZ9hA
+        fKrertr4msPsL0qZnXRHX5+BxiR07Y2EqTmtVL5GXQ==
+X-Google-Smtp-Source: APBJJlH7+EEhGrtoo4pHXOdKSytcZJ94BuO2zI4aOFPiixCW4Uf/FcIG6QYPrIznlzhS2dH0SiaUeA==
+X-Received: by 2002:a17:906:10cf:b0:993:f83b:43d2 with SMTP id v15-20020a17090610cf00b00993f83b43d2mr1594487ejv.24.1689750904563;
+        Wed, 19 Jul 2023 00:15:04 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id m23-20020aa7c2d7000000b0051def9be785sm2262403edp.85.2023.07.19.00.14.02
+        by smtp.gmail.com with ESMTPSA id c9-20020a170906d18900b009929ab17bdfsm1901790ejz.168.2023.07.19.00.15.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 00:14:04 -0700 (PDT)
-Message-ID: <9d473f0b-bd6b-f426-3bd2-2890e8a79431@linaro.org>
-Date:   Wed, 19 Jul 2023 09:14:01 +0200
+        Wed, 19 Jul 2023 00:15:04 -0700 (PDT)
+Message-ID: <499d1134-869a-050f-c18d-9e7460d87989@linaro.org>
+Date:   Wed, 19 Jul 2023 09:15:01 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [V3,02/11] dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring
+Subject: Re: [V3,03/11] dt-bindings: clock: qcom: gcc-ipq5332: remove q6 bring
  up clock macros
 Content-Language: en-US
 To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
@@ -69,9 +69,9 @@ To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
 Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
         quic_kathirav@quicinc.com, quic_anusha@quicinc.com
 References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
- <20230718120501.3205661-3-quic_mmanikan@quicinc.com>
+ <20230718120501.3205661-4-quic_mmanikan@quicinc.com>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230718120501.3205661-3-quic_mmanikan@quicinc.com>
+In-Reply-To: <20230718120501.3205661-4-quic_mmanikan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -84,13 +84,20 @@ On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
 > 
 > Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 > ---
-> Changes in V3:
-> 	- Rebased on TOT
+>  include/dt-bindings/clock/qcom,ipq5332-gcc.h | 20 --------------------
+>  1 file changed, 20 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/qcom,ipq5332-gcc.h b/include/dt-bindings/clock/qcom,ipq5332-gcc.h
+> index 8a405a0a96d0..da9b507c30bf 100644
+> --- a/include/dt-bindings/clock/qcom,ipq5332-gcc.h
+> +++ b/include/dt-bindings/clock/qcom,ipq5332-gcc.h
+> @@ -96,15 +96,7 @@
+>  #define GCC_PCNOC_BFDCD_CLK_SRC				87
+>  #define GCC_PCNOC_LPASS_CLK				88
+>  #define GCC_PRNG_AHB_CLK				89
+> -#define GCC_Q6_AHB_CLK					90
 
-No clue what is TOT. We have TIP, but you should not use it as a base.
-Other used names are mainline and linux-next.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This does not compile, does it?
 
 Best regards,
 Krzysztof
