@@ -2,65 +2,66 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C130EB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 15:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5714C001E0
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 15:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229752AbjGSPpr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 11:45:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50356 "EHLO
+        id S231366AbjGSPub (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 11:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231502AbjGSPpq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 11:45:46 -0400
+        with ESMTP id S230383AbjGSPu3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 11:50:29 -0400
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DDC32111
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 08:45:34 -0700 (PDT)
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95DCA172D
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 08:50:15 -0700 (PDT)
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E64A43F230
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 15:45:32 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id ED5603F213
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 15:50:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689781532;
-        bh=bJD7aE/rIe6c3FFU/UVaWfG6cXGm2QJmqrPvjRg5gaY=;
+        s=20210705; t=1689781812;
+        bh=lBkd8y3XOzT/fx92qUyW7CMl9N9JYFVT6xHfK84rRBs=;
         h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
          To:Cc:Content-Type;
-        b=Z2JJId5Ku9Bc5CRpk8AGAjyCA68XgukimWXd8dS9ZLaXui/jn0NBQC+JNIxvmlDqB
-         rLa8W6GT+JvG03K/oj1I3DdXUK8ioPIMOY7YUSQbqLnnaTJXLtSAeUhSKWp/UqDVMO
-         i+cjHeiwhovbXZ5c6lEapJHUBPriMmsnYRhJhuCWachAsISf3/woYFbCbNdBN0PjKg
-         RTTN+YzUDHL9kzVn3fdmivpJY+gaD4myWRkQ4UvXSAWFCYGJFVoIjtkmyjtzQT1mfg
-         eJqGY48oza+9exRjmcvjI3KcdbPu4zqikhcZY4u/JNfqRlOXK49mXes6cEnSm9v48N
-         spmMpuk1Bzxhg==
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-765a44ce88aso78889285a.1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 08:45:32 -0700 (PDT)
+        b=Q9xjtbQ15Ybw7rewOfYq54BVdFXC0YvVzNRg0I4S3e12lTY/pVDdR9KFVlHCe4/Z7
+         nKIP9psEQoY6TugsP4MJZbj4ZcnJpktsMO5373Eit/K4f6oLM+wx8NqaK/95SSdjDg
+         u5e7QuQfKW6QIaGC9Q8Bxhbj/bGf4+ia6ZCCDBmhbsJjOCuLme/XkXet/ce38ZbnkM
+         XyEKqrENuPVFPihRYCFQ30RmTIiIsElMiYMF35Ss7DvsiT4Nq9N4Yo+WL8csDt5TYg
+         1DQi3O/Bk7vRkYhfYwH8i502gCfI9UHvQK/YbC2jEkwxv8S3q7lWKJPMFioef0Bpgl
+         KKL1yHOmgrDZg==
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-3f9e556c7d8so8020721cf.0
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 08:50:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689781531; x=1690386331;
+        d=1e100.net; s=20221208; t=1689781811; x=1690386611;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bJD7aE/rIe6c3FFU/UVaWfG6cXGm2QJmqrPvjRg5gaY=;
-        b=OhkCOeJrVuLD03SjeioHnVXEII5o1V0d2YWq4UvHbnI4WMZbxzAc4WTktq3wzteLes
-         zqzGswmTwA1QG70lcvSms2G8sA3Mn5Ls5zjP3V166+MzalZTYzEgcckd/0cp4cQIt1WE
-         rwxcfWYhU/dL2KmacuOqyXplJ7JFUDgkrnnpbCqlaXIMx/3nCMBfJUVNWibXmxA9KnUB
-         r3rZLXLthw4umVxlEGM+29E4rIbPtzmA+QZ4CRv1ERR9DlgmAwlrOYm7t/xi9bXBdJLT
-         SpTauWG0BwL49EZ/bQn1udgWj1Y5V0kw56uarlYdANLDVRN7eQf3FFrppY++ZsWu5nT1
-         EOmQ==
-X-Gm-Message-State: ABy/qLbvXr8d403p9cRT64Rcy/WUTF+Y4o+8qkQ3zfk2vV5ymNaiZdf5
-        lxLeNE1N8Mz89Xl/tfbAn5VPSZqDy053Axqp96ESi6HeZpPl/eAHPUkab+CcSUE/a6hDAdjk2dA
-        ouwTEB+kOyNUEKaZ7io2yH+Ui7XZ/Tnx/hPUnj/BuO4OnyVBa7L04LQ==
-X-Received: by 2002:a05:620a:4155:b0:766:f972:73e1 with SMTP id k21-20020a05620a415500b00766f97273e1mr2968765qko.26.1689781531338;
-        Wed, 19 Jul 2023 08:45:31 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEgOZHqVyytZCi4Dmyj+T4kdUCY46MCEOc5/aq2hMRc989Ipy34EdmzvPv2BTt9oGjxyPIrXj6QLDKGJmpUDGw=
-X-Received: by 2002:a05:620a:4155:b0:766:f972:73e1 with SMTP id
- k21-20020a05620a415500b00766f97273e1mr2968746qko.26.1689781531078; Wed, 19
- Jul 2023 08:45:31 -0700 (PDT)
+        bh=lBkd8y3XOzT/fx92qUyW7CMl9N9JYFVT6xHfK84rRBs=;
+        b=ifAWgLEwl3E2vAgjD5NTDLJBoJWC8LXphzhKuPLIdgY7d4W8Ho6fexhDTp44MZ2Ot1
+         X308ytJdbchUD/wHQOdM9LgxfdyqkFAFRzQXR4rhAS/87jR9h1+U3YF3ArnxH/U42Lxg
+         EORQ664T8W7pTR7Ek+rhZyu7kejRyu//4bzsx+fvBaxlaWuGmzFrnSA0TOaKWMCuE91d
+         D4Dnx9x8SJdDFPaQNKJthHWMk0592+KdIuBG9nk+XnJ3gN6vYhAiDqGj70vQRnF59I0s
+         pyTD39a6tSuzHkNSxibnLGFj6MPuXps8+Rf76iu0sa6abYGOYb/cP+lYVG7U3V7yU9MA
+         T0Pw==
+X-Gm-Message-State: ABy/qLbZYKTQCC+ivwOzV/EHCeoEyZP3qwD2dIfNYYKGRauycxMt4o1U
+        niEv8b6UEK0AcRLf0FYUhn5hLJntLkwiEPQAxxJ3P2qUGQLdRPZh57JbuD8WCwPxblcVp/fG8Zg
+        CQnGgPGYTUFN5Vh7JygWKuQSNHNpDpq0cs3CkqFhff8R40SCgGDszaA==
+X-Received: by 2002:a05:622a:1009:b0:402:d15e:2984 with SMTP id d9-20020a05622a100900b00402d15e2984mr2944881qte.32.1689781810933;
+        Wed, 19 Jul 2023 08:50:10 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFLsdryo3l3HfOhrzOljHukZzudv9rHzS/TP/ey37QvguSJT9mRI3G5taBWNolBsF75e8Yi/YTmAsaRVIRiakk=
+X-Received: by 2002:a05:622a:1009:b0:402:d15e:2984 with SMTP id
+ d9-20020a05622a100900b00402d15e2984mr2944851qte.32.1689781810663; Wed, 19 Jul
+ 2023 08:50:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230717023040.78860-1-xingyu.wu@starfivetech.com> <20230717023040.78860-2-xingyu.wu@starfivetech.com>
-In-Reply-To: <20230717023040.78860-2-xingyu.wu@starfivetech.com>
+References: <20230717023040.78860-1-xingyu.wu@starfivetech.com> <20230717023040.78860-6-xingyu.wu@starfivetech.com>
+In-Reply-To: <20230717023040.78860-6-xingyu.wu@starfivetech.com>
 From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Wed, 19 Jul 2023 17:45:14 +0200
-Message-ID: <CAJM55Z_daAVJim+aS3DsWTv3RoG40p24qh-MZ92NgJHCVKN+3A@mail.gmail.com>
-Subject: Re: [PATCH v7 1/7] dt-bindings: clock: Add StarFive JH7110 PLL clock generator
+Date:   Wed, 19 Jul 2023 17:49:54 +0200
+Message-ID: <CAJM55Z_cX09WQdxB+aNBXo+WVjoJYT5vQz5sbrNBmLikDiNJrQ@mail.gmail.com>
+Subject: Re: [PATCH v7 5/7] clk: starfive: jh7110-sys: Add PLL clocks source
+ from DTS
 To:     Xingyu Wu <xingyu.wu@starfivetech.com>
 Cc:     linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
@@ -82,89 +83,132 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, 17 Jul 2023 at 04:30, Xingyu Wu <xingyu.wu@starfivetech.com> wrote:
 >
-> Add bindings for the PLL clock generator on the JH7110 RISC-V SoC.
+> Modify PLL clocks source to be got from DTS or
+> the fixed factor clocks.
 >
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-
 > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 > ---
->  .../bindings/clock/starfive,jh7110-pll.yaml   | 46 +++++++++++++++++++
->  .../dt-bindings/clock/starfive,jh7110-crg.h   |  6 +++
->  2 files changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
+>  drivers/clk/starfive/Kconfig                  |  1 +
+>  .../clk/starfive/clk-starfive-jh7110-sys.c    | 66 ++++++++++++-------
+>  2 files changed, 45 insertions(+), 22 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
-> new file mode 100644
-> index 000000000000..be8300ce86d0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/starfive,jh7110-pll.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/starfive,jh7110-pll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: StarFive JH7110 PLL Clock Generator
-> +
-> +description:
-> +  These PLLs are high speed, low jitter frequency synthesizers in the JH7110.
-> +  Each PLL works in integer mode or fraction mode, with configuration
-> +  registers in the sys syscon. So the PLLs node should be a child of
-> +  SYS-SYSCON node.
-> +  The formula for calculating frequency is
-> +  Fvco = Fref * (NI + NF) / M / Q1
-> +
-> +maintainers:
-> +  - Xingyu Wu <xingyu.wu@starfivetech.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: starfive,jh7110-pll
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: Main Oscillator (24 MHz)
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/starfive,jh7110-crg.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - clocks
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller {
-> +      compatible = "starfive,jh7110-pll";
-> +      clocks = <&osc>;
-> +      #clock-cells = <1>;
-> +    };
-> diff --git a/include/dt-bindings/clock/starfive,jh7110-crg.h b/include/dt-bindings/clock/starfive,jh7110-crg.h
-> index 06257bfd9ac1..3fb5e31c3be4 100644
-> --- a/include/dt-bindings/clock/starfive,jh7110-crg.h
-> +++ b/include/dt-bindings/clock/starfive,jh7110-crg.h
-> @@ -6,6 +6,12 @@
->  #ifndef __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
->  #define __DT_BINDINGS_CLOCK_STARFIVE_JH7110_CRG_H__
+> diff --git a/drivers/clk/starfive/Kconfig b/drivers/clk/starfive/Kconfig
+> index 5195f7be5213..978b78ec08b1 100644
+> --- a/drivers/clk/starfive/Kconfig
+> +++ b/drivers/clk/starfive/Kconfig
+> @@ -35,6 +35,7 @@ config CLK_STARFIVE_JH7110_SYS
+>         select AUXILIARY_BUS
+>         select CLK_STARFIVE_JH71X0
+>         select RESET_STARFIVE_JH7110 if RESET_CONTROLLER
+> +       select CLK_STARFIVE_JH7110_PLL
+>         default ARCH_STARFIVE
+>         help
+>           Say yes here to support the system clock controller on the
+> diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> index e6031345ef05..3884eff9fe93 100644
+> --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+> @@ -7,6 +7,7 @@
+>   */
 >
-> +/* PLL clocks */
-> +#define JH7110_PLLCLK_PLL0_OUT                 0
-> +#define JH7110_PLLCLK_PLL1_OUT                 1
-> +#define JH7110_PLLCLK_PLL2_OUT                 2
-> +#define JH7110_PLLCLK_END                      3
+>  #include <linux/auxiliary_bus.h>
+> +#include <linux/clk.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+> @@ -389,6 +390,7 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+>         struct jh71x0_clk_priv *priv;
+>         unsigned int idx;
+>         int ret;
+> +       struct clk *pllclk;
+>
+>         priv = devm_kzalloc(&pdev->dev,
+>                             struct_size(priv, reg, JH7110_SYSCLK_END),
+> @@ -402,28 +404,42 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+>         if (IS_ERR(priv->base))
+>                 return PTR_ERR(priv->base);
+>
+> -       /*
+> -        * These PLL clocks are not actually fixed factor clocks and can be
+> -        * controlled by the syscon registers of JH7110. They will be dropped
+> -        * and registered in the PLL clock driver instead.
+> -        */
+> -       /* 24MHz -> 1000.0MHz */
+> -       priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
+> -                                                        "osc", 0, 125, 3);
+> -       if (IS_ERR(priv->pll[0]))
+> -               return PTR_ERR(priv->pll[0]);
+> -
+> -       /* 24MHz -> 1066.0MHz */
+> -       priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
+> -                                                        "osc", 0, 533, 12);
+> -       if (IS_ERR(priv->pll[1]))
+> -               return PTR_ERR(priv->pll[1]);
+> -
+> -       /* 24MHz -> 1188.0MHz */
+> -       priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
+> -                                                        "osc", 0, 99, 2);
+> -       if (IS_ERR(priv->pll[2]))
+> -               return PTR_ERR(priv->pll[2]);
+> +       /* Use fixed factor clocks if can not get the PLL clocks from DTS */
+> +       pllclk = clk_get(priv->dev, "pll0_out");
+> +       if (IS_ERR(pllclk)) {
+> +               /* 24MHz -> 1000.0MHz */
+> +               priv->pll[0] = devm_clk_hw_register_fixed_factor(priv->dev, "pll0_out",
+> +                                                                "osc", 0, 125, 3);
+> +               if (IS_ERR(priv->pll[0]))
+> +                       return PTR_ERR(priv->pll[0]);
+> +       } else {
+> +               clk_put(pllclk);
+> +               priv->pll[0] = NULL;
+
+Not really important enough for a respin, but setting these to NULL is
+not needed as devm_kzalloc() already zeroes the memory allocated.
+
+In any case:
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+
+> +       }
 > +
->  /* SYSCRG clocks */
->  #define JH7110_SYSCLK_CPU_ROOT                 0
->  #define JH7110_SYSCLK_CPU_CORE                 1
+> +       pllclk = clk_get(priv->dev, "pll1_out");
+> +       if (IS_ERR(pllclk)) {
+> +               /* 24MHz -> 1066.0MHz */
+> +               priv->pll[1] = devm_clk_hw_register_fixed_factor(priv->dev, "pll1_out",
+> +                                                                "osc", 0, 533, 12);
+> +               if (IS_ERR(priv->pll[1]))
+> +                       return PTR_ERR(priv->pll[1]);
+> +       } else {
+> +               clk_put(pllclk);
+> +               priv->pll[1] = NULL;
+> +       }
+> +
+> +       pllclk = clk_get(priv->dev, "pll2_out");
+> +       if (IS_ERR(pllclk)) {
+> +               /* 24MHz -> 1188.0MHz */
+> +               priv->pll[2] = devm_clk_hw_register_fixed_factor(priv->dev, "pll2_out",
+> +                                                                "osc", 0, 99, 2);
+> +               if (IS_ERR(priv->pll[2]))
+> +                       return PTR_ERR(priv->pll[2]);
+> +       } else {
+> +               clk_put(pllclk);
+> +               priv->pll[2] = NULL;
+> +       }
+>
+>         for (idx = 0; idx < JH7110_SYSCLK_END; idx++) {
+>                 u32 max = jh7110_sysclk_data[idx].max;
+> @@ -462,6 +478,12 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+>                                 parents[i].fw_name = "tdm_ext";
+>                         else if (pidx == JH7110_SYSCLK_MCLK_EXT)
+>                                 parents[i].fw_name = "mclk_ext";
+> +                       else if (pidx == JH7110_SYSCLK_PLL0_OUT && !priv->pll[0])
+> +                               parents[i].fw_name = "pll0_out";
+> +                       else if (pidx == JH7110_SYSCLK_PLL1_OUT && !priv->pll[1])
+> +                               parents[i].fw_name = "pll1_out";
+> +                       else if (pidx == JH7110_SYSCLK_PLL2_OUT && !priv->pll[2])
+> +                               parents[i].fw_name = "pll2_out";
+>                         else
+>                                 parents[i].hw = priv->pll[pidx - JH7110_SYSCLK_PLL0_OUT];
+>                 }
 > --
 > 2.25.1
 >
