@@ -2,61 +2,72 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865D4C001B0
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 21:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2C5C001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 21:51:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229521AbjGSVkv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 17:40:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35256 "EHLO
+        id S229651AbjGSVvI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 17:51:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjGSVku (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 17:40:50 -0400
+        with ESMTP id S229450AbjGSVvH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 17:51:07 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBBFE1FCD;
-        Wed, 19 Jul 2023 14:40:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 629121FD9;
+        Wed, 19 Jul 2023 14:51:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6EEBD61841;
-        Wed, 19 Jul 2023 21:40:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCA20C433C7;
-        Wed, 19 Jul 2023 21:40:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C49E661856;
+        Wed, 19 Jul 2023 21:51:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC63C433C7;
+        Wed, 19 Jul 2023 21:51:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689802848;
-        bh=TaLerVSG9EvBBPGx6SsQ3R1J0acVBnahUF0b+A53yz8=;
+        s=k20201202; t=1689803465;
+        bh=xH1GVI1iu7jDWprNY4OlcNDItWm4nUtPSNOgYZARkRg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oqxGijWDGdJ4wRhwBHYjDBAVISHRzmGigrT79or5dg5v5tWZFV7Jk80KW2atVR1gj
-         RXEbf9aiEHea3KkpxvsAhDSBfNjsRloB3q29awBRqpX1b3aWOUqdaBPyGI2ULgXwtx
-         /G+pc9GiQOIGlSQudHaBiZKAsdR5MGcxO9mJrOTIOQzg5e+SahkpCSCXv6m/rthxaH
-         BL08kEwsVHEk0JhjEO3fcTySrNGENktWM3qGxE4IN6Yqr681l5el8FcFO0U7uuorRA
-         sx7mm0oJCmdVyTpDdXAK4vsmdoau6ybEMT6ud9VChG/GUl2cB/kNVyFlYED3MsIjcl
-         U7mbjR8IOVvtw==
-Message-ID: <f3252bddf5ade38ce9bbda74bc352aa1.sboyd@kernel.org>
+        b=KPXvnFJfVwdD7V9jlF+t84LLmmCAu20Xf3LSGGdQBU4rllGg/86JI8gthSmeSqbgy
+         1BzZX8Lrsuht7Bmo35MyPNAPAYIQJgoyS80GoNQOsPCCHDTyf9OXMYYcCPDUbmz4hA
+         bXkTPRyLe1HKzTRg7z2QEt49YTi6b8ytUEs8wxOKMoz1I+C7mtChB+H6bThU/7dgNM
+         /ELHKZohnTbTuwAlYO77+dCbB7mefNCzWFyS2I2iI+xth1Wofm6SCGP8ROK+DRA73L
+         7tkmVsU4tRYN+PAmL3u6qPtmphVG9I2so6L5UMUIs7LWhHmKxhJALatOfXsx6kZvcl
+         dNAHPzS/emTWA==
+Message-ID: <f7f861bbfb33b90d24e72eea3833d194.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230712102246.10348-1-duminjie@vivo.com>
-References: <20230712102246.10348-1-duminjie@vivo.com>
-Subject: Re: [PATCH v1] drivers: clk: keystone: Fix parameter judgment in _of_pll_clk_init()
+In-Reply-To: <20230707135852.24292-8-bhe@redhat.com>
+References: <20230707135852.24292-1-bhe@redhat.com> <20230707135852.24292-8-bhe@redhat.com>
+Subject: Re: [PATCH 7/8] clk: fixed-mmio: make COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     opensource.kernel@vivo.com, Minjie Du <duminjie@vivo.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Minjie Du <duminjie@vivo.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 19 Jul 2023 14:40:45 -0700
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        schnelle@linux.ibm.com, vkoul@kernel.org, eli.billauer@gmail.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, derek.kiernan@amd.com,
+        dragan.cvetic@amd.com, linux@dominikbrodowski.net,
+        Jonathan.Cameron@huawei.com, linus.walleij@linaro.org,
+        tsbogend@alpha.franken.de, joyce.ooi@intel.com,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, tglx@linutronix.de, maz@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        frowand.list@gmail.com, Baoquan He <bhe@redhat.com>,
+        kernel test robot <lkp@intel.com>, linux-clk@vger.kernel.org
+To:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org
+Date:   Wed, 19 Jul 2023 14:51:02 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Minjie Du (2023-07-12 03:22:46)
-> The function clk_register_pll() may return NULL(in line 149) or ERR_PTR
-> (in line 131).
-> Fix: make IS_ERR_OR_NULL() judge the clk_register_pll() function return.
+Quoting Baoquan He (2023-07-07 06:58:51)
+> On s390 systems (aka mainframes), it has classic channel devices for
+> networking and permanent storage that are currently even more common
+> than PCI devices. Hence it could have a fully functional s390 kernel
+> with CONFIG_PCI=3Dn, then the relevant iomem mapping functions
+> [including ioremap(), devm_ioremap(), etc.] are not available.
 >=20
-> Signed-off-by: Minjie Du <duminjie@vivo.com>
-> ---
+> Here let COMMON_CLK_FIXED_MMIO depend on HAS_IOMEM so that it won't
+> be built to cause below compiling error if PCI is unset:
+>=20
+> ------
 
-Applied to clk-next
+Applied to clk-fixes
