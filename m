@@ -2,275 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC8CC04FDF
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 08:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DFBEB64DA
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 08:43:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230449AbjGSIhB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 04:37:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37412 "EHLO
+        id S229861AbjGSIn2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 04:43:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230403AbjGSIhA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 04:37:00 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96724172E;
-        Wed, 19 Jul 2023 01:36:56 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        with ESMTP id S230117AbjGSIn1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 04:43:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3643419F;
+        Wed, 19 Jul 2023 01:43:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4752A6606F57;
-        Wed, 19 Jul 2023 09:36:54 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689755814;
-        bh=+psTFYYw5BO1qwTHZg8HUhRdI3ujR0TGp1ezqW9WCsM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=iBNLuqWU/awwuoe4Bsh0pJZi72KqrdMVm5AyFdnnQuFEHWDHQ1AUMZXaPNVUzAR+3
-         /6DzuXCozZ0DmmDSoFd0QFlaXQrhDkb5oS7i8bTp7d9hfoqRi7ztjPf33OBuAlFa8f
-         E4I7SaHy/T6Cqc9EX1GfoJQFr+L0V+Nx3c1XEHaRZdWj7I/ejoXIsrdmqx9ht9ci+X
-         OXnpaMC8usOqclKLCDQZ3v7dOaZ1A6+is4KRJXkixOI6srSOTt1Xn4jivvN6VydFNB
-         snuPBqH/6bmfnIYrFIGtDTgg01PoKYWYhMDFKqzCsL5U8fBbVs/5okxtQ8FMBuhNjz
-         cGTE4HXA3GtqQ==
-Message-ID: <a63ffedd-8637-8161-2317-bd36be2867ae@collabora.com>
-Date:   Wed, 19 Jul 2023 10:36:51 +0200
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B84316130D;
+        Wed, 19 Jul 2023 08:43:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E45C433C7;
+        Wed, 19 Jul 2023 08:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689756203;
+        bh=BlGThz6noR1JWehEW08NX7EICRzWrLxkKOFSlD5SvVI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H8fDI4LDMObASKfrxz4XlsfXVSKNkMBEGNJ65hizZvbIslddKnOVAo3wbyLAZgXhq
+         a7MUOM5Gcy+a+fdkvHG4IshEAk3sHdceXy2D2Po1JzNnjoJ6nxcrkO7QS1oZq/CsRg
+         BGcapRq5J6CffnEQFmtCgiAAJ0tsqkUWitES4n5OP5ICMN33mbznaBb4pLhe2OhGKb
+         vJLXs8VM+nltisaUxKE0c5+BX6bjOPhKq9CuNNCVM8DlfvYlepesVVjBw5qOkQW/EE
+         wq/3d/u0Sh6D62BcNYMWGDzhsy8irpP3O0Q/+O67s1MUMW61CbWj6iA85e06DMUMuh
+         fbHy873N0kLwA==
+Received: from johan by xi.lan with local (Exim 4.96)
+        (envelope-from <johan@kernel.org>)
+        id 1qM2mR-0002yG-1A;
+        Wed, 19 Jul 2023 10:43:32 +0200
+Date:   Wed, 19 Jul 2023 10:43:31 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Bjorn Andersson <andersson@kernel.org>
+Cc:     Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 03/15] clk: qcom: gcc-sm6375: Unregister critical clocks
+Message-ID: <ZLeiM6l6tu6XDzrr@hovoldconsulting.com>
+References: <20230717-topic-branch_aon_cleanup-v1-0-27784d27a4f4@linaro.org>
+ <20230717-topic-branch_aon_cleanup-v1-3-27784d27a4f4@linaro.org>
+ <ZLaRtrH85v4kpSvb@hovoldconsulting.com>
+ <33a26241-026a-9466-5dd6-e3202b29f57c@linaro.org>
+ <ybugl2m7o5cnzj4lv5ksit2rip6yvths5ieo3xlw6cycto2zax@2jimga475z2t>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] clk: mediatek: Check if clock ID is larger than
- clk_hw_onecell_data size
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230719082033.1229277-1-wenst@chromium.org>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230719082033.1229277-1-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ybugl2m7o5cnzj4lv5ksit2rip6yvths5ieo3xlw6cycto2zax@2jimga475z2t>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/07/23 10:20, Chen-Yu Tsai ha scritto:
-> The MediaTek clock driver library's simple-probe mechanism allocates
-> clk_hw_onecell_data based on how many clocks are defined. If there's a
-> mismatch between that and the actual number of clocks defined in the DT
-> binding, such that a clock ID exceeds the number, then an out-of-bounds
-> write will occur. This silently corrupts memory, maybe causing a crash
-> later on that seems unrelated. KASAN can detect this if turned on.
+On Tue, Jul 18, 2023 at 09:23:52AM -0700, Bjorn Andersson wrote:
+> On Tue, Jul 18, 2023 at 03:26:51PM +0200, Konrad Dybcio wrote:
+> > On 18.07.2023 15:20, Johan Hovold wrote:
+> > > On Mon, Jul 17, 2023 at 05:19:10PM +0200, Konrad Dybcio wrote:
+> > >> Some clocks need to be always-on, but we don't really do anything
+> > >> with them, other than calling enable() once and telling Linux they're
+> > >> enabled.
+> > >>
+> > >> Unregister them to save a couple of bytes and, perhaps more
+> > >> importantly, allow for runtime suspend of the clock controller device,
+> > >> as CLK_IS_CRITICAL prevents the latter.
+> > > 
+> > > But this doesn't sound right. How can you disable a controller which
+> > > still has clocks enabled?
+> > > 
+> > > Shouldn't instead these clocks be modelled properly so that they are
+> > > only enabled when actually needed?
+> > Hm.. We do have clk_branch2_aon_ops, but something still needs to
+> > toggle these clocks.
+> > 
 > 
-> To avoid getting into said scenario, check if the to be registered
-> clock's ID will fit in the allocated clk_hw_onecell_data. If not, put
-> out a big warning and skip the clock.
+> Before we started replacing these clocks with static votes, I handled
+> exactly this problem in the turingcc-qcs404 driver by registering the
+> ahb clock with a pm_clk_add(). The clock framework will then
+> automagically keep the clock enabled around operations, but it will also
+> keep the runtime state active as long as the clock is prepared.
 > 
-> One could argue that the proper fix is to let the drivers specify the
-> number of clocks (based on a DT binding macro) instead. However even
-> the DT binding macro could be wrong. And having code to catch errors
-> and give out warnings is better than having silent corruption.
+> As mentioned in an earlier reply today, there's no similarity to this in
+> the reset or gdsc code, so we'd need to add that in order to rely on
+> such mechanism.
+
+This reminds me of:
+
+	4cc47e8add63 ("clk: qcom: gdsc: Remove direct runtime PM calls")
+
+which recently removed a broken attempt to implement this for gdscs.
+
+Just stumbled over GENPD_FLAG_PM_CLK which may provide a way forward at
+least for genpd (but see below).
+
+> > I *think* we could leave a permanent vote in probe() without breaking
+> > runtime pm! I'll give it a spin bit later..
+> > 
 > 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
-> This one is less urgent.
-> 
-> Angelo, do you think we should add a field to struct mtk_clk_desc and
-> assign CLK_XXX_NR_CLK to it?
-> 
+> Modelling the AHB clock in DT and putting a devm_clk_get_enabled() would
+> properly connect the two, and thereby handle probe order between the two
+> clock controllers.
 
-I get the point... but I don't know if it is a good idea to add checks for
-*bad code* in the first place, as bad code shall not happen at all.
-Validating whether a developer wrote the right thing is something that should
-be done in code reviews, and such mistakes shouldn't be allowed to happen.
+Yeah, this dependency really should be described eventually.
 
-Besides, if you really want to go this route... In that case I disagree about
-the `continue`, as I would be inflexible: if your code is bad, I will refuse
-to register your clocks entirely.
-That'll force the developer to actually fix it, as parts of the SoC and/or
-platform will *not work at all* :-)
+> But it would prevent the power-domain of the parent provider to ever
+> suspending. Using pm_clk_add() this would at least depend on client
+> votes.
 
-So, in that case...
+IIUC using pm_clk_add() would also prevent the parent from suspending
+due to that resume call in clk_prepare().
 
-	if (rc->id >= clk_data->num) {
-		hw = PTR_ERR(-EINVAL);
-		goto err;
-	}
+And this mechanism is also used for GENPD_FLAG_PM_CLK...
 
-Thoughts?
-
-Cheers!
-Angelo
-
->   drivers/clk/mediatek/clk-gate.c | 11 +++++++++
->   drivers/clk/mediatek/clk-mtk.c  | 43 +++++++++++++++++++++++++++++++++
->   2 files changed, 54 insertions(+)
-> 
-> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
-> index 67d9e741c5e7..bb7c536ef60f 100644
-> --- a/drivers/clk/mediatek/clk-gate.c
-> +++ b/drivers/clk/mediatek/clk-gate.c
-> @@ -222,6 +222,11 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
->   	for (i = 0; i < num; i++) {
->   		const struct mtk_gate *gate = &clks[i];
->   
-> +		if (WARN(gate->id >= clk_data->num,
-> +			 "%pOF: gateclock ID (%d)larger than expected (%d)\n",
-> +			 node, gate->id, clk_data->num))
-> +			continue;
-> +
->   		if (!IS_ERR_OR_NULL(clk_data->hws[gate->id])) {
->   			pr_warn("%pOF: Trying to register duplicate clock ID: %d\n",
->   				node, gate->id);
-> @@ -251,6 +256,9 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
->   	while (--i >= 0) {
->   		const struct mtk_gate *gate = &clks[i];
->   
-> +		if (gate->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[gate->id]))
->   			continue;
->   
-> @@ -273,6 +281,9 @@ void mtk_clk_unregister_gates(const struct mtk_gate *clks, int num,
->   	for (i = num; i > 0; i--) {
->   		const struct mtk_gate *gate = &clks[i - 1];
->   
-> +		if (gate->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[gate->id]))
->   			continue;
->   
-> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
-> index 2e55368dc4d8..09d50a15db77 100644
-> --- a/drivers/clk/mediatek/clk-mtk.c
-> +++ b/drivers/clk/mediatek/clk-mtk.c
-> @@ -94,6 +94,10 @@ int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks, int num,
->   	for (i = 0; i < num; i++) {
->   		const struct mtk_fixed_clk *rc = &clks[i];
->   
-> +		if (WARN(rc->id >= clk_data->num,
-> +			 "Fixed clock ID (%d) larger than expected (%d)\n", rc->id, clk_data->num))
-> +			continue;
-> +
->   		if (!IS_ERR_OR_NULL(clk_data->hws[rc->id])) {
->   			pr_warn("Trying to register duplicate clock ID: %d\n", rc->id);
->   			continue;
-> @@ -117,6 +121,9 @@ int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks, int num,
->   	while (--i >= 0) {
->   		const struct mtk_fixed_clk *rc = &clks[i];
->   
-> +		if (rc->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[rc->id]))
->   			continue;
->   
-> @@ -139,6 +146,9 @@ void mtk_clk_unregister_fixed_clks(const struct mtk_fixed_clk *clks, int num,
->   	for (i = num; i > 0; i--) {
->   		const struct mtk_fixed_clk *rc = &clks[i - 1];
->   
-> +		if (rc->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[rc->id]))
->   			continue;
->   
-> @@ -160,6 +170,11 @@ int mtk_clk_register_factors(const struct mtk_fixed_factor *clks, int num,
->   	for (i = 0; i < num; i++) {
->   		const struct mtk_fixed_factor *ff = &clks[i];
->   
-> +		if (WARN(ff->id >= clk_data->num,
-> +			 "Fixed factor clock ID (%d) larger than expected (%d)\n",
-> +			 ff->id, clk_data->num))
-> +			continue;
-> +
->   		if (!IS_ERR_OR_NULL(clk_data->hws[ff->id])) {
->   			pr_warn("Trying to register duplicate clock ID: %d\n", ff->id);
->   			continue;
-> @@ -183,6 +198,9 @@ int mtk_clk_register_factors(const struct mtk_fixed_factor *clks, int num,
->   	while (--i >= 0) {
->   		const struct mtk_fixed_factor *ff = &clks[i];
->   
-> +		if (ff->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[ff->id]))
->   			continue;
->   
-> @@ -205,6 +223,9 @@ void mtk_clk_unregister_factors(const struct mtk_fixed_factor *clks, int num,
->   	for (i = num; i > 0; i--) {
->   		const struct mtk_fixed_factor *ff = &clks[i - 1];
->   
-> +		if (ff->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[ff->id]))
->   			continue;
->   
-> @@ -339,6 +360,11 @@ int mtk_clk_register_composites(struct device *dev,
->   	for (i = 0; i < num; i++) {
->   		const struct mtk_composite *mc = &mcs[i];
->   
-> +		if (WARN(mc->id >= clk_data->num,
-> +			 "Composite clock ID (%d) larger than expected (%d)\n",
-> +			 mc->id, clk_data->num))
-> +			continue;
-> +
->   		if (!IS_ERR_OR_NULL(clk_data->hws[mc->id])) {
->   			pr_warn("Trying to register duplicate clock ID: %d\n",
->   				mc->id);
-> @@ -362,6 +388,9 @@ int mtk_clk_register_composites(struct device *dev,
->   	while (--i >= 0) {
->   		const struct mtk_composite *mc = &mcs[i];
->   
-> +		if (mc->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[mcs->id]))
->   			continue;
->   
-> @@ -384,6 +413,9 @@ void mtk_clk_unregister_composites(const struct mtk_composite *mcs, int num,
->   	for (i = num; i > 0; i--) {
->   		const struct mtk_composite *mc = &mcs[i - 1];
->   
-> +		if (mc->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[mc->id]))
->   			continue;
->   
-> @@ -407,6 +439,11 @@ int mtk_clk_register_dividers(struct device *dev,
->   	for (i = 0; i <  num; i++) {
->   		const struct mtk_clk_divider *mcd = &mcds[i];
->   
-> +		if (WARN(mcd->id >= clk_data->num,
-> +			 "Divider clock ID (%d) larger than expected (%d)\n",
-> +			 mcd->id, clk_data->num))
-> +			continue;
-> +
->   		if (!IS_ERR_OR_NULL(clk_data->hws[mcd->id])) {
->   			pr_warn("Trying to register duplicate clock ID: %d\n",
->   				mcd->id);
-> @@ -432,6 +469,9 @@ int mtk_clk_register_dividers(struct device *dev,
->   	while (--i >= 0) {
->   		const struct mtk_clk_divider *mcd = &mcds[i];
->   
-> +		if (mcd->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[mcd->id]))
->   			continue;
->   
-> @@ -454,6 +494,9 @@ void mtk_clk_unregister_dividers(const struct mtk_clk_divider *mcds, int num,
->   	for (i = num; i > 0; i--) {
->   		const struct mtk_clk_divider *mcd = &mcds[i - 1];
->   
-> +		if (mcd->id >= clk_data->num)
-> +			continue;
-> +
->   		if (IS_ERR_OR_NULL(clk_data->hws[mcd->id]))
->   			continue;
->   
-
+Johan
