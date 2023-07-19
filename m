@@ -2,314 +2,136 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC554EB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 09:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43147C001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 11:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229626AbjGSJIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 05:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56110 "EHLO
+        id S230118AbjGSLFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 07:05:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbjGSJIz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 05:08:55 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCAA410B;
-        Wed, 19 Jul 2023 02:08:53 -0700 (PDT)
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id F14476607072;
-        Wed, 19 Jul 2023 10:08:51 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1689757732;
-        bh=92PMMe+Za3IqqLKrrnY1ZyW+3PGalhqsHtuGNXYAPhM=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=l/jO16z+3Sf0I6YvL2F9Vt1f/m9yqDE4Iw6QWcWE9/ySWhZdSG1QOYYO8ZWrN3Pga
-         vZ7VbrAYtlXwY22IXiiYb8CQa8BLQdhPX1gPoLHY+3jqn1T+FV1IM0tj5kve3HN2R1
-         iWa1BUYTGSi8utiFgoAGBzp5xSteF1jtJheN2B97PAQFeCQRmplXONybJAlMF6XYLm
-         5a0prg0P5PiIcEX9mlVViwrrUCmYmU27o5jgDH24RWkUehRFeRCwz+9D1zBEKrOK+2
-         uDRVgOYOj1UV9U2kX9PIQjgA4SPv/y+ks4f9+dJczSrd/YXBA5eXh7Obx7v0Nek9Wu
-         evwf9blYsENTQ==
-Message-ID: <af808c08-50f7-6c27-921f-b2d0dc79f1e8@collabora.com>
-Date:   Wed, 19 Jul 2023 11:08:49 +0200
+        with ESMTP id S230129AbjGSLFh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 07:05:37 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305F319A;
+        Wed, 19 Jul 2023 04:05:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689764736; x=1721300736;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lqPMmv8M10HlNolBgp653qSVYTh89TergptkrLWqzYo=;
+  b=S5NtVeRoGxWEjiy4hfYUAS6bs0vfE83cCaG/koNG3riMlWxEYMmxngH7
+   wd/UooOkJRRRf8oXEF1DJgiCM1fLoahHlHIoA1yA/8oYaOyrqLhMVs4Or
+   RUQm4+dbmqmr2n3HXCWsHzIO1QU8BY8NpqVJfIaKra3CIRmGTkE55oEYE
+   h/JUbwQI2rh7uzoF7NTpBdEQh+d/Nl+lfW+dJLoe4CIyIWKAjALjNVU5N
+   wBZV+ZjH1CcQsGEOPCEa+62lNArQO+022rBZYuDQQMNdczTFJNkIC54z2
+   PRwJxBle5D6naYj8wNIDeOjEdrIkxWMZ0jM53U4o2qAFBujmBb/bPR48k
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10775"; a="346023055"
+X-IronPort-AV: E=Sophos;i="6.01,216,1684825200"; 
+   d="scan'208";a="346023055"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2023 04:05:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.01,202,1684825200"; 
+   d="scan'208";a="867422501"
+Received: from lkp-server02.sh.intel.com (HELO 36946fcf73d7) ([10.239.97.151])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Jul 2023 04:05:15 -0700
+Received: from kbuild by 36946fcf73d7 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1qM4zX-0004hf-2P;
+        Wed, 19 Jul 2023 11:05:12 +0000
+Date:   Wed, 19 Jul 2023 19:04:39 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mathieu.poirier@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_eberman@quicinc.com, kvalo@kernel.org,
+        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
+        quic_sjaganat@quicinc.com, quic_kathirav@quicinc.com,
+        quic_anusha@quicinc.com
+Subject: Re: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc
+ driver
+Message-ID: <202307191844.WyywUs6s-lkp@intel.com>
+References: <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH] clk: mediatek: Check if clock ID is larger than
- clk_hw_onecell_data size
-Content-Language: en-US
-To:     Chen-Yu Tsai <wenst@chromium.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <20230719082033.1229277-1-wenst@chromium.org>
- <a63ffedd-8637-8161-2317-bd36be2867ae@collabora.com>
- <CAGXv+5GimZNPo6QDmCN7o4-qU-iPni=e1vPH5v0Z-Opn_0QjFg@mail.gmail.com>
-From:   AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <CAGXv+5GimZNPo6QDmCN7o4-qU-iPni=e1vPH5v0Z-Opn_0QjFg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il 19/07/23 10:52, Chen-Yu Tsai ha scritto:
-> On Wed, Jul 19, 2023 at 4:36 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Il 19/07/23 10:20, Chen-Yu Tsai ha scritto:
->>> The MediaTek clock driver library's simple-probe mechanism allocates
->>> clk_hw_onecell_data based on how many clocks are defined. If there's a
->>> mismatch between that and the actual number of clocks defined in the DT
->>> binding, such that a clock ID exceeds the number, then an out-of-bounds
->>> write will occur. This silently corrupts memory, maybe causing a crash
->>> later on that seems unrelated. KASAN can detect this if turned on.
->>>
->>> To avoid getting into said scenario, check if the to be registered
->>> clock's ID will fit in the allocated clk_hw_onecell_data. If not, put
->>> out a big warning and skip the clock.
->>>
->>> One could argue that the proper fix is to let the drivers specify the
->>> number of clocks (based on a DT binding macro) instead. However even
->>> the DT binding macro could be wrong. And having code to catch errors
->>> and give out warnings is better than having silent corruption.
->>>
->>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>> ---
->>> This one is less urgent.
->>>
->>> Angelo, do you think we should add a field to struct mtk_clk_desc and
->>> assign CLK_XXX_NR_CLK to it?
->>>
->>
->> I get the point... but I don't know if it is a good idea to add checks for
->> *bad code* in the first place, as bad code shall not happen at all.
->> Validating whether a developer wrote the right thing is something that should
->> be done in code reviews, and such mistakes shouldn't be allowed to happen.
-> 
-> In theory, yeah. In practice, well, we already have such an error in tree. :p
-> 
+Hi Manikanta,
 
-Yeah, I realize that reviews are done by humans, and humans naturally make
-mistakes, which is fine.
+kernel test robot noticed the following build warnings:
 
-I wonder if there is any way to solve this with a build time error... I didn't
-try and didn't look though - so I'm just thinking out loud.
+[auto build test WARNING on next-20230718]
+[also build test WARNING on v6.5-rc2]
+[cannot apply to remoteproc/rproc-next clk/clk-next robh/for-next linus/master v6.5-rc2 v6.5-rc1 v6.4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->> Besides, if you really want to go this route... In that case I disagree about
->> the `continue`, as I would be inflexible: if your code is bad, I will refuse
->> to register your clocks entirely.
->> That'll force the developer to actually fix it, as parts of the SoC and/or
->> platform will *not work at all* :-)
->>
->> So, in that case...
->>
->>          if (rc->id >= clk_data->num) {
->>                  hw = PTR_ERR(-EINVAL);
->>                  goto err;
->>          }
->>
->> Thoughts?
-> 
-> That works for me as well. This was more my debug code cleaned up.
-> I assume we still want the warning / error message though?
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Manikanta-Mylavarapu/dt-bindings-remoteproc-qcom-Add-support-for-multipd-model/20230718-202747
+base:   next-20230718
+patch link:    https://lore.kernel.org/r/20230718120501.3205661-10-quic_mmanikan%40quicinc.com
+patch subject: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc driver
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20230719/202307191844.WyywUs6s-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 12.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20230719/202307191844.WyywUs6s-lkp@intel.com/reproduce)
 
-I don't have any strong opinions on this specific matter. My only concern is
-that we'd increase the kernel size with those prints that should never happen
-anyway...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202307191844.WyywUs6s-lkp@intel.com/
 
-...but again, I'll leave that choice to you - no strong opinions.
+All warnings (new ones prefixed by >>):
 
-> The other choice would be adding .num_clks for CLK_XXX_NR_CLKS to
-> mtk_clk_desc. What are your thoughts on that?
-> 
+>> drivers/remoteproc/qcom_q6v5_mpd.c:112:4: warning: no previous prototype for 'qcom_get_pd_asid' [-Wmissing-prototypes]
+     112 | u8 qcom_get_pd_asid(struct rproc *rproc)
+         |    ^~~~~~~~~~~~~~~~
 
-A u16 wouldn't waste all that much memory, so that could cover the case in
-which someone specifies *less* clocks than normal.
-That'd be something necessary if we're really following that validation route,
-as the actual validation would be *incomplete* without that, I think.
-
-> ChenYu
-> 
->> Cheers!
->> Angelo
->>
->>>    drivers/clk/mediatek/clk-gate.c | 11 +++++++++
->>>    drivers/clk/mediatek/clk-mtk.c  | 43 +++++++++++++++++++++++++++++++++
->>>    2 files changed, 54 insertions(+)
->>>
->>> diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
->>> index 67d9e741c5e7..bb7c536ef60f 100644
->>> --- a/drivers/clk/mediatek/clk-gate.c
->>> +++ b/drivers/clk/mediatek/clk-gate.c
->>> @@ -222,6 +222,11 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
->>>        for (i = 0; i < num; i++) {
->>>                const struct mtk_gate *gate = &clks[i];
->>>
->>> +             if (WARN(gate->id >= clk_data->num,
->>> +                      "%pOF: gateclock ID (%d)larger than expected (%d)\n",
->>> +                      node, gate->id, clk_data->num))
->>> +                     continue;
->>> +
->>>                if (!IS_ERR_OR_NULL(clk_data->hws[gate->id])) {
->>>                        pr_warn("%pOF: Trying to register duplicate clock ID: %d\n",
->>>                                node, gate->id);
->>> @@ -251,6 +256,9 @@ int mtk_clk_register_gates(struct device *dev, struct device_node *node,
->>>        while (--i >= 0) {
->>>                const struct mtk_gate *gate = &clks[i];
->>>
->>> +             if (gate->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[gate->id]))
->>>                        continue;
->>>
->>> @@ -273,6 +281,9 @@ void mtk_clk_unregister_gates(const struct mtk_gate *clks, int num,
->>>        for (i = num; i > 0; i--) {
->>>                const struct mtk_gate *gate = &clks[i - 1];
->>>
->>> +             if (gate->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[gate->id]))
->>>                        continue;
->>>
->>> diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
->>> index 2e55368dc4d8..09d50a15db77 100644
->>> --- a/drivers/clk/mediatek/clk-mtk.c
->>> +++ b/drivers/clk/mediatek/clk-mtk.c
->>> @@ -94,6 +94,10 @@ int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks, int num,
->>>        for (i = 0; i < num; i++) {
->>>                const struct mtk_fixed_clk *rc = &clks[i];
->>>
->>> +             if (WARN(rc->id >= clk_data->num,
->>> +                      "Fixed clock ID (%d) larger than expected (%d)\n", rc->id, clk_data->num))
->>> +                     continue;
->>> +
->>>                if (!IS_ERR_OR_NULL(clk_data->hws[rc->id])) {
->>>                        pr_warn("Trying to register duplicate clock ID: %d\n", rc->id);
->>>                        continue;
->>> @@ -117,6 +121,9 @@ int mtk_clk_register_fixed_clks(const struct mtk_fixed_clk *clks, int num,
->>>        while (--i >= 0) {
->>>                const struct mtk_fixed_clk *rc = &clks[i];
->>>
->>> +             if (rc->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[rc->id]))
->>>                        continue;
->>>
->>> @@ -139,6 +146,9 @@ void mtk_clk_unregister_fixed_clks(const struct mtk_fixed_clk *clks, int num,
->>>        for (i = num; i > 0; i--) {
->>>                const struct mtk_fixed_clk *rc = &clks[i - 1];
->>>
->>> +             if (rc->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[rc->id]))
->>>                        continue;
->>>
->>> @@ -160,6 +170,11 @@ int mtk_clk_register_factors(const struct mtk_fixed_factor *clks, int num,
->>>        for (i = 0; i < num; i++) {
->>>                const struct mtk_fixed_factor *ff = &clks[i];
->>>
->>> +             if (WARN(ff->id >= clk_data->num,
->>> +                      "Fixed factor clock ID (%d) larger than expected (%d)\n",
->>> +                      ff->id, clk_data->num))
->>> +                     continue;
->>> +
->>>                if (!IS_ERR_OR_NULL(clk_data->hws[ff->id])) {
->>>                        pr_warn("Trying to register duplicate clock ID: %d\n", ff->id);
->>>                        continue;
->>> @@ -183,6 +198,9 @@ int mtk_clk_register_factors(const struct mtk_fixed_factor *clks, int num,
->>>        while (--i >= 0) {
->>>                const struct mtk_fixed_factor *ff = &clks[i];
->>>
->>> +             if (ff->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[ff->id]))
->>>                        continue;
->>>
->>> @@ -205,6 +223,9 @@ void mtk_clk_unregister_factors(const struct mtk_fixed_factor *clks, int num,
->>>        for (i = num; i > 0; i--) {
->>>                const struct mtk_fixed_factor *ff = &clks[i - 1];
->>>
->>> +             if (ff->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[ff->id]))
->>>                        continue;
->>>
->>> @@ -339,6 +360,11 @@ int mtk_clk_register_composites(struct device *dev,
->>>        for (i = 0; i < num; i++) {
->>>                const struct mtk_composite *mc = &mcs[i];
->>>
->>> +             if (WARN(mc->id >= clk_data->num,
->>> +                      "Composite clock ID (%d) larger than expected (%d)\n",
->>> +                      mc->id, clk_data->num))
->>> +                     continue;
->>> +
->>>                if (!IS_ERR_OR_NULL(clk_data->hws[mc->id])) {
->>>                        pr_warn("Trying to register duplicate clock ID: %d\n",
->>>                                mc->id);
->>> @@ -362,6 +388,9 @@ int mtk_clk_register_composites(struct device *dev,
->>>        while (--i >= 0) {
->>>                const struct mtk_composite *mc = &mcs[i];
->>>
->>> +             if (mc->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[mcs->id]))
->>>                        continue;
->>>
->>> @@ -384,6 +413,9 @@ void mtk_clk_unregister_composites(const struct mtk_composite *mcs, int num,
->>>        for (i = num; i > 0; i--) {
->>>                const struct mtk_composite *mc = &mcs[i - 1];
->>>
->>> +             if (mc->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[mc->id]))
->>>                        continue;
->>>
->>> @@ -407,6 +439,11 @@ int mtk_clk_register_dividers(struct device *dev,
->>>        for (i = 0; i <  num; i++) {
->>>                const struct mtk_clk_divider *mcd = &mcds[i];
->>>
->>> +             if (WARN(mcd->id >= clk_data->num,
->>> +                      "Divider clock ID (%d) larger than expected (%d)\n",
->>> +                      mcd->id, clk_data->num))
->>> +                     continue;
->>> +
->>>                if (!IS_ERR_OR_NULL(clk_data->hws[mcd->id])) {
->>>                        pr_warn("Trying to register duplicate clock ID: %d\n",
->>>                                mcd->id);
->>> @@ -432,6 +469,9 @@ int mtk_clk_register_dividers(struct device *dev,
->>>        while (--i >= 0) {
->>>                const struct mtk_clk_divider *mcd = &mcds[i];
->>>
->>> +             if (mcd->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[mcd->id]))
->>>                        continue;
->>>
->>> @@ -454,6 +494,9 @@ void mtk_clk_unregister_dividers(const struct mtk_clk_divider *mcds, int num,
->>>        for (i = num; i > 0; i--) {
->>>                const struct mtk_clk_divider *mcd = &mcds[i - 1];
->>>
->>> +             if (mcd->id >= clk_data->num)
->>> +                     continue;
->>> +
->>>                if (IS_ERR_OR_NULL(clk_data->hws[mcd->id]))
->>>                        continue;
->>>
->>
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for SM_GCC_8350
+   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
+   Selected by [m]:
+   - SM_VIDEOCC_8350 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
+   WARNING: unmet direct dependencies detected for SM_GCC_8450
+   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
+   Selected by [m]:
+   - SM_GPUCC_8450 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
+   - SM_VIDEOCC_8450 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
+   WARNING: unmet direct dependencies detected for SM_GCC_8550
+   Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=m] && (ARM64 || COMPILE_TEST [=n])
+   Selected by [m]:
+   - SM_GPUCC_8550 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
+   - SM_VIDEOCC_8550 [=m] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=m]
 
 
+vim +/qcom_get_pd_asid +112 drivers/remoteproc/qcom_q6v5_mpd.c
+
+   105	
+   106	/**
+   107	 * qcom_get_pd_asid() - get the pd asid number from PD spawn bit
+   108	 * @rproc:	rproc handle
+   109	 *
+   110	 * Returns asid on success
+   111	 */
+ > 112	u8 qcom_get_pd_asid(struct rproc *rproc)
+   113	{
+   114		struct q6_wcss *wcss = rproc->priv;
+   115		u8 bit = wcss->q6.spawn_bit;
+   116	
+   117		return bit / 8;
+   118	}
+   119	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
