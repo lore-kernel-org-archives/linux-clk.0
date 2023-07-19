@@ -2,388 +2,162 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6C5C001B0
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 07:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F41EB64DA
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 07:44:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229974AbjGSH1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 03:27:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
+        id S230329AbjGSHoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 03:44:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229884AbjGSH1C (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 03:27:02 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE6BE60
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:26:58 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id a640c23a62f3a-99364ae9596so915796466b.1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:26:58 -0700 (PDT)
+        with ESMTP id S230343AbjGSHnc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 03:43:32 -0400
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46A29268E
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:42:57 -0700 (PDT)
+Received: by mail-pg1-x52b.google.com with SMTP id 41be03b00d2f7-55fcc15e109so3106376a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689751617; x=1692343617;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fyfO5lsrlJXVidyRvvPQwDaGq7oltGO0YP6DN+snoCw=;
-        b=AjSciQ9vitluZtJ0iIt94Np5PvkEbxDdQ3s084RB9U5x8sTLF/XnZd6fz5YTdnB/wy
-         BkXCzNlUHc8NhKuk1YrOO8m3M0k8mWa1mS9qxzFYW3q8X+hjmR0hThqW4nEe2qbBGyKi
-         85IxZGTdgqjziTpBEnlDNcQAA3SP6ujzpGHEPHM3YYj1AqfgkTtJZIH9BXRb0vqCl7BF
-         lsxcVQ+Mvnnts0SW+NaPUEKZyGcBzxRysgWNg0rSznkQCIttPbeK5QR8BIF7HQm3eem6
-         ynv8mMFF8GtB+dH66Y6gsoK8LbUsbWoSRYYZoCF0SduzqZ5oT9ePb458opbM3gJoIMCQ
-         WZWw==
+        d=chromium.org; s=google; t=1689752577; x=1690357377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kbs2DuWb4kB1m8a4nLkKBnUGt5UrZsO1n5+nbdXlnA=;
+        b=NxYRpMQ1MI3s26pnW2g/EuUERfFiKqPtolriGBIpLZlPtkVKTzvs3UcHHtciA4FRBc
+         tBmPpu1++ooa1smNKdUc/sF7158Vo8ra5BN2dcV7ZzjvtDZV+PjdQFOg8sQveIREZn3C
+         vWkPZVwlxjajHG5oNnNVAPaaI5JbsJYcUpzxM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689751617; x=1692343617;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fyfO5lsrlJXVidyRvvPQwDaGq7oltGO0YP6DN+snoCw=;
-        b=UsNzaB06hZsnA4NRlA88dDC9tVc4dmzwFOETx1Z13hJMcyyYz9rypl+8/gaUZDCRvU
-         +7bdKo1tWrvWYvwVs/18w7tt9gL858XWZhJTMuVrNLx0NJQnNMw0+ylZHbbQTP1cX6Hn
-         0bwZXq00zkzmrfqmFLqJrPx2U2gty3DW/mGQeDV1Ly4Lb5Ei4oinsiLxKxPLf2NGamcT
-         7Tycjl6wLo8Mtvp6fFQqnL9Rov/LO4o7EQk9V6x6pGQPPJTx8syZG2DwRotVFrID2MkQ
-         LLfeZ+j4ve5v3Msv4BzJkDwHgpzfJsruu0vCu1Devht9lAT/ya4AsZgshUalwg1YwR1E
-         AqWA==
-X-Gm-Message-State: ABy/qLbqY6mIhwuZMmH0/KrIx8ugzlNepNxmMiZb603NZv3Wn15L3J6G
-        qJB3DezcC/Njd+JQC+ptZacsUA==
-X-Google-Smtp-Source: APBJJlEQENMPwak7uAMJQP5lUd7qaD8836fd2duRgHWK7IwO9mD8HFp/b3gvoraUz2Hfh88Imp/n4g==
-X-Received: by 2002:a17:906:5388:b0:98d:cd3e:c193 with SMTP id g8-20020a170906538800b0098dcd3ec193mr1290513ejo.46.1689751617114;
-        Wed, 19 Jul 2023 00:26:57 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id k2-20020a170906128200b0098e2eaec394sm1925666ejb.101.2023.07.19.00.26.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 00:26:56 -0700 (PDT)
-Message-ID: <fedea75a-a5f1-fbe4-7f12-75bfdf9bfcf2@linaro.org>
-Date:   Wed, 19 Jul 2023 09:26:53 +0200
+        d=1e100.net; s=20221208; t=1689752577; x=1690357377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8kbs2DuWb4kB1m8a4nLkKBnUGt5UrZsO1n5+nbdXlnA=;
+        b=X1IS1ffhbHlPImf4jChgl7cblnFKUgoe5wswrF6Un/MNQCNeoBB65fBVgfs1iKzIAB
+         uPefLXyxWE6610v4Ht9DoNw6Hk6bBhP1o4Nfaq4S/ebX90RaIeiKmsvuf99meURXRDpP
+         78CQa2wLagzHdxgZGZxm/q9E0IVSvHn5WfVRFYyGgJzXQpQeHKPRZVr4i5X7HEnCnZeR
+         XF3FO9HvPLLsox/9vLoXydWbvZt9hEH70/FCoGYtR5fxE3OhjicO9wDNM7JjRx1813G/
+         pRzDAPF8wgnrP7j9rfEazuEz5D1EW+RE+Cr5hf5o6Ab0y6ivS3ObZh8WN7uAs+deezAF
+         fgpA==
+X-Gm-Message-State: ABy/qLZ8+z4eBB+Hz2CyeX/QwGNUax96j89DtL6j97XOBNpAZn5MmZ0R
+        ENlX47v6W3oxcd2c+Qs3SzBK3g==
+X-Google-Smtp-Source: APBJJlHj8emtlM2xqJSmgfj7e1lMySh3gNJProkHsWCZl2AjGt7U6HHZa476k9mL+uXpbwnw3nTGZA==
+X-Received: by 2002:a17:90a:f2cf:b0:263:f856:a82c with SMTP id gt15-20020a17090af2cf00b00263f856a82cmr1076296pjb.15.1689752576701;
+        Wed, 19 Jul 2023 00:42:56 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:dc1f:4359:d310:3643])
+        by smtp.gmail.com with ESMTPSA id z1-20020a17090a1fc100b002631f3d36a1sm710274pjz.36.2023.07.19.00.42.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Jul 2023 00:42:56 -0700 (PDT)
+From:   Chen-Yu Tsai <wenst@chromium.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+Cc:     Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH] clk: mediatek: mt8183: Add back SSPM related clocks
+Date:   Wed, 19 Jul 2023 15:42:50 +0800
+Message-ID: <20230719074251.1219089-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.41.0.455.g037347b96a-goog
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc
- driver
-Content-Language: en-US
-To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        mathieu.poirier@linaro.org, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        quic_eberman@quicinc.com, kvalo@kernel.org,
-        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
-        quic_kathirav@quicinc.com, quic_anusha@quicinc.com
-References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
- <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
-> It adds support to bring up remoteproc's on multipd model.
-> Pd means protection domain. It's similar to process in Linux.
-> Here QDSP6 processor runs each wifi radio functionality on a
-> separate process. One process can't access other process
-> resources, so this is termed as PD i.e protection domain.
-> 
-> Here we have two pd's called root and user pd. We can correlate
-> Root pd as root and user pd as user in linux. Root pd has more
-> privileges than user pd. Root will provide services to user pd.
-> 
+This reverts commit 860690a93ef23b567f781c1b631623e27190f101.
 
+On the MT8183, the SSPM related clocks were removed claiming a lack of
+usage. This however causes some issues when the driver was converted to
+the new simple-probe mechanism. This mechanism allocates enough space
+for all the clocks defined in the clock driver, not the highest index
+in the DT binding. This leads to out-of-bound writes if their are holes
+in the DT binding or the driver (due to deprecated or unimplemented
+clocks). These errors can go unnoticed and cause memory corruption,
+leading to crashes in unrelated areas, or nothing at all. KASAN will
+detect them.
 
-> +static int q6_get_inbound_irq(struct qcom_q6v5 *q6,
-> +			      struct platform_device *pdev,
-> +			      const char *int_name,
-> +			      int index, int *pirq,
-> +			      irqreturn_t (*handler)(int irq, void *data))
-> +{
-> +	int ret, irq;
-> +	char *interrupt, *tmp = (char *)int_name;
-> +	struct q6_wcss *wcss = q6->rproc->priv;
-> +
-> +	irq = platform_get_irq(pdev, index);
-> +	if (irq < 0) {
-> +		if (irq != -EPROBE_DEFER)
-> +			dev_err_probe(&pdev->dev, irq,
-> +				      "failed to retrieve %s IRQ: %d\n",
-> +				      int_name, irq);
+Add the SSPM related clocks back to the MT8183 clock driver to fully
+implement the DT binding. The SSPM clocks are for the power management
+co-processor, and should never be turned off. They are marked as such.
 
-Wait, what? This does not make any sense. dev_err_probe is to replace
-all this dance. return dev_err_probe which I explicitly asked last time:
+Fixes: 3f37ba7cc385 ("clk: mediatek: mt8183: Convert all remaining clocks to common probe")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+Please merge for fixes.
 
-https://lore.kernel.org/all/2061a641-4b97-1aa6-27cd-99f01a785033@linaro.org/
+ drivers/clk/mediatek/clk-mt8183.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-> +		return irq;
-> +	}
-> +
-> +	*pirq = irq;
-> +
-> +	interrupt = devm_kzalloc(&pdev->dev, BUF_SIZE, GFP_KERNEL);
-> +	if (!interrupt)
-> +		return -ENOMEM;
-> +
-> +	snprintf(interrupt, BUF_SIZE, "q6v5_wcss_userpd%d_%s", wcss->pd_asid, tmp);
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, *pirq,
-> +					NULL, handler,
-> +					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +					interrupt, q6);
-> +	if (ret) {
-> +		dev_err_probe(&pdev->dev, ret,
-> +			      "failed to acquire %s irq\n", interrupt);
-> +		return ret;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static int q6_get_outbound_irq(struct qcom_q6v5 *q6,
-> +			       struct platform_device *pdev,
-> +			       const char *int_name)
-> +{
-> +	struct qcom_smem_state *tmp_state;
-> +	unsigned  bit;
-> +
-> +	tmp_state = qcom_smem_state_get(&pdev->dev, int_name, &bit);
-> +	if (IS_ERR(tmp_state)) {
-> +		dev_err_probe(&pdev->dev, IS_ERR(tmp_state),
-> +			      "failed to acquire %s state\n", int_name);
-> +		return PTR_ERR(tmp_state);
-
-So it is everywhere...
-
-
-> +	}
-> +
-> +	if (!strcmp(int_name, "stop")) {
-> +		q6->state = tmp_state;
-> +		q6->stop_bit = bit;
-> +	} else if (!strcmp(int_name, "spawn")) {
-> +		q6->spawn_state = tmp_state;
-> +		q6->spawn_bit = bit;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int init_irq(struct qcom_q6v5 *q6,
-> +		    struct platform_device *pdev, struct rproc *rproc,
-> +		    int crash_reason, const char *load_state,
-> +		    void (*handover)(struct qcom_q6v5 *q6))
-> +{
-> +	int ret;
-> +	struct q6_wcss *wcss = rproc->priv;
-> +
-> +	q6->rproc = rproc;
-> +	q6->dev = &pdev->dev;
-> +	q6->crash_reason = crash_reason;
-> +	q6->handover = handover;
-> +
-> +	init_completion(&q6->start_done);
-> +	init_completion(&q6->stop_done);
-> +	init_completion(&q6->spawn_done);
-> +
-> +	ret = q6_get_outbound_irq(q6, pdev, "stop");
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_outbound_irq(q6, pdev, "spawn");
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Get pd_asid to prepare interrupt names */
-> +	wcss->pd_asid = qcom_get_pd_asid(rproc);
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "fatal", 0, &q6->fatal_irq,
-> +				 q6v5_fatal_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "ready", 1, &q6->ready_irq,
-> +				 q6v5_ready_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "stop-ack", 3, &q6->stop_irq,
-> +				 q6v5_stop_interrupt);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = q6_get_inbound_irq(q6, pdev, "spawn-ack", 2, &q6->spawn_irq,
-> +				 q6v5_spawn_interrupt);
-> +	if (ret)
-> +		return ret;
-> +	return 0;
-> +}
-> +
-> +static void q6_release_resources(struct platform_device *pdev)
-> +{
-> +	struct rproc *upd_rproc;
-> +	struct device_node *upd_np;
-> +	struct platform_device *upd_pdev;
-> +
-> +	/* Release userpd resources */
-> +	for_each_available_child_of_node(pdev->dev.of_node, upd_np) {
-
-You should not iterate over OF to get devices to unregister. What if you
-have more nodes than before because of overlay?
-
-
-> +		upd_pdev = of_find_device_by_node(upd_np);
-> +		if (!upd_pdev)
-> +			continue;
-> +
-> +		upd_rproc = platform_get_drvdata(upd_pdev);
-> +		if (!upd_rproc) {
-> +			platform_device_unregister(upd_pdev);
-> +			continue;
-> +		}
-> +
-> +		rproc_del(upd_rproc);
-> +		rproc_free(upd_rproc);
-> +	}
-> +}
-> +
-> +static int q6_register_userpd(struct platform_device *pdev)
-> +{
-> +	struct q6_wcss *wcss;
-> +	struct rproc *rproc = NULL;
-> +	int ret;
-> +	struct device_node *userpd_np;
-> +	struct platform_device *userpd_pdev;
-> +	const char *firmware_name = NULL;
-> +
-> +	for_each_available_child_of_node(pdev->dev.of_node, userpd_np) {
-> +		ret = of_property_read_string(userpd_np, "firmware-name",
-> +					      &firmware_name);
-> +		if (ret < 0)
-> +			continue;
-> +
-> +		dev_info(&pdev->dev, "%s node found\n", userpd_np->name);
-> +
-> +		userpd_pdev = of_platform_device_create(userpd_np,
-> +							userpd_np->name,
-> +							&pdev->dev);
-> +		if (!userpd_pdev) {
-> +			ret = -ENODEV;
-> +			dev_err_probe(&pdev->dev, ret,
-> +				      "failed to create %s platform device\n",
-> +				      userpd_np->name);
-> +			goto release_resource;
-> +		}
-> +		userpd_pdev->dev.driver = pdev->dev.driver;
-> +		rproc = rproc_alloc(&userpd_pdev->dev, userpd_pdev->name,
-> +				    &wcss_ops, firmware_name,
-> +				    sizeof(*wcss));
-> +		if (!rproc) {
-> +			ret = -ENOMEM;
-> +			goto release_resource;
-> +		}
-> +
-> +		wcss = rproc->priv;
-> +		wcss->dev = &userpd_pdev->dev;
-> +
-> +		ret = q6_alloc_memory_region(wcss);
-> +		if (ret)
-
-How do you release the resource allocated in rproc_alloc() for this
-node? drvdata is not set, so your cleanup function will skip it.
-
-> +			goto release_resource;
-> +
-> +		ret = init_irq(&wcss->q6, userpd_pdev, rproc,
-> +			       WCSS_CRASH_REASON, NULL, NULL);
-> +		if (ret)
-> +			goto release_resource;
-> +
-> +		rproc->auto_boot = false;
-> +		ret = rproc_add(rproc);
-> +		if (ret)
-> +			goto release_resource;
-> +
-> +		platform_set_drvdata(userpd_pdev, rproc);
-> +		qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, userpd_pdev->name);
-> +	}
-> +	return 0;
-> +
-> +release_resource:
-> +	q6_release_resources(pdev);
-> +	return ret;
-> +}
-> +
-> +static int q6_wcss_probe(struct platform_device *pdev)
-> +{
-> +	const struct wcss_data *desc;
-> +	struct q6_wcss *wcss;
-> +	struct rproc *rproc;
-> +	int ret;
-> +	char *subdev_name;
-> +	const char **firmware;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	firmware = devm_kcalloc(&pdev->dev, MAX_FIRMWARE,
-> +				sizeof(*firmware), GFP_KERNEL);
-> +	if (!firmware)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_string_array(pdev->dev.of_node, "firmware-name",
-> +					    firmware, MAX_FIRMWARE);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
-> +			    firmware[0], sizeof(*wcss));
-> +	if (!rproc)
-> +		return -ENOMEM;
-> +
-> +	wcss = rproc->priv;
-> +	wcss->dev = &pdev->dev;
-> +	wcss->desc = desc;
-> +	wcss->firmware = firmware;
-> +
-> +	ret = q6_alloc_memory_region(wcss);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	ret = desc->init_irq(&wcss->q6, pdev, rproc,
-> +			     desc->crash_reason_smem, NULL, NULL);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	if (desc->glink_subdev_required)
-> +		qcom_add_glink_subdev(rproc, &wcss->glink_subdev, desc->ssr_name);
-> +
-> +	subdev_name = (char *)(desc->ssr_name ? desc->ssr_name : pdev->name);
-
-Wrong cast. Why are you dropping const? That's a bug.
-
-> +	qcom_add_ssr_subdev(rproc, &wcss->ssr_subdev, subdev_name);
-> +
-> +	rproc->auto_boot = false;
-> +	ret = rproc_add(rproc);
-> +	if (ret)
-> +		goto free_rproc;
-> +
-> +	platform_set_drvdata(pdev, rproc);
-> +
-> +	ret = q6_register_userpd(pdev);
-> +	if (ret) {
-> +		dev_err_probe(&pdev->dev, ret, "Failed to register userpd\n");
-> +		return ret;
-
-return dev_err_probe
-
-> +	}
-> +
-> +	return 0;
-> +
-> +free_rproc:
-> +	rproc_free(rproc);
-> +
-> +	return ret;
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
+index 1ba421b38ec5..e31f94387d87 100644
+--- a/drivers/clk/mediatek/clk-mt8183.c
++++ b/drivers/clk/mediatek/clk-mt8183.c
+@@ -328,6 +328,14 @@ static const char * const atb_parents[] = {
+ 	"syspll_d5"
+ };
+ 
++static const char * const sspm_parents[] = {
++	"clk26m",
++	"univpll_d2_d4",
++	"syspll_d2_d2",
++	"univpll_d2_d2",
++	"syspll_d3"
++};
++
+ static const char * const dpi0_parents[] = {
+ 	"clk26m",
+ 	"tvdpll_d2",
+@@ -507,6 +515,9 @@ static const struct mtk_mux top_muxes[] = {
+ 	/* CLK_CFG_6 */
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_MUX_ATB, "atb_sel",
+ 		atb_parents, 0xa0, 0xa4, 0xa8, 0, 2, 7, 0x004, 24),
++	MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_MUX_SSPM, "sspm_sel",
++				   sspm_parents, 0xa0, 0xa4, 0xa8, 8, 3, 15, 0x004, 25,
++				   CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_MUX_DPI0, "dpi0_sel",
+ 		dpi0_parents, 0xa0, 0xa4, 0xa8, 16, 4, 23, 0x004, 26),
+ 	MUX_GATE_CLR_SET_UPD(CLK_TOP_MUX_SCAM, "scam_sel",
+@@ -673,10 +684,18 @@ static const struct mtk_gate_regs infra3_cg_regs = {
+ 	GATE_MTK(_id, _name, _parent, &infra2_cg_regs, _shift,	\
+ 		&mtk_clk_gate_ops_setclr)
+ 
++#define GATE_INFRA2_FLAGS(_id, _name, _parent, _shift, _flag)	\
++	GATE_MTK_FLAGS(_id, _name, _parent, &infra2_cg_regs, 	\
++		       _shift, &mtk_clk_gate_ops_setclr, _flag)
++
+ #define GATE_INFRA3(_id, _name, _parent, _shift)		\
+ 	GATE_MTK(_id, _name, _parent, &infra3_cg_regs, _shift,	\
+ 		&mtk_clk_gate_ops_setclr)
+ 
++#define GATE_INFRA3_FLAGS(_id, _name, _parent, _shift, _flag)	\
++	GATE_MTK_FLAGS(_id, _name, _parent, &infra3_cg_regs, 	\
++		       _shift, &mtk_clk_gate_ops_setclr, _flag)
++
+ static const struct mtk_gate infra_clks[] = {
+ 	/* INFRA0 */
+ 	GATE_INFRA0(CLK_INFRA_PMIC_TMR, "infra_pmic_tmr", "axi_sel", 0),
+@@ -748,7 +767,11 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_INFRA2(CLK_INFRA_UNIPRO_TICK, "infra_unipro_tick", "fufs_sel", 12),
+ 	GATE_INFRA2(CLK_INFRA_UFS_MP_SAP_BCLK, "infra_ufs_mp_sap_bck", "fufs_sel", 13),
+ 	GATE_INFRA2(CLK_INFRA_MD32_BCLK, "infra_md32_bclk", "axi_sel", 14),
++	/* infra_sspm is main clock in co-processor, should not be closed in Linux. */
++	GATE_INFRA2_FLAGS(CLK_INFRA_SSPM, "infra_sspm", "sspm_sel", 15, CLK_IS_CRITICAL),
+ 	GATE_INFRA2(CLK_INFRA_UNIPRO_MBIST, "infra_unipro_mbist", "axi_sel", 16),
++	/* infra_sspm_bus_hclk is main clock in co-processor, should not be closed in Linux. */
++	GATE_INFRA2_FLAGS(CLK_INFRA_SSPM_BUS_HCLK, "infra_sspm_bus_hclk", "axi_sel", 17, CLK_IS_CRITICAL),
+ 	GATE_INFRA2(CLK_INFRA_I2C5, "infra_i2c5", "i2c_sel", 18),
+ 	GATE_INFRA2(CLK_INFRA_I2C5_ARBITER, "infra_i2c5_arbiter", "i2c_sel", 19),
+ 	GATE_INFRA2(CLK_INFRA_I2C5_IMM, "infra_i2c5_imm", "i2c_sel", 20),
+@@ -766,6 +789,10 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_INFRA3(CLK_INFRA_MSDC0_SELF, "infra_msdc0_self", "msdc50_0_sel", 0),
+ 	GATE_INFRA3(CLK_INFRA_MSDC1_SELF, "infra_msdc1_self", "msdc50_0_sel", 1),
+ 	GATE_INFRA3(CLK_INFRA_MSDC2_SELF, "infra_msdc2_self", "msdc50_0_sel", 2),
++	/* infra_sspm_26m_self is main clock in co-processor, should not be closed in Linux. */
++	GATE_INFRA3_FLAGS(CLK_INFRA_SSPM_26M_SELF, "infra_sspm_26m_self", "f_f26m_ck", 3, CLK_IS_CRITICAL),
++	/* infra_sspm_32k_self is main clock in co-processor, should not be closed in Linux. */
++	GATE_INFRA3_FLAGS(CLK_INFRA_SSPM_32K_SELF, "infra_sspm_32k_self", "f_f26m_ck", 4, CLK_IS_CRITICAL),
+ 	GATE_INFRA3(CLK_INFRA_UFS_AXI, "infra_ufs_axi", "axi_sel", 5),
+ 	GATE_INFRA3(CLK_INFRA_I2C6, "infra_i2c6", "i2c_sel", 6),
+ 	GATE_INFRA3(CLK_INFRA_AP_MSDC0, "infra_ap_msdc0", "msdc50_hclk_sel", 7),
+-- 
+2.41.0.455.g037347b96a-goog
 
