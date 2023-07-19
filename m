@@ -2,179 +2,118 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B156BC3DA41
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 04:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713B7EB64DA
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 07:01:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230224AbjGSERa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 00:17:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34728 "EHLO
+        id S230085AbjGSHBb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 03:01:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbjGSERL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 00:17:11 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08BF2213A;
-        Tue, 18 Jul 2023 21:16:48 -0700 (PDT)
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36J3EYA9032176;
-        Wed, 19 Jul 2023 04:16:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=qcppdkim1;
- bh=HHnHr3Di+R4Bsaxi9HkuMFeyNVFjwotMOT3L1rCOlGs=;
- b=aPfwdsRLG11zo7cTnrOCEkgsCQeIwXSBYRVN3qm3Xj4Hu8xpSqawRS/pU3fcq23RsAx+
- OS2KsKKKYcrNMngIja/BOQcdbH30g6LAwbadY8tMti4XxlywdlRqtH4HrC3mA1bgji09
- 5PV2SQ7YUdIlogxZKHhddULGXf9V1IOqkDfFPTS71TfSYp9vAmB5z0QJ5ntap63V5uGb
- 4aKVrr6rpy3jhZXfi3giwQ9E2UfzfRgFsBuY9OmgUJTXaV4jia0r7F90ttQOpp7B97Na
- leNsAnk373gCblGYSZ57YzUg3hcTG8Sz5R7swCEVEUn9ANlIeOcSV2o8NS5S7KhX9pAM QQ== 
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rx7rng4jn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Jul 2023 04:16:18 +0000
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-        by NASANPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36J4FkeF002286
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 Jul 2023 04:15:46 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Tue, 18 Jul 2023 21:15:41 -0700
-From:   Imran Shaik <quic_imrashai@quicinc.com>
-To:     Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC:     Bjorn Andersson <andersson@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Melody Olvera" <quic_molvera@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: [PATCH V4 5/7] clk: qcom: gcc-qdu1000: Add support for GDSCs
-Date:   Wed, 19 Jul 2023 09:44:48 +0530
-Message-ID: <20230719041450.737929-6-quic_imrashai@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230719041450.737929-1-quic_imrashai@quicinc.com>
-References: <20230719041450.737929-1-quic_imrashai@quicinc.com>
+        with ESMTP id S231149AbjGSHB1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 03:01:27 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45CD1FE9
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:01:24 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-992b66e5affso892202566b.3
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 00:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1689750083; x=1692342083;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WSZrt9jeszEZGu/mKauiyWiY1HTeSRHVXWkl0PsyR+c=;
+        b=BgrP9HbHLulKJqAh3a90fRdgO4sjNLYjWboQJenzmWIzqTETCKSTkJHOpYBFwF4qQB
+         bel2zi8jpzzRW3dQgrJfvkauUOmb7SUrbmqW3vJ0B4pe+mFKjD4bWIwstIzNydVSsstR
+         2bbQc4sz1ggaszirvJ+zXsbpAtLnWPtKgofL/oAasUQ6VgRM7Y/DU3hSsY496X8gxd1d
+         nQUJxAu6Xddw1Zj4tYagBOu8vipwkKoPD3231wfqwdAIQmNU169JPK/+nopUP6nZDy5y
+         RVlbSYICm/mVexr+x6rJuJSbqnhoi9LG5r9/ScVUEKSxjBublwhXyPzh59a/z1XGj0wH
+         Em5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689750083; x=1692342083;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSZrt9jeszEZGu/mKauiyWiY1HTeSRHVXWkl0PsyR+c=;
+        b=H0J+HgwjOccXFM02Giozsqm9lFYRMWIip3v+DGzQ0AbvoZhK5qZJbuMG7mAYLOecL0
+         AQcxufkNu2b3TDG/WOaH9QdukFmZ4ztxTH38/QT1MaN5tngQCwI2t/FeO9ZYnA2IrzsM
+         XWsWTPN11IVj3AmYN9fqOjshyYzDZvuPvkiWItLA2f9QQ/6lfF211svOX+kx+eLkNbaR
+         NILY8YBNV6DuexpkzzDNUj0PdxcMpU35ST2ieaZ4beF3yzSj9ydVbaiOrCRG7PIXr7KC
+         ah6ne6ugMHjIAoZWKec6oeBs8LFUjLriRVrJAYR5S5U+MGZnMjpn5I1S9Ypt+Bz3pJox
+         KuTg==
+X-Gm-Message-State: ABy/qLZRPDV6ghvAmp1wnveOBSDqLTjXtYyJi0p1cm1lt2S36nRLXOUj
+        1P+yECrEmOl8Zr0DfbGAQ8VOCQ==
+X-Google-Smtp-Source: APBJJlGX7cx1vVoHNi6pwROqc+qSgYNgqVavnXFuzLoHzyAPHaI3G/MLulDPjwxxVA6/dpRfkZ/Ugw==
+X-Received: by 2002:a17:906:95:b0:978:928:3b99 with SMTP id 21-20020a170906009500b0097809283b99mr1479059ejc.46.1689750083436;
+        Wed, 19 Jul 2023 00:01:23 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id qn24-20020a170907211800b00993470682e5sm1920268ejb.32.2023.07.19.00.01.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jul 2023 00:01:22 -0700 (PDT)
+Message-ID: <bf6c7433-7773-9b4d-1141-b5ceccae77ee@linaro.org>
+Date:   Wed, 19 Jul 2023 09:01:21 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QrYudQ0iW-Tkra-1Bw943nROWJs1Iy5V
-X-Proofpoint-ORIG-GUID: QrYudQ0iW-Tkra-1Bw943nROWJs1Iy5V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-19_01,2023-07-18_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 clxscore=1015 suspectscore=0 mlxlogscore=999
- impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307190039
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [V3,00/11] Add multipd remoteproc support
+Content-Language: en-US
+To:     Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        agross@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+        mathieu.poirier@linaro.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        quic_eberman@quicinc.com, kvalo@kernel.org,
+        loic.poulain@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_anusha@quicinc.com
+References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the GDSCs support for QDU1000 and QRU1000 SoCs.
+On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
+> APSS brings Q6 out of reset and then Q6 brings
+> WCSS block (wifi radio's) out of reset.
+> 
+> 				   ---------------
+> 			      -->  |WiFi 2G radio|
+> 			      |	   --------------
+> 			      |
+> --------	-------	      |
+> | APSS | --->   |QDSP6|  -----|
+> ---------	-------       |
+>                               |
+>       			      |
+> 			      |   --------------
+> 			      --> |WiFi 5G radio|
+> 				  --------------
+> 
+> Problem here is if any radio crashes, subsequently other
+> radio also should crash because Q6 crashed. Let's say
+> 2G radio crashed, Q6 should pass this info to APSS. Only
+> Q6 processor interrupts registered with APSS. Obviously
+> Q6 should crash and raise fatal interrupt to APSS. Due
+> to this 5G radio also crashed. But no issue in 5G radio,
+> because of 2G radio crash 5G radio also impacted.
 
-Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
-Changes since v3:
- - None
-Changes since v2:
- - None
-Changes since v1:
- - Newly added
+Your patches and cover letter is unnecessarily more difficult to parse
+and filter:
+1. Please use standard email subjects, so with the PATCH keyword in the
+title. `git format-patch` helps here to create proper versioned patches.
+Another useful tool is b4. Skipping the PATCH keyword makes filtering of
+emails more difficult thus making the review process less convenient.
 
- drivers/clk/qcom/gcc-qdu1000.c | 42 ++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+2. Please wrap message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+This is wrapped way too early.
+> 
 
-diff --git a/drivers/clk/qcom/gcc-qdu1000.c b/drivers/clk/qcom/gcc-qdu1000.c
-index 991fb2bc97e9..718c34dca6e8 100644
---- a/drivers/clk/qcom/gcc-qdu1000.c
-+++ b/drivers/clk/qcom/gcc-qdu1000.c
-@@ -17,6 +17,7 @@
- #include "clk-regmap-divider.h"
- #include "clk-regmap-mux.h"
- #include "clk-regmap-phy-mux.h"
-+#include "gdsc.h"
- #include "reset.h"
- 
- enum {
-@@ -2409,6 +2410,39 @@ static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
- 	},
- };
- 
-+static struct gdsc pcie_0_gdsc = {
-+	.gdscr = 0x9d004,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0xf,
-+	.pd = {
-+		.name = "gcc_pcie_0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc pcie_0_phy_gdsc = {
-+	.gdscr = 0x7c004,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x2,
-+	.pd = {
-+		.name = "gcc_pcie_0_phy_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc usb30_prim_gdsc = {
-+	.gdscr = 0x49004,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0xf,
-+	.pd = {
-+		.name = "gcc_usb30_prim_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
- static struct clk_regmap *gcc_qdu1000_clocks[] = {
- 	[GCC_AGGRE_NOC_ECPRI_DMA_CLK] = &gcc_aggre_noc_ecpri_dma_clk.clkr,
- 	[GCC_AGGRE_NOC_ECPRI_DMA_CLK_SRC] = &gcc_aggre_noc_ecpri_dma_clk_src.clkr,
-@@ -2545,6 +2579,12 @@ static struct clk_regmap *gcc_qdu1000_clocks[] = {
- 	[GCC_DDRSS_ECPRI_GSI_CLK] = &gcc_ddrss_ecpri_gsi_clk.clkr,
- };
- 
-+static struct gdsc *gcc_qdu1000_gdscs[] = {
-+	[PCIE_0_GDSC] = &pcie_0_gdsc,
-+	[PCIE_0_PHY_GDSC] = &pcie_0_phy_gdsc,
-+	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
-+};
-+
- static const struct qcom_reset_map gcc_qdu1000_resets[] = {
- 	[GCC_ECPRI_CC_BCR] = { 0x3e000 },
- 	[GCC_ECPRI_SS_BCR] = { 0x3a000 },
-@@ -2606,6 +2646,8 @@ static const struct qcom_cc_desc gcc_qdu1000_desc = {
- 	.num_clks = ARRAY_SIZE(gcc_qdu1000_clocks),
- 	.resets = gcc_qdu1000_resets,
- 	.num_resets = ARRAY_SIZE(gcc_qdu1000_resets),
-+	.gdscs = gcc_qdu1000_gdscs,
-+	.num_gdscs = ARRAY_SIZE(gcc_qdu1000_gdscs),
- };
- 
- static const struct of_device_id gcc_qdu1000_match_table[] = {
--- 
-2.25.1
+Best regards,
+Krzysztof
 
