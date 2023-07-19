@@ -2,62 +2,157 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36692C001B0
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 19:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97183C0015E
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 20:04:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbjGSTvF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 15:51:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39910 "EHLO
+        id S230500AbjGSUEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 16:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbjGSTvE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 15:51:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6DCF1BCF;
-        Wed, 19 Jul 2023 12:51:03 -0700 (PDT)
+        with ESMTP id S230368AbjGSUEz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 16:04:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68922F0;
+        Wed, 19 Jul 2023 13:04:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BC57617DA;
-        Wed, 19 Jul 2023 19:51:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A476EC433C8;
-        Wed, 19 Jul 2023 19:51:02 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B0E8E61807;
+        Wed, 19 Jul 2023 20:04:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D7CC433C8;
+        Wed, 19 Jul 2023 20:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689796262;
-        bh=+UIZJuew3LXED+YxrmGBHpLYD5/jx6ezttAhPttbvwY=;
+        s=k20201202; t=1689797091;
+        bh=0iKypu0kymTeD57KjtrMnZG3ybCTpOA4DfWhM2jjUOU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XiSvgTN0j4HVfMmSRBCX1GBvawpDxYI4LbS4Sb+C3nCpL9PsaA/m236d792tFESJW
-         09QdKD47NY/1dtA54ykc70E9uROioQZ6GzO6pmr44Lmn1lbRzduBNfQp4Ut/b26X6c
-         MjCgc1nP6zXPs5+9DyyJzYZaCJMaGjYOayWDnxs3hmm1IPJSFtHHzKgN+/cfA4y7v5
-         fyKtaMeqkaKszGiCm9xb3I4GbbBpd6OkNh4qMN2xS8a69AD+Xu7EdFqJWO9rV/B8OO
-         xrsjU98XzM2PkvXBbw5z0dxOsLyeNhajz2fbfp9ItyEit0eCMQ7+PmyXGZeQ7Q3U60
-         XF7tMJJ2uSq6A==
-Message-ID: <959d395c63a60c4bff156b2f121811ad.sboyd@kernel.org>
+        b=g4iAn8M9Y2zWazYP8g4VgHvj9qbowkKoguznJHd7M+5DI1D6NecNuwAsSEo2OpkSH
+         xedrocvcG6ll1IIw5g1HA7Z6zzqRggLca8gUoCIFvv0MsafwvDHpYp1Mln46w9IMAX
+         Yr5yDxfkpxY6SePMBzj0kJyjlrDa+CuabMqEWFqGWSTOybstNm0CPrz4R7Xy9mhd4v
+         +Qzhp7SP09R7IXPzkDNeQyXgU0cXVPx4hGcgv9SiRIJEsYwzLKYUVMPvqfUUTPs8++
+         lWTbCo//XArPpW0HDII69NIDvFx2kzTqHgn+DLDxp9Z8g0/GS6B8VGOCHCwF0YJKiW
+         3NNjPA9rMrioQ==
+Message-ID: <f726290fe0678217f2e17b6a68c20d42.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
-References: <085541814ebe2543cb7e8a31004c0da3e7d5b6eb.1688760111.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: starfive: Simplify .determine_rate()
+In-Reply-To: <20230710093206.18894-1-quic_devipriy@quicinc.com>
+References: <20230710093206.18894-1-quic_devipriy@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Use determine_rate instead of round_rate
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-clk@vger.kernel.org
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Wed, 19 Jul 2023 12:51:00 -0700
+Cc:     quic_srichara@quicinc.com, quic_sjaganat@quicinc.com,
+        quic_kathirav@quicinc.com, quic_anusha@quicinc.com,
+        quic_saahtoma@quicinc.com
+To:     Devi Priya <quic_devipriy@quicinc.com>, agross@kernel.org,
+        andersson@kernel.org, konrad.dybcio@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Date:   Wed, 19 Jul 2023 13:04:48 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Christophe JAILLET (2023-07-07 13:02:18)
-> jh71x0_clk_mux_determine_rate() is the same as __clk_mux_determine_rate(),
-> so use the latter to save some LoC.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Quoting Devi Priya (2023-07-10 02:32:06)
+> @@ -1094,25 +1099,25 @@ static const struct clk_div_table clk_alpha_2bit_=
+div_table[] =3D {
+>         { }
+>  };
+> =20
+> -static long
+> -clk_alpha_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
+> -                                unsigned long *prate)
+> +static int clk_alpha_pll_postdiv_determine_rate(struct clk_hw *hw,
+> +                                               struct clk_rate_request *=
+req)
+>  {
+>         struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
+);
+>         const struct clk_div_table *table;
+> +       unsigned long rate =3D req->rate;
+> =20
+>         if (pll->width =3D=3D 2)
+>                 table =3D clk_alpha_2bit_div_table;
+>         else
+>                 table =3D clk_alpha_div_table;
+> =20
+> -       return divider_round_rate(hw, rate, prate, table,
+> -                                 pll->width, CLK_DIVIDER_POWER_OF_TWO);
+> +       req->rate =3D divider_round_rate(hw, rate, &req->best_parent_rate=
+, table,
 
-Applied to clk-next
+Can you use divider_determine_rate() instead?
+
+> +                                      pll->width, CLK_DIVIDER_POWER_OF_T=
+WO);
+> +       return 0;
+>  }
+> =20
+> -static long
+> -clk_alpha_pll_postdiv_round_ro_rate(struct clk_hw *hw, unsigned long rat=
+e,
+> -                                   unsigned long *prate)
+> +static int clk_alpha_pll_postdiv_determine_ro_rate(struct clk_hw *hw,
+> +                                                  struct clk_rate_reques=
+t *req)
+>  {
+>         struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
+);
+>         u32 ctl, div;
+[...]
+> @@ -1452,14 +1459,16 @@ clk_trion_pll_postdiv_recalc_rate(struct clk_hw *=
+hw, unsigned long parent_rate)
+>         return (parent_rate / div);
+>  }
+> =20
+> -static long
+> -clk_trion_pll_postdiv_round_rate(struct clk_hw *hw, unsigned long rate,
+> -                                unsigned long *prate)
+> +static int
+> +clk_trion_pll_postdiv_determine_rate(struct clk_hw *hw,
+> +                                    struct clk_rate_request *req)
+>  {
+>         struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
+);
+> =20
+> -       return divider_round_rate(hw, rate, prate, pll->post_div_table,
+> -                                 pll->width, CLK_DIVIDER_ROUND_CLOSEST);
+> +       req->rate =3D divider_round_rate(hw, req->rate, &req->best_parent=
+_rate,
+
+divider_determine_rate()?
+
+> +                                      pll->post_div_table, pll->width,
+> +                                      CLK_DIVIDER_ROUND_CLOSEST);
+> +       return 0;
+>  };
+> =20
+>  static int
+> @@ -1485,18 +1494,21 @@ clk_trion_pll_postdiv_set_rate(struct clk_hw *hw,=
+ unsigned long rate,
+> =20
+>  const struct clk_ops clk_alpha_pll_postdiv_trion_ops =3D {
+>         .recalc_rate =3D clk_trion_pll_postdiv_recalc_rate,
+> -       .round_rate =3D clk_trion_pll_postdiv_round_rate,
+> +       .determine_rate =3D clk_trion_pll_postdiv_determine_rate,
+>         .set_rate =3D clk_trion_pll_postdiv_set_rate,
+>  };
+>  EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_trion_ops);
+> =20
+> -static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
+> -                               unsigned long rate, unsigned long *prate)
+> +static int
+> +clk_alpha_pll_postdiv_fabia_determine_rate(struct clk_hw *hw,
+> +                                          struct clk_rate_request *req)
+>  {
+>         struct clk_alpha_pll_postdiv *pll =3D to_clk_alpha_pll_postdiv(hw=
+);
+> =20
+> -       return divider_round_rate(hw, rate, prate, pll->post_div_table,
+> -                               pll->width, CLK_DIVIDER_ROUND_CLOSEST);
+> +       req->rate =3D divider_round_rate(hw, req->rate, &req->best_parent=
+_rate,
+> +                                      pll->post_div_table, pll->width,
+> +                                       CLK_DIVIDER_ROUND_CLOSEST);
+
+divider_determine_rate()?
