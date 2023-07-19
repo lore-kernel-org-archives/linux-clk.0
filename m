@@ -2,142 +2,137 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A34FEB64DA
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 14:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC97C001DE
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 15:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbjGSOTY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 10:19:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49536 "EHLO
+        id S229977AbjGSPMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 11:12:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229476AbjGSOTX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 10:19:23 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FD19C5
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 07:19:22 -0700 (PDT)
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id ADBB23F438
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 14:19:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1689776357;
-        bh=GQssMG4sr5GfDopggRQSgpxYtYsDKGG3T/Izx89s/GE=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=H7XvEt01IsviDwFPs8HZGGJziEXp/uu23LMcw7QmoEozkz5oxDvCmSjvFTWPPoi3A
-         UsLguEBvWUVEwYXUa+ZxPKW1a93tSCIx/N0/ZGzDQwQt2WP+B3S3r3MzB0FBrSHGzj
-         VAOprKq9KigsK4NmMkijIG9vTvz60PM/Wctq+siV0HIvl3CsrPXHH9K/Ox0CPWJS62
-         bSn+UUrz/0aX5aU0ZwTobDT46bzYWQisHuIRtKGSzbSVZav8XktBUXnqWteg64dFbM
-         eT5mFtP2M6V9FV/FbJsQjDhEnT2j6t6wRjb0XDlMlH6njMjcqfzqgrc2um/8MIcft6
-         UKSz/zTHfZSkQ==
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-635e244d063so59608856d6.1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 07:19:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689776355; x=1690381155;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GQssMG4sr5GfDopggRQSgpxYtYsDKGG3T/Izx89s/GE=;
-        b=d8KACRsvwFV03ff0GPiaH0/byR8BnHZ711U5aIsVtqYvA0VpN4FhhGRe5Bz9M6Mnu/
-         HOy5Yf/+0fUmJ5Wk2ynxuw2NwihtuNuL8D6rOdsck9To6hgNhwXIOaSukM8sX0+UT860
-         3uoebsh+KCN6H9KzL3ta/aS6ybyQTH4o1m8ZGI/ou0UDfMUIxMTX/8YCDIXttjBXEcHk
-         Xt9y0Zs8CzuvT+bbWiE4zvOOsFH3vR+UWgsEJ0F4LoSne3jd0Qf4FGeukfQ0+aflq0uF
-         jiLBt9Hh0YwjRjqLtKSTV5gNyyoa46Po8IdS5AFzeYpDazciAH+hR+5ionacRZkAjxuo
-         nyxQ==
-X-Gm-Message-State: ABy/qLbdesrvvHtNCViFluiiaSqQv9QUUbO2o6TxdL8FMeWJcxKIi6Wq
-        ldYhmMGousQC6kOUco4/ets6axYchkh2SaGgoVHTZVgSO+titf+vl977bSql13gBxsiSnmrqBI/
-        Bv+A8juu0yWLZ9EI9ZlEjOU2mt8Lt8/0lyNCEY6SvGZ4ykVPya+LyXw==
-X-Received: by 2002:a05:622a:1043:b0:403:e841:58cf with SMTP id f3-20020a05622a104300b00403e84158cfmr7250698qte.10.1689776355277;
-        Wed, 19 Jul 2023 07:19:15 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlF6ArzibyjU/HIAo8zVRkK4K5uiAaxY67dwKUBWu+e77t8a+bRUMd76ruBG00lvDGu4BDbxlfoFwop3e5WhMrI=
-X-Received: by 2002:a05:622a:1043:b0:403:e841:58cf with SMTP id
- f3-20020a05622a104300b00403e84158cfmr7250684qte.10.1689776355066; Wed, 19 Jul
- 2023 07:19:15 -0700 (PDT)
+        with ESMTP id S229920AbjGSPL6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 11:11:58 -0400
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3753A2;
+        Wed, 19 Jul 2023 08:11:57 -0700 (PDT)
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36JAbFwL018116;
+        Wed, 19 Jul 2023 15:11:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=qcppdkim1;
+ bh=NEljoRLZmxSC945GR/7jUU+l1FRSEid4AYsn6lQQG0g=;
+ b=SljNi75lchYbJjSOGLfuDPVip5BrNdFSLhF/HfHRyTBU5CuRNa/s+FOaUrPezVFOQk3E
+ 9QNisxeLQrwftFXER7AwtK00JkxQYEZSbfLCDuqY8OCPt99pEB4q1N/ZiMOaGpQJWeJl
+ r8tOjM/W8dp/NnYX6iMhP5IH8AdLNFfb8tHbgjHy3flc6C7+avSZU8F95/goAwfe5HtN
+ n6PTvNmWl4xAeqMy64R5Mbr2nQvrLMaVB5Hocv53Dnq/EfYoiJGOKmzTO/xv8zotb5eq
+ IpC8T8iGKjl7SmejRndoHHQ/e+MEtmA4+EVVkSoWy+yFXWpb3tMklvwixKGrWddr0wcE zQ== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rx7rnhfyg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 15:11:53 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36JFBqoU021355
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 19 Jul 2023 15:11:52 GMT
+Received: from [10.201.206.238] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Wed, 19 Jul
+ 2023 08:11:45 -0700
+Message-ID: <ed817ba3-a424-1247-0ba8-88f1a9c23fee@quicinc.com>
+Date:   Wed, 19 Jul 2023 20:41:42 +0530
 MIME-Version: 1.0
-References: <20230717210356.2794736-1-samuel.holland@sifive.com> <20230717210356.2794736-2-samuel.holland@sifive.com>
-In-Reply-To: <20230717210356.2794736-2-samuel.holland@sifive.com>
-From:   Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Date:   Wed, 19 Jul 2023 16:18:59 +0200
-Message-ID: <CAJM55Z9B6atT_t4321kOCGWoeqLxe+ZBsJDr4BeV1byaeYw5fw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: sifive: Allow building the driver as a module
-To:     Samuel Holland <samuel.holland@sifive.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Conor Dooley <conor.dooley@microchip.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.7.2
+Subject: Re: [V3,02/11] dt-bindings: clock: qcom: gcc-ipq9574: remove q6 bring
+ up clock macros
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        <agross@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
+        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
+        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
+References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
+ <20230718120501.3205661-3-quic_mmanikan@quicinc.com>
+ <9d473f0b-bd6b-f426-3bd2-2890e8a79431@linaro.org>
+ <9c540e3b-d8d1-0807-a21e-d01a301c1972@linaro.org>
+From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <9c540e3b-d8d1-0807-a21e-d01a301c1972@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: htHNUGCH63xkGt4IDHmdVxTGxuKTqvWc
+X-Proofpoint-ORIG-GUID: htHNUGCH63xkGt4IDHmdVxTGxuKTqvWc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-19_10,2023-07-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 suspectscore=0 mlxlogscore=644
+ impostorscore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307190136
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 19 Jul 2023 at 10:07, Samuel Holland <samuel.holland@sifive.com> wrote:
->
-> This can reduce the kernel image size in multiplatform configurations.
 
-I don't mind this, but booting without this driver also means there is
-no uart for debug output or any other peripheral until the kernel gets
-to the initrd to load the driver. Does the earlycon console work all
-the way until we reach the initrd? Otherwise I can't imagine many
-scenarios where configuring this as a module is desirable.
 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->
->  drivers/clk/sifive/Kconfig       | 2 +-
->  drivers/clk/sifive/sifive-prci.c | 8 +++-----
->  2 files changed, 4 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/sifive/Kconfig b/drivers/clk/sifive/Kconfig
-> index 2322f634a910..49597d95602e 100644
-> --- a/drivers/clk/sifive/Kconfig
-> +++ b/drivers/clk/sifive/Kconfig
-> @@ -10,7 +10,7 @@ menuconfig CLK_SIFIVE
->  if CLK_SIFIVE
->
->  config CLK_SIFIVE_PRCI
-> -       bool "PRCI driver for SiFive SoCs"
-> +       tristate "PRCI driver for SiFive SoCs"
->         default ARCH_SIFIVE
->         select RESET_CONTROLLER
->         select RESET_SIMPLE
-> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
-> index e317f3454e93..8c67d1a7c8df 100644
-> --- a/drivers/clk/sifive/sifive-prci.c
-> +++ b/drivers/clk/sifive/sifive-prci.c
-> @@ -7,6 +7,7 @@
->  #include <linux/clkdev.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/module.h>
->  #include <linux/of_device.h>
->  #include "sifive-prci.h"
->  #include "fu540-prci.h"
-> @@ -618,9 +619,6 @@ static struct platform_driver sifive_prci_driver = {
->         },
->         .probe = sifive_prci_probe,
->  };
-> +module_platform_driver(sifive_prci_driver);
->
-> -static int __init sifive_prci_init(void)
-> -{
-> -       return platform_driver_register(&sifive_prci_driver);
-> -}
-> -core_initcall(sifive_prci_init);
+On 7/19/2023 12:45 PM, Krzysztof Kozlowski wrote:
+> On 19/07/2023 09:14, Krzysztof Kozlowski wrote:
+>> On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
+>>> In multipd model Q6 firmware takes care of bringup clocks,
+>>> so remove them.
+>>>
+>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>> ---
+>>> Changes in V3:
+>>> 	- Rebased on TOT
+>>
+>> No clue what is TOT. We have TIP, but you should not use it as a base.
+>> Other used names are mainline and linux-next.
+>>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> Un-acked. I said last time that this does not compile and I do not see
+> any improvements here.
+> 
 
-Maybe also add the MODULE_AUTHOR() and MODULE_DESCRIPTION() macros
-while you're at it.
+My bad, i missed.
 
-> +MODULE_LICENSE("GPL");
-> --
-> 2.40.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Is it fine to move gcc driver patch to first and then dt-bindings
+patch ?
+
+With this way dt-bindings patch will compile.
+
+Current patch order:
+-------------------
+1) Removing clock macros from dt-bindigs
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-3-quic_mmanikan@quicinc.com/
+
+2) Removing clocks from gcc driver
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-5-quic_mmanikan@quicinc.com/
+
+
+Proposed patch order:
+---------------------
+1) Removing clocks from gcc driver
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-5-quic_mmanikan@quicinc.com/
+
+2) Removing clock macros from dt-bindigs
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20230718120501.3205661-3-quic_mmanikan@quicinc.com/
+
+Thanks & Regards,
+Manikanta.
+
+> Best regards,
+> Krzysztof
+> 
