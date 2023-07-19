@@ -2,62 +2,148 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A36C0015E
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 22:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA659C001DE
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 22:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229822AbjGSWIq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 18:08:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48564 "EHLO
+        id S230352AbjGSWJu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 18:09:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230198AbjGSWIp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 18:08:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817981FDC;
-        Wed, 19 Jul 2023 15:08:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S230198AbjGSWJt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 18:09:49 -0400
+Received: from relay03.th.seeweb.it (relay03.th.seeweb.it [5.144.164.164])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166741FE1;
+        Wed, 19 Jul 2023 15:09:48 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2047A61841;
-        Wed, 19 Jul 2023 22:08:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0CBC433C8;
-        Wed, 19 Jul 2023 22:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689804523;
-        bh=Q7qhiBSKFdS3iwGZGZrTqDpp+Ig1Zgkic98cWxoPI0I=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TceqhCewmpe5C331IRog4jupR1LqDk7lz//CsBSh2Ixi4oEn0oqzEKXnyuSqGYfRY
-         C+FsctB17WJAcj+TCM3v0Aj4IxwNAx/9vExaeSVY/n8HcSLiiL1eJlNpTIe+4B+WLM
-         tIxSAzcwy9G12TdM127/Idzzb8NRsrx2EwYrz+Ej7g7m1dut3Eb7SkJnOXu2+3bb8h
-         I9y7Y+pC7wNy8JVCn/RluXWo+pMnGT0qhkXPSLju6bDbobS37jkITH5BD0L44YrjR5
-         AxOpne5iiLZee62F8PSdXYjErSUYqEaNcnH142OXhvF8sZOCPoIGwMf0qVdENwOt8u
-         Blg3Q0i8orCnw==
-Message-ID: <307a29b991d3da3fc7a83c9c31a9733a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 4A3FB202EA;
+        Thu, 20 Jul 2023 00:09:45 +0200 (CEST)
+Date:   Thu, 20 Jul 2023 00:09:43 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@somainline.org>,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Martin Botka <martin.botka@somainline.org>,
+        Jami Kettunen <jami.kettunen@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 06/15] dt-bindings: display/msm: sc7180-dpu: Describe
+ SM6125
+Message-ID: <tpkiplw7l2mzdwekynkrg6dwm7svktwm2zooodb3c42btyvo3e@yjrpqem26wtx>
+References: <20230718-sm6125-dpu-v3-0-6c5a56e99820@somainline.org>
+ <20230718-sm6125-dpu-v3-6-6c5a56e99820@somainline.org>
+ <3ce19d8f-97d8-15b6-5148-78e200b112e9@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <fcd37e67fba625da304fdaf07e0ab0db@208suo.com>
-References: <20230612033904.34921-1-zhanglibing@cdjrlc.com> <0dc9409b662180ed29cbc281f0f076b7@208suo.com> <fcd37e67fba625da304fdaf07e0ab0db@208suo.com>
-Subject: Re: [PATCH] clk: baikal-t1: Using div64_ Ul replaces do_ Div() function
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     mturquette@baylibre.com, wuyonggang001@208suo.com
-Date:   Wed, 19 Jul 2023 15:08:41 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ce19d8f-97d8-15b6-5148-78e200b112e9@linaro.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting wuyonggang001@208suo.com (2023-06-13 22:45:48)
-> Fix the following coccicheck warning:
->=20
-> drivers/clk/baikal-t1/ccu-pll.c:81:1-7: WARNING: do_div() does a=20
-> 64-by-32 division, please consider using div64_ul instead.
->=20
-> Signed-off-by: Yonggang Wu <wuyonggang001@208suo.com>
-> ---
+On 2023-07-19 01:06:03, Dmitry Baryshkov wrote:
+> On 19/07/2023 00:24, Marijn Suijten wrote:
+> > SM6125 is identical to SM6375 except that while downstream also defines
+> > a throttle clock, its presence results in timeouts whereas SM6375
+> > requires it to not observe any timeouts.  This is represented by
+> > reducing the clock array length to 6 so that it cannot be passed.  Note
+> > that any SoC other than SM6375 (currently SC7180 and SM6350) are
+> > unconstrained and could either pass or leave out this "throttle" clock.
+> 
+> Could you please describe, what kind of timeouts do you observe? Is this 
+> the DSI underruns issue?
 
-Applied to clk-next
+Ping-pong timeouts and low(er) framerate.  However, they were previosuly
+not happening on a random boot out of tens... and now I can no longer
+reproduce the timeout on 4 consecutive boots after adding the throttle
+clock.  Could it perhaps be the power domains and opps that we added in
+v2 and v3?
 
-I had to manually apply it though and I had to fix the author to match
-the SoB. Please take more care next time.
+We previously discussed in DMs that the rate was bouncing between 25MHz
+and 403MHz without the clock specified, and with it it it got set at 385
+or 403MHz.  Now, a month or so later, repeatedly running this command
+shows 25MHz when the panel is not being refreshed, and between 337 and
+403MHz on modetest -r -v:
+
+    sony-pdx201 ~ $ sudo ./debugcc -p sm6125 gcc_disp_throttle_core_clk
+                gcc_disp_throttle_core_clk: 337.848277MHz (337848277Hz)
+
+Either all these boots are flukes, or it is really fixed and this patch
+should be revised...
+
+> If so, it might be fixed by the MDSS 
+> interconnect fix ([1]).
+> 
+> [1] https://patchwork.freedesktop.org/series/116576/
+
+Might have an effect but I don't have any interconnects defined in this
+SoC DT yet.
+
+- Marijn
+
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > ---
+> >   .../devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml   | 14 ++++++++++++++
+> >   1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
+> > index 630b11480496..37f66940c5e3 100644
+> > --- a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
+> > +++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
+> > @@ -15,6 +15,7 @@ properties:
+> >     compatible:
+> >       enum:
+> >         - qcom,sc7180-dpu
+> > +      - qcom,sm6125-dpu
+> >         - qcom,sm6350-dpu
+> >         - qcom,sm6375-dpu
+> >   
+> > @@ -73,6 +74,19 @@ allOf:
+> >           clock-names:
+> >             minItems: 7
+> >   
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          const: qcom,sm6125-dpu
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          maxItems: 6
+> > +
+> > +        clock-names:
+> > +          maxItems: 6
+> > +
+> >   examples:
+> >     - |
+> >       #include <dt-bindings/clock/qcom,dispcc-sc7180.h>
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
+> 
