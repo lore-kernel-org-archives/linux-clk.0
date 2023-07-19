@@ -2,91 +2,77 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D55AC001B0
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 19:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E19CC001B0
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Jul 2023 19:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbjGSTiw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 15:38:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33996 "EHLO
+        id S229707AbjGSTkb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 15:40:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229492AbjGSTiv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 15:38:51 -0400
+        with ESMTP id S229492AbjGSTka (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 15:40:30 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C59982100
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 12:38:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFA2C11C;
+        Wed, 19 Jul 2023 12:40:29 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6EF78617F4
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 19:37:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF362C433C7;
-        Wed, 19 Jul 2023 19:37:58 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7CFE2617F4;
+        Wed, 19 Jul 2023 19:40:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69EFC433C7;
+        Wed, 19 Jul 2023 19:40:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689795478;
-        bh=RoApuEBZHp8i1pghl2j5zeKB/PC8LoNvYwsxZUUhu+w=;
+        s=k20201202; t=1689795628;
+        bh=EXBuHUSa0yoSSKIi58cyfyt8k6/rczE7CI5TV0Q9sbw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=sScyy0ELuGvtqYrV+O9/LFoCKVPRZtcLiMgOe3CodM81MSZsxikyT7L7RZNj664b8
-         Tiju3xlAucu2poBrWiWtZndeCtI9V17NMyIGPw/D6XCuIoWyo8RSVoB+k9JhSRDaHT
-         6kOnku2OPg+3ff7yue7SfH3cMnO7wDqe4KzwafZjWwPH9Nz5vWh2VjfrWIYCH/uT3H
-         6k92HkfR1kSawoxbi7xlT+iF3svX0OQouuZmwOPyLM3iX2uJ/kvRUZVcA/BVs71hjT
-         /tfTzG/TsP55Dapp9xluZVs7JJkx5qQub4MdZzKs6ELEDqr6c+C2kVPj8xF3mWGLfl
-         KETPSG8iveSMg==
-Message-ID: <7d208aae212aa2101e8a9ca998a6a355.sboyd@kernel.org>
+        b=f5KXu4u18pX8w/bhoDCQEU/VXLVOFDy+kF4NEaBkkFZABXeZ8jy1BL1S787JwxTwv
+         rKhEOnhsY4ZkAnKE+PGC1Cx8tiA1n58V9nnDl7IOeR7eeJiOQvk3ZM8ibD26xhC+nD
+         whoGLUIpr2YAiXQaS7fo2g+6ssJYS4wEOve7uGVH5vo9glYucZqXKgA9VEbfNRlh1t
+         KW3v52Yx/bm74MaVXnAhALXkw4wpJYB9Ap4mGoqE2sNLorFDNkBBDISObAy1BCIECE
+         mcYk8QHU7dMdxWKaAitMdNPINI0BmLQQdK765y8qDO9kwkxXN6BpwNw6vo/GeiYEeL
+         4tl/Gn0p63HAw==
+Message-ID: <25fd7919e449d2a6ffe69c8cb50ba34c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20230719-trough-frisk-40b92acb485a@spud>
-References: <20230719-trough-frisk-40b92acb485a@spud>
-Subject: Re: [GIT PULL] StarFive clock driver additions for v6.6
+In-Reply-To: <20230719074251.1219089-1-wenst@chromium.org>
+References: <20230719074251.1219089-1-wenst@chromium.org>
+Subject: Re: [PATCH] clk: mediatek: mt8183: Add back SSPM related clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     conor@kernel.org, linux-riscv@lists.infradead.org,
-        linux-clk@vger.kernel.org, emil.renner.berthing@canonical.com,
-        xingyu.wu@starfivetech.com, walker.chen@starfivetech.com,
-        hal.feng@starfivetech.com
-To:     Conor Dooley <conor@kernel.org>
-Date:   Wed, 19 Jul 2023 12:37:56 -0700
+Cc:     Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+To:     AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Chen-Yu Tsai <wenst@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Date:   Wed, 19 Jul 2023 12:40:26 -0700
 User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Conor Dooley (2023-07-19 10:37:55)
-> Hey Stephen,
+Quoting Chen-Yu Tsai (2023-07-19 00:42:50)
+> This reverts commit 860690a93ef23b567f781c1b631623e27190f101.
 >=20
-> Please pull some clock driver additions for StarFive. I've had these
-> commits, other than a rebase to pick up R-b tags from Emil, out for LKP
-> to have a look at for a few days and they've gotten a clean bill of
-> health. Some of the dt-binding stuff "only" has a review from me, but
-> since I am a dt-binding maintainer that's fine, although maybe not
-> common knowledge yet.
+> On the MT8183, the SSPM related clocks were removed claiming a lack of
+> usage. This however causes some issues when the driver was converted to
+> the new simple-probe mechanism. This mechanism allocates enough space
+> for all the clocks defined in the clock driver, not the highest index
+> in the DT binding. This leads to out-of-bound writes if their are holes
+> in the DT binding or the driver (due to deprecated or unimplemented
+> clocks). These errors can go unnoticed and cause memory corruption,
+> leading to crashes in unrelated areas, or nothing at all. KASAN will
+> detect them.
 >=20
-> I've also gone and re-arranged the patches in this PR relative to their
-> mailing list postings, so that the dt-binding patches can be used as a
-> base for adding the clock controller nodes & dependant peripherals to
-> the jh7110's dts.
+> Add the SSPM related clocks back to the MT8183 clock driver to fully
+> implement the DT binding. The SSPM clocks are for the power management
+> co-processor, and should never be turned off. They are marked as such.
 >=20
-> I'm hoping that next time around, someone from StarFive can send you the
-> PR, maybe Walker, Hal or Xingyu are interested in that.
->=20
-> Thanks,
-> Conor.
->=20
-> The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaa=
-a5:
->=20
->   Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.git/ tags/c=
-lk-starfive-for-6.6
->=20
-> for you to fetch changes up to dae5448a327edef952faaf31bb3aedb0597ba62a:
->=20
->   clk: starfive: Add StarFive JH7110 Video-Output clock driver (2023-07-1=
-9 18:08:05 +0100)
->=20
-> ----------------------------------------------------------------
+> Fixes: 3f37ba7cc385 ("clk: mediatek: mt8183: Convert all remaining clocks=
+ to common probe")
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-fixes
