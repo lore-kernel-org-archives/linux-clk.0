@@ -2,135 +2,102 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28949EB64DD
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 18:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40BEC001DE
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 19:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229777AbjGTSVQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jul 2023 14:21:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56662 "EHLO
+        id S230117AbjGTTIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jul 2023 15:08:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbjGTSVP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 14:21:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2EB5135;
-        Thu, 20 Jul 2023 11:21:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S230129AbjGTTHx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 15:07:53 -0400
+Received: from relay04.th.seeweb.it (relay04.th.seeweb.it [5.144.164.165])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7752D4C;
+        Thu, 20 Jul 2023 12:07:46 -0700 (PDT)
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7C62B61BB8;
-        Thu, 20 Jul 2023 18:21:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC5E9C433C8;
-        Thu, 20 Jul 2023 18:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689877273;
-        bh=xWZNuT79nWckxP68+Fly6AA+AsZef3fv/zXx2PMynJw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bn8cEPYaU1Ktg6GA+KYs25EvtNCsMfW/IpZgX5FuwTYfEc9gtcRqNjtlfRT+j3ZN3
-         UTmVLPWhIxclyzehIGOkmqW+tuWq9/ZuFT9KgkQkZRP6UdMgP9aT6IYIRl8nrgmX5j
-         1Jb44u9uOWpoerkHtavQVuXh+6NI47pd82v66gdFQouR3I0JLYquzgT1N/yK3LSjnE
-         HKITs5vZQ+9JLStsblnyj8uIDANpG6XQeccHZ6OYLVhFbSO5DXkSDpRcYi9gzHneza
-         kqSqfhZDH8eEG2qrZpC3RwdJOyWxFOg8z054JIxN2Je7qqPLdF9FhsM/cDNgilMHK2
-         TZmegHLunXZLw==
-Message-ID: <6f9a6f0a4d43492604503098313c32f3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 54FD220231;
+        Thu, 20 Jul 2023 21:07:43 +0200 (CEST)
+Date:   Thu, 20 Jul 2023 21:07:41 +0200
+From:   Marijn Suijten <marijn.suijten@somainline.org>
+To:     Devi Priya <quic_devipriy@quicinc.com>
+Cc:     andersson@kernel.org, agross@kernel.org, konrad.dybcio@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_saahtoma@quicinc.com
+Subject: Re: [PATCH] clk: qcom: clk-rcg2: Fix wrong RCG clock rate for high
+ parent frequencies
+Message-ID: <v2jtnqomqr3bmewtollty2wlu73ymtbobt3pd5aypprmezhow2@edrb3w3kz56b>
+References: <20230720083304.28881-1-quic_devipriy@quicinc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAA+D8APd3n8XvC3m5fAoPxqqLzaU-RKm+e9y_G++D6KdaJJhiQ@mail.gmail.com>
-References: <1689322259-13504-1-git-send-email-shengjiu.wang@nxp.com> <1689322259-13504-4-git-send-email-shengjiu.wang@nxp.com> <ad757ed215d8f098472be370e3bbd961.sboyd@kernel.org> <CAA+D8APd3n8XvC3m5fAoPxqqLzaU-RKm+e9y_G++D6KdaJJhiQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] clk: imx: imx8: add audio clock mux driver
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
-        conor+dt@kernel.org, festevam@gmail.com, kernel@pengutronix.de,
-        krzysztof.kozlowski+dt@linaro.org, linux-imx@nxp.com,
-        mturquette@baylibre.com, peng.fan@nxp.com, robh+dt@kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To:     Shengjiu Wang <shengjiu.wang@gmail.com>
-Date:   Thu, 20 Jul 2023 11:21:11 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230720083304.28881-1-quic_devipriy@quicinc.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shengjiu Wang (2023-07-20 00:31:05)
-> On Thu, Jul 20, 2023 at 4:17=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
-rote:
->     Quoting Shengjiu Wang (2023-07-14 01:10:59)
->     > +/**
->     > + * struct imx8_acm_soc_data: soc specific data
->     > + * @sels: pointer to struct clk_imx8_acm_sel
->     > + * @num_sels: numbers of items
->     > + */
->     > +struct imx8_acm_soc_data {
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0struct clk_imx8_acm_sel *sels;
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned int num_sels;
->     > +};
->     > +
->     > +/**
->     > + * struct imx8_acm_priv: private structure
->=20
->     Compile with W=3D1 and see that this isn't kerneldoc. Please fix.
->=20
->=20
-> I have used the W=3D1,=C2=A0 but there is not error or warning from kerne=
-ldoc
->=20
-> My command is:
-> make W=3D1 ARCH=3Darm64 CROSS_COMPILE=3D/opt/toolchain/
-> gcc-linaro-14.0.0-2023.06-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-=
- -j4
->=20
-> Anything I missed?
+Can you retitle this to state "overflow" rather than just "wrong"?
+That's more descriptive.
 
-I thought W=3D1 ran kerneldoc check, but maybe not by default. Look at
-the docs:
+E.g "Fix clockrate overflow for high parent frequencies"
 
-https://docs.kernel.org/doc-guide/kernel-doc.html#structure-union-and-enume=
-ration-documentation
+On 2023-07-20 14:03:04, Devi Priya wrote:
+> If the parent clock rate is greater than unsigned long max/2 then
+> integer overflow happens when calculating the clock rate on 32-bit systems.
+> As RCG2 uses half integer dividers, the clock rate is first being
+> multiplied by 2 which will overflow the unsigned long max value. So, use
+> unsigned long long for rate computations to avoid overflow.
+> 
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-rcg2.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index e22baf3a7112..42d00b134975 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -156,18 +156,18 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
+>   *            hid_div       n
+>   */
+>  static unsigned long
+> -calc_rate(unsigned long rate, u32 m, u32 n, u32 mode, u32 hid_div)
+> +calc_rate(unsigned long parent_rate, u32 m, u32 n, u32 mode, u32 hid_div)
+>  {
+> +	u64 rate = parent_rate;
+> +
+>  	if (hid_div) {
+>  		rate *= 2;
+> -		rate /= hid_div + 1;
+> +		do_div(rate, hid_div + 1);
 
->=20
->=20
->=20
->     > + * @dev_pm: multi power domain
->     > + * @soc_data: pointer to soc data
->     > + * @reg: base address of registers
->     > + * @regs: save registers for suspend
->     > + */
->     > +struct imx8_acm_priv {
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0struct clk_imx_acm_pm_domains dev_pm;
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0const struct imx8_acm_soc_data *soc_dat=
-a;
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0void __iomem *reg;
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0u32 regs[IMX_ADMA_ACM_CLK_END];
->     > +};
->     > +
->     > +static const struct clk_parent_data imx8qm_aud_clk_sels[] =3D {
->     > +=C2=A0 =C2=A0 =C2=A0 =C2=A0{.fw_name =3D "aud_rec_clk0_lpcg_clk", =
-.name =3D
->     "aud_rec_clk0_lpcg_clk" },
->=20
->     There should only be fw_name here, or use an index. Presumably this
->     isn't migrating old code or bindings. Also, please add space after { =
-and
->     before }.
->=20
->=20
-> The clock=C2=A0 "aud_rec_clk0_lpcg_clk" is not defined in this provider. =
-if
-> remove .name There is an issue for finding parent.
+I'm pretty sure mult_frac() could have solved this as well, without
+temporarily going to u64?
 
-The .fw_name should be part of the DT binding. If it isn't part of the
-binding as an element of clock-names then it shouldn't be in the driver
-as a .fw_name. If it isn't part of the provider, then it should be
-referenced by DT index or clock-names. If you use the index, you avoid a
-possibly time consuming set of string comparisons. So if you can, use
-the index as much as possible. If you're converting a pre-existing
-binding you will have to use .name as well to fallback to the globally
-unique string name for a clk.
+    mult_frac(rate, 2, hid_div + 1)
 
->=20
-> Should I remove .fw_name , only keep .name?
+>  	}
+>  
+>  	if (mode) {
+> -		u64 tmp = rate;
+> -		tmp *= m;
+> -		do_div(tmp, n);
+> -		rate = tmp;
+> +		rate *= m;
+> +		do_div(rate, n);
 
-You should remove .name it sounds like.
+    mult_frac(rate, m, n)
+
+Or am I totally wrong?
+
+- Marijn
+
+>  	}
+>  
+>  	return rate;
+> -- 
+> 2.17.1
+> 
