@@ -2,131 +2,112 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E20EB64DA
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 08:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F820EB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 08:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbjGTI4x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jul 2023 04:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38324 "EHLO
+        id S229940AbjGTI4z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jul 2023 04:56:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231406AbjGTIyX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 04:54:23 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC26268C
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jul 2023 01:54:20 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id 2adb3069b0e04-4fb96e2b573so775173e87.3
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jul 2023 01:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689843258; x=1692435258;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hr3GYuI4RGrQA8MLYXyJLt2ld5PTqpatMnFPkHbCrNI=;
-        b=Shpu1expb9UmeNTzkrqLpZgKTTgNTFnWaaLHFYEs8X9t52qsEc2qqYzhSS1wKDUyy1
-         n4EpvR8sgcpL9FLYrJpRYmBpPkbJYzeu10lN6wdKe7Ba3JMVPmK04th61cyw1jW0vioh
-         2k3CoD0TVIieY7nwHyzHbt5z0gDLKPnvLw6UMDKlMyXki3gNfYPvuUq+SrKIZ7RFQuBd
-         Px9Xf/3N008B/kEnqXS6fqGuDaol6sbJt4f/XDWyLT7f7F4gTOg0Y1UdNeEYpRgxFEy7
-         DaXKvwDjYnKA9he3hNDcHOhrri5jmEMFtNNli0s0ezLRD1kzQDFHIjgsiSo66GqPF4gC
-         ZR0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689843258; x=1692435258;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hr3GYuI4RGrQA8MLYXyJLt2ld5PTqpatMnFPkHbCrNI=;
-        b=R1ugssiG7NaZqfCtiV+7HJ3nUb7BOJ+724dazrW5PAWiBK6umQVxGOfCk7u/NgCf+y
-         SkYJXbyIm7xqxIb6CZ9Ajg+vf2CrpA9J3ZNLkzDzU29QMtZTk/OX0DdPGooK7mRbZbDQ
-         Dm6H/PC0v68llGElRO3Q5cLw3yuLewfvRye8jPTTO9tcblURtlH4jZAnvgkXYFuTePdO
-         HJ/ee8fi5P3nlP9XpG1Vn7P5SK+X3cKvVEGKPrArvy3qjPjMoqmY3ixba5FJWyODY1LP
-         bR8/mEOW4TVS2Pdb0aODodrGq3Wg8LC8HYqN23MTOaxwsy8ceBCQTI93E2lt1MHmLACr
-         TEnA==
-X-Gm-Message-State: ABy/qLYXZGoJ7BtYyKZaOCRuSjXSxi3BBlFDBDuFrCA0tFduHdETNTKO
-        Ngq31U2f19dAdms045g/a9viKQ==
-X-Google-Smtp-Source: APBJJlEh3NvNHBbbxheUFFyvpgKd2C0hcz7XJqCW4yZ6/zAz5ujRsINO2b569mPpxzPaezD6Arr+tg==
-X-Received: by 2002:a19:ca4a:0:b0:4fb:8dcc:59e5 with SMTP id h10-20020a19ca4a000000b004fb8dcc59e5mr1681346lfj.39.1689843258307;
-        Thu, 20 Jul 2023 01:54:18 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id a12-20020a5d53cc000000b00313f9a0c521sm657889wrw.107.2023.07.20.01.54.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jul 2023 01:54:17 -0700 (PDT)
-Message-ID: <a6006558-5eca-a8a0-ed61-dfa746f223ae@linaro.org>
-Date:   Thu, 20 Jul 2023 10:54:12 +0200
+        with ESMTP id S231878AbjGTId0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 04:33:26 -0400
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD11268C;
+        Thu, 20 Jul 2023 01:33:25 -0700 (PDT)
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36K5SqqW022420;
+        Thu, 20 Jul 2023 08:33:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=qcppdkim1;
+ bh=MP1Bkyz5bjTyT8+WFtnsD0N1nt1uVmVkvyHsWOopleU=;
+ b=lVYXiOyhqoks00qR0ZRhE9p2fL+ZqQgRfwPw6HrRDe0kHeU+tiQUMxAoCPgR3JL/EwKS
+ u2fu/tYfYknaskP1+q8w7Jtotc2/cqO1JTdDwdMWxL888aoV0rb0itmWZf1hgiHDk4vV
+ z2660tVT5Qd82Ods51nqUhOLrPFhdzuLfBz6h1F6tVuQysrd4de7s5pjq7dpYkX5gufS
+ YMAdPkCjM0oHYEuq0qufHpxbwxI+MP7Z/dIdRj4F7zqIk4CMHjmLTINzF7Hv4kYXLyWZ
+ 19I+yvVe4VILLIPF8+bb93ZlsH/BEj72rsZ4UOsZe/9iXOdlrZIcmAiA/N55uVipe3gW 4g== 
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rx728u853-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jul 2023 08:33:21 +0000
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36K8XKi7022628
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Jul 2023 08:33:20 GMT
+Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.30; Thu, 20 Jul 2023 01:33:17 -0700
+From:   Devi Priya <quic_devipriy@quicinc.com>
+To:     <andersson@kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <quic_saahtoma@quicinc.com>
+Subject: [PATCH] clk: qcom: clk-rcg2: Fix wrong RCG clock rate for high parent frequencies
+Date:   Thu, 20 Jul 2023 14:03:04 +0530
+Message-ID: <20230720083304.28881-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 00/42] ep93xx device tree conversion
-Content-Language: en-US
-To:     nikita.shubin@maquefel.me,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Lennert Buytenhek <kernel@wantstofly.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Lukasz Majewski <lukma@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Peters <mpeters@embeddedTS.com>,
-        Kris Bahnsen <kris@embeddedTS.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-        netdev@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
-        linux-input@vger.kernel.org, alsa-devel@alsa-project.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-References: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.80.80.8]
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IdJx1srWEX_zfV2aQWymGAF7fjq-A4I6
+X-Proofpoint-ORIG-GUID: IdJx1srWEX_zfV2aQWymGAF7fjq-A4I6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
+ definitions=2023-07-20_02,2023-07-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ bulkscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
+ mlxlogscore=876 impostorscore=0 spamscore=0 clxscore=1015 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2306200000 definitions=main-2307200070
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/07/2023 13:29, Nikita Shubin via B4 Relay wrote:
-> This series aims to convert ep93xx from platform to full device tree support.
-> 
-> The main goal is to receive ACK's to take it via Arnd's arm-soc branch.
-> 
-> I've moved to b4, tricking it to consider v0 as v1, so it consider's
-> this version to be v3, this exactly the third version.
+If the parent clock rate is greater than unsigned long max/2 then
+integer overflow happens when calculating the clock rate on 32-bit systems.
+As RCG2 uses half integer dividers, the clock rate is first being
+multiplied by 2 which will overflow the unsigned long max value. So, use
+unsigned long long for rate computations to avoid overflow.
 
-Fix your clock/timezone, so your patches are not sent in the future.
-Unfortunately this will stay at top of my queue, which is unfair, so I
-will just ignore for now.
+Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+---
+ drivers/clk/qcom/clk-rcg2.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index e22baf3a7112..42d00b134975 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -156,18 +156,18 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
+  *            hid_div       n
+  */
+ static unsigned long
+-calc_rate(unsigned long rate, u32 m, u32 n, u32 mode, u32 hid_div)
++calc_rate(unsigned long parent_rate, u32 m, u32 n, u32 mode, u32 hid_div)
+ {
++	u64 rate = parent_rate;
++
+ 	if (hid_div) {
+ 		rate *= 2;
+-		rate /= hid_div + 1;
++		do_div(rate, hid_div + 1);
+ 	}
+ 
+ 	if (mode) {
+-		u64 tmp = rate;
+-		tmp *= m;
+-		do_div(tmp, n);
+-		rate = tmp;
++		rate *= m;
++		do_div(rate, n);
+ 	}
+ 
+ 	return rate;
+-- 
+2.17.1
 
