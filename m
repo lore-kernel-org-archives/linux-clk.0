@@ -2,171 +2,275 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3EFC001B0
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 00:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D6BC0015E
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 01:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbjGTAwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Jul 2023 20:52:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33622 "EHLO
+        id S229525AbjGTBMk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Jul 2023 21:12:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbjGTAwr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 20:52:47 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC22A92
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 17:52:45 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id d9443c01a7336-1b9c368f4b5so9677035ad.0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jul 2023 17:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689814365; x=1692406365;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EjfJbiTBWLwjCWBASk0UmbTrmdJcbucBE9z0RzX0Ebg=;
-        b=Bi2aDFsQ73w6a3Zo+IsjLw4XbkOH2rOQivGXG7Mh/2aA00CEGLJ7iJe3hkoTKiqllW
-         KuGtzw1CM8J8gSqi1gnMoNMeJNVK+iGj7ztBzKQBSHmmgdxmkR5pij4GS9k1iKC+/PX3
-         IhrPEVfZQg8NZSu+Eb/tZz/DYC0WuD8BQUjzBGDc0FOwASVg8dRL7T7VG55uTiA1Q02r
-         GyaEk8ZvdoUpq/hM/8NcrJsUUs6p1w5V8/mhDFjDGDXxT8iGZqO0+fBGDpq5r0KVHAGn
-         frpRfbLlbWqP60amm7SnuWXSYbSx64IBXu1E9UnEWoCTNMODhXQHCWRlDGSSgQLcQjBa
-         BpxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689814365; x=1692406365;
-        h=content-transfer-encoding:in-reply-to:subject:from:references:cc:to
-         :content-language:user-agent:mime-version:date:message-id:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EjfJbiTBWLwjCWBASk0UmbTrmdJcbucBE9z0RzX0Ebg=;
-        b=OFNVoON2HVChe6lz6iMTkMcAhcFMU6lX/s1j443GiOO3vcblLqhLIagbghomHWDIdw
-         m7Dy6WyiHNaf3KN8UJf/cGapRlSF1+5AvMKtv12reW0xN+Sjcy4E92D05Q5E4oMlXfL+
-         dapU680D+rBDEMlHMHs6+TrkUhs6yABMHeYzQG6W6bkNt2iq7ZUbdjqQN1Nsxji69JHG
-         yWyhv93jrNbAvn0/nRoHpSv2l8TIcjypPzQxz1uYPp0j21vc3Q08pzXkFgA+6S9GYSf+
-         IieQ293ZAoMHVDEMIv6Q9VvGY8850sheezRCU/M0+k73cC6Z4BzZVHJiYRr0mJL+eyF8
-         184A==
-X-Gm-Message-State: ABy/qLaOlovgU12wYqRISQF43wNmCHqitRGAkb3RVXvvzp38wph3tmwk
-        vYIVxOgiWeTJcdOmWeAlfHG81yck/VI=
-X-Google-Smtp-Source: APBJJlFbO683DSjl7AltR/nyz5I1ZDMAUnrs0PEOuYdsWjXBTfe2mdvvye1HSf7PlO+XdIx7FqmeMw==
-X-Received: by 2002:a17:902:da85:b0:1b4:5699:aac1 with SMTP id j5-20020a170902da8500b001b45699aac1mr4865748plx.12.1689814365210;
-        Wed, 19 Jul 2023 17:52:45 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id ix19-20020a170902f81300b001b9d335223csm4621909plb.26.2023.07.19.17.52.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jul 2023 17:52:44 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <bc762d5f-28bd-fb2d-e05f-7e7ee35c9c06@roeck-us.net>
-Date:   Wed, 19 Jul 2023 17:52:43 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
+        with ESMTP id S229450AbjGTBMj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Jul 2023 21:12:39 -0400
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2056.outbound.protection.outlook.com [40.107.21.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 901491FCD;
+        Wed, 19 Jul 2023 18:12:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=e/b3+41Htp5xGgcCQ4f0jD6aL/x6g82/IuW7JClv1sKyqj7yoSXVqTXtl90GGqEvZt05tv4h2gU0zMFmsSsLVQXlF9RpNiAUcmGaF9BJ8WOYEyIy3i90x1jw33Yz+Yx00h2WSJIqLymBBbTsi6YTvVePZZgEQrdPZZIVM0vT2oQJOk3qw4AYJS0X12H9pYxBGydrdazMw/Yf/3KgbZwqOw7yySe7rBw1jtOyafObNVRuMzn1wwkT6BVCJvDy2TWaGeN11FcUzqY+HBlvK5fTDdQLzugD8YXs1HD0wjhdqhDL6UIAiDeHWeD5ie1BMerYVni1zSIa6WAZjAbU8XrN2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OI1K1plZd137spBGw1nibVL3GDD25yhtT2kOM4OrfnI=;
+ b=kfJ+71D2Qd9gYorS3EHwPUjaXujh7H1g9qjUEVBAv8W71fEZEwfMTWAVuwBtPnYwmdobPh7P7te7AbcP0uSH+m3KcqzSbevdQLc7JSQk7vwrDRTrQr6k5pg+CtEXO0mLMMWSrhFQsjjWV+I1LJ6YYemVLpwtgeOZ0btZdutLhYy0uZUKu779mJPUoOL/t1+Uh5Veo31FOHNzUnAAkhZx7tD4NfJXULNKnM9wvgFdx7VWTYm/nISH8hClPrm5fqxG+7/03peAIFC1tnB3MGrF5BA8381+6xdjpmOPT2oNqSvMUmQLeVsjdda4MraqQEh81ARvH/OYDnDH9PkHnQnw3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OI1K1plZd137spBGw1nibVL3GDD25yhtT2kOM4OrfnI=;
+ b=OkvG4pUcsioez/8kqfJ29L8mEQRoWelTLo5t9/zxsW4htcQ3gxqHXk/ZherDysxgGh5aGUMFSK/pEmr4YTojvhMq5CCB952ygVBUoieYMAJrnkj8HaZ19EH9wEtUFDvpCDjI/tZdcim+ejIUORFmP3Hk3vVNHbuypgbRs3X+nWE=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by PAWPR04MB9986.eurprd04.prod.outlook.com (2603:10a6:102:380::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.24; Thu, 20 Jul
+ 2023 01:12:34 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::c874:7c87:c13b:64f8]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::c874:7c87:c13b:64f8%5]) with mapi id 15.20.6609.024; Thu, 20 Jul 2023
+ 01:12:34 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "abelvesa@kernel.org" <abelvesa@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ye Li <ye.li@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Subject: RE: [PATCH 1/2] clk: imx: pllv4: Fix SPLL2 MULT range
+Thread-Topic: [PATCH 1/2] clk: imx: pllv4: Fix SPLL2 MULT range
+Thread-Index: AQHZp2CbnGgVjWRZJk2vJ7TPHjeSc6/B/8Kw
+Date:   Thu, 20 Jul 2023 01:12:34 +0000
+Message-ID: <DU0PR04MB9417B2AE6605446A84C15609883EA@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Stephen Boyd <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-References: <2b594e50-2bbf-4a2d-88e6-49fc39f3957a@roeck-us.net>
- <0a13bc5364ea3cde3724c1e7a1d700d4.sboyd@kernel.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Backtraces with CONFIG_CLK_KUNIT_TEST=y+CONFIG_LOCKDEP=y
-In-Reply-To: <0a13bc5364ea3cde3724c1e7a1d700d4.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|PAWPR04MB9986:EE_
+x-ms-office365-filtering-correlation-id: dc1df6b2-97d5-4ac4-2b70-08db88be6633
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wiwggGP32akQxopXceIncsXMYev0KJ7mOKrMz7lhduJEhxGg7OR+Pa7rtZSjcWUuHMzOPA3Ma1eODFGd4RnYXvJr4htO6Z/Eqbmt9qiNl4R1PmSzsMBrIHn2YRHlbZx7ACIT1Ep6hhPNJ4pMa5e0XnQ+1CaeqM4S+Ged4fFe85hEqXRguMoZR+UXSAJ8op8bkBhmH7EzdtAmEWVtkscCWHHwodlBw/diDOQl3gQcVm/soEWTFVcRhw0Wh9uE9Xi0MciSOXoPuj9d+ArTTM7pxpSQF9WOcMZYMUxMEzv1Fg6HRjWwQBaqTT7OFr3efR0M7BxjH+A1f+AJW5+Vxf9y39rgXLP+fffzeE7UZyOWEhuNdJW2rB6fVtlfEzNRuROVUveTp/i0eoP/ea/Y7X6ZB/fnTmQSp9vHh/Up+JYb+tVpic6Uknuo933Psd73AyLtGu1T+Ekxscvho6e4OnMteLL/6GppgnfPNR6u3lqs1F+gqbY5oBrjVDwNmuFTQ1bs7Xu3pmBZtRdAbjXJK6lvCX0Eelcvix9UxrsZDFMsjJl5a3L0RbFnJhE9x70COE4+6xxJggQfCJYYE2b4agiVDl1suZcP8qGTAvdkNeKwauK8gZiYBS8AXjLzqyiMJJES
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(366004)(376002)(39860400002)(346002)(396003)(136003)(451199021)(52536014)(66946007)(44832011)(64756008)(7696005)(9686003)(66556008)(66446008)(66476007)(2906002)(8676002)(7416002)(316002)(8936002)(122000001)(4326008)(5660300002)(6506007)(38070700005)(76116006)(55016003)(38100700002)(186003)(26005)(71200400001)(41300700001)(86362001)(478600001)(83380400001)(54906003)(33656002)(110136005);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?dWoqTvLAK0B3C14bTOd6+vjHLn3sUvoRLAxVu8uvwYJPYfFF1BIE5C7RKBa7?=
+ =?us-ascii?Q?hI2Yrh9YWAsk9exTNM/I3cjEg9CAc3T3zZB5UOETZZTwiuq4YLS1kxym5hUk?=
+ =?us-ascii?Q?HGGxjPPhSdEsN07HfTIxxPBwGtW0medFqwBoGINo8BNfEzzlNL6hA+sd+426?=
+ =?us-ascii?Q?tVyGXS6sVd4JehLlUEPP4JeFjMGZJSUnu8MRqihWXqJkOpwmPzIEo3hcaHpf?=
+ =?us-ascii?Q?yIew98aeRhFh12TI0TfPIaGvMdzWE8Nysi/lSoZIw9e1x3r0/sfvCzobBlTq?=
+ =?us-ascii?Q?ua4wJ23rFFr6wtj9IQwJaoHSz0vyJXYnZ6MQv19zgczqllmBqchQZiFmUqiD?=
+ =?us-ascii?Q?Jlo9SYrbgpHnhBfREkh+gr5d33an3QPkwMI+93JfnnZ+AvnPdY8Jqan0WjC1?=
+ =?us-ascii?Q?VWeu8LXEFdzmxzVeTmMnbi+LlDj0jbfjX+1B0A0gj4ipZRhTpBlalDN3OhfI?=
+ =?us-ascii?Q?TCvI0zvc5aCyfr0LG4YJWh7tYGdyvu//U0zXawGsr+MKXCQNl7NBES0GDsoX?=
+ =?us-ascii?Q?ORYoOyqiv+n/FULnPtNQekqxyGQo36GOYnOzUiXGPHcSBj6aUWLkSxA/pVgN?=
+ =?us-ascii?Q?1cSZ5hXhFLvvzfKdUkhQTNpGNqpgQIAAvnx+Lc/pYl2/nvEjybI9NZRIc0PF?=
+ =?us-ascii?Q?K8VvWt5rr5MHXwRo0nXDxvFpomJDfFG67CgTvJzyGCFIoAlouVJFjFRDmKE2?=
+ =?us-ascii?Q?dN7kpnEYBfUaiTwmCteVbeJUb+XkuQab9UpVik1TMPc166cMED7e28R2/S2e?=
+ =?us-ascii?Q?ovqe956FM1R8gKGN6VgQqROiYHFHUEkQD+W9GvUcA68qMTgnWT94nIqc8Re6?=
+ =?us-ascii?Q?7Sd2kFb86PxCoH4mTTVXSUcsyG0EpLDUXXGnQ6iXwa5Qpun1fTkMBABsyG36?=
+ =?us-ascii?Q?/AW/P8TbwSzSs6nTcw7oc9En7qnnVrmkX/kMxwTDDV2cXJAbMKe6M75WjUX9?=
+ =?us-ascii?Q?tA5JCLCDJuw+rxZ3sYhff3t/q5tbHa+zUjMCfd/o6X5EtCO569ZT2LNEhf1v?=
+ =?us-ascii?Q?r5T3u8ZlJgGxo/XT7rZtJe16OjNRCL/phbfm53iw1vFP4a6BeCYlCh8oy+TM?=
+ =?us-ascii?Q?NCU1X2CBF8uHUZFb4/MLfh0ItfcPxcLlywbKM75cVBAd+B0gXc1jhJ7zfs2s?=
+ =?us-ascii?Q?+XdVEltaIqL3hnH2uwEw0Y8P+p8d0vw+NFiZF9oCImQrkMPuZK9b20d/DIdd?=
+ =?us-ascii?Q?yfUJMGyWSxP6PGTDwsn6g0qu785hfG2soku6zPX7DFoZdWhUa20qNW5enXu3?=
+ =?us-ascii?Q?lOkKyKe3BHfFH3c/hXkPkwniu27UIb6lk40DO/HGFkA9SYSD1mJFiPomNSjF?=
+ =?us-ascii?Q?FtAruRNJEum0tbbeCoDME2zPucdU4HRQRfbTQLjf3H7Du0g9/P+ySa+7WhPL?=
+ =?us-ascii?Q?ZmiEXgAznYVV1Ng++LrE+WG60pifT08B6ihOLuTsxQnDdYbbhD9vFakVJk9D?=
+ =?us-ascii?Q?v/gxrST4+S1JG9R8G8tYwgiA4eDSsFPoeReM66USDXts7GDY7VpL8HbzH2Vw?=
+ =?us-ascii?Q?SR/75WwtTfYpj4GIKFsKMahHDklVn5S06/Q91XIs/2zTzW45+0/tlQpB/cYn?=
+ =?us-ascii?Q?DBUOtpL77AF9107m/S8=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc1df6b2-97d5-4ac4-2b70-08db88be6633
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2023 01:12:34.2275
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WFveMuCwWrMr8F8PlVnjMxJLnIDyJBRfK6gr2aPT59bLnqDif6L4JgMLk9by7YvUrOGd0rKeqmC1c/xk6nantQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9986
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/19/23 17:01, Stephen Boyd wrote:
-> Quoting Guenter Roeck (2023-07-19 16:11:36)
->> Hi,
->>
->> when booting a kernel with both CONFIG_CLK_KUNIT_TEST and CONFIG_LOCKDEP
->> enabled, I get a lot of warning backtraces such as the following.
-> 
-> Is it the same as
-> https://lore.kernel.org/r/202301310919.b9d56ee3-yujie.liu@intel.com or
-> something different?
-> 
->>
->> [   11.119313] ------------[ cut here ]------------
->> [   11.119797] WARNING: CPU: 0 PID: 155 at drivers/clk/clk.c:708 clk_core_get_boundaries+0xdc/0xec
+Hi Abel, Stephen,
 
-The Intel report would be this one.
+> Subject: [PATCH 1/2] clk: imx: pllv4: Fix SPLL2 MULT range
 
-Guenter
+Would you give a look at this patchset?
 
->> [   11.121064] CPU: 0 PID: 155 Comm: kunit_try_catch Tainted: G                 N 6.5.0-rc2-00046-gccff6d117d8d #1
->> [   11.121580] Hardware name: Generic DT based system
->> [   11.122046]  unwind_backtrace from show_stack+0x18/0x1c
->> [   11.122429]  show_stack from dump_stack_lvl+0x38/0x5c
->> [   11.122712]  dump_stack_lvl from __warn+0x7c/0x134
->> [   11.122978]  __warn from warn_slowpath_fmt+0x7c/0xbc
->> [   11.123247]  warn_slowpath_fmt from clk_core_get_boundaries+0xdc/0xec
->> [   11.123569]  clk_core_get_boundaries from clk_core_init_rate_req+0x50/0x90
->> [   11.123899]  clk_core_init_rate_req from clk_leaf_mux_set_rate_parent_determine_rate+0x60/0x264
->> [   11.124287]  clk_leaf_mux_set_rate_parent_determine_rate from kunit_generic_run_threadfn_adapter+0x1c/0x28
->> [   11.124702]  kunit_generic_run_threadfn_adapter from kthread+0xf8/0x120
->> [   11.125017]  kthread from ret_from_fork+0x14/0x3c
->> [   11.125345] Exception stack(0x881a5fb0 to 0x881a5ff8)
->> [   11.125710] 5fa0:                                     00000000 00000000 00000000 00000000
->> [   11.126084] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> [   11.126531] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->> [   11.127384] irq event stamp: 1047
->> [   11.127717] hardirqs last  enabled at (1057): [<80166cb4>] __up_console_sem+0x68/0x88
->> [   11.128177] hardirqs last disabled at (1066): [<80166ca0>] __up_console_sem+0x54/0x88
->> [   11.128553] softirqs last  enabled at (0): [<80110cc4>] copy_process+0x810/0x216c
->> [   11.128941] softirqs last disabled at (0): [<00000000>] 0x0
->> [   11.129327] ---[ end trace 0000000000000000 ]---
->> [   11.129704] ------------[ cut here ]------------
->> [   11.129991] WARNING: CPU: 0 PID: 155 at drivers/clk/clk.c:1595 clk_core_round_rate_nolock+0xec/0x214
->> [   11.130455] CPU: 0 PID: 155 Comm: kunit_try_catch Tainted: G        W        N 6.5.0-rc2-00046-gccff6d117d8d #1
->> [   11.130891] Hardware name: Generic DT based system
->> [   11.131160]  unwind_backtrace from show_stack+0x18/0x1c
->> [   11.131446]  show_stack from dump_stack_lvl+0x38/0x5c
->> [   11.131721]  dump_stack_lvl from __warn+0x7c/0x134
->> [   11.131987]  __warn from warn_slowpath_fmt+0x7c/0xbc
->> [   11.132266]  warn_slowpath_fmt from clk_core_round_rate_nolock+0xec/0x214
->> [   11.132594]  clk_core_round_rate_nolock from clk_leaf_mux_set_rate_parent_determine_rate+0x6c/0x264
->> [   11.133001]  clk_leaf_mux_set_rate_parent_determine_rate from kunit_generic_run_threadfn_adapter+0x1c/0x28
->> [   11.133397]  kunit_generic_run_threadfn_adapter from kthread+0xf8/0x120
->> [   11.133699]  kthread from ret_from_fork+0x14/0x3c
->> [   11.133962] Exception stack(0x881a5fb0 to 0x881a5ff8)
->> [   11.134238] 5fa0:                                     00000000 00000000 00000000 00000000
->> [   11.134592] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> [   11.134943] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->> [   11.135244] irq event stamp: 1131
->> [   11.135473] hardirqs last  enabled at (1141): [<80166cb4>] __up_console_sem+0x68/0x88
->> [   11.135828] hardirqs last disabled at (1150): [<80166ca0>] __up_console_sem+0x54/0x88
->> [   11.136203] softirqs last  enabled at (0): [<80110cc4>] copy_process+0x810/0x216c
->> [   11.137215] softirqs last disabled at (1169): [<80118fb0>] __irq_exit_rcu+0x12c/0x164
->> [   11.137649] ---[ end trace 0000000000000000 ]---
->> [   11.137993] ------------[ cut here ]------------
->> [   11.138279] WARNING: CPU: 0 PID: 155 at drivers/clk/clk.c:1467 clk_core_determine_round_nolock+0xc0/0x134
->> [   11.138732] CPU: 0 PID: 155 Comm: kunit_try_catch Tainted: G        W        N 6.5.0-rc2-00046-gccff6d117d8d #1
->> [   11.139164] Hardware name: Generic DT based system
->> [   11.139423]  unwind_backtrace from show_stack+0x18/0x1c
->> [   11.139703]  show_stack from dump_stack_lvl+0x38/0x5c
->> [   11.139996]  dump_stack_lvl from __warn+0x7c/0x134
->> [   11.140273]  __warn from warn_slowpath_fmt+0x7c/0xbc
->> [   11.140563]  warn_slowpath_fmt from clk_core_determine_round_nolock+0xc0/0x134
->> [   11.140909]  clk_core_determine_round_nolock from clk_leaf_mux_set_rate_parent_determine_rate+0x6c/0x264
->> [   11.141323]  clk_leaf_mux_set_rate_parent_determine_rate from kunit_generic_run_threadfn_adapter+0x1c/0x28
->> [   11.141758]  kunit_generic_run_threadfn_adapter from kthread+0xf8/0x120
->> [   11.142112]  kthread from ret_from_fork+0x14/0x3c
->> [   11.142422] Exception stack(0x881a5fb0 to 0x881a5ff8)
->> [   11.142696] 5fa0:                                     00000000 00000000 00000000 00000000
->> [   11.143061] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> [   11.143386] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->> [   11.143674] irq event stamp: 1223
->> [   11.143910] hardirqs last  enabled at (1233): [<80166cb4>] __up_console_sem+0x68/0x88
->> [   11.144277] hardirqs last disabled at (1242): [<80166ca0>] __up_console_sem+0x54/0x88
->> [   11.144645] softirqs last  enabled at (1174): [<80101494>] __do_softirq+0x224/0x3b0
->> [   11.145053] softirqs last disabled at (1169): [<80118fb0>] __irq_exit_rcu+0x12c/0x164
->> [   11.145398] ---[ end trace 0000000000000000 ]---
->>
->> It would be great if the problem can get fixed so I can enable
->> both options in my boot tests. I'd be happy to submit a patch
->> (or patch series) to fix it, but I have no idea what is actually
->> wrong.
-> 
-> The problem is that clk_leaf_mux_set_rate_parent_determine_rate() is
-> calling __clk_determine_rate() without the prepare_lock held.
-> __clk_determine_rate() is a clk provider API and the expectation is that
-> it is called from clk providers with the prepare lock held. The simplest
-> thing to do is probably make a kunit test API that can manually grab and
-> release the prepare lock and then call it from the test.
+Thanks,
+Peng.
+
+>=20
+> From: Ye Li <ye.li@nxp.com>
+>=20
+> The SPLL2 on iMX8ULP is different with other frac PLLs, it can support VC=
+O
+> from 650Mhz to 1Ghz. According to RM, the MULT is using a range from 27
+> to 54, not some fixed values. If using current PLL implementation, some
+> clock rate can't be supported.
+>=20
+> Fix the issue by adding new type for the SPLL2 and use MULT range to
+> replace MULT table
+>=20
+> Fixes: 5f0601c47c33 ("clk: imx: Update the pllv4 to support imx8ulp")
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+> Signed-off-by: Ye Li <ye.li@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/imx/clk-pllv4.c | 46 +++++++++++++++++++++++++++++--------
+>  drivers/clk/imx/clk.h       |  1 +
+>  2 files changed, 37 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c in=
+dex
+> 6e7e34571fc8..9b136c951762 100644
+> --- a/drivers/clk/imx/clk-pllv4.c
+> +++ b/drivers/clk/imx/clk-pllv4.c
+> @@ -44,11 +44,15 @@ struct clk_pllv4 {
+>  	u32		cfg_offset;
+>  	u32		num_offset;
+>  	u32		denom_offset;
+> +	bool		use_mult_range;
+>  };
+>=20
+>  /* Valid PLL MULT Table */
+>  static const int pllv4_mult_table[] =3D {33, 27, 22, 20, 17, 16};
+>=20
+> +/* Valid PLL MULT range, (max, min) */
+> +static const int pllv4_mult_range[] =3D {54, 27};
+> +
+>  #define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
+>=20
+>  #define LOCK_TIMEOUT_US		USEC_PER_MSEC
+> @@ -94,17 +98,30 @@ static unsigned long clk_pllv4_recalc_rate(struct
+> clk_hw *hw,  static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned
+> long rate,
+>  				 unsigned long *prate)
+>  {
+> +	struct clk_pllv4 *pll =3D to_clk_pllv4(hw);
+>  	unsigned long parent_rate =3D *prate;
+>  	unsigned long round_rate, i;
+>  	u32 mfn, mfd =3D DEFAULT_MFD;
+>  	bool found =3D false;
+>  	u64 temp64;
+> -
+> -	for (i =3D 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> -		round_rate =3D parent_rate * pllv4_mult_table[i];
+> -		if (rate >=3D round_rate) {
+> +	u32 mult;
+> +
+> +	if (pll->use_mult_range) {
+> +		temp64 =3D (u64)rate;
+> +		do_div(temp64, parent_rate);
+> +		mult =3D temp64;
+> +		if (mult >=3D pllv4_mult_range[1] &&
+> +		    mult <=3D pllv4_mult_range[0]) {
+> +			round_rate =3D parent_rate * mult;
+>  			found =3D true;
+> -			break;
+> +		}
+> +	} else {
+> +		for (i =3D 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> +			round_rate =3D parent_rate * pllv4_mult_table[i];
+> +			if (rate >=3D round_rate) {
+> +				found =3D true;
+> +				break;
+> +			}
+>  		}
+>  	}
+>=20
+> @@ -138,14 +155,20 @@ static long clk_pllv4_round_rate(struct clk_hw
+> *hw, unsigned long rate,
+>  	return round_rate + (u32)temp64;
+>  }
+>=20
+> -static bool clk_pllv4_is_valid_mult(unsigned int mult)
+> +static bool clk_pllv4_is_valid_mult(struct clk_pllv4 *pll, unsigned int
+> +mult)
+>  {
+>  	int i;
+>=20
+>  	/* check if mult is in valid MULT table */
+> -	for (i =3D 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> -		if (pllv4_mult_table[i] =3D=3D mult)
+> +	if (pll->use_mult_range) {
+> +		if (mult >=3D pllv4_mult_range[1] &&
+> +		    mult <=3D pllv4_mult_range[0])
+>  			return true;
+> +	} else {
+> +		for (i =3D 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
+> +			if (pllv4_mult_table[i] =3D=3D mult)
+> +				return true;
+> +		}
+>  	}
+>=20
+>  	return false;
+> @@ -160,7 +183,7 @@ static int clk_pllv4_set_rate(struct clk_hw *hw,
+> unsigned long rate,
+>=20
+>  	mult =3D rate / parent_rate;
+>=20
+> -	if (!clk_pllv4_is_valid_mult(mult))
+> +	if (!clk_pllv4_is_valid_mult(pll, mult))
+>  		return -EINVAL;
+>=20
+>  	if (parent_rate <=3D MAX_MFD)
+> @@ -227,10 +250,13 @@ struct clk_hw *imx_clk_hw_pllv4(enum
+> imx_pllv4_type type, const char *name,
+>=20
+>  	pll->base =3D base;
+>=20
+> -	if (type =3D=3D IMX_PLLV4_IMX8ULP) {
+> +	if (type =3D=3D IMX_PLLV4_IMX8ULP ||
+> +	    type =3D=3D IMX_PLLV4_IMX8ULP_1GHZ) {
+>  		pll->cfg_offset =3D IMX8ULP_PLL_CFG_OFFSET;
+>  		pll->num_offset =3D IMX8ULP_PLL_NUM_OFFSET;
+>  		pll->denom_offset =3D IMX8ULP_PLL_DENOM_OFFSET;
+> +		if (type =3D=3D IMX_PLLV4_IMX8ULP_1GHZ)
+> +			pll->use_mult_range =3D true;
+>  	} else {
+>  		pll->cfg_offset =3D PLL_CFG_OFFSET;
+>  		pll->num_offset =3D PLL_NUM_OFFSET;
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h index
+> af19d9f6aed0..adb7ad649a0d 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -45,6 +45,7 @@ enum imx_pll14xx_type {  enum imx_pllv4_type {
+>  	IMX_PLLV4_IMX7ULP,
+>  	IMX_PLLV4_IMX8ULP,
+> +	IMX_PLLV4_IMX8ULP_1GHZ,
+>  };
+>=20
+>  enum imx_pfdv2_type {
+> --
+> 2.37.1
 
