@@ -2,112 +2,94 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F820EB64DD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E56EB64DC
 	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 08:56:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbjGTI4z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jul 2023 04:56:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35862 "EHLO
+        id S229957AbjGTI44 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jul 2023 04:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231878AbjGTId0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 04:33:26 -0400
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DD11268C;
-        Thu, 20 Jul 2023 01:33:25 -0700 (PDT)
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36K5SqqW022420;
-        Thu, 20 Jul 2023 08:33:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=qcppdkim1;
- bh=MP1Bkyz5bjTyT8+WFtnsD0N1nt1uVmVkvyHsWOopleU=;
- b=lVYXiOyhqoks00qR0ZRhE9p2fL+ZqQgRfwPw6HrRDe0kHeU+tiQUMxAoCPgR3JL/EwKS
- u2fu/tYfYknaskP1+q8w7Jtotc2/cqO1JTdDwdMWxL888aoV0rb0itmWZf1hgiHDk4vV
- z2660tVT5Qd82Ods51nqUhOLrPFhdzuLfBz6h1F6tVuQysrd4de7s5pjq7dpYkX5gufS
- YMAdPkCjM0oHYEuq0qufHpxbwxI+MP7Z/dIdRj4F7zqIk4CMHjmLTINzF7Hv4kYXLyWZ
- 19I+yvVe4VILLIPF8+bb93ZlsH/BEj72rsZ4UOsZe/9iXOdlrZIcmAiA/N55uVipe3gW 4g== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3rx728u853-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jul 2023 08:33:21 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36K8XKi7022628
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 20 Jul 2023 08:33:20 GMT
-Received: from devipriy-linux.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.30; Thu, 20 Jul 2023 01:33:17 -0700
-From:   Devi Priya <quic_devipriy@quicinc.com>
-To:     <andersson@kernel.org>, <agross@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <quic_saahtoma@quicinc.com>
-Subject: [PATCH] clk: qcom: clk-rcg2: Fix wrong RCG clock rate for high parent frequencies
-Date:   Thu, 20 Jul 2023 14:03:04 +0530
-Message-ID: <20230720083304.28881-1-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+        with ESMTP id S232481AbjGTIdC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 04:33:02 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18AFD1A8;
+        Thu, 20 Jul 2023 01:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1689841981; x=1721377981;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=seQV9zQsch8WX/hqCsOYHbU0ptwGcziO6Y53iuJxVRI=;
+  b=RhaxEsIfhIs7fC2Mqz+amT/qqTsqQOmEQAI4qb2fLJTXjmW45fNDueTT
+   fzL9SJkCif/IlKgjZOfMewL9EJyGGyaBdhm7HfsZv0gRRNC1N5S9bBNd2
+   Ndk7AVHo/JduZti/Knrlfkz/IN5JIAoUiX0608s7E0kYS78uKsq+z4BwT
+   zOt62uaXi+vnMfc5j1btPKHXckQpBrjq7v6Cna9woLgjyaIfzYRj9k/5k
+   GfuBPQX3Df9pGygmCb8gbS0c1gnw9F6SUcE1tbWLSpnaHa+mgZ8VHo2hh
+   rWr1S7ua9I2Vv5kR/viN0hyl6zglDOYDf8q9a/5iuJygmGZGTrT6T4I7g
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10776"; a="432869424"
+X-IronPort-AV: E=Sophos;i="6.01,218,1684825200"; 
+   d="scan'208";a="432869424"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2023 01:33:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10776"; a="898211096"
+X-IronPort-AV: E=Sophos;i="6.01,218,1684825200"; 
+   d="scan'208";a="898211096"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga005.jf.intel.com with ESMTP; 20 Jul 2023 01:32:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1qMP5i-00Ga0R-1b;
+        Thu, 20 Jul 2023 11:32:54 +0300
+Date:   Thu, 20 Jul 2023 11:32:54 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan <saravanak@google.com>,
+        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tero Kristo <kristo@kernel.org>
+Subject: Re: [PATCH v1 0/4] clk: Add kstrdup_and_replace() helper and use it
+Message-ID: <ZLjxNgQEqTJfkL8F@smile.fi.intel.com>
+References: <20230628153211.52988-1-andriy.shevchenko@linux.intel.com>
+ <ad13bab23313ca4bdfd405528a76ac37.sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: IdJx1srWEX_zfV2aQWymGAF7fjq-A4I6
-X-Proofpoint-ORIG-GUID: IdJx1srWEX_zfV2aQWymGAF7fjq-A4I6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-20_02,2023-07-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- bulkscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- mlxlogscore=876 impostorscore=0 spamscore=0 clxscore=1015 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307200070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad13bab23313ca4bdfd405528a76ac37.sboyd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If the parent clock rate is greater than unsigned long max/2 then
-integer overflow happens when calculating the clock rate on 32-bit systems.
-As RCG2 uses half integer dividers, the clock rate is first being
-multiplied by 2 which will overflow the unsigned long max value. So, use
-unsigned long long for rate computations to avoid overflow.
+On Wed, Jul 19, 2023 at 04:47:58PM -0700, Stephen Boyd wrote:
+> Quoting Andy Shevchenko (2023-06-28 08:32:07)
+> > There are a few existing users and more might come which would like
+> > to have the kstrdup_and_replace() functionality.
+> > 
+> > Provide this new API and reuse it in a few users.
+> > 
+> > Since most of that is under CCF, perhaps it makes sense to route it
+> > via that tree.
+> 
+> I'm happy to pick it up if you can get an ack from GregKH on the driver
+> core bits.
 
-Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
----
- drivers/clk/qcom/clk-rcg2.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+It's also an option to skip that patch.
+Greg, can you Ack the patch 2 in this series?
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index e22baf3a7112..42d00b134975 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -156,18 +156,18 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
-  *            hid_div       n
-  */
- static unsigned long
--calc_rate(unsigned long rate, u32 m, u32 n, u32 mode, u32 hid_div)
-+calc_rate(unsigned long parent_rate, u32 m, u32 n, u32 mode, u32 hid_div)
- {
-+	u64 rate = parent_rate;
-+
- 	if (hid_div) {
- 		rate *= 2;
--		rate /= hid_div + 1;
-+		do_div(rate, hid_div + 1);
- 	}
- 
- 	if (mode) {
--		u64 tmp = rate;
--		tmp *= m;
--		do_div(tmp, n);
--		rate = tmp;
-+		rate *= m;
-+		do_div(rate, n);
- 	}
- 
- 	return rate;
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
