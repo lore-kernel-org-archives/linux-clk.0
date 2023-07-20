@@ -2,100 +2,58 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BACBC001DE
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 19:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FADEB64DD
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Jul 2023 23:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230094AbjGTTK4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Jul 2023 15:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56926 "EHLO
+        id S229668AbjGTXk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Jul 2023 19:40:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbjGTTKy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 15:10:54 -0400
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [IPv6:2001:4b7a:2000:18::163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817B19E;
-        Thu, 20 Jul 2023 12:10:53 -0700 (PDT)
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+        with ESMTP id S229785AbjGTXk6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Jul 2023 19:40:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B301270D;
+        Thu, 20 Jul 2023 16:40:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r1.th.seeweb.it (Postfix) with ESMTPSA id D3A55202E0;
-        Thu, 20 Jul 2023 21:10:50 +0200 (CEST)
-Date:   Thu, 20 Jul 2023 21:10:49 +0200
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 06/15] dt-bindings: display/msm: sc7180-dpu: Describe
- SM6125
-Message-ID: <m425lafv5gvrnyhoarasqgkoumntgsxiqdpmsudcxrwspvf6ed@al5sr3t2mwec>
-References: <20230718-sm6125-dpu-v3-0-6c5a56e99820@somainline.org>
- <20230718-sm6125-dpu-v3-6-6c5a56e99820@somainline.org>
- <3ce19d8f-97d8-15b6-5148-78e200b112e9@linaro.org>
- <tpkiplw7l2mzdwekynkrg6dwm7svktwm2zooodb3c42btyvo3e@yjrpqem26wtx>
- <CAA8EJprHEes5T1z4-sxg_Xk+VjuyoTH0Ra-VyMnrWjTv7qG9EA@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AC04A61CBA;
+        Thu, 20 Jul 2023 23:40:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03FBAC433C7;
+        Thu, 20 Jul 2023 23:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689896455;
+        bh=OO5Vih9U8xrxi/OOBd7+3Y3kFFY79QAH8asfMvji0rs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=QbclupTp+8EQDa1lt4z07gP4AB+IATtX1fgMXCfCsacMyX88cnuv6R+3DMUXpCB+9
+         +fKOj197SJEYctg9/1oiKeliNyv+2v1uYSAwmAiemXRL7yJ6V2pMmKnRB2A+OyW2Mh
+         N4dvUUAmvvwAYlDRcyHx331sYHyNH5N0eVW3QOSV4w9Mzb9gHfwy22itxM9wDEqehN
+         Jrpeea3oduKmNIhf3DLC0TGC5xnQK1AwxYwLAC12IGx2Uzld9A2bAN09keyaoU2eo1
+         16qJFy+G7e1YonsItze2keAKzUqqcbdcyfETCcH9JmMSN8/ie3rb2HQVBWf7DE3sCO
+         /lnLwhD1VrvNA==
+Message-ID: <7d2d1897fdb5f4b8a1c68eaea22ed472.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAA8EJprHEes5T1z4-sxg_Xk+VjuyoTH0Ra-VyMnrWjTv7qG9EA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20230411174329.424763-1-mmyangfl@gmail.com>
+References: <20230411174329.424763-1-mmyangfl@gmail.com>
+Subject: Re: [PATCH v4 00/13] clk: hisilicon: Migrate devm APIs
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     David Yang <mmyangfl@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+To:     David Yang <mmyangfl@gmail.com>, linux-clk@vger.kernel.org
+Date:   Thu, 20 Jul 2023 16:40:52 -0700
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023-07-20 01:24:27, Dmitry Baryshkov wrote:
-> On Thu, 20 Jul 2023 at 01:09, Marijn Suijten
-> <marijn.suijten@somainline.org> wrote:
-> >
-> > On 2023-07-19 01:06:03, Dmitry Baryshkov wrote:
-> > > On 19/07/2023 00:24, Marijn Suijten wrote:
-> > > > SM6125 is identical to SM6375 except that while downstream also defines
-> > > > a throttle clock, its presence results in timeouts whereas SM6375
-> > > > requires it to not observe any timeouts.  This is represented by
-> > > > reducing the clock array length to 6 so that it cannot be passed.  Note
-> > > > that any SoC other than SM6375 (currently SC7180 and SM6350) are
-> > > > unconstrained and could either pass or leave out this "throttle" clock.
-> > >
-> > > Could you please describe, what kind of timeouts do you observe? Is this
-> > > the DSI underruns issue?
-> >
-> > Ping-pong timeouts and low(er) framerate.  However, they were previosuly
-> > not happening on a random boot out of tens... and now I can no longer
-> > reproduce the timeout on 4 consecutive boots after adding the throttle
-> > clock.  Could it perhaps be the power domains and opps that we added in
-> > v2 and v3?
-> 
-> Quite unlikely, but who knows. My main question is whether we should
-> continue skipping the throttle clocks or if it should be enabled now.
+Quoting David Yang (2023-04-11 10:43:09)
+> Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
+>=20
+> This series is a partial improvement of [1]
 
-And that "main question" could ... drum roll please ... only be answered
-by knowing if this got "accidentally" fixed by providing the right PMs
-or some other change entirely while I changed base branch and defconfig.
-Or if this is just a fluke that persisted multiple boots but will fall
-apart in some time and/or when someone else runs this on their device?
-
-- Marijn
-
-<snip>
+Thanks for sticking with this. Unfortunately the patch series got
+wrecked by some remove_new refactoring work. Can you rebase and resend?
