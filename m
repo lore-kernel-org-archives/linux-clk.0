@@ -2,113 +2,61 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC785EB64DC
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 06:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DFC6C001DE
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 07:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229452AbjGUGqI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jul 2023 02:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40100 "EHLO
+        id S229992AbjGUHA1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jul 2023 03:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229654AbjGUGqH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 02:46:07 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF11B4;
-        Thu, 20 Jul 2023 23:46:04 -0700 (PDT)
-Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id D267C7FD6;
-        Fri, 21 Jul 2023 14:45:55 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
- (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 21 Jul
- 2023 14:45:55 +0800
-Received: from [192.168.125.128] (113.72.147.86) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 21 Jul
- 2023 14:45:54 +0800
-Message-ID: <8794c997-f371-70f8-2462-a6c677e7308c@starfivetech.com>
-Date:   Fri, 21 Jul 2023 14:41:56 +0800
+        with ESMTP id S229457AbjGUHA0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 03:00:26 -0400
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E7DE8270E;
+        Fri, 21 Jul 2023 00:00:24 -0700 (PDT)
+X-IronPort-AV: E=Sophos;i="6.01,220,1684767600"; 
+   d="scan'208";a="170340902"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Jul 2023 16:00:24 +0900
+Received: from localhost.localdomain (unknown [10.226.92.55])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A93D44005656;
+        Fri, 21 Jul 2023 16:00:21 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 0/2] Use i2c_get_match_data() for versa{5,7} drivers
+Date:   Fri, 21 Jul 2023 08:00:17 +0100
+Message-Id: <20230721070019.96627-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v8 0/9] Add STG/ISP/VOUT clock and reset drivers for
- StarFive JH7110
-To:     Conor Dooley <conor@kernel.org>
-CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-References: <20230713113902.56519-1-xingyu.wu@starfivetech.com>
- <20230720-enjoyment-gestation-adb8baa9aaf1@spud>
-Content-Language: en-US
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-In-Reply-To: <20230720-enjoyment-gestation-adb8baa9aaf1@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [113.72.147.86]
-X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2023/7/21 0:32, Conor Dooley wrote:
-> On Thu, Jul 13, 2023 at 07:38:53PM +0800, Xingyu Wu wrote:
->> This patch serises are base on the basic JH7110 SYSCRG/AONCRG
->> drivers and add new partial clock drivers and reset supports
->> about System-Top-Group(STG), Image-Signal-Process(ISP)
->> and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC. These
->> clocks and resets could be used by DMA, VIN and Display modules.
->> 
->> Patches 1 and 2 are about the System-Top-Group clock and reset
->> generator(STGCRG) part. The first patch adds docunmentation to
->> describe STG bindings, and the second patch adds clock driver to
->> support STG clocks and resets as auxiliary device for JH7110.
->> 
->> Patches 3 and 4 are about the Image-Signal-Process clock and reset
->> gennerator(ISPCRG) part. The first patch adds docunmentation to
->> describe ISP bindings, and the second patch adds clock driver to
->> support ISP clocks and resets as auxiliary device for JH7110.
->> And ISP clocks should power on and enable the SYSCRG clocks first
->> before registering.
->> 
->> Patches 5 and 6 are about the Video-Output clock and reset
->> generator(VOUTCRG) part. The first patch adds docunmentation to
->> describe VOUT bindings, and the second patch adds clock driver to
->> support VOUT clocks and resets as auxiliary device for JH7110.
->> And VOUT clocks also should power on and enable the SYSCRG clocks
->> first before registering.
->> 
->> Patch 7 adds struct members to support STG/ISP/VOUT resets.
+Use i2c_get_match_data() to get match data for I2C, ACPI and
+DT-based matching instead of device_get_match_data() the one for
+ACPI/DT-based matching.
 
-BTW, I found this patch is not in the linux-next or clk-next.
-These STG/ISP/VOUT CRG drivers are 'incomplete' without this resets patch.
-I don't know what your plans about this patch and I'm just curious on it.
+This patch series is only compile tested.
 
-> 
->> Patch 8 adds external clocks which ISP and VOUT clock driver need.
->> Patch 9 adds device node about STGCRG, ISPCRG and VOUTCRG to JH7110 dts.
-> 
-> b4 did not detect this correctly, but I picked these 2 up too.
-> They should be in next tomorrow.
+v1->v2:
+ * Added Rb tags from Geert and Marek.
+ * Removed error check as all tables have data pointers.
 
-Thanks to you.
+Biju Das (2):
+  clk: vc5: Use i2c_get_match_data() instead of device_get_match_data()
+  clk: vc7: Use i2c_get_match_data() instead of device_get_match_data()
 
-> 
-> Please let your co-workers know that they should resend anything that I
-> didn't sent a thanks email for today, as it failed to apply (eg DMA,
-> eMMC).
-> 
+ drivers/clk/clk-versaclock5.c | 2 +-
+ drivers/clk/clk-versaclock7.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Okay, I'll let them know and resent these patches.
+-- 
+2.25.1
 
-Best regards,
-Xingyu Wu
