@@ -2,82 +2,82 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B663EB64DD
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 16:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A0CEB64DD
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 16:16:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232505AbjGUQP4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39956 "EHLO
+        id S232473AbjGUQQU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jul 2023 12:16:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230413AbjGUQPh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 12:15:37 -0400
-Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0062E44A8;
-        Fri, 21 Jul 2023 09:15:00 -0700 (PDT)
-Received: by mail-io1-xd2d.google.com with SMTP id ca18e2360f4ac-78372b896d0so90665639f.2;
-        Fri, 21 Jul 2023 09:15:00 -0700 (PDT)
+        with ESMTP id S231969AbjGUQPy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 12:15:54 -0400
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 286D13C3D;
+        Fri, 21 Jul 2023 09:15:12 -0700 (PDT)
+Received: by mail-io1-xd33.google.com with SMTP id ca18e2360f4ac-78654448524so91760139f.2;
+        Fri, 21 Jul 2023 09:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689956100; x=1690560900;
+        d=gmail.com; s=20221208; t=1689956111; x=1690560911;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nMqpAHzPpQ8p1VY1demvfqMIMPRVFFpZskkZxzdoi/4=;
-        b=kOiuronFPr5v6XeELMEAdxOfWvDrFi3wKedhBRC5NHp+m8wIcgNErDvBMkzT+/pwNG
-         N8B+ZOLREoBDcA6ZgvBhVI9VBThCndaKBKtuc2b8OUTpBkV2XCEOSPM9P7hl2SQJFFGB
-         FFs7P16tclcgZRx3keARryU9ib/Ja1tLL03bKkcscHhgE0YRPsN5hFRcQFmFXpBjeqE6
-         y8c9B/wwln73DFqu80WmGYfzv/pKcItBOqT/npi7TQ2rXOw6HMKMHTRH2VrWC8dFsbDD
-         vzql/apz7PD6Pjer3SJPrV1dWM5uA/SSxkQnWvM3Bw7UwbZc9g9c7XYGcKzEC6e54P1g
-         nFqw==
+        bh=UN38LW4zyrB67GHxIyM5/PZR9y0nR4K1jRGOtGjbhZ4=;
+        b=ooDeCS1g2KxixIooM5qzNESfw9+HymNift3o8gM/sqe9EuRh7974w/FCGcPJM1ArSQ
+         JHnyg+AvA8w3VYGoR3sGlx0NvxBWJemtkNceP6YmlCW2pmq7dp4902v9LWnfOvTWxwXE
+         RUKMhVEi6x9wRs8kXDhRtBHBP4ONJtNKkfB75CtpnfGj5y5S1J87txGsqAyvs301QOrF
+         EeEIpKJCGWpTAXRneYzx4K7+DH3sursxW48jQroriFM07k6qLdO0AGiweJ9nBAOqpvR/
+         uxir0ju6TRYPKg6lDMg+QxjbAAmcHTJBh2MIVI5yGAbZyfjx7DASJrmoG3F4j1rfST6E
+         jwCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689956100; x=1690560900;
+        d=1e100.net; s=20221208; t=1689956111; x=1690560911;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nMqpAHzPpQ8p1VY1demvfqMIMPRVFFpZskkZxzdoi/4=;
-        b=FknxYQgdkIHbH5+LQ19zM15CjyB8UTJN0Lx9s8KHBhVpSUE/FVZj2wOVWPlBbD1Oul
-         msXXIA+NR1/vpilsuiwz9/tiirwLwBL+UZImuE1UGQDIKS0nutm4gPenIEx7J7IUWF1+
-         vCR/ugTfUXgDM9J+Gy44WS2xCh4/91H/yFEeLNOcbCu7NB7uaY3p1Ppd7cGxHrEIP97W
-         Y4fgWD802zXAv4OQE2LMsRo4xv+pym+tRXnMwyj5Y59sYMhGefxMfq1Qg/LdJ6f+FxPK
-         CncM6UwK900yMzZKnowI+wz4dYgnpYcc2xLeRU+nLKtnekoCOK1cclk488Fk+EeOhUvi
-         FYow==
-X-Gm-Message-State: ABy/qLbREZimhjSTcBZ2nSDaOLhgreTc1ulpY7Tu2ZHS0lnHYNVuRis+
-        /LLngUfXrAfVFHF+CkP3YNZ/EAV6/E8=
-X-Google-Smtp-Source: APBJJlF+f35Yb0+g5e78f9uulM6sqmJPBfWO7GHpoL7PJLABO7/taWVAd3e1hpvG4e8BOmuIxIh+xA==
-X-Received: by 2002:a05:6602:2993:b0:787:8fc:307d with SMTP id o19-20020a056602299300b0078708fc307dmr465985ior.5.1689956100196;
-        Fri, 21 Jul 2023 09:15:00 -0700 (PDT)
+        bh=UN38LW4zyrB67GHxIyM5/PZR9y0nR4K1jRGOtGjbhZ4=;
+        b=lLbK+YF5GVGt7IYd8ID4RcBYE6V+DNtOQTdXNp6gods7OajRTomuum/GkL4jqTWWM/
+         ++y92/iV2IMnGhGXzU/KDTdSLuwZ/+P0nmHndVlAKIOjpM2bZVH7oP75pF/HMYf9jGmc
+         ryPUzaZl+i4mW1E8snaOpClTPwpLsUt/zoW+bLpcp2EJ77RjmoxVxK1UYPddGo1O+ixl
+         +1SwLNwOXoAdIa6OtZT0BJQ/6SvdIHJhfi4Pc50nYnatj8aJNhYWZEsf/tkA18mafFnw
+         P5Pskserdb2DPxWRZWPRygqDPX8PVivRQHb1PNlJwhdETvp1fpJEZReisyvloz39+5Rj
+         HMHA==
+X-Gm-Message-State: ABy/qLZB2p8m4exIKCZylo+oAxXVuCIhzPeRWjjd4T0+j26ZrD25dnFA
+        Glaw/yh09WGpuIhpFQxY6YU=
+X-Google-Smtp-Source: APBJJlGbgfScEbLyFOrC5y+mjOmztQ+E7YlL4sK2cWTLINX40nD5KSePjMly1W+eJTMPBdbhDWFMqw==
+X-Received: by 2002:a05:6602:38a:b0:774:8f64:82a8 with SMTP id f10-20020a056602038a00b007748f6482a8mr468418iov.18.1689956111214;
+        Fri, 21 Jul 2023 09:15:11 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id j9-20020a02cc69000000b0042b45d29facsm1076088jaq.152.2023.07.21.09.14.59
+        by smtp.gmail.com with ESMTPSA id z13-20020a5ec90d000000b0078647b08ab0sm1162012iol.6.2023.07.21.09.15.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 09:14:59 -0700 (PDT)
+        Fri, 21 Jul 2023 09:15:10 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Fri, 21 Jul 2023 09:14:58 -0700
+Date:   Fri, 21 Jul 2023 09:15:09 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Maxime Ripard <mripard@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         kernel test robot <yujie.liu@intel.com>
-Subject: Re: [PATCH 1/2] clk: Introduce kunit wrapper around
- clk_hw_init_rate_request
-Message-ID: <24a22c85-d4f6-4598-a95f-a1f0503978a2@roeck-us.net>
+Subject: Re: [PATCH 2/2] clk: Introduce kunit wrapper around
+ __clk_determine_rate
+Message-ID: <a03ae5b7-9235-40a7-9e29-9033678ffea0@roeck-us.net>
 References: <20230721-clk-fix-kunit-lockdep-v1-0-32cdba4c8fc1@kernel.org>
- <20230721-clk-fix-kunit-lockdep-v1-1-32cdba4c8fc1@kernel.org>
+ <20230721-clk-fix-kunit-lockdep-v1-2-32cdba4c8fc1@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230721-clk-fix-kunit-lockdep-v1-1-32cdba4c8fc1@kernel.org>
+In-Reply-To: <20230721-clk-fix-kunit-lockdep-v1-2-32cdba4c8fc1@kernel.org>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 09:09:32AM +0200, Maxime Ripard wrote:
-> Some kunit tests are meant to test the behaviour of providers (and
-> most notably __clk_determine_rate()), but don't run those functions with
-> the clk prepare_lock held which results in lockdep warning.
+On Fri, Jul 21, 2023 at 09:09:33AM +0200, Maxime Ripard wrote:
+> Some kunit tests are meant to test the behaviour of providers but don't
+> run those functions with the clk prepare_lock held which results in
+> lockdep warning.
 > 
-> clk_hw_init_rate_request is one of the functions being executed from a
-> test which should have the lock held. Let's introduce a wrapper around
-> it meant to be used only by kunit tests.
+> __clk_determine_rate is one of the functions being executed from a test
+> which should have the lock held. Let's introduce a wrapper around it
+> meant to be used only by kunit tests.
 > 
 > Reported-by: Guenter Roeck <linux@roeck-us.net>
 > Link: https://lore.kernel.org/linux-clk/2b594e50-2bbf-4a2d-88e6-49fc39f3957a@roeck-us.net/
@@ -89,90 +89,81 @@ On Fri, Jul 21, 2023 at 09:09:32AM +0200, Maxime Ripard wrote:
 Tested-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
->  drivers/clk/clk.c            | 26 ++++++++++++++++++++++++++
+>  drivers/clk/clk.c            | 25 +++++++++++++++++++++++++
 >  drivers/clk/clk_test.c       |  2 +-
->  include/linux/clk-provider.h | 11 +++++++++++
->  3 files changed, 38 insertions(+), 1 deletion(-)
+>  include/linux/clk-provider.h | 10 ++++++++++
+>  3 files changed, 36 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c249f9791ae8..8ee9bd02af76 100644
+> index 8ee9bd02af76..8fdbfec6bd85 100644
 > --- a/drivers/clk/clk.c
 > +++ b/drivers/clk/clk.c
-> @@ -6,6 +6,7 @@
->   * Standard functionality for the common clock API.  See Documentation/driver-api/clk.rst
->   */
->  
-> +#include <kunit/test-bug.h>
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/clk/clk-conf.h>
-> @@ -1556,6 +1557,31 @@ void clk_hw_init_rate_request(const struct clk_hw *hw,
+> @@ -1669,6 +1669,31 @@ int __clk_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
 >  }
->  EXPORT_SYMBOL_GPL(clk_hw_init_rate_request);
+>  EXPORT_SYMBOL_GPL(__clk_determine_rate);
 >  
 > +#if IS_ENABLED(CONFIG_KUNIT)
 > +/**
-> + * clk_kunit_init_rate_request - Initializes a clk_rate_request
-> + * @hw: the clk for which we want to submit a rate request
-> + * @req: the clk_rate_request structure we want to initialise
-> + * @rate: the rate which is to be requested
+> + * __clk_kunit_determine_rate - get the closest rate actually supported by a clock
+> + * @hw: determine the rate of this clock
+> + * @req: target rate request
 > + *
-> + * Initializes a clk_rate_request structure to submit to
-> + * __clk_determine_rate() or similar functions. Only usable in kunit
-> + * test contexts, use clk_hw_init_rate_request() otherwise.
+> + * Useful for clk_ops such as .set_rate and .determine_rate. Only usable
+> + * in a kunit test context. Use __clk_determine_rate() otherwise.
 > + */
-> +void clk_kunit_init_rate_request(const struct clk_hw *hw,
-> +				 struct clk_rate_request *req,
-> +				 unsigned long rate)
+> +int __clk_kunit_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
 > +{
+> +	int ret;
+> +
 > +	if (!kunit_get_current_test())
-> +		return;
+> +		return -EINVAL;
 > +
 > +	clk_prepare_lock();
-> +	clk_hw_init_rate_request(hw, req, rate);
+> +	ret = __clk_determine_rate(hw, req);
 > +	clk_prepare_unlock();
+> +
+> +	return ret;
 > +}
-> +EXPORT_SYMBOL_GPL(clk_kunit_init_rate_request);
+> +EXPORT_SYMBOL_GPL(__clk_kunit_determine_rate);
 > +#endif
 > +
 >  /**
->   * clk_hw_forward_rate_request - Forwards a clk_rate_request to a clock's parent
->   * @hw: the original clock that got the rate request
+>   * clk_hw_round_rate() - round the given rate for a hw clk
+>   * @hw: the hw clk for which we are rounding a rate
 > diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index a154ec9d0111..a64f7036baa3 100644
+> index a64f7036baa3..b835e08892b4 100644
 > --- a/drivers/clk/clk_test.c
 > +++ b/drivers/clk/clk_test.c
-> @@ -2230,7 +2230,7 @@ static void clk_leaf_mux_set_rate_parent_determine_rate(struct kunit *test)
->  	rate = clk_get_rate(clk);
->  	KUNIT_ASSERT_EQ(test, rate, DUMMY_CLOCK_RATE_1);
+> @@ -2232,7 +2232,7 @@ static void clk_leaf_mux_set_rate_parent_determine_rate(struct kunit *test)
 >  
-> -	clk_hw_init_rate_request(hw, &req, DUMMY_CLOCK_RATE_2);
-> +	clk_kunit_init_rate_request(hw, &req, DUMMY_CLOCK_RATE_2);
+>  	clk_kunit_init_rate_request(hw, &req, DUMMY_CLOCK_RATE_2);
 >  
->  	ret = __clk_determine_rate(hw, &req);
+> -	ret = __clk_determine_rate(hw, &req);
+> +	ret = __clk_kunit_determine_rate(hw, &req);
 >  	KUNIT_ASSERT_EQ(test, ret, 0);
+>  
+>  	KUNIT_EXPECT_EQ(test, req.rate, DUMMY_CLOCK_RATE_2);
 > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 0f0cd01906b4..efdebfa3fce9 100644
+> index efdebfa3fce9..43049f2c1dd2 100644
 > --- a/include/linux/clk-provider.h
 > +++ b/include/linux/clk-provider.h
-> @@ -67,6 +67,17 @@ struct clk_rate_request {
->  void clk_hw_init_rate_request(const struct clk_hw *hw,
->  			      struct clk_rate_request *req,
->  			      unsigned long rate);
+> @@ -1352,6 +1352,16 @@ void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
+>  void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+>  			   unsigned long max_rate);
+>  
 > +#if IS_ENABLED(CONFIG_KUNIT)
-> +void clk_kunit_init_rate_request(const struct clk_hw *hw,
-> +				 struct clk_rate_request *req,
-> +				 unsigned long rate);
+> +int __clk_kunit_determine_rate(struct clk_hw *hw, struct clk_rate_request *req);
 > +#else
-> +static inline void clk_kunit_init_rate_request(const struct clk_hw *hw,
-> +					       struct clk_rate_request *req,
-> +					       unsigned long rate)
+> +static inline int __clk_kunit_determine_rate(struct clk_hw *hw,
+> +					     struct clk_rate_request *req)
 > +{
+> +	return -ENOENT;
 > +}
 > +#endif
->  void clk_hw_forward_rate_request(const struct clk_hw *core,
->  				 const struct clk_rate_request *old_req,
->  				 const struct clk_hw *parent,
+> +
+>  static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+>  {
+>  	dst->clk = src->clk;
 > 
 > -- 
 > 2.41.0
