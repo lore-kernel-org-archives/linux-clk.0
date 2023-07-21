@@ -2,131 +2,182 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 250B4C04FDF
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 14:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BF2C04FE0
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 14:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230027AbjGUOZW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jul 2023 10:25:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45948 "EHLO
+        id S229727AbjGUOnE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jul 2023 10:43:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230501AbjGUOZU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 10:25:20 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 804CA2D79
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jul 2023 07:25:11 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 5b1f17b1804b1-3fbc5d5742bso17690305e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jul 2023 07:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1689949510; x=1690554310;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nsB9IpIa7yRoJhopQrOjvBc0s3b3yy++co3a2B1PcYw=;
-        b=qIJ3m7pumTVMjEg+kn7UzsmtHcvDLZMe1tywd8h4kIEFsV1IUMrLWSP7L1Gefi6ja3
-         JBnA+rcRqypgsH7goHOUSHZMKZ550EJ6VKVD5dUqYgKEkPNc0iL/P3ucMWjqHbEFD/T0
-         wpz6/3MqeieB5gRPCUiu4XZk3Zcu+o+NiGcka0anh/l9hHDrOL+VgYR/KE3ZF2zZOnUD
-         MAb1XtMCn/3lpC4gapmNe+wJJXmYQVNJ5+2pOFPrvODAU/4zuO7v13RiM6wLSxsILcjv
-         9HuP4O5p+Mpx4YbyqytkaZCphFp9jaYoEi2g4JOc8CmYsngHzwdRUEDe9eA+ql9xnfQE
-         Ybww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689949510; x=1690554310;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nsB9IpIa7yRoJhopQrOjvBc0s3b3yy++co3a2B1PcYw=;
-        b=PcK/8nS5IEZX6xxpwKz/vu4txu2+bQLBJDrXJvZ0S6IhcvGUUzfu2T5e9c20dJqpHC
-         v9L/5ca/Bwwq+tuaYAFJ71pVT5Krs17MtIZqeRTUCI8wkr008COzh/vXUUq+OVuJbkvc
-         PKXp9OQ9RwgknmZUcXpvDwS9vgtwHU95N7vPSz33pQK+MbYQLHm69fQlCeiUJgIKG9do
-         6qVpLBxzKx4NqKT6Rkb54j8XziJtMS6+a7zSXDM4jM2Nvo/BIDt70jZBQIqxeIQVeS2H
-         zigoQ/c+5aM89uXhGyCmVbvwBHOnNpDIU+kdRlrnbSCOSgc/AjgDmAnoX0uh4Iwahkpf
-         o0yw==
-X-Gm-Message-State: ABy/qLZ8vNLA0ecsnNd2le4hq1X7JAwS/2lPFOyfJGLWY1HDl8X8bRim
-        N937Lnl/MZajtcfvMvpWxsMgTA==
-X-Google-Smtp-Source: APBJJlHgaQ/Hte4XJbr1gx4ukptPaEvJZwQtCDry0efXozCJTjG5+/5hX3FKNFwXVDpSO/L62wwYsQ==
-X-Received: by 2002:a1c:4b0e:0:b0:3fb:a576:3212 with SMTP id y14-20020a1c4b0e000000b003fba5763212mr1443887wma.39.1689949509998;
-        Fri, 21 Jul 2023 07:25:09 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.104])
-        by smtp.gmail.com with ESMTPSA id q9-20020adff789000000b003142439c7bcsm4349281wrp.80.2023.07.21.07.25.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jul 2023 07:25:09 -0700 (PDT)
-Message-ID: <4313820e-9ddf-0a34-0cca-e356a4314c61@linaro.org>
-Date:   Fri, 21 Jul 2023 16:25:02 +0200
+        with ESMTP id S231857AbjGUOmz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 10:42:55 -0400
+Received: from out-44.mta0.migadu.com (out-44.mta0.migadu.com [91.218.175.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0641635BD
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jul 2023 07:42:49 -0700 (PDT)
+Message-ID: <dbbfd954-efef-67e6-b291-539c0b0b5ac4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1689950567;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Mg2SzEE2M9WvVRfM1Guy+LNUuC3B+BHA9FYVw72Vv+0=;
+        b=IbkDFl+0eJMk/qy7B7jfVxr03KcCAlklrh/Ou8ViMvTUdWjThyX9CmdtZ36mhDRtERb/nv
+        CBwMVHKk/pXH52lxDNshhaXG3OFNzLTiztm1HoHCW9gZ4xyby9Vuq5c51p9VE9JzHPsrgx
+        u+aTLC4vCZ3Q4qnsPmaPoZTM7DGkNqY=
+Date:   Fri, 21 Jul 2023 15:42:46 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v3 00/42] ep93xx device tree conversion
+Subject: Re: [PATCH net-next 00/11] Create common DPLL configuration API
 Content-Language: en-US
-To:     nikita.shubin@maquefel.me,
-        Hartley Sweeten <hsweeten@visionengravers.com>,
-        Lennert Buytenhek <kernel@wantstofly.org>,
-        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Lukasz Majewski <lukma@denx.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Sebastian Reichel <sre@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Mark Brown <broonie@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        soc@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Michael Peters <mpeters@embeddedTS.com>,
-        Kris Bahnsen <kris@embeddedTS.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-        netdev@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
-        linux-input@vger.kernel.org, alsa-devel@alsa-project.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-References: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
-Content-Type: text/plain; charset=UTF-8
+To:     Jiri Pirko <jiri@resnulli.us>
+Cc:     Jakub Kicinski <kuba@kernel.org>,
+        Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Milena Olech <milena.olech@intel.com>,
+        Michal Michalik <michal.michalik@intel.com>,
+        linux-arm-kernel@lists.infradead.org, poros@redhat.com,
+        mschmidt@redhat.com, netdev@vger.kernel.org,
+        linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
+ <ZLpom60B+fkjsoG1@nanopsycho>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <ZLpom60B+fkjsoG1@nanopsycho>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/07/2023 13:29, Nikita Shubin via B4 Relay wrote:
-> This series aims to convert ep93xx from platform to full device tree support.
+On 21.07.2023 12:14, Jiri Pirko wrote:
+> There are couple of issues that came up during our internal ci run:
 > 
-> The main goal is to receive ACK's to take it via Arnd's arm-soc branch.
+> 10:16:04  error: drivers/dpll/dpll_netlink.c:452:5: error: no previous prototype for '__dpll_device_change_ntf' [-Werror=missing-prototypes]
+> 10:16:04  error: drivers/dpll/dpll_netlink.c:1283:13: error: no previous prototype for 'dpll_netlink_fini' [-Werror=missing-prototypes]
+> 10:16:04  error: drivers/dpll/dpll_core.c:221:1: error: no previous prototype for 'dpll_xa_ref_dpll_find' [-Werror=missing-prototypes]
+> 
+> 10:27:31  error: drivers/dpll/dpll_core.c:220:21: warning: symbol 'dpll_xa_ref_dpll_find' was not declared. Should it be static?
+> 10:27:31  error: drivers/dpll/dpll_netlink.c:452:5: warning: symbol '__dpll_device_change_ntf' was not declared. Should it be static?
+> 10:27:31  error: drivers/dpll/dpll_netlink.c:1283:13: warning: symbol 'dpll_netlink_fini' was not declared. Should it be static?
+> 10:27:41  error: drivers/net/ethernet/intel/ice/ice_dpll.c:461:3: error: a label can only be part of a statement and a declaration is not a statement
+> 
+> I believe that you didn't run make with C=2, otherwise you would hit
+> these.
+
+Yeah, I'll re-run the set patch-by-patch with C=2 next time.
+
+> 
+> Checkpatch issue:
+> 10:29:30  CHECK: struct mutex definition without comment
+> 10:29:30  #6581: FILE: drivers/net/ethernet/intel/ice/ice_dpll.h:85:
+> 10:29:30  +	struct mutex lock;
+
+Arkadiusz will take care of "ice" part.
+
+
+> Spelling errors:
+> 10:45:08  error: Documentation/netlink/specs/dpll.yaml:165: prority ==> priority
+> 10:45:08  error: include/uapi/linux/dpll.h:128: prority ==> priority
+> 10:45:08  error: drivers/net/ethernet/intel/ice/ice_dpll.c:2008: userpsace ==> userspace
+> 10:45:08  error: drivers/net/ethernet/intel/ice/ice_dpll.h:20: properities ==> properties
 > 
 
-This approach makes patchset trickier to review with absolutely huge
-Cc-list and inter-dependencies. I don't think this is correct approach.
-This should be split per subsystem whenever possible.
+Will fix it.
 
-Expect more grunts and complains from 50-other people you Cc-ed.
+> 
+> Thu, Jul 20, 2023 at 11:18:52AM CEST, vadim.fedorenko@linux.dev wrote:
+>> Implement common API for clock/DPLL configuration and status reporting.
+>> The API utilises netlink interface as transport for commands and event
+>> notifications. This API aim to extend current pin configuration and
+> 
+> s/API aim/API aims/
+> 
+> 
+>> make it flexible and easy to cover special configurations.
+> 
+> I don't follow. How this could "aim to extend current pin configuration" ?
+> This is a new thing. Could you re-phrase?
 
-Best regards,
-Krzysztof
+Not really new. PTP devices have already simple pin configurations, mlx5 is 
+using it for some cards with external pins. The problem is that PTP subsystem
+covers only simple configuration of the pin and doesn't cover DPLL part at all.
+
+> 
+> What's "special configuration"? Sounds odd.
+> 
+
+Yeah, "complex configurations" sounds better, will change it.
+
+> 
+>>
+>> Netlink interface is based on ynl spec, it allows use of in-kernel
+>> tools/net/ynl/cli.py application to control the interface with properly
+>> formated command and json attribute strings. Here are few command
+>> examples of how it works with `ice` driver on supported NIC:
+>>
+>> - dump dpll devices
+>> $# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+> 
+> "$#" looks a bit odd. Just "$" with "sudo" when you want to emphasize
+> root is needed to perform the command.
+> 
+> 
+>> --dump device-get
+>> [{'clock-id': 282574471561216,
+>>   'id': 0,
+>>   'lock-status': 'unlocked',
+>>   'mode': 'automatic',
+>>   'module-name': 'ice',
+>>   'type': 'eec'},
+>> {'clock-id': 282574471561216,
+>>   'id': 1,
+>>   'lock-status': 'unlocked',
+>>   'mode': 'automatic',
+>>   'module-name': 'ice',
+>>   'type': 'pps'}]
+>>
+>> - get single pin info:
+>> $# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>> --do pin-get --json '{"pin-id":2}'
+>> {'clock-id': 282574471561216,
+>> 'module-name': 'ice',
+>> 'pin-board-label': 'C827_0-RCLKA',
+>> 'pin-dpll-caps': 6,
+>> 'pin-frequency': 1953125,
+>> 'pin-id': 2,
+>> 'pin-parenti-device': [{'id': 0,
+> 
+> This looks like manual edit went wrong :)
+> s/parenti/parent/
+> 
+
+Ahhh... yeah :)
+
+> 
+>>                          'pin-direction': 'input',
+>>                          'pin-prio': 11,
+>>                          'pin-state': 'selectable'},
+>>                         {'id': 1,
+>>                          'pin-direction': 'input',
+>>                          'pin-prio': 9,
+>>                          'pin-state': 'selectable'}],
+>> 'pin-type': 'mux'}
+>>
+>> - set pin's state on dpll:
+>> $# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>> --do pin-set --json '{"pin-id":2, "pin-parent-device":{"id":1, "pin-state":2}}'
+>>
+>> - set pin's prio on dpll:
+>> $# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>> --do pin-set --json '{"pin-id":2, "pin-parent-device":{"id":1, "pin-prio":4}}'
+>>
+>> - set pin's state on parent pin:
+>> $# ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/dpll.yaml \
+>> --do pin-set --json '{"pin-id":13, \
+>>                       "pin-parent-pin":{"pin-id":2, "pin-state":1}}'
+>>
+> 
+> [...]
 
