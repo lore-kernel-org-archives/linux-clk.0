@@ -2,111 +2,196 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A49C001DC
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 16:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF79EB64DC
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 16:26:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229805AbjGUQR2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45726 "EHLO
+        id S232976AbjGUQ0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jul 2023 12:26:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbjGUQRO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 12:17:14 -0400
-Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C40749D9;
-        Fri, 21 Jul 2023 09:16:11 -0700 (PDT)
-Received: by mail-io1-xd2c.google.com with SMTP id ca18e2360f4ac-77ac14ff51bso86015739f.3;
-        Fri, 21 Jul 2023 09:16:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689956166; x=1690560966;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1/l8OpS8ap0ng9Sg4kCrHOpVy2d8hstaLnlMyOeunQs=;
-        b=LLCq4O3f0NKmWdPchHTY/a+Q4bAnwUoU1rDob9wpbm0rgJvHe9BPx7F6LQfaOvGUUF
-         urwn95Itpe1mUGl6Q82O4psp/dM93Clnj/Jb4VN9FFznJKqNNH0I9C2eiY07NNY4kooe
-         ebBt48Yn3xBnpnukJNHSm4agCJ3TCysswYQfeCQF5SuQlDMwVXNRCGLnnSeI2bNuhgDB
-         Dy1pVy9zCAIgooMRBQrwCDz0m5f2wBl0lLWOhb/2r/K0KDLlfaDN0411sHU3IOcQq7Pn
-         /gvKuEVbx0wszowvTlyQ54ROD9il+pfaqBN+VJIzWsEd2VMLb1bY8Qxs0tns4umep3/M
-         AiXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689956166; x=1690560966;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1/l8OpS8ap0ng9Sg4kCrHOpVy2d8hstaLnlMyOeunQs=;
-        b=LQcwcb7XqRtnGzbeXreqcbBNg1JaG5j+SA5KvpDd78ujf9v53aRjFQOhglknwckaWx
-         vpEBwnJ8nboQ4kD0E9JVV+vR1DzX+EwXhMm7Xoy9juqt8klezVPNum+P7DCqkbQA93zW
-         XRc3am2ntnipa5HnI2489YN51I35hjTqe1xMIMgpc9QD42euOIAwqLKYkDev/39bFpzh
-         f/K6l7JqPPAxtQD25BPV1EZ5Q4XsggPsRaeYVz8ffiUg4HjuedcdBEfQusyNzXPrsAC/
-         7A1l7hVXlBvI4yFdA794koiZJ0ZXeT7ydUqjeV+SNhogL7LLPj02azNJymsNuh9RdzqA
-         D+Lg==
-X-Gm-Message-State: ABy/qLau15w4VtAw9CxauRp6au5KyyRcsw1z+5sWiWfFvN1OSwj+AX8u
-        luiikx04PJxDi7M47OJeWZE=
-X-Google-Smtp-Source: APBJJlEbtU/eaqk2P4pSha+vWyE/alULVBQK5VUa2Se8E5kEwTys/VlS7+apdqlxWfZt5z7YBOLO0A==
-X-Received: by 2002:a05:6602:2206:b0:785:d4f5:2225 with SMTP id n6-20020a056602220600b00785d4f52225mr451309ion.19.1689956165895;
-        Fri, 21 Jul 2023 09:16:05 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u4-20020a02c044000000b0042b534e9f52sm1109126jam.59.2023.07.21.09.16.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 09:16:05 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Fri, 21 Jul 2023 09:16:04 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        kernel test robot <yujie.liu@intel.com>
-Subject: Re: [PATCH 0/2] clk: kunit: Fix the lockdep warnings
-Message-ID: <6d36f9be-5236-45c0-9af1-7004c2604d86@roeck-us.net>
-References: <20230721-clk-fix-kunit-lockdep-v1-0-32cdba4c8fc1@kernel.org>
+        with ESMTP id S232605AbjGUQ02 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 12:26:28 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D090F46A1;
+        Fri, 21 Jul 2023 09:23:24 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10778"; a="453435610"
+X-IronPort-AV: E=Sophos;i="6.01,222,1684825200"; 
+   d="scan'208";a="453435610"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2023 09:21:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10778"; a="848870377"
+X-IronPort-AV: E=Sophos;i="6.01,222,1684825200"; 
+   d="scan'208";a="848870377"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga004.jf.intel.com with ESMTP; 21 Jul 2023 09:21:03 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andy@kernel.org>)
+        id 1qMssF-00CCBV-0a;
+        Fri, 21 Jul 2023 19:20:59 +0300
+Date:   Fri, 21 Jul 2023 19:20:58 +0300
+From:   Andy Shevchenko <andy@kernel.org>
+To:     nikita.shubin@maquefel.me
+Cc:     Hartley Sweeten <hsweeten@visionengravers.com>,
+        Lennert Buytenhek <kernel@wantstofly.org>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Lukasz Majewski <lukma@denx.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Michael Peters <mpeters@embeddedts.com>,
+        Kris Bahnsen <kris@embeddedts.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+        netdev@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
+        linux-input@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v3 22/42] dma: cirrus: add DT support for Cirrus EP93xx
+Message-ID: <ZLqwajir6kFLgbcm@smile.fi.intel.com>
+References: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
+ <20230605-ep93xx-v3-22-3d63a5f1103e@maquefel.me>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230721-clk-fix-kunit-lockdep-v1-0-32cdba4c8fc1@kernel.org>
+In-Reply-To: <20230605-ep93xx-v3-22-3d63a5f1103e@maquefel.me>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 21, 2023 at 09:09:31AM +0200, Maxime Ripard wrote:
-> Hi,
+On Thu, Jul 20, 2023 at 02:29:22PM +0300, Nikita Shubin via B4 Relay wrote:
+> From: Nikita Shubin <nikita.shubin@maquefel.me>
 > 
-> Here's a small series to address the lockdep warning we have when
-> running the clk kunit tests with lockdep enabled.
-> 
-> For the record, it can be tested with:
-> 
-> $ ./tools/testing/kunit/kunit.py run \
->     --kunitconfig=drivers/clk \
->     --cross_compile aarch64-linux-gnu- --arch arm64 \
->     --kconfig_add CONFIG_DEBUG_KERNEL=y \
->     --kconfig_add CONFIG_PROVE_LOCKING=y
-> 
-> Let me know what you think,
+> - drop subsys_initcall code
+> - add OF ID match table with data
+> - add of_probe for device tree
 
-The series fixes the problem for me. I sent Tested-by: tags for
-both patches individually.
+...
 
-Thanks,
-Guenter
+> +#include <linux/of_device.h>
 
-> Maxime
-> 
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
-> Maxime Ripard (2):
->       clk: Introduce kunit wrapper around clk_hw_init_rate_request
->       clk: Introduce kunit wrapper around __clk_determine_rate
-> 
->  drivers/clk/clk.c            | 51 ++++++++++++++++++++++++++++++++++++++++++++
->  drivers/clk/clk_test.c       |  4 ++--
->  include/linux/clk-provider.h | 21 ++++++++++++++++++
->  3 files changed, 74 insertions(+), 2 deletions(-)
-> ---
-> base-commit: c58c49dd89324b18a812762a2bfa5a0458e4f252
-> change-id: 20230721-clk-fix-kunit-lockdep-c5e62b221118
-> 
-> Best regards,
-> -- 
-> Maxime Ripard <mripard@kernel.org>
-> 
+Why?
+
+...
+
+> +#ifdef CONFIG_OF
+
+Why this ugly ifdeffery?
+
+...
+
+> +	data = of_device_get_match_data(&pdev->dev);
+
+device_get_match_data()
+
+> +	if (!data)
+> +		return ERR_PTR(dev_err_probe(&pdev->dev, -ENODEV, "No device match found\n"));
+
+...
+
+> +	edma = devm_kzalloc(&pdev->dev,
+> +					  struct_size(edma, channels, data->num_channels),
+> +				      GFP_KERNEL);
+
+Something wrong with indentation. Not the first time, please check all your
+patches for this kind of issues.
+
+> +		return ERR_PTR(-ENOMEM);
+
+...
+
+> +		edmac->regs = devm_platform_ioremap_resource(pdev, i);
+
+No check?
+
+> +		edmac->irq = platform_get_irq(pdev, i);
+
+No check?
+
+> +		edmac->edma = edma;
+> +
+> +		edmac->clk = of_clk_get(np, i);
+
+> +
+
+Redundant blank line.
+
+Why one of devm_clk_get*() can't be called?
+
+> +		if (IS_ERR(edmac->clk)) {
+> +			dev_warn(&pdev->dev, "failed to get clock\n");
+> +			continue;
+> +		}
+
+...
+
+> +	if (platform_get_device_id(pdev))
+> +		edma = ep93xx_init_from_pdata(pdev);
+> +	else
+> +		edma = ep93xx_dma_of_probe(pdev);
+
+> +
+
+Unneeded blank line.
+
+> +	if (!edma)
+> +		return PTR_ERR(edma);
+
+...
+
+> --- a/include/linux/platform_data/dma-ep93xx.h
+> +++ b/include/linux/platform_data/dma-ep93xx.h
+
+>  #include <linux/types.h>
+>  #include <linux/dmaengine.h>
+>  #include <linux/dma-mapping.h>
+
+> +#include <linux/of.h>
+
+property.h.
+
+...
+
+> +	if (of_device_is_compatible(dev_of_node(chan->device->dev), "cirrus,ep9301-dma-m2p"))
+> +		return true;
+> +
+
+device_is_compatible()
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
