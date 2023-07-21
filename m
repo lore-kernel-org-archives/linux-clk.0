@@ -2,154 +2,113 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD48EB64DD
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 06:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC785EB64DC
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 06:46:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229704AbjGUGdh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jul 2023 02:33:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33188 "EHLO
+        id S229452AbjGUGqI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jul 2023 02:46:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229453AbjGUGdf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 02:33:35 -0400
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CE9113;
-        Thu, 20 Jul 2023 23:33:34 -0700 (PDT)
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 36L5CcY2007317;
-        Fri, 21 Jul 2023 06:33:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=DC9f/AkivRyWRdBHdTX5l53MGYWeEg55d7aFIfliLU4=;
- b=CzW6FL7kunTgHMIr/YgwnYTacjh+loh3/jLihsPvwrtFeaEzq2AV36durAbNtzL2A005
- RVUxLy3xtwmWLMnJQqR1UeA3OmGUWJsE+lJvDll6NH5Ah3qjrvRxhVKaV69l8hcizEhm
- B9pGDG4L5FeCV09WkjBLSqyEcviEQLHjyqNd/HZTaEnvimGaCaNePhJbARvcCw9Uh35m
- 5IUU2MnyBmcsaK0oyCuTIb38Zr2VTMV0E7EZ0HSNJ9HSRK94X7U2vEWj5IogbW7QMcbc
- gErC0rC6LVMnf8FuV2NEVsWL0nF3Xd9IsoZY2P5jlChTn0ZYrbLG7+IQXjVXq95edxWJ EA== 
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ry6pv1w57-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Jul 2023 06:33:28 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 36L6XRVV004827
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Jul 2023 06:33:27 GMT
-Received: from [10.216.60.229] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.30; Thu, 20 Jul
- 2023 23:33:20 -0700
-Message-ID: <4af1abfb-9889-af13-7460-903eb94833bf@quicinc.com>
-Date:   Fri, 21 Jul 2023 12:03:17 +0530
+        with ESMTP id S229654AbjGUGqH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 02:46:07 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CF11B4;
+        Thu, 20 Jul 2023 23:46:04 -0700 (PDT)
+Received: from EXMBX166.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX166", Issuer "EXMBX166" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id D267C7FD6;
+        Fri, 21 Jul 2023 14:45:55 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX166.cuchost.com
+ (172.16.6.76) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 21 Jul
+ 2023 14:45:55 +0800
+Received: from [192.168.125.128] (113.72.147.86) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 21 Jul
+ 2023 14:45:54 +0800
+Message-ID: <8794c997-f371-70f8-2462-a6c677e7308c@starfivetech.com>
+Date:   Fri, 21 Jul 2023 14:41:56 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.7.2
-Subject: Re: [V3,09/11] remoteproc: qcom: Add Hexagon based multipd rproc
- driver
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mathieu.poirier@linaro.org>,
-        <robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-        <conor+dt@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <quic_eberman@quicinc.com>, <kvalo@kernel.org>,
-        <loic.poulain@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v8 0/9] Add STG/ISP/VOUT clock and reset drivers for
+ StarFive JH7110
+To:     Conor Dooley <conor@kernel.org>
+CC:     <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Hal Feng <hal.feng@starfivetech.com>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     <quic_srichara@quicinc.com>, <quic_sjaganat@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <quic_anusha@quicinc.com>
-References: <20230718120501.3205661-1-quic_mmanikan@quicinc.com>
- <20230718120501.3205661-10-quic_mmanikan@quicinc.com>
- <c53c8fc5-a898-df1d-4626-696ffd990796@linaro.org>
+References: <20230713113902.56519-1-xingyu.wu@starfivetech.com>
+ <20230720-enjoyment-gestation-adb8baa9aaf1@spud>
 Content-Language: en-US
-From:   Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <c53c8fc5-a898-df1d-4626-696ffd990796@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+In-Reply-To: <20230720-enjoyment-gestation-adb8baa9aaf1@spud>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YufzpMDROCJY4mesvDq7i8qydn3kb4O9
-X-Proofpoint-ORIG-GUID: YufzpMDROCJY4mesvDq7i8qydn3kb4O9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-07-21_03,2023-07-20_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 spamscore=0 malwarescore=0 adultscore=0 mlxlogscore=727
- impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0 bulkscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2307210058
+X-Originating-IP: [113.72.147.86]
+X-ClientProxiedBy: EXCAS064.cuchost.com (172.16.6.24) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 2023/7/21 0:32, Conor Dooley wrote:
+> On Thu, Jul 13, 2023 at 07:38:53PM +0800, Xingyu Wu wrote:
+>> This patch serises are base on the basic JH7110 SYSCRG/AONCRG
+>> drivers and add new partial clock drivers and reset supports
+>> about System-Top-Group(STG), Image-Signal-Process(ISP)
+>> and Video-Output(VOUT) for the StarFive JH7110 RISC-V SoC. These
+>> clocks and resets could be used by DMA, VIN and Display modules.
+>> 
+>> Patches 1 and 2 are about the System-Top-Group clock and reset
+>> generator(STGCRG) part. The first patch adds docunmentation to
+>> describe STG bindings, and the second patch adds clock driver to
+>> support STG clocks and resets as auxiliary device for JH7110.
+>> 
+>> Patches 3 and 4 are about the Image-Signal-Process clock and reset
+>> gennerator(ISPCRG) part. The first patch adds docunmentation to
+>> describe ISP bindings, and the second patch adds clock driver to
+>> support ISP clocks and resets as auxiliary device for JH7110.
+>> And ISP clocks should power on and enable the SYSCRG clocks first
+>> before registering.
+>> 
+>> Patches 5 and 6 are about the Video-Output clock and reset
+>> generator(VOUTCRG) part. The first patch adds docunmentation to
+>> describe VOUT bindings, and the second patch adds clock driver to
+>> support VOUT clocks and resets as auxiliary device for JH7110.
+>> And VOUT clocks also should power on and enable the SYSCRG clocks
+>> first before registering.
+>> 
+>> Patch 7 adds struct members to support STG/ISP/VOUT resets.
 
+BTW, I found this patch is not in the linux-next or clk-next.
+These STG/ISP/VOUT CRG drivers are 'incomplete' without this resets patch.
+I don't know what your plans about this patch and I'm just curious on it.
 
-On 7/20/2023 6:43 PM, Krzysztof Kozlowski wrote:
-> On 18/07/2023 14:04, Manikanta Mylavarapu wrote:
->> It adds support to bring up remoteproc's on multipd model.
->> Pd means protection domain. It's similar to process in Linux.
->> Here QDSP6 processor runs each wifi radio functionality on a
->> separate process. One process can't access other process
->> resources, so this is termed as PD i.e protection domain.
 > 
-> ...
+>> Patch 8 adds external clocks which ISP and VOUT clock driver need.
+>> Patch 9 adds device node about STGCRG, ISPCRG and VOUTCRG to JH7110 dts.
 > 
->> + * User pd boot-info format mentioned below
->> + * <Version> <No of elements passing over smem> <Header type> <Header Length>
->> + * <Process Id> <Load address> <firmware mem Size>
->> + *
->> + * Returns 0 on success else negative value on failure.
->> + */
->> +static int share_upd_bootinfo_to_q6(struct rproc *rproc)
->> +{
->> +	int ret;
->> +	size_t size;
->> +	u16 cnt = 0, version;
->> +	void *ptr;
->> +	struct q6_wcss *wcss = rproc->priv, *upd_wcss;
->> +	struct device_node *upd_np;
->> +	struct platform_device *upd_pdev;
->> +	struct rproc *upd_rproc;
->> +	struct userpd_boot_info upd_bootinfo = {0};
->> +	const struct firmware *fw;
->> +
->> +	ret = qcom_smem_alloc(REMOTE_PID, UPD_BOOT_INFO_SMEM_ID,
->> +			      UPD_BOOT_INFO_SMEM_SIZE);
->> +	if (ret && ret != -EEXIST) {
->> +		dev_err(wcss->dev,
->> +			"failed to allocate q6 bootinfo smem segment\n");
->> +		return ret;
->> +	}
->> +
->> +	ptr = qcom_smem_get(REMOTE_PID, UPD_BOOT_INFO_SMEM_ID, &size);
->> +	if (IS_ERR(ptr) || size != UPD_BOOT_INFO_SMEM_SIZE) {
->> +		dev_err(wcss->dev,
->> +			"Unable to acquire smp2p item(%d) ret:%ld\n",
->> +			UPD_BOOT_INFO_SMEM_ID, PTR_ERR(ptr));
->> +		return PTR_ERR(ptr);
->> +	}
->> +
->> +	/* print physical address */
->> +	dev_info(wcss->dev,
->> +		 "smem phyiscal address:0x%lX\n",
->> +		 (uintptr_t)qcom_smem_virt_to_phys(ptr));
+> b4 did not detect this correctly, but I picked these 2 up too.
+> They should be in next tomorrow.
+
+Thanks to you.
+
 > 
-> One more thought. Why do you need it? Even if this is not a kernel or
-> user-space address, why would like to disclose the memory layout? I
-> think this is contradictory to the kptr_restrict concept.
+> Please let your co-workers know that they should resend anything that I
+> didn't sent a thanks email for today, as it failed to apply (eg DMA,
+> eMMC).
 > 
 
-Sure, I will remove.
+Okay, I'll let them know and resent these patches.
 
-Thanks & Regards,
-Manikanta.
-
->> +
->> +	/*Version*/
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+Best regards,
+Xingyu Wu
