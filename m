@@ -2,531 +2,233 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CD7C001DC
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 13:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00C3EB64DC
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 13:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbjGUNNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jul 2023 09:13:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56466 "EHLO
+        id S230472AbjGUNTW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jul 2023 09:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbjGUNNb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 09:13:31 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6336830D6;
-        Fri, 21 Jul 2023 06:13:25 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4fbc0314a7bso3016436e87.2;
-        Fri, 21 Jul 2023 06:13:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689945203; x=1690550003;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FKp4EUDs9OHCFkv+axFZbsC3Ahabb0v9/dhztZiePdI=;
-        b=bd73b6TkOKCvKMHQnERHzMpaHq3wmJsqFt7I6tFD1Di3uxlYsCwG6PBjsdR0K37lAu
-         YADTF2xwGS1L73w6n5KFi+Yo0ahFqVxhaAULxA6W2aD355Aq6lZ8k4T2EuiuIDD5F0AR
-         G7WbJiDezL2QOf/GY1t11wCFYL7qbyjHDIumMcvae3CEnJrS4gmFVzd1RRKpLv1F0Vv/
-         kqJlqD2NK3kEuWPjjn09kDovNONtzWMwyeYMV5CQ5zMCBT04WRg3ntSWka9WGNcD2/Pa
-         TQzz0D6ntzz4WDS0T317Q14CZvGhV9YYCUJ7U4LO7WrH1kui4EIELu3XoNP43iGf2WBw
-         DUzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689945203; x=1690550003;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FKp4EUDs9OHCFkv+axFZbsC3Ahabb0v9/dhztZiePdI=;
-        b=GIiOmzbHOqFD7uxkrPVCiagSupW6F4683SMKdJ8gqAcRcvYdj0Oohyhhs2m21m1SKU
-         Mr//fOd1aM9c0m/D8l02ehYP0ZWuu65CNAaa4wf9rc5AFcb411oK247uYYtvOVBX/wG9
-         SSuaVyf7dysPj6UASq9ScKDOtq6WQDGcL1hDrSTR2TPkdU1QbLM8ixIJC1Bq1RbxY/Pm
-         gdI9a39Qkc0Ur64AxdROFiL6iDlr5D9njmGyoSQ+tbu3y1Tf8ooPG5Un52G6PP0gFDqj
-         Y0xeFhJO37Va1Qxb6ozWmYtP+q3/DA9p5buxvrbVqoIWL3fa37ViMniTLCiaKQlSJ7xr
-         EFHg==
-X-Gm-Message-State: ABy/qLZNazrANDoQbYu76ix/fEIjg6ufh0XjW1fexbGFVH9A5lVyftfE
-        5Wx/wCTZ1EAGZRFbK0eVssg=
-X-Google-Smtp-Source: APBJJlGgRa5fkLyoLyyYbzTWpSRETOKwIrpz5GNnH9C4vxqs4snB4WJuEZRIXFid9okA+g+NuG91UQ==
-X-Received: by 2002:a05:6512:3e1d:b0:4f8:710c:e2c7 with SMTP id i29-20020a0565123e1d00b004f8710ce2c7mr2003014lfv.33.1689945203225;
-        Fri, 21 Jul 2023 06:13:23 -0700 (PDT)
-Received: from localhost (p200300e41f1bd600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1b:d600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n2-20020aa7c782000000b00521953ce6e0sm2074329eds.93.2023.07.21.06.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 06:13:22 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+        with ESMTP id S230404AbjGUNTV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 09:19:21 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F4463595;
+        Fri, 21 Jul 2023 06:19:09 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="347313899"
+X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
+   d="scan'208";a="347313899"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2023 06:19:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10777"; a="702053539"
+X-IronPort-AV: E=Sophos;i="6.01,220,1684825200"; 
+   d="scan'208";a="702053539"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga006.jf.intel.com with ESMTP; 21 Jul 2023 06:18:54 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.96)
+        (envelope-from <andy@kernel.org>)
+        id 1qMq1x-005vpD-13;
+        Fri, 21 Jul 2023 16:18:49 +0300
+Date:   Fri, 21 Jul 2023 16:18:49 +0300
+From:   Andy Shevchenko <andy@kernel.org>
+To:     nikita.shubin@maquefel.me
+Cc:     Hartley Sweeten <hsweeten@visionengravers.com>,
+        Lennert Buytenhek <kernel@wantstofly.org>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Lukasz Majewski <lukma@denx.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 1/2] dt-bindings: clock: tegra124-dfll: Convert to json-schema
-Date:   Fri, 21 Jul 2023 15:13:21 +0200
-Message-ID: <20230721131322.2991364-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.41.0
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Michael Peters <mpeters@embeddedts.com>,
+        Kris Bahnsen <kris@embeddedts.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+        netdev@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
+        linux-input@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v3 01/42] gpio: ep93xx: split device in multiple
+Message-ID: <ZLqFuWsxhdiP4ZjA@smile.fi.intel.com>
+References: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
+ <20230605-ep93xx-v3-1-3d63a5f1103e@maquefel.me>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230605-ep93xx-v3-1-3d63a5f1103e@maquefel.me>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, Jul 20, 2023 at 02:29:01PM +0300, Nikita Shubin via B4 Relay wrote:
+> From: Nikita Shubin <nikita.shubin@maquefel.me>
+> 
+> This prepares ep93xx SOC gpio to convert into device tree driver:
+> - dropped banks and legacy defines
+> - split AB IRQ and make it shared
+> 
+> We are relying on IRQ number information A, B ports have single shared
+> IRQ, while F port have dedicated IRQ for each line.
+> 
+> Also we had to split single ep93xx platform_device into multiple, one
+> for each port, without this we can't do a full working transition from
+> legacy platform code into device tree capable. All GPIO_LOOKUP were
+> change to match new chip namings.
 
-Convert the Tegra124 (and later) DFLL bindings from the free-form text
-format to json-schema.
+...
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v2:
-- should now validate properly because pinmux bindings have been merged
+> -static void ep93xx_gpio_ab_irq_handler(struct irq_desc *desc)
+> +static u32 ep93xx_gpio_ab_irq_handler(struct gpio_chip *gc)
+>  {
+> -	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+> -	struct ep93xx_gpio *epg = gpiochip_get_data(gc);
+> -	struct irq_chip *irqchip = irq_desc_get_chip(desc);
+> +	struct ep93xx_gpio_irq_chip *eic = to_ep93xx_gpio_irq_chip(gc);
+>  	unsigned long stat;
+>  	int offset;
+>  
+> -	chained_irq_enter(irqchip, desc);
+> -
+> -	/*
+> -	 * Dispatch the IRQs to the irqdomain of each A and B
+> -	 * gpiochip irqdomains depending on what has fired.
+> -	 * The tricky part is that the IRQ line is shared
+> -	 * between bank A and B and each has their own gpiochip.
+> -	 */
+> -	stat = readb(epg->base + EP93XX_GPIO_A_INT_STATUS);
+> +	stat = readb(eic->base + EP93XX_INT_STATUS_OFFSET);
+>  	for_each_set_bit(offset, &stat, 8)
+> -		generic_handle_domain_irq(epg->gc[0].gc.irq.domain,
+> -					  offset);
+> +		generic_handle_domain_irq(gc->irq.domain, offset);
+>  
+> -	stat = readb(epg->base + EP93XX_GPIO_B_INT_STATUS);
+> -	for_each_set_bit(offset, &stat, 8)
+> -		generic_handle_domain_irq(epg->gc[1].gc.irq.domain,
+> -					  offset);
+> +	return stat;
+> +}
+>  
+> -	chained_irq_exit(irqchip, desc);
+> +static irqreturn_t ep93xx_ab_irq_handler(int irq, void *dev_id)
+> +{
+> +	return IRQ_RETVAL(ep93xx_gpio_ab_irq_handler(dev_id));
+>  }
+>  
+>  static void ep93xx_gpio_f_irq_handler(struct irq_desc *desc)
+>  {
+> -	/*
+> -	 * map discontiguous hw irq range to continuous sw irq range:
+> -	 *
+> -	 *  IRQ_EP93XX_GPIO{0..7}MUX -> EP93XX_GPIO_LINE_F{0..7}
+> -	 */
+>  	struct irq_chip *irqchip = irq_desc_get_chip(desc);
+> -	unsigned int irq = irq_desc_get_irq(desc);
+> -	int port_f_idx = (irq & 7) ^ 4; /* {20..23,48..51} -> {0..7} */
+> -	int gpio_irq = EP93XX_GPIO_F_IRQ_BASE + port_f_idx;
+> +	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+> +	struct gpio_irq_chip *gic = &gc->irq;
+> +	unsigned int parent = irq_desc_get_irq(desc);
+> +	unsigned int i;
+>  
+>  	chained_irq_enter(irqchip, desc);
+> -	generic_handle_irq(gpio_irq);
+> +	for (i = 0; i < gic->num_parents; i++)
+> +		if (gic->parents[i] == parent)
+> +			break;
+> +
+> +	if (i < gic->num_parents)
+> +		generic_handle_irq(irq_find_mapping(gc->irq.domain, i));
 
- .../bindings/clock/nvidia,tegra124-dfll.txt   | 155 ----------
- .../bindings/clock/nvidia,tegra124-dfll.yaml  | 277 ++++++++++++++++++
- 2 files changed, 277 insertions(+), 155 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
+Can we use
 
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-deleted file mode 100644
-index f7d347385b57..000000000000
---- a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt
-+++ /dev/null
-@@ -1,155 +0,0 @@
--NVIDIA Tegra124 DFLL FCPU clocksource
--
--This binding uses the common clock binding:
--Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--The DFLL IP block on Tegra is a root clocksource designed for clocking
--the fast CPU cluster. It consists of a free-running voltage controlled
--oscillator connected to the CPU voltage rail (VDD_CPU), and a closed loop
--control module that will automatically adjust the VDD_CPU voltage by
--communicating with an off-chip PMIC either via an I2C bus or via PWM signals.
--
--Required properties:
--- compatible : should be one of:
--  - "nvidia,tegra124-dfll": for Tegra124
--  - "nvidia,tegra210-dfll": for Tegra210
--- reg : Defines the following set of registers, in the order listed:
--        - registers for the DFLL control logic.
--        - registers for the I2C output logic.
--        - registers for the integrated I2C master controller.
--        - look-up table RAM for voltage register values.
--- interrupts: Should contain the DFLL block interrupt.
--- clocks: Must contain an entry for each entry in clock-names.
--  See clock-bindings.txt for details.
--- clock-names: Must include the following entries:
--  - soc: Clock source for the DFLL control logic.
--  - ref: The closed loop reference clock
--  - i2c: Clock source for the integrated I2C master.
--- resets: Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names: Must include the following entries:
--  - dvco: Reset control for the DFLL DVCO.
--- #clock-cells: Must be 0.
--- clock-output-names: Name of the clock output.
--- vdd-cpu-supply: Regulator for the CPU voltage rail that the DFLL
--  hardware will start controlling. The regulator will be queried for
--  the I2C register, control values and supported voltages.
--
--Required properties for the control loop parameters:
--- nvidia,sample-rate: Sample rate of the DFLL control loop.
--- nvidia,droop-ctrl: See the register CL_DVFS_DROOP_CTRL in the TRM.
--- nvidia,force-mode: See the field DFLL_PARAMS_FORCE_MODE in the TRM.
--- nvidia,cf: Numeric value, see the field DFLL_PARAMS_CF_PARAM in the TRM.
--- nvidia,ci: Numeric value, see the field DFLL_PARAMS_CI_PARAM in the TRM.
--- nvidia,cg: Numeric value, see the field DFLL_PARAMS_CG_PARAM in the TRM.
--
--Optional properties for the control loop parameters:
--- nvidia,cg-scale: Boolean value, see the field DFLL_PARAMS_CG_SCALE in the TRM.
--
--Optional properties for mode selection:
--- nvidia,pwm-to-pmic: Use PWM to control regulator rather then I2C.
--
--Required properties for I2C mode:
--- nvidia,i2c-fs-rate: I2C transfer rate, if using full speed mode.
--
--Required properties for PWM mode:
--- nvidia,pwm-period-nanoseconds: period of PWM square wave in nanoseconds.
--- nvidia,pwm-tristate-microvolts: Regulator voltage in micro volts when PWM
--  control is disabled and the PWM output is tristated. Note that this voltage is
--  configured in hardware, typically via a resistor divider.
--- nvidia,pwm-min-microvolts: Regulator voltage in micro volts when PWM control
--  is enabled and PWM output is low. Hence, this is the minimum output voltage
--  that the regulator supports when PWM control is enabled.
--- nvidia,pwm-voltage-step-microvolts: Voltage increase in micro volts
--  corresponding to a 1/33th increase in duty cycle. Eg the voltage for 2/33th
--  duty cycle would be: nvidia,pwm-min-microvolts +
--  nvidia,pwm-voltage-step-microvolts * 2.
--- pinctrl-0: I/O pad configuration when PWM control is enabled.
--- pinctrl-1: I/O pad configuration when PWM control is disabled.
--- pinctrl-names: must include the following entries:
--  - dvfs_pwm_enable: I/O pad configuration when PWM control is enabled.
--  - dvfs_pwm_disable: I/O pad configuration when PWM control is disabled.
--
--Example for I2C:
--
--clock@70110000 {
--        compatible = "nvidia,tegra124-dfll";
--        reg = <0 0x70110000 0 0x100>, /* DFLL control */
--              <0 0x70110000 0 0x100>, /* I2C output control */
--              <0 0x70110100 0 0x100>, /* Integrated I2C controller */
--              <0 0x70110200 0 0x100>; /* Look-up table RAM */
--        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
--        clocks = <&tegra_car TEGRA124_CLK_DFLL_SOC>,
--                 <&tegra_car TEGRA124_CLK_DFLL_REF>,
--                 <&tegra_car TEGRA124_CLK_I2C5>;
--        clock-names = "soc", "ref", "i2c";
--        resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
--        reset-names = "dvco";
--        #clock-cells = <0>;
--        clock-output-names = "dfllCPU_out";
--        vdd-cpu-supply = <&vdd_cpu>;
--
--        nvidia,sample-rate = <12500>;
--        nvidia,droop-ctrl = <0x00000f00>;
--        nvidia,force-mode = <1>;
--        nvidia,cf = <10>;
--        nvidia,ci = <0>;
--        nvidia,cg = <2>;
--
--        nvidia,i2c-fs-rate = <400000>;
--};
--
--Example for PWM:
--
--clock@70110000 {
--	compatible = "nvidia,tegra124-dfll";
--	reg = <0 0x70110000 0 0x100>, /* DFLL control */
--	      <0 0x70110000 0 0x100>, /* I2C output control */
--	      <0 0x70110100 0 0x100>, /* Integrated I2C controller */
--	      <0 0x70110200 0 0x100>; /* Look-up table RAM */
--	interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
--	clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
--	         <&tegra_car TEGRA210_CLK_DFLL_REF>,
--		 <&tegra_car TEGRA124_CLK_I2C5>;;
--	clock-names = "soc", "ref", "i2c";
--	resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
--	reset-names = "dvco";
--	#clock-cells = <0>;
--	clock-output-names = "dfllCPU_out";
--
--	nvidia,sample-rate = <25000>;
--	nvidia,droop-ctrl = <0x00000f00>;
--	nvidia,force-mode = <1>;
--	nvidia,cf = <6>;
--	nvidia,ci = <0>;
--	nvidia,cg = <2>;
--
--	nvidia,pwm-min-microvolts = <708000>; /* 708mV */
--	nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
--	nvidia,pwm-to-pmic;
--	nvidia,pwm-tristate-microvolts = <1000000>;
--	nvidia,pwm-voltage-step-microvolts = <19200>; /* 19.2mV */
--
--	pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
--	pinctrl-0 = <&dvfs_pwm_active_state>;
--	pinctrl-1 = <&dvfs_pwm_inactive_state>;
--};
--
--/* pinmux nodes added for completeness. Binding doc can be found in:
-- * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
-- */
--
--pinmux: pinmux@700008d4 {
--	dvfs_pwm_active_state: dvfs_pwm_active {
--		dvfs_pwm_pbb1 {
--			nvidia,pins = "dvfs_pwm_pbb1";
--			nvidia,tristate = <TEGRA_PIN_DISABLE>;
--		};
--	};
--	dvfs_pwm_inactive_state: dvfs_pwm_inactive {
--		dvfs_pwm_pbb1 {
--			nvidia,pins = "dvfs_pwm_pbb1";
--			nvidia,tristate = <TEGRA_PIN_ENABLE>;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
-new file mode 100644
-index 000000000000..4a9a48613ec6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.yaml
-@@ -0,0 +1,277 @@
-+# SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/nvidia,tegra124-dfll.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra124 (and later) DFLL FCPU clocksource
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+description:
-+  The DFLL IP block on Tegra is a root clocksource designed for clocking
-+  the fast CPU cluster. It consists of a free-running voltage controlled
-+  oscillator connected to the CPU voltage rail (VDD_CPU), and a closed
-+  loop control module that will automatically adjust the VDD_CPU voltage
-+  by communicating with an off-chip PMIC either via an I2C bus or via
-+  PWM signals.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - nvidia,tegra124-dfll
-+      - nvidia,tegra210-dfll
-+
-+  reg:
-+    items:
-+      - description: DFLL control logic
-+      - description: I2C output logic
-+      - description: integrated I2C controller
-+      - description: look-up table RAM for voltage register values
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: clock source for the DFLL control logic
-+      - description: closed loop reference clock
-+      - description: clock source for the integrated I2C controller
-+
-+  clock-names:
-+    items:
-+      - const: soc
-+      - const: ref
-+      - const: i2c
-+
-+  resets:
-+    minItems: 1
-+    maxItems: 2
-+
-+  reset-names:
-+    minItems: 1
-+    maxItems: 2
-+
-+  "#clock-cells":
-+    const: 0
-+
-+  clock-output-names:
-+    description: name of the clock output
-+
-+  vdd-cpu-supply:
-+    description: Regulator for the CPU voltage rail that the DFLL
-+      hardware will start controlling. The regulator will be queried for
-+      the I2C register, control values and supported voltages.
-+
-+  nvidia,sample-rate:
-+    description: Sample rate of the DFLL control loop.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,droop-ctrl:
-+    description: See the register CL_DVFS_DROOP_CTRL in the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,force-mode:
-+    description: See the field DFLL_PARAMS_FORCE_MODE in the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,cf:
-+    description: Numeric value, see the field DFLL_PARAMS_CF_PARAM in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,ci:
-+    description: Numeric value, see the field DFLL_PARAMS_CI_PARAM in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,cg:
-+    description: Numeric value, see the field DFLL_PARAMS_CG_PARAM in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  # optional properties
-+  nvidia,cg-scale:
-+    description: Boolean value, see the field DFLL_PARAMS_CG_SCALE in
-+      the TRM.
-+    $ref: /schemas/types.yaml#/definitions/flag
-+
-+  nvidia,pwm-to-pmic:
-+    description: Use PWM to control regulator rather then I2C.
-+    $ref: /schemas/types.yaml#/definitions/flag
-+
-+  nvidia,i2c-fs-rate:
-+    description: I2C transfer rate, if using full speed mode.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  # required properties for PWM mode
-+  nvidia,pwm-period-nanoseconds:
-+    description: period of PWM square wave in nanoseconds.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,pwm-tristate-microvolts:
-+    description: Regulator voltage in micro volts when PWM control is
-+      disabled and the PWM output is tristated. Note that this voltage
-+      is configured in hardware, typically via a resistor divider.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,pwm-min-microvolts:
-+    description: Regulator voltage in micro volts when PWM control is
-+      enabled and PWM output is low. Hence, this is the minimum output
-+      voltage that the regulator supports when PWM control is enabled.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  nvidia,pwm-voltage-step-microvolts:
-+    description: |
-+      Voltage increase in micro volts corresponding to a 1/33th increase
-+      in duty cycle. Eg the voltage for 2/33th duty cycle would be:
-+
-+        nvidia,pwm-min-microvolts + nvidia,pwm-voltage-step-microvolts * 2
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  pinctrl-names:
-+    items:
-+      # I/O pad configuration when PWM control is enabled
-+      - const: dvfs_pwm_enable
-+      # I/O pad configuration when PWM control is disabled
-+      - const: dvfs_pwm_disable
-+
-+  pinctrl-0: true
-+  pinctrl-1: true
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra124-dfll
-+    then:
-+      properties:
-+        resets:
-+          items:
-+            - description: DFLL DVCO reset
-+
-+        reset-names:
-+          items:
-+            - const: dvco
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra210-dfll
-+    then:
-+      properties:
-+        resets:
-+          items:
-+            - description: DFLL DVCO reset
-+            - description: DFLL reset
-+
-+        reset-names:
-+          items:
-+            - const: dvco
-+            - const: dfll
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra124-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
-+    #include <dt-bindings/reset/tegra124-car.h>
-+
-+    clock@70110000 {
-+        compatible = "nvidia,tegra124-dfll";
-+        reg = <0x70110000 0x100>, /* DFLL control */
-+              <0x70110000 0x100>, /* I2C output control */
-+              <0x70110100 0x100>, /* Integrated I2C controller */
-+              <0x70110200 0x100>; /* Look-up table RAM */
-+        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA124_CLK_DFLL_SOC>,
-+                 <&tegra_car TEGRA124_CLK_DFLL_REF>,
-+                 <&tegra_car TEGRA124_CLK_I2C5>;
-+        clock-names = "soc", "ref", "i2c";
-+        resets = <&tegra_car TEGRA124_RST_DFLL_DVCO>;
-+        reset-names = "dvco";
-+        #clock-cells = <0>;
-+        clock-output-names = "dfllCPU_out";
-+        vdd-cpu-supply = <&vdd_cpu>;
-+
-+        nvidia,sample-rate = <12500>;
-+        nvidia,droop-ctrl = <0x00000f00>;
-+        nvidia,force-mode = <1>;
-+        nvidia,cf = <10>;
-+        nvidia,ci = <0>;
-+        nvidia,cg = <2>;
-+
-+        nvidia,i2c-fs-rate = <400000>;
-+    };
-+
-+  - |
-+    #include <dt-bindings/clock/tegra210-car.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/pinctrl/pinctrl-tegra.h>
-+    #include <dt-bindings/reset/tegra210-car.h>
-+
-+    clock@70110000 {
-+        compatible = "nvidia,tegra210-dfll";
-+        reg = <0x70110000 0x100>, /* DFLL control */
-+              <0x70110000 0x100>, /* I2C output control */
-+              <0x70110100 0x100>, /* Integrated I2C controller */
-+              <0x70110200 0x100>; /* Look-up table RAM */
-+        interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car TEGRA210_CLK_DFLL_SOC>,
-+                 <&tegra_car TEGRA210_CLK_DFLL_REF>,
-+                 <&tegra_car TEGRA210_CLK_I2C5>;
-+        clock-names = "soc", "ref", "i2c";
-+        resets = <&tegra_car TEGRA210_RST_DFLL_DVCO>,
-+                 <&tegra_car 155>;
-+        reset-names = "dvco", "dfll";
-+        #clock-cells = <0>;
-+        clock-output-names = "dfllCPU_out";
-+
-+        nvidia,sample-rate = <25000>;
-+        nvidia,droop-ctrl = <0x00000f00>;
-+        nvidia,force-mode = <1>;
-+        nvidia,cf = <6>;
-+        nvidia,ci = <0>;
-+        nvidia,cg = <2>;
-+
-+        nvidia,pwm-min-microvolts = <708000>; /* 708mV */
-+        nvidia,pwm-period-nanoseconds = <2500>; /* 2.5us */
-+        nvidia,pwm-to-pmic;
-+        nvidia,pwm-tristate-microvolts = <1000000>;
-+        nvidia,pwm-voltage-step-microvolts = <19200>; /* 19.2mV */
-+
-+        pinctrl-names = "dvfs_pwm_enable", "dvfs_pwm_disable";
-+        pinctrl-0 = <&dvfs_pwm_active_state>;
-+        pinctrl-1 = <&dvfs_pwm_inactive_state>;
-+    };
-+
-+    /*
-+     * pinmux nodes added for completeness. Binding doc can be found in:
-+     * Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-pinmux.yaml
-+     */
-+
-+    pinmux: pinmux@700008d4 {
-+        compatible = "nvidia,tegra210-pinmux";
-+        reg = <0x700008d4 0x29c>, /* Pad control registers */
-+              <0x70003000 0x294>; /* Mux registers */
-+
-+        dvfs_pwm_active_state: pinmux-dvfs-pwm-active {
-+            dvfs_pwm_pbb1 {
-+                nvidia,pins = "dvfs_pwm_pbb1";
-+                nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+            };
-+        };
-+
-+        dvfs_pwm_inactive_state: pinmux-dvfs-pwm-inactive {
-+            dvfs_pwm_pbb1 {
-+                nvidia,pins = "dvfs_pwm_pbb1";
-+                nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+            };
-+        };
-+    };
+		generic_handle_domain_irq(gc->irq.domain, i);
+
+here as well?
+
+>  	chained_irq_exit(irqchip, desc);
+>  }
+
+...
+
+> -	int offset = d->irq & 7;
+> +	int offset = irqd_to_hwirq(d);
+
+	irq_hw_number_t ?
+
+>  	irq_flow_handler_t handler;
+
+...
+
+> +	int ret, irq, i = 0;
+
+What do you need this assignment for?
+
+...
+
+> +		ret = devm_request_irq(dev, irq,
+> +				ep93xx_ab_irq_handler,
+
+It can be located on the previous line.
+
+> +				IRQF_SHARED, gc->label, gc);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret, "error requesting IRQ : %d\n", irq);
+
+Drop duplicating word 'error' in the message.
+Space is not needed before colon.
+
+...
+
+> +	/* TODO: replace with handle_bad_irq once we are fully hierarchical */
+
+To be pedantic: handle_bad_irq()
+
+> +	gc->label = dev_name(&pdev->dev);
+> +	if (platform_irq_count(pdev) > 0) {
+> +		dev_dbg(&pdev->dev, "setting up irqs for %s\n", dev_name(&pdev->dev));
+> +		ret = ep93xx_setup_irqs(pdev, egc);
+> +		if (ret)
+
+> +			dev_err(&pdev->dev, "setup irqs failed for %s\n", dev_name(&pdev->dev));
+
+What's the point to print dev name twice? Esp. taking into account
+gc->label assignment above. Why not use dev_err_probe() to unify
+the format of the messages from ->probe()?
+
 -- 
-2.41.0
+With Best Regards,
+Andy Shevchenko
+
 
