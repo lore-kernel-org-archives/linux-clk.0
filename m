@@ -2,370 +2,425 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5DAEB64DD
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 12:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91ACFC001DC
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Jul 2023 12:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbjGUMDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Jul 2023 08:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55496 "EHLO
+        id S231296AbjGUMG1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Jul 2023 08:06:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbjGUMDR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 08:03:17 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA13735A0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jul 2023 05:02:40 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-316eabffaa6so1452116f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jul 2023 05:02:40 -0700 (PDT)
+        with ESMTP id S231248AbjGUMG0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Jul 2023 08:06:26 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DED18172D
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jul 2023 05:06:03 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2b961822512so27623641fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jul 2023 05:06:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20221208.gappssmtp.com; s=20221208; t=1689940930; x=1690545730;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uk63RChk971hx/wl+lPvy732XZ7IGqfv3tMslcdagrI=;
-        b=G5UatuTsXi/XjXKrY+wrDqIO/f3YXQ3zQeqKrQ6AXwwU6jKf/lsRdfU15ZZ+cEDFPb
-         eZCZ3spWElh0t6COgYWBNoyJ/AHE9C8ypUWQfN/yICvrVqQqjMIlQ0/8wEeD0tsj/bVK
-         e/WpRSl29hRf9TbmD8Knzb8cVHCz0jRHDQDYyWNnajtSbBLAzsIAFUwc8NGGKF8eAfwh
-         TV3Ay9cL6u/w+gOzbkZvhw0sfcm34NcTGMWfkSz0DiDD4EfvC9Uw1FHJL67U7urhD+Vb
-         J/6Ncc0O9ST7ZuLHy6Xj7eoqORhhPz1DkfP397PsiqPIZmATqFGKkhDuvr/mNckM6W0J
-         Ztxw==
+        d=linaro.org; s=google; t=1689941160; x=1690545960;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gXNmhvlAzapF/jclc5ASHewKjKna+w9gzTSm+2C+njA=;
+        b=lqZYn2c5Cd29qzr+lTe7eemtmhmvja1dKOcI5+g2MVF+Oxejn+e1OvTdAlFKm7s17i
+         dDGutM2JSeP/+gMYzGkZQWmwDeD+RPXx+oLLtYD7F7nw4KH3tis4/3T1lxuNzs/HvRCQ
+         Uis2KQfgHGbJ3ZxP1BoCTJ/NXVRHuMlSXUk2GPIGyUP5xeqLQ4UmE0WHPP9XCz6CuCjq
+         4Y1gT6Qvl52SNwxJ2o4N/nD8BEIW8XpMRtigmP4Jl1XeIKUNTBfa/GQ5B07QpmEDVPoP
+         kOfipuZM/lyis2+TsQSyE+51mseCq0Bn8/LUh63fFHtajyYRPPK57iUtZEMkEB/zrhnb
+         YrIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689940930; x=1690545730;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uk63RChk971hx/wl+lPvy732XZ7IGqfv3tMslcdagrI=;
-        b=RhUp+0wtVTVKJXnfIn7XWcJQ/1CtwNmNlfJf4Owg6udQOU5paAznKTccmr5xDNo3N3
-         qlRAU+Rm8vtx5m3lh7IV0flbFHqiu+cNUF8d0uOt7YAcW8NAaTzTiMuzPHrUJNFzFylZ
-         bmqgxwkVnMDEfgT6hC2/oMqcoTlAeiD5nnLUPGDuXnIGEkF79RAm4KjLzyizXuKrQj/O
-         u+K9BtHUeqlBoL/ckuO2EeKmv90uN0zlCgv9xxKRyMTvohOcrFSC5r9oN4AsLqiDvgKR
-         GyjBbcnhpBcegCzpk5UuROadl9gwsxuwo20NKOKLWxqqEke20Wc2hg2oG+whUKNPx2iW
-         gLhQ==
-X-Gm-Message-State: ABy/qLbKoJIax2cavanYrANLCNVsPj1+zTXwxFjSNFbYDuizhrCf4bB0
-        1O0Bq5c9kFaeXlNuZQwds/alDA==
-X-Google-Smtp-Source: APBJJlFBi0s6hS6tmUYK6NjhO/dxN7BONAI1AalV3sMiRCkPDjBf/mDZnWA+uNuz34jmHiiNwmQR8w==
-X-Received: by 2002:a5d:6984:0:b0:313:e9d7:108f with SMTP id g4-20020a5d6984000000b00313e9d7108fmr1192289wru.33.1689940930136;
-        Fri, 21 Jul 2023 05:02:10 -0700 (PDT)
-Received: from localhost (host-213-179-129-39.customer.m-online.net. [213.179.129.39])
-        by smtp.gmail.com with ESMTPSA id x17-20020adfffd1000000b003141f3843e6sm3995858wrs.90.2023.07.21.05.02.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jul 2023 05:02:09 -0700 (PDT)
-Date:   Fri, 21 Jul 2023 14:02:08 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
-Cc:     "kuba@kernel.org" <kuba@kernel.org>,
-        Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "Olech, Milena" <milena.olech@intel.com>,
-        "Michalik, Michal" <michal.michalik@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, poros <poros@redhat.com>,
-        mschmidt <mschmidt@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 09/11] ice: implement dpll interface to control cgu
-Message-ID: <ZLpzwMQrqp7mIMFF@nanopsycho>
-References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
- <20230720091903.297066-10-vadim.fedorenko@linux.dev>
- <ZLk/9zwbBHgs+rlb@nanopsycho>
- <DM6PR11MB46572F438AADB5801E58227A9B3EA@DM6PR11MB4657.namprd11.prod.outlook.com>
- <ZLo0ujuLMF2NrMog@nanopsycho>
- <DM6PR11MB46576153E0E28BA4C283A30A9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+        d=1e100.net; s=20221208; t=1689941160; x=1690545960;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXNmhvlAzapF/jclc5ASHewKjKna+w9gzTSm+2C+njA=;
+        b=LK8h9ajs/mAs3Px8UrThJwEfN2OAOZcleTdmWQ19WCN7H+hndEE/NBobe0Vf6k+bS1
+         288sCzJXJfBOyUl65ZEouEekM24fvZd7i2hNxY1ZarzGey5NfP97o0d9MnWDWGw3UheD
+         vOj/xYR+3hY2/itlnJ08lbT6Y+vhihHBsE+yc712YyNTdI7hCrEpy5h5rXKa2hbdMA28
+         0p91UyGQq6fLxCd2jGjTpWEF8bG1ZXM3vSaHzpc3YkbuBJ6Hljj0gx4BU3f0FFRz963c
+         l6Q+pKVrSwSESNi0vEJnz+oTZ6C873Q7vwxB0M049Z3plo/kevk8aVcUU93VuiRnZ9C8
+         lMgA==
+X-Gm-Message-State: ABy/qLbbdaNY8aWTyEAm1DJ4cDrcnv7Fl8n44lTJFxSuH/usA2gh/25Q
+        2Ro2lR9L0yfwCt/pxz8XB00bog==
+X-Google-Smtp-Source: APBJJlHzSxzuJSBOed6vpzVkOujCMxrEjq/i/cbAMm5PwD9x5v0HiDNCAh78DlHQKgcRMMS5MMr3lg==
+X-Received: by 2002:a2e:8048:0:b0:2b9:3a2b:8b02 with SMTP id p8-20020a2e8048000000b002b93a2b8b02mr1473060ljg.8.1689941160006;
+        Fri, 21 Jul 2023 05:06:00 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.104])
+        by smtp.gmail.com with ESMTPSA id qt10-20020a170906ecea00b00988e953a586sm2114366ejb.61.2023.07.21.05.05.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jul 2023 05:05:59 -0700 (PDT)
+Message-ID: <fed3bad5-9200-76b2-1d57-092de3ec0394@linaro.org>
+Date:   Fri, 21 Jul 2023 14:05:56 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR11MB46576153E0E28BA4C283A30A9B3FA@DM6PR11MB4657.namprd11.prod.outlook.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v6 1/3] dt-bindings: clock: fsl,imx8-acm: Add audio clock
+ mux support
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+        peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        shengjiu.wang@gmail.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1689934137-21430-1-git-send-email-shengjiu.wang@nxp.com>
+ <1689934137-21430-2-git-send-email-shengjiu.wang@nxp.com>
+Content-Language: en-US
+From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1689934137-21430-2-git-send-email-shengjiu.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fri, Jul 21, 2023 at 01:17:59PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>From: Jiri Pirko <jiri@resnulli.us>
->>Sent: Friday, July 21, 2023 9:33 AM
->>
->>Thu, Jul 20, 2023 at 07:31:14PM CEST, arkadiusz.kubalewski@intel.com wrote:
->>>>From: Jiri Pirko <jiri@resnulli.us>
->>>>Sent: Thursday, July 20, 2023 4:09 PM
->>>>
->>>>Thu, Jul 20, 2023 at 11:19:01AM CEST, vadim.fedorenko@linux.dev wrote:
->>>>>From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
->>>>
->>>>[...]
->>>>
->>>>
->>>>>+/**
->>>>>+ * ice_dpll_pin_enable - enable a pin on dplls
->>>>>+ * @hw: board private hw structure
->>>>>+ * @pin: pointer to a pin
->>>>>+ * @pin_type: type of pin being enabled
->>>>>+ * @extack: error reporting
->>>>>+ *
->>>>>+ * Enable a pin on both dplls. Store current state in pin->flags.
->>>>>+ *
->>>>>+ * Context: Called under pf->dplls.lock
->>>>>+ * Return:
->>>>>+ * * 0 - OK
->>>>>+ * * negative - error
->>>>>+ */
->>>>>+static int
->>>>>+ice_dpll_pin_enable(struct ice_hw *hw, struct ice_dpll_pin *pin,
->>>>>+		    enum ice_dpll_pin_type pin_type,
->>>>>+		    struct netlink_ext_ack *extack)
->>>>>+{
->>>>>+	u8 flags = 0;
->>>>>+	int ret;
->>>>>+
->>>>
->>>>
->>>>
->>>>I don't follow. Howcome you don't check if the mode is freerun here or
->>>>not? Is it valid to enable a pin when freerun mode? What happens?
->>>>
->>>
->>>Because you are probably still thinking the modes are somehow connected
->>>to the state of the pin, but it is the other way around.
->>>The dpll device mode is a state of DPLL before pins are even considered.
->>>If the dpll is in mode FREERUN, it shall not try to synchronize or monitor
->>>any of the pins.
->>>
->>>>Also, I am probably slow, but I still don't see anywhere in this
->>>>patchset any description about why we need the freerun mode. What is
->>>>diffrerent between:
->>>>1) freerun mode
->>>>2) automatic mode & all pins disabled?
->>>
->>>The difference:
->>>Case I:
->>>1. set dpll to FREERUN and configure the source as if it would be in
->>>AUTOMATIC
->>>2. switch to AUTOMATIC
->>>3. connecting to the valid source takes ~50 seconds
->>>
->>>Case II:
->>>1. set dpll to AUTOMATIC, set all the source to disconnected
->>>2. switch one valid source to SELECTABLE
->>>3. connecting to the valid source takes ~10 seconds
->>>
->>>Basically in AUTOMATIC mode the sources are still monitored even when they
->>>are not in SELECTABLE state, while in FREERUN there is no such monitoring,
->>>so in the end process of synchronizing with the source takes much longer as
->>>dpll need to start the process from scratch.
->>
->>I believe this is implementation detail of your HW. How you do it is up
->>to you. User does not have any visibility to this behaviour, therefore
->>makes no sense to expose UAPI that is considering it. Please drop it at
->>least for the initial patchset version. If you really need it later on
->>(which I honestly doubt), you can send it as a follow-up patchset.
->>
->
->And we will have the same discussion later.. But implementation is already
->there.
+On 21/07/2023 12:08, Shengjiu Wang wrote:
+> Add the clock dt-binding file for audio clock mux. which
+> is the IP for i.MX8QM, i.MX8QXP, i.MX8DXL.
+> 
+> The Audio clock mux is binded with all the audio IP and audio clocks
+> in the subsystem, so need to list the power domain of related clocks
+> and IPs. Each clock and IP has a power domain, so there are so many
+> power domains.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> changes in v6:
+> - add clocks and clock-names, for using .fw_name in driver, the clocks
+>   need to be list in DT.
 
-Yeah, it wouldn't block the initial submission. I would like to see this
-merged, so anything which is blocking us and is totally optional (as
-this freerun mode) is better to be dropped.
+You did much more. You sneaked some changes and kept my tag.
+
+> 
+> changes in v5:
+> - none
+> 
+> changes in v4:
+> - add Reviewed-by tag
+> 
+> changes in v3:
+> - change compatible string fron nxp to fsl, align with file name.
+> - add commit message for power domains numbers.
+> - remove description of power domain
+> 
+> changes in v2:
+> - update the file name to fsl,imx8-acm.yaml
+> - remove "binding" in title
+> - add power domains list
+> - change the node name in example
+> - change to lower-case for hex
+> 
+>  .../bindings/clock/fsl,imx8-acm.yaml          | 329 ++++++++++++++++++
+>  1 file changed, 329 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+> new file mode 100644
+> index 000000000000..4274c5410c3a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/fsl,imx8-acm.yaml
+> @@ -0,0 +1,329 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/fsl,imx8-acm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP i.MX8 Audio Clock Mux
+> +
+> +maintainers:
+> +  - Shengjiu Wang <shengjiu.wang@nxp.com>
+> +
+> +description: |
+> +  NXP i.MX8 Audio Clock Mux is dedicated clock muxing IP
+> +  used to control Audio related clock on the SoC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,imx8qm-acm
+> +      - fsl,imx8qxp-acm
+> +      - fsl,imx8dxl-acm
+
+Keep alphabetical order.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    minItems: 13
+> +    maxItems: 21
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +    description:
+> +      The clock consumer should specify the desired clock by having the clock
+> +      ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8-clock.h
+> +      for the full list of i.MX8 ACM clock IDs.
+> +
+> +  clocks:
+> +    minItems: 13
+> +    maxItems: 27
+> +
+> +  clock-names:
+> +    minItems: 13
+> +    maxItems: 27
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - power-domains
+> +  - '#clock-cells'
+> +  - clocks
+> +  - clock-names
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8qxp-acm
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: power domain of IMX_SC_R_AUDIO_CLK_0
+> +            - description: power domain of IMX_SC_R_AUDIO_CLK_1
+> +            - description: power domain of IMX_SC_R_MCLK_OUT_0
+> +            - description: power domain of IMX_SC_R_MCLK_OUT_1
+> +            - description: power domain of IMX_SC_R_AUDIO_PLL_0
+> +            - description: power domain of IMX_SC_R_AUDIO_PLL_1
+> +            - description: power domain of IMX_SC_R_ASRC_0
+> +            - description: power domain of IMX_SC_R_ASRC_1
+> +            - description: power domain of IMX_SC_R_ESAI_0
+> +            - description: power domain of IMX_SC_R_SAI_0
+> +            - description: power domain of IMX_SC_R_SAI_1
+> +            - description: power domain of IMX_SC_R_SAI_2
+> +            - description: power domain of IMX_SC_R_SAI_3
+> +            - description: power domain of IMX_SC_R_SAI_4
+> +            - description: power domain of IMX_SC_R_SAI_5
+> +            - description: power domain of IMX_SC_R_SPDIF_0
+> +            - description: power domain of IMX_SC_R_MQS_0
+> +
+> +        clocks:
+> +          minItems: 18
+> +          maxItems: 18
+> +
+> +        clock-names:
+> +          items:
+> +            - const: aud_rec_clk0_lpcg_clk
+> +            - const: aud_rec_clk1_lpcg_clk
+> +            - const: aud_pll_div_clk0_lpcg_clk
+> +            - const: aud_pll_div_clk1_lpcg_clk
+> +            - const: ext_aud_mclk0
+> +            - const: ext_aud_mclk1
+> +            - const: esai0_rx_clk
+> +            - const: esai0_rx_hf_clk
+> +            - const: esai0_tx_clk
+> +            - const: esai0_tx_hf_clk
+> +            - const: spdif0_rx
+> +            - const: sai0_rx_bclk
+> +            - const: sai0_tx_bclk
+> +            - const: sai1_rx_bclk
+> +            - const: sai1_tx_bclk
+> +            - const: sai2_rx_bclk
+> +            - const: sai3_rx_bclk
+> +            - const: sai4_rx_bclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8qm-acm
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: power domain of IMX_SC_R_AUDIO_CLK_0
+> +            - description: power domain of IMX_SC_R_AUDIO_CLK_1
+> +            - description: power domain of IMX_SC_R_MCLK_OUT_0
+> +            - description: power domain of IMX_SC_R_MCLK_OUT_1
+> +            - description: power domain of IMX_SC_R_AUDIO_PLL_0
+> +            - description: power domain of IMX_SC_R_AUDIO_PLL_1
+> +            - description: power domain of IMX_SC_R_ASRC_0
+> +            - description: power domain of IMX_SC_R_ASRC_1
+> +            - description: power domain of IMX_SC_R_ESAI_0
+> +            - description: power domain of IMX_SC_R_ESAI_1
+> +            - description: power domain of IMX_SC_R_SAI_0
+> +            - description: power domain of IMX_SC_R_SAI_1
+> +            - description: power domain of IMX_SC_R_SAI_2
+> +            - description: power domain of IMX_SC_R_SAI_3
+> +            - description: power domain of IMX_SC_R_SAI_4
+> +            - description: power domain of IMX_SC_R_SAI_5
+> +            - description: power domain of IMX_SC_R_SAI_6
+> +            - description: power domain of IMX_SC_R_SAI_7
+> +            - description: power domain of IMX_SC_R_SPDIF_0
+> +            - description: power domain of IMX_SC_R_SPDIF_1
+> +            - description: power domain of IMX_SC_R_MQS_0
+> +
+> +        clocks:
+> +          minItems: 27
+> +          maxItems: 27
+> +
+> +        clock-names:
+> +          items:
+> +            - const: aud_rec_clk0_lpcg_clk
+> +            - const: aud_rec_clk1_lpcg_clk
+> +            - const: aud_pll_div_clk0_lpcg_clk
+> +            - const: aud_pll_div_clk1_lpcg_clk
+> +            - const: mlb_clk
+> +            - const: hdmi_rx_mclk
+> +            - const: ext_aud_mclk0
+> +            - const: ext_aud_mclk1
+> +            - const: esai0_rx_clk
+> +            - const: esai0_rx_hf_clk
+> +            - const: esai0_tx_clk
+> +            - const: esai0_tx_hf_clk
+> +            - const: esai1_rx_clk
+> +            - const: esai1_rx_hf_clk
+> +            - const: esai1_tx_clk
+> +            - const: esai1_tx_hf_clk
+> +            - const: spdif0_rx
+> +            - const: spdif1_rx
+> +            - const: sai0_rx_bclk
+> +            - const: sai0_tx_bclk
+> +            - const: sai1_rx_bclk
+> +            - const: sai1_tx_bclk
+> +            - const: sai2_rx_bclk
+> +            - const: sai3_rx_bclk
+> +            - const: sai4_rx_bclk
+> +            - const: sai5_tx_bclk
+> +            - const: sai6_rx_bclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - fsl,imx8dxl-acm
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: power domain of IMX_SC_R_AUDIO_CLK_0
+> +            - description: power domain of IMX_SC_R_AUDIO_CLK_1
+> +            - description: power domain of IMX_SC_R_MCLK_OUT_0
+> +            - description: power domain of IMX_SC_R_MCLK_OUT_1
+> +            - description: power domain of IMX_SC_R_AUDIO_PLL_0
+> +            - description: power domain of IMX_SC_R_AUDIO_PLL_1
+> +            - description: power domain of IMX_SC_R_ASRC_0
+> +            - description: power domain of IMX_SC_R_SAI_0
+> +            - description: power domain of IMX_SC_R_SAI_1
+> +            - description: power domain of IMX_SC_R_SAI_2
+> +            - description: power domain of IMX_SC_R_SAI_3
+> +            - description: power domain of IMX_SC_R_SPDIF_0
+> +            - description: power domain of IMX_SC_R_MQS_0
+> +
+> +        clocks:
+> +          minItems: 13
+> +          maxItems: 13
+> +
+> +        clock-names:
+> +          items:
+> +            - const: aud_rec_clk0_lpcg_clk
+> +            - const: aud_rec_clk1_lpcg_clk
+> +            - const: aud_pll_div_clk0_lpcg_clk
+> +            - const: aud_pll_div_clk1_lpcg_clk
+> +            - const: ext_aud_mclk0
+> +            - const: ext_aud_mclk1
+> +            - const: spdif0_rx
+> +            - const: sai0_rx_bclk
+> +            - const: sai0_tx_bclk
+> +            - const: sai1_rx_bclk
+> +            - const: sai1_tx_bclk
+> +            - const: sai2_rx_bclk
+> +            - const: sai3_rx_bclk
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock Control Module node:
+> +  - |
+> +    #include <dt-bindings/clock/imx8-lpcg.h>
+> +    #include <dt-bindings/firmware/imx/rsrc.h>
+> +
+> +    aud_rec0_lpcg: clock-controller@59d00000 {
+> +        compatible = "fsl,imx8qxp-lpcg";
+
+How is this related to the binding? How this did appear here?!?!
+
+> +        reg = <0x59d00000 0x10000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>;
+> +        clock-indices = <IMX_LPCG_CLK_0>;
+> +        clock-output-names = "aud_rec_clk0_lpcg_clk";
+> +        power-domains = <&pd IMX_SC_R_AUDIO_PLL_0>;
+> +    };
+
+You have way too many examples here. Keep only one relevant. So
+definitely not this.
+
+> +
+> +    aud_rec1_lpcg: clock-controller@59d10000 {
+> +        compatible = "fsl,imx8qxp-lpcg";
+> +        reg = <0x59d10000 0x10000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>;
+> +        clock-indices = <IMX_LPCG_CLK_0>;
+> +        clock-output-names = "aud_rec_clk1_lpcg_clk";
+> +        power-domains = <&pd IMX_SC_R_AUDIO_PLL_1>;
+> +    };
+
+Not this.
+
+> +
+> +    aud_pll_div0_lpcg: clock-controller@59d20000 {
+> +        compatible = "fsl,imx8qxp-lpcg";
+> +        reg = <0x59d20000 0x10000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>;
+> +        clock-indices = <IMX_LPCG_CLK_0>;
+> +        clock-output-names = "aud_pll_div_clk0_lpcg_clk";
+> +        power-domains = <&pd IMX_SC_R_AUDIO_PLL_0>;
+
+Not this.
+
+> +    };
+> +
+> +    aud_pll_div1_lpcg: clock-controller@59d30000 {
+> +        compatible = "fsl,imx8qxp-lpcg";
+> +        reg = <0x59d30000 0x10000>;
+> +        #clock-cells = <1>;
+> +        clocks = <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>;
+> +        clock-indices = <IMX_LPCG_CLK_0>;
+> +        clock-output-names = "aud_pll_div_clk1_lpcg_clk";
+> +        power-domains = <&pd IMX_SC_R_AUDIO_PLL_1>;
+
+Not this.
+
+> +    };
+> +
+> +    clk_dummy: clock-dummy {
+> +        compatible = "fixed-clock";
+> +        #clock-cells = <0>;
+> +        clock-frequency = <0>;
+> +        clock-output-names = "clk_dummy";
+> +    };
+
+drop, not related.
+
+> +
+> +    clock-controller@59e00000 {
+> +        compatible = "fsl,imx8qxp-acm";
+
+Finally, this one looks relevant.
 
 
->As said in our previous discussion, without mode_set there is no point to have
->command DEVICE_SET at all, and there you said that you are ok with having the
->command as a placeholder, which doesn't make sense, since it is not used. 
+Best regards,
+Krzysztof
 
-I don't see any problem in having enum value reserved. But it does not
-need to be there at all. You can add it to the end of the list when
-needed. No problem. This is not an argument.
-
-
->
->Also this is not HW implementation detail but a synchronizer chip feature,
->once dpll is in FREERUN mode, the measurements like phase offset between the
->input and dpll's output won't be available.
->
->For the user there is a difference..
->Enabling the FREERUN mode is a reset button on the dpll's state machine,
->where disconnecting sources is not, as they are still used, monitored and
->measured.
-
-So it is not a mode! Mode is either "automatic" or "manual". Then we
-have a state to indicate the state of the state machine (unlocked, locked,
-holdover, holdover-acq). So what you seek is a way for the user to
-expliticly set the state to "unlocked" and reset of the state machine.
-
-Please don't mix config and state. I think we untangled this in the past
-:/
-
-Perhaps you just need an extra cmd like DPLL_CMD_DEVICE_STATE_RESET cmd
-to hit this button.
-
-
-
->So probably most important fact that you are missing here: assuming the user
->disconnects the pin that dpll was locked with, our dpll doesn't go into UNLOCKED
->state but into HOLDOVER.
->
->>
->>
->>>
->>>>
->>>>Isn't the behaviour of 1) and 2) exactly the same? If no, why? This
->>>>needs to be documented, please.
->>>>
->>>
->>>Sure will add the description of FREERUN to the docs.
->>
->>No, please drop it from this patchset. I have no clue why you readded
->>it in the first place in the last patchset version.
->>
->
->mode_set was there from the very beginning.. now implemented in ice driver
->as it should.
-
-I don't understand the fixation on a callback to be implemented. Just
-remove it. It can be easily added when needed. No problem.
-
-
->
->>
->>>
->>>>
->>>>
->>>>Another question, I asked the last time as well, but was not heard:
->>>>Consider example where you have 2 netdevices, eth0 and eth1, each
->>>>connected with a single DPLL pin:
->>>>eth0 - DPLL pin 10 (DPLL device id 2)
->>>>eth1 - DPLL pin 11 (DPLL device id 2)
->>>>
->>>>You have a SyncE daemon running on top eth0 and eth1.
->>>>
->>>>Could you please describe following 2 flows?
->>>>
->>>>1) SyncE daemon selects eth0 as a source of clock
->>>>2) SyncE daemon selects eth1 as a source of clock
->>>>
->>>>
->>>>For mlx5 it goes like:
->>>>
->>>>DPLL device mode is MANUAL.
->>>>1)
->>>> SynceE daemon uses RTNetlink to obtain DPLL pin number of eth0
->>>>    -> pin_id: 10
->>>> SenceE daemon will use PIN_GET with pin_id 10 to get DPLL device id
->>>>    -> device_id: 2
->>>
->>>Not sure if it needs to obtain the dpll id in this step, but it doesn't
->>>relate to the dpll interface..
->>
->>Sure it has to. The PIN_SET accepts pin_id and device_id attrs as input.
->>You need to set the state on a pin on a certain DPLL device.
->>
->
->The thing is pin can be connected to multiple dplls and SyncE daemon shall
->know already something about the dpll it is managing.
->Not saying it is not needed, I am saying this is not a moment the SyncE daemon
->learns it.
-
-Moment or not, it is needed for the cmd, that is why I have it there.
-
-
->But let's park it, as this is not really relevant.
-
-Agreed.
-
-
->
->>
->>>
->>>> SynceE daemon does PIN_SET cmd on pin_id 10, device_id 2 -> state =
->>>>CONNECTED
->>>>
->>>>2)
->>>> SynceE daemon uses RTNetlink to obtain DPLL pin number of eth1
->>>>    -> pin_id: 11
->>>> SenceE daemon will use PIN_GET with pin_id 11 to get DPLL device id
->>>>    -> device_id: 2
->>>> SynceE daemon does PIN_SET cmd on pin_id 10, device_id 2 -> state =
->>>>CONNECTED
->>>> (that will in HW disconnect previously connected pin 10, there will be
->>>>  notification of pin_id 10, device_id -> state DISCONNECT)
->>>>
->>>
->>>This flow is similar for ice, but there are some differences, although
->>>they come from the fact, the ice is using AUTOMATIC mode and recovered
->>>clock pins which are not directly connected to a dpll (connected through
->>>the MUX pin).
->>>
->>>1)
->>>a) SyncE daemon uses RTNetlink to obtain DPLL pin number of eth0 ->
->>>pin_id: 13
->>>b) SyncE daemon uses PIN_GET to find a parent MUX type pin -> pin_id: 2
->>>   (in case of dpll_id is needed, would be find in this response also)
->>>c) SyncE daemon uses PIN_SET to set parent MUX type pin (pin_id: 2) to
->>>   pin-state: SELECTABLE and highest priority (i.e. pin-prio:0, while all the
->>>   other pins shall be lower prio i.e. pin-prio:1)
->>
->>Yeah, for this you need pin_id 2 and device_id. Because you are setting
->>state on DPLL device.
->>
->>
->>>d) SyncE daemon uses PIN_SET to set state of pin_id:13 to CONNECTED with
->>>   parent pin (pin-id:2)
->>
->>For this you need pin_id and pin_parent_id because you set the state on
->>a parent pin.
->>
->>
->>Yeah, this is exactly why I initially was in favour of hiding all the
->>muxes and magic around it hidden from the user. Now every userspace app
->>working with this has to implement a logic of tracking pin and the mux
->>parents (possibly multiple levels) and configure everything. But it just
->>need a simple thing: "select this pin as a source" :/
->>
->>
->>Jakub, isn't this sort of unnecessary HW-details complexicity exposure
->>in UAPI you were against in the past? Am I missing something?
->>
->
->Multiple level of muxes possibly could be hidden in the driver, but the fact
->they exist is not possible to be hidden from the user if the DPLL is in
->AUTOMATIC mode.
->For MANUAL mode dpll the muxes could be also hidden.
->Yeah, we have in ice most complicated scenario of AUTOMATIC mode + MUXED type
->pin.
-
-Sure, but does user care how complicated things are inside? The syncE
-daemon just cares for: "select netdev x as a source". However it is done
-internally is irrelevant to him. With the existing UAPI, the syncE
-daemon needs to learn individual device dpll/pin/mux topology and
-work with it.
-
-Do we need a dpll library to do this magic?
-
-
->
->Thank you!
->Arkadiusz
->
->>
->>
->>>
->>>2) (basically the same, only eth1 would get different pin_id.)
->>>a) SyncE daemon uses RTNetlink to obtain DPLL pin number of eth0 ->
->>>pin_id: 14
->>>b) SyncE daemon uses PIN_GET to find parent MUX type pin -> pin_id: 2
->>>c) SyncE daemon uses PIN_SET to set parent MUX type pin (pin_id: 2) to
->>>   pin-state: SELECTABLE and highest priority (i.e. pin-prio:0, while all the
->>>   other pins shall be lower prio i.e. pin-prio:1)
->>>d) SyncE daemon uses PIN_SET to set state of pin_id:14 to CONNECTED with
->>>   parent pin (pin-id:2)
->>>
->>>Where step c) is required due to AUTOMATIC mode, and step d) required due to
->>>phy recovery clock pin being connected through the MUX type pin.
->>>
->>>Thank you!
->>>Arkadiusz
->>>
->>>>
->>>>Thanks!
->>>>
->>>>
->>>>[...]
->
