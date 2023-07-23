@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1C6C00528
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79543C04A94
 	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 14:07:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229625AbjGWOH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 10:07:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34664 "EHLO
+        id S229944AbjGWOHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jul 2023 10:07:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbjGWOHx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 10:07:53 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4731722;
-        Sun, 23 Jul 2023 07:07:45 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-4fb7769f15aso5055185e87.0;
-        Sun, 23 Jul 2023 07:07:45 -0700 (PDT)
+        with ESMTP id S229785AbjGWOHr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 10:07:47 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E416310E5;
+        Sun, 23 Jul 2023 07:07:39 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-4fcd615d7d6so5205941e87.3;
+        Sun, 23 Jul 2023 07:07:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690121263; x=1690726063;
+        d=gmail.com; s=20221208; t=1690121258; x=1690726058;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RqnwiCRTKEz/1wjL6Wfye4Vi7LFOrL2Vihn903cSKUk=;
-        b=SDQYyCa7KhSZaaTV7TzxLxQbwewMBXtrp2T/NDl003tAJLpEvL6ptw64nqxQia5a4B
-         S0LxSHk5CsrcVmYVk/lV2g98y65azmojDLdSrJR4xqUrTFnwkAzi3dcJh6QDfyFfj+cD
-         8V3ji+aHnnUs4CVkUr+STqVE4sJdz4NbEV+mOsH8kE9fFxZATb30kkmKm6U7dCgSZ4yB
-         u5v9HspvsfRIjvM3MFrBZA498Z7PeYTo3uKIGTctcvfPs9ox2GSF9Luk0EW9KijhoDA5
-         uqC5ZM6kjrwJwBnIPd2QmHUMcB5M1rNGCq3cc7xihLey96Uw5FdYEb43bMpFfjsQZ4yb
-         b+uw==
+        bh=3IKxf7JmOF95rTzSLnd0mZLk5/Wvwjp18VbT76vL0CI=;
+        b=YjMJo4HlQK4Nt4nol/gKne/872PaRyv4CdNsM+TB6he3wVy1V15S24sMpgopIuABoF
+         Q5LDk8AKT+WrfjTaSQdSVQc24wcFb80fuFdgaz2+7INP31NIxOagPMxR84Ahk11tYyXL
+         VIHNN9uybXPtkqU6idRJxbIhz7PU7yD1QbfGl4GZNkr46fSI/6riZnQkDrBwo45mmlxQ
+         TdTBu5zkYkkamKCJlWwIPs4+CSulZ7Y4aEEH04OsLCGwTMJO+n7aCYu6bNKBsuUZYbni
+         wJsPfcl1tEaHWIZeXKeZxhRkteN9TBAfaR669ikYYQwH3dGTojluJRbifaUL+exIlcNO
+         k95A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690121263; x=1690726063;
+        d=1e100.net; s=20221208; t=1690121258; x=1690726058;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RqnwiCRTKEz/1wjL6Wfye4Vi7LFOrL2Vihn903cSKUk=;
-        b=iJK2z4N58+8ozx4GX6HbUTRBjFqE68r3Z7VEGwADoM9FATMuRhxkyIk1msk+zqlzMi
-         2gQgQOeqwP4pbefScg9qdh0T4ejC4ydGAS4OQhpCoBIp6OYurqXYmcUetBH/nz08w7K2
-         nf3mqRTShrsUyb93cYdr0MQEzWoHSWxBu76zkZUBP4dICAeoUwCLRjPhG5YKdjvfwcm1
-         CrmCrY9JKMlKy7zNk4IJ+BzN5aScbFOWz2dxSZdlSTjJ8p0XWDsgpkpx0SAmZzzpOxZC
-         SpXpEidNI9HymHPaDH0cyEbQnL3Vh/mnwTBCpI/viYl6ZYd1aJrECbLZuxDKghk9sZNO
-         +Xzw==
-X-Gm-Message-State: ABy/qLbZpQes8/+OSRtplA7B0C4d7zffiL84qnhcmuGxBC2B+cRoSgvZ
-        n8I5xJjnlF7p9q34ou2k0JouzL/kuBCYNg==
-X-Google-Smtp-Source: APBJJlG9AtHOHcoa031sYG18h0ZZBjJPcgSERlzIioJ6AW7uFsSIXHdp7Xyo0XeMpOWecSsa/UZE+w==
-X-Received: by 2002:a05:6512:10cc:b0:4f8:6dfd:faa0 with SMTP id k12-20020a05651210cc00b004f86dfdfaa0mr3906952lfg.2.1690121263523;
-        Sun, 23 Jul 2023 07:07:43 -0700 (PDT)
+        bh=3IKxf7JmOF95rTzSLnd0mZLk5/Wvwjp18VbT76vL0CI=;
+        b=XRKmit3hGPNTuURgmIpOxDF9PrZSCS3juVwCBu/8gsSg6vz5aZngvMGDlvNYcFEGzh
+         r9u1bH+RWJmpIS7WYKISgGMBnem5b1dizO8zkClfX/QAnM0k1MnCtOH6do+ZZrStsaj9
+         cRhEnzoLTcDW3taq5L6a8f8OPWXMVqLaXq+6wJm2NP2NYzIhk128qD6EkZFkks/PCBE8
+         CGUJKn1KMuPWAAK1eCfbX+6FhPn8kNyAaNiicGji7v3hlMn6/XkC27tCAXsoJnCjuWhu
+         g4NgbK6Wq3SSk/WwI/VSoq0zqZqYZhycgdOTHXpfSApGSTWa2ICZFpAVMJFsc0+kVr9L
+         dKXg==
+X-Gm-Message-State: ABy/qLbwC1GEGNC9FD9r/0fU5+JdXwoeJNJ3KQvGSC4jSpRJe5LuSIsT
+        PXq2mHBsHp8y+5XXkABDhTvZo1gScuGOSA==
+X-Google-Smtp-Source: APBJJlFUsPgzgMP64aq60zOS7JQdco352CkdAuJ5jCBXMM9LbWwyf6Q0s10hZ1+Jl+gNCYBwSO6Ofg==
+X-Received: by 2002:a05:6512:693:b0:4f8:5940:5c6a with SMTP id t19-20020a056512069300b004f859405c6amr4957295lfe.31.1690121258172;
+        Sun, 23 Jul 2023 07:07:38 -0700 (PDT)
 Received: from localhost.localdomain (ccx116.neoplus.adsl.tpnet.pl. [83.30.147.116])
-        by smtp.gmail.com with ESMTPSA id o2-20020a05651238a200b004fbcd542888sm1688366lft.60.2023.07.23.07.07.42
+        by smtp.gmail.com with ESMTPSA id o2-20020a05651238a200b004fbcd542888sm1688366lft.60.2023.07.23.07.07.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jul 2023 07:07:43 -0700 (PDT)
+        Sun, 23 Jul 2023 07:07:37 -0700 (PDT)
 From:   Adam Skladowski <a39.skl@gmail.com>
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Adam Skladowski <a39.skl@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] arm64: dts: qcom: msm8976: Fix smsm ipc bit shifts
-Date:   Sun, 23 Jul 2023 16:06:54 +0200
-Message-Id: <20230723140712.9438-8-a39.skl@gmail.com>
+Subject: [PATCH 4/7] dt-bindings: clock: qcom,hfpll: Document MSM8976 compatibles
+Date:   Sun, 23 Jul 2023 16:06:51 +0200
+Message-Id: <20230723140712.9438-5-a39.skl@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230723140712.9438-1-a39.skl@gmail.com>
 References: <20230723140712.9438-1-a39.skl@gmail.com>
@@ -78,30 +78,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update bits to match downstream irq-bitmask values.
-Fixes: 0484d3ce0902 ("arm64: dts: qcom: Add DTS for MSM8976 and MSM8956 SoCs")
+Document MSM8976 HFPLL compatibles.
 
 Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/msm8976.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/clock/qcom,hfpll.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-index 7385d5edec04..5537ec049451 100644
---- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-@@ -433,9 +433,9 @@ smsm {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+index ec02a024424c..855344957350 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+@@ -11,6 +11,9 @@ PROPERTIES
+                         "qcom,hfpll-ipq8064", "qcom,hfpll"
+                         "qcom,hfpll-apq8064", "qcom,hfpll"
+                         "qcom,hfpll-msm8974", "qcom,hfpll"
++                        "qcom,hfpll-msm8976-a53", "qcom,hfpll"
++                        "qcom,hfpll-msm8976-a72", "qcom,hfpll"
++                        "qcom,hfpll-msm8976-cci", "qcom,hfpll"
+                         "qcom,hfpll-msm8960", "qcom,hfpll"
  
--		qcom,ipc-1 = <&apcs 8 12>;
-+		qcom,ipc-1 = <&apcs 8 13>;
- 		qcom,ipc-2 = <&apcs 8 9>;
--		qcom,ipc-3 = <&apcs 8 18>;
-+		qcom,ipc-3 = <&apcs 8 19>;
- 
- 		apps_smsm: apps@0 {
- 			reg = <0>;
+ - reg:
 -- 
 2.41.0
 
