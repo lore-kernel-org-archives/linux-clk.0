@@ -2,32 +2,32 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5A4C001DE
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E89B8C001DF
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbjGWQJB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 12:09:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33096 "EHLO
+        id S229823AbjGWQJO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jul 2023 12:09:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbjGWQIx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:08:53 -0400
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [IPv6:2001:4b7a:2000:18::168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C313AE7B;
-        Sun, 23 Jul 2023 09:08:51 -0700 (PDT)
+        with ESMTP id S229842AbjGWQIz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:08:55 -0400
+Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F8DE7F
+        for <linux-clk@vger.kernel.org>; Sun, 23 Jul 2023 09:08:52 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 125893F1EC;
-        Sun, 23 Jul 2023 18:08:49 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 6AC6B3F1F1;
+        Sun, 23 Jul 2023 18:08:50 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Sun, 23 Jul 2023 18:08:45 +0200
-Subject: [PATCH v4 07/17] dt-bindings: display/msm: dsi-controller-main:
- Document SM6125
+Date:   Sun, 23 Jul 2023 18:08:46 +0200
+Subject: [PATCH v4 08/17] dt-bindings: display/msm: sc7180-dpu: Describe
+ SM6125
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230723-sm6125-dpu-v4-7-a3f287dd6c07@somainline.org>
+Message-Id: <20230723-sm6125-dpu-v4-8-a3f287dd6c07@somainline.org>
 References: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
 In-Reply-To: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -56,40 +56,43 @@ Cc:     ~postmarketos/upstreaming@lists.sr.ht,
         linux-kernel@vger.kernel.org,
         Krzysztof Kozlowski <krzk@kernel.org>,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
 X-Mailer: b4 0.12.3
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document general compatibility of the DSI controller on SM6125.
+SM6125 is identical to SM6375 including the throttle clock that is also
+provided to the MDP node downstream.  Note that any SoC other than
+SM6375 (currently SC7180 and SM6350) has an unconstrained maximum number
+of clocks and could either pass or leave out this "throttle" clock.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-index 76270992305a..b8d1f2b7d541 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-@@ -27,6 +27,7 @@ properties:
-               - qcom,sdm660-dsi-ctrl
-               - qcom,sdm845-dsi-ctrl
-               - qcom,sm6115-dsi-ctrl
-+              - qcom,sm6125-dsi-ctrl
-               - qcom,sm6350-dsi-ctrl
-               - qcom,sm6375-dsi-ctrl
-               - qcom,sm8150-dsi-ctrl
-@@ -305,6 +306,7 @@ allOf:
-           contains:
-             enum:
-               - qcom,msm8998-dsi-ctrl
-+              - qcom,sm6125-dsi-ctrl
-               - qcom,sm6350-dsi-ctrl
+diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
+index 630b11480496..ea75f0f95d5c 100644
+--- a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
++++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
+@@ -15,6 +15,7 @@ properties:
+   compatible:
+     enum:
+       - qcom,sc7180-dpu
++      - qcom,sm6125-dpu
+       - qcom,sm6350-dpu
+       - qcom,sm6375-dpu
+ 
+@@ -63,7 +64,9 @@ allOf:
+   - if:
+       properties:
+         compatible:
+-          const: qcom,sm6375-dpu
++          enum:
++            - qcom,sm6375-dpu
++            - qcom,sm6125-dpu
+ 
      then:
        properties:
 
