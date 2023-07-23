@@ -2,105 +2,130 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EA7C04E69
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF1FC001DF
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:24:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230060AbjGWQL0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 12:11:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
+        id S229640AbjGWQYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jul 2023 12:24:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230119AbjGWQLK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:11:10 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA5C119AC;
-        Sun, 23 Jul 2023 09:10:36 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-991ef0b464cso987253566b.0;
-        Sun, 23 Jul 2023 09:10:36 -0700 (PDT)
+        with ESMTP id S229848AbjGWQYE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:24:04 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F501706;
+        Sun, 23 Jul 2023 09:23:38 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id 98e67ed59e1d1-267fcd6985cso695312a91.2;
+        Sun, 23 Jul 2023 09:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690128575; x=1690733375;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kJXUCfPfxMZDrw8reVp/mOwjqAotIrdk28gOPKfujpk=;
-        b=CiD0CijqD2LZn4fISlmA/WzpS0y7CDEsbIh1bTpP/35MGba94PiLhenPUkvaIBCVDu
-         j9Kq7hLo8z36/0ceBT4KyoxzUkbTxjI+9xSkjxFtGXkTo5I545PhwQZW799+xaM4+gt1
-         ph1/P22d4mxXnURSmuQubquB4YLYiWb6cDoPzGhxKKlNEctEZFxtd4j+nrJ1UQm4m7Sc
-         k+N6UoaTyi3bcf5Qezgj9KxbTdhQxxnICjctuFBC8rXiO0VgjSPOs1VFi9gLtR4RsEHw
-         13Rqm6OiG6PGYum+h6hq9HtBqnZsiw5uQh98cZmueJEewiFJrb2PncfgmtUgyQ0tifr/
-         6QRg==
+        d=gmail.com; s=20221208; t=1690129407; x=1690734207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSNfH7WpcXj5Pi6KtTuPLxh+ad+PNqkkHK3RTVluyTY=;
+        b=kFXQ41a5jgIKRgOBA3On6T+yIlbYoYtgwDSWCy7ssfCDJFHtVvhbN7Y8h1Hqbsik5z
+         Yovs2M4Saz/27gadU07U1/C3d5cRvpdMXkFltYuTruJNjJNwkP2SBT7+tfC1AwB+AVcM
+         xvWtyHLgBRE5XoGEUpWE1M4etpxS0XsNv7QPiPyAuBpgls9Nx0kl0F/cfxFcQoLbQ6Mu
+         FR2CH94wYbaEjCY7ltFZ9SOM2NiMKIMru69CB+mNgQjVk0Hzoz9htVfpZMMrt3HdsLiD
+         8fu8Skrflav14MrDHqTOBYgqXKVUvYGhxeuCqIKsPtrwca4jWMKCU3caiBBgMK09V4ob
+         /q8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690128575; x=1690733375;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kJXUCfPfxMZDrw8reVp/mOwjqAotIrdk28gOPKfujpk=;
-        b=TttoT6eQqk4jo3FtLsme9Mco/Spi1DEW8QsoooBzy1kEw1/8qfl50JEYdH2QQa8nAp
-         4elhPOlRwP3O3FJUDZUOvOMh72npTqhAM2M2fFM2o9tn5EgLOMkpHjuxrH54gI5rOGc2
-         Cqwm3Vlpfbk2BpfMhbuq0ciiutByOu6iUH/HvFucts8gZ29UrZxCqvH04tGKEgaYVNaY
-         0gFJtP6MFMwdHiDsR3rAnkN+cr9i74xH/F0FtXuPKM3VPjJj/37KJQ4K/NomsXmuGorJ
-         4g3JgAVmMRrGa7tWChopNG6tT9qtYw8+W/+BbKv7bzMXpmL8GTArIilVgwRaoPkgfO5+
-         v+tA==
-X-Gm-Message-State: ABy/qLb6uVbjmNiGwwqi0ZqtffdjTppOqlYfWBT07eLKjANSzuHTGGkk
-        FfpQ6S7cpVOR5KWxsRLUmiyJhwAm8bg=
-X-Google-Smtp-Source: APBJJlG3ZC0ztrZPhpT4podw6SZVxxGG31tprJEN0TaQkh2VnoG4Ub1tVZe25vh8DB+dkWy4OBcY6w==
-X-Received: by 2002:a17:906:30c5:b0:993:fb68:ed6c with SMTP id b5-20020a17090630c500b00993fb68ed6cmr7568461ejb.15.1690128575066;
-        Sun, 23 Jul 2023 09:09:35 -0700 (PDT)
-Received: from localhost.localdomain (ccx116.neoplus.adsl.tpnet.pl. [83.30.147.116])
-        by smtp.gmail.com with ESMTPSA id u16-20020a170906951000b0099b4d86fbccsm5425039ejx.141.2023.07.23.09.09.33
+        d=1e100.net; s=20221208; t=1690129407; x=1690734207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TSNfH7WpcXj5Pi6KtTuPLxh+ad+PNqkkHK3RTVluyTY=;
+        b=gbwWNJhmQ50kE+Zc27oW61X/Xg3nJHNWH5oVkGSpkgjfyX07Z2aSlJkrz3z9ipe5oe
+         V5e7tQP1+UCsiS1lOlF5jOVi87+RkMkHIfEjBLLA1fK1pRonlepkmanjGsjJ2xLn1jAj
+         nJIcHVh1pxbyVjETzDa6+rIkCDKRVuu7P3MmN/RfU7wH1J2P6cwnA6aAuk6kKQOXlGf+
+         FR8ll5zEEusK15NUdueUPnc+bqJfALNfn1SX+9EKmVbBFdEErikUy6sjd5MTpi+vOgHj
+         015DjPt/EfA+jORy30u0vebS2/35f5NNsbihdxGNZPEvfH4DLSYJIvZNrklxdMFv+HWM
+         w/zg==
+X-Gm-Message-State: ABy/qLbJeYQoR12tdF5MCpKWnTZU3JL26zzPXhXV/u2ev62j4Ameq/hx
+        AOozgwt7BFw8GQPPZCgxlbQLq5QwNlaBcg5q
+X-Google-Smtp-Source: APBJJlFbt5Ym/sqj8JlSRFlLvb/KmyxsLBAFCaI10iYYjCKmzVP3kJznG+YbMNIHBjWURW13RXpqFA==
+X-Received: by 2002:a17:90a:8b8d:b0:25f:20f:2f7d with SMTP id z13-20020a17090a8b8d00b0025f020f2f7dmr7524713pjn.2.1690129406801;
+        Sun, 23 Jul 2023 09:23:26 -0700 (PDT)
+Received: from d.home.yangfl.dn42 ([104.28.245.199])
+        by smtp.gmail.com with ESMTPSA id u3-20020a17090aae8300b00265a7145fe5sm6883787pjq.41.2023.07.23.09.23.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jul 2023 09:09:34 -0700 (PDT)
-From:   Adam Skladowski <a39.skl@gmail.com>
-Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-        Adam Skladowski <a39.skl@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Sun, 23 Jul 2023 09:23:26 -0700 (PDT)
+From:   David Yang <mmyangfl@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     David Yang <mmyangfl@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/7] arm64: dts: qcom: msm8976: Fix smsm ipc bit shifts
-Date:   Sun, 23 Jul 2023 18:08:26 +0200
-Message-Id: <20230723160827.22660-8-a39.skl@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230723160827.22660-1-a39.skl@gmail.com>
-References: <20230723160827.22660-1-a39.skl@gmail.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/13] clk: hisilicon: Migrate devm APIs
+Date:   Mon, 24 Jul 2023 00:22:25 +0800
+Message-Id: <20230723162245.35033-1-mmyangfl@gmail.com>
+X-Mailer: git-send-email 2.40.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update bits to match downstream irq-bitmask values.
+Migrate devm APIs for HiSilicon clock drivers and remove redundant codes.
 
-Fixes: 0484d3ce0902 ("arm64: dts: qcom: Add DTS for MSM8976 and MSM8956 SoCs")
-Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8976.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This series is a partial improvement of [1]
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-index 7385d5edec04..5537ec049451 100644
---- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-@@ -433,9 +433,9 @@ smsm {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		qcom,ipc-1 = <&apcs 8 12>;
-+		qcom,ipc-1 = <&apcs 8 13>;
- 		qcom,ipc-2 = <&apcs 8 9>;
--		qcom,ipc-3 = <&apcs 8 18>;
-+		qcom,ipc-3 = <&apcs 8 19>;
- 
- 		apps_smsm: apps@0 {
- 			reg = <0>;
+v2: fix test robot error
+v3:
+  * size_t for all these num types
+  * hisi_clk_unregister() change into separate patch
+  * keep relevant header inclusions
+  * split driver files changes into separate patches
+  * explain hisi_clk_register_fn() checkpatch warnings
+  * not fixed: MODULE_LICENSE("GPL v2"), as stated in SPDX-License-Identifier
+  * not fixed: "hisilicon,hip04-clock" un-documented, as none of dts files in
+    arch/ use it, better to ask hisi people why they pushed this driver
+v4:
+  * typo: hisi_clocks_get_nr() should check clks->nr first
+  * unexport hisi_clk_unregister_fn() as no one use them outside
+v5: catch up with remove_new refactoring
+
+Links:
+[1]: https://lore.kernel.org/r/20230322164201.2454771-1-mmyangfl@gmail.com
+v1: https://lore.kernel.org/r/20230326052757.297551-1-mmyangfl@gmail.com
+v2: https://lore.kernel.org/r/20230329075104.165176-1-mmyangfl@gmail.com
+v3: https://lore.kernel.org/r/20230410110733.192151-1-mmyangfl@gmail.com
+v4: https://lore.kernel.org/r/20230411174329.424763-1-mmyangfl@gmail.com
+
+David Yang (13):
+  clk: hisilicon: Add helper functions for platform driver
+  clk: hisilicon: hi3516cv300: Use helper functions
+  clk: hisilicon: hi3798cv200: Use helper functions
+  clk: hisilicon: Remove hisi_crg_funcs
+  clk: hisilicon: hi3519: Use helper functions
+  clk: hisilicon: hi3559a: Use helper functions
+  clk: hisilicon: hi3660: Convert into module
+  clk: hisilicon: hi3670: Convert into module
+  clk: hisilicon: hi3620: Convert into platform driver module
+  clk: hisilicon: hi6220: Convert into platform driver module
+  clk: hisilicon: hip04: Convert into platform driver module
+  clk: hisilicon: hix5hd2: Convert into platform driver module
+  clk: hisilicon: Migrate devm APIs
+
+ drivers/clk/hisilicon/clk-hi3519.c        | 127 +-----
+ drivers/clk/hisilicon/clk-hi3559a.c       | 252 +++---------
+ drivers/clk/hisilicon/clk-hi3620.c        | 212 +++++-----
+ drivers/clk/hisilicon/clk-hi3660.c        | 192 +++------
+ drivers/clk/hisilicon/clk-hi3670.c        | 248 ++++--------
+ drivers/clk/hisilicon/clk-hi6220-stub.c   |   9 +-
+ drivers/clk/hisilicon/clk-hi6220.c        | 229 ++++++-----
+ drivers/clk/hisilicon/clk-hip04.c         |  39 +-
+ drivers/clk/hisilicon/clk-hisi-phase.c    |  13 +-
+ drivers/clk/hisilicon/clk-hix5hd2.c       |  98 +++--
+ drivers/clk/hisilicon/clk.c               | 457 +++++++++++-----------
+ drivers/clk/hisilicon/clk.h               | 141 ++++---
+ drivers/clk/hisilicon/clkdivider-hi6220.c |  24 +-
+ drivers/clk/hisilicon/clkgate-separated.c |  26 +-
+ drivers/clk/hisilicon/crg-hi3516cv300.c   | 171 +-------
+ drivers/clk/hisilicon/crg-hi3798cv200.c   | 196 +---------
+ drivers/clk/hisilicon/crg.h               |  11 +-
+ drivers/clk/hisilicon/reset.c             |  42 ++
+ 18 files changed, 937 insertions(+), 1550 deletions(-)
+
+
+base-commit: c2782531397f5cb19ca3f8f9c17727f1cdf5bee8
 -- 
-2.25.1
+2.40.1
 
