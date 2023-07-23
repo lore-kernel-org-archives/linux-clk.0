@@ -2,32 +2,31 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E89B8C001DF
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0916C04FE0
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbjGWQJO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 12:09:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33090 "EHLO
+        id S230097AbjGWQJR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jul 2023 12:09:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbjGWQIz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:08:55 -0400
-Received: from m-r2.th.seeweb.it (m-r2.th.seeweb.it [IPv6:2001:4b7a:2000:18::171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28F8DE7F
-        for <linux-clk@vger.kernel.org>; Sun, 23 Jul 2023 09:08:52 -0700 (PDT)
+        with ESMTP id S229727AbjGWQJN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:09:13 -0400
+Received: from relay06.th.seeweb.it (relay06.th.seeweb.it [5.144.164.167])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E6E310D8;
+        Sun, 23 Jul 2023 09:08:56 -0700 (PDT)
 Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 6AC6B3F1F1;
-        Sun, 23 Jul 2023 18:08:50 +0200 (CEST)
+        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 500D53F203;
+        Sun, 23 Jul 2023 18:08:54 +0200 (CEST)
 From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Sun, 23 Jul 2023 18:08:46 +0200
-Subject: [PATCH v4 08/17] dt-bindings: display/msm: sc7180-dpu: Describe
- SM6125
+Date:   Sun, 23 Jul 2023 18:08:49 +0200
+Subject: [PATCH v4 11/17] drm/msm/mdss: Add SM6125 support
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230723-sm6125-dpu-v4-8-a3f287dd6c07@somainline.org>
+Message-Id: <20230723-sm6125-dpu-v4-11-a3f287dd6c07@somainline.org>
 References: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
 In-Reply-To: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
 To:     Andy Gross <agross@kernel.org>,
@@ -62,39 +61,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SM6125 is identical to SM6375 including the throttle clock that is also
-provided to the MDP node downstream.  Note that any SoC other than
-SM6375 (currently SC7180 and SM6350) has an unconstrained maximum number
-of clocks and could either pass or leave out this "throttle" clock.
+SM6125 has an UBWC 3.0 decoder but only an UBWC 1.0 encoder.
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
 ---
- Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_mdss.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
-index 630b11480496..ea75f0f95d5c 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sc7180-dpu.yaml
-@@ -15,6 +15,7 @@ properties:
-   compatible:
-     enum:
-       - qcom,sc7180-dpu
-+      - qcom,sm6125-dpu
-       - qcom,sm6350-dpu
-       - qcom,sm6375-dpu
+diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
+index dd22d0bd1201..ad66ccf0b6e1 100644
+--- a/drivers/gpu/drm/msm/msm_mdss.c
++++ b/drivers/gpu/drm/msm/msm_mdss.c
+@@ -568,6 +568,13 @@ static const struct msm_mdss_data sm6115_data = {
+ 	.ubwc_static = 0x11f,
+ };
  
-@@ -63,7 +64,9 @@ allOf:
-   - if:
-       properties:
-         compatible:
--          const: qcom,sm6375-dpu
-+          enum:
-+            - qcom,sm6375-dpu
-+            - qcom,sm6125-dpu
- 
-     then:
-       properties:
++static const struct msm_mdss_data sm6125_data = {
++	.ubwc_version = UBWC_1_0,
++	.ubwc_dec_version = UBWC_3_0,
++	.ubwc_swizzle = 1,
++	.highest_bank_bit = 1,
++};
++
+ static const struct msm_mdss_data sm8250_data = {
+ 	.ubwc_version = UBWC_4_0,
+ 	.ubwc_dec_version = UBWC_4_0,
+@@ -589,6 +596,7 @@ static const struct of_device_id mdss_dt_match[] = {
+ 	{ .compatible = "qcom,sc8180x-mdss", .data = &sc8180x_data },
+ 	{ .compatible = "qcom,sc8280xp-mdss", .data = &sc8280xp_data },
+ 	{ .compatible = "qcom,sm6115-mdss", .data = &sm6115_data },
++	{ .compatible = "qcom,sm6125-mdss", .data = &sm6125_data },
+ 	{ .compatible = "qcom,sm6350-mdss", .data = &sm6350_data },
+ 	{ .compatible = "qcom,sm6375-mdss", .data = &sm6350_data },
+ 	{ .compatible = "qcom,sm8150-mdss", .data = &sm8150_data },
 
 -- 
 2.41.0
