@@ -2,53 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A561C04FE2
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D10A3C04A6A
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:10:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230263AbjGWQKe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 12:10:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33760 "EHLO
+        id S230137AbjGWQKh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jul 2023 12:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230177AbjGWQKR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:10:17 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B258E7E;
-        Sun, 23 Jul 2023 09:09:48 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-992f15c36fcso624269966b.3;
-        Sun, 23 Jul 2023 09:09:48 -0700 (PDT)
+        with ESMTP id S230128AbjGWQKX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:10:23 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF1710C3;
+        Sun, 23 Jul 2023 09:09:54 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9928abc11deso610254666b.1;
+        Sun, 23 Jul 2023 09:09:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690128563; x=1690733363;
+        d=gmail.com; s=20221208; t=1690128566; x=1690733366;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nA1IXoblbGcTRPbYr/vN/81mKW6fq6S+ZkLioQzIX0I=;
-        b=R9GX4n0zrjH/JwkSD1MhAKnxJKk82PhEclnVcHItsIu7N/Mi54J5bw3PXkY+MawXYg
-         RyGa1j1bNVqcX/8yMSMolTk5n2g+21mEqtF5uWPtdfpR0MEwyQiAmdwx+1oRc+QTT2m3
-         vtPsEmod1iA/M5D9c81m7WkA5MRN5up5RXn7wxtkVKR9ddhzh49ntjJwCtOmylKdvbqH
-         DGGn8AR2U4dkSb0avJB0YLXEjK4BxC3q7zh1+9q85IYnNVMBfYs62yor0BnX201IVLSk
-         z2tAK8ci7oCGURSXvgkzxWVlusazrL2MmqBVxnQxuQNhIbLVtHPJ3D4DNXNbKbbhcoCM
-         Q/6A==
+        bh=7BAq+BvflNUovD5dCGAVp95A2FMW4EGnXenei4TqxpM=;
+        b=F9YirHYibwKQRJ/fLH6boCpDDKcMrFRjJ+S67loArQM84l/YlfKptUoKi/lKCK555X
+         tD65ffNO/M6UjtGarnXEr37ZXTs6YFMIBKRYzUpcoRpKXRuwBqwqShvY96G/bt3oDpJx
+         T5wcC85U8zZYCJ7hqoVzb9wd2CzyrZupAxcUjviNM3CqGA6tWKwzSURyca1vl7ep9gmE
+         NefZu3Wv34JcUiKQV6QUALc1JpO48ago1iV70xVmxaykZMGAxrPCI8mRHKE1N8bZ47Sd
+         QXSf3C1M71u/kLUUF85qthi1aUA4dLmujTElVDdy5N+r22DKvLh3w4ThdicOEPPb52Wu
+         hvfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690128563; x=1690733363;
+        d=1e100.net; s=20221208; t=1690128566; x=1690733366;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nA1IXoblbGcTRPbYr/vN/81mKW6fq6S+ZkLioQzIX0I=;
-        b=JFNIQgvKkdKL/n5hyJBAHz68STG5Ys6xMCQSgmy+CdUHs6L+QS6bUpaz65WGlb7ehF
-         EWCZK69qgr6qSWIr3TR0suKhk3Aov4Jw8kUQ/qUj2HS4tM+7UdkJAVF1HeTsoIc3Jk2z
-         Dvcr6x7tFeVc/jniKIJXhUEMckfTtKy9Fu+i4KDmYKNOqC/ih+H0HBj7ehZ0XQ3cZLnR
-         qIIP8LXpq0eBSi4eXUN4DgWxFsvvAMarafjWUrRB4KCnV6RvjuQa4zQDRv02g93x2Ew4
-         DgoMyuAXuDNLP4KS2GAZemYwKW2231CS+gWc5jpv9grVL/fBXnB/7K3x2MMMIrqt4/M8
-         rWMw==
-X-Gm-Message-State: ABy/qLZ0ket3I/d6cCrDXt6vqjB5BwydyS1TsUho3bJZ0csYhnfwiSyx
-        NXP7/zZtDSptNlNatBu85zPoYhB6ykE=
-X-Google-Smtp-Source: APBJJlGcNwru9+jeQSIMste212J0qxhZOOY00CK47YlVz9kAFZHG+3jLO/MjeeU8DdbO+cTBv3rQAw==
-X-Received: by 2002:a17:906:76cd:b0:993:f12a:39ce with SMTP id q13-20020a17090676cd00b00993f12a39cemr8202198ejn.15.1690128562641;
-        Sun, 23 Jul 2023 09:09:22 -0700 (PDT)
+        bh=7BAq+BvflNUovD5dCGAVp95A2FMW4EGnXenei4TqxpM=;
+        b=P0+YsNRWegKRHTSgYN8jwE6g1obc36qOZ5y7C71cm5HUUaIt7G/AKXwCUutg6e/neC
+         yNJRjAqO9ndcS8KkUHt4J5BNRl4NGAh4W2v8h9TNWXk5aNZ4Zc4pj5Vcxl12Qq/ly163
+         CzTshPHREM8eIivQRFTSDW6PfFELnle7d9uZ1Zu2iN4k2Wsvi4uyzQkzVnVpUflSwerm
+         PZi1U3Ik3RzKS7awylZt1XlWlhYF2WUNGBgi1wZt56YBOMEMC5aqvxrhOG3FJEjC+53j
+         N6fspcTnXvC8IdueQeVkto1CPcDvdyNdIygOIR1bmsGsvvKOUhRRFmBK0VLpoO21I1zs
+         2wAg==
+X-Gm-Message-State: ABy/qLbyaumEitE9KdXwQmCt1KXs76hSUAic75ryOEhSfqnsRMKQeFe6
+        rF0LlU08Uj16hNE9YNagKs0fQAtB95w=
+X-Google-Smtp-Source: APBJJlH0Br/r3TdPtSz1DJYVwJV3flYxLwICHZw7L+YE75DppMrcvEJGODGCJT5UmZmZ0STQXyteiQ==
+X-Received: by 2002:a17:907:7810:b0:993:f2b4:13c9 with SMTP id la16-20020a170907781000b00993f2b413c9mr8325480ejc.21.1690128566738;
+        Sun, 23 Jul 2023 09:09:26 -0700 (PDT)
 Received: from localhost.localdomain (ccx116.neoplus.adsl.tpnet.pl. [83.30.147.116])
-        by smtp.gmail.com with ESMTPSA id u16-20020a170906951000b0099b4d86fbccsm5425039ejx.141.2023.07.23.09.09.21
+        by smtp.gmail.com with ESMTPSA id u16-20020a170906951000b0099b4d86fbccsm5425039ejx.141.2023.07.23.09.09.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jul 2023 09:09:22 -0700 (PDT)
+        Sun, 23 Jul 2023 09:09:26 -0700 (PDT)
 From:   Adam Skladowski <a39.skl@gmail.com>
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Adam Skladowski <a39.skl@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/7] drivers: soc: qcom: rpmpd: Fix MSM8976 power domains setup
-Date:   Sun, 23 Jul 2023 18:08:20 +0200
-Message-Id: <20230723160827.22660-2-a39.skl@gmail.com>
+Subject: [PATCH v2 3/7] clk: qcom: hfpll: Allow matching pdata
+Date:   Sun, 23 Jul 2023 18:08:22 +0200
+Message-Id: <20230723160827.22660-4-a39.skl@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230723160827.22660-1-a39.skl@gmail.com>
 References: <20230723160827.22660-1-a39.skl@gmail.com>
@@ -77,89 +77,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Downstream kernel parses resource names based on pm8950-rpm-regulator.dtsi
-in such file qcom,resource-name takes three values: smpa,ldoa and clk0.
-First appearance of RWSC/RWSM point to msm-4.4 kernel
-which is way newer than what this platform was shipped with (msm-3.10).
-For the max_state downstream code limit value to TURBO inside dts
-with only one turbo_high being placed in msm-thermal bindings.
-One of effects of requesting TURBO_HIGH vote is rebooting of device
-which happens during voting inside WCNSS/IRIS,
-this behavior was observed on LeEco S2 smartphone.
-Fix regulator setup and drop unused resources.
+HFPLL driver can be used to drive PLLs also on different SoCs like MSM8976
+On MSM8976 each PLL gets it own different configuration,
+add matching pdata to driver to support multiple configurations.
 
-Fixes: b1d522443b4b ("soc: qcom: rpmpd: Add rpm power domains for msm8976")
 Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 ---
- drivers/soc/qcom/rpmpd.c | 27 ++++++++++-----------------
- 1 file changed, 10 insertions(+), 17 deletions(-)
+ drivers/clk/qcom/hfpll.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-index 3135dd1dafe0..59caa4e7b99a 100644
---- a/drivers/soc/qcom/rpmpd.c
-+++ b/drivers/soc/qcom/rpmpd.c
-@@ -166,13 +166,6 @@ static struct rpmpd cx_rwcx0_vfl = {
- 	.key = KEY_FLOOR_LEVEL,
+diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+index f4d78003d189..ec18bc8f0089 100644
+--- a/drivers/clk/qcom/hfpll.c
++++ b/drivers/clk/qcom/hfpll.c
+@@ -6,6 +6,7 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+@@ -32,7 +33,7 @@ static const struct hfpll_data hdata = {
  };
  
--static struct rpmpd cx_rwsc2_vfl = {
--	.pd = { .name = "cx_vfl", },
--	.res_type = RPMPD_RWSC,
--	.res_id = 2,
--	.key = KEY_FLOOR_LEVEL,
--};
--
- static struct rpmpd cx_s1a_vfc = {
- 	.pd = { .name = "cx_vfc", },
- 	.res_type = RPMPD_SMPA,
-@@ -329,6 +322,13 @@ static struct rpmpd mx_s6a_lvl_ao = {
- 	.key = KEY_LEVEL,
+ static const struct of_device_id qcom_hfpll_match_table[] = {
+-	{ .compatible = "qcom,hfpll" },
++	{ .compatible = "qcom,hfpll", &hdata },
+ 	{ }
  };
+ MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
+@@ -83,7 +84,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
  
-+static struct rpmpd mx_s6a_vfl = {
-+	.pd = { .name = "mx_vfl", },
-+	.res_type = RPMPD_SMPA,
-+	.res_id = 6,
-+	.key = KEY_FLOOR_LEVEL,
-+};
-+
- static struct rpmpd mx_s7a_lvl_ao;
- static struct rpmpd mx_s7a_lvl = {
- 	.pd = { .name = "mx", },
-@@ -361,13 +361,6 @@ static struct rpmpd mx_rwmx0_vfl = {
- 	.key = KEY_FLOOR_LEVEL,
- };
+ 	init.parent_data = &pdata;
  
--static struct rpmpd mx_rwsm6_vfl = {
--	.pd = { .name = "mx_vfl", },
--	.res_type = RPMPD_RWSM,
--	.res_id = 6,
--	.key = KEY_FLOOR_LEVEL,
--};
--
- /* MD */
- static struct rpmpd md_s1a_corner_ao;
- static struct rpmpd md_s1a_corner = {
-@@ -591,16 +584,16 @@ static const struct rpmpd_desc msm8953_desc = {
- static struct rpmpd *msm8976_rpmpds[] = {
- 	[MSM8976_VDDCX] =	&cx_s2a_lvl,
- 	[MSM8976_VDDCX_AO] =	&cx_s2a_lvl_ao,
--	[MSM8976_VDDCX_VFL] =	&cx_rwsc2_vfl,
-+	[MSM8976_VDDCX_VFL] =	&cx_s2a_vfl,
- 	[MSM8976_VDDMX] =	&mx_s6a_lvl,
- 	[MSM8976_VDDMX_AO] =	&mx_s6a_lvl_ao,
--	[MSM8976_VDDMX_VFL] =	&mx_rwsm6_vfl,
-+	[MSM8976_VDDMX_VFL] =	&mx_s6a_vfl,
- };
+-	h->d = &hdata;
++	h->d = of_device_get_match_data(&pdev->dev);
+ 	h->clkr.hw.init = &init;
+ 	spin_lock_init(&h->lock);
  
- static const struct rpmpd_desc msm8976_desc = {
- 	.rpmpds = msm8976_rpmpds,
- 	.num_pds = ARRAY_SIZE(msm8976_rpmpds),
--	.max_state = RPM_SMD_LEVEL_TURBO_HIGH,
-+	.max_state = RPM_SMD_LEVEL_TURBO,
- };
- 
- static struct rpmpd *msm8994_rpmpds[] = {
 -- 
 2.25.1
 
