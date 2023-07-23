@@ -2,153 +2,104 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1783CC00528
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C74C41513
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbjGWQKA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 12:10:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33670 "EHLO
+        id S230047AbjGWQKa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jul 2023 12:10:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230213AbjGWQJo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:09:44 -0400
-Received: from relay07.th.seeweb.it (relay07.th.seeweb.it [5.144.164.168])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0962E1BE6
-        for <linux-clk@vger.kernel.org>; Sun, 23 Jul 2023 09:09:04 -0700 (PDT)
-Received: from Marijn-Arch-PC.localdomain (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by m-r2.th.seeweb.it (Postfix) with ESMTPSA id 2E5523F1DE;
-        Sun, 23 Jul 2023 18:09:02 +0200 (CEST)
-From:   Marijn Suijten <marijn.suijten@somainline.org>
-Date:   Sun, 23 Jul 2023 18:08:55 +0200
-Subject: [PATCH v4 17/17] arm64: dts: qcom: sm6125-seine: Configure MDSS,
- DSI and panel
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230723-sm6125-dpu-v4-17-a3f287dd6c07@somainline.org>
-References: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
-In-Reply-To: <20230723-sm6125-dpu-v4-0-a3f287dd6c07@somainline.org>
-To:     Andy Gross <agross@kernel.org>,
+        with ESMTP id S229914AbjGWQKO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:10:14 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A835199D;
+        Sun, 23 Jul 2023 09:09:47 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-992ca792065so608324066b.2;
+        Sun, 23 Jul 2023 09:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690128561; x=1690733361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=exRmzh7fmIrCoQgVUjB3SY98XR+bPu/NDuT71ASYlFo=;
+        b=OrhI6cLh7Vs03GphtlK6DASOeoOMjk1uy08hjtgG+f+SJstHIlPy8GAUserVCFfM/b
+         cKMdgjKO6BcBNGIgYLsRkb5sjAxkMVz65OYZGRCwsoI1hg2ZUxazmVlTrxl5qlvmZxwQ
+         OAhkW/D4CHGxY7PO920lkccuMbAnbj1mfHU9hjPxqsRrdcKrEs8D76pN/McEg8PJq13H
+         cLEgTA1UCVOcb8VT0D570/qy7p6ikxDfUT24vWM+xPJu7djd2rrRfR7S9eG4Hw8IWOaY
+         34yK6Cti5Ok1hGGd155OIekehmMCO/Y4qu3JPQm1kH5S7mKJoniWorRIRuCErf9PjWmV
+         6ruw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690128561; x=1690733361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=exRmzh7fmIrCoQgVUjB3SY98XR+bPu/NDuT71ASYlFo=;
+        b=X5HFz73ke0co27XBzl4EeDoBGwYSXCZ6SvL484AsLdF0UtSwmJzA1U2hKiJv3IkoQS
+         /D+wjVYDv7O7I8bqf+6Mf59TwL27I3aaS022WarwjVRxvgYDLJafFuM/h2vVFYDmY1WT
+         lD/I+g152rLhbOOhxrzs77+XVC/mJDdYbpBgwUG7uKRPLdZoEO1pHZjNhjP7SILrXosu
+         sAp+vu2L+1F9q1042jpJPOlSphWQPL8rjBm0fhlG+ZILZL8T+a1BTOCUGT4GiadZf6hB
+         p5yeZO2pM740iX4gPrqAYoKSQsPAOA9GOLJXKb2jfWWdJmKJS6B7Gv5Zz74ewI9o0DFi
+         Dcmw==
+X-Gm-Message-State: ABy/qLbXqfRvL42q949W27YdGwiLTcQrzpTFSkp5XYeepJCuprt+QjLW
+        FeXOP7HtnjoL7AI+KYwlzWVFT+8e8Yg=
+X-Google-Smtp-Source: APBJJlFkrbi6Fn8ThGpIcYGejDRuRxCSPM90pn7BgogQzFPOaoU8Df1MVeAQJJbzK7SIqijqvm+vdQ==
+X-Received: by 2002:a17:906:116:b0:978:928:3b99 with SMTP id 22-20020a170906011600b0097809283b99mr8176810eje.46.1690128560501;
+        Sun, 23 Jul 2023 09:09:20 -0700 (PDT)
+Received: from localhost.localdomain (ccx116.neoplus.adsl.tpnet.pl. [83.30.147.116])
+        by smtp.gmail.com with ESMTPSA id u16-20020a170906951000b0099b4d86fbccsm5425039ejx.141.2023.07.23.09.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jul 2023 09:09:20 -0700 (PDT)
+From:   Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Adam Skladowski <a39.skl@gmail.com>,
         Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
         Marijn Suijten <marijn.suijten@somainline.org>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Cc:     ~postmarketos/upstreaming@lists.sr.ht,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Martin Botka <martin.botka@somainline.org>,
-        Jami Kettunen <jami.kettunen@somainline.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, Lux Aliaga <they@mint.lgbt>
-X-Mailer: b4 0.12.3
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] MSM8976 PLL,RPMPD and DTS changes
+Date:   Sun, 23 Jul 2023 18:08:19 +0200
+Message-Id: <20230723160827.22660-1-a39.skl@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enable MDSS and DSI, and configure the Samsung SOFEF01-M ams597ut01
-6.0" 1080x2520 panel.
+This patch series fixes introduce support for msm8976 pll,
+also brings some adjustments and fixes domains setup and few dts nitpicks.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Marijn Suijten <marijn.suijten@somainline.org>
----
- .../dts/qcom/sm6125-sony-xperia-seine-pdx201.dts   | 59 ++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+Changes since v1
+================
+1. Fixed few styling issues
+2. Changed compatibles for plls
+3. Added fixes: tag to first patch
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts b/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
-index 82b0da5bb794..62c3e6d8147c 100644
---- a/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
-+++ b/arch/arm64/boot/dts/qcom/sm6125-sony-xperia-seine-pdx201.dts
-@@ -179,6 +179,43 @@ &i2c3 {
- 	/* Cirrus Logic CS35L41 boosted audio amplifier @ 40 */
- };
- 
-+&mdss {
-+	status = "okay";
-+};
-+
-+&mdss_dsi0 {
-+	vdda-supply = <&pm6125_l18>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "samsung,sofef01-m-ams597ut01";
-+		reg = <0>;
-+
-+		reset-gpios = <&tlmm 90 GPIO_ACTIVE_LOW>;
-+
-+		vddio-supply = <&pm6125_l12>;
-+
-+		pinctrl-0 = <&mdss_dsi_active &mdss_te_active_sleep>;
-+		pinctrl-1 = <&mdss_dsi_sleep &mdss_te_active_sleep>;
-+		pinctrl-names = "default", "sleep";
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&mdss_dsi0_out>;
-+			};
-+		};
-+	};
-+};
-+
-+&mdss_dsi0_out {
-+	remote-endpoint = <&panel_in>;
-+	data-lanes = <0 1 2 3>;
-+};
-+
-+&mdss_dsi0_phy {
-+	status = "okay";
-+};
-+
- &pm6125_adc {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&camera_flash_therm &emmc_ufs_therm &rf_pa1_therm>;
-@@ -469,6 +506,28 @@ vol_down_n: vol-down-n-state {
- 		drive-strength = <2>;
- 		bias-disable;
- 	};
-+
-+	mdss_te_active_sleep: mdss-te-active-sleep-state {
-+		pins = "gpio89";
-+		function = "mdp_vsync";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
-+	mdss_dsi_active: mdss-dsi-active-state {
-+		pins = "gpio90";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-disable;
-+	};
-+
-+	mdss_dsi_sleep: mdss-dsi-sleep-state {
-+		pins = "gpio90";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-down;
-+	};
-+
- };
- 
- &usb3 {
+Adam Skladowski (7):
+  drivers: soc: qcom: rpmpd: Fix MSM8976 power domains setup
+  clk: qcom: clk-hfpll: Configure l_val in init when required
+  clk: qcom: hfpll: Allow matching pdata
+  dt-bindings: clock: qcom,hfpll: Document MSM8976 compatibles
+  clk: qcom: hfpll: Add MSM8976 PLL data
+  arm64: dts: qcom: msm8976: Split lpass region
+  arm64: dts: qcom: msm8976: Fix smsm ipc bit shifts
+
+ .../devicetree/bindings/clock/qcom,hfpll.txt  |  3 +
+ arch/arm64/boot/dts/qcom/msm8976.dtsi         | 11 +++-
+ drivers/clk/qcom/clk-hfpll.c                  |  4 ++
+ drivers/clk/qcom/clk-hfpll.h                  |  1 +
+ drivers/clk/qcom/hfpll.c                      | 59 ++++++++++++++++++-
+ drivers/soc/qcom/rpmpd.c                      | 27 ++++-----
+ 6 files changed, 83 insertions(+), 22 deletions(-)
 
 -- 
-2.41.0
+2.25.1
 
