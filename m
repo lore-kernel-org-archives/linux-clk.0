@@ -2,52 +2,53 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C74C41513
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE02EC001DE
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 16:10:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbjGWQKa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 12:10:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34120 "EHLO
+        id S230224AbjGWQKd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Jul 2023 12:10:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229914AbjGWQKO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:10:14 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A835199D;
-        Sun, 23 Jul 2023 09:09:47 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-992ca792065so608324066b.2;
-        Sun, 23 Jul 2023 09:09:47 -0700 (PDT)
+        with ESMTP id S230201AbjGWQKV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 12:10:21 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF7C19AB;
+        Sun, 23 Jul 2023 09:09:49 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-991ef0b464cso987235766b.0;
+        Sun, 23 Jul 2023 09:09:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690128561; x=1690733361;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=exRmzh7fmIrCoQgVUjB3SY98XR+bPu/NDuT71ASYlFo=;
-        b=OrhI6cLh7Vs03GphtlK6DASOeoOMjk1uy08hjtgG+f+SJstHIlPy8GAUserVCFfM/b
-         cKMdgjKO6BcBNGIgYLsRkb5sjAxkMVz65OYZGRCwsoI1hg2ZUxazmVlTrxl5qlvmZxwQ
-         OAhkW/D4CHGxY7PO920lkccuMbAnbj1mfHU9hjPxqsRrdcKrEs8D76pN/McEg8PJq13H
-         cLEgTA1UCVOcb8VT0D570/qy7p6ikxDfUT24vWM+xPJu7djd2rrRfR7S9eG4Hw8IWOaY
-         34yK6Cti5Ok1hGGd155OIekehmMCO/Y4qu3JPQm1kH5S7mKJoniWorRIRuCErf9PjWmV
-         6ruw==
+        d=gmail.com; s=20221208; t=1690128564; x=1690733364;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c2veQxu8CUO6P1XePRFBe/UBdEyNGLJM/Toogbx/KiU=;
+        b=rCRWyphLVpv5BaBfJbMtK/Kq7hN6XWTg+54WvIitnZAGyK8aoqbq261/U8/aZclp8R
+         cQCLWoi6C/llJ4InbyYLi6MgiXbbbzZJGYFNPawL5PVYE26x9oFjvhDkEw+suongj+ZQ
+         blLfT6bWK8WAuJhM9jB1DgjdEaXh6vR4mCc1uhW03fRdEZ3iG5VTQU1O/IqExRxfldrx
+         BdDipNnZXba0J3QW34kQCDCeMU6dWAd8LhOGabN91xks0mbsopCjv2ViLLWPx2/t87M9
+         tDrqmA+bkivmTvEhPhuwWwh9FgO/QdFfcZwZKw3yGkJePuT8MqmttfNbRKuZ8bQXSu9Y
+         XxPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690128561; x=1690733361;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=exRmzh7fmIrCoQgVUjB3SY98XR+bPu/NDuT71ASYlFo=;
-        b=X5HFz73ke0co27XBzl4EeDoBGwYSXCZ6SvL484AsLdF0UtSwmJzA1U2hKiJv3IkoQS
-         /D+wjVYDv7O7I8bqf+6Mf59TwL27I3aaS022WarwjVRxvgYDLJafFuM/h2vVFYDmY1WT
-         lD/I+g152rLhbOOhxrzs77+XVC/mJDdYbpBgwUG7uKRPLdZoEO1pHZjNhjP7SILrXosu
-         sAp+vu2L+1F9q1042jpJPOlSphWQPL8rjBm0fhlG+ZILZL8T+a1BTOCUGT4GiadZf6hB
-         p5yeZO2pM740iX4gPrqAYoKSQsPAOA9GOLJXKb2jfWWdJmKJS6B7Gv5Zz74ewI9o0DFi
-         Dcmw==
-X-Gm-Message-State: ABy/qLbXqfRvL42q949W27YdGwiLTcQrzpTFSkp5XYeepJCuprt+QjLW
-        FeXOP7HtnjoL7AI+KYwlzWVFT+8e8Yg=
-X-Google-Smtp-Source: APBJJlFkrbi6Fn8ThGpIcYGejDRuRxCSPM90pn7BgogQzFPOaoU8Df1MVeAQJJbzK7SIqijqvm+vdQ==
-X-Received: by 2002:a17:906:116:b0:978:928:3b99 with SMTP id 22-20020a170906011600b0097809283b99mr8176810eje.46.1690128560501;
-        Sun, 23 Jul 2023 09:09:20 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1690128564; x=1690733364;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c2veQxu8CUO6P1XePRFBe/UBdEyNGLJM/Toogbx/KiU=;
+        b=W7uZLZdjFTAL5HTZ14DnCEYa2s6gNhmH1CTDcye7ZHndbHCjyuTPOPYcdCgQT36jk/
+         Xvbi0+5I3pbqKQIz4O8CsCT3eu91PzrkaCCkfp58W3eRmjmaLIdHpp0ZtZPAN+mDyKNy
+         l7XQiy8zh0jcrthPoWx2AA+t7JYPE53PsKVR8PY6tPTXUKmLvW5FW91Mg6r9Pa1ZHii1
+         b6todX/yWiQHKfnsAtMpil2IApGhAL6udC9mGlNIMnpw4WVKBhpU0r1uN438QHrAbRwI
+         e3W5T/7wSSQCRhqkifSIl03CgmGdBXvEftgGxznTcfm4hRfCi7tmIG4i6d/IIZhWyhsr
+         6U4w==
+X-Gm-Message-State: ABy/qLYa4HYiEKhGzgtDzOM8+rQ7Ns/ACdy79wDbq4ez2xpC5XXXxt0o
+        czr2F8bImUxq7aBsHp4DOvryhGJbot8=
+X-Google-Smtp-Source: APBJJlFwIsIQryk9Q0z6iRZ5GHRdFGTKryrN46bOO1De3xg5QU5uQTyAdbGBs0nS/IgWahibdbzRVg==
+X-Received: by 2002:a17:906:2d4:b0:988:b61e:4219 with SMTP id 20-20020a17090602d400b00988b61e4219mr8155209ejk.29.1690128564696;
+        Sun, 23 Jul 2023 09:09:24 -0700 (PDT)
 Received: from localhost.localdomain (ccx116.neoplus.adsl.tpnet.pl. [83.30.147.116])
-        by smtp.gmail.com with ESMTPSA id u16-20020a170906951000b0099b4d86fbccsm5425039ejx.141.2023.07.23.09.09.18
+        by smtp.gmail.com with ESMTPSA id u16-20020a170906951000b0099b4d86fbccsm5425039ejx.141.2023.07.23.09.09.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jul 2023 09:09:20 -0700 (PDT)
+        Sun, 23 Jul 2023 09:09:24 -0700 (PDT)
 From:   Adam Skladowski <a39.skl@gmail.com>
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Adam Skladowski <a39.skl@gmail.com>,
@@ -63,10 +64,12 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         Marijn Suijten <marijn.suijten@somainline.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/7] MSM8976 PLL,RPMPD and DTS changes
-Date:   Sun, 23 Jul 2023 18:08:19 +0200
-Message-Id: <20230723160827.22660-1-a39.skl@gmail.com>
+Subject: [PATCH v2 2/7] clk: qcom: clk-hfpll: Configure l_val in init when required
+Date:   Sun, 23 Jul 2023 18:08:21 +0200
+Message-Id: <20230723160827.22660-3-a39.skl@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230723160827.22660-1-a39.skl@gmail.com>
+References: <20230723160827.22660-1-a39.skl@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
@@ -74,32 +77,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series fixes introduce support for msm8976 pll,
-also brings some adjustments and fixes domains setup and few dts nitpicks.
+Add support for pre-configuring default frequency multiplier,
+this appears to be required on some platforms like MSM8976.
+Without configuring L_VAL device reboots when trying to bring PLL up.
 
-Changes since v1
-================
-1. Fixed few styling issues
-2. Changed compatibles for plls
-3. Added fixes: tag to first patch
+Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+---
+ drivers/clk/qcom/clk-hfpll.c | 4 ++++
+ drivers/clk/qcom/clk-hfpll.h | 1 +
+ 2 files changed, 5 insertions(+)
 
-Adam Skladowski (7):
-  drivers: soc: qcom: rpmpd: Fix MSM8976 power domains setup
-  clk: qcom: clk-hfpll: Configure l_val in init when required
-  clk: qcom: hfpll: Allow matching pdata
-  dt-bindings: clock: qcom,hfpll: Document MSM8976 compatibles
-  clk: qcom: hfpll: Add MSM8976 PLL data
-  arm64: dts: qcom: msm8976: Split lpass region
-  arm64: dts: qcom: msm8976: Fix smsm ipc bit shifts
-
- .../devicetree/bindings/clock/qcom,hfpll.txt  |  3 +
- arch/arm64/boot/dts/qcom/msm8976.dtsi         | 11 +++-
- drivers/clk/qcom/clk-hfpll.c                  |  4 ++
- drivers/clk/qcom/clk-hfpll.h                  |  1 +
- drivers/clk/qcom/hfpll.c                      | 59 ++++++++++++++++++-
- drivers/soc/qcom/rpmpd.c                      | 27 ++++-----
- 6 files changed, 83 insertions(+), 22 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-hfpll.c b/drivers/clk/qcom/clk-hfpll.c
+index 86f728dc69e5..705352aff067 100644
+--- a/drivers/clk/qcom/clk-hfpll.c
++++ b/drivers/clk/qcom/clk-hfpll.c
+@@ -44,6 +44,10 @@ static void __clk_hfpll_init_once(struct clk_hw *hw)
+ 		regmap_write(regmap, hd->user_reg, regval);
+ 	}
+ 
++	/* Write L_VAL from conf if it exist */
++	if (hd->l_val)
++		regmap_write(regmap, hd->l_reg, hd->l_val);
++
+ 	if (hd->droop_reg)
+ 		regmap_write(regmap, hd->droop_reg, hd->droop_val);
+ 
+diff --git a/drivers/clk/qcom/clk-hfpll.h b/drivers/clk/qcom/clk-hfpll.h
+index 2a57b2fb2f2f..27b9effcb3fd 100644
+--- a/drivers/clk/qcom/clk-hfpll.h
++++ b/drivers/clk/qcom/clk-hfpll.h
+@@ -18,6 +18,7 @@ struct hfpll_data {
+ 	u32 status_reg;
+ 	u8  lock_bit;
+ 
++	u32 l_val;
+ 	u32 droop_val;
+ 	u32 config_val;
+ 	u32 user_val;
 -- 
 2.25.1
 
