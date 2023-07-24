@@ -2,42 +2,41 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6C0C0015E
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 08:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239CAC0015E
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 08:51:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231860AbjGXIsm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jul 2023 04:48:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47016 "EHLO
+        id S231907AbjGXIvk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jul 2023 04:51:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231861AbjGXIsh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 04:48:37 -0400
+        with ESMTP id S231896AbjGXIvi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 04:51:38 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A910E6;
-        Mon, 24 Jul 2023 01:48:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF39C9;
+        Mon, 24 Jul 2023 01:51:37 -0700 (PDT)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits))
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 68A326607029;
-        Mon, 24 Jul 2023 09:48:32 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 02C356607029;
+        Mon, 24 Jul 2023 09:51:34 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1690188513;
-        bh=Zjy3Rsv9lo1VbeTw2uMo83jvJBhbL51/vCj6P5OZnjw=;
+        s=mail; t=1690188695;
+        bh=d9AW+MKnPahVLf1G6Ns/+qjCnIfMZz9qqZK1zh/61Yw=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=oZtI02nAH/g+z3t+cRxRIxH4roa4RJN5x+XIvLlNZGUSJG/ZD9WCg6KScBrDgzecI
-         V3AhzDnnVdo+M7mynMcm1TPlZg0JqhVqqw6pXC3aSFp+mHtOim2pjbzcSi08zH2g3J
-         dRXlFdcW3W6AzhLAVvzHpvsCTR06h2/P9u3uWwUj9B75Zu0SbKvAk10eJUm1+qAeDC
-         PGdqi/xPXd7lbXuAWX+qT3yJbxvDXDRSWuq6u0zXhockOWZ3ujEAn5JHEnIbDAKEMU
-         FArdoWuoz5XeNoGenBD96pmAWCXYbZSma/qGAuYc81qOmsH6RJeNdVaqac6lSNaEn5
-         FRpOOm6jQ/djA==
-Message-ID: <55e72667-dec5-dab0-9d1b-dc127fe4d065@collabora.com>
-Date:   Mon, 24 Jul 2023 10:48:30 +0200
+        b=GXXb+XLfsbMrOxDaM8ivaBqOyvExwuqpxtZm/hOZSB9s+2LucLV2W65c0MJM+ClcF
+         r8GoTVNuYOZ7CtolHG9Cw6MZ+V3RvI+vg3C106XhoaQ8B1kLVTI3waBhEwxiMNNk2G
+         BCGhd3lkOfVhbnBXC1UmZRlo/t+SLznzoeGb7r06vPOmAC/NZpXXZ177oFdZuOPqBf
+         zdnQzifz5evJefPP2mgbtTbzA6lpu0WSyw1RBekzsD+qBlgh7mmIcuUF7jKJ7xo/mV
+         +Tcl/htutTr3np1dM/AOihRHSabhfMN4AUsTg2detC2P9lEU6XtLtj7ZytAuOW9mtc
+         UnoxuHfkFRNoA==
+Message-ID: <7f20ec52-bcd2-a9e1-369a-878be1e20a67@collabora.com>
+Date:   Mon, 24 Jul 2023 10:51:32 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH 1/7] drivers: soc: qcom: rpmpd: Fix MSM8976 power domains
- setup
+Subject: Re: [PATCH 3/7] clk: qcom: hfpll: Allow matching pdata
 Content-Language: en-US
 To:     Adam Skladowski <a39.skl@gmail.com>
 Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
@@ -53,10 +52,10 @@ Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20230723140712.9438-1-a39.skl@gmail.com>
- <20230723140712.9438-2-a39.skl@gmail.com>
+ <20230723140712.9438-4-a39.skl@gmail.com>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20230723140712.9438-2-a39.skl@gmail.com>
+In-Reply-To: <20230723140712.9438-4-a39.skl@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
@@ -64,27 +63,51 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Il 23/07/23 16:06, Adam Skladowski ha scritto:
-> Downstream kernel parses resource names based on pm8950-rpm-regulator.dtsi
-> in such file qcom,resource-name takes three values: smpa,ldoa and clk0.
-> First appearance of RWSC/RWSM point to msm-4.4 kernel
+> HFPLL driver can be used to drive PLLs also on different SoCs like MSM8976
+> On MSM8976 each PLL gets it own different configuration,
+> add matching pdata to driver to support multiple configurations.
+> 
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>   drivers/clk/qcom/hfpll.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+> index f4d78003d189..ec18bc8f0089 100644
+> --- a/drivers/clk/qcom/hfpll.c
+> +++ b/drivers/clk/qcom/hfpll.c
+> @@ -6,6 +6,7 @@
+>   #include <linux/module.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/of.h>
+> +#include <linux/of_device.h>
+>   #include <linux/clk.h>
+>   #include <linux/clk-provider.h>
+>   #include <linux/regmap.h>
+> @@ -32,7 +33,7 @@ static const struct hfpll_data hdata = {
+>   };
+>   
+>   static const struct of_device_id qcom_hfpll_match_table[] = {
+> -	{ .compatible = "qcom,hfpll" },
+> +	{ .compatible = "qcom,hfpll", &hdata },
 
-Are we sure that RWSC/RWSM being present isn't firmware-related?
-What is the observed issue, why are you removing RWSC/RWSM and what did you
-solve with that?
+This is supposed to be
 
-If it's just about dropping unused resources, that may be unused only on
-firmware versions older than "X".
-
-> which is way newer than what this platform was shipped with (msm-3.10).
-> For the max_state downstream code limit value to TURBO inside dts
-> with only one turbo_high being placed in msm-thermal bindings.
-> One of effects of requesting TURBO_HIGH vote is rebooting of device
-> which happens during voting inside WCNSS/IRIS,
-> this behavior was observed on LeEco S2 smartphone.
-> Fix regulator setup and drop unused resources.
-
-That's fine, but you're missing a Fixes tag, which is required, being this a fix.
+{ .compatible = xxx, .data = &hdata }
 
 Regards,
 Angelo
+
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, qcom_hfpll_match_table);
+> @@ -83,7 +84,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>   
+>   	init.parent_data = &pdata;
+>   
+> -	h->d = &hdata;
+> +	h->d = of_device_get_match_data(&pdev->dev);
+>   	h->clkr.hw.init = &init;
+>   	spin_lock_init(&h->lock);
+>   
 
