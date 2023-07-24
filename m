@@ -2,129 +2,144 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0350DEB64DD
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 05:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0800CC001B0
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 07:09:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229771AbjGXF6y convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jul 2023 01:58:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
+        id S230158AbjGXHJU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jul 2023 03:09:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229546AbjGXF6x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 01:58:53 -0400
-Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 466C5DE;
-        Sun, 23 Jul 2023 22:58:51 -0700 (PDT)
-Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
-        by fd01.gateway.ufhost.com (Postfix) with ESMTP id DAA2D80A8;
-        Mon, 24 Jul 2023 13:58:46 +0800 (CST)
-Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
- (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 24 Jul
- 2023 13:58:47 +0800
-Received: from localhost.localdomain (183.27.99.135) by EXMBX061.cuchost.com
- (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 24 Jul
- 2023 13:58:46 +0800
-From:   Xingyu Wu <xingyu.wu@starfivetech.com>
-To:     <linux-riscv@lists.infradead.org>,
+        with ESMTP id S229468AbjGXHJT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 03:09:19 -0400
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::221])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B22C6138;
+        Mon, 24 Jul 2023 00:09:14 -0700 (PDT)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6C2E524000E;
+        Mon, 24 Jul 2023 07:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+        t=1690182552;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0OTdgWQ6Vo/4tl1ZM7En0YdjITPLKGIP2IIxkkPFJRM=;
+        b=iC5ZIY44VFrCSUNoeMIdYmOyqSrlrW7N4tyY+Hq53oXBVph3jCQ5ij8fsDynsYh6NybKfF
+        47iBUwR964ggu52YB13yaU1E18wok2aDQAXdbpXfZnCVzqeybMcvNBEm04M8MJv49vz912
+        60p20TKBhztddQMV6EZbSo0vTLzFb3Ok+FWErn92iDiDFjDyPmqRh1JKdYw5xT3hwpwVlV
+        u4k2GthKUnBFuRNrRP/XoPSerupU1HIaiVySzO/QpWk35FaiLI3dwdIhQ2brWGTyOPPUCM
+        8E3/Ier83smwYkYCv/LsZ20OWFpB5I2g8A5epoX659Pa/Omr3Rckh60nqnZ+5A==
+Date:   Mon, 24 Jul 2023 09:09:02 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Andy Shevchenko <andy@kernel.org>
+Cc:     nikita.shubin@maquefel.me,
+        Hartley Sweeten <hsweeten@visionengravers.com>,
+        Lennert Buytenhek <kernel@wantstofly.org>,
+        Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Lukasz Majewski <lukma@denx.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Conor Dooley <conor@kernel.org>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-        Hal Feng <hal.feng@starfivetech.com>,
-        Xingyu Wu <xingyu.wu@starfivetech.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v1] reset: starfive: jh7110: Add StarFive STG/ISP/VOUT resets support
-Date:   Mon, 24 Jul 2023 13:54:40 +0800
-Message-ID: <20230724055440.100947-1-xingyu.wu@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, Mark Brown <broonie@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        soc@kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Michael Peters <mpeters@embeddedts.com>,
+        Kris Bahnsen <kris@embeddedts.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+        netdev@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
+        linux-input@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v3 24/42] mtd: nand: add support for ts72xx
+Message-ID: <20230724090902.679ea56d@xps-13>
+In-Reply-To: <ZLqx+Osn3gcHjUph@smile.fi.intel.com>
+References: <20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me>
+        <20230605-ep93xx-v3-24-3d63a5f1103e@maquefel.me>
+        <ZLqx+Osn3gcHjUph@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [183.27.99.135]
-X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX061.cuchost.com
- (172.16.6.61)
-X-YovoleRuleAgent: yovoleflag
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add new struct members and auxiliary_device_id of resets to support
-System-Top-Group, Image-Signal-Process and Video-Output on the StarFive
-JH7110 SoC.
+Hi Andy,
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
-Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
----
+> > +static int ts72xx_nand_attach_chip(struct nand_chip *chip)
+> > +{
+> > +	switch (chip->ecc.engine_type) {
+> > +	case NAND_ECC_ENGINE_TYPE_SOFT:
+> > +		if (chip->ecc.algo =3D=3D NAND_ECC_ALGO_UNKNOWN)
+> > +			chip->ecc.algo =3D NAND_ECC_ALGO_HAMMING;
+> > +		break;
+> > +	case NAND_ECC_ENGINE_TYPE_ON_HOST:
+> > +		return -EINVAL;
+> > +	default: =20
+>=20
+> > +		break; =20
+>=20
+> Here it will return 0, is it a problem?
 
-Hi Stephen,
+Seems ok, there are two other situations: on-die ECC engine and no ECC
+engine, both do not require any specific handling on the controller
+side.
 
-I found that the PR sent by conor was missing this STG/ISP/VOUT
-resets patch:
-https://lore.kernel.org/all/20230719-trough-frisk-40b92acb485a@spud/
+>=20
+> > +	}
+> > +
+> > +	return 0;
+> > +} =20
+>=20
+> ...
+>=20
+> > +static void ts72xx_nand_remove(struct platform_device *pdev)
+> > +{
+> > +	struct ts72xx_nand_data *data =3D platform_get_drvdata(pdev);
+> > +	struct nand_chip *chip =3D &data->chip;
+> > +	int ret;
+> > +
+> > +	ret =3D mtd_device_unregister(nand_to_mtd(chip)); =20
+>=20
+> > +	WARN_ON(ret); =20
+>=20
+> Why?!  Is it like this in other MTD drivers?
 
-I resend this patch to make the CRG drivers completed.
+Yes, we did not yet change the internal machinery to return void, and
+we don't want people to think getting errors there is normal.
+
+> > +	nand_cleanup(chip);
+> > +} =20
+>=20
 
 Thanks,
-Xingyu Wu
-
----
- .../reset/starfive/reset-starfive-jh7110.c    | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
-index 2d26ae95c8cc..29a43f0f2ad6 100644
---- a/drivers/reset/starfive/reset-starfive-jh7110.c
-+++ b/drivers/reset/starfive/reset-starfive-jh7110.c
-@@ -31,6 +31,24 @@ static const struct jh7110_reset_info jh7110_aon_info = {
- 	.status_offset = 0x3C,
- };
- 
-+static const struct jh7110_reset_info jh7110_stg_info = {
-+	.nr_resets = JH7110_STGRST_END,
-+	.assert_offset = 0x74,
-+	.status_offset = 0x78,
-+};
-+
-+static const struct jh7110_reset_info jh7110_isp_info = {
-+	.nr_resets = JH7110_ISPRST_END,
-+	.assert_offset = 0x38,
-+	.status_offset = 0x3C,
-+};
-+
-+static const struct jh7110_reset_info jh7110_vout_info = {
-+	.nr_resets = JH7110_VOUTRST_END,
-+	.assert_offset = 0x48,
-+	.status_offset = 0x4C,
-+};
-+
- static int jh7110_reset_probe(struct auxiliary_device *adev,
- 			      const struct auxiliary_device_id *id)
- {
-@@ -58,6 +76,18 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
- 		.name = "clk_starfive_jh7110_sys.rst-aon",
- 		.driver_data = (kernel_ulong_t)&jh7110_aon_info,
- 	},
-+	{
-+		.name = "clk_starfive_jh7110_sys.rst-stg",
-+		.driver_data = (kernel_ulong_t)&jh7110_stg_info,
-+	},
-+	{
-+		.name = "clk_starfive_jh7110_sys.rst-isp",
-+		.driver_data = (kernel_ulong_t)&jh7110_isp_info,
-+	},
-+	{
-+		.name = "clk_starfive_jh7110_sys.rst-vo",
-+		.driver_data = (kernel_ulong_t)&jh7110_vout_info,
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(auxiliary, jh7110_reset_ids);
--- 
-2.25.1
-
+Miqu=C3=A8l
