@@ -2,45 +2,45 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A79C001DF
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 16:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE826C001B0
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 17:22:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229485AbjGXQeX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jul 2023 12:34:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33114 "EHLO
+        id S231266AbjGXRWc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jul 2023 13:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230143AbjGXQeT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 12:34:19 -0400
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2103.outbound.protection.outlook.com [40.107.243.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E38C2122;
-        Mon, 24 Jul 2023 09:34:17 -0700 (PDT)
+        with ESMTP id S230156AbjGXRWS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 13:22:18 -0400
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2137.outbound.protection.outlook.com [40.107.220.137])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 105DBE76;
+        Mon, 24 Jul 2023 10:22:17 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AXmdQ27zI9/Uaepgcz2eT3U6gWTq6mOeDDD4XWvoU+uFhaeuYsz7vct4wchDPxa+ACVrREsYhAhFiPK/nwItBRTgvu6Y6Ob7Ud261+qKfa/cQURymHodhWp6Fb3wdepWm/CRi3vDcOqlfJzk4KYS36OwIUoSdWkAS7f9rGuQTFePNYF5CkHXt9MIqx3yg4fM3yRhy8CNixeh1PQnNOVGpB69faVDuw8S+orgv+tUzYhmMRHZqo5DbCth7OJ+xGrr2dpFcCvJMTTqklj/a3jEbE55yLkffR7EoKwMLSO594GevnHKZZb6avTQ1JIv7xihw5TDNMW815p6GfFHHZrLBg==
+ b=FayGbuR3GPUL8gkquaOiwHKVrjAmkiNPeN+/FfgwP/Mc/jctSVx7WIF01jrG3xadMVggEwRg+u7zYTSCx1tLwwyJ/jQ9IRnMHUfkmadcbopV5FpTb0WT/UJihTOwCfHJAc6lfe1Xoiy+adbpTzN9X+9vBV9IFGMACdjUgwapWXl2h2v3hpnrCKVWmQ7nHutv+l9hPFFqRbFsylbRq+VX/T7JsXzE6+9G/dHRW6bb1+6poRh277oOJLw1XAzMxXnjFAHt0mut7pcFJzq10WJhWkVMEzU/SalgSahzilz7wMfhHSkqRNhvL79ZiwTTxJaiE/qmORQdEdcRmIaldNQaIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rHuUovrk5KMlpTJR2xtXCCnQN0rTruUIKAN1DVZ8Cpk=;
- b=PdPUdoZmUNbRdG9oaus7HMGGwoJ8xS4NmH6D401ewCaERd2SJGsK2yIHnXBWa+00KL5RgS65M1vnxCMFkK9TtsWsfMFYRnijIn/StA16a6EL1qsQMeyTwsvTQlqIFCl9Egzf12lgazP8K3YjhrR785EWJkSW6IbYp/DFczoUmi5qxyQtPhKlTb0sdJ34UlMWetKFWdlZpHWRp1bdqOtM8QFPYJXc9KQz4Kh7dKopYv6eqIq2n0xvRu6YDyIsnVwDDi+AyNL4hJk9mIDo3eb5ZOB8zbUSKFW2FiCFHXNTr5X0YG5sa24iOYNNM2s46Ihy66GrTyqU0prvIwPTuzzgCA==
+ bh=djvmojwnYh9a5f7kcrDQ+w4JpbzOc7sOBRATPU6OqMI=;
+ b=eI47jjFaHMLQVydJIwViflQ2IsXwzRWe1QbvM7fXJYCB5xfGnKpTuoVfEdCGmLlGy7ilGU6+TtB1wtTKwbTtp0uCSXD5QE7vPCKM8dbX+GbwvBz8Rv9ympY+mzuylfbY9gN6PVIexWcM8QaFsuy2RPCm4nJ8x+uNvOU3MKuk0GRKYqgMsjTdxDMUy4BzMmgptYOCQh71YzoAZizFp9tNpYQGa73nff+KqakdwVZtYUgy6wuGW1P6nbNskoaoxkjPBYjFbndte8Vq0fqMDGYsG8LDK9l+iHGpi3JKYIWrrP5FsF76h2OAEA56UMPPfn15kPlLhBbXvYRCYuOwIatqtw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=corigine.com; dmarc=pass action=none header.from=corigine.com;
  dkim=pass header.d=corigine.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=corigine.onmicrosoft.com; s=selector2-corigine-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rHuUovrk5KMlpTJR2xtXCCnQN0rTruUIKAN1DVZ8Cpk=;
- b=eZl7TXGx002D9/ZDqqFBiIecUwgU55YEoxpt3ilRHsZ/jDtmWztqpwwJkW3ijb9X2dp+TpQ/wNIYD2huC+wdMGiPfvvlh/nRAiLYp0P2TX2iMfvpZTu8LZgkCTbi4NYR0yZ+LKA+cxAYTtS05/4sun0AW5mlfANF63tW+oFgCqk=
+ bh=djvmojwnYh9a5f7kcrDQ+w4JpbzOc7sOBRATPU6OqMI=;
+ b=YkTrEUjNvRkgTg4ccSn8RgORDE1CopjMlDgiLaE3Xg5cKCfUW+hCHvl+JtpOEpATln87ZYj/uB5K/Bc3j/e3+OZDpbW8UgM3TiyLUuZ6po2s55Mp5S9ICXqfIogTHpvwx0Z8OhHMiBHiqJ8fT5DKFucZfp2NF3IWIN9ayEACCdU=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=corigine.com;
 Received: from PH0PR13MB4842.namprd13.prod.outlook.com (2603:10b6:510:78::6)
- by CH2PR13MB3781.namprd13.prod.outlook.com (2603:10b6:610:9a::18) with
+ by BY1PR13MB6240.namprd13.prod.outlook.com (2603:10b6:a03:522::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.32; Mon, 24 Jul
- 2023 16:34:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.28; Mon, 24 Jul
+ 2023 17:22:12 +0000
 Received: from PH0PR13MB4842.namprd13.prod.outlook.com
  ([fe80::fde7:9821:f2d9:101d]) by PH0PR13MB4842.namprd13.prod.outlook.com
  ([fe80::fde7:9821:f2d9:101d%7]) with mapi id 15.20.6609.032; Mon, 24 Jul 2023
- 16:34:13 +0000
-Date:   Mon, 24 Jul 2023 18:34:06 +0200
+ 17:22:12 +0000
+Date:   Mon, 24 Jul 2023 19:21:54 +0200
 From:   Simon Horman <simon.horman@corigine.com>
 To:     Vadim Fedorenko <vadim.fedorenko@linux.dev>
 Cc:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
@@ -52,272 +52,303 @@ Cc:     Jakub Kicinski <kuba@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
         linux-arm-kernel@lists.infradead.org, poros@redhat.com,
         mschmidt@redhat.com, netdev@vger.kernel.org,
         linux-clk@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH net-next 06/11] dpll: netlink: Add DPLL framework base
- functions
-Message-ID: <ZL6n/g97lrtLH7Ev@corigine.com>
+Subject: Re: [PATCH net-next 08/11] ice: add admin commands to access cgu
+ configuration
+Message-ID: <ZL6zMmyIUObOY+6i@corigine.com>
 References: <20230720091903.297066-1-vadim.fedorenko@linux.dev>
- <20230720091903.297066-7-vadim.fedorenko@linux.dev>
+ <20230720091903.297066-9-vadim.fedorenko@linux.dev>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230720091903.297066-7-vadim.fedorenko@linux.dev>
-X-ClientProxiedBy: AM0PR10CA0070.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:15::23) To PH0PR13MB4842.namprd13.prod.outlook.com
+In-Reply-To: <20230720091903.297066-9-vadim.fedorenko@linux.dev>
+X-ClientProxiedBy: AM0PR05CA0073.eurprd05.prod.outlook.com
+ (2603:10a6:208:136::13) To PH0PR13MB4842.namprd13.prod.outlook.com
  (2603:10b6:510:78::6)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|CH2PR13MB3781:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd945b55-e098-4c1a-8031-08db8c63d066
+X-MS-TrafficTypeDiagnostic: PH0PR13MB4842:EE_|BY1PR13MB6240:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05e7f288-a5a2-4057-de80-08db8c6a8491
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Cje80nTOMO0VoaYSSxy+XVKlOS9fGfEJgyDkRLLPdTHA5rYscN7ddPDsBnaNnEYIfyOQt3KQXwQd/P/DBXZhaoNI0xclNkYW2TppNZou0LztiqPlO0iKSK6nB81i41yGbAzrR9I4dEptbLRRgnnP1i5JqrFVTL0A35uv/7OXOMIlZp1bd20I1uZKi2ozgnKlXEQJq60UbWIRrkDH69XuLch7xgQSaXBX1jVv0KTfDOvvSe5D3imags70YOReIvJlQ3EWyzuKboqjfQqvpEhu/Nh2M8DbHZXBBGr3LW52eB70tYRaDGoruKHGphFHahy9/P2n664lYJ4sGDYmebToq9btrn80YuZlcmcu1BLOeNw82LMMgi5ZnvJNsRTkQ0A+3EwsADWjHM3aEHbYvj9fIU1ytASCX0Bw4ESEblvtZjifZJYczKAMWH8z74KRRjSHqpHn5ECE8Y8nqWcv7iCYP6C9ETTojrwN8FfXv2flE6CxHJk/bmR/rcZlO+CmAsVHX4y64QEFNu6woTOyeTgTAE8RKVIUeERxTTHyFCR3V3WAqDMtnFKWiFeqMVaICwm6cuGFNsryZQUXakWIU/SKXMMc02OfDihuoWzf5M595cs=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(39840400004)(376002)(136003)(396003)(366004)(451199021)(6486002)(6512007)(478600001)(6666004)(54906003)(83380400001)(86362001)(44832011)(2906002)(186003)(2616005)(6506007)(66556008)(36756003)(38100700002)(66476007)(6916009)(4326008)(66946007)(41300700001)(8676002)(8936002)(316002)(7416002)(5660300002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: rQjXgNm2cFDHC8s50MmCc/nO9YTEhaF3FwE9D3EfAvIFmMwJSyAPyauqKdqVCKQu6iGKdzsmhtPVdGNjxmOTgt18KejzFxA5hIwMQK+5AcFchldAFAApoZanfuxk1qKj1Ey4v0jdHxallGc8GvMO9x02qMVZQY4IAd4Z+Ket4y5iMuvvOnMNR2xqxGJ+s1ib9pW/5AorhwNtwvsqo0jtJnxbQzbHGAejV6VNOyChS3j/7+p1HNAnFjqHhoSvHjeN4sNjvmpprEuN+hEr+QkgBwnu1+B7bgDYgcWkKUO6R1BCj0ydq/U+ZBQlweVocrLHad+3bM4sbOhcPY2rV/CfuBCDF17ijcP9UA55g/CLikWFZavXrGiibnH1ml/p59I2ccty+ywIYNGIuA/2mjicBVvk222CJeBGhMni5jCs+ARnJwWTzSCH47L7hQM9STyuOiEQCixQZHCT8lZeXP+/8Ss+mXJhQ17moHX597lvtSGBbTlTGeAH4pW2LqsGgl4YZakLNdNGlYlQlJIAaP4Lpre/I73HzUfyj9j38dm3enRiBLN7YsUc5U47KdmkcdnO/lPAM+lBZWkvmdGCyxtb9mfYmficwA9OgkSzdSFMuR+QqPK/MF219TDwjduwRBj9oFTUCsStQeFmgylqw+Po1KyGoloP5UtinJCOwJBRJCg=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR13MB4842.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230028)(4636009)(346002)(39840400004)(396003)(136003)(376002)(366004)(451199021)(41300700001)(2906002)(5660300002)(316002)(8676002)(8936002)(36756003)(44832011)(86362001)(6512007)(6666004)(6486002)(83380400001)(6506007)(478600001)(7416002)(38100700002)(186003)(66556008)(2616005)(6916009)(4326008)(66946007)(66476007)(54906003)(67856001);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?V8X7dCGTaGfJDyoJf3AnRg+VFimWfqQG0Dt7nLOvZ2nhqYW6fvwpQbg7tkbz?=
- =?us-ascii?Q?Edmcs1aOSFvp/vQ+LWwEEqKTNnt4ZdmERBjKVScZcXmQeyBzzrSOgQB9DSRj?=
- =?us-ascii?Q?qxaRvHoeUYLRML3LS42/MB81DjvgkX+ppLS1B4NX8lc9kCDC0rCvp0NKs0mu?=
- =?us-ascii?Q?/dsFIFSPm989N+tLEs5crLq/ms8dU1AW+dXLEupvSOM4Ch9sWp0ymOLmpWv8?=
- =?us-ascii?Q?bqZUdos7jQoyLlRNK1Ndo4uBr52OjiqwRAyPlIyH32bVz7guYqkYqFSA4EuU?=
- =?us-ascii?Q?WvtwIbcKGZPZhZH4xTbxPZv6V/gdLpoxZVRoan7oOGmRYBPfxi+j2vjQ1Yvc?=
- =?us-ascii?Q?0h1TYRDVVggELcWbaNq0fOwKN0eGi8vlm6HiY8kHJS7X/5YDon6NGV9mAa2z?=
- =?us-ascii?Q?xCu22JvXtS0ak1qHYUxHoY36ouS3T8h8oiMLr7vJ9cwtsICOIsHOXrtVjejj?=
- =?us-ascii?Q?OYfl4BQ+xmK3w1evEdDgCKqTj7lRFV9nKaSVrdkgfq33wpoeilFI/uMYUkDi?=
- =?us-ascii?Q?AbnoL0EiaDx7gcrCI3h19qcempRrn+pwfUZAp1bOkHr/sBrP9hPTgwWze7IL?=
- =?us-ascii?Q?khol11ZXnq1hKT3SqrZUkCH54EzL2tU/ZedVVTIc+g15plMHd7yJ8DTEl1r0?=
- =?us-ascii?Q?m2k9vkdIhdovzsTvSXos+ay6CcfkwXj59f9OAtnfzzE2Ng5sTH5vGwwcWGrX?=
- =?us-ascii?Q?0Zsf2YDNrVQmTWAEq4vSh51GRTSYUs4CYUw/A6jtTvbJyahYQUlbMb/KvW2v?=
- =?us-ascii?Q?3gdUSTiOCsYXjOMhiQ+SC1WRM8u+rErq6j7rSGEriJ9RAc6wmCufP3PjxAhK?=
- =?us-ascii?Q?xQzJZraXMZZB52Ukc0vXtzDsPzSCogIdRmes51u716di5Ja5zZnr4mZZ84wj?=
- =?us-ascii?Q?0DPtp1/Msk9CPVkev77yo1xMEvUegfFqkfrYxshpCu/8T1Cxtyop9zFeHJQS?=
- =?us-ascii?Q?/7sL3Qg3RBh3MTJEwqT0GvQPF+MKdLHStyYUQQl6ZIcK3LO/y6mVywgjiewP?=
- =?us-ascii?Q?GoY2oFER5PtO+gx6BzkQpcKtafQcOArzR/3hhJ8A16Xz9Qheu1VIQeD4cG5q?=
- =?us-ascii?Q?mrt4E8mXJq+zeS6j78TUdt5/GsGSI135GDGEIUfF9sAdeycrfrxr8Jff/t16?=
- =?us-ascii?Q?VValydhKkpZe3Opi5+bxi9qqwIhrJUtNI1vQeu0GUXMgLJHU4RAniAgoUygI?=
- =?us-ascii?Q?LU/TL5oco+OVSxPJYk9vv7bqx4bDP5AhrNKscIDsv5qpufKfC642YD70X+FP?=
- =?us-ascii?Q?5DCwQipQ+Vq464Hp3X0teTQB/2EU1+a+XQjKXZQFnQ4AI+FVVQyXlEALTpwB?=
- =?us-ascii?Q?CaKuHyZCn56HsglGsN3kdx0pRIraIUzmFKYCgiMc7LIqwxYmrWtkwjdVcqmm?=
- =?us-ascii?Q?7+/97MjThGSaWp6TXU8CgZ8c8PHbkb2Rw9PhSh08IM6zSp6dBMg0s67jan2C?=
- =?us-ascii?Q?Cu0AHsC6TjrUN4eO+zEM7xny9uz0GFE6jJMj/xjAiWNj05WfJfzUO0fZgt9s?=
- =?us-ascii?Q?+Hm1nB0ZSxDiVF/mqSS/NNr5Cge1Y3cwqpbyNsgwLJbWD/glmB6sI107LpWU?=
- =?us-ascii?Q?TkyFhELyW75IEYYnNLR6Uh4k0vqewoCJ8djtkDYZ2msgdCLsbxfIAthnG8mv?=
- =?us-ascii?Q?sPhYaE71MJKvFC+36oW5B8ey35Xb3osW4qgpYrHfqbMY/9eXW0MUiblP1Gba?=
- =?us-ascii?Q?f4s2/w=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?HewAB68TAz0bfwG4AZfpS5LYFNXA7pY78cajVTwICiUuAP1lkn8zhAcYjb+f?=
+ =?us-ascii?Q?SqjVSSmPhNzMmvqGbBCWn2x9warpQqu0YljcKPK3KuZTdZToCo7qadW4DtRh?=
+ =?us-ascii?Q?kqYIc6i3muxfwSLvlZM4yln5p7qCwuRdNXsOre4i87MUMlzRvI6fleSH7E/Q?=
+ =?us-ascii?Q?oRK5u+0okP0/P2kDitcIm1oUFVBiDsbMeiaz8eF5slW1ZGLmv3Dvl7V9riGP?=
+ =?us-ascii?Q?v7z2FL8LqUdT5gDgW5VVc19wxqjpx9ckL7tgFIQeDAiyvlXZjmZ8G6M1U4iR?=
+ =?us-ascii?Q?Nox6reAWDxnM8KQK8DWaiG8C2+Qzy6hYhpUJ6CQBi6800I09CaMs1iO2kjlp?=
+ =?us-ascii?Q?Re1V3acdloaw1L9nRsxs/otK1PdLIpIUYAD/1TSPQQMylFXTuqrRMVdw53zl?=
+ =?us-ascii?Q?sgY28nXa+2g+S2MwYcB9GelOEWPoj5uJO1IJIYtAJrGP5YC7SLLQ1ef1yecN?=
+ =?us-ascii?Q?AwuguoYA3JBd3LNRbG6AnqnKJe4/V/SoArrEnzc6v6UC8/QIc/8Sc94VNHuH?=
+ =?us-ascii?Q?9k7P64K/cw4doosRDEciGLRM5XjuzpEnuCHy0CSMgbDN4lceL7wuuLEoaCY5?=
+ =?us-ascii?Q?yAsBD8SyumI5u704hFHga8HU6KYt0AR/Nudgy87P+6XAFsKol1gbXqxENR1k?=
+ =?us-ascii?Q?vMlWzkR0usAnkp9Xzk9H2cgDhz+mCBSqwheeJWd7cgIjPLbHsaWJjlJzkV5G?=
+ =?us-ascii?Q?nfJ4YqJ49Y/X+WPoWeZU+P0hFOVZjlwzPpnT1aMr7m10xpZhen0fCzU+rEzF?=
+ =?us-ascii?Q?R6ppdP++4tzdz0uC4E0TQqbSvMiq3lstbrpHPYs3zQCr42SCE54Eo3LWJWnr?=
+ =?us-ascii?Q?TY6LJK4KlQy2Ow9j7xgxJGHlYH1zUjoJimjcwEJ6j1QOvfN+rO/BZzpEP1MC?=
+ =?us-ascii?Q?Ni+g/Bey/aOWVBoJf54H9KZwnjqaN7w5jADT1SFY1nil7ZyD4RPebzjvT1+9?=
+ =?us-ascii?Q?dPNLTzLeSTpxcQkjgEi2D34PLLTIi7P8E8mQUri7VK/vHE6gRbFdxpsLxaDo?=
+ =?us-ascii?Q?XU6u4kXBgltpBcrtO2HTI8aU0RS3SjUEYspd63CEbot0eWhEsXyP4fqy6D7W?=
+ =?us-ascii?Q?CsUE2Bd+ACI/DT9DFHE19VU5D55ivClyLk1mHkr+3qGMFvHmAUYPPEKuIt0T?=
+ =?us-ascii?Q?DKffy3V9ofSBliICL+HWNCM1NMhacy5JIqW1eeBMNWwT85hNVi6/L8emyZ7s?=
+ =?us-ascii?Q?85wUL+jzxOxOqHffMsmCju5Km6RyAAKisYTq7BqhNuB5Ig+MOOQ8h810ppRi?=
+ =?us-ascii?Q?WqzBrCi/iuOF0pWG4/2oSFw+RAI+XiGtHhbLTdJlxAkafqZwfi4UnYWAZIWK?=
+ =?us-ascii?Q?EAUUTgHNAgYIcMzR+eJQxgo7KScUkogFTxWWBJV/xdHrLOtaZA7LI1NMqGK6?=
+ =?us-ascii?Q?mSuwJTObuOrt2Wk6N9l6S12/Fcus8TJub6YOwkL8HT9JCQ1Th4VPaxYpmbE8?=
+ =?us-ascii?Q?KGs2FhQVFij0slRyYVIdMtW7NUsEfvIIdB97DyK2rOF9E61nojspDpfS9MJE?=
+ =?us-ascii?Q?1bdUP/L7WPEoU2pK+/uVglEEGM7NjoaJlLx+Cz/K2dEJyTFbIGkbI46lRDqc?=
+ =?us-ascii?Q?C3Ur2LoeNm64ij2vbtyPI2u/aFBQB5wyPOljQ06GimqvF4qBNFHorAoEYRFZ?=
+ =?us-ascii?Q?CPmpqyk3/zChuBzFYobY8jWhZD77sIX9+k2l2FnmnW04k+kV4eAxEDdj0ogj?=
+ =?us-ascii?Q?bsChrg=3D=3D?=
 X-OriginatorOrg: corigine.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd945b55-e098-4c1a-8031-08db8c63d066
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05e7f288-a5a2-4057-de80-08db8c6a8491
 X-MS-Exchange-CrossTenant-AuthSource: PH0PR13MB4842.namprd13.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2023 16:34:13.2901
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2023 17:22:12.5931
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: fe128f2c-073b-4c20-818e-7246a585940c
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vH0sMPUoFrKmugSrk9LG3tt/k36RYAv9TxzuRx+1O7GpoRk4ZWuNuBRCwBRkVyLz0pCqJ+b9aDWXs7QyuMdL3QwJUrPRFvqR0al6TBQd9EE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR13MB3781
+X-MS-Exchange-CrossTenant-UserPrincipalName: rghN7JIduudjJt4flO5IpYW7CQ+EIpxAOsIQmpiwxLfNNTXW8wESnsbQkITE9QEwQOh7yCgqBiOUr7P45iIClexYP0rys1eMgSpc4nE0E7w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR13MB6240
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 20, 2023 at 10:18:58AM +0100, Vadim Fedorenko wrote:
-> DPLL framework is used to represent and configure DPLL devices
-> in systems. Each device that has DPLL and can configure inputs
-> and outputs can use this framework.
-
-Hi Vadim,
-
-some minor feedback from my side.
-
-> 
-> Implement dpll netlink framework functions for enablement of dpll
-> subsytem netlink family.
-
-subsytem -> subsystem
+On Thu, Jul 20, 2023 at 10:19:00AM +0100, Vadim Fedorenko wrote:
 
 ...
 
-> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
+Hi Vadim,
+
+> diff --git a/drivers/net/ethernet/intel/ice/ice_common.c b/drivers/net/ethernet/intel/ice/ice_common.c
 
 ...
 
 > +/**
-> + * dpll_msg_add_pin_handle - attach pin handle attribute to a given message
-> + * @msg: pointer to sk_buff message to attach a pin handle
-> + * @pin: pin pointer
+> + * ice_aq_get_cgu_dpll_status
+> + * @hw: pointer to the HW struct
+> + * @dpll_num: DPLL index
+> + * @ref_state: Reference clock state
+> + * @dpll_state: DPLL state
+
+./scripts/kernel-doc says that @config is missing here.
+
+> + * @phase_offset: Phase offset in ns
+> + * @eec_mode: EEC_mode
 > + *
-> + * Return:
-> + * * 0 - success
-> + * * -EMSGSIZE - no space in message to attach pin handle
+> + * Get CGU DPLL status (0x0C66)
 > + */
-> +int dpll_msg_add_pin_handle(struct sk_buff *msg, struct dpll_pin *pin)
-
-This function seems to only be used in this file.
-Should it be static.
-
-...
-
-> +static int
-> +dpll_msg_add_pin_on_dpll_state(struct sk_buff *msg, struct dpll_pin *pin,
-> +			       struct dpll_pin_ref *ref,
-> +			       struct netlink_ext_ack *extack)
-> +{
-> +	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-> +	struct dpll_device *dpll = ref->dpll;
-> +	enum dpll_pin_state state;
-> +	int ret;
-> +
-> +
-
-nit: one blank line is enough
+> +int
+> +ice_aq_get_cgu_dpll_status(struct ice_hw *hw, u8 dpll_num, u8 *ref_state,
+> +			   u8 *dpll_state, u8 *config, s64 *phase_offset,
+> +			   u8 *eec_mode)
 
 ...
 
-> +static int
-> +dpll_msg_add_pin_freq(struct sk_buff *msg, struct dpll_pin *pin,
-> +		      struct dpll_pin_ref *ref, struct netlink_ext_ack *extack)
+> diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.c b/drivers/net/ethernet/intel/ice/ice_ptp_hw.c
+
+...
+
+> +/**
+> + * ice_get_cgu_state - get the state of the DPLL
+> + * @hw: pointer to the hw struct
+> + * @dpll_idx: Index of internal DPLL unit
+> + * @last_dpll_state: last known state of DPLL
+> + * @pin: pointer to a buffer for returning currently active pin
+> + * @ref_state: reference clock state
+
+Likewise, @eec_mode is missing here.
+
+> + * @phase_offset: pointer to a buffer for returning phase offset
+> + * @dpll_state: state of the DPLL (output)
+
+And @mode is missing here.
+
+> + *
+> + * This function will read the state of the DPLL(dpll_idx). Non-null
+> + * 'pin', 'ref_state', 'eec_mode' and 'phase_offset' parameters are used to
+> + * retrieve currently active pin, state, mode and phase_offset respectively.
+> + *
+> + * Return: state of the DPLL
+> + */
+> +int ice_get_cgu_state(struct ice_hw *hw, u8 dpll_idx,
+> +		      enum dpll_lock_status last_dpll_state, u8 *pin,
+> +		      u8 *ref_state, u8 *eec_mode, s64 *phase_offset,
+> +		      enum dpll_lock_status *dpll_state,
+> +		      enum dpll_mode *mode)
 > +{
-> +	const struct dpll_pin_ops *ops = dpll_pin_ops(ref);
-> +	struct dpll_device *dpll = ref->dpll;
-> +	struct nlattr *nest;
-> +	int fs, ret;
-> +	u64 freq;
+> +	u8 hw_ref_state, hw_dpll_state, hw_eec_mode, hw_config;
+> +	s64 hw_phase_offset;
+> +	int status;
 > +
-> +	if (!ops->frequency_get)
-> +		return 0;
-> +	ret = ops->frequency_get(pin, dpll_pin_on_dpll_priv(dpll, pin), dpll,
-> +				 dpll_priv(dpll), &freq, extack);
-> +	if (ret)
-> +		return ret;
-> +	if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY, sizeof(freq), &freq, 0))
-> +		return -EMSGSIZE;
-> +	for (fs = 0; fs < pin->prop->freq_supported_num; fs++) {
-> +		nest = nla_nest_start(msg, DPLL_A_PIN_FREQUENCY_SUPPORTED);
-> +		if (!nest)
-> +			return -EMSGSIZE;
-> +		freq = pin->prop->freq_supported[fs].min;
-> +		if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MIN, sizeof(freq),
-> +				   &freq, 0)) {
+> +	status = ice_aq_get_cgu_dpll_status(hw, dpll_idx, &hw_ref_state,
+> +					    &hw_dpll_state, &hw_config,
+> +					    &hw_phase_offset, &hw_eec_mode);
+> +	if (status) {
+> +		*dpll_state = ICE_CGU_STATE_INVALID;
 
-nit: The indention of the line above isn't quite right.
-     There is one space too many.
+dpll_state is of type enum dpll_lock_status.
+But the type of ICE_CGU_STATE_INVALID is enum ice_cgu_state.
+Is this intended?
 
-> +			nla_nest_cancel(msg, nest);
-> +			return -EMSGSIZE;
-> +		}
-> +		freq = pin->prop->freq_supported[fs].max;
-> +		if (nla_put_64bit(msg, DPLL_A_PIN_FREQUENCY_MAX, sizeof(freq),
-> +				   &freq, 0)) {
+As flagged by gcc-12 W=1 and clang-16 W=1 builds.
 
-Ditto.
-
-> +			nla_nest_cancel(msg, nest);
-> +			return -EMSGSIZE;
-> +		}
-> +		nla_nest_end(msg, nest);
+> +		return status;
 > +	}
 > +
-> +	return 0;
-> +}
+> +	if (pin)
+> +		/* current ref pin in dpll_state_refsel_status_X register */
+> +		*pin = hw_config & ICE_AQC_GET_CGU_DPLL_CONFIG_CLK_REF_SEL;
+> +	if (phase_offset)
+> +		*phase_offset = hw_phase_offset;
+> +	if (ref_state)
+> +		*ref_state = hw_ref_state;
+> +	if (eec_mode)
+> +		*eec_mode = hw_eec_mode;
+> +	if (!dpll_state)
+> +		return status;
+
+Here dpll_state is checked for NULL.
+But, above, it is dereferenced in the case where ice_aq_get_cgu_dpll_status
+fails. Is that safe?
+
+Also, perhaps it makes things a bit clearer to return 0 here.
 
 ...
 
-> +static int
-> +dpll_device_event_send(enum dpll_cmd event, struct dpll_device *dpll)
-> +{
-> +	struct sk_buff *msg;
-> +	void *hdr;
-> +	int ret;
-> +
-> +	if (WARN_ON(!xa_get_mark(&dpll_device_xa, dpll->id, DPLL_REGISTERED)))
-> +		return -ENODEV;
-> +	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-> +	if (!msg)
-> +		return -ENOMEM;
-> +	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0, event);
-> +	if (!hdr)
-> +		goto err_free_msg;
-
-ret is uninitialised here, but it is used in the error path.
-
-This is flagged by a clang-16 W=1 build, and Smatch.
-
-> +	ret = dpll_device_get_one(dpll, msg, NULL);
-> +	if (ret)
-> +		goto err_cancel_msg;
-> +	genlmsg_end(msg, hdr);
-> +	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
-> +
-> +	return 0;
-> +
-> +err_cancel_msg:
-> +	genlmsg_cancel(msg, hdr);
-> +err_free_msg:
-> +	nlmsg_free(msg);
-> +
-> +	return ret;
-> +}
+> diff --git a/drivers/net/ethernet/intel/ice/ice_ptp_hw.h b/drivers/net/ethernet/intel/ice/ice_ptp_hw.h
 
 ...
 
-> +int __dpll_device_change_ntf(struct dpll_device *dpll)
-> +{
-> +	return dpll_device_event_send(DPLL_CMD_DEVICE_CHANGE_NTF, dpll);
-> +}
+> +static const struct ice_cgu_pin_desc ice_e810t_sfp_cgu_inputs[] = {
+> +	{ "CVL-SDP22",	  ZL_REF0P, DPLL_PIN_TYPE_INT_OSCILLATOR,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "CVL-SDP20",	  ZL_REF0N, DPLL_PIN_TYPE_INT_OSCILLATOR,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "C827_0-RCLKA", ZL_REF1P, DPLL_PIN_TYPE_MUX, 0, },
+> +	{ "C827_0-RCLKB", ZL_REF1N, DPLL_PIN_TYPE_MUX, 0, },
+> +	{ "SMA1",	  ZL_REF3P, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "SMA2/U.FL2",	  ZL_REF3N, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "GNSS-1PPS",	  ZL_REF4P, DPLL_PIN_TYPE_GNSS,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +	{ "OCXO",	  ZL_REF4N, DPLL_PIN_TYPE_INT_OSCILLATOR, 0, },
+> +};
 
-Should this function be static?
+A gcc-12 W=1 build warns that ice_e810t_sfp_cgu_inputs, and
+the similar static variables below, are unused when ice_ptp_hw.h
+is included in ice_main.c via ice.h.
 
-...
+Looking at ice_e823_zl_cgu_outputs[], it seems to only be used
+in ice_ptp_hw.c, so perhaps it could be defined there.
 
-> +static int
-> +dpll_pin_event_send(enum dpll_cmd event, struct dpll_pin *pin)
-> +{
-> +	struct sk_buff *msg;
-> +	void *hdr;
-> +	int ret;
+Perhaps that is also true of the other static variables below,
+but I didn't check that.
+
 > +
-> +	if (WARN_ON(!xa_get_mark(&dpll_pin_xa, pin->id, DPLL_REGISTERED)))
-> +		return -ENODEV;
+> +static const struct ice_cgu_pin_desc ice_e810t_qsfp_cgu_inputs[] = {
+> +	{ "CVL-SDP22",	  ZL_REF0P, DPLL_PIN_TYPE_INT_OSCILLATOR,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "CVL-SDP20",	  ZL_REF0N, DPLL_PIN_TYPE_INT_OSCILLATOR,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "C827_0-RCLKA", ZL_REF1P, DPLL_PIN_TYPE_MUX, },
+> +	{ "C827_0-RCLKB", ZL_REF1N, DPLL_PIN_TYPE_MUX, },
+> +	{ "C827_1-RCLKA", ZL_REF2P, DPLL_PIN_TYPE_MUX, },
+> +	{ "C827_1-RCLKB", ZL_REF2N, DPLL_PIN_TYPE_MUX, },
+> +	{ "SMA1",	  ZL_REF3P, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "SMA2/U.FL2",	  ZL_REF3N, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "GNSS-1PPS",	  ZL_REF4P, DPLL_PIN_TYPE_GNSS,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +	{ "OCXO",	  ZL_REF4N, DPLL_PIN_TYPE_INT_OSCILLATOR, },
+> +};
 > +
-> +	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
-> +	if (!msg)
-> +		return -ENOMEM;
+> +static const struct ice_cgu_pin_desc ice_e810t_sfp_cgu_outputs[] = {
+> +	{ "REF-SMA1",	    ZL_OUT0, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "REF-SMA2/U.FL2", ZL_OUT1, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "PHY-CLK",	    ZL_OUT2, DPLL_PIN_TYPE_SYNCE_ETH_PORT, },
+> +	{ "MAC-CLK",	    ZL_OUT3, DPLL_PIN_TYPE_SYNCE_ETH_PORT, },
+> +	{ "CVL-SDP21",	    ZL_OUT4, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +	{ "CVL-SDP23",	    ZL_OUT5, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +};
 > +
-> +	hdr = genlmsg_put(msg, 0, 0, &dpll_nl_family, 0, event);
-> +	if (!hdr)
-> +		goto err_free_msg;
-
-It looks like ret is used uninitialised here too.
-
-> +	ret = dpll_cmd_pin_get_one(msg, pin, NULL);
-> +	if (ret)
-> +		goto err_cancel_msg;
-> +	genlmsg_end(msg, hdr);
-> +	genlmsg_multicast(&dpll_nl_family, msg, 0, 0, GFP_KERNEL);
+> +static const struct ice_cgu_pin_desc ice_e810t_qsfp_cgu_outputs[] = {
+> +	{ "REF-SMA1",	    ZL_OUT0, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "REF-SMA2/U.FL2", ZL_OUT1, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "PHY-CLK",	    ZL_OUT2, DPLL_PIN_TYPE_SYNCE_ETH_PORT, 0 },
+> +	{ "PHY2-CLK",	    ZL_OUT3, DPLL_PIN_TYPE_SYNCE_ETH_PORT, 0 },
+> +	{ "MAC-CLK",	    ZL_OUT4, DPLL_PIN_TYPE_SYNCE_ETH_PORT, 0 },
+> +	{ "CVL-SDP21",	    ZL_OUT5, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +	{ "CVL-SDP23",	    ZL_OUT6, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +};
 > +
-> +	return 0;
+> +static const struct ice_cgu_pin_desc ice_e823_si_cgu_inputs[] = {
+> +	{ "NONE",	  SI_REF0P, 0, 0 },
+> +	{ "NONE",	  SI_REF0N, 0, 0 },
+> +	{ "SYNCE0_DP",	  SI_REF1P, DPLL_PIN_TYPE_MUX, 0 },
+> +	{ "SYNCE0_DN",	  SI_REF1N, DPLL_PIN_TYPE_MUX, 0 },
+> +	{ "EXT_CLK_SYNC", SI_REF2P, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "NONE",	  SI_REF2N, 0, 0 },
+> +	{ "EXT_PPS_OUT",  SI_REF3,  DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "INT_PPS_OUT",  SI_REF4,  DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +};
 > +
-> +err_cancel_msg:
-> +	genlmsg_cancel(msg, hdr);
-> +err_free_msg:
-> +	nlmsg_free(msg);
+> +static const struct ice_cgu_pin_desc ice_e823_si_cgu_outputs[] = {
+> +	{ "1588-TIME_SYNC", SI_OUT0, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "PHY-CLK",	    SI_OUT1, DPLL_PIN_TYPE_SYNCE_ETH_PORT, 0 },
+> +	{ "10MHZ-SMA2",	    SI_OUT2, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_10_mhz), ice_cgu_pin_freq_10_mhz },
+> +	{ "PPS-SMA1",	    SI_OUT3, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +};
 > +
-> +	return ret;
-> +}
-
-...
-
-> +void
-> +dpll_unlock_doit(const struct genl_split_ops *ops, struct sk_buff *skb,
-> +		   struct genl_info *info)
-
-The indentation of the line above is not correct.
-There are two spaces too many.
-
-...
-
-> +void dpll_netlink_finish(void)
-> +{
-> +	genl_unregister_family(&dpll_nl_family);
-> +}
-
-Should this function be static?
+> +static const struct ice_cgu_pin_desc ice_e823_zl_cgu_inputs[] = {
+> +	{ "NONE",	  ZL_REF0P, 0, 0 },
+> +	{ "INT_PPS_OUT",  ZL_REF0N, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +	{ "SYNCE0_DP",	  ZL_REF1P, DPLL_PIN_TYPE_MUX, 0 },
+> +	{ "SYNCE0_DN",	  ZL_REF1N, DPLL_PIN_TYPE_MUX, 0 },
+> +	{ "NONE",	  ZL_REF2P, 0, 0 },
+> +	{ "NONE",	  ZL_REF2N, 0, 0 },
+> +	{ "EXT_CLK_SYNC", ZL_REF3P, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "NONE",	  ZL_REF3N, 0, 0 },
+> +	{ "EXT_PPS_OUT",  ZL_REF4P, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +	{ "OCXO",	  ZL_REF4N, DPLL_PIN_TYPE_INT_OSCILLATOR, 0 },
+> +};
+> +
+> +static const struct ice_cgu_pin_desc ice_e823_zl_cgu_outputs[] = {
+> +	{ "PPS-SMA1",	   ZL_OUT0, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_1_hz), ice_cgu_pin_freq_1_hz },
+> +	{ "10MHZ-SMA2",	   ZL_OUT1, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_10_mhz), ice_cgu_pin_freq_10_mhz },
+> +	{ "PHY-CLK",	   ZL_OUT2, DPLL_PIN_TYPE_SYNCE_ETH_PORT, 0 },
+> +	{ "1588-TIME_REF", ZL_OUT3, DPLL_PIN_TYPE_SYNCE_ETH_PORT, 0 },
+> +	{ "CPK-TIME_SYNC", ZL_OUT4, DPLL_PIN_TYPE_EXT,
+> +		ARRAY_SIZE(ice_cgu_pin_freq_common), ice_cgu_pin_freq_common },
+> +	{ "NONE",	   ZL_OUT5, 0, 0 },
+> +};
+> +
+>  extern const struct
+>  ice_cgu_pll_params_e822 e822_cgu_params[NUM_ICE_TIME_REF_FREQ];
+>  
 
 ...
