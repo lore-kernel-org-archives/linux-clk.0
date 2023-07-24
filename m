@@ -2,86 +2,129 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6FBC001B0
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Jul 2023 23:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0350DEB64DD
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 05:58:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbjGWXlr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Jul 2023 19:41:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35918 "EHLO
+        id S229771AbjGXF6y convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jul 2023 01:58:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbjGWXlq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Jul 2023 19:41:46 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1365E5F;
-        Sun, 23 Jul 2023 16:41:45 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id d9443c01a7336-1bb85ed352bso1728205ad.0;
-        Sun, 23 Jul 2023 16:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690155705; x=1690760505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lwrLRuLXj8SHaGOhqw9PbpKmc82/+6Aipnzx6dTElL8=;
-        b=AM/kFZCWa3uzV8PQc0is47mGVWBl0jPW74oQtHwlHDYr4a8khPFczbevFQj7xKv/iJ
-         K86ey5Fgtkg54XSNRp33uyN/HL611jA35vCZ5qmq7yhdhtVPyG1gzRyKGw8MCJ23vPAh
-         RvdLvzp92G6po+2oc/IXpdPACnaItxKLlFCN7pPk9it5ZSwzlw4C/Nk41aueNK8ajhOP
-         TJSKF9bjkThbb7GPdY1AcxL/XuAcGps79N0Ns1/lU6PQc7bal1Fwh+b33Xsz8VWzPT7y
-         9x3dODT4UB+HsCn2moD/ZRMDDA7sqelpE17SN/5xm48SqmtWOCsT359nJDsUmCqO88U1
-         Blwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690155705; x=1690760505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lwrLRuLXj8SHaGOhqw9PbpKmc82/+6Aipnzx6dTElL8=;
-        b=TkdohDaHSk2bI1BNKtbqSl9NyhXaDhrAsDna7Tw0S5ulv3KzmiBFc+a568U51SYW9F
-         iZCH7XNgHhNcXyRUih29ySDxlQ7j/PkWZu+YJSdS+j56dnUQ6mKw6ke35dDzXV7htM1f
-         UNIxdrpdVaSyG1uZXKFTiWhqiwCzRwqwXSZz9wwORguldanYvNvuVSDZvt7076NMzakJ
-         Uj/JVw3zAi0cgck01peOB0cMmANdF+yZ/+KztW6nvGSDtGlmCsWtVl7wBdF4rhTCP3mR
-         FcfsCKgNEvLPSUkn1/z/LeHY4f6LwHmmg+j9IJD0Y4bWPcYeHu+bTuHbgRew3aJedFrO
-         fbnA==
-X-Gm-Message-State: ABy/qLZyrXfrW3CdtEiMsdSMGbSleRGTMyUnCoz/zyawnXzeWMyY6LGr
-        HyDASWcyd5MajipCrZ49gjA02yMqYIjmCugtvFykpldS
-X-Google-Smtp-Source: APBJJlH6vs+K/CbuFkeV7XO9qfwoQkwgdpOdDnjtv1vn97dIw5hiB+z2jOkl3L5LVuKXhYeeF9PZyrm8nUqy7QNMY6g=
-X-Received: by 2002:a17:903:32c9:b0:1b8:5827:8763 with SMTP id
- i9-20020a17090332c900b001b858278763mr10842761plr.4.1690155705222; Sun, 23 Jul
- 2023 16:41:45 -0700 (PDT)
+        with ESMTP id S229546AbjGXF6x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 01:58:53 -0400
+Received: from fd01.gateway.ufhost.com (fd01.gateway.ufhost.com [61.152.239.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 466C5DE;
+        Sun, 23 Jul 2023 22:58:51 -0700 (PDT)
+Received: from EXMBX165.cuchost.com (unknown [175.102.18.54])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (Client CN "EXMBX165", Issuer "EXMBX165" (not verified))
+        by fd01.gateway.ufhost.com (Postfix) with ESMTP id DAA2D80A8;
+        Mon, 24 Jul 2023 13:58:46 +0800 (CST)
+Received: from EXMBX061.cuchost.com (172.16.6.61) by EXMBX165.cuchost.com
+ (172.16.6.75) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 24 Jul
+ 2023 13:58:47 +0800
+Received: from localhost.localdomain (183.27.99.135) by EXMBX061.cuchost.com
+ (172.16.6.61) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Mon, 24 Jul
+ 2023 13:58:46 +0800
+From:   Xingyu Wu <xingyu.wu@starfivetech.com>
+To:     <linux-riscv@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Conor Dooley <conor@kernel.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+        Hal Feng <hal.feng@starfivetech.com>,
+        Xingyu Wu <xingyu.wu@starfivetech.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v1] reset: starfive: jh7110: Add StarFive STG/ISP/VOUT resets support
+Date:   Mon, 24 Jul 2023 13:54:40 +0800
+Message-ID: <20230724055440.100947-1-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20230712115301.690714-1-festevam@gmail.com>
-In-Reply-To: <20230712115301.690714-1-festevam@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Sun, 23 Jul 2023 20:41:34 -0300
-Message-ID: <CAOMZO5AgwLypVJNNbkd20rzouLxSWeYDd2ScaGLFNFv1st8H_Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] ARM: dts: imx6sx: Remove LDB endpoint
-To:     shawnguo@kernel.org
-Cc:     hs@denx.de, linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
-        abelvesa@kernel.org, linux-clk@vger.kernel.org,
-        Fabio Estevam <festevam@denx.de>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [183.27.99.135]
+X-ClientProxiedBy: EXCAS061.cuchost.com (172.16.6.21) To EXMBX061.cuchost.com
+ (172.16.6.61)
+X-YovoleRuleAgent: yovoleflag
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Shawn,
+Add new struct members and auxiliary_device_id of resets to support
+System-Top-Group, Image-Signal-Process and Video-Output on the StarFive
+JH7110 SoC.
 
-On Wed, Jul 12, 2023 at 8:53=E2=80=AFAM Fabio Estevam <festevam@gmail.com> =
-wrote:
->
-> From: Fabio Estevam <festevam@denx.de>
->
-> Remove the LDB endpoint description from the common imx6sx.dtsi
-> as it causes regression for boards that has the LCDIF connected
-> directly to a parallel display.
->
-> Let the LDB endpoint be described in the board devicetree file
-> instead.
->
-> Cc: stable@vger.kernel.org
-> Fixes: b74edf626c4f ("ARM: dts: imx6sx: Add LDB support")
-> Signed-off-by: Fabio Estevam <festevam@denx.de>
-> ---
-> Changes since v2:
-> - Rebased against 6.5-rc1.
+Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+---
 
-Please consider applying this one as it fixes a regression, thanks.
+Hi Stephen,
+
+I found that the PR sent by conor was missing this STG/ISP/VOUT
+resets patch:
+https://lore.kernel.org/all/20230719-trough-frisk-40b92acb485a@spud/
+
+I resend this patch to make the CRG drivers completed.
+
+Thanks,
+Xingyu Wu
+
+---
+ .../reset/starfive/reset-starfive-jh7110.c    | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/drivers/reset/starfive/reset-starfive-jh7110.c b/drivers/reset/starfive/reset-starfive-jh7110.c
+index 2d26ae95c8cc..29a43f0f2ad6 100644
+--- a/drivers/reset/starfive/reset-starfive-jh7110.c
++++ b/drivers/reset/starfive/reset-starfive-jh7110.c
+@@ -31,6 +31,24 @@ static const struct jh7110_reset_info jh7110_aon_info = {
+ 	.status_offset = 0x3C,
+ };
+ 
++static const struct jh7110_reset_info jh7110_stg_info = {
++	.nr_resets = JH7110_STGRST_END,
++	.assert_offset = 0x74,
++	.status_offset = 0x78,
++};
++
++static const struct jh7110_reset_info jh7110_isp_info = {
++	.nr_resets = JH7110_ISPRST_END,
++	.assert_offset = 0x38,
++	.status_offset = 0x3C,
++};
++
++static const struct jh7110_reset_info jh7110_vout_info = {
++	.nr_resets = JH7110_VOUTRST_END,
++	.assert_offset = 0x48,
++	.status_offset = 0x4C,
++};
++
+ static int jh7110_reset_probe(struct auxiliary_device *adev,
+ 			      const struct auxiliary_device_id *id)
+ {
+@@ -58,6 +76,18 @@ static const struct auxiliary_device_id jh7110_reset_ids[] = {
+ 		.name = "clk_starfive_jh7110_sys.rst-aon",
+ 		.driver_data = (kernel_ulong_t)&jh7110_aon_info,
+ 	},
++	{
++		.name = "clk_starfive_jh7110_sys.rst-stg",
++		.driver_data = (kernel_ulong_t)&jh7110_stg_info,
++	},
++	{
++		.name = "clk_starfive_jh7110_sys.rst-isp",
++		.driver_data = (kernel_ulong_t)&jh7110_isp_info,
++	},
++	{
++		.name = "clk_starfive_jh7110_sys.rst-vo",
++		.driver_data = (kernel_ulong_t)&jh7110_vout_info,
++	},
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(auxiliary, jh7110_reset_ids);
+-- 
+2.25.1
+
