@@ -2,117 +2,125 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FB9C001DF
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 14:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0693CC04A6A
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 14:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230162AbjGXOBf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jul 2023 10:01:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
+        id S231561AbjGXOI6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jul 2023 10:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230149AbjGXOBe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 10:01:34 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0C690
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2023 07:01:31 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-228-RFpHSq0cPeuQ7jM8jWimbA-1; Mon, 24 Jul 2023 15:01:29 +0100
-X-MC-Unique: RFpHSq0cPeuQ7jM8jWimbA-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 24 Jul
- 2023 15:01:27 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 24 Jul 2023 15:01:27 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Geert Uytterhoeven' <geert@linux-m68k.org>,
-        Serge Semin <fancer.lancer@gmail.com>
-CC:     "wuyonggang001@208suo.com" <wuyonggang001@208suo.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] clk: baikal-t1: Using div64_ Ul replaces do_ Div()
- function
-Thread-Topic: [PATCH] clk: baikal-t1: Using div64_ Ul replaces do_ Div()
- function
-Thread-Index: AQHZvjSmxeKvFHAks0K1RCRZ2bTXfq/I8SJw
-Date:   Mon, 24 Jul 2023 14:01:27 +0000
-Message-ID: <daccab41116d4c88823ab7fc84846077@AcuMS.aculab.com>
-References: <20230612033904.34921-1-zhanglibing@cdjrlc.com>
- <0dc9409b662180ed29cbc281f0f076b7@208suo.com>
- <fcd37e67fba625da304fdaf07e0ab0db@208suo.com>
- <CAMuHMdX0xP5Gugo7uF5Wqk9_ny6-4fOWYRm41KicOo26kC6m+g@mail.gmail.com>
- <nt6kbounehvfqo4hpfj3wbr7baukuhr22dafvoykgyehs4imsp@pc6bajyo6ugn>
- <CAMuHMdUHDK9CCJPoMgLQBrXjk9VWszYF17dUU=9JtQ8XX=QAPA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUHDK9CCJPoMgLQBrXjk9VWszYF17dUU=9JtQ8XX=QAPA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        with ESMTP id S231661AbjGXOIv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 10:08:51 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 496EB1BCC
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2023 07:08:32 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id 2adb3069b0e04-4fb77f21c63so6639501e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jul 2023 07:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1690207694; x=1690812494;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3FNW9VRZHhgIzd5ftbN7Gghi1gRBQjf9A2ZRcYqwmWw=;
+        b=wp7b5MeMVKmKocDMY2GV1UwU06P62+OxtE9rEvdebP3m6olboAaxCFT/VYdUIPnkCA
+         Izwq7+Qc5j1AgH+sMk1JUsdeG0aaxmnHxLwdJbIlitL0lohqsQtkJCHA0+vHKJ331OwA
+         ebBHV29050CjjWD3dDtHncDtpLRjjqx/wu1YemN2MQ68/2KZpunj9WIG1FLaZIEVjaRz
+         ZzlzlgQpP0YbHARuwXjdPl9C3CZLOo7Mt8t1HQ4kN8YMauJSrDbtD5Csqu+lTLpslsGm
+         ueec52gbzxhktik5pE/SOpkUYSTrSHKBNMj+KsqqUxtsuPNGtkRi0Nqd+nGKwljf5usM
+         G5gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690207694; x=1690812494;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
+         :to:content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3FNW9VRZHhgIzd5ftbN7Gghi1gRBQjf9A2ZRcYqwmWw=;
+        b=C/x91HWG66HpNhLhNHLRu3fkyMRQMudmpScz3iUyIXNwVXI+GZhMGmD5aa9CaNjC0d
+         jWjc7qcetPd1164MLSfLWeJjx3+Fntqu3V/wf0Aaoqn5d2O5v+eo+24cScgX39uvfJ25
+         GWj+OpnwL265OvifbTruRWv1UsF1afFCR9N0QzjOL47tYVHRVwTb+/Xf2gFJbGQUaiKL
+         d03tJwZP03WWUGBQ5Z6xqAyDgGhna3Y2I/d051M/7EKQLY5WRWgPWYPihCVFN9X5X9aZ
+         0wjaaCSO5aLKCyznAp4mMtAx8sGYeR0Nw2MWRJZ/tNyqNLNVVdXZOagAJTOWgmDLwaUF
+         9BJw==
+X-Gm-Message-State: ABy/qLY6SJ3Zm4p0qn2W0Isi21rcytrMVGH6wMnCfI8d4uaTGnMMTvts
+        zsDP93vxx5m4J9GIZ6WAVe5s+g==
+X-Google-Smtp-Source: APBJJlE+NyuVm5cmUEeVFaq4u66Cz/M0UhmRgH9clb5xq02ToKHR+gKXadt4v3ozS0wXqYtBWWiH+A==
+X-Received: by 2002:a05:6512:3e0d:b0:4f8:68a3:38e2 with SMTP id i13-20020a0565123e0d00b004f868a338e2mr6927769lfv.0.1690207694600;
+        Mon, 24 Jul 2023 07:08:14 -0700 (PDT)
+Received: from [192.168.1.101] (abxj221.neoplus.adsl.tpnet.pl. [83.9.3.221])
+        by smtp.gmail.com with ESMTPSA id q11-20020ac25fcb000000b004f85d247069sm2217257lfg.218.2023.07.24.07.08.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jul 2023 07:08:14 -0700 (PDT)
+Message-ID: <72d60064-224e-7d1a-3d8d-3680ce451a8d@linaro.org>
+Date:   Mon, 24 Jul 2023 16:08:12 +0200
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] clk: qcom: clk-hfpll: Configure l_val in init when
+ required
 Content-Language: en-US
+To:     Adam Skladowski <a39.skl@gmail.com>
+Cc:     phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        Bjorn Andersson <andersson@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230723160827.22660-1-a39.skl@gmail.com>
+ <20230723160827.22660-3-a39.skl@gmail.com>
+From:   Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20230723160827.22660-3-a39.skl@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuDQo+IFNlbnQ6IDI0IEp1bHkgMjAyMyAxNDozOQ0KPiAN
-Cj4gSGkgU2VyZ2UsDQo+IA0KPiBPbiBNb24sIEp1bCAyNCwgMjAyMyBhdCAzOjEz4oCvUE0gU2Vy
-Z2UgU2VtaW4gPGZhbmNlci5sYW5jZXJAZ21haWwuY29tPiB3cm90ZToNCj4gPiBPbiBNb24sIEp1
-bCAyNCwgMjAyMyBhdCAxMjowNDoxOVBNICswMjAwLCBHZWVydCBVeXR0ZXJob2V2ZW4gd3JvdGU6
-DQo+ID4gPiBPbiBXZWQsIEp1biAxNCwgMjAyMyBhdCA4OjA34oCvQU0gPHd1eW9uZ2dhbmcwMDFA
-MjA4c3VvLmNvbT4gd3JvdGU6DQo+ID4gPiA+IEZpeCB0aGUgZm9sbG93aW5nIGNvY2NpY2hlY2sg
-d2FybmluZzoNCj4gPiA+ID4NCj4gPiA+ID4gZHJpdmVycy9jbGsvYmFpa2FsLXQxL2NjdS1wbGwu
-Yzo4MToxLTc6IFdBUk5JTkc6IGRvX2RpdigpIGRvZXMgYQ0KPiA+ID4gPiA2NC1ieS0zMiBkaXZp
-c2lvbiwgcGxlYXNlIGNvbnNpZGVyIHVzaW5nIGRpdjY0X3VsIGluc3RlYWQuDQo+ID4gPiA+DQo+
-ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFlvbmdnYW5nIFd1IDx3dXlvbmdnYW5nMDAxQDIwOHN1by5j
-b20+DQo+ID4gPg0KPiA+ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoLCB3aGljaCBpcyBub3cgY29t
-bWl0IGI5M2QxMzMxZWEyNjZkZWENCj4gPiA+ICgiY2xrOiBiYWlrYWwtdDE6IFVzaW5nIGRpdjY0
-XyBVbCByZXBsYWNlcyBkb18gRGl2KCkgZnVuY3Rpb24iKQ0KPiA+ID4gaW4gY2xrL2Nsay1uZXh0
-Lg0KPiA+ID4NCj4gPiA+ID4gYi9kcml2ZXJzL2Nsay9iYWlrYWwtdDEvY2N1LXBsbC5jDQo+ID4g
-PiA+IGluZGV4IDEzZWYyODAwMTQzOS4uZDQxNzM1YzY5NTZhIDEwMDY0NA0KPiA+ID4gPiAtLS0g
-YS9kcml2ZXJzL2Nsay9iYWlrYWwtdDEvY2N1LXBsbC5jDQo+ID4gPiA+ICsrKyBiL2RyaXZlcnMv
-Y2xrL2JhaWthbC10MS9jY3UtcGxsLmMNCj4gDQo+ID4gPiA+IEBAIC03OCw5ICs3OCw5IEBAIHN0
-YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBjY3VfcGxsX2NhbGNfZnJlcSh1bnNpZ25lZA0KPiA+
-ID4gPiBsb25nIHJlZl9jbGssDQo+ID4gPiA+ICAgew0KPiA+ID4gPiAgICAgICB1NjQgdG1wID0g
-cmVmX2NsazsNCj4gPiA+ID4NCj4gPg0KPiA+ID4gPiAtICAgIGRvX2Rpdih0bXAsIG5yKTsNCj4g
-PiA+ID4gKyAgICBkaXY2NF91bCh0bXAsIG5yKTsNCj4gPiA+ID4gICAgICAgdG1wICo9IG5mOw0K
-PiA+ID4gPiAtICAgIGRvX2Rpdih0bXAsIG9kKTsNCj4gPiA+ID4gKyAgICBkaXY2NF91bCh0bXAs
-IG9kKTsNCj4gPiA+ID4NCj4gPiA+ID4gICAgICAgcmV0dXJuIHRtcDsNCj4gPiA+DQo+ID4gPiBM
-aWtld2lzZS4NCj4gPg0KPiA+IFJpZ2h0LiBUaGlzIHdpbGwgYWxzbyBicmVhayB0aGUgZHJpdmVy
-Lg0KPiA+DQo+ID4gPiBCdXQgYXMgcmVmX2NsayBpcyB1bnNpZ25lZCBsb25nLCB0aGVyZSBpcyBu
-byBuZWVkIHRvIHVzZSBkaXY2NF91bCgpDQo+ID4gPiBmb3IgdGhlIGZpcnN0IGRpdmlzaW9uLCBh
-bmQgdGhpcyBjYW4gYmUgc2ltcGxpZmllZCB0bzoNCj4gPiA+DQo+ID4gPiAgICAgdTY0IHRtcCA9
-ICh1NjQpKHJlZl9jbGsgLyBucikgKiBuZjsNCj4gPiA+ICAgICByZXR1cm4gZGl2NjRfdWwodG1w
-LCBvZCk7DQo+ID4NCj4gPiBBYnNvbHV0ZWx5IHJpZ2h0LiBNeSBpbnRlbnRpb24gb2YgdXNpbmcg
-dGhlIGRvX2RpdigpIGFueXdheSB3YXMgZm9yDQo+ID4gdGhlIHNha2Ugb2YgdGhlIGNvZGUgdW5p
-ZmljYXRpb24uDQo+ID4NCj4gPiA+DQo+ID4gPiBUbyBhdm9pZCBsb3NzIG9mIHByZWNpc2lvbiwg
-aXQgbWlnaHQgYmUgYmV0dGVyIHRvIHJldmVyc2UgdGhlIG9yZGVyDQo+ID4gPiBvZiB0aGUgZGl2
-aXNpb24gYW5kIG11bHRpcGxpY2F0aW9uOg0KPiA+ID4NCj4gPg0KPiA+ID4gICAgIHU2NCB0bXAg
-PSAodTY0KXJlZl9jbGsgKiBuZiAvIG5yOw0KPiA+DQo+ID4gQWxhcyBleGFjdGx5IHRoaXMgY29k
-ZSB3aWxsIGNhdXNlIHRoZSBjb21waWxhdGlvbiBlcnJvciBvbiB0aGUgMzItYml0DQo+ID4gcGxh
-dGZvcm06DQo+ID4gY2N1LXBsbC5jOigudGV4dCsweDQ1OCk6IHVuZGVmaW5lZCByZWZlcmVuY2Ug
-dG8gYF9fdWRpdmRpMycNCj4gPg0KPiA+IFRoYXQncyB3aHkgSSBhbSB1c2luZyB0aGUgZG9fZGl2
-KCkgaGVyZS4gSSB3b3VsZCBoYXZlIHJhdGhlciB1c2VkIHRoZQ0KPiA+IGRpdjY0X3VsKCkgaW5z
-dGVhZCBhcyB0aGlzIHBhdGNoIHN1Z2dlc3RzLCBidXQgSSBoYXZlbid0IGtub3duIGFib3V0IGl0
-cw0KPiA+IGV4aXN0ZW5jZSB1cCB0byB0aGlzIG1vbWVudC4NCj4gDQo+IEJ1bW1lciwgdGhhdCB3
-YXMgYSBzaWxseSBtaXN0YWtlIG9uIG15IHNpZGUuLi4NCj4gKEluaXRpYWxseSwgSSBkaWRuJ3Qg
-d3JpdGUgdGhlIGNhc3QgdG8gdTY0IHRoZXJlLCBhcyBhbGwgb2YgcmVmX2NsaywgbmYsIGFuZCBu
-cg0KPiAgYXJlIHVuc2lnbmVkIGxvbmcuICBUaGVuIEkgcmVhbGl6ZWQgInJlZl9jbGsgKiBuZiIg
-bWlnaHQgb3ZlcmZsb3cgb24NCj4gIDMyLWJpdCwgdGh1cyByZXF1aXJpbmcgYSA2NC1iaXQgcmVz
-dWx0LiBBbmQgSSBhZGRlZCB0aGUgY2FzdC4uLikNCg0KQnV0IG9uIDMyYml0IHRoZSByZXN1bHQg
-aXMgJ2xvbmcnLg0KU28gaXQgd2lsbCBvdmVyZmxvdyB1bmxlc3MgZG9fZGl2KCkgaXMgYWxzbyB2
-YWxpZC4NCg0KVGhlIGFuYWx5c2lzIG5lZWQgdG8gbG9vayBhdCB0aGUgZG9tYWluIG9mIHRoZSB2
-YWx1ZXMuDQpUaGUgd2FybmluZyBhbmQgc3VnZ2VzdGlvbiB0byB1c2UgZGl2NjRfdWwoKSBpcyBw
-cmV0dHkgbXVjaCBhbHdheXMNCndyb25nLg0KDQpkaXY2NF91bCgpIGlzIGdvaW5nIHRvIGJlIGhv
-cnJpYmx5IHNsb3cgb24gMzJiaXQuDQpBbHNvIG9uIDY0Yml0IEludGVsIGNwdSB0aGUgMTI4LzY0
-IGRpdmlkZSB0YWtlcyB0d2ljZSBhcyBsb25nIGFzIDY0LzMyDQpldmVuIHdoZW4gdGhlIHZhbHVl
-cyBhcmUgc21hbGwuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUs
-IEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJl
-Z2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On 23.07.2023 18:08, Adam Skladowski wrote:
+> Add support for pre-configuring default frequency multiplier,
+> this appears to be required on some platforms like MSM8976.
+> Without configuring L_VAL device reboots when trying to bring PLL up.
+> 
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
+Konrad
