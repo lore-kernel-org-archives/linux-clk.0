@@ -2,225 +2,194 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91265C001DE
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 13:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3647C001B0
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 13:19:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229742AbjGXNNT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jul 2023 09:13:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57610 "EHLO
+        id S229947AbjGXNTn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jul 2023 09:19:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjGXNNS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 09:13:18 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE8DDD;
-        Mon, 24 Jul 2023 06:13:17 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id 38308e7fff4ca-2b933bbd3eeso62248631fa.1;
-        Mon, 24 Jul 2023 06:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690204395; x=1690809195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h0XwyMgX4mS7VpluG5Iry9y96d8HKzSPT5Ovi9r5ZEo=;
-        b=gerYL6R3egoRyRwQpFz0ssKPtEzv3/KEE2AgHM+pPamlNqoPceJWSB4RaN+KBiEPwm
-         zSWXlpzdroM76HgI9/NdPPte0d9HcxOGjC0+eSzbGntSzEO7BoCRteUViE/Q9NokXtkV
-         lM9xN7FI3oR82oadkVWgIWwIK7f6S4GByiuuTSpxCHKiwcXDeCU4HmOCKBS/dU4mf7x8
-         HSdHCHC3zSTXnTooVs6bUrg5XUElPlzg6woO9zBNO7X9ubKxhvzprQqiuVceyBw2U8Lj
-         rH3Kl29sFaKpeBx7wyFshrOcKQpdGLJDWufO8li7YUN2dvEAvsFdShF4DtThVuFyCH9+
-         AvRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690204395; x=1690809195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0XwyMgX4mS7VpluG5Iry9y96d8HKzSPT5Ovi9r5ZEo=;
-        b=VtdFExn+Iv/CEKLdU+9GjD+JJskf1jYRLblIJYYfmWXruk13js1TL17sz0eiwCAPkE
-         iz1S+47W3j2yK1dxRDUDhYB65bNoMnGgoZy8ZbsXGZT1bZuX0F/Q8Y0SW6sgfhAFE8PC
-         EgbrWr6ragIZ5pDIEzqqkUYiEHEPqYo/iN6w3jRJFAcWRkqrM4t212sWdwXgmLsU3Jam
-         X0dQrN2Bwdjadd80rhyh5osOkqIEEQxqiKxxWD2c7PrFtykN33txuxkJtdP8BVTFd3oh
-         SxcEFKJxhIfbd+fezCL4VkbcCNJWthrQETWAnLagxGXTOJBxrlo4QhRYlnlYjZDLZF2d
-         2RIA==
-X-Gm-Message-State: ABy/qLZsOvwyip54zJnYBcwU5OXskvKrtU8pQpzsMOIb20u15c0w0gfX
-        RUEcN74leKKIJYTkqPiwgss=
-X-Google-Smtp-Source: APBJJlEucSzSmQYiI+ro5xRfR7WnkS0Gvp+fmm1PG5uNirttRhcC3djRkCQ8LMVlf/GKT1dXliR1yw==
-X-Received: by 2002:a2e:9f0b:0:b0:2b7:25b2:e37a with SMTP id u11-20020a2e9f0b000000b002b725b2e37amr6031612ljk.44.1690204395118;
-        Mon, 24 Jul 2023 06:13:15 -0700 (PDT)
-Received: from mobilestation ([93.157.254.210])
-        by smtp.gmail.com with ESMTPSA id j26-20020a2e3c1a000000b002b6ee99fff2sm2860293lja.34.2023.07.24.06.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jul 2023 06:13:14 -0700 (PDT)
-Date:   Mon, 24 Jul 2023 16:13:12 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>, wuyonggang001@208suo.com
-Cc:     wuyonggang001@208suo.com, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        with ESMTP id S229692AbjGXNTn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 09:19:43 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DF0FA;
+        Mon, 24 Jul 2023 06:19:42 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C65D16117C;
+        Mon, 24 Jul 2023 13:19:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D76AC433C7;
+        Mon, 24 Jul 2023 13:19:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690204781;
+        bh=zTYrYfuIhDLccrN9QL20ThimI4OI5TmqW3BW1i0cnkQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cdaPaJlDzf6l99eaSnCCkx6Q1+VMDLk6XZVYtVQAP9OPUm7ZTYhl0+FfuYFZjUsDe
+         HPil2p68YsKZgexov5c8FRpmuwlF07N7x5FVIZPUSd9iZ2OpAuJGuxP7b6lE5oGjz/
+         QZuPHhAd3QFq1U7NlfiBYLAVUuqFNYyPWGT07FWNPv4K4tha90HglRPc/lTWTZLHPI
+         r6LjBgfsJQ8Evzk+1ts/e/tyNm+SQQA68q3Iulb4t7gTBb5nHdZrnS2Fv+hxDVCroN
+         vXUlunbUQQwb1SYBYfl7RFJJ9nqeurLiiJxDLzOyivr7NeZM5KQg/tXdvDpecHfdKt
+         7bPpMo2uvG90Q==
+Date:   Mon, 24 Jul 2023 15:19:38 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Frank Oltmanns <frank@oltmanns.dev>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Roman Beranek <me@crly.cz>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: baikal-t1: Using div64_ Ul replaces do_ Div()
- function
-Message-ID: <nt6kbounehvfqo4hpfj3wbr7baukuhr22dafvoykgyehs4imsp@pc6bajyo6ugn>
-References: <20230612033904.34921-1-zhanglibing@cdjrlc.com>
- <0dc9409b662180ed29cbc281f0f076b7@208suo.com>
- <fcd37e67fba625da304fdaf07e0ab0db@208suo.com>
- <CAMuHMdX0xP5Gugo7uF5Wqk9_ny6-4fOWYRm41KicOo26kC6m+g@mail.gmail.com>
+Subject: Re: [PATCH v4 08/11] clk: sunxi-ng: nkm: Support finding closest rate
+Message-ID: <walqtnf2dektptg4uimfmyth5e4l5xod4kavx3bwzmndyekfmd@l5mb2ukuhvza>
+References: <20230717-pll-mipi_set_rate_parent-v4-0-04acf1d39765@oltmanns.dev>
+ <20230717-pll-mipi_set_rate_parent-v4-8-04acf1d39765@oltmanns.dev>
+ <ho2bblo2hzizst74hfqog3ga4cjf7eead2ntbl4e7xi5c32bhq@qpttu7ayv7vy>
+ <87ilabqecp.fsf@oltmanns.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="zdha6ty5qkdyadob"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdX0xP5Gugo7uF5Wqk9_ny6-4fOWYRm41KicOo26kC6m+g@mail.gmail.com>
+In-Reply-To: <87ilabqecp.fsf@oltmanns.dev>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert
 
-On Mon, Jul 24, 2023 at 12:04:19PM +0200, Geert Uytterhoeven wrote:
-> Hi Yonggang,
-> 
-> CC Serge
+--zdha6ty5qkdyadob
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for Cc-ing me.
-
-> 
-> On Wed, Jun 14, 2023 at 8:07 AM <wuyonggang001@208suo.com> wrote:
-> > Fix the following coccicheck warning:
+On Sun, Jul 23, 2023 at 09:25:10AM +0200, Frank Oltmanns wrote:
+> On 2023-07-17 at 16:14:58 +0200, Maxime Ripard <mripard@kernel.org> wrote:
+> > [[PGP Signed Part:Undecided]]
+> > On Mon, Jul 17, 2023 at 03:34:32PM +0200, Frank Oltmanns wrote:
+> >> When finding the best rate for a NKM clock, consider rates that are
+> >> higher than the requested rate, if the CCU_FEATURE_CLOSEST_RATE flag is
+> >> set by using the helper function ccu_is_better_rate().
+> >>
+> >> Accommodate ccu_mux_helper_determine_rate to this change.
+> >>
+> >> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu_mux.c |  2 +-
+> >>  drivers/clk/sunxi-ng/ccu_nkm.c | 18 ++++++++----------
+> >>  2 files changed, 9 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu=
+_mux.c
+> >> index 1d557e323169..3ca695439620 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu_mux.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu_mux.c
+> >> @@ -139,7 +139,7 @@ int ccu_mux_helper_determine_rate(struct ccu_commo=
+n *common,
+> >>  			goto out;
+> >>  		}
+> >>
+> >> -		if ((req->rate - tmp_rate) < (req->rate - best_rate)) {
+> >> +		if (ccu_is_better_rate(common, req->rate, tmp_rate, best_rate)) {
+> >>  			best_rate =3D tmp_rate;
+> >>  			best_parent_rate =3D parent_rate;
+> >>  			best_parent =3D parent;
+> >> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu=
+_nkm.c
+> >> index 793160bc2d47..5439b9351cd7 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> >> @@ -39,6 +39,7 @@ static unsigned long ccu_nkm_optimal_parent_rate(uns=
+igned long rate, unsigned lo
+> >>  }
+> >>
+> >>  static unsigned long ccu_nkm_find_best_with_parent_adj(struct clk_hw =
+*phw, struct _ccu_nkm *nkm,
+> >> +						       struct ccu_common *common,
+> >>  						       unsigned long *parent, unsigned long rate)
+> >>  {
+> >>  	unsigned long best_rate =3D 0, best_parent_rate =3D *parent, tmp_par=
+ent =3D *parent;
+> >> @@ -54,10 +55,8 @@ static unsigned long ccu_nkm_find_best_with_parent_=
+adj(struct clk_hw *phw, struc
+> >>  				tmp_parent =3D clk_hw_round_rate(phw, tmp_parent);
+> >>
+> >>  				tmp_rate =3D tmp_parent * _n * _k / _m;
+> >> -				if (tmp_rate > rate)
+> >> -					continue;
+> >>
+> >> -				if ((rate - tmp_rate) < (rate - best_rate)) {
+> >> +				if (ccu_is_better_rate(common, rate, tmp_rate, best_rate)) {
+> >>  					best_rate =3D tmp_rate;
+> >>  					best_parent_rate =3D tmp_parent;
+> >>  					best_n =3D _n;
+> >> @@ -78,7 +77,7 @@ static unsigned long ccu_nkm_find_best_with_parent_a=
+dj(struct clk_hw *phw, struc
+> >>  }
+> >>
+> >>  static unsigned long ccu_nkm_find_best(unsigned long parent, unsigned=
+ long rate,
+> >> -				       struct _ccu_nkm *nkm)
+> >> +				       struct _ccu_nkm *nkm, struct ccu_common *common)
 > >
-> > drivers/clk/baikal-t1/ccu-pll.c:81:1-7: WARNING: do_div() does a
-> > 64-by-32 division, please consider using div64_ul instead.
+> > Same comment than on patch 7, common should be first in those two funct=
+ions.
 > >
-> > Signed-off-by: Yonggang Wu <wuyonggang001@208suo.com>
-> 
-> Thanks for your patch, which is now commit b93d1331ea266dea
-> ("clk: baikal-t1: Using div64_ Ul replaces do_ Div() function")
-> in clk/clk-next.
-> 
-> > b/drivers/clk/baikal-t1/ccu-pll.c
-> > index 13ef28001439..d41735c6956a 100644
-> > --- a/drivers/clk/baikal-t1/ccu-pll.c
-> > +++ b/drivers/clk/baikal-t1/ccu-pll.c
-> > @@ -66,7 +66,7 @@ static inline unsigned long
-> > ccu_pll_lock_delay_us(unsigned long ref_clk,
-> >   {
-> >       u64 us = 500ULL * nr * USEC_PER_SEC;
-> >
+>=20
+> Ok, I wasn't sure what your expectation is for existing functions. For
+> ccu_find_best_with_parent_adj the order is:
+>   1. *phw
+>   2. *nkm
+>   3. *common
+>   4. *parent
+>   5. rate
 
-> > -    do_div(us, ref_clk);
-> > +    div64_ul(us, ref_clk);
-> 
-> The above is not equivalent:
->   - do_div() returned the quotient as an output parameter in us,
->   - div64_ul() returns the quotient using the return value.
+Arguments are generally ordered by putting first what the function will
+act upon, and then from generic to specific, and output last.
 
-Indeed, leaving the patch as is will break the driver for sure.
-do_div() and div64_ul() aren't equivalent in regard of the return
-values. So this update will cause the ccu_pll_lock_delay_us()
-returning "500ULL * nr * USEC_PER_SEC" instead of
-"(500ULL * nr * USEC_PER_SEC) / ref_clk".
+Which I guess would make the ideal one something like:
+*common
+*parent_hw
+*parent
+rate
+nkm
 
-> 
-> Have you tested your patch?
-> 
-> >
-> >       return us;
-> 
-> So this should become:
-> 
->     return div64_ul(500ULL * nr * USEC_PER_SEC, ref_clk);
+> We don't have the parent hw in ccu_nkm_find_best. The order prior to
+> this patch is:
+>   1. parent
+>   2. rate
+>   3. *nkm
+>=20
+> We need to add *common to that, so I could add it to the beginning as
+> per your suggestion:
+>   1. *common
+>   2. parent
+>   3. rate
+>   4. *nkm
 
-This would be the correct fix. But I would either retain the local
-"us" variable here or fixed the
-drivers/clk/baikal-t1/ccu-div.c:ccu_div_lock_delay_ns() function too
-for the sake of the driver unification. The later is preferable
-though.
+Those two make sense to me
 
-> 
-> >   }
-> > @@ -78,9 +78,9 @@ static inline unsigned long ccu_pll_calc_freq(unsigned
-> > long ref_clk,
-> >   {
-> >       u64 tmp = ref_clk;
-> >
+> I could also pull *nkm to the beginning (similar to the parent_adj
+> version):
+>   4. *nkm
+>   1. *common
+>   2. parent
+>   3. rate
 
-> > -    do_div(tmp, nr);
-> > +    div64_ul(tmp, nr);
-> >       tmp *= nf;
-> > -    do_div(tmp, od);
-> > +    div64_ul(tmp, od);
-> >
-> >       return tmp;
-> 
-> Likewise.
+nkm is an output, it needs to be last.
 
-Right. This will also break the driver.
+Maxime
 
-> But as ref_clk is unsigned long, there is no need to use div64_ul()
-> for the first division, and this can be simplified to:
-> 
->     u64 tmp = (u64)(ref_clk / nr) * nf;
->     return div64_ul(tmp, od);
+--zdha6ty5qkdyadob
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Absolutely right. My intention of using the do_div() anyway was for
-the sake of the code unification.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> To avoid loss of precision, it might be better to reverse the order
-> of the division and multiplication:
-> 
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZL56ZQAKCRDj7w1vZxhR
+xfD6AQD86VqzwQL+X8K+LWwG3JTQsowVtUM7Izo4LH6eAGEXgQD/dBlKWVEEWFJ8
+Ok8JkQvJuavPFcF9gyIMwt1OzExLTA0=
+=+YIW
+-----END PGP SIGNATURE-----
 
->     u64 tmp = (u64)ref_clk * nf / nr;
-
-Alas exactly this code will cause the compilation error on the 32-bit
-platform:
-ccu-pll.c:(.text+0x458): undefined reference to `__udivdi3'
-
-That's why I am using the do_div() here. I would have rather used the
-div64_ul() instead as this patch suggests, but I haven't known about its
-existence up to this moment.
-
-Anyway my intention of dividing before multiplying had twofold
-justification. Firstly I didn't want to use the "/" operator and
-do_div() macro in the statements used to implement the same formulae.
-Since I couldn't use the operator I decided to use the macro only for
-the code unification. Secondly the PLL is designed in a way so the
-signal is first divided by NR, then multiplied by NF and then divided
-by OD. That's why I decided to preserve the same order in the
-calculations here. I assumed back then that the NR-divider performs
-the integer division in the analog circuitry. I have doubts now that
-my assumption was correct since it's analog device and most likely
-divides the source signal with no integer rounding-up. So using the
-order suggested by you would have likely given a more exact result.
-
-> 
-> But doing that requires intimate knowledge about the range of nf to
-> avoid overflow, so I leave that to Serge.
-
-nr: 1 - 2^6
-nf: 1 - 2^13
-ref_clk: normally 25'000'000 Hz.
-Using "unsigned long"/u32 multiplication will give the integer
-overflow. Meanwhile the u64 arithmetics will be more than enough here.
-
-So to speak the next alteration seems more correct here:
-+return div64_ul(div64_ul((u64)ref_clk * nf, nr), od);
-
-What do you think?
-
-Yonggang, several comments:
-1. Could you please include the "linux/math64.h" header file to the
-driver?
-2. Could you please fix the same thing in the ccu-div.c file too?
-
--Serge(y)
-
-> 
-> >   }
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+--zdha6ty5qkdyadob--
