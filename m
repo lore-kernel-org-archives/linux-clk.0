@@ -2,74 +2,145 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6247DC001E0
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 10:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94AEC001DF
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Jul 2023 10:13:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233011AbjGXKMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Jul 2023 06:12:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42186 "EHLO
+        id S229764AbjGXKNl convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Jul 2023 06:13:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbjGXKLp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 06:11:45 -0400
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F9EC59E7;
-        Mon, 24 Jul 2023 03:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1690193062; x=1721729062;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+7lDUvLV9DwkybbWR5a1MfysHXrim31bgG1G2gwZpqA=;
-  b=MrLOW4vKaA6Hn+g/dxGoZl1ggeG/L1CDaGAVs9LWNctTG1Ge64+d+2W4
-   X2gYgcRIm5cA89o7NVnN+iQKy7BnddDT52iZJybdeJdNEYX1T8aKrRV+9
-   P2MfvkMjXNVBD2uBf+l7HvexGbleFgsCacVN1mHE4OKP+XFwiOwcgGJbD
-   T6n6e+v/gBsixpQhth0sygFyNviLBCtKZxMy3gZV7c3girSfUUzix6+t7
-   nxTVTZNw8U283i163ycTPqg4ZEr/ayVF0wq0cKrV091BK8e7/poDIQvwA
-   aryiS59veyb523PNmuaDrP74gBpe6ZQlrGsANfsd/WdxpdV4ChbcftgK4
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10780"; a="367426153"
-X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
-   d="scan'208";a="367426153"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2023 03:02:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10780"; a="972203238"
-X-IronPort-AV: E=Sophos;i="6.01,228,1684825200"; 
-   d="scan'208";a="972203238"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga006.fm.intel.com with ESMTP; 24 Jul 2023 03:01:55 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.96)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1qNsO1-007gPp-36;
-        Mon, 24 Jul 2023 13:01:53 +0300
-Date:   Mon, 24 Jul 2023 13:01:53 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Doug Brown <doug@schmorgal.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Subject: Re: [PATCH v1 1/1] clk: mmp: Switch to use struct u32_fract instead
- of custom one
-Message-ID: <ZL5MEVO45QwxLN1y@smile.fi.intel.com>
-References: <20230724094838.32596-1-andriy.shevchenko@linux.intel.com>
+        with ESMTP id S231779AbjGXKMj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Jul 2023 06:12:39 -0400
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B927C7D95;
+        Mon, 24 Jul 2023 03:05:21 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-583b47809beso18621987b3.0;
+        Mon, 24 Jul 2023 03:05:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690193072; x=1690797872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kdime7qoPODmAiTa2PQFmD+bM1Qwuzb0rIVovoauwF0=;
+        b=fOSxzlFxA8X1afGtT6G8mBinIkhtcXZ+ydmi/uDK1njapdH4XqDiQQUtdFb36fAxbn
+         NUTVh6XaQTZ4x6sbP57YY4cj5m//mf4S4otpzAdP+Womumod5kKGZ/xL4XiA/kMIgGXb
+         F8sKfHmdRshJp3m3kZo4hnS8naix4hjFYQRjlzgMWUpkAZN/CJ/HV1WYnJOofT0UX45/
+         Jk7xqQOU/bYhGSc2VXbU1GpTd6QDuTTnargJsbsEh1fkE2LA8LOLsPGNAqmDZW1Zf5/f
+         C6TBm2W2/Y4kpQm4iw3XUvZihLM9QadR1BpBewCqpZQxEhdTfuWZbRHXXh3Th5hkIvQ+
+         t8Tg==
+X-Gm-Message-State: ABy/qLa75hRE4JKil0dpOKlCLCGg86Rk4fR396ZYf/d1o6Jg1FmizJac
+        vkhgcry9nqGsJ6jEo9ZX95lrrHP8JpEnEg==
+X-Google-Smtp-Source: APBJJlEDnODc8wVRL3hvLfPLovhS+i/V1oKCqYM0moHLmJy2hhjU/yei1qvrmVVFUyupOpOUckr+Aw==
+X-Received: by 2002:a81:4e82:0:b0:56d:502:43d4 with SMTP id c124-20020a814e82000000b0056d050243d4mr5491485ywb.11.1690193072404;
+        Mon, 24 Jul 2023 03:04:32 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id v14-20020a81a54e000000b005773430a57csm2654030ywg.78.2023.07.24.03.04.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jul 2023 03:04:32 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-5703cb4bcb4so46818587b3.3;
+        Mon, 24 Jul 2023 03:04:32 -0700 (PDT)
+X-Received: by 2002:a5b:a8b:0:b0:cfd:1bb9:e356 with SMTP id
+ h11-20020a5b0a8b000000b00cfd1bb9e356mr6248370ybq.32.1690193071935; Mon, 24
+ Jul 2023 03:04:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230724094838.32596-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20230612033904.34921-1-zhanglibing@cdjrlc.com>
+ <0dc9409b662180ed29cbc281f0f076b7@208suo.com> <fcd37e67fba625da304fdaf07e0ab0db@208suo.com>
+In-Reply-To: <fcd37e67fba625da304fdaf07e0ab0db@208suo.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 24 Jul 2023 12:04:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX0xP5Gugo7uF5Wqk9_ny6-4fOWYRm41KicOo26kC6m+g@mail.gmail.com>
+Message-ID: <CAMuHMdX0xP5Gugo7uF5Wqk9_ny6-4fOWYRm41KicOo26kC6m+g@mail.gmail.com>
+Subject: Re: [PATCH] clk: baikal-t1: Using div64_ Ul replaces do_ Div() function
+To:     wuyonggang001@208suo.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Serge Semin <fancer.lancer@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 24, 2023 at 12:48:38PM +0300, Andy Shevchenko wrote:
-> The struct mmp_clk_factor_tbl repeats the generic struct u32_fract.
-> Kill the custom one and use the generic one instead.
+Hi Yonggang,
 
-Note, I have not tested this. And after testing you may incorporate this
-into your series if there is no objection.
+CC Serge
+
+On Wed, Jun 14, 2023 at 8:07 AM <wuyonggang001@208suo.com> wrote:
+> Fix the following coccicheck warning:
+>
+> drivers/clk/baikal-t1/ccu-pll.c:81:1-7: WARNING: do_div() does a
+> 64-by-32 division, please consider using div64_ul instead.
+>
+> Signed-off-by: Yonggang Wu <wuyonggang001@208suo.com>
+
+Thanks for your patch, which is now commit b93d1331ea266dea
+("clk: baikal-t1: Using div64_ Ul replaces do_ Div() function")
+in clk/clk-next.
+
+> b/drivers/clk/baikal-t1/ccu-pll.c
+> index 13ef28001439..d41735c6956a 100644
+> --- a/drivers/clk/baikal-t1/ccu-pll.c
+> +++ b/drivers/clk/baikal-t1/ccu-pll.c
+> @@ -66,7 +66,7 @@ static inline unsigned long
+> ccu_pll_lock_delay_us(unsigned long ref_clk,
+>   {
+>       u64 us = 500ULL * nr * USEC_PER_SEC;
+>
+> -    do_div(us, ref_clk);
+> +    div64_ul(us, ref_clk);
+
+The above is not equivalent:
+  - do_div() returned the quotient as an output parameter in us,
+  - div64_ul() returns the quotient using the return value.
+
+Have you tested your patch?
+
+>
+>       return us;
+
+So this should become:
+
+    return div64_ul(500ULL * nr * USEC_PER_SEC, ref_clk);
+
+>   }
+> @@ -78,9 +78,9 @@ static inline unsigned long ccu_pll_calc_freq(unsigned
+> long ref_clk,
+>   {
+>       u64 tmp = ref_clk;
+>
+> -    do_div(tmp, nr);
+> +    div64_ul(tmp, nr);
+>       tmp *= nf;
+> -    do_div(tmp, od);
+> +    div64_ul(tmp, od);
+>
+>       return tmp;
+
+Likewise.
+But as ref_clk is unsigned long, there is no need to use div64_ul()
+for the first division, and this can be simplified to:
+
+    u64 tmp = (u64)(ref_clk / nr) * nf;
+    return div64_ul(tmp, od);
+
+To avoid loss of precision, it might be better to reverse the order
+of the division and multiplication:
+
+    u64 tmp = (u64)ref_clk * nf / nr;
+
+But doing that requires intimate knowledge about the range of nf to
+avoid overflow, so I leave that to Serge.
+
+>   }
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
