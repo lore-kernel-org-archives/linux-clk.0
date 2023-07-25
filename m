@@ -2,214 +2,615 @@ Return-Path: <linux-clk-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CB8C0015E
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57619C0015E
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Jul 2023 07:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232695AbjGYHl0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Jul 2023 03:41:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53432 "EHLO
+        id S232791AbjGYHmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Jul 2023 03:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232734AbjGYHlP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:41:15 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69641BEE
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:40:01 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id a640c23a62f3a-977e0fbd742so830542866b.2
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:40:01 -0700 (PDT)
+        with ESMTP id S232742AbjGYHmF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Jul 2023 03:42:05 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 008991FC0
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:41:58 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id 4fb4d7f45d1cf-5221e487e08so4356858a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jul 2023 00:41:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1690270800; x=1690875600;
+        d=linaro.org; s=google; t=1690270917; x=1690875717;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DrHfPZx3m7ETdKsggeDbNp4hUSj5sbEikKTzBEPpJZo=;
-        b=M4BL6Vzj6qPiA0kpPiwDs5DA8QbI7iWtNGRxzHNfKLOm90271SME9alsDDcYQFxwv3
-         KZ1isUhITNnPXPuQo9iQuee381kWbfyMI7XN7jQRSP/vJEhgr2PQDXBjlHd8nNATY0r5
-         E1/h71XLyIVU6nEoYker+c7vep4pEOA7L2IodD2p72vG1jFaaolXLBy9IOS1/2zhkQgG
-         ofuUOnTfJkIZ5RIZKtUX3diBDAL8FFXlh2cuMWLTmKbGpgVJIHQhvLQ3goWTb4+ZzlwW
-         xK8d5Vzgw4Xvn9L2qiwaB4W38T71zYvGVJRQVW7pAaqgj1c5BqT6QvNF96XXx18Z3MC1
-         J9lw==
+        bh=hlNnKfkfmozpxDxsDZG+P6gLgjSC+znp80u8cLVVMJs=;
+        b=fiA8Mw5u9ygP4hyyyMu8E+TIBkgfkCZfVTFgdPm9FW8fQpP5td5Wy2jDcDCD7KxewS
+         wa3Sn6ptLg/Em4TA98Es0TQe1/KiZh0jaF7dYyf9tuQsZIZPRNA0cNt7QGzWkJvdc5AE
+         KB7SC2LO4nWT2yjkDCqy1KeQfq4VGnP04KR0CpplzHx7kt17mrdmXUbpeoUjOLZ6FOvm
+         N+jQKgySPyGrGxb0svFPmc8WRXmUYDifXZp+1rFjyAGZE1kk22Zb1Mb4ipvGBy80Pcnk
+         uGl5KJvMqQOpb07UNl4HCmjg/ZwJcp7Pd9ruPwgvVZcztwr2jhAnVpB/Hv/WTX95nTit
+         y6hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690270800; x=1690875600;
+        d=1e100.net; s=20221208; t=1690270917; x=1690875717;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DrHfPZx3m7ETdKsggeDbNp4hUSj5sbEikKTzBEPpJZo=;
-        b=laVWh10tp1ymfOK6VWAQ1AlyMIqZPbpdHwBXplUpwGgmyEFMpkbzYUzMMVlPR2O8/0
-         f0ymW3ToRsZKlaj4ZyjDEVP90WasVELcKUsSgmnj7KS5BIVqC7jGTpfKqOYVhWGzHqMG
-         yTfCEYhan5+u8pw9X1nkBTgAY8q527W63HclaMCxnKS9p3225S+x/CljTk6AiiXNvxnw
-         rt3QdS8mrAAc57DSd2oXM7gyHNKRrlKtoc/BKsknhSYz71XbZHzmsngdRUMV/Gdgv9no
-         7jdef57vw9dG9KFwb/wQVzuY2ZdnNI//nz/+MjD4qPmzBstuHpEmBGdYWert5+PRZme3
-         e2Nw==
-X-Gm-Message-State: ABy/qLZSWeiMlNK+3rekgWDU3uQLV0ndAAIxPUcmlq3ARHpqMbLU31cY
-        oz9yLTcGbLczvkBykPxE7Nn7bQ==
-X-Google-Smtp-Source: APBJJlFEWtBoJHCaLUCiJnxrCzyyTztNzwfHwUzo9iTlF+mQeheI/8NYatU7cCMbzB3HSzm8DvyVNQ==
-X-Received: by 2002:a17:906:8476:b0:994:54af:e27d with SMTP id hx22-20020a170906847600b0099454afe27dmr11362150ejc.29.1690270800268;
-        Tue, 25 Jul 2023 00:40:00 -0700 (PDT)
+        bh=hlNnKfkfmozpxDxsDZG+P6gLgjSC+znp80u8cLVVMJs=;
+        b=Gbbt04acXyZlDUl1poOtJamZ62CxO5L6FUrSBW5o6ZaPt6CzPg67wwxhDBgY7xq8Ud
+         XBbUXcHMkW1yKaLO+AzCPh6qXLBHTGrMhocyUHtahIPzeisjywCOkb/3WXKJXuHPasBk
+         33Q0d3PX2GidztOk63ZbE49nY43W93+s14uq1VmJeG94qwezFaGB+kMY1AuMAFq26S9U
+         0Qcdh3KqPXpNRRkB+kH3jQYQ73iixkp8ZekQk7nggSWRA7yRzx13vQ6Opf3//L6BPSbU
+         bxXQg+7UOevjh2vbUO0slmb9NDutuG3G5etYYv4xS2cqY/D9udUPtGKlwBhRyxRbOo9l
+         aqRg==
+X-Gm-Message-State: ABy/qLYqajomncnOyD+juxbRmBZAR0SGfreQ1RjVN0DuogpoYKu5HpbQ
+        1NZNMcomt4sEch6Mp0/U+ojM2g==
+X-Google-Smtp-Source: APBJJlGwL+UCQeuQIgQkZT3rilWDNThMLYExkpkfEqV784R0E2ZLmBZfwKgYFpXVX3+HaNl6GeTAzg==
+X-Received: by 2002:a05:6402:1203:b0:51d:d4c3:6858 with SMTP id c3-20020a056402120300b0051dd4c36858mr10467143edw.12.1690270917413;
+        Tue, 25 Jul 2023 00:41:57 -0700 (PDT)
 Received: from linaro.org ([82.78.74.213])
-        by smtp.gmail.com with ESMTPSA id c21-20020a170906341500b00992b2c55c67sm7862383ejb.156.2023.07.25.00.39.58
+        by smtp.gmail.com with ESMTPSA id l25-20020aa7c3d9000000b0051873c201a0sm7174188edr.26.2023.07.25.00.41.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 00:39:59 -0700 (PDT)
-Date:   Tue, 25 Jul 2023 10:39:58 +0300
+        Tue, 25 Jul 2023 00:41:56 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 10:41:55 +0300
 From:   Abel Vesa <abel.vesa@linaro.org>
-To:     "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc:     abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+To:     Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc:     abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
         shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Ye Li <ye.li@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH 1/2] clk: imx: pllv4: Fix SPLL2 MULT range
-Message-ID: <ZL98Tgpb29HLXYDr@linaro.org>
-References: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
+        festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/2] clk: imx: imx8: add audio clock mux driver
+Message-ID: <ZL98w5g7dncQtmbD@linaro.org>
+References: <1690260984-25744-1-git-send-email-shengjiu.wang@nxp.com>
+ <1690260984-25744-3-git-send-email-shengjiu.wang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230625123340.4067536-1-peng.fan@oss.nxp.com>
+In-Reply-To: <1690260984-25744-3-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23-06-25 20:33:39, Peng Fan (OSS) wrote:
-> From: Ye Li <ye.li@nxp.com>
+On 23-07-25 12:56:24, Shengjiu Wang wrote:
+> The Audio Clock Mux (ACM) is a collection of control registers
+> and multiplexers that are used to route the audio source clocks
+> to the audio peripherals.
 > 
-> The SPLL2 on iMX8ULP is different with other frac PLLs, it can
-> support VCO from 650Mhz to 1Ghz. According to RM, the MULT is
-> using a range from 27 to 54, not some fixed values. If using
-> current PLL implementation, some clock rate can't be supported.
+> Each audio peripheral has its dedicated audio clock mux
+> (which differ based on usage) and control register.
 > 
-> Fix the issue by adding new type for the SPLL2 and use MULT range
-> to replace MULT table
-> 
-> Fixes: 5f0601c47c33 ("clk: imx: Update the pllv4 to support imx8ulp")
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
-> Signed-off-by: Ye Li <ye.li@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-
-LGTM.
 
 Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
 > ---
->  drivers/clk/imx/clk-pllv4.c | 46 +++++++++++++++++++++++++++++--------
->  drivers/clk/imx/clk.h       |  1 +
->  2 files changed, 37 insertions(+), 10 deletions(-)
+> changes in v7:
+> - none
 > 
-> diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
-> index 6e7e34571fc8..9b136c951762 100644
-> --- a/drivers/clk/imx/clk-pllv4.c
-> +++ b/drivers/clk/imx/clk-pllv4.c
-> @@ -44,11 +44,15 @@ struct clk_pllv4 {
->  	u32		cfg_offset;
->  	u32		num_offset;
->  	u32		denom_offset;
-> +	bool		use_mult_range;
->  };
+> changes in v6:
+> - change : to - for kerneldoc
+> - remove .name in clk_parent_data structure
+> - change .name = "dummy" to .index = -1
+> 
+> changes in v5:
+> - update copyright
+> - use devm_of_iomap
+> - use devm_kzalloc for clk_hw_data
+> 
+> changes in v4:
+> - fix the error for module build reported by kernel test robot
+> 
+> changes in v3:
+> - change compatible string from nxp to fsl
+> 
+> changes in v2:
+> - none
+> 
+>  drivers/clk/imx/Makefile       |   3 +-
+>  drivers/clk/imx/clk-imx8-acm.c | 476 +++++++++++++++++++++++++++++++++
+>  2 files changed, 478 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/imx/clk-imx8-acm.c
+> 
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index ae9d84ef046b..d4b8e10b1970 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -32,11 +32,12 @@ obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
 >  
->  /* Valid PLL MULT Table */
->  static const int pllv4_mult_table[] = {33, 27, 22, 20, 17, 16};
+>  obj-$(CONFIG_CLK_IMX93) += clk-imx93.o
 >  
-> +/* Valid PLL MULT range, (max, min) */
-> +static const int pllv4_mult_range[] = {54, 27};
+> -obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o
+> +obj-$(CONFIG_MXC_CLK_SCU) += clk-imx-scu.o clk-imx-lpcg-scu.o clk-imx-acm.o
+>  clk-imx-scu-$(CONFIG_CLK_IMX8QXP) += clk-scu.o clk-imx8qxp.o \
+>  				     clk-imx8qxp-rsrc.o clk-imx8qm-rsrc.o \
+>  				     clk-imx8dxl-rsrc.o
+>  clk-imx-lpcg-scu-$(CONFIG_CLK_IMX8QXP) += clk-lpcg-scu.o clk-imx8qxp-lpcg.o
+> +clk-imx-acm-$(CONFIG_CLK_IMX8QXP) = clk-imx8-acm.o
+>  
+>  obj-$(CONFIG_CLK_IMX8ULP) += clk-imx8ulp.o
+>  
+> diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
+> new file mode 100644
+> index 000000000000..1e82f72b75c6
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-imx8-acm.c
+> @@ -0,0 +1,476 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// Copyright 2023 NXP
+> +//
 > +
->  #define to_clk_pllv4(__hw) container_of(__hw, struct clk_pllv4, hw)
->  
->  #define LOCK_TIMEOUT_US		USEC_PER_MSEC
-> @@ -94,17 +98,30 @@ static unsigned long clk_pllv4_recalc_rate(struct clk_hw *hw,
->  static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
->  				 unsigned long *prate)
->  {
-> +	struct clk_pllv4 *pll = to_clk_pllv4(hw);
->  	unsigned long parent_rate = *prate;
->  	unsigned long round_rate, i;
->  	u32 mfn, mfd = DEFAULT_MFD;
->  	bool found = false;
->  	u64 temp64;
-> -
-> -	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> -		round_rate = parent_rate * pllv4_mult_table[i];
-> -		if (rate >= round_rate) {
-> +	u32 mult;
+> +#include <dt-bindings/clock/imx8-clock.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
 > +
-> +	if (pll->use_mult_range) {
-> +		temp64 = (u64)rate;
-> +		do_div(temp64, parent_rate);
-> +		mult = temp64;
-> +		if (mult >= pllv4_mult_range[1] &&
-> +		    mult <= pllv4_mult_range[0]) {
-> +			round_rate = parent_rate * mult;
->  			found = true;
-> -			break;
+> +#include "clk.h"
+> +
+> +/**
+> + * struct clk_imx_acm_pm_domains - structure for multi power domain
+> + * @pd_dev: power domain device
+> + * @pd_dev_link: power domain device link
+> + * @num_domains: power domain nummber
+> + */
+> +struct clk_imx_acm_pm_domains {
+> +	struct device **pd_dev;
+> +	struct device_link **pd_dev_link;
+> +	int    num_domains;
+> +};
+> +
+> +/**
+> + * struct clk_imx8_acm_sel - for clock mux
+> + * @name: clock name
+> + * @clkid: clock id
+> + * @parents: clock parents
+> + * @num_parents: clock parents number
+> + * @reg: register offset
+> + * @shift: bit shift in register
+> + * @width: bits width
+> + */
+> +struct clk_imx8_acm_sel {
+> +	const char			*name;
+> +	int				clkid;
+> +	const struct clk_parent_data	*parents;	/* For mux */
+> +	int				num_parents;
+> +	u32				reg;
+> +	u8				shift;
+> +	u8				width;
+> +};
+> +
+> +/**
+> + * struct imx8_acm_soc_data - soc specific data
+> + * @sels: pointer to struct clk_imx8_acm_sel
+> + * @num_sels: numbers of items
+> + */
+> +struct imx8_acm_soc_data {
+> +	struct clk_imx8_acm_sel *sels;
+> +	unsigned int num_sels;
+> +};
+> +
+> +/**
+> + * struct imx8_acm_priv - private structure
+> + * @dev_pm: multi power domain
+> + * @soc_data: pointer to soc data
+> + * @reg: base address of registers
+> + * @regs: save registers for suspend
+> + */
+> +struct imx8_acm_priv {
+> +	struct clk_imx_acm_pm_domains dev_pm;
+> +	const struct imx8_acm_soc_data *soc_data;
+> +	void __iomem *reg;
+> +	u32 regs[IMX_ADMA_ACM_CLK_END];
+> +};
+> +
+> +static const struct clk_parent_data imx8qm_aud_clk_sels[] = {
+> +	{ .fw_name = "aud_rec_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_rec_clk1_lpcg_clk" },
+> +	{ .fw_name = "mlb_clk" },
+> +	{ .fw_name = "hdmi_rx_mclk" },
+> +	{ .fw_name = "ext_aud_mclk0" },
+> +	{ .fw_name = "ext_aud_mclk1" },
+> +	{ .fw_name = "esai0_rx_clk" },
+> +	{ .fw_name = "esai0_rx_hf_clk" },
+> +	{ .fw_name = "esai0_tx_clk" },
+> +	{ .fw_name = "esai0_tx_hf_clk" },
+> +	{ .fw_name = "esai1_rx_clk" },
+> +	{ .fw_name = "esai1_rx_hf_clk" },
+> +	{ .fw_name = "esai1_tx_clk" },
+> +	{ .fw_name = "esai1_tx_hf_clk" },
+> +	{ .fw_name = "spdif0_rx" },
+> +	{ .fw_name = "spdif1_rx" },
+> +	{ .fw_name = "sai0_rx_bclk" },
+> +	{ .fw_name = "sai0_tx_bclk" },
+> +	{ .fw_name = "sai1_rx_bclk" },
+> +	{ .fw_name = "sai1_tx_bclk" },
+> +	{ .fw_name = "sai2_rx_bclk" },
+> +	{ .fw_name = "sai3_rx_bclk" },
+> +	{ .fw_name = "sai4_rx_bclk" },
+> +};
+> +
+> +static const struct clk_parent_data imx8qm_mclk_out_sels[] = {
+> +	{ .fw_name = "aud_rec_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_rec_clk1_lpcg_clk" },
+> +	{ .fw_name = "mlb_clk" },
+> +	{ .fw_name = "hdmi_rx_mclk" },
+> +	{ .fw_name = "spdif0_rx" },
+> +	{ .fw_name = "spdif1_rx" },
+> +	{ .fw_name = "sai4_rx_bclk" },
+> +	{ .fw_name = "sai6_rx_bclk" },
+> +};
+> +
+> +static const struct clk_parent_data imx8qm_mclk_sels[] = {
+> +	{ .fw_name = "aud_pll_div_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_pll_div_clk1_lpcg_clk" },
+> +	{ .fw_name = "acm_aud_clk0_sel" },
+> +	{ .fw_name = "acm_aud_clk1_sel" },
+> +};
+> +
+> +static const struct clk_parent_data imx8qm_asrc_mux_clk_sels[] = {
+> +	{ .fw_name = "sai4_rx_bclk" },
+> +	{ .fw_name = "sai5_tx_bclk" },
+> +	{ .index = -1 },
+> +	{ .fw_name = "mlb_clk" },
+> +
+> +};
+> +
+> +static struct clk_imx8_acm_sel imx8qm_sels[] = {
+> +	{ "acm_aud_clk0_sel", IMX_ADMA_ACM_AUD_CLK0_SEL, imx8qm_aud_clk_sels, ARRAY_SIZE(imx8qm_aud_clk_sels), 0x000000, 0, 5 },
+> +	{ "acm_aud_clk1_sel", IMX_ADMA_ACM_AUD_CLK1_SEL, imx8qm_aud_clk_sels, ARRAY_SIZE(imx8qm_aud_clk_sels), 0x010000, 0, 5 },
+> +	{ "acm_mclkout0_sel", IMX_ADMA_ACM_MCLKOUT0_SEL, imx8qm_mclk_out_sels, ARRAY_SIZE(imx8qm_mclk_out_sels), 0x020000, 0, 3 },
+> +	{ "acm_mclkout1_sel", IMX_ADMA_ACM_MCLKOUT1_SEL, imx8qm_mclk_out_sels, ARRAY_SIZE(imx8qm_mclk_out_sels), 0x030000, 0, 3 },
+> +	{ "acm_asrc0_mclk_sel", IMX_ADMA_ACM_ASRC0_MUX_CLK_SEL, imx8qm_asrc_mux_clk_sels, ARRAY_SIZE(imx8qm_asrc_mux_clk_sels), 0x040000, 0, 2 },
+> +	{ "acm_esai0_mclk_sel", IMX_ADMA_ACM_ESAI0_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x060000, 0, 2 },
+> +	{ "acm_esai1_mclk_sel", IMX_ADMA_ACM_ESAI1_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x070000, 0, 2 },
+> +	{ "acm_sai0_mclk_sel", IMX_ADMA_ACM_SAI0_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x0E0000, 0, 2 },
+> +	{ "acm_sai1_mclk_sel", IMX_ADMA_ACM_SAI1_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x0F0000, 0, 2 },
+> +	{ "acm_sai2_mclk_sel", IMX_ADMA_ACM_SAI2_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x100000, 0, 2 },
+> +	{ "acm_sai3_mclk_sel", IMX_ADMA_ACM_SAI3_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x110000, 0, 2 },
+> +	{ "acm_sai4_mclk_sel", IMX_ADMA_ACM_SAI4_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x120000, 0, 2 },
+> +	{ "acm_sai5_mclk_sel", IMX_ADMA_ACM_SAI5_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x130000, 0, 2 },
+> +	{ "acm_sai6_mclk_sel", IMX_ADMA_ACM_SAI6_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x140000, 0, 2 },
+> +	{ "acm_sai7_mclk_sel", IMX_ADMA_ACM_SAI7_MCLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x150000, 0, 2 },
+> +	{ "acm_spdif0_mclk_sel", IMX_ADMA_ACM_SPDIF0_TX_CLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x1A0000, 0, 2 },
+> +	{ "acm_spdif1_mclk_sel", IMX_ADMA_ACM_SPDIF1_TX_CLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x1B0000, 0, 2 },
+> +	{ "acm_mqs_mclk_sel", IMX_ADMA_ACM_MQS_TX_CLK_SEL, imx8qm_mclk_sels, ARRAY_SIZE(imx8qm_mclk_sels), 0x1C0000, 0, 2 },
+> +};
+> +
+> +static const struct clk_parent_data imx8qxp_aud_clk_sels[] = {
+> +	{ .fw_name = "aud_rec_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_rec_clk1_lpcg_clk" },
+> +	{ .fw_name = "ext_aud_mclk0" },
+> +	{ .fw_name = "ext_aud_mclk1" },
+> +	{ .fw_name = "esai0_rx_clk" },
+> +	{ .fw_name = "esai0_rx_hf_clk" },
+> +	{ .fw_name = "esai0_tx_clk" },
+> +	{ .fw_name = "esai0_tx_hf_clk" },
+> +	{ .fw_name = "spdif0_rx" },
+> +	{ .fw_name = "sai0_rx_bclk" },
+> +	{ .fw_name = "sai0_tx_bclk" },
+> +	{ .fw_name = "sai1_rx_bclk" },
+> +	{ .fw_name = "sai1_tx_bclk" },
+> +	{ .fw_name = "sai2_rx_bclk" },
+> +	{ .fw_name = "sai3_rx_bclk" },
+> +};
+> +
+> +static const struct clk_parent_data imx8qxp_mclk_out_sels[] = {
+> +	{ .fw_name = "aud_rec_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_rec_clk1_lpcg_clk" },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +	{ .fw_name = "spdif0_rx" },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +	{ .fw_name = "sai4_rx_bclk" },
+> +};
+> +
+> +static const struct clk_parent_data imx8qxp_mclk_sels[] = {
+> +	{ .fw_name = "aud_pll_div_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_pll_div_clk1_lpcg_clk" },
+> +	{ .fw_name = "acm_aud_clk0_sel" },
+> +	{ .fw_name = "acm_aud_clk1_sel" },
+> +};
+> +
+> +static struct clk_imx8_acm_sel imx8qxp_sels[] = {
+> +	{ "acm_aud_clk0_sel", IMX_ADMA_ACM_AUD_CLK0_SEL, imx8qxp_aud_clk_sels, ARRAY_SIZE(imx8qxp_aud_clk_sels), 0x000000, 0, 5 },
+> +	{ "acm_aud_clk1_sel", IMX_ADMA_ACM_AUD_CLK1_SEL, imx8qxp_aud_clk_sels, ARRAY_SIZE(imx8qxp_aud_clk_sels), 0x010000, 0, 5 },
+> +	{ "acm_mclkout0_sel", IMX_ADMA_ACM_MCLKOUT0_SEL, imx8qxp_mclk_out_sels, ARRAY_SIZE(imx8qxp_mclk_out_sels), 0x020000, 0, 3 },
+> +	{ "acm_mclkout1_sel", IMX_ADMA_ACM_MCLKOUT1_SEL, imx8qxp_mclk_out_sels, ARRAY_SIZE(imx8qxp_mclk_out_sels), 0x030000, 0, 3 },
+> +	{ "acm_esai0_mclk_sel", IMX_ADMA_ACM_ESAI0_MCLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x060000, 0, 2 },
+> +	{ "acm_sai0_mclk_sel", IMX_ADMA_ACM_SAI0_MCLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x0E0000, 0, 2 },
+> +	{ "acm_sai1_mclk_sel", IMX_ADMA_ACM_SAI1_MCLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x0F0000, 0, 2 },
+> +	{ "acm_sai2_mclk_sel", IMX_ADMA_ACM_SAI2_MCLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x100000, 0, 2 },
+> +	{ "acm_sai3_mclk_sel", IMX_ADMA_ACM_SAI3_MCLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x110000, 0, 2 },
+> +	{ "acm_sai4_mclk_sel", IMX_ADMA_ACM_SAI4_MCLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x140000, 0, 2 },
+> +	{ "acm_sai5_mclk_sel", IMX_ADMA_ACM_SAI5_MCLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x150000, 0, 2 },
+> +	{ "acm_spdif0_mclk_sel", IMX_ADMA_ACM_SPDIF0_TX_CLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x1A0000, 0, 2 },
+> +	{ "acm_mqs_mclk_sel", IMX_ADMA_ACM_MQS_TX_CLK_SEL, imx8qxp_mclk_sels, ARRAY_SIZE(imx8qxp_mclk_sels), 0x1C0000, 0, 2 },
+> +};
+> +
+> +static const struct clk_parent_data imx8dxl_aud_clk_sels[] = {
+> +	{ .fw_name = "aud_rec_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_rec_clk1_lpcg_clk" },
+> +	{ .fw_name = "ext_aud_mclk0" },
+> +	{ .fw_name = "ext_aud_mclk1" },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +	{ .fw_name = "spdif0_rx" },
+> +	{ .fw_name = "sai0_rx_bclk" },
+> +	{ .fw_name = "sai0_tx_bclk" },
+> +	{ .fw_name = "sai1_rx_bclk" },
+> +	{ .fw_name = "sai1_tx_bclk" },
+> +	{ .fw_name = "sai2_rx_bclk" },
+> +	{ .fw_name = "sai3_rx_bclk" },
+> +};
+> +
+> +static const struct clk_parent_data imx8dxl_mclk_out_sels[] = {
+> +	{ .fw_name = "aud_rec_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_rec_clk1_lpcg_clk" },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +	{ .fw_name = "spdif0_rx" },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +	{ .index = -1 },
+> +};
+> +
+> +static const struct clk_parent_data imx8dxl_mclk_sels[] = {
+> +	{ .fw_name = "aud_pll_div_clk0_lpcg_clk" },
+> +	{ .fw_name = "aud_pll_div_clk1_lpcg_clk" },
+> +	{ .fw_name = "acm_aud_clk0_sel" },
+> +	{ .fw_name = "acm_aud_clk1_sel" },
+> +};
+> +
+> +static struct clk_imx8_acm_sel imx8dxl_sels[] = {
+> +	{ "acm_aud_clk0_sel", IMX_ADMA_ACM_AUD_CLK0_SEL, imx8dxl_aud_clk_sels, ARRAY_SIZE(imx8dxl_aud_clk_sels), 0x000000, 0, 5 },
+> +	{ "acm_aud_clk1_sel", IMX_ADMA_ACM_AUD_CLK1_SEL, imx8dxl_aud_clk_sels, ARRAY_SIZE(imx8dxl_aud_clk_sels), 0x010000, 0, 5 },
+> +	{ "acm_mclkout0_sel", IMX_ADMA_ACM_MCLKOUT0_SEL, imx8dxl_mclk_out_sels, ARRAY_SIZE(imx8dxl_mclk_out_sels), 0x020000, 0, 3 },
+> +	{ "acm_mclkout1_sel", IMX_ADMA_ACM_MCLKOUT1_SEL, imx8dxl_mclk_out_sels, ARRAY_SIZE(imx8dxl_mclk_out_sels), 0x030000, 0, 3 },
+> +	{ "acm_sai0_mclk_sel", IMX_ADMA_ACM_SAI0_MCLK_SEL, imx8dxl_mclk_sels, ARRAY_SIZE(imx8dxl_mclk_sels), 0x0E0000, 0, 2 },
+> +	{ "acm_sai1_mclk_sel", IMX_ADMA_ACM_SAI1_MCLK_SEL, imx8dxl_mclk_sels, ARRAY_SIZE(imx8dxl_mclk_sels), 0x0F0000, 0, 2 },
+> +	{ "acm_sai2_mclk_sel", IMX_ADMA_ACM_SAI2_MCLK_SEL, imx8dxl_mclk_sels, ARRAY_SIZE(imx8dxl_mclk_sels), 0x100000, 0, 2 },
+> +	{ "acm_sai3_mclk_sel", IMX_ADMA_ACM_SAI3_MCLK_SEL, imx8dxl_mclk_sels, ARRAY_SIZE(imx8dxl_mclk_sels), 0x110000, 0, 2 },
+> +	{ "acm_spdif0_mclk_sel", IMX_ADMA_ACM_SPDIF0_TX_CLK_SEL, imx8dxl_mclk_sels, ARRAY_SIZE(imx8dxl_mclk_sels), 0x1A0000, 0, 2 },
+> +	{ "acm_mqs_mclk_sel", IMX_ADMA_ACM_MQS_TX_CLK_SEL, imx8dxl_mclk_sels, ARRAY_SIZE(imx8dxl_mclk_sels), 0x1C0000, 0, 2 },
+> +};
+> +
+> +/**
+> + * clk_imx_acm_attach_pm_domains: attach multi power domains
+> + * @dev: device pointer
+> + * @dev_pm: power domains for device
+> + */
+> +static int clk_imx_acm_attach_pm_domains(struct device *dev,
+> +					 struct clk_imx_acm_pm_domains *dev_pm)
+> +{
+> +	int ret;
+> +	int i;
+> +
+> +	dev_pm->num_domains = of_count_phandle_with_args(dev->of_node, "power-domains",
+> +							 "#power-domain-cells");
+> +	if (dev_pm->num_domains <= 1)
+> +		return 0;
+> +
+> +	dev_pm->pd_dev = devm_kmalloc_array(dev, dev_pm->num_domains,
+> +					    sizeof(*dev_pm->pd_dev),
+> +					    GFP_KERNEL);
+> +	if (!dev_pm->pd_dev)
+> +		return -ENOMEM;
+> +
+> +	dev_pm->pd_dev_link = devm_kmalloc_array(dev,
+> +						 dev_pm->num_domains,
+> +						 sizeof(*dev_pm->pd_dev_link),
+> +						 GFP_KERNEL);
+> +	if (!dev_pm->pd_dev_link)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < dev_pm->num_domains; i++) {
+> +		dev_pm->pd_dev[i] = dev_pm_domain_attach_by_id(dev, i);
+> +		if (IS_ERR(dev_pm->pd_dev[i]))
+> +			return PTR_ERR(dev_pm->pd_dev[i]);
+> +
+> +		dev_pm->pd_dev_link[i] = device_link_add(dev,
+> +							 dev_pm->pd_dev[i],
+> +							 DL_FLAG_STATELESS |
+> +							 DL_FLAG_PM_RUNTIME |
+> +							 DL_FLAG_RPM_ACTIVE);
+> +		if (IS_ERR(dev_pm->pd_dev_link[i])) {
+> +			dev_pm_domain_detach(dev_pm->pd_dev[i], false);
+> +			ret = PTR_ERR(dev_pm->pd_dev_link[i]);
+> +			goto detach_pm;
 > +		}
-> +	} else {
-> +		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> +			round_rate = parent_rate * pllv4_mult_table[i];
-> +			if (rate >= round_rate) {
-> +				found = true;
-> +				break;
-> +			}
->  		}
->  	}
->  
-> @@ -138,14 +155,20 @@ static long clk_pllv4_round_rate(struct clk_hw *hw, unsigned long rate,
->  	return round_rate + (u32)temp64;
->  }
->  
-> -static bool clk_pllv4_is_valid_mult(unsigned int mult)
-> +static bool clk_pllv4_is_valid_mult(struct clk_pllv4 *pll, unsigned int mult)
->  {
->  	int i;
->  
->  	/* check if mult is in valid MULT table */
-> -	for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> -		if (pllv4_mult_table[i] == mult)
-> +	if (pll->use_mult_range) {
-> +		if (mult >= pllv4_mult_range[1] &&
-> +		    mult <= pllv4_mult_range[0])
->  			return true;
-> +	} else {
-> +		for (i = 0; i < ARRAY_SIZE(pllv4_mult_table); i++) {
-> +			if (pllv4_mult_table[i] == mult)
-> +				return true;
+> +	}
+> +	return 0;
+> +
+> +detach_pm:
+> +	while (--i >= 0) {
+> +		device_link_del(dev_pm->pd_dev_link[i]);
+> +		dev_pm_domain_detach(dev_pm->pd_dev[i], false);
+> +	}
+> +	return ret;
+> +}
+> +
+> +/**
+> + * clk_imx_acm_detach_pm_domains: detach multi power domains
+> + * @dev: deivice pointer
+> + * @dev_pm: multi power domain for device
+> + */
+> +static int clk_imx_acm_detach_pm_domains(struct device *dev,
+> +					 struct clk_imx_acm_pm_domains *dev_pm)
+> +{
+> +	int i;
+> +
+> +	if (dev_pm->num_domains <= 1)
+> +		return 0;
+> +
+> +	for (i = 0; i < dev_pm->num_domains; i++) {
+> +		device_link_del(dev_pm->pd_dev_link[i]);
+> +		dev_pm_domain_detach(dev_pm->pd_dev[i], false);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx8_acm_clk_probe(struct platform_device *pdev)
+> +{
+> +	struct clk_hw_onecell_data *clk_hw_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct clk_imx8_acm_sel *sels;
+> +	struct imx8_acm_priv *priv;
+> +	struct clk_hw **hws;
+> +	void __iomem *base;
+> +	int ret;
+> +	int i;
+> +
+> +	base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+> +	if (WARN_ON(IS_ERR(base)))
+> +		return PTR_ERR(base);
+> +
+> +	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->reg = base;
+> +	priv->soc_data = of_device_get_match_data(dev);
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	clk_hw_data = devm_kzalloc(&pdev->dev, struct_size(clk_hw_data, hws, IMX_ADMA_ACM_CLK_END),
+> +				   GFP_KERNEL);
+> +	if (!clk_hw_data)
+> +		return -ENOMEM;
+> +
+> +	clk_hw_data->num = IMX_ADMA_ACM_CLK_END;
+> +	hws = clk_hw_data->hws;
+> +
+> +	ret = clk_imx_acm_attach_pm_domains(&pdev->dev, &priv->dev_pm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+> +	sels = priv->soc_data->sels;
+> +	for (i = 0; i < priv->soc_data->num_sels; i++) {
+> +		hws[sels[i].clkid] = devm_clk_hw_register_mux_parent_data_table(dev,
+> +										sels[i].name, sels[i].parents,
+> +										sels[i].num_parents, 0,
+> +										base + sels[i].reg,
+> +										sels[i].shift, sels[i].width,
+> +										0, NULL, NULL);
+> +		if (IS_ERR(hws[sels[i].clkid])) {
+> +			pm_runtime_disable(&pdev->dev);
+> +			goto err_clk_register;
 > +		}
->  	}
->  
->  	return false;
-> @@ -160,7 +183,7 @@ static int clk_pllv4_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  	mult = rate / parent_rate;
->  
-> -	if (!clk_pllv4_is_valid_mult(mult))
-> +	if (!clk_pllv4_is_valid_mult(pll, mult))
->  		return -EINVAL;
->  
->  	if (parent_rate <= MAX_MFD)
-> @@ -227,10 +250,13 @@ struct clk_hw *imx_clk_hw_pllv4(enum imx_pllv4_type type, const char *name,
->  
->  	pll->base = base;
->  
-> -	if (type == IMX_PLLV4_IMX8ULP) {
-> +	if (type == IMX_PLLV4_IMX8ULP ||
-> +	    type == IMX_PLLV4_IMX8ULP_1GHZ) {
->  		pll->cfg_offset = IMX8ULP_PLL_CFG_OFFSET;
->  		pll->num_offset = IMX8ULP_PLL_NUM_OFFSET;
->  		pll->denom_offset = IMX8ULP_PLL_DENOM_OFFSET;
-> +		if (type == IMX_PLLV4_IMX8ULP_1GHZ)
-> +			pll->use_mult_range = true;
->  	} else {
->  		pll->cfg_offset = PLL_CFG_OFFSET;
->  		pll->num_offset = PLL_NUM_OFFSET;
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index af19d9f6aed0..adb7ad649a0d 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -45,6 +45,7 @@ enum imx_pll14xx_type {
->  enum imx_pllv4_type {
->  	IMX_PLLV4_IMX7ULP,
->  	IMX_PLLV4_IMX8ULP,
-> +	IMX_PLLV4_IMX8ULP_1GHZ,
->  };
->  
->  enum imx_pfdv2_type {
+> +	}
+> +
+> +	imx_check_clk_hws(hws, IMX_ADMA_ACM_CLK_END);
+> +
+> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_hw_data);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to register hws for ACM\n");
+> +		pm_runtime_disable(&pdev->dev);
+> +	}
+> +
+> +err_clk_register:
+> +
+> +	pm_runtime_put_sync(&pdev->dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static int imx8_acm_clk_remove(struct platform_device *pdev)
+> +{
+> +	struct imx8_acm_priv *priv = dev_get_drvdata(&pdev->dev);
+> +
+> +	pm_runtime_disable(&pdev->dev);
+> +
+> +	clk_imx_acm_detach_pm_domains(&pdev->dev, &priv->dev_pm);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct imx8_acm_soc_data imx8qm_acm_data = {
+> +	.sels = imx8qm_sels,
+> +	.num_sels = ARRAY_SIZE(imx8qm_sels),
+> +};
+> +
+> +static const struct imx8_acm_soc_data imx8qxp_acm_data = {
+> +	.sels = imx8qxp_sels,
+> +	.num_sels = ARRAY_SIZE(imx8qxp_sels),
+> +};
+> +
+> +static const struct imx8_acm_soc_data imx8dxl_acm_data = {
+> +	.sels = imx8dxl_sels,
+> +	.num_sels = ARRAY_SIZE(imx8dxl_sels),
+> +};
+> +
+> +static const struct of_device_id imx8_acm_match[] = {
+> +	{ .compatible = "fsl,imx8qm-acm", .data = &imx8qm_acm_data },
+> +	{ .compatible = "fsl,imx8qxp-acm", .data = &imx8qxp_acm_data },
+> +	{ .compatible = "fsl,imx8dxl-acm", .data = &imx8dxl_acm_data },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, imx8_acm_match);
+> +
+> +static int __maybe_unused imx8_acm_runtime_suspend(struct device *dev)
+> +{
+> +	struct imx8_acm_priv *priv = dev_get_drvdata(dev);
+> +	struct clk_imx8_acm_sel *sels;
+> +	int i;
+> +
+> +	sels = priv->soc_data->sels;
+> +
+> +	for (i = 0; i < priv->soc_data->num_sels; i++)
+> +		priv->regs[i] = readl_relaxed(priv->reg + sels[i].reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused imx8_acm_runtime_resume(struct device *dev)
+> +{
+> +	struct imx8_acm_priv *priv = dev_get_drvdata(dev);
+> +	struct clk_imx8_acm_sel *sels;
+> +	int i;
+> +
+> +	sels = priv->soc_data->sels;
+> +
+> +	for (i = 0; i < priv->soc_data->num_sels; i++)
+> +		writel_relaxed(priv->regs[i], priv->reg + sels[i].reg);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dev_pm_ops imx8_acm_pm_ops = {
+> +	SET_RUNTIME_PM_OPS(imx8_acm_runtime_suspend,
+> +			   imx8_acm_runtime_resume, NULL)
+> +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				      pm_runtime_force_resume)
+> +};
+> +
+> +static struct platform_driver imx8_acm_clk_driver = {
+> +	.driver = {
+> +		.name = "imx8-acm",
+> +		.of_match_table = imx8_acm_match,
+> +		.pm = &imx8_acm_pm_ops,
+> +	},
+> +	.probe = imx8_acm_clk_probe,
+> +	.remove = imx8_acm_clk_remove,
+> +};
+> +module_platform_driver(imx8_acm_clk_driver);
+> +
+> +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
+> +MODULE_DESCRIPTION("Freescale i.MX8 Audio Clock Mux driver");
+> +MODULE_LICENSE("GPL");
 > -- 
-> 2.37.1
+> 2.34.1
 > 
